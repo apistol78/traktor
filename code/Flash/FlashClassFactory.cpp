@@ -438,6 +438,10 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< FlashSpriteInstance > > classFlashSpriteInstance = new AutoRuntimeClass< FlashSpriteInstance >();
 	classFlashSpriteInstance->addMethod("getSprite", &FlashSpriteInstance::getSprite);
+	classFlashSpriteInstance->addMethod("setCacheAsBitmap", &FlashSpriteInstance::setCacheAsBitmap);
+	classFlashSpriteInstance->addMethod("getCacheAsBitmap", &FlashSpriteInstance::getCacheAsBitmap);
+	classFlashSpriteInstance->addMethod("setOpaqueBackground", &FlashSpriteInstance::setOpaqueBackground);
+	classFlashSpriteInstance->addMethod("getOpaqueBackground", &FlashSpriteInstance::getOpaqueBackground);
 	classFlashSpriteInstance->addMethod("gotoFrame", &FlashSpriteInstance::gotoFrame);
 	classFlashSpriteInstance->addMethod("gotoPrevious", &FlashSpriteInstance::gotoPrevious);
 	classFlashSpriteInstance->addMethod("gotoNext", &FlashSpriteInstance::gotoNext);
@@ -446,10 +450,15 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashSpriteInstance->addMethod("getPlaying", &FlashSpriteInstance::getPlaying);
 	classFlashSpriteInstance->addMethod("createEmptyMovieClip", &FlashSpriteInstance::createEmptyMovieClip);
 	classFlashSpriteInstance->addMethod("removeMovieClip", &FlashSpriteInstance::removeMovieClip);
+	classFlashSpriteInstance->addMethod("clone", &FlashSpriteInstance::clone);
+	classFlashSpriteInstance->addMethod("getLocalBounds", &FlashSpriteInstance::getLocalBounds);
+	classFlashSpriteInstance->addMethod("getVisibleLocalBounds", &FlashSpriteInstance::getVisibleLocalBounds);
+	classFlashSpriteInstance->addMethod("setMask", &FlashSpriteInstance::setMask);
+	classFlashSpriteInstance->addMethod("getMask", &FlashSpriteInstance::getMask);
+	classFlashSpriteInstance->addMethod("createCanvas", &FlashSpriteInstance::createCanvas);
+	classFlashSpriteInstance->addMethod("getCanvas", &FlashSpriteInstance::getCanvas);
 	classFlashSpriteInstance->addMethod("getMouseX", &FlashSpriteInstance::getMouseX);
 	classFlashSpriteInstance->addMethod("getMouseY", &FlashSpriteInstance::getMouseY);
-	classFlashSpriteInstance->addMethod("getLocalBounds", &FlashSpriteInstance::getLocalBounds);
-	classFlashSpriteInstance->addMethod("getBounds", &FlashSpriteInstance::getBounds);
 	registrar->registerClass(classFlashSpriteInstance);
 
 	Ref< AutoRuntimeClass< FlashMovie > > classFlashMovie = new AutoRuntimeClass< FlashMovie >();

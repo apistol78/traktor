@@ -50,6 +50,14 @@ public:
 		const Vector4& viewOffset
 	) = 0;
 
+	/*! \brief Begin rendering sprite.
+	 */
+	virtual void beginSprite(const FlashSpriteInstance& sprite) = 0;
+
+	/*! \brief End rendering sprite.
+	 */
+	virtual void endSprite(const FlashSpriteInstance& sprite) = 0;
+
 	/*! \brief Begin rendering mask.
 	 *
 	 * \param increment Increment mask.

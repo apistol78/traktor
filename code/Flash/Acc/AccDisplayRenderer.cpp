@@ -350,6 +350,18 @@ void AccDisplayRenderer::begin(
 	m_maskReference = 0;
 }
 
+void AccDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite)
+{
+	if (sprite.getCacheAsBitmap())
+		m_shapeRenderer->beginCacheAsBitmap();
+}
+
+void AccDisplayRenderer::endSprite(const FlashSpriteInstance& sprite)
+{
+	if (sprite.getCacheAsBitmap())
+		m_shapeRenderer->endCacheAsBitmap();
+}
+
 void AccDisplayRenderer::beginMask(bool increment)
 {
 	renderEnqueuedGlyphs();

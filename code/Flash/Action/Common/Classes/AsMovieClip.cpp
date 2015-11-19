@@ -851,18 +851,14 @@ void AsMovieClip::MovieClip_set_blendMode(FlashSpriteInstance* self) const
 	)
 }
 
-void AsMovieClip::MovieClip_get_cacheAsBitmap(const FlashSpriteInstance* self) const
+bool AsMovieClip::MovieClip_get_cacheAsBitmap(const FlashSpriteInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::get_cacheAsBitmap not implemented" << Endl;
-	)
+	return self->getCacheAsBitmap();
 }
 
-void AsMovieClip::MovieClip_set_cacheAsBitmap(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_cacheAsBitmap(FlashSpriteInstance* self, bool enabled) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_cacheAsBitmap not implemented" << Endl;
-	)
+	self->setCacheAsBitmap(enabled);
 }
 
 int32_t AsMovieClip::MovieClip_get_currentframe(const FlashSpriteInstance* self) const
@@ -1041,11 +1037,9 @@ void AsMovieClip::MovieClip_get_opaqueBackground(const FlashSpriteInstance* self
 	)
 }
 
-void AsMovieClip::MovieClip_set_opaqueBackground(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_opaqueBackground(FlashSpriteInstance* self, const ActionValue& value) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_opaqueBackground not implemented" << Endl;
-	)
+	self->setOpaqueBackground(!value.isUndefined());
 }
 
 FlashCharacterInstance* AsMovieClip::MovieClip_get_parent(FlashSpriteInstance* self) const

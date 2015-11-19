@@ -25,6 +25,7 @@ const Matrix33 c_flipped(
 
 const uint32_t c_cacheWidth = 2048;
 const uint32_t c_cacheHeight = 2048;
+const uint32_t c_cacheMargin = 1;
 
 const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f } };
 const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
@@ -59,6 +60,7 @@ bool AccShapeRenderer::create(render::IRenderSystem* renderSystem, resource::IRe
 	}
 
 	m_packer.reset(new rbp::GuillotineBinPack(c_cacheWidth, c_cacheHeight));
+	m_cacheAsBitmap = 0;
 	return true;
 }
 
@@ -81,6 +83,7 @@ void AccShapeRenderer::beginFrame()
 		}
 	}
 
+	m_cacheAsBitmap = 0;
 	m_quadCount = 0;
 	m_shapeCount = 0;
 }
@@ -88,6 +91,16 @@ void AccShapeRenderer::beginFrame()
 void AccShapeRenderer::endFrame()
 {
 	//log::info << L"quad = " << m_quadCount << L", shape = " << m_shapeCount << Endl;
+}
+
+void AccShapeRenderer::beginCacheAsBitmap()
+{
+	m_cacheAsBitmap++;
+}
+
+void AccShapeRenderer::endCacheAsBitmap()
+{
+	m_cacheAsBitmap--;
 }
 
 void AccShapeRenderer::render(
@@ -107,6 +120,7 @@ void AccShapeRenderer::render(
 {
 	// Only permit caching of default blended shapes and not while updating stencil mask.
 	if (
+		m_cacheAsBitmap > 0 &&
 		blendMode == SbmDefault &&
 		maskWrite == false
 	)
@@ -140,16 +154,24 @@ void AccShapeRenderer::render(
 
 		if (slot < 0)
 		{
-			rbp::Rect node = m_packer->Insert(pixelWidth, pixelHeight, false, rbp::GuillotineBinPack::RectBestAreaFit, rbp::GuillotineBinPack::SplitShorterLeftoverAxis);
+			int32_t allocWidth = pixelWidth + c_cacheMargin * 2;
+			int32_t allocHeight = pixelHeight + c_cacheMargin * 2;
+			rbp::Rect node = m_packer->Insert(
+				allocWidth,
+				allocHeight,
+				false,
+				rbp::GuillotineBinPack::RectBestAreaFit,
+				rbp::GuillotineBinPack::SplitShorterLeftoverAxis
+			);
 			if (node.width > 0 && node.height > 0)
 			{
 				Cache c;
 				c.tag = tag;
-				c.x = node.x;
-				c.y = node.y;
-				c.width = node.width;
-				c.height = node.height;
-				c.flipped = bool(node.width != pixelWidth);
+				c.x = node.x + c_cacheMargin;
+				c.y = node.y + c_cacheMargin;
+				c.width = node.width - c_cacheMargin * 2;
+				c.height = node.height - c_cacheMargin * 2;
+				c.flipped = bool(node.width != allocWidth);
 				c.unused = 0;
 				
 				slot = m_cache.size();
@@ -186,7 +208,7 @@ void AccShapeRenderer::render(
 				shape->render(
 					renderContext,
 					c.flipped ? c_flipped : Matrix33::identity(),
-					c.flipped ? Vector4(bounds.mn.y, bounds.mn.x, bounds.mx.y, bounds.mx.x) : cacheFrameSize,
+					c.flipped ? cacheFrameSize.shuffle< 1, 0, 3, 2 >() : cacheFrameSize,
 					cacheViewOffset,
 					0.0f,
 					c_cxfIdentity,

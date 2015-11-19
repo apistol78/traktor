@@ -37,7 +37,15 @@ public:
 
 	void destroy();
 
-	const FlashSprite* getSprite() const;
+	const FlashSprite* getSprite() const { return m_sprite; }
+
+	void setCacheAsBitmap(bool cacheAsBitmap);
+
+	bool getCacheAsBitmap() const { return m_cacheAsBitmap; }
+
+	void setOpaqueBackground(bool opaqueBackground);
+
+	bool getOpaqueBackground() const { return m_opaqueBackground; }
 
 	void gotoFrame(uint32_t frameId);
 
@@ -45,17 +53,17 @@ public:
 
 	void gotoNext();
 
-	uint32_t getCurrentFrame() const;
+	uint32_t getCurrentFrame() const { return m_currentFrame; }
 
 	void setPlaying(bool playing);
 
-	bool getPlaying() const;
+	bool getPlaying() const { return m_playing; }
 
 	void updateDisplayList();
 
-	FlashDisplayList& getDisplayList();
+	FlashDisplayList& getDisplayList() { return m_displayList; }
 
-	const FlashDisplayList& getDisplayList() const;
+	const FlashDisplayList& getDisplayList() const { return m_displayList; }
 
 	void updateSounds(FlashSoundPlayer* soundPlayer);
 
@@ -71,7 +79,7 @@ public:
 
 	void setMask(FlashSpriteInstance* maskInstance);
 
-	FlashSpriteInstance* getMask();
+	FlashSpriteInstance* getMask() { return m_mask; }
 
 	FlashCanvas* createCanvas();
 
@@ -130,6 +138,8 @@ private:
 	uint32_t m_lastExecutedFrame;
 	uint32_t m_lastSoundFrame;
 	uint32_t m_skipEnterFrame;
+	bool m_cacheAsBitmap;
+	bool m_opaqueBackground;
 	bool m_initialized;
 	bool m_playing;
 	bool m_visible;
