@@ -2,6 +2,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Flash/FlashSprite.h"
+#include "Flash/FlashSpriteInstance.h"
 #include "Flash/SwfTypes.h"
 #include "Flash/Acc/AccQuad.h"
 #include "Flash/Acc/AccShape.h"
@@ -41,8 +43,9 @@ bool AccShapeRenderer::create(render::IRenderSystem* renderSystem, resource::IRe
 	rtscd.width = c_cacheWidth;
 	rtscd.height = c_cacheHeight;
 	rtscd.multiSample = 4;
-	rtscd.createDepthStencil = false;
+	rtscd.createDepthStencil = true;
 	rtscd.usingPrimaryDepthStencil = false;
+	rtscd.ignoreStencil = false;
 	rtscd.targets[0].format = render::TfR8G8B8A8;
 
 	m_renderTargetShapes = renderSystem->createRenderTargetSet(rtscd);
@@ -60,7 +63,6 @@ bool AccShapeRenderer::create(render::IRenderSystem* renderSystem, resource::IRe
 	}
 
 	m_packer.reset(new rbp::GuillotineBinPack(c_cacheWidth, c_cacheHeight));
-	m_cacheAsBitmap = 0;
 	return true;
 }
 
@@ -83,9 +85,8 @@ void AccShapeRenderer::beginFrame()
 		}
 	}
 
-	m_cacheAsBitmap = 0;
-	m_quadCount = 0;
-	m_shapeCount = 0;
+	m_renderIntoSlot = -1;
+	m_renderFromSlot = -1;
 }
 
 void AccShapeRenderer::endFrame()
@@ -93,14 +94,145 @@ void AccShapeRenderer::endFrame()
 	//log::info << L"quad = " << m_quadCount << L", shape = " << m_shapeCount << Endl;
 }
 
-void AccShapeRenderer::beginCacheAsBitmap()
+void AccShapeRenderer::beginCacheAsBitmap(
+	render::RenderContext* renderContext,
+	const FlashSpriteInstance& spriteInstance,
+	const Vector4& frameSize,
+	const Vector4& viewSize,
+	const Matrix33& transform
+)
 {
-	m_cacheAsBitmap++;
+	T_FATAL_ASSERT (m_renderIntoSlot < 0);
+
+	int32_t tag = spriteInstance.getSprite()->getCacheTag();
+	Aabb2 bounds = spriteInstance.getLocalBounds();
+
+	float frameWidth = (frameSize.z() - frameSize.x()) / 20.0f;
+	float frameHeight = (frameSize.w() - frameSize.y()) / 20.0f;
+
+	float scaleX = Vector2(transform.e11, transform.e12).length() * (viewSize.x() / frameWidth);
+	float scaleY = Vector2(transform.e21, transform.e22).length() * (viewSize.y() / frameHeight);
+
+	int32_t pixelWidth = int32_t(scaleX * (bounds.mx.x - bounds.mn.x) / 20.0f);
+	int32_t pixelHeight = int32_t(scaleY * (bounds.mx.y - bounds.mn.y) / 20.0f);
+
+	// Check if sprite instance already cached.
+	int32_t slot = -1;
+	for (int32_t i = 0; i < m_cache.size(); ++i)
+	{
+		if (m_cache[i].tag == tag)
+		{
+			if (
+				(!m_cache[i].flipped && m_cache[i].width == pixelWidth && m_cache[i].height == pixelHeight) ||
+				( m_cache[i].flipped && m_cache[i].width == pixelHeight && m_cache[i].height == pixelWidth)
+			)
+			{
+				slot = i;
+				break;
+			}
+		}
+	}
+
+	// If not cached then allocate a new region and begin rendering into cache.
+	if (slot < 0)
+	{
+		int32_t allocWidth = pixelWidth + c_cacheMargin * 2;
+		int32_t allocHeight = pixelHeight + c_cacheMargin * 2;
+		rbp::Rect node = m_packer->Insert(
+			allocWidth,
+			allocHeight,
+			false,
+			rbp::GuillotineBinPack::RectBestAreaFit,
+			rbp::GuillotineBinPack::SplitShorterLeftoverAxis
+		);
+		if (node.width > 0 && node.height > 0)
+		{
+			Cache c;
+			c.tag = tag;
+			c.x = node.x + c_cacheMargin;
+			c.y = node.y + c_cacheMargin;
+			c.width = node.width - c_cacheMargin * 2;
+			c.height = node.height - c_cacheMargin * 2;
+			c.flipped = bool(node.width != allocWidth);
+			c.unused = 0;
+			c.bounds = bounds;
+			c.transform = transform;
+
+			slot = m_cache.size();
+			m_cache.push_back(c);
+
+			render::TargetBeginRenderBlock* renderBlockBegin = renderContext->alloc< render::TargetBeginRenderBlock >("Flash sprite cache begin");
+			renderBlockBegin->renderTargetSet = m_renderTargetShapes;
+			renderBlockBegin->renderTargetIndex = 0;
+			renderContext->draw(render::RpOverlay, renderBlockBegin);
+
+			if (slot == 0)
+			{
+				render::TargetClearRenderBlock* renderBlockClear = renderContext->alloc< render::TargetClearRenderBlock >("Flash sprite cache clear");
+				renderBlockClear->clearMask = render::CfColor | render::CfStencil;
+				renderBlockClear->clearColor = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+				renderContext->draw(render::RpOverlay, renderBlockClear);
+			}
+
+			Vector4 cacheFrameSize(bounds.mn.x, bounds.mn.y, bounds.mx.x, bounds.mx.y);
+			Vector4 cacheViewOffset(
+				float(c.x) / c_cacheWidth,
+				float(c.y) / c_cacheHeight,
+				float(c.width) / c_cacheWidth,
+				float(c.height) / c_cacheHeight
+			);
+
+			m_renderIntoSlot = slot;
+		}
+	}
+
+	if (slot >= 0)
+		m_renderFromSlot = slot;
 }
 
-void AccShapeRenderer::endCacheAsBitmap()
+void AccShapeRenderer::endCacheAsBitmap(
+	render::RenderContext* renderContext,
+	const Vector4& frameSize,
+	const Vector4& viewOffset,
+	const Matrix33& transform
+)
 {
-	m_cacheAsBitmap--;
+	if (m_renderIntoSlot >= 0)
+	{
+		render::TargetEndRenderBlock* renderBlockEnd = renderContext->alloc< render::TargetEndRenderBlock >("Flash shape render end");
+		renderContext->draw(render::RpOverlay, renderBlockEnd);
+		m_renderIntoSlot = -1;
+	}
+
+	if (m_renderFromSlot >= 0)
+	{
+		Cache& c = m_cache[m_renderFromSlot];
+
+		Vector4 textureOffset(
+			float(c.x) / c_cacheWidth,
+			float(c.y) / c_cacheHeight,
+			float(c.width) / c_cacheWidth,
+			float(c.height) / c_cacheHeight
+		);
+
+		m_quad->render(
+			renderContext,
+			c.flipped ? Aabb2(c.bounds.mn.shuffle< 1, 0 >(), c.bounds.mx.shuffle< 1, 0 >()) : c.bounds,
+			transform * (c.flipped ? c_flipped : Matrix33::identity()),
+			frameSize,
+			viewOffset,
+			c_cxfIdentity,
+			m_renderTargetShapes->getColorTexture(0),
+			textureOffset,
+			false,
+			false,
+			0
+		);
+
+		c.unused = 0;
+
+		m_renderFromSlot = -1;
+	}
 }
 
 void AccShapeRenderer::render(
@@ -118,156 +250,47 @@ void AccShapeRenderer::render(
 	uint8_t blendMode
 )
 {
-	// Only permit caching of default blended shapes and not while updating stencil mask.
-	if (
-		m_cacheAsBitmap > 0 &&
-		blendMode == SbmDefault &&
-		maskWrite == false
-	)
+	if (m_renderIntoSlot >= 0)
 	{
-		Aabb2 bounds = shape->getBounds();
+		const Cache& c = m_cache[m_renderIntoSlot];
 
-		float frameWidth = (frameSize.z() - frameSize.x()) / 20.0f;
-		float frameHeight = (frameSize.w() - frameSize.y()) / 20.0f;
+		Vector4 cacheFrameSize(c.bounds.mn.x, c.bounds.mn.y, c.bounds.mx.x, c.bounds.mx.y);
+		Vector4 cacheViewOffset(
+			float(c.x) / c_cacheWidth,
+			float(c.y) / c_cacheHeight,
+			float(c.width) / c_cacheWidth,
+			float(c.height) / c_cacheHeight
+		);
 
-		float scaleX = Vector2(transform.e11, transform.e12).length() * (viewSize.x() / frameWidth);
-		float scaleY = Vector2(transform.e21, transform.e22).length() * (viewSize.y() / frameHeight);
-
-		int32_t pixelWidth = int32_t(scaleX * (bounds.mx.x - bounds.mn.x) / 20.0f);
-		int32_t pixelHeight = int32_t(scaleY * (bounds.mx.y - bounds.mn.y) / 20.0f);
-
-		int32_t slot = -1;
-		for (int32_t i = 0; i < m_cache.size(); ++i)
-		{
-			if (m_cache[i].tag == tag)
-			{
-				if (
-					(!m_cache[i].flipped && m_cache[i].width == pixelWidth && m_cache[i].height == pixelHeight) ||
-					( m_cache[i].flipped && m_cache[i].width == pixelHeight && m_cache[i].height == pixelWidth)
-				)
-				{
-					slot = i;
-					break;
-				}
-			}
-		}
-
-		if (slot < 0)
-		{
-			int32_t allocWidth = pixelWidth + c_cacheMargin * 2;
-			int32_t allocHeight = pixelHeight + c_cacheMargin * 2;
-			rbp::Rect node = m_packer->Insert(
-				allocWidth,
-				allocHeight,
-				false,
-				rbp::GuillotineBinPack::RectBestAreaFit,
-				rbp::GuillotineBinPack::SplitShorterLeftoverAxis
-			);
-			if (node.width > 0 && node.height > 0)
-			{
-				Cache c;
-				c.tag = tag;
-				c.x = node.x + c_cacheMargin;
-				c.y = node.y + c_cacheMargin;
-				c.width = node.width - c_cacheMargin * 2;
-				c.height = node.height - c_cacheMargin * 2;
-				c.flipped = bool(node.width != allocWidth);
-				c.unused = 0;
-				
-				slot = m_cache.size();
-				m_cache.push_back(c);
-
-				// Cache shape into off-screen target.
-				render::TargetBeginRenderBlock* renderBlockBegin = renderContext->alloc< render::TargetBeginRenderBlock >("Flash shape render begin");
-				renderBlockBegin->renderTargetSet = m_renderTargetShapes;
-				renderBlockBegin->renderTargetIndex = 0;
-				renderContext->draw(render::RpOverlay, renderBlockBegin);
-
-				Vector4 cacheFrameSize(bounds.mn.x, bounds.mn.y, bounds.mx.x, bounds.mx.y);
-				Vector4 cacheViewOffset(
-					float(c.x) / c_cacheWidth,
-					float(c.y) / c_cacheHeight,
-					float(c.width) / c_cacheWidth,
-					float(c.height) / c_cacheHeight
-				);
-
-				m_quad->render(
-					renderContext,
-					bounds,
-					Matrix33::identity(),
-					cacheFrameSize,
-					cacheViewOffset,
-					c_cxfZero,
-					0,
-					Vector4::zero(),
-					false,
-					false,
-					0
-				);
-
-				shape->render(
-					renderContext,
-					c.flipped ? c_flipped : Matrix33::identity(),
-					c.flipped ? cacheFrameSize.shuffle< 1, 0, 3, 2 >() : cacheFrameSize,
-					cacheViewOffset,
-					0.0f,
-					c_cxfIdentity,
-					false,
-					false,
-					false,
-					SbmDefault
-				);
-
-				render::TargetEndRenderBlock* renderBlockEnd = renderContext->alloc< render::TargetEndRenderBlock >("Flash shape render end");
-				renderContext->draw(render::RpOverlay, renderBlockEnd);
-			}
-		}
-
-		if (slot >= 0)
-		{
-			Vector4 textureOffset(
-				float(m_cache[slot].x) / c_cacheWidth,
-				float(m_cache[slot].y) / c_cacheHeight,
-				float(m_cache[slot].width) / c_cacheWidth,
-				float(m_cache[slot].height) / c_cacheHeight
-			);
-
-			// Blit shape to frame buffer.
-			m_quad->render(
-				renderContext,
-				m_cache[slot].flipped ? Aabb2(bounds.mn.shuffle< 1, 0 >(), bounds.mx.shuffle< 1, 0 >()) : bounds,
-				transform * (m_cache[slot].flipped ? c_flipped : Matrix33::identity()),
-				frameSize,
-				viewOffset,
-				cxform,
-				m_renderTargetShapes->getColorTexture(0),
-				textureOffset,
-				false,
-				false,
-				maskReference
-			);
-
-			m_quadCount++;
-			m_cache[slot].unused = 0;
-			return;
-		}
+		Matrix33 delta = c.transform.inverse() * transform;
+		shape->render(
+			renderContext,
+			delta * (c.flipped ? c_flipped : Matrix33::identity()),
+			c.flipped ? cacheFrameSize.shuffle< 1, 0, 3, 2 >() : cacheFrameSize,
+			cacheViewOffset,
+			0.0f,
+			cxform,
+			maskWrite,
+			maskIncrement,
+			maskReference,
+			blendMode
+		);
 	}
-
-	// Draw shape directly to framebuffer; either not able to cache or masking.
-	shape->render(
-		renderContext,
-		transform,
-		frameSize,
-		viewOffset,
-		1.0f,
-		cxform,
-		maskWrite,
-		maskIncrement,
-		maskReference,
-		blendMode
-	);
-
-	m_shapeCount++;
+	else if (m_renderFromSlot < 0)
+	{
+		shape->render(
+			renderContext,
+			transform,
+			frameSize,
+			viewOffset,
+			1.0f,
+			cxform,
+			maskWrite,
+			maskIncrement,
+			maskReference,
+			blendMode
+		);
+	}
 }
 
 	}

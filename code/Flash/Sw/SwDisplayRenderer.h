@@ -44,9 +44,9 @@ public:
 		const Vector4& viewOffset
 	) T_OVERRIDE T_FINAL;
 
-	virtual void beginSprite(const FlashSpriteInstance& sprite) T_OVERRIDE T_FINAL;
+	virtual void beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) T_OVERRIDE T_FINAL;
 
-	virtual void endSprite(const FlashSpriteInstance& sprite) T_OVERRIDE T_FINAL;
+	virtual void endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) T_OVERRIDE T_FINAL;
 
 	virtual void beginMask(bool increment) T_OVERRIDE T_FINAL;
 
