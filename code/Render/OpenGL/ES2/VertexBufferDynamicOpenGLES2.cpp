@@ -1,8 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/GlslType.h"
+#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 #include "Render/OpenGL/ES2/VertexBufferDynamicOpenGLES2.h"
 
@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteBufferCallback : public IContext::IDeleteCallback
+struct DeleteBufferCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_bufferName;
 
@@ -33,7 +33,7 @@ struct DeleteBufferCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDynamicOpenGLES2", VertexBufferDynamicOpenGLES2, VertexBufferOpenGLES2)
 
-VertexBufferDynamicOpenGLES2::VertexBufferDynamicOpenGLES2(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
+VertexBufferDynamicOpenGLES2::VertexBufferDynamicOpenGLES2(ContextOpenGLES2* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBufferOpenGLES2(bufferSize)
 ,	m_context(context)
 ,	m_arrayObject(0)

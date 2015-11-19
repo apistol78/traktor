@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-class IContext;
+class ContextOpenGL;
 
 /*!
  * \ingroup OGL
@@ -18,7 +18,7 @@ class IndexBufferIAR : public IndexBufferOpenGL
 	T_RTTI_CLASS;
 
 public:
-	IndexBufferIAR(IContext* resourceContext, IndexType indexType, uint32_t bufferSize);
+	IndexBufferIAR(ContextOpenGL* resourceContext, IndexType indexType, uint32_t bufferSize);
 
 	virtual ~IndexBufferIAR();
 
@@ -33,7 +33,7 @@ public:
 	virtual const GLvoid* getIndexData() const T_OVERRIDE T_FINAL;
 	
 private:
-	Ref< IContext > m_resourceContext;
+	Ref< ContextOpenGL > m_resourceContext;
 	GLubyte* m_data;
 };
 	

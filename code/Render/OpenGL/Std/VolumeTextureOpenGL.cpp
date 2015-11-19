@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public IContext::IDeleteCallback
+struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
 {
 	GLuint m_textureName;
 

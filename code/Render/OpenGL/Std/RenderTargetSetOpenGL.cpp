@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteRenderBufferCallback : public IContext::IDeleteCallback
+struct DeleteRenderBufferCallback : public ContextOpenGL::IDeleteCallback
 {
 	GLuint m_renderBufferName;
 
@@ -30,7 +30,7 @@ struct DeleteRenderBufferCallback : public IContext::IDeleteCallback
 	}
 };
 
-struct DeleteFramebufferCallback : public IContext::IDeleteCallback
+struct DeleteFramebufferCallback : public ContextOpenGL::IDeleteCallback
 {
 	GLuint m_framebufferName;
 

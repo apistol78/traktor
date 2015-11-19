@@ -13,7 +13,7 @@ namespace traktor
 
 #if !defined(T_OFFLINE_ONLY)
 
-class IContext;
+class ContextOpenGLES2;
 
 /*!
  * \ingroup OGL
@@ -25,7 +25,7 @@ class RenderTargetOpenGLES2
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetOpenGLES2(IContext* context, GLuint colorTexture, int32_t width, int32_t height);
+	RenderTargetOpenGLES2(ContextOpenGLES2* context, GLuint colorTexture, int32_t width, int32_t height);
 
 	virtual ~RenderTargetOpenGLES2();
 
@@ -46,7 +46,7 @@ public:
 	virtual void bindSize(GLint locationSize);
 
 private:
-	Ref< IContext > m_context;
+	Ref< ContextOpenGLES2 > m_context;
 	GLuint m_colorTexture;
 	int32_t m_width;
 	int32_t m_height;

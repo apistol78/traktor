@@ -1,8 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/GlslType.h"
+#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 #include "Render/OpenGL/ES2/VertexBufferStaticOpenGLES2.h"
 
@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteBufferCallback : public IContext::IDeleteCallback
+struct DeleteBufferCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_bufferName;
 
@@ -30,7 +30,7 @@ struct DeleteBufferCallback : public IContext::IDeleteCallback
 };
 
 #if defined(__APPLE__) && defined(GL_OES_vertex_array_object)
-struct DeleteVertexArrayCallback : public IContext::IDeleteCallback
+struct DeleteVertexArrayCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_arrayName;
 
@@ -51,7 +51,7 @@ struct DeleteVertexArrayCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferStaticOpenGLES2", VertexBufferStaticOpenGLES2, VertexBufferOpenGLES2)
 
-VertexBufferStaticOpenGLES2::VertexBufferStaticOpenGLES2(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
+VertexBufferStaticOpenGLES2::VertexBufferStaticOpenGLES2(ContextOpenGLES2* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBufferOpenGLES2(bufferSize)
 ,	m_context(context)
 ,	m_arrayObject(0)
@@ -211,7 +211,7 @@ void* VertexBufferStaticOpenGLES2::lock(uint32_t vertexOffset, uint32_t vertexCo
 
 void VertexBufferStaticOpenGLES2::unlock()
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
+	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 
 	int32_t bufferSize = getBufferSize();
 

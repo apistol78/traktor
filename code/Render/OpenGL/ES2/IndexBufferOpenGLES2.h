@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-class IContext;
+class ContextOpenGLES2;
 class StateCache;
 
 /*!
@@ -20,7 +20,7 @@ class IndexBufferOpenGLES2 : public IndexBufferOpenGL
 	T_RTTI_CLASS;
 
 public:
-	IndexBufferOpenGLES2(IContext* context, IndexType indexType, uint32_t bufferSize, bool dynamic);
+	IndexBufferOpenGLES2(ContextOpenGLES2* context, IndexType indexType, uint32_t bufferSize, bool dynamic);
 
 	virtual ~IndexBufferOpenGLES2();
 
@@ -33,7 +33,7 @@ public:
 	void activate(StateCache* stateCache);
 
 private:
-	Ref< IContext > m_context;
+	Ref< ContextOpenGLES2 > m_context;
 	bool m_dynamic;
 	GLuint m_name;
 	AutoPtr< uint8_t, AllocFreeAlign > m_buffer;

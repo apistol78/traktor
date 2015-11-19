@@ -786,7 +786,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 Ref< VertexBuffer > RenderSystemOpenGL::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 
 	if (dynamic)
 		return new VertexBufferDynamicVBO(m_resourceContext, vertexElements, bufferSize);
@@ -796,13 +796,13 @@ Ref< VertexBuffer > RenderSystemOpenGL::createVertexBuffer(const std::vector< Ve
 
 Ref< IndexBuffer > RenderSystemOpenGL::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	return new IndexBufferIBO(m_resourceContext, indexType, bufferSize, dynamic);
 }
 
 Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 
 	Ref< SimpleTextureOpenGL > texture = new SimpleTextureOpenGL(m_resourceContext);
 	if (!texture->create(desc))
@@ -813,7 +813,7 @@ Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextur
 
 Ref< ICubeTexture > RenderSystemOpenGL::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 
 	Ref< CubeTextureOpenGL > texture = new CubeTextureOpenGL(m_resourceContext);
 	if (!texture->create(desc))
@@ -824,7 +824,7 @@ Ref< ICubeTexture > RenderSystemOpenGL::createCubeTexture(const CubeTextureCreat
 
 Ref< IVolumeTexture > RenderSystemOpenGL::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 
 	Ref< VolumeTextureOpenGL > texture = new VolumeTextureOpenGL(m_resourceContext);
 	if (!texture->create(desc))
@@ -835,7 +835,7 @@ Ref< IVolumeTexture > RenderSystemOpenGL::createVolumeTexture(const VolumeTextur
 
 Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 
 	Ref< RenderTargetSetOpenGL > renderTargetSet = new RenderTargetSetOpenGL(m_resourceContext);
 	if (!renderTargetSet->create(desc))
@@ -846,7 +846,7 @@ Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTar
 
 Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	return ProgramOpenGL::create(m_resourceContext, programResource);
 }
 
@@ -857,13 +857,13 @@ Ref< IProgramCompiler > RenderSystemOpenGL::createProgramCompiler() const
 
 Ref< ITimeQuery > RenderSystemOpenGL::createTimeQuery() const
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	return TimeQueryOpenGL::create();
 }
 
 void RenderSystemOpenGL::purge()
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	m_resourceContext->deleteResources();
 }
 

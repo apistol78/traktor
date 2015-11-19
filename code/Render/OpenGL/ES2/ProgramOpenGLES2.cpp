@@ -23,7 +23,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteProgramCallback : public IContext::IDeleteCallback
+struct DeleteProgramCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_programName;
 

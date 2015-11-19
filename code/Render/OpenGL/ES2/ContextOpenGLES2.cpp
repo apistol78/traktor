@@ -29,7 +29,7 @@ typedef RefArray< ContextOpenGLES2 > context_stack_t;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGLES2", ContextOpenGLES2, IContext)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGLES2", ContextOpenGLES2, Object)
 
 ThreadLocal ContextOpenGLES2::ms_contextStack;
 

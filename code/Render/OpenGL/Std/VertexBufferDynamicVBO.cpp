@@ -2,7 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathConfig.h"
 #include "Render/VertexElement.h"
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/VertexBufferDynamicVBO.h"
 
 namespace traktor
@@ -12,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteBufferCallback : public IContext::IDeleteCallback
+struct DeleteBufferCallback : public ContextOpenGL::IDeleteCallback
 {
 	GLuint m_buffer;
 
@@ -76,7 +76,7 @@ void copyBuffer(uint8_t* dst, const uint8_t* src, uint32_t size)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDynamicVBO", VertexBufferDynamicVBO, VertexBufferOpenGL)
 
-VertexBufferDynamicVBO::VertexBufferDynamicVBO(IContext* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
+VertexBufferDynamicVBO::VertexBufferDynamicVBO(ContextOpenGL* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBufferOpenGL(bufferSize)
 ,	m_resourceContext(resourceContext)
 ,	m_array(0)

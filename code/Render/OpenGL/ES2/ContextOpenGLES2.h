@@ -7,7 +7,6 @@
 #include "Core/Thread/ThreadLocal.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/TypesOpenGL.h"
-#include "Render/OpenGL/IContext.h"
 
 namespace traktor
 {
@@ -23,24 +22,56 @@ class Window;
 /*! \brief OpenGL ES2 context.
  * \ingroup OGL
  */
-class ContextOpenGLES2 : public IContext
+class ContextOpenGLES2 : public Object
 {
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Scoped enter/leave helper.
+	 * \ingroup OGL
+	 */
+	struct Scope
+	{
+		ContextOpenGLES2* m_context;
+
+		Scope(ContextOpenGLES2* context)
+		:	m_context(context)
+		{
+			bool result = m_context->enter();
+			T_FATAL_ASSERT_M (result, L"Unable to set OpenGL ES2 context!");
+		}
+
+		~Scope()
+		{
+			m_context->leave();
+		}
+	};
+
+	/*! \brief Delete callback. 
+	 * \ingroup OGL
+	 *
+	 * These are enqueued in the context
+	 * and are invoked as soon as it's
+	 * safe to actually delete resources.
+	 */
+	struct IDeleteCallback
+	{
+		virtual void deleteResource() = 0;
+	};
+
 	static Ref< ContextOpenGLES2 > createResourceContext(void* nativeHandle);
 
 	static Ref< ContextOpenGLES2 > createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, const RenderViewDefaultDesc& desc);
 
 	static Ref< ContextOpenGLES2 > createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, const RenderViewEmbeddedDesc& desc);
 
-	virtual bool enter();
+	bool enter();
 
-	virtual void leave();
+	void leave();
 
-	virtual void deleteResource(IDeleteCallback* callback);
+	void deleteResource(IDeleteCallback* callback);
 
-	virtual void deleteResources();
+	void deleteResources();
 
 	GLuint createShaderObject(const char* shader, GLenum shaderType);
 

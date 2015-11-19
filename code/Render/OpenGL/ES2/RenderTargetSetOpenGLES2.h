@@ -11,7 +11,7 @@ namespace traktor
 	
 #if !defined(T_OFFLINE_ONLY)
 
-class IContext;
+class ContextOpenGLES2;
 class RenderTargetOpenGLES2;
 
 /*!
@@ -22,7 +22,7 @@ class RenderTargetSetOpenGLES2 : public RenderTargetSet
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetOpenGLES2(IContext* context);
+	RenderTargetSetOpenGLES2(ContextOpenGLES2* context);
 
 	virtual ~RenderTargetSetOpenGLES2();
 
@@ -47,7 +47,7 @@ public:
 	bool bind(GLuint primaryDepthBuffer, int32_t renderTarget);
 
 private:
-	Ref< IContext > m_context;
+	Ref< ContextOpenGLES2 > m_context;
 	RenderTargetSetCreateDesc m_desc;
 	GLuint m_targetFBO[8];
 	GLuint m_depthBuffer;

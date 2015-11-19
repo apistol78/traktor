@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public IContext::IDeleteCallback
+struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -156,7 +156,7 @@ bool SimpleTextureOpenGL::lock(int level, Lock& lock)
 
 void SimpleTextureOpenGL::unlock(int level)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
 	T_OGL_SAFE(glTexImage2D(

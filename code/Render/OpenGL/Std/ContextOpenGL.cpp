@@ -55,7 +55,7 @@ void APIENTRY debugCallbackAMD(GLuint id, GLenum category, GLenum severity, GLsi
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGL", ContextOpenGL, IContext)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGL", ContextOpenGL, Object)
 
 ThreadLocal ContextOpenGL::ms_contextStack;
 

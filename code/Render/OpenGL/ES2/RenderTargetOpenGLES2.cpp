@@ -1,5 +1,5 @@
 #include <cstring>
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 
 #if !defined(T_OFFLINE_ONLY)
@@ -11,7 +11,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public IContext::IDeleteCallback
+struct DeleteTextureCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -31,7 +31,7 @@ struct DeleteTextureCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGLES2", RenderTargetOpenGLES2, ISimpleTexture)
 
-RenderTargetOpenGLES2::RenderTargetOpenGLES2(IContext* context, GLuint colorTexture, int32_t width, int32_t height)
+RenderTargetOpenGLES2::RenderTargetOpenGLES2(ContextOpenGLES2* context, GLuint colorTexture, int32_t width, int32_t height)
 :	m_context(context)
 ,	m_colorTexture(colorTexture)
 ,	m_width(width)
