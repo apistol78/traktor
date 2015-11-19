@@ -5518,6 +5518,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
@@ -5536,6 +5537,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
@@ -5554,6 +5556,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
@@ -5572,6 +5575,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
