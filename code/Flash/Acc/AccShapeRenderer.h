@@ -53,6 +53,10 @@ public:
 
 	void endFrame();
 
+	void beginCacheAsBitmap();
+
+	void endCacheAsBitmap();
+
 	void render(
 		render::RenderContext* renderContext,
 		AccShape* shape,
@@ -84,7 +88,7 @@ private:
 	Ref< AccQuad > m_quad;
 	AlignedVector< Cache > m_cache;
 	AutoPtr< rbp::GuillotineBinPack > m_packer;
-
+	int32_t m_cacheAsBitmap;
 	uint32_t m_quadCount;
 	uint32_t m_shapeCount;
 };

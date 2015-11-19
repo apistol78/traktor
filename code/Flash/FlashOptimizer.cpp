@@ -45,7 +45,7 @@ public:
 		float viewWidth,
 		float viewHeight,
 		const Vector4& viewOffset
-	)
+	) T_OVERRIDE T_FINAL
 	{
 		// Copy bitmaps into output movie; is in fact shared to reduce memory cost.
 		const SmallMap< uint16_t, Ref< FlashBitmap > >& bitmaps = dictionary.getBitmaps();
@@ -53,7 +53,15 @@ public:
 			m_outputMovie->defineBitmap(i->first, i->second);
 	}
 
-	virtual void beginMask(bool increment)
+	virtual void beginSprite(const FlashSpriteInstance& sprite) T_OVERRIDE T_FINAL
+	{
+	}
+
+	virtual void endSprite(const FlashSpriteInstance& sprite) T_OVERRIDE T_FINAL
+	{
+	}
+
+	virtual void beginMask(bool increment) T_OVERRIDE T_FINAL
 	{
 		T_FATAL_ASSERT (!m_maskWrite);
 		m_maskWrite = true;
@@ -61,7 +69,7 @@ public:
 		m_mergeShape = 0;
 	}
 
-	virtual void endMask()
+	virtual void endMask() T_OVERRIDE T_FINAL
 	{
 		m_maskWrite = false;
 		m_maskSprite = 0;
@@ -69,7 +77,7 @@ public:
 		m_mergeShape = 0;
 	}
 
-	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform, uint8_t blendMode)
+	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL
 	{
 		if (m_maskWrite)
 		{
@@ -135,23 +143,23 @@ public:
 		}
 	}
 
-	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform)
+	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL
 	{
 	}
 
-	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor)
+	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor) T_OVERRIDE T_FINAL
 	{
 	}
 
-	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform)
+	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL
 	{
 	}
 
-	virtual void renderCanvas(const FlashDictionary& dictionary, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
+	virtual void renderCanvas(const FlashDictionary& dictionary, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL
 	{
 	}
 
-	virtual void end()
+	virtual void end() T_OVERRIDE T_FINAL
 	{
 	}
 

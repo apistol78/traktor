@@ -62,6 +62,14 @@ void SwDisplayRenderer::begin(
 	m_frameBounds = frameBounds;
 }
 
+void SwDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite)
+{
+}
+
+void SwDisplayRenderer::endSprite(const FlashSpriteInstance& sprite)
+{
+}
+
 void SwDisplayRenderer::beginMask(bool increment)
 {
 }

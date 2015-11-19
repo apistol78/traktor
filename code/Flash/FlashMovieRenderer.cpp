@@ -90,6 +90,12 @@ void FlashMovieRenderer::renderSprite(
 	if (!spriteInstance->isVisible() && !renderAsMask)
 		return;
 
+	m_displayRenderer->beginSprite(
+		*spriteInstance/*,
+		transform,
+		cxTransform*/
+	);
+
 	FlashDictionary* dictionary = spriteInstance->getContext()->getDictionary();
 	T_ASSERT (dictionary);
 
@@ -157,6 +163,8 @@ void FlashMovieRenderer::renderSprite(
 			m_displayRenderer->endMask();
 		}
 	}
+
+	m_displayRenderer->endSprite(*spriteInstance);
 
 	FlashCanvas* canvas = spriteInstance->getCanvas();
 	if (canvas)

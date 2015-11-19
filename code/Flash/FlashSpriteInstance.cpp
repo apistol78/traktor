@@ -29,6 +29,8 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_lastExecutedFrame(~0U)
 ,	m_lastSoundFrame(~0U)
 ,	m_skipEnterFrame(0)
+,	m_cacheAsBitmap(false)
+,	m_opaqueBackground(false)
 ,	m_initialized(false)
 ,	m_playing(true)
 ,	m_visible(false)
@@ -67,9 +69,14 @@ void FlashSpriteInstance::destroy()
 	FlashCharacterInstance::destroy();
 }
 
-const FlashSprite* FlashSpriteInstance::getSprite() const
+void FlashSpriteInstance::setCacheAsBitmap(bool cacheAsBitmap)
 {
-	return m_sprite;
+	m_cacheAsBitmap = cacheAsBitmap;
+}
+
+void FlashSpriteInstance::setOpaqueBackground(bool opaqueBackground)
+{
+	m_opaqueBackground = opaqueBackground;
 }
 
 void FlashSpriteInstance::gotoFrame(uint32_t frameId)
@@ -122,19 +129,9 @@ void FlashSpriteInstance::gotoNext()
 	}
 }
 
-uint32_t FlashSpriteInstance::getCurrentFrame() const
-{
-	return m_currentFrame;
-}
-
 void FlashSpriteInstance::setPlaying(bool playing)
 {
 	m_playing = playing;
-}
-
-bool FlashSpriteInstance::getPlaying() const
-{
-	return m_playing;
 }
 
 void FlashSpriteInstance::updateDisplayList()
@@ -172,16 +169,6 @@ void FlashSpriteInstance::updateDisplayList()
 			static_cast< FlashSpriteInstance* >(*i)->updateDisplayList();
 	}
 	m_visibleCharacters.resize(0);
-}
-
-FlashDisplayList& FlashSpriteInstance::getDisplayList()
-{
-	return m_displayList;
-}
-
-const FlashDisplayList& FlashSpriteInstance::getDisplayList() const
-{
-	return m_displayList;
 }
 
 void FlashSpriteInstance::updateSounds(FlashSoundPlayer* soundPlayer)
@@ -316,11 +303,6 @@ void FlashSpriteInstance::setMask(FlashSpriteInstance* mask)
 		m_mask->m_maskCount++;
 	if (m_mask)
 		m_mask->setVisible(false);
-}
-
-FlashSpriteInstance* FlashSpriteInstance::getMask()
-{
-	return m_mask;
 }
 
 FlashCanvas* FlashSpriteInstance::createCanvas()

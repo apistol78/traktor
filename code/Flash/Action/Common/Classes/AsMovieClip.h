@@ -147,9 +147,9 @@ private:
 
 	void MovieClip_set_blendMode(FlashSpriteInstance* self) const;
 
-	void MovieClip_get_cacheAsBitmap(const FlashSpriteInstance* self) const;
+	bool MovieClip_get_cacheAsBitmap(const FlashSpriteInstance* self) const;
 
-	void MovieClip_set_cacheAsBitmap(FlashSpriteInstance* self) const;
+	void MovieClip_set_cacheAsBitmap(FlashSpriteInstance* self, bool enabled) const;
 
 	int32_t MovieClip_get_currentframe(const FlashSpriteInstance* self) const;
 
@@ -203,7 +203,7 @@ private:
 
 	void MovieClip_get_opaqueBackground(const FlashSpriteInstance* self) const;
 
-	void MovieClip_set_opaqueBackground(FlashSpriteInstance* self) const;
+	void MovieClip_set_opaqueBackground(FlashSpriteInstance* self, const ActionValue& value) const;
 
 	FlashCharacterInstance* MovieClip_get_parent(FlashSpriteInstance* self) const;
 
