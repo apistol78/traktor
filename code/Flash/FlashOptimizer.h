@@ -27,8 +27,6 @@ class T_DLLCLASS FlashOptimizer : public Object
 
 public:
 	Ref< FlashMovie > merge(const FlashMovie* movie) const;
-
-	Ref< FlashMovie > rasterize(const FlashMovie* movie) const;
 };
 
 	}

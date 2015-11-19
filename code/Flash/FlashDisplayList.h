@@ -101,10 +101,6 @@ public:
 	 */
 	int32_t getObjectDepth(const FlashCharacterInstance* characterInstance) const;
 
-	/*! \brief Get mask character instance.
-	 */
-	const FlashCharacterInstance* getObjectMask(const FlashCharacterInstance* characterInstance) const;
-
 	/*! \brief Get next highest depth which is free.
 	 *
 	 * \return Next highest depth.
