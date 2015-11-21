@@ -59,11 +59,9 @@ public:
 		virtual void deleteResource() = 0;
 	};
 
-	static Ref< ContextOpenGLES2 > createResourceContext(void* nativeHandle);
+	static Ref< ContextOpenGLES2 > createContext(void* nativeHandle, const RenderViewDefaultDesc& desc);
 
-	static Ref< ContextOpenGLES2 > createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, const RenderViewDefaultDesc& desc);
-
-	static Ref< ContextOpenGLES2 > createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, const RenderViewEmbeddedDesc& desc);
+	static Ref< ContextOpenGLES2 > createContext(void* nativeHandle, const RenderViewEmbeddedDesc& desc);
 
 	bool enter();
 

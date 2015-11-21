@@ -33,23 +33,22 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGLES2", ContextOpenGLES2, Obj
 
 ThreadLocal ContextOpenGLES2::ms_contextStack;
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHandle)
+Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, const RenderViewDefaultDesc& desc)
 {
 	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
 
 #if defined(T_OPENGL_ES2_HAVE_EGL)
-
 #	if defined(_WIN32)
-
 	context->m_window = new Window();
 	if (!context->m_window->create())
 		return 0;
 
+	context->m_window->setTitle(desc.title.c_str());
+	context->m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+
 	context->m_display = eglGetDisplay(GetDC(*context->m_window));
 	if (context->m_display == EGL_NO_DISPLAY)
-
 #	endif
-
 	{
 		context->m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 		if (context->m_display == EGL_NO_DISPLAY)
@@ -139,64 +138,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHand
 	if (context->m_context == EGL_NO_CONTEXT)
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
-	}
-
-#elif defined(__IOS__)
-
-	context->m_context = new EAGLContextWrapper();
-	if (!context->m_context->create())
-		return 0;
-
-#elif defined(__PNACL__)
-
-	context->m_context = PPContextWrapper::createResourceContext((pp::Instance*)nativeHandle);
-	if (!context->m_context)
-		return 0;
-
-#endif
-
-	log::info << L"OpenGL ES 2.0 resource context created successfully" << Endl;
-	return context;
-}
-
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, const RenderViewDefaultDesc& desc)
-{
-	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
-
-#if defined(T_OPENGL_ES2_HAVE_EGL)
-
-#	if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
-	context->m_window = resourceContext->m_window;
-#	endif
-	context->m_display = resourceContext->m_display;
-	context->m_config = resourceContext->m_config;
-	context->m_surface = resourceContext->m_surface;
-
-#	if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
-	context->m_window->setTitle(desc.title.c_str());
-	context->m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
-#	endif
-
-	eglBindAPI(EGL_OPENGL_ES_API);
-
-	const EGLint contextAttribs[] = 
-	{
-		EGL_CONTEXT_CLIENT_VERSION, 2,
-		EGL_NONE
-	};
-
-	context->m_context = eglCreateContext(
-		context->m_display,
-		context->m_config,
-		resourceContext->m_context,
-		contextAttribs
-	);
-	if (context->m_context == EGL_NO_CONTEXT)
-	{
-		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
+		log::error << L"Create OpenGL ES2.0 context failed (1); unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
 		return 0;
 	}
 
@@ -204,36 +146,99 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resour
 	eglQuerySurface(context->m_display, context->m_surface, EGL_WIDTH, &context->m_width);
 	eglQuerySurface(context->m_display, context->m_surface, EGL_HEIGHT, &context->m_height);
 #	endif
-
 #elif defined(__PNACL__)
-
 	context->m_context = PPContextWrapper::createRenderContext(
 		(pp::Instance*)nativeHandle,
 		resourceContext->m_context
 	);
 	if (!context->m_context)
 		return 0;
-
 #else
-
 	return 0;
-
 #endif
 
 	log::info << L"OpenGL ES 2.0 render context created successfully" << Endl;
 	return context;
 }
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, const RenderViewEmbeddedDesc& desc)
+Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, const RenderViewEmbeddedDesc& desc)
 {
 	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
 
 #if defined(T_OPENGL_ES2_HAVE_EGL)
+#	if defined(_WIN32)
+	context->m_display = eglGetDisplay(GetDC((HWND)nativeHandle));
+	if (context->m_display == EGL_NO_DISPLAY)
+#	endif
+	{
+		context->m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+		if (context->m_display == EGL_NO_DISPLAY)
+		{
+			EGLint error = eglGetError();
+			log::error << L"Create OpenGL ES2.0 failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
+			return 0;
+		}
+	}
 
-	context->m_display = resourceContext->m_display;
-	context->m_config = resourceContext->m_config;
+	if (!eglInitialize(context->m_display, 0, 0)) 
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create OpenGL ES2.0 failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
+		return 0;
+	}
 
-	context->m_surface = eglCreateWindowSurface(resourceContext->m_display, resourceContext->m_config, (EGLNativeWindowType)desc.nativeWindowHandle, 0);
+	const EGLint configAttribs[] =
+	{
+		EGL_LEVEL, 0,
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+		EGL_BUFFER_SIZE, 32,
+		EGL_DEPTH_SIZE, 16,
+		EGL_STENCIL_SIZE, 4,
+		EGL_NONE
+	};
+
+	EGLConfig matchingConfigs[c_maxMatchConfigs];
+	EGLint numMatchingConfigs = 0;
+
+	EGLBoolean success = eglChooseConfig(
+		context->m_display,
+		configAttribs,
+		matchingConfigs,
+		c_maxMatchConfigs,
+		&numMatchingConfigs
+	);
+	if (!success)
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create OpenGL ES2.0 failed; unable to create choose EGL config (" << getEGLErrorString(error) << L")" << Endl;
+		return 0;
+	}
+
+	if (numMatchingConfigs == 0)
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create OpenGL ES2.0 failed; no matching configurations" << Endl;
+		return 0;
+	}
+
+	for (EGLint i = 0; i < numMatchingConfigs; ++i)
+	{
+		EGLint value;
+
+		eglGetConfigAttrib(context->m_display, matchingConfigs[i], EGL_BUFFER_SIZE, &value);
+		log::info << L"config[" << i << L"].EGL_BUFFER_SIZE = " << value << Endl;
+
+		eglGetConfigAttrib(context->m_display, matchingConfigs[i], EGL_DEPTH_SIZE, &value);
+		log::info << L"config[" << i << L"].EGL_DEPTH_SIZE = " << value << Endl;
+
+		eglGetConfigAttrib(context->m_display, matchingConfigs[i], EGL_STENCIL_SIZE, &value);
+		log::info << L"config[" << i << L"].EGL_STENCIL_SIZE = " << value << Endl;
+	}
+
+	context->m_config = matchingConfigs[0];
+
+	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, (EGLNativeWindowType)desc.nativeWindowHandle, 0);
 	if (context->m_surface == EGL_NO_SURFACE)
 	{
 		EGLint error = eglGetError();
@@ -250,15 +255,15 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resour
 	};
 
 	context->m_context = eglCreateContext(
-		resourceContext->m_display,
-		resourceContext->m_config,
-		resourceContext->m_context,
+		context->m_display,
+		context->m_config,
+		EGL_NO_CONTEXT,
 		contextAttribs
 	);
 	if (context->m_context == EGL_NO_CONTEXT)
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
+		log::error << L"Create OpenGL ES2.0 context failed (2); unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
 		return 0;
 	}
 

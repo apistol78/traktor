@@ -38,7 +38,6 @@ class RenderViewOpenGLES2
 
 public:
 	RenderViewOpenGLES2(
-		ContextOpenGLES2* globalContext,
 		ContextOpenGLES2* context
 	);
 
@@ -106,7 +105,6 @@ private:
 		Viewport viewport;
 	};
 	
-	Ref< ContextOpenGLES2 > m_globalContext;
 	Ref< ContextOpenGLES2 > m_context;
 	Ref< StateCache > m_stateCache;
 	std::stack< RenderTargetStack > m_renderTargetStack;
