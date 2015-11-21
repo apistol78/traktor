@@ -39,12 +39,8 @@ struct RenderEventTypePred
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGLES2", RenderViewOpenGLES2, IRenderView)
 
-RenderViewOpenGLES2::RenderViewOpenGLES2(
-	ContextOpenGLES2* globalContext,
-	ContextOpenGLES2* context
-)
-:	m_globalContext(globalContext)
-,	m_context(context)
+RenderViewOpenGLES2::RenderViewOpenGLES2(ContextOpenGLES2* context)
+:	m_context(context)
 ,	m_stateCache(new StateCache())
 ,	m_landscape(context->getLandscape())
 ,	m_cursorVisible(true)
@@ -119,7 +115,6 @@ void RenderViewOpenGLES2::close()
 #endif
 
 	m_context = 0;
-	m_globalContext = 0;
 }
 
 bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
@@ -246,7 +241,7 @@ SystemWindow RenderViewOpenGLES2::getSystemWindow()
 bool RenderViewOpenGLES2::begin(EyeType eye)
 {
 #if !defined(__IOS__) && !defined(__ANDROID__) && !defined(__PNACL__)
-	if (!m_globalContext->lock().wait())
+	if (!m_context->lock().wait())
 		return false;
 #endif
 
@@ -733,9 +728,9 @@ void RenderViewOpenGLES2::present()
 	m_context->leave();
 
 #if !defined(__IOS__) && !defined(__ANDROID__) && !defined(__PNACL__)
-	m_globalContext->lock().release();
+	m_context->lock().release();
 #endif
-	m_globalContext->deleteResources();
+	m_context->deleteResources();
 }
 
 void RenderViewOpenGLES2::pushMarker(const char* const marker)

@@ -9,6 +9,7 @@
 #include "Core/System/OS.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
+#include "Core/Thread/Semaphore.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashMovieLoader.h"
@@ -60,6 +61,9 @@ private:
 	bool m_merge;
 	Ref< Job > m_job;
 	Ref< FlashMovie > m_movie;
+#if defined(__ANDROID__) || defined(__IOS__)
+	static Semaphore ms_lock;
+#endif
 
 	void loader()
 	{
@@ -84,14 +88,35 @@ private:
 		Ref< IStream > s = connection->getStream();
 		T_ASSERT (s);
 
-		DynamicMemoryStream dms;
-		if (!StreamCopy(&dms, s).execute())
+		std::wstring tempFile = OS::getInstance().getWritableFolderPath() + L"/movie.tmp";
+
+		Ref< IStream > d = FileSystem::getInstance().open(tempFile, File::FmWrite);
+		if (!d)
 			return;
 
-		dms.seek(IStream::SeekSet, 0);
+		if (!StreamCopy(d, s).execute())
+			return;
 
-		SwfReader swfReader(&dms);
+		d->close();
+		s->close();
+
+		d = FileSystem::getInstance().open(tempFile, File::FmRead);
+		if (!d)
+			return;
+
+#if defined(__ANDROID__) || defined(__IOS__)
+		ms_lock.wait();
+#endif
+		SwfReader swfReader(d);
 		m_movie = FlashMovieFactory().createMovie(&swfReader);
+
+#if defined(__ANDROID__) || defined(__IOS__)
+		ms_lock.release();
+#endif
+		d->close();
+
+		FileSystem::getInstance().remove(tempFile);
+
 		if (!m_movie)
 			return;
 
@@ -111,6 +136,10 @@ private:
 		}
 	}
 };
+
+#if defined(__ANDROID__) || defined(__IOS__)
+Semaphore FlashMovieLoaderHandle::ms_lock;
+#endif
 
 		}
 

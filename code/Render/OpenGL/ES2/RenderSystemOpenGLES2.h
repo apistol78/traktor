@@ -75,7 +75,7 @@ public:
 
 private:
 	void* m_nativeHandle;
-	Ref< ContextOpenGLES2 > m_globalContext;
+	Ref< ContextOpenGLES2 > m_context;
 };
 
 	}

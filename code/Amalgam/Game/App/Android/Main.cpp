@@ -21,8 +21,6 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/System/OS.h"
 #include "Core/System/Android/DelegateInstance.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/Thread.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
@@ -72,11 +70,7 @@ public:
 
 	void destroyApplication();
 
-	void startAnimation();
-
-	void stopAnimation();
-
-	bool alive() const;
+	bool updateApplication();
 
 	virtual void handleCommand(struct android_app* app, int32_t cmd);
 
@@ -85,16 +79,10 @@ private:
 	Ref< const PropertyGroup > m_defaultSettings;
 	Ref< PropertyGroup > m_settings;
 	Ref< amalgam::Application > m_application;
-	Thread* m_thread;
-	bool m_alive;
-
-	void updateThread();
 };
 
 AndroidApplication::AndroidApplication(struct android_app* app)
 :	m_app(app)
-,	m_thread(0)
-,	m_alive(true)
 {
 }
 
@@ -143,30 +131,9 @@ void AndroidApplication::destroyApplication()
 	safeDestroy(m_application);
 }
 
-void AndroidApplication::startAnimation()
+bool AndroidApplication::updateApplication()
 {
-	if (!m_thread)
-	{
-		m_thread = ThreadManager::getInstance().create(
-			makeFunctor(this, &AndroidApplication::updateThread),
-			L"Application update thread"
-		);
-		m_thread->start();
-	}
-}
-
-void AndroidApplication::stopAnimation()
-{
-	if (m_thread)
-	{
-		m_thread->stop();
-		m_thread = 0;
-	}
-}
-
-bool AndroidApplication::alive() const
-{
-	return m_alive;
+	return m_application ? m_application->update() : true;
 }
 
 void AndroidApplication::handleCommand(struct android_app* app, int32_t cmd)
@@ -179,35 +146,21 @@ void AndroidApplication::handleCommand(struct android_app* app, int32_t cmd)
 		if (app->window != 0)
 		{
 			createApplication();
-			startAnimation();
 		}
 		break;
 
 	case APP_CMD_TERM_WINDOW:
-		stopAnimation();
 		destroyApplication();
 		break;
 
 	case APP_CMD_GAINED_FOCUS:
-		startAnimation();
 		break;
 
 	case APP_CMD_LOST_FOCUS:
-		stopAnimation();
 		break;
 	}
 
 	DelegateInstance::handleCommand(app, cmd);
-}
-
-void AndroidApplication::updateThread()
-{
-	while (!m_thread->stopped())
-	{
-		if (!m_application->update())
-			break;
-	}
-	m_alive = false;
 }
 
 // Android ============================
@@ -255,14 +208,15 @@ extern "C" void traktor_main(struct android_app* state)
 	int ident;
 	int events;
 
-	while (aa.alive())
+	for (;;)
 	{
-		while ((ident = ALooper_pollAll(100, NULL, &events, (void**)&source)) >= 0)
+		while ((ident = ALooper_pollAll(0, NULL, &events, (void**)&source)) >= 0)
 		{
 			if (source != NULL)
 				source->process(state, source);
 		}
-	}
 
-	log::info << L"BYE" << Endl;
+		if (!aa.updateApplication())
+			break;
+	}
 }
