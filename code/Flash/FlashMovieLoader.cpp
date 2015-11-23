@@ -67,9 +67,10 @@ private:
 
 	void loader()
 	{
+		std::wstring cacheFileName = net::Url::encode(m_url.getString());
+
 		if (!m_cacheDirectory.empty())
 		{
-			std::wstring cacheFileName = net::Url::encode(m_url.getString());
 			Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmRead);
 			if (f)
 			{
@@ -88,7 +89,7 @@ private:
 		Ref< IStream > s = connection->getStream();
 		T_ASSERT (s);
 
-		std::wstring tempFile = OS::getInstance().getWritableFolderPath() + L"/movie.tmp";
+		std::wstring tempFile = OS::getInstance().getWritableFolderPath() + L"/" + cacheFileName;
 
 		Ref< IStream > d = FileSystem::getInstance().open(tempFile, File::FmWrite);
 		if (!d)
@@ -125,7 +126,6 @@ private:
 
 		if (!m_cacheDirectory.empty())
 		{
-			std::wstring cacheFileName = net::Url::encode(m_url.getString());
 			Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmWrite);
 			if (f)
 			{
