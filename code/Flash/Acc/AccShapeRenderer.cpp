@@ -25,8 +25,13 @@ const Matrix33 c_flipped(
 	0, 0, 1
 );
 
+#if defined(__ANDROID__) || defined(__IOS__)
+const uint32_t c_cacheWidth = 1024;
+const uint32_t c_cacheHeight = 1024;
+#else
 const uint32_t c_cacheWidth = 2048;
 const uint32_t c_cacheHeight = 2048;
+#endif
 const uint32_t c_cacheMargin = 1;
 
 const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f } };

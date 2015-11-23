@@ -222,6 +222,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 		return 0;
 	}
 
+#if defined(_DEBUG)
 	for (EGLint i = 0; i < numMatchingConfigs; ++i)
 	{
 		EGLint value;
@@ -235,6 +236,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 		eglGetConfigAttrib(context->m_display, matchingConfigs[i], EGL_STENCIL_SIZE, &value);
 		log::info << L"config[" << i << L"].EGL_STENCIL_SIZE = " << value << Endl;
 	}
+#endif
 
 	context->m_config = matchingConfigs[0];
 

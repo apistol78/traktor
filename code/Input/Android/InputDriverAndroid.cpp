@@ -37,7 +37,7 @@ bool InputDriverAndroid::create(void* nativeHandle, const SystemWindow& systemWi
 
 	if (inputCategories & CtMouse)
 	{
-		m_mouseDevice = new MouseDeviceAndroid();
+		m_mouseDevice = new MouseDeviceAndroid(systemWindow);
 		m_devices.push_back(m_mouseDevice);
 	}
 	if (inputCategories & CtTouch)
