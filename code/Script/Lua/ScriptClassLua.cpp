@@ -63,6 +63,7 @@ Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc,
 	// Initialize prototype members before calling constructor.
 	for (prototype_t::const_iterator i = proto.begin(); i != proto.end(); ++i)
 	{
+		T_ANONYMOUS_VAR(UnwindStack)(m_luaState);
 		scriptSelf->push();
 		m_scriptManager->pushAny(i->second);
 		lua_setfield(m_luaState, -2, i->first.c_str());
