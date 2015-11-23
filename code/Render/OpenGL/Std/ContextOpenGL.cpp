@@ -483,8 +483,8 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 	else
 		{ T_OGL_SAFE(glDisable(GL_BLEND)); }
 
-	T_OGL_SAFE(glBlendFunc(rs.blendFuncSrc, rs.blendFuncDest));
-	T_OGL_SAFE(glBlendEquation(rs.blendEquation));
+	T_OGL_SAFE(glBlendFuncSeparate(rs.blendFuncSrc, rs.blendFuncDest, GL_ONE, GL_ONE));
+	T_OGL_SAFE(glBlendEquationSeparate(rs.blendEquation, GL_FUNC_ADD));
 
 	if (rs.depthTestEnable)
 		{ T_OGL_SAFE(glEnable(GL_DEPTH_TEST)); }

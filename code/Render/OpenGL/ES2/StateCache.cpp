@@ -56,13 +56,13 @@ void StateCache::setRenderState(const RenderStateOpenGL& renderState, bool inver
 		}
 		if (renderState.blendFuncSrc != m_renderState.blendFuncSrc || renderState.blendFuncDest != m_renderState.blendFuncDest)
 		{
-			T_OGL_SAFE(glBlendFunc(renderState.blendFuncSrc, renderState.blendFuncDest));
+			T_OGL_SAFE(glBlendFuncSeparate(renderState.blendFuncSrc, renderState.blendFuncDest, GL_ONE, GL_ONE));
 			m_renderState.blendFuncSrc = renderState.blendFuncSrc;
 			m_renderState.blendFuncDest = renderState.blendFuncDest;
 		}
 		if (renderState.blendEquation != m_renderState.blendEquation)
 		{
-			T_OGL_SAFE(glBlendEquation(renderState.blendEquation));
+			T_OGL_SAFE(glBlendEquationSeparate(renderState.blendEquation, GL_FUNC_ADD));
 			m_renderState.blendEquation = renderState.blendEquation;
 		}
 	}
