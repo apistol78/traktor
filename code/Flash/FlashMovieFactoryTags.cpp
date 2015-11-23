@@ -492,33 +492,36 @@ bool FlashTagDefineButton::read(SwfReader* swf, ReadContext& context)
 		}
 
 		// Read conditions.
-		bs.alignByte();
-		while (uint32_t(bs.getStream()->tell()) < context.tagEndPosition)
+		if (context.avm1)
 		{
-			uint16_t conditionLength = bs.readUInt16();
-
-			FlashButton::ButtonCondition condition;
-
-			condition.mask |= bs.readBit() ? FlashButton::CmIdleToOverDown : 0;
-			condition.mask |= bs.readBit() ? FlashButton::CmOutDownToIdle : 0;
-			condition.mask |= bs.readBit() ? FlashButton::CmOutDownToOverDown : 0;
-			condition.mask |= bs.readBit() ? FlashButton::CmOverDownToOutDown : 0;
-			condition.mask |= bs.readBit() ? FlashButton::CmOverDownToOverUp : 0;
-			condition.mask |= bs.readBit() ? FlashButton::CmOverUpToOverDown : 0;
-			condition.mask |= bs.readBit() ? FlashButton::CmOverUpToIdle : 0;
-			condition.mask |= bs.readBit() ? FlashButton::CmIdleToOverUp : 0;
-
-			condition.key = bs.readUnsigned(7);
-
-			condition.mask |= bs.readBit() ? FlashButton::CmOverDownToIdle : 0;
-
-			condition.script = context.avm1->load(bs);
 			bs.alignByte();
+			while (uint32_t(bs.getStream()->tell()) < context.tagEndPosition)
+			{
+				uint16_t conditionLength = bs.readUInt16();
 
-			button->addButtonCondition(condition);
+				FlashButton::ButtonCondition condition;
 
-			if (!conditionLength)
-				break;
+				condition.mask |= bs.readBit() ? FlashButton::CmIdleToOverDown : 0;
+				condition.mask |= bs.readBit() ? FlashButton::CmOutDownToIdle : 0;
+				condition.mask |= bs.readBit() ? FlashButton::CmOutDownToOverDown : 0;
+				condition.mask |= bs.readBit() ? FlashButton::CmOverDownToOutDown : 0;
+				condition.mask |= bs.readBit() ? FlashButton::CmOverDownToOverUp : 0;
+				condition.mask |= bs.readBit() ? FlashButton::CmOverUpToOverDown : 0;
+				condition.mask |= bs.readBit() ? FlashButton::CmOverUpToIdle : 0;
+				condition.mask |= bs.readBit() ? FlashButton::CmIdleToOverUp : 0;
+
+				condition.key = bs.readUnsigned(7);
+
+				condition.mask |= bs.readBit() ? FlashButton::CmOverDownToIdle : 0;
+
+				condition.script = context.avm1->load(bs);
+				bs.alignByte();
+
+				button->addButtonCondition(condition);
+
+				if (!conditionLength)
+					break;
+			}
 		}
 	}
 
@@ -809,7 +812,10 @@ bool FlashTagDefineSprite::read(SwfReader* swf, ReadContext& context)
 
 	// Setup readers for supported sprite tags.
 	std::map< uint16_t, Ref< FlashTag > > tagReaders;
-	tagReaders[TiDoAction] = new FlashTagDoAction();
+
+	if (context.avm1 || context.avm2)
+		tagReaders[TiDoAction] = new FlashTagDoAction();
+
 	tagReaders[TiPlaceObject] = new FlashTagPlaceObject(1);
 	tagReaders[TiPlaceObject2] = new FlashTagPlaceObject(2);
 	tagReaders[TiPlaceObject3] = new FlashTagPlaceObject(3);
@@ -1000,7 +1006,7 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 				placeObject.visible = bs.readUInt8();
 		}
 
-		if (placeObject.has(FlashFrame::PfHasActions))
+		if (placeObject.has(FlashFrame::PfHasActions) && context.avm1)
 		{
 			uint16_t reserved = bs.readUInt16();
 			if (reserved)

@@ -1,9 +1,8 @@
-#pragma optimize( "", off )
-
 #include <algorithm>
 #include <cfloat>
 #include "Core/Log/Log.h"
 #include "Core/Math/Bezier2nd.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
 #include "Core/Math/Line2.h"
 #include "Flash/Polygon.h"

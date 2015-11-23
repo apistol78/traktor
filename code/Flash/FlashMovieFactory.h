@@ -29,11 +29,12 @@ class T_DLLCLASS FlashMovieFactory : public Object
 	T_RTTI_CLASS;
 
 public:
-	FlashMovieFactory();
+	FlashMovieFactory(bool includeAS);
 
 	Ref< FlashMovie > createMovie(SwfReader* swf);
 
 private:
+	bool m_includeAS;
 	std::map< uint16_t, Ref< FlashTag > > m_tagReaders;
 };
 
