@@ -30,6 +30,8 @@ public:
 
 	void setMerge(bool merge);
 
+	void setIncludeAS(bool includeAS);
+
 	virtual Ref< IHandle > loadAsync(const net::Url& url) const T_OVERRIDE T_FINAL;
 
 	virtual Ref< FlashMovie > load(const net::Url& url) const T_OVERRIDE T_FINAL;
@@ -37,6 +39,7 @@ public:
 private:
 	std::wstring m_cacheDirectory;
 	bool m_merge;
+	bool m_includeAS;
 };
 
 	}

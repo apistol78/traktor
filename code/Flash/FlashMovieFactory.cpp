@@ -18,7 +18,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieFactory", FlashMovieFactory, Object)
 
-FlashMovieFactory::FlashMovieFactory()
+FlashMovieFactory::FlashMovieFactory(bool includeAS)
+:	m_includeAS(includeAS)
 {
 	// Setup tag readers.
 	m_tagReaders[TiSetBackgroundColor] = new FlashTagSetBackgroundColor();
@@ -52,13 +53,19 @@ FlashMovieFactory::FlashMovieFactory()
 	m_tagReaders[TiExportAssets] = new FlashTagExportAssets();
 	m_tagReaders[TiImportAssets] = new FlashTagImportAssets(1);
 	m_tagReaders[TiImportAssets2] = new FlashTagImportAssets(2);
-	m_tagReaders[TiInitAction] = new FlashTagInitAction();
+	
+	if (m_includeAS)
+		m_tagReaders[TiInitAction] = new FlashTagInitAction();
+
 	m_tagReaders[TiShowFrame] = new FlashTagShowFrame();
 	m_tagReaders[TiProtect] = new FlashTagProtect(1);
 	m_tagReaders[TiEnableDebugger] = new FlashTagProtect(2);
 	m_tagReaders[TiEnableDebugger2] = new FlashTagProtect(3);
 	m_tagReaders[TiFrameLabel] = new FlashTagFrameLabel();
-	//m_tagReaders[TiDoABC] = new FlashTagDoABC();
+	
+	//if (m_includeAS)
+	//	m_tagReaders[TiDoABC] = new FlashTagDoABC();
+
 	m_tagReaders[TiDefineSound] = new FlashTagDefineSound();
 	m_tagReaders[TiStartSound] = new FlashTagStartSound(1);
 	m_tagReaders[TiStartSound2] = new FlashTagStartSound(2);
@@ -94,11 +101,15 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 	// Decode tags.
 	FlashTag::ReadContext context;
 	context.version = header->version;
-	context.avm1 = new ActionVM1();
-	context.avm2 = new ActionVM2();
 	context.movie = movie;
 	context.sprite = movieClip;
 	context.frame = new FlashFrame();
+
+	if (m_includeAS)
+	{
+		context.avm1 = new ActionVM1();
+		context.avm2 = new ActionVM2();
+	}
 
 	for (bool going = true; going; )
 	{

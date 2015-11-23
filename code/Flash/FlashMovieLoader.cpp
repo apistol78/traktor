@@ -27,10 +27,11 @@ namespace traktor
 class FlashMovieLoaderHandle : public IFlashMovieLoader::IHandle
 {
 public:
-	FlashMovieLoaderHandle(const net::Url& url, const std::wstring& cacheDirectory, bool merge)
+	FlashMovieLoaderHandle(const net::Url& url, const std::wstring& cacheDirectory, bool merge, bool includeAS)
 	:	m_url(url)
 	,	m_cacheDirectory(cacheDirectory)
 	,	m_merge(merge)
+	,	m_includeAS(includeAS)
 	{
 		m_job = JobManager::getInstance().add(makeFunctor< FlashMovieLoaderHandle >(this, &FlashMovieLoaderHandle::loader));
 	}
@@ -59,6 +60,7 @@ private:
 	net::Url m_url;
 	std::wstring m_cacheDirectory;
 	bool m_merge;
+	bool m_includeAS;
 	Ref< Job > m_job;
 	Ref< FlashMovie > m_movie;
 #if defined(__ANDROID__) || defined(__IOS__)
@@ -109,7 +111,7 @@ private:
 		ms_lock.wait();
 #endif
 		SwfReader swfReader(d);
-		m_movie = FlashMovieFactory().createMovie(&swfReader);
+		m_movie = FlashMovieFactory(m_includeAS).createMovie(&swfReader);
 
 #if defined(__ANDROID__) || defined(__IOS__)
 		ms_lock.release();
@@ -147,6 +149,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieLoader", FlashMovieLoader, IFla
 
 FlashMovieLoader::FlashMovieLoader()
 :	m_merge(false)
+,	m_includeAS(true)
 {
 }
 
@@ -160,9 +163,14 @@ void FlashMovieLoader::setMerge(bool merge)
 	m_merge = merge;
 }
 
+void FlashMovieLoader::setIncludeAS(bool includeAS)
+{
+	m_includeAS = includeAS;
+}
+
 Ref< IFlashMovieLoader::IHandle > FlashMovieLoader::loadAsync(const net::Url& url) const
 {
-	return new FlashMovieLoaderHandle(url, m_cacheDirectory, m_merge);
+	return new FlashMovieLoaderHandle(url, m_cacheDirectory, m_merge, m_includeAS);
 }
 
 Ref< FlashMovie > FlashMovieLoader::load(const net::Url& url) const
@@ -197,7 +205,7 @@ Ref< FlashMovie > FlashMovieLoader::load(const net::Url& url) const
 	dms.seek(IStream::SeekSet, 0);
 
 	SwfReader swfReader(&dms);
-	movie = FlashMovieFactory().createMovie(&swfReader);
+	movie = FlashMovieFactory(m_includeAS).createMovie(&swfReader);
 	if (!movie)
 		return 0;
 

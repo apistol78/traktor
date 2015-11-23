@@ -105,7 +105,12 @@ void Stage::destroy()
 	safeDestroy(m_screenRenderer);
 
 	m_shaderFade.clear();
+	
+	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		(*i)->destroy();
+
 	m_layers.clear();
+
 	m_params = 0;
 	m_pendingStage = 0;
 	m_transitionStage = 0;

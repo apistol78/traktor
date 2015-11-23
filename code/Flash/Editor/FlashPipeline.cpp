@@ -126,7 +126,7 @@ bool FlashPipeline::buildOutput(
 		}
 
 		Ref< SwfReader > swf = new SwfReader(sourceStream);
-		movie = FlashMovieFactory().createMovie(swf);
+		movie = FlashMovieFactory(true).createMovie(swf);
 		if (!movie)
 		{
 			log::error << L"Failed to import Flash; unable to parse SWF" << Endl;

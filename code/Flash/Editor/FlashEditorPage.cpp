@@ -99,7 +99,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	Ref< MemoryStream > memoryStream = new MemoryStream(&assetBlob[0], int(assetSize), true, false);
 	Ref< SwfReader > swf = new SwfReader(memoryStream);
 
-	m_movie = flash::FlashMovieFactory().createMovie(swf);
+	m_movie = flash::FlashMovieFactory(true).createMovie(swf);
 	if (!m_movie)
 		return false;
 
