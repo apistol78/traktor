@@ -3,7 +3,7 @@
 # Toolchain and SDK configuration.
 XCODE_PATH=$(shell xcode-select --print-path)
 TOOLCHAIN_BIN=$(XCODE_PATH)/Toolchains/XcodeDefault.xctoolchain/usr/bin
-SDK_SYSROOT=$(XCODE_PATH)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.0.sdk
+SDK_SYSROOT=$(XCODE_PATH)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.1.sdk
 ARCH=i386
 IPHONE_OS_MIN_VERSION=7.1
 
