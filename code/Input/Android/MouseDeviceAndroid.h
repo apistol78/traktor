@@ -1,6 +1,7 @@
 #ifndef traktor_input_MouseDeviceAndroid_H
 #define traktor_input_MouseDeviceAndroid_H
 
+#include "Core/Platform.h"
 #include "Input/IInputDevice.h"
 
 struct AInputEvent;
@@ -15,7 +16,7 @@ class MouseDeviceAndroid : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	MouseDeviceAndroid();
+	MouseDeviceAndroid(const SystemWindow& systemWindow);
 
 	virtual std::wstring getName() const;
 
@@ -52,6 +53,7 @@ public:
 private:
 	friend class InputDriverAndroid;
 
+	SystemWindow m_systemWindow;
 	float m_axisX;
 	float m_axisY;
 	float m_positionX;

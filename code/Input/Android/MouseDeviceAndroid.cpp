@@ -1,4 +1,5 @@
 #include <android/input.h>
+#include <android/native_window.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Input/Android/MouseDeviceAndroid.h"
@@ -30,8 +31,9 @@ c_mouseControlMap[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceAndroid", MouseDeviceAndroid, IInputDevice)
 
-MouseDeviceAndroid::MouseDeviceAndroid()
-:	m_axisX(0.0f)
+MouseDeviceAndroid::MouseDeviceAndroid(const SystemWindow& systemWindow)
+:	m_systemWindow(systemWindow)
+,	m_axisX(0.0f)
 ,	m_axisY(0.0f)
 ,	m_positionX(0.0f)
 ,	m_positionY(0.0f)
@@ -98,13 +100,13 @@ bool MouseDeviceAndroid::getControlRange(int32_t control, float& outMin, float& 
 	if (mc.controlType == DtPositionX)
 	{
 		outMin = 0.0f;
-		outMax = 1920.0f;
+		outMax = ANativeWindow_getWidth(m_systemWindow.window);
 		return true;
 	}
 	else if (mc.controlType == DtPositionY)
 	{
 		outMin = 0.0f;
-		outMax = 1200.0f;
+		outMax = ANativeWindow_getHeight(m_systemWindow.window);
 		return true;
 	}
 	else
