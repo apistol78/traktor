@@ -8,12 +8,10 @@ namespace traktor
 	namespace render
 	{
 
-#if defined(__ANDROID__)
-
+#if defined(GL_OES_vertex_array_object)
 extern PFNGLBINDVERTEXARRAYOESPROC g_glBindVertexArrayOES;
 extern PFNGLDELETEVERTEXARRAYSOESPROC g_glDeleteVertexArraysOES;
 extern PFNGLGENVERTEXARRAYSOESPROC g_glGenVertexArraysOES;
-
 #endif
 
 void initializeExtensions();
