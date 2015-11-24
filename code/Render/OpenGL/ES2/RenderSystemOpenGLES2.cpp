@@ -35,32 +35,12 @@ RenderSystemOpenGLES2::RenderSystemOpenGLES2()
 
 bool RenderSystemOpenGLES2::create(const RenderSystemDesc& desc)
 {
-//#if !defined(T_OFFLINE_ONLY)
-//	m_context = ContextOpenGLES2::createResourceContext(desc.nativeHandle);
-//	if (!m_context)
-//		return false;
-//#endif
-
 	m_nativeHandle = desc.nativeHandle;
 	return true;
 }
 
 void RenderSystemOpenGLES2::destroy()
 {
-//#if defined(T_OPENGL_ES2_HAVE_EGL)
-//	if (m_display == EGL_NO_DISPLAY)
-//		return;
-//
-//	eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-//
-//	eglDestroyContext(m_display, m_context);
-//	eglDestroySurface(m_display, m_surface);
-//	eglTerminate(m_display);
-//
-//	m_display = EGL_NO_DISPLAY;
-//	m_context = EGL_NO_CONTEXT;
-//	m_surface = EGL_NO_SURFACE;
-//#endif
 }
 
 bool RenderSystemOpenGLES2::reset(const RenderSystemDesc& desc)

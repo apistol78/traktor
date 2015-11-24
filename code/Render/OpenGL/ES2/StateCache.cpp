@@ -1,3 +1,4 @@
+#include "Render/OpenGL/ES2/ExtensionsGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 
 namespace traktor
@@ -178,10 +179,10 @@ void StateCache::setElementArrayBuffer(GLint elemArrayBuffer)
 
 void StateCache::setVertexArrayObject(GLint vertexArrayObject)
 {
-#if defined(__APPLE__) && defined(GL_OES_vertex_array_object)
-	if (m_vertexArrayObject != vertexArrayObject)
+#if defined(GL_OES_vertex_array_object)
+	if (m_vertexArrayObject != vertexArrayObject && g_glBindVertexArrayOES != 0)
 	{
-		T_OGL_SAFE(glBindVertexArrayOES(vertexArrayObject));
+		T_OGL_SAFE(g_glBindVertexArrayOES(vertexArrayObject));
 		m_vertexArrayObject = vertexArrayObject;
 	}
 #endif
