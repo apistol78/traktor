@@ -121,6 +121,7 @@ FlashLayer::FlashLayer(
 	const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
 	const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 	bool clearBackground,
+	bool enableShapeCache,
 	bool enableSound,
 	uint32_t contextSize
 )
@@ -130,6 +131,7 @@ FlashLayer::FlashLayer(
 ,	m_externalMovies(externalMovies)
 ,	m_imageProcessSettings(imageProcessSettings)
 ,	m_clearBackground(clearBackground)
+,	m_enableShapeCache(enableShapeCache)
 ,	m_enableSound(enableSound)
 ,	m_contextSize(contextSize)
 ,	m_visible(true)
@@ -181,7 +183,10 @@ void FlashLayer::transition(Layer* fromLayer)
 	bool shouldFlush = true;
 
 	// Ensure matching settings.
-	if (m_clearBackground != fromFlashLayer->m_clearBackground)
+	if (
+		m_clearBackground != fromFlashLayer->m_clearBackground ||
+		m_enableShapeCache != fromFlashLayer->m_enableShapeCache
+	)
 		return;
 
 	// Pass movie as well, if it's the same movie and we're allowed.
@@ -744,6 +749,7 @@ void FlashLayer::createMoviePlayer()
 			m_environment->getRender()->getThreadFrameQueueCount(),
 			m_contextSize * 1024 * 1024,
 			m_clearBackground,
+			m_enableShapeCache,
 			0.006f
 		))
 		{

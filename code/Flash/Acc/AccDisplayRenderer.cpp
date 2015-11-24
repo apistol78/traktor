@@ -143,6 +143,7 @@ bool AccDisplayRenderer::create(
 	uint32_t frameCount,
 	uint32_t renderContextSize,
 	bool clearBackground,
+	bool shapeCache,
 	float stereoscopicOffset
 )
 {
@@ -196,11 +197,14 @@ bool AccDisplayRenderer::create(
 		return false;
 	}
 
-	m_shapeRenderer = new AccShapeRenderer();
-	if (!m_shapeRenderer->create(renderSystem, resourceManager))
+	if (shapeCache)
 	{
-		log::error << L"Unable to create accelerated display renderer; failed to shape renderer" << Endl;
-		return false;
+		m_shapeRenderer = new AccShapeRenderer();
+		if (!m_shapeRenderer->create(renderSystem, resourceManager))
+		{
+			log::error << L"Unable to create accelerated display renderer; failed to shape renderer" << Endl;
+			return false;
+		}
 	}
 
 	m_renderContexts.resize(frameCount);
@@ -344,7 +348,9 @@ void AccDisplayRenderer::begin(
 	}
 
 	m_glyph->beginFrame();
-	m_shapeRenderer->beginFrame();
+
+	if (m_shapeRenderer)
+		m_shapeRenderer->beginFrame();
 
 	m_maskWrite = false;
 	m_maskIncrement = false;
@@ -353,7 +359,7 @@ void AccDisplayRenderer::begin(
 
 void AccDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
 {
-	if (sprite.getCacheAsBitmap())
+	if (m_shapeRenderer && sprite.getCacheAsBitmap())
 	{
 		if (m_cacheAsBitmapDepth++ == 0)
 		{
@@ -370,7 +376,7 @@ void AccDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Ma
 
 void AccDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
 {
-	if (sprite.getCacheAsBitmap())
+	if (m_shapeRenderer && sprite.getCacheAsBitmap())
 	{
 		if (--m_cacheAsBitmapDepth == 0)
 		{
@@ -448,21 +454,40 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 	// Flush queueud glyph shapes, must do this to ensure proper draw order.
 	renderEnqueuedGlyphs();
 
-	// Render shape through shape cache.
-	m_shapeRenderer->render(
-		m_renderContext,
-		accShape,
-		tag,
-		cxform,
-		m_frameSize,
-		m_viewSize,
-		m_viewOffset,
-		transform,
-		m_maskWrite,
-		m_maskIncrement,
-		m_maskReference,
-		blendMode
-	);
+	if (m_shapeRenderer)
+	{
+		// Render shape through shape cache.
+		m_shapeRenderer->render(
+			m_renderContext,
+			accShape,
+			tag,
+			cxform,
+			m_frameSize,
+			m_viewSize,
+			m_viewOffset,
+			transform,
+			m_maskWrite,
+			m_maskIncrement,
+			m_maskReference,
+			blendMode
+		);
+	}
+	else
+	{
+		// No shape cache; render directly.
+		accShape->render(
+			m_renderContext,
+			transform,
+			m_frameSize,
+			m_viewOffset,
+			1.0f,
+			cxform,
+			m_maskWrite,
+			m_maskIncrement,
+			m_maskReference,
+			blendMode
+		);
+	}
 }
 
 void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform)
@@ -686,7 +711,9 @@ void AccDisplayRenderer::end()
 {
 	renderEnqueuedGlyphs();
 
-	m_shapeRenderer->endFrame();
+	if (m_shapeRenderer)
+		m_shapeRenderer->endFrame();
+
 	m_glyph->endFrame();
 
 #if T_FLUSH_CACHE

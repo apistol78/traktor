@@ -168,16 +168,6 @@ void RenderTargetDx11::destroy()
 
 ITexture* RenderTargetDx11::resolve()
 {
-	if (m_d3dTexture != m_d3dTextureRead)
-	{
-		m_context->getD3DDeviceContext()->ResolveSubresource(
-			m_d3dTextureRead,
-			0,
-			m_d3dTexture,
-			0,
-			m_d3dColorFormat
-		);
-	}
 	return this;
 }
 
@@ -202,6 +192,16 @@ void RenderTargetDx11::unlock(int level)
 
 void RenderTargetDx11::unbind()
 {
+	if (m_d3dTexture != m_d3dTextureRead)
+	{
+		m_context->getD3DDeviceContext()->ResolveSubresource(
+			m_d3dTextureRead,
+			0,
+			m_d3dTexture,
+			0,
+			m_d3dColorFormat
+		);
+	}
 	if (m_generateMips)
 	{
 		ID3D11ShaderResourceView* nullViews[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
