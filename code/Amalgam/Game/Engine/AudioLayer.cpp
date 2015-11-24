@@ -30,11 +30,6 @@ AudioLayer::AudioLayer(
 {
 }
 
-AudioLayer::~AudioLayer()
-{
-	destroy();
-}
-
 void AudioLayer::destroy()
 {
 	m_environment = 0;
@@ -46,6 +41,8 @@ void AudioLayer::destroy()
 		m_handle->fadeOff();
 		m_handle = 0;
 	}
+
+	Layer::destroy();
 }
 
 void AudioLayer::play()

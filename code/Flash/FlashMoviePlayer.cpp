@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Math/Const.h"
 #include "Core/System/OS.h"
@@ -102,10 +103,10 @@ void FlashMoviePlayer::destroy()
 		ActionContext* context = m_movieInstance->getContext();
 		T_ASSERT (context);
 		context->setFocus(0);
+		context->setPressed(0);
 
 		// Then destroy root movie instance.
-		m_movieInstance->destroy();
-		m_movieInstance = 0;
+		safeDestroy(m_movieInstance);
 	}
 
 	m_displayRenderer = 0;

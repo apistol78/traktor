@@ -58,9 +58,7 @@ public:
 		bool repeat
 	);
 
-	virtual ~VideoLayer();
-
-	void destroy();
+	virtual void destroy() T_OVERRIDE;
 
 	void play();
 

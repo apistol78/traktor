@@ -65,9 +65,7 @@ public:
 		const Color4ub& background
 	);
 
-	virtual ~SparkLayer();
-
-	void destroy();
+	virtual void destroy() T_OVERRIDE;
 
 	virtual void transition(Layer* fromLayer) T_OVERRIDE T_FINAL;
 

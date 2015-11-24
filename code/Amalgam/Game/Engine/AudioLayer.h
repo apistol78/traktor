@@ -46,9 +46,7 @@ public:
 		bool repeat
 	);
 
-	virtual ~AudioLayer();
-
-	void destroy();
+	virtual void destroy() T_OVERRIDE;
 
 	/*! \brief Play sound. */
 	void play();

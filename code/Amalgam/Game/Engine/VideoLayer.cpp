@@ -41,14 +41,10 @@ VideoLayer::VideoLayer(
 {
 }
 
-VideoLayer::~VideoLayer()
-{
-	destroy();
-}
-
 void VideoLayer::destroy()
 {
 	safeDestroy(m_screenRenderer);
+	Layer::destroy();
 }
 
 void VideoLayer::play()

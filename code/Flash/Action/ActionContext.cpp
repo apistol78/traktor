@@ -170,6 +170,7 @@ void ActionContext::dereference()
 	m_global = 0;
 	m_movieClip = 0;
 	m_focus = 0;
+	m_pressed = 0;
 	m_frameListeners.clear();
 }
 
