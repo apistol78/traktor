@@ -65,6 +65,7 @@ public:
 		uint32_t frameCount,
 		uint32_t renderContextSize,
 		bool clearBackground,
+		bool shapeCache,
 		float stereoscopicOffset
 	);
 

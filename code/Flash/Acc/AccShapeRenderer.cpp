@@ -47,7 +47,7 @@ bool AccShapeRenderer::create(render::IRenderSystem* renderSystem, resource::IRe
 	rtscd.count = 1;
 	rtscd.width = c_cacheWidth;
 	rtscd.height = c_cacheHeight;
-	rtscd.multiSample = 4;
+	rtscd.multiSample = 0;
 	rtscd.createDepthStencil = true;
 	rtscd.usingPrimaryDepthStencil = false;
 	rtscd.ignoreStencil = false;
@@ -106,8 +106,8 @@ void AccShapeRenderer::beginCacheAsBitmap(
 	const Matrix33& transform
 )
 {
-	T_ASSERT (m_renderIntoSlot < 0);
-	T_ASSERT (m_renderFromSlot < 0);
+	T_FATAL_ASSERT (m_renderIntoSlot < 0);
+	T_FATAL_ASSERT (m_renderFromSlot < 0);
 
 	int32_t tag = spriteInstance.getSprite()->getCacheTag();
 	Aabb2 bounds = spriteInstance.getLocalBounds();
@@ -178,14 +178,6 @@ void AccShapeRenderer::beginCacheAsBitmap(
 				renderBlockClear->clearColor = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 				renderContext->draw(render::RpOverlay, renderBlockClear);
 			}
-
-			Vector4 cacheFrameSize(bounds.mn.x, bounds.mn.y, bounds.mx.x, bounds.mx.y);
-			Vector4 cacheViewOffset(
-				float(c.x) / c_cacheWidth,
-				float(c.y) / c_cacheHeight,
-				float(c.width) / c_cacheWidth,
-				float(c.height) / c_cacheHeight
-			);
 
 			m_renderIntoSlot = slot;
 		}
@@ -270,7 +262,7 @@ void AccShapeRenderer::render(
 		Matrix33 delta = c.transform.inverse() * transform;
 		shape->render(
 			renderContext,
-			delta * (c.flipped ? c_flipped : Matrix33::identity()),
+			(c.flipped ? c_flipped : Matrix33::identity()) * delta,
 			c.flipped ? cacheFrameSize.shuffle< 1, 0, 3, 2 >() : cacheFrameSize,
 			cacheViewOffset,
 			0.0f,

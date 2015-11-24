@@ -76,6 +76,7 @@ public:
 		const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
 		const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 		bool clearBackground,
+		bool enableShapeCache,
 		bool enableSound,
 		uint32_t contextSize
 	);
@@ -196,6 +197,7 @@ private:
 	resource::Proxy< render::ImageProcessSettings > m_imageProcessSettings;
 	Ref< render::ImageProcess > m_imageProcess;
 	bool m_clearBackground;
+	bool m_enableShapeCache;
 	bool m_enableSound;
 	uint32_t m_contextSize;
 	bool m_visible;

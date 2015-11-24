@@ -53,6 +53,7 @@ private:
 	std::map< std::wstring, resource::Id< flash::FlashMovie > > m_externalMovies;
 	resource::Id< render::ImageProcessSettings > m_imageProcess;
 	bool m_clearBackground;
+	bool m_enableShapeCache;
 	bool m_enableSound;
 	uint32_t m_contextSize;
 };
