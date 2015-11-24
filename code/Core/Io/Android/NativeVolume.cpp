@@ -122,7 +122,7 @@ bool NativeVolume::exist(const Path& filename)
 
 bool NativeVolume::remove(const Path& filename)
 {
-	return false;
+	return bool(std::remove(wstombs(getSystemPath(filename)).c_str()) == 0);
 }
 
 bool NativeVolume::move(const Path& fileName, const std::wstring& newName, bool overwrite)
