@@ -4,8 +4,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-438</first>
-				<second>87</second>
+				<first>-198</first>
+				<second>131</second>
 			</position>
 			<fragmentGuid>{5C7DF289-D6CE-384F-A65C-B10EF915438E}</fragmentGuid>
 			<inputPins>
@@ -24,22 +24,22 @@
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>-559</first>
-				<second>167</second>
+				<first>-342</first>
+				<second>182</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>497</first>
-				<second>188</second>
+				<first>647</first>
+				<second>202</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-323</first>
-				<second>394</second>
+				<first>266</first>
+				<second>400</second>
 			</position>
 			<parameterName>Flash_CxFormAdd</parameterName>
 			<type>PtVector</type>
@@ -48,8 +48,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-239</first>
-				<second>230</second>
+				<first>259</first>
+				<second>249</second>
 			</position>
 			<parameterName>Flash_CxFormMul</parameterName>
 			<type>PtVector</type>
@@ -58,8 +58,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-603</first>
-				<second>-120</second>
+				<first>-673</first>
+				<second>-81</second>
 			</position>
 			<fragmentGuid>{46AAC087-9D83-3047-93E2-36B77218D3C7}</fragmentGuid>
 			<inputPins/>
@@ -76,8 +76,8 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>46</first>
-				<second>17</second>
+				<first>142</first>
+				<second>65</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
@@ -104,43 +104,16 @@
 			<outputPins/>
 			<values/>
 		</item>
-		<item type="traktor.render.Discard">
-			<comment/>
-			<position>
-				<first>-230</first>
-				<second>-38</second>
-			</position>
-			<operator>CoGreater</operator>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>-404</first>
-				<second>42</second>
-			</position>
-			<value>0</value>
-		</item>
-		<item type="traktor.render.VertexInput">
-			<comment/>
-			<position>
-				<first>-1000</first>
-				<second>-12</second>
-			</position>
-			<name>ControlPoints</name>
-			<usage>DuCustom</usage>
-			<type>DtFloat3</type>
-			<index>0</index>
-		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-648</first>
-				<second>-11</second>
+				<first>-172</first>
+				<second>-1</second>
 			</position>
 			<fragmentGuid>{6F008BFC-A1AD-814C-BF7D-010FAC0C7703}</fragmentGuid>
 			<inputPins>
 				<item>
-					<name>ControlPoints</name>
+					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
@@ -154,8 +127,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-857</first>
-				<second>211</second>
+				<first>-754</first>
+				<second>205</second>
 			</position>
 			<name>TexCoord</name>
 			<usage>DuCustom</usage>
@@ -226,36 +199,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Reference</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<name>ControlPoints</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
@@ -266,12 +209,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Color</name>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Pass</name>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -286,11 +229,11 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Color</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Input</name>
 			</destination>
 		</item>
