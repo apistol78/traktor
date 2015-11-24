@@ -30,7 +30,11 @@ public:
 	 * Screen coordinates are expressing in Pixels and
 	 * stage coordinates in Twips.
 	 */
-	Vector2 toStage(const Vector2& pos);
+	Vector2 toStage(const Vector2& pos) const;
+
+	/*! \brief Convert from stage coordinates to screen coordinates.
+	 */
+	Vector2 toScreen(const Vector2& pos) const;
 
 	int32_t getViewWidth() const { return m_viewWidth; }
 

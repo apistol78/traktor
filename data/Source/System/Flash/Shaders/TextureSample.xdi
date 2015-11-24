@@ -14,8 +14,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-224</first>
-				<second>813</second>
+				<first>-460</first>
+				<second>874</second>
 			</position>
 			<name>TexCoord</name>
 			<connectable>true</connectable>
@@ -25,11 +25,11 @@
 		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>970</first>
-				<second>455</second>
+				<first>1097</first>
+				<second>452</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
+			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtLinear</magFilter>
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
@@ -42,8 +42,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-177</first>
-				<second>620</second>
+				<first>-196</first>
+				<second>585</second>
 			</position>
 			<parameterName>Flash_TextureClamp</parameterName>
 			<type>PtScalar</type>
@@ -52,16 +52,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1562</first>
-				<second>611</second>
+				<first>1891</first>
+				<second>462</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>16</first>
-				<second>690</second>
+				<first>-119</first>
+				<second>759</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -78,8 +78,8 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>202</first>
-				<second>710</second>
+				<first>-66</first>
+				<second>711</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -102,22 +102,22 @@
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>774</first>
-				<second>496</second>
+				<first>773</first>
+				<second>499</second>
 			</position>
 		</item>
 		<item type="traktor.render.Fraction">
 			<comment/>
 			<position>
-				<first>12</first>
-				<second>834</second>
+				<first>-123</first>
+				<second>903</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>23</first>
-				<second>956</second>
+				<first>-112</first>
+				<second>1025</second>
 			</position>
 			<fragmentGuid>{93B38E3D-E0F1-1B4D-8EDA-110574DEFEA8}</fragmentGuid>
 			<inputPins>
@@ -145,23 +145,23 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-160</first>
-				<second>1035</second>
+				<first>-345</first>
+				<second>1112</second>
 			</position>
 			<value>32</value>
 		</item>
 		<item type="traktor.render.Platform">
 			<comment/>
 			<position>
-				<first>1263</first>
-				<second>574</second>
+				<first>1484</first>
+				<second>400</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>974</first>
-				<second>629</second>
+				<first>1101</first>
+				<second>626</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -395,6 +395,16 @@
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>OpenGL ES2</name>
 			</destination>
 		</item>
 	</edges>

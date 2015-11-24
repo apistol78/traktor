@@ -103,6 +103,7 @@ void AccShapeRenderer::beginCacheAsBitmap(
 	const FlashSpriteInstance& spriteInstance,
 	const Vector4& frameSize,
 	const Vector4& viewSize,
+	const Vector4& viewOffset,
 	const Matrix33& transform
 )
 {
@@ -112,14 +113,24 @@ void AccShapeRenderer::beginCacheAsBitmap(
 	int32_t tag = spriteInstance.getSprite()->getCacheTag();
 	Aabb2 bounds = spriteInstance.getLocalBounds();
 
-	float frameWidth = (frameSize.z() - frameSize.x()) / 20.0f;
-	float frameHeight = (frameSize.w() - frameSize.y()) / 20.0f;
+	// Extract axis scale factors.
+	float scaleX = Vector2(transform.e11, transform.e12).length();
+	float scaleY = Vector2(transform.e21, transform.e22).length();
 
-	float scaleX = Vector2(transform.e11, transform.e12).length() * (viewSize.x() / frameWidth);
-	float scaleY = Vector2(transform.e21, transform.e22).length() * (viewSize.y() / frameHeight);
+	// Calculate size of shape's bounds on stage.
+	float stageW = (bounds.mx.x - bounds.mn.x) * scaleX;
+	float stageH = (bounds.mx.y - bounds.mn.y) * scaleY;
 
-	int32_t pixelWidth = int32_t(scaleX * (bounds.mx.x - bounds.mn.x) / 20.0f);
-	int32_t pixelHeight = int32_t(scaleY * (bounds.mx.y - bounds.mn.y) / 20.0f);
+	// Normalize size of shape.
+	float tx = stageW / (frameSize.z() - frameSize.x());
+	float ty = stageH / (frameSize.w() - frameSize.y());
+
+	// Expand by current view size and offsets.
+	float sx = tx * viewOffset.z() * viewSize.x();
+	float sy = ty * viewOffset.w() * viewSize.y();
+
+	int32_t pixelWidth = int32_t(sx + 0.5f);
+	int32_t pixelHeight = int32_t(sy + 0.5f);
 
 	// Check if sprite instance already cached.
 	int32_t slot = -1;

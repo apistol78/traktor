@@ -58,6 +58,7 @@ public:
 		const FlashSpriteInstance& spriteInstance,
 		const Vector4& frameSize,
 		const Vector4& viewSize,
+		const Vector4& viewOffset,
 		const Matrix33& transform
 	);
 

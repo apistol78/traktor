@@ -42,18 +42,22 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGLES2", RenderViewOpenGLES
 RenderViewOpenGLES2::RenderViewOpenGLES2(ContextOpenGLES2* context)
 :	m_context(context)
 ,	m_stateCache(new StateCache())
-,	m_landscape(context->getLandscape())
+,	m_width(0)
+,	m_height(0)
 ,	m_cursorVisible(true)
 {
 #if defined(_WIN32)
 	m_context->getWindow()->addListener(this);
 #endif
 
+	m_width = m_context->getWidth();
+	m_height = m_context->getHeight();
+
 	m_viewport = Viewport(
 		0,
 		0,
-		getWidth(),
-		getHeight(),
+		m_width,
+		m_height,
 		0.0f,
 		1.0f
 	);
@@ -80,18 +84,32 @@ bool RenderViewOpenGLES2::nextEvent(RenderEvent& outEvent)
 		DispatchMessage(&msg);
 	}
 
-#elif defined(__IOS__)
+#elif defined(__IOS__) || defined(__ANDROID__)
 
-	if (m_landscape != m_context->getLandscape())
+	int32_t width = m_context->getWidth();
+	int32_t height = m_context->getHeight();
+
+	if (width != m_width || height != m_height)
 	{
-		m_landscape = m_context->getLandscape();
-		log::info << L"Device orientation changed; into landspace = " << m_landscape << Endl;
+		log::info << L"Device screen size changed, new size " << width << L" * " << height << Endl;
+
+		m_width = width;
+		m_height = height;
+
+		m_viewport = Viewport(
+			0,
+			0,
+			m_width,
+			m_height,
+			0.0f,
+			1.0f
+		);
 
 		// Post a resize event as we need all systems to re-create
 		// resources if necessary.
 		outEvent.type = ReResize;
-		outEvent.resize.width = m_context->getWidth();
-		outEvent.resize.height = m_context->getHeight();
+		outEvent.resize.width = width;
+		outEvent.resize.height = height;
 		return true;
 	}
 
@@ -113,42 +131,27 @@ void RenderViewOpenGLES2::close()
 	if (m_context->getWindow())
 		m_context->getWindow()->removeListener(this);
 #endif
-
 	m_context = 0;
 }
 
 bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
 {
-	if (!m_context->getLandscape())
-		m_context->resize(desc.displayMode.width, desc.displayMode.height);
-	else
-		m_context->resize(desc.displayMode.height, desc.displayMode.width);
 	return true;
 }
 
 bool RenderViewOpenGLES2::reset(int32_t width, int32_t height)
 {
-	if (!m_context->getLandscape())
-		m_context->resize(width, height);
-	else
-		m_context->resize(height, width);
 	return true;
 }
 
 int RenderViewOpenGLES2::getWidth() const
 {
-	if (!m_context->getLandscape())
-		return m_context->getWidth();
-	else
-		return m_context->getHeight();
+	return m_width;
 }
 
 int RenderViewOpenGLES2::getHeight() const
 {
-	if (!m_context->getLandscape())
-		return m_context->getHeight();
-	else
-		return m_context->getWidth();
+	return m_height;
 }
 
 bool RenderViewOpenGLES2::isActive() const
@@ -194,16 +197,7 @@ void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 	else
 		m_renderTargetStack.top().viewport = viewport;
 
-	if (m_renderTargetStack.empty() && m_context->getLandscape())
-	{
-		T_OGL_SAFE(glViewport(
-			viewport.top,
-			viewport.left,
-			viewport.height,
-			viewport.width
-		));
-	}
-	else
+	if (m_renderTargetStack.empty())
 	{
 		T_OGL_SAFE(glViewport(
 			viewport.left,
@@ -250,24 +244,12 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 		
 	m_context->bindPrimary();
 	
-	if (m_context->getLandscape())
-	{
-		T_OGL_SAFE(glViewport(
-			m_viewport.top,
-			m_viewport.left,
-			m_viewport.height,
-			m_viewport.width
-		));
-	}
-	else
-	{
-		T_OGL_SAFE(glViewport(
-			m_viewport.left,
-			m_viewport.top,
-			m_viewport.width,
-			m_viewport.height
-		));
-	}
+	T_OGL_SAFE(glViewport(
+		m_viewport.left,
+		m_viewport.top,
+		m_viewport.width,
+		m_viewport.height
+	));
 
 	T_OGL_SAFE(glDepthRangef(
 		m_viewport.nearZ,
@@ -370,20 +352,10 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		targetSize[0] = float(getWidth());
 		targetSize[1] = float(getHeight());
 		
-		if (m_context->getLandscape())
-		{
-			postTransform[0] = 0.0f;
-			postTransform[1] = -1.0f;
-			postTransform[2] = 1.0f;
-			postTransform[3] = 0.0f;
-		}
-		else
-		{
-			postTransform[0] = 1.0f;
-			postTransform[1] = 0.0f;
-			postTransform[2] = 0.0f;
-			postTransform[3] = 1.0f;
-		}
+		postTransform[0] = 1.0f;
+		postTransform[1] = 0.0f;
+		postTransform[2] = 0.0f;
+		postTransform[3] = 1.0f;
 		
 		invertCull = false;
 	}
@@ -499,20 +471,10 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		targetSize[0] = float(getWidth());
 		targetSize[1] = float(getHeight());
 		
-		if (m_context->getLandscape())
-		{
-			postTransform[0] = 0.0f;
-			postTransform[1] = -1.0f;
-			postTransform[2] = 1.0f;
-			postTransform[3] = 0.0f;
-		}
-		else
-		{
-			postTransform[0] = 1.0f;
-			postTransform[1] = 0.0f;
-			postTransform[2] = 0.0f;
-			postTransform[3] = 1.0f;
-		}
+		postTransform[0] = 1.0f;
+		postTransform[1] = 0.0f;
+		postTransform[2] = 0.0f;
+		postTransform[3] = 1.0f;
 		
 		invertCull = false;
 	}
@@ -696,24 +658,12 @@ void RenderViewOpenGLES2::end()
 	{
 		m_context->bindPrimary();
 		
-		if (m_context->getLandscape())
-		{
-			T_OGL_SAFE(glViewport(
-				m_viewport.top,
-				m_viewport.left,
-				m_viewport.height,
-				m_viewport.width
-			));
-		}
-		else
-		{
-			T_OGL_SAFE(glViewport(
-				m_viewport.left,
-				m_viewport.top,
-				m_viewport.width,
-				m_viewport.height
-			));
-		}
+		T_OGL_SAFE(glViewport(
+			m_viewport.left,
+			m_viewport.top,
+			m_viewport.width,
+			m_viewport.height
+		));
 
 		T_OGL_SAFE(glDepthRangef(
 			m_viewport.nearZ,

@@ -222,22 +222,6 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 		return 0;
 	}
 
-#if defined(_DEBUG)
-	for (EGLint i = 0; i < numMatchingConfigs; ++i)
-	{
-		EGLint value;
-
-		eglGetConfigAttrib(context->m_display, matchingConfigs[i], EGL_BUFFER_SIZE, &value);
-		log::info << L"config[" << i << L"].EGL_BUFFER_SIZE = " << value << Endl;
-
-		eglGetConfigAttrib(context->m_display, matchingConfigs[i], EGL_DEPTH_SIZE, &value);
-		log::info << L"config[" << i << L"].EGL_DEPTH_SIZE = " << value << Endl;
-
-		eglGetConfigAttrib(context->m_display, matchingConfigs[i], EGL_STENCIL_SIZE, &value);
-		log::info << L"config[" << i << L"].EGL_STENCIL_SIZE = " << value << Endl;
-	}
-#endif
-
 	context->m_config = matchingConfigs[0];
 
 	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, (EGLNativeWindowType)desc.nativeWindowHandle, 0);
@@ -461,15 +445,6 @@ int32_t ContextOpenGLES2::getHeight() const
 	return height;
 #else
 	return 0;
-#endif
-}
-
-bool ContextOpenGLES2::getLandscape() const
-{
-#if defined(__IOS__)
-	return m_context->getLandscape();
-#else
-	return false;
 #endif
 }
 
