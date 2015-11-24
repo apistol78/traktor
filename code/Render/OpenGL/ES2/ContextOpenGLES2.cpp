@@ -5,6 +5,7 @@
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
+#include "Render/OpenGL/ES2/ExtensionsGLES2.h"
 
 #if defined(_WIN32)
 #	include "Render/OpenGL/ES2/Win32/Window.h"
@@ -157,6 +158,11 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 	return 0;
 #endif
 
+	if (!context->enter())
+		return 0;
+	initializeExtensions();
+	context->leave();
+
 	log::info << L"OpenGL ES 2.0 render context created successfully" << Endl;
 	return context;
 }
@@ -275,6 +281,11 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 		return 0;
 
 #endif
+
+	if (!context->enter())
+		return 0;
+	initializeExtensions();
+	context->leave();
     
 	log::info << L"OpenGL ES 2.0 render context created successfully (embedded)" << Endl;
 	return context;

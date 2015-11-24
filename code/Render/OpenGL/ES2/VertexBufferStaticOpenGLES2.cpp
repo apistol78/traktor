@@ -3,6 +3,7 @@
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
+#include "Render/OpenGL/ES2/ExtensionsGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 #include "Render/OpenGL/ES2/VertexBufferStaticOpenGLES2.h"
 
@@ -29,7 +30,7 @@ struct DeleteBufferCallback : public ContextOpenGLES2::IDeleteCallback
 	}
 };
 
-#if defined(__APPLE__) && defined(GL_OES_vertex_array_object)
+#if defined(GL_OES_vertex_array_object)
 struct DeleteVertexArrayCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_arrayName;
@@ -41,7 +42,7 @@ struct DeleteVertexArrayCallback : public ContextOpenGLES2::IDeleteCallback
 
 	virtual void deleteResource()
 	{
-		T_OGL_SAFE(glDeleteVertexArraysOES(1, &m_arrayName));
+		T_OGL_SAFE(g_glDeleteVertexArraysOES(1, &m_arrayName));
 		delete this;
 	}
 };
@@ -177,7 +178,7 @@ void VertexBufferStaticOpenGLES2::destroy()
 			m_context->deleteResource(new DeleteBufferCallback(m_bufferObject));
 		m_bufferObject = 0;
 	}
-#if defined(__APPLE__) && defined(GL_OES_vertex_array_object)
+#if defined(GL_OES_vertex_array_object)
 	if (m_arrayObject)
 	{
 		if (m_context)
@@ -241,7 +242,7 @@ void VertexBufferStaticOpenGLES2::unlock()
 
 	m_buffer.release();
 	
-#if defined(__APPLE__) && defined(GL_OES_vertex_array_object)
+#if defined(GL_OES_vertex_array_object)
 	if (m_arrayObject)
 	{
 		if (m_context)
@@ -257,10 +258,10 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 {
 	stateCache->setArrayBuffer(m_bufferObject);
 
-#if defined(__APPLE__) && defined(GL_OES_vertex_array_object)
-	if (m_arrayObject == 0)
+#if defined(GL_OES_vertex_array_object)
+	if (m_arrayObject == 0 && g_glGenVertexArraysOES != 0)
 	{
-		T_OGL_SAFE(glGenVertexArraysOES(1, &m_arrayObject));
+		T_OGL_SAFE(g_glGenVertexArraysOES(1, &m_arrayObject));
 		stateCache->setVertexArrayObject(m_arrayObject);
 
 		for (AlignedVector< AttributeDesc >::const_iterator i = m_attributes.begin(); i != m_attributes.end(); ++i)
@@ -273,7 +274,7 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 				i->normalized,
 				m_vertexStride,
 				(const GLvoid*)i->offset
-				));
+			));
 		}
 	}
 	else
