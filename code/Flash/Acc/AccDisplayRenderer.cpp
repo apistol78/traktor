@@ -368,6 +368,7 @@ void AccDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Ma
 				sprite,
 				m_frameSize,
 				m_viewSize,
+				m_viewOffset,
 				transform
 			);
 		}

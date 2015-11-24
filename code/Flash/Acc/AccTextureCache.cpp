@@ -15,8 +15,10 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_gradientsWidth = 64;
-const uint32_t c_gradientsHeight = 16 * 1024;
+const uint32_t c_gradientsSize = 32;
+const uint32_t c_gradientsWidth = 1024;
+const uint32_t c_gradientsHeight = 1024;
+const uint32_t c_gradientsColumns = c_gradientsWidth / c_gradientsSize;
 
 SwfColor interpolateGradient(const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords, float f)
 {
@@ -60,6 +62,7 @@ AccTextureCache::AccTextureCache(
 )
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
+,	m_currentGradientColumn(0)
 ,	m_nextGradient(0)
 {
 	render::SimpleTextureCreateDesc desc;
@@ -119,13 +122,17 @@ AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillS
 	if (style.getGradientType() == FlashFillStyle::GtLinear)
 	{
 		if (m_nextGradient + 1 > c_gradientsHeight)
-			return BitmapRect();
+		{
+			m_nextGradient = 0;
+			if ((m_currentGradientColumn += c_gradientsSize) > c_gradientsWidth)
+				return BitmapRect();
+		}
 
-		uint8_t* gd = &m_gradientsData[m_nextGradient * c_gradientsWidth * 4];
+		uint8_t* gd = &m_gradientsData[(m_currentGradientColumn + m_nextGradient * c_gradientsWidth) * 4];
 		int32_t x1 = 0;
 		for (int32_t i = 1; i < int32_t(colorRecords.size()); ++i)
 		{
-			int32_t x2 = int32_t(colorRecords[i].ratio * c_gradientsWidth);
+			int32_t x2 = int32_t(colorRecords[i].ratio * c_gradientsSize);
 			for (int32_t x = x1; x < x2; ++x)
 			{
 				float f = float(x - x1) / (x2 - x1);
@@ -136,7 +143,7 @@ AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillS
 			}
 			x1 = x2;
 		}
-		for (; x1 < c_gradientsWidth; ++x1)
+		for (; x1 < c_gradientsSize; ++x1)
 		{
 			gd[x1 * 4 + 0] = colorRecords.back().color.red;
 			gd[x1 * 4 + 1] = colorRecords.back().color.green;
@@ -159,9 +166,9 @@ AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillS
 		BitmapRect& br = m_cache[hash];
 		br.texture = resource::Proxy< render::ISimpleTexture >(m_gradientsTexture);
 		br.clamp = true;
-		br.rect[0] = 0.0f;
+		br.rect[0] = m_currentGradientColumn * 1.0f / c_gradientsWidth;
 		br.rect[1] = m_nextGradient * 1.0f / c_gradientsHeight + 0.5f / c_gradientsHeight;
-		br.rect[2] = 1.0f;
+		br.rect[2] = 1.0f / c_gradientsColumns;
 		br.rect[3] = 0.0f;
 
 		m_nextGradient += 1;
@@ -169,16 +176,22 @@ AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillS
 	}
 	else if (style.getGradientType() == FlashFillStyle::GtRadial)
 	{
-		if (m_nextGradient + c_gradientsWidth > c_gradientsHeight)
-			return BitmapRect();
-
-		uint8_t* gd = &m_gradientsData[m_nextGradient * c_gradientsWidth * 4];
-		for (int y = 0; y < c_gradientsWidth; ++y)
+		if (m_nextGradient + c_gradientsSize > c_gradientsHeight)
 		{
-			for (int x = 0; x < c_gradientsWidth; ++x)
+			m_nextGradient = 0;
+			if ((m_currentGradientColumn += c_gradientsSize) > c_gradientsWidth)
+				return BitmapRect();
+		}
+
+		const float s = float(c_gradientsSize) / 2.0f;
+
+		uint8_t* gd = &m_gradientsData[(m_currentGradientColumn + m_nextGradient * c_gradientsWidth) * 4];
+		for (int y = 0; y < c_gradientsSize; ++y)
+		{
+			for (int x = 0; x < c_gradientsSize; ++x)
 			{
-				float fx = x / 31.5f - 1.0f;
-				float fy = y / 31.5f - 1.0f;
+				float fx = x / s - 1.0f;
+				float fy = y / s - 1.0f;
 				float f = sqrtf(fx * fx + fy * fy);
 				SwfColor c = interpolateGradient(colorRecords, f);
 				gd[x * 4 + 0] = c.red;
@@ -204,12 +217,12 @@ AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillS
 		BitmapRect& br = m_cache[hash];
 		br.texture = resource::Proxy< render::ISimpleTexture >(m_gradientsTexture);
 		br.clamp = true;
-		br.rect[0] = 0.0f;
+		br.rect[0] = m_currentGradientColumn * 1.0f / c_gradientsWidth + 0.5f / c_gradientsWidth;
 		br.rect[1] = m_nextGradient * 1.0f / c_gradientsHeight + 0.5f / c_gradientsHeight;
-		br.rect[2] = 1.0f;
-		br.rect[3] = (c_gradientsWidth - 1) / float(c_gradientsHeight);
+		br.rect[2] = (c_gradientsSize - 1) / float(c_gradientsWidth);
+		br.rect[3] = (c_gradientsSize - 1) / float(c_gradientsHeight);
 
-		m_nextGradient += c_gradientsWidth;
+		m_nextGradient += c_gradientsSize;
 		return br;
 	}
 

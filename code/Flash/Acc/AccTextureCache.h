@@ -92,6 +92,7 @@ private:
 	Ref< render::ISimpleTexture > m_gradientsTexture;
 	SmallMap< uint64_t, BitmapRect > m_cache;
 	AutoArrayPtr< uint8_t > m_gradientsData;
+	uint32_t m_currentGradientColumn;
 	uint32_t m_nextGradient;
 };
 

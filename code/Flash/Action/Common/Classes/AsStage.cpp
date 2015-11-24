@@ -75,7 +75,7 @@ void AsStage::eventResize(int32_t width, int32_t height)
 	}
 }
 
-Vector2 AsStage::toStage(const Vector2& pos)
+Vector2 AsStage::toStage(const Vector2& pos) const
 {
 	const FlashMovie* movie = getContext()->getMovie();
 	T_ASSERT (movie);
@@ -91,6 +91,26 @@ Vector2 AsStage::toStage(const Vector2& pos)
 	float ty = (((sy + 1.0f) / 2.0f - m_viewOffset.y()) / m_viewOffset.w()) * (bounds.mx.y - bounds.mn.y) + bounds.mn.y;
 	
 	return Vector2(tx, ty);
+}
+
+Vector2 AsStage::toScreen(const Vector2& pos) const
+{
+	const FlashMovie* movie = getContext()->getMovie();
+	T_ASSERT (movie);
+
+	Aabb2 bounds = movie->getFrameBounds();
+
+	// Normalize stage coordinates into 0 to 1 range.
+	float tx = (pos.x - bounds.mn.x) / (bounds.mx.x - bounds.mn.x);
+	float ty = (pos.y - bounds.mn.y) / (bounds.mx.y - bounds.mn.y);
+
+	float vx = tx * m_viewOffset.z() + m_viewOffset.x();
+	float vy = ty * m_viewOffset.w() + m_viewOffset.y();
+
+	float sx = vx * m_viewWidth;
+	float sy = vy * m_viewHeight;
+
+	return Vector2(tx, sy);
 }
 
 void AsStage::updateViewOffset()

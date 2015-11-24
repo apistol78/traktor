@@ -79,8 +79,6 @@ public:
 
 	int32_t getHeight() const;
 
-	bool getLandscape() const;
-
 	void swapBuffers();
 
 	Semaphore& lock();

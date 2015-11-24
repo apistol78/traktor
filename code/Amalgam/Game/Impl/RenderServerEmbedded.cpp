@@ -213,6 +213,23 @@ int32_t RenderServerEmbedded::reconfigure(IEnvironment* environment, const Prope
 RenderServer::UpdateResult RenderServerEmbedded::update(PropertyGroup* settings)
 {
 	RenderServer::update(settings);
+
+#if !defined(_PS3)
+
+	if (!m_renderView)
+		return UrSuccess;
+
+	render::RenderEvent evt;
+	while (m_renderView->nextEvent(evt))
+	{
+		if (evt.type == render::ReClose)
+			return UrTerminate;
+		else if (evt.type == render::ReResize)
+			return UrReconfigure;
+	}
+
+#endif
+
 	return UrSuccess;
 }
 
