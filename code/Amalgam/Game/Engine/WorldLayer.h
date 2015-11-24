@@ -70,9 +70,7 @@ public:
 		const std::map< std::wstring, resource::Proxy< world::EntityData > >& entities
 	);
 
-	virtual ~WorldLayer();
-
-	void destroy();
+	virtual void destroy() T_OVERRIDE;
 
 	virtual void transition(Layer* fromLayer) T_OVERRIDE T_FINAL;
 

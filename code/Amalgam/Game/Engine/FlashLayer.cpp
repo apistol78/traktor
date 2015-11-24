@@ -151,15 +151,10 @@ FlashLayer::FlashLayer(
 	}
 }
 
-FlashLayer::~FlashLayer()
-{
-	destroy();
-}
-
 void FlashLayer::destroy()
 {
 	// Remove ourself from feedback manager.
-	if (m_environment->getWorld())
+	if (m_environment && m_environment->getWorld())
 	{
 		spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
 		if (feedbackManager)
@@ -176,6 +171,8 @@ void FlashLayer::destroy()
 	safeDestroy(m_soundRenderer);
 	safeDestroy(m_imageTargetSet);
 	safeDestroy(m_imageProcess);
+
+	Layer::destroy();
 }
 
 void FlashLayer::transition(Layer* fromLayer)

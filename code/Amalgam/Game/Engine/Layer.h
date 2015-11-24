@@ -37,7 +37,7 @@ public:
 
 	virtual ~Layer();
 
-	void destroy();
+	virtual void destroy();
 
 	/*! \brief Called during transition between stages.
 	 *

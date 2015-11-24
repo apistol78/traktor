@@ -80,9 +80,7 @@ public:
 		uint32_t contextSize
 	);
 
-	virtual ~FlashLayer();
-
-	void destroy();
+	virtual void destroy() T_OVERRIDE;
 
 	virtual void transition(Layer* fromLayer) T_OVERRIDE T_FINAL;
 

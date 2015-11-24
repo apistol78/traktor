@@ -38,7 +38,6 @@ TrackAllocator::~TrackAllocator()
 #if defined(_WIN32)
 		wsprintf(buf, L"\nMemory leak detected, following %d allocation(s) not freed (%d KiB):\n", m_aliveBlocks.size(), (totalAlive + 1023) / 1024);
 		OutputDebugString(buf);
-
 		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
 		{
 			wsprintf(buf, L"0x%p, %d byte(s), tag \"%S\"\n", i->first, i->second.size, i->second.tag);
@@ -51,8 +50,8 @@ TrackAllocator::~TrackAllocator()
 			frequency[i->second]++;
 		}
 
+		/*
 		OutputDebugString(L"\nLeak Path Frequency:\n");
-
 		for (std::map< Block, uint32_t >::const_iterator i = frequency.begin(); i != frequency.end(); ++i)
 		{
 			wsprintf(buf, L"0x%p: %d allocation(s)\n", i->first.at[0], i->second);
@@ -64,6 +63,9 @@ TrackAllocator::~TrackAllocator()
 				OutputDebugString(buf);
 			}
 		}
+		*/
+
+		__debugbreak();
 #else
 		std::wcout << L"Memory leak detected, following allocation(s) not freed:" << std::endl;
 		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)

@@ -29,6 +29,16 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::destroy()
 {
+	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
+		i->second->replace(0);
+
+	for (std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
+	{
+		for (RefArray< ExclusiveResourceHandle >::iterator j = i->second.begin(); j != i->second.end(); ++j)
+			(*j)->replace(0);
+		i->second.clear();
+	}
+
 	m_resourceToFactory.clear();
 	m_productToFactory.clear();
 	m_residentHandles.clear();

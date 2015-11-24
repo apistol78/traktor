@@ -77,11 +77,6 @@ WorldLayer::WorldLayer(
 	s_handleFeedback = render::getParameterHandle(L"Feedback");
 }
 
-WorldLayer::~WorldLayer()
-{
-	destroy();
-}
-
 void WorldLayer::destroy()
 {
 	// Remove ourself from feedback manager.
@@ -104,6 +99,8 @@ void WorldLayer::destroy()
 	safeDestroy(m_worldRenderer);
 	safeDestroy(m_renderGroup);
 	safeDestroy(m_dynamicEntities);
+
+	Layer::destroy();
 }
 
 void WorldLayer::transition(Layer* fromLayer)

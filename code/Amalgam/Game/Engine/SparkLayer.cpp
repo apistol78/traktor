@@ -45,10 +45,6 @@ SparkLayer::SparkLayer(
 {
 }
 
-SparkLayer::~SparkLayer()
-{
-}
-
 void SparkLayer::destroy()
 {
 	m_environment = 0;
@@ -59,6 +55,8 @@ void SparkLayer::destroy()
 	safeDestroy(m_sparkRenderer);
 	safeDestroy(m_imageTargetSet);
 	safeDestroy(m_imageProcess);
+
+	Layer::destroy();
 }
 
 void SparkLayer::transition(Layer* fromLayer)
