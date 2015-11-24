@@ -143,7 +143,6 @@ void ReflectionInspectSerializer::operator >> (const Member< ISerializable* >& m
 
 void ReflectionInspectSerializer::operator >> (const Member< void* >& m)
 {
-	T_FATAL_ERROR;
 }
 
 void ReflectionInspectSerializer::operator >> (const MemberArray& m)

@@ -8,12 +8,16 @@
 #include "Flash/FlashCharacter.h"
 #include "Flash/FlashClassFactory.h"
 #include "Flash/FlashFont.h"
+#include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashMovieLoader.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashOptimizer.h"
+#include "Flash/FlashShape.h"
+#include "Flash/FlashShapeInstance.h"
 #include "Flash/FlashSound.h"
+#include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
@@ -26,6 +30,23 @@ namespace traktor
 	{
 		namespace
 		{
+
+uint32_t FlashShape_getPathCount(FlashShape* self)
+{
+	return uint32_t(self->getPaths().size());
+}
+
+RefArray< FlashCharacterInstance > FlashDisplayList_getVisibleObjects(FlashDisplayList* self)
+{
+	RefArray< FlashCharacterInstance > visibleCharacters;
+	self->getVisibleObjects(visibleCharacters);
+	return visibleCharacters;
+}
+
+FlashDisplayList* FlashSpriteInstance_getDisplayList(FlashSpriteInstance* self)
+{
+	return &self->getDisplayList();
+}
 
 ActionObject* ActionObjectRelay_getAsObject_0(ActionObjectRelay* self)
 {
@@ -445,6 +466,32 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashCharacterInstance->addMethod("getBounds", &FlashCharacterInstance::getBounds);
 	registrar->registerClass(classFlashCharacterInstance);
 
+	Ref< AutoRuntimeClass< FlashShape > > classFlashShape = new AutoRuntimeClass< FlashShape >();
+	classFlashShape->addMethod("getPathCount", &FlashShape_getPathCount);
+	registrar->registerClass(classFlashShape);
+
+	Ref< AutoRuntimeClass< FlashShapeInstance > > classFlashShapeInstance = new AutoRuntimeClass< FlashShapeInstance >();
+	classFlashShapeInstance->addMethod("getShape", &FlashShapeInstance::getShape);
+	registrar->registerClass(classFlashShapeInstance);
+
+	Ref< AutoRuntimeClass< FlashDisplayList > > classFlashDisplayList = new AutoRuntimeClass< FlashDisplayList >();
+	classFlashDisplayList->addMethod("reset", &FlashDisplayList::reset);
+	classFlashDisplayList->addMethod("showObject", &FlashDisplayList::showObject);
+	classFlashDisplayList->addMethod("removeObject", &FlashDisplayList::removeObject);
+	classFlashDisplayList->addMethod("getObjectDepth", &FlashDisplayList::getObjectDepth);
+	classFlashDisplayList->addMethod("getNextHighestDepth", &FlashDisplayList::getNextHighestDepth);
+	classFlashDisplayList->addMethod("swap", &FlashDisplayList::swap);
+	classFlashDisplayList->addMethod("getVisibleObjects", &FlashDisplayList_getVisibleObjects);
+	registrar->registerClass(classFlashDisplayList);
+
+	Ref< AutoRuntimeClass< FlashSprite > > classFlashSprite = new AutoRuntimeClass< FlashSprite >();
+	classFlashSprite->addMethod("getFrameRate", &FlashSprite::getFrameRate);
+	classFlashSprite->addMethod("addFrame", &FlashSprite::addFrame);
+	classFlashSprite->addMethod("getFrameCount", &FlashSprite::getFrameCount);
+	classFlashSprite->addMethod("getFrame", &FlashSprite::getFrame);
+	classFlashSprite->addMethod("findFrame", &FlashSprite::findFrame);
+	registrar->registerClass(classFlashSprite);
+
 	Ref< AutoRuntimeClass< FlashSpriteInstance > > classFlashSpriteInstance = new AutoRuntimeClass< FlashSpriteInstance >();
 	classFlashSpriteInstance->addMethod("getSprite", &FlashSpriteInstance::getSprite);
 	classFlashSpriteInstance->addMethod("setCacheAsBitmap", &FlashSpriteInstance::setCacheAsBitmap);
@@ -457,6 +504,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashSpriteInstance->addMethod("getCurrentFrame", &FlashSpriteInstance::getCurrentFrame);
 	classFlashSpriteInstance->addMethod("setPlaying", &FlashSpriteInstance::setPlaying);
 	classFlashSpriteInstance->addMethod("getPlaying", &FlashSpriteInstance::getPlaying);
+	classFlashSpriteInstance->addMethod("getDisplayList", &FlashSpriteInstance_getDisplayList);
 	classFlashSpriteInstance->addMethod("createEmptyMovieClip", &FlashSpriteInstance::createEmptyMovieClip);
 	classFlashSpriteInstance->addMethod("removeMovieClip", &FlashSpriteInstance::removeMovieClip);
 	classFlashSpriteInstance->addMethod("clone", &FlashSpriteInstance::clone);
