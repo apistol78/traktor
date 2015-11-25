@@ -23,7 +23,7 @@ public:
 	
 	bool create();
 	
-	bool create(EAGLContextWrapper* shareContext, void* nativeHandle);
+	bool create(void* nativeHandle);
 	
 	void destroy();
 	
@@ -33,7 +33,7 @@ public:
 	
 	void resize(GLint width, GLint height);
 
-	bool getLandscape() const;
+	static bool getLandscape();
 
 	GLuint getFrameBuffer() const { return m_frameBuffer; }
 
