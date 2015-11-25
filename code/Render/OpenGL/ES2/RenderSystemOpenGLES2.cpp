@@ -107,13 +107,7 @@ DisplayMode RenderSystemOpenGLES2::getCurrentDisplayMode() const
 
 float RenderSystemOpenGLES2::getDisplayAspectRatio() const
 {
-#if defined(__IOS__)
-	bool landscape = m_context->getLandscape();
-	float ratio = float(EAGLContextWrapper::getCurrentWidth()) / EAGLContextWrapper::getCurrentHeight();
-	return landscape ? 1.0f / ratio : ratio;
-#else
 	return 0.0f;
-#endif
 }
 
 Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefaultDesc& desc)

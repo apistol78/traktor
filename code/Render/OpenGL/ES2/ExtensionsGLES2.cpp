@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-#if defined(GL_OES_vertex_array_object)
+#if defined(GL_OES_vertex_array_object) && !defined(__IOS__)
 PFNGLBINDVERTEXARRAYOESPROC g_glBindVertexArrayOES = 0;
 PFNGLDELETEVERTEXARRAYSOESPROC g_glDeleteVertexArraysOES = 0;
 PFNGLGENVERTEXARRAYSOESPROC g_glGenVertexArraysOES = 0;
@@ -17,13 +17,7 @@ PFNGLGENVERTEXARRAYSOESPROC g_glGenVertexArraysOES = 0;
 
 void initializeExtensions()
 {
-#if defined(__IOS__)
-#	if defined(GL_OES_vertex_array_object)
-	g_glBindVertexArrayOES = glBindVertexArrayOES;
-	g_glDeleteVertexArraysOES = glDeleteVertexArraysOES;
-	g_glGenVertexArraysOES = glGenVertexArraysOES;
-#	endif
-#elif defined(__ANDROID__)
+#if defined(__ANDROID__)
 #	if defined(GL_OES_vertex_array_object)	
 	void* libhandle = dlopen("libGLESv2.so", RTLD_LAZY);
 	if (libhandle)

@@ -149,8 +149,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 #	endif
 #elif defined(__PNACL__)
 	context->m_context = PPContextWrapper::createRenderContext(
-		(pp::Instance*)nativeHandle,
-		resourceContext->m_context
+		(pp::Instance*)nativeHandle
 	);
 	if (!context->m_context)
 		return 0;
@@ -266,7 +265,6 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 
 	context->m_context = new EAGLContextWrapper();
 	if (!context->m_context->create(
-		resourceContext->m_context,
 		desc.nativeWindowHandle
 	))
 		return 0;
@@ -274,8 +272,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 #elif defined(__PNACL__)
 
 	context->m_context = PPContextWrapper::createRenderContext(
-		(pp::Instance*)nativeHandle,
-		resourceContext->m_context
+		(pp::Instance*)nativeHandle
 	);
 	if (!context->m_context)
 		return 0;

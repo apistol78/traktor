@@ -26,7 +26,7 @@ bool EAGLContextWrapper::create()
 	return true;
 }
 
-bool EAGLContextWrapper::create(EAGLContextWrapper* shareContext, void* nativeHandle)
+bool EAGLContextWrapper::create(void* nativeHandle)
 {
 	// Native handle are pointer to UIView object;
 	// these UIViews must have CAEAGLLayer as layerClass.
@@ -42,9 +42,7 @@ bool EAGLContextWrapper::create(EAGLContextWrapper* shareContext, void* nativeHa
 		kEAGLDrawablePropertyColorFormat,
 		nil];
 	
-	EAGLContext* shareCtx = shareContext->m_context;
-	EAGLSharegroup* shareGroup = [shareCtx sharegroup];
-	EAGLContext* context = [[EAGLContext alloc] initWithAPI: kEAGLRenderingAPIOpenGLES2 sharegroup: shareGroup];
+	EAGLContext* context = [[EAGLContext alloc] initWithAPI: kEAGLRenderingAPIOpenGLES2 sharegroup: nil];
 	
 	m_layer = layer;
 	m_context = context;
@@ -93,10 +91,10 @@ void EAGLContextWrapper::resize(GLint width, GLint height)
 	createFrameBuffer();
 }
 
-bool EAGLContextWrapper::getLandscape() const
+bool EAGLContextWrapper::getLandscape()
 {
 	UIDeviceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-	return UIInterfaceOrientationIsLandscape(orientation); // (orientation == UIDeviceOrientationLandscapeLeft || orientation == UIDeviceOrientationLandscapeRight);
+	return UIInterfaceOrientationIsLandscape(orientation);
 }
 
 void EAGLContextWrapper::createFrameBuffer()
