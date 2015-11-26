@@ -31,7 +31,7 @@ class T_DLLCLASS LayerData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	enum { Version = 5 };
+	enum { Version = 6 };
 
 	LayerData();
 

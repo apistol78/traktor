@@ -64,6 +64,10 @@ public:
 	 */
 	const std::string& getName() const;
 
+	/*! \brief Get unique cache key.
+	 */
+	int32_t getCacheTag() const { return m_tag; }
+
 	/*! \brief Get instance target path.
 	 *
 	 * \return Path of instance.
@@ -216,6 +220,7 @@ private:
 	Ref< ActionContext > m_context;
 	FlashCharacterInstance* m_parent;
 	std::string m_name;
+	int32_t m_tag;
 	bool m_visible;
 	bool m_enabled;
 	SwfCxTransform m_cxform;

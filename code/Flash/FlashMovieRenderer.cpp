@@ -27,6 +27,7 @@ namespace traktor
 		namespace
 		{
 
+const Vector2 c_marginDirtyRegion(2.0f * 20.0f, 2.0f * 20.0f);
 const SwfCxTransform c_cxWhite = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f } };
 
 Timer s_timer;
@@ -61,13 +62,27 @@ void FlashMovieRenderer::renderFrame(
 )
 {
 	const SwfColor& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
+
+	Aabb2 dirtyRegion;
+	calculateDirtyRegion(
+		movieInstance,
+		Matrix33::identity(),
+		dirtyRegion
+	);
+	if (!dirtyRegion.empty())
+	{
+		dirtyRegion.mn -= c_marginDirtyRegion;
+		dirtyRegion.mx += c_marginDirtyRegion;
+	}
+
 	m_displayRenderer->begin(
 		*movieInstance->getContext()->getDictionary(),
 		backgroundColor,
 		frameBounds,
 		viewWidth,
 		viewHeight,
-		viewOffset
+		viewOffset,
+		dirtyRegion
 	);
 
 	renderSprite(
@@ -443,6 +458,43 @@ void FlashMovieRenderer::renderCharacter(
 		}
 
 		return;
+	}
+}
+
+void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterInstance, const Matrix33& transform, Aabb2& outDirtyRegion)
+{
+	Matrix33 T = transform * characterInstance->getTransform();
+
+	if (FlashShapeInstance* shapeInstance = dynamic_type_cast< FlashShapeInstance* >(characterInstance))
+	{
+		Aabb2 bounds = T * shapeInstance->getShape()->getShapeBounds();
+		State& s = m_states[shapeInstance->getCacheTag()];
+		if (s.bounds != bounds)
+		{
+			outDirtyRegion.contain(s.bounds);
+			outDirtyRegion.contain(bounds);
+			s.bounds = bounds;
+		}
+	}
+
+	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
+	{
+		FlashDictionary* dictionary = spriteInstance->getContext()->getDictionary();
+		T_ASSERT (dictionary);
+
+		const FlashDisplayList& displayList = spriteInstance->getDisplayList();
+		const FlashDisplayList::layer_map_t& layers = displayList.getLayers();
+
+		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		{
+			const FlashDisplayList::Layer& layer = i->second;
+			if (layer.instance)
+				calculateDirtyRegion(
+					layer.instance,
+					T,
+					outDirtyRegion
+				);
+		}
 	}
 }
 

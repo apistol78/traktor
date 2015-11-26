@@ -26,6 +26,7 @@
 #include "Render/Context/RenderContext.h"
 
 #define T_FLUSH_CACHE 0
+#define T_DEBUG_DIRTY_REGION 0
 
 namespace traktor
 {
@@ -38,7 +39,7 @@ namespace traktor
 const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
 #endif
-#if TARGET_OS_IPHONE || defined(__PS3__)
+#if defined(__IOS__) || defined(__ANDROID__) || defined(__PS3__)
 const uint32_t c_cacheGlyphSize = 64;
 #else
 const uint32_t c_cacheGlyphSize = 128;
@@ -51,41 +52,38 @@ const uint32_t c_cacheGlyphDimX = c_cacheGlyphSize * c_cacheGlyphCountX;
 const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize * c_cacheGlyphCountY;
 
 const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f } };
+const SwfCxTransform c_cxfWhite = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f } };
 const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
 const SwfCxTransform c_cxfYellow = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f } };
+const SwfCxTransform c_cxfDebug = { { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.2f } };
 
 bool rectangleVisible(
-	const Vector4& frameSize,
+	const Aabb2& frame,
 	const Vector4& viewOffset,
 	const Matrix33& transform,
 	const Aabb2& bounds
 )
 {
-	if (bounds.mx.x <= bounds.mn.x || bounds.mx.y <= bounds.mn.y)
+	if (frame.empty() || bounds.mx.x <= bounds.mn.x || bounds.mx.y <= bounds.mn.y)
 		return false;
 
 	// Transform rectangle into frame.
-	Vector2 emn = transform * bounds.mn;
-	Vector2 emx = transform * bounds.mx;
-	Vector2 xmn(min(emn.x, emx.x), min(emn.y, emx.y));
-	Vector2 xmx(max(emn.x, emx.x), max(emn.y, emx.y));
+	Aabb2 b = transform * bounds;
 
 	// Transform from frame into normalized coordinates.
-	xmn.x = (xmn.x - frameSize.x()) / (frameSize.z() - frameSize.x());
-	xmn.y = (xmn.y - frameSize.y()) / (frameSize.w() - frameSize.y());
-	xmx.x = (xmx.x - frameSize.x()) / (frameSize.z() - frameSize.x());
-	xmx.y = (xmx.y - frameSize.y()) / (frameSize.w() - frameSize.y());
+	b.mn = (b.mn - frame.mn) / (frame.mx - frame.mn);
+	b.mx = (b.mx - frame.mn) / (frame.mx - frame.mn);
 
-	// Scale into view.
-	xmn.x = (xmn.x * viewOffset.z()) + viewOffset.x();
-	xmn.y = (xmn.y * viewOffset.w()) + viewOffset.y();
-	xmx.x = (xmx.x * viewOffset.z()) + viewOffset.x();
-	xmx.y = (xmx.y * viewOffset.w()) + viewOffset.y();
+	//// Scale into view.
+	//b.mn.x = (b.mn.x * viewOffset.z()) + viewOffset.x();
+	//b.mn.y = (b.mn.y * viewOffset.w()) + viewOffset.y();
+	//b.mx.x = (b.mx.x * viewOffset.z()) + viewOffset.x();
+	//b.mx.y = (b.mx.y * viewOffset.w()) + viewOffset.y();
 
 	// Check if extents are outside view rectangle.
-	if (xmn.x > 1.0f || xmn.y > 1.0f)
+	if (b.mn.x > 1.0f || b.mn.y > 1.0f)
 		return false;
-	if (xmx.x < 0.0f || xmx.y < 0.0f)
+	if (b.mx.x < 0.0f || b.mx.y < 0.0f)
 		return false;
 
 	return true;
@@ -144,6 +142,7 @@ bool AccDisplayRenderer::create(
 	uint32_t renderContextSize,
 	bool clearBackground,
 	bool shapeCache,
+	bool dirtyRegions,
 	float stereoscopicOffset
 )
 {
@@ -151,6 +150,7 @@ bool AccDisplayRenderer::create(
 	m_renderSystem = renderSystem;
 	m_textureCache = new AccTextureCache(m_resourceManager, m_renderSystem);
 	m_clearBackground = clearBackground;
+	m_dirtyRegions = dirtyRegions;
 	m_stereoscopicOffset = stereoscopicOffset;
 
 	m_shapeResources = new AccShapeResources();
@@ -314,14 +314,20 @@ void AccDisplayRenderer::begin(
 	const Aabb2& frameBounds,
 	float viewWidth,
 	float viewHeight,
-	const Vector4& viewOffset
+	const Vector4& viewOffset,
+	const Aabb2& dirtyRegion
 )
 {
 	m_frameSize.set(frameBounds.mn.x, frameBounds.mn.y, frameBounds.mx.x, frameBounds.mx.y);
 	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
 	m_viewOffset = viewOffset;
+	m_dirtyRegion = dirtyRegion;
 
+#if T_DEBUG_DIRTY_REGION
 	if (m_clearBackground)
+#else
+	if (m_clearBackground && !m_dirtyRegions)
+#endif
 	{
 		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (color+stencil)");
 		renderBlock->clearMask = render::CfColor | render::CfStencil;
@@ -332,12 +338,14 @@ void AccDisplayRenderer::begin(
 		);
 		m_renderContext->draw(render::RpOverlay, renderBlock);
 	}
+#if !T_DEBUG_DIRTY_REGION
 	else
 	{
 		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (stencil)");
 		renderBlock->clearMask = render::CfStencil;
 		m_renderContext->draw(render::RpOverlay, renderBlock);
 	}
+#endif
 
 	// Flush glyph cache is RT has become invalid.
 	if (!m_renderTargetGlyphs->isContentValid())
@@ -355,6 +363,29 @@ void AccDisplayRenderer::begin(
 	m_maskWrite = false;
 	m_maskIncrement = false;
 	m_maskReference = 0;
+
+	// Setup stencil for dirty region.
+	if (m_dirtyRegions)
+	{
+#if !T_DEBUG_DIRTY_REGION
+		beginMask(true);
+		renderQuad(Matrix33::identity(), m_dirtyRegion, c_cxfWhite);
+		endMask();
+
+		// Clear background by drawing a solid quad with given color; cannot clear as it doesn't handle stencil.
+		if (m_clearBackground && m_dirtyRegions)
+		{
+			SwfCxTransform clearCxForm = { { 0.0f, backgroundColor.red / 255.0f }, { 0.0f, backgroundColor.green / 255.0f }, { 0.0f, backgroundColor.blue / 255.0f }, { 0.0f, 1.0f } };
+			renderQuad(Matrix33::identity(), m_dirtyRegion, clearCxForm);
+		}
+#endif
+	}
+	else
+	{
+		// Dirty regions not used but set region to entire frame so we can
+		// cull shapes trivially later.
+		m_dirtyRegion = frameBounds;
+	}
 }
 
 void AccDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
@@ -449,7 +480,10 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 		return;
 
 	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
-	if (m_cacheAsBitmapDepth == 0 && !rectangleVisible(m_frameSize, m_viewOffset, transform, accShape->getBounds()))
+	if (
+		m_cacheAsBitmapDepth == 0 &&
+		!rectangleVisible(m_dirtyRegion, m_viewOffset, transform, accShape->getBounds())
+	)
 		return;
 
 	// Flush queueud glyph shapes, must do this to ensure proper draw order.
@@ -548,7 +582,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 	}
 
 	Aabb2 bounds = accShape->getBounds();
-	if (!rectangleVisible(m_frameSize, m_viewOffset, transform, bounds))
+	if (!rectangleVisible(m_dirtyRegion, m_viewOffset, transform, bounds))
 		return;
 
 	float cachePixelDx = 1.0f / c_cacheGlyphDimX;
@@ -689,7 +723,7 @@ void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const M
 	))
 		return;
 
-	if (!rectangleVisible(m_frameSize, m_viewOffset, transform, accShape->getBounds()))
+	if (!rectangleVisible(m_dirtyRegion, m_viewOffset, transform, accShape->getBounds()))
 		return;
 
 	renderEnqueuedGlyphs();
@@ -716,6 +750,18 @@ void AccDisplayRenderer::end()
 		m_shapeRenderer->endFrame();
 
 	m_glyph->endFrame();
+
+	// Clear dirty region to ensure stencil is reset properly.
+	if (m_dirtyRegions)
+	{
+#if T_DEBUG_DIRTY_REGION
+		renderQuad(Matrix33::identity(), m_dirtyRegion, c_cxfDebug);
+#else
+		beginMask(false);
+		renderQuad(Matrix33::identity(), m_dirtyRegion, c_cxfWhite);
+		endMask();
+#endif
+	}
 
 #if T_FLUSH_CACHE
 	// Don't flush cache if it doesn't contain that many shapes.

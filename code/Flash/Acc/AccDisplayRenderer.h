@@ -66,6 +66,7 @@ public:
 		uint32_t renderContextSize,
 		bool clearBackground,
 		bool shapeCache,
+		bool dirtyRegions,
 		float stereoscopicOffset
 	);
 
@@ -90,7 +91,8 @@ public:
 		const Aabb2& frameBounds,
 		float viewWidth,
 		float viewHeight,
-		const Vector4& viewOffset
+		const Vector4& viewOffset,
+		const Aabb2& dirtyRegion
 	) T_OVERRIDE T_FINAL;
 
 	virtual void beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) T_OVERRIDE T_FINAL;
@@ -147,7 +149,9 @@ private:
 	Vector4 m_frameSize;
 	Vector4 m_viewSize;
 	Vector4 m_viewOffset;
+	Aabb2 m_dirtyRegion;
 	bool m_clearBackground;
+	bool m_dirtyRegions;
 	float m_stereoscopicOffset;
 	bool m_maskWrite;
 	bool m_maskIncrement;

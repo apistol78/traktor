@@ -21,10 +21,7 @@ const FlashText* FlashTextInstance::getText() const
 
 Aabb2 FlashTextInstance::getBounds() const
 {
-	Aabb2 textBounds = m_text->getTextBounds();
-	textBounds.mn = getTransform() * textBounds.mn;
-	textBounds.mx = getTransform() * textBounds.mx;
-	return textBounds;
+	return getTransform() * m_text->getTextBounds();
 }
 
 	}

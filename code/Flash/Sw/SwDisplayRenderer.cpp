@@ -52,7 +52,8 @@ void SwDisplayRenderer::begin(
 	const Aabb2& frameBounds,
 	float viewWidth,
 	float viewHeight,
-	const Vector4& viewOffset
+	const Vector4& viewOffset,
+	const Aabb2& dirtyRegion
 )
 {
 	/*

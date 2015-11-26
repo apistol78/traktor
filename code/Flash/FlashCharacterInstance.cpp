@@ -1,4 +1,5 @@
 #include "Flash/FlashCharacterInstance.h"
+#include "Flash/FlashTypes.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
@@ -17,6 +18,7 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const cha
 :	ActionObjectRelay(prototype)
 ,	m_context(context)
 ,	m_parent(parent)
+,	m_tag(allocateCacheTag())
 ,	m_visible(true)
 ,	m_enabled(true)
 ,	m_filter(0)

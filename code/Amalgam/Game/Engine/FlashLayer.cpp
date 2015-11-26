@@ -122,6 +122,7 @@ FlashLayer::FlashLayer(
 	const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 	bool clearBackground,
 	bool enableShapeCache,
+	bool enableDirtyRegions,
 	bool enableSound,
 	uint32_t contextSize
 )
@@ -132,6 +133,7 @@ FlashLayer::FlashLayer(
 ,	m_imageProcessSettings(imageProcessSettings)
 ,	m_clearBackground(clearBackground)
 ,	m_enableShapeCache(enableShapeCache)
+,	m_enableDirtyRegions(enableDirtyRegions)
 ,	m_enableSound(enableSound)
 ,	m_contextSize(contextSize)
 ,	m_visible(true)
@@ -185,7 +187,8 @@ void FlashLayer::transition(Layer* fromLayer)
 	// Ensure matching settings.
 	if (
 		m_clearBackground != fromFlashLayer->m_clearBackground ||
-		m_enableShapeCache != fromFlashLayer->m_enableShapeCache
+		m_enableShapeCache != fromFlashLayer->m_enableShapeCache ||
+		m_enableDirtyRegions != fromFlashLayer->m_enableDirtyRegions
 	)
 		return;
 
@@ -745,6 +748,7 @@ void FlashLayer::createMoviePlayer()
 			m_contextSize * 1024 * 1024,
 			m_clearBackground,
 			m_enableShapeCache,
+			m_enableDirtyRegions,
 			0.006f
 		))
 		{

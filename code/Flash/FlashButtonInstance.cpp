@@ -158,13 +158,7 @@ void FlashButtonInstance::eventMouseMove0(int x, int y, int button)
 
 Aabb2 FlashButtonInstance::getBounds() const
 {
-	Aabb2 bounds = getLocalBounds();
-
-	Matrix33 transform = getTransform();
-	bounds.mn = transform * bounds.mn;
-	bounds.mx = transform * bounds.mx;
-
-	return bounds;
+	return getTransform() * getLocalBounds();
 }
 
 void FlashButtonInstance::trace(visitor_t visitor) const

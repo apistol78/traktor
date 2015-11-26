@@ -77,6 +77,7 @@ public:
 		const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 		bool clearBackground,
 		bool enableShapeCache,
+		bool enableDirtyRegions,
 		bool enableSound,
 		uint32_t contextSize
 	);
@@ -196,6 +197,7 @@ private:
 	Ref< render::ImageProcess > m_imageProcess;
 	bool m_clearBackground;
 	bool m_enableShapeCache;
+	bool m_enableDirtyRegions;
 	bool m_enableSound;
 	uint32_t m_contextSize;
 	bool m_visible;

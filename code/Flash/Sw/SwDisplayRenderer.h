@@ -41,7 +41,8 @@ public:
 		const Aabb2& frameBounds,
 		float viewWidth,
 		float viewHeight,
-		const Vector4& viewOffset
+		const Vector4& viewOffset,
+		const Aabb2& dirtyRegion
 	) T_OVERRIDE T_FINAL;
 
 	virtual void beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) T_OVERRIDE T_FINAL;

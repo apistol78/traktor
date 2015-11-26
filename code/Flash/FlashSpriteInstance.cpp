@@ -706,13 +706,7 @@ void FlashSpriteInstance::eventMouseMove1(int32_t x, int32_t y, int32_t button)
 
 Aabb2 FlashSpriteInstance::getBounds() const
 {
-	Aabb2 bounds = getLocalBounds();
-
-	Matrix33 transform = getTransform();
-	bounds.mn = transform * bounds.mn;
-	bounds.mx = transform * bounds.mx;
-
-	return bounds;
+	return getTransform() * getLocalBounds();
 }
 
 void FlashSpriteInstance::trace(visitor_t visitor) const

@@ -291,10 +291,7 @@ const TextLayout* FlashEditInstance::getTextLayout() const
 
 Aabb2 FlashEditInstance::getBounds() const
 {
-	Aabb2 textBounds = m_edit->getTextBounds();
-	textBounds.mn = getTransform() * textBounds.mn;
-	textBounds.mx = getTransform() * textBounds.mx;
-	return textBounds;
+	return getTransform() * m_edit->getTextBounds();
 }
 
 void FlashEditInstance::eventKey(wchar_t unicode)

@@ -431,9 +431,8 @@ bool RenderViewOpenGL::begin(EyeType eye)
 bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet)
 {
 	// Ensure deferred clears on targets are executed.
-	if (m_targetsDirty)
+	if (m_targetsDirty && !m_targetStack.empty())
 	{
-		T_ASSERT (!m_targetStack.empty());
 		TargetScope& ts = m_targetStack.back();
 		if (ts.clearMask != 0)
 			bindTargets();
@@ -453,9 +452,8 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet)
 bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	// Ensure deferred clears on targets are executed.
-	if (m_targetsDirty)
+	if (m_targetsDirty && !m_targetStack.empty())
 	{
-		T_FATAL_ASSERT (!m_targetStack.empty());
 		TargetScope& ts = m_targetStack.back();
 		if (ts.clearMask != 0)
 			bindTargets();
