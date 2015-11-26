@@ -72,12 +72,14 @@ Ref< flash::ActionObject > FlashLayer_createObject_0(FlashLayer* self)
 	return self->createObject();
 }
 
-Ref< flash::ActionObject > FlashLayer_createObject_1(FlashLayer* self, const std::vector< Any >& argv)
+Ref< flash::ActionObject > FlashLayer_createObject_1(FlashLayer* self, const std::string& prototype)
 {
-	if (!argv.empty())
-		return self->createObject(argv.size(), &argv.front());
-	else
-		return self->createObject();
+	return self->createObject(prototype, 0, 0);
+}
+
+Ref< flash::ActionObject > FlashLayer_createObject_2(FlashLayer* self, const std::string& prototype, const std::vector< Any >& argv)
+{
+	return self->createObject(prototype, argv.size(), &argv.front());
 }
 
 world::Entity* WorldLayer_getEntity_1(WorldLayer* self, const std::wstring& name)
@@ -266,6 +268,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashLayer->addMethod("getRoot", &FlashLayer::getRoot);
 	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_0);
 	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_1);
+	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_2);
 	classFlashLayer->addMethod("createBitmap", &FlashLayer::createBitmap);
 	classFlashLayer->addMethod("isVisible", &FlashLayer::isVisible);
 	classFlashLayer->addMethod("setVisible", &FlashLayer::setVisible);
