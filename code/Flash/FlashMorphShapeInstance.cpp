@@ -21,10 +21,7 @@ const FlashMorphShape* FlashMorphShapeInstance::getShape() const
 
 Aabb2 FlashMorphShapeInstance::getBounds() const
 {
-	Aabb2 bounds = m_shape->getShapeBounds();
-	bounds.mn = getTransform() * bounds.mn;
-	bounds.mx = getTransform() * bounds.mx;
-	return bounds;
+	return getTransform() * m_shape->getShapeBounds();
 }
 
 	}

@@ -183,8 +183,8 @@ bool FlashShape::create(const SwfShape* shape)
 		else if (!shapeRecord->edgeFlag)
 		{
 			// Whenever a style records appear we close the current sub path.
-			uint16_t fs = fillStyle0 ? fillStyle0 : fillStyle1;
-			path.end(fs, 0, lineStyle);
+			uint16_t fs = fillStyle1 ? fillStyle1 : fillStyle0;
+			path.end(0, fs, lineStyle);
 
 			const SwfStyleRecord& s = shapeRecord->style;
 			if (s.stateMoveTo)
@@ -215,8 +215,8 @@ bool FlashShape::create(const SwfShape* shape)
 		}
 	}
 
-	uint16_t fs = fillStyle0 ? fillStyle0 : fillStyle1;
-	path.end(fs, 0, lineStyle);
+	uint16_t fs = fillStyle1 ? fillStyle1 : fillStyle0;
+	path.end(0, fs, lineStyle);
 	
 	m_paths.push_back(path);
 	m_shapeBounds = path.getBounds();
@@ -285,9 +285,7 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 	// Transform paths and modify styles.
 	for (AlignedVector< Path >::const_iterator i = shape.getPaths().begin(); i != shape.getPaths().end(); ++i)
 	{
-		AlignedVector< Vector2 > points = i->getPoints();
 		AlignedVector< SubPath > subPaths = i->getSubPaths();
-
 		for (AlignedVector< SubPath >::iterator j = subPaths.begin(); j != subPaths.end(); ++j)
 		{
 			if (j->fillStyle0)
@@ -297,8 +295,7 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 			if (j->lineStyle)
 				j->lineStyle = lineStyleBase + j->lineStyle;
 		}
-
-		m_paths.push_back(Path(transform, points, subPaths));
+		m_paths.push_back(Path(transform, i->getPoints(), subPaths));
 	}
 
 	// Expand our bounds with transformed shape's bound.

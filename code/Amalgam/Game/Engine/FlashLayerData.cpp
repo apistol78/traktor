@@ -18,6 +18,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.FlashLayerData", LayerData::Ver
 FlashLayerData::FlashLayerData()
 :	m_clearBackground(false)
 ,	m_enableShapeCache(false)
+,	m_enableDirtyRegions(false)
 ,	m_enableSound(true)
 ,	m_contextSize(1)
 {
@@ -59,6 +60,7 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, IEnvironment* environm
 		imageProcess,
 		m_clearBackground,
 		m_enableShapeCache,
+		m_enableDirtyRegions,
 		m_enableSound,
 		m_contextSize
 	);
@@ -90,6 +92,9 @@ void FlashLayerData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 5)
 		s >> Member< bool >(L"enableShapeCache", m_enableShapeCache);
+
+	if (s.getVersion() >= 6)
+		s >> Member< bool >(L"enableDirtyRegions", m_enableDirtyRegions);
 
 	if (s.getVersion() >= 4)
 		s >> Member< uint32_t >(L"contextSize", m_contextSize);

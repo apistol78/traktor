@@ -5,6 +5,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Job.h"
@@ -91,9 +92,15 @@ private:
 		Ref< IStream > s = connection->getStream();
 		T_ASSERT (s);
 
-		std::wstring tempFile = OS::getInstance().getWritableFolderPath() + L"/" + cacheFileName;
-
-		Ref< IStream > d = FileSystem::getInstance().open(tempFile, File::FmWrite);
+		std::wstring tempFile;
+		Ref< IStream > d;
+		
+		for (int32_t i = 0; i < 10; ++i)
+		{
+			tempFile = OS::getInstance().getWritableFolderPath() + L"/" + cacheFileName + L"_" + toString(i);
+			if ((d = FileSystem::getInstance().open(tempFile, File::FmWrite)) != 0)
+				break;
+		}
 		if (!d)
 			return;
 

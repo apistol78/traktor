@@ -123,6 +123,7 @@ bool FlashPreviewControl::create(
 		16 * 1024 * 1024,
 		true,
 		false,
+		false,
 		0.0f
 	);
 #else

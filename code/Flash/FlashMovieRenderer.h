@@ -46,7 +46,14 @@ public:
 	);
 
 private:
+	struct State
+	{
+		Aabb2 bounds;
+		bool visible;
+	};
+
 	Ref< IDisplayRenderer > m_displayRenderer;
+	SmallMap< int32_t, State > m_states;
 
 	void renderSprite(
 		FlashSpriteInstance* spriteInstance,
@@ -60,6 +67,12 @@ private:
 		const Matrix33& transform,
 		const SwfCxTransform& cxTransform,
 		uint8_t blendMode
+	);
+
+	void calculateDirtyRegion(
+		FlashCharacterInstance* characterInstance,
+		const Matrix33& transform, 
+		Aabb2& outDirtyRegion
 	);
 };
 

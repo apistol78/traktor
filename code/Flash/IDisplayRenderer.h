@@ -40,6 +40,7 @@ public:
 	 * \param viewWidth View width in pixels.
 	 * \param viewHeight View height in pixels.
 	 * \param viewOffset View transformation; determined by stage alignment etc.
+	 * \param dirtyRegion Region of stage which needs to be redrawn.
 	 */
 	virtual void begin(
 		const FlashDictionary& dictionary,
@@ -47,7 +48,8 @@ public:
 		const Aabb2& frameBounds,
 		float viewWidth,
 		float viewHeight,
-		const Vector4& viewOffset
+		const Vector4& viewOffset,
+		const Aabb2& dirtyRegion
 	) = 0;
 
 	/*! \brief Begin rendering sprite.

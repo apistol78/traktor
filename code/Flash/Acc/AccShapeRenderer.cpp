@@ -82,7 +82,7 @@ void AccShapeRenderer::beginFrame()
 {
 	for (int32_t i = 0; i < m_cache.size(); ++i)
 	{
-		if (++m_cache[i].unused >= 2)
+		if (++m_cache[i].unused >= 20)
 		{
 			m_cache.resize(0);
 			m_packer.reset(new rbp::GuillotineBinPack(c_cacheWidth, c_cacheHeight));
