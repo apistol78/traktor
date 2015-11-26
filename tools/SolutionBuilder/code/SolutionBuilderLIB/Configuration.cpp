@@ -1,10 +1,14 @@
 #include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberEnum.h>
+#include <Core/Serialization/MemberRefArray.h>
 #include <Core/Serialization/MemberStl.h>
+#include "SolutionBuilderLIB/AggregationItem.h"
 #include "SolutionBuilderLIB/Configuration.h"
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 1, Configuration, traktor::ISerializable)
+using namespace traktor;
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 2, Configuration, ISerializable)
 
 Configuration::Configuration()
 :	m_targetFormat(TfStaticLibrary)
@@ -122,6 +126,21 @@ const std::wstring& Configuration::getAdditionalLinkerOptions() const
 	return m_additionalLinkerOptions;
 }
 
+void Configuration::addAggregationItem(AggregationItem* item)
+{
+	m_aggregationItems.push_back(item);
+}
+
+void Configuration::removeAggregationItem(AggregationItem* item)
+{
+	m_aggregationItems.remove(item);
+}
+
+const RefArray< AggregationItem >& Configuration::getAggregationItems() const
+{
+	return m_aggregationItems;
+}
+
 void Configuration::serialize(traktor::ISerializer& s)
 {
 	traktor::MemberEnum< TargetFormat >::Key kTargetFormat[] =
@@ -154,4 +173,7 @@ void Configuration::serialize(traktor::ISerializer& s)
 		s >> traktor::Member< std::wstring >(L"additionalCompilerOptions", m_additionalCompilerOptions);
 		s >> traktor::Member< std::wstring >(L"additionalLinkerOptions", m_additionalLinkerOptions);
 	}
+
+	if (s.getVersion() >= 2)
+		s >> MemberRefArray< AggregationItem >(L"aggregationItems", m_aggregationItems);
 }
