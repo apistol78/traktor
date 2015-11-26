@@ -27,7 +27,6 @@ struct Vertex
 };
 #pragma pack()
 
-const resource::Id< render::Shader > c_idShaderGlyph(Guid(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}"));
 const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}"));
 const uint32_t c_glyphCount = 1000;
 
@@ -85,10 +84,7 @@ bool AccGlyph::create(
 		s_handleInitialized = true;
 	}
 
-	if (!resourceManager->bind(c_idShaderGlyph, m_shaderGlyph))
-		return false;
-
-	if (!resourceManager->bind(c_idShaderGlyphMask, m_shaderGlyphMask))
+	if (!resourceManager->bind(c_idShaderGlyphMask, m_shaderGlyph))
 		return false;
 
 	std::vector< render::VertexElement > vertexElements;
@@ -222,18 +218,15 @@ void AccGlyph::render(
 	if (!m_count)
 		return;
 
-	render::Shader* shader = (maskReference == 0) ? m_shaderGlyph : m_shaderGlyphMask;
-	T_ASSERT (shader);
-
 	const render::handle_t techniques[] = { s_handleTechniqueDefault, s_handleTechniqueDropShadow, 0, s_handleTechniqueGlow };
 	T_ASSERT (glyphFilter < sizeof_array(techniques));
 
-	shader->setTechnique(techniques[glyphFilter]);
-	if (!shader->getCurrentProgram())
+	m_shaderGlyph->setTechnique(techniques[glyphFilter]);
+	if (!m_shaderGlyph->getCurrentProgram())
 		return;
 
 	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Flash AccGlyph");
-	renderBlock->program = shader->getCurrentProgram();
+	renderBlock->program = m_shaderGlyph->getCurrentProgram();
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffers[m_currentVertexBuffer];
 	renderBlock->primitive = render::PtTriangles;

@@ -61,8 +61,6 @@ public:
 private:
 	resource::Proxy< render::Shader > m_shaderSolid;
 	resource::Proxy< render::Shader > m_shaderTextured;
-	resource::Proxy< render::Shader > m_shaderSolidMask;
-	resource::Proxy< render::Shader > m_shaderTexturedMask;
 	resource::Proxy< render::Shader > m_shaderIncrementMask;
 	resource::Proxy< render::Shader > m_shaderDecrementMask;
 	Ref< render::VertexBuffer > m_vertexBuffer;
