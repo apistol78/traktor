@@ -357,18 +357,10 @@ void AccShape::render(
 	render::Shader* shaderTextured = 0;
 	if (!maskWrite)
 	{
-		if (maskReference == 0)
-		{
-			shaderSolid = m_shapeResources->m_shaderSolid;
-			shaderTextured = m_shapeResources->m_shaderTextured;
-		}
-		else
-		{
-			shaderSolid = m_shapeResources->m_shaderSolidMask;
-			shaderTextured = m_shapeResources->m_shaderTexturedMask;
-		}
-
+		shaderSolid = m_shapeResources->m_shaderSolid;
 		shaderSolid->setTechnique(m_shapeResources->m_handleTechniques[blendMode]);
+
+		shaderTextured = m_shapeResources->m_shaderTextured;
 		shaderTextured->setTechnique(m_shapeResources->m_handleTechniques[blendMode]);
 	}
 	else

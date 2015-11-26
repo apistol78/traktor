@@ -16,10 +16,8 @@ namespace traktor
 		namespace
 		{
 
-const resource::Id< render::Shader > c_idShaderSolid(Guid(L"{1EDAAA67-1E02-8A49-B857-14D7812C96D6}"));
-const resource::Id< render::Shader > c_idShaderTextured(Guid(L"{10426D17-CF0A-4849-A207-24F101A78459}"));
-const resource::Id< render::Shader > c_idShaderSolidMask(Guid(L"{2EDC5E1B-562D-9F46-9E3C-474729FB078E}"));
-const resource::Id< render::Shader > c_idShaderTexturedMask(Guid(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}"));
+const resource::Id< render::Shader > c_idShaderSolid(Guid(L"{2EDC5E1B-562D-9F46-9E3C-474729FB078E}"));
+const resource::Id< render::Shader > c_idShaderTextured(Guid(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}"));
 const resource::Id< render::Shader > c_idShaderIncrementMask(Guid(L"{16868DF6-A619-5541-83D2-94088A0AC552}"));
 const resource::Id< render::Shader > c_idShaderDecrementMask(Guid(L"{D6821007-47BB-D748-9E29-20829ED09C70}"));
 
@@ -63,10 +61,6 @@ bool AccQuad::create(
 	if (!resourceManager->bind(c_idShaderSolid, m_shaderSolid))
 		return false;
 	if (!resourceManager->bind(c_idShaderTextured, m_shaderTextured))
-		return false;
-	if (!resourceManager->bind(c_idShaderSolidMask, m_shaderSolidMask))
-		return false;
-	if (!resourceManager->bind(c_idShaderTexturedMask, m_shaderTexturedMask))
 		return false;
 	if (!resourceManager->bind(c_idShaderIncrementMask, m_shaderIncrementMask))
 		return false;
@@ -133,16 +127,8 @@ void AccQuad::render(
 	Ref< render::Shader > shaderSolid, shaderTextured;
 	if (!maskWrite)
 	{
-		if (maskReference == 0)
-		{
-			shaderSolid = m_shaderSolid;
-			shaderTextured = m_shaderTextured;
-		}
-		else
-		{
-			shaderSolid = m_shaderSolidMask;
-			shaderTextured = m_shaderTexturedMask;
-		}
+		shaderSolid = m_shaderSolid;
+		shaderTextured = m_shaderTextured;
 	}
 	else
 	{

@@ -122,17 +122,17 @@ void FlashMovieRenderer::renderSprite(
 		}
 		else
 		{
+			// Increment stencil mask.
 			m_displayRenderer->beginMask(true);
-
 			renderCharacter(
 				layer.instance,
 				transform,
 				cxTransform,
 				SbmDefault
 			);
-
 			m_displayRenderer->endMask();
 
+			// Render all layers which is clipped to new stencil mask.
 			for (++i; i != layers.end(); ++i)
 			{
 				if (i->first > layer.clipDepth)
@@ -150,15 +150,14 @@ void FlashMovieRenderer::renderSprite(
 				);
 			}
 
+			// Decrement stencil mask.
 			m_displayRenderer->beginMask(false);
-
 			renderCharacter(
 				layer.instance,
 				transform,
 				cxTransform,
 				SbmDefault
 			);
-
 			m_displayRenderer->endMask();
 		}
 	}
