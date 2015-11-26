@@ -47,10 +47,8 @@ bool FlashShape::create(const Aabb2& shapeBounds, const SwfShape* shape, const S
 		m_lineStyles[i].create(styles->lineStyles[i]);
 
 	Path path;
-
-	for (uint16_t i = 0; i < shape->numShapeRecords; ++i)
+	for (SwfShapeRecord* shapeRecord = shape->shapeRecords; shapeRecord; shapeRecord = shapeRecord->next)
 	{
-		SwfShapeRecord* shapeRecord = shape->shapeRecords[i];
 		if (shapeRecord->edgeFlag && shapeRecord->edge.straightFlag)
 		{
 			const SwfStraightEdgeRecord& s = shapeRecord->edge.straightEdge;
@@ -156,10 +154,8 @@ bool FlashShape::create(const SwfShape* shape)
 	uint16_t lineStyle = 0;
 
 	Path path;
-
-	for (uint16_t i = 0; i < shape->numShapeRecords; ++i)
+	for (SwfShapeRecord* shapeRecord = shape->shapeRecords; shapeRecord; shapeRecord = shapeRecord->next)
 	{
-		SwfShapeRecord* shapeRecord = shape->shapeRecords[i];
 		if (shapeRecord->edgeFlag && shapeRecord->edge.straightFlag)
 		{
 			const SwfStraightEdgeRecord& s = shapeRecord->edge.straightEdge;

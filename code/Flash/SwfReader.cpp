@@ -404,7 +404,6 @@ bool SwfReader::readMorphStyles(SwfStyles*& outStartStyles, SwfStyles*& outEndSt
 SwfShapeRecord* SwfReader::readShapeRecord(uint32_t numFillBits, uint32_t numLineBits, int shapeType)
 {
 	SwfShapeRecord* shapeRecord = m_pool->alloc< SwfShapeRecord >();
-
 	std::memset(shapeRecord, 0, sizeof(SwfShapeRecord));
 
 	shapeRecord->edgeFlag = m_bs->readBit();
@@ -474,17 +473,15 @@ SwfShapeRecord* SwfReader::readShapeRecord(uint32_t numFillBits, uint32_t numLin
 
 bool SwfReader::readShapeWithStyle(SwfShape*& outShape, SwfStyles*& outStyles, int shapeType)
 {
-	const uint32_t c_maxRecordCount = 32 * 1024U;
-
 	outStyles = readStyles(shapeType);
 	if (!outStyles)
 		return false;
 
 	outShape = m_pool->alloc< SwfShape >();
-	outShape->numShapeRecords = 0;
-	outShape->shapeRecords = m_pool->allocArray< SwfShapeRecord >(c_maxRecordCount);
+	outShape->shapeRecords = 0;
 
-	while (outShape->numShapeRecords < c_maxRecordCount)
+	SwfShapeRecord* p = 0;
+	for (;;)
 	{
 		SwfShapeRecord* shapeRecord = readShapeRecord(
 			outStyles->numFillBits,
@@ -504,8 +501,12 @@ bool SwfReader::readShapeWithStyle(SwfShape*& outShape, SwfStyles*& outStyles, i
 		)
 			break;
 
-		T_ASSERT (outShape->numShapeRecords < c_maxRecordCount);
-		outShape->shapeRecords[outShape->numShapeRecords++] = shapeRecord;
+		if (p)
+			p->next = shapeRecord;
+		else
+			outShape->shapeRecords = shapeRecord;
+
+		p = shapeRecord;
 
 		if (!shapeRecord->edgeFlag && shapeRecord->style.stateNewStyles)
 		{
@@ -519,16 +520,14 @@ bool SwfReader::readShapeWithStyle(SwfShape*& outShape, SwfStyles*& outStyles, i
 
 SwfShape* SwfReader::readShape(int shapeType)
 {
-	const uint32_t c_maxShapeCount = 1024U;
-
-	SwfShape* shape = m_pool->alloc< SwfShape >();
-	shape->numShapeRecords = 0;
-	shape->shapeRecords = m_pool->allocArray< SwfShapeRecord >(c_maxShapeCount);
-
 	uint32_t numFillBits = m_bs->readUnsigned(4);
 	uint32_t numLineBits = m_bs->readUnsigned(4);
 
-	while (shape->numShapeRecords < c_maxShapeCount)
+	SwfShape* shape = m_pool->alloc< SwfShape >();
+	shape->shapeRecords = 0;
+
+	SwfShapeRecord* p = 0;
+	for (;;)
 	{
 		SwfShapeRecord* shapeRecord = readShapeRecord(numFillBits, numLineBits, shapeType);
 		if (!shapeRecord)
@@ -544,7 +543,12 @@ SwfShape* SwfReader::readShape(int shapeType)
 		)
 			break;
 
-		shape->shapeRecords[shape->numShapeRecords++] = shapeRecord;
+		if (p)
+			p->next = shapeRecord;
+		else
+			shape->shapeRecords = shapeRecord;
+
+		p = shapeRecord;
 	}
 
 	return shape;
