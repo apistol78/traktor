@@ -616,18 +616,13 @@ Ref< flash::ActionObject > FlashLayer::createObject() const
 	return new flash::ActionObject(cx);
 }
 
-Ref< flash::ActionObject > FlashLayer::createObject(uint32_t argc, const Any* argv) const
+Ref< flash::ActionObject > FlashLayer::createObject(const std::string& prototype, uint32_t argc, const Any* argv) const
 {
 	if (!m_moviePlayer)
 	{
 		log::warning << L"FlashLayer::createObject fail; no movie player initialized." << Endl;
 		return 0;
 	}
-
-	if (argc < 1)
-		return 0;
-
-	std::string prototype = argv[0].getString();
 
 	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
 	T_ASSERT (movieInstance);
@@ -658,9 +653,9 @@ Ref< flash::ActionObject > FlashLayer::createObject(uint32_t argc, const Any* ar
 	Ref< flash::ActionObject > self = new flash::ActionObject(cx, classPrototype);
 	self->setMember(flash::ActionContext::Id__ctor__, classFunctionValue);
 
-	flash::ActionValueArray args(cx->getPool(), argc - 1);
-	for (uint32_t i = 0; i < argc - 1; ++i)
-		args[i] = CastAny< flash::ActionValue >::get(argv[i + 1]);
+	flash::ActionValueArray args(cx->getPool(), argc);
+	for (uint32_t i = 0; i < argc; ++i)
+		args[i] = CastAny< flash::ActionValue >::get(argv[i]);
 
 	classFunction->call(self, args);
 

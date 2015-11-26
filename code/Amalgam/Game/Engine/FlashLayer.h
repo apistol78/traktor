@@ -129,14 +129,12 @@ public:
 
 	/*! \brief Create ActionScript object.
 	 *
-	 * First argument should contain the name
-	 * of the class prototype.
-	 *
+	 * \param prototype Class prototype.
 	 * \param argc Argument count.
 	 * \param argv Arguments.
 	 * \return ActionScript object.
 	 */
-	Ref< flash::ActionObject > createObject(uint32_t argc, const Any* argv) const;
+	Ref< flash::ActionObject > createObject(const std::string& prototype, uint32_t argc, const Any* argv) const;
 
 	/*! \brief Create Flash bitmap object from image.
 	 *
