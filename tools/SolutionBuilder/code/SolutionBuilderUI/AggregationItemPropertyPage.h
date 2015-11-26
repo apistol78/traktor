@@ -15,6 +15,7 @@ public:
 
 private:
 	traktor::Ref< AggregationItem > m_aggregationItem;
+	traktor::Ref< traktor::ui::Edit > m_editSourceFile;
 	traktor::Ref< traktor::ui::Edit > m_editTargetPath;
 
 	void eventEditFocus(traktor::ui::FocusEvent* event);

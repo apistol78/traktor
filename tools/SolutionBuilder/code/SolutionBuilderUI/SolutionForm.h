@@ -80,6 +80,8 @@ private:
 
 	traktor::ui::custom::TreeViewItem* createTreeAggregationItemItem(traktor::ui::custom::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item);
 
+	traktor::ui::custom::TreeViewItem* createTreeAggregationItemItem(traktor::ui::custom::TreeViewItem* parentItem, Project* project, Configuration* configuration, AggregationItem* item);
+
 	bool loadSolution(const traktor::Path& fileName);
 
 	void commandNew();

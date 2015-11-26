@@ -29,6 +29,7 @@
 #include "SolutionBuilderUI/SolutionPropertyPage.h"
 
 // Tools
+#include "SolutionBuilderUI/AddAggregatesTool.h"
 #include "SolutionBuilderUI/AddMultipleConfigurations.h"
 #include "SolutionBuilderUI/EditConfigurations.h"
 #include "SolutionBuilderUI/FlattenDefinitionsTool.h"
@@ -41,7 +42,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.8"
+#define TITLE L"SolutionBuilder v3.0"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
@@ -108,6 +109,7 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	m_menuBar->add(menuFile);
 
 	Ref< ui::MenuItem > menuTools = new ui::MenuItem(L"Tools");
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.AddAggregates"), L"Add aggregates..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.AddMultipleConfigurations"), L"Add multiple configurations..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.EditConfigurations"), L"Edit configurations..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportProject"), L"Import project..."));
@@ -153,6 +155,7 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 
 	m_menuConfiguration = new ui::PopupMenu();
 	m_menuConfiguration->create();
+	m_menuConfiguration->add(new ui::MenuItem(ui::Command(L"Configuration.AddAggregation"), L"Add New Aggregation"));
 	m_menuConfiguration->add(new ui::MenuItem(ui::Command(L"Configuration.Remove"), L"Remove"));
 
 	m_menuFilter = new ui::PopupMenu();
@@ -350,6 +353,11 @@ ui::custom::TreeViewItem* SolutionForm::createTreeConfigurationItem(ui::custom::
 	treeConfiguration->setData(L"PRIMARY", configuration);
 	treeConfiguration->setData(L"PROJECT", project);
 	treeConfiguration->setData(L"CONFIGURATION", configuration);
+
+	const RefArray< AggregationItem >& items = configuration->getAggregationItems();
+	for (RefArray< AggregationItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+		createTreeAggregationItemItem(treeConfiguration, project, configuration, *i);
+
 	return treeConfiguration;
 }
 
@@ -389,6 +397,15 @@ ui::custom::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::custom
 	Ref< ui::custom::TreeViewItem > treeItem = m_treeSolution->createItem(parentItem, item->getSourceFile() + L" => " + item->getTargetPath(), 7);
 	treeItem->setData(L"PRIMARY", item);
 	treeItem->setData(L"AGGREGATION", aggregation);
+	return treeItem;
+}
+
+ui::custom::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::custom::TreeViewItem* parentItem, Project* project, Configuration* configuration, AggregationItem* item)
+{
+	Ref< ui::custom::TreeViewItem > treeItem = m_treeSolution->createItem(parentItem, item->getSourceFile() + L" => " + item->getTargetPath(), 7);
+	treeItem->setData(L"PRIMARY", item);
+	treeItem->setData(L"PROJECT", project);
+	treeItem->setData(L"CONFIGURATION", configuration);
 	return treeItem;
 }
 
@@ -579,6 +596,12 @@ void SolutionForm::eventMenuClick(ui::MenuClickEvent* event)
 	}
 	else if (command == L"File.Exit")
 		commandExit();
+	else if (command == L"Tools.AddAggregates")
+	{
+		AddAggregatesTool addAggregates;
+		addAggregates.execute(this, m_solution);
+		updateSolutionTree();
+	}
 	else if (command == L"Tools.AddMultipleConfigurations")
 	{
 		AddMultipleConfigurations addMultipleConfigurations;
@@ -792,7 +815,17 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
-			if (command == L"Configuration.Remove")
+			if (command == L"Configuration.AddAggregation")
+			{
+				Ref< AggregationItem > item = new AggregationItem();
+				item->setSourceFile(L"*.*");
+				item->setTargetPath(L"");
+				configuration->addAggregationItem(item);
+
+				createTreeAggregationItemItem(selectedItem, project, configuration, item);
+				selectedItem->expand();
+			}
+			else if (command == L"Configuration.Remove")
 			{
 				Ref< Project > project = selectedItem->getData< Project >(L"PROJECT");
 				T_ASSERT (project);
@@ -965,6 +998,10 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 					Ref< Aggregation > parentAggregation = parentItem->getData< Aggregation >(L"PRIMARY");
 					if (parentAggregation)
 						parentAggregation->removeItem(aggregationItem);
+
+					Ref< Configuration > parentConfiguration = parentItem->getData< Configuration >(L"PRIMARY");
+					if (parentConfiguration)
+						parentConfiguration->removeAggregationItem(aggregationItem);
 
 					m_treeSolution->removeItem(selectedItem);
 				}

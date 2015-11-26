@@ -10,6 +10,7 @@
 #include <Core/Misc/String.h>
 #include <Core/Misc/MD5.h>
 #include <Core/Log/Log.h>
+#include "SolutionBuilderLIB/AggregationItem.h"
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"
@@ -360,6 +361,30 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 				configuration,
 				os
 			);
+		}
+
+		const RefArray< AggregationItem >& aggregationItems = configuration->getAggregationItems();
+		if (!aggregationItems.empty())
+		{
+			os << L"<PostBuildEvent>" << Endl;
+			os << IncreaseIndent;
+			os << L"<Command>";
+			int32_t indent = os.getIndent();
+			os.setIndent(0);
+
+			os << L"pushd \"$(TargetDir)\"" << Endl;
+			Path targetDir = projectPath + L"/" + configuration->getName();
+			for (RefArray< AggregationItem >::const_iterator j = aggregationItems.begin(); j != aggregationItems.end(); ++j)
+			{
+				Path targetPath = FileSystem::getInstance().getAbsolutePath(targetDir, Path((*j)->getTargetPath()));
+				os << L"xcopy /F /R /Y /I \"" << (*j)->getSourceFile()<< L"\" \"" << targetPath.getPathName() << L"\\\"" << Endl;
+			}
+			os << L"popd" << Endl;
+
+			os.setIndent(indent);
+			os << L"</Command>" << Endl;
+			os << DecreaseIndent;
+			os << L"</PostBuildEvent>" << Endl;
 		}
 
 		os << DecreaseIndent;

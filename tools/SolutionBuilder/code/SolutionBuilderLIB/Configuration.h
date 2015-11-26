@@ -3,7 +3,10 @@
 
 #include <string>
 #include <vector>
+#include <Core/RefArray.h>
 #include <Core/Serialization/ISerializable.h>
+
+class AggregationItem;
 
 /*! \brief Configuration settings.
  *
@@ -78,6 +81,17 @@ public:
 
 	const std::wstring& getAdditionalLinkerOptions() const;
 
+	/*! \name Aggregation items. */
+	//@{
+
+	void addAggregationItem(AggregationItem* item);
+
+	void removeAggregationItem(AggregationItem* item);
+
+	const traktor::RefArray< AggregationItem >& getAggregationItems() const;
+
+	//@}
+
 	virtual void serialize(traktor::ISerializer& s);
 
 private:
@@ -91,6 +105,7 @@ private:
 	std::vector< std::wstring > m_libraries;
 	std::wstring m_additionalCompilerOptions;
 	std::wstring m_additionalLinkerOptions;
+	traktor::RefArray< AggregationItem > m_aggregationItems;
 };
 
 #endif	// Configuration_H
