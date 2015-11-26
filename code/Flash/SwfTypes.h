@@ -244,12 +244,12 @@ struct SwfShapeRecord
 		SwfStyleRecord style;
 		SwfEdgeRecord edge;
 	};
+	SwfShapeRecord* next;
 };
 
 struct SwfShape
 {
-	uint16_t numShapeRecords;
-	SwfShapeRecord** shapeRecords;
+	SwfShapeRecord* shapeRecords;
 };
 
 struct SwfTextStyleRecord

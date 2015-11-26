@@ -45,10 +45,8 @@ bool FlashMorphShape::create(const Aabb2& shapeBounds, const SwfShape* startShap
 		m_lineStyles[i].create(startStyles->lineStyles[i]);
 
 	Path path;
-
-	for (uint16_t i = 0; i < startShape->numShapeRecords; ++i)
+	for (SwfShapeRecord* shapeRecord = startShape->shapeRecords; shapeRecord; shapeRecord = shapeRecord->next)
 	{
-		SwfShapeRecord* shapeRecord = startShape->shapeRecords[i];
 		if (shapeRecord->edgeFlag && shapeRecord->edge.straightFlag)
 		{
 			const SwfStraightEdgeRecord& s = shapeRecord->edge.straightEdge;
