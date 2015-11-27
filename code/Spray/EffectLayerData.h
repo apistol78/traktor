@@ -48,7 +48,7 @@ public:
 
 	Ref< EffectLayer > createEffectLayer(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	void setName(const std::wstring& name) { m_name = name; }
 

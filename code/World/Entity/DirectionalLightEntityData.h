@@ -34,7 +34,7 @@ class T_DLLCLASS DirectionalLightEntityData : public EntityData
 public:
 	DirectionalLightEntityData();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const Vector4& getSunColor() const { return m_sunColor; }
 

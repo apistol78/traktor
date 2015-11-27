@@ -34,7 +34,7 @@ public:
 
 	const resource::Id< EntityData >& getEntityData() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	resource::Id< EntityData > m_entityData;

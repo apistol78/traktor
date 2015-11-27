@@ -37,11 +37,11 @@ public:
 	
 	virtual ~KeyboardInputSource();
 	
-	virtual std::wstring getDescription() const;
+	virtual std::wstring getDescription() const T_OVERRIDE T_FINAL;
 	
-	virtual void prepare(float T, float dT);
+	virtual void prepare(float T, float dT) T_OVERRIDE T_FINAL;
 
-	virtual float read(float T, float dT);
+	virtual float read(float T, float dT) T_OVERRIDE T_FINAL;
 	
 private:
 	struct Key

@@ -26,7 +26,7 @@ class T_DLLCLASS TheaterController : public scene::ISceneController
 public:
 	TheaterController(const RefArray< const Act >& acts);
 
-	virtual void update(scene::Scene* scene, float time, float deltaTime);
+	virtual void update(scene::Scene* scene, float time, float deltaTime) T_OVERRIDE T_FINAL;
 
 	float getActStartTime(int32_t act) const;
 

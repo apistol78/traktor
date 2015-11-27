@@ -33,7 +33,7 @@ public:
 
 	const std::wstring& getName() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Guid m_id;

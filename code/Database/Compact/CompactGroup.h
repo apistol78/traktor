@@ -25,19 +25,19 @@ public:
 
 	bool internalCreate(CompactGroupEntry* groupEntry);
 
-	virtual std::wstring getName() const;
+	virtual std::wstring getName() const T_OVERRIDE T_FINAL;
 
-	virtual bool rename(const std::wstring& name);
+	virtual bool rename(const std::wstring& name) T_OVERRIDE T_FINAL;
 
-	virtual bool remove();
+	virtual bool remove() T_OVERRIDE T_FINAL;
 
-	virtual Ref< IProviderGroup > createGroup(const std::wstring& groupName);
+	virtual Ref< IProviderGroup > createGroup(const std::wstring& groupName) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IProviderInstance > createInstance(const std::wstring& instanceName, const Guid& instanceGuid);
+	virtual Ref< IProviderInstance > createInstance(const std::wstring& instanceName, const Guid& instanceGuid) T_OVERRIDE T_FINAL;
 
-	virtual bool getChildGroups(RefArray< IProviderGroup >& outChildGroups);
+	virtual bool getChildGroups(RefArray< IProviderGroup >& outChildGroups) T_OVERRIDE T_FINAL;
 
-	virtual bool getChildInstances(RefArray< IProviderInstance >& outChildInstances);
+	virtual bool getChildInstances(RefArray< IProviderInstance >& outChildInstances) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< CompactContext > m_context;

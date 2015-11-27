@@ -31,7 +31,7 @@ class T_DLLCLASS EntityEventSetData : public ISerializable
 public:
 	virtual Ref< EntityEventSet > create(const IEntityBuilder* entityBuilder) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class EntityEventSetPipeline;

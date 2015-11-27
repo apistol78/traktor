@@ -37,7 +37,7 @@ public:
 		const TerrainComponent& terrainComponent
 	) const T_OVERRIDE;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class RubbleLayer;

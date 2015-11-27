@@ -35,7 +35,7 @@ public:
 	
 	const std::map< std::wstring, Ref< IInputSourceData > >& getSourceData() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::map< std::wstring, Ref< IInputSourceData > > m_sourceData;

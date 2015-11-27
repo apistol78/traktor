@@ -31,11 +31,11 @@ public:
 		PrExclusive
 	};
 
-	virtual Ref< Instance > createInstance() const;
+	virtual Ref< Instance > createInstance() const T_OVERRIDE T_FINAL;
 	
-	virtual void evaluate(Instance* instance, InputValueSet& valueSet) const;
+	virtual void evaluate(Instance* instance, InputValueSet& valueSet) const T_OVERRIDE T_FINAL;
 	
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 	
 private:
 	Priority m_priority;

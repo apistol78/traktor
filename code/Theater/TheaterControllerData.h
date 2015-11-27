@@ -24,9 +24,9 @@ class T_DLLCLASS TheaterControllerData : public scene::ISceneControllerData
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< scene::ISceneController > createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const;
+	virtual Ref< scene::ISceneController > createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const RefArray< ActData >& getActs() const { return m_acts; }
 

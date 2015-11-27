@@ -48,7 +48,7 @@ class T_DLLCLASS ShapeResource : public ISerializable
 public:
 	Ref< Shape > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, db::Instance* resourceInstance) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class ImageShapePipeline;

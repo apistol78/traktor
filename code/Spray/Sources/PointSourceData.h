@@ -26,9 +26,9 @@ class T_DLLCLASS PointSourceData : public SourceData
 public:
 	PointSourceData();
 
-	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Vector4 m_position;

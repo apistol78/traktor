@@ -22,9 +22,9 @@ public:
 
 	virtual ~RemoteBus();
 
-	virtual bool putEvent(const IEvent* event);
+	virtual bool putEvent(const IEvent* event) T_OVERRIDE T_FINAL;
 
-	virtual bool getEvent(Ref< const IEvent >& outEvent, bool& outRemote);
+	virtual bool getEvent(Ref< const IEvent >& outEvent, bool& outRemote) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< RemoteConnection > m_connection;

@@ -31,7 +31,7 @@ public:
 
 	const Guid& getGuid() const { return m_guid; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	uint32_t m_handle;

@@ -47,7 +47,7 @@ public:
 		const Vector4& deltaMotion,
 		uint32_t emitCount,
 		EmitterInstance& emitterInstance
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	const Vector4& getCenter() const { return m_center; }
 

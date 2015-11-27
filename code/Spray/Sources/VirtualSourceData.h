@@ -26,9 +26,9 @@ class T_DLLCLASS VirtualSourceData : public SourceData
 public:
 	VirtualSourceData();
 
-	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Range< float > m_velocity;

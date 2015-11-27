@@ -25,7 +25,7 @@ class T_DLLCLASS HeightfieldResource : public ISerializable
 public:
 	HeightfieldResource();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 

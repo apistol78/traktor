@@ -34,7 +34,7 @@ class T_DLLCLASS DecalComponentData : public IEntityComponentData
 public:
 	DecalComponentData();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	float getSize() const { return m_size; }
 
