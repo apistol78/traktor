@@ -28,7 +28,7 @@ public:
 
 	uint64_t get() const { return m_value; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	uint64_t m_value;

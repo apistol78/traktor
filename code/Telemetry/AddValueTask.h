@@ -18,7 +18,7 @@ class AddValueTask : public ITask
 public:
 	AddValueTask(const std::wstring& serverHost, const std::wstring& client, const std::wstring& symbol, int32_t delta);
 
-	virtual TaskResult execute();
+	virtual TaskResult execute() T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_serverHost;

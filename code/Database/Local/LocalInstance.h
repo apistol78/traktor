@@ -25,41 +25,41 @@ public:
 
 	bool internalCreateNew(const Guid& instanceGuid);
 
-	virtual std::wstring getPrimaryTypeName() const;
+	virtual std::wstring getPrimaryTypeName() const T_OVERRIDE T_FINAL;
 
-	virtual bool openTransaction();
+	virtual bool openTransaction() T_OVERRIDE T_FINAL;
 
-	virtual bool commitTransaction();
+	virtual bool commitTransaction() T_OVERRIDE T_FINAL;
 
-	virtual bool closeTransaction();
+	virtual bool closeTransaction() T_OVERRIDE T_FINAL;
 
-	virtual std::wstring getName() const;
+	virtual std::wstring getName() const T_OVERRIDE T_FINAL;
 
-	virtual bool setName(const std::wstring& name);
+	virtual bool setName(const std::wstring& name) T_OVERRIDE T_FINAL;
 
-	virtual Guid getGuid() const;
+	virtual Guid getGuid() const T_OVERRIDE T_FINAL;
 
-	virtual bool setGuid(const Guid& guid);
+	virtual bool setGuid(const Guid& guid) T_OVERRIDE T_FINAL;
 
-	virtual bool getLastModifyDate(DateTime& outModifyDate) const;
+	virtual bool getLastModifyDate(DateTime& outModifyDate) const T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getFlags() const;
+	virtual uint32_t getFlags() const T_OVERRIDE T_FINAL;
 
-	virtual bool remove();
+	virtual bool remove() T_OVERRIDE T_FINAL;
 
-	virtual Ref< IStream > readObject(const TypeInfo*& outSerializerType) const;
+	virtual Ref< IStream > readObject(const TypeInfo*& outSerializerType) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IStream > writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType);
+	virtual Ref< IStream > writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType) T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const;
+	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const T_OVERRIDE T_FINAL;
 
-	virtual bool getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const;
+	virtual bool getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const T_OVERRIDE T_FINAL;
 
-	virtual bool removeAllData();
+	virtual bool removeAllData() T_OVERRIDE T_FINAL;
 
-	virtual Ref< IStream > readData(const std::wstring& dataName) const;
+	virtual Ref< IStream > readData(const std::wstring& dataName) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IStream > writeData(const std::wstring& dataName);
+	virtual Ref< IStream > writeData(const std::wstring& dataName) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< Context > m_context;

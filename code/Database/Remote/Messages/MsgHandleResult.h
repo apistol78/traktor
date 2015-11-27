@@ -28,7 +28,7 @@ public:
 
 	uint32_t get() const { return m_handle; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	uint32_t m_handle;

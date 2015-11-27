@@ -22,13 +22,13 @@ class ActionRemoveAllData : public Action
 public:
 	ActionRemoveAllData(const Path& instancePath);
 
-	virtual bool execute(Context* context);
+	virtual bool execute(Context* context) T_OVERRIDE T_FINAL;
 
-	virtual bool undo(Context* context);
+	virtual bool undo(Context* context) T_OVERRIDE T_FINAL;
 
-	virtual void clean(Context* context);
+	virtual void clean(Context* context) T_OVERRIDE T_FINAL;
 
-	virtual bool redundant(const Action* action) const;
+	virtual bool redundant(const Action* action) const T_OVERRIDE T_FINAL;
 
 private:
 	Path m_instancePath;

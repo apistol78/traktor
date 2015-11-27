@@ -26,15 +26,15 @@ class T_DLLCLASS VideoDecoderTheora : public IVideoDecoder
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(IStream* stream);
+	virtual bool create(IStream* stream) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual bool getInformation(VideoDecoderInfo& outInfo) const;
+	virtual bool getInformation(VideoDecoderInfo& outInfo) const T_OVERRIDE T_FINAL;
 
-	virtual void rewind();
+	virtual void rewind() T_OVERRIDE T_FINAL;
 
-	virtual bool decode(uint32_t frame, void* bits, uint32_t pitch);
+	virtual bool decode(uint32_t frame, void* bits, uint32_t pitch) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< IStream > m_stream;

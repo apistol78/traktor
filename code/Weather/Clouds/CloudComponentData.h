@@ -53,7 +53,7 @@ public:
 
 	Ref< CloudComponent > createComponent(world::Entity* owner, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const resource::Id< render::Shader >& getParticleShader() const { return m_particleShader; }
 

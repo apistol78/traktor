@@ -36,9 +36,9 @@ public:
 
 	const RefArray< IInputSourceData >& getSources() const;
 	
-	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const;
+	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	RefArray< IInputSourceData > m_sources;

@@ -29,9 +29,9 @@ public:
 
 	const std::vector< InputDefaultControlType >& getControlTypes() const;
 	
-	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const;
+	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::vector< InputDefaultControlType > m_controlTypes;

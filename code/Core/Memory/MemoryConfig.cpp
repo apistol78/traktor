@@ -13,7 +13,7 @@ namespace traktor
 IAllocator* s_stdAllocator = 0;
 IAllocator* s_allocator = 0;
 
-#if !defined(_PS3)
+#if !defined(__GNUC__) && !defined(_PS3)
 void destroyAllocator()
 {
 	if (s_allocator != s_stdAllocator)

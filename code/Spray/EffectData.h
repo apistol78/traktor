@@ -55,7 +55,7 @@ public:
 
 	void addLayer(EffectLayerData* layer);
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	float getDuration() const { return m_duration; }
 

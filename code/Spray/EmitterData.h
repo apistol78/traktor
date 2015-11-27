@@ -63,7 +63,7 @@ public:
 
 	Ref< Emitter > createEmitter(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	void setSource(SourceData* source)  { m_source = source; }
 

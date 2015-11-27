@@ -33,11 +33,11 @@ class T_DLLCLASS GenericInputSource : public IInputSource
 public:
 	GenericInputSource(const GenericInputSourceData* data, DeviceControlManager* deviceControlManager);
 	
-	virtual std::wstring getDescription() const;
+	virtual std::wstring getDescription() const T_OVERRIDE T_FINAL;
 
-	virtual void prepare(float T, float dT);
+	virtual void prepare(float T, float dT) T_OVERRIDE T_FINAL;
 
-	virtual float read(float T, float dT);
+	virtual float read(float T, float dT) T_OVERRIDE T_FINAL;
 	
 private:
 	Ref< const GenericInputSourceData > m_data;

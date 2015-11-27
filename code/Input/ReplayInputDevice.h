@@ -28,33 +28,33 @@ class T_DLLCLASS ReplayInputDevice : public IInputDevice
 public:
 	ReplayInputDevice(IInputDevice* inputDevice, RecordInputScript* inputScript, bool loop);
 
-	virtual std::wstring getName() const;
+	virtual std::wstring getName() const T_OVERRIDE T_FINAL;
 
-	virtual InputCategory getCategory() const;
+	virtual InputCategory getCategory() const T_OVERRIDE T_FINAL;
 
-	virtual bool isConnected() const;
+	virtual bool isConnected() const T_OVERRIDE T_FINAL;
 
-	virtual int32_t getControlCount();
+	virtual int32_t getControlCount() T_OVERRIDE T_FINAL;
 
-	virtual std::wstring getControlName(int32_t control);
+	virtual std::wstring getControlName(int32_t control) T_OVERRIDE T_FINAL;
 
-	virtual bool isControlAnalogue(int32_t control) const;
+	virtual bool isControlAnalogue(int32_t control) const T_OVERRIDE T_FINAL;
 
-	virtual float getControlValue(int32_t control);
+	virtual float getControlValue(int32_t control) T_OVERRIDE T_FINAL;
 
-	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const;
+	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const T_OVERRIDE T_FINAL;
 
-	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
+	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const T_OVERRIDE T_FINAL;
 
-	virtual bool getKeyEvent(KeyEvent& outEvent);
+	virtual bool getKeyEvent(KeyEvent& outEvent) T_OVERRIDE T_FINAL;
 
-	virtual void resetState();
+	virtual void resetState() T_OVERRIDE T_FINAL;
 
-	virtual void readState();
+	virtual void readState() T_OVERRIDE T_FINAL;
 
-	virtual bool supportRumble() const;
+	virtual bool supportRumble() const T_OVERRIDE T_FINAL;
 
-	virtual void setRumble(const InputRumble& rumble);
+	virtual void setRumble(const InputRumble& rumble) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< IInputDevice > m_inputDevice;

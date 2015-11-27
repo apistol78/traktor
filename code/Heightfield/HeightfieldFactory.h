@@ -30,13 +30,13 @@ class T_DLLCLASS HeightfieldFactory : public resource::IResourceFactory
 public:
 	HeightfieldFactory(db::Database* database);
 
-	virtual const TypeInfoSet getResourceTypes() const;
+	virtual const TypeInfoSet getResourceTypes() const T_OVERRIDE T_FINAL;
 
-	virtual const TypeInfoSet getProductTypes() const;
+	virtual const TypeInfoSet getProductTypes() const T_OVERRIDE T_FINAL;
 
-	virtual bool isCacheable() const;
+	virtual bool isCacheable() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const;
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const T_OVERRIDE T_FINAL;
 
 private:
 	Ref< db::Database > m_database;

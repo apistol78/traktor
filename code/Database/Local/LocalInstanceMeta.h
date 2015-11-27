@@ -37,7 +37,7 @@ public:
 
 	const std::vector< std::wstring >& getBlobs() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Guid m_guid;

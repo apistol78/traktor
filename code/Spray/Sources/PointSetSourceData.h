@@ -31,9 +31,9 @@ class T_DLLCLASS PointSetSourceData : public SourceData
 public:
 	PointSetSourceData();
 
-	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const resource::Id< PointSet >& getPointSet() const { return m_pointSet; }
 

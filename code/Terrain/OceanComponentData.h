@@ -38,7 +38,7 @@ class T_DLLCLASS OceanComponentData : public world::IEntityComponentData
 public:
 	OceanComponentData();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 

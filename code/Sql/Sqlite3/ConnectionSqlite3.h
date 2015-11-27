@@ -32,17 +32,17 @@ class T_DLLCLASS ConnectionSqlite3 : public IConnection
 public:
 	ConnectionSqlite3();
 
-	virtual bool connect(const std::wstring& connectionString);
+	virtual bool connect(const std::wstring& connectionString) T_OVERRIDE T_FINAL;
 
-	virtual void disconnect();
+	virtual void disconnect() T_OVERRIDE T_FINAL;
 
-	virtual Ref< IResultSet > executeQuery(const std::wstring& query);
+	virtual Ref< IResultSet > executeQuery(const std::wstring& query) T_OVERRIDE T_FINAL;
 
-	virtual int32_t executeUpdate(const std::wstring& update);
+	virtual int32_t executeUpdate(const std::wstring& update) T_OVERRIDE T_FINAL;
 
-	virtual int32_t lastInsertId();
+	virtual int32_t lastInsertId() T_OVERRIDE T_FINAL;
 
-	virtual bool tableExists(const std::wstring& tableName);
+	virtual bool tableExists(const std::wstring& tableName) T_OVERRIDE T_FINAL;
 
 private:
 	Semaphore m_lock;
