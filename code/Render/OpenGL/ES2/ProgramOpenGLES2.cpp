@@ -23,6 +23,8 @@ namespace traktor
 		namespace
 		{
 
+#if !defined(T_OFFLINE_ONLY)
+
 struct DeleteProgramCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_programName;
@@ -38,6 +40,8 @@ struct DeleteProgramCallback : public ContextOpenGLES2::IDeleteCallback
 		delete this;
 	}
 };
+            
+#endif
 
 bool storeIfNotEqual(const float* source, int length, float* dest)
 {

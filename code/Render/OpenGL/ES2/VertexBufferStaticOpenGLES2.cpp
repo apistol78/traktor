@@ -7,6 +7,8 @@
 #include "Render/OpenGL/ES2/StateCache.h"
 #include "Render/OpenGL/ES2/VertexBufferStaticOpenGLES2.h"
 
+#if !defined(T_OFFLINE_ONLY)
+
 namespace traktor
 {
 	namespace render
@@ -310,3 +312,5 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 
 	}
 }
+
+#endif

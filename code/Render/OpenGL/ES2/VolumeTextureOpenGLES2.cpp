@@ -4,6 +4,8 @@
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
 
+#if !defined(T_OFFLINE_ONLY)
+
 namespace traktor
 {
 	namespace render
@@ -280,3 +282,5 @@ void VolumeTextureOpenGLES2::bindSize(GLint locationSize)
 
 	}
 }
+
+#endif

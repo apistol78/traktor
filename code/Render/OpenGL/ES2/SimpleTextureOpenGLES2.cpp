@@ -6,6 +6,8 @@
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 
+#if !defined(T_OFFLINE_ONLY)
+
 namespace traktor
 {
 	namespace render
@@ -339,3 +341,5 @@ void SimpleTextureOpenGLES2::bindSize(GLint locationSize)
 
 	}
 }
+
+#endif
