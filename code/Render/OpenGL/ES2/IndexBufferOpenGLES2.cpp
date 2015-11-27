@@ -3,6 +3,8 @@
 #include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 
+#if !defined(T_OFFLINE_ONLY)
+
 namespace traktor
 {
 	namespace render
@@ -86,3 +88,5 @@ void IndexBufferOpenGLES2::activate(StateCache* stateCache)
 
 	}
 }
+
+#endif
