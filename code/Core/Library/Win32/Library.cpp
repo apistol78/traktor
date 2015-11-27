@@ -21,14 +21,9 @@ Library::~Library()
 
 bool Library::open(const Path& libraryName)
 {
-#if !defined(_DEBUG)
-	const wchar_t suffix[] = L".dll";
-#else
-	const wchar_t suffix[] = L"_d.dll";
-#endif
 	tstring path;
 
-	path = wstots(libraryName.getPathName() + suffix);
+	path = wstots(libraryName.getPathName() + L".dll");
 	m_handle = (void*)LoadLibrary(path.c_str());
 
 	if (!m_handle)

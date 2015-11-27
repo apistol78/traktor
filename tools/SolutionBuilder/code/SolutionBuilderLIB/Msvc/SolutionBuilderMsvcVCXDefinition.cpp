@@ -146,7 +146,7 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 
 			std::wstring externalRootPath = externalDependency->getSolution()->getRootPath();
 			std::wstring externalProjectPath = externalRootPath + L"/" + toLower(externalConfiguration->getName());
-			std::wstring externalProjectName = externalDependency->getProject()->getName() + ((configuration->getTargetProfile() == Configuration::TpDebug) ? L"_d.lib" : L".lib");
+			std::wstring externalProjectName = externalDependency->getProject()->getName() + L".lib";
 
 			outAdditionalLibraries.insert(externalProjectName);
 			outAdditionalLibraryPaths.insert(externalProjectPath);

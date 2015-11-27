@@ -81,6 +81,27 @@ public:
 
 	const std::wstring& getAdditionalLinkerOptions() const;
 
+	/*! \name Debug options. */
+	//@{
+
+	void setDebugExecutable(const std::wstring& debugExecutable);
+
+	const std::wstring& getDebugExecutable() const;
+
+	void setDebugArguments(const std::wstring& debugArguments);
+
+	const std::wstring& getDebugArguments() const;
+
+	void setDebugEnvironment(const std::wstring& debugEnvironment);
+
+	const std::wstring& getDebugEnvironment() const;
+
+	void setDebugWorkingDirectory(const std::wstring& debugWorkingDirectory);
+
+	const std::wstring& getDebugWorkingDirectory() const;
+
+	//@}
+
 	/*! \name Aggregation items. */
 	//@{
 
@@ -105,6 +126,10 @@ private:
 	std::vector< std::wstring > m_libraries;
 	std::wstring m_additionalCompilerOptions;
 	std::wstring m_additionalLinkerOptions;
+	std::wstring m_debugExecutable;
+	std::wstring m_debugArguments;
+	std::wstring m_debugEnvironment;
+	std::wstring m_debugWorkingDirectory;
 	traktor::RefArray< AggregationItem > m_aggregationItems;
 };
 

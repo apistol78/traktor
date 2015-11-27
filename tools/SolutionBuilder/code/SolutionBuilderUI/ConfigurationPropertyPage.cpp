@@ -24,7 +24,7 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	if (!ui::Container::create(
 		parent,
 		ui::WsNone,
-		new ui::TableLayout(L"*,100%", L"*,*,100%,100%,100%,100%,*,*", 4, 4)
+		new ui::TableLayout(L"*,100%", L"*,*,100%,100%,100%,100%,*,*,*,*,*,*", 4, 4)
 	))
 		return false;
 
@@ -90,6 +90,34 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	m_editAdditionalLinkerOptions->create(this);
 	m_editAdditionalLinkerOptions->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
 
+	Ref< ui::Static > staticDebugExecutable = new ui::Static();
+	staticDebugExecutable->create(this, L"Debug executable");
+
+	m_editDebugExecutable = new ui::Edit();
+	m_editDebugExecutable->create(this);
+	m_editDebugExecutable->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
+
+	Ref< ui::Static > staticDebugArguments = new ui::Static();
+	staticDebugArguments->create(this, L"Debug arguments");
+
+	m_editDebugArguments = new ui::Edit();
+	m_editDebugArguments->create(this);
+	m_editDebugArguments->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
+
+	Ref< ui::Static > staticDebugEnvironment = new ui::Static();
+	staticDebugEnvironment->create(this, L"Debug environment");
+
+	m_editDebugEnvironment = new ui::Edit();
+	m_editDebugEnvironment->create(this);
+	m_editDebugEnvironment->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
+
+	Ref< ui::Static > staticDebugWorkingDirectory = new ui::Static();
+	staticDebugWorkingDirectory->create(this, L"Debug working directory");
+
+	m_editDebugWorkingDirectory = new ui::Edit();
+	m_editDebugWorkingDirectory->create(this);
+	m_editDebugWorkingDirectory->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
+
 	fit();
 
 	return true;
@@ -136,6 +164,11 @@ void ConfigurationPropertyPage::set(Configuration* configuration)
 
 	m_editAdditionalCompilerOptions->setText(m_configuration->getAdditionalCompilerOptions());
 	m_editAdditionalLinkerOptions->setText(m_configuration->getAdditionalLinkerOptions());
+
+	m_editDebugExecutable->setText(m_configuration->getDebugExecutable());
+	m_editDebugArguments->setText(m_configuration->getDebugArguments());
+	m_editDebugEnvironment->setText(m_configuration->getDebugEnvironment());
+	m_editDebugWorkingDirectory->setText(m_configuration->getDebugWorkingDirectory());
 }
 
 void ConfigurationPropertyPage::eventSelectType(ui::SelectionChangeEvent* event)
@@ -226,4 +259,9 @@ void ConfigurationPropertyPage::eventFocusAdditionalOptions(ui::FocusEvent* even
 {
 	m_configuration->setAdditionalCompilerOptions(m_editAdditionalCompilerOptions->getText());
 	m_configuration->setAdditionalLinkerOptions(m_editAdditionalLinkerOptions->getText());
+
+	m_configuration->setDebugExecutable(m_editDebugExecutable->getText());
+	m_configuration->setDebugArguments(m_editDebugArguments->getText());
+	m_configuration->setDebugEnvironment(m_editDebugEnvironment->getText());
+	m_configuration->setDebugWorkingDirectory(m_editDebugWorkingDirectory->getText());
 }

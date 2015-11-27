@@ -99,17 +99,6 @@ function migrate(args)
 	-- Copy binaries into bundle.
 	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
 	for _, f in ipairs(files) do
-		if debug then
-			local debugFile = f
-			if f:endswith(f, ".dylib") then
-				debugFile = f:sub(1, string.len(f) - 4) .. "_d.dylib"
-			else
-				debugFile = f .. "_d"
-			end
-			if fileSystem:exist(Path(sourcePath .. debugFile)) then
-				f = debugFile
-			end
-		end
 		if not run:replace(sourcePath .. f, bundle .. "/Contents/MacOS/" .. f) then
 			stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
 			return 1

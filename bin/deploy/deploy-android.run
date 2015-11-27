@@ -99,12 +99,6 @@ function deploy(args)
 	local wholeLinkFiles = ""
 	local externalLinkFiles = ""
 	for _, f in ipairs(files) do
-
-		-- Append "_d" to each file; indicating a debug build.
-		if debug then
-			f = f:sub(1, string.len(f) - 2) .. "_d.a"
-		end
-
 		if f:starts("libExtern") then
 			externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
 		else
@@ -350,12 +344,6 @@ function migrate(args)
 	local wholeLinkFiles = ""
 	local externalLinkFiles = ""
 	for _, f in ipairs(files) do
-
-		-- Append "_d" to each file; indicating a debug build.
-		if debug then
-			f = f:sub(1, string.len(f) - 2) .. "_d.a"
-		end
-
 		if f:starts("libExtern") then
 			externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
 		else

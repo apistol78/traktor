@@ -63,6 +63,12 @@ protected:
 		Project* project
 	) const;
 
+	bool generateUser(
+		GeneratorContext& context,
+		Solution* solution,
+		Project* project
+	) const;
+
 	bool collectFiles(
 		Project* project,
 		ProjectItem* item,

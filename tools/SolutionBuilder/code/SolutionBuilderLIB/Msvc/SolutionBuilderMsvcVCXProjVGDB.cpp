@@ -109,7 +109,7 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateProject(
 	))
 		return false;
 
-	if (!FileSystem::getInstance().makeDirectory(projectPath))
+	if (!FileSystem::getInstance().makeAllDirectories(projectPath))
 		return false;
 
 	traktor::log::info << L"Generating msbuild project \"" << projectFileName << L"\"" << Endl;
@@ -382,7 +382,7 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 	))
 		return false;
 
-	if (!FileSystem::getInstance().makeDirectory(projectPath))
+	if (!FileSystem::getInstance().makeAllDirectories(projectPath))
 		return false;
 
 	traktor::log::info << L"Generating VisualGDB makefiles..." << Endl;
@@ -671,12 +671,12 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 			switch (configuration->getTargetFormat())
 			{
 			case Configuration::TfStaticLibrary:
-				os << L"TARGETNAME := lib" << project->getName() << L"_d.a" << Endl;
+				os << L"TARGETNAME := lib" << project->getName() << L".a" << Endl;
 				os << L"TARGETTYPE := STATIC" << Endl;
 				break;
 
 			case Configuration::TfSharedLibrary:
-				os << L"TARGETNAME := lib" << project->getName() << L"_d.so" << Endl;
+				os << L"TARGETNAME := lib" << project->getName() << L".so" << Endl;
 				os << L"TARGETTYPE := SHARED" << Endl;
 				break;
 
@@ -1292,20 +1292,10 @@ void SolutionBuilderMsvcVCXProjVGDB::collectLinkDependencies(
 				std::wstring dependentProductPath = dependentSolution->getRootPath() + L"/" + dependentConfiguration->getName();
 				std::wstring dependentProduct = dependentProductPath + L"/lib" + dependentProject->getName();
 
-				if (dependentConfiguration->getTargetProfile() == Configuration::TpDebug)
-				{
-					if (format == Configuration::TfStaticLibrary)
-						dependentProduct += L"_d.a";
-					else
-						dependentProduct += L"_d.so";
-				}
+				if (format == Configuration::TfStaticLibrary)
+					dependentProduct += L".a";
 				else
-				{
-					if (format == Configuration::TfStaticLibrary)
-						dependentProduct += L".a";
-					else
-						dependentProduct += L".so";
-				}
+					dependentProduct += L".so";
 
 				Path libraryPathRelative;
 				if (!FileSystem::getInstance().getRelativePath(dependentProduct, projectPath, libraryPathRelative))

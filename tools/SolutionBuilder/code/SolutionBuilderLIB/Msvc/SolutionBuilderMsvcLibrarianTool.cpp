@@ -17,10 +17,7 @@ bool SolutionBuilderMsvcLibrarianTool::generate(GeneratorContext& context, Solut
 	os << L"Name=\"VCLibrarianTool\"" << Endl;
 
 	// Output file.
-	if (configuration->getTargetProfile() == Configuration::TpDebug)
-		os << L"OutputFile=\"$(OutDir)/" << project->getName() << L"_d.lib\"" << Endl;
-	else
-		os << L"OutputFile=\"$(OutDir)/" << project->getName() << L".lib\"" << Endl;
+	os << L"OutputFile=\"$(OutDir)/" << project->getName() << L".lib\"" << Endl;
 
 	// Static options.
 	for (std::map< std::wstring, std::wstring >::const_iterator i = m_staticOptions.begin(); i != m_staticOptions.end(); ++i)

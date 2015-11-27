@@ -117,17 +117,6 @@ function deployStatic(args)
 	for i = #files, 1, -1 do -- We must link in reverse order to ensure global initializers are executed correctly.
 		local f = files[i]
 		if f ~= "" then
-			if debug then
-				local debugFile = f
-				if f:endswith(".lib") then
-					debugFile = f:sub(1, string.len(f) - 4) .. "_d.lib"
-				elseif f:endswith(".dll") then
-					debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
-				end
-				if fileSystem:exist(Path(prepend .. debugFile)) then
-					f = debugFile
-				end
-			end
 			if f:endswith(".lib") then
 				externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
 			else
@@ -141,17 +130,6 @@ function deployStatic(args)
 		local f = files[i]
 		if f ~= "" then
 			linkerIncludes = linkerIncludes .. "/INCLUDE:___module__" .. f:sub(1, string.len(f) - 4):gsub("%.", "_") .. " "
-			if debug then
-				local debugFile = f
-				if f:endswith(".lib") then
-					debugFile = f:sub(1, string.len(f) - 4) .. "_d.lib"
-				elseif f:endswith(".dll") then
-					debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
-				end
-				if fileSystem:exist(Path(prepend .. debugFile)) then
-					f = debugFile
-				end
-			end				
 			wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
 		end
 	end
@@ -244,17 +222,6 @@ function deployShared(args)
 	local deployFiles = ""
 
 	for _, f in ipairs(files) do
-		if debug then
-			local debugFile = f
-			if f:endswith(".dll") then
-				debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
-			elseif f:endswith(".exe") then
-				debugFile = f:sub(1, string.len(f) - 4) .. "_d.exe"
-			end
-			if fileSystem:exist(Path(run:cwd() .. "/" .. debugFile)) then
-				f = debugFile
-			end
-		end
 		deployFiles = deployFiles .. " " .. f	
 	end
 
@@ -284,18 +251,7 @@ end
 
 function launch(args)
 	stdout:printLn("Launching Win32...")
-
-	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
-
-	if debug then
-		if string.endswith(executable, ".exe") then
-			executable = executable:sub(1, string.len(f) - 4) .. "_d.exe"
-		else
-			executable = executable .. "_d"
-		end
-	end
-
 	return run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteLaunch $(DEPLOY_TARGET_HOST) " .. executable .. " \\-s Application.config", nil)
 end
 
@@ -343,17 +299,6 @@ function migrateStatic(args)
 	for i = #files, 1, -1 do -- We must link in reverse order to ensure global initializers are executed correctly.
 		local f = files[i]
 		if f ~= "" then
-			if debug then
-				local debugFile = f
-				if f:endswith(".lib") then
-					debugFile = f:sub(1, string.len(f) - 4) .. "_d.lib"
-				elseif f:endswith(".dll") then
-					debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
-				end
-				if fileSystem:exist(Path(prepend .. debugFile)) then
-					f = debugFile
-				end
-			end
 			if f:endswith(".lib") then
 				externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
 			else
@@ -367,17 +312,6 @@ function migrateStatic(args)
 		local f = files[i]
 		if f ~= "" then
 			linkerIncludes = linkerIncludes .. "/INCLUDE:___module__" .. f:sub(1, string.len(f) - 4):gsub("%.", "_") .. " "
-			if debug then
-				local debugFile = f
-				if f:endswith(".lib") then
-					debugFile = f:sub(1, string.len(f) - 4) .. "_d.lib"
-				elseif f:endswith(".dll") then
-					debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
-				end
-				if fileSystem:exist(Path(prepend .. debugFile)) then
-					f = debugFile
-				end
-			end				
 			wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
 		end
 	end
@@ -466,17 +400,6 @@ function migrateShared(args)
 	run:mkdir("bin32")
 	local files = os:getEnvironment("DEPLOY_FILES_SHARED"):split(" ")
 	for _, f in ipairs(files) do
-		if debug then
-			local debugFile = f
-			if string.endswith(f, ".dll") then
-				debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
-			elseif string.endswith(f, ".exe") then
-				debugFile = f:sub(1, string.len(f) - 4) .. "_d.exe"
-			end
-			if fileSystem:exist(Path(sourcePath .. debugFile)) then
-				f = debugFile
-			end
-		end
 		if not run:replace(sourcePath .. f, "bin32/" .. f) then
 			stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
 			return 1

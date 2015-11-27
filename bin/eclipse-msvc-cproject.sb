@@ -33,11 +33,6 @@
 			insertLibrary(outLibraryPaths, libraryRelPath:getPathName())
 		end
 
-		local productSuffix = ""
-		if configuration:getTargetProfile() == "Debug" then
-			productSuffix = "_d"
-		end
-
 		local dependencies = project:getDependencies()
 		for i = 0, dependencies:size() - 1 do
 			local dep = dependencies:get(i)
@@ -49,7 +44,7 @@
 				local localConfig = localProject:getConfiguration(configuration:getName())
 
 				if localProject:getEnable() then
-					insertLibrary(outLibraries, localProject:getName() .. productSuffix .. ".lib")
+					insertLibrary(outLibraries, localProject:getName() .. ".lib")
 					collectLinkProducts(
 						localSolution,
 						localProject,
@@ -72,7 +67,7 @@
 					)
 
 					insertLibrary(outLibraryPaths, externalRelPath:getPathName())
-					insertLibrary(outLibraries, externalProject:getName() .. productSuffix .. ".lib")
+					insertLibrary(outLibraries, externalProject:getName() .. ".lib")
 
 					collectLinkProducts(
 						externalSolution,
@@ -164,11 +159,7 @@
 					buildArtefactType = "org.eclipse.cdt.build.core.buildArtefactType.exe"
 				end
 
-				if configuration:getTargetProfile() == "Debug" then
-					artifactName = "${ProjName}_d"
-				else
-					artifactName = "${ProjName}"
-				end
+				artifactName = "${ProjName}"
 
 				local cTool = "org.eclipse.cdt.msvc.cl.c.exe"
 				local cppTool = "org.eclipse.cdt.msvc.cl.exe"

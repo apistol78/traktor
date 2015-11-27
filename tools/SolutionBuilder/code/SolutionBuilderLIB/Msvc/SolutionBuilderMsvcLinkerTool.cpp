@@ -74,17 +74,11 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 		switch (configuration->getTargetFormat())
 		{
 		case Configuration::TfSharedLibrary:
-			if (configuration->getTargetProfile() == Configuration::TpDebug)
-				os << L"OutputFile=\"$(OutDir)/" << project->getName() << L"_d.dll\"" << Endl;
-			else
-				os << L"OutputFile=\"$(OutDir)/" << project->getName() << L".dll\"" << Endl;
+			os << L"OutputFile=\"$(OutDir)/" << project->getName() << L".dll\"" << Endl;
 			break;
 
 		case Configuration::TfExecutable:
-			if (configuration->getTargetProfile() == Configuration::TpDebug)
-				os << L"OutputFile=\"$(OutDir)/" << project->getName() << L"_d.exe\"" << Endl;
-			else
-				os << L"OutputFile=\"$(OutDir)/" << project->getName() << L".exe\"" << Endl;
+			os << L"OutputFile=\"$(OutDir)/" << project->getName() << L".exe\"" << Endl;
 			break;
 
 		default:
@@ -110,7 +104,7 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 		if (configuration->getTargetProfile() == Configuration::TpDebug)
 		{
 			os << L"GenerateDebugInformation=\"true\"" << Endl;
-			os << L"ProgramDatabaseFile=\"$(OutDir)/" << project->getName() << L"_d.pdb\"" << Endl;
+			os << L"ProgramDatabaseFile=\"$(OutDir)/" << project->getName() << L".pdb\"" << Endl;
 		}
 		else
 			os << L"GenerateDebugInformation=\"false\"" << Endl;
@@ -118,10 +112,7 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 
 	if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
 	{
-		if (configuration->getTargetProfile() == Configuration::TpDebug)
-			os << L"ImportLibrary=\"$(OutDir)/" << project->getName() << L"_d.lib\"" << Endl;
-		else
-			os << L"ImportLibrary=\"$(OutDir)/" << project->getName() << L".lib\"" << Endl;
+		os << L"ImportLibrary=\"$(OutDir)/" << project->getName() << L".lib\"" << Endl;
 	}
 
 	// Static options.
@@ -241,7 +232,7 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 			{
 				std::wstring externalRootPath = externalDependency->getSolution()->getRootPath();
 				std::wstring externalProjectPath = externalRootPath + L"/" + toLower(externalConfiguration->getName());
-				std::wstring externalProjectName = externalDependency->getProject()->getName() + ((configuration->getTargetProfile() == Configuration::TpDebug) ? L"_d.lib" : L".lib");
+				std::wstring externalProjectName = externalDependency->getProject()->getName() + L".lib";
 
 				if (!m_resolveFullLibraryPaths)
 				{

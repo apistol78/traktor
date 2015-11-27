@@ -131,7 +131,6 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	m_treeSolution->addImage(ui::Bitmap::load(c_ResourceSolution, sizeof(c_ResourceSolution), L"png"), 8);
 	m_treeSolution->addEventHandler< ui::MouseButtonDownEvent >(this, &SolutionForm::eventTreeButtonDown);
 	m_treeSolution->addEventHandler< ui::SelectionChangeEvent >(this, &SolutionForm::eventTreeSelect);
-	m_treeSolution->addEventHandler< ui::custom::TreeViewEditEvent >(this, &SolutionForm::eventTreeEdit);
 	m_treeSolution->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &SolutionForm::eventTreeChange);
 
 	m_menuSolution = new ui::PopupMenu();
@@ -239,6 +238,15 @@ void SolutionForm::destroy()
 	ui::Form::destroy();
 }
 
+void SolutionForm::hideAllPages()
+{
+	m_pageSolution->hide();
+	m_pageProject->hide();
+	m_pageConfiguration->hide();
+	m_pageAggregation->hide();
+	m_pageAggregationItem->hide();
+}
+
 void SolutionForm::updateTitle()
 {
 	std::wstringstream ss;
@@ -257,12 +265,6 @@ void SolutionForm::updateTitle()
 
 void SolutionForm::updateSolutionTree()
 {
-	m_pageSolution->hide();
-	m_pageProject->hide();
-	m_pageConfiguration->hide();
-	m_pageAggregation->hide();
-	m_pageAggregationItem->hide();
-
 	Ref< ui::HierarchicalState > treeState = m_treeSolution->captureState();
 
 	m_treeSolution->removeAllItems();
@@ -418,6 +420,7 @@ bool SolutionForm::loadSolution(const traktor::Path& fileName)
 	m_solution = xml::XmlDeserializer(file).readObject< Solution >();
 	file->close();
 
+	hideAllPages();
 	updateSolutionTree();
 
 	m_solutionHash = DeepHash(m_solution).get();
@@ -443,6 +446,7 @@ void SolutionForm::commandNew()
 	m_solutionHash = DeepHash(m_solution).get();
 	m_solutionFileName = L"";
 
+	hideAllPages();
 	updateSolutionTree();
 	updateTitle();
 }
@@ -582,6 +586,7 @@ void SolutionForm::eventMenuClick(ui::MenuClickEvent* event)
 			m_solution = xml::XmlDeserializer(file).readObject< Solution >();
 			file->close();
 
+			hideAllPages();
 			updateSolutionTree();
 
 			m_solutionHash = DeepHash(m_solution).get();
@@ -1068,14 +1073,6 @@ void SolutionForm::eventTreeSelect(ui::SelectionChangeEvent* event)
 	}
 
 	update();
-}
-
-void SolutionForm::eventTreeEdit(ui::custom::TreeViewEditEvent* event)
-{
-	Ref< ui::custom::TreeViewItem > treeItem = event->getItem();
-	Ref< AggregationItem > aggregationItem = treeItem->getData< AggregationItem >(L"PRIMARY");
-	if (aggregationItem)
-		treeItem->setText(aggregationItem->getSourceFile());
 }
 
 void SolutionForm::eventTreeChange(ui::custom::TreeViewContentChangeEvent* event)

@@ -242,9 +242,6 @@ function deploy(args)
 
 		for _, f in ipairs(files) do
 			if string.endswith(f, ".a") then
-				if debug then
-					f = f:sub(1, string.len(f) - 2) .. "_d.a"
-				end
 				deployFiles = deployFiles .. " " .. f
 			elseif string.endswith(f, ".plist") then
 				deployFiles = deployFiles .. " " .. f
@@ -350,9 +347,6 @@ function migrate(args)
 
 		for _, f in ipairs(files) do
 			if string.endswith(f, ".a") then
-				if debug then
-					f = f:sub(1, string.len(f) - 2) .. "_d.a"
-				end
 				deployFiles = deployFiles .. " " .. f
 			elseif string.endswith(f, ".plist") then
 				deployFiles = deployFiles .. " " .. f
