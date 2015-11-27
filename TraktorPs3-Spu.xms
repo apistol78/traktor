@@ -9,7 +9,7 @@
 			<name>Traktor.Sound.JobMulConst</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -27,14 +27,18 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Sound.JobMulConst.lib</sourceFile>
+							<sourceFile>Traktor.Sound.JobMulConst.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -52,9 +56,13 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Sound.JobMulConst.lib</sourceFile>
+							<sourceFile>Traktor.Sound.JobMulConst.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -75,7 +83,7 @@
 						<name>Traktor.Core</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
 						<configurations>
-							<item type="Configuration" version="2">
+							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -93,14 +101,13 @@
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Core.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
-									</item>
-								</aggregationItems>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
 							</item>
-							<item type="Configuration" version="2">
+							<item type="Configuration" version="3">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -118,12 +125,11 @@
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Core.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
-									</item>
-								</aggregationItems>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
 							</item>
 						</configurations>
 						<items>
@@ -288,7 +294,7 @@
 			<name>Traktor.Sound.JobAddMulConst</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -306,14 +312,18 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Sound.JobAddMulConst.lib</sourceFile>
+							<sourceFile>Traktor.Sound.JobAddMulConst.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -331,9 +341,13 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Sound.JobAddMulConst.lib</sourceFile>
+							<sourceFile>Traktor.Sound.JobAddMulConst.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -358,7 +372,7 @@
 			<name>Traktor.Sound.JobStretch</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -377,14 +391,18 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Sound.JobStretch.lib</sourceFile>
+							<sourceFile>Traktor.Sound.JobStretch.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -403,9 +421,13 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Sound.JobStretch.lib</sourceFile>
+							<sourceFile>Traktor.Sound.JobStretch.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -430,7 +452,7 @@
 			<name>Traktor.Spray.JobDragModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -449,14 +471,18 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobDragModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobDragModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -475,9 +501,13 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobDragModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobDragModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -502,7 +532,7 @@
 			<name>Traktor.Spray.JobGravityModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -521,14 +551,18 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobGravityModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobGravityModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -547,9 +581,13 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobGravityModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobGravityModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -574,7 +612,7 @@
 			<name>Traktor.Spray.JobIntegrateModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -593,14 +631,18 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobIntegrateModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobIntegrateModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -619,9 +661,13 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobIntegrateModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobIntegrateModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -646,7 +692,7 @@
 			<name>Traktor.Spray.JobPlaneCollisionModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -665,14 +711,18 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobPlaneCollisionModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobPlaneCollisionModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -691,9 +741,13 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobPlaneCollisionModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobPlaneCollisionModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -718,7 +772,7 @@
 			<name>Traktor.Spray.JobSizeModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -737,14 +791,18 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobSizeModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobSizeModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -763,9 +821,13 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobSizeModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobSizeModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -790,7 +852,7 @@
 			<name>Traktor.Spray.JobVortexModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -809,14 +871,18 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobVortexModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobVortexModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -835,9 +901,13 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobVortexModifier.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobVortexModifier.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -863,7 +933,7 @@
 			<name>Traktor.Spray.JobPointRenderer</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -882,14 +952,18 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobPointRenderer.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobPointRenderer.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -908,9 +982,13 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Spray.JobPointRenderer.lib</sourceFile>
+							<sourceFile>Traktor.Spray.JobPointRenderer.ppu.o</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -935,7 +1013,7 @@
 			<name>PS3_SPURS_Broadphase</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -964,6 +1042,10 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
 					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_Broadphase.lib</sourceFile>
@@ -971,7 +1053,7 @@
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -999,6 +1081,10 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
 					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_Broadphase.lib</sourceFile>
@@ -1054,7 +1140,7 @@
 			<name>PS3_SPURS_BulletCD</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1085,6 +1171,10 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -fstack-check -ffast-math</additionalCompilerOptions>
 					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_BulletCD.lib</sourceFile>
@@ -1092,7 +1182,7 @@
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1120,6 +1210,10 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -ffast-math --param inline-unit-growth=10000 --param large-function-growth=10000 --param max-inline-insns-single=10000</additionalCompilerOptions>
 					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_BulletCD.lib</sourceFile>
@@ -1417,7 +1511,7 @@
 			<name>PS3_SPURS_Integrate</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1445,6 +1539,10 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -fstack-check -ffast-math</additionalCompilerOptions>
 					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_Integrate.lib</sourceFile>
@@ -1452,7 +1550,7 @@
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1479,6 +1577,10 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -ffast-math --param inline-unit-growth=10000 --param large-function-growth=10000 --param max-inline-insns-single=10000</additionalCompilerOptions>
 					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_Integrate.lib</sourceFile>
@@ -1558,7 +1660,7 @@
 			<name>PS3_SPURS_ConstraintSolver</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
 			<configurations>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1588,6 +1690,10 @@
 					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
 					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_ConstraintSolver.lib</sourceFile>
@@ -1595,7 +1701,7 @@
 						</item>
 					</aggregationItems>
 				</item>
-				<item type="Configuration" version="2">
+				<item type="Configuration" version="3">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1624,6 +1730,10 @@
 					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
 					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_ConstraintSolver.lib</sourceFile>

@@ -1,7 +1,11 @@
 #include "Net/Http/HttpConnection.h"
 #include "Net/Http/HttpResponse.h"
 #include "Net/Http/HttpChunkStream.h"
-#include "Net/SocketAddressIPv6.h"
+#if !defined(__PS3__)
+#	include "Net/SocketAddressIPv6.h"
+#else
+#	include "Net/SocketAddressIPv4.h"
+#endif
 #include "Net/SocketStream.h"
 #include "Core/Io/StreamStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -23,7 +27,11 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 		return ErInvalidUrl;
 	
 	// Lookup host address.
+#if !defined(__PS3__)
 	SocketAddressIPv6 addr(url.getHost(), url.getPort());
+#else
+	SocketAddressIPv4 addr(url.getHost(), url.getPort());
+#endif
 	if (!addr.valid())
 		return ErInvalidUrl;
 
