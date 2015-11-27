@@ -126,11 +126,11 @@
             </item>
             <item>
               <name>ProgramDatabaseFile</name>
-              <value>$(OutDir)%(PROJECT_NAME)_d.pdb</value>
+              <value>$(OutDir)%(PROJECT_NAME).pdb</value>
             </item>
             <item>
               <name>ImportLibrary</name>
-              <value>$(OutDir)%(PROJECT_NAME)_d.lib</value>
+              <value>$(OutDir)%(PROJECT_NAME).lib</value>
             </item>
             <item>
               <name>RandomizedBaseAddress</name>
@@ -225,7 +225,7 @@
             </item>
             <item>
               <name>ProgramDatabaseFile</name>
-              <value>$(OutDir)%(PROJECT_NAME)_d.pdb</value>
+              <value>$(OutDir)%(PROJECT_NAME).pdb</value>
             </item>
             <item>
               <name>RandomizedBaseAddress</name>
@@ -320,7 +320,7 @@
             </item>
             <item>
               <name>ProgramDatabaseFile</name>
-              <value>$(OutDir)%(PROJECT_NAME)_d.pdb</value>
+              <value>$(OutDir)%(PROJECT_NAME).pdb</value>
             </item>
             <item>
               <name>RandomizedBaseAddress</name>

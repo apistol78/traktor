@@ -21,13 +21,14 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 			{
 				std::wstring suffix = L"";
 
-				if ((*j)->getTargetProfile() == Configuration::TpDebug)
-					suffix = L"_d";
-
 				switch ((*j)->getTargetFormat())
 				{
 				case Configuration::TfStaticLibrary:
-					suffix = L".lib";
+					if (
+						compareIgnoreCase< std::wstring >((*j)->getName(), L"DebugStatic") == 0 ||
+						compareIgnoreCase< std::wstring >((*j)->getName(), L"ReleaseStatic") == 0
+					)
+						suffix = L".lib";
 					break;
 				case Configuration::TfSharedLibrary:
 					suffix = L".dll";
@@ -40,10 +41,13 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 					break;
 				}
 
-				Ref< AggregationItem > a = new AggregationItem();
-				a->setSourceFile((*i)->getName() + suffix);
-				a->setTargetPath(L"$(TRAKTOR_HOME)/bin/latest/win64/" + toLower((*j)->getName()));
-				(*j)->addAggregationItem(a);
+				if (!suffix.empty())
+				{
+					Ref< AggregationItem > a = new AggregationItem();
+					a->setSourceFile((*i)->getName() + suffix);
+					a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+					(*j)->addAggregationItem(a);
+				}
 			}
 		}
 	}

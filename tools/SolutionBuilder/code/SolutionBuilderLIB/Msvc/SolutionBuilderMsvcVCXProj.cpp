@@ -84,6 +84,9 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	if (!generateFilters(context, solution, project))
 		return false;
 
+	if (!generateUser(context, solution, project))
+		return false;
+
 	return true;
 }
 
@@ -194,7 +197,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	))
 		return false;
 
-	if (!FileSystem::getInstance().makeDirectory(projectPath))
+	if (!FileSystem::getInstance().makeAllDirectories(projectPath))
 		return false;
 
 	traktor::log::info << L"Generating msbuild project \"" << projectFileName << L"\"" << Endl;
@@ -306,9 +309,6 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 		std::wstring name = configuration->getName();
 		std::wstring projectName = m_targetPrefixes[int(configuration->getTargetFormat())] + project->getName();
 
-		if (configuration->getTargetProfile() == Configuration::TpDebug)
-			projectName += L"_d";
-
 		os << L"<IntDir Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">$(Configuration)\\</IntDir>" << Endl;
 		os << L"<OutDir Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">$(SolutionDir)$(Configuration)\\</OutDir>" << Endl;
 		os << L"<TargetName Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">" << projectName << L"</TargetName>" << Endl;
@@ -375,10 +375,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			os << L"pushd \"$(TargetDir)\"" << Endl;
 			Path targetDir = projectPath + L"/" + configuration->getName();
 			for (RefArray< AggregationItem >::const_iterator j = aggregationItems.begin(); j != aggregationItems.end(); ++j)
-			{
-				Path targetPath = FileSystem::getInstance().getAbsolutePath(targetDir, Path((*j)->getTargetPath()));
-				os << L"xcopy /F /R /Y /I \"" << (*j)->getSourceFile()<< L"\" \"" << targetPath.getPathName() << L"\\\"" << Endl;
-			}
+				os << L"xcopy /F /R /Y /I \"" << (*j)->getSourceFile()<< L"\" \"" << (*j)->getTargetPath() << L"\\\"" << Endl;
 			os << L"popd" << Endl;
 
 			os.setIndent(indent);
@@ -512,7 +509,7 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 	))
 		return false;
 
-	if (!FileSystem::getInstance().makeDirectory(projectPath))
+	if (!FileSystem::getInstance().makeAllDirectories(projectPath))
 		return false;
 
 	traktor::log::info << L"Generating msbuild filters \"" << projectFileName << L".filters\"" << Endl;
@@ -612,6 +609,100 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 	}
 
 	return true;
+}
+
+bool SolutionBuilderMsvcVCXProj::generateUser(
+	GeneratorContext& context,
+	Solution* solution,
+	Project* project
+) const
+{
+	std::wstring projectPath, projectFileName, projectGuid;
+	if (!getInformation(
+		context,
+		solution,
+		project,
+		projectPath,
+		projectFileName,
+		projectGuid
+	))
+		return false;
+
+	if (!FileSystem::getInstance().makeAllDirectories(projectPath))
+		return false;
+
+	traktor::log::info << L"Generating msbuild user \"" << projectFileName << L".user\"" << Endl;
+
+	context.set(L"PROJECT_PLATFORM", m_platform);
+	context.set(L"PROJECT_NAME", project->getName());
+	context.set(L"PROJECT_PATH", projectPath);
+	context.set(L"PROJECT_FILENAME", projectFileName);
+	context.set(L"PROJECT_GUID", projectGuid);
+
+	std::vector< uint8_t > buffer;
+	buffer.reserve(40000);
+
+	DynamicMemoryStream bufferStream(buffer, false, true);
+	FileOutputStream os(&bufferStream, new AnsiEncoding());
+
+	bool needed = false;
+
+	os << L"<?xml version=\"1.0\" encoding=\"utf-8\"?>" << Endl;
+	os << L"<Project ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">" << Endl;
+	os << IncreaseIndent;
+
+	const RefArray< Configuration >& configurations = project->getConfigurations();
+	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	{
+		os << L"<PropertyGroup Condition=\"'$(Configuration)'=='" << (*i)->getName() << L"'\">" << Endl;
+		os << IncreaseIndent;
+		
+		os << L"<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>" << Endl;
+
+		if (!(*i)->getDebugEnvironment().empty())
+		{
+			os << L"<LocalDebuggerEnvironment>" << (*i)->getDebugEnvironment() << L"</LocalDebuggerEnvironment>" << Endl;
+			needed = true;
+		}
+
+		if (!(*i)->getDebugExecutable().empty())
+		{
+			os << L"<LocalDebuggerCommand>" << (*i)->getDebugExecutable() << L"</LocalDebuggerCommand>" << Endl;
+			needed = true;
+		}
+
+		if (!(*i)->getDebugWorkingDirectory().empty())
+		{
+			os << L"<LocalDebuggerWorkingDirectory>" << (*i)->getDebugWorkingDirectory() << L"</LocalDebuggerWorkingDirectory>" << Endl;
+			needed = true;
+		}
+
+		if (!(*i)->getDebugArguments().empty())
+		{
+			os << L"<LocalDebuggerCommandArguments>" << (*i)->getDebugArguments() << L"</LocalDebuggerCommandArguments>" << Endl;
+			needed = true;
+		}
+
+		os << DecreaseIndent;
+		os << L"</PropertyGroup>" << Endl;
+	}
+
+	os << DecreaseIndent;
+	os << L"</Project>" << Endl;
+
+	os.close();
+
+	if (needed && !buffer.empty())
+	{
+		Ref< IStream > file = FileSystem::getInstance().open(
+			projectFileName + L".user",
+			traktor::File::FmWrite
+		);
+		if (!file)
+			return false;
+		file->write(&buffer[0], int(buffer.size()));
+		file->close();
+	}
 }
 
 bool SolutionBuilderMsvcVCXProj::collectFiles(

@@ -12,25 +12,20 @@
 
 				local configuration = configurations:get(i)
 
-				local productSuffix = ""
 				local productFile = ""
 				local productType = ""
 
-				if configuration:getTargetProfile() == "Debug" then
-					productSuffix = "_d"
-				end
-
 				if configuration:getTargetFormat() == "StaticLibrary" then
-					productFile = "lib" .. project:getName() .. productSuffix .. ".a"
+					productFile = "lib" .. project:getName() .. ".a"
 					productType = "2"
 				elseif configuration:getTargetFormat() == "SharedLibrary" then
-					productFile = "lib" .. project:getName() .. productSuffix .. ".so"
+					productFile = "lib" .. project:getName() .. ".so"
 					productType = "3"
 				elseif configuration:getTargetFormat() == "Executable" then
-					productFile = project:getName() .. productSuffix
+					productFile = project:getName()
 					productType = "0"
 				elseif configuration:getTargetFormat() == "ExecutableConsole" then
-					productFile = project:getName() .. productSuffix
+					productFile = project:getName()
 					productType = "1"
 				end
 
@@ -141,11 +136,6 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 		insertLibrary(outLibraryPaths, libraryRelPath:getPathName())
 	end
 
-	local productSuffix = ""
-	if configuration:getTargetProfile() == "Debug" then
-		productSuffix = "_d"
-	end
-
 	local dependencies = project:getDependencies()
 	for i = 0, dependencies:size() - 1 do
 		local dep = dependencies:get(i)
@@ -157,7 +147,7 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 			local localConfig = localProject:getConfiguration(configuration:getName())
 
 			if localProject:getEnable() then
-				insertLibrary(outLibraries, localProject:getName() .. productSuffix)
+				insertLibrary(outLibraries, localProject:getName())
 				collectLinkProducts(
 					localSolution,
 					localProject,
@@ -181,7 +171,7 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 				)
 
 				insertLibrary(outLibraryPaths, externalRelPath:getPathName())
-				insertLibrary(outLibraries, externalProject:getName() .. productSuffix)
+				insertLibrary(outLibraries, externalProject:getName())
 
 				collectLinkProducts(
 					externalSolution,

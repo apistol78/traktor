@@ -2,6 +2,7 @@
 
 :: Setup default environment.
 call %~dp0config.bat
+set AGGREGATE_OUTPUT_PATH=%TRAKTOR_HOME%\bin\latest\emscripten
 
 :: Add Emscripten SDK to environment.
 if exist "C:\Program Files\Emscripten\emsdk_env.bat" (

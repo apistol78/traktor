@@ -60,6 +60,8 @@ private:
 	uint32_t m_solutionHash;
 	traktor::Ref< MRU > m_mru;
 
+	void hideAllPages();
+
 	void updateTitle();
 
 	void updateSolutionTree();
@@ -103,8 +105,6 @@ private:
 	void eventTreeButtonDown(traktor::ui::MouseButtonDownEvent*);
 
 	void eventTreeSelect(traktor::ui::SelectionChangeEvent*);
-
-	void eventTreeEdit(traktor::ui::custom::TreeViewEditEvent*);
 
 	void eventTreeChange(traktor::ui::custom::TreeViewContentChangeEvent*);
 

@@ -8,7 +8,7 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 2, Configuration, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 3, Configuration, ISerializable)
 
 Configuration::Configuration()
 :	m_targetFormat(TfStaticLibrary)
@@ -126,6 +126,46 @@ const std::wstring& Configuration::getAdditionalLinkerOptions() const
 	return m_additionalLinkerOptions;
 }
 
+void Configuration::setDebugExecutable(const std::wstring& debugExecutable)
+{
+	m_debugExecutable = debugExecutable;
+}
+
+const std::wstring& Configuration::getDebugExecutable() const
+{
+	return m_debugExecutable;
+}
+
+void Configuration::setDebugArguments(const std::wstring& debugArguments)
+{
+	m_debugArguments = debugArguments;
+}
+
+const std::wstring& Configuration::getDebugArguments() const
+{
+	return m_debugArguments;
+}
+
+void Configuration::setDebugEnvironment(const std::wstring& debugEnvironment)
+{
+	m_debugEnvironment = debugEnvironment;
+}
+
+const std::wstring& Configuration::getDebugEnvironment() const
+{
+	return m_debugEnvironment;
+}
+
+void Configuration::setDebugWorkingDirectory(const std::wstring& debugWorkingDirectory)
+{
+	m_debugWorkingDirectory = debugWorkingDirectory;
+}
+
+const std::wstring& Configuration::getDebugWorkingDirectory() const
+{
+	return m_debugWorkingDirectory;
+}
+
 void Configuration::addAggregationItem(AggregationItem* item)
 {
 	m_aggregationItems.push_back(item);
@@ -172,6 +212,14 @@ void Configuration::serialize(traktor::ISerializer& s)
 	{
 		s >> traktor::Member< std::wstring >(L"additionalCompilerOptions", m_additionalCompilerOptions);
 		s >> traktor::Member< std::wstring >(L"additionalLinkerOptions", m_additionalLinkerOptions);
+	}
+
+	if (s.getVersion() >= 3)
+	{
+		s >> traktor::Member< std::wstring >(L"debugExecutable", m_debugExecutable);
+		s >> traktor::Member< std::wstring >(L"debugArguments", m_debugArguments);
+		s >> traktor::Member< std::wstring >(L"debugEnvironment", m_debugEnvironment);
+		s >> traktor::Member< std::wstring >(L"debugWorkingDirectory", m_debugWorkingDirectory);
 	}
 
 	if (s.getVersion() >= 2)

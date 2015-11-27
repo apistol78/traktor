@@ -83,9 +83,6 @@ function deploy(args)
 	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
 	for _, f in ipairs(files) do
 		if f:endswith(".bc") then
-			if debug then
-				f = f:sub(1, f:len() - 3) .. "_d.bc"
-			end
 			if not f:startswith("libExtern") then
 				table.insert(linkerLibraries, f)
 			else
@@ -211,9 +208,6 @@ function migrate(args)
 	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
 	for _, f in ipairs(files) do
 		if f:endswith(".bc") then
-			if debug then
-				f = f:sub(1, f:len() - 3) .. "_d.bc"
-			end
 			if not f:startswith("libExtern") then
 				table.insert(linkerLibraries, f)
 			else

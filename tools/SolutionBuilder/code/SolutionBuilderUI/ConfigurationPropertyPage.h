@@ -26,6 +26,10 @@ private:
 	traktor::Ref< traktor::ui::custom::EditList > m_listLibraries;
 	traktor::Ref< traktor::ui::Edit > m_editAdditionalCompilerOptions;
 	traktor::Ref< traktor::ui::Edit > m_editAdditionalLinkerOptions;
+	traktor::Ref< traktor::ui::Edit > m_editDebugExecutable;
+	traktor::Ref< traktor::ui::Edit > m_editDebugArguments;
+	traktor::Ref< traktor::ui::Edit > m_editDebugEnvironment;
+	traktor::Ref< traktor::ui::Edit > m_editDebugWorkingDirectory;
 
 	void eventSelectType(traktor::ui::SelectionChangeEvent* event);
 

@@ -54,7 +54,7 @@ bool SolutionBuilderMsvcVCProj::generate(
 	if (!getInformation(context, solution, project, projectPath, projectFileName, projectGuid))
 		return false;
 
-	if (!FileSystem::getInstance().makeDirectory(projectPath))
+	if (!FileSystem::getInstance().makeAllDirectories(projectPath))
 		return false;
 
 	traktor::log::info << L"Generating vs project \"" << projectFileName << L"\"" << Endl;
