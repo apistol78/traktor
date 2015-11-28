@@ -159,6 +159,8 @@ private:
 
 	static void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize);
 
+	static int luaAllocatedMemory(lua_State* luaState);
+
 	static void hookCallback(lua_State* L, lua_Debug* ar);
 
 	static int luaPanic(lua_State* luaState);

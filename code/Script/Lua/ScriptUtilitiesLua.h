@@ -72,8 +72,6 @@ void dumpStack(lua_State* luaState, OutputStream& os, int32_t base = 1);
 #	define DUMP_LUA_STACK(state)
 #endif
 
-void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize);
-
 int luaPrint(lua_State *L);
 
 	}

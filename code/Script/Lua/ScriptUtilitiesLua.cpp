@@ -47,41 +47,6 @@ void dumpStack(lua_State* luaState, OutputStream& os, int32_t base)
 	}
 }
 
-void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
-{
-	size_t& allocTotal = *(size_t*)ud;
-	if (nsize > 0)
-	{
-		if (osize >= nsize)
-			return ptr;
-
-		void* nptr = getAllocator()->alloc(nsize, 16, "LUA");
-		if (!nptr)
-			return 0;
-
-		allocTotal += nsize;
-
-		if (ptr && osize > 0)
-		{
-			std::memcpy(nptr, ptr, std::min(osize, nsize));
-			getAllocator()->free(ptr);
-
-			T_ASSERT (osize <= allocTotal);
-			allocTotal -= osize;
-		}
-
-		return nptr;
-	}
-	else if (ptr && osize > 0)
-	{
-		getAllocator()->free(ptr);
-
-		T_ASSERT (osize <= allocTotal);
-		allocTotal -= osize;
-	}
-	return 0;
-}
-
 int luaPrint(lua_State* L)
 {
 	int n = lua_gettop(L);
