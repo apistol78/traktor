@@ -28,6 +28,16 @@ class ITypedObject;
 class T_DLLCLASS Any
 {
 public:
+	enum AnyType
+	{
+		AtVoid,
+		AtBoolean,
+		AtInteger,
+		AtFloat,
+		AtString,
+		AtObject
+	};
+
 	Any();
 
 	Any(const Any& src);
@@ -66,6 +76,8 @@ public:
 
 	ITypedObject* getObject() const { return m_type == AtObject ? m_data.m_object : 0; }
 
+	AnyType getType() const { return m_type; }
+
 	bool isVoid() const { return m_type == AtVoid; }
 
 	bool isBoolean() const { return m_type == AtBoolean; }
@@ -102,16 +114,6 @@ public:
 #endif
 
 private:
-	enum AnyType
-	{
-		AtVoid,
-		AtBoolean,
-		AtInteger,
-		AtFloat,
-		AtString,
-		AtObject
-	};
-
 	union AnyData
 	{
 		bool m_boolean;

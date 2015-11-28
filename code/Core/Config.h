@@ -99,7 +99,7 @@
 // Cross platform type definitions.
 #if defined(_MSC_VER)
 #	if !defined(T_HAVE_TYPES)
-#		if _MSC_VER >= 1900
+#		if _MSC_VER >= 1700
 #			include <stdint.h>
 #		else
 

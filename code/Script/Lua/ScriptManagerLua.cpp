@@ -74,7 +74,9 @@ const char c_initScript[] =
 
 	"-- Check if instance is of a class type.\n"
 	"function isa(instance, class)\n"
-	"	return instance ~= nil and getmetatable(instance).__index == class\n"
+	"	if instance == nil then return false end\n"
+	"	if type(instance) ~= \"table\" then return false end\n"
+	"	return getmetatable(instance).__index == class\n"
 	"end\n"
 };
 
@@ -126,6 +128,10 @@ ScriptManagerLua::ScriptManagerLua()
 #endif
 
 	lua_register(m_luaState, "print", luaPrint);
+
+	lua_pushlightuserdata(m_luaState, (void*)this);
+	lua_pushcclosure(m_luaState, luaAllocatedMemory, 1);
+	lua_setglobal(m_luaState, "allocatedMemory");
 
 	// Load default initialization script.
 	int32_t result = luaL_loadbuffer(
@@ -1220,6 +1226,15 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 #else
 	return ((lua_Alloc)(this_->m_defaultAllocFn))(this_->m_defaultAllocOpaque, ptr, osize, nsize);
 #endif
+}
+
+int ScriptManagerLua::luaAllocatedMemory(lua_State* luaState)
+{
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (manager);
+
+	lua_pushinteger(luaState, lua_Integer(manager->m_totalMemoryUse));
+	return 1;
 }
 
 void ScriptManagerLua::hookCallback(lua_State* luaState, lua_Debug* ar)
