@@ -14102,7 +14102,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Extern.glew-1.10.0.lib</sourceFile>
+										<sourceFile>Extern.glew.lib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -14129,7 +14129,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Extern.glew-1.10.0.lib</sourceFile>
+										<sourceFile>Extern.glew.lib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -24220,7 +24220,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Json.dll</sourceFile>
+							<sourceFile>Traktor.Json.lib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -24248,7 +24248,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Json.dll</sourceFile>
+							<sourceFile>Traktor.Json.lib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
