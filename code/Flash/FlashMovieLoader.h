@@ -32,9 +32,9 @@ public:
 
 	void setIncludeAS(bool includeAS);
 
-	virtual Ref< IHandle > loadAsync(const net::Url& url) const T_OVERRIDE T_FINAL;
+	virtual Ref< IHandle > loadAsync(const std::wstring& url) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< FlashMovie > load(const net::Url& url) const T_OVERRIDE T_FINAL;
+	virtual Ref< FlashMovie > load(const std::wstring& url) const T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_cacheDirectory;

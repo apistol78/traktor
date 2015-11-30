@@ -90,18 +90,21 @@ public:
 	{
 	}
 
-	virtual Ref< IHandle > loadAsync(const net::Url& url) const T_OVERRIDE T_FINAL
+	virtual Ref< IHandle > loadAsync(const std::wstring& url) const T_OVERRIDE T_FINAL
 	{
 		return 0;
 	}
 
-	virtual Ref< flash::FlashMovie > load(const net::Url& url) const T_OVERRIDE T_FINAL
+	virtual Ref< flash::FlashMovie > load(const std::wstring& url) const T_OVERRIDE T_FINAL
 	{
-		std::map< std::wstring, resource::Proxy< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(url.getFile());
+		std::map< std::wstring, resource::Proxy< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(url);
 		if (i != m_externalMovies.end())
 			return i->second.getResource();
 		else
+		{
+			log::error << L"Unable to load external movie \"" << url << L"\"; no such movie defined." << Endl;
 			return 0;
+		}
 	}
 
 private:
