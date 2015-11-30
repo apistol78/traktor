@@ -137,6 +137,7 @@ private:
 	// \name Submission queue
 	// \{
 
+	Semaphore m_channelsLock;
 	Semaphore m_submitQueueLock;
 	Event m_submitQueueEvent;
 	Event m_submitConsumedEvent;

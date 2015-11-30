@@ -135,6 +135,14 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 
 void SoundSystem::destroy()
 {
+	// Release all channels to ensure submission thread no longer tries to request blocks from channels.
+	{
+		m_channelsLock.wait();
+		m_channels.clear();
+		m_channelsLock.release();
+	}
+
+	// Terminate submission thread.
 	if (m_threadSubmit)
 	{
 		m_threadSubmit->stop();
@@ -142,6 +150,7 @@ void SoundSystem::destroy()
 		m_threadSubmit = 0;
 	}
 
+	// Terminate mixer thread.
 	if (m_threadMixer)
 	{
 		m_threadMixer->stop();
@@ -149,6 +158,7 @@ void SoundSystem::destroy()
 		m_threadMixer = 0;
 	}
 
+	// Free mixer and memory resources.
 	m_mixer = 0;
 	safeDestroy(m_driver);
 
@@ -305,6 +315,8 @@ void SoundSystem::threadMixer()
 {
 	SoundBlock frameBlock;
 	Timer timerMixer;
+	float presence[64];
+	uint32_t channelsCount;
 
 	timerMixer.start();
 	while (!m_threadMixer->stopped())
@@ -326,18 +338,31 @@ void SoundSystem::threadMixer()
 		double deltaTime = timerMixer.getDeltaTime();
 
 		// Read blocks from channels.
-		uint32_t channelsCount = uint32_t(m_channels.size());
-		for (uint32_t i = 0; i < channelsCount; ++i)
+		float maxPresence = 1.0f;
+		m_channelsLock.wait();
 		{
-			m_requestBlocks[i].samplesCount = m_desc.driverDesc.frameSamples;
-			m_requestBlocks[i].maxChannel = 0;
+			channelsCount = uint32_t(m_channels.size());
+			for (uint32_t i = 0; i < channelsCount; ++i)
+			{
+				m_requestBlocks[i].samplesCount = m_desc.driverDesc.frameSamples;
+				m_requestBlocks[i].maxChannel = 0;
 
-			m_requestBlockMeta[i].category = 0;
-			m_requestBlockMeta[i].presence = 0.0f;
-			m_requestBlockMeta[i].presenceRate = 0.0f;
+				m_requestBlockMeta[i].category = 0;
+				m_requestBlockMeta[i].presence = 0.0f;
+				m_requestBlockMeta[i].presenceRate = 0.0f;
 
-			m_channels[i]->getBlock(m_mixer, m_time, m_requestBlocks[i], m_requestBlockMeta[i]);
+				m_channels[i]->getBlock(m_mixer, m_time, m_requestBlocks[i], m_requestBlockMeta[i]);
+
+				if (m_requestBlockMeta[i].presence > 0.0f)
+				{
+					presence[i] = 1.0f + m_requestBlockMeta[i].presence;
+					maxPresence = max(maxPresence, presence[i]);
+				}
+				else
+					presence[i] = 1.0f;
+			}
 		}
+		m_channelsLock.release();
 
 		// Allocate new frame block.
 		float* samples = m_samplesBlocks[m_samplesBlockHead];
@@ -352,21 +377,6 @@ void SoundSystem::threadMixer()
 		frameBlock.samplesCount = m_desc.driverDesc.frameSamples;
 		frameBlock.sampleRate = m_desc.driverDesc.sampleRate;
 		frameBlock.maxChannel = m_desc.driverDesc.hwChannels;
-
-		// Get which channel has the highest presence.
-		float presence[64];
-		float maxPresence = 1.0f;
-
-		for (int32_t i = 0; i < int32_t(channelsCount); ++i)
-		{
-			if (m_requestBlockMeta[i].presence > 0.0f)
-			{
-				presence[i] = 1.0f + m_requestBlockMeta[i].presence;
-				maxPresence = max(maxPresence, presence[i]);
-			}
-			else
-				presence[i] = 1.0f;
-		}
 
 		for (uint32_t i = 0; i < m_duck[0].size(); ++i)
 		{
