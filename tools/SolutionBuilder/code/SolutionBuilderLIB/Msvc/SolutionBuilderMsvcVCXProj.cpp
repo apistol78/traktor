@@ -372,11 +372,11 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			int32_t indent = os.getIndent();
 			os.setIndent(0);
 
-			os << L"pushd \"$(TargetDir)\"" << Endl;
+			os << L"@pushd \"$(TargetDir)\"" << Endl;
 			Path targetDir = projectPath + L"/" + configuration->getName();
 			for (RefArray< AggregationItem >::const_iterator j = aggregationItems.begin(); j != aggregationItems.end(); ++j)
-				os << L"xcopy /F /R /Y /I \"" << (*j)->getSourceFile()<< L"\" \"" << (*j)->getTargetPath() << L"\\\"" << Endl;
-			os << L"popd" << Endl;
+				os << L"@xcopy /M /F /R /Y /I \"" << (*j)->getSourceFile()<< L"\" \"" << (*j)->getTargetPath() << L"\\\"" << Endl;
+			os << L"@popd" << Endl;
 
 			os.setIndent(indent);
 			os << L"</Command>" << Endl;

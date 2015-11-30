@@ -19,7 +19,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v3.0.0"
+#define TITLE L"SolutionBuilder v3.0.1"
 
 #define ERROR_UNKNOWN_FORMAT 1
 #define ERROR_UNABLE_TO_READ_SOLUTION 2
