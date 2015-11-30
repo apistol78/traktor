@@ -40,9 +40,9 @@ public:
 		bool failed() { return !succeeded(); }
 	};
 
-	virtual Ref< IHandle > loadAsync(const net::Url& url) const = 0;
+	virtual Ref< IHandle > loadAsync(const std::wstring& url) const = 0;
 
-	virtual Ref< FlashMovie > load(const net::Url& url) const = 0;
+	virtual Ref< FlashMovie > load(const std::wstring& url) const = 0;
 };
 
 	}

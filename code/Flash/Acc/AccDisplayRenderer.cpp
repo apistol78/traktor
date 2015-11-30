@@ -74,11 +74,11 @@ bool rectangleVisible(
 	b.mn = (b.mn - frame.mn) / (frame.mx - frame.mn);
 	b.mx = (b.mx - frame.mn) / (frame.mx - frame.mn);
 
-	//// Scale into view.
-	//b.mn.x = (b.mn.x * viewOffset.z()) + viewOffset.x();
-	//b.mn.y = (b.mn.y * viewOffset.w()) + viewOffset.y();
-	//b.mx.x = (b.mx.x * viewOffset.z()) + viewOffset.x();
-	//b.mx.y = (b.mx.y * viewOffset.w()) + viewOffset.y();
+	// Scale into view.
+	b.mn.x = (b.mn.x * viewOffset.z()) + viewOffset.x();
+	b.mn.y = (b.mn.y * viewOffset.w()) + viewOffset.y();
+	b.mx.x = (b.mx.x * viewOffset.z()) + viewOffset.x();
+	b.mx.y = (b.mx.y * viewOffset.w()) + viewOffset.y();
 
 	// Check if extents are outside view rectangle.
 	if (b.mn.x > 1.0f || b.mn.y > 1.0f)

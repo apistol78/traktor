@@ -28,7 +28,7 @@ namespace traktor
 class FlashMovieLoaderHandle : public IFlashMovieLoader::IHandle
 {
 public:
-	FlashMovieLoaderHandle(const net::Url& url, const std::wstring& cacheDirectory, bool merge, bool includeAS)
+	FlashMovieLoaderHandle(const std::wstring& url, const std::wstring& cacheDirectory, bool merge, bool includeAS)
 	:	m_url(url)
 	,	m_cacheDirectory(cacheDirectory)
 	,	m_merge(merge)
@@ -58,7 +58,7 @@ public:
 	}
 
 private:
-	net::Url m_url;
+	std::wstring m_url;
 	std::wstring m_cacheDirectory;
 	bool m_merge;
 	bool m_includeAS;
@@ -70,7 +70,7 @@ private:
 
 	void loader()
 	{
-		std::wstring cacheFileName = net::Url::encode(m_url.getString());
+		std::wstring cacheFileName = net::Url::encode(m_url);
 
 		if (!m_cacheDirectory.empty())
 		{
@@ -124,7 +124,6 @@ private:
 		ms_lock.release();
 #endif
 		d->close();
-
 		FileSystem::getInstance().remove(tempFile);
 
 		if (!m_movie)
@@ -175,18 +174,18 @@ void FlashMovieLoader::setIncludeAS(bool includeAS)
 	m_includeAS = includeAS;
 }
 
-Ref< IFlashMovieLoader::IHandle > FlashMovieLoader::loadAsync(const net::Url& url) const
+Ref< IFlashMovieLoader::IHandle > FlashMovieLoader::loadAsync(const std::wstring& url) const
 {
 	return new FlashMovieLoaderHandle(url, m_cacheDirectory, m_merge, m_includeAS);
 }
 
-Ref< FlashMovie > FlashMovieLoader::load(const net::Url& url) const
+Ref< FlashMovie > FlashMovieLoader::load(const std::wstring& url) const
 {
+	std::wstring cacheFileName = net::Url::encode(url);
 	Ref< FlashMovie > movie;
 
 	if (!m_cacheDirectory.empty())
 	{
-		std::wstring cacheFileName = net::Url::encode(url.getString());
 		Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmRead);
 		if (f)
 		{
@@ -205,14 +204,34 @@ Ref< FlashMovie > FlashMovieLoader::load(const net::Url& url) const
 	Ref< IStream > s = connection->getStream();
 	T_ASSERT (s);
 
-	DynamicMemoryStream dms;
-	if (!StreamCopy(&dms, s).execute())
+	std::wstring tempFile;
+	Ref< IStream > d;
+
+	for (int32_t i = 0; i < 10; ++i)
+	{
+		tempFile = OS::getInstance().getWritableFolderPath() + L"/" + cacheFileName + L"_" + toString(i);
+		if ((d = FileSystem::getInstance().open(tempFile, File::FmWrite)) != 0)
+			break;
+	}
+	if (!d)
 		return 0;
 
-	dms.seek(IStream::SeekSet, 0);
+	if (!StreamCopy(d, s).execute())
+		return 0;
 
-	SwfReader swfReader(&dms);
+	d->close();
+	s->close();
+
+	d = FileSystem::getInstance().open(tempFile, File::FmRead);
+	if (!d)
+		return 0;
+
+	SwfReader swfReader(d);
 	movie = FlashMovieFactory(m_includeAS).createMovie(&swfReader);
+
+	d->close();
+	FileSystem::getInstance().remove(tempFile);
+
 	if (!movie)
 		return 0;
 
@@ -221,7 +240,6 @@ Ref< FlashMovie > FlashMovieLoader::load(const net::Url& url) const
 
 	if (!m_cacheDirectory.empty())
 	{
-		std::wstring cacheFileName = net::Url::encode(url.getString());
 		Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmWrite);
 		if (f)
 		{
