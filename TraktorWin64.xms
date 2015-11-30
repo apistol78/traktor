@@ -13217,8 +13217,8 @@
 					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Extern.glew-1.10.0</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/src</sourcePath>
+						<name>Extern.glew</name>
+						<sourcePath>$(GLEW_SDK)/src</sourcePath>
 						<configurations>
 							<item type="Configuration" version="3">
 								<name>DebugShared</name>
@@ -13226,7 +13226,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
+									<item>$(GLEW_SDK)/include</item>
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
@@ -13248,7 +13248,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
+									<item>$(GLEW_SDK)/include</item>
 								</includePaths>
 								<definitions>
 									<item>NDEBUG</item>
@@ -13270,7 +13270,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
+									<item>$(GLEW_SDK)/include</item>
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
@@ -13297,7 +13297,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
+									<item>$(GLEW_SDK)/include</item>
 								</includePaths>
 								<definitions>
 									<item>NDEBUG</item>
