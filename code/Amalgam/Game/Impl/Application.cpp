@@ -435,11 +435,11 @@ void Application::destroy()
 	JobManager::getInstance().stop();
 
 	safeDestroy(m_stateManager);
+	safeDestroy(m_audioServer);
 	safeDestroy(m_resourceServer);
 	safeDestroy(m_worldServer);
 	safeDestroy(m_physicsServer);
 	safeDestroy(m_inputServer);
-	safeDestroy(m_audioServer);
 	safeDestroy(m_renderServer);
 	safeDestroy(m_scriptServer);
 	safeDestroy(m_onlineServer);
