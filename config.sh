@@ -12,6 +12,7 @@ export GLSL_OPTIMIZER=$TRAKTOR_HOME/3rdp/glsl-optimizer-master-20141020
 export SQLITE_SDK=$TRAKTOR_HOME/3rdp/sqlite-3.8.7.2
 export WXWIDGETS_SDK=$TRAKTOR_HOME/3rdp/wxWidgets-3.0.2
 export LUA_SDK=$TRAKTOR_HOME/3rdp/lua-5.2.4
+export GLEW_SDK=$TRAKTOR_HOME/3rdp/glew-1.13.0
 
 # PNaCl SDK; need to be manually installed in 3rdp folder.
 export NACL_SDK_ROOT=$TRAKTOR_HOME/3rdp/nacl_sdk/pepper_37
