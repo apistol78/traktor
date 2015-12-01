@@ -24,6 +24,7 @@
 #include "Heightfield/Editor/OcclusionLayerAttribute.h"
 #include "Heightfield/Editor/OcclusionTextureAsset.h"
 #include "Heightfield/Editor/OcclusionTexturePipeline.h"
+#include "Mesh/MeshComponentData.h"
 #include "Mesh/MeshEntityData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
@@ -31,6 +32,7 @@
 #include "Model/Operations/Triangulate.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "World/Editor/LayerEntityData.h"
+#include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -41,6 +43,12 @@ namespace traktor
 		{
 
 const int32_t c_margin = 12;
+
+struct MeshAndTransform
+{
+	resource::Id< mesh::IMesh > mesh;
+	Transform transform;
+};
 
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
 {
@@ -78,7 +86,7 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 	return reflection->clone();
 }
 
-void collectMeshEntities(const ISerializable* object, const Transform& transform, RefArray< mesh::MeshEntityData >& outMeshEntityData)
+void collectMeshes(const ISerializable* object, AlignedVector< MeshAndTransform >& outMeshes)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 
@@ -92,7 +100,21 @@ void collectMeshEntities(const ISerializable* object, const Transform& transform
 
 		if (mesh::MeshEntityData* meshEntityData = dynamic_type_cast< mesh::MeshEntityData* >(objectMember->get()))
 		{
-			outMeshEntityData.push_back(meshEntityData);
+			MeshAndTransform mat;
+			mat.mesh = meshEntityData->getMesh();
+			mat.transform = meshEntityData->getTransform();
+			outMeshes.push_back(mat);
+		}
+		else if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
+		{
+			mesh::MeshComponentData* meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >();
+			if (meshComponentData)
+			{
+				MeshAndTransform mat;
+				mat.mesh = meshComponentData->getMesh();
+				mat.transform = componentEntityData->getTransform();
+				outMeshes.push_back(mat);
+			}
 		}
 		else if (world::LayerEntityData* layerEntityData = dynamic_type_cast< world::LayerEntityData* >(objectMember->get()))
 		{
@@ -103,18 +125,16 @@ void collectMeshEntities(const ISerializable* object, const Transform& transform
 			if (attr && !attr->trace())
 				continue;
 
-			collectMeshEntities(
+			collectMeshes(
 				objectMember->get(),
-				layerEntityData->getTransform(),
-				outMeshEntityData
+				outMeshes
 			);
 		}
 		else if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
 		{
-			collectMeshEntities(
+			collectMeshes(
 				objectMember->get(),
-				entityData->getTransform(),
-				outMeshEntityData
+				outMeshes
 			);
 		}
 	}
@@ -343,10 +363,10 @@ bool OcclusionTexturePipeline::buildOutput(
 
 	occluderData = resolveAllExternal(pipelineBuilder, occluderData);
 
-	RefArray< mesh::MeshEntityData > meshEntityData;
-	collectMeshEntities(occluderData, Transform::identity(), meshEntityData);
+	AlignedVector< MeshAndTransform > meshes;
+	collectMeshes(occluderData, meshes);
 
-	log::info << L"Found " << int32_t(meshEntityData.size()) << L" mesh(es)" << Endl;
+	log::info << L"Found " << int32_t(meshes.size()) << L" mesh(es)" << Endl;
 
 	// Trace occlusion onto heightfield.
 	std::map< std::wstring, Ref< SahTree > > treeCache;
@@ -355,11 +375,9 @@ bool OcclusionTexturePipeline::buildOutput(
 	RefArray< TraceTask > tasks;
 	RefArray< Job > jobs;
 
-	for (RefArray< mesh::MeshEntityData >::const_iterator i = meshEntityData.begin(); i != meshEntityData.end(); ++i)
+	for (AlignedVector< MeshAndTransform >::const_iterator i = meshes.begin(); i != meshes.end(); ++i)
 	{
-		const resource::Id< mesh::IMesh >& mesh = (*i)->getMesh();
-
-		Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(mesh);
+		Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(i->mesh);
 		if (!meshAsset)
 			continue;
 
@@ -421,7 +439,7 @@ bool OcclusionTexturePipeline::buildOutput(
 		task->resolution = asset->m_size;
 		task->maxTraceDistance = asset->m_traceDistance;
 		task->worldExtent = heightfieldAsset->getWorldExtent();
-		task->transform = (*i)->getTransform();
+		task->transform = i->transform;
 		task->heightfield = heightfield;
 		task->tree = tree;
 		task->x = 0;
