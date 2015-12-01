@@ -184,7 +184,7 @@ bool FlashShape::create(const SwfShape* shape)
 		{
 			// Whenever a style records appear we close the current sub path.
 			uint16_t fs = fillStyle1 ? fillStyle1 : fillStyle0;
-			path.end(0, fs, lineStyle);
+			path.end(fs, 0, lineStyle);
 
 			const SwfStyleRecord& s = shapeRecord->style;
 			if (s.stateMoveTo)
@@ -216,7 +216,7 @@ bool FlashShape::create(const SwfShape* shape)
 	}
 
 	uint16_t fs = fillStyle1 ? fillStyle1 : fillStyle0;
-	path.end(0, fs, lineStyle);
+	path.end(fs, 0, lineStyle);
 	
 	m_paths.push_back(path);
 	m_shapeBounds = path.getBounds();
