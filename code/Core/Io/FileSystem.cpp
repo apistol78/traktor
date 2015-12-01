@@ -117,6 +117,11 @@ bool FileSystem::setCurrentVolumeAndDirectory(const Path& directory)
 	return true;
 }
 
+Path FileSystem::getCurrentVolumeAndDirectory() const
+{
+	return m_currentVolume ? m_currentVolume->getCurrentDirectory() : Path();
+}
+
 Ref< File > FileSystem::get(const Path& fileName)
 {
 	Ref< IVolume > volume = getVolume(fileName);
