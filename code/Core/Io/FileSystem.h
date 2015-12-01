@@ -91,6 +91,10 @@ public:
 	 * \return True if successfully changed.
 	 */
 	bool setCurrentVolumeAndDirectory(const Path& directory);
+
+	/*! \brief Get current volume and directory.
+	 */
+	Path getCurrentVolumeAndDirectory() const;
 	
 	/*! \brief Get file description.
 	 *

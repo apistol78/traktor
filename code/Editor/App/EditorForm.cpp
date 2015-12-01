@@ -376,6 +376,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
 #endif
 
+	// Remember startup directory so we can save user configuration properly.
+	m_startupDirectory = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+
 	// Load settings; use only global settings as merged settings until workspace has been loaded.
 	m_globalSettings = loadProperties(settingsPath);
 	if (!m_globalSettings)
@@ -2315,9 +2318,9 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				// Save modified settings; do this here as well as at termination
 				// as we want to make sure changes doesn't get lost in case of a crash.
 #if !defined(__APPLE__)
-				std::wstring settingsPath = L"Traktor.Editor.config";
+				Path settingsPath = m_startupDirectory + Path(L"Traktor.Editor.config");
 #else
-				std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
+				Path settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
 #endif
 				if (saveProperties(settingsPath, m_globalSettings, false))
 				{
@@ -2597,9 +2600,9 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 
 	// Save settings and pipeline hash.
 #if !defined(__APPLE__)
-	std::wstring settingsPath = L"Traktor.Editor.config";
+	Path settingsPath = m_startupDirectory + Path(L"Traktor.Editor.config");
 #else
-	std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
+	Path settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
 #endif
 	saveProperties(settingsPath, m_globalSettings, false);
 	ui::Application::getInstance()->exit(0);

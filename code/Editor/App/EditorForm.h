@@ -197,6 +197,7 @@ private:
 	Thread* m_threadAssetMonitor;
 	Thread* m_threadBuild;
 	Semaphore m_lockBuild;
+	Path m_startupDirectory;
 	Path m_workspacePath;
 	Ref< PropertyGroup > m_globalSettings;
 	Ref< PropertyGroup > m_workspaceSettings;
