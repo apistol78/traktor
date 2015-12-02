@@ -4,18 +4,18 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1872</first>
-				<second>846</second>
+				<first>2305</first>
+				<second>836</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>1734</first>
-				<second>819</second>
+				<first>1885</first>
+				<second>797</second>
 			</position>
-			<parameterName>ShadowEnable</parameterName>
+			<parameterName>World_ShadowEnable</parameterName>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -25,11 +25,11 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>1462</first>
-				<second>805</second>
+				<first>1431</first>
+				<second>770</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -37,6 +37,7 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -44,26 +45,26 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1621</first>
-				<second>825</second>
+				<first>1764</first>
+				<second>838</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1222</first>
-				<second>811</second>
+				<first>1064</first>
+				<second>717</second>
 			</position>
-			<parameterName>ShadowMask</parameterName>
+			<parameterName>World_ShadowMask</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>1221</first>
-				<second>861</second>
+				<first>1045</first>
+				<second>852</second>
 			</position>
 			<name>ShadowUV</name>
 			<connectable>true</connectable>

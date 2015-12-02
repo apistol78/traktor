@@ -48,10 +48,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>351</first>
-				<second>276</second>
+				<first>243</first>
+				<second>263</second>
 			</position>
-			<parameterName>Time</parameterName>
+			<parameterName>World_Time</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -72,8 +72,8 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>402</first>
-				<second>315</second>
+				<first>330</first>
+				<second>366</second>
 			</position>
 			<value>4</value>
 		</item>

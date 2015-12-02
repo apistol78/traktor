@@ -82,17 +82,17 @@ WorldRendererDeferred::WorldRendererDeferred()
 	ms_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
 
 	// Global parameters.
-	ms_handleTime = render::getParameterHandle(L"Time");
-	ms_handleView = render::getParameterHandle(L"View");
-	ms_handleViewInverse = render::getParameterHandle(L"ViewInverse");
-	ms_handleProjection = render::getParameterHandle(L"Projection");
-	ms_handleColorMap = render::getParameterHandle(L"ColorMap");
-	ms_handleDepthMap = render::getParameterHandle(L"DepthMap");
-	ms_handleLightMap = render::getParameterHandle(L"LightMap");
-	ms_handleNormalMap = render::getParameterHandle(L"NormalMap");
-	ms_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
-	ms_handleFogDistanceAndDensity = render::getParameterHandle(L"FogDistanceAndDensity");
-	ms_handleFogColor = render::getParameterHandle(L"FogColor");
+	ms_handleTime = render::getParameterHandle(L"World_Time");
+	ms_handleView = render::getParameterHandle(L"World_View");
+	ms_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
+	ms_handleProjection = render::getParameterHandle(L"World_Projection");
+	ms_handleColorMap = render::getParameterHandle(L"World_ColorMap");
+	ms_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
+	ms_handleLightMap = render::getParameterHandle(L"World_LightMap");
+	ms_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
+	ms_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
+	ms_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
+	ms_handleFogColor = render::getParameterHandle(L"World_FogColor");
 }
 
 bool WorldRendererDeferred::create(

@@ -4,10 +4,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>218</first>
-				<second>249</second>
+				<first>169</first>
+				<second>247</second>
 			</position>
-			<parameterName>DecalParams</parameterName>
+			<parameterName>World_DecalParams</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>

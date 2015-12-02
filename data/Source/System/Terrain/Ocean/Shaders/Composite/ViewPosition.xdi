@@ -4,18 +4,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>840</first>
-				<second>609</second>
+				<first>694</first>
+				<second>524</second>
 			</position>
-			<parameterName>MagicCoeffs</parameterName>
+			<parameterName>World_MagicCoeffs</parameterName>
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1050</first>
-				<second>556</second>
+				<first>965</first>
+				<second>558</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
@@ -51,18 +51,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>455</first>
-				<second>427</second>
+				<first>317</first>
+				<second>408</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>389</first>
-				<second>507</second>
+				<first>251</first>
+				<second>488</second>
 			</position>
 			<name>UV</name>
 			<connectable>true</connectable>
@@ -80,38 +80,38 @@
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>397</first>
-				<second>641</second>
+				<first>259</first>
+				<second>622</second>
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>530</first>
-				<second>675</second>
+				<first>392</first>
+				<second>656</second>
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>729</first>
-				<second>626</second>
+				<first>591</first>
+				<second>607</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>569</first>
-				<second>589</second>
+				<first>431</first>
+				<second>570</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>683</first>
-				<second>452</second>
+				<first>545</first>
+				<second>433</second>
 			</position>
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>

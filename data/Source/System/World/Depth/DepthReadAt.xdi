@@ -4,20 +4,20 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>462</first>
-				<second>156</second>
+				<first>536</first>
+				<second>143</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>347</first>
-				<second>156</second>
+				<first>421</first>
+				<second>143</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>172</first>
@@ -29,6 +29,7 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -36,8 +37,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-23</first>
-				<second>134</second>
+				<first>-128</first>
+				<second>131</second>
 			</position>
 			<name>DepthMap</name>
 			<connectable>true</connectable>
@@ -47,8 +48,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-39</first>
-				<second>184</second>
+				<first>-144</first>
+				<second>181</second>
 			</position>
 			<name>DepthMapUV</name>
 			<connectable>true</connectable>

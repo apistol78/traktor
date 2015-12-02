@@ -4,8 +4,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>262</first>
-				<second>231</second>
+				<first>78</first>
+				<second>245</second>
 			</position>
 			<name>Distance</name>
 			<connectable>true</connectable>
@@ -15,8 +15,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>260</first>
-				<second>287</second>
+				<first>76</first>
+				<second>301</second>
 			</position>
 			<name>Density</name>
 			<connectable>true</connectable>
@@ -41,29 +41,29 @@
 		<item type="traktor.render.Exp">
 			<comment/>
 			<position>
-				<first>615</first>
-				<second>232</second>
+				<first>528</first>
+				<second>228</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>480</first>
-				<second>232</second>
+				<first>296</first>
+				<second>246</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>913</first>
-				<second>136</second>
+				<first>987</first>
+				<second>130</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1075</first>
-				<second>156</second>
+				<first>1194</first>
+				<second>147</second>
 			</position>
 			<name>Output</name>
 		</item>

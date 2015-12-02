@@ -8,8 +8,8 @@ Sprite index
 			]]>
 			</comment>
 			<position>
-				<first>145</first>
-				<second>353</second>
+				<first>90</first>
+				<second>355</second>
 			</position>
 			<name>Index</name>
 			<connectable>true</connectable>
@@ -19,8 +19,8 @@ Sprite index
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>147</first>
-				<second>520</second>
+				<first>92</first>
+				<second>522</second>
 			</position>
 			<name>Rows</name>
 			<connectable>true</connectable>
@@ -30,8 +30,8 @@ Sprite index
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>133</first>
-				<second>455</second>
+				<first>78</first>
+				<second>457</second>
 			</position>
 			<name>Columns</name>
 			<connectable>true</connectable>
@@ -48,44 +48,44 @@ Sprite index
 		<item type="traktor.render.Fraction">
 			<comment/>
 			<position>
-				<first>503</first>
-				<second>432</second>
+				<first>540</first>
+				<second>426</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>640</first>
-				<second>396</second>
+				<first>731</first>
+				<second>368</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>800</first>
-				<second>427</second>
+				<first>891</first>
+				<second>441</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1258</first>
-				<second>205</second>
+				<first>1700</first>
+				<second>218</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
 		<item type="traktor.render.MixIn">
 			<comment/>
 			<position>
-				<first>997</first>
-				<second>244</second>
+				<first>1092</first>
+				<second>258</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>273</first>
-				<second>119</second>
+				<first>229</first>
+				<second>121</second>
 			</position>
 			<name>TexCoord</name>
 			<connectable>true</connectable>
@@ -95,8 +95,8 @@ Sprite index
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>469</first>
-				<second>139</second>
+				<first>597</first>
+				<second>160</second>
 			</position>
 		</item>
 		<item type="traktor.render.MixIn">
@@ -109,8 +109,8 @@ Sprite index
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1113</first>
-				<second>170</second>
+				<first>1378</first>
+				<second>193</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">

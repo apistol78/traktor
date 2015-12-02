@@ -4,8 +4,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-19</first>
-				<second>195</second>
+				<first>-230</first>
+				<second>223</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -109,8 +109,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-13</first>
-				<second>109</second>
+				<first>-224</first>
+				<second>137</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -120,8 +120,8 @@
 		<item type="traktor.render.Dot">
 			<comment/>
 			<position>
-				<first>199</first>
-				<second>166</second>
+				<first>43</first>
+				<second>151</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
@@ -142,8 +142,8 @@
 		<item type="traktor.render.Abs">
 			<comment/>
 			<position>
-				<first>422</first>
-				<second>117</second>
+				<first>263</first>
+				<second>159</second>
 			</position>
 		</item>
 	</nodes>

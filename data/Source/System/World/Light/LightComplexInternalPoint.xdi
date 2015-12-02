@@ -69,8 +69,8 @@ Specular light
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>1258</first>
-				<second>222</second>
+				<first>1135</first>
+				<second>251</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -78,15 +78,15 @@ Specular light
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>612</first>
-				<second>565</second>
+				<first>805</first>
+				<second>572</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>400</first>
-				<second>712</second>
+				<first>603</first>
+				<second>711</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -98,8 +98,8 @@ Fall off
 			]]>
 			</comment>
 			<position>
-				<first>264</first>
-				<second>712</second>
+				<first>368</first>
+				<second>715</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
@@ -161,30 +161,30 @@ Fall off
 		<item type="traktor.render.Length">
 			<comment/>
 			<position>
-				<first>-114</first>
+				<first>-183</first>
 				<second>708</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-255</first>
-				<second>540</second>
+				<first>-269</first>
+				<second>593</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>-386</first>
-				<second>511</second>
+				<first>-527</first>
+				<second>523</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-568</first>
-				<second>561</second>
+				<first>-767</first>
+				<second>550</second>
 			</position>
 			<name>Position</name>
 			<connectable>true</connectable>
@@ -194,23 +194,23 @@ Fall off
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>159</first>
-				<second>713</second>
+				<first>233</first>
+				<second>714</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>485</first>
-				<second>525</second>
+				<first>569</first>
+				<second>530</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>401</first>
-				<second>565</second>
+				<first>485</first>
+				<second>570</second>
 			</position>
 			<swizzle>0x</swizzle>
 		</item>
@@ -252,8 +252,8 @@ Fall off
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-519</first>
-				<second>370</second>
+				<first>-803</first>
+				<second>272</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -263,8 +263,8 @@ Fall off
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-456</first>
-				<second>337</second>
+				<first>-740</first>
+				<second>239</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -281,8 +281,8 @@ Fall off
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-482</first>
-				<second>403</second>
+				<first>-766</first>
+				<second>305</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -292,8 +292,8 @@ Fall off
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>401</first>
-				<second>539</second>
+				<first>485</first>
+				<second>544</second>
 			</position>
 			<swizzle>x0</swizzle>
 		</item>

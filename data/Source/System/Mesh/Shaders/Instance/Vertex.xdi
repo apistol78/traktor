@@ -4,16 +4,16 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>1870</first>
-				<second>-64</second>
+				<first>2003</first>
+				<second>-57</second>
 			</position>
 			<technique/>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>1626</first>
-				<second>-84</second>
+				<first>1759</first>
+				<second>-77</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
@@ -59,8 +59,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>124</first>
-				<second>-38</second>
+				<first>44</first>
+				<second>-35</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -81,17 +81,17 @@
 				<first>979</first>
 				<second>-119</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1458</first>
-				<second>-32</second>
+				<first>1516</first>
+				<second>-35</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -117,31 +117,31 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1512</first>
-				<second>62</second>
+				<first>1597</first>
+				<second>77</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>1454</first>
-				<second>60</second>
+				<first>1539</first>
+				<second>75</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1512</first>
-				<second>95</second>
+				<first>1597</first>
+				<second>110</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>1454</first>
-				<second>93</second>
+				<first>1539</first>
+				<second>108</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
@@ -206,16 +206,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1512</first>
-				<second>161</second>
+				<first>1597</first>
+				<second>176</second>
 			</position>
 			<name>ViewBinormal</name>
 		</item>
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>1454</first>
-				<second>159</second>
+				<first>1539</first>
+				<second>174</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
@@ -280,16 +280,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1512</first>
-				<second>128</second>
+				<first>1597</first>
+				<second>143</second>
 			</position>
 			<name>ViewTangent</name>
 		</item>
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>1454</first>
-				<second>128</second>
+				<first>1539</first>
+				<second>143</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
@@ -354,16 +354,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1483</first>
-				<second>454</second>
+				<first>1638</first>
+				<second>472</second>
 			</position>
 			<name>Color</name>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1268</first>
-				<second>434</second>
+				<first>1344</first>
+				<second>438</second>
 			</position>
 			<fragmentGuid>{0F359947-AADA-6748-B492-44CE56038205}</fragmentGuid>
 			<inputPins>
@@ -424,16 +424,16 @@ Scale
 			]]>
 			</comment>
 			<position>
-				<first>207</first>
-				<second>19</second>
+				<first>127</first>
+				<second>22</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>336</first>
-				<second>-31</second>
+				<first>256</first>
+				<second>-28</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">

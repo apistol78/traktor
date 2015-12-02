@@ -4,23 +4,23 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>2449</first>
-				<second>591</second>
+				<first>2696</first>
+				<second>595</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>2304</first>
-				<second>571</second>
+				<first>2462</first>
+				<second>579</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2214</first>
-				<second>576</second>
+				<first>2372</first>
+				<second>584</second>
 			</position>
 			<swizzle>000w</swizzle>
 		</item>
@@ -38,16 +38,16 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2214</first>
-				<second>618</second>
+				<first>2372</first>
+				<second>626</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
 		<item type="traktor.render.Lerp">
 			<comment/>
 			<position>
-				<first>2058</first>
-				<second>644</second>
+				<first>2121</first>
+				<second>643</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
@@ -56,7 +56,7 @@
 				<first>1399</first>
 				<second>680</second>
 			</position>
-			<parameterName>FogColor</parameterName>
+			<parameterName>World_FogColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -89,8 +89,8 @@ Fog density
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>1078</first>
-				<second>732</second>
+				<first>1207</first>
+				<second>700</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -98,8 +98,8 @@ Fog density
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>910</first>
-				<second>664</second>
+				<first>987</first>
+				<second>657</second>
 			</position>
 			<fragmentGuid>{45537BBC-34C2-7F4F-B6A2-E1DFAD414348}</fragmentGuid>
 			<inputPins>
@@ -129,15 +129,15 @@ Fog density
 		<item type="traktor.render.Length">
 			<comment/>
 			<position>
-				<first>597</first>
-				<second>669</second>
+				<first>512</first>
+				<second>673</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>347</first>
-				<second>710</second>
+				<first>262</first>
+				<second>714</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -155,10 +155,10 @@ Fog density
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>313</first>
-				<second>811</second>
+				<first>226</first>
+				<second>807</second>
 			</position>
-			<parameterName>FogDistanceAndDensity</parameterName>
+			<parameterName>World_FogDistanceAndDensity</parameterName>
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -234,17 +234,17 @@ Fog density
 		<item type="traktor.render.MatrixOut">
 			<comment/>
 			<position>
-				<first>449</first>
-				<second>912</second>
+				<first>330</first>
+				<second>908</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>289</first>
-				<second>932</second>
+				<first>129</first>
+				<second>915</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>

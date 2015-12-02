@@ -4,16 +4,16 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>2309</first>
-				<second>-57</second>
+				<first>2478</first>
+				<second>-79</second>
 			</position>
 			<technique/>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>2065</first>
-				<second>-77</second>
+				<first>2234</first>
+				<second>-99</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
@@ -81,7 +81,7 @@
 				<first>1375</first>
 				<second>-157</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -91,7 +91,7 @@
 				<first>1897</first>
 				<second>-25</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -599,7 +599,7 @@ Scale
 				<first>474</first>
 				<second>-502</second>
 			</position>
-			<parameterName>Time</parameterName>
+			<parameterName>World_Time</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>

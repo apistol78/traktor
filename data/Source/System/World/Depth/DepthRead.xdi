@@ -4,23 +4,23 @@
 		<item type="traktor.render.FragmentPosition">
 			<comment/>
 			<position>
-				<first>71</first>
-				<second>338</second>
+				<first>51</first>
+				<second>339</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>619</first>
-				<second>315</second>
+				<first>760</first>
+				<second>311</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.TargetSize">
 			<comment/>
 			<position>
-				<first>115</first>
-				<second>370</second>
+				<first>95</first>
+				<second>371</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
@@ -33,8 +33,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>413</first>
-				<second>295</second>
+				<first>494</first>
+				<second>298</second>
 			</position>
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
@@ -57,12 +57,36 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>224</first>
-				<second>288</second>
+				<first>241</first>
+				<second>251</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>-138</first>
+				<second>370</second>
+			</position>
+			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>DepthMap</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>DepthMapUV</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>

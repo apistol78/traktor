@@ -32,15 +32,15 @@ void initializeHandles()
 
 	s_techniquePreLitColor = render::getParameterHandle(L"World_PreLitColor");
 
-	s_handleWorld = render::getParameterHandle(L"World");
-	s_handleWorldView = render::getParameterHandle(L"WorldView");
-	s_handleFogEnable = render::getParameterHandle(L"FogEnable");
-	s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
-	s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
-	s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
-	s_handleLightSunColor = render::getParameterHandle(L"LightSunColor");
-	s_handleLightBaseColor = render::getParameterHandle(L"LightBaseColor");
-	s_handleLightShadowColor = render::getParameterHandle(L"LightShadowColor");
+	s_handleWorld = render::getParameterHandle(L"World_World");
+	s_handleWorldView = render::getParameterHandle(L"World_WorldView");
+	s_handleFogEnable = render::getParameterHandle(L"World_FogEnable");
+	s_handleDepthEnable = render::getParameterHandle(L"World_DepthEnable");
+	s_handleLightPositionAndType = render::getParameterHandle(L"World_LightPositionAndType");
+	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
+	s_handleLightSunColor = render::getParameterHandle(L"World_LightSunColor");
+	s_handleLightBaseColor = render::getParameterHandle(L"World_LightBaseColor");
+	s_handleLightShadowColor = render::getParameterHandle(L"World_LightShadowColor");
 
 	s_handlesInitialized = true;
 }

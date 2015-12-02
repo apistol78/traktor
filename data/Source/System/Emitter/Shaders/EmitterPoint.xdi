@@ -18,7 +18,7 @@
 				<first>298</first>
 				<second>562</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -28,7 +28,7 @@
 				<first>788</first>
 				<second>455</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -53,15 +53,15 @@ View position
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>970</first>
-				<second>401</second>
+				<first>1129</first>
+				<second>408</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>1145</first>
-				<second>402</second>
+				<first>1459</first>
+				<second>413</second>
 			</position>
 			<technique/>
 		</item>
@@ -149,8 +149,8 @@ Alpha
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1936</first>
-				<second>694</second>
+				<first>2019</first>
+				<second>691</second>
 			</position>
 			<name>Depth</name>
 		</item>
@@ -246,7 +246,7 @@ Alpha
 				<first>1715</first>
 				<second>667</second>
 			</position>
-			<parameterName>DepthEnable</parameterName>
+			<parameterName>World_DepthEnable</parameterName>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>

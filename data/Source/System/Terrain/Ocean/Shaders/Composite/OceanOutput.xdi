@@ -364,7 +364,7 @@ Lerp refraction amount on depth
 				<first>683</first>
 				<second>1432</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>

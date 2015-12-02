@@ -4,15 +4,15 @@
 		<item type="traktor.render.Neg">
 			<comment/>
 			<position>
-				<first>-1466</first>
-				<second>940</second>
+				<first>-1538</first>
+				<second>937</second>
 			</position>
 		</item>
 		<item type="traktor.render.Normalize">
 			<comment/>
 			<position>
-				<first>-1243</first>
-				<second>940</second>
+				<first>-1238</first>
+				<second>952</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
@@ -82,8 +82,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>199</first>
-				<second>1182</second>
+				<first>238</first>
+				<second>1189</second>
 			</position>
 			<name>RefractiveTintColor</name>
 			<connectable>true</connectable>
@@ -93,14 +93,14 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>496</first>
+				<first>565</first>
 				<second>1225</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>464</first>
+				<first>533</first>
 				<second>1307</second>
 			</position>
 			<name>RefractiveAmount</name>
@@ -126,15 +126,15 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>81</first>
+				<first>150</first>
 				<second>1251</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>-509</first>
-				<second>1337</second>
+				<first>-598</first>
+				<second>1298</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
@@ -147,21 +147,21 @@
 		<item type="traktor.render.Dot">
 			<comment/>
 			<position>
-				<first>-685</first>
-				<second>1301</second>
+				<first>-835</first>
+				<second>1265</second>
 			</position>
 		</item>
 		<item type="traktor.render.Lerp">
 			<comment/>
 			<position>
-				<first>771</first>
-				<second>1167</second>
+				<first>843</first>
+				<second>1176</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>252</first>
+				<first>321</first>
 				<second>1265</second>
 			</position>
 			<fragmentGuid>{645D00CF-9F76-0F49-9451-04C9945D5E8A}</fragmentGuid>
@@ -481,8 +481,8 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1980</first>
-				<second>895</second>
+				<first>2119</first>
+				<second>916</second>
 			</position>
 			<technique>World_DeferredColor</technique>
 			<priority>
@@ -532,15 +532,15 @@
 		<item type="traktor.render.TargetSize">
 			<comment/>
 			<position>
-				<first>-219</first>
-				<second>1265</second>
+				<first>-268</first>
+				<second>1266</second>
 			</position>
 		</item>
 		<item type="traktor.render.FragmentPosition">
 			<comment/>
 			<position>
-				<first>-259</first>
-				<second>1233</second>
+				<first>-308</first>
+				<second>1234</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">

@@ -11,8 +11,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1148</first>
-				<second>643</second>
+				<first>1200</first>
+				<second>636</second>
 			</position>
 			<fragmentGuid>{4E6FFD9F-DB4F-1545-B58A-DE392CD06F62}</fragmentGuid>
 			<inputPins>
@@ -65,8 +65,8 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>500</first>
-				<second>309</second>
+				<first>390</first>
+				<second>322</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
@@ -79,23 +79,23 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1246</first>
-				<second>480</second>
+				<first>1337</first>
+				<second>469</second>
 			</position>
 			<swizzle>xy01</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>916</first>
-				<second>403</second>
+				<first>883</first>
+				<second>326</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>500</first>
-				<second>159</second>
+				<first>397</first>
+				<second>169</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -105,8 +105,8 @@ Maximum
 			]]>
 			</comment>
 			<position>
-				<first>351</first>
-				<second>166</second>
+				<first>248</first>
+				<second>176</second>
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
@@ -117,26 +117,26 @@ Minimum
 			]]>
 			</comment>
 			<position>
-				<first>345</first>
-				<second>231</second>
+				<first>242</first>
+				<second>241</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>137</first>
-				<second>195</second>
+				<first>13</first>
+				<second>182</second>
 			</position>
-			<parameterName>Extent</parameterName>
+			<parameterName>World_Extent</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>1388</first>
-				<second>498</second>
+				<first>1479</first>
+				<second>487</second>
 			</position>
 			<technique/>
 		</item>
@@ -154,8 +154,8 @@ Minimum
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>611</first>
-				<second>672</second>
+				<first>573</first>
+				<second>663</second>
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
@@ -169,24 +169,24 @@ Minimum
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>615</first>
-				<second>700</second>
+				<first>577</first>
+				<second>691</second>
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1342</first>
-				<second>650</second>
+				<first>1456</first>
+				<second>647</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1337</first>
-				<second>573</second>
+				<first>1451</first>
+				<second>570</second>
 			</position>
 			<name>Position</name>
 		</item>

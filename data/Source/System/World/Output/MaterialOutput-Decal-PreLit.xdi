@@ -71,8 +71,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1611</first>
-				<second>158</second>
+				<first>1832</first>
+				<second>165</second>
 			</position>
 			<fragmentGuid>{9F5649E4-3234-3B4F-BFA9-E124110B9969}</fragmentGuid>
 			<inputPins>
@@ -112,8 +112,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-162</first>
-				<second>478</second>
+				<first>-345</first>
+				<second>488</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -123,22 +123,22 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1209</first>
-				<second>16</second>
+				<first>1345</first>
+				<second>26</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1076</first>
-				<second>-19</second>
+				<first>1144</first>
+				<second>-16</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>807</first>
-				<second>-97</second>
+				<first>767</first>
+				<second>-117</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -149,10 +149,10 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>525</first>
+				<first>451</first>
 				<second>-122</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
@@ -161,6 +161,7 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -168,59 +169,59 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>323</first>
-				<second>-130</second>
+				<first>133</first>
+				<second>-204</second>
 			</position>
-			<parameterName>LightMap</parameterName>
+			<parameterName>World_LightMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Platform">
 			<comment/>
 			<position>
-				<first>357</first>
-				<second>-66</second>
+				<first>193</first>
+				<second>-74</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>215</first>
-				<second>-31</second>
+				<first>-108</first>
+				<second>-44</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>44</first>
+				<first>-366</first>
 				<second>-111</second>
 			</position>
 		</item>
 		<item type="traktor.render.FragmentPosition">
 			<comment/>
 			<position>
-				<first>-122</first>
-				<second>-101</second>
+				<first>-582</first>
+				<second>-103</second>
 			</position>
 		</item>
 		<item type="traktor.render.TargetSize">
 			<comment/>
 			<position>
-				<first>-82</first>
-				<second>-69</second>
+				<first>-542</first>
+				<second>-71</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>72</first>
+				<first>-338</first>
 				<second>10</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-80</first>
+				<first>-490</first>
 				<second>15</second>
 			</position>
 			<value>0.5</value>
@@ -228,8 +229,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-159</first>
-				<second>254</second>
+				<first>-342</first>
+				<second>264</second>
 			</position>
 			<name>DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -239,8 +240,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-162</first>
-				<second>198</second>
+				<first>-345</first>
+				<second>208</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -265,8 +266,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-167</first>
-				<second>310</second>
+				<first>-350</first>
+				<second>320</second>
 			</position>
 			<name>SpecularTerm</name>
 			<connectable>true</connectable>
@@ -276,8 +277,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>572</first>
-				<second>183</second>
+				<first>615</first>
+				<second>184</second>
 			</position>
 			<fragmentGuid>{D5AA3EC3-E59A-5B45-A5C5-D863B4E91EE3}</fragmentGuid>
 			<inputPins>
@@ -306,15 +307,15 @@
 				<first>308</first>
 				<second>141</second>
 			</position>
-			<parameterName>NormalMap</parameterName>
+			<parameterName>World_NormalMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-147</first>
-				<second>534</second>
+				<first>-330</first>
+				<second>544</second>
 			</position>
 			<name>Reflection</name>
 			<connectable>true</connectable>
@@ -324,8 +325,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-143</first>
-				<second>646</second>
+				<first>-326</first>
+				<second>656</second>
 			</position>
 			<name>RimColor</name>
 			<connectable>true</connectable>
@@ -335,8 +336,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-160</first>
-				<second>590</second>
+				<first>-343</first>
+				<second>600</second>
 			</position>
 			<name>RimIntensity</name>
 			<connectable>true</connectable>
@@ -346,8 +347,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-139</first>
-				<second>422</second>
+				<first>-322</first>
+				<second>432</second>
 			</position>
 			<name>Emissive</name>
 			<connectable>true</connectable>
@@ -357,8 +358,8 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>944</first>
-				<second>-55</second>
+				<first>952</first>
+				<second>-49</second>
 			</position>
 		</item>
 		<item type="traktor.render.Interpolator">
@@ -499,8 +500,8 @@ No refraction; render as normal opaque geometry.
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1053</first>
-				<second>877</second>
+				<first>1166</first>
+				<second>906</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
@@ -513,16 +514,16 @@ No refraction; render as normal opaque geometry.
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1117</first>
-				<second>1024</second>
+				<first>1179</first>
+				<second>1036</second>
 			</position>
 			<swizzle>xxx</swizzle>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>484</first>
-				<second>936</second>
+				<first>372</first>
+				<second>959</second>
 			</position>
 			<fragmentGuid>{BAFF9338-89FC-074F-ADB8-050FD2747021}</fragmentGuid>
 			<inputPins/>
@@ -536,8 +537,8 @@ No refraction; render as normal opaque geometry.
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>655</first>
-				<second>986</second>
+				<first>610</first>
+				<second>987</second>
 			</position>
 			<fragmentGuid>{BC060F9A-456E-B747-92C9-5BD78E172A26}</fragmentGuid>
 			<inputPins>
@@ -584,22 +585,22 @@ No refraction; render as normal opaque geometry.
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>912</first>
-				<second>916</second>
+				<first>937</first>
+				<second>933</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>1250</first>
-				<second>944</second>
+				<first>1353</first>
+				<second>943</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-159</first>
-				<second>702</second>
+				<first>-342</first>
+				<second>712</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -609,8 +610,8 @@ No refraction; render as normal opaque geometry.
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-198</first>
-				<second>366</second>
+				<first>-381</first>
+				<second>376</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -688,8 +689,8 @@ No refraction; render as normal opaque geometry.
 		<item type="traktor.render.Dot">
 			<comment/>
 			<position>
-				<first>908</first>
-				<second>1183</second>
+				<first>789</first>
+				<second>1169</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
@@ -702,8 +703,8 @@ No refraction; render as normal opaque geometry.
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1084</first>
-				<second>1219</second>
+				<first>1027</first>
+				<second>1240</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
@@ -824,8 +825,8 @@ No refraction; render as normal opaque geometry.
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1387</first>
-				<second>64</second>
+				<first>1563</first>
+				<second>69</second>
 			</position>
 			<fragmentGuid>{5961D8B7-FFC0-8742-B87F-1AD8B232D84E}</fragmentGuid>
 			<inputPins>
@@ -884,8 +885,8 @@ No refraction; render as normal opaque geometry.
 		<item type="traktor.render.Neg">
 			<comment/>
 			<position>
-				<first>137</first>
-				<second>651</second>
+				<first>60</first>
+				<second>646</second>
 			</position>
 		</item>
 	</nodes>

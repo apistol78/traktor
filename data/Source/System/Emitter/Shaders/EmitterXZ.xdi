@@ -15,10 +15,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>406</first>
-				<second>406</second>
+				<first>393</first>
+				<second>358</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -28,15 +28,15 @@
 				<first>788</first>
 				<second>455</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>442</first>
-				<second>453</second>
+				<first>392</first>
+				<second>494</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
@@ -49,15 +49,15 @@
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>970</first>
-				<second>401</second>
+				<first>1100</first>
+				<second>427</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>1145</first>
-				<second>402</second>
+				<first>1368</first>
+				<second>415</second>
 			</position>
 			<technique/>
 		</item>
@@ -145,16 +145,16 @@ Alpha
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1556</first>
-				<second>678</second>
+				<first>1835</first>
+				<second>705</second>
 			</position>
 			<name>Depth</name>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>216</first>
-				<second>409</second>
+				<first>148</first>
+				<second>442</second>
 			</position>
 			<fragmentGuid>{F69FB000-4750-764C-AB54-75CEFE6C1F2A}</fragmentGuid>
 			<inputPins>
@@ -207,15 +207,15 @@ Alpha
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1131</first>
-				<second>627</second>
+				<first>1161</first>
+				<second>640</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>1284</first>
-				<second>647</second>
+				<first>1381</first>
+				<second>657</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -231,18 +231,18 @@ Alpha
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1296</first>
-				<second>747</second>
+				<first>1353</first>
+				<second>773</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>1432</first>
-				<second>666</second>
+				<first>1566</first>
+				<second>688</second>
 			</position>
-			<parameterName>DepthEnable</parameterName>
+			<parameterName>World_DepthEnable</parameterName>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
@@ -255,8 +255,8 @@ Alpha
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>772</first>
-				<second>383</second>
+				<first>894</first>
+				<second>373</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>

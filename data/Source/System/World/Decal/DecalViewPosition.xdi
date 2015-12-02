@@ -20,39 +20,39 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1713</first>
-				<second>149</second>
+				<first>1949</first>
+				<second>159</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1567</first>
-				<second>120</second>
+				<first>1722</first>
+				<second>127</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1466</first>
-				<second>121</second>
+				<first>1621</first>
+				<second>128</second>
 			</position>
 			<swizzle>00x1</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1466</first>
-				<second>181</second>
+				<first>1621</first>
+				<second>188</second>
 			</position>
 			<swizzle>xy00</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1325</first>
-				<second>173</second>
+				<first>1382</first>
+				<second>177</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
@@ -65,10 +65,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>702</first>
-				<second>269</second>
+				<first>666</first>
+				<second>243</second>
 			</position>
-			<parameterName>MagicCoeffs</parameterName>
+			<parameterName>World_MagicCoeffs</parameterName>
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -83,10 +83,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>106</first>
-				<second>157</second>
+				<first>57</first>
+				<second>132</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -188,18 +188,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>371</first>
-				<second>423</second>
+				<first>329</first>
+				<second>421</second>
 			</position>
-			<parameterName>NormalMap</parameterName>
+			<parameterName>World_NormalMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>893</first>
-				<second>385</second>
+				<first>970</first>
+				<second>391</second>
 			</position>
 			<name>Normal</name>
 		</item>

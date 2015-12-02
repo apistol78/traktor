@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>546</first>
@@ -13,7 +13,10 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
@@ -43,8 +46,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-238</first>
-				<second>930</second>
+				<first>-273</first>
+				<second>888</second>
 			</position>
 			<parameterName>WorldOrigin</parameterName>
 			<type>PtVector</type>
@@ -83,8 +86,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-257</first>
-				<second>968</second>
+				<first>-326</first>
+				<second>975</second>
 			</position>
 			<name>WorldPosition</name>
 			<connectable>true</connectable>

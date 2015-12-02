@@ -51,7 +51,6 @@ render::handle_t s_techniqueDepth = 0;
 render::handle_t s_techniqueShadow = 0;
 render::handle_t s_handleTime = 0;
 render::handle_t s_handleProjection = 0;
-render::handle_t s_handleSquareProjection = 0;
 render::handle_t s_handleReflectionMap = 0;
 
 		}
@@ -70,10 +69,9 @@ WorldRendererForward::WorldRendererForward()
 	s_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
 
 	// Global parameters.
-	s_handleTime = render::getParameterHandle(L"Time");
-	s_handleProjection = render::getParameterHandle(L"Projection");
-	s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
-	s_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
+	s_handleTime = render::getParameterHandle(L"World_Time");
+	s_handleProjection = render::getParameterHandle(L"World_Projection");
+	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
 }
 
 bool WorldRendererForward::create(
@@ -687,7 +685,6 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 				shadowProgramParams.beginParameters(m_globalContext);
 				shadowProgramParams.setFloatParameter(s_handleTime, f.time);
 				shadowProgramParams.setMatrixParameter(s_handleProjection, f.slice[i].shadowLightProjection);
-				shadowProgramParams.setMatrixParameter(s_handleSquareProjection, f.slice[i].shadowLightSquareProjection);
 				shadowProgramParams.endParameters(m_globalContext);
 
 				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");

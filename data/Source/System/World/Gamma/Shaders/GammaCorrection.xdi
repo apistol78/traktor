@@ -4,18 +4,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>193</first>
-				<second>418</second>
+				<first>109</first>
+				<second>416</second>
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="4">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>467</first>
-				<second>434</second>
+				<first>383</first>
+				<second>432</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -23,7 +23,7 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
-			<compare>CmNo</compare>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -31,8 +31,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>205</first>
-				<second>496</second>
+				<first>121</first>
+				<second>494</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>

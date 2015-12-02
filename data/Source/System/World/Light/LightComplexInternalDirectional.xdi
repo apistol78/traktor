@@ -62,15 +62,15 @@ Specular light
 		<item type="traktor.render.MixOut">
 			<comment/>
 			<position>
-				<first>1376</first>
-				<second>225</second>
+				<first>1302</first>
+				<second>227</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>1258</first>
-				<second>222</second>
+				<first>1082</first>
+				<second>223</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -78,15 +78,15 @@ Specular light
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>486</first>
-				<second>389</second>
+				<first>572</first>
+				<second>387</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>401</first>
-				<second>429</second>
+				<first>487</first>
+				<second>427</second>
 			</position>
 			<swizzle>0x</swizzle>
 		</item>
@@ -139,7 +139,7 @@ Specular light
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-456</first>
+				<first>-439</first>
 				<second>337</second>
 			</position>
 			<name>Normal</name>
@@ -199,7 +199,7 @@ Specular light
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-482</first>
+				<first>-469</first>
 				<second>403</second>
 			</position>
 			<name>EyeDirection</name>
@@ -210,8 +210,8 @@ Specular light
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>401</first>
-				<second>403</second>
+				<first>487</first>
+				<second>401</second>
 			</position>
 			<swizzle>x0</swizzle>
 		</item>

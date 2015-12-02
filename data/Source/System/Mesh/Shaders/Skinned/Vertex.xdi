@@ -4,8 +4,8 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>760</first>
-				<second>344</second>
+				<first>834</first>
+				<second>342</second>
 			</position>
 			<technique/>
 		</item>
@@ -34,8 +34,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-238</first>
-				<second>384</second>
+				<first>-329</first>
+				<second>402</second>
 			</position>
 			<fragmentGuid>{4D067CD9-D2A2-DF4B-8839-277EA2663A82}</fragmentGuid>
 			<inputPins>
@@ -54,8 +54,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-417</first>
-				<second>422</second>
+				<first>-598</first>
+				<second>427</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -65,10 +65,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-120</first>
-				<second>350</second>
+				<first>-183</first>
+				<second>318</second>
 			</position>
-			<parameterName>WorldView</parameterName>
+			<parameterName>World_WorldView</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -78,7 +78,7 @@
 				<first>410</first>
 				<second>415</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -115,8 +115,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-238</first>
-				<second>462</second>
+				<first>-329</first>
+				<second>480</second>
 			</position>
 			<fragmentGuid>{C39DDCC5-D584-2149-B630-D6C5695B6F10}</fragmentGuid>
 			<inputPins>
@@ -135,8 +135,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-414</first>
-				<second>497</second>
+				<first>-595</first>
+				<second>502</second>
 			</position>
 			<name>Normal</name>
 			<usage>DuNormal</usage>
@@ -207,8 +207,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-238</first>
-				<second>540</second>
+				<first>-329</first>
+				<second>558</second>
 			</position>
 			<fragmentGuid>{C39DDCC5-D584-2149-B630-D6C5695B6F10}</fragmentGuid>
 			<inputPins>
@@ -227,8 +227,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-418</first>
-				<second>576</second>
+				<first>-599</first>
+				<second>581</second>
 			</position>
 			<name>Tangent</name>
 			<usage>DuTangent</usage>
@@ -268,8 +268,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-422</first>
-				<second>640</second>
+				<first>-603</first>
+				<second>645</second>
 			</position>
 			<name>Binormal</name>
 			<usage>DuBinormal</usage>
@@ -279,8 +279,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>172</first>
-				<second>1038</second>
+				<first>292</first>
+				<second>1036</second>
 			</position>
 			<name>Color</name>
 		</item>
@@ -307,8 +307,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-165</first>
-				<second>1038</second>
+				<first>-274</first>
+				<second>1030</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>

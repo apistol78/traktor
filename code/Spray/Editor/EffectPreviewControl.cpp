@@ -609,9 +609,9 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
-		visualProgramParams.setFloatParameter(L"Time", time);
-		visualProgramParams.setMatrixParameter(L"View", viewTransform);
-		visualProgramParams.setMatrixParameter(L"Projection", projectionTransform);
+		visualProgramParams.setFloatParameter(L"World_Time", time);
+		visualProgramParams.setMatrixParameter(L"World_View", viewTransform);
+		visualProgramParams.setMatrixParameter(L"World_Projection", projectionTransform);
 		visualProgramParams.endParameters(m_globalContext);
 
 		m_renderContext->render(m_renderView, render::RpAll, &visualProgramParams);

@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1545</first>
-				<second>313</second>
+				<first>1685</first>
+				<second>318</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -47,7 +47,7 @@
 		<item type="traktor.render.Conditional" version="1">
 			<comment/>
 			<position>
-				<first>1372</first>
+				<first>1426</first>
 				<second>313</second>
 			</position>
 			<branch>BrAuto</branch>
@@ -83,15 +83,15 @@
 				<first>-754</first>
 				<second>-42</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-704</first>
-				<second>278</second>
+				<first>-781</first>
+				<second>287</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -108,7 +108,7 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1233</first>
+				<first>1287</first>
 				<second>365</second>
 			</position>
 			<value>100000</value>
@@ -116,7 +116,7 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1261</first>
+				<first>1315</first>
 				<second>396</second>
 			</position>
 			<value>1</value>
@@ -124,7 +124,7 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1261</first>
+				<first>1315</first>
 				<second>424</second>
 			</position>
 			<value>0</value>
@@ -182,7 +182,7 @@
 				<first>33</first>
 				<second>212</second>
 			</position>
-			<parameterName>LightShadowColor</parameterName>
+			<parameterName>World_LightShadowColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -192,7 +192,7 @@
 				<first>51</first>
 				<second>278</second>
 			</position>
-			<parameterName>LightBaseColor</parameterName>
+			<parameterName>World_LightBaseColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -202,7 +202,7 @@
 				<first>55</first>
 				<second>344</second>
 			</position>
-			<parameterName>LightSunColor</parameterName>
+			<parameterName>World_LightSunColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -240,8 +240,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-207</first>
-				<second>406</second>
+				<first>-279</first>
+				<second>419</second>
 			</position>
 			<fragmentGuid>{D0BC3830-8C89-3745-BF71-AAB4B5B985D9}</fragmentGuid>
 			<inputPins>
@@ -319,36 +319,36 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-361</first>
-				<second>146</second>
+				<first>-509</first>
+				<second>163</second>
 			</position>
-			<parameterName>MagicCoeffs</parameterName>
+			<parameterName>World_MagicCoeffs</parameterName>
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-335</first>
-				<second>442</second>
+				<first>-407</first>
+				<second>455</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-622</first>
-				<second>425</second>
+				<first>-698</first>
+				<second>416</second>
 			</position>
-			<parameterName>LightDirectionAndRange</parameterName>
+			<parameterName>World_LightDirectionAndRange</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-515</first>
-				<second>249</second>
+				<first>-587</first>
+				<second>262</second>
 			</position>
 			<fragmentGuid>{D5AA3EC3-E59A-5B45-A5C5-D863B4E91EE3}</fragmentGuid>
 			<inputPins>
@@ -374,33 +374,33 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-745</first>
-				<second>198</second>
+				<first>-879</first>
+				<second>206</second>
 			</position>
-			<parameterName>NormalMap</parameterName>
+			<parameterName>World_NormalMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>365</first>
-				<second>437</second>
+				<first>373</first>
+				<second>468</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>280</first>
-				<second>435</second>
+				<first>369</first>
+				<second>439</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-155</first>
-				<second>341</second>
+				<first>-227</first>
+				<second>354</second>
 			</position>
 			<fragmentGuid>{6759FB5E-8AE7-A44E-9719-53C0AA117AD5}</fragmentGuid>
 			<inputPins>
@@ -433,7 +433,7 @@
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>-226</first>
@@ -445,6 +445,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -452,10 +453,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-520</first>
-				<second>555</second>
+				<first>-546</first>
+				<second>551</second>
 			</position>
-			<parameterName>ColorMap</parameterName>
+			<parameterName>World_ColorMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -470,8 +471,8 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>545</first>
-				<second>437</second>
+				<first>579</first>
+				<second>480</second>
 			</position>
 		</item>
 		<item type="traktor.render.Fraction">
@@ -498,14 +499,14 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>373</first>
-				<second>-88</second>
+				<first>313</first>
+				<second>-77</second>
 			</position>
-			<parameterName>ViewInverse</parameterName>
+			<parameterName>World_ViewInverse</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>1494</first>
@@ -517,6 +518,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -573,7 +575,7 @@
 				<first>638</first>
 				<second>-247</second>
 			</position>
-			<parameterName>Time</parameterName>
+			<parameterName>World_Time</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -613,7 +615,7 @@
 				<first>1941</first>
 				<second>-98</second>
 			</position>
-			<parameterName>CloudShadowEnable</parameterName>
+			<parameterName>World_CloudShadowEnable</parameterName>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -626,10 +628,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1267</first>
-				<second>-199</second>
+				<first>1210</first>
+				<second>-205</second>
 			</position>
-			<parameterName>CloudShadow</parameterName>
+			<parameterName>World_CloudShadow</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>

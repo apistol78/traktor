@@ -4,14 +4,14 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>2249</first>
+				<first>2347</first>
 				<second>584</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2132</first>
+				<first>2230</first>
 				<second>562</second>
 			</position>
 			<swizzle>000w</swizzle>
@@ -30,7 +30,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2132</first>
+				<first>2230</first>
 				<second>639</second>
 			</position>
 			<swizzle>xyz0</swizzle>
@@ -38,8 +38,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1956</first>
-				<second>635</second>
+				<first>1990</first>
+				<second>645</second>
 			</position>
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
@@ -212,8 +212,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>2418</first>
-				<second>601</second>
+				<first>2589</first>
+				<second>610</second>
 			</position>
 			<fragmentGuid>{69565123-2C4A-8742-970C-FE8022249942}</fragmentGuid>
 			<inputPins>
@@ -298,8 +298,8 @@
 		<item type="traktor.render.Normalize">
 			<comment/>
 			<position>
-				<first>483</first>
-				<second>789</second>
+				<first>411</first>
+				<second>793</second>
 			</position>
 		</item>
 	</nodes>

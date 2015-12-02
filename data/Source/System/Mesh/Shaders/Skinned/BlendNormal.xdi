@@ -4,16 +4,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1510</first>
-				<second>246</second>
+				<first>1697</first>
+				<second>244</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1358</first>
-				<second>226</second>
+				<first>1545</first>
+				<second>224</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
@@ -86,8 +86,8 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>934</first>
-				<second>161</second>
+				<first>1124</first>
+				<second>162</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
@@ -181,8 +181,8 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>803</first>
-				<second>106</second>
+				<first>909</first>
+				<second>104</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">

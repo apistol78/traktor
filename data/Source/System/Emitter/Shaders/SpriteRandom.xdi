@@ -4,7 +4,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>202</first>
+				<first>136</first>
 				<second>288</second>
 			</position>
 			<name>Random</name>
@@ -15,7 +15,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>214</first>
+				<first>148</first>
 				<second>365</second>
 			</position>
 			<name>Count</name>
@@ -33,16 +33,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>695</first>
-				<second>319</second>
+				<first>906</first>
+				<second>338</second>
 			</position>
 			<name>Index</name>
 		</item>
 		<item type="traktor.render.Truncate">
 			<comment/>
 			<position>
-				<first>528</first>
-				<second>299</second>
+				<first>615</first>
+				<second>300</second>
 			</position>
 		</item>
 	</nodes>

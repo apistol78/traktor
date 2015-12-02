@@ -9,7 +9,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>1069</first>
@@ -21,6 +21,7 @@
 			<addressU>AdMirror</addressU>
 			<addressV>AdMirror</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -28,10 +29,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>840</first>
-				<second>474</second>
+				<first>824</first>
+				<second>436</second>
 			</position>
-			<parameterName>ColorMap</parameterName>
+			<parameterName>World_ColorMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>

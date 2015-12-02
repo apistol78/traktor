@@ -4,8 +4,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-84</first>
-				<second>-187</second>
+				<first>-129</first>
+				<second>-190</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -15,8 +15,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-121</first>
-				<second>-222</second>
+				<first>-179</first>
+				<second>-225</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -26,8 +26,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-60</first>
-				<second>-152</second>
+				<first>-99</first>
+				<second>-155</second>
 			</position>
 			<name>Position</name>
 			<connectable>true</connectable>
@@ -37,8 +37,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-57</first>
-				<second>-257</second>
+				<first>-99</first>
+				<second>-260</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -48,16 +48,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>702</first>
-				<second>-233</second>
+				<first>859</first>
+				<second>-235</second>
 			</position>
 			<name>Diffuse</name>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-60</first>
-				<second>-117</second>
+				<first>-99</first>
+				<second>-120</second>
 			</position>
 			<name>Shadow</name>
 			<connectable>true</connectable>
@@ -67,32 +67,32 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>702</first>
-				<second>-191</second>
+				<first>859</first>
+				<second>-193</second>
 			</position>
 			<name>Specular</name>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>624</first>
-				<second>-233</second>
+				<first>781</first>
+				<second>-235</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>624</first>
-				<second>-191</second>
+				<first>781</first>
+				<second>-193</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>474</first>
-				<second>-236</second>
+				<first>532</first>
+				<second>-237</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
