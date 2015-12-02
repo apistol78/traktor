@@ -21,8 +21,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-384</first>
-				<second>488</second>
+				<first>-521</first>
+				<second>487</second>
 			</position>
 			<name>LightDirection</name>
 			<connectable>true</connectable>
@@ -32,8 +32,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-349</first>
-				<second>557</second>
+				<first>-486</first>
+				<second>556</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -43,30 +43,30 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1724</first>
-				<second>525</second>
+				<first>2397</first>
+				<second>508</second>
 			</position>
 			<name>Specular</name>
 		</item>
 		<item type="traktor.render.Pow">
 			<comment/>
 			<position>
-				<first>1110</first>
-				<second>562</second>
+				<first>1496</first>
+				<second>550</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>947</first>
-				<second>517</second>
+				<first>1188</first>
+				<second>507</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>717</first>
-				<second>523</second>
+				<first>820</first>
+				<second>517</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -76,23 +76,23 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>822</first>
-				<second>562</second>
+				<first>925</first>
+				<second>556</second>
 			</position>
 			<value>32</value>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>928</first>
-				<second>610</second>
+				<first>1169</first>
+				<second>600</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>321</first>
-				<second>638</second>
+				<first>412</first>
+				<second>650</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -111,8 +111,8 @@ Spec. dot
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-95</first>
-				<second>693</second>
+				<first>-232</first>
+				<second>692</second>
 			</position>
 			<fragmentGuid>{A3FDEEFB-60E9-924E-89C4-322C12BC33A1}</fragmentGuid>
 			<inputPins>
@@ -135,8 +135,8 @@ Spec. dot
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-374</first>
-				<second>689</second>
+				<first>-511</first>
+				<second>688</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -161,8 +161,8 @@ Spec. dot
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1100</first>
-				<second>444</second>
+				<first>1486</first>
+				<second>432</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
@@ -176,30 +176,30 @@ Spec. dot
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>1378</first>
-				<second>466</second>
+				<first>1917</first>
+				<second>458</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1196</first>
-				<second>526</second>
+				<first>1691</first>
+				<second>519</second>
 			</position>
 			<value>25.132742</value>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1558</first>
-				<second>505</second>
+				<first>2157</first>
+				<second>497</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>79</first>
-				<second>526</second>
+				<first>0</first>
+				<second>512</second>
 			</position>
 			<fragmentGuid>{50714E2B-9865-FE43-8430-3414D7154B62}</fragmentGuid>
 			<inputPins>

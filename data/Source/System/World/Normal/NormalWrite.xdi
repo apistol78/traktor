@@ -4,8 +4,8 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>529</first>
-				<second>410</second>
+				<first>611</first>
+				<second>417</second>
 			</position>
 			<technique>World_NormalWrite</technique>
 		</item>
@@ -30,18 +30,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>115</first>
-				<second>449</second>
+				<first>27</first>
+				<second>437</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>726</first>
-				<second>199</second>
+				<first>775</first>
+				<second>200</second>
 			</position>
 			<technique>World_NormalWrite</technique>
 			<priority>
@@ -83,15 +83,15 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>542</first>
-				<second>215</second>
+				<first>591</first>
+				<second>216</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>444</first>
-				<second>215</second>
+				<first>493</first>
+				<second>216</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -118,8 +118,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>58</first>
-				<second>184</second>
+				<first>-20</first>
+				<second>173</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -129,8 +129,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>444</first>
-				<second>263</second>
+				<first>493</first>
+				<second>264</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
@@ -152,8 +152,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-86</first>
-				<second>257</second>
+				<first>-179</first>
+				<second>246</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -163,7 +163,7 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>135</first>
+				<first>69</first>
 				<second>311</second>
 			</position>
 			<value>16</value>

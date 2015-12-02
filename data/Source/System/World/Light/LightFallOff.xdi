@@ -2,23 +2,27 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>842</first>
-				<second>419</second>
+				<first>1028</first>
+				<second>426</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment>Fall off</comment>
+			<comment>
+			<![CDATA[
+Fall off
+			]]>
+			</comment>
 			<position>
-				<first>703</first>
-				<second>424</second>
+				<first>803</first>
+				<second>428</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>587</first>
 				<second>416</second>
@@ -26,24 +30,24 @@
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>556</first>
 				<second>455</second>
 			</position>
 		</item>
 		<item type="traktor.render.Length">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>439</first>
-				<second>427</second>
+				<first>333</first>
+				<second>418</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>402</first>
-				<second>516</second>
+				<first>321</first>
+				<second>519</second>
 			</position>
 			<name>Range</name>
 			<connectable>true</connectable>
@@ -51,10 +55,10 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>253</first>
-				<second>430</second>
+				<first>69</first>
+				<second>414</second>
 			</position>
 			<name>LightVector</name>
 			<connectable>true</connectable>
@@ -62,10 +66,10 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>1006</first>
-				<second>442</second>
+				<first>1252</first>
+				<second>453</second>
 			</position>
 			<name>Output</name>
 		</item>

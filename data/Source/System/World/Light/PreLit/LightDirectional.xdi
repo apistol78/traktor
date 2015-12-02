@@ -4,7 +4,7 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1109</first>
+				<first>1294</first>
 				<second>312</second>
 			</position>
 			<technique>Default</technique>
@@ -47,7 +47,7 @@
 		<item type="traktor.render.Conditional" version="1">
 			<comment/>
 			<position>
-				<first>936</first>
+				<first>1043</first>
 				<second>312</second>
 			</position>
 			<branch>BrAuto</branch>
@@ -83,7 +83,7 @@
 				<first>-754</first>
 				<second>-42</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -108,7 +108,7 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>797</first>
+				<first>904</first>
 				<second>364</second>
 			</position>
 			<value>100000</value>
@@ -116,7 +116,7 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>825</first>
+				<first>932</first>
 				<second>395</second>
 			</position>
 			<value>1</value>
@@ -124,7 +124,7 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>825</first>
+				<first>932</first>
 				<second>423</second>
 			</position>
 			<value>0</value>
@@ -132,14 +132,14 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>599</first>
+				<first>706</first>
 				<second>360</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>503</first>
+				<first>610</first>
 				<second>372</second>
 			</position>
 			<swizzle>xyz</swizzle>
@@ -179,30 +179,30 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>30</first>
-				<second>265</second>
+				<first>68</first>
+				<second>192</second>
 			</position>
-			<parameterName>LightShadowColor</parameterName>
+			<parameterName>World_LightShadowColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>48</first>
-				<second>291</second>
+				<first>74</first>
+				<second>272</second>
 			</position>
-			<parameterName>LightBaseColor</parameterName>
+			<parameterName>World_LightBaseColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>51</first>
-				<second>317</second>
+				<first>82</first>
+				<second>345</second>
 			</position>
-			<parameterName>LightSunColor</parameterName>
+			<parameterName>World_LightSunColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -275,38 +275,38 @@
 		<item type="traktor.render.Neg">
 			<comment/>
 			<position>
-				<first>434</first>
-				<second>39</second>
+				<first>701</first>
+				<second>28</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>300</first>
-				<second>39</second>
+				<first>493</first>
+				<second>31</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>199</first>
-				<second>40</second>
+				<first>392</first>
+				<second>32</second>
 			</position>
 			<swizzle>00x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>199</first>
-				<second>100</second>
+				<first>392</first>
+				<second>92</second>
 			</position>
 			<swizzle>xy0</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>57</first>
-				<second>87</second>
+				<first>145</first>
+				<second>83</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
@@ -319,10 +319,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-256</first>
-				<second>173</second>
+				<first>-356</first>
+				<second>153</second>
 			</position>
-			<parameterName>MagicCoeffs</parameterName>
+			<parameterName>World_MagicCoeffs</parameterName>
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -337,10 +337,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-576</first>
-				<second>442</second>
+				<first>-687</first>
+				<second>441</second>
 			</position>
-			<parameterName>LightDirectionAndRange</parameterName>
+			<parameterName>World_LightDirectionAndRange</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -374,17 +374,17 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-744</first>
-				<second>228</second>
+				<first>-783</first>
+				<second>202</second>
 			</position>
-			<parameterName>NormalMap</parameterName>
+			<parameterName>World_NormalMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>505</first>
+				<first>612</first>
 				<second>405</second>
 			</position>
 			<swizzle>000x</swizzle>

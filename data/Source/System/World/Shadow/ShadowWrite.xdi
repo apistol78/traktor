@@ -4,23 +4,23 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>532</first>
-				<second>388</second>
+				<first>737</first>
+				<second>382</second>
 			</position>
 			<technique>World_ShadowWrite</technique>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>301</first>
-				<second>368</second>
+				<first>361</first>
+				<second>375</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>76</first>
-				<second>359</second>
+				<first>-47</first>
+				<second>363</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -30,10 +30,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>110</first>
-				<second>401</second>
+				<first>-15</first>
+				<second>412</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>

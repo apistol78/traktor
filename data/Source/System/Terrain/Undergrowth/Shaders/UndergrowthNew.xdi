@@ -221,7 +221,7 @@
 				<first>-1653</first>
 				<second>-55</second>
 			</position>
-			<parameterName>Time</parameterName>
+			<parameterName>World_Time</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -265,7 +265,7 @@
 				<first>-969</first>
 				<second>133</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -544,7 +544,7 @@
 				<first>665</first>
 				<second>568</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -554,7 +554,7 @@
 				<first>2298</first>
 				<second>553</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -669,7 +669,7 @@
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="4">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>658</first>
@@ -681,7 +681,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
-			<compare>CmNo</compare>
+			<compare>CfNone</compare>
 			<mipBias>-1</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>

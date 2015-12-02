@@ -37,7 +37,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>342</first>
@@ -49,6 +49,7 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -56,8 +57,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>108</first>
-				<second>232</second>
+				<first>79</first>
+				<second>241</second>
 			</position>
 			<name>NormalMap</name>
 			<connectable>true</connectable>
@@ -67,8 +68,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>98</first>
-				<second>282</second>
+				<first>69</first>
+				<second>291</second>
 			</position>
 			<name>NormalMapUV</name>
 			<connectable>true</connectable>

@@ -51,19 +51,19 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightRenderer", LightRenderer, Object)
 
 LightRenderer::LightRenderer()
 {
-	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
-	s_handleExtent = render::getParameterHandle(L"Extent");
-	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
-	s_handleDepthMap = render::getParameterHandle(L"DepthMap");
-	s_handleNormalMap = render::getParameterHandle(L"NormalMap");
-	s_handleShadowMaskSize = render::getParameterHandle(L"ShadowMaskSize");
-	s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
-	s_handleLightPosition = render::getParameterHandle(L"LightPosition");
-	s_handleLightPositionAndRadius = render::getParameterHandle(L"LightPositionAndRadius");
-	s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
-	s_handleLightSunColor = render::getParameterHandle(L"LightSunColor");
-	s_handleLightBaseColor = render::getParameterHandle(L"LightBaseColor");
-	s_handleLightShadowColor = render::getParameterHandle(L"LightShadowColor");
+	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
+	s_handleExtent = render::getParameterHandle(L"World_Extent");
+	s_handleMagicCoeffs = render::getParameterHandle(L"World_MagicCoeffs");
+	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
+	s_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
+	s_handleShadowMaskSize = render::getParameterHandle(L"World_ShadowMaskSize");
+	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
+	s_handleLightPosition = render::getParameterHandle(L"World_LightPosition");
+	s_handleLightPositionAndRadius = render::getParameterHandle(L"World_LightPositionAndRadius");
+	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
+	s_handleLightSunColor = render::getParameterHandle(L"World_LightSunColor");
+	s_handleLightBaseColor = render::getParameterHandle(L"World_LightBaseColor");
+	s_handleLightShadowColor = render::getParameterHandle(L"World_LightShadowColor");
 }
 
 bool LightRenderer::create(

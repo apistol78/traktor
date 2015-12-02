@@ -22,14 +22,14 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>313</first>
+				<first>293</first>
 				<second>216</second>
 			</position>
-			<parameterName>ColorMap</parameterName>
+			<parameterName>World_ColorMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>569</first>
@@ -41,6 +41,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -91,26 +92,26 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1478</first>
-				<second>-75</second>
+				<first>1561</first>
+				<second>-77</second>
 			</position>
 			<swizzle>00x1</swizzle>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1016</first>
-				<second>21</second>
+				<first>835</first>
+				<second>14</second>
 			</position>
-			<parameterName>MagicCoeffs</parameterName>
+			<parameterName>World_MagicCoeffs</parameterName>
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1194</first>
-				<second>-28</second>
+				<first>1122</first>
+				<second>7</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
@@ -123,16 +124,16 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1478</first>
-				<second>-15</second>
+				<first>1561</first>
+				<second>-17</second>
 			</position>
 			<swizzle>xy00</swizzle>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1579</first>
-				<second>-76</second>
+				<first>1662</first>
+				<second>-78</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
@@ -141,7 +142,7 @@
 				<first>537</first>
 				<second>-224</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -241,16 +242,16 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1789</first>
-				<second>-71</second>
+				<first>1872</first>
+				<second>-73</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Neg">
 			<comment/>
 			<position>
-				<first>1897</first>
-				<second>-91</second>
+				<first>1980</first>
+				<second>-93</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
@@ -283,18 +284,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>475</first>
-				<second>66</second>
+				<first>415</first>
+				<second>61</second>
 			</position>
-			<parameterName>NormalMap</parameterName>
+			<parameterName>World_NormalMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Normalize">
 			<comment/>
 			<position>
-				<first>2114</first>
-				<second>-21</second>
+				<first>2197</first>
+				<second>-23</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">

@@ -168,7 +168,7 @@
 				<first>182</first>
 				<second>135</second>
 			</position>
-			<parameterName>LightEnableComplex</parameterName>
+			<parameterName>World_LightEnableComplex</parameterName>
 		</item>
 		<item type="traktor.render.Branch">
 			<comment/>
@@ -176,7 +176,7 @@
 				<first>182</first>
 				<second>49</second>
 			</position>
-			<parameterName>LightEnableComplex</parameterName>
+			<parameterName>World_LightEnableComplex</parameterName>
 		</item>
 	</nodes>
 	<edges>

@@ -4,8 +4,8 @@
 		<item type="traktor.render.TargetSize">
 			<comment/>
 			<position>
-				<first>1034</first>
-				<second>694</second>
+				<first>978</first>
+				<second>708</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
@@ -42,16 +42,16 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>526</first>
-				<second>269</second>
+				<first>474</first>
+				<second>270</second>
 			</position>
 			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>527</first>
-				<second>424</second>
+				<first>475</first>
+				<second>425</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -65,8 +65,8 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>500</first>
-				<second>309</second>
+				<first>448</first>
+				<second>310</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
@@ -79,23 +79,23 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1246</first>
-				<second>480</second>
+				<first>1328</first>
+				<second>443</second>
 			</position>
 			<swizzle>xy01</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>916</first>
-				<second>403</second>
+				<first>899</first>
+				<second>378</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>500</first>
-				<second>159</second>
+				<first>368</first>
+				<second>158</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -105,8 +105,8 @@ Maximum
 			]]>
 			</comment>
 			<position>
-				<first>351</first>
-				<second>166</second>
+				<first>271</first>
+				<second>164</second>
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
@@ -117,26 +117,26 @@ Minimum
 			]]>
 			</comment>
 			<position>
-				<first>345</first>
-				<second>231</second>
+				<first>265</first>
+				<second>229</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>137</first>
-				<second>195</second>
+				<first>51</first>
+				<second>170</second>
 			</position>
-			<parameterName>Extent</parameterName>
+			<parameterName>World_Extent</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>1388</first>
-				<second>498</second>
+				<first>1470</first>
+				<second>461</second>
 			</position>
 			<technique/>
 		</item>
@@ -154,8 +154,8 @@ Minimum
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>611</first>
-				<second>672</second>
+				<first>577</first>
+				<second>677</second>
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
@@ -169,24 +169,24 @@ Minimum
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>615</first>
-				<second>700</second>
+				<first>581</first>
+				<second>705</second>
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1342</first>
-				<second>650</second>
+				<first>1433</first>
+				<second>653</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1337</first>
-				<second>573</second>
+				<first>1388</first>
+				<second>578</second>
 			</position>
 			<name>Position</name>
 		</item>

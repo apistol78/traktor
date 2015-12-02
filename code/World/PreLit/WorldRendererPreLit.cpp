@@ -61,7 +61,6 @@ render::handle_t WorldRendererPreLit::ms_handleTime = 0;
 render::handle_t WorldRendererPreLit::ms_handleView = 0;
 render::handle_t WorldRendererPreLit::ms_handleViewInverse = 0;
 render::handle_t WorldRendererPreLit::ms_handleProjection = 0;
-render::handle_t WorldRendererPreLit::ms_handleSquareProjection = 0;
 render::handle_t WorldRendererPreLit::ms_handleColorMap = 0;
 render::handle_t WorldRendererPreLit::ms_handleDepthMap = 0;
 render::handle_t WorldRendererPreLit::ms_handleLightMap = 0;
@@ -82,18 +81,17 @@ WorldRendererPreLit::WorldRendererPreLit()
 	ms_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
 
 	// Global parameters.
-	ms_handleTime = render::getParameterHandle(L"Time");
-	ms_handleView = render::getParameterHandle(L"View");
-	ms_handleViewInverse = render::getParameterHandle(L"ViewInverse");
-	ms_handleProjection = render::getParameterHandle(L"Projection");
-	ms_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
-	ms_handleColorMap = render::getParameterHandle(L"ColorMap");
-	ms_handleDepthMap = render::getParameterHandle(L"DepthMap");
-	ms_handleLightMap = render::getParameterHandle(L"LightMap");
-	ms_handleNormalMap = render::getParameterHandle(L"NormalMap");
-	ms_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
-	ms_handleFogDistanceAndDensity = render::getParameterHandle(L"FogDistanceAndDensity");
-	ms_handleFogColor = render::getParameterHandle(L"FogColor");
+	ms_handleTime = render::getParameterHandle(L"World_Time");
+	ms_handleView = render::getParameterHandle(L"World_View");
+	ms_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
+	ms_handleProjection = render::getParameterHandle(L"World_Projection");
+	ms_handleColorMap = render::getParameterHandle(L"World_ColorMap");
+	ms_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
+	ms_handleLightMap = render::getParameterHandle(L"World_LightMap");
+	ms_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
+	ms_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
+	ms_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
+	ms_handleFogColor = render::getParameterHandle(L"World_FogColor");
 }
 
 bool WorldRendererPreLit::create(
@@ -829,7 +827,6 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					shadowProgramParams.setMatrixParameter(ms_handleView, f.slice[j].shadowLightView[i]);
 					shadowProgramParams.setMatrixParameter(ms_handleViewInverse, f.slice[j].shadowLightView[i].inverse());
 					shadowProgramParams.setMatrixParameter(ms_handleProjection, f.slice[j].shadowLightProjection[i]);
-					shadowProgramParams.setMatrixParameter(ms_handleSquareProjection, f.slice[j].shadowLightSquareProjection[i]);
 					shadowProgramParams.endParameters(m_globalContext);
 
 					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");

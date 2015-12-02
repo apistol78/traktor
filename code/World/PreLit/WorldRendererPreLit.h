@@ -135,7 +135,6 @@ private:
 	static render::handle_t ms_handleView;
 	static render::handle_t ms_handleViewInverse;
 	static render::handle_t ms_handleProjection;
-	static render::handle_t ms_handleSquareProjection;
 	static render::handle_t ms_handleColorMap;
 	static render::handle_t ms_handleDepthMap;
 	static render::handle_t ms_handleLightMap;

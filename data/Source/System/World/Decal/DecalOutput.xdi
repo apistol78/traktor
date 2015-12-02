@@ -44,15 +44,15 @@
 				<first>522</first>
 				<second>198</second>
 			</position>
-			<parameterName>DecalThinkness</parameterName>
+			<parameterName>World_DecalThinkness</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>1219</first>
-				<second>-65</second>
+				<first>1203</first>
+				<second>-66</second>
 			</position>
 			<name>UseAlpha</name>
 			<connectable>false</connectable>

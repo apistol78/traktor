@@ -18,7 +18,7 @@
 				<first>940</first>
 				<second>479</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -28,7 +28,7 @@
 				<first>1437</first>
 				<second>456</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -42,15 +42,15 @@
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>1619</first>
-				<second>402</second>
+				<first>1708</first>
+				<second>406</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>1794</first>
-				<second>403</second>
+				<first>2048</first>
+				<second>409</second>
 			</position>
 			<technique/>
 		</item>
@@ -138,8 +138,8 @@ Alpha
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>2205</first>
-				<second>679</second>
+				<first>2453</first>
+				<second>686</second>
 			</position>
 			<name>Depth</name>
 		</item>
@@ -215,8 +215,8 @@ Alpha
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>1933</first>
-				<second>648</second>
+				<first>1975</first>
+				<second>650</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -240,10 +240,10 @@ Alpha
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>2081</first>
-				<second>667</second>
+				<first>2161</first>
+				<second>665</second>
 			</position>
-			<parameterName>DepthEnable</parameterName>
+			<parameterName>World_DepthEnable</parameterName>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
@@ -467,7 +467,7 @@ Velocity
 				<first>-1097</first>
 				<second>686</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>

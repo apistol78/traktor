@@ -4,14 +4,14 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>306</first>
-				<second>421</second>
+				<first>244</first>
+				<second>380</second>
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>467</first>
@@ -23,6 +23,7 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -48,8 +49,8 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>691</first>
-				<second>428</second>
+				<first>709</first>
+				<second>430</second>
 			</position>
 			<technique>Default</technique>
 			<priority>

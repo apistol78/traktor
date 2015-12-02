@@ -4,16 +4,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>950</first>
-				<second>532</second>
+				<first>1072</first>
+				<second>531</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>448</first>
-				<second>515</second>
+				<first>270</first>
+				<second>517</second>
 			</position>
 			<name>Input</name>
 			<connectable>true</connectable>
@@ -23,23 +23,23 @@
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>647</first>
+				<first>519</first>
 				<second>512</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>455</first>
-				<second>578</second>
+				<first>277</first>
+				<second>580</second>
 			</position>
 			<value>2, 2, 2, 0</value>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>443</first>
-				<second>618</second>
+				<first>265</first>
+				<second>620</second>
 			</position>
 			<value>-1, -1, -1, 0</value>
 		</item>

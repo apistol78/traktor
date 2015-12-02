@@ -4,8 +4,8 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>579</first>
-				<second>479</second>
+				<first>611</first>
+				<second>460</second>
 			</position>
 			<technique>World_PreLitGBufferWrite</technique>
 		</item>
@@ -33,7 +33,7 @@
 				<first>111</first>
 				<second>475</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -132,7 +132,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-134</first>
+				<first>-220</first>
 				<second>651</second>
 			</position>
 			<name>SpecularRoughness</name>
@@ -240,8 +240,8 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>579</first>
-				<second>526</second>
+				<first>611</first>
+				<second>507</second>
 			</position>
 			<technique>World_DeferredGBufferWrite</technique>
 		</item>

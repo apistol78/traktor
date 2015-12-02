@@ -4,8 +4,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1671</first>
-				<second>598</second>
+				<first>2013</first>
+				<second>587</second>
 			</position>
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
@@ -28,8 +28,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>267</first>
-				<second>492</second>
+				<first>92</first>
+				<second>478</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -39,8 +39,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>270</first>
-				<second>524</second>
+				<first>95</first>
+				<second>510</second>
 			</position>
 			<name>DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -50,15 +50,15 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1208</first>
-				<second>573</second>
+				<first>1402</first>
+				<second>567</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>262</first>
-				<second>556</second>
+				<first>87</first>
+				<second>542</second>
 			</position>
 			<name>SpecularTerm</name>
 			<connectable>true</connectable>
@@ -68,8 +68,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>270</first>
-				<second>652</second>
+				<first>95</first>
+				<second>638</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -79,8 +79,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>267</first>
-				<second>620</second>
+				<first>92</first>
+				<second>606</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -90,8 +90,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>231</first>
-				<second>588</second>
+				<first>56</first>
+				<second>574</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -101,8 +101,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>916</first>
-				<second>625</second>
+				<first>959</first>
+				<second>615</second>
 			</position>
 			<fragmentGuid>{BC060F9A-456E-B747-92C9-5BD78E172A26}</fragmentGuid>
 			<inputPins>
@@ -149,60 +149,60 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1208</first>
-				<second>652</second>
+				<first>1402</first>
+				<second>646</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1378</first>
-				<second>663</second>
+				<first>1607</first>
+				<second>655</second>
 			</position>
 			<swizzle>xxx</swizzle>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>1511</first>
-				<second>583</second>
+				<first>1705</first>
+				<second>577</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1847</first>
-				<second>602</second>
+				<first>2283</first>
+				<second>595</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1841</first>
-				<second>544</second>
+				<first>2183</first>
+				<second>533</second>
 			</position>
 			<swizzle>000w</swizzle>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1964</first>
-				<second>547</second>
+				<first>2358</first>
+				<second>544</second>
 			</position>
 		</item>
 		<item type="traktor.render.Neg">
 			<comment/>
 			<position>
-				<first>761</first>
-				<second>778</second>
+				<first>661</first>
+				<second>773</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>2124</first>
-				<second>563</second>
+				<first>2604</first>
+				<second>554</second>
 			</position>
 			<fragmentGuid>{BDEEDD46-96EF-C14F-980C-C73BE38DC8DB}</fragmentGuid>
 			<inputPins>
@@ -226,16 +226,16 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>762</first>
-				<second>732</second>
+				<first>662</first>
+				<second>727</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Normalize">
 			<comment/>
 			<position>
-				<first>580</first>
-				<second>756</second>
+				<first>405</first>
+				<second>742</second>
 			</position>
 		</item>
 	</nodes>

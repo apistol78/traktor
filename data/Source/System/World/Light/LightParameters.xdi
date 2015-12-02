@@ -8,8 +8,8 @@ Light range
 			]]>
 			</comment>
 			<position>
-				<first>763</first>
-				<second>389</second>
+				<first>923</first>
+				<second>387</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
@@ -20,19 +20,20 @@ Light direction
 			]]>
 			</comment>
 			<position>
-				<first>763</first>
-				<second>450</second>
+				<first>923</first>
+				<second>448</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment/>
 			<position>
-				<first>534</first>
-				<second>405</second>
+				<first>429</first>
+				<second>432</second>
 			</position>
-			<parameterName>LightDirectionAndRange</parameterName>
+			<parameterName>World_LightDirectionAndRange</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>2</length>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -42,8 +43,8 @@ Light position
 			]]>
 			</comment>
 			<position>
-				<first>763</first>
-				<second>503</second>
+				<first>923</first>
+				<second>501</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -54,56 +55,60 @@ Light type
 			]]>
 			</comment>
 			<position>
-				<first>763</first>
-				<second>338</second>
+				<first>923</first>
+				<second>336</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment/>
 			<position>
-				<first>534</first>
-				<second>329</second>
+				<first>429</first>
+				<second>356</second>
 			</position>
-			<parameterName>LightPositionAndType</parameterName>
+			<parameterName>World_LightPositionAndType</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>2</length>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment/>
 			<position>
-				<first>534</first>
-				<second>253</second>
+				<first>429</first>
+				<second>280</second>
 			</position>
-			<parameterName>LightShadowColor</parameterName>
+			<parameterName>World_LightShadowColor</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>2</length>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment/>
 			<position>
-				<first>534</first>
-				<second>177</second>
+				<first>429</first>
+				<second>204</second>
 			</position>
-			<parameterName>LightBaseColor</parameterName>
+			<parameterName>World_LightBaseColor</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>2</length>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment/>
 			<position>
-				<first>534</first>
-				<second>101</second>
+				<first>429</first>
+				<second>128</second>
 			</position>
-			<parameterName>LightSunColor</parameterName>
+			<parameterName>World_LightSunColor</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>2</length>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>305</first>
-				<second>270</second>
+				<first>200</first>
+				<second>297</second>
 			</position>
 			<name>Index</name>
 			<connectable>true</connectable>
@@ -113,80 +118,80 @@ Light type
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>905</first>
-				<second>263</second>
+				<first>1065</first>
+				<second>261</second>
 			</position>
 			<name>SunColor</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>905</first>
-				<second>294</second>
+				<first>1065</first>
+				<second>292</second>
 			</position>
 			<name>BaseColor</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>905</first>
-				<second>325</second>
+				<first>1065</first>
+				<second>323</second>
 			</position>
 			<name>ShadowColor</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>905</first>
-				<second>356</second>
+				<first>1065</first>
+				<second>354</second>
 			</position>
 			<name>Type</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>905</first>
-				<second>387</second>
+				<first>1065</first>
+				<second>385</second>
 			</position>
 			<name>Range</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>905</first>
-				<second>418</second>
+				<first>1065</first>
+				<second>416</second>
 			</position>
 			<name>Direction</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>905</first>
-				<second>449</second>
+				<first>1065</first>
+				<second>447</second>
 			</position>
 			<name>Position</name>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>763</first>
-				<second>186</second>
+				<first>923</first>
+				<second>184</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>763</first>
-				<second>223</second>
+				<first>923</first>
+				<second>221</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>763</first>
-				<second>264</second>
+				<first>923</first>
+				<second>262</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>

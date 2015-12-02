@@ -29,7 +29,7 @@
 			<external>{DE17AA8C-526F-5D4A-BB05-BBD50D564FFA}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>739</first>
@@ -41,6 +41,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -91,18 +92,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-100</first>
-				<second>332</second>
+				<first>-209</first>
+				<second>344</second>
 			</position>
-			<parameterName>Time</parameterName>
+			<parameterName>World_Time</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>-97</first>
-				<second>363</second>
+				<first>-174</first>
+				<second>309</second>
 			</position>
 			<value>2, 0, 0, 0</value>
 		</item>
@@ -123,18 +124,18 @@
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>-105</first>
-				<second>511</second>
+				<first>-165</first>
+				<second>530</second>
 			</position>
 			<value>0, 2.3, 0, 0</value>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-108</first>
-				<second>480</second>
+				<first>-197</first>
+				<second>430</second>
 			</position>
-			<parameterName>Time</parameterName>
+			<parameterName>World_Time</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -167,7 +168,7 @@
 				<second>467</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>731</first>
@@ -179,6 +180,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>

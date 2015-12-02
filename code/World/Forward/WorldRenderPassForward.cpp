@@ -42,24 +42,24 @@ void initializeHandles()
 
 	s_techniqueDefault = render::getParameterHandle(L"World_ForwardColor");
 
-	s_handleView = render::getParameterHandle(L"View");
-	s_handleViewInverse = render::getParameterHandle(L"ViewInverse");
-	s_handleWorld = render::getParameterHandle(L"World");
-	s_handleWorldView = render::getParameterHandle(L"WorldView");
-	s_handleColorMap = render::getParameterHandle(L"ColorMap");
-	s_handleLightEnableComplex = render::getParameterHandle(L"LightEnableComplex");
-	s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
-	s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
-	s_handleLightSunColor = render::getParameterHandle(L"LightSunColor");
-	s_handleLightBaseColor = render::getParameterHandle(L"LightBaseColor");
-	s_handleLightShadowColor = render::getParameterHandle(L"LightShadowColor");
-	s_handleFogEnable = render::getParameterHandle(L"FogEnable");
-	s_handleFogDistanceAndDensity = render::getParameterHandle(L"FogDistanceAndDensity");
-	s_handleFogColor = render::getParameterHandle(L"FogColor");
-	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
-	s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
-	s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
-	s_handleDepthMap = render::getParameterHandle(L"DepthMap");
+	s_handleView = render::getParameterHandle(L"World_View");
+	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
+	s_handleWorld = render::getParameterHandle(L"World_World");
+	s_handleWorldView = render::getParameterHandle(L"World_WorldView");
+	s_handleColorMap = render::getParameterHandle(L"World_ColorMap");
+	s_handleLightEnableComplex = render::getParameterHandle(L"World_LightEnableComplex");
+	s_handleLightPositionAndType = render::getParameterHandle(L"World_LightPositionAndType");
+	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
+	s_handleLightSunColor = render::getParameterHandle(L"World_LightSunColor");
+	s_handleLightBaseColor = render::getParameterHandle(L"World_LightBaseColor");
+	s_handleLightShadowColor = render::getParameterHandle(L"World_LightShadowColor");
+	s_handleFogEnable = render::getParameterHandle(L"World_FogEnable");
+	s_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
+	s_handleFogColor = render::getParameterHandle(L"World_FogColor");
+	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
+	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
+	s_handleDepthEnable = render::getParameterHandle(L"World_DepthEnable");
+	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
 
 	s_handlesInitialized = true;
 }

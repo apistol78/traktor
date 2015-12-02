@@ -148,7 +148,7 @@
 				<first>487</first>
 				<second>-177</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -173,7 +173,7 @@
 				<first>101</first>
 				<second>-182</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>

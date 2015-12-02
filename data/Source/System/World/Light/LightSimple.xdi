@@ -4,8 +4,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>664</first>
-				<second>275</second>
+				<first>901</first>
+				<second>298</second>
 			</position>
 			<fragmentGuid>{3BDB38CE-AE49-4D4D-A158-78E64469DF0A}</fragmentGuid>
 			<inputPins>
@@ -36,8 +36,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>671</first>
-				<second>451</second>
+				<first>903</first>
+				<second>463</second>
 			</position>
 			<name>Specular</name>
 		</item>
@@ -169,8 +169,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>431</first>
-				<second>415</second>
+				<first>557</first>
+				<second>413</second>
 			</position>
 			<fragmentGuid>{B5FB3B51-18B3-1D44-A060-5E83D267C7D4}</fragmentGuid>
 			<inputPins>
@@ -200,24 +200,24 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>870</first>
-				<second>295</second>
+				<first>1190</first>
+				<second>326</second>
 			</position>
 			<name>Diffuse</name>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>790</first>
-				<second>295</second>
+				<first>1110</first>
+				<second>326</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>603</first>
-				<second>451</second>
+				<first>729</first>
+				<second>449</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>

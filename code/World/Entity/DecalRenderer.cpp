@@ -37,9 +37,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalRenderer", DecalRenderer, IEntityRen
 
 DecalRenderer::DecalRenderer(render::IRenderSystem* renderSystem)
 {
-	s_handleDecalParams = render::getParameterHandle(L"DecalParams");
-	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
-	s_handleWorldViewInv = render::getParameterHandle(L"WorldViewInv");
+	s_handleDecalParams = render::getParameterHandle(L"World_DecalParams");
+	s_handleMagicCoeffs = render::getParameterHandle(L"World_MagicCoeffs");
+	s_handleWorldViewInv = render::getParameterHandle(L"World_WorldViewInv");
 
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position), 0));

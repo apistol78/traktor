@@ -4,23 +4,23 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>3473</first>
-				<second>198</second>
+				<first>3645</first>
+				<second>196</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>3281</first>
-				<second>208</second>
+				<first>3453</first>
+				<second>206</second>
 			</position>
 		</item>
 		<item type="traktor.render.Platform">
 			<comment/>
 			<position>
-				<first>2956</first>
-				<second>138</second>
+				<first>3057</first>
+				<second>136</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
@@ -37,30 +37,30 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>2735</first>
-				<second>170</second>
+				<first>2836</first>
+				<second>168</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>2494</first>
-				<second>73</second>
+				<first>2595</first>
+				<second>71</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2166</first>
-				<second>2</second>
+				<first>2255</first>
+				<second>9</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>2012</first>
-				<second>-18</second>
+				<first>2029</first>
+				<second>-29</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -68,6 +68,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -84,15 +85,15 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1451</first>
-				<second>-84</second>
+				<first>1554</first>
+				<second>-80</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1247</first>
-				<second>-167</second>
+				<first>1350</first>
+				<second>-163</second>
 			</position>
 		</item>
 		<item type="traktor.render.Conditional" version="1">
@@ -107,29 +108,29 @@
 		<item type="traktor.render.MixOut">
 			<comment/>
 			<position>
-				<first>422</first>
-				<second>-69</second>
+				<first>317</first>
+				<second>-77</second>
 			</position>
 		</item>
 		<item type="traktor.render.Abs">
 			<comment/>
 			<position>
-				<first>230</first>
-				<second>-20</second>
+				<first>125</first>
+				<second>-28</second>
 			</position>
 		</item>
 		<item type="traktor.render.Max">
 			<comment/>
 			<position>
-				<first>740</first>
-				<second>-101</second>
+				<first>706</first>
+				<second>-121</second>
 			</position>
 		</item>
 		<item type="traktor.render.Max">
 			<comment/>
 			<position>
-				<first>593</first>
-				<second>-132</second>
+				<first>488</first>
+				<second>-140</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -185,8 +186,8 @@
 		<item type="traktor.render.Max">
 			<comment/>
 			<position>
-				<first>2294</first>
-				<second>130</second>
+				<first>2395</first>
+				<second>128</second>
 			</position>
 		</item>
 		<item type="traktor.render.Max">
@@ -207,8 +208,8 @@
 		<item type="traktor.render.Abs">
 			<comment/>
 			<position>
-				<first>1873</first>
-				<second>117</second>
+				<first>1788</first>
+				<second>113</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -230,8 +231,8 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>3154</first>
-				<second>260</second>
+				<first>3248</first>
+				<second>344</second>
 			</position>
 			<value>0.5</value>
 		</item>

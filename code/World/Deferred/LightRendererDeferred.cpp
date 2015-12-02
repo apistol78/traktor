@@ -61,28 +61,28 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightRendererDeferred", LightRendererDefe
 
 LightRendererDeferred::LightRendererDeferred()
 {
-	s_handleTime = render::getParameterHandle(L"Time");
-	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
-	s_handleCloudShadowEnable = render::getParameterHandle(L"CloudShadowEnable");
-	s_handleExtent = render::getParameterHandle(L"Extent");
-	s_handleProjection = render::getParameterHandle(L"Projection");
-	s_handleViewInverse = render::getParameterHandle(L"ViewInverse");
-	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
-	s_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
-	s_handleDepthMap = render::getParameterHandle(L"DepthMap");
-	s_handleNormalMap = render::getParameterHandle(L"NormalMap");
-	s_handleColorMap = render::getParameterHandle(L"ColorMap");
-	s_handleShadowMaskSize = render::getParameterHandle(L"ShadowMaskSize");
-	s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
-	s_handleCloudShadow = render::getParameterHandle(L"CloudShadow");
-	s_handleLightPosition = render::getParameterHandle(L"LightPosition");
-	s_handleLightPositionAndRadius = render::getParameterHandle(L"LightPositionAndRadius");
-	s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
-	s_handleLightSunColor = render::getParameterHandle(L"LightSunColor");
-	s_handleLightBaseColor = render::getParameterHandle(L"LightBaseColor");
-	s_handleLightShadowColor = render::getParameterHandle(L"LightShadowColor");
-	s_handleFogDistanceAndDensity = render::getParameterHandle(L"FogDistanceAndDensity");
-	s_handleFogColor = render::getParameterHandle(L"FogColor");
+	s_handleTime = render::getParameterHandle(L"World_Time");
+	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
+	s_handleCloudShadowEnable = render::getParameterHandle(L"World_CloudShadowEnable");
+	s_handleExtent = render::getParameterHandle(L"World_Extent");
+	s_handleProjection = render::getParameterHandle(L"World_Projection");
+	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
+	s_handleMagicCoeffs = render::getParameterHandle(L"World_MagicCoeffs");
+	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
+	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
+	s_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
+	s_handleColorMap = render::getParameterHandle(L"World_ColorMap");
+	s_handleShadowMaskSize = render::getParameterHandle(L"World_ShadowMaskSize");
+	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
+	s_handleCloudShadow = render::getParameterHandle(L"World_CloudShadow");
+	s_handleLightPosition = render::getParameterHandle(L"World_LightPosition");
+	s_handleLightPositionAndRadius = render::getParameterHandle(L"World_LightPositionAndRadius");
+	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
+	s_handleLightSunColor = render::getParameterHandle(L"World_LightSunColor");
+	s_handleLightBaseColor = render::getParameterHandle(L"World_LightBaseColor");
+	s_handleLightShadowColor = render::getParameterHandle(L"World_LightShadowColor");
+	s_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
+	s_handleFogColor = render::getParameterHandle(L"World_FogColor");
 }
 
 bool LightRendererDeferred::create(

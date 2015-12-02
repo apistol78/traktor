@@ -4,8 +4,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>69</first>
-				<second>127</second>
+				<first>-47</first>
+				<second>117</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -15,8 +15,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>122</first>
-				<second>272</second>
+				<first>-71</first>
+				<second>305</second>
 			</position>
 			<parameterName>ModelView</parameterName>
 			<type>PtMatrix</type>
@@ -25,8 +25,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>69</first>
-				<second>170</second>
+				<first>-47</first>
+				<second>160</second>
 			</position>
 			<name>Normal</name>
 			<usage>DuNormal</usage>
@@ -36,8 +36,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>68</first>
-				<second>212</second>
+				<first>-48</first>
+				<second>202</second>
 			</position>
 			<name>Tangent</name>
 			<usage>DuTangent</usage>
@@ -54,22 +54,22 @@
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>307</first>
-				<second>235</second>
+				<first>308</first>
+				<second>262</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>307</first>
-				<second>315</second>
+				<first>314</first>
+				<second>364</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>475</first>
-				<second>197</second>
+				<first>993</first>
+				<second>211</second>
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
@@ -78,39 +78,39 @@
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>633</first>
-				<second>146</second>
+				<first>1304</first>
+				<second>109</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>502</first>
-				<second>96</second>
+				<first>1179</first>
+				<second>52</second>
 			</position>
 			<name>Position</name>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>821</first>
-				<second>96</second>
+				<first>1660</first>
+				<second>88</second>
 			</position>
 			<technique/>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>512</first>
-				<second>290</second>
+				<first>689</first>
+				<second>313</second>
 			</position>
 			<name>Normal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>507</first>
-				<second>338</second>
+				<first>684</first>
+				<second>361</second>
 			</position>
 			<name>Tangent</name>
 		</item>

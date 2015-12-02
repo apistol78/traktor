@@ -4,16 +4,16 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>827</first>
-				<second>277</second>
+				<first>1048</first>
+				<second>257</second>
 			</position>
 			<technique/>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>661</first>
-				<second>268</second>
+				<first>844</first>
+				<second>244</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
@@ -26,15 +26,15 @@
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>217</first>
-				<second>198</second>
+				<first>91</first>
+				<second>202</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>44</first>
-				<second>214</second>
+				<first>-142</first>
+				<second>202</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -44,30 +44,30 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>74</first>
-				<second>240</second>
+				<first>-112</first>
+				<second>228</second>
 			</position>
-			<parameterName>World</parameterName>
+			<parameterName>World_World</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>197</first>
+				<first>122</first>
 				<second>305</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>493</first>
-				<second>320</second>
+				<first>610</first>
+				<second>302</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -89,8 +89,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>379</first>
-				<second>465</second>
+				<first>302</first>
+				<second>442</second>
 			</position>
 			<name>Normal</name>
 			<usage>DuNormal</usage>
@@ -100,34 +100,34 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>426</first>
-				<second>501</second>
+				<first>346</first>
+				<second>500</second>
 			</position>
-			<parameterName>World</parameterName>
+			<parameterName>World_World</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>565</first>
-				<second>372</second>
+				<first>627</first>
+				<second>207</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>387</first>
-				<second>366</second>
+				<first>360</first>
+				<second>167</second>
 			</position>
 			<name>Position</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1241</first>
-				<second>622</second>
+				<first>1314</first>
+				<second>629</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
@@ -141,17 +141,17 @@
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>775</first>
-				<second>561</second>
+				<first>745</first>
+				<second>556</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>608</first>
-				<second>613</second>
+				<first>546</first>
+				<second>601</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -184,8 +184,8 @@
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>953</first>
-				<second>581</second>
+				<first>996</first>
+				<second>592</second>
 			</position>
 		</item>
 	</nodes>
@@ -362,22 +362,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[21]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

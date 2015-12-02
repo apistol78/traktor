@@ -4,57 +4,57 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>277</first>
-				<second>108</second>
+				<first>487</first>
+				<second>59</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>176</first>
-				<second>169</second>
+				<first>386</first>
+				<second>120</second>
 			</position>
 			<swizzle>xy00</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>34</first>
-				<second>156</second>
+				<first>175</first>
+				<second>134</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>-108</first>
-				<second>156</second>
+				<first>-77</first>
+				<second>164</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-286</first>
-				<second>205</second>
+				<first>-244</first>
+				<second>245</second>
 			</position>
-			<parameterName>MagicCoeffs</parameterName>
+			<parameterName>World_MagicCoeffs</parameterName>
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-765</first>
-				<second>-40</second>
+				<first>-835</first>
+				<second>-35</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>176</first>
-				<second>109</second>
+				<first>386</first>
+				<second>60</second>
 			</position>
 			<swizzle>00x1</swizzle>
 		</item>
@@ -155,20 +155,20 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-799</first>
-				<second>42</second>
+				<first>-916</first>
+				<second>66</second>
 			</position>
-			<parameterName>NormalMap</parameterName>
+			<parameterName>World_NormalMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-706</first>
+				<first>-799</first>
 				<second>492</second>
 			</position>
-			<parameterName>LightDirectionAndRange</parameterName>
+			<parameterName>World_LightDirectionAndRange</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -250,30 +250,30 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>629</first>
+				<first>576</first>
 				<second>403</second>
 			</position>
-			<parameterName>LightSunColor</parameterName>
+			<parameterName>World_LightSunColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>625</first>
+				<first>572</first>
 				<second>338</second>
 			</position>
-			<parameterName>LightBaseColor</parameterName>
+			<parameterName>World_LightBaseColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>606</first>
+				<first>553</first>
 				<second>269</second>
 			</position>
-			<parameterName>LightShadowColor</parameterName>
+			<parameterName>World_LightShadowColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -318,10 +318,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-976</first>
-				<second>334</second>
+				<first>-1055</first>
+				<second>342</second>
 			</position>
-			<parameterName>LightPosition</parameterName>
+			<parameterName>World_LightPosition</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -397,8 +397,8 @@ Fall off
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-971</first>
-				<second>95</second>
+				<first>-977</first>
+				<second>159</second>
 			</position>
 			<fragmentGuid>{EA7EBD42-FB88-C441-97B3-ED69566A9993}</fragmentGuid>
 			<inputPins/>
@@ -431,19 +431,19 @@ Fall off
 		<item type="traktor.render.Min">
 			<comment/>
 			<position>
-				<first>295</first>
-				<second>449</second>
+				<first>381</first>
+				<second>458</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>191</first>
-				<second>501</second>
+				<first>241</first>
+				<second>513</second>
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>-211</first>
@@ -455,6 +455,7 @@ Fall off
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -465,7 +466,7 @@ Fall off
 				<first>-505</first>
 				<second>697</second>
 			</position>
-			<parameterName>ColorMap</parameterName>
+			<parameterName>World_ColorMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>

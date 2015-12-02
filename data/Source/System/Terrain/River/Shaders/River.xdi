@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="4">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
 				<first>2578</first>
 				<second>781</second>
 			</position>
 			<technique>World_ForwardColor</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -218,7 +226,7 @@
 				<first>407</first>
 				<second>818</second>
 			</position>
-			<parameterName>Time</parameterName>
+			<parameterName>World_Time</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -349,7 +357,7 @@
 				<second>890</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>1264</first>
@@ -361,7 +369,10 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Texture">
 			<comment/>
@@ -372,7 +383,7 @@
 			<external>{EDB0CC4F-1D26-EE45-9FF5-7293F137EDDB}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>1265</first>
@@ -384,7 +395,10 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -460,7 +474,7 @@
 				<first>577</first>
 				<second>377</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -509,10 +523,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1062</first>
-				<second>460</second>
+				<first>929</first>
+				<second>450</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -554,7 +568,7 @@
 				<second>1238</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>2289</first>
@@ -566,7 +580,10 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Texture">
 			<comment/>
@@ -599,7 +616,7 @@
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>1469</first>
@@ -611,9 +628,12 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>1469</first>
@@ -625,7 +645,10 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Platform">
 			<comment/>

@@ -7,22 +7,22 @@
 				<first>1036</first>
 				<second>347</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>1218</first>
-				<second>293</second>
+				<first>1329</first>
+				<second>300</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>1393</first>
-				<second>294</second>
+				<first>1613</first>
+				<second>286</second>
 			</position>
 			<technique/>
 		</item>
@@ -40,7 +40,7 @@
 				<first>545</first>
 				<second>427</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -84,8 +84,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1161</first>
-				<second>199</second>
+				<first>1252</first>
+				<second>200</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -180,16 +180,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1287</first>
-				<second>716</second>
+				<first>1386</first>
+				<second>727</second>
 			</position>
 			<name>Age</name>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>1123</first>
-				<second>680</second>
+				<first>1222</first>
+				<second>691</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -233,8 +233,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-57</first>
-				<second>479</second>
+				<first>-253</first>
+				<second>477</second>
 			</position>
 			<name>Direction</name>
 			<usage>DuCustom</usage>
@@ -251,8 +251,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-83</first>
-				<second>531</second>
+				<first>-279</first>
+				<second>529</second>
 			</position>
 			<name>ScaleDisplacement</name>
 			<connectable>true</connectable>
@@ -262,8 +262,8 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>172</first>
-				<second>478</second>
+				<first>51</first>
+				<second>476</second>
 			</position>
 		</item>
 	</nodes>

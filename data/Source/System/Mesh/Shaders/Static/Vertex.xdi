@@ -4,16 +4,16 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>540</first>
-				<second>505</second>
+				<first>800</first>
+				<second>499</second>
 			</position>
 			<technique/>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>342</first>
-				<second>485</second>
+				<first>509</first>
+				<second>470</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
@@ -37,20 +37,20 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-287</first>
-				<second>508</second>
+				<first>-367</first>
+				<second>504</second>
 			</position>
-			<parameterName>WorldView</parameterName>
+			<parameterName>World_WorldView</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>174</first>
-				<second>537</second>
+				<first>227</first>
+				<second>531</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -87,8 +87,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>57</first>
-				<second>632</second>
+				<first>144</first>
+				<second>657</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -96,7 +96,7 @@
 			<comment/>
 			<position>
 				<first>-82</first>
-				<second>612</second>
+				<second>613</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexInput">
@@ -128,8 +128,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>57</first>
-				<second>714</second>
+				<first>146</first>
+				<second>721</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -169,16 +169,16 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>57</first>
-				<second>798</second>
+				<first>139</first>
+				<second>802</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>-82</first>
-				<second>778</second>
+				<first>-90</first>
+				<second>779</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexInput">

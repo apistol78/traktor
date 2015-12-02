@@ -4,22 +4,22 @@
 		<item type="traktor.render.Platform">
 			<comment/>
 			<position>
-				<first>1252</first>
-				<second>269</second>
+				<first>1570</first>
+				<second>252</second>
 			</position>
 		</item>
 		<item type="traktor.render.Neg">
 			<comment/>
 			<position>
-				<first>75</first>
-				<second>572</second>
+				<first>-140</first>
+				<second>566</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-134</first>
-				<second>447</second>
+				<first>-349</first>
+				<second>441</second>
 			</position>
 			<name>Amount</name>
 			<connectable>true</connectable>
@@ -29,11 +29,11 @@
 		<item type="traktor.render.Reflect">
 			<comment/>
 			<position>
-				<first>233</first>
-				<second>536</second>
+				<first>117</first>
+				<second>524</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>745</first>
@@ -45,6 +45,7 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -52,15 +53,15 @@
 		<item type="traktor.render.Lerp">
 			<comment/>
 			<position>
-				<first>1068</first>
-				<second>414</second>
+				<first>1316</first>
+				<second>396</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-131</first>
-				<second>413</second>
+				<first>-346</first>
+				<second>407</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -70,8 +71,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-158</first>
-				<second>549</second>
+				<first>-373</first>
+				<second>543</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -81,8 +82,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-119</first>
-				<second>379</second>
+				<first>-334</first>
+				<second>373</second>
 			</position>
 			<name>Input</name>
 			<connectable>true</connectable>
@@ -92,8 +93,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1485</first>
-				<second>322</second>
+				<first>1859</first>
+				<second>309</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -107,10 +108,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>264</first>
+				<first>219</first>
 				<second>626</second>
 			</position>
-			<parameterName>ViewInverse</parameterName>
+			<parameterName>World_ViewInverse</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -125,25 +126,25 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>526</first>
-				<second>507</second>
+				<first>475</first>
+				<second>488</second>
 			</position>
-			<parameterName>ReflectionMap</parameterName>
+			<parameterName>World_ReflectionMap</parameterName>
 			<type>PtTextureCube</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>916</first>
-				<second>515</second>
+				<first>1010</first>
+				<second>508</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-119</first>
-				<second>481</second>
+				<first>-334</first>
+				<second>475</second>
 			</position>
 			<name>Scale</name>
 			<connectable>true</connectable>
@@ -153,8 +154,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-123</first>
-				<second>515</second>
+				<first>-338</first>
+				<second>509</second>
 			</position>
 			<name>Offset</name>
 			<connectable>true</connectable>

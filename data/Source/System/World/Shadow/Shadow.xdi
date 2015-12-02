@@ -4,32 +4,32 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1872</first>
-				<second>846</second>
+				<first>2166</first>
+				<second>813</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>1734</first>
-				<second>819</second>
+				<first>1798</first>
+				<second>776</second>
 			</position>
-			<parameterName>ShadowEnable</parameterName>
+			<parameterName>World_ShadowEnable</parameterName>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1591</first>
-				<second>901</second>
+				<first>1618</first>
+				<second>860</second>
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>1462</first>
-				<second>805</second>
+				<first>1267</first>
+				<second>722</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -37,6 +37,7 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -44,47 +45,47 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1621</first>
-				<second>825</second>
+				<first>1685</first>
+				<second>782</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>633</first>
-				<second>803</second>
+				<first>-107</first>
+				<second>753</second>
 			</position>
-			<parameterName>ShadowMask</parameterName>
+			<parameterName>World_ShadowMask</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.TargetSize">
 			<comment/>
 			<position>
-				<first>836</first>
-				<second>986</second>
+				<first>399</first>
+				<second>948</second>
 			</position>
 		</item>
 		<item type="traktor.render.FragmentPosition">
 			<comment/>
 			<position>
-				<first>794</first>
-				<second>949</second>
+				<first>357</first>
+				<second>911</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>968</first>
-				<second>942</second>
+				<first>637</first>
+				<second>887</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1117</first>
-				<second>1021</second>
+				<first>956</first>
+				<second>968</second>
 			</position>
 		</item>
 		<item type="traktor.render.Platform">
@@ -97,31 +98,31 @@
 		<item type="traktor.render.TextureSize">
 			<comment/>
 			<position>
-				<first>727</first>
-				<second>1182</second>
+				<first>256</first>
+				<second>1111</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>761</first>
-				<second>1132</second>
+				<first>441</first>
+				<second>1051</second>
 			</position>
 			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>861</first>
-				<second>1183</second>
+				<first>541</first>
+				<second>1102</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>953</first>
-				<second>1132</second>
+				<first>633</first>
+				<second>1051</second>
 			</position>
 		</item>
 	</nodes>

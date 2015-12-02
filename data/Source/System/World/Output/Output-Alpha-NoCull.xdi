@@ -47,8 +47,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-224</first>
-				<second>517</second>
+				<first>-331</first>
+				<second>526</second>
 			</position>
 			<name>Output</name>
 			<connectable>true</connectable>
@@ -101,24 +101,24 @@
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>174</first>
-				<second>487</second>
+				<first>67</first>
+				<second>496</second>
 			</position>
 			<operator>CoGreaterEqual</operator>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-20</first>
-				<second>479</second>
+				<first>-127</first>
+				<second>488</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>61</first>
-				<second>539</second>
+				<first>-46</first>
+				<second>548</second>
 			</position>
 			<value>0.01</value>
 		</item>

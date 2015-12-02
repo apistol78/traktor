@@ -4,8 +4,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-918</first>
-				<second>110</second>
+				<first>-1411</first>
+				<second>50</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -15,65 +15,68 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>232</first>
-				<second>117</second>
+				<first>730</first>
+				<second>103</second>
 			</position>
 			<technique>Default</technique>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>71</first>
-				<second>97</second>
+				<first>327</first>
+				<second>104</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-107</first>
-				<second>189</second>
+				<first>-12</first>
+				<second>199</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>-220</first>
-				<second>91</second>
+				<first>-188</first>
+				<second>67</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-369</first>
-				<second>211</second>
+				<first>-255</first>
+				<second>205</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-651</first>
-				<second>167</second>
+				<first>-862</first>
+				<second>144</second>
 			</position>
 			<parameterName>SkyDomeRadius</parameterName>
 			<type>PtScalar</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-60</first>
-				<second>70</second>
+				<first>189</first>
+				<second>121</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-417</first>
-				<second>100</second>
+				<first>-547</first>
+				<second>68</second>
 			</position>
 			<fragmentGuid>{D9D861EF-1A71-9C4F-9D94-47812EF465EF}</fragmentGuid>
 			<inputPins>
@@ -100,15 +103,15 @@
 		<item type="traktor.render.MixOut">
 			<comment/>
 			<position>
-				<first>-738</first>
-				<second>69</second>
+				<first>-1040</first>
+				<second>14</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-598</first>
-				<second>54</second>
+				<first>-862</first>
+				<second>5</second>
 			</position>
 			<fragmentGuid>{7F401326-4C07-AC4C-9315-B2FCD61B9250}</fragmentGuid>
 			<inputPins>
@@ -131,13 +134,21 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
 				<first>1165</first>
 				<second>521</second>
 			</position>
 			<technique>Default</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -155,6 +166,7 @@
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
 			<wireframe>false</wireframe>
 			<stencilEnable>false</stencilEnable>
 			<stencilFail>SoKeep</stencilFail>
@@ -163,6 +175,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Interpolator">
 			<comment/>
@@ -181,69 +194,70 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>-640</first>
-				<second>620</second>
+				<first>-436</first>
+				<second>568</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-1294</first>
-				<second>954</second>
+				<first>-1709</first>
+				<second>842</second>
 			</position>
-			<parameterName>Time</parameterName>
+			<parameterName>World_Time</parameterName>
 			<type>PtScalar</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-1293</first>
-				<second>985</second>
+				<first>-1650</first>
+				<second>975</second>
 			</position>
 			<value>0</value>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>-1143</first>
-				<second>923</second>
+				<first>-1483</first>
+				<second>860</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-992</first>
-				<second>892</second>
+				<first>-1190</first>
+				<second>860</second>
 			</position>
 			<swizzle>0x</swizzle>
 		</item>
 		<item type="traktor.render.Sin">
 			<comment/>
 			<position>
-				<first>-1102</first>
-				<second>679</second>
+				<first>-1399</first>
+				<second>644</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>-952</first>
-				<second>697</second>
+				<first>-1150</first>
+				<second>665</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-1075</first>
-				<second>778</second>
+				<first>-1273</first>
+				<second>746</second>
 			</position>
 			<value>20</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-1076</first>
-				<second>747</second>
+				<first>-1274</first>
+				<second>715</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -271,7 +285,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-106</first>
@@ -279,6 +293,7 @@
 			</position>
 			<parameterName>LightDirection</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Lerp">
 			<comment/>

@@ -107,7 +107,7 @@
 				<second>-155</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="4">
+		<item type="traktor.render.Sampler" version="5">
 			<comment>
 			<![CDATA[
 Generated texture from surface cache.
@@ -123,7 +123,7 @@ Generated texture from surface cache.
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
-			<compare>CmNo</compare>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -416,7 +416,7 @@ Generated texture from surface cache.
 				<first>70</first>
 				<second>98</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -506,7 +506,7 @@ Generated texture from surface cache.
 				<first>1304</first>
 				<second>-330</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -538,7 +538,7 @@ Generated texture from surface cache.
 				<first>269</first>
 				<second>140</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -552,7 +552,7 @@ Generated texture from surface cache.
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="4">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>1648</first>
@@ -564,7 +564,7 @@ Generated texture from surface cache.
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
-			<compare>CmNo</compare>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -593,7 +593,7 @@ Generated texture from surface cache.
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Sampler" version="4">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>870</first>
@@ -605,7 +605,7 @@ Generated texture from surface cache.
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
-			<compare>CmNo</compare>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -733,7 +733,7 @@ Generated texture from surface cache.
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="4">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>2297</first>
@@ -745,7 +745,7 @@ Generated texture from surface cache.
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
-			<compare>CmNo</compare>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -775,7 +775,7 @@ Generated texture from surface cache.
 			</position>
 			<swizzle>x0</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="4">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>2680</first>
@@ -787,12 +787,12 @@ Generated texture from surface cache.
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
-			<compare>CmNo</compare>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Sampler" version="4">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>2295</first>
@@ -804,7 +804,7 @@ Generated texture from surface cache.
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
-			<compare>CmNo</compare>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -816,8 +816,8 @@ Disabled emissive for now as it doesn't work on OpenGL
 			]]>
 			</comment>
 			<position>
-				<first>1945</first>
-				<second>-166</second>
+				<first>2161</first>
+				<second>-100</second>
 			</position>
 		</item>
 	</nodes>

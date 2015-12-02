@@ -145,18 +145,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1608</first>
-				<second>381</second>
+				<first>1467</first>
+				<second>332</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-1607</first>
-				<second>294</second>
+				<first>-1677</first>
+				<second>306</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -285,8 +285,8 @@ Surface point
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-1417</first>
-				<second>357</second>
+				<first>-1487</first>
+				<second>369</second>
 			</position>
 			<fragmentGuid>{099A92E7-736C-4E46-8165-7EAA069F654B}</fragmentGuid>
 			<inputPins>
@@ -305,10 +305,10 @@ Surface point
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-1352</first>
-				<second>472</second>
+				<first>-1390</first>
+				<second>466</second>
 			</position>
-			<parameterName>ViewInverse</parameterName>
+			<parameterName>World_ViewInverse</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -375,7 +375,7 @@ Surface point
 				<first>1186</first>
 				<second>592</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -419,7 +419,7 @@ Surface point
 				<first>1209</first>
 				<second>747</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>

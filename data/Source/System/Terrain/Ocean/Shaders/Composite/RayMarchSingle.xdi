@@ -28,18 +28,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1372</first>
-				<second>559</second>
+				<first>1369</first>
+				<second>546</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1537</first>
-				<second>561</second>
+				<first>1682</first>
+				<second>588</second>
 			</position>
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
@@ -90,7 +90,7 @@
 				<first>653</first>
 				<second>660</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -179,8 +179,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-230</first>
-				<second>576</second>
+				<first>-346</first>
+				<second>581</second>
 			</position>
 			<name>MarchDistance</name>
 			<connectable>true</connectable>
@@ -205,8 +205,8 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-143</first>
-				<second>645</second>
+				<first>-259</first>
+				<second>650</second>
 			</position>
 			<value>15</value>
 		</item>
@@ -281,10 +281,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>968</first>
-				<second>986</second>
+				<first>927</first>
+				<second>985</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -307,8 +307,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1852</first>
-				<second>887</second>
+				<first>2011</first>
+				<second>894</second>
 			</position>
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
@@ -331,18 +331,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1687</first>
-				<second>885</second>
+				<first>1811</first>
+				<second>847</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>2104</first>
-				<second>886</second>
+				<first>2263</first>
+				<second>893</second>
 			</position>
 			<name>Depth</name>
 		</item>

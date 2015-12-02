@@ -7,7 +7,7 @@
 				<first>-75</first>
 				<second>636</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -47,7 +47,7 @@
 				<first>-75</first>
 				<second>551</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -211,7 +211,7 @@ else
 				<first>-75</first>
 				<second>466</second>
 			</position>
-			<parameterName>ColorMap</parameterName>
+			<parameterName>World_ColorMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -330,7 +330,6 @@ if (/*hitDepth >= Origin.z &&*/ deltaDepth < 0.0 && deltaDepth > -MaxDeltaDepth)
 }
 else
 	Hit = vec4(0.0, 0.0, 0.0, 0.0);
-
 			]]>
 			</script>
 		</item>

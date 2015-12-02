@@ -34,8 +34,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>420</first>
-				<second>238</second>
+				<first>318</first>
+				<second>241</second>
 			</position>
 			<fragmentGuid>{3E7D86C6-609E-D74A-B2D8-54BDBE06B2AE}</fragmentGuid>
 			<inputPins>
@@ -67,30 +67,30 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>140</first>
-				<second>-42</second>
+				<first>34</first>
+				<second>-33</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>23</first>
-				<second>-72</second>
+				<first>-83</first>
+				<second>-63</second>
 			</position>
 			<swizzle>x0y</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>-184</first>
-				<second>-142</second>
+				<first>-407</first>
+				<second>-146</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-400</first>
-				<second>-148</second>
+				<first>-623</first>
+				<second>-152</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -100,8 +100,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-383</first>
-				<second>-84</second>
+				<first>-606</first>
+				<second>-88</second>
 			</position>
 			<name>Edge</name>
 			<usage>DuCustom</usage>
@@ -111,25 +111,25 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>29</first>
-				<second>21</second>
+				<first>-77</first>
+				<second>30</second>
 			</position>
 			<swizzle>0y0</swizzle>
 		</item>
 		<item type="traktor.render.MatrixOut">
 			<comment/>
 			<position>
-				<first>-123</first>
-				<second>-47</second>
+				<first>-346</first>
+				<second>-51</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-272</first>
-				<second>-27</second>
+				<first>-588</first>
+				<second>-22</second>
 			</position>
-			<parameterName>World</parameterName>
+			<parameterName>World_World</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -144,8 +144,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-7</first>
-				<second>86</second>
+				<first>-101</first>
+				<second>85</second>
 			</position>
 			<parameterName>Eye</parameterName>
 			<type>PtVector</type>
@@ -157,17 +157,17 @@
 				<first>-195</first>
 				<second>423</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>862</first>
-				<second>386</second>
+				<first>799</first>
+				<second>387</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -407,8 +407,8 @@
 		<item type="traktor.render.Normalize">
 			<comment/>
 			<position>
-				<first>1458</first>
-				<second>796</second>
+				<first>1534</first>
+				<second>799</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
@@ -495,15 +495,15 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>327</first>
-				<second>813</second>
+				<first>242</first>
+				<second>793</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>137</first>
-				<second>837</second>
+				<first>52</first>
+				<second>817</second>
 			</position>
 			<value>0.1, 0, 0, 0</value>
 		</item>
@@ -551,15 +551,15 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>327</first>
-				<second>922</second>
+				<first>242</first>
+				<second>902</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>180</first>
-				<second>950</second>
+				<first>95</first>
+				<second>930</second>
 			</position>
 			<value>0, 0.1, 0, 0</value>
 		</item>
@@ -628,10 +628,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1038</first>
-				<second>-194</second>
+				<first>993</first>
+				<second>-214</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
+			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>

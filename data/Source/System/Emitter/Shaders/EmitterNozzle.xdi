@@ -4,23 +4,23 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>1080</first>
-				<second>515</second>
+				<first>1305</first>
+				<second>536</second>
 			</position>
 			<technique/>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>905</first>
-				<second>514</second>
+				<first>1032</first>
+				<second>533</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>733</first>
-				<second>665</second>
+				<first>863</first>
+				<second>681</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
@@ -277,10 +277,10 @@ Position
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>583</first>
-				<second>732</second>
+				<first>636</first>
+				<second>712</second>
 			</position>
-			<parameterName>View</parameterName>
+			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -290,7 +290,7 @@ Position
 				<first>723</first>
 				<second>568</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -376,8 +376,8 @@ Random
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>949</first>
-				<second>772</second>
+				<first>1079</first>
+				<second>788</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -467,8 +467,8 @@ Age
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>647</first>
-				<second>652</second>
+				<first>777</first>
+				<second>668</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
