@@ -131,16 +131,21 @@ public:
 	 */
 	friend T_MATH_INLINE T_DLLCLASS Aabb2 operator * (const Matrix33& m, const Aabb2& b)
 	{
-		Vector2 x[4];
-		b.getExtents(x);
+		if (!b.empty())
+		{
+			Vector2 x[4];
+			b.getExtents(x);
 
-		Aabb2 r;
-		r.contain(m * x[0]);
-		r.contain(m * x[1]);
-		r.contain(m * x[2]);
-		r.contain(m * x[3]);
+			Aabb2 r;
+			r.contain(m * x[0]);
+			r.contain(m * x[1]);
+			r.contain(m * x[2]);
+			r.contain(m * x[3]);
 
-		return r;
+			return r;
+		}
+		else
+			return Aabb2();
 	}
 };
 
