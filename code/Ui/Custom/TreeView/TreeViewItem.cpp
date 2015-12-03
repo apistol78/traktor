@@ -274,6 +274,8 @@ void TreeViewItem::interval()
 
 void TreeViewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
+	m_dragMode = 0;
+
 	if (hasChildren() && calculateExpandRect().inside(event->getPosition()))
 	{
 		if (m_expanded)
@@ -333,9 +335,12 @@ void TreeViewItem::mouseUp(MouseButtonUpEvent* event, const Point& position)
 	}
 	if (m_dragMode == 2)
 	{
-		Point position = m_view->clientToScreen(event->getPosition());
-		TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::DmDrop, position);
-		m_view->raiseEvent(&dragEvent);
+		if (!m_view->getInnerRect().inside(event->getPosition()))
+		{
+			Point position = m_view->clientToScreen(event->getPosition());
+			TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::DmDrop, position);
+			m_view->raiseEvent(&dragEvent);
+		}
 	}
 	m_dragMode = 0;
 }
