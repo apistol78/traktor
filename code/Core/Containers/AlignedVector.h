@@ -626,9 +626,15 @@ public:
 			Constructor::construct(m_data[i + size]);
 
 		// Move items to make room for items to be inserted.
-		size_t move = std::min< size_t >(size, count);
-		for (size_t i = offset; i < offset + move; ++i)
-			m_data[i + count] = m_data[i];
+		int32_t move = int32_t(size - offset);
+		for (int32_t i = move - 1; i >= 0; --i)
+		{
+			T_ASSERT (i + offset >= 0);
+			T_ASSERT (i + offset < size);
+			T_ASSERT (i + offset + count >= 0);
+			T_ASSERT (i + offset + count < m_size);
+			m_data[i + offset + count] = m_data[i + offset];
+		}
 
 		// Copy insert items into location.
 		for (size_t i = 0; i < count; ++i)
