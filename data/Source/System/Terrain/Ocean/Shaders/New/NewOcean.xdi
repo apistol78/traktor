@@ -784,8 +784,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>2813</first>
-				<second>-57</second>
+				<first>2870</first>
+				<second>-74</second>
 			</position>
 			<fragmentGuid>{5961D8B7-FFC0-8742-B87F-1AD8B232D84E}</fragmentGuid>
 			<inputPins>
@@ -810,6 +810,10 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>ReflectionMap</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>Scale</name>
 					<optional>true</optional>
 				</item>
@@ -826,6 +830,10 @@
 				</item>
 				<item>
 					<first>Offset</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>ReflectionMap</first>
 					<second>0</second>
 				</item>
 				<item>
@@ -1149,6 +1157,16 @@ read-back color buffer.
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>2577</first>
+				<second>-173</second>
+			</position>
+			<parameterName>ReflectionMap</parameterName>
+			<type>PtTextureCube</type>
+			<frequency>UfOnce</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -2490,6 +2508,16 @@ read-back color buffer.
 			<destination>
 				<node ref="/object/nodes/item[99]"/>
 				<name>Color</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[100]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[82]"/>
+				<name>ReflectionMap</name>
 			</destination>
 		</item>
 	</edges>
