@@ -1720,7 +1720,7 @@ bool emitScript(GlslContext& cx, Script* node)
 			int32_t stage;
 
 			// Define sampler.
-			bool defineStates = cx.defineSampler(samplerId, samplerHash.get(), GL_TEXTURE_2D, node->getInputPin(i)->getName(), stage);
+			bool defineStates = cx.defineSampler(samplerId, samplerHash.get(), GL_TEXTURE_2D, in[i]->getName(), stage);
 			if (defineStates)
 			{
 				RenderStateOpenGL& rs = cx.getRenderState();
