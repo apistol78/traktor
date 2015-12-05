@@ -60,7 +60,9 @@ public:
 
 	static std::wstring encode(const std::wstring& text);
 
-	static std::vector< uint8_t > decode(const std::wstring& text);
+	static std::vector< uint8_t > decodeBytes(const std::wstring& text);
+
+	static std::wstring decodeString(const std::wstring& text);
 	
 private:
 	bool m_valid;

@@ -185,8 +185,6 @@ Path Path::normalized() const
 			out += *i + L"/";
 		out += p.back();
 	}
-	else
-		out += L"/";
 
 	return Path(out);
 }
