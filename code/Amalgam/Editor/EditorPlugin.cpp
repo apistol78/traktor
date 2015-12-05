@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <cstring>
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Amalgam/Editor/HostEnumerator.h"
@@ -22,6 +24,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -43,6 +46,7 @@
 #include "I18N/Text.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketAddressIPv4.h"
+#include "Net/Url.h"
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Http/HttpRequest.h"
 #include "Net/Http/HttpServer.h"
@@ -112,34 +116,89 @@ private:
 class HttpRequestListener : public net::HttpServer::IRequestListener
 {
 public:
-	virtual int32_t httpClientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os, Ref< IStream >& outStream)
+	virtual int32_t httpClientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os, Ref< IStream >& outStream, bool& outCache)
 	{
 		std::wstring resource = request->getResource();
 
-		Ref< File > file = FileSystem::getInstance().get(L"." + resource);
-		if (!file)
-			return 404;
+		T_DEBUG(L"HTTP request resource \"" << resource << L"\"");
 
-		if (file->isDirectory())
+		if (resource == L"" || resource == L"/")
+			resource = L"/index.html";
+
+		if (startsWith< std::wstring >(resource, L"/loadFile?"))
 		{
-			os << L"<html>" << Endl;
-			os << L"	<body>" << Endl;
+			std::wstring kvs = resource.substr(resource.find(L'?') + 1);
 
-			RefArray< File > files;
-			FileSystem::getInstance().find(file->getPath().getPathName() + L"/*.*", files);
+			// Parse GET encoded key/value pairs.
+			std::map< std::wstring, std::wstring > kvm;
+			StringSplit< std::wstring > ss(kvs, L"&");
+			for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+			{
+				const std::wstring& kv = *i;
+				size_t ii = kv.find(L'=');
+				if (ii != kv.npos)
+				{
+					std::wstring key = kv.substr(0, ii);
+					std::wstring value =  net::Url::decodeString(kv.substr(ii + 1));
+					kvm[key] = value;
+				}
+			}
 
-			if (!endsWith< std::wstring >(resource, L"/"))
-				resource += L"/";
+			outStream = FileSystem::getInstance().open(kvm[L"path"], File::FmRead);
+			outCache = false;
+		}
+		else if (startsWith< std::wstring >(resource, L"/loadDirectory?"))
+		{
+			std::wstring kvs = resource.substr(resource.find(L'?') + 1);
 
-			for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
-				os << L"<a href=\"" << resource << (*i)->getPath().getFileName() << L"\">" << (*i)->getPath().getFileName() << L"</a><br>" << Endl;
+			// Parse GET encoded key/value pairs.
+			std::map< std::wstring, std::wstring > kvm;
+			StringSplit< std::wstring > ss(kvs, L"&");
+			for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+			{
+				const std::wstring& kv = *i;
+				size_t ii = kv.find(L'=');
+				if (ii != kv.npos)
+				{
+					std::wstring key = kv.substr(0, ii);
+					std::wstring value =  net::Url::decodeString(kv.substr(ii + 1));
+					kvm[key] = value;
+				}
+			}
 
-			os << L"	</body>" << Endl;
-			os << L"</html>" << Endl;
+			os << L"[";
+
+			Path path = Path(kvm[L"path"]).normalized();
+			if (path == L"")
+				path = L".";
+
+			Ref< File > file = FileSystem::getInstance().get(path);
+			if (file && file->isDirectory())
+			{
+				RefArray< File > files;
+				FileSystem::getInstance().find(file->getPath().getPathName() + L"/*.*", files);
+				for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
+				{
+					if (i != files.begin())
+						os << L",";
+					if ((*i)->isDirectory())
+						os << L"[0,\"" << (*i)->getPath().getFileName() << L"\",\"" << (*i)->getPath().getPathName() << L"\"]";
+					else
+						os << L"[1,\"" << (*i)->getPath().getFileName() << L"\",\"" << (*i)->getPath().getPathName() << L"\"]";
+				}
+			}
+
+			os << L"]";
+
+			outCache = false;
 		}
 		else
 		{
-			outStream = FileSystem::getInstance().open(file->getPath(), File::FmRead);
+			Ref< IStream > file = FileSystem::getInstance().open(L"$(TRAKTOR_HOME)/res/html" + resource, File::FmRead);
+			if (!file)
+				return 404;
+
+			outStream = file;
 		}
 
 		return 200;

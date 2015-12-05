@@ -102,15 +102,19 @@ public:
 				StringOutputStream ssr;
 				Ref< IStream > ds;
 				int32_t result = 503;
+				bool cache = true;
 
 				if (m_listener)
-					result = m_listener->httpClientRequest(m_server, request, ssr, ds);
+					result = m_listener->httpClientRequest(m_server, request, ssr, ds, cache);
 
 				FileOutputStream os(&clientStream, new Utf8Encoding(), OutputStream::LeWin);
 				if (result >= 200 && result < 300)
 					os << L"HTTP/1.1 " << result << L" OK" << Endl;
 				else
 					os << L"HTTP/1.1 " << result << L" ERROR" << Endl;
+
+				if (!cache)
+					os << L"Cache-Control: no-cache" << Endl;
 
 				os << L"Connection: close" << Endl;
 				os << Endl;

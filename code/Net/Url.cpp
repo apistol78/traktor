@@ -220,7 +220,7 @@ std::wstring Url::encode(const std::wstring& text)
 	return encode((const uint8_t*)s.c_str(), s.length());
 }
 
-std::vector< uint8_t > Url::decode(const std::wstring& text)
+std::vector< uint8_t > Url::decodeBytes(const std::wstring& text)
 {
 	std::vector< uint8_t > bytes;
 	for (size_t i = 0; i < text.length(); )
@@ -238,6 +238,26 @@ std::vector< uint8_t > Url::decode(const std::wstring& text)
 		}
 	}
 	return bytes;
+}
+
+std::wstring Url::decodeString(const std::wstring& text)
+{
+	std::vector< wchar_t > chrs;
+	for (size_t i = 0; i < text.length(); )
+	{
+		if (text[i] == L'%' && i < text.length() - 2)
+		{
+			char hex[] = { char(text[i + 1]), char(text[i + 2]), 0 };
+			chrs.push_back(wchar_t(std::strtol(hex, 0, 16)));
+			i += 3;
+		}
+		else
+		{
+			chrs.push_back(wchar_t(text[i]));
+			i++;
+		}
+	}
+	return std::wstring(chrs.begin(), chrs.end());
 }
 
 	}
