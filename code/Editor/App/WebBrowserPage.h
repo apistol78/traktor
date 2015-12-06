@@ -1,6 +1,7 @@
 #ifndef traktor_editor_WebBrowserPage_H
 #define traktor_editor_WebBrowserPage_H
 
+#include "Net/Url.h"
 #include "Ui/Container.h"
 
 namespace traktor
@@ -33,7 +34,7 @@ class WebBrowserPage : public ui::Container
 public:
 	WebBrowserPage(IEditor* editor);
 
-	bool create(ui::Widget* parent);
+	bool create(ui::Widget* parent, const net::Url& url);
 
 private:
 	IEditor* m_editor;

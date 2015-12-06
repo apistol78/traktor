@@ -31,9 +31,13 @@ public:
 
 	int32_t count() const;
 
-	bool getHost(int32_t index, std::wstring& outHost) const;
+	const std::wstring& getHost(int32_t index) const;
 
-	bool getDescription(int32_t index, std::wstring& outDescription) const;
+	int32_t getRemotePort(int32_t index) const;
+
+	int32_t getHttpPort(int32_t index) const;
+
+	const std::wstring& getDescription(int32_t index) const;
 
 	bool supportPlatform(int32_t index, const std::wstring& platform) const;
 
@@ -44,8 +48,10 @@ public:
 private:
 	struct Host
 	{
-		std::wstring host;
 		std::wstring description;
+		std::wstring host;
+		int32_t remotePort;
+		int32_t httpPort;
 		std::vector< std::wstring > platforms;
 		bool local;
 

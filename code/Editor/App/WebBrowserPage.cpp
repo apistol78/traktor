@@ -24,12 +24,10 @@ WebBrowserPage::WebBrowserPage(IEditor* editor)
 {
 }
 
-bool WebBrowserPage::create(ui::Widget* parent)
+bool WebBrowserPage::create(ui::Widget* parent, const net::Url& url)
 {
 	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
-
-	std::wstring url = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.HomeUrl", L"about:blank");
 
 	Ref< ui::custom::ToolBar > toolbar = new ui::custom::ToolBar();
 	toolbar->create(this);
@@ -41,7 +39,7 @@ bool WebBrowserPage::create(ui::Widget* parent)
 	toolbar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &WebBrowserPage::eventToolClick);
 
 	m_browser = new ui::WebBrowser();
-	if (!m_browser->create(this, url))
+	if (!m_browser->create(this, url.getString()))
 		return false;
 
 	return true;

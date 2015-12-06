@@ -25,7 +25,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
-#include "Core/Misc/StringSplit.h"
+//#include "Core/Misc/StringSplit.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -47,10 +47,8 @@
 #include "I18N/Text.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Net/Url.h"
+//#include "Net/Url.h"
 #include "Net/Discovery/DiscoveryManager.h"
-#include "Net/Http/HttpRequest.h"
-#include "Net/Http/HttpServer.h"
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Clipboard.h"
@@ -114,98 +112,6 @@ private:
 	TargetState m_targetState;
 };
 
-class HttpRequestListener : public net::HttpServer::IRequestListener
-{
-public:
-	virtual int32_t httpClientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os, Ref< IStream >& outStream, bool& outCache)
-	{
-		std::wstring resource = request->getResource();
-
-		T_DEBUG(L"HTTP request resource \"" << resource << L"\"");
-
-		if (resource == L"" || resource == L"/")
-			resource = L"/index.html";
-
-		if (startsWith< std::wstring >(resource, L"/loadFile?"))
-		{
-			std::wstring kvs = resource.substr(resource.find(L'?') + 1);
-
-			// Parse GET encoded key/value pairs.
-			std::map< std::wstring, std::wstring > kvm;
-			StringSplit< std::wstring > ss(kvs, L"&");
-			for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
-			{
-				const std::wstring& kv = *i;
-				size_t ii = kv.find(L'=');
-				if (ii != kv.npos)
-				{
-					std::wstring key = kv.substr(0, ii);
-					std::wstring value =  net::Url::decodeString(kv.substr(ii + 1));
-					kvm[key] = value;
-				}
-			}
-
-			outStream = FileSystem::getInstance().open(kvm[L"path"], File::FmRead);
-			outCache = false;
-		}
-		else if (startsWith< std::wstring >(resource, L"/loadDirectory?"))
-		{
-			std::wstring kvs = resource.substr(resource.find(L'?') + 1);
-
-			// Parse GET encoded key/value pairs.
-			std::map< std::wstring, std::wstring > kvm;
-			StringSplit< std::wstring > ss(kvs, L"&");
-			for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
-			{
-				const std::wstring& kv = *i;
-				size_t ii = kv.find(L'=');
-				if (ii != kv.npos)
-				{
-					std::wstring key = kv.substr(0, ii);
-					std::wstring value =  net::Url::decodeString(kv.substr(ii + 1));
-					kvm[key] = value;
-				}
-			}
-
-			os << L"[";
-
-			Path path = Path(kvm[L"path"]).normalized();
-			if (path == L"")
-				path = L".";
-
-			Ref< File > file = FileSystem::getInstance().get(path);
-			if (file && file->isDirectory())
-			{
-				RefArray< File > files;
-				FileSystem::getInstance().find(file->getPath().getPathName() + L"/*.*", files);
-				for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
-				{
-					if (i != files.begin())
-						os << L",";
-					if ((*i)->isDirectory())
-						os << L"[0,\"" << (*i)->getPath().getFileName() << L"\",\"" << (*i)->getPath().getPathName() << L"\"]";
-					else
-						os << L"[1,\"" << (*i)->getPath().getFileName() << L"\",\"" << (*i)->getPath().getPathName() << L"\"]";
-				}
-			}
-
-			os << L"]";
-
-			outCache = false;
-		}
-		else
-		{
-			Ref< IStream > file = FileSystem::getInstance().open(L"$(TRAKTOR_HOME)/res/html" + resource, File::FmRead);
-			if (!file)
-				return 404;
-
-			outStream = file;
-		}
-
-		return 200;
-	}
-};
-
 Ref< ui::MenuItem > createTweakMenuItem(const std::wstring& text, bool initiallyChecked)
 {
 	Ref< ui::MenuItem > menuItem = new ui::MenuItem(text, true, 0);
@@ -221,7 +127,6 @@ EditorPlugin::EditorPlugin(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_threadHostEnumerator(0)
 ,	m_threadTargetActions(0)
-,	m_threadHttpServer(0)
 {
 }
 
@@ -233,11 +138,6 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	// Create host enumerator.
 	m_discoveryManager = m_editor->getStoreObject< net::DiscoveryManager >(L"DiscoveryManager");
 	m_hostEnumerator = new HostEnumerator(m_editor->getSettings(), m_discoveryManager);
-
-	// Create http server.
-	m_httpServer = new net::HttpServer();
-	m_httpServer->create(net::SocketAddressIPv4(44246));
-	m_httpServer->setRequestListener(new HttpRequestListener());
 
 	// Create target script debugger dispatcher.
 	m_targetDebuggerSessions = new TargetScriptDebuggerSessions();
@@ -297,9 +197,6 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_threadTargetActions = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetActions), L"Targets");
 	m_threadTargetActions->start();
 
-	m_threadHttpServer = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadHttpServer), L"HTTP server");
-	m_threadHttpServer->start();
-
 	container->addEventHandler< ui::TimerEvent >(this, &EditorPlugin::eventTimer);
 	container->startTimer(30);
 
@@ -308,12 +205,6 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 void EditorPlugin::destroy()
 {
-	if (m_threadHttpServer)
-	{
-		m_threadHttpServer->stop();
-		ThreadManager::getInstance().destroy(m_threadHttpServer);
-	}
-
 	if (m_threadTargetActions)
 	{
 		m_threadTargetActions->stop();
@@ -331,7 +222,6 @@ void EditorPlugin::destroy()
 	m_connectionManager = 0;
 	m_discoveryManager = 0;
 
-	safeDestroy(m_httpServer);
 	safeDestroy(m_targetManager);
 
 	if (m_editor)
@@ -593,34 +483,22 @@ void EditorPlugin::eventTargetListBrowse(TargetBrowseEvent* event)
 	TargetInstance* targetInstance = event->getInstance();
 
 	// Get selected target host.
-	int32_t deployHostId = targetInstance->getDeployHostId();
-	if (deployHostId < 0)
+	int32_t id = targetInstance->getDeployHostId();
+	if (id < 0)
 		return;
 
-	std::wstring deployHost = L"";
-	m_hostEnumerator->getHost(deployHostId, deployHost);
+	std::wstring host = m_hostEnumerator->getHost(id);
+	int32_t port = m_hostEnumerator->getHttpPort(id);
 
-	// Open default browser to target host.
-	OS::getInstance().openFile(L"http://" + deployHost + L":44246");
+	if ((event->getKeyState() & ui::KsShift) == 0)
+		m_editor->openBrowser(L"http://" + host + L":" + toString(port));
+	else
+		OS::getInstance().openFile(L"http://" + host + L":" + toString(port));
 }
 
 void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
-
-	// Get selected target host.
-	std::wstring deployHost = L"";
-	int32_t deployHostId = targetInstance->getDeployHostId();
-	if (deployHostId >= 0)
-		m_hostEnumerator->getHost(deployHostId, deployHost);
-
-	// Get our network host.
-	std::wstring editorHost = L"localhost";
-	net::SocketAddressIPv4::Interface itf;
-	if (net::SocketAddressIPv4::getBestInterface(itf))
-		editorHost = itf.addr->getHostName();
-	else
-		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
 
 	// Resolve absolute output path.
 	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
@@ -688,10 +566,11 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 	TargetInstance* targetInstance = event->getInstance();
 
 	// Get selected target host.
-	std::wstring deployHost = L"";
-	int32_t deployHostId = targetInstance->getDeployHostId();
-	if (deployHostId >= 0)
-		m_hostEnumerator->getHost(deployHostId, deployHost);
+	int32_t id = targetInstance->getDeployHostId();
+	if (id < 0)
+		return;
+
+	std::wstring host = m_hostEnumerator->getHost(id);
 
 	// Get our network host.
 	std::wstring editorHost = L"localhost";
@@ -746,7 +625,7 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 			targetInstance->getName(),
 			targetInstance->getTarget(),
 			targetInstance->getTargetConfiguration(),
-			deployHost,
+			host,
 			outputPath
 		);
 		chain.actions.push_back(action);
@@ -763,10 +642,11 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 	TargetInstance* targetInstance = event->getInstance();
 
 	// Get selected target host.
-	std::wstring deployHost = L"";
-	int32_t deployHostId = targetInstance->getDeployHostId();
-	if (deployHostId >= 0)
-		m_hostEnumerator->getHost(deployHostId, deployHost);
+	int32_t id = targetInstance->getDeployHostId();
+	if (id < 0)
+		return;
+
+	std::wstring host = m_hostEnumerator->getHost(id);
 
 	// Get our network host.
 	std::wstring editorHost = L"localhost";
@@ -854,7 +734,7 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 			targetInstance->getTarget(),
 			targetInstance->getTargetConfiguration(),
 			editorHost,
-			deployHost,
+			host,
 			m_connectionManager->getListenPort(),
 			targetInstance->getDatabaseName(),
 			m_targetManager->getPort(),
@@ -871,7 +751,7 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 			targetInstance->getName(),
 			targetInstance->getTarget(),
 			targetInstance->getTargetConfiguration(),
-			deployHost,
+			host,
 			outputPath
 		);
 		chain.actions.push_back(action);
@@ -1016,12 +896,6 @@ void EditorPlugin::threadTargetActions()
 		chain.actions.resize(0);
 		chain.targetInstance = 0;
 	}
-}
-
-void EditorPlugin::threadHttpServer()
-{
-	while (!m_threadHttpServer->stopped())
-		m_httpServer->update(250);
 }
 
 	}
