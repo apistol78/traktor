@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <cstring>
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Amalgam/Editor/HostEnumerator.h"
@@ -15,9 +13,12 @@
 #include "Amalgam/Editor/Deploy/Platform.h"
 #include "Amalgam/Editor/Deploy/Target.h"
 #include "Amalgam/Editor/Deploy/TargetConfiguration.h"
+#include "Amalgam/Editor/Ui/TargetBrowseEvent.h"
+#include "Amalgam/Editor/Ui/TargetBuildEvent.h"
 #include "Amalgam/Editor/Ui/TargetCaptureEvent.h"
 #include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
 #include "Amalgam/Editor/Ui/TargetListControl.h"
+#include "Amalgam/Editor/Ui/TargetMigrateEvent.h"
 #include "Amalgam/Editor/Ui/TargetPlayEvent.h"
 #include "Amalgam/Editor/Ui/TargetStopEvent.h"
 #include "Core/Io/FileSystem.h"
@@ -280,9 +281,12 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	// Create target configuration list control.
 	m_targetList = new TargetListControl();
 	m_targetList->create(container);
+	m_targetList->addEventHandler< TargetBrowseEvent >(this, &EditorPlugin::eventTargetListBrowse);
+	m_targetList->addEventHandler< TargetBuildEvent >(this, &EditorPlugin::eventTargetListBuild);
+	m_targetList->addEventHandler< TargetCaptureEvent >(this, &EditorPlugin::eventTargetListShowProfiler);
+	m_targetList->addEventHandler< TargetMigrateEvent >(this, &EditorPlugin::eventTargetListMigrate);
 	m_targetList->addEventHandler< TargetPlayEvent >(this, &EditorPlugin::eventTargetListPlay);
 	m_targetList->addEventHandler< TargetStopEvent >(this, &EditorPlugin::eventTargetListStop);
-	m_targetList->addEventHandler< TargetCaptureEvent >(this, &EditorPlugin::eventTargetListShowProfiler);
 
 	m_site->createAdditionalPanel(container, ui::scaleBySystemDPI(200), false);
 
@@ -584,6 +588,176 @@ void EditorPlugin::updateTargetManagers()
 	}
 }
 
+void EditorPlugin::eventTargetListBrowse(TargetBrowseEvent* event)
+{
+	TargetInstance* targetInstance = event->getInstance();
+
+	// Get selected target host.
+	int32_t deployHostId = targetInstance->getDeployHostId();
+	if (deployHostId < 0)
+		return;
+
+	std::wstring deployHost = L"";
+	m_hostEnumerator->getHost(deployHostId, deployHost);
+
+	// Open default browser to target host.
+	OS::getInstance().openFile(L"http://" + deployHost + L":44246");
+}
+
+void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
+{
+	TargetInstance* targetInstance = event->getInstance();
+
+	// Get selected target host.
+	std::wstring deployHost = L"";
+	int32_t deployHostId = targetInstance->getDeployHostId();
+	if (deployHostId >= 0)
+		m_hostEnumerator->getHost(deployHostId, deployHost);
+
+	// Get our network host.
+	std::wstring editorHost = L"localhost";
+	net::SocketAddressIPv4::Interface itf;
+	if (net::SocketAddressIPv4::getBestInterface(itf))
+		editorHost = itf.addr->getHostName();
+	else
+		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
+
+	// Resolve absolute output path.
+	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
+
+	// Set target's state to pending as actions can be queued up to be performed much later.
+	targetInstance->setState(TsPending);
+	targetInstance->setBuildProgress(0);
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
+
+		ActionChain chain;
+		chain.targetInstance = targetInstance;
+
+		Action action;
+
+		// Expose _DEBUG script definition when launching through editor, ie not migrating.
+		Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
+		if ((event->getKeyState() & ui::KsControl) == 0)
+		{
+			std::set< std::wstring > scriptPrepDefinitions;
+			scriptPrepDefinitions.insert(L"_DEBUG");
+			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
+		}
+
+		// Add build output data action.
+		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
+		action.action = new BuildTargetAction(
+			m_editor->getSourceDatabase(),
+			m_editor->getSettings(),
+			pipelineSettings,
+			targetInstance->getTarget(),
+			targetInstance->getTargetConfiguration(),
+			outputPath,
+			false
+		);
+		chain.actions.push_back(action);
+
+		m_targetActionQueue.push_back(chain);
+		m_targetActionQueueSignal.set();
+	}
+
+	m_targetList->requestUpdate();
+}
+
+void EditorPlugin::eventTargetListShowProfiler(TargetCaptureEvent* event)
+{
+	TargetInstance* targetInstance = event->getInstance();
+	int32_t connectionId = event->getConnectionIndex();
+
+	RefArray< TargetConnection > connections = targetInstance->getConnections();
+	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
+	{
+		TargetConnection* connection = connections[connectionId];
+		T_ASSERT (connection);
+
+		Ref< ProfilerDialog > profilerDialog = new ProfilerDialog(connection);
+		profilerDialog->create(m_parent);
+		profilerDialog->show();
+	}
+}
+
+void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
+{
+	TargetInstance* targetInstance = event->getInstance();
+
+	// Get selected target host.
+	std::wstring deployHost = L"";
+	int32_t deployHostId = targetInstance->getDeployHostId();
+	if (deployHostId >= 0)
+		m_hostEnumerator->getHost(deployHostId, deployHost);
+
+	// Get our network host.
+	std::wstring editorHost = L"localhost";
+	net::SocketAddressIPv4::Interface itf;
+	if (net::SocketAddressIPv4::getBestInterface(itf))
+		editorHost = itf.addr->getHostName();
+	else
+		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
+
+	// Resolve absolute output path.
+	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
+
+	// Set target's state to pending as actions can be queued up to be performed much later.
+	targetInstance->setState(TsPending);
+	targetInstance->setBuildProgress(0);
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
+
+		ActionChain chain;
+		chain.targetInstance = targetInstance;
+
+		Action action;
+
+		// Expose _DEBUG script definition when launching through editor, ie not migrating.
+		Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
+		if ((event->getKeyState() & ui::KsControl) == 0)
+		{
+			std::set< std::wstring > scriptPrepDefinitions;
+			scriptPrepDefinitions.insert(L"_DEBUG");
+			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
+		}
+
+		// Add build output data action.
+		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
+		action.action = new BuildTargetAction(
+			m_editor->getSourceDatabase(),
+			m_editor->getSettings(),
+			pipelineSettings,
+			targetInstance->getTarget(),
+			targetInstance->getTargetConfiguration(),
+			outputPath,
+			false
+		);
+		chain.actions.push_back(action);
+
+		// Add migrate actions.
+		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsMigrating);
+		action.action = new MigrateTargetAction(
+			m_editor->getSourceDatabase(),
+			m_editor->getSettings(),
+			targetInstance->getName(),
+			targetInstance->getTarget(),
+			targetInstance->getTargetConfiguration(),
+			deployHost,
+			outputPath
+		);
+		chain.actions.push_back(action);
+
+		m_targetActionQueue.push_back(chain);
+		m_targetActionQueueSignal.set();
+	}
+
+	m_targetList->requestUpdate();
+}
+
 void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
@@ -639,86 +813,68 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 		);
 		chain.actions.push_back(action);
 
-		if (event->getKeyState() == 0)
+		Ref< PropertyGroup > tweakSettings = new PropertyGroup();
+
+		if (m_toolTweaks->get(0)->isChecked())
+			tweakSettings->setProperty< PropertyFloat >(L"Audio.MasterVolume", 0.0f);
+		if (m_toolTweaks->get(1)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
+		if (m_toolTweaks->get(2)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Render.WaitVBlank", false);
+		if (m_toolTweaks->get(3)->isChecked())
+			tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 0.25f);
+		if (m_toolTweaks->get(4)->isChecked())
+			tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 2);
+		if (m_toolTweaks->get(5)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
+		if (m_toolTweaks->get(6)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
+		if (m_toolTweaks->get(7)->isChecked())
 		{
-			Ref< PropertyGroup > tweakSettings = new PropertyGroup();
-
-			if (m_toolTweaks->get(0)->isChecked())
-				tweakSettings->setProperty< PropertyFloat >(L"Audio.MasterVolume", 0.0f);
-			if (m_toolTweaks->get(1)->isChecked())
-				tweakSettings->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
-			if (m_toolTweaks->get(2)->isChecked())
-				tweakSettings->setProperty< PropertyBoolean >(L"Render.WaitVBlank", false);
-			if (m_toolTweaks->get(3)->isChecked())
-				tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 0.25f);
-			if (m_toolTweaks->get(4)->isChecked())
-				tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 2);
-			if (m_toolTweaks->get(5)->isChecked())
-				tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
-			if (m_toolTweaks->get(6)->isChecked())
-				tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
-			if (m_toolTweaks->get(7)->isChecked())
-			{
-				std::set< std::wstring > modules = tweakSettings->getProperty< PropertyStringSet >(L"Amalgam.Modules");
-				modules.insert(L"Traktor.Render.Capture");
-				tweakSettings->setProperty< PropertyStringSet >(L"Amalgam.Modules", modules);
-				tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemCapture");
-			}
-			if (m_toolTweaks->get(8)->isChecked())
-				tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
-			if (m_toolTweaks->get(9)->isChecked())
-				tweakSettings->setProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 1);
-
-			int32_t language = m_toolLanguage->getSelected();
-			if (language > 0)
-				tweakSettings->setProperty< PropertyString >(L"Online.OverrideLanguageCode", c_languageCodes[language - 1].code);
-
-			// Add deploy and launch actions.
-			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);
-			action.action = new DeployTargetAction(
-				m_editor->getSourceDatabase(),
-				m_editor->getSettings(),
-				targetInstance->getName(),
-				targetInstance->getTarget(),
-				targetInstance->getTargetConfiguration(),
-				editorHost,
-				deployHost,
-				m_connectionManager->getListenPort(),
-				targetInstance->getDatabaseName(),
-				m_targetManager->getPort(),
-				targetInstance->getId(),
-				outputPath,
-				tweakSettings
-			);
-			chain.actions.push_back(action);
-
-			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsLaunching);
-			action.action = new LaunchTargetAction(
-				m_editor->getSourceDatabase(),
-				m_editor->getSettings(),
-				targetInstance->getName(),
-				targetInstance->getTarget(),
-				targetInstance->getTargetConfiguration(),
-				deployHost,
-				outputPath
-			);
-			chain.actions.push_back(action);
+			std::set< std::wstring > modules = tweakSettings->getProperty< PropertyStringSet >(L"Amalgam.Modules");
+			modules.insert(L"Traktor.Render.Capture");
+			tweakSettings->setProperty< PropertyStringSet >(L"Amalgam.Modules", modules);
+			tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemCapture");
 		}
-		else if ((event->getKeyState() & ui::KsControl) != 0)
-		{
-			// Add migrate actions.
-			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsMigrating);
-			action.action = new MigrateTargetAction(
-				m_editor->getSourceDatabase(),
-				m_editor->getSettings(),
-				targetInstance->getName(),
-				targetInstance->getTarget(),
-				targetInstance->getTargetConfiguration(),
-				deployHost,
-				outputPath
-			);
-			chain.actions.push_back(action);
-		}
+		if (m_toolTweaks->get(8)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
+		if (m_toolTweaks->get(9)->isChecked())
+			tweakSettings->setProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 1);
+
+		int32_t language = m_toolLanguage->getSelected();
+		if (language > 0)
+			tweakSettings->setProperty< PropertyString >(L"Online.OverrideLanguageCode", c_languageCodes[language - 1].code);
+
+		// Add deploy and launch actions.
+		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);
+		action.action = new DeployTargetAction(
+			m_editor->getSourceDatabase(),
+			m_editor->getSettings(),
+			targetInstance->getName(),
+			targetInstance->getTarget(),
+			targetInstance->getTargetConfiguration(),
+			editorHost,
+			deployHost,
+			m_connectionManager->getListenPort(),
+			targetInstance->getDatabaseName(),
+			m_targetManager->getPort(),
+			targetInstance->getId(),
+			outputPath,
+			tweakSettings
+		);
+		chain.actions.push_back(action);
+
+		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsLaunching);
+		action.action = new LaunchTargetAction(
+			m_editor->getSourceDatabase(),
+			m_editor->getSettings(),
+			targetInstance->getName(),
+			targetInstance->getTarget(),
+			targetInstance->getTargetConfiguration(),
+			deployHost,
+			outputPath
+		);
+		chain.actions.push_back(action);
 
 		m_targetActionQueue.push_back(chain);
 		m_targetActionQueueSignal.set();
@@ -743,23 +899,6 @@ void EditorPlugin::eventTargetListStop(TargetStopEvent* event)
 	}
 
 	m_targetList->requestUpdate();
-}
-
-void EditorPlugin::eventTargetListShowProfiler(TargetCaptureEvent* event)
-{
-	TargetInstance* targetInstance = event->getInstance();
-	int32_t connectionId = event->getConnectionIndex();
-
-	RefArray< TargetConnection > connections = targetInstance->getConnections();
-	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
-	{
-		TargetConnection* connection = connections[connectionId];
-		T_ASSERT (connection);
-
-		Ref< ProfilerDialog > profilerDialog = new ProfilerDialog(connection);
-		profilerDialog->create(m_parent);
-		profilerDialog->show();
-	}
 }
 
 void EditorPlugin::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)

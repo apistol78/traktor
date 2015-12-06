@@ -48,8 +48,11 @@ class ToolBarDropMenu;
 
 class HostEnumerator;
 class Target;
+class TargetBrowseEvent;
+class TargetBuildEvent;
 class TargetCaptureEvent;
 class TargetListControl;
+class TargetMigrateEvent;
 class TargetInstance;
 class TargetManager;
 class TargetPlayEvent;
@@ -151,11 +154,17 @@ private:
 
 	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
 
+	void eventTargetListBrowse(TargetBrowseEvent* event);
+
+	void eventTargetListBuild(TargetBuildEvent* event);
+
+	void eventTargetListShowProfiler(TargetCaptureEvent* event);
+
+	void eventTargetListMigrate(TargetMigrateEvent* event);
+
 	void eventTargetListPlay(TargetPlayEvent* event);
 
 	void eventTargetListStop(TargetStopEvent* event);
-
-	void eventTargetListShowProfiler(TargetCaptureEvent* event);
 
 	void eventTimer(ui::TimerEvent* event);
 
