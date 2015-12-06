@@ -39,6 +39,14 @@ typedef traktor::ui::WidgetFactoryWx WidgetFactoryImpl;
 
 using namespace traktor;
 
+#if defined(_WIN32)
+// NVidia hack to get Optimus to enable NVidia GPU when possible.
+extern "C"
+{
+    _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
+#endif
+
 namespace
 {
 
