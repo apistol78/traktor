@@ -133,6 +133,8 @@ public:
 
 	virtual bool openDefaultEditor(db::Instance* instance);
 
+	virtual bool openBrowser(const net::Url& url);
+
 	virtual Ref< IEditorPage > getActiveEditorPage();
 
 	virtual void setActiveEditorPage(IEditorPage* editorPage);

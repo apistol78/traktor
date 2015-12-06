@@ -1,6 +1,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/System/OS.h"
 #include "Ui/WebBrowser.h"
 #include "Ui/Win32/WebBrowserWin32.h"
 
@@ -454,6 +455,26 @@ bool WebBrowserWin32::create(IWidget* parent, const std::wstring& url)
 	GetClientRect(m_hWnd, &rcInner);
 
 	m_hWnd.registerMessageHandler(WM_SIZE, new MethodMessageHandler< WebBrowserWin32 >(this, &WebBrowserWin32::eventSize));
+
+	// Set registry key to use latest IE.
+	Path executable = OS::getInstance().getExecutable();
+
+	DWORD value = 0x00002ee1;
+	HKEY hKey;
+
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION"), 0, KEY_ALL_ACCESS, &hKey) == ERROR_SUCCESS)
+	{
+		RegSetValueEx(hKey, executable.getFileName().c_str(), 0, REG_DWORD, (const BYTE*)&value, sizeof(value));
+		RegCloseKey(hKey);
+	}
+
+#if !defined(_WIN64)
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("Software\\Wow6432Node\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION"), 0, KEY_ALL_ACCESS, &hKey) == ERROR_SUCCESS)
+	{
+		RegSetValueEx(hKey, executable.getFileName().c_str(), 0, REG_DWORD, (const BYTE*)&value, sizeof(value));
+		RegCloseKey(hKey);
+	}
+#endif
 
 	ComRef< OleInPlaceSite > inPlaceSite = new OleInPlaceSite(m_hWnd);
 	m_clientSite = new OleClientSite(inPlaceSite);

@@ -49,6 +49,8 @@ public:
 
 	void destroy();
 
+	int32_t getListenPort();
+
 	void setRequestListener(IRequestListener* listener);
 
 	void update(int32_t duration);

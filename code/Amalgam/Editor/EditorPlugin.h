@@ -9,7 +9,6 @@
 #include "Core/Thread/Signal.h"
 #include "Core/Thread/Thread.h"
 #include "Database/Remote/Server/ConnectionManager.h"
-#include "Net/Http/HttpServer.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPlugin.h"
 #include "Ui/Event.h"
@@ -23,7 +22,6 @@ class IProcess;
 	{
 
 class DiscoveryManager;
-class HttpServer;
 
 	}
 
@@ -138,14 +136,8 @@ private:
 	action_queue_t m_targetActionQueue;
 	// \}
 
-	// \name HTTP server
-	// \{
-	Ref< net::HttpServer > m_httpServer;
-	// \}
-
 	Thread* m_threadHostEnumerator;
 	Thread* m_threadTargetActions;
-	Thread* m_threadHttpServer;
 	Ref< IProcess > m_pipelineSlaveProcess;
 
 	void updateTargetLists();
@@ -171,8 +163,6 @@ private:
 	void threadHostEnumerator();
 
 	void threadTargetActions();
-
-	void threadHttpServer();
 };
 
 	}

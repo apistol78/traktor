@@ -8,6 +8,7 @@
 #include <Core/Misc/Adler32.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Misc/SafeDestroy.h>
+#include <Core/Misc/StringSplit.h>
 #include <Core/Settings/PropertyInteger.h>
 #include <Core/Settings/PropertyString.h>
 #include <Core/Settings/PropertyStringArray.h>
@@ -20,8 +21,11 @@
 #include <Net/SocketAddressIPv4.h>
 #include <Net/SocketStream.h>
 #include <Net/TcpSocket.h>
+#include <Net/Url.h>
 #include <Net/Discovery/DiscoveryManager.h>
 #include <Net/Discovery/NetworkService.h>
+#include <Net/Http/HttpRequest.h>
+#include <Net/Http/HttpServer.h>
 #include <Ui/Application.h>
 #include <Ui/Bitmap.h>
 #include <Ui/Clipboard.h>
@@ -54,6 +58,106 @@ const uint8_t c_errNone = 0;
 const uint8_t c_errIoFailed = 1;
 const uint8_t c_errLaunchFailed = 2;
 const uint8_t c_errUnknown = 255;
+
+class HttpRequestListener : public net::HttpServer::IRequestListener
+{
+public:
+	HttpRequestListener(const Path& basePath)
+	:	m_basePath(basePath)
+	{
+	}
+
+	virtual int32_t httpClientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os, Ref< traktor::IStream >& outStream, bool& outCache)
+	{
+		std::wstring resource = request->getResource();
+
+		T_DEBUG(L"HTTP request resource \"" << resource << L"\"");
+
+		if (resource == L"" || resource == L"/")
+			resource = L"/index.html";
+
+		if (startsWith< std::wstring >(resource, L"/loadFile?"))
+		{
+			std::wstring kvs = resource.substr(resource.find(L'?') + 1);
+
+			// Parse GET encoded key/value pairs.
+			std::map< std::wstring, std::wstring > kvm;
+			StringSplit< std::wstring > ss(kvs, L"&");
+			for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+			{
+				const std::wstring& kv = *i;
+				size_t ii = kv.find(L'=');
+				if (ii != kv.npos)
+				{
+					std::wstring key = kv.substr(0, ii);
+					std::wstring value =  net::Url::decodeString(kv.substr(ii + 1));
+					kvm[key] = value;
+				}
+			}
+
+			outStream = FileSystem::getInstance().open(m_basePath + Path(kvm[L"path"]), File::FmRead);
+			outCache = false;
+		}
+		else if (startsWith< std::wstring >(resource, L"/loadDirectory?"))
+		{
+			std::wstring kvs = resource.substr(resource.find(L'?') + 1);
+
+			// Parse GET encoded key/value pairs.
+			std::map< std::wstring, std::wstring > kvm;
+			StringSplit< std::wstring > ss(kvs, L"&");
+			for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+			{
+				const std::wstring& kv = *i;
+				size_t ii = kv.find(L'=');
+				if (ii != kv.npos)
+				{
+					std::wstring key = kv.substr(0, ii);
+					std::wstring value =  net::Url::decodeString(kv.substr(ii + 1));
+					kvm[key] = value;
+				}
+			}
+
+			os << L"[";
+
+			Path path = (m_basePath + Path(kvm[L"path"])).normalized();
+			Ref< File > file = FileSystem::getInstance().get(path);
+			if (file && file->isDirectory())
+			{
+				RefArray< File > files;
+				FileSystem::getInstance().find(file->getPath().getPathName() + L"/*.*", files);
+				for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
+				{
+					Path filePath;
+					FileSystem::getInstance().getRelativePath((*i)->getPath(), m_basePath, filePath);
+
+					if (i != files.begin())
+						os << L",";
+					if ((*i)->isDirectory())
+						os << L"[0,\"" << filePath.getFileName() << L"\",\"" << filePath.getPathName() << L"\"]";
+					else
+						os << L"[1,\"" << filePath.getFileName() << L"\",\"" << filePath.getPathName() << L"\"]";
+				}
+			}
+
+			os << L"]";
+
+			outCache = false;
+		}
+		else
+		{
+			Ref< traktor::IStream > file = FileSystem::getInstance().open(L"$(TRAKTOR_HOME)/res/html" + resource, File::FmRead);
+			if (!file)
+				return 404;
+
+			outStream = file;
+		}
+
+		return 200;
+	}
+
+private:
+	Path m_basePath;
+};
 
 std::wstring g_scratchPath;
 std::map< std::wstring, uint32_t > g_fileHashes;
@@ -93,6 +197,12 @@ void eventNotificationButtonDown(ui::MouseButtonDownEvent* event)
 	}
 }
 #endif
+
+void threadHttpServer(net::HttpServer* httpServer)
+{
+	while (!ThreadManager::getInstance().getCurrentThread()->stopped())
+		httpServer->update(250);
+}
 
 uint8_t handleDeploy(net::TcpSocket* clientSocket)
 {
@@ -292,13 +402,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #if defined(_WIN32)
 	ui::Application::getInstance()->initialize(
 		new ui::EventLoopWin32(),
-		new ui::WidgetFactoryWin32()
+		new ui::WidgetFactoryWin32(),
+		0
 	);
 #endif
 
-	T_FORCE_LINK_REF(PropertyInteger);
-
-	traktor::log::info << L"Traktor RemoteServer 1.91" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 2.0" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
@@ -321,7 +430,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	Ref< ui::Bitmap > imageIdle = ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png");
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 1.91 (" + g_scratchPath + L")", imageIdle);
+	g_notificationIcon->create(L"Traktor RemoteServer 2.0 (" + g_scratchPath + L")", imageIdle);
 	g_notificationIcon->addEventHandler< ui::MouseButtonDownEvent >(&eventNotificationButtonDown);
 #endif
 
@@ -340,6 +449,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		traktor::log::error << L"Unable to listen on server socket" << Endl;
 		return 2;
 	}
+
+	// Create http server.
+	Ref< net::HttpServer > httpServer = new net::HttpServer();
+	httpServer->create(net::SocketAddressIPv4(0));
+	httpServer->setRequestListener(new HttpRequestListener(g_scratchPath));
+
+	Ref< Thread > httpServerThread = ThreadManager::getInstance().create(makeStaticFunctor< net::HttpServer* >(&threadHttpServer, httpServer), L"HTTP server");
+	httpServerThread->start();
 
 	// Create discovery manager and publish ourself.
 	std::wstring hostName = L"";
@@ -397,8 +514,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 			traktor::log::info << L"Discoverable as \"RemoteTools/Server\", host \"" << itf.addr->getHostName() << L"\"" << Endl;
 
 			Ref< PropertyGroup > properties = new PropertyGroup();
-			properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName());
 			properties->setProperty< PropertyString >(L"Description", OS::getInstance().getComputerName());
+			properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName());
+			properties->setProperty< PropertyInteger >(L"RemotePort", c_listenPort);
+			properties->setProperty< PropertyInteger >(L"HttpPort", httpServer->getListenPort());
 			properties->setProperty< PropertyStringArray >(L"Platforms", platforms);
 
 			if (cmdLine.hasOption('k', L"keyword"))
@@ -427,6 +546,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		g_notificationIcon->setImage(imageIdle);
 #endif
 	}
+
+	if (httpServerThread)
+	{
+		httpServerThread->stop();
+		ThreadManager::getInstance().destroy(httpServerThread);
+	}
+
+	safeDestroy(httpServer);
 
 #if defined(_WIN32)
 	safeDestroy(g_notificationIcon);

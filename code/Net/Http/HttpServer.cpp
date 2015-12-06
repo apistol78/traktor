@@ -6,6 +6,7 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Net/SocketAddressIPv4.h"
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 #include "Net/Http/HttpRequest.h"
@@ -46,6 +47,11 @@ public:
 	{
 		m_listener = 0;
 		m_serverSocket.close();
+	}
+
+	int32_t getListenPort()
+	{
+		return dynamic_type_cast< net::SocketAddressIPv4* >(m_serverSocket.getLocalAddress())->getPort();
 	}
 
 	void setRequestListener(HttpServer::IRequestListener* listener)
@@ -160,6 +166,14 @@ bool HttpServer::create(const SocketAddressIPv4& bind)
 void HttpServer::destroy()
 {
 	safeDestroy(m_impl);
+}
+
+int32_t HttpServer::getListenPort()
+{
+	if (m_impl)
+		return m_impl->getListenPort();
+	else
+		return 0;
 }
 
 void HttpServer::setRequestListener(IRequestListener* listener)

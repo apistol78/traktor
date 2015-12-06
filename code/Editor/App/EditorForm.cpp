@@ -1174,6 +1174,20 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 	return true;
 }
 
+bool EditorForm::openBrowser(const net::Url& url)
+{
+	Ref< ui::TabPage > tabPage = new ui::TabPage();
+	tabPage->create(m_tab, url.getString(), 0, new ui::FloodLayout());
+
+	Ref< WebBrowserPage > homePage = new WebBrowserPage(this);
+	homePage->create(tabPage, url);
+
+	m_tab->addPage(tabPage);
+	m_tab->update(0, true);
+
+	return true;
+}
+
 Ref< IEditorPage > EditorForm::getActiveEditorPage()
 {
 	return m_activeEditorPage;
@@ -1339,14 +1353,18 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	m_mru->usedFile(workspacePath);
 
 	// Create "Home" page.
-	Ref< ui::TabPage > tabPage = new ui::TabPage();
-	tabPage->create(m_tab, L"Home", 0, new ui::FloodLayout());
+	std::wstring url = m_mergedSettings->getProperty< PropertyString >(L"Editor.HomeUrl", L"");
+	if (!url.empty())
+	{
+		Ref< ui::TabPage > tabPage = new ui::TabPage();
+		tabPage->create(m_tab, L"Home", 0, new ui::FloodLayout());
 
-	Ref< WebBrowserPage > homePage = new WebBrowserPage(this);
-	homePage->create(tabPage);
+		Ref< WebBrowserPage > homePage = new WebBrowserPage(this);
+		homePage->create(tabPage, url);
 
-	m_tab->addPage(tabPage);
-	m_tab->update(0, true);
+		m_tab->addPage(tabPage);
+		m_tab->update(0, true);
+	}
 
 	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Traktor.Editor.mru", m_mru);
 	updateMRU();

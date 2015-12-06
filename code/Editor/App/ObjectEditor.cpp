@@ -118,6 +118,11 @@ bool ObjectEditor::openDefaultEditor(db::Instance* instance)
 	return m_editor->openDefaultEditor(instance);
 }
 
+bool ObjectEditor::openBrowser(const net::Url& url)
+{
+	return m_editor->openBrowser(url);
+}
+
 Ref< IEditorPage > ObjectEditor::getActiveEditorPage()
 {
 	return m_editor->getActiveEditorPage();

@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringArray.h"
 #include "Net/SocketAddressIPv4.h"
@@ -34,26 +35,24 @@ int32_t HostEnumerator::count() const
 	return int32_t(m_hosts.size());
 }
 
-bool HostEnumerator::getHost(int32_t index, std::wstring& outHost) const
+const std::wstring& HostEnumerator::getHost(int32_t index) const
 {
-	if (index >= 0 && index < int32_t(m_hosts.size()))
-	{
-		outHost = m_hosts[index].host;
-		return true;
-	}
-	else
-		return false;
+	return m_hosts[index].host;
 }
 
-bool HostEnumerator::getDescription(int32_t index, std::wstring& outDescription) const
+int32_t HostEnumerator::getRemotePort(int32_t index) const
 {
-	if (index >= 0 && index < int32_t(m_hosts.size()))
-	{
-		outDescription = m_hosts[index].description;
-		return true;
-	}
-	else
-		return false;
+	return m_hosts[index].remotePort;
+}
+
+int32_t HostEnumerator::getHttpPort(int32_t index) const
+{
+	return m_hosts[index].httpPort;
+}
+
+const std::wstring& HostEnumerator::getDescription(int32_t index) const
+{
+	return m_hosts[index].description;
 }
 
 bool HostEnumerator::supportPlatform(int32_t index, const std::wstring& platform) const
@@ -103,8 +102,10 @@ void HostEnumerator::update()
 				continue;
 
 			Host h;
-			h.host = properties->getProperty< PropertyString >(L"Host");
 			h.description = properties->getProperty< PropertyString >(L"Description");
+			h.host = properties->getProperty< PropertyString >(L"Host");
+			h.remotePort = properties->getProperty< PropertyInteger >(L"RemotePort");
+			h.httpPort = properties->getProperty< PropertyInteger >(L"HttpPort");
 			h.platforms = properties->getProperty< PropertyStringArray >(L"Platforms");
 			h.local = bool(itf.addr != 0 && itf.addr->getHostName() == h.host);
 			m_hosts.push_back(h);
@@ -115,7 +116,9 @@ void HostEnumerator::update()
 }
 
 HostEnumerator::Host::Host()
-:	local(false)
+:	remotePort(0)
+,	httpPort(0)
+,	local(false)
 {
 }
 

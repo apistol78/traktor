@@ -6,6 +6,7 @@
 #include "Core/Config.h"
 #include "Core/RefArray.h"
 #include "Core/Rtti/ITypedObject.h"
+#include "Net/Url.h"
 
 namespace traktor
 {
@@ -102,6 +103,9 @@ public:
 
 	/*! \brief Open instance using default editor. */
 	virtual bool openDefaultEditor(db::Instance* instance) = 0;
+
+	/*! \brief Open browser to given resource. */
+	virtual bool openBrowser(const net::Url& url) = 0;
 
 	/*! \brief Get active editor. */
 	virtual Ref< IEditorPage > getActiveEditorPage() = 0;

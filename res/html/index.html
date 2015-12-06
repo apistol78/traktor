@@ -5,7 +5,7 @@
 
 body
 {
-	background-color: #ddd;
+	background-color: #f6f6f6;
 	padding: 0;
 	margin: 0;
 }
@@ -15,7 +15,7 @@ body
 	color: #44f;
 	text-decoration: none;
 	cursor: pointer;
-	padding: 4;
+	padding: 2;
 }
 
 .type_dir:hover
@@ -28,7 +28,7 @@ body
 	color: #444;
 	text-decoration: none;
 	cursor: pointer;
-	padding: 4;
+	padding: 2;
 }
 
 .type_file:hover
@@ -39,10 +39,10 @@ body
 .directory
 {
 	position: relative;
-	background-color: #ccc;
+	background-color: #f6f6f6;
 	color: #000;
-	font-family: verdana, arial;
-	font-size: 13;
+	font-family: "Segoe UI", verdana, arial;
+	font-size: 12;
 	float: left;
 	width: 20%;
 	height: 100%;
@@ -134,7 +134,7 @@ function loadFile(path)
 	{
 		d.innerHTML = "<img src=\"loadFile?path=" + path + "\" />";
 	}
-	else if (!endsWithAny(path.toLowerCase(), [ ".swf", ".fla" ]))
+	else if (!endsWithAny(path.toLowerCase(), [ ".swf", ".fla", ".exe", ".dll", ".lib", ".pdb", ".compact" ]))
 	{
 		d.innerHTML = "";
 		var xhttp = new XMLHttpRequest();

@@ -34,7 +34,7 @@ public:
 	
 	bool valid() const;
 
-	int getDefaultPort() const;
+	int32_t getDefaultPort() const;
 
 	std::wstring getFile() const;
 
@@ -42,7 +42,7 @@ public:
 
 	std::wstring getPath() const;
 
-	int getPort() const;
+	int32_t getPort() const;
 
 	std::wstring getProtocol() const;
 
@@ -68,7 +68,7 @@ private:
 	bool m_valid;
 	std::wstring m_protocol;
 	std::wstring m_host;
-	int m_port;
+	int32_t m_port;
 	std::wstring m_path;
 	std::wstring m_file;
 	std::wstring m_query;

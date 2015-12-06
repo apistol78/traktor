@@ -119,14 +119,14 @@ bool Url::valid() const
 	return m_valid;
 }
 
-int Url::getDefaultPort() const
+int32_t Url::getDefaultPort() const
 {
 	if (m_protocol == L"http")
 		return 80;
-	if (m_protocol == L"ftp")
+	else if (m_protocol == L"ftp")
 		return 21;
-
-	return 0;
+	else
+		return 0;
 }
 
 std::wstring Url::getFile() const
@@ -144,7 +144,7 @@ std::wstring Url::getPath() const
 	return m_path;
 }
 
-int Url::getPort() const
+int32_t Url::getPort() const
 {
 	return m_port;
 }
@@ -174,6 +174,9 @@ std::wstring Url::getString() const
 	StringOutputStream ss;
 	ss << getProtocol() << L"://" << getHost();
 	
+	if (getPort() != getDefaultPort())
+		ss << L":" << m_port;
+
 	std::wstring path = getPath();
 	if (!path.empty())
 		ss << path;

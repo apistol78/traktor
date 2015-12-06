@@ -31,9 +31,8 @@ void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& p
 		{
 			if (m_hostEnumerator->supportPlatform(i, platformName))
 			{
-				std::wstring item;
-				m_hostEnumerator->getDescription(i, item);
-				menu.add(new ui::MenuItem(ui::Command(i), item));
+				const std::wstring& description = m_hostEnumerator->getDescription(i);
+				menu.add(new ui::MenuItem(ui::Command(i), description));
 			}
 		}
 
@@ -83,12 +82,10 @@ void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	canvas.setBackground(ui::getSystemColor(ui::ScWindowText));
 	canvas.fillPolygon(pnts, 3);
 
-	int32_t deployHostId = m_instance->getDeployHostId();
-	if (deployHostId >= 0)
+	int32_t id = m_instance->getDeployHostId();
+	if (id >= 0)
 	{
-		std::wstring description;
-		m_hostEnumerator->getDescription(deployHostId, description);
-
+		const std::wstring& description = m_hostEnumerator->getDescription(id);
 		canvas.setForeground(ui::getSystemColor(ui::ScWindowText));
 		canvas.drawText(rcText, description, ui::AnLeft, ui::AnCenter);
 	}
