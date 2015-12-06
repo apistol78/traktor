@@ -37,12 +37,21 @@ private:
 	Ref< ProgressCell > m_progressCell;
 	Ref< DropListCell > m_hostsCell;
 	Ref< ButtonCell > m_playCell;
+	Ref< ButtonCell > m_buildCell;
+	Ref< ButtonCell > m_migrateCell;
+	Ref< ButtonCell > m_browseCell;
 	RefArray< ButtonCell > m_stopCells;
 	RefArray< ButtonCell > m_captureCells;
 	Ref< TargetInstance > m_instance;
 	TargetState m_lastInstanceState;
 
 	void eventPlayButtonClick(ui::ButtonClickEvent* event);
+
+	void eventBuildButtonClick(ui::ButtonClickEvent* event);
+
+	void eventMigrateButtonClick(ui::ButtonClickEvent* event);
+
+	void eventBrowseButtonClick(ui::ButtonClickEvent* event);
 
 	void eventStopButtonClick(ui::ButtonClickEvent* event);
 

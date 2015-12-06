@@ -4,8 +4,11 @@
 #include "Amalgam/Editor/Ui/ButtonCell.h"
 #include "Amalgam/Editor/Ui/DropListCell.h"
 #include "Amalgam/Editor/Ui/ProgressCell.h"
+#include "Amalgam/Editor/Ui/TargetBrowseEvent.h"
+#include "Amalgam/Editor/Ui/TargetBuildEvent.h"
 #include "Amalgam/Editor/Ui/TargetCaptureEvent.h"
 #include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
+#include "Amalgam/Editor/Ui/TargetMigrateEvent.h"
 #include "Amalgam/Editor/Ui/TargetPlayEvent.h"
 #include "Amalgam/Editor/Ui/TargetStopEvent.h"
 #include "Amalgam/Editor/Deploy/Platform.h"
@@ -98,6 +101,15 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 
 	m_playCell = new ButtonCell(s_bitmapTargetControl, 0, ui::Command());
 	m_playCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventPlayButtonClick);
+
+	m_buildCell = new ButtonCell(s_bitmapTargetControl, 0, ui::Command());
+	m_buildCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventBuildButtonClick);
+
+	m_migrateCell = new ButtonCell(s_bitmapTargetControl, 0, ui::Command());
+	m_migrateCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventMigrateButtonClick);
+
+	m_browseCell = new ButtonCell(s_bitmapTargetControl, 0, ui::Command());
+	m_browseCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventBrowseButtonClick);
 }
 
 ui::Size TargetInstanceListItem::getSize() const
@@ -120,7 +132,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 			ui::Rect(
 				controlRect.getCenter().x,
 				controlRect.getCenter().y - ui::scaleBySystemDPI(10),
-				controlRect.right - 24 * 1 - 12,
+				controlRect.right - 24 * 4 - 12,
 				controlRect.getCenter().y + ui::scaleBySystemDPI(10)
 			)
 		);
@@ -133,7 +145,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 			ui::Rect(
 				controlRect.left + 30,
 				controlRect.getCenter().y - ui::scaleBySystemDPI(8),
-				controlRect.right - 24 * 1 - 8,
+				controlRect.right - 24 * 4 - 8,
 				controlRect.getCenter().y + ui::scaleBySystemDPI(8)
 			)
 		);
@@ -141,6 +153,33 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 
 	widget->placeCell(
 		m_playCell,
+		ui::Rect(
+			controlRect.right - 24 * 4 - 4,
+			controlRect.top,
+			controlRect.right - 24 * 3 - 4,
+			controlRect.bottom
+		)
+	);
+	widget->placeCell(
+		m_buildCell,
+		ui::Rect(
+			controlRect.right - 24 * 3 - 4,
+			controlRect.top,
+			controlRect.right - 24 * 2 - 4,
+			controlRect.bottom
+		)
+	);
+	widget->placeCell(
+		m_migrateCell,
+		ui::Rect(
+			controlRect.right - 24 * 2 - 4,
+			controlRect.top,
+			controlRect.right - 24 * 1 - 4,
+			controlRect.bottom
+		)
+	);
+	widget->placeCell(
+		m_browseCell,
 		ui::Rect(
 			controlRect.right - 24 * 1 - 4,
 			controlRect.top,
@@ -396,12 +435,32 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	canvas.setFont(widgetFont);
 
 	m_playCell->setEnable(m_instance->getState() == TsIdle);
+	m_buildCell->setEnable(m_instance->getState() == TsIdle);
+	m_migrateCell->setEnable(m_instance->getState() == TsIdle);
 }
 
 void TargetInstanceListItem::eventPlayButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetPlayEvent playEvent(this, m_instance);
 	getWidget()->raiseEvent(&playEvent);
+}
+
+void TargetInstanceListItem::eventBuildButtonClick(ui::ButtonClickEvent* event)
+{
+	TargetBuildEvent buildEvent(this, m_instance);
+	getWidget()->raiseEvent(&buildEvent);
+}
+
+void TargetInstanceListItem::eventMigrateButtonClick(ui::ButtonClickEvent* event)
+{
+	TargetMigrateEvent migrateEvent(this, m_instance);
+	getWidget()->raiseEvent(&migrateEvent);
+}
+
+void TargetInstanceListItem::eventBrowseButtonClick(ui::ButtonClickEvent* event)
+{
+	TargetBrowseEvent browseEvent(this, m_instance);
+	getWidget()->raiseEvent(&browseEvent);
 }
 
 void TargetInstanceListItem::eventStopButtonClick(ui::ButtonClickEvent* event)
