@@ -59,7 +59,7 @@ AccShape::~AccShape()
 	destroy();
 }
 
-bool AccShape::createTesselation(const AlignedVector< Path >& paths)
+bool AccShape::createTesselation(const AlignedVector< Path >& paths, bool oddEven)
 {
 	AlignedVector< Segment > segments;
 	Triangulator triangulator;
@@ -129,7 +129,7 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 			{
 				uint32_t from = m_triangles.size();
 
-				triangulator.triangulate(segments, *ii, m_triangles);
+				triangulator.triangulate(segments, *ii, oddEven, m_triangles);
 				segments.resize(0);
 
 				uint32_t to = m_triangles.size();
@@ -164,16 +164,16 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 	return true;
 }
 
-bool AccShape::createTesselation(const FlashShape& shape)
+bool AccShape::createTesselation(const FlashShape& shape, bool oddEven)
 {
 	const AlignedVector< Path >& paths = shape.getPaths();
-	return createTesselation(paths);
+	return createTesselation(paths, oddEven);
 }
 
 bool AccShape::createTesselation(const FlashCanvas& canvas)
 {
 	const AlignedVector< Path >& paths = canvas.getPaths();
-	return createTesselation(paths);
+	return createTesselation(paths, false);
 }
 
 bool AccShape::updateRenderable(
