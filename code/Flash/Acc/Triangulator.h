@@ -26,7 +26,7 @@ class T_DLLCLASS Triangulator : public Object
 	T_RTTI_CLASS;
 
 public:
-	void triangulate(const AlignedVector< Segment >& segments, uint16_t currentFillStyle, AlignedVector< Triangle >& outTriangles);
+	void triangulate(const AlignedVector< Segment >& segments, uint16_t currentFillStyle, bool oddEven, AlignedVector< Triangle >& outTriangles);
 
 private:
 	AlignedVector< Segment > m_segments;

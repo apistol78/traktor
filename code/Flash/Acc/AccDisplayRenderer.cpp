@@ -457,7 +457,7 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 	if (it == m_shapeCache.end())
 	{
 		accShape = new AccShape(m_shapeResources);
-		if (!accShape->createTesselation(shape))
+		if (!accShape->createTesselation(shape, false))
 			return;
 
 		m_shapeCache[tag].unusedCount = 0;
@@ -553,7 +553,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 	if (it1 == m_glyphCache.end())
 	{
 		Ref< AccShape > accShape = new AccShape(m_shapeResources);
-		if (!accShape->createTesselation(shape))
+		if (!accShape->createTesselation(shape, true))
 		{
 			T_DEBUG(L"Glyph tesselation failed");
 			return;

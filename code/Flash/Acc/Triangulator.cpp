@@ -262,7 +262,7 @@ void segmentsToTriangles(const Segment& sl, const Segment& sr, AlignedVector< Tr
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Triangulator", Triangulator, Object)
 
-void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_t currentFillStyle, AlignedVector< Triangle >& outTriangles)
+void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_t currentFillStyle, bool oddEven, AlignedVector< Triangle >& outTriangles)
 {
 	std::set< float > pys;
 	Segment s;
@@ -368,7 +368,8 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 		if (i->v[0].y > i->v[1].y)
 		{
 			std::swap(i->v[0], i->v[1]);
-			std::swap(i->fillStyle0, i->fillStyle1);
+			if (!oddEven)
+				std::swap(i->fillStyle0, i->fillStyle1);
 		}
 	}
 
@@ -381,11 +382,15 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 		T_ASSERT (*i == std::floor(*i));
 		m_slabs.resize(0);
 
+		int32_t count = 0;
+
 		for (AlignedVector< Segment >::iterator j = m_segments.begin(); j != m_segments.end(); )
 		{
 			// As segments are sorted we can safely abort if we find one that's completely below.
 			if (j->v[0].y >= *i)
 				break;
+
+			++count;
 
 			if (!j->curve)
 			{
@@ -474,8 +479,11 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 
 		for (size_t i = 0; i < m_slabs.size() - 1; ++i)
 		{
-			const Segment& sl = m_slabs[i];
-			const Segment& sr = m_slabs[i + 1];
+			Segment& sl = m_slabs[i];
+			Segment& sr = m_slabs[i + 1];
+
+			if (oddEven)
+				sl.fillStyle0 = ((i & 1) == 0) ? sl.fillStyle0 : sl.fillStyle1;
 
 			if (sl.fillStyle0 == currentFillStyle)
 			{

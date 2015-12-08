@@ -52,9 +52,9 @@ public:
 
 	virtual ~AccShape();
 
-	bool createTesselation(const AlignedVector< Path >& paths);
+	bool createTesselation(const AlignedVector< Path >& paths, bool oddEven);
 
-	bool createTesselation(const FlashShape& shape);
+	bool createTesselation(const FlashShape& shape, bool oddEven);
 
 	bool createTesselation(const FlashCanvas& canvas);
 
