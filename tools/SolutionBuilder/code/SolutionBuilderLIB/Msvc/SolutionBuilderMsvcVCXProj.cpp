@@ -375,7 +375,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			os << L"@pushd \"$(TargetDir)\"" << Endl;
 			Path targetDir = projectPath + L"/" + configuration->getName();
 			for (RefArray< AggregationItem >::const_iterator j = aggregationItems.begin(); j != aggregationItems.end(); ++j)
-				os << L"@xcopy /M /F /R /Y /I \"" << (*j)->getSourceFile()<< L"\" \"" << (*j)->getTargetPath() << L"\\\"" << Endl;
+				os << L"@xcopy /D /F /R /Y /I \"" << (*j)->getSourceFile()<< L"\" \"" << (*j)->getTargetPath() << L"\\\"" << Endl;
 			os << L"@popd" << Endl;
 
 			os.setIndent(indent);
