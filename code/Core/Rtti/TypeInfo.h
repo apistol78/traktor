@@ -76,37 +76,37 @@ public:
 	 *
 	 * \return Type name.
 	 */
-	const wchar_t* getName() const;
+	const wchar_t* getName() const { return m_name; }
 
 	/*! \brief Size of type in bytes.
 	 *
 	 * \return Type size in bytes.
 	 */
-	size_t getSize() const;
+	size_t getSize() const { return m_size; }
 
 	/*! \brief Version of type.
 	 *
 	 * \return Type version.
 	 */
-	int32_t getVersion() const;
+	int32_t getVersion() const { return m_version; }
 
 	/*! \brief Editable type.
 	 *
 	 * \return True if type is editable.
 	 */
-	bool isEditable() const;
+	bool isEditable() const { return m_editable; }
 
 	/*! \brief Return super type.
 	 *
 	 * \return Super type.
 	 */
-	const TypeInfo* getSuper() const;
+	const TypeInfo* getSuper() const { return m_super; }
 
 	/*! \brief Instantiable type.
 	 *
 	 * \return True if type is Instantiable.
 	 */
-	bool isInstantiable() const;
+	bool isInstantiable() const { return m_factory != 0; }
 
 	/*! \brief Create new instance of type.
 	 *
@@ -136,6 +136,15 @@ public:
 	 */
 	static ITypedObject* createInstance(const std::wstring& name, void* memory = 0);
 
+	/*! \brief Set tag.
+	 * \note This is specifically used for maintaining script class mapping.
+	 */
+	void setTag(uint32_t tag) const;
+
+	/*! \brief Get tag.
+	 */
+	uint32_t getTag() const { return m_tag; }
+
 private:
 	const wchar_t* m_name;
 	size_t m_size;
@@ -143,6 +152,7 @@ private:
 	bool m_editable;
 	const TypeInfo* m_super;
 	Ref< const IInstanceFactory > m_factory;
+	mutable uint32_t m_tag;
 };
 
 /*! \brief Set of type information.

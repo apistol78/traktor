@@ -96,8 +96,6 @@ ScriptManagerLua::ScriptManagerLua()
 ,	m_collectTargetSteps(0.0f)
 ,	m_totalMemoryUse(0)
 ,	m_lastMemoryUse(0)
-,	m_classIdBoxedVector4(0)
-,	m_classIdBoxedTransform(0)
 {
 	ms_instance = this;
 
@@ -393,24 +391,17 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	TypeInfoSet derivedTypes;
 	exportType.findAllOf(derivedTypes);
 
-	for (TypeInfoSet::const_iterator i = derivedTypes.begin(); i != derivedTypes.end(); ++i)
+	for (TypeInfoSet::iterator i = derivedTypes.begin(); i != derivedTypes.end(); ++i)
 	{
-		SmallMap< const TypeInfo*, uint32_t >::const_iterator j = m_classRegistryLookup.find(*i);
-		if (j != m_classRegistryLookup.end())
+		if ((*i)->getTag() != 0)
 		{
-			const RegisteredClass& rc2 = m_classRegistry[j->second];
+			const RegisteredClass& rc2 = m_classRegistry[(*i)->getTag() - 1];
 			const TypeInfo& exportType2 = rc2.runtimeClass->getExportType();
 			if (is_type_of(exportType, exportType2))
 				continue;
 		}
-		m_classRegistryLookup[*i] = classRegistryIndex;
+		(*i)->setTag(classRegistryIndex + 1);
 	}
-
-	// Remember commonly used classes.
-	if (is_type_a< BoxedVector4 >(exportType))
-		m_classIdBoxedVector4 = classRegistryIndex;
-	else if (is_type_a< BoxedTransform >(exportType))
-		m_classIdBoxedTransform = classRegistryIndex;
 
 	// Add constants last as constants might be instances of this class.
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef);
@@ -580,27 +571,14 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 	const TypeInfo* objectType = &type_of(object);
 	uint32_t classId = 0;
 
-	// Check commonly used boxes.
-	if (objectType == &type_of< BoxedVector4 >())
-	{
-		classId = m_classIdBoxedVector4;
-	}
-	else if (objectType == &type_of< BoxedTransform >())
-	{
-		classId = m_classIdBoxedTransform;
-	}
+	// Get class index.
+	if (objectType->getTag() != 0)
+		classId = objectType->getTag() - 1;
 	else
 	{
-		// Find registered script class entry.
-		SmallMap< const TypeInfo*, uint32_t >::const_iterator i = m_classRegistryLookup.find(objectType);
-		if (i != m_classRegistryLookup.end())
-			classId = i->second;
-		else
-		{
-			lua_pop(m_luaState, 1);
-			lua_pushnil(m_luaState);
-			return;
-		}
+		lua_pop(m_luaState, 1);
+		lua_pushnil(m_luaState);
+		return;
 	}
 
 	const RegisteredClass& rc = m_classRegistry[classId];
