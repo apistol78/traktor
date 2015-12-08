@@ -137,6 +137,7 @@ TypeInfo::TypeInfo(
 ,	m_editable(editable)
 ,	m_super(super)
 ,	m_factory(factory)
+,	m_tag(0)
 {
 	__registerTypeInfo(this);
 }
@@ -144,36 +145,6 @@ TypeInfo::TypeInfo(
 TypeInfo::~TypeInfo()
 {
 	__unregisterTypeInfo(this);
-}
-
-const wchar_t* TypeInfo::getName() const
-{
-	return m_name;
-}
-
-size_t TypeInfo::getSize() const
-{
-	return m_size;
-}
-
-int32_t TypeInfo::getVersion() const
-{
-	return m_version;
-}
-
-bool TypeInfo::isEditable() const
-{
-	return m_editable;
-}
-
-const TypeInfo* TypeInfo::getSuper() const
-{
-	return m_super;
-}
-
-bool TypeInfo::isInstantiable() const
-{
-	return m_factory != 0;
 }
 
 ITypedObject* TypeInfo::createInstance(void* memory) const
@@ -223,6 +194,11 @@ ITypedObject* TypeInfo::createInstance(const std::wstring& name, void* memory)
 {
 	const TypeInfo* type = TypeInfo::find(name);
 	return type ? type->createInstance(memory) : 0;
+}
+
+void TypeInfo::setTag(uint32_t tag) const
+{
+	m_tag = tag;
 }
 
 void __forceLinkReference(const TypeInfo& type)

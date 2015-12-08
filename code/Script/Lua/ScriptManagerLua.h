@@ -4,7 +4,6 @@
 #define T_SCRIPT_LUA_USE_MT_LOCK
 
 #include "Core/RefArray.h"
-#include "Core/Containers/SmallMap.h"
 #include "Script/IScriptManager.h"
 
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)
@@ -88,7 +87,6 @@ private:
 #endif
 	ScriptContextLua* m_lockContext;
 	std::vector< RegisteredClass > m_classRegistry;
-	SmallMap< const TypeInfo*, uint32_t > m_classRegistryLookup;
 	RefArray< ScriptContextLua > m_contexts;
 	Ref< ScriptDebuggerLua > m_debugger;
 	Ref< ScriptProfilerLua > m_profiler;
@@ -97,8 +95,6 @@ private:
 	float m_collectTargetSteps;
 	size_t m_totalMemoryUse;
 	size_t m_lastMemoryUse;
-	uint32_t m_classIdBoxedVector4;
-	uint32_t m_classIdBoxedTransform;
 
 	void lock(ScriptContextLua* context)
 	{
