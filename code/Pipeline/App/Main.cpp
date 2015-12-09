@@ -16,6 +16,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
+#include "Core/System/IProcess.h"
 #include "Core/System/ISharedMemory.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Mutex.h"
@@ -853,9 +854,10 @@ int master(const CommandLine& cmdLine)
 			false,
 			true
 		);
-
 		if (!slaveProcess)
 			return 1;
+
+		slaveProcess->setPriority(IProcess::Below);
 	}
 
 	std::vector< Guid > roots;

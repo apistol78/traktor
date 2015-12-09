@@ -15,6 +15,8 @@ class ProcessLinux : public IProcess
 public:
 	virtual ~ProcessLinux();
 
+	virtual bool setPriority(Priority priority);
+
 	virtual Ref< IStream > getPipeStream(StdPipe pipe);
 
 	virtual bool signal(SignalType signalType);

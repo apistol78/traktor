@@ -15,6 +15,8 @@ class ProcessOsX : public IProcess
 public:
 	virtual ~ProcessOsX();
 
+	virtual bool setPriority(Priority priority);
+
 	virtual Ref< IStream > getPipeStream(StdPipe pipe);
 	
 	virtual bool signal(SignalType signalType);

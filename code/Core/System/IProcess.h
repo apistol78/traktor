@@ -30,6 +30,15 @@ class T_DLLCLASS IProcess
 	T_RTTI_CLASS;
 
 public:
+	enum Priority
+	{
+		Lowest,
+		Below,
+		Normal,
+		Above,
+		Highest
+	};
+
 	enum StdPipe
 	{
 		SpStdIn,
@@ -42,6 +51,13 @@ public:
 		StCtrlC,
 		StCtrlBreak
 	};
+
+	/*! \brief Set process scheduling priority.
+	 *
+	 * \param New process priority.
+	 * \return True if priority changed.
+	 */
+	virtual bool setPriority(Priority priority) = 0;
 
 	/*! \brief Get pipe stream.
 	 *

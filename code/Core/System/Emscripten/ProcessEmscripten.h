@@ -12,6 +12,8 @@ class ProcessEmscripten : public IProcess
 	T_RTTI_CLASS;
 
 public:
+	virtual bool setPriority(Priority priority);
+	
 	virtual Ref< IStream > getPipeStream(StdPipe pipe);
 
 	virtual bool signal(SignalType signalType);

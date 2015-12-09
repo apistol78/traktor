@@ -104,6 +104,11 @@ ProcessLinux::~ProcessLinux()
 	}
 }
 
+bool ProcessLinux::setPriority(Priority priority)
+{
+	return false;
+}
+
 Ref< IStream > ProcessLinux::getPipeStream(StdPipe pipe)
 {
 	if (m_fileActions)

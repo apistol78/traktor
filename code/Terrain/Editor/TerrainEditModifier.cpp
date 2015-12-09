@@ -614,7 +614,12 @@ void TerrainEditModifier::apply(
 		render::ITexture::Lock cl;
 		if (m_splatMap->lock(0, cl))
 		{
-			std::memcpy(cl.bits, m_splatImage->getData(), size * size * 4);
+			const uint8_t* src = static_cast< const uint8_t* >(m_splatImage->getData());
+			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
+
+			for (int32_t y = 0; y < size; ++y)
+				std::memcpy(&dst[y * cl.pitch], &src[y * size * 4], size * 4);
+
 			m_splatMap->unlock(0);
 		}
 	}
@@ -627,7 +632,13 @@ void TerrainEditModifier::apply(
 		if (m_colorMap->lock(0, cl))
 		{
 			m_colorImageLowPrecision->copy(m_colorImage, mnx, mnz, mnx, mnz, mxx - mnx, mxz - mnz);
-			std::memcpy(cl.bits, m_colorImageLowPrecision->getData(), size * size * 4);
+			
+			const uint8_t* src = static_cast< const uint8_t* >(m_colorImageLowPrecision->getData());
+			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
+
+			for (int32_t y = 0; y < size; ++y)
+				std::memcpy(&dst[y * cl.pitch], &src[y * size * 4], size * 4);
+
 			m_colorMap->unlock(0);
 		}
 	}
@@ -655,7 +666,12 @@ void TerrainEditModifier::apply(
 		render::ITexture::Lock nl;
 		if (m_normalMap->lock(0, nl))
 		{
-			std::memcpy(nl.bits, m_normalData.c_ptr(), size * size * 4);
+			const uint8_t* src = static_cast< const uint8_t* >(m_normalData.c_ptr());
+			uint8_t* dst = static_cast< uint8_t* >(nl.bits);
+
+			for (int32_t y = 0; y < size; ++y)
+				std::memcpy(&dst[y * nl.pitch], &src[y * size * 4], size * 4);
+
 			m_normalMap->unlock(0);
 		}
 
@@ -678,7 +694,12 @@ void TerrainEditModifier::apply(
 		render::ITexture::Lock cl;
 		if (m_cutMap->lock(0, cl))
 		{
-			std::memcpy(cl.bits, m_cutData.c_ptr(), size * size);
+			const uint8_t* src = static_cast< const uint8_t* >(m_cutData.c_ptr());
+			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
+
+			for (int32_t y = 0; y < size; ++y)
+				std::memcpy(&dst[y * cl.pitch], &src[y * size], size);
+
 			m_cutMap->unlock(0);
 		}
 
@@ -701,7 +722,12 @@ void TerrainEditModifier::apply(
 		render::ITexture::Lock cl;
 		if (m_materialMap->lock(0, cl))
 		{
-			std::memcpy(cl.bits, m_materialData.c_ptr(), size * size);
+			const uint8_t* src = static_cast< const uint8_t* >(m_materialData.c_ptr());
+			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
+
+			for (int32_t y = 0; y < size; ++y)
+				std::memcpy(&dst[y * cl.pitch], &src[y * size], size);
+
 			m_materialMap->unlock(0);
 		}
 

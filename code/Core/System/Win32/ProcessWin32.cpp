@@ -144,6 +144,19 @@ ProcessWin32::~ProcessWin32()
 	CloseHandle(m_hStdErrWrite);
 }
 
+bool ProcessWin32::setPriority(Priority priority)
+{
+	const DWORD c_priorityClasses[] =
+	{
+		IDLE_PRIORITY_CLASS,
+		BELOW_NORMAL_PRIORITY_CLASS,
+		NORMAL_PRIORITY_CLASS,
+		ABOVE_NORMAL_PRIORITY_CLASS,
+		HIGH_PRIORITY_CLASS
+	};
+	return SetPriorityClass(m_hProcess, c_priorityClasses[priority]) != 0;
+}
+
 bool ProcessWin32::wait(int32_t timeout)
 {
 	return WaitForSingleObject(m_hProcess, timeout >= 0 ? timeout : INFINITE) == WAIT_OBJECT_0;
