@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -68,7 +69,7 @@ std::wstring ImportHeightfieldWizardTool::getDescription() const
 
 uint32_t ImportHeightfieldWizardTool::getFlags() const
 {
-	return WfGroup;
+	return WfInstance | WfGroup;
 }
 
 bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
@@ -86,19 +87,20 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 	}
 	fileDialog.destroy();
 
-	// Determine unique instance name.
-	std::wstring instanceName = getUniqueInstanceName(fileName.getFileNameNoExtension(), group);
-	if (instanceName.empty())
-		return false;
-
 	// Read source heightfield as image.
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!file)
+	{
+		log::error << L"Failed to import heightfield; unable to open file \"" << fileName.getPathName() << L"\"" << Endl;
 		return false;
+	}
 
 	Ref< drawing::Image > image;
 	if ((image = readRawTerrain(file)) == 0)
+	{
+		log::error << L"Failed to import heightfiled; unable to parse file \"" << fileName.getPathName() << L"\"" << Endl;
 		return false;
+	}
 
 	// Flip base image.
 	bool invertX = false;
@@ -116,7 +118,10 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 	if (detailSkip > 1)
 	{
 		if (!(size /= detailSkip))
-			return 0;
+		{
+			log::error << L"Failed to import heightfield; incorrect detail skip." << Endl;
+			return false;
+		}
 
 		drawing::ScaleFilter scaleFilter(
 			size,
@@ -127,11 +132,30 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 		image->apply(&scaleFilter);
 	}
 
-	// Create heightfield.
-	Ref< Heightfield > heightfield = new Heightfield(
-		size,
-		Vector4(1024.0f, 128.0f, 1024.0f)
-	);
+	Ref< Heightfield > heightfield;
+	if (instance)
+	{
+		// Read existing heightfield.
+		Ref< HeightfieldAsset > heightfieldAsset = instance->getObject< HeightfieldAsset >();
+		if (!heightfieldAsset)
+		{
+			log::error << L"Failed to read existing heightfield asset; incorrect instance type." << Endl;
+			return false;
+		}
+
+		heightfield = new Heightfield(
+			size,
+			heightfieldAsset->getWorldExtent()
+		);
+	}
+	else
+	{
+		// Create heightfield.
+		heightfield = new Heightfield(
+			size,
+			Vector4(1024.0f, 128.0f, 1024.0f)
+		);
+	}
 
 	const height_t* sourceHeights = static_cast< const height_t* >(image->getData());
 	height_t* destinationHeights = heightfield->getHeights();
@@ -148,23 +172,55 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 		size * size / 8
 	);
 
-	// Create heightfield asset.
-	Ref< HeightfieldAsset > heightfieldAsset = new HeightfieldAsset(heightfield->getWorldExtent());
-
-	// Create heightfield instance.
-	Ref< db::Instance > heightfieldInstance = group->createInstance(instanceName);
-	heightfieldInstance->setObject(heightfieldAsset);
-
-	Ref< IStream > data = heightfieldInstance->writeData(L"Data");
-	if (!data)
+	if (!instance)
 	{
-		heightfieldInstance->revert();
-		return false;
+		// Determine unique instance name.
+		std::wstring instanceName = getUniqueInstanceName(fileName.getFileNameNoExtension(), group);
+		if (instanceName.empty())
+			return false;
+
+		// Create heightfield asset.
+		Ref< HeightfieldAsset > heightfieldAsset = new HeightfieldAsset(heightfield->getWorldExtent());
+
+		// Create heightfield instance.
+		Ref< db::Instance > heightfieldInstance = group->createInstance(instanceName);
+		heightfieldInstance->setObject(heightfieldAsset);
+
+		Ref< IStream > data = heightfieldInstance->writeData(L"Data");
+		if (!data)
+		{
+			log::error << L"Failed to write heightfield data into instance; import heights failed." << Endl;
+			heightfieldInstance->revert();
+			return false;
+		}
+
+		HeightfieldFormat().write(data, heightfield);
+
+		heightfieldInstance->commit();
+	}
+	else
+	{
+		if (!instance->checkout())
+		{
+			log::error << L"Failed to write heightfield data into instance; unable to checkout instance." << Endl;
+			return false;
+		}
+
+		// Replace heightfield in existing asset.
+		Ref< IStream > data = instance->writeData(L"Data");
+		if (!data)
+		{
+			log::error << L"Failed to write heightfield data into instance; import heights failed." << Endl;
+			instance->revert();
+			return false;
+		}
+
+		HeightfieldFormat().write(data, heightfield);
+
+		instance->commit();
 	}
 
-	HeightfieldFormat().write(data, heightfield);
-
-	heightfieldInstance->commit();
+	log::info << L"Heightfield imported successfully!" << Endl;
 	return true;
 }
 

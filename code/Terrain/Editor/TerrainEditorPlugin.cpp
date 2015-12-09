@@ -162,6 +162,7 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 	{
 		if (command == L"Terrain.Editor.EditTerrain")
 		{
+			m_context->setPlaying(false);
 			m_context->setModifier(m_terrainEditModifier);
 			return true;
 		}

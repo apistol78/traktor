@@ -14,6 +14,8 @@
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -233,7 +235,7 @@ struct BuildCombinationTask : public Object
 
 			std::vector< Guid >::iterator it = std::find(shaderResourceCombination->textures.begin(), shaderResourceCombination->textures.end(), textureGuid);
 			if (it != shaderResourceCombination->textures.end())
-				textureIndex = std::distance(shaderResourceCombination->textures.begin(), it);
+				textureIndex = int32_t(std::distance(shaderResourceCombination->textures.begin(), it));
 			else
 			{
 				textureIndex = int32_t(shaderResourceCombination->textures.size());
@@ -453,6 +455,9 @@ bool ShaderPipeline::buildOutput(
 
 	for (std::set< std::wstring >::iterator i = techniqueNames.begin(); i != techniqueNames.end(); ++i)
 	{
+		if (ThreadManager::getInstance().getCurrentThread()->stopped())
+			break;
+
 		log::info << L"Building shader technique \"" << *i << L"\"..." << Endl;
 		log::info << IncreaseIndent;
 
@@ -554,6 +559,12 @@ bool ShaderPipeline::buildOutput(
 	shaderGraphCombinations.resize(0);
 
 	log::info << L"All task(s) collected" << Endl;
+
+	if (ThreadManager::getInstance().getCurrentThread()->stopped())
+	{
+		log::info << L"ShaderPipeline aborted; pipeline cancelled." << Endl;
+		return false;
+	}
 
 	if (failed)
 	{

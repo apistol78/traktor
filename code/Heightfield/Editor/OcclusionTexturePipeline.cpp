@@ -10,6 +10,8 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -377,6 +379,9 @@ bool OcclusionTexturePipeline::buildOutput(
 
 	for (AlignedVector< MeshAndTransform >::const_iterator i = meshes.begin(); i != meshes.end(); ++i)
 	{
+		if (ThreadManager::getInstance().getCurrentThread()->stopped())
+			break;
+
 		Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(i->mesh);
 		if (!meshAsset)
 			continue;
@@ -486,6 +491,12 @@ bool OcclusionTexturePipeline::buildOutput(
 
 	jobs.clear();
 	tasks.clear();
+
+	if (ThreadManager::getInstance().getCurrentThread()->stopped())
+	{
+		log::info << L"Occlusion texture pipeline terminated; pipeline aborted." << Endl;
+		return false;
+	}
 
 	if (asset->m_blurRadius > 0)
 	{

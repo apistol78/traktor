@@ -55,9 +55,10 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 			AppendMenu(
 				hMenu,
 				flags,
-				UINT_PTR(item),
+				UINT_PTR(m_flatten.size()),
 				(LPTSTR)tmp.c_str()
 			);
+			m_flatten.push_back(item);
 		}
 		else
 		{
@@ -85,7 +86,7 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 		0, 0, 0, 0
 	);
 
-	UINT_PTR id = TrackPopupMenuEx(
+	int32_t id = (int32_t)TrackPopupMenuEx(
 		hMenu,
 		TPM_RETURNCMD,
 		pnt.x,
@@ -94,12 +95,23 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 		NULL
 	);
 
-	MenuItem* item = reinterpret_cast< MenuItem* >(id);
-	if (item && item->getCheckBox())
-		item->setChecked(!item->isChecked());
+	if (id >= 0 && id < int32_t(m_flatten.size()))
+	{
+		MenuItem* item = m_flatten[id];
 
-	DestroyMenu(hMenu);
-	return item;
+		if (item && item->getCheckBox())
+			item->setChecked(!item->isChecked());
+
+		DestroyMenu(hMenu);
+
+		m_flatten.clear();
+		return item;
+	}
+	else
+	{
+		m_flatten.clear();
+		return 0;
+	}
 }
 
 HMENU PopupMenuWin32::buildMenu(MenuItem* item)
@@ -131,9 +143,10 @@ HMENU PopupMenuWin32::buildMenu(MenuItem* item)
 			AppendMenu(
 				hMenu,
 				flags,
-				UINT_PTR(subItem),
+				UINT_PTR(m_flatten.size()),
 				(LPTSTR)tmp.c_str()
 			);
+			m_flatten.push_back(subItem);
 		}
 		else
 		{

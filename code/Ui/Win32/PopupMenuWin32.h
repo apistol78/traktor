@@ -26,6 +26,7 @@ public:
 
 private:
 	RefArray< MenuItem > m_items;
+	RefArray< MenuItem > m_flatten;
 
 	HMENU buildMenu(MenuItem* item);
 };
