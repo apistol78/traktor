@@ -38,6 +38,8 @@ public:
 
 	virtual ~ProcessWin32();
 
+	virtual bool setPriority(Priority priority);
+
 	virtual bool wait(int32_t timeout);
 
 	virtual Ref< IStream > getPipeStream(StdPipe pipe);

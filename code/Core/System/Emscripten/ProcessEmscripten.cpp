@@ -7,6 +7,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ProcessEmscripten", ProcessEmscripten, IProcess)
 
+bool ProcessEmscripten::setPriority(Priority priority)
+{
+	return false;
+}
+
 Ref< IStream > ProcessEmscripten::getPipeStream(StdPipe pipe)
 {
 	return 0;

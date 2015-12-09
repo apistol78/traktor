@@ -104,6 +104,11 @@ ProcessOsX::~ProcessOsX()
 	}
 }
 
+bool ProcessOsX::setPriority(Priority priority)
+{
+	return false;
+}
+
 Ref< IStream > ProcessOsX::getPipeStream(StdPipe pipe)
 {
 	if (m_fileActions)
