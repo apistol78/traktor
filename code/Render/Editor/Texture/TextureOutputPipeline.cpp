@@ -15,6 +15,8 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -605,6 +607,9 @@ bool TextureOutputPipeline::buildOutput(
 			// Create task for each mip level.
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
+				if (ThreadManager::getInstance().getCurrentThread()->stopped())
+					break;
+
 				int32_t mipWidth = std::max(width >> i, 1);
 				int32_t mipHeight = std::max(height >> i, 1);
 
@@ -689,6 +694,12 @@ bool TextureOutputPipeline::buildOutput(
 						tasks[i] = 0;
 					}
 				}
+			}
+
+			if (ThreadManager::getInstance().getCurrentThread()->stopped())
+			{
+				log::info << L"Texture pipeline terminated. Pipeline aborted." << Endl;
+				return false;
 			}
 		}
 
