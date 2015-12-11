@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashSoundPlayer.h"
+#include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/ActionObjectRelay.h"
@@ -88,15 +89,21 @@ ActionValue AsSound::xplicit(const ActionValueArray& args)
 
 void AsSound::Sound_attachSound(ActionObject* self, const std::string& exportName) const
 {
-	uint16_t soundId;
+	ActionContext* context = self->getContext();
+	T_ASSERT (context);
 
-	if (!getContext()->getDictionary()->getExportId(exportName, soundId))
+	FlashDictionary* dictionary = context->getMovieClip()->getDictionary();
+	if (!dictionary)
+		return;
+
+	uint16_t soundId;
+	if (!dictionary->getExportId(exportName, soundId))
 	{
 		log::error << L"No sound exported as \"" << mbstows(exportName) << L"\"" << Endl;
 		return;
 	}
 
-	const FlashSound* sound = getContext()->getDictionary()->getSound(soundId);
+	const FlashSound* sound = dictionary->getSound(soundId);
 	if (!sound)
 	{
 		log::error << L"No sound defined with id " << soundId << L", exported as \"" << mbstows(exportName) << L"\"" << Endl;

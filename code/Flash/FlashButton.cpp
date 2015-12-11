@@ -46,6 +46,7 @@ const FlashButton::button_conditions_t& FlashButton::getButtonConditions() const
 
 Ref< FlashCharacterInstance > FlashButton::createInstance(
 	ActionContext* context,
+	FlashDictionary* dictionary,
 	FlashCharacterInstance* parent,
 	const std::string& name,
 	const Matrix33& transform,
@@ -53,7 +54,7 @@ Ref< FlashCharacterInstance > FlashButton::createInstance(
 	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 ) const
 {
-	return new FlashButtonInstance(context, parent, this);
+	return new FlashButtonInstance(context, dictionary, parent, this);
 }
 
 void FlashButton::serialize(ISerializer& s)

@@ -28,7 +28,7 @@ ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self, A
 	if (argCount < 0)
 		argCount = 0;
 
-	ActionValueArray args(getContext()->getPool(), argCount);
+	ActionValueArray args(callerFrame->getContext()->getPool(), argCount);
 	for (int32_t i = 0; i < argCount; ++i)
 		args[i] = callerStack.pop();
 
@@ -45,7 +45,7 @@ ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self)
 	if (argCount < 0)
 		argCount = 0;
 
-	ActionValueArray args(getContext()->getPool(), argCount);
+	ActionValueArray args(callerFrame->getContext()->getPool(), argCount);
 	for (int32_t i = 0; i < argCount; ++i)
 		args[i] = callerStack.pop();
 
@@ -62,7 +62,7 @@ ActionValue ActionFunction::call(ActionFrame* callerFrame)
 	if (argCount < 0)
 		argCount = 0;
 
-	ActionValueArray args(getContext()->getPool(), argCount);
+	ActionValueArray args(callerFrame->getContext()->getPool(), argCount);
 	for (int32_t i = 0; i < argCount; ++i)
 		args[i] = callerStack.pop();
 

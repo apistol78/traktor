@@ -30,7 +30,7 @@ class T_DLLCLASS FlashEditInstance : public FlashCharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	FlashEditInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashEdit* edit, const std::wstring& html);
+	FlashEditInstance(ActionContext* context, FlashDictionary* dictionary, FlashCharacterInstance* parent, const FlashEdit* edit, const std::wstring& html);
 
 	const FlashEdit* getEdit() const;
 

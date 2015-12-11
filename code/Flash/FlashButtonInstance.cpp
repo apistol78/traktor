@@ -15,8 +15,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashButtonInstance", FlashButtonInstance, FlashCharacterInstance)
 
-FlashButtonInstance::FlashButtonInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashButton* button)
-:	FlashCharacterInstance(context, "Button", parent)
+FlashButtonInstance::FlashButtonInstance(ActionContext* context, FlashDictionary* dictionary, FlashCharacterInstance* parent, const FlashButton* button)
+:	FlashCharacterInstance(context, "Button", dictionary, parent)
 ,	m_button(button)
 ,	m_state(FlashButton::SmUp)
 ,	m_inside(false)
@@ -26,11 +26,11 @@ FlashButtonInstance::FlashButtonInstance(ActionContext* context, FlashCharacterI
 	const FlashButton::button_layers_t& layers = m_button->getButtonLayers();
 	for (FlashButton::button_layers_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
-		Ref< const FlashCharacter > character = context->getDictionary()->getCharacter(i->characterId);
+		Ref< const FlashCharacter > character = dictionary->getCharacter(i->characterId);
 		if (!character)
 			continue;
 
-		Ref< FlashCharacterInstance > characterInstance = character->createInstance(context, this, "", Matrix33::identity(), 0, 0);
+		Ref< FlashCharacterInstance > characterInstance = character->createInstance(context, dictionary, this, "", Matrix33::identity(), 0, 0);
 		T_ASSERT (characterInstance);
 
 		m_characterInstances[i->characterId] = characterInstance;

@@ -28,7 +28,7 @@ class T_DLLCLASS FlashButtonInstance : public FlashCharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	FlashButtonInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashButton* button);
+	FlashButtonInstance(ActionContext* context, FlashDictionary* dictionary, FlashCharacterInstance* parent, const FlashButton* button);
 
 	virtual ~FlashButtonInstance();
 

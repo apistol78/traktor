@@ -20,6 +20,7 @@ namespace traktor
 	{
 
 class ActionContext;
+class FlashDictionary;
 class IActionVMImage;
 
 /*! \brief Character instance.
@@ -30,7 +31,12 @@ class T_DLLCLASS FlashCharacterInstance : public ActionObjectRelay
 	T_RTTI_CLASS;
 
 public:
-	FlashCharacterInstance(ActionContext* context, const char* const prototype, FlashCharacterInstance* parent);
+	FlashCharacterInstance(
+		ActionContext* context,
+		const char* const prototype,
+		FlashDictionary* dictionary,
+		FlashCharacterInstance* parent
+	);
 
 	virtual ~FlashCharacterInstance();
 
@@ -45,6 +51,12 @@ public:
 	 * \return ActionScript context.
 	 */
 	ActionContext* getContext() const;
+
+	/*! \brief Get dictionary.
+	 *
+	 * \return Dictionary.
+	 */
+	FlashDictionary* getDictionary() const;
 
 	/*! \brief Get parent instance.
 	 *
@@ -218,6 +230,7 @@ protected:
 private:
 	static int32_t ms_instanceCount;
 	Ref< ActionContext > m_context;
+	Ref< FlashDictionary > m_dictionary;
 	FlashCharacterInstance* m_parent;
 	std::string m_name;
 	int32_t m_tag;

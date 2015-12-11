@@ -76,7 +76,7 @@ void FlashMovieRenderer::renderFrame(
 	}
 
 	m_displayRenderer->begin(
-		*movieInstance->getContext()->getDictionary(),
+		*movieInstance->getDictionary(),
 		backgroundColor,
 		frameBounds,
 		viewWidth,
@@ -110,7 +110,7 @@ void FlashMovieRenderer::renderSprite(
 		transform
 	);
 
-	FlashDictionary* dictionary = spriteInstance->getContext()->getDictionary();
+	FlashDictionary* dictionary = spriteInstance->getDictionary();
 	T_ASSERT (dictionary);
 
 	const FlashDisplayList& displayList = spriteInstance->getDisplayList();
@@ -205,7 +205,7 @@ void FlashMovieRenderer::renderCharacter(
 	if (cxTransform2.alpha[0] + cxTransform2.alpha[1] <= FUZZY_EPSILON)
 		return;
 
-	FlashDictionary* dictionary = characterInstance->getContext()->getDictionary();
+	FlashDictionary* dictionary = characterInstance->getDictionary();
 	T_ASSERT (dictionary);
 
 	// Render basic shapes.
@@ -479,7 +479,7 @@ void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterI
 
 	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
 	{
-		FlashDictionary* dictionary = spriteInstance->getContext()->getDictionary();
+		FlashDictionary* dictionary = spriteInstance->getDictionary();
 		T_ASSERT (dictionary);
 
 		const FlashDisplayList& displayList = spriteInstance->getDisplayList();

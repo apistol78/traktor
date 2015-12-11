@@ -26,7 +26,7 @@ class T_DLLCLASS FlashShapeInstance : public FlashCharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	FlashShapeInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashShape* shape);
+	FlashShapeInstance(ActionContext* context, FlashDictionary* dictionary, FlashCharacterInstance* parent, const FlashShape* shape);
 
 	const FlashShape* getShape() const;
 

@@ -126,8 +126,8 @@ Aabb2 adjustForGutter(const Aabb2& aabb)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashEditInstance", FlashEditInstance, FlashCharacterInstance)
 
-FlashEditInstance::FlashEditInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashEdit* edit, const std::wstring& html)
-:	FlashCharacterInstance(context, "TextField", parent)
+FlashEditInstance::FlashEditInstance(ActionContext* context, FlashDictionary* dictionary, FlashCharacterInstance* parent, const FlashEdit* edit, const std::wstring& html)
+:	FlashCharacterInstance(context, "TextField", dictionary, parent)
 ,	m_edit(edit)
 ,	m_textColor(edit->getTextColor())
 ,	m_letterSpacing(0.0f)
@@ -347,7 +347,7 @@ bool FlashEditInstance::internalParseText(const std::wstring& text)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	
-	const FlashDictionary* dictionary = getContext()->getDictionary();
+	const FlashDictionary* dictionary = getDictionary();
 	T_ASSERT (dictionary);
 
 	const FlashFont* font = dictionary->getFont(m_edit->getFontId());
@@ -392,7 +392,7 @@ bool FlashEditInstance::internalParseHtml(const std::wstring& html)
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	const FlashDictionary* dictionary = getContext()->getDictionary();
+	const FlashDictionary* dictionary = getDictionary();
 	T_ASSERT (dictionary);
 
 	const FlashFont* font = dictionary->getFont(m_edit->getFontId());

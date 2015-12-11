@@ -40,6 +40,7 @@ class AccDisplayRenderer;
 class ActionObject;
 class FlashMovie;
 class FlashMoviePlayer;
+class FlashSpriteInstance;
 class ISoundRenderer;
 
 	}
@@ -116,11 +117,18 @@ public:
 	 */
 	flash::ActionObject* getGlobal();
 
-	/*! \brief Get ActionScript "_root" object.
+	/*! \brief Get "_root" sprite.
 	 *
-	 * \return ActionScript "_root" object.
+	 * \return "_root" sprite.
 	 */
-	flash::ActionObject* getRoot();
+	flash::FlashSpriteInstance* getRoot();
+
+	/*! \brief Get external movie.
+	 *
+	 * \param id Name of external movie.
+	 * \return External movie, null if doesn't exist.
+	 */
+	flash::FlashMovie* getExternal(const std::wstring& id) const;
 
 	/*! \brief Create empty ActionScript object.
 	 *

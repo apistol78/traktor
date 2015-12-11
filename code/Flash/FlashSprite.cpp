@@ -72,6 +72,7 @@ const RefArray< const IActionVMImage >& FlashSprite::getInitActionScripts() cons
 
 Ref< FlashCharacterInstance > FlashSprite::createInstance(
 	ActionContext* context,
+	FlashDictionary* dictionary,
 	FlashCharacterInstance* parent,
 	const std::string& name,
 	const Matrix33& transform,
@@ -79,7 +80,7 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 ) const
 {
-	Ref< FlashSpriteInstance > spriteInstance = new FlashSpriteInstance(context, parent, this);
+	Ref< FlashSpriteInstance > spriteInstance = new FlashSpriteInstance(context, dictionary, parent, this);
 
 	if (!name.empty())
 		spriteInstance->setName(name);
@@ -104,7 +105,7 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 	}
 
 	std::string spriteClassName;
-	if (context->getDictionary()->getExportName(getId(), spriteClassName))
+	if (dictionary->getExportName(getId(), spriteClassName))
 	{
 		ActionValue spriteClassValue;
 		if (context->getGlobal()->getMember(spriteClassName, spriteClassValue))
@@ -124,7 +125,7 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 
 	spriteInstance->updateDisplayList();
 
-	if (context->getDictionary()->getExportName(getId(), spriteClassName))
+	if (dictionary->getExportName(getId(), spriteClassName))
 	{
 		ActionValue spriteClassValue;
 		if (context->getGlobal()->getMember(spriteClassName, spriteClassValue))

@@ -118,7 +118,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 			if (placeObject.has(FlashFrame::PfHasCharacterId) && placeObject.characterId != layer.id)
 			{
-				Ref< const FlashCharacter > character = m_context->getDictionary()->getCharacter(placeObject.characterId);
+				Ref< const FlashCharacter > character = ownerInstance->getDictionary()->getCharacter(placeObject.characterId);
 				if (character)
 				{
 					// Use previous instance transform if we're replacing an instance.
@@ -128,6 +128,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 					layer.id = placeObject.characterId;
 					layer.instance = character->createInstance(
 						m_context,
+						ownerInstance->getDictionary(),
 						ownerInstance,
 						placeObject.has(FlashFrame::PfHasName) ? placeObject.name : "",
 						placeObject.has(FlashFrame::PfHasMatrix) ? placeObject.matrix : transform,

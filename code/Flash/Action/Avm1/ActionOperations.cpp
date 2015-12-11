@@ -71,10 +71,12 @@ void unalignedWrite(void* ptr, T value)
 
 #endif
 
-//#define T_IF_TRACE(x) \
-//	{ if (state.trace) { x } }
-
-#define T_IF_TRACE(x)
+#if defined(_DEBUG)
+#	define T_IF_TRACE(x) \
+		{ if (state.trace) { x } }
+#else
+#	define T_IF_TRACE(x)
+#endif
 
 int32_t parseIndex(const char* str)
 {

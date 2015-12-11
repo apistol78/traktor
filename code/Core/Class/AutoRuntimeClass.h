@@ -2660,7 +2660,7 @@ template < typename ClassType >
 class AutoRuntimeClass : public IRuntimeClass
 {
 public:
-	typedef Any (ClassType::*unknown_method_t)(const std::string& methodName, uint32_t argc, const Any* argv);
+	typedef Any (*unknown_fn_t)(ClassType* self, const std::string& methodName, uint32_t argc, const Any* argv);
 
 	AutoRuntimeClass()
 	:	m_unknown(0)
@@ -3146,7 +3146,7 @@ public:
 		addMethod(methodName, 8, new MethodTrunk_8< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type >(method));
 	}
 
-	void setUnknownMethod(unknown_method_t unknown)
+	void setUnknownHandler(unknown_fn_t unknown)
 	{
 		m_unknown = unknown;
 	}
@@ -3396,7 +3396,7 @@ public:
 	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
 	{
 		if (m_unknown)
-			return (checked_type_cast< ClassType* >(object)->*m_unknown)(methodName, argc, argv);
+			return (*m_unknown)(mandatory_non_null_type_cast< ClassType* >(object), methodName, argc, argv);
 		else
 		{
 			T_FATAL_ASSERT_M(false, L"No such method");
@@ -3444,7 +3444,7 @@ private:
 	std::vector< MethodInfo > m_methods;
 	std::vector< StaticMethodInfo > m_staticMethods;
 	std::vector< IOperator* > m_operators[4];
-	unknown_method_t m_unknown;
+	unknown_fn_t m_unknown;
 
 	void addConstructor(size_t argc, IConstructor* constructor)
 	{

@@ -72,6 +72,7 @@ FlashEdit::FlashEdit(
 
 Ref< FlashCharacterInstance > FlashEdit::createInstance(
 	ActionContext* context,
+	FlashDictionary* dictionary,
 	FlashCharacterInstance* parent,
 	const std::string& name,
 	const Matrix33& transform,
@@ -79,7 +80,7 @@ Ref< FlashCharacterInstance > FlashEdit::createInstance(
 	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 ) const
 {
-	return new FlashEditInstance(context, parent, this, m_initialText);
+	return new FlashEditInstance(context, dictionary, parent, this, m_initialText);
 }
 
 uint16_t FlashEdit::getFontId() const

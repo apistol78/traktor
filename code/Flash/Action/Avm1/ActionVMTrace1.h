@@ -7,7 +7,7 @@
 namespace traktor
 {
 
-class FileOutputStream;
+class OutputStream;
 
 	namespace flash
 	{
@@ -36,7 +36,7 @@ public:
 	OutputStream& getTraceStream();
 	
 private:
-	Ref< FileOutputStream > m_stream;
+	Ref< OutputStream > m_stream;
 };
 
 	}

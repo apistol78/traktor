@@ -65,13 +65,13 @@ Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IFlashMovie
 	dictionary->m_characters = m_characters;
 	dictionary->m_exports = m_exports;
 
-	Ref< ActionContext > context = new ActionContext(this, movieLoader, dictionary);
+	Ref< ActionContext > context = new ActionContext(this, movieLoader);
 
 	Ref< ActionGlobal > global = new ActionGlobal(context);
 	context->setGlobal(global);
 
 	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(
-		m_movieClip->createInstance(context, 0, "", Matrix33::identity(), 0, 0)
+		m_movieClip->createInstance(context, dictionary, 0, "", Matrix33::identity(), 0, 0)
 	);
 
 	global->setMember("_root", ActionValue(spriteInstance->getAsObject(context)));
@@ -89,15 +89,17 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 	dictionary->m_characters = m_characters;
 	dictionary->m_exports = m_exports;
 
-	// Create context; share VM and global.
-	Ref< ActionContext > outerContext = containerInstance->getContext();
-
-	Ref< ActionContext > context = new ActionContext(this, outerContext->getMovieLoader(), dictionary);
-	context->setGlobal(outerContext->getGlobal());
-
 	// Create instance of external movie.
 	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(
-		m_movieClip->createInstance(context, containerInstance, "", Matrix33::identity(), 0, 0)
+		m_movieClip->createInstance(
+			containerInstance->getContext(),
+			dictionary,
+			containerInstance,
+			"",
+			Matrix33::identity(),
+			0,
+			0
+		)
 	);
 
 	// Add instance to container's display list.
@@ -109,6 +111,71 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 		true
 	);
 
+	return spriteInstance;
+}
+
+Ref< FlashSpriteInstance > FlashMovie::createExternalSpriteInstance(FlashSpriteInstance* containerInstance, const std::string& characterName, int32_t depth) const
+{
+	// Get exported character identifier.
+	SmallMap< std::string, uint16_t >::const_iterator i = m_exports.find(characterName);
+	if (i == m_exports.end())
+		return 0;
+
+	uint16_t characterId = i->second;
+
+	// Get exported character.
+	SmallMap< uint16_t, Ref< FlashCharacter > >::const_iterator j = m_characters.find(characterId);
+	if (j == m_characters.end())
+		return 0;
+
+	// Get exported sprite.
+	const FlashSprite* sprite = dynamic_type_cast< const FlashSprite* >(j->second);
+	if (!sprite)
+		return 0;
+
+	Ref< FlashDictionary > dictionary = new FlashDictionary();
+	dictionary->m_fonts = m_fonts;
+	dictionary->m_bitmaps = m_bitmaps;
+	dictionary->m_sounds = m_sounds;
+	dictionary->m_characters = m_characters;
+	dictionary->m_exports = m_exports;
+
+	// Need to create movie instance as it's initialization scripts creates the AS classes.
+	Ref< FlashCharacterInstance > movieInstance = m_movieClip->createInstance(
+		containerInstance->getContext(),
+		dictionary,
+		containerInstance,
+		"",
+		Matrix33::identity(),
+		0,
+		0
+	);
+	if (!movieInstance)
+		return 0;
+
+	// Create instance of external sprite.
+	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(
+		sprite->createInstance(
+			containerInstance->getContext(),
+			dictionary,
+			containerInstance,
+			"",
+			Matrix33::identity(),
+			0,
+			0
+		)
+	);
+
+	// Add instance to container's display list.
+	FlashDisplayList& displayList = containerInstance->getDisplayList();
+	displayList.showObject(
+		depth,
+		0,
+		spriteInstance,
+		true
+	);
+
+	movieInstance->destroy();
 	return spriteInstance;
 }
 

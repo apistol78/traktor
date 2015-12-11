@@ -52,6 +52,8 @@ public:
 
 	Ref< FlashSpriteInstance > createExternalMovieClipInstance(FlashSpriteInstance* containerInstance) const;
 
+	Ref< FlashSpriteInstance > createExternalSpriteInstance(FlashSpriteInstance* containerInstance, const std::string& characterName, int32_t depth) const;
+
 	const Aabb2& getFrameBounds() const { return m_frameBounds; }
 
 	const FlashSprite* getMovieClip() const { return m_movieClip; }
