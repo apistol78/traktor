@@ -20,7 +20,6 @@ namespace traktor
 	{
 
 class FlashCharacterInstance;
-class FlashDictionary;
 class FlashMovie;
 class FlashSpriteInstance;
 class IFlashMovieLoader;
@@ -72,7 +71,7 @@ public:
 		IdOnScroller = 33
 	};
 
-	ActionContext(const FlashMovie* movie, const IFlashMovieLoader* movieLoader, FlashDictionary* dictionary);
+	ActionContext(const FlashMovie* movie, const IFlashMovieLoader* movieLoader);
 
 	void setGlobal(ActionObject* global);
 
@@ -98,8 +97,6 @@ public:
 
 	const IFlashMovieLoader* getMovieLoader() const { return m_movieLoader; }
 
-	FlashDictionary* getDictionary() const { return m_dictionary; }
-
 	ActionObject* getGlobal() const { return m_global; }
 
 	FlashSpriteInstance* getMovieClip() const { return m_movieClip; }
@@ -124,7 +121,6 @@ private:
 
 	const FlashMovie* m_movie;
 	Ref< const IFlashMovieLoader > m_movieLoader;
-	Ref< FlashDictionary > m_dictionary;
 	Ref< ActionObject > m_global;
 	Ref< FlashSpriteInstance > m_movieClip;
 	Ref< FlashCharacterInstance > m_focus;

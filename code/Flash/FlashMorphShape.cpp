@@ -140,6 +140,7 @@ bool FlashMorphShape::create(const Aabb2& shapeBounds, const SwfShape* startShap
 
 Ref< FlashCharacterInstance > FlashMorphShape::createInstance(
 	ActionContext* context,
+	FlashDictionary* dictionary,
 	FlashCharacterInstance* parent,
 	const std::string& name,
 	const Matrix33& transform,
@@ -147,7 +148,7 @@ Ref< FlashCharacterInstance > FlashMorphShape::createInstance(
 	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 ) const
 {
-	return new FlashMorphShapeInstance(context, parent, this);
+	return new FlashMorphShapeInstance(context, dictionary, parent, this);
 }
 
 void FlashMorphShape::serialize(ISerializer& s)

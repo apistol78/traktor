@@ -306,6 +306,7 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 
 Ref< FlashCharacterInstance > FlashShape::createInstance(
 	ActionContext* context,
+	FlashDictionary* dictionary,
 	FlashCharacterInstance* parent,
 	const std::string& name,
 	const Matrix33& transform,
@@ -313,7 +314,7 @@ Ref< FlashCharacterInstance > FlashShape::createInstance(
 	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 ) const
 {
-	return new FlashShapeInstance(context, parent, this);
+	return new FlashShapeInstance(context, dictionary, parent, this);
 }
 
 void FlashShape::serialize(ISerializer& s)

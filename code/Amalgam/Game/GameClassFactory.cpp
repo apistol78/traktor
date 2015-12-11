@@ -82,6 +82,11 @@ Ref< flash::ActionObject > FlashLayer_createObject_2(FlashLayer* self, const std
 	return self->createObject(prototype, argv.size(), &argv.front());
 }
 
+Any FlashLayer_externalCall(FlashLayer* self, const std::string& methodName, uint32_t argc, const Any* argv)
+{
+	return self->externalCall(methodName, argc, argv);
+}
+
 world::Entity* WorldLayer_getEntity_1(WorldLayer* self, const std::wstring& name)
 {
 	return self->getEntity(name);
@@ -266,6 +271,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashLayer->addMethod("getMoviePlayer", &FlashLayer::getMoviePlayer);
 	classFlashLayer->addMethod("getGlobal", &FlashLayer::getGlobal);
 	classFlashLayer->addMethod("getRoot", &FlashLayer::getRoot);
+	classFlashLayer->addMethod("getExternal", &FlashLayer::getExternal);
 	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_0);
 	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_1);
 	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_2);
@@ -273,7 +279,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashLayer->addMethod("isVisible", &FlashLayer::isVisible);
 	classFlashLayer->addMethod("setVisible", &FlashLayer::setVisible);
 	classFlashLayer->addMethod("getPrintableString", &FlashLayer::getPrintableString);
-	classFlashLayer->setUnknownMethod(&FlashLayer::externalCall);
+	classFlashLayer->setUnknownHandler(&FlashLayer_externalCall);
 	registrar->registerClass(classFlashLayer);
 
 	Ref< AutoRuntimeClass< SparkLayer > > classSparkLayer = new AutoRuntimeClass< SparkLayer >();

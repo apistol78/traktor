@@ -26,7 +26,7 @@ class T_DLLCLASS FlashTextInstance : public FlashCharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	FlashTextInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashText* text);
+	FlashTextInstance(ActionContext* context, FlashDictionary* dictionary, FlashCharacterInstance* parent, const FlashText* text);
 
 	const FlashText* getText() const;
 

@@ -14,9 +14,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacterInstance", FlashCharacterIn
 
 int32_t FlashCharacterInstance::ms_instanceCount = 0;
 
-FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const char* const prototype, FlashCharacterInstance* parent)
+FlashCharacterInstance::FlashCharacterInstance(
+	ActionContext* context,
+	const char* const prototype,
+	FlashDictionary* dictionary,
+	FlashCharacterInstance* parent
+)
 :	ActionObjectRelay(prototype)
 ,	m_context(context)
+,	m_dictionary(dictionary)
 ,	m_parent(parent)
 ,	m_tag(allocateCacheTag())
 ,	m_visible(true)
@@ -67,6 +73,11 @@ void FlashCharacterInstance::destroy()
 ActionContext* FlashCharacterInstance::getContext() const
 {
 	return m_context;
+}
+
+FlashDictionary* FlashCharacterInstance::getDictionary() const
+{
+	return m_dictionary;
 }
 
 FlashCharacterInstance* FlashCharacterInstance::getParent() const

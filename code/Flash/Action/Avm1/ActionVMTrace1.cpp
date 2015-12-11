@@ -1,5 +1,5 @@
-#include "Core/Io/FileOutputStream.h"
-#include "Core/Io/FileSystem.h"
+#include <map>
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
@@ -92,21 +92,11 @@ ActionVMTrace1::ActionVMTrace1()
 
 ActionVMTrace1::~ActionVMTrace1()
 {
-	if (m_stream)
-	{
-		m_stream->close();
-		m_stream = 0;
-	}
 }
 
 void ActionVMTrace1::beginDispatcher()
 {
-	if (!m_stream)
-	{
-		Ref< IStream > traceFile = FileSystem::getInstance().open(L"ActionVM1.trace", File::FmWrite | File::FmAppend);
-		m_stream = new FileOutputStream(traceFile, new Utf8Encoding());
-	}
-
+	m_stream = &log::info;
 	(*m_stream) << L"Begin dispatcher" << Endl;
 }
 

@@ -8,9 +8,13 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Timer/Timer.h"
 #include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionDictionary.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionOperations.h"
 #include "Flash/Action/Avm1/ActionVMImage1.h"
+#if defined(_DEBUG)
+#	include "Flash/Action/Avm1/ActionVMTrace1.h"
+#endif
 
 namespace traktor
 {
@@ -176,24 +180,23 @@ void ActionVMImage1::nonConstExecute(ActionFrame* frame)
 	state.movieClip = frame->getContext()->getMovieClip();
 	state.trace = 0;
 
-#if T_TRACE_EXECUTE
-	if (m_trace)
+#if defined(_DEBUG)
+	ActionVMTrace1 trace;
+
+	trace.beginDispatcher();
+	state.trace = &trace.getTraceStream();
+
+	const ActionDictionary* dictionary = state.frame->getDictionary();
+	if (dictionary)
 	{
-		m_trace->beginDispatcher();
-		state.trace = &m_trace->getTraceStream();
+		*state.trace << L"Dictionary:" << Endl;
+		*state.trace << IncreaseIndent;
 
-		const ActionDictionary* dictionary = state.frame->getDictionary();
-		if (dictionary)
-		{
-			*state.trace << L"Dictionary:" << Endl;
-			*state.trace << IncreaseIndent;
+		const AlignedVector< ActionValue >& table = dictionary->getTable();
+		for (uint32_t i = 0; i < table.size(); ++i)
+			*state.trace << i << L". " << table[i].getWideString() << Endl;
 
-			const AlignedVector< ActionValue >& table = dictionary->getTable();
-			for (uint32_t i = 0; i < table.size(); ++i)
-				*state.trace << i << L". " << table[i].getWideString() << Endl;
-
-			*state.trace << DecreaseIndent;
-		}
+		*state.trace << DecreaseIndent;
 	}
 #endif
 
@@ -222,23 +225,20 @@ void ActionVMImage1::nonConstExecute(ActionFrame* frame)
 		T_ASSERT (info.op == op);
 		T_ASSERT (info.execute != 0);
 
-#if T_TRACE_EXECUTE
-		if (m_trace)
-			m_trace->preDispatch(state, info);
+#if defined(_DEBUG)
+		trace.preDispatch(state, info);
 #endif
 		info.execute(state);
-#if T_TRACE_EXECUTE
-		if (m_trace)
-			m_trace->postDispatch(state, info);
+#if defined(_DEBUG)
+		trace.postDispatch(state, info);
 #endif
 
 		// Update program counter.
 		state.pc = state.npc;
 	}
 
-#if T_TRACE_EXECUTE
-	if (m_trace)
-		m_trace->endDispatcher();
+#if defined(_DEBUG)
+	trace.endDispatcher();
 #endif
 }
 

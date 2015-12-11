@@ -19,8 +19,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashSpriteInstance", FlashSpriteInstance, FlashCharacterInstance)
 
-FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashSprite* sprite)
-:	FlashCharacterInstance(context, "MovieClip", parent)
+FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashDictionary* dictionary, FlashCharacterInstance* parent, const FlashSprite* sprite)
+:	FlashCharacterInstance(context, "MovieClip", dictionary, parent)
 ,	m_sprite(sprite)
 ,	m_displayList(context)
 ,	m_currentFrame(0)
@@ -181,7 +181,7 @@ void FlashSpriteInstance::updateSounds(FlashSoundPlayer* soundPlayer)
 			const AlignedVector< uint16_t >& startSounds = frame->getStartSounds();
 			for (AlignedVector< uint16_t >::const_iterator i = startSounds.begin(); i != startSounds.end(); ++i)
 			{
-				const FlashSound* sound = getContext()->getDictionary()->getSound(*i);
+				const FlashSound* sound = getDictionary()->getSound(*i);
 				if (sound)
 					soundPlayer->play(sound);
 			}
@@ -211,7 +211,15 @@ Ref< FlashSpriteInstance > FlashSpriteInstance::createEmptyMovieClip(const std::
 	emptyClip->addFrame(new FlashFrame());
 
 	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(context, this, clipName, Matrix33::identity(), 0, 0));
+	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(
+		context,
+		getDictionary(),
+		this,
+		clipName,
+		Matrix33::identity(),
+		0,
+		0
+	));
 	emptyClipInstance->setName(clipName);
 
 	// Add new instance to display list.
@@ -251,6 +259,7 @@ Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
 	const SmallMap< uint32_t, Ref< const IActionVMImage > >& events = getEvents();
 	Ref< FlashSpriteInstance > cloneInstance = checked_type_cast< FlashSpriteInstance* >(m_sprite->createInstance(
 		getContext(),
+		getDictionary(),
 		getParent(),
 		"",
 		getTransform(),

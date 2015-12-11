@@ -31,6 +31,147 @@ namespace traktor
 		namespace
 		{
 
+Any ActionObject_getMember(ActionObject* self, const std::string& memberName)
+{
+	ActionValue memberValue;
+	if (self->getMember(memberName, memberValue))
+		return CastAny< ActionValue >::set(memberValue);
+	else
+		return Any();
+}
+
+Any ActionObject_getMemberByQName(ActionObject* self, const std::string& memberName)
+{
+	ActionValue memberValue;
+	if (self->getMemberByQName(memberName, memberValue))
+		return CastAny< ActionValue >::set(memberValue);
+	else
+		return Any();
+}
+
+void ActionObject_setMember(ActionObject* self, const std::string& memberName, const Any& value)
+{
+	ActionValue memberValue = CastAny< ActionValue >::get(value);
+	self->setMember(memberName, memberValue);
+}
+
+Any ActionObject_getProperty(ActionObject* self, const std::string& propertyName)
+{
+	Ref< ActionFunction > propertyGetFn;
+	if (self->getPropertyGet(propertyName, propertyGetFn))
+	{
+		ActionValue propertyValue = propertyGetFn->call(self);
+		return CastAny< ActionValue >::set(propertyValue);
+	}
+	else
+		return Any();
+}
+
+void ActionObject_setProperty(ActionObject* self, const std::string& propertyName, const Any& value)
+{
+	Ref< ActionFunction > propertySetFn;
+	if (self->getPropertySet(propertyName, propertySetFn))
+	{
+		ActionValueArray callArgv(self->getContext()->getPool(), 1);
+		callArgv[0] = CastAny< ActionValue >::get(value);
+		propertySetFn->call(self, callArgv);
+	}
+}
+
+Any ActionObject_invoke(ActionObject* self, const std::string& methodName, uint32_t argc, const Any* argv)
+{
+	ActionValue memberValue;
+	if (self->getMember(methodName, memberValue))
+	{
+		ActionFunction* fn = memberValue.getObject< ActionFunction >();
+		if (fn)
+		{
+			ActionValueArray callArgv(self->getContext()->getPool(), argc);
+			for (uint32_t i = 0; i < argc; ++i)
+				callArgv[i] = CastAny< ActionValue >::get(argv[i]);
+			ActionValue ret = fn->call(self, callArgv);
+			return CastAny< ActionValue >::set(ret);
+		}
+	}
+	return Any();
+}
+
+Any ActionObjectRelay_invoke(ActionObjectRelay* self, const std::string& methodName, uint32_t argc, const Any* argv)
+{
+	ActionObject* actionObject = self->getAsObject();
+	if (actionObject)
+	{
+		if (methodName == "getMember")
+		{
+			ActionValue memberValue;
+			if (actionObject->getMember(argv[0].getString(), memberValue))
+				return CastAny< ActionValue >::set(memberValue);
+		}
+		else if (methodName == "getMemberByQName")
+		{
+			ActionValue memberValue;
+			if (actionObject->getMemberByQName(argv[0].getString(), memberValue))
+				return CastAny< ActionValue >::set(memberValue);
+		}
+		else if (methodName == "setMember")
+		{
+			ActionValue memberValue = CastAny< ActionValue >::get(argv[1]);
+			actionObject->setMember(argv[0].getString(), memberValue);
+		}
+		else if (methodName == "getProperty")
+		{
+			Ref< ActionFunction > propertyGetFn;
+			if (actionObject->getPropertyGet(argv[0].getString(), propertyGetFn))
+			{
+				ActionValue propertyValue = propertyGetFn->call(actionObject);
+				return CastAny< ActionValue >::set(propertyValue);
+			}
+		}
+		else if (methodName == "setProperty")
+		{
+			Ref< ActionFunction > propertySetFn;
+			if (actionObject->getPropertySet(argv[0].getString(), propertySetFn))
+			{
+				ActionValueArray callArgv(actionObject->getContext()->getPool(), 1);
+				callArgv[0] = CastAny< ActionValue >::get(argv[1]);
+				propertySetFn->call(actionObject, callArgv);
+			}
+		}
+		else
+		{
+			ActionValue memberValue;
+			if (actionObject->getMember(methodName, memberValue))
+			{
+				ActionFunction* fn = memberValue.getObject< ActionFunction >();
+				if (fn)
+				{
+					ActionValueArray callArgv(actionObject->getContext()->getPool(), argc);
+					for (uint32_t i = 0; i < argc; ++i)
+						callArgv[i] = CastAny< ActionValue >::get(argv[i]);
+					ActionValue ret = fn->call(actionObject, callArgv);
+					return CastAny< ActionValue >::set(ret);
+				}
+			}
+		}
+	}
+	return Any();
+}
+
+Any FlashCharacterInstance_invoke(FlashCharacterInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
+{
+	return ActionObjectRelay_invoke(self, methodName, argc, argv);
+}
+
+Any FlashShapeInstance_invoke(FlashShapeInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
+{
+	return ActionObjectRelay_invoke(self, methodName, argc, argv);
+}
+
+Any FlashSpriteInstance_invoke(FlashSpriteInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
+{
+	return ActionObjectRelay_invoke(self, methodName, argc, argv);
+}
+
 uint32_t FlashShape_getPathCount(FlashShape* self)
 {
 	return uint32_t(self->getPaths().size());
@@ -48,363 +189,25 @@ FlashDisplayList* FlashSpriteInstance_getDisplayList(FlashSpriteInstance* self)
 	return &self->getDisplayList();
 }
 
-ActionObject* ActionObjectRelay_getAsObject_0(ActionObjectRelay* self)
-{
-	return self->getAsObject();
-}
-
-ActionObject* ActionObjectRelay_getAsObject_1(ActionObjectRelay* self, ActionContext* cx)
-{
-	return self->getAsObject(cx);
-}
-
 		}
-
-class ActionObjectClass : public IRuntimeClass
-{
-	T_RTTI_CLASS;
-
-public:
-	virtual const TypeInfo& getExportType() const T_OVERRIDE;
-
-	virtual bool haveConstructor() const T_OVERRIDE;
-
-	virtual bool haveUnknown() const T_OVERRIDE;
-
-	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const T_OVERRIDE;
-
-	virtual uint32_t getConstantCount() const T_OVERRIDE;
-
-	virtual std::string getConstantName(uint32_t constId) const T_OVERRIDE;
-
-	virtual Any getConstantValue(uint32_t constId) const T_OVERRIDE;
-
-	virtual uint32_t getMethodCount() const T_OVERRIDE;
-
-	virtual std::string getMethodName(uint32_t methodId) const T_OVERRIDE;
-
-	virtual void getMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const T_OVERRIDE;
-
-	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE;
-
-	virtual uint32_t getStaticMethodCount() const T_OVERRIDE;
-
-	virtual std::string getStaticMethodName(uint32_t methodId) const T_OVERRIDE;
-
-	virtual void getStaticMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const T_OVERRIDE;
-
-	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE;
-
-	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const T_OVERRIDE;
-
-	virtual Any invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const T_OVERRIDE;
-};
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObjectClass", ActionObjectClass, IRuntimeClass)
-
-const TypeInfo& ActionObjectClass::getExportType() const
-{
-	return type_of< ActionObject >();
-}
-
-bool ActionObjectClass::haveConstructor() const
-{
-	return false;
-}
-
-bool ActionObjectClass::haveUnknown() const
-{
-	return true;
-}
-
-Ref< ITypedObject > ActionObjectClass::construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const
-{
-	return 0;
-}
-
-uint32_t ActionObjectClass::getConstantCount() const
-{
-	return 0;
-}
-
-std::string ActionObjectClass::getConstantName(uint32_t constId) const
-{
-	return "";
-}
-
-Any ActionObjectClass::getConstantValue(uint32_t constId) const
-{
-	return Any();
-}
-
-uint32_t ActionObjectClass::getMethodCount() const
-{
-	return 6;
-}
-
-std::string ActionObjectClass::getMethodName(uint32_t methodId) const
-{
-	switch (methodId)
-	{
-	case 0:
-		return "getMember";
-	case 1:
-		return "getMemberByQName";
-	case 2:
-		return "setMember";
-	case 3:
-		return "getProperty";
-	case 4:
-		return "setProperty";
-	case 5:
-		return "getRelay";
-	default:
-		return "";
-	}
-}
-
-void ActionObjectClass::getMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const
-{
-}
-
-Any ActionObjectClass::invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const
-{
-	ActionObject* actionObject = checked_type_cast< ActionObject*, false >(object);
-	switch (methodId)
-	{
-	case 0:
-		{
-			ActionValue memberValue;
-			if (actionObject->getMember(argv[0].getString(), memberValue))
-				return CastAny< ActionValue >::set(memberValue);
-		}
-		break;
-
-	case 1:
-		{
-			ActionValue memberValue;
-			if (actionObject->getMemberByQName(argv[0].getString(), memberValue))
-				return CastAny< ActionValue >::set(memberValue);
-		}
-		break;
-
-	case 2:
-		{
-			ActionValue memberValue = CastAny< ActionValue >::get(argv[1]);
-			actionObject->setMember(argv[0].getString(), memberValue);
-		}
-		break;
-
-	case 3:
-		{
-			Ref< ActionFunction > propertyGetFn;
-			if (actionObject->getPropertyGet(argv[0].getString(), propertyGetFn))
-			{
-				ActionValue propertyValue = propertyGetFn->call(actionObject);
-				return CastAny< ActionValue >::set(propertyValue);
-			}
-		}
-		break;
-
-	case 4:
-		{
-			Ref< ActionFunction > propertySetFn;
-			if (actionObject->getPropertySet(argv[0].getString(), propertySetFn))
-			{
-				ActionValueArray callArgv(actionObject->getContext()->getPool(), 1);
-				callArgv[0] = CastAny< ActionValue >::get(argv[1]);
-				propertySetFn->call(actionObject, callArgv);
-			}
-		}
-		break;
-
-	case 5:
-		{
-			return Any::fromObject(actionObject->getRelay());
-		}
-		break;
-
-	default:
-		break;
-	}
-	return Any();
-}
-
-uint32_t ActionObjectClass::getStaticMethodCount() const
-{
-	return 0;
-}
-
-std::string ActionObjectClass::getStaticMethodName(uint32_t methodId) const
-{
-	return "";
-}
-
-void ActionObjectClass::getStaticMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const
-{
-}
-
-Any ActionObjectClass::invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const
-{
-	return Any();
-}
-
-Any ActionObjectClass::invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const
-{
-	ActionObject* actionObject = checked_type_cast< ActionObject*, false >(object);
-	T_ASSERT (object);
-
-	ActionValuePool& pool = actionObject->getContext()->getPool();
-	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
-
-	ActionValueArray args(pool, argc);
-	for (uint32_t i = 0; i < argc; ++i)
-		args[i] = CastAny< ActionValue >::get(argv[i]);
-
-	ActionValue functionValue;
-	actionObject->getMember(methodName, functionValue);
-
-	ActionFunction* fn = functionValue.getObject< ActionFunction >();
-	if (fn)
-	{
-		ActionValue ret = fn->call(actionObject, args);
-		return CastAny< ActionValue >::set(ret);
-	}
-
-	return Any();
-}
-
-Any ActionObjectClass::invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const
-{
-	return Any();
-}
-
-class ActionFunctionClass : public ActionObjectClass
-{
-	T_RTTI_CLASS;
-
-public:
-	virtual const TypeInfo& getExportType() const T_OVERRIDE T_FINAL;
-
-	virtual uint32_t getMethodCount() const T_OVERRIDE T_FINAL;
-
-	virtual std::string getMethodName(uint32_t methodId) const T_OVERRIDE T_FINAL;
-
-	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL;
-};
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ActionFunctionClass", ActionFunctionClass, ActionObjectClass)
-
-const TypeInfo& ActionFunctionClass::getExportType() const
-{
-	return type_of< ActionFunction >();
-}
-
-uint32_t ActionFunctionClass::getMethodCount() const
-{
-	return 6;
-}
-
-std::string ActionFunctionClass::getMethodName(uint32_t methodId) const
-{
-	switch (methodId)
-	{
-	case 0:
-		return "getMember";
-	case 1:
-		return "getMemberByQName";
-	case 2:
-		return "setMember";
-	case 3:
-		return "getProperty";
-	case 4:
-		return "setProperty";
-	case 5:
-		return "call";
-	default:
-		return "";
-	}
-}
-
-Any ActionFunctionClass::invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const
-{
-	ActionFunction* actionObject = checked_type_cast< ActionFunction*, false >(object);
-	switch (methodId)
-	{
-	case 0:
-		{
-			ActionValue memberValue;
-			if (actionObject->getMember(argv[0].getString(), memberValue))
-				return CastAny< ActionValue >::set(memberValue);
-		}
-		break;
-
-	case 1:
-		{
-			ActionValue memberValue;
-			if (actionObject->getMemberByQName(argv[0].getString(), memberValue))
-				return CastAny< ActionValue >::set(memberValue);
-		}
-		break;
-
-	case 2:
-		{
-			ActionValue memberValue = CastAny< ActionValue >::get(argv[1]);
-			actionObject->setMember(argv[0].getString(), memberValue);
-		}
-		break;
-
-	case 3:
-		{
-			Ref< ActionFunction > propertyGetFn;
-			if (actionObject->getPropertyGet(argv[0].getString(), propertyGetFn))
-			{
-				ActionValue propertyValue = propertyGetFn->call(actionObject);
-				return CastAny< ActionValue >::set(propertyValue);
-			}
-		}
-		break;
-
-	case 4:
-		{
-			Ref< ActionFunction > propertySetFn;
-			if (actionObject->getPropertySet(argv[0].getString(), propertySetFn))
-			{
-				ActionValueArray callArgv(actionObject->getContext()->getPool(), 1);
-				callArgv[0] = CastAny< ActionValue >::get(argv[1]);
-				propertySetFn->call(actionObject, callArgv);
-			}
-		}
-		break;
-
-	case 5:
-		{
-			ActionValuePool& pool = actionObject->getContext()->getPool();
-			T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
-
-			ActionValueArray args(pool, argc - 1);
-			for (uint32_t i = 0; i < argc - 1; ++i)
-				args[i] = CastAny< ActionValue >::get(argv[i + 1]);
-
-			ActionValue ret = actionObject->call(
-				checked_type_cast< ActionObject*, true >(argv[0].getObject()),
-				args
-			);
-
-			return CastAny< ActionValue >::set(ret);
-		}
-		break;
-
-	default:
-		break;
-	}
-	return Any();
-}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashClassFactory", 0, FlashClassFactory, IRuntimeClassFactory)
 
 void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	Ref< AutoRuntimeClass< ActionObject > > classActionObject = new AutoRuntimeClass< ActionObject >();
+	classActionObject->addMethod("getMember", &ActionObject_getMember);
+	classActionObject->addMethod("getMemberByQName", &ActionObject_getMemberByQName);
+	classActionObject->addMethod("setMember", &ActionObject_setMember);
+	classActionObject->addMethod("getProperty", &ActionObject_getProperty);
+	classActionObject->addMethod("setProperty", &ActionObject_setProperty);
+	classActionObject->setUnknownHandler(&ActionObject_invoke);
+	registrar->registerClass(classActionObject);
+
+	Ref< AutoRuntimeClass< ActionObjectRelay > > classActionObjectRelay = new AutoRuntimeClass< ActionObjectRelay >();
+	classActionObjectRelay->setUnknownHandler(&ActionObjectRelay_invoke);
+	registrar->registerClass(classActionObjectRelay);
+
 	Ref< AutoRuntimeClass< IFlashMovieLoader > > classIFlashMovieLoader = new AutoRuntimeClass< IFlashMovieLoader >();
 	classIFlashMovieLoader->addMethod("loadAsync", &IFlashMovieLoader::loadAsync);
 	classIFlashMovieLoader->addMethod("load", &IFlashMovieLoader::load);
@@ -464,6 +267,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashCharacterInstance->addMethod("setEnabled", &FlashCharacterInstance::setEnabled);
 	classFlashCharacterInstance->addMethod("isEnabled", &FlashCharacterInstance::isEnabled);
 	classFlashCharacterInstance->addMethod("getBounds", &FlashCharacterInstance::getBounds);
+	classFlashCharacterInstance->setUnknownHandler(&FlashCharacterInstance_invoke);
 	registrar->registerClass(classFlashCharacterInstance);
 
 	Ref< AutoRuntimeClass< FlashShape > > classFlashShape = new AutoRuntimeClass< FlashShape >();
@@ -472,6 +276,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< FlashShapeInstance > > classFlashShapeInstance = new AutoRuntimeClass< FlashShapeInstance >();
 	classFlashShapeInstance->addMethod("getShape", &FlashShapeInstance::getShape);
+	classFlashShapeInstance->setUnknownHandler(&FlashShapeInstance_invoke);
 	registrar->registerClass(classFlashShapeInstance);
 
 	Ref< AutoRuntimeClass< FlashDisplayList > > classFlashDisplayList = new AutoRuntimeClass< FlashDisplayList >();
@@ -516,6 +321,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashSpriteInstance->addMethod("getCanvas", &FlashSpriteInstance::getCanvas);
 	classFlashSpriteInstance->addMethod("getMouseX", &FlashSpriteInstance::getMouseX);
 	classFlashSpriteInstance->addMethod("getMouseY", &FlashSpriteInstance::getMouseY);
+	classFlashSpriteInstance->setUnknownHandler(&FlashSpriteInstance_invoke);
 	registrar->registerClass(classFlashSpriteInstance);
 
 	Ref< AutoRuntimeClass< FlashMovie > > classFlashMovie = new AutoRuntimeClass< FlashMovie >();
@@ -524,15 +330,12 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashMovie->addMethod("defineSound", &FlashMovie::defineSound);
 	classFlashMovie->addMethod("defineCharacter", &FlashMovie::defineCharacter);
 	classFlashMovie->addMethod("setExport", &FlashMovie::setExport);
+	classFlashMovie->addMethod("createMovieClipInstance", &FlashMovie::createMovieClipInstance);
 	classFlashMovie->addMethod("createExternalMovieClipInstance", &FlashMovie::createExternalMovieClipInstance);
+	classFlashMovie->addMethod("createExternalSpriteInstance", &FlashMovie::createExternalSpriteInstance);
 	classFlashMovie->addMethod("getFrameBounds", &FlashMovie::getFrameBounds);
 	classFlashMovie->addMethod("getMovieClip", &FlashMovie::getMovieClip);
 	registrar->registerClass(classFlashMovie);
-
-	Ref< AutoRuntimeClass< ActionObjectRelay > > classActionObjectRelay = new AutoRuntimeClass< ActionObjectRelay >();
-	classActionObjectRelay->addMethod("getAsObject", &ActionObjectRelay_getAsObject_0);
-	classActionObjectRelay->addMethod("getAsObject", &ActionObjectRelay_getAsObject_1);
-	registrar->registerClass(classActionObjectRelay);
 
 	Ref< AutoRuntimeClass< ActionContext > > classActionContext = new AutoRuntimeClass< ActionContext >();
 	classActionContext->addMethod("lookupClass", &ActionContext::lookupClass);
@@ -543,12 +346,6 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classActionContext->addMethod("getPressed", &ActionContext::getPressed);
 	registrar->registerClass(classActionContext);
 
-	Ref< ActionObjectClass > classActionObject = new ActionObjectClass();
-	registrar->registerClass(classActionObject);
-
-	Ref< ActionFunctionClass > classActionFunction = new ActionFunctionClass();
-	registrar->registerClass(classActionFunction);
-	
 	Ref< AutoRuntimeClass< FlashOptimizer > > classFlashOptimizer = new AutoRuntimeClass< FlashOptimizer >();
 	classFlashOptimizer->addConstructor();
 	classFlashOptimizer->addMethod("merge", &FlashOptimizer::merge);

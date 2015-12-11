@@ -246,8 +246,9 @@ void AsMovieClip::MovieClip_attachBitmap_4(FlashSpriteInstance* self, const Bitm
 	T_ASSERT (context);
 
 	// Get dictionary.
-	FlashDictionary* dictionary = context->getDictionary();
-	T_ASSERT (dictionary);
+	FlashDictionary* dictionary = self->getDictionary();
+	if (!dictionary)
+		return;
 
 	// Define bitmap symbol.
 	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmapData(bmp->getImage()));
@@ -264,7 +265,7 @@ void AsMovieClip::MovieClip_attachBitmap_4(FlashSpriteInstance* self, const Bitm
 	uint16_t shapeId = dictionary->addCharacter(shape);
 
 	// Create new instance of shape.
-	Ref< FlashShapeInstance > attachShapeInstance = checked_type_cast< FlashShapeInstance* >(shape->createInstance(context, self, "", Matrix33::identity(), 0, 0));
+	Ref< FlashShapeInstance > attachShapeInstance = checked_type_cast< FlashShapeInstance* >(shape->createInstance(context, dictionary, self, "", Matrix33::identity(), 0, 0));
 	T_ASSERT (attachShapeInstance);
 
 	// Add new instance to display list.
@@ -282,9 +283,10 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	ActionContext* context = self->getContext();
 	T_ASSERT (context);
 
-	// Get root movie.
-	const FlashDictionary* dictionary = context->getDictionary();
-	T_ASSERT (dictionary);
+	// Get dictionary.
+	FlashDictionary* dictionary = self->getDictionary();
+	if (!dictionary)
+		return 0;
 
 	// Get movie clip ID from name.
 	uint16_t attachClipId;
@@ -307,7 +309,15 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	}
 
 	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(context, self, attachClipNewName, Matrix33::identity(), initObject, 0));
+	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(
+		context,
+		dictionary,
+		self,
+		attachClipNewName,
+		Matrix33::identity(),
+		initObject,
+		0
+	));
 	
 	// Add new instance to display list.
 	FlashDisplayList& displayList = self->getDisplayList();
@@ -437,6 +447,11 @@ Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
 	ActionContext* context = self->getContext();
 	T_ASSERT (context);
 
+	// Get dictionary.
+	FlashDictionary* dictionary = self->getDictionary();
+	if (!dictionary)
+		return 0;
+
 	Aabb2 bounds(
 		Vector2(0.0f, 0.0f),
 		Vector2(width, height)
@@ -464,7 +479,15 @@ Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
 	);
 
 	// Create edit character instance.
-	Ref< FlashEditInstance > editInstance = checked_type_cast< FlashEditInstance*, false >(edit->createInstance(context, self, name, Matrix33::identity(), 0, 0));
+	Ref< FlashEditInstance > editInstance = checked_type_cast< FlashEditInstance*, false >(edit->createInstance(
+		context,
+		dictionary,
+		self,
+		name,
+		Matrix33::identity(),
+		0,
+		0
+	));
 	
 	// Place character at given location.
 	editInstance->setTransform(translate(x, y));

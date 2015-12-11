@@ -52,6 +52,7 @@ public:
 
 	virtual Ref< FlashCharacterInstance > createInstance(
 		ActionContext* context,
+		FlashDictionary* dictionary,
 		FlashCharacterInstance* parent,
 		const std::string& name,
 		const Matrix33& transform,

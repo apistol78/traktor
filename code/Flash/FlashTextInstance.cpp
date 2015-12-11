@@ -8,8 +8,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashTextInstance", FlashTextInstance, FlashCharacterInstance)
 
-FlashTextInstance::FlashTextInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashText* text)
-:	FlashCharacterInstance(context, "TextField", parent)
+FlashTextInstance::FlashTextInstance(ActionContext* context, FlashDictionary* dictionary, FlashCharacterInstance* parent, const FlashText* text)
+:	FlashCharacterInstance(context, "TextField", dictionary, parent)
 ,	m_text(text)
 {
 }

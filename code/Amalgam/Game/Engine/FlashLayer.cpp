@@ -588,7 +588,7 @@ flash::ActionObject* FlashLayer::getGlobal()
 	return cx->getGlobal();
 }
 
-flash::ActionObject* FlashLayer::getRoot()
+flash::FlashSpriteInstance* FlashLayer::getRoot()
 {
 	if (!m_moviePlayer)
 	{
@@ -596,13 +596,13 @@ flash::ActionObject* FlashLayer::getRoot()
 		return 0;
 	}
 
-	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
-	T_ASSERT (movieInstance);
+	return m_moviePlayer->getMovieInstance();
+}
 
-	flash::ActionContext* cx = movieInstance->getContext();
-	T_ASSERT (cx);
-
-	return movieInstance->getAsObject(cx);
+flash::FlashMovie* FlashLayer::getExternal(const std::wstring& id) const
+{
+	std::map< std::wstring, resource::Proxy< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(id);
+	return i != m_externalMovies.end() ? i->second.getResource() : 0;
 }
 
 Ref< flash::ActionObject > FlashLayer::createObject() const
