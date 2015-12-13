@@ -52,9 +52,14 @@
 #include "Ui/Custom/TreeView/TreeViewItemStateChangeEvent.h"
 
 // Resources
-#include "Resources/DatabaseView.h"
+//#include "Resources/DatabaseView.h"
+#include "Resources/Favorites.h"
+#include "Resources/Folders.h"
+#include "Resources/NameFilter.h"
+#include "Resources/ShowFiltered.h"
+#include "Resources/TypeFilter.h"
 #include "Resources/Types.h"
-#include "Resources/TypesHidden.h"
+//#include "Resources/TypesHidden.h"
 
 namespace traktor
 {
@@ -311,7 +316,10 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_toolSelection = new ui::custom::ToolBar();
 	if (!m_toolSelection->create(this))
 		return false;
-	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceDatabaseView, sizeof(c_ResourceDatabaseView), L"png"), 4);
+	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceNameFilter, sizeof(c_ResourceNameFilter), L"image"), 1);
+	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceTypeFilter, sizeof(c_ResourceTypeFilter), L"image"), 1);
+	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceShowFiltered, sizeof(c_ResourceShowFiltered), L"image"), 1);
+	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceFavorites, sizeof(c_ResourceFavorites), L"image"), 1);
 
 	m_toolFilterType = new ui::custom::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER"),
@@ -365,8 +373,9 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase = new ui::custom::TreeView();
 	if (!m_treeDatabase->create(this, (ui::custom::TreeView::WsDefault | ui::custom::TreeView::WsDrag | ui::WsDoubleBuffer) & ~ui::WsClientBorder))
 		return false;
-	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 23);
-	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypesHidden, sizeof(c_ResourceTypesHidden), L"png"), 23);
+	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceFolders, sizeof(c_ResourceFolders), L"image"), 2);
+	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"image"), 23);
+	//m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypesHidden, sizeof(c_ResourceTypesHidden), L"png"), 23);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
 	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);

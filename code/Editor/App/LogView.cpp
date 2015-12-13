@@ -15,8 +15,10 @@
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
 // Resources
-#include "Resources/LogFilter.h"
-#include "Resources/Standard16.h"
+#include "Resources/LogError.h"
+#include "Resources/LogInfo.h"
+#include "Resources/LogWarning.h"
+#include "Resources/Copy.h"
 
 namespace traktor
 {
@@ -58,34 +60,36 @@ bool LogView::create(ui::Widget* parent)
 
 	m_toolToggleInfo = new ui::custom::ToolBarButton(
 		i18n::Text(L"LOG_VIEW_INFO"),
-		0,
+		2,
 		ui::Command(L"Editor.Log.ToggleLevel"),
 		ui::custom::ToolBarButton::BsDefaultToggled
 	);
 
 	m_toolToggleWarning = new ui::custom::ToolBarButton(
 		i18n::Text(L"LOG_VIEW_WARNING"),
-		1,
+		3,
 		ui::Command(L"Editor.Log.ToggleLevel"),
 		ui::custom::ToolBarButton::BsDefaultToggled
 	);
 
 	m_toolToggleError = new ui::custom::ToolBarButton(
 		i18n::Text(L"LOG_VIEW_ERROR"),
-		2,
+		1,
 		ui::Command(L"Editor.Log.ToggleLevel"),
 		ui::custom::ToolBarButton::BsDefaultToggled
 	);
 
 	m_toolFilter = new ui::custom::ToolBar();
 	m_toolFilter->create(this);
-	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceLogFilter, sizeof(c_ResourceLogFilter), L"png"), 3);
-	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceStandard16, sizeof(c_ResourceStandard16), L"png"), 10);
+	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceCopy, sizeof(c_ResourceCopy), L"image"), 1);
+	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceLogError, sizeof(c_ResourceLogError), L"image"), 1);
+	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceLogInfo, sizeof(c_ResourceLogInfo), L"image"), 1);
+	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceLogWarning, sizeof(c_ResourceLogWarning), L"image"), 1);
 	m_toolFilter->addItem(m_toolToggleInfo);
 	m_toolFilter->addItem(m_toolToggleWarning);
 	m_toolFilter->addItem(m_toolToggleError);
 	m_toolFilter->addItem(new ui::custom::ToolBarSeparator());
-	m_toolFilter->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 7, ui::Command(L"Editor.Log.Copy")));
+	m_toolFilter->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 0, ui::Command(L"Editor.Log.Copy")));
 	m_toolFilter->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &LogView::eventToolClick);
 
 	m_log = new ui::custom::LogList();

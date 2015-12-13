@@ -10,11 +10,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ButtonCell", ButtonCell, ui::custom::Au
 
 ButtonCell::ButtonCell(
 	ui::Bitmap* bitmap,
-	int32_t index,
 	const ui::Command& command
 )
 :	m_bitmap(bitmap)
-,	m_index(index)
 ,	m_command(command)
 ,	m_enable(true)
 ,	m_down(false)
@@ -46,10 +44,9 @@ void ButtonCell::mouseUp(ui::MouseButtonUpEvent* event, const ui::Point& positio
 void ButtonCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
 	ui::Size bitmapSize = m_bitmap->getSize();
-	ui::Size glyphSize(bitmapSize.cx / 4, bitmapSize.cy / 2);
 
 	ui::Point position = rect.getTopLeft();
-	position.y += (rect.getHeight() - glyphSize.cy) / 2;
+	position.y += (rect.getHeight() - bitmapSize.cy) / 2;
 
 	if (m_down)
 	{
@@ -59,8 +56,8 @@ void ButtonCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 
 	canvas.drawBitmap(
 		position,
-		ui::Point(m_index * glyphSize.cx, (m_enable ? 0 : 1) * glyphSize.cy),
-		glyphSize,
+		ui::Point(0, 0),
+		bitmapSize,
 		m_bitmap,
 		ui::BmAlpha
 	);

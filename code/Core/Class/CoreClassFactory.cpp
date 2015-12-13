@@ -4,6 +4,8 @@
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Io/AnsiEncoding.h"
+#include "Core/Io/BitReader.h"
+#include "Core/Io/BitWriter.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/File.h"
@@ -45,6 +47,11 @@ RefArray< File > IVolume_find(IVolume* self, const std::wstring& mask)
 	RefArray< File > files;
 	self->find(mask, files);
 	return files;
+}
+
+uint32_t File_getSize(File* self)
+{
+	return uint32_t(self->getSize());
 }
 
 int32_t IStream_seek(IStream* self, int32_t origin, int32_t offset)
@@ -282,7 +289,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFile->addConstructor< const Path&, uint64_t, uint32_t, const DateTime&, const DateTime&, const DateTime& >();
 	classFile->addConstructor< const Path&, uint64_t, uint32_t >();
 	classFile->addMethod("getPath", &File::getPath);
-	classFile->addMethod("getSize", &File::getSize);
+	classFile->addMethod("getSize", &File_getSize);
 	classFile->addMethod("getFlags", &File::getFlags);
 	classFile->addMethod("isNormal", &File::isNormal);
 	classFile->addMethod("isReadOnly", &File::isReadOnly);
@@ -332,6 +339,39 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< DynamicMemoryStream > > classDynamicMemoryStream = new AutoRuntimeClass< DynamicMemoryStream >();
 	classDynamicMemoryStream->addConstructor< bool, bool >();
 	registrar->registerClass(classDynamicMemoryStream);
+
+	Ref< AutoRuntimeClass< BitReader > > classBitReader = new AutoRuntimeClass< BitReader >();
+	classBitReader->addConstructor< IStream* >();
+	classBitReader->addMethod("readBit", &BitReader::readBit);
+	classBitReader->addMethod("readUnsigned", &BitReader::readUnsigned);
+	classBitReader->addMethod("readSigned", &BitReader::readSigned);
+	classBitReader->addMethod("readInt8", &BitReader::readInt8);
+	classBitReader->addMethod("readUInt8", &BitReader::readUInt8);
+	classBitReader->addMethod("readInt16", &BitReader::readInt16);
+	classBitReader->addMethod("readUInt16", &BitReader::readUInt16);
+	classBitReader->addMethod("readInt32", &BitReader::readInt32);
+	classBitReader->addMethod("readUInt32", &BitReader::readUInt32);
+	classBitReader->addMethod("alignByte", &BitReader::alignByte);
+	classBitReader->addMethod("tell", &BitReader::tell);
+	classBitReader->addMethod("skip", &BitReader::skip);
+	classBitReader->addMethod("getStream", &BitReader::getStream);
+	registrar->registerClass(classBitReader);
+
+	Ref< AutoRuntimeClass< BitWriter > > classBitWriter = new AutoRuntimeClass< BitWriter >();
+	classBitWriter->addConstructor< IStream* >();
+	classBitWriter->addMethod("writeBit", &BitWriter::writeBit);
+	classBitWriter->addMethod("writeUnsigned", &BitWriter::writeUnsigned);
+	classBitWriter->addMethod("writeSigned", &BitWriter::writeSigned);
+	classBitWriter->addMethod("writeInt8", &BitWriter::writeInt8);
+	classBitWriter->addMethod("writeUInt8", &BitWriter::writeUInt8);
+	classBitWriter->addMethod("writeInt16", &BitWriter::writeInt16);
+	classBitWriter->addMethod("writeUInt16", &BitWriter::writeUInt16);
+	classBitWriter->addMethod("writeInt32", &BitWriter::writeInt32);
+	classBitWriter->addMethod("writeUInt32", &BitWriter::writeUInt32);
+	classBitWriter->addMethod("flush", &BitWriter::flush);
+	classBitWriter->addMethod("tell", &BitWriter::tell);
+	classBitWriter->addMethod("getStream", &BitWriter::getStream);
+	registrar->registerClass(classBitWriter);
 
 	Ref< AutoRuntimeClass< FileSystem > > classFileSystem = new AutoRuntimeClass< FileSystem >();
 	classFileSystem->addStaticMethod("getInstance", &FileSystem_getInstance);

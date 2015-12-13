@@ -43,6 +43,42 @@ void BitWriter::writeSigned(int32_t nbits, int32_t value)
 	writeUnsigned(nbits, *(uint32_t*)&value);
 }
 
+bool BitWriter::writeInt8(int8_t v)
+{
+	flush();
+	return m_stream->write(&v, sizeof(v)) == sizeof(v);
+}
+
+bool BitWriter::writeUInt8(uint8_t v)
+{
+	flush();
+	return m_stream->write(&v, sizeof(v)) == sizeof(v);
+}
+
+bool BitWriter::writeInt16(int16_t v)
+{
+	flush();
+	return m_stream->write(&v, sizeof(v)) == sizeof(v);
+}
+
+bool BitWriter::writeUInt16(uint16_t v)
+{
+	flush();
+	return m_stream->write(&v, sizeof(v)) == sizeof(v);
+}
+
+bool BitWriter::writeInt32(int32_t v)
+{
+	flush();
+	return m_stream->write(&v, sizeof(v)) == sizeof(v);
+}
+
+bool BitWriter::writeUInt32(uint32_t v)
+{
+	flush();
+	return m_stream->write(&v, sizeof(v)) == sizeof(v);
+}
+
 void BitWriter::flush()
 {
 	if (m_cnt <= 0)

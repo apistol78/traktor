@@ -69,7 +69,7 @@
 #include "Ui/Custom/Graph/SelectEvent.h"
 
 // Resources
-#include "Resources/Alignment.h"
+#include "Resources/Tools.h"
 
 namespace traktor
 {
@@ -119,7 +119,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	// Create our custom toolbar.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 14);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceTools, sizeof(c_ResourceTools), L"image"), 14);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), 7, ui::Command(L"ShaderGraph.Editor.Center")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_LEFT"), 0, ui::Command(L"ShaderGraph.Editor.AlignLeft")));

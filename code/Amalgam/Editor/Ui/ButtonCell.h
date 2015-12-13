@@ -17,7 +17,6 @@ class ButtonCell : public ui::custom::AutoWidgetCell
 public:
 	ButtonCell(
 		ui::Bitmap* bitmap,
-		int32_t index,
 		const ui::Command& command
 	);
 
@@ -31,7 +30,6 @@ public:
 
 private:
 	Ref< ui::Bitmap > m_bitmap;
-	int32_t m_index;
 	ui::Command m_command;
 	bool m_enable;
 	bool m_down;

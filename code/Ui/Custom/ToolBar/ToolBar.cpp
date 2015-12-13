@@ -28,8 +28,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ToolBar", ToolBar, Widget)
 
 ToolBar::ToolBar()
 :	m_style(WsNone)
-,	m_imageWidth(16)
-,	m_imageHeight(16)
+,	m_imageWidth(scaleBySystemDPI(16))
+,	m_imageHeight(scaleBySystemDPI(16))
 ,	m_imageCount(0)
 {
 }

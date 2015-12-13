@@ -48,12 +48,16 @@
 #include "Ui/Custom/StatusBar/StatusBar.h"
 
 // Resources
-#include "Resources/Editor.h"
-#include "Resources/PlusMinus.h"
-#include "Resources/ScriptEdit.h"
-#include "Resources/ScriptFunction.h"
-#include "Resources/ScriptFunctionLocal.h"
-#include "Resources/ScriptFunctionReference.h"
+#include "Resources/AddDependency.h"
+#include "Resources/Breakpoint.h"
+#include "Resources/DefineGlobalFunction.h"
+#include "Resources/DefineLocalFunction.h"
+#include "Resources/MoveDependencyDown.h"
+#include "Resources/MoveDependencyUp.h"
+#include "Resources/ReferenceFunction.h"
+#include "Resources/RemoveBreakpoints.h"
+#include "Resources/RemoveDependency.h"
+#include "Resources/ToggleComments.h"
 
 namespace traktor
 {
@@ -68,9 +72,9 @@ ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageS
 ,	m_document(document)
 ,	m_compileCountDown(0)
 {
-	m_bitmapFunction = ui::Bitmap::load(c_ResourceScriptFunction, sizeof(c_ResourceScriptFunction), L"png");
-	m_bitmapFunctionLocal = ui::Bitmap::load(c_ResourceScriptFunctionLocal, sizeof(c_ResourceScriptFunctionLocal), L"png");
-	m_bitmapFunctionReference = ui::Bitmap::load(c_ResourceScriptFunctionReference, sizeof(c_ResourceScriptFunctionReference), L"png");
+	m_bitmapFunction = ui::Bitmap::load(c_ResourceDefineGlobalFunction, sizeof(c_ResourceDefineGlobalFunction), L"image");
+	m_bitmapFunctionLocal = ui::Bitmap::load(c_ResourceDefineLocalFunction, sizeof(c_ResourceDefineLocalFunction), L"image");
+	m_bitmapFunctionReference = ui::Bitmap::load(c_ResourceReferenceFunction, sizeof(c_ResourceReferenceFunction), L"image");
 }
 
 bool ScriptEditorPage::create(ui::Container* parent)
@@ -95,7 +99,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_outlineGrid = new ui::custom::GridView();
 	if (!m_outlineGrid->create(tabOutline, ui::custom::GridView::WsColumnHeader |ui::WsDoubleBuffer))
 		return false;
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(L"", 30));
+	m_outlineGrid->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(30)));
 	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), ui::scaleBySystemDPI(165)));
 	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), ui::scaleBySystemDPI(45)));
 	m_outlineGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventOutlineDoubleClick);
@@ -108,12 +112,15 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	if (!dependencyTools->create(tabDependencies))
 		return false;
 
-	dependencyTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"png"), 4);
+	dependencyTools->addImage(ui::Bitmap::load(c_ResourceAddDependency, sizeof(c_ResourceAddDependency), L"image"), 1);
+	dependencyTools->addImage(ui::Bitmap::load(c_ResourceMoveDependencyDown, sizeof(c_ResourceMoveDependencyDown), L"image"), 1);
+	dependencyTools->addImage(ui::Bitmap::load(c_ResourceMoveDependencyUp, sizeof(c_ResourceMoveDependencyUp), L"image"), 1);
+	dependencyTools->addImage(ui::Bitmap::load(c_ResourceRemoveDependency, sizeof(c_ResourceRemoveDependency), L"image"), 1);
 	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_ADD_DEPENDENCY"), 0, ui::Command(L"Script.Editor.AddDependency")));
-	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_DEPENDENCY"), 1, ui::Command(L"Script.Editor.RemoveDependency")));
+	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_DEPENDENCY"), 3, ui::Command(L"Script.Editor.RemoveDependency")));
 	dependencyTools->addItem(new ui::custom::ToolBarSeparator());
 	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_UP"), 2, ui::Command(L"Script.Editor.MoveDependencyUp")));
-	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN"), 3, ui::Command(L"Script.Editor.MoveDependencyDown")));
+	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN"), 1, ui::Command(L"Script.Editor.MoveDependencyDown")));
 	dependencyTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventDependencyToolClick);
 
 	Ref< ui::custom::Splitter > splitterDependencies = new ui::custom::Splitter();
@@ -153,16 +160,17 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	Ref< ui::custom::ToolBar > toolBarEdit = new ui::custom::ToolBar();
 	toolBarEdit->create(containerEdit);
-	toolBarEdit->addImage(ui::Bitmap::load(c_ResourceScriptEdit, sizeof(c_ResourceScriptEdit), L"png"), 2);
-	toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_TOGGLE_COMMENTS"), 0, ui::Command(L"Script.Editor.ToggleComments")));
-	toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS"), 1, ui::Command(L"Script.Editor.RemoveAllBreakpoints")));
+	toolBarEdit->addImage(ui::Bitmap::load(c_ResourceRemoveBreakpoints, sizeof(c_ResourceRemoveBreakpoints), L"image"), 1);
+	toolBarEdit->addImage(ui::Bitmap::load(c_ResourceToggleComments, sizeof(c_ResourceToggleComments), L"image"), 1);
+	toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_TOGGLE_COMMENTS"), 1, ui::Command(L"Script.Editor.ToggleComments")));
+	toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS"), 0, ui::Command(L"Script.Editor.RemoveAllBreakpoints")));
 	toolBarEdit->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventToolBarEditClick);
 
 	m_edit = new ui::custom::SyntaxRichEdit();
 	if (!m_edit->create(containerEdit, m_script->getText(), ui::WsDoubleBuffer))
 		return false;
 
-	m_edit->addImage(ui::Bitmap::load(c_ResourceEditor, sizeof(c_ResourceEditor), L"png"), 1);
+	m_edit->addImage(ui::Bitmap::load(c_ResourceBreakpoint, sizeof(c_ResourceBreakpoint), L"image"), 1);
 
 #if defined(__APPLE__)
 	m_edit->setFont(ui::Font(L"Menlo Regular", 11));

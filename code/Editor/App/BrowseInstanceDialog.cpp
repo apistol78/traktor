@@ -26,7 +26,7 @@
 #include "Ui/Custom/TreeView/TreeViewItem.h"
 
 // Resources
-#include "Resources/Files.h"
+//#include "Resources/Files.h"
 
 #pragma warning(disable: 4344)
 
@@ -101,7 +101,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	m_treeDatabase = new ui::custom::TreeView();
 	if (!m_treeDatabase->create(left, ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
-	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
+	//m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &BrowseInstanceDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();
