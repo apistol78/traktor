@@ -10,7 +10,7 @@
 #include "Ui/Custom/GridView/GridView.h"
 
 // Resources
-#include "Resources/TviState.h"
+#include "Resources/GridView.h"
 
 namespace traktor
 {
@@ -27,7 +27,7 @@ GridRow::GridRow(uint32_t initialState)
 ,	m_minimumHeight(0)
 ,	m_parent(0)
 {
-	m_expand = Bitmap::load(c_ResourceTviState, sizeof(c_ResourceTviState), L"png");
+	m_expand = Bitmap::load(c_ResourceGridView, sizeof(c_ResourceGridView), L"image");
 }
 
 GridRow::~GridRow()
@@ -131,6 +131,8 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 	if (!m_children.empty())
 		++depth;
 
+	int32_t size = m_expand->getSize().cy;
+
 	Rect rcCell(rect.left, rect.top, rect.left, rect.bottom);
 	for (uint32_t i = 0; i < columns.size(); ++i)
 	{
@@ -145,7 +147,7 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 
 		Rect rcCellLocal = rcCell;
 		if (i == 0)
-			rcCellLocal.left += depth * 16;
+			rcCellLocal.left += depth * size;
 		widget->placeCell(m_items[i], rcCellLocal);
 
 		rcCell.left = rcCell.right;
@@ -160,7 +162,8 @@ void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 	if (!m_children.empty())
 	{
 		int32_t depth = getDepth();
-		int32_t rx = depth * 16 + 16;
+		int32_t size = m_expand->getSize().cy;
+		int32_t rx = depth * size + size;
 		if (position.x <= rx)
 		{
 			if (m_state & RsExpanded)
@@ -201,10 +204,11 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	if (!m_children.empty())
 	{
 		int32_t depth = getDepth();
+		int32_t size = m_expand->getSize().cy;
 		canvas.drawBitmap(
-			Point(rect.left + 2 + depth * 16, rect.top + (rect.getHeight() - 16) / 2),
-			Point((m_state & GridRow::RsExpanded) ? 16 : 0, (m_state & GridRow::RsSelected) ? 16 : 0),
-			Size(16, 16),
+			Point(rect.left + 2 + depth * size, rect.top + (rect.getHeight() - size) / 2),
+			Point((m_state & GridRow::RsExpanded) ? size : 0, (m_state & GridRow::RsSelected) ? size : 0),
+			Size(size, size),
 			m_expand,
 			BmAlpha
 		);

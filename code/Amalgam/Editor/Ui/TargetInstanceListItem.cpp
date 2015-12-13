@@ -19,8 +19,13 @@
 #include "Ui/Custom/Auto/AutoWidget.h"
 
 // Resources
-#include "Resources/Platforms.h"
-#include "Resources/TargetControl.h"
+#include "Resources/Logos.h"
+#include "Resources/TargetBrowse.h"
+#include "Resources/TargetBuild.h"
+#include "Resources/TargetMigrate.h"
+#include "Resources/TargetPlay.h"
+#include "Resources/TargetProfile.h"
+#include "Resources/TargetStop.h"
 
 namespace traktor
 {
@@ -29,8 +34,7 @@ namespace traktor
 		namespace
 		{
 
-Ref< ui::Bitmap > s_bitmapPlatforms;
-Ref< ui::Bitmap > s_bitmapTargetControl;
+Ref< ui::Bitmap > s_bitmapLogos;
 
 const int32_t c_performanceLineHeight = 14;
 const int32_t c_performanceHeight = 7 * c_performanceLineHeight;
@@ -91,24 +95,22 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 :	m_instance(instance)
 ,	m_lastInstanceState((TargetState)-1)
 {
-	if (!s_bitmapPlatforms)
-		s_bitmapPlatforms = ui::Bitmap::load(c_ResourcePlatforms, sizeof(c_ResourcePlatforms), L"png");
-	if (!s_bitmapTargetControl)
-		s_bitmapTargetControl = ui::Bitmap::load(c_ResourceTargetControl, sizeof(c_ResourceTargetControl), L"png");
+	if (!s_bitmapLogos)
+		s_bitmapLogos = ui::Bitmap::load(c_ResourceLogos, sizeof(c_ResourceLogos), L"image");
 
 	m_progressCell = new ProgressCell();
 	m_hostsCell = new DropListCell(hostEnumerator, instance);
 
-	m_playCell = new ButtonCell(s_bitmapTargetControl, 0, ui::Command());
+	m_playCell = new ButtonCell(ui::Bitmap::load(c_ResourceTargetPlay, sizeof(c_ResourceTargetPlay), L"image"), ui::Command());
 	m_playCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventPlayButtonClick);
 
-	m_buildCell = new ButtonCell(s_bitmapTargetControl, 0, ui::Command());
+	m_buildCell = new ButtonCell(ui::Bitmap::load(c_ResourceTargetBuild, sizeof(c_ResourceTargetBuild), L"image"), ui::Command());
 	m_buildCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventBuildButtonClick);
 
-	m_migrateCell = new ButtonCell(s_bitmapTargetControl, 0, ui::Command());
+	m_migrateCell = new ButtonCell(ui::Bitmap::load(c_ResourceTargetMigrate, sizeof(c_ResourceTargetMigrate), L"image"), ui::Command());
 	m_migrateCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventMigrateButtonClick);
 
-	m_browseCell = new ButtonCell(s_bitmapTargetControl, 0, ui::Command());
+	m_browseCell = new ButtonCell(ui::Bitmap::load(c_ResourceTargetBrowse, sizeof(c_ResourceTargetBrowse), L"image"), ui::Command());
 	m_browseCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventBrowseButtonClick);
 }
 
@@ -130,22 +132,21 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 		widget->placeCell(
 			m_hostsCell,
 			ui::Rect(
-				controlRect.left + 30 + ui::scaleBySystemDPI(100),
+				controlRect.left + ui::scaleBySystemDPI(130),
 				controlRect.getCenter().y - ui::scaleBySystemDPI(10),
-				controlRect.right - 24 * 4 - 12,
+				controlRect.right - ui::scaleBySystemDPI(24) * 4 - 12,
 				controlRect.getCenter().y + ui::scaleBySystemDPI(10)
 			)
 		);
 	}
-
-	if (m_instance->getState() != TsIdle)
+	else
 	{
 		widget->placeCell(
 			m_progressCell,
 			ui::Rect(
-				controlRect.left + 30,
+				controlRect.left + ui::scaleBySystemDPI(30),
 				controlRect.getCenter().y - ui::scaleBySystemDPI(8),
-				controlRect.right - 24 * 4 - 8,
+				controlRect.right - ui::scaleBySystemDPI(24) * 4 - 8,
 				controlRect.getCenter().y + ui::scaleBySystemDPI(8)
 			)
 		);
@@ -154,36 +155,36 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 	widget->placeCell(
 		m_playCell,
 		ui::Rect(
-			controlRect.right - 24 * 4 - 4,
+			controlRect.right - ui::scaleBySystemDPI(24) * 4 - 4,
 			controlRect.top,
-			controlRect.right - 24 * 3 - 4,
+			controlRect.right - ui::scaleBySystemDPI(24) * 3 - 4,
 			controlRect.bottom
 		)
 	);
 	widget->placeCell(
 		m_buildCell,
 		ui::Rect(
-			controlRect.right - 24 * 3 - 4,
+			controlRect.right - ui::scaleBySystemDPI(24) * 3 - 4,
 			controlRect.top,
-			controlRect.right - 24 * 2 - 4,
+			controlRect.right - ui::scaleBySystemDPI(24) * 2 - 4,
 			controlRect.bottom
 		)
 	);
 	widget->placeCell(
 		m_migrateCell,
 		ui::Rect(
-			controlRect.right - 24 * 2 - 4,
+			controlRect.right - ui::scaleBySystemDPI(24) * 2 - 4,
 			controlRect.top,
-			controlRect.right - 24 * 1 - 4,
+			controlRect.right - ui::scaleBySystemDPI(24) * 1 - 4,
 			controlRect.bottom
 		)
 	);
 	widget->placeCell(
 		m_browseCell,
 		ui::Rect(
-			controlRect.right - 24 * 1 - 4,
+			controlRect.right - ui::scaleBySystemDPI(24) * 1 - 4,
 			controlRect.top,
-			controlRect.right - 24 * 0 - 4,
+			controlRect.right - ui::scaleBySystemDPI(24) * 0 - 4,
 			controlRect.bottom
 		)
 	);
@@ -198,22 +199,22 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 	{
 		if (!m_stopCells[i])
 		{
-			m_stopCells[i] = new ButtonCell(s_bitmapTargetControl, 2, ui::Command(i));
+			m_stopCells[i] = new ButtonCell(ui::Bitmap::load(c_ResourceTargetStop, sizeof(c_ResourceTargetStop), L"image"), ui::Command(i));
 			m_stopCells[i]->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventStopButtonClick);
 		}
 
 		if (!m_captureCells[i])
 		{
-			m_captureCells[i] = new ButtonCell(s_bitmapTargetControl, 3, ui::Command(i));
+			m_captureCells[i] = new ButtonCell(ui::Bitmap::load(c_ResourceTargetProfile, sizeof(c_ResourceTargetProfile), L"image"), ui::Command(i));
 			m_captureCells[i]->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventCaptureButtonClick);
 		}
 
 		widget->placeCell(
 			m_stopCells[i],
 			ui::Rect(
-				controlRect.right - 24 * 1 - 4,
+				controlRect.right - ui::scaleBySystemDPI(24) * 1 - 4,
 				controlRect.top,
-				controlRect.right - 24 * 0 - 4,
+				controlRect.right - ui::scaleBySystemDPI(24) * 0 - 4,
 				(controlRect.top + controlRect.bottom) / 2
 			)
 		);
@@ -221,9 +222,9 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 		widget->placeCell(
 			m_captureCells[i],
 			ui::Rect(
-				controlRect.right - 24 * 1 - 4,
+				controlRect.right - ui::scaleBySystemDPI(24) * 1 - 4,
 				(controlRect.top + controlRect.bottom) / 2,
-				controlRect.right - 24 * 0 - 4,
+				controlRect.right - ui::scaleBySystemDPI(24) * 0 - 4,
 				controlRect.bottom
 			)
 		);
@@ -282,17 +283,18 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	else
 		m_progressCell->setProgress(-1);
 
+	int32_t logoSize = s_bitmapLogos->getSize().cy;
 	canvas.drawBitmap(
-		ui::Point(controlRect.left + 2, controlRect.getCenter().y - 12),
-		ui::Point(platform->getIconIndex() * 24, 0),
-		ui::Size(24, 24),
-		s_bitmapPlatforms,
+		ui::Point(controlRect.left + 2, controlRect.getCenter().y - logoSize / 2),
+		ui::Point(platform->getIconIndex() * logoSize, 0),
+		ui::Size(logoSize, logoSize),
+		s_bitmapLogos,
 		ui::BmAlpha
 	);
 
 	ui::Rect textRect = controlRect;
-	textRect.left += 34;
-	textRect.right -= 24 * 3 - 8;
+	textRect.left += logoSize + 10;
+	textRect.right -= ui::scaleBySystemDPI(24) * 3 - 8;
 
 	canvas.setForeground(ui::getSystemColor(ui::ScWindowText));
 	canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
@@ -303,7 +305,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	ui::Font markerFont = widgetFont; markerFont.setSize(7);
 
 	performanceRect = rect;
-	performanceRect.right -= 34;
+	performanceRect.right -= ui::scaleBySystemDPI(34);
 	performanceRect.top = rect.top + ui::scaleBySystemDPI(28);
 	performanceRect.bottom = performanceRect.top + ui::scaleBySystemDPI(c_performanceHeight);
 

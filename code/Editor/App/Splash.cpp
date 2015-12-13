@@ -4,7 +4,7 @@
 #include "Ui/Image.h"
 
 // Resources
-#include "Resources/Splash.h"
+//#include "Resources/Splash.h"
 
 namespace traktor
 {
@@ -18,18 +18,18 @@ bool Splash::create()
 	if (!ui::ToolForm::create(0, L"Splash", 0, 0, ui::WsTop, new ui::FloodLayout()))
 		return false;
 
-	Ref< ui::Bitmap > splash = ui::Bitmap::load(c_ResourceSplash, sizeof(c_ResourceSplash), L"png");
-	T_ASSERT (splash);
+	//Ref< ui::Bitmap > splash = ui::Bitmap::load(c_ResourceSplash, sizeof(c_ResourceSplash), L"png");
+	//T_ASSERT (splash);
 
-	Ref< ui::Image > image = new ui::Image();
-	image->create(this, splash, false);
+	//Ref< ui::Image > image = new ui::Image();
+	//image->create(this, splash, false);
 
-	fit();
-	center();
-	show();
+	//fit();
+	//center();
+	//show();
 
-	raise();
-	update(0, true);
+	//raise();
+	//update(0, true);
 
 	return true;
 }

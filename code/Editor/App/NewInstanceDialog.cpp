@@ -19,7 +19,7 @@
 #include "Ui/Custom/TreeView/TreeViewItem.h"
 
 // Resources
-#include "Resources/Files.h"
+//#include "Resources/Files.h"
 
 #pragma warning(disable: 4344)
 
@@ -81,7 +81,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 
 	m_categoryTree = new ui::custom::TreeView();
 	m_categoryTree->create(left, ui::WsDoubleBuffer);
-	m_categoryTree->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
+	//m_categoryTree->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
 	m_categoryTree->addEventHandler< ui::SelectionChangeEvent >(this, &NewInstanceDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();

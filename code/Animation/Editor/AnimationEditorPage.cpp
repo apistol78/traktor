@@ -191,8 +191,8 @@ bool AnimationEditorPage::create(ui::Container* parent)
 
 	m_toolBarPlay = new ui::custom::ToolBar();
 	m_toolBarPlay->create(m_sequencerPanel);
-	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
-	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceSkeleton, sizeof(c_ResourceSkeleton), L"png"), 5);
+	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"image"), 6);
+	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceSkeleton, sizeof(c_ResourceSkeleton), L"image"), 5);
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_REWIND"), 0, ui::Command(L"Animation.Editor.Rewind")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_PLAY"), 1, ui::Command(L"Animation.Editor.Play")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_STOP"), 2, ui::Command(L"Animation.Editor.Stop")));

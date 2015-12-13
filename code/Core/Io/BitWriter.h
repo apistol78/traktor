@@ -38,6 +38,24 @@ public:
 	/*! \brief Write variable bit-length signed number to stream. */
 	void writeSigned(int32_t nbits, int32_t value);
 
+	/*! \brief Write signed 8 bit number. */
+	bool writeInt8(int8_t v);
+
+	/*! \brief Write unsigned 8 bit number. */
+	bool writeUInt8(uint8_t v);
+
+	/*! \brief Write signed 16 bit number. */
+	bool writeInt16(int16_t v);
+
+	/*! \brief Write unsigned 16 bit number. */
+	bool writeUInt16(uint16_t v);
+
+	/*! \brief Write signed 32 bit number. */
+	bool writeInt32(int32_t v);
+
+	/*! \brief Write unsigned 8 bit number. */
+	bool writeUInt32(uint32_t v);
+
 	/*! \brief Flush bits. */
 	void flush();
 

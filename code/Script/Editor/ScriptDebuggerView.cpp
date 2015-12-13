@@ -24,7 +24,10 @@
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 
 // Resources
-#include "Resources/Debug.h"
+#include "Resources/DebugContinue.h"
+#include "Resources/DebugStepInto.h"
+#include "Resources/DebugStepOver.h"
+#include "Resources/DebugStop.h"
 
 namespace traktor
 {
@@ -53,11 +56,14 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	if (!m_debuggerTools->create(this))
 		return false;
 
-	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebug, sizeof(c_ResourceDebug), L"png"), 5);
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CONTINUE"), 1, ui::Command(L"Script.Editor.Continue")));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), 0, ui::Command(L"Script.Editor.Break")));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), 2, ui::Command(L"Script.Editor.StepInto")));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_OVER"), 3, ui::Command(L"Script.Editor.StepOver")));
+	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebugContinue, sizeof(c_ResourceDebugContinue), L"image"), 1);
+	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebugStepInto, sizeof(c_ResourceDebugStepInto), L"image"), 1);
+	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebugStepOver, sizeof(c_ResourceDebugStepOver), L"image"), 1);
+	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebugStop, sizeof(c_ResourceDebugStop), L"image"), 1);
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CONTINUE"), 0, ui::Command(L"Script.Editor.Continue")));
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), 3, ui::Command(L"Script.Editor.Break")));
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), 1, ui::Command(L"Script.Editor.StepInto")));
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_OVER"), 2, ui::Command(L"Script.Editor.StepOver")));
 	m_debuggerTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptDebuggerView::eventDebuggerToolClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();

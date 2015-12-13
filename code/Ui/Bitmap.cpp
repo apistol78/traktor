@@ -1,3 +1,6 @@
+#pragma optimize( "", off )
+
+#include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Singleton/ISingleton.h"
@@ -13,6 +16,22 @@ namespace traktor
 	{
 		namespace
 		{
+
+#pragma pack(1)
+struct ImageEntry
+{
+	uint16_t dpi;
+	uint32_t offset;
+};
+#pragma pack()
+
+#pragma pack(1)
+struct ImageHeader
+{
+	uint16_t count;
+	ImageEntry entry[1];
+};
+#pragma pack()
 
 class BitmapCache : public ISingleton
 {
@@ -34,13 +53,44 @@ public:
 		if (i != m_cache.end())
 			return i->second;
 
-		Ref< drawing::Image > image = drawing::Image::load(resource, size, extension);
-		if (!image)
-			return 0;
-
 		Ref< Bitmap > bitmap = new Bitmap();
-		if (!bitmap->create(image))
-			return 0;
+
+		if (extension == L"image")
+		{
+			int32_t systemDPI = getSystemDPI();
+			int32_t bestFit = std::numeric_limits< int32_t >::max();
+			int32_t bestFitIndex = 0;
+
+			const ImageHeader* h = static_cast< const ImageHeader* >(resource);
+			for (uint32_t i = 0; i < h->count; ++i)
+			{
+				if (abs(systemDPI - h->entry[i].dpi) < bestFit)
+				{
+					bestFit = abs(systemDPI - h->entry[i].dpi);
+					bestFitIndex = i;
+				}
+			}
+
+			MemoryStream ms(
+				static_cast< const uint8_t* >(resource) + h->entry[bestFitIndex].offset,
+				size - h->entry[bestFitIndex].offset
+			);
+			Ref< drawing::Image > image = drawing::Image::load(&ms, L"png");
+			if (!image)
+				return 0;
+
+			if (!bitmap->create(image))
+				return 0;
+		}
+		else
+		{
+			Ref< drawing::Image > image = drawing::Image::load(resource, size, extension);
+			if (!image)
+				return 0;
+
+			if (!bitmap->create(image))
+				return 0;
+		}
 
 		m_cache.insert(std::make_pair(resource, bitmap));
 		return bitmap;

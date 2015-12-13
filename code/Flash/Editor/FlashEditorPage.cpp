@@ -113,7 +113,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 
 	m_toolBarPlay = new ui::custom::ToolBar();
 	m_toolBarPlay->create(container);
-	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
+	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"image"), 6);
 	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceFlash, sizeof(c_ResourceFlash), L"png"), 6);
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rewind", 0, ui::Command(L"Flash.Editor.Rewind")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", 1, ui::Command(L"Flash.Editor.Play")));

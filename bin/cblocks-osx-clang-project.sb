@@ -263,7 +263,7 @@ end
 				for i = 0, files:size() - 1 do
 					local filePath = Path(files:get(i):getPathNameNoVolume()) -- fileSystem:getAbsolutePath(files:get(i))
 					local ext = filePath:getExtension()
-					if ext == "png" or ext == "xdi" then
+					if ext == "png" or ext == "image" or ext == "xdi" then
 						local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
 						if filePathRel ~= nil then
 --?>

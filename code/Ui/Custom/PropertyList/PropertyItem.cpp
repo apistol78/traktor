@@ -11,8 +11,7 @@
 #include "Ui/Custom/PropertyList/PropertyList.h"
 
 // Resources
-#include "Resources/Expand.h"
-#include "Resources/Collapse.h"
+#include "Resources/PropertyList.h"
 #include "Resources/SmallCross.h"
 
 namespace traktor
@@ -25,7 +24,6 @@ namespace traktor
 			{
 
 Ref< Bitmap > s_imageExpand;
-Ref< Bitmap > s_imageCollapse;
 Ref< Bitmap > s_imageCross;
 
 			}
@@ -40,9 +38,7 @@ PropertyItem::PropertyItem(const std::wstring& text)
 ,	m_parent(0)
 {
 	if (!s_imageExpand)
-		s_imageExpand = Bitmap::load(c_ResourceExpand, sizeof(c_ResourceExpand), L"png");
-	if (!s_imageCollapse)
-		s_imageCollapse = Bitmap::load(c_ResourceCollapse, sizeof(c_ResourceCollapse), L"png");
+		s_imageExpand = Bitmap::load(c_ResourcePropertyList, sizeof(c_ResourcePropertyList), L"image");
 	if (!s_imageCross)
 		s_imageCross = Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png");
 }
@@ -238,23 +234,23 @@ void PropertyItem::paintBackground(Canvas& canvas, const Rect& rc)
 
 void PropertyItem::paintText(Canvas& canvas, const Rect& rc)
 {
-	int depth = getDepth();
-	int left = depth * 8;
+	int32_t depth = getDepth();
+	int32_t left = depth * scaleBySystemDPI(8);
 
 	if (!m_childItems.empty())
 	{
-		Bitmap* image = m_expanded ? s_imageCollapse : s_imageExpand;
-
-		int c = (rc.getHeight() - image->getSize().cy) / 2;
+		int32_t size = s_imageExpand->getSize().cy;
+		int32_t c = (rc.getHeight() - size) / 2;
 
 		canvas.drawBitmap(
-			ui::Point(rc.left + left + 2, rc.top + c),
-			ui::Point(0, 0),
-			image->getSize(),
-			image
+			ui::Point(rc.left + left + scaleBySystemDPI(2), rc.top + c),
+			ui::Point(m_expanded ? size : 0, 0),
+			ui::Size(size, size),
+			s_imageExpand,
+			BmAlpha
 		);
 
-		left += image->getSize().cx + 4;
+		left += size + scaleBySystemDPI(4);
 	}
 
 	canvas.drawText(

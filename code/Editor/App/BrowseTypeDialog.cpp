@@ -17,7 +17,7 @@
 #include "Ui/Custom/TreeView/TreeViewItem.h"
 
 // Resources
-#include "Resources/Files.h"
+//#include "Resources/Files.h"
 
 #pragma warning(disable: 4344)
 
@@ -87,7 +87,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 	m_categoryTree = new ui::custom::TreeView();
 	if (!m_categoryTree->create(left, ui::WsDoubleBuffer))
 		return false;
-	m_categoryTree->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
+	//m_categoryTree->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
 	m_categoryTree->addEventHandler< ui::SelectionChangeEvent >(this, &BrowseTypeDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();

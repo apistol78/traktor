@@ -37,7 +37,6 @@
 #include "Editor/IPipeline.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/TypeBrowseFilter.h"
-#include "Editor/App/AboutDialog.h"
 #include "Editor/App/BrowseInstanceDialog.h"
 #include "Editor/App/BrowseTypeDialog.h"
 #include "Editor/App/BuildView.h"
@@ -101,10 +100,15 @@
 #include "Xml/XmlDeserializer.h"
 
 // Resources
-#include "Resources/TraktorSmall.h"
+#include "Resources/Build.h"
+#include "Resources/CancelBuild.h"
+#include "Resources/Copy.h"
+#include "Resources/Cut.h"
+#include "Resources/Paste.h"
+#include "Resources/Redo.h"
 #include "Resources/Save.h"
-#include "Resources/Standard16.h"
 #include "Resources/Types.h"
+#include "Resources/Undo.h"
 
 #if defined(MessageBox)
 #	undef MessageBox
@@ -416,7 +420,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!ui::Form::create(c_title, ui::scaleBySystemDPI(1280), ui::scaleBySystemDPI(900), ui::Form::WsDefault, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
 		return false;
 
-	setIcon(ui::Bitmap::load(c_ResourceTraktorSmall, sizeof(c_ResourceTraktorSmall), L"png"));
+	//setIcon(ui::Bitmap::load(c_ResourceTraktorSmall, sizeof(c_ResourceTraktorSmall), L"png"));
 
 	addEventHandler< ui::CloseEvent >(this, &EditorForm::eventClose);
 	addEventHandler< ui::TimerEvent >(this, &EditorForm::eventTimer);
@@ -438,7 +442,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.OpenWorkspace"), i18n::Text(L"MENU_FILE_OPEN_WORKSPACE")));
 	menuFile->add(m_menuItemRecent);
 	menuFile->add(new ui::MenuItem(L"-"));
-	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE"), ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"png")));
+	//menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE"), ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"png")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.SaveAll"), i18n::Text(L"MENU_FILE_SAVE_ALL")));
 	menuFile->add(new ui::MenuItem(L"-"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Exit"), i18n::Text(L"MENU_FILE_EXIT")));
@@ -474,18 +478,25 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Create toolbar.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(this, ui::WsNone);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceStandard16, sizeof(c_ResourceStandard16), L"png"), 12);
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 2, ui::Command(L"Editor.Save")));
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceCut, sizeof(c_ResourceCut), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceCopy, sizeof(c_ResourceCopy), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourcePaste, sizeof(c_ResourcePaste), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceUndo, sizeof(c_ResourceUndo), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceRedo, sizeof(c_ResourceRedo), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceBuild, sizeof(c_ResourceBuild), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceCancelBuild, sizeof(c_ResourceCancelBuild), L"image"), 1);
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Editor.Save")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 3, ui::Command(L"Editor.Cut")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 4, ui::Command(L"Editor.Copy")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), 5, ui::Command(L"Editor.Paste")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 1, ui::Command(L"Editor.Cut")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 2, ui::Command(L"Editor.Copy")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), 3, ui::Command(L"Editor.Paste")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), 6, ui::Command(L"Editor.Undo")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), 7, ui::Command(L"Editor.Redo")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), 4, ui::Command(L"Editor.Undo")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), 5, ui::Command(L"Editor.Redo")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 8, ui::Command(L"Editor.Build")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 10, ui::Command(L"Editor.CancelBuild")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 6, ui::Command(L"Editor.Build")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 7, ui::Command(L"Editor.CancelBuild")));
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EditorForm::eventToolClicked);
 
 	updateTitle();
@@ -552,7 +563,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	m_tab = new ui::Tab();
 	m_tab->create(m_dock, ui::Tab::WsLine | ui::Tab::WsCloseButton);
-	m_tab->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 23);
+	m_tab->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"image"), 23);
 	m_tab->addEventHandler< ui::MouseButtonDownEvent >(this, &EditorForm::eventTabButtonDown);
 	m_tab->addEventHandler< ui::TabSelectionChangeEvent >(this, &EditorForm::eventTabSelChange);
 	m_tab->addEventHandler< ui::TabCloseEvent >(this, &EditorForm::eventTabClose);
@@ -2376,15 +2387,6 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		Ref< ui::Widget > panelWidget = checked_type_cast< ui::Widget* >(command.getData());
 		if (panelWidget)
 			showAdditionalPanel(panelWidget);
-	}
-	else if (command == L"Editor.About")
-	{
-		AboutDialog aboutDialog;
-		if (aboutDialog.create(this))
-		{
-			aboutDialog.showModal();
-			aboutDialog.destroy();
-		}
 	}
 	else if (command == L"Editor.Exit")
 		ui::Application::getInstance()->exit(0);

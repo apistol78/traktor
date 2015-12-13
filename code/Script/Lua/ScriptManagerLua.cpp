@@ -931,7 +931,7 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
 	{
-		log::error << L"Unable to call method; null object" << Endl;
+		log::error << L"Unable to call method \"" << mbstows(runtimeClass->getMethodName(methodId)) << L"\"; null object" << Endl;
 		return 0;
 	}
 
@@ -983,7 +983,7 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
 	{
-		log::error << L"Unable to call method; null object" << Endl;
+		log::error << L"Unable to call method \"" << mbstows(methodName) << L"\"; null object" << Endl;
 		return 0;
 	}
 
@@ -1050,7 +1050,7 @@ int ScriptManagerLua::classAddMethod(lua_State* luaState)
 
 	if (!object)
 	{
-		log::error << L"Unable to call method; null object" << Endl;
+		log::error << L"Unable to call add operator; null object" << Endl;
 		return 0;
 	}
 
@@ -1075,7 +1075,7 @@ int ScriptManagerLua::classSubtractMethod(lua_State* luaState)
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
 	{
-		log::error << L"Unable to call method; null object" << Endl;
+		log::error << L"Unable to call subtract operator; null object" << Endl;
 		return 0;
 	}
 
@@ -1115,7 +1115,7 @@ int ScriptManagerLua::classMultiplyMethod(lua_State* luaState)
 
 	if (!object)
 	{
-		log::error << L"Unable to call method; null object" << Endl;
+		log::error << L"Unable to call multiply operator; null object" << Endl;
 		return 0;
 	}
 
@@ -1140,7 +1140,7 @@ int ScriptManagerLua::classDivideMethod(lua_State* luaState)
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
 	{
-		log::error << L"Unable to call method; null object" << Endl;
+		log::error << L"Unable to call divide operator; null object" << Endl;
 		return 0;
 	}
 

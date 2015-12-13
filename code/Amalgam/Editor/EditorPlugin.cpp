@@ -25,7 +25,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
-//#include "Core/Misc/StringSplit.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -47,7 +46,6 @@
 #include "I18N/Text.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketAddressIPv4.h"
-//#include "Net/Url.h"
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
@@ -153,12 +151,12 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolBar->create(container);
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
 
-	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), 120, i18n::Text(L"AMALGAM_TARGETS"));
+	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), ui::scaleBySystemDPI(120), i18n::Text(L"AMALGAM_TARGETS"));
 	m_toolBar->addItem(m_toolTargets);
 
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 
-	m_toolTweaks = new ui::custom::ToolBarDropMenu(ui::Command(L"Amalgam.Tweaks"), 70, i18n::Text(L"AMALGAM_TWEAKS"), i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
+	m_toolTweaks = new ui::custom::ToolBarDropMenu(ui::Command(L"Amalgam.Tweaks"), ui::scaleBySystemDPI(70), i18n::Text(L"AMALGAM_TWEAKS"), i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
 	m_toolTweaks->add(createTweakMenuItem(L"Mute Audio", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Audio \"Write Out\"", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Force VBlank Off", false));
@@ -171,7 +169,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
 	m_toolBar->addItem(m_toolTweaks);
 
-	m_toolLanguage = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Language"), 85, i18n::Text(L"AMALGAM_LANGUAGE"));
+	m_toolLanguage = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Language"), ui::scaleBySystemDPI(85), i18n::Text(L"AMALGAM_LANGUAGE"));
 	m_toolLanguage->add(i18n::Text(L"AMALGAM_LANGUAGE_DEFAULT"));
 	for (uint32_t i = 0; i < sizeof_array(c_languageCodes); ++i)
 		m_toolLanguage->add(i18n::Text(c_languageCodes[i].human));

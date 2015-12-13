@@ -98,7 +98,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 
 	m_treeSkeleton = new ui::TreeView();
 	m_treeSkeleton->create(m_skeletonPanel, ui::TreeView::WsDefault & ~ui::WsClientBorder);
-	m_treeSkeleton->addImage(ui::Bitmap::load(c_ResourceBones, sizeof(c_ResourceBones), L"png"), 2);
+	m_treeSkeleton->addImage(ui::Bitmap::load(c_ResourceBones, sizeof(c_ResourceBones), L"image"), 2);
 	m_treeSkeleton->addEventHandler< ui::MouseButtonDownEvent >(this, &SkeletonEditorPage::eventTreeButtonDown);
 	m_treeSkeleton->addEventHandler< ui::SelectionChangeEvent >(this, &SkeletonEditorPage::eventTreeSelect);
 	m_treeSkeleton->addEventHandler< ui::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
@@ -559,7 +559,7 @@ void SkeletonEditorPage::eventTreeSelect(ui::SelectionChangeEvent* event)
 	if (!selectedItem)
 		return;
 
-	Ref< Joint > joint = selectedItem->getData< Joint >(L"JOINT");
+	Joint* joint = selectedItem->getData< Joint >(L"JOINT");
 	m_selectedJoint = findIndexOfJoint(m_skeleton, joint);
 
 	if (joint)
@@ -573,11 +573,12 @@ void SkeletonEditorPage::eventTreeSelect(ui::SelectionChangeEvent* event)
 void SkeletonEditorPage::eventTreeEdited(ui::TreeViewContentChangeEvent* event)
 {
 	ui::TreeViewItem* selectedItem = event->getItem();
-
-	Ref< Joint > joint = selectedItem->getData< Joint >(L"JOINT");
-	std::wstring name = selectedItem->getText();
-
-	joint->setName(name);
+	Joint* joint = selectedItem->getData< Joint >(L"JOINT");
+	if (joint)
+	{
+		std::wstring name = selectedItem->getText();
+		joint->setName(name);
+	}
 }
 
 	}
