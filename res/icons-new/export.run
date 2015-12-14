@@ -112,6 +112,12 @@ local outputs =
 
 	-- Flash
 	-- { name = "Playback", column = 0, row = 13, width = 6, height = 1 },
+
+	-- Terrain
+	{ name = "Terrain", column = 0, row = 14, width = 15, height = 1 },
+
+	-- Theater
+	{ name = "Theater", column = 0, row = 15, width = 8, height = 1 },
 }
 
 local function export(input, x, y, width, height, dpi, output)

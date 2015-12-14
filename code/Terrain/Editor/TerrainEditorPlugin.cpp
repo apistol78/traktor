@@ -54,7 +54,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 {
 	m_parent = parent;
 
-	int32_t image = toolBar->addImage(ui::Bitmap::load(c_ResourceTerrain, sizeof(c_ResourceTerrain), L"png"), 15);
+	int32_t image = toolBar->addImage(ui::Bitmap::load(c_ResourceTerrain, sizeof(c_ResourceTerrain), L"image"), 15);
 
 	m_toolToggleEditTerrain = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EDIT_TERRAIN"), image + 6, ui::Command(L"Terrain.Editor.EditTerrain"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSplat = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SPLAT_BRUSH"), image + 9, ui::Command(L"Terrain.Editor.SplatBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
