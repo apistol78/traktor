@@ -21,8 +21,8 @@
 #include "World/EntityData.h"
 
 // Resources
+#include "Resources/Folders.h"
 #include "Resources/Types.h"
-#include "Resources/EntityTypes.h"
 
 namespace traktor
 {
@@ -63,8 +63,8 @@ bool EntityDependencyInvestigator::create(ui::Widget* parent)
 
 	m_dependencyTree = new ui::custom::TreeView();
 	m_dependencyTree->create(this, (ui::custom::TreeView::WsDefault & ~ui::WsClientBorder) | ui::WsDoubleBuffer);
-	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 30);
-	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
+	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceFolders, sizeof(c_ResourceFolders), L"image"), 2);
+	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"image"), 23);
 	m_dependencyTree->addEventHandler< ui::custom::TreeViewItemActivateEvent >(this, &EntityDependencyInvestigator::eventDependencyActivate);
 
 	m_context->addEventHandler< ui::SelectionChangeEvent >(this, &EntityDependencyInvestigator::eventContextSelect);

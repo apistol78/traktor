@@ -56,8 +56,10 @@
 #include "Ui/Custom/Splitter.h"
 
 // Resources
+#include "Resources/BrowseBackground.h"
+#include "Resources/BrowseImageProcess.h"
 #include "Resources/Playback.h"
-#include "Resources/EffectEdit.h"
+#include "Resources/Randomize.h"
 #include "Resources/LayerDelete.h"
 #include "Resources/LayerVisible.h"
 #include "Resources/LayerHidden.h"
@@ -152,8 +154,10 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceEffectEdit, sizeof(c_ResourceEffectEdit), L"png"), 6);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"image"), 6);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceBrowseBackground, sizeof(c_ResourceBrowseBackground), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceBrowseImageProcess, sizeof(c_ResourceBrowseImageProcess), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceRandomize, sizeof(c_ResourceRandomize), L"image"), 1);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_REWIND"), 0, ui::Command(L"Effect.Editor.Rewind")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_PLAY"), 1, ui::Command(L"Effect.Editor.Play")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_STOP"), 2, ui::Command(L"Effect.Editor.Stop")));
@@ -161,10 +165,10 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(m_toolToggleMove);
 	m_toolBar->addItem(m_toolToggleGroundClip);
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 6, ui::Command(L"Effect.Editor.RandomizeSeed")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 8, ui::Command(L"Effect.Editor.RandomizeSeed")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_BACKGROUND"), 10, ui::Command(L"Effect.Editor.BrowseBackground")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_POSTPROCESS"), 11, ui::Command(L"Effect.Editor.BrowseImageProcess")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_BACKGROUND"), 6, ui::Command(L"Effect.Editor.BrowseBackground")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_POSTPROCESS"), 7, ui::Command(L"Effect.Editor.BrowseImageProcess")));
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolClick);
 
 	m_previewControl = new EffectPreviewControl(m_editor);

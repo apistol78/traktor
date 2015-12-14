@@ -91,14 +91,16 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, B
 {
 	Size size = getSize(toolBar, imageWidth, imageHeight);
 
+	int32_t sep = ui::scaleBySystemDPI(14);
+
 	Rect rcText(
 		at.x + 4,
 		at.y + 2,
-		at.x + size.cx - 14 - 2,
+		at.x + size.cx - sep - 2,
 		at.y + size.cy - 2
 	);
 	Rect rcButton(
-		at.x + size.cx - 14,
+		at.x + size.cx - sep,
 		at.y + 1,
 		at.x + size.cx - 1,
 		at.y + size.cy - 1
@@ -118,11 +120,11 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, B
 	}
 
 	Point center = rcButton.getCenter();
-	Point pnts[] =
+	ui::Point pnts[] =
 	{
-		Point(center.x - 2, center.y - 1),
-		Point(center.x + 3, center.y - 1),
-		Point(center.x,     center.y + 2)
+		ui::Point(center.x - ui::scaleBySystemDPI(3), center.y - ui::scaleBySystemDPI(1)),
+		ui::Point(center.x + ui::scaleBySystemDPI(2), center.y - ui::scaleBySystemDPI(1)),
+		ui::Point(center.x - ui::scaleBySystemDPI(1), center.y + ui::scaleBySystemDPI(2))
 	};
 
 	canvas.setBackground(getSystemColor(ScWindowText));

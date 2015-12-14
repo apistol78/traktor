@@ -5,7 +5,8 @@ local dpis =
 	96,
 	120,
 	144,
-	192
+	192,
+	240
 }
 
 local outputs =
@@ -57,6 +58,10 @@ local outputs =
 	-- { name = "ToggleMoveEmitter", column = 2, row = 6, width = 1, height = 1 },
 	-- { name = "BrowseBackground", column = 3, row = 6, width = 1, height = 1 },
 	-- { name = "BrowseImageProcess", column = 4, row = 6, width = 1, height = 1 },
+	-- { name = "Playback", column = 0, row = 13, width = 6, height = 1 },
+	-- { name = "LayerVisible", column = 5, row = 6, width = 1, height = 1 },
+	-- { name = "LayerHidden", column = 6, row = 6, width = 1, height = 1 },
+	-- { name = "LayerDelete", column = 9, row = 6, width = 1, height = 1 },
 
 	-- Shader
 	-- { name = "Tools", column = 0, row = 7, width = 14, height = 1 },
@@ -72,6 +77,17 @@ local outputs =
 	-- { name = "Rewind", column = 7, row = 8, width = 1, height = 1 },
 	-- { name = "Play", column = 8, row = 8, width = 1, height = 1 },
 	-- { name = "Stop", column = 9, row = 8, width = 1, height = 1 },
+	-- { name = "LayerVisible", column = 5, row = 6, width = 1, height = 1 },
+	-- { name = "LayerHidden", column = 6, row = 6, width = 1, height = 1 },
+	-- { name = "LayerLocked", column = 7, row = 6, width = 1, height = 1 },
+	-- { name = "LayerUnlocked", column = 8, row = 6, width = 1, height = 1 },
+	-- { name = "LayerDelete", column = 9, row = 6, width = 1, height = 1 },
+	-- { name = "Types", column = 0, row = 2, width = 23, height = 1 },
+	-- { name = "Folders", column = 0, row = 3, width = 2, height = 1 },
+	-- { name = "RemoveEntity", column = 10, row = 8, width = 1, height = 1 },
+	-- { name = "MoveToEntity", column = 11, row = 8, width = 1, height = 1 },
+	-- { name = "ToggleGrid", column = 10, row = 8, width = 1, height = 1 },
+	-- { name = "ToggleGuide", column = 11, row = 8, width = 1, height = 1 },
 
 	-- Amalgam
 	-- { name = "Logos", column = 0, row = 9, width = 13, height = 1, base = 24 },
@@ -95,13 +111,13 @@ local outputs =
 	-- { name = "Playback", column = 0, row = 13, width = 6, height = 1 },
 
 	-- Flash
-	{ name = "Playback", column = 0, row = 13, width = 6, height = 1 },
+	-- { name = "Playback", column = 0, row = 13, width = 6, height = 1 },
 }
 
 local function export(input, x, y, width, height, dpi, output)
 	local inkscape = "c:/program files/inkscape/inkscape.exe"
 	local cmd = "\"" .. inkscape .. "\" -e \"" .. output .. "\" -a " .. x .. ":" .. -y .. ":" .. (x + width) .. ":" .. -y + height .. " -d " .. dpi .. " " .. input
-	local result = run:execute(cmd, nil)
+	local result = run:execute(cmd)
 	return result == 0
 end
 
