@@ -90,7 +90,7 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 
 	m_toolBarActs = new ui::custom::ToolBar();
 	m_toolBarActs->create(containerActs);
-	m_toolBarActs->addImage(ui::Bitmap::load(c_ResourceTheater, sizeof(c_ResourceTheater), L"png"), 8);
+	m_toolBarActs->addImage(ui::Bitmap::load(c_ResourceTheater, sizeof(c_ResourceTheater), L"image"), 8);
 	m_toolBarActs->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_ADD_ACT"), 6, ui::Command(L"Theater.AddAct")));
 	m_toolBarActs->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_REMOVE_ACT"), 7, ui::Command(L"Theater.RemoveAct")));
 	m_toolBarActs->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &TheaterControllerEditor::eventToolBarClick);

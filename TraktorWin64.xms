@@ -15049,7 +15049,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/toolbar/Terrain.png</fileName>
+							<fileName>Resources/*.image</fileName>
 							<items/>
 						</item>
 					</items>
@@ -18884,7 +18884,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/toolbar/Theater.png</fileName>
+							<fileName>Resources/*.image</fileName>
 							<items/>
 						</item>
 					</items>
