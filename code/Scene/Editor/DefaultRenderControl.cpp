@@ -25,8 +25,8 @@
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
 // Resources
-#include "Resources/EntityEdit.h"
-#include "Resources/SceneEdit.h"
+#include "Resources/ToggleGrid.h"
+#include "Resources/ToggleGuide.h"
 
 namespace traktor
 {
@@ -64,8 +64,8 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	if (!m_toolBar->create(m_container))
 		return false;
 
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceSceneEdit, sizeof(c_ResourceSceneEdit), L"png"), 17);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceEntityEdit, sizeof(c_ResourceEntityEdit), L"png"), 5);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceToggleGrid, sizeof(c_ResourceToggleGrid), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceToggleGuide, sizeof(c_ResourceToggleGuide), L"image"), 1);
 
 	m_toolView = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), ui::scaleBySystemDPI(100), i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));
@@ -81,14 +81,14 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	m_toolToggleGrid = new ui::custom::ToolBarButton(
 		i18n::Text(L"SCENE_EDITOR_TOGGLE_GRID"),
-		16,
+		0,
 		ui::Command(1, L"Scene.Editor.ToggleGrid"),
 		gridEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
 	m_toolToggleGuide = new ui::custom::ToolBarButton(
 		i18n::Text(L"SCENE_EDITOR_TOGGLE_GUIDE"),
-		5,
+		1,
 		ui::Command(1, L"Scene.Editor.ToggleGuide"),
 		guideEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);

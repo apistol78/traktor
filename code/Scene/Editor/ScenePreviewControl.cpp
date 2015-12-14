@@ -41,8 +41,16 @@
 #include "World/IEntityEventManager.h"
 
 // Resources
-#include "Resources/SceneEdit.h"
-#include "Resources/Playback.h"
+#include "Resources/DualView.h"
+#include "Resources/Play.h"
+#include "Resources/Pointer.h"
+#include "Resources/QuadView.h"
+#include "Resources/Rewind.h"
+#include "Resources/Rotate.h"
+#include "Resources/SingleView.h"
+#include "Resources/Snap.h"
+#include "Resources/Stop.h"
+#include "Resources/Translate.h"
 
 namespace traktor
 {
@@ -64,12 +72,12 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	m_toolTogglePick = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_PICK"), 10, ui::Command(1, L"Scene.Editor.TogglePick"), ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleTranslate = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TRANSLATE"), 0, ui::Command(L"Scene.Editor.Translate"), ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleRotate = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_ROTATE"), 1, ui::Command(L"Scene.Editor.Rotate"), ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleSnap = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), 7, ui::Command(1, L"Scene.Editor.ToggleSnap"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolTogglePick = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_PICK"), 0, ui::Command(1, L"Scene.Editor.TogglePick"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleTranslate = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TRANSLATE"), 1, ui::Command(L"Scene.Editor.Translate"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleRotate = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_ROTATE"), 2, ui::Command(L"Scene.Editor.Rotate"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleSnap = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), 3, ui::Command(1, L"Scene.Editor.ToggleSnap"), ui::custom::ToolBarButton::BsDefaultToggle);
 
-	m_toolSnapSpacing = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.SnapSpacing"), 60, i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP_SPACING"));
+	m_toolSnapSpacing = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.SnapSpacing"), ui::scaleBySystemDPI(60), i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP_SPACING"));
 	m_toolSnapSpacing->add(L"None");
 	m_toolSnapSpacing->add(L"1/8");
 	m_toolSnapSpacing->add(L"1/4");
@@ -90,8 +98,16 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_toolBarActions = new ui::custom::ToolBar();
 	m_toolBarActions->create(this, ui::WsBorder);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceSceneEdit, sizeof(c_ResourceSceneEdit), L"png"), 17);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourcePointer, sizeof(c_ResourcePointer), L"image"), 1);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceTranslate, sizeof(c_ResourceTranslate), L"image"), 1);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceRotate, sizeof(c_ResourceRotate), L"image"), 1);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceSnap, sizeof(c_ResourceSnap), L"image"), 1);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourcePlay, sizeof(c_ResourcePlay), L"image"), 1);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceRewind, sizeof(c_ResourceRewind), L"image"), 1);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceStop, sizeof(c_ResourceStop), L"image"), 1);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceSingleView, sizeof(c_ResourceSingleView), L"image"), 1);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceDualView, sizeof(c_ResourceDualView), L"image"), 1);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceQuadView, sizeof(c_ResourceQuadView), L"image"), 1);
 	m_toolBarActions->addItem(m_toolTogglePick);
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarActions->addItem(m_toolToggleTranslate);
@@ -100,13 +116,13 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(m_toolToggleSnap);
 	m_toolBarActions->addItem(m_toolSnapSpacing);
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REWIND"), 17, ui::Command(L"Scene.Editor.Rewind")));
-	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_PLAY"), 18, ui::Command(L"Scene.Editor.Play")));
-	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_STOP"), 19, ui::Command(L"Scene.Editor.Stop")));
+	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REWIND"), 5, ui::Command(L"Scene.Editor.Rewind")));
+	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_PLAY"), 4, ui::Command(L"Scene.Editor.Play")));
+	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_STOP"), 6, ui::Command(L"Scene.Editor.Stop")));
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_SINGLE_VIEW"), 13, ui::Command(L"Scene.Editor.SingleView")));
-	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_DOUBLE_VIEW"), 14, ui::Command(L"Scene.Editor.DoubleView")));
-	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_QUADRUPLE_VIEW"), 15, ui::Command(L"Scene.Editor.QuadrupleView")));
+	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_SINGLE_VIEW"), 7, ui::Command(L"Scene.Editor.SingleView")));
+	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_DOUBLE_VIEW"), 8, ui::Command(L"Scene.Editor.DoubleView")));
+	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_QUADRUPLE_VIEW"), 9, ui::Command(L"Scene.Editor.QuadrupleView")));
 	m_toolBarActions->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScenePreviewControl::eventToolBarActionClicked);
 
 	// Let plugins create additional toolbar items.

@@ -7935,39 +7935,7 @@
 								<name>Resources</name>
 								<items>
 									<item type="File">
-										<fileName>../../../res/toolbar/EntityEdit.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/toolbar/SceneEdit.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/toolbar/Playback.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/editor/EntityTypes.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/editor/Types.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerHidden.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerVisible.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerLocked.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerUnlocked.png</fileName>
+										<fileName>Resources/*.image</fileName>
 										<items/>
 									</item>
 								</items>
@@ -14737,27 +14705,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/toolbar/Playback.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/toolbar/EffectEdit.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/toolbar/SceneEdit.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/LayerHidden.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/LayerVisible.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/LayerDelete.png</fileName>
+							<fileName>Resources/*.image</fileName>
 							<items/>
 						</item>
 					</items>
