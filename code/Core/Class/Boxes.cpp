@@ -1526,6 +1526,8 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< BoxedAabb2 > > classBoxedAabb2 = new AutoRuntimeClass< BoxedAabb2 >();
 	classBoxedAabb2->addConstructor();
 	classBoxedAabb2->addConstructor< const BoxedVector2*, const BoxedVector2* >();
+	classBoxedAabb2->addMethod("min", &BoxedAabb2::min);
+	classBoxedAabb2->addMethod("max", &BoxedAabb2::max);
 	classBoxedAabb2->addMethod("inside", &BoxedAabb2::inside);
 	classBoxedAabb2->addMethod("contain", &BoxedAabb2::contain);
 	classBoxedAabb2->addMethod("getCenter", &BoxedAabb2::getCenter);
@@ -1536,6 +1538,8 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< BoxedAabb3 > > classBoxedAabb3 = new AutoRuntimeClass< BoxedAabb3 >();
 	classBoxedAabb3->addConstructor();
 	classBoxedAabb3->addConstructor< const BoxedVector4*, const BoxedVector4* >();
+	classBoxedAabb3->addMethod("min", &BoxedAabb3::min);
+	classBoxedAabb3->addMethod("max", &BoxedAabb3::max);
 	classBoxedAabb3->addMethod("inside", &BoxedAabb3::inside);
 	classBoxedAabb3->addMethod("contain", &BoxedAabb3::contain);
 	classBoxedAabb3->addMethod("scale", &BoxedAabb3::scale);

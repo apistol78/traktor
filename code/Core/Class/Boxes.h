@@ -483,6 +483,10 @@ public:
 
 	explicit BoxedAabb2(const BoxedVector2* min, const BoxedVector2* max);
 
+	const Vector2& min() const { return m_value.mn; }
+
+	const Vector2& max() const { return m_value.mx; }
+
 	bool inside(const BoxedVector2* pt) const { return m_value.inside(pt->unbox()); }
 
 	void contain(const BoxedVector2* pt) { m_value.contain(pt->unbox()); }
@@ -515,6 +519,10 @@ public:
 	explicit BoxedAabb3(const Aabb3& value);
 
 	explicit BoxedAabb3(const BoxedVector4* min, const BoxedVector4* max);
+
+	const Vector4& min() const { return m_value.mn; }
+
+	const Vector4& max() const { return m_value.mx; }
 
 	bool inside(const BoxedVector4* pt) const { return m_value.inside(pt->unbox()); }
 
