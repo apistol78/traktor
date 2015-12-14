@@ -61,7 +61,7 @@ RichEdit::RichEdit()
 
 bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 {
-	if (!Widget::create(parent, style | WsWantAllInput))
+	if (!Widget::create(parent, style | WsWantAllInput | WsDoubleBuffer | WsAccelerated))
 		return false;
 
 	addEventHandler< KeyDownEvent >(this, &RichEdit::eventKeyDown);
