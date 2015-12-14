@@ -77,7 +77,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.PropertyList", PropertyList, Widget)
 
 PropertyList::PropertyList()
 :	m_guidResolver(0)
-,	m_separator(ui::scaleBySystemDPI(80))
+,	m_separator(scaleBySystemDPI(80))
 ,	m_mode(MdNone)
 ,	m_columnHeader(true)
 {
@@ -241,7 +241,7 @@ Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& posit
 	int32_t y = position.y;
 	if (m_columnHeader)
 	{
-		y -= ui::scaleBySystemDPI(c_columnsHeight);
+		y -= scaleBySystemDPI(c_columnsHeight);
 		if (y < 0)
 			return 0;
 	}
@@ -334,7 +334,7 @@ void PropertyList::updateScrollBar()
 
 	int32_t height = rc.getHeight();
 	if (m_columnHeader)
-		height -= ui::scaleBySystemDPI(c_columnsHeight);
+		height -= scaleBySystemDPI(c_columnsHeight);
 
 	int32_t itemCount = int(propertyItems.size());
 	int32_t pageCount = height / scaleBySystemDPI(c_propertyItemHeight);
@@ -353,7 +353,7 @@ void PropertyList::placeItems()
 {
 	int32_t scrollBarOffset = m_scrollBar->getPosition() * scaleBySystemDPI(c_propertyItemHeight);
 	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
-	int32_t top = m_columnHeader ? ui::scaleBySystemDPI(c_columnsHeight) : 0;
+	int32_t top = m_columnHeader ? scaleBySystemDPI(c_columnsHeight) : 0;
 
 	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
@@ -392,7 +392,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 	setFocus();
 
 	m_mousePropertyItem = 0;
-	if (p.x >= m_separator - 2 && p.x <= m_separator + 2)
+	if (p.x >= m_separator - scaleBySystemDPI(2) && p.x <= m_separator + scaleBySystemDPI(2))
 	{
 		m_mode = MdMoveSeparator;
 		setCursor(CrSizeWE);
@@ -406,7 +406,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 		int32_t y = event->getPosition().y;
 		if (m_columnHeader)
 		{
-			if ((y -= ui::scaleBySystemDPI(c_columnsHeight)) < 0)
+			if ((y -= scaleBySystemDPI(c_columnsHeight)) < 0)
 				return;
 		}
 
@@ -418,12 +418,12 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 		{
 			if (int(std::distance(propertyItems.begin(), i)) == id)
 			{
-				if (p.x >= m_separator + 2)
+				if (p.x >= m_separator + scaleBySystemDPI(2))
 				{
 					m_mousePropertyItem = *i;
 					m_mousePropertyItem->mouseButtonDown(event);
 				}
-				else if (p.x >= (*i)->getDepth() * 8 && p.x <= (*i)->getDepth() * 8 + 12)
+				else if (p.x >= (*i)->getDepth() * scaleBySystemDPI(8) && p.x <= (*i)->getDepth() * scaleBySystemDPI(8) + scaleBySystemDPI(12))
 				{
 					if ((*i)->isExpanded())
 						(*i)->collapse();
@@ -514,7 +514,7 @@ void PropertyList::eventMouseMove(MouseMoveEvent* event)
 	}
 	else
 	{
-		if (p.x >= m_separator - 2 && p.x <= m_separator + 2)
+		if (p.x >= m_separator - scaleBySystemDPI(2) && p.x <= m_separator + scaleBySystemDPI(2))
 		{
 			setCursor(CrSizeWE);
 			event->consume();
@@ -541,7 +541,7 @@ void PropertyList::eventSize(SizeEvent* event)
 	Rect rc = getInnerRect();
 
 	int32_t scrollWidth = m_scrollBar->getPreferedSize().cx;
-	int32_t top = m_columnHeader ? ui::scaleBySystemDPI(c_columnsHeight) : 0;
+	int32_t top = m_columnHeader ? scaleBySystemDPI(c_columnsHeight) : 0;
 
 	m_scrollBar->setRect(Rect(
 		rc.right - scrollWidth,
@@ -565,7 +565,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 
 	int32_t scrollBarOffset = m_scrollBar->getPosition() * scaleBySystemDPI(c_propertyItemHeight);
 	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
-	int32_t top = m_columnHeader ? ui::scaleBySystemDPI(c_columnsHeight) : 0;
+	int32_t top = m_columnHeader ? scaleBySystemDPI(c_columnsHeight) : 0;
 
 	// Clear widget background.
 	canvas.setBackground(ss->getColor(this, L"background-color"));
@@ -575,13 +575,13 @@ void PropertyList::eventPaint(PaintEvent* event)
 	if (m_columnHeader)
 	{
 		canvas.setBackground(ss->getColor(this, L"header-background-color"));
-		canvas.fillRect(Rect(rcInner.left, rcInner.top, rcInner.right, rcInner.top + ui::scaleBySystemDPI(c_columnsHeight)));
+		canvas.fillRect(Rect(rcInner.left, rcInner.top, rcInner.right, rcInner.top + scaleBySystemDPI(c_columnsHeight)));
 
 		canvas.setForeground(ss->getColor(this, this->isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			Rect(
 				rcInner.left + 2, rcInner.top,
-				rcInner.left + m_separator - 2, rcInner.top + ui::scaleBySystemDPI(c_columnsHeight)
+				rcInner.left + m_separator - 2, rcInner.top + scaleBySystemDPI(c_columnsHeight)
 			),
 			m_columnNames[0],
 			AnLeft,
@@ -592,7 +592,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 		canvas.drawText(
 			Rect(
 				rcInner.left + m_separator + 2, rcInner.top,
-				rcInner.right, rcInner.top + ui::scaleBySystemDPI(c_columnsHeight)
+				rcInner.right, rcInner.top + scaleBySystemDPI(c_columnsHeight)
 			),
 			m_columnNames[1],
 			AnLeft,
