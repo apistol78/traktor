@@ -93,7 +93,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	m_d2dRenderTarget->SetDpi(96, 96);
 
 	m_d2dRenderTarget->BeginDraw();
-	m_d2dRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Yellow));
+	m_d2dRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
 
 	setForeground(Color4ub(0, 0, 0, 255));
 	setBackground(Color4ub(255, 255, 255, 255));
@@ -118,6 +118,8 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 void CanvasDirect2DWin32::endPaint(Window& hWnd)
 {
 	HRESULT hr;
+
+	resetClipRect();
 
 	m_d2dForegroundBrush.release();
 	m_d2dBackgroundBrush.release();
@@ -204,7 +206,7 @@ void CanvasDirect2DWin32::setBackground(const Color4ub& background)
 
 void CanvasDirect2DWin32::setFont(const Font& font)
 {
-	int32_t size = font.getSize();
+	int32_t size = font.getPixelSize();
 	if (size < 0)
 		size = -size;
 
@@ -647,7 +649,7 @@ Size CanvasDirect2DWin32::getTextExtent(const std::wstring& text) const
 	dwLayout->GetMetrics(&dwtm);
 
 	return Size(
-		dwtm.width,
+		dwtm.widthIncludingTrailingWhitespace,
 		dwtm.height
 	);
 }

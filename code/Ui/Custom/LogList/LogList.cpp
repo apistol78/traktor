@@ -35,7 +35,7 @@ LogList::LogList()
 
 bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 {
-	if (!Widget::create(parent, style | WsDoubleBuffer))
+	if (!Widget::create(parent, style | WsDoubleBuffer | WsAccelerated))
 		return false;
 
 	addEventHandler< PaintEvent >(this, &LogList::eventPaint);
