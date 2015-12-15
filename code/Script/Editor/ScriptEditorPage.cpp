@@ -173,11 +173,11 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_edit->addImage(ui::Bitmap::load(c_ResourceBreakpoint, sizeof(c_ResourceBreakpoint), L"image"), 1);
 
 #if defined(__APPLE__)
-	m_edit->setFont(ui::Font(L"Menlo Regular", 11));
+	m_edit->setFont(ui::Font(L"Menlo Regular", 14));
 #elif defined(__LINUX__)
 	m_edit->setFont(ui::Font(L"DejaVu Sans Mono", 14));
 #else
-	m_edit->setFont(ui::Font(L"Consolas", ui::scaleBySystemDPI(14)));
+	m_edit->setFont(ui::Font(L"Consolas", 14));
 #endif
 	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
 	m_edit->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventScriptDoubleClick);

@@ -4,6 +4,7 @@
 #include <map>
 #include "Core/Misc/TString.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/AllEvents.h"
@@ -240,8 +241,12 @@ public:
 	{
 		LOGFONT lf;
 
+		int32_t dip = font.getSize();
+		float inches = dip / 96.0f;
+		float logical = inches * getSystemDPI();
+
 		std::memset(&lf, 0, sizeof(lf));
-		lf.lfHeight = font.getPointSize();
+		lf.lfHeight = -int32_t(logical + 0.5f);
 		lf.lfWidth = 0;
 		lf.lfEscapement = 0;
 		lf.lfOrientation = 0;
@@ -262,12 +267,30 @@ public:
 	virtual Font getFont() const
 	{
 		LOGFONT lf;
+
 		BOOL result = GetObject(m_hWnd.getFont(), sizeof(lf), &lf);
 		T_ASSERT_M (result, L"Unable to get device font");
 
+		HDC hDC = GetDC(m_hWnd);
+
+		int32_t logical = 0;
+		if (lf.lfHeight >= 0)
+		{
+			TEXTMETRIC tm = { 0 };
+			GetTextMetrics(hDC, &tm);
+			logical = lf.lfHeight - tm.tmInternalLeading;
+		}
+		else
+			logical = -lf.lfHeight;
+
+		ReleaseDC(m_hWnd, hDC);
+
+		float inches = float(logical) / getSystemDPI();
+		float dip = inches * 96.0f;
+
 		return Font(
 			tstows(lf.lfFaceName),
-			lf.lfHeight,
+			int32_t(dip + 0.5f),
 			bool(lf.lfWeight == FW_BOLD),
 			bool(lf.lfItalic == TRUE),
 			bool(lf.lfUnderline == TRUE)

@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Ui/Application.h"
 #include "Ui/Font.h"
 
 namespace traktor
@@ -25,9 +26,10 @@ Font::Font(const Font& font)
 	m_params.underline = font.m_params.underline;
 }
 
-Font::Font(const std::wstring& face, int size, bool bold, bool italic, bool underline)
+Font::Font(const std::wstring& face, int32_t size, bool bold, bool italic, bool underline)
 :	m_face(face)
 {
+	T_FATAL_ASSERT (size >= 0);
 	m_params.size = size;
 	m_params.bold = bold;
 	m_params.italic = italic;
@@ -44,36 +46,30 @@ std::wstring Font::getFace() const
 	return m_face;
 }
 
-void Font::setSize(int size)
+void Font::setSize(int32_t size)
 {
+	T_FATAL_ASSERT (size >= 0);
 	m_params.size = size;
 }
 
-int Font::getSize() const
+int32_t Font::getSize() const
 {
 	return m_params.size;
 }
 
-int Font::getPointSize() const
+void Font::setPixelSize(int32_t size)
 {
-	if (m_params.size > 0)
-		return m_params.size;
-	else
-	{
-		// Internal size specified in pixels, transform to points.
-		return int((-m_params.size / 72.0f) * 96.0f);
-	}
+	T_FATAL_ASSERT (size >= 0);
+	int32_t dpi = getSystemDPI();
+	float inches = float(size) / dpi;
+	m_params.size = int32_t(inches * 96.0f);
 }
 
-int Font::getPixelSize() const
+int32_t Font::getPixelSize() const
 {
-	if (m_params.size > 0)
-	{
-		// Internal size specified in points, transform to pixels.
-		return int((m_params.size / 96.0f) * 72.0f);
-	}
-	else
-		return -m_params.size;
+	int32_t dpi = getSystemDPI();
+	float inches = m_params.size / 96.0f;
+	return int32_t(inches * dpi + 0.5f);
 }
 
 void Font::setBold(bool bold)
