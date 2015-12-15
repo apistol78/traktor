@@ -1,13 +1,13 @@
 #include <cstring>
-#include <sstream>
 #include "Core/Io/IStream.h"
-#include "Core/Serialization/MemberArray.h"
-#include "Core/Serialization/MemberComplex.h"
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/Base64.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
-#include "Core/Misc/Base64.h"
-#include "Core/Log/Log.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Serialization/MemberArray.h"
+#include "Core/Serialization/MemberComplex.h"
 #include "Xml/XmlDeserializer.h"
 
 namespace traktor
@@ -277,7 +277,7 @@ void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 
 	if ((a = findAttribute(attr, L"ref")) != attr.end())
 	{
-		std::map< std::wstring, Ref< ISerializable > >::iterator i = m_refs.find(a->second);
+		SmallMap< std::wstring, Ref< ISerializable > >::const_iterator i = m_refs.find(a->second);
 		if (!ensure(i != m_refs.end()))
 			return;
 
@@ -401,8 +401,8 @@ void XmlDeserializer::operator >> (const MemberEnumBase& m)
 
 std::wstring XmlDeserializer::stackPath()
 {
-	std::wstringstream ss;
-	for (std::list< Entry >::const_iterator i = m_stack.begin(); i != m_stack.end(); ++i)
+	StringOutputStream ss;
+	for (AlignedVector< Entry >::const_iterator i = m_stack.begin(); i != m_stack.end(); ++i)
 	{
 		ss << L'/' << i->name;
 		if (i->index > 0)
