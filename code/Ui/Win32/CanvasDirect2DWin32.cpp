@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #if defined(T_USE_DIRECT2D)
 
 #include <limits>

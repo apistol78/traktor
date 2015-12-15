@@ -200,7 +200,7 @@ public:
 	virtual bool read(int32_t& outStep, std::wstring& outStatus) T_OVERRIDE T_FINAL
 	{
 		outStep = m_step;
-		outStatus = L"...";
+		outStatus = i18n::Text(L"EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_" + toString(m_step), L"...");
 		return true;
 	}
 

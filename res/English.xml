@@ -682,6 +682,26 @@
       <second>Opening workspace...</second>
     </item>
     <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_0</first>
+      <second>Workspace settings</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_100</first>
+      <second>Workspace settings</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_200</first>
+      <second>Source database</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_600</first>
+      <second>Output database</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_1000</first>
+      <second>Done</second>
+    </item>
+    <item>
       <first>EDITOR_ABOUT_TITLE</first>
       <second>About</second>
     </item>
