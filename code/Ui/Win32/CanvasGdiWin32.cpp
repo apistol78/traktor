@@ -1,9 +1,10 @@
-#include "Ui/Win32/CanvasGdiWin32.h"
-#include "Ui/Win32/BitmapWin32.h"
-#include "Core/Misc/TString.h"
+#include "Core/Log/Log.h"
 #include "Core/Math/Envelope.h"
 #include "Core/Math/Vector2.h"
-#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Ui/Application.h"
+#include "Ui/Win32/BitmapWin32.h"
+#include "Ui/Win32/CanvasGdiWin32.h"
 
 namespace traktor
 {
@@ -626,8 +627,12 @@ void CanvasGdiWin32::updateFont()
 {
 	LOGFONT lf;
 
+	int32_t dip = m_font.getSize();
+	float inches = dip / 96.0f;
+	float logical = inches * getSystemDPI();
+
 	std::memset(&lf, 0, sizeof(lf));
-	lf.lfHeight = m_font.getSize();
+	lf.lfHeight = -int32_t(logical + 0.5f);
 	lf.lfWidth = 0;
 	lf.lfEscapement = 0;
 	lf.lfOrientation = 0;

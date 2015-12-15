@@ -1,6 +1,9 @@
+#pragma optimize( "", off )
+
 #if defined(T_USE_DIRECT2D)
 
 #include <limits>
+#include "Ui/Application.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/CanvasDirect2DWin32.h"
 
@@ -101,12 +104,26 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	m_strokeWidth = 1.0f;
 
 	LOGFONT lf;
-	if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
-		return false;
+
+	BOOL result = GetObject(hWnd.getFont(), sizeof(lf), &lf);
+	T_ASSERT_M (result, L"Unable to get device font");
+
+	int32_t logical = 0;
+	if (lf.lfHeight >= 0)
+	{
+		TEXTMETRIC tm = { 0 };
+		GetTextMetrics(hDC, &tm);
+		logical = lf.lfHeight - tm.tmInternalLeading;
+	}
+	else
+		logical = -lf.lfHeight;
+
+	float inches = float(logical) / getSystemDPI();
+	float dip = inches * 96.0f;
 
 	setFont(Font(
 		lf.lfFaceName,
-		lf.lfHeight,
+		int32_t(dip + 0.5f),
 		bool(lf.lfWeight == FW_BOLD),
 		bool(lf.lfItalic == TRUE),
 		bool(lf.lfUnderline == TRUE)
@@ -206,9 +223,7 @@ void CanvasDirect2DWin32::setBackground(const Color4ub& background)
 
 void CanvasDirect2DWin32::setFont(const Font& font)
 {
-	int32_t size = font.getPixelSize();
-	if (size < 0)
-		size = -size;
+	int32_t dip = font.getSize();
 
 	s_dwFactory->CreateTextFormat(
 		font.getFace().c_str(),
@@ -216,7 +231,7 @@ void CanvasDirect2DWin32::setFont(const Font& font)
 		font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 		font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		size,
+		dip * getSystemDPI() / 96.0f,
 		L"",
 		&m_dwTextFormat.getAssign()
 	);

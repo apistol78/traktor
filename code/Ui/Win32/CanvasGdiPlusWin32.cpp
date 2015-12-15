@@ -176,11 +176,11 @@ void CanvasGdiPlusWin32::setFont(const Font& font)
 {
 	m_font.reset(new Gdiplus::Font(
 		font.getFace().c_str(),
-		(Gdiplus::REAL)abs(font.getSize()),
+		(Gdiplus::REAL)font.getPixelSize(),
 		(font.isBold() ? FontStyleBold : 0) |
 		(font.isItalic() ? FontStyleItalic : 0) |
 		(font.isUnderline() ? FontStyleUnderline : 0),
-		font.getSize() < 0 ? UnitPixel : UnitPoint,
+		UnitPixel,
 		NULL
 	));
 }

@@ -27,7 +27,7 @@ const int32_t c_fontHeightMargin = 4;
 #elif defined(__LINUX__)
 const int32_t c_fontHeightMargin = 1;
 #else
-const int32_t c_fontHeightMargin = 1;
+const int32_t c_fontHeightMargin = 5;
 #endif
 
 bool isWordSeparator(wchar_t ch)
@@ -388,7 +388,7 @@ bool RichEdit::showLine(int32_t line)
 	Font font = getFont();
 	Rect rc = getEditRect();
 
-	int32_t lineHeight = font.getSize() + c_fontHeightMargin;
+	int32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
 	int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 	int32_t top = m_scrollBarV->getPosition();
@@ -441,7 +441,7 @@ void RichEdit::updateScrollBars()
 
 	uint32_t lineCount = m_lines.size();
 	uint32_t lineOffset = 0;
-	uint32_t lineHeight = font.getSize() + c_fontHeightMargin;
+	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 	m_scrollBarV->setRange(lineCount + pageLines);
@@ -668,7 +668,7 @@ void RichEdit::scrollToCaret()
 		Font font = getFont();
 		Rect rc = getEditRect();
 
-		int32_t lineHeight = font.getSize() + c_fontHeightMargin;
+		int32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
 		int32_t pageLines = rc.getHeight() / lineHeight;
 
 		int32_t top = m_scrollBarV->getPosition();
@@ -840,7 +840,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			Font font = getFont();
 			Rect rc = getEditRect();
 
-			int32_t lineHeight = font.getSize() + c_fontHeightMargin;
+			int32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
 			int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 			for (int32_t i = 1; i < int32_t(m_lines.size()); ++i)
@@ -864,7 +864,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			Font font = getFont();
 			Rect rc = getEditRect();
 
-			int32_t lineHeight = font.getSize() + c_fontHeightMargin;
+			int32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
 			int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 			for (int32_t i = 0; i < int32_t(m_lines.size()) - 1; ++i)
@@ -977,7 +977,7 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 
 	uint32_t lineCount = m_lines.size();
 	uint32_t lineOffset = m_scrollBarV->getPosition();
-	uint32_t lineHeight = font.getSize() + c_fontHeightMargin;
+	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 	uint32_t line = lineOffset + mousePosition.y / lineHeight;
@@ -1057,7 +1057,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 	uint32_t lineCount = m_lines.size();
 	uint32_t lineOffset = m_scrollBarV->getPosition();
-	uint32_t lineHeight = abs(font.getSize()) + c_fontHeightMargin;
+	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
 	uint32_t pageLines = (innerRc.getHeight() + lineHeight - 1) / lineHeight;
 
 	// Calculate margin width from highest visible line number.

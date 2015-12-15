@@ -19,6 +19,9 @@ namespace traktor
 
 /*! \brief Font
  * \ingroup UI
+ *
+ * Font size is expressed in "device independent pixels" (DIP) size which is defined
+ * as being pixels on a 1/96 inch DPI device.
  */
 class T_DLLCLASS Font : public Object
 {
@@ -29,19 +32,19 @@ public:
 
 	Font(const Font& font);
 
-	Font(const std::wstring& face, int size, bool bold = false, bool italic = false, bool underline = false);
+	Font(const std::wstring& face, int32_t size, bool bold = false, bool italic = false, bool underline = false);
 
 	void setFace(const std::wstring& face);
 
 	std::wstring getFace() const;
 
-	void setSize(int size);
+	void setSize(int32_t size);
 
-	int getSize() const;
+	int32_t getSize() const;
 
-	int getPointSize() const;
+	void setPixelSize(int32_t size);
 
-	int getPixelSize() const;
+	int32_t getPixelSize() const;
 
 	void setBold(bool bold);
 
