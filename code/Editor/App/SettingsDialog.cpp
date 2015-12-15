@@ -1,5 +1,7 @@
-#include "Editor/App/SettingsDialog.h"
+#include "Core/Misc/String.h"
 #include "Editor/ISettingsPage.h"
+#include "Editor/App/GeneralSettingsPage.h"
+#include "Editor/App/SettingsDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
@@ -10,6 +12,29 @@ namespace traktor
 {
 	namespace editor
 	{
+		namespace
+		{
+
+struct SettingsPagePredicate
+{
+	bool operator () (const TypeInfo* lh, const TypeInfo* rh) const
+	{
+		// Ensure general settings page is always first.
+		if (is_type_a(type_of< GeneralSettingsPage >(), *lh))
+			return true;
+		else if (is_type_a(type_of< GeneralSettingsPage >(), *rh))
+			return false;
+
+		// Sort using name of type.
+		int32_t r = compareIgnoreCase< std::wstring >(lh->getName(), rh->getName());
+		if (r < 0)
+			return true;
+		else
+			return false;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.SettingsDialog", SettingsDialog, ui::ConfigDialog)
 
@@ -30,7 +55,10 @@ bool SettingsDialog::create(ui::Widget* parent, PropertyGroup* settings, const s
 	TypeInfoSet settingPageTypes;
 	type_of< ISettingsPage >().findAllOf(settingPageTypes, false);
 
-	for (TypeInfoSet::const_iterator i = settingPageTypes.begin(); i != settingPageTypes.end(); ++i)
+	std::vector< const TypeInfo* > types(settingPageTypes.begin(), settingPageTypes.end());
+	std::sort(types.begin(), types.end(), SettingsPagePredicate());
+
+	for (std::vector< const TypeInfo* >::const_iterator i = types.begin(); i != types.end(); ++i)
 	{
 		Ref< ISettingsPage > settingsPage = dynamic_type_cast< ISettingsPage* >((*i)->createInstance());
 		if (!settingsPage)
