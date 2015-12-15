@@ -7817,39 +7817,7 @@
 								<name>Resources</name>
 								<items>
 									<item type="File">
-										<fileName>../../../res/toolbar/SceneEdit.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/toolbar/EntityEdit.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/toolbar/Playback.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/editor/EntityTypes.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/editor/Types.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerHidden.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerVisible.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerLocked.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerUnlocked.png</fileName>
+										<fileName>Resources/*.image</fileName>
 										<items/>
 									</item>
 								</items>
@@ -9237,18 +9205,14 @@
 														</item>
 													</items>
 												</item>
-											</items>
-										</item>
-										<item type="Filter">
-											<name>Resources</name>
-											<items>
-												<item type="File">
-													<fileName>../../../res/toolbar/Alignment.png</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../../res/toolbar/PlusMinus.png</fileName>
-													<items/>
+												<item type="Filter">
+													<name>Resources</name>
+													<items>
+														<item type="File">
+															<fileName>Shader/Resources/*.image</fileName>
+															<items/>
+														</item>
+													</items>
 												</item>
 											</items>
 										</item>
@@ -9258,6 +9222,15 @@
 												<item type="File">
 													<fileName>Texture/*.*</fileName>
 													<items/>
+												</item>
+												<item type="Filter">
+													<name>Resources</name>
+													<items>
+														<item type="File">
+															<fileName>Texture/Resources/*.image</fileName>
+															<items/>
+														</item>
+													</items>
 												</item>
 											</items>
 										</item>
@@ -10136,59 +10109,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/New.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Files.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/toolbar/DatabaseView.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/editor/Types.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/icons/Save.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/toolbar/Standard16.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Splash.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/TraktorSmall.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/BigIcons.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/SmallIcons.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/About.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/LogFilter.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Navigate.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/editor/TypesHidden.png</fileName>
+							<fileName>Resources/*.image</fileName>
 							<items/>
 						</item>
 					</items>
@@ -16255,31 +16176,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/toolbar/PlusMinus.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/toolbar/Debug.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/script/Editor.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/editor/ScriptFunction.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/editor/ScriptFunctionReference.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/toolbar/ScriptEdit.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/editor/ScriptFunctionLocal.png</fileName>
+							<fileName>Resources/*.image</fileName>
 							<items/>
 						</item>
 					</items>
@@ -17210,27 +17107,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/toolbar/Playback.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/toolbar/SceneEdit.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/toolbar/EffectEdit.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/LayerVisible.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/LayerHidden.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/LayerDelete.png</fileName>
+							<fileName>Resources/*.image</fileName>
 							<items/>
 						</item>
 					</items>
@@ -20100,23 +19977,11 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/Amalgam/Plugin.png</fileName>
+							<fileName>Resources/*.png</fileName>
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>../../../res/Amalgam/TargetControl.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Amalgam/ProgressBar.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Amalgam/Platforms.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Amalgam/NoIcon.png</fileName>
+							<fileName>Resources/*.image</fileName>
 							<items/>
 						</item>
 					</items>
