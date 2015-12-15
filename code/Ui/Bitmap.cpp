@@ -1,5 +1,6 @@
 #pragma optimize( "", off )
 
+#include <limits>
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
