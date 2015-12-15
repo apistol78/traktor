@@ -5817,6 +5817,15 @@
 							<fileName>PropertyList/*.*</fileName>
 							<items/>
 						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>PropertyList/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -5861,6 +5870,15 @@
 						<item type="File">
 							<fileName>GridView/*.*</fileName>
 							<items/>
+						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>GridView/Resources/*.image</fileName>
+									<items/>
+								</item>
+							</items>
 						</item>
 					</items>
 				</item>
@@ -6038,6 +6056,15 @@
 						<item type="File">
 							<fileName>TreeView/*.*</fileName>
 							<items/>
+						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>TreeView/Resources/*.image</fileName>
+									<items/>
+								</item>
+							</items>
 						</item>
 					</items>
 				</item>
