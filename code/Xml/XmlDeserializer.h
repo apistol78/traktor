@@ -1,7 +1,7 @@
 #ifndef traktor_xml_XmlDeserializer_H
 #define traktor_xml_XmlDeserializer_H
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/Serializer.h"
 #include "Xml/XmlPullParser.h"
 
@@ -93,13 +93,13 @@ private:
 	{
 		std::wstring name;
 		int index;
-		std::map< std::wstring, int > dups;
+		SmallMap< std::wstring, int > dups;
 	};
 
-	std::list< Entry > m_stack;
-	std::map< std::wstring, Ref< ISerializable > > m_refs;
+	AlignedVector< Entry > m_stack;
+	SmallMap< std::wstring, Ref< ISerializable > > m_refs;
 	std::wstring m_value;
-	std::vector< float > m_values;
+	AlignedVector< float > m_values;
 
 	std::wstring stackPath();
 
