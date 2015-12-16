@@ -263,7 +263,7 @@ public:
 	{
 		NSFont* nsfnt = [NSFont
 			fontWithName: makeNSString(font.getFace())
-			size: (CGFloat)font.getPointSize()
+			size: (CGFloat)font.getPixelSize()
 		];
 		if (!nsfnt)
 			return;

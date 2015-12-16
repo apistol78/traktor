@@ -279,9 +279,9 @@ public:
 	{
 		m_window->SetFont(wxFont(
 #if defined(__WXGTK__)
-			font.getPointSize() - 6,
+			font.getPixelSize() - 6,
 #else
-			font.getPointSize(),
+			font.getPixelSize(),
 #endif
 			wxFONTFAMILY_DEFAULT,
 			font.isItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
