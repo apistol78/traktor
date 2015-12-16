@@ -5383,7 +5383,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -7608,7 +7608,7 @@
 										<name>Resources</name>
 										<items>
 											<item type="File">
-												<fileName>GridView/Resources/*.image</fileName>
+												<fileName>GridView/Resources/*.*</fileName>
 												<items/>
 											</item>
 										</items>
@@ -7742,7 +7742,7 @@
 										<name>Resources</name>
 										<items>
 											<item type="File">
-												<fileName>TreeView/Resources/*.image</fileName>
+												<fileName>TreeView/Resources/*.*</fileName>
 												<items/>
 											</item>
 										</items>
@@ -7896,7 +7896,7 @@
 								<name>Resources</name>
 								<items>
 									<item type="File">
-										<fileName>Resources/*.image</fileName>
+										<fileName>Resources/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -9261,7 +9261,7 @@
 													<name>Resources</name>
 													<items>
 														<item type="File">
-															<fileName>Shader/Resources/*.image</fileName>
+															<fileName>Shader/Resources/*.*</fileName>
 															<items/>
 														</item>
 													</items>
@@ -9279,7 +9279,7 @@
 													<name>Resources</name>
 													<items>
 														<item type="File">
-															<fileName>Texture/Resources/*.image</fileName>
+															<fileName>Texture/Resources/*.*</fileName>
 															<items/>
 														</item>
 													</items>
@@ -9638,7 +9638,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -11007,11 +11007,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/Flash.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -13620,7 +13616,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -14666,7 +14662,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -15010,7 +15006,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -18841,7 +18837,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -19015,7 +19011,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
