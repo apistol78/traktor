@@ -670,10 +670,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 			m_menuTools = 0;
 	}
 
-	Ref< ui::MenuItem > menuHelp = new ui::MenuItem(i18n::Text(L"MENU_HELP"));
-	menuHelp->add(new ui::MenuItem(ui::Command(L"Editor.About"), i18n::Text(L"MENU_HELP_ABOUT")));
-	m_menuBar->add(menuHelp);
-
 	// Collect all shortcut commands from all editors.
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Save"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.SaveAll"));

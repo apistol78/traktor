@@ -180,7 +180,8 @@ local outputs =
 		path = "../../code/Flash/Editor/Resources",
 		resources =
 		{
-			{ name = "Playback", column = 0, row = 13, width = 6, height = 1 },
+			-- { name = "Playback", column = 0, row = 13, width = 6, height = 1 },
+			{ name = "Flash", column = 0, row = 17, width = 2, height = 1 },
 		}
 	},
 	{
@@ -210,54 +211,56 @@ end
 
 function main(argv)
 	for _, g in ipairs(outputs) do
-		for _, o in ipairs(g.resources) do
-			stdout:printLn("Converting " .. g.name .. "/" .. o.name .. "...")
+		if argv:empty() or argv:get(0) == g.name then
+			for _, o in ipairs(g.resources) do
+				stdout:printLn("Converting " .. g.name .. "/" .. o.name .. "...")
 
-			local sizes = { 0, 0, 0, 0 }
-			local base = 16
-			if o.base ~= nil then base = o.base end
+				local sizes = { 0, 0, 0, 0 }
+				local base = 16
+				if o.base ~= nil then base = o.base end
 
-			-- Generate PNG at different DPI resolutions.
-			for j, dpi in ipairs(dpis) do
+				-- Generate PNG at different DPI resolutions.
+				for j, dpi in ipairs(dpis) do
 
-				-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
-				local xdpi = (90 / 2) * (dpi / 96) * (base / 16)
-				export("Icons.svg", o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
+					-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
+					local xdpi = (90 / 2) * (dpi / 96) * (base / 16)
+					export("Icons.svg", o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
 
-				-- Get file size of output.
-				local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
+					-- Get file size of output.
+					local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
+					assert (f ~= nil)
+					sizes[j] = f:getSize()
+				end
+
+				-- Merge all files into a simple "image pack" resource.
+				local p = FileSystem.getInstance():getAbsolutePath(Path(g.path .. "/" .. o.name .. ".image"))
+				local f = FileSystem.getInstance():open(p, File.FmWrite)
 				assert (f ~= nil)
-				sizes[j] = f:getSize()
-			end
 
-			-- Merge all files into a simple "image pack" resource.
-			local p = FileSystem.getInstance():getAbsolutePath(Path(g.path .. "/" .. o.name .. ".image"))
-			local f = FileSystem.getInstance():open(p, File.FmWrite)
-			assert (f ~= nil)
+				-- Write directory.
+				local bw = BitWriter(f)
+				bw:writeUInt16(#dpis)
+				local offset = 16 / 8 + #dpis * (16 + 32) / 8
+				for j, dpi in ipairs(dpis) do
+					bw:writeUInt16(dpi)
+					bw:writeUInt32(offset)
+					offset = offset + sizes[j]
+				end
 
-			-- Write directory.
-			local bw = BitWriter(f)
-			bw:writeUInt16(#dpis)
-			local offset = 16 / 8 + #dpis * (16 + 32) / 8
-			for j, dpi in ipairs(dpis) do
-				bw:writeUInt16(dpi)
-				bw:writeUInt32(offset)
-				offset = offset + sizes[j]
-			end
+				-- Append each image file.
+				for j, dpi in ipairs(dpis) do
+					local sf = FileSystem.getInstance():open(Path(dpi .. ".png"), File.FmRead)
+					assert (sf ~= nil)
+					StreamCopy(f, sf):execute()
+					sf:close()
+				end
 
-			-- Append each image file.
-			for j, dpi in ipairs(dpis) do
-				local sf = FileSystem.getInstance():open(Path(dpi .. ".png"), File.FmRead)
-				assert (sf ~= nil)
-				StreamCopy(f, sf):execute()
-				sf:close()
-			end
+				f:close()
 
-			f:close()
-
-			-- Remove all intermediate images.
-			for j, dpi in ipairs(dpis) do
-				run:rm(dpi .. ".png")
+				-- Remove all intermediate images.
+				for j, dpi in ipairs(dpis) do
+					run:rm(dpi .. ".png")
+				end
 			end
 		end
 	end
