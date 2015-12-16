@@ -7523,6 +7523,15 @@
 										<fileName>Graph/*.*</fileName>
 										<items/>
 									</item>
+									<item type="Filter">
+										<name>Resources</name>
+										<items>
+											<item type="File">
+												<fileName>Graph/Resources/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">
@@ -7647,46 +7656,6 @@
 										<items/>
 									</item>
 									<item type="File">
-										<fileName>../../../res/graph/Background.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Grid.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/InOut.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Input.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Ipol.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Node.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Output.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Pin.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Shadow.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/ProgressBar.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
 										<fileName>../../../res/SmallPen.png</fileName>
 										<items/>
 									</item>
@@ -7703,15 +7672,7 @@
 										<items/>
 									</item>
 									<item type="File">
-										<fileName>../../../res/graph/Comment.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
 										<fileName>../../../res/preview/PreviewFrame.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/External.png</fileName>
 										<items/>
 									</item>
 								</items>
@@ -16949,11 +16910,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>

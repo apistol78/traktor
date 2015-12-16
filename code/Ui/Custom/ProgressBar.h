@@ -15,9 +15,6 @@ namespace traktor
 {
 	namespace ui
 	{
-
-class Bitmap;
-
 		namespace custom
 		{
 
@@ -31,26 +28,25 @@ class T_DLLCLASS ProgressBar : public Widget
 public:
 	ProgressBar();
 
-	bool create(Widget* parent, int style = WsNone, int minProgress = 0, int maxProgress = 100);
+	bool create(Widget* parent, int32_t style = WsNone, int32_t minProgress = 0, int32_t maxProgress = 100);
 
-	void setRange(int minProgress, int maxProgress);
+	void setRange(int32_t minProgress, int32_t maxProgress);
 
-	int getMinRange() const;
+	int32_t getMinRange() const;
 
-	int getMaxRange() const;
+	int32_t getMaxRange() const;
 
 	void setProgress(int progress);
 
-	int getProgress() const;
+	int32_t getProgress() const;
 
 	virtual Size getPreferedSize() const;
 
 private:
-	Ref< Bitmap > m_imageProgressBar;
-	int m_minProgress;
-	int m_maxProgress;
-	int m_progress;
-	int m_loop;
+	int32_t m_minProgress;
+	int32_t m_maxProgress;
+	int32_t m_progress;
+	int32_t m_loop;
 
 	void eventPaint(PaintEvent* event);
 };

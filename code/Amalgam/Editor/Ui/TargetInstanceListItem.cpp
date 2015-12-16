@@ -300,7 +300,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
 
 	ui::Font widgetFont = getWidget()->getFont();
-	ui::Font performanceFont = widgetFont; performanceFont.setSize(8);
+	ui::Font performanceFont = widgetFont; performanceFont.setSize(10);
 	ui::Font performanceBoldFont = performanceFont; performanceBoldFont.setBold(true);
 	ui::Font markerFont = widgetFont; markerFont.setSize(7);
 

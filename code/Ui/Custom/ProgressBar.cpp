@@ -1,8 +1,6 @@
-#include "Ui/Bitmap.h"
+#include "Ui/Application.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/ProgressBar.h"
-
-// Resources
-#include "Resources/ProgressBar.h"
 
 namespace traktor
 {
@@ -21,38 +19,36 @@ ProgressBar::ProgressBar()
 {
 }
 
-bool ProgressBar::create(Widget* parent, int style, int minProgress, int maxProgress)
+bool ProgressBar::create(Widget* parent, int32_t style, int32_t minProgress, int32_t maxProgress)
 {
 	if (!Widget::create(parent, style))
 		return false;
 
-	m_imageProgressBar = Bitmap::load(c_ResourceProgressBar, sizeof(c_ResourceProgressBar), L"png");
 	m_minProgress = minProgress;
 	m_maxProgress = maxProgress;
 	m_progress = minProgress;
 
 	addEventHandler< PaintEvent >(this, &ProgressBar::eventPaint);
-
 	return true;
 }
 
-void ProgressBar::setRange(int minProgress, int maxProgress)
+void ProgressBar::setRange(int32_t minProgress, int32_t maxProgress)
 {
 	m_minProgress = minProgress;
 	m_maxProgress = maxProgress;
 }
 
-int ProgressBar::getMinRange() const
+int32_t ProgressBar::getMinRange() const
 {
 	return m_minProgress;
 }
 
-int ProgressBar::getMaxRange() const
+int32_t ProgressBar::getMaxRange() const
 {
 	return m_maxProgress;
 }
 
-void ProgressBar::setProgress(int progress)
+void ProgressBar::setProgress(int32_t progress)
 {
 	if (m_progress != progress)
 	{
@@ -61,61 +57,25 @@ void ProgressBar::setProgress(int progress)
 	}
 }
 
-int ProgressBar::getProgress() const
+int32_t ProgressBar::getProgress() const
 {
 	return m_progress;
 }
 
 Size ProgressBar::getPreferedSize() const
 {
-	return Size(256, 16);
-}
-
-namespace
-{
-
-	void drawSkin(Canvas& canvas, const Rect& rc, Bitmap* bitmap, int pieceOffset)
-	{
-		int w = rc.getWidth();
-		int h = rc.getHeight();
-
-		if (w < 8)
-			return;
-
-		canvas.drawBitmap(
-			Point(rc.left, rc.top),
-			Size(4, h),
-			Point(pieceOffset, 0),
-			Size(4, 16),
-			bitmap
-		);
-
-		canvas.drawBitmap(
-			Point(rc.left + 4, rc.top),
-			Size(w - 8, h),
-			Point(pieceOffset + 4, 0),
-			Size(8, 16),
-			bitmap
-		);
-
-		canvas.drawBitmap(
-			Point(rc.right - 4, rc.top),
-			Size(4, h),
-			Point(pieceOffset + 12, 0),
-			Size(4, 16),
-			bitmap
-		);
-	}
-
+	return Size(scaleBySystemDPI(256), scaleBySystemDPI(16));
 }
 
 void ProgressBar::eventPaint(PaintEvent* event)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 
 	Rect rc = getInnerRect();
 
-	drawSkin(canvas, rc, m_imageProgressBar, 16);
+	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.fillRect(rc);
 
 	int32_t range = m_maxProgress - m_minProgress;
 	if (range > 0)
@@ -124,7 +84,9 @@ void ProgressBar::eventPaint(PaintEvent* event)
 		if (x > 0)
 		{
 			Rect rc2 = rc; rc2.right = rc2.left + x;
-			drawSkin(canvas, rc2, m_imageProgressBar, 0);
+
+			canvas.setBackground(ss->getColor(this, L"progress-color"));
+			canvas.fillRect(rc2);
 		}
 	}
 	else	// No range; looping progressbar.
@@ -137,7 +99,8 @@ void ProgressBar::eventPaint(PaintEvent* event)
 		rc2.left = x1;
 		rc2.right = x2;
 
-		drawSkin(canvas, rc2, m_imageProgressBar, 0);
+		canvas.setBackground(ss->getColor(this, L"progress-color"));
+		canvas.fillRect(rc2);
 
 		m_loop += std::max< int32_t >(rc.getWidth() / 16, 1);
 		if (m_loop >= (rc.getWidth() * 5) / 4)

@@ -11,173 +11,254 @@ local dpis =
 
 local outputs =
 {
-	-- Editor
-	-- { name = "Save", column = 0, row = 0, width = 1, height = 1 },
-	-- { name = "Cut", column = 1, row = 0, width = 1, height = 1 },
-	-- { name = "Copy", column = 2, row = 0, width = 1, height = 1 },
-	-- { name = "Paste", column = 3, row = 0, width = 1, height = 1 },
-	-- { name = "Undo", column = 4, row = 0, width = 1, height = 1 },
-	-- { name = "Redo", column = 5, row = 0, width = 1, height = 1 },
-	-- { name = "Build", column = 6, row = 0, width = 1, height = 1 },
-	-- { name = "CancelBuild", column = 7, row = 0, width = 1, height = 1 },
-	-- { name = "LogInfo", column = 8, row = 0, width = 1, height = 1 },
-	-- { name = "LogWarning", column = 9, row = 0, width = 1, height = 1 },
-	-- { name = "LogError", column = 10, row = 0, width = 1, height = 1 },
-	-- { name = "NameFilter", column = 0, row = 1, width = 1, height = 1 },
-	-- { name = "TypeFilter", column = 1, row = 1, width = 1, height = 1 },
-	-- { name = "ShowFiltered", column = 2, row = 1, width = 1, height = 1 },
-	-- { name = "Favorites", column = 3, row = 1, width = 1, height = 1 },
-	-- { name = "Types", column = 0, row = 2, width = 23, height = 1 },
-	-- { name = "Folders", column = 0, row = 3, width = 2, height = 1 },
-
-	-- UI
-	-- { name = "Tree", column = 0, row = 4, width = 2, height = 1 },
-	-- { name = "GridView", column = 0, row = 4, width = 2, height = 1 },
-	-- { name = "PropertyList", column = 0, row = 4, width = 2, height = 1 },
-
-	-- Script
-	-- { name = "ToggleComments", column = 0, row = 5, width = 1, height = 1 },
-	-- { name = "RemoveBreakpoints", column = 1, row = 5, width = 1, height = 1 },
-	-- { name = "DebugStop", column = 2, row = 5, width = 1, height = 1 },
-	-- { name = "DebugContinue", column = 3, row = 5, width = 1, height = 1 },
-	-- { name = "DebugStepInto", column = 4, row = 5, width = 1, height = 1 },
-	-- { name = "DebugStepOver", column = 5, row = 5, width = 1, height = 1 },
-	-- { name = "ProfilerClear", column = 6, row = 5, width = 1, height = 1 },
-	-- { name = "Breakpoint", column = 7, row = 5, width = 1, height = 1, base = 12 },
-	-- { name = "AddDependency", column = 8, row = 5, width = 1, height = 1 },
-	-- { name = "RemoveDependency", column = 9, row = 5, width = 1, height = 1 },
-	-- { name = "MoveDependencyUp", column = 10, row = 5, width = 1, height = 1 },
-	-- { name = "MoveDependencyDown", column = 11, row = 5, width = 1, height = 1 },
-	-- { name = "DefineGlobalFunction", column = 12, row = 5, width = 1, height = 1 },
-	-- { name = "DefineLocalFunction", column = 13, row = 5, width = 1, height = 1 },
-	-- { name = "ReferenceFunction", column = 14, row = 5, width = 1, height = 1 },
-
-	-- Spray
-	-- { name = "Randomize", column = 0, row = 6, width = 1, height = 1 },
-	-- { name = "ToggleGuideLines", column = 1, row = 6, width = 1, height = 1 },
-	-- { name = "ToggleMoveEmitter", column = 2, row = 6, width = 1, height = 1 },
-	-- { name = "BrowseBackground", column = 3, row = 6, width = 1, height = 1 },
-	-- { name = "BrowseImageProcess", column = 4, row = 6, width = 1, height = 1 },
-	-- { name = "Playback", column = 0, row = 13, width = 6, height = 1 },
-	-- { name = "LayerVisible", column = 5, row = 6, width = 1, height = 1 },
-	-- { name = "LayerHidden", column = 6, row = 6, width = 1, height = 1 },
-	-- { name = "LayerDelete", column = 9, row = 6, width = 1, height = 1 },
-
-	-- Shader
-	-- { name = "Tools", column = 0, row = 7, width = 14, height = 1 },
-
-	-- Scene
-	-- { name = "Pointer", column = 0, row = 8, width = 1, height = 1 },
-	-- { name = "Translate", column = 1, row = 8, width = 1, height = 1 },
-	-- { name = "Rotate", column = 2, row = 8, width = 1, height = 1 },
-	-- { name = "Snap", column = 3, row = 8, width = 1, height = 1 },
-	-- { name = "SingleView", column = 4, row = 8, width = 1, height = 1 },
-	-- { name = "DualView", column = 5, row = 8, width = 1, height = 1 },
-	-- { name = "QuadView", column = 6, row = 8, width = 1, height = 1 },
-	-- { name = "Rewind", column = 7, row = 8, width = 1, height = 1 },
-	-- { name = "Play", column = 8, row = 8, width = 1, height = 1 },
-	-- { name = "Stop", column = 9, row = 8, width = 1, height = 1 },
-	-- { name = "LayerVisible", column = 5, row = 6, width = 1, height = 1 },
-	-- { name = "LayerHidden", column = 6, row = 6, width = 1, height = 1 },
-	-- { name = "LayerLocked", column = 7, row = 6, width = 1, height = 1 },
-	-- { name = "LayerUnlocked", column = 8, row = 6, width = 1, height = 1 },
-	-- { name = "LayerDelete", column = 9, row = 6, width = 1, height = 1 },
-	-- { name = "Types", column = 0, row = 2, width = 23, height = 1 },
-	-- { name = "Folders", column = 0, row = 3, width = 2, height = 1 },
-	-- { name = "RemoveEntity", column = 10, row = 8, width = 1, height = 1 },
-	-- { name = "MoveToEntity", column = 11, row = 8, width = 1, height = 1 },
-	-- { name = "ToggleGrid", column = 10, row = 8, width = 1, height = 1 },
-	-- { name = "ToggleGuide", column = 11, row = 8, width = 1, height = 1 },
-
-	-- Amalgam
-	-- { name = "Logos", column = 0, row = 9, width = 13, height = 1, base = 24 },
-	-- { name = "TargetPlay", column = 0, row = 10, width = 1, height = 1, base = 24 },
-	-- { name = "TargetBuild", column = 1, row = 10, width = 1, height = 1, base = 24 },
-	-- { name = "TargetMigrate", column = 2, row = 10, width = 1, height = 1, base = 24 },
-	-- { name = "TargetBrowse", column = 3, row = 10, width = 1, height = 1, base = 24 },
-	-- { name = "TargetStop", column = 4, row = 10, width = 1, height = 1, base = 24 },
-	-- { name = "TargetProfile", column = 5, row = 10, width = 1, height = 1, base = 24 },
-
-	-- Texture
-	-- { name = "PlusMinus", column = 0, row = 11, width = 2, height = 1 },
-
-	-- Input
-	-- { name = "Alignment", column = 0, row = 7, width = 6, height = 1 },
-
-	-- Animation
-	-- { name = "Alignment", column = 0, row = 7, width = 6, height = 1 },
-	-- { name = "Bones", column = 0, row = 12, width = 2, height = 1 },
-	-- { name = "Skeleton", column = 2, row = 12, width = 5, height = 1 },
-	-- { name = "Playback", column = 0, row = 13, width = 6, height = 1 },
-
-	-- Flash
-	-- { name = "Playback", column = 0, row = 13, width = 6, height = 1 },
-
-	-- Terrain
-	-- { name = "Terrain", column = 0, row = 14, width = 15, height = 1 },
-
-	-- Theater
-	-- { name = "Theater", column = 0, row = 15, width = 8, height = 1 },
-
-	-- Navigate
-	{ name = "Navigate", column = 0, row = 16, width = 4, height = 1 },
+	{
+		name = "Editor",
+		path = "../../code/Editor/App/Resources",
+		resources =
+		{
+			{ name = "Save", column = 0, row = 0, width = 1, height = 1 },
+			{ name = "Cut", column = 1, row = 0, width = 1, height = 1 },
+			{ name = "Copy", column = 2, row = 0, width = 1, height = 1 },
+			{ name = "Paste", column = 3, row = 0, width = 1, height = 1 },
+			{ name = "Undo", column = 4, row = 0, width = 1, height = 1 },
+			{ name = "Redo", column = 5, row = 0, width = 1, height = 1 },
+			{ name = "Build", column = 6, row = 0, width = 1, height = 1 },
+			{ name = "CancelBuild", column = 7, row = 0, width = 1, height = 1 },
+			{ name = "LogInfo", column = 8, row = 0, width = 1, height = 1 },
+			{ name = "LogWarning", column = 9, row = 0, width = 1, height = 1 },
+			{ name = "LogError", column = 10, row = 0, width = 1, height = 1 },
+			{ name = "NameFilter", column = 0, row = 1, width = 1, height = 1 },
+			{ name = "TypeFilter", column = 1, row = 1, width = 1, height = 1 },
+			{ name = "ShowFiltered", column = 2, row = 1, width = 1, height = 1 },
+			{ name = "Favorites", column = 3, row = 1, width = 1, height = 1 },
+			{ name = "Types", column = 0, row = 2, width = 23, height = 1 },
+			{ name = "Folders", column = 0, row = 3, width = 2, height = 1 },
+			{ name = "Navigate", column = 0, row = 16, width = 4, height = 1 },
+		}
+	},
+	{
+		name = "UI - TreeView",
+		path = "../../code/Ui/Custom/TreeView/Resources",
+		resources =
+		{
+			{ name = "Tree", column = 0, row = 4, width = 2, height = 1 },
+		}
+	},
+	{
+		name = "UI - GridView",
+		path = "../../code/Ui/Custom/GridView/Resources",
+		resources =
+		{
+			{ name = "GridView", column = 0, row = 4, width = 2, height = 1 },
+		}
+	},
+	{
+		name = "UI - PropertyList",
+		path = "../../code/Ui/Custom/PropertyList/Resources",
+		resources =
+		{
+			{ name = "PropertyList", column = 0, row = 4, width = 2, height = 1 },
+		}
+	},
+	{
+		name = "Script",
+		path = "../../code/Script/Editor/Resources",
+		resources =
+		{
+			{ name = "ToggleComments", column = 0, row = 5, width = 1, height = 1 },
+			{ name = "RemoveBreakpoints", column = 1, row = 5, width = 1, height = 1 },
+			{ name = "DebugStop", column = 2, row = 5, width = 1, height = 1 },
+			{ name = "DebugContinue", column = 3, row = 5, width = 1, height = 1 },
+			{ name = "DebugStepInto", column = 4, row = 5, width = 1, height = 1 },
+			{ name = "DebugStepOver", column = 5, row = 5, width = 1, height = 1 },
+			{ name = "ProfilerClear", column = 6, row = 5, width = 1, height = 1 },
+			{ name = "Breakpoint", column = 7, row = 5, width = 1, height = 1, base = 12 },
+			{ name = "AddDependency", column = 8, row = 5, width = 1, height = 1 },
+			{ name = "RemoveDependency", column = 9, row = 5, width = 1, height = 1 },
+			{ name = "MoveDependencyUp", column = 10, row = 5, width = 1, height = 1 },
+			{ name = "MoveDependencyDown", column = 11, row = 5, width = 1, height = 1 },
+			{ name = "DefineGlobalFunction", column = 12, row = 5, width = 1, height = 1 },
+			{ name = "DefineLocalFunction", column = 13, row = 5, width = 1, height = 1 },
+			{ name = "ReferenceFunction", column = 14, row = 5, width = 1, height = 1 },
+		}
+	},
+	{
+		name = "Spray",
+		path = "../../code/Spray/Editor/Resources",
+		resources =
+		{
+			{ name = "Randomize", column = 0, row = 6, width = 1, height = 1 },
+			{ name = "ToggleGuideLines", column = 1, row = 6, width = 1, height = 1 },
+			{ name = "ToggleMoveEmitter", column = 2, row = 6, width = 1, height = 1 },
+			{ name = "BrowseBackground", column = 3, row = 6, width = 1, height = 1 },
+			{ name = "BrowseImageProcess", column = 4, row = 6, width = 1, height = 1 },
+			{ name = "Playback", column = 0, row = 13, width = 6, height = 1 },
+			{ name = "LayerVisible", column = 5, row = 6, width = 1, height = 1 },
+			{ name = "LayerHidden", column = 6, row = 6, width = 1, height = 1 },
+			{ name = "LayerDelete", column = 9, row = 6, width = 1, height = 1 },		
+		}
+	},
+	{
+		name = "Shader",
+		path = "../../code/Render/Editor/Shader/Resources",
+		resources =
+		{
+			{ name = "Tools", column = 0, row = 7, width = 14, height = 1 },
+		}
+	},
+	{
+		name = "Texture",
+		path = "../../code/Render/Editor/Texture/Resources",
+		resources =
+		{
+			{ name = "PlusMinus", column = 0, row = 11, width = 2, height = 1 },
+		}
+	},
+	{
+		name = "Scene",
+		path = "../../code/Scene/Editor/Resources",
+		resources =
+		{
+			{ name = "Pointer", column = 0, row = 8, width = 1, height = 1 },
+			{ name = "Translate", column = 1, row = 8, width = 1, height = 1 },
+			{ name = "Rotate", column = 2, row = 8, width = 1, height = 1 },
+			{ name = "Snap", column = 3, row = 8, width = 1, height = 1 },
+			{ name = "SingleView", column = 4, row = 8, width = 1, height = 1 },
+			{ name = "DualView", column = 5, row = 8, width = 1, height = 1 },
+			{ name = "QuadView", column = 6, row = 8, width = 1, height = 1 },
+			{ name = "Rewind", column = 7, row = 8, width = 1, height = 1 },
+			{ name = "Play", column = 8, row = 8, width = 1, height = 1 },
+			{ name = "Stop", column = 9, row = 8, width = 1, height = 1 },
+			{ name = "LayerVisible", column = 5, row = 6, width = 1, height = 1 },
+			{ name = "LayerHidden", column = 6, row = 6, width = 1, height = 1 },
+			{ name = "LayerLocked", column = 7, row = 6, width = 1, height = 1 },
+			{ name = "LayerUnlocked", column = 8, row = 6, width = 1, height = 1 },
+			{ name = "LayerDelete", column = 9, row = 6, width = 1, height = 1 },
+			{ name = "Types", column = 0, row = 2, width = 23, height = 1 },
+			{ name = "Folders", column = 0, row = 3, width = 2, height = 1 },
+			{ name = "RemoveEntity", column = 10, row = 8, width = 1, height = 1 },
+			{ name = "MoveToEntity", column = 11, row = 8, width = 1, height = 1 },
+			{ name = "ToggleGrid", column = 10, row = 8, width = 1, height = 1 },
+			{ name = "ToggleGuide", column = 11, row = 8, width = 1, height = 1 },		
+		}
+	},
+	{
+		name = "Amalgam",
+		path = "../../code/Amalgam/Editor/Resources",
+		resources =
+		{
+			{ name = "Logos", column = 0, row = 9, width = 13, height = 1, base = 24 },
+			{ name = "TargetPlay", column = 0, row = 10, width = 1, height = 1, base = 24 },
+			{ name = "TargetBuild", column = 1, row = 10, width = 1, height = 1, base = 24 },
+			{ name = "TargetMigrate", column = 2, row = 10, width = 1, height = 1, base = 24 },
+			{ name = "TargetBrowse", column = 3, row = 10, width = 1, height = 1, base = 24 },
+			{ name = "TargetStop", column = 4, row = 10, width = 1, height = 1, base = 24 },
+			{ name = "TargetProfile", column = 5, row = 10, width = 1, height = 1, base = 24 },
+		}
+	},
+	{
+		name = "Input",
+		path = "../../code/Input/Editor/Resources",
+		resources =
+		{
+			{ name = "Alignment", column = 0, row = 7, width = 6, height = 1 },
+		}
+	},
+	{
+		name = "Animation",
+		path = "../../code/Animation/Editor/Resources",
+		resources =
+		{
+			{ name = "Alignment", column = 0, row = 7, width = 6, height = 1 },
+			{ name = "Bones", column = 0, row = 12, width = 2, height = 1 },
+			{ name = "Skeleton", column = 2, row = 12, width = 5, height = 1 },
+			{ name = "Playback", column = 0, row = 13, width = 6, height = 1 },		
+		}
+	},
+	{
+		name = "Flash",
+		path = "../../code/Flash/Editor/Resources",
+		resources =
+		{
+			{ name = "Playback", column = 0, row = 13, width = 6, height = 1 },
+		}
+	},
+	{
+		name = "Terrain",
+		path = "../../code/Terrain/Editor/Resources",
+		resources =
+		{
+			{ name = "Terrain", column = 0, row = 14, width = 15, height = 1 },
+		}
+	},
+	{
+		name = "Theater",
+		path = "../../code/Theater/Editor/Resources",
+		resources =
+		{
+			{ name = "Theater", column = 0, row = 15, width = 8, height = 1 },
+		}
+	},
 }
 
 local function export(input, x, y, width, height, dpi, output)
 	local inkscape = "c:/program files/inkscape/inkscape.exe"
 	local cmd = "\"" .. inkscape .. "\" -e \"" .. output .. "\" -a " .. x .. ":" .. -y .. ":" .. (x + width) .. ":" .. -y + height .. " -d " .. dpi .. " " .. input
-	local result = run:execute(cmd)
+	local result = run:execute(cmd, nil)
 	return result == 0
 end
 
 function main(argv)
-	for _, o in ipairs(outputs) do
-		stdout:printLn("Converting " .. o.name .. "...")
-		local sizes = { 0, 0, 0, 0 }
+	for _, g in ipairs(outputs) do
+		for _, o in ipairs(g.resources) do
+			stdout:printLn("Converting " .. g.name .. "/" .. o.name .. "...")
 
-		local base = 16
-		if o.base ~= nil then base = o.base end
+			local sizes = { 0, 0, 0, 0 }
+			local base = 16
+			if o.base ~= nil then base = o.base end
 
-		-- Generate PNG at different DPI resolutions.
-		for j, dpi in ipairs(dpis) do
+			-- Generate PNG at different DPI resolutions.
+			for j, dpi in ipairs(dpis) do
 
-			-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
-			local xdpi = (90 / 2) * (dpi / 96) * (base / 16)
-			export("Icons.svg", o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
+				-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
+				local xdpi = (90 / 2) * (dpi / 96) * (base / 16)
+				export("Icons.svg", o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
 
-			-- Get file size of output.
-			local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
+				-- Get file size of output.
+				local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
+				assert (f ~= nil)
+				sizes[j] = f:getSize()
+			end
+
+			-- Merge all files into a simple "image pack" resource.
+			local p = FileSystem.getInstance():getAbsolutePath(Path(g.path .. "/" .. o.name .. ".image"))
+			local f = FileSystem.getInstance():open(p, File.FmWrite)
 			assert (f ~= nil)
-			sizes[j] = f:getSize()
-		end
 
-		-- Merge all files into a simple "image pack" resource.
-		local f = FileSystem.getInstance():open(Path(o.name .. ".image"), File.FmWrite)
-		assert (f ~= nil)
+			-- Write directory.
+			local bw = BitWriter(f)
+			bw:writeUInt16(#dpis)
+			local offset = 16 / 8 + #dpis * (16 + 32) / 8
+			for j, dpi in ipairs(dpis) do
+				bw:writeUInt16(dpi)
+				bw:writeUInt32(offset)
+				offset = offset + sizes[j]
+			end
 
-		-- Write directory.
-		local bw = BitWriter(f)
-		bw:writeUInt16(#dpis)
-		local offset = 16 / 8 + #dpis * (16 + 32) / 8
-		for j, dpi in ipairs(dpis) do
-			bw:writeUInt16(dpi)
-			bw:writeUInt32(offset)
-			offset = offset + sizes[j]
-		end
+			-- Append each image file.
+			for j, dpi in ipairs(dpis) do
+				local sf = FileSystem.getInstance():open(Path(dpi .. ".png"), File.FmRead)
+				assert (sf ~= nil)
+				StreamCopy(f, sf):execute()
+				sf:close()
+			end
 
-		-- Append each image file.
-		for j, dpi in ipairs(dpis) do
-			local sf = FileSystem.getInstance():open(Path(dpi .. ".png"), File.FmRead)
-			assert (sf ~= nil)
-			StreamCopy(f, sf):execute()
-			sf:close()
-		end
+			f:close()
 
-		f:close()
-
-		-- Remove all intermediate images.
-		for j, dpi in ipairs(dpis) do
-			run:rm(dpi .. ".png")
+			-- Remove all intermediate images.
+			for j, dpi in ipairs(dpis) do
+				run:rm(dpi .. ".png")
+			end
 		end
 	end
 	stdout:printLn("Done")
