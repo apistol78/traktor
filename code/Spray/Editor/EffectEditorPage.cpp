@@ -58,11 +58,14 @@
 // Resources
 #include "Resources/BrowseBackground.h"
 #include "Resources/BrowseImageProcess.h"
+#include "Resources/LayerDelete.h"
+#include "Resources/LayerHidden.h"
+#include "Resources/LayerVisible.h"
 #include "Resources/Playback.h"
 #include "Resources/Randomize.h"
-#include "Resources/LayerDelete.h"
-#include "Resources/LayerVisible.h"
-#include "Resources/LayerHidden.h"
+#include "Resources/ToggleGroundClip.h"
+#include "Resources/ToggleGuideLines.h"
+#include "Resources/ToggleMoveEmitter.h"
 
 namespace traktor
 {
@@ -136,9 +139,9 @@ bool EffectEditorPage::create(ui::Container* parent)
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
-	m_toolToggleGuide = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), 7, ui::Command(L"Effect.Editor.ToggleGuide"), ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleMove = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_MOVE"), 8, ui::Command(L"Effect.Editor.ToggleMove"), ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleGroundClip = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GROUND_CLIP"), 9, ui::Command(L"Effect.Editor.ToggleGroundClip"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleGuide = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), 6, ui::Command(L"Effect.Editor.ToggleGuide"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleMove = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_MOVE"), 7, ui::Command(L"Effect.Editor.ToggleMove"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleGroundClip = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GROUND_CLIP"), 8, ui::Command(L"Effect.Editor.ToggleGroundClip"), ui::custom::ToolBarButton::BsDefaultToggle);
 
 	Ref< const PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT (settings);
@@ -155,6 +158,9 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"image"), 6);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceToggleGuideLines, sizeof(c_ResourceToggleGuideLines), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceToggleMoveEmitter, sizeof(c_ResourceToggleMoveEmitter), L"image"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceToggleGroundClip, sizeof(c_ResourceToggleGroundClip), L"image"), 1);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceBrowseBackground, sizeof(c_ResourceBrowseBackground), L"image"), 1);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceBrowseImageProcess, sizeof(c_ResourceBrowseImageProcess), L"image"), 1);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceRandomize, sizeof(c_ResourceRandomize), L"image"), 1);
@@ -165,10 +171,10 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(m_toolToggleMove);
 	m_toolBar->addItem(m_toolToggleGroundClip);
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 8, ui::Command(L"Effect.Editor.RandomizeSeed")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 11, ui::Command(L"Effect.Editor.RandomizeSeed")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_BACKGROUND"), 6, ui::Command(L"Effect.Editor.BrowseBackground")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_POSTPROCESS"), 7, ui::Command(L"Effect.Editor.BrowseImageProcess")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_BACKGROUND"), 9, ui::Command(L"Effect.Editor.BrowseBackground")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_POSTPROCESS"), 10, ui::Command(L"Effect.Editor.BrowseImageProcess")));
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolClick);
 
 	m_previewControl = new EffectPreviewControl(m_editor);

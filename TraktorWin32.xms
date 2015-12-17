@@ -5513,19 +5513,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/toolbar/Skeleton.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/toolbar/Alignment.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/toolbar/Playback.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/editor/Bones.png</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -5822,27 +5810,7 @@
 											<name>Resources</name>
 											<items>
 												<item type="File">
-													<fileName>../../res/DockBottom.png</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../res/DockLeft.png</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../res/DockRight.png</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../res/DockTop.png</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../res/DockGripper.png</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../res/Close.png</fileName>
+													<fileName>Resources/*.*</fileName>
 													<items/>
 												</item>
 											</items>
@@ -7401,6 +7369,15 @@
 										<fileName>Graph/*.*</fileName>
 										<items/>
 									</item>
+									<item type="Filter">
+										<name>Resources</name>
+										<items>
+											<item type="File">
+												<fileName>Graph/Resources/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">
@@ -7409,6 +7386,15 @@
 									<item type="File">
 										<fileName>Layer/*.*</fileName>
 										<items/>
+									</item>
+									<item type="Filter">
+										<name>Resources</name>
+										<items>
+											<item type="File">
+												<fileName>Layer/Resources/*.*</fileName>
+												<items/>
+											</item>
+										</items>
 									</item>
 								</items>
 							</item>
@@ -7437,6 +7423,15 @@
 										<fileName>Sequencer/*.*</fileName>
 										<items/>
 									</item>
+									<item type="Filter">
+										<name>Resources</name>
+										<items>
+											<item type="File">
+												<fileName>Sequencer/Resources/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">
@@ -7464,6 +7459,15 @@
 										<fileName>LogList/*.*</fileName>
 										<items/>
 									</item>
+									<item type="Filter">
+										<name>Resources</name>
+										<items>
+											<item type="File">
+												<fileName>LogList/Resources/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">
@@ -7477,7 +7481,7 @@
 										<name>Resources</name>
 										<items>
 											<item type="File">
-												<fileName>GridView/Resources/*.image</fileName>
+												<fileName>GridView/Resources/*.*</fileName>
 												<items/>
 											</item>
 										</items>
@@ -7663,7 +7667,7 @@
 										<name>Resources</name>
 										<items>
 											<item type="File">
-												<fileName>TreeView/Resources/*.image</fileName>
+												<fileName>TreeView/Resources/*.*</fileName>
 												<items/>
 											</item>
 										</items>
@@ -7817,7 +7821,7 @@
 								<name>Resources</name>
 								<items>
 									<item type="File">
-										<fileName>Resources/*.image</fileName>
+										<fileName>Resources/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -9209,7 +9213,7 @@
 													<name>Resources</name>
 													<items>
 														<item type="File">
-															<fileName>Shader/Resources/*.image</fileName>
+															<fileName>Shader/Resources/*.*</fileName>
 															<items/>
 														</item>
 													</items>
@@ -9227,7 +9231,7 @@
 													<name>Resources</name>
 													<items>
 														<item type="File">
-															<fileName>Texture/Resources/*.image</fileName>
+															<fileName>Texture/Resources/*.*</fileName>
 															<items/>
 														</item>
 													</items>
@@ -10109,7 +10113,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -11477,11 +11481,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/toolbar/Playback.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Flash.png</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -11789,11 +11789,7 @@
 								<name>Resources</name>
 								<items>
 									<item type="File">
-										<fileName>../../../res/resound/Grain.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/toolbar/PlusMinus.png</fileName>
+										<fileName>Resources/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -16176,7 +16172,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -17107,7 +17103,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -17451,7 +17447,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/toolbar/Terrain.png</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -17983,7 +17979,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/toolbar/Theater.png</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -19977,11 +19973,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>Resources/*.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>Resources/*.image</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -21513,7 +21505,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/toolbar/Alignment.png</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -21679,15 +21671,15 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>$(TRAKTOR_HOME)/res/Amalgam/Error.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
 							<fileName>$(TRAKTOR_HOME)/res/Traktor.Amalgam.ico</fileName>
 							<items/>
 						</item>
 						<item type="File">
 							<fileName>$(TRAKTOR_HOME)/res/Traktor.Amalgam.rc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -23577,15 +23569,6 @@
 					</items>
 				</item>
 				<item type="Filter">
-					<name>Resources</name>
-					<items>
-						<item type="File">
-							<fileName>../../../res/toolbar/Playback.png</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
 					<name>Fxg</name>
 					<items>
 						<item type="File">
@@ -24157,6 +24140,308 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Amalgam.Run</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Run</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_AMALGAM_RUN_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.dll</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_AMALGAM_RUN_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.dll</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Impl</name>
+					<items>
+						<item type="File">
+							<fileName>Impl/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[95]/dependencies/item[8]/project/dependencies/item[25]/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[58]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Amalgam.Run.App</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Run/App</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable>$(TargetPath)</debugExecutable>
+					<debugArguments/>
+					<debugEnvironment>PATH=$(AGGREGATE_OUTPUT_PATH)\debugshared;$(PATH)</debugEnvironment>
+					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.App.exe</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable>$(TargetPath)</debugExecutable>
+					<debugArguments/>
+					<debugEnvironment>PATH=$(AGGREGATE_OUTPUT_PATH)\releaseshared;$(PATH)</debugEnvironment>
+					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.App.exe</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.App.exe</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.App.exe</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Win32</name>
+					<items>
+						<item type="File">
+							<fileName>Win32/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[138]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>

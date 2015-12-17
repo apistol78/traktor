@@ -20,7 +20,7 @@ BankControlGrain::BankControlGrain(BankControlGrain* parent, IGrainData* grain, 
 ,	m_image(image)
 ,	m_active(false)
 {
-	m_bitmapGrain = ui::Bitmap::load(c_ResourceGrain, sizeof(c_ResourceGrain), L"png");
+	m_bitmapGrain = ui::Bitmap::load(c_ResourceGrain, sizeof(c_ResourceGrain), L"image");
 }
 
 BankControlGrain* BankControlGrain::getParent() const

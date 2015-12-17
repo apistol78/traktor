@@ -53,7 +53,7 @@ bool SoundBatchDialog::create(ui::Widget* parent)
 	if (!soundListTools->create(soundListContainer))
 		return false;
 
-	soundListTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"png"), 4);
+	soundListTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"image"), 4);
 	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_ADD"), 0, ui::Command(L"SoundBatch.Add")));
 	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_REMOVE"), 1, ui::Command(L"SoundBatch.Remove")));
 	soundListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SoundBatchDialog::eventSoundListToolClick);

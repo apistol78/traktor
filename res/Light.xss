@@ -102,11 +102,6 @@
 			<color>51, 153, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.PreviewList</type>
-			<element>background-color</element>
-			<color>80, 80, 80, 255</color>
-		</item>
-		<item>
 			<type>traktor.ui.custom.GradientStatic</type>
 			<element>background-color-left</element>
 			<color>239, 239, 242, 255</color>
@@ -210,6 +205,26 @@
 			<type>traktor.ui.custom.ProgressBar</type>
 			<element>progress-color</element>
 			<color>0, 153, 0, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.PreviewList</type>
+			<element>background-color</element>
+			<color>246, 246, 246, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.PreviewList</type>
+			<element>color</element>
+			<color>0, 0, 0, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.PreviewList</type>
+			<element>item-background-color</element>
+			<color>200, 200, 200, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.PreviewList</type>
+			<element>item-background-color-selected</element>
+			<color>51, 153, 255, 255</color>
 		</item>
 	</groups>
 </object>

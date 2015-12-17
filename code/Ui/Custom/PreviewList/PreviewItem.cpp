@@ -1,9 +1,9 @@
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Canvas.h"
+#include "Ui/StyleSheet.h"
+#include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/PreviewList/PreviewItem.h"
-
-// Resources
-#include "Resources/PreviewFrame.h"
 
 namespace traktor
 {
@@ -17,14 +17,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.PreviewItem", PreviewItem, AutoWidget
 PreviewItem::PreviewItem()
 :	m_selected(false)
 {
-	m_bitmapFrame = ui::Bitmap::load(c_ResourcePreviewFrame, sizeof(c_ResourcePreviewFrame), L"png");
 }
 
 PreviewItem::PreviewItem(const std::wstring& text)
 :	m_text(text)
 ,	m_selected(false)
 {
-	m_bitmapFrame = ui::Bitmap::load(c_ResourcePreviewFrame, sizeof(c_ResourcePreviewFrame), L"png");
 }
 
 void PreviewItem::setText(const std::wstring& text)
@@ -59,24 +57,18 @@ bool PreviewItem::isSelected() const
 
 void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 {
-	Size frameSize(74, 74); // = m_bitmapFrame->getSize();
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	Size frameSize(scaleBySystemDPI(64), scaleBySystemDPI(64));
 	Point framePosition(rect.left + (rect.getWidth() - frameSize.cx) / 2, rect.top);
 
-	canvas.drawBitmap(
-		framePosition,
-		Point(m_selected ? 74 : 0, 0),
-		frameSize,
-		m_bitmapFrame,
-		BmAlpha
-	);
+	canvas.setBackground(ss->getColor(getWidget(), isSelected() ? L"item-background-color-selected" : L"item-background-color"));
+	canvas.fillRect(Rect(framePosition, frameSize));
 
 	if (m_bitmapImage)
 	{
 		Size thumbSize = m_bitmapImage->getSize();
-		Point thumbPosition(
-			framePosition.x + 5,
-			framePosition.y + 5
-		);
+		Point thumbPosition = framePosition;
 
 		canvas.drawBitmap(
 			thumbPosition,
@@ -119,15 +111,7 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 
 	textRect.bottom = textRect.top + textExtent.cy + 2;
 
-	if (isSelected())
-	{
-		Color4ub background = canvas.getBackground();
-		canvas.setBackground(Color4ub(80, 90, 120));
-		canvas.fillRect(textRect);
-		canvas.setBackground(background);
-	}
-
-	canvas.setForeground(Color4ub(255, 255, 255));
+	canvas.setForeground(ss->getColor(getWidget(), L"color"));
 	canvas.drawText(
 		Rect(
 			textRect.left,

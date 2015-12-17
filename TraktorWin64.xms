@@ -5680,27 +5680,7 @@
 											<name>Resources</name>
 											<items>
 												<item type="File">
-													<fileName>../../res/DockBottom.png</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../res/DockLeft.png</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../res/DockRight.png</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../res/DockTop.png</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../res/Close.png</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../res/DockGripper.png</fileName>
+													<fileName>Resources/*.*</fileName>
 													<items/>
 												</item>
 											</items>
@@ -7541,6 +7521,15 @@
 										<fileName>Layer/*.*</fileName>
 										<items/>
 									</item>
+									<item type="Filter">
+										<name>Resources</name>
+										<items>
+											<item type="File">
+												<fileName>Layer/Resources/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">
@@ -7567,6 +7556,15 @@
 									<item type="File">
 										<fileName>Sequencer/*.*</fileName>
 										<items/>
+									</item>
+									<item type="Filter">
+										<name>Resources</name>
+										<items>
+											<item type="File">
+												<fileName>Sequencer/Resources/*.*</fileName>
+												<items/>
+											</item>
+										</items>
 									</item>
 								</items>
 							</item>
@@ -7595,6 +7593,15 @@
 										<fileName>LogList/*.*</fileName>
 										<items/>
 									</item>
+									<item type="Filter">
+										<name>Resources</name>
+										<items>
+											<item type="File">
+												<fileName>LogList/Resources/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">
@@ -7620,59 +7627,6 @@
 								<items>
 									<item type="File">
 										<fileName>GradientStatic/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Resources</name>
-								<items>
-									<item type="File">
-										<fileName>../../../res/Log.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/Unchecked.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/Checked.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/Collapse.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/Expand.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerHidden.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerVisible.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/SmallPen.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/SmallDots.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/SmallPlus.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/SmallCross.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/preview/PreviewFrame.png</fileName>
 										<items/>
 									</item>
 								</items>
@@ -11320,11 +11274,7 @@
 								<name>Resources</name>
 								<items>
 									<item type="File">
-										<fileName>../../../res/resound/Grain.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/toolbar/PlusMinus.png</fileName>
+										<fileName>Resources/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -15176,15 +15126,6 @@
 							<item type="File">
 								<fileName>*.*</fileName>
 								<items/>
-							</item>
-							<item type="Filter">
-								<name>Resources</name>
-								<items>
-									<item type="File">
-										<fileName>../../../res/toolbar/Heightfield.png</fileName>
-										<items/>
-									</item>
-								</items>
 							</item>
 						</items>
 						<dependencies>
@@ -19177,15 +19118,15 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>$(TRAKTOR_HOME)/res/Amalgam/Error.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
 							<fileName>$(TRAKTOR_HOME)/res/Traktor.Amalgam.ico</fileName>
 							<items/>
 						</item>
 						<item type="File">
 							<fileName>$(TRAKTOR_HOME)/res/Traktor.Amalgam.rc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -22619,282 +22560,6 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
-			<name>Traktor.Sprite</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Sprite</sourcePath>
-			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_SPRITE_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Sprite.dll</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_SPRITE_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Sprite.dll</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="3">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Sprite.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Sprite.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>false</enable>
-			<name>Traktor.Sprite.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Sprite/Editor</sourcePath>
-			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_SPRITE_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Sprite.Editor.dll</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_SPRITE_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Sprite.Editor.dll</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="3">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Sprite.Editor.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Sprite.Editor.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[3]/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Telemetry</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Telemetry</sourcePath>
@@ -23152,15 +22817,6 @@
 					<items>
 						<item type="File">
 							<fileName>Svg/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Resources</name>
-					<items>
-						<item type="File">
-							<fileName>../../../res/toolbar/Playback.png</fileName>
 							<items/>
 						</item>
 					</items>

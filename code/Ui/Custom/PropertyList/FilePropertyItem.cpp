@@ -48,7 +48,7 @@ void FilePropertyItem::createInPlaceControls(Widget* parent)
 
 	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
-	m_buttonEdit->create(parent, ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png"));
+	m_buttonEdit->create(parent, ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image"));
 	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &FilePropertyItem::eventClick);
 }
 

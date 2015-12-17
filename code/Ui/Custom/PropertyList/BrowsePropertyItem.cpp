@@ -54,13 +54,13 @@ void BrowsePropertyItem::createInPlaceControls(Widget* parent)
 
 	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
-	m_buttonEdit->create(parent, Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"png"));
+	m_buttonEdit->create(parent, Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"image"));
 	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &BrowsePropertyItem::eventEditClick);
 	m_buttonEdit->setEnable(!m_value.isNull());
 	
 	T_ASSERT (!m_buttonBrowse);
 	m_buttonBrowse = new MiniButton();
-	m_buttonBrowse->create(parent,ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png"));
+	m_buttonBrowse->create(parent,ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image"));
 	m_buttonBrowse->addEventHandler< ButtonClickEvent >(this, &BrowsePropertyItem::eventBrowseClick);
 }
 

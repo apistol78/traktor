@@ -1,13 +1,5 @@
 import(traktor)
-
-local dpis =
-{
-	96,
-	120,
-	144,
-	192,
-	240
-}
+import(traktor.drawing)
 
 local outputs =
 {
@@ -37,7 +29,23 @@ local outputs =
 		}
 	},
 	{
-		name = "UI - TreeView",
+		name = "UI_Dock",
+		path = "../../code/Ui/Resources",
+		resources =
+		{
+			{ name = "DockClose", column = 2, row = 24, width = 1, height = 1, base = 12 },
+		}
+	},
+	{
+		name = "UI_Tab",
+		path = "../../code/Ui/Resources",
+		resources =
+		{
+			{ name = "TabClose", column = 2, row = 24, width = 1, height = 1, base = 12 },
+		}
+	},	
+	{
+		name = "UI_TreeView",
 		path = "../../code/Ui/Custom/TreeView/Resources",
 		resources =
 		{
@@ -45,7 +53,7 @@ local outputs =
 		}
 	},
 	{
-		name = "UI - GridView",
+		name = "UI_GridView",
 		path = "../../code/Ui/Custom/GridView/Resources",
 		resources =
 		{
@@ -53,13 +61,47 @@ local outputs =
 		}
 	},
 	{
-		name = "UI - PropertyList",
+		name = "UI_LogList",
+		path = "../../code/Ui/Custom/LogList/Resources",
+		resources =
+		{
+			{ name = "Log", column = 0, row = 23, width = 3, height = 1, base = 12 },
+		}
+	},	
+	{
+		name = "UI_PropertyList",
 		path = "../../code/Ui/Custom/PropertyList/Resources",
 		resources =
 		{
 			{ name = "PropertyList", column = 0, row = 4, width = 2, height = 1 },
+			{ name = "Unchecked", column = 0, row = 24, width = 1, height = 1, base = 14 },
+			{ name = "Checked", column = 1, row = 24, width = 1, height = 1, base = 14 },
+			{ name = "SmallCross", column = 2, row = 24, width = 1, height = 1, base = 12 },
+			{ name = "SmallDots", column = 3, row = 24, width = 1, height = 1, base = 12 },
+			{ name = "SmallPen", column = 4, row = 24, width = 1, height = 1, base = 12 },
+			{ name = "SmallPlus", column = 5, row = 24, width = 1, height = 1, base = 12 },
 		}
 	},
+	{
+		name = "UI_Sequencer",
+		path = "../../code/Ui/Custom/Sequencer/Resources",
+		resources =
+		{
+			{ name = "SequenceExpand", column = 0, row = 4, width = 1, height = 1, base = 9 },
+			{ name = "SequenceCollapse", column = 1, row = 4, width = 1, height = 1, base = 9 },
+			{ name = "SequenceVisible", column = 5, row = 6, width = 1, height = 1 },
+			{ name = "SequenceHidden", column = 6, row = 6, width = 1, height = 1 },
+		}
+	},
+	{
+		name = "UI_Layer",
+		path = "../../code/Ui/Custom/Layer/Resources",
+		resources =
+		{
+			{ name = "LayerVisible", column = 5, row = 6, width = 1, height = 1 },
+			{ name = "LayerHidden", column = 6, row = 6, width = 1, height = 1 },
+		}
+	},	
 	{
 		name = "Script",
 		path = "../../code/Script/Editor/Resources",
@@ -90,12 +132,13 @@ local outputs =
 			{ name = "Randomize", column = 0, row = 6, width = 1, height = 1 },
 			{ name = "ToggleGuideLines", column = 1, row = 6, width = 1, height = 1 },
 			{ name = "ToggleMoveEmitter", column = 2, row = 6, width = 1, height = 1 },
-			{ name = "BrowseBackground", column = 3, row = 6, width = 1, height = 1 },
-			{ name = "BrowseImageProcess", column = 4, row = 6, width = 1, height = 1 },
+			{ name = "ToggleGroundClip", column = 3, row = 6, width = 1, height = 1 },
+			{ name = "BrowseBackground", column = 4, row = 6, width = 1, height = 1 },
+			{ name = "BrowseImageProcess", column = 5, row = 6, width = 1, height = 1 },
 			{ name = "Playback", column = 0, row = 13, width = 6, height = 1 },
-			{ name = "LayerVisible", column = 5, row = 6, width = 1, height = 1 },
-			{ name = "LayerHidden", column = 6, row = 6, width = 1, height = 1 },
-			{ name = "LayerDelete", column = 9, row = 6, width = 1, height = 1 },		
+			{ name = "LayerVisible", column = 6, row = 6, width = 1, height = 1 },
+			{ name = "LayerHidden", column = 7, row = 6, width = 1, height = 1 },
+			{ name = "LayerDelete", column = 10, row = 6, width = 1, height = 1 },		
 		}
 	},
 	{
@@ -180,7 +223,7 @@ local outputs =
 		path = "../../code/Flash/Editor/Resources",
 		resources =
 		{
-			-- { name = "Playback", column = 0, row = 13, width = 6, height = 1 },
+			{ name = "Playback", column = 0, row = 13, width = 6, height = 1 },
 			{ name = "Flash", column = 0, row = 17, width = 2, height = 1 },
 		}
 	},
@@ -200,6 +243,32 @@ local outputs =
 			{ name = "Theater", column = 0, row = 15, width = 8, height = 1 },
 		}
 	},
+	{
+		name = "Sound",
+		path = "../../code/Sound/Editor/Resources",
+		resources =
+		{
+			{ name = "PlusMinus", column = 0, row = 11, width = 2, height = 1 },
+			{ name = "Grain", column = 0, row = 22, width = 4, height = 6, base = 32 },
+		}
+	},	
+	{
+		name = "Amalgam_Run",
+		path = "../../code/Amalgam/Game/App/Resources",
+		resources =
+		{
+			{ name = "Error", column = 0, row = 34, width = 3, height = 10 },
+		}
+	},		
+}
+
+local dpis =
+{
+	96,
+	120,
+	144,
+	192,
+	240
 }
 
 local function export(input, x, y, width, height, dpi, output)
@@ -215,51 +284,91 @@ function main(argv)
 			for _, o in ipairs(g.resources) do
 				stdout:printLn("Converting " .. g.name .. "/" .. o.name .. "...")
 
-				local sizes = { 0, 0, 0, 0 }
-				local base = 16
-				if o.base ~= nil then base = o.base end
-
-				-- Generate PNG at different DPI resolutions.
-				for j, dpi in ipairs(dpis) do
-
-					-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
-					local xdpi = (90 / 2) * (dpi / 96) * (base / 16)
-					export("Icons.svg", o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
-
-					-- Get file size of output.
-					local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
-					assert (f ~= nil)
-					sizes[j] = f:getSize()
-				end
-
-				-- Merge all files into a simple "image pack" resource.
 				local p = FileSystem.getInstance():getAbsolutePath(Path(g.path .. "/" .. o.name .. ".image"))
-				local f = FileSystem.getInstance():open(p, File.FmWrite)
-				assert (f ~= nil)
+				local f = FileSystem.getInstance():get(p)
+				if f == nil or not f:isReadOnly() then
 
-				-- Write directory.
-				local bw = BitWriter(f)
-				bw:writeUInt16(#dpis)
-				local offset = 16 / 8 + #dpis * (16 + 32) / 8
-				for j, dpi in ipairs(dpis) do
-					bw:writeUInt16(dpi)
-					bw:writeUInt32(offset)
-					offset = offset + sizes[j]
-				end
+					local sizes = { 0, 0, 0, 0 }
+					local base = 16
+					if o.base ~= nil then base = o.base end
 
-				-- Append each image file.
-				for j, dpi in ipairs(dpis) do
-					local sf = FileSystem.getInstance():open(Path(dpi .. ".png"), File.FmRead)
-					assert (sf ~= nil)
-					StreamCopy(f, sf):execute()
-					sf:close()
-				end
+					if true then
 
-				f:close()
+						-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
+						local sdpi = 480
+						local xdpi = (90 / 2) * (sdpi / 96) * (base / 16)
+						export("Icons.svg", o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, sdpi .. ".png")
 
-				-- Remove all intermediate images.
-				for j, dpi in ipairs(dpis) do
-					run:rm(dpi .. ".png")
+						-- Generate PNG at different DPI resolutions.
+						local source = Image.loadFromFile(sdpi .. ".png")
+						for j, dpi in ipairs(dpis) do
+
+							-- Produce scaled version of image.
+							if dpi ~= sdpi then
+								local scale = dpi / sdpi
+								local t = source:clone(true)
+								local flt = ScaleFilter(
+									t:getWidth() * scale,
+									t:getHeight() * scale
+								)
+								t:apply(flt)
+								t:save(dpi .. ".png")
+							end
+
+							-- Get file size of output.
+							local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
+							assert (f ~= nil)
+							sizes[j] = f:getSize()								
+						end
+
+					else
+
+						-- Generate PNG at different DPI resolutions.
+						for j, dpi in ipairs(dpis) do
+
+							-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
+							local xdpi = (90 / 2) * (dpi / 96) * (base / 16)
+							export("Icons.svg", o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
+
+							-- Get file size of output.
+							local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
+							assert (f ~= nil)
+							sizes[j] = f:getSize()
+						end
+
+					end
+
+					-- Merge all files into a simple "image pack" resource.
+					local f = FileSystem.getInstance():open(p, File.FmWrite)
+					assert (f ~= nil)
+
+					-- Write directory.
+					local bw = BitWriter(f)
+					bw:writeUInt16(#dpis)
+					local offset = 16 / 8 + #dpis * (16 + 32) / 8
+					for j, dpi in ipairs(dpis) do
+						bw:writeUInt16(dpi)
+						bw:writeUInt32(offset)
+						offset = offset + sizes[j]
+					end
+
+					-- Append each image file.
+					for j, dpi in ipairs(dpis) do
+						local sf = FileSystem.getInstance():open(Path(dpi .. ".png"), File.FmRead)
+						assert (sf ~= nil)
+						StreamCopy(f, sf):execute()
+						sf:close()
+					end
+
+					f:close()
+
+					-- Remove all intermediate images.
+					for j, dpi in ipairs(dpis) do
+						run:rm(dpi .. ".png")
+					end
+
+				else
+					stdout:printLn("Skipped as target is read-only; presumably because it's locked in SCM.")
 				end
 			end
 		end

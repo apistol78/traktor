@@ -40,7 +40,7 @@ PropertyItem::PropertyItem(const std::wstring& text)
 	if (!s_imageExpand)
 		s_imageExpand = Bitmap::load(c_ResourcePropertyList, sizeof(c_ResourcePropertyList), L"image");
 	if (!s_imageCross)
-		s_imageCross = Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png");
+		s_imageCross = Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"image");
 }
 
 void PropertyItem::setText(const std::wstring& text)
