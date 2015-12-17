@@ -72,6 +72,7 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 
 		canvas.drawBitmap(
 			thumbPosition,
+			frameSize,
 			Point(0, 0),
 			thumbSize,
 			m_bitmapImage,

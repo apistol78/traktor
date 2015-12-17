@@ -17,7 +17,7 @@
 #include "Ui/Custom/TreeView/TreeViewItem.h"
 
 // Resources
-//#include "Resources/Files.h"
+#include "Resources/Folders.h"
 
 #pragma warning(disable: 4344)
 
@@ -87,7 +87,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 	m_categoryTree = new ui::custom::TreeView();
 	if (!m_categoryTree->create(left, ui::WsDoubleBuffer))
 		return false;
-	//m_categoryTree->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
+	m_categoryTree->addImage(ui::Bitmap::load(c_ResourceFolders, sizeof(c_ResourceFolders), L"image"), 2);
 	m_categoryTree->addEventHandler< ui::SelectionChangeEvent >(this, &BrowseTypeDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();
@@ -103,7 +103,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 		return false;
 	m_typeList->addEventHandler< ui::MouseDoubleClickEvent >(this, &BrowseTypeDialog::eventListDoubleClick);
 
-	Ref< ui::custom::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"BROWSE_TYPE_GLOBAL"), 2, 3);
+	Ref< ui::custom::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"BROWSE_TYPE_GLOBAL"), 0, 1);
 	for (TypeInfoSet::iterator i = types.begin(); i != types.end(); ++i)
 	{
 		const TypeInfo* type = *i;
@@ -125,7 +125,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 			Ref< ui::custom::TreeViewItem > child = group->findChild(*j);
 			if (!child)
 			{
-				child = m_categoryTree->createItem(group, *j, 2, 3);
+				child = m_categoryTree->createItem(group, *j, 0, 1);
 				child->expand();
 			}
 			group = child;

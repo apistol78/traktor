@@ -26,7 +26,7 @@
 #include "Ui/Custom/TreeView/TreeViewItem.h"
 
 // Resources
-//#include "Resources/Files.h"
+#include "Resources/Folders.h"
 
 #pragma warning(disable: 4344)
 
@@ -101,7 +101,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	m_treeDatabase = new ui::custom::TreeView();
 	if (!m_treeDatabase->create(left, ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
-	//m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
+	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceFolders, sizeof(c_ResourceFolders), L"image"), 2);
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &BrowseInstanceDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();
@@ -198,7 +198,7 @@ ui::custom::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::custom::Tree
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
 
-	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parent, group->getName(), 2, 3);
+	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parent, group->getName(), 0, 1);
 	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 		buildGroupItems(treeView, groupItem, *i, filter);
 
