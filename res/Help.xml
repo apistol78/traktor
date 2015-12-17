@@ -312,5 +312,37 @@ order to compensate for display gamma.
             ]]>
             </second>
         </item>
+        <item>
+            <first>HELP_TRAKTOR_RENDER_EXTERNAL</first>
+            <second>
+            <![CDATA[
+External fragment            
+            ]]>
+            </second>
+        </item>
+        <item>
+            <first>HELP_TRAKTOR_RENDER_UNIFORM</first>
+            <second>
+            <![CDATA[
+Uniform shader parameter      
+            ]]>
+            </second>
+        </item>
+        <item>
+            <first>HELP_TRAKTOR_RENDER_PIXELOUTPUT</first>
+            <second>
+            <![CDATA[
+Pixel written output
+            ]]>
+            </second>
+        </item>
+        <item>
+            <first>HELP_TRAKTOR_RENDER_SWIZZLE</first>
+            <second>
+            <![CDATA[
+Swizzle elements
+            ]]>
+            </second>
+        </item>        
 	</map>
 </object>

@@ -16,6 +16,7 @@
 #include "Core/Misc/String.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 
 // Resources
@@ -237,13 +238,14 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 
 void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
+	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
 	const Platform* platform = m_instance->getPlatform();
 	const TargetConfiguration* targetConfiguration = m_instance->getTargetConfiguration();
 	RefArray< TargetConnection > connections = m_instance->getConnections();
 
 	ui::Rect controlRect = rect; controlRect.bottom = rect.top + ui::scaleBySystemDPI(28);
 
-	canvas.setBackground(Color4ub(255, 255, 255));
+	canvas.setBackground(ss->getColor(getWidget(), L"item-background-color"));
 	canvas.fillRect(controlRect);
 
 	ui::Rect performanceRect = rect;
@@ -251,12 +253,12 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	performanceRect.bottom = performanceRect.top + ui::scaleBySystemDPI(c_performanceHeight);
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
-		canvas.setBackground(Color4ub(220, 220, 220));
+		canvas.setBackground(ss->getColor(getWidget(), L"item-connection-background-color"));
 		canvas.fillRect(performanceRect);
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}
 
-	canvas.setForeground(ui::getSystemColor(ui::ScButtonShadow));
+	canvas.setForeground(ss->getColor(getWidget(), L"item-seperator-color"));
 	canvas.drawLine(rect.left, rect.bottom - 1, rect.right, rect.bottom - 1);
 
 	if (m_instance->getState() != m_lastInstanceState)
@@ -296,7 +298,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	textRect.left += logoSize + 10;
 	textRect.right -= ui::scaleBySystemDPI(24) * 3 - 8;
 
-	canvas.setForeground(ui::getSystemColor(ui::ScWindowText));
+	canvas.setForeground(ss->getColor(getWidget(), L"color"));
 	canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
 
 	ui::Font widgetFont = getWidget()->getFont();

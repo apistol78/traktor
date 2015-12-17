@@ -1,6 +1,7 @@
 #include <sstream>
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/String.h"
+#include "Ui/Application.h"
 #include "Ui/Edit.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
@@ -60,8 +61,8 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 	if (!ConfigDialog::create(
 		parent,
 		text,
-		500,
-		400,
+		scaleBySystemDPI(500),
+		scaleBySystemDPI(400),
 		style,
 		new TableLayout(L"*,*,*,*", L"*", 4, 4)
 	))

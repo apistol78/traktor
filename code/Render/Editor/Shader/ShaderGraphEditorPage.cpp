@@ -138,7 +138,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_INSERT_INTERPOLATORS"), 13, ui::Command(L"ShaderGraph.Editor.InsertInterpolators")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	
-	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), 80, i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
+	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), ui::scaleBySystemDPI(80), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
 	m_toolPlatform->add(L"DX9");
 	m_toolPlatform->add(L"DX9 Xbox360");
 	m_toolPlatform->add(L"DX11");

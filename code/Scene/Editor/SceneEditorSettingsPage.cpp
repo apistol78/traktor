@@ -30,12 +30,12 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneEditorSettingsPage", 0, Scen
 
 bool SceneEditorSettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
-	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
+	m_container = new ui::Container();
+	if (!m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
 		return false;
 
 	Ref< ui::Container > containerSliders = new ui::Container();
-	containerSliders->create(container, ui::WsNone, new ui::TableLayout(L"*,300,*", L"*", 0, 4));
+	containerSliders->create(m_container, ui::WsNone, new ui::TableLayout(L"*,300,*", L"*", 0, 4));
 
 	Ref< ui::Static > staticWorldRenderer = new ui::Static();
 	staticWorldRenderer->create(containerSliders, i18n::Text(L"SCENE_EDITOR_SETTINGS_WORLD_RENDERER"));
@@ -71,15 +71,15 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, PropertyGroup* setti
 	m_staticMouseWheelRateValue->create(containerSliders, L"");
 
 	m_checkInvertMouseWheel = new ui::CheckBox();
-	m_checkInvertMouseWheel->create(container, i18n::Text(L"SCENE_EDITOR_SETTINGS_INVERT_MOUSE_WHEEL"));
+	m_checkInvertMouseWheel->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_INVERT_MOUSE_WHEEL"));
 	m_checkInvertMouseWheel->setChecked(settings->getProperty< PropertyBoolean >(L"SceneEditor.InvertMouseWheel"));
 
 	m_checkInvertPanY = new ui::CheckBox();
-	m_checkInvertPanY->create(container, i18n::Text(L"SCENE_EDITOR_SETTINGS_INVERT_PAN_Y"));
+	m_checkInvertPanY->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_INVERT_PAN_Y"));
 	m_checkInvertPanY->setChecked(settings->getProperty< PropertyBoolean >(L"SceneEditor.InvertPanY"));
 
 	m_checkBuildWhenDrop = new ui::CheckBox();
-	m_checkBuildWhenDrop->create(container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP"));
+	m_checkBuildWhenDrop->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP"));
 	m_checkBuildWhenDrop->setChecked(settings->getProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", true));
 
 	parent->setText(i18n::Text(L"SCENE_EDITOR_SETTINGS"));
@@ -120,9 +120,13 @@ void SceneEditorSettingsPage::updateValues()
 {
 	int32_t fov = m_sliderFov->getValue();
 	m_staticFovValue->setText(toString(fov) + L" degree(s)");
+	m_staticFovValue->update();
 
 	int32_t mouseWheelRate = m_sliderMouseWheelRate->getValue();
 	m_staticMouseWheelRateValue->setText(toString(mouseWheelRate));
+	m_staticMouseWheelRateValue->update();
+
+	m_container->update();
 }
 
 void SceneEditorSettingsPage::eventValueChange(ui::ContentChangeEvent* event)
