@@ -102,11 +102,6 @@
 			<color>51, 153, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.PreviewList</type>
-			<element>background-color</element>
-			<color>80, 80, 80, 255</color>
-		</item>
-		<item>
 			<type>traktor.ui.custom.GradientStatic</type>
 			<element>background-color-left</element>
 			<color>45, 45, 45, 255</color>
@@ -152,6 +147,31 @@
 			<color>128, 128, 128, 255</color>
 		</item>
 		<item>
+			<type>traktor.ui.custom.PropertyList</type>
+			<element>background-color</element>
+			<color>45, 45, 45, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.PropertyList</type>
+			<element>header-background-color</element>
+			<color>40, 40, 40, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.PropertyList</type>
+			<element>item-color-selected</element>
+			<color>255, 255, 255, 255</color>
+		</item>		
+		<item>
+			<type>traktor.ui.custom.PropertyList</type>
+			<element>item-background-color-selected</element>
+			<color>51, 153, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.PropertyList</type>
+			<element>line-color</element>
+			<color>40, 40, 40, 255</color>
+		</item>
+		<item>
 			<type>traktor.ui.custom.StatusBar</type>
 			<element>color</element>
 			<color>255, 255, 255, 255</color>
@@ -170,6 +190,76 @@
 			<type>traktor.sound.BankControl</type>
 			<element>background-color</element>
 			<color>80, 80, 80, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.ProgressBar</type>
+			<element>background-color</element>
+			<color>255, 255, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.ProgressBar</type>
+			<element>progress-color</element>
+			<color>0, 153, 0, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.PreviewList</type>
+			<element>background-color</element>
+			<color>246, 246, 246, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.PreviewList</type>
+			<element>color</element>
+			<color>0, 0, 0, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.PreviewList</type>
+			<element>item-background-color</element>
+			<color>200, 200, 200, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.PreviewList</type>
+			<element>item-background-color-selected</element>
+			<color>51, 153, 255, 255</color>
+		</item>		
+		<item>
+			<type>traktor.amalgam.TargetListControl</type>
+			<element>item-background-color</element>
+			<color>80, 80, 80, 255</color>
+		</item>
+		<item>
+			<type>traktor.amalgam.TargetListControl</type>
+			<element>item-seperator-color</element>
+			<color>60, 60, 60, 255</color>
+		</item>		
+		<item>
+			<type>traktor.amalgam.TargetListControl</type>
+			<element>item-connection-background-color</element>
+			<color>70, 70, 70, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.MiniButton</type>
+			<element>background-color</element>
+			<color>50, 50, 50, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.MiniButton</type>
+			<element>bevel-color</element>
+			<color>40, 40, 40, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.MiniButton</type>
+			<element>bevel-highlight-color</element>
+			<color>70, 70, 70, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.MiniButton</type>
+			<element>bevel-shadow-color</element>
+			<color>30, 30, 30, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.MiniButton</type>
+			<element>bevel-disabled-color</element>
+			<color>40, 40, 40, 255</color>
 		</item>
 	</groups>
 </object>

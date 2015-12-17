@@ -1,7 +1,7 @@
-#include "Ui/Static.h"
 #include "Ui/Application.h"
-#include "Ui/Itf/IStatic.h"
-#include "Core/Log/Log.h"
+#include "Ui/Canvas.h"
+#include "Ui/Static.h"
+#include "Ui/StyleSheet.h"
 
 namespace traktor
 {
@@ -12,25 +12,33 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Static", Static, Widget)
 
 bool Static::create(Widget* parent, const std::wstring& text)
 {
-	if (!parent)
+	if (!Widget::create(parent))
 		return false;
 
-	IStatic* staticText = Application::getInstance()->getWidgetFactory()->createStatic(this);
-	if (!staticText)
-	{
-		log::error << L"Failed to create native widget peer (Static)" << Endl;
-		return false;
-	}
+	setText(text);
+	addEventHandler< PaintEvent >(this, &Static::eventPaint);
+	return true;
+}
 
-	if (!staticText->create(parent->getIWidget(), text))
-	{
-		staticText->destroy();
-		return false;
-	}
+Size Static::getPreferedSize() const
+{
+	return getTextExtent(getText());
+}
 
-	m_widget = staticText;
+void Static::eventPaint(PaintEvent* event)
+{
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	Canvas& canvas = event->getCanvas();
+	
+	Rect rcInner = getInnerRect();
+	
+	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.fillRect(rcInner);
 
-	return Widget::create(parent);
+	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.drawText(rcInner, getText(), AnLeft, AnCenter);
+
+	event->consume();
 }
 
 	}

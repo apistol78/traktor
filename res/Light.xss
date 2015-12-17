@@ -226,5 +226,45 @@
 			<element>item-background-color-selected</element>
 			<color>51, 153, 255, 255</color>
 		</item>
+		<item>
+			<type>traktor.amalgam.TargetListControl</type>
+			<element>item-background-color</element>
+			<color>255, 255, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.amalgam.TargetListControl</type>
+			<element>item-seperator-color</element>
+			<color>200, 200, 200, 255</color>
+		</item>	
+		<item>
+			<type>traktor.amalgam.TargetListControl</type>
+			<element>item-connection-background-color</element>
+			<color>220, 220, 220, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.MiniButton</type>
+			<element>background-color</element>
+			<color>246, 246, 246, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.MiniButton</type>
+			<element>bevel-color</element>
+			<color>140, 140, 140, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.MiniButton</type>
+			<element>bevel-highlight-color</element>
+			<color>255, 255, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.MiniButton</type>
+			<element>bevel-shadow-color</element>
+			<color>64, 64, 64, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.MiniButton</type>
+			<element>bevel-disabled-color</element>
+			<color>140, 140, 140, 255</color>
+		</item>
 	</groups>
 </object>

@@ -42,6 +42,7 @@ public:
 	virtual bool apply(PropertyGroup* settings);
 
 private:
+	Ref< ui::Container > m_container;
 	Ref< ui::DropDown > m_dropWorldRenderer;
 	Ref< ui::Slider > m_sliderFov;
 	Ref< ui::Slider > m_sliderMouseWheelRate;

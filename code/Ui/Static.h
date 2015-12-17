@@ -25,6 +25,11 @@ class T_DLLCLASS Static : public Widget
 
 public:
 	bool create(Widget* parent, const std::wstring& text = L"");
+
+	virtual Size getPreferedSize() const;
+
+private:
+	void eventPaint(PaintEvent* event);
 };
 
 	}

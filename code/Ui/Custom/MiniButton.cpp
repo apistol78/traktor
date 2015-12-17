@@ -1,5 +1,6 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/MiniButton.h"
 
 namespace traktor
@@ -82,33 +83,34 @@ void MiniButton::eventButtonUp(MouseButtonUpEvent* event)
 
 void MiniButton::eventPaint(PaintEvent* event)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 	
 	Rect rcInner = getInnerRect();
 	
-	canvas.setBackground(getSystemColor(ScButtonFace));
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcInner);
 
 	if (isEnable())
 	{
 		if (m_state == StReleased)
 		{
-			canvas.setForeground(Color4ub(140, 140, 140));
+			canvas.setForeground(ss->getColor(this, L"bevel-color"));
 			canvas.drawRect(rcInner);
 			
 			rcInner = rcInner.inflate(-1, -1);
 
-			canvas.setForeground(Color4ub(255, 255, 255));
+			canvas.setForeground(ss->getColor(this, L"bevel-highlight-color"));
 			canvas.drawLine(rcInner.left, rcInner.bottom - 2, rcInner.left, rcInner.top);
 			canvas.drawLine(rcInner.left, rcInner.top, rcInner.right - 1, rcInner.top);
 			
-			canvas.setForeground(Color4ub(64, 64, 64));
+			canvas.setForeground(ss->getColor(this, L"bevel-shadow-color"));
 			canvas.drawLine(rcInner.left + 1, rcInner.bottom - 1, rcInner.right - 1, rcInner.bottom - 1);
 			canvas.drawLine(rcInner.right - 1, rcInner.bottom - 1, rcInner.right - 1, rcInner.top);
 		}
 		else
 		{
-			canvas.setForeground(getSystemColor(ScButtonShadow));
+			canvas.setForeground(ss->getColor(this, L"bevel-color"));
 			canvas.drawRect(rcInner);
 		
 			if (m_state == StPushed)
@@ -117,7 +119,7 @@ void MiniButton::eventPaint(PaintEvent* event)
 	}
 	else
 	{
-		canvas.setForeground(Color4ub(140, 140, 140));
+		canvas.setForeground(ss->getColor(this, L"bevel-disabled-color"));
 		canvas.drawRect(rcInner);
 	}
 
@@ -138,7 +140,7 @@ void MiniButton::eventPaint(PaintEvent* event)
 	}
 	else
 	{
-		canvas.setForeground(Color4ub(0, 0, 0));
+		canvas.setForeground(ss->getColor(this, L"color"));
 		canvas.drawText(rcInner, getText(), AnCenter, AnCenter);
 	}
 	
