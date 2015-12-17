@@ -56,7 +56,7 @@ void TextPropertyItem::createInPlaceControls(Widget* parent)
 	{
 		T_ASSERT (!m_buttonEdit);
 		m_buttonEdit = new MiniButton();
-		m_buttonEdit->create(parent, ui::Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"png"));
+		m_buttonEdit->create(parent, ui::Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"image"));
 		m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &TextPropertyItem::eventClick);
 	}
 }

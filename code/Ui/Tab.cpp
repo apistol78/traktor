@@ -6,7 +6,7 @@
 #include "Ui/TabPage.h"
 #include "Ui/Font.h"
 
-#include "Resources/Close.h"
+#include "Resources/TabClose.h"
 
 namespace traktor
 {
@@ -49,7 +49,7 @@ bool Tab::create(Widget* parent, int32_t style)
 	m_drawLine = bool((style & WsLine) == WsLine);
 	m_bottom = bool((style & WsBottom) == WsBottom);
 	
-	m_bitmapClose = Bitmap::load(c_ResourceClose, sizeof(c_ResourceClose), L"png");
+	m_bitmapClose = Bitmap::load(c_ResourceTabClose, sizeof(c_ResourceTabClose), L"image");
 	T_FATAL_ASSERT (m_bitmapClose);
 
 	return true;

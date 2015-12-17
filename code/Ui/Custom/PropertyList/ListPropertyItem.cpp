@@ -96,7 +96,7 @@ void ListPropertyItem::createInPlaceControls(Widget* parent)
 {
 	T_ASSERT (!m_buttonDrop);
 	m_buttonDrop = new MiniButton();
-	m_buttonDrop->create(parent, ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png"));
+	m_buttonDrop->create(parent, ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image"));
 	m_buttonDrop->addEventHandler< ButtonClickEvent >(this, &ListPropertyItem::eventDropClick);
 
 	T_ASSERT (!m_listForm);

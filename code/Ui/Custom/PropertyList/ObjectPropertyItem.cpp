@@ -47,9 +47,9 @@ void ObjectPropertyItem::setObject(Object* object)
 	if (m_buttonEdit)
 	{
 		if (m_object)
-			m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png"));
+			m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"image"));
 		else
-			m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png"));
+			m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image"));
 
 		m_buttonEdit->update();
 	}
@@ -68,9 +68,9 @@ void ObjectPropertyItem::createInPlaceControls(Widget* parent)
 	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &ObjectPropertyItem::eventClick);
 
 	if (m_object)
-		m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png"));
+		m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"image"));
 	else
-		m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png"));
+		m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image"));
 }
 
 void ObjectPropertyItem::destroyInPlaceControls()

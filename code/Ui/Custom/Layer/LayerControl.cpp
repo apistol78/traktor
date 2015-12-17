@@ -38,8 +38,8 @@ bool LayerControl::create(Widget* parent, int style)
 
 	m_scrollBar->addEventHandler< ScrollEvent >(this, &LayerControl::eventScroll);
 
-	m_imageVisible = Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"png");
-	m_imageHidden = Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png");
+	m_imageVisible = Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"image");
+	m_imageHidden = Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"image");
 
 	addEventHandler< SizeEvent >(this, &LayerControl::eventSize);
 	addEventHandler< MouseButtonDownEvent >(this, &LayerControl::eventButtonDown);

@@ -33,9 +33,9 @@ ArrayPropertyItem::ArrayPropertyItem(const std::wstring& text, const TypeInfo* e
 ,	m_readOnly(readOnly)
 {
 	if (!s_imageSmallDots)
-		s_imageSmallDots = ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png");
+		s_imageSmallDots = ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image");
 	if (!s_imageSmallPlus)
-		s_imageSmallPlus = ui::Bitmap::load(c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus), L"png");
+		s_imageSmallPlus = ui::Bitmap::load(c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus), L"image");
 }
 
 void ArrayPropertyItem::setElementType(const TypeInfo* elementType)

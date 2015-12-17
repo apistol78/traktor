@@ -5,10 +5,10 @@
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 
 // Resources
-#include "Resources/Expand.h"
-#include "Resources/Collapse.h"
-#include "Resources/LayerVisible.h"
-#include "Resources/LayerHidden.h"
+#include "Resources/SequenceExpand.h"
+#include "Resources/SequenceCollapse.h"
+#include "Resources/SequenceVisible.h"
+#include "Resources/SequenceHidden.h"
 
 namespace traktor
 {
@@ -32,10 +32,10 @@ SequenceGroup::SequenceGroup(const std::wstring& name)
 ,	m_start(0)
 ,	m_end(100)
 {
-	m_imageExpand = Bitmap::load(c_ResourceExpand, sizeof(c_ResourceExpand), L"png");
-	m_imageCollapse = Bitmap::load(c_ResourceCollapse, sizeof(c_ResourceCollapse), L"png");
-	m_imageVisible = Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"png");
-	m_imageHidden = Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png");
+	m_imageExpand = Bitmap::load(c_ResourceSequenceExpand, sizeof(c_ResourceSequenceExpand), L"image");
+	m_imageCollapse = Bitmap::load(c_ResourceSequenceCollapse, sizeof(c_ResourceSequenceCollapse), L"image");
+	m_imageVisible = Bitmap::load(c_ResourceSequenceVisible, sizeof(c_ResourceSequenceVisible), L"image");
+	m_imageHidden = Bitmap::load(c_ResourceSequenceHidden, sizeof(c_ResourceSequenceHidden), L"image");
 }
 
 void SequenceGroup::expand()

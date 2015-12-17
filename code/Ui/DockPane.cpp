@@ -5,7 +5,7 @@
 #include "Ui/DockPane.h"
 #include "Ui/StyleSheet.h"
 
-#include "Resources/Close.h"
+#include "Resources/DockClose.h"
 #include "Resources/DockGripper.h"
 
 namespace traktor
@@ -59,7 +59,7 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 ,	m_split(0)
 ,	m_focus(false)
 {
-	m_bitmapClose = Bitmap::load(c_ResourceClose, sizeof(c_ResourceClose), L"png");
+	m_bitmapClose = Bitmap::load(c_ResourceDockClose, sizeof(c_ResourceDockClose), L"image");
 	T_FATAL_ASSERT (m_bitmapClose);
 
 	m_bitmapGripper = Bitmap::load(c_ResourceDockGripper, sizeof(c_ResourceDockGripper), L"png");
@@ -439,10 +439,11 @@ void DockPane::draw(Canvas& canvas)
 			gx += 4;
 		}
 
+		// \fixme White when focus
 		canvas.drawBitmap(
-			Point(captionRect.right - 16, captionRect.getCenter().y - 3),
-			Point(m_focus ? 10 : 0, 0),
-			Size(10, 8),
+			Point(captionRect.right -  m_bitmapClose->getSize().cx - 4, captionRect.getCenter().y - m_bitmapClose->getSize().cy / 2),
+			Point(0, 0),
+			m_bitmapClose->getSize(),
 			m_bitmapClose,
 			BmAlpha
 		);

@@ -49,7 +49,7 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 
 	m_scrollBar->addEventHandler< ScrollEvent >(this, &LogList::eventScroll);
 
-	m_icons = Bitmap::load(c_ResourceLog, sizeof(c_ResourceLog), L"png");
+	m_icons = Bitmap::load(c_ResourceLog, sizeof(c_ResourceLog), L"image");
 
 	m_itemHeight = getFont().getPixelSize() + scaleBySystemDPI(4);
 	m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize().cy);

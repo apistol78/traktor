@@ -46,7 +46,6 @@ public:
 
 private:
 	std::wstring m_text;
-	Ref< ui::Bitmap > m_bitmapFrame;
 	Ref< ui::Bitmap > m_bitmapImage;
 	bool m_selected;
 };

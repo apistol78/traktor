@@ -27,9 +27,9 @@ CheckPropertyItem::CheckPropertyItem(const std::wstring& text, bool checked)
 ,	m_checked(checked)
 {
 	if (!s_imageUnchecked)
-		s_imageUnchecked = Bitmap::load(c_ResourceUnchecked, sizeof(c_ResourceUnchecked), L"png");
+		s_imageUnchecked = Bitmap::load(c_ResourceUnchecked, sizeof(c_ResourceUnchecked), L"image");
 	if (!s_imageChecked)
-		s_imageChecked = Bitmap::load(c_ResourceChecked, sizeof(c_ResourceChecked), L"png");
+		s_imageChecked = Bitmap::load(c_ResourceChecked, sizeof(c_ResourceChecked), L"image");
 }
 
 void CheckPropertyItem::setChecked(bool checked)
