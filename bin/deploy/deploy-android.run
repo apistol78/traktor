@@ -20,7 +20,14 @@ function string:split(sep)
 end
 
 
-function generateImage(fileName, image, width, height)
+local function isDeviceConnected()
+	run:execute("$(ANDROID_HOME)/platform-tools/adb get-state", nil)
+	local s = run:stdOut():trim()
+	return s == "device"
+end
+
+
+local function generateImage(fileName, image, width, height)
 	local outputAspect = width / height
 
 	local sourceWidth = image:getWidth()
@@ -200,6 +207,12 @@ end
 
 function launch(args)
 	stdout:printLn("Launching...")
+
+	-- Ensure device is ready.
+	if not isDeviceConnected() then
+		stderr:printLn("No device ready; ensure an Android device is connected and properly configured.")
+		return 1
+	end	
 
 	local ant = os:getEnvironment("ANT_HOME")
 	if #ant <= 0 then
@@ -436,6 +449,12 @@ function migrate(args)
 	-- Use ant to build apk package.
 	stdout:printLn("Building package...")
 	run:execute("$(ANT_HOME)/bin/ant.bat debug", nil)
+
+	-- Ensure device is ready.
+	if not isDeviceConnected() then
+		stderr:printLn("No device ready; ensure an Android device is connected and properly configured.")
+		return 1
+	end
 
 	-- Install application on attached device.
 	stdout:printLn("Installing package...")
