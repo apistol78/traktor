@@ -5659,27 +5659,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../res/DockBottom.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../res/DockLeft.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../res/DockRight.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../res/DockTop.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../res/DockGripper.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../res/Close.png</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -5799,6 +5779,15 @@
 							<fileName>Graph/*.*</fileName>
 							<items/>
 						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>Graph/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -5807,6 +5796,15 @@
 						<item type="File">
 							<fileName>Layer/*.*</fileName>
 							<items/>
+						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>Layer/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
 						</item>
 					</items>
 				</item>
@@ -5835,6 +5833,15 @@
 							<fileName>Sequencer/*.*</fileName>
 							<items/>
 						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>Sequencer/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -5862,6 +5869,15 @@
 							<fileName>LogList/*.*</fileName>
 							<items/>
 						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>LogList/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -5875,7 +5891,7 @@
 							<name>Resources</name>
 							<items>
 								<item type="File">
-									<fileName>GridView/Resources/*.image</fileName>
+									<fileName>GridView/Resources/*.*</fileName>
 									<items/>
 								</item>
 							</items>
@@ -5887,111 +5903,6 @@
 					<items>
 						<item type="File">
 							<fileName>GradientStatic/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Resources</name>
-					<items>
-						<item type="File">
-							<fileName>../../../res/graph/Shadow.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Background.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Grid.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/InOut.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Input.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Ipol.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Node.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Output.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Pin.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/LayerHidden.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/LayerVisible.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Collapse.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Expand.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Unchecked.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Checked.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Log.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/ProgressBar.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/SmallPen.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/SmallCross.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/SmallDots.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/SmallPlus.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Comment.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/preview/PreviewFrame.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/External.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/TviState.png</fileName>
 							<items/>
 						</item>
 					</items>
@@ -6061,7 +5972,7 @@
 							<name>Resources</name>
 							<items>
 								<item type="File">
-									<fileName>TreeView/Resources/*.image</fileName>
+									<fileName>TreeView/Resources/*.*</fileName>
 									<items/>
 								</item>
 							</items>
