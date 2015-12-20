@@ -135,7 +135,14 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 
 			ActionFunction* classConstructor = spriteClassValue.getObject< ActionFunction >();
 			if (classConstructor)
+			{
+				Ref< FlashSpriteInstance > current = context->getMovieClip();
+				context->setMovieClip(spriteInstance);
+
 				classConstructor->call(spriteInstanceAO);
+
+				context->setMovieClip(current);
+			}
 		}
 	}
 
