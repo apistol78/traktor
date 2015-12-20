@@ -905,7 +905,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 {
 	// Find first directional light casting shadow.
 	const Light* shadowLight = 0;
-	for (int32_t i = 0; i < MaxLightCount; ++i)
+	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
 	{
 		const Light& light = worldRenderView.getLight(i);
 		if (light.type == LtDirectional && light.castShadow)

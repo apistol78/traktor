@@ -18,7 +18,6 @@ class ITexture;
 enum
 {
 	MaxSliceCount = 4,
-	MaxLightCount = 64,
 	MaxLightShadowCount = 2
 };
 

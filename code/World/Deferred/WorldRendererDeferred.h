@@ -89,21 +89,16 @@ private:
 		Matrix44 projection;
 		Matrix44 view;
 		Frustum viewFrustum;
-		Light lights[MaxLightCount];
-		uint32_t lightCount;
+		AlignedVector< Light > lights;
 		Vector4 godRayDirection;
 		bool haveGBuffer;
-		bool haveShadows[MaxLightCount];
 
 		Frame()
 		:	time(0.0f)
 		,	A(0.0f)
 		,	B(0.0f)
-		,	lightCount(0)
 		,	haveGBuffer(false)
 		{
-			for (uint32_t i = 0; i < MaxLightCount; ++i)
-				haveShadows[i] = false;
 		}
 	};
 
