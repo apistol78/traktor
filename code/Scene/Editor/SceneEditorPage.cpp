@@ -231,9 +231,9 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGrid = new ui::custom::GridView();
 	m_instanceGrid->create(m_entityPanel, ui::WsDoubleBuffer);
 	//m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
-	m_instanceGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), 200));
-	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", 30));
-	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", 30));
+	m_instanceGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), ui::scaleBySystemDPI(200)));
+	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(30)));
+	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(30)));
 	m_instanceGrid->addEventHandler< ui::SelectionChangeEvent >(this, &SceneEditorPage::eventInstanceSelect);
 	m_instanceGrid->addEventHandler< ui::custom::GridRowStateChangeEvent >(this, &SceneEditorPage::eventInstanceExpand);
 	m_instanceGrid->addEventHandler< ui::MouseButtonDownEvent >(this, &SceneEditorPage::eventInstanceButtonDown);

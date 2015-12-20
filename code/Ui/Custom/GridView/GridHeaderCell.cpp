@@ -24,13 +24,14 @@ void GridHeaderCell::mouseDown(MouseButtonDownEvent* event, const Point& positio
 	if (m_columns.size() < 2)
 		return;
 
+	int32_t dx = scaleBySystemDPI(1);
 	int32_t x = 0;
+
 	for (uint32_t i = 0; i < m_columns.size() - 1; ++i)
 	{
 		GridColumn* column = m_columns[i];
 		x += column->getWidth();
-
-		if (position.x >= x - 1 && position.x <= x + 1)
+		if (position.x >= x - dx && position.x <= x + dx)
 		{
 			m_resizeColumn = column;
 			m_resizeWidth = column->getWidth();
