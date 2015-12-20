@@ -2,6 +2,7 @@
 #define traktor_world_WorldRenderView_H
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
@@ -92,8 +93,8 @@ public:
 		return m_lights[index];
 	}
 
-	T_FORCE_INLINE int getLightCount() const {
-		return m_lightCount;
+	T_FORCE_INLINE int32_t getLightCount() const {
+		return int32_t(m_lights.size());
 	}
 
 	T_FORCE_INLINE const Aabb3& getShadowBox() const {
@@ -142,8 +143,7 @@ private:
 	Matrix44 m_projection;
 	Matrix44 m_view;
 	Vector2 m_viewSize;
-	Light m_lights[MaxLightCount];
-	int m_lightCount;
+	AlignedVector< Light > m_lights;
 	Aabb3 m_shadowBox;
 	float m_time;
 	float m_deltaTime;

@@ -11,7 +11,6 @@ WorldRenderView::WorldRenderView()
 :	m_projection(Matrix44::identity())
 ,	m_view(Matrix44::identity())
 ,	m_viewSize(0.0f, 0.0f)
-,	m_lightCount(0)
 ,	m_time(0.0f)
 ,	m_deltaTime(0.0f)
 ,	m_interval(0.0f)
@@ -20,16 +19,6 @@ WorldRenderView::WorldRenderView()
 ,	m_screenPlaneDistance(13.0f)
 ,	m_godRayDirection(Vector4::zero())
 {
-	for (int i = 0; i < MaxLightCount; ++i)
-	{
-		m_lights[i].type = LtDisabled;
-		m_lights[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-		m_lights[i].direction = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
-		m_lights[i].sunColor = Vector4(1.0f, 1.0f, 1.0f, 0.0f);
-		m_lights[i].baseColor = Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-		m_lights[i].shadowColor = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-		m_lights[i].range = Scalar(0.0f);
-	}
 }
 
 void WorldRenderView::setOrthogonal(float width, float height, float nearZ, float farZ)
@@ -123,25 +112,15 @@ void WorldRenderView::setGodRayDirection(const Vector4& direction)
 
 void WorldRenderView::addLight(const Light& light)
 {
-	if (m_lightCount >= MaxLightCount)
-		return;
-
 	if (light.castShadow)
-	{
-		for (int32_t i = m_lightCount - 1; i >= 0; --i)
-			m_lights[i + 1] = m_lights[i];
-
-		m_lights[0] = light;
-	}
+		m_lights.insert(m_lights.begin(), light);
 	else
-		m_lights[m_lightCount] = light;
-
-	++m_lightCount;
+		m_lights.push_back(light);
 }
 
 void WorldRenderView::resetLights()
 {
-	m_lightCount = 0;
+	m_lights.resize(0);
 }
 
 	}

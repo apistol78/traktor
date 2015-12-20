@@ -651,7 +651,7 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 	// Flush previous frame.
 	f.gbuffer->clear();
 
-	uint32_t shadowLightCount = min< uint32_t >(f.lightCount, MaxLightShadowCount);
+	uint32_t shadowLightCount = min< uint32_t >(f.lights.size(), MaxLightShadowCount);
 	for (uint32_t i = 0; i < shadowLightCount; ++i)
 	{
 		for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
@@ -787,17 +787,17 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 	}
 
 	// Render shadow and light maps.
-	if ((flags & (WrfShadowMap | WrfLightMap)) != 0 && f.lightCount > 0)
+	if ((flags & (WrfShadowMap | WrfLightMap)) != 0 && !f.lights.empty())
 	{
 		bool firstLight = true;
 
 		// First render all shadowing lights.
 		if ((flags & WrfShadowMap) != 0)
 		{
-			uint32_t shadowLightCount = min< uint32_t >(f.lightCount, MaxLightShadowCount);
+			uint32_t shadowLightCount = min< uint32_t >(f.lights.size(), MaxLightShadowCount);
 			for (uint32_t i = 0; i < shadowLightCount; ++i)
 			{
-				if (!f.haveShadows[i])
+				if (!f.lights[i].castShadow)
 					continue;
 
 				if (eye == render::EtCyclop || eye == render::EtLeft)
@@ -938,9 +938,9 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 					firstLight = false;
 				}
 
-				for (uint32_t i = 0; i < f.lightCount; ++i)
+				for (uint32_t i = 0; i < f.lights.size(); ++i)
 				{
-					if (f.haveShadows[i])
+					if (f.lights[i].castShadow)
 						continue;
 
 					T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (no shadow)");
@@ -1276,12 +1276,10 @@ void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderVi
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	Aabb3 shadowBox = worldRenderView.getShadowBox();
 
-	f.lightCount = worldRenderView.getLightCount();
-
+	f.lights.resize(worldRenderView.getLightCount());
 	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
 	{
 		const Light& light = worldRenderView.getLight(i);
-
 		f.lights[i] = light;
 
 		if (
@@ -1356,22 +1354,21 @@ void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderVi
 				f.slice[slice].shadowLightProjection[i] = shadowLightProjection;
 				f.slice[slice].viewToLightSpace[i] = /*shadowLightSquareProjection * */shadowLightProjection * shadowLightView * viewInverse;
 			}
-
-			f.haveShadows[i] = true;
 		}
 		else
-			f.haveShadows[i] = false;
+			f.lights[i].castShadow = false;
 	}
 }
 
 void WorldRendererDeferred::buildLightWithNoShadows(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
-	f.lightCount = worldRenderView.getLightCount();
+	f.lights.resize(worldRenderView.getLightCount());
 	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
 	{
 		const Light& light = worldRenderView.getLight(i);
 		f.lights[i] = light;
+		f.lights[i].castShadow = false;
 	}
 }
 
