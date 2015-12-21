@@ -33,6 +33,17 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
+
+int CALLBACK enumFontCallBack(const LOGFONT* lf, const TEXTMETRIC*, DWORD, LPVOID lParam)
+{
+	std::set< std::wstring >& outFonts = *reinterpret_cast< std::set< std::wstring >* >(lParam);
+	outFonts.insert(lf->lfFaceName);
+	return TRUE; 
+}
+
+		}
 
 WidgetFactoryWin32::WidgetFactoryWin32()
 :	m_systemDPI(96)
@@ -224,6 +235,27 @@ bool WidgetFactoryWin32::getSystemColor(SystemColor systemColor, Color4ub& outCo
 	);
 
 	return true;
+}
+
+void WidgetFactoryWin32::getSystemFonts(std::list< std::wstring >& outFonts)
+{
+	HDC hDC = GetDC(NULL);
+
+	LOGFONT lf = { 0 };
+	lf.lfCharSet = DEFAULT_CHARSET;
+
+	std::set< std::wstring > fonts;
+	EnumFontFamiliesEx(
+		hDC,
+		&lf,
+		(FONTENUMPROC)enumFontCallBack,
+		(LPARAM)&fonts,
+		0
+	);
+
+	ReleaseDC(NULL, hDC);
+
+	outFonts = std::list< std::wstring >(fonts.begin(), fonts.end());
 }
 
 	}

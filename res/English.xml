@@ -825,6 +825,10 @@
       <second>Shader compiler</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_EDITOR_FONT</first>
+      <second>Font</second>
+    </item>    
+    <item>
       <first>EDITOR_SETTINGS_HOME_URL</first>
       <second>Home URL</second>
     </item>

@@ -86,6 +86,8 @@ public:
 
 	virtual bool getSystemColor(SystemColor systemColor, Color4ub& outColor);
 
+	virtual void getSystemFonts(std::list< std::wstring >& outFonts);
+
 private:
 	int32_t m_systemDPI;
 };

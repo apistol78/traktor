@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.DropDown", DropDown, Widget)
 
-bool DropDown::create(Widget* parent, const std::wstring& text, int style)
+bool DropDown::create(Widget* parent, const std::wstring& text, int32_t style)
 {
 	if (!parent)
 		return false;
@@ -33,18 +33,18 @@ bool DropDown::create(Widget* parent, const std::wstring& text, int style)
 	return Widget::create(parent);
 }
 
-int DropDown::add(const std::wstring& item, Object* data)
+int32_t DropDown::add(const std::wstring& item, Object* data)
 {
 	T_ASSERT (m_widget);
 
-	int index = static_cast< IDropDown* >(m_widget)->add(item.c_str());
+	int32_t index = static_cast< IDropDown* >(m_widget)->add(item.c_str());
 	if (index >= 0)
 		m_data[index] = data;
 
 	return index;
 }
 
-bool DropDown::remove(int index)
+bool DropDown::remove(int32_t index)
 {
 	T_ASSERT (m_widget);
 
@@ -62,43 +62,56 @@ void DropDown::removeAll()
 	m_data.clear();
 }
 
-int DropDown::count() const
+int32_t DropDown::count() const
 {
 	T_ASSERT (m_widget);
 	return static_cast< IDropDown* >(m_widget)->count();
 }
 
-void DropDown::setItem(int index, const std::wstring& item)
+void DropDown::setItem(int32_t index, const std::wstring& item)
 {
 	T_ASSERT (m_widget);
 	static_cast< IDropDown* >(m_widget)->set(index, item);
 }
 
-void DropDown::setData(int index, Object* data)
+void DropDown::setData(int32_t index, Object* data)
 {
 	T_ASSERT (m_widget);
 	m_data[index] = data;
 }
 
-std::wstring DropDown::getItem(int index) const
+std::wstring DropDown::getItem(int32_t index) const
 {
 	T_ASSERT (m_widget);
 	return static_cast< IDropDown* >(m_widget)->get(index);
 }
 
-Ref< Object > DropDown::getData(int index) const
+Ref< Object > DropDown::getData(int32_t index) const
 {
-	std::map< int, Ref< Object > >::const_iterator i = m_data.find(index);
+	std::map< int32_t, Ref< Object > >::const_iterator i = m_data.find(index);
 	return (i != m_data.end()) ? i->second.ptr() : 0;
 }
 
-void DropDown::select(int index)
+void DropDown::select(int32_t index)
 {
 	T_ASSERT (m_widget);
 	static_cast< IDropDown* >(m_widget)->select(index);
 }
 
-int DropDown::getSelected() const
+bool DropDown::select(const std::wstring& item)
+{
+	for (int32_t i = 0; i < count(); ++i)
+	{
+		if (getItem(i) == item)
+		{
+			select(i);
+			return true;
+		}
+	}
+	return false;
+}
+
+int32_t DropDown::getSelected() const
 {
 	T_ASSERT (m_widget);
 	return static_cast< IDropDown* >(m_widget)->getSelected();
@@ -107,14 +120,14 @@ int DropDown::getSelected() const
 std::wstring DropDown::getSelectedItem() const
 {
 	T_ASSERT (m_widget);
-	int index = getSelected();
+	int32_t index = getSelected();
 	return index >= 0 ? getItem(index) : std::wstring();
 }
 
 Ref< Object > DropDown::getSelectedData() const
 {
 	T_ASSERT (m_widget);
-	int index = getSelected();
+	int32_t index = getSelected();
 	return index >= 0 ? getData(index) : 0;
 }
 
