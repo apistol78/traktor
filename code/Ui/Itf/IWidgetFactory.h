@@ -1,6 +1,7 @@
 #ifndef traktor_ui_IWidgetFactory_H
 #define traktor_ui_IWidgetFactory_H
 
+#include <list>
 #include <string>
 #include "Core/Config.h"
 #include "Core/Math/Color4ub.h"
@@ -112,6 +113,8 @@ public:
 	virtual int32_t getSystemDPI() const = 0;
 
 	virtual bool getSystemColor(SystemColor systemColor, Color4ub& outColor) = 0;
+
+	virtual void getSystemFonts(std::list< std::wstring >& outFonts) = 0;
 };
 
 	}

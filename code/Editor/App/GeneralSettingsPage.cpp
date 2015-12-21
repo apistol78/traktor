@@ -1,14 +1,20 @@
+#include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/App/GeneralSettingsPage.h"
 #include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
+#include "Ui/DropDown.h"
 #include "Ui/Edit.h"
+#include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Itf/IWidgetFactory.h"
 
 namespace traktor
 {
@@ -32,6 +38,27 @@ bool GeneralSettingsPage::create(ui::Container* parent, PropertyGroup* settings,
 
 	m_editDictionary = new ui::Edit();
 	m_editDictionary->create(containerInner, settings->getProperty< PropertyString >(L"Editor.Dictionary"));
+
+	Ref< ui::Static > staticFont = new ui::Static();
+	staticFont->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_EDITOR_FONT"));
+
+	Ref< ui::Container > containerFont = new ui::Container();
+	if (!containerFont->create(containerInner, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, 4)))
+		return false;
+
+	m_dropFonts = new ui::DropDown();
+	m_dropFonts->create(containerFont);
+
+	std::list< std::wstring > fonts;
+	ui::Application::getInstance()->getWidgetFactory()->getSystemFonts(fonts);
+	for (std::list< std::wstring >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
+		m_dropFonts->add(*i);
+
+	m_dropFonts->select(settings->getProperty< PropertyString >(L"Editor.Font", L"Consolas"));
+
+	m_editFontSize = new ui::Edit();
+	m_editFontSize->create(containerFont, L"1", ui::WsClientBorder, new ui::NumericEditValidator(false, 1, 100, 0));
+	m_editFontSize->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.FontSize", 14)));
 
 	m_checkAutoOpen = new ui::CheckBox();
 	m_checkAutoOpen->create(container, i18n::Text(L"EDITOR_SETTINGS_AUTOOPEN_RECENT_WORKSPACE"));
@@ -64,6 +91,8 @@ void GeneralSettingsPage::destroy()
 bool GeneralSettingsPage::apply(PropertyGroup* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
+	settings->setProperty< PropertyString >(L"Editor.Font", m_dropFonts->getSelectedItem());
+	settings->setProperty< PropertyInteger >(L"Editor.FontSize", parseString< int32_t >(m_editFontSize->getText()));
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoOpenRecentlyUsedWorkspace", m_checkAutoOpen->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoSave", m_checkAutoSave->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified", m_checkBuildWhenSourceModified->isChecked());

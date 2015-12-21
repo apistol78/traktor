@@ -4,6 +4,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -172,13 +173,10 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	m_edit->addImage(ui::Bitmap::load(c_ResourceBreakpoint, sizeof(c_ResourceBreakpoint), L"image"), 1);
 
-#if defined(__APPLE__)
-	m_edit->setFont(ui::Font(L"Menlo Regular", 14));
-#elif defined(__LINUX__)
-	m_edit->setFont(ui::Font(L"DejaVu Sans Mono", 14));
-#else
-	m_edit->setFont(ui::Font(L"Consolas", 14));
-#endif
+	std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
+	int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
+	m_edit->setFont(ui::Font(font, fontSize));
+
 	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
 	m_edit->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventScriptDoubleClick);
 
@@ -440,6 +438,13 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		}
 
 		m_edit->setFocus();
+	}
+	else if (command == L"Editor.SettingsChanged")
+	{
+		std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
+		int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
+		m_edit->setFont(ui::Font(font, fontSize));
+		m_edit->update();
 	}
 	else if (command == L"Script.Editor.GotoLine")
 	{

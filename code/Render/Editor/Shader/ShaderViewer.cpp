@@ -1,6 +1,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
@@ -112,13 +113,10 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_shaderEdit = new ui::custom::SyntaxRichEdit();
 	m_shaderEdit->create(this, L"", ui::WsDoubleBuffer);
 	m_shaderEdit->setLanguage(new ui::custom::SyntaxLanguageHlsl());
-#if defined(__APPLE__)
-	m_shaderEdit->setFont(ui::Font(L"Courier New", 14));
-#elif defined(__LINUX__)
-	m_shaderEdit->setFont(ui::Font(L"Courier New", 14));
-#else
-	m_shaderEdit->setFont(ui::Font(L"Consolas", 14));
-#endif
+
+	std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
+	int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
+	m_shaderEdit->setFont(ui::Font(font, fontSize));
 
 	// Create reflector thread.
 	m_reflectThread = ThreadManager::getInstance().create(makeFunctor(this, &ShaderViewer::threadReflect), L"Shader reflector");

@@ -25,34 +25,36 @@ class T_DLLCLASS DropDown : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, const std::wstring& text = L"", int style = WsBorder);
+	bool create(Widget* parent, const std::wstring& text = L"", int32_t style = WsBorder);
 	
-	int add(const std::wstring& item, Object* data = 0);
+	int32_t add(const std::wstring& item, Object* data = 0);
 
-	bool remove(int index);
+	bool remove(int32_t index);
 
 	void removeAll();
 
-	int count() const;
+	int32_t count() const;
 
-	void setItem(int index, const std::wstring& item);
+	void setItem(int32_t index, const std::wstring& item);
 
-	void setData(int index, Object* data);
+	void setData(int32_t index, Object* data);
 
-	std::wstring getItem(int index) const;
+	std::wstring getItem(int32_t index) const;
 
-	Ref< Object > getData(int index) const;
+	Ref< Object > getData(int32_t index) const;
 
-	void select(int index);
+	void select(int32_t index);
 
-	int getSelected() const;
+	bool select(const std::wstring& item);
+
+	int32_t getSelected() const;
 
 	std::wstring getSelectedItem() const;
 
 	Ref< Object > getSelectedData() const;
 
 	template < typename T >
-	Ref< T > getData(int index) const
+	Ref< T > getData(int32_t index) const
 	{
 		return dynamic_type_cast< T* >(getData(index));
 	}
@@ -64,7 +66,7 @@ public:
 	}
 
 private:
-	std::map< int, Ref< Object > > m_data;
+	std::map< int32_t, Ref< Object > > m_data;
 };
 
 	}
