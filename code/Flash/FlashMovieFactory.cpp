@@ -32,6 +32,7 @@ FlashMovieFactory::FlashMovieFactory(bool includeAS)
 	m_tagReaders[TiDefineFont] = new FlashTagDefineFont(1);
 	m_tagReaders[TiDefineFont2] = new FlashTagDefineFont(2);
 	m_tagReaders[TiDefineFont3] = new FlashTagDefineFont(3);
+	m_tagReaders[TiDefineScalingGrid] = new FlashTagDefineScalingGrid();
 	m_tagReaders[TiJpegTables] = new FlashTagJpegTables();
 	m_tagReaders[TiDefineBitsJpeg] = new FlashTagDefineBitsJpeg(1);
 	m_tagReaders[TiDefineBitsJpeg2] = new FlashTagDefineBitsJpeg(2);

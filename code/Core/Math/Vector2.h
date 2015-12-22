@@ -115,6 +115,8 @@ T_MATH_INLINE T_DLLCLASS float dot(const Vector2& l, const Vector2& r);
 
 T_MATH_INLINE T_DLLCLASS Vector2 lerp(const Vector2& a, const Vector2& b, float c);
 
+T_MATH_INLINE T_DLLCLASS Vector2 lerp(const Vector2& a, const Vector2& b, const Vector2& c);
+
 T_MATH_INLINE T_DLLCLASS float determinant(const Vector2& a, const Vector2& b);
 
 T_MATH_INLINE T_DLLCLASS Vector2 min(const Vector2& l, const Vector2& r);

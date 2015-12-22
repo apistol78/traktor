@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Float.h"
 #include "Core/Misc/Split.h"
 #include "Core/Timer/Timer.h"
 #include "Flash/FlashDictionary.h"
@@ -105,10 +106,8 @@ void FlashMovieRenderer::renderSprite(
 	if (!spriteInstance->isVisible() && !renderAsMask)
 		return;
 
-	m_displayRenderer->beginSprite(
-		*spriteInstance,
-		transform
-	);
+	const FlashSprite* sprite = spriteInstance->getSprite();
+	const Aabb2& scalingGrid = sprite->getScalingGrid();
 
 	FlashDictionary* dictionary = spriteInstance->getDictionary();
 	T_ASSERT (dictionary);
@@ -116,71 +115,216 @@ void FlashMovieRenderer::renderSprite(
 	const FlashDisplayList& displayList = spriteInstance->getDisplayList();
 	const FlashDisplayList::layer_map_t& layers = displayList.getLayers();
 
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); )
+	if (scalingGrid.empty())
 	{
-		const FlashDisplayList::Layer& layer = i->second;
-		if (!layer.instance)
-		{
-			++i;
-			continue;
-		}
+		m_displayRenderer->beginSprite(
+			*spriteInstance,
+			transform
+		);
 
-		if (!layer.clipEnable)
+		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); )
 		{
-			renderCharacter(
-				layer.instance,
-				transform,
-				cxTransform,
-				spriteInstance->getBlendMode()
-			);
-			++i;
-		}
-		else
-		{
-			// Increment stencil mask.
-			m_displayRenderer->beginMask(true);
-			renderCharacter(
-				layer.instance,
-				transform,
-				cxTransform,
-				SbmDefault
-			);
-			m_displayRenderer->endMask();
-
-			// Render all layers which is clipped to new stencil mask.
-			for (++i; i != layers.end(); ++i)
+			const FlashDisplayList::Layer& layer = i->second;
+			if (!layer.instance)
 			{
-				if (i->first > layer.clipDepth)
-					break;
+				++i;
+				continue;
+			}
 
-				const FlashDisplayList::Layer& clippedLayer = i->second;
-				if (!clippedLayer.instance)
-					continue;
-
+			if (!layer.clipEnable)
+			{
 				renderCharacter(
-					clippedLayer.instance,
+					layer.instance,
 					transform,
 					cxTransform,
 					spriteInstance->getBlendMode()
 				);
+				++i;
+			}
+			else
+			{
+				// Increment stencil mask.
+				m_displayRenderer->beginMask(true);
+				renderCharacter(
+					layer.instance,
+					transform,
+					cxTransform,
+					SbmDefault
+				);
+				m_displayRenderer->endMask();
+
+				// Render all layers which is clipped to new stencil mask.
+				for (++i; i != layers.end(); ++i)
+				{
+					if (i->first > layer.clipDepth)
+						break;
+
+					const FlashDisplayList::Layer& clippedLayer = i->second;
+					if (!clippedLayer.instance)
+						continue;
+
+					renderCharacter(
+						clippedLayer.instance,
+						transform,
+						cxTransform,
+						spriteInstance->getBlendMode()
+					);
+				}
+
+				// Decrement stencil mask.
+				m_displayRenderer->beginMask(false);
+				renderCharacter(
+					layer.instance,
+					transform,
+					cxTransform,
+					SbmDefault
+				);
+				m_displayRenderer->endMask();
+			}
+		}
+
+		m_displayRenderer->endSprite(
+			*spriteInstance,
+			transform
+		);
+	}
+	else
+	{
+		Aabb2 localBounds = spriteInstance->getLocalBounds();
+		Aabb2 globalBounds = spriteInstance->getBounds();
+
+		float w0 = scalingGrid.mn.x - localBounds.mn.x;
+		float w1 = localBounds.mx.x - scalingGrid.mx.x;
+
+		float h0 = scalingGrid.mn.y - localBounds.mn.y;
+		float h1 = localBounds.mx.y - scalingGrid.mx.y;
+
+		float sfx0 = w0 / (localBounds.mx.x - localBounds.mn.x);
+		float sfx1 = ((localBounds.mx.x - localBounds.mn.x) - w1) / (localBounds.mx.x - localBounds.mn.x);
+		float sfy0 = h0 / (localBounds.mx.y - localBounds.mn.y);
+		float sfy1 = ((localBounds.mx.y - localBounds.mn.y) - h1) / (localBounds.mx.y - localBounds.mn.y);
+
+		Aabb2 sourceGrid[] =
+		{
+			Aabb2(Vector2(0.0f, 0.0f), Vector2(sfx0, sfy0)),
+			Aabb2(Vector2(sfx0, 0.0f), Vector2(sfx1, sfy0)),
+			Aabb2(Vector2(sfx1, 0.0f), Vector2(1.0f, sfy0)),
+			Aabb2(Vector2(0.0f, sfy0), Vector2(sfx0, sfy1)),
+			Aabb2(Vector2(sfx0, sfy0), Vector2(sfx1, sfy1)),
+			Aabb2(Vector2(sfx1, sfy0), Vector2(1.0f, sfy1)),
+			Aabb2(Vector2(0.0f, sfy1), Vector2(sfx0, 1.0f)),
+			Aabb2(Vector2(sfx0, sfy1), Vector2(sfx1, 1.0f)),
+			Aabb2(Vector2(sfx1, sfy1), Vector2(1.0f, 1.0f))
+		};
+
+		float dfx0 = w0 / (globalBounds.mx.x - globalBounds.mn.x);
+		float dfx1 = ((globalBounds.mx.x - globalBounds.mn.x) - w1) / (globalBounds.mx.x - globalBounds.mn.x);
+		float dfy0 = h0 / (globalBounds.mx.y - globalBounds.mn.y);
+		float dfy1 = ((globalBounds.mx.y - globalBounds.mn.y) - h1) / (globalBounds.mx.y - globalBounds.mn.y);
+
+		Aabb2 destinationGrid[] =
+		{
+			Aabb2(Vector2(0.0f, 0.0f), Vector2(dfx0, dfy0)),
+			Aabb2(Vector2(dfx0, 0.0f), Vector2(dfx1, dfy0)),
+			Aabb2(Vector2(dfx1, 0.0f), Vector2(1.0f, dfy0)),
+			Aabb2(Vector2(0.0f, dfy0), Vector2(dfx0, dfy1)),
+			Aabb2(Vector2(dfx0, dfy0), Vector2(dfx1, dfy1)),
+			Aabb2(Vector2(dfx1, dfy0), Vector2(1.0f, dfy1)),
+			Aabb2(Vector2(0.0f, dfy1), Vector2(dfx0, 1.0f)),
+			Aabb2(Vector2(dfx0, dfy1), Vector2(dfx1, 1.0f)),
+			Aabb2(Vector2(dfx1, dfy1), Vector2(1.0f, 1.0f))
+		};
+
+		for (int32_t i = 0; i < sizeof_array(destinationGrid); ++i)
+		{
+			Aabb2 sourceBounds(
+				lerp(localBounds.mn, localBounds.mx, sourceGrid[i].mn),
+				lerp(localBounds.mn, localBounds.mx, sourceGrid[i].mx)
+			);
+
+			Aabb2 destinationBounds(
+				lerp(localBounds.mn, localBounds.mx, destinationGrid[i].mn),
+				lerp(localBounds.mn, localBounds.mx, destinationGrid[i].mx)
+			);
+
+			// Calculate local scale transformation.
+			Matrix33 Ts = scale((destinationBounds.mx - destinationBounds.mn) / (sourceBounds.mx - sourceBounds.mn));
+			Matrix33 Tt0 = translate(sourceBounds.mn);
+			Matrix33 Tt1 = translate(destinationBounds.mn);
+			Matrix33 T = Tt1 * Ts * Tt0.inverse();
+
+			// Increment stencil mask.
+			m_displayRenderer->beginMask(true);
+			m_displayRenderer->renderQuad(transform, destinationBounds, c_cxWhite);
+			m_displayRenderer->endMask();
+
+			for (FlashDisplayList::layer_map_t::const_iterator j = layers.begin(); j != layers.end(); )
+			{
+				const FlashDisplayList::Layer& layer = j->second;
+				if (!layer.instance)
+				{
+					++j;
+					continue;
+				}
+
+				if (!layer.clipEnable)
+				{
+					renderCharacter(
+						layer.instance,
+						transform * T,
+						cxTransform,
+						spriteInstance->getBlendMode()
+					);
+					++j;
+				}
+				else
+				{
+					// Increment stencil mask.
+					m_displayRenderer->beginMask(true);
+					renderCharacter(
+						layer.instance,
+						transform,
+						cxTransform,
+						SbmDefault
+					);
+					m_displayRenderer->endMask();
+
+					// Render all layers which is clipped to new stencil mask.
+					for (++j; j != layers.end(); ++j)
+					{
+						if (j->first > layer.clipDepth)
+							break;
+
+						const FlashDisplayList::Layer& clippedLayer = j->second;
+						if (!clippedLayer.instance)
+							continue;
+
+						renderCharacter(
+							clippedLayer.instance,
+							transform,
+							cxTransform,
+							spriteInstance->getBlendMode()
+						);
+					}
+
+					// Decrement stencil mask.
+					m_displayRenderer->beginMask(false);
+					renderCharacter(
+						layer.instance,
+						transform,
+						cxTransform,
+						SbmDefault
+					);
+					m_displayRenderer->endMask();
+				}
 			}
 
 			// Decrement stencil mask.
 			m_displayRenderer->beginMask(false);
-			renderCharacter(
-				layer.instance,
-				transform,
-				cxTransform,
-				SbmDefault
-			);
+			m_displayRenderer->renderQuad(transform, destinationBounds, c_cxWhite);
 			m_displayRenderer->endMask();
 		}
 	}
-
-	m_displayRenderer->endSprite(
-		*spriteInstance,
-		transform
-	);
 
 	FlashCanvas* canvas = spriteInstance->getCanvas();
 	if (canvas)

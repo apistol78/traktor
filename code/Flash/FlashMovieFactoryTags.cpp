@@ -269,6 +269,30 @@ bool FlashTagDefineFont::read(SwfReader* swf, ReadContext& context)
 }
 
 // ============================================================================
+// Define scaling grid
+
+bool FlashTagDefineScalingGrid::read(SwfReader* swf, ReadContext& context)
+{
+	BitReader& bs = swf->getBitReader();
+
+	uint16_t characterId = bs.readUInt16();
+	Aabb2 splitter = swf->readRect();
+
+	const SmallMap< uint16_t, Ref< FlashCharacter > >& characters = context.movie->getCharacters();
+	
+	SmallMap< uint16_t, Ref< FlashCharacter > >::const_iterator i = characters.find(characterId);
+	if (i == characters.end())
+		return false;
+
+	if (FlashSprite* spriteCharacter = dynamic_type_cast< FlashSprite* >(i->second))
+		spriteCharacter->setScalingGrid(splitter);
+	else
+		log::warning << L"Only sprite characters can have 9-grid scaling; scaling grid ignored." << Endl;
+
+	return true;
+}
+
+// ============================================================================
 // Define text
 
 FlashTagDefineText::FlashTagDefineText(int textType)
@@ -825,6 +849,7 @@ bool FlashTagDefineSprite::read(SwfReader* swf, ReadContext& context)
 	tagReaders[TiStartSound2] = new FlashTagStartSound(2);
 	tagReaders[TiShowFrame] = new FlashTagShowFrame();
 	tagReaders[TiFrameLabel] = new FlashTagFrameLabel();
+	tagReaders[TiDefineScalingGrid] = new FlashTagDefineScalingGrid();
 
 	// Define readers for tags which isn't planed to be implemented.
 	tagReaders[TiDefineFontInfo] = new FlashTagUnsupported(TiDefineFontInfo);
