@@ -33,6 +33,18 @@ const SwfCxTransform c_cxWhite = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f 
 
 Timer s_timer;
 
+SwfCxTransform convertColor(const SwfColor& c)
+{
+	SwfCxTransform cxtr =
+	{
+		{ 0.0f, c.red / 255.0f },
+		{ 0.0f, c.green / 255.0f },
+		{ 0.0f, c.blue / 255.0f },
+		{ 0.0f, c.alpha / 255.0f },
+	};
+	return cxtr;
+}
+
 SwfCxTransform concateCxTransform(const SwfCxTransform& cxt1, const SwfCxTransform& cxt2)
 {
 	SwfCxTransform cxtr = 
@@ -484,7 +496,7 @@ void FlashMovieRenderer::renderCharacter(
 							m_displayRenderer->renderQuad(
 								editTransform * translate(caretEndPosition + 50.0f, 0.0f),
 								caretBounds,
-								c_cxWhite
+								convertColor(editInstance->getTextColor())
 							);
 					}
 
@@ -519,7 +531,7 @@ void FlashMovieRenderer::renderCharacter(
 				m_displayRenderer->renderQuad(
 					editTransform * translate(caretEndPosition + 50.0f, 0.0f),
 					caretBounds,
-					c_cxWhite
+					convertColor(editInstance->getTextColor())
 				);
 		}
 
