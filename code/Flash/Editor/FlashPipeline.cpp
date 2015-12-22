@@ -54,7 +54,7 @@ struct AtlasBucket
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 41, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 42, FlashPipeline, editor::IPipeline)
 
 FlashPipeline::FlashPipeline()
 :	m_generateMips(false)
@@ -150,7 +150,7 @@ bool FlashPipeline::buildOutput(
 		movie = new FlashMovie(
 			Aabb2(
 				Vector2(0.0f, 0.0f),
-				Vector2(emptyMovieAsset->getStageWidth(), emptyMovieAsset->getStageHeight())
+				Vector2(emptyMovieAsset->getStageWidth() * 20.0f, emptyMovieAsset->getStageHeight() * 20.0f)
 			),
 			sprite
 		);

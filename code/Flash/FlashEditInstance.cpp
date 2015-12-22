@@ -331,13 +331,8 @@ void FlashEditInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	if (!m_edit->readOnly())
 	{
 		Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
-		Aabb2 bounds = m_edit->getTextBounds();
-
-		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
-		if (inside)
+		if (m_edit->getTextBounds().inside(xy))
 			getContext()->setFocus(this);
-		else
-			getContext()->setFocus(0);
 	}
 
 	FlashCharacterInstance::eventMouseDown(x, y, button);

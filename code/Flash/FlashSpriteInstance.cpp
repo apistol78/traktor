@@ -565,6 +565,10 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
 
+	// Remove focus item if we're root, focus might be shifted.
+	if (!getParent())
+		context->setFocus(0);
+
 	// Transform coordinates into local.
 	Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
 	m_mouseX = int32_t(xy.x / 20.0f);
@@ -584,8 +588,7 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	if (!context->getPressed() && isEnabled())
 	{
 		Aabb2 bounds = getVisibleLocalBounds();
-		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
-		if (inside)
+		if (bounds.inside(xy))
 		{
 			if (haveScriptEvent(ActionContext::IdOnPress) || haveScriptEvent(ActionContext::IdOnRelease))
 			{
