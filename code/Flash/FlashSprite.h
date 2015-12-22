@@ -50,6 +50,10 @@ public:
 
 	const RefArray< const IActionVMImage >& getInitActionScripts() const;
 
+	void setScalingGrid(const Aabb2& scalingGrid);
+
+	const Aabb2& getScalingGrid() const;
+
 	virtual Ref< FlashCharacterInstance > createInstance(
 		ActionContext* context,
 		FlashDictionary* dictionary,
@@ -66,6 +70,7 @@ private:
 	uint16_t m_frameRate;
 	RefArray< FlashFrame > m_frames;
 	RefArray< const IActionVMImage > m_initActionScripts;
+	Aabb2 m_scalingGrid;
 };
 
 	}

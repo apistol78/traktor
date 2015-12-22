@@ -91,6 +91,12 @@ private:
 	int m_fontType;
 };
 
+class FlashTagDefineScalingGrid : public FlashTag
+{
+public:
+	virtual bool read(SwfReader* swf, ReadContext& context);
+};
+
 class FlashTagDefineText : public FlashTag
 {
 public:

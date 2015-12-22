@@ -205,6 +205,11 @@ T_MATH_INLINE Vector2 lerp(const Vector2& a, const Vector2& b, float c)
 	return a + (b - a) * c;
 }
 
+T_MATH_INLINE Vector2 lerp(const Vector2& a, const Vector2& b, const Vector2& c)
+{
+	return a + (b - a) * c;
+}
+
 T_MATH_INLINE float determinant(const Vector2& a, const Vector2& b)
 {
 	return a.x * b.y - a.y * b.x;

@@ -145,6 +145,15 @@ T_MATH_INLINE Matrix33 operator * (const Matrix33& lh, const Matrix33& rh)
 	return m;
 }
 
+T_MATH_INLINE Matrix33 translate(const Vector2& t)
+{
+	return Matrix33(
+		1.0f, 0.0f, t.x,
+		0.0f, 1.0f, t.y,
+		0.0f, 0.0f, 1.0f
+	);
+}
+
 T_MATH_INLINE Matrix33 translate(float x, float y)
 {
 	return Matrix33(
@@ -162,6 +171,15 @@ T_MATH_INLINE Matrix33 rotate(float angle)
 		    c,   -s, 0.0f,
 		    s,    c, 0.0f,
 		 0.0f, 0.0f, 1.0f
+	);
+}
+
+T_MATH_INLINE Matrix33 scale(const Vector2& s)
+{
+	return Matrix33(
+		s.x, 0.0f, 0.0f,
+		0.0f, s.y, 0.0f,
+		0.0f, 0.0f, 1.0f
 	);
 }
 

@@ -2,6 +2,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashFrame.h"
@@ -17,7 +18,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashSprite", 0, FlashSprite, FlashCharacter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashSprite", 1, FlashSprite, FlashCharacter)
 
 FlashSprite::FlashSprite()
 :	m_frameRate(0)
@@ -68,6 +69,16 @@ void FlashSprite::addInitActionScript(const IActionVMImage* initActionScript)
 const RefArray< const IActionVMImage >& FlashSprite::getInitActionScripts() const
 {
 	return m_initActionScripts;
+}
+
+void FlashSprite::setScalingGrid(const Aabb2& scalingGrid)
+{
+	m_scalingGrid = scalingGrid;
+}
+
+const Aabb2& FlashSprite::getScalingGrid() const
+{
+	return m_scalingGrid;
 }
 
 Ref< FlashCharacterInstance > FlashSprite::createInstance(
@@ -156,6 +167,7 @@ void FlashSprite::serialize(ISerializer& s)
 	s >> Member< uint16_t >(L"frameRate", m_frameRate);
 	s >> MemberRefArray< FlashFrame >(L"frames", m_frames);
 	s >> MemberRefArray< const IActionVMImage >(L"initActionScripts", m_initActionScripts);
+	s >> MemberAabb2(L"scalingGrid", m_scalingGrid);
 }
 
 	}

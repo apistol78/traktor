@@ -68,9 +68,13 @@ public:
 	/*extern*/ friend T_MATH_INLINE T_DLLCLASS Matrix33 operator * (const Matrix33& lh, const Matrix33& rh);
 };
 
+T_MATH_INLINE T_DLLCLASS Matrix33 translate(const Vector2& t);
+
 T_MATH_INLINE T_DLLCLASS Matrix33 translate(float x, float y);
 
 T_MATH_INLINE T_DLLCLASS Matrix33 rotate(float angle);
+
+T_MATH_INLINE T_DLLCLASS Matrix33 scale(const Vector2& s);
 
 T_MATH_INLINE T_DLLCLASS Matrix33 scale(float x, float y);
 
