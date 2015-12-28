@@ -4,16 +4,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>2434</first>
-				<second>550</second>
+				<first>2724</first>
+				<second>579</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>1594</first>
-				<second>436</second>
+				<first>2090</first>
+				<second>324</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -21,30 +21,30 @@
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>1331</first>
-				<second>406</second>
+				<first>1355</first>
+				<second>340</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1128</first>
-				<second>398</second>
+				<first>1152</first>
+				<second>332</second>
 			</position>
 			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>1056</first>
-				<second>449</second>
+				<first>1080</first>
+				<second>383</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>699</first>
-				<second>486</second>
+				<first>673</first>
+				<second>395</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
@@ -72,8 +72,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>903</first>
-				<second>834</second>
+				<first>1551</first>
+				<second>687</second>
 			</position>
 			<name>Input</name>
 			<connectable>true</connectable>
@@ -196,8 +196,8 @@
 		<item type="traktor.render.Conditional" version="1">
 			<comment/>
 			<position>
-				<first>2118</first>
-				<second>513</second>
+				<first>2455</first>
+				<second>543</second>
 			</position>
 			<branch>BrDynamic</branch>
 			<operator>CoNotEqual</operator>
@@ -205,8 +205,8 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1872</first>
-				<second>589</second>
+				<first>2320</first>
+				<second>595</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -232,31 +232,54 @@
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>1260</first>
-				<second>615</second>
+				<first>1908</first>
+				<second>468</second>
 			</position>
 			<operator>CoGreater</operator>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>958</first>
-				<second>654</second>
+				<first>1736</first>
+				<second>520</second>
 			</position>
 			<value>0</value>
 		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>2724</first>
+				<second>442</second>
+			</position>
+			<name>Edge</name>
+		</item>
+		<item type="traktor.render.Conditional" version="1">
+			<comment/>
+			<position>
+				<first>2460</first>
+				<second>406</second>
+			</position>
+			<branch>BrDynamic</branch>
+			<operator>CoNotEqual</operator>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>2303</first>
+				<second>458</second>
+			</position>
+			<value>0</value>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>2303</first>
+				<second>490</second>
+			</position>
+			<value>1</value>
+		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[3]"/>
@@ -629,16 +652,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
@@ -655,6 +668,76 @@
 			<destination>
 				<node ref="/object/nodes/item[25]"/>
 				<name>CaseFalse</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Reference</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<name>CaseTrue</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<name>CaseFalse</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
