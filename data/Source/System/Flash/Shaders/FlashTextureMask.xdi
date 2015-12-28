@@ -30,8 +30,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1127</first>
-				<second>312</second>
+				<first>754</first>
+				<second>135</second>
 			</position>
 			<fragmentGuid>{AC47E91D-696B-A647-BB33-022614658D3B}</fragmentGuid>
 			<inputPins>
@@ -39,9 +39,18 @@
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
+				<item>
+					<name>Edge</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
+			<values>
+				<item>
+					<first>Edge</first>
+					<second>1</second>
+				</item>
+			</values>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -58,6 +67,9 @@
 			</inputPins>
 			<outputPins>
 				<item>
+					<name>Edge</name>
+				</item>
+				<item>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -66,14 +78,14 @@
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>636</first>
-				<second>390</second>
+				<first>429</first>
+				<second>197</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>69</first>
+				<first>79</first>
 				<second>115</second>
 			</position>
 		</item>
@@ -107,8 +119,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>84</first>
-				<second>319</second>
+				<first>58</first>
+				<second>205</second>
 			</position>
 			<parameterName>Flash_CxFormMul</parameterName>
 			<type>PtVector</type>
@@ -117,8 +129,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>81</first>
-				<second>495</second>
+				<first>57</first>
+				<second>295</second>
 			</position>
 			<parameterName>Flash_CxFormAdd</parameterName>
 			<type>PtVector</type>
@@ -235,6 +247,16 @@
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Edge</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Edge</name>
 			</destination>
 		</item>
 	</edges>
