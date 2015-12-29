@@ -26,13 +26,6 @@ class IEnvironment;
 
 	}
 
-	namespace drawing
-	{
-
-class Image;
-
-	}
-
 	namespace flash
 	{
 
@@ -111,12 +104,6 @@ public:
 	 */
 	flash::FlashMoviePlayer* getMoviePlayer();
 
-	/*! \brief Get ActionScript "_global" object.
-	 *
-	 * \return ActionScript "_global" object.
-	 */
-	flash::ActionObject* getGlobal();
-
 	/*! \brief Get "_root" sprite.
 	 *
 	 * \return "_root" sprite.
@@ -129,28 +116,6 @@ public:
 	 * \return External movie, null if doesn't exist.
 	 */
 	flash::FlashMovie* getExternal(const std::wstring& id) const;
-
-	/*! \brief Create empty ActionScript object.
-	 *
-	 * \return ActionScript object.
-	 */
-	Ref< flash::ActionObject > createObject() const;
-
-	/*! \brief Create ActionScript object.
-	 *
-	 * \param prototype Class prototype.
-	 * \param argc Argument count.
-	 * \param argv Arguments.
-	 * \return ActionScript object.
-	 */
-	Ref< flash::ActionObject > createObject(const std::string& prototype, uint32_t argc, const Any* argv) const;
-
-	/*! \brief Create Flash bitmap object from image.
-	 *
-	 * \param image Image object.
-	 * \return Flash bitmap object.
-	 */
-	Ref< flash::ActionObject > createBitmap(drawing::Image* image) const;
 
 	/*! \brief Invoke methods registered through Flash ExternalInterface protocol.
 	 *
