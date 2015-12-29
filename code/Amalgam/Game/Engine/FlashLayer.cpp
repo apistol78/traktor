@@ -20,11 +20,7 @@
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/ISoundRenderer.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
-#include "Flash/Action/ActionContext.h"
-#include "Flash/Action/ActionFunction.h"
-#include "Flash/Action/ActionValueArray.h"
 #include "Flash/Action/Common/Classes/AsKey.h"
-#include "Flash/Action/Common/BitmapData.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
@@ -571,23 +567,6 @@ flash::FlashMoviePlayer* FlashLayer::getMoviePlayer()
 	return m_moviePlayer;
 }
 
-flash::ActionObject* FlashLayer::getGlobal()
-{
-	if (!m_moviePlayer)
-	{
-		log::warning << L"FlashLayer::getGlobal fail; no movie player initialized." << Endl;
-		return 0;
-	}
-
-	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
-	T_ASSERT (movieInstance);
-
-	flash::ActionContext* cx = movieInstance->getContext();
-	T_ASSERT (cx);
-
-	return cx->getGlobal();
-}
-
 flash::FlashSpriteInstance* FlashLayer::getRoot()
 {
 	if (!m_moviePlayer)
@@ -595,7 +574,6 @@ flash::FlashSpriteInstance* FlashLayer::getRoot()
 		log::warning << L"FlashLayer::getRoot fail; no movie player initialized." << Endl;
 		return 0;
 	}
-
 	return m_moviePlayer->getMovieInstance();
 }
 
@@ -603,87 +581,6 @@ flash::FlashMovie* FlashLayer::getExternal(const std::wstring& id) const
 {
 	std::map< std::wstring, resource::Proxy< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(id);
 	return i != m_externalMovies.end() ? i->second.getResource() : 0;
-}
-
-Ref< flash::ActionObject > FlashLayer::createObject() const
-{
-	if (!m_moviePlayer)
-	{
-		log::warning << L"FlashLayer::createObject fail; no movie player initialized." << Endl;
-		return 0;
-	}
-
-	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
-	T_ASSERT (movieInstance);
-
-	flash::ActionContext* cx = movieInstance->getContext();
-	T_ASSERT (cx);
-
-	return new flash::ActionObject(cx);
-}
-
-Ref< flash::ActionObject > FlashLayer::createObject(const std::string& prototype, uint32_t argc, const Any* argv) const
-{
-	if (!m_moviePlayer)
-	{
-		log::warning << L"FlashLayer::createObject fail; no movie player initialized." << Endl;
-		return 0;
-	}
-
-	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
-	T_ASSERT (movieInstance);
-
-	flash::ActionContext* cx = movieInstance->getContext();
-	T_ASSERT (cx);
-
-	flash::ActionValue classFunctionValue;
-	cx->getGlobal()->getMemberByQName(prototype, classFunctionValue);
-
-	Ref< flash::ActionFunction > classFunction = classFunctionValue.getObject< flash::ActionFunction >();
-	if (!classFunction)
-	{
-		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
-		return 0;
-	}
-
-	flash::ActionValue classPrototypeValue;
-	classFunction->getLocalMember(flash::ActionContext::IdPrototype, classPrototypeValue);
-
-	Ref< flash::ActionObject > classPrototype = classPrototypeValue.getObject();
-	if (!classPrototype)
-	{
-		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
-		return 0;
-	}
-
-	Ref< flash::ActionObject > self = new flash::ActionObject(cx, classPrototype);
-	self->setMember(flash::ActionContext::Id__ctor__, classFunctionValue);
-
-	flash::ActionValueArray args(cx->getPool(), argc);
-	for (uint32_t i = 0; i < argc; ++i)
-		args[i] = CastAny< flash::ActionValue >::get(argv[i]);
-
-	classFunction->call(self, args);
-
-	return self;
-}
-
-Ref< flash::ActionObject > FlashLayer::createBitmap(drawing::Image* image) const
-{
-	if (!m_moviePlayer)
-	{
-		log::warning << L"FlashLayer::createBitmap fail; no movie player initialized." << Endl;
-		return 0;
-	}
-
-	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
-	T_ASSERT (movieInstance);
-
-	flash::ActionContext* cx = movieInstance->getContext();
-	T_ASSERT (cx);
-
-	Ref< flash::BitmapData > bitmap = new flash::BitmapData(image);
-	return bitmap->getAsObject(cx);
 }
 
 Any FlashLayer::externalCall(const std::string& methodName, uint32_t argc, const Any* argv)

@@ -722,7 +722,7 @@ void opx_trace(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	std::wstring trace = stack.pop().getWideString();
 	if (trace != L"** BREAK **")
-		log::info << L"TRACE \"" << trace << L"\"" << Endl;
+		log::info << trace << Endl;
 	else
 		T_BREAKPOINT;
 }

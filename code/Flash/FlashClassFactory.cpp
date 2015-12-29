@@ -23,6 +23,7 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValue.h"
+#include "Flash/Action/Common/BitmapData.h"
 
 namespace traktor
 {
@@ -189,6 +190,80 @@ FlashDisplayList* FlashSpriteInstance_getDisplayList(FlashSpriteInstance* self)
 	return &self->getDisplayList();
 }
 
+
+Ref< ActionObject > ActionContext_createObject_0(ActionContext* self)
+{
+	return new flash::ActionObject(self);
+}
+
+Ref< ActionObject > ActionContext_createObject_1(ActionContext* self, const std::string& prototype)
+{
+	ActionValue classFunctionValue;
+	self->getGlobal()->getMemberByQName(prototype, classFunctionValue);
+
+	Ref< ActionFunction > classFunction = classFunctionValue.getObject< ActionFunction >();
+	if (!classFunction)
+	{
+		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
+		return 0;
+	}
+
+	ActionValue classPrototypeValue;
+	classFunction->getLocalMember(ActionContext::IdPrototype, classPrototypeValue);
+
+	Ref< ActionObject > classPrototype = classPrototypeValue.getObject();
+	if (!classPrototype)
+	{
+		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
+		return 0;
+	}
+
+	Ref< ActionObject > obj = new ActionObject(self, classPrototype);
+	obj->setMember(flash::ActionContext::Id__ctor__, classFunctionValue);
+
+	classFunction->call(obj);
+	return obj;
+}
+
+Ref< ActionObject > ActionContext_createObject_2(ActionContext* self, const std::string& prototype, const std::vector< Any >& argv)
+{
+	ActionValue classFunctionValue;
+	self->getGlobal()->getMemberByQName(prototype, classFunctionValue);
+
+	Ref< ActionFunction > classFunction = classFunctionValue.getObject< ActionFunction >();
+	if (!classFunction)
+	{
+		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
+		return 0;
+	}
+
+	ActionValue classPrototypeValue;
+	classFunction->getLocalMember(ActionContext::IdPrototype, classPrototypeValue);
+
+	Ref< ActionObject > classPrototype = classPrototypeValue.getObject();
+	if (!classPrototype)
+	{
+		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
+		return 0;
+	}
+
+	Ref< ActionObject > obj = new ActionObject(self, classPrototype);
+	obj->setMember(flash::ActionContext::Id__ctor__, classFunctionValue);
+
+	ActionValueArray args(self->getPool(), argv.size());
+	for (uint32_t i = 0; i < argv.size(); ++i)
+		args[i] = CastAny< ActionValue >::get(argv[i]);
+
+	classFunction->call(obj, args);
+	return obj;
+}
+
+Ref< ActionObject > ActionContext_createBitmap(ActionContext* self, drawing::Image* image)
+{
+	Ref< BitmapData > bitmap = new BitmapData(image);
+	return bitmap->getAsObject(self);
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashClassFactory", 0, FlashClassFactory, IRuntimeClassFactory)
@@ -344,6 +419,10 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classActionContext->addMethod("getMovieClip", &ActionContext::getMovieClip);
 	classActionContext->addMethod("getFocus", &ActionContext::getFocus);
 	classActionContext->addMethod("getPressed", &ActionContext::getPressed);
+	classActionContext->addMethod("createObject", &ActionContext_createObject_0);
+	classActionContext->addMethod("createObject", &ActionContext_createObject_1);
+	classActionContext->addMethod("createObject", &ActionContext_createObject_2);
+	classActionContext->addMethod("createBitmap", &ActionContext_createBitmap);
 	registrar->registerClass(classActionContext);
 
 	Ref< AutoRuntimeClass< FlashOptimizer > > classFlashOptimizer = new AutoRuntimeClass< FlashOptimizer >();

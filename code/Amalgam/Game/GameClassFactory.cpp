@@ -67,21 +67,6 @@ RefArray< BoxedTransition > StageData_getTransitions(StageData* self)
 	return out;
 }
 
-Ref< flash::ActionObject > FlashLayer_createObject_0(FlashLayer* self)
-{
-	return self->createObject();
-}
-
-Ref< flash::ActionObject > FlashLayer_createObject_1(FlashLayer* self, const std::string& prototype)
-{
-	return self->createObject(prototype, 0, 0);
-}
-
-Ref< flash::ActionObject > FlashLayer_createObject_2(FlashLayer* self, const std::string& prototype, const std::vector< Any >& argv)
-{
-	return self->createObject(prototype, argv.size(), &argv.front());
-}
-
 Any FlashLayer_externalCall(FlashLayer* self, const std::string& methodName, uint32_t argc, const Any* argv)
 {
 	return self->externalCall(methodName, argc, argv);
@@ -269,13 +254,8 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< FlashLayer > > classFlashLayer = new AutoRuntimeClass< FlashLayer >();
 	classFlashLayer->addMethod("getMoviePlayer", &FlashLayer::getMoviePlayer);
-	classFlashLayer->addMethod("getGlobal", &FlashLayer::getGlobal);
 	classFlashLayer->addMethod("getRoot", &FlashLayer::getRoot);
 	classFlashLayer->addMethod("getExternal", &FlashLayer::getExternal);
-	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_0);
-	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_1);
-	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_2);
-	classFlashLayer->addMethod("createBitmap", &FlashLayer::createBitmap);
 	classFlashLayer->addMethod("isVisible", &FlashLayer::isVisible);
 	classFlashLayer->addMethod("setVisible", &FlashLayer::setVisible);
 	classFlashLayer->addMethod("getPrintableString", &FlashLayer::getPrintableString);
