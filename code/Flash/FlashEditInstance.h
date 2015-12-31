@@ -38,6 +38,10 @@ public:
 
 	bool parseHtml(const std::wstring& html);
 
+	void setTextBounds(const Aabb2& textBounds);
+
+	const Aabb2& getTextBounds() const;
+
 	const SwfColor& getTextColor() const;
 
 	void setTextColor(const SwfColor& textColor);
@@ -77,6 +81,7 @@ public:
 private:
 	mutable Semaphore m_lock;
 	Ref< const FlashEdit > m_edit;
+	Aabb2 m_textBounds;
 	SwfColor m_textColor;
 	float m_letterSpacing;
 	SwfTextAlignType m_align;

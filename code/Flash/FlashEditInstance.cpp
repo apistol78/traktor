@@ -129,6 +129,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashEditInstance", FlashEditInstance, Fl
 FlashEditInstance::FlashEditInstance(ActionContext* context, FlashDictionary* dictionary, FlashCharacterInstance* parent, const FlashEdit* edit, const std::wstring& html)
 :	FlashCharacterInstance(context, "TextField", dictionary, parent)
 ,	m_edit(edit)
+,	m_textBounds(edit->getTextBounds())
 ,	m_textColor(edit->getTextColor())
 ,	m_letterSpacing(0.0f)
 ,	m_align(edit->getAlign())
@@ -189,6 +190,16 @@ bool FlashEditInstance::parseHtml(const std::wstring& html)
 	}
 
 	return true;
+}
+
+void FlashEditInstance::setTextBounds(const Aabb2& textBounds)
+{
+	m_textBounds = textBounds;
+}
+
+const Aabb2& FlashEditInstance::getTextBounds() const
+{
+	return m_textBounds;
 }
 
 const SwfColor& FlashEditInstance::getTextColor() const
@@ -271,10 +282,9 @@ int32_t FlashEditInstance::getMaxScroll() const
 	if (m_layout)
 	{
 		const AlignedVector< TextLayout::Line >& lines = m_layout->getLines();
-		Aabb2 textBounds = m_edit->getTextBounds();
 
 		float lineHeight = m_layout->getFontHeight() + m_layout->getLeading();
-		float editHeight = textBounds.mx.y - textBounds.mn.y;
+		float editHeight = m_textBounds.mx.y - m_textBounds.mn.y;
 
 		int maxScroll = lines.size() - int32_t(editHeight / lineHeight + 0.5f);
 		return std::max(maxScroll, 0);
@@ -291,7 +301,7 @@ const TextLayout* FlashEditInstance::getTextLayout() const
 
 Aabb2 FlashEditInstance::getBounds() const
 {
-	return getTransform() * m_edit->getTextBounds();
+	return getTransform() * m_textBounds;
 }
 
 void FlashEditInstance::eventKey(wchar_t unicode)
@@ -331,7 +341,7 @@ void FlashEditInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	if (!m_edit->readOnly())
 	{
 		Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
-		if (m_edit->getTextBounds().inside(xy))
+		if (m_textBounds.inside(xy))
 			getContext()->setFocus(this);
 	}
 
@@ -350,7 +360,7 @@ bool FlashEditInstance::internalParseText(const std::wstring& text)
 
 	m_layout->begin();
 
-	m_layout->setBounds(adjustForGutter(m_edit->getTextBounds()));
+	m_layout->setBounds(adjustForGutter(m_textBounds));
 	m_layout->setLeading(m_edit->getLeading());
 	m_layout->setLetterSpacing(m_letterSpacing);
 	m_layout->setFontHeight(m_fontHeight);
@@ -395,7 +405,7 @@ bool FlashEditInstance::internalParseHtml(const std::wstring& html)
 
 	m_layout->begin();
 
-	m_layout->setBounds(adjustForGutter(m_edit->getTextBounds()));
+	m_layout->setBounds(adjustForGutter(m_textBounds));
 	m_layout->setLeading(m_edit->getLeading());
 	m_layout->setLetterSpacing(m_letterSpacing);
 	m_layout->setFontHeight(m_fontHeight);
