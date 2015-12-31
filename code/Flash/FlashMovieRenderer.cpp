@@ -442,7 +442,7 @@ void FlashMovieRenderer::renderCharacter(
 		if (!editInstance->isVisible())
 			return;
 
-		const Aabb2& textBounds = editInstance->getEdit()->getTextBounds();
+		const Aabb2& textBounds = editInstance->getTextBounds();
 		Matrix33 editTransform = transform * editInstance->getTransform();
 
 		const TextLayout* layout = editInstance->getTextLayout();

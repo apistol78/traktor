@@ -425,17 +425,15 @@ void AsTextField::TextField_set_gridFitType(FlashEditInstance* self, const std::
 
 avm_number_t AsTextField::TextField_get_height(FlashEditInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::get_height not implemented" << Endl;
-	)
-	return 0;
+	Aabb2 bounds = self->getTextBounds();
+	return (bounds.mx.y - bounds.mn.y) / 20.0f;
 }
 
 void AsTextField::TextField_set_height(FlashEditInstance* self, avm_number_t height) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_height not implemented" << Endl;
-	)
+	Aabb2 bounds = self->getTextBounds();
+	bounds.mx.y = bounds.mn.y + height * 20.0f;
+	self->setTextBounds(bounds);
 }
 
 avm_number_t AsTextField::TextField_get_highquality(FlashEditInstance* self) const
@@ -874,15 +872,15 @@ void AsTextField::TextField_set_visible(FlashEditInstance* self, bool visible) c
 
 avm_number_t AsTextField::TextField_get_width(FlashEditInstance* self) const
 {
-	Aabb2 bounds = self->getBounds();
+	Aabb2 bounds = self->getTextBounds();
 	return (bounds.mx.x - bounds.mn.x) / 20.0f;
 }
 
 void AsTextField::TextField_set_width(FlashEditInstance* self, avm_number_t width) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_width not implemented" << Endl;
-	)
+	Aabb2 bounds = self->getTextBounds();
+	bounds.mx.x = bounds.mn.x + width * 20.0f;
+	self->setTextBounds(bounds);
 }
 
 bool AsTextField::TextField_get_wordWrap(FlashEditInstance* self) const
