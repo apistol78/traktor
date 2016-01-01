@@ -52,6 +52,7 @@
 #include "Editor/App/NewWorkspaceDialog.h"
 #include "Editor/App/ObjectEditorDialog.h"
 #include "Editor/App/PropertiesView.h"
+#include "Editor/App/QuickOpenDialog.h"
 #include "Editor/App/SettingsDialog.h"
 #include "Editor/App/Shortcut.h"
 #include "Editor/App/ThumbnailGenerator.h"
@@ -692,6 +693,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Build"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Rebuild"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.CancelBuild"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.QuickOpen"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Database.ToggleRoot"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Database.ToggleFavorite"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Database.Build"));
@@ -2383,6 +2385,17 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		Ref< ui::Widget > panelWidget = checked_type_cast< ui::Widget* >(command.getData());
 		if (panelWidget)
 			showAdditionalPanel(panelWidget);
+	}
+	else if (command == L"Editor.QuickOpen")
+	{
+		QuickOpenDialog quickOpenDlg(this);
+		if (quickOpenDlg.create(this))
+		{
+			Ref< db::Instance > instance = quickOpenDlg.showDialog();
+			quickOpenDlg.destroy();
+			if (instance)
+				openEditor(instance);
+		}
 	}
 	else if (command == L"Editor.Exit")
 		ui::Application::getInstance()->exit(0);

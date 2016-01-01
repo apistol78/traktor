@@ -159,6 +159,14 @@ void GridView::removeAllRows()
 	requestUpdate();
 }
 
+GridRow* GridView::getRow(int32_t index)
+{
+	if (index >= 0 && index < int32_t(m_rows.size()))
+		return m_rows[index];
+	else
+		return 0;
+}
+
 const RefArray< GridRow >& GridView::getRows() const
 {
 	return m_rows;

@@ -72,6 +72,8 @@ public:
 
 	void removeAllRows();
 
+	GridRow* getRow(int32_t index);
+
 	const RefArray< GridRow >& getRows() const;
 
 	uint32_t getRows(RefArray< GridRow >& outRows, uint32_t flags) const;
