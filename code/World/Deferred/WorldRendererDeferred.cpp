@@ -1207,47 +1207,47 @@ render::ImageProcess* WorldRendererDeferred::getVisualImageProcess()
 	return m_visualImageProcess;
 }
 
-void WorldRendererDeferred::getDebugTargets(std::vector< DebugTarget >& outTargets) const
+void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& outTargets) const
 {
 	if (m_gbufferTargetSet)
 	{
-		outTargets.push_back(DebugTarget(L"GBuffer depth", DtvDepth, m_gbufferTargetSet->getColorTexture(0)));
-		outTargets.push_back(DebugTarget(L"GBuffer normals", DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
-		outTargets.push_back(DebugTarget(L"GBuffer specular roughness", DtvDeferredSpecularRoughness, m_gbufferTargetSet->getColorTexture(1)));
-		outTargets.push_back(DebugTarget(L"GBuffer surface color", DtvDefault, m_gbufferTargetSet->getColorTexture(2)));
-		outTargets.push_back(DebugTarget(L"GBuffer specular term", DtvDeferredSpecularTerm, m_gbufferTargetSet->getColorTexture(2)));
-		outTargets.push_back(DebugTarget(L"GBuffer reflectivity", DtvDeferredReflectivity, m_gbufferTargetSet->getColorTexture(2)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer depth", render::DtvDepth, m_gbufferTargetSet->getColorTexture(0)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer normals", render::DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer specular roughness", render::DtvDeferredSpecularRoughness, m_gbufferTargetSet->getColorTexture(1)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(2)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer specular term", render::DtvDeferredSpecularTerm, m_gbufferTargetSet->getColorTexture(2)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer reflectivity", render::DtvDeferredReflectivity, m_gbufferTargetSet->getColorTexture(2)));
 	}
 
 	if (m_shadowTargetSet)
-		outTargets.push_back(DebugTarget(L"Shadow map (last cascade)", DtvShadowMap, m_shadowTargetSet->getDepthTexture()));
+		outTargets.push_back(render::DebugTarget(L"Shadow map (last cascade)", render::DtvShadowMap, m_shadowTargetSet->getDepthTexture()));
 	
 	if (m_shadowMaskProjectTargetSet)
-		outTargets.push_back(DebugTarget(L"Shadow mask (projection)", DtvShadowMask, m_shadowMaskProjectTargetSet->getDepthTexture()));
+		outTargets.push_back(render::DebugTarget(L"Shadow mask (projection)", render::DtvShadowMask, m_shadowMaskProjectTargetSet->getDepthTexture()));
 
 	if (m_shadowMaskFilterTargetSet)
-		outTargets.push_back(DebugTarget(L"Shadow mask (SS filtered)", DtvShadowMask, m_shadowMaskFilterTargetSet->getDepthTexture()));
+		outTargets.push_back(render::DebugTarget(L"Shadow mask (SS filtered)", render::DtvShadowMask, m_shadowMaskFilterTargetSet->getDepthTexture()));
 
-	//if (m_shadowMaskProject)
-	//	m_shadowMaskProject->getDebugTargets(outTargets);
+	if (m_shadowMaskProject)
+		m_shadowMaskProject->getDebugTargets(outTargets);
 
-	//if (m_shadowMaskFilter)
-	//	m_shadowMaskFilter->getDebugTargets(outTargets);
+	if (m_shadowMaskFilter)
+		m_shadowMaskFilter->getDebugTargets(outTargets);
 
-	//if (m_colorTargetCopy)
-	//	m_colorTargetCopy->getDebugTargets(outTargets);
+	if (m_colorTargetCopy)
+		m_colorTargetCopy->getDebugTargets(outTargets);
 
-	//if (m_ambientOcclusion)
-	//	m_ambientOcclusion->getDebugTargets(outTargets);
+	if (m_ambientOcclusion)
+		m_ambientOcclusion->getDebugTargets(outTargets);
 
-	//if (m_antiAlias)
-	//	m_antiAlias->getDebugTargets(outTargets);
+	if (m_antiAlias)
+		m_antiAlias->getDebugTargets(outTargets);
 
-	//if (m_visualImageProcess)
-	//	m_visualImageProcess->getDebugTargets(outTargets);
+	if (m_visualImageProcess)
+		m_visualImageProcess->getDebugTargets(outTargets);
 
-	//if (m_gammaCorrectionImageProcess)
-	//	m_gammaCorrectionImageProcess->getDebugTargets(outTargets);
+	if (m_gammaCorrectionImageProcess)
+		m_gammaCorrectionImageProcess->getDebugTargets(outTargets);
 }
 
 void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int frame)

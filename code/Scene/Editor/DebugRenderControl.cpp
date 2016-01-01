@@ -186,7 +186,7 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView || !m_screenRenderer)
 		return;
 
-	const std::vector< world::DebugTarget >& debugTargets = m_context->getDebugTargets();
+	const std::vector< render::DebugTarget >& debugTargets = m_context->getDebugTargets();
 
 	if (m_renderView->begin(render::EtCyclop))
 	{

@@ -178,7 +178,7 @@ public:
 
 	virtual render::ImageProcess* getVisualImageProcess() = 0;
 
-	virtual void getDebugTargets(std::vector< DebugTarget >& outTargets) const = 0;
+	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const = 0;
 
 	//@}
 };

@@ -100,7 +100,7 @@ public:
 
 	bool requireHighRange() const;
 
-	//void getDebugTargets(std::vector< DebugTarget >& outTargets) const;
+	void getDebugTargets(std::vector< DebugTarget >& outTargets) const;
 
 private:
 	struct Target

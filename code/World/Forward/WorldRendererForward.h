@@ -81,7 +81,7 @@ public:
 
 	virtual render::ImageProcess* getVisualImageProcess() T_OVERRIDE T_FINAL;
 
-	virtual void getDebugTargets(std::vector< DebugTarget >& outTargets) const T_OVERRIDE T_FINAL;
+	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const T_OVERRIDE T_FINAL;
 
 private:
 	struct Slice

@@ -652,6 +652,39 @@ struct RenderTargetSetCreateDesc
 	}
 };
 
+/*! \brief Preferred debuggable target visualization method. */
+enum DebugTargetVisualize
+{
+	DtvDefault,
+	DtvDepth,
+	DtvNormals,
+	DtvDeferredSpecularRoughness,
+	DtvDeferredSpecularTerm,
+	DtvDeferredReflectivity,
+	DtvShadowMap,
+	DtvShadowMask
+};
+
+/*! \brief Debuggable target. */
+struct DebugTarget
+{
+	std::wstring name;
+	DebugTargetVisualize visualize;
+	Ref< class ITexture > texture;
+
+	DebugTarget()
+	:	visualize(DtvDefault)
+	{
+	}
+
+	DebugTarget(const std::wstring& name_, DebugTargetVisualize visualize_, render::ITexture* texture_)
+	:	name(name_)
+	,	visualize(visualize_)
+	,	texture(texture_)
+	{
+	}
+};
+
 /*! \brief Draw primitives. */
 struct Primitives
 {

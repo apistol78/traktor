@@ -73,39 +73,6 @@ struct UpdateParams
 	float alternateTime;	/*! \brief Alternative absolute time. */
 };
 
-/*! \brief Debuggable target visualization type. */
-enum DebugTargetVisualize
-{
-	DtvDefault,
-	DtvDepth,
-	DtvNormals,
-	DtvDeferredSpecularRoughness,
-	DtvDeferredSpecularTerm,
-	DtvDeferredReflectivity,
-	DtvShadowMap,
-	DtvShadowMask
-};
-
-/*! \brief Debuggable target. */
-struct DebugTarget
-{
-	std::wstring name;
-	DebugTargetVisualize visualize;
-	Ref< render::ITexture > texture;
-
-	DebugTarget()
-	:	visualize(DtvDefault)
-	{
-	}
-
-	DebugTarget(const std::wstring& name_, DebugTargetVisualize visualize_, render::ITexture* texture_)
-	:	name(name_)
-	,	visualize(visualize_)
-	,	texture(texture_)
-	{
-	}
-};
-
 	}
 }
 

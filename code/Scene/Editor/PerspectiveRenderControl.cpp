@@ -616,10 +616,10 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	// Expose various render targets for debugging.
 	m_context->clearDebugTargets();
 
-	std::vector< world::DebugTarget > worldTargets;
+	std::vector< render::DebugTarget > worldTargets;
 	m_worldRenderer->getDebugTargets(worldTargets);
 
-	for (std::vector< world::DebugTarget >::const_iterator i = worldTargets.begin(); i != worldTargets.end(); ++i)
+	for (std::vector< render::DebugTarget >::const_iterator i = worldTargets.begin(); i != worldTargets.end(); ++i)
 		m_context->addDebugTarget(*i);
 
 	event->consume();
