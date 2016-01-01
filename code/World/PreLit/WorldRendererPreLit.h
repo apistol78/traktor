@@ -99,7 +99,6 @@ private:
 		Ref< WorldContext > shadow[MaxLightShadowCount];
 		Matrix44 shadowLightView[MaxLightShadowCount];
 		Matrix44 shadowLightProjection[MaxLightShadowCount];
-		Matrix44 shadowLightSquareProjection[MaxLightShadowCount];
 		Matrix44 viewToLightSpace[MaxLightShadowCount];
 	};
 

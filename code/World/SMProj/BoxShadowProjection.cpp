@@ -17,7 +17,6 @@ void BoxShadowProjection::calculate(
 	bool quantizeProjection,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
-	Matrix44& outLightSquareProjection,
 	Frustum& outShadowFrustum
 ) const
 {
@@ -80,8 +79,6 @@ void BoxShadowProjection::calculate(
 		if (viewFrustumPlane.normal().z() <= 0.0f)
 			outShadowFrustum.planes.push_back(viewFrustumPlane);
 	}
-
-	outLightSquareProjection = Matrix44::identity();
 }
 
 	}

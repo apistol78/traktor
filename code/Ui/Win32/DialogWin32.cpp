@@ -226,6 +226,8 @@ LRESULT DialogWin32::eventSizing(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 LRESULT DialogWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
+	volatile bool modal = m_modal;
+	
 	skip = false;
 
 	CloseEvent closeEvent(m_owner);
@@ -237,7 +239,7 @@ LRESULT DialogWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 	if (closeEvent.consumed())
 		return 0;
 
-	if (m_modal)
+	if (modal)
 		endModal(DrCancel);
 
 	return 0;
