@@ -64,14 +64,14 @@ bool VideoEditorPage::create(ui::Container* parent)
 
 	// Create preview render widget.
 	m_renderWidget = new ui::Widget();
-	if (!m_renderWidget->create(parent, ui::WsClientBorder))
+	if (!m_renderWidget->create(parent, ui::WsNone))
 		return false;
 
 	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &VideoEditorPage::eventSize);
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &VideoEditorPage::eventPaint);
 
 	render::RenderViewEmbeddedDesc desc;
-	desc.depthBits = 16;
+	desc.depthBits = 0;
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
 	desc.waitVBlank = false;
