@@ -4,6 +4,7 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Frustum.h"
+#include "Render/Types.h"
 #include "Ui/EventSubject.h"
 #include "World/WorldTypes.h"
 
@@ -229,9 +230,9 @@ public:
 
 	void clearDebugTargets();
 
-	void addDebugTarget(const world::DebugTarget& debugTarget);
+	void addDebugTarget(const render::DebugTarget& debugTarget);
 
-	const std::vector< world::DebugTarget >& getDebugTargets() const;
+	const std::vector< render::DebugTarget >& getDebugTargets() const;
 
 	//@}
 
@@ -310,7 +311,7 @@ private:
 	Ref< world::IEntityEventManager > m_eventManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	std::vector< world::DebugTarget > m_debugTargets;
+	std::vector< render::DebugTarget > m_debugTargets;
 	Ref< physics::PhysicsManager > m_physicsManager;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
 	RefArray< ISceneEditorPlugin > m_editorPlugins;

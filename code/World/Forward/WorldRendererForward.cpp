@@ -886,19 +886,19 @@ render::ImageProcess* WorldRendererForward::getVisualImageProcess()
 	return m_visualImageProcess;
 }
 
-void WorldRendererForward::getDebugTargets(std::vector< DebugTarget >& outTargets) const
+void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& outTargets) const
 {
 	if (m_depthTargetSet)
-		outTargets.push_back(DebugTarget(L"View depth", DtvDepth, m_depthTargetSet->getColorTexture(0)));
+		outTargets.push_back(render::DebugTarget(L"View depth", render::DtvDepth, m_depthTargetSet->getColorTexture(0)));
 
 	if (m_shadowTargetSet)
-		outTargets.push_back(DebugTarget(L"Shadow map (last cascade)", DtvShadowMap, m_shadowTargetSet->getDepthTexture()));
+		outTargets.push_back(render::DebugTarget(L"Shadow map (last cascade)", render::DtvShadowMap, m_shadowTargetSet->getDepthTexture()));
 	
 	if (m_shadowMaskProjectTargetSet)
-		outTargets.push_back(DebugTarget(L"Shadow mask (projection)", DtvShadowMask, m_shadowMaskProjectTargetSet->getDepthTexture()));
+		outTargets.push_back(render::DebugTarget(L"Shadow mask (projection)",render:: DtvShadowMask, m_shadowMaskProjectTargetSet->getDepthTexture()));
 
 	if (m_shadowMaskFilterTargetSet)
-		outTargets.push_back(DebugTarget(L"Shadow mask (SS filtered)", DtvShadowMask, m_shadowMaskFilterTargetSet->getDepthTexture()));
+		outTargets.push_back(render::DebugTarget(L"Shadow mask (SS filtered)", render::DtvShadowMask, m_shadowMaskFilterTargetSet->getDepthTexture()));
 }
 
 void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)

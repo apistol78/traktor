@@ -689,12 +689,12 @@ void SceneEditorContext::clearDebugTargets()
 	m_debugTargets.resize(0);
 }
 
-void SceneEditorContext::addDebugTarget(const world::DebugTarget& debugTarget)
+void SceneEditorContext::addDebugTarget(const render::DebugTarget& debugTarget)
 {
 	m_debugTargets.push_back(debugTarget);
 }
 
-const std::vector< world::DebugTarget >& SceneEditorContext::getDebugTargets() const
+const std::vector< render::DebugTarget >& SceneEditorContext::getDebugTargets() const
 {
 	return m_debugTargets;
 }
