@@ -151,7 +151,8 @@ bool XmlPullParserImpl::parse()
 		m_done = nread < sizeof(m_buf);
 		if (XML_Parse(m_parser, (const char*)m_buf, nread, m_done) == XML_STATUS_ERROR)
 		{
-			log::error << L"XML parse error" << Endl;
+			XML_Size line = XML_GetCurrentLineNumber(m_parser);
+			log::error << L"XML parse error at line " << int32_t(line) << Endl;
 
 			XmlPullParser::Event* evt = allocEvent();
 			if (!evt)

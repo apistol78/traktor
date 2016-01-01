@@ -18,13 +18,11 @@ void LiSPShadowProjection::calculate(
 	bool quantizeProjection,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
-	Matrix44& outLightSquareProjection,
 	Frustum& outShadowFrustum
 ) const
 {
 	outLightView = Matrix44::identity();
 	outLightProjection = Matrix44::identity();
-	outLightSquareProjection = Matrix44::identity();
 }
 
 	}

@@ -21,7 +21,6 @@ void TrapezoidShadowProjection::calculate(
 	bool quantizeProjection,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
-	Matrix44& outLightSquareProjection,
 	Frustum& outShadowFrustum
 ) const
 {
@@ -133,7 +132,7 @@ void TrapezoidShadowProjection::calculate(
 		lightDistance + extent.z()
 	);
 
-	outLightSquareProjection = NT;
+	// outLightSquareProjection = NT;
 
 	outShadowFrustum.buildOrtho(
 		extent.x(),

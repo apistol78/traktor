@@ -15,6 +15,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/App/SearchToolDialog.h"
 #include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/Button.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Edit.h"
@@ -203,11 +204,11 @@ void SearchToolDialog::destroy()
 
 bool SearchToolDialog::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, i18n::Text(L"EDITOR_SEARCH_TOOL_TITLE"), 1100, 600, ui::Dialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::Dialog::create(parent, i18n::Text(L"EDITOR_SEARCH_TOOL_TITLE"), ui::scaleBySystemDPI(1100), ui::scaleBySystemDPI(600), ui::Dialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
 	Ref< ui::custom::Splitter > splitterV = new ui::custom::Splitter();
-	splitterV->create(this, true, 220, false);
+	splitterV->create(this, true, ui::scaleBySystemDPI(220), false);
 
 	Ref< ui::Container > containerSearch = new ui::Container();
 	containerSearch->create(splitterV, ui::WsNone, new ui::TableLayout(L"100%", L"*", 4, 4));
@@ -228,10 +229,10 @@ bool SearchToolDialog::create(ui::Widget* parent)
 
 	m_gridResults = new ui::custom::GridView();
 	m_gridResults->create(splitterV, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_INSTANCE"), 320));
-	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_TYPE"), 200));
-	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_MEMBER"), 200));
-	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_VALUE"), 200));
+	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_INSTANCE"), ui::scaleBySystemDPI(320)));
+	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_TYPE"), ui::scaleBySystemDPI(200)));
+	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_MEMBER"), ui::scaleBySystemDPI(200)));
+	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_VALUE"), ui::scaleBySystemDPI(200)));
 	m_gridResults->addEventHandler< ui::MouseDoubleClickEvent >(this, &SearchToolDialog::eventGridResultDoubleClick);
 	m_gridResults->addEventHandler< ui::MouseButtonUpEvent >(this, &SearchToolDialog::eventGridResultButtonUp);
 

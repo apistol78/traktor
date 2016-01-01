@@ -941,7 +941,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		// Calculate shadow map projection.
 		Matrix44 shadowLightView;
 		Matrix44 shadowLightProjection;
-		Matrix44 shadowLightSquareProjection = Matrix44::identity();
 		Frustum shadowFrustum;
 
 		m_shadowProjection->calculate(
@@ -954,7 +953,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 			m_shadowSettings.quantizeProjection,
 			shadowLightView,
 			shadowLightProjection,
-			shadowLightSquareProjection,
 			shadowFrustum
 		);
 
@@ -982,8 +980,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		f.slice[slice].shadow->flush(shadowRenderView, shadowPass);
 		
 		f.slice[slice].shadowLightProjection = shadowLightProjection;
-		f.slice[slice].shadowLightSquareProjection = shadowLightSquareProjection;
-		f.slice[slice].viewToLightSpace = shadowLightSquareProjection * shadowLightProjection * shadowLightView * viewInverse;
+		f.slice[slice].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
 	}
 
 	// Render visuals.

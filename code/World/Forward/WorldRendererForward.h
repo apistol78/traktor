@@ -88,7 +88,6 @@ private:
 	{
 		Ref< WorldContext > shadow;
 		Matrix44 shadowLightProjection;
-		Matrix44 shadowLightSquareProjection;
 		Matrix44 viewToLightSpace;
 	};
 

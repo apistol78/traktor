@@ -25,7 +25,6 @@ public:
 		bool quantizeProjection,
 		Matrix44& outLightView,
 		Matrix44& outLightProjection,
-		Matrix44& outLightSquareProjection,
 		Frustum& outShadowFrustum
 	) const T_OVERRIDE T_FINAL;
 

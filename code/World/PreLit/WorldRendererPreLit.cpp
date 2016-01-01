@@ -1253,7 +1253,6 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 				// Calculate shadow map projection.
 				Matrix44 shadowLightView;
 				Matrix44 shadowLightProjection;
-				Matrix44 shadowLightSquareProjection = Matrix44::identity();
 				Frustum shadowFrustum;
 
 				(slice == 0 ? m_shadowProjection0 : m_shadowProjection)->calculate(
@@ -1266,7 +1265,6 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 					m_shadowSettings.quantizeProjection,
 					shadowLightView,
 					shadowLightProjection,
-					shadowLightSquareProjection,
 					shadowFrustum
 				);
 
@@ -1294,8 +1292,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 				
 				f.slice[slice].shadowLightView[i] = shadowLightView;
 				f.slice[slice].shadowLightProjection[i] = shadowLightProjection;
-				f.slice[slice].shadowLightSquareProjection[i] = shadowLightSquareProjection;
-				f.slice[slice].viewToLightSpace[i] = shadowLightSquareProjection * shadowLightProjection * shadowLightView * viewInverse;
+				f.slice[slice].viewToLightSpace[i] = shadowLightProjection * shadowLightView * viewInverse;
 			}
 		}
 		else

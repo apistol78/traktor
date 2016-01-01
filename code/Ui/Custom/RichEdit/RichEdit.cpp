@@ -695,14 +695,17 @@ int32_t RichEdit::getCharacterStops(const std::wstring& text, std::vector< int32
 	outStops.resize(0);
 	outStops.reserve(text.length());
 
-	std::wstring::const_iterator i0 = text.begin();
-	for (std::wstring::const_iterator i = text.begin(); i != text.end(); ++i)
+	if (m_charWidth > 0)
 	{
-		outStops.push_back(x);
-		if (*i != '\t')
-			x += m_charWidth;
-		else
-			x = alignUp(x + 4 * m_charWidth, 4 * m_charWidth);
+		std::wstring::const_iterator i0 = text.begin();
+		for (std::wstring::const_iterator i = text.begin(); i != text.end(); ++i)
+		{
+			outStops.push_back(x);
+			if (*i != '\t')
+				x += m_charWidth;
+			else
+				x = alignUp(x + 4 * m_charWidth, 4 * m_charWidth);
+		}
 	}
 
 	return x;
