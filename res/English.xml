@@ -666,6 +666,18 @@
       <second>Wizards</second>
     </item>
     <item>
+      <first>EDITOR_QUICK_OPEN_TITLE</first>
+      <second>Quick open</second>
+    </item>
+    <item>
+      <first>EDITOR_QUICK_OPEN_COLUMN_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>EDITOR_QUICK_OPEN_COLUMN_PATH</first>
+      <second>Path</second>
+    </item>
+    <item>
       <first>EDITOR_WAIT_BUILDING_TITLE</first>
       <second>Building resources</second>
     </item>
