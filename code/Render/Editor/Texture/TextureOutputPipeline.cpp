@@ -51,25 +51,6 @@ namespace traktor
 		namespace
 		{
 
-bool isBinaryAlpha(const drawing::Image* image)
-{
-	std::set< uint8_t > alphas;
-	for (int32_t y = 0; y < image->getHeight(); ++y)
-	{
-		for (int32_t x = 0; x < image->getWidth(); ++x)
-		{
-			Color4f color;
-			image->getPixel(x, y, color);
-
-			uint8_t alpha = uint8_t(color.getAlpha() * 255.0f);
-			alphas.insert(alpha);
-			if (alphas.size() > 2)
-				return false;
-		}
-	}
-	return true;
-}
-
 struct ScaleTextureTask : public Object
 {
 	Ref< drawing::Image > image;
@@ -336,10 +317,7 @@ bool TextureOutputPipeline::buildOutput(
 				}
 				else
 				{
-					bool binaryAlpha = false;
-					//if (textureOutput->m_hasAlpha && !textureOutput->m_ignoreAlpha)
-					//	binaryAlpha = isBinaryAlpha(image);
-					if (needAlpha && !binaryAlpha)
+					if (needAlpha)
 					{
 						log::info << L"Using DXT3 compression" << Endl;
 						textureFormat = TfDXT3;

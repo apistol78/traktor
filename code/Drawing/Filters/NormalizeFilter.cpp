@@ -1,3 +1,4 @@
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Const.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/NormalizeFilter.h"
@@ -11,40 +12,28 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.NormalizeFilter", NormalizeFilter, IIma
 
 void NormalizeFilter::apply(Image* image) const
 {
-	Color4f in;
-	for (int32_t y = 0; y < image->getHeight(); ++y)
+	const Scalar c_two(2.0f);
+	const Scalar c_one(1.0f);
+	const Scalar c_half(0.5f);
+
+	const int32_t width = image->getWidth();
+	const int32_t height = image->getHeight();
+
+	AlignedVector< Color4f > row(width, Color4f(0, 0, 0, 0));
+	for (int32_t y = 0; y < height; ++y)
 	{
-		for (int32_t x = 0; x < image->getWidth(); ++x)
+		image->getSpanUnsafe(y, row.ptr());
+		for (int32_t x = 0; x < width; ++x)
 		{
-			image->getPixelUnsafe(x, y, in);
-
-			float nx = in.getRed() * 2.0f - 1.0f;
-			float ny = in.getGreen() * 2.0f - 1.0f;
-			float nz = in.getBlue() * 2.0f - 1.0f;
-
-			float ln = std::sqrt(nx * nx + ny * ny + nz * nz);
-
-			if (ln >= FUZZY_EPSILON)
-			{
-				nx /= ln;
-				ny /= ln;
-				nz /= ln;
-			}
+			Vector4 n = Vector4(row[x]) * c_two - c_one;			
+			Scalar ln = n.length2();
+			if (ln >= FUZZY_EPSILON * FUZZY_EPSILON)
+				n *= reciprocalSquareRoot(ln);
 			else
-			{
-				nx = 0.0f;
-				ny = 1.0f;
-				nz = 0.0f;
-			}
-
-			Color4f out(
-				nx * 0.5f + 0.5f,
-				ny * 0.5f + 0.5f,
-				nz * 0.5f + 0.5f,
-				in.getAlpha()
-			);
-			image->setPixelUnsafe(x, y, out);
+				n.set(0.0f, 1.0f, 0.0f);
+			row[x] = Color4f((n * c_half + c_half).xyz0() + Vector4(0.0f, 0.0f, 0.0f, row[x].getAlpha()));
 		}
+		image->setSpanUnsafe(y, row.ptr());
 	}
 }
 
