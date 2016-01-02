@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "Core/Config.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,8 +19,10 @@ namespace traktor
 /*! \brief Base64 encode binary data.
  * \ingroup Core
  */
-class T_DLLCLASS Base64
+class T_DLLCLASS Base64 : public Object
 {
+	T_RTTI_CLASS;
+
 public:
 	std::wstring encode(const uint8_t* data, uint32_t size, bool insertCrLf = false) const;
 
