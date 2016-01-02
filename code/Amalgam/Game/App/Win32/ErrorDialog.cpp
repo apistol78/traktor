@@ -31,7 +31,7 @@ bool ErrorDialog::create()
 		return false;
 
 	Ref< ui::Image > imageError = new ui::Image();
-	imageError->create(this, ui::Bitmap::load(c_ResourceError, sizeof(c_ResourceError), L"png"), ui::Image::WsTransparent);
+	imageError->create(this, ui::Bitmap::load(c_ResourceError, sizeof(c_ResourceError), L"image"), ui::Image::WsTransparent);
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(this, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 4, 4));
@@ -43,7 +43,7 @@ bool ErrorDialog::create()
 	staticText->create(containerText, L"Unfortunately there has been an error");
 
 	m_listLog = new ui::custom::LogList();
-	m_listLog->create(containerText, ui::WsClientBorder, 0);
+	m_listLog->create(containerText, ui::WsNone, 0);
 
 	Ref< ui::Container > containerButtons = new ui::Container();
 	containerButtons->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"*", 0, 4));

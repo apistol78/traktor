@@ -787,23 +787,11 @@ void AsTextField::TextField_set_textColor(FlashEditInstance* self, avm_number_t 
 
 avm_number_t AsTextField::TextField_get_textWidth(FlashEditInstance* self) const
 {
-	//float width, height;
-	//if (self->getTextExtents(width, height))
-	//	return avm_number_t(width);
-	//else
-	//	return avm_number_t(0);
-
 	return self->getTextLayout()->getWidth();
 }
 
 avm_number_t AsTextField::TextField_get_textHeight(FlashEditInstance* self) const
 {
-	//float width, height;
-	//if (self->getTextExtents(width, height))
-	//	return avm_number_t(height);
-	//else
-	//	return avm_number_t(0);
-
 	return self->getTextLayout()->getHeight();
 }
 

@@ -204,18 +204,6 @@ void AsMovieClip::initialize(ActionObject* self)
 
 void AsMovieClip::construct(ActionObject* self, const ActionValueArray& args)
 {
-	// Check if we already have a relay; it will if it's created through FlashSprite::createInstance
-	// when created for the display list.
-	if (self->getRelay< FlashSpriteInstance >())
-		return;
-
-	//Ref< FlashSprite > sprite = new FlashSprite(0, 0);
-	//sprite->addFrame(new FlashFrame());
-
-	//Ref< FlashCharacterInstance > spriteInstance = sprite->createInstance(getContext(), 0, "", 0);
-	//T_ASSERT (spriteInstance);
-
-	//self->setRelay(spriteInstance);
 }
 
 ActionValue AsMovieClip::xplicit(const ActionValueArray& args)
