@@ -33,7 +33,7 @@ bool QuickOpenDialog::create(ui::Widget* parent)
 		return false;
 
 	m_editFilter = new ui::Edit();
-	m_editFilter->create(this, L"");
+	m_editFilter->create(this, L"", ui::WsClientBorder | ui::WsWantAllInput);
 	m_editFilter->addEventHandler< ui::ContentChangeEvent >(this, &QuickOpenDialog::eventFilterChange);
 	m_editFilter->addEventHandler< ui::KeyDownEvent >(this, &QuickOpenDialog::eventFilterKey);
 
