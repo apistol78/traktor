@@ -19,6 +19,10 @@
 #include "Core/Io/Utf16Encoding.h"
 #include "Core/Io/Utf32Encoding.h"
 #include "Core/Io/Path.h"
+#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Base64.h"
+#include "Core/Misc/MD5.h"
+#include "Core/Misc/SHA1.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyArray.h"
@@ -551,6 +555,30 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTimer->addMethod("getElapsedTime", &Timer::getElapsedTime);
 	classTimer->addMethod("getDeltaTime", &Timer::getDeltaTime);
 	registrar->registerClass(classTimer);
+
+	Ref< AutoRuntimeClass< Adler32 > > classAdler32 = new AutoRuntimeClass< Adler32 >();
+	classAdler32->addConstructor();
+	classAdler32->addMethod("begin", &Adler32::begin);
+	classAdler32->addMethod("end", &Adler32::end);
+	classAdler32->addMethod("get", &Adler32::get);
+	registrar->registerClass(classAdler32);
+	
+	Ref< AutoRuntimeClass< Base64 > > classBase64 = new AutoRuntimeClass< Base64 >();
+	registrar->registerClass(classBase64);
+
+	Ref< AutoRuntimeClass< MD5 > > classMD5 = new AutoRuntimeClass< MD5 >();
+	classMD5->addConstructor();
+	classMD5->addMethod("create", &MD5::create);
+	classMD5->addMethod("begin", &MD5::begin);
+	classMD5->addMethod("end", &MD5::end);
+	classMD5->addMethod("format", &MD5::format);
+	registrar->registerClass(classMD5);
+
+	Ref< AutoRuntimeClass< SHA1 > > classSHA1 = new AutoRuntimeClass< SHA1 >();
+	classSHA1->addConstructor();
+	classSHA1->addMethod("begin", &SHA1::begin);
+	classSHA1->addMethod("end", &SHA1::end);
+	registrar->registerClass(classSHA1);
 }
 
 }

@@ -9,6 +9,8 @@ const uint32_t c_modAdler = 65521;
 
 	}
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Adler32", Adler32, Object)
+
 Adler32::Adler32()
 :	m_A(0)
 ,	m_B(0)
@@ -50,7 +52,7 @@ void Adler32::end()
 	}
 }
 
-const uint32_t Adler32::get() const
+uint32_t Adler32::get() const
 {
 	return (m_B << 16) | m_A;
 }

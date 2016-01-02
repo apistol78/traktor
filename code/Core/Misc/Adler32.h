@@ -1,8 +1,7 @@
 #ifndef traktor_Adler32_H
 #define traktor_Adler32_H
 
-#include <string>
-#include "Core/Config.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,8 +17,10 @@ namespace traktor
 /* \brief Adler32 checksum.
  * \ingroup Core
  */
-class T_DLLCLASS Adler32
+class T_DLLCLASS Adler32 : public Object
 {
+	T_RTTI_CLASS;
+
 public:
 	Adler32();
 
@@ -29,7 +30,7 @@ public:
 
 	void end();
 
-	const uint32_t get() const;
+	uint32_t get() const;
 
 	template < typename T >
 	void feed(const T& value)

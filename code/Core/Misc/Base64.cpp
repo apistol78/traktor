@@ -43,6 +43,8 @@ bool isBase64(wchar_t c)
 
 	}
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Base64", Base64, Object)
+
 std::wstring Base64::encode(const uint8_t* data, uint32_t size, bool insertCrLf) const
 {
 	std::wstringstream ss;
