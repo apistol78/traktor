@@ -29,6 +29,8 @@ public:
 	/*! \brief Begin feeding data for SHA1 checksum calculation. */
 	void begin();
 
+	bool createFromString(const std::wstring& str);
+
 	/*! \brief Feed data to SHA1 checksum calculation.
 	 *
 	 * \param buffer Pointer to data.
@@ -38,6 +40,9 @@ public:
 
 	/*! \brief End feeding data for SHA1 checksum calculation. */
 	void end();
+
+	/*! \brief Format MD5 checksum as string. */
+	std::wstring format() const;
 
 private:
 	void* m_sha1nfo;
