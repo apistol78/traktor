@@ -569,6 +569,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< MD5 > > classMD5 = new AutoRuntimeClass< MD5 >();
 	classMD5->addConstructor();
 	classMD5->addMethod("create", &MD5::create);
+	classMD5->addMethod("createFromString", &MD5::createFromString);
 	classMD5->addMethod("begin", &MD5::begin);
 	classMD5->addMethod("end", &MD5::end);
 	classMD5->addMethod("format", &MD5::format);

@@ -35,6 +35,8 @@ public:
 	 */
 	bool create(const std::wstring& md5);
 
+	bool createFromString(const std::wstring& str);
+
 	/*! \brief Begin feeding data for MD5 checksum calculation. */
 	void begin();
 

@@ -1,6 +1,7 @@
 #include <cstring>
 #include <sstream>
 #include "Core/Misc/MD5.h"
+#include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStaticArray.h"
 
@@ -247,6 +248,14 @@ bool MD5::create(const std::wstring& md5)
 	}
 
 	byteToDword(m_md5, md5b, MD5_SIZE);
+	return true;
+}
+
+bool MD5::createFromString(const std::wstring& str)
+{
+	std::string s = wstombs(str);
+	feed(s.c_str(), uint32_t(s.length()));
+	end();
 	return true;
 }
 
