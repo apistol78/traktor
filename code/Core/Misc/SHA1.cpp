@@ -1,5 +1,8 @@
 #include <cstring>
+#include <sstream>
 #include "Core/Misc/SHA1.h"
+#include "Core/Misc/TString.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -209,6 +212,14 @@ void SHA1::begin()
 	sha1_init((sha1info*)m_sha1nfo);
 }
 
+bool SHA1::createFromString(const std::wstring& str)
+{
+	std::string s = wstombs(str);
+	feed(s.c_str(), uint32_t(s.length()));
+	end();
+	return true;
+}
+
 void SHA1::feed(const void* buffer, uint32_t bufferSize)
 {
 	const uint8_t* u8buffer = static_cast< const uint8_t* const >(buffer);
@@ -218,7 +229,16 @@ void SHA1::feed(const void* buffer, uint32_t bufferSize)
 
 void SHA1::end()
 {
-	sha1_pad((sha1info*)m_sha1nfo);
+
+}
+
+std::wstring SHA1::format() const
+{
+	const uint8_t* r = sha1_result((sha1info*)m_sha1nfo);
+	std::wstringstream ss;
+	for (int i = 0; i < 20; ++i)
+		ss << std::hex << r[i];
+	return ss.str();    
 }
 
 }

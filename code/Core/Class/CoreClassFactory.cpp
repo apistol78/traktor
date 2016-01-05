@@ -577,8 +577,10 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< SHA1 > > classSHA1 = new AutoRuntimeClass< SHA1 >();
 	classSHA1->addConstructor();
+	classSHA1->addMethod("createFromString", &SHA1::createFromString);
 	classSHA1->addMethod("begin", &SHA1::begin);
 	classSHA1->addMethod("end", &SHA1::end);
+	classSHA1->addMethod("format", &SHA1::format);
 	registrar->registerClass(classSHA1);
 }
 
