@@ -58,6 +58,8 @@ class Preprocessor;
 class Script;
 class ScriptBreakpointEvent;
 class ScriptClassesView;
+class SearchControl;
+class SearchEvent;
 
 class T_DLLCLASS ScriptEditorPage
 :	public editor::IEditorPage
@@ -104,6 +106,7 @@ private:
 	Ref< ScriptClassesView > m_classesView;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	Ref< ui::custom::StatusBar > m_compileStatus;
+	Ref< SearchControl > m_searchControl;
 	Ref< ui::Tab > m_tabSessions;
 	std::wstring m_findNeedle;
 	std::wstring m_replaceValue;
@@ -154,6 +157,10 @@ private:
 	void eventScriptChange(ui::ContentChangeEvent* event);
 
 	void eventScriptDoubleClick(ui::MouseDoubleClickEvent* event);
+
+	void eventScriptSize(ui::SizeEvent* event);
+
+	void eventSearch(SearchEvent* event);
 
 	void eventTimer(ui::TimerEvent* event);
 

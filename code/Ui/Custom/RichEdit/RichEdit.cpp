@@ -434,6 +434,14 @@ bool RichEdit::paste()
 	return true;
 }
 
+Rect RichEdit::getEditRect() const
+{
+	Rect rc = getInnerRect();
+	rc.right -= m_scrollBarV->getPreferedSize().cx;
+	rc.bottom -= m_scrollBarH->getPreferedSize().cy;
+	return rc;
+}
+
 void RichEdit::updateScrollBars()
 {
 	Font font = getFont();
@@ -709,14 +717,6 @@ int32_t RichEdit::getCharacterStops(const std::wstring& text, std::vector< int32
 	}
 
 	return x;
-}
-
-Rect RichEdit::getEditRect() const
-{
-	Rect rc = getInnerRect();
-	rc.right -= m_scrollBarV->getPreferedSize().cx;
-	rc.bottom -= m_scrollBarH->getPreferedSize().cy;
-	return rc;
 }
 
 void RichEdit::eventKeyDown(KeyDownEvent* event)
