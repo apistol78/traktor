@@ -25,6 +25,8 @@
 #include "Script/Editor/ScriptClassesView.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditorPage.h"
+#include "Script/Editor/SearchControl.h"
+#include "Script/Editor/SearchEvent.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
@@ -33,7 +35,6 @@
 #include "Ui/Tab.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
-#include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
@@ -179,6 +180,12 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
 	m_edit->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventScriptDoubleClick);
+	m_edit->addEventHandler< ui::SizeEvent >(this, &ScriptEditorPage::eventScriptSize);
+
+	m_searchControl = new SearchControl();
+	m_searchControl->create(m_edit);
+	m_searchControl->hide();
+	m_searchControl->addEventHandler< SearchEvent >(this, &ScriptEditorPage::eventSearch);
 
 	m_compileStatus = new ui::custom::StatusBar();
 	if (!m_compileStatus->create(containerEdit))
@@ -314,131 +321,17 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Find")
 	{
-		ui::custom::InputDialog::Field fields[] =
-		{
-			{ L"Find", L"", 0, 0 }
-		};
-
-		Ref< ui::custom::InputDialog > dialogFind = new ui::custom::InputDialog();
-		dialogFind->create(m_edit, L"Find", L"Enter text or word to search for", fields, sizeof_array(fields));
-		if (dialogFind->showModal() == ui::DrOk)
-		{
-			if (!(m_findNeedle = fields[0].value).empty())
-			{
-				int32_t caretLine = m_edit->getLineFromOffset(m_edit->getCaretOffset());
-				int32_t line = caretLine;
-
-				while (line < m_edit->getLineCount())
-				{
-					std::wstring text = m_edit->getLine(line);
-					if (text.find(m_findNeedle) != text.npos)
-					{
-						m_edit->showLine(line);
-						m_edit->placeCaret(m_edit->getLineOffset(line));
-						break;
-					}
-					++line;
-				}
-				if (line >= m_edit->getLineCount())
-				{
-					line = 0;
-					while (line < caretLine)
-					{
-						std::wstring text = m_edit->getLine(line);
-						if (text.find(m_findNeedle) != text.npos)
-						{
-							m_edit->showLine(line);
-							m_edit->placeCaret(m_edit->getLineOffset(line));
-							break;
-						}
-						++line;
-					}
-				}
-			}
-		}
-		else
-			log::info << L"\"" << fields[0].value << L"\" not found." << Endl;
-
-		m_edit->setFocus();
+		m_searchControl->show();
+		m_searchControl->setFocus();
 	}
 	else if (command == L"Editor.FindNext")
 	{
-		if (!m_findNeedle.empty())
-		{
-			int32_t caretLine = m_edit->getLineFromOffset(m_edit->getCaretOffset());
-			int32_t line = caretLine + 1;
-
-			while (line < m_edit->getLineCount())
-			{
-				std::wstring text = m_edit->getLine(line);
-				if (text.find(m_findNeedle) != text.npos)
-				{
-					m_edit->showLine(line);
-					m_edit->placeCaret(m_edit->getLineOffset(line));
-					break;
-				}
-				++line;
-			}
-			if (line >= m_edit->getLineCount())
-			{
-				line = 0;
-				while (line < caretLine)
-				{
-					std::wstring text = m_edit->getLine(line);
-					if (text.find(m_findNeedle) != text.npos)
-					{
-						m_edit->showLine(line);
-						m_edit->placeCaret(m_edit->getLineOffset(line));
-						break;
-					}
-					++line;
-				}
-			}
-		}
-		m_edit->setFocus();
 	}
 	else if (command == L"Editor.Replace")
 	{
-		ui::custom::InputDialog::Field fields[] =
-		{
-			{ L"Search", L"", 0, 0 },
-			{ L"Replace with", L"", 0, 0 },
-		};
-
-		Ref< ui::custom::InputDialog > dialogReplace = new ui::custom::InputDialog();
-		dialogReplace->create(m_edit, L"Replace", L"Enter text or word to replace", fields, sizeof_array(fields));
-		if (dialogReplace->showModal() == ui::DrOk)
-		{
-		}
-
-		m_edit->setFocus();
 	}
 	else if (command == L"Editor.ReplaceAll")
 	{
-		ui::custom::InputDialog::Field fields[] =
-		{
-			{ L"Search", L"", 0, 0 },
-			{ L"Replace with", L"", 0, 0 },
-		};
-
-		Ref< ui::custom::InputDialog > dialogReplace = new ui::custom::InputDialog();
-		dialogReplace->create(m_edit, L"Replace All", L"Enter text or word to replace", fields, sizeof_array(fields));
-		if (dialogReplace->showModal() == ui::DrOk)
-		{
-			if (
-				!(m_findNeedle = fields[0].value).empty() &&
-				!(m_replaceValue = fields[1].value).empty()
-			)
-			{
-				for (int32_t line = 0; line < m_edit->getLineCount(); ++line)
-				{
-					std::wstring text = m_edit->getLine(line);
-					m_edit->setLine(line, replaceAll(text, m_findNeedle, m_replaceValue));
-				}
-			}
-		}
-
-		m_edit->setFocus();
 	}
 	else if (command == L"Editor.SettingsChanged")
 	{
@@ -785,6 +678,51 @@ void ScriptEditorPage::eventScriptDoubleClick(ui::MouseDoubleClickEvent* event)
 		m_edit->setLineData(line, 0);
 
 	updateBreakpoints();
+}
+
+void ScriptEditorPage::eventScriptSize(ui::SizeEvent* event)
+{
+	ui::Size searchControlSize = m_searchControl->getPreferedSize();
+	m_searchControl->setRect(ui::Rect(
+		ui::Point(m_edit->getEditRect().getWidth() - searchControlSize.cx, 0),
+		searchControlSize
+	));
+}
+
+void ScriptEditorPage::eventSearch(SearchEvent* event)
+{
+	int32_t caretLine = m_edit->getLineFromOffset(m_edit->getCaretOffset());
+	int32_t line = caretLine;
+
+	while (line < m_edit->getLineCount())
+	{
+		std::wstring text = m_edit->getLine(line);
+		size_t p = text.find(event->getSearch());
+		if (p != text.npos)
+		{
+			m_edit->showLine(line);
+			m_edit->placeCaret(m_edit->getLineOffset(line) + int32_t(p));
+			break;
+		}
+		++line;
+	}
+
+	if (line >= m_edit->getLineCount())
+	{
+		line = 0;
+		while (line < caretLine)
+		{
+			std::wstring text = m_edit->getLine(line);
+			size_t p = text.find(event->getSearch());
+			if (p != text.npos)
+			{
+				m_edit->showLine(line);
+				m_edit->placeCaret(m_edit->getLineOffset(line) + int32_t(p));
+				break;
+			}
+			++line;
+		}
+	}
 }
 
 void ScriptEditorPage::eventTimer(ui::TimerEvent* event)

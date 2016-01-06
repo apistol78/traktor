@@ -113,6 +113,9 @@ public:
 	/*! \brief Paste text from clipboard at caret position. */
 	bool paste();
 
+	/*! \brief Get text inner rectangle. */
+	Rect getEditRect() const;
+
 private:
 	struct Attribute
 	{
@@ -180,8 +183,6 @@ private:
 	void scrollToCaret();
 
 	int32_t getCharacterStops(const std::wstring& text, std::vector< int32_t >& outStops) const;
-
-	Rect getEditRect() const;
 
 	void eventKeyDown(KeyDownEvent* event);
 

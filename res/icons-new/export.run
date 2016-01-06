@@ -122,6 +122,9 @@ local outputs =
 			{ name = "DefineGlobalFunction", column = 12, row = 5, width = 1, height = 1 },
 			{ name = "DefineLocalFunction", column = 13, row = 5, width = 1, height = 1 },
 			{ name = "ReferenceFunction", column = 14, row = 5, width = 1, height = 1 },
+			{ name = "SearchCaseSensitive", column = 15, row = 5, width = 1, height = 1 },
+			{ name = "SearchWholeWord", column = 16, row = 5, width = 1, height = 1 },
+			{ name = "SearchWildCard", column = 17, row = 5, width = 1, height = 1 },
 		}
 	},
 	{
