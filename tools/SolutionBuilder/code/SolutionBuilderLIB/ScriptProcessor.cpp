@@ -1,5 +1,6 @@
 #include <Core/Class/AutoRuntimeClass.h>
 #include <Core/Class/Boxes.h>
+#include <Core/Class/CoreClassFactory.h>
 #include <Core/Io/BufferedStream.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/StringOutputStream.h>
@@ -146,42 +147,13 @@ bool ScriptProcessor::create()
 	m_scriptManager = new script::ScriptManagerLua();
 
 	BoxesClassFactory().createClasses(m_scriptManager);
+	CoreClassFactory().createClasses(m_scriptManager);
 
 	Ref< AutoRuntimeClass< Output > > classOutput = new AutoRuntimeClass< Output >();
 	classOutput->addMethod("print", &Output::print);
 	classOutput->addMethod("printLn", &Output::printLn);
 	classOutput->addMethod("printSection", &Output::printSection);
 	m_scriptManager->registerClass(classOutput);
-
-	Ref< AutoRuntimeClass< Path > > classPath = new AutoRuntimeClass< Path >();
-	classPath->addConstructor();
-	classPath->addConstructor< const std::wstring& >();
-	classPath->addMethod("getOriginal", &Path::getOriginal);
-	classPath->addMethod("hasVolume", &Path::hasVolume);
-	classPath->addMethod("getVolume", &Path::getVolume);
-	classPath->addMethod("isRelative", &Path::isRelative);
-	classPath->addMethod("getFileName", &Path::getFileName);
-	classPath->addMethod("getFileNameNoExtension", &Path::getFileNameNoExtension);
-	classPath->addMethod("getPathOnly", &Path::getPathOnly);
-	classPath->addMethod("getPathOnlyNoVolume", &Path::getPathOnlyNoVolume);
-	classPath->addMethod("getPathName", &Path::getPathName);
-	classPath->addMethod("getPathNameNoExtension", &Path::getPathNameNoExtension);
-	classPath->addMethod("getPathNameNoVolume", &Path::getPathNameNoVolume);
-	classPath->addMethod("getExtension", &Path::getExtension);
-	classPath->addMethod("normalized", &Path::normalized);
-	m_scriptManager->registerClass(classPath);
-
-	Ref< AutoRuntimeClass< FileSystem > > classFileSystem = new AutoRuntimeClass< FileSystem >();
-	classFileSystem->addMethod("exist", &FileSystem::exist);
-	classFileSystem->addMethod("remove", &FileSystem::remove);
-	classFileSystem->addMethod("makeDirectory", &FileSystem::makeDirectory);
-	classFileSystem->addMethod("makeAllDirectories", &FileSystem::makeAllDirectories);
-	classFileSystem->addMethod("removeDirectory", &FileSystem::removeDirectory);
-	classFileSystem->addMethod("renameDirectory", &FileSystem::renameDirectory);
-	classFileSystem->addMethod("getAbsolutePath", &FileSystem_getAbsolutePath_1);
-	classFileSystem->addMethod("getAbsolutePath", &FileSystem_getAbsolutePath_2);
-	classFileSystem->addMethod("getRelativePath", &FileSystem_getRelativePath);
-	m_scriptManager->registerClass(classFileSystem);
 
 	Ref< AutoRuntimeClass< Solution > > classSolution = new AutoRuntimeClass< Solution >();
 	classSolution->addMethod("getName", &Solution::getName);

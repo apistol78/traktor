@@ -703,6 +703,8 @@ bool SolutionBuilderMsvcVCXProj::generateUser(
 		file->write(&buffer[0], int(buffer.size()));
 		file->close();
 	}
+
+	return true;
 }
 
 bool SolutionBuilderMsvcVCXProj::collectFiles(

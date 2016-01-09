@@ -1,0 +1,138 @@
+# This makefile is automatically generated, DO NOT EDIT!
+
+<?--
+
+-- Read configuration from environment.
+local dialect = OS.getInstance():getEnvironment("MAKE_DIALECT")
+local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
+local os = OS.getInstance():getEnvironment("MAKE_OS")
+local include = OS.getInstance():getEnvironment("MAKE_INCLUDE")
+local objectFile = OS.getInstance():getEnvironment("MAKE_OBJECT_FILE")
+local staticLibraryFile = OS.getInstance():getEnvironment("MAKE_STATIC_LIBRARY_FILE")
+local sharedLibraryFile = OS.getInstance():getEnvironment("MAKE_SHARED_LIBRARY_FILE")
+local executableFile = OS.getInstance():getEnvironment("MAKE_EXECUTABLE_FILE")
+
+local function getProductName(project, configuration)
+	local format = configuration:getTargetFormat()
+	if format == "StaticLibrary" then
+		return string.format(staticLibraryFile, project:getName())
+	elseif format == "SharedLibrary" then
+		return string.format(sharedLibraryFile, project:getName())
+	elseif format == "Executable" then
+		return string.format(executableFile, project:getName())
+	elseif format == "ExecutableConsole" then
+		return string.format(executableFile, project:getName())
+	end
+	assert(false)
+	return ""
+end
+
+if include ~= nil then
+	if dialect == "nmake" then
+		output:printLn("!INCLUDE " .. include)
+	elseif dialect == "make" then
+		output:printLn("include " .. include)
+	end
+	output:printLn("")
+end
+
+-- Gather all configurations.
+local availConfigurations = {}
+local projects = solution:getProjects()
+for i = 0, projects:size() - 1 do
+	local project = projects:get(i)
+	if project:getEnable() then
+		local configurations = project:getConfigurations()
+		for j = 0, configurations:size() - 1 do
+			local configuration = configurations:get(j)
+			availConfigurations[configuration:getName()] = true
+		end
+	end
+end
+
+-- Create "all" target.
+output:print("all :")
+local projects = solution:getProjects()
+for i = 0, projects:size() - 1 do
+	local project = projects:get(i)
+	if project:getEnable() then
+		local configurations = project:getConfigurations()
+		for j = 0, configurations:size() - 1 do
+			local configuration = configurations:get(j)
+			local productName = getProductName(project, configuration)
+			output:printLn(" \\")
+			output:print("\t" .. configuration:getName() .. "/" .. productName)
+		end
+	end
+end
+output:printLn("")
+output:printLn("\t@echo all")
+output:printLn("")
+
+-- Create target for each configuration.
+for c, _ in pairs(availConfigurations) do
+	output:print(c .. " :")
+	local projects = solution:getProjects()
+	for i = 0, projects:size() - 1 do
+		local project = projects:get(i)
+		if project:getEnable() then
+			local configuration = project:getConfiguration(c)
+			if configuration ~= nil then
+				local productName = getProductName(project, configuration)
+				output:printLn(" \\")
+				output:print("\t" .. configuration:getName() .. "/" .. productName)
+			end
+		end
+	end
+	output:printLn("")
+	output:printLn("\t@echo " .. c)
+	output:printLn("")	
+end
+
+-- Create targets for each project.
+local projects = solution:getProjects()
+for i = 0, projects:size() - 1 do
+	local project = projects:get(i)
+	if project:getEnable() then
+		local configurations = project:getConfigurations()
+		for j = 0, configurations:size() - 1 do
+			local configuration = configurations:get(j)
+			local productName = getProductName(project, configuration)
+
+			output:print(configuration:getName() .. "/" .. productName .. " :")
+			local dependencies = project:getDependencies()
+			for k = 0, dependencies:size() - 1 do
+				local dependency = dependencies:get(k)
+				if isa(dependency, ProjectDependency) then
+					local localProject = dependency:getProject()
+					local localConfiguration = localProject:getConfiguration(configuration:getName())
+					local localProductName = getProductName(localProject, localConfiguration)
+					output:printLn(" \\")
+					output:print("\t" .. configuration:getName() .. "/" .. localProductName)
+				end
+			end
+			output:printLn("")
+			if dialect == "nmake" then
+				output:printLn("\tpushd " .. project:getName() .. " & $(MAKE) " .. configuration:getName() .. " & popd")
+			elseif dialect == "make" then
+				output:printLn("\t$(MAKE) -C " .. project:getName() .. " " .. configuration:getName())
+			end
+			output:printLn("")
+		end
+	end
+end
+
+output:printLn("clean :")
+local projects = solution:getProjects()
+for i = 0, projects:size() - 1 do
+	local project = projects:get(i)
+	if project:getEnable() then
+		if dialect == "nmake" then
+			output:printLn("\tpushd " .. project:getName() .. " & $(MAKE) clean & popd")
+		elseif dialect == "make" then
+			output:printLn("\t$(MAKE) -C " .. project:getName() .. " clean")
+		end
+	end
+end
+
+--?>

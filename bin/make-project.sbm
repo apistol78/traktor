@@ -1,0 +1,447 @@
+# This makefile is automatically generated, DO NOT EDIT!
+
+<?--
+
+import(traktor)
+
+-- Read configuration from environment.
+local dialect = OS.getInstance():getEnvironment("MAKE_DIALECT")
+local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
+local os = OS.getInstance():getEnvironment("MAKE_OS")
+local include = OS.getInstance():getEnvironment("MAKE_INCLUDE")
+local objectFile = OS.getInstance():getEnvironment("MAKE_OBJECT_FILE")
+local staticLibraryFile = OS.getInstance():getEnvironment("MAKE_STATIC_LIBRARY_FILE")
+local sharedLibraryFile = OS.getInstance():getEnvironment("MAKE_SHARED_LIBRARY_FILE")
+local executableFile = OS.getInstance():getEnvironment("MAKE_EXECUTABLE_FILE")
+
+local function getProductName(project, configuration)
+	local format = configuration:getTargetFormat()
+	if format == "StaticLibrary" then
+		return string.format(staticLibraryFile, project:getName())
+	elseif format == "SharedLibrary" then
+		return string.format(sharedLibraryFile, project:getName())
+	elseif format == "Executable" then
+		return string.format(executableFile, project:getName())
+	elseif format == "ExecutableConsole" then
+		return string.format(executableFile, project:getName())
+	end
+	assert(false)
+	return ""
+end
+
+local function insertLast(t, iv)
+	for i, v in ipairs(t) do
+		if v == iv then
+			table.remove(t, i)
+			break
+		end
+	end
+	table.insert(t, iv)
+end
+
+local function collectDependencies(solution, project, configuration, outIncludePaths, outLibraries, outLibrariesExternal, outLibraryPaths)
+	-- Add include paths.
+	local includePaths = configuration:getIncludePaths()
+	for i = 0, includePaths:size() - 1 do
+		insertLast(outIncludePaths, includePaths:get(i))
+	end
+
+	-- Add libraries.
+	local libraries = configuration:getLibraries()
+	for i = 0, libraries:size() - 1 do
+		insertLast(outLibrariesExternal, libraries:get(i))
+	end
+
+	-- Add library paths.
+	local libraryPaths = configuration:getLibraryPaths()
+	for i = 0, libraryPaths:size() - 1 do
+		local libraryRelPath = fileSystem:getRelativePath(
+			Path(libraryPaths:get(i)),
+			projectPath
+		)
+		insertLast(outLibraryPaths, libraryRelPath:getPathName())
+	end
+
+	-- Recurse with dependencies.
+	local dependencies = project:getDependencies()
+	for i = 0, dependencies:size() - 1 do
+		local dep = dependencies:get(i)
+		if isa(dep, ProjectDependency) then
+			local localSolution = solution
+			local localProject = dep:getProject()
+			local localConfig = localProject:getConfiguration(configuration:getName())
+			if localProject:getEnable() then
+				insertLast(outLibraries, localProject:getName())
+				collectDependencies(
+					localSolution,
+					localProject,
+					localConfig,
+					outIncludePaths,
+					outLibraries,
+					outLibrariesExternal,
+					outLibraryPaths
+				)
+			end
+		elseif isa(dep, ExternalDependency) then
+			local externalSolution = dep:getSolution()
+			local externalProject = dep:getProject()
+			local externalConfig = externalProject:getConfiguration(configuration:getName())
+			if externalProject:getEnable() then
+				local externalRelPath = fileSystem:getRelativePath(
+					Path(externalSolution:getRootPath() .. "/" .. configuration:getName():lower()),
+					projectPath
+				)
+				insertLast(outLibraryPaths, externalRelPath:getPathName())
+				insertLast(outLibraries, externalProject:getName())
+				collectDependencies(
+					externalSolution,
+					externalProject,
+					externalConfig,
+					outIncludePaths,
+					outLibraries,
+					outLibrariesExternal,
+					outLibraryPaths
+				)
+			end
+		end
+	end
+end
+
+local function collectFiles(project, projectOrFilter, pred, outFiles)
+	local items = projectOrFilter:getItems()
+	for i = 0, items:size() - 1 do
+		local item = items:get(i)
+		if isa(item, Filter) then
+			collectFiles(project, item, pred, outFiles)
+		else
+			local files = item:getSystemFiles(project:getSourcePath())
+			for i = 0, files:size() - 1 do
+				local file = files:get(i)
+				if pred(file) then
+					table.insert(outFiles, file)
+				end
+			end
+		end
+	end
+end
+
+local cache = {}
+local function scanHeaderDependencies(includePaths, file, outDependencies)
+	if not fileSystem:exist(file) then return end
+
+	-- Check if already cached.
+	local fpn = file:getPathName()
+	if cache[fpn] ~= nil then
+		for _, d in ipairs(cache[fpn]) do
+			outDependencies[d] = true
+			return
+		end
+	end
+
+	-- Scan for dependencies in files.
+	local fs = fileSystem:open(file, File.FmRead)
+	assert (fs ~= nil)
+
+	local sr = StringReader(BufferedStream(fs), AnsiEncoding())
+	while true do
+		local s = sr:readLine()
+		if s == nil then break end
+		local p = s:match("#include.*\"(.*)\"") or s:match("#include.*<(.*)>")
+		if p ~= nil then
+			for _, ip in ipairs(includePaths) do
+				local ipp = Path(ip .. "/" .. p):normalized()
+				if fileSystem:exist(ipp) and outDependencies[ipp:getPathName()] ~= true then
+					outDependencies[ipp:getPathName()] = true
+					scanHeaderDependencies(includePaths, ipp, outDependencies)
+					break
+				end
+			end
+		end
+	end
+
+	fs:close()
+
+	-- Store in cache.
+	local c = {}
+	for d, _ in pairs(outDependencies) do
+		table.insert(c, d)
+	end
+	cache[fpn] = c
+end
+
+------------------------------------------------
+
+if include ~= nil then
+	if dialect == "nmake" then
+		output:printLn("!INCLUDE " .. include)
+	elseif dialect == "make" then
+		output:printLn("include " .. include)
+	end
+	output:printLn("")
+end
+
+local configurations = project:getConfigurations()
+local sourcePath = Path(project:getSourcePath())
+
+-- Scan configurations.
+local includePaths = {}
+local libraries = {}
+local externalLibraries = {}
+local libraryPaths = {}
+for i = 0, configurations:size() - 1 do
+	includePaths[i] = {}
+	libraries[i] = {}
+	externalLibraries[i] = {}
+	libraryPaths[i] = {}
+	collectDependencies(
+		solution,
+		project,
+		configurations:get(i),
+		includePaths[i],
+		libraries[i],
+		externalLibraries[i],
+		libraryPaths[i]
+	)
+end
+
+-- Collect source files.
+local sourceFiles = {}
+collectFiles(
+	project,
+	project,
+	function(file)
+		local ext = file:getExtension()
+		return ext == "c" or ext == "cc" or ext == "cpp" or ext == "m" or ext == "mm" 
+	end,
+	sourceFiles
+)
+
+-- Collect resource files.
+local resourceFiles = {}
+collectFiles(
+	project,
+	project,
+	function(file)
+		local ext = file:getExtension()
+		return ext == "xdi" or ext == "image" or ext == "png"
+	end,
+	resourceFiles
+)
+
+------------------------------------------------
+
+-- Include paths.
+for i = 0, configurations:size() - 1 do
+	local configuration = configurations:get(i)
+
+	output:print(configuration:getName():upper() .. "_INCLUDE=")
+
+	if toolchain == "vc" then
+		output:print("/I " .. configuration:getName())
+	elseif toolchain == "gnu" or toolchain == "clang" then
+		output:print("-I" .. configuration:getName())
+	end
+
+	for _, includePath in ipairs(includePaths[i]) do
+		if toolchain == "vc" then
+			output:print(" /I " .. includePath)
+		elseif toolchain == "gnu" or toolchain == "clang" then
+			output:print(" -I" .. includePath)
+		end
+	end
+
+	output:printLn("")
+end
+
+------------------------------------------------
+output:printLn("")
+
+-- Definitions.
+for i = 0, configurations:size() - 1 do
+	local configuration = configurations:get(i)
+	output:print(configuration:getName():upper() .. "_DEFINES=")
+
+	local definitions = configuration:getDefinitions()
+	for j = 0, definitions:size() - 1 do
+		local definition = definitions:get(j)
+		local def0 = string.sub(definition, 1, 1)
+		if not (def0 == "'" or def0 == "`") then
+			if toolchain == "vc" then
+				output:print("/D" .. definition .. " ")
+			elseif toolchain == "gnu" or toolchain == "clang" then
+				output:print("-D" .. definition .. " ")
+			end
+		else
+			output:print(definition)
+		end
+	end
+
+	output:printLn("")
+end
+
+------------------------------------------------
+output:printLn("")
+
+-- "all" target.
+output:print("all :")
+for i = 0, configurations:size() - 1 do
+	local configuration = configurations:get(i)
+	output:print(" " .. configuration:getName())
+end
+output:printLn("")
+output:printLn("\t@echo all")
+
+------------------------------------------------
+output:printLn("")
+
+-- "clean" target.
+output:printLn("clean :")
+for i = 0, configurations:size() - 1 do
+	local configuration = configurations:get(i)
+	if os == "linux" or os == "osx" then
+		output:printLn("\trm -f " .. configuration:getName())
+	elseif os == "windows" then
+		output:printLn("\tdel /F " .. configuration:getName())
+	end
+end
+
+------------------------------------------------
+output:printLn("")
+
+-- Link targets.
+for i = 0, configurations:size() - 1 do
+	local configuration = configurations:get(i)
+	
+	output:print(configuration:getName() .. " :")
+	for _, file in ipairs(resourceFiles) do
+		output:printLn(" \\")
+		output:print("\t" .. configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h")
+	end
+	for _, file in ipairs(sourceFiles) do
+		local f = fileSystem:getRelativePath(file, sourcePath)
+		assert (f ~= nil)
+		output:printLn(" \\")
+		output:print("\t" .. configuration:getName() .. "/" .. string.format(objectFile, f:getPathNameNoExtension()))
+	end
+	output:printLn("")
+
+	if dialect == "nmake" then
+		output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
+	elseif dialect == "make" then
+		if os == "windows" then
+			output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
+		else
+			output:printLn("\t-mkdir -p ../" .. configuration:getName())
+		end
+	end
+
+	local productName = getProductName(project, configuration)
+	local profile = configuration:getTargetProfile()
+	local format = configuration:getTargetFormat()
+	if format == "StaticLibrary" then
+		output:print("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) ../" .. configuration:getName() .. "/" .. productName)
+	elseif format == "SharedLibrary" then
+		output:print("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -o ../" .. configuration:getName() .. "/" .. productName)
+	elseif format == "Executable" then
+		output:print("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) -o ../" .. configuration:getName() .. "/" .. productName)
+	elseif format == "ExecutableConsole" then
+		output:print("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) -o ../" .. configuration:getName() .. "/" .. productName)
+	end	
+	if dialect == "nmake" then
+		output:printLn(" $**")
+	elseif dialect == "make" then
+		output:printLn(" $^")
+	end
+	output:printLn("")
+end
+
+------------------------------------------------
+
+-- Resource targets.
+
+for i = 0, configurations:size() - 1 do
+	local configuration = configurations:get(i)
+	for _, file in ipairs(resourceFiles) do
+		local f1 = fileSystem:getRelativePath(file, projectPath)
+		assert (f1 ~= nil)
+
+		output:printLn(configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h : \\")
+		output:printLn("\t" .. f1:getPathName())
+
+		if dialect == "nmake" then
+			output:printLn("\t-mkdir \"$(@D)\" 1>nul 2>&1")
+		elseif dialect == "make" then
+			if os == "windows" then
+				output:printLn("\t-mkdir \"$(@D:\\=)\"")
+			else
+				output:printLn("\t-mkdir -p $(@D:\\=)")
+			end
+		end
+
+		if dialect == "nmake" then
+			output:printLn("\t$(BINARY_INCLUDE) $** $@ c_Resource" .. file:getFileNameNoExtension())
+		elseif dialect == "make" then
+			output:printLn("\t$(BINARY_INCLUDE) $^ $@ c_Resource" .. file:getFileNameNoExtension())
+		end
+
+		output:printLn("")
+	end
+end
+
+------------------------------------------------
+
+-- Unit targets.
+for i = 0, configurations:size() - 1 do
+	local configuration = configurations:get(i)
+	for _, file in ipairs(sourceFiles) do
+		local deps = {}
+		scanHeaderDependencies(includePaths[i], file, deps)
+
+		local f = fileSystem:getRelativePath(file, sourcePath)
+		assert (f ~= nil)
+
+		local f1 = fileSystem:getRelativePath(file, projectPath)
+		assert (f1 ~= nil)
+
+		output:printLn(configuration:getName() .. "/" .. string.format(objectFile, f:getPathNameNoExtension()) .. " : \\")
+		output:print("\t" .. f1:getPathName())
+		for dep, _ in pairs(deps) do
+			local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
+			assert (f2 ~= nil)
+			output:printLn(" \\")
+			output:print("\t" .. f2:getPathName())
+		end
+		output:printLn("")
+
+		if dialect == "nmake" then
+			output:printLn("\t-mkdir \"$(@D)\" 1>nul 2>&1")
+		elseif dialect == "make" then
+			if os == "windows" then
+				output:printLn("\t-mkdir \"$(@D:\\=)\"")
+			else
+				output:printLn("\t-mkdir -p $(@D:\\=)")
+			end
+		end
+
+		local cc = "CC"
+		local ext = f:getExtension()
+		if ext == "m" or ext == "mm" then
+			cc = "MM"
+		end
+
+		local profile = configuration:getTargetProfile()
+		local format = configuration:getTargetFormat()
+		if format == "StaticLibrary" then
+			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " -o $@")
+		elseif format == "SharedLibrary" then
+			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " -o $@")
+		elseif format == "Executable" then
+			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " -o $@")
+		elseif format == "ExecutableConsole" then
+			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " -o $@")
+		end
+		output:printLn("")
+	end
+end
+
+--?>
