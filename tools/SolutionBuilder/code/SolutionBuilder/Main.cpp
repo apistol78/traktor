@@ -14,12 +14,13 @@
 #include "SolutionBuilderLIB/Eclipse/SolutionBuilderEclipse.h"
 #include "SolutionBuilderLIB/GraphViz/SolutionBuilderGraphViz.h"
 #include "SolutionBuilderLIB/Make/SolutionBuilderMake.h"
+#include "SolutionBuilderLIB/Make/SolutionBuilderMake2.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvc.h"
 #include "SolutionBuilderLIB/Xcode/SolutionBuilderXcode.h"
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v3.0.1"
+#define TITLE L"SolutionBuilder v3.1"
 
 #define ERROR_UNKNOWN_FORMAT 1
 #define ERROR_UNABLE_TO_READ_SOLUTION 2
@@ -71,6 +72,8 @@ int main(int argc, const char** argv)
 			builder = new SolutionBuilderGraphViz();
 		else if (ide == L"make")
 			builder = new SolutionBuilderMake();
+		else if (ide == L"make2")
+			builder = new SolutionBuilderMake2();
 		else if (ide == L"msvc")
 			builder = new SolutionBuilderMsvc();
 		else if (ide == L"xcode")
@@ -90,7 +93,7 @@ int main(int argc, const char** argv)
 	{
 		traktor::log::info << TITLE << Endl;
 		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution]" << Endl;
-		traktor::log::info << L"\t-f,-format=[format]	[\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"xcode\", \"dependencies\"]" << Endl;
+		traktor::log::info << L"\t-f,-format=[format]	[\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"make2\", \"xcode\", \"dependencies\"]" << Endl;
 		traktor::log::info << L"\t-rootPath=Path		Override solution root path" << Endl;
 		traktor::log::info << L"\t-v,verbose			Verbose" << Endl;
 		if (builder)
