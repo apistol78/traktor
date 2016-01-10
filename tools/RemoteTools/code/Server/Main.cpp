@@ -145,11 +145,13 @@ public:
 		}
 		else
 		{
-			Ref< traktor::IStream > file = FileSystem::getInstance().open(L"$(TRAKTOR_HOME)/res/html" + resource, File::FmRead);
-			if (!file)
-				return 404;
+			if (FileSystem::getInstance().exist(L"$(TRAKTOR_HOME)/res/html" + resource))
+				outStream = FileSystem::getInstance().open(L"$(TRAKTOR_HOME)/res/html" + resource, File::FmRead);
+			else
+				outStream = FileSystem::getInstance().open(m_basePath.getPathName() + resource, File::FmRead);
 
-			outStream = file;
+			if (!outStream)
+				return 404;
 		}
 
 		return 200;
@@ -407,7 +409,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	);
 #endif
 
-	traktor::log::info << L"Traktor RemoteServer 2.0" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 2.0.1" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
@@ -430,7 +432,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	Ref< ui::Bitmap > imageIdle = ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png");
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 2.0 (" + g_scratchPath + L")", imageIdle);
+	g_notificationIcon->create(L"Traktor RemoteServer 2.0.1 (" + g_scratchPath + L")", imageIdle);
 	g_notificationIcon->addEventHandler< ui::MouseButtonDownEvent >(&eventNotificationButtonDown);
 #endif
 
