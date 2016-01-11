@@ -323,7 +323,7 @@ for i = 0, configurations:size() - 1 do
 	if os == "linux" or os == "osx" then
 		output:printLn("\trm -Rf " .. configuration:getName())
 	elseif os == "windows" then
-		output:printLn("\tdel /F " .. configuration:getName())
+		output:printLn("\tdel /F /Q " .. configuration:getName())
 	end
 end
 
