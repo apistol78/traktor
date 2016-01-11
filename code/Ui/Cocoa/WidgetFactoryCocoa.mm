@@ -265,5 +265,9 @@ bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color4ub& outCo
 	return true;
 }
 
+void WidgetFactoryCocoa::getSystemFonts(std::list< std::wstring >& outFonts)
+{
+}
+
 	}
 }
