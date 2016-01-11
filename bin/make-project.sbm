@@ -125,17 +125,21 @@ local function collectFiles(project, projectOrFilter, pred, outFiles)
 	end
 end
 
-local cache = {}
-local function scanHeaderDependencies(includePaths, file, outDependencies)
+local function copyTable(t, s)
+	for k, v in pairs(s) do
+		t[k] = v
+	end
+end
+
+local function scanHeaderDependencies(cache, includePaths, file, outDependencies, outMissingDependencies)
 	if not fileSystem:exist(file) then return end
 
 	-- Check if already cached.
 	local fpn = file:getPathName()
 	if cache[fpn] ~= nil then
-		for _, d in ipairs(cache[fpn]) do
-			outDependencies[d] = true
-			return
-		end
+		copyTable(outDependencies, cache[fpn].dependencies)
+		copyTable(outMissingDependencies, cache[fpn].missing)
+		return
 	end
 
 	-- Scan for dependencies in files.
@@ -146,15 +150,32 @@ local function scanHeaderDependencies(includePaths, file, outDependencies)
 	while true do
 		local s = sr:readLine()
 		if s == nil then break end
-		local p = s:match("#include.*\"(.*)\"") or s:match("#include.*<(.*)>")
+		local p = s:match("#include.*\"(.*)\"") -- or s:match("#include.*<(.*)>")
 		if p ~= nil then
+			local found = false
 			for _, ip in ipairs(includePaths) do
 				local ipp = Path(ip .. "/" .. p):normalized()
-				if fileSystem:exist(ipp) and outDependencies[ipp:getPathName()] ~= true then
-					outDependencies[ipp:getPathName()] = true
-					scanHeaderDependencies(includePaths, ipp, outDependencies)
+				if fileSystem:exist(ipp) then
+					if outDependencies[ipp:getPathName()] ~= true then
+						outDependencies[ipp:getPathName()] = true
+						scanHeaderDependencies(cache, includePaths, ipp, outDependencies, outMissingDependencies)
+					end
+					found = true
 					break
 				end
+			end
+			if not found then
+				local ipp = Path(file:getPathOnly() .. "/" .. p):normalized()
+				if fileSystem:exist(ipp) then
+					if outDependencies[ipp:getPathName()] ~= true then
+						outDependencies[ipp:getPathName()] = true
+						scanHeaderDependencies(cache, includePaths, ipp, outDependencies, outMissingDependencies)
+					end
+					found = true
+				end
+			end
+			if not found then
+				outMissingDependencies[p] = true
 			end
 		end
 	end
@@ -163,9 +184,10 @@ local function scanHeaderDependencies(includePaths, file, outDependencies)
 
 	-- Store in cache.
 	local c = {}
-	for d, _ in pairs(outDependencies) do
-		table.insert(c, d)
-	end
+	c.dependencies = {}
+	c.missing = {}
+	copyTable(c.dependencies, outDependencies)
+	copyTable(c.missing, outMissingDependencies)
 	cache[fpn] = c
 end
 
@@ -299,7 +321,7 @@ output:printLn("clean :")
 for i = 0, configurations:size() - 1 do
 	local configuration = configurations:get(i)
 	if os == "linux" or os == "osx" then
-		output:printLn("\trm -f " .. configuration:getName())
+		output:printLn("\trm -Rf " .. configuration:getName())
 	elseif os == "windows" then
 		output:printLn("\tdel /F " .. configuration:getName())
 	end
@@ -311,12 +333,11 @@ output:printLn("")
 -- Link targets.
 for i = 0, configurations:size() - 1 do
 	local configuration = configurations:get(i)
-	
-	output:print(configuration:getName() .. " :")
-	for _, file in ipairs(resourceFiles) do
-		output:printLn(" \\")
-		output:print("\t" .. configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h")
-	end
+	local productName = getProductName(project, configuration)
+	local profile = configuration:getTargetProfile()
+	local format = configuration:getTargetFormat()
+
+	output:print(configuration:getName() .. "_OBJS=")
 	for _, file in ipairs(sourceFiles) do
 		local f = fileSystem:getRelativePath(file, sourcePath)
 		assert (f ~= nil)
@@ -324,6 +345,9 @@ for i = 0, configurations:size() - 1 do
 		output:print("\t" .. configuration:getName() .. "/" .. string.format(objectFile, f:getPathNameNoExtension()))
 	end
 	output:printLn("")
+
+	output:printLn(configuration:getName() .. " : \\")
+	output:printLn("\t$(" .. configuration:getName() .. "_OBJS)")
 
 	if dialect == "nmake" then
 		output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
@@ -335,23 +359,53 @@ for i = 0, configurations:size() - 1 do
 		end
 	end
 
-	local productName = getProductName(project, configuration)
-	local profile = configuration:getTargetProfile()
-	local format = configuration:getTargetFormat()
-	if format == "StaticLibrary" then
-		output:print("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) ../" .. configuration:getName() .. "/" .. productName)
-	elseif format == "SharedLibrary" then
-		output:print("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -o ../" .. configuration:getName() .. "/" .. productName)
-	elseif format == "Executable" then
-		output:print("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) -o ../" .. configuration:getName() .. "/" .. productName)
-	elseif format == "ExecutableConsole" then
-		output:print("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) -o ../" .. configuration:getName() .. "/" .. productName)
-	end	
-	if dialect == "nmake" then
-		output:printLn(" $**")
-	elseif dialect == "make" then
-		output:printLn(" $^")
+	local lo = ""
+	if format ~= "StaticLibrary" then
+		if toolchain == "vc" then
+			lo = lo .. " /LIBPATH:../" .. configuration:getName()
+		elseif toolchain == "gcc" or toolchain == "clang" then
+			lo = lo .. " -L../" .. configuration:getName()
+		end		
+		for _, libraryPath in ipairs(libraryPaths[i]) do
+			if toolchain == "vc" then
+				lo = lo .. " /LIBPATH:" .. libraryPath
+			elseif toolchain == "gcc" or toolchain == "clang" then
+				lo = lo .. " -L" .. libraryPath
+			end
+		end
+		for _, library in ipairs(libraries[i]) do
+			if toolchain == "vc" then
+				lo = lo .. " " .. library
+			elseif toolchain == "gcc" or toolchain == "clang" then
+				lo = lo .. " -l" .. library
+			end
+		end
+		for _, externalLibrary in ipairs(externalLibraries[i]) do
+			if toolchain == "vc" then
+				lo = lo .. " " .. externalLibrary
+			elseif toolchain == "gcc" or toolchain == "clang" then
+				if string.find(externalLibrary, ".framework") == nil then
+					lo = lo .. " -l" .. externalLibrary
+				else
+					lo = lo .. " -framework " .. externalLibrary:sub(1, #externalLibrary - 10)
+				end
+			end
+		end
 	end
+
+	if format == "StaticLibrary" then
+		output:printLn("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+	elseif format == "SharedLibrary" then
+		if os ~= "osx" then
+			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED)" .. lo .. " $(LINK_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+		else
+			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -dynamiclib -install_name @executable_path/" .. productName .. lo .. " $(LINK_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+		end
+	elseif format == "Executable" then
+		output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE)" .. lo .. " $(LINK_FLAG_OUTPUT) ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+	elseif format == "ExecutableConsole" then
+		output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE)" .. lo .. " $(LINK_FLAG_OUTPUT) ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+	end	
 	output:printLn("")
 end
 
@@ -393,9 +447,12 @@ end
 -- Unit targets.
 for i = 0, configurations:size() - 1 do
 	local configuration = configurations:get(i)
+	local cache = {}
+
 	for _, file in ipairs(sourceFiles) do
 		local deps = {}
-		scanHeaderDependencies(includePaths[i], file, deps)
+		local missing = {}
+		scanHeaderDependencies(cache, includePaths[i], file, deps, missing)
 
 		local f = fileSystem:getRelativePath(file, sourcePath)
 		assert (f ~= nil)
@@ -410,6 +467,14 @@ for i = 0, configurations:size() - 1 do
 			assert (f2 ~= nil)
 			output:printLn(" \\")
 			output:print("\t" .. f2:getPathName())
+		end
+		for dep, _ in pairs(missing) do
+			for _, file in ipairs(resourceFiles) do
+				if dep == "Resources/" .. file:getFileNameNoExtension() .. ".h" then
+					output:printLn(" \\")
+					output:print("\t" .. configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h")
+				end
+			end
 		end
 		output:printLn("")
 
@@ -432,13 +497,13 @@ for i = 0, configurations:size() - 1 do
 		local profile = configuration:getTargetProfile()
 		local format = configuration:getTargetFormat()
 		if format == "StaticLibrary" then
-			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " -o $@")
+			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
 		elseif format == "SharedLibrary" then
-			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " -o $@")
+			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
 		elseif format == "Executable" then
-			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " -o $@")
+			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
 		elseif format == "ExecutableConsole" then
-			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " -o $@")
+			output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
 		end
 		output:printLn("")
 	end
