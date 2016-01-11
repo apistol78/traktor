@@ -19,57 +19,13 @@ echo $(date +"%D %T") >>$BUILD_LOG_DIR/build-ios-stderr.log
 pushd $TRAKTOR_HOME
 source build-projects-make-ios.sh
 
-pushd build/ios-i386
+pushd build/ios
 if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
-	echo "========== ReleaseStatic (i386) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
+	echo "========== ReleaseStatic ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
 	make ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
 fi
 if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
-	echo "========== DebugStatic (i386) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	make DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-fi
-popd
-
-pushd build/ios-x86_64
-if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
-	echo "========== ReleaseStatic (x86_64) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	make ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-fi
-if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
-	echo "========== DebugStatic (x86_64) ==========" 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-	make DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-fi
-popd
-
-pushd build/ios-armv7
-if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
-	echo "========== ReleaseStatic (ARMv7) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	make ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-fi
-if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
-	echo "========== DebugStatic (ARMv7) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	make DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-fi
-popd
-
-pushd build/ios-armv7s
-if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
-	echo "========== ReleaseStatic (ARMv7s) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	make ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-fi
-if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
-	echo "========== DebugStatic (ARMv7s) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	make DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-fi
-popd
-
-pushd build/ios-arm64
-if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
-	echo "========== ReleaseStatic (ARM64) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	make ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-fi
-if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
-	echo "========== DebugStatic (ARM64) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
+	echo "========== DebugStatic ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
 	make DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
 fi
 popd
