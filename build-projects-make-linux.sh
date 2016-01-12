@@ -4,18 +4,18 @@
 . "`dirname \"$BASH_SOURCE\"`/config.sh"
 
 # Generator configuration.
-set MAKE_DIALECT=make
-set MAKE_TOOLCHAIN=gcc
-set MAKE_OS=linux
-set MAKE_INCLUDE=$(TRAKTOR_HOME)/bin/make-config-osx.inc
-set MAKE_OBJECT_FILE=%%s.o
-set MAKE_STATIC_LIBRARY_FILE=lib%%s.a
-set MAKE_SHARED_LIBRARY_FILE=lib%%s.so
-set MAKE_EXECUTABLE_FILE=%%s
+export MAKE_DIALECT=make
+export MAKE_TOOLCHAIN=gcc
+export MAKE_OS=linux
+export MAKE_INCLUDE="\$(TRAKTOR_HOME)/bin/make-config-linux.inc"
+export MAKE_OBJECT_FILE="%s.o"
+export MAKE_STATIC_LIBRARY_FILE="lib%s.a"
+export MAKE_SHARED_LIBRARY_FILE="lib%s.so"
+export MAKE_EXECUTABLE_FILE="%s"
 
 # Build solution files.
 $TRAKTOR_HOME/bin/linux/SolutionBuilder \
 	-f=make2 \
 	-make-solution-template=$TRAKTOR_HOME/bin/make-solution.sbm \
 	-make-project-template=$TRAKTOR_HOME/bin/make-project.sbm \
-	$TRAKTOR_HOME/TraktorOSX.xms
+	$TRAKTOR_HOME/TraktorLinux.xms
