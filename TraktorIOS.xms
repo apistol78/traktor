@@ -10,52 +10,6 @@
 			<sourcePath>$(BULLET_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(BULLET_SDK)/include</item>
-						<item>$(BULLET_SDK)/src</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(BULLET_SDK)/include</item>
-						<item>$(BULLET_SDK)/src</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -234,58 +188,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>MACOS_CLASSIC</item>
-						<item>XML_STATIC</item>
-						<item>XML_BUILDING_EXPAT</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>MACOS_CLASSIC</item>
-						<item>XML_STATIC</item>
-						<item>XML_BUILDING_EXPAT</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -363,56 +265,6 @@
 			<name>Extern.freetype-2.3.5</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-						<item>FT2_BUILD_LIBRARY</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-						<item>FT2_BUILD_LIBRARY</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -1438,52 +1290,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/jpeg-6b</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1736,60 +1542,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_LIBFLAC_EXPORT</item>
-						<item>_DEBUG</item>
-						<item>FLAC__NO_DLL</item>
-						<item>FLAC__NO_ASM</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_LIBFLAC_EXPORT</item>
-						<item>NDEBUG</item>
-						<item>FLAC__NO_DLL</item>
-						<item>FLAC__NO_ASM</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1944,60 +1696,6 @@
 			<name>Extern.libmad-0.15.1b</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/osx</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_LIBMAD_EXPORT</item>
-						<item>_DEBUG</item>
-						<item>FPM_DEFAULT</item>
-						<item>HAVE_CONFIG_H</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/osx</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_LIBMAD_EXPORT</item>
-						<item>NDEBUG</item>
-						<item>FPM_DEFAULT</item>
-						<item>HAVE_CONFIG_H</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -2168,54 +1866,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/src</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_LIBOGG-1_1_3_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_LIBOGG-1_1_3_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2281,58 +1931,6 @@
 			<name>Extern.libvorbis-1.3.3</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -2710,54 +2308,6 @@
 					<debugWorkingDirectory/>
 					<aggregationItems/>
 				</item>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_LPNG128_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_LPNG128_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 			</configurations>
 			<items>
 				<item type="File">
@@ -2776,52 +2326,6 @@
 			<name>Extern.squish-1.10</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/squish-1.10</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -2930,52 +2434,6 @@
 					<debugWorkingDirectory/>
 					<aggregationItems/>
 				</item>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_ZLIB_1_2_3_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_ZLIB_1_2_3_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 			</configurations>
 			<items>
 				<item type="File">
@@ -2994,52 +2452,6 @@
 			<name>Traktor.Animation</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Animation</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_ANIMATION_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_ANIMATION_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -3156,58 +2568,6 @@
 						<name>Traktor.Core</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
 						<configurations>
-							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_CORE_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries>
-									<item>Foundation.framework</item>
-									<item>UIKit.framework</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_CORE_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries>
-									<item>Foundation.framework</item>
-									<item>UIKit.framework</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
 							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
@@ -3540,52 +2900,6 @@
 						<sourcePath>$(TRAKTOR_HOME)/code/World</sourcePath>
 						<configurations>
 							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_WORLD_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_WORLD_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -3706,52 +3020,6 @@
 									<name>Traktor.Render</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Render</sourcePath>
 									<configurations>
-										<item type="Configuration" version="3">
-											<name>DebugShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-											</includePaths>
-											<definitions>
-												<item>__IOS__</item>
-												<item>T_RENDER_EXPORT</item>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
-										<item type="Configuration" version="3">
-											<name>ReleaseShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-											</includePaths>
-											<definitions>
-												<item>__IOS__</item>
-												<item>T_RENDER_EXPORT</item>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
 										<item type="Configuration" version="3">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
@@ -3874,52 +3142,6 @@
 												<sourcePath>$(TRAKTOR_HOME)/code/Resource</sourcePath>
 												<configurations>
 													<item type="Configuration" version="3">
-														<name>DebugShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
-														<definitions>
-															<item>__IOS__</item>
-															<item>T_RESOURCE_EXPORT</item>
-															<item>_DEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
-														<definitions>
-															<item>__IOS__</item>
-															<item>T_RESOURCE_EXPORT</item>
-															<item>NDEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -3989,60 +3211,6 @@
 												<name>Traktor.Compress</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Compress</sourcePath>
 												<configurations>
-													<item type="Configuration" version="3">
-														<name>DebugShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
-														</includePaths>
-														<definitions>
-															<item>__IOS__</item>
-															<item>T_COMPRESS_EXPORT</item>
-															<item>_DEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
-														</includePaths>
-														<definitions>
-															<item>__IOS__</item>
-															<item>T_COMPRESS_EXPORT</item>
-															<item>NDEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
 													<item type="Configuration" version="3">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
@@ -4151,52 +3319,6 @@
 															<sourcePath>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</sourcePath>
 															<configurations>
 																<item type="Configuration" version="3">
-																	<name>DebugShared</name>
-																	<targetFormat>TfStaticLibrary</targetFormat>
-																	<targetProfile>TpDebug</targetProfile>
-																	<precompiledHeader/>
-																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
-																	</includePaths>
-																	<definitions>
-																		<item>__IOS__</item>
-																		<item>_DEBUG</item>
-																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
-																	<additionalCompilerOptions/>
-																	<additionalLinkerOptions/>
-																	<debugExecutable/>
-																	<debugArguments/>
-																	<debugEnvironment/>
-																	<debugWorkingDirectory/>
-																	<aggregationItems/>
-																</item>
-																<item type="Configuration" version="3">
-																	<name>ReleaseShared</name>
-																	<targetFormat>TfStaticLibrary</targetFormat>
-																	<targetProfile>TpRelease</targetProfile>
-																	<precompiledHeader/>
-																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
-																	</includePaths>
-																	<definitions>
-																		<item>__IOS__</item>
-																		<item>NDEBUG</item>
-																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
-																	<additionalCompilerOptions/>
-																	<additionalLinkerOptions/>
-																	<debugExecutable/>
-																	<debugArguments/>
-																	<debugEnvironment/>
-																	<debugWorkingDirectory/>
-																	<aggregationItems/>
-																</item>
-																<item type="Configuration" version="3">
 																	<name>DebugStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -4281,54 +3403,6 @@
 															<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</sourcePath>
 															<configurations>
 																<item type="Configuration" version="3">
-																	<name>DebugShared</name>
-																	<targetFormat>TfStaticLibrary</targetFormat>
-																	<targetProfile>TpDebug</targetProfile>
-																	<precompiledHeader/>
-																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-																	</includePaths>
-																	<definitions>
-																		<item>__IOS__</item>
-																		<item>_DEBUG</item>
-																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
-																	<additionalCompilerOptions/>
-																	<additionalLinkerOptions/>
-																	<debugExecutable/>
-																	<debugArguments/>
-																	<debugEnvironment/>
-																	<debugWorkingDirectory/>
-																	<aggregationItems/>
-																</item>
-																<item type="Configuration" version="3">
-																	<name>ReleaseShared</name>
-																	<targetFormat>TfStaticLibrary</targetFormat>
-																	<targetProfile>TpRelease</targetProfile>
-																	<precompiledHeader/>
-																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-																	</includePaths>
-																	<definitions>
-																		<item>__IOS__</item>
-																		<item>NDEBUG</item>
-																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
-																	<additionalCompilerOptions/>
-																	<additionalLinkerOptions/>
-																	<debugExecutable/>
-																	<debugArguments/>
-																	<debugEnvironment/>
-																	<debugWorkingDirectory/>
-																	<aggregationItems/>
-																</item>
-																<item type="Configuration" version="3">
 																	<name>DebugStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -4409,52 +3483,6 @@
 									<name>Traktor.Database</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Database</sourcePath>
 									<configurations>
-										<item type="Configuration" version="3">
-											<name>DebugShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-											</includePaths>
-											<definitions>
-												<item>__IOS__</item>
-												<item>T_DATABASE_EXPORT</item>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
-										<item type="Configuration" version="3">
-											<name>ReleaseShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-											</includePaths>
-											<definitions>
-												<item>__IOS__</item>
-												<item>T_DATABASE_EXPORT</item>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
 										<item type="Configuration" version="3">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
@@ -4541,54 +3569,6 @@
 												<sourcePath>$(TRAKTOR_HOME)/code/Xml</sourcePath>
 												<configurations>
 													<item type="Configuration" version="3">
-														<name>DebugShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
-														</includePaths>
-														<definitions>
-															<item>__IOS__</item>
-															<item>T_XML_EXPORT</item>
-															<item>_DEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
-														</includePaths>
-														<definitions>
-															<item>__IOS__</item>
-															<item>T_XML_EXPORT</item>
-															<item>NDEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -4671,52 +3651,6 @@
 						<name>Traktor.Mesh</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Mesh</sourcePath>
 						<configurations>
-							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_MESH_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_MESH_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
 							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
@@ -4894,52 +3828,6 @@
 						<sourcePath>$(TRAKTOR_HOME)/code/Physics</sourcePath>
 						<configurations>
 							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_PHYSICS_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_PHYSICS_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -5031,52 +3919,6 @@
 									<sourcePath>$(TRAKTOR_HOME)/code/Heightfield</sourcePath>
 									<configurations>
 										<item type="Configuration" version="3">
-											<name>DebugShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-											</includePaths>
-											<definitions>
-												<item>__IOS__</item>
-												<item>T_HEIGHTFIELD_EXPORT</item>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
-										<item type="Configuration" version="3">
-											<name>ReleaseShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-											</includePaths>
-											<definitions>
-												<item>__IOS__</item>
-												<item>T_HEIGHTFIELD_EXPORT</item>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
-										<item type="Configuration" version="3">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -5156,52 +3998,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Database/Compact</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_DATABASE_COMPACT_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_DATABASE_COMPACT_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5278,52 +4074,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Database/Local</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_DATABASE_LOCAL_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_DATABASE_LOCAL_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5399,50 +4149,6 @@
 			<name>Traktor.Database.Remote</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -5524,52 +4230,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Client</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5646,52 +4306,6 @@
 						<name>Traktor.Net</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Net</sourcePath>
 						<configurations>
-							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_NET_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_NET_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
 							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
@@ -5834,52 +4448,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Server</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5970,60 +4538,6 @@
 			<name>Traktor.Drawing</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Drawing</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
-						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_DRAWING_EXPORT</item>
-						<item>_DEBUG</item>
-						<item>T_INCLUDE_PNG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
-						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_DRAWING_EXPORT</item>
-						<item>NDEBUG</item>
-						<item>T_INCLUDE_PNG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -6131,54 +4645,6 @@
 			<name>Traktor.Flash</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Flash</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_FLASH_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_FLASH_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -6341,52 +4807,6 @@
 						<sourcePath>$(TRAKTOR_HOME)/code/Html</sourcePath>
 						<configurations>
 							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_HTML_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_HTML_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6461,62 +4881,6 @@
 						<name>Traktor.Sound</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Sound</sourcePath>
 						<configurations>
-							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_SOUND_EXPORT</item>
-									<item>_DEBUG</item>
-									<item>FLAC_NO_DLL</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries>
-									<item>AudioToolbox.framework</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_SOUND_EXPORT</item>
-									<item>NDEBUG</item>
-									<item>FLAC_NO_DLL</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries>
-									<item>AudioToolbox.framework</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
 							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
@@ -6670,46 +5034,6 @@
 									<sourcePath>$(TRAKTOR_HOME)/3rdp/stb_vorbis</sourcePath>
 									<configurations>
 										<item type="Configuration" version="3">
-											<name>DebugShared</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths/>
-											<definitions>
-												<item>__IOS__</item>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
-										<item type="Configuration" version="3">
-											<name>ReleaseShared</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths/>
-											<definitions>
-												<item>__IOS__</item>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
-										<item type="Configuration" version="3">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -6770,48 +5094,6 @@
 						<name>Extern.RectangleBinPack</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</sourcePath>
 						<configurations>
-							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
 							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
@@ -6875,52 +5157,6 @@
 			<name>Traktor.Graphics</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Graphics</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_GRAPHICS_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_GRAPHICS_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -6989,52 +5225,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/I18N</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_I18N_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_I18N_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -7100,52 +5290,6 @@
 			<name>Traktor.Input</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Input</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_INPUT_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_INPUT_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -7227,56 +5371,6 @@
 			<name>Traktor.Model</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Model</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_MODEL_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_MODEL_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -7369,56 +5463,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Physics/Bullet</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(BULLET_SDK)/include</item>
-						<item>$(BULLET_SDK)/src</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_PHYSICS_BULLET_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(BULLET_SDK)/include</item>
-						<item>$(BULLET_SDK)/src</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_PHYSICS_BULLET_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -7509,60 +5553,6 @@
 			<name>Traktor.Render.OpenGL.ES2</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
-						<item>_DEBUG</item>
-						<item>T_OPENGL_ES2</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>OpenGLES.framework</item>
-						<item>QuartzCore.framework</item>
-					</libraries>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
-						<item>NDEBUG</item>
-						<item>T_OPENGL_ES2</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>OpenGLES.framework</item>
-						<item>QuartzCore.framework</item>
-					</libraries>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -7662,52 +5652,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Scene</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SCENE_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SCENE_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -7789,52 +5733,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Script</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SCRIPT_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SCRIPT_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -7905,56 +5803,6 @@
 			<name>Traktor.Script.Lua</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Script/Lua</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(LUA_SDK)/src</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SCRIPT_LUA_EXPORT</item>
-						<item>_DEBUG</item>
-						<item>T_LUA_5_2</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(LUA_SDK)/src</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SCRIPT_LUA_EXPORT</item>
-						<item>NDEBUG</item>
-						<item>T_LUA_5_2</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -8032,48 +5880,6 @@
 						<sourcePath>$(LUA_SDK)/src</sourcePath>
 						<configurations>
 							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(LUA_SDK)/src</item>
-								</includePaths>
-								<definitions>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(LUA_SDK)/src</item>
-								</includePaths>
-								<definitions>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -8137,52 +5943,6 @@
 			<name>Traktor.Spray</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SPRAY_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SPRAY_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -8307,52 +6067,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Terrain</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_TERRAIN_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_TERRAIN_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -8444,52 +6158,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Theater</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_THEATER_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_THEATER_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -8565,52 +6233,6 @@
 			<name>Traktor.Ui</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Ui</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_UI_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_UI_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -8729,52 +6351,6 @@
 			<name>Traktor.Ui.Custom</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Custom</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_UI_CUSTOM_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_UI_CUSTOM_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -9119,52 +6695,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Weather</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_WEATHER_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_WEATHER_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -9267,52 +6797,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/UnitTest</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfExecutable</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_UNITTEST</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfExecutable</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_UNITTEST</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -9400,56 +6884,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Input/iOS</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_INPUT_IOS_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>UIKit.framework</item>
-					</libraries>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_INPUT_IOS_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>UIKit.framework</item>
-					</libraries>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -9524,60 +6958,6 @@
 			<name>Traktor.Sound.OpenAL</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/OpenAL</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SOUND_OPENAL_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>UIKit.framework</item>
-						<item>AVFoundation.framework</item>
-						<item>OpenAL.framework</item>
-					</libraries>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SOUND_OPENAL_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>UIKit.framework</item>
-						<item>AVFoundation.framework</item>
-						<item>OpenAL.framework</item>
-					</libraries>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -9667,54 +7047,6 @@
 			<sourcePath>$(SQLITE_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(SQLITE_SDK)</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>_DEBUG</item>
-						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
-						<item>T_IOS_HACK</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(SQLITE_SDK)</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>NDEBUG</item>
-						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
-						<item>T_IOS_HACK</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -9785,52 +7117,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Sql</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SQL_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SQL_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -9896,54 +7182,6 @@
 			<name>Traktor.Sql.Sqlite3</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sql/Sqlite3</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(SQLITE_SDK)</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SQL_SQLITE3_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(SQLITE_SDK)</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_SQL_SQLITE3_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -10023,54 +7261,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -10147,56 +7337,6 @@
 			<name>Traktor.Video</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Video</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_VIDEO_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_VIDEO_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -10296,52 +7436,6 @@
 			<name>Traktor.Online</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Online</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_ONLINE_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_ONLINE_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -10446,52 +7540,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Online/Local</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_ONLINE_LOCAL_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_ONLINE_LOCAL_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -10572,52 +7620,6 @@
 			<name>Traktor.Amalgam.Game</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Game</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_AMALGAM_GAME_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_AMALGAM_GAME_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -10836,54 +7838,6 @@
 						<sourcePath>$(TRAKTOR_HOME)/code/Ai</sourcePath>
 						<configurations>
 							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_AI_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-								</includePaths>
-								<definitions>
-									<item>__IOS__</item>
-									<item>T_AI_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -10952,50 +7906,6 @@
 									<name>Extern.detour</name>
 									<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour</sourcePath>
 									<configurations>
-										<item type="Configuration" version="3">
-											<name>DebugShared</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-											</includePaths>
-											<definitions>
-												<item>__IOS__</item>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
-										<item type="Configuration" version="3">
-											<name>ReleaseShared</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-											</includePaths>
-											<definitions>
-												<item>__IOS__</item>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
 										<item type="Configuration" version="3">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
@@ -11096,50 +8006,6 @@
 						<sourcePath>$(TRAKTOR_HOME)/code/Amalgam</sourcePath>
 						<configurations>
 							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_AMALGAM_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_AMALGAM_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -11217,50 +8083,6 @@
 						<name>Traktor.Spark</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Spark</sourcePath>
 						<configurations>
-							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_SPARK_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_SPARK_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
 							<item type="Configuration" version="3">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
@@ -11366,60 +8188,6 @@
 			<name>Extern.mpg123-1.13.2</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_MPG123_EXPORT</item>
-						<item>_DEBUG</item>
-						<item>OPT_GENERIC</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_MPG123_EXPORT</item>
-						<item>NDEBUG</item>
-						<item>OPT_GENERIC</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
@@ -11706,98 +8474,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Online/Gc</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_ONLINE_GC_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/Everyplay</item>
-					</libraryPaths>
-					<libraries>
-						<item>AdSupport.framework</item>
-						<item>AssetsLibrary.framework</item>
-						<item>AudioToolbox.framework</item>
-						<item>AVFoundation.framework</item>
-						<item>CoreGraphics.framework</item>
-						<item>CoreImage.framework</item>
-						<item>CoreMedia.framework</item>
-						<item>Foundation.framework</item>
-						<item>MessageUI.framework</item>
-						<item>MobileCoreServices.framework</item>
-						<item>OpenGLES.framework</item>
-						<item>QuartzCore.framework</item>
-						<item>Security.framework</item>
-						<item>Social.framework</item>
-						<item>StoreKit.framework</item>
-						<item>SystemConfiguration.framework</item>
-						<item>Twitter.framework</item>
-						<item>UIKit.framework</item>
-						<item>GameKit.framework</item>
-						<item>Everyplay.framework</item>
-					</libraries>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>T_ONLINE_GC_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/Everyplay</item>
-					</libraryPaths>
-					<libraries>
-						<item>AdSupport.framework</item>
-						<item>AssetsLibrary.framework</item>
-						<item>AudioToolbox.framework</item>
-						<item>AVFoundation.framework</item>
-						<item>CoreGraphics.framework</item>
-						<item>CoreImage.framework</item>
-						<item>CoreMedia.framework</item>
-						<item>Foundation.framework</item>
-						<item>MessageUI.framework</item>
-						<item>MobileCoreServices.framework</item>
-						<item>OpenGLES.framework</item>
-						<item>QuartzCore.framework</item>
-						<item>Security.framework</item>
-						<item>Social.framework</item>
-						<item>StoreKit.framework</item>
-						<item>SystemConfiguration.framework</item>
-						<item>Twitter.framework</item>
-						<item>UIKit.framework</item>
-						<item>GameKit.framework</item>
-						<item>Everyplay.framework</item>
-					</libraries>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -11915,50 +8591,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Game/App</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfExecutable</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfExecutable</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -12053,50 +8685,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
-					</includePaths>
-					<definitions>
-						<item>__IOS__</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -12175,50 +8763,6 @@
 			<sourcePath>$(TRAKTOR_HOME)/code/Telemetry</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_TELEMETRY_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_TELEMETRY_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -12288,62 +8832,6 @@
 			<name>Traktor.Json</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Json</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
-					</includePaths>
-					<definitions>
-						<item>T_JSON_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Json.dll</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="3">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
-					</includePaths>
-					<definitions>
-						<item>T_JSON_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Json.dll</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
