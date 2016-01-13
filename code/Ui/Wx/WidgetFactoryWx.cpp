@@ -213,5 +213,9 @@ bool WidgetFactoryWx::getSystemColor(SystemColor systemColor, Color4ub& outColor
 	return true;
 }
 
+void WidgetFactoryWx::getSystemFonts(std::list< std::wstring >& outFonts)
+{
+}
+
 	}
 }
