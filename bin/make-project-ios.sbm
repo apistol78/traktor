@@ -89,7 +89,7 @@ local function collectDependencies(solution, project, configuration, outIncludeP
 			local externalConfig = externalProject:getConfiguration(configuration:getName())
 			if externalProject:getEnable() then
 				local externalRelPath = fileSystem:getRelativePath(
-					Path(externalSolution:getRootPath() .. "/" .. configuration:getName():lower()),
+					Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
 					projectPath
 				)
 				insertLast(outLibraryPaths, externalRelPath:getPathName())
