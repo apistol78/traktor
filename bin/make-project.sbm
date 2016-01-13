@@ -263,15 +263,19 @@ for i = 0, configurations:size() - 1 do
 
 	if toolchain == "vc" then
 		output:print("/I " .. configuration:getName())
-	elseif toolchain == "gnu" or toolchain == "clang" then
+	elseif toolchain == "gcc" or toolchain == "clang" then
 		output:print("-I" .. configuration:getName())
 	end
 
 	for _, includePath in ipairs(includePaths[i]) do
 		if toolchain == "vc" then
 			output:print(" /I " .. includePath)
-		elseif toolchain == "gnu" or toolchain == "clang" then
-			output:print(" -I" .. includePath)
+		elseif toolchain == "gcc" or toolchain == "clang" then
+			if includePath:sub(1, 1) ~= "`" then
+				output:print(" -I" .. includePath)
+			else
+				output:print(" " .. includePath)
+			end
 		end
 	end
 
@@ -301,7 +305,7 @@ for i = 0, configurations:size() - 1 do
 		if not (def0 == "'" or def0 == "`") then
 			if toolchain == "vc" then
 				output:print("/D" .. definition .. " ")
-			elseif toolchain == "gnu" or toolchain == "clang" then
+			elseif toolchain == "gcc" or toolchain == "clang" then
 				output:print("-D" .. definition .. " ")
 			end
 		else
@@ -363,7 +367,7 @@ for i = 0, configurations:size() - 1 do
 	output:printLn("\t$(" .. configuration:getName() .. "_OBJS)")
 
 	if os ~= "windows" then
-		output:printLn("\t@printf \"\\e[0;35mAssembling " .. project:getName() .. "...\\e[0m\\n\"")
+		output:printLn("\t@printf '\\e[0;35mAssembling " .. project:getName() .. "...\\e[0m\\n'")
 	end
 
 	if dialect == "nmake" then
@@ -394,7 +398,11 @@ for i = 0, configurations:size() - 1 do
 			if toolchain == "vc" then
 				lo = lo .. " " .. library
 			elseif toolchain == "gcc" or toolchain == "clang" then
-				lo = lo .. " -l" .. library
+				if library:sub(1, 1) ~= "`" then
+					lo = lo .. " -l" .. library
+				else
+					lo = lo .. " " .. library
+				end
 			end
 		end
 		for _, externalLibrary in ipairs(externalLibraries[i]) do
@@ -414,14 +422,14 @@ for i = 0, configurations:size() - 1 do
 		output:printLn("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
 	elseif format == "SharedLibrary" then
 		if os ~= "osx" then
-			output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED)" .. lo .. " $(LINK_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+			output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) $(LINK_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS) " .. lo)
 		else
-			output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -dynamiclib -install_name @executable_path/" .. productName .. lo .. " $(LINK_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+			output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -dynamiclib -install_name @executable_path/" .. productName .. " $(LINK_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS) " .. lo)
 		end
 	elseif format == "Executable" then
-		output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE)" .. lo .. " $(LINK_FLAG_OUTPUT) ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+		output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT) ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)" .. lo)
 	elseif format == "ExecutableConsole" then
-		output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE)" .. lo .. " $(LINK_FLAG_OUTPUT) ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+		output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT) ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)" .. lo)
 	end	
 
 	local aggregationItems = configuration:getAggregationItems()
@@ -436,7 +444,7 @@ for i = 0, configurations:size() - 1 do
 		if os == "windows" then
 			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
 		elseif os == "osx" or os == "linux" then
-			output:printLn("\t@printf \"\\e[0;35mCopy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume() .. "\\e[0m\\n\"")
+			output:printLn("\t@printf '\\e[0;35mCopy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume() .. "\\e[0m\\n'")
 			output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
 			output:printLn("\t@cp -f \"" .. sourceFile:getPathNameNoVolume() .. "\" \"" .. targetPath:getPathNameNoVolume() .. "/\"")
 		end
@@ -459,7 +467,7 @@ for i = 0, configurations:size() - 1 do
 		output:printLn("\t" .. f1:getPathName())
 
 		if os ~= "windows" then
-			output:printLn("\t@printf \"\\e[0;35mConverting " .. file:getFileName() .. "...\\e[0m\\n\"")
+			output:printLn("\t@printf '\\e[0;35mConverting " .. file:getFileName() .. "...\\e[0m\\n'")
 		end
 
 		if dialect == "nmake" then
@@ -519,7 +527,7 @@ for i = 0, configurations:size() - 1 do
 		output:printLn("")
 
 		if os ~= "windows" then
-			output:printLn("\t@printf \"\\e[0;35mCompiling " .. f:getFileName() .. "...\\e[0m\\n\"")
+			output:printLn("\t@printf '\\e[0;35mCompiling " .. f:getFileName() .. "...\\e[0m\\n'")
 		end
 
 		if dialect == "nmake" then

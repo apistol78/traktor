@@ -264,14 +264,14 @@ for i = 0, configurations:size() - 1 do
 
 	if toolchain == "vc" then
 		output:print("/I " .. configuration:getName())
-	elseif toolchain == "gnu" or toolchain == "clang" then
+	elseif toolchain == "gcc" or toolchain == "clang" then
 		output:print("-I" .. configuration:getName())
 	end
 
 	for _, includePath in ipairs(includePaths[i]) do
 		if toolchain == "vc" then
 			output:print(" /I " .. includePath)
-		elseif toolchain == "gnu" or toolchain == "clang" then
+		elseif toolchain == "gcc" or toolchain == "clang" then
 			output:print(" -I" .. includePath)
 		end
 	end
