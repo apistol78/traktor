@@ -51,6 +51,7 @@ for i = 0, projects:size() - 1 do
 end
 
 -- Create "all" target.
+output:printLn(".PHONY: all")
 output:print("all :")
 local projects = solution:getProjects()
 for i = 0, projects:size() - 1 do
@@ -71,6 +72,7 @@ output:printLn("")
 
 -- Create target for each configuration.
 for c, _ in pairs(availConfigurations) do
+	output:printLn(".PHONY: " .. c)
 	output:print(c .. " :")
 	local projects = solution:getProjects()
 	for i = 0, projects:size() - 1 do
@@ -99,6 +101,7 @@ for i = 0, projects:size() - 1 do
 			local configuration = configurations:get(j)
 			local productName = getProductName(project, configuration)
 
+			output:printLn(".PHONY: " .. configuration:getName() .. "/" .. productName)
 			output:print(configuration:getName() .. "/" .. productName .. " :")
 			local dependencies = project:getDependencies()
 			for k = 0, dependencies:size() - 1 do
@@ -122,6 +125,7 @@ for i = 0, projects:size() - 1 do
 	end
 end
 
+output:printLn(".PHONY: clean")
 output:printLn("clean :")
 local projects = solution:getProjects()
 for i = 0, projects:size() - 1 do

@@ -14,13 +14,15 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 3)
 	{
-		traktor::log::info << L"BinaryInclude : Usage BinaryInclude.exe input output symbol" << Endl;
+		traktor::log::info << L"BinaryInclude : Usage BinaryInclude.exe (option) input output symbol" << Endl;
+		traktor::log::info << L"                -v, -verbose" << Endl;
 		return 1;
 	}
 
 	Path inputFile = cmdLine.getString(0);
 	Path outputFile = cmdLine.getString(1);
 	std::wstring symbol = cmdLine.getString(2);
+	bool verbose = cmdLine.hasOption('v', L"verbose");
 
 	// Ensure symbol doesn't contain invalid characters.
 	symbol = replaceAll< std::wstring >(symbol, '.', '_');
@@ -41,7 +43,8 @@ int main(int argc, const char** argv)
 		// Output file exists; only create output if source file been modified since output file created.
 		if (fileInputFile->getLastWriteTime()  <= fileOutputFile->getCreationTime())
 		{
-			traktor::log::info << L"File up-to-date; skipped" << Endl;
+			if (verbose)
+				traktor::log::info << L"File up-to-date; skipped" << Endl;
 			return 0;
 		}
 	}
@@ -111,5 +114,6 @@ int main(int argc, const char** argv)
 	output->close();
 	input->close();
 
-	traktor::log::info << L"File \"" << outputFile.getPathName() << L"\" converted successfully" << Endl;
+	if (verbose)
+		traktor::log::info << L"File \"" << outputFile.getPathName() << L"\" converted successfully" << Endl;
 }

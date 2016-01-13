@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="Solution" version="2">
 	<name>SolutionBuilder</name>
-	<rootPath>$(TRAKTOR_HOME)/tools/SolutionBuilder/build/macosx</rootPath>
+	<rootPath>$(TRAKTOR_HOME)/tools/SolutionBuilder/build/osx</rootPath>
 	<definitions/>
 	<projects>
 		<item type="Project" version="1">
