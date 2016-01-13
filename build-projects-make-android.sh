@@ -3,5 +3,20 @@
 # Source environment configuration.
 . "`dirname \"$BASH_SOURCE\"`/config.sh"
 
+# Generator configuration.
+export MAKE_DIALECT=make
+export MAKE_TOOLCHAIN=gcc
+export MAKE_OS=linux
+export MAKE_INCLUDE="\$(TRAKTOR_HOME)/bin/make-config-android.inc"
+export MAKE_OBJECT_FILE="%s.o"
+export MAKE_STATIC_LIBRARY_FILE="lib%s.a"
+export MAKE_SHARED_LIBRARY_FILE="lib%s.so"
+export MAKE_EXECUTABLE_FILE="%s"
+export AGGREGATE_OUTPUT_PATH="$(TRAKTOR_HOME)/bin/latest/android"
+
 # Build solution files.
-$TRAKTOR_HOME/bin/osx/SolutionBuilder -f=make -make-dialect=gnu -make-platform=osx -make-configuration=$TRAKTOR_HOME/bin/make-config-android.inc TraktorAndroid.xms
+$TRAKTOR_HOME/bin/linux/SolutionBuilder \
+	-f=make2 \
+	-make-solution-template=$TRAKTOR_HOME/bin/make-solution.sbm \
+	-make-project-template=$TRAKTOR_HOME/bin/make-project.sbm \
+	$TRAKTOR_HOME/TraktorAndroid.xms

@@ -12,6 +12,3 @@ call build-projects-make-emscripten.bat
 cd build\emscripten
 nmake all
 popd
-
-call copy-latest-emscripten.bat
-pause

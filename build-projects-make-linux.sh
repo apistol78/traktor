@@ -12,6 +12,7 @@ export MAKE_OBJECT_FILE="%s.o"
 export MAKE_STATIC_LIBRARY_FILE="lib%s.a"
 export MAKE_SHARED_LIBRARY_FILE="lib%s.so"
 export MAKE_EXECUTABLE_FILE="%s"
+export AGGREGATE_OUTPUT_PATH="$(TRAKTOR_HOME)/bin/latest/linux"
 
 # Build solution files.
 $TRAKTOR_HOME/bin/linux/SolutionBuilder \

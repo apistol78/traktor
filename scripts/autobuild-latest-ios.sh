@@ -31,8 +31,3 @@ fi
 popd
 
 popd
-
-# Put built binaries into place
-source copy-latest-ios.sh $CONFIG
-
-

@@ -24,7 +24,3 @@ make -j 4 ReleaseStatic 2>$BUILD_LOG_DIR/build-osx-stderr.log
 popd
 
 popd
-
-# Put built binaries into place
-/bin/sh copy-latest-osx.sh
-

@@ -22,6 +22,3 @@ devenv "build\win64\Traktor Win64.sln" /Build ReleaseShared /Out %~dp0autobuild-
 devenv "build\win64\Traktor Win64.sln" /Build DebugStatic /Out %~dp0autobuild-win64.log
 devenv "build\win64\Traktor Win64.sln" /Build ReleaseStatic /Out %~dp0autobuild-win64.log
 popd
-
-:: call copy-latest-win64.bat
-pause

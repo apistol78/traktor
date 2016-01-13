@@ -15,6 +15,3 @@ call build-projects-vs2012-pnacl.bat
 devenv "build\pnacl\Traktor PNaCl.sln" /Build DebugStatic /Out %~dp0autobuild-pnacl.log
 devenv "build\pnacl\Traktor PNaCl.sln" /Build ReleaseStatic /Out %~dp0autobuild-pnacl.log
 popd
-
-call copy-latest-pnacl.bat
-pause

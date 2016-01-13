@@ -8,6 +8,7 @@
 #include <Core/Misc/SafeDestroy.h>
 #include <Script/IScriptContext.h>
 #include <Script/Lua/ScriptManagerLua.h>
+#include "SolutionBuilderLIB/AggregationItem.h"
 #include "SolutionBuilderLIB/Configuration.h"
 #include "SolutionBuilderLIB/ScriptProcessor.h"
 #include "SolutionBuilderLIB/ExternalDependency.h"
@@ -183,6 +184,11 @@ bool ScriptProcessor::create()
 	classConfiguration->addMethod("getLibraries", &Configuration::getLibraries);
 	classConfiguration->addMethod("getAdditionalCompilerOptions", &Configuration::getAdditionalCompilerOptions);
 	classConfiguration->addMethod("getAdditionalLinkerOptions", &Configuration::getAdditionalLinkerOptions);
+	classConfiguration->addMethod("getDebugExecutable", &Configuration::getDebugExecutable);
+	classConfiguration->addMethod("getDebugArguments", &Configuration::getDebugArguments);
+	classConfiguration->addMethod("getDebugEnvironment", &Configuration::getDebugEnvironment);
+	classConfiguration->addMethod("getDebugWorkingDirectory", &Configuration::getDebugWorkingDirectory);
+	classConfiguration->addMethod("getAggregationItems", &Configuration::getAggregationItems);
 	m_scriptManager->registerClass(classConfiguration);
 
 	Ref< AutoRuntimeClass< ProjectItem > > classProjectItem = new AutoRuntimeClass< ProjectItem >();
@@ -197,6 +203,11 @@ bool ScriptProcessor::create()
 	Ref< AutoRuntimeClass< Filter > > classFilter = new AutoRuntimeClass< Filter >();
 	classFilter->addMethod("getName", &Filter::getName);
 	m_scriptManager->registerClass(classFilter);
+
+	Ref< AutoRuntimeClass< AggregationItem > > classAggregationItem = new AutoRuntimeClass< AggregationItem >();
+	classAggregationItem->addMethod("getSourceFile", &AggregationItem::getSourceFile);
+	classAggregationItem->addMethod("getTargetPath", &AggregationItem::getTargetPath);
+	m_scriptManager->registerClass(classAggregationItem);
 
 	Ref< AutoRuntimeClass< Dependency > > classDependency = new AutoRuntimeClass< Dependency >();
 	classDependency->addMethod("getLink", &Dependency_getLink);

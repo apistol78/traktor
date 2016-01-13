@@ -17,6 +17,3 @@ devenv "build\ps3\Traktor Ps3.sln" /Build ReleaseStatic /Out %~dp0autobuild-ps3.
 devenv "build\ps3-spu\Traktor Ps3 SPU.sln" /Build DebugStatic /Out %~dp0autobuild-ps3.log
 devenv "build\ps3-spu\Traktor Ps3 SPU.sln" /Build ReleaseStatic /Out %~dp0autobuild-ps3.log
 popd
-
-call copy-latest-ps3.bat
-pause

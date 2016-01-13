@@ -22,7 +22,3 @@ make -j 8 DebugStatic 2>>$BUILD_LOG_DIR/build-pnacl-stderr.log
 popd
 
 popd
-
-# Put built binaries into place
-/bin/sh copy-latest-pnacl.sh
-

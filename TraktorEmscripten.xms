@@ -32,7 +32,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.expat-2.1.0.a</sourceFile>
+							<sourceFile>libExtern.expat-2.1.0.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -60,7 +60,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.expat-2.1.0.a</sourceFile>
+							<sourceFile>libExtern.expat-2.1.0.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -114,7 +114,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.bullet.a</sourceFile>
+							<sourceFile>libExtern.bullet.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -142,7 +142,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.bullet.a</sourceFile>
+							<sourceFile>libExtern.bullet.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -302,7 +302,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.jpeg-6b.a</sourceFile>
+							<sourceFile>libExtern.jpeg-6b.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -330,7 +330,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.jpeg-6b.a</sourceFile>
+							<sourceFile>libExtern.jpeg-6b.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -568,7 +568,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libflac-1.2.1.a</sourceFile>
+							<sourceFile>libExtern.libflac-1.2.1.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -600,7 +600,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libflac-1.2.1.a</sourceFile>
+							<sourceFile>libExtern.libflac-1.2.1.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -733,7 +733,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libmad-0.15.1b.a</sourceFile>
+							<sourceFile>libExtern.libmad-0.15.1b.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -765,7 +765,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libmad-0.15.1b.a</sourceFile>
+							<sourceFile>libExtern.libmad-0.15.1b.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -907,7 +907,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libogg-1.3.0.a</sourceFile>
+							<sourceFile>libExtern.libogg-1.3.0.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -934,7 +934,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libogg-1.3.0.a</sourceFile>
+							<sourceFile>libExtern.libogg-1.3.0.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -981,7 +981,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libvorbis-1.3.3.a</sourceFile>
+							<sourceFile>libExtern.libvorbis-1.3.3.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1010,7 +1010,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libvorbis-1.3.3.a</sourceFile>
+							<sourceFile>libExtern.libvorbis-1.3.3.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1319,7 +1319,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lpng128.a</sourceFile>
+							<sourceFile>libExtern.lpng128.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1347,7 +1347,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lpng128.a</sourceFile>
+							<sourceFile>libExtern.lpng128.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1458,7 +1458,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libExtern.zlib-1.2.3.a</sourceFile>
+										<sourceFile>libExtern.zlib-1.2.3.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -1485,7 +1485,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libExtern.zlib-1.2.3.a</sourceFile>
+										<sourceFile>libExtern.zlib-1.2.3.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -1533,7 +1533,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lua.a</sourceFile>
+							<sourceFile>libExtern.lua.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1560,7 +1560,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lua.a</sourceFile>
+							<sourceFile>libExtern.lua.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1605,7 +1605,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lwObject.a</sourceFile>
+							<sourceFile>libExtern.lwObject.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1632,7 +1632,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lwObject.a</sourceFile>
+							<sourceFile>libExtern.lwObject.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1674,7 +1674,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.squish-1.10.a</sourceFile>
+							<sourceFile>libExtern.squish-1.10.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1702,7 +1702,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.squish-1.10.a</sourceFile>
+							<sourceFile>libExtern.squish-1.10.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1748,7 +1748,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Animation.a</sourceFile>
+							<sourceFile>libTraktor.Animation.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1775,7 +1775,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Animation.a</sourceFile>
+							<sourceFile>libTraktor.Animation.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1872,7 +1872,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Core.a</sourceFile>
+										<sourceFile>libTraktor.Core.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -1899,7 +1899,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Core.a</sourceFile>
+										<sourceFile>libTraktor.Core.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -2196,7 +2196,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.World.a</sourceFile>
+										<sourceFile>libTraktor.World.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -2223,7 +2223,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.World.a</sourceFile>
+										<sourceFile>libTraktor.World.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -2325,7 +2325,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libTraktor.Render.a</sourceFile>
+													<sourceFile>libTraktor.Render.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -2352,7 +2352,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libTraktor.Render.a</sourceFile>
+													<sourceFile>libTraktor.Render.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -2454,7 +2454,7 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>libTraktor.Resource.a</sourceFile>
+																<sourceFile>libTraktor.Resource.bc</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 															</item>
 														</aggregationItems>
@@ -2481,7 +2481,7 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>libTraktor.Resource.a</sourceFile>
+																<sourceFile>libTraktor.Resource.bc</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 															</item>
 														</aggregationItems>
@@ -2536,7 +2536,7 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>libTraktor.Compress.a</sourceFile>
+																<sourceFile>libTraktor.Compress.bc</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 															</item>
 														</aggregationItems>
@@ -2567,7 +2567,7 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>libTraktor.Compress.a</sourceFile>
+																<sourceFile>libTraktor.Compress.bc</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 															</item>
 														</aggregationItems>
@@ -2648,7 +2648,7 @@
 																	<debugWorkingDirectory/>
 																	<aggregationItems>
 																		<item type="AggregationItem">
-																			<sourceFile>libExtern.minilzo-2.05.a</sourceFile>
+																			<sourceFile>libExtern.minilzo-2.05.bc</sourceFile>
 																			<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 																		</item>
 																	</aggregationItems>
@@ -2676,7 +2676,7 @@
 																	<debugWorkingDirectory/>
 																	<aggregationItems>
 																		<item type="AggregationItem">
-																			<sourceFile>libExtern.minilzo-2.05.a</sourceFile>
+																			<sourceFile>libExtern.minilzo-2.05.bc</sourceFile>
 																			<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 																		</item>
 																	</aggregationItems>
@@ -2725,7 +2725,7 @@
 																	<debugWorkingDirectory/>
 																	<aggregationItems>
 																		<item type="AggregationItem">
-																			<sourceFile>libExtern.liblzf-3.6.a</sourceFile>
+																			<sourceFile>libExtern.liblzf-3.6.bc</sourceFile>
 																			<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 																		</item>
 																	</aggregationItems>
@@ -2752,7 +2752,7 @@
 																	<debugWorkingDirectory/>
 																	<aggregationItems>
 																		<item type="AggregationItem">
-																			<sourceFile>libExtern.liblzf-3.6.a</sourceFile>
+																			<sourceFile>libExtern.liblzf-3.6.bc</sourceFile>
 																			<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 																		</item>
 																	</aggregationItems>
@@ -2828,7 +2828,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libTraktor.Database.a</sourceFile>
+													<sourceFile>libTraktor.Database.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -2855,7 +2855,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libTraktor.Database.a</sourceFile>
+													<sourceFile>libTraktor.Database.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -2922,7 +2922,7 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>libTraktor.Xml.a</sourceFile>
+																<sourceFile>libTraktor.Xml.bc</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 															</item>
 														</aggregationItems>
@@ -2950,7 +2950,7 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>libTraktor.Xml.a</sourceFile>
+																<sourceFile>libTraktor.Xml.bc</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 															</item>
 														</aggregationItems>
@@ -3012,7 +3012,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Mesh.a</sourceFile>
+										<sourceFile>libTraktor.Mesh.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -3039,7 +3039,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Mesh.a</sourceFile>
+										<sourceFile>libTraktor.Mesh.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -3196,7 +3196,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Physics.a</sourceFile>
+										<sourceFile>libTraktor.Physics.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -3223,7 +3223,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Physics.a</sourceFile>
+										<sourceFile>libTraktor.Physics.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -3295,7 +3295,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libTraktor.Heightfield.a</sourceFile>
+													<sourceFile>libTraktor.Heightfield.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -3322,7 +3322,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libTraktor.Heightfield.a</sourceFile>
+													<sourceFile>libTraktor.Heightfield.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -3387,7 +3387,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Database.Compact.a</sourceFile>
+							<sourceFile>libTraktor.Database.Compact.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3414,7 +3414,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Database.Compact.a</sourceFile>
+							<sourceFile>libTraktor.Database.Compact.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3471,7 +3471,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Database.Local.a</sourceFile>
+							<sourceFile>libTraktor.Database.Local.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3498,7 +3498,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Database.Local.a</sourceFile>
+							<sourceFile>libTraktor.Database.Local.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3555,7 +3555,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Database.Remote.a</sourceFile>
+							<sourceFile>libTraktor.Database.Remote.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3582,7 +3582,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Database.Remote.a</sourceFile>
+							<sourceFile>libTraktor.Database.Remote.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3639,7 +3639,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Net.a</sourceFile>
+										<sourceFile>libTraktor.Net.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -3666,7 +3666,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Net.a</sourceFile>
+										<sourceFile>libTraktor.Net.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -3793,7 +3793,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Database.Remote.Client.a</sourceFile>
+							<sourceFile>libTraktor.Database.Remote.Client.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3820,7 +3820,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Database.Remote.Client.a</sourceFile>
+							<sourceFile>libTraktor.Database.Remote.Client.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3886,7 +3886,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Drawing.a</sourceFile>
+							<sourceFile>libTraktor.Drawing.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3917,7 +3917,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Drawing.a</sourceFile>
+							<sourceFile>libTraktor.Drawing.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3997,7 +3997,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Flash.a</sourceFile>
+							<sourceFile>libTraktor.Flash.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -4024,7 +4024,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Flash.a</sourceFile>
+							<sourceFile>libTraktor.Flash.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -4169,7 +4169,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Html.a</sourceFile>
+										<sourceFile>libTraktor.Html.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -4196,7 +4196,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Html.a</sourceFile>
+										<sourceFile>libTraktor.Html.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -4252,7 +4252,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Sound.a</sourceFile>
+										<sourceFile>libTraktor.Sound.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -4284,7 +4284,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Sound.a</sourceFile>
+										<sourceFile>libTraktor.Sound.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -4382,7 +4382,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
+													<sourceFile>libExtern.mpg123-1.13.2.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -4413,7 +4413,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
+													<sourceFile>libExtern.mpg123-1.13.2.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -4669,7 +4669,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libExtern.stb_vorbis.a</sourceFile>
+													<sourceFile>libExtern.stb_vorbis.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -4693,7 +4693,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libExtern.stb_vorbis.a</sourceFile>
+													<sourceFile>libExtern.stb_vorbis.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -4750,7 +4750,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libExtern.RectangleBinPack.a</sourceFile>
+										<sourceFile>libExtern.RectangleBinPack.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -4776,7 +4776,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libExtern.RectangleBinPack.a</sourceFile>
+										<sourceFile>libExtern.RectangleBinPack.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -4825,7 +4825,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.I18N.a</sourceFile>
+							<sourceFile>libTraktor.I18N.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -4852,7 +4852,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.I18N.a</sourceFile>
+							<sourceFile>libTraktor.I18N.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -4899,7 +4899,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Input.a</sourceFile>
+							<sourceFile>libTraktor.Input.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -4926,7 +4926,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Input.a</sourceFile>
+							<sourceFile>libTraktor.Input.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -4992,7 +4992,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Physics.Bullet.a</sourceFile>
+							<sourceFile>libTraktor.Physics.Bullet.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5021,7 +5021,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Physics.Bullet.a</sourceFile>
+							<sourceFile>libTraktor.Physics.Bullet.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5093,7 +5093,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.OpenGL.ES2.a</sourceFile>
+							<sourceFile>libTraktor.Render.OpenGL.ES2.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5124,7 +5124,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.OpenGL.ES2.a</sourceFile>
+							<sourceFile>libTraktor.Render.OpenGL.ES2.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5186,7 +5186,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Scene.a</sourceFile>
+							<sourceFile>libTraktor.Scene.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5213,7 +5213,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Scene.a</sourceFile>
+							<sourceFile>libTraktor.Scene.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5275,7 +5275,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Script.a</sourceFile>
+							<sourceFile>libTraktor.Script.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5302,7 +5302,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Script.a</sourceFile>
+							<sourceFile>libTraktor.Script.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5355,7 +5355,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Script.Lua.a</sourceFile>
+							<sourceFile>libTraktor.Script.Lua.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5383,7 +5383,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Script.Lua.a</sourceFile>
+							<sourceFile>libTraktor.Script.Lua.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5441,7 +5441,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Spray.a</sourceFile>
+							<sourceFile>libTraktor.Spray.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5468,7 +5468,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Spray.a</sourceFile>
+							<sourceFile>libTraktor.Spray.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5572,7 +5572,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Terrain.a</sourceFile>
+							<sourceFile>libTraktor.Terrain.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5599,7 +5599,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Terrain.a</sourceFile>
+							<sourceFile>libTraktor.Terrain.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5671,7 +5671,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Theater.a</sourceFile>
+							<sourceFile>libTraktor.Theater.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5698,7 +5698,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Theater.a</sourceFile>
+							<sourceFile>libTraktor.Theater.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5755,7 +5755,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.a</sourceFile>
+							<sourceFile>libTraktor.Ui.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5782,7 +5782,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.a</sourceFile>
+							<sourceFile>libTraktor.Ui.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5861,7 +5861,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Custom.a</sourceFile>
+							<sourceFile>libTraktor.Ui.Custom.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5888,7 +5888,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Custom.a</sourceFile>
+							<sourceFile>libTraktor.Ui.Custom.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6170,7 +6170,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Weather.a</sourceFile>
+							<sourceFile>libTraktor.Weather.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6197,7 +6197,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Weather.a</sourceFile>
+							<sourceFile>libTraktor.Weather.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6280,7 +6280,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Capture.a</sourceFile>
+							<sourceFile>libTraktor.Render.Capture.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6307,7 +6307,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Capture.a</sourceFile>
+							<sourceFile>libTraktor.Render.Capture.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6365,7 +6365,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.sqlite.a</sourceFile>
+							<sourceFile>libExtern.sqlite.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6393,7 +6393,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.sqlite.a</sourceFile>
+							<sourceFile>libExtern.sqlite.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6442,7 +6442,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Sql.a</sourceFile>
+							<sourceFile>libTraktor.Sql.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6469,7 +6469,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Sql.a</sourceFile>
+							<sourceFile>libTraktor.Sql.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6517,7 +6517,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Sql.Sqlite3.a</sourceFile>
+							<sourceFile>libTraktor.Sql.Sqlite3.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6545,7 +6545,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Sql.Sqlite3.a</sourceFile>
+							<sourceFile>libTraktor.Sql.Sqlite3.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6604,7 +6604,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
+							<sourceFile>libExtern.libtheora-1.1.1.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6633,7 +6633,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
+							<sourceFile>libExtern.libtheora-1.1.1.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6691,7 +6691,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Video.a</sourceFile>
+							<sourceFile>libTraktor.Video.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6720,7 +6720,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Video.a</sourceFile>
+							<sourceFile>libTraktor.Video.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6796,7 +6796,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Online.a</sourceFile>
+							<sourceFile>libTraktor.Online.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6823,7 +6823,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Online.a</sourceFile>
+							<sourceFile>libTraktor.Online.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6907,7 +6907,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Online.Local.a</sourceFile>
+							<sourceFile>libTraktor.Online.Local.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6934,7 +6934,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Online.Local.a</sourceFile>
+							<sourceFile>libTraktor.Online.Local.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6996,7 +6996,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Amalgam.Game.a</sourceFile>
+							<sourceFile>libTraktor.Amalgam.Game.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -7023,7 +7023,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Amalgam.Game.a</sourceFile>
+							<sourceFile>libTraktor.Amalgam.Game.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -7222,7 +7222,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Ai.a</sourceFile>
+										<sourceFile>libTraktor.Ai.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -7250,7 +7250,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Ai.a</sourceFile>
+										<sourceFile>libTraktor.Ai.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -7297,7 +7297,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libExtern.detour.a</sourceFile>
+													<sourceFile>libExtern.detour.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -7323,7 +7323,7 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
-													<sourceFile>libExtern.detour.a</sourceFile>
+													<sourceFile>libExtern.detour.bc</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -7405,7 +7405,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Amalgam.a</sourceFile>
+										<sourceFile>libTraktor.Amalgam.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -7432,7 +7432,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Amalgam.a</sourceFile>
+										<sourceFile>libTraktor.Amalgam.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -7493,7 +7493,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Spark.a</sourceFile>
+										<sourceFile>libTraktor.Spark.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -7520,7 +7520,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Spark.a</sourceFile>
+										<sourceFile>libTraktor.Spark.bc</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -7613,7 +7613,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Amalgam.Game.App.a</sourceFile>
+							<sourceFile>libTraktor.Amalgam.Game.App.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -7641,7 +7641,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Amalgam.Game.App.a</sourceFile>
+							<sourceFile>libTraktor.Amalgam.Game.App.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -7717,7 +7717,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.recast.a</sourceFile>
+							<sourceFile>libExtern.recast.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -7743,7 +7743,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.recast.a</sourceFile>
+							<sourceFile>libExtern.recast.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -7897,7 +7897,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Telemetry.a</sourceFile>
+							<sourceFile>libTraktor.Telemetry.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -7924,7 +7924,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Telemetry.a</sourceFile>
+							<sourceFile>libTraktor.Telemetry.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -7979,7 +7979,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Json.a</sourceFile>
+							<sourceFile>libTraktor.Json.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -8007,7 +8007,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Json.a</sourceFile>
+							<sourceFile>libTraktor.Json.bc</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
