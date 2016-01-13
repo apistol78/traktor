@@ -421,6 +421,23 @@ for i = 0, configurations:size() - 1 do
 	elseif format == "ExecutableConsole" then
 		output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE)" .. lo .. " $(LINK_FLAG_OUTPUT) ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
 	end	
+
+	local aggregationItems = configuration:getAggregationItems()
+	for i = 0, aggregationItems:size() - 1 do
+		local aggregationItem = aggregationItems:get(i)
+		local sourceFile = aggregationItem:getSourceFile()
+		local targetPath = aggregationItem:getTargetPath()
+
+		sourceFile = Path("../" .. configuration:getName()):concat(Path(sourceFile))
+		targetPath = Path(targetPath)
+
+		if os == "windows" then
+			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
+		elseif os == "osx" or os == "linux" then
+			output:printLn("\tcp -f \"" .. sourceFile:getPathNameNoVolume() .. "\" \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+		end
+	end
+
 	output:printLn("")
 end
 

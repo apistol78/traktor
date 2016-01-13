@@ -15,6 +15,3 @@ call build-projects-vs2012-android.bat
 devenv "build\android\Traktor Android.sln" /Build DebugStatic /Out %~dp0autobuild-android.log
 devenv "build\android\Traktor Android.sln" /Build ReleaseStatic /Out %~dp0autobuild-android.log
 popd
-
-call copy-latest-android.bat
-pause

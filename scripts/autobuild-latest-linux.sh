@@ -22,7 +22,3 @@ make DebugShared 2>>$BUILD_LOG_DIR/build-linux-stderr.log
 echo "========== ReleaseShared ==========" >>$BUILD_LOG_DIR/build-linux-stderr.log
 make ReleaseShared 2>>$BUILD_LOG_DIR/build-linux-stderr.log
 popd
-
-# Put built binaries into place
-/bin/bash copy-latest-linux.sh
-

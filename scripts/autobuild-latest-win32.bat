@@ -22,6 +22,3 @@ devenv "build\win32\Traktor Win32.sln" /Build ReleaseShared /Out %~dp0autobuild-
 devenv "build\win32\Traktor Win32.sln" /Build DebugStatic /Out %~dp0autobuild-win32.log
 devenv "build\win32\Traktor Win32.sln" /Build ReleaseStatic /Out %~dp0autobuild-win32.log
 popd
-
-:: call copy-latest-win32.bat
-pause

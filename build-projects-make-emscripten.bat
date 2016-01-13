@@ -12,6 +12,7 @@ set MAKE_OBJECT_FILE=%%s.o
 set MAKE_STATIC_LIBRARY_FILE=lib%%s.bc
 set MAKE_SHARED_LIBRARY_FILE=lib%%s.bc
 set MAKE_EXECUTABLE_FILE=%%s.js
+set AGGREGATE_OUTPUT_PATH=%TRAKTOR_HOME%\bin\latest\emscripten
 
 %TRAKTOR_HOME%\bin\win32\solutionbuilder ^
 	-f=make2 ^

@@ -46,6 +46,11 @@ namespace traktor
 	namespace
 	{
 
+Ref< Path > Path_concat(Path* self, Path* rh)
+{
+	return new Path(*self + *rh);
+}
+
 RefArray< File > IVolume_find(IVolume* self, const std::wstring& mask)
 {
 	RefArray< File > files;
@@ -283,6 +288,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classPath->addMethod("getPathNameNoVolume", &Path::getPathNameNoVolume);
 	classPath->addMethod("getExtension", &Path::getExtension);
 	classPath->addMethod("normalized", &Path::normalized);
+	classPath->addMethod("concat", &Path_concat);
 	registrar->registerClass(classPath);
 
 	Ref< AutoRuntimeClass< File > > classFile = new AutoRuntimeClass< File >();

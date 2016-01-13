@@ -22,6 +22,3 @@ make -j 8 DebugStatic 2>>$BUILD_LOG_DIR/build-android-stderr.log
 popd
 
 popd
-
-# Put built binaries into place
-/bin/sh copy-latest-android.sh
