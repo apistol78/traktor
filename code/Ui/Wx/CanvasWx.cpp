@@ -267,8 +267,18 @@ void CanvasWx::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& si
 	if (!image)
 		return;
 
+	int32_t width = image->GetWidth();
+	int32_t height = image->GetHeight();
+	int32_t x = std::max< int32_t >(srcAt.x, 0);
+	int32_t y = std::max< int32_t >(srcAt.y, 0);
+	int32_t w = std::min< int32_t >(size.cx, width - x);
+	int32_t h = std::min< int32_t >(size.cy, height - y);
+
+	if (w <= 0 || h <= 0)
+		return;
+
 	m_context->DrawBitmap(
-		image->GetSubImage(wxRect(srcAt.x, srcAt.y, size.cx, size.cy)),
+		image->GetSubImage(wxRect(x, y, w, h)),
 		dstAt.x, dstAt.y,
 		size.cx, size.cy
 	);
@@ -283,8 +293,18 @@ void CanvasWx::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& 
 	if (!image)
 		return;
 
+	int32_t width = image->GetWidth();
+	int32_t height = image->GetHeight();
+	int32_t x = std::max< int32_t >(srcAt.x, 0);
+	int32_t y = std::max< int32_t >(srcAt.y, 0);
+	int32_t w = std::min< int32_t >(srcSize.cx, width - x);
+	int32_t h = std::min< int32_t >(srcSize.cy, height - y);
+
+	if (w <= 0 || h <= 0)
+		return;
+
 	m_context->DrawBitmap(
-		image->GetSubImage(wxRect(srcAt.x, srcAt.y, srcSize.cx, srcSize.cy)),
+		image->GetSubImage(wxRect(x, y, w, h)),
 		dstAt.x, dstAt.y,
 		dstSize.cx, dstSize.cy
 	);
