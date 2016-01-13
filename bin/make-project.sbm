@@ -398,11 +398,7 @@ for i = 0, configurations:size() - 1 do
 			if toolchain == "vc" then
 				lo = lo .. " " .. library
 			elseif toolchain == "gcc" or toolchain == "clang" then
-				if library:sub(1, 1) ~= "`" then
-					lo = lo .. " -l" .. library
-				else
-					lo = lo .. " " .. library
-				end
+				lo = lo .. " -l" .. library
 			end
 		end
 		for _, externalLibrary in ipairs(externalLibraries[i]) do
@@ -410,7 +406,11 @@ for i = 0, configurations:size() - 1 do
 				lo = lo .. " " .. externalLibrary
 			elseif toolchain == "gcc" or toolchain == "clang" then
 				if string.find(externalLibrary, ".framework") == nil then
-					lo = lo .. " -l" .. externalLibrary
+					if externalLibrary:sub(1, 1) ~= "`" then
+						lo = lo .. " -l" .. externalLibrary
+					else
+						lo = lo .. " " .. externalLibrary
+					end
 				else
 					lo = lo .. " -framework " .. externalLibrary:sub(1, #externalLibrary - 10)
 				end
