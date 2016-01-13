@@ -22,11 +22,11 @@ source build-projects-make-ios.sh
 pushd build/ios
 if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
 	echo "========== ReleaseStatic ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	make ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
+	make -j 4 ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
 fi
 if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
 	echo "========== DebugStatic ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	make DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
+	make -j 4 DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
 fi
 popd
 

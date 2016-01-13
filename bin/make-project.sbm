@@ -360,13 +360,17 @@ for i = 0, configurations:size() - 1 do
 	output:printLn(configuration:getName() .. " : \\")
 	output:printLn("\t$(" .. configuration:getName() .. "_OBJS)")
 
+	if os ~= "windows" then
+		output:printLn("\t@printf \"\\n\\e[0;35mAssembling " .. project:getName() .. "...\\e[0m\\n\"")
+	end
+
 	if dialect == "nmake" then
 		output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
 	elseif dialect == "make" then
 		if os == "windows" then
 			output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
 		else
-			output:printLn("\t-mkdir -p ../" .. configuration:getName())
+			output:printLn("\t@mkdir -p ../" .. configuration:getName())
 		end
 	end
 
@@ -433,13 +437,17 @@ for i = 0, configurations:size() - 1 do
 		output:printLn(configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h : \\")
 		output:printLn("\t" .. f1:getPathName())
 
+		if os ~= "windows" then
+			output:printLn("\t@printf \"\\n\\e[0;35mConverting " .. file:getFileName() .. "...\\e[0m\\n\"")
+		end
+
 		if dialect == "nmake" then
 			output:printLn("\t-mkdir \"$(@D)\" 1>nul 2>&1")
 		elseif dialect == "make" then
 			if os == "windows" then
 				output:printLn("\t-mkdir \"$(@D:\\=)\"")
 			else
-				output:printLn("\t-mkdir -p $(@D:\\=)")
+				output:printLn("\t@mkdir -p $(@D:\\=)")
 			end
 		end
 
@@ -489,13 +497,17 @@ for i = 0, configurations:size() - 1 do
 		end
 		output:printLn("")
 
+		if os ~= "windows" then
+			output:printLn("\t@printf \"\\n\\e[0;35mCompiling " .. f:getFileName() .. "...\\e[0m\\n\"")
+		end
+
 		if dialect == "nmake" then
 			output:printLn("\t-mkdir \"$(@D)\" 1>nul 2>&1")
 		elseif dialect == "make" then
 			if os == "windows" then
 				output:printLn("\t-mkdir \"$(@D:\\=)\"")
 			else
-				output:printLn("\t-mkdir -p $(@D:\\=)")
+				output:printLn("\t@mkdir -p $(@D:\\=)")
 			end
 		end
 
