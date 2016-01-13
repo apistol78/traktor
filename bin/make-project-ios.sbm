@@ -370,7 +370,7 @@ for i = 0, configurations:size() - 1 do
 	end
 
 	if format == "StaticLibrary" then
-		output:print("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName)
+		output:print("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName)
 		for _, a in ipairs(architectures) do
 			output:print(" " ..configuration:getName() .. "_" .. a .. "/" .. productName)
 		end
@@ -389,7 +389,9 @@ for i = 0, configurations:size() - 1 do
 		if os == "windows" then
 			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
 		elseif os == "osx" or os == "linux" then
-			output:printLn("\tcp -f \"" .. sourceFile:getPathNameNoVolume() .. "\" \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+			output:printLn("\t@printf \"\\e[0;35mCopy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume() .. "\\e[0m\\n\"")
+			output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+			output:printLn("\t@cp -f \"" .. sourceFile:getPathNameNoVolume() .. "\" \"" .. targetPath:getPathNameNoVolume() .. "/\"")
 		end
 	end
 
@@ -418,7 +420,7 @@ for i = 0, configurations:size() - 1 do
 		output:printLn(configuration:getName() .. "_" .. a .. " : \\")
 		output:printLn("\t$(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
 
-		output:printLn("\t@printf \"\\n\\e[0;35mAssembling " .. project:getName() .. " (" .. a .. ")...\\e[0m\\n\"")
+		output:printLn("\t@printf \"\\e[0;35mAssembling " .. project:getName() .. " (" .. a .. ")...\\e[0m\\n\"")
 
 		if dialect == "nmake" then
 			output:printLn("\t-mkdir \"" .. configuration:getName() .. "_" .. a .. "\" 1>nul 2>&1")
@@ -465,17 +467,17 @@ for i = 0, configurations:size() - 1 do
 		end
 
 		if format == "StaticLibrary" then
-			output:printLn("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. configuration:getName() .. "_" .. a .. "/" .. productName .. " $(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
+			output:printLn("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. configuration:getName() .. "_" .. a .. "/" .. productName .. " $(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
 		elseif format == "SharedLibrary" then
 			if os ~= "osx" then
-				output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED)" .. lo .. " $(LINK_FLAG_OUTPUT)" .. configuration:getName() .. "_" .. a .. "/" .. productName .. " $(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
+				output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED)" .. lo .. " $(LINK_FLAG_OUTPUT)" .. configuration:getName() .. "_" .. a .. "/" .. productName .. " $(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
 			else
-				output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -dynamiclib -install_name @executable_path/" .. productName .. lo .. " $(LINK_FLAG_OUTPUT)" .. configuration:getName() .. "_" .. a .. "/" .. productName .. " $(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
+				output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -dynamiclib -install_name @executable_path/" .. productName .. lo .. " $(LINK_FLAG_OUTPUT)" .. configuration:getName() .. "_" .. a .. "/" .. productName .. " $(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
 			end
 		elseif format == "Executable" then
-			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE)" .. lo .. " $(LINK_FLAG_OUTPUT)" .. configuration:getName() .. "_" .. a .. "/" .. productName .. " $(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
+			output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE)" .. lo .. " $(LINK_FLAG_OUTPUT)" .. configuration:getName() .. "_" .. a .. "/" .. productName .. " $(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
 		elseif format == "ExecutableConsole" then
-			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE)" .. lo .. " $(LINK_FLAG_OUTPUT)" .. configuration:getName() .. "_" .. a .. "/" .. productName .. " $(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
+			output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE)" .. lo .. " $(LINK_FLAG_OUTPUT)" .. configuration:getName() .. "_" .. a .. "/" .. productName .. " $(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
 		end
 		output:printLn("")
 	end
@@ -494,7 +496,7 @@ for i = 0, configurations:size() - 1 do
 		output:printLn(configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h : \\")
 		output:printLn("\t" .. f1:getPathName())
 
-		output:printLn("\t@printf \"\\n\\e[0;35mConverting " .. file:getFileName() .. "...\\e[0m\\n\"")
+		output:printLn("\t@printf \"\\e[0;35mConverting " .. file:getFileName() .. "...\\e[0m\\n\"")
 
 		if dialect == "nmake" then
 			output:printLn("\t-mkdir \"$(@D)\" 1>nul 2>&1")
@@ -507,9 +509,9 @@ for i = 0, configurations:size() - 1 do
 		end
 
 		if dialect == "nmake" then
-			output:printLn("\t$(BINARY_INCLUDE) $** $@ c_Resource" .. file:getFileNameNoExtension())
+			output:printLn("\t@$(BINARY_INCLUDE) $** $@ c_Resource" .. file:getFileNameNoExtension())
 		elseif dialect == "make" then
-			output:printLn("\t$(BINARY_INCLUDE) $^ $@ c_Resource" .. file:getFileNameNoExtension())
+			output:printLn("\t@$(BINARY_INCLUDE) $^ $@ c_Resource" .. file:getFileNameNoExtension())
 		end
 
 		output:printLn("")
@@ -553,7 +555,7 @@ for i = 0, configurations:size() - 1 do
 			end
 			output:printLn("")
 
-			output:printLn("\t@printf \"\\n\\e[0;35mCompiling " .. f:getFileName() .. " (" .. a .. ")...\\e[0m\\n\"")
+			output:printLn("\t@printf \"\\e[0;35mCompiling " .. f:getFileName() .. " (" .. a .. ")...\\e[0m\\n\"")
 
 			if dialect == "nmake" then
 				output:printLn("\t-mkdir \"$(@D)\" 1>nul 2>&1")
@@ -574,13 +576,13 @@ for i = 0, configurations:size() - 1 do
 			local profile = configuration:getTargetProfile()
 			local format = configuration:getTargetFormat()
 			if format == "StaticLibrary" then
-				output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC_" .. a  .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
+				output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC_" .. a  .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
 			elseif format == "SharedLibrary" then
-				output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED_" .. a  .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
+				output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED_" .. a  .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
 			elseif format == "Executable" then
-				output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE_" .. a  .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
+				output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE_" .. a  .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
 			elseif format == "ExecutableConsole" then
-				output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE_" .. a  .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
+				output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE_" .. a  .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
 			end
 			output:printLn("")
 		end
