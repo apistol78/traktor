@@ -316,6 +316,7 @@ end
 output:printLn("")
 
 -- "all" target.
+output:printLn(".PHONY: all")
 output:print("all :")
 for i = 0, configurations:size() - 1 do
 	local configuration = configurations:get(i)
@@ -328,6 +329,7 @@ output:printLn("\t@echo all")
 output:printLn("")
 
 -- "clean" target.
+output:printLn(".PHONY: clean")
 output:printLn("clean :")
 for i = 0, configurations:size() - 1 do
 	local configuration = configurations:get(i)
