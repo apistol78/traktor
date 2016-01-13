@@ -398,7 +398,7 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 		Rect rcExpand = calculateExpandRect();
 		canvas.drawBitmap(
 			rcExpand.getTopLeft(),
-			Point(isExpanded() ? imageWidth : 0, isSelected() ? imageWidth : 0),
+			Point(isExpanded() ? imageWidth : 0, /*isSelected() ? imageHeight :*/ 0),
 			Size(imageWidth, imageHeight),
 			m_view->m_imageState,
 			BmAlpha
