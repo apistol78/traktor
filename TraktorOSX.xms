@@ -8887,6 +8887,10 @@
 													<sourceFile>libTraktor.Model.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>$(FBX_SDK)/lib/gcc4/ub/*.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -8923,6 +8927,10 @@
 											<aggregationItems>
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Model.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>$(FBX_SDK)/lib/gcc4/ub/*.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
 												</item>
 											</aggregationItems>
@@ -8963,6 +8971,10 @@
 													<sourceFile>libTraktor.Model.a</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>$(FBX_SDK)/lib/gcc4/ub/*.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -8999,6 +9011,10 @@
 											<aggregationItems>
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Model.a</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>$(FBX_SDK)/lib/gcc4/ub/*.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -16564,6 +16580,10 @@
 							<sourceFile>libTraktor.Online.Steam.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(STEAMWORKS_SDK)/redistributable_bin/osx32/libsteam_api.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -16595,6 +16615,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Online.Steam.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(STEAMWORKS_SDK)/redistributable_bin/osx32/libsteam_api.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -16629,6 +16653,10 @@
 							<sourceFile>libTraktor.Online.Steam.a</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(STEAMWORKS_SDK)/redistributable_bin/osx32/libsteam_api.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -16659,6 +16687,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Online.Steam.a</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(STEAMWORKS_SDK)/redistributable_bin/osx32/libsteam_api.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>

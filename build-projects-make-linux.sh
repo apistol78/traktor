@@ -12,7 +12,17 @@ export MAKE_OBJECT_FILE="%s.o"
 export MAKE_STATIC_LIBRARY_FILE="lib%s.a"
 export MAKE_SHARED_LIBRARY_FILE="lib%s.so"
 export MAKE_EXECUTABLE_FILE="%s"
-export AGGREGATE_OUTPUT_PATH="\$(TRAKTOR_HOME)/bin/latest/linux"
+
+if [ $AGGREGATE_OUTPUT_PATH = "" ]; then
+	export AGGREGATE_OUTPUT_PATH="\$(TRAKTOR_HOME)/bin/latest/linux"
+fi
+
+# Steam redistributable aggregate.
+if [ "`uname -m`" == "x86_64" ]; then
+	export STEAMWORKS_SDK_BIN="$STEAMWORKS_SDK/redistributable_bin/linux64"
+else
+	export STEAMWORKS_SDK_BIN="$STEAMWORKS_SDK/redistributable_bin/linux32"
+fi
 
 # Build solution files.
 $TRAKTOR_HOME/bin/linux/SolutionBuilder \
