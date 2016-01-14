@@ -55,15 +55,15 @@ Ref< HttpResponse > HttpClient::get(const net::Url& url, const std::wstring& con
 	ss << L"\r\n";
 	ss << urlec;
 
-	Ref< IStream > stream = new SocketStream(socket);
+	m_stream = new SocketStream(socket);
 
 	// Send request, UTF-8 encoded.
-	FileOutputStream fos(stream, new Utf8Encoding());
+	FileOutputStream fos(m_stream, new Utf8Encoding());
 	fos << ss.str();
 
 	// Accept and parse response from server.
 	Ref< HttpResponse > response = new HttpResponse();
-	if (!response->parse(stream))
+	if (!response->parse(m_stream))
 		return 0;
 
 	return response;
@@ -109,15 +109,15 @@ Ref< HttpResponse > HttpClient::put(const net::Url& url, const std::wstring& con
 	ss << L"\r\n";
 	ss << urlec;
 
-	Ref< IStream > stream = new SocketStream(socket);
+	m_stream = new SocketStream(socket);
 
 	// Send request, UTF-8 encoded.
-	FileOutputStream fos(stream, new Utf8Encoding());
+	FileOutputStream fos(m_stream, new Utf8Encoding());
 	fos << ss.str();
 
 	// Accept and parse response from server.
 	Ref< HttpResponse > response = new HttpResponse();
-	if (!response->parse(stream))
+	if (!response->parse(m_stream))
 		return 0;
 
 	return response;
@@ -163,18 +163,23 @@ Ref< HttpResponse > HttpClient::post(const net::Url& url, const std::wstring& co
 	ss << L"\r\n";
 	ss << urlec;
 
-	Ref< IStream > stream = new SocketStream(socket);
+	m_stream = new SocketStream(socket);
 
 	// Send request, UTF-8 encoded.
-	FileOutputStream fos(stream, new Utf8Encoding());
+	FileOutputStream fos(m_stream, new Utf8Encoding());
 	fos << ss.str();
 
 	// Accept and parse response from server.
 	Ref< HttpResponse > response = new HttpResponse();
-	if (!response->parse(stream))
+	if (!response->parse(m_stream))
 		return 0;
 
 	return response;
+}
+
+Ref< IStream > HttpClient::getStream()
+{
+	return m_stream;
 }
 
 	}
