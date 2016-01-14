@@ -13,6 +13,9 @@
 
 namespace traktor
 {
+
+class IStream;
+
 	namespace net
 	{
 
@@ -32,6 +35,12 @@ public:
 	Ref< HttpResponse > put(const net::Url& url, const std::wstring& content);
 
 	Ref< HttpResponse > post(const net::Url& url, const std::wstring& content);
+
+	Ref< IStream > getStream();
+
+private:
+	Ref< IStream > m_stream;
+
 };
 
 	}
