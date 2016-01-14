@@ -104,6 +104,12 @@ public:
 	 */
 	flash::FlashMoviePlayer* getMoviePlayer();
 
+	/*! \brief Get ActionScript context.
+	 *
+	 * \return ActionScript context.
+	 */
+	flash::ActionContext* getContext();
+
 	/*! \brief Get "_root" sprite.
 	 *
 	 * \return "_root" sprite.

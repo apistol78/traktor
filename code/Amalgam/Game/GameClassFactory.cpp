@@ -254,6 +254,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< FlashLayer > > classFlashLayer = new AutoRuntimeClass< FlashLayer >();
 	classFlashLayer->addMethod("getMoviePlayer", &FlashLayer::getMoviePlayer);
+	classFlashLayer->addMethod("getContext", &FlashLayer::getContext);
 	classFlashLayer->addMethod("getRoot", &FlashLayer::getRoot);
 	classFlashLayer->addMethod("getExternal", &FlashLayer::getExternal);
 	classFlashLayer->addMethod("isVisible", &FlashLayer::isVisible);

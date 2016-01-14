@@ -567,11 +567,21 @@ flash::FlashMoviePlayer* FlashLayer::getMoviePlayer()
 	return m_moviePlayer;
 }
 
+flash::ActionContext* FlashLayer::getContext()
+{
+	if (!m_moviePlayer)
+	{
+		log::warning << L"Unable to get context; no movie player initialized." << Endl;
+		return 0;
+	}
+	return m_moviePlayer->getMovieInstance()->getContext();
+}
+
 flash::FlashSpriteInstance* FlashLayer::getRoot()
 {
 	if (!m_moviePlayer)
 	{
-		log::warning << L"FlashLayer::getRoot fail; no movie player initialized." << Endl;
+		log::warning << L"Unable to get root; no movie player initialized." << Endl;
 		return 0;
 	}
 	return m_moviePlayer->getMovieInstance();
