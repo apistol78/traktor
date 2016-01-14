@@ -77,10 +77,21 @@ bool ButtonWin32::getState() const
 
 Size ButtonWin32::getPreferedSize() const
 {
+	int32_t systemDPI = 96;
+
+	HDC hDC = GetDC(NULL);
+	if (hDC != NULL)
+	{
+		systemDPI = GetDeviceCaps(hDC, LOGPIXELSX);
+		ReleaseDC(NULL, hDC);
+	}
+
 	Size extent = getTextExtent(getText());
+
 	SIZE ideal;
-	ideal.cx = max(extent.cx + 24, 60);
-	ideal.cy = extent.cy + 6;
+	ideal.cx = max(extent.cx + (systemDPI * 24) / 96, (systemDPI * 60) / 96);
+	ideal.cy = extent.cy + (systemDPI * 6) / 96;
+
 	return Size(ideal.cx, ideal.cy);
 }
 

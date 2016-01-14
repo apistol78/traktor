@@ -58,6 +58,7 @@ bool SettingsDialog::create(ui::Widget* parent, PropertyGroup* settings, const s
 	std::vector< const TypeInfo* > types(settingPageTypes.begin(), settingPageTypes.end());
 	std::sort(types.begin(), types.end(), SettingsPagePredicate());
 
+	int32_t four = ui::scaleBySystemDPI(4);
 	for (std::vector< const TypeInfo* >::const_iterator i = types.begin(); i != types.end(); ++i)
 	{
 		Ref< ISettingsPage > settingsPage = dynamic_type_cast< ISettingsPage* >((*i)->createInstance());
@@ -65,7 +66,7 @@ bool SettingsDialog::create(ui::Widget* parent, PropertyGroup* settings, const s
 			continue;
 
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
-		if (!tabPage->create(tab, L"", new ui::FloodLayout(ui::Size(4, 4))))
+		if (!tabPage->create(tab, L"", new ui::FloodLayout(ui::Size(four, four))))
 			continue;
 
 		if (!settingsPage->create(tabPage, settings, shortcutCommands))

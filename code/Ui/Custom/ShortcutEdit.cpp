@@ -1,4 +1,5 @@
 #include "Ui/Application.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/ShortcutEdit.h"
 
 namespace traktor
@@ -111,19 +112,24 @@ void ShortcutEdit::eventKeyDown(KeyDownEvent* event)
 
 void ShortcutEdit::eventPaint(PaintEvent* event)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 
 	Rect rc = getInnerRect();
 
 	if (!hasFocus())
-		canvas.setBackground(getSystemColor(ScWindowBackground));
+		canvas.setBackground(ss->getColor(this, L"background-color"));
 	else
-		canvas.setBackground(Color4ub(220, 255, 220));
+		canvas.setBackground(ss->getColor(this, L"background-color-focus"));
 
 	canvas.fillRect(rc);
 
-	std::wstring text = getText();
-	canvas.drawText(rc.inflate(-8, 0), text, AnLeft, AnCenter);
+	if (!hasFocus())
+		canvas.setForeground(ss->getColor(this, L"color"));
+	else
+		canvas.setForeground(ss->getColor(this, L"color-focus"));
+
+	canvas.drawText(rc.inflate(scaleBySystemDPI(-8), 0), getText(), AnLeft, AnCenter);
 	
 	event->consume();
 }

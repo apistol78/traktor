@@ -266,5 +266,25 @@
 			<element>bevel-disabled-color</element>
 			<color>140, 140, 140, 255</color>
 		</item>
+		<item>
+			<type>traktor.ui.custom.ShortcutEdit</type>
+			<element>background-color</element>
+			<color>255, 255, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.ShortcutEdit</type>
+			<element>background-color-focus</element>
+			<color>230, 230, 230, 255</color>
+		</item>		
+		<item>
+			<type>traktor.ui.custom.ShortcutEdit</type>
+			<element>color</element>
+			<color>0, 0, 0, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.ShortcutEdit</type>
+			<element>color-focus</element>
+			<color>0, 0, 0, 255</color>
+		</item>
 	</groups>
 </object>

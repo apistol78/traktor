@@ -625,6 +625,15 @@ void ScriptEditorPage::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent
 	{
 		int32_t startOffset = m_edit->getSelectionStartOffset();
 		int32_t stopOffset = m_edit->getSelectionStopOffset();
+
+		if (startOffset < 0)
+		{
+			int32_t caret = m_edit->getCaretOffset();
+			int32_t caretLine = m_edit->getLineFromOffset(caret);
+			startOffset = m_edit->getLineOffset(caretLine);
+			stopOffset = startOffset + m_edit->getLineLength(caretLine);
+		}
+
 		if (startOffset >= 0 && stopOffset >= 0)
 		{
 			std::wstring lineComment = m_edit->getLanguage()->lineComment();
@@ -633,7 +642,7 @@ void ScriptEditorPage::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent
 			int32_t startLine = m_edit->getLineFromOffset(startOffset);
 			int32_t stopLine = m_edit->getLineFromOffset(stopOffset);
 
-			for (int32_t i = startLine; i < stopLine; ++i)
+			for (int32_t i = startLine; i <= stopLine; ++i)
 			{
 				std::wstring line = m_edit->getLine(i);
 				if (startsWith(line, lineComment))
@@ -643,14 +652,18 @@ void ScriptEditorPage::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent
 				m_edit->setLine(i, line);
 			}
 
+			m_script->setText(m_edit->getText());
+
 			m_edit->updateLanguage(startLine, stopLine);
 			m_edit->update();
 		}
 	}
 	else if (command == L"Script.Editor.RemoveAllBreakpoints")
 	{
-		Guid instanceGuid = m_document->getInstance(0)->getGuid();
-		m_scriptDebuggerSessions->removeAllBreakpoints(instanceGuid);
+		int32_t lineCount = m_edit->getLineCount();
+		for (int32_t i = 0; i < lineCount; ++i)
+			m_edit->setLineData(i, 0);
+		updateBreakpoints();
 	}
 }
 
