@@ -3895,15 +3895,6 @@
 								</items>
 							</item>
 							<item type="Filter">
-								<name>SwHiZ</name>
-								<items>
-									<item type="File">
-										<fileName>SwHiZ/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
 								<name>Deferred</name>
 								<items>
 									<item type="File">
@@ -14441,15 +14432,6 @@
 							<item type="File">
 								<fileName>*.*</fileName>
 								<items/>
-							</item>
-							<item type="Filter">
-								<name>Resources</name>
-								<items>
-									<item type="File">
-										<fileName>../../../res/toolbar/Heightfield.png</fileName>
-										<items/>
-									</item>
-								</items>
 							</item>
 						</items>
 						<dependencies>

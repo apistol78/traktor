@@ -3686,15 +3686,6 @@
 								</items>
 							</item>
 							<item type="Filter">
-								<name>SwHiZ</name>
-								<items>
-									<item type="File">
-										<fileName>SwHiZ/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
 								<name>Deferred</name>
 								<items>
 									<item type="File">
