@@ -14,6 +14,16 @@ local staticLibraryFile = OS.getInstance():getEnvironment("MAKE_STATIC_LIBRARY_F
 local sharedLibraryFile = OS.getInstance():getEnvironment("MAKE_SHARED_LIBRARY_FILE")
 local executableFile = OS.getInstance():getEnvironment("MAKE_EXECUTABLE_FILE")
 
+local function printWithColor(c, s)
+	if os == "windows" then
+		output:printLn("\t@echo " .. s)
+	elseif os == "osx" then
+		output:printLn("\t@printf \"\\e[0;" .. c .. "m" .. s .. "\\e[0m\\n\"")
+	elseif os == "linux" then
+		output:printLn("\t@printf '\\e[0;" .. c .. "m" .. s .. "\\e[0m\\n'")
+	end
+end
+
 local function getProductName(project, configuration)
 	local format = configuration:getTargetFormat()
 	if format == "StaticLibrary" then
@@ -366,9 +376,7 @@ for i = 0, configurations:size() - 1 do
 	output:printLn(configuration:getName() .. " : \\")
 	output:printLn("\t$(" .. configuration:getName() .. "_OBJS)")
 
-	if os ~= "windows" then
-		output:printLn("\t@printf '\\e[0;35mAssembling " .. project:getName() .. "...\\e[0m\\n'")
-	end
+	printWithColor(35, "Assembling " .. project:getName() .. "...")
 
 	if dialect == "nmake" then
 		output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
@@ -444,7 +452,7 @@ for i = 0, configurations:size() - 1 do
 		if os == "windows" then
 			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
 		elseif os == "osx" or os == "linux" then
-			output:printLn("\t@printf '\\e[0;35mCopy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume() .. "\\e[0m\\n'")
+			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
 			output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
 			output:printLn("\t@cp -f \"" .. sourceFile:getPathNameNoVolume() .. "\" \"" .. targetPath:getPathNameNoVolume() .. "/\"")
 		end
@@ -466,10 +474,7 @@ for i = 0, configurations:size() - 1 do
 		output:printLn(configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h : \\")
 		output:printLn("\t" .. f1:getPathName())
 
-		if os ~= "windows" then
-			output:printLn("\t@printf '\\e[0;35mConverting " .. file:getFileName() .. "...\\e[0m\\n'")
-		end
-
+		printWithColor(35, "Converting " .. file:getFileName() .. "...")
 		if dialect == "nmake" then
 			output:printLn("\t-mkdir \"$(@D)\" 1>nul 2>&1")
 		elseif dialect == "make" then
@@ -526,10 +531,7 @@ for i = 0, configurations:size() - 1 do
 		end
 		output:printLn("")
 
-		if os ~= "windows" then
-			output:printLn("\t@printf '\\e[0;35mCompiling " .. f:getFileName() .. "...\\e[0m\\n'")
-		end
-
+		printWithColor(35, "Compiling " .. f:getFileName() .. "...")
 		if dialect == "nmake" then
 			output:printLn("\t-mkdir \"$(@D)\" 1>nul 2>&1")
 		elseif dialect == "make" then
