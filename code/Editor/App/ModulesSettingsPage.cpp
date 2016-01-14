@@ -3,10 +3,11 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Editor/App/ModulesSettingsPage.h"
 #include "I18N/Text.h"
-#include "Ui/TableLayout.h"
-#include "Ui/Container.h"
+#include "Ui/Application.h"
 #include "Ui/Button.h"
+#include "Ui/Container.h"
 #include "Ui/ListBox.h"
+#include "Ui/TableLayout.h"
 #include "Ui/Custom/InputDialog.h"
 
 namespace traktor
@@ -19,14 +20,14 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ModulesSettingsPage", 0, Modules
 bool ModulesSettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, ui::scaleBySystemDPI(4))))
 		return false;
 
 	m_listModules = new ui::ListBox();
 	m_listModules->create(container, i18n::Text(L"EDITOR_SETTINGS_DEPENDENT_MODULES"), ui::ListBox::WsSingle | ui::ListBox::WsSort);
 
 	Ref< ui::Container > containerModulesTools = new ui::Container();
-	containerModulesTools->create(container, ui::WsNone, new ui::TableLayout(L"*,*", L"100%", 0, 4));
+	containerModulesTools->create(container, ui::WsNone, new ui::TableLayout(L"*,*", L"100%", 0, ui::scaleBySystemDPI(4)));
 
 	Ref< ui::Button > buttonAddModule = new ui::Button();
 	buttonAddModule->create(containerModulesTools, i18n::Text(L"EDITOR_SETTINGS_ADD_MODULE"));

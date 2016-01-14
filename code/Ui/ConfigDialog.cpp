@@ -1,5 +1,6 @@
-#include "Ui/ConfigDialog.h"
+#include "Ui/Application.h"
 #include "Ui/Button.h"
+#include "Ui/ConfigDialog.h"
 
 namespace traktor
 {
@@ -66,18 +67,19 @@ void ConfigDialog::update(const Rect* rc, bool immediate)
 	Size ok = m_ok->getPreferedSize();
 	Size cancel = m_cancel->getPreferedSize();
 
+	int32_t four = scaleBySystemDPI(4);
 	if (m_apply)
 	{
 		Size apply = m_apply->getPreferedSize();
 
-		m_ok->setRect(Rect(Point(rcInner.right - ok.cx - cancel.cx - apply.cx - 3 * 4, rcInner.bottom + 4 + 4), ok));
-		m_cancel->setRect(Rect(Point(rcInner.right - cancel.cx - apply.cx - 2 * 4, rcInner.bottom + 4 + 4), cancel));
-		m_apply->setRect(Rect(Point(rcInner.right - apply.cx - 1 * 4, rcInner.bottom + 4 + 4), apply));
+		m_ok->setRect(Rect(Point(rcInner.right - ok.cx - cancel.cx - apply.cx - 3 * four, rcInner.bottom + four + four), ok));
+		m_cancel->setRect(Rect(Point(rcInner.right - cancel.cx - apply.cx - 2 * four, rcInner.bottom + four + four), cancel));
+		m_apply->setRect(Rect(Point(rcInner.right - apply.cx - 1 * four, rcInner.bottom + four + four), apply));
 	}
 	else
 	{
-		m_ok->setRect(Rect(Point(rcInner.right - ok.cx - cancel.cx - 2 * 4, rcInner.bottom + 4 + 4), ok));
-		m_cancel->setRect(Rect(Point(rcInner.right - cancel.cx - 1 * 4, rcInner.bottom + 4 + 4), cancel));
+		m_ok->setRect(Rect(Point(rcInner.right - ok.cx - cancel.cx - 2 * four, rcInner.bottom + four + four), ok));
+		m_cancel->setRect(Rect(Point(rcInner.right - cancel.cx - 1 * four, rcInner.bottom + four + four), cancel));
 	}
 
 	Dialog::update(rc, immediate);
@@ -87,7 +89,10 @@ Rect ConfigDialog::getInnerRect() const
 {
 	Rect rc = Dialog::getInnerRect();
 	if (m_ok)
-		rc.bottom -= m_ok->getPreferedSize().cy + 2 * 4 + 4;
+	{
+		int32_t four = scaleBySystemDPI(4);
+		rc.bottom -= m_ok->getPreferedSize().cy + 2 * four + four;
+	}
 	return rc;
 }
 
