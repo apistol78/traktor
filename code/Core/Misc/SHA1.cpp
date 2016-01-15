@@ -1,5 +1,6 @@
 #include <cstring>
 #include <sstream>
+#include <iomanip>
 #include "Core/Misc/SHA1.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
@@ -237,7 +238,7 @@ std::wstring SHA1::format() const
 	const uint8_t* r = sha1_result((sha1info*)m_sha1nfo);
 	std::wstringstream ss;
 	for (int i = 0; i < 20; ++i)
-		ss << std::hex << r[i];
+		ss << std::hex << std::setfill(L'0') << std::setw(2)<< r[i];
 	return ss.str();    
 }
 
