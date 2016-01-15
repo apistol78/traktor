@@ -52,17 +52,12 @@ Application* Application::getInstance()
 	return s_instance;
 }
 
-bool Application::initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactory, StyleSheet* styleSheet)
+bool Application::initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactory, const StyleSheet* styleSheet)
 {
 	m_eventLoop = eventLoop;
 	m_widgetFactory = widgetFactory;
 	m_clipboard = new Clipboard(widgetFactory->createClipboard());
-	
-	if (styleSheet)
-		m_styleSheet = styleSheet;
-	else
-		m_styleSheet = StyleSheet::createDefault();
-
+	setStyleSheet(styleSheet);
 	return true;
 }
 
@@ -109,6 +104,14 @@ IWidgetFactory* Application::getWidgetFactory()
 Clipboard* Application::getClipboard()
 {
 	return m_clipboard;
+}
+
+void Application::setStyleSheet(const StyleSheet* styleSheet)
+{
+	if (styleSheet)
+		m_styleSheet = styleSheet;
+	else
+		m_styleSheet = StyleSheet::createDefault();
 }
 
 const StyleSheet* Application::getStyleSheet() const

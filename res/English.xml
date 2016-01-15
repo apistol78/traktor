@@ -853,6 +853,10 @@
       <second>Source database</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_STYLESHEET</first>
+      <second>Style sheet</second>
+    </item>    
+    <item>
     	<first>EDITOR_SETTINGS_SYSTEM_ROOT</first>
     	<second>System root</second>
     </item>

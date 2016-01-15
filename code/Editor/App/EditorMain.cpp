@@ -13,8 +13,6 @@
 #include "Editor/App/Splash.h"
 #include "Net/Network.h"
 #include "Ui/Application.h"
-#include "Ui/StyleSheet.h"
-#include "Xml/XmlDeserializer.h"
 
 #if defined(_WIN32)
 #	include <Ui/Win32/EventLoopWin32.h>
@@ -46,20 +44,6 @@ extern "C"
     _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
 #endif
-
-namespace
-{
-
-Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
-{
-	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, File::FmRead);
-	if (file)
-		return xml::XmlDeserializer(file).readObject< ui::StyleSheet >();
-	else
-		return 0;
-}
-
-}
 
 #if !defined(_WIN32) || defined(_CONSOLE)
 int main(int argc, const char** argv)
@@ -105,12 +89,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	log::info << L"DYLD_LIBRARY_PATH = \"" << check << L"\"" << Endl;
 #endif
 
-	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(L"$(TRAKTOR_HOME)/res/Light.xss");
-
 	ui::Application::getInstance()->initialize(
 		new EventLoopImpl(),
 		new WidgetFactoryImpl(),
-		styleSheet
+		0
 	);
 
 	net::Network::initialize();

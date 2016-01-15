@@ -37,7 +37,13 @@ bool GeneralSettingsPage::create(ui::Container* parent, PropertyGroup* settings,
 	staticDictionary->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_DICTIONARY"));
 
 	m_editDictionary = new ui::Edit();
-	m_editDictionary->create(containerInner, settings->getProperty< PropertyString >(L"Editor.Dictionary"));
+	m_editDictionary->create(containerInner, settings->getProperty< PropertyString >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/res/English.xml"));
+
+	Ref< ui::Static > staticStyleSheet = new ui::Static();
+	staticStyleSheet->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_STYLESHEET"));
+
+	m_editStyleSheet = new ui::Edit();
+	m_editStyleSheet->create(containerInner, settings->getProperty< PropertyString >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/Light.xss"));
 
 	Ref< ui::Static > staticFont = new ui::Static();
 	staticFont->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_EDITOR_FONT"));
@@ -91,6 +97,7 @@ void GeneralSettingsPage::destroy()
 bool GeneralSettingsPage::apply(PropertyGroup* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
+	settings->setProperty< PropertyString >(L"Editor.StyleSheet", m_editStyleSheet->getText());
 	settings->setProperty< PropertyString >(L"Editor.Font", m_dropFonts->getSelectedItem());
 	settings->setProperty< PropertyInteger >(L"Editor.FontSize", parseString< int32_t >(m_editFontSize->getText()));
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoOpenRecentlyUsedWorkspace", m_checkAutoOpen->isChecked());
