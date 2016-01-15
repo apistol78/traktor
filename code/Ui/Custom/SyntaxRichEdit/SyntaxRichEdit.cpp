@@ -1,5 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Ui/Application.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguage.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
 
@@ -31,16 +33,18 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int32_t st
 	if (!RichEdit::create(parent, text, style))
 		return false;
 
-	m_attributeDefault = addAttribute(Color4ub(0, 0, 0), Color4ub(255, 255, 255), false, false, false);				// Default
-	m_attributeString = addAttribute(Color4ub(120, 120, 120), Color4ub(255, 255, 255), false, false, false);		// String
-	m_attributeNumber = addAttribute(Color4ub(0, 0, 120), Color4ub(255, 255, 255), false, false, false);			// Number
-	m_attributeComment = addAttribute(Color4ub(40, 120, 40), Color4ub(255, 255, 255), false, true, false);			// Comment
-	m_attributeFunction = addAttribute(Color4ub(120, 40, 40), Color4ub(255, 255, 255), false, false, false);		// Function
-	m_attributeType = addAttribute(Color4ub(160, 40, 255), Color4ub(255, 255, 255), false, false, false);			// Type
-	m_attributeKeyword = addAttribute(Color4ub(0, 0, 255), Color4ub(255, 255, 255), false, false, false);			// Keyword
-	m_attributeSpecial = addAttribute(Color4ub(255, 140, 0), Color4ub(255, 255, 255), false, false, false);			// Special
-	m_attributePreprocessor = addAttribute(Color4ub(0, 140, 255), Color4ub(255, 255, 255), false, false, false);	// Preprocessor
-	m_attributeError = addAttribute(Color4ub(255, 255, 255), Color4ub(255, 0, 0), false, false, false);				// Error
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	m_attributeDefault = addAttribute(ss->getColor(this, L"color-default"), ss->getColor(this, L"background-color-default"), false, false, false);
+	m_attributeString = addAttribute(ss->getColor(this, L"color-string"), ss->getColor(this, L"background-color-string"), false, false, false);
+	m_attributeNumber = addAttribute(ss->getColor(this, L"color-number"), ss->getColor(this, L"background-color-number"), false, false, false);
+	m_attributeComment = addAttribute(ss->getColor(this, L"color-comment"), ss->getColor(this, L"background-color-comment"), false, true, false);
+	m_attributeFunction = addAttribute(ss->getColor(this, L"color-function"), ss->getColor(this, L"background-color-function"), false, false, false);
+	m_attributeType = addAttribute(ss->getColor(this, L"color-type"), ss->getColor(this, L"background-color-type"), false, false, false);
+	m_attributeKeyword = addAttribute(ss->getColor(this, L"color-keyword"), ss->getColor(this, L"background-color-keyword"), false, false, false);
+	m_attributeSpecial = addAttribute(ss->getColor(this, L"color-special"), ss->getColor(this, L"background-color-special"), false, false, false);
+	m_attributePreprocessor = addAttribute(ss->getColor(this, L"color-preprocessor"), ss->getColor(this, L"background-color-preprocessor"), false, false, false);
+	m_attributeError = addAttribute(ss->getColor(this, L"color-error"), ss->getColor(this, L"background-color-error"), false, false, false);
 
 	addEventHandler< ContentChangeEvent >(this, &SyntaxRichEdit::eventChange);
 	return true;

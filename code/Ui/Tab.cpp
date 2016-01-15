@@ -355,7 +355,7 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 		bool closed = false;
 		if (m_closeButton && selectedPageState)
 		{
-			if (pnt.x >= selectedPageState->right - 16 && pnt.x < selectedPageState->right)
+			if (pnt.x >= selectedPageState->right - scaleBySystemDPI(16) && pnt.x < selectedPageState->right)
 			{
 				TabCloseEvent closeEvent(this, selectedPageState->page);
 				raiseEvent(&closeEvent);
@@ -507,10 +507,11 @@ void Tab::eventPaint(PaintEvent* event)
 				// Draw close button.
 				if (m_closeButton && (page == m_selectedPage || page == m_hoverPage))
 				{
+					Size closeSize = m_bitmapClose->getSize();
 					canvas.drawBitmap(
-						Point(rcTab.right - 10 - scaleBySystemDPI(4), rcTab.getCenter().y - 4),
-						Point(10, 0),
-						Size(10, 8),
+						Point(rcTab.right - closeSize.cx - scaleBySystemDPI(4), rcTab.getCenter().y - closeSize.cy / 2 + scaleBySystemDPI(1)),
+						Point(0, 0),
+						closeSize,
 						m_bitmapClose,
 						BmAlpha
 					);

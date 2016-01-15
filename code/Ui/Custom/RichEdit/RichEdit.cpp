@@ -7,6 +7,7 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/ScrollBar.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/RichEdit/RichEdit.h"
 
 namespace traktor
@@ -1036,6 +1037,7 @@ void RichEdit::eventMouseWheel(MouseWheelEvent* event)
 
 void RichEdit::eventPaint(PaintEvent* event)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 
 	Font font = getFont();
@@ -1052,8 +1054,8 @@ void RichEdit::eventPaint(PaintEvent* event)
 	}
 
 	// Clear entire background.
-	canvas.setBackground(Color4ub(255, 255, 255));
-	canvas.fillRect(updateRc);
+	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.fillRect(innerRc);
 
 	innerRc.right -= m_scrollBarV->getPreferedSize().cx;
 	innerRc.bottom -= m_scrollBarH->getPreferedSize().cy;
@@ -1073,11 +1075,10 @@ void RichEdit::eventPaint(PaintEvent* event)
 		Rect iconsRc(innerRc.left, innerRc.top, innerRc.left + scaleBySystemDPI(c_iconSize), innerRc.top + lineHeight);
 		Rect lineRc(innerRc.left + scaleBySystemDPI(c_iconSize), innerRc.top, innerRc.left + m_lineMargin, innerRc.top + lineHeight);
 
-		canvas.setForeground(Color4ub(180, 180, 180));
-		canvas.setBackground(Color4ub(200, 200, 200));
-		canvas.fillGradientRect(marginRc, false);
+		canvas.setBackground(ss->getColor(this, L"background-color-margin"));
+		canvas.fillRect(marginRc);
 
-		canvas.setForeground(Color4ub(0, 0, 0));
+		canvas.setForeground(ss->getColor(this, L"color-margin"));
 		for (uint32_t i = lineOffset; i < lineOffset + pageLines && i < lineCount; ++i)
 		{
 			canvas.drawText(lineRc, toString(i + 1), AnLeft, AnCenter);
@@ -1124,10 +1125,10 @@ void RichEdit::eventPaint(PaintEvent* event)
 				// Draw caret.
 				if (m_caret == j)
 				{
-					textRc.left = m_lineMargin + 2 + x - 1 - m_lineOffsetH;
-					textRc.right = textRc.left + 1;
+					textRc.left = m_lineMargin + 2 + x - scaleBySystemDPI(1) - m_lineOffsetH;
+					textRc.right = textRc.left + scaleBySystemDPI(1);
 
-					canvas.setBackground(Color4ub(0, 0, 0));
+					canvas.setBackground(ss->getColor(this, L"color-caret"));
 					canvas.fillRect(textRc);
 				}
 
@@ -1135,14 +1136,14 @@ void RichEdit::eventPaint(PaintEvent* event)
 				bool solidBackground = false;
 				if (j >= m_selectionStart && j < m_selectionStop)
 				{
-					canvas.setBackground(Color4ub(51, 153, 255));
-					canvas.setForeground(Color4ub(255, 255, 255));
+					canvas.setBackground(ss->getColor(this, L"background-color-selection"));
+					canvas.setForeground(ss->getColor(this, L"color-selection"));
 					solidBackground = true;
 				}
 				else
 				{
 					canvas.setForeground(attrib.textColor);
-					solidBackground = bool(attrib.backColor != Color4ub(255, 255, 255));
+					solidBackground = bool(attrib.backColor.a != 0);
 					if (solidBackground)
 						canvas.setBackground(attrib.backColor);
 				}
@@ -1182,10 +1183,10 @@ void RichEdit::eventPaint(PaintEvent* event)
 			// Special condition; caret at the very end of a line.
 			if (m_caret == line.stop)
 			{
-				textRc.left = m_lineMargin + 2 + x - 1;
-				textRc.right = textRc.left + 1;
+				textRc.left = m_lineMargin + 2 + x - scaleBySystemDPI(1);
+				textRc.right = textRc.left + scaleBySystemDPI(1);
 
-				canvas.setBackground(Color4ub(0, 0, 0));
+				canvas.setBackground(ss->getColor(this, L"color-caret"));
 				canvas.fillRect(textRc);
 			}
 

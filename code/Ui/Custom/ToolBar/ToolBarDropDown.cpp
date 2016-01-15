@@ -2,6 +2,7 @@
 #include "Ui/Canvas.h"
 #include "Ui/MenuItem.h"
 #include "Ui/PopupMenu.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
@@ -89,6 +90,7 @@ Size ToolBarDropDown::getSize(const ToolBar* toolBar, int imageWidth, int imageH
 
 void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Size size = getSize(toolBar, imageWidth, imageHeight);
 
 	int32_t sep = ui::scaleBySystemDPI(14);
@@ -106,15 +108,15 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, B
 		at.y + size.cy - 1
 	);
 
-	canvas.setBackground(getSystemColor(ScWindowBackground));
+	canvas.setBackground(ss->getColor(toolBar, m_hover ? L"item-background-color-dropdown-hover" : L"item-background-color-dropdown"));
 	canvas.fillRect(Rect(at, size));
 
-	canvas.setBackground(getSystemColor(ScMenuBackground));
+	canvas.setBackground(ss->getColor(toolBar, L"item-background-color-dropdown-button"));
 	canvas.fillRect(rcButton);
 
 	if (m_hover)
 	{
-		canvas.setForeground(Color4ub(128, 128, 140));
+		canvas.setForeground(ss->getColor(toolBar, L"item-color-dropdown-hover"));
 		canvas.drawRect(Rect(at, size));
 		canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom);
 	}
@@ -127,10 +129,10 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, B
 		ui::Point(center.x - ui::scaleBySystemDPI(1), center.y + ui::scaleBySystemDPI(2))
 	};
 
-	canvas.setBackground(getSystemColor(ScWindowText));
+	canvas.setBackground(ss->getColor(toolBar, L"item-color-dropdown-arrow"));
 	canvas.fillPolygon(pnts, 3);
 
-	canvas.setForeground(getSystemColor(ScWindowText));
+	canvas.setForeground(ss->getColor(toolBar, L"color"));
 	canvas.drawText(rcText, getSelectedItem(), AnLeft, AnCenter);
 
 	m_dropPosition = rcButton.left;

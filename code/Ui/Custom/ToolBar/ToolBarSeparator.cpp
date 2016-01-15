@@ -1,5 +1,8 @@
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
+#include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/StyleSheet.h"
+#include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
 namespace traktor
 {
@@ -22,7 +25,8 @@ Size ToolBarSeparator::getSize(const ToolBar* toolBar, int imageWidth, int image
 
 void ToolBarSeparator::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight)
 {
-	canvas.setForeground(Color4ub(160, 160, 160));
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	canvas.setForeground(ss->getColor(toolBar, L"item-color-seperator"));
 	canvas.drawLine(at, at + Size(0, imageHeight));
 }
 

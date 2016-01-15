@@ -51,7 +51,7 @@ public:
 	 * \param widgetFactory System widget factory instance.
 	 * \return True if application initialization succeeded.
 	 */
-	bool initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactory, StyleSheet* styleSheet);
+	bool initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactory, const StyleSheet* styleSheet);
 	
 	/*! \brief Cleanup UI application. */
 	void finalize();
@@ -88,6 +88,9 @@ public:
 	/*! \brief Get clipboard. */
 	Clipboard* getClipboard();
 
+	/*! \brief Set style sheet. */
+	void setStyleSheet(const StyleSheet* styleSheet);
+
 	/*! \brief Get style sheet. */
 	const StyleSheet* getStyleSheet() const;
 
@@ -112,7 +115,7 @@ private:
 	IEventLoop* m_eventLoop;
 	IWidgetFactory* m_widgetFactory;
 	Ref< Clipboard > m_clipboard;
-	Ref< StyleSheet > m_styleSheet;
+	Ref< const StyleSheet > m_styleSheet;
 };
 
 /*! \brief Convenience wrappers. */

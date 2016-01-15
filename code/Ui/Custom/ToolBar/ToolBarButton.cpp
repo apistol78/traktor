@@ -137,7 +137,7 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bit
 	{
 		Size textExtent = toolBar->getTextExtent(m_text);
 		int centerOffsetY = (size.cy - textExtent.cy) / 2;
-		canvas.setForeground(ss->getColor(toolBar, L"color") /*Color4ub(64, 64, 70)*/);
+		canvas.setForeground(ss->getColor(toolBar, L"color"));
 		canvas.drawText(
 			at + Size(centerOffsetX, centerOffsetY),
 			m_text

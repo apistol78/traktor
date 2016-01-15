@@ -87,6 +87,7 @@
 #include "Ui/MenuBar.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 #include "Ui/Custom/BackgroundWorkerDialog.h"
@@ -305,6 +306,15 @@ bool saveProperties(const Path& pathName, const PropertyGroup* properties, bool 
 	return result;
 }
 
+Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
+{
+	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, File::FmRead);
+	if (file)
+		return xml::XmlDeserializer(file).readObject< ui::StyleSheet >();
+	else
+		return 0;
+}
+
 Ref< db::Database > openDatabase(const std::wstring& connectionString, bool create)
 {
 	Ref< db::Database > database = new db::Database();
@@ -393,6 +403,16 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 
 	m_mergedSettings = m_globalSettings;
+
+	// Load editor stylesheet.
+	std::wstring styleSheetName = m_mergedSettings->getProperty< PropertyString >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/Light.xss");
+	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
+	if (!styleSheet)
+	{
+		log::error << L"Unable to load stylesheet " << styleSheetName << Endl;
+		return false;
+	}
+	ui::Application::getInstance()->setStyleSheet(styleSheet);
 
 	// Load dependent modules.
 #if !defined(T_STATIC)
@@ -2150,7 +2170,7 @@ void EditorForm::activateNextEditor()
 
 void EditorForm::loadLanguageDictionary()
 {
-	std::wstring dictionaryFile = m_mergedSettings->getProperty< PropertyString >(L"Editor.Dictionary");
+	std::wstring dictionaryFile = m_mergedSettings->getProperty< PropertyString >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/res/English.xml");
 
 	Ref< IStream > file = FileSystem::getInstance().open(dictionaryFile, File::FmRead);
 	if (!file)
@@ -2342,6 +2362,14 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				else
 					m_mergedSettings = m_globalSettings;
 
+				// Load editor stylesheet.
+				std::wstring styleSheetName = m_mergedSettings->getProperty< PropertyString >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/Light.xss");
+				Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
+				if (styleSheet)
+					ui::Application::getInstance()->setStyleSheet(styleSheet);
+				else
+					log::error << L"Unable to load stylesheet " << styleSheetName << Endl;
+
 				// Save modified settings; do this here as well as at termination
 				// as we want to make sure changes doesn't get lost in case of a crash.
 #if !defined(__APPLE__)
@@ -2360,6 +2388,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 							editorPage->handleCommand(ui::Command(L"Editor.SettingsChanged"));
 					}
 				}
+
+				update();
 			}
 
 			settingsDialog.destroy();

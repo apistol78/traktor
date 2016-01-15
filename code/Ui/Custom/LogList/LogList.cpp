@@ -153,8 +153,8 @@ void LogList::updateScrollBar()
 {
 	Rect inner = getInnerRect();
 
-	int logCount = int(m_logFiltered.size());
-	int pageCount = inner.getHeight() / m_itemHeight;
+	int32_t logCount = int(m_logFiltered.size());
+	int32_t pageCount = inner.getHeight() / m_itemHeight;
 
 	m_scrollBar->setRange(logCount);
 	m_scrollBar->setPage(pageCount);
@@ -167,9 +167,18 @@ void LogList::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
-
-	const Color4ub c_levelColors[] = { Color4ub(255, 255, 255), Color4ub(255, 255, 200), Color4ub(255, 200, 200) };
-	const Color4ub c_threadColors[] = { Color4ub(255, 255, 255), Color4ub(255, 255, 230), Color4ub(240, 240, 255), Color4ub(230, 255, 255) };
+	const Color4ub levelColors[] =
+	{
+		ss->getColor(this, L"color-info"),
+		ss->getColor(this, L"color-warning"),
+		ss->getColor(this, L"color-error")
+	};
+	const Color4ub levelBgColors[] =
+	{
+		ss->getColor(this, L"background-color-info"),
+		ss->getColor(this, L"background-color-warning"),
+		ss->getColor(this, L"background-color-error")
+	};
 
 	// Get inner rectangle, adjust for scrollbar.
 	Rect inner = getInnerRect();
@@ -179,21 +188,20 @@ void LogList::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(inner);
 
-	int scrollOffset = m_scrollBar->getPosition();
+	int32_t scrollOffset = m_scrollBar->getPosition();
 	Rect rc(inner.getTopLeft(), Size(inner.getWidth(), m_itemHeight));
 
 	log_list_t::const_iterator i = m_logFiltered.begin();
 
 	// Advance iterator by scroll offset, keep a page worth of lines.
-	int advanceCount = scrollOffset;
+	int32_t advanceCount = scrollOffset;
 	advanceCount = std::max(0, advanceCount);
-	advanceCount = std::min(advanceCount, int(m_logFiltered.size()));
+	advanceCount = std::min(advanceCount, int32_t(m_logFiltered.size()));
 	std::advance(i, advanceCount);
 
 	for (; i != m_logFiltered.end(); ++i)
 	{
 		uint32_t threadIndex = m_threadIndices[i->threadId];
-		Color4ub backgroundColor = c_threadColors[threadIndex % sizeof_array(c_threadColors)];
 
 		Size iconSize(m_icons->getSize().cy, m_icons->getSize().cy);
 		Point iconPos = rc.getTopLeft() + Size(0, (rc.getHeight() - iconSize.cy) / 2);
@@ -201,34 +209,46 @@ void LogList::eventPaint(PaintEvent* event)
 		{
 		case LvDebug:
 		case LvInfo:
-			canvas.setBackground(backgroundColor * c_levelColors[0]);
-			canvas.fillRect(rc);
+			if (levelBgColors[0].a != 0)
+			{
+				canvas.setBackground(levelBgColors[0]);
+				canvas.fillRect(rc);
+			}
 			canvas.drawBitmap(iconPos, Point(0, 0), iconSize, m_icons, BmAlpha);
+			canvas.setForeground(levelColors[0]);
 			break;
 
 		case LvWarning:
-			canvas.setBackground(backgroundColor * c_levelColors[1]);
-			canvas.fillRect(rc);
+			if (levelBgColors[1].a != 0)
+			{
+				canvas.setBackground(levelBgColors[1]);
+				canvas.fillRect(rc);
+			}
 			canvas.drawBitmap(iconPos, Point(iconSize.cx, 0), iconSize, m_icons, BmAlpha);
+			canvas.setForeground(levelColors[1]);
 			break;
 
 		case LvError:
-			canvas.setBackground(backgroundColor * c_levelColors[2]);
-			canvas.fillRect(rc);
+			if (levelBgColors[2].a != 0)
+			{
+				canvas.setBackground(levelBgColors[2]);
+				canvas.fillRect(rc);
+			}
 			canvas.drawBitmap(iconPos, Point(2 * iconSize.cx, 0), iconSize, m_icons, BmAlpha);
+			canvas.setForeground(levelColors[2]);
 			break;
 
 		default:
-			canvas.setBackground(backgroundColor * c_levelColors[0]);
+			if (levelBgColors[0].a != 0)
+				canvas.setBackground(levelBgColors[0]);
 			canvas.fillRect(rc);
+			canvas.setForeground(levelColors[0]);
 			break;
 		}
 
 		Rect textRect(rc.left + iconSize.cx, rc.top, rc.right, rc.bottom);
-		canvas.setForeground(Color4ub(0, 0, 0));
-
 		canvas.drawText(textRect, toString(threadIndex) + L">", AnLeft, AnCenter);
-		textRect.left += ui::scaleBySystemDPI(20);
+		textRect.left += scaleBySystemDPI(20);
 
 		size_t s = 0;
 		while (s < i->logText.length())
@@ -237,7 +257,7 @@ void LogList::eventPaint(PaintEvent* event)
 			if (e1 == i->logText.npos)
 				break;
 
-			textRect.left += int(e1 - s) * 8 * 4;
+			textRect.left += int32_t(e1 - s) * scaleBySystemDPI(8 * 4);
 
 			size_t e2 = i->logText.find_first_of('\t', e1);
 			if (e2 == i->logText.npos)
@@ -247,7 +267,6 @@ void LogList::eventPaint(PaintEvent* event)
 				break;
 
 			std::wstring text = i->logText.substr(e1, e2 - e1);
-
 			canvas.drawText(textRect, text, AnLeft, AnCenter);
 
 			Size extent = canvas.getTextExtent(text);
@@ -264,7 +283,7 @@ void LogList::eventPaint(PaintEvent* event)
 
 void LogList::eventSize(SizeEvent* event)
 {
-	int width = m_scrollBar->getPreferedSize().cx;
+	int32_t width = m_scrollBar->getPreferedSize().cx;
 
 	Rect inner = getInnerRect();
 	Rect rc(Point(inner.getWidth() - width, 0), Size(width, inner.getHeight()));
@@ -276,7 +295,7 @@ void LogList::eventSize(SizeEvent* event)
 
 void LogList::eventMouseWheel(MouseWheelEvent* event)
 {
-	int position = m_scrollBar->getPosition();
+	int32_t position = m_scrollBar->getPosition();
 	position -= event->getRotation() * 4;
 	m_scrollBar->setPosition(position);
 	update();
@@ -313,7 +332,7 @@ void LogList::eventTimer(TimerEvent* event)
 	if (added > 0)
 	{
 		updateScrollBar();
-		m_scrollBar->setPosition(int(m_logFiltered.size()));
+		m_scrollBar->setPosition(int32_t(m_logFiltered.size()));
 	}
 
 	update();
