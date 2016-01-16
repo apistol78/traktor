@@ -20,6 +20,7 @@ class IStream;
 	{
 
 class HttpResponse;
+class IHttpRequestContent;
 class Url;
 
 /*! \brief
@@ -30,11 +31,17 @@ class T_DLLCLASS HttpClient : public Object
 	T_RTTI_CLASS;
 
 public:
-	Ref< HttpResponse > get(const net::Url& url, const std::wstring& content);
+	Ref< HttpResponse > get(const net::Url& url);
 
-	Ref< HttpResponse > put(const net::Url& url, const std::wstring& content);
+	Ref< HttpResponse > get(const net::Url& url, const IHttpRequestContent& content);
 
-	Ref< HttpResponse > post(const net::Url& url, const std::wstring& content);
+	Ref< HttpResponse > put(const net::Url& url);
+
+	Ref< HttpResponse > put(const net::Url& url, const IHttpRequestContent& content);
+
+	Ref< HttpResponse > post(const net::Url& url);
+
+	Ref< HttpResponse > post(const net::Url& url, const IHttpRequestContent& content);
 
 	Ref< IStream > getStream();
 
