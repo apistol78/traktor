@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Net/Url.h"
 #include "Net/Http/HttpClient.h"
+#include "Net/Http/HttpRequestContent.h"
 #include "Net/Http/HttpResponse.h"
 #include "Telemetry/EventTask.h"
 
@@ -34,7 +35,7 @@ ITask::TaskResult EventTask::execute()
 	net::HttpClient client;
 	Ref< net::HttpResponse > response = client.put(
 		net::Url(L"http://" + m_serverHost + L"/Api/Event.php"),
-		ss.str()
+		net::HttpRequestContent(ss.str())
 	);
 	if (!response)
 	{

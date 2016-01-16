@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Net/Url.h"
 #include "Net/Http/HttpClient.h"
+#include "Net/Http/HttpRequestContent.h"
 #include "Net/Http/HttpResponse.h"
 #include "Telemetry/SetValueTask.h"
 
@@ -36,7 +37,7 @@ ITask::TaskResult SetValueTask::execute()
 	net::HttpClient client;
 	Ref< net::HttpResponse > response = client.put(
 		net::Url(L"http://" + m_serverHost + L"/Api/Set.php"),
-		ss.str()
+		net::HttpRequestContent(ss.str())
 	);
 	if (!response)
 	{

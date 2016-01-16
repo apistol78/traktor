@@ -15,6 +15,8 @@
 #include "Net/Http/HttpClient.h"
 #include "Net/Http/HttpResponse.h"
 #include "Net/Http/HttpRequest.h"
+#include "Net/Http/HttpRequestContent.h"
+#include "Net/Http/HttpRequestParameters.h"
 #include "Net/Http/HttpServer.h"
 #include "Net/Replication/INetworkTopology.h"
 #include "Net/Replication/IPeer2PeerProvider.h"
@@ -33,6 +35,36 @@ namespace traktor
 	{
 		namespace
 		{
+
+Ref< HttpResponse > net_HttpClient_get_2(HttpClient* self, const Url& url)
+{
+	return self->get(url);
+}
+
+Ref< HttpResponse > net_HttpClient_get_3(HttpClient* self, const Url& url, const IHttpRequestContent& content)
+{
+	return self->get(url, content);
+}
+
+Ref< HttpResponse > net_HttpClient_put_2(HttpClient* self, const Url& url)
+{
+	return self->put(url);
+}
+
+Ref< HttpResponse > net_HttpClient_put_3(HttpClient* self, const Url& url, const IHttpRequestContent& content)
+{
+	return self->put(url, content);
+}
+
+Ref< HttpResponse > net_HttpClient_post_2(HttpClient* self, const Url& url)
+{
+	return self->post(url);
+}
+
+Ref< HttpResponse > net_HttpClient_post_3(HttpClient* self, const Url& url, const IHttpRequestContent& content)
+{
+	return self->post(url, content);
+}
 
 std::wstring net_HttpRequest_getMethod(HttpRequest* self)
 {
@@ -301,11 +333,28 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classUrlConnection->addMethod("getStream", &UrlConnection::getStream);
 	registrar->registerClass(classUrlConnection);
 
+	Ref< AutoRuntimeClass< IHttpRequestContent > > classIHttpRequestContent = new AutoRuntimeClass< IHttpRequestContent >();
+	classIHttpRequestContent->addMethod("getUrlEncodedContent", &IHttpRequestContent::getUrlEncodedContent);
+	registrar->registerClass(classIHttpRequestContent);
+
+	Ref< AutoRuntimeClass< HttpRequestContent > > classHttpRequestContent = new AutoRuntimeClass< HttpRequestContent >();
+	classHttpRequestContent->addConstructor();
+	classHttpRequestContent->addConstructor< const std::wstring& >();
+	registrar->registerClass(classHttpRequestContent);
+
+	Ref< AutoRuntimeClass< HttpRequestParameters > > classHttpRequestParameters = new AutoRuntimeClass< HttpRequestParameters >();
+	classHttpRequestParameters->addConstructor();
+	classHttpRequestParameters->addMethod("set", &HttpRequestParameters::set);
+	registrar->registerClass(classHttpRequestParameters);
+
 	Ref< AutoRuntimeClass< HttpClient > > classHttpClient = new AutoRuntimeClass< HttpClient >();
 	classHttpClient->addConstructor();
-	classHttpClient->addMethod("get", &HttpClient::get);
-	classHttpClient->addMethod("put", &HttpClient::put);
-	classHttpClient->addMethod("post", &HttpClient::post);
+	classHttpClient->addMethod("get", &net_HttpClient_get_2);
+	classHttpClient->addMethod("get", &net_HttpClient_get_3);
+	classHttpClient->addMethod("put", &net_HttpClient_put_2);
+	classHttpClient->addMethod("put", &net_HttpClient_put_3);
+	classHttpClient->addMethod("post", &net_HttpClient_post_2);
+	classHttpClient->addMethod("post", &net_HttpClient_post_3);
 	classHttpClient->addMethod("getStream", &HttpClient::getStream);
 	registrar->registerClass(classHttpClient);
 
