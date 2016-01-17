@@ -16,12 +16,10 @@ namespace traktor
 {
 	namespace ui
 	{
-
-class ScrollBar;
-
 		namespace custom
 		{
 
+class ScrollBar;
 class SequenceItem;
 
 /*! \brief Sequencer control.

@@ -20,12 +20,12 @@ class Guid;
 	{
 
 class HierarchicalState;
-class ScrollBar;
 
 		namespace custom
 		{
 
 class PropertyItem;
+class ScrollBar;
 
 /*! \brief Property list control.
  * \ingroup UIC

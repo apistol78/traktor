@@ -22,10 +22,11 @@ class Guid;
 	{
 
 class Bitmap;
-class ScrollBar;
 
 		namespace custom
 		{
+
+class ScrollBar;
 
 /*! \brief Log list control.
  * \ingroup UIC
