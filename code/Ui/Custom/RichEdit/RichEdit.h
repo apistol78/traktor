@@ -18,10 +18,11 @@ namespace traktor
 	{
 
 class Bitmap;
-class ScrollBar;
 
 		namespace custom
 		{
+
+class ScrollBar;
 
 /*! \brief Rich, multi-line, text editor.
  * \ingroup UIC

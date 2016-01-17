@@ -515,5 +515,22 @@
 			<element>background-color-error</element>
 			<color>255, 0, 0, 255</color>
 		</item>
+
+		<!-- ScrollBar -->
+		<item>
+			<type>traktor.ui.custom.ScrollBar</type>
+			<element>background-color</element>
+			<color>60, 60, 62, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.ScrollBar</type>
+			<element>color-arrow</element>
+			<color>120, 120, 120, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.ScrollBar</type>
+			<element>color-slider</element>
+			<color>120, 120, 120, 255</color>
+		</item>
 	</groups>
 </object>

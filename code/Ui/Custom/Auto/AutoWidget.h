@@ -16,13 +16,11 @@ namespace traktor
 {
 	namespace ui
 	{
-
-class ScrollBar;
-
 		namespace custom
 		{
 
 class AutoWidgetCell;
+class ScrollBar;
 
 /*! \brief Auto layout widget.
  * \ingroup UIC

@@ -9,8 +9,8 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
-#include "Ui/ScrollBar.h"
 #include "Ui/StyleSheet.h"
+#include "Ui/Custom/ScrollBar.h"
 #include "Ui/Custom/LogList/LogList.h"
 
 // Resources

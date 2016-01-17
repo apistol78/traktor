@@ -4,7 +4,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
-#include "Ui/ScrollBar.h"
+#include "Ui/Custom/ScrollBar.h"
 #include "Ui/Custom/Sequencer/CursorMoveEvent.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/SequenceGroup.h"
