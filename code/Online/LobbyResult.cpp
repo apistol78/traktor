@@ -15,6 +15,7 @@ void LobbyResult::succeed(ILobby* lobby)
 
 ILobby* LobbyResult::get() const
 {
+	wait();
 	return m_lobby;
 }
 

@@ -15,6 +15,7 @@ void PartyResult::succeed(IParty* lobby)
 
 IParty* PartyResult::get() const
 {
+	wait();
 	return m_lobby;
 }
 
