@@ -1,15 +1,11 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Command.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/NullPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-
-// Resources
-#include "Resources/SmallDots.h"
-#include "Resources/SmallPlus.h"
 
 namespace traktor
 {
@@ -20,8 +16,8 @@ namespace traktor
 			namespace
 			{
 
-Ref< Bitmap > s_imageSmallDots;
-Ref< Bitmap > s_imageSmallPlus;
+Ref< IBitmap > s_imageSmallDots;
+Ref< IBitmap > s_imageSmallPlus;
 
 			}
 
@@ -33,9 +29,9 @@ ArrayPropertyItem::ArrayPropertyItem(const std::wstring& text, const TypeInfo* e
 ,	m_readOnly(readOnly)
 {
 	if (!s_imageSmallDots)
-		s_imageSmallDots = ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image");
+		s_imageSmallDots = new ui::StyleBitmap(L"UI.SmallDots");
 	if (!s_imageSmallPlus)
-		s_imageSmallPlus = ui::Bitmap::load(c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus), L"image");
+		s_imageSmallPlus = new ui::StyleBitmap(L"UI.SmallPlus");
 }
 
 void ArrayPropertyItem::setElementType(const TypeInfo* elementType)

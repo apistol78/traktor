@@ -517,12 +517,12 @@ void CanvasDirect2DWin32::fillPolygon(const Point* pnts, int npnts)
 	);
 }
 
-void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode)
+void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)
 {
 	drawBitmap(dstAt, size, srcAt, size, bitmap, blendMode);
 }
 
-void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
+void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode)
 {
 	ID2D1Bitmap* bm = getCachedBitmap(bitmap);
 	if (!bm)
@@ -693,9 +693,9 @@ void CanvasDirect2DWin32::shutdown()
 	s_d2dFactory.release();
 }
 
-ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const IBitmap* bm)
+ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 {
-	std::map< const IBitmap*, ComRef< ID2D1Bitmap > >::const_iterator i = m_d2dBitmaps.find(bm);
+	std::map< const ISystemBitmap*, ComRef< ID2D1Bitmap > >::const_iterator i = m_d2dBitmaps.find(bm);
 	if (i != m_d2dBitmaps.end())
 		return i->second;
 

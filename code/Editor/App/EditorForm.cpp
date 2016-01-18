@@ -87,6 +87,7 @@
 #include "Ui/MenuBar.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
@@ -102,15 +103,15 @@
 #include "Xml/XmlDeserializer.h"
 
 // Resources
-#include "Resources/Build.h"
-#include "Resources/CancelBuild.h"
-#include "Resources/Copy.h"
-#include "Resources/Cut.h"
-#include "Resources/Paste.h"
-#include "Resources/Redo.h"
-#include "Resources/Save.h"
-#include "Resources/Types.h"
-#include "Resources/Undo.h"
+//#include "Resources/Build.h"
+//#include "Resources/CancelBuild.h"
+//#include "Resources/Copy.h"
+//#include "Resources/Cut.h"
+//#include "Resources/Paste.h"
+//#include "Resources/Redo.h"
+//#include "Resources/Save.h"
+//#include "Resources/Types.h"
+//#include "Resources/Undo.h"
 
 #if defined(MessageBox)
 #	undef MessageBox
@@ -499,14 +500,15 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Create toolbar.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(this, ui::WsNone);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceCut, sizeof(c_ResourceCut), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceCopy, sizeof(c_ResourceCopy), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourcePaste, sizeof(c_ResourcePaste), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceUndo, sizeof(c_ResourceUndo), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceRedo, sizeof(c_ResourceRedo), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceBuild, sizeof(c_ResourceBuild), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceCancelBuild, sizeof(c_ResourceCancelBuild), L"image"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Cut"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Paste"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Undo"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Redo"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Build"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.CancelBuild"), 1);
+
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Editor.Save")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 1, ui::Command(L"Editor.Cut")));
@@ -584,7 +586,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	m_tab = new ui::Tab();
 	m_tab->create(m_dock, ui::Tab::WsLine | ui::Tab::WsCloseButton);
-	m_tab->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"image"), 23);
+	m_tab->addImage(new ui::StyleBitmap(L"Editor.Database.Types"), 23);
 	m_tab->addEventHandler< ui::MouseButtonDownEvent >(this, &EditorForm::eventTabButtonDown);
 	m_tab->addEventHandler< ui::TabSelectionChangeEvent >(this, &EditorForm::eventTabSelChange);
 	m_tab->addEventHandler< ui::TabCloseEvent >(this, &EditorForm::eventTabClose);

@@ -318,7 +318,7 @@ void CanvasGdiPlusWin32::fillPolygon(const Point* pnts, int count)
 	m_graphics->FillPolygon(&m_brush, &points[0], (INT)points.size());
 }
 
-void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode)
+void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)
 {
 	Gdiplus::Bitmap* bm = reinterpret_cast< BitmapWin32* >(bitmap)->getGdiPlusBitmap();
 	if (bm)
@@ -350,7 +350,7 @@ void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, cons
 	}
 }
 
-void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
+void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode)
 {
 	Gdiplus::Bitmap* bm = reinterpret_cast< BitmapWin32* >(bitmap)->getGdiPlusBitmap();
 	if (bm)

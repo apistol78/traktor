@@ -41,7 +41,7 @@ class ITreeView;
 class IUserWidget;
 class IWebBrowser;
 class INative;
-class IBitmap;
+class ISystemBitmap;
 class IClipboard;
 
 /*! \brief Widget factory interface.
@@ -106,7 +106,7 @@ public:
 
 	virtual INative* createNative(EventSubject* owner) = 0;
 
-	virtual IBitmap* createBitmap() = 0;
+	virtual ISystemBitmap* createBitmap() = 0;
 
 	virtual IClipboard* createClipboard() = 0;
 

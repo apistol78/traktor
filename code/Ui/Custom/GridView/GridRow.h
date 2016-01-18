@@ -18,7 +18,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
+class IBitmap;
 
 		namespace custom
 		{
@@ -97,7 +97,7 @@ private:
 	uint32_t m_state;
 	Color4ub m_background;
 	int32_t m_minimumHeight;
-	Ref< Bitmap > m_expand;
+	Ref< IBitmap > m_expand;
 	RefArray< GridCell > m_items;
 	GridRow* m_parent;
 	RefArray< GridRow > m_children;

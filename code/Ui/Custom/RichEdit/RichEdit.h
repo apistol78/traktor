@@ -17,7 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
+class IBitmap;
 
 		namespace custom
 		{
@@ -49,7 +49,7 @@ public:
 	void setAttribute(int32_t start, int32_t length, int32_t attribute);
 
 	/*! \brief Define new image. */
-	int32_t addImage(Bitmap* image, uint32_t imageCount);
+	int32_t addImage(IBitmap* image, uint32_t imageCount);
 
 	/*! \brief Use image on a line of text. */
 	void setImage(int32_t line, int32_t image);
@@ -152,7 +152,7 @@ private:
 	Ref< ScrollBar > m_scrollBarV;
 	Ref< ScrollBar > m_scrollBarH;
 	std::vector< Attribute > m_attributes;
-	Ref< Bitmap > m_image;
+	Ref< IBitmap > m_image;
 	uint32_t m_imageWidth;
 	uint32_t m_imageHeight;
 	uint32_t m_imageCount;

@@ -18,7 +18,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
+class IBitmap;
 
 		namespace custom
 		{
@@ -46,7 +46,7 @@ public:
 
 	void destroy();
 
-	uint32_t addImage(Bitmap* image, uint32_t imageCount);
+	uint32_t addImage(IBitmap* image, uint32_t imageCount);
 
 	uint32_t addItem(ToolBarItem* item);
 
@@ -61,8 +61,8 @@ public:
 private:
 	Ref< ToolTip > m_toolTip;
 	int m_style;
-	Ref< Bitmap > m_imageEnabled;
-	Ref< Bitmap > m_imageDisabled;
+	Ref< IBitmap > m_imageEnabled;
+	Ref< IBitmap > m_imageDisabled;
 	uint32_t m_imageWidth;
 	uint32_t m_imageHeight;
 	uint32_t m_imageCount;

@@ -8,7 +8,7 @@ namespace traktor
 	namespace ui
 	{
 
-class IBitmap;
+class ISystemBitmap;
 class TreeViewItem;
 
 /*! \brief TreeView interface.
@@ -19,7 +19,7 @@ class ITreeView : public IWidget
 public:
 	virtual bool create(IWidget* parent, int style) = 0;
 
-	virtual int addImage(IBitmap* image, int imageCount) = 0;
+	virtual int addImage(ISystemBitmap* image, int imageCount) = 0;
 
 	virtual Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage) = 0;
 

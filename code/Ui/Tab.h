@@ -16,8 +16,8 @@ namespace traktor
 	namespace ui
 	{
 
+class IBitmap;
 class TabPage;
-class Bitmap;
 
 /*! \brief Tab container.
  * \ingroup UI
@@ -41,7 +41,7 @@ public:
 
 	virtual Rect getInnerRect() const;
 
-	int32_t addImage(Bitmap* image, int32_t imageCount);
+	int32_t addImage(IBitmap* image, int32_t imageCount);
 	
 	int32_t addPage(TabPage* page);
 
@@ -83,8 +83,8 @@ private:
 
 	typedef std::vector< PageState > page_state_vector_t;
 
-	Ref< Bitmap > m_bitmapClose;
-	Ref< Bitmap > m_bitmapImages;
+	Ref< IBitmap > m_bitmapClose;
+	Ref< IBitmap > m_bitmapImages;
 	uint32_t m_imageWidth;
 	uint32_t m_imageHeight;
 	Rect m_innerRect;

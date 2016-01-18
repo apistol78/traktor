@@ -1,13 +1,10 @@
 #include "Core/Io/StringOutputStream.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Command.h"
 #include "Ui/Edit.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/FilePropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-
-// Resources
-#include "Resources/SmallDots.h"
 
 namespace traktor
 {
@@ -48,7 +45,7 @@ void FilePropertyItem::createInPlaceControls(Widget* parent)
 
 	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
-	m_buttonEdit->create(parent, ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image"));
+	m_buttonEdit->create(parent, new ui::StyleBitmap(L"UI.SmallDots"));
 	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &FilePropertyItem::eventClick);
 }
 

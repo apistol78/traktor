@@ -80,7 +80,7 @@ void FormWin32::destroy()
 	WidgetWin32Impl< IForm >::destroy();
 }
 
-void FormWin32::setIcon(IBitmap* icon)
+void FormWin32::setIcon(ISystemBitmap* icon)
 {
 	ICONINFO ii;
 

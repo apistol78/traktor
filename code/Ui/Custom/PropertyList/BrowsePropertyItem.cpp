@@ -1,14 +1,10 @@
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-
-// Resources
-#include "Resources/SmallPen.h"
-#include "Resources/SmallDots.h"
 
 namespace traktor
 {
@@ -54,13 +50,13 @@ void BrowsePropertyItem::createInPlaceControls(Widget* parent)
 
 	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
-	m_buttonEdit->create(parent, Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"image"));
+	m_buttonEdit->create(parent, new ui::StyleBitmap(L"UI.SmallPen"));
 	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &BrowsePropertyItem::eventEditClick);
 	m_buttonEdit->setEnable(!m_value.isNull());
 	
 	T_ASSERT (!m_buttonBrowse);
 	m_buttonBrowse = new MiniButton();
-	m_buttonBrowse->create(parent,ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image"));
+	m_buttonBrowse->create(parent,new ui::StyleBitmap(L"UI.SmallDots"));
 	m_buttonBrowse->addEventHandler< ButtonClickEvent >(this, &BrowsePropertyItem::eventBrowseClick);
 }
 

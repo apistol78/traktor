@@ -23,7 +23,7 @@ public:
 
 	virtual void destroy();
 
-	virtual void setIcon(IBitmap* icon);
+	virtual void setIcon(ISystemBitmap* icon);
 
 	virtual void maximize();
 

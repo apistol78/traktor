@@ -31,7 +31,7 @@ Size ToolBarEmbed::getSize(const ToolBar* toolBar, int imageWidth, int imageHeig
 	);
 }
 
-void ToolBarEmbed::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight)
+void ToolBarEmbed::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
 {
 	Rect rc(at, getSize(toolBar, imageWidth, imageHeight));
 	m_widget->setRect(rc);

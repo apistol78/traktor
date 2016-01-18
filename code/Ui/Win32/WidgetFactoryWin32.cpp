@@ -191,7 +191,7 @@ INative* WidgetFactoryWin32::createNative(EventSubject* owner)
 	return new NativeWin32(owner);
 }
 
-IBitmap* WidgetFactoryWin32::createBitmap()
+ISystemBitmap* WidgetFactoryWin32::createBitmap()
 {
 	return new BitmapWin32();
 }

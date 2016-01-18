@@ -55,9 +55,22 @@ Color4ub StyleSheet::getColor(const Widget* widget, const wchar_t* const element
 	return Color4ub(255, 255, 255);
 }
 
+std::wstring StyleSheet::getValue(const wchar_t* const name) const
+{
+	for (std::vector< Value >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
+	{
+		if (i->name != name)
+			continue;
+
+		return i->value;
+	}
+	return L"";
+}
+
 void StyleSheet::serialize(ISerializer& s)
 {
 	s >> MemberStlVector< Group, MemberComposite< Group > >(L"groups", m_groups);
+	s >> MemberStlVector< Value, MemberComposite< Value > >(L"values", m_values);
 }
 
 void StyleSheet::setColor(const wchar_t* const type, const wchar_t* const element, const Color4ub& color)
@@ -74,6 +87,12 @@ void StyleSheet::Group::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"type", type);
 	s >> Member< std::wstring >(L"element", element);
 	s >> Member< Color4ub >(L"color", color);
+}
+
+void StyleSheet::Value::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> Member< std::wstring >(L"value", value);
 }
 
 	}

@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/NotificationIcon.h"
@@ -24,7 +25,7 @@ NotificationIcon::~NotificationIcon()
 
 bool NotificationIcon::create(const std::wstring& text, Bitmap* image)
 {
-	if (!image || !image->getIBitmap())
+	if (!image || !image->getSystemBitmap())
 		return false;
 
 	m_ni = Application::getInstance()->getWidgetFactory()->createNotificationIcon(this);
@@ -34,7 +35,7 @@ bool NotificationIcon::create(const std::wstring& text, Bitmap* image)
 		return false;
 	}
 
-	if (!m_ni->create(text, image->getIBitmap()))
+	if (!m_ni->create(text, image->getSystemBitmap()))
 		return false;
 
 	return true;
@@ -42,16 +43,12 @@ bool NotificationIcon::create(const std::wstring& text, Bitmap* image)
 
 void NotificationIcon::destroy()
 {
-	if (m_ni)
-	{
-		m_ni->destroy();
-		m_ni = 0;
-	}
+	safeDestroy(m_ni);
 }
 
 void NotificationIcon::setImage(Bitmap* image)
 {
-	m_ni->setImage(image->getIBitmap());
+	m_ni->setImage(image->getSystemBitmap());
 }
 
 	}

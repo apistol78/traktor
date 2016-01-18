@@ -5,7 +5,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/App/LogView.h"
 #include "I18N/Text.h"
-#include "Ui/Bitmap.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
@@ -13,12 +13,6 @@
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-
-// Resources
-#include "Resources/LogError.h"
-#include "Resources/LogInfo.h"
-#include "Resources/LogWarning.h"
-#include "Resources/Copy.h"
 
 namespace traktor
 {
@@ -81,10 +75,10 @@ bool LogView::create(ui::Widget* parent)
 
 	m_toolFilter = new ui::custom::ToolBar();
 	m_toolFilter->create(this);
-	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceCopy, sizeof(c_ResourceCopy), L"image"), 1);
-	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceLogError, sizeof(c_ResourceLogError), L"image"), 1);
-	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceLogInfo, sizeof(c_ResourceLogInfo), L"image"), 1);
-	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceLogWarning, sizeof(c_ResourceLogWarning), L"image"), 1);
+	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"), 1);
+	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.Log.Error"), 1);
+	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.Log.Info"), 1);
+	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.Log.Warning"), 1);
 	m_toolFilter->addItem(m_toolToggleInfo);
 	m_toolFilter->addItem(m_toolToggleWarning);
 	m_toolFilter->addItem(m_toolToggleError);

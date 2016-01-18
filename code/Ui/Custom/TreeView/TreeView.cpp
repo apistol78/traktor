@@ -5,12 +5,11 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Edit.h"
 #include "Ui/HierarchicalState.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/TreeView/TreeView.h"
 #include "Ui/Custom/TreeView/TreeViewContentChangeEvent.h"
 #include "Ui/Custom/TreeView/TreeViewEditEvent.h"
 #include "Ui/Custom/TreeView/TreeViewItem.h"
-
-#include "Resources/Tree.h"
 
 namespace traktor
 {
@@ -29,7 +28,7 @@ TreeView::TreeView()
 {
 }
 
-bool TreeView::create(Widget* parent, int style)
+bool TreeView::create(Widget* parent, int32_t style)
 {
 	if (!AutoWidget::create(parent, style))
 		return false;
@@ -41,13 +40,13 @@ bool TreeView::create(Widget* parent, int style)
 	m_itemEditor->hide();
 	m_itemEditor->addEventHandler< FocusEvent >(this, &TreeView::eventEditFocus);
 
-	m_imageState = Bitmap::load(c_ResourceTree, sizeof(c_ResourceTree), L"image");
+	m_imageState = new ui::StyleBitmap(L"UI.Tree");
 
 	addEventHandler< ScrollEvent >(this, &TreeView::eventScroll);
 	return true;
 }
 
-int TreeView::addImage(Bitmap* image, int imageCount)
+int32_t TreeView::addImage(IBitmap* image, int32_t imageCount)
 {
 	if (m_imageCount <= 0)
 	{
@@ -57,14 +56,12 @@ int TreeView::addImage(Bitmap* image, int imageCount)
 
 	if (m_image)
 	{
-		Ref< Bitmap > source = image;
-
-		uint32_t width = m_image->getSize().cx + source->getSize().cx;
-		uint32_t height = std::max(m_image->getSize().cy, source->getSize().cy);
+		uint32_t width = m_image->getSize().cx + image->getSize().cx;
+		uint32_t height = std::max(m_image->getSize().cy, image->getSize().cy);
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
 		newImage->copyImage(m_image->getImage());
-		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), source->getSize()), Point(m_image->getSize().cx, 0));
+		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(m_image->getSize().cx, 0));
 		m_image = newImage;
 	}
 	else
@@ -78,7 +75,7 @@ int TreeView::addImage(Bitmap* image, int imageCount)
 	return m_imageCount - imageCount;
 }
 
-Ref< TreeViewItem > TreeView::createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage)
+Ref< TreeViewItem > TreeView::createItem(TreeViewItem* parent, const std::wstring& text, int32_t image, int32_t expandedImage)
 {
 	Ref< TreeViewItem > item = new TreeViewItem(this, parent, text, image, expandedImage);
 

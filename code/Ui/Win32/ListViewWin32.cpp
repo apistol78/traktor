@@ -84,7 +84,7 @@ void ListViewWin32::setStyle(int style)
 	UpdateWindow(m_hWnd);
 }
 
-int ListViewWin32::addImage(IBitmap* image, int imageCount, bool smallImage)
+int ListViewWin32::addImage(ISystemBitmap* image, int imageCount, bool smallImage)
 {
 	if (!m_hImageList)
 	{

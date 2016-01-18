@@ -9,7 +9,7 @@ namespace traktor
 	{
 
 class EventSubject;
-class IBitmap;
+class ISystemBitmap;
 
 /*! \brief Form interface.
  * \ingroup UI
@@ -19,7 +19,7 @@ class IForm : public IWidget
 public:
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) = 0;
 
-	virtual void setIcon(IBitmap* icon) = 0;
+	virtual void setIcon(ISystemBitmap* icon) = 0;
 
 	virtual void maximize() = 0;
 

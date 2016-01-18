@@ -15,6 +15,9 @@ namespace traktor
 {
 	namespace ui
 	{
+
+class Bitmap;
+
 		namespace custom
 		{
 

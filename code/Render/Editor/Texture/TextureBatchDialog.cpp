@@ -5,19 +5,16 @@
 #include "I18N/Text.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureBatchDialog.h"
-#include "Ui/Bitmap.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/TableLayout.h"
 #include "Ui/ListBox.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
-
-// Resources
-#include "Resources/PlusMinus.h"
 
 namespace traktor
 {
@@ -53,7 +50,7 @@ bool TextureBatchDialog::create(ui::Widget* parent)
 	if (!textureListTools->create(textureListContainer))
 		return false;
 
-	textureListTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"image"), 2);
+	textureListTools->addImage(new ui::StyleBitmap(L"Texture.PlusMinus"), 2);
 	textureListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_ADD"), 0, ui::Command(L"TextureBatch.Add")));
 	textureListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_REMOVE"), 1, ui::Command(L"TextureBatch.Remove")));
 	textureListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &TextureBatchDialog::eventTextureListToolClick);

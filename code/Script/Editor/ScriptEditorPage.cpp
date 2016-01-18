@@ -28,10 +28,10 @@
 #include "Script/Editor/SearchControl.h"
 #include "Script/Editor/SearchEvent.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/ListBox.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
@@ -49,18 +49,6 @@
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageLua.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
 
-// Resources
-#include "Resources/AddDependency.h"
-#include "Resources/Breakpoint.h"
-#include "Resources/DefineGlobalFunction.h"
-#include "Resources/DefineLocalFunction.h"
-#include "Resources/MoveDependencyDown.h"
-#include "Resources/MoveDependencyUp.h"
-#include "Resources/ReferenceFunction.h"
-#include "Resources/RemoveBreakpoints.h"
-#include "Resources/RemoveDependency.h"
-#include "Resources/ToggleComments.h"
-
 namespace traktor
 {
 	namespace script
@@ -74,9 +62,9 @@ ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageS
 ,	m_document(document)
 ,	m_compileCountDown(0)
 {
-	m_bitmapFunction = ui::Bitmap::load(c_ResourceDefineGlobalFunction, sizeof(c_ResourceDefineGlobalFunction), L"image");
-	m_bitmapFunctionLocal = ui::Bitmap::load(c_ResourceDefineLocalFunction, sizeof(c_ResourceDefineLocalFunction), L"image");
-	m_bitmapFunctionReference = ui::Bitmap::load(c_ResourceReferenceFunction, sizeof(c_ResourceReferenceFunction), L"image");
+	m_bitmapFunction = new ui::StyleBitmap(L"Script.DefineGlobalFunction");
+	m_bitmapFunctionLocal = new ui::StyleBitmap(L"Script.DefineLocalFunction");
+	m_bitmapFunctionReference = new ui::StyleBitmap(L"Script.ReferenceFunction");
 }
 
 bool ScriptEditorPage::create(ui::Container* parent)
@@ -114,10 +102,10 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	if (!dependencyTools->create(tabDependencies))
 		return false;
 
-	dependencyTools->addImage(ui::Bitmap::load(c_ResourceAddDependency, sizeof(c_ResourceAddDependency), L"image"), 1);
-	dependencyTools->addImage(ui::Bitmap::load(c_ResourceMoveDependencyDown, sizeof(c_ResourceMoveDependencyDown), L"image"), 1);
-	dependencyTools->addImage(ui::Bitmap::load(c_ResourceMoveDependencyUp, sizeof(c_ResourceMoveDependencyUp), L"image"), 1);
-	dependencyTools->addImage(ui::Bitmap::load(c_ResourceRemoveDependency, sizeof(c_ResourceRemoveDependency), L"image"), 1);
+	dependencyTools->addImage(new ui::StyleBitmap(L"Script.AddDependency"), 1);
+	dependencyTools->addImage(new ui::StyleBitmap(L"Script.MoveDependencyDown"), 1);
+	dependencyTools->addImage(new ui::StyleBitmap(L"Script.MoveDependencyUp"), 1);
+	dependencyTools->addImage(new ui::StyleBitmap(L"Script.RemoveDependency"), 1);
 	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_ADD_DEPENDENCY"), 0, ui::Command(L"Script.Editor.AddDependency")));
 	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_DEPENDENCY"), 3, ui::Command(L"Script.Editor.RemoveDependency")));
 	dependencyTools->addItem(new ui::custom::ToolBarSeparator());
@@ -162,8 +150,8 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	Ref< ui::custom::ToolBar > toolBarEdit = new ui::custom::ToolBar();
 	toolBarEdit->create(containerEdit);
-	toolBarEdit->addImage(ui::Bitmap::load(c_ResourceRemoveBreakpoints, sizeof(c_ResourceRemoveBreakpoints), L"image"), 1);
-	toolBarEdit->addImage(ui::Bitmap::load(c_ResourceToggleComments, sizeof(c_ResourceToggleComments), L"image"), 1);
+	toolBarEdit->addImage(new ui::StyleBitmap(L"Script.RemoveBreakpoints"), 1);
+	toolBarEdit->addImage(new ui::StyleBitmap(L"Script.ToggleComments"), 1);
 	toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_TOGGLE_COMMENTS"), 1, ui::Command(L"Script.Editor.ToggleComments")));
 	toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS"), 0, ui::Command(L"Script.Editor.RemoveAllBreakpoints")));
 	toolBarEdit->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventToolBarEditClick);
@@ -172,7 +160,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	if (!m_edit->create(containerEdit, m_script->getText(), ui::WsDoubleBuffer))
 		return false;
 
-	m_edit->addImage(ui::Bitmap::load(c_ResourceBreakpoint, sizeof(c_ResourceBreakpoint), L"image"), 1);
+	m_edit->addImage(new ui::StyleBitmap(L"Script.Breakpoint"), 1);
 
 	std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
 	int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);

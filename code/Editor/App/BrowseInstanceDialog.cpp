@@ -12,10 +12,10 @@
 #include "Editor/App/BrowseInstanceDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/Static.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/MiniButton.h"
@@ -101,7 +101,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	m_treeDatabase = new ui::custom::TreeView();
 	if (!m_treeDatabase->create(left, ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
-	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceFolders, sizeof(c_ResourceFolders), L"image"), 2);
+	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &BrowseInstanceDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();

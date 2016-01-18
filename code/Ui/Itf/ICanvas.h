@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-class IBitmap;
+class ISystemBitmap;
 
 /*! \brief Canvas interface.
  * \ingroup UI
@@ -63,9 +63,9 @@ public:
 
 	virtual void fillPolygon(const Point* pnts, int count) = 0;
 
-	virtual void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode) = 0;
+	virtual void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode) = 0;
 
-	virtual void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode) = 0;
+	virtual void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode) = 0;
 
 	virtual void drawText(const Point& at, const std::wstring& text) = 0;
 

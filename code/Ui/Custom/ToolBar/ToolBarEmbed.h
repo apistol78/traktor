@@ -32,19 +32,19 @@ public:
 	ToolBarEmbed(Widget* widget, int width);
 
 protected:
-	virtual bool getToolTip(std::wstring& outToolTip) const;
+	virtual bool getToolTip(std::wstring& outToolTip) const T_OVERRIDE T_FINAL;
 
-	virtual Size getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const;
+	virtual Size getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const T_OVERRIDE T_FINAL;
 
-	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight);
+	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight) T_OVERRIDE T_FINAL;
 
-	virtual bool mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent);
+	virtual bool mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent) T_OVERRIDE T_FINAL;
 
-	virtual void mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent);
+	virtual void mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent) T_OVERRIDE T_FINAL;
 
-	virtual void buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent);
+	virtual void buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent) T_OVERRIDE T_FINAL;
 
-	virtual void buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent);
+	virtual void buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< Widget > m_widget;

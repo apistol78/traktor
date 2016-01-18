@@ -13,16 +13,12 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityDependencyInvestigator.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Ui/Bitmap.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/TreeView/TreeView.h"
 #include "Ui/Custom/TreeView/TreeViewItem.h"
 #include "Ui/Custom/TreeView/TreeViewItemActivateEvent.h"
 #include "World/EntityData.h"
-
-// Resources
-#include "Resources/Folders.h"
-#include "Resources/Types.h"
 
 namespace traktor
 {
@@ -63,8 +59,8 @@ bool EntityDependencyInvestigator::create(ui::Widget* parent)
 
 	m_dependencyTree = new ui::custom::TreeView();
 	m_dependencyTree->create(this, (ui::custom::TreeView::WsDefault & ~ui::WsClientBorder) | ui::WsDoubleBuffer);
-	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceFolders, sizeof(c_ResourceFolders), L"image"), 2);
-	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"image"), 23);
+	m_dependencyTree->addImage(new ui::StyleBitmap(L"Scene.Folders"), 2);
+	m_dependencyTree->addImage(new ui::StyleBitmap(L"Scene.Types"), 23);
 	m_dependencyTree->addEventHandler< ui::custom::TreeViewItemActivateEvent >(this, &EntityDependencyInvestigator::eventDependencyActivate);
 
 	m_context->addEventHandler< ui::SelectionChangeEvent >(this, &EntityDependencyInvestigator::eventContextSelect);

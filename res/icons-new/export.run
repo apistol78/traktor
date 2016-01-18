@@ -5,7 +5,8 @@ local outputs =
 {
 	{
 		name = "Editor",
-		path = "../../code/Editor/App/Resources",
+		-- path = "../../code/Editor/App/Resources",
+		path = "../themes/%s/Images/Editor",
 		resources =
 		{
 			{ name = "Save", column = 0, row = 0, width = 1, height = 1 },
@@ -30,7 +31,8 @@ local outputs =
 	},
 	{
 		name = "UI_Dock",
-		path = "../../code/Ui/Resources",
+		-- path = "../../code/Ui/Resources",
+		path = "../themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "DockClose", column = 2, row = 24, width = 1, height = 1, base = 12 },
@@ -38,7 +40,8 @@ local outputs =
 	},
 	{
 		name = "UI_Tab",
-		path = "../../code/Ui/Resources",
+		-- path = "../../code/Ui/Resources",
+		path = "../themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "TabClose", column = 2, row = 24, width = 1, height = 1, base = 12 },
@@ -46,7 +49,8 @@ local outputs =
 	},	
 	{
 		name = "UI_TreeView",
-		path = "../../code/Ui/Custom/TreeView/Resources",
+		-- path = "../../code/Ui/Custom/TreeView/Resources",
+		path = "../themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "Tree", column = 0, row = 4, width = 2, height = 1 },
@@ -54,7 +58,8 @@ local outputs =
 	},
 	{
 		name = "UI_GridView",
-		path = "../../code/Ui/Custom/GridView/Resources",
+		-- path = "../../code/Ui/Custom/GridView/Resources",
+		path = "../themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "GridView", column = 0, row = 4, width = 2, height = 1 },
@@ -62,7 +67,8 @@ local outputs =
 	},
 	{
 		name = "UI_LogList",
-		path = "../../code/Ui/Custom/LogList/Resources",
+		-- path = "../../code/Ui/Custom/LogList/Resources",
+		path = "../themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "Log", column = 0, row = 23, width = 3, height = 1, base = 12 },
@@ -70,7 +76,8 @@ local outputs =
 	},	
 	{
 		name = "UI_PropertyList",
-		path = "../../code/Ui/Custom/PropertyList/Resources",
+		-- path = "../../code/Ui/Custom/PropertyList/Resources",
+		path = "../themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "PropertyList", column = 0, row = 4, width = 2, height = 1 },
@@ -84,7 +91,8 @@ local outputs =
 	},
 	{
 		name = "UI_Sequencer",
-		path = "../../code/Ui/Custom/Sequencer/Resources",
+		-- path = "../../code/Ui/Custom/Sequencer/Resources",
+		path = "../themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "SequenceExpand", column = 0, row = 4, width = 1, height = 1, base = 9 },
@@ -95,7 +103,8 @@ local outputs =
 	},
 	{
 		name = "UI_Layer",
-		path = "../../code/Ui/Custom/Layer/Resources",
+		-- path = "../../code/Ui/Custom/Layer/Resources",
+		path = "../themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "LayerVisible", column = 5, row = 6, width = 1, height = 1 },
@@ -104,7 +113,8 @@ local outputs =
 	},	
 	{
 		name = "Script",
-		path = "../../code/Script/Editor/Resources",
+		--path = "../../code/Script/Editor/Resources",
+		path = "../themes/%s/Images/Script",
 		resources =
 		{
 			{ name = "ToggleComments", column = 0, row = 5, width = 1, height = 1 },
@@ -129,7 +139,8 @@ local outputs =
 	},
 	{
 		name = "Spray",
-		path = "../../code/Spray/Editor/Resources",
+		-- path = "../../code/Spray/Editor/Resources",
+		path = "../themes/%s/Images/Spray",
 		resources =
 		{
 			{ name = "Randomize", column = 0, row = 6, width = 1, height = 1 },
@@ -146,7 +157,8 @@ local outputs =
 	},
 	{
 		name = "Shader",
-		path = "../../code/Render/Editor/Shader/Resources",
+		-- path = "../../code/Render/Editor/Shader/Resources",
+		path = "../themes/%s/Images/Shader",
 		resources =
 		{
 			{ name = "Tools", column = 0, row = 7, width = 14, height = 1 },
@@ -154,7 +166,8 @@ local outputs =
 	},
 	{
 		name = "Texture",
-		path = "../../code/Render/Editor/Texture/Resources",
+		-- path = "../../code/Render/Editor/Texture/Resources",
+		path = "../themes/%s/Images/Texture",
 		resources =
 		{
 			{ name = "PlusMinus", column = 0, row = 11, width = 2, height = 1 },
@@ -162,7 +175,8 @@ local outputs =
 	},
 	{
 		name = "Scene",
-		path = "../../code/Scene/Editor/Resources",
+		-- path = "../../code/Scene/Editor/Resources",
+		path = "../themes/%s/Images/Scene",
 		resources =
 		{
 			{ name = "Pointer", column = 0, row = 8, width = 1, height = 1 },
@@ -190,7 +204,8 @@ local outputs =
 	},
 	{
 		name = "Amalgam",
-		path = "../../code/Amalgam/Editor/Resources",
+		-- path = "../../code/Amalgam/Editor/Resources",
+		path = "../themes/%s/Images/Amalgam",
 		resources =
 		{
 			{ name = "Logos", column = 0, row = 9, width = 13, height = 1, base = 24 },
@@ -204,7 +219,8 @@ local outputs =
 	},
 	{
 		name = "Input",
-		path = "../../code/Input/Editor/Resources",
+		-- path = "../../code/Input/Editor/Resources",
+		path = "../themes/%s/Images/Input",
 		resources =
 		{
 			{ name = "Alignment", column = 0, row = 7, width = 6, height = 1 },
@@ -212,7 +228,8 @@ local outputs =
 	},
 	{
 		name = "Animation",
-		path = "../../code/Animation/Editor/Resources",
+		-- path = "../../code/Animation/Editor/Resources",
+		path = "../themes/%s/Images/Animation",
 		resources =
 		{
 			{ name = "Alignment", column = 0, row = 7, width = 6, height = 1 },
@@ -223,7 +240,8 @@ local outputs =
 	},
 	{
 		name = "Flash",
-		path = "../../code/Flash/Editor/Resources",
+		-- path = "../../code/Flash/Editor/Resources",
+		path = "../themes/%s/Images/Flash",
 		resources =
 		{
 			{ name = "Playback", column = 0, row = 13, width = 6, height = 1 },
@@ -232,7 +250,8 @@ local outputs =
 	},
 	{
 		name = "Terrain",
-		path = "../../code/Terrain/Editor/Resources",
+		-- path = "../../code/Terrain/Editor/Resources",
+		path = "../themes/%s/Images/Terrain",
 		resources =
 		{
 			{ name = "Terrain", column = 0, row = 14, width = 15, height = 1 },
@@ -240,7 +259,8 @@ local outputs =
 	},
 	{
 		name = "Theater",
-		path = "../../code/Theater/Editor/Resources",
+		-- path = "../../code/Theater/Editor/Resources",
+		path = "../themes/%s/Images/Theater",
 		resources =
 		{
 			{ name = "Theater", column = 0, row = 15, width = 8, height = 1 },
@@ -248,7 +268,8 @@ local outputs =
 	},
 	{
 		name = "Sound",
-		path = "../../code/Sound/Editor/Resources",
+		-- path = "../../code/Sound/Editor/Resources",
+		path = "../themes/%s/Images/Sound",
 		resources =
 		{
 			{ name = "PlusMinus", column = 0, row = 11, width = 2, height = 1 },
@@ -257,7 +278,8 @@ local outputs =
 	},	
 	{
 		name = "Amalgam_Run",
-		path = "../../code/Amalgam/Game/App/Resources",
+		-- path = "../../code/Amalgam/Game/App/Resources",
+		path = "../themes/%s/Images/Amalgam",
 		resources =
 		{
 			{ name = "Error", column = 0, row = 34, width = 3, height = 10 },
@@ -274,6 +296,7 @@ local dpis =
 	240
 }
 
+-- -j -i Dark
 local function export(input, x, y, width, height, dpi, output)
 	local inkscape = "c:/program files/inkscape/inkscape.exe"
 	local cmd = "\"" .. inkscape .. "\" -e \"" .. output .. "\" -a " .. x .. ":" .. -y .. ":" .. (x + width) .. ":" .. -y + height .. " -d " .. dpi .. " " .. input
@@ -282,12 +305,20 @@ local function export(input, x, y, width, height, dpi, output)
 end
 
 function main(argv)
+
+	if argv:size() < 1 then
+		stdout:printLn("Missing arguments")
+		return 1
+	end
+
 	for _, g in ipairs(outputs) do
-		if argv:empty() or argv:get(0) == g.name then
+		-- if argv:empty() or argv:get(0) == g.name then
+		if true then
 			for _, o in ipairs(g.resources) do
 				stdout:printLn("Converting " .. g.name .. "/" .. o.name .. "...")
 
-				local p = FileSystem.getInstance():getAbsolutePath(Path(g.path .. "/" .. o.name .. ".image"))
+				local path = string.format(g.path, argv:get(0))
+				local p = FileSystem.getInstance():getAbsolutePath(Path(path .. "/" .. o.name .. ".image"))
 				local f = FileSystem.getInstance():get(p)
 				if f == nil or not f:isReadOnly() then
 

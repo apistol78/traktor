@@ -57,21 +57,19 @@ void ToolBar::destroy()
 	Widget::destroy();
 }
 
-uint32_t ToolBar::addImage(Bitmap* image, uint32_t imageCount)
+uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 {
 	T_ASSERT (image);
 	T_ASSERT (imageCount > 0);
 
 	if (m_imageEnabled)
 	{
-		Ref< Bitmap > source = image;
-
-		uint32_t width = m_imageEnabled->getSize().cx + source->getSize().cx;
-		uint32_t height = std::max(m_imageEnabled->getSize().cy, source->getSize().cy);
+		uint32_t width = m_imageEnabled->getSize().cx + image->getSize().cx;
+		uint32_t height = std::max(m_imageEnabled->getSize().cy, image->getSize().cy);
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
 		newImage->copyImage(m_imageEnabled->getImage());
-		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), source->getSize()), Point(m_imageEnabled->getSize().cx, 0));
+		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(m_imageEnabled->getSize().cx, 0));
 		m_imageEnabled = newImage;
 	}
 	else

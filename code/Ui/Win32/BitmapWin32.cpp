@@ -1,7 +1,7 @@
-#include "Ui/Win32/BitmapWin32.h"
+#include "Core/Math/Color4ub.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Math/Color4ub.h"
+#include "Ui/Win32/BitmapWin32.h"
 
 #if defined(T_USE_GDI_PLUS)
 using namespace Gdiplus;

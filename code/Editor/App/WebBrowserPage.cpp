@@ -2,7 +2,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "Editor/App/WebBrowserPage.h"
-#include "Ui/Bitmap.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/WebBrowser.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
@@ -31,7 +31,7 @@ bool WebBrowserPage::create(ui::Widget* parent, const net::Url& url)
 
 	Ref< ui::custom::ToolBar > toolbar = new ui::custom::ToolBar();
 	toolbar->create(this);
-	toolbar->addImage(ui::Bitmap::load(c_ResourceNavigate, sizeof(c_ResourceNavigate), L"image"), 4);
+	toolbar->addImage(new ui::StyleBitmap(L"Editor.Web.Navigate"), 4);
 	toolbar->addItem(new ui::custom::ToolBarButton(L"Home", 0, ui::Command(L"Editor.WebBrowser.Home")));
 	toolbar->addItem(new ui::custom::ToolBarButton(L"Back", 1, ui::Command(L"Editor.WebBrowser.Back")));
 	toolbar->addItem(new ui::custom::ToolBarButton(L"Forward", 2, ui::Command(L"Editor.WebBrowser.Forward")));

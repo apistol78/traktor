@@ -1,7 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/HierarchicalState.h"
+#include "Ui/IBitmap.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
 #include "Ui/Itf/ITreeView.h"
@@ -54,7 +54,7 @@ void recursiveApplyState(TreeViewItem* item, const HierarchicalState* state)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TreeView", TreeView, Widget)
 
-bool TreeView::create(Widget* parent, int style)
+bool TreeView::create(Widget* parent, int32_t style)
 {
 	if (!parent)
 		return false;
@@ -77,14 +77,14 @@ bool TreeView::create(Widget* parent, int style)
 	return Widget::create(parent, style);
 }
 
-int TreeView::addImage(Bitmap* image, int imageCount)
+int32_t TreeView::addImage(IBitmap* image, int imageCount)
 {
-	if (!image || !image->getIBitmap())
+	if (!image || !image->getSystemBitmap())
 		return -1;
-	return static_cast< ITreeView* >(m_widget)->addImage(image->getIBitmap(), imageCount);
+	return static_cast< ITreeView* >(m_widget)->addImage(image->getSystemBitmap(), imageCount);
 }
 
-Ref< TreeViewItem > TreeView::createItem(TreeViewItem* parent, const std::wstring& text, int image, int selectedImage)
+Ref< TreeViewItem > TreeView::createItem(TreeViewItem* parent, const std::wstring& text, int32_t image, int32_t selectedImage)
 {
 	return static_cast< ITreeView* >(m_widget)->createItem(parent, text, image, selectedImage);
 }

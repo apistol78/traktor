@@ -1,14 +1,11 @@
-#include "Ui/Bitmap.h"
 #include "Ui/Canvas.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/ListBox.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/ToolForm.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/ListPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-
-// Resources
-#include "Resources/SmallDots.h"
 
 namespace traktor
 {
@@ -96,7 +93,7 @@ void ListPropertyItem::createInPlaceControls(Widget* parent)
 {
 	T_ASSERT (!m_buttonDrop);
 	m_buttonDrop = new MiniButton();
-	m_buttonDrop->create(parent, ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image"));
+	m_buttonDrop->create(parent, new ui::StyleBitmap(L"UI.SmallDots"));
 	m_buttonDrop->addEventHandler< ButtonClickEvent >(this, &ListPropertyItem::eventDropClick);
 
 	T_ASSERT (!m_listForm);
