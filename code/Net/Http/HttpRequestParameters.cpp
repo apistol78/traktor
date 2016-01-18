@@ -20,8 +20,12 @@ void HttpRequestParameters::set(const std::wstring& key, const std::wstring& val
 std::wstring HttpRequestParameters::getUrlEncodedContent() const
 {
 	StringOutputStream ss;
+	std::wstring separator = L"";
 	for (std::map< std::wstring, std::wstring >::const_iterator i = m_parameters.begin(); i != m_parameters.end(); ++i)
-		ss << Url::encode(i->first) << L"=" << Url::encode(i->second) << L"\r\n";
+	{
+		ss << separator << Url::encode(i->first) << L"=" << Url::encode(i->second);
+		separator = L"&";
+	}
 	return ss.str();
 }
 
