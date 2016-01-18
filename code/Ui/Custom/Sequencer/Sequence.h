@@ -19,8 +19,8 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
 class Command;
+class IBitmap;
 
 		namespace custom
 		{
@@ -41,7 +41,7 @@ public:
 
 	const std::wstring& getDescription() const;
 
-	int32_t addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& command, bool toggle = false);
+	int32_t addButton(IBitmap* imageUp, IBitmap* imageDown, const Command& command, bool toggle = false);
 
 	void setButtonState(int32_t buttonIndex, bool state);
 
@@ -74,8 +74,8 @@ public:
 private:
 	struct Button
 	{
-		Ref< Bitmap > imageUp;
-		Ref< Bitmap > imageDown;
+		Ref< IBitmap > imageUp;
+		Ref< IBitmap > imageDown;
 		Command command;
 		bool toggle;
 		bool state;

@@ -28,9 +28,9 @@ class IEditorPageSite;
 	namespace ui
 	{
 
-class Bitmap;
 class Container;
 class Font;
+class IBitmap;
 class PopupMenu;
 class Tab;
 
@@ -106,10 +106,10 @@ private:
 	Ref< ui::PopupMenu > m_entityMenuExternal;
 	Ref< ui::Container > m_controllerPanel;
 	Ref< ui::custom::ToolBar > m_entityToolBar;
-	Ref< ui::Bitmap > m_imageHidden;
-	Ref< ui::Bitmap > m_imageVisible;
-	Ref< ui::Bitmap > m_imageLocked;
-	Ref< ui::Bitmap > m_imageUnlocked;
+	Ref< ui::IBitmap > m_imageHidden;
+	Ref< ui::IBitmap > m_imageVisible;
+	Ref< ui::IBitmap > m_imageLocked;
+	Ref< ui::IBitmap > m_imageUnlocked;
 	Ref< ui::custom::GridView > m_instanceGrid;
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< ui::Font > m_instanceGridFontHuge;

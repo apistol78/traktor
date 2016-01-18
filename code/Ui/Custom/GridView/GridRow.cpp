@@ -1,16 +1,13 @@
 #include <algorithm>
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Event.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridRowStateChangeEvent.h"
 #include "Ui/Custom/GridView/GridView.h"
-
-// Resources
-#include "Resources/GridView.h"
 
 namespace traktor
 {
@@ -27,7 +24,7 @@ GridRow::GridRow(uint32_t initialState)
 ,	m_minimumHeight(0)
 ,	m_parent(0)
 {
-	m_expand = Bitmap::load(c_ResourceGridView, sizeof(c_ResourceGridView), L"image");
+	m_expand = new ui::StyleBitmap(L"UI.GridView");
 }
 
 GridRow::~GridRow()

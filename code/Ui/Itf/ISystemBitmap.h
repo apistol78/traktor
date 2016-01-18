@@ -1,5 +1,5 @@
-#ifndef traktor_ui_IBitmap_H
-#define traktor_ui_IBitmap_H
+#ifndef traktor_ui_ISystemBitmap_H
+#define traktor_ui_ISystemBitmap_H
 
 #include "Core/Config.h"
 #include "Core/Ref.h"
@@ -20,10 +20,10 @@ class Image;
 	namespace ui
 	{
 
-/*! \brief Bitmap interface.
+/*! \brief System bitmap interface.
  * \ingroup UI
  */
-class IBitmap
+class ISystemBitmap
 {
 public:
 	virtual bool create(uint32_t width, uint32_t height) = 0;
@@ -44,4 +44,4 @@ public:
 	}
 }
 
-#endif	// traktor_ui_IBitmap_H
+#endif	// traktor_ui_ISystemBitmap_H

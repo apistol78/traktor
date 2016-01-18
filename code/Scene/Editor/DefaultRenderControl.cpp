@@ -13,20 +13,16 @@
 #include "Scene/Editor/PerspectiveRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/MenuItem.h"
 #include "Ui/PopupMenu.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-
-// Resources
-#include "Resources/ToggleGrid.h"
-#include "Resources/ToggleGuide.h"
 
 namespace traktor
 {
@@ -64,8 +60,8 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	if (!m_toolBar->create(m_container))
 		return false;
 
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceToggleGrid, sizeof(c_ResourceToggleGrid), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceToggleGuide, sizeof(c_ResourceToggleGuide), L"image"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGrid"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGuide"), 1);
 
 	m_toolView = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), ui::scaleBySystemDPI(100), i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));

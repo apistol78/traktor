@@ -59,7 +59,7 @@ void TreeViewWin32::destroy()
 	WidgetWin32Impl< ITreeView >::destroy();
 }
 
-int TreeViewWin32::addImage(IBitmap* image, int imageCount)
+int TreeViewWin32::addImage(ISystemBitmap* image, int imageCount)
 {
 	if (!m_hImageList)
 	{

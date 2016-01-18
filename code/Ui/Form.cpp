@@ -36,10 +36,10 @@ void Form::setIcon(Bitmap* icon)
 {
 	T_ASSERT (m_widget);
 
-	if (!icon || !icon->getIBitmap())
+	if (!icon || !icon->getSystemBitmap())
 		return;
 
-	static_cast< IForm* >(m_widget)->setIcon(icon->getIBitmap());
+	static_cast< IForm* >(m_widget)->setIcon(icon->getSystemBitmap());
 }
 
 void Form::maximize()

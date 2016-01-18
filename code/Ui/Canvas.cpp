@@ -1,6 +1,6 @@
-#include "Ui/Canvas.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
+#include "Ui/Canvas.h"
+#include "Ui/IBitmap.h"
 
 namespace traktor
 {
@@ -157,16 +157,16 @@ void Canvas::fillPolygon(const Point* pnts, int count)
 	m_canvas->fillPolygon(pnts, count);
 }
 
-void Canvas::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, Bitmap* bitmap, uint32_t blendMode)
+void Canvas::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode)
 {
-	if (bitmap && bitmap->getIBitmap())
-		m_canvas->drawBitmap(dstAt, srcAt, size, bitmap->getIBitmap(), blendMode);
+	if (bitmap && bitmap->getSystemBitmap())
+		m_canvas->drawBitmap(dstAt, srcAt, size, bitmap->getSystemBitmap(), blendMode);
 }
 
-void Canvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, Bitmap* bitmap, uint32_t blendMode)
+void Canvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
 {
-	if (bitmap && bitmap->getIBitmap())
-		m_canvas->drawBitmap(dstAt, dstSize, srcAt, srcSize, bitmap->getIBitmap(), blendMode);
+	if (bitmap && bitmap->getSystemBitmap())
+		m_canvas->drawBitmap(dstAt, dstSize, srcAt, srcSize, bitmap->getSystemBitmap(), blendMode);
 }
 
 void Canvas::drawText(const Point& at, const std::wstring& text)

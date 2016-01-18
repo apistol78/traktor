@@ -8,7 +8,7 @@ namespace traktor
 	namespace ui
 	{
 
-class IBitmap;
+class ISystemBitmap;
 
 class ListViewItems;
 class ListViewItem;
@@ -23,7 +23,7 @@ public:
 
 	virtual void setStyle(int style) = 0;
 
-	virtual int addImage(IBitmap* image, int imageCount, bool smallImage) = 0;
+	virtual int addImage(ISystemBitmap* image, int imageCount, bool smallImage) = 0;
 	
 	virtual void removeAllColumns() = 0;
 

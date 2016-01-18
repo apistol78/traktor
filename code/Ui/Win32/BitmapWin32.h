@@ -10,7 +10,7 @@
 #	include <gdiplus.h>
 #endif
 #include "Core/Misc/AutoPtr.h"
-#include "Ui/Itf/IBitmap.h"
+#include "Ui/Itf/ISystemBitmap.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ namespace traktor
 /*! \brief
  * \ingroup UIW32
  */
-class BitmapWin32 : public IBitmap
+class BitmapWin32 : public ISystemBitmap
 {
 public:
 	BitmapWin32();

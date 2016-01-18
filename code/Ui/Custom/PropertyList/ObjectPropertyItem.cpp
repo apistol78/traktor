@@ -3,16 +3,12 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-
-// Resources
-#include "Resources/SmallDots.h"
-#include "Resources/SmallCross.h"
 
 namespace traktor
 {
@@ -47,9 +43,9 @@ void ObjectPropertyItem::setObject(Object* object)
 	if (m_buttonEdit)
 	{
 		if (m_object)
-			m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"image"));
+			m_buttonEdit->setImage(new ui::StyleBitmap(L"UI.SmallCross"));
 		else
-			m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image"));
+			m_buttonEdit->setImage(new ui::StyleBitmap(L"UI.SmallDots"));
 
 		m_buttonEdit->update();
 	}
@@ -68,9 +64,9 @@ void ObjectPropertyItem::createInPlaceControls(Widget* parent)
 	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &ObjectPropertyItem::eventClick);
 
 	if (m_object)
-		m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"image"));
+		m_buttonEdit->setImage(new ui::StyleBitmap(L"UI.SmallCross"));
 	else
-		m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"image"));
+		m_buttonEdit->setImage(new ui::StyleBitmap(L"UI.SmallDots"));
 }
 
 void ObjectPropertyItem::destroyInPlaceControls()

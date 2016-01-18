@@ -19,11 +19,11 @@ class NotificationIconWin32 : public INotificationIcon
 public:
 	NotificationIconWin32(EventSubject* owner);
 
-	virtual bool create(const std::wstring& text, IBitmap* image);
+	virtual bool create(const std::wstring& text, ISystemBitmap* image);
 
 	virtual void destroy();
 
-	virtual void setImage(IBitmap* image);
+	virtual void setImage(ISystemBitmap* image);
 
 private:
 	EventSubject* m_owner;

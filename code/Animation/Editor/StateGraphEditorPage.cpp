@@ -15,9 +15,9 @@
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/PopupMenu.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/AspectLayout.h"
@@ -34,9 +34,6 @@
 #include "Ui/Custom/Graph/EdgeDisconnectEvent.h"
 #include "Ui/Custom/Graph/Pin.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
-
-// Resources
-#include "Resources/Alignment.h"
 
 namespace traktor
 {
@@ -65,7 +62,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	// Create our custom toolbar.
 	m_toolBarGraph = new ui::custom::ToolBar();
 	m_toolBarGraph->create(container);
-	m_toolBarGraph->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"image"), 6);
+	m_toolBarGraph->addImage(new ui::StyleBitmap(L"Animation.Alignment"), 6);
 	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_LEFT"), 0, ui::Command(L"StateGraph.Editor.AlignLeft")));
 	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_RIGHT"), 1, ui::Command(L"StateGraph.Editor.AlignRight")));
 	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_TOP"), 2, ui::Command(L"StateGraph.Editor.AlignTop")));

@@ -402,7 +402,7 @@ void CanvasGdiWin32::fillPolygon(const Point* pnts, int count)
 	SelectObject(m_hDC, hCurrentPen);
 }
 
-void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode)
+void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)
 {
 	if (!bitmap)
 		return;
@@ -467,7 +467,7 @@ void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Si
 	DeleteDC(hImageDC);
 }
 
-void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
+void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode)
 {
 	if (!bitmap)
 		return;

@@ -7,6 +7,11 @@
 #include "Animation/Editor/AnimationEditorPage.h"
 #include "Animation/Editor/VolumePicker.h"
 #include "Animation/IK/IKPoseController.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/Vector2.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -15,6 +20,12 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Editor/TypeBrowseFilter.h"
+#include "I18N/Text.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
+#include "Render/PrimitiveRenderer.h"
+#include "Render/Resource/TextureFactory.h"
+#include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
@@ -22,7 +33,7 @@
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Bitmap.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/QuadSplitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -33,21 +44,6 @@
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
 #include "Ui/Itf/IWidget.h"
-#include "I18N/Text.h"
-#include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
-#include "Render/PrimitiveRenderer.h"
-#include "Render/Resource/TextureFactory.h"
-#include "Render/Resource/ShaderFactory.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberComposite.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Vector2.h"
-#include "Core/Log/Log.h"
-
-// Resources
-#include "Resources/Playback.h"
-#include "Resources/Skeleton.h"
 
 namespace traktor
 {
@@ -191,8 +187,8 @@ bool AnimationEditorPage::create(ui::Container* parent)
 
 	m_toolBarPlay = new ui::custom::ToolBar();
 	m_toolBarPlay->create(m_sequencerPanel);
-	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"image"), 6);
-	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceSkeleton, sizeof(c_ResourceSkeleton), L"image"), 5);
+	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Animation.Playback"), 6);
+	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Animation.Skeleton"), 5);
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_REWIND"), 0, ui::Command(L"Animation.Editor.Rewind")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_PLAY"), 1, ui::Command(L"Animation.Editor.Play")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_STOP"), 2, ui::Command(L"Animation.Editor.Stop")));

@@ -16,8 +16,8 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
 class Font;
+class IBitmap;
 
 		namespace custom
 		{
@@ -36,9 +36,9 @@ public:
 
 	explicit GridItem(const std::wstring& text, Font* font);
 
-	explicit GridItem(const std::wstring& text, Bitmap* image);
+	explicit GridItem(const std::wstring& text, IBitmap* image);
 
-	explicit GridItem(Bitmap* image);
+	explicit GridItem(IBitmap* image);
 
 	virtual void setText(const std::wstring& text) T_FINAL;
 
@@ -50,14 +50,14 @@ public:
 
 	Font* getFont() const;
 
-	void setImage(Bitmap* image);
+	void setImage(IBitmap* image);
 
-	Bitmap* getImage() const;
+	IBitmap* getImage() const;
 
 private:
 	std::wstring m_text;
 	Ref< Font > m_font;
-	Ref< Bitmap > m_image;
+	Ref< IBitmap > m_image;
 
 	virtual int32_t getHeight() const T_FINAL;
 

@@ -1,6 +1,6 @@
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Canvas.h"
+#include "Ui/IBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/GridView/GridItem.h"
@@ -31,13 +31,13 @@ GridItem::GridItem(const std::wstring& text, Font* font)
 {
 }
 
-GridItem::GridItem(const std::wstring& text, Bitmap* image)
+GridItem::GridItem(const std::wstring& text, IBitmap* image)
 :	m_text(text)
 ,	m_image(image)
 {
 }
 
-GridItem::GridItem(Bitmap* image)
+GridItem::GridItem(IBitmap* image)
 :	m_image(image)
 {
 }
@@ -69,12 +69,12 @@ Font* GridItem::getFont() const
 	return m_font;
 }
 
-void GridItem::setImage(Bitmap* image)
+void GridItem::setImage(IBitmap* image)
 {
 	m_image = image;
 }
 
-Bitmap* GridItem::getImage() const
+IBitmap* GridItem::getImage() const
 {
 	return m_image;
 }

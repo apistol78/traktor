@@ -20,8 +20,8 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Container.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
@@ -29,9 +29,6 @@
 #include "Ui/HierarchicalState.h"
 #include "Ui/TreeViewItem.h"
 #include "Ui/Itf/IWidget.h"
-
-// Resources
-#include "Resources/Bones.h"
 
 namespace traktor
 {
@@ -98,7 +95,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 
 	m_treeSkeleton = new ui::TreeView();
 	m_treeSkeleton->create(m_skeletonPanel, ui::TreeView::WsDefault & ~ui::WsClientBorder);
-	m_treeSkeleton->addImage(ui::Bitmap::load(c_ResourceBones, sizeof(c_ResourceBones), L"image"), 2);
+	m_treeSkeleton->addImage(new ui::StyleBitmap(L"Animation.Bones"), 2);
 	m_treeSkeleton->addEventHandler< ui::MouseButtonDownEvent >(this, &SkeletonEditorPage::eventTreeButtonDown);
 	m_treeSkeleton->addEventHandler< ui::SelectionChangeEvent >(this, &SkeletonEditorPage::eventTreeSelect);
 	m_treeSkeleton->addEventHandler< ui::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);

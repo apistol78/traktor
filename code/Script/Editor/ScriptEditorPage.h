@@ -31,8 +31,8 @@ class IEditorPageSite;
 	namespace ui
 	{
 
-class Bitmap;
 class ListBox;
+class IBitmap;
 class Tab;
 
 		namespace custom
@@ -95,9 +95,9 @@ private:
 	Ref< IScriptManager > m_scriptManager;
 	Ref< IScriptOutline > m_scriptOutline;
 	Ref< Preprocessor > m_preprocessor;
-	Ref< ui::Bitmap > m_bitmapFunction;
-	Ref< ui::Bitmap > m_bitmapFunctionLocal;
-	Ref< ui::Bitmap > m_bitmapFunctionReference;
+	Ref< ui::IBitmap > m_bitmapFunction;
+	Ref< ui::IBitmap > m_bitmapFunctionLocal;
+	Ref< ui::IBitmap > m_bitmapFunctionReference;
 	Ref< ui::Container > m_containerExplorer;
 	Ref< ui::Container > m_containerDebugger;
 	Ref< ui::custom::GridView > m_outlineGrid;

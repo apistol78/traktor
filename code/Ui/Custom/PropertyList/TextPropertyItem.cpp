@@ -1,16 +1,13 @@
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/Edit.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/TextPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 #include "Ui/Events/ButtonClickEvent.h"
 #include "Ui/Events/FocusEvent.h"
-
-// Resources
-#include "Resources/SmallPen.h"
 
 namespace traktor
 {
@@ -56,7 +53,7 @@ void TextPropertyItem::createInPlaceControls(Widget* parent)
 	{
 		T_ASSERT (!m_buttonEdit);
 		m_buttonEdit = new MiniButton();
-		m_buttonEdit->create(parent, ui::Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"image"));
+		m_buttonEdit->create(parent, new ui::StyleBitmap(L"UI.SmallPen"));
 		m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &TextPropertyItem::eventClick);
 	}
 }

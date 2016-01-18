@@ -6,10 +6,10 @@
 #include "Editor/App/NewInstanceDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Edit.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/Static.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/PreviewList/PreviewItem.h"
@@ -81,7 +81,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 
 	m_categoryTree = new ui::custom::TreeView();
 	m_categoryTree->create(left, ui::WsDoubleBuffer);
-	m_categoryTree->addImage(ui::Bitmap::load(c_ResourceFolders, sizeof(c_ResourceFolders), L"image"), 2);
+	m_categoryTree->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
 	m_categoryTree->addEventHandler< ui::SelectionChangeEvent >(this, &NewInstanceDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();

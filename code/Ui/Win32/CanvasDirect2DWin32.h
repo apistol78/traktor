@@ -70,9 +70,9 @@ public:
 
 	virtual void fillPolygon(const Point* pnts, int count);
 	
-	virtual void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode);
+	virtual void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode);
 
-	virtual void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode);
+	virtual void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode);
 
 	virtual void drawText(const Point& at, const std::wstring& text);
 
@@ -96,12 +96,12 @@ private:
 	D2D1_GRADIENT_STOP m_gradientStops[2];
 	ComRef< ID2D1GradientStopCollection > m_d2dGradientStops;
 	ComRef< IDWriteTextFormat > m_dwTextFormat;
-	std::map< const IBitmap*, ComRef< ID2D1Bitmap > > m_d2dBitmaps;
+	std::map< const ISystemBitmap*, ComRef< ID2D1Bitmap > > m_d2dBitmaps;
 	float m_strokeWidth;
 	bool m_underline;
 	bool m_clip;
 
-	ID2D1Bitmap* getCachedBitmap(const IBitmap* bm);
+	ID2D1Bitmap* getCachedBitmap(const ISystemBitmap* bm);
 
 	void flushCachedBitmaps();
 };

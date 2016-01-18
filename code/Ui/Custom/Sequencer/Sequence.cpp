@@ -39,7 +39,7 @@ const std::wstring& Sequence::getDescription() const
 	return m_description;
 }
 
-int32_t Sequence::addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& command, bool toggle)
+int32_t Sequence::addButton(IBitmap* imageUp, IBitmap* imageDown, const Command& command, bool toggle)
 {
 	Button btn;
 	btn.imageUp = imageUp;

@@ -32,6 +32,8 @@ public:
 
 	Color4ub getColor(const Widget* widget, const wchar_t* const element) const;
 
+	std::wstring getValue(const wchar_t* const name) const;
+
 	virtual void serialize(ISerializer& s);
 
 private:
@@ -44,7 +46,16 @@ private:
 		void serialize(ISerializer& s);
 	};
 
+	struct Value
+	{
+		std::wstring name;
+		std::wstring value;
+
+		void serialize(ISerializer& s);
+	};
+
 	std::vector< Group > m_groups;
+	std::vector< Value > m_values;
 
 	void setColor(const wchar_t* const type, const wchar_t* const element, const Color4ub& color);
 };

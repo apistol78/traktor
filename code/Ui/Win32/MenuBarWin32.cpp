@@ -148,7 +148,7 @@ void MenuBarWin32::add(MenuItem* item)
 	if (item->getImage())
 	{
 		mii.fMask |= MIIM_BITMAP;
-		mii.hbmpItem = static_cast< BitmapWin32* >(item->getImage()->getIBitmap())->getHBitmap();
+		mii.hbmpItem = static_cast< BitmapWin32* >(item->getImage()->getSystemBitmap())->getHBitmap();
 	}
 
 	HWND hWndParent = static_cast< HWND >(m_form->getInternalHandle());

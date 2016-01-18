@@ -33,8 +33,8 @@
 #include "Resource/ResourceManager.h"
 #include "Sound/Player/ISoundPlayer.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Container.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/AspectLayout.h"
 #include "Ui/Custom/CenterLayout.h"
@@ -45,10 +45,6 @@
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/TreeView/TreeView.h"
 #include "Ui/Custom/TreeView/TreeViewItem.h"
-
-// Resources
-#include "Resources/Playback.h"
-#include "Resources/Flash.h"
 
 namespace traktor
 {
@@ -113,8 +109,8 @@ bool FlashEditorPage::create(ui::Container* parent)
 
 	m_toolBarPlay = new ui::custom::ToolBar();
 	m_toolBarPlay->create(container);
-	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"image"), 6);
-	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceFlash, sizeof(c_ResourceFlash), L"image"), 2);
+	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Flash.Playback"), 6);
+	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Flash.Flash"), 2);
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rewind", 0, ui::Command(L"Flash.Editor.Rewind")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", 1, ui::Command(L"Flash.Editor.Play")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Stop", 2, ui::Command(L"Flash.Editor.Stop")));

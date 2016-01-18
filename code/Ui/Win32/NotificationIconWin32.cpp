@@ -22,7 +22,7 @@ NotificationIconWin32::NotificationIconWin32(EventSubject* owner)
 {
 }
 
-bool NotificationIconWin32::create(const std::wstring& text, IBitmap* image)
+bool NotificationIconWin32::create(const std::wstring& text, ISystemBitmap* image)
 {
 	if (!m_hWnd.create(
 		NULL,
@@ -62,7 +62,7 @@ void NotificationIconWin32::destroy()
 	delete this;
 }
 
-void NotificationIconWin32::setImage(IBitmap* image)
+void NotificationIconWin32::setImage(ISystemBitmap* image)
 {
 	T_ASSERT (image);
 	m_nid.hIcon = reinterpret_cast< BitmapWin32* >(image)->createIcon();

@@ -60,7 +60,7 @@ Rect Tab::getInnerRect() const
 	return m_innerRect;
 }
 
-int32_t Tab::addImage(Bitmap* image, int32_t imageCount)
+int32_t Tab::addImage(IBitmap* image, int32_t imageCount)
 {
 	uint32_t width = 0, height = 0;
 	

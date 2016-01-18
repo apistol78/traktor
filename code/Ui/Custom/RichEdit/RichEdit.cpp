@@ -199,21 +199,19 @@ void RichEdit::setAttribute(int32_t start, int32_t length, int32_t attribute)
 	update();
 }
 
-int32_t RichEdit::addImage(Bitmap* image, uint32_t imageCount)
+int32_t RichEdit::addImage(IBitmap* image, uint32_t imageCount)
 {
 	T_ASSERT (image);
 	T_ASSERT (imageCount > 0);
 
 	if (m_image)
 	{
-		Ref< Bitmap > source = image;
-
-		uint32_t width = m_image->getSize().cx + source->getSize().cx;
-		uint32_t height = std::max(m_image->getSize().cy, source->getSize().cy);
+		uint32_t width = m_image->getSize().cx + image->getSize().cx;
+		uint32_t height = std::max(m_image->getSize().cy, image->getSize().cy);
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
 		newImage->copyImage(m_image->getImage());
-		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), source->getSize()), Point(m_image->getSize().cx, 0));
+		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(m_image->getSize().cx, 0));
 		m_image = newImage;
 	}
 	else

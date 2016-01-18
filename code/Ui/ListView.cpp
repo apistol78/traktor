@@ -44,9 +44,9 @@ void ListView::setStyle(int style)
 int ListView::addImage(Bitmap* image, int imageCount, bool smallImage)
 {
 	T_ASSERT (m_widget);
-	if (!image || !image->getIBitmap())
+	if (!image || !image->getSystemBitmap())
 		return -1;
-	return static_cast< IListView* >(m_widget)->addImage(image->getIBitmap(), imageCount, smallImage);
+	return static_cast< IListView* >(m_widget)->addImage(image->getSystemBitmap(), imageCount, smallImage);
 }
 
 void ListView::removeAllColumns()

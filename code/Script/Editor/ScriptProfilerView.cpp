@@ -6,7 +6,7 @@
 #include "I18N/Text.h"
 #include "Script/Editor/ScriptProfilerView.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
@@ -15,9 +15,6 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-
-// Resources
-#include "Resources/ProfilerClear.h"
 
 namespace traktor
 {
@@ -47,7 +44,7 @@ bool ScriptProfilerView::create(ui::Widget* parent)
 	if (!m_profilerTools->create(this))
 		return false;
 
-	m_profilerTools->addImage(ui::Bitmap::load(c_ResourceProfilerClear, sizeof(c_ResourceProfilerClear), L"image"), 1);
+	m_profilerTools->addImage(new ui::StyleBitmap(L"Script.ProfilerClear"), 1);
 	m_profilerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_PROFILER_CLEAR_SAMPLES"), 0, ui::Command(L"Script.Editor.ClearProfile")));
 	m_profilerTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptProfilerView::eventProfilerToolClick);
 

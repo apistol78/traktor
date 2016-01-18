@@ -1,5 +1,8 @@
 #include <limits>
+#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Singleton/ISingleton.h"
@@ -7,7 +10,7 @@
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
-#include "Ui/Itf/IBitmap.h"
+#include "Ui/Itf/ISystemBitmap.h"
 
 namespace traktor
 {
@@ -107,7 +110,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Bitmap", Bitmap, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Bitmap", Bitmap, IBitmap)
 
 Bitmap::Bitmap()
 :	m_bitmap(0)
@@ -258,21 +261,65 @@ void Bitmap::setPixel(uint32_t x, uint32_t y, const Color4ub& color)
 	m_bitmap->setPixel(x, y, color);
 }
 
-IBitmap* Bitmap::getIBitmap() const
+ISystemBitmap* Bitmap::getSystemBitmap() const
 {
 	return m_bitmap;
 }
 
 Ref< Bitmap > Bitmap::load(const std::wstring& fileName)
 {
-	Ref< drawing::Image > image = drawing::Image::load(fileName);
-	if (!image)
-		return 0;
+	Ref< Bitmap > bitmap;
+	if (Path(fileName).getExtension() == L"image")
+	{
+		Ref< IStream > s = FileSystem::getInstance().open(fileName, File::FmRead);
+		if (!s)
+			return 0;
 
-	Ref< Bitmap > bitmap = new Bitmap();
-	if (!bitmap->create(image))
-		return 0;
+		DynamicMemoryStream dms(false, true);
+		StreamCopy(&dms, s).execute();
 
+		s->close();
+		s = 0;
+
+		const void* resource = &dms.getBuffer()[0];
+		uint32_t size = dms.getBuffer().size();
+
+		int32_t systemDPI = getSystemDPI();
+		int32_t bestFit = std::numeric_limits< int32_t >::max();
+		int32_t bestFitIndex = 0;
+
+		const ImageHeader* h = static_cast< const ImageHeader* >(resource);
+		for (uint32_t i = 0; i < h->count; ++i)
+		{
+			if (abs(systemDPI - h->entry[i].dpi) < bestFit)
+			{
+				bestFit = abs(systemDPI - h->entry[i].dpi);
+				bestFitIndex = i;
+			}
+		}
+
+		MemoryStream ms(
+			static_cast< const uint8_t* >(resource) + h->entry[bestFitIndex].offset,
+			size - h->entry[bestFitIndex].offset
+		);
+		Ref< drawing::Image > image = drawing::Image::load(&ms, L"png");
+		if (!image)
+			return 0;
+
+		bitmap = new Bitmap();
+		if (!bitmap->create(image))
+			return 0;
+	}
+	else
+	{
+		Ref< drawing::Image > image = drawing::Image::load(fileName);
+		if (!image)
+			return 0;
+
+		bitmap = new Bitmap();
+		if (!bitmap->create(image))
+			return 0;
+	}
 	return bitmap;
 }
 

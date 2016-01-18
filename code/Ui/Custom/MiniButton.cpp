@@ -28,7 +28,7 @@ bool MiniButton::create(Widget* parent, const std::wstring& text)
 	return true;
 }
 
-bool MiniButton::create(Widget* parent, Bitmap* image)
+bool MiniButton::create(Widget* parent, IBitmap* image)
 {
 	if (!Widget::create(parent))
 		return false;
@@ -43,7 +43,7 @@ bool MiniButton::create(Widget* parent, Bitmap* image)
 	return true;
 }
 
-void MiniButton::setImage(Bitmap* image)
+void MiniButton::setImage(IBitmap* image)
 {
 	m_image = image;
 }

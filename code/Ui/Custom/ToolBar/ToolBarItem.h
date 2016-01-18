@@ -19,8 +19,8 @@ namespace traktor
 	{
 
 class Canvas;
+class IBitmap;
 class Point;
-class Bitmap;
 class MouseButtonDownEvent;
 class MouseButtonUpEvent;
 class MouseMoveEvent;
@@ -53,7 +53,7 @@ protected:
 
 	virtual Size getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const = 0;
 
-	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight) = 0;
+	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight) = 0;
 
 	/*! \brief Mouse enter item.
 	 *

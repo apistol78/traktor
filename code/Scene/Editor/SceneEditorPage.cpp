@@ -37,12 +37,12 @@
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/Events/PreModifyEvent.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/MenuItem.h"
 #include "Ui/PopupMenu.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
@@ -63,14 +63,6 @@
 #include "World/EntityEventManager.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
-
-// Resources
-#include "Resources/LayerHidden.h"
-#include "Resources/LayerVisible.h"
-#include "Resources/LayerLocked.h"
-#include "Resources/LayerUnlocked.h"
-#include "Resources/MoveToEntity.h"
-#include "Resources/RemoveEntity.h"
 
 namespace traktor
 {
@@ -217,16 +209,16 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_entityToolBar = new ui::custom::ToolBar();
 	m_entityToolBar->create(m_entityPanel);
-	m_entityToolBar->addImage(ui::Bitmap::load(c_ResourceMoveToEntity, sizeof(c_ResourceMoveToEntity), L"image"), 1);
-	m_entityToolBar->addImage(ui::Bitmap::load(c_ResourceRemoveEntity, sizeof(c_ResourceRemoveEntity), L"image"), 1);
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveToEntity"), 1);
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.RemoveEntity"), 1);
 	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 1, ui::Command(L"Editor.Delete")));
 	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 0, ui::Command(L"Scene.Editor.MoveToEntity")));
 	m_entityToolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SceneEditorPage::eventEntityToolClick);
 
-	m_imageHidden = ui::Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"image");
-	m_imageVisible = ui::Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"image");
-	m_imageLocked = ui::Bitmap::load(c_ResourceLayerLocked, sizeof(c_ResourceLayerLocked), L"image");
-	m_imageUnlocked = ui::Bitmap::load(c_ResourceLayerUnlocked, sizeof(c_ResourceLayerUnlocked), L"image");
+	m_imageHidden = new ui::StyleBitmap(L"Scene.LayerHidden");
+	m_imageVisible = new ui::StyleBitmap(L"Scene.LayerVisible");
+	m_imageLocked = new ui::StyleBitmap(L"Scene.LayerLocked");
+	m_imageUnlocked = new ui::StyleBitmap(L"Scene.LayerUnlocked");
 
 	m_instanceGrid = new ui::custom::GridView();
 	m_instanceGrid->create(m_entityPanel, ui::WsDoubleBuffer);

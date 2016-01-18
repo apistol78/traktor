@@ -12,7 +12,7 @@
 #include "Script/Editor/ScriptBreakpointEvent.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/GridView/GridColumn.h"
@@ -22,12 +22,6 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-
-// Resources
-#include "Resources/DebugContinue.h"
-#include "Resources/DebugStepInto.h"
-#include "Resources/DebugStepOver.h"
-#include "Resources/DebugStop.h"
 
 namespace traktor
 {
@@ -56,10 +50,10 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	if (!m_debuggerTools->create(this))
 		return false;
 
-	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebugContinue, sizeof(c_ResourceDebugContinue), L"image"), 1);
-	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebugStepInto, sizeof(c_ResourceDebugStepInto), L"image"), 1);
-	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebugStepOver, sizeof(c_ResourceDebugStepOver), L"image"), 1);
-	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebugStop, sizeof(c_ResourceDebugStop), L"image"), 1);
+	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugContinue"), 1);
+	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStepInto"), 1);
+	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStepOver"), 1);
+	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStop"), 1);
 	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CONTINUE"), 0, ui::Command(L"Script.Editor.Continue")));
 	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), 3, ui::Command(L"Script.Editor.Break")));
 	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), 1, ui::Command(L"Script.Editor.StepInto")));

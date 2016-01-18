@@ -21,7 +21,7 @@ public:
 
 	virtual void setStyle(int style);
 
-	virtual int addImage(IBitmap* image, int imageCount, bool smallImage);
+	virtual int addImage(ISystemBitmap* image, int imageCount, bool smallImage);
 	
 	virtual void removeAllColumns();
 

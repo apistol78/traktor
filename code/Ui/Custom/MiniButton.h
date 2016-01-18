@@ -28,9 +28,9 @@ class T_DLLCLASS MiniButton : public Widget
 public:
 	bool create(Widget* parent, const std::wstring& text);
 
-	bool create(Widget* parent, Bitmap* image);
+	bool create(Widget* parent, IBitmap* image);
 
-	void setImage(Bitmap* image);
+	void setImage(IBitmap* image);
 
 	virtual Size getPreferedSize() const;
 
@@ -42,7 +42,7 @@ private:
 	};
 	
 	State m_state;
-	Ref< Bitmap > m_image;
+	Ref< IBitmap > m_image;
 	
 	void eventButtonDown(MouseButtonDownEvent* event);
 	

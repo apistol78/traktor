@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class HierarchicalState;
+class IBitmap;
 class TreeViewItem;
 		
 /*! \brief Tree view.
@@ -36,11 +37,11 @@ public:
 		WsDefault = WsClientBorder | WsAutoEdit | WsTreeButtons | WsTreeLines
 	};
 
-	bool create(Widget* parent, int style = WsDefault);
+	bool create(Widget* parent, int32_t style = WsDefault);
 
-	int addImage(Bitmap* image, int imageCount);
+	int32_t addImage(IBitmap* image, int32_t imageCount);
 
-	Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int image = -1, int expandedImage = -1);
+	Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int32_t image = -1, int32_t expandedImage = -1);
 
 	void removeItem(TreeViewItem* item);
 

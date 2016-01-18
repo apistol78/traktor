@@ -1,7 +1,7 @@
 #ifndef traktor_ui_Bitmap_H
 #define traktor_ui_Bitmap_H
 
-#include "Core/Object.h"
+#include "Ui/IBitmap.h"
 #include "Ui/Rect.h"
 
 // import/export mechanism.
@@ -27,15 +27,13 @@ class Image;
 	namespace ui
 	{
 
-class IBitmap;
-
 /*! \brief Bitmap.
  * \ingroup UI
  *
  * The Bitmap class is a wrapper for system
  * dependent IBitmap instances.
  */
-class T_DLLCLASS Bitmap : public Object
+class T_DLLCLASS Bitmap : public IBitmap
 {
 	T_RTTI_CLASS;
 
@@ -74,7 +72,7 @@ public:
 	bool create(drawing::Image* image, const ui::Rect& srcRect);
 
 	/*! \brief Destroy bitmap. */
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	/*! \brief Copy image into bitmap. */
 	void copyImage(drawing::Image* image);
@@ -88,10 +86,10 @@ public:
 	void copySubImage(drawing::Image* image, const ui::Rect& srcRect, const ui::Point& destPos);
 
 	/*! \brief Get image from bitmap. */
-	Ref< drawing::Image > getImage() const;
+	virtual Ref< drawing::Image > getImage() const T_OVERRIDE T_FINAL;
 
 	/*! \brief Get size of bitmap in pixels. */
-	Size getSize() const;
+	virtual Size getSize() const T_OVERRIDE T_FINAL;
 
 	/*! \brief Get pixel. */
 	Color4ub getPixel(uint32_t x, uint32_t y) const;
@@ -99,8 +97,8 @@ public:
 	/*! \brief Set pixel. */
 	void setPixel(uint32_t x, uint32_t y, const Color4ub& color);
 
-	/*! \brief Get bitmap implementation interface. */
-	IBitmap* getIBitmap() const;
+	/*! \brief Get system bitmap. */
+	virtual ISystemBitmap* getSystemBitmap() const T_OVERRIDE T_FINAL;
 
 	/*! \brief Load bitmap from file. */
 	static Ref< Bitmap > load(const std::wstring& fileName);
@@ -109,7 +107,7 @@ public:
 	static Ref< Bitmap > load(const void* resource, uint32_t size, const std::wstring& extension);
 
 private:
-	IBitmap* m_bitmap;
+	ISystemBitmap* m_bitmap;
 	bool m_cached;
 };
 
