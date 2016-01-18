@@ -53,7 +53,7 @@ bool ScrollBar::create(Widget* parent, int32_t style)
 void ScrollBar::setRange(int32_t range)
 {
 	m_range = max(range, 0);
-	m_position = clamp(m_position, 0, m_range);
+	m_position = clamp(m_position, 0, m_range - (m_page - 1));
 	update();
 }
 
@@ -64,7 +64,7 @@ int32_t ScrollBar::getRange() const
 
 void ScrollBar::setPage(int32_t page)
 {
-	m_page = max(page, 0);
+	m_page = max(page, 1);
 	update();
 }
 
@@ -75,7 +75,7 @@ int32_t ScrollBar::getPage() const
 
 void ScrollBar::setPosition(int32_t position)
 {
-	m_position = clamp(position, 0, m_range);
+	m_position = clamp(position, 0, m_range - (m_page - 1));
 	update();
 }
 
@@ -105,7 +105,7 @@ void ScrollBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 
 	if (getPrimaryPosition(event->getPosition(), m_vertical) >= getPrimaryPosition(rcInner.getBottomRight(), m_vertical) - scaleBySystemDPI(16))
 	{
-		if (m_position < m_range)
+		if (m_position < m_range - (m_page - 1))
 		{
 			++m_position;
 			ScrollEvent scrollEvent(this, m_position);
@@ -119,7 +119,7 @@ void ScrollBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 	{
 		int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - scaleBySystemDPI(16) * 2;
 		int32_t sliderHeight = max(m_page * sliderRange / m_range, scaleBySystemDPI(60));
-		int32_t sliderTop = m_position * (sliderRange - sliderHeight) / m_range;
+		int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
 
 		if (
 			getPrimaryPosition(event->getPosition(), m_vertical) >= getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + scaleBySystemDPI(16) + sliderTop &&
@@ -133,7 +133,7 @@ void ScrollBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 
 		if (getPrimaryPosition(event->getPosition(), m_vertical) < getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + scaleBySystemDPI(16) + sliderTop)
 		{
-			m_position = max(m_position - m_page, 0);
+			m_position = max(m_position - (m_page - 1), 0);
 			ScrollEvent scrollEvent(this, m_position);
 			raiseEvent(&scrollEvent);
 			update();
@@ -142,7 +142,7 @@ void ScrollBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 
 		if (getPrimaryPosition(event->getPosition(), m_vertical) > getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + scaleBySystemDPI(16) + sliderTop + sliderHeight)
 		{
-			m_position = min(m_position + m_page, m_range);
+			m_position = min(m_position + m_page, m_range - (m_page - 1));
 			ScrollEvent scrollEvent(this, m_position);
 			raiseEvent(&scrollEvent);
 			update();
@@ -171,8 +171,8 @@ void ScrollBar::eventMouseMove(MouseMoveEvent* event)
 
 	int32_t position0 = m_position;
 
-	m_position = (getPrimaryPosition(event->getPosition(), m_vertical) - m_trackOffset) * m_range / (sliderRange - sliderHeight);
-	m_position = clamp(m_position, 0, m_range);
+	m_position = (getPrimaryPosition(event->getPosition(), m_vertical) - scaleBySystemDPI(16) - m_trackOffset) * (m_range - (m_page - 1)) / (sliderRange - sliderHeight);
+	m_position = clamp(m_position, 0, m_range - (m_page - 1));
 
 	if (m_position != position0)
 	{
@@ -197,7 +197,7 @@ void ScrollBar::eventPaint(PaintEvent* event)
 		{
 			int32_t sliderRange = rcInner.getHeight() - scaleBySystemDPI(16) * 2;
 			int32_t sliderHeight = max(m_page * sliderRange / m_range, scaleBySystemDPI(60));
-			int32_t sliderTop = m_position * (sliderRange - sliderHeight) / m_range;
+			int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
 
 			Rect rcSlider(
 				rcInner.left + scaleBySystemDPI(4),
@@ -252,7 +252,7 @@ void ScrollBar::eventPaint(PaintEvent* event)
 		{
 			int32_t sliderRange = rcInner.getWidth() - scaleBySystemDPI(16) * 2;
 			int32_t sliderHeight = max(m_page * sliderRange / m_range, scaleBySystemDPI(60));
-			int32_t sliderTop = m_position * (sliderRange - sliderHeight) / m_range;
+			int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
 
 			Rect rcSlider(
 				rcInner.left + scaleBySystemDPI(16) + sliderTop,
