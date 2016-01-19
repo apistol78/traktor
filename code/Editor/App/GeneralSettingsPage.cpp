@@ -43,7 +43,7 @@ bool GeneralSettingsPage::create(ui::Container* parent, PropertyGroup* settings,
 	staticStyleSheet->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_STYLESHEET"));
 
 	m_editStyleSheet = new ui::Edit();
-	m_editStyleSheet->create(containerInner, settings->getProperty< PropertyString >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/Light.xss"));
+	m_editStyleSheet->create(containerInner, settings->getProperty< PropertyString >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/themes/Light/StyleSheet.xss"));
 
 	Ref< ui::Static > staticFont = new ui::Static();
 	staticFont->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_EDITOR_FONT"));
