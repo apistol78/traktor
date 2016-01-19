@@ -25,10 +25,10 @@
 #include "Scene/Editor/Events/FrameEvent.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Command.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Slider.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -39,18 +39,6 @@
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/QuadSplitter.h"
 #include "World/IEntityEventManager.h"
-
-// Resources
-#include "Resources/DualView.h"
-#include "Resources/Play.h"
-#include "Resources/Pointer.h"
-#include "Resources/QuadView.h"
-#include "Resources/Rewind.h"
-#include "Resources/Rotate.h"
-#include "Resources/SingleView.h"
-#include "Resources/Snap.h"
-#include "Resources/Stop.h"
-#include "Resources/Translate.h"
 
 namespace traktor
 {
@@ -98,16 +86,16 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_toolBarActions = new ui::custom::ToolBar();
 	m_toolBarActions->create(this, ui::WsBorder);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourcePointer, sizeof(c_ResourcePointer), L"image"), 1);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceTranslate, sizeof(c_ResourceTranslate), L"image"), 1);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceRotate, sizeof(c_ResourceRotate), L"image"), 1);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceSnap, sizeof(c_ResourceSnap), L"image"), 1);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourcePlay, sizeof(c_ResourcePlay), L"image"), 1);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceRewind, sizeof(c_ResourceRewind), L"image"), 1);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceStop, sizeof(c_ResourceStop), L"image"), 1);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceSingleView, sizeof(c_ResourceSingleView), L"image"), 1);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceDualView, sizeof(c_ResourceDualView), L"image"), 1);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceQuadView, sizeof(c_ResourceQuadView), L"image"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Pointer"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Translate"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Rotate"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Snap"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Play"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Rewind"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Stop"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.SingleView"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.DualView"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.QuadView"), 1);
 	m_toolBarActions->addItem(m_toolTogglePick);
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarActions->addItem(m_toolToggleTranslate);

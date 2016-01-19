@@ -1,15 +1,11 @@
 #include <algorithm>
 #include <stack>
 #include "Drawing/Image.h"
-#include "Ui/Bitmap.h"
 #include "Ui/ScrollBar.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/Layer/LayerContentChangeEvent.h"
 #include "Ui/Custom/Layer/LayerControl.h"
 #include "Ui/Custom/Layer/LayerItem.h"
-
-// Resources
-#include "Resources/LayerVisible.h"
-#include "Resources/LayerHidden.h"
 
 namespace traktor
 {
@@ -38,8 +34,8 @@ bool LayerControl::create(Widget* parent, int style)
 
 	m_scrollBar->addEventHandler< ScrollEvent >(this, &LayerControl::eventScroll);
 
-	m_imageVisible = Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"image");
-	m_imageHidden = Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"image");
+	m_imageVisible = new StyleBitmap(L"UI.LayerVisible");
+	m_imageHidden = new StyleBitmap(L"UI.LayerHidden");
 
 	addEventHandler< SizeEvent >(this, &LayerControl::eventSize);
 	addEventHandler< MouseButtonDownEvent >(this, &LayerControl::eventButtonDown);
@@ -201,7 +197,7 @@ void LayerControl::paintItem(Canvas& canvas, Rect& rcItem, LayerItem* item, int 
 		item->getText()
 	);
 
-	Ref< Bitmap > image = item->isEnabled() ? m_imageVisible : m_imageHidden;
+	Ref< IBitmap > image = item->isEnabled() ? m_imageVisible : m_imageHidden;
 	if (image)
 	{
 		Point pt(

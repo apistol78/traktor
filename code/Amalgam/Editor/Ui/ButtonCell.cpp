@@ -9,7 +9,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ButtonCell", ButtonCell, ui::custom::AutoWidgetCell)
 
 ButtonCell::ButtonCell(
-	ui::Bitmap* bitmap,
+	ui::IBitmap* bitmap,
 	const ui::Command& command
 )
 :	m_bitmap(bitmap)

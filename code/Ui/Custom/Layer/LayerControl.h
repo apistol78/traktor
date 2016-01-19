@@ -17,7 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
+class IBitmap;
 class ScrollBar;
 
 		namespace custom
@@ -59,8 +59,8 @@ public:
 private:
 	Ref< ScrollBar > m_scrollBar;
 	RefArray< LayerItem > m_layers;
-	Ref< Bitmap > m_imageVisible;
-	Ref< Bitmap > m_imageHidden;
+	Ref< IBitmap > m_imageVisible;
+	Ref< IBitmap > m_imageHidden;
 
 	void updateScrollBar();
 

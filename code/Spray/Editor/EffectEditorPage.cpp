@@ -33,12 +33,12 @@
 #include "Spray/Editor/EffectEditorPage.h"
 #include "Spray/Editor/EffectPreviewControl.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -157,13 +157,13 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"image"), 6);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceToggleGuideLines, sizeof(c_ResourceToggleGuideLines), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceToggleMoveEmitter, sizeof(c_ResourceToggleMoveEmitter), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceToggleGroundClip, sizeof(c_ResourceToggleGroundClip), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceBrowseBackground, sizeof(c_ResourceBrowseBackground), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceBrowseImageProcess, sizeof(c_ResourceBrowseImageProcess), L"image"), 1);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceRandomize, sizeof(c_ResourceRandomize), L"image"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.Playback"), 6);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGuideLines"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleMoveEmitter"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGroundClip"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.BrowseBackground"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.BrowseImageProcess"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.Randomize"), 1);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_REWIND"), 0, ui::Command(L"Effect.Editor.Rewind")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_PLAY"), 1, ui::Command(L"Effect.Editor.Play")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_STOP"), 2, ui::Command(L"Effect.Editor.Stop")));
@@ -511,9 +511,9 @@ void EffectEditorPage::updateSequencer()
 	}
 
 	// Add each effect layers to sequencer.
-	Ref< ui::Bitmap > layerDelete = ui::Bitmap::load(c_ResourceLayerDelete, sizeof(c_ResourceLayerDelete), L"png");
-	Ref< ui::Bitmap > layerVisible = ui::Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"png");
-	Ref< ui::Bitmap > layerHidden = ui::Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png");
+	Ref< ui::IBitmap > layerDelete = new ui::StyleBitmap(L"Spray.LayerDelete");
+	Ref< ui::IBitmap > layerVisible = new ui::StyleBitmap(L"Spray.LayerVisible");
+	Ref< ui::IBitmap > layerHidden = new ui::StyleBitmap(L"Spray.LayerHidden");
 
 	const RefArray< EffectLayerData >& layers = m_effectData->getLayers();
 	for (RefArray< EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)

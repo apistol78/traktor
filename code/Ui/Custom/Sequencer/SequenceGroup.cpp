@@ -1,14 +1,8 @@
 #include "Drawing/Image.h"
-#include "Ui/Bitmap.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/Sequencer/GroupVisibleEvent.h"
 #include "Ui/Custom/Sequencer/SequenceGroup.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
-
-// Resources
-#include "Resources/SequenceExpand.h"
-#include "Resources/SequenceCollapse.h"
-#include "Resources/SequenceVisible.h"
-#include "Resources/SequenceHidden.h"
 
 namespace traktor
 {
@@ -32,10 +26,10 @@ SequenceGroup::SequenceGroup(const std::wstring& name)
 ,	m_start(0)
 ,	m_end(100)
 {
-	m_imageExpand = Bitmap::load(c_ResourceSequenceExpand, sizeof(c_ResourceSequenceExpand), L"image");
-	m_imageCollapse = Bitmap::load(c_ResourceSequenceCollapse, sizeof(c_ResourceSequenceCollapse), L"image");
-	m_imageVisible = Bitmap::load(c_ResourceSequenceVisible, sizeof(c_ResourceSequenceVisible), L"image");
-	m_imageHidden = Bitmap::load(c_ResourceSequenceHidden, sizeof(c_ResourceSequenceHidden), L"image");
+	m_imageExpand = new StyleBitmap(L"UI.SequenceExpand");
+	m_imageCollapse = new StyleBitmap(L"UI.SequenceCollapse");
+	m_imageVisible = new StyleBitmap(L"UI.SequenceVisible");
+	m_imageHidden = new StyleBitmap(L"UI.SequenceHidden");
 }
 
 void SequenceGroup::expand()
@@ -87,8 +81,8 @@ int SequenceGroup::getEnd() const
 void SequenceGroup::mouseDown(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
 {
 	// Select images based on the state of this group.
-	Bitmap* imageExpand = m_expanded ? m_imageCollapse : m_imageExpand;
-	Bitmap* imageVisible = m_visible ? m_imageVisible : m_imageHidden;
+	IBitmap* imageExpand = m_expanded ? m_imageCollapse : m_imageExpand;
+	IBitmap* imageVisible = m_visible ? m_imageVisible : m_imageHidden;
 
 	// Calculate left edges.
 	int expandLeft = rc.left + 4 + getDepth() * 16;
@@ -123,8 +117,8 @@ void SequenceGroup::mouseMove(SequencerControl* sequencer, const Point& at, cons
 void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset)
 {
 	// Select images based on the state of this group.
-	Bitmap* imageExpand = m_expanded ? m_imageCollapse : m_imageExpand;
-	Bitmap* imageVisible = m_visible ? m_imageVisible : m_imageHidden;
+	IBitmap* imageExpand = m_expanded ? m_imageCollapse : m_imageExpand;
+	IBitmap* imageVisible = m_visible ? m_imageVisible : m_imageHidden;
 
 	// Calculate left edges.
 	int expandLeft = rc.left + 4 + getDepth() * 16;

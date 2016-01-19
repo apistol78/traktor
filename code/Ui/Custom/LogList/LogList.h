@@ -21,7 +21,7 @@ class Guid;
 	namespace ui
 	{
 
-class Bitmap;
+class IBitmap;
 
 		namespace custom
 		{
@@ -77,7 +77,7 @@ private:
 
 	const ISymbolLookup* m_lookup;
 	Ref< ScrollBar > m_scrollBar;
-	Ref< Bitmap > m_icons;
+	Ref< IBitmap > m_icons;
 	log_list_t m_pending;
 	Semaphore m_pendingLock;
 	log_list_t m_logFull;

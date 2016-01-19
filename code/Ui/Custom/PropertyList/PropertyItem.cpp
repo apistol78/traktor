@@ -2,17 +2,13 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/PropertyCommandEvent.h"
 #include "Ui/Custom/PropertyList/PropertyContentChangeEvent.h"
 #include "Ui/Custom/PropertyList/PropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-
-// Resources
-#include "Resources/PropertyList.h"
-#include "Resources/SmallCross.h"
 
 namespace traktor
 {
@@ -23,8 +19,8 @@ namespace traktor
 			namespace
 			{
 
-Ref< Bitmap > s_imageExpand;
-Ref< Bitmap > s_imageCross;
+Ref< IBitmap > s_imageExpand;
+Ref< IBitmap > s_imageCross;
 
 			}
 
@@ -38,9 +34,9 @@ PropertyItem::PropertyItem(const std::wstring& text)
 ,	m_parent(0)
 {
 	if (!s_imageExpand)
-		s_imageExpand = Bitmap::load(c_ResourcePropertyList, sizeof(c_ResourcePropertyList), L"image");
+		s_imageExpand = new StyleBitmap(L"UI.PropertyList");
 	if (!s_imageCross)
-		s_imageCross = Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"image");
+		s_imageCross = new StyleBitmap(L"UI.SmallCross");
 }
 
 void PropertyItem::setText(const std::wstring& text)

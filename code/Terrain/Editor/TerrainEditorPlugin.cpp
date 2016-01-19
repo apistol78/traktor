@@ -18,12 +18,12 @@
 #include "Terrain/Editor/TerrainEditorPlugin.h"
 #include "Terrain/Editor/TerrainEditModifier.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
 #include "Ui/MenuItem.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ColorPicker/ColorControl.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
@@ -33,9 +33,6 @@
 #include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 #include "Ui/Custom/ToolBar/ToolBarItemGroup.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-
-// Resources
-#include "Resources/Terrain.h"
 
 namespace traktor
 {
@@ -54,7 +51,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 {
 	m_parent = parent;
 
-	int32_t image = toolBar->addImage(ui::Bitmap::load(c_ResourceTerrain, sizeof(c_ResourceTerrain), L"image"), 15);
+	int32_t image = toolBar->addImage(new ui::StyleBitmap(L"Terrain.Terrain"), 15);
 
 	m_toolToggleEditTerrain = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EDIT_TERRAIN"), image + 6, ui::Command(L"Terrain.Editor.EditTerrain"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSplat = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SPLAT_BRUSH"), image + 9, ui::Command(L"Terrain.Editor.SplatBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
