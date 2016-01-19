@@ -1,10 +1,6 @@
-#include "Ui/Bitmap.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/PropertyList/CheckPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-
-// Resources
-#include "Resources/Unchecked.h"
-#include "Resources/Checked.h"
 
 namespace traktor
 {
@@ -15,8 +11,8 @@ namespace traktor
 			namespace
 			{
 
-Ref< Bitmap > s_imageUnchecked;
-Ref< Bitmap > s_imageChecked;
+Ref< IBitmap > s_imageUnchecked;
+Ref< IBitmap > s_imageChecked;
 
 			}
 
@@ -27,9 +23,9 @@ CheckPropertyItem::CheckPropertyItem(const std::wstring& text, bool checked)
 ,	m_checked(checked)
 {
 	if (!s_imageUnchecked)
-		s_imageUnchecked = Bitmap::load(c_ResourceUnchecked, sizeof(c_ResourceUnchecked), L"image");
+		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked");
 	if (!s_imageChecked)
-		s_imageChecked = Bitmap::load(c_ResourceChecked, sizeof(c_ResourceChecked), L"image");
+		s_imageChecked = new StyleBitmap(L"UI.Checked");
 }
 
 void CheckPropertyItem::setChecked(bool checked)
@@ -50,7 +46,7 @@ void CheckPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 
 void CheckPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
-	Bitmap* image = m_checked ? s_imageChecked : s_imageUnchecked;
+	IBitmap* image = m_checked ? s_imageChecked : s_imageUnchecked;
 	T_ASSERT (image);
 
 	int c = (rc.getHeight() - image->getSize().cy) / 2;

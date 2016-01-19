@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
+class IBitmap;
 
 		namespace custom
 		{
@@ -58,10 +58,10 @@ public:
 	virtual void paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset);
 
 private:
-	Ref< Bitmap > m_imageExpand;
-	Ref< Bitmap > m_imageCollapse;
-	Ref< Bitmap > m_imageVisible;
-	Ref< Bitmap > m_imageHidden;
+	Ref< IBitmap > m_imageExpand;
+	Ref< IBitmap > m_imageCollapse;
+	Ref< IBitmap > m_imageVisible;
+	Ref< IBitmap > m_imageHidden;
 	bool m_expanded;
 	bool m_visible;
 	int m_start;

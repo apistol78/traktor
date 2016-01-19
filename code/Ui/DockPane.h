@@ -17,8 +17,8 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
 class Canvas;
+class IBitmap;
 
 /*! \brief Docking pane.
  * \ingroup UI
@@ -77,8 +77,8 @@ private:
 	Widget* m_owner;
 	DockPane* m_parent;
 	Ref< Widget > m_widget;
-	Ref< Bitmap > m_bitmapClose;
-	Ref< Bitmap > m_bitmapGripper;
+	Ref< IBitmap > m_bitmapClose;
+	Ref< IBitmap > m_bitmapGripper;
 	bool m_detachable;
 	Ref< DockPane > m_child[2];
 	bool m_vertical;

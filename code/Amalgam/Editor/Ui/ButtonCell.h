@@ -1,8 +1,8 @@
 #ifndef traktor_amalgam_ButtonCell_H
 #define traktor_amalgam_ButtonCell_H
 
-#include "Ui/Bitmap.h"
 #include "Ui/Command.h"
+#include "Ui/IBitmap.h"
 #include "Ui/Custom/Auto/AutoWidgetCell.h"
 
 namespace traktor
@@ -16,7 +16,7 @@ class ButtonCell : public ui::custom::AutoWidgetCell
 
 public:
 	ButtonCell(
-		ui::Bitmap* bitmap,
+		ui::IBitmap* bitmap,
 		const ui::Command& command
 	);
 
@@ -29,7 +29,7 @@ public:
 	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect) T_FINAL;
 
 private:
-	Ref< ui::Bitmap > m_bitmap;
+	Ref< ui::IBitmap > m_bitmap;
 	ui::Command m_command;
 	bool m_enable;
 	bool m_down;

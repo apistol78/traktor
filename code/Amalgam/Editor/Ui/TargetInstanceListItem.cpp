@@ -16,17 +16,9 @@
 #include "Core/Misc/String.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
-
-// Resources
-#include "Resources/Logos.h"
-#include "Resources/TargetBrowse.h"
-#include "Resources/TargetBuild.h"
-#include "Resources/TargetMigrate.h"
-#include "Resources/TargetPlay.h"
-#include "Resources/TargetProfile.h"
-#include "Resources/TargetStop.h"
 
 namespace traktor
 {
@@ -35,7 +27,7 @@ namespace traktor
 		namespace
 		{
 
-Ref< ui::Bitmap > s_bitmapLogos;
+Ref< ui::IBitmap > s_bitmapLogos;
 
 const int32_t c_performanceLineHeight = 14;
 const int32_t c_performanceHeight = 7 * c_performanceLineHeight;
@@ -97,21 +89,21 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 ,	m_lastInstanceState((TargetState)-1)
 {
 	if (!s_bitmapLogos)
-		s_bitmapLogos = ui::Bitmap::load(c_ResourceLogos, sizeof(c_ResourceLogos), L"image");
+		s_bitmapLogos = new ui::StyleBitmap(L"Amalgam.Logos");
 
 	m_progressCell = new ProgressCell();
 	m_hostsCell = new DropListCell(hostEnumerator, instance);
 
-	m_playCell = new ButtonCell(ui::Bitmap::load(c_ResourceTargetPlay, sizeof(c_ResourceTargetPlay), L"image"), ui::Command());
+	m_playCell = new ButtonCell(new ui::StyleBitmap(L"Amalgam.TargetPlay"), ui::Command());
 	m_playCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventPlayButtonClick);
 
-	m_buildCell = new ButtonCell(ui::Bitmap::load(c_ResourceTargetBuild, sizeof(c_ResourceTargetBuild), L"image"), ui::Command());
+	m_buildCell = new ButtonCell(new ui::StyleBitmap(L"Amalgam.TargetBuild"), ui::Command());
 	m_buildCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventBuildButtonClick);
 
-	m_migrateCell = new ButtonCell(ui::Bitmap::load(c_ResourceTargetMigrate, sizeof(c_ResourceTargetMigrate), L"image"), ui::Command());
+	m_migrateCell = new ButtonCell(new ui::StyleBitmap(L"Amalgam.TargetMigrate"), ui::Command());
 	m_migrateCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventMigrateButtonClick);
 
-	m_browseCell = new ButtonCell(ui::Bitmap::load(c_ResourceTargetBrowse, sizeof(c_ResourceTargetBrowse), L"image"), ui::Command());
+	m_browseCell = new ButtonCell(new ui::StyleBitmap(L"Amalgam.TargetBrowse"), ui::Command());
 	m_browseCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventBrowseButtonClick);
 }
 
@@ -200,13 +192,13 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 	{
 		if (!m_stopCells[i])
 		{
-			m_stopCells[i] = new ButtonCell(ui::Bitmap::load(c_ResourceTargetStop, sizeof(c_ResourceTargetStop), L"image"), ui::Command(i));
+			m_stopCells[i] = new ButtonCell(new ui::StyleBitmap(L"Amalgam.TargetStop"), ui::Command(i));
 			m_stopCells[i]->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventStopButtonClick);
 		}
 
 		if (!m_captureCells[i])
 		{
-			m_captureCells[i] = new ButtonCell(ui::Bitmap::load(c_ResourceTargetProfile, sizeof(c_ResourceTargetProfile), L"image"), ui::Command(i));
+			m_captureCells[i] = new ButtonCell(new ui::StyleBitmap(L"Amalgam.TargetProfile"), ui::Command(i));
 			m_captureCells[i]->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventCaptureButtonClick);
 		}
 

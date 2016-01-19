@@ -40,10 +40,10 @@
 #include "Input/Editor/InRemapAxisTraits.h"
 #include "Input/Editor/InThresholdTraits.h"
 #include "Input/Editor/InTriggerTraits.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/MenuItem.h"
 #include "Ui/PopupMenu.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/EditList.h"
 #include "Ui/Custom/EditListEditEvent.h"
@@ -65,9 +65,6 @@
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-
-// Resources
-#include "Resources/Alignment.h"
 
 namespace traktor
 {
@@ -212,7 +209,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 
 	m_toolBarGraph = new ui::custom::ToolBar();
 	m_toolBarGraph->create(container);
-	m_toolBarGraph->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"image"), 6);
+	m_toolBarGraph->addImage(new ui::StyleBitmap(L"Input.Alignment"), 6);
 	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"INPUT_EDITOR_ALIGN_LEFT"), 0, ui::Command(L"Input.Editor.AlignLeft")));
 	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"INPUT_EDITOR_ALIGN_RIGHT"), 1, ui::Command(L"Input.Editor.AlignRight")));
 	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"INPUT_EDITOR_ALIGN_TOP"), 2, ui::Command(L"Input.Editor.AlignTop")));

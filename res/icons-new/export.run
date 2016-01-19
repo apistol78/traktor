@@ -326,7 +326,7 @@ function main(argv)
 					local base = 16
 					if o.base ~= nil then base = o.base end
 
-					if true then
+					if false then
 
 						-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
 						local sdpi = 480

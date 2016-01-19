@@ -12,10 +12,10 @@
 #include "Theater/TheaterControllerData.h"
 #include "Theater/TrackData.h"
 #include "Theater/Editor/TheaterControllerEditor.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/MessageBox.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/EditList.h"
 #include "Ui/Custom/EditListEditEvent.h"
@@ -30,9 +30,6 @@
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
 #include "World/EntityData.h"
-
-// Resources
-#include "Resources/Theater.h"
 
 namespace traktor
 {
@@ -90,7 +87,7 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 
 	m_toolBarActs = new ui::custom::ToolBar();
 	m_toolBarActs->create(containerActs);
-	m_toolBarActs->addImage(ui::Bitmap::load(c_ResourceTheater, sizeof(c_ResourceTheater), L"image"), 8);
+	m_toolBarActs->addImage(new ui::StyleBitmap(L"Theater.Theater"), 8);
 	m_toolBarActs->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_ADD_ACT"), 6, ui::Command(L"Theater.AddAct")));
 	m_toolBarActs->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_REMOVE_ACT"), 7, ui::Command(L"Theater.RemoveAct")));
 	m_toolBarActs->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &TheaterControllerEditor::eventToolBarClick);
@@ -106,7 +103,7 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(containerSequencer);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceTheater, sizeof(c_ResourceTheater), L"png"), 8);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Theater.Theater"), 8);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_CAPTURE_ENTITIES"), 0, ui::Command(L"Theater.CaptureEntities")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_DELETE_SELECTED_KEY"), 1, ui::Command(L"Theater.DeleteSelectedKey")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_SET_LOOKAT_ENTITY"), 4, ui::Command(L"Theater.SetLookAtEntity")));
