@@ -11,8 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.StyleBitmap", StyleBitmap, IBitmap)
 
-StyleBitmap::StyleBitmap(const wchar_t* const name)
+StyleBitmap::StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap)
 :	m_name(name)
+,	m_defaultBitmap(defaultBitmap)
 {
 }
 
@@ -48,7 +49,9 @@ bool StyleBitmap::resolve() const
 
 	safeDestroy(m_bitmap);
 
-	m_bitmap = Bitmap::load(bmp);
+	if ((m_bitmap = Bitmap::load(bmp)) == 0)
+		m_bitmap = m_defaultBitmap;
+
 	m_path = bmp;
 
 	return bool(m_bitmap != 0);

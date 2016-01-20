@@ -102,17 +102,6 @@
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
 
-// Resources
-//#include "Resources/Build.h"
-//#include "Resources/CancelBuild.h"
-//#include "Resources/Copy.h"
-//#include "Resources/Cut.h"
-//#include "Resources/Paste.h"
-//#include "Resources/Redo.h"
-//#include "Resources/Save.h"
-//#include "Resources/Types.h"
-//#include "Resources/Undo.h"
-
 #if defined(MessageBox)
 #	undef MessageBox
 #endif
@@ -209,6 +198,14 @@ public:
 
 private:
 	int32_t& m_step;
+};
+
+struct EditorToolPredicate
+{
+	bool operator () (const IEditorTool* lh, const IEditorTool* rh) const
+	{
+		return compareIgnoreCase(lh->getDescription(), rh->getDescription()) < 0;
+	}
 };
 
 Ref< PropertyGroup > loadProperties(const Path& pathName)
@@ -673,18 +670,22 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	{
 		m_menuTools = new ui::MenuItem(i18n::Text(L"MENU_TOOLS"));
 
-		int32_t toolId = 0;
 		for (TypeInfoSet::iterator i = toolTypes.begin(); i != toolTypes.end(); ++i)
 		{
 			Ref< IEditorTool > tool = dynamic_type_cast< IEditorTool* >((*i)->createInstance());
-			if (!tool)
-				continue;
+			if (tool)
+				m_editorTools.push_back(tool);
+		}
 
-			std::wstring desc = tool->getDescription();
+		EditorToolPredicate predicate;
+		m_editorTools.sort(predicate);
+
+		for (uint32_t i = 0; i < m_editorTools.size(); ++i)
+		{
+			std::wstring desc = m_editorTools[i]->getDescription();
 			T_ASSERT (!desc.empty());
 
-			m_menuTools->add(new ui::MenuItem(ui::Command(toolId++), desc));
-			m_editorTools.push_back(tool);
+			m_menuTools->add(new ui::MenuItem(ui::Command(i), desc));
 		}
 
 		if (!m_editorTools.empty())
