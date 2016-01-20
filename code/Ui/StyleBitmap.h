@@ -24,7 +24,7 @@ class T_DLLCLASS StyleBitmap : public IBitmap
 	T_RTTI_CLASS;
 
 public:
-	StyleBitmap(const wchar_t* const name);
+	StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap = 0);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
@@ -36,6 +36,7 @@ public:
 
 private:
 	const wchar_t* const m_name;
+	Ref< IBitmap > m_defaultBitmap;
 	mutable std::wstring m_path;
 	mutable Ref< IBitmap > m_bitmap;
 
