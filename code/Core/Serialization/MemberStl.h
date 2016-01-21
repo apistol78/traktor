@@ -38,18 +38,18 @@ public:
 	{
 	}
 
-	virtual void reserve(size_t size, size_t capacity) const
+	virtual void reserve(size_t size, size_t capacity) const T_OVERRIDE T_FINAL
 	{
 		m_ref.resize(size);
 		m_ref.reserve(capacity);
 	}
 
-	virtual size_t size() const
+	virtual size_t size() const T_OVERRIDE T_FINAL
 	{
 		return m_ref.size();
 	}
 	
-	virtual void read(ISerializer& s) const
+	virtual void read(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		if (m_index < m_ref.size())
 			s >> ValueMember(L"item", m_ref[m_index]);
@@ -70,12 +70,12 @@ public:
 		++m_index;
 	}
 
-	virtual void write(ISerializer& s) const
+	virtual void write(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		s >> ValueMember(L"item", m_ref[m_index++]);
 	}
 
-	virtual bool insert() const
+	virtual bool insert() const T_OVERRIDE T_FINAL
 	{
 		uint8_t zero[sizeof(ValueType)];
 		std::memset(zero, 0, sizeof(zero));
@@ -116,28 +116,28 @@ public:
 	{
 	}
 
-	virtual void reserve(size_t size, size_t capacity) const
+	virtual void reserve(size_t size, size_t capacity) const T_OVERRIDE T_FINAL
 	{
 		m_ref.clear();
 	}
 
-	virtual size_t size() const
+	virtual size_t size() const T_OVERRIDE T_FINAL
 	{
 		return m_ref.size();
 	}
 
-	virtual void read(ISerializer& s) const
+	virtual void read(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		m_ref.push_back(ValueType());
 		s >> ValueMember(L"item", m_ref.back());
 	}
 
-	virtual void write(ISerializer& s) const
+	virtual void write(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		s >> ValueMember(L"item", *m_iter++);
 	}
 
-	virtual bool insert() const
+	virtual bool insert() const T_OVERRIDE T_FINAL
 	{
 		uint8_t value[sizeof(ValueType)];
 		std::memset(value, 0, sizeof(value));
@@ -175,30 +175,30 @@ public:
 	{
 	}
 	
-	virtual void reserve(size_t size, size_t capacity) const
+	virtual void reserve(size_t size, size_t capacity) const T_OVERRIDE T_FINAL
 	{
 		m_ref.clear();
 	}
 
-	virtual size_t size() const
+	virtual size_t size() const T_OVERRIDE T_FINAL
 	{
 		return m_ref.size();
 	}
 
-	virtual void read(ISerializer& s) const
+	virtual void read(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		ValueType item;
 		s >> ValueMember(L"item", item);
 		m_ref.insert(item);
 	}
 
-	virtual void write(ISerializer& s) const
+	virtual void write(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		ValueType v = *m_iter++;
 		s >> ValueMember(L"item", v);
 	}
 
-	virtual bool insert() const
+	virtual bool insert() const T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
@@ -221,7 +221,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		s >> FirstMember(L"first", m_ref.first);
 		s >> SecondMember(L"second", m_ref.second);
@@ -252,31 +252,31 @@ public:
 	{
 	}
 
-	virtual void reserve(size_t size, size_t capacity) const
+	virtual void reserve(size_t size, size_t capacity) const T_OVERRIDE T_FINAL
 	{
 		m_ref.clear();
 	}
 
-	virtual size_t size() const
+	virtual size_t size() const T_OVERRIDE T_FINAL
 	{
 		return m_ref.size();
 	}
 
-	virtual void read(ISerializer& s) const
+	virtual void read(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		typename PairMember::value_type item;
 		s >> PairMember(L"item", item);
 		m_ref[item.first] = item.second;
 	}
 
-	virtual void write(ISerializer& s) const
+	virtual void write(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		typename PairMember::value_type item = std::make_pair(m_iter->first, m_iter->second);
 		s >> PairMember(L"item", item);
 		++m_iter;
 	}
 
-	virtual bool insert() const
+	virtual bool insert() const T_OVERRIDE T_FINAL
 	{
 		m_ref.insert(std::make_pair< KeyType, ValueType >(
 			KeyType(),

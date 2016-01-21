@@ -46,7 +46,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(m_self->*m_method)();
 	}
@@ -81,7 +81,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(m_self->*m_method)(m_p1);
 	}
@@ -118,7 +118,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(m_self->*m_method)(m_p1, m_p2);
 	}
@@ -157,7 +157,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(m_self->*m_method)(m_p1, m_p2, m_p3);
 	}
@@ -198,7 +198,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(m_self->*m_method)(m_p1, m_p2, m_p3, m_p4);
 	}
@@ -241,7 +241,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(m_self->*m_method)(m_p1, m_p2, m_p3, m_p4, m_p5);
 	}
@@ -286,7 +286,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(m_self->*m_method)(m_p1, m_p2, m_p3, m_p4, m_p5, m_p6);
 	}
@@ -324,7 +324,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(*m_function)();
 	}
@@ -356,7 +356,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(*m_function)(m_p1);
 	}
@@ -391,7 +391,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(*m_function)(m_p1, m_p2);
 	}
@@ -428,7 +428,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(*m_function)(m_p1, m_p2, m_p3);
 	}
@@ -467,7 +467,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(*m_function)(m_p1, m_p2, m_p3, m_p4);
 	}
@@ -508,7 +508,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(*m_function)(m_p1, m_p2, m_p3, m_p4, m_p5);
 	}
@@ -551,7 +551,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(*m_function)(m_p1, m_p2, m_p3, m_p4, m_p5, m_p6);
 	}
@@ -596,7 +596,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(*m_function)(m_p1, m_p2, m_p3, m_p4, m_p5, m_p6, m_p7);
 	}
@@ -643,7 +643,7 @@ public:
 	{
 	}
 
-	virtual void operator () ()
+	virtual void operator () () T_OVERRIDE T_FINAL
 	{
 		(*m_function)(m_p1, m_p2, m_p3, m_p4, m_p5, m_p6, m_p7, m_p8);
 	}

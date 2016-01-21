@@ -29,7 +29,6 @@ private:
 	ScriptContextLua* m_context;
 	lua_State*& m_luaState;
 	int32_t m_functionRef;
-	int32_t m_tag;
 };
 
 	}

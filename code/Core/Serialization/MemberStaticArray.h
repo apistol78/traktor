@@ -28,16 +28,16 @@ public:
 	{
 	}
 
-	virtual void reserve(size_t size, size_t capacity) const
+	virtual void reserve(size_t size, size_t capacity) const T_OVERRIDE T_FINAL
 	{
 	}
 
-	virtual size_t size() const
+	virtual size_t size() const T_OVERRIDE T_FINAL
 	{
 		return ArraySize;
 	}
 
-	virtual void read(ISerializer& s) const
+	virtual void read(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		s >> ValueMember(
 			m_elementNames ? m_elementNames[m_index] : L"item",
@@ -46,7 +46,7 @@ public:
 		++m_index;
 	}
 
-	virtual void write(ISerializer& s) const
+	virtual void write(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		s >> ValueMember(
 			m_elementNames ? m_elementNames[m_index] : L"item",
@@ -55,7 +55,7 @@ public:
 		++m_index;
 	}
 
-	virtual bool insert() const
+	virtual bool insert() const T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
