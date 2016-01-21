@@ -1,8 +1,8 @@
 #ifndef traktor_script_ScriptDebuggerLua_H
 #define traktor_script_ScriptDebuggerLua_H
 
-#include <list>
-#include <map>
+#include "Core/Containers/SmallMap.h"
+#include "Core/Containers/SmallSet.h"
 #include "Core/Thread/Semaphore.h"
 #include "Script/IScriptDebugger.h"
 
@@ -63,8 +63,8 @@ private:
 	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;
 	Semaphore m_lock;
-	std::map< int32_t, std::set< Guid > > m_breakpoints;
-	std::set< IListener* > m_listeners;
+	SmallMap< int32_t, SmallSet< Guid > > m_breakpoints;
+	SmallSet< IListener* > m_listeners;
 	Guid m_lastId;
 	State m_state;
 

@@ -543,13 +543,14 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 	}
 
 	// If this is a wrapped LUA object or function then unwrap and push as is.
-	if (&type_of(object) == &type_of< ScriptObjectLua >())
+	const TypeInfo& objectType = type_of(object);
+	if (&objectType == &type_of< ScriptObjectLua >())
 	{
 		ScriptObjectLua* scriptObject = checked_type_cast< ScriptObjectLua*, false >(object);
 		scriptObject->push();
 		return;
 	}
-	else if (&type_of(object) == &type_of< ScriptDelegateLua >())
+	else if (&objectType == &type_of< ScriptDelegateLua >())
 	{
 		ScriptDelegateLua* delegateContainer = checked_type_cast< ScriptDelegateLua*, false >(object);
 		delegateContainer->push();
@@ -568,12 +569,10 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 	// No reference; drop nil value from stack.
 	lua_pop(m_luaState, 1);
 
-	const TypeInfo* objectType = &type_of(object);
-	uint32_t classId = 0;
-
 	// Get class index.
-	if (objectType->getTag() != 0)
-		classId = objectType->getTag() - 1;
+	uint32_t classId = 0;
+	if (objectType.getTag() != 0)
+		classId = objectType.getTag() - 1;
 	else
 	{
 		lua_pop(m_luaState, 1);
@@ -604,10 +603,7 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 void ScriptManagerLua::pushAny(const Any& any)
 {
 	CHECK_LUA_STACK(m_luaState, 1);
-
-	if (any.isVoid())
-		lua_pushnil(m_luaState);
-	else if (any.isBoolean())
+	if (any.isBoolean())
 		lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
 	else if (any.isInteger())
 		lua_pushinteger(m_luaState, any.getIntegerUnsafe());
@@ -624,13 +620,10 @@ void ScriptManagerLua::pushAny(const Any& any)
 void ScriptManagerLua::pushAny(const Any* anys, int32_t count)
 {
 	CHECK_LUA_STACK(m_luaState, count);
-
 	for (int32_t i = 0; i < count; ++i)
 	{
 		const Any& any = anys[i];
-		if (any.isVoid())
-			lua_pushnil(m_luaState);
-		else if (any.isBoolean())
+		if (any.isBoolean())
 			lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
 		else if (any.isInteger())
 			lua_pushinteger(m_luaState, any.getIntegerUnsafe());
@@ -656,12 +649,6 @@ Any ScriptManagerLua::toAny(int32_t index)
 		return Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
 	else if (type == LUA_TSTRING)
 		return Any::fromString(lua_tostring(m_luaState, index));
-	else if (type == LUA_TFUNCTION)
-	{
-		// Box LUA function into C++ container.
-		lua_pushvalue(m_luaState, index);
-		return Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
-	}
 	else if (type == LUA_TTABLE)
 	{
 		// Get associated native object.
@@ -690,6 +677,12 @@ Any ScriptManagerLua::toAny(int32_t index)
 		int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 		return Any::fromObject(new ScriptObjectLua(m_luaState, tableRef, 0));
 	}
+	else if (type == LUA_TFUNCTION)
+	{
+		// Box LUA function into C++ container.
+		lua_pushvalue(m_luaState, index);
+		return Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
+	}
 
 	return Any();
 }
@@ -709,12 +702,6 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 			outAnys[i] = Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
 		else if (type == LUA_TSTRING)
 			outAnys[i] = Any::fromString(lua_tostring(m_luaState, index));
-		else if (type == LUA_TFUNCTION)
-		{
-			// Box LUA function into C++ container.
-			lua_pushvalue(m_luaState, index);
-			outAnys[i] = Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
-		}
 		else if (type == LUA_TTABLE)
 		{
 			// Get associated native object.
@@ -747,6 +734,12 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 			int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 			outAnys[i] = Any::fromObject(new ScriptObjectLua(m_luaState, tableRef, 0));
 		}
+		else if (type == LUA_TFUNCTION)
+		{
+			// Box LUA function into C++ container.
+			lua_pushvalue(m_luaState, index);
+			outAnys[i] = Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
+		}
 	}
 }
 
@@ -761,9 +754,7 @@ void ScriptManagerLua::collectGarbageFull()
 void ScriptManagerLua::collectGarbageFullNoLock()
 {
 #if defined(T_LUA_5_2)
-
 	lua_gc(m_luaState, LUA_GCCOLLECT, 0);
-
 #else
 	uint32_t memoryUse = 0;
 	do
@@ -862,9 +853,7 @@ void ScriptManagerLua::breakDebugger(lua_State* luaState)
 	if (!m_debugger)
 		return;
 
-	lua_Debug ar;
-
-	std::memset(&ar, 0, sizeof(ar));
+	lua_Debug ar = { 0 };
 	lua_getstack(luaState, 1, &ar);
 	lua_getinfo(luaState, "Snlu", &ar);
 
@@ -909,8 +898,8 @@ int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 	Any argv[8];
 	manager->toAny(2, top - 1, argv);
 
-	Any returnValue = Any::fromObject(runtimeClass->construct(0, top - 1, argv));
-	manager->pushAny(returnValue);
+	Ref< ITypedObject > returnValue = runtimeClass->construct(0, top - 1, argv);
+	manager->pushObject(returnValue);
 	return 1;
 }
 
@@ -1157,8 +1146,8 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 	ScriptManagerLua* this_ = reinterpret_cast< ScriptManagerLua* >(ud);
 	T_ASSERT (this_);
 
+	IAllocator* allocator = getAllocator();
 	size_t& totalMemoryUse = this_->m_totalMemoryUse;
-
 	if (nsize > 0)
 	{
 		totalMemoryUse += nsize;
@@ -1171,7 +1160,7 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 			return ptr;
 		}
 
-		void* nptr = getAllocator()->alloc(nsize, 16, T_FILE_LINE);
+		void* nptr = allocator->alloc(nsize, 16, T_FILE_LINE);
 		if (!nptr)
 			return 0;
 #endif
@@ -1180,7 +1169,7 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 		{
 #if defined(T_USE_ALLOCATOR)
 			std::memcpy(nptr, ptr, std::min(osize, nsize));
-			getAllocator()->free(ptr);
+			allocator->free(ptr);
 #endif
 			T_ASSERT (osize <= totalMemoryUse);
 			totalMemoryUse -= osize;
@@ -1193,7 +1182,7 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 	else if (ptr)
 	{
 #if defined(T_USE_ALLOCATOR)
-		getAllocator()->free(ptr);
+		allocator->free(ptr);
 #endif
 		T_ASSERT (osize <= totalMemoryUse);
 		totalMemoryUse -= osize;
