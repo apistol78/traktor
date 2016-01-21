@@ -10,6 +10,10 @@
 #include "Ui/Custom/PropertyList/PropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 
+// Resources
+#include "Resources/PropertyList.h"
+#include "Resources/SmallCross.h"
+
 namespace traktor
 {
 	namespace ui
@@ -34,9 +38,9 @@ PropertyItem::PropertyItem(const std::wstring& text)
 ,	m_parent(0)
 {
 	if (!s_imageExpand)
-		s_imageExpand = new StyleBitmap(L"UI.PropertyList");
+		s_imageExpand = new StyleBitmap(L"UI.PropertyList", c_ResourcePropertyList, sizeof(c_ResourcePropertyList));
 	if (!s_imageCross)
-		s_imageCross = new StyleBitmap(L"UI.SmallCross");
+		s_imageCross = new StyleBitmap(L"UI.SmallCross", c_ResourceSmallCross, sizeof(c_ResourceSmallCross));
 }
 
 void PropertyItem::setText(const std::wstring& text)

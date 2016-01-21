@@ -6,6 +6,9 @@
 #include "Ui/Custom/PropertyList/FilePropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 
+// Resources
+#include "Resources/SmallDots.h"
+
 namespace traktor
 {
 	namespace ui
@@ -45,7 +48,7 @@ void FilePropertyItem::createInPlaceControls(Widget* parent)
 
 	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
-	m_buttonEdit->create(parent, new ui::StyleBitmap(L"UI.SmallDots"));
+	m_buttonEdit->create(parent, new ui::StyleBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots)));
 	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &FilePropertyItem::eventClick);
 }
 

@@ -6,6 +6,7 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/StyleBitmap.h"
 
+#include "Resources/DockClose.h"
 #include "Resources/DockGripper.h"
 
 namespace traktor
@@ -59,7 +60,7 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 ,	m_split(0)
 ,	m_focus(false)
 {
-	m_bitmapClose = new ui::StyleBitmap(L"UI.DockClose");
+	m_bitmapClose = new ui::StyleBitmap(L"UI.DockClose", c_ResourceDockClose, sizeof(c_ResourceDockClose));
 	T_FATAL_ASSERT (m_bitmapClose);
 
 	m_bitmapGripper = Bitmap::load(c_ResourceDockGripper, sizeof(c_ResourceDockGripper), L"png");

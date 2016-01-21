@@ -9,6 +9,9 @@
 #include "Ui/Custom/GridView/GridRowStateChangeEvent.h"
 #include "Ui/Custom/GridView/GridView.h"
 
+// Resources
+#include "Resources/GridView.h"
+
 namespace traktor
 {
 	namespace ui
@@ -24,7 +27,7 @@ GridRow::GridRow(uint32_t initialState)
 ,	m_minimumHeight(0)
 ,	m_parent(0)
 {
-	m_expand = new ui::StyleBitmap(L"UI.GridView");
+	m_expand = new ui::StyleBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
 }
 
 GridRow::~GridRow()

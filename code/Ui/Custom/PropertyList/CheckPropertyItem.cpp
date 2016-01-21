@@ -2,6 +2,10 @@
 #include "Ui/Custom/PropertyList/CheckPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 
+// Resources
+#include "Resources/Unchecked.h"
+#include "Resources/Checked.h"
+
 namespace traktor
 {
 	namespace ui
@@ -23,9 +27,9 @@ CheckPropertyItem::CheckPropertyItem(const std::wstring& text, bool checked)
 ,	m_checked(checked)
 {
 	if (!s_imageUnchecked)
-		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked");
+		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
 	if (!s_imageChecked)
-		s_imageChecked = new StyleBitmap(L"UI.Checked");
+		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
 }
 
 void CheckPropertyItem::setChecked(bool checked)

@@ -11,9 +11,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.StyleBitmap", StyleBitmap, IBitmap)
 
+StyleBitmap::StyleBitmap(const wchar_t* const name)
+:	m_name(name)
+{
+}
+
 StyleBitmap::StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap)
 :	m_name(name)
 ,	m_defaultBitmap(defaultBitmap)
+{
+}
+
+StyleBitmap::StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize)
+:	m_name(name)
+,	m_defaultBitmap(Bitmap::load(defaultBitmapResource, defaultBitmapResourceSize, L"image"))
 {
 }
 

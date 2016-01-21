@@ -11,6 +11,8 @@
 #include "Ui/Custom/TreeView/TreeViewEditEvent.h"
 #include "Ui/Custom/TreeView/TreeViewItem.h"
 
+#include "Resources/Tree.h"
+
 namespace traktor
 {
 	namespace ui
@@ -40,7 +42,7 @@ bool TreeView::create(Widget* parent, int32_t style)
 	m_itemEditor->hide();
 	m_itemEditor->addEventHandler< FocusEvent >(this, &TreeView::eventEditFocus);
 
-	m_imageState = new ui::StyleBitmap(L"UI.Tree");
+	m_imageState = new ui::StyleBitmap(L"UI.Tree", c_ResourceTree, sizeof(c_ResourceTree));
 
 	addEventHandler< ScrollEvent >(this, &TreeView::eventScroll);
 	return true;

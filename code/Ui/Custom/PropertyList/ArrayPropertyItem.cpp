@@ -7,6 +7,10 @@
 #include "Ui/Custom/PropertyList/NullPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 
+// Resources
+#include "Resources/SmallDots.h"
+#include "Resources/SmallPlus.h"
+
 namespace traktor
 {
 	namespace ui
@@ -29,9 +33,9 @@ ArrayPropertyItem::ArrayPropertyItem(const std::wstring& text, const TypeInfo* e
 ,	m_readOnly(readOnly)
 {
 	if (!s_imageSmallDots)
-		s_imageSmallDots = new ui::StyleBitmap(L"UI.SmallDots");
+		s_imageSmallDots = new ui::StyleBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots));
 	if (!s_imageSmallPlus)
-		s_imageSmallPlus = new ui::StyleBitmap(L"UI.SmallPlus");
+		s_imageSmallPlus = new ui::StyleBitmap(L"UI.SmallPlus", c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus));
 }
 
 void ArrayPropertyItem::setElementType(const TypeInfo* elementType)
