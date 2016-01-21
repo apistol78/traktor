@@ -335,7 +335,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		Guid currentId;
 
 		// Any breakpoint defined with current line number?
-		std::map< int32_t, std::set< Guid > >::const_iterator i = m_breakpoints.find(currentLine);
+		SmallMap< int32_t, SmallSet< Guid > >::const_iterator i = m_breakpoints.find(currentLine);
 		if (i != m_breakpoints.end())
 		{
 			// Get executing script's identifier.
@@ -348,7 +348,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 					m_state = StHalted;
 					m_lastId = currentId;
 
-					for (std::set< IListener* >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
+					for (SmallSet< IListener* >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
 						(*j)->breakpointReached(this);
 				}
 
@@ -366,7 +366,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		{
 			m_state = StHalted;
 			m_lastId = currentId;
-			for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+			for (SmallSet< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
 				(*i)->breakpointReached(this);
 		}
 	}
@@ -381,7 +381,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		{
 			m_state = StHalted;
 			m_lastId = currentId;
-			for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+			for (SmallSet< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
 				(*i)->breakpointReached(this);
 		}
 	}
@@ -398,7 +398,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 			{
 				m_state = StHalted;
 				m_lastId = currentId;
-				for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+				for (SmallSet< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
 					(*i)->breakpointReached(this);
 			}
 		}
