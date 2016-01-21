@@ -10,6 +10,37 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
+
+UINT getReflectedMessage(UINT message)
+{
+	switch (message)
+	{
+	case WM_COMMAND:
+		return WM_REFLECTED_COMMAND;
+
+	case WM_HSCROLL:
+		return WM_REFLECTED_HSCROLL;
+
+	case WM_VSCROLL:
+		return WM_REFLECTED_VSCROLL;
+
+	case WM_CTLCOLORSTATIC:
+		return WM_REFLECTED_CTLCOLORSTATIC;
+
+	case WM_CTLCOLOREDIT:
+		return WM_REFLECTED_CTLCOLOREDIT;
+
+	case WM_CTLCOLORBTN:
+		return WM_REFLECTED_CTLCOLORBTN;
+
+	default:
+		return 0;
+	}
+}
+
+		}
 
 Window::Window()
 :	m_hWnd(0)
@@ -210,6 +241,7 @@ LRESULT Window::invokeMessageHandlers(HWND hWnd, DWORD dwIndex, UINT message, WP
 LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT result = FALSE;
+	UINT reflectedMessage;
 	bool pass;
 
 	// Lookup handler of issued message.
@@ -218,17 +250,7 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		return result;
 
 	// Reflect messages sent to parents back to issuing child.
-	if (message == WM_COMMAND)
-	{
-		HWND hWndControl = (HWND)lParam;
-		if (hWndControl)
-		{
-			result = invokeMessageHandlers(hWndControl, GWLP_USERDATA, WM_REFLECTED_COMMAND, wParam, lParam, pass);
-			if (!pass)
-				return result;
-		}
-	}
-	else if (message == WM_NOTIFY)
+	if (message == WM_NOTIFY)
 	{
 		LPNMHDR nmhdr = reinterpret_cast< LPNMHDR >(lParam);
 		if (nmhdr && nmhdr->hwndFrom)
@@ -238,13 +260,12 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 				return result;
 		}
 	}
-	else if (message == WM_HSCROLL || message == WM_VSCROLL)
+	else if ((reflectedMessage = getReflectedMessage(message)) != 0)
 	{
 		HWND hWndControl = (HWND)lParam;
 		if (hWndControl)
 		{
-			UINT reflectMsg = (message == WM_HSCROLL) ? WM_REFLECTED_HSCROLL : WM_REFLECTED_VSCROLL;
-			result = invokeMessageHandlers(hWndControl, GWLP_USERDATA, reflectMsg, wParam, lParam, pass);
+			result = invokeMessageHandlers(hWndControl, GWLP_USERDATA, reflectedMessage, wParam, lParam, pass);
 			if (!pass)
 				return result;
 		}
