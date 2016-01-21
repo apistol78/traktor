@@ -1,16 +1,11 @@
 #include "Script/Editor/SearchControl.h"
 #include "Script/Editor/SearchEvent.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Edit.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
-
-// Resources
-#include "Resources/SearchCaseSensitive.h"
-#include "Resources/SearchWholeWord.h"
-#include "Resources/SearchWildCard.h"
 
 namespace traktor
 {
@@ -30,9 +25,9 @@ bool SearchControl::create(ui::Widget* parent)
 
 	m_toolBarMode = new ui::custom::ToolBar();
 	m_toolBarMode->create(this);
-	m_toolBarMode->addImage(ui::Bitmap::load(c_ResourceSearchCaseSensitive, sizeof(c_ResourceSearchCaseSensitive), L"image"), 1);
-	m_toolBarMode->addImage(ui::Bitmap::load(c_ResourceSearchWholeWord, sizeof(c_ResourceSearchWholeWord), L"image"), 1);
-	m_toolBarMode->addImage(ui::Bitmap::load(c_ResourceSearchWildCard, sizeof(c_ResourceSearchWildCard), L"image"), 1);
+	m_toolBarMode->addImage(new ui::StyleBitmap(L"Script.SearchCaseSensitive"), 1);
+	m_toolBarMode->addImage(new ui::StyleBitmap(L"Script.SearchWholeWord"), 1);
+	m_toolBarMode->addImage(new ui::StyleBitmap(L"Script.SearchWildCard"), 1);
 	
 	m_toolCaseSensitive = new ui::custom::ToolBarButton(L"Toggle case sensitive search", 0, ui::Command(L"Script.Editor.ToggleCaseSensitive"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolBarMode->addItem(m_toolCaseSensitive);
