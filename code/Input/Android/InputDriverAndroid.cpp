@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Input/Android/InputDriverAndroid.h"
+#include "Input/Android/KeyboardDeviceAndroid.h"
 #include "Input/Android/MouseDeviceAndroid.h"
 #include "Input/Android/TouchDeviceAndroid.h"
 
@@ -35,6 +36,12 @@ bool InputDriverAndroid::create(void* nativeHandle, const SystemWindow& systemWi
 
 	m_instance->addDelegate(this);
 
+	if (inputCategories & CtKeyboard)
+	{
+		m_keyboardDevice = new KeyboardDeviceAndroid();
+		m_keyboardDevice->ms_activity = m_instance->getActivity();
+		m_devices.push_back(m_keyboardDevice);
+	}
 	if (inputCategories & CtMouse)
 	{
 		m_mouseDevice = new MouseDeviceAndroid(systemWindow);
@@ -68,12 +75,14 @@ IInputDriver::UpdateResult InputDriverAndroid::update()
 	return UrOk;
 }
 
-void InputDriverAndroid::notifyHandleInput(struct android_app* app, AInputEvent* event)
+void InputDriverAndroid::notifyHandleInput(DelegateInstance* instance, AInputEvent* event)
 {
 	if (m_mouseDevice)
 		m_mouseDevice->handleInput(event);
 	if (m_touchDevice)
 		m_touchDevice->handleInput(event);
+	if (m_keyboardDevice)
+		m_keyboardDevice->handleInput(event);
 }
 
 	}
