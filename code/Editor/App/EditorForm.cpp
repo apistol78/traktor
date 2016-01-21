@@ -1445,6 +1445,7 @@ void EditorForm::setPropertyObject(Object* properties)
 		dynamic_type_cast< ISerializable* >(properties)
 	);
 
+	std::wstring previousTitle = m_propertiesView->getText();
 	if (properties)
 	{
 		StringOutputStream ss;
@@ -1453,8 +1454,8 @@ void EditorForm::setPropertyObject(Object* properties)
 	}
 	else
 		m_propertiesView->setText(i18n::Text(L"TITLE_PROPERTIES"));
-
-	m_dock->update();
+	if (previousTitle != m_propertiesView->getText())
+		m_dock->update();
 }
 
 void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, int32_t direction)
