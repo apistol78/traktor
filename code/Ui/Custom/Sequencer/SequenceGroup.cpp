@@ -4,6 +4,12 @@
 #include "Ui/Custom/Sequencer/SequenceGroup.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 
+// Resources
+#include "Resources/SequenceExpand.h"
+#include "Resources/SequenceCollapse.h"
+#include "Resources/SequenceVisible.h"
+#include "Resources/SequenceHidden.h"
+
 namespace traktor
 {
 	namespace ui
@@ -26,10 +32,10 @@ SequenceGroup::SequenceGroup(const std::wstring& name)
 ,	m_start(0)
 ,	m_end(100)
 {
-	m_imageExpand = new StyleBitmap(L"UI.SequenceExpand");
-	m_imageCollapse = new StyleBitmap(L"UI.SequenceCollapse");
-	m_imageVisible = new StyleBitmap(L"UI.SequenceVisible");
-	m_imageHidden = new StyleBitmap(L"UI.SequenceHidden");
+	m_imageExpand = new StyleBitmap(L"UI.SequenceExpand", c_ResourceSequenceExpand, sizeof(c_ResourceSequenceExpand));
+	m_imageCollapse = new StyleBitmap(L"UI.SequenceCollapse", c_ResourceSequenceCollapse, sizeof(c_ResourceSequenceCollapse));
+	m_imageVisible = new StyleBitmap(L"UI.SequenceVisible", c_ResourceSequenceVisible, sizeof(c_ResourceSequenceVisible));
+	m_imageHidden = new StyleBitmap(L"UI.SequenceHidden", c_ResourceSequenceHidden, sizeof(c_ResourceSequenceHidden));
 }
 
 void SequenceGroup::expand()

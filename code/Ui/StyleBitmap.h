@@ -24,7 +24,11 @@ class T_DLLCLASS StyleBitmap : public IBitmap
 	T_RTTI_CLASS;
 
 public:
-	StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap = 0);
+	StyleBitmap(const wchar_t* const name);
+
+	StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap);
+
+	StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

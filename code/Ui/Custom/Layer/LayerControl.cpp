@@ -7,6 +7,10 @@
 #include "Ui/Custom/Layer/LayerControl.h"
 #include "Ui/Custom/Layer/LayerItem.h"
 
+// Resources
+#include "Resources/LayerVisible.h"
+#include "Resources/LayerHidden.h"
+
 namespace traktor
 {
 	namespace ui
@@ -34,8 +38,8 @@ bool LayerControl::create(Widget* parent, int style)
 
 	m_scrollBar->addEventHandler< ScrollEvent >(this, &LayerControl::eventScroll);
 
-	m_imageVisible = new StyleBitmap(L"UI.LayerVisible");
-	m_imageHidden = new StyleBitmap(L"UI.LayerHidden");
+	m_imageVisible = new StyleBitmap(L"UI.LayerVisible", c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible));
+	m_imageHidden = new StyleBitmap(L"UI.LayerHidden", c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden));
 
 	addEventHandler< SizeEvent >(this, &LayerControl::eventSize);
 	addEventHandler< MouseButtonDownEvent >(this, &LayerControl::eventButtonDown);

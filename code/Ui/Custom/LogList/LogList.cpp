@@ -13,6 +13,9 @@
 #include "Ui/Custom/ScrollBar.h"
 #include "Ui/Custom/LogList/LogList.h"
 
+// Resources
+#include "Resources/Log.h"
+
 namespace traktor
 {
 	namespace ui
@@ -46,7 +49,7 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 
 	m_scrollBar->addEventHandler< ScrollEvent >(this, &LogList::eventScroll);
 
-	m_icons = new StyleBitmap(L"UI.Log");
+	m_icons = new StyleBitmap(L"UI.Log", c_ResourceLog, sizeof(c_ResourceLog));
 
 	m_itemHeight = getFont().getPixelSize() + scaleBySystemDPI(4);
 	m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize().cy);
