@@ -14,6 +14,7 @@
 
 struct android_app;
 struct AInputEvent;
+struct ANativeActivity;
 
 namespace traktor
 {
@@ -26,18 +27,22 @@ class T_DLLCLASS DelegateInstance
 public:
 	struct IDelegate
 	{
-		virtual void notifyHandleCommand(struct android_app* app, int32_t cmd) {}
+		virtual void notifyHandleCommand(DelegateInstance* instance, int32_t cmd) {}
 
-		virtual void notifyHandleInput(struct android_app* app, AInputEvent* event) {}
+		virtual void notifyHandleInput(DelegateInstance* instance, AInputEvent* event) {}
 	};
+
+	virtual struct android_app* getApplication() = 0;
+
+	virtual struct ANativeActivity* getActivity() = 0;
 
 	void addDelegate(IDelegate* delegate);
 
 	void removeDelegate(IDelegate* delegate);
 
-	virtual void handleCommand(struct android_app* app, int32_t cmd);
+	virtual void handleCommand(int32_t cmd);
 
-	virtual void handleInput(struct android_app* app, AInputEvent* event);
+	virtual void handleInput(AInputEvent* event);
 
 private:
 	std::vector< IDelegate* > m_delegates;

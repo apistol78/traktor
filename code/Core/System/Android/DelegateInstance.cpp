@@ -16,16 +16,16 @@ void DelegateInstance::removeDelegate(IDelegate* delegate)
 		m_delegates.erase(i);
 }
 
-void DelegateInstance::handleCommand(struct android_app* app, int32_t cmd)
+void DelegateInstance::handleCommand(int32_t cmd)
 {
 	for (std::vector< IDelegate* >::iterator i = m_delegates.begin(); i != m_delegates.end(); ++i)
-		(*i)->notifyHandleCommand(app, cmd);
+		(*i)->notifyHandleCommand(this, cmd);
 }
 
-void DelegateInstance::handleInput(struct android_app* app, AInputEvent* event)
+void DelegateInstance::handleInput(AInputEvent* event)
 {
 	for (std::vector< IDelegate* >::iterator i = m_delegates.begin(); i != m_delegates.end(); ++i)
-		(*i)->notifyHandleInput(app, event);
+		(*i)->notifyHandleInput(this, event);
 }
 
 }

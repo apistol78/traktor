@@ -72,7 +72,11 @@ public:
 
 	bool updateApplication();
 
-	virtual void handleCommand(struct android_app* app, int32_t cmd);
+	virtual struct android_app* getApplication() T_OVERRIDE T_FINAL;
+
+	virtual struct ANativeActivity* getActivity() T_OVERRIDE T_FINAL;
+
+	virtual void handleCommand(int32_t cmd) T_OVERRIDE T_FINAL;
 
 private:
 	struct android_app* m_app;
@@ -136,14 +140,22 @@ bool AndroidApplication::updateApplication()
 	return m_application ? m_application->update() : true;
 }
 
-void AndroidApplication::handleCommand(struct android_app* app, int32_t cmd)
+struct android_app* AndroidApplication::getApplication()
 {
-	T_ASSERT (app == m_app);
+	return m_app;
+}
 
+struct ANativeActivity* AndroidApplication::getActivity()
+{
+	return m_app->activity;
+}
+
+void AndroidApplication::handleCommand(int32_t cmd)
+{
 	switch (cmd)
 	{
 	case APP_CMD_INIT_WINDOW:
-		if (app->window != 0)
+		if (m_app->window != 0)
 		{
 			createApplication();
 		}
@@ -159,8 +171,7 @@ void AndroidApplication::handleCommand(struct android_app* app, int32_t cmd)
 	case APP_CMD_LOST_FOCUS:
 		break;
 	}
-
-	DelegateInstance::handleCommand(app, cmd);
+	DelegateInstance::handleCommand(cmd);
 }
 
 // Android ============================
@@ -168,13 +179,13 @@ void AndroidApplication::handleCommand(struct android_app* app, int32_t cmd)
 void handleCommand(struct android_app* app, int32_t cmd)
 {
 	AndroidApplication* aa = (AndroidApplication*)app->userData;
-	aa->handleCommand(app, cmd);
+	aa->handleCommand(cmd);
 }
 
 int32_t handleInput(struct android_app* app, AInputEvent* event)
 {
 	AndroidApplication* aa = (AndroidApplication*)app->userData;
-	aa->handleInput(app, event);
+	aa->handleInput(event);
 	return 0;
 }
 
@@ -186,9 +197,11 @@ extern "C" void traktor_main(struct android_app* state)
 	setenv("INTERNAL_DATA_PATH", state->activity->internalDataPath, 1); 
 	setenv("EXTERNAL_DATA_PATH", state->activity->externalDataPath, 1); 
 
+#if defined(_DEBUG)
 	log::info << L"Using following data paths," << Endl;
 	log::info << L"\tINTERNAL_DATA_PATH = \"" << mbstows(state->activity->internalDataPath) << L"\"" << Endl;
 	log::info << L"\tEXTERNAL_DATA_PATH = \"" << mbstows(state->activity->externalDataPath) << L"\"" << Endl;
+#endif
 
 	mkdir(state->activity->internalDataPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	mkdir(state->activity->externalDataPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
