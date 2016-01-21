@@ -41,7 +41,7 @@ public:
 	 *
 	 * \return Member attributes.
 	 */
-	virtual const Attribute* getAttributes() const { return m_attributes; }
+	const Attribute* getAttributes() const { return m_attributes; }
 
 	/*!
 	 * Reserve size for X number of elements.

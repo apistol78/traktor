@@ -25,13 +25,13 @@ class T_DLLCLASS CycleRefDebugger : public IObjectRefDebugger
 public:
 	CycleRefDebugger();
 
-	virtual void addObject(void* object, size_t size);
+	virtual void addObject(void* object, size_t size) T_OVERRIDE T_FINAL;
 
-	virtual void removeObject(void* object);
+	virtual void removeObject(void* object) T_OVERRIDE T_FINAL;
 
-	virtual void addObjectRef(void* ref, void* object);
+	virtual void addObjectRef(void* ref, void* object) T_OVERRIDE T_FINAL;
 
-	virtual void removeObjectRef(void* ref, void* object);
+	virtual void removeObjectRef(void* ref, void* object) T_OVERRIDE T_FINAL;
 
 private:
 	struct ObjInfo

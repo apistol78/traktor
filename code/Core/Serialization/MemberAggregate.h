@@ -24,7 +24,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		Ref< ISerializable > rf = m_ref;
 		s >> Member< ISerializable* >(

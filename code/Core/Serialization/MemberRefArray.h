@@ -33,29 +33,29 @@ public:
 	{
 	}
 
-	virtual void reserve(size_t size, size_t capacity) const
+	virtual void reserve(size_t size, size_t capacity) const T_OVERRIDE T_FINAL
 	{
 		m_ref.resize(size);
 		m_ref.reserve(capacity);
 	}
 
-	virtual size_t size() const
+	virtual size_t size() const T_OVERRIDE T_FINAL
 	{
 		return m_ref.size();
 	}
 
-	virtual void read(ISerializer& s) const
+	virtual void read(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		m_ref.resize(m_index + 1);
 		s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
 	}
 
-	virtual void write(ISerializer& s) const
+	virtual void write(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
 	}
 
-	virtual bool insert() const
+	virtual bool insert() const T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
