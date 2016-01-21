@@ -38,7 +38,7 @@ Ref< StyleSheet > StyleSheet::createDefault()
 	return ss;
 }
 
-Color4ub StyleSheet::getColor(const Widget* widget, const wchar_t* const element) const
+Color4ub StyleSheet::getColor(const Object* widget, const wchar_t* const element) const
 {
 	for (std::vector< Group >::const_reverse_iterator i = m_groups.rbegin(); i != m_groups.rend(); ++i)
 	{

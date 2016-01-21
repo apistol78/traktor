@@ -19,8 +19,25 @@
 		</item>
 		<item>
 			<type>traktor.ui.Widget</type>
+			<element>background-color-disabled</element>
+			<color>230, 230, 235, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.Widget</type>
 			<element>border-color</element>
 			<color>160, 160, 160, 255</color>
+		</item>
+
+		<!-- Edit -->
+		<item>
+			<type>traktor.ui.Edit</type>
+			<element>background-color</element>
+			<color>255, 255, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.Edit</type>
+			<element>background-color-disabled</element>
+			<color>239, 239, 242, 255</color>
 		</item>
 
 		<!-- Dock -->

@@ -28,7 +28,14 @@ public:
 	virtual Size getPreferedSize() const;
 
 private:
+	SmartBrush m_brushBackground;
+	SmartBrush m_brushBackgroundDisabled;
+
 	LRESULT eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
+
+	LRESULT eventCtlColorStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
+
+	LRESULT eventCtlColorEdit(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
 };
 
 	}

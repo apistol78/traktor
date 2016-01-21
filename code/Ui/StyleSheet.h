@@ -18,8 +18,6 @@ namespace traktor
 	namespace ui
 	{
 
-class Widget;
-
 /*! \brief Widget style sheet.
  * \ingroup UI
  */
@@ -30,7 +28,7 @@ class T_DLLCLASS StyleSheet : public ISerializable
 public:
 	static Ref< StyleSheet > createDefault();
 
-	Color4ub getColor(const Widget* widget, const wchar_t* const element) const;
+	Color4ub getColor(const Object* widget, const wchar_t* const element) const;
 
 	std::wstring getValue(const wchar_t* const name) const;
 
