@@ -691,6 +691,18 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/ProfilerClear.image</value>
 		</item>
 		<item>
+			<name>Script.SearchCaseSensitive</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/SearchCaseSensitive.image</value>
+		</item>
+		<item>
+			<name>Script.SearchWholeWord</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/SearchWholeWord.image</value>
+		</item>
+		<item>
+			<name>Script.SearchWildCard</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/SearchWildCard.image</value>
+		</item>
+		<item>
 			<name>Flash.Playback</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/Playback.image</value>
 		</item>
