@@ -29,7 +29,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Dock", Dock, Widget)
 
 bool Dock::create(Widget* parent)
 {
-	if (!ui::Widget::create(parent))
+	if (!ui::Widget::create(parent, WsAccelerated))
 		return false;
 
 	m_hint = new ToolForm();

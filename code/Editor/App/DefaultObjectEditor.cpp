@@ -37,7 +37,7 @@ bool DefaultObjectEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	m_object = object;
 
 	m_propertyList = new ui::custom::AutoPropertyList();
-	m_propertyList->create(parent, ui::WsDoubleBuffer | ui::WsTabStop | ui::custom::AutoPropertyList::WsColumnHeader, this);
+	m_propertyList->create(parent, ui::WsAccelerated | ui::WsTabStop | ui::custom::AutoPropertyList::WsColumnHeader, this);
 	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &DefaultObjectEditor::eventPropertyCommand);
 	m_propertyList->setSeparator(ui::scaleBySystemDPI(200));
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
