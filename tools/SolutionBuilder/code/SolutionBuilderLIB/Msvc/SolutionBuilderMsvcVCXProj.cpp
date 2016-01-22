@@ -18,6 +18,7 @@
 #include "SolutionBuilderLIB/Configuration.h"
 #include "SolutionBuilderLIB/Filter.h"
 #include "SolutionBuilderLIB/File.h"
+#include "SolutionBuilderLIB/Utilities.h"
 #include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXDefinition.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
@@ -477,17 +478,8 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 
 	os.close();
 
-	if (!buffer.empty())
-	{
-		Ref< IStream > file = FileSystem::getInstance().open(
-			projectFileName,
-			traktor::File::FmWrite
-		);
-		if (!file)
-			return false;
-		file->write(&buffer[0], int(buffer.size()));
-		file->close();
-	}
+	if (!writeFileIfMismatch(projectFileName, buffer))
+		return false;
 
 	return true;
 }
@@ -567,18 +559,19 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 	}
 
 	// Create filter guids.
+	Guid filterGuid(L"{4708E59F-6655-4B59-A318-ECFC32369845}");
+
 	std::set< std::wstring > filters;
 	for (std::vector< std::pair< std::wstring, Path > >::const_iterator i = files.begin(); i != files.end(); ++i)
 	{
 		if (i->first != L"")
 			filters.insert(i->first);
 	}
+
 	if (!filters.empty())
 	{
 		for (std::set< std::wstring >::const_iterator i = filters.begin(); i != filters.end(); ++i)
 		{
-			Guid filterGuid = Guid::create();
-
 			os << L"<ItemGroup>" << Endl;
 			os << IncreaseIndent;
 
@@ -588,6 +581,8 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 
 			os << DecreaseIndent;
 			os << L"</ItemGroup>" << Endl;
+
+			filterGuid = filterGuid.permutate(1);
 		}
 	}
 
@@ -596,17 +591,8 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 
 	os.close();
 
-	if (!buffer.empty())
-	{
-		Ref< IStream > file = FileSystem::getInstance().open(
-			projectFileName + L".filters",
-			traktor::File::FmWrite
-		);
-		if (!file)
-			return false;
-		file->write(&buffer[0], int(buffer.size()));
-		file->close();
-	}
+	if (!writeFileIfMismatch(projectFileName + L".filters", buffer))
+		return false;
 
 	return true;
 }
@@ -692,16 +678,10 @@ bool SolutionBuilderMsvcVCXProj::generateUser(
 
 	os.close();
 
-	if (needed && !buffer.empty())
+	if (needed)
 	{
-		Ref< IStream > file = FileSystem::getInstance().open(
-			projectFileName + L".user",
-			traktor::File::FmWrite
-		);
-		if (!file)
+		if (!writeFileIfMismatch(projectFileName + L".user", buffer))
 			return false;
-		file->write(&buffer[0], int(buffer.size()));
-		file->close();
 	}
 
 	return true;

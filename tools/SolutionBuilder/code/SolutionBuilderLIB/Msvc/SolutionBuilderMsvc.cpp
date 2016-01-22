@@ -3,6 +3,7 @@
 #include <Core/Misc/MD5.h>
 #include <Core/Misc/String.h>
 #include <Core/Io/AnsiEncoding.h>
+#include <Core/Io/DynamicMemoryStream.h>
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/IStream.h>
@@ -12,6 +13,7 @@
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"
 #include "SolutionBuilderLIB/Solution.h"
+#include "SolutionBuilderLIB/Utilities.h"
 #include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvc.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcProject.h"
@@ -194,14 +196,11 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	// Generate solution.
 	std::wstring solutionGuid = context.generateGUID(solutionFileName);
 
-	Ref< IStream > file = FileSystem::getInstance().open(
-		solutionFileName,
-		traktor::File::FmWrite
-	);
-	if (!file)
-		return false;
+	std::vector< uint8_t > buffer;
+	buffer.reserve(40000);
 
-	FileOutputStream os(file, new AnsiEncoding());
+	DynamicMemoryStream bufferStream(buffer, false, true);
+	FileOutputStream os(&bufferStream, new AnsiEncoding());
 
 	os << L"Microsoft Visual Studio Solution File, Format Version " << m_settings->getSLNVersion() << Endl;
 	os << L"# Visual Studio " << m_settings->getVSVersion() << Endl;
@@ -478,6 +477,9 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	os << L"EndGlobal" << Endl;
 
 	os.close();
+
+	if (!writeFileIfMismatch(solutionFileName, buffer))
+		return false;
 
 	return true;
 }
