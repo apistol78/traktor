@@ -1,3 +1,4 @@
+#include "Ui/Application.h"
 #include "Ui/DropDown.h"
 #include "Ui/Edit.h"
 #include "Ui/Static.h"
@@ -26,7 +27,7 @@ bool InputDialog::create(
 	uint32_t outFieldsCount
 )
 {
-	if (!ConfigDialog::create(parent, title, 300, 180, ConfigDialog::WsDefaultFixed, new TableLayout(L"100%", L"*,*", 4, 4)))
+	if (!ConfigDialog::create(parent, title, scaleBySystemDPI(300), scaleBySystemDPI(180), ConfigDialog::WsDefaultFixed, new TableLayout(L"100%", L"*,*", 4, 4)))
 		return false;
 
 	Ref< Static > labelMessage = new Static();
