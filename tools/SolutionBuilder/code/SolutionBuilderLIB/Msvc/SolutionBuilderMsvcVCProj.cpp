@@ -1,7 +1,7 @@
-#include <Core/Io/FileSystem.h>
+#include <Core/Io/AnsiEncoding.h>
 #include <Core/Io/DynamicMemoryStream.h>
 #include <Core/Io/FileOutputStream.h>
-#include <Core/Io/AnsiEncoding.h>
+#include <Core/Io/FileSystem.h>
 #include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberStl.h>
@@ -10,15 +10,16 @@
 #include <Core/Misc/String.h>
 #include <Core/Misc/MD5.h>
 #include <Core/Log/Log.h>
-#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCProj.h"
-#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcConfiguration.h"
-#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcTool.h"
-#include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/Configuration.h"
 #include "SolutionBuilderLIB/Filter.h"
 #include "SolutionBuilderLIB/File.h"
+#include "SolutionBuilderLIB/Utilities.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCProj.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcConfiguration.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcTool.h"
+#include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
 
 using namespace traktor;
 
@@ -128,17 +129,8 @@ bool SolutionBuilderMsvcVCProj::generate(
 
 	os.close();
 
-	if (!buffer.empty())
-	{
-		Ref< IStream > file = FileSystem::getInstance().open(
-			projectFileName,
-			traktor::File::FmWrite
-		);
-		if (!file)
-			return false;
-		file->write(&buffer[0], int(buffer.size()));
-		file->close();
-	}
+	if (!writeFileIfMismatch(projectFileName, buffer))
+		return false;
 
 	return true;
 }
