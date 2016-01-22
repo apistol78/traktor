@@ -468,7 +468,10 @@ void Tab::eventPaint(PaintEvent* event)
 
 			int32_t tabWidthNoMargin = sizText.cx;
 			if (m_closeButton)
-				tabWidthNoMargin += 10 + scaleBySystemDPI(4);
+			{
+				Size closeSize = m_bitmapClose->getSize();
+				tabWidthNoMargin += closeSize.cx + scaleBySystemDPI(4);
+			}
 
 			int32_t tabWidth = tabWidthNoMargin + scaleBySystemDPI(4 * 2);
 						
