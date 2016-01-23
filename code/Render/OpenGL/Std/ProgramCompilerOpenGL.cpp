@@ -39,22 +39,16 @@ bool ProgramCompilerOpenGL::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	int32_t optimize,
-	std::wstring& outShader
+	std::wstring& outVertexShader,
+	std::wstring& outPixelShader
 ) const
 {
 	GlslProgram glslProgram;
 	if (!Glsl().generate(shaderGraph, settings, glslProgram))
 		return false;
 
-	outShader =
-		std::wstring(L"// Vertex shader\n") +
-		std::wstring(L"\n") +
-		glslProgram.getVertexShader() +
-		std::wstring(L"\n") +
-		std::wstring(L"// Fragment shader\n") +
-		std::wstring(L"\n") +
-		glslProgram.getFragmentShader();
-
+	outVertexShader = glslProgram.getVertexShader();
+	outPixelShader = glslProgram.getFragmentShader();
 	return true;
 }
 

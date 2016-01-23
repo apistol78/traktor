@@ -2,6 +2,7 @@
 #include <limits>
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
+#include "Ui/Application.h"
 #include "Ui/Edit.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
@@ -80,9 +81,9 @@ void AnglesPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 			continue;
 
 		Rect rcSub(
-			rc.left + (c_valueWidth * i) / 3,
+			rc.left + (scaleBySystemDPI(c_valueWidth) * i) / 3,
 			rc.top,
-			rc.left + (c_valueWidth * (i + 1)) / 3,
+			rc.left + (scaleBySystemDPI(c_valueWidth) * (i + 1)) / 3,
 			rc.bottom
 		);
 
@@ -117,9 +118,9 @@ void AnglesPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	for (int i = 0; i < 3; ++i)
 	{
 		Rect rcSub(
-			rc.left + (c_valueWidth * i) / 3,
+			rc.left + (scaleBySystemDPI(c_valueWidth) * i) / 3,
 			rc.top,
-			rc.left + (c_valueWidth * (i + 1)) / 3,
+			rc.left + (scaleBySystemDPI(c_valueWidth) * (i + 1)) / 3,
 			rc.bottom
 		);
 
