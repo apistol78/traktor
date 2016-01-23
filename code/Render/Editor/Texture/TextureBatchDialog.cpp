@@ -5,6 +5,7 @@
 #include "I18N/Text.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureBatchDialog.h"
+#include "Ui/Application.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/ListBox.h"
@@ -33,15 +34,15 @@ bool TextureBatchDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"TEXTURE_BATCH_DIALOG_TITLE"),
-		900,
-		500,
+		ui::scaleBySystemDPI(900),
+		ui::scaleBySystemDPI(500),
 		ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))
 		return false;
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, 200);
+	splitter->create(this, true, ui::scaleBySystemDPI(200));
 
 	Ref< ui::Container > textureListContainer = new ui::Container();
 	textureListContainer->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -60,8 +61,8 @@ bool TextureBatchDialog::create(ui::Widget* parent)
 	m_textureList->addEventHandler< ui::SelectionChangeEvent >(this, &TextureBatchDialog::eventTextureListSelect);
 
 	m_texturePropertyList = new ui::custom::AutoPropertyList();
-	m_texturePropertyList->create(splitter, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader);
-	m_texturePropertyList->setSeparator(200);
+	m_texturePropertyList->create(splitter, ui::WsAccelerated | ui::custom::AutoPropertyList::WsColumnHeader);
+	m_texturePropertyList->setSeparator(ui::scaleBySystemDPI(200));
 	m_texturePropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_texturePropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 

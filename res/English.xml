@@ -2233,6 +2233,22 @@
       <second>Move dependency down</second>
     </item>
     <item>
+      <first>SCRIPT_EDITOR_CONTINUE</first>
+      <second>Continue</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_BREAK</first>
+      <second>Break</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_STEP_INTO</first>
+      <second>Step into</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_STEP_OVER</first>
+      <second>Step over</second>
+    </item>
+    <item>
       <first>SCRIPT_PROFILER_TOOL</first>
       <second>Script profiler</second>
     </item>
@@ -2691,6 +2707,22 @@
     <item>
       <first>SHADERGRAPH_VIEWER</first>
       <second>Generated</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VIEWER_COMPILER</first>
+      <second>Compiler</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VIEWER_TECHNIQUE</first>
+      <second>Technique</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VIEWER_VERTEX</first>
+      <second>Vertex</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VIEWER_PIXEL</first>
+      <second>Pixel</second>
     </item>
     <item>
       <first>SKELETON_WIZARDTOOL_DESCRIPTION</first>

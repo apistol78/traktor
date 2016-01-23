@@ -33,7 +33,7 @@ public:
 
 	typedef float vector_t [MaxDimension];
 
-	VectorPropertyItem(const std::wstring& text, const vector_t& value, int dimension = MaxDimension);
+	VectorPropertyItem(const std::wstring& text, const vector_t& value, int32_t dimension = MaxDimension);
 
 	void setValue(const vector_t& value);
 
@@ -57,7 +57,9 @@ protected:
 private:
 	Ref< Edit > m_editors[MaxDimension];
 	vector_t m_value;
-	int m_dimension;
+	int32_t m_dimension;
+
+	bool isEditing() const;
 
 	void eventEditFocus(FocusEvent* event);
 };

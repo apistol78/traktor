@@ -394,9 +394,11 @@ void DockPane::draw(Canvas& canvas)
 
 		canvas.setForeground(ss->getColor(m_owner, m_focus ? L"caption-color-focus" : L"caption-color-no-focus"));
 
+		int32_t closeWidth = m_bitmapClose->getSize().cx;
+
 		Rect titleRect = captionRect.offset(0, -1);
-		titleRect.left += 4;
-		titleRect.right -= 16;
+		titleRect.left += scaleBySystemDPI(4);
+		titleRect.right -= closeWidth + scaleBySystemDPI(4);
 
 		std::wstring title = m_widget->getText();
 
@@ -413,8 +415,8 @@ void DockPane::draw(Canvas& canvas)
 
 		canvas.drawText(titleRect, title, AnLeft, AnCenter);
 
-		int32_t gx = titleRect.left + titleExtent.cx + 4;
-		int32_t gx1 = captionRect.right - 16 - 4;
+		int32_t gx = titleRect.left + titleExtent.cx + scaleBySystemDPI(4);
+		int32_t gx1 = captionRect.right - closeWidth - scaleBySystemDPI(4);
 		while (gx < gx1 - 256)
 		{
 			int32_t w = min(256, gx1 - gx);
@@ -442,7 +444,7 @@ void DockPane::draw(Canvas& canvas)
 
 		// \fixme White when focus
 		canvas.drawBitmap(
-			Point(captionRect.right -  m_bitmapClose->getSize().cx - 4, captionRect.getCenter().y - m_bitmapClose->getSize().cy / 2),
+			Point(captionRect.right - closeWidth - scaleBySystemDPI(4), captionRect.getCenter().y - m_bitmapClose->getSize().cy / 2),
 			Point(0, 0),
 			m_bitmapClose->getSize(),
 			m_bitmapClose,
@@ -533,7 +535,8 @@ bool DockPane::hitGripperClose(const Point& position) const
 	if (isSplitter() || !hitGripper(position))
 		return false;
 
-	return position.x >= m_rect.right - 16;
+	int32_t closeWidth = m_bitmapClose->getSize().cx;
+	return position.x >= m_rect.right - closeWidth - scaleBySystemDPI(4);
 }
 
 bool DockPane::hitSplitter(const Point& position) const

@@ -16,7 +16,7 @@ class ProgramCompilerOpenGLES2 : public IProgramCompiler
 	T_RTTI_CLASS;
 
 public:
-	virtual const wchar_t* getPlatformSignature() const;
+	virtual const wchar_t* getPlatformSignature() const T_OVERRIDE T_FINAL;
 
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
@@ -24,14 +24,15 @@ public:
 		int32_t optimize,
 		bool validate,
 		Stats* outStats
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual bool generate(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
 		int32_t optimize,
-		std::wstring& outShader
-	) const;
+		std::wstring& outVertexShader,
+		std::wstring& outPixelShader
+	) const T_OVERRIDE T_FINAL;
 };
 
 	}

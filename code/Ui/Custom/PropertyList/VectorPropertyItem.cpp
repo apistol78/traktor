@@ -48,7 +48,7 @@ const VectorPropertyItem::vector_t& VectorPropertyItem::getValue() const
 
 void VectorPropertyItem::createInPlaceControls(Widget* parent)
 {
-	for (int i = 0; i < m_dimension; ++i)
+	for (int32_t i = 0; i < m_dimension; ++i)
 	{
 		T_ASSERT (!m_editors[i]);
 		m_editors[i] = new Edit();
@@ -70,7 +70,7 @@ void VectorPropertyItem::createInPlaceControls(Widget* parent)
 
 void VectorPropertyItem::destroyInPlaceControls()
 {
-	for (int i = 0; i < m_dimension; ++i)
+	for (int32_t i = 0; i < m_dimension; ++i)
 	{
 		if (m_editors[i])
 		{
@@ -82,15 +82,15 @@ void VectorPropertyItem::destroyInPlaceControls()
 
 void VectorPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
 {
-	for (int i = 0; i < m_dimension; ++i)
+	for (int32_t i = 0; i < m_dimension; ++i)
 	{
 		if (!m_editors[i])
 			continue;
 
 		Rect rcSub(
-			rc.left + (c_valueWidth * i) / m_dimension,
+			rc.left + (scaleBySystemDPI(c_valueWidth) * i) / m_dimension,
 			rc.top,
-			rc.left + (c_valueWidth * (i + 1)) / m_dimension,
+			rc.left + (scaleBySystemDPI(c_valueWidth) * (i + 1)) / m_dimension,
 			rc.bottom
 		);
 
@@ -100,7 +100,7 @@ void VectorPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 
 void VectorPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 {
-	for (int i = 0; i < m_dimension; ++i)
+	for (int32_t i = 0; i < m_dimension; ++i)
 	{
 		Rect rcSub = m_editors[i]->getRect();
 		if (rcSub.inside(event->getPosition()))
@@ -116,12 +116,12 @@ void VectorPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 
 void VectorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
-	for (int i = 0; i < m_dimension; ++i)
+	for (int32_t i = 0; i < m_dimension; ++i)
 	{
 		Rect rcSub(
-			rc.left + (c_valueWidth * i) / m_dimension,
+			rc.left + (scaleBySystemDPI(c_valueWidth) * i) / m_dimension,
 			rc.top,
-			rc.left + (c_valueWidth * (i + 1)) / m_dimension,
+			rc.left + (scaleBySystemDPI(c_valueWidth) * (i + 1)) / m_dimension,
 			rc.bottom
 		);
 
@@ -136,24 +136,28 @@ void VectorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 bool VectorPropertyItem::copy()
 {
-	Clipboard* clipboard = Application::getInstance()->getClipboard();
-	if (clipboard)
-	{
-		StringOutputStream ss;
-		for (int i = 0; i < m_dimension; ++i)
-		{
-			if (i > 0)
-				ss << L",";
-			ss << m_value[i];
-		}
-		return clipboard->setText(ss.str());
-	}
-	else
+	if (isEditing())
 		return false;
+
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	StringOutputStream ss;
+	for (int32_t i = 0; i < m_dimension; ++i)
+	{
+		if (i > 0)
+			ss << L",";
+		ss << m_value[i];
+	}
+	return clipboard->setText(ss.str());
 }
 
 bool VectorPropertyItem::paste()
 {
+	if (isEditing())
+		return false;
+
 	Clipboard* clipboard = Application::getInstance()->getClipboard();
 	if (!clipboard)
 		return false;
@@ -170,11 +174,21 @@ bool VectorPropertyItem::paste()
 		return false;
 }
 
+bool VectorPropertyItem::isEditing() const
+{
+	for (int32_t i = 0; i < m_dimension; ++i)
+	{
+		if (m_editors[i] && m_editors[i]->isVisible(false))
+			return true;
+	}
+	return false;
+}
+
 void VectorPropertyItem::eventEditFocus(FocusEvent* event)
 {
 	if (event->lostFocus())
 	{
-		for (int i = 0; i < m_dimension; ++i)
+		for (int32_t i = 0; i < m_dimension; ++i)
 		{
 			if (m_editors[i]->isVisible(false))
 			{

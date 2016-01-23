@@ -76,7 +76,8 @@ bool ProgramCompilerSw::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	int32_t optimize,
-	std::wstring& outShader
+	std::wstring& outVertexShader,
+	std::wstring& outPixelShader
 ) const
 {
 	RefArray< VertexOutput > vertexOutputs;
@@ -106,25 +107,32 @@ bool ProgramCompilerSw::generate(
 
 	StringOutputStream ss;
 
-	ss << L"Vertex program:" << Endl;
+	ss.reset();
 	cx.getVertexProgram().dump(ss, parameters.uniforms);
 	ss << Endl;
-
-	ss << L"Pixel program:" << Endl;
-	cx.getPixelProgram().dump(ss, parameters.uniforms);
-	ss << Endl;
-
 	ss << L"Parameter map:" << Endl;
 	for (std::map< std::wstring, std::pair< int32_t, int32_t > >::const_iterator i = parameterMap.begin(); i != parameterMap.end(); ++i)
 		ss << L"\"" << i->first << L"\", register " << i->second.first << L", size " << i->second.second << Endl;
 	ss << Endl;
-
 	ss << L"Sampler map:" << Endl;
 	for (std::map< std::wstring, int32_t >::const_iterator i = samplerMap.begin(); i != samplerMap.end(); ++i)
 		ss << L"\"" << i->first << L"\", index " << i->second << Endl;
 	ss << Endl;
+	outVertexShader = ss.str();
 
-	outShader = ss.str();
+	ss.reset();
+	cx.getPixelProgram().dump(ss, parameters.uniforms);
+	ss << Endl;
+	ss << L"Parameter map:" << Endl;
+	for (std::map< std::wstring, std::pair< int32_t, int32_t > >::const_iterator i = parameterMap.begin(); i != parameterMap.end(); ++i)
+		ss << L"\"" << i->first << L"\", register " << i->second.first << L", size " << i->second.second << Endl;
+	ss << Endl;
+	ss << L"Sampler map:" << Endl;
+	for (std::map< std::wstring, int32_t >::const_iterator i = samplerMap.begin(); i != samplerMap.end(); ++i)
+		ss << L"\"" << i->first << L"\", index " << i->second << Endl;
+	ss << Endl;
+	outPixelShader = ss.str();
+
 	return true;
 }
 

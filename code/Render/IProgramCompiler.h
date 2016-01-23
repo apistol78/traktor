@@ -79,14 +79,16 @@ public:
 	 * \param shaderGraph Program shader graph.
 	 * \param settings Compiler settings.
 	 * \param optimize Optimization level (0-4; 0 = No optimization; 4 = Maximum optimization).
-	 * \param outShader Output render specific shader.
+	 * \param outVertexShader Output render specific shader.
+	 * \param outPixelShader Output render specific shader.
 	 * \return True if shader was successfully generated.
 	 */
 	virtual bool generate(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
 		int32_t optimize,
-		std::wstring& outShader
+		std::wstring& outVertexShader,
+		std::wstring& outPixelShader
 	) const = 0;
 };
 

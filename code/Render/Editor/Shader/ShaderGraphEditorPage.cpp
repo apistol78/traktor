@@ -327,6 +327,9 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 
 bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 {
+	if (m_shaderViewer->handleCommand(command))
+		return true;
+
 	if (command == L"Editor.PropertiesChanging")
 	{
 		m_document->push();
@@ -748,7 +751,6 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		return false;
 
 	m_editorGraph->update();
-
 	return true;
 }
 
