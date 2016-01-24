@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>813</first>
+				<second>286</second>
+			</position>
+			<name>UV</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>1939</first>
+				<second>183</second>
+			</position>
+			<name>Output</name>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>705</first>
+				<second>24</second>
+			</position>
+			<parameterName>World_ColorMap</parameterName>
+			<type>PtTexture2D</type>
+			<frequency>UfOnce</frequency>
+		</item>
+		<item type="traktor.render.Sampler" version="5">
+			<comment/>
+			<position>
+				<first>1266</first>
+				<second>85</second>
+			</position>
+			<minFilter>FtPoint</minFilter>
+			<mipFilter>FtPoint</mipFilter>
+			<magFilter>FtPoint</magFilter>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
+			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>1699</first>
+				<second>160</second>
+			</position>
+			<swizzle>xyz</swizzle>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

@@ -539,15 +539,34 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 	RenderTargetDx11* rt0 = checked_type_cast< RenderTargetDx11*, true >(rts->getColorTexture(0));
 	RenderTargetDx11* rt1 = checked_type_cast< RenderTargetDx11*, true >(rts->getColorTexture(1));
 	RenderTargetDx11* rt2 = checked_type_cast< RenderTargetDx11*, true >(rts->getColorTexture(2));
+	RenderTargetDx11* rt3 = checked_type_cast< RenderTargetDx11*, true >(rts->getColorTexture(3));
 
-	if (rt0 && rt1 && rt2)
+	if (rt0 && rt1 && rt2 && rt3)
 	{
 		RenderState rs =
 		{
 			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
 			rts,
-			{ rt0, rt1, rt2 },
-			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), rt2->getD3D11RenderTargetView() },
+			{ rt0, rt1, rt2, rt3 },
+			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), rt2->getD3D11RenderTargetView(), rt3->getD3D11RenderTargetView() },
+			(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
+			{ rts->getWidth(), rts->getHeight() }
+		};
+
+		if (rts->usingPrimaryDepthStencil())
+			rs.d3dDepthStencilView = m_d3dDepthStencilView;
+
+		m_renderStateStack.push_back(rs);
+		m_targetsDirty = true;
+	}
+	else if (rt0 && rt1 && rt2)
+	{
+		RenderState rs =
+		{
+			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+			rts,
+			{ rt0, rt1, rt2, 0 },
+			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), rt2->getD3D11RenderTargetView(), 0 },
 			(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
 			{ rts->getWidth(), rts->getHeight() }
 		};
@@ -564,8 +583,8 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 		{
 			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
 			rts,
-			{ rt0, rt1, 0 },
-			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), 0 },
+			{ rt0, rt1, 0, 0 },
+			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), 0, 0 },
 			(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
 			{ rts->getWidth(), rts->getHeight() }
 		};
@@ -582,8 +601,8 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 		{
 			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
 			rts,
-			{ rt0, 0, 0 },
-			{ rt0->getD3D11RenderTargetView(), 0, 0 },
+			{ rt0, 0, 0, 0 },
+			{ rt0->getD3D11RenderTargetView(), 0, 0, 0 },
 			(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
 			{ rts->getWidth(), rts->getHeight() }
 		};
@@ -600,8 +619,8 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 		{
 			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
 			rts,
-			{ 0, 0, 0 },
-			{ 0, 0, 0 },
+			{ 0, 0, 0, 0 },
+			{ 0, 0, 0, 0 },
 			rtd->getD3D11DepthTextureView(),
 			{ rts->getWidth(), rts->getHeight() }
 		};
@@ -632,8 +651,8 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	{
 		{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
 		rts,
-		{ rt, 0, 0 },
-		{ rt->getD3D11RenderTargetView(), 0, 0 },
+		{ rt, 0, 0, 0 },
+		{ rt->getD3D11RenderTargetView(), 0, 0, 0 },
 		(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
 		{ rts->getWidth(), rts->getHeight() }
 	};
@@ -670,6 +689,11 @@ void RenderViewDx11::clear(uint32_t clearMask, const Color4f* colors, float dept
 		{
 			colors[2].storeAligned(tmp);
 			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[2], tmp);
+		}
+		if (rs.d3dRenderView[3] != 0)
+		{
+			colors[3].storeAligned(tmp);
+			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[3], tmp);
 		}
 	}
 
@@ -963,7 +987,7 @@ void RenderViewDx11::bindTargets()
 	m_context->getD3DDeviceContext()->VSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
 	m_context->getD3DDeviceContext()->PSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
 
-	m_context->getD3DDeviceContext()->OMSetRenderTargets(3, rs.d3dRenderView, rs.d3dDepthStencilView);
+	m_context->getD3DDeviceContext()->OMSetRenderTargets(4, rs.d3dRenderView, rs.d3dDepthStencilView);
 	m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
 
 	m_stateCache.reset();

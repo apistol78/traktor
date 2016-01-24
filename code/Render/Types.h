@@ -280,6 +280,7 @@ enum TextureFormat
 	TfR5G6B5 = 3,
 	TfR5G5B5A1 = 4,
 	TfR4G4B4A4 = 5,
+	TfR10G10B10A2 = 6,
 
 	/*! \name Floating point formats. */
 	//@{

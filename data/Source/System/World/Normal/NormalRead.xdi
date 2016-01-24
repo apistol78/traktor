@@ -4,29 +4,29 @@
 		<item type="traktor.render.FragmentPosition">
 			<comment/>
 			<position>
-				<first>-15</first>
-				<second>356</second>
+				<first>-813</first>
+				<second>324</second>
 			</position>
 		</item>
 		<item type="traktor.render.TargetSize">
 			<comment/>
 			<position>
-				<first>25</first>
-				<second>388</second>
+				<first>-767</first>
+				<second>419</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>208</first>
-				<second>345</second>
+				<first>-372</first>
+				<second>307</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>152</first>
-				<second>263</second>
+				<first>-486</first>
+				<second>53</second>
 			</position>
 			<parameterName>World_NormalMap</parameterName>
 			<type>PtTexture2D</type>
@@ -35,8 +35,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>418</first>
-				<second>301</second>
+				<first>77</first>
+				<second>217</second>
 			</position>
 			<fragmentGuid>{D5AA3EC3-E59A-5B45-A5C5-D863B4E91EE3}</fragmentGuid>
 			<inputPins>
@@ -62,16 +62,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>823</first>
-				<second>361</second>
-			</position>
-			<name>SpecularRoughness</name>
-		</item>
-		<item type="traktor.render.OutputPort">
-			<comment/>
-			<position>
-				<first>823</first>
-				<second>307</second>
+				<first>844</first>
+				<second>286</second>
 			</position>
 			<name>Normal</name>
 		</item>
@@ -120,20 +112,10 @@
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
-				<name>SpecularRoughness</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
 				<name>Normal</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
 			</destination>
 		</item>
