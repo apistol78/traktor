@@ -35,6 +35,9 @@ UINT getReflectedMessage(UINT message)
 	case WM_CTLCOLORBTN:
 		return WM_REFLECTED_CTLCOLORBTN;
 
+	case WM_CTLCOLORLISTBOX:
+		return WM_REFLECTED_CTLCOLORLISTBOX;
+
 	default:
 		return 0;
 	}

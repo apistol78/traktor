@@ -1,10 +1,21 @@
+#include "Ui/Application.h"
 #include "Ui/ListBox.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Win32/ListBoxWin32.h"
 
 namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
+
+COLORREF getColorRef(const Color4ub& c)
+{
+	return RGB(c.r, c.g, c.b);
+}
+
+		}
 
 ListBoxWin32::ListBoxWin32(EventSubject* owner)
 :	WidgetWin32Impl< IListBox >(owner)
@@ -49,6 +60,7 @@ bool ListBoxWin32::create(IWidget* parent, int style)
 		return false;
 
 	m_hWnd.registerMessageHandler(WM_REFLECTED_COMMAND, new MethodMessageHandler< ListBoxWin32 >(this, &ListBoxWin32::eventCommand));
+	m_hWnd.registerMessageHandler(WM_REFLECTED_CTLCOLORLISTBOX, new MethodMessageHandler< ListBoxWin32 >(this, &ListBoxWin32::eventCtlColorListBox));
 
 	return true;
 }
@@ -130,6 +142,28 @@ LRESULT ListBoxWin32::eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARA
 			skip = false;
 	}
 	return TRUE;
+}
+
+LRESULT ListBoxWin32::eventCtlColorListBox(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
+{
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	if (!ss)
+	{
+		skip = true;
+		return 0;
+	}
+
+	HDC hDC = (HDC)wParam;
+
+	Color4ub color = ss->getColor(m_owner, L"color");
+	SetTextColor(hDC, getColorRef(color));
+
+	Color4ub backgroundColor = ss->getColor(m_owner, L"background-color");
+	m_brushBackground = CreateSolidBrush(getColorRef(backgroundColor));
+
+	SetBkColor(hDC, getColorRef(backgroundColor));
+
+	return (LRESULT)m_brushBackground.getHandle();
 }
 
 	}
