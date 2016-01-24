@@ -41,7 +41,7 @@ function deploy(args)
 	-- Deploy bundle to target.
 	stdout:printLn("Deploying application to target host...")
 	run:pushd(bundle)
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy -recursive -target-base=" .. bundle .. " $(DEPLOY_TARGET_HOST) *", "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy -recursive " $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)/" .. bundle .. "\" *", "(null)")
 	if run:exitCode() ~= 0 then
 		stderr:printLn("Failed to deploy application to target.")
 		return run:exitCode()
@@ -56,14 +56,14 @@ function deploy(args)
 	f:close()
 
 	-- Deploy launcher script.
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) launch.sh", "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh", "(null)")
 	return 0
 end
 
 
 function launch(args)
 	stdout:printLn("Launching OSX...")
-	return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) launch.sh", "(null)")
+	return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh", "(null)")
 end
 
 

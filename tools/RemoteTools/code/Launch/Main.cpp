@@ -32,7 +32,9 @@ int main(int argc, const char** argv)
 
 	if (argc < 3)
 	{
-		log::info << L"Usage: RemoteLaunch (-w) host application arguments" << Endl;
+		traktor::log::info << L"Usage: RemoteLaunch (options) host application arguments" << Endl;
+		traktor::log::info << L"   -w, -wait Wait until application terminates." << Endl;
+		traktor::log::info << L"   -t, -target-base Target base path." << Endl;
 		return 0;
 	}
 
@@ -42,7 +44,15 @@ int main(int argc, const char** argv)
 
 	std::wstring host = cmdLine.getString(0);
 	std::wstring application = cmdLine.getString(1);
-	bool wait = cmdLine.hasOption('w');
+	bool wait = cmdLine.hasOption('w', L"wait");
+	bool base = cmdLine.hasOption('t', L"target-base");
+	Path targetBase = base ? cmdLine.getOption('t', L"target-base").getString() : L"";
+
+	if (!targetBase.isRelative())
+	{
+		traktor::log::info << L"Target base must be a relative path" << Endl;
+		return 1;
+	}
 
 	std::wstring arguments;
 	for (int32_t i = 2; i < cmdLine.getCount(); ++i)
@@ -56,6 +66,10 @@ int main(int argc, const char** argv)
 
 		arguments += argument;
 	}
+
+	traktor::log::info << L"Host \"" << host << L"\"" << Endl;
+	traktor::log::info << int32_t(cmdLine.getCount()) << L" command line value(s)" << Endl;
+	traktor::log::info << L"Target base \"" << targetBase.getPathName() << L"\"" << Endl;
 
 	Ref< net::TcpSocket > clientSocket = new net::TcpSocket();
 	if (!clientSocket->connect(net::SocketAddressIPv4(host, c_serverPort)))
@@ -72,7 +86,12 @@ int main(int argc, const char** argv)
 	uint8_t ret;
 
 	writer << c_msgLaunchProcess;
-	writer << OS::getInstance().getCurrentUser();
+
+	if (!targetBase.getPathName().empty())
+		writer << (OS::getInstance().getCurrentUser() + L"/" + targetBase.getPathName());
+	else
+		writer << OS::getInstance().getCurrentUser();
+
 	writer << application;
 	writer << arguments;
 	writer << wait;
