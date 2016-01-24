@@ -38,9 +38,12 @@ public:
 	virtual Rect getItemRect(int index) const;
 
 private:
+	SmartBrush m_brushBackground;
 	bool m_single;
 
 	LRESULT eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
+
+	LRESULT eventCtlColorListBox(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
 };
 
 	}

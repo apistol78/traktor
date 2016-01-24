@@ -28,6 +28,13 @@
 			<color>160, 160, 160, 255</color>
 		</item>
 
+		<!-- ListBox -->
+		<item>
+			<type>traktor.ui.ListBox</type>
+			<element>background-color</element>
+			<color>37, 37, 38, 255</color>
+		</item>
+
 		<!-- Edit -->
 		<item>
 			<type>traktor.ui.Edit</type>
