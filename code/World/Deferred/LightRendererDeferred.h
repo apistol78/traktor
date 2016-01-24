@@ -57,6 +57,7 @@ public:
 		const Light& light,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,
+		render::ITexture* miscMap,
 		render::ITexture* colorMap,
 		float shadowMaskSize,
 		render::ITexture* shadowMask
@@ -71,6 +72,7 @@ public:
 		render::ITexture* reflectionMap,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,
+		render::ITexture* miscMap,
 		render::ITexture* colorMap
 	);
 

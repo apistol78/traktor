@@ -34,6 +34,7 @@ render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleReflectionMap;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleNormalMap;
+render::handle_t s_handleMiscMap;
 render::handle_t s_handleColorMap;
 render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleShadowMask;
@@ -71,6 +72,7 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
 	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
 	s_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
+	s_handleMiscMap = render::getParameterHandle(L"World_MiscMap");
 	s_handleColorMap = render::getParameterHandle(L"World_ColorMap");
 	s_handleShadowMaskSize = render::getParameterHandle(L"World_ShadowMaskSize");
 	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
@@ -138,6 +140,7 @@ void LightRendererDeferred::renderLight(
 	const Light& light,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
+	render::ITexture* miscMap,
 	render::ITexture* colorMap,
 	float shadowMaskSize,
 	render::ITexture* shadowMask
@@ -163,6 +166,7 @@ void LightRendererDeferred::renderLight(
 		m_lightDirectionalShader->setTextureParameter(s_handleCloudShadow, light.texture);
 		m_lightDirectionalShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightDirectionalShader->setTextureParameter(s_handleNormalMap, normalMap);
+		m_lightDirectionalShader->setTextureParameter(s_handleMiscMap, miscMap);
 		m_lightDirectionalShader->setTextureParameter(s_handleColorMap, colorMap);
 		m_lightDirectionalShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
 		m_lightDirectionalShader->setVectorParameter(s_handleLightSunColor, sunColorAndIntensity);
@@ -237,6 +241,7 @@ void LightRendererDeferred::renderLight(
 		m_lightPointShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 		m_lightPointShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightPointShader->setTextureParameter(s_handleNormalMap, normalMap);
+		m_lightPointShader->setTextureParameter(s_handleMiscMap, miscMap);
 		m_lightPointShader->setTextureParameter(s_handleColorMap, colorMap);
 		m_lightPointShader->setVectorParameter(s_handleLightPosition, lightPosition);
 		m_lightPointShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
@@ -315,6 +320,7 @@ void LightRendererDeferred::renderLight(
 		m_lightSpotShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 		m_lightSpotShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightSpotShader->setTextureParameter(s_handleNormalMap, normalMap);
+		m_lightSpotShader->setTextureParameter(s_handleMiscMap, miscMap);
 		m_lightSpotShader->setTextureParameter(s_handleColorMap, colorMap);
 		m_lightSpotShader->setVectorParameter(s_handleLightPositionAndRadius, lightPositionAndRadius);
 		m_lightSpotShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
@@ -335,6 +341,7 @@ void LightRendererDeferred::renderFinal(
 	render::ITexture* reflectionMap,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
+	render::ITexture* miscMap,
 	render::ITexture* colorMap
 )
 {
@@ -349,6 +356,7 @@ void LightRendererDeferred::renderFinal(
 	m_finalShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
 	m_finalShader->setTextureParameter(s_handleDepthMap, depthMap);
 	m_finalShader->setTextureParameter(s_handleNormalMap, normalMap);
+	m_finalShader->setTextureParameter(s_handleMiscMap, miscMap);
 	m_finalShader->setTextureParameter(s_handleColorMap, colorMap);
 
 	m_finalShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);

@@ -216,8 +216,8 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 
 			for (uint32_t i = 0; i < debugTargets.size(); ++i)
 			{
-				float ox =  float(i % size) * 2.1f;
-				float oy = -float(i / size) * 2.1f;
+				float ox =  float(i % size) * 2.2f;
+				float oy = -float(i / size) * 2.2f;
 
 				ox += m_renderOffset.x;
 				oy += m_renderOffset.y;
@@ -245,8 +245,8 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 		int32_t size = int32_t(std::sqrt(float(debugTargets.size())) + 0.5f);
 		for (uint32_t i = 0; i < debugTargets.size(); ++i)
 		{
-			float ox =  float(i % size) * 2.1f;
-			float oy = -float(i / size) * 2.1f;
+			float ox =  float(i % size) * 2.2f;
+			float oy = -float(i / size) * 2.2f;
 
 			ox += m_renderOffset.x;
 			oy += m_renderOffset.y;
@@ -259,8 +259,10 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 			ox *= 2.0f / m_renderScale;
 			oy *= 2.0f / m_renderScale;
 
+			ui::Size ext = canvas.getTextExtent(debugTargets[i].name);
+
 			int32_t x = innerSize.cx * (ox * 0.5f + 0.5f);
-			int32_t y = innerSize.cy * (0.5f - oy * 0.5f) - 16;
+			int32_t y = innerSize.cy * (0.5f - oy * 0.5f) - ext.cy;
 
 			canvas.drawText(ui::Point(x, y), debugTargets[i].name);
 		}

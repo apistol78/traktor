@@ -177,6 +177,12 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 		outType = GL_UNSIGNED_BYTE;
 		return true;
 
+	case TfR10G10B10A2:
+		outInternalFormat = GL_RGBA;
+		outFormat = GL_RGBA;
+		outType = GL_UNSIGNED_INT_2_10_10_10_REV;
+		return true;
+
 	case TfR16G16B16A16F:
 		outInternalFormat = GL_RGBA16F;
 		outFormat = GL_RGBA;

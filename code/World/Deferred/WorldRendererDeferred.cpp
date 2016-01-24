@@ -133,7 +133,7 @@ bool WorldRendererDeferred::create(
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 
-		rtscd.count = 3;
+		rtscd.count = 4;
 		rtscd.width = width;
 		rtscd.height = height;
 		rtscd.multiSample = desc.multiSample;
@@ -142,12 +142,14 @@ bool WorldRendererDeferred::create(
 		rtscd.preferTiled = true;
 #if !defined(__PS3__)
 		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
-		rtscd.targets[1].format = render::TfR8G8B8A8;		// Normals (RGB), Specular roughness (A)
-		rtscd.targets[2].format = render::TfR16G16B16A16F;	// Surface color (RGB), Specular term & Reflectivity (A 8:8)
+		rtscd.targets[1].format = render::TfR10G10B10A2;	// Normals (RGB)
+		rtscd.targets[2].format = render::TfR11G11B10F;		// Specular term (R), Reflectivity (G), Roughness (B)
+		rtscd.targets[3].format = render::TfR11G11B10F;		// Surface color (RGB)
 #else
 		rtscd.targets[0].format = render::TfR8G8B8A8;		// Encoded depth
-		rtscd.targets[1].format = render::TfR8G8B8A8;		// Normals (RGB), Specular roughness (A)
-		rtscd.targets[2].format = render::TfR8G8B8A8;		// Surface color (RGB), Specular term & Reflectivity (A 8:8)
+		rtscd.targets[1].format = render::TfR8G8B8A8;		// Normals (RGB), Unused (A)
+		rtscd.targets[2].format = render::TfR8G8B8A8;		// Specular term (R), Reflectivity (G), Roughness (B), Unused (A)
+		rtscd.targets[3].format = render::TfR8G8B8A8;		// Surface color (RGB), Unused (A)
 #endif
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
@@ -772,9 +774,10 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 			const float clearZ = std::numeric_limits< float >::max();
 
 			const Color4f depthColor(clearZ, clearZ, clearZ, clearZ);
-			const Color4f normalColor(0.5f, 0.5f, 0.0f, 0.5f);
+			const Color4f normalColor(0.0f, 0.0f, 1.0f, 0.0f);
+			const Color4f miscColor(0.0f, 0.0f, 0.0f, 0.0f);
 			const Color4f surfaceColor(0.0f, 0.0f, 0.0f, 0.0f);
-			const Color4f clearColors[] = { depthColor, normalColor, surfaceColor };
+			const Color4f clearColors[] = { depthColor, normalColor, miscColor, surfaceColor };
 
 			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
 
@@ -916,6 +919,7 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 							m_gbufferTargetSet->getColorTexture(0),
 							m_gbufferTargetSet->getColorTexture(1),
 							m_gbufferTargetSet->getColorTexture(2),
+							m_gbufferTargetSet->getColorTexture(3),
 							shadowMask != 0 ? shadowMask->getWidth() : 0,
 							shadowMask != 0 ? shadowMask->getColorTexture(0) : 0
 						);
@@ -953,6 +957,7 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 						m_gbufferTargetSet->getColorTexture(0),
 						m_gbufferTargetSet->getColorTexture(1),
 						m_gbufferTargetSet->getColorTexture(2),
+						m_gbufferTargetSet->getColorTexture(3),
 						0,
 						0
 					);
@@ -968,7 +973,8 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 					m_reflectionMap,
 					m_gbufferTargetSet->getColorTexture(0),
 					m_gbufferTargetSet->getColorTexture(1),
-					m_gbufferTargetSet->getColorTexture(2)
+					m_gbufferTargetSet->getColorTexture(2),
+					m_gbufferTargetSet->getColorTexture(3)
 				);
 
 				m_renderView->end();
@@ -1213,10 +1219,10 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 	{
 		outTargets.push_back(render::DebugTarget(L"GBuffer depth", render::DtvDepth, m_gbufferTargetSet->getColorTexture(0)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer normals", render::DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
-		outTargets.push_back(render::DebugTarget(L"GBuffer specular roughness", render::DtvDeferredSpecularRoughness, m_gbufferTargetSet->getColorTexture(1)));
-		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer specular term", render::DtvDeferredSpecularTerm, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer reflectivity", render::DtvDeferredReflectivity, m_gbufferTargetSet->getColorTexture(2)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer roughness", render::DtvDeferredSpecularRoughness, m_gbufferTargetSet->getColorTexture(2)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(3)));
 	}
 
 	if (m_shadowTargetSet)
