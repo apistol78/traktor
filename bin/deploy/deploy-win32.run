@@ -182,7 +182,7 @@ function deployStatic(args)
 	end
 
 	-- Deploy executable into remote folder.
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) $(DEPLOY_EXECUTABLE).exe", nil)
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" $(DEPLOY_EXECUTABLE).exe", nil)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Deploy external files into remote folder.
@@ -192,7 +192,7 @@ function deployStatic(args)
 		else
 			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/debugstatic")
 		end
-		run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) " .. externalCopyFiles, nil)
+		run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. externalCopyFiles, nil)
 		run:popd()
 		if run:exitCode() ~= 0 then return run:exitCode() end
 	end
@@ -225,7 +225,7 @@ function deployShared(args)
 		deployFiles = deployFiles .. " " .. f	
 	end
 
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) " .. deployFiles, nil)
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, nil)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 	run:popd()
 
@@ -236,7 +236,7 @@ end
 function deploy(args)
 	-- Deploy application configuration to target.
 	stdout:printLn("Deploying resources to target host...")
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", nil)
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Application.config", nil)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Continue with either statically linked product or as a bunch of dynamic libraries.
@@ -252,7 +252,7 @@ end
 function launch(args)
 	stdout:printLn("Launching Win32...")
 	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
-	return run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteLaunch $(DEPLOY_TARGET_HOST) " .. executable .. " \\-s Application.config", nil)
+	return run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteLaunch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. executable .. " \\-s Application.config", nil)
 end
 
 

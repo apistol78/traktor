@@ -31,7 +31,7 @@ function deploy(args)
 
 	-- Deploy application configuration to target.
 	stdout:printLn("Deploying resources to target host...")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Application.config", "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Deploy binaries to target.
@@ -50,7 +50,7 @@ function deploy(args)
 		deployFiles = deployFiles .. " " .. f	
 	end
 
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST)" .. deployFiles, "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 	run:popd()
 
@@ -62,14 +62,14 @@ function deploy(args)
 	f:close()
 
 	-- Deploy launcher script.
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) launch.sh", "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh", "(null)")
 	return 0
 end
 
 
 function launch(args)
 	stdout:printLn("Launching Linux...")
-	return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) launch.sh", "(null)")
+	return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh", "(null)")
 end
 
 
