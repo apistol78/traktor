@@ -183,7 +183,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 	);
 
 	controlRect.top = controlRect.bottom;
-	controlRect.bottom = controlRect.top + c_performanceHeight;
+	controlRect.bottom = controlRect.top + ui::scaleBySystemDPI(c_performanceHeight);
 
 	m_stopCells.resize(connections.size());
 	m_captureCells.resize(connections.size());
