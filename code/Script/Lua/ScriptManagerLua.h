@@ -41,7 +41,7 @@ class T_DLLCLASS ScriptManagerLua : public IScriptManager
 	T_RTTI_CLASS;
 
 public:
-	ScriptManagerLua();
+	ScriptManagerLua(bool strict = true);
 
 	virtual ~ScriptManagerLua();
 
@@ -95,6 +95,7 @@ private:
 	float m_collectTargetSteps;
 	size_t m_totalMemoryUse;
 	size_t m_lastMemoryUse;
+	bool m_strict;
 
 	void lock(ScriptContextLua* context)
 	{
@@ -156,6 +157,8 @@ private:
 	static void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize);
 
 	static int luaAllocatedMemory(lua_State* luaState);
+
+	static int luaStrictEnvironment(lua_State* luaState);
 
 	static void hookCallback(lua_State* L, lua_Debug* ar);
 

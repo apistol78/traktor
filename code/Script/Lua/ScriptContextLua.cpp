@@ -89,6 +89,17 @@ bool ScriptContextLua::load(const IScriptBlob* scriptBlob)
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
 
+		// Unlock environment.
+		if (m_strict)
+		{
+			CHECK_LUA_STACK(m_luaState, 0);
+			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+			lua_getmetatable(m_luaState, -1);
+			lua_pushnil(m_luaState);
+			lua_setfield(m_luaState, -2, "__newindex");
+			lua_pop(m_luaState, 2);
+		}
+
 		const ScriptBlobLua* scriptBlobLua = mandatory_non_null_type_cast< const ScriptBlobLua* >(scriptBlob);
 		int32_t result = luaL_loadbuffer(
 			m_luaState,
@@ -112,6 +123,18 @@ bool ScriptContextLua::load(const IScriptBlob* scriptBlob)
 		lua_setfenv(m_luaState, -2);
 		lua_call(m_luaState, 0, 0);
 #endif
+
+		// Lock environment.
+		if (m_strict)
+		{
+			CHECK_LUA_STACK(m_luaState, 0);
+			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+			lua_getmetatable(m_luaState, -1);
+			lua_pushlightuserdata(m_luaState, (void*)this);
+			lua_pushcclosure(m_luaState, restrictedAccess, 1);
+			lua_setfield(m_luaState, -2, "__newindex");
+			lua_pop(m_luaState, 2);
+		}
 	}
 	m_scriptManager->unlock();
 	return true;
@@ -123,8 +146,9 @@ void ScriptContextLua::setGlobal(const std::string& globalName, const Any& globa
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+		lua_pushstring(m_luaState, globalName.c_str());
 		m_scriptManager->pushAny(globalValue);
-		lua_setfield(m_luaState, -2, globalName.c_str());
+		lua_rawset(m_luaState, -3);
 		lua_pop(m_luaState, 1);
 	}
 	m_scriptManager->unlock();
@@ -352,10 +376,11 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 	return returnValue;
 }
 
-ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef)
+ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict)
 :	m_scriptManager(scriptManager)
 ,	m_luaState(luaState)
 ,	m_environmentRef(environmentRef)
+,	m_strict(strict)
 ,	m_lastSelf(0)
 {
 }
@@ -371,6 +396,19 @@ int32_t ScriptContextLua::runtimeError(lua_State* luaState)
 	std::wstring error = mbstows(lua_tostring(luaState, -1));
 	if (!error.empty())
 		log::error << error << Endl;
+
+	this_->m_scriptManager->breakDebugger(luaState);
+	return 0;
+}
+
+int32_t ScriptContextLua::restrictedAccess(lua_State* luaState)
+{
+	ScriptContextLua* this_ = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (this_);
+	T_ASSERT (this_->m_scriptManager);
+
+	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
+	log::error << L"GLOBAL access is restricted; no new globals permitted after initialization." << Endl;
 
 	this_->m_scriptManager->breakDebugger(luaState);
 	return 0;
