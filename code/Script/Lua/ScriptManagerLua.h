@@ -41,7 +41,7 @@ class T_DLLCLASS ScriptManagerLua : public IScriptManager
 	T_RTTI_CLASS;
 
 public:
-	ScriptManagerLua(bool strict = true);
+	ScriptManagerLua();
 
 	virtual ~ScriptManagerLua();
 
@@ -51,7 +51,7 @@ public:
 
 	virtual Ref< IScriptBlob > compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IScriptContext > createContext() T_OVERRIDE T_FINAL;
+	virtual Ref< IScriptContext > createContext(bool strict) T_OVERRIDE T_FINAL;
 
 	virtual Ref< IScriptDebugger > createDebugger() T_OVERRIDE T_FINAL;
 
@@ -95,7 +95,6 @@ private:
 	float m_collectTargetSteps;
 	size_t m_totalMemoryUse;
 	size_t m_lastMemoryUse;
-	bool m_strict;
 
 	void lock(ScriptContextLua* context)
 	{

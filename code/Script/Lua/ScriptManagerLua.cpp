@@ -86,7 +86,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptMana
 
 ScriptManagerLua* ScriptManagerLua::ms_instance = 0;
 
-ScriptManagerLua::ScriptManagerLua(bool strict)
+ScriptManagerLua::ScriptManagerLua()
 :	m_luaState(0)
 ,	m_defaultAllocFn(0)
 ,	m_defaultAllocOpaque(0)
@@ -96,7 +96,6 @@ ScriptManagerLua::ScriptManagerLua(bool strict)
 ,	m_collectTargetSteps(0.0f)
 ,	m_totalMemoryUse(0)
 ,	m_lastMemoryUse(0)
-,	m_strict(strict)
 {
 	ms_instance = this;
 
@@ -462,7 +461,7 @@ Ref< IScriptBlob > ScriptManagerLua::compile(const std::wstring& fileName, const
 	return blob;
 }
 
-Ref< IScriptContext > ScriptManagerLua::createContext()
+Ref< IScriptContext > ScriptManagerLua::createContext(bool strict)
 {
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -484,7 +483,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext()
 	lua_pop(m_luaState, 1);
 
 	// Create context.
-	Ref< ScriptContextLua > context = new ScriptContextLua(this, m_luaState, environmentRef, m_strict);
+	Ref< ScriptContextLua > context = new ScriptContextLua(this, m_luaState, environmentRef, strict);
 	m_contexts.push_back(context);
 	return context;
 }

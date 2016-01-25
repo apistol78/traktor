@@ -60,7 +60,7 @@ int32_t Run_execute_3(Run* self, const std::wstring& command, const Any& saveOut
 
 Ref< script::IScriptManager > createScriptManager()
 {
-	Ref< script::IScriptManager > scriptManager = new script::ScriptManagerLua(false);
+	Ref< script::IScriptManager > scriptManager = new script::ScriptManagerLua();
 
 	OrderedClassRegistrar registrar;
 
@@ -148,7 +148,7 @@ int32_t executeRun(script::IScriptManager* scriptManager, const std::wstring& te
 	}
 
 	// Create script context..
-	Ref< script::IScriptContext > scriptContext = scriptManager->createContext();
+	Ref< script::IScriptContext > scriptContext = scriptManager->createContext(false);
 	if (!scriptContext)
 		return 1;
 
@@ -226,7 +226,7 @@ int32_t executeTemplate(script::IScriptManager* scriptManager, const std::wstrin
 	for (int32_t i = 1; i < cmdLine.getCount(); ++i)
 		args.push_back(cmdLine.getString(i));
 
-	Ref< script::IScriptContext > scriptContext = scriptManager->createContext();
+	Ref< script::IScriptContext > scriptContext = scriptManager->createContext(false);
 	if (!scriptContext)
 		return 1;
 
