@@ -108,6 +108,9 @@ public:
 	/*! \brief Place caret at a specified offset. */
 	void placeCaret(int32_t offset);
 
+	/*! \brief Select all. */
+	void selectAll();
+
 	/*! \brief Copy selected text into clipboard. */
 	bool copy();
 

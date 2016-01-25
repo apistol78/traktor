@@ -408,6 +408,16 @@ void RichEdit::placeCaret(int32_t offset)
 	update();
 }
 
+void RichEdit::selectAll()
+{
+	if (!m_text.empty())
+	{
+		m_selectionStart = 0;
+		m_selectionStop = int32_t(m_text.size());
+	}
+	update();
+}
+
 bool RichEdit::copy()
 {
 	Clipboard* clipboard = Application::getInstance()->getClipboard();
