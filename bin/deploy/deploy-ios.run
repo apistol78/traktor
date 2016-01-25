@@ -3,6 +3,15 @@ import(traktor.drawing)
 import(traktor.run)
 
 
+-- Tools
+local tools =
+{
+	pipeline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App",
+	migrate = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App",
+	remote = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Remote.Client.App"
+}
+
+
 -- Application icon definitions.
 local iconDefinitions =
 {
@@ -172,7 +181,7 @@ end
 
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	local cmdline = tools.pipeline .. " -p -s=Pipeline"
 	for i = 1, args:size() - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -223,9 +232,9 @@ function deploy(args)
 
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
 		stdout:printLn("Deploying resources to target host...")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh *.plist *.mm *.png Application.config", "(null)")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive Images.xcassets/*.*", "(null)")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
+		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh *.plist *.mm *.png Application.config", "(null)")
+		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive Images.xcassets/*.*", "(null)")
+		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
 		if not debug then
 			stdout:printLn("Deploying binaries to target host...")
@@ -251,11 +260,11 @@ function deploy(args)
 		end
 
 		if #deployFiles > 0 then
-			run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, "(null)")
+			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, "(null)")
 		end
 
 		for _, bundle in ipairs(deployBundles) do
-			run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy -recursive $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. bundle .. "/*.*", "(null)")
+			run:execute(tools.remote .. " deploy -recursive $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. bundle .. "/*.*", "(null)")
 		end
 
 		run:popd()
@@ -269,7 +278,7 @@ end
 function launch(args)
 	stdout:printLn("Launching Xcode on target host...")
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
-		local result = run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)")
+		local result = run:execute(tools.remote .. " launch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)")
 		if result ~= 0 then
 			stderr:printLn("Failed to launch iOS application")
 			return 1
@@ -283,7 +292,7 @@ function migrate(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
 	stdout:printLn("Migrating iOS...")
-	if run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate") ~= 0 then
+	if run:execute(tools.migrate .. " -p -s=Migrate") ~= 0 then
 		stderr:printLn("Failed to migrate iOS database")
 		return 1
 	end
@@ -328,9 +337,9 @@ function migrate(args)
 
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
 		stdout:printLn("Deploying resources to target host...")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh *.plist *.mm *.png Content.compact Application.config", "(null)")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive Images.xcassets/*.*", "(null)")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
+		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh *.plist *.mm *.png Content.compact Application.config", "(null)")
+		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive Images.xcassets/*.*", "(null)")
+		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
 		if not debug then
 			stdout:printLn("Deploying binaries to target host...")
@@ -356,15 +365,15 @@ function migrate(args)
 		end
 
 		if #deployFiles > 0 then
-			run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, "(null)")
+			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, "(null)")
 		end
 
 		for _, bundle in ipairs(deployBundles) do
-			run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive " .. bundle .. "/*.*", "(null)")
+			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive " .. bundle .. "/*.*", "(null)")
 		end
 
 		stdout:printLn("Launching Xcode on target host...")
-		if run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)") ~= 0 then
+		if run:execute(tools.remote .. " launch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)") ~= 0 then
 			stderr:printLn("Failed to launch Xcode")
 			return 1
 		end

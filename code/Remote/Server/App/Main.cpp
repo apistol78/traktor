@@ -1,43 +1,43 @@
 #include <list>
-#include <Compress/Lzo/InflateStreamLzo.h>
-#include <Core/Io/FileSystem.h>
-#include <Core/Io/Reader.h>
-#include <Core/Io/StreamCopy.h>
-#include <Core/Io/Writer.h>
-#include <Core/Log/Log.h>
-#include <Core/Misc/Adler32.h>
-#include <Core/Misc/CommandLine.h>
-#include <Core/Misc/SafeDestroy.h>
-#include <Core/Misc/StringSplit.h>
-#include <Core/Settings/PropertyInteger.h>
-#include <Core/Settings/PropertyString.h>
-#include <Core/Settings/PropertyStringArray.h>
-#include <Core/System/IProcess.h>
-#include <Core/System/OS.h>
-#include <Core/Thread/Mutex.h>
-#include <Core/Thread/Thread.h>
-#include <Core/Thread/ThreadManager.h>
-#include <Net/Network.h>
-#include <Net/SocketAddressIPv4.h>
-#include <Net/SocketStream.h>
-#include <Net/TcpSocket.h>
-#include <Net/Url.h>
-#include <Net/Discovery/DiscoveryManager.h>
-#include <Net/Discovery/NetworkService.h>
-#include <Net/Http/HttpRequest.h>
-#include <Net/Http/HttpServer.h>
-#include <Ui/Application.h>
-#include <Ui/Bitmap.h>
-#include <Ui/Clipboard.h>
-#include <Ui/Command.h>
-#include <Ui/MenuItem.h>
-#include <Ui/MessageBox.h>
-#include <Ui/NotificationIcon.h>
-#include <Ui/PopupMenu.h>
-#include <Ui/Events/AllEvents.h>
+#include "Compress/Lzo/InflateStreamLzo.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/Reader.h"
+#include "Core/Io/StreamCopy.h"
+#include "Core/Io/Writer.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
+#include "Core/Misc/CommandLine.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/StringSplit.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyStringArray.h"
+#include "Core/System/IProcess.h"
+#include "Core/System/OS.h"
+#include "Core/Thread/Mutex.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Net/Network.h"
+#include "Net/SocketAddressIPv4.h"
+#include "Net/SocketStream.h"
+#include "Net/TcpSocket.h"
+#include "Net/Url.h"
+#include "Net/Discovery/DiscoveryManager.h"
+#include "Net/Discovery/NetworkService.h"
+#include "Net/Http/HttpRequest.h"
+#include "Net/Http/HttpServer.h"
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
+#include "Ui/Clipboard.h"
+#include "Ui/Command.h"
+#include "Ui/MenuItem.h"
+#include "Ui/MessageBox.h"
+#include "Ui/NotificationIcon.h"
+#include "Ui/PopupMenu.h"
+#include "Ui/Events/AllEvents.h"
 #if defined(_WIN32)
-#	include <Ui/Win32/EventLoopWin32.h>
-#	include <Ui/Win32/WidgetFactoryWin32.h>
+#	include "Ui/Win32/EventLoopWin32.h"
+#	include "Ui/Win32/WidgetFactoryWin32.h"
 #	undef MessageBox
 #endif
 
@@ -221,7 +221,7 @@ uint8_t handleDeploy(net::TcpSocket* clientSocket)
 	reader >> size;
 	reader >> hash;
 
-	traktor::log::info << L"Receiving file \"" << pathName << L"\", " << size << L" byte(s)" << Endl;
+	log::info << L"Receiving file \"" << pathName << L"\", " << size << L" byte(s)" << Endl;
 
 	Path path(g_scratchPath + L"/" + user + L"/" + pathName);
 	bool outOfSync = true;
@@ -235,7 +235,7 @@ uint8_t handleDeploy(net::TcpSocket* clientSocket)
 			// Hashes match; finally ensure file still exist, could have been manually removed.
 			if (FileSystem::getInstance().exist(path))
 			{
-				traktor::log::info << L"File up-to-date; skipping (1)" << Endl;
+				log::info << L"File up-to-date; skipping (1)" << Endl;
 				outOfSync = false;
 			}
 		}
@@ -261,7 +261,7 @@ uint8_t handleDeploy(net::TcpSocket* clientSocket)
 
 			if (adler.get() == hash)
 			{
-				traktor::log::info << L"File up-to-date; skipping (2)" << Endl;
+				log::info << L"File up-to-date; skipping (2)" << Endl;
 				outOfSync = false;
 			}
 		}
@@ -276,18 +276,18 @@ uint8_t handleDeploy(net::TcpSocket* clientSocket)
 		Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(path, File::FmWrite);
 		if (!fileStream)
 		{
-			traktor::log::error << L"Unable to create file \"" << pathName << L"\"" << Endl;
+			log::error << L"Unable to create file \"" << pathName << L"\"" << Endl;
 			return c_errIoFailed;
 		}
 
 		compress::InflateStreamLzo inflateStream(&clientStream);
 		if (!StreamCopy(fileStream, &inflateStream).execute(size))
 		{
-			traktor::log::error << L"Unable to receive file \"" << pathName << L"\"" << Endl;
+			log::error << L"Unable to receive file \"" << pathName << L"\"" << Endl;
 			return c_errIoFailed;
 		}
 
-		traktor::log::info << L"File \"" << pathName << L"\" received successfully" << Endl;
+		log::info << L"File \"" << pathName << L"\" received successfully" << Endl;
 
 		fileStream->close();
 		fileStream = 0;
@@ -316,14 +316,14 @@ uint8_t handleLaunchProcess(net::Socket* clientSocket)
 	reader >> arguments;
 	reader >> wait;
 
-	traktor::log::info << L"Launching \"" << pathName << L"\"" << Endl;
-	traktor::log::info << L"\targuments \"" << arguments << L"\"" << Endl;
+	log::info << L"Launching \"" << pathName << L"\"" << Endl;
+	log::info << L"\targuments \"" << arguments << L"\"" << Endl;
 
 	Path path(g_scratchPath + L"/" + user + L"/" + pathName);
 	Ref< IProcess > process = OS::getInstance().execute(L"\"" + path.getPathName() + L"\" " + arguments, g_scratchPath + L"/" + user, 0, false, false, false);
 	if (!process)
 	{
-		traktor::log::error << L"Unable to launch process \"" << pathName << L"\"" << Endl;
+		log::error << L"Unable to launch process \"" << pathName << L"\"" << Endl;
 		writer << uint8_t(c_errLaunchFailed);
 		return c_errLaunchFailed;
 	}
@@ -345,14 +345,14 @@ void processClient(Ref< net::TcpSocket > clientSocket)
 
 	if (clientSocket->select(true, false, false, 5000) <= 0)
 	{
-		traktor::log::info << L"Client terminated unexpectedly (1)." << Endl;
+		log::info << L"Client terminated unexpectedly (1)." << Endl;
 		return;
 	}
 
 	int32_t md = clientSocket->recv();
 	if (md < 0)
 	{
-		traktor::log::info << L"Client terminated unexpectedly (2)." << Endl;
+		log::info << L"Client terminated unexpectedly (2)." << Endl;
 		return;
 	}
 
@@ -368,7 +368,7 @@ void processClient(Ref< net::TcpSocket > clientSocket)
 		break;
 
 	default:
-		traktor::log::error << L"Invalid message ID from client; " << int32_t(msg) << Endl;
+		log::error << L"Invalid message ID from client; " << int32_t(msg) << Endl;
 		ret = c_errUnknown;
 		break;
 	}
@@ -409,15 +409,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	);
 #endif
 
-	traktor::log::info << L"Traktor RemoteServer 2.0.1" << Endl;
-
 	if (cmdLine.getCount() <= 0)
 	{
-		traktor::log::error << L"Usage: RemoteServer [-k|--keyword=(Filter keyword)] (Scratch directory)" << Endl;
+		log::error << L"Usage: Traktor.Remote.Server.App [-k|--keyword=(Filter keyword)] (Scratch directory)" << Endl;
 		return 1;
 	}
 
+	log::info << L"Traktor.Remote.Server.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+
 	g_scratchPath = cmdLine.getString(0);
+
+	if (!FileSystem::getInstance().makeAllDirectories(g_scratchPath))
+	{
+		log::error << L"Unable to create scratch directory \"" << g_scratchPath << L"\"." << Endl;
+		return 1;
+	}
 
 #if defined(_WIN32)
 	g_popupMenu = new ui::PopupMenu();
@@ -432,7 +438,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	Ref< ui::Bitmap > imageIdle = ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png");
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 2.0.1 (" + g_scratchPath + L")", imageIdle);
+	g_notificationIcon->create(L"Traktor.Remote.Server.App 2.0.1 (" + g_scratchPath + L")", imageIdle);
 	g_notificationIcon->addEventHandler< ui::MouseButtonDownEvent >(&eventNotificationButtonDown);
 #endif
 
@@ -442,13 +448,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	Ref< net::TcpSocket > serverSocket = new net::TcpSocket();
 	if (!serverSocket->bind(net::SocketAddressIPv4(c_listenPort)))
 	{
-		traktor::log::error << L"Unable to bind server socket to port " << c_listenPort << Endl;
+		log::error << L"Unable to bind server socket to port " << c_listenPort << Endl;
 		return 1;
 	}
 
 	if (!serverSocket->listen())
 	{
-		traktor::log::error << L"Unable to listen on server socket" << Endl;
+		log::error << L"Unable to listen on server socket" << Endl;
 		return 2;
 	}
 
@@ -491,11 +497,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
 	if (!discoveryManager->create(net::MdPublishServices))
 	{
-		traktor::log::error << L"Unable to create discovery manager" << Endl;
+		log::error << L"Unable to create discovery manager" << Endl;
 		return 4;
 	}
 
-	traktor::log::info << L"Waiting for client(s)..." << Endl;
+	log::info << L"Waiting for client(s)..." << Endl;
 
 #if defined(_WIN32)
 	while (ui::Application::getInstance()->process())
@@ -507,13 +513,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		net::SocketAddressIPv4::Interface itf;
 		if (!net::SocketAddressIPv4::getBestInterface(itf))
 		{
-			traktor::log::error << L"Unable to get interfaces" << Endl;
+			log::error << L"Unable to get interfaces" << Endl;
 			return 4;
 		}
 
 		if (itf.addr->getHostName() != hostName)
 		{
-			traktor::log::info << L"Discoverable as \"RemoteTools/Server\", host \"" << itf.addr->getHostName() << L"\"" << Endl;
+			log::info << L"Discoverable as \"RemoteTools/Server\", host \"" << itf.addr->getHostName() << L"\"" << Endl;
 
 			Ref< PropertyGroup > properties = new PropertyGroup();
 			properties->setProperty< PropertyString >(L"Description", OS::getInstance().getComputerName());
