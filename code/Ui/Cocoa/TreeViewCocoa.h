@@ -31,7 +31,7 @@ public:
 
 	virtual bool create(IWidget* parent, int style);
 
-	virtual int addImage(IBitmap* image, int imageCount);
+	virtual int addImage(ISystemBitmap* image, int imageCount);
 
 	virtual Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage);
 

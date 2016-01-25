@@ -41,7 +41,7 @@ void ListViewCocoa::setStyle(int style)
 {
 }
 
-int ListViewCocoa::addImage(IBitmap* image, int imageCount, bool smallImage)
+int ListViewCocoa::addImage(ISystemBitmap* image, int imageCount, bool smallImage)
 {
 	return 0;
 }

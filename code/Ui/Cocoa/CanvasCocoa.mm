@@ -200,7 +200,7 @@ void CanvasCocoa::fillPolygon(const Point* pnts, int count)
 	[path fill];
 }
 
-void CanvasCocoa::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode)
+void CanvasCocoa::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)
 {
 	BitmapCocoa* bmc = static_cast< BitmapCocoa* >(bitmap);
 	T_ASSERT (bmc);
@@ -214,7 +214,7 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Point& srcAt, const Size&
 		[bmc->getNSImagePreAlpha() drawInRect: dstRect fromRect: srcRect operation: NSCompositeSourceOver fraction: 1.0f];
 }
 
-void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
+void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode)
 {
 	BitmapCocoa* bmc = static_cast< BitmapCocoa* >(bitmap);
 	T_ASSERT (bmc);

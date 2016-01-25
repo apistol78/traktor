@@ -3,14 +3,14 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "Ui/Itf/IBitmap.h"
+#include "Ui/Itf/ISystemBitmap.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
-class BitmapCocoa : public IBitmap
+class BitmapCocoa : public ISystemBitmap
 {
 public:
 	BitmapCocoa();

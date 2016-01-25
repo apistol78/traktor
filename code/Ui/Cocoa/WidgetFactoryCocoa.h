@@ -73,7 +73,7 @@ public:
 
 	virtual INative* createNative(EventSubject* owner);
 
-	virtual IBitmap* createBitmap();
+	virtual ISystemBitmap* createBitmap();
 
 	virtual IClipboard* createClipboard();
 
