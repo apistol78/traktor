@@ -30,6 +30,7 @@
 #include "Database/Compact/CompactDatabase.h"
 #include "Database/Events/EvtInstanceCommitted.h"
 #include "Database/Events/EvtInstanceCreated.h"
+#include "Database/Events/EvtInstanceRemoved.h"
 #include "Database/Local/LocalDatabase.h"
 #include "Editor/Assets.h"
 #include "Editor/IPipeline.h"
@@ -321,6 +322,12 @@ void updateDatabases()
 
 					if (i->second.cache)
 						i->second.cache->flush(instanceCommited->getInstanceGuid());
+				}
+				else if (const db::EvtInstanceRemoved* instanceRemoved = dynamic_type_cast< const db::EvtInstanceRemoved* >(event))
+				{
+					log::info << L"Database event; instance \"" << instanceRemoved->getInstanceGuid().format() << L"\" removed" << Endl;
+					if (i->second.cache)
+						i->second.cache->flush(instanceRemoved->getInstanceGuid());
 				}
 				else
 					log::info << L"Database event; " << type_name(event) << Endl;
