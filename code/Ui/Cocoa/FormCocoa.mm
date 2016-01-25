@@ -44,7 +44,7 @@ bool FormCocoa::create(IWidget* parent, const std::wstring& text, int width, int
 	return true;
 }
 
-void FormCocoa::setIcon(IBitmap* icon)
+void FormCocoa::setIcon(ISystemBitmap* icon)
 {
 }
 

@@ -162,7 +162,7 @@ INative* WidgetFactoryCocoa::createNative(EventSubject* owner)
 	return 0;
 }
 
-IBitmap* WidgetFactoryCocoa::createBitmap()
+ISystemBitmap* WidgetFactoryCocoa::createBitmap()
 {
 	return new BitmapCocoa();
 }

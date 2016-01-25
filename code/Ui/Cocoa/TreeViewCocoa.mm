@@ -66,7 +66,7 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 	return class_t::create();
 }
 
-int TreeViewCocoa::addImage(IBitmap* image, int imageCount)
+int TreeViewCocoa::addImage(ISystemBitmap* image, int imageCount)
 {
 	Ref< drawing::Image > images = image->getImage()->clone();
 	if (!images)
