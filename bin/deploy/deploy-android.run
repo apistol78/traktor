@@ -2,6 +2,15 @@ import(traktor)
 import(traktor.drawing)
 
 
+-- Tools
+local tools =
+{
+	pipeline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App",
+	migrate = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App",
+	remote = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Remote.Client.App"
+}
+
+
 function string:trim()
 	return self:find'^%s*$' and '' or self:match'^%s*(.*%S)'
 end
@@ -45,7 +54,7 @@ end
 
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	local cmdline = tools.pipeline .. " -p -s=Pipeline"
 	for i = 1, args:size() - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -315,7 +324,7 @@ function migrate(args)
 
 	-- Migrate database into compact database.
 	stdout:printLn("Migrating Android...")
-	if run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate") ~= 0 then
+	if run:execute(tools.migrate .. " -p -s=Migrate") ~= 0 then
 		stderr:printLn("Failed to migrate Android database")
 		return 1
 	end

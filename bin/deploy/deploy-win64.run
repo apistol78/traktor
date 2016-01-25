@@ -2,6 +2,15 @@ import(traktor)
 import(traktor.drawing)
 
 
+-- Tools
+local tools =
+{
+	pipeline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App",
+	migrate = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App",
+	remote = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Remote.Client.App"
+}
+
+
 function string:split(sep)
 	local sep, fields = sep or ":", {}
 	local pattern = string.format("([^%s]+)", sep)
@@ -93,7 +102,7 @@ end
 
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	local cmdline = tools.pipeline .. " -p -s=Pipeline"
 	for i = 1, args:size() - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -213,7 +222,7 @@ function deployStatic(args)
 	end
 
 	-- Deploy executable into remote folder.
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" $(DEPLOY_EXECUTABLE).exe", nil)
+	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" $(DEPLOY_EXECUTABLE).exe", nil)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Deploy external files into remote folder.
@@ -223,7 +232,7 @@ function deployStatic(args)
 		else
 			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugstatic")
 		end
-		run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. externalCopyFiles, nil)
+		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. externalCopyFiles, nil)
 		run:popd()
 		if run:exitCode() ~= 0 then return run:exitCode() end
 	end
@@ -264,7 +273,7 @@ function deployShared(args)
 --	end
 
 	-- Transfer files to deploy target.
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, nil)
+	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, nil)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 	run:popd()
 
@@ -275,7 +284,7 @@ end
 function deploy(args)
 	-- Deploy application configuration to target.
 	stdout:printLn("Deploying resources to target host...")
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Application.config", nil)
+	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Application.config", nil)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Continue with either statically linked product or as a bunch of dynamic libraries.
@@ -291,7 +300,7 @@ end
 function launch(args)
 	stdout:printLn("Launching Win64...")
 	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
-	return run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteLaunch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. executable .. " \\-s Application.config", nil)
+	return run:execute(tools.remote .. " launch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. executable .. " \\-s Application.config", nil)
 end
 
 
@@ -461,7 +470,7 @@ function migrate(args)
 	stdout:printLn("Migrating Win64...")
 
 	-- Build content database.
-	run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+	run:execute(tools.migrate .. " -p -s=Migrate")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Continue with either statically linked product or as a bunch of dynamic libraries.
