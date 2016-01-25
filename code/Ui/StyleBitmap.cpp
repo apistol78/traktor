@@ -20,12 +20,14 @@ StyleBitmap::StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap)
 :	m_name(name)
 ,	m_defaultBitmap(defaultBitmap)
 {
+	T_FATAL_ASSERT_M(m_defaultBitmap, L"Default bitmap is null.");
 }
 
 StyleBitmap::StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize)
 :	m_name(name)
 ,	m_defaultBitmap(Bitmap::load(defaultBitmapResource, defaultBitmapResourceSize, L"image"))
 {
+	T_FATAL_ASSERT_M(m_defaultBitmap, L"Unable to load default bitmap resource.");
 }
 
 void StyleBitmap::destroy()
@@ -52,10 +54,13 @@ bool StyleBitmap::resolve() const
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	if (!ss)
-		return false;
+	{
+		m_bitmap = m_defaultBitmap;
+		return bool(m_bitmap != 0);
+	}
 
 	std::wstring bmp = ss->getValue(m_name);
-	if (bmp == m_path)
+	if (!bmp.empty() && bmp == m_path)
 		return bool(m_bitmap != 0);
 
 	safeDestroy(m_bitmap);
@@ -64,7 +69,6 @@ bool StyleBitmap::resolve() const
 		m_bitmap = m_defaultBitmap;
 
 	m_path = bmp;
-
 	return bool(m_bitmap != 0);
 }
 

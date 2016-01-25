@@ -30,6 +30,8 @@ bool writeFileIfMismatch(const std::wstring& fileName, const std::vector< uint8_
 					needToWrite = true;
 			}
 		}
+		else
+			needToWrite = true;
 	}
 	else
 		needToWrite = true;
