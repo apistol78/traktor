@@ -86,7 +86,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptMana
 
 ScriptManagerLua* ScriptManagerLua::ms_instance = 0;
 
-ScriptManagerLua::ScriptManagerLua()
+ScriptManagerLua::ScriptManagerLua(bool strict)
 :	m_luaState(0)
 ,	m_defaultAllocFn(0)
 ,	m_defaultAllocOpaque(0)
@@ -96,6 +96,7 @@ ScriptManagerLua::ScriptManagerLua()
 ,	m_collectTargetSteps(0.0f)
 ,	m_totalMemoryUse(0)
 ,	m_lastMemoryUse(0)
+,	m_strict(strict)
 {
 	ms_instance = this;
 
@@ -131,8 +132,8 @@ ScriptManagerLua::ScriptManagerLua()
 	lua_pushcclosure(m_luaState, luaAllocatedMemory, 1);
 	lua_setglobal(m_luaState, "allocatedMemory");
 
-	// Load default initialization script.
-	int32_t result = luaL_loadbuffer(
+	// Load default initialization script(s).
+	luaL_loadbuffer(
 		m_luaState,
 		c_initScript,
 		strlen(c_initScript),
@@ -483,7 +484,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext()
 	lua_pop(m_luaState, 1);
 
 	// Create context.
-	Ref< ScriptContextLua > context = new ScriptContextLua(this, m_luaState, environmentRef);
+	Ref< ScriptContextLua > context = new ScriptContextLua(this, m_luaState, environmentRef, m_strict);
 	m_contexts.push_back(context);
 	return context;
 }

@@ -60,7 +60,7 @@ int32_t Run_execute_3(Run* self, const std::wstring& command, const Any& saveOut
 
 Ref< script::IScriptManager > createScriptManager()
 {
-	Ref< script::IScriptManager > scriptManager = new script::ScriptManagerLua();
+	Ref< script::IScriptManager > scriptManager = new script::ScriptManagerLua(false);
 
 	OrderedClassRegistrar registrar;
 

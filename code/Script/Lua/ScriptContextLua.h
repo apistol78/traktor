@@ -51,11 +51,14 @@ private:
 	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;
 	int32_t m_environmentRef;
+	bool m_strict;
 	const Object* m_lastSelf;
 
-	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef);
+	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict);
 
 	static int32_t runtimeError(lua_State* luaState);
+
+	static int32_t restrictedAccess(lua_State* luaState);
 };
 
 	}
