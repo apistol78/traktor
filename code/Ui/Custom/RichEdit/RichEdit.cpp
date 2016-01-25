@@ -24,11 +24,14 @@ const int32_t c_iconSize = 16;
 const int32_t c_scrollHSteps = 10;
 
 #if defined(__APPLE__)
+const int32_t c_fontWidthMargin = 0;
 const int32_t c_fontHeightMargin = 4;
 #elif defined(__LINUX__)
+const int32_t c_fontWidthMargin = 0;
 const int32_t c_fontHeightMargin = 1;
 #else
-const int32_t c_fontHeightMargin = 5;
+const int32_t c_fontWidthMargin = 0;
+const int32_t c_fontHeightMargin = 2;
 #endif
 
 bool isWordSeparator(wchar_t ch)
@@ -68,6 +71,8 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	addEventHandler< KeyDownEvent >(this, &RichEdit::eventKeyDown);
 	addEventHandler< KeyEvent >(this, &RichEdit::eventKey);
 	addEventHandler< MouseButtonDownEvent >(this, &RichEdit::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &RichEdit::eventButtonUp);
+	addEventHandler< MouseMoveEvent >(this, &RichEdit::eventMouseMove);
 	addEventHandler< MouseWheelEvent >(this, &RichEdit::eventMouseWheel);
 	addEventHandler< PaintEvent >(this, &RichEdit::eventPaint);
 	addEventHandler< SizeEvent >(this, &RichEdit::eventSize);
@@ -94,7 +99,6 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	setText(text);
 
 	CHECK;
-
 	return true;
 }
 
@@ -268,9 +272,59 @@ void RichEdit::insert(const std::wstring& text)
 		insertCharacter(*i);
 }
 
+int32_t RichEdit::getOffsetFromPosition(const Point& position)
+{
+	Font font = getFont();
+	Rect rc = getEditRect();
+
+	uint32_t lineCount = m_lines.size();
+	uint32_t lineOffset = m_scrollBarV->getPosition();
+	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
+	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+
+	uint32_t line = lineOffset + position.y / lineHeight;
+	if (line >= lineCount)
+		return -1;
+
+	const Line& ln = m_lines[line];
+	std::wstring text(&m_text[ln.start], &m_text[ln.stop]);
+
+	std::vector< int32_t > stops;
+	int32_t lineWidth = getCharacterStops(text, stops);
+
+	int32_t linePosition = std::max(position.x - m_lineMargin, 0) + m_lineOffsetH;
+	if (linePosition < lineWidth)
+	{
+		for (int32_t i = stops.size() - 1; i >= 0; --i)
+		{
+			if (linePosition >= stops[i])
+			{
+				return ln.start + i;
+				break;
+			}
+		}
+	}
+
+	return ln.stop;
+}
+
 int32_t RichEdit::getCaretOffset() const
 {
 	return m_caret;
+}
+
+int32_t RichEdit::getLineFromPosition(int32_t position)
+{
+	Font font = getFont();
+	Rect rc = getEditRect();
+
+	uint32_t lineCount = m_lines.size();
+	uint32_t lineOffset = m_scrollBarV->getPosition();
+	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
+	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+
+	uint32_t line = lineOffset + position / lineHeight;
+	return line < lineCount ? line : -1;
 }
 
 int32_t RichEdit::getLineFromOffset(int32_t offset) const
@@ -449,6 +503,11 @@ Rect RichEdit::getEditRect() const
 	rc.right -= m_scrollBarV->getPreferedSize().cx;
 	rc.bottom -= m_scrollBarH->getPreferedSize().cy;
 	return rc;
+}
+
+int32_t RichEdit::getMarginWidth() const
+{
+	return m_lineMargin;
 }
 
 void RichEdit::updateScrollBars()
@@ -980,55 +1039,61 @@ void RichEdit::eventKey(KeyEvent* event)
 
 void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 {
-	Point mousePosition = event->getPosition();
-
-	Font font = getFont();
-	Rect rc = getEditRect();
-
-	int32_t fromCaret = m_caret;
-
-	uint32_t lineCount = m_lines.size();
-	uint32_t lineOffset = m_scrollBarV->getPosition();
-	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
-	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
-
-	uint32_t line = lineOffset + mousePosition.y / lineHeight;
-	if (line >= lineCount)
+	Point position = event->getPosition();
+	if (position.x < m_lineMargin)
 		return;
 
-	const Line& ln = m_lines[line];
-	std::wstring text(&m_text[ln.start], &m_text[ln.stop]);
+	setCursor(CrIBeam);
 
-	std::vector< int32_t > stops;
-	int32_t lineWidth = getCharacterStops(text, stops);
-
-	int32_t linePosition = mousePosition.x - m_lineMargin + m_lineOffsetH;
-	if (linePosition < lineWidth)
+	int32_t offset = getOffsetFromPosition(position);
+	if (offset >= 0)
 	{
-		for (int32_t i = stops.size() - 1; i >= 0; --i)
+		if ((event->getKeyState() & ui::KsShift) != 0)
 		{
-			if (linePosition >= stops[i])
-			{
-				m_caret = ln.start + i;
-				break;
-			}
+			m_fromCaret = m_caret;
+			m_caret = offset;
+			m_selectionStart = std::min(m_fromCaret, m_caret);
+			m_selectionStop = std::max(m_fromCaret, m_caret);
 		}
+		else
+		{
+			m_caret = offset;
+			m_fromCaret = offset;
+			m_selectionStart = -1;
+			m_selectionStop = -1;
+		}
+		setCapture();
+		update();
 	}
-	else
-		m_caret = ln.stop;
+}
 
-	if ((event->getKeyState() & ui::KsShift) != 0)
-	{
-		m_selectionStart = std::min(fromCaret, m_caret);
-		m_selectionStop = std::max(fromCaret, m_caret);
-	}
-	else
-	{
-		m_selectionStart = -1;
-		m_selectionStop = -1;
-	}
+void RichEdit::eventButtonUp(MouseButtonUpEvent* event)
+{
+	setCursor(CrIBeam);
 
-	update();
+	if (!hasCapture())
+		return;
+
+	releaseCapture();
+}
+
+void RichEdit::eventMouseMove(MouseMoveEvent* event)
+{
+	Point position = event->getPosition();
+	if (position.x >= m_lineMargin)
+		setCursor(CrIBeam);
+
+	if (!hasCapture())
+		return;
+
+	int32_t offset = getOffsetFromPosition(position);
+	if (offset >= 0)
+	{
+		m_caret = offset;
+		m_selectionStart = std::min(m_fromCaret, m_caret);
+		m_selectionStop = std::max(m_fromCaret, m_caret);
+		update();
+	}
 }
 
 void RichEdit::eventMouseWheel(MouseWheelEvent* event)
@@ -1053,7 +1118,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 	Rect updateRc = event->getUpdateRect();
 
 	// Cache font character width.
-	int32_t charWidth = canvas.getTextExtent(L" ").cx;
+	int32_t charWidth = canvas.getTextExtent(L" ").cx + c_fontWidthMargin;
 	if (charWidth != m_charWidth)
 	{
 		m_charWidth = charWidth;

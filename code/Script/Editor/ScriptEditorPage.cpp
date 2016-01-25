@@ -167,7 +167,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_edit->setFont(ui::Font(font, fontSize));
 
 	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
-	m_edit->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventScriptDoubleClick);
+	m_edit->addEventHandler< ui::MouseButtonDownEvent >(this, &ScriptEditorPage::eventScriptButtonDown);
 	m_edit->addEventHandler< ui::SizeEvent >(this, &ScriptEditorPage::eventScriptSize);
 
 	m_searchControl = new SearchControl();
@@ -670,19 +670,23 @@ void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 	updateBreakpoints();
 }
 
-void ScriptEditorPage::eventScriptDoubleClick(ui::MouseDoubleClickEvent* event)
+void ScriptEditorPage::eventScriptButtonDown(ui::MouseButtonDownEvent* event)
 {
-	int32_t offset = m_edit->getCaretOffset();
-	int32_t line = m_edit->getLineFromOffset(offset);
-	if (line < 0)
+	if (event->getPosition().x >= m_edit->getMarginWidth())
 		return;
 
-	if (!m_edit->getLineData(line))
-		m_edit->setLineData(line, new PropertyBoolean(true));
-	else
-		m_edit->setLineData(line, 0);
+	int32_t line = m_edit->getLineFromPosition(event->getPosition().y);
+	if (line >= 0)
+	{
+		if (!m_edit->getLineData(line))
+			m_edit->setLineData(line, new PropertyBoolean(true));
+		else
+			m_edit->setLineData(line, 0);
 
-	updateBreakpoints();
+		updateBreakpoints();
+	}
+
+	event->consume();
 }
 
 void ScriptEditorPage::eventScriptSize(ui::SizeEvent* event)
