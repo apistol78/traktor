@@ -1,11 +1,14 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Io/StreamStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
+#include "Core/Misc/String.h"
 #include "Net/SocketAddressIPv6.h"
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 #include "Net/Url.h"
 #include "Net/Http/HttpClient.h"
+#include "Net/Http/HttpChunkStream.h"
 #include "Net/Http/HttpResponse.h"
 #include "Net/Http/IHttpRequestContent.h"
 
@@ -70,6 +73,15 @@ bool executeRequest(const wchar_t* const method, const net::Url& url, const IHtt
 	outResponse = new HttpResponse();
 	if (!outResponse->parse(outStream))
 		return false;
+
+	// Create chunked-transfer stream if such encoding is required.
+	if (outResponse->get(L"Transfer-Encoding") == L"chunked")
+		outStream = new HttpChunkStream(outStream);
+
+	// If response contains content length field we can cap stream.
+	int contentLength = parseString< int >(outResponse->get(L"Content-Length"));
+	if (contentLength > 0)
+		outStream = new StreamStream(outStream, contentLength);
 
 	return true;
 }
