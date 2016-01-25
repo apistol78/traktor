@@ -1,4 +1,5 @@
 import(traktor)
+import(traktor.run)
 
 
 -- Tools
@@ -50,7 +51,7 @@ function deploy(args)
 	-- Deploy bundle to target.
 	stdout:printLn("Deploying application to target host...")
 	run:pushd(bundle)
-	run:execute(tools.remote .. " deploy -recursive " $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)/" .. bundle .. "\" *", "(null)")
+	run:execute(tools.remote .. " deploy -recursive $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)/" .. bundle .. "\" *", "(null)")
 	if run:exitCode() ~= 0 then
 		stderr:printLn("Failed to deploy application to target.")
 		return run:exitCode()
