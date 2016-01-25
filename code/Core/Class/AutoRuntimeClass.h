@@ -3349,7 +3349,7 @@ public:
 			return methods[argc]->invoke(object, argc, argv);
 		else
 		{
-			T_FATAL_ASSERT_M(false, L"No such method");
+			T_FATAL_ASSERT_M(false, L"Incorrect number of arguments when calling method \"" + mbstows(info.name) + L"\"");
 			return Any();
 		}
 	}
@@ -3388,7 +3388,7 @@ public:
 			return methods[argc]->invoke(argc, argv);
 		else
 		{
-			T_FATAL_ASSERT_M(false, L"No such static method");
+			T_FATAL_ASSERT_M(false, L"Incorrect number of arguments when calling static method \"" + mbstows(info.name) + L"\"");
 			return Any();
 		}
 	}
