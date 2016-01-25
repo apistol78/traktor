@@ -14,7 +14,6 @@ namespace traktor
 		namespace
 		{
 
-#if !defined(_DEBUG)
 void copyBuffer(uint8_t* dst, const uint8_t* src, uint32_t size)
 {
 	uint32_t i = 0;
@@ -51,12 +50,6 @@ void copyBuffer(uint8_t* dst, const uint8_t* src, uint32_t size)
 		dst[i] = src[i];
 	}
 }
-#else
-void copyBuffer(uint8_t* dst, const uint8_t* src, uint32_t size)
-{
-	std::memcpy(dst, src, size);
-}
-#endif
 
 		}
 
