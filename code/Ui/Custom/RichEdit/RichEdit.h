@@ -60,8 +60,14 @@ public:
 	/*! \brief Insert text at caret's current position. */
 	void insert(const std::wstring& text);
 
+	/*! \brief Get offset from client position. */
+	int32_t getOffsetFromPosition(const Point& position);
+
 	/*! \brief Get caret's current position. */
 	int32_t getCaretOffset() const;
+
+	/*! \brief Get line from client Y position. */
+	int32_t getLineFromPosition(int32_t position);
 
 	/*! \brief Get line index of position. */
 	int32_t getLineFromOffset(int32_t offset) const;
@@ -120,6 +126,9 @@ public:
 	/*! \brief Get text inner rectangle. */
 	Rect getEditRect() const;
 
+	/*! \brief Get margin width. */
+	int32_t getMarginWidth() const;
+
 private:
 	struct Attribute
 	{
@@ -169,6 +178,7 @@ private:
 	int32_t m_lineMargin;
 	int32_t m_lineOffsetH;
 	int32_t m_widestLineWidth;
+	int32_t m_fromCaret;
 
 #if defined(_DEBUG)
 	std::vector< Line > m_linesLastGood;
@@ -193,6 +203,10 @@ private:
 	void eventKey(KeyEvent* event);
 
 	void eventButtonDown(MouseButtonDownEvent* event);
+
+	void eventButtonUp(MouseButtonUpEvent* event);
+
+	void eventMouseMove(MouseMoveEvent* event);
 
 	void eventMouseWheel(MouseWheelEvent* event);
 

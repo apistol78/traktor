@@ -156,7 +156,7 @@ private:
 
 	void eventScriptChange(ui::ContentChangeEvent* event);
 
-	void eventScriptDoubleClick(ui::MouseDoubleClickEvent* event);
+	void eventScriptButtonDown(ui::MouseButtonDownEvent* event);
 
 	void eventScriptSize(ui::SizeEvent* event);
 
