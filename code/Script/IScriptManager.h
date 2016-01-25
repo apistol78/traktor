@@ -78,9 +78,10 @@ public:
 
 	/*! \brief Create script context.
 	 *
+	 * \param strict Strict global variable declaration required.
 	 * \return Script context instance.
 	 */
-	virtual Ref< IScriptContext > createContext() = 0;
+	virtual Ref< IScriptContext > createContext(bool strict) = 0;
 
 	/*! \brief Create debugger.
 	 *

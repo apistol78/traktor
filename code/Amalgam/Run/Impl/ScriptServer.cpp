@@ -146,7 +146,7 @@ bool ScriptServer::execute(IEnvironment* environment)
 		return false;
 	}
 
-	m_scriptContext = m_scriptManager->createContext();
+	m_scriptContext = m_scriptManager->createContext(false);
 	if (!m_scriptContext)
 	{
 		log::error << L"Unable to create script execution context" << Endl;

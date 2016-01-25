@@ -98,7 +98,7 @@ bool ScriptServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 	}
 
 	// Create shared script context.
-	m_scriptContext = m_scriptManager->createContext();
+	m_scriptContext = m_scriptManager->createContext(true);
 	return true;
 }
 
