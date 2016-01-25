@@ -897,10 +897,10 @@ bool RenderViewOpenGL::windowListenerEvent(Window* window, UINT message, WPARAM 
 	}
 	else if (message == WM_SETCURSOR)
 	{
-		if (m_cursorVisible)
-			SetCursor(LoadCursor(NULL, IDC_ARROW));
-		else
+		if (!m_cursorVisible)
 			SetCursor(NULL);
+		else
+			return false;
 	}
 	else
 		return false;
