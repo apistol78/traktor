@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCompare.h"
 
