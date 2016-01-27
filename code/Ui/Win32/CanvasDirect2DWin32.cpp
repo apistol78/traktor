@@ -95,6 +95,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 
 	m_d2dRenderTarget->BeginDraw();
 	m_d2dRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 
 	setForeground(Color4ub(0, 0, 0, 255));
 	setBackground(Color4ub(255, 255, 255, 255));
