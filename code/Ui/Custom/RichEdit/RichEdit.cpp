@@ -73,6 +73,7 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	addEventHandler< MouseButtonDownEvent >(this, &RichEdit::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &RichEdit::eventButtonUp);
 	addEventHandler< MouseMoveEvent >(this, &RichEdit::eventMouseMove);
+	addEventHandler< MouseDoubleClickEvent >(this, &RichEdit::eventDoubleClick);
 	addEventHandler< MouseWheelEvent >(this, &RichEdit::eventMouseWheel);
 	addEventHandler< PaintEvent >(this, &RichEdit::eventPaint);
 	addEventHandler< SizeEvent >(this, &RichEdit::eventSize);
@@ -1092,6 +1093,37 @@ void RichEdit::eventMouseMove(MouseMoveEvent* event)
 		m_caret = offset;
 		m_selectionStart = std::min(m_fromCaret, m_caret);
 		m_selectionStop = std::max(m_fromCaret, m_caret);
+		update();
+	}
+}
+
+void RichEdit::eventDoubleClick(MouseDoubleClickEvent* event)
+{
+	Point position = event->getPosition();
+	if (position.x < m_lineMargin)
+		return;
+
+	int32_t offset = getOffsetFromPosition(position);
+	if (offset >= 0)
+	{
+		if ((m_selectionStart = offset) > 0)
+		{
+			m_selectionStart--;
+			while (m_selectionStart > 0)
+			{
+				if (isWordSeparator(m_text[m_selectionStart - 1]))
+					break;
+				--m_selectionStart;
+			}
+		}
+		m_selectionStop = offset;
+		while (m_selectionStop < int32_t(m_text.size()) - 1)
+		{
+			++m_selectionStop;
+			if (isWordSeparator(m_text[m_selectionStop]))
+				break;
+		}
+		m_caret = m_selectionStop;
 		update();
 	}
 }
