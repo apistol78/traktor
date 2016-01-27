@@ -59,10 +59,8 @@ bool AudioServer::create(const PropertyGroup* settings, void* nativeHandle)
 	sscd.driverDesc.hwChannels = settings->getProperty< PropertyInteger >(L"Audio.HwChannels", 2);
 #	if defined(__IOS__) || defined(__PNACL__) || defined(__ANDROID__)
 	sscd.driverDesc.frameSamples = 1024;
-	sscd.driverDesc.mixerFrames = 3;
 #	else
 	sscd.driverDesc.frameSamples = 512;
-	sscd.driverDesc.mixerFrames = 3;
 #	endif
 #else
 	sscd.channels = 16;
@@ -70,7 +68,6 @@ bool AudioServer::create(const PropertyGroup* settings, void* nativeHandle)
 	sscd.driverDesc.bitsPerSample = 16;
 	sscd.driverDesc.hwChannels = 5+1;
 	sscd.driverDesc.frameSamples = 4 * 256;
-	sscd.driverDesc.mixerFrames = 5;
 #endif
 
 	if (!m_soundSystem->create(sscd))
