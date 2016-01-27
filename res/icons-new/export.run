@@ -25,8 +25,9 @@ local outputs =
 			{ name = "ShowFiltered", column = 2, row = 1, width = 1, height = 1 },
 			{ name = "Favorites", column = 3, row = 1, width = 1, height = 1 },
 			{ name = "Types", column = 0, row = 2, width = 23, height = 1 },
-			{ name = "Folders", column = 0, row = 3, width = 2, height = 1 },
-			{ name = "Navigate", column = 0, row = 16, width = 4, height = 1 },
+			{ name = "TypesHidden", column = 0, row = 3, width = 23, height = 1 },
+			{ name = "Folders", column = 0, row = 4, width = 2, height = 1 },
+			{ name = "Navigate", column = 0, row = 17, width = 4, height = 1 },
 		}
 	},
 	{
@@ -35,7 +36,7 @@ local outputs =
 		path = "../themes/%s/Images/UI",
 		resources =
 		{
-			{ name = "DockClose", column = 2, row = 24, width = 1, height = 1, base = 12 },
+			{ name = "DockClose", column = 2, row = 25, width = 1, height = 1, base = 12 },
 		}
 	},
 	{
@@ -44,7 +45,7 @@ local outputs =
 		path = "../themes/%s/Images/UI",
 		resources =
 		{
-			{ name = "TabClose", column = 2, row = 24, width = 1, height = 1, base = 12 },
+			{ name = "TabClose", column = 2, row = 25, width = 1, height = 1, base = 12 },
 		}
 	},	
 	{
@@ -53,7 +54,7 @@ local outputs =
 		path = "../themes/%s/Images/UI",
 		resources =
 		{
-			{ name = "Tree", column = 0, row = 4, width = 2, height = 1 },
+			{ name = "Tree", column = 0, row = 5, width = 4, height = 1 },
 		}
 	},
 	{
@@ -62,7 +63,7 @@ local outputs =
 		path = "../themes/%s/Images/UI",
 		resources =
 		{
-			{ name = "GridView", column = 0, row = 4, width = 2, height = 1 },
+			{ name = "GridView", column = 0, row = 5, width = 4, height = 1 },
 		}
 	},
 	{
@@ -71,7 +72,7 @@ local outputs =
 		path = "../themes/%s/Images/UI",
 		resources =
 		{
-			{ name = "Log", column = 0, row = 23, width = 3, height = 1, base = 12 },
+			{ name = "Log", column = 0, row = 24, width = 3, height = 1, base = 12 },
 		}
 	},	
 	{
@@ -80,13 +81,13 @@ local outputs =
 		path = "../themes/%s/Images/UI",
 		resources =
 		{
-			{ name = "PropertyList", column = 0, row = 4, width = 2, height = 1 },
-			{ name = "Unchecked", column = 0, row = 24, width = 1, height = 1, base = 14 },
-			{ name = "Checked", column = 1, row = 24, width = 1, height = 1, base = 14 },
-			{ name = "SmallCross", column = 2, row = 24, width = 1, height = 1, base = 12 },
-			{ name = "SmallDots", column = 3, row = 24, width = 1, height = 1, base = 12 },
-			{ name = "SmallPen", column = 4, row = 24, width = 1, height = 1, base = 12 },
-			{ name = "SmallPlus", column = 5, row = 24, width = 1, height = 1, base = 12 },
+			{ name = "PropertyList", column = 0, row = 5, width = 2, height = 1 },
+			{ name = "Unchecked", column = 0, row = 25, width = 1, height = 1, base = 14 },
+			{ name = "Checked", column = 1, row = 25, width = 1, height = 1, base = 14 },
+			{ name = "SmallCross", column = 2, row = 25, width = 1, height = 1, base = 12 },
+			{ name = "SmallDots", column = 3, row = 25, width = 1, height = 1, base = 12 },
+			{ name = "SmallPen", column = 4, row = 25, width = 1, height = 1, base = 12 },
+			{ name = "SmallPlus", column = 5, row = 25, width = 1, height = 1, base = 12 },
 		}
 	},
 	{
@@ -95,10 +96,10 @@ local outputs =
 		path = "../themes/%s/Images/UI",
 		resources =
 		{
-			{ name = "SequenceExpand", column = 0, row = 4, width = 1, height = 1, base = 9 },
-			{ name = "SequenceCollapse", column = 1, row = 4, width = 1, height = 1, base = 9 },
-			{ name = "SequenceVisible", column = 5, row = 6, width = 1, height = 1 },
-			{ name = "SequenceHidden", column = 6, row = 6, width = 1, height = 1 },
+			{ name = "SequenceExpand", column = 0, row = 5, width = 1, height = 1, base = 9 },
+			{ name = "SequenceCollapse", column = 1, row = 5, width = 1, height = 1, base = 9 },
+			{ name = "SequenceVisible", column = 5, row = 7, width = 1, height = 1 },
+			{ name = "SequenceHidden", column = 6, row = 7, width = 1, height = 1 },
 		}
 	},
 	{
@@ -107,8 +108,8 @@ local outputs =
 		path = "../themes/%s/Images/UI",
 		resources =
 		{
-			{ name = "LayerVisible", column = 5, row = 6, width = 1, height = 1 },
-			{ name = "LayerHidden", column = 6, row = 6, width = 1, height = 1 },
+			{ name = "LayerVisible", column = 5, row = 7, width = 1, height = 1 },
+			{ name = "LayerHidden", column = 6, row = 7, width = 1, height = 1 },
 		}
 	},	
 	{
@@ -117,24 +118,24 @@ local outputs =
 		path = "../themes/%s/Images/Script",
 		resources =
 		{
-			{ name = "ToggleComments", column = 0, row = 5, width = 1, height = 1 },
-			{ name = "RemoveBreakpoints", column = 1, row = 5, width = 1, height = 1 },
-			{ name = "DebugStop", column = 2, row = 5, width = 1, height = 1 },
-			{ name = "DebugContinue", column = 3, row = 5, width = 1, height = 1 },
-			{ name = "DebugStepInto", column = 4, row = 5, width = 1, height = 1 },
-			{ name = "DebugStepOver", column = 5, row = 5, width = 1, height = 1 },
-			{ name = "ProfilerClear", column = 6, row = 5, width = 1, height = 1 },
-			{ name = "Breakpoint", column = 7, row = 5, width = 1, height = 1, base = 12 },
-			{ name = "AddDependency", column = 8, row = 5, width = 1, height = 1 },
-			{ name = "RemoveDependency", column = 9, row = 5, width = 1, height = 1 },
-			{ name = "MoveDependencyUp", column = 10, row = 5, width = 1, height = 1 },
-			{ name = "MoveDependencyDown", column = 11, row = 5, width = 1, height = 1 },
-			{ name = "DefineGlobalFunction", column = 12, row = 5, width = 1, height = 1 },
-			{ name = "DefineLocalFunction", column = 13, row = 5, width = 1, height = 1 },
-			{ name = "ReferenceFunction", column = 14, row = 5, width = 1, height = 1 },
-			{ name = "SearchCaseSensitive", column = 15, row = 5, width = 1, height = 1 },
-			{ name = "SearchWholeWord", column = 16, row = 5, width = 1, height = 1 },
-			{ name = "SearchWildCard", column = 17, row = 5, width = 1, height = 1 },
+			{ name = "ToggleComments", column = 0, row = 6, width = 1, height = 1 },
+			{ name = "RemoveBreakpoints", column = 1, row = 6, width = 1, height = 1 },
+			{ name = "DebugStop", column = 2, row = 6, width = 1, height = 1 },
+			{ name = "DebugContinue", column = 3, row = 6, width = 1, height = 1 },
+			{ name = "DebugStepInto", column = 4, row = 6, width = 1, height = 1 },
+			{ name = "DebugStepOver", column = 5, row = 6, width = 1, height = 1 },
+			{ name = "ProfilerClear", column = 6, row = 6, width = 1, height = 1 },
+			{ name = "Breakpoint", column = 7, row = 6, width = 1, height = 1, base = 12 },
+			{ name = "AddDependency", column = 8, row = 6, width = 1, height = 1 },
+			{ name = "RemoveDependency", column = 9, row = 6, width = 1, height = 1 },
+			{ name = "MoveDependencyUp", column = 10, row = 6, width = 1, height = 1 },
+			{ name = "MoveDependencyDown", column = 11, row = 6, width = 1, height = 1 },
+			{ name = "DefineGlobalFunction", column = 12, row = 6, width = 1, height = 1 },
+			{ name = "DefineLocalFunction", column = 13, row = 6, width = 1, height = 1 },
+			{ name = "ReferenceFunction", column = 14, row = 6, width = 1, height = 1 },
+			{ name = "SearchCaseSensitive", column = 15, row = 6, width = 1, height = 1 },
+			{ name = "SearchWholeWord", column = 16, row = 6, width = 1, height = 1 },
+			{ name = "SearchWildCard", column = 17, row = 6, width = 1, height = 1 },
 		}
 	},
 	{
@@ -143,16 +144,16 @@ local outputs =
 		path = "../themes/%s/Images/Spray",
 		resources =
 		{
-			{ name = "Randomize", column = 0, row = 6, width = 1, height = 1 },
-			{ name = "ToggleGuideLines", column = 1, row = 6, width = 1, height = 1 },
-			{ name = "ToggleMoveEmitter", column = 2, row = 6, width = 1, height = 1 },
-			{ name = "ToggleGroundClip", column = 3, row = 6, width = 1, height = 1 },
-			{ name = "BrowseBackground", column = 4, row = 6, width = 1, height = 1 },
-			{ name = "BrowseImageProcess", column = 5, row = 6, width = 1, height = 1 },
-			{ name = "Playback", column = 0, row = 13, width = 6, height = 1 },
-			{ name = "LayerVisible", column = 6, row = 6, width = 1, height = 1 },
-			{ name = "LayerHidden", column = 7, row = 6, width = 1, height = 1 },
-			{ name = "LayerDelete", column = 10, row = 6, width = 1, height = 1 },		
+			{ name = "Randomize", column = 0, row = 7, width = 1, height = 1 },
+			{ name = "ToggleGuideLines", column = 1, row = 7, width = 1, height = 1 },
+			{ name = "ToggleMoveEmitter", column = 2, row = 7, width = 1, height = 1 },
+			{ name = "ToggleGroundClip", column = 3, row = 7, width = 1, height = 1 },
+			{ name = "BrowseBackground", column = 4, row = 7, width = 1, height = 1 },
+			{ name = "BrowseImageProcess", column = 5, row = 7, width = 1, height = 1 },
+			{ name = "Playback", column = 0, row = 14, width = 6, height = 1 },
+			{ name = "LayerVisible", column = 6, row = 7, width = 1, height = 1 },
+			{ name = "LayerHidden", column = 7, row = 7, width = 1, height = 1 },
+			{ name = "LayerDelete", column = 10, row = 7, width = 1, height = 1 },		
 		}
 	},
 	{
@@ -161,7 +162,7 @@ local outputs =
 		path = "../themes/%s/Images/Shader",
 		resources =
 		{
-			{ name = "Tools", column = 0, row = 7, width = 14, height = 1 },
+			{ name = "Tools", column = 0, row = 8, width = 14, height = 1 },
 		}
 	},
 	{
@@ -170,7 +171,7 @@ local outputs =
 		path = "../themes/%s/Images/Texture",
 		resources =
 		{
-			{ name = "PlusMinus", column = 0, row = 11, width = 2, height = 1 },
+			{ name = "PlusMinus", column = 0, row = 12, width = 2, height = 1 },
 		}
 	},
 	{
@@ -179,27 +180,27 @@ local outputs =
 		path = "../themes/%s/Images/Scene",
 		resources =
 		{
-			{ name = "Pointer", column = 0, row = 8, width = 1, height = 1 },
-			{ name = "Translate", column = 1, row = 8, width = 1, height = 1 },
-			{ name = "Rotate", column = 2, row = 8, width = 1, height = 1 },
-			{ name = "Snap", column = 3, row = 8, width = 1, height = 1 },
-			{ name = "SingleView", column = 4, row = 8, width = 1, height = 1 },
-			{ name = "DualView", column = 5, row = 8, width = 1, height = 1 },
-			{ name = "QuadView", column = 6, row = 8, width = 1, height = 1 },
-			{ name = "Rewind", column = 7, row = 8, width = 1, height = 1 },
-			{ name = "Play", column = 8, row = 8, width = 1, height = 1 },
-			{ name = "Stop", column = 9, row = 8, width = 1, height = 1 },
-			{ name = "LayerVisible", column = 6, row = 6, width = 1, height = 1 },
-			{ name = "LayerHidden", column = 7, row = 6, width = 1, height = 1 },
-			{ name = "LayerLocked", column = 8, row = 6, width = 1, height = 1 },
-			{ name = "LayerUnlocked", column = 9, row = 6, width = 1, height = 1 },
-			{ name = "LayerDelete", column = 10, row = 6, width = 1, height = 1 },
+			{ name = "Pointer", column = 0, row = 9, width = 1, height = 1 },
+			{ name = "Translate", column = 1, row = 9, width = 1, height = 1 },
+			{ name = "Rotate", column = 2, row = 9, width = 1, height = 1 },
+			{ name = "Snap", column = 3, row = 9, width = 1, height = 1 },
+			{ name = "SingleView", column = 4, row = 9, width = 1, height = 1 },
+			{ name = "DualView", column = 5, row = 9, width = 1, height = 1 },
+			{ name = "QuadView", column = 6, row = 9, width = 1, height = 1 },
+			{ name = "Rewind", column = 7, row = 9, width = 1, height = 1 },
+			{ name = "Play", column = 8, row = 9, width = 1, height = 1 },
+			{ name = "Stop", column = 9, row = 9, width = 1, height = 1 },
+			{ name = "LayerVisible", column = 6, row = 7, width = 1, height = 1 },
+			{ name = "LayerHidden", column = 7, row = 7, width = 1, height = 1 },
+			{ name = "LayerLocked", column = 8, row = 7, width = 1, height = 1 },
+			{ name = "LayerUnlocked", column = 9, row = 7, width = 1, height = 1 },
+			{ name = "LayerDelete", column = 10, row = 7, width = 1, height = 1 },
 			{ name = "Types", column = 0, row = 2, width = 23, height = 1 },
-			{ name = "Folders", column = 0, row = 3, width = 2, height = 1 },
-			{ name = "RemoveEntity", column = 10, row = 8, width = 1, height = 1 },
-			{ name = "MoveToEntity", column = 11, row = 8, width = 1, height = 1 },
-			{ name = "ToggleGrid", column = 12, row = 8, width = 1, height = 1 },
-			{ name = "ToggleGuide", column = 13, row = 8, width = 1, height = 1 },		
+			{ name = "Folders", column = 0, row = 4, width = 2, height = 1 },
+			{ name = "RemoveEntity", column = 11, row = 8, width = 1, height = 1 },
+			{ name = "MoveToEntity", column = 12, row = 8, width = 1, height = 1 },
+			{ name = "ToggleGrid", column = 13, row = 8, width = 1, height = 1 },
+			{ name = "ToggleGuide", column = 14, row = 8, width = 1, height = 1 },		
 		}
 	},
 	{
@@ -208,13 +209,13 @@ local outputs =
 		path = "../themes/%s/Images/Amalgam",
 		resources =
 		{
-			{ name = "Logos", column = 0, row = 9, width = 13, height = 1, base = 24 },
-			{ name = "TargetPlay", column = 0, row = 10, width = 1, height = 1, base = 24 },
-			{ name = "TargetBuild", column = 1, row = 10, width = 1, height = 1, base = 24 },
-			{ name = "TargetMigrate", column = 2, row = 10, width = 1, height = 1, base = 24 },
-			{ name = "TargetBrowse", column = 3, row = 10, width = 1, height = 1, base = 24 },
-			{ name = "TargetStop", column = 4, row = 10, width = 1, height = 1, base = 24 },
-			{ name = "TargetProfile", column = 5, row = 10, width = 1, height = 1, base = 24 },
+			{ name = "Logos", column = 0, row = 10, width = 13, height = 1, base = 24 },
+			{ name = "TargetPlay", column = 0, row = 11, width = 1, height = 1, base = 24 },
+			{ name = "TargetBuild", column = 1, row = 11, width = 1, height = 1, base = 24 },
+			{ name = "TargetMigrate", column = 2, row = 11, width = 1, height = 1, base = 24 },
+			{ name = "TargetBrowse", column = 3, row = 11, width = 1, height = 1, base = 24 },
+			{ name = "TargetStop", column = 4, row = 11, width = 1, height = 1, base = 24 },
+			{ name = "TargetProfile", column = 5, row = 11, width = 1, height = 1, base = 24 },
 		}
 	},
 	{
@@ -223,7 +224,7 @@ local outputs =
 		path = "../themes/%s/Images/Input",
 		resources =
 		{
-			{ name = "Alignment", column = 0, row = 7, width = 6, height = 1 },
+			{ name = "Alignment", column = 0, row = 8, width = 6, height = 1 },
 		}
 	},
 	{
@@ -232,10 +233,10 @@ local outputs =
 		path = "../themes/%s/Images/Animation",
 		resources =
 		{
-			{ name = "Alignment", column = 0, row = 7, width = 6, height = 1 },
-			{ name = "Bones", column = 0, row = 12, width = 2, height = 1 },
-			{ name = "Skeleton", column = 2, row = 12, width = 5, height = 1 },
-			{ name = "Playback", column = 0, row = 13, width = 6, height = 1 },		
+			{ name = "Alignment", column = 0, row = 8, width = 6, height = 1 },
+			{ name = "Bones", column = 0, row = 13, width = 2, height = 1 },
+			{ name = "Skeleton", column = 2, row = 13, width = 5, height = 1 },
+			{ name = "Playback", column = 0, row = 14, width = 6, height = 1 },		
 		}
 	},
 	{
@@ -244,8 +245,8 @@ local outputs =
 		path = "../themes/%s/Images/Flash",
 		resources =
 		{
-			{ name = "Playback", column = 0, row = 13, width = 6, height = 1 },
-			{ name = "Flash", column = 0, row = 17, width = 2, height = 1 },
+			{ name = "Playback", column = 0, row = 14, width = 6, height = 1 },
+			{ name = "Flash", column = 0, row = 18, width = 2, height = 1 },
 		}
 	},
 	{
@@ -254,7 +255,7 @@ local outputs =
 		path = "../themes/%s/Images/Terrain",
 		resources =
 		{
-			{ name = "Terrain", column = 0, row = 14, width = 15, height = 1 },
+			{ name = "Terrain", column = 0, row = 15, width = 15, height = 1 },
 		}
 	},
 	{
@@ -263,7 +264,7 @@ local outputs =
 		path = "../themes/%s/Images/Theater",
 		resources =
 		{
-			{ name = "Theater", column = 0, row = 15, width = 8, height = 1 },
+			{ name = "Theater", column = 0, row = 16, width = 8, height = 1 },
 		}
 	},
 	{
@@ -272,8 +273,8 @@ local outputs =
 		path = "../themes/%s/Images/Sound",
 		resources =
 		{
-			{ name = "PlusMinus", column = 0, row = 11, width = 2, height = 1 },
-			{ name = "Grain", column = 0, row = 22, width = 4, height = 6, base = 32 },
+			{ name = "PlusMinus", column = 0, row = 12, width = 2, height = 1 },
+			{ name = "Grain", column = 0, row = 23, width = 4, height = 6, base = 32 },
 		}
 	},	
 	{
@@ -282,7 +283,7 @@ local outputs =
 		path = "../themes/%s/Images/Amalgam",
 		resources =
 		{
-			{ name = "Error", column = 0, row = 34, width = 3, height = 10 },
+			{ name = "Error", column = 0, row = 35, width = 3, height = 10 },
 		}
 	},		
 }
