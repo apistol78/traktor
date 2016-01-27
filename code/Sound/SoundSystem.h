@@ -1,10 +1,10 @@
 #ifndef traktor_sound_SoundSystem_H
 #define traktor_sound_SoundSystem_H
 
-#include <list>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/CircularVector.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Event.h"
 #include "Core/Thread/Semaphore.h"
@@ -117,9 +117,8 @@ public:
 	/*! \brief Query performance of each thread.
 	 *
 	 * \param outMixerTime Last mixer thread duration in seconds.
-	 * \param outSubmitTime Last submit duration in seconds.
 	 */
-	void getThreadPerformances(double& outMixerTime, double& outSubmitTime) const;
+	void getThreadPerformances(double& outMixerTime) const;
 
 private:
 	Ref< ISoundDriver > m_driver;
@@ -129,7 +128,6 @@ private:
 	float m_volume;
 	SmallMap< handle_t, float > m_categoryVolumes;
 	Thread* m_threadMixer;
-	Thread* m_threadSubmit;
 	RefArray< SoundChannel > m_channels;
 	AlignedVector< SoundBlock > m_requestBlocks;
 	AlignedVector< SoundBlockMeta > m_requestBlockMeta;
@@ -138,10 +136,6 @@ private:
 	// \{
 
 	Semaphore m_channelsLock;
-	Semaphore m_submitQueueLock;
-	Event m_submitQueueEvent;
-	Event m_submitConsumedEvent;
-	std::list< SoundBlock > m_submitQueue;
 
 	// \}
 	
@@ -149,20 +143,15 @@ private:
 	// \{
 
 	float* m_samplesData;
-	std::vector< float* > m_samplesBlocks;
-	int32_t m_samplesBlockHead;
-	int32_t m_samplesBlockTail;
+	CircularVector< float*, 4 > m_samplesBlocks;
 	AlignedVector< float > m_duck[2];
 
 	// \}
 
 	double m_time;
 	double m_mixerThreadTime;
-	double m_submitThreadTime;
 
 	void threadMixer();
-
-	void threadSubmit();
 };
 
 	}

@@ -76,14 +76,12 @@ struct SoundDriverCreateDesc
 	uint8_t bitsPerSample;	//!< Bits per sample, ex. 8, 16 or 24.
 	uint16_t hwChannels;	//!< Number of hardware channels.
 	uint32_t frameSamples;	//!< Size of frames, i.e. size of mixed sound blocks passed to the driver.
-	uint32_t mixerFrames;	//!< Number of mixed frames ahead of submission thread.
 
 	SoundDriverCreateDesc()
 	:	sampleRate(0)
 	,	bitsPerSample(0)
 	,	hwChannels(0)
 	,	frameSamples(0)
-	,	mixerFrames(2)
 	{
 	}
 };

@@ -246,7 +246,7 @@ void SoundDriverXAudio2::wait()
 
 void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 {
-	XAUDIO2_BUFFER buffer;
+	XAUDIO2_BUFFER buffer = { 0 };
 
 	if (FAILED(m_hResult))
 	{
@@ -261,7 +261,6 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 	uint32_t channels = min< uint32_t >(m_desc.hwChannels, soundBlock.maxChannel);
 
 	// Grab buffer to submit.
-	std::memset(&buffer, 0, sizeof(buffer));
 	buffer.AudioBytes = std::min(m_bufferSize, blockSize);
 	buffer.pAudioData = m_buffers[m_nextSubmitBuffer];
 	m_nextSubmitBuffer = (m_nextSubmitBuffer + 1) % sizeof_array(m_buffers);

@@ -63,7 +63,6 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 	desc.driverDesc.bitsPerSample = settings->getProperty< PropertyInteger >(L"Editor.SoundBitsPerSample", 16);
 	desc.driverDesc.hwChannels = settings->getProperty< PropertyInteger >(L"Editor.SoundHwChannels", 5 + 1);
 	desc.driverDesc.frameSamples = settings->getProperty< PropertyInteger >(L"Editor.SoundFrameSamples", 1024);
-	desc.driverDesc.mixerFrames = settings->getProperty< PropertyInteger >(L"Editor.SoundMixerFrames", 3);
 
 	Ref< SoundSystem > soundSystem = new SoundSystem(soundDriver);
 	if (!soundSystem->create(desc))
