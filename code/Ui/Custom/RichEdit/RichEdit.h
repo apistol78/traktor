@@ -208,6 +208,8 @@ private:
 
 	void eventMouseMove(MouseMoveEvent* event);
 
+	void eventDoubleClick(MouseDoubleClickEvent* event);
+
 	void eventMouseWheel(MouseWheelEvent* event);
 
 	void eventPaint(PaintEvent* event);
