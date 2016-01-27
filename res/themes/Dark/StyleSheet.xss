@@ -617,6 +617,10 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Editor/Types.image</value>
 		</item>
 		<item>
+			<name>Editor.Database.TypesHidden</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Editor/TypesHidden.image</value>
+		</item>
+		<item>
 			<name>Editor.Log.Info</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Editor/LogInfo.image</value>
 		</item>

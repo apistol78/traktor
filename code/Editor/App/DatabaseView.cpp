@@ -52,16 +52,6 @@
 #include "Ui/Custom/TreeView/TreeViewItemActivateEvent.h"
 #include "Ui/Custom/TreeView/TreeViewItemStateChangeEvent.h"
 
-// Resources
-//#include "Resources/DatabaseView.h"
-//#include "Resources/Favorites.h"
-//#include "Resources/Folders.h"
-//#include "Resources/NameFilter.h"
-//#include "Resources/ShowFiltered.h"
-//#include "Resources/TypeFilter.h"
-//#include "Resources/Types.h"
-//#include "Resources/TypesHidden.h"
-
 namespace traktor
 {
 	namespace editor
@@ -376,6 +366,7 @@ bool DatabaseView::create(ui::Widget* parent)
 		return false;
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Types"), 23);
+	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TypesHidden"), 23);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
 	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
