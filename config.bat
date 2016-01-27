@@ -13,7 +13,7 @@ set P4_X64_SDK=%TRAKTOR_HOME%3rdp\p4api-2013.3.707972.BETA-vs2008_dyn_x64
 set SQLITE_SDK=%TRAKTOR_HOME%3rdp\sqlite-3.8.7.2
 set WXWIDGETS_SDK=%TRAKTOR_HOME%3rdp\wxWidgets-3.0.2
 set SIMPLYGON_SDK=%TRAKTOR_HOME%3rdp\SimplygonSDK
-set LUA_SDK=%TRAKTOR_HOME%3rdp\lua-5.2.4
+set LUA_SDK=%TRAKTOR_HOME%3rdp\lua-5.3.2
 set GLEW_SDK=%TRAKTOR_HOME%3rdp\glew-1.13.0
 
 :: PNaCl SDK; need to be manually installed in 3rdp folder.
