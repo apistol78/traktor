@@ -165,7 +165,7 @@ INative* WidgetFactoryWx::createNative(EventSubject* owner)
 	return 0;
 }
 
-IBitmap* WidgetFactoryWx::createBitmap()
+ISystemBitmap* WidgetFactoryWx::createBitmap()
 {
 	return new BitmapWx();
 }
