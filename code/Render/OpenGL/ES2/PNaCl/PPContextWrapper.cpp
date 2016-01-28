@@ -31,27 +31,7 @@ void flushCallback(void* data, int32_t result)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PPContextWrapper", PPContextWrapper, Object)
 
-Ref< PPContextWrapper > PPContextWrapper::createResourceContext(pp::Instance* instance)
-{
-	glInitializePPAPI(pp::Module::Get()->get_browser_interface());
-
-    const int32_t attribs[] =
-	{
-		PP_GRAPHICS3DATTRIB_NONE
-    };
-
-	Ref< PPContextWrapper > wrapper = new PPContextWrapper();
-	wrapper->m_context = pp::Graphics3D(instance, attribs);
-	if (wrapper->m_context.is_null())
-	{
-		log::error << L"Failed to create resource-only pp::Graphics3D context" << Endl;
-		return 0;
-	}
-
-	return wrapper;
-}
-
-Ref< PPContextWrapper > PPContextWrapper::createRenderContext(pp::Instance* instance, PPContextWrapper* shareContext)
+Ref< PPContextWrapper > PPContextWrapper::createRenderContext(pp::Instance* instance)
 {
     const int32_t attribs[] =
 	{
@@ -63,11 +43,7 @@ Ref< PPContextWrapper > PPContextWrapper::createRenderContext(pp::Instance* inst
     };
 
 	Ref< PPContextWrapper > wrapper = new PPContextWrapper();
-	if (shareContext)
-		wrapper->m_context = pp::Graphics3D(instance, shareContext->m_context, attribs);
-	else
-		wrapper->m_context = pp::Graphics3D(instance, attribs);
-
+	wrapper->m_context = pp::Graphics3D(instance, attribs);
 	if (wrapper->m_context.is_null())
 	{
 		log::error << L"Failed to create render pp::Graphics3D context" << Endl;
