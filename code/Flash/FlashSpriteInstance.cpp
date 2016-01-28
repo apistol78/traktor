@@ -86,6 +86,7 @@ void FlashSpriteInstance::gotoFrame(uint32_t frameId)
 	{
 		m_currentFrame =
 		m_nextFrame = frameId;
+		renewCacheTag();
 	}
 	else
 	{
@@ -100,7 +101,10 @@ void FlashSpriteInstance::gotoPrevious()
 	if (!m_inDispatch)
 	{
 		if (m_currentFrame > 0)
+		{
 			m_currentFrame--;
+			renewCacheTag();
+		}
 	}
 	else
 	{
@@ -117,7 +121,10 @@ void FlashSpriteInstance::gotoNext()
 	if (!m_inDispatch)
 	{
 		if (m_currentFrame < m_sprite->getFrameCount() - 1)
+		{
 			m_currentFrame++;
+			renewCacheTag();
+		}
 	}
 	else
 	{
@@ -382,6 +389,7 @@ void FlashSpriteInstance::postDispatchEvents()
 	{
 		T_ASSERT (m_nextFrame < m_sprite->getFrameCount());
 		m_currentFrame = m_nextFrame;
+		renewCacheTag();
 	}
 
 	// Issue post dispatch event on child sprite instances.

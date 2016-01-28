@@ -75,6 +75,10 @@ void FlashMovieRenderer::renderFrame(
 {
 	const SwfColor& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
 
+	// Clear states for this frame.
+	int32_t curr = (m_count + 1) & 1;
+	m_states[curr].clear();
+
 	Aabb2 dirtyRegion;
 	calculateDirtyRegion(
 		movieInstance,
@@ -101,6 +105,8 @@ void FlashMovieRenderer::renderFrame(
 	);
 
 	m_displayRenderer->end();
+
+	++m_count;
 }
 
 void FlashMovieRenderer::renderSprite(
@@ -647,7 +653,18 @@ void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterI
 	else
 	{
 		Aabb2 bounds = transform * characterInstance->getBounds();
-		State& s = m_states[characterInstance->getCacheTag()];
+		
+		int32_t last = m_count & 1;
+		int32_t curr = (m_count + 1) & 1;
+
+		State& s = m_states[curr][characterInstance->getCacheTag()];
+
+		// Copy state from last frame.
+		SmallMap< int32_t, State >::const_iterator i = m_states[last].find(characterInstance->getCacheTag());
+		if (i != m_states[last].end())
+			s = i->second;
+
+		// Compare state and add to dirty region if mismatch.
 		if (s.visible != instanceVisible)
 		{
 			if (s.visible)
