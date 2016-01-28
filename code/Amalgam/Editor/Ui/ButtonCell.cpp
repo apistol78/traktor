@@ -1,4 +1,5 @@
 #include "Amalgam/Editor/Ui/ButtonCell.h"
+#include "Ui/Application.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 
 namespace traktor
@@ -50,8 +51,8 @@ void ButtonCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 
 	if (m_down)
 	{
-		position.x += 1;
-		position.y += 1;
+		position.x += ui::scaleBySystemDPI(1);
+		position.y += ui::scaleBySystemDPI(1);
 	}
 
 	canvas.drawBitmap(
