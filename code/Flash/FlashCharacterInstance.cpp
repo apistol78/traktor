@@ -342,6 +342,11 @@ bool FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const Action
 	return true;
 }
 
+void FlashCharacterInstance::renewCacheTag()
+{
+	m_tag = allocateCacheTag();
+}
+
 void FlashCharacterInstance::trace(visitor_t visitor) const
 {
 	visitor(m_context);

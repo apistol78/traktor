@@ -614,6 +614,9 @@ void FlashMovieRenderer::renderCharacter(
 
 void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterInstance, const Matrix33& transform, bool visible, Aabb2& outDirtyRegion)
 {
+	ActionContext* context = characterInstance->getContext();
+	T_ASSERT (context);
+
 	bool instanceVisible = characterInstance->isVisible() && visible;
 	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
 	{
@@ -635,6 +638,11 @@ void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterI
 					outDirtyRegion
 				);
 		}
+	}
+	else if (characterInstance == context->getFocus())
+	{
+		Aabb2 bounds = transform * characterInstance->getBounds();
+		outDirtyRegion.contain(bounds);
 	}
 	else
 	{
