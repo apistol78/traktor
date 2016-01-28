@@ -223,6 +223,8 @@ protected:
 
 	bool executeScriptEvent(uint32_t eventName, const ActionValue& arg);
 
+	void renewCacheTag();
+
 	virtual void trace(visitor_t visitor) const T_OVERRIDE;
 
 	virtual void dereference() T_OVERRIDE;
