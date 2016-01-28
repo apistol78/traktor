@@ -24,9 +24,7 @@ class PPContextWrapper : public Object
 	T_RTTI_CLASS;
 
 public:
-	static Ref< PPContextWrapper > createResourceContext(pp::Instance* instance);
-
-	static Ref< PPContextWrapper > createRenderContext(pp::Instance* instance, PPContextWrapper* shareContext);
+	static Ref< PPContextWrapper > createRenderContext(pp::Instance* instance);
 
 	virtual ~PPContextWrapper();
 

@@ -1508,8 +1508,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.lua-5.1.4</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</sourcePath>
+			<name>Extern.lua</name>
+			<sourcePath>$(LUA_SDK)/src</sourcePath>
 			<configurations>
 				<item type="Configuration" version="3">
 					<name>DebugStatic</name>
@@ -1517,11 +1517,12 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>LUA_32BITS</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -1533,7 +1534,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lua-5.1.4.a</sourceFile>
+							<sourceFile>libExtern.lua.a</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1544,11 +1545,12 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>LUA_32BITS</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -1560,7 +1562,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lua-5.1.4.a</sourceFile>
+							<sourceFile>libExtern.lua.a</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1568,211 +1570,11 @@
 			</configurations>
 			<items>
 				<item type="File">
-					<fileName>lapi.c</fileName>
+					<fileName>*.c</fileName>
 					<items/>
 				</item>
 				<item type="File">
-					<fileName>lapi.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lauxlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lauxlib.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lbaselib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lcode.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lcode.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldblib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldebug.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldebug.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldo.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldo.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldump.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lfunc.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lfunc.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lgc.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lgc.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>linit.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>liolib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llex.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llex.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llimits.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmathlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmem.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmem.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>loadlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lobject.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lobject.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lopcodes.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lopcodes.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>loslib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lparser.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lparser.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstate.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstate.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstring.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstring.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstrlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltable.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltable.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltablib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltm.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltm.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>luaconf.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lualib.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lundump.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lundump.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lvm.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lvm.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lzio.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lzio.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>print.c</fileName>
+					<fileName>*.h</fileName>
 					<items/>
 				</item>
 			</items>
@@ -5545,11 +5347,13 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>LUA_32BITS</item>
+						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -5573,11 +5377,13 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>LUA_32BITS</item>
+						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -6012,27 +5818,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../res/DockBottom.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../res/DockLeft.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../res/DockRight.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../res/DockTop.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../res/DockGripper.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../res/Close.png</fileName>
+							<fileName>Resources/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -6150,6 +5936,15 @@
 							<fileName>Graph/*.*</fileName>
 							<items/>
 						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>Graph/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -6158,6 +5953,15 @@
 						<item type="File">
 							<fileName>Layer/*.*</fileName>
 							<items/>
+						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>Layer/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
 						</item>
 					</items>
 				</item>
@@ -6168,6 +5972,15 @@
 							<fileName>PropertyList/*.*</fileName>
 							<items/>
 						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>PropertyList/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -6176,6 +5989,15 @@
 						<item type="File">
 							<fileName>Sequencer/*.*</fileName>
 							<items/>
+						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>Sequencer/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
 						</item>
 					</items>
 				</item>
@@ -6204,6 +6026,15 @@
 							<fileName>LogList/*.*</fileName>
 							<items/>
 						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>LogList/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -6213,6 +6044,15 @@
 							<fileName>GridView/*.*</fileName>
 							<items/>
 						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>GridView/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -6220,111 +6060,6 @@
 					<items>
 						<item type="File">
 							<fileName>GradientStatic/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Resources</name>
-					<items>
-						<item type="File">
-							<fileName>../../../res/graph/Shadow.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Background.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Grid.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/InOut.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Input.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Ipol.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Node.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Output.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Pin.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/LayerHidden.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/LayerVisible.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Collapse.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Expand.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Unchecked.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Checked.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/Log.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/ProgressBar.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/SmallPen.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/SmallCross.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/SmallDots.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/SmallPlus.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/Comment.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/preview/PreviewFrame.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/graph/External.png</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>../../../res/TviState.png</fileName>
 							<items/>
 						</item>
 					</items>
@@ -6389,6 +6124,15 @@
 						<item type="File">
 							<fileName>TreeView/*.*</fileName>
 							<items/>
+						</item>
+						<item type="Filter">
+							<name>Resources</name>
+							<items>
+								<item type="File">
+									<fileName>TreeView/Resources/*.*</fileName>
+									<items/>
+								</item>
+							</items>
 						</item>
 					</items>
 				</item>
