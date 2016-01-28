@@ -18,7 +18,7 @@ public:
 	{
 	}
 
-	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args)
+	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) T_OVERRIDE T_FINAL
 	{
 		m_delegate->call(0, 0);
 		return ActionValue();

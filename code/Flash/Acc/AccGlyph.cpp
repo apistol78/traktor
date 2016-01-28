@@ -162,6 +162,9 @@ void AccGlyph::add(
 		return;
 	}
 
+	float dbx = bounds.mx.x - bounds.mn.x;
+	float dby = bounds.mx.y - bounds.mn.y;
+
 	Matrix44 m1(
 		transform.e11, transform.e12, transform.e13, 0.0f,
 		transform.e21, transform.e22, transform.e23, 0.0f,
@@ -170,15 +173,15 @@ void AccGlyph::add(
 	);
 
 	Matrix44 m2(
-		bounds.mx.x - bounds.mn.x, 0.0f, bounds.mn.x, 0.0f,
-		0.0f, bounds.mx.y - bounds.mn.y, bounds.mn.y, 0.0f,
+		dbx, 0.0f, bounds.mn.x, 0.0f,
+		0.0f, dby, bounds.mn.y, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
 	Matrix44 m = m1 * m2;
 
-	Vertex* vertex = (Vertex*)m_vertex;
+	Vertex* vertex = reinterpret_cast< Vertex* >(m_vertex);
 	for (uint32_t i = 0; i < sizeof_array(c_glyphTemplate); ++i)
 	{
 		Vector4 pos = m * c_glyphTemplate[i].pos;
@@ -191,8 +194,8 @@ void AccGlyph::add(
 		vertex->texOffsetAndScale[0] = textureOffset.x();
 		vertex->texOffsetAndScale[1] = textureOffset.y();
 
-		vertex->texOffsetAndScale[2] = bounds.mx.x - bounds.mn.x;
-		vertex->texOffsetAndScale[3] = bounds.mx.y - bounds.mn.y;
+		vertex->texOffsetAndScale[2] = dbx;
+		vertex->texOffsetAndScale[3] = dby;
 
 		vertex++;
 	}
