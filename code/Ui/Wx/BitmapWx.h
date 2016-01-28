@@ -2,14 +2,14 @@
 #define traktor_ui_BitmapWx_H
 
 #include <wx/wx.h>
-#include "Ui/Itf/IBitmap.h"
+#include "Ui/Itf/ISystemBitmap.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
-class BitmapWx : public IBitmap
+class BitmapWx : public ISystemBitmap
 {
 public:
 	BitmapWx();
