@@ -67,37 +67,64 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 		return 0;
 	}
 
-	const EGLint configAttribs[] =
-	{
-		EGL_LEVEL, 0,
-		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-		EGL_DEPTH_SIZE, 16,
-		EGL_STENCIL_SIZE, 4,
-		EGL_NONE
-	};
-
 	EGLConfig matchingConfigs[c_maxMatchConfigs];
 	EGLint numMatchingConfigs = 0;
 
-	EGLBoolean success = eglChooseConfig(
-		context->m_display,
-		configAttribs,
-		matchingConfigs,
-		c_maxMatchConfigs,
-		&numMatchingConfigs
-	);
-	if (!success)
+	if (desc.multiSample > 1)
 	{
-		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 failed; unable to create choose EGL config (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		const EGLint configAttribsWithMSAA[] =
+		{
+			EGL_LEVEL, 0,
+			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+			EGL_DEPTH_SIZE, 16,
+			EGL_STENCIL_SIZE, 4,
+			EGL_SAMPLES, desc.multiSample,
+			EGL_NONE
+		};
+
+		EGLBoolean success = eglChooseConfig(
+			context->m_display,
+			configAttribsWithMSAA,
+			matchingConfigs,
+			c_maxMatchConfigs,
+			&numMatchingConfigs
+		);
+		if (!success || numMatchingConfigs == 0)
+			log::warning << L"No matching MSAA configurations found; MSAA disabled." << Endl;
+	}
+
+	if (numMatchingConfigs == 0)
+	{
+		const EGLint configAttribs[] =
+		{
+			EGL_LEVEL, 0,
+			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+			EGL_DEPTH_SIZE, 16,
+			EGL_STENCIL_SIZE, 4,
+			EGL_NONE
+		};
+
+		EGLBoolean success = eglChooseConfig(
+			context->m_display,
+			configAttribs,
+			matchingConfigs,
+			c_maxMatchConfigs,
+			&numMatchingConfigs
+		);
+		if (!success)
+		{
+			EGLint error = eglGetError();
+			log::error << L"Create OpenGL ES2.0 failed; unable to choose EGL config (" << getEGLErrorString(error) << L")." << Endl;
+			return 0;
+		}
 	}
 
 	if (numMatchingConfigs == 0)
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 failed; no matching configurations" << Endl;
+		log::error << L"Create OpenGL ES2.0 failed; no matching configurations." << Endl;
 		return 0;
 	}
 
@@ -192,38 +219,66 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 		return 0;
 	}
 
-	const EGLint configAttribs[] =
-	{
-		EGL_LEVEL, 0,
-		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-		EGL_BUFFER_SIZE, 32,
-		EGL_DEPTH_SIZE, 16,
-		EGL_STENCIL_SIZE, 4,
-		EGL_NONE
-	};
-
 	EGLConfig matchingConfigs[c_maxMatchConfigs];
 	EGLint numMatchingConfigs = 0;
 
-	EGLBoolean success = eglChooseConfig(
-		context->m_display,
-		configAttribs,
-		matchingConfigs,
-		c_maxMatchConfigs,
-		&numMatchingConfigs
-	);
-	if (!success)
+	if (desc.multiSample > 1)
 	{
-		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 failed; unable to create choose EGL config (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		const EGLint configAttribsWithMSAA[] =
+		{
+			EGL_LEVEL, 0,
+			EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+			EGL_BUFFER_SIZE, 32,
+			EGL_DEPTH_SIZE, 16,
+			EGL_STENCIL_SIZE, 4,
+			EGL_SAMPLES, desc.multiSample,
+			EGL_NONE
+		};
+
+		EGLBoolean success = eglChooseConfig(
+			context->m_display,
+			configAttribsWithMSAA,
+			matchingConfigs,
+			c_maxMatchConfigs,
+			&numMatchingConfigs
+		);
+		if (!success || numMatchingConfigs == 0)
+			log::warning << L"No matching MSAA configurations found; MSAA disabled." << Endl;
+	}
+
+	if (numMatchingConfigs == 0)
+	{
+		const EGLint configAttribs[] =
+		{
+			EGL_LEVEL, 0,
+			EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+			EGL_BUFFER_SIZE, 32,
+			EGL_DEPTH_SIZE, 16,
+			EGL_STENCIL_SIZE, 4,
+			EGL_NONE
+		};
+
+		EGLBoolean success = eglChooseConfig(
+			context->m_display,
+			configAttribs,
+			matchingConfigs,
+			c_maxMatchConfigs,
+			&numMatchingConfigs
+		);
+		if (!success)
+		{
+			EGLint error = eglGetError();
+			log::error << L"Create OpenGL ES2.0 failed; unable to create choose EGL config (" << getEGLErrorString(error) << L")." << Endl;
+			return 0;
+		}
 	}
 
 	if (numMatchingConfigs == 0)
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 failed; no matching configurations" << Endl;
+		log::error << L"Create OpenGL ES2.0 failed; no matching configurations." << Endl;
 		return 0;
 	}
 
