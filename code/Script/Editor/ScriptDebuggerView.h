@@ -67,7 +67,7 @@ private:
 	/*! \name IScriptDebugger::IListener */
 	/*! \{ */
 
-	virtual void breakpointReached(IScriptDebugger* scriptDebugger);
+	virtual void debugeeStateChange(IScriptDebugger* scriptDebugger);
 
 	/*! \} */
 

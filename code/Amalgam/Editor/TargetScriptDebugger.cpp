@@ -1,6 +1,8 @@
 #include "Amalgam/ScriptDebuggerBreakpoint.h"
 #include "Amalgam/ScriptDebuggerControl.h"
+#include "Amalgam/ScriptDebuggerStateChange.h"
 #include "Amalgam/ScriptDebuggerStackFrame.h"
+#include "Amalgam/ScriptDebuggerStatus.h"
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetScriptDebugger.h"
 #include "Net/BidirectionalObjectTransport.h"
@@ -17,16 +19,34 @@ TargetScriptDebugger::TargetScriptDebugger(net::BidirectionalObjectTransport* tr
 {
 }
 
+void TargetScriptDebugger::update()
+{
+	Ref< ScriptDebuggerStateChange > debugger;
+	while (m_transport->recv< ScriptDebuggerStateChange >(0, debugger) == net::BidirectionalObjectTransport::RtSuccess)
+	{
+		for (std::list< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+			(*i)->debugeeStateChange(this);
+	}
+}
+
 bool TargetScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
 	ScriptDebuggerBreakpoint bp(true, scriptId, lineNumber);
-	return m_transport->send(&bp);
+	if (!m_transport->send(&bp))
+		return false;
+
+	Ref< ScriptDebuggerStatus > st;
+	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 bool TargetScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
 	ScriptDebuggerBreakpoint bp(false, scriptId, lineNumber);
-	return m_transport->send(&bp);
+	if (!m_transport->send(&bp))
+		return false;
+
+	Ref< ScriptDebuggerStatus > st;
+	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 Ref< script::StackFrame > TargetScriptDebugger::captureStackFrame(uint32_t depth)
@@ -44,47 +64,68 @@ Ref< script::StackFrame > TargetScriptDebugger::captureStackFrame(uint32_t depth
 
 bool TargetScriptDebugger::isRunning() const
 {
-	return true;
+	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStatus);
+	if (!m_transport->send(&ctrl))
+		return false;
+
+	Ref< ScriptDebuggerStatus > st;
+	if (m_transport->recv< ScriptDebuggerStatus >(1000, st) != net::BidirectionalObjectTransport::RtSuccess)
+		return false;
+
+	return st->isRunning();
 }
 
 bool TargetScriptDebugger::actionBreak()
 {
 	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcBreak);
-	return m_transport->send(&ctrl);
+	if (!m_transport->send(&ctrl))
+		return false;
+
+	Ref< ScriptDebuggerStatus > st;
+	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 bool TargetScriptDebugger::actionContinue()
 {
 	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcContinue);
-	return m_transport->send(&ctrl);
+	if (!m_transport->send(&ctrl))
+		return false;
+
+	Ref< ScriptDebuggerStatus > st;
+	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 bool TargetScriptDebugger::actionStepInto()
 {
 	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepInto);
-	return m_transport->send(&ctrl);
+	if (!m_transport->send(&ctrl))
+		return false;
+
+	Ref< ScriptDebuggerStatus > st;
+	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 bool TargetScriptDebugger::actionStepOver()
 {
 	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepOver);
-	return m_transport->send(&ctrl);
+	if (!m_transport->send(&ctrl))
+		return false;
+
+	Ref< ScriptDebuggerStatus > st;
+	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 void TargetScriptDebugger::addListener(IListener* listener)
 {
+	T_ASSERT (listener);
 	m_listeners.push_back(listener);
+	listener->debugeeStateChange(this);
 }
 
 void TargetScriptDebugger::removeListener(IListener* listener)
 {
+	T_ASSERT (listener);
 	m_listeners.remove(listener);
-}
-
-void TargetScriptDebugger::notifyListeners()
-{
-	for (std::list< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-		(*i)->breakpointReached(this);
 }
 
 	}

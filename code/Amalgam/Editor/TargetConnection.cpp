@@ -1,4 +1,3 @@
-#include "Amalgam/ScriptDebuggerHalted.h"
 #include "Amalgam/ScriptProfilerCallMeasured.h"
 #include "Amalgam/TargetLog.h"
 #include "Amalgam/Editor/TargetConnection.h"
@@ -89,12 +88,6 @@ bool TargetConnection::update()
 	}
 
 	{
-		Ref< ScriptDebuggerHalted > debugger;
-		while (m_transport->recv< ScriptDebuggerHalted >(0, debugger) == net::BidirectionalObjectTransport::RtSuccess)
-			m_targetDebugger->notifyListeners();
-	}
-
-	{
 		Ref< ScriptProfilerCallMeasured > measured;
 		while (m_transport->recv< ScriptProfilerCallMeasured >(0, measured) == net::BidirectionalObjectTransport::RtSuccess)
 		{
@@ -107,6 +100,9 @@ bool TargetConnection::update()
 			);
 		}
 	}
+
+	if (m_targetDebugger)
+		m_targetDebugger->update();
 
 	return true;
 }

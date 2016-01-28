@@ -81,9 +81,9 @@ private:
 
 	void threadDebugger();
 
-	virtual void breakpointReached(script::IScriptDebugger* scriptDebugger);
+	virtual void debugeeStateChange(script::IScriptDebugger* scriptDebugger) T_OVERRIDE T_FINAL;
 
-	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
+	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) T_OVERRIDE T_FINAL;
 };
 
 	}

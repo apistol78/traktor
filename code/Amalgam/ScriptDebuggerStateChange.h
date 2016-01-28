@@ -1,5 +1,5 @@
-#ifndef traktor_amalgam_ScriptDebuggerHalted_H
-#define traktor_amalgam_ScriptDebuggerHalted_H
+#ifndef traktor_amalgam_ScriptDebuggerStateChange_H
+#define traktor_amalgam_ScriptDebuggerStateChange_H
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -16,10 +16,10 @@ namespace traktor
 	namespace amalgam
 	{
 
-/*! \brief Response from running target when debugger has been halted.
+/*! \brief Event from target when debug state has changed.
  * \ingroup Amalgam
  */
-class T_DLLCLASS ScriptDebuggerHalted : public ISerializable
+class T_DLLCLASS ScriptDebuggerStateChange : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -30,4 +30,4 @@ public:
 	}
 }
 
-#endif	// traktor_amalgam_ScriptDebuggerHalted_H
+#endif	// traktor_amalgam_ScriptDebuggerStateChange_H

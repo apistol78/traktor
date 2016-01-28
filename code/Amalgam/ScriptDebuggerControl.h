@@ -26,11 +26,12 @@ class T_DLLCLASS ScriptDebuggerControl : public ISerializable
 public:
 	enum Action
 	{
-		AcBreak,
-		AcContinue,
-		AcStepInto,
-		AcStepOver,
-		AcCapture
+		AcStatus = 0,
+		AcBreak = 1,
+		AcContinue = 2,
+		AcStepInto = 3,
+		AcStepOver = 4,
+		AcCapture = 5
 	};
 
 	ScriptDebuggerControl();

@@ -94,15 +94,7 @@ void ScriptDebuggerView::destroy()
 bool ScriptDebuggerView::handleCommand(const ui::Command& command)
 {
 	if (command == L"Script.Editor.Continue")
-	{
-		m_callStackGrid->setEnable(false);
-		m_callStackGrid->update();
-
-		m_localsGrid->setEnable(false);
-		m_localsGrid->update();
-
 		m_scriptDebugger->actionContinue();
-	}
 	else if (command == L"Script.Editor.Break")
 		m_scriptDebugger->actionBreak();
 	else if (command == L"Script.Editor.StepInto")
@@ -139,9 +131,7 @@ Ref< ui::custom::GridRow > ScriptDebuggerView::createVariableRow(const script::L
 
 void ScriptDebuggerView::updateLocals(int32_t depth)
 {
-	m_localsGrid->setEnable(true);
 	m_localsGrid->removeAllRows();
-
 	if (depth >= 0 && depth < m_stackFrames.size())
 	{
 		const StackFrame* sf = m_stackFrames[depth];
@@ -154,48 +144,60 @@ void ScriptDebuggerView::updateLocals(int32_t depth)
 				m_localsGrid->addRow(row);
 		}
 	}
-
 	m_localsGrid->update();
 }
 
-void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger)
+void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 {
-	m_stackFrames.resize(0);
-	for (uint32_t depth = 0; ; ++depth)
+	if (!scriptDebugger->isRunning())
 	{
-		Ref< StackFrame > sf = scriptDebugger->captureStackFrame(depth);
-		if (!sf)
-			break;
+		m_stackFrames.resize(0);
+		for (uint32_t depth = 0; ; ++depth)
+		{
+			Ref< StackFrame > sf = scriptDebugger->captureStackFrame(depth);
+			if (!sf)
+				break;
 
-		m_stackFrames.push_back(sf);
+			m_stackFrames.push_back(sf);
+		}
+
+		m_callStackGrid->removeAllRows();
+
+		int32_t depth = 0;
+		for (RefArray< StackFrame >::const_iterator i = m_stackFrames.begin(); i != m_stackFrames.end(); ++i)
+		{
+			Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance((*i)->getScriptId());
+
+			Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
+
+			row->add(new ui::custom::GridItem((*i)->getFunctionName()));
+			row->add(new ui::custom::GridItem(toString((*i)->getLine() + 1)));
+			row->add(new ui::custom::GridItem(scriptInstance ? scriptInstance->getName() : L"(Unknown script)"));
+			row->setData(L"SCRIPT_ID", new PropertyString((*i)->getScriptId().format()));
+			row->setData(L"SCRIPT_LINE", new PropertyInteger((*i)->getLine()));
+			row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
+
+			m_callStackGrid->addRow(row);
+		}
+
+		updateLocals(0);
+
+		m_callStackGrid->setEnable(true);
+		m_callStackGrid->update();
+		m_localsGrid->setEnable(true);
+		m_localsGrid->update();
+
+		// Issue event to notify script editor about breakpoint in this view.
+		ScriptBreakpointEvent eventBreakPoint(this, !m_stackFrames.empty() ? m_stackFrames.front() : 0);
+		raiseEvent(&eventBreakPoint);
 	}
-
-	m_callStackGrid->setEnable(true);
-	m_callStackGrid->removeAllRows();
-
-	int32_t depth = 0;
-
-	for (RefArray< StackFrame >::const_iterator i = m_stackFrames.begin(); i != m_stackFrames.end(); ++i)
+	else
 	{
-		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance((*i)->getScriptId());
-
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
-
-		row->add(new ui::custom::GridItem((*i)->getFunctionName()));
-		row->add(new ui::custom::GridItem(toString((*i)->getLine() + 1)));
-		row->add(new ui::custom::GridItem(scriptInstance ? scriptInstance->getName() : L"(Unknown script)"));
-		row->setData(L"SCRIPT_ID", new PropertyString((*i)->getScriptId().format()));
-		row->setData(L"SCRIPT_LINE", new PropertyInteger((*i)->getLine()));
-		row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
-
-		m_callStackGrid->addRow(row);
+		m_callStackGrid->setEnable(false);
+		m_callStackGrid->update();
+		m_localsGrid->setEnable(false);
+		m_localsGrid->update();
 	}
-
-	updateLocals(0);
-
-	// Issue event to notify script editor about breakpoint in this view.
-	ScriptBreakpointEvent eventBreakPoint(this, !m_stackFrames.empty() ? m_stackFrames.front() : 0);
-	raiseEvent(&eventBreakPoint);
 }
 
 void ScriptDebuggerView::eventDebuggerToolClick(ui::custom::ToolBarButtonClickEvent* event)

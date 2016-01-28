@@ -30,16 +30,7 @@ ScriptDebuggerControl::ScriptDebuggerControl(Action action, uint32_t param)
 
 void ScriptDebuggerControl::serialize(ISerializer& s)
 {
-	const MemberEnum< Action >::Key c_Action_Keys[] =
-	{
-		{ L"AcBreak", AcBreak },
-		{ L"AcContinue", AcContinue },
-		{ L"AcStepInto", AcStepInto },
-		{ L"AcStepOver", AcStepOver },
-		{ L"AcCapture", AcCapture },
-		{ 0 }
-	};
-	s >> MemberEnum< Action >(L"action", m_action, c_Action_Keys);
+	s >> MemberEnumByValue< Action, uint8_t >(L"action", m_action);
 	s >> Member< uint32_t >(L"param", m_param);
 }
 

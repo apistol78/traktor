@@ -33,7 +33,7 @@ public:
 	{
 		virtual ~IListener() {}
 
-		virtual void breakpointReached(IScriptDebugger* scriptDebugger) = 0;
+		virtual void debugeeStateChange(IScriptDebugger* scriptDebugger) = 0;
 	};
 
 	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;

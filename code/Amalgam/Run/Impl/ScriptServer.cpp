@@ -1,7 +1,8 @@
 #include "Amalgam/ScriptDebuggerBreakpoint.h"
 #include "Amalgam/ScriptDebuggerControl.h"
-#include "Amalgam/ScriptDebuggerHalted.h"
 #include "Amalgam/ScriptDebuggerStackFrame.h"
+#include "Amalgam/ScriptDebuggerStateChange.h"
+#include "Amalgam/ScriptDebuggerStatus.h"
 #include "Amalgam/ScriptProfilerCallMeasured.h"
 #include "Amalgam/Run/IEnvironment.h"
 #include "Amalgam/Run/Impl/ScriptServer.h"
@@ -223,20 +224,43 @@ void ScriptServer::threadDebugger()
 				T_ASSERT (control);
 				switch (control->getAction())
 				{
+				case ScriptDebuggerControl::AcStatus:
+					{
+						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
+						m_transport->send(&status);
+					}
+					break;
+
 				case ScriptDebuggerControl::AcBreak:
-					m_scriptDebugger->actionBreak();
+					{
+						m_scriptDebugger->actionBreak();
+						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
+						m_transport->send(&status);
+					}
 					break;
 
 				case ScriptDebuggerControl::AcContinue:
-					m_scriptDebugger->actionContinue();
+					{
+						m_scriptDebugger->actionContinue();
+						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
+						m_transport->send(&status);
+					}
 					break;
 
 				case ScriptDebuggerControl::AcStepInto:
-					m_scriptDebugger->actionStepInto();
+					{
+						m_scriptDebugger->actionStepInto();
+						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
+						m_transport->send(&status);
+					}
 					break;
 
 				case ScriptDebuggerControl::AcStepOver:
-					m_scriptDebugger->actionStepOver();
+					{
+						m_scriptDebugger->actionStepOver();
+						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
+						m_transport->send(&status);
+					}
 					break;
 
 				case ScriptDebuggerControl::AcCapture:
@@ -248,6 +272,9 @@ void ScriptServer::threadDebugger()
 					break;
 				}
 			}
+
+			ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
+			m_transport->send(&status);
 		}
 	}
 
@@ -255,10 +282,10 @@ void ScriptServer::threadDebugger()
 		m_scriptDebugger->actionContinue();
 }
 
-void ScriptServer::breakpointReached(script::IScriptDebugger* scriptDebugger)
+void ScriptServer::debugeeStateChange(script::IScriptDebugger* scriptDebugger)
 {
-	ScriptDebuggerHalted halted;
-	m_transport->send(&halted);
+	ScriptDebuggerStateChange stateChange;
+	m_transport->send(&stateChange);
 }
 
 void ScriptServer::callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
