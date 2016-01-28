@@ -258,7 +258,7 @@ void CanvasWx::fillPolygon(const Point* pnts, int count)
 	*/
 }
 
-void CanvasWx::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode)
+void CanvasWx::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)
 {
 	if (!bitmap)
 		return;
@@ -284,7 +284,7 @@ void CanvasWx::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& si
 	);
 }
 
-void CanvasWx::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
+void CanvasWx::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode)
 {
 	if (!bitmap)
 		return;
