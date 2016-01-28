@@ -28,7 +28,6 @@ namespace traktor
 		namespace
 		{
 
-const Vector2 c_marginDirtyRegion(2.0f * 20.0f, 2.0f * 20.0f);
 const SwfCxTransform c_cxWhite = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f } };
 
 Timer s_timer;
@@ -69,9 +68,9 @@ FlashMovieRenderer::FlashMovieRenderer(IDisplayRenderer* displayRenderer)
 void FlashMovieRenderer::renderFrame(
 	FlashSpriteInstance* movieInstance,
 	const Aabb2& frameBounds,
+	const Vector4& frameTransform,
 	float viewWidth,
-	float viewHeight,
-	const Vector4& viewOffset
+	float viewHeight
 )
 {
 	const SwfColor& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
@@ -80,21 +79,17 @@ void FlashMovieRenderer::renderFrame(
 	calculateDirtyRegion(
 		movieInstance,
 		Matrix33::identity(),
+		true,
 		dirtyRegion
 	);
-	if (!dirtyRegion.empty())
-	{
-		dirtyRegion.mn -= c_marginDirtyRegion;
-		dirtyRegion.mx += c_marginDirtyRegion;
-	}
 
 	m_displayRenderer->begin(
 		*movieInstance->getDictionary(),
 		backgroundColor,
 		frameBounds,
+		frameTransform,
 		viewWidth,
 		viewHeight,
-		viewOffset,
 		dirtyRegion
 	);
 
@@ -617,27 +612,15 @@ void FlashMovieRenderer::renderCharacter(
 	}
 }
 
-void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterInstance, const Matrix33& transform, Aabb2& outDirtyRegion)
+void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterInstance, const Matrix33& transform, bool visible, Aabb2& outDirtyRegion)
 {
-	Matrix33 T = transform * characterInstance->getTransform();
-
-	if (FlashShapeInstance* shapeInstance = dynamic_type_cast< FlashShapeInstance* >(characterInstance))
-	{
-		Aabb2 bounds = T * shapeInstance->getShape()->getShapeBounds();
-		State& s = m_states[shapeInstance->getCacheTag()];
-		if (s.bounds != bounds)
-		{
-			outDirtyRegion.contain(s.bounds);
-			outDirtyRegion.contain(bounds);
-			s.bounds = bounds;
-		}
-	}
-
+	bool instanceVisible = characterInstance->isVisible() && visible;
 	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
 	{
 		FlashDictionary* dictionary = spriteInstance->getDictionary();
 		T_ASSERT (dictionary);
 
+		const Matrix33 T = transform * spriteInstance->getTransform();
 		const FlashDisplayList& displayList = spriteInstance->getDisplayList();
 		const FlashDisplayList::layer_map_t& layers = displayList.getLayers();
 
@@ -648,8 +631,33 @@ void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterI
 				calculateDirtyRegion(
 					layer.instance,
 					T,
+					instanceVisible,
 					outDirtyRegion
 				);
+		}
+	}
+	else
+	{
+		Aabb2 bounds = transform * characterInstance->getBounds();
+		State& s = m_states[characterInstance->getCacheTag()];
+		if (s.visible != instanceVisible)
+		{
+			if (s.visible)
+			{
+				outDirtyRegion.contain(s.bounds);
+				s.visible = false;
+			}
+			else
+			{
+				outDirtyRegion.contain(bounds);
+				s.visible = true;
+			}
+		}
+		else if (instanceVisible && s.bounds != bounds)
+		{
+			outDirtyRegion.contain(s.bounds);
+			outDirtyRegion.contain(bounds);
+			s.bounds = bounds;
 		}
 	}
 }

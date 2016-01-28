@@ -37,18 +37,18 @@ public:
 	 * \param dictionary Flash character dictionary.
 	 * \param backgroundColor Frame background color.
 	 * \param frameBounds Frame bounds.
-	 * \param viewWidth View width in pixels.
-	 * \param viewHeight View height in pixels.
-	 * \param viewOffset View transformation; determined by stage alignment etc.
+	 * \param frameTransform Frame transformation; determined by stage alignment etc.
+	 * \param viewWidth Output view width in pixels.
+	 * \param viewHeight Output view height in pixels.
 	 * \param dirtyRegion Region of stage which needs to be redrawn.
 	 */
 	virtual void begin(
 		const FlashDictionary& dictionary,
 		const SwfColor& backgroundColor,
 		const Aabb2& frameBounds,
+		const Vector4& frameTransform,
 		float viewWidth,
 		float viewHeight,
-		const Vector4& viewOffset,
 		const Aabb2& dirtyRegion
 	) = 0;
 

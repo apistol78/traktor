@@ -44,9 +44,8 @@ c_glyphTemplate[4] =
 };
 
 bool s_handleInitialized = false;
-render::handle_t s_handleFrameSize;
-render::handle_t s_handleViewOffset;
-render::handle_t s_handleScreenOffsetScale;
+render::handle_t s_handleFrameBounds;
+render::handle_t s_handleFrameTransform;
 render::handle_t s_handleTexture;
 render::handle_t s_handleColor;
 render::handle_t s_handleFilterColor;
@@ -72,9 +71,8 @@ bool AccGlyph::create(
 {
 	if (!s_handleInitialized)
 	{
-		s_handleFrameSize = render::getParameterHandle(L"Flash_FrameSize");
-		s_handleViewOffset = render::getParameterHandle(L"Flash_ViewOffset");
-		s_handleScreenOffsetScale = render::getParameterHandle(L"Flash_ScreenOffsetScale");
+		s_handleFrameBounds = render::getParameterHandle(L"Flash_FrameBounds");
+		s_handleFrameTransform = render::getParameterHandle(L"Flash_FrameTransform");
 		s_handleTexture = render::getParameterHandle(L"Flash_Texture");
 		s_handleColor = render::getParameterHandle(L"Flash_Color");
 		s_handleFilterColor = render::getParameterHandle(L"Flash_FilterColor");
@@ -205,9 +203,8 @@ void AccGlyph::add(
 
 void AccGlyph::render(
 	render::RenderContext* renderContext,
-	const Vector4& frameSize,
-	const Vector4& viewOffset,
-	float screenOffsetScale,
+	const Vector4& frameBounds,
+	const Vector4& frameTransform,
 	render::ITexture* texture,
 	uint8_t maskReference,
 	uint8_t glyphFilter,
@@ -237,9 +234,8 @@ void AccGlyph::render(
 
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->programParams->beginParameters(renderContext);
-	renderBlock->programParams->setVectorParameter(s_handleFrameSize, frameSize);
-	renderBlock->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
-	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, screenOffsetScale);
+	renderBlock->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
+	renderBlock->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
 	renderBlock->programParams->setStencilReference(maskReference);
 	renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
 

@@ -40,7 +40,7 @@ public:
 
 	int32_t getViewHeight() const { return m_viewHeight; }
 
-	const Vector4& getViewOffset() const { return m_viewOffset; }
+	const Vector4& getFrameTransform() const { return m_frameTransform; }
 
 	SwfAlignType getAlignH() const { return m_alignH; }
 
@@ -56,7 +56,7 @@ private:
 	SwfAlignType m_alignH;
 	SwfAlignType m_alignV;
 	SwfScaleModeType m_scaleMode;
-	Vector4 m_viewOffset;
+	Vector4 m_frameTransform;
 
 	void updateViewOffset();
 

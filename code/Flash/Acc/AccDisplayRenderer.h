@@ -66,7 +66,7 @@ public:
 		uint32_t renderContextSize,
 		bool clearBackground,
 		bool shapeCache,
-		bool dirtyRegions,
+		bool clipToDirtyRegion,
 		float stereoscopicOffset
 	);
 
@@ -89,9 +89,9 @@ public:
 		const FlashDictionary& dictionary,
 		const SwfColor& backgroundColor,
 		const Aabb2& frameBounds,
+		const Vector4& frameTransform,
 		float viewWidth,
 		float viewHeight,
-		const Vector4& viewOffset,
 		const Aabb2& dirtyRegion
 	) T_OVERRIDE T_FINAL;
 
@@ -135,7 +135,6 @@ private:
 	render::IRenderSystem* m_renderSystem;
 	RefArray< render::RenderContext > m_renderContexts;
 	Ref< render::RenderContext > m_renderContext;
-	Ref< render::RenderContext > m_globalContext;
 	Ref< render::RenderTargetSet > m_renderTargetGlyphs;
 	Ref< AccShapeResources > m_shapeResources;
 	Ref< AccShapeVertexPool > m_vertexPool;
@@ -146,20 +145,19 @@ private:
 	SmallMap< int32_t, ShapeCache > m_shapeCache;
 	SmallMap< int32_t, GlyphCache > m_glyphCache;
 	int32_t m_nextIndex;
-	Vector4 m_frameSize;
-	Vector4 m_viewSize;
-	Vector4 m_viewOffset;
+	Vector4 m_frameBounds;			//!< [left, top, right, bottom] in twips.
+	Vector4 m_frameTransform;		//!< [offset x, offset y, scale x, scale y] in normalized values.
+	Vector4 m_viewSize;				//!< [width, height, 1/width, 1/height] in pixels.
+	Aabb2 m_frameBoundsVisible;		//!< Part of frame visible on screen, in twips and in "frame" space.
 	Aabb2 m_dirtyRegion;
 	bool m_clearBackground;
-	bool m_dirtyRegions;
-	float m_stereoscopicOffset;
+	bool m_clipToDirtyRegion;
 	bool m_maskWrite;
 	bool m_maskIncrement;
 	uint8_t m_maskReference;
 	uint8_t m_glyphFilter;
 	SwfColor m_glyphColor;
 	SwfColor m_glyphFilterColor;
-	render::handle_t m_handleScreenOffset;
 	int32_t m_cacheAsBitmapDepth;
 
 	void renderEnqueuedGlyphs();

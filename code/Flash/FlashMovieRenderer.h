@@ -40,9 +40,9 @@ public:
 	void renderFrame(
 		FlashSpriteInstance* movieInstance,
 		const Aabb2& frameBounds,
+		const Vector4& frameTransform,
 		float viewWidth,
-		float viewHeight,
-		const Vector4& viewOffset
+		float viewHeight
 	);
 
 private:
@@ -50,6 +50,11 @@ private:
 	{
 		Aabb2 bounds;
 		bool visible;
+
+		State()
+		:	visible(false)
+		{
+		}
 	};
 
 	Ref< IDisplayRenderer > m_displayRenderer;
@@ -71,7 +76,8 @@ private:
 
 	void calculateDirtyRegion(
 		FlashCharacterInstance* characterInstance,
-		const Matrix33& transform, 
+		const Matrix33& transform,
+		bool visible,
 		Aabb2& outDirtyRegion
 	);
 };

@@ -173,9 +173,9 @@ void FlashMoviePlayer::renderFrame()
 	m_movieRenderer->renderFrame(
 		m_movieInstance,
 		m_movie->getFrameBounds(),
+		m_stage->getFrameTransform(),
 		float(m_stage->getViewWidth()),
-		float(m_stage->getViewHeight()),
-		m_stage->getViewOffset()
+		float(m_stage->getViewHeight())
 	);
 }
 

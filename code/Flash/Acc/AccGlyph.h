@@ -58,8 +58,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		const Vector4& frameSize,
-		const Vector4& viewOffset,
-		float screenOffsetScale,
+		const Vector4& frameTransform,
 		render::ITexture* texture,
 		uint8_t maskReference,
 		uint8_t glyphFilter,

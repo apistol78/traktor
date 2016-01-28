@@ -56,16 +56,16 @@ public:
 	void beginCacheAsBitmap(
 		render::RenderContext* renderContext,
 		const FlashSpriteInstance& spriteInstance,
-		const Vector4& frameSize,
+		const Vector4& frameBounds,
+		const Vector4& frameTransform,
 		const Vector4& viewSize,
-		const Vector4& viewOffset,
 		const Matrix33& transform
 	);
 
 	void endCacheAsBitmap(
 		render::RenderContext* renderContext,
-		const Vector4& frameSize,
-		const Vector4& viewOffset,
+		const Vector4& frameBounds,
+		const Vector4& frameTransform,
 		const Matrix33& transform
 	);
 
@@ -74,9 +74,8 @@ public:
 		AccShape* shape,
 		int32_t tag,
 		const SwfCxTransform& cxform,
-		const Vector4& frameSize,
-		const Vector4& viewSize,
-		const Vector4& viewOffset,
+		const Vector4& frameBounds,
+		const Vector4& frameTransform,
 		const Matrix33& transform,
 		bool maskWrite,
 		bool maskIncrement,
