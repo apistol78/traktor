@@ -234,6 +234,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	{
 		m_scriptDebuggerSessions->addListener(this);
 
+		// Get all breakpoints.
 		Guid instanceGuid = m_document->getInstance(0)->getGuid();
 		for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
 		{
@@ -410,22 +411,10 @@ void ScriptEditorPage::notifyEndSession(IScriptDebugger* scriptDebugger, IScript
 
 void ScriptEditorPage::notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
-	//Guid instanceGuid = m_document->getInstance(0)->getGuid();
-	//if (scriptId == instanceGuid)
-	//{
-	//	m_edit->setImage(lineNumber, 0);
-	//	m_edit->update();
-	//}
 }
 
 void ScriptEditorPage::notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
-	//Guid instanceGuid = m_document->getInstance(0)->getGuid();
-	//if (scriptId == instanceGuid)
-	//{
-	//	m_edit->setImage(lineNumber, 1);
-	//	m_edit->update();
-	//}
 }
 
 void ScriptEditorPage::updateDependencyList()

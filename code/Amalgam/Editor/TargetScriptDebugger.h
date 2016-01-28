@@ -26,6 +26,8 @@ class TargetScriptDebugger : public script::IScriptDebugger
 public:
 	TargetScriptDebugger(net::BidirectionalObjectTransport* transport);
 
+	void update();
+
 	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
 	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
@@ -46,11 +48,11 @@ public:
 
 	virtual void removeListener(IListener* listener) T_OVERRIDE T_FINAL;
 
-	void notifyListeners();
-
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	std::list< IListener* > m_listeners;
+
+	void notifyListeners();
 };
 
 	}

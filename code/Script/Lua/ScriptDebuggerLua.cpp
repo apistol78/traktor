@@ -349,7 +349,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 					m_lastId = currentId;
 
 					for (SmallSet< IListener* >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-						(*j)->breakpointReached(this);
+						(*j)->debugeeStateChange(this);
 				}
 
 			}
@@ -367,7 +367,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 			m_state = StHalted;
 			m_lastId = currentId;
 			for (SmallSet< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-				(*i)->breakpointReached(this);
+				(*i)->debugeeStateChange(this);
 		}
 	}
 	else if (m_state == StStepInto)
@@ -382,7 +382,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 			m_state = StHalted;
 			m_lastId = currentId;
 			for (SmallSet< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-				(*i)->breakpointReached(this);
+				(*i)->debugeeStateChange(this);
 		}
 	}
 	else if (m_state == StStepOver)
@@ -399,19 +399,23 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 				m_state = StHalted;
 				m_lastId = currentId;
 				for (SmallSet< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-					(*i)->breakpointReached(this);
+					(*i)->debugeeStateChange(this);
 			}
 		}
 	}
 
 	if (m_state == StHalted)
 	{
+		// Wait until state is no longer halted.
 		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 		do
 		{
 			currentThread->sleep(100);
 		}
 		while (m_state == StHalted && !currentThread->stopped());
+
+		for (SmallSet< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+			(*i)->debugeeStateChange(this);
 	}
 }
 
