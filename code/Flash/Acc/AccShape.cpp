@@ -333,9 +333,8 @@ void AccShape::destroy()
 void AccShape::render(
 	render::RenderContext* renderContext,
 	const Matrix33& transform,
-	const Vector4& frameSize,
-	const Vector4& viewOffset,
-	float screenOffsetScale,
+	const Vector4& frameBounds,
+	const Vector4& frameTransform,
 	const SwfCxTransform& cxform,
 	bool maskWrite,
 	bool maskIncrement,
@@ -346,7 +345,7 @@ void AccShape::render(
 	if (m_renderBatches.empty() || !m_vertexRange.vertexBuffer)
 		return;
 
-	Matrix44 m(
+	const Matrix44 m(
 		transform.e11, transform.e12, transform.e13, 0.0f,
 		transform.e21, transform.e22, transform.e23, 0.0f,
 		transform.e31, transform.e32, transform.e33, 0.0f,
@@ -381,9 +380,8 @@ void AccShape::render(
 			renderBlockSolid->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlockSolid->programParams->beginParameters(renderContext);
 			renderBlockSolid->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
-			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleFrameSize, frameSize);
-			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleViewOffset, viewOffset);
-			renderBlockSolid->programParams->setFloatParameter(m_shapeResources->m_handleScreenOffsetScale, screenOffsetScale);
+			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleFrameBounds, frameBounds);
+			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleFrameTransform, frameTransform);
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 			renderBlockSolid->programParams->setStencilReference(maskReference);
@@ -402,9 +400,8 @@ void AccShape::render(
 			renderBlockTextured->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlockTextured->programParams->beginParameters(renderContext);
 			renderBlockTextured->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
-			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleFrameSize, frameSize);
-			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleViewOffset, viewOffset);
-			renderBlockTextured->programParams->setFloatParameter(m_shapeResources->m_handleScreenOffsetScale, screenOffsetScale);
+			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleFrameBounds, frameBounds);
+			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleFrameTransform, frameTransform);
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 			renderBlockTextured->programParams->setStencilReference(maskReference);

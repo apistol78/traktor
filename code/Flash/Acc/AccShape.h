@@ -71,9 +71,8 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		const Matrix33& transform,
-		const Vector4& frameSize,
-		const Vector4& viewOffset,
-		float screenOffsetScale,
+		const Vector4& frameBounds,
+		const Vector4& frameTransform,
 		const SwfCxTransform& cxform,
 		bool maskWrite,
 		bool maskIncrement,

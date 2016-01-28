@@ -23,7 +23,7 @@ AsStage::AsStage(ActionContext* context)
 ,	m_alignH(SaCenter)
 ,	m_alignV(SaCenter)
 ,	m_scaleMode(SmShowAll)
-,	m_viewOffset(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_frameTransform(0.0f, 0.0f, 0.0f, 0.0f)
 {
 	addProperty("align", createNativeFunction(context, this, &AsStage::Stage_get_align), createNativeFunction(context, this, &AsStage::Stage_set_align));
 	addProperty("height", createNativeFunction(context, this, &AsStage::Stage_get_height), 0);
@@ -87,8 +87,8 @@ Vector2 AsStage::toStage(const Vector2& pos) const
 	float sy = 2.0f * pos.y / m_viewHeight - 1.0f;
 
 	// Inverse transform into stage coordinates.
-	float tx = (((sx + 1.0f) / 2.0f - m_viewOffset.x()) / m_viewOffset.z()) * (bounds.mx.x - bounds.mn.x) + bounds.mn.x;
-	float ty = (((sy + 1.0f) / 2.0f - m_viewOffset.y()) / m_viewOffset.w()) * (bounds.mx.y - bounds.mn.y) + bounds.mn.y;
+	float tx = (((sx + 1.0f) / 2.0f - m_frameTransform.x()) / m_frameTransform.z()) * (bounds.mx.x - bounds.mn.x) + bounds.mn.x;
+	float ty = (((sy + 1.0f) / 2.0f - m_frameTransform.y()) / m_frameTransform.w()) * (bounds.mx.y - bounds.mn.y) + bounds.mn.y;
 	
 	return Vector2(tx, ty);
 }
@@ -104,8 +104,8 @@ Vector2 AsStage::toScreen(const Vector2& pos) const
 	float tx = (pos.x - bounds.mn.x) / (bounds.mx.x - bounds.mn.x);
 	float ty = (pos.y - bounds.mn.y) / (bounds.mx.y - bounds.mn.y);
 
-	float vx = tx * m_viewOffset.z() + m_viewOffset.x();
-	float vy = ty * m_viewOffset.w() + m_viewOffset.y();
+	float vx = tx * m_frameTransform.z() + m_frameTransform.x();
+	float vy = ty * m_frameTransform.w() + m_frameTransform.y();
 
 	float sx = vx * m_viewWidth;
 	float sy = vy * m_viewHeight;
@@ -115,7 +115,7 @@ Vector2 AsStage::toScreen(const Vector2& pos) const
 
 void AsStage::updateViewOffset()
 {
-	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
+	m_frameTransform.set(0.0f, 0.0f, 1.0f, 1.0f);
 
 	float aspectRatio = float(m_viewWidth) / m_viewHeight;
 	if (aspectRatio <= FUZZY_EPSILON)
@@ -146,7 +146,7 @@ void AsStage::updateViewOffset()
 				break;
 			}
 
-			m_viewOffset.set(leftX, 0.0f, scaleX, 1.0f);
+			m_frameTransform.set(leftX, 0.0f, scaleX, 1.0f);
 		}
 		else
 		{
@@ -166,7 +166,7 @@ void AsStage::updateViewOffset()
 				break;
 			}
 
-			m_viewOffset.set(0.0f, topY, 1.0f, scaleY);
+			m_frameTransform.set(0.0f, topY, 1.0f, scaleY);
 		}
 	}
 	else if (m_scaleMode == SmNoBorder)
@@ -191,7 +191,7 @@ void AsStage::updateViewOffset()
 				break;
 			}
 
-			m_viewOffset.set(0.0f, topY, 1.0f, scaleY);
+			m_frameTransform.set(0.0f, topY, 1.0f, scaleY);
 		}
 		else
 		{
@@ -209,7 +209,7 @@ void AsStage::updateViewOffset()
 				break;
 			}
 
-			m_viewOffset.set(leftX, 0.0f, scaleX, 1.0f);
+			m_frameTransform.set(leftX, 0.0f, scaleX, 1.0f);
 		}
 	}
 	else if (m_scaleMode == SmNoScale)
@@ -250,7 +250,7 @@ void AsStage::updateViewOffset()
 			break;
 		}
 
-		m_viewOffset.set(leftX / viewWidth, topY / viewHeight, scaleX, scaleY);
+		m_frameTransform.set(leftX / viewWidth, topY / viewHeight, scaleX, scaleY);
 	}
 }
 

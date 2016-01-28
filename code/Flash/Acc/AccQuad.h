@@ -49,7 +49,7 @@ public:
 		const Aabb2& bounds,
 		const Matrix33& transform,
 		const Vector4& frameSize,
-		const Vector4& viewOffset,
+		const Vector4& frameTransform,
 		const SwfCxTransform& cxform,
 		render::ITexture* texture,
 		const Vector4& textureOffset,

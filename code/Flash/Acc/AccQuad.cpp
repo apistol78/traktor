@@ -30,8 +30,8 @@ struct Vertex
 
 bool s_handleInitialized = false;
 render::handle_t s_handleTransform;
-render::handle_t s_handleFrameSize;
-render::handle_t s_handleViewOffset;
+render::handle_t s_handleFrameBounds;
+render::handle_t s_handleFrameTransform;
 render::handle_t s_handleScreenOffsetScale;
 render::handle_t s_handleCxFormMul;
 render::handle_t s_handleCxFormAdd;
@@ -48,8 +48,8 @@ bool AccQuad::create(
 	if (!s_handleInitialized)
 	{
 		s_handleTransform = render::getParameterHandle(L"Flash_Transform");
-		s_handleFrameSize = render::getParameterHandle(L"Flash_FrameSize");
-		s_handleViewOffset = render::getParameterHandle(L"Flash_ViewOffset");
+		s_handleFrameBounds = render::getParameterHandle(L"Flash_FrameBounds");
+		s_handleFrameTransform = render::getParameterHandle(L"Flash_FrameTransform");
 		s_handleScreenOffsetScale = render::getParameterHandle(L"Flash_ScreenOffsetScale");
 		s_handleCxFormMul = render::getParameterHandle(L"Flash_CxFormMul");
 		s_handleCxFormAdd = render::getParameterHandle(L"Flash_CxFormAdd");
@@ -98,8 +98,8 @@ void AccQuad::render(
 	render::RenderContext* renderContext,
 	const Aabb2& bounds,
 	const Matrix33& transform,
-	const Vector4& frameSize,
-	const Vector4& viewOffset,
+	const Vector4& frameBounds,
+	const Vector4& frameTransform,
 	const SwfCxTransform& cxform,
 	render::ITexture* texture,
 	const Vector4& textureOffset,
@@ -154,8 +154,8 @@ void AccQuad::render(
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->programParams->beginParameters(renderContext);
 	renderBlock->programParams->setMatrixParameter(s_handleTransform, m);
-	renderBlock->programParams->setVectorParameter(s_handleFrameSize, frameSize);
-	renderBlock->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
+	renderBlock->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
+	renderBlock->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
 	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, 0.0f);
 	renderBlock->programParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 	renderBlock->programParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));

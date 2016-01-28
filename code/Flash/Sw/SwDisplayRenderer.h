@@ -39,9 +39,9 @@ public:
 		const FlashDictionary& dictionary,
 		const SwfColor& backgroundColor,
 		const Aabb2& frameBounds,
+		const Vector4& frameTransform,
 		float viewWidth,
 		float viewHeight,
-		const Vector4& viewOffset,
 		const Aabb2& dirtyRegion
 	) T_OVERRIDE T_FINAL;
 

@@ -37,9 +37,8 @@ private:
 	resource::Proxy< render::Shader > m_shaderDecrementMask;
 
 	render::handle_t m_handleTransform;
-	render::handle_t m_handleFrameSize;
-	render::handle_t m_handleViewOffset;
-	render::handle_t m_handleScreenOffsetScale;
+	render::handle_t m_handleFrameBounds;
+	render::handle_t m_handleFrameTransform;
 	render::handle_t m_handleCxFormMul;
 	render::handle_t m_handleCxFormAdd;
 	render::handle_t m_handleTexture;

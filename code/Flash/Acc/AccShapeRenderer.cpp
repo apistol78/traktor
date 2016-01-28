@@ -101,9 +101,9 @@ void AccShapeRenderer::endFrame()
 void AccShapeRenderer::beginCacheAsBitmap(
 	render::RenderContext* renderContext,
 	const FlashSpriteInstance& spriteInstance,
-	const Vector4& frameSize,
+	const Vector4& frameBounds,
+	const Vector4& frameTransform,
 	const Vector4& viewSize,
-	const Vector4& viewOffset,
 	const Matrix33& transform
 )
 {
@@ -122,12 +122,12 @@ void AccShapeRenderer::beginCacheAsBitmap(
 	float stageH = (bounds.mx.y - bounds.mn.y) * scaleY;
 
 	// Normalize size of shape.
-	float tx = stageW / (frameSize.z() - frameSize.x());
-	float ty = stageH / (frameSize.w() - frameSize.y());
+	float tx = stageW / (frameBounds.z() - frameBounds.x());
+	float ty = stageH / (frameBounds.w() - frameBounds.y());
 
 	// Expand by current view size and offsets.
-	float sx = tx * viewOffset.z() * viewSize.x();
-	float sy = ty * viewOffset.w() * viewSize.y();
+	float sx = tx * frameTransform.z() * viewSize.x();
+	float sy = ty * frameTransform.w() * viewSize.y();
 
 	int32_t pixelWidth = int32_t(sx + 0.5f);
 	int32_t pixelHeight = int32_t(sy + 0.5f);
@@ -200,8 +200,8 @@ void AccShapeRenderer::beginCacheAsBitmap(
 
 void AccShapeRenderer::endCacheAsBitmap(
 	render::RenderContext* renderContext,
-	const Vector4& frameSize,
-	const Vector4& viewOffset,
+	const Vector4& frameBounds,
+	const Vector4& frameTransform,
 	const Matrix33& transform
 )
 {
@@ -227,8 +227,8 @@ void AccShapeRenderer::endCacheAsBitmap(
 			renderContext,
 			c.flipped ? Aabb2(c.bounds.mn.shuffle< 1, 0 >(), c.bounds.mx.shuffle< 1, 0 >()) : c.bounds,
 			transform * (c.flipped ? c_flipped : Matrix33::identity()),
-			frameSize,
-			viewOffset,
+			frameBounds,
+			frameTransform,
 			c_cxfIdentity,
 			m_renderTargetShapes->getColorTexture(0),
 			textureOffset,
@@ -248,9 +248,8 @@ void AccShapeRenderer::render(
 	AccShape* shape,
 	int32_t tag,
 	const SwfCxTransform& cxform,
-	const Vector4& frameSize,
-	const Vector4& viewSize,
-	const Vector4& viewOffset,
+	const Vector4& frameBounds,
+	const Vector4& frameTransform,
 	const Matrix33& transform,
 	bool maskWrite,
 	bool maskIncrement,
@@ -276,7 +275,6 @@ void AccShapeRenderer::render(
 			(c.flipped ? c_flipped : Matrix33::identity()) * delta,
 			c.flipped ? cacheFrameSize.shuffle< 1, 0, 3, 2 >() : cacheFrameSize,
 			cacheViewOffset,
-			0.0f,
 			cxform,
 			maskWrite,
 			maskIncrement,
@@ -289,9 +287,8 @@ void AccShapeRenderer::render(
 		shape->render(
 			renderContext,
 			transform,
-			frameSize,
-			viewOffset,
-			1.0f,
+			frameBounds,
+			frameTransform,
 			cxform,
 			maskWrite,
 			maskIncrement,
