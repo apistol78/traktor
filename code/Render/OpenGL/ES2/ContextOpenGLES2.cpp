@@ -227,7 +227,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 		const EGLint configAttribsWithMSAA[] =
 		{
 			EGL_LEVEL, 0,
-			EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
+			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
 			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 			EGL_BUFFER_SIZE, 32,
 			EGL_DEPTH_SIZE, 16,
@@ -252,7 +252,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 		const EGLint configAttribs[] =
 		{
 			EGL_LEVEL, 0,
-			EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
+			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
 			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 			EGL_BUFFER_SIZE, 32,
 			EGL_DEPTH_SIZE, 16,
