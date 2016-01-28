@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cfloat>
+#include "Core/Containers/SmallSet.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Const.h"
@@ -264,7 +265,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Triangulator", Triangulator, Object)
 
 void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_t currentFillStyle, bool oddEven, AlignedVector< Triangle >& outTriangles)
 {
-	std::set< float > pys;
+	SmallSet< float > pys;
 	Segment s;
 
 	m_segments.resize(0);
@@ -376,8 +377,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 	// Sort segments to Y.
 	std::sort(m_segments.begin(), m_segments.end(), compareSegmentsY);
 
-	pys.erase(pys.begin());
-	for (std::set< float >::iterator i = pys.begin(); i != pys.end(); ++i)
+	for (SmallSet< float >::iterator i = pys.begin() + 1; i != pys.end(); ++i)
 	{
 		T_ASSERT (*i == std::floor(*i));
 		m_slabs.resize(0);
