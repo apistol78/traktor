@@ -78,7 +78,7 @@
 			<item>
 				<first>Amalgam.RenderThread</first>
 				<second type="traktor.PropertyBoolean">
-					<value>false</value>
+					<value>true</value>
 				</second>
 			</item>
 		</value>
