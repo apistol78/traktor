@@ -103,6 +103,7 @@ private:
 	bool m_expanded;
 	bool m_selected;
 	bool m_editable;
+	Point m_mouseDownPosition;
 	int32_t m_editMode;
 	int32_t m_dragMode;
 	RefArray< TreeViewItem > m_children;
@@ -115,17 +116,19 @@ private:
 
 	Rect calculateLabelRect() const;
 
-	virtual void interval() T_FINAL;
+	int32_t calculateWidth() const;
 
-	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) T_FINAL;
+	virtual void interval() T_OVERRIDE T_FINAL;
 
-	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position) T_FINAL;
+	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) T_OVERRIDE T_FINAL;
 
-	virtual void mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position) T_FINAL;
+	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position) T_OVERRIDE T_FINAL;
 
-	virtual void mouseMove(MouseMoveEvent* event, const Point& position) T_FINAL;
+	virtual void mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position) T_OVERRIDE T_FINAL;
 
-	virtual void paint(Canvas& canvas, const Rect& rect) T_FINAL;
+	virtual void mouseMove(MouseMoveEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+
+	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE T_FINAL;
 };
 
 		}

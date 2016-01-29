@@ -53,6 +53,10 @@ void AutoWidgetCell::mouseMove(MouseMoveEvent* event, const Point& position)
 {
 }
 
+void AutoWidgetCell::mouseMoveFocus(MouseMoveEvent* event, const Point& position)
+{
+}
+
 void AutoWidgetCell::paint(Canvas& canvas, const Rect& rect)
 {
 }
