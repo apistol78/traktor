@@ -206,8 +206,8 @@ int main(int argc, const char** argv)
 		Library library;
 		if (!library.open(*i))
 		{
-			traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
-			return 2;
+			traktor::log::warning << L"Unable to load module \"" << *i << L"\"" << Endl;
+			continue;
 		}
 		library.detach();
 	}
@@ -215,7 +215,7 @@ int main(int argc, const char** argv)
 	net::Network::initialize();
 
 	Ref< net::TcpSocket > serverSocket = new net::TcpSocket();
-	if (!serverSocket->bind(net::SocketAddressIPv4(0)))
+	if (!serverSocket->bind(net::SocketAddressIPv4()))
 	{
 		traktor::log::error << L"Unable to bind server socket to port" << Endl;
 		return 1;

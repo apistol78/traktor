@@ -38,6 +38,8 @@ public:
 	virtual uint32_t get(const Guid& dependencyGuid) const = 0;
 
 	virtual uint32_t size() const = 0;
+
+	virtual void dump() = 0;
 };
 
 	}

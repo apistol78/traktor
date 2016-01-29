@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
@@ -42,6 +43,17 @@ uint32_t PipelineDependencySet::get(const Guid& dependencyGuid) const
 uint32_t PipelineDependencySet::size() const
 {
 	return m_dependencies.size();
+}
+
+void PipelineDependencySet::dump()
+{
+	for (uint32_t i = 0; i < uint32_t(m_dependencies.size()); ++i)
+	{
+		log::info << L"dependency[" << i << L"]:" << Endl;
+		log::info << IncreaseIndent;
+		m_dependencies[i]->dump();
+		log::info << DecreaseIndent;
+	}
 }
 
 void PipelineDependencySet::serialize(ISerializer& s)

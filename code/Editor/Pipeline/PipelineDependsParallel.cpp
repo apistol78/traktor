@@ -225,6 +225,7 @@ void PipelineDependsParallel::addUniqueDependency(
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 	{
 		log::error << L"Unable to add dependency to \"" << outputPath << L"\"; no pipeline found" << Endl;
+		currentDependency->flags |= PdfFailed;
 		return;
 	}
 
@@ -424,13 +425,15 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 
 void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, Guid sourceAssetGuid, uint32_t flags)
 {
-	Ref< PipelineDependency > currentDependency;
 	bool exists;
 
 	// Don't add dependency multiple times.
-	currentDependency = findOrCreateDependency(sourceAssetGuid, parentDependency, flags, exists);
-	if (exists)
-		return;
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_dependencySetLock);
+		uint32_t dependencyIndex = m_dependencySet->get(sourceAssetGuid);
+		if (dependencyIndex != IPipelineDependencySet::DiInvalid)
+			return;
+	}
 
 	// Get source asset instance from database.
 	Ref< db::Instance > sourceAssetInstance = m_sourceDatabase->getInstance(sourceAssetGuid);
@@ -450,6 +453,11 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;
 		return;
 	}
+
+	// Create dependency, another thread might have raced us to this so also ensure it hasn't been created.
+	Ref< PipelineDependency > currentDependency = findOrCreateDependency(sourceAssetGuid, parentDependency, flags, exists);
+	if (exists)
+		return;
 
 	addUniqueDependency(
 		parentDependency,
