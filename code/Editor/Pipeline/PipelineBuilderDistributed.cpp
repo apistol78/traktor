@@ -108,6 +108,9 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 		const PipelineDependency* dependency = dependencySet->get(i);
 		T_ASSERT (dependency);
 
+		if ((dependency->flags & PdfFailed) != 0)
+			continue;
+
 		std::vector< uint32_t > children = dependency->children;
 		std::set< uint32_t > visited;
 
@@ -149,6 +152,9 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 		{
 			const PipelineDependency* dependency = dependencySet->get(i);
 			T_ASSERT (dependency);
+
+			if ((dependency->flags & PdfFailed) != 0)
+				continue;
 
 			if (performBuild(dependencySet, dependency))
 				++m_succeeded;

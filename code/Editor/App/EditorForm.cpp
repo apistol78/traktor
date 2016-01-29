@@ -1686,6 +1686,10 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	double elapsedDependencies = timerBuild.getElapsedTime();
 	log::info << L"Collected " << dependencySet.size() << L" dependencies in " << elapsedDependencies << L" second(s)" << Endl;
 
+#if defined(_DEBUG)
+	dependencySet.dump();
+#endif
+
 	m_buildView->beginBuild();
 
 	// Build output.
