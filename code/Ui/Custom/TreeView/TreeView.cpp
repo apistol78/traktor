@@ -10,6 +10,7 @@
 #include "Ui/Custom/TreeView/TreeViewContentChangeEvent.h"
 #include "Ui/Custom/TreeView/TreeViewEditEvent.h"
 #include "Ui/Custom/TreeView/TreeViewItem.h"
+#include "Ui/Custom/TreeView/TreeViewItemActivateEvent.h"
 
 #include "Resources/Tree.h"
 
@@ -32,7 +33,7 @@ TreeView::TreeView()
 
 bool TreeView::create(Widget* parent, int32_t style)
 {
-	if (!AutoWidget::create(parent, style))
+	if (!AutoWidget::create(parent, style | WsWantAllInput))
 		return false;
 
 	m_autoEdit = bool((style & WsAutoEdit) == WsAutoEdit);
@@ -45,6 +46,7 @@ bool TreeView::create(Widget* parent, int32_t style)
 	m_imageState = new ui::StyleBitmap(L"UI.Tree", c_ResourceTree, sizeof(c_ResourceTree));
 
 	addEventHandler< ScrollEvent >(this, &TreeView::eventScroll);
+	addEventHandler< KeyDownEvent >(this, &TreeView::eventKeyDown);
 	return true;
 }
 
@@ -147,6 +149,14 @@ uint32_t TreeView::getItems(RefArray< TreeViewItem >& outItems, uint32_t flags) 
 	return uint32_t(outItems.size());
 }
 
+void TreeView::deselectAll()
+{
+	RefArray< TreeViewItem > selectedItems;
+	getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly);
+	for (RefArray< TreeViewItem >::iterator i = selectedItems.begin(); i != selectedItems.end(); ++i)
+		(*i)->unselect();
+}
+
 Ref< HierarchicalState > TreeView::captureState() const
 {
 	Ref< HierarchicalState > state = new HierarchicalState();
@@ -246,6 +256,67 @@ void TreeView::eventEditFocus(FocusEvent* event)
 void TreeView::eventScroll(ScrollEvent* event)
 {
 	m_itemEditor->hide();
+}
+
+void TreeView::eventKeyDown(KeyDownEvent* event)
+{
+	RefArray< TreeViewItem > items;
+	getItems(items, TreeView::GfDescendants | TreeView::GfExpandedOnly);
+
+	// Find index of selected item.
+	int32_t current = -1;
+	for (int32_t i = 0; i < items.size(); ++i)
+	{
+		if (items[i]->isSelected())
+		{
+			current = i;
+			break;
+		}
+	}
+	if (current < 0)
+		return;
+
+	switch (event->getVirtualKey())
+	{
+	case VkLeft:
+		if (items[current]->isExpanded())
+			items[current]->collapse();
+		else if (items[current]->getParent() != 0)
+			items[current]->getParent()->select();
+		break;
+
+	case VkRight:
+		if (items[current]->hasChildren())
+		{
+			if (items[current]->isCollapsed())
+				items[current]->expand();
+			else
+				items[current + 1]->select();
+		}
+		break;
+
+	case VkUp:
+		if (current > 0)
+			items[current - 1]->select();
+		break;
+
+	case VkDown:
+		if (current < items.size() - 1)
+			items[current + 1]->select();
+		break;
+
+	case VkReturn:
+		{
+			TreeViewItemActivateEvent activateEvent(this, items[current]);
+			raiseEvent(&activateEvent);
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	requestUpdate();
 }
 
 		}

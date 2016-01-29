@@ -77,7 +77,11 @@ public:
 
 	void sort(bool recursive);
 
-	Ref< TreeViewItem > getParent() const;
+	TreeViewItem* getParent() const;
+
+	TreeViewItem* getPreviousSibling(TreeViewItem* child) const;
+
+	TreeViewItem* getNextSibling(TreeViewItem* child) const;
 
 	bool hasChildren() const;
 

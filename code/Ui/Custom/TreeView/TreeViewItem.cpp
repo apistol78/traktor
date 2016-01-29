@@ -122,7 +122,9 @@ bool TreeViewItem::isSelected() const
 
 void TreeViewItem::select()
 {
+	m_view->deselectAll();
 	m_selected = true;
+	m_view->requestUpdate();
 }
 
 void TreeViewItem::unselect()
@@ -139,6 +141,7 @@ void TreeViewItem::show()
 {
 	for (TreeViewItem* parent = m_parent; parent; parent = parent->m_parent)
 		parent->expand();
+	m_view->requestUpdate();
 }
 
 void TreeViewItem::setEditable(bool editable)
@@ -167,9 +170,31 @@ void TreeViewItem::sort(bool recursive)
 {
 }
 
-Ref< TreeViewItem > TreeViewItem::getParent() const
+TreeViewItem* TreeViewItem::getParent() const
 {
 	return m_parent;
+}
+
+TreeViewItem* TreeViewItem::getPreviousSibling(TreeViewItem* child) const
+{
+	T_FATAL_ASSERT (child->m_parent == this);
+
+	RefArray< TreeViewItem >::const_iterator i = std::find(m_children.begin(), m_children.end(), child);
+	if (i == m_children.end() || i == m_children.begin())
+		return 0;
+
+	return *(i - 1);
+}
+
+TreeViewItem* TreeViewItem::getNextSibling(TreeViewItem* child) const
+{
+	T_FATAL_ASSERT (child->m_parent == this);
+
+	RefArray< TreeViewItem >::const_iterator i = std::find(m_children.begin(), m_children.end(), child);
+	if (i == m_children.end())
+		return 0;
+
+	return *(i + 1);
 }
 
 bool TreeViewItem::hasChildren() const
@@ -303,14 +328,9 @@ void TreeViewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
 	{
 		if (!isSelected())
 		{
-			// De-select all items.
-			RefArray< TreeViewItem > selectedItems;
-			m_view->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly);
-			for (RefArray< TreeViewItem >::iterator i = selectedItems.begin(); i != selectedItems.end(); ++i)
-				(*i)->unselect();
-
 			// Select this item only.
-			select();
+			m_view->deselectAll();
+			m_selected = true;
 
 			SelectionChangeEvent selectionChangeEvent(m_view);
 			m_view->raiseEvent(&selectionChangeEvent);

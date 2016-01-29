@@ -64,6 +64,8 @@ public:
 
 	uint32_t getItems(RefArray< TreeViewItem >& outItems, uint32_t flags) const;
 
+	void deselectAll();
+
 	Ref< HierarchicalState > captureState() const;
 
 	void applyState(const HierarchicalState* state);
@@ -88,6 +90,8 @@ private:
 	void eventEditFocus(FocusEvent* event);
 
 	void eventScroll(ScrollEvent* event);
+
+	void eventKeyDown(KeyDownEvent* event);
 };
 
 		}
