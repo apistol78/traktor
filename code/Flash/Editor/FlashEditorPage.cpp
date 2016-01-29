@@ -389,6 +389,13 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 	}
 	m_treeMovie->createItem(characterItem, ss.str());
 
+	const Aabb2& bounds = characterInstance->getBounds();
+	ss.reset();
+	ss << L"Bounds: = Min {" << bounds.mn.x << L", " << bounds.mn.y << L"} Max { " << bounds.mx.x << L", " << bounds.mx.y << L"}";
+	m_treeMovie->createItem(characterItem, ss.str());
+
+
+
 	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
 	{
 		const FlashSprite* sprite = spriteInstance->getSprite();
