@@ -58,7 +58,7 @@ bool TreeViewWx::create(IWidget* parent, int style)
 	return true;
 }
 
-int TreeViewWx::addImage(IBitmap* image, int imageCount)
+int TreeViewWx::addImage(ISystemBitmap* image, int imageCount)
 {
 	if (!image || imageCount <= 0)
 		return -1;
