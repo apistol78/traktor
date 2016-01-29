@@ -60,7 +60,7 @@ bool ListViewWx::create(IWidget* parent, int style)
 	return true;
 }
 
-int ListViewWx::addImage(IBitmap* image, int imageCount, bool smallImage)
+int ListViewWx::addImage(ISystemBitmap* image, int imageCount, bool smallImage)
 {
 	if (!image || imageCount <= 0)
 		return -1;

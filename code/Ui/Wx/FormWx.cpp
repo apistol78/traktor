@@ -66,7 +66,7 @@ bool FormWx::create(IWidget* parent, const std::wstring& text, int width, int he
 	return true;
 }
 
-void FormWx::setIcon(IBitmap* icon)
+void FormWx::setIcon(ISystemBitmap* icon)
 {
 }
 
