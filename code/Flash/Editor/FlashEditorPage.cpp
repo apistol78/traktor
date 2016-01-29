@@ -547,6 +547,7 @@ void FlashEditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 	if (m_selectedCharacterInstance)
 	{
 		m_selectedCharacterInstance->setColorTransform(m_selectedCharacterInstanceCxForm);
+		m_selectedCharacterInstance->setBlendMode(m_selectedCharacterInstanceBlendMode);
 		m_selectedCharacterInstance = 0;
 	}
 
@@ -556,6 +557,7 @@ void FlashEditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 		if (m_selectedCharacterInstance)
 		{
 			m_selectedCharacterInstanceCxForm = m_selectedCharacterInstance->getColorTransform();
+			m_selectedCharacterInstanceBlendMode = m_selectedCharacterInstance->getBlendMode();
 
 			SwfCxTransform cxform;
 			cxform.red[0] = 0.5f; cxform.red[1] = 0.0f;
@@ -564,6 +566,7 @@ void FlashEditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 			cxform.alpha[0] = 1.0f; cxform.alpha[1] = 0.0f;
 
 			m_selectedCharacterInstance->setColorTransform(cxform);
+			m_selectedCharacterInstance->setBlendMode(SbmDefault);
 
 			const PropertyInteger* pathIndex = selectedItems[0]->getData< PropertyInteger >(L"PATH");
 			if (pathIndex)
