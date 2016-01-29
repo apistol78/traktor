@@ -59,6 +59,8 @@ public:
 
 	virtual void mouseMove(MouseMoveEvent* event, const Point& position);
 
+	virtual void mouseMoveFocus(MouseMoveEvent* event, const Point& position);
+
 	virtual void paint(Canvas& canvas, const Rect& rect);
 
 protected:

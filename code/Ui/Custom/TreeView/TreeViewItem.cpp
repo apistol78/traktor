@@ -274,6 +274,12 @@ Rect TreeViewItem::calculateLabelRect() const
 	return rcItem;
 }
 
+int32_t TreeViewItem::calculateWidth() const
+{
+	Size extent = m_view->getTextExtent(m_text);
+	return ui::scaleBySystemDPI(4 + calculateDepth() * 20 + 44) + extent.cx + m_view->m_imageWidth;
+}
+
 void TreeViewItem::interval()
 {
 	// Cancel pending edit.
@@ -283,6 +289,7 @@ void TreeViewItem::interval()
 
 void TreeViewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
+	m_mouseDownPosition = position;
 	m_dragMode = 0;
 
 	if (hasChildren() && calculateExpandRect().inside(event->getPosition()))
@@ -366,17 +373,21 @@ void TreeViewItem::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& p
 
 void TreeViewItem::mouseMove(MouseMoveEvent* event, const Point& position)
 {
-	// Ensure edit isn't triggered if mouse moved during edit state tracking.
-	m_editMode = 0;
-
-	if (m_dragMode == 1)
+	Size d = position - m_mouseDownPosition;
+	if (abs(d.cx) > scaleBySystemDPI(2) || abs(d.cy) > scaleBySystemDPI(2))
 	{
-		TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::DmDrag);
-		m_view->raiseEvent(&dragEvent);
-		if (!(dragEvent.consumed() && dragEvent.cancelled()))
-			m_dragMode = 2;
-		else
-			m_dragMode = 3;
+		// Ensure edit isn't triggered if mouse moved during edit state tracking.
+		m_editMode = 0;
+
+		if (m_dragMode == 1)
+		{
+			TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::DmDrag);
+			m_view->raiseEvent(&dragEvent);
+			if (!(dragEvent.consumed() && dragEvent.cancelled()))
+				m_dragMode = 2;
+			else
+				m_dragMode = 3;
+		}
 	}
 }
 

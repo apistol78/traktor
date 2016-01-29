@@ -192,7 +192,11 @@ void TreeView::layoutCells(const Rect& rc)
 	RefArray< TreeViewItem > items;
 	getItems(items, GfDescendants | GfExpandedOnly);
 
-	Rect rcRow(rc.left, rc.top, rc.right, rc.top + height);
+	int32_t maxWidth = rc.right - rc.left;
+	for (RefArray< TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
+		maxWidth = std::max(maxWidth, rc.left + (*i)->calculateWidth());
+
+	Rect rcRow(rc.left, rc.top, rc.left + maxWidth, rc.top + height);
 	for (RefArray< TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
 	{
 		placeCell(*i, rcRow);

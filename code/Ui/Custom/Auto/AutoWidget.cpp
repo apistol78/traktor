@@ -305,8 +305,14 @@ void AutoWidget::eventMouseMove(MouseMoveEvent* event)
 	{
 		Point clientPosition = event->getPosition() - m_scrollOffset;
 		m_captureCell->mouseMove(event, clientPosition);
-		update();
 	}
+	if (m_focusCell)
+	{
+		Point clientPosition = event->getPosition() - m_scrollOffset;
+		m_focusCell->mouseMoveFocus(event, clientPosition);
+	}
+	if (m_captureCell || m_focusCell)
+		update();
 }
 
 void AutoWidget::eventMouseWheel(MouseWheelEvent* event)
