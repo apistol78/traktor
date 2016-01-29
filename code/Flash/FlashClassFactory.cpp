@@ -158,6 +158,18 @@ Any ActionObjectRelay_invoke(ActionObjectRelay* self, const std::string& methodN
 	return Any();
 }
 
+void FlashCharacterInstance_setColorTransform(FlashCharacterInstance* self, const Color4f& mul, const Color4f& add)
+{
+	SwfCxTransform cxform =
+	{
+		{ mul.getRed()  , add.getRed()   },
+		{ mul.getGreen(), add.getGreen() },
+		{ mul.getBlue() , add.getBlue()  },
+		{ mul.getAlpha(), add.getAlpha() }
+	};
+	self->setColorTransform(cxform);
+}
+
 Any FlashCharacterInstance_invoke(FlashCharacterInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
 {
 	return ActionObjectRelay_invoke(self, methodName, argc, argv);
@@ -334,6 +346,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashCharacterInstance->addMethod("setName", &FlashCharacterInstance::setName);
 	classFlashCharacterInstance->addMethod("getName", &FlashCharacterInstance::getName);
 	classFlashCharacterInstance->addMethod("getTarget", &FlashCharacterInstance::getTarget);
+	classFlashCharacterInstance->addMethod("setColorTransform", &FlashCharacterInstance_setColorTransform);
 	classFlashCharacterInstance->addMethod("setTransform", &FlashCharacterInstance::setTransform);
 	classFlashCharacterInstance->addMethod("getTransform", &FlashCharacterInstance::getTransform);
 	classFlashCharacterInstance->addMethod("getFullTransform", &FlashCharacterInstance::getFullTransform);
