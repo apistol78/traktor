@@ -26,8 +26,6 @@ FlashShape::FlashShape()
 FlashShape::FlashShape(uint16_t id)
 :	FlashCharacter(id)
 {
-	m_shapeBounds.mn.x = m_shapeBounds.mx.x =
-	m_shapeBounds.mn.y = m_shapeBounds.mx.y = 0.0f;
 }
 
 bool FlashShape::create(const Aabb2& shapeBounds, const SwfShape* shape, const SwfStyles* styles)
