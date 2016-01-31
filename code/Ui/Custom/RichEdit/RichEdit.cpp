@@ -1171,7 +1171,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 	uint32_t pageLines = (innerRc.getHeight() + lineHeight - 1) / lineHeight;
 
 	// Calculate margin width from highest visible line number.
-	m_lineMargin = scaleBySystemDPI(c_iconSize) + canvas.getTextExtent(toString(lineOffset + pageLines)).cx + 2;
+	m_lineMargin = scaleBySystemDPI(c_iconSize) + canvas.getTextExtent(toString(lineOffset + pageLines)).cx + scaleBySystemDPI(2);
 	m_lineOffsetH = m_scrollBarH->getPosition() * c_scrollHSteps;
 
 	// Background
