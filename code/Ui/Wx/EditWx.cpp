@@ -58,6 +58,10 @@ void EditWx::selectAll()
 	m_window->SetSelection(-1, -1);
 }
 
+void EditWx::setBorderColor(const Color4ub& borderColor)
+{
+}
+
 void EditWx::setText(const std::wstring& text)
 {
 	tstring ttext = wstots(text);
