@@ -1,5 +1,6 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
+#include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -331,7 +332,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 
 	const SwfCxTransform& cxform = characterInstance->getColorTransform();
 	ss.reset();
-	ss << L"Color transform: [0] = {" << cxform.red[0] << L", " << cxform.green[0] << L", " << cxform.blue[0] << L", " << cxform.alpha[0] << L"}, [1] = {" << cxform.red[1] << L", " << cxform.green[1] << L", " << cxform.blue[1] << L", " << cxform.alpha[1] << L"}";
+	ss << L"Color transform: [*] = {" << cxform.red[0] << L", " << cxform.green[0] << L", " << cxform.blue[0] << L", " << cxform.alpha[0] << L"}, [+] = {" << cxform.red[1] << L", " << cxform.green[1] << L", " << cxform.blue[1] << L", " << cxform.alpha[1] << L"}";
 	m_treeMovie->createItem(characterItem, ss.str());
 
 	ss.reset();
@@ -381,7 +382,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 		ss << L"Overlay" << Endl;
 		break;
 	case SbmHardlight:
-		ss << L"Hardlight" << Endl;
+		ss << L"Hard light" << Endl;
 		break;
 	default:
 		ss << L"UNKNOWN" << Endl;
@@ -391,10 +392,8 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 
 	const Aabb2& bounds = characterInstance->getBounds();
 	ss.reset();
-	ss << L"Bounds: = Min {" << bounds.mn.x << L", " << bounds.mn.y << L"} Max { " << bounds.mx.x << L", " << bounds.mx.y << L"}";
+	ss << L"Bounds: " << bounds.mn << L" - " << bounds.mx << IncreaseIndent;
 	m_treeMovie->createItem(characterItem, ss.str());
-
-
 
 	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
 	{
@@ -464,25 +463,38 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 		const FlashShape* shape = shapeInstance->getShape();
 
 		const AlignedVector< FlashFillStyle >& fillStyles = shape->getFillStyles();
-		const AlignedVector< FlashLineStyle >& lineStyles = shape->getLineStyles();
+		if (!fillStyles.empty())
+		{
+			ss.reset();
+			ss << int32_t(fillStyles.size()) << L" fill(s)";
+			Ref< ui::custom::TreeViewItem > styleItem = m_treeMovie->createItem(characterItem, ss.str());
 
-		ss.reset();
-		ss << int32_t(fillStyles.size()) << L" fill(s), " << int32_t(lineStyles.size()) << L" line(s)";
-		m_treeMovie->createItem(characterItem, ss.str());
+			for (uint32_t i = 0; i < uint32_t(fillStyles.size()); ++i)
+			{
+				const FlashFillStyle& fs = fillStyles[i];
+				const AlignedVector< FlashFillStyle::ColorRecord >& cr = fs.getColorRecords();
 
-		Ref< ui::custom::TreeViewItem > pathsItem = m_treeMovie->createItem(characterItem, L"Path(s)", 0, 0);
+				ss.reset();
+				ss << (cr[0].color.red / 255.0f) << L", " << (cr[0].color.green / 255.0f) << L", " << (cr[0].color.blue / 255.0f) << L", " << (cr[0].color.alpha / 255.0f);
+				m_treeMovie->createItem(styleItem, ss.str());
+			}
+		}
 
 		const AlignedVector< Path >& paths = shape->getPaths();
-		for (uint32_t i = 0; i < uint32_t(paths.size()); ++i)
+		if (!paths.empty())
 		{
-			const Path& p = paths[i];
+			Ref< ui::custom::TreeViewItem > pathsItem = m_treeMovie->createItem(characterItem, L"Path(s)", 0, 0);
+			for (uint32_t i = 0; i < uint32_t(paths.size()); ++i)
+			{
+				const Path& p = paths[i];
 
-			ss.reset();
-			ss << i << L". " << int32_t(p.getPoints().size()) << L" point(s), " << int32_t(p.getSubPaths().size()) << L" subpath(s)";
-			
-			Ref< ui::custom::TreeViewItem > pathItem = m_treeMovie->createItem(pathsItem, ss.str());
-			pathItem->setData(L"CHARACTER", characterInstance);
-			pathItem->setData(L"PATH", new PropertyInteger(i));
+				ss.reset();
+				ss << i << L". " << int32_t(p.getPoints().size()) << L" point(s), " << int32_t(p.getSubPaths().size()) << L" subpath(s)";
+
+				Ref< ui::custom::TreeViewItem > pathItem = m_treeMovie->createItem(pathsItem, ss.str());
+				pathItem->setData(L"CHARACTER", characterInstance);
+				pathItem->setData(L"PATH", new PropertyInteger(i));
+			}
 		}
 	}
 
