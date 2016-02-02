@@ -77,7 +77,7 @@ void FlashMovieRenderer::renderFrame(
 
 	// Clear states for this frame.
 	int32_t curr = (m_count + 1) & 1;
-	m_states[curr].clear();
+	m_states[curr].reset();
 
 	Aabb2 dirtyRegion;
 	calculateDirtyRegion(
