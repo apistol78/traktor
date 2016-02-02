@@ -46,6 +46,16 @@
 			<element>background-color-disabled</element>
 			<color>45, 45, 45, 255</color>
 		</item>
+		<item>
+			<type>traktor.ui.Edit</type>
+			<element>border-color</element>
+			<color>55, 55, 55, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.Edit</type>
+			<element>border-color-disabled</element>
+			<color>55, 55, 55, 255</color>
+		</item>		
 
 		<!-- Dock -->
 		<item>

@@ -689,26 +689,12 @@ void ScriptEditorPage::eventScriptSize(ui::SizeEvent* event)
 
 void ScriptEditorPage::eventSearch(SearchEvent* event)
 {
-	int32_t caretLine = m_edit->getLineFromOffset(m_edit->getCaretOffset());
-	int32_t line = caretLine;
-
-	while (line < m_edit->getLineCount())
+	if (!event->isPreview())
 	{
-		std::wstring text = m_edit->getLine(line);
-		size_t p = text.find(event->getSearch());
-		if (p != text.npos)
-		{
-			m_edit->showLine(line);
-			m_edit->placeCaret(m_edit->getLineOffset(line) + int32_t(p));
-			break;
-		}
-		++line;
-	}
+		int32_t caretLine = m_edit->getLineFromOffset(m_edit->getCaretOffset());
+		int32_t line = caretLine;
 
-	if (line >= m_edit->getLineCount())
-	{
-		line = 0;
-		while (line < caretLine)
+		while (line < m_edit->getLineCount())
 		{
 			std::wstring text = m_edit->getLine(line);
 			size_t p = text.find(event->getSearch());
@@ -720,6 +706,39 @@ void ScriptEditorPage::eventSearch(SearchEvent* event)
 			}
 			++line;
 		}
+
+		if (line >= m_edit->getLineCount())
+		{
+			line = 0;
+			while (line < caretLine)
+			{
+				std::wstring text = m_edit->getLine(line);
+				size_t p = text.find(event->getSearch());
+				if (p != text.npos)
+				{
+					m_edit->showLine(line);
+					m_edit->placeCaret(m_edit->getLineOffset(line) + int32_t(p));
+					break;
+				}
+				++line;
+			}
+		}
+	}
+	else
+	{
+		// See if any match exist in document, update search control hints.
+		bool found = false;
+		for (int32_t line = 0; line < m_edit->getLineCount(); ++line)
+		{
+			std::wstring text = m_edit->getLine(line);
+			size_t p = text.find(event->getSearch());
+			if (p != text.npos)
+			{
+				found = true;
+				break;
+			}
+		}
+		m_searchControl->setAnyMatchingHint(found);
 	}
 }
 

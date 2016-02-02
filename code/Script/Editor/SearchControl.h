@@ -29,6 +29,8 @@ class SearchControl : public ui::Container
 public:
 	bool create(ui::Widget* parent);
 
+	void setAnyMatchingHint(bool hint);
+
 	virtual void setFocus() T_OVERRIDE;
 
 	virtual ui::Size getPreferedSize() const T_OVERRIDE;
@@ -41,6 +43,8 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolWildCard;
 
 	void eventEditSearchKeyDown(ui::KeyDownEvent* event);
+
+	void eventEditChange(ui::ContentChangeEvent* event);
 };
 
 	}

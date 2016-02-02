@@ -12,13 +12,15 @@ SearchEvent::SearchEvent(
 	const std::wstring& search,
 	bool caseSensitive,
 	bool wholeWord,
-	bool wildCard
+	bool wildCard,
+	bool preview
 )
 :	ui::Event(sender)
 ,	m_search(search)
 ,	m_caseSensitive(caseSensitive)
 ,	m_wholeWord(wholeWord)
 ,	m_wildCard(wildCard)
+,	m_preview(preview)
 {
 }
 

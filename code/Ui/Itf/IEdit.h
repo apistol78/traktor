@@ -21,6 +21,8 @@ public:
 	virtual void getSelection(int& outFrom, int& outTo) const = 0;
 
 	virtual void selectAll() = 0;
+
+	virtual void setBorderColor(const Color4ub& borderColor) = 0;
 };
 
 	}
