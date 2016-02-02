@@ -16,15 +16,17 @@ public:
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int style);
 
-	virtual void setSelection(int from, int to);
+	virtual void setSelection(int from, int to) T_OVERRIDE T_FINAL;
 
-	virtual void getSelection(int& outFrom, int& outTo) const;
+	virtual void getSelection(int& outFrom, int& outTo) const T_OVERRIDE T_FINAL;
 
-	virtual void selectAll();
+	virtual void selectAll() T_OVERRIDE T_FINAL;
 
-	virtual void setText(const std::wstring& text);
+	virtual void setBorderColor(const Color4ub& borderColor) T_OVERRIDE T_FINAL;
 
-	virtual std::wstring getText() const;
+	virtual void setText(const std::wstring& text) T_OVERRIDE T_FINAL;
+
+	virtual std::wstring getText() const T_OVERRIDE T_FINAL;
 };
 
 	}

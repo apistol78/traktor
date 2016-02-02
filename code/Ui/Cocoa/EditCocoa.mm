@@ -40,6 +40,10 @@ void EditCocoa::selectAll()
 	[m_control selectText: nil];
 }
 
+void EditCocoa::setBorderColor(const Color4ub& borderColor)
+{
+}
+
 void EditCocoa::setText(const std::wstring& text)
 {
 	[m_control setStringValue: makeNSString(text)];
