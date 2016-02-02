@@ -1,3 +1,4 @@
+#include <stack>
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -48,52 +49,68 @@ public:
 
 private:
 	Ref< FlashMovie > m_outputMovie;
-	Ref< FlashFrame > m_outputFrame;
+	RefArray< FlashFrame > m_outputFrame;
 	Ref< FlashShape > m_mergeShape;
+	Ref< FlashSprite > m_clippedSprite;
+	Ref< FlashFrame > m_clippedFrame;
 	Ref< FlashSprite > m_maskSprite;
 	Ref< FlashFrame > m_maskFrame;
 	std::map< const FlashShape*, uint32_t > m_usedIds;
 	int32_t m_nextShapeId;
 	int32_t m_nextDepth;
-	int32_t m_maskDepth;
+	std::stack< int32_t > m_maskDepths;
+	uint8_t m_lastBlendMode;
 
 	uint16_t cloneShape(const FlashShape& shape);
 };
 
 MergeQueue::MergeQueue(FlashMovie* outputMovie, FlashFrame* outputFrame)
 :	m_outputMovie(outputMovie)
-,	m_outputFrame(outputFrame)
 ,	m_nextDepth(1)
 ,	m_nextShapeId(2)
-,	m_maskDepth(-1)
+,	m_lastBlendMode(0)
 {
+	m_outputFrame.push_back(outputFrame);
 }
 
 void MergeQueue::beginMask()
 {
-	if (!m_maskSprite)
-	{
-		// Create a mask sprite; need to have a sprite because the mask can have multiple shapes
-		// and how flash defines mask we must have a container of some sort.
-		m_maskFrame = new FlashFrame();
-		m_maskSprite = new FlashSprite(m_nextShapeId, 1);
-		m_maskSprite->addFrame(m_maskFrame);
-		m_outputMovie->defineCharacter(m_nextShapeId, m_maskSprite);
+	T_FATAL_ASSERT(!m_maskSprite);
+
+	int32_t clippedId = m_nextShapeId++;
+	m_clippedFrame = new FlashFrame();
+	m_clippedSprite = new FlashSprite(clippedId, 1);
+	m_clippedSprite->addFrame(m_clippedFrame);
+	m_outputMovie->defineCharacter(clippedId, m_clippedSprite);
+
+	FlashFrame::PlaceObject place;
+	place.hasFlags = FlashFrame::PfHasCharacterId;
+	place.depth = m_nextDepth++;
+	place.characterId = clippedId;
+	place.clipDepth = 0;
+	m_outputFrame.back()->placeObject(place);
+
+	m_outputFrame.push_back(m_clippedFrame);
+
+	int32_t maskId = m_nextShapeId++;
+	m_maskFrame = new FlashFrame();
+	m_maskSprite = new FlashSprite(maskId, 1);
+	m_maskSprite->addFrame(m_maskFrame);
+	m_outputMovie->defineCharacter(maskId, m_maskSprite);
 	
-		// Place mask character onto output frame.
-		FlashFrame::PlaceObject place;
-		place.hasFlags = FlashFrame::PfHasCharacterId | FlashFrame::PfHasClipDepth;
-		place.depth = m_nextDepth++;
-		place.characterId = m_nextShapeId++;
-		place.clipDepth = 0;
-		m_outputFrame->placeObject(place);
-	
-		m_maskDepth = place.depth;
-	}
+	place.hasFlags = FlashFrame::PfHasCharacterId | FlashFrame::PfHasClipDepth;
+	place.depth = m_nextDepth++;
+	place.characterId = maskId;
+	place.clipDepth = 0;
+	m_outputFrame.back()->placeObject(place);
+
+	m_maskDepths.push(place.depth);
 }
 
 void MergeQueue::endMask()
 {
+	T_FATAL_ASSERT(m_maskFrame);
+
 	m_maskSprite = 0;
 	m_maskFrame = 0;
 	m_mergeShape = 0;
@@ -101,15 +118,23 @@ void MergeQueue::endMask()
 
 void MergeQueue::endClip()
 {
-	if (m_maskDepth >= 0)
-	{
-		FlashFrame::PlaceObject place = m_outputFrame->getPlaceObjects()[m_maskDepth];
-		T_FATAL_ASSERT (place.has(FlashFrame::PfHasClipDepth));
-		place.clipDepth = m_nextDepth++;
-		m_outputFrame->placeObject(place);
-		m_maskDepth = -1;
-		m_mergeShape = 0;
-	}
+	T_FATAL_ASSERT(!m_maskDepths.empty());
+	T_FATAL_ASSERT(!m_outputFrame.empty());
+
+	int32_t maskDepth = m_maskDepths.top();
+	m_maskDepths.pop();
+
+	FlashFrame::PlaceObject place = m_outputFrame.back()->getPlaceObjects()[maskDepth];
+	T_FATAL_ASSERT (place.has(FlashFrame::PfHasClipDepth));
+	place.clipDepth = m_nextDepth++;
+	m_outputFrame.back()->placeObject(place);
+
+	m_outputFrame.pop_back();
+	T_FATAL_ASSERT(!m_outputFrame.empty());
+
+	m_clippedSprite = 0;
+	m_clippedFrame = 0;
+	m_mergeShape = 0;
 }
 
 void MergeQueue::insertShape(const FlashShape* shape, const Matrix33& transform, const SwfCxTransform& cxform, uint8_t blendMode)
@@ -125,6 +150,9 @@ void MergeQueue::insertShape(const FlashShape* shape, const Matrix33& transform,
 	}
 	else
 	{
+		if (blendMode != m_lastBlendMode)
+			m_mergeShape = 0;
+
 		if (!m_mergeShape)
 		{
 			m_mergeShape = new FlashShape(m_nextShapeId++);
@@ -135,10 +163,11 @@ void MergeQueue::insertShape(const FlashShape* shape, const Matrix33& transform,
 			place.depth = m_nextDepth++;
 			place.characterId = m_mergeShape->getId();
 			place.blendMode = blendMode;
-			m_outputFrame->placeObject(place);
+			m_outputFrame.back()->placeObject(place);
 		}
 
 		m_mergeShape->merge(*shape, transform, cxform);
+		m_lastBlendMode = blendMode;
 	}
 }
 
