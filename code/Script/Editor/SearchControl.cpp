@@ -20,8 +20,9 @@ bool SearchControl::create(ui::Widget* parent)
 		return false;
 
 	m_editSearch = new ui::Edit();
-	m_editSearch->create(this, L"", ui::WsWantAllInput);
+	m_editSearch->create(this, L"", ui::WsBorder | ui::WsWantAllInput);
 	m_editSearch->addEventHandler< ui::KeyDownEvent >(this, &SearchControl::eventEditSearchKeyDown);
+	m_editSearch->addEventHandler< ui::ContentChangeEvent >(this, &SearchControl::eventEditChange);
 
 	m_toolBarMode = new ui::custom::ToolBar();
 	m_toolBarMode->create(this);
@@ -39,6 +40,11 @@ bool SearchControl::create(ui::Widget* parent)
 	m_toolBarMode->addItem(m_toolWildCard);
 
 	return true;
+}
+
+void SearchControl::setAnyMatchingHint(bool hint)
+{
+	m_editSearch->setBorderColor(!hint ? Color4ub(255, 0, 0, 255) : Color4ub(0, 0, 0, 0));
 }
 
 void SearchControl::setFocus()
@@ -70,10 +76,28 @@ void SearchControl::eventEditSearchKeyDown(ui::KeyDownEvent* event)
 				m_editSearch->getText(),
 				m_toolCaseSensitive->isToggled(),
 				m_toolWholeWord->isToggled(),
-				m_toolWildCard->isToggled()
+				m_toolWildCard->isToggled(),
+				false
 			);
 			raiseEvent(&searchEvent);
 		}
+	}
+}
+
+void SearchControl::eventEditChange(ui::ContentChangeEvent* event)
+{
+	setAnyMatchingHint(true);
+	if (!m_editSearch->getText().empty())
+	{
+		SearchEvent searchEvent(
+			this,
+			m_editSearch->getText(),
+			m_toolCaseSensitive->isToggled(),
+			m_toolWholeWord->isToggled(),
+			m_toolWildCard->isToggled(),
+			true
+		);
+		raiseEvent(&searchEvent);
 	}
 }
 

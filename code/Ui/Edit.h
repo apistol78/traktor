@@ -41,6 +41,8 @@ public:
 
 	void selectAll();
 
+	void setBorderColor(const Color4ub& borderColor);
+
 private:
 	Ref< EditValidator > m_validator;
 

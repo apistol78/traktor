@@ -18,7 +18,8 @@ public:
 		const std::wstring& search,
 		bool caseSensitive,
 		bool wholeWord,
-		bool wildCard
+		bool wildCard,
+		bool preview
 	);
 
 	const std::wstring& getSearch() const { return m_search; }
@@ -29,11 +30,14 @@ public:
 
 	bool getWildCard() const { return m_wildCard; }
 
+	bool isPreview() const { return m_preview; }
+
 private:
 	std::wstring m_search;
 	bool m_caseSensitive;
 	bool m_wholeWord;
 	bool m_wildCard;
+	bool m_preview;
 };
 
 	}

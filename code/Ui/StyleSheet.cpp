@@ -25,6 +25,8 @@ Ref< StyleSheet > StyleSheet::createDefault()
 
 	ss->setColor(L"traktor.ui.Edit", L"background-color", Color4ub(255, 255, 255));
 	ss->setColor(L"traktor.ui.Edit", L"background-color-disabled", Color4ub(239, 239, 242));
+	ss->setColor(L"traktor.ui.Edit", L"border-color", Color4ub(180, 180, 180));
+	ss->setColor(L"traktor.ui.Edit", L"border-color-disabled", Color4ub(180, 180, 180));
 
 	ss->setColor(L"traktor.ui.Dock", L"caption-background-color", Color4ub(0, 122, 204));
 	ss->setColor(L"traktor.ui.Dock", L"caption-color-focus", Color4ub(255, 255, 255));

@@ -71,6 +71,12 @@ void Edit::selectAll()
 	static_cast< IEdit* >(m_widget)->selectAll();
 }
 
+void Edit::setBorderColor(const Color4ub& borderColor)
+{
+	T_ASSERT (m_widget);
+	static_cast< IEdit* >(m_widget)->setBorderColor(borderColor);
+}
+
 void Edit::eventKey(KeyEvent* event)
 {
 	wchar_t ch = event->getCharacter();
