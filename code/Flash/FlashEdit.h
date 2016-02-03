@@ -43,6 +43,7 @@ public:
 		bool readOnly,
 		bool wordWrap,
 		bool multiLine,
+		bool password,
 		bool renderHtml
 	);
 
@@ -140,6 +141,12 @@ public:
 	 */
 	bool multiLine() const;
 
+	/*! \brief Password text field.
+	 *
+	 * \return True if password field.
+	 */
+	bool password() const;
+
 	/*! \brief Render HTML content.
 	 *
 	 * \return True if text is HTML.
@@ -163,6 +170,7 @@ private:
 	bool m_readOnly;
 	bool m_wordWrap;
 	bool m_multiLine;
+	bool m_password;
 	bool m_renderHtml;
 };
 
