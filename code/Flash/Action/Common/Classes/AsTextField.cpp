@@ -590,17 +590,12 @@ void AsTextField::TextField_set_parent(FlashEditInstance* self, FlashSpriteInsta
 
 bool AsTextField::TextField_get_password(FlashEditInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::get_password not implemented" << Endl;
-	)
-	return false;
+	return self->getPassword();
 }
 
 void AsTextField::TextField_set_password(FlashEditInstance* self, bool password) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_password not implemented" << Endl;
-	)
+	self->setPassword(password);
 }
 
 std::wstring AsTextField::TextField_get_quality(FlashEditInstance* self) const

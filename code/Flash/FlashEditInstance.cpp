@@ -135,6 +135,7 @@ FlashEditInstance::FlashEditInstance(ActionContext* context, FlashDictionary* di
 ,	m_align(edit->getAlign())
 ,	m_fontHeight(edit->getFontHeight())
 ,	m_html(false)
+,	m_password(edit->password())
 ,	m_caret(0)
 ,	m_scroll(0)
 ,	m_layout(new TextLayout())
@@ -267,6 +268,17 @@ int32_t FlashEditInstance::getCaret() const
 	return m_caret;
 }
 
+void FlashEditInstance::setPassword(bool password)
+{
+	m_password = password;
+	updateLayout();
+}
+
+bool FlashEditInstance::getPassword() const
+{
+	return m_password;
+}
+
 void FlashEditInstance::setScroll(int32_t scroll)
 {
 	m_scroll = scroll;
@@ -362,7 +374,7 @@ bool FlashEditInstance::internalParseText(const std::wstring& text)
 
 	m_layout->setBounds(adjustForGutter(m_textBounds));
 	m_layout->setLeading(m_edit->getLeading());
-	m_layout->setLetterSpacing(m_letterSpacing);
+	m_layout->setLetterSpacing(m_password ? 6 : m_letterSpacing);
 	m_layout->setFontHeight(m_fontHeight);
 	m_layout->setWordWrap(m_edit->wordWrap());
 	m_layout->setAlignment(m_align);
@@ -376,6 +388,11 @@ bool FlashEditInstance::internalParseText(const std::wstring& text)
 			m_layout->insertText(*i);
 			m_layout->newLine();
 		}
+	}
+	else if (m_password)
+	{
+		for (size_t i = 0; i < text.length(); ++i)
+			m_layout->insertText(L"•");
 	}
 	else
 		m_layout->insertText(text);

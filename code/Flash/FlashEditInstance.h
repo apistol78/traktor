@@ -62,6 +62,10 @@ public:
 
 	std::wstring getHtmlText() const;
 
+	void setPassword(bool password);
+
+	bool getPassword() const;
+
 	int32_t getCaret() const;
 
 	void setScroll(int32_t scroll);
@@ -89,6 +93,7 @@ private:
 	std::wstring m_text;
 	std::wstring m_htmlText;
 	bool m_html;
+	bool m_password;
 	int32_t m_caret;
 	int32_t m_scroll;
 	Ref< TextLayout > m_layout;

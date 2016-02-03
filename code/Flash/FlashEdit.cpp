@@ -25,6 +25,7 @@ FlashEdit::FlashEdit()
 ,	m_readOnly(true)
 ,	m_wordWrap(false)
 ,	m_multiLine(false)
+,	m_password(false)
 ,	m_renderHtml(false)
 {
 	m_textColor.red =
@@ -49,6 +50,7 @@ FlashEdit::FlashEdit(
 	bool readOnly,
 	bool wordWrap,
 	bool multiLine,
+	bool password,
 	bool renderHtml
 )
 :	FlashCharacter(id)
@@ -66,6 +68,7 @@ FlashEdit::FlashEdit(
 ,	m_readOnly(readOnly)
 ,	m_wordWrap(wordWrap)
 ,	m_multiLine(multiLine)
+,	m_password(password)
 ,	m_renderHtml(renderHtml)
 {
 }
@@ -153,6 +156,11 @@ bool FlashEdit::multiLine() const
 	return m_multiLine;
 }
 
+bool FlashEdit::password() const
+{
+	return m_password;
+}
+
 bool FlashEdit::renderHtml() const
 {
 	return m_renderHtml;
@@ -185,6 +193,7 @@ void FlashEdit::serialize(ISerializer& s)
 	s >> Member< bool >(L"readOnly", m_readOnly);
 	s >> Member< bool >(L"wordWrap", m_wordWrap);
 	s >> Member< bool >(L"multiLine", m_multiLine);
+	s >> Member< bool >(L"password", m_password);
 	s >> Member< bool >(L"renderHtml", m_renderHtml);
 }
 
