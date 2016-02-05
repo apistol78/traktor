@@ -392,7 +392,7 @@ bool FlashEditInstance::internalParseText(const std::wstring& text)
 	else if (m_password)
 	{
 		for (size_t i = 0; i < text.length(); ++i)
-			m_layout->insertText(L"•");
+			m_layout->insertText(L"\u2022");
 	}
 	else
 		m_layout->insertText(text);
