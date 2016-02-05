@@ -257,26 +257,39 @@ void ScriptDebuggerLua::removeListener(IListener* listener)
 		m_state = StRunning;
 }
 
-Ref< StackFrame > ScriptDebuggerLua::captureStackFrame(uint32_t depth)
+bool ScriptDebuggerLua::captureStackFrame(uint32_t depth, Ref< StackFrame >& outStackFrame)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	ScriptContextLua* currentContext = m_scriptManager->m_lockContext;
 	if (!currentContext)
-		return 0;
+		return false;
 
-	lua_Debug ar;
-	std::memset(&ar, 0, sizeof(ar));
-
+	lua_Debug ar = { 0 };
 	if (!lua_getstack(currentContext->m_luaState, depth, &ar))
-		return 0;
+		return false;
 
 	lua_getinfo(currentContext->m_luaState, "Snlu", &ar);
 
-	Ref< StackFrame > sf = new StackFrame();
-	sf->setScriptId(Guid(mbstows(ar.source)));
-	sf->setFunctionName(ar.name ? mbstows(ar.name) : L"(anonymous)");
-	sf->setLine(max(ar.currentline - 1, 0));
+	outStackFrame = new StackFrame();
+	outStackFrame->setScriptId(Guid(mbstows(ar.source)));
+	outStackFrame->setFunctionName(ar.name ? mbstows(ar.name) : L"(anonymous)");
+	outStackFrame->setLine(max(ar.currentline - 1, 0));
+
+	return true;
+}
+
+bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Local >& outLocals)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	ScriptContextLua* currentContext = m_scriptManager->m_lockContext;
+	if (!currentContext)
+		return false;
+
+	lua_Debug ar = { 0 };
+	if (!lua_getstack(currentContext->m_luaState, depth, &ar))
+		return false;
 
 	const char* localName;
 	for (int n = 1; (localName = lua_getlocal(currentContext->m_luaState, &ar, n)) != 0; ++n)
@@ -285,12 +298,12 @@ Ref< StackFrame > ScriptDebuggerLua::captureStackFrame(uint32_t depth)
 		{
 			Ref< Local > local = describeLocal(mbstows(localName), currentContext->m_luaState, -1, 0);
 			if (local)
-				sf->addLocal(local);
+				outLocals.push_back(local);
 		}
 		lua_pop(currentContext->m_luaState, 1);
 	}
 
-	return sf;
+	return true;
 }
 
 bool ScriptDebuggerLua::isRunning() const

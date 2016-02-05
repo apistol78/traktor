@@ -134,14 +134,15 @@ void ScriptDebuggerView::updateLocals(int32_t depth)
 	m_localsGrid->removeAllRows();
 	if (depth >= 0 && depth < m_stackFrames.size())
 	{
-		const StackFrame* sf = m_stackFrames[depth];
-		const RefArray< Local >& locals = sf->getLocals();
-
-		for (RefArray< script::Local >::const_iterator j = locals.begin(); j != locals.end(); ++j)
+		RefArray< Local > locals;
+		if (m_scriptDebugger->captureLocals(depth, locals))
 		{
-			Ref< ui::custom::GridRow > row = createVariableRow(*j);
-			if (row)
-				m_localsGrid->addRow(row);
+			for (RefArray< script::Local >::const_iterator j = locals.begin(); j != locals.end(); ++j)
+			{
+				Ref< ui::custom::GridRow > row = createVariableRow(*j);
+				if (row)
+					m_localsGrid->addRow(row);
+			}
 		}
 	}
 	m_localsGrid->update();
@@ -154,10 +155,11 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 		m_stackFrames.resize(0);
 		for (uint32_t depth = 0; ; ++depth)
 		{
-			Ref< StackFrame > sf = scriptDebugger->captureStackFrame(depth);
-			if (!sf)
+			Ref< StackFrame > sf;
+			if (!scriptDebugger->captureStackFrame(depth, sf))
 				break;
 
+			T_FATAL_ASSERT (sf);
 			m_stackFrames.push_back(sf);
 		}
 

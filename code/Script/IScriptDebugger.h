@@ -2,6 +2,7 @@
 #define traktor_script_IScriptDebugger_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,6 +20,7 @@ class Guid;
 	namespace script
 	{
 
+class Local;
 class StackFrame;
 
 /*! \brief Script debugger
@@ -40,7 +42,9 @@ public:
 
 	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
 
-	virtual Ref< StackFrame > captureStackFrame(uint32_t depth) = 0;
+	virtual bool captureStackFrame(uint32_t depth, Ref< StackFrame >& outStackFrame) = 0;
+
+	virtual bool captureLocals(uint32_t depth, RefArray< Local >& outLocals) = 0;
 
 	virtual bool isRunning() const = 0;
 

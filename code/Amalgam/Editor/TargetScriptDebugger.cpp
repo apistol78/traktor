@@ -1,5 +1,6 @@
 #include "Amalgam/ScriptDebuggerBreakpoint.h"
 #include "Amalgam/ScriptDebuggerControl.h"
+#include "Amalgam/ScriptDebuggerLocals.h"
 #include "Amalgam/ScriptDebuggerStateChange.h"
 #include "Amalgam/ScriptDebuggerStackFrame.h"
 #include "Amalgam/ScriptDebuggerStatus.h"
@@ -49,17 +50,32 @@ bool TargetScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNu
 	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
-Ref< script::StackFrame > TargetScriptDebugger::captureStackFrame(uint32_t depth)
+bool TargetScriptDebugger::captureStackFrame(uint32_t depth, Ref< script::StackFrame >& outStackFrame)
 {
-	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCapture, depth);
+	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureStack, depth);
 	if (!m_transport->send(&ctrl))
-		return 0;
+		return false;
 
 	Ref< ScriptDebuggerStackFrame > sf;
 	if (m_transport->recv< ScriptDebuggerStackFrame >(1000, sf) != net::BidirectionalObjectTransport::RtSuccess)
-		return 0;
+		return false;
 
-	return sf->getFrame();
+	outStackFrame = sf->getFrame();
+	return outStackFrame != 0;
+}
+
+bool TargetScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Local >& outLocals)
+{
+	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureLocals, depth);
+	if (!m_transport->send(&ctrl))
+		return false;
+
+	Ref< ScriptDebuggerLocals > l;
+	if (m_transport->recv< ScriptDebuggerLocals >(1000, l) != net::BidirectionalObjectTransport::RtSuccess)
+		return false;
+
+	outLocals = l->getLocals();
+	return true;
 }
 
 bool TargetScriptDebugger::isRunning() const

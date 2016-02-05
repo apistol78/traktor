@@ -31,7 +31,8 @@ public:
 		AcContinue = 2,
 		AcStepInto = 3,
 		AcStepOver = 4,
-		AcCapture = 5
+		AcCaptureStack = 5,
+		AcCaptureLocals = 6
 	};
 
 	ScriptDebuggerControl();

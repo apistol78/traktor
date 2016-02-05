@@ -1,8 +1,5 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberComposite.h"
-#include "Core/Serialization/MemberRefArray.h"
-#include "Script/Local.h"
 #include "Script/StackFrame.h"
 
 namespace traktor
@@ -47,27 +44,11 @@ uint32_t StackFrame::getLine() const
 	return m_line;
 }
 
-void StackFrame::setLocals(const RefArray< Local >& locals)
-{
-	m_locals = locals;
-}
-
-void StackFrame::addLocal(Local* local)
-{
-	m_locals.push_back(local);
-}
-
-const RefArray< Local >& StackFrame::getLocals() const
-{
-	return m_locals;
-}
-
 void StackFrame::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"scriptId", m_scriptId);
 	s >> Member< std::wstring >(L"functionName", m_functionName);
 	s >> Member< uint32_t >(L"line", m_line);
-	s >> MemberRefArray< Local >(L"locals", m_locals);
 }
 
 	}

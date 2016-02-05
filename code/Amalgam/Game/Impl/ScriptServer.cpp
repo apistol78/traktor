@@ -1,5 +1,6 @@
 #include "Amalgam/ScriptDebuggerBreakpoint.h"
 #include "Amalgam/ScriptDebuggerControl.h"
+#include "Amalgam/ScriptDebuggerLocals.h"
 #include "Amalgam/ScriptDebuggerStackFrame.h"
 #include "Amalgam/ScriptDebuggerStateChange.h"
 #include "Amalgam/ScriptDebuggerStatus.h"
@@ -242,11 +243,24 @@ void ScriptServer::threadDebugger()
 					}
 					break;
 
-				case ScriptDebuggerControl::AcCapture:
+				case ScriptDebuggerControl::AcCaptureStack:
 					{
-						Ref< script::StackFrame > sf = m_scriptDebugger->captureStackFrame(control->getParam());
+						Ref< script::StackFrame > sf;
+						if (!m_scriptDebugger->captureStackFrame(control->getParam(), sf))
+							sf = 0;
 						ScriptDebuggerStackFrame capturedFrame(sf);
 						m_transport->send(&capturedFrame);
+					}
+					break;
+
+				case ScriptDebuggerControl::AcCaptureLocals:
+					{
+						RefArray< script::Local > l;
+						if (m_scriptDebugger->captureLocals(control->getParam(), l))
+						{
+							ScriptDebuggerLocals capturedLocals(l);
+							m_transport->send(&capturedLocals);
+						}
 					}
 					break;
 				}
