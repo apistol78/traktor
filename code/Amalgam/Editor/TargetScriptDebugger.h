@@ -32,7 +32,9 @@ public:
 
 	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
-	virtual Ref< script::StackFrame > captureStackFrame(uint32_t depth) T_OVERRIDE T_FINAL;
+	virtual bool captureStackFrame(uint32_t depth, Ref< script::StackFrame >& outStackFrame) T_OVERRIDE T_FINAL;
+
+	virtual bool captureLocals(uint32_t depth, RefArray< script::Local >& outLocals) T_OVERRIDE T_FINAL;
 
 	virtual bool isRunning() const T_OVERRIDE T_FINAL;
 

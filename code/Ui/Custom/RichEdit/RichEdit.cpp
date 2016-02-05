@@ -1206,6 +1206,8 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 	// Formatted text.
 	{
+		bool showCaret = hasFocus();
+
 		canvas.setClipRect(Rect(
 			innerRc.left + m_lineMargin,
 			innerRc.top,
@@ -1228,7 +1230,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 				const Attribute& attrib = m_attributes[m_meta[j]];
 
 				// Draw caret.
-				if (m_caret == j)
+				if (showCaret && m_caret == j)
 				{
 					textRc.left = m_lineMargin + 2 + x - scaleBySystemDPI(1) - m_lineOffsetH;
 					textRc.right = textRc.left + scaleBySystemDPI(1);
@@ -1286,7 +1288,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 			}
 
 			// Special condition; caret at the very end of a line.
-			if (m_caret == line.stop)
+			if (showCaret && m_caret == line.stop)
 			{
 				textRc.left = m_lineMargin + 2 + x - scaleBySystemDPI(1);
 				textRc.right = textRc.left + scaleBySystemDPI(1);

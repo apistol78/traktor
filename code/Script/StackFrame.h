@@ -1,9 +1,7 @@
 #ifndef traktor_script_StackFrame_H
 #define traktor_script_StackFrame_H
 
-#include <list>
 #include "Core/Guid.h"
-#include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -18,8 +16,6 @@ namespace traktor
 {
 	namespace script
 	{
-
-class Local;
 
 /*! \brief Call stack debug information.
  * \ingroup Script
@@ -43,19 +39,12 @@ public:
 
 	uint32_t getLine() const;
 
-	void setLocals(const RefArray< Local >& locals);
-
-	void addLocal(Local* local);
-
-	const RefArray< Local >& getLocals() const;
-
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Guid m_scriptId;
 	std::wstring m_functionName;
 	uint32_t m_line;
-	RefArray< Local > m_locals;
 };
 
 	}

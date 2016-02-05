@@ -116,6 +116,10 @@ public:
 	 */
 	Matrix33 getFullTransform() const;
 
+	/*! \brief Transform between characters.
+	 */
+	Vector2 transformInto(const FlashCharacterInstance* other, const Vector2& pnt) const;
+
 	/*! \brief
 	 */
 	void setFilter(uint8_t filter);

@@ -257,11 +257,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 		deployTool.getExecutable() + L" migrate",
 		m_outputPath,
 		env,
-#if defined(_DEBUG)
-		false, false, false
-#else
 		true, true, false
-#endif
 	);
 	if (!process)
 	{

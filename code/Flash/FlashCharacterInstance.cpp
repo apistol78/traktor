@@ -118,6 +118,12 @@ Matrix33 FlashCharacterInstance::getFullTransform() const
 		return m_transform;
 }
 
+Vector2 FlashCharacterInstance::transformInto(const FlashCharacterInstance* other, const Vector2& pnt) const
+{
+	Vector2 glb = getFullTransform() * pnt;
+	return other->getFullTransform().inverse() * glb;
+}
+
 void FlashCharacterInstance::setFilter(uint8_t filter)
 {
 	m_filter = filter;

@@ -350,6 +350,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashCharacterInstance->addMethod("setTransform", &FlashCharacterInstance::setTransform);
 	classFlashCharacterInstance->addMethod("getTransform", &FlashCharacterInstance::getTransform);
 	classFlashCharacterInstance->addMethod("getFullTransform", &FlashCharacterInstance::getFullTransform);
+	classFlashCharacterInstance->addMethod("transformInto", &FlashCharacterInstance::transformInto);
 	classFlashCharacterInstance->addMethod("setVisible", &FlashCharacterInstance::setVisible);
 	classFlashCharacterInstance->addMethod("isVisible", &FlashCharacterInstance::isVisible);
 	classFlashCharacterInstance->addMethod("setEnabled", &FlashCharacterInstance::setEnabled);

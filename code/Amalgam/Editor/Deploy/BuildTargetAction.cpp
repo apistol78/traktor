@@ -302,11 +302,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		ss.str(),
 		m_outputPath,
 		env,
-#if defined(_DEBUG)
-		false, false, false
-#else
 		true, true, false
-#endif
 	);
 	if (!process)
 	{
