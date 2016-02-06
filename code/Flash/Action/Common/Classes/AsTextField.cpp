@@ -20,28 +20,13 @@ namespace traktor
 		namespace
 		{
 
-float polarAngle(float x, float y)
-{
-	if (x == 0.0f && y == 0.0f)
-		return 0.0f;
-	
-	float r = sqrtf(x * x + y * y);
-
-	if (x > 0.0f)
-		return asinf(y / r);
-	else
-		return -asinf(y / r) + PI;
-}
-
 void decomposeTransform(const Matrix33& transform, Vector2& outTranslate, Vector2& outScale, float& outRotation)
 {
 	outTranslate.x = transform.e13;
 	outTranslate.y = transform.e23;
-
 	outScale.x = Vector2(transform.e11, transform.e12).length();
 	outScale.y = Vector2(transform.e21, transform.e22).length();
-
-	outRotation = polarAngle(transform.e11, transform.e12);
+	outRotation = std::atan2(transform.e12, transform.e11);
 }
 
 Matrix33 composeTransform(const Vector2& translate_, const Vector2& scale_, float rotate_)
@@ -928,6 +913,7 @@ void AsTextField::TextField_set_y(FlashEditInstance* self, avm_number_t y) const
 	Vector2 T, S; float R;
 	decomposeTransform(self->getTransform(), T, S, R);
 	T.y = y * 20.0f;
+	self->setTransform(composeTransform(T, S, R));
 }
 
 avm_number_t AsTextField::TextField_get_ymouse(FlashEditInstance* self) const
