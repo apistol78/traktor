@@ -56,6 +56,14 @@ T_MATH_INLINE const Matrix33& Matrix33::identity()
 	return identity;
 }
 
+T_MATH_INLINE Matrix33 Matrix33::compose(const Vector2& translation, const Vector2& scal3, float rotation)
+{
+	return
+		translate(translation.x, translation.y) *
+		scale(scal3.x, scal3.y) *
+		rotate(rotation);
+}
+
 T_MATH_INLINE Vector4 Matrix33::diagonal() const
 {
 	return Vector4(e11, e22, e33, 0.0f);
@@ -96,6 +104,22 @@ T_MATH_INLINE Matrix33 Matrix33::inverse() const
 		s * -(e11 * e32 - e12 * e31),
 		s *  (e11 * e22 - e12 * e21)
 	);
+}
+
+T_MATH_INLINE void Matrix33::decompose(Vector2* outTranslation, Vector2* outScale, float* outRotation) const
+{
+	if (outTranslation)
+	{
+		outTranslation->x = e13;
+		outTranslation->y = e23;
+	}
+	if (outScale)
+	{
+		outScale->x = Vector2(e11, e12).length();
+		outScale->y = Vector2(e21, e22).length();
+	}
+	if (outRotation)
+		*outRotation = std::atan2(e12, e11);
 }
 
 T_MATH_INLINE Matrix33& Matrix33::operator = (const Matrix33& m_)

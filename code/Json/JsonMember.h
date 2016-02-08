@@ -28,7 +28,11 @@ public:
 
 	const std::wstring& getName() const { return m_name; }
 
+	void setValue(const Any& value) { m_value = value; }
+
 	const Any& getValue() const { return m_value; }
+
+	virtual bool write(OutputStream& os) const T_OVERRIDE;
 
 private:
 	std::wstring m_name;

@@ -17,27 +17,6 @@ namespace traktor
 {
 	namespace flash
 	{
-		namespace
-		{
-
-void decomposeTransform(const Matrix33& transform, Vector2& outTranslate, Vector2& outScale, float& outRotation)
-{
-	outTranslate.x = transform.e13;
-	outTranslate.y = transform.e23;
-	outScale.x = Vector2(transform.e11, transform.e12).length();
-	outScale.y = Vector2(transform.e21, transform.e22).length();
-	outRotation = std::atan2(transform.e12, transform.e11);
-}
-
-Matrix33 composeTransform(const Vector2& translate_, const Vector2& scale_, float rotate_)
-{
-	return
-		translate(translate_.x, translate_.y) *
-		scale(scale_.x, scale_.y) *
-		rotate(rotate_);
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField", AsTextField, ActionClass)
 
@@ -410,15 +389,12 @@ void AsTextField::TextField_set_gridFitType(FlashEditInstance* self, const std::
 
 avm_number_t AsTextField::TextField_get_height(FlashEditInstance* self) const
 {
-	Aabb2 bounds = self->getTextBounds();
-	return (bounds.mx.y - bounds.mn.y) / 20.0f;
+	return self->getHeight();
 }
 
 void AsTextField::TextField_set_height(FlashEditInstance* self, avm_number_t height) const
 {
-	Aabb2 bounds = self->getTextBounds();
-	bounds.mx.y = bounds.mn.y + height * 20.0f;
-	self->setTextBounds(bounds);
+	self->setHeight(height);
 }
 
 avm_number_t AsTextField::TextField_get_highquality(FlashEditInstance* self) const
@@ -615,17 +591,12 @@ void AsTextField::TextField_set_restrict(FlashEditInstance* self, const std::wst
 
 avm_number_t AsTextField::TextField_get_rotation(FlashEditInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::get_rotation not implemented" << Endl;
-	)
-	return 0;
+	return self->getRotation();
 }
 
 void AsTextField::TextField_set_rotation(FlashEditInstance* self, avm_number_t rotation) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_rotation not implemented" << Endl;
-	)
+	self->setRotation(rotation);
 }
 
 int32_t AsTextField::TextField_get_scroll(FlashEditInstance* self) const
@@ -767,12 +738,12 @@ void AsTextField::TextField_set_textColor(FlashEditInstance* self, avm_number_t 
 
 avm_number_t AsTextField::TextField_get_textWidth(FlashEditInstance* self) const
 {
-	return self->getTextLayout()->getWidth();
+	return self->getTextWidth();
 }
 
 avm_number_t AsTextField::TextField_get_textHeight(FlashEditInstance* self) const
 {
-	return self->getTextLayout()->getHeight();
+	return self->getTextHeight();
 }
 
 avm_number_t AsTextField::TextField_get_thickness(FlashEditInstance* self) const
@@ -840,15 +811,12 @@ void AsTextField::TextField_set_visible(FlashEditInstance* self, bool visible) c
 
 avm_number_t AsTextField::TextField_get_width(FlashEditInstance* self) const
 {
-	Aabb2 bounds = self->getTextBounds();
-	return (bounds.mx.x - bounds.mn.x) / 20.0f;
+	return self->getWidth();
 }
 
 void AsTextField::TextField_set_width(FlashEditInstance* self, avm_number_t width) const
 {
-	Aabb2 bounds = self->getTextBounds();
-	bounds.mx.x = bounds.mn.x + width * 20.0f;
-	self->setTextBounds(bounds);
+	self->setWidth(width);
 }
 
 bool AsTextField::TextField_get_wordWrap(FlashEditInstance* self) const
@@ -865,17 +833,12 @@ void AsTextField::TextField_set_wordWrap(FlashEditInstance* self, bool wordWrap)
 
 avm_number_t AsTextField::TextField_get_x(FlashEditInstance* self) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	return T.x / 20.0f;
+	return self->getX();
 }
 
 void AsTextField::TextField_set_x(FlashEditInstance* self, avm_number_t x) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	T.x = x * 20.0f;
-	self->setTransform(composeTransform(T, S, R));
+	self->setX(x);
 }
 
 avm_number_t AsTextField::TextField_get_xmouse(FlashEditInstance* self) const
@@ -888,32 +851,22 @@ avm_number_t AsTextField::TextField_get_xmouse(FlashEditInstance* self) const
 
 avm_number_t AsTextField::TextField_get_xscale(FlashEditInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::get_xscale not implemented" << Endl;
-	)
-	return 1;
+	return self->getXScale();
 }
 
 void AsTextField::TextField_set_xscale(FlashEditInstance* self, avm_number_t xscale) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_xscale not implemented" << Endl;
-	)
+	self->setXScale(xscale);
 }
 
 avm_number_t AsTextField::TextField_get_y(FlashEditInstance* self) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	return T.y / 20.0f;
+	return self->getY();
 }
 
 void AsTextField::TextField_set_y(FlashEditInstance* self, avm_number_t y) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	T.y = y * 20.0f;
-	self->setTransform(composeTransform(T, S, R));
+	self->setY(y);
 }
 
 avm_number_t AsTextField::TextField_get_ymouse(FlashEditInstance* self) const
@@ -926,17 +879,12 @@ avm_number_t AsTextField::TextField_get_ymouse(FlashEditInstance* self) const
 
 avm_number_t AsTextField::TextField_get_yscale(FlashEditInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::get_yscale not implemented" << Endl;
-	)
-	return 1;
+	return self->getYScale();
 }
 
 void AsTextField::TextField_set_yscale(FlashEditInstance* self, avm_number_t yscale) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_yscale not implemented" << Endl;
-	)
+	self->setYScale(yscale);
 }
 
 	}

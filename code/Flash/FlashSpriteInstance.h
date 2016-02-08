@@ -121,6 +121,51 @@ public:
 
 	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
 
+	/*! \group Convenience methods, commonly used by scripting. */
+	//@{
+
+	void setPosition(const Vector2& position);
+
+	Vector2 getPosition() const;
+
+	void setX(float x);
+
+	float getX() const;
+
+	void setY(float y);
+
+	float getY() const;
+
+	void setSize(const Vector2& size);
+
+	Vector2 getSize() const;
+
+	void setWidth(float width);
+
+	float getWidth() const;
+
+	void setHeight(float height);
+
+	float getHeight() const;
+
+	void setRotation(float rotation);
+
+	float getRotation() const;
+
+	void setScale(const Vector2& scale);
+
+	Vector2 getScale() const;
+
+	void setXScale(float xscale);
+
+	float getXScale() const;
+
+	void setYScale(float yscale);
+
+	float getYScale() const;
+
+	//@}
+
 protected:
 	virtual void trace(visitor_t visitor) const T_OVERRIDE T_FINAL;
 

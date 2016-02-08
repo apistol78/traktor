@@ -49,6 +49,8 @@ public:
 
 	static T_MATH_INLINE const Matrix33& identity();
 
+	static T_MATH_INLINE Matrix33 compose(const Vector2& translation, const Vector2& scale, float rotation);
+
 	T_MATH_INLINE Vector4 diagonal() const;
 
 	T_MATH_INLINE float determinant() const;
@@ -56,6 +58,8 @@ public:
 	T_MATH_INLINE Matrix33 transpose() const;
 
 	T_MATH_INLINE Matrix33 inverse() const;
+
+	T_MATH_INLINE void decompose(Vector2* outTranslation, Vector2* outScale, float* outRotation) const;
 
 	T_MATH_INLINE Matrix33& operator = (const Matrix33& m_);
 

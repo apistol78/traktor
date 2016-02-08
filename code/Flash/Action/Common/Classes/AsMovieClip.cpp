@@ -26,27 +26,6 @@ namespace traktor
 {
 	namespace flash
 	{
-		namespace
-		{
-
-void decomposeTransform(const Matrix33& transform, Vector2& outTranslate, Vector2& outScale, float& outRotation)
-{
-	outTranslate.x = transform.e13;
-	outTranslate.y = transform.e23;
-	outScale.x = Vector2(transform.e11, transform.e12).length();
-	outScale.y = Vector2(transform.e21, transform.e22).length();
-	outRotation = std::atan2(transform.e12, transform.e11);
-}
-
-Matrix33 composeTransform(const Vector2& translate_, const Vector2& scale_, float rotate_)
-{
-	return
-		translate(translate_.x, translate_.y) *
-		scale(scale_.x, scale_.y) *
-		rotate(rotate_);
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClip", AsMovieClip, ActionClass)
 
@@ -903,9 +882,9 @@ void AsMovieClip::MovieClip_get_focusEnabled(const FlashSpriteInstance* self) co
 
 void AsMovieClip::MovieClip_set_focusEnabled(FlashSpriteInstance* self) const
 {
-	//T_IF_VERBOSE(
-	//	log::warning << L"MovieClip::set_focusEnabled not implemented" << Endl;
-	//)
+	T_IF_VERBOSE(
+		log::warning << L"MovieClip::set_focusEnabled not implemented" << Endl;
+	)
 }
 
 void AsMovieClip::MovieClip_get_focusrect(const FlashSpriteInstance* self) const
@@ -943,21 +922,12 @@ int32_t AsMovieClip::MovieClip_get_framesloaded(const FlashSpriteInstance* self)
 
 float AsMovieClip::MovieClip_get_height(const FlashSpriteInstance* self) const
 {
-	Aabb2 bounds = self->getBounds();
-	return (bounds.mx.y - bounds.mn.y) / 20.0f;
+	return self->getHeight();
 }
 
 void AsMovieClip::MovieClip_set_height(FlashSpriteInstance* self, float height) const
 {
-	Aabb2 bounds = self->getLocalBounds();
-	float extent = (bounds.mx.y - bounds.mn.y) / 20.0f;
-	if (abs(extent) <= FUZZY_EPSILON)
-		return;
-
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	S.y = height / extent;
-	self->setTransform(composeTransform(T, S, R));
+	self->setHeight(height);
 }
 
 void AsMovieClip::MovieClip_get_highquality(const FlashSpriteInstance* self) const
@@ -1068,17 +1038,12 @@ void AsMovieClip::MovieClip_set_quality(FlashSpriteInstance* self, const std::st
 
 float AsMovieClip::MovieClip_get_rotation(const FlashSpriteInstance* self) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	return rad2deg(R);
+	return self->getRotation();
 }
 
 void AsMovieClip::MovieClip_set_rotation(FlashSpriteInstance* self, float rotation) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	R = deg2rad(rotation);
-	self->setTransform(composeTransform(T, S, R));
+	self->setRotation(rotation);
 }
 
 void AsMovieClip::MovieClip_get_scale9Grid(const FlashSpriteInstance* self) const
@@ -1146,9 +1111,9 @@ void AsMovieClip::MovieClip_get_tabEnabled(const FlashSpriteInstance* self) cons
 
 void AsMovieClip::MovieClip_set_tabEnabled(FlashSpriteInstance* self) const
 {
-	//T_IF_VERBOSE(
-	//	log::warning << L"MovieClip::set_tabEnabled not implemented" << Endl;
-	//)
+	T_IF_VERBOSE(
+		log::warning << L"MovieClip::set_tabEnabled not implemented" << Endl;
+	)
 }
 
 void AsMovieClip::MovieClip_get_tabIndex(const FlashSpriteInstance* self) const
@@ -1225,34 +1190,22 @@ void AsMovieClip::MovieClip_set_visible(FlashSpriteInstance* self, bool visible)
 
 float AsMovieClip::MovieClip_get_width(const FlashSpriteInstance* self) const
 {
-	Aabb2 bounds = self->getBounds();
-	return (bounds.mx.x - bounds.mn.x) / 20.0f;
+	return self->getWidth();
 }
 
 void AsMovieClip::MovieClip_set_width(FlashSpriteInstance* self, float width) const
 {
-	Aabb2 bounds = self->getLocalBounds();
-	float extent = (bounds.mx.x - bounds.mn.x) / 20.0f;
-	if (abs(extent) <= FUZZY_EPSILON)
-		return;
-
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	S.x = width / extent;
-	self->setTransform(composeTransform(T, S, R));
+	self->setWidth(width);
 }
 
 float AsMovieClip::MovieClip_get_x(const FlashSpriteInstance* self) const
 {
-	const Matrix33& m = self->getTransform();
-	return m.e13 / 20.0f;
+	return self->getX();
 }
 
 void AsMovieClip::MovieClip_set_x(FlashSpriteInstance* self, float x) const
 {
-	Matrix33 m = self->getTransform();
-	m.e13 = x * 20.0f;
-	self->setTransform(m);
+	self->setX(x);
 }
 
 int32_t AsMovieClip::MovieClip_get_xmouse(const FlashSpriteInstance* self) const
@@ -1262,30 +1215,22 @@ int32_t AsMovieClip::MovieClip_get_xmouse(const FlashSpriteInstance* self) const
 
 float AsMovieClip::MovieClip_get_xscale(const FlashSpriteInstance* self) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	return S.x * 100.0f;
+	return self->getXScale();
 }
 
 void AsMovieClip::MovieClip_set_xscale(FlashSpriteInstance* self, float x) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	S.x = x / 100.0f;
-	self->setTransform(composeTransform(T, S, R));
+	self->setXScale(x);
 }
 
 float AsMovieClip::MovieClip_get_y(const FlashSpriteInstance* self) const
 {
-	const Matrix33& m = self->getTransform();
-	return m.e23 / 20.0f;
+	return self->getY();
 }
 
 void AsMovieClip::MovieClip_set_y(FlashSpriteInstance* self, float y) const
 {
-	Matrix33 m = self->getTransform();
-	m.e23 = y * 20.0f;
-	self->setTransform(m);
+	self->setY(y);
 }
 
 int32_t AsMovieClip::MovieClip_get_ymouse(const FlashSpriteInstance* self) const
@@ -1295,17 +1240,12 @@ int32_t AsMovieClip::MovieClip_get_ymouse(const FlashSpriteInstance* self) const
 
 float AsMovieClip::MovieClip_get_yscale(const FlashSpriteInstance* self) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	return S.y * 100.0f;
+	return self->getYScale();
 }
 
 void AsMovieClip::MovieClip_set_yscale(FlashSpriteInstance* self, float y) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	S.y = y / 100.0f;
-	self->setTransform(composeTransform(T, S, R));
+	self->setYScale(y);
 }
 
 	}

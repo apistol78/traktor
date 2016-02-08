@@ -39,6 +39,8 @@ public:
 
 	const AlignedVector< Any >& get() const { return m_array; }
 
+	virtual bool write(OutputStream& os) const T_OVERRIDE;
+
 private:
 	AlignedVector< Any > m_array;
 };

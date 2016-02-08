@@ -203,20 +203,15 @@ const Aabb2& FlashEditInstance::getTextBounds() const
 	return m_textBounds;
 }
 
-const SwfColor& FlashEditInstance::getTextColor() const
-{
-	return m_textColor;
-}
-
 void FlashEditInstance::setTextColor(const SwfColor& textColor)
 {
 	m_textColor = textColor;
 	updateLayout();
 }
 
-float FlashEditInstance::getLetterSpacing() const
+const SwfColor& FlashEditInstance::getTextColor() const
 {
-	return m_letterSpacing;
+	return m_textColor;
 }
 
 void FlashEditInstance::setLetterSpacing(float letterSpacing)
@@ -225,14 +220,9 @@ void FlashEditInstance::setLetterSpacing(float letterSpacing)
 	updateLayout();
 }
 
-Ref< FlashTextFormat > FlashEditInstance::getTextFormat() const
+float FlashEditInstance::getLetterSpacing() const
 {
-	return new FlashTextFormat(m_letterSpacing, m_align, m_fontHeight);
-}
-
-Ref< FlashTextFormat > FlashEditInstance::getTextFormat(int32_t beginIndex, int32_t endIndex) const
-{
-	return new FlashTextFormat(m_letterSpacing, m_align, m_fontHeight);
+	return m_letterSpacing;
 }
 
 void FlashEditInstance::setTextFormat(const FlashTextFormat* textFormat)
@@ -243,12 +233,22 @@ void FlashEditInstance::setTextFormat(const FlashTextFormat* textFormat)
 	updateLayout();
 }
 
+Ref< FlashTextFormat > FlashEditInstance::getTextFormat() const
+{
+	return new FlashTextFormat(m_letterSpacing, m_align, m_fontHeight);
+}
+
 void FlashEditInstance::setTextFormat(const FlashTextFormat* textFormat, int32_t beginIndex, int32_t endIndex)
 {
 	m_letterSpacing = textFormat->getLetterSpacing();
 	m_align = textFormat->getAlign();
 	m_fontHeight = textFormat->getSize();
 	updateLayout();
+}
+
+Ref< FlashTextFormat > FlashEditInstance::getTextFormat(int32_t beginIndex, int32_t endIndex) const
+{
+	return new FlashTextFormat(m_letterSpacing, m_align, m_fontHeight);
 }
 
 std::wstring FlashEditInstance::getText() const
@@ -358,6 +358,167 @@ void FlashEditInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	}
 
 	FlashCharacterInstance::eventMouseDown(x, y, button);
+}
+
+void FlashEditInstance::setPosition(const Vector2& position)
+{
+	Matrix33 m = getTransform();
+	m.e13 = position.x * 20.0f;
+	m.e23 = position.y * 20.0f;
+	setTransform(m);
+}
+
+Vector2 FlashEditInstance::getPosition() const
+{
+	const Matrix33& m = getTransform();
+	return Vector2(m.e13 / 20.0f, m.e23 / 20.0f);
+}
+
+void FlashEditInstance::setX(float x)
+{
+	Matrix33 m = getTransform();
+	m.e13 = x * 20.0f;
+	setTransform(m);
+}
+
+float FlashEditInstance::getX() const
+{
+	const Matrix33& m = getTransform();
+	return m.e13 / 20.0f;
+}
+
+void FlashEditInstance::setY(float y)
+{
+	Matrix33 m = getTransform();
+	m.e23 = y * 20.0f;
+	setTransform(m);
+}
+
+float FlashEditInstance::getY() const
+{
+	const Matrix33& m = getTransform();
+	return m.e23 / 20.0f;
+}
+
+void FlashEditInstance::setSize(const Vector2& size)
+{
+	m_textBounds.mx.x = m_textBounds.mn.x + size.x * 20.0f;
+	m_textBounds.mx.y = m_textBounds.mn.y + size.y * 20.0f;
+}
+
+Vector2 FlashEditInstance::getSize() const
+{
+	return Vector2(
+		(m_textBounds.mx.x - m_textBounds.mn.x) / 20.0f,
+		(m_textBounds.mx.y - m_textBounds.mn.y) / 20.0f
+	);
+}
+
+void FlashEditInstance::setWidth(float width)
+{
+	m_textBounds.mx.x = m_textBounds.mn.x + width * 20.0f;
+}
+
+float FlashEditInstance::getWidth() const
+{
+	return (m_textBounds.mx.x - m_textBounds.mn.x) / 20.0f;
+}
+
+void FlashEditInstance::setHeight(float height)
+{
+	m_textBounds.mx.y = m_textBounds.mn.y + height * 20.0f;
+}
+
+float FlashEditInstance::getHeight() const
+{
+	return (m_textBounds.mx.y - m_textBounds.mn.y) / 20.0f;
+}
+
+void FlashEditInstance::setRotation(float rotation)
+{
+	Vector2 T, S;
+	float R;
+
+	getTransform().decompose(&T, &S, &R);
+	R = deg2rad(rotation);
+	setTransform(Matrix33::compose(T, S, R));
+}
+
+float FlashEditInstance::getRotation() const
+{
+	float R;
+	getTransform().decompose(0, 0, &R);
+	return rad2deg(R);
+}
+
+void FlashEditInstance::setScale(const Vector2& scale)
+{
+	Vector2 T, S;
+	float R;
+
+	getTransform().decompose(&T, &S, &R);
+	S.x = scale.x / 100.0f;
+	S.y = scale.y / 100.0f;
+	setTransform(Matrix33::compose(T, S, R));
+}
+
+Vector2 FlashEditInstance::getScale() const
+{
+	Vector2 S;
+	getTransform().decompose(0, &S, 0);
+	return Vector2(
+		S.x * 100.0f,
+		S.y * 100.0f
+	);
+}
+
+void FlashEditInstance::setXScale(float xscale)
+{
+	Vector2 T, S;
+	float R;
+
+	getTransform().decompose(&T, &S, &R);
+	S.x = xscale / 100.0f;
+	setTransform(Matrix33::compose(T, S, R));
+}
+
+float FlashEditInstance::getXScale() const
+{
+	Vector2 S;
+	getTransform().decompose(0, &S, 0);
+	return S.x * 100.0f;
+}
+
+void FlashEditInstance::setYScale(float yscale)
+{
+	Vector2 T, S;
+	float R;
+
+	getTransform().decompose(&T, &S, &R);
+	S.y = yscale / 100.0f;
+	setTransform(Matrix33::compose(T, S, R));
+}
+
+float FlashEditInstance::getYScale() const
+{
+	Vector2 S;
+	getTransform().decompose(0, &S, 0);
+	return S.y * 100.0f;
+}
+
+Vector2 FlashEditInstance::getTextSize() const
+{
+	return Vector2(m_layout->getWidth(), m_layout->getHeight());
+}
+
+float FlashEditInstance::getTextWidth() const
+{
+	return m_layout->getWidth();
+}
+
+float FlashEditInstance::getTextHeight() const
+{
+	return m_layout->getHeight();
 }
 
 bool FlashEditInstance::internalParseText(const std::wstring& text)

@@ -39,11 +39,15 @@ public:
 
 	JsonMember* getMember(const std::wstring& name);
 
+	void setMemberValue(const std::wstring& name, const Any& value);
+
 	Any getMemberValue(const std::wstring& name);
 
 	JsonMember* get(uint32_t index) { return m_members[index]; }
 
 	const RefArray< JsonMember >& get() const { return m_members; }
+
+	virtual bool write(OutputStream& os) const T_OVERRIDE;
 
 private:
 	RefArray< JsonMember > m_members;
