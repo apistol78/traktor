@@ -31,6 +31,10 @@ public:
 	bool loadFromStream(IStream* stream);
 	
 	bool loadFromText(const std::wstring& text);
+
+	bool saveToFile(const Path& fileName);
+
+	bool saveToStream(IStream* stream);
 };
 
 	}

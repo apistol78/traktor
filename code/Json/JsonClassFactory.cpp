@@ -56,12 +56,15 @@ void JsonClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classJsonDocument->addMethod("loadFromFile", &JsonDocument::loadFromFile);
 	classJsonDocument->addMethod("loadFromStream", &JsonDocument::loadFromStream);
 	classJsonDocument->addMethod("loadFromText", &JsonDocument::loadFromText);
+	classJsonDocument->addMethod("saveToFile", &JsonDocument::saveToFile);
+	classJsonDocument->addMethod("saveToStream", &JsonDocument::saveToStream);
 	registrar->registerClass(classJsonDocument);
 
 	Ref< AutoRuntimeClass< JsonMember > > classJsonMember = new AutoRuntimeClass< JsonMember >();
 	classJsonMember->addConstructor();
 	classJsonMember->addConstructor< const std::wstring&, const Any& >();
 	classJsonMember->addMethod("getName", &JsonMember::getName);
+	classJsonMember->addMethod("setValue", &JsonMember::setValue);
 	classJsonMember->addMethod("getValue", &JsonMember::getValue);
 	registrar->registerClass(classJsonMember);
 
@@ -73,6 +76,7 @@ void JsonClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classJsonObject->addMethod("back", &JsonObject::back);
 	classJsonObject->addMethod("size", &JsonObject::size);
 	classJsonObject->addMethod("getMember", &JsonObject::getMember);
+	classJsonObject->addMethod("setMemberValue", &JsonObject::setMemberValue);
 	classJsonObject->addMethod("getMemberValue", &JsonObject::getMemberValue);
 	classJsonObject->addMethod("get", &JsonObject_get_1);
 	classJsonObject->addMethod("get", &JsonObject_get_0);

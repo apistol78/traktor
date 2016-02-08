@@ -729,6 +729,185 @@ Aabb2 FlashSpriteInstance::getBounds() const
 	return getTransform() * getLocalBounds();
 }
 
+void FlashSpriteInstance::setPosition(const Vector2& position)
+{
+	Matrix33 m = getTransform();
+	m.e13 = position.x * 20.0f;
+	m.e23 = position.y * 20.0f;
+	setTransform(m);
+}
+
+Vector2 FlashSpriteInstance::getPosition() const
+{
+	const Matrix33& m = getTransform();
+	return Vector2(m.e13 / 20.0f, m.e23 / 20.0f);
+}
+
+void FlashSpriteInstance::setX(float x)
+{
+	Matrix33 m = getTransform();
+	m.e13 = x * 20.0f;
+	setTransform(m);
+}
+
+float FlashSpriteInstance::getX() const
+{
+	const Matrix33& m = getTransform();
+	return m.e13 / 20.0f;
+}
+
+void FlashSpriteInstance::setY(float y)
+{
+	Matrix33 m = getTransform();
+	m.e23 = y * 20.0f;
+	setTransform(m);
+}
+
+float FlashSpriteInstance::getY() const
+{
+	const Matrix33& m = getTransform();
+	return m.e23 / 20.0f;
+}
+
+void FlashSpriteInstance::setSize(const Vector2& size)
+{
+	Aabb2 bounds = getLocalBounds();
+	float extent = (bounds.mx.x - bounds.mn.x) / 20.0f;
+	if (abs(extent) > FUZZY_EPSILON)
+	{
+		Vector2 T, S;
+		float R;
+
+		getTransform().decompose(&T, &S, &R);
+		S.x = size.x / extent;
+		S.y = size.y / extent;
+		setTransform(Matrix33::compose(T, S, R));
+	}
+}
+
+Vector2 FlashSpriteInstance::getSize() const
+{
+	Aabb2 bounds = getBounds();
+	return Vector2(
+		(bounds.mx.x - bounds.mn.x) / 20.0f,
+		(bounds.mx.y - bounds.mn.y) / 20.0f
+	);
+}
+
+void FlashSpriteInstance::setWidth(float width)
+{
+	Aabb2 bounds = getLocalBounds();
+	float extent = (bounds.mx.x - bounds.mn.x) / 20.0f;
+	if (abs(extent) > FUZZY_EPSILON)
+	{
+		Vector2 T, S;
+		float R;
+
+		getTransform().decompose(&T, &S, &R);
+		S.x = width / extent;
+		setTransform(Matrix33::compose(T, S, R));
+	}
+}
+
+float FlashSpriteInstance::getWidth() const
+{
+	Aabb2 bounds = getBounds();
+	return (bounds.mx.x - bounds.mn.x) / 20.0f;
+}
+
+void FlashSpriteInstance::setHeight(float height)
+{
+	Aabb2 bounds = getLocalBounds();
+	float extent = (bounds.mx.y - bounds.mn.y) / 20.0f;
+	if (abs(extent) > FUZZY_EPSILON)
+	{
+		Vector2 T, S;
+		float R;
+
+		getTransform().decompose(&T, &S, &R);
+		S.y = height / extent;
+		setTransform(Matrix33::compose(T, S, R));
+	}
+}
+
+float FlashSpriteInstance::getHeight() const
+{
+	Aabb2 bounds = getBounds();
+	return (bounds.mx.y - bounds.mn.y) / 20.0f;
+}
+
+void FlashSpriteInstance::setRotation(float rotation)
+{
+	Vector2 T, S;
+	float R;
+
+	getTransform().decompose(&T, &S, &R);
+	R = deg2rad(rotation);
+	setTransform(Matrix33::compose(T, S, R));
+}
+
+float FlashSpriteInstance::getRotation() const
+{
+	float R;
+	getTransform().decompose(0, 0, &R);
+	return rad2deg(R);
+}
+
+void FlashSpriteInstance::setScale(const Vector2& scale)
+{
+	Vector2 T, S;
+	float R;
+
+	getTransform().decompose(&T, &S, &R);
+	S.x = scale.x / 100.0f;
+	S.y = scale.y / 100.0f;
+	setTransform(Matrix33::compose(T, S, R));
+}
+
+Vector2 FlashSpriteInstance::getScale() const
+{
+	Vector2 S;
+	getTransform().decompose(0, &S, 0);
+	return Vector2(
+		S.x * 100.0f,
+		S.y * 100.0f
+	);
+}
+
+void FlashSpriteInstance::setXScale(float xscale)
+{
+	Vector2 T, S;
+	float R;
+
+	getTransform().decompose(&T, &S, &R);
+	S.x = xscale / 100.0f;
+	setTransform(Matrix33::compose(T, S, R));
+}
+
+float FlashSpriteInstance::getXScale() const
+{
+	Vector2 S;
+	getTransform().decompose(0, &S, 0);
+	return S.x * 100.0f;
+}
+
+void FlashSpriteInstance::setYScale(float yscale)
+{
+	Vector2 T, S;
+	float R;
+
+	getTransform().decompose(&T, &S, &R);
+	S.y = yscale / 100.0f;
+	setTransform(Matrix33::compose(T, S, R));
+}
+
+float FlashSpriteInstance::getYScale() const
+{
+	Vector2 S;
+	getTransform().decompose(0, &S, 0);
+	return S.y * 100.0f;
+}
+
 void FlashSpriteInstance::trace(visitor_t visitor) const
 {
 	visitor(m_mask);

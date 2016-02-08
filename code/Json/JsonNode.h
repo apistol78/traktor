@@ -13,12 +13,18 @@
 
 namespace traktor
 {
+
+class OutputStream;
+
 	namespace json
 	{
 
 class T_DLLCLASS JsonNode : public Object
 {
 	T_RTTI_CLASS;
+
+public:
+	virtual bool write(OutputStream& os) const = 0;
 };
 
 	}

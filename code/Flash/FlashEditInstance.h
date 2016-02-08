@@ -42,21 +42,21 @@ public:
 
 	const Aabb2& getTextBounds() const;
 
-	const SwfColor& getTextColor() const;
-
 	void setTextColor(const SwfColor& textColor);
 
-	float getLetterSpacing() const;
+	const SwfColor& getTextColor() const;
 
 	void setLetterSpacing(float letterSpacing);
 
-	Ref< FlashTextFormat > getTextFormat() const;
-
-	Ref< FlashTextFormat > getTextFormat(int32_t beginIndex, int32_t endIndex) const;
+	float getLetterSpacing() const;
 
 	void setTextFormat(const FlashTextFormat* textFormat);
 
+	Ref< FlashTextFormat > getTextFormat() const;
+
 	void setTextFormat(const FlashTextFormat* textFormat, int32_t beginIndex, int32_t endIndex);
+
+	Ref< FlashTextFormat > getTextFormat(int32_t beginIndex, int32_t endIndex) const;
 
 	std::wstring getText() const;
 
@@ -81,6 +81,57 @@ public:
 	virtual void eventKey(wchar_t unicode) T_OVERRIDE T_FINAL;
 
 	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
+
+	/*! \group Convenience methods, commonly used by scripting. */
+	//@{
+
+	void setPosition(const Vector2& position);
+
+	Vector2 getPosition() const;
+
+	void setX(float x);
+
+	float getX() const;
+
+	void setY(float y);
+
+	float getY() const;
+
+	void setSize(const Vector2& size);
+
+	Vector2 getSize() const;
+
+	void setWidth(float width);
+
+	float getWidth() const;
+
+	void setHeight(float height);
+
+	float getHeight() const;
+
+	void setRotation(float rotation);
+
+	float getRotation() const;
+
+	void setScale(const Vector2& scale);
+
+	Vector2 getScale() const;
+
+	void setXScale(float xscale);
+
+	float getXScale() const;
+
+	void setYScale(float yscale);
+
+	float getYScale() const;
+
+	Vector2 getTextSize() const;
+
+	float getTextWidth() const;
+
+	float getTextHeight() const;
+
+	//@}
 
 private:
 	mutable Semaphore m_lock;

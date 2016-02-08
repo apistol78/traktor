@@ -2,6 +2,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Acquire.h"
@@ -33,12 +34,23 @@ Ref< ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instan
 	// First check if this object has already been read during this build.
 	std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
 	if (i != m_readCache.end())
+	{
+		T_FATAL_ASSERT (i->second);
 		return i->second;
+	}
 
 	// Get instance from database.
 	Ref< db::Instance > instance = m_database->getInstance(instanceGuid);
-	if (!instance || !instance->getLastModifyDate(lastModifyDate))
+	if (!instance)
+	{
+		log::error << L"PipelineInstanceCache::getObjectReadOnly failed; No such instance in database " << instanceGuid.format() << Endl;
 		return 0;
+	}
+	if (!instance->getLastModifyDate(lastModifyDate))
+	{
+		log::error << L"PipelineInstanceCache::getObjectReadOnly failed; Unable to get \"last modification data\" of instance " << instanceGuid.format() << Endl;
+		return 0;
+	}
 
 	// Generate cached instance filename.
 	std::wstring cachedFileName = instanceGuid.format();
@@ -67,10 +79,13 @@ Ref< ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instan
 
 	// Either the instance isn't cached yet or not up-to-date; read from database and write a shadow copy in cache.
 	Ref< ISerializable > object = instance->getObject();
-	m_readCache[instanceGuid] = object;
-
 	if (!object)
+	{
+		log::error << L"PipelineInstanceCache::getObjectReadOnly failed; Unable to read instance " << instanceGuid.format() << Endl;
 		return 0;
+	}
+
+	m_readCache[instanceGuid] = object;
 
 	stream = FileSystem::getInstance().open(cachedPathName, File::FmWrite);
 	if (stream)

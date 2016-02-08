@@ -1,6 +1,8 @@
 #include <rapidjson/reader.h>
+#include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Json/JsonArray.h"
 #include "Json/JsonDocument.h"
 #include "Json/JsonMember.h"
@@ -260,7 +262,6 @@ bool JsonDocument::loadFromStream(IStream* stream)
 		rapidjson::GenericReader< rapidjson::UTF8< >, rapidjson::UTF16< > > r;
 		r.Parse(ss, handler);
 	}
-
 	return true;
 }
 	
@@ -272,7 +273,6 @@ bool JsonDocument::loadFromText(const std::wstring& text)
 		true,
 		false
 	);
-
 	if (sizeof(wchar_t) == 4)
 	{
 		JsonStreamStream< rapidjson::UTF32< > > ss(&ms);
@@ -287,7 +287,61 @@ bool JsonDocument::loadFromText(const std::wstring& text)
 		rapidjson::GenericReader< rapidjson::UTF16< >, rapidjson::UTF16< > > r;
 		r.Parse(ss, handler);
 	}
+	return true;
+}
 
+bool JsonDocument::saveToFile(const Path& fileName)
+{
+	Ref< IStream > f = FileSystem::getInstance().open(fileName, File::FmWrite);
+	return f ? saveToStream(f) : false;
+}
+
+bool JsonDocument::saveToStream(IStream* stream)
+{
+	if (!stream->canWrite())
+		return false;
+
+	Utf8Encoding encoding;
+	FileOutputStream os(stream, &encoding);
+
+	for (AlignedVector< Any >::const_iterator i = get().begin(); i != get().end(); ++i)
+	{
+		if (i != get().begin())
+			os << L"," << Endl;
+
+		switch (i->getType())
+		{
+		case Any::AtVoid:
+			os << L"nil" << Endl;
+			break;
+
+		case Any::AtBoolean:
+			os << (i->getBooleanUnsafe() ? L"true" : L"false");
+			break;
+
+		case Any::AtInteger:
+			os << i->getIntegerUnsafe();
+			break;
+
+		case Any::AtFloat:
+			os << i->getFloatUnsafe();
+			break;
+
+		case Any::AtString:
+			os << L"\"" << i->getWideString() << L"\"";
+			break;
+
+		case Any::AtObject:
+			{
+				if (const JsonNode* node = dynamic_type_cast< const JsonNode* >(i->getObjectUnsafe()))
+					node->write(os);
+				else
+					os << L"nil" << Endl;
+			}
+			break;
+		}
+	}
+	os << Endl;
 	return true;
 }
 

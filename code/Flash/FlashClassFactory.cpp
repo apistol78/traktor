@@ -7,6 +7,7 @@
 #include "Flash/FlashCast.h"
 #include "Flash/FlashCharacter.h"
 #include "Flash/FlashClassFactory.h"
+#include "Flash/FlashEditInstance.h"
 #include "Flash/FlashFont.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
@@ -181,6 +182,11 @@ Any FlashShapeInstance_invoke(FlashShapeInstance* self, const std::string& metho
 }
 
 Any FlashSpriteInstance_invoke(FlashSpriteInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
+{
+	return ActionObjectRelay_invoke(self, methodName, argc, argv);
+}
+
+Any FlashEditInstance_invoke(FlashEditInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
 {
 	return ActionObjectRelay_invoke(self, methodName, argc, argv);
 }
@@ -410,8 +416,75 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashSpriteInstance->addMethod("getCanvas", &FlashSpriteInstance::getCanvas);
 	classFlashSpriteInstance->addMethod("getMouseX", &FlashSpriteInstance::getMouseX);
 	classFlashSpriteInstance->addMethod("getMouseY", &FlashSpriteInstance::getMouseY);
+	classFlashSpriteInstance->addMethod("setPosition", &FlashSpriteInstance::setPosition);
+	classFlashSpriteInstance->addMethod("getPosition", &FlashSpriteInstance::getPosition);
+	classFlashSpriteInstance->addMethod("setX", &FlashSpriteInstance::setX);
+	classFlashSpriteInstance->addMethod("getX", &FlashSpriteInstance::getX);
+	classFlashSpriteInstance->addMethod("setY", &FlashSpriteInstance::setY);
+	classFlashSpriteInstance->addMethod("getY", &FlashSpriteInstance::getY);
+	classFlashSpriteInstance->addMethod("setSize", &FlashSpriteInstance::setSize);
+	classFlashSpriteInstance->addMethod("getSize", &FlashSpriteInstance::getSize);
+	classFlashSpriteInstance->addMethod("setWidth", &FlashSpriteInstance::setWidth);
+	classFlashSpriteInstance->addMethod("getWidth", &FlashSpriteInstance::getWidth);
+	classFlashSpriteInstance->addMethod("setHeight", &FlashSpriteInstance::setHeight);
+	classFlashSpriteInstance->addMethod("getHeight", &FlashSpriteInstance::getHeight);
+	classFlashSpriteInstance->addMethod("setRotation", &FlashSpriteInstance::setRotation);
+	classFlashSpriteInstance->addMethod("getRotation", &FlashSpriteInstance::getRotation);
+	classFlashSpriteInstance->addMethod("setScale", &FlashSpriteInstance::setScale);
+	classFlashSpriteInstance->addMethod("getScale", &FlashSpriteInstance::getScale);
+	classFlashSpriteInstance->addMethod("setXScale", &FlashSpriteInstance::setXScale);
+	classFlashSpriteInstance->addMethod("getXScale", &FlashSpriteInstance::getXScale);
+	classFlashSpriteInstance->addMethod("setYScale", &FlashSpriteInstance::setYScale);
+	classFlashSpriteInstance->addMethod("getYScale", &FlashSpriteInstance::getYScale);
 	classFlashSpriteInstance->setUnknownHandler(&FlashSpriteInstance_invoke);
 	registrar->registerClass(classFlashSpriteInstance);
+
+	Ref< AutoRuntimeClass< FlashEditInstance > > classFlashEditInstance = new AutoRuntimeClass< FlashEditInstance >();
+	classFlashEditInstance->addMethod("parseText", &FlashEditInstance::parseText);
+	classFlashEditInstance->addMethod("parseHtml", &FlashEditInstance::parseHtml);
+	classFlashEditInstance->addMethod("setTextBounds", &FlashEditInstance::setTextBounds);
+	classFlashEditInstance->addMethod("getTextBounds", &FlashEditInstance::getTextBounds);
+	//classFlashEditInstance->addMethod("setTextColor", &FlashEditInstance::setTextColor);
+	//classFlashEditInstance->addMethod("getTextColor", &FlashEditInstance::getTextColor);
+	classFlashEditInstance->addMethod("setLetterSpacing", &FlashEditInstance::setLetterSpacing);
+	classFlashEditInstance->addMethod("getLetterSpacing", &FlashEditInstance::getLetterSpacing);
+	//classFlashEditInstance->addMethod("setTextFormat", &FlashEditInstance_setTextFormat_1);
+	//classFlashEditInstance->addMethod("getTextFormat", &FlashEditInstance_getTextFormat_0);
+	//classFlashEditInstance->addMethod("setTextFormat", &FlashEditInstance_setTextFormat_3);
+	//classFlashEditInstance->addMethod("getTextFormat", &FlashEditInstance_getTextFormat_2);
+	classFlashEditInstance->addMethod("getText", &FlashEditInstance::getText);
+	classFlashEditInstance->addMethod("getHtmlText", &FlashEditInstance::getHtmlText);
+	classFlashEditInstance->addMethod("setPassword", &FlashEditInstance::setPassword);
+	classFlashEditInstance->addMethod("getPassword", &FlashEditInstance::getPassword);
+	classFlashEditInstance->addMethod("getCaret", &FlashEditInstance::getCaret);
+	classFlashEditInstance->addMethod("setScroll", &FlashEditInstance::setScroll);
+	classFlashEditInstance->addMethod("getScroll", &FlashEditInstance::getScroll);
+	classFlashEditInstance->addMethod("getMaxScroll", &FlashEditInstance::getMaxScroll);
+	classFlashEditInstance->addMethod("setPosition", &FlashEditInstance::setPosition);
+	classFlashEditInstance->addMethod("getPosition", &FlashEditInstance::getPosition);
+	classFlashEditInstance->addMethod("setX", &FlashEditInstance::setX);
+	classFlashEditInstance->addMethod("getX", &FlashEditInstance::getX);
+	classFlashEditInstance->addMethod("setY", &FlashEditInstance::setY);
+	classFlashEditInstance->addMethod("getY", &FlashEditInstance::getY);
+	classFlashEditInstance->addMethod("setSize", &FlashEditInstance::setSize);
+	classFlashEditInstance->addMethod("getSize", &FlashEditInstance::getSize);
+	classFlashEditInstance->addMethod("setWidth", &FlashEditInstance::setWidth);
+	classFlashEditInstance->addMethod("getWidth", &FlashEditInstance::getWidth);
+	classFlashEditInstance->addMethod("setHeight", &FlashEditInstance::setHeight);
+	classFlashEditInstance->addMethod("getHeight", &FlashEditInstance::getHeight);
+	classFlashEditInstance->addMethod("setRotation", &FlashEditInstance::setRotation);
+	classFlashEditInstance->addMethod("getRotation", &FlashEditInstance::getRotation);
+	classFlashEditInstance->addMethod("setScale", &FlashEditInstance::setScale);
+	classFlashEditInstance->addMethod("getScale", &FlashEditInstance::getScale);
+	classFlashEditInstance->addMethod("setXScale", &FlashEditInstance::setXScale);
+	classFlashEditInstance->addMethod("getXScale", &FlashEditInstance::getXScale);
+	classFlashEditInstance->addMethod("setYScale", &FlashEditInstance::setYScale);
+	classFlashEditInstance->addMethod("getYScale", &FlashEditInstance::getYScale);
+	classFlashEditInstance->addMethod("getTextSize", &FlashEditInstance::getTextSize);
+	classFlashEditInstance->addMethod("getTextWidth", &FlashEditInstance::getTextWidth);
+	classFlashEditInstance->addMethod("getTextHeight", &FlashEditInstance::getTextHeight);
+	classFlashEditInstance->setUnknownHandler(&FlashEditInstance_invoke);
+	registrar->registerClass(classFlashEditInstance);
 
 	Ref< AutoRuntimeClass< FlashMovie > > classFlashMovie = new AutoRuntimeClass< FlashMovie >();
 	classFlashMovie->addMethod("defineFont", &FlashMovie::defineFont);
