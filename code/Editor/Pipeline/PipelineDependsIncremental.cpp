@@ -269,7 +269,10 @@ Ref< db::Database > PipelineDependsIncremental::getOutputDatabase() const
 
 Ref< const ISerializable > PipelineDependsIncremental::getObjectReadOnly(const Guid& instanceGuid)
 {
-	return m_instanceCache->getObjectReadOnly(instanceGuid);
+	if (instanceGuid.isNotNull())
+		return m_instanceCache->getObjectReadOnly(instanceGuid);
+	else
+		return 0;
 }
 
 void PipelineDependsIncremental::addUniqueDependency(

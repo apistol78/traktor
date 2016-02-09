@@ -71,7 +71,6 @@ bool LocalInstance::openTransaction()
 	}
 
 	m_transactionName.clear();
-
 	return true;
 }
 
@@ -87,8 +86,10 @@ bool LocalInstance::commitTransaction()
 		log::error << L"commitTransaction failed; commit failed" << Endl;
 		return false;
 	}
+	
 	if (!m_transactionName.empty())
-		m_instancePath = m_instancePath = m_instancePath.getPathOnly() + L"/" + m_transactionName;
+		m_instancePath = m_instancePath.getPathOnly() + L"/" + m_transactionName;
+
 	return true;
 }
 

@@ -324,7 +324,14 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 		{
 			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(renamed->getInstanceGuid());
 			if (i != m_instanceMap.end())
-				i->second->internalFlush();
+			{
+				Ref< Group > parent = i->second->getParent();
+				if (parent)
+					parent->internalFlushChildInstances();
+			}
+
+			m_instanceMap.clear();
+			buildInstanceMap(m_rootGroup, m_instanceMap);
 		}
 	}
 
