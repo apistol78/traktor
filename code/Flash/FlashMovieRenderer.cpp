@@ -217,17 +217,17 @@ void FlashMovieRenderer::renderSprite(
 		float sfy0 = h0 / (localBounds.mx.y - localBounds.mn.y);
 		float sfy1 = ((localBounds.mx.y - localBounds.mn.y) - h1) / (localBounds.mx.y - localBounds.mn.y);
 
-		Aabb2 sourceGrid[] =
+		Vector2 sourceGrid[][2] =
 		{
-			Aabb2(Vector2(0.0f, 0.0f), Vector2(sfx0, sfy0)),
-			Aabb2(Vector2(sfx0, 0.0f), Vector2(sfx1, sfy0)),
-			Aabb2(Vector2(sfx1, 0.0f), Vector2(1.0f, sfy0)),
-			Aabb2(Vector2(0.0f, sfy0), Vector2(sfx0, sfy1)),
-			Aabb2(Vector2(sfx0, sfy0), Vector2(sfx1, sfy1)),
-			Aabb2(Vector2(sfx1, sfy0), Vector2(1.0f, sfy1)),
-			Aabb2(Vector2(0.0f, sfy1), Vector2(sfx0, 1.0f)),
-			Aabb2(Vector2(sfx0, sfy1), Vector2(sfx1, 1.0f)),
-			Aabb2(Vector2(sfx1, sfy1), Vector2(1.0f, 1.0f))
+			{ Vector2(0.0f, 0.0f), Vector2(sfx0, sfy0) },
+			{ Vector2(sfx0, 0.0f), Vector2(sfx1, sfy0) },
+			{ Vector2(sfx1, 0.0f), Vector2(1.0f, sfy0) },
+			{ Vector2(0.0f, sfy0), Vector2(sfx0, sfy1) },
+			{ Vector2(sfx0, sfy0), Vector2(sfx1, sfy1) },
+			{ Vector2(sfx1, sfy0), Vector2(1.0f, sfy1) },
+			{ Vector2(0.0f, sfy1), Vector2(sfx0, 1.0f) },
+			{ Vector2(sfx0, sfy1), Vector2(sfx1, 1.0f) },
+			{ Vector2(sfx1, sfy1), Vector2(1.0f, 1.0f) }
 		};
 
 		float dfx0 = w0 / (globalBounds.mx.x - globalBounds.mn.x);
@@ -235,36 +235,36 @@ void FlashMovieRenderer::renderSprite(
 		float dfy0 = h0 / (globalBounds.mx.y - globalBounds.mn.y);
 		float dfy1 = ((globalBounds.mx.y - globalBounds.mn.y) - h1) / (globalBounds.mx.y - globalBounds.mn.y);
 
-		Aabb2 destinationGrid[] =
+		Vector2 destinationGrid[][2] =
 		{
-			Aabb2(Vector2(0.0f, 0.0f), Vector2(dfx0, dfy0)),
-			Aabb2(Vector2(dfx0, 0.0f), Vector2(dfx1, dfy0)),
-			Aabb2(Vector2(dfx1, 0.0f), Vector2(1.0f, dfy0)),
-			Aabb2(Vector2(0.0f, dfy0), Vector2(dfx0, dfy1)),
-			Aabb2(Vector2(dfx0, dfy0), Vector2(dfx1, dfy1)),
-			Aabb2(Vector2(dfx1, dfy0), Vector2(1.0f, dfy1)),
-			Aabb2(Vector2(0.0f, dfy1), Vector2(dfx0, 1.0f)),
-			Aabb2(Vector2(dfx0, dfy1), Vector2(dfx1, 1.0f)),
-			Aabb2(Vector2(dfx1, dfy1), Vector2(1.0f, 1.0f))
+			{ Vector2(0.0f, 0.0f), Vector2(dfx0, dfy0) },
+			{ Vector2(dfx0, 0.0f), Vector2(dfx1, dfy0) },
+			{ Vector2(dfx1, 0.0f), Vector2(1.0f, dfy0) },
+			{ Vector2(0.0f, dfy0), Vector2(dfx0, dfy1) },
+			{ Vector2(dfx0, dfy0), Vector2(dfx1, dfy1) },
+			{ Vector2(dfx1, dfy0), Vector2(1.0f, dfy1) },
+			{ Vector2(0.0f, dfy1), Vector2(dfx0, 1.0f) },
+			{ Vector2(dfx0, dfy1), Vector2(dfx1, 1.0f) },
+			{ Vector2(dfx1, dfy1), Vector2(1.0f, 1.0f) }
 		};
 
 		for (int32_t i = 0; i < sizeof_array(destinationGrid); ++i)
 		{
 			Aabb2 sourceBounds(
-				lerp(localBounds.mn, localBounds.mx, sourceGrid[i].mn),
-				lerp(localBounds.mn, localBounds.mx, sourceGrid[i].mx)
+				lerp(localBounds.mn, localBounds.mx, sourceGrid[i][0]),
+				lerp(localBounds.mn, localBounds.mx, sourceGrid[i][1])
 			);
 
 			Aabb2 destinationBounds(
-				lerp(localBounds.mn, localBounds.mx, destinationGrid[i].mn),
-				lerp(localBounds.mn, localBounds.mx, destinationGrid[i].mx)
+				lerp(localBounds.mn, localBounds.mx, destinationGrid[i][0]),
+				lerp(localBounds.mn, localBounds.mx, destinationGrid[i][1])
 			);
 
 			// Calculate local scale transformation.
 			Matrix33 Ts = scale((destinationBounds.mx - destinationBounds.mn) / (sourceBounds.mx - sourceBounds.mn));
-			Matrix33 Tt0 = translate(sourceBounds.mn);
+			Matrix33 Tt0Inv = translate(-sourceBounds.mn);
 			Matrix33 Tt1 = translate(destinationBounds.mn);
-			Matrix33 T = Tt1 * Ts * Tt0.inverse();
+			Matrix33 T = transform * Tt1 * Ts * Tt0Inv;
 
 			// Increment stencil mask.
 			m_displayRenderer->beginMask(true);
@@ -284,7 +284,7 @@ void FlashMovieRenderer::renderSprite(
 				{
 					renderCharacter(
 						layer.instance,
-						transform * T,
+						T,
 						cxTransform,
 						spriteInstance->getBlendMode()
 					);
@@ -296,7 +296,7 @@ void FlashMovieRenderer::renderSprite(
 					m_displayRenderer->beginMask(true);
 					renderCharacter(
 						layer.instance,
-						transform,
+						T,
 						cxTransform,
 						SbmDefault
 					);
@@ -314,7 +314,7 @@ void FlashMovieRenderer::renderSprite(
 
 						renderCharacter(
 							clippedLayer.instance,
-							transform,
+							T,
 							cxTransform,
 							spriteInstance->getBlendMode()
 						);
@@ -324,7 +324,7 @@ void FlashMovieRenderer::renderSprite(
 					m_displayRenderer->beginMask(false);
 					renderCharacter(
 						layer.instance,
-						transform,
+						T,
 						cxTransform,
 						SbmDefault
 					);
@@ -365,10 +365,51 @@ void FlashMovieRenderer::renderCharacter(
 	FlashDictionary* dictionary = characterInstance->getDictionary();
 	T_ASSERT (dictionary);
 
-	// Render basic shapes.
-	FlashShapeInstance* shapeInstance = dynamic_type_cast< FlashShapeInstance* >(characterInstance);
-	if (shapeInstance)
+	const TypeInfo& characterType = type_of(characterInstance);
+
+	// Render sprites.
+	if (&characterType == &type_of< FlashSpriteInstance >())
 	{
+		FlashSpriteInstance* spriteInstance = static_cast< FlashSpriteInstance* >(characterInstance);
+
+		FlashSpriteInstance* maskInstance = spriteInstance->getMask();
+		if (maskInstance)
+		{
+			m_displayRenderer->beginMask(true);
+			renderSprite(
+				maskInstance,
+				transform * maskInstance->getTransform(),
+				maskInstance->getColorTransform(),
+				true
+			);
+			m_displayRenderer->endMask();
+		}
+
+		renderSprite(
+			spriteInstance,
+			transform * spriteInstance->getTransform(),
+			cxTransform2,
+			false
+		);
+
+		if (maskInstance)
+		{
+			m_displayRenderer->beginMask(false);
+			renderSprite(
+				maskInstance,
+				transform * maskInstance->getTransform(),
+				maskInstance->getColorTransform(),
+				true
+			);
+			m_displayRenderer->endMask();
+		}
+		return;
+	}
+
+	// Render basic shapes.
+	if (&characterType == &type_of< FlashShapeInstance >())
+	{
+		FlashShapeInstance* shapeInstance = static_cast< FlashShapeInstance* >(characterInstance);
 		m_displayRenderer->renderShape(
 			*dictionary,
 			transform * shapeInstance->getTransform(),
@@ -380,9 +421,9 @@ void FlashMovieRenderer::renderCharacter(
 	}
 
 	// Render morph shapes.
-	FlashMorphShapeInstance* morphInstance = dynamic_type_cast< FlashMorphShapeInstance* >(characterInstance);
-	if (morphInstance)
+	if (&characterType == &type_of< FlashMorphShapeInstance >())
 	{
+		FlashMorphShapeInstance* morphInstance = static_cast< FlashMorphShapeInstance* >(characterInstance);
 		m_displayRenderer->renderMorphShape(
 			*dictionary,
 			transform * morphInstance->getTransform(),
@@ -393,14 +434,13 @@ void FlashMovieRenderer::renderCharacter(
 	}
 
 	// Render static texts.
-	FlashTextInstance* textInstance = dynamic_type_cast< FlashTextInstance* >(characterInstance);
-	if (textInstance)
+	if (&characterType == &type_of< FlashTextInstance >())
 	{
+		FlashTextInstance* textInstance = static_cast< FlashTextInstance* >(characterInstance);
 		if (!textInstance->isVisible())
 			return;
 
 		const FlashText* text = textInstance->getText();
-
 		Matrix33 textTransform = transform * textInstance->getTransform() * text->getTextMatrix();
 
 		const AlignedVector< FlashText::Character >& characters = text->getCharacters();
@@ -437,9 +477,9 @@ void FlashMovieRenderer::renderCharacter(
 	}
 
 	// Render dynamic texts.
-	FlashEditInstance* editInstance = dynamic_type_cast< FlashEditInstance* >(characterInstance);
-	if (editInstance)
+	if (&characterType == &type_of< FlashEditInstance >())
 	{
+		FlashEditInstance* editInstance = static_cast< FlashEditInstance* >(characterInstance);
 		if (!editInstance->isVisible())
 			return;
 
@@ -547,9 +587,9 @@ void FlashMovieRenderer::renderCharacter(
 	}
 
 	// Render buttons.
-	FlashButtonInstance* buttonInstance = dynamic_type_cast< FlashButtonInstance* >(characterInstance);
-	if (buttonInstance)
+	if (&characterType == &type_of< FlashButtonInstance >())
 	{
+		FlashButtonInstance* buttonInstance = static_cast< FlashButtonInstance* >(characterInstance);
 		const FlashButton* button = buttonInstance->getButton();
 
 		Matrix33 buttonTransform = transform * buttonInstance->getTransform();
@@ -572,49 +612,6 @@ void FlashMovieRenderer::renderCharacter(
 				cxTransform2,
 				buttonInstance->getBlendMode()
 			);
-		}
-
-		return;
-	}
-
-	// Render sprites.
-	FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance);
-	if (spriteInstance)
-	{
-		FlashSpriteInstance* maskInstance = spriteInstance->getMask();
-		if (maskInstance)
-		{
-			m_displayRenderer->beginMask(true);
-
-			renderSprite(
-				maskInstance,
-				transform * maskInstance->getTransform(),
-				maskInstance->getColorTransform(),
-				true
-			);
-
-			m_displayRenderer->endMask();
-		}
-
-		renderSprite(
-			spriteInstance,
-			transform * spriteInstance->getTransform(),
-			cxTransform2,
-			false
-		);
-
-		if (maskInstance)
-		{
-			m_displayRenderer->beginMask(false);
-
-			renderSprite(
-				maskInstance,
-				transform * maskInstance->getTransform(),
-				maskInstance->getColorTransform(),
-				true
-			);
-
-			m_displayRenderer->endMask();
 		}
 
 		return;

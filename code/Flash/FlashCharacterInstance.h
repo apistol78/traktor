@@ -50,19 +50,19 @@ public:
 	 *
 	 * \return ActionScript context.
 	 */
-	ActionContext* getContext() const;
+	ActionContext* getContext() const { return m_context; }
 
 	/*! \brief Get dictionary.
 	 *
 	 * \return Dictionary.
 	 */
-	FlashDictionary* getDictionary() const;
+	FlashDictionary* getDictionary() const { return m_dictionary; }
 
 	/*! \brief Get parent instance.
 	 *
 	 * \return Parent instance.
 	 */
-	FlashCharacterInstance* getParent() const;
+	FlashCharacterInstance* getParent() const { return m_parent; }
 
 	/*! \brief Set instance name.
 	 *

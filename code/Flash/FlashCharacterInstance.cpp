@@ -70,21 +70,6 @@ void FlashCharacterInstance::destroy()
 	ActionObjectRelay::dereference();
 }
 
-ActionContext* FlashCharacterInstance::getContext() const
-{
-	return m_context;
-}
-
-FlashDictionary* FlashCharacterInstance::getDictionary() const
-{
-	return m_dictionary;
-}
-
-FlashCharacterInstance* FlashCharacterInstance::getParent() const
-{
-	return m_parent;
-}
-
 void FlashCharacterInstance::setName(const std::string& name)
 {
 	m_name = name;
