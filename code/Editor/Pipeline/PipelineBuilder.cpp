@@ -519,7 +519,10 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 
 Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
 {
-	return m_instanceCache->getObjectReadOnly(instanceGuid);
+	if (instanceGuid.isNotNull())
+		return m_instanceCache->getObjectReadOnly(instanceGuid);
+	else
+		return 0;
 }
 
 Ref< IStream > PipelineBuilder::openFile(const Path& basePath, const std::wstring& fileName)

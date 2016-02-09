@@ -172,7 +172,10 @@ Ref< db::Database > PipelineDependsParallel::getOutputDatabase() const
 
 Ref< const ISerializable > PipelineDependsParallel::getObjectReadOnly(const Guid& instanceGuid)
 {
-	return m_instanceCache->getObjectReadOnly(instanceGuid);
+	if (instanceGuid.isNotNull())
+		return m_instanceCache->getObjectReadOnly(instanceGuid);
+	else
+		return 0;
 }
 
 Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(

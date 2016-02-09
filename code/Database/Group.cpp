@@ -246,6 +246,26 @@ void Group::internalDestroy()
 	m_childInstances.resize(0);
 }
 
+bool Group::internalFlushChildInstances()
+{
+	m_childInstances.resize(0);
+
+	RefArray< IProviderInstance > providerChildInstances;
+	m_providerGroup->getChildInstances(providerChildInstances);
+
+	m_childInstances.reserve(providerChildInstances.size());
+	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
+	{
+		Ref< Instance > childInstance = new Instance(this);
+		if (!childInstance->internalCreateExisting(*i, this))
+			return false;
+
+		m_childInstances.push_back(childInstance);
+	}
+
+	return true;
+}
+
 bool Group::internalAddExtGroup(const std::wstring& groupName)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
