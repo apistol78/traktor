@@ -16,18 +16,14 @@ local systemRoot = Path(environment:get("DEPLOY_SYSTEM_ROOT")):getPathName()
 
 local files = environment:get("DEPLOY_FILES"):split(" ")
 
-local wholeLinkFilesRelease = ""
-local externalLinkFilesRelease = ""
-local wholeLinkFilesDebug = ""
-local externalLinkFilesDebug = ""
+local wholeLinkFiles = ""
+local externalLinkFiles = ""
 
 for _, f in ipairs(files) do
   if f:starts("libExtern") then
-    externalLinkFilesRelease = externalLinkFilesRelease .. ";" .. f:sub(4, #f - 2)
-    externalLinkFilesDebug = externalLinkFilesDebug .. ";" .. f:sub(4, #f - 2) .. "_d"
+    externalLinkFiles = externalLinkFiles .. ";" .. f:sub(4, #f - 2)
   else
-    wholeLinkFilesRelease = wholeLinkFilesRelease .. ";" .. f:sub(4, #f - 2)
-    wholeLinkFilesDebug = wholeLinkFilesDebug .. ";" .. f:sub(4, #f - 2) .. "_d"
+    wholeLinkFiles = wholeLinkFiles .. ";" .. f:sub(4, #f - 2)
   end
 end
 
@@ -75,7 +71,7 @@ end
       <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>android;EGL;GLESv2;OpenSLES<!-- output:print(wholeLinkFilesDebug .. wholeLinkFilesDebug .. externalLinkFilesDebug) --!></AdditionalDependencies>
+      <AdditionalDependencies>android;EGL;GLESv2;OpenSLES<!-- output:print(wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles) --!></AdditionalDependencies>
       <AdditionalLibraryDirectories><!-- output:print(systemRoot) --!>\bin\latest\android\debugstatic</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -85,7 +81,7 @@ end
       <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>android;EGL;GLESv2;OpenSLES<!-- output:print(wholeLinkFilesRelease .. wholeLinkFilesRelease .. externalLinkFilesRelease) --!></AdditionalDependencies>
+      <AdditionalDependencies>android;EGL;GLESv2;OpenSLES<!-- output:print(wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles) --!></AdditionalDependencies>
       <AdditionalLibraryDirectories><!-- output:print(systemRoot) --!>\bin\latest\android\releasestatic</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

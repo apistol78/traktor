@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashCanvas.h"

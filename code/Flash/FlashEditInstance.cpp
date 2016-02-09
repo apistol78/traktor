@@ -1,4 +1,5 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
