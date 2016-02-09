@@ -1,8 +1,6 @@
 #ifndef traktor_flash_FlashEditInstance_H
 #define traktor_flash_FlashEditInstance_H
 
-#include <list>
-#include "Core/Thread/Semaphore.h"
 #include "Flash/FlashCharacterInstance.h"
 
 // import/export mechanism.
@@ -32,7 +30,7 @@ class T_DLLCLASS FlashEditInstance : public FlashCharacterInstance
 public:
 	FlashEditInstance(ActionContext* context, FlashDictionary* dictionary, FlashCharacterInstance* parent, const FlashEdit* edit, const std::wstring& html);
 
-	const FlashEdit* getEdit() const;
+	const FlashEdit* getEdit() const { return m_edit; }
 
 	bool parseText(const std::wstring& text);
 
@@ -40,15 +38,15 @@ public:
 
 	void setTextBounds(const Aabb2& textBounds);
 
-	const Aabb2& getTextBounds() const;
+	const Aabb2& getTextBounds() const { return m_textBounds; }
 
 	void setTextColor(const SwfColor& textColor);
 
-	const SwfColor& getTextColor() const;
+	const SwfColor& getTextColor() const { return m_textColor; }
 
 	void setLetterSpacing(float letterSpacing);
 
-	float getLetterSpacing() const;
+	float getLetterSpacing() const { return m_letterSpacing; }
 
 	void setTextFormat(const FlashTextFormat* textFormat);
 
@@ -58,23 +56,23 @@ public:
 
 	Ref< FlashTextFormat > getTextFormat(int32_t beginIndex, int32_t endIndex) const;
 
-	std::wstring getText() const;
+	const std::wstring& getText() const { return m_text; }
 
-	std::wstring getHtmlText() const;
+	const std::wstring& getHtmlText() const;
 
 	void setPassword(bool password);
 
-	bool getPassword() const;
+	bool getPassword() const { return m_password; }
 
-	int32_t getCaret() const;
+	int32_t getCaret() const { return m_caret; }
 
 	void setScroll(int32_t scroll);
 
-	int32_t getScroll() const;
+	int32_t getScroll() const { return m_scroll; }
 
 	int32_t getMaxScroll() const;
 
-	const TextLayout* getTextLayout() const;
+	const TextLayout* getTextLayout() const { return m_layout; }
 
 	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
 
@@ -134,7 +132,6 @@ public:
 	//@}
 
 private:
-	mutable Semaphore m_lock;
 	Ref< const FlashEdit > m_edit;
 	Aabb2 m_textBounds;
 	SwfColor m_textColor;

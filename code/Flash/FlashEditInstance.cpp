@@ -3,7 +3,6 @@
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
-#include "Core/Thread/Acquire.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
@@ -147,11 +146,6 @@ FlashEditInstance::FlashEditInstance(ActionContext* context, FlashDictionary* di
 		parseText(html);
 }
 
-const FlashEdit* FlashEditInstance::getEdit() const
-{
-	return m_edit;
-}
-
 bool FlashEditInstance::parseText(const std::wstring& text)
 {
 	if (!internalParseText(text))
@@ -199,31 +193,16 @@ void FlashEditInstance::setTextBounds(const Aabb2& textBounds)
 	m_textBounds = textBounds;
 }
 
-const Aabb2& FlashEditInstance::getTextBounds() const
-{
-	return m_textBounds;
-}
-
 void FlashEditInstance::setTextColor(const SwfColor& textColor)
 {
 	m_textColor = textColor;
 	updateLayout();
 }
 
-const SwfColor& FlashEditInstance::getTextColor() const
-{
-	return m_textColor;
-}
-
 void FlashEditInstance::setLetterSpacing(float letterSpacing)
 {
 	m_letterSpacing = letterSpacing;
 	updateLayout();
-}
-
-float FlashEditInstance::getLetterSpacing() const
-{
-	return m_letterSpacing;
 }
 
 void FlashEditInstance::setTextFormat(const FlashTextFormat* textFormat)
@@ -252,21 +231,9 @@ Ref< FlashTextFormat > FlashEditInstance::getTextFormat(int32_t beginIndex, int3
 	return new FlashTextFormat(m_letterSpacing, m_align, m_fontHeight);
 }
 
-std::wstring FlashEditInstance::getText() const
+const std::wstring& FlashEditInstance::getHtmlText() const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	return m_text;
-}
-
-std::wstring FlashEditInstance::getHtmlText() const
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	return m_html ? m_htmlText : m_text;
-}
-
-int32_t FlashEditInstance::getCaret() const
-{
-	return m_caret;
 }
 
 void FlashEditInstance::setPassword(bool password)
@@ -275,19 +242,9 @@ void FlashEditInstance::setPassword(bool password)
 	updateLayout();
 }
 
-bool FlashEditInstance::getPassword() const
-{
-	return m_password;
-}
-
 void FlashEditInstance::setScroll(int32_t scroll)
 {
 	m_scroll = scroll;
-}
-
-int32_t FlashEditInstance::getScroll() const
-{
-	return m_scroll;
 }
 
 int32_t FlashEditInstance::getMaxScroll() const
@@ -306,12 +263,6 @@ int32_t FlashEditInstance::getMaxScroll() const
 		return 0;
 }
 
-const TextLayout* FlashEditInstance::getTextLayout() const
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	return m_layout;
-}
-
 Aabb2 FlashEditInstance::getBounds() const
 {
 	return getTransform() * m_textBounds;
@@ -324,8 +275,6 @@ void FlashEditInstance::eventKey(wchar_t unicode)
 
 	if (unicode == L'\n' || unicode == L'\r' || unicode == L'\t')
 		return;
-
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (m_html)
 		m_text = L"";
@@ -524,8 +473,6 @@ float FlashEditInstance::getTextHeight() const
 
 bool FlashEditInstance::internalParseText(const std::wstring& text)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	
 	const FlashDictionary* dictionary = getDictionary();
 	T_ASSERT (dictionary);
 
@@ -574,8 +521,6 @@ bool FlashEditInstance::internalParseHtml(const std::wstring& html)
 	html::Document document(false);
 	if (!document.loadFromText(html))
 		return false;
-
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	const FlashDictionary* dictionary = getDictionary();
 	T_ASSERT (dictionary);
