@@ -449,9 +449,11 @@ void FlashMovieRenderer::renderCharacter(
 		const TextLayout* layout = editInstance->getTextLayout();
 		T_ASSERT (layout);
 
+#if !defined(__ANDROID__)
 		m_displayRenderer->beginMask(true);
 		m_displayRenderer->renderQuad(editTransform, textBounds, c_cxWhite);
 		m_displayRenderer->endMask();
+#endif
 
 		const AlignedVector< TextLayout::Line >& lines = layout->getLines();
 		const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();
@@ -463,7 +465,7 @@ void FlashMovieRenderer::renderCharacter(
 		bool showCaret = bool((int32_t(s_timer.getElapsedTime() * 2.0f) & 1) == 0);
 		
 		int32_t caret = editInstance->getCaret();
-		Aabb2 caretBounds(Vector2(0.0f, 0.0f), Vector2(100.0f, layout->getFontHeight()));
+		Aabb2 caretBounds(Vector2::zero(), Vector2(100.0f, layout->getFontHeight()));
 		float caretEndPosition = 0.0f;
 		float textOffsetX = 0.0f;
 		float textOffsetY = -(layout->getFontHeight() + layout->getLeading()) * editInstance->getScroll();
@@ -536,10 +538,11 @@ void FlashMovieRenderer::renderCharacter(
 				);
 		}
 
+#if !defined(__ANDROID__)
 		m_displayRenderer->beginMask(false);
 		m_displayRenderer->renderQuad(editTransform, textBounds, c_cxWhite);
 		m_displayRenderer->endMask();
-
+#endif
 		return;
 	}
 

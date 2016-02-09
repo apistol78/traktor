@@ -29,7 +29,7 @@ wchar_t StringReader::readChar()
 
 	T_ASSERT (m_count > 0);
 
-	int result = m_encoding->translate(m_buffer, m_count, ch);
+	int32_t result = m_encoding->translate(m_buffer, m_count, ch);
 	if (result <= 0)
 		return 0;
 
@@ -41,33 +41,33 @@ wchar_t StringReader::readChar()
 
 int StringReader::readLine(std::wstring& out)
 {
+	std::vector< wchar_t > buf;
 	wchar_t ch;
-
-	out = L"";
 
 	for (;;)
 	{
 		if (m_count < sizeof(m_buffer))
 		{
-			int result = -1;
-			
+			int32_t result = -1;
 			if (m_stream)
 			{
 				result = m_stream->read(&m_buffer[m_count], sizeof(m_buffer) - m_count);
 				if (result < 0)
 					m_stream = 0;
 			}
-
 			if (result > 0)
 				m_count += result;
-			else if (m_count <= 0 && out.empty())
+			else if (m_count <= 0 && buf.empty())
+			{
+				out.clear();
 				return -1;
+			}
 		}
 		
 		if (m_count <= 0)
 			break;
 
-		int result = m_encoding->translate(m_buffer, m_count, ch);
+		int32_t result = m_encoding->translate(m_buffer, m_count, ch);
 		if (result <= 0)
 			break;
 
@@ -77,9 +77,10 @@ int StringReader::readLine(std::wstring& out)
 		if (ch == L'\n')
 			break;
 		else if (ch != L'\r')
-			out += ch;
+			buf.push_back(ch);
 	}
 
+	out = std::wstring(buf.begin(), buf.end());
 	return int(out.length());
 }
 

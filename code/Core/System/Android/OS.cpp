@@ -7,6 +7,7 @@
 #include <pwd.h>
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
@@ -33,7 +34,21 @@ OS& OS::getInstance()
 
 uint32_t OS::getCPUCoreCount() const
 {
-	return 4;
+	char possible[1024] = { '\0' };
+	FILE* fp = fopen("/sys/devices/system/cpu/possible", "r");
+	if (fp)
+	{
+		fgets(possible, sizeof(possible), fp);
+		fclose(fp);
+
+		char* p = strchr(possible, '-');
+		if (p)
+		{
+			uint32_t count = parseString< uint32_t >(p + 1);
+			return clamp< uint32_t >(count, 1, 16);
+		}
+	}
+	return 1;
 }
 
 Path OS::getExecutable() const

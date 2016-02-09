@@ -74,6 +74,10 @@ void displayKeyboard(ANativeActivity* activity, bool pShow)
 
 int getUnicodeChar(ANativeActivity* activity, int eventType, int keyCode, int metaState)
 {
+	// \hack Intercept backspace keycode.
+	if (keyCode == 67)
+		return L'\b';
+
 	JavaVM* javaVM = activity->vm;
 	JNIEnv* jniEnv = activity->env;
 
@@ -230,10 +234,13 @@ void KeyboardDeviceAndroid::handleInput(AInputEvent* event)
 		ke.character = ch;
 		m_keyEvents.push_back(ke);
 
-		ke.type = KtCharacter;
-		ke.keyCode = key;
-		ke.character = ch;
-		m_keyEvents.push_back(ke);
+		if (ch)
+		{
+			ke.type = KtCharacter;
+			ke.keyCode = key;
+			ke.character = ch;
+			m_keyEvents.push_back(ke);
+		}
 	}
 	else if (action == AKEY_EVENT_ACTION_UP)
 	{
