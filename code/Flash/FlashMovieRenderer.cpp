@@ -75,10 +75,6 @@ void FlashMovieRenderer::renderFrame(
 {
 	const SwfColor& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
 
-	// Clear states for this frame.
-	int32_t curr = (m_count + 1) & 1;
-	m_states[curr].reset();
-
 	Aabb2 dirtyRegion;
 	calculateDirtyRegion(
 		movieInstance,
@@ -105,8 +101,6 @@ void FlashMovieRenderer::renderFrame(
 	);
 
 	m_displayRenderer->end();
-
-	++m_count;
 }
 
 void FlashMovieRenderer::renderSprite(
@@ -624,8 +618,9 @@ void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterI
 	T_ASSERT (context);
 
 	bool instanceVisible = characterInstance->isVisible() && visible;
-	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
+	if (&type_of(characterInstance) == &type_of< FlashSpriteInstance >())
 	{
+		FlashSpriteInstance* spriteInstance = static_cast< FlashSpriteInstance* >(characterInstance);
 		FlashDictionary* dictionary = spriteInstance->getDictionary();
 		T_ASSERT (dictionary);
 
@@ -652,37 +647,33 @@ void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterI
 	}
 	else
 	{
-		Aabb2 bounds = transform * characterInstance->getBounds();
-		
-		int32_t last = m_count & 1;
-		int32_t curr = (m_count + 1) & 1;
-
-		State& s = m_states[curr][characterInstance->getCacheTag()];
-
-		// Copy state from last frame.
-		SmallMap< int32_t, State >::const_iterator i = m_states[last].find(characterInstance->getCacheTag());
-		if (i != m_states[last].end())
-			s = i->second;
+		State* s = static_cast< State* >(characterInstance->getCacheObject());
+		if (!s)
+		{
+			s = new State();
+			characterInstance->setCacheObject(s);
+		}
 
 		// Compare state and add to dirty region if mismatch.
-		if (s.visible != instanceVisible)
+		Aabb2 bounds = transform * characterInstance->getBounds();
+		if (s->visible != instanceVisible)
 		{
-			if (s.visible)
+			if (s->visible)
 			{
-				outDirtyRegion.contain(s.bounds);
-				s.visible = false;
+				outDirtyRegion.contain(s->bounds);
+				s->visible = false;
 			}
 			else
 			{
 				outDirtyRegion.contain(bounds);
-				s.visible = true;
+				s->visible = true;
 			}
 		}
-		else if (instanceVisible && s.bounds != bounds)
+		else if (instanceVisible && s->bounds != bounds)
 		{
-			outDirtyRegion.contain(s.bounds);
+			outDirtyRegion.contain(s->bounds);
 			outDirtyRegion.contain(bounds);
-			s.bounds = bounds;
+			s->bounds = bounds;
 		}
 	}
 }

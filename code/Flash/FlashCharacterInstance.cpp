@@ -24,7 +24,7 @@ FlashCharacterInstance::FlashCharacterInstance(
 ,	m_context(context)
 ,	m_dictionary(dictionary)
 ,	m_parent(parent)
-,	m_tag(allocateCacheTag())
+,	m_cacheTag(allocateCacheTag())
 ,	m_visible(true)
 ,	m_enabled(true)
 ,	m_filter(0)
@@ -78,6 +78,11 @@ void FlashCharacterInstance::setName(const std::string& name)
 const std::string& FlashCharacterInstance::getName() const
 {
 	return m_name;
+}
+
+void FlashCharacterInstance::setCacheObject(IRefCount* cacheObject)
+{
+	m_cacheObject = cacheObject;
 }
 
 std::string FlashCharacterInstance::getTarget() const
@@ -335,7 +340,7 @@ bool FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const Action
 
 void FlashCharacterInstance::renewCacheTag()
 {
-	m_tag = allocateCacheTag();
+	m_cacheTag = allocateCacheTag();
 }
 
 void FlashCharacterInstance::trace(visitor_t visitor) const
