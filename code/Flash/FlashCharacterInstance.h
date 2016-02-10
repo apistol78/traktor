@@ -78,7 +78,15 @@ public:
 
 	/*! \brief Get unique cache key.
 	 */
-	int32_t getCacheTag() const { return m_tag; }
+	int32_t getCacheTag() const { return m_cacheTag; }
+
+	/*! \brief Set cache object.
+	 */
+	void setCacheObject(IRefCount* cacheObject);
+
+	/*! \brief Set cache object.
+	 */
+	IRefCount* getCacheObject() { return m_cacheObject; }
 
 	/*! \brief Get instance target path.
 	 *
@@ -239,7 +247,8 @@ private:
 	Ref< FlashDictionary > m_dictionary;
 	FlashCharacterInstance* m_parent;
 	std::string m_name;
-	int32_t m_tag;
+	int32_t m_cacheTag;
+	Ref< IRefCount > m_cacheObject;
 	bool m_visible;
 	bool m_enabled;
 	SwfCxTransform m_cxform;

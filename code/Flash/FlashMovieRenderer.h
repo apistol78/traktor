@@ -46,7 +46,7 @@ public:
 	);
 
 private:
-	struct State
+	struct State : public RefCountImpl< IRefCount >
 	{
 		Aabb2 bounds;
 		bool visible;
@@ -58,8 +58,6 @@ private:
 	};
 
 	Ref< IDisplayRenderer > m_displayRenderer;
-	SmallMap< int32_t, State > m_states[2];
-	int32_t m_count;
 
 	void renderSprite(
 		FlashSpriteInstance* spriteInstance,
