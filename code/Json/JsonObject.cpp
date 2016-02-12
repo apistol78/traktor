@@ -1,4 +1,7 @@
 #include "Core/Io/OutputStream.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
+#include "Json/JsonArray.h"
 #include "Json/JsonMember.h"
 #include "Json/JsonObject.h"
 
@@ -18,7 +21,7 @@ void JsonObject::push(JsonMember* member)
 	m_members.push_back(member);
 }
 
-JsonMember* JsonObject::getMember(const std::wstring& name)
+JsonMember* JsonObject::getMember(const std::wstring& name) const
 {
 	for (RefArray< JsonMember >::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
 	{
@@ -37,10 +40,38 @@ void JsonObject::setMemberValue(const std::wstring& name, const Any& value)
 		push(new JsonMember(name, value));
 }
 
-Any JsonObject::getMemberValue(const std::wstring& name)
+Any JsonObject::getMemberValue(const std::wstring& name) const
 {
-	JsonMember* member = getMember(name);
+	const JsonMember* member = getMember(name);
 	return member ? member->getValue() : Any();
+}
+
+Any JsonObject::getValue(const std::wstring& path) const
+{
+	Any iter = Any::fromObject(const_cast< JsonObject* >(this));
+
+	StringSplit< std::wstring > s(path, L".");
+	for (StringSplit< std::wstring >::const_iterator i = s.begin(); i != s.end(); ++i)
+	{
+		if (JsonObject* nodeObject = dynamic_type_cast< JsonObject* >(iter.getObject()))
+		{
+			JsonMember* member = nodeObject->getMember(*i);
+			if (member)
+				iter = member->getValue();
+			else
+				return Any();
+		}
+		else if (JsonArray* nodeArray = dynamic_type_cast< JsonArray* >(iter.getObject()))
+		{
+			uint32_t index = parseString< int32_t >(*i, ~0U);
+			if (index >= 0 && index < nodeArray->size())
+				iter = nodeArray->get(index);
+			else
+				return Any();
+		}
+	}
+
+	return iter;
 }
 
 bool JsonObject::write(OutputStream& os) const

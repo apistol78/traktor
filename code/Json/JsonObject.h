@@ -37,11 +37,13 @@ public:
 
 	uint32_t size() const { return uint32_t(m_members.size()); }
 
-	JsonMember* getMember(const std::wstring& name);
+	JsonMember* getMember(const std::wstring& name) const;
 
 	void setMemberValue(const std::wstring& name, const Any& value);
 
-	Any getMemberValue(const std::wstring& name);
+	Any getMemberValue(const std::wstring& name) const;
+
+	Any getValue(const std::wstring& path) const;
 
 	JsonMember* get(uint32_t index) { return m_members[index]; }
 

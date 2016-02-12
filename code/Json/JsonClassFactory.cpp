@@ -78,6 +78,7 @@ void JsonClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classJsonObject->addMethod("getMember", &JsonObject::getMember);
 	classJsonObject->addMethod("setMemberValue", &JsonObject::setMemberValue);
 	classJsonObject->addMethod("getMemberValue", &JsonObject::getMemberValue);
+	classJsonObject->addMethod("getValue", &JsonObject::getValue);
 	classJsonObject->addMethod("get", &JsonObject_get_1);
 	classJsonObject->addMethod("get", &JsonObject_get_0);
 	registrar->registerClass(classJsonObject);
