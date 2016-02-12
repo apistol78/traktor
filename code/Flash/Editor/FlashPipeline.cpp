@@ -21,6 +21,7 @@
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashOptimizer.h"
+#include "Flash/FlashShape.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Editor/FlashEmptyMovieAsset.h"
@@ -95,7 +96,7 @@ bool FlashPipeline::buildDependencies(
 ) const
 {
 	if (const FlashMovieAsset* movieAsset = dynamic_type_cast< const FlashMovieAsset* >(sourceAsset))
-		pipelineDepends->addDependency(Path(m_assetPath), movieAsset->getFileName().getOriginal());
+		pipelineDepends->addDependency(traktor::Path(m_assetPath), movieAsset->getFileName().getOriginal());
 	pipelineDepends->addDependency(c_idFlashShaderAssets, editor::PdfBuild | editor::PdfResource);	// Solid
 	return true;
 }
@@ -118,19 +119,49 @@ bool FlashPipeline::buildOutput(
 
 	if (const FlashMovieAsset* movieAsset = dynamic_type_cast< const FlashMovieAsset* >(sourceAsset))
 	{
-		Ref< IStream > sourceStream = pipelineBuilder->openFile(Path(m_assetPath), movieAsset->getFileName().getOriginal());
+		Ref< IStream > sourceStream = pipelineBuilder->openFile(traktor::Path(m_assetPath), movieAsset->getFileName().getOriginal());
 		if (!sourceStream)
 		{
 			log::error << L"Failed to import Flash; unable to open file \"" << movieAsset->getFileName().getOriginal() << L"\"" << Endl;
 			return false;
 		}
 
-		Ref< SwfReader > swf = new SwfReader(sourceStream);
-		movie = FlashMovieFactory(true).createMovie(swf);
-		if (!movie)
+		// Try to load image and embedd into a movie first, if extension
+		// not supported then this fail quickly.
+		Ref< drawing::Image > image = drawing::Image::load(sourceStream, movieAsset->getFileName().getExtension());
+		if (image)
 		{
-			log::error << L"Failed to import Flash; unable to parse SWF" << Endl;
-			return false;
+			// Create a single frame and place shape.
+			Ref< FlashFrame > frame = new FlashFrame();
+			
+			FlashFrame::PlaceObject p;
+			p.hasFlags = FlashFrame::PfHasCharacterId;
+			p.depth = 0;
+			p.characterId = 1;
+			frame->placeObject(p);
+
+			// Create sprite and add frame.
+			Ref< FlashSprite > sprite = new FlashSprite();
+			sprite->addFrame(frame);
+
+			// Create quad shape and fill with bitmap.
+			Ref< FlashShape > shape = new FlashShape();
+			shape->create(1, image->getWidth() * 20, image->getHeight() * 20);
+
+			// Setup dictionary.
+			movie = new FlashMovie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20, image->getHeight() * 20)), sprite);
+			movie->defineBitmap(1, new FlashBitmapData(image));
+			movie->defineCharacter(1, shape);
+		}
+		else
+		{
+			Ref< SwfReader > swf = new SwfReader(sourceStream);
+			movie = FlashMovieFactory(true).createMovie(swf);
+			if (!movie)
+			{
+				log::error << L"Failed to import Flash; unable to parse SWF" << Endl;
+				return false;
+			}
 		}
 
 		safeClose(sourceStream);
@@ -356,7 +387,7 @@ bool FlashPipeline::buildOutput(
 				output->m_scaleHeight = atlasImage->getHeight() / m_textureSizeDenom;
 			}
 
-			std::wstring bitmapOutputPath = Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
+			std::wstring bitmapOutputPath = traktor::Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
 			if (!pipelineBuilder->buildOutput(
 				output,
 				bitmapOutputPath,
@@ -441,7 +472,7 @@ bool FlashPipeline::buildOutput(
 			output->m_scaleHeight = bitmapImage->getHeight() / m_textureSizeDenom;
 		}
 
-		std::wstring bitmapOutputPath = Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
+		std::wstring bitmapOutputPath = traktor::Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
 		if (!pipelineBuilder->buildOutput(
 			output,
 			bitmapOutputPath,
