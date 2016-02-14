@@ -677,12 +677,15 @@ void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent(ActionContext::IdOnMouseMove, ActionValue());
 
 	// Roll over and out event handling.
-	Aabb2 bounds = getVisibleLocalBounds();
-	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
-	if (inside != m_inside)
+	if (haveScriptEvent(ActionContext::IdOnRollOut))
 	{
-		if (!inside)
-			executeScriptEvent(ActionContext::IdOnRollOut, ActionValue());
+		Aabb2 bounds = getVisibleLocalBounds();
+		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
+		if (inside != m_inside)
+		{
+			if (!inside)
+				executeScriptEvent(ActionContext::IdOnRollOut, ActionValue());
+		}
 	}
 
 	FlashCharacterInstance::eventMouseMove0(x, y, button);
@@ -703,14 +706,17 @@ void FlashSpriteInstance::eventMouseMove1(int32_t x, int32_t y, int32_t button)
 	m_mouseY = int32_t(xy.y / 20.0f);
 
 	// Roll over and out event handling.
-	Aabb2 bounds = getVisibleLocalBounds();
-	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
-	if (inside != m_inside)
+	if (haveScriptEvent(ActionContext::IdOnRollOver))
 	{
-		if (inside)
-			executeScriptEvent(ActionContext::IdOnRollOver, ActionValue());
+		Aabb2 bounds = getVisibleLocalBounds();
+		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
+		if (inside != m_inside)
+		{
+			if (inside)
+				executeScriptEvent(ActionContext::IdOnRollOver, ActionValue());
 
-		m_inside = inside;
+			m_inside = inside;
+		}
 	}
 
 	// Issue events on "visible" characters.

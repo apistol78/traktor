@@ -311,11 +311,7 @@ bool FlashCharacterInstance::haveScriptEvent(uint32_t eventName)
 	if (!self->getMember(eventName, memberValue))
 		return false;
 
-	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();
-	if (!eventFunction)
-		return false;
-
-	return true;
+	return memberValue.getObject< ActionFunction >() != 0;
 }
 
 bool FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const ActionValue& arg)
