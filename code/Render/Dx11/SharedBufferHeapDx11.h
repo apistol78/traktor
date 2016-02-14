@@ -35,7 +35,7 @@ public:
 
 	virtual bool alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk) T_OVERRIDE T_FINAL;
 
-	virtual void free(const Chunk& chunk) T_OVERRIDE T_FINAL;
+	virtual void free(Chunk& chunk) T_OVERRIDE T_FINAL;
 
 private:
 	struct FreeList

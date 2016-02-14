@@ -89,7 +89,7 @@ BoxedAllocator< BoxedTransform, 8192 > s_allocBoxedTransform;
 BoxedAllocator< BoxedAabb2, 64 > s_allocBoxedAabb2;
 BoxedAllocator< BoxedAabb3, 64 > s_allocBoxedAabb3;
 BoxedAllocator< BoxedFrustum, 16 > s_allocBoxedFrustum;
-BoxedAllocator< BoxedMatrix33, 16 > s_allocBoxedMatrix33;
+BoxedAllocator< BoxedMatrix33, 256 > s_allocBoxedMatrix33;
 BoxedAllocator< BoxedMatrix44, 16 > s_allocBoxedMatrix44;
 BoxedAllocator< BoxedColor4f, 16 > s_allocBoxedColor4f;
 BoxedAllocator< BoxedColor4ub, 16 > s_allocBoxedColor4ub;

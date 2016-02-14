@@ -183,7 +183,11 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 		dxgiAdapter,
 		dxgiAdapter != 0 ? D3D_DRIVER_TYPE_UNKNOWN : D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
+#if defined(_DEBUG)
+		D3D11_CREATE_DEVICE_DEBUG,
+#else
 		0,
+#endif
 		0,
 		0,
 		D3D11_SDK_VERSION,
@@ -289,7 +293,7 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 	dbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	dbd.CPUAccessFlags = 0;
 	dbd.MiscFlags = 0;
-#if 1
+#if 0
 	m_vertexBufferStaticHeap = new SharedBufferHeapDx11(m_context, dbd);
 #else
 	m_vertexBufferStaticHeap = new SimpleBufferHeapDx11(m_context, dbd);
@@ -300,7 +304,7 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 	dbd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	dbd.CPUAccessFlags = 0;
 	dbd.MiscFlags = 0;
-#if 1
+#if 0
 	m_indexBufferStaticHeap = new SharedBufferHeapDx11(m_context, dbd);
 #else
 	m_indexBufferStaticHeap = new SimpleBufferHeapDx11(m_context, dbd);

@@ -13,10 +13,14 @@ Ref< IndexBufferStaticDx11 > IndexBufferStaticDx11::create(ContextDx11* context,
 {
 	IBufferHeapDx11::Chunk bufferChunk;
 
+	T_FATAL_ASSERT (bufferSize > 0);
+
 	uint32_t indexStride = (indexType == ItUInt16) ? 2 : 4;
 
 	if (!bufferHeap->alloc(bufferSize, indexStride, bufferChunk))
 		return 0;
+
+	T_FATAL_ASSERT (bufferChunk.vertexOffset % indexStride == 0);
 
 	Ref< IndexBufferStaticDx11 > ib = new IndexBufferStaticDx11(indexType, bufferSize);
 

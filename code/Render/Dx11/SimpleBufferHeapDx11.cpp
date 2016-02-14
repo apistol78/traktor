@@ -34,8 +34,11 @@ bool SimpleBufferHeapDx11::alloc(uint32_t bufferSize, uint32_t vertexStride, Chu
 	return true;
 }
 
-void SimpleBufferHeapDx11::free(const Chunk& chunk)
+void SimpleBufferHeapDx11::free(Chunk& chunk)
 {
+	T_FATAL_ASSERT(chunk.d3dBuffer != 0);
+	chunk.d3dBuffer->Release();
+	chunk.d3dBuffer = 0;
 }
 
 	}
