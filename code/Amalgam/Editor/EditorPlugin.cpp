@@ -159,6 +159,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks = new ui::custom::ToolBarDropMenu(ui::Command(L"Amalgam.Tweaks"), ui::scaleBySystemDPI(70), i18n::Text(L"AMALGAM_TWEAKS"), i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
 	m_toolTweaks->add(createTweakMenuItem(L"Mute Audio", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Audio \"Write Out\"", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Force Render Thread Off", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Force VBlank Off", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Physics 2*dT", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Supersample *4", false));
@@ -698,25 +699,27 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 		if (m_toolTweaks->get(1)->isChecked())
 			tweakSettings->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
 		if (m_toolTweaks->get(2)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Render.WaitVBlank", false);
+			tweakSettings->setProperty< PropertyBoolean >(L"Amalgam.RenderThread", false);
 		if (m_toolTweaks->get(3)->isChecked())
-			tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 0.25f);
+			tweakSettings->setProperty< PropertyBoolean >(L"Render.WaitVBlank", false);
 		if (m_toolTweaks->get(4)->isChecked())
-			tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 2);
+			tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 0.25f);
 		if (m_toolTweaks->get(5)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
+			tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 2);
 		if (m_toolTweaks->get(6)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
+			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
 		if (m_toolTweaks->get(7)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
+		if (m_toolTweaks->get(8)->isChecked())
 		{
 			std::set< std::wstring > modules = tweakSettings->getProperty< PropertyStringSet >(L"Amalgam.Modules");
 			modules.insert(L"Traktor.Render.Capture");
 			tweakSettings->setProperty< PropertyStringSet >(L"Amalgam.Modules", modules);
 			tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemCapture");
 		}
-		if (m_toolTweaks->get(8)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
 		if (m_toolTweaks->get(9)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
+		if (m_toolTweaks->get(10)->isChecked())
 			tweakSettings->setProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 1);
 
 		int32_t language = m_toolLanguage->getSelected();

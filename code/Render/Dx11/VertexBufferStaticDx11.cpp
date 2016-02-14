@@ -22,7 +22,10 @@ Ref< VertexBufferStaticDx11 > VertexBufferStaticDx11::create(
 {
 	IBufferHeapDx11::Chunk bufferChunk;
 
+	T_FATAL_ASSERT (bufferSize > 0);
+
 	uint32_t vertexStride = getVertexSize(vertexElements);
+	T_FATAL_ASSERT (vertexStride > 0);
 
 	if (!bufferHeap->alloc(bufferSize, vertexStride, bufferChunk))
 		return 0;
@@ -41,8 +44,8 @@ Ref< VertexBufferStaticDx11 > VertexBufferStaticDx11::create(
 	vb->m_d3dInputElements.resize(vertexElements.size());
 	for (uint32_t i = 0; i < vertexElements.size(); ++i)
 	{
-		T_ASSERT (vertexElements[i].getDataUsage() < sizeof_array(c_dxgiInputSemantic));
-		T_ASSERT (vertexElements[i].getDataType() < sizeof_array(c_dxgiInputType));
+		T_FATAL_ASSERT (vertexElements[i].getDataUsage() < sizeof_array(c_dxgiInputSemantic));
+		T_FATAL_ASSERT (vertexElements[i].getDataType() < sizeof_array(c_dxgiInputType));
 
 		std::memset(&vb->m_d3dInputElements[i], 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
 		vb->m_d3dInputElements[i].SemanticName = c_dxgiInputSemantic[vertexElements[i].getDataUsage()];

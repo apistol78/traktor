@@ -29,7 +29,7 @@ public:
 
 	virtual bool alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk) = 0;
 
-	virtual void free(const Chunk& chunk) = 0;
+	virtual void free(Chunk& chunk) = 0;
 };
 
 	}

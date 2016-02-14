@@ -94,7 +94,7 @@ bool SharedBufferHeapDx11::alloc(uint32_t bufferSize, uint32_t vertexStride, Chu
 	return true;
 }
 
-void SharedBufferHeapDx11::free(const Chunk& chunk)
+void SharedBufferHeapDx11::free(Chunk& chunk)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (std::map< uint32_t, std::list< Chain > >::iterator i = m_chains.begin(); i != m_chains.end(); ++i)

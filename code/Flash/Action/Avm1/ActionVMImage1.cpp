@@ -16,6 +16,8 @@
 #	include "Flash/Action/Avm1/ActionVMTrace1.h"
 #endif
 
+//#define T_TRACE_ENABLE
+
 namespace traktor
 {
 	namespace flash
@@ -180,7 +182,7 @@ void ActionVMImage1::nonConstExecute(ActionFrame* frame)
 	state.movieClip = frame->getContext()->getMovieClip();
 	state.trace = 0;
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && defined(T_TRACE_ENABLE)
 	ActionVMTrace1 trace;
 
 	trace.beginDispatcher();
@@ -225,11 +227,11 @@ void ActionVMImage1::nonConstExecute(ActionFrame* frame)
 		T_ASSERT (info.op == op);
 		T_ASSERT (info.execute != 0);
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && defined(T_TRACE_ENABLE)
 		trace.preDispatch(state, info);
 #endif
 		info.execute(state);
-#if defined(_DEBUG)
+#if defined(_DEBUG) && defined(T_TRACE_ENABLE)
 		trace.postDispatch(state, info);
 #endif
 
@@ -237,7 +239,7 @@ void ActionVMImage1::nonConstExecute(ActionFrame* frame)
 		state.pc = state.npc;
 	}
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && defined(T_TRACE_ENABLE)
 	trace.endDispatcher();
 #endif
 }

@@ -187,7 +187,8 @@ void FlashLayer::transition(Layer* fromLayer)
 	if (
 		m_clearBackground != fromFlashLayer->m_clearBackground ||
 		m_enableShapeCache != fromFlashLayer->m_enableShapeCache ||
-		m_enableDirtyRegions != fromFlashLayer->m_enableDirtyRegions
+		m_enableDirtyRegions != fromFlashLayer->m_enableDirtyRegions ||
+		m_contextSize != fromFlashLayer->m_contextSize
 	)
 		return;
 
