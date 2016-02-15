@@ -698,7 +698,7 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_loadMovie(FlashSpriteInstance*
 	if (!movie)
 		return 0;
 
-	return movie->createExternalMovieClipInstance(self);
+	return movie->createExternalMovieClipInstance(self, 0);
 }
 
 void AsMovieClip::MovieClip_loadVariables(FlashSpriteInstance* self) const

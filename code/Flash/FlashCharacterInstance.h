@@ -76,10 +76,6 @@ public:
 	 */
 	const std::string& getName() const;
 
-	/*! \brief Get unique cache key.
-	 */
-	int32_t getCacheTag() const { return m_cacheTag; }
-
 	/*! \brief Set cache object.
 	 */
 	void setCacheObject(IRefCount* cacheObject);
@@ -235,28 +231,26 @@ protected:
 
 	bool executeScriptEvent(uint32_t eventName, const ActionValue& arg);
 
-	void renewCacheTag();
-
 	virtual void trace(visitor_t visitor) const T_OVERRIDE;
 
 	virtual void dereference() T_OVERRIDE;
 
 private:
 	static int32_t ms_instanceCount;
+
+	std::string m_name;
+	Matrix33 m_transform;
+	SwfCxTransform m_cxform;
 	Ref< ActionContext > m_context;
 	Ref< FlashDictionary > m_dictionary;
 	FlashCharacterInstance* m_parent;
-	std::string m_name;
-	int32_t m_cacheTag;
 	Ref< IRefCount > m_cacheObject;
+	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
+	SwfColor m_filterColor;
+	uint8_t m_filter;
+	uint8_t m_blendMode;
 	bool m_visible;
 	bool m_enabled;
-	SwfCxTransform m_cxform;
-	Matrix33 m_transform;
-	uint8_t m_filter;
-	SwfColor m_filterColor;
-	uint8_t m_blendMode;
-	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
 };
 
 	}

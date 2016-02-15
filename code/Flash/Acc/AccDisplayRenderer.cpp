@@ -412,7 +412,15 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 	if (it == m_shapeCache.end())
 	{
 		accShape = new AccShape(m_shapeResources);
-		if (!accShape->createTesselation(shape, false))
+		if (!accShape->create(
+			m_vertexPool,
+			m_textureCache,
+			dictionary,
+			shape.getFillStyles(),
+			shape.getLineStyles(),
+			shape,
+			false
+		))
 			return;
 
 		m_shapeCache[tag].unusedCount = 0;
@@ -423,16 +431,6 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 		it->second.unusedCount = 0;
 		accShape = it->second.shape;
 	}
-
-	// Update geometry if necessary.
-	if (!accShape->updateRenderable(
-		m_vertexPool,
-		m_textureCache,
-		dictionary,
-		shape.getFillStyles(),
-		shape.getLineStyles()
-	))
-		return;
 
 	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
 	if (
@@ -506,7 +504,15 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 	if (it1 == m_glyphCache.end())
 	{
 		Ref< AccShape > accShape = new AccShape(m_shapeResources);
-		if (!accShape->createTesselation(shape, true))
+		if (!accShape->create(
+			m_vertexPool,
+			0,
+			dictionary,
+			shape.getFillStyles(),
+			shape.getLineStyles(),
+			shape,
+			true
+		))
 		{
 			T_DEBUG(L"Glyph tesselation failed");
 			return;
@@ -521,18 +527,6 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 
 	Ref< AccShape > accShape = it1->second.shape;
 	T_ASSERT (accShape);
-
-	if (!accShape->updateRenderable(
-		m_vertexPool,
-		0,
-		dictionary,
-		shape.getFillStyles(),
-		shape.getLineStyles()
-	))
-	{
-		it1->second.index = -1;
-		return;
-	}
 
 	Aabb2 bounds = accShape->getBounds();
 	if (!rectangleVisible(m_dirtyRegion, transform * bounds))
@@ -657,7 +651,14 @@ void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const M
 	if (it == m_shapeCache.end() || it->second.tag != canvas.getDirtyTag())
 	{
 		accShape = new AccShape(m_shapeResources);
-		if (!accShape->createTesselation(canvas))
+		if (!accShape->create(
+			m_vertexPool,
+			m_textureCache,
+			dictionary,
+			canvas.getFillStyles(),
+			canvas.getLineStyles(),
+			canvas
+		))
 			return;
 
 		m_shapeCache[tag].unusedCount = 0;
@@ -668,15 +669,6 @@ void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const M
 		it->second.unusedCount = 0;
 		accShape = it->second.shape;
 	}
-
-	if (!accShape->updateRenderable(
-		m_vertexPool,
-		m_textureCache,
-		dictionary,
-		canvas.getFillStyles(),
-		canvas.getLineStyles()
-	))
-		return;
 
 	if (!rectangleVisible(m_dirtyRegion, transform * accShape->getBounds()))
 		return;

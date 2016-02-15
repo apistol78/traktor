@@ -24,11 +24,10 @@ FlashCharacterInstance::FlashCharacterInstance(
 ,	m_context(context)
 ,	m_dictionary(dictionary)
 ,	m_parent(parent)
-,	m_cacheTag(allocateCacheTag())
-,	m_visible(true)
-,	m_enabled(true)
 ,	m_filter(0)
 ,	m_blendMode(0)
+,	m_visible(true)
+,	m_enabled(true)
 {
 	Atomic::increment(ms_instanceCount);
 
@@ -332,11 +331,6 @@ bool FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const Action
 
 	eventFunction->call(self, argv);
 	return true;
-}
-
-void FlashCharacterInstance::renewCacheTag()
-{
-	m_cacheTag = allocateCacheTag();
 }
 
 void FlashCharacterInstance::trace(visitor_t visitor) const

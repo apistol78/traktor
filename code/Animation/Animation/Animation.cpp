@@ -85,7 +85,7 @@ uint32_t Animation::addKeyPose(const KeyPose& pose)
 void Animation::removeKeyPose(uint32_t poseIndex)
 {
 	T_ASSERT (poseIndex >= 0 && poseIndex < uint32_t(m_poses.size()));
-	m_poses.erase(m_poses.begin() + poseIndex);
+	m_poses.erase(m_poses.begin() + size_t(poseIndex));
 }
 
 bool Animation::empty() const

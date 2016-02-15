@@ -80,7 +80,7 @@ Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IFlashMovie
 	return spriteInstance;
 }
 
-Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpriteInstance* containerInstance) const
+Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpriteInstance* containerInstance, int32_t depth) const
 {
 	Ref< FlashDictionary > dictionary = new FlashDictionary();
 	dictionary->m_fonts = m_fonts;
@@ -105,7 +105,7 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 	// Add instance to container's display list.
 	FlashDisplayList& displayList = containerInstance->getDisplayList();
 	displayList.showObject(
-		0,
+		depth,
 		0,
 		spriteInstance,
 		true

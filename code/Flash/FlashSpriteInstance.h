@@ -177,12 +177,14 @@ private:
 	Ref< FlashSpriteInstance > m_mask;
 	Ref< FlashCanvas > m_canvas;
 	RefArray< FlashCharacterInstance > m_visibleCharacters;
-	uint32_t m_currentFrame;
-	uint32_t m_nextFrame;
-	uint32_t m_lastUpdateFrame;
-	uint32_t m_lastExecutedFrame;
-	uint32_t m_lastSoundFrame;
-	uint32_t m_skipEnterFrame;
+	int32_t m_mouseX;
+	int32_t m_mouseY;
+	uint16_t m_currentFrame;
+	uint16_t m_nextFrame;
+	uint16_t m_lastUpdateFrame;
+	uint16_t m_lastExecutedFrame;
+	uint16_t m_lastSoundFrame;
+	uint8_t m_skipEnterFrame;
 	bool m_cacheAsBitmap;
 	bool m_opaqueBackground;
 	bool m_initialized;
@@ -192,9 +194,6 @@ private:
 	bool m_inside;
 	bool m_inDispatch;
 	bool m_gotoIssued;
-	int32_t m_mouseX;
-	int32_t m_mouseY;
-	int32_t m_maskCount;
 };
 
 	}

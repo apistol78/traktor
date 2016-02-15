@@ -67,13 +67,17 @@ bool AccShapeRenderer::create(render::IRenderSystem* renderSystem, resource::IRe
 		return false;
 	}
 
-	m_packer.reset(new rbp::GuillotineBinPack(c_cacheWidth, c_cacheHeight));
+	m_packer = new rbp::GuillotineBinPack(c_cacheWidth, c_cacheHeight);
 	return true;
 }
 
 void AccShapeRenderer::destroy()
 {
-	m_packer.release();
+	if (m_packer)
+	{
+		delete m_packer;
+		m_packer = 0;
+	}
 	safeDestroy(m_quad);
 	safeDestroy(m_renderTargetShapes);
 }
@@ -85,7 +89,7 @@ void AccShapeRenderer::beginFrame()
 		if (++m_cache[i].unused >= 20)
 		{
 			m_cache.resize(0);
-			m_packer.reset(new rbp::GuillotineBinPack(c_cacheWidth, c_cacheHeight));
+			m_packer->Init(c_cacheWidth, c_cacheHeight);
 			break;
 		}
 	}
@@ -174,7 +178,7 @@ void AccShapeRenderer::beginCacheAsBitmap(
 			c.bounds = bounds;
 			c.transform = transform;
 
-			slot = m_cache.size();
+			slot = int32_t(m_cache.size());
 			m_cache.push_back(c);
 
 			render::TargetBeginRenderBlock* renderBlockBegin = renderContext->alloc< render::TargetBeginRenderBlock >("Flash sprite cache begin");

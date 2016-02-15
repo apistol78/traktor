@@ -13,9 +13,10 @@ int32_t Collectable::ms_instanceCount = 0;
 Collectable::Collectable()
 :	m_prev(0)
 ,	m_next(0)
+,	m_weakRefDisposes(0)
+,	m_traceRefCount(0)
 ,	m_traceColor(TcBlack)
 ,	m_traceBuffered(false)
-,	m_traceRefCount(0)
 {
 	Atomic::increment(ms_instanceCount);
 }
@@ -25,6 +26,7 @@ Collectable::~Collectable()
 	T_ASSERT (m_next == 0);
 	T_ASSERT (m_prev == 0);
 	Atomic::decrement(ms_instanceCount);
+	delete m_weakRefDisposes;
 }
 
 void Collectable::addRef(void* owner) const
@@ -45,8 +47,11 @@ void Collectable::release(void* owner) const
 			GC::getInstance().removeCandidate(const_cast< Collectable* >(this));
 		}
 
-		for (AlignedVector< IWeakRefDispose* >::iterator i = m_weakRefDisposes.begin(); i != m_weakRefDisposes.end(); ++i)
-			(*i)->disposeReference(const_cast< Collectable* >(this));
+		if (m_weakRefDisposes)
+		{
+			for (SmallSet< IWeakRefDispose* >::iterator i = m_weakRefDisposes->begin(); i != m_weakRefDisposes->end(); ++i)
+				(*i)->disposeReference(const_cast< Collectable* >(this));
+		}
 	}
 	else
 	{
@@ -63,14 +68,15 @@ void Collectable::release(void* owner) const
 
 void Collectable::addWeakRef(IWeakRefDispose* weakRefDispose)
 {
-	m_weakRefDisposes.push_back(weakRefDispose);
+	if (!m_weakRefDisposes)
+		m_weakRefDisposes = new SmallSet< IWeakRefDispose* >();
+	m_weakRefDisposes->insert(weakRefDispose);
 }
 
 void Collectable::releaseWeakRef(IWeakRefDispose* weakRefDispose)
 {
-	AlignedVector< IWeakRefDispose* >::iterator it = std::find(m_weakRefDisposes.begin(), m_weakRefDisposes.end(), weakRefDispose);
-	T_ASSERT (it != m_weakRefDisposes.end());
-	m_weakRefDisposes.erase(it);
+	T_ASSERT (m_weakRefDisposes);
+	m_weakRefDisposes->erase(weakRefDispose);
 }
 
 int32_t Collectable::getInstanceCount()

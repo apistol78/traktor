@@ -308,7 +308,7 @@ void Raster::drawPolyLine(const Vector2* points, uint32_t npoints, const Color4f
 
 void Raster::insertSpan(spanline_t& spanline, const Span& span) const
 {
-	for (uint32_t i = 0; i < spanline.size(); ++i)
+	for (size_t i = 0; i < spanline.size(); ++i)
 	{
 		if (span.x < spanline[i].x)
 		{

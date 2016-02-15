@@ -70,7 +70,7 @@ bool AsMovieClipLoader::MovieClipLoader_loadClip(ActionObject* self, const std::
 	if (!movie)
 		return false;
 
-	return movie->createExternalMovieClipInstance(target) != 0;
+	return movie->createExternalMovieClipInstance(target, 0) != 0;
 }
 
 void AsMovieClipLoader::MovieClipLoader_removeListener(CallArgs& ca)

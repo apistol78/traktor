@@ -50,7 +50,6 @@ AccShape::AccShape(AccShapeResources* shapeResources)
 :	m_shapeResources(shapeResources)
 ,	m_vertexPool(0)
 ,	m_batchFlags(0)
-,	m_needUpdate(true)
 {
 }
 
@@ -59,14 +58,22 @@ AccShape::~AccShape()
 	destroy();
 }
 
-bool AccShape::createTesselation(const AlignedVector< Path >& paths, bool oddEven)
+bool AccShape::create(
+	AccShapeVertexPool* vertexPool,
+	AccTextureCache* textureCache,
+	const FlashDictionary& dictionary,
+	const AlignedVector< FlashFillStyle >& fillStyles,
+	const AlignedVector< FlashLineStyle >& lineStyles,
+	const AlignedVector< Path >& paths,
+	bool oddEven
+)
 {
+	AlignedVector< Triangle > triangles;
 	AlignedVector< Segment > segments;
 	Triangulator triangulator;
 	Segment s;
 
 	// Create triangles through tessellation.
-	m_triangles.resize(0);
 	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
 		const AlignedVector< Vector2 >& points = i->getPoints();
@@ -127,19 +134,19 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths, bool oddEve
 
 			if (!segments.empty())
 			{
-				uint32_t from = m_triangles.size();
+				uint32_t from = triangles.size();
 
-				triangulator.triangulate(segments, *ii, oddEven, m_triangles);
+				triangulator.triangulate(segments, *ii, oddEven, triangles);
 				segments.resize(0);
 
-				uint32_t to = m_triangles.size();
+				uint32_t to = triangles.size();
 
 				// Transform each new triangle with path's transform.
 				for (uint32_t ti = from; ti < to; ++ti)
 				{
-					m_triangles[ti].v[0] = i->getTransform() * m_triangles[ti].v[0];
-					m_triangles[ti].v[1] = i->getTransform() * m_triangles[ti].v[1];
-					m_triangles[ti].v[2] = i->getTransform() * m_triangles[ti].v[2];
+					triangles[ti].v[0] = i->getTransform() * triangles[ti].v[0];
+					triangles[ti].v[1] = i->getTransform() * triangles[ti].v[1];
+					triangles[ti].v[2] = i->getTransform() * triangles[ti].v[2];
 				}
 			}
 		}
@@ -148,7 +155,7 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths, bool oddEve
 	// Update shape's bounds from all triangles.
 	m_bounds.mn.x = m_bounds.mn.y =  std::numeric_limits< float >::max();
 	m_bounds.mx.x = m_bounds.mx.y = -std::numeric_limits< float >::max();
-	for (AlignedVector< Triangle >::const_iterator j = m_triangles.begin(); j != m_triangles.end(); ++j)
+	for (AlignedVector< Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
 	{
 		for (int k = 0; k < 3; ++k)
 		{
@@ -160,159 +167,150 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths, bool oddEve
 		}
 	}
 
-	m_needUpdate = true;
+	m_renderBatches.resize(0);
+	m_batchFlags = 0;
+
+	if (!triangles.empty())
+	{
+		// Allocate vertex range.
+		T_ASSERT (!m_vertexRange.vertexBuffer)
+		if (!vertexPool->acquireRange(triangles.size() * 3, m_vertexRange))
+			return false;
+		T_ASSERT (m_vertexRange.vertexBuffer);
+		m_vertexPool = vertexPool;
+
+		AccShapeVertexPool::Vertex* vertex = static_cast< AccShapeVertexPool::Vertex* >(m_vertexRange.vertexBuffer->lock());
+		if (!vertex)
+			return false;
+
+		uint32_t vertexOffset = 0;
+		Matrix33 textureMatrix;
+		uint16_t lastFillStyle = 0;
+		Color4ub color(255, 255, 255, 255);
+		AccTextureCache::BitmapRect texture;
+
+		for (AlignedVector< Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
+		{
+			T_ASSERT (j->fillStyle);
+
+			float curveSign = 0.0f;
+			if (j->type == TcIn)
+				curveSign = 1.0f;
+			else if (j->type == TcOut)
+				curveSign = -1.0f;
+
+			if (
+				!fillStyles.empty() &&
+				j->fillStyle != lastFillStyle
+			)
+			{
+				color = Color4ub(255, 255, 255, 255);
+				texture = AccTextureCache::BitmapRect();
+
+				const FlashFillStyle& style = fillStyles[j->fillStyle - 1];
+
+				// Convert colors, solid or gradients.
+				const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
+				if (colorRecords.size() > 1)
+				{
+					T_ASSERT (textureCache);
+					texture = textureCache->getGradientTexture(style);
+					textureMatrix = c_textureTS * style.getGradientMatrix().inverse();
+					m_batchFlags |= BfHaveTextured;
+				}
+				else if (colorRecords.size() == 1)
+				{
+					color.r = colorRecords.front().color.red;
+					color.g = colorRecords.front().color.green;
+					color.b = colorRecords.front().color.blue;
+					color.a = colorRecords.front().color.alpha;
+					m_batchFlags |= BfHaveSolid;
+				}
+
+				// Convert bitmaps.
+				const FlashBitmap* bitmap = dictionary.getBitmap(style.getFillBitmap());
+				if (bitmap)
+				{
+					T_ASSERT (textureCache);
+					texture = textureCache->getBitmapTexture(*bitmap);
+					textureMatrix = scale(1.0f / bitmap->getWidth(), 1.0f / bitmap->getHeight()) * style.getFillBitmapMatrix().inverse();
+					m_batchFlags |= BfHaveTextured;
+				}
+
+				lastFillStyle = j->fillStyle;
+			}
+
+			if (m_renderBatches.empty() || m_renderBatches.back().texture.texture != texture.texture)	// \fixme Clamp?
+			{
+				m_renderBatches.push_back(RenderBatch());
+				m_renderBatches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
+				m_renderBatches.back().texture = texture;
+			}
+
+			for (int k = 0; k < 3; ++k)
+			{
+				const Vector2& P = j->v[k];
+				Vector2 tc = textureMatrix * P;
+
+				vertex->pos[0] = P.x;
+				vertex->pos[1] = P.y;
+				vertex->curvature[0] = c_controlPoints[k][0];
+				vertex->curvature[1] = c_controlPoints[k][1];
+				vertex->curvature[2] = curveSign;
+				vertex->texCoord[0] = tc.x;
+				vertex->texCoord[1] = tc.y;
+				vertex->texRect[0] = texture.rect[0];
+				vertex->texRect[1] = texture.rect[1];
+				vertex->texRect[2] = texture.rect[2];
+				vertex->texRect[3] = texture.rect[3];
+				vertex->color[0] = color.r;
+				vertex->color[1] = color.g;
+				vertex->color[2] = color.b;
+				vertex->color[3] = color.a;
+
+				vertex++;
+			}
+
+			m_renderBatches.back().primitives.count++;
+			vertexOffset += 3;
+		}
+
+		m_vertexRange.vertexBuffer->unlock();
+
+		// Some shapes doesn't expose styles, such as glyphs, but are
+		// assumed to be solids.
+		if (!m_batchFlags)
+			m_batchFlags |= BfHaveSolid;
+	}
+
 	return true;
 }
 
-bool AccShape::createTesselation(const FlashShape& shape, bool oddEven)
-{
-	const AlignedVector< Path >& paths = shape.getPaths();
-	return createTesselation(paths, oddEven);
-}
-
-bool AccShape::createTesselation(const FlashCanvas& canvas)
-{
-	const AlignedVector< Path >& paths = canvas.getPaths();
-	return createTesselation(paths, false);
-}
-
-bool AccShape::updateRenderable(
+bool AccShape::create(
 	AccShapeVertexPool* vertexPool,
 	AccTextureCache* textureCache,
 	const FlashDictionary& dictionary,
 	const AlignedVector< FlashFillStyle >& fillStyles,
-	const AlignedVector< FlashLineStyle >& lineStyles
+	const AlignedVector< FlashLineStyle >& lineStyles,
+	const FlashShape& shape,
+	bool oddEven
 )
 {
-	// Do we need to update?
-	if (m_triangles.empty())
-		return false;
-	if (!m_needUpdate)
-		return true;
+	const AlignedVector< Path >& paths = shape.getPaths();
+	return create(vertexPool, textureCache, dictionary, fillStyles, lineStyles, paths, oddEven);
+}
 
-	// Free previous vertex range if any.
-	if (m_vertexRange.vertexBuffer)
-	{
-		m_vertexPool->releaseRange(m_vertexRange);
-		m_vertexPool = 0;
-		m_vertexRange.vertexBuffer = 0;
-	}
-
-	m_renderBatches.resize(0);
-	m_batchFlags = 0;
-
-	// Allocate vertex range.
-	if (!vertexPool->acquireRange(m_triangles.size() * 3, m_vertexRange))
-		return false;
-
-	T_ASSERT (m_vertexRange.vertexBuffer);
-	m_vertexPool = vertexPool;
-
-	AccShapeVertexPool::Vertex* vertex = static_cast< AccShapeVertexPool::Vertex* >(m_vertexRange.vertexBuffer->lock());
-	if (!vertex)
-		return false;
-
-	uint32_t vertexOffset = 0;
-	Matrix33 textureMatrix;
-	uint16_t lastFillStyle = 0;
-	Color4ub color(255, 255, 255, 255);
-	AccTextureCache::BitmapRect texture;
-
-	for (AlignedVector< Triangle >::const_iterator j = m_triangles.begin(); j != m_triangles.end(); ++j)
-	{
-		T_ASSERT (j->fillStyle);
-
-		float curveSign = 0.0f;
-		if (j->type == TcIn)
-			curveSign = 1.0f;
-		else if (j->type == TcOut)
-			curveSign = -1.0f;
-
-		if (
-			!fillStyles.empty() &&
-			j->fillStyle != lastFillStyle
-		)
-		{
-			color = Color4ub(255, 255, 255, 255);
-			texture = AccTextureCache::BitmapRect();
-
-			const FlashFillStyle& style = fillStyles[j->fillStyle - 1];
-
-			// Convert colors, solid or gradients.
-			const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
-			if (colorRecords.size() > 1)
-			{
-				T_ASSERT (textureCache);
-				texture = textureCache->getGradientTexture(style);
-				textureMatrix = c_textureTS * style.getGradientMatrix().inverse();
-				m_batchFlags |= BfHaveTextured;
-			}
-			else if (colorRecords.size() == 1)
-			{
-				color.r = colorRecords.front().color.red;
-				color.g = colorRecords.front().color.green;
-				color.b = colorRecords.front().color.blue;
-				color.a = colorRecords.front().color.alpha;
-				m_batchFlags |= BfHaveSolid;
-			}
-
-			// Convert bitmaps.
-			const FlashBitmap* bitmap = dictionary.getBitmap(style.getFillBitmap());
-			if (bitmap)
-			{
-				T_ASSERT (textureCache);
-				texture = textureCache->getBitmapTexture(*bitmap);
-				textureMatrix = scale(1.0f / bitmap->getWidth(), 1.0f / bitmap->getHeight()) * style.getFillBitmapMatrix().inverse();
-				m_batchFlags |= BfHaveTextured;
-			}
-
-			lastFillStyle = j->fillStyle;
-		}
-
-		if (m_renderBatches.empty() || m_renderBatches.back().texture.texture != texture.texture)	// \fixme Clamp?
-		{
-			m_renderBatches.push_back(RenderBatch());
-			m_renderBatches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
-			m_renderBatches.back().texture = texture;
-		}
-
-		for (int k = 0; k < 3; ++k)
-		{
-			const Vector2& P = j->v[k];
-			Vector2 tc = textureMatrix * P;
-
-			vertex->pos[0] = P.x;
-			vertex->pos[1] = P.y;
-			vertex->curvature[0] = c_controlPoints[k][0];
-			vertex->curvature[1] = c_controlPoints[k][1];
-			vertex->curvature[2] = curveSign;
-			vertex->texCoord[0] = tc.x;
-			vertex->texCoord[1] = tc.y;
-			vertex->texRect[0] = texture.rect[0];
-			vertex->texRect[1] = texture.rect[1];
-			vertex->texRect[2] = texture.rect[2];
-			vertex->texRect[3] = texture.rect[3];
-			vertex->color[0] = color.r;
-			vertex->color[1] = color.g;
-			vertex->color[2] = color.b;
-			vertex->color[3] = color.a;
-
-			vertex++;
-		}
-
-		m_renderBatches.back().primitives.count++;
-		vertexOffset += 3;
-	}
-
-	m_vertexRange.vertexBuffer->unlock();
-
-	// Some shapes doesn't expose styles, such as glyphs, but are
-	// assumed to be solids.
-	if (!m_batchFlags)
-		m_batchFlags |= BfHaveSolid;
-
-	m_needUpdate = false;
-	return true;
+bool AccShape::create(
+	AccShapeVertexPool* vertexPool,
+	AccTextureCache* textureCache,
+	const FlashDictionary& dictionary,
+	const AlignedVector< FlashFillStyle >& fillStyles,
+	const AlignedVector< FlashLineStyle >& lineStyles,
+	const FlashCanvas& canvas
+)
+{
+	const AlignedVector< Path >& paths = canvas.getPaths();
+	return create(vertexPool, textureCache, dictionary, fillStyles, lineStyles, paths, false);
 }
 
 void AccShape::destroy()
@@ -326,7 +324,6 @@ void AccShape::destroy()
 		m_vertexRange = AccShapeVertexPool::Range();
 	}
 
-	m_triangles.clear();
 	m_renderBatches.clear();
 }
 
