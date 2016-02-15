@@ -347,6 +347,8 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classSwfReader);
 
 	Ref< AutoRuntimeClass< FlashCharacterInstance > > classFlashCharacterInstance = new AutoRuntimeClass< FlashCharacterInstance >();
+	classFlashCharacterInstance->addStaticMethod("getInstanceCount", &FlashCharacterInstance::getInstanceCount);
+	classFlashCharacterInstance->addMethod("destroy", &FlashCharacterInstance::destroy);
 	classFlashCharacterInstance->addMethod("getContext", &FlashCharacterInstance::getContext);
 	classFlashCharacterInstance->addMethod("getParent", &FlashCharacterInstance::getParent);
 	classFlashCharacterInstance->addMethod("setName", &FlashCharacterInstance::setName);

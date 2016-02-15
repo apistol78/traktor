@@ -5,7 +5,6 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Misc/AutoPtr.h"
 
 namespace rbp
 {
@@ -100,7 +99,7 @@ private:
 	Ref< render::RenderTargetSet > m_renderTargetShapes;
 	Ref< AccQuad > m_quad;
 	AlignedVector< Cache > m_cache;
-	AutoPtr< rbp::GuillotineBinPack > m_packer;
+	rbp::GuillotineBinPack* m_packer;
 	int32_t m_renderIntoSlot;
 	int32_t m_renderFromSlot;
 };

@@ -46,12 +46,12 @@ public:
 
 	iterator find(const Key& value)
 	{
-		uint32_t is = 0;
-		uint32_t ie = uint32_t(m_data.size());
+		size_t is = 0;
+		size_t ie = m_data.size();
 
 		while (is < ie)
 		{
-			uint32_t i = (is + ie) >> 1;
+			size_t i = (is + ie) >> 1;
 			if (value < m_data[i])
 				ie = i;
 			else if (value > m_data[i])
@@ -65,12 +65,12 @@ public:
 
 	const_iterator find(const Key& value) const
 	{
-		uint32_t is = 0;
-		uint32_t ie = uint32_t(m_data.size());
+		size_t is = 0;
+		size_t ie = m_data.size();
 
 		while (is < ie)
 		{
-			uint32_t i = (is + ie) >> 1;
+			size_t i = (is + ie) >> 1;
 			if (value < m_data[i])
 				ie = i;
 			else if (value > m_data[i])
@@ -84,12 +84,12 @@ public:
 
 	bool insert(const Key& value)
 	{
-		uint32_t is = 0;
-		uint32_t ie = uint32_t(m_data.size());
+		size_t is = 0;
+		size_t ie = m_data.size();
 
 		while (is < ie)
 		{
-			uint32_t i = (is + ie) >> 1;
+			size_t i = (is + ie) >> 1;
 			if (value < m_data[i])
 				ie = i;
 			else if (value > m_data[i])
@@ -105,12 +105,12 @@ public:
 
 	bool erase(const Key& value)
 	{
-		uint32_t is = 0;
-		uint32_t ie = uint32_t(m_data.size());
+		size_t is = 0;
+		size_t ie = m_data.size();
 
 		while (is < ie)
 		{
-			uint32_t i = (is + ie) >> 1;
+			size_t i = (is + ie) >> 1;
 			if (value < m_data[i])
 				ie = i;
 			else if (value > m_data[i])

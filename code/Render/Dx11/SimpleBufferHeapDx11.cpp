@@ -20,6 +20,8 @@ void SimpleBufferHeapDx11::destroy()
 
 bool SimpleBufferHeapDx11::alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk)
 {
+	T_FATAL_ASSERT(bufferSize > 0);
+
 	D3D11_BUFFER_DESC dbd = m_dbd;
 	dbd.ByteWidth = bufferSize;
 

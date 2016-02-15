@@ -24,11 +24,13 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashDictionary
 :	FlashCharacterInstance(context, "MovieClip", dictionary, parent)
 ,	m_sprite(sprite)
 ,	m_displayList(context)
+,	m_mouseX(0)
+,	m_mouseY(0)
 ,	m_currentFrame(0)
 ,	m_nextFrame(0)
-,	m_lastUpdateFrame(~0U)
-,	m_lastExecutedFrame(~0U)
-,	m_lastSoundFrame(~0U)
+,	m_lastUpdateFrame(~0)
+,	m_lastExecutedFrame(~0)
+,	m_lastSoundFrame(~0)
 ,	m_skipEnterFrame(0)
 ,	m_cacheAsBitmap(false)
 ,	m_opaqueBackground(false)
@@ -39,9 +41,6 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashDictionary
 ,	m_inside(false)
 ,	m_inDispatch(false)
 ,	m_gotoIssued(false)
-,	m_mouseX(0)
-,	m_mouseY(0)
-,	m_maskCount(0)
 {
 	T_ASSERT (m_sprite->getFrameCount() > 0);
 }
@@ -87,7 +86,6 @@ void FlashSpriteInstance::gotoFrame(uint32_t frameId)
 	{
 		m_currentFrame =
 		m_nextFrame = frameId;
-		renewCacheTag();
 	}
 	else
 	{
@@ -102,10 +100,7 @@ void FlashSpriteInstance::gotoPrevious()
 	if (!m_inDispatch)
 	{
 		if (m_currentFrame > 0)
-		{
 			m_currentFrame--;
-			renewCacheTag();
-		}
 	}
 	else
 	{
@@ -122,10 +117,7 @@ void FlashSpriteInstance::gotoNext()
 	if (!m_inDispatch)
 	{
 		if (m_currentFrame < m_sprite->getFrameCount() - 1)
-		{
 			m_currentFrame++;
-			renewCacheTag();
-		}
 	}
 	else
 	{
@@ -314,11 +306,7 @@ Aabb2 FlashSpriteInstance::getVisibleLocalBounds() const
 
 void FlashSpriteInstance::setMask(FlashSpriteInstance* mask)
 {
-	if (m_mask)
-		m_mask->m_maskCount--;
 	if ((m_mask = mask) != 0)
-		m_mask->m_maskCount++;
-	if (m_mask)
 		m_mask->setVisible(false);
 }
 
@@ -390,7 +378,6 @@ void FlashSpriteInstance::postDispatchEvents()
 	{
 		T_ASSERT (m_nextFrame < m_sprite->getFrameCount());
 		m_currentFrame = m_nextFrame;
-		renewCacheTag();
 	}
 
 	// Issue post dispatch event on child sprite instances.

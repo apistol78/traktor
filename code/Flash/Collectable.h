@@ -2,8 +2,8 @@
 #define traktor_flash_Collectable_H
 
 #include "Core/Object.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/IntrusiveList.h"
+#include "Core/Containers/SmallSet.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,15 +23,17 @@ class T_DLLCLASS Collectable : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct IVisitor
+	class IVisitor
 	{
+	public:
 		virtual ~IVisitor() {}
 
 		virtual void operator () (Collectable* childCollectable) const = 0;
 	};
 
-	struct IWeakRefDispose
+	class IWeakRefDispose
 	{
+	public:
 		virtual ~IWeakRefDispose() {}
 
 		virtual void disposeReference(Collectable* collectable) = 0;
@@ -74,10 +76,10 @@ private:
 	static int32_t ms_instanceCount;
 	Collectable* m_prev;	//!< Intrusive list chain members.
 	Collectable* m_next;
-	mutable AlignedVector< IWeakRefDispose* > m_weakRefDisposes;
-	mutable TraceColor m_traceColor;
-	mutable bool m_traceBuffered;
+	mutable SmallSet< IWeakRefDispose* >* m_weakRefDisposes;
 	mutable int32_t m_traceRefCount;
+	mutable uint8_t m_traceColor;
+	mutable bool m_traceBuffered;
 
 	void traceMarkGray();
 

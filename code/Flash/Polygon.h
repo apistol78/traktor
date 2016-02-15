@@ -31,7 +31,7 @@ enum TriangleType
 struct Triangle
 {
 	Vector2 v[3];
-	TriangleType type;
+	uint8_t type;	//!< \sa TriangleType
 	uint16_t fillStyle;
 };
 

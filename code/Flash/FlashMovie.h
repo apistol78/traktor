@@ -50,7 +50,7 @@ public:
 
 	Ref< FlashSpriteInstance > createMovieClipInstance(const IFlashMovieLoader* movieLoader) const;
 
-	Ref< FlashSpriteInstance > createExternalMovieClipInstance(FlashSpriteInstance* containerInstance) const;
+	Ref< FlashSpriteInstance > createExternalMovieClipInstance(FlashSpriteInstance* containerInstance, int32_t depth) const;
 
 	Ref< FlashSpriteInstance > createExternalSpriteInstance(FlashSpriteInstance* containerInstance, const std::string& characterName, int32_t depth) const;
 

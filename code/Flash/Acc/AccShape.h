@@ -52,18 +52,33 @@ public:
 
 	virtual ~AccShape();
 
-	bool createTesselation(const AlignedVector< Path >& paths, bool oddEven);
-
-	bool createTesselation(const FlashShape& shape, bool oddEven);
-
-	bool createTesselation(const FlashCanvas& canvas);
-
-	bool updateRenderable(
+	bool create(
 		AccShapeVertexPool* vertexPool,
 		AccTextureCache* textureCache,
 		const FlashDictionary& dictionary,
 		const AlignedVector< FlashFillStyle >& fillStyles,
-		const AlignedVector< FlashLineStyle >& lineStyles
+		const AlignedVector< FlashLineStyle >& lineStyles,
+		const AlignedVector< Path >& paths,
+		bool oddEven
+	);
+
+	bool create(
+		AccShapeVertexPool* vertexPool,
+		AccTextureCache* textureCache,
+		const FlashDictionary& dictionary,
+		const AlignedVector< FlashFillStyle >& fillStyles,
+		const AlignedVector< FlashLineStyle >& lineStyles,
+		const FlashShape& shape,
+		bool oddEven
+	);
+
+	bool create(
+		AccShapeVertexPool* vertexPool,
+		AccTextureCache* textureCache,
+		const FlashDictionary& dictionary,
+		const AlignedVector< FlashFillStyle >& fillStyles,
+		const AlignedVector< FlashLineStyle >& lineStyles,
+		const FlashCanvas& canvas
 	);
 
 	void destroy();
@@ -87,12 +102,10 @@ public:
 private:
 	AccShapeResources* m_shapeResources;
 	AccShapeVertexPool* m_vertexPool;
-	AlignedVector< Triangle > m_triangles;
 	AccShapeVertexPool::Range m_vertexRange;
 	AlignedVector< RenderBatch > m_renderBatches;
 	Aabb2 m_bounds;
 	uint8_t m_batchFlags;
-	bool m_needUpdate;
 };
 
 	}

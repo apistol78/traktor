@@ -512,7 +512,6 @@ bool FlashEditInstance::internalParseText(const std::wstring& text)
 	m_htmlText.clear();
 	m_html = false;
 
-	renewCacheTag();
 	return true;
 }
 
@@ -550,7 +549,6 @@ bool FlashEditInstance::internalParseHtml(const std::wstring& html)
 	m_htmlText = html;
 	m_html = true;
 
-	renewCacheTag();
 	return true;
 }
 

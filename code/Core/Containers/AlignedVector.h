@@ -97,7 +97,17 @@ public:
 			return const_iterator(m_ptr + offset);
 		}
 
+		const_iterator operator + (size_t offset) const
+		{
+			return const_iterator(m_ptr + offset);
+		}
+
 		const_iterator operator - (int offset) const
+		{
+			return const_iterator(m_ptr - offset);
+		}
+
+		const_iterator operator - (size_t offset) const
 		{
 			return const_iterator(m_ptr - offset);
 		}
@@ -208,7 +218,17 @@ public:
 			return iterator(_O::m_ptr + offset);
 		}
 
+		iterator operator + (size_t offset) const
+		{
+			return iterator(_O::m_ptr + offset);
+		}
+
 		iterator operator - (int offset) const
+		{
+			return iterator(_O::m_ptr - offset);
+		}
+
+		iterator operator - (size_t offset) const
 		{
 			return iterator(_O::m_ptr - offset);
 		}

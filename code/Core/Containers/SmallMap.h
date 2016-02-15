@@ -49,12 +49,12 @@ public:
 	
 	iterator find(const Key& key)
 	{
-		uint32_t is = 0;
-		uint32_t ie = uint32_t(m_data.size());
+		size_t is = 0;
+		size_t ie = m_data.size();
 
 		while (is < ie)
 		{
-			uint32_t i = (is + ie) >> 1;
+			size_t i = (is + ie) >> 1;
 			if (key < m_data[i].first)
 				ie = i;
 			else if (key > m_data[i].first)
@@ -68,12 +68,12 @@ public:
 	
 	const_iterator find(const Key& key) const
 	{
-		uint32_t is = 0;
-		uint32_t ie = uint32_t(m_data.size());
+		size_t is = 0;
+		size_t ie = m_data.size();
 
 		while (is < ie)
 		{
-			uint32_t i = (is + ie) >> 1;
+			size_t i = (is + ie) >> 1;
 			if (key < m_data[i].first)
 				ie = i;
 			else if (key > m_data[i].first)
@@ -87,12 +87,12 @@ public:
 	
 	void insert(const pair_t& pair)
 	{
-		uint32_t is = 0;
-		uint32_t ie = uint32_t(m_data.size());
+		size_t is = 0;
+		size_t ie = m_data.size();
 
 		while (is < ie)
 		{
-			uint32_t i = (is + ie) >> 1;
+			size_t i = (is + ie) >> 1;
 			if (pair.first < m_data[i].first)
 				ie = i;
 			else if (pair.first > m_data[i].first)
@@ -154,19 +154,19 @@ public:
 		return m_data.empty();
 	}
 
-	uint32_t size() const
+	size_t size() const
 	{
-		return uint32_t(m_data.size());
+		return m_data.size();
 	}
 
 	Item& operator [] (const Key& key)
 	{
-		uint32_t is = 0;
-		uint32_t ie = uint32_t(m_data.size());
+		size_t is = 0;
+		size_t ie = m_data.size();
 
 		while (is < ie)
 		{
-			uint32_t i = (is + ie) >> 1;
+			size_t i = (is + ie) >> 1;
 			if (key < m_data[i].first)
 				ie = i;
 			else if (key > m_data[i].first)
@@ -181,12 +181,12 @@ public:
 
 	Item operator [] (const Key& key) const
 	{
-		uint32_t is = 0;
-		uint32_t ie = m_data.size();
+		size_t is = 0;
+		size_t ie = m_data.size();
 
 		while (is < ie)
 		{
-			uint32_t i = (is + ie) >> 1;
+			size_t i = (is + ie) >> 1;
 			if (key < m_data[i].first)
 				ie = i;
 			else if (key > m_data[i].first)

@@ -165,7 +165,7 @@ struct ImpostorUpdateRenderBlock : public render::RenderBlock
 		renderView->begin(impostorTargetSet, 0);
 		renderView->clear(render::CfColor, &impostorClearColor, 0.0f, 0);
 
-		for (int i = 0; i < particlePassCount; ++i)
+		for (uint32_t i = 0; i < particlePassCount; ++i)
 			particlePass[i]->render(renderView, globalParameters);
 
 		renderView->end();
