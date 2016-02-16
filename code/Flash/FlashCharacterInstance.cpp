@@ -45,7 +45,17 @@ FlashCharacterInstance::FlashCharacterInstance(
 
 FlashCharacterInstance::~FlashCharacterInstance()
 {
-	destroy();
+	if (m_context)
+	{
+		if (m_context->getFocus() == this)
+			m_context->setFocus(0);
+	}
+
+	m_context = 0;
+	m_parent = 0;
+	m_eventScripts.clear();
+
+	ActionObjectRelay::dereference();
 	Atomic::decrement(ms_instanceCount);
 }
 

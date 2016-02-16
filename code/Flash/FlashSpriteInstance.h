@@ -35,7 +35,7 @@ public:
 
 	virtual ~FlashSpriteInstance();
 
-	void destroy();
+	virtual void destroy() T_OVERRIDE;
 
 	const FlashSprite* getSprite() const { return m_sprite; }
 

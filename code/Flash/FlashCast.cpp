@@ -29,6 +29,13 @@ public:
 		return m_delegate;
 	}
 
+protected:
+	virtual void dereference() T_OVERRIDE
+	{
+		m_delegate = 0;
+		ActionFunction::dereference();
+	}
+
 private:
 	Ref< IRuntimeDelegate > m_delegate;
 };

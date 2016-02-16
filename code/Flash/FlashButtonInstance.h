@@ -32,7 +32,7 @@ public:
 
 	virtual ~FlashButtonInstance();
 
-	void destroy();
+	virtual void destroy() T_OVERRIDE;
 
 	/*! \brief Get button.
 	 *
