@@ -44,7 +44,7 @@ public:
 	static int32_t getInstanceCount();
 	
 	/*! \brief Destroy instance. */
-	void destroy();
+	virtual void destroy();
 
 	/*! \brief Get ActionScript execution context.
 	 *

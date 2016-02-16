@@ -47,7 +47,19 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashDictionary
 
 FlashSpriteInstance::~FlashSpriteInstance()
 {
-	destroy();
+	m_sprite = 0;
+	m_mask = 0;
+	m_canvas = 0;
+	m_playing = false;
+
+	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	{
+		if (i->second.instance)
+			i->second.instance->destroy();
+	}
+	m_displayList.reset();
+	m_visibleCharacters.clear();
 }
 
 void FlashSpriteInstance::destroy()

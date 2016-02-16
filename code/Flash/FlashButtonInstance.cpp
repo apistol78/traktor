@@ -39,7 +39,10 @@ FlashButtonInstance::FlashButtonInstance(ActionContext* context, FlashDictionary
 
 FlashButtonInstance::~FlashButtonInstance()
 {
-	destroy();
+	for (std::map< uint16_t, Ref< FlashCharacterInstance > >::iterator i = m_characterInstances.begin(); i != m_characterInstances.end(); ++i)
+		safeDestroy(i->second);
+
+	m_characterInstances.clear();
 }
 
 void FlashButtonInstance::destroy()
