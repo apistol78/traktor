@@ -60,6 +60,8 @@ SwfCxTransform concateCxTransform(const SwfCxTransform& cxt1, const SwfCxTransfo
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieRenderer", FlashMovieRenderer, Object)
 
+bool FlashMovieRenderer::ms_forceRedraw = false;
+
 FlashMovieRenderer::FlashMovieRenderer(IDisplayRenderer* displayRenderer)
 :	m_displayRenderer(displayRenderer)
 ,	m_wantDirtyRegion(displayRenderer->wantDirtyRegion())
@@ -77,7 +79,7 @@ void FlashMovieRenderer::renderFrame(
 	const SwfColor& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
 
 	Aabb2 dirtyRegion;
-	if (m_wantDirtyRegion)
+	if (m_wantDirtyRegion && !ms_forceRedraw)
 	{
 		calculateDirtyRegion(
 			movieInstance,
@@ -86,6 +88,8 @@ void FlashMovieRenderer::renderFrame(
 			dirtyRegion
 		);
 	}
+	else
+		dirtyRegion = frameBounds;
 
 	m_displayRenderer->begin(
 		*movieInstance->getDictionary(),
@@ -105,6 +109,7 @@ void FlashMovieRenderer::renderFrame(
 	);
 
 	m_displayRenderer->end();
+	ms_forceRedraw = false;
 }
 
 void FlashMovieRenderer::renderSprite(
@@ -680,6 +685,16 @@ void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterI
 			s->bounds = bounds;
 		}
 	}
+}
+
+FlashMovieRenderer::State::State()
+:	visible(false)
+{
+}
+
+FlashMovieRenderer::State::~State()
+{
+	ms_forceRedraw |= visible;
 }
 
 	}
