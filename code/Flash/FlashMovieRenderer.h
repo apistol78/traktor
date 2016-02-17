@@ -58,6 +58,7 @@ private:
 	};
 
 	Ref< IDisplayRenderer > m_displayRenderer;
+	bool m_wantDirtyRegion;
 
 	void renderSprite(
 		FlashSpriteInstance* spriteInstance,
