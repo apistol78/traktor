@@ -51,14 +51,14 @@ private:
 		Aabb2 bounds;
 		bool visible;
 
-		State()
-		:	visible(false)
-		{
-		}
+		State();
+
+		virtual ~State();
 	};
 
 	Ref< IDisplayRenderer > m_displayRenderer;
 	bool m_wantDirtyRegion;
+	static bool ms_forceRedraw;
 
 	void renderSprite(
 		FlashSpriteInstance* spriteInstance,
