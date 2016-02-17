@@ -46,6 +46,11 @@ void SwDisplayRenderer::setTransform(const Matrix33& transform)
 	m_transform = transform;
 }
 
+bool SwDisplayRenderer::wantDirtyRegion() const
+{
+	return false;
+}
+
 void SwDisplayRenderer::begin(
 	const FlashDictionary& dictionary,
 	const SwfColor& backgroundColor,

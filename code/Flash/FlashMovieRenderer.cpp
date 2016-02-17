@@ -62,6 +62,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieRenderer", FlashMovieRenderer, 
 
 FlashMovieRenderer::FlashMovieRenderer(IDisplayRenderer* displayRenderer)
 :	m_displayRenderer(displayRenderer)
+,	m_wantDirtyRegion(displayRenderer->wantDirtyRegion())
 {
 }
 
@@ -76,12 +77,15 @@ void FlashMovieRenderer::renderFrame(
 	const SwfColor& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
 
 	Aabb2 dirtyRegion;
-	calculateDirtyRegion(
-		movieInstance,
-		Matrix33::identity(),
-		true,
-		dirtyRegion
-	);
+	if (m_wantDirtyRegion)
+	{
+		calculateDirtyRegion(
+			movieInstance,
+			Matrix33::identity(),
+			true,
+			dirtyRegion
+		);
+	}
 
 	m_displayRenderer->begin(
 		*movieInstance->getDictionary(),

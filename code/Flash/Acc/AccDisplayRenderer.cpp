@@ -254,6 +254,11 @@ void AccDisplayRenderer::flushCaches()
 	m_nextIndex = 0;
 }
 
+bool AccDisplayRenderer::wantDirtyRegion() const
+{
+	return m_clipToDirtyRegion;
+}
+
 void AccDisplayRenderer::begin(
 	const FlashDictionary& dictionary,
 	const SwfColor& backgroundColor,

@@ -34,6 +34,8 @@ public:
 	SwDisplayRenderer(drawing::Image* image);
 
 	void setTransform(const Matrix33& transform);
+
+	virtual bool wantDirtyRegion() const T_OVERRIDE T_FINAL;
 	
 	virtual void begin(
 		const FlashDictionary& dictionary,

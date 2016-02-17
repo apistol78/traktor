@@ -32,6 +32,10 @@ class T_DLLCLASS IDisplayRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Return true if renderer require proper dirty region.
+	 */
+	virtual bool wantDirtyRegion() const = 0;
+
 	/*! \brief Begin rendering frame.
 	 *
 	 * \param dictionary Flash character dictionary.
