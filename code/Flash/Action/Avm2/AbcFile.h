@@ -5,13 +5,11 @@
 
 namespace traktor
 {
-
-class BitReader;
-
 	namespace flash
 	{
 
 struct ConstantPool;
+class SwfReader;
 
 /*! \brief
  * \ingroup Flash
@@ -37,7 +35,7 @@ struct NamespaceInfo
 
 	NamespaceInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 };
 
 /*! \brief
@@ -50,7 +48,7 @@ struct NamespaceSetInfo
 
 	NamespaceSetInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 };
 
 /*! \brief
@@ -108,7 +106,7 @@ struct MultinameInfo
 
 	MultinameInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -126,7 +124,7 @@ struct ConstantPool
 	AutoArrayPtr< NamespaceSetInfo > nsset;
 	AutoArrayPtr< MultinameInfo > multinames;
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 };
 
 /*! \brief
@@ -161,7 +159,7 @@ struct OptionDetail
 
 	OptionDetail();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -176,7 +174,7 @@ struct OptionInfo
 
 	OptionInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -188,7 +186,7 @@ struct ParamInfo
 {
 	AutoArrayPtr< uint32_t > names;
 
-	bool load(BitReader& br, uint32_t paramCount);
+	bool load(SwfReader& swf, uint32_t paramCount);
 
 	void dump(const ConstantPool& cpool, uint32_t paramCount) const;
 };
@@ -221,7 +219,7 @@ struct MethodInfo
 
 	MethodInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -236,7 +234,7 @@ struct ItemInfo
 
 	ItemInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -252,7 +250,7 @@ struct MetaDataInfo
 
 	MetaDataInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -326,7 +324,7 @@ struct TraitsInfo
 
 	TraitsInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -359,7 +357,7 @@ struct InstanceInfo
 
 	InstanceInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -375,7 +373,7 @@ struct ClassInfo
 
 	ClassInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -391,7 +389,7 @@ struct ScriptInfo
 
 	ScriptInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -409,7 +407,7 @@ struct ExceptionInfo
 
 	ExceptionInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -433,7 +431,7 @@ struct MethodBodyInfo
 
 	MethodBodyInfo();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump(const ConstantPool& cpool) const;
 };
@@ -460,7 +458,7 @@ struct AbcFile
 
 	AbcFile();
 
-	bool load(BitReader& br);
+	bool load(SwfReader& swf);
 
 	void dump() const;
 };

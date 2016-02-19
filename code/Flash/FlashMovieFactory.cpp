@@ -45,6 +45,7 @@ FlashMovieFactory::FlashMovieFactory(bool includeAS)
 	m_tagReaders[TiDefineEditText] = new FlashTagDefineEditText();
 	//m_tagReaders[TiDefineButton] = new FlashTagDefineButton(1);
 	m_tagReaders[TiDefineButton2] = new FlashTagDefineButton(2);
+	m_tagReaders[TiDefineSceneAndFrameLabelData] = new FlashTagDefineSceneAndFrameLabelData();
 	m_tagReaders[TiPlaceObject] = new FlashTagPlaceObject(1);
 	m_tagReaders[TiPlaceObject2] = new FlashTagPlaceObject(2);
 	m_tagReaders[TiPlaceObject3] = new FlashTagPlaceObject(3);
@@ -64,8 +65,8 @@ FlashMovieFactory::FlashMovieFactory(bool includeAS)
 	m_tagReaders[TiEnableDebugger2] = new FlashTagProtect(3);
 	m_tagReaders[TiFrameLabel] = new FlashTagFrameLabel();
 	
-	//if (m_includeAS)
-	//	m_tagReaders[TiDoABC] = new FlashTagDoABC();
+	if (m_includeAS)
+		m_tagReaders[TiDoABC] = new FlashTagDoABC();
 
 	m_tagReaders[TiDefineSound] = new FlashTagDefineSound();
 	m_tagReaders[TiStartSound] = new FlashTagStartSound(1);

@@ -4,6 +4,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Memory/PoolAllocator.h"
+#include "Core/Misc/Endian.h"
 #include "Flash/SwfReader.h"
 
 namespace traktor
@@ -919,6 +920,56 @@ float SwfReader::readFixed8()
 {
 	int16_t fixed = m_bs->readInt16();
 	return float(fixed) / 256.0f;
+}
+
+uint16_t SwfReader::readU16BE()
+{
+	uint16_t v = m_bs->readUnsigned(16);
+#if defined(T_LITTLE_ENDIAN)
+	swap8in32(v);
+#endif
+	return v;
+}
+
+uint32_t SwfReader::readEncodedU30()
+{
+	return readEncodedU32();
+}
+
+uint32_t SwfReader::readEncodedU32()
+{
+	uint32_t v = 0;
+	uint32_t b;
+	
+	b = m_bs->readUInt8();
+	v = b;
+	if ((v & 0x00000080) == 0)
+		return v;
+
+	b = m_bs->readUInt8();
+	v = (v & 0x0000007f) | (b << 7);
+	if ((v & 0x00004000) == 0)
+		return v;
+
+	b = m_bs->readUInt8();
+	v = (v & 0x00003fff) | (b << 14);
+	if ((v & 0x00200000) == 0)
+		return v;
+
+	b = m_bs->readUInt8();
+	v = (v & 0x001fffff) | (b << 21);
+	if ((v & 0x10000000) == 0)
+		return v;
+
+	b = m_bs->readUInt8();
+	v = (v & 0x0fffffff) | (b << 28);
+	return v;
+}
+
+int32_t SwfReader::readEncodedS32()
+{
+	uint32_t v = readEncodedU32();
+	return *(int32_t*)&v;
 }
 
 BitReader& SwfReader::getBitReader()

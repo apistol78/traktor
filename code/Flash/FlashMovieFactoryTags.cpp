@@ -534,7 +534,7 @@ bool FlashTagDefineButton::read(SwfReader* swf, ReadContext& context)
 
 				condition.mask |= bs.readBit() ? FlashButton::CmOverDownToIdle : 0;
 
-				condition.script = context.avm1->load(bs);
+				condition.script = context.avm1->load(*swf);
 				bs.alignByte();
 
 				button->addButtonCondition(condition);
@@ -1059,7 +1059,7 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 					T_DEBUG(L"PlaceObject, unused keycode in EvtKeyPress");
 				}
 
-				Ref< const IActionVMImage > image = context.avm1->load(bs);
+				Ref< const IActionVMImage > image = context.avm1->load(*swf);
 				bs.alignByte();
 
 				placeObject.events.insert(std::make_pair(eventMask, image));
@@ -1114,12 +1114,9 @@ bool FlashTagShowFrame::read(SwfReader* swf, ReadContext& context)
 
 bool FlashTagDoAction::read(SwfReader* swf, ReadContext& context)
 {
-	BitReader& bs = swf->getBitReader();
-
-	Ref< const IActionVMImage > image = context.avm1->load(bs);
+	Ref< const IActionVMImage > image = context.avm1->load(*swf);
 	if (image)
 		context.frame->addActionScript(image);
-
 	return true;
 }
 
@@ -1182,7 +1179,7 @@ bool FlashTagInitAction::read(SwfReader* swf, ReadContext& context)
 
 	/*uint16_t spriteId = */bs.readUInt16();
 
-	Ref< const IActionVMImage > image = context.avm1->load(bs);
+	Ref< const IActionVMImage > image = context.avm1->load(*swf);
 	bs.alignByte();
 
 	context.sprite->addInitActionScript(image);
@@ -1225,7 +1222,7 @@ bool FlashTagDoABC::read(SwfReader* swf, ReadContext& context)
 	uint32_t flags = bs.readUInt32();
 	std::string name = swf->readString();
 
-	Ref< const IActionVMImage > image = context.avm2->load(bs);
+	Ref< const IActionVMImage > image = context.avm2->load(*swf);
 	if (!image)
 		return false;
 
@@ -1347,6 +1344,33 @@ bool FlashTagStartSound::read(SwfReader* swf, ReadContext& context)
 	else
 		// \fixme
 		return false;
+
+	return true;
+}
+
+// ============================================================================
+
+bool FlashTagDefineSceneAndFrameLabelData::read(SwfReader* swf, ReadContext& context)
+{
+	BitReader& bs = swf->getBitReader();
+
+	uint32_t sceneCount = swf->readEncodedU32();
+	for (uint32_t i = 0; i < sceneCount; ++i)
+	{
+		uint32_t offset = swf->readEncodedU32();
+		std::string name = swf->readString();
+
+		log::info << i << L". offset = " << offset << L", name = " << mbstows(name) << Endl;
+	}
+
+	uint32_t frameLabelCount = swf->readEncodedU32();
+	for (uint32_t i = 0; i < frameLabelCount; ++i)
+	{
+		uint32_t number = swf->readEncodedU32();
+		std::string label = swf->readString();
+
+		log::info << i << L". number = " << number << L", label = " << mbstows(label) << Endl;
+	}
 
 	return true;
 }

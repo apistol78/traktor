@@ -29,7 +29,7 @@ class T_DLLCLASS ActionVM2 : public IActionVM
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< const IActionVMImage > load(BitReader& br) const T_OVERRIDE T_FINAL;
+	virtual Ref< const IActionVMImage > load(SwfReader& swf) const T_OVERRIDE T_FINAL;
 };
 
 	}

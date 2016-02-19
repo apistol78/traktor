@@ -1,4 +1,5 @@
 #include "Core/Io/BitReader.h"
+#include "Flash/SwfReader.h"
 #include "Flash/Action/Avm1/ActionOpcodes.h"
 #include "Flash/Action/Avm1/ActionVM1.h"
 #include "Flash/Action/Avm1/ActionVMImage1.h"
@@ -10,9 +11,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionVM1", ActionVM1, IActionVM)
 
-Ref< const IActionVMImage > ActionVM1::load(BitReader& br) const
+Ref< const IActionVMImage > ActionVM1::load(SwfReader& swf) const
 {
 	Ref< ActionVMImage1 > image = new ActionVMImage1();
+	BitReader& br = swf.getBitReader();
 
 	image->m_byteCode.reserve(4096);
 	for (;;)
