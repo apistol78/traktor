@@ -55,7 +55,7 @@ public:
 class FlashTagSetBackgroundColor : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagDefineShape : public FlashTag
@@ -63,7 +63,7 @@ class FlashTagDefineShape : public FlashTag
 public:
 	FlashTagDefineShape(int shapeType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int m_shapeType;
@@ -74,7 +74,7 @@ class FlashTagDefineMorphShape : public FlashTag
 public:
 	FlashTagDefineMorphShape(int shapeType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int m_shapeType;
@@ -85,7 +85,7 @@ class FlashTagDefineFont : public FlashTag
 public:
 	FlashTagDefineFont(int fontType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int m_fontType;
@@ -94,7 +94,7 @@ private:
 class FlashTagDefineScalingGrid : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagDefineText : public FlashTag
@@ -102,7 +102,7 @@ class FlashTagDefineText : public FlashTag
 public:
 	FlashTagDefineText(int textType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int m_textType;
@@ -111,7 +111,7 @@ private:
 class FlashTagDefineEditText : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagDefineButton : public FlashTag
@@ -119,7 +119,7 @@ class FlashTagDefineButton : public FlashTag
 public:
 	FlashTagDefineButton(int buttonType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int m_buttonType;
@@ -128,7 +128,7 @@ private:
 class FlashTagJpegTables : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagDefineBitsJpeg : public FlashTag
@@ -136,7 +136,7 @@ class FlashTagDefineBitsJpeg : public FlashTag
 public:
 	FlashTagDefineBitsJpeg(int bitsType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int m_bitsType;
@@ -147,7 +147,7 @@ class FlashTagDefineBitsLossLess : public FlashTag
 public:
 	FlashTagDefineBitsLossLess(int bitsType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int m_bitsType;
@@ -156,7 +156,7 @@ private:
 class FlashTagDefineSprite : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagPlaceObject : public FlashTag
@@ -164,7 +164,7 @@ class FlashTagPlaceObject : public FlashTag
 public:
 	FlashTagPlaceObject(int placeType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int m_placeType;
@@ -175,7 +175,7 @@ class FlashTagRemoveObject : public FlashTag
 public:
 	FlashTagRemoveObject(int removeType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int m_removeType;
@@ -184,19 +184,19 @@ private:
 class FlashTagShowFrame : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagDoAction : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagExportAssets : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagImportAssets : public FlashTag
@@ -204,7 +204,7 @@ class FlashTagImportAssets : public FlashTag
 public:
 	FlashTagImportAssets(int importType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int m_importType;
@@ -213,7 +213,7 @@ private:
 class FlashTagInitAction : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagProtect : public FlashTag
@@ -221,25 +221,25 @@ class FlashTagProtect : public FlashTag
 public:
 	FlashTagProtect(int protectType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagFrameLabel : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagDoABC : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagDefineSound : public FlashTag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagStartSound : public FlashTag
@@ -247,10 +247,16 @@ class FlashTagStartSound : public FlashTag
 public:
 	FlashTagStartSound(int32_t startType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_startType;
+};
+
+class FlashTagDefineSceneAndFrameLabelData : public FlashTag
+{
+public:
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
 class FlashTagUnsupported : public FlashTag
@@ -258,7 +264,7 @@ class FlashTagUnsupported : public FlashTag
 public:
 	FlashTagUnsupported(int32_t tagId);
 
-	virtual bool read(SwfReader* swf, ReadContext& context);
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_tagId;

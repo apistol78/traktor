@@ -153,6 +153,14 @@ public:
 
 	float readFixed8();
 
+	uint16_t readU16BE();
+
+	uint32_t readEncodedU30();
+
+	uint32_t readEncodedU32();
+
+	int32_t readEncodedS32();
+
 	//@}
 
 	BitReader& getBitReader();

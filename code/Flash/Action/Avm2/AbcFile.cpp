@@ -5,6 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
+#include "Flash/SwfReader.h"
 #include "Flash/Action/Avm2/AbcFile.h"
 #include "Flash/Action/Avm2/ActionOpcodes.h"
 
@@ -15,53 +16,53 @@ namespace traktor
 		namespace
 		{
 
-uint16_t readU16(BitReader& br)
-{
-	uint16_t v = br.readUnsigned(16);
-#if defined(T_LITTLE_ENDIAN)
-	swap8in32(v);
-#endif
-	return v;
-}
+//uint16_t readU16(SwfReader& swf)
+//{
+//	uint16_t v = br.readUnsigned(16);
+//#if defined(T_LITTLE_ENDIAN)
+//	swap8in32(v);
+//#endif
+//	return v;
+//}
 
-uint32_t readU30(BitReader& br)
-{
-	uint32_t out = 0;
-	for (uint32_t i = 0; i < 5; ++i)
-	{
-		uint8_t v = br.readUnsigned(8);
-		out |= (v & 0x7f) << (i * 7);
-		if ((v & 0x80) == 0x00)
-			break;
-	}
-	return out;
-}
+//uint32_t readU30(SwfReader& swf)
+//{
+//	uint32_t out = 0;
+//	for (uint32_t i = 0; i < 5; ++i)
+//	{
+//		uint8_t v = br.readUnsigned(8);
+//		out |= (v & 0x7f) << (i * 7);
+//		if ((v & 0x80) == 0x00)
+//			break;
+//	}
+//	return out;
+//}
+//
+//uint32_t readU32(SwfReader& swf)
+//{
+//	uint32_t out = 0;
+//	for (uint32_t i = 0; i < 5; ++i)
+//	{
+//		uint8_t v = br.readUnsigned(8);
+//		out |= (v & 0x7f) << (i * 7);
+//		if ((v & 0x80) == 0x00)
+//			break;
+//	}
+//	return out;
+//}
 
-uint32_t readU32(BitReader& br)
-{
-	uint32_t out = 0;
-	for (uint32_t i = 0; i < 5; ++i)
-	{
-		uint8_t v = br.readUnsigned(8);
-		out |= (v & 0x7f) << (i * 7);
-		if ((v & 0x80) == 0x00)
-			break;
-	}
-	return out;
-}
-
-int32_t readS32(BitReader& br)
-{
-	int32_t out = 0;
-	for (uint32_t i = 0; i < 5; ++i)
-	{
-		uint8_t v = br.readUnsigned(8);
-		out |= (v & 0x7f) << (i * 7);
-		if ((v & 0x80) == 0x00)
-			break;
-	}
-	return out;
-}
+//int32_t readS32(SwfReader& swf)
+//{
+//	int32_t out = 0;
+//	for (uint32_t i = 0; i < 5; ++i)
+//	{
+//		uint8_t v = br.readUnsigned(8);
+//		out |= (v & 0x7f) << (i * 7);
+//		if ((v & 0x80) == 0x00)
+//			break;
+//	}
+//	return out;
+//}
 
 std::wstring getQualifiedName(const ConstantPool& cpool, uint32_t name)
 {
@@ -88,10 +89,11 @@ NamespaceInfo::NamespaceInfo()
 {
 }
 
-bool NamespaceInfo::load(BitReader& br)
+bool NamespaceInfo::load(SwfReader& swf)
 {
+	BitReader& br = swf.getBitReader();
 	kind = br.readUnsigned(8);
-	name = readU30(br);
+	name = swf.readEncodedU30();
 	return true;
 }
 
@@ -100,12 +102,12 @@ NamespaceSetInfo::NamespaceSetInfo()
 {
 }
 
-bool NamespaceSetInfo::load(BitReader& br)
+bool NamespaceSetInfo::load(SwfReader& swf)
 {
-	count = readU30(br);
+	count = swf.readEncodedU30();
 	ns.reset(new uint32_t [count]);
 	for (uint32_t i = 0; i < count; ++i)
-		ns[i] = readU30(br);
+		ns[i] = swf.readEncodedU30();
 	return true;
 }
 
@@ -114,23 +116,24 @@ MultinameInfo::MultinameInfo()
 {
 }
 
-bool MultinameInfo::load(BitReader& br)
+bool MultinameInfo::load(SwfReader& swf)
 {
+	BitReader& br = swf.getBitReader();
 	kind = br.readUnsigned(8);
 	switch (kind)
 	{
 	case Mnik_CONSTANT_QName:
 	case Mnik_CONSTANT_QNameA:
 		{
-			data.qname.ns = readU30(br);
-			data.qname.name = readU30(br);
+			data.qname.ns = swf.readEncodedU30();
+			data.qname.name = swf.readEncodedU30();
 		}
 		break;
 
 	case Mnik_CONSTANT_RTQName:
 	case Mnik_CONSTANT_RTQNameA:
 		{
-			data.rtqname.name = readU30(br);
+			data.rtqname.name = swf.readEncodedU30();
 		}
 		break;
 
@@ -141,15 +144,15 @@ bool MultinameInfo::load(BitReader& br)
 	case Mnik_CONSTANT_Multiname:
 	case Mnik_CONSTANT_MultinameA:
 		{
-			data.multiname.name = readU30(br);
-			data.multiname.nsset = readU30(br);
+			data.multiname.name = swf.readEncodedU30();
+			data.multiname.nsset = swf.readEncodedU30();
 		}
 		break;
 
 	case Mnik_CONSTANT_MultinameL:
 	case Mnik_CONSTANT_MultinameLA:
 		{
-			data.multinameL.nsset = readU30(br);
+			data.multinameL.nsset = swf.readEncodedU30();
 		}
 		break;
 
@@ -159,22 +162,24 @@ bool MultinameInfo::load(BitReader& br)
 	return true;
 }
 
-bool ConstantPool::load(BitReader& br)
+bool ConstantPool::load(SwfReader& swf)
 {
-	uint32_t cpoolInt32Count = readU30(br);
-	s32.reset(new int32_t [cpoolInt32Count]);
+	BitReader& br = swf.getBitReader();
+
+	uint32_t cpoolInt32Count = swf.readEncodedU30();
+	s32.reset(new int32_t [std::max(cpoolInt32Count, 1U)]);
 	s32[0] = 0;
 	for (uint32_t i = 1; i < cpoolInt32Count; ++i)
-		s32[i] = readU32(br);
+		s32[i] = swf.readEncodedU32();
 
-	uint32_t cpoolUInt32Count = readU30(br);
-	u32.reset(new uint32_t [cpoolUInt32Count]);
+	uint32_t cpoolUInt32Count = swf.readEncodedU30();
+	u32.reset(new uint32_t [std::max(cpoolUInt32Count, 1U)]);
 	u32[0] = 0;
 	for (uint32_t i = 1; i < cpoolUInt32Count; ++i)
-		u32[i] = readS32(br);
+		u32[i] = swf.readEncodedS32();
 
-	uint32_t cpoolDoubleCount = readU30(br);
-	doubles.reset(new double [cpoolDoubleCount]);
+	uint32_t cpoolDoubleCount = swf.readEncodedU30();
+	doubles.reset(new double [std::max(cpoolDoubleCount, 1U)]);
 	doubles[0] = 0.0;
 	for (uint32_t i = 1; i < cpoolDoubleCount; ++i)
 	{
@@ -182,11 +187,11 @@ bool ConstantPool::load(BitReader& br)
 		doubles[i] = *(double*)&dv;
 	}
 
-	uint32_t cpoolStringCount = readU30(br);
-	strings.reset(new std::wstring [cpoolStringCount]);
+	uint32_t cpoolStringCount = swf.readEncodedU30();
+	strings.reset(new std::wstring [std::max(cpoolStringCount, 1U)]);
 	for (uint32_t i = 1; i < cpoolStringCount; ++i)
 	{
-		uint32_t length = readU30(br);
+		uint32_t length = swf.readEncodedU30();
 
 		AutoArrayPtr< uint8_t > data(new uint8_t [length]);
 		for (uint32_t j = 0; j < length; ++j)
@@ -195,27 +200,27 @@ bool ConstantPool::load(BitReader& br)
 		strings[i] = mbstows(Utf8Encoding(), std::string(&data[0], &data[length]));
 	}
 
-	uint32_t cpoolNamespaceCount = readU30(br);
-	namespaces.reset(new NamespaceInfo [cpoolNamespaceCount]);
+	uint32_t cpoolNamespaceCount = swf.readEncodedU30();
+	namespaces.reset(new NamespaceInfo [std::max(cpoolNamespaceCount, 1U)]);
 	for (uint32_t i = 1; i < cpoolNamespaceCount; ++i)
 	{
-		if (!namespaces[i].load(br))
+		if (!namespaces[i].load(swf))
 			return false;
 	}
 
-	uint32_t cpoolNsSetCount = readU30(br);
-	nsset.reset(new NamespaceSetInfo [cpoolNsSetCount]);
+	uint32_t cpoolNsSetCount = swf.readEncodedU30();
+	nsset.reset(new NamespaceSetInfo [std::max(cpoolNsSetCount, 1U)]);
 	for (uint32_t i = 1; i < cpoolNsSetCount; ++i)
 	{
-		if (!nsset[i].load(br))
+		if (!nsset[i].load(swf))
 			return false;
 	}
 
-	uint32_t cpoolMultinameCount = readU30(br);
-	multinames.reset(new MultinameInfo [cpoolMultinameCount]);
+	uint32_t cpoolMultinameCount = swf.readEncodedU30();
+	multinames.reset(new MultinameInfo [std::max(cpoolMultinameCount, 1U)]);
 	for (uint32_t i = 1; i < cpoolMultinameCount; ++i)
 	{
-		if (!multinames[i].load(br))
+		if (!multinames[i].load(swf))
 			return false;
 	}
 
@@ -228,9 +233,10 @@ OptionDetail::OptionDetail()
 {
 }
 
-bool OptionDetail::load(BitReader& br)
+bool OptionDetail::load(SwfReader& swf)
 {
-	val = readU30(br);
+	BitReader& br = swf.getBitReader();
+	val = swf.readEncodedU30();
 	kind = br.readUnsigned(8);
 	return true;
 }
@@ -246,13 +252,13 @@ OptionInfo::OptionInfo()
 {
 }
 
-bool OptionInfo::load(BitReader& br)
+bool OptionInfo::load(SwfReader& swf)
 {
-	optionCount = readU30(br);
+	optionCount = swf.readEncodedU30();
 	options.reset(new OptionDetail [optionCount]);
 	for (uint32_t i = 0; i < optionCount; ++i)
 	{
-		if (!options[i].load(br))
+		if (!options[i].load(swf))
 			return false;
 	}
 	return true;
@@ -271,11 +277,11 @@ void OptionInfo::dump(const ConstantPool& cpool) const
 	}
 }
 
-bool ParamInfo::load(BitReader& br, uint32_t paramCount)
+bool ParamInfo::load(SwfReader& swf, uint32_t paramCount)
 {
 	names.reset(new uint32_t [paramCount]);
 	for (uint32_t i = 0; i < paramCount; ++i)
-		names[i] = readU30(br);
+		names[i] = swf.readEncodedU30();
 	return true;
 }
 
@@ -293,30 +299,32 @@ MethodInfo::MethodInfo()
 {
 }
 
-bool MethodInfo::load(BitReader& br)
+bool MethodInfo::load(SwfReader& swf)
 {
-	paramCount = readU30(br);
-	returnType = readU30(br);
+	BitReader& br = swf.getBitReader();
+
+	paramCount = swf.readEncodedU30();
+	returnType = swf.readEncodedU30();
 
 	if (paramCount > 0)
 	{
 		paramTypes.reset(new uint32_t [paramCount]);
 		for (uint32_t j = 0; j < paramCount; ++j)
-			paramTypes[j] = readU30(br);
+			paramTypes[j] = swf.readEncodedU30();
 	}
 
-	name = readU30(br);
+	name = swf.readEncodedU30();
 	flags = br.readUnsigned(8);
 		
 	if (flags & Mif_HAS_OPTIONAL)
 	{
-		if (!options.load(br))
+		if (!options.load(swf))
 			return false;
 	}
 
 	if (flags & Mif_HAS_PARAM_NAMES)
 	{
-		if (!paramNames.load(br, paramCount))
+		if (!paramNames.load(swf, paramCount))
 			return false;
 	}
 
@@ -353,10 +361,10 @@ ItemInfo::ItemInfo()
 {
 }
 
-bool ItemInfo::load(BitReader& br)
+bool ItemInfo::load(SwfReader& swf)
 {
-	key = readU30(br);
-	value = readU30(br);
+	key = swf.readEncodedU30();
+	value = swf.readEncodedU30();
 	return true;
 }
 
@@ -372,14 +380,14 @@ MetaDataInfo::MetaDataInfo()
 {
 }
 
-bool MetaDataInfo::load(BitReader& br)
+bool MetaDataInfo::load(SwfReader& swf)
 {
-	name = readU30(br);
-	itemCount = readU30(br);
+	name = swf.readEncodedU30();
+	itemCount = swf.readEncodedU30();
 	items.reset(new ItemInfo [itemCount]);
 	for (uint32_t j = 0; j < itemCount; ++j)
 	{
-		if (!items[j].load(br))
+		if (!items[j].load(swf))
 			return false;
 	}
 	return true;
@@ -406,9 +414,13 @@ TraitsInfo::TraitsInfo()
 {
 }
 
-bool TraitsInfo::load(BitReader& br)
+bool TraitsInfo::load(SwfReader& swf)
 {
-	name = readU30(br);
+	BitReader& br = swf.getBitReader();
+
+	if ((name = swf.readEncodedU30()) == 0)
+		return false;
+
 	kind = br.readUnsigned(8);
 
 	switch (kind & 7)
@@ -416,24 +428,27 @@ bool TraitsInfo::load(BitReader& br)
 	case Tik_Trait_Slot:
 	case Tik_Trait_Const:
 		{
-			data.slot.slotId = readU30(br);
-			data.slot.typeName = readU30(br);
-			data.slot.vindex = readU30(br);
-			data.slot.vkind = br.readUnsigned(8);
+			data.slot.slotId = swf.readEncodedU30();
+			data.slot.typeName = swf.readEncodedU30();
+			data.slot.vindex = swf.readEncodedU30();
+			if (data.slot.vindex != 0)
+				data.slot.vkind = br.readUnsigned(8);
+			else
+				data.slot.vkind = 0;
 		}
 		break;
 
 	case Tik_Trait_Class:
 		{
-			data.clazz.slotId = readU30(br);
-			data.clazz.classIndex = readU30(br);
+			data.clazz.slotId = swf.readEncodedU30();
+			data.clazz.classIndex = swf.readEncodedU30();
 		}
 		break;
 
 	case Tik_Trait_Function:
 		{
-			data.function.slotId = readU30(br);
-			data.function.functionIndex = readU30(br);
+			data.function.slotId = swf.readEncodedU30();
+			data.function.functionIndex = swf.readEncodedU30();
 		}
 		break;
 
@@ -441,8 +456,8 @@ bool TraitsInfo::load(BitReader& br)
 	case Tik_Trait_Getter:
 	case Tik_Trait_Setter:
 		{
-			data.method.dispId = readU30(br);
-			data.method.methodIndex = readU30(br);
+			data.method.dispId = swf.readEncodedU30();
+			data.method.methodIndex = swf.readEncodedU30();
 		}
 		break;
 
@@ -452,10 +467,10 @@ bool TraitsInfo::load(BitReader& br)
 
 	if (((kind >> 4) & Tia_ATTR_MetaData) == Tia_ATTR_MetaData)
 	{
-		metaDataCount = readU30(br);
+		metaDataCount = swf.readEncodedU30();
 		metaData.reset(new uint32_t [metaDataCount]);
 		for (uint32_t i = 0; i < metaDataCount; ++i)
-			metaData[i] = readU30(br);
+			metaData[i] = swf.readEncodedU30();
 	}
 
 	return true;
@@ -481,25 +496,29 @@ InstanceInfo::InstanceInfo()
 {
 }
 
-bool InstanceInfo::load(BitReader& br)
+bool InstanceInfo::load(SwfReader& swf)
 {
-	name = readU30(br);
-	superName = readU30(br);
-	flags = br.readUnsigned(8);
-	protectedNs = readU30(br);
+	BitReader& br = swf.getBitReader();
 
-	interfaceCount = readU30(br);
+	name = swf.readEncodedU30();
+	superName = swf.readEncodedU30();
+	flags = br.readUnsigned(8);
+
+	if ((flags & Iif_CONSTANT_ClassProtectedNs) != 0)
+		protectedNs = swf.readEncodedU30();
+
+	interfaceCount = swf.readEncodedU30();
 	interfaces.reset(new uint32_t [interfaceCount]);
 	for (uint32_t i = 0; i < interfaceCount; ++i)
-		interfaces[i] = readU30(br);
+		interfaces[i] = swf.readEncodedU30();
 
-	iinit = readU30(br);
+	iinit = swf.readEncodedU30();
 
-	traitsCount = readU30(br);
+	traitsCount = swf.readEncodedU30();
 	traits.reset(new TraitsInfo [traitsCount]);
 	for (uint32_t i = 0; i < traitsCount; ++i)
 	{
-		if (!traits[i].load(br))
+		if (!traits[i].load(swf))
 			return false;
 	}
 
@@ -533,15 +552,15 @@ ClassInfo::ClassInfo()
 {
 }
 
-bool ClassInfo::load(BitReader& br)
+bool ClassInfo::load(SwfReader& swf)
 {
-	cinit = readU30(br);
+	cinit = swf.readEncodedU30();
 
-	traitsCount = readU30(br);
+	traitsCount = swf.readEncodedU30();
 	traits.reset(new TraitsInfo [traitsCount]);
 	for (uint32_t i = 0; i < traitsCount; ++i)
 	{
-		if (!traits[i].load(br))
+		if (!traits[i].load(swf))
 			return false;
 	}
 
@@ -568,15 +587,15 @@ ScriptInfo::ScriptInfo()
 {
 }
 
-bool ScriptInfo::load(BitReader& br)
+bool ScriptInfo::load(SwfReader& swf)
 {
-	init = readU30(br);
+	init = swf.readEncodedU30();
 
-	traitsCount = readU30(br);
+	traitsCount = swf.readEncodedU30();
 	traits.reset(new TraitsInfo [traitsCount]);
 	for (uint32_t i = 0; i < traitsCount; ++i)
 	{
-		if (!traits[i].load(br))
+		if (!traits[i].load(swf))
 			return false;
 	}
 
@@ -606,13 +625,13 @@ ExceptionInfo::ExceptionInfo()
 {
 }
 
-bool ExceptionInfo::load(BitReader& br)
+bool ExceptionInfo::load(SwfReader& swf)
 {
-	from = readU30(br);
-	to = readU30(br);
-	target = readU30(br);
-	exceptionType = readU30(br);
-	varName = readU30(br);
+	from = swf.readEncodedU30();
+	to = swf.readEncodedU30();
+	target = swf.readEncodedU30();
+	exceptionType = swf.readEncodedU30();
+	varName = swf.readEncodedU30();
 	return true;
 }
 
@@ -637,32 +656,34 @@ MethodBodyInfo::MethodBodyInfo()
 {
 }
 
-bool MethodBodyInfo::load(BitReader& br)
+bool MethodBodyInfo::load(SwfReader& swf)
 {
-	method = readU30(br);
-	maxStack = readU30(br);
-	localCount = readU30(br);
-	initScopeDepth = readU30(br);
-	maxScopeDepth = readU30(br);
+	BitReader& br = swf.getBitReader();
 
-	codeLength = readU30(br);
+	method = swf.readEncodedU30();
+	maxStack = swf.readEncodedU30();
+	localCount = swf.readEncodedU30();
+	initScopeDepth = swf.readEncodedU30();
+	maxScopeDepth = swf.readEncodedU30();
+
+	codeLength = swf.readEncodedU30();
 	code.reset(new uint8_t [codeLength]);
 	for (uint32_t i = 0; i < codeLength; ++i)
 		code[i] = br.readUnsigned(8);
 
-	exceptionCount = readU30(br);
+	exceptionCount = swf.readEncodedU30();
 	exceptions.reset(new ExceptionInfo [exceptionCount]);
 	for (uint32_t i = 0; i < exceptionCount; ++i)
 	{
-		if (!exceptions[i].load(br))
+		if (!exceptions[i].load(swf))
 			return false;
 	}
 
-	traitsCount = readU30(br);
+	traitsCount = swf.readEncodedU30();
 	traits.reset(new TraitsInfo [traitsCount]);
 	for (uint32_t i = 0; i < traitsCount; ++i)
 	{
-		if (!traits[i].load(br))
+		if (!traits[i].load(swf))
 			return false;
 	}
 
@@ -718,57 +739,57 @@ AbcFile::AbcFile()
 {
 }
 
-bool AbcFile::load(BitReader& br)
+bool AbcFile::load(SwfReader& swf)
 {
-	minorVersion = readU16(br);
-	majorVersion = readU16(br);
+	minorVersion = swf.readU16BE();
+	majorVersion = swf.readU16BE();
 
-	if (!cpool.load(br))
+	if (!cpool.load(swf))
 		return false;
 
-	methodCount = readU30(br);
+	methodCount = swf.readEncodedU30();
 	methods.reset(new MethodInfo [methodCount]);
 	for (uint32_t i = 0; i < methodCount; ++i)
 	{
-		if (!methods[i].load(br))
+		if (!methods[i].load(swf))
 			return false;
 	}
 
-	metaDataCount = readU30(br);
+	metaDataCount = swf.readEncodedU30();
 	metaData.reset(new MetaDataInfo [metaDataCount]);
 	for (uint32_t i = 0; i < metaDataCount; ++i)
 	{
-		if (!metaData[i].load(br))
+		if (!metaData[i].load(swf))
 			return false;
 	}
 
-	classCount = readU30(br);
+	classCount = swf.readEncodedU30();
 	instances.reset(new InstanceInfo [classCount]);
 	for (uint32_t i = 0; i < classCount; ++i)
 	{
-		if (!instances[i].load(br))
+		if (!instances[i].load(swf))
 			return false;
 	}
 	classes.reset(new ClassInfo [classCount]);
 	for (uint32_t i = 0; i < classCount; ++i)
 	{
-		if (!classes[i].load(br))
+		if (!classes[i].load(swf))
 			return false;
 	}
 
-	scriptsCount = readU30(br);
+	scriptsCount = swf.readEncodedU30();
 	scripts.reset(new ScriptInfo [scriptsCount]);
 	for (uint32_t i = 0; i < scriptsCount; ++i)
 	{
-		if (!scripts[i].load(br))
+		if (!scripts[i].load(swf))
 			return false;
 	}
 
-	methodBodyCount = readU30(br);
+	methodBodyCount = swf.readEncodedU30();
 	methodBodies.reset(new MethodBodyInfo [methodBodyCount]);
 	for (uint32_t i = 0; i < methodBodyCount; ++i)
 	{
-		if (!methodBodies[i].load(br))
+		if (!methodBodies[i].load(swf))
 			return false;
 	}
 
