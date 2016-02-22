@@ -692,6 +692,10 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/Breakpoint.image</value>
 		</item>
 		<item>
+			<name>Script.Current</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/Current.image</value>
+		</item>
+		<item>
 			<name>Script.DebugContinue</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/DebugContinue.image</value>
 		</item>

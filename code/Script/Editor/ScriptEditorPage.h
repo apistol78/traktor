@@ -3,6 +3,7 @@
 
 #include <list>
 #include "Editor/IEditorPage.h"
+#include "Script/IScriptDebugger.h"
 #include "Script/IScriptManager.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
 #include "Script/Editor/IScriptOutline.h"
@@ -64,6 +65,7 @@ class SearchEvent;
 class T_DLLCLASS ScriptEditorPage
 :	public editor::IEditorPage
 ,	public IErrorCallback
+,	public IScriptDebugger::IListener
 ,	public IScriptDebuggerSessions::IListener
 {
 	T_RTTI_CLASS;
@@ -119,6 +121,13 @@ private:
 
 	/*! \} */
 
+	/*! \name IScriptDebugger::IListener */
+	/*! \{ */
+
+	virtual void debugeeStateChange(IScriptDebugger* scriptDebugger);
+
+	/*! \} */
+
 	/*! \name IScriptDebuggerSessions::IListener */
 	/*! \{ */
 
@@ -159,8 +168,6 @@ private:
 	void eventSearch(SearchEvent* event);
 
 	void eventTimer(ui::TimerEvent* event);
-
-	//void eventBreakPoint(ScriptBreakpointEvent* event);
 };
 
 	}

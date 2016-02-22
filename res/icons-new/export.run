@@ -126,6 +126,7 @@ local outputs =
 			{ name = "DebugStepOver", column = 5, row = 6, width = 1, height = 1 },
 			{ name = "ProfilerClear", column = 6, row = 6, width = 1, height = 1 },
 			{ name = "Breakpoint", column = 7, row = 6, width = 1, height = 1, base = 12 },
+			{ name = "Current", column = 7, row = 18, width = 1, height = 1, base = 12 },
 			{ name = "AddDependency", column = 8, row = 6, width = 1, height = 1 },
 			{ name = "RemoveDependency", column = 9, row = 6, width = 1, height = 1 },
 			{ name = "MoveDependencyUp", column = 10, row = 6, width = 1, height = 1 },
