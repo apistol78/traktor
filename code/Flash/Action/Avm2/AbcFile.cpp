@@ -16,54 +16,6 @@ namespace traktor
 		namespace
 		{
 
-//uint16_t readU16(SwfReader& swf)
-//{
-//	uint16_t v = br.readUnsigned(16);
-//#if defined(T_LITTLE_ENDIAN)
-//	swap8in32(v);
-//#endif
-//	return v;
-//}
-
-//uint32_t readU30(SwfReader& swf)
-//{
-//	uint32_t out = 0;
-//	for (uint32_t i = 0; i < 5; ++i)
-//	{
-//		uint8_t v = br.readUnsigned(8);
-//		out |= (v & 0x7f) << (i * 7);
-//		if ((v & 0x80) == 0x00)
-//			break;
-//	}
-//	return out;
-//}
-//
-//uint32_t readU32(SwfReader& swf)
-//{
-//	uint32_t out = 0;
-//	for (uint32_t i = 0; i < 5; ++i)
-//	{
-//		uint8_t v = br.readUnsigned(8);
-//		out |= (v & 0x7f) << (i * 7);
-//		if ((v & 0x80) == 0x00)
-//			break;
-//	}
-//	return out;
-//}
-
-//int32_t readS32(SwfReader& swf)
-//{
-//	int32_t out = 0;
-//	for (uint32_t i = 0; i < 5; ++i)
-//	{
-//		uint8_t v = br.readUnsigned(8);
-//		out |= (v & 0x7f) << (i * 7);
-//		if ((v & 0x80) == 0x00)
-//			break;
-//	}
-//	return out;
-//}
-
 std::wstring getQualifiedName(const ConstantPool& cpool, uint32_t name)
 {
 	const MultinameInfo& mn = cpool.multinames[name];

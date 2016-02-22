@@ -533,6 +533,11 @@ void FlashEditorPage::updateTreeMovie()
 				std::set< const ActionObject* > objectStack;
 				updateTreeObject(memberItemGlobal, global, objectStack, pointerHash, nextPointerHash);
 
+				Ref< ui::custom::TreeViewItem > memberItemExports = m_treeMovie->createItem(0, L"Export(s)", 0, 0);
+				const SmallMap< std::string, uint16_t >& exports = m_movie->getExports();
+				for (SmallMap< std::string, uint16_t >::const_iterator i = exports.begin(); i != exports.end(); ++i)
+					m_treeMovie->createItem(memberItemExports, toString(i->second) + L": \"" + mbstows(i->first) + L"\"");
+
 				log::debug << L"Last object index @" << nextPointerHash << Endl;
 			}
 		}

@@ -1349,6 +1349,7 @@ bool FlashTagStartSound::read(SwfReader* swf, ReadContext& context)
 }
 
 // ============================================================================
+// Define scene and frame label data.
 
 bool FlashTagDefineSceneAndFrameLabelData::read(SwfReader* swf, ReadContext& context)
 {
@@ -1370,6 +1371,24 @@ bool FlashTagDefineSceneAndFrameLabelData::read(SwfReader* swf, ReadContext& con
 		std::string label = swf->readString();
 
 		log::info << i << L". number = " << number << L", label = " << mbstows(label) << Endl;
+	}
+
+	return true;
+}
+
+// ============================================================================
+// Symbol class associations.
+
+bool FlashTagSymbolClass::read(SwfReader* swf, ReadContext& context)
+{
+	BitReader& bs = swf->getBitReader();
+
+	uint16_t numSymbols = bs.readUInt16();
+	for (uint16_t i = 0; i < numSymbols; ++i)
+	{
+		uint16_t tag = bs.readUInt16();
+		std::string name = swf->readString();
+		context.movie->setExport(name, tag);
 	}
 
 	return true;

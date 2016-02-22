@@ -55,6 +55,7 @@ FlashMovieFactory::FlashMovieFactory(bool includeAS)
 	m_tagReaders[TiExportAssets] = new FlashTagExportAssets();
 	m_tagReaders[TiImportAssets] = new FlashTagImportAssets(1);
 	m_tagReaders[TiImportAssets2] = new FlashTagImportAssets(2);
+	m_tagReaders[TiSymbolClass] = new FlashTagSymbolClass();
 	
 	if (m_includeAS)
 		m_tagReaders[TiInitAction] = new FlashTagInitAction();
