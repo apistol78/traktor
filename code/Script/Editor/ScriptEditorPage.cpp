@@ -21,7 +21,6 @@
 #include "Script/Editor/IScriptOutline.h"
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
-#include "Script/Editor/ScriptBreakpointEvent.h"
 #include "Script/Editor/ScriptClassesView.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditorPage.h"
@@ -161,6 +160,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		return false;
 
 	m_edit->addImage(new ui::StyleBitmap(L"Script.Breakpoint"), 1);
+	m_edit->addImage(new ui::StyleBitmap(L"Script.Current"), 1);
 
 	std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
 	int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
@@ -327,6 +327,11 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		m_edit->placeCaret(lineOffset);
 		m_edit->showLine(command.getId());
 	}
+	else if (command == L"Script.Editor.SetCurrentLine")
+	{
+		int32_t line = command.getId();
+		m_edit->setImage(line, 2);
+	}
 	else
 		return false;
 
@@ -351,12 +356,28 @@ void ScriptEditorPage::otherError(const std::wstring& message)
 	m_compileStatus->setAlert(true);
 }
 
+void ScriptEditorPage::debugeeStateChange(IScriptDebugger* scriptDebugger)
+{
+	Ref< StackFrame > sf;
+	if (scriptDebugger->captureStackFrame(0, sf))
+	{
+		Guid instanceGuid = m_document->getInstance(0)->getGuid();
+		if (sf->getScriptId() == instanceGuid)
+		{
+			int32_t line = int32_t(sf->getLine());
+			m_edit->setImage(line, 1);
+		}
+	}
+}
+
 void ScriptEditorPage::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
+	scriptDebugger->addListener(this);
 }
 
 void ScriptEditorPage::notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
+	scriptDebugger->removeListener(this);
 }
 
 void ScriptEditorPage::notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber)

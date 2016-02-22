@@ -35,7 +35,7 @@ bool ScriptDebuggerDialog::create(ui::Widget* parent)
 		return false;
 
 	m_tabSessions = new ui::Tab();
-	m_tabSessions->create(this);
+	m_tabSessions->create(this, ui::WsNone);
 
 	m_scriptDebuggerSessions = m_editor->getStoreObject< IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
 	if (m_scriptDebuggerSessions)
@@ -43,7 +43,6 @@ bool ScriptDebuggerDialog::create(ui::Widget* parent)
 
 	addEventHandler< ui::CloseEvent >(this, &ScriptDebuggerDialog::eventClose);
 	update();
-
 	return true;
 }
 
@@ -54,7 +53,6 @@ void ScriptDebuggerDialog::notifyBeginSession(IScriptDebugger* scriptDebugger, I
 
 	Ref< ScriptDebuggerView > debuggerView = new ScriptDebuggerView(m_editor, scriptDebugger);
 	debuggerView->create(tabPageSession);
-	//debuggerView->addEventHandler< ScriptBreakpointEvent >(this, &ScriptDebuggerDialog::eventBreakPoint);
 
 	tabPageSession->setData(L"DEBUGGER", scriptDebugger);
 	tabPageSession->setData(L"VIEW", debuggerView);

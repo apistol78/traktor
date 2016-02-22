@@ -298,7 +298,7 @@ void GridView::beginEdit(GridCell* item)
 
 void GridView::eventEditFocus(FocusEvent* event)
 {
-	if (event->lostFocus())
+	if (event->lostFocus() && m_editItem)
 	{
 		std::wstring originalText = m_editItem->getText();
 		std::wstring newText = m_itemEditor->getText();

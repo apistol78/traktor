@@ -9,7 +9,6 @@
 #include "Script/LocalComposite.h"
 #include "Script/LocalSimple.h"
 #include "Script/StackFrame.h"
-#include "Script/Editor/ScriptBreakpointEvent.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
@@ -188,10 +187,6 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 		m_callStackGrid->update();
 		m_localsGrid->setEnable(true);
 		m_localsGrid->update();
-
-		// Issue event to notify script editor about breakpoint in this view.
-		ScriptBreakpointEvent eventBreakPoint(this, !m_stackFrames.empty() ? m_stackFrames.front() : 0);
-		raiseEvent(&eventBreakPoint);
 	}
 	else
 	{
@@ -226,10 +221,7 @@ void ScriptDebuggerView::eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent
 
 			editor::IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
 			if (activeEditorPage)
-				activeEditorPage->handleCommand(ui::Command(
-					line,
-					L"Script.Editor.GotoLine"
-				));
+				activeEditorPage->handleCommand(ui::Command(line, L"Script.Editor.GotoLine"));
 		}
 
 		updateLocals(depth);

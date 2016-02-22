@@ -32,7 +32,7 @@ public:
 		WsCloseButton = WsUser,
 		WsLine = WsUser << 1,
 		WsBottom = WsUser << 2,
-		WsDefault = WsCloseButton | WsBorder
+		WsDefault = WsCloseButton
 	};
 
 	Tab();
