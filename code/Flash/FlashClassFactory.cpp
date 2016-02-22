@@ -7,6 +7,7 @@
 #include "Flash/FlashCast.h"
 #include "Flash/FlashCharacter.h"
 #include "Flash/FlashClassFactory.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashEditInstance.h"
 #include "Flash/FlashFont.h"
 #include "Flash/FlashFrame.h"
@@ -157,6 +158,24 @@ Any ActionObjectRelay_invoke(ActionObjectRelay* self, const std::string& methodN
 		}
 	}
 	return Any();
+}
+
+Any FlashDictionary_getExportId(FlashDictionary* self, const std::string& exportName)
+{
+	uint16_t exportId;
+	if (self->getExportId(exportName, exportId))
+		return Any::fromInteger(exportId);
+	else
+		return Any();
+}
+
+Any FlashDictionary_getExportName(FlashDictionary* self, uint16_t exportId)
+{
+	std::string exportName;
+	if (self->getExportName(exportId, exportName))
+		return Any::fromString(exportName);
+	else
+		return Any();
 }
 
 void FlashCharacterInstance_setColorTransform(FlashCharacterInstance* self, const Color4f& mul, const Color4f& add)
@@ -346,10 +365,24 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSwfReader->addConstructor< IStream* >();
 	registrar->registerClass(classSwfReader);
 
+	Ref< AutoRuntimeClass< FlashDictionary > > classFlashDictionary = new AutoRuntimeClass< FlashDictionary >();
+	classFlashDictionary->addMethod("addFont", &FlashDictionary::addFont);
+	classFlashDictionary->addMethod("addBitmap", &FlashDictionary::addBitmap);
+	classFlashDictionary->addMethod("addSound", &FlashDictionary::addSound);
+	classFlashDictionary->addMethod("addCharacter", &FlashDictionary::addCharacter);
+	classFlashDictionary->addMethod("getFont", &FlashDictionary::getFont);
+	classFlashDictionary->addMethod("getBitmap", &FlashDictionary::getBitmap);
+	classFlashDictionary->addMethod("getSound", &FlashDictionary::getSound);
+	classFlashDictionary->addMethod("getCharacter", &FlashDictionary::getCharacter);
+	classFlashDictionary->addMethod("getExportId", &FlashDictionary_getExportId);
+	classFlashDictionary->addMethod("getExportName", &FlashDictionary_getExportName);
+	registrar->registerClass(classFlashDictionary);
+
 	Ref< AutoRuntimeClass< FlashCharacterInstance > > classFlashCharacterInstance = new AutoRuntimeClass< FlashCharacterInstance >();
 	classFlashCharacterInstance->addStaticMethod("getInstanceCount", &FlashCharacterInstance::getInstanceCount);
 	classFlashCharacterInstance->addMethod("destroy", &FlashCharacterInstance::destroy);
 	classFlashCharacterInstance->addMethod("getContext", &FlashCharacterInstance::getContext);
+	classFlashCharacterInstance->addMethod("getDictionary", &FlashCharacterInstance::getDictionary);
 	classFlashCharacterInstance->addMethod("getParent", &FlashCharacterInstance::getParent);
 	classFlashCharacterInstance->addMethod("setName", &FlashCharacterInstance::setName);
 	classFlashCharacterInstance->addMethod("getName", &FlashCharacterInstance::getName);

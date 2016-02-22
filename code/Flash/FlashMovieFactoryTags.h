@@ -259,6 +259,12 @@ public:
 	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
 };
 
+class FlashTagSymbolClass : public FlashTag
+{
+public:
+	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+};
+
 class FlashTagUnsupported : public FlashTag
 {
 public:

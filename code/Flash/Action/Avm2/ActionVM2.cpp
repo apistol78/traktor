@@ -14,8 +14,9 @@ Ref< const IActionVMImage > ActionVM2::load(SwfReader& swf) const
 	if (!image->m_abcFile.load(swf))
 		return 0;
 
+#if defined(_DEBUG)
 	image->m_abcFile.dump();
-
+#endif
 	return image;
 }
 
