@@ -41,6 +41,13 @@ const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccShapeRenderer", AccShapeRenderer, Object)
 
+AccShapeRenderer::AccShapeRenderer()
+:	m_renderIntoSlot(0)
+,	m_renderFromSlot(0)
+,	m_cacheAsBitmap(0)
+{
+}
+
 bool AccShapeRenderer::create(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager)
 {
 	render::RenderTargetSetCreateDesc rtscd;
@@ -100,6 +107,108 @@ void AccShapeRenderer::beginFrame()
 
 void AccShapeRenderer::endFrame()
 {
+}
+
+void AccShapeRenderer::beginSprite(
+	render::RenderContext* renderContext,
+	const FlashSpriteInstance& sprite,
+	const Vector4& frameBounds,
+	const Vector4& frameTransform,
+	const Vector4& viewSize,
+	const Matrix33& transform
+)
+{
+	if (sprite.getCacheAsBitmap())
+	{
+		if (m_cacheAsBitmap++ == 0)
+		{
+			beginCacheAsBitmap(
+				renderContext,
+				sprite,
+				frameBounds,
+				frameTransform,
+				viewSize,
+				transform
+			);
+		}
+	}
+}
+
+void AccShapeRenderer::endSprite(
+	render::RenderContext* renderContext,
+	const FlashSpriteInstance& sprite,
+	const Vector4& frameBounds,
+	const Vector4& frameTransform,
+	const Matrix33& transform
+)
+{
+	if (sprite.getCacheAsBitmap())
+	{
+		if (--m_cacheAsBitmap == 0)
+		{
+			endCacheAsBitmap(
+				renderContext,
+				frameBounds,
+				frameTransform,
+				transform
+			);
+		}
+	}
+}
+
+void AccShapeRenderer::render(
+	render::RenderContext* renderContext,
+	AccShape* shape,
+	int32_t tag,
+	const SwfCxTransform& cxform,
+	const Vector4& frameBounds,
+	const Vector4& frameTransform,
+	const Matrix33& transform,
+	bool maskWrite,
+	bool maskIncrement,
+	uint8_t maskReference,
+	uint8_t blendMode
+)
+{
+	if (m_renderIntoSlot >= 0)
+	{
+		const Cache& c = m_cache[m_renderIntoSlot];
+
+		Vector4 cacheFrameSize(c.bounds.mn.x, c.bounds.mn.y, c.bounds.mx.x, c.bounds.mx.y);
+		Vector4 cacheViewOffset(
+			float(c.x) / c_cacheWidth,
+			float(c.y) / c_cacheHeight,
+			float(c.width) / c_cacheWidth,
+			float(c.height) / c_cacheHeight
+		);
+
+		Matrix33 delta = c.transform.inverse() * transform;
+		shape->render(
+			renderContext,
+			(c.flipped ? c_flipped : Matrix33::identity()) * delta,
+			c.flipped ? cacheFrameSize.shuffle< 1, 0, 3, 2 >() : cacheFrameSize,
+			cacheViewOffset,
+			cxform,
+			maskWrite,
+			maskIncrement,
+			maskReference,
+			blendMode
+		);
+	}
+	else if (m_renderFromSlot < 0)
+	{
+		shape->render(
+			renderContext,
+			transform,
+			frameBounds,
+			frameTransform,
+			cxform,
+			maskWrite,
+			maskIncrement,
+			maskReference,
+			blendMode
+		);
+	}
 }
 
 void AccShapeRenderer::beginCacheAsBitmap(
@@ -244,61 +353,6 @@ void AccShapeRenderer::endCacheAsBitmap(
 		c.unused = 0;
 
 		m_renderFromSlot = -1;
-	}
-}
-
-void AccShapeRenderer::render(
-	render::RenderContext* renderContext,
-	AccShape* shape,
-	int32_t tag,
-	const SwfCxTransform& cxform,
-	const Vector4& frameBounds,
-	const Vector4& frameTransform,
-	const Matrix33& transform,
-	bool maskWrite,
-	bool maskIncrement,
-	uint8_t maskReference,
-	uint8_t blendMode
-)
-{
-	if (m_renderIntoSlot >= 0)
-	{
-		const Cache& c = m_cache[m_renderIntoSlot];
-
-		Vector4 cacheFrameSize(c.bounds.mn.x, c.bounds.mn.y, c.bounds.mx.x, c.bounds.mx.y);
-		Vector4 cacheViewOffset(
-			float(c.x) / c_cacheWidth,
-			float(c.y) / c_cacheHeight,
-			float(c.width) / c_cacheWidth,
-			float(c.height) / c_cacheHeight
-		);
-
-		Matrix33 delta = c.transform.inverse() * transform;
-		shape->render(
-			renderContext,
-			(c.flipped ? c_flipped : Matrix33::identity()) * delta,
-			c.flipped ? cacheFrameSize.shuffle< 1, 0, 3, 2 >() : cacheFrameSize,
-			cacheViewOffset,
-			cxform,
-			maskWrite,
-			maskIncrement,
-			maskReference,
-			blendMode
-		);
-	}
-	else if (m_renderFromSlot < 0)
-	{
-		shape->render(
-			renderContext,
-			transform,
-			frameBounds,
-			frameTransform,
-			cxform,
-			maskWrite,
-			maskIncrement,
-			maskReference,
-			blendMode
-		);
 	}
 }
 

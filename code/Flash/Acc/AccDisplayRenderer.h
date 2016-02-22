@@ -123,7 +123,6 @@ private:
 	struct ShapeCache
 	{
 		Ref< AccShape > shape;
-		int32_t unusedCount;
 		int32_t tag;
 	};
 
@@ -160,7 +159,6 @@ private:
 	uint8_t m_glyphFilter;
 	SwfColor m_glyphColor;
 	SwfColor m_glyphFilterColor;
-	int32_t m_cacheAsBitmapDepth;
 
 	void renderEnqueuedGlyphs();
 };

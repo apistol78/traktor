@@ -25,8 +25,6 @@
 #include "Render/RenderTargetSet.h"
 #include "Render/Context/RenderContext.h"
 
-#define T_FLUSH_CACHE 0
-
 namespace traktor
 {
 	namespace flash
@@ -34,10 +32,6 @@ namespace traktor
 		namespace
 		{
 
-#if T_FLUSH_CACHE
-const uint32_t c_maxCacheSize = 64;
-const uint32_t c_maxUnusedCount = 40;
-#endif
 #if defined(__IOS__) || defined(__ANDROID__) || defined(__PS3__)
 const uint32_t c_cacheGlyphSize = 64;
 #else
@@ -93,7 +87,6 @@ AccDisplayRenderer::AccDisplayRenderer()
 ,	m_maskIncrement(false)
 ,	m_maskReference(0)
 ,	m_glyphFilter(0)
-,	m_cacheAsBitmapDepth(0)
 {
 	std::memset(&m_glyphColor, 0, sizeof(SwfColor));
 	std::memset(&m_glyphFilterColor, 0, sizeof(SwfColor));
@@ -350,36 +343,27 @@ void AccDisplayRenderer::begin(
 
 void AccDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
 {
-	if (m_shapeRenderer && sprite.getCacheAsBitmap())
-	{
-		if (m_cacheAsBitmapDepth++ == 0)
-		{
-			m_shapeRenderer->beginCacheAsBitmap(
-				m_renderContext,
-				sprite,
-				m_frameBounds,
-				m_frameTransform,
-				m_viewSize,
-				transform
-			);
-		}
-	}
+	if (m_shapeRenderer)
+		m_shapeRenderer->beginSprite(
+			m_renderContext,
+			sprite,
+			m_frameBounds,
+			m_frameTransform,
+			m_viewSize,
+			transform
+		);
 }
 
 void AccDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
 {
-	if (m_shapeRenderer && sprite.getCacheAsBitmap())
-	{
-		if (--m_cacheAsBitmapDepth == 0)
-		{
-			m_shapeRenderer->endCacheAsBitmap(
-				m_renderContext,
-				m_frameBounds,
-				m_frameTransform,
-				transform
-			);
-		}
-	}
+	if (m_shapeRenderer)
+		m_shapeRenderer->endSprite(
+			m_renderContext,
+			sprite,
+			m_frameBounds,
+			m_frameTransform,
+			transform
+		);
 }
 
 void AccDisplayRenderer::beginMask(bool increment)
@@ -428,20 +412,13 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 		))
 			return;
 
-		m_shapeCache[tag].unusedCount = 0;
 		m_shapeCache[tag].shape = accShape;
 	}
 	else
-	{
-		it->second.unusedCount = 0;
 		accShape = it->second.shape;
-	}
 
 	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
-	if (
-		m_cacheAsBitmapDepth == 0 &&
-		!rectangleVisible(m_dirtyRegion, transform * accShape->getBounds())
-	)
+	if (!rectangleVisible(m_dirtyRegion, transform * accShape->getBounds()))
 		return;
 
 	// Flush queued glyph shapes, must do this to ensure proper draw order.
@@ -666,14 +643,10 @@ void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const M
 		))
 			return;
 
-		m_shapeCache[tag].unusedCount = 0;
 		m_shapeCache[tag].shape = accShape;
 	}
 	else
-	{
-		it->second.unusedCount = 0;
 		accShape = it->second.shape;
-	}
 
 	if (!rectangleVisible(m_dirtyRegion, transform * accShape->getBounds()))
 		return;
@@ -709,29 +682,6 @@ void AccDisplayRenderer::end()
 		renderQuad(Matrix33::identity(), m_dirtyRegion, c_cxfWhite);
 		endMask();
 	}
-
-#if T_FLUSH_CACHE
-	// Don't flush cache if it doesn't contain that many shapes.
-	if (m_shapeCache.size() < c_maxCacheSize)
-	{
-		// Increment "unused" counter still.
-		for (std::map< uint64_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
-			i->second.unusedCount++;
-		return;
-	}
-
-	// Nuke cached shapes which hasn't been used for X number of frames.
-	for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); )
-	{
-		if (i->second.unusedCount++ >= c_maxUnusedCount)
-		{
-			i->second.shape->destroy();
-			m_shapeCache.erase(i++);
-		}
-		else
-			++i;
-	}
-#endif
 
 	m_vertexPool->cycleGarbage();
 	m_renderContext = 0;
