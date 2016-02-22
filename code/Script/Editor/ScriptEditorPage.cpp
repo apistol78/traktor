@@ -179,16 +179,6 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	if (!m_compileStatus->create(containerEdit))
 		return false;
 
-	// Debugger panel.
-	m_containerDebugger = new ui::Container();
-	m_containerDebugger->create(parent, ui::WsNone, new ui::FloodLayout());
-	m_containerDebugger->setText(i18n::Text(L"SCRIPT_EDITOR_DEBUGGER"));
-
-	m_tabSessions = new ui::Tab();
-	m_tabSessions->create(m_containerDebugger, ui::WsNone);
-
-	m_site->createAdditionalPanel(m_containerDebugger, ui::scaleBySystemDPI(180), true);
-
 	// Create language specific implementations.
 	{
 		std::wstring syntaxLanguageTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.SyntaxLanguageType");
@@ -262,10 +252,8 @@ void ScriptEditorPage::destroy()
 	m_preprocessor = 0;
 
 	// Destroy panels.
-	m_site->destroyAdditionalPanel(m_containerDebugger);
 	m_site->destroyAdditionalPanel(m_containerExplorer);
 
-	safeDestroy(m_containerDebugger);
 	safeDestroy(m_containerExplorer);
 	safeDestroy(m_scriptManager);
 }
@@ -340,18 +328,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		m_edit->showLine(command.getId());
 	}
 	else
-	{
-		ui::TabPage* tabPageSession = m_tabSessions->getActivePage();
-		if (tabPageSession)
-		{
-			Ref< ScriptDebuggerView > debuggerView = tabPageSession->getData< ScriptDebuggerView >(L"VIEW");
-			T_ASSERT (debuggerView);
-
-			if (debuggerView->handleCommand(command))
-				return true;
-		}
 		return false;
-	}
 
 	return true;
 }
@@ -376,37 +353,10 @@ void ScriptEditorPage::otherError(const std::wstring& message)
 
 void ScriptEditorPage::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
-	Ref< ui::TabPage > tabPageSession = new ui::TabPage();
-	tabPageSession->create(m_tabSessions, L"Session 0", new ui::FloodLayout());
-
-	Ref< ScriptDebuggerView > debuggerView = new ScriptDebuggerView(m_editor, scriptDebugger);
-	debuggerView->create(tabPageSession);
-	debuggerView->addEventHandler< ScriptBreakpointEvent >(this, &ScriptEditorPage::eventBreakPoint);
-
-	tabPageSession->setData(L"DEBUGGER", scriptDebugger);
-	tabPageSession->setData(L"VIEW", debuggerView);
-
-	m_tabSessions->addPage(tabPageSession);
-	m_tabSessions->setActivePage(tabPageSession);
-	m_tabSessions->update();
 }
 
 void ScriptEditorPage::notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
-	int32_t pageCount = m_tabSessions->getPageCount();
-	for (int32_t i = 0; i < pageCount; ++i)
-	{
-		ui::TabPage* tabPageSession = m_tabSessions->getPage(i);
-		T_ASSERT (tabPageSession);
-
-		if (tabPageSession->getData< IScriptDebugger >(L"DEBUGGER") == scriptDebugger)
-		{
-			m_tabSessions->removePage(tabPageSession);
-			safeDestroy(tabPageSession);
-			break;
-		}
-	}
-	m_tabSessions->update();
 }
 
 void ScriptEditorPage::notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber)
@@ -776,20 +726,20 @@ void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 	}
 }
 
-void ScriptEditorPage::eventBreakPoint(ScriptBreakpointEvent* event)
-{
-	if (!event->getCurrentFrame())
-		return;
-
-	Guid editScriptId = m_document->getInstance(0)->getGuid();
-	Guid breakScriptId = event->getCurrentFrame()->getScriptId();
-
-	if (editScriptId == breakScriptId)
-	{
-		m_edit->showLine(event->getCurrentFrame()->getLine());
-		m_edit->placeCaret(m_edit->getLineOffset(event->getCurrentFrame()->getLine()));
-	}
-}
+//void ScriptEditorPage::eventBreakPoint(ScriptBreakpointEvent* event)
+//{
+//	if (!event->getCurrentFrame())
+//		return;
+//
+//	Guid editScriptId = m_document->getInstance(0)->getGuid();
+//	Guid breakScriptId = event->getCurrentFrame()->getScriptId();
+//
+//	if (editScriptId == breakScriptId)
+//	{
+//		m_edit->showLine(event->getCurrentFrame()->getLine());
+//		m_edit->placeCaret(m_edit->getLineOffset(event->getCurrentFrame()->getLine()));
+//	}
+//}
 
 	}
 }
