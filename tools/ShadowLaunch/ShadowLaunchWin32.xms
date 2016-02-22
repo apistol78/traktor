@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="Solution" version="2">
+	<name>ShadowLaunch Win32</name>
+	<rootPath>$(TRAKTOR_HOME)/tools/ShadowLaunch/build/win32</rootPath>
+	<definitions/>
+	<projects>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>ShadowLaunch</name>
+			<sourcePath>$(TRAKTOR_HOME)/tools/ShadowLaunch/code/App</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/Detours-master/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/Detours-master/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.detours</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/Detours-master/src</sourcePath>
+						<configurations>
+							<item type="Configuration" version="3">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths/>
+								<definitions>
+									<item>DETOURS_X86</item>
+									<item>DETOURS_32BIT</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+							</item>
+							<item type="Configuration" version="3">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths/>
+								<definitions>
+									<item>DETOURS_X86</item>
+									<item>DETOURS_32BIT</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>Makefile</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>creatwth.cpp</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>detours.cpp</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>detours.h</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>detver.h</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>disasm.cpp</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>image.cpp</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>modules.cpp</fileName>
+								<items/>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Core</projectName>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item/dependencies/item/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>ShadowLaunchHook</name>
+			<sourcePath>$(TRAKTOR_HOME)/tools/ShadowLaunch/code/Hook</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/Detours-master/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/Detours-master/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Core</projectName>
+				</item>
+			</dependencies>
+		</item>
+	</projects>
+	<aggregations/>
+</object>
