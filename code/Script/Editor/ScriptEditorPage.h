@@ -99,7 +99,6 @@ private:
 	Ref< ui::IBitmap > m_bitmapFunctionLocal;
 	Ref< ui::IBitmap > m_bitmapFunctionReference;
 	Ref< ui::Container > m_containerExplorer;
-	Ref< ui::Container > m_containerDebugger;
 	Ref< ui::custom::GridView > m_outlineGrid;
 	Ref< ui::ListBox > m_dependencyList;
 	Ref< ui::ListBox > m_dependentList;
@@ -107,7 +106,6 @@ private:
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	Ref< ui::custom::StatusBar > m_compileStatus;
 	Ref< SearchControl > m_searchControl;
-	Ref< ui::Tab > m_tabSessions;
 	std::wstring m_findNeedle;
 	std::wstring m_replaceValue;
 	int32_t m_compileCountDown;
@@ -121,7 +119,6 @@ private:
 
 	/*! \} */
 
-
 	/*! \name IScriptDebuggerSessions::IListener */
 	/*! \{ */
 
@@ -134,7 +131,6 @@ private:
 	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber);
 
 	/*! \} */
-
 
 	void updateDependencyList();
 
@@ -164,7 +160,7 @@ private:
 
 	void eventTimer(ui::TimerEvent* event);
 
-	void eventBreakPoint(ScriptBreakpointEvent* event);
+	//void eventBreakPoint(ScriptBreakpointEvent* event);
 };
 
 	}
