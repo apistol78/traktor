@@ -44,6 +44,8 @@ class AccShapeRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
+	AccShapeRenderer();
+
 	bool create(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager);
 
 	void destroy();
@@ -52,17 +54,18 @@ public:
 
 	void endFrame();
 
-	void beginCacheAsBitmap(
+	void beginSprite(
 		render::RenderContext* renderContext,
-		const FlashSpriteInstance& spriteInstance,
+		const FlashSpriteInstance& sprite,
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
 		const Vector4& viewSize,
 		const Matrix33& transform
 	);
 
-	void endCacheAsBitmap(
+	void endSprite(
 		render::RenderContext* renderContext,
+		const FlashSpriteInstance& sprite,
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
 		const Matrix33& transform
@@ -102,6 +105,23 @@ private:
 	rbp::GuillotineBinPack* m_packer;
 	int32_t m_renderIntoSlot;
 	int32_t m_renderFromSlot;
+	int32_t m_cacheAsBitmap;
+
+	void beginCacheAsBitmap(
+		render::RenderContext* renderContext,
+		const FlashSpriteInstance& spriteInstance,
+		const Vector4& frameBounds,
+		const Vector4& frameTransform,
+		const Vector4& viewSize,
+		const Matrix33& transform
+	);
+
+	void endCacheAsBitmap(
+		render::RenderContext* renderContext,
+		const Vector4& frameBounds,
+		const Vector4& frameTransform,
+		const Matrix33& transform
+	);
 };
 
 	}

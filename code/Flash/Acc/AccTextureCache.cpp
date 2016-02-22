@@ -168,7 +168,7 @@ AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillS
 		br.clamp = true;
 		br.rect[0] = m_currentGradientColumn * 1.0f / c_gradientsWidth;
 		br.rect[1] = m_nextGradient * 1.0f / c_gradientsHeight + 0.5f / c_gradientsHeight;
-		br.rect[2] = 1.0f / c_gradientsColumns;
+		br.rect[2] = 1.0f / c_gradientsColumns - 1.0f / c_gradientsWidth;
 		br.rect[3] = 0.0f;
 
 		m_nextGradient += 1;
