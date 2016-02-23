@@ -22,6 +22,7 @@ class Command;
 		{
 
 class GridRow;
+class GridRowStateChangeEvent;
 class GridView;
 class ToolBar;
 class ToolBarButtonClickEvent;
@@ -32,7 +33,7 @@ class ToolBarButtonClickEvent;
 	namespace script
 	{
 
-class Local;
+class Variable;
 
 class ScriptDebuggerView
 :	public ui::Container
@@ -60,7 +61,7 @@ private:
 	RefArray< StackFrame > m_stackFrames;
 	int32_t m_activeFrame;
 
-	Ref< ui::custom::GridRow > createVariableRow(const script::Local* local);
+	Ref< ui::custom::GridRow > createVariableRow(const Variable* local);
 
 	void updateLocals(int32_t depth);
 
@@ -74,6 +75,8 @@ private:
 	void eventDebuggerToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
 	void eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent* event);
+
+	void eventLocalsGridStateChange(ui::custom::GridRowStateChangeEvent* event);
 };
 
 	}

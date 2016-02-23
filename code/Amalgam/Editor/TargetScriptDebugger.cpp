@@ -64,7 +64,7 @@ bool TargetScriptDebugger::captureStackFrame(uint32_t depth, Ref< script::StackF
 	return outStackFrame != 0;
 }
 
-bool TargetScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Local >& outLocals)
+bool TargetScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Variable >& outLocals)
 {
 	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureLocals, depth);
 	if (!m_transport->send(&ctrl))
@@ -75,6 +75,20 @@ bool TargetScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Local
 		return false;
 
 	outLocals = l->getLocals();
+	return true;
+}
+
+bool TargetScriptDebugger::captureObject(uint32_t object, RefArray< script::Variable >& outMembers)
+{
+	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureObject, object);
+	if (!m_transport->send(&ctrl))
+		return false;
+
+	Ref< ScriptDebuggerLocals > l;
+	if (m_transport->recv< ScriptDebuggerLocals >(1000, l) != net::BidirectionalObjectTransport::RtSuccess)
+		return false;
+
+	outMembers = l->getLocals();
 	return true;
 }
 

@@ -34,7 +34,9 @@ public:
 
 	virtual bool captureStackFrame(uint32_t depth, Ref< script::StackFrame >& outStackFrame) T_OVERRIDE T_FINAL;
 
-	virtual bool captureLocals(uint32_t depth, RefArray< script::Local >& outLocals) T_OVERRIDE T_FINAL;
+	virtual bool captureLocals(uint32_t depth, RefArray< script::Variable >& outLocals) T_OVERRIDE T_FINAL;
+
+	virtual bool captureObject(uint32_t object, RefArray< script::Variable >& outMembers) T_OVERRIDE T_FINAL;
 
 	virtual bool isRunning() const T_OVERRIDE T_FINAL;
 

@@ -665,6 +665,26 @@
       <first>DATABASE_WIZARDS</first>
       <second>Wizards</second>
     </item>
+	<item>
+		<first>EDITOR_HTTP_GET</first>
+		<second>Http GET</second>
+	</item>
+	<item>
+		<first>EDITOR_HTTP_GET_URL</first>
+		<second>URL</second>
+	</item>
+	<item>
+		<first>EDITOR_HTTP_GET_URL_CAPTION</first>
+		<second>Enter URL</second>
+	<item>
+	<item>
+		<first>EDITOR_HTTP_GET_URL_MESSAGE</first>
+		<second>Enter URL</second>
+	</item>
+	<item>
+		<first>EDITOR_HTTP_GET_SAVE_AS</first>
+		<second>Save file as</second>
+	</item>
     <item>
       <first>EDITOR_QUICK_OPEN_TITLE</first>
       <second>Quick open</second>
@@ -2199,6 +2219,10 @@
     <item>
       <first>SCRIPT_EDITOR_DEBUG_LOCAL_NAME</first>
       <second>Name</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_DEBUG_LOCAL_TYPE</first>
+      <second>Type</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_DEBUG_LOCAL_VALUE</first>
