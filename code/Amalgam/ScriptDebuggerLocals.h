@@ -17,7 +17,7 @@ namespace traktor
 	namespace script
 	{
 
-class Local;
+class Variable;
 
 	}
 
@@ -34,14 +34,14 @@ class T_DLLCLASS ScriptDebuggerLocals : public ISerializable
 public:
 	ScriptDebuggerLocals();
 
-	ScriptDebuggerLocals(const RefArray< script::Local >& locals);
+	ScriptDebuggerLocals(const RefArray< script::Variable >& locals);
 
-	const RefArray< script::Local >& getLocals() const { return m_locals; }
+	const RefArray< script::Variable >& getLocals() const { return m_locals; }
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
-	RefArray< script::Local > m_locals;
+	RefArray< script::Variable > m_locals;
 };
 
 	}

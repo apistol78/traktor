@@ -1,7 +1,7 @@
 #include "Amalgam/ScriptDebuggerLocals.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Script/Local.h"
+#include "Script/Variable.h"
 
 namespace traktor
 {
@@ -14,14 +14,14 @@ ScriptDebuggerLocals::ScriptDebuggerLocals()
 {
 }
 
-ScriptDebuggerLocals::ScriptDebuggerLocals(const RefArray< script::Local >& locals)
+ScriptDebuggerLocals::ScriptDebuggerLocals(const RefArray< script::Variable >& locals)
 :	m_locals(locals)
 {
 }
 
 void ScriptDebuggerLocals::serialize(ISerializer& s)
 {
-	s >> MemberRefArray< script::Local >(L"locals", m_locals);
+	s >> MemberRefArray< script::Variable >(L"locals", m_locals);
 }
 
 	}

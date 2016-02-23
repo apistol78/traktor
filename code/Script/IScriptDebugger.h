@@ -20,7 +20,7 @@ class Guid;
 	namespace script
 	{
 
-class Local;
+class Variable;
 class StackFrame;
 
 /*! \brief Script debugger
@@ -44,7 +44,9 @@ public:
 
 	virtual bool captureStackFrame(uint32_t depth, Ref< StackFrame >& outStackFrame) = 0;
 
-	virtual bool captureLocals(uint32_t depth, RefArray< Local >& outLocals) = 0;
+	virtual bool captureLocals(uint32_t depth, RefArray< Variable >& outLocals) = 0;
+
+	virtual bool captureObject(uint32_t object, RefArray< Variable >& outMembers) = 0;
 
 	virtual bool isRunning() const = 0;
 

@@ -73,6 +73,8 @@ void FileDialogWin32::destroy()
 int FileDialogWin32::showModal(Path& outPath)
 {
 	m_ofn.Flags &= ~OFN_ALLOWMULTISELECT;
+	wcscpy(m_fileName, outPath.getFileName().c_str());
+
 	if (!m_save)
 	{
 		if (!GetOpenFileName(&m_ofn))

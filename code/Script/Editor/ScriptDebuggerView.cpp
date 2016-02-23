@@ -6,9 +6,10 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
 #include "I18N/Text.h"
-#include "Script/LocalComposite.h"
-#include "Script/LocalSimple.h"
 #include "Script/StackFrame.h"
+#include "Script/Variable.h"
+#include "Script/Value.h"
+#include "Script/ValueObject.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
@@ -17,6 +18,7 @@
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridRowStateChangeEvent.h"
 #include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -72,9 +74,11 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 
 	m_localsGrid = new ui::custom::GridView();
 	m_localsGrid->create(splitter, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_NAME"), ui::scaleBySystemDPI(120)));
-	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_VALUE"), ui::scaleBySystemDPI(300)));
+	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_NAME"), ui::scaleBySystemDPI(180)));
+	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_VALUE"), ui::scaleBySystemDPI(150)));
+	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_TYPE"), ui::scaleBySystemDPI(150)));
 	m_localsGrid->setEnable(false);
+	m_localsGrid->addEventHandler< ui::custom::GridRowStateChangeEvent >(this, &ScriptDebuggerView::eventLocalsGridStateChange);
 
 	m_scriptDebugger->addListener(this);
 	return true;
@@ -106,25 +110,26 @@ bool ScriptDebuggerView::handleCommand(const ui::Command& command)
 	return true;
 }
 
-Ref< ui::custom::GridRow > ScriptDebuggerView::createVariableRow(const script::Local* local)
+Ref< ui::custom::GridRow > ScriptDebuggerView::createVariableRow(const Variable* local)
 {
 	Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
 	row->add(new ui::custom::GridItem(local->getName()));
-	if (const script::LocalComposite* composite = dynamic_type_cast< const script::LocalComposite* >(local))
-	{
-		if (!composite->getValue().empty())
-			row->add(new ui::custom::GridItem(composite->getValue()));
 
-		const RefArray< script::Local >& values = composite->getValues();
-		for (RefArray< script::Local >::const_iterator j = values.begin(); j != values.end(); ++j)
-		{
-			Ref< ui::custom::GridRow > child = createVariableRow(*j);
-			if (child)
-				row->addChild(child);
-		}
+	if (const script::Value* value = dynamic_type_cast< const script::Value* >(local->getValue()))
+	{
+		row->add(new ui::custom::GridItem(value->getLiteral()));
+		row->add(new ui::custom::GridItem(local->getTypeName()));
 	}
-	else if (const script::LocalSimple* simple = dynamic_type_cast< const script::LocalSimple* >(local))
-		row->add(new ui::custom::GridItem(simple->getValue()));
+	else if (const script::ValueObject* valueObject = dynamic_type_cast< const script::ValueObject* >(local->getValue()))
+	{
+		row->add(new ui::custom::GridItem(L""));
+		row->add(new ui::custom::GridItem(local->getTypeName()));
+
+		Ref< ui::custom::GridRow > objectRow = new ui::custom::GridRow(0);
+		objectRow->setData(L"OBJECT_REFERENCE", const_cast< script::ValueObject* >(valueObject));
+		row->addChild(objectRow);
+	}
+
 	return row;
 }
 
@@ -133,10 +138,10 @@ void ScriptDebuggerView::updateLocals(int32_t depth)
 	m_localsGrid->removeAllRows();
 	if (depth >= 0 && depth < m_stackFrames.size())
 	{
-		RefArray< Local > locals;
+		RefArray< Variable > locals;
 		if (m_scriptDebugger->captureLocals(depth, locals))
 		{
-			for (RefArray< script::Local >::const_iterator j = locals.begin(); j != locals.end(); ++j)
+			for (RefArray< Variable >::const_iterator j = locals.begin(); j != locals.end(); ++j)
 			{
 				Ref< ui::custom::GridRow > row = createVariableRow(*j);
 				if (row)
@@ -228,6 +233,34 @@ void ScriptDebuggerView::eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent
 	}
 	else
 		updateLocals(0);
+}
+
+void ScriptDebuggerView::eventLocalsGridStateChange(ui::custom::GridRowStateChangeEvent* event)
+{
+	Ref< ui::custom::GridRow > row = event->getRow();
+
+	const RefArray< ui::custom::GridRow >& children = row->getChildren();
+	if (children.size() == 1)
+	{
+		Ref< script::ValueObject > valueObject = children[0]->getData< script::ValueObject >(L"OBJECT_REFERENCE");
+		if (valueObject)
+		{
+			row->removeAllChildren();
+
+			RefArray< Variable > members;
+			if (m_scriptDebugger->captureObject(valueObject->getObjectRef(), members))
+			{
+				for (RefArray< Variable >::const_iterator j = members.begin(); j != members.end(); ++j)
+				{
+					Ref< ui::custom::GridRow > childRow = createVariableRow(*j);
+					if (childRow)
+						row->addChild(childRow);
+				}
+			}
+		}
+	}
+
+	m_localsGrid->update();
 }
 
 	}

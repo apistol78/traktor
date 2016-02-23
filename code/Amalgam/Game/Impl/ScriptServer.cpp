@@ -255,8 +255,19 @@ void ScriptServer::threadDebugger()
 
 				case ScriptDebuggerControl::AcCaptureLocals:
 					{
-						RefArray< script::Local > l;
+						RefArray< script::Variable > l;
 						if (m_scriptDebugger->captureLocals(control->getParam(), l))
+						{
+							ScriptDebuggerLocals capturedLocals(l);
+							m_transport->send(&capturedLocals);
+						}
+					}
+					break;
+
+				case ScriptDebuggerControl::AcCaptureObject:
+					{
+						RefArray< script::Variable > l;
+						if (m_scriptDebugger->captureObject(control->getParam(), l))
 						{
 							ScriptDebuggerLocals capturedLocals(l);
 							m_transport->send(&capturedLocals);

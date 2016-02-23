@@ -1,7 +1,7 @@
-#ifndef traktor_script_LocalSimple_H
-#define traktor_script_LocalSimple_H
+#ifndef traktor_script_Value_H
+#define traktor_script_Value_H
 
-#include "Script/Local.h"
+#include "Script/IValue.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,24 +19,26 @@ namespace traktor
 /*! \brief
  * \ingroup Script
  */
-class T_DLLCLASS LocalSimple : public Local
+class T_DLLCLASS Value : public IValue
 {
 	T_RTTI_CLASS;
 
 public:
-	LocalSimple();
+	Value();
 
-	LocalSimple(const std::wstring& name, const std::wstring& value);
+	Value(const std::wstring& literal);
 
-	const std::wstring& getValue() const;
+	void setLiteral(const std::wstring& literal);
+
+	const std::wstring& getLiteral() const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
-	std::wstring m_value;
+	std::wstring m_literal;
 };
 
 	}
 }
 
-#endif	// traktor_script_LocalSimple_H
+#endif	// traktor_script_Value_H
