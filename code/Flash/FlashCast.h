@@ -27,8 +27,8 @@ ActionValue T_DLLCLASS castAnyToAction(const Any& value);
 template < >
 struct CastAny < flash::ActionValue, false >
 {
-	static const wchar_t* const typeName() {
-		return L"flash::ActionValue";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"flash::ActionValue";
 	}
 	static Any set(const flash::ActionValue& value)
 	{
@@ -43,8 +43,8 @@ struct CastAny < flash::ActionValue, false >
 template < >
 struct CastAny < const flash::ActionValue&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const flash::ActionValue&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const flash::ActionValue&";
 	}
 	static Any set(const flash::ActionValue& value)
 	{

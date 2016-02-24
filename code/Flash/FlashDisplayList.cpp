@@ -255,6 +255,16 @@ void FlashDisplayList::swap(int32_t depth1, int32_t depth2)
 	}
 }
 
+void FlashDisplayList::getObjects(RefArray< FlashCharacterInstance >& outCharacterInstances) const
+{
+	T_ASSERT (outCharacterInstances.empty());
+	for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	{
+		T_ASSERT (i->second.instance);
+		outCharacterInstances.push_back(i->second.instance);
+	}
+}
+
 void FlashDisplayList::getVisibleObjects(RefArray< FlashCharacterInstance >& outCharacterInstances) const
 {
 	T_ASSERT (outCharacterInstances.empty());

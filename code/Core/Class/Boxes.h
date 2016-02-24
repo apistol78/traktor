@@ -1004,8 +1004,8 @@ private:
 template < >
 struct CastAny< TypeInfo, false >
 {
-	static const wchar_t* const typeName() {
-		return L"TypeInfo";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.TypeInfo";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedTypeInfo >(value.getObjectUnsafe());
@@ -1021,8 +1021,8 @@ struct CastAny< TypeInfo, false >
 template < >
 struct CastAny< const TypeInfo&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const TypeInfo&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const TypeInfo&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedTypeInfo >(value.getObjectUnsafe());
@@ -1038,8 +1038,8 @@ struct CastAny< const TypeInfo&, false >
 template < >
 struct CastAny< uint64_t, false >
 {
-	static const wchar_t* const typeName() {
-		return L"uint64_t";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"uint64_t";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedUInt64 >(value.getObjectUnsafe());
@@ -1055,8 +1055,8 @@ struct CastAny< uint64_t, false >
 template < >
 struct CastAny< const uint64_t&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const uint64_t&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const uint64_t&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedUInt64 >(value.getObjectUnsafe());
@@ -1072,8 +1072,8 @@ struct CastAny< const uint64_t&, false >
 template < >
 struct CastAny < Guid, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Guid";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Guid";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedGuid >(value.getObjectUnsafe());
@@ -1089,8 +1089,8 @@ struct CastAny < Guid, false >
 template < >
 struct CastAny < const Guid&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Guid&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Guid&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedGuid >(value.getObjectUnsafe());
@@ -1106,8 +1106,8 @@ struct CastAny < const Guid&, false >
 template < >
 struct CastAny < Vector2, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Vector2";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Vector2";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedVector2 >(value.getObjectUnsafe());
@@ -1123,8 +1123,8 @@ struct CastAny < Vector2, false >
 template < >
 struct CastAny < const Vector2&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Vector2&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Vector2&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedVector2 >(value.getObjectUnsafe());
@@ -1140,8 +1140,8 @@ struct CastAny < const Vector2&, false >
 template < >
 struct CastAny < Vector4, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Vector4";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Vector4";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedVector4 >(value.getObjectUnsafe());
@@ -1157,8 +1157,8 @@ struct CastAny < Vector4, false >
 template < >
 struct CastAny < const Vector4&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Vector4&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Vector4&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedVector4 >(value.getObjectUnsafe());
@@ -1174,8 +1174,8 @@ struct CastAny < const Vector4&, false >
 template < >
 struct CastAny < AlignedVector< Vector4 >, false >
 {
-	static const wchar_t* const typeName() {
-		return L"AlignedVector< Vector4 >";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.AlignedVector< traktor.Vector4 >";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedVector4Array >(value.getObjectUnsafe());
@@ -1191,8 +1191,8 @@ struct CastAny < AlignedVector< Vector4 >, false >
 template < >
 struct CastAny < const AlignedVector< Vector4 >&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const AlignedVector< Vector4 >&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.AlignedVector< traktor.Vector4 >&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedVector4Array >(value.getObjectUnsafe());
@@ -1208,8 +1208,8 @@ struct CastAny < const AlignedVector< Vector4 >&, false >
 template < >
 struct CastAny < Quaternion, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Quaternion";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Quaternion";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedQuaternion >(value.getObjectUnsafe());
@@ -1225,8 +1225,8 @@ struct CastAny < Quaternion, false >
 template < >
 struct CastAny < const Quaternion&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Quaternion&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Quaternion&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedQuaternion >(value.getObjectUnsafe());
@@ -1242,8 +1242,8 @@ struct CastAny < const Quaternion&, false >
 template < >
 struct CastAny < Plane, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Plane";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Plane";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedPlane >(value.getObjectUnsafe());
@@ -1259,8 +1259,8 @@ struct CastAny < Plane, false >
 template < >
 struct CastAny < const Plane&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Plane&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Plane&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedPlane >(value.getObjectUnsafe());
@@ -1276,8 +1276,8 @@ struct CastAny < const Plane&, false >
 template < >
 struct CastAny < Transform, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Transform";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Transform";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedTransform >(value.getObjectUnsafe());
@@ -1293,8 +1293,8 @@ struct CastAny < Transform, false >
 template < >
 struct CastAny < const Transform&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Transform&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Transform&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedTransform >(value.getObjectUnsafe());
@@ -1310,8 +1310,8 @@ struct CastAny < const Transform&, false >
 template < >
 struct CastAny < Aabb2, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Aabb2";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Aabb2";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedAabb2 >(value.getObjectUnsafe());
@@ -1327,8 +1327,8 @@ struct CastAny < Aabb2, false >
 template < >
 struct CastAny < const Aabb2&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Aabb2&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Aabb2&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedAabb2 >(value.getObjectUnsafe());
@@ -1344,8 +1344,8 @@ struct CastAny < const Aabb2&, false >
 template < >
 struct CastAny < Aabb3, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Aabb3";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Aabb3";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedAabb3 >(value.getObjectUnsafe());
@@ -1361,8 +1361,8 @@ struct CastAny < Aabb3, false >
 template < >
 struct CastAny < const Aabb3&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Aabb3&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Aabb3&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedAabb3 >(value.getObjectUnsafe());
@@ -1378,8 +1378,8 @@ struct CastAny < const Aabb3&, false >
 template < >
 struct CastAny < Frustum, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Frustum";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Frustum";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedFrustum >(value.getObjectUnsafe());
@@ -1395,8 +1395,8 @@ struct CastAny < Frustum, false >
 template < >
 struct CastAny < const Frustum&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Frustum&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Frustum&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedFrustum >(value.getObjectUnsafe());
@@ -1412,8 +1412,8 @@ struct CastAny < const Frustum&, false >
 template < >
 struct CastAny < Matrix33, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Matrix33";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Matrix33";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedMatrix33 >(value.getObjectUnsafe());
@@ -1429,8 +1429,8 @@ struct CastAny < Matrix33, false >
 template < >
 struct CastAny < const Matrix33&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Matrix33&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Matrix33&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedMatrix33 >(value.getObjectUnsafe());
@@ -1446,8 +1446,8 @@ struct CastAny < const Matrix33&, false >
 template < >
 struct CastAny < Matrix44, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Matrix44";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Matrix44";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedMatrix44 >(value.getObjectUnsafe());
@@ -1463,8 +1463,8 @@ struct CastAny < Matrix44, false >
 template < >
 struct CastAny < const Matrix44&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Matrix44&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Matrix44&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedMatrix44 >(value.getObjectUnsafe());
@@ -1480,8 +1480,8 @@ struct CastAny < const Matrix44&, false >
 template < >
 struct CastAny < Color4f, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Color4f";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Color4f";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedColor4f >(value.getObjectUnsafe());
@@ -1497,8 +1497,8 @@ struct CastAny < Color4f, false >
 template < >
 struct CastAny < const Color4f&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Color4f&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Color4f&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedColor4f >(value.getObjectUnsafe());
@@ -1514,8 +1514,8 @@ struct CastAny < const Color4f&, false >
 template < >
 struct CastAny < Color4ub, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Color4ub";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Color4ub";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedColor4ub >(value.getObjectUnsafe());
@@ -1531,8 +1531,8 @@ struct CastAny < Color4ub, false >
 template < >
 struct CastAny < const Color4ub&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Color4ub&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Color4ub&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedColor4ub >(value.getObjectUnsafe());
@@ -1548,8 +1548,8 @@ struct CastAny < const Color4ub&, false >
 template < >
 struct CastAny < Random, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Random";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Random";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRandom >(value.getObjectUnsafe());
@@ -1565,8 +1565,8 @@ struct CastAny < Random, false >
 template < >
 struct CastAny < const Random&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Random&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Random&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRandom >(value.getObjectUnsafe());
@@ -1582,8 +1582,8 @@ struct CastAny < const Random&, false >
 template < >
 struct CastAny < RandomGeometry, false >
 {
-	static const wchar_t* const typeName() {
-		return L"RandomGeometry";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.RandomGeometry";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRandomGeometry >(value.getObjectUnsafe());
@@ -1599,8 +1599,8 @@ struct CastAny < RandomGeometry, false >
 template < >
 struct CastAny < const RandomGeometry&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const RandomGeometry&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.RandomGeometry&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRandomGeometry >(value.getObjectUnsafe());
@@ -1616,8 +1616,8 @@ struct CastAny < const RandomGeometry&, false >
 template < typename InnerType >
 struct CastAny< Range< InnerType >, false >
 {
-	static const wchar_t* const typeName() {
-		return L"Range< InnerType >";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Range< InnerType >";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRange >(value.getObjectUnsafe());
@@ -1633,8 +1633,8 @@ struct CastAny< Range< InnerType >, false >
 template < typename InnerType >
 struct CastAny< const Range< InnerType >&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const Range< InnerType >&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Range< InnerType >&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRange >(value.getObjectUnsafe());
@@ -1650,8 +1650,8 @@ struct CastAny< const Range< InnerType >&, false >
 template < typename InnerType >
 struct CastAny < RefArray< InnerType >, false >
 {
-	static const wchar_t* const typeName() {
-		return L"RefArray< InnerType >";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.RefArray< " << type_name< InnerType >() << L" >";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRefArray >(value.getObjectUnsafe());
@@ -1667,8 +1667,8 @@ struct CastAny < RefArray< InnerType >, false >
 template < typename InnerType >
 struct CastAny < const RefArray< InnerType >&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const RefArray< InnerType >&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.RefArray< " << type_name< InnerType >() << L" >&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRefArray >(value.getObjectUnsafe());
@@ -1684,8 +1684,8 @@ struct CastAny < const RefArray< InnerType >&, false >
 template < typename InnerType >
 struct CastAny < std::vector< InnerType >, false >
 {
-	static const wchar_t* const typeName() {
-		return L"std::vector< InnerType >";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.StdVector< InnerType >";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedStdVector >(value.getObjectUnsafe());
@@ -1701,8 +1701,8 @@ struct CastAny < std::vector< InnerType >, false >
 template < typename InnerType >
 struct CastAny < const std::vector< InnerType >&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const std::vector< InnerType >&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.StdVector< InnerType >&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedStdVector >(value.getObjectUnsafe());

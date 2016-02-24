@@ -42,7 +42,7 @@ public:
 
 	virtual std::string getMethodName(uint32_t methodId) const T_OVERRIDE T_FINAL;
 
-	virtual void getMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const T_OVERRIDE T_FINAL;
+	virtual std::wstring getMethodSignature(uint32_t methodId) const T_OVERRIDE T_FINAL;
 
 	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL;
 
@@ -50,7 +50,7 @@ public:
 
 	virtual std::string getStaticMethodName(uint32_t methodId) const T_OVERRIDE T_FINAL;
 
-	virtual void getStaticMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const T_OVERRIDE T_FINAL;
+	virtual std::wstring getStaticMethodSignature(uint32_t methodId) const T_OVERRIDE T_FINAL;
 
 	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL;
 

@@ -8,10 +8,11 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.flash.FlashMovieAsset", 2, FlashMovieAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.flash.FlashMovieAsset", 3, FlashMovieAsset, editor::Asset)
 
 FlashMovieAsset::FlashMovieAsset()
 :	m_staticMovie(false)
+,	m_includeAS(true)
 {
 }
 
@@ -27,6 +28,9 @@ void FlashMovieAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"staticMovie", m_staticMovie);
+
+	if (s.getVersion() >= 3)
+		s >> Member< bool >(L"includeAS", m_includeAS);
 }
 
 	}

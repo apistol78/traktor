@@ -3,6 +3,7 @@
 
 #include "Core/Class/CastAny.h"
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Meta/TypeList.h"
 
 namespace traktor
@@ -25,7 +26,7 @@ struct T_NOVTABLE IMethod
 {
 	virtual ~IMethod() {}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const = 0;
+	virtual void signature(OutputStream& ss) const = 0;
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const = 0;
 };
@@ -34,7 +35,7 @@ struct T_NOVTABLE IStaticMethod
 {
 	virtual ~IStaticMethod() {}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const = 0;
+	virtual void signature(OutputStream& ss) const = 0;
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const = 0;
 };
@@ -563,9 +564,9 @@ struct Method_0 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
+		CastAny< ReturnType >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -590,9 +591,9 @@ struct Method_0 < ClassType, void, Const > : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
+		ss << L"void";
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -619,10 +620,9 @@ struct Method_1 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -651,10 +651,9 @@ struct Method_1 < ClassType, void, Argument1Type, Const > : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -685,11 +684,9 @@ struct Method_2 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -720,11 +717,9 @@ struct Method_2 < ClassType, void, Argument1Type, Argument2Type, Const > : publi
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -757,12 +752,9 @@ struct Method_3 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -795,12 +787,9 @@ struct Method_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -835,13 +824,9 @@ struct Method_4 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -876,13 +861,9 @@ struct Method_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -919,14 +900,9 @@ struct Method_5 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -963,14 +939,9 @@ struct Method_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1009,15 +980,9 @@ struct Method_6 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
+		ss << CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1056,15 +1021,9 @@ struct Method_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
+		ss << L"void,"; ss << CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1105,16 +1064,9 @@ struct Method_7 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
-		outSignature[7] = CastAny< Argument7Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1155,16 +1107,9 @@ struct Method_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
-		outSignature[7] = CastAny< Argument7Type >::typeName();
+		ss << L"void,"; ss << CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1207,17 +1152,9 @@ struct Method_8 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
-		outSignature[7] = CastAny< Argument7Type >::typeName();
-		outSignature[8] = CastAny< Argument8Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss); ss << L","; CastAny< Argument8Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1260,17 +1197,9 @@ struct Method_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
-		outSignature[7] = CastAny< Argument7Type >::typeName();
-		outSignature[8] = CastAny< Argument8Type >::typeName();
+		ss << L"void,"; ss << CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss); ss << L","; CastAny< Argument8Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1310,9 +1239,9 @@ struct MethodTrunk_0 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
+		CastAny< ReturnType >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1336,9 +1265,9 @@ struct MethodTrunk_0< ClassType, void > : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
+		ss << L"void";
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1365,10 +1294,9 @@ struct MethodTrunk_1 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1397,10 +1325,9 @@ struct MethodTrunk_1 < ClassType, void, Argument1Type > : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1431,11 +1358,9 @@ struct MethodTrunk_2 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1466,11 +1391,9 @@ struct MethodTrunk_2 < ClassType, void, Argument1Type, Argument2Type > : public 
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1503,12 +1426,9 @@ struct MethodTrunk_3 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1541,12 +1461,9 @@ struct MethodTrunk_3 < ClassType, void, Argument1Type, Argument2Type, Argument3T
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
+		ss << L"void,"; L"," << CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1581,13 +1498,9 @@ struct MethodTrunk_4 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1622,13 +1535,9 @@ struct MethodTrunk_4 < ClassType, void, Argument1Type, Argument2Type, Argument3T
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1665,14 +1574,9 @@ struct MethodTrunk_5 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1709,14 +1613,9 @@ struct MethodTrunk_5 < ClassType, void, Argument1Type, Argument2Type, Argument3T
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1755,15 +1654,9 @@ struct MethodTrunk_6 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1802,15 +1695,9 @@ struct MethodTrunk_6 < ClassType, void, Argument1Type, Argument2Type, Argument3T
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1851,16 +1738,9 @@ struct MethodTrunk_7 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
-		outSignature[7] = CastAny< Argument7Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1901,16 +1781,9 @@ struct MethodTrunk_7 < ClassType, void, Argument1Type, Argument2Type, Argument3T
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
-		outSignature[7] = CastAny< Argument7Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1953,17 +1826,9 @@ struct MethodTrunk_8 : public IMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
-		outSignature[7] = CastAny< Argument7Type >::typeName();
-		outSignature[8] = CastAny< Argument8Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss); ss << L","; CastAny< Argument8Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2004,9 +1869,9 @@ struct StaticMethod_0 : public IStaticMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
+		CastAny< ReturnType >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2030,9 +1895,9 @@ struct StaticMethod_0 < ClassType, void > : public IStaticMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
+		ss << L"void";
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2058,10 +1923,9 @@ struct StaticMethod_1 : public IStaticMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2089,10 +1953,9 @@ struct StaticMethod_1 < ClassType, void, Argument1Type > : public IStaticMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2122,11 +1985,9 @@ struct StaticMethod_2 : public IStaticMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2156,11 +2017,9 @@ struct StaticMethod_2 < ClassType, void, Argument1Type, Argument2Type > : public
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2192,12 +2051,9 @@ struct StaticMethod_3 : public IStaticMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2229,12 +2085,9 @@ struct StaticMethod_3 < ClassType, void, Argument1Type, Argument2Type, Argument3
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2268,13 +2121,9 @@ struct StaticMethod_4 : public IStaticMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2308,13 +2157,9 @@ struct StaticMethod_4 < ClassType, void, Argument1Type, Argument2Type, Argument3
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2350,14 +2195,9 @@ struct StaticMethod_5 : public IStaticMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2393,14 +2233,9 @@ struct StaticMethod_5 < ClassType, void, Argument1Type, Argument2Type, Argument3
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2438,15 +2273,9 @@ struct StaticMethod_6 : public IStaticMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2484,15 +2313,9 @@ struct StaticMethod_6 < ClassType, void, Argument1Type, Argument2Type, Argument3
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2532,16 +2355,9 @@ struct StaticMethod_7 : public IStaticMethod
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
-		outSignature[7] = CastAny< Argument7Type >::typeName();
+		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -2581,16 +2397,9 @@ struct StaticMethod_7 < ClassType, void, Argument1Type, Argument2Type, Argument3
 	{
 	}
 
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		outSignature[0] = L"void";
-		outSignature[1] = CastAny< Argument1Type >::typeName();
-		outSignature[2] = CastAny< Argument2Type >::typeName();
-		outSignature[3] = CastAny< Argument3Type >::typeName();
-		outSignature[4] = CastAny< Argument4Type >::typeName();
-		outSignature[5] = CastAny< Argument5Type >::typeName();
-		outSignature[6] = CastAny< Argument6Type >::typeName();
-		outSignature[7] = CastAny< Argument7Type >::typeName();
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss);
 	}
 
 	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -3325,20 +3134,19 @@ public:
 		return m_methods[methodId].name;
 	}
 
-	virtual void getMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual std::wstring getMethodSignature(uint32_t methodId) const T_OVERRIDE T_FINAL
 	{
-		for (int32_t i = 0; i < MaxSignatures; ++i)
-			outSignature[i] = 0;
-
 		const MethodInfo& info = m_methods[methodId];
 		for (std::vector< IMethod* >::const_iterator i = info.methods.begin(); i != info.methods.end(); ++i)
 		{
 			if (*i)
 			{
-				(*i)->signature(outSignature);
-				break;
+				StringOutputStream ss;
+				(*i)->signature(ss);
+				return ss.str();
 			}
 		}
+		return L"";
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -3364,20 +3172,19 @@ public:
 		return m_staticMethods[methodId].name;
 	}
 
-	virtual void getStaticMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const T_OVERRIDE T_FINAL
+	virtual std::wstring getStaticMethodSignature(uint32_t methodId) const T_OVERRIDE T_FINAL
 	{
-		for (int32_t i = 0; i < MaxSignatures; ++i)
-			outSignature[i] = 0;
-
 		const StaticMethodInfo& info = m_staticMethods[methodId];
 		for (std::vector< IStaticMethod* >::const_iterator i = info.methods.begin(); i != info.methods.end(); ++i)
 		{
 			if (*i)
 			{
-				(*i)->signature(outSignature);
-				break;
+				StringOutputStream ss;
+				(*i)->signature(ss);
+				return ss.str();
 			}
 		}
+		return L"";
 	}
 
 	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL

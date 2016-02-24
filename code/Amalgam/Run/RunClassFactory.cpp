@@ -2,6 +2,8 @@
 #include "Amalgam/Run/RunClassFactory.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Database/Database.h"
 
 namespace traktor
 {
