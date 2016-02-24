@@ -120,8 +120,9 @@ std::string ScriptClassLua::getMethodName(uint32_t methodId) const
 	return m_methods[methodId].name;
 }
 
-void ScriptClassLua::getMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const
+std::wstring ScriptClassLua::getMethodSignature(uint32_t methodId) const
 {
+	return L"";
 }
 
 Any ScriptClassLua::invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const
@@ -144,8 +145,9 @@ std::string ScriptClassLua::getStaticMethodName(uint32_t methodId) const
 	return "";
 }
 
-void ScriptClassLua::getStaticMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const
+std::wstring ScriptClassLua::getStaticMethodSignature(uint32_t methodId) const
 {
+	return L"";
 }
 
 Any ScriptClassLua::invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const

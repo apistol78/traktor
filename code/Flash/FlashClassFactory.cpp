@@ -4,6 +4,7 @@
 #include "Core/Io/IStream.h"
 #include "Drawing/Image.h"
 #include "Flash/FlashBitmap.h"
+#include "Flash/FlashCanvas.h"
 #include "Flash/FlashCast.h"
 #include "Flash/FlashCharacter.h"
 #include "Flash/FlashClassFactory.h"
@@ -215,6 +216,13 @@ uint32_t FlashShape_getPathCount(FlashShape* self)
 	return uint32_t(self->getPaths().size());
 }
 
+RefArray< FlashCharacterInstance > FlashDisplayList_getObjects(FlashDisplayList* self)
+{
+	RefArray< FlashCharacterInstance > characters;
+	self->getObjects(characters);
+	return characters;
+}
+
 RefArray< FlashCharacterInstance > FlashDisplayList_getVisibleObjects(FlashDisplayList* self)
 {
 	RefArray< FlashCharacterInstance > visibleCharacters;
@@ -416,6 +424,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashDisplayList->addMethod("getObjectDepth", &FlashDisplayList::getObjectDepth);
 	classFlashDisplayList->addMethod("getNextHighestDepth", &FlashDisplayList::getNextHighestDepth);
 	classFlashDisplayList->addMethod("swap", &FlashDisplayList::swap);
+	classFlashDisplayList->addMethod("getObjects", &FlashDisplayList_getObjects);
 	classFlashDisplayList->addMethod("getVisibleObjects", &FlashDisplayList_getVisibleObjects);
 	registrar->registerClass(classFlashDisplayList);
 

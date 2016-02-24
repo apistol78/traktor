@@ -55,7 +55,7 @@ struct AtlasBucket
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 43, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 44, FlashPipeline, editor::IPipeline)
 
 FlashPipeline::FlashPipeline()
 :	m_generateMips(false)
@@ -156,7 +156,7 @@ bool FlashPipeline::buildOutput(
 		else
 		{
 			Ref< SwfReader > swf = new SwfReader(sourceStream);
-			movie = FlashMovieFactory(true).createMovie(swf);
+			movie = FlashMovieFactory(movieAsset->m_includeAS).createMovie(swf);
 			if (!movie)
 			{
 				log::error << L"Failed to import Flash; unable to parse SWF" << Endl;

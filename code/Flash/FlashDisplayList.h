@@ -114,6 +114,12 @@ public:
 	 */
 	void swap(int32_t depth1, int32_t depth2);
 
+	/*! \brief Get character instances.
+	 *
+	 * \param outCharacterInstances Output array of character instances.
+	 */
+	void getObjects(RefArray< FlashCharacterInstance >& outCharacterInstances) const;
+
 	/*! \brief Get visible character instances.
 	 *
 	 * \param outCharacterInstances Output array of visible character instances.

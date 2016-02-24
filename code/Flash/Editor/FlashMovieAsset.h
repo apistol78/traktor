@@ -29,6 +29,7 @@ private:
 	friend class FlashPipeline;
 
 	bool m_staticMovie;
+	bool m_includeAS;
 };
 
 	}

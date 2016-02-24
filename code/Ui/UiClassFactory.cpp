@@ -4,7 +4,9 @@
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Form.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/TableLayout.h"
 #include "Ui/UiClassFactory.h"
 
@@ -84,8 +86,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Rect", BoxedRect, Object)
 template < >
 struct CastAny < ui::Size, false >
 {
-	static const wchar_t* const typeName() {
-		return L"ui::Size";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.ui.Size";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< ui::BoxedSize >(value.getObjectUnsafe());
@@ -101,8 +103,8 @@ struct CastAny < ui::Size, false >
 template < >
 struct CastAny < const ui::Size&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const ui::Size&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.ui.Size&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< ui::BoxedSize >(value.getObjectUnsafe());
@@ -118,8 +120,8 @@ struct CastAny < const ui::Size&, false >
 template < >
 struct CastAny < ui::Point, false >
 {
-	static const wchar_t* const typeName() {
-		return L"ui::Point";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.ui.Point";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< ui::BoxedPoint >(value.getObjectUnsafe());
@@ -135,8 +137,8 @@ struct CastAny < ui::Point, false >
 template < >
 struct CastAny < const ui::Point&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const ui::Point&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.ui.Point&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< ui::BoxedPoint >(value.getObjectUnsafe());
@@ -152,8 +154,8 @@ struct CastAny < const ui::Point&, false >
 template < >
 struct CastAny < ui::Rect, false >
 {
-	static const wchar_t* const typeName() {
-		return L"ui::Rect";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.ui.Rect";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< ui::BoxedRect >(value.getObjectUnsafe());
@@ -169,8 +171,8 @@ struct CastAny < ui::Rect, false >
 template < >
 struct CastAny < const ui::Rect&, false >
 {
-	static const wchar_t* const typeName() {
-		return L"const ui::Rect&";
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.ui.Rect&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< ui::BoxedRect >(value.getObjectUnsafe());

@@ -67,6 +67,12 @@ RefArray< Instance > db_Group_getChildInstances(Group* self)
 	return childInstances;
 }
 
+Any db_Instance_getPrimaryType(Instance* self)
+{
+	const TypeInfo* primaryType = self->getPrimaryType();
+	return primaryType ? CastAny< TypeInfo, false >::set(*primaryType) : Any();
+}
+
 Ref< ISerializable > db_Instance_getObject(Instance* self)
 {
 	return self->getObject();
@@ -117,7 +123,7 @@ void DatabaseClassFactory::createClasses(IRuntimeClassRegistrar* registrar) cons
 	classInstance->addMethod("getPath", &Instance::getPath);
 	classInstance->addMethod("getGuid", &Instance::getGuid);
 	classInstance->addMethod("getPrimaryTypeName", &Instance::getPrimaryTypeName);
-	classInstance->addMethod("getPrimaryType", &Instance::getPrimaryType);
+	classInstance->addMethod("getPrimaryType", &db_Instance_getPrimaryType);
 	classInstance->addMethod("getObject", &db_Instance_getObject);
 	classInstance->addMethod("getDataNames", &db_Instance_getDataNames);
 	classInstance->addMethod("readData", &Instance::readData);

@@ -152,7 +152,19 @@ inline const wchar_t* type_name(const ITypedObject* obj)
 template < typename T >
 const TypeInfo& type_of()
 {
-	return T::getClassTypeInfo();
+	typedef typename IsPointer< IsReference< T >::base_t >::base_t tt;
+	return tt::getClassTypeInfo();
+}
+
+/*! \brief Return type name.
+ * \ingroup Core
+ *
+ * \return Type name.
+ */
+template < typename T >
+inline const wchar_t* type_name()
+{
+	return type_of< T >().getName();
 }
 
 /*! \brief Check if type is identical.

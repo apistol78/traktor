@@ -27,7 +27,6 @@ public:
 
 	virtual void registerClass(IRuntimeClass* runtimeClass)
 	{
-		const wchar_t* signature[IRuntimeClass::MaxSignatures];
 		StringOutputStream ss;
 
 		std::vector< std::wstring > qname;
@@ -68,13 +67,16 @@ public:
 
 		for (uint32_t i = 0; i < runtimeClass->getMethodCount(); ++i)
 		{
-			std::memset(signature, 0, sizeof(signature));
-			runtimeClass->getMethodSignature(i, signature);
+			std::wstring signature = runtimeClass->getMethodSignature(i);
+
+			std::vector< std::wstring > s;
+			Split< std::wstring >::any(signature, L",", s, true);
+			T_FATAL_ASSERT (s.size() >= 1);
 
 			ss.reset();
-			ss << (signature[0] ? signature[0] : L"void") << L" " << mbstows(runtimeClass->getMethodName(i)) << L"(";
-			for (uint32_t j = 1; signature[j]; ++j)
-				ss << (j > 1 ? L", " : L"") << signature[j];
+			ss << s[0] << L" " << mbstows(runtimeClass->getMethodName(i)) << L"(";
+			for (size_t j = 1; j < s.size(); ++j)
+				ss << (j > 1 ? L", " : L"") << s[j];
 			ss << L")";
 
 			m_treeClasses->createItem(classItem, ss.str());
@@ -82,13 +84,16 @@ public:
 
 		for (uint32_t i = 0; i < runtimeClass->getStaticMethodCount(); ++i)
 		{
-			std::memset(signature, 0, sizeof(signature));
-			runtimeClass->getStaticMethodSignature(i, signature);
+			std::wstring signature = runtimeClass->getStaticMethodSignature(i);
+
+			std::vector< std::wstring > s;
+			Split< std::wstring >::any(signature, L",", s, true);
+			T_FATAL_ASSERT (s.size() >= 1);
 
 			ss.reset();
-			ss << L"static " << (signature[0] ? signature[0] : L"void") << L" " << mbstows(runtimeClass->getStaticMethodName(i)) << L"(";
-			for (uint32_t j = 1; signature[j]; ++j)
-				ss << (j > 1 ? L", " : L"") << signature[j];
+			ss << L"static " << s[0] << L" " << mbstows(runtimeClass->getStaticMethodName(i)) << L"(";
+			for (size_t j = 1; j < s.size(); ++j)
+				ss << (j > 1 ? L", " : L"") << s[j];
 			ss << L")";
 
 			m_treeClasses->createItem(classItem, ss.str());

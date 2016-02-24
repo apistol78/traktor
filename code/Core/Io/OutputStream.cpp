@@ -402,6 +402,11 @@ OutputStream& operator << (OutputStream& os, wchar_t ch)
 	return os;
 }
 
+OutputStream& operator << (OutputStream& os0, OutputStream& os1)
+{
+	return os1;
+}
+
 OutputStream& Endl(OutputStream& s)
 {
 	switch (s.getLineEnd())
