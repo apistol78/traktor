@@ -1023,7 +1023,7 @@ struct Method_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 
 	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		ss << L"void,"; ss << CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1199,7 +1199,7 @@ struct Method_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 
 	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		ss << L"void,"; ss << CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss); ss << L","; CastAny< Argument8Type >::typeName(ss);
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss); ss << L","; CastAny< Argument8Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
@@ -1213,7 +1213,7 @@ struct Method_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 			CastAny< Argument5Type >::get(argv[4]),
 			CastAny< Argument6Type >::get(argv[5]),
 			CastAny< Argument7Type >::get(argv[6]),
-			CastAny< Argument7Type >::get(argv[7])
+			CastAny< Argument8Type >::get(argv[7])
 		);
 		return Any();
 	}
