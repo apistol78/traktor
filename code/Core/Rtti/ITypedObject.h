@@ -152,7 +152,7 @@ inline const wchar_t* type_name(const ITypedObject* obj)
 template < typename T >
 const TypeInfo& type_of()
 {
-	typedef typename IsPointer< IsReference< T >::base_t >::base_t tt;
+	typedef typename IsPointer< typename IsReference< T >::base_t >::base_t tt;
 	return tt::getClassTypeInfo();
 }
 
