@@ -502,6 +502,8 @@ void FlashSpriteInstance::eventFrame()
 				callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
 				callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
 
+				callFrame.setRegister(0, ActionValue(context->getGlobal()));
+
 				(*i)->execute(&callFrame);
 			}
 		}

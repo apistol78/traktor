@@ -1,6 +1,10 @@
+#include "Flash/FlashMovieRenderer.h"
+#include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Common/Classes/As_flash_display_BitmapData.h"
 #include "Flash/Action/Common/BitmapData.h"
+//#include "Flash/Action/Common/Rectangle.h"
+#include "Flash/Action/Common/Classes/As_flash_display_BitmapData.h"
+#include "Flash/Sw/SwDisplayRenderer.h"
 
 namespace traktor
 {
@@ -25,7 +29,7 @@ As_flash_display_BitmapData::As_flash_display_BitmapData(ActionContext* context)
 	//prototype->setMember("copyChannel", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_copyChannel)));
 	//prototype->setMember("copyPixels", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_copyPixels)));
 	//prototype->setMember("dispose", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_dispose)));
-	//prototype->setMember("draw", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_draw)));
+	prototype->setMember("draw", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_draw)));
 	//prototype->setMember("fillRect", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_fillRect)));
 	//prototype->setMember("floodFill", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_floodFill)));
 	//prototype->setMember("generateFilterRect", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_generateFilterRect)));
@@ -103,6 +107,29 @@ avm_number_t As_flash_display_BitmapData::BitmapData_get_width(const BitmapData*
 	return avm_number_t(self->getHeight());
 }
 
+void As_flash_display_BitmapData::BitmapData_draw(BitmapData* self, FlashSpriteInstance* source) const
+{
+	SwDisplayRenderer displayRenderer(self->getImage());
+	FlashMovieRenderer movieRenderer(&displayRenderer);
+
+	Aabb2 frameBounds = source->getLocalBounds();
+	Vector4 frameTransform(0.0f, 0.0f, 1.0f, 1.0f);
+
+	float viewWidth = self->getWidth();
+	float viewHeight = self->getHeight();
+
+	movieRenderer.renderFrame(
+		source,
+		frameBounds,
+		frameTransform,
+		viewWidth,
+		viewHeight
+	);
+}
+
+//void As_flash_display_BitmapData::BitmapData_fillRect(BitmapData* self, const Rectangle* rectangle, uint32_t color) const
+//{
+//}
 
 	}
 }

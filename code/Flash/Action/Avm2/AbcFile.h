@@ -107,8 +107,6 @@ struct MultinameInfo
 	MultinameInfo();
 
 	bool load(SwfReader& swf);
-
-	void dump(const ConstantPool& cpool) const;
 };
 
 /*! \brief
@@ -119,7 +117,7 @@ struct ConstantPool
 	AutoArrayPtr< int32_t > s32;
 	AutoArrayPtr< uint32_t > u32;
 	AutoArrayPtr< double > doubles;
-	AutoArrayPtr< std::wstring > strings;
+	AutoArrayPtr< std::string > strings;
 	AutoArrayPtr< NamespaceInfo > namespaces;
 	AutoArrayPtr< NamespaceSetInfo > nsset;
 	AutoArrayPtr< MultinameInfo > multinames;

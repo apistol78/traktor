@@ -1,8 +1,10 @@
 #pragma optimize( "", off )
 
 #include "Core/RefArray.h"
+#include "Core/Misc/StringSplit.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/Avm2/ActionOpcodes.h"
 #include "Flash/Action/Avm2/ActionVMImage2.h"
 
@@ -55,12 +57,59 @@ uint32_t decodeU30(const uint8_t T_UNALIGNED *& pc)
 	return out;
 }
 
+bool getMemberOrProperty(ActionFrame* frame, ActionObject* self, int32_t variableId, ActionValue& outValue)
+{
+	ActionValueStack& stack = frame->getStack();
+	Ref< ActionFunction > propertyGet;
+
+	if (self->getPropertyGet(variableId, propertyGet))
+	{
+		stack.push(ActionValue(avm_number_t(0)));
+		outValue = propertyGet->call(frame, self);
+		return true;
+	}
+
+	return self->getMember(variableId, outValue);
+}
+
+bool getStrictProperty(ActionFrame* frame, ActionObject* self, const AbcFile& abcFile, const MultinameInfo& mn, ActionValue& outValue)
+{
+	const NamespaceInfo& ns = abcFile.cpool.namespaces[mn.data.qname.ns];
+
+	Ref< ActionObject > it = self;
+
+	if (!abcFile.cpool.strings[ns.name].empty())
+	{
+		StringSplit< std::string > ss(abcFile.cpool.strings[ns.name], ".");
+		for (StringSplit< std::string >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+		{
+			ActionValue value;
+			if (!it->getMember(*i, value))
+				return false;
+			if (!value.isObject())
+				return false;
+			it = value.getObject();
+		}
+	}
+
+	T_FATAL_ASSERT (it != 0);
+
+	return it->getMember(abcFile.cpool.strings[mn.data.qname.name], outValue);
+}
+
+void setStrictProperty(ActionFrame* frame, ActionObject* self, const AbcFile& abcFile, const MultinameInfo& mn, const ActionValue& value)
+{
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ActionVMImage2", 0, ActionVMImage2, IActionVMImage)
 
 void ActionVMImage2::execute(ActionFrame* frame) const
 {
+	ActionContext* context = frame->getContext();
+	T_ASSERT (context);
+
 	// Last script is the first to be executed of ABC.
 	const ScriptInfo& script = m_abcFile.scripts[m_abcFile.scriptsCount - 1];
 
@@ -243,7 +292,19 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 
 		VM_BEGIN(Avm2OpGetLex)
 			uint32_t index = decodeU30(pc);
+
 			const MultinameInfo& mn = m_abcFile.cpool.multinames[index];
+			T_FATAL_ASSERT (mn.kind == Mnik_CONSTANT_QName);
+
+			ActionValue value;
+			for (size_t i = 0; i < scopeStack.size(); ++i)
+			{
+				if (getStrictProperty(frame, scopeStack[i], m_abcFile, mn, value))
+					break;
+			}
+
+			operationStack.push(value);
+
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetLocal)
@@ -351,6 +412,11 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(Avm2OpInitProperty)
+			uint32_t index = decodeU30(pc);
+
+			const MultinameInfo& mn = m_abcFile.cpool.multinames[index];
+			
+
 		VM_END()
 
 		VM_BEGIN(Avm2OpInstanceOf)
@@ -425,6 +491,10 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(Avm2OpNewClass)
+
+			uint32_t index = decodeU30(pc);
+			const ClassInfo& ci = m_abcFile.classes[index];
+
 		VM_END()
 
 		VM_BEGIN(Avm2OpNewFunction)

@@ -34,6 +34,14 @@
 
 // flash.display
 #include "Flash/Action/Common/Classes/As_flash_display_BitmapData.h"
+#include "Flash/Action/Common/Classes/As_flash_display_DisplayObject.h"
+#include "Flash/Action/Common/Classes/As_flash_display_DisplayObjectContainer.h"
+#include "Flash/Action/Common/Classes/As_flash_display_InteractiveObject.h"
+#include "Flash/Action/Common/Classes/As_flash_display_MovieClip.h"
+#include "Flash/Action/Common/Classes/As_flash_display_Sprite.h"
+
+// flash.events
+#include "Flash/Action/Common/Classes/As_flash_events_EventDispatcher.h"
 
 // flash.external
 #include "Flash/Action/Common/Classes/As_flash_external_ExternalInterface.h"
@@ -104,8 +112,20 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 		Ref< ActionObject > display = new ActionObject(context);
 		{
 			display->setMember("BitmapData", ActionValue(new As_flash_display_BitmapData(context)));
+			display->setMember("DisplayObject", ActionValue(new As_flash_display_DisplayObject(context)));
+			display->setMember("DisplayObjectContainer", ActionValue(new As_flash_display_DisplayObjectContainer(context)));
+			display->setMember("InteractiveObject", ActionValue(new As_flash_display_InteractiveObject(context)));
+			display->setMember("MovieClip", ActionValue(new As_flash_display_MovieClip(context)));
+			display->setMember("Sprite", ActionValue(new As_flash_display_Sprite(context)));
 		}
 		flash->setMember("display", ActionValue(display));
+
+		// flash.events.
+		Ref< ActionObject > events = new ActionObject(context);
+		{
+			events->setMember("EventDispatcher", ActionValue(new As_flash_events_EventDispatcher(context)));
+		}
+		flash->setMember("events", ActionValue(events));
 
 		// flash.external.
 		Ref< ActionObject > external = new ActionObject(context);
