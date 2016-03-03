@@ -1395,6 +1395,16 @@ bool FlashTagSymbolClass::read(SwfReader* swf, ReadContext& context)
 }
 
 // ============================================================================
+// Metadata
+
+bool FlashTagMetaData::read(SwfReader* swf, ReadContext& context)
+{
+	std::string meta = swf->readString();
+	log::info << mbstows(meta) << Endl;
+	return true;
+}
+
+// ============================================================================
 // Unsupported
 
 FlashTagUnsupported::FlashTagUnsupported(int32_t tagId)

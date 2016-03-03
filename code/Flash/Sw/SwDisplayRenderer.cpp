@@ -118,6 +118,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 				if (k->type == SpgtLinear)
 				{
 					edge.type = SpgtLinear;
+					edge.points.resize(0);
 					edge.points.push_back(rasterTransform * points[k->pointsOffset]);
 					edge.points.push_back(rasterTransform * points[k->pointsOffset + 1]);
 					edges.push_back(edge);
@@ -144,6 +145,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 					{
 						Vector2 p2 = b.evaluate(float(t) / steps);
 						edge.type = SpgtLinear;
+						edge.points.resize(0);
 						edge.points.push_back(p1);
 						edge.points.push_back(p2);
 						edges.push_back(edge);

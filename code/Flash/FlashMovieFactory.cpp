@@ -56,6 +56,7 @@ FlashMovieFactory::FlashMovieFactory(bool includeAS)
 	m_tagReaders[TiImportAssets] = new FlashTagImportAssets(1);
 	m_tagReaders[TiImportAssets2] = new FlashTagImportAssets(2);
 	m_tagReaders[TiSymbolClass] = new FlashTagSymbolClass();
+	m_tagReaders[TiMetadata] = new FlashTagMetaData();
 	
 	if (m_includeAS)
 		m_tagReaders[TiInitAction] = new FlashTagInitAction();
@@ -80,7 +81,6 @@ FlashMovieFactory::FlashMovieFactory(bool includeAS)
 	m_tagReaders[TiSoundStreamHead2] = new FlashTagUnsupported(TiSoundStreamHead2);
 	m_tagReaders[TiDebugID] = new FlashTagUnsupported(TiDebugID);
 	m_tagReaders[TiFileAttributes] = new FlashTagUnsupported(TiFileAttributes);
-	m_tagReaders[TiMetadata] = new FlashTagUnsupported(TiMetadata);
 	m_tagReaders[TiDefineFontAlignZones] = new FlashTagUnsupported(TiDefineFontAlignZones);
 	m_tagReaders[TiCSMTextSettings] = new FlashTagUnsupported(TiCSMTextSettings);
 	m_tagReaders[TiDefineFontName] = new FlashTagUnsupported(TiDefineFontName);

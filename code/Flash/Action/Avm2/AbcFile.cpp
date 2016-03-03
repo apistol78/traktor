@@ -1,7 +1,6 @@
 #pragma optimize( "", off )
 
 #include "Core/Io/BitReader.h"
-#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
@@ -26,7 +25,7 @@ std::wstring getQualifiedName(const ConstantPool& cpool, uint32_t name)
 	case Mnik_CONSTANT_QNameA:
 		{
 			const NamespaceInfo& ns = cpool.namespaces[mn.data.qname.ns];
-			return cpool.strings[ns.name] + L" :: " + cpool.strings[mn.data.qname.name];
+			return mbstows(cpool.strings[ns.name] + " :: " + cpool.strings[mn.data.qname.name]);
 		}
 	}
 
@@ -140,7 +139,7 @@ bool ConstantPool::load(SwfReader& swf)
 	}
 
 	uint32_t cpoolStringCount = swf.readEncodedU30();
-	strings.reset(new std::wstring [std::max(cpoolStringCount, 1U)]);
+	strings.reset(new std::string [std::max(cpoolStringCount, 1U)]);
 	for (uint32_t i = 1; i < cpoolStringCount; ++i)
 	{
 		uint32_t length = swf.readEncodedU30();
@@ -149,7 +148,7 @@ bool ConstantPool::load(SwfReader& swf)
 		for (uint32_t j = 0; j < length; ++j)
 			data[j] = br.readUnsigned(8);
 		
-		strings[i] = mbstows(Utf8Encoding(), std::string(&data[0], &data[length]));
+		strings[i] = std::string(&data[0], &data[length]);
 	}
 
 	uint32_t cpoolNamespaceCount = swf.readEncodedU30();
@@ -240,7 +239,7 @@ bool ParamInfo::load(SwfReader& swf, uint32_t paramCount)
 void ParamInfo::dump(const ConstantPool& cpool, uint32_t paramCount) const
 {
 	for (uint32_t i = 0; i < paramCount; ++i)
-		log::info << L"names[" << i << L"] = " << cpool.strings[names[i]] << Endl;
+		log::info << L"names[" << i << L"] = " << mbstows(cpool.strings[names[i]]) << Endl;
 }
 
 MethodInfo::MethodInfo()
@@ -291,20 +290,26 @@ void MethodInfo::dump(const ConstantPool& cpool) const
 	for (uint32_t j = 0; j < paramCount; ++j)
 		log::info << L"paramTypes[" << j << L"] = " << paramTypes[j] << Endl;
 
-	log::info << L"name = " << cpool.strings[name] << Endl;
+	log::info << L"name = " << mbstows(cpool.strings[name]) << Endl;
 	log::info << L"flags = " << uint32_t(flags) << Endl;
 
-	log::info << L"options = {" << Endl;
-	log::info << IncreaseIndent;
-	options.dump(cpool);
-	log::info << DecreaseIndent;
-	log::info << L"}" << Endl;
+	if (flags & Mif_HAS_OPTIONAL)
+	{
+		log::info << L"options = {" << Endl;
+		log::info << IncreaseIndent;
+		options.dump(cpool);
+		log::info << DecreaseIndent;
+		log::info << L"}" << Endl;
+	}
 
-	log::info << L"paramNames = {" << Endl;
-	log::info << IncreaseIndent;
-	paramNames.dump(cpool, paramCount);
-	log::info << DecreaseIndent;
-	log::info << L"}" << Endl;
+	if (flags & Mif_HAS_PARAM_NAMES)
+	{
+		log::info << L"paramNames = {" << Endl;
+		log::info << IncreaseIndent;
+		paramNames.dump(cpool, paramCount);
+		log::info << DecreaseIndent;
+		log::info << L"}" << Endl;
+	}
 }
 
 ItemInfo::ItemInfo()

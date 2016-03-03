@@ -17,6 +17,13 @@ BitmapData::BitmapData(int32_t width, int32_t height, bool transparent, uint32_t
 		width,
 		height
 	);
+
+	m_image->clear(Color4f(
+		((fillColor & 0x00ff0000) >> 16) / 255.0f,
+		((fillColor & 0x0000ff00) >>  8) / 255.0f,
+		((fillColor & 0x000000ff) >>  0) / 255.0f,
+		transparent ? ((fillColor & 0xff000000) >> 24) / 255.0f : 1.0f
+	));
 }
 
 BitmapData::BitmapData(drawing::Image* image)

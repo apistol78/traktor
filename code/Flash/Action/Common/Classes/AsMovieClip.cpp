@@ -277,11 +277,25 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	return attachClipInstance;
 }
 
-void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, const BitmapData* bm, ActionObject* matrix, bool repeat, bool smoothing) const
 {
-	FlashFillStyle style;
-	style.create(0, Matrix33::identity());
+	// Get dictionary.
+	FlashDictionary* dictionary = self->getDictionary();
+	if (!dictionary)
+		return;
 
+	// Define bitmap symbol.
+	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmapData(bm->getImage()));
+
+	// Create style.
+	FlashFillStyle style;
+	style.create(bitmapId, Matrix33(
+		20.0f, 0.0f, 0.0f,
+		0.0f, 20.0f, 0.0f,
+		0.0f, 0.0f, 1.0f
+	));
+
+	// Begin filling with style.
 	FlashCanvas* canvas = self->createCanvas();
 	canvas->beginFill(style);
 }
