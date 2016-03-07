@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Core/Io/StringOutputStream.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionValue.h"
