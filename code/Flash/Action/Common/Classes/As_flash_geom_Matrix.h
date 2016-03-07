@@ -1,5 +1,5 @@
-#ifndef traktor_flash_As_flash_geom_Point_H
-#define traktor_flash_As_flash_geom_Point_H
+#ifndef traktor_flash_As_flash_geom_Matrix_H
+#define traktor_flash_As_flash_geom_Matrix_H
 
 #include "Flash/Action/ActionClass.h"
 
@@ -10,15 +10,15 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Point class.
+/*! \brief Matrix class.
  * \ingroup Flash
  */
-class As_flash_geom_Point : public ActionClass
+class As_flash_geom_Matrix : public ActionClass
 {
 	T_RTTI_CLASS;
 
 public:
-	As_flash_geom_Point(ActionContext* context);
+	As_flash_geom_Matrix(ActionContext* context);
 
 	virtual void initialize(ActionObject* self) T_OVERRIDE T_FINAL;
 
@@ -27,14 +27,14 @@ public:
 	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
 
 private:
-	void Point_distance(CallArgs& ca);
+	void Matrix_distance(CallArgs& ca);
 
-	void Point_interpolate(CallArgs& ca);
+	void Matrix_interpolate(CallArgs& ca);
 
-	void Point_polar(CallArgs& ca);
+	void Matrix_polar(CallArgs& ca);
 };
 
 	}
 }
 
-#endif	// traktor_flash_As_flash_geom_Point_H
+#endif	// traktor_flash_As_flash_geom_Matrix_H

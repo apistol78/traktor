@@ -14,6 +14,7 @@ class BitmapData;
 class FlashCharacterInstance;
 class FlashEditInstance;
 class FlashSpriteInstance;
+class Matrix;
 class Transform;
 
 /*! \brief MovieClip class.
@@ -45,7 +46,7 @@ private:
 
 	Ref< FlashSpriteInstance > MovieClip_attachMovie_4(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth, ActionObject* initObject) const;
 
-	void MovieClip_beginBitmapFill(FlashSpriteInstance* self, const BitmapData* bm, ActionObject* matrix, bool repeat, bool smoothing) const;
+	void MovieClip_beginBitmapFill(FlashSpriteInstance* self, const BitmapData* bm, const Matrix* matrix, bool repeat, bool smoothing) const;
 
 	void MovieClip_beginFill_1(FlashSpriteInstance* self, uint32_t rgb) const;
 

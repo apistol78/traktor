@@ -19,6 +19,7 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Common/Array.h"
 #include "Flash/Action/Common/BitmapData.h"
+#include "Flash/Action/Common/Matrix.h"
 #include "Flash/Action/Common/Transform.h"
 #include "Flash/Action/Common/Classes/AsMovieClip.h"
 
@@ -277,7 +278,7 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	return attachClipInstance;
 }
 
-void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, const BitmapData* bm, ActionObject* matrix, bool repeat, bool smoothing) const
+void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, const BitmapData* bm, const Matrix* matrix, bool repeat, bool smoothing) const
 {
 	// Get dictionary.
 	FlashDictionary* dictionary = self->getDictionary();
@@ -287,13 +288,18 @@ void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, const Bit
 	// Define bitmap symbol.
 	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmapData(bm->getImage()));
 
-	// Create style.
-	FlashFillStyle style;
-	style.create(bitmapId, Matrix33(
+	Matrix33 M(
 		20.0f, 0.0f, 0.0f,
 		0.0f, 20.0f, 0.0f,
 		0.0f, 0.0f, 1.0f
-	));
+	);
+
+	if (matrix)
+		M = M * matrix->m_v;
+
+	// Create style.
+	FlashFillStyle style;
+	style.create(bitmapId, M);
 
 	// Begin filling with style.
 	FlashCanvas* canvas = self->createCanvas();

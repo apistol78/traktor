@@ -2,7 +2,7 @@
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Common/BitmapData.h"
-//#include "Flash/Action/Common/Rectangle.h"
+#include "Flash/Action/Common/Rectangle.h"
 #include "Flash/Action/Common/Classes/As_flash_display_BitmapData.h"
 #include "Flash/Sw/SwDisplayRenderer.h"
 
@@ -127,9 +127,9 @@ void As_flash_display_BitmapData::BitmapData_draw(BitmapData* self, FlashSpriteI
 	);
 }
 
-//void As_flash_display_BitmapData::BitmapData_fillRect(BitmapData* self, const Rectangle* rectangle, uint32_t color) const
-//{
-//}
+void As_flash_display_BitmapData::BitmapData_fillRect(BitmapData* self, const Rectangle* rectangle, uint32_t color) const
+{
+}
 
 	}
 }

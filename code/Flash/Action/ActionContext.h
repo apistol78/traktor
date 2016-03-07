@@ -68,7 +68,11 @@ public:
 		IdOnKillFocus = 30,
 		IdOnMouseWheel = 31,
 		IdOnChanged = 32,
-		IdOnScroller = 33
+		IdOnScroller = 33,
+		IdX = 34,
+		IdY = 35,
+		IdWidth = 36,
+		IdHeight = 37
 	};
 
 	ActionContext(const FlashMovie* movie, const IFlashMovieLoader* movieLoader);
