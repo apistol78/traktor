@@ -23,6 +23,11 @@ class Image;
 	namespace flash
 	{
 
+class BitmapFilter;
+class FlashSpriteInstance;
+class Point;
+class Rectangle;
+
 /*! \brief ActionScript boolean wrapper.
  * \ingroup Flash
  */
@@ -35,9 +40,19 @@ public:
 
 	BitmapData(drawing::Image* image);
 
-	int32_t getWidth() const;
+	int32_t getWidth();
 
-	int32_t getHeight() const;
+	int32_t getHeight();
+
+	bool getTransparent();
+
+	Ref< Rectangle > getRectangle();
+
+	void applyFilter(const BitmapData* sourceBitmapData, const Rectangle* sourceRect, const Point* destPoint, const BitmapFilter* filter);
+
+	void draw(FlashSpriteInstance* source);
+
+	void fillRect(const Rectangle* rectangle, uint32_t color);
 
 	drawing::Image* getImage() const;
 

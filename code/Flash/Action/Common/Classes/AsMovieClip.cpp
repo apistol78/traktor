@@ -183,17 +183,17 @@ void AsMovieClip::MovieClip_attachAudio(FlashSpriteInstance* self) const
 	)
 }
 
-void AsMovieClip::MovieClip_attachBitmap_2(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth) const
+void AsMovieClip::MovieClip_attachBitmap_2(FlashSpriteInstance* self, BitmapData* bmp, int32_t depth) const
 {
 	MovieClip_attachBitmap_4(self, bmp, depth, "auto", false);
 }
 
-void AsMovieClip::MovieClip_attachBitmap_3(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth, const std::string& pixelSnapping) const
+void AsMovieClip::MovieClip_attachBitmap_3(FlashSpriteInstance* self, BitmapData* bmp, int32_t depth, const std::string& pixelSnapping) const
 {
 	MovieClip_attachBitmap_4(self, bmp, depth, pixelSnapping, false);
 }
 
-void AsMovieClip::MovieClip_attachBitmap_4(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth, const std::string& pixelSnapping, bool smoothing) const
+void AsMovieClip::MovieClip_attachBitmap_4(FlashSpriteInstance* self, BitmapData* bmp, int32_t depth, const std::string& pixelSnapping, bool smoothing) const
 {
 	ActionContext* context = self->getContext();
 	T_ASSERT (context);
@@ -278,7 +278,7 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	return attachClipInstance;
 }
 
-void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, const BitmapData* bm, const Matrix* matrix, bool repeat, bool smoothing) const
+void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, BitmapData* bm, const Matrix* matrix, bool repeat, bool smoothing) const
 {
 	// Get dictionary.
 	FlashDictionary* dictionary = self->getDictionary();

@@ -1,5 +1,5 @@
-#ifndef traktor_flash_As_flash_display_BitmapData_H
-#define traktor_flash_As_flash_display_BitmapData_H
+#ifndef traktor_flash_As_flash_filters_BitmapFilter_H
+#define traktor_flash_As_flash_filters_BitmapFilter_H
 
 #include "Flash/Action/ActionClass.h"
 
@@ -8,12 +8,15 @@ namespace traktor
 	namespace flash
 	{
 
-class As_flash_display_BitmapData : public ActionClass
+/*! \brief BitmapFilter class.
+ * \ingroup Flash
+ */
+class As_flash_filters_BitmapFilter : public ActionClass
 {
 	T_RTTI_CLASS;
 
 public:
-	As_flash_display_BitmapData(ActionContext* context);
+	As_flash_filters_BitmapFilter(ActionContext* context);
 
 	virtual void initialize(ActionObject* self) T_OVERRIDE T_FINAL;
 
@@ -25,4 +28,4 @@ public:
 	}
 }
 
-#endif	// traktor_flash_As_flash_display_BitmapData_H
+#endif	// traktor_flash_As_flash_filters_BitmapFilter_H

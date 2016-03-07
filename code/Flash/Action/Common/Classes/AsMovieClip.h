@@ -36,17 +36,17 @@ public:
 private:
 	void MovieClip_attachAudio(FlashSpriteInstance* self) const;
 
-	void MovieClip_attachBitmap_2(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth) const;
+	void MovieClip_attachBitmap_2(FlashSpriteInstance* self, BitmapData* bmp, int32_t depth) const;
 
-	void MovieClip_attachBitmap_3(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth, const std::string& pixelSnapping) const;
+	void MovieClip_attachBitmap_3(FlashSpriteInstance* self, BitmapData* bmp, int32_t depth, const std::string& pixelSnapping) const;
 
-	void MovieClip_attachBitmap_4(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth, const std::string& pixelSnapping, bool smoothing) const;
+	void MovieClip_attachBitmap_4(FlashSpriteInstance* self, BitmapData* bmp, int32_t depth, const std::string& pixelSnapping, bool smoothing) const;
 
 	Ref< FlashSpriteInstance > MovieClip_attachMovie_3(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth) const;
 
 	Ref< FlashSpriteInstance > MovieClip_attachMovie_4(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth, ActionObject* initObject) const;
 
-	void MovieClip_beginBitmapFill(FlashSpriteInstance* self, const BitmapData* bm, const Matrix* matrix, bool repeat, bool smoothing) const;
+	void MovieClip_beginBitmapFill(FlashSpriteInstance* self, BitmapData* bm, const Matrix* matrix, bool repeat, bool smoothing) const;
 
 	void MovieClip_beginFill_1(FlashSpriteInstance* self, uint32_t rgb) const;
 

@@ -1,10 +1,10 @@
-#include "Flash/FlashMovieRenderer.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Common/BitmapData.h"
+#include "Flash/Action/Common/BitmapFilter.h"
+#include "Flash/Action/Common/Point.h"
 #include "Flash/Action/Common/Rectangle.h"
 #include "Flash/Action/Common/Classes/As_flash_display_BitmapData.h"
-#include "Flash/Sw/SwDisplayRenderer.h"
 
 namespace traktor
 {
@@ -18,19 +18,19 @@ As_flash_display_BitmapData::As_flash_display_BitmapData(ActionContext* context)
 {
 	Ref< ActionObject > prototype = new ActionObject(context);
 
-	prototype->addProperty("height", createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_get_height), 0);
-	prototype->addProperty("rectangle", createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_get_rectangle), 0);
-	prototype->addProperty("transparent", createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_get_transparent), 0);
-	prototype->addProperty("width", createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_get_width), 0);
+	prototype->addProperty("height", createNativeFunction(context, &BitmapData::getHeight), 0);
+	prototype->addProperty("rectangle", createNativeFunction(context, &BitmapData::getRectangle), 0);
+	prototype->addProperty("transparent", createNativeFunction(context, &BitmapData::getTransparent), 0);
+	prototype->addProperty("width", createNativeFunction(context, &BitmapData::getWidth), 0);
 
-	//prototype->setMember("applyFilter", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_applyFilter)));
+	prototype->setMember("applyFilter", ActionValue(createNativeFunction(context, &BitmapData::applyFilter)));
 	//prototype->setMember("clone", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_clone)));
 	//prototype->setMember("colorTransform", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_colorTransform)));
 	//prototype->setMember("copyChannel", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_copyChannel)));
 	//prototype->setMember("copyPixels", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_copyPixels)));
 	//prototype->setMember("dispose", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_dispose)));
-	prototype->setMember("draw", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_draw)));
-	//prototype->setMember("fillRect", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_fillRect)));
+	prototype->setMember("draw", ActionValue(createNativeFunction(context, &BitmapData::draw)));
+	prototype->setMember("fillRect", ActionValue(createNativeFunction(context, &BitmapData::fillRect)));
 	//prototype->setMember("floodFill", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_floodFill)));
 	//prototype->setMember("generateFilterRect", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_generateFilterRect)));
 	//prototype->setMember("getColorBoundsRect", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_getColorBoundsRect)));
@@ -85,50 +85,6 @@ void As_flash_display_BitmapData::construct(ActionObject* self, const ActionValu
 ActionValue As_flash_display_BitmapData::xplicit(const ActionValueArray& args)
 {
 	return ActionValue();
-}
-
-avm_number_t As_flash_display_BitmapData::BitmapData_get_height(const BitmapData* self) const
-{
-	return avm_number_t(self->getWidth());
-}
-
-ActionValue As_flash_display_BitmapData::BitmapData_get_rectangle(const BitmapData* self) const
-{
-	return ActionValue();
-}
-
-bool As_flash_display_BitmapData::BitmapData_get_transparent(const BitmapData* self) const
-{
-	return false;
-}
-
-avm_number_t As_flash_display_BitmapData::BitmapData_get_width(const BitmapData* self) const
-{
-	return avm_number_t(self->getHeight());
-}
-
-void As_flash_display_BitmapData::BitmapData_draw(BitmapData* self, FlashSpriteInstance* source) const
-{
-	SwDisplayRenderer displayRenderer(self->getImage());
-	FlashMovieRenderer movieRenderer(&displayRenderer);
-
-	Aabb2 frameBounds = source->getLocalBounds();
-	Vector4 frameTransform(0.0f, 0.0f, 1.0f, 1.0f);
-
-	float viewWidth = self->getWidth();
-	float viewHeight = self->getHeight();
-
-	movieRenderer.renderFrame(
-		source,
-		frameBounds,
-		frameTransform,
-		viewWidth,
-		viewHeight
-	);
-}
-
-void As_flash_display_BitmapData::BitmapData_fillRect(BitmapData* self, const Rectangle* rectangle, uint32_t color) const
-{
 }
 
 	}

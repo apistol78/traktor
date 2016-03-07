@@ -46,6 +46,10 @@
 // flash.external
 #include "Flash/Action/Common/Classes/As_flash_external_ExternalInterface.h"
 
+// flash.filters
+#include "Flash/Action/Common/Classes/As_flash_filters_BitmapFilter.h"
+#include "Flash/Action/Common/Classes/As_flash_filters_BlurFilter.h"
+
 // flash.geom
 #include "Flash/Action/Common/Classes/As_flash_geom_ColorTransform.h"
 #include "Flash/Action/Common/Classes/As_flash_geom_Matrix.h"
@@ -134,6 +138,14 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 			external->setMember("ExternalInterface", ActionValue(new As_flash_external_ExternalInterface(context)));
 		}
 		flash->setMember("external", ActionValue(external));
+
+		// flash.filters.
+		Ref< ActionObject > filters = new ActionObject(context);
+		{
+			filters->setMember("BitmapFilter", ActionValue(new As_flash_filters_BitmapFilter(context)));
+			filters->setMember("BlurFilter", ActionValue(new As_flash_filters_BlurFilter(context)));
+		}
+		flash->setMember("filters", ActionValue(filters));
 
 		// flash.geom.
 		Ref< ActionObject > geom = new ActionObject(context);
