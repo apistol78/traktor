@@ -55,8 +55,9 @@ public:
 
 	~UnwindStack()
 	{
-		T_ASSERT (lua_gettop(m_luaState) >= m_top);
-		lua_pop(m_luaState, lua_gettop(m_luaState) - m_top);
+		int32_t npop = lua_gettop(m_luaState) - m_top;
+		T_FATAL_ASSERT (npop >= 0);
+		lua_pop(m_luaState, npop);
 	}
 
 private:
