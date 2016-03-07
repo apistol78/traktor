@@ -48,6 +48,10 @@ ActionContext::ActionContext(const FlashMovie* movie, const IFlashMovieLoader* m
 	m_strings["onMouseWheel"];
 	m_strings["onChanged"];
 	m_strings["onScroller"];
+	m_strings["x"];
+	m_strings["y"];
+	m_strings["width"];
+	m_strings["height"];
 }
 
 void ActionContext::setGlobal(ActionObject* global)

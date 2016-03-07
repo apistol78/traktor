@@ -10,7 +10,7 @@ namespace traktor
 
 class BitmapData;
 class FlashSpriteInstance;
-//class Rectangle;
+class Rectangle;
 
 class As_flash_display_BitmapData : public ActionClass
 {
@@ -36,7 +36,7 @@ private:
 
 	void BitmapData_draw(BitmapData* self, FlashSpriteInstance* source) const;
 
-	//void BitmapData_fillRect(BitmapData* self, const Rectangle* rectangle, uint32_t color) const;
+	void BitmapData_fillRect(BitmapData* self, const Rectangle* rectangle, uint32_t color) const;
 };
 
 	}

@@ -48,6 +48,7 @@
 
 // flash.geom
 #include "Flash/Action/Common/Classes/As_flash_geom_ColorTransform.h"
+#include "Flash/Action/Common/Classes/As_flash_geom_Matrix.h"
 #include "Flash/Action/Common/Classes/As_flash_geom_Point.h"
 #include "Flash/Action/Common/Classes/As_flash_geom_Rectangle.h"
 #include "Flash/Action/Common/Classes/As_flash_geom_Transform.h"
@@ -138,6 +139,7 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 		Ref< ActionObject > geom = new ActionObject(context);
 		{
 			geom->setMember("ColorTransform", ActionValue(new As_flash_geom_ColorTransform(context)));
+			geom->setMember("Matrix", ActionValue(new As_flash_geom_Matrix(context)));
 			geom->setMember("Point", ActionValue(new As_flash_geom_Point(context)));
 			geom->setMember("Rectangle", ActionValue(new As_flash_geom_Rectangle(context)));
 			geom->setMember("Transform", ActionValue(new As_flash_geom_Transform(context)));
