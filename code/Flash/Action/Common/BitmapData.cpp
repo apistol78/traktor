@@ -1,6 +1,12 @@
 #include "Drawing/Image.h"
+#include "Drawing/Filters/BlurFilter.h"
+#include "Flash/FlashMovieRenderer.h"
+#include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Common/BitmapData.h"
+#include "Flash/Action/Common/BlurFilter.h"
+#include "Flash/Action/Common/Rectangle.h"
+#include "Flash/Sw/SwDisplayRenderer.h"
 
 namespace traktor
 {
@@ -32,14 +38,57 @@ BitmapData::BitmapData(drawing::Image* image)
 {
 }
 
-int32_t BitmapData::getWidth() const
+int32_t BitmapData::getWidth()
 {
 	return m_image->getWidth();
 }
 
-int32_t BitmapData::getHeight() const
+int32_t BitmapData::getHeight()
 {
 	return m_image->getHeight();
+}
+
+bool BitmapData::getTransparent()
+{
+	return true;
+}
+
+Ref< Rectangle > BitmapData::getRectangle()
+{
+	return new Rectangle();
+}
+
+void BitmapData::applyFilter(const BitmapData* sourceBitmapData, const Rectangle* sourceRect, const Point* destPoint, const BitmapFilter* filter)
+{
+	if (BlurFilter* blurFilter = dynamic_type_cast< BlurFilter* >(const_cast< BitmapFilter* >(filter)))
+	{
+		drawing::BlurFilter f(blurFilter->getBlurX(), blurFilter->getBlurY());
+		m_image->apply(&f);
+	}
+}
+
+void BitmapData::draw(FlashSpriteInstance* source)
+{
+	SwDisplayRenderer displayRenderer(m_image);
+	FlashMovieRenderer movieRenderer(&displayRenderer);
+
+	Aabb2 frameBounds = source->getLocalBounds();
+	Vector4 frameTransform(0.0f, 0.0f, 1.0f, 1.0f);
+
+	float viewWidth = m_image->getWidth();
+	float viewHeight = m_image->getHeight();
+
+	movieRenderer.renderFrame(
+		source,
+		frameBounds,
+		frameTransform,
+		viewWidth,
+		viewHeight
+	);
+}
+
+void BitmapData::fillRect(const Rectangle* rectangle, uint32_t color)
+{
 }
 
 drawing::Image* BitmapData::getImage() const
