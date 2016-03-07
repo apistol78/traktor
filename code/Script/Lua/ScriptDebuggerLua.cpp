@@ -285,6 +285,7 @@ bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outL
 		return false;
 
 	lua_State* L = currentContext->m_luaState;
+	T_ANONYMOUS_VAR(UnwindStack)(L);
 
 	lua_Debug ar = { 0 };
 	if (!lua_getstack(L, depth, &ar))
@@ -342,8 +343,8 @@ bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outL
 
 			outLocals.push_back(variable);
 		}
-
-		lua_pop(currentContext->m_luaState, 1);
+		else
+			lua_pop(currentContext->m_luaState, 1);
 	}
 
 	return true;
@@ -358,6 +359,7 @@ bool ScriptDebuggerLua::captureObject(uint32_t object, RefArray< Variable >& out
 		return false;
 
 	lua_State* L = currentContext->m_luaState;
+	T_ANONYMOUS_VAR(UnwindStack)(L);
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, object);
 	T_ASSERT (lua_istable(L, -1));
