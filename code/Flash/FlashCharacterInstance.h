@@ -80,6 +80,10 @@ public:
 	 */
 	void setCacheObject(IRefCount* cacheObject);
 
+	/*! \brief Clear cache object.
+	 */
+	virtual void clearCacheObject();
+
 	/*! \brief Set cache object.
 	 */
 	IRefCount* getCacheObject() { return m_cacheObject; }

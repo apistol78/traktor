@@ -68,7 +68,11 @@ void FlashDisplayList::updateEnd()
 	for (layer_map_t::iterator i = m_layers.begin(); i != m_layers.end(); )
 	{
 		if (!i->second.immutable && i->second.collect)
+		{
+			if (i->second.instance)
+				i->second.instance->clearCacheObject();
 			i = m_layers.erase(i);
+		}
 		else
 			i++;
 	}
@@ -89,6 +93,9 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 		layer_map_t::iterator j = m_layers.find(removeObject.depth + c_depthOffset);
 		if (j != m_layers.end())
 		{
+			if (j->second.instance)
+				j->second.instance->clearCacheObject();
+
 			if (removeObject.hasCharacterId)
 			{
 				if (j->second.id == removeObject.characterId)
@@ -118,6 +125,9 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 			if (placeObject.has(FlashFrame::PfHasCharacterId) && placeObject.characterId != layer.id)
 			{
+				if (layer.instance)
+					layer.instance->clearCacheObject();
+
 				Ref< const FlashCharacter > character = ownerInstance->getDictionary()->getCharacter(placeObject.characterId);
 				if (character)
 				{
@@ -189,7 +199,11 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 			layer_map_t::iterator j = m_layers.find(placeObject.depth + c_depthOffset);
 			if (j != m_layers.end())
+			{
+				if (j->second.instance)
+					j->second.instance->clearCacheObject();
 				m_layers.erase(j);
+			}
 		}
 	}
 }
@@ -197,6 +211,10 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 void FlashDisplayList::showObject(int32_t depth, uint16_t characterId, FlashCharacterInstance* characterInstance, bool immutable)
 {
 	T_ASSERT (characterInstance);
+
+	if (m_layers[depth].instance)
+		m_layers[depth].instance->clearCacheObject();
+
 	m_layers[depth].id = characterId;
 	m_layers[depth].name = m_context->getString(characterInstance->getName());
 	m_layers[depth].instance = characterInstance;
@@ -211,6 +229,8 @@ void FlashDisplayList::removeObject(FlashCharacterInstance* characterInstance)
 	T_ASSERT (i != m_layers.end());
 
 	m_layers.erase(i);
+
+	characterInstance->clearCacheObject();
 }
 
 int32_t FlashDisplayList::getObjectDepth(const FlashCharacterInstance* characterInstance) const
