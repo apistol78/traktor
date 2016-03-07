@@ -94,6 +94,11 @@ void FlashCharacterInstance::setCacheObject(IRefCount* cacheObject)
 	m_cacheObject = cacheObject;
 }
 
+void FlashCharacterInstance::clearCacheObject()
+{
+	m_cacheObject = 0;
+}
+
 std::string FlashCharacterInstance::getTarget() const
 {
 	return m_parent ? (m_parent->getTarget() + "/" + getName()) : "";

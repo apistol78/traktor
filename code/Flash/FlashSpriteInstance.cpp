@@ -263,6 +263,7 @@ void FlashSpriteInstance::removeMovieClip()
 	m_mask = 0;
 	m_canvas = 0;
 
+	setCacheObject(0);
 	setParent(0);
 }
 
@@ -327,6 +328,15 @@ FlashCanvas* FlashSpriteInstance::createCanvas()
 	if (!m_canvas)
 		m_canvas = new FlashCanvas();
 	return m_canvas;
+}
+
+void FlashSpriteInstance::clearCacheObject()
+{
+	FlashCharacterInstance::clearCacheObject();
+	m_displayList.getVisibleObjects(m_visibleCharacters);
+	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+		(*i)->clearCacheObject();
+	m_visibleCharacters.resize(0);
 }
 
 bool FlashSpriteInstance::enumerateMembers(std::vector< uint32_t >& outMemberNames) const

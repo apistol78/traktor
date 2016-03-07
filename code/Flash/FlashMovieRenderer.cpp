@@ -694,7 +694,7 @@ FlashMovieRenderer::State::State()
 
 FlashMovieRenderer::State::~State()
 {
-	ms_forceRedraw |= visible;
+	ms_forceRedraw |= true; //visible;
 }
 
 	}
