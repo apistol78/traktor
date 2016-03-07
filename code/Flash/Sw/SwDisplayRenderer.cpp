@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <algorithm>
 #include <limits>
 #include "Core/Math/Bezier2nd.h"
