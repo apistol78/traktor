@@ -632,6 +632,9 @@ void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const M
 	SmallMap< int32_t, ShapeCache >::iterator it = m_shapeCache.find(tag);
 	if (it == m_shapeCache.end() || it->second.tag != canvas.getDirtyTag())
 	{
+		if (it != m_shapeCache.end() && it->second.shape)
+			it->second.shape->destroy();
+
 		accShape = new AccShape(m_shapeResources);
 		if (!accShape->create(
 			m_vertexPool,
