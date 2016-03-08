@@ -241,7 +241,7 @@ Ref< ActionObject > ActionContext_createObject_0(ActionContext* self)
 	return new flash::ActionObject(self);
 }
 
-Ref< ActionObject > ActionContext_createObject_1(ActionContext* self, const std::string& prototype)
+Ref< ActionObject > ActionContext_createObject_N(ActionContext* self, const std::string& prototype, ActionValueArray& args)
 {
 	ActionValue classFunctionValue;
 	self->getGlobal()->getMemberByQName(prototype, classFunctionValue);
@@ -265,42 +265,85 @@ Ref< ActionObject > ActionContext_createObject_1(ActionContext* self, const std:
 
 	Ref< ActionObject > obj = new ActionObject(self, classPrototype);
 	obj->setMember(flash::ActionContext::Id__ctor__, classFunctionValue);
-
-	classFunction->call(obj);
-	return obj;
-}
-
-Ref< ActionObject > ActionContext_createObject_2(ActionContext* self, const std::string& prototype, const std::vector< Any >& argv)
-{
-	ActionValue classFunctionValue;
-	self->getGlobal()->getMemberByQName(prototype, classFunctionValue);
-
-	Ref< ActionFunction > classFunction = classFunctionValue.getObject< ActionFunction >();
-	if (!classFunction)
-	{
-		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
-		return 0;
-	}
-
-	ActionValue classPrototypeValue;
-	classFunction->getLocalMember(ActionContext::IdPrototype, classPrototypeValue);
-
-	Ref< ActionObject > classPrototype = classPrototypeValue.getObject();
-	if (!classPrototype)
-	{
-		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
-		return 0;
-	}
-
-	Ref< ActionObject > obj = new ActionObject(self, classPrototype);
-	obj->setMember(flash::ActionContext::Id__ctor__, classFunctionValue);
-
-	ActionValueArray args(self->getPool(), argv.size());
-	for (uint32_t i = 0; i < argv.size(); ++i)
-		args[i] = CastAny< ActionValue >::get(argv[i]);
 
 	classFunction->call(obj, args);
 	return obj;
+}
+
+Ref< ActionObject > ActionContext_createObject_1(ActionContext* self, const std::string& prototype)
+{
+	ActionValueArray args(self->getPool(), 0);
+	return ActionContext_createObject_N(self, prototype, args);
+}
+
+Ref< ActionObject > ActionContext_createObject_2(ActionContext* self, const std::string& prototype, const Any& arg1)
+{
+	ActionValueArray args(self->getPool(), 1);
+	args[0] = CastAny< ActionValue >::get(arg1);
+	return ActionContext_createObject_N(self, prototype, args);
+}
+
+Ref< ActionObject > ActionContext_createObject_3(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2)
+{
+	ActionValueArray args(self->getPool(), 2);
+	args[0] = CastAny< ActionValue >::get(arg1);
+	args[1] = CastAny< ActionValue >::get(arg2);
+	return ActionContext_createObject_N(self, prototype, args);
+}
+
+Ref< ActionObject > ActionContext_createObject_4(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2, const Any& arg3)
+{
+	ActionValueArray args(self->getPool(), 3);
+	args[0] = CastAny< ActionValue >::get(arg1);
+	args[1] = CastAny< ActionValue >::get(arg2);
+	args[2] = CastAny< ActionValue >::get(arg3);
+	return ActionContext_createObject_N(self, prototype, args);
+}
+
+Ref< ActionObject > ActionContext_createObject_5(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2, const Any& arg3, const Any& arg4)
+{
+	ActionValueArray args(self->getPool(), 4);
+	args[0] = CastAny< ActionValue >::get(arg1);
+	args[1] = CastAny< ActionValue >::get(arg2);
+	args[2] = CastAny< ActionValue >::get(arg3);
+	args[3] = CastAny< ActionValue >::get(arg3);
+	return ActionContext_createObject_N(self, prototype, args);
+}
+
+Ref< ActionObject > ActionContext_createObject_6(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2, const Any& arg3, const Any& arg4, const Any& arg5)
+{
+	ActionValueArray args(self->getPool(), 5);
+	args[0] = CastAny< ActionValue >::get(arg1);
+	args[1] = CastAny< ActionValue >::get(arg2);
+	args[2] = CastAny< ActionValue >::get(arg3);
+	args[3] = CastAny< ActionValue >::get(arg4);
+	args[4] = CastAny< ActionValue >::get(arg5);
+	return ActionContext_createObject_N(self, prototype, args);
+}
+
+Ref< ActionObject > ActionContext_createObject_7(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2, const Any& arg3, const Any& arg4, const Any& arg5, const Any& arg6)
+{
+	ActionValueArray args(self->getPool(), 6);
+	args[0] = CastAny< ActionValue >::get(arg1);
+	args[1] = CastAny< ActionValue >::get(arg2);
+	args[2] = CastAny< ActionValue >::get(arg3);
+	args[3] = CastAny< ActionValue >::get(arg4);
+	args[4] = CastAny< ActionValue >::get(arg5);
+	args[5] = CastAny< ActionValue >::get(arg6);
+	return ActionContext_createObject_N(self, prototype, args);
+}
+
+Ref< ActionObject > ActionContext_createObject_8(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2, const Any& arg3, const Any& arg4, const Any& arg5, const Any& arg6, const Any& arg7)
+{
+	ActionValueArray args(self->getPool(), 7);
+	args[0] = CastAny< ActionValue >::get(arg1);
+	args[1] = CastAny< ActionValue >::get(arg2);
+	args[2] = CastAny< ActionValue >::get(arg3);
+	args[3] = CastAny< ActionValue >::get(arg4);
+	args[4] = CastAny< ActionValue >::get(arg5);
+	args[5] = CastAny< ActionValue >::get(arg6);
+	args[6] = CastAny< ActionValue >::get(arg7);
+	return ActionContext_createObject_N(self, prototype, args);
 }
 
 Ref< ActionObject > ActionContext_createBitmap(ActionContext* self, drawing::Image* image)
@@ -553,6 +596,12 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classActionContext->addMethod("createObject", &ActionContext_createObject_0);
 	classActionContext->addMethod("createObject", &ActionContext_createObject_1);
 	classActionContext->addMethod("createObject", &ActionContext_createObject_2);
+	classActionContext->addMethod("createObject", &ActionContext_createObject_3);
+	classActionContext->addMethod("createObject", &ActionContext_createObject_4);
+	classActionContext->addMethod("createObject", &ActionContext_createObject_5);
+	classActionContext->addMethod("createObject", &ActionContext_createObject_6);
+	classActionContext->addMethod("createObject", &ActionContext_createObject_7);
+	classActionContext->addMethod("createObject", &ActionContext_createObject_8);
 	classActionContext->addMethod("createBitmap", &ActionContext_createBitmap);
 	registrar->registerClass(classActionContext);
 
