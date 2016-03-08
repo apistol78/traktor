@@ -325,6 +325,7 @@ void FlashSpriteInstance::setMask(FlashSpriteInstance* mask)
 
 FlashCanvas* FlashSpriteInstance::createCanvas()
 {
+	clearCacheObject();
 	if (!m_canvas)
 		m_canvas = new FlashCanvas();
 	return m_canvas;

@@ -1,5 +1,5 @@
-#ifndef traktor_flash_FlashBitmapData_H
-#define traktor_flash_FlashBitmapData_H
+#ifndef traktor_flash_FlashBitmapImage_H
+#define traktor_flash_FlashBitmapImage_H
 
 #include "Core/Misc/AutoPtr.h"
 #include "Flash/FlashBitmap.h"
@@ -28,16 +28,16 @@ class Image;
 /*! \brief Flash bitmap container.
  * \ingroup Flash
  */
-class T_DLLCLASS FlashBitmapData : public FlashBitmap
+class T_DLLCLASS FlashBitmapImage : public FlashBitmap
 {
 	T_RTTI_CLASS;
 
 public:
-	FlashBitmapData();
+	FlashBitmapImage();
 
-	FlashBitmapData(drawing::Image* image);
+	FlashBitmapImage(drawing::Image* image);
 
-	virtual ~FlashBitmapData();
+	virtual ~FlashBitmapImage();
 
 	/*! \brief Create bitmap from image.
 	 *
@@ -57,4 +57,4 @@ private:
 	}
 }
 
-#endif	// traktor_flash_FlashBitmapData_H
+#endif	// traktor_flash_FlashBitmapImage_H

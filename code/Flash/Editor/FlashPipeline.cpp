@@ -14,7 +14,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Flash/FlashBitmapData.h"
+#include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashBitmapResource.h"
 #include "Flash/FlashFont.h"
 #include "Flash/FlashFrame.h"
@@ -43,7 +43,7 @@ const Guid c_idFlashShaderAssets(L"{14D6A2DB-796D-E54D-9D70-73DE4AE7C4E8}");
 struct AtlasBitmap
 {
 	uint16_t id;
-	Ref< const FlashBitmapData > bitmap;
+	Ref< const FlashBitmapImage > bitmap;
 	rbp::Rect packedRect;
 };
 
@@ -150,7 +150,7 @@ bool FlashPipeline::buildOutput(
 
 			// Setup dictionary.
 			movie = new FlashMovie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20, image->getHeight() * 20)), sprite);
-			movie->defineBitmap(1, new FlashBitmapData(image));
+			movie->defineBitmap(1, new FlashBitmapImage(image));
 			movie->defineCharacter(1, shape);
 		}
 		else
@@ -224,7 +224,7 @@ bool FlashPipeline::buildOutput(
 
 	for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
 	{
-		const FlashBitmapData* bitmapData = dynamic_type_cast< const FlashBitmapData* >(i->second);
+		const FlashBitmapImage* bitmapData = dynamic_type_cast< const FlashBitmapImage* >(i->second);
 		if (!bitmapData)
 		{
 			log::warning << L"Skipped bitmap as it not a static bitmap (" << type_name(i->second) << L")" << Endl;

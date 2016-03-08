@@ -1,4 +1,3 @@
-#include <limits>
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashTypes.h"
 
@@ -6,18 +5,6 @@ namespace traktor
 {
 	namespace flash
 	{
-		namespace
-		{
-
-void expandBounds(Aabb2& bounds, avm_number_t x, avm_number_t y)
-{
-	bounds.mn.x = std::min< float >(bounds.mn.x, x);
-	bounds.mn.y = std::min< float >(bounds.mn.y, y);
-	bounds.mx.x = std::max< float >(bounds.mx.x, x);
-	bounds.mx.y = std::max< float >(bounds.mx.y, y);
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCanvas", FlashCanvas, Object)
 
@@ -42,10 +29,9 @@ int32_t FlashCanvas::getDirtyTag() const
 void FlashCanvas::clear()
 {
 	m_paths.clear();
-	m_bounds.mn = Vector2( std::numeric_limits< float >::max(),  std::numeric_limits< float >::max());
-	m_bounds.mx = Vector2(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max());
-	m_fillStyles.clear();
-	m_lineStyles.clear();
+	m_bounds = Aabb2();
+	m_fillStyles.resize(0);
+	m_lineStyles.resize(0);
 	++m_dirtyTag;
 }
 
@@ -77,8 +63,7 @@ void FlashCanvas::moveTo(avm_number_t x, avm_number_t y)
 
 	Path& p = m_paths.back();
 	p.moveTo(int32_t(x), int32_t(y), Path::CmAbsolute);
-
-	expandBounds(m_bounds, x, y);
+	m_bounds.contain(Vector2(x, y));
 }
 
 void FlashCanvas::lineTo(avm_number_t x, avm_number_t y)
@@ -88,8 +73,7 @@ void FlashCanvas::lineTo(avm_number_t x, avm_number_t y)
 
 	Path& p = m_paths.back();
 	p.lineTo(int32_t(x), int32_t(y), Path::CmAbsolute);
-
-	expandBounds(m_bounds, x, y);
+	m_bounds.contain(Vector2(x, y));
 }
 
 void FlashCanvas::curveTo(avm_number_t controlX, avm_number_t controlY, avm_number_t anchorX, avm_number_t anchorY)
@@ -99,9 +83,8 @@ void FlashCanvas::curveTo(avm_number_t controlX, avm_number_t controlY, avm_numb
 
 	Path& p = m_paths.back();
 	p.quadraticTo(int32_t(controlX), int32_t(controlY), int32_t(anchorX), int32_t(anchorY), Path::CmAbsolute);
-
-	expandBounds(m_bounds, controlX, controlY);
-	expandBounds(m_bounds, anchorX, anchorY);
+	m_bounds.contain(Vector2(controlX, controlY));
+	m_bounds.contain(Vector2(anchorX, anchorY));
 }
 
 	}

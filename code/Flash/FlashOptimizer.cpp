@@ -3,7 +3,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
-#include "Flash/FlashBitmapData.h"
+#include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"

@@ -3,34 +3,34 @@
 #include "Core/Serialization/Member.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Flash/FlashBitmapData.h"
+#include "Flash/FlashBitmapImage.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashBitmapData", 0, FlashBitmapData, FlashBitmap)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashBitmapImage", 0, FlashBitmapImage, FlashBitmap)
 
-FlashBitmapData::FlashBitmapData()
+FlashBitmapImage::FlashBitmapImage()
 :	FlashBitmap()
 ,	m_bits(0)
 {
 }
 
-FlashBitmapData::FlashBitmapData(drawing::Image* image)
+FlashBitmapImage::FlashBitmapImage(drawing::Image* image)
 :	FlashBitmap()
 ,	m_bits(0)
 {
 	create(image);
 }
 
-FlashBitmapData::~FlashBitmapData()
+FlashBitmapImage::~FlashBitmapImage()
 {
 	m_bits.release();
 }
 
-bool FlashBitmapData::create(drawing::Image* image)
+bool FlashBitmapImage::create(drawing::Image* image)
 {
 	bool hasAlpha = image->getPixelFormat().getAlphaBits() > 0;
 
@@ -92,7 +92,7 @@ bool FlashBitmapData::create(drawing::Image* image)
 	return true;
 }
 
-void FlashBitmapData::serialize(ISerializer& s)
+void FlashBitmapImage::serialize(ISerializer& s)
 {
 	FlashBitmap::serialize(s);
 
