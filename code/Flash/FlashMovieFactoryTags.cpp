@@ -23,7 +23,7 @@
 #include "Flash/FlashText.h"
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashButton.h"
-#include "Flash/FlashBitmapData.h"
+#include "Flash/FlashBitmapImage.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/IActionVM.h"
 
@@ -630,7 +630,7 @@ bool FlashTagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 		Ref< drawing::Image > image = context.jpegFormat->readJpegImage(&bufferStream);
 		T_ASSERT (image);
 
-		Ref< FlashBitmapData > bitmap = new FlashBitmapData();
+		Ref< FlashBitmapImage > bitmap = new FlashBitmapImage();
 		if (!bitmap->create(image))
 			return false;
 
@@ -675,7 +675,7 @@ bool FlashTagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 
 		if (image)
 		{
-			Ref< FlashBitmapData > bitmap = new FlashBitmapData();
+			Ref< FlashBitmapImage > bitmap = new FlashBitmapImage();
 			if (!bitmap->create(image))
 				return false;
 
@@ -740,7 +740,7 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 			}
 		}
 
-		Ref< FlashBitmapData > bitmap = new FlashBitmapData();
+		Ref< FlashBitmapImage > bitmap = new FlashBitmapImage();
 		if (!bitmap->create(image))
 			return false;
 
@@ -808,7 +808,7 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 			}
 		}
 
-		Ref< FlashBitmapData > bitmap = new FlashBitmapData();
+		Ref< FlashBitmapImage > bitmap = new FlashBitmapImage();
 		if (!bitmap->create(image))
 			return false;
 

@@ -1,7 +1,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
-#include "Flash/FlashBitmapData.h"
+#include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashEdit.h"
@@ -204,7 +204,7 @@ void AsMovieClip::MovieClip_attachBitmap_4(FlashSpriteInstance* self, BitmapData
 		return;
 
 	// Define bitmap symbol.
-	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmapData(bmp->getImage()));
+	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmapImage(bmp->getImage()));
 
 	// Create a quad shape.
 	Ref< FlashShape > shape = new FlashShape();
@@ -286,7 +286,7 @@ void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, BitmapDat
 		return;
 
 	// Define bitmap symbol.
-	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmapData(bm->getImage()));
+	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmapImage(bm->getImage()));
 
 	Matrix33 M(
 		20.0f, 0.0f, 0.0f,

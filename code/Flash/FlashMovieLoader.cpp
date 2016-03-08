@@ -12,7 +12,7 @@
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/Semaphore.h"
 #include "Drawing/Image.h"
-#include "Flash/FlashBitmapData.h"
+#include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
@@ -149,7 +149,7 @@ private:
 
 			// Setup dictionary.
 			m_movie = new FlashMovie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20, image->getHeight() * 20)), sprite);
-			m_movie->defineBitmap(1, new FlashBitmapData(image));
+			m_movie->defineBitmap(1, new FlashBitmapImage(image));
 			m_movie->defineCharacter(1, shape);
 		}
 		else

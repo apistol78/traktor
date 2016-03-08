@@ -1,7 +1,7 @@
 #include <cstring>
 #include "Core/Misc/Adler32.h"
 #include "Flash/FlashFillStyle.h"
-#include "Flash/FlashBitmapData.h"
+#include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashBitmapResource.h"
 #include "Flash/Acc/AccTextureCache.h"
 #include "Render/ISimpleTexture.h"
@@ -259,7 +259,7 @@ AccTextureCache::BitmapRect AccTextureCache::getBitmapTexture(const FlashBitmap&
 
 		return br;
 	}
-	else if (const FlashBitmapData* bitmapData = dynamic_type_cast< const FlashBitmapData* >(&bitmap))
+	else if (const FlashBitmapImage* bitmapData = dynamic_type_cast< const FlashBitmapImage* >(&bitmap))
 	{
 		render::SimpleTextureCreateDesc desc;
 
