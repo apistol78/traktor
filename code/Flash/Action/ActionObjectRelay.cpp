@@ -46,7 +46,11 @@ void ActionObjectRelay::trace(visitor_t visitor) const
 
 void ActionObjectRelay::dereference()
 {
-	m_asObject = 0;
+	if (m_asObject)
+	{
+		m_asObject->dereference();
+		m_asObject = 0;
+	}
 }
 
 ActionObjectRelay::ActionObjectRelay(const char* const prototype)

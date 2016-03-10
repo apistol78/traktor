@@ -259,12 +259,10 @@ void FlashSpriteInstance::removeMovieClip()
 	if (parentClipInstance->m_mask == this)
 		parentClipInstance->m_mask = 0;
 
-	m_displayList.reset();
-	m_mask = 0;
-	m_canvas = 0;
-
 	setCacheObject(0);
 	setParent(0);
+
+	dereference();
 }
 
 Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
@@ -944,6 +942,7 @@ void FlashSpriteInstance::trace(visitor_t visitor) const
 void FlashSpriteInstance::dereference()
 {
 	m_mask = 0;
+	m_canvas = 0;
 	m_visibleCharacters.resize(0);
 	m_displayList.reset();
 
