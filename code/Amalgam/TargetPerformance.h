@@ -66,6 +66,7 @@ public:
 	uint32_t manifoldCount;
 	uint32_t queryCount;
 	uint32_t activeSoundChannels;
+	uint32_t flashCharacterCount;
 	AlignedVector< FrameMarker > frameMarkers;
 
 	TargetPerformance();

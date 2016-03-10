@@ -37,6 +37,7 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Database/Events/EvtInstanceCommitted.h"
+#include "Flash/FlashCharacterInstance.h"
 #include "Online/ISessionManager.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Physics/PhysicsManager.h"
@@ -983,6 +984,8 @@ bool Application::update()
 
 			if (m_audioServer)
 				performance.activeSoundChannels = m_audioServer->getActiveSoundChannels();
+
+			performance.flashCharacterCount = flash::FlashCharacterInstance::getInstanceCount();
 
 			{
 				const AlignedVector< FrameProfiler::Marker >& markers = m_frameProfiler.getMarkers();
