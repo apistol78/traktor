@@ -6,6 +6,8 @@
 #include "Drawing/IImageFilter.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Drawing/Raster.h"
+#include "Drawing/Filters/BlurFilter.h"
 #include "Drawing/Filters/BrightnessContrastFilter.h"
 #include "Drawing/Filters/ChainFilter.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
@@ -207,6 +209,10 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classImage->addMethod("getHeight", &Image::getHeight);
 	registrar->registerClass(classImage);
 
+	Ref< AutoRuntimeClass< BlurFilter > > classBlurFilter = new AutoRuntimeClass< BlurFilter >();
+	classBlurFilter->addConstructor< int32_t, int32_t >();
+	registrar->registerClass(classBlurFilter);
+
 	Ref< AutoRuntimeClass< BrightnessContrastFilter > > classBrightnessContrastFilter = new AutoRuntimeClass< BrightnessContrastFilter >();
 	classBrightnessContrastFilter->addConstructor< float, float >();
 	registrar->registerClass(classBrightnessContrastFilter);
@@ -282,6 +288,19 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< TransformFilter > > classTransformFilter = new AutoRuntimeClass< TransformFilter >();
 	classTransformFilter->addConstructor< const Color4f&, const Color4f& >();
 	registrar->registerClass(classTransformFilter);
+
+	Ref< AutoRuntimeClass< Raster > > classRaster = new AutoRuntimeClass< Raster >();
+	classRaster->addConstructor< drawing::Image* >();
+	classRaster->addMethod("drawLine", &Raster::drawLine);
+	//classRaster->addMethod("drawPixel", &Raster::drawPixel);
+	//classRaster->addMethod("drawPixel", &Raster::drawPixel);
+	classRaster->addMethod("drawCircle", &Raster::drawCircle);
+	classRaster->addMethod("drawFilledCircle", &Raster::drawFilledCircle);
+	classRaster->addMethod("drawRectangle", &Raster::drawRectangle);
+	classRaster->addMethod("drawFilledRectangle", &Raster::drawFilledRectangle);
+	//classRaster->addMethod("drawPolygon", &Raster::drawPolygon);
+	//classRaster->addMethod("drawPolyLine", &Raster::drawPolyLine);
+	registrar->registerClass(classRaster);
 }
 
 	}
