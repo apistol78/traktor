@@ -73,6 +73,8 @@ Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IFlashMovie
 	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(
 		m_movieClip->createInstance(context, dictionary, 0, "", Matrix33::identity(), 0, 0)
 	);
+	if (!spriteInstance)
+		return 0;
 
 	global->setMember("_root", ActionValue(spriteInstance->getAsObject(context)));
 	global->setMember("_level0", ActionValue(spriteInstance->getAsObject(context)));
@@ -82,6 +84,9 @@ Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IFlashMovie
 
 Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpriteInstance* containerInstance, int32_t depth) const
 {
+	if (!containerInstance)
+		return 0;
+
 	Ref< FlashDictionary > dictionary = new FlashDictionary();
 	dictionary->m_fonts = m_fonts;
 	dictionary->m_bitmaps = m_bitmaps;
@@ -101,6 +106,8 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 			0
 		)
 	);
+	if (!spriteInstance)
+		return 0;
 
 	// Add instance to container's display list.
 	FlashDisplayList& displayList = containerInstance->getDisplayList();
@@ -116,6 +123,9 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 
 Ref< FlashSpriteInstance > FlashMovie::createExternalSpriteInstance(FlashSpriteInstance* containerInstance, const std::string& characterName, int32_t depth) const
 {
+	if (!containerInstance)
+		return 0;
+
 	// Get exported character identifier.
 	SmallMap< std::string, uint16_t >::const_iterator i = m_exports.find(characterName);
 	if (i == m_exports.end())
@@ -165,6 +175,8 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalSpriteInstance(FlashSpriteI
 			0
 		)
 	);
+	if (!spriteInstance)
+		return 0;
 
 	// Add instance to container's display list.
 	FlashDisplayList& displayList = containerInstance->getDisplayList();

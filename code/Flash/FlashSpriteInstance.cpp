@@ -259,10 +259,12 @@ void FlashSpriteInstance::removeMovieClip()
 	if (parentClipInstance->m_mask == this)
 		parentClipInstance->m_mask = 0;
 
+	m_displayList.reset();
+	m_mask = 0;
+	m_canvas = 0;
+
 	setCacheObject(0);
 	setParent(0);
-
-	dereference();
 }
 
 Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
@@ -412,6 +414,8 @@ void FlashSpriteInstance::postDispatchEvents()
 void FlashSpriteInstance::eventInit()
 {
 	ActionContext* context = getContext();
+	if (!context)
+		return;
 
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
@@ -447,6 +451,8 @@ void FlashSpriteInstance::eventInit()
 void FlashSpriteInstance::eventConstruct()
 {
 	ActionContext* context = getContext();
+	if (!context)
+		return;
 
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
@@ -459,6 +465,8 @@ void FlashSpriteInstance::eventConstruct()
 void FlashSpriteInstance::eventLoad()
 {
 	ActionContext* context = getContext();
+	if (!context)
+		return;
 
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
@@ -474,6 +482,8 @@ void FlashSpriteInstance::eventLoad()
 void FlashSpriteInstance::eventFrame()
 {
 	ActionContext* context = getContext();
+	if (!context)
+		return;
 
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
@@ -540,6 +550,8 @@ void FlashSpriteInstance::eventKey(wchar_t unicode)
 void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 {
 	ActionContext* context = getContext();
+	if (!context)
+		return;
 
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
@@ -560,6 +572,8 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 {
 	ActionContext* context = getContext();
+	if (!context)
+		return;
 
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
@@ -580,6 +594,8 @@ void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 {
 	ActionContext* context = getContext();
+	if (!context)
+		return;
 
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
@@ -626,6 +642,8 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 {
 	ActionContext* context = getContext();
+	if (!context)
+		return;
 
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
@@ -667,6 +685,8 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
 {
 	ActionContext* context = getContext();
+	if (!context)
+		return;
 
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
@@ -706,6 +726,8 @@ void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
 void FlashSpriteInstance::eventMouseMove1(int32_t x, int32_t y, int32_t button)
 {
 	ActionContext* context = getContext();
+	if (!context)
+		return;
 
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
