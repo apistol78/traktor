@@ -28,6 +28,8 @@ class Image;
  */
 class T_DLLCLASS Raster : public Object
 {
+	T_RTTI_CLASS;
+
 public:
 	Raster(Image* image);
 

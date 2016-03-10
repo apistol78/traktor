@@ -18,6 +18,8 @@ float frac(float v)
 
 		}
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.Raster", Raster, Object)
+
 Raster::Raster(Image* image)
 :	m_image(image)
 {
