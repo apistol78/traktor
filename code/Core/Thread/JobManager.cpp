@@ -16,7 +16,11 @@ JobManager& JobManager::getInstance()
 		SingletonManager::getInstance().addBefore(s_instance, &ThreadManager::getInstance());
 
 		s_instance->m_queue.create(
+#if !defined(__ANDROID__) && !defined(__IOS__)
 			OS::getInstance().getCPUCoreCount(),
+#else
+			1,
+#endif
 			Thread::Normal
 		);
 	}
