@@ -123,6 +123,7 @@ private:
 	struct ShapeCache
 	{
 		Ref< AccShape > shape;
+		int32_t unusedCount;
 		int32_t tag;
 	};
 
