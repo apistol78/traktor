@@ -12,6 +12,12 @@ namespace traktor
 {
 	namespace amalgam
 	{
+		namespace
+		{
+
+const int32_t c_timeout = 30000;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetScriptDebugger", TargetScriptDebugger, script::IScriptDebugger)
 
@@ -37,7 +43,7 @@ bool TargetScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumbe
 		return false;
 
 	Ref< ScriptDebuggerStatus > st;
-	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
+	return m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 bool TargetScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
@@ -47,7 +53,7 @@ bool TargetScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNu
 		return false;
 
 	Ref< ScriptDebuggerStatus > st;
-	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
+	return m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 bool TargetScriptDebugger::captureStackFrame(uint32_t depth, Ref< script::StackFrame >& outStackFrame)
@@ -57,7 +63,7 @@ bool TargetScriptDebugger::captureStackFrame(uint32_t depth, Ref< script::StackF
 		return false;
 
 	Ref< ScriptDebuggerStackFrame > sf;
-	if (m_transport->recv< ScriptDebuggerStackFrame >(1000, sf) != net::BidirectionalObjectTransport::RtSuccess)
+	if (m_transport->recv< ScriptDebuggerStackFrame >(c_timeout, sf) != net::BidirectionalObjectTransport::RtSuccess)
 		return false;
 
 	outStackFrame = sf->getFrame();
@@ -71,7 +77,7 @@ bool TargetScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Varia
 		return false;
 
 	Ref< ScriptDebuggerLocals > l;
-	if (m_transport->recv< ScriptDebuggerLocals >(1000, l) != net::BidirectionalObjectTransport::RtSuccess)
+	if (m_transport->recv< ScriptDebuggerLocals >(c_timeout, l) != net::BidirectionalObjectTransport::RtSuccess)
 		return false;
 
 	outLocals = l->getLocals();
@@ -85,7 +91,7 @@ bool TargetScriptDebugger::captureObject(uint32_t object, RefArray< script::Vari
 		return false;
 
 	Ref< ScriptDebuggerLocals > l;
-	if (m_transport->recv< ScriptDebuggerLocals >(1000, l) != net::BidirectionalObjectTransport::RtSuccess)
+	if (m_transport->recv< ScriptDebuggerLocals >(c_timeout, l) != net::BidirectionalObjectTransport::RtSuccess)
 		return false;
 
 	outMembers = l->getLocals();
@@ -99,7 +105,7 @@ bool TargetScriptDebugger::isRunning() const
 		return false;
 
 	Ref< ScriptDebuggerStatus > st;
-	if (m_transport->recv< ScriptDebuggerStatus >(1000, st) != net::BidirectionalObjectTransport::RtSuccess)
+	if (m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) != net::BidirectionalObjectTransport::RtSuccess)
 		return false;
 
 	return st->isRunning();
@@ -112,7 +118,7 @@ bool TargetScriptDebugger::actionBreak()
 		return false;
 
 	Ref< ScriptDebuggerStatus > st;
-	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
+	return m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 bool TargetScriptDebugger::actionContinue()
@@ -122,7 +128,7 @@ bool TargetScriptDebugger::actionContinue()
 		return false;
 
 	Ref< ScriptDebuggerStatus > st;
-	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
+	return m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 bool TargetScriptDebugger::actionStepInto()
@@ -132,7 +138,7 @@ bool TargetScriptDebugger::actionStepInto()
 		return false;
 
 	Ref< ScriptDebuggerStatus > st;
-	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
+	return m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 bool TargetScriptDebugger::actionStepOver()
@@ -142,7 +148,7 @@ bool TargetScriptDebugger::actionStepOver()
 		return false;
 
 	Ref< ScriptDebuggerStatus > st;
-	return m_transport->recv< ScriptDebuggerStatus >(1000, st) == net::BidirectionalObjectTransport::RtSuccess;
+	return m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) == net::BidirectionalObjectTransport::RtSuccess;
 }
 
 void TargetScriptDebugger::addListener(IListener* listener)
