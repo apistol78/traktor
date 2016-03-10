@@ -10,7 +10,6 @@
 #include "Core/System/OS.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
-#include "Core/Thread/Semaphore.h"
 #include "Drawing/Image.h"
 #include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashFrame.h"
@@ -69,9 +68,6 @@ private:
 	bool m_includeAS;
 	Ref< Job > m_job;
 	Ref< FlashMovie > m_movie;
-#if defined(__ANDROID__) || defined(__IOS__)
-	static Semaphore ms_lock;
-#endif
 
 	void loader()
 	{
@@ -119,10 +115,6 @@ private:
 		if (!d)
 			return;
 
-#if defined(__ANDROID__) || defined(__IOS__)
-		ms_lock.wait();
-#endif
-
 		std::wstring ext = toLower(traktor::Path(m_url).getExtension());
 
 		// Try to load image and embedd into a movie first, if extension
@@ -158,9 +150,6 @@ private:
 			m_movie = FlashMovieFactory(m_includeAS).createMovie(&swfReader);
 		}
 
-#if defined(__ANDROID__) || defined(__IOS__)
-		ms_lock.release();
-#endif
 		d->close();
 		FileSystem::getInstance().remove(tempFile);
 
@@ -182,10 +171,6 @@ private:
 		}
 	}
 };
-
-#if defined(__ANDROID__) || defined(__IOS__)
-Semaphore FlashMovieLoaderHandle::ms_lock;
-#endif
 
 		}
 

@@ -318,6 +318,9 @@ void FlashCharacterInstance::setParent(FlashCharacterInstance* parent)
 
 bool FlashCharacterInstance::haveScriptEvent(uint32_t eventName)
 {
+	if (!m_context)
+		return false;
+
 	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
@@ -330,6 +333,9 @@ bool FlashCharacterInstance::haveScriptEvent(uint32_t eventName)
 
 bool FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const ActionValue& arg)
 {
+	if (!m_context)
+		return false;
+
 	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
