@@ -571,6 +571,13 @@
 			<element>color-slider</element>
 			<color>189, 189, 192, 255</color>
 		</item>
+
+		<!-- Script editor -->
+		<item>
+			<type>traktor.script.ScriptEditorPage</type>
+			<element>background-debug-line</element>
+			<color>255, 255, 220, 255</color>
+		</item>		
 	</groups>
 
 	<!-- Values -->

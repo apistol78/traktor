@@ -23,6 +23,7 @@ struct Block
 const uint32_t c_magic = 'LIVE';
 #endif
 int32_t s_allocated = 0;
+int32_t s_peek = 0;
 
 	}
 
@@ -42,6 +43,8 @@ void* Alloc::acquire(size_t size, const char* tag)
 	block->size = size;
 
 	Atomic::add(s_allocated, int32_t(size + sizeof(Block)));
+	s_peek = std::max(s_peek, s_allocated);
+
 	return block + 1;
 }
 
@@ -90,7 +93,8 @@ void Alloc::freeAlign(void* ptr)
 
 size_t Alloc::allocated()
 {
-	return s_allocated;
+	int32_t allocated = std::max(s_peek, s_allocated); s_peek = 0;
+	return allocated;
 }
 
 }

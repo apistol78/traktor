@@ -48,16 +48,16 @@ public:
 
 private:
 	Ref< const SyntaxLanguage > m_language;
-	int32_t m_attributeDefault;
-	int32_t m_attributeString;
-	int32_t m_attributeNumber;
-	int32_t m_attributeComment;
-	int32_t m_attributeFunction;
-	int32_t m_attributeType;
-	int32_t m_attributeKeyword;
-	int32_t m_attributeSpecial;
-	int32_t m_attributePreprocessor;
-	int32_t m_attributeError;
+	int32_t m_attributeDefault[2];
+	int32_t m_attributeString[2];
+	int32_t m_attributeNumber[2];
+	int32_t m_attributeComment[2];
+	int32_t m_attributeFunction[2];
+	int32_t m_attributeType[2];
+	int32_t m_attributeKeyword[2];
+	int32_t m_attributeSpecial[2];
+	int32_t m_attributePreprocessor[2];
+	int32_t m_attributeError[2];
 
 	void eventChange(ContentChangeEvent* event);
 };
