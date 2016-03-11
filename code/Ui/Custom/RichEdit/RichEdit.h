@@ -42,11 +42,23 @@ public:
 	/*! \brief Get textual content of text editor. */
 	virtual std::wstring getText() const;
 
-	/*! \brief Define a new attribute. */
-	int32_t addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline);
+	/*! \brief Define a new text attribute. */
+	int32_t addTextAttribute(const Color4ub& textColor, bool bold, bool italic, bool underline);
 
-	/*! \brief Use attribute on a selection of the text. */
-	void setAttribute(int32_t start, int32_t length, int32_t attribute);
+	/*! \brief Define a new background attribute. */
+	int32_t addBackgroundAttribute(const Color4ub& backColor);
+
+	/*! \brief Use text attribute on a selection of the text. */
+	void setTextAttribute(int32_t start, int32_t length, int32_t attribute);
+
+	/*! \brief Use background attribute on a selection of the text. */
+	void setBackgroundAttribute(int32_t start, int32_t length, int32_t attribute);
+
+	/*! \brief Use background attribute on an entire line. */
+	void setBackgroundAttribute(int32_t line, int32_t attribute);
+
+	/*! \brief Use attributes on a selection of the text. */
+	void setAttributes(int32_t start, int32_t length, int32_t textAttribute, int32_t backgroundAttribute);
 
 	/*! \brief Define new image. */
 	int32_t addImage(IBitmap* image, uint32_t imageCount);
@@ -130,15 +142,14 @@ public:
 	int32_t getMarginWidth() const;
 
 private:
-	struct Attribute
+	struct TextAttribute
 	{
 		Color4ub textColor;
-		Color4ub backColor;
 		bool bold;
 		bool italic;
 		bool underline;
 
-		Attribute()
+		TextAttribute()
 		:	bold(false)
 		,	italic(false)
 		,	underline(false)
@@ -146,31 +157,51 @@ private:
 		}
 	};
 
+	struct BackgroundAttribute
+	{
+		Color4ub backColor;
+	};
+
 	struct Line
 	{
 		int32_t start;
 		int32_t stop;
 		int32_t image;
+		uint16_t attrib;
 		Ref< Object > data;
 
 		Line()
 		:	start(0)
 		,	stop(0)
 		,	image(-1)
+		,	attrib(0xffff)
+		{
+		}
+	};
+
+	struct Meta
+	{
+		uint16_t tai;
+		uint16_t bgai;
+
+		Meta()
+		:	tai(0)
+		,	bgai(0)
 		{
 		}
 	};
 
 	Ref< ScrollBar > m_scrollBarV;
 	Ref< ScrollBar > m_scrollBarH;
-	std::vector< Attribute > m_attributes;
+	std::vector< TextAttribute > m_textAttributes;
+	std::vector< BackgroundAttribute > m_backgroundAttributes;
 	Ref< IBitmap > m_image;
 	uint32_t m_imageWidth;
 	uint32_t m_imageHeight;
 	uint32_t m_imageCount;
 	std::vector< Line > m_lines;
 	std::vector< wchar_t > m_text;
-	std::vector< uint16_t > m_meta;
+	std::vector< Meta > m_meta;
 	int32_t m_charWidth;
 	int32_t m_caret;
 	int32_t m_selectionStart;

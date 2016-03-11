@@ -15,17 +15,17 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.SyntaxRichEdit", SyntaxRichEdit, RichEdit)
 
 SyntaxRichEdit::SyntaxRichEdit()
-:	m_attributeDefault(0)
-,	m_attributeString(0)
-,	m_attributeNumber(0)
-,	m_attributeComment(0)
-,	m_attributeFunction(0)
-,	m_attributeType(0)
-,	m_attributeKeyword(0)
-,	m_attributeSpecial(0)
-,	m_attributePreprocessor(0)
-,	m_attributeError(0)
 {
+	m_attributeDefault[0] = m_attributeDefault[1] = 0;
+	m_attributeString[0] = m_attributeString[1] = 0;
+	m_attributeNumber[0] = m_attributeNumber[1] = 0;
+	m_attributeComment[0] = m_attributeComment[1] = 0;
+	m_attributeFunction[0] = m_attributeFunction[1] = 0;
+	m_attributeType[0] = m_attributeType[1] = 0;
+	m_attributeKeyword[0] = m_attributeKeyword[1] = 0;
+	m_attributeSpecial[0] = m_attributeSpecial[1] = 0;
+	m_attributePreprocessor[0] = m_attributePreprocessor[1] = 0;
+	m_attributeError[0] = m_attributeError[1] = 0;
 }
 
 bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
@@ -35,16 +35,35 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int32_t st
 
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 
-	m_attributeDefault = addAttribute(ss->getColor(this, L"color-default"), ss->getColor(this, L"background-color-default"), false, false, false);
-	m_attributeString = addAttribute(ss->getColor(this, L"color-string"), ss->getColor(this, L"background-color-string"), false, false, false);
-	m_attributeNumber = addAttribute(ss->getColor(this, L"color-number"), ss->getColor(this, L"background-color-number"), false, false, false);
-	m_attributeComment = addAttribute(ss->getColor(this, L"color-comment"), ss->getColor(this, L"background-color-comment"), false, true, false);
-	m_attributeFunction = addAttribute(ss->getColor(this, L"color-function"), ss->getColor(this, L"background-color-function"), false, false, false);
-	m_attributeType = addAttribute(ss->getColor(this, L"color-type"), ss->getColor(this, L"background-color-type"), false, false, false);
-	m_attributeKeyword = addAttribute(ss->getColor(this, L"color-keyword"), ss->getColor(this, L"background-color-keyword"), false, false, false);
-	m_attributeSpecial = addAttribute(ss->getColor(this, L"color-special"), ss->getColor(this, L"background-color-special"), false, false, false);
-	m_attributePreprocessor = addAttribute(ss->getColor(this, L"color-preprocessor"), ss->getColor(this, L"background-color-preprocessor"), false, false, false);
-	m_attributeError = addAttribute(ss->getColor(this, L"color-error"), ss->getColor(this, L"background-color-error"), false, false, false);
+	m_attributeDefault[0] = addTextAttribute(ss->getColor(this, L"color-default"), false, false, false);
+	m_attributeDefault[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-default"));
+
+	m_attributeString[0] = addTextAttribute(ss->getColor(this, L"color-string"), false, false, false);
+	m_attributeString[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-string"));
+
+	m_attributeNumber[0] = addTextAttribute(ss->getColor(this, L"color-number"), false, false, false);
+	m_attributeNumber[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-number"));
+
+	m_attributeComment[0] = addTextAttribute(ss->getColor(this, L"color-comment"), false, true, false);
+	m_attributeComment[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-comment"));
+
+	m_attributeFunction[0] = addTextAttribute(ss->getColor(this, L"color-function"), false, false, false);
+	m_attributeFunction[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-function"));
+
+	m_attributeType[0] = addTextAttribute(ss->getColor(this, L"color-type"), false, false, false);
+	m_attributeType[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-type"));
+
+	m_attributeKeyword[0] = addTextAttribute(ss->getColor(this, L"color-keyword"), false, false, false);
+	m_attributeKeyword[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-keyword"));
+
+	m_attributeSpecial[0] = addTextAttribute(ss->getColor(this, L"color-special"), false, false, false);
+	m_attributeSpecial[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-special"));
+
+	m_attributePreprocessor[0] = addTextAttribute(ss->getColor(this, L"color-preprocessor"), false, false, false);
+	m_attributePreprocessor[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-preprocessor"));
+
+	m_attributeError[0] = addTextAttribute(ss->getColor(this, L"color-error"), false, false, false);
+	m_attributeError[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-error"));
 
 	addEventHandler< ContentChangeEvent >(this, &SyntaxRichEdit::eventChange);
 	return true;
@@ -68,7 +87,7 @@ void SyntaxRichEdit::setErrorHighlight(int32_t line)
 	{
 		int32_t offset = getLineOffset(line);
 		int32_t length = getLineLength(line);
-		setAttribute(offset, length, m_attributeError);
+		setAttributes(offset, length, m_attributeError[0], m_attributeError[1]);
 	}
 }
 
@@ -114,39 +133,39 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 					switch (currentState)
 					{
 					case SyntaxLanguage::StDefault:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeDefault);
+						setAttributes(startOffset, endOffset - startOffset, m_attributeDefault[0], m_attributeDefault[1]);
 						break;
 
 					case SyntaxLanguage::StString:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeString);
+						setAttributes(startOffset, endOffset - startOffset, m_attributeString[0], m_attributeString[1]);
 						break;
 
 					case SyntaxLanguage::StNumber:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeNumber);
+						setAttributes(startOffset, endOffset - startOffset, m_attributeNumber[0], m_attributeNumber[1]);
 						break;
 
 					case SyntaxLanguage::StComment:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeComment);
+						setAttributes(startOffset, endOffset - startOffset, m_attributeComment[0], m_attributeComment[1]);
 						break;
 
 					case SyntaxLanguage::StFunction:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeFunction);
+						setAttributes(startOffset, endOffset - startOffset, m_attributeFunction[0], m_attributeFunction[1]);
 						break;
 
 					case SyntaxLanguage::StType:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeType);
+						setAttributes(startOffset, endOffset - startOffset, m_attributeType[0], m_attributeType[1]);
 						break;
 
 					case SyntaxLanguage::StKeyword:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeKeyword);
+						setAttributes(startOffset, endOffset - startOffset, m_attributeKeyword[0], m_attributeKeyword[1]);
 						break;
 
 					case SyntaxLanguage::StSpecial:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeSpecial);
+						setAttributes(startOffset, endOffset - startOffset, m_attributeSpecial[0], m_attributeSpecial[1]);
 						break;
 
 					case SyntaxLanguage::StPreprocessor:
-						setAttribute(startOffset, endOffset - startOffset, m_attributePreprocessor);
+						setAttributes(startOffset, endOffset - startOffset, m_attributePreprocessor[0], m_attributePreprocessor[1]);
 						break;
 
 					default:
@@ -177,39 +196,39 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 		switch (currentState)
 		{
 		case SyntaxLanguage::StDefault:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeDefault);
+			setAttributes(startOffset, endOffset - startOffset, m_attributeDefault[0], m_attributeDefault[1]);
 			break;
 
 		case SyntaxLanguage::StString:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeString);
+			setAttributes(startOffset, endOffset - startOffset, m_attributeString[0], m_attributeString[1]);
 			break;
 
 		case SyntaxLanguage::StNumber:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeNumber);
+			setAttributes(startOffset, endOffset - startOffset, m_attributeNumber[0], m_attributeNumber[1]);
 			break;
 
 		case SyntaxLanguage::StComment:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeComment);
+			setAttributes(startOffset, endOffset - startOffset, m_attributeComment[0], m_attributeComment[1]);
 			break;
 
 		case SyntaxLanguage::StFunction:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeFunction);
+			setAttributes(startOffset, endOffset - startOffset, m_attributeFunction[0], m_attributeFunction[1]);
 			break;
 
 		case SyntaxLanguage::StType:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeType);
+			setAttributes(startOffset, endOffset - startOffset, m_attributeType[0], m_attributeType[1]);
 			break;
 
 		case SyntaxLanguage::StKeyword:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeKeyword);
+			setAttributes(startOffset, endOffset - startOffset, m_attributeKeyword[0], m_attributeKeyword[1]);
 			break;
-			
+
 		case SyntaxLanguage::StSpecial:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeSpecial);
+			setAttributes(startOffset, endOffset - startOffset, m_attributeSpecial[0], m_attributeSpecial[1]);
 			break;
 
 		case SyntaxLanguage::StPreprocessor:
-			setAttribute(startOffset, endOffset - startOffset, m_attributePreprocessor);
+			setAttributes(startOffset, endOffset - startOffset, m_attributePreprocessor[0], m_attributePreprocessor[1]);
 			break;
 
 		default:
@@ -217,7 +236,7 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 		}
 	}
 
-	setAttribute(endOffset, 0, m_attributeDefault);
+	setAttributes(endOffset, 0, m_attributeDefault[0], m_attributeDefault[1]);
 }
 
 void SyntaxRichEdit::setText(const std::wstring& text)

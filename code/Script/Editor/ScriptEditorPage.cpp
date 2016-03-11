@@ -31,6 +31,7 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/ListBox.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
@@ -60,6 +61,8 @@ ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageS
 ,	m_site(site)
 ,	m_document(document)
 ,	m_compileCountDown(0)
+,	m_debugLineAttribute(0)
+,	m_debugLineLast(-1)
 {
 	m_bitmapFunction = new ui::StyleBitmap(L"Script.DefineGlobalFunction");
 	m_bitmapFunctionLocal = new ui::StyleBitmap(L"Script.DefineLocalFunction");
@@ -160,7 +163,6 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		return false;
 
 	m_edit->addImage(new ui::StyleBitmap(L"Script.Breakpoint"), 1);
-	m_edit->addImage(new ui::StyleBitmap(L"Script.Current"), 1);
 
 	std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
 	int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
@@ -169,6 +171,9 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
 	m_edit->addEventHandler< ui::MouseButtonDownEvent >(this, &ScriptEditorPage::eventScriptButtonDown);
 	m_edit->addEventHandler< ui::SizeEvent >(this, &ScriptEditorPage::eventScriptSize);
+
+	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
+	m_debugLineAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-debug-line"));
 
 	m_searchControl = new SearchControl();
 	m_searchControl->create(m_edit);
@@ -327,11 +332,6 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		m_edit->placeCaret(lineOffset);
 		m_edit->showLine(command.getId());
 	}
-	else if (command == L"Script.Editor.SetCurrentLine")
-	{
-		int32_t line = command.getId();
-		m_edit->setImage(line, 2);
-	}
 	else
 		return false;
 
@@ -358,14 +358,25 @@ void ScriptEditorPage::otherError(const std::wstring& message)
 
 void ScriptEditorPage::debugeeStateChange(IScriptDebugger* scriptDebugger)
 {
-	Ref< StackFrame > sf;
-	if (scriptDebugger->captureStackFrame(0, sf))
+	if (m_debugLineLast >= 0)
+	{
+		m_edit->setBackgroundAttribute(m_debugLineLast, 0xffff);
+		m_debugLineLast = -1;
+	}
+	if (!scriptDebugger->isRunning())
 	{
 		Guid instanceGuid = m_document->getInstance(0)->getGuid();
-		if (sf->getScriptId() == instanceGuid)
+		Ref< StackFrame > sf;
+		for (uint32_t depth = 0; scriptDebugger->captureStackFrame(depth, sf); ++depth)
 		{
-			int32_t line = int32_t(sf->getLine());
-			m_edit->setImage(line, 1);
+			T_FATAL_ASSERT (sf);
+			if (sf->getScriptId() == instanceGuid)
+			{
+				int32_t line = int32_t(sf->getLine());
+				m_edit->setBackgroundAttribute(line, m_debugLineAttribute);
+				m_debugLineLast = line;
+				break;
+			}
 		}
 	}
 }

@@ -89,13 +89,16 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	m_scrollBarV->addEventHandler< ScrollEvent >(this, &RichEdit::eventScroll);
 	m_scrollBarH->addEventHandler< ScrollEvent >(this, &RichEdit::eventScroll);
 
-	Attribute attrib;
-	attrib.textColor = Color4ub(0, 0, 0);
-	attrib.backColor = Color4ub(255, 255, 255);
-	attrib.bold = false;
-	attrib.italic = false;
-	attrib.underline = false;
-	m_attributes.push_back(attrib);
+	TextAttribute txAttrib;
+	txAttrib.textColor = Color4ub(0, 0, 0);
+	txAttrib.bold = false;
+	txAttrib.italic = false;
+	txAttrib.underline = false;
+	m_textAttributes.push_back(txAttrib);
+
+	BackgroundAttribute bgAttrib;
+	bgAttrib.backColor = Color4ub(255, 255, 255);
+	m_backgroundAttributes.push_back(bgAttrib);
 
 	setText(text);
 
@@ -145,7 +148,7 @@ void RichEdit::setText(const std::wstring& text)
 	}
 
 	m_meta.clear();
-	m_meta.resize(m_text.size(), 0);
+	m_meta.resize(m_text.size());
 
 	m_selectionStart =
 	m_selectionStop = -1;
@@ -169,21 +172,28 @@ std::wstring RichEdit::getText() const
 		return L"";
 }
 
-int32_t RichEdit::addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline)
+int32_t RichEdit::addTextAttribute(const Color4ub& textColor, bool bold, bool italic, bool underline)
 {
-	Attribute attr;
+	TextAttribute attr;
 	attr.textColor = textColor;
-	attr.backColor = backColor;
 	attr.bold = bold;
 	attr.italic = italic;
 	attr.underline = underline;
-	m_attributes.push_back(attr);
-	return int32_t(m_attributes.size() - 1);
+	m_textAttributes.push_back(attr);
+	return int32_t(m_textAttributes.size() - 1);
 }
 
-void RichEdit::setAttribute(int32_t start, int32_t length, int32_t attribute)
+int32_t RichEdit::addBackgroundAttribute(const Color4ub& backColor)
 {
-	if (attribute < 0 || attribute >= int32_t(m_attributes.size()))
+	BackgroundAttribute attr;
+	attr.backColor = backColor;
+	m_backgroundAttributes.push_back(attr);
+	return int32_t(m_backgroundAttributes.size() - 1);
+}
+
+void RichEdit::setTextAttribute(int32_t start, int32_t length, int32_t attribute)
+{
+	if (attribute < 0 || attribute >= int32_t(m_textAttributes.size()))
 		attribute = 0;
 
 	if (start < 0)
@@ -197,11 +207,49 @@ void RichEdit::setAttribute(int32_t start, int32_t length, int32_t attribute)
 	}
 
 	for (int32_t i = start; i < start + length; ++i)
-		m_meta[i] = uint16_t(attribute);
+		m_meta[i].tai = uint16_t(attribute);
 
 	CHECK;
 
 	update();
+}
+
+void RichEdit::setBackgroundAttribute(int32_t start, int32_t length, int32_t attribute)
+{
+	if (attribute < 0 || attribute >= int32_t(m_backgroundAttributes.size()))
+		attribute = 0;
+
+	if (start < 0)
+		start = 0;
+
+	if (start + length >= int32_t(m_text.size()))
+	{
+		length = int32_t(m_text.size()) - start;
+		if (length < 0)
+			return;
+	}
+
+	for (int32_t i = start; i < start + length; ++i)
+		m_meta[i].bgai = uint16_t(attribute);
+
+	CHECK;
+
+	update();
+}
+
+void RichEdit::setBackgroundAttribute(int32_t line, int32_t attribute)
+{
+	if (line >= 0 && line < int32_t(m_lines.size()))
+	{
+		m_lines[line].attrib = attribute;
+		update();
+	}
+}
+
+void RichEdit::setAttributes(int32_t start, int32_t length, int32_t textAttribute, int32_t backgroundAttribute)
+{
+	setTextAttribute(start, length, textAttribute);
+	setBackgroundAttribute(start, length, backgroundAttribute);
 }
 
 int32_t RichEdit::addImage(IBitmap* image, uint32_t imageCount)
@@ -242,10 +290,10 @@ void RichEdit::clear(bool attributes, bool images, bool content)
 {
 	if (attributes)
 	{
-		m_attributes.clear();
-
 		m_meta.clear();
-		m_meta.resize(m_text.size(), 0);
+		m_meta.resize(m_text.size());
+		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+			i->attrib = 0xffff;
 	}
 
 	if (content)
@@ -366,7 +414,7 @@ void RichEdit::setLine(int32_t line, const std::wstring& text)
 	for (uint32_t i = 0; i < text.size(); ++i)
 	{
 		m_text.insert(m_text.begin() + ln.start + i, text[i]);
-		m_meta.insert(m_meta.begin() + ln.start + i, 0);
+		m_meta.insert(m_meta.begin() + ln.start + i, Meta());
 	}
 
 	int32_t adjust = text.size() - (ln.stop - ln.start);
@@ -695,7 +743,7 @@ void RichEdit::insertCharacter(wchar_t ch)
 void RichEdit::insertAt(int32_t offset, wchar_t ch)
 {
 	m_text.insert(m_text.begin() + offset, ch);
-	m_meta.insert(m_meta.begin() + offset, 0);
+	m_meta.insert(m_meta.begin() + offset, Meta());
 
 	if (ch == L'\n' || ch == L'\r')
 	{
@@ -1221,13 +1269,22 @@ void RichEdit::eventPaint(PaintEvent* event)
 		{
 			const Line& line = m_lines[i];
 
+			// Draw line background attribute.
+			if (line.attrib != 0xffff)
+			{
+				const BackgroundAttribute& bgAttrib = m_backgroundAttributes[line.attrib];
+				canvas.setBackground(bgAttrib.backColor);
+				canvas.fillRect(lineRc);
+			}
+
 			Rect textRc = lineRc;
 			uint32_t x = 0;
 
 			// Non-empty line; format print.
 			for (int32_t j = line.start; j < line.stop; ++j)
 			{
-				const Attribute& attrib = m_attributes[m_meta[j]];
+				const TextAttribute& txAttrib = m_textAttributes[m_meta[j].tai];
+				const BackgroundAttribute& bgAttrib = m_backgroundAttributes[m_meta[j].bgai];
 
 				// Draw caret.
 				if (showCaret && m_caret == j)
@@ -1249,10 +1306,10 @@ void RichEdit::eventPaint(PaintEvent* event)
 				}
 				else
 				{
-					canvas.setForeground(attrib.textColor);
-					solidBackground = bool(attrib.backColor.a != 0);
+					canvas.setForeground(txAttrib.textColor);
+					solidBackground = bool(bgAttrib.backColor.a != 0);
 					if (solidBackground)
-						canvas.setBackground(attrib.backColor);
+						canvas.setBackground(bgAttrib.backColor);
 				}
 
 				// Draw characters.
@@ -1352,7 +1409,7 @@ void RichEdit::checkConsistency()
 	T_ASSERT (m_lines.back().stop == m_text.size() - 1);
 
 	for (std::vector< uint16_t >::const_iterator i = m_meta.begin(); i != m_meta.end(); ++i)
-		T_ASSERT (*i < m_attributes.size());
+		T_ASSERT (*i < m_textAttributes.size());
 
 	// Save "good" lines so we can spot differences if
 	// next fail.
