@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/StyleSheet.h"
@@ -16,6 +17,18 @@ namespace traktor
 	{
 		namespace custom
 		{
+			namespace
+			{
+
+struct ItemSortPredicate
+{
+	bool operator () (const TreeViewItem* item1, const TreeViewItem* item2) const
+	{
+		return compareIgnoreCase(item1->getText(), item2->getText()) >= 0;
+	}
+};
+
+			}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.TreeViewItem", TreeViewItem, Object)
 
@@ -168,6 +181,12 @@ bool TreeViewItem::edit()
 
 void TreeViewItem::sort(bool recursive)
 {
+	if (recursive)
+	{
+		for (RefArray< TreeViewItem >::const_iterator i = m_children.begin(); i != m_children.end(); ++i)
+			(*i)->sort(true);
+	}
+	m_children.sort(ItemSortPredicate());
 }
 
 TreeViewItem* TreeViewItem::getParent() const
