@@ -233,7 +233,8 @@ enum InputCategory
 	CtJoystick	= 4,
 	CtWheel		= 8,
 	CtTouch		= 16,
-	CtUnknown	= 32
+	CtGaze		= 32,
+	CtUnknown	= 64
 };
 
 /*! \brief Input rumble specification.

@@ -83,7 +83,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 			continue;
 		}
 
-		if (!driver->create(nativeHandle, systemWindow, input::CtKeyboard | input::CtMouse | input::CtJoystick | input::CtWheel | input::CtTouch))
+		if (!driver->create(nativeHandle, systemWindow, input::CtKeyboard | input::CtMouse | input::CtJoystick | input::CtWheel | input::CtTouch | input::CtGaze))
 		{
 			log::error << L"Input server failed; unable to create driver \"" << *i << L"\"" << Endl;
 			continue;

@@ -412,7 +412,8 @@ bool Stage::validateScriptContext()
 			// Call script constructor.
 			Any argv[] =
 			{
-				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
+				Any::fromObject(const_cast< Object* >(m_params.c_ptr())),
+				Any::fromObject(m_environment)
 			};
 			m_object = m_class->construct(this, sizeof_array(argv), argv, proto);
 		}

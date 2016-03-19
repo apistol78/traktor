@@ -12,6 +12,7 @@ const MemberEnum< InputCategory >::Key g_InputCategory_Keys[] =
 	{ L"CtJoystick", CtJoystick },
 	{ L"CtWheel", CtWheel },
 	{ L"CtTouch", CtTouch },
+	{ L"CtGaze", CtGaze },
 	{ L"CtUnknown", CtUnknown },
 	0
 };

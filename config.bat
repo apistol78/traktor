@@ -15,6 +15,7 @@ set WXWIDGETS_SDK=%TRAKTOR_HOME%3rdp\wxWidgets-3.0.2
 set SIMPLYGON_SDK=%TRAKTOR_HOME%3rdp\SimplygonSDK
 set LUA_SDK=%TRAKTOR_HOME%3rdp\lua-5.3.2
 set GLEW_SDK=%TRAKTOR_HOME%3rdp\glew-1.13.0
+set TOBII_SDK=%TRAKTOR_HOME%3rdp\tobii-sdk-1.7.480
 
 :: PNaCl SDK; need to be manually installed in 3rdp folder.
 set NACL_SDK_ROOT=%TRAKTOR_HOME%3rdp\nacl_sdk\pepper_47
