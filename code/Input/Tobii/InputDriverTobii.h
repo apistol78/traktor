@@ -46,6 +46,7 @@ private:
 	TX_HANDLE m_hGlobalInteractorSnapshot;
 	TX_TICKET m_hConnectionStateChangedTicket;
 	TX_TICKET m_hEventHandlerTicket;
+	HWND m_hWnd;
 	Ref< InputDeviceGaze > m_device;
 
 	static void TX_CALLCONVENTION snapshotCommitted(TX_CONSTHANDLE hAsyncData, TX_USERPARAM param);

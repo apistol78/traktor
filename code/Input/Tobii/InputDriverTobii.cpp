@@ -1,3 +1,4 @@
+#include "Core/Platform.h"
 #include "Core/Log/Log.h"
 #include "Input/Tobii/InputDeviceGaze.h"
 #include "Input/Tobii/InputDriverTobii.h"
@@ -20,6 +21,7 @@ InputDriverTobii::InputDriverTobii()
 ,	m_hGlobalInteractorSnapshot(TX_EMPTY_HANDLE)
 ,	m_hConnectionStateChangedTicket(TX_INVALID_TICKET)
 ,	m_hEventHandlerTicket(TX_INVALID_TICKET)
+,	m_hWnd(NULL)
 {
 }
 
@@ -46,6 +48,8 @@ bool InputDriverTobii::create(void* nativeHandle, const SystemWindow& systemWind
 {
 	TX_HANDLE hInteractor = TX_EMPTY_HANDLE;
 	TX_GAZEPOINTDATAPARAMS params = { TX_GAZEPOINTDATAMODE_LIGHTLYFILTERED };
+
+	m_hWnd = systemWindow.hWnd;
 
 	if (txInitializeEyeX(TX_EYEXCOMPONENTOVERRIDEFLAG_NONE, NULL, NULL, NULL, NULL) != TX_RESULT_OK)
 		return false;
@@ -118,7 +122,10 @@ void TX_CALLCONVENTION InputDriverTobii::engineConnectionStateChanged(TX_CONNECT
 		{
 			log::info << L"Tobii EyeX connected." << Endl;
 			if (txCommitSnapshotAsync(this_->m_hGlobalInteractorSnapshot, snapshotCommitted, this_) == TX_RESULT_OK)
+			{
 				log::info << L"Gaze data streaming started." << Endl;
+				this_->m_device->m_connected = true;
+			}
 			else
 				log::error << L"Failed to start gaze data streaming." << Endl;
 		}
@@ -127,6 +134,7 @@ void TX_CALLCONVENTION InputDriverTobii::engineConnectionStateChanged(TX_CONNECT
 	case TX_CONNECTIONSTATE_DISCONNECTED:
 		{
 			log::info << L"Tobii EyeX disconnected." << Endl;
+			this_->m_device->m_connected = false;
 		}
 		break;
 	}
@@ -147,8 +155,16 @@ void TX_CALLCONVENTION InputDriverTobii::handleEvent(TX_CONSTHANDLE hAsyncData, 
 		TX_GAZEPOINTDATAEVENTPARAMS eventParams;
 		if (txGetGazePointDataEventParams(hBehavior, &eventParams) == TX_RESULT_OK)
 		{
-			this_->m_device->m_positionX = eventParams.X;
-			this_->m_device->m_positionY = eventParams.Y;
+			RECT rcClient;
+			GetClientRect(this_->m_hWnd, &rcClient);
+
+			POINT pnt = { (LONG)eventParams.X, (LONG)eventParams.Y };
+			ScreenToClient(this_->m_hWnd, &pnt);
+
+			this_->m_device->m_rangeX = rcClient.right - rcClient.left;
+			this_->m_device->m_rangeY = rcClient.bottom - rcClient.top;
+			this_->m_device->m_positionX = pnt.x;
+			this_->m_device->m_positionY = pnt.y;
 		}
 
 		txReleaseObject(&hBehavior);
