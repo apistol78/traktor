@@ -23,6 +23,11 @@ std::wstring CheckAssetsTool::getDescription() const
 	return i18n::Text(L"EDITOR_CHECK_ASSETS");
 }
 
+Ref< ui::IBitmap > CheckAssetsTool::getIcon() const
+{
+	return 0;
+}
+
 bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor)
 {
 	Ref< db::Database > database = editor->getSourceDatabase();

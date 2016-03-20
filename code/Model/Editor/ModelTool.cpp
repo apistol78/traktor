@@ -24,6 +24,11 @@ std::wstring ModelTool::getDescription() const
 	return L"Model Tool";
 }
 
+Ref< ui::IBitmap > ModelTool::getIcon() const
+{
+	return 0;
+}
+
 bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor)
 {
 	safeDestroy(m_dialog);

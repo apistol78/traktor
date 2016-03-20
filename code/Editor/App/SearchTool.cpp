@@ -2,6 +2,7 @@
 #include "Editor/App/SearchTool.h"
 #include "Editor/App/SearchToolDialog.h"
 #include "I18N/Text.h"
+#include "Ui/StyleBitmap.h"
 
 namespace traktor
 {
@@ -14,6 +15,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.SearchTool", 0, SearchTool, IEdi
 std::wstring SearchTool::getDescription() const
 {
 	return i18n::Text(L"EDITOR_SEARCH_TOOL");
+}
+
+Ref< ui::IBitmap > SearchTool::getIcon() const
+{
+	return new ui::StyleBitmap(L"Editor.Tool.Search");
 }
 
 bool SearchTool::launch(ui::Widget* parent, IEditor* editor)

@@ -2,6 +2,7 @@
 #include "Script/Editor/ScriptDebuggerTool.h"
 #include "Script/Editor/ScriptDebuggerDialog.h"
 #include "I18N/Text.h"
+#include "Ui/StyleBitmap.h"
 
 namespace traktor
 {
@@ -14,6 +15,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptDebuggerTool", 0, ScriptDe
 std::wstring ScriptDebuggerTool::getDescription() const
 {
 	return i18n::Text(L"SCRIPT_DEBUGGER_TOOL");
+}
+
+Ref< ui::IBitmap > ScriptDebuggerTool::getIcon() const
+{
+	return new ui::StyleBitmap(L"Script.Tool.Debugger");
 }
 
 bool ScriptDebuggerTool::launch(ui::Widget* parent, editor::IEditor* script)

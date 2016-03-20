@@ -18,6 +18,11 @@ std::wstring CheckSerializableTool::getDescription() const
 	return i18n::Text(L"EDITOR_CHECK_SERIALIZABLE_CLASSES");
 }
 
+Ref< ui::IBitmap > CheckSerializableTool::getIcon() const
+{
+	return 0;
+}
+
 bool CheckSerializableTool::launch(ui::Widget* parent, IEditor* editor)
 {
 	AutoArrayPtr< uint8_t, AllocFreeAlign > memory((uint8_t*)Alloc::acquireAlign(1024 * 1024, 16, T_FILE_LINE));

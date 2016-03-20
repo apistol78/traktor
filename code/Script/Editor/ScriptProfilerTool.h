@@ -15,9 +15,11 @@ class ScriptProfilerTool : public editor::IEditorTool
 	T_RTTI_CLASS;
 
 public:
-	virtual std::wstring getDescription() const;
+	virtual std::wstring getDescription() const T_OVERRIDE T_FINAL;
 
-	virtual bool launch(ui::Widget* parent, editor::IEditor* editor);
+	virtual Ref< ui::IBitmap > getIcon() const T_OVERRIDE T_FINAL;
+
+	virtual bool launch(ui::Widget* parent, editor::IEditor* editor) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ScriptProfilerDialog > m_profilerDialog;

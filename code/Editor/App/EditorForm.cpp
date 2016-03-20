@@ -517,6 +517,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 6, ui::Command(L"Editor.Build")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 7, ui::Command(L"Editor.CancelBuild")));
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EditorForm::eventToolClicked);
 
 	updateTitle();
@@ -686,6 +687,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 			T_ASSERT (!desc.empty());
 
 			m_menuTools->add(new ui::MenuItem(ui::Command(i), desc));
+
+			Ref< ui::IBitmap > toolIcon = m_editorTools[i]->getIcon();
+			if (toolIcon)
+			{
+				int32_t iconIndex = m_toolBar->addImage(toolIcon, 1);
+				m_toolBar->addItem(new ui::custom::ToolBarButton(desc, iconIndex, ui::Command(i)));
+			}
 		}
 
 		if (!m_editorTools.empty())

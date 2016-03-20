@@ -43,6 +43,11 @@ std::wstring DeleteEmptyGroupsTool::getDescription() const
 	return i18n::Text(L"EDITOR_DELETE_EMPTY_GROUPS");
 }
 
+Ref< ui::IBitmap > DeleteEmptyGroupsTool::getIcon() const
+{
+	return 0;
+}
+
 bool DeleteEmptyGroupsTool::launch(ui::Widget* parent, IEditor* editor)
 {
 	db::Database* db = editor->getSourceDatabase();
