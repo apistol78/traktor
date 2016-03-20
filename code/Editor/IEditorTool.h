@@ -17,6 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
+class IBitmap;
 class Widget;
 
 	}
@@ -35,6 +36,8 @@ class T_DLLCLASS IEditorTool : public Object
 
 public:
 	virtual std::wstring getDescription() const = 0;
+
+	virtual Ref< ui::IBitmap > getIcon() const = 0;
 
 	virtual bool launch(ui::Widget* parent, IEditor* editor) = 0;
 };

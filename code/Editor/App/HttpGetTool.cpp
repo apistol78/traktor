@@ -20,6 +20,11 @@ std::wstring HttpGetTool::getDescription() const
 	return i18n::Text(L"EDITOR_HTTP_GET");
 }
 
+Ref< ui::IBitmap > HttpGetTool::getIcon() const
+{
+	return 0;
+}
+
 bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor)
 {
 	ui::custom::InputDialog inputDialog;

@@ -332,12 +332,12 @@
 		<item>
 			<type>traktor.ui.custom.PreviewList</type>
 			<element>background-color</element>
-			<color>246, 246, 246, 255</color>
+			<color>37, 37, 38, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.PreviewList</type>
 			<element>color</element>
-			<color>0, 0, 0, 255</color>
+			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.PreviewList</type>
@@ -654,6 +654,10 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Editor/Navigate.image</value>
 		</item>
 		<item>
+			<name>Editor.Tool.Search</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Editor/ToolSearch.image</value>
+		</item>
+		<item>
 			<name>Script.DefineGlobalFunction</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Script/DefineGlobalFunction.image</value>
 		</item>
@@ -728,6 +732,14 @@
 		<item>
 			<name>Script.SearchWildCard</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Script/SearchWildCard.image</value>
+		</item>
+		<item>
+			<name>Script.Tool.Debugger</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Script/ToolDebugger.image</value>
+		</item>
+		<item>
+			<name>Script.Tool.Profiler</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Script/ToolProfiler.image</value>
 		</item>
 		<item>
 			<name>Flash.Playback</name>

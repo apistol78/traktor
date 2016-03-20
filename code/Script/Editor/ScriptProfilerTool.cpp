@@ -2,6 +2,7 @@
 #include "Script/Editor/ScriptProfilerTool.h"
 #include "Script/Editor/ScriptProfilerDialog.h"
 #include "I18N/Text.h"
+#include "Ui/StyleBitmap.h"
 
 namespace traktor
 {
@@ -14,6 +15,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptProfilerTool", 0, ScriptPr
 std::wstring ScriptProfilerTool::getDescription() const
 {
 	return i18n::Text(L"SCRIPT_PROFILER_TOOL");
+}
+
+Ref< ui::IBitmap > ScriptProfilerTool::getIcon() const
+{
+	return new ui::StyleBitmap(L"Script.Tool.Profiler");
 }
 
 bool ScriptProfilerTool::launch(ui::Widget* parent, editor::IEditor* script)

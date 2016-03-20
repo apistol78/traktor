@@ -28,6 +28,7 @@ local outputs =
 			{ name = "TypesHidden", column = 0, row = 3, width = 23, height = 1 },
 			{ name = "Folders", column = 0, row = 4, width = 2, height = 1 },
 			{ name = "Navigate", column = 0, row = 17, width = 4, height = 1 },
+			{ name = "ToolSearch", column = 0, row = 36, width = 1, height = 1 },
 		}
 	},
 	{
@@ -137,6 +138,8 @@ local outputs =
 			{ name = "SearchCaseSensitive", column = 15, row = 6, width = 1, height = 1 },
 			{ name = "SearchWholeWord", column = 16, row = 6, width = 1, height = 1 },
 			{ name = "SearchWildCard", column = 17, row = 6, width = 1, height = 1 },
+			{ name = "ToolDebugger", column = 1, row = 36, width = 1, height = 1 },
+			{ name = "ToolProfiler", column = 2, row = 36, width = 1, height = 1 },
 		}
 	},
 	{

@@ -659,6 +659,10 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Editor/Navigate.image</value>
 		</item>
 		<item>
+			<name>Editor.Tool.Search</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Editor/ToolSearch.image</value>
+		</item>
+		<item>
 			<name>Script.DefineGlobalFunction</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/DefineGlobalFunction.image</value>
 		</item>
@@ -733,6 +737,14 @@
 		<item>
 			<name>Script.SearchWildCard</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/SearchWildCard.image</value>
+		</item>
+		<item>
+			<name>Script.Tool.Debugger</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/ToolDebugger.image</value>
+		</item>
+		<item>
+			<name>Script.Tool.Profiler</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/ToolProfiler.image</value>
 		</item>
 		<item>
 			<name>Flash.Playback</name>
