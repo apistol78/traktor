@@ -326,6 +326,24 @@ spark::Character* SparkLayer::getRoot() const
 	return m_character;
 }
 
+bool SparkLayer::viewToScreen(const Vector2& viewPosition, Vector2& outScreenPosition) const
+{
+	Vector4 clientPosition = m_projection * Vector4(viewPosition.x, viewPosition.y, 0.0f, 1.0f);
+	outScreenPosition.set(
+		clientPosition.x() * 0.5f + 0.5f,
+		clientPosition.y() * 0.5f + 0.5f
+	);
+	return true;
+}
+
+bool SparkLayer::screenToView(const Vector2& screenPosition, Vector2& outViewPosition) const
+{
+	Vector4 clientPosition(2.0f * screenPosition.x - 1.0f, 1.0f - 2.0f * screenPosition.y, 0.0f, 1.0f);
+	Vector4 viewPosition = m_projection.inverse() * clientPosition;
+	outViewPosition.set(viewPosition.x(), viewPosition.y());
+	return true;
+}
+
 void SparkLayer::updateProjection()
 {
 	float viewRatio = m_environment->getRender()->getAspectRatio();
