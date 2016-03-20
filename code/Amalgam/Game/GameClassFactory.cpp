@@ -93,6 +93,24 @@ Any FlashLayer_externalCall(FlashLayer* self, const std::string& methodName, uin
 	return self->externalCall(methodName, argc, argv);
 }
 
+Any SparkLayer_viewToScreen(SparkLayer* self, const Vector2& viewPosition)
+{
+	Vector2 screenPosition;
+	if (self->viewToScreen(viewPosition, screenPosition))
+		return CastAny< Vector2 >::set(screenPosition);
+	else
+		return Any();
+}
+
+Any SparkLayer_screenToView(SparkLayer* self, const Vector2& screenPosition)
+{
+	Vector2 viewPosition;
+	if (self->screenToView(screenPosition, viewPosition))
+		return CastAny< Vector2 >::set(viewPosition);
+	else
+		return Any();
+}
+
 world::Entity* WorldLayer_getEntity_1(WorldLayer* self, const std::wstring& name)
 {
 	return self->getEntity(name);
@@ -286,6 +304,8 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< SparkLayer > > classSparkLayer = new AutoRuntimeClass< SparkLayer >();
 	classSparkLayer->addMethod("getRoot", &SparkLayer::getRoot);
+	classSparkLayer->addMethod("viewToScreen", &SparkLayer_viewToScreen);
+	classSparkLayer->addMethod("screenToView", &SparkLayer_screenToView);
 	registrar->registerClass(classSparkLayer);
 
 	Ref< AutoRuntimeClass< VideoLayer > > classVideoLayer = new AutoRuntimeClass< VideoLayer >();

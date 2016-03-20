@@ -4,6 +4,7 @@
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Matrix44.h"
+#include "Core/Math/Vector2.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -88,6 +89,10 @@ public:
 	virtual void resume() T_OVERRIDE T_FINAL;
 
 	spark::Character* getRoot() const;
+
+	bool viewToScreen(const Vector2& viewPosition, Vector2& outScreenPosition) const;
+
+	bool screenToView(const Vector2& screenPosition, Vector2& outViewPosition) const;
 
 private:
 	struct LastMouseState
