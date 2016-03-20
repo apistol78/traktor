@@ -224,7 +224,7 @@ void AnimationPreviewControl::updateWorldRenderView()
 	m_worldRenderView.setPerspective(
 		sz.cx,
 		sz.cy,
-		float(sz.cy) / sz.cy,
+		float(sz.cx) / sz.cy,
 		deg2rad(65.0f),
 		0.1f,
 		1000.0f

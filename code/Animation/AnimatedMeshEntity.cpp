@@ -175,10 +175,11 @@ void AnimatedMeshEntity::update(const world::UpdateParams& update)
 			m_jointTransforms.resize(0);
 			m_poseTransforms.resize(0);
 
-			calculateJointTransforms(
-				m_skeleton,
-				m_jointTransforms
-			);
+			if (m_skeleton)
+				calculateJointTransforms(
+					m_skeleton,
+					m_jointTransforms
+				);
 
 			m_poseTransforms.reserve(m_jointTransforms.size());
 			m_skeleton.consume();
