@@ -197,7 +197,7 @@ private:
 
 	RxEvent m_rxEventsInOrderQueue[256];
 	uint8_t m_rxEventsInOrderSequence;
-	std::list< RxEvent > m_rxEvents;
+	AlignedVector< RxEvent > m_rxEvents;
 	CircularVector< uint8_t, 64 > m_rxEventSequences[2];
 
 	//@}

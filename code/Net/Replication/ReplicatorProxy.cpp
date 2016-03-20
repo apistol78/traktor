@@ -354,8 +354,9 @@ bool ReplicatorProxy::dispatchRxEvents(const SmallMap< const TypeInfo*, RefArray
 	}
 
 	// Dispatch received events.
-	for (std::list< RxEvent >::const_iterator i = m_rxEvents.begin(); i != m_rxEvents.end(); ++i)
+	for (AlignedVector< RxEvent >::const_iterator i = m_rxEvents.begin(); i != m_rxEvents.end(); ++i)
 	{
+		T_FATAL_ASSERT (i->eventObject);
 		bool processed = false;
 
 		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = eventListeners.find(&type_of(i->eventObject));
@@ -376,7 +377,7 @@ bool ReplicatorProxy::dispatchRxEvents(const SmallMap< const TypeInfo*, RefArray
 			log::warning << m_replicator->getLogPrefix() << L"Event " << type_name(i->eventObject) << L" from " << getLogIdentifier() << L" not processed (2); event discarded." << Endl;
 	}
 
-	m_rxEvents.clear();
+	m_rxEvents.resize(0);
 	return true;
 }
 
