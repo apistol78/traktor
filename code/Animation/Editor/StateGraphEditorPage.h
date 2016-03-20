@@ -27,6 +27,7 @@ class IEditorPageSite;
 	namespace ui
 	{
 
+class ButtonClickEvent;
 class Container;
 class MouseButtonDownEvent;
 class Point;
@@ -53,6 +54,7 @@ class ToolBarButtonClickEvent;
 class AnimationPreviewControl;
 class StateGraph;
 class StateNode;
+class StatePoseController;
 class Transition;
 
 class T_DLLEXPORT StateGraphEditorPage : public editor::IEditorPage
@@ -81,12 +83,14 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< StateGraph > m_stateGraph;
+	Ref< StatePoseController > m_statePreviewController;
 	Ref< ui::custom::ToolBar > m_toolBarGraph;
 	Ref< ui::custom::GraphControl > m_editorGraph;
 	Ref< ui::PopupMenu > m_menuPopup;
 	Ref< ui::Container > m_containerPreview;
 	Ref< ui::custom::ToolBar > m_toolBarPreview;
 	Ref< AnimationPreviewControl > m_previewControl;
+	Ref< ui::Container > m_previewConditions;
 
 	void bindStateNodes();
 
@@ -97,6 +101,8 @@ private:
 	void createState(const ui::Point& at);
 
 	void updateGraph();
+
+	void updatePreviewConditions();
 
 	void eventToolBarGraphClick(ui::custom::ToolBarButtonClickEvent* event);
 
@@ -111,6 +117,8 @@ private:
 	void eventEdgeConnect(ui::custom::EdgeConnectEvent* event);
 
 	void eventEdgeDisconnect(ui::custom::EdgeDisconnectEvent* event);
+
+	void eventPreviewConditionClick(ui::ButtonClickEvent* event);
 };
 
 	}

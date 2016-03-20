@@ -15,6 +15,7 @@
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Ui/Application.h"
+#include "Ui/CheckBox.h"
 #include "Ui/Container.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/StyleBitmap.h"
@@ -55,6 +56,8 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	if (!m_stateGraph)
 		return false;
 
+	m_statePreviewController = new StatePoseController(resource::Proxy< StateGraph >(m_stateGraph));
+
 	// Create state graph container.
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -91,7 +94,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 
 	// Create preview panel.
 	m_containerPreview = new ui::Container();
-	m_containerPreview->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	m_containerPreview->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0));
 	m_containerPreview->setText(L"Animation Preview");
 
 	m_toolBarPreview = new ui::custom::ToolBar();
@@ -102,7 +105,10 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 
 	m_previewControl = new AnimationPreviewControl(m_editor);
 	m_previewControl->create(m_containerPreview);
-	m_previewControl->setPoseController(new StatePoseController(resource::Proxy< StateGraph >(m_stateGraph)));
+	m_previewControl->setPoseController(m_statePreviewController);
+
+	m_previewConditions = new ui::Container();
+	m_previewConditions->create(m_containerPreview, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0, 0));
 
 	m_site->createAdditionalPanel(m_containerPreview, ui::scaleBySystemDPI(450), false);
 
@@ -115,6 +121,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->center();
 
 	updateGraph();
+	updatePreviewConditions();
 	bindStateNodes();
 
 	return true;
@@ -196,6 +203,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 		}
 
 		updateGraph();
+		updatePreviewConditions();
 	}
 	//if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	//{
@@ -337,6 +345,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 
 		bindStateNodes();
 		updateGraph();
+		updatePreviewConditions();
 	}
 	//else if (command == L"Editor.Undo")
 	//{
@@ -547,6 +556,47 @@ void StateGraphEditorPage::updateGraph()
 	m_editorGraph->update();
 }
 
+void StateGraphEditorPage::updatePreviewConditions()
+{
+	std::map< std::wstring, bool > conditions;
+
+	// Collect all condition variables.
+	const RefArray< Transition >& transitions = m_stateGraph->getTransitions();
+	for (RefArray< Transition >::const_iterator i = transitions.begin(); i != transitions.end(); ++i)
+	{
+		std::wstring c = (*i)->getCondition();
+		if (!c.empty())
+		{
+			if (c[0] == L'!')
+				c = c.substr(1);
+
+			conditions[c] = false;
+		}
+	}
+
+	// Keep all existing condition states.
+	for (ui::Widget* it = m_previewConditions->getFirstChild(); it; it = it->getNextSibling())
+	{
+		ui::CheckBox* condition = mandatory_non_null_type_cast< ui::CheckBox* >(it);
+		if (conditions.find(condition->getText()) != conditions.end())
+			conditions[condition->getText()] = condition->isChecked();
+	}
+
+	// Destroy all checkboxes.
+	while (m_previewConditions->getFirstChild())
+		m_previewConditions->getFirstChild()->destroy();
+
+	// Recreate checkboxes.
+	for (std::map< std::wstring, bool >::const_iterator i = conditions.begin(); i != conditions.end(); ++i)
+	{
+		Ref< ui::CheckBox > cb = new ui::CheckBox();
+		cb->create(m_previewConditions, i->first, i->second);
+		cb->addEventHandler< ui::ButtonClickEvent >(this, &StateGraphEditorPage::eventPreviewConditionClick);
+	}
+
+	m_containerPreview->update();
+}
+
 void StateGraphEditorPage::eventToolBarGraphClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
@@ -597,12 +647,12 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 		T_ASSERT (transition);
 
 		m_site->setPropertyObject(transition);
-		m_previewControl->setPoseController(new StatePoseController(resource::Proxy< StateGraph >(m_stateGraph)));
+		m_previewControl->setPoseController(m_statePreviewController);
 	}
 	else
 	{
 		m_site->setPropertyObject(0);
-		m_previewControl->setPoseController(new StatePoseController(resource::Proxy< StateGraph >(m_stateGraph)));
+		m_previewControl->setPoseController(m_statePreviewController);
 	}
 }
 
@@ -662,6 +712,12 @@ void StateGraphEditorPage::eventEdgeDisconnect(ui::custom::EdgeDisconnectEvent* 
 	m_stateGraph->removeTransition(transition);
 
 	updateGraph();
+}
+
+void StateGraphEditorPage::eventPreviewConditionClick(ui::ButtonClickEvent* event)
+{
+	ui::CheckBox* cb = mandatory_non_null_type_cast< ui::CheckBox* >(event->getSender());
+	m_statePreviewController->setCondition(cb->getText(), cb->isChecked(), false);
 }
 
 	}
