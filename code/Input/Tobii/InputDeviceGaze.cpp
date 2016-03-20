@@ -8,7 +8,10 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceGaze", InputDeviceGaze, IInputDevice)
 
 InputDeviceGaze::InputDeviceGaze()
-:	m_positionX(0.0f)
+:	m_connected(false)
+,	m_rangeX(0.0f)
+,	m_rangeY(0.0f)
+,	m_positionX(0.0f)
 ,	m_positionY(0.0f)
 {
 }
@@ -25,7 +28,7 @@ InputCategory InputDeviceGaze::getCategory() const
 
 bool InputDeviceGaze::isConnected() const
 {
-	return true;
+	return m_connected;
 }
 
 int32_t InputDeviceGaze::getControlCount()
@@ -75,7 +78,21 @@ float InputDeviceGaze::getControlValue(int32_t control)
 
 bool InputDeviceGaze::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
-	return false;
+	switch (control)
+	{
+	case 0:
+		outMin = 0.0f;
+		outMax = m_rangeX;
+		return true;
+
+	case 1:
+		outMin = 0.0f;
+		outMax = m_rangeY;
+		return true;
+
+	default:
+		return 0.0f;
+	}
 }
 
 bool InputDeviceGaze::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
@@ -107,6 +124,8 @@ bool InputDeviceGaze::getKeyEvent(KeyEvent& outEvent)
 
 void InputDeviceGaze::resetState()
 {
+	m_positionX =
+	m_positionY = 0.0f;
 }
 
 void InputDeviceGaze::readState()

@@ -53,6 +53,9 @@ public:
 private:
 	friend class InputDriverTobii;
 
+	bool m_connected;
+	float m_rangeX;
+	float m_rangeY;
 	float m_positionX;
 	float m_positionY;
 };
