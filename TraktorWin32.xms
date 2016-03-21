@@ -5359,10 +5359,10 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x86</item>
+						<item>$(FBX_SDK_LIBPATH)</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
+						<item>libfbxsdk.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -5392,10 +5392,10 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x86</item>
+						<item>$(FBX_SDK_LIBPATH)</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
+						<item>libfbxsdk.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -5425,10 +5425,10 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x86</item>
+						<item>$(FBX_SDK_LIBPATH)</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
+						<item>libfbxsdk.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -5458,10 +5458,10 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x86</item>
+						<item>$(FBX_SDK_LIBPATH)</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
+						<item>libfbxsdk.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -8725,10 +8725,10 @@
 												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/vs2008/x86</item>
+												<item>$(FBX_SDK_LIBPATH)</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1.lib</item>
+												<item>libfbxsdk.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -8742,7 +8742,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)\lib\vs2008\x86\*.dll</sourceFile>
+													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
 											</aggregationItems>
@@ -8762,10 +8762,10 @@
 												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/vs2008/x86</item>
+												<item>$(FBX_SDK_LIBPATH)</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1.lib</item>
+												<item>libfbxsdk.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -8779,7 +8779,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)\lib\vs2008\x86\*.dll</sourceFile>
+													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
 												</item>
 											</aggregationItems>
@@ -8799,10 +8799,10 @@
 												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/vs2008/x86</item>
+												<item>$(FBX_SDK_LIBPATH)</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1.lib</item>
+												<item>libfbxsdk.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -8816,7 +8816,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)\lib\vs2008\x86\*.dll</sourceFile>
+													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -8836,10 +8836,10 @@
 												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/vs2008/x86</item>
+												<item>$(FBX_SDK_LIBPATH)</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1.lib</item>
+												<item>libfbxsdk.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -8853,7 +8853,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)\lib\vs2008\x86\*.dll</sourceFile>
+													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -14258,7 +14258,6 @@
 									<item>NOMINMAX</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
-									<item>snprintf=_snprintf</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -14295,7 +14294,6 @@
 									<item>NOMINMAX</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
-									<item>snprintf=_snprintf</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -14332,7 +14330,6 @@
 									<item>NOMINMAX</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
-									<item>snprintf=_snprintf</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -14364,7 +14361,6 @@
 									<item>NOMINMAX</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
-									<item>snprintf=_snprintf</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -19214,14 +19210,14 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_X86_SDK)/include/p4</item>
+						<item>$(P4_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_X86_SDK)/lib</item>
+						<item>$(P4_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
@@ -19249,14 +19245,14 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_X86_SDK)/include/p4</item>
+						<item>$(P4_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_X86_SDK)/lib</item>
+						<item>$(P4_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
@@ -19284,14 +19280,14 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_X86_SDK)/include/p4</item>
+						<item>$(P4_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_X86_SDK)/lib</item>
+						<item>$(P4_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
@@ -19319,14 +19315,14 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_X86_SDK)/include/p4</item>
+						<item>$(P4_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_X86_SDK)/lib</item>
+						<item>$(P4_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>

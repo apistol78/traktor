@@ -401,7 +401,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 		}
 	}
 
-	FbxAnimEvaluator* sceneEvaluator = scene->GetEvaluator();
+	FbxAnimEvaluator* sceneEvaluator = scene->GetAnimationEvaluator();
 	FbxMatrix nodeGlobalTransform = sceneEvaluator->GetNodeGlobalTransform(meshNode);
 	FbxMatrix geometricTransform = getGeometricTransform(meshNode);
 	FbxMatrix globalTransform = nodeGlobalTransform * geometricTransform;
@@ -784,7 +784,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 	bool status = importer->Initialize(fbxStream.ptr(), stream, readerID, s_fbxManager->GetIOSettings());
 	if (!status)
 	{
-		log::error << L"Unable to import FBX model; failed to initialize FBX importer (" << mbstows(importer->GetLastErrorString()) << L")." << Endl;
+		log::error << L"Unable to import FBX model; failed to initialize FBX importer (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
 		return 0;
 	}
 
@@ -793,7 +793,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 	status = importer->Import(s_scene);
 	if (!status)
 	{
-		log::error << L"Unable to import FBX model; FBX importer failed (" << mbstows(importer->GetLastErrorString()) << L")." << Endl;
+		log::error << L"Unable to import FBX model; FBX importer failed (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
 		return 0;
 	}
 

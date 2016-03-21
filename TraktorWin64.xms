@@ -5229,10 +5229,10 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x64</item>
+						<item>$(FBX_SDK_LIBPATH)</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
+						<item>libfbxsdk.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -5262,10 +5262,10 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x64</item>
+						<item>$(FBX_SDK_LIBPATH)</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
+						<item>libfbxsdk.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -5295,10 +5295,10 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x64</item>
+						<item>$(FBX_SDK_LIBPATH)</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
+						<item>libfbxsdk.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -5328,10 +5328,10 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x64</item>
+						<item>$(FBX_SDK_LIBPATH)</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
+						<item>libfbxsdk.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -8511,7 +8511,6 @@
 								<definitions>
 									<item>T_MESH_EDITOR_EXPORT</item>
 									<item>_DEBUG</item>
-									<item>T_USE_SIMPLYGON_SDK</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -8537,7 +8536,6 @@
 								<definitions>
 									<item>T_MESH_EDITOR_EXPORT</item>
 									<item>NDEBUG</item>
-									<item>T_USE_SIMPLYGON_SDK</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -8563,7 +8561,6 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
-									<item>T_USE_SIMPLYGON_SDK</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -8589,7 +8586,6 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
-									<item>T_USE_SIMPLYGON_SDK</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -8742,13 +8738,12 @@
 												<item>_DEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
-												<item>T_USE_SIMPLYGON_SDK</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/vs2008/x64</item>
+												<item>$(FBX_SDK_LIBPATH)</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1.lib</item>
+												<item>libfbxsdk.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -8762,7 +8757,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)\lib\vs2008\x64\*.dll</sourceFile>
+													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
 											</aggregationItems>
@@ -8781,13 +8776,12 @@
 												<item>NDEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
-												<item>T_USE_SIMPLYGON_SDK</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/vs2008/x64</item>
+												<item>$(FBX_SDK_LIBPATH)</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1.lib</item>
+												<item>libfbxsdk.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -8801,7 +8795,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)\lib\vs2008\x64\*.dll</sourceFile>
+													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
 												</item>
 											</aggregationItems>
@@ -8820,13 +8814,12 @@
 												<item>_DEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
-												<item>T_USE_SIMPLYGON_SDK</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/vs2008/x64</item>
+												<item>$(FBX_SDK_LIBPATH)</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1.lib</item>
+												<item>libfbxsdk.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -8840,7 +8833,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)\lib\vs2008\x64\*.dll</sourceFile>
+													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -8859,13 +8852,12 @@
 												<item>NDEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
-												<item>T_USE_SIMPLYGON_SDK</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/vs2008/x64</item>
+												<item>$(FBX_SDK_LIBPATH)</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1.lib</item>
+												<item>libfbxsdk.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -8879,7 +8871,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)\lib\vs2008\x64\*.dll</sourceFile>
+													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -8907,10 +8899,6 @@
 													<items/>
 												</item>
 											</items>
-										</item>
-										<item type="File">
-											<fileName>$(SIMPLYGON_SDK)/SimplygonSDKLoader.cpp</fileName>
-											<items/>
 										</item>
 									</items>
 									<dependencies>
@@ -19683,14 +19671,14 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_X64_SDK)/include/p4</item>
+						<item>$(P4_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_X64_SDK)/lib</item>
+						<item>$(P4_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
@@ -19718,14 +19706,14 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_X64_SDK)/include/p4</item>
+						<item>$(P4_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_X64_SDK)/lib</item>
+						<item>$(P4_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
@@ -19753,14 +19741,14 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_X64_SDK)/include/p4</item>
+						<item>$(P4_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_X64_SDK)/lib</item>
+						<item>$(P4_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
@@ -19788,14 +19776,14 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_X64_SDK)/include/p4</item>
+						<item>$(P4_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_X64_SDK)/lib</item>
+						<item>$(P4_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
@@ -21326,7 +21314,6 @@
 									<item>NOMINMAX</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
-									<item>snprintf=_snprintf</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -21363,7 +21350,6 @@
 									<item>NOMINMAX</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
-									<item>snprintf=_snprintf</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -21400,7 +21386,6 @@
 									<item>NOMINMAX</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
-									<item>snprintf=_snprintf</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -21432,7 +21417,6 @@
 									<item>NOMINMAX</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
-									<item>snprintf=_snprintf</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
