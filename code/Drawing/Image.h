@@ -79,6 +79,9 @@ public:
 	/*! \brief Clear entire image. */
 	void clear(const Color4f& color);
 
+	/*! \brief Clear only alpha. */
+	void clearAlpha(float alpha);
+
 	/*! \brief Get single pixel. */
 	bool getPixel(int32_t x, int32_t y, Color4f& outColor) const;
 

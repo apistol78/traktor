@@ -630,11 +630,7 @@ bool FlashTagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 		Ref< drawing::Image > image = context.jpegFormat->readJpegImage(&bufferStream);
 		T_ASSERT (image);
 
-		Ref< FlashBitmapImage > bitmap = new FlashBitmapImage();
-		if (!bitmap->create(image))
-			return false;
-
-		context.movie->defineBitmap(bitmapId, bitmap);
+		context.movie->defineBitmap(bitmapId, new FlashBitmapImage(image));
 	}
 	else
 	{
@@ -674,13 +670,7 @@ bool FlashTagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 		}
 
 		if (image)
-		{
-			Ref< FlashBitmapImage > bitmap = new FlashBitmapImage();
-			if (!bitmap->create(image))
-				return false;
-
-			context.movie->defineBitmap(bitmapId, bitmap);
-		}
+			context.movie->defineBitmap(bitmapId, new FlashBitmapImage(image));
 	}
 
 	return true;
@@ -740,11 +730,7 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 			}
 		}
 
-		Ref< FlashBitmapImage > bitmap = new FlashBitmapImage();
-		if (!bitmap->create(image))
-			return false;
-
-		context.movie->defineBitmap(bitmapId, bitmap);
+		context.movie->defineBitmap(bitmapId, new FlashBitmapImage(image));
 	}
 	else if (format == 4 || format == 5)	// RGB/RGBA
 	{
@@ -808,11 +794,7 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 			}
 		}
 
-		Ref< FlashBitmapImage > bitmap = new FlashBitmapImage();
-		if (!bitmap->create(image))
-			return false;
-
-		context.movie->defineBitmap(bitmapId, bitmap);
+		context.movie->defineBitmap(bitmapId, new FlashBitmapImage(image));
 	}
 
 	return true;

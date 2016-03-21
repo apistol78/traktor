@@ -244,6 +244,20 @@ void Image::clear(const Color4f& color)
 	checkData(m_data, m_size);
 }
 
+void Image::clearAlpha(float alpha)
+{
+	Color4f cl;
+	for (int32_t y = 0; y < m_height; ++y)
+	{
+		for (int32_t x = 0; x < m_width; ++x)
+		{
+			getPixelUnsafe(x, y, cl);
+			cl.setAlpha(Scalar(alpha));
+			setPixelUnsafe(x, y, cl);
+		}
+	}
+}
+
 bool Image::getPixel(int32_t x, int32_t y, Color4f& outColor) const
 {
 	if (x < 0  || x >= m_width || y < 0 || y >= m_height)
