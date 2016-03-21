@@ -35,23 +35,15 @@ class T_DLLCLASS FlashBitmapImage : public FlashBitmap
 public:
 	FlashBitmapImage();
 
-	FlashBitmapImage(drawing::Image* image);
+	FlashBitmapImage(const drawing::Image* image);
 
-	virtual ~FlashBitmapImage();
-
-	/*! \brief Create bitmap from image.
-	 *
-	 * \param image Source image.
-	 * \return True if successfully created.
-	 */
-	bool create(drawing::Image* image);
-
-	const SwfColor* getBits() const { return m_bits.c_ptr(); }
+	const SwfColor* getBits() const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
-	AutoArrayPtr< SwfColor > m_bits;
+	//AutoArrayPtr< SwfColor > m_bits;
+	Ref< drawing::Image > m_image;
 };
 
 	}

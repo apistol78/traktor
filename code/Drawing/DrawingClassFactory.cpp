@@ -199,6 +199,7 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classImage->addMethod("copy", &Image_copy_1);
 	classImage->addMethod("copy", &Image_copy_2);
 	classImage->addMethod("clear", &Image::clear);
+	classImage->addMethod("clearAlpha", &Image::clearAlpha);
 	classImage->addMethod("getPixel", &Image_getPixel);
 	classImage->addMethod("setPixel", &Image::setPixel);
 	classImage->addMethod("apply", &Image::apply);
