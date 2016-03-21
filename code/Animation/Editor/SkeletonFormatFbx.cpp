@@ -163,7 +163,7 @@ void createJoints(
 	if (!fbxNode)
 		return;
 
-	FbxVector4 nodeTranslation = fbxNode->GetScene()->GetEvaluator()->GetNodeLocalTranslation(fbxNode);	
+	FbxVector4 nodeTranslation = fbxNode->GetScene()->GetAnimationEvaluator()->GetNodeLocalTranslation(fbxNode);	
 	Vector4 translation = convertPosition(axisTransform, nodeTranslation);
 
 	Ref< Joint > joint = new Joint();
@@ -327,8 +327,8 @@ Ref< Skeleton > SkeletonFormatFbx::import(IStream* stream, const Vector4& offset
 
 				skeleton = new Skeleton();
 
-				FbxVector4 scaleVector = scene->GetEvaluator()->GetNodeLocalScaling(childNode);
-				FbxVector4 translation = scene->GetEvaluator()->GetNodeLocalTranslation(childNode);
+				FbxVector4 scaleVector = scene->GetAnimationEvaluator()->GetNodeLocalScaling(childNode);
+				FbxVector4 translation = scene->GetAnimationEvaluator()->GetNodeLocalTranslation(childNode);
 				Matrix44 scaleMatrix = traktor::scale(convertVector(scaleVector));
 				axisTransform = axisTransform * scaleMatrix;
 
