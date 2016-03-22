@@ -114,12 +114,11 @@ public:
 
 	/*! \brief Render canvas.
 	 *
-	 * \param dictionary Flash character dictionary.
 	 * \param transform Shape transform.
 	 * \param canvas Canvas
 	 * \param cxform Color transform.
 	 */
-	virtual void renderCanvas(const FlashDictionary& dictionary, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform) = 0;
+	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform) = 0;
 
 	/*! \brief End frame. */
 	virtual void end() = 0;

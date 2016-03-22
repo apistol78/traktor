@@ -25,6 +25,11 @@ FlashBitmap::FlashBitmap(uint32_t x, uint32_t y, uint32_t width, uint32_t height
 {
 }
 
+void FlashBitmap::setCacheObject(IRefCount* cacheObject) const
+{
+	m_cacheObject = cacheObject;
+}
+
 void FlashBitmap::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"x", m_x);

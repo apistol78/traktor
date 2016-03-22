@@ -286,7 +286,7 @@ void SwDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bound
 {
 }
 
-void SwDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
+void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
 {
 }
 

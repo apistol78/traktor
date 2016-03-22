@@ -37,6 +37,7 @@ class RenderTargetSet;
 	{
 
 class AccGlyph;
+class AccGradientCache;
 class AccQuad;
 class AccShape;
 class AccShapeRenderer;
@@ -113,7 +114,7 @@ public:
 
 	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL;
 
-	virtual void renderCanvas(const FlashDictionary& dictionary, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL;
+	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL;
 
 	virtual void end() T_OVERRIDE T_FINAL;
 
@@ -141,6 +142,7 @@ private:
 	Ref< AccShapeResources > m_shapeResources;
 	Ref< AccShapeVertexPool > m_vertexPool;
 	Ref< AccShapeRenderer > m_shapeRenderer;
+	Ref< AccGradientCache > m_gradientCache;
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccGlyph > m_glyph;
 	Ref< AccQuad > m_quad;

@@ -1,3 +1,4 @@
+#include "Flash/FlashBitmap.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashTypes.h"
 
@@ -28,6 +29,7 @@ int32_t FlashCanvas::getDirtyTag() const
 
 void FlashCanvas::clear()
 {
+	m_dictionary = FlashDictionary();
 	m_paths.clear();
 	m_bounds = Aabb2();
 	m_fillStyles.resize(0);
@@ -35,9 +37,31 @@ void FlashCanvas::clear()
 	++m_dirtyTag;
 }
 
-void FlashCanvas::beginFill(const FlashFillStyle& fillStyle)
+void FlashCanvas::beginFill(const SwfColor& color)
 {
-	m_fillStyles.push_back(fillStyle);
+	FlashFillStyle style;
+	style.create(color);
+	m_fillStyles.push_back(style);
+	m_paths.push_back(Path());
+	m_drawing = true;
+}
+
+void FlashCanvas::beginGradientFill(FlashFillStyle::GradientType gradientType, const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords, const Matrix33& gradientMatrix)
+{
+	FlashFillStyle style;
+	style.create(gradientType, colorRecords, gradientMatrix);
+	m_fillStyles.push_back(style);
+	m_paths.push_back(Path());
+	m_drawing = true;
+}
+
+void FlashCanvas::beginBitmapFill(FlashBitmap* image, const Matrix33& bitmapMatrix)
+{
+	uint16_t bitmapId = m_dictionary.addBitmap(image);
+
+	FlashFillStyle style;
+	style.create(bitmapId, bitmapMatrix);
+	m_fillStyles.push_back(style);
 	m_paths.push_back(Path());
 	m_drawing = true;
 }

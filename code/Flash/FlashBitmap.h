@@ -28,6 +28,14 @@ public:
 
 	FlashBitmap(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
+	/*! \brief Set cache object.
+	*/
+	void setCacheObject(IRefCount* cacheObject) const;
+
+	/*! \brief Set cache object.
+	*/
+	IRefCount* getCacheObject() const { return m_cacheObject; }
+
 	uint32_t getX() const { return m_x; }
 
 	uint32_t getY() const { return m_y; }
@@ -39,6 +47,7 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 protected:
+	mutable Ref< IRefCount > m_cacheObject;
 	uint32_t m_x;
 	uint32_t m_y;
 	uint32_t m_width;
