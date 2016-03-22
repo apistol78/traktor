@@ -280,14 +280,6 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 
 void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, BitmapData* bm, const Matrix* matrix, bool repeat, bool smoothing) const
 {
-	// Get dictionary.
-	FlashDictionary* dictionary = self->getDictionary();
-	if (!dictionary)
-		return;
-
-	// Define bitmap symbol.
-	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmapImage(bm->getImage()));
-
 	Matrix33 M(
 		20.0f, 0.0f, 0.0f,
 		0.0f, 20.0f, 0.0f,
@@ -297,13 +289,7 @@ void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, BitmapDat
 	if (matrix)
 		M = M * matrix->m_v;
 
-	// Create style.
-	FlashFillStyle style;
-	style.create(bitmapId, M);
-
-	// Begin filling with style.
-	FlashCanvas* canvas = self->createCanvas();
-	canvas->beginFill(style);
+	self->createCanvas()->beginBitmapFill(new FlashBitmapImage(bm->getImage()), M);
 }
 
 void AsMovieClip::MovieClip_beginFill_1(FlashSpriteInstance* self, uint32_t rgb) const
@@ -320,11 +306,7 @@ void AsMovieClip::MovieClip_beginFill_2(FlashSpriteInstance* self, uint32_t rgb,
 	c.blue = rgb & 255;
 	c.alpha = (255 * clamp(alpha, 0, 100)) / 100;
 
-	FlashFillStyle style;
-	style.create(c);
-
-	FlashCanvas* canvas = self->createCanvas();
-	canvas->beginFill(style);
+	self->createCanvas()->beginFill(c);
 }
 
 bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const std::string& fillType, const Array* colors, const Array* alphas, const Array* ratios, ActionObject* matrix) const
@@ -386,19 +368,13 @@ bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const s
 		gradientMatrix = translate(w * 10.0f + x * 20.0f, h * 10.0f + y * 20.0f) * rotate(r) * scale(1.0f / w, 1.0f / h) * scale(20.0f, 20.0f);
 	}
 
-	FlashFillStyle style;
-	style.create(gradientType, colorRecords, gradientMatrix);
-
-	FlashCanvas* canvas = self->createCanvas();
-	canvas->beginFill(style);
-
+	self->createCanvas()->beginGradientFill(gradientType, colorRecords, gradientMatrix);
 	return true;
 }
 
 void AsMovieClip::MovieClip_clear(FlashSpriteInstance* self) const
 {
-	FlashCanvas* canvas = self->createCanvas();
-	canvas->clear();
+	self->createCanvas()->clear();
 }
 
 Ref< FlashSpriteInstance > AsMovieClip::MovieClip_createEmptyMovieClip(FlashSpriteInstance* self, const std::string& emptyClipName, int32_t depth) const
@@ -478,8 +454,7 @@ Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
 
 void AsMovieClip::MovieClip_curveTo(FlashSpriteInstance* self, avm_number_t controlX, avm_number_t controlY, avm_number_t anchorX, avm_number_t anchorY) const
 {
-	FlashCanvas* canvas = self->createCanvas();
-	canvas->curveTo(controlX * 20.0f, controlY * 20.0f, anchorX * 20.0f, anchorY * 20.0f);
+	self->createCanvas()->curveTo(controlX * 20.0f, controlY * 20.0f, anchorX * 20.0f, anchorY * 20.0f);
 }
 
 Ref< FlashSpriteInstance > AsMovieClip::MovieClip_duplicateMovieClip(FlashSpriteInstance* self, const std::string& name, int32_t depth) const
@@ -501,8 +476,7 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_duplicateMovieClip(FlashSprite
 
 void AsMovieClip::MovieClip_endFill(FlashSpriteInstance* self) const
 {
-	FlashCanvas* canvas = self->createCanvas();
-	canvas->endFill();
+	self->createCanvas()->endFill();
 }
 
 Ref< ActionObject > AsMovieClip::MovieClip_getBounds(FlashSpriteInstance* self, const FlashCharacterInstance* reference) const
@@ -701,8 +675,7 @@ void AsMovieClip::MovieClip_lineStyle(FlashSpriteInstance* self) const
 
 void AsMovieClip::MovieClip_lineTo(FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const
 {
-	FlashCanvas* canvas = self->createCanvas();
-	canvas->lineTo(x * 20.0f, y * 20.0f);
+	self->createCanvas()->lineTo(x * 20.0f, y * 20.0f);
 }
 
 Ref< FlashSpriteInstance > AsMovieClip::MovieClip_loadMovie(FlashSpriteInstance* self, const std::wstring& fileName) const
@@ -737,8 +710,7 @@ void AsMovieClip::MovieClip_localToGlobal(const FlashSpriteInstance* self) const
 
 void AsMovieClip::MovieClip_moveTo(FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const
 {
-	FlashCanvas* canvas = self->createCanvas();
-	canvas->moveTo(x * 20.0f, y * 20.0f);
+	self->createCanvas()->moveTo(x * 20.0f, y * 20.0f);
 }
 
 void AsMovieClip::MovieClip_nextFrame(FlashSpriteInstance* self) const

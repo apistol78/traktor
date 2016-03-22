@@ -7,8 +7,11 @@
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashBitmap.h"
+#include "Flash/Acc/AccBitmapRect.h"
+#include "Flash/Acc/AccGradientCache.h"
 #include "Flash/Acc/AccShape.h"
 #include "Flash/Acc/AccShapeResources.h"
+#include "Flash/Acc/AccTextureCache.h"
 #include "Flash/Acc/Triangulator.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
@@ -60,6 +63,7 @@ AccShape::~AccShape()
 
 bool AccShape::create(
 	AccShapeVertexPool* vertexPool,
+	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
 	const FlashDictionary& dictionary,
 	const AlignedVector< FlashFillStyle >& fillStyles,
@@ -187,7 +191,7 @@ bool AccShape::create(
 		Matrix33 textureMatrix;
 		uint16_t lastFillStyle = 0;
 		Color4ub color(255, 255, 255, 255);
-		AccTextureCache::BitmapRect texture;
+		Ref< AccBitmapRect > texture;
 
 		for (AlignedVector< Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
 		{
@@ -205,7 +209,7 @@ bool AccShape::create(
 			)
 			{
 				color = Color4ub(255, 255, 255, 255);
-				texture = AccTextureCache::BitmapRect();
+				texture = 0;
 
 				const FlashFillStyle& style = fillStyles[j->fillStyle - 1];
 
@@ -213,8 +217,7 @@ bool AccShape::create(
 				const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 				if (colorRecords.size() > 1)
 				{
-					T_ASSERT (textureCache);
-					texture = textureCache->getGradientTexture(style);
+					texture = gradientCache->getGradientTexture(style);
 					textureMatrix = c_textureTS * style.getGradientMatrix().inverse();
 					m_batchFlags |= BfHaveTextured;
 				}
@@ -231,7 +234,6 @@ bool AccShape::create(
 				const FlashBitmap* bitmap = dictionary.getBitmap(style.getFillBitmap());
 				if (bitmap)
 				{
-					T_ASSERT (textureCache);
 					texture = textureCache->getBitmapTexture(*bitmap);
 					textureMatrix = scale(1.0f / bitmap->getWidth(), 1.0f / bitmap->getHeight()) * style.getFillBitmapMatrix().inverse();
 					m_batchFlags |= BfHaveTextured;
@@ -240,35 +242,57 @@ bool AccShape::create(
 				lastFillStyle = j->fillStyle;
 			}
 
-			if (m_renderBatches.empty() || m_renderBatches.back().texture.texture != texture.texture)	// \fixme Clamp?
+			if (m_renderBatches.empty() || m_renderBatches.back().texture != texture)	// \fixme Clamp?
 			{
 				m_renderBatches.push_back(RenderBatch());
 				m_renderBatches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
 				m_renderBatches.back().texture = texture;
 			}
 
-			for (int k = 0; k < 3; ++k)
+			if (texture)
 			{
-				const Vector2& P = j->v[k];
-				Vector2 tc = textureMatrix * P;
+				for (int k = 0; k < 3; ++k)
+				{
+					const Vector2& P = j->v[k];
+					Vector2 tc = textureMatrix * P;
 
-				vertex->pos[0] = P.x;
-				vertex->pos[1] = P.y;
-				vertex->curvature[0] = c_controlPoints[k][0];
-				vertex->curvature[1] = c_controlPoints[k][1];
-				vertex->curvature[2] = curveSign;
-				vertex->texCoord[0] = tc.x;
-				vertex->texCoord[1] = tc.y;
-				vertex->texRect[0] = texture.rect[0];
-				vertex->texRect[1] = texture.rect[1];
-				vertex->texRect[2] = texture.rect[2];
-				vertex->texRect[3] = texture.rect[3];
-				vertex->color[0] = color.r;
-				vertex->color[1] = color.g;
-				vertex->color[2] = color.b;
-				vertex->color[3] = color.a;
+					vertex->pos[0] = P.x;
+					vertex->pos[1] = P.y;
+					vertex->curvature[0] = c_controlPoints[k][0];
+					vertex->curvature[1] = c_controlPoints[k][1];
+					vertex->curvature[2] = curveSign;
+					vertex->texCoord[0] = tc.x;
+					vertex->texCoord[1] = tc.y;
+					vertex->texRect[0] = texture->rect[0];
+					vertex->texRect[1] = texture->rect[1];
+					vertex->texRect[2] = texture->rect[2];
+					vertex->texRect[3] = texture->rect[3];
+					vertex->color[0] = color.r;
+					vertex->color[1] = color.g;
+					vertex->color[2] = color.b;
+					vertex->color[3] = color.a;
 
-				vertex++;
+					vertex++;
+				}
+			}
+			else
+			{
+				for (int k = 0; k < 3; ++k)
+				{
+					const Vector2& P = j->v[k];
+
+					vertex->pos[0] = P.x;
+					vertex->pos[1] = P.y;
+					vertex->curvature[0] = c_controlPoints[k][0];
+					vertex->curvature[1] = c_controlPoints[k][1];
+					vertex->curvature[2] = curveSign;
+					vertex->color[0] = color.r;
+					vertex->color[1] = color.g;
+					vertex->color[2] = color.b;
+					vertex->color[3] = color.a;
+
+					vertex++;
+				}
 			}
 
 			m_renderBatches.back().primitives.count++;
@@ -288,6 +312,7 @@ bool AccShape::create(
 
 bool AccShape::create(
 	AccShapeVertexPool* vertexPool,
+	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
 	const FlashDictionary& dictionary,
 	const AlignedVector< FlashFillStyle >& fillStyles,
@@ -297,11 +322,12 @@ bool AccShape::create(
 )
 {
 	const AlignedVector< Path >& paths = shape.getPaths();
-	return create(vertexPool, textureCache, dictionary, fillStyles, lineStyles, paths, oddEven);
+	return create(vertexPool, gradientCache, textureCache, dictionary, fillStyles, lineStyles, paths, oddEven);
 }
 
 bool AccShape::create(
 	AccShapeVertexPool* vertexPool,
+	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
 	const FlashDictionary& dictionary,
 	const AlignedVector< FlashFillStyle >& fillStyles,
@@ -310,7 +336,7 @@ bool AccShape::create(
 )
 {
 	const AlignedVector< Path >& paths = canvas.getPaths();
-	return create(vertexPool, textureCache, dictionary, fillStyles, lineStyles, paths, false);
+	return create(vertexPool, gradientCache, textureCache, dictionary, fillStyles, lineStyles, paths, false);
 }
 
 void AccShape::destroy()
@@ -409,7 +435,7 @@ void AccShape::render(
 
 	for (AlignedVector< RenderBatch >::iterator j = m_renderBatches.begin(); j != m_renderBatches.end(); ++j)
 	{
-		if (!j->texture.texture)
+		if (!j->texture)
 		{
 			if (shaderSolid && shaderSolid->getCurrentProgram())
 			{
@@ -434,8 +460,8 @@ void AccShape::render(
 				renderBlock->count = j->primitives.count;
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleTexture, j->texture.texture);
-				renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->texture.clamp ? 1.0f : 0.0f);
+				renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleTexture, j->texture->texture);
+				renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->texture->clamp ? 1.0f : 0.0f);
 				renderBlock->programParams->endParameters(renderContext);
 				renderContext->draw(render::RpOverlay, renderBlock);
 			}

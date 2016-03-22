@@ -5,6 +5,7 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Flash/Path.h"
 #include "Flash/SwfTypes.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashLineStyle.h"
 #include "Flash/FlashFillStyle.h"
 #include "Flash/Action/ActionTypes.h"
@@ -22,6 +23,8 @@ namespace traktor
 	namespace flash
 	{
 
+class FlashBitmap;
+
 /*! \brief Dynamic canvas.
  * \ingroup Flash
  */
@@ -38,7 +41,11 @@ public:
 
 	void clear();
 
-	void beginFill(const FlashFillStyle& fillStyle);
+	void beginFill(const SwfColor& color);
+
+	void beginGradientFill(FlashFillStyle::GradientType gradientType, const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords, const Matrix33& gradientMatrix);
+
+	void beginBitmapFill(FlashBitmap* image, const Matrix33& bitmapMatrix);
 
 	void endFill();
 
@@ -50,6 +57,8 @@ public:
 
 	const Aabb2& getBounds() const { return m_bounds; }
 
+	const FlashDictionary& getDictionary() const { return m_dictionary; }
+
 	const AlignedVector< Path >& getPaths() const { return m_paths; }
 
 	const AlignedVector< FlashLineStyle >& getLineStyles() const { return m_lineStyles; }
@@ -60,6 +69,7 @@ private:
 	int32_t m_cacheTag;
 	int32_t m_dirtyTag;
 	Aabb2 m_bounds;
+	FlashDictionary m_dictionary;
 	AlignedVector< Path > m_paths;
 	AlignedVector< FlashLineStyle > m_lineStyles;
 	AlignedVector< FlashFillStyle > m_fillStyles;

@@ -13,6 +13,7 @@
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashShape.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
+#include "Flash/Acc/AccGradientCache.h"
 #include "Flash/Acc/AccGlyph.h"
 #include "Flash/Acc/AccTextureCache.h"
 #include "Flash/Acc/AccShape.h"
@@ -117,6 +118,7 @@ bool AccDisplayRenderer::create(
 {
 	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
+	m_gradientCache = new AccGradientCache(m_renderSystem);
 	m_textureCache = new AccTextureCache(m_resourceManager, m_renderSystem);
 	m_clearBackground = clearBackground;
 	m_clipToDirtyRegion = clipToDirtyRegion;
@@ -188,6 +190,7 @@ void AccDisplayRenderer::destroy()
 
 	safeDestroy(m_glyph);
 	safeDestroy(m_quad);
+	safeDestroy(m_gradientCache);
 	safeDestroy(m_textureCache);
 	safeDestroy(m_renderTargetGlyphs);
 
@@ -236,7 +239,7 @@ void AccDisplayRenderer::flush()
 
 void AccDisplayRenderer::flushCaches()
 {
-	m_textureCache->clear();
+	m_gradientCache->clear();
 
 	for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 		safeDestroy(i->second.shape);
@@ -406,6 +409,7 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 		accShape = new AccShape(m_shapeResources);
 		if (!accShape->create(
 			m_vertexPool,
+			m_gradientCache,
 			m_textureCache,
 			dictionary,
 			shape.getFillStyles(),
@@ -495,7 +499,8 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 		Ref< AccShape > accShape = new AccShape(m_shapeResources);
 		if (!accShape->create(
 			m_vertexPool,
-			0,
+			m_gradientCache,
+			m_textureCache,
 			dictionary,
 			shape.getFillStyles(),
 			shape.getLineStyles(),
@@ -631,7 +636,7 @@ void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& boun
 	);
 }
 
-void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
 {
 	Ref< AccShape > accShape;
 
@@ -645,8 +650,9 @@ void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const M
 		accShape = new AccShape(m_shapeResources);
 		if (!accShape->create(
 			m_vertexPool,
+			m_gradientCache,
 			m_textureCache,
-			dictionary,
+			canvas.getDictionary(),
 			canvas.getFillStyles(),
 			canvas.getLineStyles(),
 			canvas

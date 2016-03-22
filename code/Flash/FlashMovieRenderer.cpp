@@ -345,7 +345,6 @@ void FlashMovieRenderer::renderSprite(
 	FlashCanvas* canvas = spriteInstance->getCanvas();
 	if (canvas)
 		m_displayRenderer->renderCanvas(
-			*dictionary,
 			transform,
 			*canvas,
 			cxTransform

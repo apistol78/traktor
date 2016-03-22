@@ -8,7 +8,6 @@
 #include "Core/Math/Matrix44.h"
 #include "Flash/Polygon.h"
 #include "Flash/Acc/AccShapeVertexPool.h"
-#include "Flash/Acc/AccTextureCache.h"
 #include "Resource/Proxy.h"
 #include "Render/Types.h"
 
@@ -27,6 +26,8 @@ class VertexBuffer;
 	namespace flash
 	{
 
+class AccBitmapRect;
+class AccGradientCache;
 class AccShapeResources;
 class AccTextureCache;
 class FlashCanvas;
@@ -44,7 +45,7 @@ class AccShape : public Object
 public:
 	struct RenderBatch
 	{
-		AccTextureCache::BitmapRect texture;
+		Ref< AccBitmapRect > texture;
 		render::Primitives primitives;
 	};
 
@@ -54,6 +55,7 @@ public:
 
 	bool create(
 		AccShapeVertexPool* vertexPool,
+		AccGradientCache* gradientCache,
 		AccTextureCache* textureCache,
 		const FlashDictionary& dictionary,
 		const AlignedVector< FlashFillStyle >& fillStyles,
@@ -64,6 +66,7 @@ public:
 
 	bool create(
 		AccShapeVertexPool* vertexPool,
+		AccGradientCache* gradientCache,
 		AccTextureCache* textureCache,
 		const FlashDictionary& dictionary,
 		const AlignedVector< FlashFillStyle >& fillStyles,
@@ -74,6 +77,7 @@ public:
 
 	bool create(
 		AccShapeVertexPool* vertexPool,
+		AccGradientCache* gradientCache,
 		AccTextureCache* textureCache,
 		const FlashDictionary& dictionary,
 		const AlignedVector< FlashFillStyle >& fillStyles,
