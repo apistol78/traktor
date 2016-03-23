@@ -2,6 +2,7 @@
 #define traktor_flash_AccTextureCache_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 
 namespace traktor
 {
@@ -41,11 +42,16 @@ public:
 
 	void destroy();
 
+	void clear();
+
 	Ref< AccBitmapRect > getBitmapTexture(const FlashBitmap& bitmap);
+
+	void freeTexture(render::ISimpleTexture* texture);
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
+	RefArray< render::ISimpleTexture > m_freeTextures;
 };
 
 	}
