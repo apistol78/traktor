@@ -235,7 +235,27 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 		T_OGL_SAFE(glFlush());
 	}
 	else
-		m_data.resize(texturePitch);
+	{
+		m_data.resize(texturePitch, 0);
+
+		for (int i = 0; i < desc.mipCount; ++i)
+		{
+			uint32_t width = std::max(m_width >> i, 1);
+			uint32_t height = std::max(m_height >> i, 1);
+
+			T_OGL_SAFE(glTexImage2D(
+				GL_TEXTURE_2D,
+				i,
+				m_components,
+				width,
+				height,
+				0,
+				m_format,
+				m_type,
+				desc.initialData[i].data ? desc.initialData[i].data : m_data.c_ptr()
+			));
+		}
+	}
 
 	m_mipCount = desc.mipCount;
 	return true;
@@ -281,18 +301,17 @@ void SimpleTextureOpenGLES2::unlock(int level)
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
 	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-	T_OGL_SAFE(glTexImage2D(
+	T_OGL_SAFE(glTexSubImage2D(
 		GL_TEXTURE_2D,
 		level,
-		m_components,
+		0,
+		0,
 		std::max(m_width >> level, 1),
 		std::max(m_height >> level, 1),
-		0,
 		m_format,
 		m_type,
-		&m_data[0]
+		m_data.c_ptr()
 	));
-	T_OGL_SAFE(glFlush());
 }
 
 void SimpleTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
