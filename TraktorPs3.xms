@@ -2459,7 +2459,12 @@
 								<debugArguments/>
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
-								<aggregationItems/>
+								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Extern.agg.lib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+									</item>
+								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
 								<name>ReleaseStatic</name>
@@ -2482,7 +2487,12 @@
 								<debugArguments/>
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
-								<aggregationItems/>
+								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Extern.agg.lib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+									</item>
+								</aggregationItems>
 							</item>
 						</configurations>
 						<items>
