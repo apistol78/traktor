@@ -68,6 +68,7 @@ public:
 		const Palette* srcPalette,
 		const void* T_RESTRICT srcPixels,
 		Color4f* T_RESTRICT dstPixels,
+		int srcPixelPitch,
 		int pixelCount
 	) const;
 
@@ -77,6 +78,7 @@ public:
 		const Color4f* T_RESTRICT srcPixels,
 		const Palette* dstPalette,
 		void* T_RESTRICT dstPixels,
+		int dstPixelPitch,
 		int pixelCount
 	) const;
 

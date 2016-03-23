@@ -291,6 +291,7 @@ void Image::getPixelUnsafe(int32_t x, int32_t y, Color4f& outColor) const
 		m_palette,
 		&m_data[x * m_pixelFormat.getByteSize() + y * m_pitch],
 		&outColor,
+		1,
 		1
 	);
 }
@@ -301,6 +302,7 @@ void Image::setPixelUnsafe(int32_t x, int32_t y, const Color4f& color)
 		&color,
 		m_palette,
 		&m_data[x * m_pixelFormat.getByteSize() + y * m_pitch],
+		1,
 		1
 	);
 }
@@ -319,6 +321,7 @@ void Image::getSpanUnsafe(int32_t y, Color4f* outSpan) const
 		m_palette,
 		&m_data[offset],
 		outSpan,
+		1,
 		m_width
 	);
 }
@@ -330,7 +333,32 @@ void Image::setSpanUnsafe(int32_t y, const Color4f* span)
 		span,
 		m_palette,
 		&m_data[offset],
+		1,
 		m_width
+	);
+}
+
+void Image::getVerticalSpanUnsafe(int32_t x, Color4f* outSpan) const
+{
+	int32_t offset = x * m_pixelFormat.getByteSize();
+	m_pixelFormat.convertTo4f(
+		m_palette,
+		&m_data[offset],
+		outSpan,
+		m_width,
+		m_height
+	);
+}
+
+void Image::setVerticalSpanUnsafe(int32_t x, const Color4f* span)
+{
+	int32_t offset = x * m_pixelFormat.getByteSize();
+	m_pixelFormat.convertFrom4f(
+		span,
+		m_palette,
+		&m_data[offset],
+		m_width,
+		m_height
 	);
 }
 

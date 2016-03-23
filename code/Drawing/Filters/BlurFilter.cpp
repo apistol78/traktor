@@ -1,3 +1,4 @@
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Const.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/BlurFilter.h"
@@ -18,39 +19,77 @@ BlurFilter::BlurFilter(int32_t x, int32_t y)
 void BlurFilter::apply(Image* image) const
 {
 	Ref< Image > imm = image->clone(false);
-	Color4f tmp;
+
+	int32_t w = image->getWidth();
+	int32_t h = image->getHeight();
 
 	// Horizontal pass.
-	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
-		for (int32_t x = 0; x < image->getWidth(); ++x)
+		AlignedVector< Color4f > span(w + m_x * 2);
+		AlignedVector< Color4f > out(w);
+
+		const Scalar invX(1.0f / (m_x * 2.0f + 1.0f));
+
+		for (int32_t y = 0; y < h; ++y)
 		{
-			Color4f acc;
-			for (int32_t dx = -m_x; dx <= m_x; ++dx)
+			image->getSpanUnsafe(y, span.ptr() + m_x);
+
+			for (int32_t x = 0; x < m_x; ++x)
 			{
-				if (!image->getPixel(x + dx, y, tmp))
-					image->getPixel(x, y, tmp);
-				acc += tmp;
+				span[x] = span[m_x];
+				span[x + w + m_x] = span[w + m_x - 1];
 			}
-			acc /= Scalar(m_x * 2 + 1);
-			imm->setPixelUnsafe(x, y, acc);
+
+			for (int32_t x = 0; x < w; ++x)
+				out[x] = span[x + m_x];
+
+			for (int32_t dx = 0; dx < m_x; ++dx)
+			{
+				for (int32_t x = 0; x < w; ++x)
+					out[x] += span[x + m_x - dx];
+				for (int32_t x = 0; x < w; ++x)
+					out[x] += span[x + m_x + dx];
+			}
+
+			for (int32_t x = 0; x < w; ++x)
+				out[x] *= invX;
+
+			imm->setSpanUnsafe(y, out.c_ptr());
 		}
 	}
 
 	// Vertical pass.
-	for (int32_t x = 0; x < image->getWidth(); ++x)
 	{
-		for (int32_t y = 0; y < image->getHeight(); ++y)
+		AlignedVector< Color4f > span(h + m_y * 2);
+		AlignedVector< Color4f > out(h);
+
+		const Scalar invY(1.0f / (m_y * 2.0f + 1.0f));
+
+		for (int32_t x = 0; x < w; ++x)
 		{
-			Color4f acc;
-			for (int32_t dy = -m_y; dy <= m_y; ++dy)
+			imm->getVerticalSpanUnsafe(x, span.ptr() + m_y);
+
+			for (int32_t y = 0; y < m_y; ++y)
 			{
-				if (!imm->getPixel(x, y + dy, tmp))
-					imm->getPixel(x, y, tmp);
-				acc += tmp;
+				span[y] = span[m_y];
+				span[y + h + m_y] = span[h + m_y - 1];
 			}
-			acc /= Scalar(m_y * 2 + 1);
-			image->setPixelUnsafe(x, y, acc);
+
+			for (int32_t y = 0; y < h; ++y)
+				out[y] = span[y + m_y];
+
+			for (int32_t dy = 0; dy < m_y; ++dy)
+			{
+				for (int32_t y = 0; y < h; ++y)
+					out[y] += span[y + m_y - dy];
+				for (int32_t y = 0; y < h; ++y)
+					out[y] += span[y + m_y + dy];
+			}
+
+			for (int32_t y = 0; y < h; ++y)
+				out[y] *= invY;
+
+			image->setVerticalSpanUnsafe(x, out.c_ptr());
 		}
 	}
 }

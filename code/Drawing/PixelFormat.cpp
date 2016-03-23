@@ -671,6 +671,7 @@ void PixelFormat::convertTo4f(
 	const Palette* srcPalette,
 	const void* T_RESTRICT srcPixels,
 	Color4f* T_RESTRICT dstPixels,
+	int srcPixelPitch,
 	int pixelCount
 ) const
 {
@@ -697,34 +698,39 @@ void PixelFormat::convertTo4f(
 
 #if defined(USE_XMM_INTRINSICS)
 		__m128i mx = _mm_set_epi32(amx, bmx, gmx, rmx);
-		for (; ii < pixelCount - 4; ii += 4)
+
+		// Do four horizontal pixels at a time thus cannot pitch.
+		if (srcPixelPitch <= 1)
 		{
-			uint32_t s0 = (*m_unpack)(src + 0);
-			uint32_t s1 = (*m_unpack)(src + 1 * getByteSize());
-			uint32_t s2 = (*m_unpack)(src + 2 * getByteSize());
-			uint32_t s3 = (*m_unpack)(src + 3 * getByteSize());
+			for (; ii < pixelCount - 4; ii += 4)
+			{
+				uint32_t s0 = (*m_unpack)(src + 0);
+				uint32_t s1 = (*m_unpack)(src + 1 * getByteSize());
+				uint32_t s2 = (*m_unpack)(src + 2 * getByteSize());
+				uint32_t s3 = (*m_unpack)(src + 3 * getByteSize());
 
-			__m128i t0_0 = _mm_set_epi32(s0 >> getAlphaShift(), s0 >> getBlueShift(), s0 >> getGreenShift(), s0 >> getRedShift());
-			__m128i t0_1 = _mm_set_epi32(s1 >> getAlphaShift(), s1 >> getBlueShift(), s1 >> getGreenShift(), s1 >> getRedShift());
-			__m128i t0_2 = _mm_set_epi32(s2 >> getAlphaShift(), s2 >> getBlueShift(), s2 >> getGreenShift(), s2 >> getRedShift());
-			__m128i t0_3 = _mm_set_epi32(s3 >> getAlphaShift(), s3 >> getBlueShift(), s3 >> getGreenShift(), s3 >> getRedShift());
+				__m128i t0_0 = _mm_set_epi32(s0 >> getAlphaShift(), s0 >> getBlueShift(), s0 >> getGreenShift(), s0 >> getRedShift());
+				__m128i t0_1 = _mm_set_epi32(s1 >> getAlphaShift(), s1 >> getBlueShift(), s1 >> getGreenShift(), s1 >> getRedShift());
+				__m128i t0_2 = _mm_set_epi32(s2 >> getAlphaShift(), s2 >> getBlueShift(), s2 >> getGreenShift(), s2 >> getRedShift());
+				__m128i t0_3 = _mm_set_epi32(s3 >> getAlphaShift(), s3 >> getBlueShift(), s3 >> getGreenShift(), s3 >> getRedShift());
 
-			__m128i t1_0 = _mm_and_si128(t0_0, mx);
-			__m128i t1_1 = _mm_and_si128(t0_1, mx);
-			__m128i t1_2 = _mm_and_si128(t0_2, mx);
-			__m128i t1_3 = _mm_and_si128(t0_3, mx);
+				__m128i t1_0 = _mm_and_si128(t0_0, mx);
+				__m128i t1_1 = _mm_and_si128(t0_1, mx);
+				__m128i t1_2 = _mm_and_si128(t0_2, mx);
+				__m128i t1_3 = _mm_and_si128(t0_3, mx);
 
-			__m128 fp_0 = _mm_cvtepi32_ps(t1_0);
-			__m128 fp_1 = _mm_cvtepi32_ps(t1_1);
-			__m128 fp_2 = _mm_cvtepi32_ps(t1_2);
-			__m128 fp_3 = _mm_cvtepi32_ps(t1_3);
+				__m128 fp_0 = _mm_cvtepi32_ps(t1_0);
+				__m128 fp_1 = _mm_cvtepi32_ps(t1_1);
+				__m128 fp_2 = _mm_cvtepi32_ps(t1_2);
+				__m128 fp_3 = _mm_cvtepi32_ps(t1_3);
 
-			*dst++ = Color4f(Vector4(fp_0)) * inv;
-			*dst++ = Color4f(Vector4(fp_1)) * inv;
-			*dst++ = Color4f(Vector4(fp_2)) * inv;
-			*dst++ = Color4f(Vector4(fp_3)) * inv;
+				*dst++ = Color4f(Vector4(fp_0)) * inv;
+				*dst++ = Color4f(Vector4(fp_1)) * inv;
+				*dst++ = Color4f(Vector4(fp_2)) * inv;
+				*dst++ = Color4f(Vector4(fp_3)) * inv;
 
-			src += getByteSize() * 4;
+				src += getByteSize() * 4;
+			}
 		}
 #endif
 
@@ -733,19 +739,15 @@ void PixelFormat::convertTo4f(
 			uint32_t s = (*m_unpack)(src);
 
 #if defined(USE_XMM_INTRINSICS)
-
 			__m128i t0 = _mm_set_epi32(s >> getAlphaShift(), s >> getBlueShift(), s >> getGreenShift(), s >> getRedShift());
 			__m128i t1 = _mm_and_si128(t0, mx);
 			__m128 fp = _mm_cvtepi32_ps(t1);
-
 			*dst = Color4f(Vector4(fp)) * inv;
-
 #else
 			uint32_t r = (s >> getRedShift()) & rmx;
 			uint32_t g = (s >> getGreenShift()) & gmx;
 			uint32_t b = (s >> getBlueShift()) & bmx;
 			uint32_t a = (s >> getAlphaShift()) & amx;
-
 			*dst = Color4f(
 				float(r),
 				float(g),
@@ -753,7 +755,7 @@ void PixelFormat::convertTo4f(
 				float(a)
 			) * inv;
 #endif
-			src += getByteSize();
+			src += srcPixelPitch * getByteSize();
 			dst++;
 		}
 	}
@@ -834,7 +836,7 @@ void PixelFormat::convertTo4f(
 
 			*dst = Color4f::loadAligned(clr);
 
-			src += getByteSize();
+			src += srcPixelPitch * getByteSize();
 			dst++;
 		}
 	}
@@ -844,6 +846,7 @@ void PixelFormat::convertFrom4f(
 	const Color4f* T_RESTRICT srcPixels,
 	const Palette* dstPalette,
 	void* T_RESTRICT dstPixels,
+	int dstPixelPitch,
 	int pixelCount
 ) const
 {
@@ -877,7 +880,7 @@ void PixelFormat::convertFrom4f(
 			);
 
 			src++;
-			dst += getByteSize();
+			dst += dstPixelPitch * getByteSize();
 		}
 	}
 	else
@@ -974,7 +977,7 @@ void PixelFormat::convertFrom4f(
 			}
 
 			src++;
-			dst += getByteSize();
+			dst += dstPixelPitch * getByteSize();
 		}
 	}
 }
