@@ -240,6 +240,7 @@ void AccDisplayRenderer::flush()
 void AccDisplayRenderer::flushCaches()
 {
 	m_gradientCache->clear();
+	m_textureCache->clear();
 
 	for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 		safeDestroy(i->second.shape);
