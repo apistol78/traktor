@@ -2,7 +2,6 @@
 #define traktor_drawing_Raster_H
 
 #include "Core/Object.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector2.h"
 
 // import/export mechanism.
@@ -22,6 +21,7 @@ class Color4f;
 	{
 
 class Image;
+class IRasterImpl;
 
 /*! \brief Raster primitives.
  * \ingroup Drawing
@@ -31,39 +31,43 @@ class T_DLLCLASS Raster : public Object
 	T_RTTI_CLASS;
 
 public:
-	Raster(Image* image);
-
-	void drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const Color4f& color);
-
-	void drawPixel(int32_t x, int32_t y, const Color4f& color);
-
-	void drawPixel(int32_t x, int32_t y, const Color4f& color, float alpha);
-
-	void drawCircle(int32_t x, int32_t y, int32_t radius, const Color4f& color);
-
-	void drawFilledCircle(int32_t x, int32_t y, int32_t radius, const Color4f& color);
-
-	void drawRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color4f& color);
-
-	void drawFilledRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color4f& color);
-
-	void drawPolygon(const Vector2* points, uint32_t npoints, const Color4f& color);
-
-	void drawPolyLine(const Vector2* points, uint32_t npoints, const Color4f& color);
-
-private:
-	struct Span
+	enum StrokeCapType
 	{
-		float x;
-		int8_t fillDelta;
+		ScButt,
+		ScSquare,
+		ScRound
 	};
 
-	typedef AlignedVector< Span > spanline_t;
+	Raster(Image* image);
 
-	Ref< Image > m_image;
-	AlignedVector< Raster::spanline_t > m_spanlines;
+	bool valid() const;
 
-	void insertSpan(spanline_t& spanline, const Span& span) const;
+	void clear();
+
+	void moveTo(float x, float y);
+
+	void lineTo(float x, float y);
+
+	void quadricTo(float x1, float y1, float x, float y);
+
+	void quadricTo(float x, float y);
+
+	void cubicTo(float x1, float y1, float x2, float y2, float x, float y);
+
+	void cubicTo(float x2, float y2, float x, float y);
+
+	void close();
+
+	void rect(float x, float y, float width, float height, float radius);
+
+	void circle(float x, float y, float radius);
+
+	void fill(const Color4f& color);
+
+	void stroke(const Color4f& color, float width, StrokeCapType cap);
+
+private:
+	Ref< IRasterImpl > m_impl;
 };
 
 	}

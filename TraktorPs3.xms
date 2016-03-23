@@ -2430,6 +2430,97 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[2]"/>
 				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.agg</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/agg-2.5</sourcePath>
+						<configurations>
+							<item type="Configuration" version="3">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/gpc</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+							</item>
+							<item type="Configuration" version="3">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/gpc</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+							</item>
+						</configurations>
+						<items>
+							<item type="Filter">
+								<name>src</name>
+								<items>
+									<item type="File">
+										<fileName>src/*.cpp</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>include</name>
+								<items>
+									<item type="File">
+										<fileName>include/*.h</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>gpc</name>
+								<items>
+									<item type="File">
+										<fileName>gpc/*.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>gpc/*.h</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
@@ -7786,6 +7877,7 @@
 				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[17]/dependencies/item[4]/project"/>
 	</projects>
 	<aggregations/>
 </object>

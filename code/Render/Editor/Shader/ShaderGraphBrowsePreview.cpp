@@ -73,22 +73,31 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 		std::pair< int, int > position1 = (*i)->getSource()->getNode()->getPosition();
 		std::pair< int, int > position2 = (*i)->getDestination()->getNode()->getPosition();
 		
-		int32_t x1 = ((position1.first - bounds.left) * 64) / bounds.getSize().cx;
-		int32_t y1 = ((position1.second - bounds.top) * 64) / bounds.getSize().cy;
-		int32_t x2 = ((position2.first - bounds.left) * 64) / bounds.getSize().cx;
-		int32_t y2 = ((position2.second - bounds.top) * 64) / bounds.getSize().cy;
+		float x1 = float((position1.first - bounds.left) * 64) / bounds.getSize().cx;
+		float y1 = float((position1.second - bounds.top) * 64) / bounds.getSize().cy;
+		float x2 = float((position2.first - bounds.left) * 64) / bounds.getSize().cx;
+		float y2 = float((position2.second - bounds.top) * 64) / bounds.getSize().cy;
 
-		raster.drawLine(x1, y1, x2, y2, Color4f(0.0f, 0.0f, 0.0f, 0.8f));
+		raster.clear();
+		raster.moveTo(x1, y1);
+		raster.lineTo(x2, y2);
+		raster.stroke(Color4f(0.0f, 0.0f, 0.0f, 0.8f), 1.0f, drawing::Raster::ScRound);
 	}
 
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
 		std::pair< int, int > position = (*i)->getPosition();
 		
-		int32_t x = ((position.first - bounds.left) * 64) / bounds.getSize().cx;
-		int32_t y = ((position.second - bounds.top) * 64) / bounds.getSize().cy;
+		float x = float((position.first - bounds.left) * 64) / bounds.getSize().cx;
+		float y = float((position.second - bounds.top) * 64) / bounds.getSize().cy;
 		
-		raster.drawFilledRectangle(x - 1, y - 1, x + 1, y + 1, Color4f(1.0f, 1.0f, 0.8f, 1.0f));
+		raster.clear();
+		raster.moveTo(x - 1.0f, y - 1.0f);
+		raster.lineTo(x + 1.0f, y - 1.0f);
+		raster.lineTo(x + 1.0f, y + 1.0f);
+		raster.lineTo(x - 1.0f, y + 1.0f);
+		raster.close();
+		raster.fill(Color4f(1.0f, 1.0f, 0.8f, 1.0f));
 	}
 
 	return new ui::Bitmap(shaderGraphThumb);

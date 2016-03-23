@@ -1463,7 +1463,7 @@ struct MethodTrunk_3 < ClassType, void, Argument1Type, Argument2Type, Argument3T
 
 	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
 	{
-		ss << L"void,"; L"," << CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
 	}
 
 	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
