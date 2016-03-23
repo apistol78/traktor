@@ -105,6 +105,12 @@ public:
 
 	/*! \brief Set span of pixels, no boundary checks. */
 	void setSpanUnsafe(int32_t y, const Color4f* span);
+
+	/*! \brief Get vertical span of pixels, no boundary checks. */
+	void getVerticalSpanUnsafe(int32_t x, Color4f* outSpan) const;
+
+	/*! \brief Set vertical span of pixels, no boundary checks. */
+	void setVerticalSpanUnsafe(int32_t x, const Color4f* span);
 	
 	/*! \brief Apply filter on entire image. */
 	void apply(const IImageFilter* imageFilter);
