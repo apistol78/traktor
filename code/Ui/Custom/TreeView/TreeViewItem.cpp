@@ -24,7 +24,7 @@ struct ItemSortPredicate
 {
 	bool operator () (const TreeViewItem* item1, const TreeViewItem* item2) const
 	{
-		return compareIgnoreCase(item1->getText(), item2->getText()) >= 0;
+		return compareIgnoreCase(item1->getText(), item2->getText()) < 0;
 	}
 };
 
