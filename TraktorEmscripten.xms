@@ -3988,7 +3988,12 @@
 								<debugArguments/>
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
-								<aggregationItems/>
+								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>libExtern.agg.bc</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+									</item>
+								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
 								<name>ReleaseStatic</name>
@@ -4011,7 +4016,12 @@
 								<debugArguments/>
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
-								<aggregationItems/>
+								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>libExtern.agg.bc</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+									</item>
+								</aggregationItems>
 							</item>
 						</configurations>
 						<items>

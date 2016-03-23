@@ -12,6 +12,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>libExtern.agg.a</item>
 								<item>libExtern.detour.a</item>
 								<item>libExtern.expat-2.1.0.a</item>
 								<item>libExtern.jpeg-6b.a</item>
@@ -210,6 +211,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
 								<item>Extern.expat-2.1.0.lib</item>
 								<item>Extern.jpeg-6b.lib</item>
@@ -269,6 +271,7 @@
 						<first>DEPLOY_EXTERN_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>Extern.agg.lib</item>
 								<item>Extern.OpenEXR.lib</item>
 								<item>Extern.detour.lib</item>
 								<item>Extern.expat-2.1.0.lib</item>
@@ -379,6 +382,7 @@
 						<first>DEPLOY_EXTERN_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>Extern.agg.lib</item>
 								<item>Extern.OpenEXR.lib</item>
 								<item>Extern.detour.lib</item>
 								<item>Extern.expat-2.1.0.lib</item>
@@ -489,6 +493,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
 								<item>Extern.expat-2.1.0.lib</item>
 								<item>Extern.libflac-1.2.1.lib</item>
@@ -543,6 +548,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>libExtern.agg.bc</item>
 								<item>libExtern.detour.bc</item>
 								<item>libExtern.expat-2.1.0.bc</item>
 								<item>libExtern.libflac-1.2.1.bc</item>
@@ -598,6 +604,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>libExtern.agg.a</item>
 								<item>libExtern.detour.a</item>
 								<item>libExtern.expat-2.1.0.a</item>
 								<item>libExtern.jpeg-6b.a</item>
@@ -657,6 +664,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>libExtern.agg.a</item>
 								<item>libExtern.detour.a</item>
 								<item>libExtern.expat-2.1.0.a</item>
 								<item>libExtern.libflac-1.2.1.a</item>
