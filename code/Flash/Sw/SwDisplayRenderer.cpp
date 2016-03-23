@@ -248,10 +248,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 							Scalar alphaInv = Scalar(1.0f) - alpha;
 
 							for (int32_t x = icx1; x <= icx2; ++x)
-							{
-								m_image->getPixelUnsafe(x, y, target);
-								m_image->setPixelUnsafe(x, y, (color * alpha + target * alphaInv).rgb1());
-							}
+								m_image->setPixelAlphaBlendUnsafe(x, y, color);
 						}
 						else
 						{

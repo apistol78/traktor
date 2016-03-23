@@ -88,11 +88,17 @@ public:
 	/*! \brief Set single pixel. */
 	bool setPixel(int32_t x, int32_t y, const Color4f& color);
 	
+	/*! \brief Alpha blend single pixel. */
+	bool setPixelAlphaBlend(int32_t x, int32_t y, const Color4f& color);
+
 	/*! \brief Get single pixel, no boundary check. */
 	void getPixelUnsafe(int32_t x, int32_t y, Color4f& outColor) const;
 	
 	/*! \brief Set single pixel, no boundary check. */
 	void setPixelUnsafe(int32_t x, int32_t y, const Color4f& color);
+
+	/*! \brief Alpha blend single pixel, no boundary check. */
+	void setPixelAlphaBlendUnsafe(int32_t x, int32_t y, const Color4f& color);
 
 	/*! \brief Get span of pixels, no boundary checks. */
 	void getSpanUnsafe(int32_t y, Color4f* outSpan) const;

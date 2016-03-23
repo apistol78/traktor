@@ -276,6 +276,15 @@ bool Image::setPixel(int32_t x, int32_t y, const Color4f& color)
 	return true;
 }
 
+bool Image::setPixelAlphaBlend(int32_t x, int32_t y, const Color4f& color)
+{
+	if (x < 0 || x >= m_width || y < 0 || y >= m_height)
+		return false;
+
+	setPixelAlphaBlendUnsafe(x, y, color);
+	return true;
+}
+
 void Image::getPixelUnsafe(int32_t x, int32_t y, Color4f& outColor) const
 {
 	m_pixelFormat.convertTo4f(
@@ -294,6 +303,13 @@ void Image::setPixelUnsafe(int32_t x, int32_t y, const Color4f& color)
 		&m_data[x * m_pixelFormat.getByteSize() + y * m_pitch],
 		1
 	);
+}
+
+void Image::setPixelAlphaBlendUnsafe(int32_t x, int32_t y, const Color4f& color)
+{
+	Color4f target;
+	getPixelUnsafe(x, y, target);
+	setPixelUnsafe(x, y, (color * color.getAlpha() + target * (Scalar(1.0f) - color.getAlpha())).rgb1());
 }
 
 void Image::getSpanUnsafe(int32_t y, Color4f* outSpan) const

@@ -64,7 +64,8 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 		if (polygonVertices.empty())
 			continue;
 
-		screenVertices.resize(polygonVertices.size());
+		raster.clear();
+
 		for (uint32_t j = 0; j < polygonVertices.size(); ++j)
 		{
 			const model::Vertex& vertex = vertices[polygonVertices[j]];
@@ -74,19 +75,29 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 
 			float iz = 1.0f / (position.z() * 0.5f + 1.5f);
 
-			screenVertices[j].x = position.x() * iz * 28.0f + 32.0f;
-			screenVertices[j].y = 32.0f - position.y() * iz * 28.0f;
+			if (j == 0)
+			{
+				raster.moveTo(
+					position.x() * iz * 28.0f + 32.0f,
+					32.0f - position.y() * iz * 28.0f
+				);
+			}
+			else
+			{
+				raster.lineTo(
+					position.x() * iz * 28.0f + 32.0f,
+					32.0f - position.y() * iz * 28.0f
+				);
+			}
 		}
+
+		raster.close();
 
 		float shade = 1.0f;
 		if (i->getNormal() != model::c_InvalidIndex)
 			shade = abs(normals[i->getNormal()].z() * 0.3f) + 0.7f;
 
-		raster.drawPolyLine(
-			&screenVertices[0],
-			screenVertices.size(),
-			Color4f(shade, shade, shade, 1.0f)
-		);
+		raster.stroke(Color4f(shade, shade, shade, 1.0f), 1.0f, drawing::Raster::ScRound);
 	}
 
 	return new ui::Bitmap(meshThumb);
