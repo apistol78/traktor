@@ -235,32 +235,24 @@ void ScriptServer::threadDebugger()
 				case ScriptDebuggerControl::AcBreak:
 					{
 						m_scriptDebugger->actionBreak();
-						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
-						m_transport->send(&status);
 					}
 					break;
 
 				case ScriptDebuggerControl::AcContinue:
 					{
 						m_scriptDebugger->actionContinue();
-						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
-						m_transport->send(&status);
 					}
 					break;
 
 				case ScriptDebuggerControl::AcStepInto:
 					{
 						m_scriptDebugger->actionStepInto();
-						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
-						m_transport->send(&status);
 					}
 					break;
 
 				case ScriptDebuggerControl::AcStepOver:
 					{
 						m_scriptDebugger->actionStepOver();
-						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
-						m_transport->send(&status);
 					}
 					break;
 
@@ -297,9 +289,6 @@ void ScriptServer::threadDebugger()
 					break;
 				}
 			}
-
-			ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
-			m_transport->send(&status);
 		}
 	}
 

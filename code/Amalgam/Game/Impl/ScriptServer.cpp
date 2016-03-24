@@ -193,9 +193,6 @@ void ScriptServer::threadDebugger()
 					m_scriptDebugger->setBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
 				else
 					m_scriptDebugger->removeBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
-
-				ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
-				m_transport->send(&status);
 			}
 
 			Ref< ScriptDebuggerControl > control;
@@ -214,32 +211,24 @@ void ScriptServer::threadDebugger()
 				case ScriptDebuggerControl::AcBreak:
 					{
 						m_scriptDebugger->actionBreak();
-						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
-						m_transport->send(&status);
 					}
 					break;
 
 				case ScriptDebuggerControl::AcContinue:
 					{
 						m_scriptDebugger->actionContinue();
-						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
-						m_transport->send(&status);
 					}
 					break;
 
 				case ScriptDebuggerControl::AcStepInto:
 					{
 						m_scriptDebugger->actionStepInto();
-						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
-						m_transport->send(&status);
 					}
 					break;
 
 				case ScriptDebuggerControl::AcStepOver:
 					{
 						m_scriptDebugger->actionStepOver();
-						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
-						m_transport->send(&status);
 					}
 					break;
 

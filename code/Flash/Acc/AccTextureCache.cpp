@@ -139,20 +139,9 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap
 		{
 			if (i->getWidth() == bitmapData->getWidth() && i->getHeight() == bitmapData->getHeight())
 			{
-				render::ITexture::Lock tl;
-				if (i->lock(0, tl))
-				{
-					std::memcpy(
-						tl.bits,
-						bitmapData->getBits(),
-						bitmapData->getWidth() * bitmapData->getHeight() * 4
-					);
-					i->unlock(0);
-
-					texture = *i;
-					m_freeTextures.erase(i);
-					break;
-				}
+				texture = *i;
+				m_freeTextures.erase(i);
+				break;
 			}
 		}
 
@@ -166,15 +155,28 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap
 			desc.mipCount = 1;
 			desc.format = render::TfR8G8B8A8;
 			desc.immutable = false;
-			desc.initialData[0].data = bitmapData->getBits();
-			desc.initialData[0].pitch = desc.width * 4;
-			desc.initialData[0].slicePitch = desc.width * desc.height * 4;
 
 			texture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc));
 		}
 
 		if (!texture)
 			return 0;
+
+		render::ITexture::Lock tl;
+		if (texture->lock(0, tl))
+		{
+			const uint8_t* s = reinterpret_cast< const uint8_t* >(bitmapData->getBits());
+			uint8_t* d = static_cast< uint8_t* >(tl.bits);
+
+			for (uint32_t y = 0; y < bitmapData->getHeight(); ++y)
+			{
+				std::memcpy(d, s, bitmapData->getWidth() * 4);
+				s += bitmapData->getWidth() * 4;
+				d += tl.pitch;
+			}
+				
+			texture->unlock(0);
+		}
 
 		Ref< AccBitmapRect > br = new AccBitmapRect(
 			resource::Proxy< render::ISimpleTexture >(new AccCachedTexture(this, texture)),

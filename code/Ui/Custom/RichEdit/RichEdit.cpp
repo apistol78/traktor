@@ -1408,8 +1408,11 @@ void RichEdit::checkConsistency()
 
 	T_ASSERT (m_lines.back().stop == m_text.size() - 1);
 
-	for (std::vector< uint16_t >::const_iterator i = m_meta.begin(); i != m_meta.end(); ++i)
-		T_ASSERT (*i < m_textAttributes.size());
+	for (std::vector< Meta >::const_iterator i = m_meta.begin(); i != m_meta.end(); ++i)
+	{
+		T_ASSERT (i->tai < m_textAttributes.size());
+		T_ASSERT (i->bgai < m_backgroundAttributes.size());
+	}
 
 	// Save "good" lines so we can spot differences if
 	// next fail.

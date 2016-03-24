@@ -47,14 +47,6 @@ bool TargetScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumbe
 		log::error << L"Target script debugger error; Unable to send while setting breakpoint." << Endl;
 		return false;
 	}
-
-	Ref< ScriptDebuggerStatus > st;
-	if (m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) != net::BidirectionalObjectTransport::RtSuccess)
-	{
-		log::error << L"Target script debugger error; No status response received while setting breakpoint." << Endl;
-		return false;
-	}
-
 	return true;
 }
 
@@ -66,15 +58,6 @@ bool TargetScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNu
 		log::error << L"Target script debugger error; Unable to send while setting breakpoint." << Endl;
 		return false;
 	}
-
-
-	Ref< ScriptDebuggerStatus > st;
-	if (m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) != net::BidirectionalObjectTransport::RtSuccess)
-	{
-		log::error << L"Target script debugger error; No status response received while removing breakpoint." << Endl;
-		return false;
-	}
-
 	return true;
 }
 
@@ -151,14 +134,6 @@ bool TargetScriptDebugger::actionBreak()
 		log::error << L"Target script debugger error; Unable to send while break target." << Endl;
 		return false;
 	}
-
-	Ref< ScriptDebuggerStatus > st;
-	if (m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) != net::BidirectionalObjectTransport::RtSuccess)
-	{
-		log::error << L"Target script debugger error; No status response received while break target." << Endl;
-		return false;
-	}
-
 	return true;
 }
 
@@ -170,14 +145,6 @@ bool TargetScriptDebugger::actionContinue()
 		log::error << L"Target script debugger error; Unable to send while continue target." << Endl;
 		return false;
 	}
-
-	Ref< ScriptDebuggerStatus > st;
-	if (m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) != net::BidirectionalObjectTransport::RtSuccess)
-	{
-		log::error << L"Target script debugger error; No status response received while continue target." << Endl;
-		return false;
-	}
-
 	return true;
 }
 
@@ -189,14 +156,6 @@ bool TargetScriptDebugger::actionStepInto()
 		log::error << L"Target script debugger error; Unable to send while step-into target." << Endl;
 		return false;
 	}
-
-	Ref< ScriptDebuggerStatus > st;
-	if (m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) != net::BidirectionalObjectTransport::RtSuccess)
-	{
-		log::error << L"Target script debugger error; No status response received while step-into target." << Endl;
-		return false;
-	}
-
 	return true;
 }
 
@@ -208,14 +167,6 @@ bool TargetScriptDebugger::actionStepOver()
 		log::error << L"Target script debugger error; Unable to send while step-over target." << Endl;
 		return false;
 	}
-
-	Ref< ScriptDebuggerStatus > st;
-	if (m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) != net::BidirectionalObjectTransport::RtSuccess)
-	{
-		log::error << L"Target script debugger error; No status response received while step-over target." << Endl;
-		return false;
-	}
-
 	return true;
 }
 
