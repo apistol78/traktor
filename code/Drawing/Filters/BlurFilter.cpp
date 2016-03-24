@@ -23,11 +23,11 @@ void BlurFilter::apply(Image* image) const
 	int32_t w = image->getWidth();
 	int32_t h = image->getHeight();
 
+	AlignedVector< Color4f > span(std::max(w + m_x * 2, h + m_y * 2));
+	AlignedVector< Color4f > out(std::max(w, h));
+
 	// Horizontal pass.
 	{
-		AlignedVector< Color4f > span(w + m_x * 2);
-		AlignedVector< Color4f > out(w);
-
 		const Scalar invX(1.0f / (m_x * 2.0f + 1.0f));
 
 		for (int32_t y = 0; y < h; ++y)
@@ -60,9 +60,6 @@ void BlurFilter::apply(Image* image) const
 
 	// Vertical pass.
 	{
-		AlignedVector< Color4f > span(h + m_y * 2);
-		AlignedVector< Color4f > out(h);
-
 		const Scalar invY(1.0f / (m_y * 2.0f + 1.0f));
 
 		for (int32_t x = 0; x < w; ++x)
