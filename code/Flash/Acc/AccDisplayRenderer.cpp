@@ -646,7 +646,10 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanv
 	if (it == m_shapeCache.end() || it->second.tag != canvas.getDirtyTag())
 	{
 		if (it != m_shapeCache.end() && it->second.shape)
+		{
 			it->second.shape->destroy();
+			it->second.shape = 0;
+		}
 
 		accShape = new AccShape(m_shapeResources);
 		if (!accShape->create(
@@ -662,6 +665,7 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanv
 
 		m_shapeCache[tag].unusedCount = 0;
 		m_shapeCache[tag].shape = accShape;
+		m_shapeCache[tag].tag = canvas.getDirtyTag();
 	}
 	else
 	{
