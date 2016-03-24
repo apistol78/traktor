@@ -709,25 +709,26 @@ void AccDisplayRenderer::end()
 	}
 
 	// Don't flush cache if it doesn't contain that many shapes.
-	if (m_shapeCache.size() < c_maxCacheSize)
+	if (m_shapeCache.size() >= c_maxCacheSize)
+	{
+		// Nuke cached shapes which hasn't been used for X number of frames.
+		for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); )
+		{
+			if (i->second.unusedCount++ >= c_maxUnusedCount)
+			{
+				if (i->second.shape)
+					i->second.shape->destroy();
+				i = m_shapeCache.erase(i);
+			}
+			else
+				++i;
+		}
+	}
+	else
 	{
 		// Increment "unused" counter still.
 		for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 			i->second.unusedCount++;
-		return;
-	}
-
-	// Nuke cached shapes which hasn't been used for X number of frames.
-	for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); )
-	{
-		if (i->second.unusedCount++ >= c_maxUnusedCount)
-		{
-			if (i->second.shape)
-				i->second.shape->destroy();
-			i = m_shapeCache.erase(i);
-		}
-		else
-			++i;
 	}
 
 	m_vertexPool->cycleGarbage();
