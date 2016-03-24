@@ -102,7 +102,6 @@ Image::Image(const PixelFormat& pixelFormat, uint32_t width, uint32_t height, Pa
 {
 	m_size = m_height * m_pitch;
 	m_data = allocData(m_size);
-	std::memset(m_data, 0, m_size);
 }
 
 Image::~Image()
