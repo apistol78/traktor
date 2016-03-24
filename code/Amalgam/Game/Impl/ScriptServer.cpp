@@ -285,7 +285,7 @@ void ScriptServer::threadDebugger()
 
 void ScriptServer::debugeeStateChange(script::IScriptDebugger* scriptDebugger)
 {
-	ScriptDebuggerStateChange stateChange;
+	ScriptDebuggerStateChange stateChange(m_scriptDebugger->isRunning());
 	m_transport->send(&stateChange);
 }
 

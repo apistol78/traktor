@@ -55,6 +55,7 @@ public:
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	std::list< IListener* > m_listeners;
+	bool m_running;
 
 	void notifyListeners();
 };

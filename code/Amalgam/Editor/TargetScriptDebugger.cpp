@@ -24,14 +24,16 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetScriptDebugger", TargetScriptDebu
 
 TargetScriptDebugger::TargetScriptDebugger(net::BidirectionalObjectTransport* transport)
 :	m_transport(transport)
+,	m_running(true)
 {
 }
 
 void TargetScriptDebugger::update()
 {
-	Ref< ScriptDebuggerStateChange > debugger;
-	while (m_transport->recv< ScriptDebuggerStateChange >(0, debugger) == net::BidirectionalObjectTransport::RtSuccess)
+	Ref< ScriptDebuggerStateChange > stateChange;
+	while (m_transport->recv< ScriptDebuggerStateChange >(0, stateChange) == net::BidirectionalObjectTransport::RtSuccess)
 	{
+		m_running = stateChange->isRunning();
 		for (std::list< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
 			(*i)->debugeeStateChange(this);
 	}
@@ -138,21 +140,7 @@ bool TargetScriptDebugger::captureObject(uint32_t object, RefArray< script::Vari
 
 bool TargetScriptDebugger::isRunning() const
 {
-	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStatus);
-	if (!m_transport->send(&ctrl))
-	{
-		log::error << L"Target script debugger error; Unable to send while checking running state." << Endl;
-		return false;
-	}
-
-	Ref< ScriptDebuggerStatus > st;
-	if (m_transport->recv< ScriptDebuggerStatus >(c_timeout, st) != net::BidirectionalObjectTransport::RtSuccess)
-	{
-		log::error << L"Target script debugger error; No status response received while checking running state." << Endl;
-		return false;
-	}
-
-	return st->isRunning();
+	return m_running;
 }
 
 bool TargetScriptDebugger::actionBreak()
