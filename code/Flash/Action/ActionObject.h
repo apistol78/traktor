@@ -39,7 +39,7 @@ public:
 
 	explicit ActionObject(ActionContext* context, ActionObjectRelay* relay = 0);
 
-	explicit ActionObject(ActionContext* context, const std::string& prototypeName, ActionObjectRelay* relay = 0);
+	explicit ActionObject(ActionContext* context, const char* prototypeName, ActionObjectRelay* relay = 0);
 
 	explicit ActionObject(ActionContext* context, ActionObject* prototype, ActionObjectRelay* relay = 0);
 
