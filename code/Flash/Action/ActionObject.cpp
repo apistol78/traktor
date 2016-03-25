@@ -25,7 +25,7 @@ ActionObject::ActionObject(ActionContext* context, ActionObjectRelay* relay)
 	setRelay(relay);
 }
 
-ActionObject::ActionObject(ActionContext* context, const std::string& prototypeName, ActionObjectRelay* relay)
+ActionObject::ActionObject(ActionContext* context, const char* prototypeName, ActionObjectRelay* relay)
 :	m_context(context)
 ,	m_readOnly(false)
 {
