@@ -65,7 +65,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	containerTargetConfigurations->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 4));
 
 	m_listBoxTargetConfigurations = new ui::custom::EditList();
-	m_listBoxTargetConfigurations->create(containerTargetConfigurations, ui::ListBox::WsDefault);
+	m_listBoxTargetConfigurations->create(containerTargetConfigurations, ui::ListBox::WsSingle);
 	m_listBoxTargetConfigurations->addEventHandler< ui::custom::EditListEditEvent >(this, &TargetEditor::eventListBoxTargetConfigurationsEdit);
 	m_listBoxTargetConfigurations->addEventHandler< ui::SelectionChangeEvent >(this, &TargetEditor::eventListBoxTargetConfigurationsSelect);
 
@@ -172,7 +172,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	staticAvailFeatures->create(containerAvailFeatures, L"Available");
 
 	m_listBoxAvailFeatures = new ui::ListBox();
-	m_listBoxAvailFeatures->create(containerAvailFeatures, L"", ui::WsClientBorder | ui::ListBox::WsMultiple);
+	m_listBoxAvailFeatures->create(containerAvailFeatures, L"", ui::ListBox::WsMultiple);
 
 	Ref< ui::Container > containerManageFeatures = new ui::Container();
 	containerManageFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"*", L"*,*", 0, 0));
@@ -192,7 +192,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	staticUsedFeatures->create(containerUsedFeatures, L"Using");
 
 	m_listBoxUsedFeatures = new ui::ListBox();
-	m_listBoxUsedFeatures->create(containerUsedFeatures, L"", ui::WsClientBorder | ui::ListBox::WsMultiple);
+	m_listBoxUsedFeatures->create(containerUsedFeatures, L"", ui::ListBox::WsMultiple);
 
 	// Collect all available platforms.
 	db::recursiveFindChildInstances(

@@ -33,7 +33,7 @@ public:
 
 private:
 	Ref< ui::Edit > m_editDictionary;
-	Ref< ui::Edit > m_editStyleSheet;
+	Ref< ui::DropDown > m_dropStyleSheet;
 	Ref< ui::DropDown > m_dropFonts;
 	Ref< ui::Edit > m_editFontSize;
 	Ref< ui::CheckBox > m_checkAutoOpen;
