@@ -20,6 +20,22 @@ namespace traktor
 {
 	namespace editor
 	{
+		namespace
+		{
+
+const struct
+{
+	const wchar_t* id;
+	const wchar_t* path;
+}
+c_styleSheets[] =
+{
+	{ L"EDITOR_SETTINGS_STYLESHEET_LIGHT", L"$(TRAKTOR_HOME)/res/themes/Light/StyleSheet.xss" },
+	{ L"EDITOR_SETTINGS_STYLESHEET_DARK", L"$(TRAKTOR_HOME)/res/themes/Dark/StyleSheet.xss" },
+	{ 0 }
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.GeneralSettingsPage", 0, GeneralSettingsPage, ISettingsPage)
 
@@ -42,8 +58,17 @@ bool GeneralSettingsPage::create(ui::Container* parent, PropertyGroup* settings,
 	Ref< ui::Static > staticStyleSheet = new ui::Static();
 	staticStyleSheet->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_STYLESHEET"));
 
-	m_editStyleSheet = new ui::Edit();
-	m_editStyleSheet->create(containerInner, settings->getProperty< PropertyString >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/themes/Light/StyleSheet.xss"));
+	m_dropStyleSheet = new ui::DropDown();
+	m_dropStyleSheet->create(containerInner);
+
+	int32_t current = 0;
+	for (int32_t i = 0; c_styleSheets[i].id; ++i)
+	{
+		m_dropStyleSheet->add(i18n::Text(c_styleSheets[i].id));
+		if (compareIgnoreCase< std::wstring >(c_styleSheets[i].path, settings->getProperty< PropertyString >(L"Editor.StyleSheet")) == 0)
+			current = i;
+	}
+	m_dropStyleSheet->select(current);
 
 	Ref< ui::Static > staticFont = new ui::Static();
 	staticFont->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_EDITOR_FONT"));
@@ -97,7 +122,7 @@ void GeneralSettingsPage::destroy()
 bool GeneralSettingsPage::apply(PropertyGroup* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
-	settings->setProperty< PropertyString >(L"Editor.StyleSheet", m_editStyleSheet->getText());
+	settings->setProperty< PropertyString >(L"Editor.StyleSheet", c_styleSheets[m_dropStyleSheet->getSelected()].path);
 	settings->setProperty< PropertyString >(L"Editor.Font", m_dropFonts->getSelectedItem());
 	settings->setProperty< PropertyInteger >(L"Editor.FontSize", parseString< int32_t >(m_editFontSize->getText()));
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoOpenRecentlyUsedWorkspace", m_checkAutoOpen->isChecked());

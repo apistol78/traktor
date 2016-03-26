@@ -1017,6 +1017,14 @@
       <second>Settings</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_STYLESHEET_LIGHT</first>
+      <second>Light</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_STYLESHEET_DARK</first>
+      <second>Dark</second>
+    </item>
+    <item>
       <first>EDITOR_WORKSPACE_TITLE</first>
       <second>Workspace</second>
     </item>
