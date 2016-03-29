@@ -17,6 +17,7 @@ FlashFillStyle::FlashFillStyle()
 ,	m_gradientMatrix(Matrix33::identity())
 ,	m_fillBitmap(0)
 ,	m_fillBitmapMatrix(Matrix33::identity())
+,	m_fillBitmapRepeat(false)
 {
 }
 
@@ -84,10 +85,11 @@ bool FlashFillStyle::create(GradientType gradientType, const AlignedVector< Colo
 	return true;
 }
 
-bool FlashFillStyle::create(uint16_t fillBitmap, const Matrix33& fillBitmapMatrix)
+bool FlashFillStyle::create(uint16_t fillBitmap, const Matrix33& fillBitmapMatrix, bool fillBitmapRepeat)
 {
 	m_fillBitmap = fillBitmap;
 	m_fillBitmapMatrix = fillBitmapMatrix;
+	m_fillBitmapRepeat = fillBitmapRepeat;
 	return true;
 }
 
@@ -123,6 +125,7 @@ void FlashFillStyle::serialize(ISerializer& s)
 	s >> Member< Matrix33 >(L"gradientMatrix", m_gradientMatrix);
 	s >> Member< uint16_t >(L"m_fillBitmap", m_fillBitmap);
 	s >> Member< Matrix33 >(L"fillBitmapMatrix", m_fillBitmapMatrix);
+	s >> Member< bool >(L"fillBitmapRepeat", m_fillBitmapRepeat);
 }
 
 void FlashFillStyle::ColorRecord::serialize(ISerializer& s)

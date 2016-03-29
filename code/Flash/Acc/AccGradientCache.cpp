@@ -156,7 +156,6 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 
 		m_cache[hash] = new AccBitmapRect(
 			resource::Proxy< render::ISimpleTexture >(m_gradientsTexture),
-			true,
 			m_currentGradientColumn * 1.0f / c_gradientsWidth,
 			m_nextGradient * 1.0f / c_gradientsHeight + 0.5f / c_gradientsHeight,
 			1.0f / c_gradientsColumns - 1.0f / c_gradientsWidth,
@@ -208,7 +207,6 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 
 		m_cache[hash] = new AccBitmapRect(
 			resource::Proxy< render::ISimpleTexture >(m_gradientsTexture),
-			true,
 			m_currentGradientColumn * 1.0f / c_gradientsWidth + 0.5f / c_gradientsWidth,
 			m_nextGradient * 1.0f / c_gradientsHeight + 0.5f / c_gradientsHeight,
 			(c_gradientsSize - 1) / float(c_gradientsWidth),

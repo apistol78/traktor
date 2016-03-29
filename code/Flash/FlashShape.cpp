@@ -226,7 +226,7 @@ bool FlashShape::create(uint16_t fillBitmap, int32_t width, int32_t height)
 		20.0f, 0.0f, 0.0f,
 		0.0f, 20.0f, 0.0f,
 		0.0f, 0.0f, 1.0f
-	));
+	), true);
 
 	Path path;
 	path.moveTo(0, 0, Path::CmAbsolute);

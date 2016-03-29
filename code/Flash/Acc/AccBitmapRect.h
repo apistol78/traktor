@@ -22,12 +22,10 @@ class AccBitmapRect : public RefCountImpl< IRefCount >
 {
 public:
 	resource::Proxy< render::ISimpleTexture > texture;
-	bool clamp;
 	float rect[4];
 
 	AccBitmapRect()
 	{
-		clamp = false;
 		rect[0] =
 		rect[1] =
 		rect[2] =
@@ -36,7 +34,6 @@ public:
 
 	AccBitmapRect(
 		const resource::Proxy< render::ISimpleTexture >& texture_,
-		bool clamp_,
 		float left,
 		float top,
 		float width,
@@ -44,7 +41,6 @@ public:
 	)
 	{
 		texture = texture_;
-		clamp = clamp_;
 		rect[0] = left;
 		rect[1] = top;
 		rect[2] = width;
@@ -53,7 +49,7 @@ public:
 
 	bool operator == (const AccBitmapRect& rh) const
 	{
-		if (texture != rh.texture || clamp != rh.clamp)
+		if (texture != rh.texture)
 			return false;
 
 		return
