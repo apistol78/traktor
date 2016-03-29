@@ -120,7 +120,6 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap
 
 		Ref< AccBitmapRect > br = new AccBitmapRect(
 			texture,
-			false,
 			bitmapResource->getX() / w,
 			bitmapResource->getY() / h,
 			bitmapResource->getWidth() / w,
@@ -180,7 +179,6 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap
 
 		Ref< AccBitmapRect > br = new AccBitmapRect(
 			resource::Proxy< render::ISimpleTexture >(new AccCachedTexture(this, texture)),
-			false,
 			0.0f,
 			0.0f,
 			1.0f,

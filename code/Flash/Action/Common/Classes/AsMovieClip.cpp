@@ -289,7 +289,7 @@ void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, BitmapDat
 	if (matrix)
 		M = M * matrix->m_v;
 
-	self->createCanvas()->beginBitmapFill(new FlashBitmapImage(bm->getImage()), M);
+	self->createCanvas()->beginBitmapFill(new FlashBitmapImage(bm->getImage()), M, repeat);
 }
 
 void AsMovieClip::MovieClip_beginFill_1(FlashSpriteInstance* self, uint32_t rgb) const

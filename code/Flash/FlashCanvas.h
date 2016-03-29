@@ -45,7 +45,7 @@ public:
 
 	void beginGradientFill(FlashFillStyle::GradientType gradientType, const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords, const Matrix33& gradientMatrix);
 
-	void beginBitmapFill(FlashBitmap* image, const Matrix33& bitmapMatrix);
+	void beginBitmapFill(FlashBitmap* image, const Matrix33& bitmapMatrix, bool repeat);
 
 	void endFill();
 

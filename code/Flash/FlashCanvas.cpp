@@ -55,12 +55,13 @@ void FlashCanvas::beginGradientFill(FlashFillStyle::GradientType gradientType, c
 	m_drawing = true;
 }
 
-void FlashCanvas::beginBitmapFill(FlashBitmap* image, const Matrix33& bitmapMatrix)
+void FlashCanvas::beginBitmapFill(FlashBitmap* image, const Matrix33& bitmapMatrix, bool repeat)
 {
 	uint16_t bitmapId = m_dictionary.addBitmap(image);
 
 	FlashFillStyle style;
-	style.create(bitmapId, bitmapMatrix);
+	style.create(bitmapId, bitmapMatrix, repeat);
+
 	m_fillStyles.push_back(style);
 	m_paths.push_back(Path());
 	m_drawing = true;

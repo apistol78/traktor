@@ -192,6 +192,7 @@ bool AccShape::create(
 		uint16_t lastFillStyle = 0;
 		Color4ub color(255, 255, 255, 255);
 		Ref< AccBitmapRect > texture;
+		bool textureClamp = false;
 
 		for (AlignedVector< Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
 		{
@@ -219,6 +220,7 @@ bool AccShape::create(
 				{
 					texture = gradientCache->getGradientTexture(style);
 					textureMatrix = c_textureTS * style.getGradientMatrix().inverse();
+					textureClamp = true;
 					m_batchFlags |= BfHaveTextured;
 				}
 				else if (colorRecords.size() == 1)
@@ -236,17 +238,19 @@ bool AccShape::create(
 				{
 					texture = textureCache->getBitmapTexture(*bitmap);
 					textureMatrix = scale(1.0f / bitmap->getWidth(), 1.0f / bitmap->getHeight()) * style.getFillBitmapMatrix().inverse();
+					textureClamp = !style.getFillBitmapRepeat();
 					m_batchFlags |= BfHaveTextured;
 				}
 
 				lastFillStyle = j->fillStyle;
 			}
 
-			if (m_renderBatches.empty() || m_renderBatches.back().texture != texture)	// \fixme Clamp?
+			if (m_renderBatches.empty() || m_renderBatches.back().texture != texture || m_renderBatches.back().textureClamp != textureClamp)
 			{
 				m_renderBatches.push_back(RenderBatch());
 				m_renderBatches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
 				m_renderBatches.back().texture = texture;
+				m_renderBatches.back().textureClamp = textureClamp;
 			}
 
 			if (texture)
@@ -461,7 +465,7 @@ void AccShape::render(
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);
 				renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleTexture, j->texture->texture);
-				renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->texture->clamp ? 1.0f : 0.0f);
+				renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->textureClamp ? 1.0f : 0.0f);
 				renderBlock->programParams->endParameters(renderContext);
 				renderContext->draw(render::RpOverlay, renderBlock);
 			}

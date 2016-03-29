@@ -61,7 +61,7 @@ public:
 
 	bool create(GradientType gradientType, const AlignedVector< ColorRecord >& colorRecords, const Matrix33& gradientMatrix);
 
-	bool create(uint16_t fillBitmap, const Matrix33& fillBitmapMatrix);
+	bool create(uint16_t fillBitmap, const Matrix33& fillBitmapMatrix, bool fillBitmapRepeat);
 
 	void transform(const Matrix33& transform, const SwfCxTransform& cxform);
 
@@ -75,6 +75,8 @@ public:
 
 	const Matrix33& getFillBitmapMatrix() const { return m_fillBitmapMatrix; }
 
+	bool getFillBitmapRepeat() const { return m_fillBitmapRepeat; }
+
 	void serialize(ISerializer& s);
 
 private:
@@ -83,6 +85,7 @@ private:
 	Matrix33 m_gradientMatrix;
 	uint16_t m_fillBitmap;
 	Matrix33 m_fillBitmapMatrix;
+	bool m_fillBitmapRepeat;
 };
 
 	}

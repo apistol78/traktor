@@ -47,6 +47,7 @@ public:
 	{
 		Ref< AccBitmapRect > texture;
 		render::Primitives primitives;
+		bool textureClamp;
 	};
 
 	AccShape(AccShapeResources* shapeResources);
