@@ -156,7 +156,7 @@ void AccGlyph::add(
 {
 	T_FATAL_ASSERT (m_vertex != 0);
 
-	if (m_count >= c_glyphCount)
+	if (m_count + m_offset >= c_glyphCount)
 	{
 		log::warning << L"Too many glyphs cached; skipped" << Endl;
 		return;
