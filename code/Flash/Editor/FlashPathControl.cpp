@@ -51,13 +51,12 @@ public:
 		{
 			d /= ln;
 
-			Color4ub tcl(255, 0, 0, cl.a);
-
-			m_canvas.setForeground(tcl);
+			m_canvas.setForeground(Color4ub(255, 0, 0, cl.a));
 			m_canvas.drawLine(
 				toPoint(c0),
 				toPoint(c0 + d * m_tail)
 			);
+			m_canvas.setForeground(Color4ub(0, 255, 0, cl.a));
 			m_canvas.drawLine(
 				toPoint(c1 - d * m_tail),
 				toPoint(c1)
@@ -81,8 +80,6 @@ public:
 
 	void drawCurve(const Vector2& p0, const Vector2& pc, const Vector2& p1, const Color4ub& cl)
 	{
-		Color4ub tcl(255, 0, 0, cl.a);
-
 		Bezier2nd b(p0, pc, p1);
 		for (int32_t t = 0; t < 10; ++t)
 		{
@@ -92,7 +89,13 @@ public:
 			Vector2 c0 = b.evaluate(f0);
 			Vector2 c1 = b.evaluate(f1);
 
-			m_canvas.setForeground((t == 0 || t == 9) ? tcl : cl);
+			if (t == 0)
+				m_canvas.setForeground(Color4ub(255, 0, 0, cl.a));
+			else if (t == 9)
+				m_canvas.setForeground(Color4ub(0, 255, 0, cl.a));
+			else
+				m_canvas.setForeground(cl);
+
 			m_canvas.drawLine(
 				toPoint(project(c0)),
 				toPoint(project(c1))
@@ -108,7 +111,7 @@ public:
 			toPoint(project(t.v[1])),
 			toPoint(project(t.v[2]))
 		};
-		m_canvas.setBackground(Color4ub(255, 255, 0, 40));
+		m_canvas.setBackground(Color4ub(255, 255, 0, 20));
 		m_canvas.fillPolygon(pnts, 3);
 	}
 
@@ -155,10 +158,10 @@ bool compareSegmentsX(const Segment& ls, const Segment& rs)
 	if (ls.v[0].x > rs.v[0].x)
 		return false;
 
-	if (ls.v[1].x < rs.v[1].x)
-		return true;
-	if (ls.v[1].x > rs.v[1].x)
-		return false;
+	//if (ls.v[1].x < rs.v[1].x)
+	//	return true;
+	//if (ls.v[1].x > rs.v[1].x)
+	//	return false;
 
 	return false;
 }
@@ -382,28 +385,24 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 
 		std::sort(m_slabs.begin(), m_slabs.end(), compareSegmentsX);
 
-		uint16_t fillStyle = 0;
+		uint32_t fs = 0;
+		for (size_t i = 0; i < m_slabs.size() - 1; ++i)
+		{
+			Segment& sl = m_slabs[i];
+			Segment& sr = m_slabs[i + 1];
+
+			if (sl.fillStyle1 != fs && sr.fillStyle1 == fs)
+				std::swap(sl, sr);
+
+			fs = sl.fillStyle0;
+		}
+
 		for (size_t i = 0; i < m_slabs.size() - 1; ++i)
 		{
 			const Segment& sl = m_slabs[i];
 			const Segment& sr = m_slabs[i + 1];
 
-			fillStyle = sl.fillStyle0;
-
-			//if (i == 0)
-			//	fillStyle = sl.fillStyle0 ? sl.fillStyle0 : sl.fillStyle1;
-			//else
-			//{
-			//	if (sl.fillStyle0 == fillStyle)
-			//		fillStyle = sl.fillStyle1;
-			//	else
-			//		fillStyle = sl.fillStyle0;
-			//}
-
-			if (mp.x >= sl.v[0].x && mp.x <= sr.v[0].x && mp.y >= sl.v[0].y && mp.y <= sl.v[1].y)
-				log::info << fillStyle << Endl;
-
-			if (fillStyle)
+			if (sl.fillStyle0)
 			{
 				if (sl.v[0].x >= sr.v[0].x && sl.v[1].x >= sr.v[1].x)
 					continue;
@@ -427,7 +426,6 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					p.drawLine(Vector2(sr.v[0].x, y0), Vector2(sr.v[1].x, y1), Color4ub(0, 0, 0, 255));
 
 
-
 				if (sl.curve)
 				{
 					t.v[0] = Vector2(sl.v[0].x, y0);
@@ -437,7 +435,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					il = bool(Line2(t.v[0], t.v[2]).distance(sl.c) >= 0.0f);
 
 					t.type = il ? TcOut : TcIn;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 
 					++tcount;
@@ -452,7 +450,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					ir = bool(Line2(t.v[0], t.v[2]).distance(sr.c) < 0.0f);
 
 					t.type = ir ? TcOut : TcIn;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 
 					++tcount;
@@ -464,7 +462,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = Vector2(sr.v[0].x, y0);
 					t.v[2] = Vector2(sl.v[1].x, y1);
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 					++tcount;
 
@@ -472,7 +470,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = Vector2(sl.v[1].x, y1);
 					t.v[2] = Vector2(sr.v[0].x, y0);
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 					++tcount;
 
@@ -483,7 +481,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = Vector2(sr.v[0].x, y0);
 					t.v[2] = sl.c;
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 					++tcount;
 
@@ -492,7 +490,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = Vector2(sr.v[1].x, y1);
 					t.v[2] = sl.c;
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 					++tcount;
 
@@ -501,7 +499,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = Vector2(sl.v[1].x, y1);
 					t.v[2] = sl.c;
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 					++tcount;
 
@@ -512,7 +510,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = Vector2(sr.v[0].x, y0);
 					t.v[2] = sr.c;
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 					++tcount;
 
@@ -521,7 +519,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = Vector2(sl.v[0].x, y0);
 					t.v[2] = sr.c;
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 					++tcount;
 
@@ -530,7 +528,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = Vector2(sl.v[1].x, y1);
 					t.v[2] = sr.c;
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 					++tcount;
 
@@ -541,7 +539,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = Vector2(sr.v[0].x, y0);
 					t.v[2] = sl.c;
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 					++tcount;
 
@@ -550,7 +548,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = sr.c;
 					t.v[2] = sl.c;
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 
 					++tcount;
@@ -560,7 +558,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = Vector2(sl.v[1].x, y1);
 					t.v[2] = sr.c;
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 					++tcount;
 
@@ -569,7 +567,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					t.v[1] = sl.c;
 					t.v[2] = sr.c;
 					t.type = TcFill;
-					t.fillStyle = fillStyle;
+					t.fillStyle = sl.fillStyle0;
 					p.drawTriangle(t);
 					++tcount;
 
@@ -579,7 +577,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 		}
 	}
 
-	log::info << tcount << L" triangles" << Endl;
+	//log::info << tcount << L" triangles" << Endl;
 }
 
 void visualizeTriangulation(Painter& p, const Path& path, uint16_t fillStyle, const ui::Point& mousePosition)
@@ -608,6 +606,8 @@ void visualizeTriangulation(Painter& p, const Path& path, uint16_t fillStyle, co
 			if (sp.fillStyle0 != /**ii*/fillStyle && sp.fillStyle1 != /**ii*/fillStyle)
 				continue;
 
+			int32_t os = segments.size();
+
 			for (AlignedVector< SubPathSegment >::const_iterator k = sp.segments.begin(); k != sp.segments.end(); ++k)
 			{
 				switch (k->type)
@@ -621,6 +621,8 @@ void visualizeTriangulation(Painter& p, const Path& path, uint16_t fillStyle, co
 						s.fillStyle1 = sp.fillStyle1;
 						s.lineStyle = sp.lineStyle;
 						segments.push_back(s);
+
+						//p.drawLine(s.v[0], s.v[1], Color4ub(0, 0, 0, 255));
 					}
 					break;
 
@@ -634,6 +636,8 @@ void visualizeTriangulation(Painter& p, const Path& path, uint16_t fillStyle, co
 						s.fillStyle1 = sp.fillStyle1;
 						s.lineStyle = sp.lineStyle;
 						segments.push_back(s);
+
+						//p.drawCurve(s.v[0], s.c, s.v[1], Color4ub(0, 0, 0, 255));
 					}
 					break;
 
@@ -641,7 +645,29 @@ void visualizeTriangulation(Painter& p, const Path& path, uint16_t fillStyle, co
 					break;
 				}
 			}
+
+			int32_t oe = segments.size();
+
+			//if ((oe - os) >= 1)
+			//{
+			//	Segment ss = segments[os];
+			//	Segment se = segments[oe];
+
+			//	if (ss.v[0] != se.v[1])
+			//	{
+			//		log::info << L"Sub segment not closed, inserting closing segment." << Endl;
+			//
+			//		Segment b = se;
+			//		b.v[0] = se.v[1];
+			//		b.v[1] = ss.v[0];
+			//		b.curve = false;
+			//		segments.push_back(b);
+
+			//	}
+			//}
+
 		}
+
 
 		if (!segments.empty())
 		{
@@ -731,7 +757,7 @@ void FlashPathControl::eventMouseMove(ui::MouseMoveEvent* event)
 		ui::Size delta = event->getPosition() - m_lastMousePosition;
 		m_lastMousePosition = event->getPosition();
 
-		m_viewOffset -= Vector2(delta.cx, delta.cy);
+		m_viewOffset -= Vector2(delta.cx, delta.cy) * (m_viewScale / 100.0f);
 
 		update();
 	}
@@ -744,7 +770,21 @@ void FlashPathControl::eventMouseMove(ui::MouseMoveEvent* event)
 
 void FlashPathControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
-	m_viewScale += event->getRotation() * 100.0f;
+	if (m_viewScale > 100.0f)
+	{
+		m_viewScale += event->getRotation() * 100.0f;
+		if (m_viewScale < 100.0f)
+			m_viewScale = 100.0f;
+	}
+	else if (m_viewScale > 10.0f)
+	{
+		m_viewScale += event->getRotation() * 10.0f;
+		if (m_viewScale < 10.0f)
+			m_viewScale = 10.0f;
+	}
+	else
+		m_viewScale += event->getRotation();
+
 	if (m_viewScale < 1.0f)
 		m_viewScale = 1.0f;
 

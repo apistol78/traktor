@@ -477,6 +477,22 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 
 		std::sort(m_slabs.begin(), m_slabs.end(), compareSegmentsX);
 
+		// Ensure fill style is consistent across segment, might be swapped due to discrepancies in data.
+		if (!oddEven)
+		{
+			uint32_t fs = 0;
+			for (size_t i = 0; i < m_slabs.size() - 1; ++i)
+			{
+				Segment& sl = m_slabs[i];
+				Segment& sr = m_slabs[i + 1];
+
+				if (sl.fillStyle1 != fs && sr.fillStyle1 == fs)
+					std::swap(sl, sr);
+
+				fs = sl.fillStyle0;
+			}
+		}
+
 		for (size_t i = 0; i < m_slabs.size() - 1; ++i)
 		{
 			Segment& sl = m_slabs[i];
