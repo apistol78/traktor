@@ -61,6 +61,7 @@ ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageS
 ,	m_site(site)
 ,	m_document(document)
 ,	m_compileCountDown(0)
+,	m_foundLineAttribute(0)
 ,	m_debugLineAttribute(0)
 ,	m_debugLineLast(-1)
 {
@@ -173,6 +174,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_edit->addEventHandler< ui::SizeEvent >(this, &ScriptEditorPage::eventScriptSize);
 
 	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
+	m_foundLineAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-found-line"));
 	m_debugLineAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-debug-line"));
 
 	m_searchControl = new SearchControl();
@@ -684,6 +686,8 @@ void ScriptEditorPage::eventSearch(SearchEvent* event)
 			{
 				m_edit->showLine(line);
 				m_edit->placeCaret(m_edit->getLineOffset(line) + int32_t(p));
+				for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
+					m_edit->setBackgroundAttribute(i, (i == line) ? m_foundLineAttribute : 0xffff);
 				break;
 			}
 			++line;
@@ -700,6 +704,8 @@ void ScriptEditorPage::eventSearch(SearchEvent* event)
 				{
 					m_edit->showLine(line);
 					m_edit->placeCaret(m_edit->getLineOffset(line) + int32_t(p));
+					for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
+						m_edit->setBackgroundAttribute(i, (i == line) ? m_foundLineAttribute : 0xffff);
 					break;
 				}
 				++line;
@@ -757,21 +763,6 @@ void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 		}
 	}
 }
-
-//void ScriptEditorPage::eventBreakPoint(ScriptBreakpointEvent* event)
-//{
-//	if (!event->getCurrentFrame())
-//		return;
-//
-//	Guid editScriptId = m_document->getInstance(0)->getGuid();
-//	Guid breakScriptId = event->getCurrentFrame()->getScriptId();
-//
-//	if (editScriptId == breakScriptId)
-//	{
-//		m_edit->showLine(event->getCurrentFrame()->getLine());
-//		m_edit->placeCaret(m_edit->getLineOffset(event->getCurrentFrame()->getLine()));
-//	}
-//}
 
 	}
 }

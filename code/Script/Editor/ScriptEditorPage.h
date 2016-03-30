@@ -111,6 +111,7 @@ private:
 	std::wstring m_findNeedle;
 	std::wstring m_replaceValue;
 	int32_t m_compileCountDown;
+	int32_t m_foundLineAttribute;
 	int32_t m_debugLineAttribute;
 	int32_t m_debugLineLast;
 
