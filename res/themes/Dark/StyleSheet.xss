@@ -570,6 +570,11 @@
 		<!-- Script editor -->
 		<item>
 			<type>traktor.script.ScriptEditorPage</type>
+			<element>background-found-line</element>
+			<color>40, 80, 30, 255</color>
+		</item>
+		<item>
+			<type>traktor.script.ScriptEditorPage</type>
 			<element>background-debug-line</element>
 			<color>80, 80, 20, 255</color>
 		</item>
