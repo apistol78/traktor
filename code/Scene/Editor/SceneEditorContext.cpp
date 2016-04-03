@@ -539,7 +539,10 @@ uint32_t SceneEditorContext::findAdaptersOfType(const TypeInfo& entityType, RefA
 		{
 			EntityAdapter* entityAdapter = *r.first++;
 
-			if (is_type_of(entityType, type_of(entityAdapter->getEntity())))
+			if (
+				is_type_of(entityType, type_of(entityAdapter->getEntity())) ||
+				entityAdapter->getComponent(entityType) != 0
+			)
 			{
 				bool include = true;
 

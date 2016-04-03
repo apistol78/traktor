@@ -116,11 +116,41 @@ bool ScriptPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	Ref< const Script > sourceScript = checked_type_cast< const Script* >(sourceAsset);
+	Ref< const Script > script = checked_type_cast< const Script* >(sourceAsset);
 
-	const std::vector< Guid >& dependencies = sourceScript->getDependencies();
+	// Ensure no double character line breaks.
+	std::wstring source = script->getText();
+	source = replaceAll< std::wstring >(source, L"\r\n", L"\n");
+
+	// Execute preprocessor on script.
+	std::wstring text;
+	if (!m_preprocessor->evaluate(source, text))
+	{
+		log::error << L"Script pipeline failed; unable to preprocess script" << Endl;
+		return false;
+	}
+
+	// Add script dependencies.
+	const std::vector< Guid >& dependencies = script->getDependencies();
 	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		pipelineDepends->addDependency(*i, editor::PdfBuild);
+
+	// Scan for implicit dependencies from script.
+	for (size_t i = text.find_first_of(L"{"); i != text.npos; i = text.find(L"{", i + 1))
+	{
+		if (i + 37 > text.size())
+			break;
+
+		if (text[i + 37] != L'}')
+			continue;
+
+		Guid g;
+		if (g.create(text.substr(i, 38)))
+		{
+			if (pipelineDepends->getSourceDatabase()->getInstance(g))
+				pipelineDepends->addDependency(g, editor::PdfBuild);
+		}
+	}
 
 	return true;
 }
