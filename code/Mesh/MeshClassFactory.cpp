@@ -6,22 +6,30 @@
 #include "Mesh/MeshClassFactory.h"
 #include "Mesh/MeshComponent.h"
 #include "Mesh/MeshEntity.h"
+#include "Mesh/Blend/BlendMesh.h"
 #include "Mesh/Blend/BlendMeshComponent.h"
 #include "Mesh/Blend/BlendMeshEntity.h"
 #include "Mesh/Composite/CompositeMeshEntity.h"
+#include "Mesh/Indoor/IndoorMesh.h"
 #include "Mesh/Indoor/IndoorMeshComponent.h"
 #include "Mesh/Indoor/IndoorMeshEntity.h"
+#include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshComponent.h"
 #include "Mesh/Instance/InstanceMeshEntity.h"
+#include "Mesh/Lod/AutoLodMesh.h"
 #include "Mesh/Lod/AutoLodMeshComponent.h"
 #include "Mesh/Lod/AutoLodMeshEntity.h"
 #include "Mesh/Lod/LodMeshEntity.h"
+#include "Mesh/Partition/PartitionMesh.h"
 #include "Mesh/Partition/PartitionMeshComponent.h"
 #include "Mesh/Partition/PartitionMeshEntity.h"
+#include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshComponent.h"
 #include "Mesh/Skinned/SkinnedMeshEntity.h"
+#include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshComponent.h"
 #include "Mesh/Static/StaticMeshEntity.h"
+#include "Mesh/Stream/StreamMesh.h"
 #include "Mesh/Stream/StreamMeshComponent.h"
 #include "Mesh/Stream/StreamMeshEntity.h"
 #include "Render/ITexture.h"
@@ -129,12 +137,18 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedProgramParameters->addMethod("setStencilReference", &BoxedProgramParameters::setStencilReference);
 	registrar->registerClass(classBoxedProgramParameters);
 
+	Ref< AutoRuntimeClass< IMesh > > classIMesh = new AutoRuntimeClass< IMesh >();
+	registrar->registerClass(classIMesh);
+
 	Ref< AutoRuntimeClass< MeshComponent > > classMeshComponent = new AutoRuntimeClass< MeshComponent >();
 	registrar->registerClass(classMeshComponent);
 
 	Ref< AutoRuntimeClass< MeshEntity > > classMeshEntity = new AutoRuntimeClass< MeshEntity >();
 	classMeshEntity->addMethod("setParameterCallback", MeshEntity_setParameterCallback);
 	registrar->registerClass(classMeshEntity);
+
+	Ref< AutoRuntimeClass< BlendMesh > > classBlendMesh = new AutoRuntimeClass< BlendMesh >();
+	registrar->registerClass(classBlendMesh);
 
 	Ref< AutoRuntimeClass< BlendMeshComponent > > classBlendMeshComponent = new AutoRuntimeClass< BlendMeshComponent >();
 	classBlendMeshComponent->addMethod("setBlendWeights", &BlendMeshComponent::setBlendWeights);
@@ -151,17 +165,26 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCompositeMeshEntity->addMethod("getMeshEntity", &CompositeMeshEntity::getMeshEntity);
 	registrar->registerClass(classCompositeMeshEntity);
 
+	Ref< AutoRuntimeClass< IndoorMesh > > classIndoorMesh = new AutoRuntimeClass< IndoorMesh >();
+	registrar->registerClass(classIndoorMesh);
+
 	Ref< AutoRuntimeClass< IndoorMeshComponent > > classIndoorMeshComponent = new AutoRuntimeClass< IndoorMeshComponent >();
 	registrar->registerClass(classIndoorMeshComponent);
 
 	Ref< AutoRuntimeClass< IndoorMeshEntity > > classIndoorMeshEntity = new AutoRuntimeClass< IndoorMeshEntity >();
 	registrar->registerClass(classIndoorMeshEntity);
 
+	Ref< AutoRuntimeClass< InstanceMesh > > classInstanceMesh = new AutoRuntimeClass< InstanceMesh >();
+	registrar->registerClass(classInstanceMesh);
+
 	Ref< AutoRuntimeClass< InstanceMeshComponent > > classInstanceMeshComponent = new AutoRuntimeClass< InstanceMeshComponent >();
 	registrar->registerClass(classInstanceMeshComponent);
 
 	Ref< AutoRuntimeClass< InstanceMeshEntity > > classInstanceMeshEntity = new AutoRuntimeClass< InstanceMeshEntity >();
 	registrar->registerClass(classInstanceMeshEntity);
+
+	Ref< AutoRuntimeClass< AutoLodMesh > > classAutoLodMesh = new AutoRuntimeClass< AutoLodMesh >();
+	registrar->registerClass(classAutoLodMesh);
 
 	Ref< AutoRuntimeClass< AutoLodMeshComponent > > classAutoLodMeshComponent = new AutoRuntimeClass< AutoLodMeshComponent >();
 	registrar->registerClass(classAutoLodMeshComponent);
@@ -172,11 +195,17 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< LodMeshEntity > > classLodMeshEntity = new AutoRuntimeClass< LodMeshEntity >();
 	registrar->registerClass(classLodMeshEntity);
 
+	Ref< AutoRuntimeClass< PartitionMesh > > classPartitionMesh = new AutoRuntimeClass< PartitionMesh >();
+	registrar->registerClass(classPartitionMesh);
+
 	Ref< AutoRuntimeClass< PartitionMeshComponent > > classPartitionMeshComponent = new AutoRuntimeClass< PartitionMeshComponent >();
 	registrar->registerClass(classPartitionMeshComponent);
 
 	Ref< AutoRuntimeClass< PartitionMeshEntity > > classPartitionMeshEntity = new AutoRuntimeClass< PartitionMeshEntity >();
 	registrar->registerClass(classPartitionMeshEntity);
+
+	Ref< AutoRuntimeClass< SkinnedMesh > > classSkinnedMesh = new AutoRuntimeClass< SkinnedMesh >();
+	registrar->registerClass(classSkinnedMesh);
 
 	Ref< AutoRuntimeClass< SkinnedMeshComponent > > classSkinnedMeshComponent = new AutoRuntimeClass< SkinnedMeshComponent >();
 	registrar->registerClass(classSkinnedMeshComponent);
@@ -184,11 +213,17 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< SkinnedMeshEntity > > classSkinnedMeshEntity = new AutoRuntimeClass< SkinnedMeshEntity >();
 	registrar->registerClass(classSkinnedMeshEntity);
 
+	Ref< AutoRuntimeClass< StaticMesh > > classStaticMesh = new AutoRuntimeClass< StaticMesh >();
+	registrar->registerClass(classStaticMesh);
+
 	Ref< AutoRuntimeClass< StaticMeshComponent > > classStaticMeshComponent = new AutoRuntimeClass< StaticMeshComponent >();
 	registrar->registerClass(classStaticMeshComponent);
 
 	Ref< AutoRuntimeClass< StaticMeshEntity > > classStaticMeshEntity = new AutoRuntimeClass< StaticMeshEntity >();
 	registrar->registerClass(classStaticMeshEntity);
+
+	Ref< AutoRuntimeClass< StreamMesh > > classStreamMesh = new AutoRuntimeClass< StreamMesh >();
+	registrar->registerClass(classStreamMesh);
 
 	Ref< AutoRuntimeClass< StreamMeshComponent > > classStreamMeshComponent = new AutoRuntimeClass< StreamMeshComponent >();
 	classStreamMeshComponent->addMethod("getFrameCount", &StreamMeshComponent::getFrameCount);

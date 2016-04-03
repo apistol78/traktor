@@ -284,11 +284,14 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classVolumeComponent);
 
 	Ref< AutoRuntimeClass< ComponentEntityData > > classComponentEntityData = new AutoRuntimeClass< ComponentEntityData >();
+	classComponentEntityData->addConstructor();
 	classComponentEntityData->addMethod("setComponent", &ComponentEntityData::setComponent);
 	classComponentEntityData->addMethod("getComponent", &ComponentEntityData_getComponent);
 	registrar->registerClass(classComponentEntityData);
 
 	Ref< AutoRuntimeClass< ComponentEntity > > classComponentEntity = new AutoRuntimeClass< ComponentEntity >();
+	classComponentEntity->addConstructor();
+	classComponentEntity->addConstructor< const Transform& >();
 	classComponentEntity->addMethod("setComponent", &ComponentEntity::setComponent);
 	classComponentEntity->addMethod("getComponent", &ComponentEntity_getComponent);
 	registrar->registerClass(classComponentEntity);
