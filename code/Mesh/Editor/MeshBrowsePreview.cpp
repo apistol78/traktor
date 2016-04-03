@@ -42,12 +42,12 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 	Aabb3 boundingBox = model->getBoundingBox();
 
 	Ref< drawing::Image > meshThumb = new drawing::Image(
-		drawing::PixelFormat::getR8G8B8(),
+		drawing::PixelFormat::getR8G8B8A8(),
 		64,
 		64
 	);
 
-	meshThumb->clear(Color4f(0.6f, 0.6f, 0.6f));
+	meshThumb->clear(Color4f(0.6f, 0.6f, 0.6f, 1.0f));
 
 	drawing::Raster raster(meshThumb);
 

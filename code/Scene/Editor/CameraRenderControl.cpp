@@ -306,18 +306,17 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
 
-	/*
 	// Get current camera entity.
 	if (!m_context->findAdaptersOfType(type_of< world::CameraComponent >(), m_cameraEntities))
 		return;
 
 	// Create world render view.
-	world::CameraComponent* cameraEntity = mandatory_non_null_type_cast< world::CameraComponent* >(m_cameraEntities[0]->getEntity());
-	if (cameraEntity->getCameraType() == world::CtOrthographic)
+	world::CameraComponent* cameraComponent = m_cameraEntities[0]->getComponent< world::CameraComponent >();
+	if (cameraComponent->getCameraType() == world::CtOrthographic)
 	{
 		m_worldRenderView.setOrthogonal(
-			cameraEntity->getWidth(),
-			cameraEntity->getHeight(),
+			cameraComponent->getWidth(),
+			cameraComponent->getHeight(),
 			worldRenderSettings->viewNearZ,
 			worldRenderSettings->viewFarZ
 		);
@@ -330,7 +329,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 			sz.cx,
 			sz.cy,
 			float(sz.cx) / sz.cy,
-			cameraEntity->getFieldOfView(),
+			cameraComponent->getFieldOfView(),
 			worldRenderSettings->viewNearZ,
 			worldRenderSettings->viewFarZ
 		);
@@ -338,7 +337,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Get current transformations.
 	Matrix44 projection = m_worldRenderView.getProjection();
-	Matrix44 view = cameraEntity->getTransform(0.0f).inverse().toMatrix44();
+	Matrix44 view = m_cameraEntities[0]->getTransform().inverse().toMatrix44();
 
 	// Render world.
 	if (m_renderView->begin(render::EtCyclop))
@@ -384,7 +383,6 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->end();
 		m_renderView->present();
 	}
-	*/
 
 	event->consume();
 }

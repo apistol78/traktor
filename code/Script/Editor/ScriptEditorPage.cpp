@@ -276,7 +276,13 @@ void ScriptEditorPage::deactivate()
 
 bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
-	return false;
+	int32_t dropOffset = m_edit->getOffsetFromPosition(m_edit->screenToClient(position));
+	if (dropOffset < 0)
+		return false;
+
+	m_edit->placeCaret(dropOffset);
+	m_edit->insert(L"\"" + instance->getGuid().format() + L"\"");
+	return true;
 }
 
 bool ScriptEditorPage::handleCommand(const ui::Command& command)
