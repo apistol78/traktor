@@ -42,8 +42,8 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 
 	drawing::Raster raster(shaderGraphThumb);
 
-	int32_t edgeStyle = raster.defineStyle(Color4f(0.0f, 0.0f, 0.0f, 0.8f));
-	int32_t nodeStyle = raster.defineStyle(Color4f(1.0f, 1.0f, 0.8f, 1.0f));
+	int32_t edgeStyle = raster.defineSolidStyle(Color4f(0.0f, 0.0f, 0.0f, 0.8f));
+	int32_t nodeStyle = raster.defineSolidStyle(Color4f(1.0f, 1.0f, 0.8f, 1.0f));
 
 	const RefArray< Node >& nodes = shaderGraph->getNodes();
 	const RefArray< Edge >& edges = shaderGraph->getEdges();
