@@ -3,6 +3,8 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Editor/IEditor.h"
 #include "Flash/Editor/FlashPreviewControl.h"
 #include "Flash/FlashMovie.h"
@@ -128,7 +130,6 @@ bool FlashPreviewControl::create(
 	);
 #else
 	graphics::CreateDesc desc;
-
 	desc.windowHandle = getIWidget()->getSystemHandle();
 	desc.fullScreen = false;
 	desc.displayMode.width = 16;
@@ -139,11 +140,11 @@ bool FlashPreviewControl::create(
 #if defined(_WIN32)
 	m_graphicsSystem = new graphics::GraphicsSystemGdi();
 #endif
-
 	if (!m_graphicsSystem->create(desc))
 		return false;
 
-	m_displayRenderer = new SwDisplayRenderer();
+	m_image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), 16, 16);
+	m_displayRenderer = new SwDisplayRenderer(m_image, true);
 #endif
 
 	if (soundPlayer)
@@ -288,6 +289,10 @@ void FlashPreviewControl::eventSize(ui::SizeEvent* event)
 		sz.cx,
 		sz.cy
 	);
+
+	m_image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), sz.cx, sz.cy);
+	m_displayRenderer->setImage(m_image);
+
 #endif
 
 	if (m_moviePlayer)
@@ -334,8 +339,18 @@ void FlashPreviewControl::eventPaint(ui::PaintEvent* event)
 	void* bits = surface->lock(desc);
 	if (bits)
 	{
-		m_displayRenderer->setRasterTarget(bits, desc.width, desc.height, desc.pitch);
 		m_moviePlayer->renderFrame();
+
+		const uint32_t* s = reinterpret_cast< const uint32_t* >(m_image->getData());
+		uint32_t* d = reinterpret_cast< uint32_t* >(bits);
+
+		for (uint32_t y = 0; y < desc.height; ++y)
+		{
+			std::memcpy(d, s, desc.width * 4);
+			s += m_image->getWidth();
+			d += desc.pitch / 4;
+		}
+
 		surface->unlock();
 	}
 

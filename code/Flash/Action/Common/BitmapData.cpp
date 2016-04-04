@@ -69,7 +69,7 @@ void BitmapData::applyFilter(const BitmapData* sourceBitmapData, const Rectangle
 
 void BitmapData::draw(FlashSpriteInstance* source)
 {
-	SwDisplayRenderer displayRenderer(m_image);
+	SwDisplayRenderer displayRenderer(m_image, false);
 	FlashMovieRenderer movieRenderer(&displayRenderer);
 
 	Aabb2 frameBounds = source->getLocalBounds();

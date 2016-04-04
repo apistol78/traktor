@@ -1,6 +1,7 @@
 #ifndef traktor_flash_SwDisplayRenderer_H
 #define traktor_flash_SwDisplayRenderer_H
 
+#include "Core/RefArray.h"
 #include "Flash/IDisplayRenderer.h"
 
 // import/export mechanism.
@@ -17,6 +18,7 @@ namespace traktor
 	{
 
 class Image;
+class Raster;
 
 	}
 
@@ -31,9 +33,11 @@ class T_DLLCLASS SwDisplayRenderer : public IDisplayRenderer
 	T_RTTI_CLASS;
 
 public:
-	SwDisplayRenderer(drawing::Image* image);
+	SwDisplayRenderer(drawing::Image* image, bool clearBackground);
 
 	void setTransform(const Matrix33& transform);
+
+	void setImage(drawing::Image* image);
 
 	virtual bool wantDirtyRegion() const T_OVERRIDE T_FINAL;
 	
@@ -68,21 +72,14 @@ public:
 	virtual void end() T_OVERRIDE T_FINAL;
 
 private:
-	struct Span
-	{
-		float x;
-		float dx;
-		uint16_t fillStyle;
-	};
-
-	typedef std::vector< Span > spanline_t;
-
 	Ref< drawing::Image > m_image;
+	RefArray< drawing::Image > m_mask;
+	Ref< drawing::Raster > m_raster;
 	Matrix33 m_transform;
 	Aabb2 m_frameBounds;
-	std::vector< spanline_t > m_spanlines;
-
-	void insertSpan(spanline_t& spanline, float x, float dx, uint16_t fillStyle);
+	bool m_clearBackground;
+	bool m_writeMask;
+	bool m_writeEnable;
 };
 
 	}

@@ -97,8 +97,11 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 		if (i->getNormal() != model::c_InvalidIndex)
 			shade = abs(normals[i->getNormal()].z() * 0.3f) + 0.7f;
 
-		raster.stroke(Color4f(shade, shade, shade, 1.0f), 1.0f, drawing::Raster::ScRound);
+		raster.clearStyles();
+		raster.stroke(raster.defineStyle(Color4f(shade, shade, shade, 1.0f)), 1.0f, drawing::Raster::ScRound);
 	}
+
+	raster.submit();
 
 	return new ui::Bitmap(meshThumb);
 }

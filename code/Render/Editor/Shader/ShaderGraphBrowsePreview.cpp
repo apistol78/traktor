@@ -42,6 +42,9 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 
 	drawing::Raster raster(shaderGraphThumb);
 
+	int32_t edgeStyle = raster.defineStyle(Color4f(0.0f, 0.0f, 0.0f, 0.8f));
+	int32_t nodeStyle = raster.defineStyle(Color4f(1.0f, 1.0f, 0.8f, 1.0f));
+
 	const RefArray< Node >& nodes = shaderGraph->getNodes();
 	const RefArray< Edge >& edges = shaderGraph->getEdges();
 	
@@ -81,7 +84,7 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 		raster.clear();
 		raster.moveTo(x1, y1);
 		raster.lineTo(x2, y2);
-		raster.stroke(Color4f(0.0f, 0.0f, 0.0f, 0.8f), 1.0f, drawing::Raster::ScRound);
+		raster.stroke(edgeStyle, 1.0f, drawing::Raster::ScRound);
 	}
 
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
@@ -97,8 +100,10 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 		raster.lineTo(x + 1.0f, y + 1.0f);
 		raster.lineTo(x - 1.0f, y + 1.0f);
 		raster.close();
-		raster.fill(Color4f(1.0f, 1.0f, 0.8f, 1.0f));
+		raster.fill(nodeStyle, nodeStyle, drawing::Raster::FrOddEven);
 	}
+
+	raster.submit();
 
 	return new ui::Bitmap(shaderGraphThumb);
 }
