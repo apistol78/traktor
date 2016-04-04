@@ -109,9 +109,10 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 		return;
 
 	const AlignedVector< FlashFillStyle >& fillStyles = shape.getFillStyles();
-	AlignedVector< int32_t > fsm;
+	const AlignedVector< FlashLineStyle >& lineStyles = shape.getLineStyles();
+	int32_t lineStyleBase = 0;
 
-	// Convert all fill styles used by this shape.
+	// Convert all styles used by this shape.
 	m_raster->clearStyles();
 	if (!m_writeMask)
 	{
@@ -121,15 +122,28 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 			const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 			if (colorRecords.size() >= 1)
 			{
-				fsm.push_back(m_raster->defineStyle(Color4f(
+				m_raster->defineStyle(Color4f(
 					colorRecords[0].color.red / 255.0f,
 					colorRecords[0].color.green / 255.0f,
 					colorRecords[0].color.blue / 255.0f,
 					colorRecords[0].color.alpha / 255.0f
-				)));
+				));
 			}
 			else
-				fsm.push_back(-1);
+			{
+				m_raster->defineStyle(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+			}
+		}
+		lineStyleBase = int32_t(fillStyles.size());
+		for (uint32_t i = 0; i < uint32_t(lineStyles.size()); ++i)
+		{
+			const FlashLineStyle& style = lineStyles[i];
+			m_raster->defineStyle(Color4f(
+				style.getLineColor().red / 255.0f,
+				style.getLineColor().green / 255.0f,
+				style.getLineColor().blue / 255.0f,
+				style.getLineColor().alpha / 255.0f
+			));
 		}
 	}
 	else
@@ -154,9 +168,9 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 		{
 			int32_t fs0 = j->fillStyle0 - 1;
 			int32_t fs1 = j->fillStyle1 - 1;
+			int32_t ls = j->lineStyle - 1;
 
-			if (!fs0 && !fs1)
-				continue;
+			T_ASSERT (fs0 >= 0 || fs1 >= 0 || ls >= 0);
 
 			m_raster->clear();
 
@@ -170,10 +184,21 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 					m_raster->quadricTo(rasterTransform * points[k->pointsOffset + 1], rasterTransform * points[k->pointsOffset + 2]);
 			}
 
-			if (!m_writeMask)
-				m_raster->fill(fs0, fs1, drawing::Raster::FrNonZero);
-			else
-				m_raster->fill(fs0 >= 0 ? 0 : -1, fs1 >= 0 ? 0 : -1, drawing::Raster::FrNonZero);
+			if (fs0 >= 0 || fs1 >= 0)
+			{
+				if (!m_writeMask)
+					m_raster->fill(fs0, fs1, drawing::Raster::FrNonZero);
+				else
+					m_raster->fill(fs0 >= 0 ? 0 : -1, fs1 >= 0 ? 0 : -1, drawing::Raster::FrNonZero);
+			}
+
+			if (ls >= 0)
+			{
+				if (!m_writeMask)
+					m_raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth(), drawing::Raster::ScSquare);
+				else
+					m_raster->stroke(0, lineStyles[ls].getLineWidth(), drawing::Raster::ScSquare);
+			}
 		}
 
 		m_raster->submit();
@@ -186,6 +211,52 @@ void SwDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, cons
 
 void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor)
 {
+	if (!m_writeEnable)
+		return;
+
+	// Convert all styles used by this shape.
+	m_raster->clearStyles();
+	m_raster->defineStyle(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+
+	int32_t width = m_image->getWidth();
+	int32_t height = m_image->getHeight();
+	float frameWidth = m_frameBounds.mx.x;
+	float frameHeight = m_frameBounds.mx.y;
+
+	Matrix33 rasterTransform = traktor::scale(width / frameWidth, height / frameHeight) * transform * m_transform;
+
+	// Rasterize every path in shape.
+	const AlignedVector< Path >& paths = glyphShape.getPaths();
+	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
+	{
+		const AlignedVector< Vector2 >& points = i->getPoints();
+		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
+		for (AlignedVector< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
+		{
+			int32_t fs0 = j->fillStyle0 - 1;
+			int32_t fs1 = j->fillStyle1 - 1;
+
+			T_ASSERT (fs0 >= 0 || fs1 >= 0);
+
+			m_raster->clear();
+
+			const AlignedVector< SubPathSegment >& segments = j->segments;
+			for (AlignedVector< SubPathSegment >::const_iterator k = segments.begin(); k != segments.end(); ++k)
+			{
+				m_raster->moveTo(rasterTransform * points[k->pointsOffset]);
+				if (k->type == SpgtLinear)
+					m_raster->lineTo(rasterTransform * points[k->pointsOffset + 1]);
+				else
+					m_raster->quadricTo(rasterTransform * points[k->pointsOffset + 1], rasterTransform * points[k->pointsOffset + 2]);
+			}
+
+			if (fs0 >= 0 || fs1 >= 0)
+				m_raster->fill(fs0 >= 0 ? 0 : -1, fs1 >= 0 ? 0 : -1, drawing::Raster::FrNonZero);
+		}
+
+		m_raster->submit();
+	}
+
 }
 
 void SwDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform)
