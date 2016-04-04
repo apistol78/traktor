@@ -342,7 +342,9 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classRaster->addMethod("setImage", &Raster::setImage);
 	classRaster->addMethod("setMask", &Raster::setMask);
 	classRaster->addMethod("clearStyles", &Raster::clearStyles);
-	classRaster->addMethod("defineStyle", &Raster::defineStyle);
+	classRaster->addMethod("defineSolidStyle", &Raster::defineSolidStyle);
+	//classRaster->addMethod("defineLinearGradientStyle", &Raster::defineLinearGradientStyle);
+	//classRaster->addMethod("defineRadialGradientStyle", &Raster::defineRadialGradientStyle);
 	classRaster->addMethod("clear", &Raster::clear);
 	classRaster->addMethod("moveTo", &Raster_moveTo);
 	classRaster->addMethod("lineTo", &Raster_lineTo);

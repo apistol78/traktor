@@ -98,7 +98,7 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 			shade = abs(normals[i->getNormal()].z() * 0.3f) + 0.7f;
 
 		raster.clearStyles();
-		raster.stroke(raster.defineStyle(Color4f(shade, shade, shade, 1.0f)), 1.0f, drawing::Raster::ScRound);
+		raster.stroke(raster.defineSolidStyle(Color4f(shade, shade, shade, 1.0f)), 1.0f, drawing::Raster::ScRound);
 	}
 
 	raster.submit();

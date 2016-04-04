@@ -23,6 +23,7 @@ namespace traktor
 	namespace drawing
 	{
 
+/*! \brief Rasterizer implementation interface. */
 class IRasterImpl : public IRefCount
 {
 public:
@@ -30,7 +31,11 @@ public:
 
 	virtual void clearStyles() = 0;
 
-	virtual int32_t defineStyle(const Color4f& color) = 0;
+	virtual int32_t defineSolidStyle(const Color4f& color) = 0;
+
+	virtual int32_t defineLinearGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors) = 0;
+
+	virtual int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors) = 0;
 
 	virtual void clear() = 0;
 
@@ -59,93 +64,234 @@ public:
 	virtual void submit() = 0;
 };
 
-// AGG interface for custom styles.
-template< typename color_type >
-class StyleHandler
+/*! \brief Style interface. */
+template < typename color_type >
+class IStyle
 {
+public:
+	virtual void generateSpan(color_type* span, int x, int y, unsigned len) const = 0;
 };
 
+/*! \brief Solid style partial template. */
+template < typename color_type >
+class SolidStyle : public IStyle< color_type > {};
+
+/*! \brief Solid style for 8-bit gray color. */
+template < >
+class SolidStyle< agg::gray8 > : public IStyle< agg::gray8 >
+{
+public:
+	SolidStyle(const Color4f& color)
+	:	m_color(agg::int8u(color.getAlpha() * 255.0f))
+	{
+	}
+
+	virtual void generateSpan(agg::gray8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	{
+		for (unsigned i = 0; i < len; ++i)
+			span[i] = m_color;
+	}
+
+private:
+	agg::gray8 m_color;
+};
+
+/*! \brief Solid style for 32-bit colors. */
+template < >
+class SolidStyle< agg::rgba8 > : public IStyle< agg::rgba8 >
+{
+public:
+	SolidStyle(const Color4f& color)
+	:	m_color(
+			agg::int8u(color.getRed() * 255.0f),
+			agg::int8u(color.getGreen() * 255.0f),
+			agg::int8u(color.getBlue() * 255.0f),
+			agg::int8u(color.getAlpha() * 255.0f)
+		)
+	{
+	}
+
+	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	{
+		for (unsigned i = 0; i < len; ++i)
+			span[i] = m_color;
+	}
+
+private:
+	agg::rgba8 m_color;
+};
+
+/*! \brief Linear gradient style for 32-bit colors. */
+class LinearGradientStyle : public IStyle< agg::rgba8 >
+{
+public:
+	LinearGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
+	:	m_gradientMatrix(gradientMatrix)
+	,	m_colors(colors)
+	{
+	}
+
+	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	{
+		float s = m_colors.front().second;
+		float e = m_colors.back().second;
+
+		for (unsigned i = 0; i < len; ++i)
+		{
+			Vector2 pt = m_gradientMatrix * Vector2(float(x + i), float(y));
+			float f = clamp((pt.x - s) / (e - s), 0.0f, 1.0f);
+			
+			Color4f c(lerp(m_colors.front().first, m_colors.back().first, Scalar(f)));
+
+			span[i] = agg::rgba8(
+				agg::int8u(c.getRed() * 255.0f),
+				agg::int8u(c.getGreen() * 255.0f),
+				agg::int8u(c.getBlue() * 255.0f),
+				agg::int8u(c.getAlpha() * 255.0f)
+			);
+		}
+	}
+
+private:
+	Matrix33 m_gradientMatrix;
+	AlignedVector< std::pair< Color4f, float > > m_colors;
+};
+
+/*! \brief Radial gradient style for 32-bit colors. */
+class RadialGradientStyle : public IStyle< agg::rgba8 >
+{
+public:
+	RadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
+	:	m_gradientMatrix(gradientMatrix)
+	,	m_colors(colors)
+	{
+	}
+
+	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	{
+		float s = m_colors.front().second;
+		float e = m_colors.back().second;
+
+		for (unsigned i = 0; i < len; ++i)
+		{
+			Vector2 pt = m_gradientMatrix * Vector2(float(x + i), float(y));
+			float f = clamp(((pt * pt).length() - s) / (e - s), 0.0f, 1.0f);
+
+			Color4f c(lerp(m_colors.front().first, m_colors.back().first, Scalar(f)));
+
+			span[i] = agg::rgba8(
+				agg::int8u(c.getRed() * 255.0f),
+				agg::int8u(c.getGreen() * 255.0f),
+				agg::int8u(c.getBlue() * 255.0f),
+				agg::int8u(c.getAlpha() * 255.0f)
+			);
+		}
+	}
+
+private:
+	Matrix33 m_gradientMatrix;
+	AlignedVector< std::pair< Color4f, float > > m_colors;
+};
+
+/*! \brief Style handler partial template. */
+template< typename color_type >
+class StyleHandler {};
+
+/*! \brief Style handler for 8-bit gray colors. */
 template < >
 class StyleHandler< agg::gray8 >
 {
 public:
 	void clearStyles()
 	{
-		m_colors.resize(0);
+		m_styles.resize(0);
 	}
 
-	int32_t defineStyle(const Color4f& color)
+	int32_t defineSolidStyle(const Color4f& color)
 	{
-		m_colors.push_back(agg::gray8(
-			agg::int8u(color.getAlpha() * 255.0f)
-		));
-		return int32_t(m_colors.size() - 1);
+		m_styles.push_back(new SolidStyle< agg::gray8 >(color));
+		return int32_t(m_styles.size() - 1);
+	}
+
+	int32_t defineLinearGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
+	{
+		return defineSolidStyle(colors[0].first);
+	}
+
+	int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
+	{
+		return defineSolidStyle(colors[0].first);
 	}
 
 	bool is_solid(unsigned style) const
 	{
-		return true;
+		return false;
 	}
 
-    agg::gray8 color(unsigned style) const 
-    {
-        if (style < m_colors.size())
-            return m_colors[style];
-		else
-			return agg::gray8(0);
-    }
+	agg::gray8 color(unsigned style) const
+	{
+		T_FATAL_ERROR;
+		return agg::gray8();
+	}
 
     void generate_span(agg::gray8* span, int x, int y, unsigned len, unsigned style)
     {
-		T_FATAL_ERROR;
-    }
+		m_styles[style]->generateSpan(span, x, y, len);
+	}
 
 private:
-	AlignedVector< agg::gray8 > m_colors;
+	AlignedVector< IStyle< agg::gray8 >* > m_styles;
 };
 
+/*! \brief Style handler for 32-bit colors. */
 template < >
 class StyleHandler< agg::rgba8 >
 {
 public:
 	void clearStyles()
 	{
-		m_colors.resize(0);
+		m_styles.resize(0);
 	}
 
-	int32_t defineStyle(const Color4f& color)
+	int32_t defineSolidStyle(const Color4f& color)
 	{
-		m_colors.push_back(agg::rgba8(
-			agg::int8u(color.getRed() * 255.0f),
-			agg::int8u(color.getGreen() * 255.0f),
-			agg::int8u(color.getBlue() * 255.0f),
-			agg::int8u(color.getAlpha() * 255.0f)
-		));
-		return int32_t(m_colors.size() - 1);
+		m_styles.push_back(new SolidStyle< agg::rgba8 >(color));
+		return int32_t(m_styles.size() - 1);
+	}
+
+	int32_t defineLinearGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
+	{
+		m_styles.push_back(new LinearGradientStyle(gradientMatrix, colors));
+		return int32_t(m_styles.size() - 1);
+	}
+
+	int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
+	{
+		m_styles.push_back(new RadialGradientStyle(gradientMatrix, colors));
+		return int32_t(m_styles.size() - 1);
 	}
 
 	bool is_solid(unsigned style) const
 	{
-		return true;
+		return false;
 	}
 
-    agg::rgba8 color(unsigned style) const 
-    {
-        if (style < m_colors.size())
-            return m_colors[style];
-		else
-			return agg::rgba8(0, 0, 0, 0);
-    }
-
-    void generate_span(agg::rgba8* span, int x, int y, unsigned len, unsigned style)
-    {
+	agg::rgba8 color(unsigned style) const
+	{
 		T_FATAL_ERROR;
-    }
+		return agg::rgba8();
+	}
+
+	void generate_span(agg::rgba8* span, int x, int y, unsigned len, unsigned style)
+	{
+		m_styles[style]->generateSpan(span, x, y, len);
+	}
 
 private:
-	AlignedVector< agg::rgba8 > m_colors;
+	AlignedVector< IStyle< agg::rgba8 >* > m_styles;
 };
 
+/*! \brief Rasterizer implementation. */
 template < typename pixfmt_type, typename color_type >
 class RasterImpl : public RefCountImpl< IRasterImpl >
 {
@@ -167,9 +313,19 @@ public:
 		m_styleHandler.clearStyles();
 	}
 
-	virtual int32_t defineStyle(const Color4f& color) T_OVERRIDE T_FINAL
+	virtual int32_t defineSolidStyle(const Color4f& color) T_OVERRIDE T_FINAL
 	{
-		return m_styleHandler.defineStyle(color);
+		return m_styleHandler.defineSolidStyle(color);
+	}
+
+	virtual int32_t defineLinearGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors) T_OVERRIDE T_FINAL
+	{
+		return m_styleHandler.defineLinearGradientStyle(gradientMatrix, colors);
+	}
+
+	virtual int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors) T_OVERRIDE T_FINAL
+	{
+		return m_styleHandler.defineRadialGradientStyle(gradientMatrix, colors);
 	}
 
 	virtual void clear() T_OVERRIDE T_FINAL
@@ -333,9 +489,19 @@ void Raster::clearStyles()
 	m_impl->clearStyles();
 }
 
-int32_t Raster::defineStyle(const Color4f& color)
+int32_t Raster::defineSolidStyle(const Color4f& color)
 {
-	return m_impl->defineStyle(color);
+	return m_impl->defineSolidStyle(color);
+}
+
+int32_t Raster::defineLinearGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
+{
+	return m_impl->defineLinearGradientStyle(gradientMatrix, colors);
+}
+
+int32_t Raster::defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
+{
+	return m_impl->defineRadialGradientStyle(gradientMatrix, colors);
 }
 
 void Raster::clear()

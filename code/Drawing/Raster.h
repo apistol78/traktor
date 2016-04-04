@@ -2,7 +2,8 @@
 #define traktor_drawing_Raster_H
 
 #include "Core/Object.h"
-#include "Core/Math/Vector2.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Matrix33.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -56,7 +57,11 @@ public:
 
 	void clearStyles();
 
-	int32_t defineStyle(const Color4f& color);
+	int32_t defineSolidStyle(const Color4f& color);
+
+	int32_t defineLinearGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors);
+
+	int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors);
 
 	void clear();
 
