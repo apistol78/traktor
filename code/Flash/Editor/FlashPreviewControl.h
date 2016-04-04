@@ -1,7 +1,7 @@
 #ifndef traktor_flash_FlashPreviewControl_H
 #define traktor_flash_FlashPreviewControl_H
 
-#define T_USE_ACCELERATED_RENDERER 1
+#define T_USE_ACCELERATED_RENDERER 0
 
 #include "Core/Timer/Timer.h"
 #include "Ui/Widget.h"
@@ -20,6 +20,13 @@ namespace traktor
 	{
 
 class Database;
+
+	}
+
+	namespace drawing
+	{
+	
+class Image;
 
 	}
 
@@ -113,6 +120,7 @@ private:
 	Ref< AccDisplayRenderer > m_displayRenderer;
 #else
 	Ref< graphics::IGraphicsSystem > m_graphicsSystem;
+	Ref< drawing::Image > m_image;
 	Ref< SwDisplayRenderer > m_displayRenderer;
 #endif
 	Ref< SoundRenderer > m_soundRenderer;

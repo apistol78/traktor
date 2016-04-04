@@ -38,21 +38,49 @@ public:
 		ScRound
 	};
 
+	enum FillRuleType
+	{
+		FrOddEven,
+		FrNonZero
+	};
+
+	Raster();
+
 	Raster(Image* image);
 
 	bool valid() const;
 
+	bool setImage(Image* image);
+
+	void setMask(Image* image);
+
+	void clearStyles();
+
+	int32_t defineStyle(const Color4f& color);
+
 	void clear();
+
+	void moveTo(const Vector2& p) { moveTo(p.x, p.y); }
 
 	void moveTo(float x, float y);
 
+	void lineTo(const Vector2& p) { lineTo(p.x, p.y); }
+
 	void lineTo(float x, float y);
+
+	void quadricTo(const Vector2& p, const Vector2& c) { quadricTo(p.x, p.y, c.x, c.y); }
 
 	void quadricTo(float x1, float y1, float x, float y);
 
+	void quadricTo(const Vector2& p) { quadricTo(p.x, p.y); }
+
 	void quadricTo(float x, float y);
 
+	void cubicTo(const Vector2& p1, const Vector2& p2, const Vector2& c) { cubicTo(p1.x, p1.y, p2.x, p2.y, c.x, c.y); }
+
 	void cubicTo(float x1, float y1, float x2, float y2, float x, float y);
+
+	void cubicTo(const Vector2& p2, const Vector2& c) { cubicTo(p2.x, p2.y, c.x, c.y); }
 
 	void cubicTo(float x2, float y2, float x, float y);
 
@@ -62,9 +90,11 @@ public:
 
 	void circle(float x, float y, float radius);
 
-	void fill(const Color4f& color);
+	void fill(int32_t style0, int32_t style1, FillRuleType fillRule);
 
-	void stroke(const Color4f& color, float width, StrokeCapType cap);
+	void stroke(int32_t style, float width, StrokeCapType cap);
+
+	void submit();
 
 private:
 	Ref< IRasterImpl > m_impl;

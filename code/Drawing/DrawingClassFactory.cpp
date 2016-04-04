@@ -152,6 +152,16 @@ void Image_copy_2(Image* image, const Image* src, int32_t dx, int32_t dy, int32_
 	image->copy(src, dx, dy, x, y, width, height);
 }
 
+void Raster_moveTo(Raster* self, float x, float y)
+{
+	self->moveTo(x, y);
+}
+
+void Raster_lineTo(Raster* self, float x, float y)
+{
+	self->lineTo(x, y);
+}
+
 void Raster_quadricTo_4(Raster* self, float x1, float y1, float x, float y)
 {
 	self->quadricTo(x1, y1, x, y);
@@ -172,9 +182,14 @@ void Raster_cubicTo_4(Raster* self, float x2, float y2, float x, float y)
 	self->cubicTo(x2, y2, x, y);
 }
 
-void Raster_stroke(Raster* self, const Color4f& color, float width, int32_t cap)
+void Raster_fill(Raster* self, int32_t style0, int32_t style1, int32_t fillRule)
 {
-	self->stroke(color, width, (Raster::StrokeCapType)cap);
+	self->fill(style0, style1, (Raster::FillRuleType)fillRule);
+}
+
+void Raster_stroke(Raster* self, int32_t style, float width, int32_t cap)
+{
+	self->stroke(style, width, (Raster::StrokeCapType)cap);
 }
 
 		}
@@ -319,11 +334,18 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classRaster->addConstant("ScButt", Any::fromInteger(Raster::ScButt));
 	classRaster->addConstant("ScSquare", Any::fromInteger(Raster::ScSquare));
 	classRaster->addConstant("ScRound", Any::fromInteger(Raster::ScRound));
+	classRaster->addConstant("FrOddEven", Any::fromInteger(Raster::FrOddEven));
+	classRaster->addConstant("FrNonZero", Any::fromInteger(Raster::FrNonZero));
+	classRaster->addConstructor();
 	classRaster->addConstructor< drawing::Image* >();
 	classRaster->addMethod("valid", &Raster::valid);
+	classRaster->addMethod("setImage", &Raster::setImage);
+	classRaster->addMethod("setMask", &Raster::setMask);
+	classRaster->addMethod("clearStyles", &Raster::clearStyles);
+	classRaster->addMethod("defineStyle", &Raster::defineStyle);
 	classRaster->addMethod("clear", &Raster::clear);
-	classRaster->addMethod("moveTo", &Raster::moveTo);
-	classRaster->addMethod("lineTo", &Raster::lineTo);
+	classRaster->addMethod("moveTo", &Raster_moveTo);
+	classRaster->addMethod("lineTo", &Raster_lineTo);
 	classRaster->addMethod("quadricTo", &Raster_quadricTo_4);
 	classRaster->addMethod("quadricTo", &Raster_quadricTo_2);
 	classRaster->addMethod("cubicTo", &Raster_cubicTo_6);
@@ -331,8 +353,9 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classRaster->addMethod("close", &Raster::close);
 	classRaster->addMethod("rect", &Raster::rect);
 	classRaster->addMethod("circle", &Raster::circle);
-	classRaster->addMethod("fill", &Raster::fill);
+	classRaster->addMethod("fill", &Raster_fill);
 	classRaster->addMethod("stroke", &Raster_stroke);
+	classRaster->addMethod("submit", &Raster::submit);
 	registrar->registerClass(classRaster);
 }
 
