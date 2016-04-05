@@ -59,6 +59,7 @@ AccGradientCache::AccGradientCache(render::IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 ,	m_currentGradientColumn(0)
 ,	m_nextGradient(0)
+,	m_dirty(false)
 {
 	render::SimpleTextureCreateDesc desc;
 	desc.width = c_gradientsWidth;
@@ -142,18 +143,6 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 			gd[x1 * 4 + 3] = colorRecords.back().color.alpha;
 		}
 
-		render::ITexture::Lock lock;
-		if (m_gradientsTexture->lock(0, lock))
-		{
-			uint8_t* dp = static_cast< uint8_t* >(lock.bits);
-			for (uint32_t y = 0; y < c_gradientsHeight; ++y)
-			{
-				std::memcpy(dp, &m_gradientsData[y * c_gradientsWidth * 4], c_gradientsWidth * 4);
-				dp += lock.pitch;
-			}
-			m_gradientsTexture->unlock(0);
-		}
-
 		m_cache[hash] = new AccBitmapRect(
 			resource::Proxy< render::ISimpleTexture >(m_gradientsTexture),
 			m_currentGradientColumn * 1.0f / c_gradientsWidth,
@@ -163,6 +152,8 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 		);
 
 		m_nextGradient += 1;
+		m_dirty = true;
+
 		return m_cache[hash];
 	}
 	else if (style.getGradientType() == FlashFillStyle::GtRadial)
@@ -193,18 +184,6 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 			gd += c_gradientsWidth * 4;
 		}
 
-		render::ITexture::Lock lock;
-		if (m_gradientsTexture->lock(0, lock))
-		{
-			uint8_t* dp = static_cast< uint8_t* >(lock.bits);
-			for (uint32_t y = 0; y < c_gradientsHeight; ++y)
-			{
-				std::memcpy(dp, &m_gradientsData[y * c_gradientsWidth * 4], c_gradientsWidth * 4);
-				dp += lock.pitch;
-			}
-			m_gradientsTexture->unlock(0);
-		}
-
 		m_cache[hash] = new AccBitmapRect(
 			resource::Proxy< render::ISimpleTexture >(m_gradientsTexture),
 			m_currentGradientColumn * 1.0f / c_gradientsWidth + 0.5f / c_gradientsWidth,
@@ -214,10 +193,31 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 		);
 
 		m_nextGradient += c_gradientsSize;
+		m_dirty = true;
+
 		return m_cache[hash];
 	}
 
 	return 0;
+}
+
+void AccGradientCache::synchronize()
+{
+	if (!m_dirty)
+		return;
+
+	render::ITexture::Lock lock;
+	if (m_gradientsTexture->lock(0, lock))
+	{
+		uint8_t* dp = static_cast< uint8_t* >(lock.bits);
+		for (uint32_t y = 0; y < c_gradientsHeight; ++y)
+		{
+			std::memcpy(dp, &m_gradientsData[y * c_gradientsWidth * 4], c_gradientsWidth * 4);
+			dp += lock.pitch;
+		}
+		m_gradientsTexture->unlock(0);
+		m_dirty = false;
+	}
 }
 
 	}

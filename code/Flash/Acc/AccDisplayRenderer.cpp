@@ -753,6 +753,7 @@ void AccDisplayRenderer::end()
 		m_quad->blit(m_renderContext, m_frameTarget->getColorTexture(0));
 	}
 
+	m_gradientCache->synchronize();
 	m_vertexPool->cycleGarbage();
 	m_renderContext = 0;
 }
