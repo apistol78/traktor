@@ -262,25 +262,9 @@ bool FlashShape::create(uint16_t fillBitmap, int32_t width, int32_t height)
 	path.lineTo(0, 0, Path::CmAbsolute);
 	path.end(1, 1, 0);
 
+	m_paths.push_back(path);
 	m_shapeBounds = path.getBounds();
-	m_paths.push_back(path);
-
 	return true;
-}
-
-void FlashShape::addPath(const Path& path)
-{
-	m_paths.push_back(path);
-}
-
-void FlashShape::addFillStyle(const FlashFillStyle& fillStyle)
-{
-	m_fillStyles.push_back(fillStyle);
-}
-
-void FlashShape::addLineStyle(const FlashLineStyle& lineStyle)
-{
-	m_lineStyles.push_back(lineStyle);
 }
 
 void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const SwfCxTransform& cxform)
