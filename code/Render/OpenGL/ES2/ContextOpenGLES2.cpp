@@ -313,9 +313,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 		return 0;
 	}
 
-	//if (!eglSurfaceAttrib(context->m_display, context->m_surface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_DESTROYED))
-	//	log::warning << L"Unable to specify swap behaviour on EGL surface; might affect performance." << Endl;
-	if (!eglSurfaceAttrib(context->m_display, context->m_surface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_PRESERVED))
+	if (!eglSurfaceAttrib(context->m_display, context->m_surface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_DESTROYED))
 		log::warning << L"Unable to specify swap behaviour on EGL surface; might affect performance." << Endl;
 
 #elif defined(__IOS__)
