@@ -58,11 +58,17 @@ public:
 		uint8_t maskReference
 	);
 
+	void blit(
+		render::RenderContext* renderContext,
+		render::ITexture* texture
+	);
+
 private:
 	resource::Proxy< render::Shader > m_shaderSolid;
 	resource::Proxy< render::Shader > m_shaderTextured;
 	resource::Proxy< render::Shader > m_shaderIncrementMask;
 	resource::Proxy< render::Shader > m_shaderDecrementMask;
+	resource::Proxy< render::Shader > m_shaderBlit;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 };
 

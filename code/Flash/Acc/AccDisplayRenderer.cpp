@@ -271,6 +271,31 @@ void AccDisplayRenderer::begin(
 {
 	bool viewSizeChanged = bool(viewWidth != m_viewSize.x() || viewHeight != m_viewSize.y());
 
+	if (m_clipToDirtyRegion && (viewSizeChanged || !m_frameTarget))
+	{
+		safeDestroy(m_frameTarget);
+
+		render::RenderTargetSetCreateDesc rtscd;
+		rtscd.count = 1;
+		rtscd.width = viewWidth;
+		rtscd.height = viewHeight;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = true;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.ignoreStencil = false;
+		rtscd.targets[0].format = render::TfR8G8B8A8;
+
+		m_frameTarget = m_renderSystem->createRenderTargetSet(rtscd);
+	}
+
+	if (m_frameTarget)
+	{
+		render::TargetBeginRenderBlock* renderBlock = m_renderContext->alloc< render::TargetBeginRenderBlock >("Flash begin target");
+		renderBlock->renderTargetSet = m_frameTarget;
+		renderBlock->renderTargetIndex = 0;
+		m_renderContext->draw(render::RpOverlay, renderBlock);
+	}
+
 	m_frameBounds.set(frameBounds.mn.x, frameBounds.mn.y, frameBounds.mx.x, frameBounds.mx.y);
 	m_frameTransform = frameTransform;
 	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
@@ -335,7 +360,6 @@ void AccDisplayRenderer::begin(
 			if (m_clearBackground)
 			{
 				SwfCxTransform clearCxForm = { { 0.0f, backgroundColor.red / 255.0f }, { 0.0f, backgroundColor.green / 255.0f }, { 0.0f, backgroundColor.blue / 255.0f }, { 0.0f, 1.0f } };
-				//SwfCxTransform clearCxForm = { { 0.0f, (rand() & 255) / 255.0f }, { 0.0f, (rand() & 255) / 255.0f }, { 0.0f, (rand() & 255) / 255.0f }, { 0.0f, 1.0f } };
 				renderQuad(Matrix33::identity(), m_dirtyRegion, clearCxForm);
 			}
 		}
@@ -729,6 +753,13 @@ void AccDisplayRenderer::end()
 		// Increment "unused" counter still.
 		for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 			i->second.unusedCount++;
+	}
+
+	if (m_frameTarget)
+	{
+		render::TargetEndRenderBlock* renderBlock = m_renderContext->alloc< render::TargetEndRenderBlock >("Flash end target");
+		m_renderContext->draw(render::RpOverlay, renderBlock);
+		m_quad->blit(m_renderContext, m_frameTarget->getColorTexture(0));
 	}
 
 	m_vertexPool->cycleGarbage();

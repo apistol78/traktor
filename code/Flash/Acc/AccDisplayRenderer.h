@@ -139,6 +139,7 @@ private:
 	RefArray< render::RenderContext > m_renderContexts;
 	Ref< render::RenderContext > m_renderContext;
 	Ref< render::RenderTargetSet > m_renderTargetGlyphs;
+	Ref< render::RenderTargetSet > m_frameTarget;
 	Ref< AccShapeResources > m_shapeResources;
 	Ref< AccShapeVertexPool > m_vertexPool;
 	Ref< AccShapeRenderer > m_shapeRenderer;
