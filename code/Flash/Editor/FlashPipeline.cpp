@@ -55,7 +55,7 @@ struct AtlasBucket
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 45, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 47, FlashPipeline, editor::IPipeline)
 
 FlashPipeline::FlashPipeline()
 :	m_generateMips(false)
@@ -214,6 +214,9 @@ bool FlashPipeline::buildOutput(
 			return false;
 		}
 	}
+
+	// Generate triangles of every shape in movie.
+	FlashOptimizer().triangulate(movie);
 
 	// Replace all bitmaps with resource references to textures.
 	SmallMap< uint16_t, Ref< FlashBitmap > > bitmaps = movie->getBitmaps();

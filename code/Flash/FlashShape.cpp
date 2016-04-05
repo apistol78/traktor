@@ -6,16 +6,42 @@
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashShapeInstance.h"
 #include "Flash/Path.h"
 #include "Flash/SwfMembers.h"
+#include "Flash/Triangulator.h"
 
 namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+class MemberTriangle : public MemberComplex
+{
+public:
+	MemberTriangle(const wchar_t* const name, Triangle& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	{
+		s >> MemberStaticArray< Vector2, 3 >(L"v", m_ref.v);
+		s >> Member< uint8_t >(L"type", m_ref.type);
+		s >> Member< uint16_t >(L"fillStyle", m_ref.fillStyle);
+	}
+
+private:
+	Triangle& m_ref;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashShape", 0, FlashShape, FlashCharacter)
 
@@ -302,6 +328,98 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 		m_shapeBounds.contain(transform * shapeExtents[i]);
 }
 
+void FlashShape::triangulate(bool oddEven)
+{
+	AlignedVector< Segment > segments;
+	Triangulator triangulator;
+	Segment s;
+
+	m_triangles.resize(0);
+
+	for (AlignedVector< Path >::const_iterator i = m_paths.begin(); i != m_paths.end(); ++i)
+	{
+		const AlignedVector< Vector2 >& points = i->getPoints();
+		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
+
+		std::set< uint16_t > fillStyles;
+		for (uint32_t j = 0; j < subPaths.size(); ++j)
+		{
+			const SubPath& sp = subPaths[j];
+			if (sp.fillStyle0)
+				fillStyles.insert(sp.fillStyle0);
+			if (sp.fillStyle1)
+				fillStyles.insert(sp.fillStyle1);
+		}
+
+		for (std::set< uint16_t >::const_iterator ii = fillStyles.begin(); ii != fillStyles.end(); ++ii)
+		{
+			for (uint32_t j = 0; j < subPaths.size(); ++j)
+			{
+				const SubPath& sp = subPaths[j];
+				if (sp.fillStyle0 != *ii && sp.fillStyle1 != *ii)
+					continue;
+
+				for (AlignedVector< SubPathSegment >::const_iterator k = sp.segments.begin(); k != sp.segments.end(); ++k)
+				{
+					switch (k->type)
+					{
+					case SpgtLinear:
+						{
+							s.v[0] = points[k->pointsOffset];
+							s.v[1] = points[k->pointsOffset + 1];
+							s.curve = false;
+							s.fillStyle0 = sp.fillStyle0;
+							s.fillStyle1 = sp.fillStyle1;
+							s.lineStyle = sp.lineStyle;
+							segments.push_back(s);
+						}
+						break;
+
+					case SpgtQuadratic:
+						{
+							s.v[0] = points[k->pointsOffset];
+							s.v[1] = points[k->pointsOffset + 2];
+							s.c = points[k->pointsOffset + 1];
+							s.curve = true;
+							s.fillStyle0 = sp.fillStyle0;
+							s.fillStyle1 = sp.fillStyle1;
+							s.lineStyle = sp.lineStyle;
+							segments.push_back(s);
+						}
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+
+			if (!segments.empty())
+			{
+				uint32_t from = m_triangles.size();
+
+				triangulator.triangulate(segments, *ii, oddEven, m_triangles);
+				segments.resize(0);
+
+				uint32_t to = m_triangles.size();
+
+				// Transform each new triangle with path's transform.
+				for (uint32_t ti = from; ti < to; ++ti)
+				{
+					m_triangles[ti].v[0] = i->getTransform() * m_triangles[ti].v[0];
+					m_triangles[ti].v[1] = i->getTransform() * m_triangles[ti].v[1];
+					m_triangles[ti].v[2] = i->getTransform() * m_triangles[ti].v[2];
+				}
+			}
+		}
+	}
+}
+
+void FlashShape::discardPaths()
+{
+	m_paths.clear();
+}
+
 Ref< FlashCharacterInstance > FlashShape::createInstance(
 	ActionContext* context,
 	FlashDictionary* dictionary,
@@ -323,6 +441,7 @@ void FlashShape::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Path, MemberComposite< Path > >(L"paths", m_paths);
 	s >> MemberAlignedVector< FlashFillStyle, MemberComposite< FlashFillStyle > >(L"fillStyles", m_fillStyles);
 	s >> MemberAlignedVector< FlashLineStyle, MemberComposite< FlashLineStyle > >(L"lineStyles", m_lineStyles);
+	s >> MemberAlignedVector< Triangle, MemberTriangle >(L"triangles", m_triangles);
 }
 
 	}

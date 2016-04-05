@@ -54,6 +54,7 @@ private:
 	AutoPtr< uint8_t, AllocFreeAlign > m_buffer;
 	GLintptr m_lockOffset;
 	GLsizeiptr m_lockSize;
+	bool m_dirty;
 };
 
 	}

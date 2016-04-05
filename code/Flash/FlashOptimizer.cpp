@@ -5,6 +5,7 @@
 #include "Core/Misc/String.h"
 #include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashDictionary.h"
+#include "Flash/FlashFont.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieRenderer.h"
@@ -283,6 +284,31 @@ Ref< FlashMovie > FlashOptimizer::merge(const FlashMovie* movie) const
 	traverse(queue, movie, movieClip, Matrix33::identity(), c_cxfIdentity, SbmDefault);
 
 	return outputMovie;
+}
+
+void FlashOptimizer::triangulate(FlashMovie* movie) const
+{
+	const SmallMap< uint16_t, Ref< FlashCharacter > >& characters = movie->getCharacters();
+	for (SmallMap< uint16_t, Ref< FlashCharacter > >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+	{
+		FlashShape* shape = dynamic_type_cast< FlashShape* >(i->second);
+		if (shape)
+		{
+			shape->triangulate(false);
+			shape->discardPaths();
+		}
+	}
+
+	const SmallMap< uint16_t, Ref< FlashFont > >& fonts = movie->getFonts();
+	for (SmallMap< uint16_t, Ref< FlashFont > >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
+	{
+		const RefArray< FlashShape >& glyphShapes = i->second->getShapes();
+		for (RefArray< FlashShape >::const_iterator j = glyphShapes.begin(); j != glyphShapes.end(); ++j)
+		{
+			(*j)->triangulate(true);
+			(*j)->discardPaths();
+		}
+	}
 }
 
 	}

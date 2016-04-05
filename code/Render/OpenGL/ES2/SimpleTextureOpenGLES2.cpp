@@ -231,8 +231,6 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 				));
 			}
 		}
-		
-		T_OGL_SAFE(glFlush());
 	}
 	else
 	{

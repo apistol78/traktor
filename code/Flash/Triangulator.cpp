@@ -6,7 +6,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Line2.h"
 #include "Core/Math/MathUtils.h"
-#include "Flash/Acc/Triangulator.h"
+#include "Flash/Triangulator.h"
 
 namespace traktor
 {

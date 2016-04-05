@@ -432,15 +432,12 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 	if (it == m_shapeCache.end())
 	{
 		accShape = new AccShape(m_shapeResources);
-		if (!accShape->create(
+		if (!accShape->createFromShape(
 			m_vertexPool,
 			m_gradientCache,
 			m_textureCache,
 			dictionary,
-			shape.getFillStyles(),
-			shape.getLineStyles(),
-			shape,
-			false
+			shape
 		))
 			return;
 
@@ -522,15 +519,12 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 	if (it1 == m_glyphCache.end())
 	{
 		Ref< AccShape > accShape = new AccShape(m_shapeResources);
-		if (!accShape->create(
+		if (!accShape->createFromGlyph(
 			m_vertexPool,
 			m_gradientCache,
 			m_textureCache,
 			dictionary,
-			shape.getFillStyles(),
-			shape.getLineStyles(),
-			shape,
-			true
+			shape
 		))
 		{
 			T_DEBUG(L"Glyph tesselation failed");
@@ -676,13 +670,10 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanv
 		}
 
 		accShape = new AccShape(m_shapeResources);
-		if (!accShape->create(
+		if (!accShape->createFromCanvas(
 			m_vertexPool,
 			m_gradientCache,
 			m_textureCache,
-			canvas.getDictionary(),
-			canvas.getFillStyles(),
-			canvas.getLineStyles(),
 			canvas
 		))
 			return;
