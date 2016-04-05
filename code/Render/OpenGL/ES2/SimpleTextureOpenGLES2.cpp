@@ -146,6 +146,7 @@ SimpleTextureOpenGLES2::SimpleTextureOpenGLES2(ContextOpenGLES2* context)
 :	m_context(context)
 ,	m_textureName(0)
 ,	m_pot(false)
+,	m_dirty(-1)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_pixelSize(0)
@@ -296,26 +297,30 @@ bool SimpleTextureOpenGLES2::lock(int level, Lock& lock)
 
 void SimpleTextureOpenGLES2::unlock(int level)
 {
-	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
-	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
-	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-	T_OGL_SAFE(glTexSubImage2D(
-		GL_TEXTURE_2D,
-		level,
-		0,
-		0,
-		std::max(m_width >> level, 1),
-		std::max(m_height >> level, 1),
-		m_format,
-		m_type,
-		m_data.c_ptr()
-	));
+	m_dirty = level;
 }
 
 void SimpleTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
+
+	if (m_dirty >= 0)
+	{
+		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+		T_OGL_SAFE(glTexSubImage2D(
+			GL_TEXTURE_2D,
+			m_dirty,
+			0,
+			0,
+			std::max(m_width >> m_dirty, 1),
+			std::max(m_height >> m_dirty, 1),
+			m_format,
+			m_type,
+			m_data.c_ptr()
+		));
+		m_dirty = -1;
+	}
 
 	GLenum minFilter = GL_NEAREST;
 	if (m_mipCount > 1)

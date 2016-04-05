@@ -50,6 +50,7 @@ private:
 	Ref< ContextOpenGLES2 > m_context;
 	GLuint m_textureName;
 	bool m_pot;
+	int m_dirty;
 	int m_width;
 	int m_height;
 	int m_pixelSize;
