@@ -381,7 +381,8 @@ void AccDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Ma
 			m_frameBounds,
 			m_frameTransform,
 			m_viewSize,
-			transform
+			transform,
+			m_maskReference
 		);
 }
 
@@ -393,7 +394,8 @@ void AccDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matr
 			sprite,
 			m_frameBounds,
 			m_frameTransform,
-			transform
+			transform,
+			m_maskReference
 		);
 }
 
@@ -426,6 +428,10 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 {
 	Ref< AccShape > accShape;
 
+	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
+	if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
+		return;
+
 	// Get accelerated shape.
 	int32_t tag = shape.getCacheTag();
 	SmallMap< int32_t, ShapeCache >::iterator it = m_shapeCache.find(tag);
@@ -449,10 +455,6 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 		it->second.unusedCount = 0;
 		accShape = it->second.shape;
 	}
-
-	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
-	if (!rectangleVisible(m_dirtyRegion, transform * accShape->getBounds()))
-		return;
 
 	// Flush queued glyph shapes, must do this to ensure proper draw order.
 	renderEnqueuedGlyphs();
@@ -497,6 +499,10 @@ void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, con
 
 void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor)
 {
+	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
+	if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
+		return;
+
 	SwfColor glyphColor = 
 	{
 		uint8_t(color.red * cxform.red[0] + cxform.red[1] * 255.0f),
@@ -541,14 +547,11 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 	Ref< AccShape > accShape = it1->second.shape;
 	T_ASSERT (accShape);
 
-	Aabb2 bounds = accShape->getBounds();
-	if (!rectangleVisible(m_dirtyRegion, transform * bounds))
-		return;
-
 	float cachePixelDx = 1.0f / c_cacheGlyphDimX;
 	float cachePixelDy = 1.0f / c_cacheGlyphDimY;
 
 	// Always use maximum glyph bounds.
+	Aabb2 bounds = accShape->getBounds();
 	bounds.mx = bounds.mn + fontMaxDimension;
 
 	// Get cached glyph target.

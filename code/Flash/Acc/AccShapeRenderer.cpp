@@ -115,7 +115,8 @@ void AccShapeRenderer::beginSprite(
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
 	const Vector4& viewSize,
-	const Matrix33& transform
+	const Matrix33& transform,
+	uint8_t maskReference
 )
 {
 	if (sprite.getCacheAsBitmap())
@@ -128,7 +129,8 @@ void AccShapeRenderer::beginSprite(
 				frameBounds,
 				frameTransform,
 				viewSize,
-				transform
+				transform,
+				maskReference
 			);
 		}
 	}
@@ -139,7 +141,8 @@ void AccShapeRenderer::endSprite(
 	const FlashSpriteInstance& sprite,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
-	const Matrix33& transform
+	const Matrix33& transform,
+	uint8_t maskReference
 )
 {
 	if (sprite.getCacheAsBitmap())
@@ -150,7 +153,8 @@ void AccShapeRenderer::endSprite(
 				renderContext,
 				frameBounds,
 				frameTransform,
-				transform
+				transform,
+				maskReference
 			);
 		}
 	}
@@ -217,7 +221,8 @@ void AccShapeRenderer::beginCacheAsBitmap(
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
 	const Vector4& viewSize,
-	const Matrix33& transform
+	const Matrix33& transform,
+	uint8_t maskReference
 )
 {
 	T_FATAL_ASSERT (m_renderIntoSlot < 0);
@@ -297,9 +302,17 @@ void AccShapeRenderer::beginCacheAsBitmap(
 
 			if (slot == 0)
 			{
-				render::TargetClearRenderBlock* renderBlockClear = renderContext->alloc< render::TargetClearRenderBlock >("Flash sprite cache clear");
+				render::TargetClearRenderBlock* renderBlockClear = renderContext->alloc< render::TargetClearRenderBlock >("Flash sprite cache clear (color|stencil)");
 				renderBlockClear->clearMask = render::CfColor | render::CfStencil;
 				renderBlockClear->clearColor = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+				renderBlockClear->clearStencil = maskReference;
+				renderContext->draw(render::RpOverlay, renderBlockClear);
+			}
+			else
+			{
+				render::TargetClearRenderBlock* renderBlockClear = renderContext->alloc< render::TargetClearRenderBlock >("Flash sprite cache clear (stencil)");
+				renderBlockClear->clearMask = render::CfStencil;
+				renderBlockClear->clearStencil = maskReference;
 				renderContext->draw(render::RpOverlay, renderBlockClear);
 			}
 
@@ -315,7 +328,8 @@ void AccShapeRenderer::endCacheAsBitmap(
 	render::RenderContext* renderContext,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
-	const Matrix33& transform
+	const Matrix33& transform,
+	uint8_t maskReference
 )
 {
 	if (m_renderIntoSlot >= 0)
@@ -347,7 +361,7 @@ void AccShapeRenderer::endCacheAsBitmap(
 			textureOffset,
 			false,
 			false,
-			0
+			maskReference
 		);
 
 		c.unused = 0;

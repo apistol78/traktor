@@ -60,7 +60,8 @@ public:
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
 		const Vector4& viewSize,
-		const Matrix33& transform
+		const Matrix33& transform,
+		uint8_t maskReference
 	);
 
 	void endSprite(
@@ -68,7 +69,8 @@ public:
 		const FlashSpriteInstance& sprite,
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
-		const Matrix33& transform
+		const Matrix33& transform,
+		uint8_t maskReference
 	);
 
 	void render(
@@ -113,14 +115,16 @@ private:
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
 		const Vector4& viewSize,
-		const Matrix33& transform
+		const Matrix33& transform,
+		uint8_t maskReference
 	);
 
 	void endCacheAsBitmap(
 		render::RenderContext* renderContext,
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
-		const Matrix33& transform
+		const Matrix33& transform,
+		uint8_t maskReference
 	);
 };
 
