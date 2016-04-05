@@ -1,6 +1,7 @@
 #include "Compress/Lzf/DeflateStreamLzf.h"
 #include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Functor/Functor.h"
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StreamCopy.h"
@@ -32,10 +33,11 @@ namespace traktor
 class FlashMovieLoaderHandle : public IFlashMovieLoader::IHandle
 {
 public:
-	FlashMovieLoaderHandle(const std::wstring& url, const std::wstring& cacheDirectory, bool merge, bool includeAS)
+	FlashMovieLoaderHandle(const std::wstring& url, const std::wstring& cacheDirectory, bool merge, bool triangulate, bool includeAS)
 	:	m_url(url)
 	,	m_cacheDirectory(cacheDirectory)
 	,	m_merge(merge)
+	,	m_triangulate(triangulate)
 	,	m_includeAS(includeAS)
 	{
 		m_job = JobManager::getInstance().add(makeFunctor< FlashMovieLoaderHandle >(this, &FlashMovieLoaderHandle::loader));
@@ -65,6 +67,7 @@ private:
 	std::wstring m_url;
 	std::wstring m_cacheDirectory;
 	bool m_merge;
+	bool m_triangulate;
 	bool m_includeAS;
 	Ref< Job > m_job;
 	Ref< FlashMovie > m_movie;
@@ -79,8 +82,9 @@ private:
 			if (f)
 			{
 				compress::InflateStreamLzf is(f);
-				m_movie = BinarySerializer(&is).readObject< FlashMovie >();
-				is.close();
+				BufferedStream bs(&is);
+				m_movie = BinarySerializer(&bs).readObject< FlashMovie >();
+				bs.close();
 			}
 			if (m_movie)
 				return;
@@ -159,14 +163,18 @@ private:
 		if (m_merge)
 			m_movie = FlashOptimizer().merge(m_movie);
 
+		if (m_triangulate)
+			FlashOptimizer().triangulate(m_movie);
+
 		if (!m_cacheDirectory.empty())
 		{
 			Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmWrite);
 			if (f)
 			{
 				compress::DeflateStreamLzf ds(f);
-				BinarySerializer(&ds).writeObject(m_movie);
-				ds.close();
+				BufferedStream bs(&ds);
+				BinarySerializer(&bs).writeObject(m_movie);
+				bs.close();
 			}
 		}
 	}
@@ -178,6 +186,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieLoader", FlashMovieLoader, IFla
 
 FlashMovieLoader::FlashMovieLoader()
 :	m_merge(false)
+,	m_triangulate(false)
 ,	m_includeAS(true)
 {
 }
@@ -192,6 +201,11 @@ void FlashMovieLoader::setMerge(bool merge)
 	m_merge = merge;
 }
 
+void FlashMovieLoader::setTriangulate(bool triangulate)
+{
+	m_triangulate = triangulate;
+}
+
 void FlashMovieLoader::setIncludeAS(bool includeAS)
 {
 	m_includeAS = includeAS;
@@ -199,80 +213,13 @@ void FlashMovieLoader::setIncludeAS(bool includeAS)
 
 Ref< IFlashMovieLoader::IHandle > FlashMovieLoader::loadAsync(const std::wstring& url) const
 {
-	return new FlashMovieLoaderHandle(url, m_cacheDirectory, m_merge, m_includeAS);
+	return new FlashMovieLoaderHandle(url, m_cacheDirectory, m_merge, m_triangulate, m_includeAS);
 }
 
 Ref< FlashMovie > FlashMovieLoader::load(const std::wstring& url) const
 {
-	std::wstring cacheFileName = net::Url::encode(url);
-	Ref< FlashMovie > movie;
-
-	if (!m_cacheDirectory.empty())
-	{
-		Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmRead);
-		if (f)
-		{
-			compress::InflateStreamLzf is(f);
-			movie = BinarySerializer(&is).readObject< FlashMovie >();
-			is.close();
-		}
-		if (movie)
-			return movie;
-	}
-
-	Ref< net::UrlConnection > connection = net::UrlConnection::open(url);
-	if (!connection)
-		return 0;
-
-	Ref< IStream > s = connection->getStream();
-	T_ASSERT (s);
-
-	std::wstring tempFile;
-	Ref< IStream > d;
-
-	for (int32_t i = 0; i < 10; ++i)
-	{
-		tempFile = OS::getInstance().getWritableFolderPath() + L"/" + cacheFileName + L"_" + toString(i);
-		if ((d = FileSystem::getInstance().open(tempFile, File::FmWrite)) != 0)
-			break;
-	}
-	if (!d)
-		return 0;
-
-	if (!StreamCopy(d, s).execute())
-		return 0;
-
-	d->close();
-	s->close();
-
-	d = FileSystem::getInstance().open(tempFile, File::FmRead);
-	if (!d)
-		return 0;
-
-	SwfReader swfReader(d);
-	movie = FlashMovieFactory(m_includeAS).createMovie(&swfReader);
-
-	d->close();
-	FileSystem::getInstance().remove(tempFile);
-
-	if (!movie)
-		return 0;
-
-	if (m_merge)
-		movie = FlashOptimizer().merge(movie);
-
-	if (!m_cacheDirectory.empty())
-	{
-		Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmWrite);
-		if (f)
-		{
-			compress::DeflateStreamLzf ds(f);
-			BinarySerializer(&ds).writeObject(movie);
-			ds.close();
-		}
-	}
-
-	return movie;
+	Ref< IHandle > handle = loadAsync(url);
+	return handle ? handle->get() : 0;
 }
 
 	}

@@ -234,11 +234,6 @@ SystemWindow RenderViewOpenGLES2::getSystemWindow()
 
 bool RenderViewOpenGLES2::begin(EyeType eye)
 {
-#if !defined(__IOS__) && !defined(__ANDROID__) && !defined(__PNACL__)
-	if (!m_context->lock().wait())
-		return false;
-#endif
-
 	if (!m_context->enter())
 		return false;
 		
@@ -676,10 +671,6 @@ void RenderViewOpenGLES2::present()
 {	
 	m_context->swapBuffers();
 	m_context->leave();
-
-#if !defined(__IOS__) && !defined(__ANDROID__) && !defined(__PNACL__)
-	m_context->lock().release();
-#endif
 	m_context->deleteResources();
 }
 

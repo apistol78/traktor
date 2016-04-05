@@ -54,7 +54,7 @@ public:
 
 	virtual ~AccShape();
 
-	bool create(
+	bool createFromPaths(
 		AccShapeVertexPool* vertexPool,
 		AccGradientCache* gradientCache,
 		AccTextureCache* textureCache,
@@ -65,24 +65,36 @@ public:
 		bool oddEven
 	);
 
-	bool create(
+	bool createFromTriangles(
 		AccShapeVertexPool* vertexPool,
 		AccGradientCache* gradientCache,
 		AccTextureCache* textureCache,
 		const FlashDictionary& dictionary,
 		const AlignedVector< FlashFillStyle >& fillStyles,
 		const AlignedVector< FlashLineStyle >& lineStyles,
-		const FlashShape& shape,
-		bool oddEven
+		const AlignedVector< Triangle >& triangles
 	);
 
-	bool create(
+	bool createFromShape(
 		AccShapeVertexPool* vertexPool,
 		AccGradientCache* gradientCache,
 		AccTextureCache* textureCache,
 		const FlashDictionary& dictionary,
-		const AlignedVector< FlashFillStyle >& fillStyles,
-		const AlignedVector< FlashLineStyle >& lineStyles,
+		const FlashShape& shape
+	);
+
+	bool createFromGlyph(
+		AccShapeVertexPool* vertexPool,
+		AccGradientCache* gradientCache,
+		AccTextureCache* textureCache,
+		const FlashDictionary& dictionary,
+		const FlashShape& shape
+	);
+
+	bool createFromCanvas(
+		AccShapeVertexPool* vertexPool,
+		AccGradientCache* gradientCache,
+		AccTextureCache* textureCache,
 		const FlashCanvas& canvas
 	);
 

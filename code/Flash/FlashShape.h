@@ -2,6 +2,7 @@
 #define traktor_flash_FlashShape_H
 
 #include "Flash/Path.h"
+#include "Flash/Polygon.h"
 #include "Flash/SwfTypes.h"
 #include "Flash/FlashCharacter.h"
 #include "Flash/FlashFillStyle.h"
@@ -46,6 +47,10 @@ public:
 
 	void merge(const FlashShape& shape, const Matrix33& transform, const SwfCxTransform& cxform);
 
+	void triangulate(bool oddEven);
+
+	void discardPaths();
+
 	virtual Ref< FlashCharacterInstance > createInstance(
 		ActionContext* context,
 		FlashDictionary* dictionary,
@@ -64,6 +69,8 @@ public:
 
 	const AlignedVector< FlashLineStyle >& getLineStyles() const { return m_lineStyles; }
 
+	const AlignedVector< Triangle >& getTriangles() const { return m_triangles; }
+
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
@@ -71,6 +78,7 @@ private:
 	AlignedVector< Path > m_paths;
 	AlignedVector< FlashFillStyle > m_fillStyles;
 	AlignedVector< FlashLineStyle > m_lineStyles;
+	AlignedVector< Triangle > m_triangles;
 };
 
 	}

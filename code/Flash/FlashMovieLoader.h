@@ -30,6 +30,8 @@ public:
 
 	void setMerge(bool merge);
 
+	void setTriangulate(bool triangulate);
+
 	void setIncludeAS(bool includeAS);
 
 	virtual Ref< IHandle > loadAsync(const std::wstring& url) const T_OVERRIDE T_FINAL;
@@ -39,6 +41,7 @@ public:
 private:
 	std::wstring m_cacheDirectory;
 	bool m_merge;
+	bool m_triangulate;
 	bool m_includeAS;
 };
 

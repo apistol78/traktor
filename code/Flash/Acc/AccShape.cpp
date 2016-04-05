@@ -7,12 +7,12 @@
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashBitmap.h"
+#include "Flash/Triangulator.h"
 #include "Flash/Acc/AccBitmapRect.h"
 #include "Flash/Acc/AccGradientCache.h"
 #include "Flash/Acc/AccShape.h"
 #include "Flash/Acc/AccShapeResources.h"
 #include "Flash/Acc/AccTextureCache.h"
-#include "Flash/Acc/Triangulator.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
@@ -61,7 +61,7 @@ AccShape::~AccShape()
 	destroy();
 }
 
-bool AccShape::create(
+bool AccShape::createFromPaths(
 	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
@@ -77,7 +77,6 @@ bool AccShape::create(
 	Triangulator triangulator;
 	Segment s;
 
-	// Create triangles through tessellation.
 	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
 		const AlignedVector< Vector2 >& points = i->getPoints();
@@ -156,6 +155,27 @@ bool AccShape::create(
 		}
 	}
 
+	return createFromTriangles(
+		vertexPool,
+		gradientCache,
+		textureCache,
+		dictionary,
+		fillStyles,
+		lineStyles,
+		triangles
+	);
+}
+
+bool AccShape::createFromTriangles(
+	AccShapeVertexPool* vertexPool,
+	AccGradientCache* gradientCache,
+	AccTextureCache* textureCache,
+	const FlashDictionary& dictionary,
+	const AlignedVector< FlashFillStyle >& fillStyles,
+	const AlignedVector< FlashLineStyle >& lineStyles,
+	const AlignedVector< Triangle >& triangles
+)
+{
 	// Update shape's bounds from all triangles.
 	m_bounds.mn.x = m_bounds.mn.y =  std::numeric_limits< float >::max();
 	m_bounds.mx.x = m_bounds.mx.y = -std::numeric_limits< float >::max();
@@ -314,33 +334,89 @@ bool AccShape::create(
 	return true;
 }
 
-bool AccShape::create(
+bool AccShape::createFromShape(
 	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
 	const FlashDictionary& dictionary,
-	const AlignedVector< FlashFillStyle >& fillStyles,
-	const AlignedVector< FlashLineStyle >& lineStyles,
-	const FlashShape& shape,
-	bool oddEven
+	const FlashShape& shape
 )
 {
-	const AlignedVector< Path >& paths = shape.getPaths();
-	return create(vertexPool, gradientCache, textureCache, dictionary, fillStyles, lineStyles, paths, oddEven);
+	if (!shape.getTriangles().empty())
+		return createFromTriangles(
+			vertexPool,
+			gradientCache,
+			textureCache,
+			dictionary,
+			shape.getFillStyles(),
+			shape.getLineStyles(),
+			shape.getTriangles()
+		);
+	else if (!shape.getPaths().empty())
+		return createFromPaths(
+			vertexPool,
+			gradientCache,
+			textureCache,
+			dictionary,
+			shape.getFillStyles(),
+			shape.getLineStyles(),
+			shape.getPaths(),
+			false
+		);
+	else
+		return false;
 }
 
-bool AccShape::create(
+bool AccShape::createFromGlyph(
 	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
 	const FlashDictionary& dictionary,
-	const AlignedVector< FlashFillStyle >& fillStyles,
-	const AlignedVector< FlashLineStyle >& lineStyles,
+	const FlashShape& shape
+)
+{
+	if (!shape.getTriangles().empty())
+		return createFromTriangles(
+			vertexPool,
+			gradientCache,
+			textureCache,
+			dictionary,
+			shape.getFillStyles(),
+			shape.getLineStyles(),
+			shape.getTriangles()
+		);
+	else if (!shape.getPaths().empty())
+		return createFromPaths(
+			vertexPool,
+			gradientCache,
+			textureCache,
+			dictionary,
+			shape.getFillStyles(),
+			shape.getLineStyles(),
+			shape.getPaths(),
+			true
+		);
+	else
+		return false;
+}
+
+bool AccShape::createFromCanvas(
+	AccShapeVertexPool* vertexPool,
+	AccGradientCache* gradientCache,
+	AccTextureCache* textureCache,
 	const FlashCanvas& canvas
 )
 {
-	const AlignedVector< Path >& paths = canvas.getPaths();
-	return create(vertexPool, gradientCache, textureCache, dictionary, fillStyles, lineStyles, paths, false);
+	return createFromPaths(
+		vertexPool,
+		gradientCache,
+		textureCache,
+		canvas.getDictionary(),
+		canvas.getFillStyles(),
+		canvas.getLineStyles(),
+		canvas.getPaths(),
+		false
+	);
 }
 
 void AccShape::destroy()

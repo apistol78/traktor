@@ -388,6 +388,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashMovieLoader->addConstructor();
 	classFlashMovieLoader->addMethod("setCacheDirectory", &FlashMovieLoader::setCacheDirectory);
 	classFlashMovieLoader->addMethod("setMerge", &FlashMovieLoader::setMerge);
+	classFlashMovieLoader->addMethod("setTriangulate", &FlashMovieLoader::setTriangulate);
 	classFlashMovieLoader->addMethod("setIncludeAS", &FlashMovieLoader::setIncludeAS);
 	registrar->registerClass(classFlashMovieLoader);
 
@@ -608,6 +609,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< FlashOptimizer > > classFlashOptimizer = new AutoRuntimeClass< FlashOptimizer >();
 	classFlashOptimizer->addConstructor();
 	classFlashOptimizer->addMethod("merge", &FlashOptimizer::merge);
+	classFlashOptimizer->addMethod("triangulate", &FlashOptimizer::triangulate);
 	registrar->registerClass(classFlashOptimizer);
 }
 

@@ -62,6 +62,7 @@ VertexBufferStaticOpenGLES2::VertexBufferStaticOpenGLES2(ContextOpenGLES2* conte
 ,	m_vertexStride(0)
 ,	m_lockOffset(0)
 ,	m_lockSize(0)
+,	m_dirty(false)
 {
 	m_vertexStride = getVertexSize(vertexElements);
 	T_ASSERT (m_vertexStride > 0);
@@ -203,62 +204,59 @@ void* VertexBufferStaticOpenGLES2::lock()
 
 void* VertexBufferStaticOpenGLES2::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
+	T_FATAL_ASSERT (m_buffer.ptr() == 0);
+	T_FATAL_ASSERT (!m_dirty);
+
 	m_lockOffset = vertexOffset * m_vertexStride;
 	m_lockSize = vertexCount * m_vertexStride;
-
-	if (!m_buffer.ptr())
-		m_buffer.reset((uint8_t*)Alloc::acquireAlign(m_lockSize, 16, "VB"));
+	m_buffer.reset((uint8_t*)Alloc::acquireAlign(m_lockSize, 16, "VB"));
 
 	return m_buffer.ptr();
 }
 
 void VertexBufferStaticOpenGLES2::unlock()
 {
-	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
-
-	int32_t bufferSize = getBufferSize();
-
-	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_bufferObject));
-
-	if (m_lockOffset <= 0 && m_lockSize >= bufferSize)
-	{
-		T_OGL_SAFE(glBufferData(
-			GL_ARRAY_BUFFER,
-			m_lockSize,
-			m_buffer.ptr(),
-			GL_STATIC_DRAW
-		));
-	}
-	else
-	{
-		T_OGL_SAFE(glBufferSubData(
-			GL_ARRAY_BUFFER,
-			m_lockOffset,
-			m_lockSize,
-			m_buffer.ptr()
-		));		
-	}
-	
-	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, 0));
-	T_OGL_SAFE(glFlush());
-
-	m_buffer.release();
-	
-#if defined(GL_OES_vertex_array_object)
-	if (m_arrayObject)
-	{
-		if (m_context)
-			m_context->deleteResource(new DeleteVertexArrayCallback(m_arrayObject));
-		m_arrayObject = 0;
-	}
-#endif
-
+	m_dirty = true;
 	setContentValid(true);
 }
 
 void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 {
 	stateCache->setArrayBuffer(m_bufferObject);
+
+	if (m_dirty)
+	{
+		int32_t bufferSize = getBufferSize();
+		if (m_lockOffset <= 0 && m_lockSize >= bufferSize)
+		{
+			T_OGL_SAFE(glBufferData(
+				GL_ARRAY_BUFFER,
+				m_lockSize,
+				m_buffer.ptr(),
+				GL_STATIC_DRAW
+			));
+		}
+		else
+		{
+			T_OGL_SAFE(glBufferSubData(
+				GL_ARRAY_BUFFER,
+				m_lockOffset,
+				m_lockSize,
+				m_buffer.ptr()
+			));		
+		}
+		m_buffer.release();
+	
+#if defined(GL_OES_vertex_array_object)
+		if (m_arrayObject)
+		{
+			if (m_context)
+				m_context->deleteResource(new DeleteVertexArrayCallback(m_arrayObject));
+			m_arrayObject = 0;
+		}
+#endif
+		m_dirty = false;
+	}
 
 #if defined(GL_OES_vertex_array_object)
 	if (m_arrayObject == 0 && g_glGenVertexArraysOES != 0)
