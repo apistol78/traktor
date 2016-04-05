@@ -37,6 +37,8 @@ public:
 
 	Ref< AccBitmapRect > getGradientTexture(const FlashFillStyle& style);
 
+	void synchronize();
+
 private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::ISimpleTexture > m_gradientsTexture;
@@ -44,6 +46,7 @@ private:
 	AutoArrayPtr< uint8_t > m_gradientsData;
 	uint32_t m_currentGradientColumn;
 	uint32_t m_nextGradient;
+	bool m_dirty;
 };
 
 	}
