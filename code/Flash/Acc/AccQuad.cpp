@@ -20,6 +20,7 @@ const resource::Id< render::Shader > c_idShaderSolid(Guid(L"{2EDC5E1B-562D-9F46-
 const resource::Id< render::Shader > c_idShaderTextured(Guid(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}"));
 const resource::Id< render::Shader > c_idShaderIncrementMask(Guid(L"{16868DF6-A619-5541-83D2-94088A0AC552}"));
 const resource::Id< render::Shader > c_idShaderDecrementMask(Guid(L"{D6821007-47BB-D748-9E29-20829ED09C70}"));
+const resource::Id< render::Shader > c_idShaderBlit(Guid(L"{34029EA0-112D-D74B-94CA-9C32FF319BB0}"));
 
 #pragma pack(1)
 struct Vertex
@@ -65,6 +66,8 @@ bool AccQuad::create(
 	if (!resourceManager->bind(c_idShaderIncrementMask, m_shaderIncrementMask))
 		return false;
 	if (!resourceManager->bind(c_idShaderDecrementMask, m_shaderDecrementMask))
+		return false;
+	if (!resourceManager->bind(c_idShaderBlit, m_shaderBlit))
 		return false;
 
 	std::vector< render::VertexElement > vertexElements;
@@ -167,6 +170,26 @@ void AccQuad::render(
 		renderBlock->programParams->setVectorParameter(s_handleTextureOffset, textureOffset);
 	}
 
+	renderBlock->programParams->endParameters(renderContext);
+
+	renderContext->draw(render::RpOverlay, renderBlock);
+}
+
+void AccQuad::blit(
+	render::RenderContext* renderContext,
+	render::ITexture* texture
+)
+{
+	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccQuad (blit)");
+	renderBlock->program = m_shaderBlit->getCurrentProgram();
+	renderBlock->vertexBuffer = m_vertexBuffer;
+	renderBlock->primitive = render::PtTriangleStrip;
+	renderBlock->offset = 0;
+	renderBlock->count = 2;
+
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+	renderBlock->programParams->beginParameters(renderContext);
+	renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(render::RpOverlay, renderBlock);
