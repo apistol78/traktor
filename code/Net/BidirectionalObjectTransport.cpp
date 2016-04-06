@@ -57,8 +57,10 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		net::SocketStream ss(m_socket, false, true, 10000);
-		if (!BinarySerializer(&ss).writeObject(object))
+		BufferedStream bs(&ss);
+		if (!BinarySerializer(&bs).writeObject(object))
 			return false;
+		bs.flush();
 	}
 
 	return true;
