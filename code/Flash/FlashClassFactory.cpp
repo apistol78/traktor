@@ -223,13 +223,6 @@ RefArray< FlashCharacterInstance > FlashDisplayList_getObjects(FlashDisplayList*
 	return characters;
 }
 
-RefArray< FlashCharacterInstance > FlashDisplayList_getVisibleObjects(FlashDisplayList* self)
-{
-	RefArray< FlashCharacterInstance > visibleCharacters;
-	self->getVisibleObjects(visibleCharacters);
-	return visibleCharacters;
-}
-
 FlashDisplayList* FlashSpriteInstance_getDisplayList(FlashSpriteInstance* self)
 {
 	return &self->getDisplayList();
@@ -469,7 +462,6 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashDisplayList->addMethod("getNextHighestDepth", &FlashDisplayList::getNextHighestDepth);
 	classFlashDisplayList->addMethod("swap", &FlashDisplayList::swap);
 	classFlashDisplayList->addMethod("getObjects", &FlashDisplayList_getObjects);
-	classFlashDisplayList->addMethod("getVisibleObjects", &FlashDisplayList_getVisibleObjects);
 	registrar->registerClass(classFlashDisplayList);
 
 	Ref< AutoRuntimeClass< FlashSprite > > classFlashSprite = new AutoRuntimeClass< FlashSprite >();
