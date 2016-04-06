@@ -18,8 +18,8 @@ Matrix::Matrix(const avm_number_t v[6])
 :	ActionObjectRelay("Matrix")
 {
 	m_v.e11 = v[0]; m_v.e12 = v[1]; m_v.e13 = v[4];
-	m_v.e11 = v[2]; m_v.e12 = v[3]; m_v.e13 = v[5];
-	m_v.e11 = 0.0f; m_v.e12 = 0.0f; m_v.e13 = 1.0f;
+	m_v.e21 = v[2]; m_v.e22 = v[3]; m_v.e23 = v[5];
+	m_v.e31 = 0.0f; m_v.e32 = 0.0f; m_v.e33 = 1.0f;
 }
 
 Ref< Matrix > Matrix::clone()
