@@ -47,9 +47,8 @@ class AlignedVector
 {
 	enum
 	{
-		MaxCapacityAlignment = 65536,
-		MinCapacity = 64,
-		ResizeCapacityAlignment = 64,
+		MaxCapacityAlignment = 1024,
+		MinCapacity = 32,
 		Alignment = 16
 	};
 
@@ -391,12 +390,9 @@ public:
 		{
 			if (size > m_capacity)
 			{
-				size_t capacity = (size & ~(ResizeCapacityAlignment - 1)) + ResizeCapacityAlignment;
-				reserve(capacity);
+				reserve(size);
+				T_ASSERT (size <= m_capacity);
 			}
-
-			T_ASSERT (size <= m_capacity);
-
 			for (size_t i = m_size; i < size; ++i)
 				Constructor::construct(m_data[i], pad);
 		}
