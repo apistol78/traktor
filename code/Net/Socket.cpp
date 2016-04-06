@@ -1,3 +1,6 @@
+#if defined(__LINUX__) || defined(__ANDROID__)
+#	include <sys/ioctl.h>
+#endif
 #include "Net/Socket.h"
 
 namespace traktor
@@ -115,6 +118,22 @@ bool Socket::ioctl(IoctlCommand cmd, unsigned long* argp)
 		return false;
 	}
 	return bool(ioctlsocket(m_socket, ncmd, argp) == 0);
+#elif defined(__LINUX__) || defined(__ANDROID__)
+	int ret = 0;
+	switch (cmd)
+	{
+	case IccReadPending:
+		if (::ioctl(m_socket, FIONREAD, &ret) >= 0)
+		{
+			*argp = ret;
+			return true;
+		}
+		break;
+
+	default:
+		break;
+	}
+	return false;
 #else
 	return false;
 #endif
