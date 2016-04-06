@@ -478,9 +478,6 @@ void FlashSpriteInstance::eventFrame()
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
 
-	FlashFrame* frame = m_sprite->getFrame(m_currentFrame);
-	T_ASSERT (frame);
-
 	// Issue script assigned event; hack to skip events when using goto methods.
 	if (!m_skipEnterFrame)
 		executeScriptEvent(ActionContext::IdOnEnterFrame, ActionValue());
@@ -490,6 +487,9 @@ void FlashSpriteInstance::eventFrame()
 	// Execute frame scripts.
 	if (m_lastExecutedFrame != m_currentFrame)
 	{
+		FlashFrame* frame = m_sprite->getFrame(m_currentFrame);
+		T_ASSERT (frame);
+
 		const RefArray< const IActionVMImage >& scripts = frame->getActionScripts();
 		if (!scripts.empty())
 		{
