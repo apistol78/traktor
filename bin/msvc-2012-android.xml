@@ -404,6 +404,10 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -450,6 +454,10 @@
             <item>
               <name>WarningLevel</name>
               <value>Level3</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
             </item>
           </options>
         </item>
@@ -578,6 +586,10 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -696,6 +708,10 @@
             <item>
               <name>WarningLevel</name>
               <value>Level3</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
             </item>
           </options>
         </item>
@@ -846,6 +862,10 @@
               <name>GenerateDebugInformation</name>
               <value>false</value>
             </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -920,6 +940,10 @@
             <item>
               <name>GenerateDebugInformation</name>
               <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
             </item>
           </options>
         </item>
@@ -1076,6 +1100,10 @@
               <name>GenerateDebugInformation</name>
               <value>false</value>
             </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -1222,6 +1250,10 @@
             <item>
               <name>GenerateDebugInformation</name>
               <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
             </item>
           </options>
         </item>

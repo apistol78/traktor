@@ -59,7 +59,6 @@ FlashSpriteInstance::~FlashSpriteInstance()
 			i->second.instance->destroy();
 	}
 	m_displayList.reset();
-	m_visibleCharacters.clear();
 }
 
 void FlashSpriteInstance::destroy()
@@ -76,7 +75,6 @@ void FlashSpriteInstance::destroy()
 			i->second.instance->destroy();
 	}
 	m_displayList.reset();
-	m_visibleCharacters.clear();
 
 	FlashCharacterInstance::destroy();
 }
@@ -173,14 +171,10 @@ void FlashSpriteInstance::updateDisplayList()
 	}
 	m_lastUpdateFrame = m_currentFrame;
 
-	// Recursive update of child sprite instances as well.
-	m_displayList.getVisibleObjects(m_visibleCharacters);
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-	{
-		if (&type_of(*i) == &type_of< FlashSpriteInstance >())
-			static_cast< FlashSpriteInstance* >(*i)->updateDisplayList();
-	}
-	m_visibleCharacters.resize(0);
+	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
+		if (&type_of(instance) == &type_of< FlashSpriteInstance >())
+			static_cast< FlashSpriteInstance* >(instance)->updateDisplayList();
+	});
 }
 
 void FlashSpriteInstance::updateSounds(FlashSoundPlayer* soundPlayer)
@@ -201,13 +195,10 @@ void FlashSpriteInstance::updateSounds(FlashSoundPlayer* soundPlayer)
 		m_lastSoundFrame = m_currentFrame;
 	}
 
-	m_displayList.getVisibleObjects(m_visibleCharacters);
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-	{
-		if (&type_of(*i) == &type_of< FlashSpriteInstance >())
-			static_cast< FlashSpriteInstance* >(*i)->updateSounds(soundPlayer);
-	}
-	m_visibleCharacters.resize(0);
+	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+		if (&type_of(instance) == &type_of< FlashSpriteInstance >())
+			static_cast< FlashSpriteInstance* >(instance)->updateSounds(soundPlayer);
+	});
 }
 
 Ref< FlashSpriteInstance > FlashSpriteInstance::createEmptyMovieClip(const std::string& clipName, int32_t depth)
@@ -334,10 +325,9 @@ FlashCanvas* FlashSpriteInstance::createCanvas()
 void FlashSpriteInstance::clearCacheObject()
 {
 	FlashCharacterInstance::clearCacheObject();
-	m_displayList.getVisibleObjects(m_visibleCharacters);
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-		(*i)->clearCacheObject();
-	m_visibleCharacters.resize(0);
+	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
+		instance->clearCacheObject();
+	});
 }
 
 bool FlashSpriteInstance::enumerateMembers(std::vector< uint32_t >& outMemberNames) const
@@ -386,9 +376,9 @@ void FlashSpriteInstance::preDispatchEvents()
 		m_nextFrame = m_currentFrame;
 
 	// Issue dispatch event on visible child instances.
-	m_displayList.getVisibleObjects(m_visibleCharacters);
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-		(*i)->preDispatchEvents();
+	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
+		instance->preDispatchEvents();
+	});
 }
 
 void FlashSpriteInstance::postDispatchEvents()
@@ -404,9 +394,9 @@ void FlashSpriteInstance::postDispatchEvents()
 	}
 
 	// Issue post dispatch event on child sprite instances.
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-		(*i)->postDispatchEvents();
-	m_visibleCharacters.resize(0);
+	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
+		instance->postDispatchEvents();
+	});
 
 	m_inDispatch = false;
 }
@@ -530,8 +520,9 @@ void FlashSpriteInstance::eventFrame()
 	}
 
 	// Issue events on "visible" characters.
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-		(*i)->eventFrame();
+	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
+		instance->eventFrame();
+	});
 
 	FlashCharacterInstance::eventFrame();
 
@@ -541,8 +532,9 @@ void FlashSpriteInstance::eventFrame()
 void FlashSpriteInstance::eventKey(wchar_t unicode)
 {
 	// Issue events on "visible" characters.
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-		(*i)->eventKey(unicode);
+	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+		instance->eventKey(unicode);
+	});
 
 	FlashCharacterInstance::eventKey(unicode);
 }
@@ -557,8 +549,9 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 	context->setMovieClip(this);
 
 	// Issue events on "visible" characters.
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-		(*i)->eventKeyDown(keyCode);
+	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+		instance->eventKeyDown(keyCode);
+	});
 
 	// Issue script assigned event.
 	if (context->getFocus() == this)
@@ -579,8 +572,9 @@ void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 	context->setMovieClip(this);
 
 	// Issue events on "visible" characters.
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-		(*i)->eventKeyUp(keyCode);
+	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+		instance->eventKeyUp(keyCode);
+	});
 
 	// Issue script assigned event.
 	if (context->getFocus() == this)
@@ -609,12 +603,10 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
-	// Issue events on "visible" characters.
-	if (!m_visibleCharacters.empty())
-	{
-		for (int32_t i = int32_t(m_visibleCharacters.size() - 1); i >= 0; --i)
-			m_visibleCharacters[i]->eventMouseDown(x, y, button);
-	}
+	// Issue events on "visible" characters. \fixme Reverse?
+	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+		instance->eventMouseDown(x, y, button);
+	});
 
 	// Issue script assigned event.
 	executeScriptEvent(ActionContext::IdOnMouseDown, ActionValue());
@@ -653,12 +645,10 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
-	// Issue events on "visible" characters.
-	if (!m_visibleCharacters.empty())
-	{
-		for (int32_t i = int32_t(m_visibleCharacters.size() - 1); i >= 0; --i)
-			m_visibleCharacters[i]->eventMouseUp(x, y, button);
-	}
+	// Issue events on "visible" characters. \fixme Reverse?
+	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+		instance->eventMouseUp(x, y, button);
+	});
 
 	// Issue script assigned event.
 	executeScriptEvent(ActionContext::IdOnMouseUp, ActionValue());
@@ -697,11 +687,9 @@ void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
 	m_mouseY = int32_t(xy.y / 20.0f);
 
 	// Issue events on "visible" characters.
-	if (!m_visibleCharacters.empty())
-	{
-		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-			(*i)->eventMouseMove0(x, y, button);
-	}
+	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+		instance->eventMouseMove0(x, y, button);
+	});
 
 	// Issue script assigned event.
 	executeScriptEvent(ActionContext::IdOnMouseMove, ActionValue());
@@ -752,11 +740,9 @@ void FlashSpriteInstance::eventMouseMove1(int32_t x, int32_t y, int32_t button)
 	}
 
 	// Issue events on "visible" characters.
-	if (!m_visibleCharacters.empty())
-	{
-		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-			(*i)->eventMouseMove1(x, y, button);
-	}
+	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+		instance->eventMouseMove1(x, y, button);
+	});
 
 	FlashCharacterInstance::eventMouseMove1(x, y, button);
 
@@ -951,9 +937,6 @@ void FlashSpriteInstance::trace(visitor_t visitor) const
 {
 	visitor(m_mask);
 
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-		visitor(*i);
-
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 		visitor(i->second.instance);
@@ -965,7 +948,6 @@ void FlashSpriteInstance::dereference()
 {
 	m_mask = 0;
 	m_canvas = 0;
-	m_visibleCharacters.resize(0);
 	m_displayList.reset();
 
 	FlashCharacterInstance::dereference();

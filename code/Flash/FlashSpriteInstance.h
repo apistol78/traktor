@@ -178,7 +178,6 @@ private:
 	FlashDisplayList m_displayList;
 	Ref< FlashSpriteInstance > m_mask;
 	Ref< FlashCanvas > m_canvas;
-	RefArray< FlashCharacterInstance > m_visibleCharacters;
 	int32_t m_mouseX;
 	int32_t m_mouseY;
 	uint16_t m_currentFrame;

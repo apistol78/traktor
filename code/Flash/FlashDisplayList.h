@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
+#include "Flash/FlashCharacterInstance.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
@@ -21,7 +22,6 @@ namespace traktor
 
 class ActionContext;
 class FlashMovie;
-class FlashCharacterInstance;
 class FlashFrame;
 
 /*! \brief Movie clip display list.
@@ -120,11 +120,20 @@ public:
 	 */
 	void getObjects(RefArray< FlashCharacterInstance >& outCharacterInstances) const;
 
-	/*! \brief Get visible character instances.
+	/*! \brief For each visible character instances.
 	 *
-	 * \param outCharacterInstances Output array of visible character instances.
+	 * \param fn Callback function.
 	 */
-	void getVisibleObjects(RefArray< FlashCharacterInstance >& outCharacterInstances) const;
+	template < typename fn_t >
+	void forEachVisibleObject(fn_t fn) const
+	{
+		for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		{
+			T_ASSERT (i->second.instance);
+			if (i->second.instance->isVisible())
+				fn(i->second.instance);
+		}
+	}
 
 	/*! \brief Get background clear color.
 	 *

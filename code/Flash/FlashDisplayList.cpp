@@ -3,7 +3,7 @@
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashDisplayList.h"
 #include "Flash/FlashCharacter.h"
-#include "Flash/FlashCharacterInstance.h"
+//#include "Flash/FlashCharacterInstance.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/Action/ActionContext.h"
 
@@ -282,17 +282,6 @@ void FlashDisplayList::getObjects(RefArray< FlashCharacterInstance >& outCharact
 	{
 		T_ASSERT (i->second.instance);
 		outCharacterInstances.push_back(i->second.instance);
-	}
-}
-
-void FlashDisplayList::getVisibleObjects(RefArray< FlashCharacterInstance >& outCharacterInstances) const
-{
-	T_ASSERT (outCharacterInstances.empty());
-	for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-	{
-		T_ASSERT (i->second.instance);
-		if (i->second.instance->isVisible())
-			outCharacterInstances.push_back(i->second.instance);
 	}
 }
 
