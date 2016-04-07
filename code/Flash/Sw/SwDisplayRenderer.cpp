@@ -1,5 +1,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/Raster.h"
+#include "Flash/FlashBitmapImage.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashShape.h"
 #include "Flash/Sw/SwDisplayRenderer.h"
@@ -138,68 +140,83 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 			const FlashFillStyle& style = fillStyles[i];
 			const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 
-			if (colorRecords.size() == 1)
+			const FlashBitmapImage* bitmap = dynamic_type_cast< const FlashBitmapImage* >(dictionary.getBitmap(style.getFillBitmap()));
+			if (bitmap)
 			{
-				Color4f c(
-					colorRecords[0].color.red / 255.0f,
-					colorRecords[0].color.green / 255.0f,
-					colorRecords[0].color.blue / 255.0f,
-					colorRecords[0].color.alpha / 255.0f
+				const drawing::Image* image = bitmap->getImage();
+				T_ASSERT (image);
+
+				m_raster->defineImageStyle(
+					style.getFillBitmapMatrix().inverse() * rasterTransform.inverse(),
+					image,
+					style.getFillBitmapRepeat()
 				);
-				m_raster->defineSolidStyle(c * cxm + cxa);
-			}
-			else if (colorRecords.size() > 1)
-			{
-				switch (style.getGradientType())
-				{
-				case FlashFillStyle::GtLinear:
-					{
-						AlignedVector< std::pair< Color4f, float > > colors;
-						for (uint32_t j = 0; j < colorRecords.size(); ++j)
-						{
-							Color4f c(
-								colorRecords[j].color.red / 255.0f,
-								colorRecords[j].color.green / 255.0f,
-								colorRecords[j].color.blue / 255.0f,
-								colorRecords[j].color.alpha / 255.0f
-							);
-							colors.push_back(std::make_pair(c * cxm + cxa, colorRecords[j].ratio));
-						}
-						m_raster->defineLinearGradientStyle(
-							c_textureTS * style.getGradientMatrix().inverse() * rasterTransform.inverse(),
-							colors
-						);
-					}
-					break;
-
-				case FlashFillStyle::GtRadial:
-					{
-						AlignedVector< std::pair< Color4f, float > > colors;
-						for (uint32_t j = 0; j < colorRecords.size(); ++j)
-						{
-							Color4f c(
-								colorRecords[j].color.red / 255.0f,
-								colorRecords[j].color.green / 255.0f,
-								colorRecords[j].color.blue / 255.0f,
-								colorRecords[j].color.alpha / 255.0f
-							);
-							colors.push_back(std::make_pair(c * cxm + cxa, colorRecords[j].ratio));
-						}
-						m_raster->defineRadialGradientStyle(
-							c_textureTS * style.getGradientMatrix().inverse() * rasterTransform.inverse(),
-							colors
-						);
-					}
-					break;
-
-				default:
-					m_raster->defineSolidStyle(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-					break;
-				}
 			}
 			else
 			{
-				m_raster->defineSolidStyle(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+				if (colorRecords.size() == 1)
+				{
+					Color4f c(
+						colorRecords[0].color.red / 255.0f,
+						colorRecords[0].color.green / 255.0f,
+						colorRecords[0].color.blue / 255.0f,
+						colorRecords[0].color.alpha / 255.0f
+					);
+					m_raster->defineSolidStyle(c * cxm + cxa);
+				}
+				else if (colorRecords.size() > 1)
+				{
+					switch (style.getGradientType())
+					{
+					case FlashFillStyle::GtLinear:
+						{
+							AlignedVector< std::pair< Color4f, float > > colors;
+							for (uint32_t j = 0; j < colorRecords.size(); ++j)
+							{
+								Color4f c(
+									colorRecords[j].color.red / 255.0f,
+									colorRecords[j].color.green / 255.0f,
+									colorRecords[j].color.blue / 255.0f,
+									colorRecords[j].color.alpha / 255.0f
+								);
+								colors.push_back(std::make_pair(c * cxm + cxa, colorRecords[j].ratio));
+							}
+							m_raster->defineLinearGradientStyle(
+								c_textureTS * style.getGradientMatrix().inverse() * rasterTransform.inverse(),
+								colors
+							);
+						}
+						break;
+
+					case FlashFillStyle::GtRadial:
+						{
+							AlignedVector< std::pair< Color4f, float > > colors;
+							for (uint32_t j = 0; j < colorRecords.size(); ++j)
+							{
+								Color4f c(
+									colorRecords[j].color.red / 255.0f,
+									colorRecords[j].color.green / 255.0f,
+									colorRecords[j].color.blue / 255.0f,
+									colorRecords[j].color.alpha / 255.0f
+								);
+								colors.push_back(std::make_pair(c * cxm + cxa, colorRecords[j].ratio));
+							}
+							m_raster->defineRadialGradientStyle(
+								c_textureTS * style.getGradientMatrix().inverse() * rasterTransform.inverse(),
+								colors
+							);
+						}
+						break;
+
+					default:
+						m_raster->defineSolidStyle(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+						break;
+					}
+				}
+				else
+				{
+					m_raster->defineSolidStyle(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+				}
 			}
 		}
 		lineStyleBase = int32_t(fillStyles.size());

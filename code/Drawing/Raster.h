@@ -63,6 +63,8 @@ public:
 
 	int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors);
 
+	int32_t defineImageStyle(const Matrix33& imageMatrix, const Image* image, bool repeat);
+
 	void clear();
 
 	void moveTo(const Vector2& p) { moveTo(p.x, p.y); }
