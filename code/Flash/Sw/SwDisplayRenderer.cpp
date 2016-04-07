@@ -115,6 +115,8 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 	if (!m_writeEnable)
 		return;
 
+	const Color4f cxm(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]);
+	const Color4f cxa(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]);
 	int32_t width = m_image->getWidth();
 	int32_t height = m_image->getHeight();
 	float frameWidth = m_frameBounds.mx.x;
@@ -138,12 +140,13 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 
 			if (colorRecords.size() == 1)
 			{
-				m_raster->defineSolidStyle(Color4f(
+				Color4f c(
 					colorRecords[0].color.red / 255.0f,
 					colorRecords[0].color.green / 255.0f,
 					colorRecords[0].color.blue / 255.0f,
 					colorRecords[0].color.alpha / 255.0f
-				));
+				);
+				m_raster->defineSolidStyle(c * cxm + cxa);
 			}
 			else if (colorRecords.size() > 1)
 			{
@@ -154,15 +157,13 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 						AlignedVector< std::pair< Color4f, float > > colors;
 						for (uint32_t j = 0; j < colorRecords.size(); ++j)
 						{
-							colors.push_back(std::make_pair(
-								Color4f(
-									colorRecords[j].color.red / 255.0f,
-									colorRecords[j].color.green / 255.0f,
-									colorRecords[j].color.blue / 255.0f,
-									colorRecords[j].color.alpha / 255.0f
-								),
-								colorRecords[j].ratio
-							));
+							Color4f c(
+								colorRecords[j].color.red / 255.0f,
+								colorRecords[j].color.green / 255.0f,
+								colorRecords[j].color.blue / 255.0f,
+								colorRecords[j].color.alpha / 255.0f
+							);
+							colors.push_back(std::make_pair(c * cxm + cxa, colorRecords[j].ratio));
 						}
 						m_raster->defineLinearGradientStyle(
 							c_textureTS * style.getGradientMatrix().inverse() * rasterTransform.inverse(),
@@ -176,15 +177,13 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 						AlignedVector< std::pair< Color4f, float > > colors;
 						for (uint32_t j = 0; j < colorRecords.size(); ++j)
 						{
-							colors.push_back(std::make_pair(
-								Color4f(
-									colorRecords[j].color.red / 255.0f,
-									colorRecords[j].color.green / 255.0f,
-									colorRecords[j].color.blue / 255.0f,
-									colorRecords[j].color.alpha / 255.0f
-								),
-								colorRecords[j].ratio
-							));
+							Color4f c(
+								colorRecords[j].color.red / 255.0f,
+								colorRecords[j].color.green / 255.0f,
+								colorRecords[j].color.blue / 255.0f,
+								colorRecords[j].color.alpha / 255.0f
+							);
+							colors.push_back(std::make_pair(c * cxm + cxa, colorRecords[j].ratio));
 						}
 						m_raster->defineRadialGradientStyle(
 							c_textureTS * style.getGradientMatrix().inverse() * rasterTransform.inverse(),
@@ -207,12 +206,13 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 		for (uint32_t i = 0; i < uint32_t(lineStyles.size()); ++i)
 		{
 			const FlashLineStyle& style = lineStyles[i];
-			m_raster->defineSolidStyle(Color4f(
+			Color4f c(
 				style.getLineColor().red / 255.0f,
 				style.getLineColor().green / 255.0f,
 				style.getLineColor().blue / 255.0f,
 				style.getLineColor().alpha / 255.0f
-			));
+			);
+			m_raster->defineSolidStyle(c * cxm + cxa);
 		}
 	}
 	else
