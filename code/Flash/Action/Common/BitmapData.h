@@ -54,6 +54,8 @@ public:
 
 	void fillRect(const Rectangle* rectangle, uint32_t color);
 
+	bool save(const std::wstring& fileName);
+
 	drawing::Image* getImage() const;
 
 private:
