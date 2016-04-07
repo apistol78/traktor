@@ -39,10 +39,11 @@ public:
 
 	const SwfColor* getBits() const;
 
+	const drawing::Image* getImage() const { return m_image; }
+
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
-	//AutoArrayPtr< SwfColor > m_bits;
 	Ref< drawing::Image > m_image;
 };
 

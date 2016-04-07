@@ -37,6 +37,8 @@ public:
 
 	virtual int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors) = 0;
 
+	virtual int32_t defineImageStyle(const Matrix33& imageMatrix, const Image* image, bool repeat) = 0;
+
 	virtual void clear() = 0;
 
 	virtual void moveTo(float x, float y) = 0;
@@ -193,6 +195,55 @@ private:
 	AlignedVector< std::pair< Color4f, float > > m_colors;
 };
 
+/*! \brief Image style for 32-bit colors. */
+class ImageStyle : public IStyle< agg::rgba8 >
+{
+public:
+	ImageStyle(const Matrix33& imageMatrix, const drawing::Image* image, bool repeat)
+	:	m_imageMatrix(imageMatrix)
+	,	m_image(image)
+	,	m_repeat(repeat)
+	{
+	}
+
+	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	{
+		Color4f c(0.0f, 0.0f, 0.0f, 0.0f);
+		for (unsigned i = 0; i < len; ++i)
+		{
+			Vector2 pt = m_imageMatrix * Vector2(float(x + i), float(y));
+
+			int32_t sx = int32_t(pt.x);
+			int32_t sy = int32_t(pt.y);
+
+			if (m_repeat)
+			{
+				sx = sx % m_image->getWidth();
+				sy = sy % m_image->getHeight();
+			}
+			else
+			{
+				sx = clamp(sx, 0, m_image->getWidth());
+				sy = clamp(sy, 0, m_image->getHeight());
+			}
+
+			m_image->getPixelUnsafe(sx, sy, c);
+
+			span[i] = agg::rgba8(
+				agg::int8u(c.getRed() * 255.0f),
+				agg::int8u(c.getGreen() * 255.0f),
+				agg::int8u(c.getBlue() * 255.0f),
+				agg::int8u(c.getAlpha() * 255.0f)
+			);
+		}
+	}
+
+private:
+	Matrix33 m_imageMatrix;
+	Ref< const drawing::Image > m_image;
+	bool m_repeat;
+};
+
 /*! \brief Style handler partial template. */
 template< typename color_type >
 class StyleHandler {};
@@ -221,6 +272,11 @@ public:
 	int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
 	{
 		return defineSolidStyle(colors[0].first);
+	}
+
+	int32_t defineImageStyle(const Matrix33& imageMatrix, const Image* image, bool repeat)
+	{
+		return defineSolidStyle(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 	}
 
 	bool is_solid(unsigned style) const
@@ -268,6 +324,12 @@ public:
 	int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
 	{
 		m_styles.push_back(new RadialGradientStyle(gradientMatrix, colors));
+		return int32_t(m_styles.size() - 1);
+	}
+
+	int32_t defineImageStyle(const Matrix33& imageMatrix, const Image* image, bool repeat)
+	{
+		m_styles.push_back(new ImageStyle(imageMatrix, image, repeat));
 		return int32_t(m_styles.size() - 1);
 	}
 
@@ -326,6 +388,11 @@ public:
 	virtual int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors) T_OVERRIDE T_FINAL
 	{
 		return m_styleHandler.defineRadialGradientStyle(gradientMatrix, colors);
+	}
+
+	virtual int32_t defineImageStyle(const Matrix33& imageMatrix, const Image* image, bool repeat) T_OVERRIDE T_FINAL
+	{
+		return m_styleHandler.defineImageStyle(imageMatrix, image, repeat);
 	}
 
 	virtual void clear() T_OVERRIDE T_FINAL
@@ -502,6 +569,11 @@ int32_t Raster::defineLinearGradientStyle(const Matrix33& gradientMatrix, const 
 int32_t Raster::defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
 {
 	return m_impl->defineRadialGradientStyle(gradientMatrix, colors);
+}
+
+int32_t Raster::defineImageStyle(const Matrix33& imageMatrix, const Image* image, bool repeat)
+{
+	return m_impl->defineImageStyle(imageMatrix, image, repeat);
 }
 
 void Raster::clear()
