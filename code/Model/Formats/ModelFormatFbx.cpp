@@ -1,6 +1,6 @@
 #include <fbxsdk.h>
 #include "Core/FbxLock.h"
-#include "Core/Io/IStream.h"
+#include "Core/Io/BufferedStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/AutoPtr.h"
@@ -44,7 +44,9 @@ public:
 	virtual bool Open(void* pStreamData)
 	{
 		T_ASSERT (!m_stream);
-		m_stream = static_cast< IStream* >(pStreamData);
+		if (!m_stream)
+			m_stream = static_cast< IStream* >(pStreamData);
+		m_stream->seek(IStream::SeekSet, 0);
 		m_state = eOpen;
 		return true;
 	}
@@ -52,8 +54,7 @@ public:
 	virtual bool Close()
 	{
 		T_ASSERT (m_stream);
-		m_stream->close();
-		m_stream = 0;
+		m_stream->seek(IStream::SeekSet, 0);
 		m_state = eClosed;
 		return true;
 	}
@@ -780,8 +781,14 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 		return 0;
 	}
 
+	// Wrap source stream into a buffered stream if necessary as
+	// FBX keep reading very small chunks.
+	Ref< IStream > rs = stream;
+	if (!is_a< BufferedStream >(rs))
+		rs = new BufferedStream(stream);
+
 	AutoPtr< FbxStream > fbxStream(new FbxIStreamWrap());
-	bool status = importer->Initialize(fbxStream.ptr(), stream, readerID, s_fbxManager->GetIOSettings());
+	bool status = importer->Initialize(fbxStream.ptr(), rs, readerID, s_fbxManager->GetIOSettings());
 	if (!status)
 	{
 		log::error << L"Unable to import FBX model; failed to initialize FBX importer (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
