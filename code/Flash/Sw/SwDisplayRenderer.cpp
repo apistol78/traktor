@@ -88,7 +88,7 @@ void SwDisplayRenderer::beginMask(bool increment)
 		m_mask.back()->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 		m_raster->setImage(m_mask.back());
 		if (m_mask.size() >= 2)
-			m_raster->setMask(m_mask.back() - 1);
+			m_raster->setMask(m_mask[m_mask.size() - 2]);
 		else
 			m_raster->setMask(0);
 	}
