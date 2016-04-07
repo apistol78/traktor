@@ -135,6 +135,21 @@ public:
 		}
 	}
 
+	/*! \brief For each visible character instances in reverse.
+	 *
+	 * \param fn Callback function.
+	 */
+	template < typename fn_t >
+	void forEachVisibleObjectReverse(fn_t fn) const
+	{
+		for (FlashDisplayList::layer_map_t::const_reverse_iterator i = m_layers.rbegin(); i != m_layers.rend(); ++i)
+		{
+			T_ASSERT (i->second.instance);
+			if (i->second.instance->isVisible())
+				fn(i->second.instance);
+		}
+	}
+
 	/*! \brief Get background clear color.
 	 *
 	 * \return Background colors.

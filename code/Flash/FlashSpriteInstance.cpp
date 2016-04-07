@@ -603,8 +603,8 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
-	// Issue events on "visible" characters. \fixme Reverse?
-	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+	// Issue events on "visible" characters.
+	m_displayList.forEachVisibleObjectReverse([&] (FlashCharacterInstance* instance) {
 		instance->eventMouseDown(x, y, button);
 	});
 
@@ -645,8 +645,8 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
-	// Issue events on "visible" characters. \fixme Reverse?
-	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+	// Issue events on "visible" characters.
+	m_displayList.forEachVisibleObjectReverse([&] (FlashCharacterInstance* instance) {
 		instance->eventMouseUp(x, y, button);
 	});
 

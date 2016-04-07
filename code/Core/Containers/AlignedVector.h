@@ -291,6 +291,207 @@ public:
 		}
 	};
 
+	class const_reverse_iterator
+	{
+	public:
+		typedef std::random_access_iterator_tag iterator_category;
+		typedef ItemType value_type;
+		typedef int difference_type;
+		typedef const value_type* pointer;
+		typedef const value_type& reference;
+		typedef const value_type* const_pointer;
+		typedef const value_type& const_reference;
+
+		const_reverse_iterator()
+		:	m_ptr(0)
+		{
+		}
+
+		const_reverse_iterator(const const_reverse_iterator& r)
+		:	m_ptr(r.m_ptr)
+		{
+		}
+
+		reference operator * () const
+		{
+			return *m_ptr;
+		}
+
+		pointer operator -> () const
+		{
+			return m_ptr;
+		}
+
+		const_reverse_iterator operator + (int offset) const
+		{
+			return const_reverse_iterator(m_ptr - offset);
+		}
+
+		const_reverse_iterator operator + (size_t offset) const
+		{
+			return const_reverse_iterator(m_ptr - offset);
+		}
+
+		const_reverse_iterator operator - (int offset) const
+		{
+			return const_reverse_iterator(m_ptr + offset);
+		}
+
+		const_reverse_iterator operator - (size_t offset) const
+		{
+			return const_reverse_iterator(m_ptr + offset);
+		}
+
+		void operator += (int offset)
+		{
+			m_ptr -= offset;
+		}
+
+		void operator -= (int offset)
+		{
+			m_ptr += offset;
+		}
+
+		const_reverse_iterator operator ++ ()		// pre-fix
+		{
+			return const_reverse_iterator(--m_ptr);
+		}
+
+		const_reverse_iterator operator ++ (int)	// post-fix
+		{
+			return const_reverse_iterator(m_ptr--);
+		}
+
+		const_reverse_iterator operator -- ()
+		{
+			return const_reverse_iterator(++m_ptr);
+		}
+
+		const_reverse_iterator operator -- (int)
+		{
+			return const_reverse_iterator(m_ptr++);
+		}
+
+		bool operator == (const const_reverse_iterator& r) const
+		{
+			return m_ptr == r.m_ptr;
+		}
+
+		bool operator != (const const_reverse_iterator& r) const
+		{
+			return m_ptr != r.m_ptr;
+		}
+
+		difference_type operator - (const const_reverse_iterator& r) const
+		{
+			return difference_type(m_ptr - r.m_ptr);
+		}
+
+		const_reverse_iterator& operator = (const const_reverse_iterator& r)
+		{
+			m_ptr = r.m_ptr;
+			return *this;
+		}
+
+		const_pointer _const_ptr() const
+		{
+			return m_ptr;
+		}
+
+	protected:
+		friend class AlignedVector;
+		ItemType* m_ptr;
+
+		explicit const_reverse_iterator(ItemType* ptr)
+		:	m_ptr(ptr)
+		{
+		}
+	};
+
+	class reverse_iterator : public const_reverse_iterator
+	{
+	public:
+		typedef const_reverse_iterator _O;
+		typedef std::random_access_iterator_tag iterator_category;
+		typedef ItemType value_type;
+		typedef int difference_type;
+		typedef value_type* pointer;
+		typedef value_type& reference;
+
+		reference operator * ()
+		{
+			return *_O::m_ptr;
+		}
+
+		pointer operator -> ()
+		{
+			return _O::m_ptr;
+		}
+
+		reverse_iterator operator + (int offset) const
+		{
+			return reverse_iterator(_O::m_ptr - offset);
+		}
+
+		reverse_iterator operator + (size_t offset) const
+		{
+			return reverse_iterator(_O::m_ptr - offset);
+		}
+
+		reverse_iterator operator - (int offset) const
+		{
+			return reverse_iterator(_O::m_ptr + offset);
+		}
+
+		reverse_iterator operator - (size_t offset) const
+		{
+			return reverse_iterator(_O::m_ptr + offset);
+		}
+
+		reverse_iterator operator ++ ()		// pre-fix
+		{
+			return reverse_iterator(--_O::m_ptr);
+		}
+
+		reverse_iterator operator ++ (int)	// post-fix
+		{
+			return reverse_iterator(_O::m_ptr--);
+		}
+
+		reverse_iterator operator -- ()
+		{
+			return reverse_iterator(++_O::m_ptr);
+		}
+
+		reverse_iterator operator -- (int)
+		{
+			return reverse_iterator(_O::m_ptr++);
+		}
+
+		bool operator == (const reverse_iterator& r) const
+		{
+			return _O::m_ptr == r.m_ptr;
+		}
+
+		bool operator != (const reverse_iterator& r) const
+		{
+			return _O::m_ptr != r.m_ptr;
+		}
+
+		difference_type operator - (const const_reverse_iterator& r) const
+		{
+			return difference_type(_O::m_ptr - r._const_ptr());
+		}
+
+	protected:
+		friend class AlignedVector;
+
+		explicit reverse_iterator(ItemType* ptr)
+		:	const_reverse_iterator(ptr)
+		{
+		}
+	};
+
 	AlignedVector()
 	:	m_data(0)
 	,	m_size(0)
@@ -523,6 +724,15 @@ public:
 		return iterator(m_data);
 	}
 
+	/*! \brief Return reverse iterator.
+	 *
+	 * \return Iterator.
+	 */
+	reverse_iterator rbegin()
+	{
+		return reverse_iterator(&m_data[m_size - 1]);
+	}
+
 	/*! \brief Return iterator one step beyond last element.
 	 *
 	 * \return Iterator.
@@ -530,6 +740,15 @@ public:
 	iterator end()
 	{
 		return iterator(&m_data[m_size]);
+	}
+
+	/*! \brief Return reverse iterator at first element.
+	 *
+	 * \return Iterator.
+	 */
+	reverse_iterator rend()
+	{
+		return reverse_iterator(&m_data[-1]);
 	}
 
 	/*! \brief Return constant iterator at first element.
@@ -541,6 +760,15 @@ public:
 		return const_iterator(m_data);
 	}
 
+	/*! \brief Return constant reverse iterator.
+	 *
+	 * \return Iterator.
+	 */
+	const_reverse_iterator rbegin() const
+	{
+		return const_reverse_iterator(&m_data[m_size - 1]);
+	}
+
 	/*! \brief Return constant iterator one step beyond last element.
 	 *
 	 * \return Iterator.
@@ -548,6 +776,15 @@ public:
 	const_iterator end() const
 	{
 		return const_iterator(&m_data[m_size]);
+	}
+
+	/*! \brief Return constant reverse iterator at first element.
+	 *
+	 * \return Iterator.
+	 */
+	const_reverse_iterator rend() const
+	{
+		return const_reverse_iterator(&m_data[-1]);
 	}
 
 	/*! \brief Erase element.
