@@ -21,6 +21,8 @@ public:
 	typedef std::pair< Key, Item > pair_t;
 	typedef typename AlignedVector< pair_t >::iterator iterator;
 	typedef typename AlignedVector< pair_t >::const_iterator const_iterator;
+	typedef typename AlignedVector< pair_t >::reverse_iterator reverse_iterator;
+	typedef typename AlignedVector< pair_t >::const_reverse_iterator const_reverse_iterator;
 
 	void reserve(size_t capacity)
 	{
@@ -37,6 +39,16 @@ public:
 		return m_data.begin();
 	}
 	
+	reverse_iterator rbegin()
+	{
+		return m_data.rbegin();
+	}
+
+	const_reverse_iterator rbegin() const
+	{
+		return m_data.rbegin();
+	}
+
 	iterator end()
 	{
 		return m_data.end();
@@ -47,6 +59,16 @@ public:
 		return m_data.end();
 	}
 	
+	reverse_iterator rend()
+	{
+		return m_data.rend();
+	}
+	
+	const_reverse_iterator rend() const
+	{
+		return m_data.rend();
+	}
+
 	iterator find(const Key& key)
 	{
 		size_t is = 0;
