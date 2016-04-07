@@ -48,6 +48,8 @@ As_flash_display_BitmapData::As_flash_display_BitmapData(ActionContext* context)
 	//prototype->setMember("setPixel32", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_setPixel32)));
 	//prototype->setMember("threshold", ActionValue(createNativeFunction(context, this, &As_flash_display_BitmapData::BitmapData_threshold)));
 
+	prototype->setMember("save", ActionValue(createNativeFunction(context, &BitmapData::save)));
+
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 

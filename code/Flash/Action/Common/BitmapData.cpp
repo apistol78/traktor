@@ -87,6 +87,11 @@ void BitmapData::draw(FlashSpriteInstance* source)
 	);
 }
 
+bool BitmapData::save(const std::wstring& fileName)
+{
+	return m_image->save(fileName);
+}
+
 void BitmapData::fillRect(const Rectangle* rectangle, uint32_t color)
 {
 }
