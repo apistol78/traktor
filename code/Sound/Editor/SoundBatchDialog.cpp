@@ -5,9 +5,10 @@
 #include "I18N/Text.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundBatchDialog.h"
-#include "Ui/Bitmap.h"
+#include "Ui/Application.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ListBox.h"
 #include "Ui/Custom/Splitter.h"
@@ -15,9 +16,6 @@
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
-
-// Resources
-#include "Resources/PlusMinus.h"
 
 namespace traktor
 {
@@ -36,15 +34,15 @@ bool SoundBatchDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"SOUND_BATCH_DIALOG_TITLE"),
-		900,
-		500,
+		ui::scaleBySystemDPI(900),
+		ui::scaleBySystemDPI(500),
 		ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))
 		return false;
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, 200);
+	splitter->create(this, true, ui::scaleBySystemDPI(200));
 
 	Ref< ui::Container > soundListContainer = new ui::Container();
 	soundListContainer->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -53,7 +51,7 @@ bool SoundBatchDialog::create(ui::Widget* parent)
 	if (!soundListTools->create(soundListContainer))
 		return false;
 
-	soundListTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"image"), 4);
+	soundListTools->addImage(new ui::StyleBitmap(L"Sound.PlusMinus"), 2);
 	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_ADD"), 0, ui::Command(L"SoundBatch.Add")));
 	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_REMOVE"), 1, ui::Command(L"SoundBatch.Remove")));
 	soundListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SoundBatchDialog::eventSoundListToolClick);
@@ -64,7 +62,7 @@ bool SoundBatchDialog::create(ui::Widget* parent)
 
 	m_soundPropertyList = new ui::custom::AutoPropertyList();
 	m_soundPropertyList->create(splitter, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader);
-	m_soundPropertyList->setSeparator(200);
+	m_soundPropertyList->setSeparator(ui::scaleBySystemDPI(200));
 	m_soundPropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_soundPropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 
