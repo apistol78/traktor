@@ -752,12 +752,20 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Script/ToolProfiler.image</value>
 		</item>
 		<item>
+			<name>Sound.PlusMinus</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Sound/PlusMinus.image</value>
+		</item>
+		<item>
 			<name>Flash.Playback</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/Playback.image</value>
 		</item>
 		<item>
 			<name>Flash.Flash</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/Flash.image</value>
+		</item>
+		<item>
+			<name>Flash.PlusMinus</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/PlusMinus.image</value>
 		</item>
 		<item>
 			<name>Shader.Tools</name>

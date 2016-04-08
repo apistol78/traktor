@@ -9,6 +9,7 @@
 #include "Ui/Bitmap.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ListBox.h"
 #include "Ui/Custom/Splitter.h"
@@ -16,9 +17,6 @@
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
-
-// Resources
-//#include "Resources/PlusMinus.h"
 
 namespace traktor
 {
@@ -54,7 +52,7 @@ bool FlashBatchDialog::create(ui::Widget* parent)
 	if (!movieListTools->create(textureListContainer))
 		return false;
 
-	//movieListTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"png"), 4);
+	movieListTools->addImage(new ui::StyleBitmap(L"Flash.PlusMinus"), 2);
 	movieListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_BATCH_ADD"), 0, ui::Command(L"FlashBatch.Add")));
 	movieListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_BATCH_REMOVE"), 1, ui::Command(L"FlashBatch.Remove")));
 	movieListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashBatchDialog::eventTextureListToolClick);
