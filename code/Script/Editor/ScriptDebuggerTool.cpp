@@ -24,15 +24,29 @@ Ref< ui::IBitmap > ScriptDebuggerTool::getIcon() const
 
 bool ScriptDebuggerTool::launch(ui::Widget* parent, editor::IEditor* script)
 {
-	safeDestroy(m_debuggerDialog);
+	// If debugger dialog is already created then we only need to show it.
+	if (m_debuggerDialog)
+	{
+		m_debuggerDialog->show();
+		return true;
+	}
 
+	// Create dialog and register ourself for close events.
 	m_debuggerDialog = new ScriptDebuggerDialog(script);
 	if (m_debuggerDialog->create(parent))
+	{
 		m_debuggerDialog->show();
+		m_debuggerDialog->addEventHandler< ui::CloseEvent >(this, &ScriptDebuggerTool::eventCloseDialog);
+	}
 	else
 		safeDestroy(m_debuggerDialog);
 
 	return true;
+}
+
+void ScriptDebuggerTool::eventCloseDialog(ui::CloseEvent* event)
+{
+	safeDestroy(m_debuggerDialog);
 }
 
 	}
