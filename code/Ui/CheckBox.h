@@ -24,11 +24,24 @@ class T_DLLCLASS CheckBox : public Widget
 	T_RTTI_CLASS;
 
 public:
+	CheckBox();
+
 	bool create(Widget* parent, const std::wstring& text = L"", bool checked = false);
 	
 	void setChecked(bool checked);
 	
 	bool isChecked() const;
+
+	virtual Size getPreferedSize() const;
+
+private:
+	bool m_checked;
+
+	void eventPaint(PaintEvent* event);
+
+	void eventButtonDown(MouseButtonDownEvent* event);
+
+	void eventButtonUp(MouseButtonUpEvent* event);
 };
 
 	}
