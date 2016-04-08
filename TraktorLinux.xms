@@ -6401,7 +6401,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
@@ -6409,11 +6409,11 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x86</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x64</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1-staticd</item>
+						<item>fbxsdk-2016.1.2-staticd</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -6435,7 +6435,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
@@ -6443,11 +6443,11 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x86</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x64</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1-static</item>
+						<item>fbxsdk-2016.1.2-static</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -6469,7 +6469,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -6477,11 +6477,11 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x86</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x64</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1-staticd</item>
+						<item>fbxsdk-2016.1.2-staticd</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -6503,7 +6503,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -6511,11 +6511,11 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x86</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x64</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1-static</item>
+						<item>fbxsdk-2016.1.2-static</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -10029,7 +10029,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
 												<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 											</includePaths>
 											<definitions>
@@ -10038,11 +10038,11 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x86</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x64</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1-staticd</item>
+												<item>fbxsdk-2016.1.2-staticd</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -10065,7 +10065,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
 												<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 											</includePaths>
 											<definitions>
@@ -10074,11 +10074,11 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x86</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x64</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1-static</item>
+												<item>fbxsdk-2016.1.2-static</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -10101,7 +10101,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
 												<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 											</includePaths>
 											<definitions>
@@ -10110,11 +10110,11 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x86</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x64</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1-staticd</item>
+												<item>fbxsdk-2016.1.2-staticd</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -10137,7 +10137,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
 												<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 											</includePaths>
 											<definitions>
@@ -10146,11 +10146,11 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x86</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/lib/gcc4/x64</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1-static</item>
+												<item>fbxsdk-2016.1.2-static</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
