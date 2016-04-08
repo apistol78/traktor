@@ -157,7 +157,7 @@ Size CanvasGdiPlusWin32::getTextExtent(Window& hWnd, const std::wstring& text) c
 
 	ReleaseDC(hWnd, hDC);
 
-	return Size(int(boundingBox.Width), int(boundingBox.Height));
+	return Size(int(boundingBox.Width + 1), int(boundingBox.Height + 4));
 }
 
 void CanvasGdiPlusWin32::setForeground(const Color4ub& color)
@@ -485,7 +485,7 @@ Size CanvasGdiPlusWin32::getTextExtent(const std::wstring& text) const
 		&boundingBox
 	);
 
-	return Size(int(boundingBox.Width + 1), int(boundingBox.Height));
+	return Size(int(boundingBox.Width + 1), int(boundingBox.Height + 1));
 }
 
 void* CanvasGdiPlusWin32::getSystemHandle()
