@@ -82,7 +82,7 @@ void RenderEditorPlugin::handleWorkspaceOpened()
 void RenderEditorPlugin::handleWorkspaceClosed()
 {
 	m_editor->setStoreObject(L"ShaderDependencyTracker", 0);
-	m_tracker = 0;
+	safeDestroy(m_tracker);
 }
 
 	}

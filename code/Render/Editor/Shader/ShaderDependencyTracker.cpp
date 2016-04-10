@@ -70,6 +70,15 @@ ShaderDependencyTracker::~ShaderDependencyTracker()
 	T_ASSERT (!m_scanThreadActive);
 }
 
+void ShaderDependencyTracker::destroy()
+{
+	if (m_scanThreadActive)
+	{
+		ThreadPool::getInstance().join(m_scanThread);
+		T_ASSERT(!m_scanThreadActive);
+	}
+}
+
 void ShaderDependencyTracker::scan(db::Database* database)
 {
 	if (m_scanThreadActive)
