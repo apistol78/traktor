@@ -36,6 +36,8 @@ public:
 
 	virtual ~ShaderDependencyTracker();
 
+	void destroy();
+
 	void scan(db::Database* database);
 
 	void scan(db::Database* database, const Guid& shader);
