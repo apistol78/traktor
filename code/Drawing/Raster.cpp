@@ -131,26 +131,34 @@ public:
 	:	m_gradientMatrix(gradientMatrix)
 	,	m_colors(colors)
 	{
+		// Premultiply to be in "byte range".
+		for (AlignedVector< std::pair< Color4f, float > >::iterator i = m_colors.begin(); i != m_colors.end(); ++i)
+			i->first *= Scalar(255.0f);
 	}
 
 	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
 	{
 		float s = m_colors.front().second;
 		float e = m_colors.back().second;
+		float n = 1.0f / (e - s);
+
+		Vector2 pt = m_gradientMatrix * Vector2(float(x), float(y));
+		Vector2 dt = m_gradientMatrix * Vector2(float(x + 1.0f), float(y)) - pt;
 
 		for (unsigned i = 0; i < len; ++i)
 		{
-			Vector2 pt = m_gradientMatrix * Vector2(float(x + i), float(y));
-			float f = clamp((pt.x - s) / (e - s), 0.0f, 1.0f);
+			float f = clamp((pt.x - s) * n, 0.0f, 1.0f);
 			
 			Color4f c(lerp(m_colors.front().first, m_colors.back().first, Scalar(f)));
 
 			span[i] = agg::rgba8(
-				agg::int8u(c.getRed() * 255.0f),
-				agg::int8u(c.getGreen() * 255.0f),
-				agg::int8u(c.getBlue() * 255.0f),
-				agg::int8u(c.getAlpha() * 255.0f)
+				agg::int8u(c.getRed()),
+				agg::int8u(c.getGreen()),
+				agg::int8u(c.getBlue()),
+				agg::int8u(c.getAlpha())
 			);
+
+			pt.x += dt.x;
 		}
 	}
 
@@ -167,26 +175,34 @@ public:
 	:	m_gradientMatrix(gradientMatrix)
 	,	m_colors(colors)
 	{
+		// Premultiply to be in "byte range".
+		for (AlignedVector< std::pair< Color4f, float > >::iterator i = m_colors.begin(); i != m_colors.end(); ++i)
+			i->first *= Scalar(255.0f);
 	}
 
 	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
 	{
 		float s = m_colors.front().second;
 		float e = m_colors.back().second;
+		float n = 1.0f / (e - s);
+
+		Vector2 pt = m_gradientMatrix * Vector2(float(x), float(y));
+		Vector2 dt = m_gradientMatrix * Vector2(float(x + 1.0f), float(y)) - pt;
 
 		for (unsigned i = 0; i < len; ++i)
 		{
-			Vector2 pt = m_gradientMatrix * Vector2(float(x + i), float(y));
-			float f = clamp(((pt * pt).length() - s) / (e - s), 0.0f, 1.0f);
+			float f = clamp(((pt * pt).length() - s) * n, 0.0f, 1.0f);
 
 			Color4f c(lerp(m_colors.front().first, m_colors.back().first, Scalar(f)));
 
 			span[i] = agg::rgba8(
-				agg::int8u(c.getRed() * 255.0f),
-				agg::int8u(c.getGreen() * 255.0f),
-				agg::int8u(c.getBlue() * 255.0f),
-				agg::int8u(c.getAlpha() * 255.0f)
+				agg::int8u(c.getRed()),
+				agg::int8u(c.getGreen()),
+				agg::int8u(c.getBlue()),
+				agg::int8u(c.getAlpha())
 			);
+
+			pt += dt;
 		}
 	}
 
@@ -209,32 +225,50 @@ public:
 	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
 	{
 		Color4f c(0.0f, 0.0f, 0.0f, 0.0f);
-		for (unsigned i = 0; i < len; ++i)
+
+		Vector2 pt = m_imageMatrix * Vector2(float(x), float(y));
+		Vector2 dt = m_imageMatrix * Vector2(float(x + 1.0f), float(y)) - pt;
+
+		const int32_t w = m_image->getWidth();
+		const int32_t h = m_image->getHeight();
+
+		if (m_repeat)
 		{
-			Vector2 pt = m_imageMatrix * Vector2(float(x + i), float(y));
-
-			int32_t sx = int32_t(pt.x);
-			int32_t sy = int32_t(pt.y);
-
-			if (m_repeat)
+			for (unsigned i = 0; i < len; ++i)
 			{
-				sx = sx % m_image->getWidth();
-				sy = sy % m_image->getHeight();
+				int32_t sx = int32_t(pt.x) % w;
+				int32_t sy = int32_t(pt.y) % h;
+
+				m_image->getPixelUnsafe(sx, sy, c);
+
+				span[i] = agg::rgba8(
+					agg::int8u(c.getRed() * 255.0f),
+					agg::int8u(c.getGreen() * 255.0f),
+					agg::int8u(c.getBlue() * 255.0f),
+					agg::int8u(c.getAlpha() * 255.0f)
+				);
+
+				pt += dt;
 			}
-			else
+		}
+		else
+		{
+			for (unsigned i = 0; i < len; ++i)
 			{
-				sx = clamp(sx, 0, m_image->getWidth());
-				sy = clamp(sy, 0, m_image->getHeight());
+				int32_t sx = clamp(int32_t(pt.x), 0, w);
+				int32_t sy = clamp(int32_t(pt.y), 0, h);
+
+				m_image->getPixelUnsafe(sx, sy, c);
+
+				span[i] = agg::rgba8(
+					agg::int8u(c.getRed() * 255.0f),
+					agg::int8u(c.getGreen() * 255.0f),
+					agg::int8u(c.getBlue() * 255.0f),
+					agg::int8u(c.getAlpha() * 255.0f)
+				);
+
+				pt += dt;
 			}
-
-			m_image->getPixelUnsafe(sx, sy, c);
-
-			span[i] = agg::rgba8(
-				agg::int8u(c.getRed() * 255.0f),
-				agg::int8u(c.getGreen() * 255.0f),
-				agg::int8u(c.getBlue() * 255.0f),
-				agg::int8u(c.getAlpha() * 255.0f)
-			);
 		}
 	}
 
