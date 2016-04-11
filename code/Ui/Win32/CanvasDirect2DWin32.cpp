@@ -161,14 +161,29 @@ Size CanvasDirect2DWin32::getTextExtent(Window& hWnd, const std::wstring& text) 
 	if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
 		return Size(0, 0);
 
+	int32_t logical = 0;
+	if (lf.lfHeight >= 0)
+	{
+		TEXTMETRIC tm = { 0 };
+		HDC hDC = GetDC(hWnd);
+		GetTextMetrics(hDC, &tm);
+		ReleaseDC(hWnd, hDC);
+		logical = lf.lfHeight - tm.tmInternalLeading;
+	}
+	else
+		logical = -lf.lfHeight;
+
+	float inches = float(logical) / getSystemDPI();
+	float dip = inches * 96.0f;
+
 	ComRef< IDWriteTextFormat > dwTextFormat;
 	s_dwFactory->CreateTextFormat(
 		lf.lfFaceName,
 		NULL,
-		DWRITE_FONT_WEIGHT_NORMAL,
-		DWRITE_FONT_STYLE_NORMAL,
+		bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
+		bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		std::abs(lf.lfHeight),
+		int32_t(dip + 0.5f) * getSystemDPI() / 96.0f,
 		L"",
 		&dwTextFormat.getAssign()
 	);
@@ -193,7 +208,7 @@ Size CanvasDirect2DWin32::getTextExtent(Window& hWnd, const std::wstring& text) 
 	dwLayout->GetMetrics(&dwtm);
 
 	return Size(
-		dwtm.width,
+		dwtm.widthIncludingTrailingWhitespace,
 		dwtm.height
 	);
 }
