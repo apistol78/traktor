@@ -40,7 +40,7 @@ struct ErrorCallback : public IErrorCallback
 	}
 };
 
-bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const Guid& scriptGuid, std::vector< Guid >& outScripts)
+bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const Preprocessor* prep, const Guid& scriptGuid, std::vector< Guid >& outScripts)
 {
 	Ref< db::Instance > scriptInstance = pipelineBuilder->getSourceDatabase()->getInstance(scriptGuid);
 	if (!scriptInstance)
@@ -50,13 +50,41 @@ bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const Guid& 
 	if (!script)
 		return false;
 
+	// Ensure no double character line breaks.
+	std::wstring source = script->getText();
+	source = replaceAll< std::wstring >(source, L"\r\n", L"\n");
+
+	// Execute preprocessor on script.
+	std::wstring text;
+	std::set< std::wstring > usings;
+	if (!prep->evaluate(source, text, usings))
+	{
+		log::error << L"Script pipeline failed; unable to preprocess script." << Endl;
+		return false;
+	}
+
+	// Scan usings.
+	for (std::set< std::wstring >::const_iterator i = usings.begin(); i != usings.end(); ++i)
+	{
+		Guid g;
+		if (g.create(i->substr(1, i->length() - 2)))
+		{
+			if (std::find(outScripts.begin(), outScripts.end(), g) != outScripts.end())
+				continue;
+
+			if (!flattenDependencies(pipelineBuilder, prep, g, outScripts))
+				return false;
+		}
+	}
+
+	// Scan explicit dependencies.
 	const std::vector< Guid >& dependencies = script->getDependencies();
 	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		if (std::find(outScripts.begin(), outScripts.end(), *i) != outScripts.end())
 			continue;
 
-		if (!flattenDependencies(pipelineBuilder, *i, outScripts))
+		if (!flattenDependencies(pipelineBuilder, prep, *i, outScripts))
 			return false;
 	}
 
@@ -124,13 +152,32 @@ bool ScriptPipeline::buildDependencies(
 
 	// Execute preprocessor on script.
 	std::wstring text;
-	if (!m_preprocessor->evaluate(source, text))
+	std::set< std::wstring > usings;
+	if (!m_preprocessor->evaluate(source, text, usings))
 	{
-		log::error << L"Script pipeline failed; unable to preprocess script" << Endl;
+		log::error << L"Script pipeline failed; unable to preprocess script." << Endl;
 		return false;
 	}
 
-	// Add script dependencies.
+	// Get list of used dependencies.
+	std::set< Guid > usingIds;
+	for (std::set< std::wstring >::const_iterator i = usings.begin(); i != usings.end(); ++i)
+	{
+		Guid g;
+		if (g.create(i->substr(1, i->length() - 2)))
+			usingIds.insert(g);
+		else
+		{
+			log::error << L"Script pipeline failed; malformed using statement." << Endl;
+			return false;
+		}
+	}
+
+	// Add dependencies to included scripts.
+	for (std::set< Guid >::const_iterator i = usingIds.begin(); i != usingIds.end(); ++i)
+		pipelineDepends->addDependency(*i, editor::PdfBuild);
+
+	// Add explicit script dependencies.
 	const std::vector< Guid >& dependencies = script->getDependencies();
 	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		pipelineDepends->addDependency(*i, editor::PdfBuild);
@@ -145,11 +192,14 @@ bool ScriptPipeline::buildDependencies(
 			continue;
 
 		Guid g;
-		if (g.create(text.substr(i, 38)))
-		{
-			if (pipelineDepends->getSourceDatabase()->getInstance(g))
-				pipelineDepends->addDependency(g, editor::PdfBuild);
-		}
+		if (!g.create(text.substr(i, 38)))
+			continue;
+
+		if (usingIds.find(g) != usingIds.end())
+			continue;
+
+		if (pipelineDepends->getSourceDatabase()->getInstance(g))
+			pipelineDepends->addDependency(g, editor::PdfBuild);
 	}
 
 	return true;
@@ -176,17 +226,18 @@ bool ScriptPipeline::buildOutput(
 
 	// Execute preprocessor on script.
 	std::wstring text;
-	if (!m_preprocessor->evaluate(source, text))
+	std::set< std::wstring > includes;
+	if (!m_preprocessor->evaluate(source, text, includes))
 	{
-		log::error << L"Script pipeline failed; unable to preprocess script" << Endl;
+		log::error << L"Script pipeline failed; unable to preprocess script." << Endl;
 		return false;
 	}
 
 	// Create ordered list of dependent scripts.
 	std::vector< Guid > dependencies;
-	if (!flattenDependencies(pipelineBuilder, outputGuid, dependencies))
+	if (!flattenDependencies(pipelineBuilder, m_preprocessor, outputGuid, dependencies))
 	{
-		log::error << L"Script pipeline failed; unable to resolve script dependencies" << Endl;
+		log::error << L"Script pipeline failed; unable to resolve script dependencies." << Endl;
 		return false;
 	}
 
@@ -200,7 +251,7 @@ bool ScriptPipeline::buildOutput(
 	Ref< IScriptBlob > blob = m_scriptManager->compile(outputGuid.format(), text, &errorCallback);
 	if (!blob)
 	{
-		log::error << L"Script pipeline failed; unable to compile script" << Endl;
+		log::error << L"Script pipeline failed; unable to compile script." << Endl;
 		return false;
 	}
 

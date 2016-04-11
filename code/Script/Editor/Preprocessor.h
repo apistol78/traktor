@@ -21,7 +21,7 @@ public:
 
 	void removeDefinition(const std::wstring& symbol);
 
-	bool evaluate(const std::wstring& source, std::wstring& output) const;
+	bool evaluate(const std::wstring& source, std::wstring& output, std::set< std::wstring >& usings) const;
 
 private:
 	std::map< std::wstring, int32_t > m_definitions;

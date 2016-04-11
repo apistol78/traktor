@@ -19,7 +19,8 @@ enum PreprocessorKeyword
 	PkwIf,
 	PkwElseIf,
 	PkwElse,
-	PkwEnd
+	PkwEnd,
+	PkwUsing
 };
 
 struct Tokenizer
@@ -315,7 +316,7 @@ void Preprocessor::removeDefinition(const std::wstring& symbol)
 		m_definitions.erase(i);
 }
 
-bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output) const
+bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, std::set< std::wstring >& usings) const
 {
 	StringOutputStream ss;
 
@@ -342,6 +343,8 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output) co
 					keyword = PkwIf;
 				else if (tmp == L"#elif")
 					keyword = PkwElseIf;
+				else if (tmp == L"#using")
+					keyword = PkwUsing;
 
 				expression = line.substr(sep + 1);
 			}
@@ -393,6 +396,11 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output) co
 						return false;
 					}
 				}
+				break;
+
+			case PkwUsing:
+					if (keep.top() == 0)
+						usings.insert(trim(expression));
 				break;
 
 			default:

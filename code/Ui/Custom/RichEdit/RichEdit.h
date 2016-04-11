@@ -37,11 +37,14 @@ public:
 	bool create(Widget* parent, const std::wstring& text = L"", int32_t style = WsClientBorder | WsDoubleBuffer);
 
 	/*! \brief Set text content of text editor. */
-	virtual void setText(const std::wstring& text);
-	
-	/*! \brief Get textual content of text editor. */
-	virtual std::wstring getText() const;
+	virtual void setText(const std::wstring& text) T_OVERRIDE;
 
+	/*! \brief Get textual content of text editor. */
+	virtual std::wstring getText() const T_OVERRIDE;
+
+	/*! \brief Set font. */
+	virtual void setFont(const Font& font) T_OVERRIDE;
+	
 	/*! \brief Define a new text attribute. */
 	int32_t addTextAttribute(const Color4ub& textColor, bool bold, bool italic, bool underline);
 
@@ -65,6 +68,9 @@ public:
 
 	/*! \brief Use image on a line of text. */
 	void setImage(int32_t line, int32_t image);
+
+	/*! \brief Set special character substiute value. */
+	void setSpecialCharacter(wchar_t meta, const std::wstring& value);
 
 	/*! \brief Clear attributes, images or content of text. */
 	void clear(bool attributes, bool images, bool content);
@@ -179,14 +185,26 @@ private:
 		}
 	};
 
-	struct Meta
+	struct Character
 	{
+		wchar_t ch;
 		uint16_t tai;
 		uint16_t bgai;
+		uint16_t width;
 
-		Meta()
-		:	tai(0)
+		Character()
+		:	ch(0)
+		,	tai(0)
 		,	bgai(0)
+		,	width(0)
+		{
+		}
+
+		explicit Character(wchar_t _ch)
+		:	ch(_ch)
+		,	tai(0)
+		,	bgai(0)
+		,	width(0)
 		{
 		}
 	};
@@ -200,9 +218,8 @@ private:
 	uint32_t m_imageHeight;
 	uint32_t m_imageCount;
 	std::vector< Line > m_lines;
-	std::vector< wchar_t > m_text;
-	std::vector< Meta > m_meta;
-	int32_t m_charWidth;
+	std::vector< Character > m_text;
+	std::map< wchar_t, std::wstring > m_specialCharacters;
 	int32_t m_caret;
 	int32_t m_selectionStart;
 	int32_t m_selectionStop;
@@ -211,13 +228,9 @@ private:
 	int32_t m_widestLineWidth;
 	int32_t m_fromCaret;
 
-#if defined(_DEBUG)
-	std::vector< Line > m_linesLastGood;
-#endif
-
 	void updateScrollBars();
 
-	void updateWidestLine();
+	void updateCharacterWidths();
 
 	void deleteCharacters();
 
@@ -226,8 +239,6 @@ private:
 	void insertAt(int32_t offset, wchar_t ch);
 
 	void scrollToCaret();
-
-	int32_t getCharacterStops(const std::wstring& text, std::vector< int32_t >& outStops) const;
 
 	void eventKeyDown(KeyDownEvent* event);
 
@@ -248,10 +259,6 @@ private:
 	void eventSize(SizeEvent* event);
 
 	void eventScroll(ScrollEvent* event);
-
-#if defined(_DEBUG)
-	void checkConsistency();
-#endif
 };
 
 		}

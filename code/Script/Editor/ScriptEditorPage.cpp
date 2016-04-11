@@ -162,7 +162,6 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_edit = new ui::custom::SyntaxRichEdit();
 	if (!m_edit->create(containerEdit, m_script->getText(), ui::WsDoubleBuffer))
 		return false;
-
 	m_edit->addImage(new ui::StyleBitmap(L"Script.Breakpoint"), 1);
 
 	std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
@@ -749,7 +748,8 @@ void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 		{
 			// Take snapshot of script and try to compile it.
 			std::wstring script;
-			m_preprocessor->evaluate(m_edit->getText(), script);
+			std::set< std::wstring > usings;
+			m_preprocessor->evaluate(m_edit->getText(), script, usings);
 
 			if (m_scriptManager->compile(L"", script, this))
 			{
