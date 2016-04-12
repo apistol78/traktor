@@ -50,6 +50,7 @@ RichEdit::RichEdit()
 ,	m_lineMargin(c_lineMarginMin)
 ,	m_lineOffsetH(0)
 ,	m_widestLineWidth(0)
+,	m_nextSpecialCharacter(0xff00)
 {
 }
 
@@ -157,6 +158,20 @@ std::wstring RichEdit::getText() const
 	}
 	else
 		return L"";
+}
+
+std::wstring RichEdit::getText(std::function< std::wstring (wchar_t) > cfn, std::function< std::wstring (const ISpecialCharacter*) > scfn) const
+{
+	StringOutputStream ss;
+	for (size_t i = 0; i < m_text.size(); ++i)
+	{
+		std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator j = m_specialCharacters.find(m_text[i].ch);
+		if (j == m_specialCharacters.end())
+			ss << cfn(m_text[i].ch);
+		else
+			ss << scfn(j->second);
+	}
+	return ss.str();
 }
 
 void RichEdit::setFont(const Font& font)
@@ -279,10 +294,12 @@ void RichEdit::setImage(int32_t line, int32_t image)
 		m_lines[line].image = image;
 }
 
-void RichEdit::setSpecialCharacter(wchar_t meta, const std::wstring& value)
+wchar_t RichEdit::addSpecialCharacter(const ISpecialCharacter* specialCharacter)
 {
-	m_specialCharacters[meta] = value;
+	wchar_t ch = m_nextSpecialCharacter++;
+	m_specialCharacters[ch] = specialCharacter;
 	updateCharacterWidths();
+	return ch;
 }
 
 void RichEdit::clear(bool attributes, bool images, bool content)
@@ -608,7 +625,7 @@ void RichEdit::updateCharacterWidths()
 			{
 				if (c.ch != L'\t')
 				{
-					std::map< wchar_t, std::wstring >::const_iterator k = m_specialCharacters.find(c.ch);
+					std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator k = m_specialCharacters.find(c.ch);
 					if (k == m_specialCharacters.end())
 					{
 						Size sz = getTextExtent(std::wstring(1, c.ch));
@@ -616,8 +633,7 @@ void RichEdit::updateCharacterWidths()
 					}
 					else
 					{
-						Size sz = getTextExtent(k->second);
-						c.width = sz.cx;
+						c.width = k->second->measureWidth(this);
 					}
 				}
 				else
@@ -1301,7 +1317,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 				if (solidBackground)
 					canvas.fillRect(textRc);
 
-				std::map< wchar_t, std::wstring >::const_iterator k = m_specialCharacters.find(m_text[j].ch);
+				std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator k = m_specialCharacters.find(m_text[j].ch);
 				if (k == m_specialCharacters.end())
 				{
 					if (std::iswgraph(m_text[j].ch))
@@ -1309,7 +1325,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 				}
 				else
 				{
-					canvas.drawText(textRc, k->second, AnLeft, AnCenter);
+					k->second->draw(canvas, textRc);
 				}
 
 				x += m_text[j].width;

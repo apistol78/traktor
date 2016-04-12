@@ -1,6 +1,7 @@
 #ifndef traktor_ui_custom_RichEdit_H
 #define traktor_ui_custom_RichEdit_H
 
+#include <functional>
 #include <list>
 #include "Ui/Widget.h"
 
@@ -32,6 +33,13 @@ class T_DLLCLASS RichEdit : public Widget
 	T_RTTI_CLASS;
 
 public:
+	struct ISpecialCharacter : public IRefCount
+	{
+		virtual int32_t measureWidth(const RichEdit* richEdit) const = 0;
+
+		virtual void draw(Canvas& canvas, const Rect& rc) const = 0;
+	};
+
 	RichEdit();
 
 	bool create(Widget* parent, const std::wstring& text = L"", int32_t style = WsClientBorder | WsDoubleBuffer);
@@ -41,6 +49,9 @@ public:
 
 	/*! \brief Get textual content of text editor. */
 	virtual std::wstring getText() const T_OVERRIDE;
+
+	/*! \brief Get textual content of text editor. */
+	std::wstring getText(std::function< std::wstring (wchar_t) > cfn, std::function< std::wstring (const ISpecialCharacter*) > scfn) const;
 
 	/*! \brief Set font. */
 	virtual void setFont(const Font& font) T_OVERRIDE;
@@ -69,8 +80,8 @@ public:
 	/*! \brief Use image on a line of text. */
 	void setImage(int32_t line, int32_t image);
 
-	/*! \brief Set special character substiute value. */
-	void setSpecialCharacter(wchar_t meta, const std::wstring& value);
+	/*! \brief Add special character with substiute value. */
+	wchar_t addSpecialCharacter(const ISpecialCharacter* specialCharacter);
 
 	/*! \brief Clear attributes, images or content of text. */
 	void clear(bool attributes, bool images, bool content);
@@ -219,7 +230,7 @@ private:
 	uint32_t m_imageCount;
 	std::vector< Line > m_lines;
 	std::vector< Character > m_text;
-	std::map< wchar_t, std::wstring > m_specialCharacters;
+	std::map< wchar_t, Ref< const ISpecialCharacter > > m_specialCharacters;
 	int32_t m_caret;
 	int32_t m_selectionStart;
 	int32_t m_selectionStop;
@@ -227,6 +238,7 @@ private:
 	int32_t m_lineOffsetH;
 	int32_t m_widestLineWidth;
 	int32_t m_fromCaret;
+	wchar_t m_nextSpecialCharacter;
 
 	void updateScrollBars();
 

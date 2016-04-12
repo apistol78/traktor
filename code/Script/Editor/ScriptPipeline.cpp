@@ -42,6 +42,8 @@ struct ErrorCallback : public IErrorCallback
 
 bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const Preprocessor* prep, const Guid& scriptGuid, std::vector< Guid >& outScripts)
 {
+	Guid g;
+
 	Ref< db::Instance > scriptInstance = pipelineBuilder->getSourceDatabase()->getInstance(scriptGuid);
 	if (!scriptInstance)
 		return false;
@@ -50,8 +52,12 @@ bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const Prepro
 	if (!script)
 		return false;
 
+	// Escape script and flatten dependencies.
+	std::wstring source = script->escape([&] (const Guid& g) -> std::wstring {
+		return g.format();
+	});
+
 	// Ensure no double character line breaks.
-	std::wstring source = script->getText();
 	source = replaceAll< std::wstring >(source, L"\r\n", L"\n");
 
 	// Execute preprocessor on script.
@@ -66,26 +72,13 @@ bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const Prepro
 	// Scan usings.
 	for (std::set< std::wstring >::const_iterator i = usings.begin(); i != usings.end(); ++i)
 	{
-		Guid g;
-		if (g.create(i->substr(1, i->length() - 2)))
+		if (g.create(*i))
 		{
 			if (std::find(outScripts.begin(), outScripts.end(), g) != outScripts.end())
 				continue;
-
 			if (!flattenDependencies(pipelineBuilder, prep, g, outScripts))
 				return false;
 		}
-	}
-
-	// Scan explicit dependencies.
-	const std::vector< Guid >& dependencies = script->getDependencies();
-	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-	{
-		if (std::find(outScripts.begin(), outScripts.end(), *i) != outScripts.end())
-			continue;
-
-		if (!flattenDependencies(pipelineBuilder, prep, *i, outScripts))
-			return false;
 	}
 
 	outScripts.push_back(scriptGuid);
@@ -94,7 +87,7 @@ bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const Prepro
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 20, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 21, ScriptPipeline, editor::DefaultPipeline)
 
 ScriptPipeline::~ScriptPipeline()
 {
@@ -146,8 +139,12 @@ bool ScriptPipeline::buildDependencies(
 {
 	Ref< const Script > script = checked_type_cast< const Script* >(sourceAsset);
 
+	// Escape script and flatten dependencies.
+	std::wstring source = script->escape([&] (const Guid& g) -> std::wstring {
+		return g.format();
+	});
+
 	// Ensure no double character line breaks.
-	std::wstring source = script->getText();
 	source = replaceAll< std::wstring >(source, L"\r\n", L"\n");
 
 	// Execute preprocessor on script.
@@ -164,7 +161,7 @@ bool ScriptPipeline::buildDependencies(
 	for (std::set< std::wstring >::const_iterator i = usings.begin(); i != usings.end(); ++i)
 	{
 		Guid g;
-		if (g.create(i->substr(1, i->length() - 2)))
+		if (g.create(*i))
 			usingIds.insert(g);
 		else
 		{
@@ -175,11 +172,6 @@ bool ScriptPipeline::buildDependencies(
 
 	// Add dependencies to included scripts.
 	for (std::set< Guid >::const_iterator i = usingIds.begin(); i != usingIds.end(); ++i)
-		pipelineDepends->addDependency(*i, editor::PdfBuild);
-
-	// Add explicit script dependencies.
-	const std::vector< Guid >& dependencies = script->getDependencies();
-	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		pipelineDepends->addDependency(*i, editor::PdfBuild);
 
 	// Scan for implicit dependencies from script.
@@ -220,8 +212,12 @@ bool ScriptPipeline::buildOutput(
 {
 	const Script* script = mandatory_non_null_type_cast< const Script* >(sourceAsset);
 
+	// Escape script and flatten dependencies.
+	std::wstring source = script->escape([&] (const Guid& g) -> std::wstring {
+		return g.format();
+	});
+
 	// Ensure no double character line breaks.
-	std::wstring source = script->getText();
 	source = replaceAll< std::wstring >(source, L"\r\n", L"\n");
 
 	// Execute preprocessor on script.
