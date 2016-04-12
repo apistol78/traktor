@@ -593,7 +593,9 @@ void RichEdit::updateScrollBars()
 
 void RichEdit::updateCharacterWidths()
 {
-	const Size szw = getTextExtent(L" ");
+	Size szw = getTextExtent(L" ");
+	if (szw.cx <= 0)
+		szw.cx = 1;
 
 	m_widestLineWidth = 0;
 	for (std::vector< Line >::const_iterator i = m_lines.begin(); i != m_lines.end(); ++i)
