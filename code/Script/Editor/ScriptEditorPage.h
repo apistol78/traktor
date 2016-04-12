@@ -102,8 +102,6 @@ private:
 	Ref< ui::IBitmap > m_bitmapFunctionReference;
 	Ref< ui::Container > m_containerExplorer;
 	Ref< ui::custom::GridView > m_outlineGrid;
-	Ref< ui::ListBox > m_dependencyList;
-	Ref< ui::ListBox > m_dependentList;
 	Ref< ScriptClassesView > m_classesView;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	Ref< ui::custom::StatusBar > m_compileStatus;
@@ -144,21 +142,11 @@ private:
 
 	/*! \} */
 
-	void updateDependencyList();
-
-	void updateDependentList();
-
 	void updateBreakpoints();
 
 	void buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on);
 
 	void eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event);
-
-	void eventDependencyToolClick(ui::custom::ToolBarButtonClickEvent* event);
-
-	void eventDependencyListDoubleClick(ui::MouseDoubleClickEvent* event);
-
-	void eventDependentListDoubleClick(ui::MouseDoubleClickEvent* event);
 
 	void eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent* event);
 

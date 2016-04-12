@@ -53,6 +53,32 @@ namespace traktor
 {
 	namespace script
 	{
+		namespace
+		{
+		
+struct DependencyCharacter : public RefCountImpl< ui::custom::RichEdit::ISpecialCharacter >
+{
+	Guid id;
+	std::wstring path;
+
+	DependencyCharacter(const Guid& id_, const std::wstring& path_)
+	:	id(id_)
+	,	path(path_)
+	{
+	}
+
+	virtual int32_t measureWidth(const ui::custom::RichEdit* richEdit) const T_OVERRIDE T_FINAL
+	{
+		return richEdit->getTextExtent(path).cx;
+	}
+
+	virtual void draw(ui::Canvas& canvas, const ui::Rect& rc) const T_OVERRIDE T_FINAL
+	{
+		canvas.drawText(rc, path, ui::AnCenter, ui::AnCenter);
+	}
+};
+		
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditorPage", ScriptEditorPage, editor::IEditorPage)
 
@@ -97,40 +123,6 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), ui::scaleBySystemDPI(45)));
 	m_outlineGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventOutlineDoubleClick);
 
-	Ref< ui::TabPage > tabDependencies = new ui::TabPage();
-	if (!tabDependencies->create(tab, i18n::Text(L"SCRIPT_EDITOR_DEPENDENCIES"), new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
-		return false;
-
-	Ref< ui::custom::ToolBar > dependencyTools = new ui::custom::ToolBar();
-	if (!dependencyTools->create(tabDependencies))
-		return false;
-
-	dependencyTools->addImage(new ui::StyleBitmap(L"Script.AddDependency"), 1);
-	dependencyTools->addImage(new ui::StyleBitmap(L"Script.MoveDependencyDown"), 1);
-	dependencyTools->addImage(new ui::StyleBitmap(L"Script.MoveDependencyUp"), 1);
-	dependencyTools->addImage(new ui::StyleBitmap(L"Script.RemoveDependency"), 1);
-	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_ADD_DEPENDENCY"), 0, ui::Command(L"Script.Editor.AddDependency")));
-	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_DEPENDENCY"), 3, ui::Command(L"Script.Editor.RemoveDependency")));
-	dependencyTools->addItem(new ui::custom::ToolBarSeparator());
-	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_UP"), 2, ui::Command(L"Script.Editor.MoveDependencyUp")));
-	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN"), 1, ui::Command(L"Script.Editor.MoveDependencyDown")));
-	dependencyTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventDependencyToolClick);
-
-	Ref< ui::custom::Splitter > splitterDependencies = new ui::custom::Splitter();
-	splitterDependencies->create(tabDependencies, false, 50, true);
-
-	m_dependencyList = new ui::ListBox();
-	if (!m_dependencyList->create(splitterDependencies, L"", ui::ListBox::WsSingle))
-		return false;
-
-	m_dependencyList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventDependencyListDoubleClick);
-
-	m_dependentList = new ui::ListBox();
-	if (!m_dependentList->create(splitterDependencies, L"", ui::ListBox::WsSingle))
-		return false;
-
-	m_dependentList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventDependentListDoubleClick);
-
 	Ref< ui::TabPage > tabClasses = new ui::TabPage();
 	if (!tabClasses->create(tab, i18n::Text(L"SCRIPT_EDITOR_CLASSES"), new ui::TableLayout(L"100%", L"100%", 0, 0)))
 		return false;
@@ -140,7 +132,6 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		return false;
 
 	tab->addPage(tabOutline);
-	tab->addPage(tabDependencies);
 	tab->addPage(tabClasses);
 	tab->setActivePage(tabOutline);
 
@@ -160,9 +151,21 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	toolBarEdit->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventToolBarEditClick);
 
 	m_edit = new ui::custom::SyntaxRichEdit();
-	if (!m_edit->create(containerEdit, m_script->getText(), ui::WsDoubleBuffer))
+	if (!m_edit->create(containerEdit, L"", ui::WsDoubleBuffer))
 		return false;
 	m_edit->addImage(new ui::StyleBitmap(L"Script.Breakpoint"), 1);
+
+	// Escape text and set into editor, embedded dependencies are wrapped as "special characters".
+	m_edit->setText(m_script->escape([&] (const Guid& g) -> std::wstring {
+		const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
+		if (instance)
+		{
+			wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(g, instance->getPath()));
+			return std::wstring(1, ch);
+		}
+		else
+			return L"\"\"";
+	}));
 
 	std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
 	int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
@@ -242,8 +245,6 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		}
 	}
 
-	updateDependencyList();
-	updateDependentList();
 	return true;
 }
 
@@ -279,8 +280,11 @@ bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& pos
 	if (dropOffset < 0)
 		return false;
 
+	wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(instance->getGuid(), instance->getPath()));
+
 	m_edit->placeCaret(dropOffset);
-	m_edit->insert(L"\"" + instance->getGuid().format() + L"\"");
+	m_edit->insert(std::wstring(1, ch));
+
 	return true;
 }
 
@@ -291,9 +295,19 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		if (m_document->undo())
 		{
 			m_script = m_document->getObject< Script >(0);
-			m_edit->setText(m_script->getText());
-			updateDependencyList();
-			updateDependentList();
+
+			// Escape text and set into editor, embedded dependencies are wrapped as "special characters".
+			m_edit->setText(m_script->escape([&] (const Guid& g) -> std::wstring {
+				const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
+				if (instance)
+				{
+					wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(g, instance->getPath()));
+					return std::wstring(1, ch);
+				}
+				else
+					return L"\"\"";
+			}));
+
 			updateBreakpoints();
 		}
 	}
@@ -302,9 +316,19 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		if (m_document->redo())
 		{
 			m_script = m_document->getObject< Script >(0);
-			m_edit->setText(m_script->getText());
-			updateDependencyList();
-			updateDependentList();
+
+			// Escape text and set into editor, embedded dependencies are wrapped as "special characters".
+			m_edit->setText(m_script->escape([&] (const Guid& g) -> std::wstring {
+				const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
+				if (instance)
+				{
+					wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(g, instance->getPath()));
+					return std::wstring(1, ch);
+				}
+				else
+					return L"\"\"";
+			}));
+
 			updateBreakpoints();
 		}
 	}
@@ -406,44 +430,6 @@ void ScriptEditorPage::notifyRemoveBreakpoint(const Guid& scriptId, int32_t line
 {
 }
 
-void ScriptEditorPage::updateDependencyList()
-{
-	m_dependencyList->removeAll();
-
-	const std::vector< Guid >& dependencies = m_script->getDependencies();
-	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-	{
-		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(*i);
-		if (scriptInstance)
-			m_dependencyList->add(scriptInstance->getPath());
-		else
-			m_dependencyList->add(i->format());
-	}
-}
-
-void ScriptEditorPage::updateDependentList()
-{
-	m_dependentList->removeAll();
-
-	RefArray< db::Instance > scriptInstances;
-	db::recursiveFindChildInstances(m_editor->getSourceDatabase()->getRootGroup(), db::FindInstanceByType(type_of< Script >()), scriptInstances);
-
-	Guid instanceGuid = m_document->getInstance(0)->getGuid();
-
-	for (RefArray< db::Instance >::const_iterator i = scriptInstances.begin(); i != scriptInstances.end(); ++i)
-	{
-		Ref< const Script > scriptObject = (*i)->getObject< const Script >();
-		if (scriptObject)
-		{
-			const std::vector< Guid >& scriptDependencies = scriptObject->getDependencies();
-			if (std::find(scriptDependencies.begin(), scriptDependencies.end(), instanceGuid) != scriptDependencies.end())
-			{
-				m_dependentList->add((*i)->getPath(), *i);
-			}
-		}
-	}
-}
-
 void ScriptEditorPage::updateBreakpoints()
 {
 	Guid instanceGuid = m_document->getInstance(0)->getGuid();
@@ -514,119 +500,45 @@ void ScriptEditorPage::eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event)
 	}
 }
 
-void ScriptEditorPage::eventDependencyToolClick(ui::custom::ToolBarButtonClickEvent* event)
-{
-	const ui::Command& cmd = event->getCommand();
-	if (cmd == L"Script.Editor.AddDependency")
-	{
-		editor::TypeBrowseFilter filter(type_of< Script >());
-		Ref< db::Instance > scriptInstance = m_editor->browseInstance(&filter);
-		if (scriptInstance)
-		{
-			m_script->addDependency(scriptInstance->getGuid());
-			m_document->push();
-			updateDependencyList();
-		}
-	}
-	else if (cmd == L"Script.Editor.RemoveDependency")
-	{
-		int32_t selectedIndex = m_dependencyList->getSelected();
-		if (selectedIndex >= 0)
-		{
-			std::vector< Guid >& dependencies = m_script->getDependencies();
-			dependencies.erase(dependencies.begin() + selectedIndex);
-			m_document->push();
-			updateDependencyList();
-		}
-	}
-	else if (cmd == L"Script.Editor.MoveDependencyUp")
-	{
-		int32_t selectedIndex = m_dependencyList->getSelected();
-		if (selectedIndex > 0)
-		{
-			std::vector< Guid >& dependencies = m_script->getDependencies();
-			std::swap(dependencies[selectedIndex - 1], dependencies[selectedIndex]);
-			m_document->push();
-			updateDependencyList();
-			m_dependencyList->select(selectedIndex - 1);
-		}
-	}
-	else if (cmd == L"Script.Editor.MoveDependencyDown")
-	{
-		int32_t selectedIndex = m_dependencyList->getSelected();
-		if (selectedIndex < m_dependencyList->count() -1 )
-		{
-			std::vector< Guid >& dependencies = m_script->getDependencies();
-			std::swap(dependencies[selectedIndex + 1], dependencies[selectedIndex]);
-			m_document->push();
-			updateDependencyList();
-			m_dependencyList->select(selectedIndex + 1);
-		}
-	}
-}
-
-void ScriptEditorPage::eventDependencyListDoubleClick(ui::MouseDoubleClickEvent* event)
-{
-	int selectedIndex = m_dependencyList->getSelected();
-	if (selectedIndex >= 0)
-	{
-		const std::vector< Guid >& dependencies = m_script->getDependencies();
-		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(dependencies[selectedIndex]);
-		if (scriptInstance)
-			m_editor->openEditor(scriptInstance);
-	}
-}
-
-void ScriptEditorPage::eventDependentListDoubleClick(ui::MouseDoubleClickEvent* event)
-{
-	int selectedIndex = m_dependentList->getSelected();
-	if (selectedIndex >= 0)
-	{
-		Ref< db::Instance > scriptInstance = m_dependentList->getData< db::Instance >(selectedIndex);
-		if (scriptInstance)
-			m_editor->openEditor(scriptInstance);
-	}
-}
-
 void ScriptEditorPage::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	if (command == L"Script.Editor.ToggleComments")
 	{
-		int32_t startOffset = m_edit->getSelectionStartOffset();
-		int32_t stopOffset = m_edit->getSelectionStopOffset();
+		//int32_t startOffset = m_edit->getSelectionStartOffset();
+		//int32_t stopOffset = m_edit->getSelectionStopOffset();
 
-		if (startOffset < 0)
-		{
-			int32_t caret = m_edit->getCaretOffset();
-			int32_t caretLine = m_edit->getLineFromOffset(caret);
-			startOffset = m_edit->getLineOffset(caretLine);
-			stopOffset = startOffset + m_edit->getLineLength(caretLine);
-		}
+		//if (startOffset < 0)
+		//{
+		//	int32_t caret = m_edit->getCaretOffset();
+		//	int32_t caretLine = m_edit->getLineFromOffset(caret);
+		//	startOffset = m_edit->getLineOffset(caretLine);
+		//	stopOffset = startOffset + m_edit->getLineLength(caretLine);
+		//}
 
-		if (startOffset >= 0 && stopOffset >= 0)
-		{
-			std::wstring lineComment = m_edit->getLanguage()->lineComment();
-			T_ASSERT (!lineComment.empty());
+		//if (startOffset >= 0 && stopOffset >= 0)
+		//{
+		//	std::wstring lineComment = m_edit->getLanguage()->lineComment();
+		//	T_ASSERT (!lineComment.empty());
 
-			int32_t startLine = m_edit->getLineFromOffset(startOffset);
-			int32_t stopLine = m_edit->getLineFromOffset(stopOffset);
+		//	int32_t startLine = m_edit->getLineFromOffset(startOffset);
+		//	int32_t stopLine = m_edit->getLineFromOffset(stopOffset);
 
-			for (int32_t i = startLine; i <= stopLine; ++i)
-			{
-				std::wstring line = m_edit->getLine(i);
-				if (startsWith(line, lineComment))
-					line = line.substr(2);
-				else
-					line = lineComment + line;
-				m_edit->setLine(i, line);
-			}
+		//	for (int32_t i = startLine; i <= stopLine; ++i)
+		//	{
+		//		std::wstring line = m_edit->getLine(i);
+		//		if (startsWith(line, lineComment))
+		//			line = line.substr(2);
+		//		else
+		//			line = lineComment + line;
+		//		m_edit->setLine(i, line);
+		//	}
 
-			m_script->setText(m_edit->getText());
+		//	m_script->setText(m_edit->getText());
 
-			m_edit->updateLanguage(startLine, stopLine);
-			m_edit->update();
-		}
+		//	m_edit->updateLanguage(startLine, stopLine);
+		//	m_edit->update();
+		//}
 	}
 	else if (command == L"Script.Editor.RemoveAllBreakpoints")
 	{
@@ -639,7 +551,19 @@ void ScriptEditorPage::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent
 
 void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 {
-	m_script->setText(m_edit->getText());
+	// Transform editor text into "escaped" text.
+	std::wstring text = m_edit->getText(
+		[&] (wchar_t ch) -> std::wstring {
+			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
+		},
+		[&] (const ui::custom::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+			const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
+			return L"\\" + dc->id.format();
+		}
+	);
+
+	// Update script with text.
+	m_script->setTextDirect(text);
 
 	m_compileCountDown = 10;
 	m_compileStatus->setText(i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));

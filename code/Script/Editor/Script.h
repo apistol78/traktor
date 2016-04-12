@@ -1,6 +1,7 @@
 #ifndef traktor_script_Script_H
 #define traktor_script_Script_H
 
+#include <functional>
 #include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -29,20 +30,13 @@ public:
 
 	Script(const std::wstring& text);
 
-	void addDependency(const Guid& dependency);
+	void setTextDirect(const std::wstring& text);
 
-	std::vector< Guid >& getDependencies();
-
-	const std::vector< Guid >& getDependencies() const;
-
-	void setText(const std::wstring& text);
-
-	const std::wstring& getText() const;
+	std::wstring escape(std::function< std::wstring (const Guid& g) > fn) const;
 
 	virtual void serialize(ISerializer& s);
 
 private:
-	std::vector< Guid > m_dependencies;
 	std::wstring m_text;
 };
 
