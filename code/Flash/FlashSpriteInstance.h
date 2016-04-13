@@ -20,6 +20,7 @@ namespace traktor
 class ActionContext;
 class FlashCanvas;
 class FlashCharacter;
+class FlashEditInstance;
 class FlashSoundPlayer;
 class FlashSprite;
 
@@ -68,6 +69,8 @@ public:
 	void updateSounds(FlashSoundPlayer* soundPlayer);
 
 	Ref< FlashSpriteInstance > createEmptyMovieClip(const std::string& clipName, int32_t depth);
+
+	Ref< FlashEditInstance > createTextField(const std::string& textName, int32_t depth, float x, float y, float width, float height);
 
 	void removeMovieClip();
 
