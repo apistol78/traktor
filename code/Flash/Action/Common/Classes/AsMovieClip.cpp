@@ -4,7 +4,6 @@
 #include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashCanvas.h"
-#include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
@@ -392,64 +391,7 @@ Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
 	avm_number_t height
 ) const
 {
-	ActionContext* context = self->getContext();
-	T_ASSERT (context);
-
-	// Get dictionary.
-	FlashDictionary* dictionary = self->getDictionary();
-	if (!dictionary)
-		return 0;
-
-	Aabb2 bounds(
-		Vector2(0.0f, 0.0f),
-		Vector2(width, height)
-	);
-	SwfColor color = { 0, 0, 0, 0 };
-
-	// Create edit character.
-	Ref< FlashEdit > edit = new FlashEdit(
-		-1,
-		0,
-		12,
-		bounds,
-		color,
-		std::numeric_limits< uint16_t >::max(),
-		L"",
-		StaLeft,
-		0,
-		0,
-		0,
-		0,
-		true,
-		false,
-		false,
-		false,
-		false
-	);
-
-	// Create edit character instance.
-	Ref< FlashEditInstance > editInstance = checked_type_cast< FlashEditInstance*, false >(edit->createInstance(
-		context,
-		dictionary,
-		self,
-		name,
-		Matrix33::identity(),
-		0,
-		0
-	));
-	
-	// Place character at given location.
-	editInstance->setTransform(translate(x, y));
-	
-	// Show edit character instance.
-	self->getDisplayList().showObject(
-		depth,
-		edit->getId(),
-		editInstance,
-		true
-	);
-
-	return editInstance;
+	return self->createTextField(name, depth, x, y, width, height);
 }
 
 void AsMovieClip::MovieClip_curveTo(FlashSpriteInstance* self, avm_number_t controlX, avm_number_t controlY, avm_number_t anchorX, avm_number_t anchorY) const

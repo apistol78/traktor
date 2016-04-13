@@ -486,6 +486,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashSpriteInstance->addMethod("getPlaying", &FlashSpriteInstance::getPlaying);
 	classFlashSpriteInstance->addMethod("getDisplayList", &FlashSpriteInstance_getDisplayList);
 	classFlashSpriteInstance->addMethod("createEmptyMovieClip", &FlashSpriteInstance::createEmptyMovieClip);
+	classFlashSpriteInstance->addMethod("createTextField", &FlashSpriteInstance::createTextField);
 	classFlashSpriteInstance->addMethod("removeMovieClip", &FlashSpriteInstance::removeMovieClip);
 	classFlashSpriteInstance->addMethod("clone", &FlashSpriteInstance::clone);
 	classFlashSpriteInstance->addMethod("getLocalBounds", &FlashSpriteInstance::getLocalBounds);

@@ -3,11 +3,13 @@
 #include "Core/Math/Format.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashCanvas.h"
+#include "Flash/FlashEdit.h"
+#include "Flash/FlashEditInstance.h"
+#include "Flash/FlashFrame.h"
 #include "Flash/FlashSound.h"
 #include "Flash/FlashSoundPlayer.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
-#include "Flash/FlashFrame.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
@@ -228,6 +230,68 @@ Ref< FlashSpriteInstance > FlashSpriteInstance::createEmptyMovieClip(const std::
 	// Add new instance to display list.
 	m_displayList.showObject(depth, emptyClipId, emptyClipInstance, true);
 	return emptyClipInstance;
+}
+
+Ref< FlashEditInstance > FlashSpriteInstance::createTextField(const std::string& textName, int32_t depth, float x, float y, float width, float height)
+{
+	ActionContext* context = getContext();
+	T_ASSERT (context);
+
+	// Get dictionary.
+	FlashDictionary* dictionary = getDictionary();
+	if (!dictionary)
+		return 0;
+
+	Aabb2 bounds(
+		Vector2(0.0f, 0.0f),
+		Vector2(width, height)
+	);
+	SwfColor color = { 0, 0, 0, 0 };
+
+	// Create edit character.
+	Ref< FlashEdit > edit = new FlashEdit(
+		-1,
+		0,
+		12,
+		bounds,
+		color,
+		std::numeric_limits< uint16_t >::max(),
+		L"",
+		StaLeft,
+		0,
+		0,
+		0,
+		0,
+		true,
+		false,
+		false,
+		false,
+		false
+	);
+
+	// Create edit character instance.
+	Ref< FlashEditInstance > editInstance = checked_type_cast< FlashEditInstance*, false >(edit->createInstance(
+		context,
+		dictionary,
+		this,
+		textName,
+		Matrix33::identity(),
+		0,
+		0
+	));
+	
+	// Place character at given location.
+	editInstance->setTransform(translate(x, y));
+	
+	// Show edit character instance.
+	getDisplayList().showObject(
+		depth,
+		edit->getId(),
+		editInstance,
+		true
+	);
+
+	return editInstance;
 }
 
 void FlashSpriteInstance::removeMovieClip()
