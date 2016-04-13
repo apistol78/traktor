@@ -114,7 +114,9 @@ void RichEdit::setText(const std::wstring& text)
 			line.stop = line.start + int32_t(ln.length());
 			m_lines.push_back(line);
 
-			m_text.insert(m_text.end(), ln.begin(), ln.end());
+			for (std::wstring::const_iterator k = ln.begin(); k != ln.end(); ++k)
+				m_text.push_back(Character(*k));
+
 			m_text.push_back(Character(L'\n'));
 
 			if (j != text.npos)
