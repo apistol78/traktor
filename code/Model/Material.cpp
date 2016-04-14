@@ -13,6 +13,7 @@ Material::Material()
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_specularRoughness(0.8f)
+,	m_metalness(0.0f)
 ,	m_transparency(0.0f)
 ,	m_emissive(0.0f)
 ,	m_reflective(0.0f)
@@ -28,6 +29,7 @@ Material::Material(const std::wstring& name)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_specularRoughness(0.8f)
+,	m_metalness(0.0f)
 ,	m_transparency(0.0f)
 ,	m_emissive(0.0f)
 ,	m_reflective(0.0f)
@@ -155,6 +157,16 @@ void Material::setSpecularRoughness(float specularRoughness)
 float Material::getSpecularRoughness() const
 {
 	return m_specularRoughness;
+}
+
+void Material::setMetalness(float metalness)
+{
+	m_metalness = metalness;
+}
+
+float Material::getMetalness() const
+{
+	return m_metalness;
 }
 
 void Material::setTransparency(float transparency)

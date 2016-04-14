@@ -19,7 +19,8 @@ namespace traktor
 const resource::Id< render::Shader > c_lightDirectionalShader(Guid(L"{F4F7C11E-BCB3-1045-9C78-1F0658D34229}"));
 const resource::Id< render::Shader > c_lightPointShader(Guid(L"{E00C6B91-3266-A044-BE9E-56C8E70CA539}"));
 const resource::Id< render::Shader > c_lightSpotShader(Guid(L"{3FD07AEE-3FB5-C84D-87E1-3F9A2F0CAD5E}"));
-const resource::Id< render::Shader > c_finalShader(Guid(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}"));
+const resource::Id< render::Shader > c_reflectionShader(Guid(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}"));
+const resource::Id< render::Shader > c_fogShader(Guid(L"{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}"));
 
 const float c_pointLightScreenAreaThresholdDim = 4.0f;
 const float c_pointLightScreenAreaThreshold = 4.0f * (c_pointLightScreenAreaThresholdDim * c_pointLightScreenAreaThresholdDim) / (1280.0f * 720.0f);
@@ -98,7 +99,9 @@ bool LightRendererDeferred::create(
 		return false;
 	if (!resourceManager->bind(c_lightSpotShader, m_lightSpotShader))
 		return false;
-	if (!resourceManager->bind(c_finalShader, m_finalShader))
+	if (!resourceManager->bind(c_reflectionShader, m_reflectionShader))
+		return false;
+	if (!resourceManager->bind(c_fogShader, m_fogShader))
 		return false;
 
 	std::vector< render::VertexElement > vertexElements;
@@ -332,7 +335,7 @@ void LightRendererDeferred::renderLight(
 	}
 }
 
-void LightRendererDeferred::renderFinal(
+void LightRendererDeferred::renderReflections(
 	render::IRenderView* renderView,
 	const Matrix44& projection,
 	const Matrix44& view,
@@ -348,18 +351,48 @@ void LightRendererDeferred::renderFinal(
 	Scalar p11 = projection.get(0, 0);
 	Scalar p22 = projection.get(1, 1);
 
-	m_finalShader->setMatrixParameter(s_handleProjection, projection);
-	m_finalShader->setMatrixParameter(s_handleViewInverse, view.inverse());
-	m_finalShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	m_finalShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);
-	m_finalShader->setVectorParameter(s_handleFogColor, fogColor);
-	m_finalShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
-	m_finalShader->setTextureParameter(s_handleDepthMap, depthMap);
-	m_finalShader->setTextureParameter(s_handleNormalMap, normalMap);
-	m_finalShader->setTextureParameter(s_handleMiscMap, miscMap);
-	m_finalShader->setTextureParameter(s_handleColorMap, colorMap);
+	m_reflectionShader->setMatrixParameter(s_handleProjection, projection);
+	m_reflectionShader->setMatrixParameter(s_handleViewInverse, view.inverse());
+	m_reflectionShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	m_reflectionShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);
+	m_reflectionShader->setVectorParameter(s_handleFogColor, fogColor);
+	m_reflectionShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
+	m_reflectionShader->setTextureParameter(s_handleDepthMap, depthMap);
+	m_reflectionShader->setTextureParameter(s_handleNormalMap, normalMap);
+	m_reflectionShader->setTextureParameter(s_handleMiscMap, miscMap);
+	m_reflectionShader->setTextureParameter(s_handleColorMap, colorMap);
 
-	m_finalShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
+	m_reflectionShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
+}
+
+void LightRendererDeferred::renderFog(
+	render::IRenderView* renderView,
+	const Matrix44& projection,
+	const Matrix44& view,
+	const Vector4& fogDistanceAndDensity,
+	const Vector4& fogColor,
+	render::ITexture* reflectionMap,
+	render::ITexture* depthMap,
+	render::ITexture* normalMap,
+	render::ITexture* miscMap,
+	render::ITexture* colorMap
+)
+{
+	Scalar p11 = projection.get(0, 0);
+	Scalar p22 = projection.get(1, 1);
+
+	m_fogShader->setMatrixParameter(s_handleProjection, projection);
+	m_fogShader->setMatrixParameter(s_handleViewInverse, view.inverse());
+	m_fogShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	m_fogShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);
+	m_fogShader->setVectorParameter(s_handleFogColor, fogColor);
+	m_fogShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
+	m_fogShader->setTextureParameter(s_handleDepthMap, depthMap);
+	m_fogShader->setTextureParameter(s_handleNormalMap, normalMap);
+	m_fogShader->setTextureParameter(s_handleMiscMap, miscMap);
+	m_fogShader->setTextureParameter(s_handleColorMap, colorMap);
+
+	m_fogShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 }
 
 	}

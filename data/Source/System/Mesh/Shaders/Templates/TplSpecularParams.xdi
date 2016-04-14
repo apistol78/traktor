@@ -4,8 +4,8 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>462</first>
-				<second>309</second>
+				<first>468</first>
+				<second>332</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -21,15 +21,15 @@
 			<comment/>
 			<position>
 				<first>629</first>
-				<second>333</second>
+				<second>332</second>
 			</position>
 			<name>T_SpecularRoughness</name>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>267</first>
-				<second>288</second>
+				<first>192</first>
+				<second>313</second>
 			</position>
 			<name>T_TexCoord0</name>
 			<connectable>true</connectable>
@@ -39,13 +39,21 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>267</first>
-				<second>327</second>
+				<first>192</first>
+				<second>352</second>
 			</position>
 			<name>T_TexCoord1</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>629</first>
+				<second>372</second>
+			</position>
+			<name>T_Metalness</name>
 		</item>
 	</nodes>
 	<edges>
@@ -66,6 +74,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
 			</destination>
 		</item>

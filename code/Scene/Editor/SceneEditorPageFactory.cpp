@@ -29,6 +29,7 @@ bool SceneEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::
 	outDependencies.insert(Guid(L"{4D4647F5-AC2D-B04A-AAC9-309A7BC9D980}"));	// System/World/WorldDeferredAssets
 	outDependencies.insert(Guid(L"{BCCEE4A9-4054-5A46-B179-8353133C0D65}"));	// System/World/WorldForwardAssets
 	outDependencies.insert(Guid(L"{BC961340-9C47-D14B-896C-6942456DB027}"));	// System/World/WorldPrelitAssets
+	outDependencies.insert(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));	// System/Scene/Shaders/DebugTargets
 	return true;
 }
 
