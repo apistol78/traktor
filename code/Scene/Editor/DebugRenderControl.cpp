@@ -205,6 +205,7 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 			L"Normals",
 			L"SpecularRoughness",
 			L"SpecularTerm",
+			L"Metalness",
 			L"Reflectivity",
 			L"ShadowMap",
 			L"ShadowMask"

@@ -107,6 +107,10 @@ public:
 
 	float getSpecularRoughness() const;
 
+	void setMetalness(float metalness);
+
+	float getMetalness() const;
+
 	void setTransparency(float transparency);
 
 	float getTransparency() const;
@@ -144,6 +148,7 @@ private:
 	float m_diffuseTerm;
 	float m_specularTerm;
 	float m_specularRoughness;
+	float m_metalness;
 	float m_transparency;
 	float m_emissive;
 	float m_reflective;

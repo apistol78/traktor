@@ -102,8 +102,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-485</first>
-				<second>792</second>
+				<first>-435</first>
+				<second>786</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -233,7 +233,7 @@
 			<comment/>
 			<position>
 				<first>-365</first>
-				<second>725</second>
+				<second>722</second>
 			</position>
 			<name>Reflection</name>
 			<connectable>true</connectable>
@@ -251,7 +251,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-396</first>
+				<first>-395</first>
 				<second>658</second>
 			</position>
 			<name>SpecularTerm</name>
@@ -276,7 +276,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>37</first>
+				<first>39</first>
 				<second>658</second>
 			</position>
 			<swizzle>x</swizzle>
@@ -284,16 +284,35 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>37</first>
-				<second>725</second>
+				<first>39</first>
+				<second>722</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>37</first>
-				<second>792</second>
+				<first>39</first>
+				<second>786</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-365</first>
+				<second>850</second>
+			</position>
+			<name>Metalness</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>39</first>
+				<second>850</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -537,6 +556,26 @@
 			<destination>
 				<node ref="/object/nodes/item[17]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<name>W</name>
 			</destination>
 		</item>
 	</edges>

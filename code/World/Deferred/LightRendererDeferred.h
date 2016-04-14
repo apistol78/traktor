@@ -63,7 +63,20 @@ public:
 		render::ITexture* shadowMask
 	);
 
-	void renderFinal(
+	void renderReflections(
+		render::IRenderView* renderView,
+		const Matrix44& projection,
+		const Matrix44& view,
+		const Vector4& fogDistanceAndDensity,
+		const Vector4& fogColor,
+		render::ITexture* reflectionMap,
+		render::ITexture* depthMap,
+		render::ITexture* normalMap,
+		render::ITexture* miscMap,
+		render::ITexture* colorMap
+	);
+
+	void renderFog(
 		render::IRenderView* renderView,
 		const Matrix44& projection,
 		const Matrix44& view,
@@ -80,7 +93,8 @@ private:
 	resource::Proxy< render::Shader > m_lightDirectionalShader;
 	resource::Proxy< render::Shader > m_lightPointShader;
 	resource::Proxy< render::Shader > m_lightSpotShader;
-	resource::Proxy< render::Shader > m_finalShader;
+	resource::Proxy< render::Shader > m_reflectionShader;
+	resource::Proxy< render::Shader > m_fogShader;
 	Ref< render::VertexBuffer > m_vertexBufferQuad;
 	render::Primitives m_primitivesQuad;
 };

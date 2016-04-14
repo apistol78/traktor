@@ -661,6 +661,7 @@ enum DebugTargetVisualize
 	DtvNormals,
 	DtvDeferredSpecularRoughness,
 	DtvDeferredSpecularTerm,
+	DtvDeferredMetalness,
 	DtvDeferredReflectivity,
 	DtvShadowMap,
 	DtvShadowMask

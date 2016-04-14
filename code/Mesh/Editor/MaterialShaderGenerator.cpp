@@ -304,6 +304,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			specularRoughnessNode->setComment(L"");
 			specularRoughnessNode->set(material.getSpecularRoughness());
 		}
+		else if (comment == L"Tag_Metalness")
+		{
+			render::Scalar* metalnessNode = checked_type_cast< render::Scalar* >(*i);
+			metalnessNode->setComment(L"");
+			metalnessNode->set(material.getMetalness());
+		}
 		else if (comment == L"Tag_Transparency")
 		{
 			render::Scalar* transparencyNode = checked_type_cast< render::Scalar* >(*i);

@@ -231,6 +231,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::str
 		material.setDiffuseTerm(surface->diffuse.val);
 		material.setSpecularTerm(surface->specularity.val);
 		material.setSpecularRoughness(surface->glossiness.val);
+		material.setMetalness(surface->color_hilite.val);
 		material.setEmissive(surface->luminosity.val);
 		material.setReflective(surface->reflection.val.val);
 		material.setRimLightIntensity(surface->glow.val);
