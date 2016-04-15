@@ -201,10 +201,10 @@ local outputs =
 			{ name = "LayerDelete", column = 10, row = 7, width = 1, height = 1 },
 			{ name = "Types", column = 0, row = 2, width = 23, height = 1 },
 			{ name = "Folders", column = 0, row = 4, width = 2, height = 1 },
-			{ name = "RemoveEntity", column = 11, row = 8, width = 1, height = 1 },
-			{ name = "MoveToEntity", column = 12, row = 8, width = 1, height = 1 },
-			{ name = "ToggleGrid", column = 13, row = 8, width = 1, height = 1 },
-			{ name = "ToggleGuide", column = 14, row = 8, width = 1, height = 1 },		
+			{ name = "RemoveEntity", column = 10, row = 9, width = 1, height = 1 },
+			{ name = "MoveToEntity", column = 11, row = 9, width = 1, height = 1 },
+			{ name = "ToggleGrid", column = 12, row = 9, width = 1, height = 1 },
+			{ name = "ToggleGuide", column = 13, row = 9, width = 1, height = 1 },		
 		}
 	},
 	{
@@ -404,7 +404,8 @@ function main(argv)
 
 					-- Remove all intermediate images.
 					for j, dpi in ipairs(dpis) do
-						run:rm(dpi .. ".png")
+--						run:rm(dpi .. ".png")
+						FileSystem.getInstance():move(Path(o.name .. "_" .. dpi .. ".png"), Path(dpi .. ".png"), true)
 					end
 
 				else

@@ -5,6 +5,13 @@
 
 namespace traktor
 {
+	namespace ui
+	{
+
+class CloseEvent;
+
+	}
+
 	namespace script
 	{
 
@@ -23,6 +30,8 @@ public:
 
 private:
 	Ref< ScriptProfilerDialog > m_profilerDialog;
+
+	void eventCloseDialog(ui::CloseEvent* event);
 };
 
 	}

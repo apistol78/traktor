@@ -24,15 +24,29 @@ Ref< ui::IBitmap > ScriptProfilerTool::getIcon() const
 
 bool ScriptProfilerTool::launch(ui::Widget* parent, editor::IEditor* script)
 {
-	safeDestroy(m_profilerDialog);
+	// If profiler dialog is already created then we only need to show it.
+	if (m_profilerDialog)
+	{
+		m_profilerDialog->show();
+		return true;
+	}
 
+	// Create dialog and register ourself for close events.
 	m_profilerDialog = new ScriptProfilerDialog(script);
 	if (m_profilerDialog->create(parent))
+	{
 		m_profilerDialog->show();
+		m_profilerDialog->addEventHandler< ui::CloseEvent >(this, &ScriptProfilerTool::eventCloseDialog);
+	}
 	else
 		safeDestroy(m_profilerDialog);
 
 	return true;
+}
+
+void ScriptProfilerTool::eventCloseDialog(ui::CloseEvent* event)
+{
+	safeDestroy(m_profilerDialog);
 }
 
 	}
