@@ -40,9 +40,7 @@ bool ScriptProfilerDialog::create(ui::Widget* parent)
 	if (m_scriptDebuggerSessions)
 		m_scriptDebuggerSessions->addListener(this);
 
-	addEventHandler< ui::CloseEvent >(this, &ScriptProfilerDialog::eventClose);
 	update();
-
 	return true;
 }
 
@@ -84,11 +82,6 @@ void ScriptProfilerDialog::notifySetBreakpoint(const Guid& scriptId, int32_t lin
 
 void ScriptProfilerDialog::notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
-}
-
-void ScriptProfilerDialog::eventClose(ui::CloseEvent* event)
-{
-	destroy();
 }
 
 	}

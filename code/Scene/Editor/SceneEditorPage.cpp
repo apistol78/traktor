@@ -209,10 +209,10 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_entityToolBar = new ui::custom::ToolBar();
 	m_entityToolBar->create(m_entityPanel);
-	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveToEntity"), 1);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.RemoveEntity"), 1);
-	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 1, ui::Command(L"Editor.Delete")));
-	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 0, ui::Command(L"Scene.Editor.MoveToEntity")));
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveToEntity"), 1);
+	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 0, ui::Command(L"Editor.Delete")));
+	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 1, ui::Command(L"Scene.Editor.MoveToEntity")));
 	m_entityToolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SceneEditorPage::eventEntityToolClick);
 
 	m_imageHidden = new ui::StyleBitmap(L"Scene.LayerHidden");
@@ -223,7 +223,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGrid = new ui::custom::GridView();
 	m_instanceGrid->create(m_entityPanel, ui::WsDoubleBuffer);
 	//m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
-	m_instanceGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), ui::scaleBySystemDPI(200)));
+	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(200)));
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(30)));
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(30)));
 	m_instanceGrid->addEventHandler< ui::SelectionChangeEvent >(this, &SceneEditorPage::eventInstanceSelect);

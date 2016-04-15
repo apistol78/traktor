@@ -207,7 +207,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 		int32_t size = m_expand->getSize().cy;
 		canvas.drawBitmap(
 			Point(rect.left + 2 + depth * size, rect.top + (rect.getHeight() - size) / 2),
-			Point((m_state & GridRow::RsExpanded) ? size : 0, (m_state & GridRow::RsSelected) ? size : 0),
+			Point((m_state & GridRow::RsExpanded) ? size : 0, 0),
 			Size(size, size),
 			m_expand,
 			BmAlpha

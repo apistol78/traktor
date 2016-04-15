@@ -53,8 +53,6 @@ private:
 	virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber);
 
 	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber);
-
-	void eventClose(ui::CloseEvent* event);
 };
 
 	}

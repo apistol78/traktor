@@ -106,7 +106,9 @@ bool GridView::create(Widget* parent, uint32_t style)
 	m_itemEditor->hide();
 	m_itemEditor->addEventHandler< FocusEvent >(this, &GridView::eventEditFocus);
 
-	m_headerCell = new GridHeaderCell();
+	if ((style & WsColumnHeader) != 0)
+		m_headerCell = new GridHeaderCell();
+
 	return true;
 }
 

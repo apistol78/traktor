@@ -1662,20 +1662,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49999998"
-     inkscape:cx="-425.90395"
-     inkscape:cy="-1038.0001"
+     inkscape:zoom="0.99999996"
+     inkscape:cx="73.397892"
+     inkscape:cy="-528.14045"
      inkscape:document-units="px"
      inkscape:current-layer="g5948"
      showgrid="true"
      inkscape:snap-global="true"
      inkscape:snap-grids="true"
      inkscape:snap-to-guides="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1377"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
+     inkscape:window-width="1421"
+     inkscape:window-height="1237"
+     inkscape:window-x="654"
+     inkscape:window-y="73"
+     inkscape:window-maximized="0"
      units="px"
      inkscape:showpageshadow="false"
      showborder="true"
@@ -7633,7 +7633,7 @@
                    style="fill:none" />
                 <polygon
                    id="polygon7502"
-                   points="501.49,82.577 501.49,88.467 502.3,88.467 502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 495.632,81.218 495.632,88.467 496.613,88.467 496.613,82.577 498.566,88.467 499.537,88.467 " />
+                   points="495.632,88.467 496.613,88.467 496.613,82.577 498.566,88.467 499.537,88.467 501.49,82.577 501.49,88.467 502.3,88.467 502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 495.632,81.218 " />
               </g>
               <path
                  id="path7504"
@@ -11319,7 +11319,7 @@
        inkscape:groupmode="layer"
        id="layer2"
        inkscape:label="Disabled 1"
-       style="display:none;opacity:0.5">
+       style="display:inline;opacity:0.5">
       <rect
          style="display:inline;opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="rect8515"
@@ -17232,7 +17232,7 @@
                    d="m 502.3,24.062 -321.503,0 0,64.45 0,0.633 322.124,0 0,-65.083 -0.621,0 z m -13.197,57.156 5.627,0 0,0.831 -2.322,0 0,6.418 -0.98,0 0,-6.418 -2.324,0 0,-0.831 z"
                    id="path8038" />
                 <polygon
-                   points="491.427,88.467 492.408,88.467 492.408,82.049 494.73,82.049 494.73,81.218 489.103,81.218 489.103,82.049 491.427,82.049 "
+                   points="494.73,81.218 489.103,81.218 489.103,82.049 491.427,82.049 491.427,88.467 492.408,88.467 492.408,82.049 494.73,82.049 "
                    id="polygon8040" />
               </g>
               <g
@@ -17243,7 +17243,7 @@
                    d="m 502.3,24.062 -321.503,0 0,64.45 0,0.633 322.124,0 0,-65.083 -0.621,0 z m -6.668,57.156 1.352,0 2.102,6.191 2.033,-6.191 1.182,0 0,7.249 -0.811,0 0,-5.89 -1.953,5.89 -0.971,0 -1.953,-5.89 0,5.89 -0.98,0 0,-7.249 z"
                    id="path8044" />
                 <polygon
-                   points="495.632,88.467 496.613,88.467 496.613,82.577 498.566,88.467 499.537,88.467 501.49,82.577 501.49,88.467 502.3,88.467 502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 495.632,81.218 "
+                   points="495.632,81.218 495.632,88.467 496.613,88.467 496.613,82.577 498.566,88.467 499.537,88.467 501.49,82.577 501.49,88.467 502.3,88.467 502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 "
                    id="polygon8046" />
               </g>
               <path
