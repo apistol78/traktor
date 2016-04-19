@@ -15,8 +15,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1939</first>
-				<second>183</second>
+				<first>2498</first>
+				<second>207</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -55,6 +55,21 @@
 			</position>
 			<swizzle>z</swizzle>
 		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>1944</first>
+				<second>289</second>
+			</position>
+			<value>64</value>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>2143</first>
+				<second>208</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -89,7 +104,27 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>

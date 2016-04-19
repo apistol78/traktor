@@ -700,7 +700,7 @@
 				<first>1504</first>
 				<second>1169</second>
 			</position>
-			<value>32</value>
+			<value>64</value>
 		</item>
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
@@ -1217,16 +1217,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[31]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[45]"/>
 				<name>Output</name>
 			</source>
@@ -1252,6 +1242,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[47]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
 				<name>Input</name>
 			</destination>
 		</item>

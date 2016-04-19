@@ -143,7 +143,7 @@ bool WorldRendererDeferred::create(
 #if !defined(__PS3__)
 		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
 		rtscd.targets[1].format = render::TfR10G10B10A2;	// Normals (RGB)
-		rtscd.targets[2].format = render::TfR16G16B16A16F;	// Specular term (R), Reflectivity (G), Roughness (B), Metalness (A)
+		rtscd.targets[2].format = render::TfR8G8B8A8;		// Specular term (R), Reflectivity (G), Roughness (B), Metalness (A)
 		rtscd.targets[3].format = render::TfR11G11B10F;		// Surface color (RGB)
 #else
 		rtscd.targets[0].format = render::TfR8G8B8A8;		// Encoded depth
