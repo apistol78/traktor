@@ -106,6 +106,7 @@ std::string FlashCharacterInstance::getTarget() const
 
 void FlashCharacterInstance::setColorTransform(const SwfCxTransform& cxform)
 {
+	clearCacheObject();
 	m_cxform = cxform;
 }
 
