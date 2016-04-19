@@ -374,6 +374,7 @@ Aabb2 FlashSpriteInstance::getVisibleLocalBounds() const
 
 void FlashSpriteInstance::setMask(FlashSpriteInstance* mask)
 {
+	clearCacheObject();
 	if ((m_mask = mask) != 0)
 		m_mask->setVisible(false);
 }
