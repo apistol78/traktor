@@ -1,3 +1,4 @@
+#include "Animation/PathEntity/PathComponentData.h"
 #include "Animation/PathEntity/PathEntity.h"
 #include "Animation/PathEntity/PathEntityData.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
@@ -23,7 +24,9 @@ const TypeInfoSet PathEntityFactory::getEntityEventTypes() const
 
 const TypeInfoSet PathEntityFactory::getEntityComponentTypes() const
 {
-	return TypeInfoSet();
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< PathComponentData >());
+	return typeSet;
 }
 
 Ref< world::Entity > PathEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
@@ -39,6 +42,9 @@ Ref< world::IEntityEvent > PathEntityFactory::createEntityEvent(const world::IEn
 
 Ref< world::IEntityComponent > PathEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
 {
+	if (const PathComponentData* pathComponentData = dynamic_type_cast< const PathComponentData* >(&entityComponentData))
+		return pathComponentData->createComponent(owner);
+
 	return 0;
 }
 

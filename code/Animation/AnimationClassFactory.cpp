@@ -6,6 +6,8 @@
 #include "Animation/IK/IKPoseController.h"
 #include "Animation/PathEntity/PathEntity.h"
 #include "Animation/PathEntity/PathEntityData.h"
+#include "Animation/PathEntity/PathComponent.h"
+#include "Animation/PathEntity/PathComponentData.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
@@ -168,6 +170,12 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	Ref< AutoRuntimeClass< PathEntityData > > classPathEntityData = new AutoRuntimeClass< PathEntityData >();
 	classPathEntityData->addConstructor();
 	registrar->registerClass(classPathEntityData);
+
+	Ref< AutoRuntimeClass< PathComponent > > classPathComponent = new AutoRuntimeClass< PathComponent >();
+	registrar->registerClass(classPathComponent);
+
+	Ref< AutoRuntimeClass< PathComponentData > > classPathComponentData = new AutoRuntimeClass< PathComponentData >();
+	registrar->registerClass(classPathComponentData);
 }
 
 	}
