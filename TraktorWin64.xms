@@ -19407,7 +19407,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(STEAMWORKS_SDK)\redistributable_bin\win64\steam_api64.dll</sourceFile>
+							<sourceFile>$(STEAMWORKS_SDK)\redistributable_bin\win64\steam_api64.lib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -19442,7 +19442,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(STEAMWORKS_SDK)\redistributable_bin\win64\steam_api64.dll</sourceFile>
+							<sourceFile>$(STEAMWORKS_SDK)\redistributable_bin\win64\steam_api64.lib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
