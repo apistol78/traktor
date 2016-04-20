@@ -89,6 +89,8 @@ Ref< Object > ScriptClassFactory::create(resource::IResourceManager* resourceMan
 			log::error << L"Unable to create script class; load resource failed" << Endl;
 			return 0;
 		}
+
+		return new Object();
 	}
 	else
 		return 0;
