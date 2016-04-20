@@ -183,11 +183,11 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 		dxgiAdapter,
 		dxgiAdapter != 0 ? D3D_DRIVER_TYPE_UNKNOWN : D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
-#if defined(_DEBUG)
-		D3D11_CREATE_DEVICE_DEBUG,
-#else
+//#if defined(_DEBUG)
+//		D3D11_CREATE_DEVICE_DEBUG,
+//#else
 		0,
-#endif
+//#endif
 		0,
 		0,
 		D3D11_SDK_VERSION,
