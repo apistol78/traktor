@@ -77,7 +77,7 @@ void ScriptNodeFacade::editShaderNode(
 {
 	Script* scriptNode = checked_type_cast< Script*, false >(shaderNode);
 
-	Ref< ScriptNodeDialog > dialog = new ScriptNodeDialog(scriptNode);
+	Ref< ScriptNodeDialog > dialog = new ScriptNodeDialog(editor, scriptNode);
 	if (dialog->create(graphControl))
 	{
 		if (dialog->showModal() == ui::DrOk)

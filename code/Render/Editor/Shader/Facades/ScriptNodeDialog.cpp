@@ -1,3 +1,7 @@
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
+#include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Render/Shader/Script.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeDialog.h"
@@ -34,29 +38,37 @@ const wchar_t* c_parameterTypes[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScriptNodeDialog", ScriptNodeDialog, ui::ConfigDialog)
 
-ScriptNodeDialog::ScriptNodeDialog(Script* script)
-:	m_script(script)
+ScriptNodeDialog::ScriptNodeDialog(editor::IEditor* editor, Script* script)
+:	m_editor(editor)
+,	m_script(script)
 {
 }
 
 bool ScriptNodeDialog::create(ui::Widget* parent)
 {
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"SHADERGRAPH_SCRIPT_EDIT"), 1100, 800, ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsApplyButton, new ui::FloodLayout()))
+	if (!ui::ConfigDialog::create(
+		parent,
+		i18n::Text(L"SHADERGRAPH_SCRIPT_EDIT"),
+		ui::scaleBySystemDPI(1100),
+		ui::scaleBySystemDPI(800),
+		ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsApplyButton,
+		new ui::FloodLayout())
+	)
 		return false;
 
 	addEventHandler< ui::ButtonClickEvent >(this, &ScriptNodeDialog::eventClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, 230);
+	splitter->create(this, true, ui::scaleBySystemDPI(230));
 
 	Ref< ui::custom::Splitter > splitter2 = new ui::custom::Splitter();
-	splitter2->create(splitter, false, -20, true);
+	splitter2->create(splitter, false, ui::scaleBySystemDPI(-20), true);
 
 	m_inputPinList = new ui::custom::GridView();
 	m_inputPinList->create(splitter2, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Input", 90));
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Type", 70));
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Sampler", 110));
+	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Input", ui::scaleBySystemDPI(90)));
+	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::scaleBySystemDPI(70)));
+	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Sampler", ui::scaleBySystemDPI(110)));
 	m_inputPinList->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventInputPinRowDoubleClick);
 
 	int32_t inputPinCount = m_script->getInputPinCount();
@@ -77,8 +89,8 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 
 	m_outputPinList = new ui::custom::GridView();
 	m_outputPinList->create(splitter2, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Output", 90));
-	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Type", 70));
+	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Output", ui::scaleBySystemDPI(90)));
+	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::scaleBySystemDPI(70)));
 	m_outputPinList->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventOutputPinRowDoubleClick);
 
 	int32_t outputPinCount = m_script->getOutputPinCount();
@@ -100,13 +112,10 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 		return false;
 
 	m_edit->setLanguage(new ui::custom::SyntaxLanguageHlsl());
-#if defined(__APPLE__)
-	m_edit->setFont(ui::Font(L"Menlo Regular", 11));
-#elif defined(__LINUX__)
-	m_edit->setFont(ui::Font(L"Monospace", 11));
-#else
-	m_edit->setFont(ui::Font(L"Consolas", ui::scaleBySystemDPI(14)));
-#endif
+
+	std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
+	int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
+	m_edit->setFont(ui::Font(font, fontSize));
 
 	update();
 	return true;
