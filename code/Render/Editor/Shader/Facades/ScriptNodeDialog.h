@@ -6,6 +6,13 @@
 
 namespace traktor
 {
+	namespace editor
+	{
+
+class IEditor;
+
+	}
+
 	namespace ui
 	{
 
@@ -31,11 +38,12 @@ class ScriptNodeDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	ScriptNodeDialog(Script* script);
+	ScriptNodeDialog(editor::IEditor* editor, Script* script);
 
 	bool create(ui::Widget* parent);
 
 private:
+	editor::IEditor* m_editor;
 	Ref< Script > m_script;
 	Ref< ui::custom::GridView > m_inputPinList;
 	Ref< ui::custom::GridView > m_outputPinList;
