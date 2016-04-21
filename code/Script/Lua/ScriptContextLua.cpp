@@ -95,8 +95,14 @@ bool ScriptContextLua::load(const IScriptBlob* scriptBlob)
 			CHECK_LUA_STACK(m_luaState, 0);
 			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 			lua_getmetatable(m_luaState, -1);
-			lua_pushnil(m_luaState);
+
+			lua_pushlightuserdata(m_luaState, (void*)this);
+			lua_pushcclosure(m_luaState, permitGlobalWrite, 1);
 			lua_setfield(m_luaState, -2, "__newindex");
+
+			lua_getglobal(m_luaState, "_G");
+			lua_setfield(m_luaState, -2, "__index");
+
 			lua_pop(m_luaState, 2);
 		}
 
@@ -130,9 +136,15 @@ bool ScriptContextLua::load(const IScriptBlob* scriptBlob)
 			CHECK_LUA_STACK(m_luaState, 0);
 			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 			lua_getmetatable(m_luaState, -1);
+			
 			lua_pushlightuserdata(m_luaState, (void*)this);
-			lua_pushcclosure(m_luaState, restrictedAccess, 1);
+			lua_pushcclosure(m_luaState, restrictedAccessWrite, 1);
 			lua_setfield(m_luaState, -2, "__newindex");
+
+			lua_pushlightuserdata(m_luaState, (void*)this);
+			lua_pushcclosure(m_luaState, restrictedAccessRead, 1);
+			lua_setfield(m_luaState, -2, "__index");
+
 			lua_pop(m_luaState, 2);
 		}
 	}
@@ -401,15 +413,78 @@ int32_t ScriptContextLua::runtimeError(lua_State* luaState)
 	return 0;
 }
 
-int32_t ScriptContextLua::restrictedAccess(lua_State* luaState)
+// __newindex
+int32_t ScriptContextLua::permitGlobalWrite(lua_State* luaState)
+{
+	ScriptContextLua* this_ = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (this_);
+	T_ASSERT (this_->m_scriptManager);
+
+	const char* key = lua_tostring(luaState, -2);
+	if (!key)
+	{
+		log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
+		log::error << L"GLOBAL access is restricted; cannot define new globals with non-literal keys." << Endl;
+		this_->m_scriptManager->breakDebugger(luaState);
+		return 0;
+	}
+
+	// Track all defined globals manually to ensure they are valid to read.
+	this_->m_globals.insert(key);
+
+	lua_rawset(luaState, -3);
+	lua_pop(luaState, 1);
+
+	return 0;
+}
+
+// __newindex
+int32_t ScriptContextLua::restrictedAccessWrite(lua_State* luaState)
 {
 	ScriptContextLua* this_ = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (this_);
 	T_ASSERT (this_->m_scriptManager);
 
 	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
-	log::error << L"GLOBAL access is restricted; no new globals permitted after initialization." << Endl;
+	log::error << L"GLOBAL access is restricted; cannot define new globals." << Endl;
+	this_->m_scriptManager->breakDebugger(luaState);
+	return 0;
+}
 
+// __index
+int32_t ScriptContextLua::restrictedAccessRead(lua_State* luaState)
+{
+	ScriptContextLua* this_ = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (this_);
+	T_ASSERT (this_->m_scriptManager);
+
+	// Read from this context's environment table first.
+	lua_pushvalue(luaState, -1);
+	lua_rawget(luaState, -3);
+	if (!lua_isnil(luaState, -1))
+		return 1;
+	lua_pop(luaState, 1);
+
+	// Read from global table second.
+	lua_getglobal(luaState, "_G");
+	lua_pushvalue(luaState, -2);
+	lua_rawget(luaState, -2);
+	if (!lua_isnil(luaState, -1))
+		return 1;
+	lua_pop(luaState, 2);
+
+	// Either no such variable exist or it's "nil", check if
+	// it's been declared when this context was loaded.
+	const char* key = lua_tostring(luaState, -1);
+	if (key != 0 && this_->m_globals.find(key) != this_->m_globals.end())
+	{
+		lua_pushnil(luaState);
+		return 1;
+	}
+
+	// No such variable exist thus issue a runtime error.
+	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
+	log::error << L"GLOBAL access is restricted; cannot read undefined globals." << Endl;
 	this_->m_scriptManager->breakDebugger(luaState);
 	return 0;
 }

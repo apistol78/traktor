@@ -53,12 +53,17 @@ private:
 	int32_t m_environmentRef;
 	bool m_strict;
 	const Object* m_lastSelf;
+	std::set< std::string > m_globals;
 
 	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict);
 
 	static int32_t runtimeError(lua_State* luaState);
 
-	static int32_t restrictedAccess(lua_State* luaState);
+	static int32_t permitGlobalWrite(lua_State* luaState);
+
+	static int32_t restrictedAccessWrite(lua_State* luaState);
+
+	static int32_t restrictedAccessRead(lua_State* luaState);
 };
 
 	}
