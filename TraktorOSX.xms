@@ -5523,10 +5523,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/gcc4/ub</item>
+						<item>$(FBX_SDK)/lib/clang/debug</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1</item>
+						<item>fbxsdk</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -5559,10 +5559,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/gcc4/ub</item>
+						<item>$(FBX_SDK)/lib/clang/release</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1</item>
+						<item>fbxsdk</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -5595,10 +5595,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/gcc4/ub</item>
+						<item>$(FBX_SDK)/lib/clang/debug</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1</item>
+						<item>fbxsdk</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -5631,10 +5631,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(FBX_SDK)/lib/gcc4/ub</item>
+						<item>$(FBX_SDK)/lib/clang/release</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1</item>
+						<item>fbxsdk</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -9006,10 +9006,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/gcc4/ub</item>
+												<item>$(FBX_SDK)/lib/clang/debug</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1</item>
+												<item>fbxsdk</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
@@ -9026,7 +9026,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)/lib/gcc4/ub/*.dylib</sourceFile>
+													<sourceFile>$(FBX_SDK)/lib/clang/debug/*.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
 											</aggregationItems>
@@ -9048,10 +9048,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/gcc4/ub</item>
+												<item>$(FBX_SDK)/lib/clang/release</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1</item>
+												<item>fbxsdk</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
@@ -9068,7 +9068,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)/lib/gcc4/ub/*.dylib</sourceFile>
+													<sourceFile>$(FBX_SDK)/lib/clang/release/*.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
 												</item>
 											</aggregationItems>
@@ -9090,10 +9090,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/gcc4/ub</item>
+												<item>$(FBX_SDK)/lib/clang/debug</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1</item>
+												<item>fbxsdk</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
@@ -9110,7 +9110,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)/lib/gcc4/ub/*.dylib</sourceFile>
+													<sourceFile>$(FBX_SDK)/lib/clang/debug/*.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -9132,10 +9132,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(FBX_SDK)/lib/gcc4/ub</item>
+												<item>$(FBX_SDK)/lib/clang/release</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1</item>
+												<item>fbxsdk</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
@@ -9152,7 +9152,7 @@
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK)/lib/gcc4/ub/*.dylib</sourceFile>
+													<sourceFile>$(FBX_SDK)/lib/clang/release/*.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 												</item>
 											</aggregationItems>
@@ -20998,7 +20998,7 @@
 					<targetPath>Contents/Resources</targetPath>
 				</item>
 				<item type="AggregationItem">
-					<sourceFile>lib$(FBX_SDK)/lib/gcc4/ub/libfbxsdk-2013.1.dylib</sourceFile>
+					<sourceFile>lib$(FBX_SDK)/lib/clang/release/libfbxsdk.dylib</sourceFile>
 					<targetPath>Contents/MacOS</targetPath>
 				</item>
 				<item type="AggregationItem">
