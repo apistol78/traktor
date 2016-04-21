@@ -446,7 +446,13 @@ int32_t ScriptContextLua::restrictedAccessWrite(lua_State* luaState)
 	T_ASSERT (this_->m_scriptManager);
 
 	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
-	log::error << L"GLOBAL access is restricted; cannot define new globals." << Endl;
+
+	const char* key = lua_tostring(luaState, -2);
+	if (key)
+		log::error << L"GLOBAL access is restricted; cannot define new global \"" << mbstows(key) << L"\"." << Endl;
+	else
+		log::error << L"GLOBAL access is restricted; cannot define new globals." << Endl;
+
 	this_->m_scriptManager->breakDebugger(luaState);
 	return 0;
 }
@@ -484,7 +490,7 @@ int32_t ScriptContextLua::restrictedAccessRead(lua_State* luaState)
 
 	// No such variable exist thus issue a runtime error.
 	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
-	log::error << L"GLOBAL access is restricted; cannot read undefined globals." << Endl;
+	log::error << L"GLOBAL access is restricted; cannot read undefined global \"" << mbstows(key) << "\"." << Endl;
 	this_->m_scriptManager->breakDebugger(luaState);
 	return 0;
 }
