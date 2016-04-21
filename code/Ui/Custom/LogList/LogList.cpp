@@ -263,16 +263,13 @@ void LogList::eventPaint(PaintEvent* event)
 			if (e2 == i->logText.npos)
 				e2 = i->logText.length();
 
-			if (e2 <= e1)
-				break;
-
 			std::wstring text = i->logText.substr(e1, e2 - e1);
 			canvas.drawText(textRect, text, AnLeft, AnCenter);
 
 			Size extent = canvas.getTextExtent(text);
 			textRect.left += extent.cx;
 
-			s += e2;
+			s = e2;
 		}
 
 		rc = rc.offset(0, m_itemHeight);
