@@ -544,7 +544,9 @@ for i = 0, configurations:size() - 1 do
 
 		local cc = "CC"
 		local ext = f:getExtension()
-		if ext == "m" or ext == "mm" then
+		if ext == "c" then
+			cc = "C"
+		elseif ext == "m" or ext == "mm" then
 			cc = "MM"
 		end
 
