@@ -46,7 +46,7 @@ Ref< Object > ScriptModuleFactory::create(resource::IResourceManager* resourceMa
 		return 0;
 	}
 
-	Ref< IScriptContext > scriptContext = m_scriptManager->createContext(false);
+	Ref< IScriptContext > scriptContext = m_scriptManager->createContext(true);
 	if (!scriptContext)
 	{
 		log::error << L"Unable to create script context; create context failed" << Endl;
