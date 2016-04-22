@@ -141,7 +141,7 @@ bool RenderTargetDx11::create(const RenderTargetSetCreateDesc& setDesc, const Re
 	dsrvd.Format = dtd.Format;
 	dsrvd.ViewDimension = /*dtd.SampleDesc.Count > 1 ? D3D11_SRV_DIMENSION_TEXTURE2DMS : */D3D11_SRV_DIMENSION_TEXTURE2D;
 	dsrvd.Texture2D.MostDetailedMip = 0;
-	dsrvd.Texture2D.MipLevels = 1;
+	dsrvd.Texture2D.MipLevels = -1;
 
 	hr = m_context->getD3DDevice()->CreateShaderResourceView(m_d3dTextureRead, &dsrvd, &m_d3dTextureResourceView.getAssign());
 	if (FAILED(hr))
