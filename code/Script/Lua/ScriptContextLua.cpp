@@ -226,7 +226,9 @@ bool ScriptContextLua::haveFunction(const std::string& functionName) const
 		CHECK_LUA_STACK(m_luaState, 0);
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		lua_getfield(m_luaState, -1, functionName.c_str());
+		//lua_getfield(m_luaState, -1, functionName.c_str());
+		lua_pushstring(m_luaState, functionName.c_str());
+		lua_rawget(m_luaState, -2);
 		
 		result = (lua_isfunction(m_luaState, -1) != 0);
 		
@@ -248,7 +250,9 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 		int32_t errfunc = lua_gettop(m_luaState);
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		lua_getfield(m_luaState, -1, functionName.c_str());
+		//lua_getfield(m_luaState, -1, functionName.c_str());
+		lua_pushstring(m_luaState, functionName.c_str());
+		lua_rawget(m_luaState, -2);
 
 		if (lua_isfunction(m_luaState, -1))
 		{
@@ -445,9 +449,17 @@ int32_t ScriptContextLua::restrictedAccessWrite(lua_State* luaState)
 	T_ASSERT (this_);
 	T_ASSERT (this_->m_scriptManager);
 
-	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
-
+	// Check if global has been defined, thus allow write.
 	const char* key = lua_tostring(luaState, -2);
+	if (key != 0 && this_->m_globals.find(key) != this_->m_globals.end())
+	{
+		lua_rawset(luaState, -3);
+		lua_pop(luaState, 1);
+		return 1;
+	}
+
+	// No such global has been defined, trap as error.
+	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
 	if (key)
 		log::error << L"GLOBAL access is restricted; cannot define new global \"" << mbstows(key) << L"\"." << Endl;
 	else
@@ -490,7 +502,7 @@ int32_t ScriptContextLua::restrictedAccessRead(lua_State* luaState)
 
 	// No such variable exist thus issue a runtime error.
 	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
-	log::error << L"GLOBAL access is restricted; cannot read undefined global \"" << mbstows(key) << "\"." << Endl;
+	log::error << L"GLOBAL access is restricted; cannot read undefined global \"" << mbstows(key) << L"\"." << Endl;
 	this_->m_scriptManager->breakDebugger(luaState);
 	return 0;
 }
