@@ -241,7 +241,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			}
 
 			if (!model::MergeModel(*model, (*i)->getTransform(), 0.01f).apply(*mergedModel))
-				return false;
+				return 0;
 
 			meshMaterialTextures.insert(
 				meshAsset->getMaterialTextures().begin(),

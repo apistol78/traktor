@@ -188,7 +188,7 @@ bool CalculateConvexHull::apply(Model& model) const
 		// Add new faces.
 		for (std::vector< std::pair< uint32_t, uint32_t > >::iterator j = silouette.begin(); j != silouette.end(); ++j)
 		{
-			int idx[] = { j->second, j->first, i };
+			uint32_t idx[] = { j->second, j->first, i };
 			faces.push_back(HullFace(idx[0], idx[1], idx[2]));
 		}
 
