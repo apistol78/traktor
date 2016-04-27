@@ -20,10 +20,10 @@ namespace traktor
 		namespace
 		{
 
-std::string generateKey(const Guid& guid, uint32_t hash, int32_t version)
+std::string generateKey(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	std::stringstream ss;
-	ss << wstombs(guid.format()) << ":" << hash << ":" << version;
+	ss << wstombs(guid.format()) << ":" << hash.pipelineHash << ":" << hash.sourceAssetHash << ":" << hash.sourceDataHash << ":" << hash.filesHash << ":" << hash.pipelineVersion;
 	return ss.str();
 }
 
@@ -69,11 +69,11 @@ void MemCachedPipelineCache::destroy()
 	m_proto = 0;
 }
 
-Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, uint32_t hash, int32_t version)
+Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	if (m_accessRead)
 	{
-		Ref< MemCachedGetStream > stream = new MemCachedGetStream(m_proto, generateKey(guid, hash, version));
+		Ref< MemCachedGetStream > stream = new MemCachedGetStream(m_proto, generateKey(guid, hash));
 		
 		// Request end block; do not try to open non-finished cache streams.
 		if (!stream->requestEndBlock())
@@ -89,10 +89,10 @@ Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, uint32_t hash, int3
 		return 0;
 }
 
-Ref< IStream > MemCachedPipelineCache::put(const Guid& guid, uint32_t hash, int32_t version)
+Ref< IStream > MemCachedPipelineCache::put(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	if (m_accessWrite)
-		return new MemCachedPutStream(m_proto, generateKey(guid, hash, version));
+		return new MemCachedPutStream(m_proto, generateKey(guid, hash));
 	else
 		return 0;
 }

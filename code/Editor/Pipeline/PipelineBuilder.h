@@ -9,6 +9,7 @@
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/PipelineTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -121,10 +122,10 @@ private:
 	BuildResult performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason);
 
 	/*! \brief Isolate instance in cache. */
-	bool putInstancesInCache(const Guid& guid, uint32_t hash, int32_t version, const RefArray< db::Instance >& instances);
+	bool putInstancesInCache(const Guid& guid, const PipelineDependencyHash& hash, const RefArray< db::Instance >& instances);
 
 	/*! \brief Get isolated instance from cache. */
-	bool getInstancesFromCache(const Guid& guid, uint32_t hash, int32_t version);
+	bool getInstancesFromCache(const Guid& guid, const PipelineDependencyHash& hash);
 
 	/*! \brief Build thread method. */
 	void buildThread(const IPipelineDependencySet* dependencySet, Thread* controlThread, int32_t cpuCore);

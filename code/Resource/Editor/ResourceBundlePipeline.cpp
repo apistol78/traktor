@@ -28,7 +28,7 @@ void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::I
 	{
 		// Recurse until a resource is found; isn't necessary to recurse further as
 		// resource loading will need to load any other dependent resource anyway.
-		for (std::vector< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
+		for (SmallSet< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 		{
 			const editor::PipelineDependency* childDependency = dependencySet->get(*i);
 			T_ASSERT (childDependency);

@@ -16,13 +16,13 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_version = 1;
+const uint32_t c_version = 2;
 const uint32_t c_flushAfterChanges = 10;	//!< Flush pipeline after N changes.
 
-class MemberDependencyHash : public MemberComplex
+class MemberPipelineDependencyHash : public MemberComplex
 {
 public:
-	MemberDependencyHash(const wchar_t* const name, IPipelineDb::DependencyHash& ref)
+	MemberPipelineDependencyHash(const wchar_t* const name, PipelineDependencyHash& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -31,17 +31,20 @@ public:
 	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< uint32_t >(L"pipelineVersion", m_ref.pipelineVersion);
-		s >> Member< uint32_t >(L"hash", m_ref.hash);
+		s >> Member< uint32_t >(L"pipelineHash", m_ref.pipelineHash);
+		s >> Member< uint32_t >(L"sourceAssetHash", m_ref.sourceAssetHash);
+		s >> Member< uint32_t >(L"sourceDataHash", m_ref.sourceDataHash);
+		s >> Member< uint32_t >(L"filesHash", m_ref.filesHash);
 	}
 
 private:
-	IPipelineDb::DependencyHash& m_ref;
+	PipelineDependencyHash& m_ref;
 };
 
-class MemberFileHash : public MemberComplex
+class MemberPipelineFileHash : public MemberComplex
 {
 public:
-	MemberFileHash(const wchar_t* const name, IPipelineDb::FileHash& ref)
+	MemberPipelineFileHash(const wchar_t* const name, PipelineFileHash& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -55,7 +58,7 @@ public:
 	}
 
 private:
-	IPipelineDb::FileHash& m_ref;
+	PipelineFileHash& m_ref;
 };
 
 		}
@@ -112,23 +115,23 @@ bool PipelineDbFlat::open(const std::wstring& connectionString)
 	{
 		s >> MemberStlMap<
 			Guid,
-			DependencyHash,
+			PipelineDependencyHash,
 			MemberStlPair<
 				Guid,
-				DependencyHash,
+				PipelineDependencyHash,
 				Member< Guid >,
-				MemberDependencyHash
+				MemberPipelineDependencyHash
 			>
 		>(L"dependencies", m_dependencies);
 
 		s >> MemberStlMap<
 			std::wstring,
-			FileHash,
+			PipelineFileHash,
 			MemberStlPair<
 				std::wstring,
-				FileHash,
+				PipelineFileHash,
 				Member< std::wstring >,
-				MemberFileHash
+				MemberPipelineFileHash
 			>
 		>(L"files", m_files);
 	}
@@ -162,23 +165,23 @@ void PipelineDbFlat::endTransaction()
 
 			s >> MemberStlMap<
 				Guid,
-				DependencyHash,
+				PipelineDependencyHash,
 				MemberStlPair<
-				Guid,
-				DependencyHash,
-				Member< Guid >,
-				MemberDependencyHash
+					Guid,
+					PipelineDependencyHash,
+					Member< Guid >,
+					MemberPipelineDependencyHash
 				>
 			>(L"dependencies", m_dependencies);
 
 			s >> MemberStlMap<
 				std::wstring,
-				FileHash,
+				PipelineFileHash,
 				MemberStlPair<
-				std::wstring,
-				FileHash,
-				Member< std::wstring >,
-				MemberFileHash
+					std::wstring,
+					PipelineFileHash,
+					Member< std::wstring >,
+					MemberPipelineFileHash
 				>
 			>(L"files", m_files);
 
@@ -192,7 +195,7 @@ void PipelineDbFlat::endTransaction()
 	}
 }
 
-void PipelineDbFlat::setDependency(const Guid& guid, const DependencyHash& hash)
+void PipelineDbFlat::setDependency(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 	m_dependencies[guid] = hash;
@@ -200,11 +203,11 @@ void PipelineDbFlat::setDependency(const Guid& guid, const DependencyHash& hash)
 		endTransaction();
 }
 
-bool PipelineDbFlat::getDependency(const Guid& guid, DependencyHash& outHash) const
+bool PipelineDbFlat::getDependency(const Guid& guid, PipelineDependencyHash& outHash) const
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
-	std::map< Guid, DependencyHash >::const_iterator it = m_dependencies.find(guid);
+	std::map< Guid, PipelineDependencyHash >::const_iterator it = m_dependencies.find(guid);
 	if (it == m_dependencies.end())
 		return false;
 
@@ -212,7 +215,7 @@ bool PipelineDbFlat::getDependency(const Guid& guid, DependencyHash& outHash) co
 	return true;
 }
 
-void PipelineDbFlat::setFile(const Path& path, const FileHash& file)
+void PipelineDbFlat::setFile(const Path& path, const PipelineFileHash& file)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 	m_files[path.getPathName()] = file;
@@ -220,11 +223,11 @@ void PipelineDbFlat::setFile(const Path& path, const FileHash& file)
 		endTransaction();
 }
 
-bool PipelineDbFlat::getFile(const Path& path, FileHash& outFile)
+bool PipelineDbFlat::getFile(const Path& path, PipelineFileHash& outFile)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
-	std::map< std::wstring, FileHash >::const_iterator it = m_files.find(path.getPathName());
+	std::map< std::wstring, PipelineFileHash >::const_iterator it = m_files.find(path.getPathName());
 	if (it == m_files.end())
 		return false;
 

@@ -51,10 +51,12 @@ void FlashBitmapImage::serialize(ISerializer& s)
 		m_image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), m_width, m_height);
 #endif
 
-	void* bits = m_image->getData();
-	uint32_t size = m_width * m_height * sizeof(SwfColor);
-
-	s >> Member< void* >(L"bits", bits, size);
+	if (m_image)
+	{
+		void* bits = m_image->getData();
+		uint32_t size = m_width * m_height * sizeof(SwfColor);
+		s >> Member< void* >(L"bits", bits, size);
+	}
 }
 
 	}

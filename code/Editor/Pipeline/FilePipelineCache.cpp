@@ -36,13 +36,13 @@ void FilePipelineCache::destroy()
 {
 }
 
-Ref< IStream > FilePipelineCache::get(const Guid& guid, uint32_t hash, int32_t version)
+Ref< IStream > FilePipelineCache::get(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	if (!m_accessRead)
 		return 0;
 
 	StringOutputStream ss;
-	ss << m_path << L"/" << guid.format() << L"_" << hash << L"_" << version << L".cache";
+	ss << m_path << L"/" << guid.format() << L"_" << hash.pipelineVersion << L"_" << hash.pipelineHash << L"_" << hash.sourceAssetHash << L"_" << hash.sourceDataHash << L"_" << hash.filesHash << L"_" << hash.pipelineVersion << L".cache";
 	
 	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str(), File::FmRead);
 	if (!fileStream)
@@ -51,13 +51,13 @@ Ref< IStream > FilePipelineCache::get(const Guid& guid, uint32_t hash, int32_t v
 	return new BufferedStream(fileStream);
 }
 
-Ref< IStream > FilePipelineCache::put(const Guid& guid, uint32_t hash, int32_t version)
+Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	if (!m_accessWrite)
 		return 0;
 
 	StringOutputStream ss;
-	ss << m_path << L"/" << guid.format() << L"_" << hash << L"_" << version << L".cache";
+	ss << m_path << L"/" << guid.format() << L"_" << hash.pipelineVersion << L"_" << hash.pipelineHash << L"_" << hash.sourceAssetHash << L"_" << hash.sourceDataHash << L"_" << hash.filesHash << L"_" << hash.pipelineVersion << L".cache";
 	
 	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str() + L"~", File::FmWrite);
 	if (!fileStream)

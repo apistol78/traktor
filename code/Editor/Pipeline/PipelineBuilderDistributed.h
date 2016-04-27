@@ -2,6 +2,7 @@
 #define traktor_editor_PipelineBuilderDistributed_H
 
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDb.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +20,6 @@ class Thread;
 	namespace editor
 	{
 
-class IPipelineDb;
 class PipelineAgentsManager;
 class PipelineDependency;
 class PipelineFactory;
@@ -77,7 +77,7 @@ private:
 	bool performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency);
 
 	/*! \brief */
-	void agentBuildSucceeded(const PipelineDependency* dependency, uint32_t pipelineVersion, uint32_t hash, int32_t agentIndex);
+	void agentBuildSucceeded(const PipelineDependency* dependency, PipelineDependencyHash hash, int32_t agentIndex);
 
 	void agentBuildFailed(const PipelineDependency* dependency, int32_t agentIndex);
 };

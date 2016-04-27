@@ -32,9 +32,9 @@ public:
 
 	virtual ~PipelineDbReport();
 
-	virtual void set(const std::wstring& name, int32_t value);
+	virtual void set(const std::wstring& name, int32_t value) T_OVERRIDE T_FINAL;
 
-	virtual void set(const std::wstring& name, const std::wstring& value);
+	virtual void set(const std::wstring& name, const std::wstring& value) T_OVERRIDE T_FINAL;
 
 private:
 	ReaderWriterLock& m_lock;

@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_version = 5;
+const int32_t c_version = 6;
 
 int32_t hash(const std::wstring& s)
 {
@@ -73,7 +73,10 @@ bool PipelineDb::open(const std::wstring& connectionString)
 			L"create table PipelineHash ("
 			L"guid char(37) primary key,"
 			L"pipelineVersion integer,"
-			L"hash integer"
+			L"pipelineHash integer,"
+			L"sourceAssetHash integer,"
+			L"sourceDataHash integer,"
+			L"filesHash integer"
 			L")"
 		) < 0)
 			return false;
@@ -125,7 +128,7 @@ void PipelineDb::endTransaction()
 	}
 }
 
-void PipelineDb::setDependency(const Guid& guid, const DependencyHash& hash)
+void PipelineDb::setDependency(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 
@@ -139,17 +142,20 @@ void PipelineDb::setDependency(const Guid& guid, const DependencyHash& hash)
 
 	m_ss.reset();
 	m_ss <<
-		L"insert or replace into PipelineHash (guid, pipelineVersion, hash) "
+		L"insert or replace into PipelineHash (guid, pipelineVersion, pipelineHash, sourceAssetHash, sourceDataHash, filesHash) "
 		L"values (" <<
 		L"'" << guid.format() << L"'," <<
 		hash.pipelineVersion << L"," <<
-		hash.hash <<
+		hash.pipelineHash << L"," <<
+		hash.sourceAssetHash << L"," <<
+		hash.sourceDataHash << L"," <<
+		hash.filesHash <<
 		L")";
 	if (m_connection->executeUpdate(m_ss.str()) != 1)
 		log::warning << L"Unable to update pipeline hash in database" << Endl;
 }
 
-bool PipelineDb::getDependency(const Guid& guid, DependencyHash& outHash) const
+bool PipelineDb::getDependency(const Guid& guid, PipelineDependencyHash& outHash) const
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
@@ -163,12 +169,15 @@ bool PipelineDb::getDependency(const Guid& guid, DependencyHash& outHash) const
 		return false;
 
 	outHash.pipelineVersion = rs->getInt32(L"pipelineVersion");
-	outHash.hash = rs->getInt32(L"hash");
+	outHash.pipelineHash = rs->getInt32(L"pipelineHash");
+	outHash.sourceAssetHash = rs->getInt32(L"sourceAssetHash");
+	outHash.sourceDataHash = rs->getInt32(L"sourceDataHash");
+	outHash.filesHash = rs->getInt32(L"filesHash");
 
 	return true;
 }
 
-void PipelineDb::setFile(const Path& path, const FileHash& file)
+void PipelineDb::setFile(const Path& path, const PipelineFileHash& file)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 
@@ -197,7 +206,7 @@ void PipelineDb::setFile(const Path& path, const FileHash& file)
 		log::error << L"Unable to update pipeline file hash in database" << Endl;
 }
 
-bool PipelineDb::getFile(const Path& path, FileHash& outFile)
+bool PipelineDb::getFile(const Path& path, PipelineFileHash& outFile)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
