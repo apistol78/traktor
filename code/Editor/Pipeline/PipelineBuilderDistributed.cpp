@@ -19,24 +19,38 @@ namespace traktor
 		namespace
 		{
 
-uint32_t calculateGlobalHash(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency)
+void calculateGlobalHash(
+	const IPipelineDependencySet* dependencySet,
+	const PipelineDependency* dependency,
+	uint32_t& outPipelineHash,
+	uint32_t& outSourceAssetHash,
+	uint32_t& outSourceDataHash,
+	uint32_t& outFilesHash
+)
 {
-	uint32_t hash =
-		dependency->pipelineHash +
-		dependency->sourceAssetHash +
-		dependency->sourceDataHash +
-		dependency->filesHash;
+	outPipelineHash += dependency->pipelineHash;
+	outSourceAssetHash += dependency->sourceAssetHash;
+	outSourceDataHash += dependency->sourceDataHash;
+	outFilesHash += dependency->filesHash;
 
-	for (std::vector< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
+	for (SmallSet< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 	{
 		const PipelineDependency* childDependency = dependencySet->get(*i);
 		T_ASSERT (childDependency);
 
-		if ((childDependency->flags & PdfUse) != 0)
-			hash += calculateGlobalHash(dependencySet, childDependency);
-	}
+		if (childDependency == dependency)
+			continue;
 
-	return hash;
+		if ((childDependency->flags & PdfUse) != 0)
+			calculateGlobalHash(
+				dependencySet,
+				childDependency,
+				outPipelineHash,
+				outSourceAssetHash,
+				outSourceDataHash,
+				outFilesHash
+			);
+	}
 }
 
 		}
@@ -79,10 +93,22 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 		// Have source asset been modified?
 		if (!rebuild)
 		{
-			uint32_t hash = calculateGlobalHash(dependencySet, dependency);
+			uint32_t pipelineHash = 0;
+			uint32_t sourceAssetHash = 0;
+			uint32_t sourceDataHash = 0;
+			uint32_t filesHash = 0;
+
+			calculateGlobalHash(
+				dependencySet,
+				dependency,
+				pipelineHash,
+				sourceAssetHash,
+				sourceDataHash,
+				filesHash
+			);
 
 			// Get hash entry from database.
-			IPipelineDb::DependencyHash previousDependencyHash;
+			PipelineDependencyHash previousDependencyHash;
 			if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
 			{
 				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed" << Endl;
@@ -93,7 +119,12 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; pipeline version differ" << Endl;
 				reasons[i] |= PbrSourceModified;
 			}
-			else if (previousDependencyHash.hash != hash)
+			else if (
+				previousDependencyHash.pipelineHash != pipelineHash ||
+				previousDependencyHash.sourceAssetHash != sourceAssetHash ||
+				previousDependencyHash.sourceDataHash != sourceDataHash ||
+				previousDependencyHash.filesHash != filesHash
+			)
 			{
 				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
 				reasons[i] |= PbrSourceModified;
@@ -111,10 +142,12 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 		if ((dependency->flags & PdfFailed) != 0)
 			continue;
 
-		std::vector< uint32_t > children = dependency->children;
-		std::set< uint32_t > visited;
-
+		SmallSet< uint32_t > visited;
 		visited.insert(i);
+
+		AlignedVector< uint32_t > children;
+		children.insert(children.end(), dependency->children.begin(), dependency->children.end());
+
 		while (!children.empty())
 		{
 			if (visited.find(children.back()) != visited.end())
@@ -136,6 +169,7 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 				reasons[i] |= PbrDependencyModified;
 
 			visited.insert(children.back());
+
 			children.pop_back();
 			children.insert(children.end(), childDependency->children.begin(), childDependency->children.end());
 		}
@@ -245,12 +279,19 @@ Ref< IPipelineReport > PipelineBuilderDistributed::createReport(const std::wstri
 
 bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency)
 {
-	IPipelineDb::DependencyHash currentDependencyHash;
+	PipelineDependencyHash currentDependencyHash;
 	bool result = true;
 
 	// Create hash entry.
 	currentDependencyHash.pipelineVersion = dependency->pipelineType->getVersion();
-	currentDependencyHash.hash = calculateGlobalHash(dependencySet, dependency);
+	calculateGlobalHash(
+		dependencySet,
+		dependency,
+		currentDependencyHash.pipelineHash,
+		currentDependencyHash.sourceAssetHash,
+		currentDependencyHash.sourceDataHash,
+		currentDependencyHash.filesHash
+	);
 
 	// Skip no-build asset; just update hash.
 	if ((dependency->flags & PdfBuild) == 0)
@@ -263,7 +304,7 @@ bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* depe
 	if (!agent)
 		return false;
 
-	log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << dependency->pipelineType->getName() << L") on agent " << agent->getDescription() << L"..." << Endl;
+	log::info << L"Building asset \"" << dependency->outputPath << L"..." << Endl;
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 	T_ASSERT (pipeline);
@@ -284,8 +325,7 @@ bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* depe
 			this,
 			&PipelineBuilderDistributed::agentBuildSucceeded,
 			dependency,
-			currentDependencyHash.pipelineVersion,
-			currentDependencyHash.hash,
+			currentDependencyHash,
 			agentIndex
 		),
 		makeFunctor(
@@ -299,12 +339,9 @@ bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* depe
 	return result;
 }
 
-void PipelineBuilderDistributed::agentBuildSucceeded(const PipelineDependency* dependency, uint32_t pipelineVersion, uint32_t hash, int32_t agentIndex)
+void PipelineBuilderDistributed::agentBuildSucceeded(const PipelineDependency* dependency, PipelineDependencyHash hash, int32_t agentIndex)
 {
-	IPipelineDb::DependencyHash dependencyHash;
-	dependencyHash.pipelineVersion = pipelineVersion;
-	dependencyHash.hash = hash;
-	m_pipelineDb->setDependency(dependency->outputGuid, dependencyHash);
+	m_pipelineDb->setDependency(dependency->outputGuid, hash);
 
 	if (m_listener)
 		m_listener->endBuild(

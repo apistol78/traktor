@@ -34,13 +34,13 @@ public:
 
 	virtual ~MemCachedPipelineCache();
 
-	virtual bool create(const PropertyGroup* settings);
+	virtual bool create(const PropertyGroup* settings) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual Ref< IStream > get(const Guid& guid, uint32_t hash, int32_t version);
+	virtual Ref< IStream > get(const Guid& guid, const PipelineDependencyHash& hash) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IStream > put(const Guid& guid, uint32_t hash, int32_t version);
+	virtual Ref< IStream > put(const Guid& guid, const PipelineDependencyHash& hash) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< net::TcpSocket > m_socket;

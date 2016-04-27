@@ -90,7 +90,7 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset,
 
 		dependency->flags |= flags;
 		if (m_currentDependency)
-			m_currentDependency->children.push_back(dependencyIndex);
+			m_currentDependency->children.insert(dependencyIndex);
 
 		return;
 	}
@@ -122,7 +122,7 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 
 		dependency->flags |= flags;
 		if (m_currentDependency)
-			m_currentDependency->children.push_back(dependencyIndex);
+			m_currentDependency->children.insert(dependencyIndex);
 
 		return;
 	}
@@ -162,7 +162,7 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 
 		dependency->flags |= flags;
 		if (m_currentDependency)
-			m_currentDependency->children.push_back(dependencyIndex);
+			m_currentDependency->children.insert(dependencyIndex);
 
 		return;
 	}
@@ -306,7 +306,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 	uint32_t dependencyIndex = m_dependencySet->add(outputGuid, dependency);
 
 	if (m_currentDependency)
-		m_currentDependency->children.push_back(dependencyIndex);
+		m_currentDependency->children.insert(dependencyIndex);
 
 	bool result = true;
 
@@ -374,7 +374,7 @@ void PipelineDependsIncremental::updateDependencyHashes(
 
 			if (m_pipelineDb && sourceInstance->getDataLastWriteTime(*i, lastWriteTime))
 			{
-				IPipelineDb::FileHash fileHash;
+				PipelineFileHash fileHash;
 				if (m_pipelineDb->getFile(fauxDataPath, fileHash))
 				{
 					if (fileHash.lastWriteTime == lastWriteTime)
@@ -401,7 +401,7 @@ void PipelineDependsIncremental::updateDependencyHashes(
 
 				if (m_pipelineDb)
 				{
-					IPipelineDb::FileHash fileHash;
+					PipelineFileHash fileHash;
 					fileHash.size = 0;
 					fileHash.lastWriteTime = lastWriteTime;
 					fileHash.hash = a32.get();
@@ -413,14 +413,14 @@ void PipelineDependsIncremental::updateDependencyHashes(
 
 	// Calculate external file hashes.
 	dependency->filesHash = 0;
-	for (std::vector< PipelineDependency::ExternalFile >::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
+	for (AlignedVector< PipelineDependency::ExternalFile >::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
 	{
 		if (m_pipelineDb)
 		{
 			Ref< File > file = FileSystem::getInstance().get(i->filePath);
 			if (file)
 			{
-				IPipelineDb::FileHash fileHash;
+				PipelineFileHash fileHash;
 				if (m_pipelineDb->getFile(i->filePath, fileHash))
 				{
 					if (fileHash.lastWriteTime == file->getLastWriteTime())
@@ -452,7 +452,7 @@ void PipelineDependsIncremental::updateDependencyHashes(
 				Ref< File > file = FileSystem::getInstance().get(i->filePath);
 				if (file)
 				{
-					IPipelineDb::FileHash fileHash;
+					PipelineFileHash fileHash;
 					fileHash.size = file->getSize();
 					fileHash.lastWriteTime = file->getLastWriteTime();
 					fileHash.hash = a32.get();

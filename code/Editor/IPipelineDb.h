@@ -1,10 +1,9 @@
 #ifndef traktor_editor_IPipelineDb_H
 #define traktor_editor_IPipelineDb_H
 
-#include <map>
 #include "Core/Guid.h"
-#include "Core/Date/DateTime.h"
 #include "Core/Io/Path.h"
+#include "Editor/PipelineTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,19 +37,6 @@ class T_DLLCLASS IPipelineDb : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct DependencyHash
-	{
-		uint32_t pipelineVersion;
-		uint32_t hash;
-	};
-
-	struct FileHash
-	{
-		uint64_t size;
-		DateTime lastWriteTime;
-		uint32_t hash;
-	};
-
 	virtual bool open(const std::wstring& connectionString) = 0;
 
 	virtual void close() = 0;
@@ -59,13 +45,13 @@ public:
 
 	virtual void endTransaction() = 0;
 
-	virtual void setDependency(const Guid& guid, const DependencyHash& hash) = 0;
+	virtual void setDependency(const Guid& guid, const PipelineDependencyHash& hash) = 0;
 
-	virtual bool getDependency(const Guid& guid, DependencyHash& outHash) const = 0;
+	virtual bool getDependency(const Guid& guid, PipelineDependencyHash& outHash) const = 0;
 
-	virtual void setFile(const Path& path, const FileHash& file) = 0;
+	virtual void setFile(const Path& path, const PipelineFileHash& file) = 0;
 
-	virtual bool getFile(const Path& path, FileHash& outFile) = 0;
+	virtual bool getFile(const Path& path, PipelineFileHash& outFile) = 0;
 
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid) = 0;
 };

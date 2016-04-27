@@ -195,7 +195,7 @@ Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(
 
 		dependency->flags |= flags;
 		if (parentDependency)
-			parentDependency->children.push_back(dependencyIndex);
+			parentDependency->children.insert(dependencyIndex);
 
 		outExists = true;
 		return dependency;
@@ -206,7 +206,7 @@ Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(
 	
 	dependencyIndex = m_dependencySet->add(guid, dependency);
 	if (parentDependency)
-		parentDependency->children.push_back(dependencyIndex);
+		parentDependency->children.insert(dependencyIndex);
 
 	outExists = false;
 	return dependency;
@@ -303,14 +303,14 @@ void PipelineDependsParallel::updateDependencyHashes(
 
 	// Calculate external file hashes.
 	dependency->filesHash = 0;
-	for (std::vector< PipelineDependency::ExternalFile >::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
+	for (AlignedVector< PipelineDependency::ExternalFile >::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
 	{
 		if (m_pipelineDb)
 		{
 			Ref< File > file = FileSystem::getInstance().get(i->filePath);
 			if (file)
 			{
-				IPipelineDb::FileHash fileHash;
+				PipelineFileHash fileHash;
 				if (m_pipelineDb->getFile(i->filePath, fileHash))
 				{
 					if (fileHash.lastWriteTime == file->getLastWriteTime())
@@ -342,7 +342,7 @@ void PipelineDependsParallel::updateDependencyHashes(
 				Ref< File > file = FileSystem::getInstance().get(i->filePath);
 				if (file)
 				{
-					IPipelineDb::FileHash fileHash;
+					PipelineFileHash fileHash;
 					fileHash.size = file->getSize();
 					fileHash.lastWriteTime = file->getLastWriteTime();
 					fileHash.hash = a32.get();

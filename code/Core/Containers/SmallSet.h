@@ -39,6 +39,11 @@ public:
 		return m_data.end();
 	}
 
+	void clear()
+	{
+		m_data.clear();
+	}
+
 	bool empty() const
 	{
 		return m_data.empty();
@@ -123,6 +128,16 @@ public:
 		}
 
 		return false;
+	}
+
+	size_t size() const
+	{
+		return m_data.size();
+	}
+
+	const Key& operator [] (size_t index) const
+	{
+		return m_data[index];
 	}
 
 private:

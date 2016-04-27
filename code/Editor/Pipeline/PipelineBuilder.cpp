@@ -84,7 +84,7 @@ void calculateGlobalHash(
 	outSourceDataHash += dependency->sourceDataHash;
 	outFilesHash += dependency->filesHash;
 
-	for (std::vector< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
+	for (SmallSet< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 	{
 		const PipelineDependency* childDependency = dependencySet->get(*i);
 		T_ASSERT (childDependency);
@@ -183,10 +183,8 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 				filesHash
 			);
 
-			uint32_t hash = pipelineHash + sourceAssetHash + sourceDataHash + filesHash;
-
 			// Get hash entry from database.
-			IPipelineDb::DependencyHash previousDependencyHash;
+			PipelineDependencyHash previousDependencyHash;
 			if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
 			{
 #if defined(_DEBUG)
@@ -201,16 +199,20 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 #endif
 				m_reasons[i] |= PbrSourceModified;
 			}
-			else if (previousDependencyHash.hash != hash)
+			else if (
+				previousDependencyHash.pipelineHash != pipelineHash ||
+				previousDependencyHash.sourceAssetHash != sourceAssetHash ||
+				previousDependencyHash.sourceDataHash != sourceDataHash ||
+				previousDependencyHash.filesHash != filesHash
+			)
 			{
 #if defined(_DEBUG)
 				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
 				log::info << IncreaseIndent;
-				log::info << L"("; FormatHex(log::info, previousDependencyHash.hash, 8); log::info << L" != "; FormatHex(log::info, hash, 8); log::info << L")" << Endl;
-				log::info << L"Pipeline hash "; FormatHex(log::info, pipelineHash, 8); log::info << Endl;
-				log::info << L"Source asset hash "; FormatHex(log::info, sourceAssetHash, 8); log::info << Endl;
-				log::info << L"Source data hash "; FormatHex(log::info, sourceDataHash, 8); log::info << Endl;
-				log::info << L"File(s) hash "; FormatHex(log::info, filesHash, 8); log::info << Endl;
+				log::info << L"Pipeline hash "; FormatHex(log::info, pipelineHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.pipelineHash, 8); log::info << L")" << Endl;
+				log::info << L"Source asset hash "; FormatHex(log::info, sourceAssetHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.sourceAssetHash, 8); log::info << L")" << Endl;
+				log::info << L"Source data hash "; FormatHex(log::info, sourceDataHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.sourceDataHash, 8); log::info << L")" << Endl;
+				log::info << L"File(s) hash "; FormatHex(log::info, filesHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.filesHash, 8); log::info << L")" << Endl;
 				log::info << DecreaseIndent;
 #endif
 
@@ -226,10 +228,12 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 		const PipelineDependency* dependency = dependencySet->get(i);
 		T_ASSERT (dependency);
 
-		std::vector< uint32_t > children = dependency->children;
-		std::set< uint32_t > visited;
-
+		SmallSet< uint32_t > visited;
 		visited.insert(i);
+
+		AlignedVector< uint32_t > children;
+		children.insert(children.end(), dependency->children.begin(), dependency->children.end());
+
 		while (!children.empty())
 		{
 			if (visited.find(children.back()) != visited.end())
@@ -251,6 +255,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 				m_reasons[i] |= PbrDependencyModified;
 			
 			visited.insert(children.back());
+
 			children.pop_back();
 			children.insert(children.end(), childDependency->children.begin(), childDependency->children.end());
 		}
@@ -551,7 +556,7 @@ Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, c
 
 IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason)
 {
-	IPipelineDb::DependencyHash currentDependencyHash;
+	PipelineDependencyHash currentDependencyHash;
 
 	// Ensure FP is in known state.
 #if defined(_WIN32) && !defined(_WIN64)
@@ -580,7 +585,10 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 
 	// Create hash entry.
 	currentDependencyHash.pipelineVersion = dependency->pipelineType->getVersion();
-	currentDependencyHash.hash = pipelineHash + sourceAssetHash + sourceDataHash + filesHash;
+	currentDependencyHash.pipelineHash = pipelineHash;
+	currentDependencyHash.sourceAssetHash = sourceAssetHash;
+	currentDependencyHash.sourceDataHash = sourceDataHash;
+	currentDependencyHash.filesHash = filesHash;
 
 	// Skip no-build asset; just update hash.
 	if ((dependency->flags & PdfBuild) == 0)
@@ -591,13 +599,13 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
-	log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << dependency->pipelineType->getName() << L")..." << Endl;
+	log::info << L"Building asset \"" << dependency->outputPath << L"\"..." << Endl;
 	log::info << IncreaseIndent;
 
 	// Get output instances from cache.
 	if (m_cache && !buildParams)
 	{
-		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash.hash, currentDependencyHash.pipelineVersion))
+		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash))
 		{
 			log::info << L"Cached instance(s) used" << Endl;
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
@@ -658,8 +666,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 			if (m_cache && !buildParams)
 				putInstancesInCache(
 					dependency->outputGuid,
-					currentDependencyHash.hash,
-					currentDependencyHash.pipelineVersion,
+					currentDependencyHash,
 					builtInstances
 				);
 
@@ -678,11 +685,11 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 		return BrFailed;
 }
 
-bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash, int32_t version, const RefArray< db::Instance >& instances)
+bool PipelineBuilder::putInstancesInCache(const Guid& guid, const PipelineDependencyHash& hash, const RefArray< db::Instance >& instances)
 {
 	bool result = false;
 
-	Ref< IStream > stream = m_cache->put(guid, hash, version);
+	Ref< IStream > stream = m_cache->put(guid, hash);
 	if (stream)
 	{
 		Writer writer(stream);
@@ -704,11 +711,11 @@ bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash, int32
 	return result;
 }
 
-bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash, int32_t version)
+bool PipelineBuilder::getInstancesFromCache(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	bool result = false;
 
-	Ref< IStream > stream = m_cache->get(guid, hash, version);
+	Ref< IStream > stream = m_cache->get(guid, hash);
 	if (stream)
 	{
 		Reader reader(stream);
