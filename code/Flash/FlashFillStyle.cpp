@@ -64,6 +64,7 @@ bool FlashFillStyle::create(const SwfFillStyle* fillStyle)
 	{
 		m_fillBitmap = fillStyle->bitmap.bitmapId; 
 		m_fillBitmapMatrix = Matrix33(fillStyle->bitmap.bitmapMatrix.m);
+		m_fillBitmapRepeat = bool(fillStyle->type == FstTiledBitmap || fillStyle->type == FstTiledBitmapHard);
 	}
 	else
 		m_fillBitmap = 0;
