@@ -28,13 +28,13 @@ class T_DLLCLASS Panel : public Container
 public:
 	bool create(Widget* parent, const std::wstring& text, Layout* layout);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE;
 
-	virtual Size getMinimumSize() const;
+	virtual Size getMinimumSize() const T_OVERRIDE;
 
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE;
 
-	virtual Rect getInnerRect() const;
+	virtual Rect getInnerRect() const T_OVERRIDE;
 
 private:
 	Ref< ui::EventSubject::IEventHandler > m_focusEventHandler;

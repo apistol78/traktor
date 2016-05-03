@@ -39,7 +39,7 @@ public:
 
 	bool create(Widget* parent, int channels, int time, int minSample, int maxSample, int style, IProfileCallback* callBack);
 
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE;
 
 private:
 	struct Sample

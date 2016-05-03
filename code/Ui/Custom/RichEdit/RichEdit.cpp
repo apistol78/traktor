@@ -1119,7 +1119,12 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 			m_fromCaret = offset;
 			m_selectionStart = -1;
 			m_selectionStop = -1;
+
+			std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator i = m_specialCharacters.find(m_text[m_caret].ch);
+			if (i != m_specialCharacters.end())
+				i->second->mouseButtonDown(event);
 		}
+
 		setCapture();
 		update();
 	}
@@ -1131,6 +1136,10 @@ void RichEdit::eventButtonUp(MouseButtonUpEvent* event)
 
 	if (!hasCapture())
 		return;
+
+	std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator i = m_specialCharacters.find(m_text[m_caret].ch);
+	if (i != m_specialCharacters.end())
+		i->second->mouseButtonUp(event);
 
 	releaseCapture();
 }

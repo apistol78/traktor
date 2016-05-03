@@ -31,13 +31,13 @@ class T_DLLCLASS IpolNodeShape : public NodeShape
 public:
 	IpolNodeShape();
 
-	virtual Point getPinPosition(const Node* node, const Pin* pin);
+	virtual Point getPinPosition(const Node* node, const Pin* pin) T_OVERRIDE;
 
-	virtual Ref< Pin > getPinAt(const Node* node, const Point& pt);
+	virtual Ref< Pin > getPinAt(const Node* node, const Point& pt) T_OVERRIDE;
 
-	virtual void paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset);
+	virtual void paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset) T_OVERRIDE;
 
-	virtual Size calculateSize(const Node* node);
+	virtual Size calculateSize(const Node* node) T_OVERRIDE;
 
 private:
 	Ref< Bitmap > m_imageNode;

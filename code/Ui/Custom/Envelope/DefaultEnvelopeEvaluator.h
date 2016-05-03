@@ -22,7 +22,7 @@ template
 class DefaultEnvelopeEvaluator : public EnvelopeEvaluator
 {
 public:
-	virtual float evaluate(const RefArray< EnvelopeKey >& keys, float T)
+	virtual float evaluate(const RefArray< EnvelopeKey >& keys, float T) T_OVERRIDE T_FINAL
 	{
 		Envelope< float, Evaluator< float > > envelope;
 		for (RefArray< EnvelopeKey >::const_iterator i = keys.begin(); i != keys.end(); ++i)

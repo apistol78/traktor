@@ -54,13 +54,13 @@ public:
 	std::wstring getSelectedItem() const;
 
 protected:
-	virtual void createInPlaceControls(Widget* parent);
+	virtual void createInPlaceControls(Widget* parent) T_OVERRIDE;
 
-	virtual void destroyInPlaceControls();
+	virtual void destroyInPlaceControls() T_OVERRIDE;
 
-	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects);
+	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects) T_OVERRIDE;
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc);
+	virtual void paintValue(Canvas& canvas, const Rect& rc) T_OVERRIDE;
 
 private:
 	std::vector< std::wstring > m_items;

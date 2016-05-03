@@ -48,7 +48,7 @@ public:
 		uint32_t outFieldsCount
 	);
 
-	virtual int showModal();
+	virtual int showModal() T_OVERRIDE;
 
 private:
 	Field* m_outFields;

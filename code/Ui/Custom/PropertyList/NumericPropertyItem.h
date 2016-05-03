@@ -47,23 +47,23 @@ public:
 	void setLimit(double limitMin, double limitMax);
 
 protected:
-	virtual void createInPlaceControls(Widget* parent);
+	virtual void createInPlaceControls(Widget* parent) T_OVERRIDE;
 
-	virtual void destroyInPlaceControls();
+	virtual void destroyInPlaceControls() T_OVERRIDE;
 
-	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects);
+	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects) T_OVERRIDE;
 
-	virtual void mouseButtonDown(MouseButtonDownEvent* event);
+	virtual void mouseButtonDown(MouseButtonDownEvent* event) T_OVERRIDE;
 
-	virtual void mouseButtonUp(MouseButtonUpEvent* event);
+	virtual void mouseButtonUp(MouseButtonUpEvent* event) T_OVERRIDE;
 
-	virtual void mouseMove(MouseMoveEvent* event);
+	virtual void mouseMove(MouseMoveEvent* event) T_OVERRIDE;
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc);
+	virtual void paintValue(Canvas& canvas, const Rect& rc) T_OVERRIDE;
 
-	virtual bool copy();
+	virtual bool copy() T_OVERRIDE;
 
-	virtual bool paste();
+	virtual bool paste() T_OVERRIDE;
 
 private:
 	Ref< Edit > m_editor;

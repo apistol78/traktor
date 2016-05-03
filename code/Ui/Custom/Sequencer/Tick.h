@@ -32,11 +32,11 @@ public:
 
 	int getTime() const;
 
-	virtual void move(int offset);
+	virtual void move(int offset) T_OVERRIDE;
 
-	virtual void getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const;
+	virtual void getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const T_OVERRIDE;
 
-	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset);
+	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) T_OVERRIDE;
 
 private:
 	int m_time;

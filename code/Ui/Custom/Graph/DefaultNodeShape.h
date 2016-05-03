@@ -33,13 +33,13 @@ class T_DLLCLASS DefaultNodeShape : public NodeShape
 public:
 	DefaultNodeShape(GraphControl* graphControl);
 
-	virtual Point getPinPosition(const Node* node, const Pin* pin);
+	virtual Point getPinPosition(const Node* node, const Pin* pin) T_OVERRIDE;
 
-	virtual Ref< Pin > getPinAt(const Node* node, const Point& pt);
+	virtual Ref< Pin > getPinAt(const Node* node, const Point& pt) T_OVERRIDE;
 
-	virtual void paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset);
+	virtual void paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset) T_OVERRIDE;
 
-	virtual Size calculateSize(const Node* node);
+	virtual Size calculateSize(const Node* node) T_OVERRIDE;
 
 private:
 	Ref< GraphControl > m_graphControl;

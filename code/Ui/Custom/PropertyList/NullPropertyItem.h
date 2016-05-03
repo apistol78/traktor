@@ -29,7 +29,7 @@ public:
 	NullPropertyItem();
 
 protected:
-	virtual void paintValue(Canvas& canvas, const Rect& rc);
+	virtual void paintValue(Canvas& canvas, const Rect& rc) T_OVERRIDE;
 };
 
 		}

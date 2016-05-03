@@ -38,6 +38,10 @@ public:
 		virtual int32_t measureWidth(const RichEdit* richEdit) const = 0;
 
 		virtual void draw(Canvas& canvas, const Rect& rc) const = 0;
+
+		virtual void mouseButtonDown(MouseButtonDownEvent* event) const = 0;
+
+		virtual void mouseButtonUp(MouseButtonUpEvent* event) const = 0;
 	};
 
 	RichEdit();

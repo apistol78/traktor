@@ -32,7 +32,7 @@ public:
 
 	void setImage(IBitmap* image);
 
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE;
 
 private:
 	enum State

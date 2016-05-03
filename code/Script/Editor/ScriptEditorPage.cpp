@@ -76,6 +76,14 @@ struct DependencyCharacter : public RefCountImpl< ui::custom::RichEdit::ISpecial
 	{
 		canvas.drawText(rc, path, ui::AnCenter, ui::AnCenter);
 	}
+
+	virtual void mouseButtonDown(ui::MouseButtonDownEvent* event) const T_OVERRIDE T_FINAL
+	{
+	}
+
+	virtual void mouseButtonUp(ui::MouseButtonUpEvent* event) const T_OVERRIDE T_FINAL
+	{
+	}
 };
 		
 		}

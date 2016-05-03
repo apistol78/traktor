@@ -98,7 +98,7 @@ private:
 	Ref< Edit > m_itemEditor;
 	Ref< GridCell > m_editItem;
 
-	virtual void layoutCells(const Rect& rc);
+	virtual void layoutCells(const Rect& rc) T_OVERRIDE T_FINAL;
 
 	void beginEdit(GridCell* item);
 

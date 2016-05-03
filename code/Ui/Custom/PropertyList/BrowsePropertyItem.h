@@ -40,17 +40,17 @@ public:
 	const Guid& getValue() const;
 
 protected:
-	virtual void createInPlaceControls(Widget* parent);
+	virtual void createInPlaceControls(Widget* parent) T_OVERRIDE;
 
-	virtual void destroyInPlaceControls();
+	virtual void destroyInPlaceControls() T_OVERRIDE;
 
-	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects);
+	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects) T_OVERRIDE;
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc);
+	virtual void paintValue(Canvas& canvas, const Rect& rc) T_OVERRIDE;
 
-	virtual bool copy();
+	virtual bool copy() T_OVERRIDE;
 
-	virtual bool paste();
+	virtual bool paste() T_OVERRIDE;
 
 private:
 	Guid m_value;

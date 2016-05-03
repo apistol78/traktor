@@ -36,7 +36,7 @@ public:
 
 	bool create(Widget* parent, int style, IGradient* gradient);
 
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE;
 
 	void updateGradient();
 
