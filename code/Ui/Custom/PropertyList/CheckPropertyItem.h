@@ -33,9 +33,9 @@ public:
 	bool isChecked() const;
 
 protected:
-	virtual void mouseButtonDown(MouseButtonDownEvent* event);
+	virtual void mouseButtonDown(MouseButtonDownEvent* event) T_OVERRIDE;
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc);
+	virtual void paintValue(Canvas& canvas, const Rect& rc) T_OVERRIDE;
 
 private:
 	bool m_checked;

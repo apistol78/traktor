@@ -28,13 +28,13 @@ class T_DLLCLASS GridHeaderCell : public AutoWidgetCell
 public:
 	void setColumns(const RefArray< GridColumn >& columns);
 
-	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) T_FINAL;
+	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) T_OVERRIDE T_FINAL;
 
-	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position) T_FINAL;
+	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position) T_OVERRIDE T_FINAL;
 
-	virtual void mouseMove(MouseMoveEvent* event, const Point& position) T_FINAL;
+	virtual void mouseMove(MouseMoveEvent* event, const Point& position) T_OVERRIDE T_FINAL;
 
-	virtual void paint(Canvas& canvas, const Rect& rect) T_FINAL;
+	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE T_FINAL;
 
 private:
 	RefArray< GridColumn > m_columns;

@@ -28,9 +28,9 @@ class T_DLLCLASS AspectLayout : public Layout
 public:
 	AspectLayout(float ratio = -1.0f);
 
-	virtual bool fit(Widget* widget, const Size& bounds, Size& result);
+	virtual bool fit(Widget* widget, const Size& bounds, Size& result) T_OVERRIDE;
 
-	virtual void update(Widget* widget);
+	virtual void update(Widget* widget) T_OVERRIDE;
 
 private:
 	float m_ratio;

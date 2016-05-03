@@ -30,9 +30,9 @@ public:
 
 	bool create(Widget* parent, int32_t keyState, VirtualKey virtualKey, int style = WsNone);
 
-	virtual std::wstring getText() const;
+	virtual std::wstring getText() const T_OVERRIDE;
 
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE;
 
 	void set(int32_t keyState, VirtualKey virtualKey);
 

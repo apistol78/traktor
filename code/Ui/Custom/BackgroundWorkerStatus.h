@@ -34,7 +34,7 @@ public:
 
 	void notify(int32_t step, const std::wstring& status);
 
-	virtual bool read(int32_t& outStep, std::wstring& outStatus);
+	virtual bool read(int32_t& outStep, std::wstring& outStatus) T_OVERRIDE T_FINAL;
 
 private:
 	Semaphore m_lock;

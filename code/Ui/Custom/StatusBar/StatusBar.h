@@ -32,9 +32,9 @@ public:
 
 	void setAlert(bool alert);
 
-	virtual void setText(const std::wstring& text);
+	virtual void setText(const std::wstring& text) T_OVERRIDE;
 
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE;
 
 private:
 	bool m_alert;

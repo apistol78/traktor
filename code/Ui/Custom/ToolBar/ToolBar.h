@@ -56,7 +56,7 @@ public:
 
 	Ref< ToolBarItem > getItem(const Point& at);
 
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE;
 
 private:
 	Ref< ToolTip > m_toolTip;

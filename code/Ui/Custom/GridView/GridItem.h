@@ -40,11 +40,11 @@ public:
 
 	explicit GridItem(IBitmap* image);
 
-	virtual void setText(const std::wstring& text) T_FINAL;
+	virtual void setText(const std::wstring& text) T_OVERRIDE T_FINAL;
 
-	virtual std::wstring getText() const T_FINAL;
+	virtual std::wstring getText() const T_OVERRIDE T_FINAL;
 
-	virtual bool edit();
+	virtual bool edit() T_OVERRIDE;
 
 	void setFont(Font* font);
 
@@ -59,11 +59,11 @@ private:
 	Ref< Font > m_font;
 	Ref< IBitmap > m_image;
 
-	virtual int32_t getHeight() const T_FINAL;
+	virtual int32_t getHeight() const T_OVERRIDE T_FINAL;
 
-	virtual AutoWidgetCell* hitTest(const Point& position) T_FINAL;
+	virtual AutoWidgetCell* hitTest(const Point& position) T_OVERRIDE T_FINAL;
 
-	virtual void paint(Canvas& canvas, const Rect& rect) T_FINAL;
+	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE T_FINAL;
 };
 
 		}

@@ -33,7 +33,7 @@ public:
 	const std::wstring& getValue() const;
 
 protected:
-	virtual void paintValue(Canvas& canvas, const Rect& rc);
+	virtual void paintValue(Canvas& canvas, const Rect& rc) T_OVERRIDE;
 
 private:
 	std::wstring m_value;
