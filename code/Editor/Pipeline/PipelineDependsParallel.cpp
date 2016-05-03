@@ -66,10 +66,25 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
 		return;
 
-	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
-	T_ASSERT (parentDependency);
+	const TypeInfo* pipelineType;
+	uint32_t pipelineHash;
 
-	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< const ISerializable >(sourceAsset)));
+	if (m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
+	{
+		Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
+		T_FATAL_ASSERT (parentDependency);
+
+		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
+		T_ASSERT (pipeline);
+
+		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid());
+
+		// Merge hash of dependent pipeline with parent's pipeline hash.
+		if (parentDependency)
+			parentDependency->pipelineHash += pipelineHash;
+	}
+	else
+		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
 }
 
 void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, uint32_t flags)
@@ -381,38 +396,12 @@ void PipelineDependsParallel::updateDependencyHashes(
 	}
 }
 
-void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset)
-{
-	const TypeInfo* pipelineType;
-	uint32_t pipelineHash;
-
-	if (m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
-	{
-		Ref< PipelineDependency > previousDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
-		m_currentDependency.set(parentDependency);
-
-		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
-		T_ASSERT (pipeline);
-
-		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid());
-
-		// Merge hash of dependent pipeline with parent's pipeline hash.
-		if (parentDependency)
-			parentDependency->pipelineHash += pipelineHash;
-
-		m_currentDependency.set(previousDependency);
-	}
-	else
-		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
-}
-
 void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset, std::wstring outputPath, Guid outputGuid, uint32_t flags)
 {
-	Ref< PipelineDependency > currentDependency;
 	bool exists;
 
 	// Don't add dependency multiple times.
-	currentDependency = findOrCreateDependency(outputGuid, parentDependency, flags, exists);
+	Ref< PipelineDependency > currentDependency = findOrCreateDependency(outputGuid, parentDependency, flags, exists);
 	if (exists)
 		return;
 
@@ -428,11 +417,10 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 
 void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< db::Instance > sourceAssetInstance, uint32_t flags)
 {
-	Ref< PipelineDependency > currentDependency;
 	bool exists;
 
 	// Don't add dependency multiple times.
-	currentDependency = findOrCreateDependency(sourceAssetInstance->getGuid(), parentDependency, flags, exists);
+	Ref< PipelineDependency > currentDependency = findOrCreateDependency(sourceAssetInstance->getGuid(), parentDependency, flags, exists);
 	if (exists)
 		return;
 
