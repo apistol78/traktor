@@ -183,6 +183,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.CachePath", cachePath);
 
 	// Merge threaded build configuration from global configuration.
+	bool dependsThreads = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.DependsThreads", true);
+	pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.DependsThreads", dependsThreads);
 	bool buildThreads = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true);
 	pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", buildThreads);
 

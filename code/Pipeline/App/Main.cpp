@@ -610,17 +610,18 @@ bool perform(const PipelineParameters* params)
 
 	// Collect dependencies.
 	Ref< editor::IPipelineDepends > pipelineDepends;
-	//if (settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true))
-	//{
-	//	pipelineDepends = new editor::PipelineDependsParallel(
-	//		&pipelineFactory,
-	//		sourceDatabase,
-	//		outputDatabase,
-	//		&pipelineDependencySet,
-	//		pipelineDb
-	//	);
-	//}
-	//else
+	if (settings->getProperty< PropertyBoolean >(L"Pipeline.DependsThreads", true))
+	{
+		pipelineDepends = new editor::PipelineDependsParallel(
+			&pipelineFactory,
+			sourceDatabaseAndCache.database,
+			outputDatabaseAndCache.database,
+			&pipelineDependencySet,
+			pipelineDb,
+			sourceDatabaseAndCache.cache
+		);
+	}
+	else
 	{
 		pipelineDepends = new editor::PipelineDependsIncremental(
 			&pipelineFactory,
