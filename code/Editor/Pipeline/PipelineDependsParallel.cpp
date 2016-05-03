@@ -272,6 +272,11 @@ void PipelineDependsParallel::updateDependencyHashes(
 	const db::Instance* sourceInstance
 ) const
 {
+	PipelineFileHash fileHash;
+	DateTime lastWriteTime;
+	bool haveLastWriteTime = false;
+	std::wstring fauxDataPath;
+
 	// Calculate source of source asset.
 	dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
 
@@ -284,6 +289,23 @@ void PipelineDependsParallel::updateDependencyHashes(
 
 		for (std::vector< std::wstring >::const_iterator i = dataNames.begin(); i != dataNames.end(); ++i)
 		{
+			if (m_pipelineDb)
+			{
+				haveLastWriteTime = sourceInstance->getDataLastWriteTime(*i, lastWriteTime);
+				if (haveLastWriteTime)
+				{
+					fauxDataPath = sourceInstance->getGuid().format() + L"/" + *i;
+					if (m_pipelineDb->getFile(fauxDataPath, fileHash))
+					{
+						if (fileHash.lastWriteTime == lastWriteTime)
+						{
+							dependency->sourceDataHash += fileHash.hash;
+							continue;
+						}
+					}
+				}
+			}
+
 			Ref< IStream > dataStream = sourceInstance->readData(*i);
 			if (dataStream)
 			{
@@ -297,6 +319,14 @@ void PipelineDependsParallel::updateDependencyHashes(
 				a32.end();
 
 				dependency->sourceDataHash += a32.get();
+
+				if (m_pipelineDb && haveLastWriteTime)
+				{
+					fileHash.size = 0;
+					fileHash.lastWriteTime = lastWriteTime;
+					fileHash.hash = a32.get();
+					m_pipelineDb->setFile(fauxDataPath, fileHash);
+				}
 			}
 		}
 	}
@@ -310,7 +340,6 @@ void PipelineDependsParallel::updateDependencyHashes(
 			Ref< File > file = FileSystem::getInstance().get(i->filePath);
 			if (file)
 			{
-				PipelineFileHash fileHash;
 				if (m_pipelineDb->getFile(i->filePath, fileHash))
 				{
 					if (fileHash.lastWriteTime == file->getLastWriteTime())
@@ -342,7 +371,6 @@ void PipelineDependsParallel::updateDependencyHashes(
 				Ref< File > file = FileSystem::getInstance().get(i->filePath);
 				if (file)
 				{
-					PipelineFileHash fileHash;
 					fileHash.size = file->getSize();
 					fileHash.lastWriteTime = file->getLastWriteTime();
 					fileHash.hash = a32.get();

@@ -1,9 +1,10 @@
 #include <cstdlib>
 #include <numeric>
 #include "Core/Io/Path.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
-#include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
 
@@ -158,35 +159,38 @@ std::wstring Path::getPathNameNoVolume() const
 Path Path::normalized() const
 {
 	std::vector< std::wstring > p;
-	Split< std::wstring >::any(getPathNameNoVolume(), L"/", p);
+	p.reserve(32);
 
-	for (size_t i = 0; i < p.size(); )
+	StringSplit< std::wstring > ss(getPathNameNoVolume(), L"/");
+	for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
 	{
-		if (p[i] == L".")
+		if (*i == L".")
+			continue;
+
+		if (*i == L".." && !p.empty())
 		{
-			p.erase(p.begin() + i);
+			p.pop_back();
+			continue;
 		}
-		else if (i > 0 && p[i] == L"..")
-		{
-			p.erase(p.begin() + i - 1);
-			p.erase(p.begin() + i - 1);
-			--i;
-		}
-		else
-			++i;
+
+		p.push_back(*i);
 	}
 
-	std::wstring out = hasVolume() ? getVolume() + L":" : L"";
+	StringOutputStream s;
+
+	if (hasVolume())
+		s << getVolume() << L":";
+
 	if (!p.empty())
 	{
 		if (!isRelative())
-			out += L"/";
+			s << L"/";
 		for (std::vector< std::wstring >::const_iterator i = p.begin(); i != p.end() - 1; ++i)
-			out += *i + L"/";
-		out += p.back();
+			s << *i << L"/";
+		s << p.back();
 	}
 
-	return Path(out);
+	return Path(s.str());
 }
 
 Path Path::operator + (const Path& rh) const
