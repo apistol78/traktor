@@ -1,6 +1,7 @@
 #ifndef traktor_editor_PipelineDependency_H
 #define traktor_editor_PipelineDependency_H
 
+#include <list>
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallSet.h"
@@ -46,10 +47,12 @@ public:
 		void serialize(ISerializer& s);
 	};
 
+	typedef std::list< ExternalFile > external_files_t;
+
 	const TypeInfo* pipelineType;
 	Guid sourceInstanceGuid;
 	Ref< const ISerializable > sourceAsset;		/*!< Source asset. */
-	AlignedVector< ExternalFile > files;		/*!< External file dependencies. */
+	external_files_t files;						/*!< External file dependencies. */
 	std::wstring outputPath;					/*!< Database output path. */
 	Guid outputGuid;							/*!< Database output guid. */
 	uint32_t pipelineHash;						/*!< Hash of pipeline settings. */

@@ -100,7 +100,7 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 			Ref< ui::custom::TreeViewItem > dependencyItem = m_dependencyTree->createItem(typeGroup, dependency->outputPath, 2);
 			dependencyItem->setData(L"DEPENDENCY", dependency);
 
-			for (AlignedVector< editor::PipelineDependency::ExternalFile >::const_iterator j = dependency->files.begin(); j != dependency->files.end(); ++j)
+			for (editor::PipelineDependency::external_files_t::const_iterator j = dependency->files.begin(); j != dependency->files.end(); ++j)
 				externalFiles.insert(j->filePath);
 		}
 

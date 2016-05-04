@@ -413,7 +413,7 @@ void PipelineDependsIncremental::updateDependencyHashes(
 
 	// Calculate external file hashes.
 	dependency->filesHash = 0;
-	for (AlignedVector< PipelineDependency::ExternalFile >::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
+	for (PipelineDependency::external_files_t::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
 	{
 		if (m_pipelineDb)
 		{
