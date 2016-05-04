@@ -28,6 +28,27 @@ namespace traktor
 {
 	namespace editor
 	{
+		namespace
+		{
+
+class ExternalFilePred
+{
+public:
+	ExternalFilePred(const Path& path)
+	:	m_path(path)
+	{
+	}
+
+	bool operator () (const PipelineDependency::ExternalFile& file) const
+	{
+		return file.filePath == m_path;
+	}
+
+private:
+	const Path& m_path;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsParallel", PipelineDependsParallel, IPipelineDepends)
 
@@ -72,7 +93,6 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
 	if (m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 	{
 		Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
-		T_FATAL_ASSERT (parentDependency);
 
 		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 		T_ASSERT (pipeline);
@@ -84,7 +104,7 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
 			parentDependency->pipelineHash += pipelineHash;
 	}
 	else
-		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
+		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found." << Endl;
 }
 
 void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, uint32_t flags)
@@ -134,17 +154,22 @@ void PipelineDependsParallel::addDependency(
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 	if (parentDependency)
 	{
+		T_FATAL_ASSERT_M(parentDependency->sourceAssetHash == 0, L"Dependency already hashed");
+
 		Path filePath = FileSystem::getInstance().getAbsolutePath(basePath, fileName);
-		Ref< File > file = FileSystem::getInstance().get(filePath);
-		if (file)
+		if (std::find_if(parentDependency->files.begin(), parentDependency->files.end(), ExternalFilePred(filePath)) == parentDependency->files.end())
 		{
-			PipelineDependency::ExternalFile externalFile;
-			externalFile.filePath = filePath;
-			externalFile.lastWriteTime = file->getLastWriteTime();
-			parentDependency->files.push_back(externalFile);
+			Ref< File > file = FileSystem::getInstance().get(filePath);
+			if (file)
+			{
+				PipelineDependency::ExternalFile externalFile;
+				externalFile.filePath = filePath;
+				externalFile.lastWriteTime = file->getLastWriteTime();
+				parentDependency->files.push_back(externalFile);
+			}
+			else
+				log::error << L"Unable to add dependency to \"" << filePath.getPathName() << L"\"; no such file." << Endl;
 		}
-		else
-			log::error << L"Unable to add dependency to \"" << filePath.getPathName() << L"\"; no such file" << Endl;
 	}
 }
 
@@ -161,7 +186,7 @@ void PipelineDependsParallel::addDependency(
 
 		if (!m_pipelineFactory->findPipelineType(sourceAssetType, pipelineType, pipelineHash))
 		{
-			log::error << L"Unable to add dependency to source asset (" << sourceAssetType.getName() << L"); no pipeline found" << Endl;
+			log::error << L"Unable to add dependency to source asset (" << sourceAssetType.getName() << L"); no pipeline found." << Endl;
 			return;
 		}
 
@@ -292,6 +317,8 @@ void PipelineDependsParallel::updateDependencyHashes(
 	bool haveLastWriteTime = false;
 	std::wstring fauxDataPath;
 
+	T_FATAL_ASSERT_M (dependency->sourceAssetHash == 0, L"Hash already calculated, thread issue?");
+
 	// Calculate source of source asset.
 	dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
 
@@ -343,12 +370,14 @@ void PipelineDependsParallel::updateDependencyHashes(
 					m_pipelineDb->setFile(fauxDataPath, fileHash);
 				}
 			}
+			else
+				log::error << L"Unable to open data stream \"" << *i << L"\"; hash inconsistent." << Endl;
 		}
 	}
 
 	// Calculate external file hashes.
 	dependency->filesHash = 0;
-	for (AlignedVector< PipelineDependency::ExternalFile >::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
+	for (PipelineDependency::external_files_t::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
 	{
 		if (m_pipelineDb)
 		{
@@ -393,15 +422,18 @@ void PipelineDependsParallel::updateDependencyHashes(
 				}
 			}
 		}
+		else
+			log::error << L"Unable to open file stream \"" << i->filePath.getPathName() << L"\"; hash inconsistent." << Endl;
 	}
 }
 
 void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset, std::wstring outputPath, Guid outputGuid, uint32_t flags)
 {
+	Ref< PipelineDependency > currentDependency;
 	bool exists;
 
 	// Don't add dependency multiple times.
-	Ref< PipelineDependency > currentDependency = findOrCreateDependency(outputGuid, parentDependency, flags, exists);
+	currentDependency = findOrCreateDependency(outputGuid, parentDependency, flags, exists);
 	if (exists)
 		return;
 
@@ -417,10 +449,11 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 
 void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< db::Instance > sourceAssetInstance, uint32_t flags)
 {
+	Ref< PipelineDependency > currentDependency;
 	bool exists;
 
 	// Don't add dependency multiple times.
-	Ref< PipelineDependency > currentDependency = findOrCreateDependency(sourceAssetInstance->getGuid(), parentDependency, flags, exists);
+	currentDependency = findOrCreateDependency(sourceAssetInstance->getGuid(), parentDependency, flags, exists);
 	if (exists)
 		return;
 

@@ -4,7 +4,7 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
-//#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberSmallSet.h"
 #include "Core/Serialization/MemberType.h"
 #include "Editor/PipelineDependency.h"
@@ -28,15 +28,17 @@ PipelineDependency::PipelineDependency()
 
 void PipelineDependency::dump() const
 {
+	uint32_t i = 0;
+
 	log::info << L"pipelineType: " << (pipelineType ? pipelineType->getName() : L"(null)") << Endl;
 	log::info << L"sourceInstanceGuid: " << sourceInstanceGuid.format() << Endl;
 	log::info << L"sourceAsset: " << type_name(sourceAsset) << Endl;
 
-	for (uint32_t i = 0; i < uint32_t(files.size()); ++i)
+	for (external_files_t::const_iterator it = files.begin(); it != files.end(); ++it, ++i)
 	{
 		log::info << L"files[" << i << L"]" << Endl;
-		log::info << L"\t.filePath: " << files[i].filePath.getPathName() << Endl;
-		log::info << L"\t.lastWriteTime: " << files[i].lastWriteTime.getSecondsSinceEpoch() << Endl;
+		log::info << L"\t.filePath: " << it->filePath.getPathName() << Endl;
+		log::info << L"\t.lastWriteTime: " << it->lastWriteTime.getSecondsSinceEpoch() << Endl;
 	}
 
 	log::info << L"outputPath: " << outputPath << Endl;
@@ -57,7 +59,7 @@ void PipelineDependency::dump() const
 		log::info << L" PdfFailed";
 	log::info << Endl;
 
-	for (uint32_t i = 0; i < uint32_t(children.size()); ++i)
+	for (i = 0; i < uint32_t(children.size()); ++i)
 		log::info << L"children[" << i << L"] = " << children[i] << Endl;
 }
 
@@ -66,7 +68,7 @@ void PipelineDependency::serialize(ISerializer& s)
 	s >> MemberType(L"pipelineType", pipelineType);
 	s >> Member< Guid >(L"sourceInstanceGuid", sourceInstanceGuid);
 	s >> MemberRef< const ISerializable >(L"sourceAsset", sourceAsset);
-	s >> MemberAlignedVector< ExternalFile, MemberComposite< ExternalFile > >(L"files", files);
+	s >> MemberStlList< ExternalFile, MemberComposite< ExternalFile > >(L"files", files);
 	s >> Member< std::wstring >(L"outputPath", outputPath);
 	s >> Member< Guid >(L"outputGuid", outputGuid);
 	s >> Member< uint32_t >(L"pipelineHash", pipelineHash);
