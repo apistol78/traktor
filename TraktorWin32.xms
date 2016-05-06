@@ -19799,6 +19799,10 @@
 							<sourceFile>$(STEAMWORKS_SDK)\redistributable_bin\steam_api.lib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(STEAMWORKS_SDK)\redistributable_bin\steam_api.dll</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -19833,6 +19837,10 @@
 						</item>
 						<item type="AggregationItem">
 							<sourceFile>$(STEAMWORKS_SDK)\redistributable_bin\steam_api.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(STEAMWORKS_SDK)\redistributable_bin\steam_api.dll</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
