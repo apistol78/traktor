@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/ResourceManagerDx9.h"
 #include "Render/Dx9/VertexBufferDynamicDx9.h"
@@ -141,8 +142,8 @@ void* VertexBufferDynamicDx9::lock(uint32_t vertexOffset, uint32_t vertexCount)
 
 	if (m_dirtyRegion[0] != m_dirtyRegion[1])
 	{
-		m_dirtyRegion[0] = min(m_dirtyRegion[0], vertexOffset * m_d3dVertexStride);
-		m_dirtyRegion[1] = max(m_dirtyRegion[1], (vertexOffset + vertexCount) * m_d3dVertexStride);
+		m_dirtyRegion[0] = min< uint32_t >(m_dirtyRegion[0], vertexOffset * m_d3dVertexStride);
+		m_dirtyRegion[1] = max< uint32_t >(m_dirtyRegion[1], (vertexOffset + vertexCount) * m_d3dVertexStride);
 	}
 	else
 	{

@@ -24,9 +24,9 @@ InputDriverPNaCl::~InputDriverPNaCl()
 	}
 }
 
-bool InputDriverPNaCl::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverPNaCl::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
 {
-	m_instance = reinterpret_cast< DelegateInstance* >(nativeHandle);
+	m_instance = sysapp.instance;
 	if (!m_instance)
 	{
 		log::error << L"Unable to create PNaCl input driver; Invalid instance handle." << Endl;

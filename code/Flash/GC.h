@@ -1,9 +1,17 @@
 #ifndef traktor_flash_GC_H
 #define traktor_flash_GC_H
 
-#include "Core/Containers/IntrusiveList.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Semaphore.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_FLASH_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
@@ -20,7 +28,7 @@ class Collectable;
  * It uses a simple tracing algorithm in order
  * to find isolated reference cycles.
  */
-class GC : public ISingleton
+class T_DLLCLASS GC : public ISingleton
 {
 public:
 	static GC& getInstance();
@@ -29,6 +37,8 @@ public:
 
 	void removeCandidate(Collectable* object);
 
+	uint32_t getCandidateCount() const;
+
 	void collectCycles(bool full);
 
 protected:
@@ -36,7 +46,7 @@ protected:
 
 private:
 	Semaphore m_lock;
-	IntrusiveList< Collectable > m_candidates;
+	AlignedVector< Collectable* > m_candidates;
 
 	virtual ~GC();
 };

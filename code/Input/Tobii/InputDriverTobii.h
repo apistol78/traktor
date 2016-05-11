@@ -33,7 +33,7 @@ public:
 
 	void destroy();
 
-	virtual bool create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories) T_OVERRIDE T_FINAL;
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) T_OVERRIDE T_FINAL;
 
 	virtual int getDeviceCount() T_OVERRIDE T_FINAL;
 

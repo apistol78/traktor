@@ -74,7 +74,7 @@ public:
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
 
 private:
-	void* m_nativeHandle;
+	SystemApplication m_sysapp;
 	Ref< ContextOpenGLES2 > m_context;
 };
 

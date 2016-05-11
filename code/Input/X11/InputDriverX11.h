@@ -30,7 +30,7 @@ class T_DLLCLASS InputDriverX11 : public IInputDriver
 public:
 	InputDriverX11();
 
-	virtual bool create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories);
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories);
 
 	virtual int getDeviceCount();
 

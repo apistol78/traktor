@@ -32,6 +32,8 @@ void GC::addCandidate(Collectable* object)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (object->m_traceColor != Collectable::TcGray);
 	T_ASSERT (object->m_traceColor != Collectable::TcWhite);
+	
+	object->m_index = m_candidates.size();
 	m_candidates.push_back(object);
 }
 
@@ -40,7 +42,25 @@ void GC::removeCandidate(Collectable* object)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (object->m_traceColor != Collectable::TcGray);
 	T_ASSERT (object->m_traceColor != Collectable::TcWhite);
-	m_candidates.remove(object);
+	
+	uint32_t idx = object->m_index;
+	object->m_index = ~0U;
+
+	T_ASSERT (idx != ~0U);
+
+	Collectable* back = m_candidates.back();
+	if (back != object)
+	{
+		back->m_index = idx;
+		m_candidates[idx] = back;
+	}
+
+	m_candidates.pop_back();
+}
+
+uint32_t GC::getCandidateCount() const
+{
+	return m_candidates.size();
 }
 
 void GC::collectCycles(bool full)
@@ -54,9 +74,10 @@ void GC::collectCycles(bool full)
 	{
 #if defined(_DEBUG)
 		// Ensure root candidates are initially colored reasonably.
-		for (IntrusiveList< Collectable >::iterator i = m_candidates.begin(); i != m_candidates.end(); ++i)
+		for (uint32_t i = 0; i < m_candidates.size(); ++i)
 		{
-			Collectable* candidate = *i;
+			Collectable* candidate = m_candidates[i];
+			T_ASSERT (candidate->m_index == i);
 			T_ASSERT (
 				candidate->m_traceColor == Collectable::TcBlack ||
 				candidate->m_traceColor == Collectable::TcPurple
@@ -65,9 +86,10 @@ void GC::collectCycles(bool full)
 #endif
 
 		// Mark roots.
-		for (IntrusiveList< Collectable >::iterator i = m_candidates.begin(); i != m_candidates.end(); )
+		for (uint32_t i = 0; i < m_candidates.size(); )
 		{
-			Collectable* candidate = *i;
+			Collectable* candidate = m_candidates[i];
+			T_ASSERT (candidate->m_index == i);
 			T_ASSERT (candidate->m_traceColor != Collectable::TcWhite);
 
 			if (candidate->m_traceColor == Collectable::TcPurple)
@@ -82,29 +104,39 @@ void GC::collectCycles(bool full)
 					candidate->m_traceColor == Collectable::TcGray
 				);
 				candidate->m_traceBuffered = false;
-				i = m_candidates.erase(i);
+
+				Collectable* back = m_candidates.back();
+				if (back != candidate)
+				{
+					back->m_index = i;
+					m_candidates[i] = back;
+				}
+
+				candidate->m_index = ~0U;
+				m_candidates.pop_back();
 			}
 		}
 
 		// Scan roots.
-		for (IntrusiveList< Collectable >::iterator i = m_candidates.begin(); i != m_candidates.end(); ++i)
+		for (uint32_t i = 0; i < m_candidates.size(); ++i)
 		{
-			Collectable* candidate = *i;
+			Collectable* candidate = m_candidates[i];
 			candidate->traceScan();
 		}
 
 		// Collect roots.
 		while (!m_candidates.empty())
 		{
-			Collectable* candidate = m_candidates.front();
+			Collectable* candidate = m_candidates.back();
 
 			// If we've found a purple object then it's been added during
 			// collection of roots thus we need to make another trace round.
 			if (candidate->m_traceColor == Collectable::TcPurple)
 				break;
 			
-			m_candidates.pop_front();
+			m_candidates.pop_back();
 
+			candidate->m_index = ~0U;
 			candidate->m_traceBuffered = false;
 			candidate->traceCollectWhite();
 		}

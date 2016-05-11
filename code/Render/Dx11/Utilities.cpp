@@ -1,3 +1,4 @@
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/Utilities.h"
@@ -75,7 +76,7 @@ bool setupSampleDesc(ID3D11Device* d3dDevice, uint32_t sampleCount, DXGI_FORMAT 
 				if (SUCCEEDED(hr) && msQuality2 > 0)
 				{
 					outSampleDesc.Count = i;
-					outSampleDesc.Quality = min(msQuality1 - 1, msQuality2 - 1);
+					outSampleDesc.Quality = min< UINT >(msQuality1 - 1, msQuality2 - 1);
 				}
 			}
 		}

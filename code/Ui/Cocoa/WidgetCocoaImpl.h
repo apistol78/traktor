@@ -347,9 +347,9 @@ public:
 		return m_control;
 	}
 
-	virtual void* getSystemHandle()
+	virtual SystemWindow getSystemWindow()
 	{
-		return m_control;
+		return SystemWindow(m_control);
 	}
 
 protected:

@@ -1,10 +1,13 @@
 #include <cmath>
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/Matrix44.h"
 #include "Render/Sw/Core/InterpreterFixed.h"
 #include "Render/Sw/Core/IntrProgram.h"
 #include "Render/Sw/Core/Sampler.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Matrix44.h"
-#include "Core/Log/Log.h"
+
+#undef min
+#undef max
 
 namespace traktor
 {

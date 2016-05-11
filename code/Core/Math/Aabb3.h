@@ -118,16 +118,16 @@ public:
 	/*! \brief Expand bounding box to contain point. */
 	T_MATH_INLINE Aabb3& contain(const Vector4& pt)
 	{
-		mn = min(mn, pt);
-		mx = max(mx, pt);
+		mn = traktor::min(mn, pt);
+		mx = traktor::max(mx, pt);
 		return *this;
 	}
 
 	/*! \brief Expand bounding box to contain sphere. */
 	T_MATH_INLINE Aabb3& contain(const Vector4& center, const Scalar& radius)
 	{
-		mn = min(mn, center - radius);
-		mx = max(mx, center + radius);
+		mn = traktor::min(mn, center - radius);
+		mx = traktor::max(mx, center + radius);
 		return *this;
 	}
 

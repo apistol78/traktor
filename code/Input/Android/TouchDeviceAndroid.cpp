@@ -37,12 +37,12 @@ c_touchControlMap[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.TouchDeviceAndroid", TouchDeviceAndroid, IInputDevice)
 
-TouchDeviceAndroid::TouchDeviceAndroid(const SystemWindow& systemWindow)
+TouchDeviceAndroid::TouchDeviceAndroid(const SystemWindow& syswin)
 :	m_width(0)
 ,	m_height(0)
 {
-	m_width = ANativeWindow_getWidth(systemWindow.window);
-	m_height = ANativeWindow_getHeight(systemWindow.window);
+	m_width = ANativeWindow_getWidth(*syswin.window);
+	m_height = ANativeWindow_getHeight(*syswin.window);
 	resetState();
 }
 

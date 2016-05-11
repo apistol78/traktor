@@ -4934,6 +4934,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
+						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -4966,6 +4967,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
+						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -7773,6 +7775,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -7800,6 +7803,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>

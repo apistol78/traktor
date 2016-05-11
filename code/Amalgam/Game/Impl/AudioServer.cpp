@@ -31,7 +31,7 @@ AudioServer::AudioServer()
 {
 }
 
-bool AudioServer::create(const PropertyGroup* settings, void* nativeHandle)
+bool AudioServer::create(const PropertyGroup* settings, const SystemApplication& sysapp)
 {
 	m_audioType = settings->getProperty< PropertyString >(L"Audio.Type");
 
@@ -51,7 +51,7 @@ bool AudioServer::create(const PropertyGroup* settings, void* nativeHandle)
 	m_soundSystem = new sound::SoundSystem(soundDriver);
 
 	sound::SoundSystemCreateDesc sscd;
-	sscd.nativeHandle = nativeHandle;
+	sscd.sysapp = sysapp;
 #if !defined(_PS3)
 	sscd.channels = settings->getProperty< PropertyInteger >(L"Audio.Channels", 16);
 	sscd.driverDesc.sampleRate = settings->getProperty< PropertyInteger >(L"Audio.SampleRate", 44100);

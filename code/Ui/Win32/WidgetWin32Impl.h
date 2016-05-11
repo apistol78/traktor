@@ -10,6 +10,9 @@
 #include "Ui/Events/AllEvents.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Win32/Window.h"
+#include "Ui/Win32/SmartHandle.h"
+#include "Ui/Win32/UtilitiesWin32.h"
+
 #include "Ui/Win32/CanvasGdiWin32.h"
 #if defined(T_USE_DIRECT2D)
 #	include "Ui/Win32/CanvasDirect2DWin32.h"
@@ -17,8 +20,6 @@
 #if defined(T_USE_GDI_PLUS)
 #	include "Ui/Win32/CanvasGdiPlusWin32.h"
 #endif
-#include "Ui/Win32/SmartHandle.h"
-#include "Ui/Win32/UtilitiesWin32.h"
 
 extern HINSTANCE g_hInstance;
 
@@ -464,9 +465,9 @@ public:
 		return static_cast< void* >((HWND)m_hWnd);
 	}
 
-	virtual void* getSystemHandle()
+	virtual SystemWindow getSystemWindow()
 	{
-		return static_cast< void* >((HWND)m_hWnd);
+		return SystemWindow(m_hWnd);
 	}
 
 protected:

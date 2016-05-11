@@ -19,7 +19,7 @@ SoundDriverOpenSL::SoundDriverOpenSL()
 {
 }
 
-bool SoundDriverOpenSL::create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverOpenSL::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
 	SLresult result;
 
@@ -104,11 +104,11 @@ bool SoundDriverOpenSL::create(void* nativeHandle, const SoundDriverCreateDesc& 
 	SLDataFormat_PCM formatPCM =
 	{
 		SL_DATAFORMAT_PCM,
-		desc.hwChannels,
-		sampleRate,
+		(SLuint32)desc.hwChannels,
+		(SLuint32)sampleRate,
 		SL_PCMSAMPLEFORMAT_FIXED_16,
 		SL_PCMSAMPLEFORMAT_FIXED_16,
-		speakers,
+		(SLuint32)speakers,
 		SL_BYTEORDER_LITTLEENDIAN
 	};
 

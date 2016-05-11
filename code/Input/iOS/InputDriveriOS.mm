@@ -111,10 +111,10 @@ InputDriveriOS::InputDriveriOS()
 {
 }
 
-bool InputDriveriOS::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriveriOS::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
 {
 	m_impl = new InputDriveriOSImpl();
-	if (!m_impl->create(systemWindow.view))
+	if (!m_impl->create(syswin.view))
 	{
 		m_impl = 0;
 		return false;

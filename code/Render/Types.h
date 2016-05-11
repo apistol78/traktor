@@ -3,6 +3,7 @@
 
 #include "Core/Config.h"
 #include "Core/Guid.h"
+#include "Core/Platform.h"
 #include "Core/Io/Path.h"
 
 // import/export mechanism.
@@ -465,7 +466,7 @@ struct RenderSystemInformation
 struct RenderSystemDesc
 {
 	class IRenderSystem* capture;
-	void* nativeHandle;
+	SystemApplication sysapp;
 	int32_t adapter;
 	float mipBias;
 	int32_t maxAnisotropy;
@@ -473,7 +474,6 @@ struct RenderSystemDesc
 
 	RenderSystemDesc()
 	:	capture(0)
-	,	nativeHandle(0)
 	,	adapter(-1)
 	,	mipBias(0.0f)
 	,	maxAnisotropy(1)
@@ -516,12 +516,11 @@ struct RenderViewDefaultDesc : public RenderViewDesc
 /*! \brief Descriptor for embedded render views. */
 struct RenderViewEmbeddedDesc : public RenderViewDesc
 {
-	void* nativeWindowHandle;
+	SystemWindow syswin;
 	bool stereoscopic;
 
 	RenderViewEmbeddedDesc()
 	:	RenderViewDesc()
-	,	nativeWindowHandle(0)
 	,	stereoscopic(false)
 	{
 	}

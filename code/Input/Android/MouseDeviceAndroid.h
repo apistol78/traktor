@@ -16,7 +16,7 @@ class MouseDeviceAndroid : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	MouseDeviceAndroid(const SystemWindow& systemWindow);
+	MouseDeviceAndroid(const SystemWindow& syswin);
 
 	virtual std::wstring getName() const;
 
@@ -53,7 +53,7 @@ public:
 private:
 	friend class InputDriverAndroid;
 
-	SystemWindow m_systemWindow;
+	SystemWindow m_syswim;
 	float m_axisX;
 	float m_axisY;
 	float m_positionX;

@@ -59,9 +59,11 @@ public:
 		virtual void deleteResource() = 0;
 	};
 
-	static Ref< ContextOpenGLES2 > createContext(void* nativeHandle, const RenderViewDefaultDesc& desc);
+	static Ref< ContextOpenGLES2 > createContext(const SystemApplication& sysapp, const RenderViewDefaultDesc& desc);
 
-	static Ref< ContextOpenGLES2 > createContext(void* nativeHandle, const RenderViewEmbeddedDesc& desc);
+	static Ref< ContextOpenGLES2 > createContext(const SystemApplication& sysapp, const RenderViewEmbeddedDesc& desc);
+
+	bool reset(int32_t width, int32_t height);
 
 	bool enter();
 
@@ -72,8 +74,6 @@ public:
 	void deleteResources();
 
 	GLuint createShaderObject(const char* shader, GLenum shaderType);
-
-	bool resize(int32_t width, int32_t height);
 
 	int32_t getWidth() const;
 
@@ -102,6 +102,8 @@ private:
 	Ref< Window > m_window;
 	EGLint m_width;
 	EGLint m_height;
+#	elif defined(__ANDROID__)
+	SystemWindow m_syswin;
 #	endif
 	EGLDisplay m_display;
 	EGLConfig m_config;

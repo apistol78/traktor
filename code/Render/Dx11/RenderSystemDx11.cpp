@@ -442,7 +442,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 	HRESULT hr;
 
 	RECT rc;
-	GetClientRect((HWND)desc.nativeWindowHandle, &rc);
+	GetClientRect(desc.syswin.hWnd, &rc);
 
 	if (rc.right <= rc.left)
 		rc.right = 8;
@@ -460,7 +460,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 	scd.BufferDesc.RefreshRate.Numerator = 60;
 	scd.BufferDesc.RefreshRate.Denominator = 1;
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scd.OutputWindow = (HWND)desc.nativeWindowHandle;
+	scd.OutputWindow = desc.syswin.hWnd;
 	scd.Windowed = TRUE;
 
 	if (!setupSampleDesc(m_context->getD3DDevice(), desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D24_UNORM_S8_UINT, scd.SampleDesc))

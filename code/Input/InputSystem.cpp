@@ -4,6 +4,9 @@
 #include "Input/IInputDriver.h"
 #include "Input/IInputDevice.h"
 
+#undef min
+#undef max
+
 namespace traktor
 {
 	namespace input

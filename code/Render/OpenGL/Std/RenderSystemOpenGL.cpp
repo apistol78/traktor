@@ -661,7 +661,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		0, 0, 0
 	};
 
-	HDC hDC = GetDC((HWND)desc.nativeWindowHandle);
+	HDC hDC = GetDC((HWND)desc.syswin.hWnd);
 	if (!hDC)
 		return 0;
 
@@ -687,7 +687,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return 0;
 	}
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, (HWND)desc.nativeWindowHandle, hDC, hRC);
+	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, (HWND)desc.syswin.hWnd, hDC, hRC);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)

@@ -5,6 +5,7 @@
 #include "Amalgam/Game/IApplication.h"
 #include "Amalgam/Game/UpdateControl.h"
 #include "Amalgam/Game/UpdateInfo.h"
+#include "Core/Platform.h"
 #include "Core/RefArray.h"
 #include "Core/Library/Library.h"
 #include "Core/Math/Color4f.h"
@@ -65,8 +66,8 @@ public:
 	bool create(
 		const PropertyGroup* defaultSettings,
 		PropertyGroup* settings,
-		void* nativeHandle,
-		void* nativeWindowHandle
+		const SystemApplication& sysapp,
+		const SystemWindow* syswin
 	);
 
 	void destroy();

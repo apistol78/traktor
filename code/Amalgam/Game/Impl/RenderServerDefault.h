@@ -15,7 +15,7 @@ class RenderServerDefault : public RenderServer
 public:
 	RenderServerDefault();
 
-	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, void* nativeHandle);
+	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

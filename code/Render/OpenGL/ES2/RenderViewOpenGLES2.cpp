@@ -141,7 +141,7 @@ bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
 
 bool RenderViewOpenGLES2::reset(int32_t width, int32_t height)
 {
-	return true;
+	return m_context->reset(width, height);
 }
 
 int RenderViewOpenGLES2::getWidth() const

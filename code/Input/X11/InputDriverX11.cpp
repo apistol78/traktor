@@ -18,10 +18,10 @@ InputDriverX11::InputDriverX11()
 {
 }
 
-bool InputDriverX11::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverX11::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
 {
-	m_display = (Display*)systemWindow.display;
-	m_window = (Window)systemWindow.window;
+	m_display = (Display*)syswin.display;
+	m_window = (Window)syswin.window;
 
 	static int32_t opcode = 0, event = 0, error = 0;
 	if (!XQueryExtension(m_display, "XInputExtension", &opcode, &event, &error))

@@ -74,7 +74,7 @@ RenderServerEmbedded::RenderServerEmbedded()
 {
 }
 
-bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, void* nativeHandle, void* nativeWindowHandle)
+bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp, const SystemWindow& syswin)
 {
 	std::wstring renderType = defaultSettings->getProperty< PropertyString >(L"Render.Type");
 	std::wstring captureRenderType = settings->getProperty< PropertyString >(L"Render.CaptureType");
@@ -97,7 +97,7 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 
 	render::RenderSystemDesc rsd;
 	rsd.capture = captureRenderSystem;
-	rsd.nativeHandle = nativeHandle;
+	rsd.sysapp = sysapp;
 	rsd.adapter = settings->getProperty< PropertyInteger >(L"Render.Adapter", -1);
 	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
@@ -128,7 +128,7 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 	m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 4);
 	m_renderViewDesc.multiSample = sanitizeMultiSample(m_renderViewDesc.multiSample);
 	m_renderViewDesc.waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
-	m_renderViewDesc.nativeWindowHandle = nativeWindowHandle;
+	m_renderViewDesc.syswin = syswin;
 	m_renderViewDesc.stereoscopic = false;
 
 	Ref< render::IRenderView > renderView = renderSystem->createRenderView(m_renderViewDesc);

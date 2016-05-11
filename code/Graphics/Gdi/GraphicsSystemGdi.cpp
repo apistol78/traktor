@@ -45,7 +45,7 @@ bool GraphicsSystemGdi::getCurrentDisplayMode(DisplayMode& outDisplayMode) const
 
 bool GraphicsSystemGdi::create(const CreateDesc& createDesc)
 {
-	m_hWnd = (HWND)createDesc.windowHandle;
+	m_hWnd = createDesc.syswin.hWnd;
 	if (!m_hWnd)
 		return false;
 

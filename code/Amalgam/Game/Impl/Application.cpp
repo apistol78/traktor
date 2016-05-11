@@ -38,6 +38,7 @@
 #include "Database/Database.h"
 #include "Database/Events/EvtInstanceCommitted.h"
 #include "Flash/FlashCharacterInstance.h"
+#include "Flash/GC.h"
 #include "Online/ISessionManager.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Physics/PhysicsManager.h"
@@ -90,8 +91,8 @@ Application::Application()
 bool Application::create(
 	const PropertyGroup* defaultSettings,
 	PropertyGroup* settings,
-	void* nativeHandle,
-	void* nativeWindowHandle
+	const SystemApplication& sysapp,
+	const SystemWindow* syswin
 )
 {
 	// Establish target manager connection is launched from the Editor.
@@ -148,17 +149,17 @@ bool Application::create(
 
 	// Render
 	T_DEBUG(L"Creating render server...");
-	if (nativeWindowHandle)
+	if (syswin)
 	{
 		Ref< RenderServerEmbedded > renderServer = new RenderServerEmbedded();
-		if (!renderServer->create(defaultSettings, settings, nativeHandle, nativeWindowHandle))
+		if (!renderServer->create(defaultSettings, settings, sysapp, *syswin))
 			return false;
 		m_renderServer = renderServer;
 	}
 	else
 	{
 		Ref< RenderServerDefault > renderServer = new RenderServerDefault();
-		if (!renderServer->create(defaultSettings, settings, nativeHandle))
+		if (!renderServer->create(defaultSettings, settings, sysapp))
 			return false;
 		m_renderServer = renderServer;
 	}
@@ -171,19 +172,13 @@ bool Application::create(
 
 	// Input
 	T_DEBUG(L"Creating input server...");
-	SystemWindow inputWindow = m_renderServer->getRenderView()->getSystemWindow();
-#if defined(__ANDROID__)
-	inputWindow.window = (struct ANativeWindow*)nativeWindowHandle;
-#elif defined(__IOS__)
-	inputWindow.view = nativeWindowHandle;
-#endif
 	m_inputServer = new InputServer();
 	if (!m_inputServer->create(
 		defaultSettings,
 		settings,
 		m_database,
-		nativeHandle,
-		inputWindow
+		sysapp,
+		syswin ? *syswin : m_renderServer->getRenderView()->getSystemWindow()
 	))
 		return false;
 
@@ -231,7 +226,7 @@ bool Application::create(
 	if (settings->getProperty(L"Audio.Type"))
 	{
 		m_audioServer = new AudioServer();
-		if (!m_audioServer->create(settings, nativeHandle))
+		if (!m_audioServer->create(settings, sysapp))
 			return false;
 	}
 
@@ -986,6 +981,7 @@ bool Application::update()
 				performance.activeSoundChannels = m_audioServer->getActiveSoundChannels();
 
 			performance.flashCharacterCount = flash::FlashCharacterInstance::getInstanceCount();
+			performance.flashGCCandidates = flash::GC::getInstance().getCandidateCount();
 
 			{
 				const AlignedVector< FrameProfiler::Marker >& markers = m_frameProfiler.getMarkers();

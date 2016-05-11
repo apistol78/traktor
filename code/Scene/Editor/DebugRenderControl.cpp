@@ -46,7 +46,7 @@ bool DebugRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
 	desc.waitVBlank = false;
-	desc.nativeWindowHandle = m_renderWidget->getIWidget()->getSystemHandle();
+	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 
 	m_renderView = m_context->getRenderSystem()->createRenderView(desc);
 	if (!m_renderView)

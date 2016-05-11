@@ -12,6 +12,9 @@
 #include "Render/Resource/TextureFactory.h"
 #include "Render/Resource/TextureResource.h"
 
+#undef min
+#undef max
+
 namespace traktor
 {
 	namespace render

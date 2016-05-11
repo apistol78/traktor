@@ -6,21 +6,62 @@
 #		include <xtl.h>
 #	else
 #		define _WIN32_LEAN_AND_MEAN
+#		define NOMINMAX
 #		include <windows.h>
 #	endif
 #	include <tchar.h>
-#endif
-
-#if defined(max)
-#	undef max
-#endif
-#if defined(min)
-#	undef min
+#elif defined(__ANDROID__)
+#	include <android/native_window.h>
 #endif
 
 namespace traktor
 {
 
+	/*! \brief
+	 * \ingroup Core
+	 */
+	struct SystemApplication
+	{
+#if defined(__ANDROID__)
+		class DelegateInstance* instance;
+
+		SystemApplication()
+		:	instance(0)
+		{
+		}
+
+		explicit SystemApplication(class DelegateInstance* instance_)
+		:	instance(instance_)
+		{
+		}
+
+#elif defined(__PNACL__)
+		pp::Instance* instance;
+
+		SystemApplication()
+		:	instance(0)
+		{
+		}
+
+		explicit SystemApplication(pp::Instance* instance_)
+		:	instance(instance_)
+		{
+		}
+
+#else
+		void* unk;
+
+		SystemApplication()
+		:	unk(0)
+		{
+		}
+
+#endif
+	};
+
+	/*! \brief
+	 * \ingroup Core
+	 */
 	struct SystemWindow
 	{
 #if defined(_WIN32)
@@ -28,6 +69,11 @@ namespace traktor
 
 		SystemWindow()
 		:	hWnd(0)
+		{
+		}
+
+		explicit SystemWindow(HWND hWnd_)
+		:	hWnd(hWnd_)
 		{
 		}
 
@@ -41,8 +87,13 @@ namespace traktor
 		{
 		}
 
-#elif defined(__APPLE__)
+		explicit SystemWindow(void* display_, unsigned long window_)
+		:	display(display_)
+		,	window(window_)
+		{
+		}
 
+#elif defined(__APPLE__)
 		void* view;
 		
 		SystemWindow()
@@ -50,12 +101,21 @@ namespace traktor
 		{
 		}
 
-#elif defined(__ANDROID__)
+		explicit SystemWindow(void* view_)
+		:	view(view_)
+		{
+		}
 
-		struct ANativeWindow* window;
+#elif defined(__ANDROID__)
+		struct ANativeWindow** window;
 
 		SystemWindow()
 		:	window(0)
+		{
+		}
+
+		explicit SystemWindow(struct ANativeWindow** window_)
+		:	window(window_)
 		{
 		}
 

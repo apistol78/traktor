@@ -2,6 +2,7 @@
 #define traktor_sound_Types_H
 
 #include "Core/Config.h"
+#include "Core/Platform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -89,14 +90,13 @@ struct SoundDriverCreateDesc
 /*! \brief Sound system create description. */
 struct SoundSystemCreateDesc
 {
-	void* nativeHandle;									//!< Some kind of native handle to system.
+	SystemApplication sysapp;
 	uint32_t channels;									//!< Number of virtual channels.
 	SoundDriverCreateDesc driverDesc;					//!< Driver create description.
 	float cm[SbcMaxChannelCount][SbcMaxChannelCount];	//!< Final combine matrix.
 
 	SoundSystemCreateDesc()
-	:	nativeHandle(0)
-	,	channels(0)
+	:	channels(0)
 	{
 		for (int i = 0; i < SbcMaxChannelCount; ++i)
 			for (int j = 0; j < SbcMaxChannelCount; ++j)

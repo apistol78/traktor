@@ -25,9 +25,9 @@ InputDriverAndroid::~InputDriverAndroid()
 	}
 }
 
-bool InputDriverAndroid::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverAndroid::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
 {
-	m_instance = reinterpret_cast< DelegateInstance* >(nativeHandle);
+	m_instance = sysapp.instance;
 	if (!m_instance)
 	{
 		log::error << L"Unable to create Android input driver; Invalid instance handle." << Endl;
@@ -44,12 +44,12 @@ bool InputDriverAndroid::create(void* nativeHandle, const SystemWindow& systemWi
 	}
 	if (inputCategories & CtMouse)
 	{
-		m_mouseDevice = new MouseDeviceAndroid(systemWindow);
+		m_mouseDevice = new MouseDeviceAndroid(syswin);
 		m_devices.push_back(m_mouseDevice);
 	}
 	if (inputCategories & CtTouch)
 	{
-		m_touchDevice = new TouchDeviceAndroid(systemWindow);
+		m_touchDevice = new TouchDeviceAndroid(syswin);
 		m_devices.push_back(m_touchDevice);
 	}
 

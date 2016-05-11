@@ -433,12 +433,12 @@ public:
 		return m_window;
 	}
 
-	virtual void* getSystemHandle()
+	virtual SystemWindow getSystemWindow()
 	{
 #if defined(__WXMSW__)
-		return m_window->GetHWND();
+		return SystemWindow(m_window->GetHWND());
 #elif defined(__WXMAC__)
-		return m_window->GetHandle();	// Always returns ControlRef handle.
+		return SystemWindow(m_window->GetHandle());	// Always returns ControlRef handle.
 #else
 		// Get internal GTK widget from wxGTK.
 		GtkWidget* internalWidget = m_window->m_wxwindow;
@@ -451,7 +451,7 @@ public:
 		if (!GTK_WIDGET_REALIZED(internalWidget))
 			gtk_widget_realize(internalWidget);
 
-		return (void*)GDK_WINDOW_XWINDOW(internalWidget->window);
+		return SystemWindow(0, GDK_WINDOW_XWINDOW(internalWidget->window));
 #endif
 	}
 
