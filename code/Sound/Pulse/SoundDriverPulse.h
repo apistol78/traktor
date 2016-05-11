@@ -28,13 +28,13 @@ class T_DLLCLASS SoundDriverPulse : public ISoundDriver
 public:
 	SoundDriverPulse();
 
-	virtual bool create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
+	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void wait();
+	virtual void wait() T_OVERRIDE T_FINAL;
 
-	virtual void submit(const SoundBlock& soundBlock);
+	virtual void submit(const SoundBlock& soundBlock) T_OVERRIDE T_FINAL;
 
 private:
 	pa_sample_spec m_ss;
