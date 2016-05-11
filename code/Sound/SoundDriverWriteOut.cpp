@@ -23,11 +23,11 @@ SoundDriverWriteOut::SoundDriverWriteOut(ISoundDriver* childDriver)
 {
 }
 
-bool SoundDriverWriteOut::create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverWriteOut::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
 	if (m_childDriver)
 	{
-		if (!m_childDriver->create(nativeHandle, desc, outMixer))
+		if (!m_childDriver->create(sysapp, desc, outMixer))
 			return false;
 	}
 

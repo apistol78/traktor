@@ -184,10 +184,10 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewDefaultDesc&
 	}
 
 	UpdateWindow(m_hWnd);
+	graphicsDesc.syswin = SystemWindow(m_hWnd);
 
 #endif
 
-	graphicsDesc.windowHandle = m_hWnd;
 	graphicsDesc.fullScreen = desc.fullscreen;
 	graphicsDesc.displayMode.width = desc.displayMode.width;
 	graphicsDesc.displayMode.height = desc.displayMode.height;
@@ -205,7 +205,7 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewEmbeddedDesc
 	Ref< graphics::IGraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
 
-	graphicsDesc.windowHandle = desc.nativeWindowHandle;
+	graphicsDesc.syswin = desc.syswin;
 	graphicsDesc.fullScreen = false;
 	graphicsDesc.displayMode.width = 16;
 	graphicsDesc.displayMode.height = 16;
@@ -217,7 +217,7 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewEmbeddedDesc
 	graphicsSystem = new graphics::GraphicsSystemGdi();
 
 	RECT rc;
-	GetClientRect((HWND)desc.nativeWindowHandle, &rc);
+	GetClientRect((HWND)desc.syswin.hWnd, &rc);
 	graphicsDesc.displayMode.width = std::max(int(rc.right - rc.left), 16);
 	graphicsDesc.displayMode.height = std::max(int(rc.bottom - rc.top), 16);
 

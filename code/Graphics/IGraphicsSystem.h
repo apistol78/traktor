@@ -2,6 +2,7 @@
 #define traktor_graphics_IGraphicsSystem_H
 
 #include "Core/Object.h"
+#include "Core/Platform.h"
 #include "Graphics/PixelFormat.h"
 
 // import/export mechanism.
@@ -35,7 +36,7 @@ struct DisplayMode
  */
 struct CreateDesc
 {
-	void* windowHandle;
+	SystemWindow syswin;
 	bool fullScreen;
 	DisplayMode displayMode;
 	PixelFormatEnum pixelFormat;	//< Secondary surface pixel format, primary surface has unknown pixel format.

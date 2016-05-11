@@ -26,7 +26,7 @@ class T_DLLCLASS InputDriverPs3 : public IInputDriver
 public:
 	InputDriverPs3(int padCount = 4);
 
-	virtual bool create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories);
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories);
 
 	virtual int getDeviceCount();
 

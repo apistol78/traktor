@@ -17,7 +17,7 @@ class TouchDeviceAndroid : public IInputDevice
 	T_RTTI_CLASS;
 	
 public:
-	TouchDeviceAndroid(const SystemWindow& systemWindow);
+	TouchDeviceAndroid(const SystemWindow& syswin);
 
 	virtual std::wstring getName() const T_OVERRIDE T_FINAL;
 

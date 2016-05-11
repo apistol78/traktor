@@ -110,7 +110,7 @@ bool FlashPreviewControl::create(
 	desc.stencilBits = 8;
 	desc.multiSample = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", 4);
 	desc.waitVBlank = false;
-	desc.nativeWindowHandle = getIWidget()->getSystemHandle();
+	desc.syswin = getIWidget()->getSystemWindow();
 
 	m_renderView = renderSystem->createRenderView(desc);
 	if (!m_renderView)
@@ -131,7 +131,7 @@ bool FlashPreviewControl::create(
 	);
 #else
 	graphics::CreateDesc desc;
-	desc.windowHandle = getIWidget()->getSystemHandle();
+	desc.syswin = getIWidget()->getSystemWindow();
 	desc.fullScreen = false;
 	desc.displayMode.width = 16;
 	desc.displayMode.height = 16;

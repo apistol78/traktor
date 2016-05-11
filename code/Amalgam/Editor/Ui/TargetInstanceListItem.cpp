@@ -350,7 +350,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.drawText(middleRect, L"Sim: " + toString(int32_t(performance.steps)) + L", " + formatPerformanceTime(performance.interval) + L", " + toString(performance.collisions), ui::AnLeft, ui::AnCenter);
 
 		middleRect.left += ui::scaleBySystemDPI(150);
-		canvas.drawText(middleRect, L"F: " + toString(performance.flashCharacterCount), ui::AnLeft, ui::AnCenter);
+		canvas.drawText(middleRect, L"F: " + toString(performance.flashCharacterCount) + L", " + toString(performance.flashGCCandidates), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect2 = performanceRect;
 		middleRect2.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 3;

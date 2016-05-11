@@ -50,7 +50,7 @@ InputDriverOsX::InputDriverOsX()
 {
 }
 
-bool InputDriverOsX::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverOsX::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
 {
 	// Create vanilla devices.
 	m_keyboardDevice = new InputDeviceKeyboardOsX();

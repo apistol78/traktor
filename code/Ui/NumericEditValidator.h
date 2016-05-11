@@ -4,6 +4,9 @@
 #include <limits>
 #include "Ui/EditValidator.h"
 
+#undef min
+#undef max
+
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)

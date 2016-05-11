@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Platform.h"
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
@@ -34,7 +35,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGLES2", ContextOpenGLES2, Obj
 
 ThreadLocal ContextOpenGLES2::ms_contextStack;
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, const RenderViewDefaultDesc& desc)
+Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication& sysapp, const RenderViewDefaultDesc& desc)
 {
 	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
 
@@ -79,7 +80,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 			EGL_DEPTH_SIZE, 16,
 			EGL_STENCIL_SIZE, 4,
-			EGL_SAMPLES, desc.multiSample,
+			EGL_SAMPLES, (EGLint)desc.multiSample,
 			EGL_NONE
 		};
 
@@ -175,9 +176,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 	eglQuerySurface(context->m_display, context->m_surface, EGL_HEIGHT, &context->m_height);
 #	endif
 #elif defined(__PNACL__)
-	context->m_context = PPContextWrapper::createRenderContext(
-		(pp::Instance*)nativeHandle
-	);
+	context->m_context = PPContextWrapper::createRenderContext(sysapp.instance);
 	if (!context->m_context)
 		return 0;
 #else
@@ -193,23 +192,17 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 	return context;
 }
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, const RenderViewEmbeddedDesc& desc)
+Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication& sysapp, const RenderViewEmbeddedDesc& desc)
 {
 	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
 
 #if defined(T_OPENGL_ES2_HAVE_EGL)
-#	if defined(_WIN32)
-	context->m_display = eglGetDisplay(GetDC((HWND)nativeHandle));
+	context->m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	if (context->m_display == EGL_NO_DISPLAY)
-#	endif
 	{
-		context->m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-		if (context->m_display == EGL_NO_DISPLAY)
-		{
-			EGLint error = eglGetError();
-			log::error << L"Create OpenGL ES2.0 failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
-			return 0;
-		}
+		EGLint error = eglGetError();
+		log::error << L"Create OpenGL ES2.0 failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
+		return 0;
 	}
 
 	if (!eglInitialize(context->m_display, 0, 0)) 
@@ -232,7 +225,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 			EGL_BUFFER_SIZE, 32,
 			EGL_DEPTH_SIZE, 16,
 			EGL_STENCIL_SIZE, 4,
-			EGL_SAMPLES, desc.multiSample,
+			EGL_SAMPLES, (EGLint)desc.multiSample,
 			EGL_NONE
 		};
 
@@ -284,13 +277,27 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 
 	context->m_config = matchingConfigs[0];
 
-	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, (EGLNativeWindowType)desc.nativeWindowHandle, 0);
+#if defined(_WIN32)
+	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, (EGLNativeWindowType)desc.syswin.hWnd, 0);
+#elif defined(__LINUX__)
+	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, (EGLNativeWindowType)desc.syswin.window, 0);
+#elif defined(__APPLE__)
+	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, (EGLNativeWindowType)desc.syswin.view, 0);
+#elif defined(__ANDROID__)
+	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, (EGLNativeWindowType)(*desc.syswin.window), 0);
+#else
+	context->m_surface = EGL_NO_SURFACE;
+#endif
 	if (context->m_surface == EGL_NO_SURFACE)
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
 		return 0;
 	}
+
+#if defined(__ANDROID__)
+	context->m_syswin = desc.syswin;
+#endif
 
 	eglBindAPI(EGL_OPENGL_ES_API);
 
@@ -319,16 +326,12 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
 #elif defined(__IOS__)
 
 	context->m_context = new EAGLContextWrapper();
-	if (!context->m_context->create(
-		desc.nativeWindowHandle
-	))
+	if (!context->m_context->create(desc.syswin.view))
 		return 0;
 
 #elif defined(__PNACL__)
 
-	context->m_context = PPContextWrapper::createRenderContext(
-		(pp::Instance*)nativeHandle
-	);
+	context->m_context = PPContextWrapper::createRenderContext(sysapp.instance);
 	if (!context->m_context)
 		return 0;
 
@@ -341,6 +344,22 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(void* nativeHandle, cons
     
 	log::info << L"OpenGL ES 2.0 render context created successfully (embedded)" << Endl;
 	return context;
+}
+
+bool ContextOpenGLES2::reset(int32_t width, int32_t height)
+{
+#if defined(__PNACL__)
+	return m_context->resize(width, height);
+#elif defined(_WIN32)
+	m_width = width;
+	m_height = height;
+	m_primaryDepth = 0;	// \fixme Should release depth buffer!
+#elif defined(__ANDROID__)
+	eglDestroySurface(m_display, m_surface);
+	m_surface = eglCreateWindowSurface(m_display, m_config, (EGLNativeWindowType)(*m_syswin.window), 0);
+	return m_surface != EGL_NO_SURFACE;
+#endif
+	return true;
 }
 
 bool ContextOpenGLES2::enter()
@@ -465,20 +484,6 @@ GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderTyp
 
 	m_shaderObjects.insert(std::make_pair(hash, shaderObject));
 	return shaderObject;
-}
-
-bool ContextOpenGLES2::resize(int32_t width, int32_t height)
-{
-#if defined(__PNACL__)
-	return m_context->resize(width, height);
-#elif defined(_WIN32)
-	m_width = width;
-	m_height = height;
-	m_primaryDepth = 0;	// \fixme Should release depth buffer!
-	return true;
-#else
-	return false;
-#endif
 }
 
 int32_t ContextOpenGLES2::getWidth() const

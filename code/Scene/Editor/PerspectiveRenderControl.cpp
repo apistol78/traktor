@@ -114,7 +114,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	desc.stencilBits = 0;
 	desc.multiSample = m_multiSample;
 	desc.waitVBlank = false;
-	desc.nativeWindowHandle = m_renderWidget->getIWidget()->getSystemHandle();
+	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 
 	m_renderView = m_context->getRenderSystem()->createRenderView(desc);
 	if (!m_renderView)

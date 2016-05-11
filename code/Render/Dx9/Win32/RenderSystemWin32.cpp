@@ -273,7 +273,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewEmbeddedD
 	HRESULT hr;
 	RECT rcWindow;
 
-	GetClientRect((HWND)desc.nativeWindowHandle, &rcWindow);
+	GetClientRect(desc.syswin.hWnd, &rcWindow);
 	if (rcWindow.left >= rcWindow.right)
 		rcWindow.right = rcWindow.left + 10;
 	if (rcWindow.top >= rcWindow.bottom)
@@ -302,7 +302,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewEmbeddedD
 	d3dPresent.BackBufferHeight = rcWindow.bottom - rcWindow.top;
 	d3dPresent.MultiSampleType = d3dMultiSample;
 	d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dPresent.hDeviceWindow = (HWND)desc.nativeWindowHandle;
+	d3dPresent.hDeviceWindow = desc.syswin.hWnd;
 	d3dPresent.Windowed = TRUE;
 	d3dPresent.EnableAutoDepthStencil = FALSE;
 	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;

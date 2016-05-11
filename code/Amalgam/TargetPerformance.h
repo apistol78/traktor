@@ -67,6 +67,7 @@ public:
 	uint32_t queryCount;
 	uint32_t activeSoundChannels;
 	uint32_t flashCharacterCount;
+	uint32_t flashGCCandidates;
 	AlignedVector< FrameMarker > frameMarkers;
 
 	TargetPerformance();

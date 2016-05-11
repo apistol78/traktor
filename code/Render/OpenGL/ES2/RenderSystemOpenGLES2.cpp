@@ -29,13 +29,12 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemOpenGLES2", 0, RenderSystemOpenGLES2, IRenderSystem)
 
 RenderSystemOpenGLES2::RenderSystemOpenGLES2()
-:	m_nativeHandle(0)
 {
 }
 
 bool RenderSystemOpenGLES2::create(const RenderSystemDesc& desc)
 {
-	m_nativeHandle = desc.nativeHandle;
+	m_sysapp = desc.sysapp;
 	return true;
 }
 
@@ -114,7 +113,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefau
 {
 #if defined(_WIN32) || defined(__PNACL__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__)
 	m_context = ContextOpenGLES2::createContext(
-		m_nativeHandle,
+		m_sysapp,
 		desc
 	);
 	return new RenderViewOpenGLES2(m_context);
@@ -127,7 +126,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbed
 {
 #if !defined(T_OFFLINE_ONLY)
 	m_context = ContextOpenGLES2::createContext(
-		m_nativeHandle,
+		m_sysapp,
 		desc
 	);
 	return new RenderViewOpenGLES2(m_context);

@@ -217,11 +217,11 @@ void InputDriverDi8::destroy()
 	m_directInput.release();
 }
 
-bool InputDriverDi8::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverDi8::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
 {
 	HRESULT hr;
 
-	if (!(m_hWnd = systemWindow.hWnd))
+	if (!(m_hWnd = syswin.hWnd))
 	{
 		if (!(m_hWnd = getMyProcessWindow()))
 		{

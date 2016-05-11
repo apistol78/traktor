@@ -39,7 +39,7 @@ bool GraphicsSystemDd7::create(const CreateDesc& createDesc)
 {
 	HRESULT hr;
 
-	if (!(m_hWnd = (HWND)createDesc.windowHandle))
+	if (!(m_hWnd = createDesc.syswin.hWnd))
 		return false;
 
 	hr = DirectDrawCreateEx(NULL, (LPVOID*)&m_dd.getAssign(), IID_IDirectDraw7, NULL);

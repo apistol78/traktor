@@ -7,7 +7,13 @@
 #endif
 #include <windows.h>
 #if defined(T_USE_GDI_PLUS)
+// \hack As we don't want min/max defined but gdiplus.h require them
+// we temporarily define them first.
+#	define max(a,b) (((a) > (b)) ? (a) : (b))
+#	define min(a,b) (((a) < (b)) ? (a) : (b))
 #	include <gdiplus.h>
+#	undef min
+#	undef max
 #endif
 #include "Core/Misc/AutoPtr.h"
 #include "Ui/Itf/ISystemBitmap.h"

@@ -14,7 +14,7 @@ InputDriverXi::InputDriverXi(DWORD deviceCount)
 		m_devices.push_back(new InputDeviceXi(i));
 }
 
-bool InputDriverXi::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverXi::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
 {
 	return true;
 }

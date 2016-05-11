@@ -5,6 +5,9 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
+#undef min
+#undef max
+
 namespace traktor
 {
 

@@ -236,7 +236,7 @@ bool AnimationEditorPage::create(ui::Container* parent)
 		desc.stencilBits = 0;
 		desc.multiSample = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", 4);
 		desc.waitVBlank = false;
-		desc.nativeWindowHandle = m_renderWidgets[i]->getIWidget()->getSystemHandle();
+		desc.syswin = m_renderWidgets[i]->getIWidget()->getSystemWindow();
 
 		data->orthogonal = i > 0;
 		data->cameraAngleX = c_cameraAngles[i][0];

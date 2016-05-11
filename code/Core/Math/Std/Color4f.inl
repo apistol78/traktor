@@ -86,7 +86,7 @@ T_MATH_INLINE void Color4f::setAlpha(const Scalar& alpha)
 
 T_MATH_INLINE Color4f Color4f::saturated() const
 {
-	return Color4f(max(min(m_data, Vector4(1.0f, 1.0f, 1.0f, 1.0f)), Vector4(0.0f, 0.0f, 0.0f, 0.0f)));
+	return Color4f(traktor::max(traktor::min(m_data, Vector4(1.0f, 1.0f, 1.0f, 1.0f)), Vector4(0.0f, 0.0f, 0.0f, 0.0f)));
 }
 
 T_MATH_INLINE Color4f Color4f::rgb0() const

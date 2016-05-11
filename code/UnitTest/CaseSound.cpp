@@ -26,20 +26,20 @@ public:
 	{
 	}
 
-	virtual bool create(void* nativeHandle, const sound::SoundDriverCreateDesc& desc, Ref< sound::ISoundMixer >& outMixer)
+	virtual bool create(const SystemApplication& sysapp, const sound::SoundDriverCreateDesc& desc, Ref< sound::ISoundMixer >& outMixer) T_OVERRIDE T_FINAL
 	{
 		return true;
 	}
 
-	virtual void destroy()
+	virtual void destroy() T_OVERRIDE T_FINAL
 	{
 	}
 
-	virtual void wait()
+	virtual void wait() T_OVERRIDE T_FINAL
 	{
 	}
 
-	virtual void submit(const sound::SoundBlock& soundBlock)
+	virtual void submit(const sound::SoundBlock& soundBlock) T_OVERRIDE T_FINAL
 	{
 		if (m_signal.wait(0))
 			return;
@@ -66,12 +66,12 @@ public:
 			m_block[i] = 2.0f;
 	}
 
-	virtual Ref< sound::ISoundBufferCursor > createCursor() const
+	virtual Ref< sound::ISoundBufferCursor > createCursor() const T_OVERRIDE T_FINAL
 	{
 		return 0;
 	}
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const
+	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const T_OVERRIDE T_FINAL
 	{
 		outBlock.samples[0] = m_block;
 		outBlock.samplesCount = sizeof_array(m_block);

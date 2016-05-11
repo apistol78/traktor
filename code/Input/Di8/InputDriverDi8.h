@@ -34,13 +34,13 @@ public:
 
 	void destroy();
 
-	virtual bool create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories);
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) T_OVERRIDE T_FINAL;
 
-	virtual int getDeviceCount();
+	virtual int getDeviceCount() T_OVERRIDE T_FINAL;
 
-	virtual Ref< IInputDevice > getDevice(int index);
+	virtual Ref< IInputDevice > getDevice(int index) T_OVERRIDE T_FINAL;
 
-	virtual UpdateResult update();
+	virtual UpdateResult update() T_OVERRIDE T_FINAL;
 
 private:
 	static BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE* deviceInstance, VOID* context);

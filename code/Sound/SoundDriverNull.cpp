@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverNull", 0, SoundDriverNull, ISoundDriver)
 
-bool SoundDriverNull::create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverNull::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
 	m_desc = desc;
 	return true;

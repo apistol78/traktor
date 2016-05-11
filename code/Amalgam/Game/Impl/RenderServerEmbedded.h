@@ -15,7 +15,7 @@ class RenderServerEmbedded : public RenderServer
 public:
 	RenderServerEmbedded();
 
-	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, void* nativeHandle, void* nativeWindowHandle);
+	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp, const SystemWindow& syswin);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

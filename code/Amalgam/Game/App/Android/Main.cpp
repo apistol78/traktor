@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include "Amalgam/Game/IOnlineServer.h"
+#include "Amalgam/Game/IRenderServer.h"
 #include "Amalgam/Game/Impl/Application.h"
 #include "Amalgam/Game/Impl/Environment.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
@@ -21,6 +22,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/System/OS.h"
 #include "Core/System/Android/DelegateInstance.h"
+#include "Render/IRenderView.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
@@ -72,6 +74,10 @@ public:
 
 	bool updateApplication();
 
+	void suspendApplication();
+
+	void resumeApplication();
+
 	virtual struct android_app* getApplication() T_OVERRIDE T_FINAL;
 
 	virtual struct ANativeActivity* getActivity() T_OVERRIDE T_FINAL;
@@ -80,13 +86,19 @@ public:
 
 private:
 	struct android_app* m_app;
+	SystemWindow m_syswin;
+	SystemApplication m_sysapp;
 	Ref< const PropertyGroup > m_defaultSettings;
 	Ref< PropertyGroup > m_settings;
 	Ref< amalgam::Application > m_application;
+	bool m_suspended;
 };
 
 AndroidApplication::AndroidApplication(struct android_app* app)
 :	m_app(app)
+,	m_syswin(&app->window)
+,	m_sysapp(this)
+,	m_suspended(false)
 {
 }
 
@@ -125,8 +137,8 @@ bool AndroidApplication::createApplication()
 	return m_application->create(
 		m_defaultSettings,
 		m_settings,
-		this,
-		m_app->window
+		m_sysapp,
+		&m_syswin
 	);
 }
 
@@ -137,7 +149,34 @@ void AndroidApplication::destroyApplication()
 
 bool AndroidApplication::updateApplication()
 {
-	return m_application ? m_application->update() : true;
+	if (m_application && !m_suspended)
+		return m_application->update();
+	else
+		return true;
+}
+
+void AndroidApplication::suspendApplication()
+{
+	if (!m_suspended)
+	{
+		if (m_application)
+			m_application->suspend();
+
+		m_suspended = true;
+	}
+}
+
+void AndroidApplication::resumeApplication()
+{
+	if (m_suspended)
+	{
+		if (m_application)
+		{
+			m_application->getEnvironment()->getRender()->getRenderView()->reset(0, 0);
+			m_application->resume();
+		}
+		m_suspended = false;
+	}
 }
 
 struct android_app* AndroidApplication::getApplication()
@@ -154,21 +193,78 @@ void AndroidApplication::handleCommand(int32_t cmd)
 {
 	switch (cmd)
 	{
+	case APP_CMD_INPUT_CHANGED:
+		log::info << L"handleCommand APP_CMD_INPUT_CHANGED" << Endl;
+		break;
+
 	case APP_CMD_INIT_WINDOW:
-		if (m_app->window != 0)
-		{
+		log::info << L"handleCommand APP_CMD_INIT_WINDOW (window: " << int32_t(m_app->window) << L")" << Endl;
+		if (!m_application && m_app->window != 0)
 			createApplication();
-		}
 		break;
 
 	case APP_CMD_TERM_WINDOW:
-		destroyApplication();
+		log::info << L"handleCommand APP_CMD_TERM_WINDOW" << Endl;
+		suspendApplication();
+		break;
+
+	case APP_CMD_WINDOW_RESIZED:
+		log::info << L"handleCommand APP_CMD_WINDOW_RESIZED" << Endl;
+		break;
+
+	case APP_CMD_WINDOW_REDRAW_NEEDED:
+		log::info << L"handleCommand APP_CMD_WINDOW_REDRAW_NEEDED" << Endl;
+		break;
+
+	case APP_CMD_CONTENT_RECT_CHANGED:
+		log::info << L"handleCommand APP_CMD_CONTENT_RECT_CHANGED" << Endl;
 		break;
 
 	case APP_CMD_GAINED_FOCUS:
+		log::info << L"handleCommand APP_CMD_GAINED_FOCUS" << Endl;
+		resumeApplication();
 		break;
 
 	case APP_CMD_LOST_FOCUS:
+		log::info << L"handleCommand APP_CMD_LOST_FOCUS" << Endl;
+		suspendApplication();
+		break;
+
+	case APP_CMD_CONFIG_CHANGED:
+		log::info << L"handleCommand APP_CMD_CONFIG_CHANGED" << Endl;
+		break;
+
+	case APP_CMD_LOW_MEMORY:
+		log::info << L"handleCommand APP_CMD_LOW_MEMORY" << Endl;
+		break;
+
+	case APP_CMD_START:
+		log::info << L"handleCommand APP_CMD_START" << Endl;
+		break;
+
+	case APP_CMD_RESUME:
+		log::info << L"handleCommand APP_CMD_RESUME" << Endl;
+		break;
+
+	case APP_CMD_SAVE_STATE:
+		log::info << L"handleCommand APP_CMD_SAVE_STATE" << Endl;
+		break;
+
+	case APP_CMD_PAUSE:
+		log::info << L"handleCommand APP_CMD_PAUSE" << Endl;
+		break;
+
+	case APP_CMD_STOP:
+		log::info << L"handleCommand APP_CMD_STOP" << Endl;
+		break;
+
+	case APP_CMD_DESTROY:
+		log::info << L"handleCommand APP_CMD_DESTROY" << Endl;
+		destroyApplication();
+		break;
+
+	default:
+		log::info << L"handleCommand <Unknown command>" << Endl;
 		break;
 	}
 	DelegateInstance::handleCommand(cmd);

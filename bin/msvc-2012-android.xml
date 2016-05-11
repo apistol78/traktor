@@ -408,6 +408,10 @@
               <name>CppLanguageStandard</name>
               <value>c++11</value>
             </item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -458,6 +462,10 @@
             <item>
               <name>CppLanguageStandard</name>
               <value>c++11</value>
+            </item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
             </item>
           </options>
         </item>
@@ -590,6 +598,10 @@
               <name>CppLanguageStandard</name>
               <value>c++11</value>
             </item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -712,6 +724,10 @@
             <item>
               <name>CppLanguageStandard</name>
               <value>c++11</value>
+            </item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
             </item>
           </options>
         </item>
@@ -866,6 +882,10 @@
               <name>CppLanguageStandard</name>
               <value>c++11</value>
             </item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -944,6 +964,10 @@
             <item>
               <name>CppLanguageStandard</name>
               <value>c++11</value>
+            </item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
             </item>
           </options>
         </item>
@@ -1104,6 +1128,10 @@
               <name>CppLanguageStandard</name>
               <value>c++11</value>
             </item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -1254,6 +1282,10 @@
             <item>
               <name>CppLanguageStandard</name>
               <value>c++11</value>
+            </item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
             </item>
           </options>
         </item>

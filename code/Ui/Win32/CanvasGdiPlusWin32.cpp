@@ -1,6 +1,7 @@
 #if defined(T_USE_GDI_PLUS)
 
 #include <cmath>
+#include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/CanvasGdiPlusWin32.h"

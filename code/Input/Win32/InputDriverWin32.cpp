@@ -15,16 +15,16 @@ InputDriverWin32::InputDriverWin32()
 {
 }
 
-bool InputDriverWin32::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverWin32::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
 {
 	if (inputCategories & CtKeyboard)
 	{
-		m_keyboardDevice = new KeyboardDeviceWin32(systemWindow.hWnd);
+		m_keyboardDevice = new KeyboardDeviceWin32(syswin.hWnd);
 		m_devices.push_back(m_keyboardDevice);
 	}
 	if (inputCategories & CtMouse)
 	{
-		m_mouseDevice = new MouseDeviceWin32(systemWindow.hWnd);
+		m_mouseDevice = new MouseDeviceWin32(syswin.hWnd);
 		m_devices.push_back(m_mouseDevice);
 	}
 	update();

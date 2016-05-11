@@ -2,6 +2,7 @@
 #define traktor_amalgam_AudioServer_H
 
 #include "Amalgam/Game/IAudioServer.h"
+#include "Core/Platform.h"
 
 namespace traktor
 {
@@ -27,7 +28,7 @@ class AudioServer : public IAudioServer
 public:
 	AudioServer();
 
-	bool create(const PropertyGroup* settings, void* nativeHandle);
+	bool create(const PropertyGroup* settings, const SystemApplication& sysapp);
 
 	void destroy();
 

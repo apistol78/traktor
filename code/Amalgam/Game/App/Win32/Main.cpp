@@ -401,6 +401,7 @@ void pureVirtualCallHandler(void)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
 	std::vector< std::wstring > argv;
+	SystemApplication sysapp;
 
 	wchar_t szFilename[MAX_PATH] = L"";
 	GetModuleFileName(NULL, szFilename, sizeof_array(szFilename));
@@ -592,7 +593,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		if (application->create(
 			defaultSettings,
 			settings,
-			0,
+			sysapp,
 			0
 		))
 		{

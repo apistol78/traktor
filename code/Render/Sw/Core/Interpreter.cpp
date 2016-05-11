@@ -8,6 +8,9 @@
 #include "Render/Sw/Core/IntrProgram.h"
 #include "Render/Sw/Core/Sampler.h"
 
+#undef min
+#undef max
+
 namespace traktor
 {
 	namespace render

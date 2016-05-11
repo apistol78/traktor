@@ -147,7 +147,7 @@ RenderServerDefault::RenderServerDefault()
 {
 }
 
-bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, void* nativeHandle)
+bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp)
 {
 	std::wstring renderType = defaultSettings->getProperty< PropertyString >(L"Render.Type");
 	std::wstring captureRenderType = settings->getProperty< PropertyString >(L"Render.CaptureType");
@@ -170,7 +170,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 
 	render::RenderSystemDesc rsd;
 	rsd.capture = captureRenderSystem;
-	rsd.nativeHandle = nativeHandle;
+	rsd.sysapp = sysapp;
 	rsd.adapter = settings->getProperty< PropertyInteger >(L"Render.Adapter", -1);
 	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);

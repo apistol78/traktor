@@ -44,12 +44,12 @@ void InputDriverTobii::destroy()
 	m_device = 0;
 }
 
-bool InputDriverTobii::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverTobii::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
 {
 	TX_HANDLE hInteractor = TX_EMPTY_HANDLE;
 	TX_GAZEPOINTDATAPARAMS params = { TX_GAZEPOINTDATAMODE_LIGHTLYFILTERED };
 
-	m_hWnd = systemWindow.hWnd;
+	m_hWnd = syswin.hWnd;
 
 	if (txInitializeEyeX(TX_EYEXCOMPONENTOVERRIDEFLAG_NONE, NULL, NULL, NULL, NULL) != TX_RESULT_OK)
 		return false;

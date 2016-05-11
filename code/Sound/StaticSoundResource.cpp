@@ -12,6 +12,9 @@
 #include "Sound/StaticSoundResource.h"
 #include "Sound/IStreamDecoder.h"
 
+#undef min
+#undef max
+
 namespace traktor
 {
 	namespace sound

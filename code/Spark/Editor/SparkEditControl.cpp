@@ -58,7 +58,7 @@ bool SparkEditControl::create(
 	desc.stencilBits = 8;
 	desc.multiSample = 4;
 	desc.waitVBlank = false;
-	desc.nativeWindowHandle = getIWidget()->getSystemHandle();
+	desc.syswin = getIWidget()->getSystemWindow();
 
 	m_renderView = renderSystem->createRenderView(desc);
 	if (!m_renderView)

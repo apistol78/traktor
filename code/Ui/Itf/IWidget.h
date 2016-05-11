@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Core/Config.h"
+#include "Core/Platform.h"
 #include "Ui/Enums.h"
 #include "Ui/Rect.h"
 #include "Ui/Font.h"
@@ -104,7 +105,7 @@ public:
 
 	virtual void* getInternalHandle() = 0;
 
-	virtual void* getSystemHandle() = 0;
+	virtual SystemWindow getSystemWindow() = 0;
 };
 
 	}
