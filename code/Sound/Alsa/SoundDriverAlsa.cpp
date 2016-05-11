@@ -32,7 +32,7 @@ SoundDriverAlsa::~SoundDriverAlsa()
 	T_ASSERT (!m_handle);
 }
 
-bool SoundDriverAlsa::create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverAlsa::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
 	int res;
 
