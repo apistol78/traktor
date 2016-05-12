@@ -1,5 +1,8 @@
 #include "Core/RefSet.h"
 #include "Core/Functor/Functor.h"
+#include "Core/Io/FileOutputStream.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -19,6 +22,7 @@
 #include "Ui/Button.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Edit.h"
+#include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/MenuItem.h"
 #include "Ui/PopupMenu.h"
@@ -223,6 +227,10 @@ bool SearchToolDialog::create(ui::Widget* parent)
 	m_buttonFind->create(containerSearch, i18n::Text(L"EDITOR_SEARCH_TOOL_FIND"));
 	m_buttonFind->addEventHandler< ui::ButtonClickEvent >(this, &SearchToolDialog::eventButtonSearchClick);
 
+	m_buttonSaveAs = new ui::Button();
+	m_buttonSaveAs->create(containerSearch, i18n::Text(L"EDITOR_SEARCH_TOOL_SAVE_AS"));
+	m_buttonSaveAs->addEventHandler< ui::ButtonClickEvent >(this, &SearchToolDialog::eventButtonSaveAsClick);
+
 	m_progressBar = new ui::custom::ProgressBar();
 	m_progressBar->create(containerSearch, ui::WsDoubleBuffer);
 	m_progressBar->setVisible(false);
@@ -258,9 +266,43 @@ void SearchToolDialog::eventButtonSearchClick(ui::ButtonClickEvent* event)
 	m_editSearch->setEnable(false);
 	m_checkCaseSensitive->setEnable(false);
 	m_buttonFind->setEnable(false);
+	m_buttonSaveAs->setEnable(false);
 	m_progressBar->setVisible(true);
 
 	startTimer(100);
+}
+
+void SearchToolDialog::eventButtonSaveAsClick(ui::ButtonClickEvent* event)
+{
+	ui::FileDialog fileDialog;
+	if (!fileDialog.create(this, i18n::Text(L"EDITOR_SEARCH_TOOL_SAVE_AS_TITLE"), L"All files;*.*", true))
+		return;
+
+	Path saveAsPath;
+	if (fileDialog.showModal(saveAsPath) != ui::DrOk)
+		return;
+
+	fileDialog.destroy();
+
+	Ref< IStream > file = FileSystem::getInstance().open(saveAsPath, File::FmWrite);
+	if (!file)
+		return;
+
+	Utf8Encoding encoding;
+	FileOutputStream fos(file, &encoding);
+
+	const RefArray< ui::custom::GridRow >& rows = m_gridResults->getRows();
+	for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
+	{
+		fos <<
+			(*i)->get(0)->getText() << L";" <<
+			(*i)->get(1)->getText() << L";" <<
+			(*i)->get(2)->getText() << L";" <<
+			(*i)->get(3)->getText() <<
+		Endl;
+	}
+
+	fos.close();
 }
 
 void SearchToolDialog::eventGridResultDoubleClick(ui::MouseDoubleClickEvent* event)
@@ -307,6 +349,7 @@ void SearchToolDialog::eventTimer(ui::TimerEvent* event)
 		m_editSearch->setEnable(true);
 		m_checkCaseSensitive->setEnable(true);
 		m_buttonFind->setEnable(true);
+		m_buttonSaveAs->setEnable(true);
 		m_progressBar->setProgress(0);
 		m_progressBar->setVisible(false);
 		update();

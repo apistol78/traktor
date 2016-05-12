@@ -1069,6 +1069,14 @@
       <second>Find in database view</second>
     </item>
     <item>
+      <first>EDITOR_SEARCH_TOOL_SAVE_AS</first>
+      <second>Save result as CSV...</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_SAVE_AS_TITLE</first>
+      <second>Save result as</second>
+    </item>    
+    <item>
       <first>EDITOR_NEW_WORKSPACE_TITLE</first>
       <second>New workspace</second>
     </item>
