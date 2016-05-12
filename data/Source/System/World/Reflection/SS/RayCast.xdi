@@ -51,142 +51,6 @@
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Script">
-			<comment/>
-			<position>
-				<first>376</first>
-				<second>408</second>
-			</position>
-			<name>RayCastFn_DX11</name>
-			<inputPins>
-				<item>
-					<name>Direction</name>
-					<type>PtVector</type>
-					<samplerId/>
-				</item>
-				<item>
-					<name>Origin</name>
-					<type>PtVector</type>
-					<samplerId/>
-				</item>
-				<item>
-					<name>DepthMap</name>
-					<type>PtTexture2D</type>
-					<samplerId>DepthMap_Sampler</samplerId>
-				</item>
-				<item>
-					<name>Projection</name>
-					<type>PtMatrix</type>
-					<samplerId/>
-				</item>
-				<item>
-					<name>ColorMap</name>
-					<type>PtTexture2D</type>
-					<samplerId>ColorMap_Sampler</samplerId>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<name>Hit</name>
-					<type>PtVector</type>
-				</item>
-			</outputPins>
-			<samplers>
-				<item>
-					<first>ColorMap_Sampler</first>
-					<second>
-						<minFilter>FtPoint</minFilter>
-						<mipFilter>FtPoint</mipFilter>
-						<magFilter>FtPoint</magFilter>
-						<addressU>AdClamp</addressU>
-						<addressV>AdClamp</addressV>
-						<addressW>AdClamp</addressW>
-						<compare>CfNone</compare>
-						<mipBias>0</mipBias>
-						<ignoreMips>true</ignoreMips>
-						<useAnisotropic>false</useAnisotropic>
-					</second>
-				</item>
-				<item>
-					<first>DepthMap_Sampler</first>
-					<second>
-						<minFilter>FtPoint</minFilter>
-						<mipFilter>FtPoint</mipFilter>
-						<magFilter>FtPoint</magFilter>
-						<addressU>AdClamp</addressU>
-						<addressV>AdClamp</addressV>
-						<addressW>AdClamp</addressW>
-						<compare>CfNone</compare>
-						<mipBias>0</mipBias>
-						<ignoreMips>true</ignoreMips>
-						<useAnisotropic>false</useAnisotropic>
-					</second>
-				</item>
-			</samplers>
-			<script>
-			<![CDATA[
-const float StepLength = 1.5f;
-const int MaxSteps = 16;
-const int BinarySearchSteps = 5;
-const float MaxDeltaDepth = 4.0f;
-
-float3 hitCoord = Origin.xyz;
-float deltaDepth = 0.0f;
-
-// Scan coarse hit.
-for (int i = 0; i < MaxSteps; ++i)
-{
-	hitCoord += Direction.xyz * StepLength;
-	
-	float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
-	projCoord.xy /= projCoord.w;
-	projCoord.xy = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
-
-	float depth = DepthMap.Sample(DepthMap_Sampler, projCoord.xy).x;
-	deltaDepth = depth - hitCoord.z;
-	if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
-		break;
-}
-
-if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
-{
-/*
-	// Refine hit by binary search.
-	float3 dir = Direction.xyz * StepLength;
-	for (int i = 0; i < BinarySearchSteps; i++)
-    {
-		float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
-		projCoord.xy /= projCoord.w;
-		projCoord.xy = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
- 
-		float depth = DepthMap.Sample(DepthMap_Sampler, projCoord.xy).x;
-		deltaDepth = depth - hitCoord.z;
- 
-		dir *= 0.5f;
- 	if (deltaDepth < 0.0f)
-			hitCoord += dir;
-		else
-			hitCoord -= dir;
-    }
-*/
-	float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
-	projCoord.xy /= projCoord.w;
-
-	float2 colorCoord = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
-
-	float2 dc = abs(projCoord.xy);
-	float edgeFactor = clamp((1.0f - max(dc.x, dc.y)) * 10.0f, 0.0f, 1.0f);
-	float normFactor = pow(clamp(Direction.z, 0.0f, 1.0f), 0.2f);
-	float distFactor = 1.0f - pow(length(Origin.xyz - hitCoord) / (MaxSteps * StepLength), 2.0f);
-
-	float3 color = ColorMap.Sample(ColorMap_Sampler, colorCoord).xyz;
-	Hit = float4(color, edgeFactor * normFactor * distFactor);
-}
-else
-	Hit = float4(0.0f, 0.0f, 0.0f, 0.0f);
-			]]>
-			</script>
-		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
@@ -348,91 +212,175 @@ else
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
+		<item type="traktor.render.Script">
+			<comment/>
+			<position>
+				<first>377</first>
+				<second>386</second>
+			</position>
+			<name>RayCastFn_DX11</name>
+			<inputPins>
+				<item>
+					<name>Direction</name>
+					<type>PtVector</type>
+					<samplerId/>
+				</item>
+				<item>
+					<name>Origin</name>
+					<type>PtVector</type>
+					<samplerId/>
+				</item>
+				<item>
+					<name>DepthMap</name>
+					<type>PtTexture2D</type>
+					<samplerId>DepthMap_Sampler</samplerId>
+				</item>
+				<item>
+					<name>Projection</name>
+					<type>PtMatrix</type>
+					<samplerId/>
+				</item>
+				<item>
+					<name>ColorMap</name>
+					<type>PtTexture2D</type>
+					<samplerId>ColorMap_Sampler</samplerId>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Hit</name>
+					<type>PtVector</type>
+				</item>
+			</outputPins>
+			<samplers>
+				<item>
+					<first>ColorMap_Sampler</first>
+					<second>
+						<minFilter>FtLinear</minFilter>
+						<mipFilter>FtLinear</mipFilter>
+						<magFilter>FtLinear</magFilter>
+						<addressU>AdClamp</addressU>
+						<addressV>AdClamp</addressV>
+						<addressW>AdClamp</addressW>
+						<compare>CfNone</compare>
+						<mipBias>0</mipBias>
+						<ignoreMips>false</ignoreMips>
+						<useAnisotropic>false</useAnisotropic>
+					</second>
+				</item>
+				<item>
+					<first>DepthMap_Sampler</first>
+					<second>
+						<minFilter>FtPoint</minFilter>
+						<mipFilter>FtPoint</mipFilter>
+						<magFilter>FtPoint</magFilter>
+						<addressU>AdClamp</addressU>
+						<addressV>AdClamp</addressV>
+						<addressW>AdClamp</addressW>
+						<compare>CfNone</compare>
+						<mipBias>0</mipBias>
+						<ignoreMips>true</ignoreMips>
+						<useAnisotropic>false</useAnisotropic>
+					</second>
+				</item>
+			</samplers>
+			<script>
+			<![CDATA[
+const float StepLength = 1.5f;
+const int MaxSteps = 16;
+const int BinarySearchSteps = 3;
+const float MaxDeltaDepth = 4.0f;
+
+float3 hitCoord = Origin.xyz;
+float deltaDepth = 0.0f;
+
+// Scan coarse hit.
+for (int i = 0; i < MaxSteps; ++i)
+{
+	hitCoord += Direction.xyz * StepLength;
+	
+	float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
+	projCoord.xy /= projCoord.w;
+	projCoord.xy = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+
+	float depth = DepthMap.Sample(DepthMap_Sampler, projCoord.xy).x;
+	deltaDepth = depth - hitCoord.z;
+	if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
+		break;
+}
+
+Hit = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
+{
+	// Refine hit by binary search.
+	float3 dir = Direction.xyz * StepLength * 0.5f;
+	for (int i = 0; i < BinarySearchSteps; i++)
+    {
+		float3 testCoord = hitCoord - dir;
+
+		float4 projCoord = mul(Projection, float4(testCoord, 1.0f));
+
+		projCoord.xy /= projCoord.w;
+		projCoord.xy = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+ 
+		float depth = DepthMap.Sample(DepthMap_Sampler, projCoord.xy).x;
+
+		deltaDepth = depth - testCoord.z;
+
+		if (deltaDepth < 0.0f)
+		{
+			hitCoord = testCoord;
+			dir *= 0.5f;
+		}
+		else
+		{
+			dir *= 0.5f;
+		}
+    }
+
+	float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
+	projCoord.xy /= projCoord.w;
+
+	float2 colorCoord = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+	
+	float2 dc = abs(projCoord.xy);
+	float edgeFactor = clamp((1.0f - max(dc.x, dc.y)) * 10.0f, 0.0f, 1.0f);
+	float normFactor = pow(clamp(Direction.z, 0.0f, 1.0f), 0.2f);
+	float distFactor = 1.0f - pow(length(Origin.xyz - hitCoord) / (MaxSteps * StepLength), 2.0f);
+	
+	float3 color = ColorMap.SampleLevel(ColorMap_Sampler, colorCoord, 3.0f).xyz;
+	Hit = float4(color, edgeFactor * normFactor * distFactor);
+}
+
+			]]>
+			</script>
+		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Origin</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Projection</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>DepthMap</name>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
 				<name>Direction</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Direction</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>ColorMap</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Hit</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>DX11</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -442,21 +390,21 @@ else
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Hit</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[10]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>OpenGL</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Direction</name>
 			</destination>
 		</item>
@@ -466,17 +414,17 @@ else
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Origin</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>ColorMap</name>
 			</destination>
 		</item>
@@ -486,7 +434,7 @@ else
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>DepthMap</name>
 			</destination>
 		</item>
@@ -496,18 +444,78 @@ else
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Projection</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[10]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Direction</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Origin</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>DepthMap</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Projection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>ColorMap</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Hit</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>DX11</name>
 			</destination>
 		</item>
 	</edges>
