@@ -45,11 +45,14 @@ private:
 	Ref< ui::Edit > m_editSearch;
 	Ref< ui::CheckBox > m_checkCaseSensitive;
 	Ref< ui::Button > m_buttonFind;
+	Ref< ui::Button > m_buttonSaveAs;
 	Ref< ui::custom::ProgressBar > m_progressBar;
 	Ref< ui::custom::GridView > m_gridResults;
 	Ref< Job > m_jobSearch;
 
 	void eventButtonSearchClick(ui::ButtonClickEvent* event);
+
+	void eventButtonSaveAsClick(ui::ButtonClickEvent* event);
 
 	void eventGridResultDoubleClick(ui::MouseDoubleClickEvent* event);
 
