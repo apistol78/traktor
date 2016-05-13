@@ -705,7 +705,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 #elif defined(__APPLE__)
 
 	void* glcontext = cglwCreateContext(
-		desc.nativeWindowHandle,
+		desc.syswin.view,
 		m_resourceContext->getGLContext(),
 		desc.depthBits,
 		desc.stencilBits,
@@ -764,7 +764,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return false;
 	}
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, m_display, (::Window)desc.nativeWindowHandle, glcontext);
+	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, m_display, (::Window)desc.syswin.window, glcontext);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
