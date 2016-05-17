@@ -114,6 +114,8 @@ void signalHandler(int sig)
 
 int main(int argc, const char** argv)
 {
+	SystemApplication sysapp;
+
 	// Install crash/exception signal handlers first of all things.
 	signal(SIGILL, signalHandler);
 	signal(SIGSEGV, signalHandler);
@@ -195,7 +197,7 @@ int main(int argc, const char** argv)
 	if (application->create(
 		defaultSettings,
 		settings,
-		0,
+		sysapp,
 		0
 	))
 	{
