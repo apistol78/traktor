@@ -45,7 +45,7 @@ public:
 		bool standAlone
 	);
 
-	virtual bool execute(IProgressListener* progressListener);
+	virtual bool execute(IProgressListener* progressListener) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< db::Database > m_database;

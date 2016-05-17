@@ -16,11 +16,11 @@ class StreamInput : public IInput
 public:
 	StreamInput(IStream* stream, IEncoding* encoding);
 
-	virtual bool endOfFile();
+	virtual bool endOfFile() T_OVERRIDE T_FINAL;
 
-	virtual std::wstring readChar();
+	virtual std::wstring readChar() T_OVERRIDE T_FINAL;
 
-	virtual std::wstring readLn();
+	virtual std::wstring readLn() T_OVERRIDE T_FINAL;
 
 private:
 	Ref< IStream > m_stream;

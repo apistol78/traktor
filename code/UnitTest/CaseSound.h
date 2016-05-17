@@ -9,7 +9,7 @@ namespace traktor
 class CaseSound : public Case
 {
 public:
-	virtual void run();
+	virtual void run() T_OVERRIDE T_FINAL;
 };
 
 }

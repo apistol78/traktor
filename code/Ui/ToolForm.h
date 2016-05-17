@@ -33,7 +33,7 @@ public:
 
 	void center();
 
-	virtual bool acceptLayout() const;
+	virtual bool acceptLayout() const T_OVERRIDE;
 };
 
 	}

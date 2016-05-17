@@ -26,7 +26,7 @@ class T_DLLCLASS UnwrapUV : public IModelOperation
 public:
 	UnwrapUV(int32_t channel, float margin, float ustep, float vstep);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_channel;

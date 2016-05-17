@@ -73,19 +73,19 @@ class T_DLLCLASS ScriptEditorPage
 public:
 	ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
-	virtual bool create(ui::Container* parent);
+	virtual bool create(ui::Container* parent) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void activate();
+	virtual void activate() T_OVERRIDE T_FINAL;
 
-	virtual void deactivate();
+	virtual void deactivate() T_OVERRIDE T_FINAL;
 
-	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
+	virtual bool dropInstance(db::Instance* instance, const ui::Point& position) T_OVERRIDE T_FINAL;
 
-	virtual bool handleCommand(const ui::Command& command);
+	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
-	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId);
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) T_OVERRIDE T_FINAL;
 
 private:
 	editor::IEditor* m_editor;
@@ -116,29 +116,29 @@ private:
 	/*! \name IErrorCallback */
 	/*! \{ */
 
-	virtual void syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message);
+	virtual void syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message) T_OVERRIDE T_FINAL;
 
-	virtual void otherError(const std::wstring& message);
+	virtual void otherError(const std::wstring& message) T_OVERRIDE T_FINAL;
 
 	/*! \} */
 
 	/*! \name IScriptDebugger::IListener */
 	/*! \{ */
 
-	virtual void debugeeStateChange(IScriptDebugger* scriptDebugger);
+	virtual void debugeeStateChange(IScriptDebugger* scriptDebugger) T_OVERRIDE T_FINAL;
 
 	/*! \} */
 
 	/*! \name IScriptDebuggerSessions::IListener */
 	/*! \{ */
 
-	virtual void notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler);
+	virtual void notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) T_OVERRIDE T_FINAL;
 
-	virtual void notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler);
+	virtual void notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) T_OVERRIDE T_FINAL;
 
-	virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber);
+	virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
-	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber);
+	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
 	/*! \} */
 

@@ -32,7 +32,7 @@ public:
 
 	std::wstring getValue(const wchar_t* const name) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 private:
 	struct Group

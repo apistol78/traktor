@@ -18,48 +18,48 @@ public:
 
 	virtual void getCommands(
 		std::list< ui::Command >& outCommands
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void getGuideDrawIds(
 		std::set< std::wstring >& outIds
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createEditorPlugins(
 		SceneEditorContext* context,
 		RefArray< ISceneEditorPlugin >& outEditorPlugins
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createResourceFactories(
 		SceneEditorContext* context,
 		RefArray< const resource::IResourceFactory >& outResourceFactories
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createEntityFactories(
 		SceneEditorContext* context,
 		RefArray< const world::IEntityFactory >& outEntityFactories
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createEntityRenderers(
 		SceneEditorContext* context,
 		render::IRenderView* renderView,
 		render::PrimitiveRenderer* primitiveRenderer,
 		RefArray< world::IEntityRenderer >& outEntityRenderers
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createControllerEditorFactories(
 		SceneEditorContext* context,
 		RefArray< const ISceneControllerEditorFactory >& outControllerEditorFactories
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createEntityEditorFactories(
 		SceneEditorContext* context,
 		RefArray< const IEntityEditorFactory >& outEntityEditorFactories
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual Ref< world::EntityData > createEntityData(
 		SceneEditorContext* context,
 		db::Instance* instance
-	) const;
+	) const T_OVERRIDE T_FINAL;
 };
 
 	}

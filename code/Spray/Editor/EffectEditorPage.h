@@ -70,19 +70,19 @@ class T_DLLCLASS EffectEditorPage : public editor::IEditorPage
 public:
 	EffectEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
-	virtual bool create(ui::Container* parent);
+	virtual bool create(ui::Container* parent) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void activate();
+	virtual void activate() T_OVERRIDE T_FINAL;
 
-	virtual void deactivate();
+	virtual void deactivate() T_OVERRIDE T_FINAL;
 
-	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
+	virtual bool dropInstance(db::Instance* instance, const ui::Point& position) T_OVERRIDE T_FINAL;
 
-	virtual bool handleCommand(const ui::Command& command);
+	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
-	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId);
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) T_OVERRIDE T_FINAL;
 
 private:
 	editor::IEditor* m_editor;

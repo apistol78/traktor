@@ -51,7 +51,7 @@ public:
 
 	uint32_t getReason() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_pipelineTypeName;

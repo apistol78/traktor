@@ -21,11 +21,11 @@ class T_DLLCLASS ExportHeightfieldAsMeshWizardTool : public editor::IWizardTool
 	T_RTTI_CLASS;
 
 public:
-	virtual std::wstring getDescription() const;
+	virtual std::wstring getDescription() const T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getFlags() const;
+	virtual uint32_t getFlags() const T_OVERRIDE T_FINAL;
 
-	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance);
+	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance) T_OVERRIDE T_FINAL;
 };
 
 	}

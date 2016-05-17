@@ -23,7 +23,7 @@ class T_DLLCLASS FlashMovieAsset : public editor::Asset
 public:
 	FlashMovieAsset();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class FlashPipeline;

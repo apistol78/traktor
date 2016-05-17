@@ -30,11 +30,11 @@ class T_DLLCLASS DefaultPipeline : public IPipeline
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const IPipelineSettings* settings);
+	virtual bool create(const IPipelineSettings* settings) T_OVERRIDE;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE;
 
-	virtual TypeInfoSet getAssetTypes() const;
+	virtual TypeInfoSet getAssetTypes() const T_OVERRIDE;
 
 	virtual bool buildDependencies(
 		IPipelineDepends* pipelineDepends,
@@ -42,7 +42,7 @@ public:
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
 		const Guid& outputGuid
-	) const;
+	) const T_OVERRIDE;
 
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
@@ -55,12 +55,12 @@ public:
 		const Guid& outputGuid,
 		const Object* buildParams,
 		uint32_t reason
-	) const;
+	) const T_OVERRIDE;
 
 	virtual Ref< ISerializable > buildOutput(
 		IPipelineBuilder* pipelineBuilder,
 		const ISerializable* sourceAsset
-	) const;
+	) const T_OVERRIDE;
 };
 
 	}

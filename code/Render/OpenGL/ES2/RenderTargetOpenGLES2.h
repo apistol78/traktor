@@ -29,21 +29,21 @@ public:
 
 	virtual ~RenderTargetOpenGLES2();
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual ITexture* resolve();
+	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
 
-	virtual int getWidth() const;
+	virtual int getWidth() const T_OVERRIDE T_FINAL;
 	
-	virtual int getHeight() const;
+	virtual int getHeight() const T_OVERRIDE T_FINAL;
 
-	virtual bool lock(int level, Lock& lock);
+	virtual bool lock(int level, Lock& lock) T_OVERRIDE T_FINAL;
 
-	virtual void unlock(int level);
+	virtual void unlock(int level) T_OVERRIDE T_FINAL;
 
-	virtual void bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture);
+	virtual void bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture) T_OVERRIDE T_FINAL;
 
-	virtual void bindSize(GLint locationSize);
+	virtual void bindSize(GLint locationSize) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ContextOpenGLES2 > m_context;

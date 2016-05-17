@@ -26,17 +26,17 @@ public:
 
 	void endSession(TargetScriptDebugger* scriptDebugger, TargetScriptProfiler* scriptProfiler);
 
-	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber);
+	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
-	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber);
+	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
-	virtual bool removeAllBreakpoints(const Guid& scriptId);
+	virtual bool removeAllBreakpoints(const Guid& scriptId) T_OVERRIDE T_FINAL;
 
-	virtual bool haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const;
+	virtual bool haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const T_OVERRIDE T_FINAL;
 
-	virtual void addListener(IListener* listener);
+	virtual void addListener(IListener* listener) T_OVERRIDE T_FINAL;
 
-	virtual void removeListener(IListener* listener);
+	virtual void removeListener(IListener* listener) T_OVERRIDE T_FINAL;
 
 private:
 	struct Session

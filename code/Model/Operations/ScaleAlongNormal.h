@@ -26,7 +26,7 @@ class T_DLLCLASS ScaleAlongNormal : public IModelOperation
 public:
 	ScaleAlongNormal(float distance);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	float m_distance;

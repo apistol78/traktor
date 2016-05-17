@@ -43,9 +43,9 @@ class TerrainEditorPlugin : public scene::ISceneEditorPlugin
 public:
 	TerrainEditorPlugin(scene::SceneEditorContext* context);
 
-	virtual bool create(ui::Widget* parent, ui::custom::ToolBar* toolBar);
+	virtual bool create(ui::Widget* parent, ui::custom::ToolBar* toolBar) T_OVERRIDE T_FINAL;
 
-	virtual bool handleCommand(const ui::Command& command);
+	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
 private:
 	scene::SceneEditorContext* m_context;

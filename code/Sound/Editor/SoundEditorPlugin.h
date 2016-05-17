@@ -25,17 +25,17 @@ class SoundEditorPlugin : public editor::IEditorPlugin
 public:
 	SoundEditorPlugin(editor::IEditor* editor);
 
-	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site);
+	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual bool handleCommand(const ui::Command& command, bool result);
+	virtual bool handleCommand(const ui::Command& command, bool result) T_OVERRIDE T_FINAL;
 
-	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId);
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) T_OVERRIDE T_FINAL;
 
-	virtual void handleWorkspaceOpened();
+	virtual void handleWorkspaceOpened() T_OVERRIDE T_FINAL;
 
-	virtual void handleWorkspaceClosed();
+	virtual void handleWorkspaceClosed() T_OVERRIDE T_FINAL;
 
 private:
 	editor::IEditor* m_editor;

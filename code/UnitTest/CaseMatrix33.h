@@ -9,7 +9,7 @@ namespace traktor
 class CaseMatrix33 : public Case
 {
 public:
-	virtual void run();
+	virtual void run() T_OVERRIDE T_FINAL;
 };
 
 }

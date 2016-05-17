@@ -15,11 +15,11 @@ class MessageBoxCocoa : public IMessageBox
 public:
 	MessageBoxCocoa(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::wstring& message, const std::wstring& caption, int style);
+	virtual bool create(IWidget* parent, const std::wstring& message, const std::wstring& caption, int style) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual int showModal();
+	virtual int showModal() T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_message;

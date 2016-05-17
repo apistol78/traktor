@@ -31,47 +31,47 @@ class T_DLLCLASS RenderSystemOpenGLES2 : public IRenderSystem
 public:
 	RenderSystemOpenGLES2();
 
-	virtual bool create(const RenderSystemDesc& desc);
+	virtual bool create(const RenderSystemDesc& desc) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual bool reset(const RenderSystemDesc& desc);
+	virtual bool reset(const RenderSystemDesc& desc) T_OVERRIDE T_FINAL;
 
-	virtual void getInformation(RenderSystemInformation& outInfo) const;
+	virtual void getInformation(RenderSystemInformation& outInfo) const T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getDisplayModeCount() const;
+	virtual uint32_t getDisplayModeCount() const T_OVERRIDE T_FINAL;
 
-	virtual DisplayMode getDisplayMode(uint32_t index) const;
+	virtual DisplayMode getDisplayMode(uint32_t index) const T_OVERRIDE T_FINAL;
 
-	virtual DisplayMode getCurrentDisplayMode() const;
+	virtual DisplayMode getCurrentDisplayMode() const T_OVERRIDE T_FINAL;
 
-	virtual float getDisplayAspectRatio() const;
+	virtual float getDisplayAspectRatio() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc);
+	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc);
+	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc) T_OVERRIDE T_FINAL;
 
-	virtual Ref< VertexBuffer > createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
+	virtual Ref< VertexBuffer > createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IndexBuffer > createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic);
+	virtual Ref< IndexBuffer > createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic) T_OVERRIDE T_FINAL;
 
-	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc);
+	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc) T_OVERRIDE T_FINAL;
 
-	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc);
+	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc);
+	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc) T_OVERRIDE T_FINAL;
 
-	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
+	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag);
+	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IProgramCompiler > createProgramCompiler() const;
+	virtual Ref< IProgramCompiler > createProgramCompiler() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< ITimeQuery > createTimeQuery() const;
+	virtual Ref< ITimeQuery > createTimeQuery() const T_OVERRIDE T_FINAL;
 
-	virtual void purge();
+	virtual void purge() T_OVERRIDE T_FINAL;
 
-	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
+	virtual void getStatistics(RenderSystemStatistics& outStatistics) const T_OVERRIDE T_FINAL;
 
 private:
 	SystemApplication m_sysapp;

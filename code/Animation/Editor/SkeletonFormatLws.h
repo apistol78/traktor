@@ -17,7 +17,7 @@ class SkeletonFormatLws : public ISkeletonFormat
 public:
 	Ref< Skeleton > create(LwsDocument* document) const;
 
-	virtual Ref< Skeleton > import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const;
+	virtual Ref< Skeleton > import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const T_OVERRIDE T_FINAL;
 };
 
 	}

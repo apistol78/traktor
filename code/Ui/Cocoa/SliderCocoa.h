@@ -16,13 +16,13 @@ public:
 	
 	// ISlider
 
-	virtual bool create(IWidget* parent, int style);
+	virtual bool create(IWidget* parent, int style) T_OVERRIDE T_FINAL;
 
-	virtual void setRange(int minValue, int maxValue);
+	virtual void setRange(int minValue, int maxValue) T_OVERRIDE T_FINAL;
 
-	virtual void setValue(int value);
+	virtual void setValue(int value) T_OVERRIDE T_FINAL;
 
-	virtual int getValue() const;
+	virtual int getValue() const T_OVERRIDE T_FINAL;
 };
 
 	}

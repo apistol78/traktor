@@ -13,7 +13,7 @@ class MeshShapeRenderer : public IPhysicsShapeRenderer
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfo& getDescType() const;
+	virtual const TypeInfo& getDescType() const T_OVERRIDE T_FINAL;
 
 	virtual void draw(
 		resource::IResourceManager* resourceManager,
@@ -21,7 +21,7 @@ public:
 		const Transform& body1Transform0,
 		const Transform& body1Transform,
 		const ShapeDesc* shapeDesc
-	) const;
+	) const T_OVERRIDE T_FINAL;
 };
 
 	}

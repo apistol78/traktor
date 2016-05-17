@@ -27,7 +27,7 @@ public:
 	const RefArray< BankControlGrain >& getGrains() const;
 
 protected:
-	virtual void layoutCells(const ui::Rect& rc);
+	virtual void layoutCells(const ui::Rect& rc) T_OVERRIDE T_FINAL;
 
 private:
 	RefArray< BankControlGrain > m_cells;

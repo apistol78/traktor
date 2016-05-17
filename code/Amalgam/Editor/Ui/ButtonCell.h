@@ -22,11 +22,11 @@ public:
 
 	void setEnable(bool enable);
 
-	virtual void mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position) T_FINAL;
+	virtual void mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position)  T_OVERRIDE T_FINAL;
 
-	virtual void mouseUp(ui::MouseButtonUpEvent* event, const ui::Point& position) T_FINAL;
+	virtual void mouseUp(ui::MouseButtonUpEvent* event, const ui::Point& position)  T_OVERRIDE T_FINAL;
 
-	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect) T_FINAL;
+	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect)  T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ui::IBitmap > m_bitmap;

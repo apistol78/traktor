@@ -29,9 +29,9 @@ class T_DLLCLASS ScriptPipeline : public editor::DefaultPipeline
 public:
 	virtual ~ScriptPipeline();
 
-	virtual bool create(const editor::IPipelineSettings* settings);
+	virtual bool create(const editor::IPipelineSettings* settings) T_OVERRIDE T_FINAL;
 
-	virtual TypeInfoSet getAssetTypes() const;
+	virtual TypeInfoSet getAssetTypes() const T_OVERRIDE T_FINAL;
 
 	virtual bool buildDependencies(
 		editor::IPipelineDepends* pipelineDepends,
@@ -39,7 +39,7 @@ public:
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
 		const Guid& outputGuid
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual bool buildOutput(
 		editor::IPipelineBuilder* pipelineBuilder,
@@ -52,7 +52,7 @@ public:
 		const Guid& outputGuid,
 		const Object* buildParams,
 		uint32_t reason
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 private:
 	Ref< IScriptManager > m_scriptManager;

@@ -22,7 +22,7 @@ class TextEditorDialog : public ui::ConfigDialog
 public:
 	bool create(ui::Widget* parent, const std::wstring& initialText);
 
-	std::wstring getText() const;
+	virtual std::wstring getText() const T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ui::RichEdit > m_edit;

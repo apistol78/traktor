@@ -30,9 +30,9 @@ class T_DLLCLASS Tab : public Widget
 public:
 	bool create(Widget* parent);
 
-	virtual Rect getInnerRect() const;
+	virtual Rect getInnerRect() const T_OVERRIDE T_FINAL;
 	
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE T_FINAL;
 	
 	int addPage(TabPage* page);
 

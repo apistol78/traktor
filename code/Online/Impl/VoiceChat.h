@@ -63,7 +63,7 @@ private:
 
 	virtual ~VoiceChat();
 
-	virtual void onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples, uint32_t samplesCount, uint32_t sampleRate);
+	virtual void onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples, uint32_t samplesCount, uint32_t sampleRate) T_OVERRIDE T_FINAL;
 };
 
 	}

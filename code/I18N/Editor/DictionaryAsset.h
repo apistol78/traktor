@@ -23,7 +23,7 @@ class T_DLLCLASS DictionaryAsset : public editor::Asset
 public:
 	DictionaryAsset();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	int32_t getKeyColumn() const { return m_keyColumn; }
 

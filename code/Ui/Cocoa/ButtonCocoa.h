@@ -20,17 +20,17 @@ public:
 	
 	// IButton
 
-	virtual bool create(IWidget* parent, const std::wstring& text, int style);
+	virtual bool create(IWidget* parent, const std::wstring& text, int style) T_OVERRIDE T_FINAL;
 
-	virtual void setState(bool state);
+	virtual void setState(bool state) T_OVERRIDE T_FINAL;
 
-	virtual bool getState() const;
+	virtual bool getState() const T_OVERRIDE T_FINAL;
 	
 	// ITargetProxyCallback
 	
-	virtual void targetProxy_Action(void* controlId);
+	virtual void targetProxy_Action(void* controlId) T_OVERRIDE T_FINAL;
 	
-	virtual void targetProxy_doubleAction(void* controlId);
+	virtual void targetProxy_doubleAction(void* controlId) T_OVERRIDE T_FINAL;
 };
 
 	}

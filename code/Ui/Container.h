@@ -31,13 +31,13 @@ public:
 
 	virtual void fit();
 
-	virtual void update(const Rect* rc = 0, bool immediate = false);
+	virtual void update(const Rect* rc = 0, bool immediate = false) T_OVERRIDE;
 	
-	virtual Size getMinimumSize() const;
+	virtual Size getMinimumSize() const T_OVERRIDE;
 	
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE;
 	
-	virtual Size getMaximumSize() const;
+	virtual Size getMaximumSize() const T_OVERRIDE;
 
 	Ref< Layout > getLayout() const;
 	

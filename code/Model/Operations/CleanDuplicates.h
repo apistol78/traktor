@@ -26,7 +26,7 @@ class T_DLLCLASS CleanDuplicates : public IModelOperation
 public:
 	CleanDuplicates(float positionDistance);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	float m_positionDistance;

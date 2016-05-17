@@ -28,7 +28,7 @@ public:
 
 	Quantize(const Vector4& step);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	Vector4 m_step;

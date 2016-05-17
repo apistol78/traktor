@@ -29,9 +29,9 @@ public:
 
 	ui::Size getSize() const;
 
-	virtual void placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect);
+	virtual void placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect) T_OVERRIDE T_FINAL;
 
-	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect);
+	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ProgressCell > m_progressCell;

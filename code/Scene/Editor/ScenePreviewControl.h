@@ -45,7 +45,7 @@ public:
 
 	bool create(ui::Widget* parent, SceneEditorContext* context);
 
-	void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	void updateWorldRenderer();
 
@@ -53,7 +53,7 @@ public:
 
 	bool getViewIndex(const ui::Point& position, uint32_t& outIndex) const;
 
-	virtual ui::Size getPreferedSize() const;
+	virtual ui::Size getPreferedSize() const T_OVERRIDE T_FINAL;
 
 private:
 	enum SplitType

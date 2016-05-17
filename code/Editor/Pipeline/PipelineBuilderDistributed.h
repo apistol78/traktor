@@ -39,29 +39,29 @@ public:
 		IListener* listener
 	);
 
-	virtual bool build(const IPipelineDependencySet* dependencySet, bool rebuild);
+	virtual bool build(const IPipelineDependencySet* dependencySet, bool rebuild) T_OVERRIDE T_FINAL;
 
-	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset);
+	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset) T_OVERRIDE T_FINAL;
 
-	virtual bool buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams);
+	virtual bool buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams) T_OVERRIDE T_FINAL;
 
-	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset);
+	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset) T_OVERRIDE T_FINAL;
 
-	virtual Ref< db::Database > getSourceDatabase() const;
+	virtual Ref< db::Database > getSourceDatabase() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< db::Database > getOutputDatabase() const;
+	virtual Ref< db::Database > getOutputDatabase() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid);
+	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) T_OVERRIDE T_FINAL;
 
-	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName);
+	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IStream > createTemporaryFile(const std::wstring& fileName);
+	virtual Ref< IStream > createTemporaryFile(const std::wstring& fileName) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName);
+	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid);
+	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< PipelineAgentsManager > m_agentsManager;

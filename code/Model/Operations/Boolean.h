@@ -30,7 +30,7 @@ public:
 		const Model& modelB, const Transform& modelTransformB
 	);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	const Model& m_modelA;

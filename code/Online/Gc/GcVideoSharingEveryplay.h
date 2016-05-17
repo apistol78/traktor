@@ -17,11 +17,11 @@ class GcVideoSharingEveryplay : public GcVideoSharing
 public:
 	bool create(const GcGameConfiguration& configuration);
 
-	virtual bool beginCapture(int32_t duration);
+	virtual bool beginCapture(int32_t duration) T_OVERRIDE T_FINAL;
 
-	virtual void endCapture(const PropertyGroup* metaData);
+	virtual void endCapture(const PropertyGroup* metaData) T_OVERRIDE T_FINAL;
 
-	virtual bool showShareUI();
+	virtual bool showShareUI() T_OVERRIDE T_FINAL;
 };
 
 	}

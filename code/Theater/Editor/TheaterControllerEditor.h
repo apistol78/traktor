@@ -43,19 +43,19 @@ class TheaterControllerEditor : public scene::ISceneControllerEditor
 public:
 	TheaterControllerEditor();
 
-	virtual bool create(scene::SceneEditorContext* context, ui::Container* parent);
+	virtual bool create(scene::SceneEditorContext* context, ui::Container* parent) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void entityRemoved(scene::EntityAdapter* entityAdapter);
+	virtual void entityRemoved(scene::EntityAdapter* entityAdapter) T_OVERRIDE T_FINAL;
 
-	virtual void propertiesChanged();
+	virtual void propertiesChanged() T_OVERRIDE T_FINAL;
 
-	virtual bool handleCommand(const ui::Command& command);
+	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
-	virtual void update();
+	virtual void update() T_OVERRIDE T_FINAL;
 
-	virtual void draw(render::PrimitiveRenderer* primitiveRenderer);
+	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ui::custom::ToolBar > m_toolBarActs;

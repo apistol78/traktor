@@ -31,7 +31,7 @@ public:
 
 	const DeployTool& getDeployTool() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_iconIndex;

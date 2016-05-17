@@ -31,7 +31,7 @@ class T_DLLCLASS LayerEntityData : public world::GroupEntityData
 public:
 	LayerEntityData();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	void setVisible(bool visible) { m_visible = visible; }
 

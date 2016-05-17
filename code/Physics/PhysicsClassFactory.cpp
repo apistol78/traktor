@@ -66,7 +66,7 @@ public:
 	{
 	}
 
-	virtual void notify(const CollisionInfo& collisionInfo)
+	virtual void notify(const CollisionInfo& collisionInfo) T_OVERRIDE T_FINAL
 	{
 		Any argv[] =
 		{

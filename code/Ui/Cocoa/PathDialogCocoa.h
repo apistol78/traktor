@@ -17,11 +17,11 @@ class PathDialogCocoa : public IPathDialog
 public:
 	PathDialogCocoa(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::wstring& title);
+	virtual bool create(IWidget* parent, const std::wstring& title) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual int showModal(Path& outPath);
+	virtual int showModal(Path& outPath) T_OVERRIDE T_FINAL;
 
 private:
 	EventSubject* m_owner;

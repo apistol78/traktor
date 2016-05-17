@@ -13,7 +13,7 @@ class AnimationFormatBvh : public IAnimationFormat
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Animation > import(IStream* stream, const Vector4& offset, bool invertX, bool invertZ, bool autoCenterKeyPoses) const;
+	virtual Ref< Animation > import(IStream* stream, const Vector4& offset, bool invertX, bool invertZ, bool autoCenterKeyPoses) const T_OVERRIDE T_FINAL;
 };
 
 	}

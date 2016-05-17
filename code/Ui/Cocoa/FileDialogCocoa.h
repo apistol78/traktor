@@ -19,13 +19,13 @@ public:
 
 	virtual ~FileDialogCocoa();
 
-	virtual bool create(IWidget* parent, const std::wstring& title, const std::wstring& filters, bool save);
+	virtual bool create(IWidget* parent, const std::wstring& title, const std::wstring& filters, bool save) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual int showModal(Path& outPath);
+	virtual int showModal(Path& outPath) T_OVERRIDE T_FINAL;
 
-	virtual int showModal(std::vector< Path >& outPaths);
+	virtual int showModal(std::vector< Path >& outPaths) T_OVERRIDE T_FINAL;
 
 private:
 	EventSubject* m_owner;

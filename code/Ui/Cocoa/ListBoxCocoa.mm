@@ -48,7 +48,7 @@ bool ListBoxCocoa::create(IWidget* parent, int style)
 	
 	[contentView addSubview: m_view];
 	
-	return class_t::create();
+	return class_t::internalCreate();
 }
 
 int ListBoxCocoa::add(const std::wstring& item)

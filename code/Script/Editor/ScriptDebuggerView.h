@@ -48,7 +48,7 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	bool handleCommand(const ui::Command& command);
 
@@ -68,7 +68,7 @@ private:
 	/*! \name IScriptDebugger::IListener */
 	/*! \{ */
 
-	virtual void debugeeStateChange(IScriptDebugger* scriptDebugger);
+	virtual void debugeeStateChange(IScriptDebugger* scriptDebugger) T_OVERRIDE T_FINAL;
 
 	/*! \} */
 

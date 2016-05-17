@@ -16,7 +16,7 @@ public:
 	
 	// IStatic implementation
 
-	virtual bool create(IWidget* parent, const std::wstring& text);
+	virtual bool create(IWidget* parent, const std::wstring& text) T_OVERRIDE T_FINAL;
 };
 
 	}

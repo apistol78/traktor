@@ -15,11 +15,11 @@ public:
 	
 	virtual ~SharedMemoryOsX();
 	
-	virtual Ref< IStream > read(bool exclusive);
+	virtual Ref< IStream > read(bool exclusive) T_OVERRIDE T_FINAL;
 	
-	virtual Ref< IStream > write();
+	virtual Ref< IStream > write() T_OVERRIDE T_FINAL;
 	
-	virtual bool clear();
+	virtual bool clear() T_OVERRIDE T_FINAL;
 	
 private:
 	uint32_t m_size;

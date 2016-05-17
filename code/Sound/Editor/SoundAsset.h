@@ -24,7 +24,7 @@ class T_DLLCLASS SoundAsset : public editor::Asset
 public:
 	SoundAsset();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	float getPresence() const { return m_presence; }
 

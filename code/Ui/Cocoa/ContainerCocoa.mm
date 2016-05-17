@@ -30,7 +30,7 @@ bool ContainerCocoa::create(IWidget* parent, int style)
 	
 	[contentView addSubview: m_control];
 
-	return class_t::create();
+	return class_t::internalCreate();
 }
 
 bool ContainerCocoa::event_drawRect(const NSRect& rect)

@@ -62,17 +62,17 @@ class BankAssetEditor : public editor::IObjectEditor
 public:
 	BankAssetEditor(editor::IEditor* editor);
 
-	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object);
+	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void apply();
+	virtual void apply() T_OVERRIDE T_FINAL;
 
-	virtual bool handleCommand(const ui::Command& command);
+	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
-	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId);
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) T_OVERRIDE T_FINAL;
 
-	virtual ui::Size getPreferredSize() const;
+	virtual ui::Size getPreferredSize() const T_OVERRIDE T_FINAL;
 
 private:
 	editor::IEditor* m_editor;

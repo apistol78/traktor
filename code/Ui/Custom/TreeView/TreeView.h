@@ -83,7 +83,7 @@ private:
 	Ref< TreeViewItem > m_editItem;
 	bool m_autoEdit;
 
-	virtual void layoutCells(const Rect& rc);
+	virtual void layoutCells(const Rect& rc) T_OVERRIDE;
 
 	void beginEdit(TreeViewItem* item);
 

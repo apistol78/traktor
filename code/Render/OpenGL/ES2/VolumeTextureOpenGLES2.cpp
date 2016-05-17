@@ -226,15 +226,6 @@ int VolumeTextureOpenGLES2::getDepth() const
 	return m_depth;
 }
 
-bool VolumeTextureOpenGLES2::lock(int side, int level, Lock& lock)
-{
-	return false;
-}
-
-void VolumeTextureOpenGLES2::unlock(int side, int level)
-{
-}
-
 void VolumeTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
 {
 #if !defined(T_OFFLINE_ONLY) && !defined(__IOS__) && !defined(__PNACL__)

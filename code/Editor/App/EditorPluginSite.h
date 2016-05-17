@@ -41,15 +41,15 @@ public:
 
 	void handleWorkspaceClosed();
 
-	virtual void setPropertyObject(Object* properties);
+	virtual void setPropertyObject(Object* properties) T_OVERRIDE T_FINAL;
 
-	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south);
+	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south) T_OVERRIDE T_FINAL;
 
-	virtual void destroyAdditionalPanel(ui::Widget* widget);
+	virtual void destroyAdditionalPanel(ui::Widget* widget) T_OVERRIDE T_FINAL;
 
-	virtual void showAdditionalPanel(ui::Widget* widget);
+	virtual void showAdditionalPanel(ui::Widget* widget) T_OVERRIDE T_FINAL;
 
-	virtual void hideAdditionalPanel(ui::Widget* widget);
+	virtual void hideAdditionalPanel(ui::Widget* widget) T_OVERRIDE T_FINAL;
 
 private:
 	EditorForm* m_editor;

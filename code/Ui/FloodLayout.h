@@ -29,9 +29,9 @@ public:
 
 	FloodLayout(const Size& margin);
 	
-	virtual bool fit(Widget* widget, const Size& bounds, Size& result);
+	virtual bool fit(Widget* widget, const Size& bounds, Size& result) T_OVERRIDE;
 	
-	virtual void update(Widget* widget);
+	virtual void update(Widget* widget) T_OVERRIDE;
 	
 private:
 	Size m_margin;

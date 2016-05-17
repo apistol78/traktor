@@ -23,7 +23,7 @@ class T_DLLCLASS OcclusionLayerAttribute : public world::ILayerAttribute
 public:
 	OcclusionLayerAttribute();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	bool trace() const { return m_trace; }
 

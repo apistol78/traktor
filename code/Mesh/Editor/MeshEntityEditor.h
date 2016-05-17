@@ -23,13 +23,13 @@ class T_DLLCLASS MeshEntityEditor : public scene::DefaultEntityEditor
 public:
 	MeshEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
-	virtual bool isPickable() const;
+	virtual bool isPickable() const T_OVERRIDE T_FINAL;
 
 	virtual bool queryRay(
 		const Vector4& worldRayOrigin,
 		const Vector4& worldRayDirection,
 		Scalar& outDistance
-	) const;
+	) const T_OVERRIDE T_FINAL;
 };
 
 	}

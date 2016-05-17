@@ -26,9 +26,9 @@ class TargetScriptProfiler : public script::IScriptProfiler
 public:
 	TargetScriptProfiler(net::BidirectionalObjectTransport* transport);
 
-	virtual void addListener(IListener* listener);
+	virtual void addListener(IListener* listener) T_OVERRIDE T_FINAL;
 
-	virtual void removeListener(IListener* listener);
+	virtual void removeListener(IListener* listener) T_OVERRIDE T_FINAL;
 
 	void notifyListeners(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
 

@@ -28,7 +28,7 @@ class T_DLLCLASS ReduceSimplygon : public IModelOperation
 public:
 	ReduceSimplygon(float target);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	float m_target;

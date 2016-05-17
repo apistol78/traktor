@@ -20,25 +20,25 @@ public:
 
 	virtual ~Document();
 
-	virtual void editInstance(db::Instance* instance, ISerializable* object);
+	virtual void editInstance(db::Instance* instance, ISerializable* object) T_OVERRIDE T_FINAL;
 
-	virtual bool containInstance(db::Instance* instance) const;
+	virtual bool containInstance(db::Instance* instance) const T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getInstanceCount() const;
+	virtual uint32_t getInstanceCount() const T_OVERRIDE T_FINAL;
 
-	virtual db::Instance* getInstance(uint32_t index) const;
+	virtual db::Instance* getInstance(uint32_t index) const T_OVERRIDE T_FINAL;
 
-	virtual ISerializable* getObject(uint32_t index) const;
+	virtual ISerializable* getObject(uint32_t index) const T_OVERRIDE T_FINAL;
 
-	virtual bool setObject(uint32_t index, ISerializable* object);
+	virtual bool setObject(uint32_t index, ISerializable* object) T_OVERRIDE T_FINAL;
 
-	virtual void setModified();
+	virtual void setModified() T_OVERRIDE T_FINAL;
 
-	virtual void push();
+	virtual void push() T_OVERRIDE T_FINAL;
 
-	virtual bool undo();
+	virtual bool undo() T_OVERRIDE T_FINAL;
 
-	virtual bool redo();
+	virtual bool redo() T_OVERRIDE T_FINAL;
 
 	bool save();
 

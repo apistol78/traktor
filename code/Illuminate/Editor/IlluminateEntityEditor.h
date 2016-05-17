@@ -23,13 +23,13 @@ class T_DLLCLASS IlluminateEntityEditor : public scene::DefaultEntityEditor
 public:
 	IlluminateEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
-	virtual bool isPickable() const;
+	virtual bool isPickable() const T_OVERRIDE T_FINAL;
 
-	virtual bool isGroup() const;
+	virtual bool isGroup() const T_OVERRIDE T_FINAL;
 
-	virtual bool addChildEntity(scene::EntityAdapter* childEntityAdapter) const;
+	virtual bool addChildEntity(scene::EntityAdapter* childEntityAdapter) const T_OVERRIDE T_FINAL;
 
-	virtual bool removeChildEntity(scene::EntityAdapter* childEntityAdapter) const;
+	virtual bool removeChildEntity(scene::EntityAdapter* childEntityAdapter) const T_OVERRIDE T_FINAL;
 };
 
 	}

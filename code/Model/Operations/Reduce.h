@@ -26,7 +26,7 @@ class T_DLLCLASS Reduce : public IModelOperation
 public:
 	Reduce(float target);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	float m_target;

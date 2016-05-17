@@ -51,7 +51,7 @@ public:
 
 	bool create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	Ref< db::Instance > getInstance();
 

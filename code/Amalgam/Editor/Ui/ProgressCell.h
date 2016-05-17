@@ -17,7 +17,7 @@ public:
 
 	void setProgress(int32_t progress);
 
-	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect);
+	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_text;

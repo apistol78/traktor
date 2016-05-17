@@ -13,9 +13,9 @@ class ImageProcessDefineTargetFacade : public IImageProcessDefineFacade
 	T_RTTI_CLASS;
 
 public:
-	virtual int32_t getImage(const ImageProcessDefine* definition) const;
+	virtual int32_t getImage(const ImageProcessDefine* definition) const T_OVERRIDE T_FINAL;
 
-	virtual std::wstring getText(const ImageProcessDefine* definition) const;
+	virtual std::wstring getText(const ImageProcessDefine* definition) const T_OVERRIDE T_FINAL;
 };
 
 	}

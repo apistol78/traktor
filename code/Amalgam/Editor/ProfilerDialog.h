@@ -23,7 +23,7 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	void destroy();
+	virtual void destroy() T_OVERRIDE;
 
 private:
 	Ref< TargetConnection > m_connection;
