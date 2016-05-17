@@ -306,9 +306,9 @@ void* DialogCocoa::getInternalHandle()
 	return [m_window contentView];
 }
 
-void* DialogCocoa::getSystemHandle()
+SystemWindow DialogCocoa::getSystemWindow()
 {
-	return m_window;
+	return SystemWindow(m_window);
 }
 
 void DialogCocoa::event_windowDidMove()

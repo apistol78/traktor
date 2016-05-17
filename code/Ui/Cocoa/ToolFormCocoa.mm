@@ -283,9 +283,9 @@ void* ToolFormCocoa::getInternalHandle()
 	return [m_window contentView];
 }
 
-void* ToolFormCocoa::getSystemHandle()
+SystemWindow ToolFormCocoa::getSystemWindow()
 {
-	return m_window;
+	return SystemWindow(m_window);
 }
 
 void ToolFormCocoa::event_windowDidMove()

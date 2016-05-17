@@ -23,117 +23,117 @@ public:
 	
 	// IForm implementation
 
-	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style);
+	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE;
 
-	virtual void setIcon(ISystemBitmap* icon);
+	virtual void setIcon(ISystemBitmap* icon) T_OVERRIDE;
 
-	virtual void maximize();
+	virtual void maximize() T_OVERRIDE;
 
-	virtual void minimize();
+	virtual void minimize() T_OVERRIDE;
 
-	virtual void restore();
+	virtual void restore() T_OVERRIDE;
 
-	virtual bool isMaximized() const;
+	virtual bool isMaximized() const T_OVERRIDE;
 
-	virtual bool isMinimized() const;
+	virtual bool isMinimized() const T_OVERRIDE;
 	
 	// IWidget implementation
 	
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE;
 
-	virtual void setParent(IWidget* parent);
+	virtual void setParent(IWidget* parent) T_OVERRIDE;
 
-	virtual void setText(const std::wstring& text);
+	virtual void setText(const std::wstring& text) T_OVERRIDE;
 
-	virtual std::wstring getText() const;
+	virtual std::wstring getText() const T_OVERRIDE;
 
-	virtual void setToolTipText(const std::wstring& text);
+	virtual void setToolTipText(const std::wstring& text) T_OVERRIDE;
 
-	virtual void setForeground();
+	virtual void setForeground() T_OVERRIDE;
 
-	virtual bool isForeground() const;
+	virtual bool isForeground() const T_OVERRIDE;
 
-	virtual void setVisible(bool visible);
+	virtual void setVisible(bool visible) T_OVERRIDE;
 
-	virtual bool isVisible(bool includingParents) const;
+	virtual bool isVisible(bool includingParents) const T_OVERRIDE;
 
-	virtual void setActive();
+	virtual void setActive() T_OVERRIDE;
 
-	virtual void setEnable(bool enable);
+	virtual void setEnable(bool enable) T_OVERRIDE;
 
-	virtual bool isEnable() const;
+	virtual bool isEnable() const T_OVERRIDE;
 
-	virtual bool hasFocus() const;
+	virtual bool hasFocus() const T_OVERRIDE;
 
-	virtual bool containFocus() const;
+	virtual bool containFocus() const T_OVERRIDE;
 
-	virtual void setFocus();
+	virtual void setFocus() T_OVERRIDE;
 
-	virtual bool hasCapture() const;
+	virtual bool hasCapture() const T_OVERRIDE;
 
-	virtual void setCapture();
+	virtual void setCapture() T_OVERRIDE;
 
-	virtual void releaseCapture();
+	virtual void releaseCapture() T_OVERRIDE;
 
-	virtual void startTimer(int interval, int id);
+	virtual void startTimer(int interval, int id) T_OVERRIDE;
 	
-	virtual void stopTimer(int id);
+	virtual void stopTimer(int id) T_OVERRIDE;
 
-	virtual void setOutline(const Point* p, int np);
+	virtual void setOutline(const Point* p, int np) T_OVERRIDE;
 
-	virtual void setRect(const Rect& rect);
+	virtual void setRect(const Rect& rect) T_OVERRIDE;
 
-	virtual Rect getRect() const;
+	virtual Rect getRect() const T_OVERRIDE;
 
-	virtual Rect getInnerRect() const;
+	virtual Rect getInnerRect() const T_OVERRIDE;
 
-	virtual Rect getNormalRect() const;
+	virtual Rect getNormalRect() const T_OVERRIDE;
 
-	virtual Size getTextExtent(const std::wstring& text) const;
+	virtual Size getTextExtent(const std::wstring& text) const T_OVERRIDE;
 
-	virtual void setFont(const Font& font);
+	virtual void setFont(const Font& font) T_OVERRIDE;
 
-	virtual Font getFont() const;
+	virtual Font getFont() const T_OVERRIDE;
 
-	virtual void setCursor(Cursor cursor);
+	virtual void setCursor(Cursor cursor) T_OVERRIDE;
 
-	virtual Point getMousePosition(bool relative) const;
+	virtual Point getMousePosition(bool relative) const T_OVERRIDE;
 
-	virtual Point screenToClient(const Point& pt) const;
+	virtual Point screenToClient(const Point& pt) const T_OVERRIDE;
 
-	virtual Point clientToScreen(const Point& pt) const;
+	virtual Point clientToScreen(const Point& pt) const T_OVERRIDE;
 
-	virtual bool hitTest(const Point& pt) const;
+	virtual bool hitTest(const Point& pt) const T_OVERRIDE;
 
-	virtual void setChildRects(const std::vector< IWidgetRect >& childRects);
+	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) T_OVERRIDE;
 
-	virtual Size getMinimumSize() const;
+	virtual Size getMinimumSize() const T_OVERRIDE;
 
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE;
 
-	virtual Size getMaximumSize() const;
+	virtual Size getMaximumSize() const T_OVERRIDE;
 
-	virtual void update(const Rect* rc, bool immediate);
+	virtual void update(const Rect* rc, bool immediate) T_OVERRIDE;
 
-	virtual void* getInternalHandle();
+	virtual void* getInternalHandle() T_OVERRIDE;
 
-	virtual void* getSystemHandle();
+	virtual SystemWindow getSystemWindow() T_OVERRIDE;
 	
 	// INSWindowEventsCallback
 	
-	virtual void event_windowDidMove();
+	virtual void event_windowDidMove() T_OVERRIDE;
 	
-	virtual void event_windowDidResize();
+	virtual void event_windowDidResize() T_OVERRIDE;
 	
-	virtual bool event_windowShouldClose();
+	virtual bool event_windowShouldClose() T_OVERRIDE;
 
-	virtual void event_windowDidBecomeKey();
+	virtual void event_windowDidBecomeKey() T_OVERRIDE;
 	
-	virtual void event_windowDidResignKey();
+	virtual void event_windowDidResignKey() T_OVERRIDE;
 	
-	virtual void event_windowDidBecomeMain();
+	virtual void event_windowDidBecomeMain() T_OVERRIDE;
 	
-	virtual void event_windowDidResignMain();
+	virtual void event_windowDidResignMain() T_OVERRIDE;
 
 private:
 	EventSubject* m_owner;
