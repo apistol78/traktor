@@ -304,9 +304,9 @@ void* FormCocoa::getInternalHandle()
 	return [m_window contentView];
 }
 
-void* FormCocoa::getSystemHandle()
+SystemWindow FormCocoa::getSystemWindow()
 {
-	return m_window;
+	return SystemWindow(m_window);
 }
 
 void FormCocoa::event_windowDidMove()
