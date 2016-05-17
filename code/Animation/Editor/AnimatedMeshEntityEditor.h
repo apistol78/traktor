@@ -23,9 +23,9 @@ class T_DLLCLASS AnimatedMeshEntityEditor : public scene::DefaultEntityEditor
 public:
 	AnimatedMeshEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
-	virtual bool handleCommand(const ui::Command& command);
+	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const T_OVERRIDE T_FINAL;
 
 private:
 	Color4ub m_colorBone;

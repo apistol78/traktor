@@ -23,7 +23,7 @@ class T_DLLCLASS SoundCategory : public ISerializable
 public:
 	SoundCategory();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const Guid& getParent() const { return m_parent; }
 

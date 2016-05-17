@@ -26,7 +26,7 @@ class T_DLLCLASS SortProjectedArea : public IModelOperation
 public:
 	SortProjectedArea(bool insideOut);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	bool m_insideOut;

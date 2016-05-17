@@ -55,7 +55,7 @@ public:
 		render::IRenderSystem* renderSystem
 	);
 
-	void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	Vector2 clientToView(const ui::Point& point) const;
 

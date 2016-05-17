@@ -35,7 +35,7 @@ class T_DLLCLASS Native : public Widget
 public:
 	bool create(void* nativeHandle, Layout* layout = 0);
 
-	virtual void update(const Rect* rc = 0, bool immediate = false);
+	virtual void update(const Rect* rc = 0, bool immediate = false) T_OVERRIDE;
 
 private:
 	Ref< Layout > m_layout;

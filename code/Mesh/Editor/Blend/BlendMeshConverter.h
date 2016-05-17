@@ -11,7 +11,7 @@ namespace traktor
 class BlendMeshConverter : public IMeshConverter
 {
 public:
-	virtual Ref< IMeshResource > createResource() const;
+	virtual Ref< IMeshResource > createResource() const T_OVERRIDE T_FINAL;
 
 	virtual bool convert(
 		const MeshAsset* meshAsset,

@@ -30,17 +30,17 @@ class DefaultObjectEditor
 public:
 	DefaultObjectEditor(IEditor* editor);
 
-	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object);
+	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void apply();
+	virtual void apply() T_OVERRIDE T_FINAL;
 
-	virtual bool handleCommand(const ui::Command& command);
+	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
-	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId);
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) T_OVERRIDE T_FINAL;
 
-	virtual ui::Size getPreferredSize() const;
+	virtual ui::Size getPreferredSize() const T_OVERRIDE T_FINAL;
 
 private:
 	IEditor* m_editor;
@@ -48,7 +48,7 @@ private:
 	Ref< ISerializable > m_object;
 	Ref< ui::custom::AutoPropertyList > m_propertyList;
 
-	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
+	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const T_OVERRIDE T_FINAL;
 
 	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
 };

@@ -20,51 +20,51 @@ public:
 	
 	virtual ~TreeViewItemCocoa();
 	
-	virtual void setText(const std::wstring& text);
+	virtual void setText(const std::wstring& text) T_OVERRIDE T_FINAL;
 	
-	virtual std::wstring getText() const;
+	virtual std::wstring getText() const T_OVERRIDE T_FINAL;
 	
-	virtual void setBold(bool bold);
+	virtual void setBold(bool bold) T_OVERRIDE T_FINAL;
 	
-	virtual bool isBold() const;
+	virtual bool isBold() const T_OVERRIDE T_FINAL;
 	
-	virtual void setImage(int image);
+	virtual void setImage(int image) T_OVERRIDE T_FINAL;
 	
-	virtual int getImage() const;
+	virtual int getImage() const T_OVERRIDE T_FINAL;
 	
-	virtual void setExpandedImage(int expandedImage);
+	virtual void setExpandedImage(int expandedImage) T_OVERRIDE T_FINAL;
 	
-	virtual int getExpandedImage() const;
+	virtual int getExpandedImage() const T_OVERRIDE T_FINAL;
 	
-	virtual bool isExpanded() const;
+	virtual bool isExpanded() const T_OVERRIDE T_FINAL;
 	
-	virtual void expand();
+	virtual void expand() T_OVERRIDE T_FINAL;
 	
-	virtual bool isCollapsed() const;
+	virtual bool isCollapsed() const T_OVERRIDE T_FINAL;
 	
-	virtual void collapse();
+	virtual void collapse() T_OVERRIDE T_FINAL;
 	
-	virtual bool isSelected() const;
+	virtual bool isSelected() const T_OVERRIDE T_FINAL;
 	
-	virtual void select();
+	virtual void select() T_OVERRIDE T_FINAL;
 	
-	virtual bool isVisible() const;
+	virtual bool isVisible() const T_OVERRIDE T_FINAL;
 	
-	virtual void show();
+	virtual void show() T_OVERRIDE T_FINAL;
 	
-	virtual void setEditable(bool editable);
+	virtual void setEditable(bool editable) T_OVERRIDE T_FINAL;
 
-	virtual bool isEditable() const;
+	virtual bool isEditable() const T_OVERRIDE T_FINAL;
 
-	virtual bool edit();
+	virtual bool edit() T_OVERRIDE T_FINAL;
 
-	virtual void sort(bool recursive);
+	virtual void sort(bool recursive) T_OVERRIDE T_FINAL;
 	
-	virtual Ref< TreeViewItem > getParent() const;
+	virtual Ref< TreeViewItem > getParent() const T_OVERRIDE T_FINAL;
 
-	virtual bool hasChildren() const;
+	virtual bool hasChildren() const T_OVERRIDE T_FINAL;
 	
-	virtual int getChildren(RefArray< TreeViewItem >& outChildren) const;
+	virtual int getChildren(RefArray< TreeViewItem >& outChildren) const T_OVERRIDE T_FINAL;
 	
 	const std::vector< ObjCRef* >& getChildren() const { return m_children; }
 

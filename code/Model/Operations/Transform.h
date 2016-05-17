@@ -27,7 +27,7 @@ class T_DLLCLASS Transform : public IModelOperation
 public:
 	Transform(const Matrix44& tf);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	Matrix44 m_transform;

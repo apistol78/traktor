@@ -93,7 +93,7 @@ public:
 		sound::ISoundPlayer* soundPlayer
 	);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	void setMovie(FlashMovie* movie);
 
@@ -107,7 +107,7 @@ public:
 
 	bool playing() const;
 
-	virtual ui::Size getPreferedSize() const;
+	virtual ui::Size getPreferedSize() const T_OVERRIDE T_FINAL;
 
 	FlashMoviePlayer* getMoviePlayer() const { return m_moviePlayer; }
 

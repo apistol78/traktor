@@ -16,7 +16,7 @@ class ScriptOutlineLua : public IScriptOutline
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Node > parse(const std::wstring& text) const;
+	virtual Ref< Node > parse(const std::wstring& text) const T_OVERRIDE T_FINAL;
 
 	void parseResult(Node* node) const;
 

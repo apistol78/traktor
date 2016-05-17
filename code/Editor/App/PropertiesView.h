@@ -42,7 +42,7 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	void setPropertyObject(ISerializable* object);
 
@@ -50,7 +50,7 @@ public:
 
 	bool handleCommand(const ui::Command& command);
 
-	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
+	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const T_OVERRIDE T_FINAL;
 
 private:
 	IEditor* m_editor;

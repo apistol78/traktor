@@ -29,45 +29,45 @@ public:
 		
 	// ITreeView
 
-	virtual bool create(IWidget* parent, int style);
+	virtual bool create(IWidget* parent, int style) T_OVERRIDE T_FINAL;
 
-	virtual int addImage(ISystemBitmap* image, int imageCount);
+	virtual int addImage(ISystemBitmap* image, int imageCount) T_OVERRIDE T_FINAL;
 
-	virtual Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage);
+	virtual Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage) T_OVERRIDE T_FINAL;
 
-	virtual void removeItem(TreeViewItem* item);
+	virtual void removeItem(TreeViewItem* item) T_OVERRIDE T_FINAL;
 
-	virtual void removeAllItems();
+	virtual void removeAllItems() T_OVERRIDE T_FINAL;
 
-	virtual Ref< TreeViewItem > getRootItem() const;
+	virtual Ref< TreeViewItem > getRootItem() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< TreeViewItem > getSelectedItem() const;
+	virtual Ref< TreeViewItem > getSelectedItem() const T_OVERRIDE T_FINAL;
 	
 	// ITreeDataCallback
 	
-	virtual void* treeChildOfItem(int childIndex, void* item) const;
+	virtual void* treeChildOfItem(int childIndex, void* item) const T_OVERRIDE T_FINAL;
 	
-	virtual bool treeIsExpandable(void* item) const;
+	virtual bool treeIsExpandable(void* item) const T_OVERRIDE T_FINAL;
 	
-	virtual int treeNumberOfChildren(void* item) const;
+	virtual int treeNumberOfChildren(void* item) const T_OVERRIDE T_FINAL;
 	
-	virtual void treeValue(void* item, std::wstring& outValue, bool& outBold) const;
+	virtual void treeValue(void* item, std::wstring& outValue, bool& outBold) const T_OVERRIDE T_FINAL;
 	
-	virtual void treeSetValue(void* item, const std::wstring& value);
+	virtual void treeSetValue(void* item, const std::wstring& value) T_OVERRIDE T_FINAL;
 	
 	// ITargetProxyCallback
 	
-	virtual void targetProxy_Action(void* controlId);
+	virtual void targetProxy_Action(void* controlId) T_OVERRIDE T_FINAL;
 	
-	virtual void targetProxy_doubleAction(void* controlId);
+	virtual void targetProxy_doubleAction(void* controlId) T_OVERRIDE T_FINAL;
 	
 	// INSOutlineViewEventsCallback
 	
-	virtual void event_selectionDidChange();
+	virtual void event_selectionDidChange() T_OVERRIDE T_FINAL;
 	
-	virtual void event_rightMouseDown(NSEvent* event);
+	virtual void event_rightMouseDown(NSEvent* event) T_OVERRIDE T_FINAL;
 	
-	virtual void event_willDisplayCell(NSCell* cell, NSTableColumn* tableColumn, void* item);
+	virtual void event_willDisplayCell(NSCell* cell, NSTableColumn* tableColumn, void* item) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< TreeViewItemCocoa > m_rootItem;

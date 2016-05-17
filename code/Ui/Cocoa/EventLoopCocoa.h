@@ -23,15 +23,15 @@ public:
 	
 	virtual ~EventLoopCocoa();
 
-	virtual bool process(EventSubject* owner);
+	virtual bool process(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual int execute(EventSubject* owner);
+	virtual int execute(EventSubject* owner) T_OVERRIDE T_FINAL;
 	
-	virtual void exit(int exitCode);
+	virtual void exit(int exitCode) T_OVERRIDE T_FINAL;
 
-	virtual int getExitCode() const;
+	virtual int getExitCode() const T_OVERRIDE T_FINAL;
 
-	virtual int getAsyncKeyState() const;
+	virtual int getAsyncKeyState() const T_OVERRIDE T_FINAL;
 	
 private:
 	void* m_pool;

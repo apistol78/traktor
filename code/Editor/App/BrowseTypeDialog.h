@@ -32,7 +32,7 @@ public:
 
 	bool create(ui::Widget* parent, const TypeInfo* base, bool onlyEditable, bool onlyInstantiable);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	const TypeInfo* getSelectedType() const;
 

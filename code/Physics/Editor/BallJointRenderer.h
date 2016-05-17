@@ -13,14 +13,14 @@ class BallJointRenderer : public IPhysicsJointRenderer
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfo& getDescType() const;
+	virtual const TypeInfo& getDescType() const T_OVERRIDE T_FINAL;
 
 	virtual void draw(
 		render::PrimitiveRenderer* primitiveRenderer,
 		const Transform& body1Transform0,
 		const Transform& body1Transform,
 		const JointDesc* jointDesc
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void draw(
 		render::PrimitiveRenderer* primitiveRenderer,
@@ -29,7 +29,7 @@ public:
 		const Transform& body2Transform0,
 		const Transform& body2Transform,
 		const JointDesc* jointDesc
-	) const;
+	) const T_OVERRIDE T_FINAL;
 };
 
 	}

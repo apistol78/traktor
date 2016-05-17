@@ -20,17 +20,17 @@ public:
 	
 	// ICheckBox
 
-	virtual bool create(IWidget* parent, const std::wstring& text, bool checked);
+	virtual bool create(IWidget* parent, const std::wstring& text, bool checked) T_OVERRIDE T_FINAL;
 
-	virtual void setChecked(bool checked);
+	virtual void setChecked(bool checked) T_OVERRIDE T_FINAL;
 
-	virtual bool isChecked() const;
+	virtual bool isChecked() const T_OVERRIDE T_FINAL;
 	
 	// ITargetProxyCallback
 	
-	virtual void targetProxy_Action(void* controlId);
+	virtual void targetProxy_Action(void* controlId) T_OVERRIDE T_FINAL;
 	
-	virtual void targetProxy_doubleAction(void* controlId);
+	virtual void targetProxy_doubleAction(void* controlId) T_OVERRIDE T_FINAL;
 };
 
 	}

@@ -34,7 +34,7 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	const TypeInfo* getType() const;
 

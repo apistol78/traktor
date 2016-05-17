@@ -44,7 +44,7 @@ public:
 
 	uint32_t getHash() const { return m_hash; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::string m_vertexShader;

@@ -15,9 +15,9 @@ class DefaultEntityEditorFactory : public IEntityEditorFactory
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getEntityDataTypes() const;
+	virtual const TypeInfoSet getEntityDataTypes() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IEntityEditor > createEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter) const;
+	virtual Ref< IEntityEditor > createEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter) const T_OVERRIDE T_FINAL;
 };
 
 	}

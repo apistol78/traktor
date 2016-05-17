@@ -63,7 +63,7 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 	
 	[contentView addSubview: m_view];
 	
-	return class_t::create();
+	return class_t::internalCreate();
 }
 
 int TreeViewCocoa::addImage(ISystemBitmap* image, int imageCount)

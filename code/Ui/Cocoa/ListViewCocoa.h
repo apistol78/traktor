@@ -20,41 +20,41 @@ public:
 	
 	// IListView
 
-	virtual bool create(IWidget* parent, int style);
+	virtual bool create(IWidget* parent, int style) T_OVERRIDE T_FINAL;
 	
-	virtual void setStyle(int style);
+	virtual void setStyle(int style) T_OVERRIDE T_FINAL;
 
-	virtual int addImage(ISystemBitmap* image, int imageCount, bool smallImage);
+	virtual int addImage(ISystemBitmap* image, int imageCount, bool smallImage) T_OVERRIDE T_FINAL;
 	
-	virtual void removeAllColumns();
+	virtual void removeAllColumns() T_OVERRIDE T_FINAL;
 
-	virtual void removeColumn(int columnIndex);
+	virtual void removeColumn(int columnIndex) T_OVERRIDE T_FINAL;
 
-	virtual int getColumnCount() const;
+	virtual int getColumnCount() const T_OVERRIDE T_FINAL;
 
-	virtual int addColumn(const std::wstring& columnHeader, int width);
+	virtual int addColumn(const std::wstring& columnHeader, int width) T_OVERRIDE T_FINAL;
 
-	virtual void setColumnHeader(int columnIndex, const std::wstring& columnHeader);
+	virtual void setColumnHeader(int columnIndex, const std::wstring& columnHeader) T_OVERRIDE T_FINAL;
 
-	virtual std::wstring getColumnHeader(int columnIndex) const;
+	virtual std::wstring getColumnHeader(int columnIndex) const T_OVERRIDE T_FINAL;
 
-	virtual void setColumnWidth(int columnIndex, int width);
+	virtual void setColumnWidth(int columnIndex, int width) T_OVERRIDE T_FINAL;
 
-	virtual int getColumnWidth(int columnIndex) const;
+	virtual int getColumnWidth(int columnIndex) const T_OVERRIDE T_FINAL;
 
-	virtual int getColumnFromPosition(int position) const;
+	virtual int getColumnFromPosition(int position) const T_OVERRIDE T_FINAL;
 
-	virtual void setItems(ListViewItems* items);
+	virtual void setItems(ListViewItems* items) T_OVERRIDE T_FINAL;
 
-	virtual Ref< ListViewItems > getItems() const;
+	virtual Ref< ListViewItems > getItems() const T_OVERRIDE T_FINAL;
 	
-	virtual int getSelectedItems(std::vector< int >& items) const;
+	virtual int getSelectedItems(std::vector< int >& items) const T_OVERRIDE T_FINAL;
 	
 	// IListDataCallback
 	
-	virtual int listCount() const;
+	virtual int listCount() const T_OVERRIDE T_FINAL;
 	
-	virtual std::wstring listValue(NSTableColumn* tableColumn, int index) const;
+	virtual std::wstring listValue(NSTableColumn* tableColumn, int index) const T_OVERRIDE T_FINAL;
 	
 private:
 	Ref< ListViewItems > m_items;

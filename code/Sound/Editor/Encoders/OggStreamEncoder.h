@@ -26,11 +26,11 @@ class T_DLLCLASS OggStreamEncoder : public IStreamEncoder
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(IStream* stream);
+	virtual bool create(IStream* stream) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual bool putBlock(SoundBlock& block);
+	virtual bool putBlock(SoundBlock& block) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< OggStreamEncoderImpl > m_impl;

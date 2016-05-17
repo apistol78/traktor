@@ -16,23 +16,23 @@ public:
 	
 	// IScrollBar
 
-	virtual bool create(IWidget* parent, int style);
+	virtual bool create(IWidget* parent, int style) T_OVERRIDE T_FINAL;
 
-	virtual void setRange(int range);
+	virtual void setRange(int range) T_OVERRIDE T_FINAL;
 
-	virtual int getRange() const;
+	virtual int getRange() const T_OVERRIDE T_FINAL;
 
-	virtual void setPage(int page);
+	virtual void setPage(int page) T_OVERRIDE T_FINAL;
 
-	virtual int getPage() const;
+	virtual int getPage() const T_OVERRIDE T_FINAL;
 
-	virtual void setPosition(int position);
+	virtual void setPosition(int position) T_OVERRIDE T_FINAL;
 
-	virtual int getPosition() const;
+	virtual int getPosition() const T_OVERRIDE T_FINAL;
 	
 	// IWidget
 	
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE T_FINAL;
 	
 private:
 	bool m_vertical;

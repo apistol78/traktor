@@ -28,21 +28,21 @@ public:
 
 	bool create(const RenderTargetSetCreateDesc& desc);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual int getWidth() const;
+	virtual int getWidth() const T_OVERRIDE T_FINAL;
 	
-	virtual int getHeight() const;
+	virtual int getHeight() const T_OVERRIDE T_FINAL;
 
-	virtual ISimpleTexture* getColorTexture(int index) const;
+	virtual ISimpleTexture* getColorTexture(int index) const T_OVERRIDE T_FINAL;
 
-	virtual ISimpleTexture* getDepthTexture() const;
+	virtual ISimpleTexture* getDepthTexture() const T_OVERRIDE T_FINAL;
 
-	virtual void swap(int index1, int index2);
+	virtual void swap(int index1, int index2) T_OVERRIDE T_FINAL;
 
-	virtual void discard();
+	virtual void discard() T_OVERRIDE T_FINAL;
 
-	virtual bool read(int index, void* buffer) const;
+	virtual bool read(int index, void* buffer) const T_OVERRIDE T_FINAL;
 
 	bool bind(GLuint primaryDepthBuffer, int32_t renderTarget);
 

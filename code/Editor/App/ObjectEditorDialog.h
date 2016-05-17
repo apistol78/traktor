@@ -34,7 +34,7 @@ public:
 
 	bool create(IEditor* editor, ui::Widget* parent, db::Instance* instance, ISerializable* object);
 
-	void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	bool apply(bool keep);
 

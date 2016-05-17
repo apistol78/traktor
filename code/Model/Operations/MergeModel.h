@@ -26,7 +26,7 @@ class T_DLLCLASS MergeModel : public IModelOperation
 public:
 	MergeModel(const Model& sourceModel, const Transform& sourceTransform, float positionDistance);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	const Model& m_sourceModel;

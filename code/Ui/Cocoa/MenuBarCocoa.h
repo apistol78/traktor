@@ -22,17 +22,17 @@ public:
 
 	// IMenuBar
 
-	virtual bool create(IForm* form);
+	virtual bool create(IForm* form) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void add(MenuItem* item);
+	virtual void add(MenuItem* item) T_OVERRIDE T_FINAL;
 	
 	// ITargetProxyCallback
 	
-	virtual void targetProxy_Action(void* controlId);
+	virtual void targetProxy_Action(void* controlId) T_OVERRIDE T_FINAL;
 	
-	virtual void targetProxy_doubleAction(void* controlId);
+	virtual void targetProxy_doubleAction(void* controlId) T_OVERRIDE T_FINAL;
 
 private:
 	EventSubject* m_owner;

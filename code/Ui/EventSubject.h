@@ -47,7 +47,7 @@ public:
 		{
 		}
 
-		virtual void notify(Event* event)
+		virtual void notify(Event* event) T_OVERRIDE
 		{
 			(*m_fn)(
 				checked_type_cast< EventType*, false >(event)
@@ -70,7 +70,7 @@ public:
 		{
 		}
 
-		virtual void notify(Event* event)
+		virtual void notify(Event* event) T_OVERRIDE
 		{
 			(m_target->*m_method)(
 				checked_type_cast< EventType*, false >(event)

@@ -24,7 +24,7 @@ class T_DLLCLASS OcclusionTextureAsset : public editor::Asset
 public:
 	render::TextureOutput m_output;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 };
 
 	}

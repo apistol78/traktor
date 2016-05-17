@@ -125,6 +125,8 @@ float InputDeviceGamepadOsX::getControlValue(int32_t control)
 			return m_button[4] ? 1.0f : 0.0f;
 		else if (index == -8)
 			return m_button[5] ? 1.0f : 0.0f;
+		else
+			return 0.0f;
 	}
 	else
 	{

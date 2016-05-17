@@ -60,21 +60,21 @@ class TerrainEditModifier : public scene::IModifier
 public:
 	TerrainEditModifier(scene::SceneEditorContext* context);
 
-	virtual void selectionChanged();
+	virtual void selectionChanged() T_OVERRIDE T_FINAL;
 
 	virtual bool cursorMoved(
 		const scene::TransformChain& transformChain,
 		const Vector2& cursorPosition,
 		const Vector4& worldRayOrigin,
 		const Vector4& worldRayDirection
-	);
+	) T_OVERRIDE T_FINAL;
 
-	virtual bool handleCommand(const ui::Command& command);
+	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
 	virtual bool begin(
 		const scene::TransformChain& transformChain,
 		int32_t mouseButton
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void apply(
 		const scene::TransformChain& transformChain,
@@ -83,11 +83,11 @@ public:
 		const Vector4& worldRayDirection,
 		const Vector4& screenDelta,
 		const Vector4& viewDelta
-	);
+	) T_OVERRIDE T_FINAL;
 
-	virtual void end(const scene::TransformChain& transformChain);
+	virtual void end(const scene::TransformChain& transformChain) T_OVERRIDE T_FINAL;
 
-	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) const;
+	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) const T_OVERRIDE T_FINAL;
 
 	void setBrush(const TypeInfo& brushType);
 

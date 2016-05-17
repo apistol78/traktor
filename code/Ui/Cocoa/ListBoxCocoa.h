@@ -22,37 +22,37 @@ public:
 	
 	// IListBox
 
-	virtual bool create(IWidget* parent, int style);
+	virtual bool create(IWidget* parent, int style) T_OVERRIDE T_FINAL;
 
-	virtual int add(const std::wstring& item);
+	virtual int add(const std::wstring& item) T_OVERRIDE T_FINAL;
 
-	virtual bool remove(int index);
+	virtual bool remove(int index) T_OVERRIDE T_FINAL;
 
-	virtual void removeAll();
+	virtual void removeAll() T_OVERRIDE T_FINAL;
 
-	virtual int count() const;
+	virtual int count() const T_OVERRIDE T_FINAL;
 
-	virtual void set(int index, const std::wstring& item);
+	virtual void set(int index, const std::wstring& item) T_OVERRIDE T_FINAL;
 
-	virtual std::wstring get(int index) const;
+	virtual std::wstring get(int index) const T_OVERRIDE T_FINAL;
 	
-	virtual void select(int index);
+	virtual void select(int index) T_OVERRIDE T_FINAL;
 
-	virtual bool selected(int index) const;
+	virtual bool selected(int index) const T_OVERRIDE T_FINAL;
 
-	virtual Rect getItemRect(int index) const;
+	virtual Rect getItemRect(int index) const T_OVERRIDE T_FINAL;
 	
 	// IListDataCallback
 	
-	virtual int listCount() const;
+	virtual int listCount() const T_OVERRIDE T_FINAL;
 	
-	virtual std::wstring listValue(NSTableColumn* tableColumn, int index) const;
+	virtual std::wstring listValue(NSTableColumn* tableColumn, int index) const T_OVERRIDE T_FINAL;
 	
 	// ITargetProxyCallback
 	
-	virtual void targetProxy_Action(void* controlId);
+	virtual void targetProxy_Action(void* controlId) T_OVERRIDE T_FINAL;
 	
-	virtual void targetProxy_doubleAction(void* controlId);
+	virtual void targetProxy_doubleAction(void* controlId) T_OVERRIDE T_FINAL;
 		
 private:
 	std::vector< std::wstring > m_items;

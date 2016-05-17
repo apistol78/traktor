@@ -48,7 +48,7 @@ public:
 
 	Position getPosition(const Object* object) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	void setSourceData(InputMappingSourceData* sourceData) { m_sourceData = sourceData; }
 

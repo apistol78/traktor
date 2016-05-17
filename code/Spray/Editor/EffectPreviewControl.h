@@ -80,7 +80,7 @@ public:
 		sound::SoundSystem* soundSystem
 	);
 
-	void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	void setEffect(Effect* effect);
 

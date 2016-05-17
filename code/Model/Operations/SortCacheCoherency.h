@@ -24,7 +24,7 @@ class T_DLLCLASS SortCacheCoherency : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 };
 
 	}

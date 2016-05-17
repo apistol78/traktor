@@ -13,11 +13,11 @@ class DictionaryFormatCSV : public IDictionaryFormat
 	T_RTTI_CLASS;
 
 public:
-	virtual bool supportExtension(const std::wstring& extension) const;
+	virtual bool supportExtension(const std::wstring& extension) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Dictionary > read(IStream* stream, int32_t keyColumn, int32_t textColumn) const;
+	virtual Ref< Dictionary > read(IStream* stream, int32_t keyColumn, int32_t textColumn) const T_OVERRIDE T_FINAL;
 
-	virtual bool write(IStream* stream, const Dictionary* dictionary) const;
+	virtual bool write(IStream* stream, const Dictionary* dictionary) const T_OVERRIDE T_FINAL;
 };
 
 	}

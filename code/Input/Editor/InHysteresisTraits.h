@@ -11,17 +11,17 @@ namespace traktor
 class InHysteresisTraits : public InputNodeTraits
 {
 public:
-	virtual std::wstring getHeader(const IInputNode* node) const;
+	virtual std::wstring getHeader(const IInputNode* node) const T_OVERRIDE T_FINAL;
 
-	virtual std::wstring getDescription(const IInputNode* node) const;
+	virtual std::wstring getDescription(const IInputNode* node) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IInputNode > createNode() const;
+	virtual Ref< IInputNode > createNode() const T_OVERRIDE T_FINAL;
 
-	virtual void getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const;
+	virtual void getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const T_OVERRIDE T_FINAL;
 
-	virtual void connectInputNode(IInputNode* node, const std::wstring& inputName, IInputNode* sourceNode) const;
+	virtual void connectInputNode(IInputNode* node, const std::wstring& inputName, IInputNode* sourceNode) const T_OVERRIDE T_FINAL;
 
-	virtual void disconnectInputNode(IInputNode* node, const std::wstring& inputName) const;
+	virtual void disconnectInputNode(IInputNode* node, const std::wstring& inputName) const T_OVERRIDE T_FINAL;
 };
 
 	}

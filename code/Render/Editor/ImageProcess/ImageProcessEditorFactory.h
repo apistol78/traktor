@@ -21,13 +21,13 @@ class T_DLLCLASS ImageProcessEditorFactory : public editor::IObjectEditorFactory
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getEditableTypes() const;
+	virtual const TypeInfoSet getEditableTypes() const T_OVERRIDE T_FINAL;
 
-	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const;
+	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const;
+	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const T_OVERRIDE T_FINAL;
 
-	virtual void getCommands(std::list< ui::Command >& outCommands) const;
+	virtual void getCommands(std::list< ui::Command >& outCommands) const T_OVERRIDE T_FINAL;
 };
 
 	}

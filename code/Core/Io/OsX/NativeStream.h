@@ -24,25 +24,25 @@ public:
 	
 	virtual ~NativeStream();
 
-	virtual void close();
+	virtual void close() T_OVERRIDE T_FINAL;
 
-	virtual bool canRead() const;
+	virtual bool canRead() const T_OVERRIDE T_FINAL;
 
-	virtual bool canWrite() const;
+	virtual bool canWrite() const T_OVERRIDE T_FINAL;
 
-	virtual bool canSeek() const;
+	virtual bool canSeek() const T_OVERRIDE T_FINAL;
 
-	virtual int tell() const;
+	virtual int tell() const T_OVERRIDE T_FINAL;
 
-	virtual int available() const;
+	virtual int available() const T_OVERRIDE T_FINAL;
 
-	virtual int seek(SeekOriginType origin, int offset);
+	virtual int seek(SeekOriginType origin, int offset) T_OVERRIDE T_FINAL;
 
-	virtual int read(void* block, int nbytes);
+	virtual int read(void* block, int nbytes) T_OVERRIDE T_FINAL;
 
-	virtual int write(const void* block, int nbytes);
+	virtual int write(const void* block, int nbytes) T_OVERRIDE T_FINAL;
 
-	virtual void flush();
+	virtual void flush() T_OVERRIDE T_FINAL;
 	
 private:
 	std::FILE* m_fp;

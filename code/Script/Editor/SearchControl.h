@@ -31,9 +31,9 @@ public:
 
 	void setAnyMatchingHint(bool hint);
 
-	virtual void setFocus() T_OVERRIDE;
+	virtual void setFocus() T_OVERRIDE T_FINAL;
 
-	virtual ui::Size getPreferedSize() const T_OVERRIDE;
+	virtual ui::Size getPreferedSize() const T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ui::Edit > m_editSearch;

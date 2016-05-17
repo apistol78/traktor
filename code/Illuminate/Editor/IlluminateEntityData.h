@@ -32,9 +32,9 @@ public:
 
 	void removeAllEntityData();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 	
-	virtual void setTransform(const Transform& transform);
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 
 	const Guid& getSeedGuid() const { return m_seedGuid; }
 

@@ -60,7 +60,7 @@ public:
 
 	bool create(ui::Widget* parent, int style = WsDoubleBuffer | WsAccelerated);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE;
 
 	void addNode(Node* node);
 

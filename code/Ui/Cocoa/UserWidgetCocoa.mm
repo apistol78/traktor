@@ -41,7 +41,7 @@ bool UserWidgetCocoa::create(IWidget* parent, int style)
 	
 	[contentView addSubview: m_control];
 
-	return class_t::create();
+	return class_t::internalCreate();
 }
 
 bool UserWidgetCocoa::event_drawRect(const NSRect& rect)

@@ -25,7 +25,7 @@ public:
 private:
 	RefArray< TargetInstanceListItem > m_items;
 
-	virtual void layoutCells(const ui::Rect& rc);
+	virtual void layoutCells(const ui::Rect& rc) T_OVERRIDE T_FINAL;
 };
 
 	}

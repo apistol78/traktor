@@ -24,11 +24,11 @@ public:
 
 	virtual ~IndexBufferOpenGLES2();
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void* lock();
+	virtual void* lock() T_OVERRIDE T_FINAL;
 	
-	virtual void unlock();
+	virtual void unlock() T_OVERRIDE T_FINAL;
 
 	void activate(StateCache* stateCache);
 

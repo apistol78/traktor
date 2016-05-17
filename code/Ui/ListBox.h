@@ -36,7 +36,7 @@ public:
 
 	bool create(Widget* parent, const std::wstring& text = L"", int style = WsDefault);
 	
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE;
 
 	int add(const std::wstring& item, Object* data = 0);
 

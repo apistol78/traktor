@@ -29,9 +29,9 @@ class T_DLLCLASS TableLayout : public Layout
 public:
 	TableLayout(const std::wstring& cdef, const std::wstring& rdef, int margin, int pad);
 	
-	virtual bool fit(Widget* widget, const Size& bounds, Size& result);
+	virtual bool fit(Widget* widget, const Size& bounds, Size& result) T_OVERRIDE;
 	
-	virtual void update(Widget* widget);
+	virtual void update(Widget* widget) T_OVERRIDE;
 
 private:
 	Size m_margin;

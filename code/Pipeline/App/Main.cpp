@@ -353,7 +353,7 @@ public:
 		const std::vector< Guid >& roots
 	);
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const std::wstring& getWorkingDirectory() const { return m_workingDirectory; }
 
@@ -424,7 +424,7 @@ public:
 
 	int32_t getResult() const { return m_result; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_result;
@@ -462,7 +462,7 @@ public:
 
 	const std::wstring& getText() const { return m_text; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_level;

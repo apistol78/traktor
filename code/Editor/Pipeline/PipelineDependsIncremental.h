@@ -43,41 +43,41 @@ public:
 
 	virtual void addDependency(
 		const ISerializable* sourceAsset
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void addDependency(
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
 		uint32_t flags
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void addDependency(
 		db::Instance* sourceAssetInstance,
 		uint32_t flags
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void addDependency(
 		const Guid& sourceAssetGuid,
 		uint32_t flags
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void addDependency(
 		const Path& basePath,
 		const std::wstring& fileName
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void addDependency(
 		const TypeInfo& sourceAssetType
-	);
+	) T_OVERRIDE T_FINAL;
 
-	virtual bool waitUntilFinished();
+	virtual bool waitUntilFinished() T_OVERRIDE T_FINAL;
 
-	virtual Ref< db::Database > getSourceDatabase() const;
+	virtual Ref< db::Database > getSourceDatabase() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< db::Database > getOutputDatabase() const;
+	virtual Ref< db::Database > getOutputDatabase() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< PipelineFactory > m_pipelineFactory;

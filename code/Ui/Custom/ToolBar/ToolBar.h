@@ -44,7 +44,7 @@ public:
 
 	bool create(Widget* parent, int style = WsNone);
 
-	void destroy();
+	virtual void destroy() T_OVERRIDE;
 
 	uint32_t addImage(IBitmap* image, uint32_t imageCount);
 

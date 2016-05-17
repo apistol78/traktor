@@ -10,34 +10,6 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace
-		{
-		
-OutputStream& operator << (OutputStream& os, const NSPoint& npt)
-{
-	os << npt.x << L", " << npt.y;
-	return os;
-}
-
-OutputStream& operator << (OutputStream& os, const NSRect& nrc)
-{
-	os << nrc.origin.x << L", " << nrc.origin.y << L" - " << nrc.origin.x + nrc.size.width << L", " << nrc.origin.y + nrc.size.height;
-	return os;
-}
-
-OutputStream& operator << (OutputStream& os, const Point& pt)
-{
-	os << pt.x << L", " << pt.y;
-	return os;
-}
-
-OutputStream& operator << (OutputStream& os, const Rect& rc)
-{
-	os << rc.left << L", " << rc.top << L" - " << rc.right << L", " << rc.bottom;
-	return os;
-}
-
-		}
 
 NSString* makeNSString(const std::wstring& str)
 {

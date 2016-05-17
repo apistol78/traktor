@@ -26,7 +26,7 @@ class T_DLLCLASS MergeCoplanarAdjacents : public IModelOperation
 public:
 	MergeCoplanarAdjacents(bool allowConvexOnly);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	bool m_allowConvexOnly;

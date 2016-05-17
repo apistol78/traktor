@@ -13,13 +13,13 @@ class DefaultObjectEditorFactory : public IObjectEditorFactory
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getEditableTypes() const;
+	virtual const TypeInfoSet getEditableTypes() const T_OVERRIDE T_FINAL;
 
-	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const;
+	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IObjectEditor > createObjectEditor(IEditor* editor) const;
+	virtual Ref< IObjectEditor > createObjectEditor(IEditor* editor) const T_OVERRIDE T_FINAL;
 
-	virtual void getCommands(std::list< ui::Command >& outCommands) const;
+	virtual void getCommands(std::list< ui::Command >& outCommands) const T_OVERRIDE T_FINAL;
 };
 
 	}

@@ -103,7 +103,7 @@ public:
 		return m_pose;
 	}
 
-	virtual void serialize(ISerializer& s)
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL
 	{
 		s >> MemberComposite< Animation::KeyPose >(L"pose", m_pose);
 	}

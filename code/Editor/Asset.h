@@ -36,7 +36,7 @@ public:
 
 	const Path& getFileName() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 private:
 	Path m_fileName;

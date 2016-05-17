@@ -26,15 +26,15 @@ public:
 
 	virtual ~VertexBufferDynamicOpenGLES2();
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void* lock();
+	virtual void* lock() T_OVERRIDE T_FINAL;
 
-	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount);
+	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) T_OVERRIDE T_FINAL;
 
-	virtual void unlock();
+	virtual void unlock() T_OVERRIDE T_FINAL;
 
-	virtual void activate(StateCache* stateCache);
+	virtual void activate(StateCache* stateCache) T_OVERRIDE T_FINAL;
 
 private:
 	struct AttributeDesc

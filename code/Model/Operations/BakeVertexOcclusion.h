@@ -30,7 +30,7 @@ public:
 		float rayBias = 0.1f
 	);
 
-	virtual bool apply(Model& model) const;
+	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_rayCount;

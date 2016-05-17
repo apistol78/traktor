@@ -21,7 +21,7 @@ class T_DLLCLASS BankPipeline : public editor::DefaultPipeline
 	T_RTTI_CLASS;
 
 public:
-	virtual TypeInfoSet getAssetTypes() const;
+	virtual TypeInfoSet getAssetTypes() const T_OVERRIDE T_FINAL;
 
 	virtual bool buildDependencies(
 		editor::IPipelineDepends* pipelineDepends,
@@ -29,7 +29,7 @@ public:
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
 		const Guid& outputGuid
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual bool buildOutput(
 		editor::IPipelineBuilder* pipelineBuilder,
@@ -42,7 +42,7 @@ public:
 		const Guid& outputGuid,
 		const Object* buildParams,
 		uint32_t reason
-	) const;
+	) const T_OVERRIDE T_FINAL;
 };
 
 	}

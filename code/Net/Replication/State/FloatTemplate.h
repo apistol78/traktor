@@ -34,15 +34,15 @@ public:
 
 	explicit FloatTemplate(float threshold, float min, float max, FloatTemplatePrecision precision, bool cyclic);
 
-	virtual const TypeInfo& getValueType() const;
+	virtual const TypeInfo& getValueType() const T_OVERRIDE T_FINAL;
 
-	virtual void pack(BitWriter& writer, const IValue* V) const;
+	virtual void pack(BitWriter& writer, const IValue* V) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< const IValue > unpack(BitReader& reader) const;
+	virtual Ref< const IValue > unpack(BitReader& reader) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const;
+	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const T_OVERRIDE T_FINAL;
 
-	virtual bool threshold(const IValue* Vn1, const IValue* V) const;
+	virtual bool threshold(const IValue* Vn1, const IValue* V) const T_OVERRIDE T_FINAL;
 
 private:
 	float m_threshold;

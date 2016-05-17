@@ -36,7 +36,7 @@ public:
 
 	bool getResult() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Guid m_buildGuid;

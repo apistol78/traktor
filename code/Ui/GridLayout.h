@@ -27,9 +27,9 @@ class T_DLLCLASS GridLayout : public Layout
 public:
 	GridLayout(int columns, int rows);
 
-	virtual bool fit(Widget* widget, const Size& bounds, Size& result);
+	virtual bool fit(Widget* widget, const Size& bounds, Size& result) T_OVERRIDE;
 	
-	virtual void update(Widget* widget);
+	virtual void update(Widget* widget) T_OVERRIDE;
 	
 private:
 	int m_columns;

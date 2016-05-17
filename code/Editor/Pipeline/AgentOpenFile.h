@@ -36,7 +36,7 @@ public:
 
 	const std::wstring& getFileName() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Path m_basePath;

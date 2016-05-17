@@ -13,7 +13,7 @@ class ConeSourceRenderer : public SourceRenderer
 	T_RTTI_CLASS;
 
 public:
-	virtual void render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const;
+	virtual void render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const T_OVERRIDE T_FINAL;
 };
 
 	}

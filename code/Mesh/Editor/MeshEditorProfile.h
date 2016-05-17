@@ -23,48 +23,48 @@ class T_DLLCLASS MeshEditorProfile : public scene::ISceneEditorProfile
 public:
 	virtual void getCommands(
 		std::list< ui::Command >& outCommands
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void getGuideDrawIds(
 		std::set< std::wstring >& outIds
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createEditorPlugins(
 		scene::SceneEditorContext* context,
 		RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createResourceFactories(
 		scene::SceneEditorContext* context,
 		RefArray< const resource::IResourceFactory >& outResourceFactories
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createEntityFactories(
 		scene::SceneEditorContext* context,
 		RefArray< const world::IEntityFactory >& outEntityFactories
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createEntityRenderers(
 		scene::SceneEditorContext* context,
 		render::IRenderView* renderView,
 		render::PrimitiveRenderer* primitiveRenderer,
 		RefArray< world::IEntityRenderer >& outEntityRenderers
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createControllerEditorFactories(
 		scene::SceneEditorContext* context,
 		RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void createEntityEditorFactories(
 		scene::SceneEditorContext* context,
 		RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual Ref< world::EntityData > createEntityData(
 		scene::SceneEditorContext* context,
 		db::Instance* instance
-	) const;
+	) const T_OVERRIDE T_FINAL;
 };
 
 	}
