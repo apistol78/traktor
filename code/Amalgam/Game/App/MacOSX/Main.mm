@@ -129,6 +129,7 @@ void showErrorDialog(const std::list< std::wstring >& tail)
 int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
+	SystemApplication sysapp;
 
 	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
 	FileSystem::getInstance().makeAllDirectories(writablePath);
@@ -221,7 +222,7 @@ int main(int argc, const char** argv)
 	if (application->create(
 		defaultSettings,
 		settings,
-		0,
+		sysapp,
 		0
 	))
 	{
