@@ -362,6 +362,7 @@ bool ReplicatorProxy::dispatchRxEvents(const SmallMap< const TypeInfo*, RefArray
 		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = eventListeners.find(&type_of(i->eventObject));
 		if (it != eventListeners.end())
 		{
+			T_ANONYMOUS_VAR(Ref< const ISerializable >)(i->eventObject);
 			for (RefArray< IReplicatorEventListener >::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
 			{
 				processed |= (*it2)->notify(
