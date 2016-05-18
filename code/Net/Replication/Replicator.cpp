@@ -726,6 +726,7 @@ bool Replicator::sendEventToPrimary(const ISerializable* eventObject, bool inOrd
 		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
 		if (it != m_eventListeners.end())
 		{
+			T_ANONYMOUS_VAR(Ref< const ISerializable >)(eventObject);
 			for (RefArray< IReplicatorEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 			{
 				processed |= (*i)->notify(
