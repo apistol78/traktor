@@ -14,10 +14,6 @@
 
 namespace traktor
 {
-
-class IStream;
-class Path;
-
 	namespace db
 	{
 
@@ -76,12 +72,6 @@ public:
 	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset) = 0;
 
 	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) = 0;
-
-	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) = 0;
-
-	virtual Ref< IStream > createTemporaryFile(const std::wstring& fileName) = 0;
-
-	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) = 0;
 
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid) = 0;
 };

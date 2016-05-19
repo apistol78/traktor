@@ -57,6 +57,7 @@ public:
 private:
 	Ref< IScriptManager > m_scriptManager;
 	Ref< Preprocessor > m_preprocessor;
+	std::wstring m_assetPath;
 };
 
 	}

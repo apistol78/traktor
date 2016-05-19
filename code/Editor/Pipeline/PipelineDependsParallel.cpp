@@ -1,8 +1,8 @@
 #if defined(_WIN32)
 #	include <cfloat>
 #endif
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -216,6 +216,25 @@ Ref< const ISerializable > PipelineDependsParallel::getObjectReadOnly(const Guid
 		return m_instanceCache->getObjectReadOnly(instanceGuid);
 	else
 		return 0;
+}
+
+Ref< IStream > PipelineDependsParallel::openFile(const Path& basePath, const std::wstring& fileName)
+{
+	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
+	Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmRead);
+	return fileStream ? new BufferedStream(fileStream) : 0;
+}
+
+Ref< IStream > PipelineDependsParallel::createTemporaryFile(const std::wstring& fileName)
+{
+	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmWrite);
+	return fileStream ? new BufferedStream(fileStream) : 0;
+}
+
+Ref< IStream > PipelineDependsParallel::openTemporaryFile(const std::wstring& fileName)
+{
+	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmRead);
+	return fileStream ? new BufferedStream(fileStream) : 0;
 }
 
 Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(

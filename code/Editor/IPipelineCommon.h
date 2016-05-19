@@ -16,6 +16,8 @@ namespace traktor
 {
 
 class ISerializable;
+class IStream;
+class Path;
 
 	namespace db
 	{
@@ -40,6 +42,12 @@ public:
 	virtual Ref< db::Database > getOutputDatabase() const = 0;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
+
+	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) = 0;
+
+	virtual Ref< IStream > createTemporaryFile(const std::wstring& fileName) = 0;
+
+	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) = 0;
 
 	template < typename T >
 	Ref< const T > getObjectReadOnly(const Guid& guid)

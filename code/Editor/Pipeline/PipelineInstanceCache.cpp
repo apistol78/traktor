@@ -69,6 +69,7 @@ Ref< ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instan
 		{
 			Ref< ISerializable > object = BinarySerializer(&bufferedStream).readObject();
 			T_FATAL_ASSERT (object);
+
 			m_readCache[instanceGuid] = object;
 			return object;
 		}
@@ -104,9 +105,17 @@ Ref< ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instan
 
 void PipelineInstanceCache::flush(const Guid& instanceGuid)
 {
+	// Remove from in-memory map.
 	std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
 	if (i != m_readCache.end())
 		m_readCache.erase(i);
+
+	// Generate cached instance filename.
+	std::wstring cachedFileName = instanceGuid.format();
+	std::wstring cachedPathName = m_cacheDirectory + L"/" + cachedFileName + L".bin";
+
+	// Delete cached instance if exists.
+	FileSystem::getInstance().remove(cachedPathName);
 }
 
 	}

@@ -2,6 +2,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -18,6 +19,7 @@
 #include "Script/ScriptResource.h"
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
+#include "Script/Editor/ScriptAsset.h"
 #include "Script/Editor/ScriptPipeline.h"
 
 namespace traktor
@@ -40,7 +42,43 @@ struct ErrorCallback : public IErrorCallback
 	}
 };
 
-bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const Preprocessor* prep, const Guid& scriptGuid, std::vector< Guid >& outScripts)
+bool readScript(editor::IPipelineCommon* pipelineCommon, const std::wstring& assetPath, const ISerializable* sourceAsset, std::wstring& outSource)
+{
+	if (const Script* script = dynamic_type_cast< const Script* >(sourceAsset))
+	{
+		// Escape script and flatten dependencies.
+		outSource = script->escape([&] (const Guid& g) -> std::wstring {
+			return g.format();
+		});
+	}
+	else if (const ScriptAsset* scriptAsset = dynamic_type_cast< const ScriptAsset* >(sourceAsset))
+	{
+		// Read script from asset as-is as we need to traverse dependencies.
+		Ref< IStream > file = pipelineCommon->openFile(Path(assetPath), scriptAsset->getFileName().getOriginal());
+		if (!file)
+		{
+			log::error << L"Script pipeline failed; unable to open script (" << scriptAsset->getFileName().getOriginal() << L")" << Endl;
+			return false;
+		}
+
+		StringOutputStream ss;
+		std::wstring line;
+
+		// Read script using utf-8 encoding.
+		Utf8Encoding encoding;
+		StringReader sr(file, &encoding);
+		while (sr.readLine(line) >= 0)
+			ss << line << Endl;
+
+		outSource = ss.str();
+	}
+
+	// Ensure no double character line breaks.
+	outSource = replaceAll< std::wstring >(outSource, L"\r\n", L"\n");
+	return true;
+}
+
+bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const std::wstring& assetPath, const Preprocessor* prep, const Guid& scriptGuid, std::vector< Guid >& outScripts)
 {
 	Guid g;
 
@@ -48,17 +86,9 @@ bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const Prepro
 	if (!scriptInstance)
 		return false;
 
-	Ref< const Script > script = scriptInstance->getObject< Script >();
-	if (!script)
+	std::wstring source;
+	if (!readScript(pipelineBuilder, assetPath, scriptInstance->getObject(), source))
 		return false;
-
-	// Escape script and flatten dependencies.
-	std::wstring source = script->escape([&] (const Guid& g) -> std::wstring {
-		return g.format();
-	});
-
-	// Ensure no double character line breaks.
-	source = replaceAll< std::wstring >(source, L"\r\n", L"\n");
 
 	// Execute preprocessor on script.
 	std::wstring text;
@@ -72,13 +102,21 @@ bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const Prepro
 	// Scan usings.
 	for (std::set< std::wstring >::const_iterator i = usings.begin(); i != usings.end(); ++i)
 	{
-		if (g.create(*i))
+		if (!g.create(*i))
 		{
-			if (std::find(outScripts.begin(), outScripts.end(), g) != outScripts.end())
-				continue;
-			if (!flattenDependencies(pipelineBuilder, prep, g, outScripts))
+			// Resolve using database path instead of guid.
+			Ref< db::Instance > dependentInstance = pipelineBuilder->getSourceDatabase()->getInstance(*i);
+			if (!dependentInstance)
 				return false;
+
+			g = dependentInstance->getGuid();
 		}
+
+		if (std::find(outScripts.begin(), outScripts.end(), g) != outScripts.end())
+			continue;
+
+		if (!flattenDependencies(pipelineBuilder, assetPath, prep, g, outScripts))
+			return false;
 	}
 
 	outScripts.push_back(scriptGuid);
@@ -119,6 +157,8 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 	for (std::set< std::wstring >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
 		m_preprocessor->setDefinition(*i);
 
+	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+
 	return editor::DefaultPipeline::create(settings);
 }
 
@@ -126,6 +166,7 @@ TypeInfoSet ScriptPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Script >());
+	typeSet.insert(&type_of< ScriptAsset >());
 	return typeSet;
 }
 
@@ -137,15 +178,13 @@ bool ScriptPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	Ref< const Script > script = checked_type_cast< const Script* >(sourceAsset);
+	// Add dependency to script file.
+	if (const ScriptAsset* scriptAsset = dynamic_type_cast< const ScriptAsset* >(sourceAsset))
+		pipelineDepends->addDependency(Path(m_assetPath), scriptAsset->getFileName().getOriginal());
 
-	// Escape script and flatten dependencies.
-	std::wstring source = script->escape([&] (const Guid& g) -> std::wstring {
-		return g.format();
-	});
-
-	// Ensure no double character line breaks.
-	source = replaceAll< std::wstring >(source, L"\r\n", L"\n");
+	std::wstring source;
+	if (!readScript(pipelineDepends, m_assetPath, sourceAsset, source))
+		return false;
 
 	// Execute preprocessor on script.
 	std::wstring text;
@@ -165,8 +204,15 @@ bool ScriptPipeline::buildDependencies(
 			usingIds.insert(g);
 		else
 		{
-			log::error << L"Script pipeline failed; malformed using statement." << Endl;
-			return false;
+			// Resolve using database path instead of guid.
+			Ref< db::Instance > dependentInstance = pipelineDepends->getSourceDatabase()->getInstance(*i);
+			if (dependentInstance)
+				usingIds.insert(dependentInstance->getGuid());
+			else
+			{
+				log::error << L"Script pipeline failed; malformed using statement." << Endl;
+				return false;
+			}
 		}
 	}
 
@@ -210,15 +256,9 @@ bool ScriptPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	const Script* script = mandatory_non_null_type_cast< const Script* >(sourceAsset);
-
-	// Escape script and flatten dependencies.
-	std::wstring source = script->escape([&] (const Guid& g) -> std::wstring {
-		return g.format();
-	});
-
-	// Ensure no double character line breaks.
-	source = replaceAll< std::wstring >(source, L"\r\n", L"\n");
+	std::wstring source;
+	if (!readScript(pipelineBuilder, m_assetPath, sourceAsset, source))
+		return false;
 
 	// Execute preprocessor on script.
 	std::wstring text;
@@ -231,7 +271,7 @@ bool ScriptPipeline::buildOutput(
 
 	// Create ordered list of dependent scripts.
 	std::vector< Guid > dependencies;
-	if (!flattenDependencies(pipelineBuilder, m_preprocessor, outputGuid, dependencies))
+	if (!flattenDependencies(pipelineBuilder, m_assetPath, m_preprocessor, outputGuid, dependencies))
 	{
 		log::error << L"Script pipeline failed; unable to resolve script dependencies." << Endl;
 		return false;
