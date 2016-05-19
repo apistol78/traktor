@@ -1,6 +1,7 @@
 #ifndef traktor_online_OnlinePeer2PeerProvider_H
 #define traktor_online_OnlinePeer2PeerProvider_H
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/CircularVector.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Signal.h"
@@ -71,7 +72,7 @@ public:
 private:
 	Ref< ISessionManager > m_sessionManager;
 	Ref< ILobby > m_lobby;
-	std::vector< P2PUser > m_users;
+	AlignedVector< P2PUser > m_users;
 	net::net_handle_t m_localHandle;
 	net::net_handle_t m_primaryHandle;
 	double m_whenUpdate;
