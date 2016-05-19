@@ -34,21 +34,6 @@ struct P2PUserFindPred
 	}
 };
 
-struct P2PUserTimeoutPred
-{
-	int32_t m_timeout;
-
-	P2PUserTimeoutPred(int32_t timeout)
-	:	m_timeout(timeout)
-	{
-	}
-
-	bool operator () (const OnlinePeer2PeerProvider::P2PUser& p2pu) const
-	{
-		return p2pu.timeout >= m_timeout;
-	}
-};
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.OnlinePeer2PeerProvider", OnlinePeer2PeerProvider, net::IPeer2PeerProvider)
@@ -87,7 +72,7 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 OnlinePeer2PeerProvider::~OnlinePeer2PeerProvider()
 {
 	// Disable P2P with all connected users.
-	for (std::vector< P2PUser >::iterator i = m_users.begin(); i != m_users.end(); ++i)
+	for (AlignedVector< P2PUser >::iterator i = m_users.begin(); i != m_users.end(); ++i)
 		i->user->setP2PEnable(false);
 
 	// Terminate transmission thread.
@@ -122,7 +107,7 @@ bool OnlinePeer2PeerProvider::update()
 		}
 
 		// Increment timeout counter for users which have left.
-		for (std::vector< P2PUser >::iterator i = m_users.begin(); i != m_users.end(); ++i)
+		for (AlignedVector< P2PUser >::iterator i = m_users.begin(); i != m_users.end(); ++i)
 		{
 			if (std::find(users.begin(), users.end(), i->user) != users.end())
 			{
@@ -137,13 +122,20 @@ bool OnlinePeer2PeerProvider::update()
 		}
 
 		// Remove users which have a timeout greater than limit.
-		std::vector< P2PUser >::iterator i = std::remove_if(m_users.begin(), m_users.end(), P2PUserTimeoutPred(4));
-		for (std::vector< P2PUser >::iterator j = i; j != m_users.end(); ++j)
+		for (size_t i = 0; i < m_users.size(); )
 		{
-			j->user->setP2PEnable(false);
-			log::info << L"[Online P2P] Peer " << j->user->getGlobalId() << L" removed." << Endl;
+			if (m_users[i].timeout >= 4 || !m_users[i].user)
+			{
+				if (m_users[i].user)
+				{
+					m_users[i].user->setP2PEnable(false);
+					log::info << L"[Online P2P] Peer " << m_users[i].user->getGlobalId() << L" removed." << Endl;
+				}
+				m_users.erase(m_users.begin() + i);
+			}
+			else
+				++i;
 		}
-		m_users.erase(i, m_users.end());
 
 		// Cache primary handle.
 		T_MEASURE_STATEMENT(m_primaryHandle = net::net_handle_t(m_lobby->getOwner()->getGlobalId()), 0.0005);
@@ -190,7 +182,7 @@ Object* OnlinePeer2PeerProvider::getPeerUser(int32_t index) const
 
 bool OnlinePeer2PeerProvider::setPrimaryPeerHandle(net::net_handle_t node)
 {
-	for (std::vector< P2PUser >::const_iterator i = m_users.begin(); i != m_users.end(); ++i)
+	for (AlignedVector< P2PUser >::const_iterator i = m_users.begin(); i != m_users.end(); ++i)
 	{
 		if (i->user->getGlobalId() == node)
 		{
@@ -213,7 +205,7 @@ net::net_handle_t OnlinePeer2PeerProvider::getPrimaryPeerHandle() const
 
 bool OnlinePeer2PeerProvider::send(net::net_handle_t node, const void* data, int32_t size)
 {
-	for (std::vector< P2PUser >::iterator i = m_users.begin(); i != m_users.end(); ++i)
+	for (AlignedVector< P2PUser >::iterator i = m_users.begin(); i != m_users.end(); ++i)
 	{
 		if (i->user->getGlobalId() == node)
 		{
