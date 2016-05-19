@@ -1,5 +1,5 @@
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/Save.h"
@@ -273,6 +273,25 @@ Ref< const ISerializable > PipelineDependsIncremental::getObjectReadOnly(const G
 		return m_instanceCache->getObjectReadOnly(instanceGuid);
 	else
 		return 0;
+}
+
+Ref< IStream > PipelineDependsIncremental::openFile(const Path& basePath, const std::wstring& fileName)
+{
+	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
+	Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmRead);
+	return fileStream ? new BufferedStream(fileStream) : 0;
+}
+
+Ref< IStream > PipelineDependsIncremental::createTemporaryFile(const std::wstring& fileName)
+{
+	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmWrite);
+	return fileStream ? new BufferedStream(fileStream) : 0;
+}
+
+Ref< IStream > PipelineDependsIncremental::openTemporaryFile(const std::wstring& fileName)
+{
+	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmRead);
+	return fileStream ? new BufferedStream(fileStream) : 0;
 }
 
 void PipelineDependsIncremental::addUniqueDependency(
