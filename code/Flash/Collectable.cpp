@@ -11,7 +11,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Collectable", Collectable, Object)
 int32_t Collectable::ms_instanceCount = 0;
 
 Collectable::Collectable()
-:	m_index(~0U)
+:	m_prev(0)
+,	m_next(0)
 ,	m_weakRefDisposes(0)
 ,	m_traceRefCount(0)
 ,	m_traceColor(TcBlack)
@@ -22,6 +23,8 @@ Collectable::Collectable()
 
 Collectable::~Collectable()
 {
+	T_ASSERT (m_next == 0);
+	T_ASSERT (m_prev == 0);
 	Atomic::decrement(ms_instanceCount);
 	delete m_weakRefDisposes;
 }
