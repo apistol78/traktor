@@ -2,6 +2,7 @@
 #define traktor_flash_Collectable_H
 
 #include "Core/Object.h"
+#include "Core/Containers/IntrusiveList.h"
 #include "Core/Containers/SmallSet.h"
 
 // import/export mechanism.
@@ -61,6 +62,7 @@ protected:
 	virtual void dereference() = 0;
 
 private:
+	friend struct DefaultLink< Collectable >;
 	friend class GC;
 
 	enum TraceColor
@@ -72,7 +74,8 @@ private:
 	};
 
 	static int32_t ms_instanceCount;
-	uint32_t m_index;	//!< Index into GC list of candidates.
+	Collectable* m_prev;	//!< Intrusive list chain members.
+	Collectable* m_next;
 	mutable SmallSet< IWeakRefDispose* >* m_weakRefDisposes;
 	mutable int32_t m_traceRefCount;
 	mutable uint8_t m_traceColor;

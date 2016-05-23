@@ -981,7 +981,7 @@ bool Application::update()
 				performance.activeSoundChannels = m_audioServer->getActiveSoundChannels();
 
 			performance.flashCharacterCount = flash::FlashCharacterInstance::getInstanceCount();
-			performance.flashGCCandidates = flash::GC::getInstance().getCandidateCount();
+			performance.flashGCCandidates = 0; //flash::GC::getInstance().getCandidateCount();
 
 			{
 				const AlignedVector< FrameProfiler::Marker >& markers = m_frameProfiler.getMarkers();
