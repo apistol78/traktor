@@ -1,4 +1,6 @@
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
@@ -169,6 +171,8 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 
 		m_callStackGrid->removeAllRows();
 
+		bool autoOpenDebuggedScript = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Editor.AutoOpenDebuggedScript", true);
+
 		int32_t depth = 0;
 		for (RefArray< StackFrame >::const_iterator i = m_stackFrames.begin(); i != m_stackFrames.end(); ++i)
 		{
@@ -184,6 +188,16 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 			row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
 
 			m_callStackGrid->addRow(row);
+
+			// Open debugged script and issue a "goto line" to scroll script editor to debugged line.
+			if (autoOpenDebuggedScript && i == m_stackFrames.begin())
+			{
+				m_editor->openEditor(scriptInstance);
+
+				editor::IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
+				if (activeEditorPage)
+					activeEditorPage->handleCommand(ui::Command((*i)->getLine(), L"Script.Editor.GotoLine"));
+			}
 		}
 
 		updateLocals(0);

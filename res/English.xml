@@ -1025,6 +1025,14 @@
       <second>Dark</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_SCRIPT</first>
+      <second>Script</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SCRIPT_AUTO_OPEN</first>
+      <second>Auto open and navigate through debugged script</second>
+    </item>
+    <item>
       <first>EDITOR_WORKSPACE_TITLE</first>
       <second>Workspace</second>
     </item>
