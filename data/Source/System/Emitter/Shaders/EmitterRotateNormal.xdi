@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.VertexInput">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>136</first>
 				<second>133</second>
@@ -12,16 +12,23 @@
 			<type>DtFloat1</type>
 			<index>1</index>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment>Normal in view space</comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment>
+			<![CDATA[
+Normal in view space
+			]]>
+			</comment>
 			<position>
 				<first>386</first>
 				<second>270</second>
 			</position>
 			<name>Normal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>525</first>
 				<second>303</second>
@@ -29,7 +36,7 @@
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>525</first>
 				<second>340</second>
@@ -37,7 +44,11 @@
 			<swizzle>00z</swizzle>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment>Rotated normal in view space</comment>
+			<comment>
+			<![CDATA[
+Rotated normal in view space
+			]]>
+			</comment>
 			<position>
 				<first>964</first>
 				<second>263</second>
@@ -45,14 +56,14 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Interpolator">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>485</first>
 				<second>210</second>
 			</position>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>607</first>
 				<second>214</second>
@@ -61,9 +72,11 @@
 			<inputPins>
 				<item>
 					<name>Angle</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Input</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -71,16 +84,17 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>765</first>
 				<second>235</second>
 			</position>
 		</item>
 		<item type="traktor.render.Neg">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>350</first>
 				<second>146</second>

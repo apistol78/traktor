@@ -110,7 +110,6 @@ it's automatically replaced in MeshPipeline.
 By default we map with StaticMesh vertex
 fragment just to make the shader previewer
 work.
-
 			]]>
 			</comment>
 			<position>

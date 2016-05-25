@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="7">
+<object type="traktor.amalgam.Feature" version="8">
 	<description>Physics - NVidia PhysX</description>
 	<priority>0</priority>
 	<platforms>
@@ -62,27 +62,6 @@
 						</second>
 					</item>
 				</value>
-				<value>
-					<item>
-						<first>DEPLOY_FILES_SHARED</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>PhysX3Common_x86.lib</item>
-								<item>PhysX3Cooking_x86.lib</item>
-								<item>PhysX3Extensions.lib</item>
-								<item>PhysX3_x86.lib</item>
-								<item>PxTask.lib</item>
-								<item>Traktor.Core.lib</item>
-								<item>Traktor.Database.lib</item>
-								<item>Traktor.Heightfield.lib</item>
-								<item>Traktor.Physics.PhysX.lib</item>
-								<item>Traktor.Physics.lib</item>
-								<item>Traktor.Resource.lib</item>
-								<item>Traktor.World.lib</item>
-							</value>
-						</second>
-					</item>
-				</value>
 			</deploy>
 		</item>
 	</platforms>
@@ -132,4 +111,5 @@
 		</value>
 	</runtimeProperties>
 	<environment/>
+	<dependencies/>
 </object>

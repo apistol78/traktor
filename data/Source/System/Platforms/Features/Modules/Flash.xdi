@@ -407,21 +407,21 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>DropShadow</item>
-						<item>Glow</item>
-						<item>Flash_Default</item>
-						<item>Flash_Layer</item>
-						<item>Flash_Multiply</item>
-						<item>Flash_Screen</item>
-						<item>Flash_Lighten</item>
-						<item>Flash_Darken</item>
-						<item>Flash_Difference</item>
 						<item>Flash_Add</item>
-						<item>Flash_Subtract</item>
-						<item>Flash_Invert</item>
 						<item>Flash_Alpha</item>
+						<item>Flash_Darken</item>
+						<item>Flash_Default</item>
+						<item>Flash_Difference</item>
 						<item>Flash_Erase</item>
-						<item>Flash_Overlay</item>
 						<item>Flash_Hardlight</item>
+						<item>Flash_Invert</item>
+						<item>Flash_Layer</item>
+						<item>Flash_Lighten</item>
+						<item>Flash_Multiply</item>
+						<item>Flash_Overlay</item>
+						<item>Flash_Screen</item>
+						<item>Flash_Subtract</item>
+						<item>Glow</item>
 					</value>
 				</second>
 			</item>

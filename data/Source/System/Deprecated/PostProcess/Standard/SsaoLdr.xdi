@@ -2,25 +2,35 @@
 <object type="traktor.render.ImageProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
 	<definitions>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>3</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>4</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
 	</definitions>
 	<steps>
@@ -34,7 +44,7 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>4</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="2">
 			<shader>{9165EBF1-FB28-584B-B259-0B580E2050D5}</shader>
 			<sources>
 				<item>
@@ -50,11 +60,12 @@
 			</sources>
 			<direction>1, 0, 0, 0</direction>
 			<taps>15</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>2</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="2">
 			<shader>{9165EBF1-FB28-584B-B259-0B580E2050D5}</shader>
 			<sources>
 				<item>
@@ -70,6 +81,7 @@
 			</sources>
 			<direction>0, 1, 0, 0</direction>
 			<taps>15</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>0</target>

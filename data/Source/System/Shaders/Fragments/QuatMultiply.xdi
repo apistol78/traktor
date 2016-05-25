@@ -4,7 +4,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -19,7 +19,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -34,7 +34,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -46,7 +46,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -58,7 +58,7 @@
 		<item type="traktor.render.Mul">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -69,7 +69,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -81,7 +81,7 @@
 		<item type="traktor.render.Mul">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -92,7 +92,7 @@
 		<item type="traktor.render.Vector">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -104,7 +104,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -116,7 +116,7 @@
 		<item type="traktor.render.Mul">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -127,7 +127,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -139,7 +139,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -151,7 +151,7 @@
 		<item type="traktor.render.Mul">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -162,7 +162,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -174,7 +174,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -186,7 +186,7 @@
 		<item type="traktor.render.Mul">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -197,7 +197,7 @@
 		<item type="traktor.render.Mul">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -208,7 +208,7 @@
 		<item type="traktor.render.Add">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -219,7 +219,7 @@
 		<item type="traktor.render.Add">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -230,7 +230,7 @@
 		<item type="traktor.render.Sub">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -241,7 +241,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -254,7 +254,6 @@
 			<comment>
 			<![CDATA[
 Quaternion multiply fragment.
-
 			]]>
 			</comment>
 			<position>

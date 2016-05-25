@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External">
-			<comment>Microfacet Distribution Function</comment>
+		<item type="traktor.render.External" version="1">
+			<comment>
+			<![CDATA[
+Microfacet Distribution Function
+			]]>
+			</comment>
 			<position>
 				<first>317</first>
 				<second>116</second>
@@ -11,12 +15,15 @@
 			<inputPins>
 				<item>
 					<name>Normal</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>HalfAngleVector</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Roughness</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -24,9 +31,14 @@
 					<name>D</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
-			<comment>Fresnel Reflection</comment>
+		<item type="traktor.render.External" version="1">
+			<comment>
+			<![CDATA[
+Fresnel Reflection
+			]]>
+			</comment>
 			<position>
 				<first>366</first>
 				<second>250</second>
@@ -35,12 +47,15 @@
 			<inputPins>
 				<item>
 					<name>LightDirection</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>HalfAngleVector</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>RefractionIndex</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -48,70 +63,86 @@
 					<name>F</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>733</first>
 				<second>194</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>22</first>
 				<second>228</second>
 			</position>
 			<name>Roughness</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>9</first>
 				<second>173</second>
 			</position>
 			<name>HalfAngleVector</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>47</first>
 				<second>103</second>
 			</position>
 			<name>Normal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>6</first>
 				<second>7</second>
 			</position>
 			<name>ViewDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>54</first>
 				<second>328</second>
 			</position>
 			<name>RefractionIndex</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>330</first>
 				<second>6</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>685</first>
 				<second>-9</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>542</first>
 				<second>41</second>
@@ -119,14 +150,14 @@
 			<value>3.142</value>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>858</first>
 				<second>20</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1033</first>
 				<second>9</second>

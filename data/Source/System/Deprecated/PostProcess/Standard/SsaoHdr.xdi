@@ -2,125 +2,185 @@
 <object type="traktor.render.ImageProcessSettings" version="1">
 	<requireHighRange>true</requireHighRange>
 	<definitions>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>3</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>4</screenDenom>
+			<screenWidthDenom>4</screenWidthDenom>
+			<screenHeightDenom>4</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR32F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>4</id>
 			<width>64</width>
 			<height>64</height>
-			<screenDenom>0</screenDenom>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR32F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>5</id>
 			<width>16</width>
 			<height>16</height>
-			<screenDenom>0</screenDenom>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR32F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>6</id>
 			<width>4</width>
 			<height>4</height>
-			<screenDenom>0</screenDenom>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR32F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>7</id>
 			<width>1</width>
 			<height>1</height>
-			<screenDenom>0</screenDenom>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR32F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>8</id>
 			<width>1</width>
 			<height>1</height>
-			<screenDenom>0</screenDenom>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR32F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>9</id>
 			<width>256</width>
 			<height>256</height>
-			<screenDenom>0</screenDenom>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR16G16B16A16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>10</id>
 			<width>256</width>
 			<height>256</height>
-			<screenDenom>0</screenDenom>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR16G16B16A16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>11</id>
 			<width>1</width>
 			<height>1</height>
-			<screenDenom>0</screenDenom>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR32F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>12</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR32F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>13</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR32F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>14</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR16G16B16A16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
 	</definitions>
 	<steps>
@@ -134,7 +194,7 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>13</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="2">
 			<shader>{9165EBF1-FB28-584B-B259-0B580E2050D5}</shader>
 			<sources>
 				<item>
@@ -150,11 +210,12 @@
 			</sources>
 			<direction>1, 0, 0, 0</direction>
 			<taps>15</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>12</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="2">
 			<shader>{9165EBF1-FB28-584B-B259-0B580E2050D5}</shader>
 			<sources>
 				<item>
@@ -170,6 +231,7 @@
 			</sources>
 			<direction>0, 1, 0, 0</direction>
 			<taps>15</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>14</target>
@@ -271,7 +333,7 @@
 					<item type="traktor.render.ImageProcessStepSetTarget">
 						<target>10</target>
 					</item>
-					<item type="traktor.render.ImageProcessStepBlur" version="1">
+					<item type="traktor.render.ImageProcessStepBlur" version="2">
 						<shader>{E119187C-8BF9-6544-934B-44CC29C65A26}</shader>
 						<sources>
 							<item>
@@ -282,11 +344,12 @@
 						</sources>
 						<direction>2, 0, 0, 0</direction>
 						<taps>15</taps>
+						<blurType>BtGaussian</blurType>
 					</item>
 					<item type="traktor.render.ImageProcessStepSetTarget">
 						<target>9</target>
 					</item>
-					<item type="traktor.render.ImageProcessStepBlur" version="1">
+					<item type="traktor.render.ImageProcessStepBlur" version="2">
 						<shader>{E119187C-8BF9-6544-934B-44CC29C65A26}</shader>
 						<sources>
 							<item>
@@ -297,6 +360,7 @@
 						</sources>
 						<direction>0, 2, 0, 0</direction>
 						<taps>15</taps>
+						<blurType>BtGaussian</blurType>
 					</item>
 				</steps>
 			</step>

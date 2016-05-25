@@ -352,7 +352,6 @@ if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
 	float3 color = ColorMap.SampleLevel(ColorMap_Sampler, colorCoord, 3.0f).xyz;
 	Hit = float4(color, edgeFactor * normFactor * distFactor);
 }
-
 			]]>
 			</script>
 		</item>

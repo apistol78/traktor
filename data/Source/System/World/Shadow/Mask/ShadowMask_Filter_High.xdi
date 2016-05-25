@@ -2,7 +2,7 @@
 <object type="traktor.render.ImageProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
 	<definitions>
-		<item type="traktor.render.ImageProcessDefineTarget" version="3">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>Flip</id>
 			<width>0</width>
 			<height>0</height>
@@ -15,6 +15,7 @@
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
 			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
 	</definitions>
 	<steps>

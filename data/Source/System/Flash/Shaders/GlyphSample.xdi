@@ -231,7 +231,7 @@
 				<second>199</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="4">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>955</first>
@@ -243,7 +243,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
-			<compare>CmNo</compare>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>

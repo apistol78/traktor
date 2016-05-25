@@ -2,31 +2,37 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>225</first>
 				<second>285</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>107</first>
 				<second>108</second>
 			</position>
 			<name>Angle</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>105</first>
 				<second>305</second>
 			</position>
 			<name>Input</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>918</first>
 				<second>189</second>
@@ -34,56 +40,56 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Sin">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>216</first>
 				<second>200</second>
 			</position>
 		</item>
 		<item type="traktor.render.Cos">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>216</first>
 				<second>142</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>364</first>
 				<second>185</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>364</first>
 				<second>110</second>
 			</position>
 		</item>
 		<item type="traktor.render.MixIn">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>771</first>
 				<second>153</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>628</first>
 				<second>185</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>630</first>
 				<second>111</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>506</first>
 				<second>202</second>
@@ -91,7 +97,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>506</first>
 				<second>177</second>
@@ -99,7 +105,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>506</first>
 				<second>152</second>
@@ -107,7 +113,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>506</first>
 				<second>127</second>

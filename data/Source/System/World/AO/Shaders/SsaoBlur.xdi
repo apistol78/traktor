@@ -75,7 +75,7 @@
 				<second>566</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="5">
 			<comment>
 			<![CDATA[
 Sample shadow
@@ -91,7 +91,9 @@ Sample shadow
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
@@ -172,7 +174,7 @@ Sample shadow
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="5">
 			<comment>
 			<![CDATA[
 Shadow; adjusted for msaa.
@@ -188,7 +190,9 @@ Shadow; adjusted for msaa.
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">

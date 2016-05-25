@@ -4,7 +4,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -19,7 +19,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -31,7 +31,7 @@
 		<item type="traktor.render.Dot">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -42,7 +42,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -54,7 +54,7 @@
 		<item type="traktor.render.Sqrt">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -65,7 +65,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -77,7 +77,7 @@
 		<item type="traktor.render.Add">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>

@@ -1,46 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>56</first>
 				<second>179</second>
 			</position>
 			<name>Tangent</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>56</first>
 				<second>134</second>
 			</position>
 			<name>Normal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>447</first>
 				<second>52</second>
 			</position>
 			<name>Input</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.MatrixIn">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>414</first>
 				<second>126</second>
 			</position>
 		</item>
 		<item type="traktor.render.Cross">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>254</first>
 				<second>197</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>276</first>
 				<second>78</second>
@@ -48,14 +57,14 @@
 			<value>0, 0, 0, 0</value>
 		</item>
 		<item type="traktor.render.Transform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>601</first>
 				<second>71</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>785</first>
 				<second>95</second>

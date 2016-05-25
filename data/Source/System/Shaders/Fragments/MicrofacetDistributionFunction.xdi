@@ -1,74 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>-193</first>
 				<second>42</second>
 			</position>
 			<name>Normal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>-193</first>
 				<second>100</second>
 			</position>
 			<name>HalfAngleVector</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>4</first>
 				<second>54</second>
 			</position>
 		</item>
 		<item type="traktor.render.ArcusCos">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>174</first>
 				<second>23</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>217</first>
 				<second>155</second>
 			</position>
 			<name>Roughness</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>342</first>
 				<second>62</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>520</first>
 				<second>62</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>254</first>
 				<second>225</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>404</first>
 				<second>287</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>174</first>
 				<second>387</second>
@@ -76,28 +85,28 @@
 			<value>4</value>
 		</item>
 		<item type="traktor.render.Pow">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>335</first>
 				<second>419</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>569</first>
 				<second>347</second>
 			</position>
 		</item>
 		<item type="traktor.render.Neg">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>682</first>
 				<second>79</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>689</first>
 				<second>143</second>
@@ -105,21 +114,21 @@
 			<value>2.71828</value>
 		</item>
 		<item type="traktor.render.Pow">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>836</first>
 				<second>104</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1022</first>
 				<second>163</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1199</first>
 				<second>161</second>

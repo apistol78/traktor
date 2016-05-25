@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="7">
+<object type="traktor.amalgam.Feature" version="8">
 	<description>Online - LAN</description>
 	<priority>0</priority>
 	<platforms>
@@ -104,17 +104,6 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>Traktor.Core.lib</item>
-								<item>Traktor.Net.lib</item>
-								<item>Traktor.Online.Lan.lib</item>
-								<item>Traktor.Online.lib</item>
-							</value>
-						</second>
-					</item>
-					<item>
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
@@ -122,6 +111,17 @@
 								<item>Traktor.Net.dll</item>
 								<item>Traktor.Online.Lan.dll</item>
 								<item>Traktor.Online.dll</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Net.lib</item>
+								<item>Traktor.Online.Lan.lib</item>
+								<item>Traktor.Online.lib</item>
 							</value>
 						</second>
 					</item>
@@ -134,17 +134,6 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>Traktor.Core.lib</item>
-								<item>Traktor.Net.lib</item>
-								<item>Traktor.Online.Lan.lib</item>
-								<item>Traktor.Online.lib</item>
-							</value>
-						</second>
-					</item>
-					<item>
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
@@ -152,6 +141,17 @@
 								<item>Traktor.Net.dll</item>
 								<item>Traktor.Online.Lan.dll</item>
 								<item>Traktor.Online.dll</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Net.lib</item>
+								<item>Traktor.Online.Lan.lib</item>
+								<item>Traktor.Online.lib</item>
 							</value>
 						</second>
 					</item>
@@ -281,4 +281,5 @@
 		</value>
 	</runtimeProperties>
 	<environment/>
+	<dependencies/>
 </object>

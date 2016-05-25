@@ -19,13 +19,21 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
 				<first>1552</first>
 				<second>833</second>
 			</position>
 			<technique>Default</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -43,6 +51,7 @@
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
 			<wireframe>false</wireframe>
 			<stencilEnable>false</stencilEnable>
 			<stencilFail>SoKeep</stencilFail>
@@ -51,8 +60,9 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>186</first>
@@ -64,8 +74,12 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-116</first>
@@ -73,8 +87,9 @@
 			</position>
 			<parameterName>ViewEdgeTopLeft</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-122</first>
@@ -82,8 +97,9 @@
 			</position>
 			<parameterName>ViewEdgeTopRight</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-132</first>
@@ -91,8 +107,9 @@
 			</position>
 			<parameterName>ViewEdgeBottomLeft</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-138</first>
@@ -100,6 +117,7 @@
 			</position>
 			<parameterName>ViewEdgeBottomRight</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Lerp">
 			<comment/>
@@ -181,7 +199,7 @@ View position of fragment
 			<from>0</from>
 			<to>15</to>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment/>
 			<position>
 				<first>454</first>
@@ -189,6 +207,7 @@ View position of fragment
 			</position>
 			<parameterName>Offsets</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>32</length>
 		</item>
 		<item type="traktor.render.Add">
@@ -232,7 +251,7 @@ Clip space
 				<second>1155</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>2168</first>
@@ -244,6 +263,10 @@ Clip space
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -358,7 +381,7 @@ Clip space
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>888</first>
@@ -366,6 +389,7 @@ Clip space
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -382,7 +406,7 @@ Clip space
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>311</first>
@@ -394,6 +418,10 @@ Clip space
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.FragmentPosition">
 			<comment/>
@@ -483,7 +511,7 @@ Clip space
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-8</first>
@@ -491,8 +519,9 @@ Clip space
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture2D</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>1959</first>
@@ -500,6 +529,7 @@ Clip space
 			</position>
 			<parameterName>FixMe</parameterName>
 			<type>PtTexture2D</type>
+			<frequency>UfFrame</frequency>
 		</item>
 	</nodes>
 	<edges>

@@ -2,21 +2,21 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Lerp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>540</first>
 				<second>127</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>253</first>
 				<second>269</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>147</first>
 				<second>339</second>
@@ -24,7 +24,7 @@
 			<value>2</value>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>386</first>
 				<second>228</second>
@@ -33,21 +33,21 @@
 			<max>1</max>
 		</item>
 		<item type="traktor.render.Lerp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>679</first>
 				<second>212</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>386</first>
 				<second>318</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>281</first>
 				<second>387</second>
@@ -55,7 +55,7 @@
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>540</first>
 				<second>254</second>
@@ -63,40 +63,52 @@
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>272</first>
 				<second>75</second>
 			</position>
 			<name>Input1</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>272</first>
 				<second>104</second>
 			</position>
 			<name>Input2</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>272</first>
 				<second>133</second>
 			</position>
 			<name>Input3</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>56</first>
 				<second>272</second>
 			</position>
 			<name>Blend</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>829</first>
 				<second>247</second>
