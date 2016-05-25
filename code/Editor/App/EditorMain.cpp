@@ -69,10 +69,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #endif
 
 #if defined(__APPLE__)
+	bool forceConsole = cmdLine.hasOption(L"console");
+
 	// Everything should live inside the bundle and not have
 	// a special location in the file system; thus we override
 	// our special environment variable to point to our bundle.
-	if (!Debugger::getInstance().isDebuggerAttached())
+	if (!forceConsole && !Debugger::getInstance().isDebuggerAttached())
 	{
 		std::wstring bundlePath;
 		if (OS::getInstance().getEnvironment(L"BUNDLE_PATH", bundlePath))
@@ -81,6 +83,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	// Log some relevant environment variables to ease debugging.
 	std::wstring check;
+
+	OS::getInstance().getEnvironment(L"BUNDLE_PATH", check);
+	log::info << L"BUNDLE_PATH = \"" << check << L"\"" << Endl;
 
 	OS::getInstance().getEnvironment(L"TRAKTOR_HOME", check);
 	log::info << L"TRAKTOR_HOME = \"" << check << L"\"" << Endl;

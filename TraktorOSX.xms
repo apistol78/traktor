@@ -3201,6 +3201,10 @@
 							<sourceFile>libTraktor.Animation.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Animation.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -3227,6 +3231,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Animation.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Animation.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -3382,6 +3390,10 @@
 										<sourceFile>libTraktor.Core.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Core.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -3411,6 +3423,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Core.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Core.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -3769,6 +3785,10 @@
 										<sourceFile>libTraktor.World.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.World.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -3795,6 +3815,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.World.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.World.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -3943,6 +3967,10 @@
 													<sourceFile>libTraktor.Render.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Render.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -3969,6 +3997,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Render.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Render.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -4126,6 +4158,10 @@
 																<sourceFile>libTraktor.Resource.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Resource.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+															</item>
 														</aggregationItems>
 													</item>
 													<item type="Configuration" version="3">
@@ -4152,6 +4188,10 @@
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Resource.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Resource.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 															</item>
 														</aggregationItems>
 													</item>
@@ -4262,6 +4302,10 @@
 																<sourceFile>libTraktor.Compress.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Compress.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+															</item>
 														</aggregationItems>
 													</item>
 													<item type="Configuration" version="3">
@@ -4292,6 +4336,10 @@
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Compress.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Compress.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 															</item>
 														</aggregationItems>
 													</item>
@@ -4704,6 +4752,10 @@
 													<sourceFile>libTraktor.Database.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Database.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -4730,6 +4782,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Database.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Database.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -4852,6 +4908,10 @@
 																<sourceFile>libTraktor.Xml.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Xml.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+															</item>
 														</aggregationItems>
 													</item>
 													<item type="Configuration" version="3">
@@ -4879,6 +4939,10 @@
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Xml.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Xml.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 															</item>
 														</aggregationItems>
 													</item>
@@ -4998,6 +5062,10 @@
 										<sourceFile>libTraktor.Mesh.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Mesh.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -5024,6 +5092,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Mesh.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Mesh.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -5236,6 +5308,10 @@
 										<sourceFile>libTraktor.Physics.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Physics.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -5262,6 +5338,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Physics.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Physics.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -5389,6 +5469,10 @@
 													<sourceFile>libTraktor.Heightfield.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Heightfield.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -5415,6 +5499,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Heightfield.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Heightfield.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -5542,6 +5630,10 @@
 							<sourceFile>libTraktor.Animation.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Animation.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -5577,6 +5669,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Animation.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Animation.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -5753,6 +5849,10 @@
 										<sourceFile>libTraktor.Editor.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Editor.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -5779,6 +5879,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Editor.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Editor.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -5891,6 +5995,10 @@
 													<sourceFile>libTraktor.Ui.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Ui.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -5917,6 +6025,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Ui.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Ui.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -6051,6 +6163,10 @@
 																<sourceFile>libTraktor.Drawing.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Drawing.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+															</item>
 														</aggregationItems>
 													</item>
 													<item type="Configuration" version="3">
@@ -6081,6 +6197,10 @@
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Drawing.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Drawing.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 															</item>
 														</aggregationItems>
 													</item>
@@ -6381,6 +6501,10 @@
 													<sourceFile>libTraktor.Net.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Net.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -6407,6 +6531,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Net.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Net.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -6585,6 +6713,10 @@
 													<sourceFile>libTraktor.Sql.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Sql.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -6611,6 +6743,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Sql.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Sql.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -6718,6 +6854,10 @@
 													<sourceFile>libTraktor.Sql.Sqlite3.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Sql.Sqlite3.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -6745,6 +6885,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Sql.Sqlite3.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Sql.Sqlite3.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -6982,6 +7126,10 @@
 													<sourceFile>libTraktor.Database.Remote.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Database.Remote.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -7008,6 +7156,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Database.Remote.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Database.Remote.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -7133,6 +7285,10 @@
 													<sourceFile>libTraktor.Database.Remote.Server.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Database.Remote.Server.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -7159,6 +7315,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Database.Remote.Server.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Database.Remote.Server.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -7267,6 +7427,10 @@
 																<sourceFile>libTraktor.Database.Compact.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Database.Compact.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+															</item>
 														</aggregationItems>
 													</item>
 													<item type="Configuration" version="3">
@@ -7293,6 +7457,10 @@
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Database.Compact.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Database.Compact.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 															</item>
 														</aggregationItems>
 													</item>
@@ -7409,6 +7577,10 @@
 																<sourceFile>libTraktor.Database.Local.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Database.Local.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+															</item>
 														</aggregationItems>
 													</item>
 													<item type="Configuration" version="3">
@@ -7435,6 +7607,10 @@
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Database.Local.dylib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Database.Local.dylib</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 															</item>
 														</aggregationItems>
 													</item>
@@ -7577,6 +7753,10 @@
 										<sourceFile>libTraktor.I18N.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.I18N.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -7603,6 +7783,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.I18N.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.I18N.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -7709,6 +7893,10 @@
 										<sourceFile>libTraktor.Scene.Editor.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Scene.Editor.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -7735,6 +7923,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Scene.Editor.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Scene.Editor.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -7880,6 +8072,10 @@
 													<sourceFile>libTraktor.Scene.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Scene.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -7906,6 +8102,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Scene.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Scene.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -8032,6 +8232,10 @@
 													<sourceFile>libTraktor.Ui.Custom.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Ui.Custom.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -8058,6 +8262,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Ui.Custom.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Ui.Custom.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -8404,6 +8612,10 @@
 													<sourceFile>libTraktor.Weather.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Weather.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -8430,6 +8642,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Weather.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Weather.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -8589,6 +8805,10 @@
 													<sourceFile>libTraktor.World.Editor.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.World.Editor.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -8615,6 +8835,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.World.Editor.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.World.Editor.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -8784,6 +9008,10 @@
 										<sourceFile>libTraktor.Mesh.Editor.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Mesh.Editor.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -8810,6 +9038,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Mesh.Editor.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Mesh.Editor.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -9029,6 +9261,14 @@
 													<sourceFile>$(FBX_SDK)/lib/clang/debug/*.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Model.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>$(FBX_SDK)/lib/clang/debug/*.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -9070,6 +9310,14 @@
 												<item type="AggregationItem">
 													<sourceFile>$(FBX_SDK)/lib/clang/release/*.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Model.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>$(FBX_SDK)/lib/clang/release/*.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -9368,6 +9616,10 @@
 													<sourceFile>libTraktor.Render.Editor.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Render.Editor.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -9397,6 +9649,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Render.Editor.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Render.Editor.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -9771,6 +10027,10 @@
 							<sourceFile>libTraktor.Database.Remote.Client.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Database.Remote.Client.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -9797,6 +10057,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Database.Remote.Client.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Database.Remote.Client.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -10066,7 +10330,63 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Editor.App</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/osx/Info.plist</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/Traktor.icns</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/English.xml</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/Help.xml</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/deploy</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/templates</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/bin/deploy</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/bin/template</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/bin/osx</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/Traktor.Editor.config</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/Traktor.Editor.osx.config</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/data/Source</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/data</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/data/Assets</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/data</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/themes</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -10093,7 +10413,63 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Editor.App</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/osx/Info.plist</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/Traktor.icns</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/English.xml</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/Help.xml</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/deploy</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/templates</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/bin/deploy</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/bin/template</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/bin/osx</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/Traktor.Editor.config</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/Traktor.Editor.osx.config</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/data/Source</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/data</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/data/Assets</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/data</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TRAKTOR_HOME)/res/themes</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -10251,6 +10627,10 @@
 										<sourceFile>libTraktor.Ui.Cocoa.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Ui.Cocoa.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -10282,6 +10662,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Ui.Cocoa.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Ui.Cocoa.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -10398,6 +10782,10 @@
 										<sourceFile>libTraktor.Html.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Html.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -10424,6 +10812,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Html.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Html.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -10545,6 +10937,10 @@
 							<sourceFile>libTraktor.Flash.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Flash.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -10572,6 +10968,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Flash.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Flash.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -10784,6 +11184,10 @@
 										<sourceFile>libTraktor.Sound.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Sound.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -10815,6 +11219,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Sound.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Sound.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -11448,6 +11856,10 @@
 							<sourceFile>libTraktor.Flash.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Flash.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -11474,6 +11886,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Flash.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Flash.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -11638,6 +12054,10 @@
 										<sourceFile>libTraktor.Sound.Editor.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Sound.Editor.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -11666,6 +12086,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Sound.Editor.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Sound.Editor.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -11852,6 +12276,10 @@
 							<sourceFile>libTraktor.Graphics.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Graphics.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -11878,6 +12306,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Graphics.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Graphics.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -11982,6 +12414,10 @@
 							<sourceFile>libTraktor.I18N.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.I18N.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -12008,6 +12444,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.I18N.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.I18N.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -12135,6 +12575,10 @@
 							<sourceFile>libTraktor.Input.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Input.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -12161,6 +12605,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Input.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Input.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -12284,6 +12732,10 @@
 							<sourceFile>libTraktor.Physics.Bullet.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Physics.Bullet.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -12312,6 +12764,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Physics.Bullet.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Physics.Bullet.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -12438,6 +12894,10 @@
 							<sourceFile>libTraktor.Physics.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Physics.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -12464,6 +12924,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Physics.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Physics.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -12786,6 +13250,10 @@
 							<sourceFile>libTraktor.Render.OpenGL.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.OpenGL.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -12819,6 +13287,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Render.OpenGL.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.OpenGL.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -13075,6 +13547,10 @@
 							<sourceFile>libTraktor.Script.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Script.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -13101,6 +13577,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Script.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Script.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -13208,6 +13688,10 @@
 							<sourceFile>libTraktor.Script.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Script.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -13234,6 +13718,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Script.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Script.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -13374,6 +13862,10 @@
 							<sourceFile>libTraktor.Script.Lua.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Script.Lua.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -13399,6 +13891,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Script.Lua.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Script.Lua.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -13628,6 +14124,10 @@
 							<sourceFile>libTraktor.Sound.OpenAL.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Sound.OpenAL.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -13656,6 +14156,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Sound.OpenAL.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Sound.OpenAL.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -13763,6 +14267,10 @@
 							<sourceFile>libTraktor.Spray.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Spray.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -13789,6 +14297,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Spray.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Spray.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -13948,6 +14460,10 @@
 							<sourceFile>libTraktor.Spray.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Spray.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -13974,6 +14490,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Spray.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Spray.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -14155,6 +14675,10 @@
 							<sourceFile>libTraktor.Terrain.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Terrain.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -14181,6 +14705,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Terrain.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Terrain.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -14308,6 +14836,10 @@
 							<sourceFile>libTraktor.Terrain.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Terrain.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -14334,6 +14866,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Terrain.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Terrain.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -14491,6 +15027,10 @@
 										<sourceFile>libTraktor.Heightfield.Editor.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Heightfield.Editor.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -14517,6 +15057,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Heightfield.Editor.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Heightfield.Editor.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -14717,6 +15261,10 @@
 							<sourceFile>libTraktor.Theater.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Theater.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -14743,6 +15291,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Theater.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Theater.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -14855,6 +15407,10 @@
 							<sourceFile>libTraktor.Theater.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Theater.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -14881,6 +15437,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Theater.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Theater.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -15048,6 +15608,10 @@
 							<sourceFile>libTraktor.Ui.Wx.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Ui.Wx.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -15081,6 +15645,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Ui.Wx.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Ui.Wx.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -15194,6 +15762,10 @@
 							<sourceFile>libTraktor.Weather.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Weather.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -15220,6 +15792,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Weather.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Weather.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -15503,6 +16079,10 @@
 							<sourceFile>libTraktor.Render.Capture.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.Capture.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -15529,6 +16109,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Render.Capture.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.Capture.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -15644,6 +16228,10 @@
 							<sourceFile>libTraktor.Render.OpenGL.ES2.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.OpenGL.ES2.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -15673,6 +16261,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Render.OpenGL.ES2.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.OpenGL.ES2.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -15933,6 +16525,10 @@
 							<sourceFile>libTraktor.Video.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Video.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -15961,6 +16557,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Video.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Video.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -16096,6 +16696,10 @@
 							<sourceFile>libTraktor.Video.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Video.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -16122,6 +16726,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Video.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Video.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -16254,6 +16862,10 @@
 							<sourceFile>libTraktor.Online.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Online.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -16280,6 +16892,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Online.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Online.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -16424,6 +17040,10 @@
 							<sourceFile>libTraktor.Online.Local.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Online.Local.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -16450,6 +17070,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Online.Local.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Online.Local.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -16571,6 +17195,10 @@
 							<sourceFile>libTraktor.Input.OsX.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Input.OsX.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -16601,6 +17229,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Input.OsX.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Input.OsX.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -16718,6 +17350,14 @@
 							<sourceFile>$(STEAMWORKS_SDK)/redistributable_bin/osx32/libsteam_api.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Online.Steam.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(STEAMWORKS_SDK)/redistributable_bin/osx32/libsteam_api.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -16754,6 +17394,14 @@
 						<item type="AggregationItem">
 							<sourceFile>$(STEAMWORKS_SDK)/redistributable_bin/osx32/libsteam_api.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Online.Steam.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(STEAMWORKS_SDK)/redistributable_bin/osx32/libsteam_api.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -16889,6 +17537,10 @@
 							<sourceFile>libTraktor.Amalgam.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Amalgam.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -16915,6 +17567,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Amalgam.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Amalgam.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -17075,6 +17731,10 @@
 										<sourceFile>libTraktor.Amalgam.Game.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Amalgam.Game.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -17101,6 +17761,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Amalgam.Game.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Amalgam.Game.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -17355,6 +18019,10 @@
 													<sourceFile>libTraktor.Ai.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Ai.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -17382,6 +18050,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Ai.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Ai.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -17636,6 +18308,10 @@
 													<sourceFile>libTraktor.Amalgam.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Amalgam.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -17662,6 +18338,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Amalgam.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Amalgam.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -17778,6 +18458,10 @@
 													<sourceFile>libTraktor.Spark.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Spark.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
 											</aggregationItems>
 										</item>
 										<item type="Configuration" version="3">
@@ -17804,6 +18488,10 @@
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Spark.dylib</sourceFile>
 													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Spark.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 												</item>
 											</aggregationItems>
 										</item>
@@ -17996,6 +18684,10 @@
 										<sourceFile>libTraktor.Amalgam.Deploy.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Amalgam.Deploy.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+									</item>
 								</aggregationItems>
 							</item>
 							<item type="Configuration" version="3">
@@ -18022,6 +18714,10 @@
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Amalgam.Deploy.dylib</sourceFile>
 										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>libTraktor.Amalgam.Deploy.dylib</sourceFile>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -18168,6 +18864,10 @@
 							<sourceFile>Traktor.Database.Migrate.App</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>*.*</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -18284,6 +18984,10 @@
 							<sourceFile>libTraktor.Input.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Input.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -18310,6 +19014,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Input.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Input.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -18627,6 +19335,10 @@
 							<sourceFile>libTraktor.Resource.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Resource.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -18653,6 +19365,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Resource.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Resource.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -18889,6 +19605,10 @@
 							<sourceFile>libTraktor.Ai.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Ai.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -18917,6 +19637,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Ai.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Ai.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -19240,6 +19964,10 @@
 							<sourceFile>libTraktor.Script.LuaJIT.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Script.LuaJIT.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -19272,6 +20000,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Script.LuaJIT.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Script.LuaJIT.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -19396,6 +20128,10 @@
 							<sourceFile>libTraktor.Illuminate.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Illuminate.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -19422,6 +20158,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Illuminate.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Illuminate.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -19570,6 +20310,10 @@
 							<sourceFile>libTraktor.Online.Gc.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Online.Gc.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -19596,6 +20340,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Online.Gc.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Online.Gc.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -19707,6 +20455,10 @@
 							<sourceFile>libTraktor.Online.Lan.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Online.Lan.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -19731,6 +20483,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Online.Lan.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Online.Lan.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -19840,6 +20596,10 @@
 							<sourceFile>libTraktor.Telemetry.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Telemetry.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -19866,6 +20626,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Telemetry.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Telemetry.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -19974,6 +20738,10 @@
 							<sourceFile>libTraktor.Spark.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Spark.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -20000,6 +20768,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Spark.Editor.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Spark.Editor.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -20555,6 +21327,10 @@
 							<sourceFile>libTraktor.Json.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Json.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+						</item>
 					</aggregationItems>
 				</item>
 				<item type="Configuration" version="3">
@@ -20582,6 +21358,10 @@
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Json.dylib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Json.dylib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -20948,477 +21728,5 @@
 		</item>
 		<item ref="/object/projects/item[13]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[4]/project"/>
 	</projects>
-	<aggregations>
-		<item type="Aggregation" version="1">
-			<enable>true</enable>
-			<name>Traktor.Editor.App.Bundle</name>
-			<items>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/res/osx/Info.plist</sourceFile>
-					<targetPath>Contents</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/res/icons/Traktor.icns</sourceFile>
-					<targetPath>Contents/Resources</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/res/English.xml</sourceFile>
-					<targetPath>Contents/Resources/res</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/res/Help.xml</sourceFile>
-					<targetPath>Contents/Resources/res</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/res/deploy</sourceFile>
-					<targetPath>Contents/Resources/res</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/res/templates</sourceFile>
-					<targetPath>Contents/Resources/res</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/bin/deploy</sourceFile>
-					<targetPath>Contents/Resources/bin</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/bin/template</sourceFile>
-					<targetPath>Contents/Resources/bin</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/bin/osx</sourceFile>
-					<targetPath>Contents/Resources/bin</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/Traktor.Editor.config</sourceFile>
-					<targetPath>Contents/Resources</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/Traktor.Editor.osx.config</sourceFile>
-					<targetPath>Contents/Resources</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(FBX_SDK)/lib/clang/release/libfbxsdk.dylib</sourceFile>
-					<targetPath>Contents/MacOS</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/data/Source</sourceFile>
-					<targetPath>Contents/Resources/data</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/data/Assets</sourceFile>
-					<targetPath>Contents/Resources/data</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/bin/latest/ios/releasestatic</sourceFile>
-					<targetPath>Contents/Resources/bin/latest/ios</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/bin/latest/osx/releaseshared</sourceFile>
-					<targetPath>Contents/Resources/bin/latest/osx</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>lib$(TRAKTOR_HOME)/bin/latest/pnacl/releasestatic</sourceFile>
-					<targetPath>Contents/Resources/bin/latest/pnacl</targetPath>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[81]/dependencies/item[8]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[90]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[81]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[83]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[3]/project/dependencies/item[6]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[3]/project/dependencies/item[7]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[21]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[26]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[5]/project/dependencies/item[4]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[55]/dependencies/item[10]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]/dependencies/item[10]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[6]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[30]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[31]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[89]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[79]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[2]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[15]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[15]/project/dependencies/item[5]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[77]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[78]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[80]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[5]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[37]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[38]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[39]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[69]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[15]/project/dependencies/item[8]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[42]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[70]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[4]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[7]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[46]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[47]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[48]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[7]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[26]/dependencies/item[11]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[51]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[52]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[53]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[3]/project/dependencies/item[4]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[3]/project/dependencies/item[5]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[54]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[55]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[56]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]/dependencies/item[9]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[6]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[61]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[75]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[76]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[8]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[13]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[68]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[81]/dependencies/item[8]/project/dependencies/item[22]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[95]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[93]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[99]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[100]"/>
-				</item>
-			</dependencies>
-		</item>
-	</aggregations>
+	<aggregations/>
 </object>

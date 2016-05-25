@@ -1,7 +1,7 @@
 #ifndef traktor_flash_FlashPreviewControl_H
 #define traktor_flash_FlashPreviewControl_H
 
-#define T_USE_ACCELERATED_RENDERER 0
+#define T_USE_ACCELERATED_RENDERER 1
 
 #include "Core/Timer/Timer.h"
 #include "Ui/Widget.h"

@@ -136,7 +136,7 @@ bool FlashPipeline::buildOutput(
 			
 			FlashFrame::PlaceObject p;
 			p.hasFlags = FlashFrame::PfHasCharacterId;
-			p.depth = 0;
+			p.depth = 1;
 			p.characterId = 1;
 			frame->placeObject(p);
 
