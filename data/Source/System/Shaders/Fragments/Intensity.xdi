@@ -4,7 +4,7 @@
 		<item type="traktor.render.Dot">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -15,7 +15,7 @@
 		<item type="traktor.render.Vector">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -27,7 +27,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -42,7 +42,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -55,7 +55,6 @@
 			<comment>
 			<![CDATA[
 Calculate light intensity of RGB color.
-
 			]]>
 			</comment>
 			<position>

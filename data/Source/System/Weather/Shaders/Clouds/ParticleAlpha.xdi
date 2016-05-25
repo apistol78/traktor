@@ -113,7 +113,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>822</first>
@@ -125,8 +125,12 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>606</first>
@@ -134,6 +138,7 @@
 			</position>
 			<parameterName>ParticleTexture</parameterName>
 			<type>PtTexture2D</type>
+			<frequency>UfFrame</frequency>
 		</item>
 	</nodes>
 	<edges>

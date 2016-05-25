@@ -12,7 +12,7 @@
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>353</first>
@@ -24,6 +24,10 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
@@ -63,7 +67,7 @@
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>162</first>
@@ -71,6 +75,7 @@
 			</position>
 			<parameterName>BlurredTexture</parameterName>
 			<type>PtTexture2D</type>
+			<frequency>UfFrame</frequency>
 		</item>
 	</nodes>
 	<edges>

@@ -2,30 +2,31 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>573</first>
 				<second>253</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>750</first>
 				<second>253</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
-			<comment></comment>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
 			<position>
 				<first>535</first>
 				<second>326</second>
 			</position>
 			<parameterName>ParticleDensity</parameterName>
 			<type>PtScalar</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>911</first>
 				<second>257</second>
@@ -33,7 +34,7 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>349</first>
 				<second>302</second>
@@ -44,7 +45,7 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>353</first>
 				<second>264</second>

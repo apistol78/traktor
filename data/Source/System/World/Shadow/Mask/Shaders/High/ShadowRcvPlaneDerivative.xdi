@@ -2,21 +2,29 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Sub">
-			<comment>ddist_duv.y</comment>
+			<comment>
+			<![CDATA[
+ddist_duv.y
+			]]>
+			</comment>
 			<position>
 				<first>960</first>
 				<second>473</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment>determinant</comment>
+			<comment>
+			<![CDATA[
+determinant
+			]]>
+			</comment>
 			<position>
 				<first>960</first>
 				<second>662</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>176</first>
 				<second>510</second>
@@ -24,7 +32,7 @@
 			<swizzle>00x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>176</first>
 				<second>471</second>
@@ -32,14 +40,18 @@
 			<swizzle>xy0</swizzle>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>262</first>
 				<second>465</second>
 			</position>
 		</item>
 		<item type="traktor.render.Derivative">
-			<comment>duvdist_dx</comment>
+			<comment>
+			<![CDATA[
+duvdist_dx
+			]]>
+			</comment>
 			<position>
 				<first>433</first>
 				<second>402</second>
@@ -47,7 +59,11 @@
 			<axis>DaX</axis>
 		</item>
 		<item type="traktor.render.Derivative">
-			<comment>duvdist_dy</comment>
+			<comment>
+			<![CDATA[
+duvdist_dy
+			]]>
+			</comment>
 			<position>
 				<first>433</first>
 				<second>497</second>
@@ -55,7 +71,7 @@
 			<axis>DaY</axis>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>587</first>
 				<second>397</second>
@@ -63,7 +79,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>587</first>
 				<second>428</second>
@@ -71,7 +87,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>587</first>
 				<second>461</second>
@@ -79,7 +95,7 @@
 			<swizzle>z</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>587</first>
 				<second>509</second>
@@ -87,7 +103,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>587</first>
 				<second>540</second>
@@ -95,7 +111,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>587</first>
 				<second>573</second>
@@ -103,63 +119,71 @@
 			<swizzle>z</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>812</first>
 				<second>631</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>812</first>
 				<second>704</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
-			<comment>ddist_duv</comment>
+			<comment>
+			<![CDATA[
+ddist_duv
+			]]>
+			</comment>
 			<position>
 				<first>1329</first>
 				<second>425</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>811</first>
 				<second>278</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>811</first>
 				<second>351</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment>ddist_duv.x</comment>
+			<comment>
+			<![CDATA[
+ddist_duv.x
+			]]>
+			</comment>
 			<position>
 				<first>959</first>
 				<second>309</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>812</first>
 				<second>515</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>812</first>
 				<second>442</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1090</first>
 				<second>394</second>
@@ -167,7 +191,7 @@
 			<swizzle>x0</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1090</first>
 				<second>438</second>
@@ -175,30 +199,36 @@
 			<swizzle>0x</swizzle>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1186</first>
 				<second>388</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>-54</first>
 				<second>456</second>
 			</position>
 			<name>ShadowMapTexCoord</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>10</first>
 				<second>525</second>
 			</position>
 			<name>Distance</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1656</first>
 				<second>492</second>
@@ -206,7 +236,7 @@
 			<name>dDistance_dUV</name>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1490</first>
 				<second>449</second>

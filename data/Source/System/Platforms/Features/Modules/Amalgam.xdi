@@ -271,8 +271,8 @@
 						<first>DEPLOY_EXTERN_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.agg.lib</item>
 								<item>Extern.OpenEXR.lib</item>
+								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
 								<item>Extern.expat-2.1.0.lib</item>
 								<item>Extern.ilmbase.lib</item>
@@ -382,8 +382,8 @@
 						<first>DEPLOY_EXTERN_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.agg.lib</item>
 								<item>Extern.OpenEXR.lib</item>
+								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
 								<item>Extern.expat-2.1.0.lib</item>
 								<item>Extern.ilmbase.lib</item>

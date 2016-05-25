@@ -2,22 +2,27 @@
 <object type="traktor.render.ImageProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
 	<definitions>
-		<item type="traktor.render.ImageProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>Flip</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
 	</definitions>
 	<steps>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Flip</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="2">
 			<shader>{B8239ACF-8DFF-584B-8DC5-A993D1A005F2}</shader>
 			<sources>
 				<item>
@@ -28,11 +33,12 @@
 			</sources>
 			<direction>2, 0, 0, 0</direction>
 			<taps>7</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="2">
 			<shader>{B8239ACF-8DFF-584B-8DC5-A993D1A005F2}</shader>
 			<sources>
 				<item>
@@ -43,6 +49,7 @@
 			</sources>
 			<direction>0, 2, 0, 0</direction>
 			<taps>7</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 	</steps>
 </object>

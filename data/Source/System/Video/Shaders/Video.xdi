@@ -79,7 +79,7 @@
 			</position>
 			<swizzle>x00</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment>
 			<![CDATA[
 Luma
@@ -95,6 +95,7 @@ Luma
 			<addressU>AdBorder</addressU>
 			<addressV>AdBorder</addressV>
 			<addressW>AdBorder</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -175,7 +176,7 @@ Luma
 			</position>
 			<swizzle>0yz</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="5">
 			<comment>
 			<![CDATA[
 Chroma
@@ -191,6 +192,7 @@ Chroma
 			<addressU>AdBorder</addressU>
 			<addressV>AdBorder</addressV>
 			<addressW>AdBorder</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>

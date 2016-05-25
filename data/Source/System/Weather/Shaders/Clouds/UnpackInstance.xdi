@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>760</first>
 				<second>185</second>
@@ -10,7 +10,7 @@
 			<name>ParticlePosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>760</first>
 				<second>261</second>
@@ -18,7 +18,7 @@
 			<name>ParticleRadius</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>760</first>
 				<second>299</second>
@@ -26,7 +26,7 @@
 			<name>ParticleRotation</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>760</first>
 				<second>337</second>
@@ -34,7 +34,7 @@
 			<name>ParticleUV</name>
 		</item>
 		<item type="traktor.render.VertexInput">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>184</first>
 				<second>148</second>
@@ -44,28 +44,30 @@
 			<type>DtFloat1</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.IndexedUniform">
-			<comment></comment>
+		<item type="traktor.render.IndexedUniform" version="1">
+			<comment/>
 			<position>
 				<first>390</first>
 				<second>215</second>
 			</position>
 			<parameterName>InstanceData1</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>16</length>
 		</item>
-		<item type="traktor.render.IndexedUniform">
-			<comment></comment>
+		<item type="traktor.render.IndexedUniform" version="1">
+			<comment/>
 			<position>
 				<first>390</first>
 				<second>285</second>
 			</position>
 			<parameterName>InstanceData2</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>16</length>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>605</first>
 				<second>261</second>
@@ -73,7 +75,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>605</first>
 				<second>319</second>
@@ -81,7 +83,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>605</first>
 				<second>377</second>
@@ -89,7 +91,7 @@
 			<swizzle>zw</swizzle>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>760</first>
 				<second>223</second>
@@ -97,7 +99,7 @@
 			<name>ParticleOpacity</name>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>605</first>
 				<second>145</second>
@@ -105,7 +107,7 @@
 			<swizzle>xyz1</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>605</first>
 				<second>203</second>

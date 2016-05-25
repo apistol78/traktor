@@ -14,7 +14,7 @@ Tag_TransparencyMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>526</first>
@@ -26,7 +26,9 @@ Tag_TransparencyMap
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Swizzle">

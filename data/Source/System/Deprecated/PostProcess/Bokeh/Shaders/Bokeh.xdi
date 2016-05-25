@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="3">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
 				<first>1735</first>
 				<second>790</second>
 			</position>
 			<technique>Default</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -25,6 +33,7 @@
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
 			<wireframe>false</wireframe>
 			<stencilEnable>false</stencilEnable>
 			<stencilFail>SoKeep</stencilFail>
@@ -80,7 +89,7 @@
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>915</first>
@@ -92,6 +101,10 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
@@ -126,8 +139,8 @@
 				<second>486</second>
 			</position>
 			<external>{E4081801-6AA7-2F4C-8286-F6AE953E93D5}</external>
-      <type>PtTexture2D</type>
-    </item>
+			<type>PtTexture2D</type>
+		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
@@ -151,7 +164,7 @@
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>692</first>
@@ -163,6 +176,10 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
@@ -223,7 +240,7 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>681</first>
@@ -235,6 +252,10 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>

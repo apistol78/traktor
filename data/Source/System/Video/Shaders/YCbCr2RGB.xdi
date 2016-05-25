@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>150</first>
 				<second>256</second>
@@ -13,7 +13,7 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>225</first>
 				<second>64</second>
@@ -21,7 +21,7 @@
 			<value>1.16438, 0, 1.59603, -0.870785</value>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>187</first>
 				<second>99</second>
@@ -29,7 +29,7 @@
 			<value>1.16438, -0.391762, -0.8135, 0.529593</value>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>225</first>
 				<second>133</second>
@@ -37,14 +37,18 @@
 			<value>1.16438, 2.017234, 0, -1.08139</value>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment>R</comment>
+			<comment>
+			<![CDATA[
+R
+			]]>
+			</comment>
 			<position>
 				<first>527</first>
 				<second>102</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>329</first>
 				<second>256</second>
@@ -52,28 +56,36 @@
 			<swizzle>xyz1</swizzle>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment>G</comment>
+			<comment>
+			<![CDATA[
+G
+			]]>
+			</comment>
 			<position>
 				<first>527</first>
 				<second>220</second>
 			</position>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment>B</comment>
+			<comment>
+			<![CDATA[
+B
+			]]>
+			</comment>
 			<position>
 				<first>527</first>
 				<second>340</second>
 			</position>
 		</item>
 		<item type="traktor.render.MixIn">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>714</first>
 				<second>206</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>859</first>
 				<second>235</second>

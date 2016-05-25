@@ -4,7 +4,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -19,7 +19,7 @@
 		<item type="traktor.render.MixOut">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -30,7 +30,7 @@
 		<item type="traktor.render.Add">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -41,7 +41,7 @@
 		<item type="traktor.render.Add">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -52,7 +52,7 @@
 		<item type="traktor.render.Div">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -63,7 +63,7 @@
 		<item type="traktor.render.Scalar">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -75,7 +75,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment>
 			<![CDATA[
-
+	
 			]]>
 			</comment>
 			<position>
@@ -89,7 +89,6 @@
 			<![CDATA[
 Calculate average value from RGB color.
 Output = (R + G + B) / 3
-
 			]]>
 			</comment>
 			<position>

@@ -1,114 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>271</first>
 				<second>527</second>
 			</position>
 			<name>Roughness</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>249</first>
 				<second>571</second>
 			</position>
 			<name>HalfAngleVector</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>246</first>
 				<second>404</second>
 			</position>
 			<name>LightDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>288</first>
 				<second>671</second>
 			</position>
 			<name>RefractionIndex</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>294</first>
 				<second>477</second>
 			</position>
 			<name>Normal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>506</first>
 				<second>408</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>763</first>
 				<second>245</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>823</first>
 				<second>354</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment>Percentage of specular light reflected</comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment>
+			<![CDATA[
+Percentage of specular light reflected
+			]]>
+			</comment>
 			<position>
 				<first>145</first>
 				<second>302</second>
 			</position>
 			<name>SpecularLightReflected</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>585</first>
 				<second>194</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>472</first>
 				<second>277</second>
 			</position>
 			<name>DiffuseReflectivity</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>416</first>
 				<second>176</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>258</first>
 				<second>158</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>-78</first>
 				<second>101</second>
 			</position>
 			<name>AmbientSurfaceReflectance</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>98</first>
 				<second>193</second>
@@ -116,30 +144,40 @@
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>273</first>
 				<second>17</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>-38</first>
 				<second>-5</second>
 			</position>
 			<name>AmbientLightIntensity</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>743</first>
 				<second>149</second>
 			</position>
 			<name>LightLuminousIntensity</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External">
-			<comment>Cook Torrance Specular</comment>
+		<item type="traktor.render.External" version="1">
+			<comment>
+			<![CDATA[
+Cook Torrance Specular
+			]]>
+			</comment>
 			<position>
 				<first>537</first>
 				<second>509</second>
@@ -148,18 +186,23 @@
 			<inputPins>
 				<item>
 					<name>Roughness</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>HalfAngleVector</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Normal</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>ViewDirection</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>RefractionIndex</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -167,17 +210,21 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>276</first>
 				<second>621</second>
 			</position>
 			<name>ViewDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>463</first>
 				<second>86</second>
@@ -185,7 +232,7 @@
 			<name>Ambient</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1183</first>
 				<second>254</second>
@@ -193,7 +240,7 @@
 			<name>Diffuse</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1184</first>
 				<second>309</second>
@@ -201,14 +248,14 @@
 			<name>Specular</name>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1030</first>
 				<second>237</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1030</first>
 				<second>310</second>

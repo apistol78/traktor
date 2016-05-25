@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.TextureAsset" version="5">
+<object type="traktor.render.TextureAsset" version="10">
 	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Terrain/Undergrowth/Textures/Grass.tga</fileName>
+	<textureFormat>TfInvalid</textureFormat>
 	<generateNormalMap>false</generateNormalMap>
 	<scaleDepth>0</scaleDepth>
 	<generateMips>true</generateMips>
 	<keepZeroAlpha>false</keepZeroAlpha>
-	<isCubeMap>false</isCubeMap>
+	<textureType>Tt2D</textureType>
 	<hasAlpha>true</hasAlpha>
 	<ignoreAlpha>false</ignoreAlpha>
+	<premultiplyAlpha>false</premultiplyAlpha>
 	<scaleImage>false</scaleImage>
 	<scaleWidth>0</scaleWidth>
 	<scaleHeight>0</scaleHeight>
+	<flipX>false</flipX>
+	<flipY>false</flipY>
 	<enableCompression>true</enableCompression>
 	<enableNormalMapCompression>false</enableNormalMapCompression>
 	<inverseNormalMapY>false</inverseNormalMapY>
@@ -18,4 +22,5 @@
 	<generateSphereMap>false</generateSphereMap>
 	<preserveAlphaCoverage>true</preserveAlphaCoverage>
 	<alphaCoverageReference>0.3</alphaCoverageReference>
+	<systemTexture>false</systemTexture>
 </object>

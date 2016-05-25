@@ -8,7 +8,7 @@
 				<second>139</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
 				<first>644</first>
@@ -20,6 +20,10 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.MixIn">
 			<comment/>
@@ -227,8 +231,8 @@ Cloud dark
 				<second>59</second>
 			</position>
 			<external>{857E4DC7-8E99-0E49-A78C-36A85736DC22}</external>
-      <type>PtTexture2D</type>
-    </item>
+			<type>PtTexture2D</type>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">

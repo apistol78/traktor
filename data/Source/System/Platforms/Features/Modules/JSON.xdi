@@ -12,8 +12,8 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Json.a</item>
 								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Json.a</item>
 							</value>
 						</second>
 					</item>
@@ -29,8 +29,8 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Json.so</item>
 								<item>libTraktor.Core.so</item>
+								<item>libTraktor.Json.so</item>
 							</value>
 						</second>
 					</item>
@@ -46,8 +46,8 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Traktor.Json.dll</item>
 								<item>Traktor.Core.dll</item>
+								<item>Traktor.Json.dll</item>
 							</value>
 						</second>
 					</item>
@@ -63,8 +63,8 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Json.dylib</item>
 								<item>libTraktor.Core.dylib</item>
+								<item>libTraktor.Json.dylib</item>
 							</value>
 						</second>
 					</item>
@@ -80,8 +80,8 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Traktor.Json.lib</item>
 								<item>Traktor.Core.lib</item>
+								<item>Traktor.Json.lib</item>
 							</value>
 						</second>
 					</item>
@@ -103,8 +103,8 @@
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Traktor.Json.dll</item>
 								<item>Traktor.Core.dll</item>
+								<item>Traktor.Json.dll</item>
 							</value>
 						</second>
 					</item>
@@ -112,8 +112,8 @@
 						<first>DEPLOY_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Traktor.Json.lib</item>
 								<item>Traktor.Core.lib</item>
+								<item>Traktor.Json.lib</item>
 							</value>
 						</second>
 					</item>
@@ -135,8 +135,8 @@
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Traktor.Json.dll</item>
 								<item>Traktor.Core.dll</item>
+								<item>Traktor.Json.dll</item>
 							</value>
 						</second>
 					</item>
@@ -144,8 +144,8 @@
 						<first>DEPLOY_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Traktor.Json.lib</item>
 								<item>Traktor.Core.lib</item>
+								<item>Traktor.Json.lib</item>
 							</value>
 						</second>
 					</item>
@@ -161,8 +161,8 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Traktor.Json.lib</item>
 								<item>Traktor.Core.lib</item>
+								<item>Traktor.Json.lib</item>
 							</value>
 						</second>
 					</item>
@@ -178,8 +178,8 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Json.bc</item>
 								<item>libTraktor.Core.bc</item>
+								<item>libTraktor.Json.bc</item>
 							</value>
 						</second>
 					</item>
@@ -195,8 +195,8 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Json.a</item>
 								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Json.a</item>
 							</value>
 						</second>
 					</item>
@@ -212,8 +212,8 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Json.a</item>
 								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Json.a</item>
 							</value>
 						</second>
 					</item>
