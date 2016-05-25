@@ -383,10 +383,13 @@ EditorForm::EditorForm()
 
 bool EditorForm::create(const CommandLine& cmdLine)
 {
-#if !defined(__APPLE__)
 	std::wstring settingsPath = L"Traktor.Editor.config";
-#else
-	std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
+
+#if defined(__APPLE__)
+	// Load configuration from bundle resources.
+	bool forceConsole = cmdLine.hasOption(L"console");
+	if (!forceConsole)
+		settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
 #endif
 
 	// Remember startup directory so we can save user configuration properly.
@@ -811,14 +814,14 @@ void EditorForm::destroy()
 	setStoreObject(L"DiscoveryManager", 0);
 
 	// Destroy shortcut table.
-	m_shortcutTable->destroy();
+	safeDestroy(m_shortcutTable);
 
 	// Destroy widgets.
-	m_menuTab->destroy();
-	m_dock->destroy();
-	m_statusBar->destroy();
-	m_toolBar->destroy();
-	m_menuBar->destroy();
+	safeDestroy(m_menuTab);
+	safeDestroy(m_dock);
+	safeDestroy(m_statusBar);
+	safeDestroy(m_toolBar);
+	safeDestroy(m_menuBar);
 
 	Form::destroy();
 }

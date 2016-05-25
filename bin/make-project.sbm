@@ -454,7 +454,7 @@ for i = 0, configurations:size() - 1 do
 		elseif os == "osx" or os == "linux" then
 			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
 			output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
-			output:printLn("\t@cp -f " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+			output:printLn("\t@cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
 		end
 	end
 
