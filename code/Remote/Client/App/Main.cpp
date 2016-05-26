@@ -42,6 +42,9 @@ int launch(const CommandLine& cmdLine)
 		return 1;
 	}
 
+	if (base)
+		log::info << L"Using target base \"" << targetBase.getPathName() << L"\"" << Endl;
+
 	std::wstring arguments;
 	for (int32_t i = 3; i < cmdLine.getCount(); ++i)
 	{
@@ -225,6 +228,9 @@ int deploy(const CommandLine& cmdLine)
 		log::error << L"Target base must be a relative path." << Endl;
 		return 1;
 	}
+
+	if (base)
+		log::info << L"Using target base \"" << targetBase.getPathName() << L"\"" << Endl;
 
 	net::SocketAddressIPv4 addr(host, c_serverPort);
 
