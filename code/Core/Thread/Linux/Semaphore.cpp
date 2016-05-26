@@ -1,3 +1,4 @@
+#include <cstring>
 #include <pthread.h>
 #include "Core/Thread/Semaphore.h"
 
