@@ -205,7 +205,7 @@ private:
 				continue;
 			}
 
-			size_t s = i++;
+			size_t s = i;
 			while (i < args.length())
 			{
 				ch = args[i];
