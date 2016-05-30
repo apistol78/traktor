@@ -328,6 +328,8 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 {
 	if (!m_program)
 		return false;
+	if (m_validated && !m_valid)
+		return false;
 
 	// Bind program.
 	T_OGL_SAFE(glUseProgram(m_program));
@@ -438,24 +440,34 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 	}
 
 	// Check if program and state is valid.
-#if defined(_DEBUG)
-	GLint status;
-	T_OGL_SAFE(glValidateProgram(m_program));
-	T_OGL_SAFE(glGetProgramiv(m_program, GL_VALIDATE_STATUS, &status));
-	if (status != GL_TRUE)
+	if (!m_validated)
 	{
-		GLchar errorBuf[512];
-		GLint errorBufLen;
+		GLint status;
+		
+		T_OGL_SAFE(glValidateProgram(m_program));
+		T_OGL_SAFE(glGetProgramiv(m_program, GL_VALIDATE_STATUS, &status));
 
-		T_OGL_SAFE(glGetProgramInfoLog(m_program, sizeof(errorBuf), &errorBufLen, errorBuf));
-		if (errorBufLen > 0)
+		m_validated = true;
+		m_valid = bool(status == GL_TRUE);
+
+#if defined(_DEBUG)
+		if (!m_valid)
 		{
-			log::error << L"GLSL program validate failed :" << Endl;
-			log::error << mbstows(errorBuf) << Endl;
-			return false;
+			GLchar errorBuf[512];
+			GLint errorBufLen;
+
+			T_OGL_SAFE(glGetProgramInfoLog(m_program, sizeof(errorBuf), &errorBufLen, errorBuf));
+			if (errorBufLen > 0)
+			{
+				log::error << L"GLSL program validate failed :" << Endl;
+				log::error << mbstows(errorBuf) << Endl;
+			}
 		}
-	}
 #endif
+
+		if (!m_valid)
+			return false;
+	}
 
 	ms_activeProgram = this;
 	return true;
@@ -472,6 +484,8 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, con
 ,	m_renderStateList(0)
 ,	m_locationTargetSize(0)
 ,	m_textureDirty(true)
+,	m_validated(false)
+,	m_valid(false)
 {
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
 

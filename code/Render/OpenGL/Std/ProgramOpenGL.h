@@ -112,6 +112,8 @@ private:
 	RefArray< ITexture > m_textures;
 	float m_targetSize[2];
 	bool m_textureDirty;
+	bool m_validated;
+	bool m_valid;
 	static ProgramOpenGL* ms_activeProgram;
 	
 	ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource);
