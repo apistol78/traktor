@@ -215,14 +215,15 @@ void SoundDriverOpenAL::wait()
 void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)
 {
 	ALuint buffer = 0;
+	ALCenum error;
 
 	// Pop processed buffer from queue.
 	if (m_submitted >= sizeof_array(m_buffers))
 	{
 		alSourceUnqueueBuffers(m_source, 1, &buffer);
-		if (alGetError() != AL_NO_ERROR)
+		if ((error = alGetError()) != AL_NO_ERROR)
 		{
-			log::error << L"OpenAL error detected; unable to unqueue sound block" << Endl;
+			log::error << L"OpenAL error detected; unable to unqueue sound block (" << error << L")" << Endl;
 			return;
 		}
 	}
@@ -265,17 +266,17 @@ void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)
 		soundBlock.samplesCount * m_desc.hwChannels * m_desc.bitsPerSample / 8,
 		m_desc.sampleRate
 	);
-	if (alGetError() != AL_NO_ERROR)
+	if ((error = alGetError()) != AL_NO_ERROR)
 	{
-		log::error << L"OpenAL error detected; unable to buffer sound block" << Endl;
+		log::error << L"OpenAL error detected; unable to buffer sound block (" << error << L")" << Endl;
 		return;
 	}
 
 	// Push buffer onto queue.
 	alSourceQueueBuffers(m_source, 1, &buffer);
-	if (alGetError() != AL_NO_ERROR)
+	if ((error = alGetError()) != AL_NO_ERROR)
 	{
-		log::error << L"OpenAL error detected; unable to queue sound block" << Endl;
+		log::error << L"OpenAL error detected; unable to queue sound block (" << error << L")" << Endl;
 		return;
 	}
 

@@ -423,7 +423,9 @@ bool FlashSpriteInstance::getMember(ActionContext* context, uint32_t memberName,
 
 void FlashSpriteInstance::preDispatchEvents()
 {
-	T_ASSERT (!m_inDispatch);
+	if (m_inDispatch)
+		return;
+
 	m_inDispatch = true;
 	m_gotoIssued = false;
 
