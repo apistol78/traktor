@@ -9,6 +9,8 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 
+#include "Core/Log/Log.h"
+
 namespace traktor
 {
 
@@ -67,6 +69,7 @@ public:
 	{
 		m_file = mbstows(argv[0]);
 
+#if !defined(_WIN32)
 		StringOutputStream ss;
 		for (int i = 1; i < argc; ++i)
 		{
@@ -75,12 +78,36 @@ public:
 			ss << mbstows(argv[i]);
 		}
 		parse(ss.str());
+#else
+		for (int i = 1; i < argc; ++i)
+		{
+			std::wstring a = mbstows(argv[i]);
+			if (a[0] == L'-')
+			{
+				const wchar_t* cs = a.c_str() + 1;
+				const wchar_t* value = wcschr(cs, L'=');
+				if (value)
+					m_opts.push_back(Option(
+						std::wstring(cs, value),
+						trim(value + 1)
+					));
+				else
+					m_opts.push_back(Option(
+						std::wstring(cs),
+						L""
+					));
+			}
+			else
+				m_args.push_back(trim(a));
+		}
+#endif
 	}
 
 	explicit CommandLine(const std::vector< std::wstring >& argv)
 	{
 		m_file = argv[0];
 
+#if !defined(_WIN32)
 		StringOutputStream ss;
 		for (size_t i = 1; i < argv.size(); ++i)
 		{
@@ -89,6 +116,29 @@ public:
 			ss << argv[i];
 		}
 		parse(ss.str());
+#else
+		for (size_t i = 1; i < argv.size(); ++i)
+		{
+			std::wstring a = argv[i];
+			if (a[0] == L'-')
+			{
+				const wchar_t* cs = a.c_str() + 1;
+				const wchar_t* value = wcschr(cs, L'=');
+				if (value)
+					m_opts.push_back(Option(
+						std::wstring(cs, value),
+						trim(value + 1)
+					));
+				else
+					m_opts.push_back(Option(
+						std::wstring(cs),
+						L""
+					));
+			}
+			else
+				m_args.push_back(trim(a));
+		}
+#endif
 	}
 
 	explicit CommandLine(const std::wstring& file, const std::wstring& args)
