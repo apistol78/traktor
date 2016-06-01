@@ -4,7 +4,7 @@ set TRAKTOR_HOME=%~dp0
 
 set STEAMWORKS_SDK=%TRAKTOR_HOME%3rdp\steamworks-sdk-137
 set FBX_SDK=%TRAKTOR_HOME%3rdp\FbxSdk\2016.1.2
-set BULLET_SDK=%TRAKTOR_HOME%3rdp\bullet3-master
+set BULLET_SDK=%TRAKTOR_HOME%3rdp\bullet3-master-160601
 set PHYSX_SDK=%TRAKTOR_HOME%3rdp\PhysX-3.3.1
 set ANGLE_SDK=%TRAKTOR_HOME%3rdp\angle-2014-05-09
 set GLSL_OPTIMIZER=%TRAKTOR_HOME%3rdp\glsl-optimizer-master-20160321
