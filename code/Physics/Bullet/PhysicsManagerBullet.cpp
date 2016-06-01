@@ -63,12 +63,12 @@ namespace traktor
 
 void* traktorAlloc(size_t size)
 {
-	return getAllocator()->alloc(size, 4, "Bullet");
+	return getAllocator()->alloc(size, 16, "Bullet");
 }
 
 void* traktorAllocAlign(size_t size, int alignment)
 {
-	return getAllocator()->alloc(size, alignment, "Bullet");
+	return getAllocator()->alloc(size, max(16, alignment), "Bullet");
 }
 
 void traktorFree(void* memblock)
