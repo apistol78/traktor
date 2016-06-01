@@ -6,7 +6,7 @@ TRAKTOR_HOME="`(cd \"$TRAKTOR_HOME\" && pwd)`"
 
 export TRAKTOR_HOME
 export STEAMWORKS_SDK=$TRAKTOR_HOME/3rdp/steamworks-sdk-137
-export BULLET_SDK=$TRAKTOR_HOME/3rdp/bullet3-master
+export BULLET_SDK=$TRAKTOR_HOME/3rdp/bullet3-master-160601
 export FBX_SDK=$TRAKTOR_HOME/3rdp/FbxSdk/2016.1.2
 export GLSL_OPTIMIZER=$TRAKTOR_HOME/3rdp/glsl-optimizer-master-20141020
 export SQLITE_SDK=$TRAKTOR_HOME/3rdp/sqlite-3.8.7.2

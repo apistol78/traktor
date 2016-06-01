@@ -35,8 +35,6 @@ public:
 
 	virtual void processAllTriangles(btTriangleCallback* callback, const btVector3& aabbMin, const btVector3& aabbMax) const T_OVERRIDE T_FINAL;
 
-	virtual void processRaycastAllTriangles(btTriangleRaycastCallback *callback, const btVector3 &raySource, const btVector3 &rayTarget) T_OVERRIDE T_FINAL;
-
 	virtual void calculateLocalInertia(btScalar mass, btVector3& inertia) const T_OVERRIDE T_FINAL;
 
 	virtual const char*	getName() const T_OVERRIDE T_FINAL;
