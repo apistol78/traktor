@@ -36,7 +36,8 @@ c_mouseControlMap[] =
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceMouseOsX", InputDeviceMouseOsX, IInputDevice)
 
 InputDeviceMouseOsX::InputDeviceMouseOsX()
-:	m_exclusive(false)
+:	m_associated(false)
+,	m_exclusive(false)
 ,	m_lastMouseValid(false)
 ,	m_scrollAccum(0.0f)
 {
@@ -154,8 +155,12 @@ void InputDeviceMouseOsX::readState()
 	bool mouseValid = isInputAllowed();
 
 	// Capture mouse if exclusive mode.
-	if (CGAssociateMouseAndMouseCursorPosition(!m_exclusive) != kCGErrorSuccess)
-		return;
+	if (!m_associated)
+	{
+		if (CGAssociateMouseAndMouseCursorPosition(!m_exclusive) != kCGErrorSuccess)
+			return;
+		m_associated = true;
+	}
 
 	NSPoint centerPosition;
 	if (!getMouseCenterPosition(centerPosition))
@@ -206,7 +211,11 @@ void InputDeviceMouseOsX::setRumble(const InputRumble& rumble)
 
 void InputDeviceMouseOsX::setExclusive(bool exclusive)
 {
-	m_exclusive = exclusive;
+	if (exclusive != m_exclusive)
+	{
+		m_associated = false;
+		m_exclusive = exclusive;
+	}
 }
 
 void InputDeviceMouseOsX::consumeEvent(NSEvent* event)
