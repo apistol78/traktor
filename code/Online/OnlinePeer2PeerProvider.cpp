@@ -259,6 +259,8 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 				std::memcpy(data, rx.data, nrecv);
 				outNode = net::net_handle_t(rx.user->getGlobalId());
 			}
+			else
+				log::warning << L"[Online P2P] Received data from unknown user." << Endl;
 
 			m_rxQueue.pop_front();
 			--m_rxQueuePending;
@@ -277,7 +279,10 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 			if (fromUser != 0 && std::find_if(m_users.begin(), m_users.end(), P2PUserFindPred(fromUser)) != m_users.end())
 				outNode = net::net_handle_t(fromUser->getGlobalId());
 			else
+			{
+				log::warning << L"[Online P2P] Received data from unknown user." << Endl;
 				nrecv = 0;
+			}
 		}
 	}
 

@@ -32,6 +32,17 @@ void SteamVoiceChat::setCallback(IVoiceChatCallback* callback)
 
 void SteamVoiceChat::setAudience(const std::vector< uint64_t >& audienceHandles)
 {
+	// Close channels of old audience members.
+	for (std::vector< uint64_t >::const_iterator i = m_audienceHandles.begin(); i != m_audienceHandles.end(); ++i)
+	{
+		if (std::find(audienceHandles.begin(), audienceHandles.end(), *i) == audienceHandles.end())
+		{
+			log::info << L"[Steam Voice] Closing voice channel to " << *i << Endl;
+			SteamNetworking()->CloseP2PChannelWithUser(uint64(*i), c_voiceP2PChannel);
+		}
+	}
+
+	// Replace audience.
 	m_audienceHandles = audienceHandles;
 }
 
