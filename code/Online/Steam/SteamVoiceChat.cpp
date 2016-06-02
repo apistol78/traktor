@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Log/Log.h"
 #include "Online/Steam/SteamVoiceChat.h"
 
