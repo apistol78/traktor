@@ -350,7 +350,7 @@ function migrateStatic(args)
 	cmd = cmd .. " /MACHINE:X86"
 	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
 	if not debug then
-		cmd = cmd .. " /LTCG /OPT:REF"
+		cmd = cmd .. " /DEBUG /LTCG /OPT:REF"
 	else
 		cmd = cmd .. " /DEBUG"
 	end
@@ -382,6 +382,7 @@ function migrateStatic(args)
 	-- Copy binaries into "bin".
 	run:mkdir("bin32")
 	run:replace("$(DEPLOY_EXECUTABLE).exe", "bin32/$(DEPLOY_EXECUTABLE).exe")
+	run:replace("$(DEPLOY_EXECUTABLE).pdb", "bin32/$(DEPLOY_EXECUTABLE).pdb")
 
 	-- Copy external files into "bin".
 	if externalCopyFiles ~= "" then
