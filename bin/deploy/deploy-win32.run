@@ -167,7 +167,7 @@ function deployStatic(args)
 	cmd = cmd .. " /MACHINE:X86"
 	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
 	if not debug then
-		cmd = cmd .. " /LTCG /OPT:REF"
+		cmd = cmd .. " /DEBUG /LTCG /OPT:REF"
 	else
 		cmd = cmd .. " /DEBUG"
 	end
