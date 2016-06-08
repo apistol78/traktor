@@ -244,16 +244,26 @@ void InputDeviceKeyboardOsX::consumeEvent(NSEvent* event)
 				}
 			}
 
-			NSString* cs = [event characters];
-			if (cs)
+			if ([event keyCode] == kVK_Delete)
 			{
-				std::wstring chrs = fromNSString(cs);
-				for (size_t i = 0; i < chrs.size(); ++i)
+				KeyEvent ke;
+				ke.type = KtCharacter;
+				ke.character = L'\b';
+				m_keyEvents.push_back(ke);
+			}
+			else
+			{
+				NSString* cs = [event characters];
+				if (cs)
 				{
-					KeyEvent ke;
-					ke.type = KtCharacter;
-					ke.character = wchar_t(chrs[i]);
-					m_keyEvents.push_back(ke);
+					std::wstring chrs = fromNSString(cs);
+					for (size_t i = 0; i < chrs.size(); ++i)
+					{
+						KeyEvent ke;
+						ke.type = KtCharacter;
+						ke.character = wchar_t(chrs[i]);
+						m_keyEvents.push_back(ke);
+					}
 				}
 			}
 		}
