@@ -63,7 +63,7 @@ void SparkLayer::transition(Layer* fromLayer)
 {
 }
 
-void SparkLayer::prepare()
+void SparkLayer::prepare(const UpdateInfo& info)
 {
 	if (!m_context)
 	{

@@ -131,8 +131,11 @@ void WorldLayer::transition(Layer* fromLayer)
 	}
 }
 
-void WorldLayer::prepare()
+void WorldLayer::prepare(const UpdateInfo& info)
 {
+	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+	T_ASSERT (renderView);
+
 	if (m_scene.changed())
 	{
 		// If render group already exist then ensure it doesn't contain anything
@@ -164,71 +167,6 @@ void WorldLayer::prepare()
 		if (!m_worldRenderer)
 			return;
 	}
-}
-
-void WorldLayer::update(const UpdateInfo& info)
-{
-	if (!m_worldRenderer)
-		return;
-
-	info.getProfiler()->beginScope(FptWorldLayer);
-
-	// Update camera transform.
-	if (m_cameraEntity)
-	{
-		Transform cameraTransform;
-		m_cameraEntity->getTransform(cameraTransform);
-		m_cameraTransform.step();
-		m_cameraTransform.set(cameraTransform);
-	}
-
-	// Update scene controller.
-	if (m_controllerEnable)
-	{
-		if (m_controllerTime < 0.0f)
-			m_controllerTime = info.getSimulationTime();
-
-		world::UpdateParams up;
-		up.totalTime = info.getSimulationTime() - m_controllerTime;
-		up.deltaTime = info.getSimulationDeltaTime();
-		up.alternateTime = m_alternateTime;
-
-		m_scene->update(up, true, false);
-	}
-
-	{
-		world::UpdateParams up;
-		up.totalTime = info.getSimulationTime();
-		up.deltaTime = info.getSimulationDeltaTime();
-		up.alternateTime = m_alternateTime;
-
-		// Update all entities; calling manually because we have exclusive control
-		// of dynamic entities and an explicit render root group.
-		m_renderGroup->update(up);
-
-		// Update entity events.
-		world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
-		if (eventManager)
-		{
-			info.getProfiler()->beginScope(FptWorldLayerEvents);
-			eventManager->update(up);
-			info.getProfiler()->endScope();
-		}
-	}
-
-	// In case not explicitly set we update the alternative time also.
-	m_alternateTime += info.getSimulationDeltaTime();
-
-	info.getProfiler()->endScope();
-}
-
-void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
-{
-	if (!m_worldRenderer || !m_scene)
-		return;
-
-	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-	T_ASSERT (renderView);
 
 	// Get render view dimensions.
 	int32_t width = renderView->getWidth();
@@ -304,7 +242,70 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 		info.getStateTime(),
 		info.getFrameDeltaTime(),
 		info.getInterval()
-	);
+	);	
+}
+
+void WorldLayer::update(const UpdateInfo& info)
+{
+	if (!m_worldRenderer)
+		return;
+
+	info.getProfiler()->beginScope(FptWorldLayer);
+
+	// Update camera transform.
+	if (m_cameraEntity)
+	{
+		Transform cameraTransform;
+		m_cameraEntity->getTransform(cameraTransform);
+		m_cameraTransform.step();
+		m_cameraTransform.set(cameraTransform);
+	}
+
+	// Update scene controller.
+	if (m_controllerEnable)
+	{
+		if (m_controllerTime < 0.0f)
+			m_controllerTime = info.getSimulationTime();
+
+		world::UpdateParams up;
+		up.totalTime = info.getSimulationTime() - m_controllerTime;
+		up.deltaTime = info.getSimulationDeltaTime();
+		up.alternateTime = m_alternateTime;
+
+		m_scene->update(up, true, false);
+	}
+
+	{
+		world::UpdateParams up;
+		up.totalTime = info.getSimulationTime();
+		up.deltaTime = info.getSimulationDeltaTime();
+		up.alternateTime = m_alternateTime;
+
+		// Update all entities; calling manually because we have exclusive control
+		// of dynamic entities and an explicit render root group.
+		m_renderGroup->update(up);
+
+		// Update entity events.
+		world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
+		if (eventManager)
+		{
+			info.getProfiler()->beginScope(FptWorldLayerEvents);
+			eventManager->update(up);
+			info.getProfiler()->endScope();
+		}
+	}
+
+	// In case not explicitly set we update the alternative time also.
+	m_alternateTime += info.getSimulationDeltaTime();
+
+	info.getProfiler()->endScope();
+}
+
+void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
+{
+	if (!m_worldRenderer || !m_scene)
+		return;
+
 	if (m_worldRenderer->beginBuild())
 	{
 		m_worldRenderer->build(m_renderGroup);
@@ -368,7 +369,8 @@ void WorldLayer::postReconfigured()
 {
 	// Issue prepare here as we want the world renderer
 	// to be created during reconfiguration has the render lock.
-	prepare();
+	UpdateInfo info;
+	prepare(info);
 }
 
 void WorldLayer::suspend()

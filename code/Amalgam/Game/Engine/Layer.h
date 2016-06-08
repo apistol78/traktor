@@ -48,8 +48,11 @@ public:
 	 */
 	virtual void transition(Layer* fromLayer) = 0;
 
-	/*! \brief Prepare layer for update. */
-	virtual void prepare() = 0;
+	/*! \brief Prepare layer for update.
+	 *
+	 * \param info Engine update information.
+	 */
+	virtual void prepare(const UpdateInfo& info) = 0;
 
 	/*! \brief Update layer logic.
 	 *
