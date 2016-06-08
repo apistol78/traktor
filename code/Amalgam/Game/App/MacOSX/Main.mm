@@ -53,7 +53,7 @@ public:
 
 	virtual void log(int32_t level, const std::wstring& str)
 	{
-		(*m_stream) << str << Endl;
+		(*m_stream) << L"[" << DateTime::now().format(L"%H:%M:%S") << L"] " << str << Endl;
 	}
 
 private:
@@ -130,12 +130,50 @@ int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
 	SystemApplication sysapp;
+	Ref< traktor::IStream > logFile;
 
 	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
 	FileSystem::getInstance().makeAllDirectories(writablePath);
 
 #if !defined(_DEBUG)
-	Ref< IStream > logFile = FileSystem::getInstance().open(writablePath + L"/Application.log", File::FmWrite);
+	RefArray< File > logs;
+	FileSystem::getInstance().find(writablePath + L"/Application_*.log", logs);
+
+	// Get "alive" log ids.
+	std::vector< int32_t > logIds;
+	for (RefArray< File >::const_iterator i = logs.begin(); i != logs.end(); ++i)
+	{
+		std::wstring logName = (*i)->getPath().getFileNameNoExtension();
+		size_t p = logName.find(L'_');
+		if (p != logName.npos)
+		{
+			int32_t id = parseString< int32_t >(logName.substr(p + 1), -1);
+			if (id != -1)
+				logIds.push_back(id);
+		}
+	}
+
+	int32_t nextLogId = 0;
+	if (!logIds.empty())
+	{
+		std::sort(logIds.begin(), logIds.end());
+
+		// Don't keep more than 10 log files.
+		while (logIds.size() >= 10)
+		{
+			StringOutputStream ss;
+			ss << writablePath << L"/Application_" << logIds.front() << L".log";
+			FileSystem::getInstance().remove(ss.str());
+			logIds.erase(logIds.begin());
+		}
+
+		nextLogId = logIds.back() + 1;
+	}
+
+	// Create new log file.
+	StringOutputStream ss;
+	ss << writablePath << L"/Application_" << nextLogId << L".log";
+	logFile = FileSystem::getInstance().open(ss.str(), File::FmWrite);
 	if (logFile)
 	{
 		Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
@@ -271,14 +309,17 @@ int main(int argc, const char** argv)
 #if !defined(_DEBUG)
 	if (logFile)
 	{
-		log::info   .setGlobalTarget(0);
-		log::warning.setGlobalTarget(0);
-		log::error  .setGlobalTarget(0);
-
 		logFile->close();
-		logFile = 0;
+		logFile;
 	}
 #endif
 
+	log::info   .setGlobalTarget(0);
+	log::warning.setGlobalTarget(0);
+	log::error  .setGlobalTarget(0);	
+
+#if defined(_DEBUG)
+	SingletonManager::getInstance().destroy();
+#endif
 	return 0;
 }
