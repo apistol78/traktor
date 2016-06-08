@@ -220,7 +220,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 		// Prepare all layers.
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			T_MEASURE_STATEMENT_M((*i)->prepare(), 1.0 / 60.0, type_name(*i));
+			T_MEASURE_STATEMENT_M((*i)->prepare(info), 1.0 / 60.0, type_name(*i));
 
 		// Issue script update.
 		if (validateScriptContext())

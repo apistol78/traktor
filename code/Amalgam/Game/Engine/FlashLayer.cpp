@@ -220,7 +220,7 @@ void FlashLayer::transition(Layer* fromLayer)
 		m_displayRenderer->flushCaches();
 }
 
-void FlashLayer::prepare()
+void FlashLayer::prepare(const UpdateInfo& info)
 {
 	if (m_movie.changed())
 	{

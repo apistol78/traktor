@@ -84,7 +84,7 @@ public:
 
 	virtual void transition(Layer* fromLayer) T_OVERRIDE T_FINAL;
 
-	virtual void prepare() T_OVERRIDE T_FINAL;
+	virtual void prepare(const UpdateInfo& info) T_OVERRIDE T_FINAL;
 
 	virtual void update(const UpdateInfo& info) T_OVERRIDE T_FINAL;
 

@@ -108,7 +108,7 @@ void AudioLayer::transition(Layer* fromLayer)
 	}
 }
 
-void AudioLayer::prepare()
+void AudioLayer::prepare(const UpdateInfo& info)
 {
 }
 

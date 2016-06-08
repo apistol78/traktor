@@ -1,4 +1,5 @@
 #include "Amalgam/Game/IEnvironment.h"
+#include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Amalgam/Game/Engine/RuntimePlugin.h"
 #include "Amalgam/Game/Engine/Stage.h"
@@ -51,9 +52,10 @@ Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment) const
 
 	// Prepare all initial layers; this will cause pending resources and systems
 	// to be created before first frame.
+	const UpdateInfo info;
 	const RefArray< Layer >& layers = stage->getLayers();
 	for (RefArray< Layer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
-		(*i)->prepare();
+		(*i)->prepare(info);
 
 	return new StageState(environment, stage);
 }

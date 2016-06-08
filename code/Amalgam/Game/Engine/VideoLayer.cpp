@@ -107,7 +107,7 @@ void VideoLayer::transition(Layer* fromLayer)
 {
 }
 
-void VideoLayer::prepare()
+void VideoLayer::prepare(const UpdateInfo& info)
 {
 }
 
