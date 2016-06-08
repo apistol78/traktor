@@ -32,7 +32,6 @@ end
 function deploy(args)
 	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
 	local bundle = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("%s", "") .. ".app"
-	local icns = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("%s", "") .. ".icns"
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
 	-- Create application bundle.
@@ -40,7 +39,7 @@ function deploy(args)
 	run:mkdir(bundle .. "/Contents/Resources")
 
 	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Info.plist.template", bundle .. "/Contents/Info.plist")
-	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Icon.icns", bundle .. "/Contents/Resources/" .. icns)
+	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Icon.icns", bundle .. "/Contents/Resources/Icon.icns")
 	run:replace("Application.config", bundle .. "/Contents/Resources/Application.config")
 	
 	-- Copy binaries into bundle.
@@ -85,7 +84,6 @@ end
 function migrate(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 	local bundle = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("%s", "") .. ".app"
-	local icns = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("%s", "") .. ".icns"
 
 	-- Build content database.
 	stdout:printLn("Migrating OSX...")
@@ -97,7 +95,7 @@ function migrate(args)
 	run:mkdir(bundle .. "/Contents/Resources")
 
 	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Info.plist.template", bundle .. "/Contents/Info.plist")
-	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Icon.icns", bundle .. "/Contents/Resources/" .. icns)
+	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Icon.icns", bundle .. "/Contents/Resources/Icon.icns")
 	run:replace("Application.config", bundle .. "/Contents/Resources/Application.config")
 	run:replace("Content.compact", bundle .. "/Contents/Resources/Content.compact")
 	
