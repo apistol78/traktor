@@ -228,6 +228,9 @@ void ReplicatorProxy::setSendState(bool sendState)
 
 void ReplicatorProxy::sendEvent(const ISerializable* eventObject, bool inOrder)
 {
+	if (m_replicator == NULL)
+		return;
+
 	// Pack event structure.
 	TxEvent e;
 	e.msg.id = inOrder ? RmiEvent1 : RmiEvent0;

@@ -216,8 +216,8 @@ uint32_t StateTemplate::pack(const State* S, void* buffer, uint32_t bufferSize) 
 	{
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
 		T_ASSERT (valueTemplate);
-
-		valueTemplate->pack(writer, V[i]);
+		if (V.size() > i)
+			valueTemplate->pack(writer, V[i]);
 	}
 
 	writer.flush();
