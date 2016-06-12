@@ -232,9 +232,7 @@ bool VoiceChat::isTransmitting(IUser* user)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (std::list< Transmission >::const_iterator i = m_transmissions.begin(); i != m_transmissions.end(); ++i)
 	{
-		if (i->soundHandle == NULL) // Should never happen... maybe destroy should take the lock?
-			return false;
-		if (i->user == user && i->soundHandle->isPlaying())
+		if (i->user == user && i->soundHandle && i->soundHandle->isPlaying())
 			return true;
 	}
 	return false;
@@ -279,7 +277,7 @@ void VoiceChat::onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples,
 			T_ASSERT (i->soundBuffer);
 			i->soundBuffer->enqueueVoiceSamples(samples, samplesCount, sampleRate);
 
-			if (!i->soundHandle->isPlaying())
+			if (i->soundHandle == NULL || !i->soundHandle->isPlaying())
 			{
 				Ref< sound::Sound > soundVoice = new sound::Sound(
 					i->soundBuffer,
