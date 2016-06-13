@@ -277,7 +277,7 @@ void VoiceChat::onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples,
 			T_ASSERT (i->soundBuffer);
 			i->soundBuffer->enqueueVoiceSamples(samples, samplesCount, sampleRate);
 
-			if (i->soundHandle == NULL || !i->soundHandle->isPlaying())
+			if (!i->soundHandle || !i->soundHandle->isPlaying())
 			{
 				Ref< sound::Sound > soundVoice = new sound::Sound(
 					i->soundBuffer,
@@ -288,6 +288,13 @@ void VoiceChat::onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples,
 					0.0f
 				);
 				i->soundHandle = m_soundPlayer->play(soundVoice, 0);
+				if (!i->soundHandle)
+				{
+					// Unable to playback voice from existing transmission user, need
+					// to remove user from transmission; \note iterator becomes invalid
+					// thus we rely on return statement below.
+					m_transmissions.erase(i);
+				}
 			}
 
 			return;
@@ -308,7 +315,6 @@ void VoiceChat::onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples,
 		0.0f
 	);
 	t.soundHandle = m_soundPlayer->play(soundVoice, 0);
-
 	if (t.soundHandle)
 		m_transmissions.push_back(t);
 }

@@ -41,7 +41,10 @@ void UserCache::getMany(const std::vector< uint64_t >& userHandles, RefArray< Us
 		if (it != m_users.end())
 			outUsers.push_back(it->second);
 		else
+		{
 			m_users[*i] = new User(m_userProvider, *i);
+			outUsers.push_back(m_users[*i]);
+		}
 	}
 }
 
