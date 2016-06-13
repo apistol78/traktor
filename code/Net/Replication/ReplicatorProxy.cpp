@@ -228,7 +228,7 @@ void ReplicatorProxy::setSendState(bool sendState)
 
 void ReplicatorProxy::sendEvent(const ISerializable* eventObject, bool inOrder)
 {
-	if (m_replicator == NULL)
+	if (!m_replicator)
 		return;
 
 	// Pack event structure.

@@ -181,19 +181,22 @@ bool Replicator::update()
 			RmiState_MaxStateSize()
 		), 0.001);
 
-		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		if (stateDataSize > 0)
 		{
-			if ((*i)->m_sendState && ((*i)->m_timeUntilTxState -= dT) <= 0.0)
+			for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 			{
-				T_MEASURE_STATEMENT(m_topology->send((*i)->m_handle, &msg, RmiState_NetSize(stateDataSize)), 0.001);
+				if ((*i)->m_sendState && ((*i)->m_timeUntilTxState -= dT) <= 0.0)
+				{
+					T_MEASURE_STATEMENT(m_topology->send((*i)->m_handle, &msg, RmiState_NetSize(stateDataSize)), 0.001);
 
-				Vector4 direction = (*i)->m_origin.translation() - m_origin.translation();
-				Scalar distance = direction.length();
+					Vector4 direction = (*i)->m_origin.translation() - m_origin.translation();
+					Scalar distance = direction.length();
 
-				float t = clamp((distance - m_configuration.nearDistance) / (m_configuration.farDistance - m_configuration.nearDistance), 0.0f, 1.0f);
+					float t = clamp((distance - m_configuration.nearDistance) / (m_configuration.farDistance - m_configuration.nearDistance), 0.0f, 1.0f);
 
-				(*i)->m_distance = distance;
-				(*i)->m_timeUntilTxState = lerp(m_configuration.timeUntilTxStateNear, m_configuration.timeUntilTxStateFar, t);
+					(*i)->m_distance = distance;
+					(*i)->m_timeUntilTxState = lerp(m_configuration.timeUntilTxStateNear, m_configuration.timeUntilTxStateFar, t);
+				}
 			}
 		}
 	}

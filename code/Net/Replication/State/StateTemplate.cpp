@@ -75,7 +75,7 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 	// Ensure times are valid.
 	if (isNanOrInfinite(Tn2) || isNanOrInfinite(Tn1) || isNanOrInfinite(T0) || isNanOrInfinite(T))
 	{
-		log::error << L"Invalid state time(s); either NaN or Inf" << Endl;
+		log::error << L"Invalid state time(s); either NaN or Inf." << Endl;
 		return 0;
 	}
 
@@ -91,18 +91,18 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			V0.size() != m_valueTemplates.size()
 		)
 		{
-			log::error << L"Number of state values mismatch template definition; #Vn2 " << int32_t(Vn2.size()) << L", #Vn1 " << int32_t(Vn1.size()) << L", #V0 " << int32_t(V0.size()) << Endl;
+			log::error << L"Number of state values mismatch template definition; #Vn2 " << int32_t(Vn2.size()) << L", #Vn1 " << int32_t(Vn1.size()) << L", #V0 " << int32_t(V0.size()) << L"." << Endl;
 			return 0;
 		}
 
 		if (Tn2 > Tn1 - FUZZY_EPSILON)
 		{
-			log::error << L"Difference between Tn2 and Tn1 too small" << Endl;
+			log::error << L"Difference between Tn2 and Tn1 too small." << Endl;
 			return 0;
 		}
 		if (Tn1 > T0 - FUZZY_EPSILON)
 		{
-			log::error << L"Difference between Tn1 and T0 too small" << Endl;
+			log::error << L"Difference between Tn1 and T0 too small." << Endl;
 			return 0;
 		}
 
@@ -140,13 +140,13 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			V0.size() != m_valueTemplates.size()
 		)
 		{
-			log::error << L"Number of state values mismatch template definition; #Vn1 " << int32_t(Vn1.size()) << L", #V0 " << int32_t(V0.size()) << Endl;
+			log::error << L"Number of state values mismatch template definition; #Vn1 " << int32_t(Vn1.size()) << L", #V0 " << int32_t(V0.size()) << L"." << Endl;
 			return 0;
 		}
 
 		if (Tn1 > T0 - FUZZY_EPSILON)
 		{
-			log::error << L"Difference between Tn1 and T0 too small" << Endl;
+			log::error << L"Difference between Tn1 and T0 too small." << Endl;
 			return 0;
 		}
 
@@ -208,16 +208,42 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 
 uint32_t StateTemplate::pack(const State* S, void* buffer, uint32_t bufferSize) const
 {
-	MemoryStream stream(buffer, bufferSize, false, true);
-	BitWriter writer(&stream);
+	T_FATAL_ASSERT (S);
 
+	// Number of values of state must match template.
 	const RefArray< const IValue >& V = S->getValues();
+	if (V.size() != m_valueTemplates.size())
+	{
+		log::error << L"State values mismatch template definition." << Endl;
+		return 0;
+	}
+
+	// Ensure all values have correct type.
 	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 	{
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
 		T_ASSERT (valueTemplate);
-		if (V.size() > i)
-			valueTemplate->pack(writer, V[i]);
+
+		const TypeInfo& valueType = valueTemplate->getValueType();
+		if (!is_type_a(valueType, type_of(V[i])))
+		{
+			log::error << L"Value types mismatch template definition" << Endl;
+			log::error << L"\tDefinition \"" << valueType.getName() << L"\"" << Endl;
+			log::error << L"\tV \"" << type_of(V[i]).getName() << L"\"" << Endl;
+			return 0;
+		}
+	}
+
+	// Pack all values into buffer.
+	MemoryStream stream(buffer, bufferSize, false, true);
+	BitWriter writer(&stream);
+
+	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
+	{
+		const IValueTemplate* valueTemplate = m_valueTemplates[i];
+		T_ASSERT (valueTemplate);
+
+		valueTemplate->pack(writer, V[i]);
 	}
 
 	writer.flush();
@@ -241,7 +267,10 @@ Ref< const State > StateTemplate::unpack(const void* buffer, uint32_t bufferSize
 
 	// Must have read all data from buffer.
 	if (stream.available() > 0)
+	{
+		log::error << L"Not all state data has been unpacked; entire state discarded." << Endl;
 		return 0;
+	}
 
 	return new State(V);
 }
