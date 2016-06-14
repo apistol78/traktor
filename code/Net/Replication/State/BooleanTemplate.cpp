@@ -36,6 +36,11 @@ const TypeInfo& BooleanTemplate::getValueType() const
 	return type_of< BooleanValue >();
 }
 
+uint32_t BooleanTemplate::getMaxPackedDataSize() const
+{
+	return 1;
+}
+
 void BooleanTemplate::pack(BitWriter& writer, const IValue* V) const
 {
 	bool f = *checked_type_cast< const BooleanValue* >(V);

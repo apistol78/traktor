@@ -29,6 +29,8 @@ class T_DLLCLASS IValueTemplate : public Object
 public:
 	virtual const TypeInfo& getValueType() const = 0;
 
+	virtual uint32_t getMaxPackedDataSize() const = 0;
+
 	virtual void pack(BitWriter& writer, const IValue* V) const = 0;
 
 	virtual Ref< const IValue > unpack(BitReader& reader) const = 0;

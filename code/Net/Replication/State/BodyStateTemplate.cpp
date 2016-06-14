@@ -71,6 +71,11 @@ const TypeInfo& BodyStateTemplate::getValueType() const
 	return type_of< BodyStateValue >();
 }
 
+uint32_t BodyStateTemplate::getMaxPackedDataSize() const
+{
+	return 3 * (13+11) + 16 + (4+11) + 16 + (7+8) + 16 + (5+8);
+}
+
 void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 {
 	physics::BodyState v = *checked_type_cast< const BodyStateValue* >(V);

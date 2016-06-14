@@ -36,6 +36,8 @@ public:
 
 	virtual const TypeInfo& getValueType() const T_OVERRIDE T_FINAL;
 
+	virtual uint32_t getMaxPackedDataSize() const T_OVERRIDE T_FINAL;
+
 	virtual void pack(BitWriter& writer, const IValue* V) const T_OVERRIDE T_FINAL;
 
 	virtual Ref< const IValue > unpack(BitReader& reader) const T_OVERRIDE T_FINAL;

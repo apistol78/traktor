@@ -219,6 +219,7 @@ uint32_t StateTemplate::pack(const State* S, void* buffer, uint32_t bufferSize) 
 	}
 
 	// Ensure all values have correct type.
+	uint32_t maxPackedSize = 0;
 	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 	{
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
@@ -232,6 +233,15 @@ uint32_t StateTemplate::pack(const State* S, void* buffer, uint32_t bufferSize) 
 			log::error << L"\tV \"" << type_of(V[i]).getName() << L"\"" << Endl;
 			return 0;
 		}
+
+		maxPackedSize += valueTemplate->getMaxPackedDataSize();
+	}
+
+	// Ensure all values fit within output buffer.
+	if ((maxPackedSize + 7) / 8 > bufferSize)
+	{
+		log::error << L"Not enough size in packed buffer to pack all values; state discarded." << Endl;
+		return 0;
 	}
 
 	// Pack all values into buffer.
