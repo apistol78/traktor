@@ -42,8 +42,9 @@ void UserCache::getMany(const std::vector< uint64_t >& userHandles, RefArray< Us
 			outUsers.push_back(it->second);
 		else
 		{
-			m_users[*i] = new User(m_userProvider, *i);
-			outUsers.push_back(m_users[*i]);
+			Ref< User > user = new User(m_userProvider, *i);
+			m_users.insert(std::make_pair(*i, user));
+			outUsers.push_back(user);
 		}
 	}
 }

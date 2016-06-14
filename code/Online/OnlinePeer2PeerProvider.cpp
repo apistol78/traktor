@@ -17,8 +17,6 @@ namespace traktor
 		namespace
 		{
 
-Timer s_timer;
-
 struct P2PUserFindPred
 {
 	const IUser* m_user;
@@ -30,7 +28,7 @@ struct P2PUserFindPred
 
 	bool operator () (const OnlinePeer2PeerProvider::P2PUser& p2pu) const
 	{
-		return p2pu.user == m_user;
+		return p2pu.user->getGlobalId() == m_user->getGlobalId();
 	}
 };
 
@@ -66,7 +64,7 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 		}
 	}
 
-	s_timer.start();
+	m_timer.start();
 }
 
 OnlinePeer2PeerProvider::~OnlinePeer2PeerProvider()
@@ -85,7 +83,7 @@ OnlinePeer2PeerProvider::~OnlinePeer2PeerProvider()
 
 bool OnlinePeer2PeerProvider::update()
 {
-	if (s_timer.getElapsedTime() >= m_whenUpdate)
+	if (m_timer.getElapsedTime() >= m_whenUpdate)
 	{
 		RefArray< IUser > users;
 		T_MEASURE_STATEMENT(m_lobby->getParticipants(users), 0.001);
@@ -139,7 +137,7 @@ bool OnlinePeer2PeerProvider::update()
 
 		// Cache primary handle.
 		T_MEASURE_STATEMENT(m_primaryHandle = net::net_handle_t(m_lobby->getOwner()->getGlobalId()), 0.0005);
-		m_whenUpdate = s_timer.getElapsedTime() + 0.5;
+		m_whenUpdate = m_timer.getElapsedTime() + 0.2;
 	}
 	return true;
 }
@@ -189,7 +187,11 @@ bool OnlinePeer2PeerProvider::setPrimaryPeerHandle(net::net_handle_t node)
 #if defined(_DEBUG)
 			log::info << L"[Online P2P] Migrating primary token to peer " << node << L"..." << Endl;
 #endif
-			return m_lobby->setOwner(i->user);
+			if (m_lobby->setOwner(i->user))
+			{
+				m_whenUpdate = 0.0f;
+				return true;
+			}
 		}
 	}
 #if defined(_DEBUG)
@@ -260,7 +262,7 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 				outNode = net::net_handle_t(rx.user->getGlobalId());
 			}
 			else
-				log::warning << L"[Online P2P] Received data from unknown user." << Endl;
+				log::warning << L"[Online P2P] Received data from unknown user " << rx.user->getGlobalId() << L" (1)." << Endl;
 
 			m_rxQueue.pop_front();
 			--m_rxQueuePending;
@@ -280,7 +282,7 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 				outNode = net::net_handle_t(fromUser->getGlobalId());
 			else
 			{
-				log::warning << L"[Online P2P] Received data from unknown user." << Endl;
+				log::warning << L"[Online P2P] Received data from unknown user " << fromUser->getGlobalId() << L" (2)." << Endl;
 				nrecv = 0;
 			}
 		}
