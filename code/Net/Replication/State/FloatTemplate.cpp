@@ -75,6 +75,22 @@ const TypeInfo& FloatTemplate::getValueType() const
 	return type_of< FloatValue >();
 }
 
+uint32_t FloatTemplate::getMaxPackedDataSize() const
+{
+	switch (m_precision)
+	{
+	case Ftp32:
+		return 32;
+	case Ftp16:
+		return 16;
+	case Ftp8:
+		return 8;
+	case Ftp4:
+		return 4;
+	}
+	return 0;
+}
+
 void FloatTemplate::pack(BitWriter& writer, const IValue* V) const
 {
 	float f = *checked_type_cast< const FloatValue* >(V);
