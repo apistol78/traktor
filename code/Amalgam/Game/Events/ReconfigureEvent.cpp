@@ -5,7 +5,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReconfigureEvent", ReconfigureEvent, IEvent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReconfigureEvent", ReconfigureEvent, Object)
 
 ReconfigureEvent::ReconfigureEvent(bool finished, int32_t result)
 :	m_finished(finished)

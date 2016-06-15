@@ -5,7 +5,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ActiveEvent", ActiveEvent, IEvent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ActiveEvent", ActiveEvent, Object)
 
 ActiveEvent::ActiveEvent(bool activated)
 :	m_activated(activated)

@@ -1,3 +1,4 @@
+#include "Amalgam/CommandEvent.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Engine/Stage.h"
 #include "Amalgam/Game/Engine/StageState.h"
@@ -5,6 +6,7 @@
 #include "Amalgam/Game/Events/ReconfigureEvent.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/TString.h"
 #include "Render/IRenderView.h"
 
 namespace traktor
@@ -76,7 +78,7 @@ void StageState::flush()
 	m_stage->flush();
 }
 
-bool StageState::take(const IEvent* event)
+bool StageState::take(const Object* event)
 {
 	if (const ReconfigureEvent* reconfigureEvent = dynamic_type_cast< const ReconfigureEvent* >(event))
 	{
@@ -91,6 +93,14 @@ bool StageState::take(const IEvent* event)
 			m_stage->resume();
 		else
 			m_stage->suspend();
+	}
+	else if (const CommandEvent* commandEvent = dynamic_type_cast< const CommandEvent* >(event))
+	{
+		m_stage->invokeScript(
+			wstombs(commandEvent->getFunction()),
+			0,
+			0
+		);
 	}
 	return true;
 }

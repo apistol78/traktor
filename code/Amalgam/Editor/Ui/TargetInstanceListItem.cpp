@@ -7,6 +7,7 @@
 #include "Amalgam/Editor/Ui/TargetBrowseEvent.h"
 #include "Amalgam/Editor/Ui/TargetBuildEvent.h"
 #include "Amalgam/Editor/Ui/TargetCaptureEvent.h"
+#include "Amalgam/Editor/Ui/TargetCommandEvent.h"
 #include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
 #include "Amalgam/Editor/Ui/TargetMigrateEvent.h"
 #include "Amalgam/Editor/Ui/TargetPlayEvent.h"
@@ -16,6 +17,7 @@
 #include "Core/Misc/String.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
+#include "Ui/Edit.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
@@ -31,6 +33,7 @@ Ref< ui::IBitmap > s_bitmapLogos;
 
 const int32_t c_performanceLineHeight = 14;
 const int32_t c_performanceHeight = 7 * c_performanceLineHeight;
+const int32_t c_commandHeight = 22;
 
 const Color4ub c_markerColors[] =
 {
@@ -110,7 +113,7 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 ui::Size TargetInstanceListItem::getSize() const
 {
 	RefArray< TargetConnection > connections = m_instance->getConnections();
-	return ui::Size(128, ui::scaleBySystemDPI(28 + connections.size() * c_performanceHeight));
+	return ui::Size(128, ui::scaleBySystemDPI(28 + connections.size() * (c_performanceHeight + c_commandHeight)));
 }
 
 void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect)
@@ -187,6 +190,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 
 	m_stopCells.resize(connections.size());
 	m_captureCells.resize(connections.size());
+	m_editCells.resize(connections.size());
 
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
@@ -200,6 +204,14 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 		{
 			m_captureCells[i] = new ButtonCell(new ui::StyleBitmap(L"Amalgam.TargetProfile"), ui::Command(i));
 			m_captureCells[i]->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventCaptureButtonClick);
+		}
+
+		if (!m_editCells[i])
+		{
+			Ref< ui::Edit > edit = new ui::Edit();
+			edit->create(getWidget(), L"", ui::WsNone | ui::WsWantAllInput);
+			edit->addEventHandler< ui::KeyDownEvent >(this, &TargetInstanceListItem::eventCommandEditKeyDown);
+			m_editCells[i] = new ui::custom::ChildWidgetCell(edit);
 		}
 
 		widget->placeCell(
@@ -222,7 +234,17 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 			)
 		);
 
-		controlRect = controlRect.offset(0, controlRect.getHeight());
+		widget->placeCell(
+			m_editCells[i],
+			ui::Rect(
+				controlRect.left,
+				controlRect.bottom,
+				controlRect.right,
+				controlRect.bottom + ui::scaleBySystemDPI(c_commandHeight)
+			)
+		);
+
+		controlRect = controlRect.offset(0, controlRect.getHeight() + c_commandHeight);
 	}
 
 	AutoWidgetCell::placeCells(widget, rect);
@@ -427,7 +449,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 			}
 		}
 
-		performanceRect = performanceRect.offset(0, ui::scaleBySystemDPI(c_performanceHeight));
+		performanceRect = performanceRect.offset(0, ui::scaleBySystemDPI(c_performanceHeight + c_commandHeight));
 	}
 
 	canvas.resetClipRect();
@@ -472,6 +494,27 @@ void TargetInstanceListItem::eventCaptureButtonClick(ui::ButtonClickEvent* event
 {
 	TargetCaptureEvent captureEvent(this, m_instance, event->getCommand().getId());
 	getWidget()->raiseEvent(&captureEvent);
+}
+
+void TargetInstanceListItem::eventCommandEditKeyDown(ui::KeyDownEvent* event)
+{
+	ui::Edit* edit = mandatory_non_null_type_cast< ui::Edit* >(event->getSender());
+	int32_t connectionIndex = 0;	// \fixme
+
+	if (event->getVirtualKey() == ui::VkEscape)
+	{
+		edit->setText(L"");
+	}
+	else if (event->getVirtualKey() == ui::VkReturn)
+	{
+		std::wstring command = edit->getText();
+		if (!command.empty())
+		{
+			TargetCommandEvent commandEvent(this, m_instance, connectionIndex, command);
+			getWidget()->raiseEvent(&commandEvent);
+			edit->setText(L"");
+		}
+	}
 }
 
 	}

@@ -49,6 +49,7 @@ class Target;
 class TargetBrowseEvent;
 class TargetBuildEvent;
 class TargetCaptureEvent;
+class TargetCommandEvent;
 class TargetListControl;
 class TargetMigrateEvent;
 class TargetInstance;
@@ -157,6 +158,8 @@ private:
 	void eventTargetListPlay(TargetPlayEvent* event);
 
 	void eventTargetListStop(TargetStopEvent* event);
+
+	void eventTargetListCommand(TargetCommandEvent* event);
 
 	void eventTimer(ui::TimerEvent* event);
 

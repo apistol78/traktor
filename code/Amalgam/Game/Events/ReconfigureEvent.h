@@ -1,8 +1,8 @@
 #ifndef traktor_amalgam_ReconfigureEvent_H
 #define traktor_amalgam_ReconfigureEvent_H
 
-#include "Amalgam/Game/IEvent.h"
 #include "Amalgam/Game/Types.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +23,7 @@ namespace traktor
  * Applications are notified with this
  * event when any server has been reconfigured.
  */
-class T_DLLCLASS ReconfigureEvent : public IEvent
+class T_DLLCLASS ReconfigureEvent : public Object
 {
 	T_RTTI_CLASS;
 

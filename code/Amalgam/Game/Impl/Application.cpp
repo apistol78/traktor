@@ -1,3 +1,4 @@
+#include "Amalgam/IRemoteEvent.h"
 #include "Amalgam/TargetManagerConnection.h"
 #include "Amalgam/TargetPerformance.h"
 #include "Amalgam/Game/IRuntimePlugin.h"
@@ -924,6 +925,19 @@ bool Application::update()
 
 		m_updateInfo.m_frame++;
 		m_frameProfiler.endFrame();
+
+		// Receive remote events from editor.
+		if (m_targetManagerConnection && m_targetManagerConnection->connected())
+		{
+			Ref< IRemoteEvent > remoteEvent;
+			if (
+				m_targetManagerConnection->getTransport()->recv< IRemoteEvent >(0, remoteEvent) == net::BidirectionalObjectTransport::RtSuccess &&
+				remoteEvent != 0
+			)
+			{
+				currentState->take(remoteEvent);
+			}
+		}
 
 #if T_MEASURE_PERFORMANCE
 		// Calculate frame rate.

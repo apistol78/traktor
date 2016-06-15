@@ -1,7 +1,7 @@
 #ifndef traktor_amalgam_ActiveEvent_H
 #define traktor_amalgam_ActiveEvent_H
 
-#include "Amalgam/Game/IEvent.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,7 +22,7 @@ namespace traktor
  * Applications are notified with this
  * event when Amalgam is becoming activated or deactivated.
  */
-class T_DLLCLASS ActiveEvent : public IEvent
+class T_DLLCLASS ActiveEvent : public Object
 {
 	T_RTTI_CLASS;
 

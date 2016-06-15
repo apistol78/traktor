@@ -3,7 +3,7 @@
 
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Core/RefArray.h"
-#include "Ui/Custom/Auto/AutoWidgetCell.h"
+#include "Ui/Custom/Auto/ChildWidgetCell.h"
 
 namespace traktor
 {
@@ -42,6 +42,7 @@ private:
 	Ref< ButtonCell > m_browseCell;
 	RefArray< ButtonCell > m_stopCells;
 	RefArray< ButtonCell > m_captureCells;
+	RefArray< ui::custom::ChildWidgetCell > m_editCells;
 	Ref< TargetInstance > m_instance;
 	TargetState m_lastInstanceState;
 
@@ -56,6 +57,8 @@ private:
 	void eventStopButtonClick(ui::ButtonClickEvent* event);
 
 	void eventCaptureButtonClick(ui::ButtonClickEvent* event);
+
+	void eventCommandEditKeyDown(ui::KeyDownEvent* event);
 };
 
 	}
