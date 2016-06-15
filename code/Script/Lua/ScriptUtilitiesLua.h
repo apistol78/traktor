@@ -1,6 +1,8 @@
 #ifndef traktor_script_ScriptUtilitiesLua_H
 #define traktor_script_ScriptUtilitiesLua_H
 
+#define T_SCRIPT_LUA_FORCE_STACK_CHECK 1
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 
@@ -19,7 +21,7 @@ class OutputStream;
 	namespace script
 	{
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || T_SCRIPT_LUA_FORCE_STACK_CHECK
 class CheckStack
 {
 public:
@@ -32,7 +34,7 @@ public:
 	~CheckStack()
 	{
 		int32_t top = lua_gettop(m_luaState);
-		T_ASSERT (m_top == top);
+		T_FATAL_ASSERT (m_top == top);
 	}
 
 private:

@@ -68,6 +68,9 @@ public:
 	/*! \brief Skip given number of bits. */
 	void skip(uint32_t nbits);
 
+	/*! \brief Check if end-of-stream has been reached. */
+	bool eos() const;
+
 	/*! \brief Get reference to underlying stream. */
 	Ref< IStream > getStream();
 
@@ -75,6 +78,7 @@ private:
 	Ref< IStream > m_stream;
 	uint8_t m_data;
 	int8_t m_cnt;
+	bool m_eos;
 };
 
 }

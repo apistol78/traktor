@@ -301,16 +301,21 @@ bool Replicator::update()
 			Ref< ISerializable > eventObject;
 			T_MEASURE_STATEMENT(eventObject = CompactSerializer(&ms, &m_eventTypes[0], uint32_t(m_eventTypes.size())).readObject< ISerializable >(), 0.001);
 
-			if (fromProxy->receivedRxEvent(msg.time, msg.event.sequence, eventObject, msg.id == RmiEvent1))
+			if (eventObject && ms.tell() == RmiEvent_EventSize(nrecv))
 			{
-				// Send back event acknowledge.
-				reply.id = (msg.id == RmiEvent0) ? RmiEvent0Ack : RmiEvent1Ack;
-				reply.time = time2net(m_time);
-				reply.eventAck.sequence = msg.event.sequence;
-				T_MEASURE_STATEMENT(m_topology->send(fromProxy->m_handle, &reply, RmiEventAck_NetSize()), 0.001);
+				if (fromProxy->receivedRxEvent(msg.time, msg.event.sequence, eventObject, msg.id == RmiEvent1))
+				{
+					// Send back event acknowledge.
+					reply.id = (msg.id == RmiEvent0) ? RmiEvent0Ack : RmiEvent1Ack;
+					reply.time = time2net(m_time);
+					reply.eventAck.sequence = msg.event.sequence;
+					T_MEASURE_STATEMENT(m_topology->send(fromProxy->m_handle, &reply, RmiEventAck_NetSize()), 0.001);
+				}
+				else
+					log::error << getLogPrefix() << L"Unable to enqueue event object." << Endl;
 			}
 			else
-				log::error << getLogPrefix() << L"Unable to enqueue event object" << Endl;
+				log::error << getLogPrefix() << L"Unable to deserialize event object, possibly corrupt data received." << Endl;
 		}
 		else if (msg.id == RmiEvent0Ack || msg.id == RmiEvent1Ack)
 		{
@@ -706,6 +711,8 @@ double Replicator::getWorstReverseLatency() const
 
 bool Replicator::sendEventToPrimary(const ISerializable* eventObject, bool inOrder)
 {
+	T_FATAL_ASSERT (eventObject);
+
 	if (!isPrimary())
 	{
 		// Find primary proxy and send event to it.
@@ -724,6 +731,7 @@ bool Replicator::sendEventToPrimary(const ISerializable* eventObject, bool inOrd
 	else
 	{
 		bool processed = false;
+		uint32_t count = 0;
 
 		// We are primary peer; dispatch event directly.
 		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
@@ -738,11 +746,12 @@ bool Replicator::sendEventToPrimary(const ISerializable* eventObject, bool inOrd
 					0,
 					eventObject
 				);
+				++count;
 			}
 		}
 
-		if (!processed)
-			log::warning << getLogPrefix() << L"Event " << type_name(eventObject) << L" to local not processed (1); event discarded." << Endl;
+		if (!processed && count > 0)
+			log::warning << getLogPrefix() << L"Event " << type_name(eventObject) << L" to local not processed by " << count << L" listener(s); event discarded." << Endl;
 
 		return true;
 	}

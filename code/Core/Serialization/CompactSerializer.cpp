@@ -22,19 +22,19 @@ namespace traktor
 bool read_bool(BitReader& r, bool& value)
 {
 	value = r.readBit();
-	return true;
+	return !r.eos();
 }
 
 bool read_int8(BitReader& r, int8_t& value)
 {
 	value = r.readSigned(8);
-	return true;
+	return !r.eos();
 }
 
 bool read_uint8(BitReader& r, uint8_t& value)
 {
 	value = r.readUnsigned(8);
-	return true;
+	return !r.eos();
 }
 
 bool read_int16(BitReader& r, int16_t& value)
@@ -48,7 +48,7 @@ bool read_int16(BitReader& r, int16_t& value)
 		uv = r.readUnsigned(8);
 
 	value = sign ? -uv : uv;
-	return true;
+	return !r.eos();
 }
 
 bool read_uint16(BitReader& r, uint16_t& value)
@@ -57,7 +57,7 @@ bool read_uint16(BitReader& r, uint16_t& value)
 		value = r.readUnsigned(16);
 	else
 		value = r.readUnsigned(8);
-	return true;
+	return !r.eos();
 }
 
 bool read_int32(BitReader& r, int32_t& value)
@@ -71,7 +71,7 @@ bool read_int32(BitReader& r, int32_t& value)
 		uv = r.readUnsigned(16);
 
 	value = sign ? -uv : uv;
-	return true;
+	return !r.eos();
 }
 
 bool read_uint32(BitReader& r, uint32_t& value)
@@ -80,32 +80,32 @@ bool read_uint32(BitReader& r, uint32_t& value)
 		value = r.readUnsigned(32);
 	else
 		value = r.readUnsigned(16);
-	return true;
+	return !r.eos();
 }
 
 bool read_int64(BitReader& r, int64_t& value)
 {
 	value = r.readSigned(64);
-	return true;
+	return !r.eos();
 }
 
 bool read_uint64(BitReader& r, uint64_t& value)
 {
 	value = r.readUnsigned(64);
-	return true;
+	return !r.eos();
 }
 
 bool read_half(BitReader& r, half_t& value)
 {
 	value = r.readUnsigned(16);
-	return true;
+	return !r.eos();
 }
 
 bool read_float(BitReader& r, float& value)
 {
 	uint32_t v = r.readUnsigned(32);
 	value = *(float*)&v;
-	return true;
+	return !r.eos();
 }
 
 bool read_double(BitReader& r, double& value)
@@ -114,7 +114,7 @@ bool read_double(BitReader& r, double& value)
 	uint32_t hi = r.readUnsigned(32);
 	uint64_t v = (uint64_t(hi) << 32) | lo;
 	value = *(double*)&v;
-	return true;
+	return !r.eos();
 }
 
 bool write_bool(BitWriter& w, bool v)
