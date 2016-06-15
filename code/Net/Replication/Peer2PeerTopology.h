@@ -6,6 +6,7 @@
 #include <vector>
 #include "Core/Containers/CircularVector.h"
 #include "Core/Math/Random.h"
+#include "Core/Timer/Timer.h"
 #include "Net/Replication/INetworkTopology.h"
 #include "Net/Replication/IPeer2PeerProvider.h"
 
@@ -56,6 +57,10 @@ public:
 
 	Peer2PeerTopology(IPeer2PeerProvider* provider);
 
+	void setIAmInterval(double interval, double flux);
+
+	void setPropagateCMaskInterval(double interval, double flux);
+
 	virtual void setCallback(INetworkCallback* callback) T_OVERRIDE T_FINAL;
 
 	virtual net_handle_t getLocalHandle() const T_OVERRIDE T_FINAL;
@@ -94,10 +99,14 @@ private:
 	std::vector< net_handle_t > m_providerPeers;
 	INetworkCallback* m_callback;
 	Random m_random;
-	double m_time;
+	Timer m_timer;
+	double m_iAmInterval;
+	double m_iAmRandomFlux;
+	double m_propagateInterval;
+	double m_propagateRandomFlux;
 	std::vector< Peer > m_peers;
 	std::vector< int32_t > m_nodes;
-	CircularVector< Recv, 512 > m_recvQueue;
+	CircularVector< Recv, 1024 > m_recvQueue;
 
 	bool findOptimalRoute(net_handle_t from, net_handle_t to, net_handle_t& outNext) const;
 

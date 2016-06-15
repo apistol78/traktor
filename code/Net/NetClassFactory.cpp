@@ -408,6 +408,8 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< Peer2PeerTopology > > classPeer2PeerTopology = new AutoRuntimeClass< Peer2PeerTopology >();
 	classPeer2PeerTopology->addConstructor< IPeer2PeerProvider* >();
+	classPeer2PeerTopology->addMethod("setIAmInterval", &Peer2PeerTopology::setIAmInterval);
+	classPeer2PeerTopology->addMethod("setPropagateCMaskInterval", &Peer2PeerTopology::setPropagateCMaskInterval);
 	registrar->registerClass(classPeer2PeerTopology);
 
 	Ref< AutoRuntimeClass< ReplicatorProxy > > classReplicatorProxy = new AutoRuntimeClass< ReplicatorProxy >();
