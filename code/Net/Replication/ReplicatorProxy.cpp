@@ -228,6 +228,8 @@ void ReplicatorProxy::setSendState(bool sendState)
 
 void ReplicatorProxy::sendEvent(const ISerializable* eventObject, bool inOrder)
 {
+	T_FATAL_ASSERT (eventObject);
+
 	if (!m_replicator)
 		return;
 
@@ -361,6 +363,7 @@ bool ReplicatorProxy::dispatchRxEvents(const SmallMap< const TypeInfo*, RefArray
 	{
 		T_FATAL_ASSERT (i->eventObject);
 		bool processed = false;
+		uint32_t count = 0;
 
 		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = eventListeners.find(&type_of(i->eventObject));
 		if (it != eventListeners.end())
@@ -374,11 +377,12 @@ bool ReplicatorProxy::dispatchRxEvents(const SmallMap< const TypeInfo*, RefArray
 					this,
 					i->eventObject
 				);
+				++count;
 			}
 		}
 
-		if (!processed)
-			log::warning << m_replicator->getLogPrefix() << L"Event " << type_name(i->eventObject) << L" from " << getLogIdentifier() << L" not processed (2); event discarded." << Endl;
+		if (!processed && count > 0)
+			log::warning << m_replicator->getLogPrefix() << L"Event " << type_name(i->eventObject) << L" from " << getLogIdentifier() << L" not processed by " << count << L" listener(s); event discarded." << Endl;
 	}
 
 	m_rxEvents.resize(0);

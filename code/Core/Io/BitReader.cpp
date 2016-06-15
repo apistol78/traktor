@@ -12,6 +12,7 @@ BitReader::BitReader(IStream* stream)
 :	m_stream(stream)
 ,	m_data(0)
 ,	m_cnt(0)
+,	m_eos(false)
 {
 }
 
@@ -19,7 +20,11 @@ bool BitReader::readBit()
 {
 	if (m_cnt <= 0)
 	{
-		m_stream->read((void*)&m_data, 1);
+		if (m_stream->read((void*)&m_data, 1) != 1)
+		{
+			m_eos = true;
+			return false;
+		}
 		m_cnt = 8;
 	}
 
@@ -34,7 +39,11 @@ uint32_t BitReader::readUnsigned(int nbits)
 	{
 		if (m_cnt <= 0)
 		{
-			m_stream->read((void*)&m_data, 1);
+			if (m_stream->read((void*)&m_data, 1) != 1)
+			{
+				m_eos = true;
+				return 0;
+			}
 			m_cnt = 8;
 		}
 
@@ -50,9 +59,13 @@ uint32_t BitReader::readUnsigned(int nbits)
 int32_t BitReader::readSigned(int nbits)
 {
 	uint32_t u = readUnsigned(nbits);
+	if (eos())
+		return 0;
+
 	uint32_t msb = 1 << (nbits - 1);
 	if (u & msb)
 		u |= ~(msb - 1);
+
 	return *(int32_t*)(&u);
 }
 
@@ -61,7 +74,11 @@ int8_t BitReader::readInt8()
 	alignByte();
 
 	int8_t u;
-	m_stream->read(&u, sizeof(u));
+	if (m_stream->read(&u, sizeof(u)) != sizeof(u))
+	{
+		m_eos = true;
+		return 0;
+	}
 
 	return u;
 }
@@ -71,7 +88,11 @@ uint8_t BitReader::readUInt8()
 	alignByte();
 
 	uint8_t u;
-	m_stream->read(&u, sizeof(u));
+	if (m_stream->read(&u, sizeof(u)) != sizeof(u))
+	{
+		m_eos = true;
+		return 0;
+	}
 
 	return u;
 }
@@ -81,7 +102,11 @@ int16_t BitReader::readInt16()
 	alignByte();
 
 	int16_t u;
-	m_stream->read(&u, sizeof(u));
+	if (m_stream->read(&u, sizeof(u)) != sizeof(u))
+	{
+		m_eos = true;
+		return 0;
+	}
 
 #if defined(T_BIG_ENDIAN)
 	swap8in32(u);
@@ -95,7 +120,11 @@ uint16_t BitReader::readUInt16()
 	alignByte();
 
 	uint16_t u;
-	m_stream->read(&u, sizeof(u));
+	if (m_stream->read(&u, sizeof(u)) != sizeof(u))
+	{
+		m_eos = true;
+		return 0;
+	}
 
 #if defined(T_BIG_ENDIAN)
 	swap8in32(u);
@@ -109,7 +138,11 @@ int32_t BitReader::readInt32()
 	alignByte();
 
 	int32_t u;
-	m_stream->read(&u, sizeof(u));
+	if (m_stream->read(&u, sizeof(u)) != sizeof(u))
+	{
+		m_eos = true;
+		return 0;
+	}
 
 #if defined(T_BIG_ENDIAN)
 	swap8in32(u);
@@ -123,7 +156,11 @@ uint32_t BitReader::readUInt32()
 	alignByte();
 
 	uint32_t u;
-	m_stream->read(&u, sizeof(u));
+	if (m_stream->read(&u, sizeof(u)) != sizeof(u))
+	{
+		m_eos = true;
+		return 0;
+	}
 
 #if defined(T_BIG_ENDIAN)
 	swap8in32(u);
@@ -158,6 +195,11 @@ void BitReader::skip(uint32_t nbits)
 		while (nbits-- > 0)
 			readBit();
 	}
+}
+
+bool BitReader::eos() const
+{
+	return m_eos;
 }
 
 Ref< IStream > BitReader::getStream()
