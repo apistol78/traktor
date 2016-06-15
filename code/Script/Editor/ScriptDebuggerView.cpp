@@ -190,7 +190,7 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 			m_callStackGrid->addRow(row);
 
 			// Open debugged script and issue a "goto line" to scroll script editor to debugged line.
-			if (autoOpenDebuggedScript && i == m_stackFrames.begin())
+			if (autoOpenDebuggedScript && scriptInstance && i == m_stackFrames.begin())
 			{
 				m_editor->openEditor(scriptInstance);
 

@@ -17,7 +17,6 @@ namespace traktor
 	namespace amalgam
 	{
 
-class IEvent;
 class IStateManager;
 class UpdateInfo;
 
@@ -91,7 +90,7 @@ public:
 	 * \param event Event.
 	 * \return True if event handled.
 	 */
-	virtual bool take(const IEvent* event) = 0;
+	virtual bool take(const Object* event) = 0;
 };
 
 	}

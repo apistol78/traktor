@@ -41,7 +41,7 @@ public:
 
 	virtual void flush() T_OVERRIDE T_FINAL;
 
-	virtual bool take(const IEvent* event) T_OVERRIDE T_FINAL;
+	virtual bool take(const Object* event) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< IEnvironment > m_environment;

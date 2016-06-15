@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Amalgam/CommandEvent.h"
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Amalgam/Editor/HostEnumerator.h"
 #include "Amalgam/Editor/ProfilerDialog.h"
@@ -16,6 +17,7 @@
 #include "Amalgam/Editor/Ui/TargetBrowseEvent.h"
 #include "Amalgam/Editor/Ui/TargetBuildEvent.h"
 #include "Amalgam/Editor/Ui/TargetCaptureEvent.h"
+#include "Amalgam/Editor/Ui/TargetCommandEvent.h"
 #include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
 #include "Amalgam/Editor/Ui/TargetListControl.h"
 #include "Amalgam/Editor/Ui/TargetMigrateEvent.h"
@@ -186,6 +188,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_targetList->addEventHandler< TargetMigrateEvent >(this, &EditorPlugin::eventTargetListMigrate);
 	m_targetList->addEventHandler< TargetPlayEvent >(this, &EditorPlugin::eventTargetListPlay);
 	m_targetList->addEventHandler< TargetStopEvent >(this, &EditorPlugin::eventTargetListStop);
+	m_targetList->addEventHandler< TargetCommandEvent >(this, &EditorPlugin::eventTargetListCommand);
 
 	m_site->createAdditionalPanel(container, ui::scaleBySystemDPI(200), false);
 
@@ -780,6 +783,23 @@ void EditorPlugin::eventTargetListStop(TargetStopEvent* event)
 	}
 
 	m_targetList->requestUpdate();
+}
+
+void EditorPlugin::eventTargetListCommand(TargetCommandEvent* event)
+{
+	TargetInstance* targetInstance = event->getInstance();
+	int32_t connectionId = event->getConnectionIndex();
+
+	RefArray< TargetConnection > connections = targetInstance->getConnections();
+	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
+	{
+		TargetConnection* connection = connections[connectionId];
+		T_ASSERT (connection);
+
+		CommandEvent commandEvent(event->getCommand());
+		if (!connection->getTransport()->send(&commandEvent))
+			log::error << L"Failed to issue command \"" << event->getCommand() << L"\" at target, unable to send command." << Endl;
+	}
 }
 
 void EditorPlugin::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
