@@ -71,10 +71,7 @@ struct P2PMessage
 };
 #pragma pack()
 
-const double c_IAmInterval = 2.0;
 const uint32_t c_maxPendingIAm = 32;
-const double c_propagateInterval = 4.0;
-const double c_timeRandomFlux = 0.5;
 const int32_t c_maxReceiveMessages = 128;
 
 		}
@@ -85,8 +82,28 @@ Peer2PeerTopology::Peer2PeerTopology(IPeer2PeerProvider* provider)
 :	m_provider(provider)
 ,	m_callback(0)
 ,	m_random(std::clock())
-,	m_time(0.0)
+,	m_iAmInterval(2.0)
+,	m_iAmRandomFlux(0.3)
+,	m_propagateInterval(1.0)
+,	m_propagateRandomFlux(0.3)
 {
+	m_timer.start();
+}
+
+void Peer2PeerTopology::setIAmInterval(double interval, double flux)
+{
+	T_FATAL_ASSERT (interval > 0.0);
+	m_iAmInterval = interval;
+	m_iAmRandomFlux = flux;
+}
+
+void Peer2PeerTopology::setPropagateCMaskInterval(double interval, double flux)
+{
+	T_FATAL_ASSERT (interval > 0.0);
+	T_FATAL_ASSERT (flux > 0.0);
+	T_FATAL_ASSERT (flux < interval);
+	m_propagateInterval = interval;
+	m_propagateRandomFlux = flux;
 }
 
 void Peer2PeerTopology::setCallback(INetworkCallback* callback)
@@ -201,7 +218,10 @@ int32_t Peer2PeerTopology::recv(void* data, int32_t size, net_handle_t& outNode)
 				return size;
 			}
 			else
+			{
 				log::warning << getLogPrefix() << L"Received data from non-established peer " << r.from << Endl;
+				peer.whenIAm = 0.0;
+			}
 		}
 		else
 			log::warning << getLogPrefix() << L"Received data from unknown peer " << r.from << Endl;
@@ -264,7 +284,7 @@ bool Peer2PeerTopology::update(double dT)
 			{
 				myPeer.connections.erase(it);
 				myPeer.sequence++;
-				myPeer.whenPropagate = m_time;
+				myPeer.whenPropagate = 0.0;
 				updateRouting = 2;
 			}
 
@@ -287,14 +307,16 @@ bool Peer2PeerTopology::update(double dT)
 
 	T_MEASURE_UNTIL(0.00025);
 
-	// Send direct connection handshake messages.
+	double time = m_timer.getElapsedTime();
+
+	// Send direct connection handshake messages, send for every new peer first.
 	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
 	{
 		if (i == myIndex)
 			continue;
 
 		Peer& peer = m_peers[i];
-		if (m_time < peer.whenIAm)
+		if (peer.whenIAm > 0.0)
 			continue;
 
 		// Keep sending "I am" messages as long as peer exist from provider; ie is in lobby.
@@ -307,13 +329,13 @@ bool Peer2PeerTopology::update(double dT)
 		}
 		else
 		{
-			log::info << getLogPrefix() << L"Failed to send \"I am\" to peer " << peer.handle << L"." << Endl;
+			log::info << getLogPrefix() << L"Failed to send \"I am\" to peer " << peer.handle << L" (1)." << Endl;
 
 			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
 			if (it != myPeer.connections.end())
 			{
 				myPeer.connections.erase(it);
-				myPeer.whenPropagate = m_time;
+				myPeer.whenPropagate = 0.0;
 				myPeer.sequence++;
 
 				peer.sequence = 0;
@@ -325,7 +347,48 @@ bool Peer2PeerTopology::update(double dT)
 			}
 		}
 
-		peer.whenIAm = m_time + c_IAmInterval + m_random.nextDouble() * c_timeRandomFlux;
+		peer.whenIAm = time + m_iAmInterval + m_random.nextDouble() * m_iAmRandomFlux;
+	}
+
+	// Send direct connection handshake messages, periodically thus only one message per update.
+	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
+	{
+		if (i == myIndex)
+			continue;
+
+		Peer& peer = m_peers[i];
+		if (peer.whenIAm <= 0.0 || time < peer.whenIAm)
+			continue;
+
+		// Keep sending "I am" messages as long as peer exist from provider; ie is in lobby.
+		msg.id = MsgIAm_0;
+		msg.iam.sequence = 0;
+
+		if (m_provider->send(peer.handle, &msg, MsgIAm_NetSize()))
+		{
+			peer.sentIAm++;
+		}
+		else
+		{
+			log::info << getLogPrefix() << L"Failed to send \"I am\" to peer " << peer.handle << L" (2)." << Endl;
+
+			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
+			if (it != myPeer.connections.end())
+			{
+				myPeer.connections.erase(it);
+				myPeer.whenPropagate = 0.0;
+				myPeer.sequence++;
+
+				peer.sequence = 0;
+				peer.connections.clear();
+				peer.whenIAm = 0.0;
+				peer.sentIAm = 0;
+
+				updateRouting = 4;
+			}
+		}
+
+		peer.whenIAm = time + m_iAmInterval + m_random.nextDouble() * m_iAmRandomFlux;
 
 		// Only send one "I am" per update.
 		break;
@@ -350,7 +413,7 @@ bool Peer2PeerTopology::update(double dT)
 				log::info << getLogPrefix() << L"Peer " << peer.handle << L" no longer respond to \"I am\" messages." << Endl;
 
 				myPeer.connections.erase(it);
-				myPeer.whenPropagate = m_time;
+				myPeer.whenPropagate = 0.0;
 				myPeer.sequence++;
 
 				peer.sequence = 0;
@@ -429,7 +492,7 @@ bool Peer2PeerTopology::update(double dT)
 	{
 		Peer& peer = m_peers[i];
 
-		if (m_time < peer.whenPropagate || peer.connections.empty())
+		if (time < peer.whenPropagate || peer.connections.empty())
 			continue;
 
 		msg.id = MsgCMask;
@@ -451,7 +514,7 @@ bool Peer2PeerTopology::update(double dT)
 			}
 		}
 
-		peer.whenPropagate = m_time + c_propagateInterval + m_random.nextDouble() * c_timeRandomFlux;
+		peer.whenPropagate = time + m_propagateInterval + m_random.nextDouble() * m_propagateRandomFlux;
 	}
 
 	if (errors > 0)
@@ -496,7 +559,7 @@ bool Peer2PeerTopology::update(double dT)
 							myPeer.connections.push_back(from);
 							std::sort(myPeer.connections.begin(), myPeer.connections.end());
 
-							myPeer.whenPropagate = m_time;
+							myPeer.whenPropagate = 0.0;
 							myPeer.sequence++;
 
 							updateRouting = 7;
@@ -536,7 +599,7 @@ bool Peer2PeerTopology::update(double dT)
 
 						if (!equal || msg.cmask.sequence > ofPeer.sequence)
 						{
-							ofPeer.whenPropagate = m_time;
+							ofPeer.whenPropagate = 0.0;
 							if (!equal)
 								updateRouting = 8;
 						}
@@ -654,8 +717,6 @@ bool Peer2PeerTopology::update(double dT)
 	}
 
 	T_MEASURE_UNTIL(0.001);
-
-	m_time += dT;
 	return true;
 }
 
