@@ -8,14 +8,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessStepSetTargetFacade", 0, ImageProcessStepSetTargetFacade, IImageProcessStepFacade)
 
-int32_t ImageProcessStepSetTargetFacade::getImage(const ImageProcessStep* step) const
+int32_t ImageProcessStepSetTargetFacade::getImage(editor::IEditor* editor, const ImageProcessStep* step) const
 {
 	return 4;
 }
 
-std::wstring ImageProcessStepSetTargetFacade::getText(const ImageProcessStep* step) const
+std::wstring ImageProcessStepSetTargetFacade::getText(editor::IEditor* editor, const ImageProcessStep* step) const
 {
-	const ImageProcessStepSetTarget* targetStep = checked_type_cast< const ImageProcessStepSetTarget* >(step);
+	const ImageProcessStepSetTarget* targetStep = mandatory_non_null_type_cast< const ImageProcessStepSetTarget* >(step);
 	return L"Set target \"" + targetStep->getTarget() + L"\"";
 }
 
