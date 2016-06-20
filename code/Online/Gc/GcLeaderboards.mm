@@ -93,6 +93,11 @@ bool GcLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& outLea
 	return true;
 }
 
+bool GcLeaderboards::create(const std::wstring& leaderboardId, LeaderboardData& outLeaderboard)
+{
+	return false;
+}
+
 bool GcLeaderboards::set(const uint64_t handle, int32_t score)
 {
 	__block Event* bevent;

@@ -12,6 +12,11 @@ bool LanLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& outLe
 	return true;
 }
 
+bool LanLeaderboards::create(const std::wstring& leaderboardId, LeaderboardData& outLeaderboard)
+{
+	return false;
+}
+
 bool LanLeaderboards::set(const uint64_t handle, int32_t score)
 {
 	return true;

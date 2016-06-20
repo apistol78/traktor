@@ -12,6 +12,11 @@ bool PsnLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& outLe
 	return true;
 }
 
+bool PsnLeaderboards::create(const std::wstring& leaderboardId, LeaderboardData& outLeaderboard)
+{
+	return false;
+}
+
 bool PsnLeaderboards::set(const uint64_t handle, int32_t score)
 {
 	return false;
