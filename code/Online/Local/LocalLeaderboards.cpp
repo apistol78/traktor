@@ -37,6 +37,11 @@ bool LocalLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 	return true;
 }
 
+bool LocalLeaderboards::create(const std::wstring& leaderboardId, LeaderboardData& outLeaderboard)
+{
+	return false;
+}
+
 bool LocalLeaderboards::set(const uint64_t handle, int32_t score)
 {
 	if (m_db->executeUpdate(L"update Leaderboards set score=" + toString(score) + L" where id=" + toString(handle)) > 0)

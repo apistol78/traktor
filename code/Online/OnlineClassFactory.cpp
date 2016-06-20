@@ -339,6 +339,7 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< ILeaderboards > > classILeaderboards = new AutoRuntimeClass< ILeaderboards >();
 	classILeaderboards->addMethod("ready", &ILeaderboards::ready);
 	classILeaderboards->addMethod("enumerate", &ILeaderboards_enumerate);
+	classILeaderboards->addMethod("create", &ILeaderboards::create);
 	classILeaderboards->addMethod("getRank", &ILeaderboards_getRank);
 	classILeaderboards->addMethod("getScore", &ILeaderboards_getScore);
 	classILeaderboards->addMethod("setScore", &ILeaderboards::setScore);

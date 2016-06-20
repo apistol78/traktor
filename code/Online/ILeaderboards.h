@@ -26,6 +26,8 @@ public:
 
 	virtual bool enumerate(std::set< std::wstring >& outLeaderboardIds) const = 0;
 
+	virtual bool create(const std::wstring& leaderboardId) = 0;
+
 	virtual bool getRank(const std::wstring& leaderboardId, uint32_t& outRank) const = 0;
 
 	virtual bool getScore(const std::wstring& leaderboardId, int32_t& outScore) const = 0;

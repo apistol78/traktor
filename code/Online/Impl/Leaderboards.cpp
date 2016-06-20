@@ -26,6 +26,18 @@ bool Leaderboards::enumerate(std::set< std::wstring >& outLeaderboardIds) const
 	return true;
 }
 
+bool Leaderboards::create(const std::wstring& leaderboardId)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	ILeaderboardsProvider::LeaderboardData leaderboardData;
+
+	if (!m_provider->create(leaderboardId, leaderboardData))
+		return false;
+
+	m_leaderboards.insert(std::make_pair(leaderboardId, leaderboardData));
+	return true;
+}
+
 bool Leaderboards::getRank(const std::wstring& leaderboardId, uint32_t& outRank) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);

@@ -172,6 +172,27 @@ bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 	return allSuccessful;
 }
 
+bool SteamLeaderboards::create(const std::wstring& leaderboardId, LeaderboardData& outLeaderboard)
+{
+	outLeaderboard.handle = 0;
+	outLeaderboard.score = 0;
+	outLeaderboard.rank = 0;
+
+	Ref< FindLeaderboardCall > call = FindLeaderboardCall::create(leaderboardId, outLeaderboard);
+	if (!call)
+		return false;
+
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	while (!call->finished())
+	{
+		m_sessionManager->update();
+		if (!call->finished() && currentThread)
+			currentThread->wait(100);
+	}
+
+	return call->successful();
+}
+
 bool SteamLeaderboards::set(uint64_t handle, int32_t score)
 {
 	if (!handle || !::SteamUser()->BLoggedOn())

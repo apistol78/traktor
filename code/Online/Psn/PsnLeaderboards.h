@@ -15,6 +15,8 @@ class PsnLeaderboards : public ILeaderboardsProvider
 public:
 	virtual bool enumerate(std::map< std::wstring, LeaderboardData >& outLeaderboards);
 
+	virtual bool create(const std::wstring& leaderboardId, LeaderboardData& outLeaderboard);
+
 	virtual bool set(const uint64_t handle, int32_t score);
 
 	virtual bool getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores);
