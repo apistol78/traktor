@@ -32,8 +32,9 @@ class IEditorPageSite;
 	namespace ui
 	{
 
-class ListBox;
 class IBitmap;
+class ListBox;
+class PopupMenu;
 class Tab;
 
 		namespace custom
@@ -104,6 +105,7 @@ private:
 	Ref< ui::custom::GridView > m_outlineGrid;
 	Ref< ScriptClassesView > m_classesView;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
+	Ref< ui::PopupMenu > m_editMenu;
 	Ref< ui::custom::StatusBar > m_compileStatus;
 	Ref< SearchControl > m_searchControl;
 	std::wstring m_findNeedle;
@@ -153,6 +155,8 @@ private:
 	void eventScriptChange(ui::ContentChangeEvent* event);
 
 	void eventScriptButtonDown(ui::MouseButtonDownEvent* event);
+
+	void eventScriptButtonUp(ui::MouseButtonUpEvent* event);
 
 	void eventScriptSize(ui::SizeEvent* event);
 

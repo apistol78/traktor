@@ -30,6 +30,8 @@
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/ListBox.h"
+#include "Ui/MenuItem.h"
+#include "Ui/PopupMenu.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
@@ -181,11 +183,16 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
 	m_edit->addEventHandler< ui::MouseButtonDownEvent >(this, &ScriptEditorPage::eventScriptButtonDown);
+	m_edit->addEventHandler< ui::MouseButtonUpEvent >(this, &ScriptEditorPage::eventScriptButtonUp);
 	m_edit->addEventHandler< ui::SizeEvent >(this, &ScriptEditorPage::eventScriptSize);
 
 	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
 	m_foundLineAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-found-line"));
 	m_debugLineAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-debug-line"));
+
+	m_editMenu = new ui::PopupMenu();
+	m_editMenu->create();
+	m_editMenu->add(new ui::MenuItem(ui::Command(L"Script.Editor.AddUsingStatement"), i18n::Text(L"SCRIPT_EDITOR_ADD_USING")));
 
 	m_searchControl = new SearchControl();
 	m_searchControl->create(m_edit);
@@ -582,7 +589,7 @@ void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 
 void ScriptEditorPage::eventScriptButtonDown(ui::MouseButtonDownEvent* event)
 {
-	if (event->getPosition().x >= m_edit->getMarginWidth())
+	if (event->getPosition().x >= m_edit->getMarginWidth() || event->getButton() != ui::MbtLeft)
 		return;
 
 	int32_t line = m_edit->getLineFromPosition(event->getPosition().y);
@@ -594,6 +601,34 @@ void ScriptEditorPage::eventScriptButtonDown(ui::MouseButtonDownEvent* event)
 			m_edit->setLineData(line, 0);
 
 		updateBreakpoints();
+	}
+
+	event->consume();
+}
+
+void ScriptEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
+{
+	if (event->getButton() != ui::MbtRight)
+		return;
+
+	Ref< ui::MenuItem > menuItem = m_editMenu->show(m_edit, event->getPosition());
+	if (menuItem)
+	{
+		if (menuItem->getCommand() == L"Script.Editor.AddUsingStatement")
+		{
+			Ref< db::Instance > instance = m_editor->browseInstance(type_of< Script >());
+			if (instance)
+			{
+				int32_t offset = m_edit->getCaretOffset();
+				int32_t line = m_edit->getLineFromOffset(offset);
+
+				offset = m_edit->getLineOffset(line);
+
+				wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(instance->getGuid(), instance->getPath()));
+				m_edit->placeCaret(offset);
+				m_edit->insert(L"#using " + std::wstring(1, ch) + L"\n");
+			}
+		}
 	}
 
 	event->consume();
