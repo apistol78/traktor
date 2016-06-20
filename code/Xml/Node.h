@@ -56,13 +56,13 @@ public:
 
 	Node* getParent() const;
 	
-	Ref< Node > getPreviousSibling() const;
+	Node* getPreviousSibling() const;
 	
-	Ref< Node > getNextSibling() const;
+	Node* getNextSibling() const;
 	
-	Ref< Node > getFirstChild() const;
+	Node* getFirstChild() const;
 	
-	Ref< Node > getLastChild() const;
+	Node* getLastChild() const;
 
 protected:
 	virtual Ref< Node > cloneUntyped() const = 0;

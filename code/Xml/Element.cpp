@@ -31,10 +31,10 @@ void Element::setName(const std::wstring& name)
 std::wstring Element::getValue() const
 {
 	StringOutputStream ss;
-	for (Ref< Node > child = getFirstChild(); child != 0; child = child->getNextSibling())
+	for (Node* child = getFirstChild(); child != 0; child = child->getNextSibling())
 	{
 		if (is_a< Text >(child))
-			ss << static_cast< Text* >(child.ptr())->getValue();
+			ss << static_cast< Text* >(child)->getValue();
 	}
 	return ss.str();
 }
@@ -57,7 +57,7 @@ void Element::setValue(const std::wstring& value)
 void Element::write(OutputStream& os) const
 {
 	os << L"<" << m_name;
-	for (Ref< Attribute > attr = getFirstAttribute(); attr; attr = attr->getNext())
+	for (Attribute* attr = getFirstAttribute(); attr; attr = attr->getNext())
 		os << L" " << attr->getName() << L"=\"" << attr->getValue() << L"\"";
 
 	if (getFirstChild())
@@ -66,7 +66,7 @@ void Element::write(OutputStream& os) const
 		os << IncreaseIndent;
 
 		uint32_t childElements = 0, childText = 0;
-		for (Ref< Node > child = getFirstChild(); child; child = child->getNextSibling())
+		for (Node* child = getFirstChild(); child; child = child->getNextSibling())
 		{
 			if (is_a< Element >(child))
 				++childElements;
@@ -86,7 +86,7 @@ void Element::write(OutputStream& os) const
 		os << L"/>" << Endl;
 }
 
-int Element::get(const std::wstring& path, RefArray< Element >& elements)
+int32_t Element::get(const std::wstring& path, RefArray< Element >& outElements) const
 {
 	size_t i = path.find_first_of(L'/');
 	if (i != path.npos)
@@ -94,26 +94,26 @@ int Element::get(const std::wstring& path, RefArray< Element >& elements)
 		std::wstring name = path.substr(0, i);
 		std::wstring sub = path.substr(i + 1);
 		
-		for (Ref< Node > child = getFirstChild(); child != 0; child = child->getNextSibling())
+		for (Node* child = getFirstChild(); child != 0; child = child->getNextSibling())
 		{
-			Ref< Element > elm = dynamic_type_cast< Element* >(child);
+			Element* elm = dynamic_type_cast< Element* >(child);
 			if (elm && elm->match(name) == true)
-				elm->get(sub, elements);
+				elm->get(sub, outElements);
 		}
 	}
 	else
 	{
-		for (Ref< Node > child = getFirstChild(); child != 0; child = child->getNextSibling())
+		for (Node* child = getFirstChild(); child != 0; child = child->getNextSibling())
 		{
-			Ref< Element > elm = dynamic_type_cast< Element* >(child);
+			Element* elm = dynamic_type_cast< Element* >(child);
 			if (elm && elm->match(path) == true)
-				elements.push_back(elm);
+				outElements.push_back(elm);
 		}
 	}
-	return int(elements.size());
+	return int32_t(outElements.size());
 }
 
-Ref< Element > Element::getSingle(const std::wstring& path)
+Element* Element::getSingle(const std::wstring& path) const
 {
 	size_t i = path.find_first_of(L'/');
 	if (i != path.npos)
@@ -121,12 +121,12 @@ Ref< Element > Element::getSingle(const std::wstring& path)
 		std::wstring name = path.substr(0, i);
 		std::wstring sub = path.substr(i + 1);
 		
-		for (Ref< Node > child = getFirstChild(); child != 0; child = child->getNextSibling())
+		for (Node* child = getFirstChild(); child != 0; child = child->getNextSibling())
 		{
-			Ref< Element > elm = dynamic_type_cast< Element* >(child);
+			Element* elm = dynamic_type_cast< Element* >(child);
 			if (elm && elm->match(name) == true)
 			{
-				Ref< Element > found = elm->getSingle(sub);
+				Element* found = elm->getSingle(sub);
 				if (found)
 					return found;
 			}
@@ -134,9 +134,9 @@ Ref< Element > Element::getSingle(const std::wstring& path)
 	}
 	else
 	{
-		for (Ref< Node > child = getFirstChild(); child != 0; child = child->getNextSibling())
+		for (Node* child = getFirstChild(); child != 0; child = child->getNextSibling())
 		{
-			Ref< Element > elm = dynamic_type_cast< Element* >(child);
+			Element* elm = dynamic_type_cast< Element* >(child);
 			if (elm && elm->match(path) == true)
 				return elm;
 		}
@@ -155,10 +155,10 @@ std::wstring Element::getPath() const
 	std::wstringstream ss;
 	while (!elm.empty())
 	{
-		Ref< const Element > e = elm.top();
+		const Element* e = elm.top();
 
-		int index = 0;
-		for (Ref< Node > node = e->getPreviousSibling(); node != 0; node = node->getPreviousSibling())
+		int32_t index = 0;
+		for (Node* node = e->getPreviousSibling(); node != 0; node = node->getPreviousSibling())
 		{
 			if (is_a< Element >(node))
 			{
@@ -195,7 +195,7 @@ bool Element::match(const std::wstring& condition)
 				return false;
 				
 			std::wstring attribName = indexer.substr(1, i - 1);
-			Ref< Attribute > attrib = getAttribute(attribName);
+			Attribute* attrib = getAttribute(attribName);
 			if (attrib == 0)
 				return false;
 				
@@ -212,7 +212,7 @@ bool Element::match(const std::wstring& condition)
 				if (indexer == L"last()")
 				{
 					// Am I the last element?
-					for (Ref< Node > node = getNextSibling(); node != 0; node = node->getNextSibling())
+					for (Node* node = getNextSibling(); node != 0; node = node->getNextSibling())
 					{
 						if (is_a< Element >(node))
 						{
@@ -223,11 +223,11 @@ bool Element::match(const std::wstring& condition)
 				}
 				else
 				{
-					int n = parseString< int >(indexer);
+					int32_t n = parseString< int32_t >(indexer);
 					
 					// Calculate our own index.
-					int nn = 0;
-					for (Ref< Node > node = getPreviousSibling(); node != 0; node = node->getPreviousSibling())
+					int32_t nn = 0;
+					for (Node* node = getPreviousSibling(); node != 0; node = node->getPreviousSibling())
 					{
 						if (is_a< Element >(node))
 						{
@@ -244,7 +244,7 @@ bool Element::match(const std::wstring& condition)
 			else
 			{
 				std::wstring childName = indexer.substr(0, i);
-				Ref< Element > elm = getChildElementByName(childName);
+				Element* elm = getChildElementByName(childName);
 				if (elm == 0)
 					return false;
 				
@@ -287,19 +287,19 @@ void Element::setAttribute(const std::wstring& name, const std::wstring& value)
 	attr->setValue(value);
 }
 
-Ref< Attribute > Element::getFirstAttribute() const
+Attribute* Element::getFirstAttribute() const
 {
 	return m_firstAttribute;
 }
 
-Ref< Attribute > Element::getLastAttribute() const
+Attribute* Element::getLastAttribute() const
 {
 	return m_lastAttribute;
 }
 
-Ref< Attribute > Element::getAttribute(const std::wstring& name) const
+Attribute* Element::getAttribute(const std::wstring& name) const
 {
-	Ref< Attribute > attr;
+	Attribute* attr;
 	for (attr = m_firstAttribute; attr != 0; attr = attr->getNext())
 	{
 		if (attr->getName() == name)
@@ -316,13 +316,13 @@ Ref< Attribute > Element::getAttribute(const std::wstring& name, const std::wstr
 	return attr;
 }
 
-Ref< Element > Element::getChildElementByName(const std::wstring& name)
+Element* Element::getChildElementByName(const std::wstring& name)
 {
-	for (Ref< Node > child = getFirstChild(); child != 0; child = child->getNextSibling())
+	for (Node* child = getFirstChild(); child != 0; child = child->getNextSibling())
 	{
 		if (is_a< Element >(child))
 		{
-			Ref< Element > elm = static_cast< Element* >(child.ptr());
+			Element* elm = static_cast< Element* >(child);
 			if (elm->getName() == name)
 				return elm;
 		}

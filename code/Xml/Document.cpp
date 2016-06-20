@@ -123,7 +123,7 @@ bool Document::saveIntoStream(IStream* stream)
 	return true;
 }
 
-int Document::get(const std::wstring& path, RefArray< Element >& elements)
+int32_t Document::get(const std::wstring& path, RefArray< Element >& outElements) const
 {
 	if (m_docElement)
 	{
@@ -131,15 +131,15 @@ int Document::get(const std::wstring& path, RefArray< Element >& elements)
 		{
 			size_t p = path.find(L'/', 1);
 			if (path.substr(1, p - 1) == m_docElement->getName())
-				m_docElement->get(path.substr(p + 1), elements);
+				m_docElement->get(path.substr(p + 1), outElements);
 		}
 		else
-			m_docElement->get(path, elements);
+			m_docElement->get(path, outElements);
 	}
-	return int(elements.size());
+	return int32_t(outElements.size());
 }
 
-Ref< Element > Document::getSingle(const std::wstring& path)
+Element* Document::getSingle(const std::wstring& path) const
 {
 	RefArray< Element > elements;
 	return (get(path, elements) > 0) ? elements.front() : 0;
@@ -150,7 +150,7 @@ void Document::setDocumentElement(Element* docElement)
 	m_docElement = docElement;
 }
 
-Ref< Element > Document::getDocumentElement() const
+Element* Document::getDocumentElement() const
 {
 	return m_docElement;
 }

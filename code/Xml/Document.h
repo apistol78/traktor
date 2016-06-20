@@ -41,13 +41,13 @@ public:
 
 	bool saveIntoStream(IStream* stream);
 
-	int get(const std::wstring& path, RefArray< Element >& elements);
+	int32_t get(const std::wstring& path, RefArray< Element >& outElements) const;
 	
-	Ref< Element > getSingle(const std::wstring& path);
+	Element* getSingle(const std::wstring& path) const;
 	
 	void setDocumentElement(Element* docElement);
 
-	Ref< Element > getDocumentElement() const;
+	Element* getDocumentElement() const;
 
 	Ref< Document > clone() const;
 	
