@@ -8,12 +8,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessStepChainFacade", 0, ImageProcessStepChainFacade, IImageProcessStepFacade)
 
-int32_t ImageProcessStepChainFacade::getImage(const ImageProcessStep* step) const
+int32_t ImageProcessStepChainFacade::getImage(editor::IEditor* editor, const ImageProcessStep* step) const
 {
 	return 1;
 }
 
-std::wstring ImageProcessStepChainFacade::getText(const ImageProcessStep* step) const
+std::wstring ImageProcessStepChainFacade::getText(editor::IEditor* editor, const ImageProcessStep* step) const
 {
 	return L"Chain";
 }

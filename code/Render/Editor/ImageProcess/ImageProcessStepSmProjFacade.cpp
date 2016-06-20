@@ -8,12 +8,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessStepSmProjFacade", 0, ImageProcessStepSmProjFacade, IImageProcessStepFacade)
 
-int32_t ImageProcessStepSmProjFacade::getImage(const ImageProcessStep* step) const
+int32_t ImageProcessStepSmProjFacade::getImage(editor::IEditor* editor, const ImageProcessStep* step) const
 {
 	return 6;
 }
 
-std::wstring ImageProcessStepSmProjFacade::getText(const ImageProcessStep* step) const
+std::wstring ImageProcessStepSmProjFacade::getText(editor::IEditor* editor, const ImageProcessStep* step) const
 {
 	return L"Project shadow map";
 }

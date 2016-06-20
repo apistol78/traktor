@@ -287,7 +287,7 @@ void ImageProcessEditor::updateStepView(ui::custom::GridRow* parentStepRow, cons
 
 		Ref< ui::custom::GridRow > stepRow = new ui::custom::GridRow();
 		stepRow->add(new ui::custom::GridItem(toString(inoutOrder++)/*stepFacade->getImage(*i)*/));
-		stepRow->add(new ui::custom::GridItem(stepFacade->getText(*i)));
+		stepRow->add(new ui::custom::GridItem(stepFacade->getText(m_editor, *i)));
 		stepRow->setData(L"STEP", *i);
 
 		if (parentStepRow)
@@ -331,7 +331,7 @@ void ImageProcessEditor::updateViews()
 
 		Ref< ui::custom::GridRow > definitionRow = new ui::custom::GridRow();
 		definitionRow->add(new ui::custom::GridItem(L"(User)"));
-		definitionRow->add(new ui::custom::GridItem(defineFacade->getText(*i)));
+		definitionRow->add(new ui::custom::GridItem(defineFacade->getText(m_editor, *i)));
 		definitionRow->setData(L"DEFINITION", *i);
 		m_gridDefinitions->addRow(definitionRow);
 	}
