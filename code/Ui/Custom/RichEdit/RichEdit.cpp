@@ -1103,30 +1103,33 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 
 	setCursor(CrIBeam);
 
-	int32_t offset = getOffsetFromPosition(position);
-	if (offset >= 0)
+	if (event->getButton() == MbtLeft)
 	{
-		if ((event->getKeyState() & ui::KsShift) != 0)
+		int32_t offset = getOffsetFromPosition(position);
+		if (offset >= 0)
 		{
-			m_fromCaret = m_caret;
-			m_caret = offset;
-			m_selectionStart = std::min(m_fromCaret, m_caret);
-			m_selectionStop = std::max(m_fromCaret, m_caret);
-		}
-		else
-		{
-			m_caret = offset;
-			m_fromCaret = offset;
-			m_selectionStart = -1;
-			m_selectionStop = -1;
+			if ((event->getKeyState() & ui::KsShift) != 0)
+			{
+				m_fromCaret = m_caret;
+				m_caret = offset;
+				m_selectionStart = std::min(m_fromCaret, m_caret);
+				m_selectionStop = std::max(m_fromCaret, m_caret);
+			}
+			else
+			{
+				m_caret = offset;
+				m_fromCaret = offset;
+				m_selectionStart = -1;
+				m_selectionStop = -1;
 
-			std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator i = m_specialCharacters.find(m_text[m_caret].ch);
-			if (i != m_specialCharacters.end())
-				i->second->mouseButtonDown(event);
-		}
+				std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator i = m_specialCharacters.find(m_text[m_caret].ch);
+				if (i != m_specialCharacters.end())
+					i->second->mouseButtonDown(event);
+			}
 
-		setCapture();
-		update();
+			setCapture();
+			update();
+		}
 	}
 }
 
@@ -1165,6 +1168,9 @@ void RichEdit::eventMouseMove(MouseMoveEvent* event)
 
 void RichEdit::eventDoubleClick(MouseDoubleClickEvent* event)
 {
+	if (event->getButton() != MbtLeft)
+		return;
+
 	Point position = event->getPosition();
 	if (position.x < m_lineMargin)
 		return;

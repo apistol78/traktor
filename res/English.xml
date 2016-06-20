@@ -2197,6 +2197,10 @@
     	<second>Script debugger</second>
     </item>
     <item>
+      <first>SCRIPT_EDITOR_ADD_USING</first>
+      <second>Add #using...</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_CLASSES</first>
       <second>System classes</second>
     </item>
