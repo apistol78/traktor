@@ -134,7 +134,7 @@ struct NameData
 	{
 		Ref< const xml::Element > nameArray = source->getSingle(L"Name_array");
 		if (!nameArray)
-			nameArray = source->getSingle(L"IDREF_array").ptr();
+			nameArray = source->getSingle(L"IDREF_array");
 		if (nameArray)
 		{
 			id = source->getAttribute(L"id", L"")->getValue();

@@ -47,7 +47,7 @@ void Node::setValue(const std::wstring& value)
 
 void Node::write(OutputStream& os) const
 {
-	for (Ref< Node > child = m_firstChild; child != 0; child = child->m_nextSibling)
+	for (Node* child = m_firstChild; child != 0; child = child->m_nextSibling)
 		child->write(os);
 }
 
@@ -166,22 +166,22 @@ Node* Node::getParent() const
 	return m_parent;
 }
 
-Ref< Node > Node::getPreviousSibling() const
+Node* Node::getPreviousSibling() const
 {
 	return m_previousSibling;
 }
 
-Ref< Node > Node::getNextSibling() const
+Node* Node::getNextSibling() const
 {
 	return m_nextSibling;
 }
 
-Ref< Node > Node::getFirstChild() const
+Node* Node::getFirstChild() const
 {
 	return m_firstChild;
 }
 
-Ref< Node > Node::getLastChild() const
+Node* Node::getLastChild() const
 {
 	return m_lastChild;
 }

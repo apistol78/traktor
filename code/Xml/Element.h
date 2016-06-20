@@ -43,9 +43,9 @@ public:
 
 	virtual void write(OutputStream& os) const T_OVERRIDE T_FINAL;
 
-	int get(const std::wstring& path, RefArray< Element >& elements);
+	int32_t get(const std::wstring& path, RefArray< Element >& outElements) const;
 	
-	Ref< Element > getSingle(const std::wstring& path);
+	Element* getSingle(const std::wstring& path) const;
 
 	std::wstring getPath() const;
 
@@ -55,11 +55,11 @@ public:
 	
 	void setAttribute(const std::wstring& name, const std::wstring& value);
 	
-	Ref< Attribute > getFirstAttribute() const;
+	Attribute* getFirstAttribute() const;
 	
-	Ref< Attribute > getLastAttribute() const;
+	Attribute* getLastAttribute() const;
 	
-	Ref< Attribute > getAttribute(const std::wstring& name) const;
+	Attribute* getAttribute(const std::wstring& name) const;
 
 	/*! \brief Get attribute by name, will always return an attribute.
 	 * This method will always return an attribute, if named attribute
@@ -75,7 +75,7 @@ public:
 	 */
 	Ref< Attribute > getAttribute(const std::wstring& name, const std::wstring& defaultValue) const;
 	
-	Ref< Element > getChildElementByName(const std::wstring& name);
+	Element* getChildElementByName(const std::wstring& name);
 
 	Ref< Element > clone() const;
 
