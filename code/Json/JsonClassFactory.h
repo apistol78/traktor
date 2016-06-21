@@ -16,6 +16,9 @@ namespace traktor
 	namespace json
 	{
 
+/*! \brief JSON class binding factory.
+ * \ingroup JSON
+ */
 class T_DLLCLASS JsonClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;
