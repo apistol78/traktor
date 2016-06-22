@@ -55,7 +55,7 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 			AppendMenu(
 				hMenu,
 				flags,
-				UINT_PTR(m_flatten.size()),
+				UINT_PTR(m_flatten.size() + 1),
 				(LPTSTR)tmp.c_str()
 			);
 			m_flatten.push_back(item);
@@ -95,9 +95,9 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 		NULL
 	);
 
-	if (id >= 0 && id < int32_t(m_flatten.size()))
+	if (id > 0 && id <= int32_t(m_flatten.size()))
 	{
-		MenuItem* item = m_flatten[id];
+		MenuItem* item = m_flatten[id - 1];
 
 		if (item && item->getCheckBox())
 			item->setChecked(!item->isChecked());
