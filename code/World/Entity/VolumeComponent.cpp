@@ -9,8 +9,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumeComponent", VolumeComponent, IEntityComponent)
 
-VolumeComponent::VolumeComponent(Entity* owner, const VolumeComponentData* data)
-:	m_owner(owner)
+VolumeComponent::VolumeComponent(const VolumeComponentData* data)
+:	m_owner(0)
 ,	m_data(data)
 {
 	const AlignedVector< Aabb3 >& volumes = m_data->getVolumes();
@@ -20,6 +20,11 @@ VolumeComponent::VolumeComponent(Entity* owner, const VolumeComponentData* data)
 
 void VolumeComponent::destroy()
 {
+}
+
+void VolumeComponent::setOwner(Entity* owner)
+{
+	m_owner = owner;
 }
 
 void VolumeComponent::setTransform(const Transform& transform)
@@ -38,7 +43,7 @@ void VolumeComponent::update(const UpdateParams& update)
 bool VolumeComponent::inside(const Vector4& point) const
 {
 	Transform transform;
-	if (!m_owner->getTransform(transform))
+	if (!m_owner || !m_owner->getTransform(transform))
 		return false;
 
 	Vector4 p = transform.inverse() * point.xyz1();

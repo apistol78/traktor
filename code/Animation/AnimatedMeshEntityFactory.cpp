@@ -42,7 +42,7 @@ Ref< world::IEntityEvent > AnimatedMeshEntityFactory::createEntityEvent(const wo
 	return 0;
 }
 
-Ref< world::IEntityComponent > AnimatedMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+Ref< world::IEntityComponent > AnimatedMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	return 0;
 }

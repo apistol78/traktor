@@ -81,11 +81,10 @@ public:
 
 	/*! \brief Create component from component data.
 	 *
-	 * \param owner Owner entity.
 	 * \param entityComponentData Entity component data.
 	 * \return Component instance, null if unable to create instance.
 	 */
-	virtual Ref< IEntityComponent > create(Entity* owner, const IEntityComponentData* entityComponentData) const = 0;
+	virtual Ref< IEntityComponent > create(const IEntityComponentData* entityComponentData) const = 0;
 
 	/*! \brief Get composite entity builder.
 	 *

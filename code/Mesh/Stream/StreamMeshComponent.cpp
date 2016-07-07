@@ -12,8 +12,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StreamMeshComponent", StreamMeshComponent, MeshComponent)
 
-StreamMeshComponent::StreamMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< StreamMesh >& mesh)
-:	MeshComponent(owner, screenSpaceCulling)
+StreamMeshComponent::StreamMeshComponent(const resource::Proxy< StreamMesh >& mesh, bool screenSpaceCulling)
+:	MeshComponent(screenSpaceCulling)
 ,	m_mesh(mesh)
 ,	m_frame(0)
 {

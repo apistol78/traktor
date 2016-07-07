@@ -12,8 +12,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BlendMeshComponent", BlendMeshComponent, MeshComponent)
 
-BlendMeshComponent::BlendMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< BlendMesh >& mesh)
-:	MeshComponent(owner, screenSpaceCulling)
+BlendMeshComponent::BlendMeshComponent(const resource::Proxy< BlendMesh >& mesh, bool screenSpaceCulling)
+:	MeshComponent(screenSpaceCulling)
 ,	m_mesh(mesh)
 {
 	uint32_t blendTargetCount = m_mesh->getBlendTargetCount();

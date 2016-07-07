@@ -26,7 +26,7 @@ class T_DLLCLASS StreamMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	StreamMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< StreamMesh >& mesh);
+	StreamMeshComponent(const resource::Proxy< StreamMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

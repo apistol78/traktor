@@ -52,8 +52,8 @@ const int32_t c_gridCells = (c_gridSize - 1) * (c_gridSize - 1);
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanComponent", OceanComponent, world::IEntityComponent)
 
-OceanComponent::OceanComponent(world::Entity* owner)
-:	m_owner(owner)
+OceanComponent::OceanComponent()
+:	m_owner(0)
 ,	m_opacity(0.0f)
 ,	m_maxAmplitude(0.0f)
 ,	m_allowSSReflections(true)
@@ -180,6 +180,11 @@ void OceanComponent::destroy()
 	m_shader.clear();
 }
 
+void OceanComponent::setOwner(world::Entity* owner)
+{
+	m_owner = owner;
+}
+
 void OceanComponent::setTransform(const Transform& transform)
 {
 }
@@ -201,7 +206,7 @@ void OceanComponent::render(
 )
 {
 	Transform transform;
-	if (!m_owner->getTransform(transform))
+	if (!m_owner || !m_owner->getTransform(transform))
 		return;
 
 	const Matrix44& view = worldRenderView.getView();

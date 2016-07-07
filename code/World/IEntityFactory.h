@@ -42,7 +42,7 @@ public:
 
 	virtual Ref< IEntityEvent > createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const = 0;
 
-	virtual Ref< IEntityComponent > createEntityComponent(const IEntityBuilder* builder, Entity* owner, const IEntityComponentData& entityComponentData) const = 0;
+	virtual Ref< IEntityComponent > createEntityComponent(const IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const = 0;
 };
 
 	}

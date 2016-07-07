@@ -27,9 +27,11 @@ class T_DLLCLASS VolumeComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	VolumeComponent(Entity* owner, const VolumeComponentData* data);
+	VolumeComponent(const VolumeComponentData* data);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual void setOwner(Entity* owner) T_OVERRIDE T_FINAL;
 
 	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 

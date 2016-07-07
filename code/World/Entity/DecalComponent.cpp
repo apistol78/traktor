@@ -27,6 +27,10 @@ void DecalComponent::destroy()
 {
 }
 
+void DecalComponent::setOwner(Entity* owner)
+{
+}
+
 void DecalComponent::setTransform(const Transform& transform)
 {
 	m_transform = transform;

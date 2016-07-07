@@ -53,6 +53,10 @@ void SkyComponent::destroy()
 	safeDestroy(m_vertexBuffer);
 }
 
+void SkyComponent::setOwner(world::Entity* owner)
+{
+}
+
 void SkyComponent::setTransform(const Transform& transform)
 {
 }

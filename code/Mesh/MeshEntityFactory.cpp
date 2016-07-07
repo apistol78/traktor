@@ -46,10 +46,10 @@ Ref< world::IEntityEvent > MeshEntityFactory::createEntityEvent(const world::IEn
 	return 0;
 }
 
-Ref< world::IEntityComponent > MeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+Ref< world::IEntityComponent > MeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(&entityComponentData);
-	return meshComponentData->createComponent(owner, m_resourceManager);
+	return meshComponentData->createComponent(m_resourceManager);
 }
 
 	}

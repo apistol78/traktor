@@ -29,7 +29,7 @@ class T_DLLCLASS SkinnedMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	SkinnedMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< SkinnedMesh >& mesh);
+	SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

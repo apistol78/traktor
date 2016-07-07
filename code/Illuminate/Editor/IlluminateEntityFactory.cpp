@@ -49,7 +49,7 @@ Ref< world::IEntityEvent > IlluminateEntityFactory::createEntityEvent(const worl
 	return 0;
 }
 
-Ref< world::IEntityComponent > IlluminateEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+Ref< world::IEntityComponent > IlluminateEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	return 0;
 }

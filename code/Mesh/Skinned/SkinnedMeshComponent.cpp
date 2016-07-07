@@ -12,8 +12,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshComponent", SkinnedMeshComponent, MeshComponent)
 
-SkinnedMeshComponent::SkinnedMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< SkinnedMesh >& mesh)
-:	MeshComponent(owner, screenSpaceCulling)
+SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, bool screenSpaceCulling)
+:	MeshComponent(screenSpaceCulling)
 ,	m_mesh(mesh)
 ,	m_count(0)
 {

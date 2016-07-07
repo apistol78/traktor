@@ -18,22 +18,16 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.RigidBodyComponentData", 0, RigidBodyComponentData, world::IEntityComponentData)
 
 Ref< RigidBodyComponent > RigidBodyComponentData::createComponent(
-	world::Entity* owner,
 	const world::IEntityBuilder* entityBuilder,
 	world::IEntityEventManager* eventManager,
 	resource::IResourceManager* resourceManager,
 	PhysicsManager* physicsManager
 ) const
 {
-	Transform transform;
-	if (!owner->getTransform(transform))
-		return 0;
-
 	Ref< Body > body = physicsManager->createBody(resourceManager, m_bodyDesc);
 	if (!body)
 		return 0;
 
-	body->setTransform(transform);
 	body->setEnable(true);
 
 	Ref< world::IEntityEvent > eventCollide;
@@ -44,7 +38,7 @@ Ref< RigidBodyComponent > RigidBodyComponentData::createComponent(
 			return 0;
 	}
 
-	return new RigidBodyComponent(owner, body, eventManager, eventCollide);
+	return new RigidBodyComponent(body, eventManager, eventCollide);
 }
 
 void RigidBodyComponentData::serialize(ISerializer& s)

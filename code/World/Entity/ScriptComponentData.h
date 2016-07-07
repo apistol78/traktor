@@ -27,7 +27,6 @@ class IResourceManager;
 	namespace world
 	{
 
-class Entity;
 class ScriptComponent;
 
 /*! \brief Script entity component data.
@@ -38,7 +37,7 @@ class T_DLLCLASS ScriptComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	Ref< ScriptComponent > createComponent(Entity* owner, resource::IResourceManager* resourceManager) const;
+	Ref< ScriptComponent > createComponent(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 

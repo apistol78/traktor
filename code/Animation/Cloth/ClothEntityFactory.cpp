@@ -42,7 +42,7 @@ Ref< world::IEntityEvent > ClothEntityFactory::createEntityEvent(const world::IE
 	return 0;
 }
 
-Ref< world::IEntityComponent > ClothEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+Ref< world::IEntityComponent > ClothEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	return 0;
 }

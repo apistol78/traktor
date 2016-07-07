@@ -27,7 +27,7 @@ class T_DLLCLASS InstanceMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	InstanceMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< InstanceMesh >& mesh);
+	InstanceMeshComponent(const resource::Proxy< InstanceMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

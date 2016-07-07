@@ -45,10 +45,10 @@ Ref< world::IEntityEvent > WeatherFactory::createEntityEvent(const world::IEntit
 	return 0;
 }
 
-Ref< world::IEntityComponent > WeatherFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+Ref< world::IEntityComponent > WeatherFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	if (const CloudComponentData* cloudComponentData = dynamic_type_cast< const CloudComponentData* >(&entityComponentData))
-		return cloudComponentData->createComponent(owner, m_resourceManager, m_renderSystem);
+		return cloudComponentData->createComponent(m_resourceManager, m_renderSystem);
 	else if (const SkyComponentData* skyComponentData = dynamic_type_cast< const SkyComponentData* >(&entityComponentData))
 		return skyComponentData->createComponent(m_resourceManager, m_renderSystem);
 	else

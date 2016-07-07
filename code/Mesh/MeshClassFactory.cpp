@@ -34,6 +34,7 @@
 #include "Mesh/Stream/StreamMeshEntity.h"
 #include "Render/ITexture.h"
 #include "Render/Context/ProgramParameters.h"
+#include "Resource/ResourceCast.h"
 
 namespace traktor
 {
@@ -151,6 +152,7 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBlendMesh);
 
 	Ref< AutoRuntimeClass< BlendMeshComponent > > classBlendMeshComponent = new AutoRuntimeClass< BlendMeshComponent >();
+	classBlendMeshComponent->addConstructor< const resource::Proxy< BlendMesh >&, bool >();
 	classBlendMeshComponent->addMethod("setBlendWeights", &BlendMeshComponent::setBlendWeights);
 	classBlendMeshComponent->addMethod("getBlendWeights", &BlendMeshComponent::getBlendWeights);
 	registrar->registerClass(classBlendMeshComponent);
@@ -169,6 +171,7 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIndoorMesh);
 
 	Ref< AutoRuntimeClass< IndoorMeshComponent > > classIndoorMeshComponent = new AutoRuntimeClass< IndoorMeshComponent >();
+	classIndoorMeshComponent->addConstructor< const resource::Proxy< IndoorMesh >&, bool >();
 	registrar->registerClass(classIndoorMeshComponent);
 
 	Ref< AutoRuntimeClass< IndoorMeshEntity > > classIndoorMeshEntity = new AutoRuntimeClass< IndoorMeshEntity >();
@@ -178,6 +181,7 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classInstanceMesh);
 
 	Ref< AutoRuntimeClass< InstanceMeshComponent > > classInstanceMeshComponent = new AutoRuntimeClass< InstanceMeshComponent >();
+	classInstanceMeshComponent->addConstructor< const resource::Proxy< InstanceMesh >&, bool >();
 	registrar->registerClass(classInstanceMeshComponent);
 
 	Ref< AutoRuntimeClass< InstanceMeshEntity > > classInstanceMeshEntity = new AutoRuntimeClass< InstanceMeshEntity >();
@@ -187,6 +191,7 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classAutoLodMesh);
 
 	Ref< AutoRuntimeClass< AutoLodMeshComponent > > classAutoLodMeshComponent = new AutoRuntimeClass< AutoLodMeshComponent >();
+	classAutoLodMeshComponent->addConstructor< const resource::Proxy< AutoLodMesh >&, bool >();
 	registrar->registerClass(classAutoLodMeshComponent);
 
 	Ref< AutoRuntimeClass< AutoLodMeshEntity > > classAutoLodMeshEntity = new AutoRuntimeClass< AutoLodMeshEntity >();
@@ -199,6 +204,7 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classPartitionMesh);
 
 	Ref< AutoRuntimeClass< PartitionMeshComponent > > classPartitionMeshComponent = new AutoRuntimeClass< PartitionMeshComponent >();
+	classPartitionMeshComponent->addConstructor< const resource::Proxy< PartitionMesh >&, bool >();
 	registrar->registerClass(classPartitionMeshComponent);
 
 	Ref< AutoRuntimeClass< PartitionMeshEntity > > classPartitionMeshEntity = new AutoRuntimeClass< PartitionMeshEntity >();
@@ -208,6 +214,7 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classSkinnedMesh);
 
 	Ref< AutoRuntimeClass< SkinnedMeshComponent > > classSkinnedMeshComponent = new AutoRuntimeClass< SkinnedMeshComponent >();
+	classSkinnedMeshComponent->addConstructor< const resource::Proxy< SkinnedMesh >&, bool >();
 	registrar->registerClass(classSkinnedMeshComponent);
 
 	Ref< AutoRuntimeClass< SkinnedMeshEntity > > classSkinnedMeshEntity = new AutoRuntimeClass< SkinnedMeshEntity >();
@@ -217,6 +224,7 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classStaticMesh);
 
 	Ref< AutoRuntimeClass< StaticMeshComponent > > classStaticMeshComponent = new AutoRuntimeClass< StaticMeshComponent >();
+	classStaticMeshComponent->addConstructor< const resource::Proxy< StaticMesh >&, bool >();
 	registrar->registerClass(classStaticMeshComponent);
 
 	Ref< AutoRuntimeClass< StaticMeshEntity > > classStaticMeshEntity = new AutoRuntimeClass< StaticMeshEntity >();
@@ -226,6 +234,7 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classStreamMesh);
 
 	Ref< AutoRuntimeClass< StreamMeshComponent > > classStreamMeshComponent = new AutoRuntimeClass< StreamMeshComponent >();
+	classStreamMeshComponent->addConstructor< const resource::Proxy< StreamMesh >&, bool >();
 	classStreamMeshComponent->addMethod("getFrameCount", &StreamMeshComponent::getFrameCount);
 	classStreamMeshComponent->addMethod("setFrame", &StreamMeshComponent::setFrame);
 	registrar->registerClass(classStreamMeshComponent);

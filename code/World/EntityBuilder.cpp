@@ -198,10 +198,10 @@ Ref< IEntityEvent > EntityBuilder::create(const IEntityEventData* entityEventDat
 	return entityFactory ? entityFactory->createEntityEvent(this, *entityEventData) : 0;
 }
 
-Ref< IEntityComponent > EntityBuilder::create(Entity* owner, const IEntityComponentData* entityComponentData) const
+Ref< IEntityComponent > EntityBuilder::create(const IEntityComponentData* entityComponentData) const
 {
 	Ref< const IEntityFactory > entityFactory = getFactory(entityComponentData);
-	return entityFactory ? entityFactory->createEntityComponent(this, owner, *entityComponentData) : 0;
+	return entityFactory ? entityFactory->createEntityComponent(this, *entityComponentData) : 0;
 }
 
 const IEntityBuilder* EntityBuilder::getCompositeEntityBuilder() const

@@ -48,11 +48,11 @@ Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntity
 	return 0;
 }
 
-Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	if (const OceanComponentData* oceanComponentData = dynamic_type_cast< const OceanComponentData* >(&entityComponentData))
 	{
-		Ref< OceanComponent > oceanComponent = new OceanComponent(owner);
+		Ref< OceanComponent > oceanComponent = new OceanComponent();
 		if (oceanComponent->create(m_resourceManager, m_renderSystem, *oceanComponentData))
 			return oceanComponent;
 	}

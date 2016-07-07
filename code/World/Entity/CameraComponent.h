@@ -30,6 +30,8 @@ public:
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
+	virtual void setOwner(Entity* owner) T_OVERRIDE T_FINAL;
+
 	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
 
 	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;

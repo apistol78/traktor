@@ -12,8 +12,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.AutoLodMeshComponent", AutoLodMeshComponent, MeshComponent)
 
-AutoLodMeshComponent::AutoLodMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< AutoLodMesh >& mesh)
-:	MeshComponent(owner, screenSpaceCulling)
+AutoLodMeshComponent::AutoLodMeshComponent(const resource::Proxy< AutoLodMesh >& mesh, bool screenSpaceCulling)
+:	MeshComponent(screenSpaceCulling)
 ,	m_mesh(mesh)
 ,	m_lodDistance(0.0f)
 {

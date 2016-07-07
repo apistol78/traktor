@@ -37,9 +37,11 @@ class T_DLLCLASS MeshComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	MeshComponent(world::Entity* owner, bool screenSpaceCulling);
+	MeshComponent(bool screenSpaceCulling);
 
 	virtual void destroy() T_OVERRIDE;
+
+	virtual void setOwner(world::Entity* owner) T_OVERRIDE T_FINAL;
 
 	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 

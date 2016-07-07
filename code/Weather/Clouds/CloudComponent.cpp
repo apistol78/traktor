@@ -176,8 +176,8 @@ struct ImpostorUpdateRenderBlock : public render::RenderBlock
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudComponent", CloudComponent, world::IEntityComponent)
 
-CloudComponent::CloudComponent(world::Entity* owner)
-:	m_owner(owner)
+CloudComponent::CloudComponent()
+:	m_owner(0)
 ,	m_handleBillboardView(render::getParameterHandle(L"BillboardView"))
 ,	m_handleImpostorTarget(render::getParameterHandle(L"ImpostorTarget"))
 ,	m_timeUntilUpdate(0.0f)
@@ -288,6 +288,11 @@ void CloudComponent::destroy()
 
 	safeDestroy(m_vertexBuffer);
 	safeDestroy(m_indexBuffer);
+}
+
+void CloudComponent::setOwner(world::Entity* owner)
+{
+	m_owner = owner;
 }
 
 void CloudComponent::setTransform(const Transform& transform)

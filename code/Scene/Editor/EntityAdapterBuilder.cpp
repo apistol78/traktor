@@ -290,9 +290,9 @@ Ref< world::IEntityEvent > EntityAdapterBuilder::create(const world::IEntityEven
 	return m_entityBuilder->create(entityEventData);
 }
 
-Ref< world::IEntityComponent > EntityAdapterBuilder::create(world::Entity* owner, const world::IEntityComponentData* entityComponentData) const
+Ref< world::IEntityComponent > EntityAdapterBuilder::create(const world::IEntityComponentData* entityComponentData) const
 {
-	return m_entityBuilder->create(owner, entityComponentData);
+	return m_entityBuilder->create(entityComponentData);
 }
 
 const world::IEntityBuilder* EntityAdapterBuilder::getCompositeEntityBuilder() const

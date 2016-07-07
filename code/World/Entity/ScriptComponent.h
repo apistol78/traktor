@@ -30,9 +30,11 @@ class T_DLLCLASS ScriptComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	ScriptComponent(Entity* owner, const resource::Proxy< IRuntimeClass >& clazz);
+	ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual void setOwner(Entity* owner) T_OVERRIDE T_FINAL;
 
 	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 

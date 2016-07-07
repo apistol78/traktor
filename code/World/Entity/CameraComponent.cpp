@@ -20,6 +20,10 @@ void CameraComponent::destroy()
 {
 }
 
+void CameraComponent::setOwner(Entity* owner)
+{
+}
+
 void CameraComponent::update(const UpdateParams& update)
 {
 }

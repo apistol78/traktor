@@ -38,7 +38,7 @@ MeshComponentData::MeshComponentData(const resource::Id< IMesh >& mesh)
 {
 }
 
-Ref< MeshComponent > MeshComponentData::createComponent(world::Entity* owner, resource::IResourceManager* resourceManager) const
+Ref< MeshComponent > MeshComponentData::createComponent(resource::IResourceManager* resourceManager) const
 {
 	resource::Proxy< IMesh > mesh;
 	if (!resourceManager->bind(m_mesh, mesh))
@@ -47,21 +47,21 @@ Ref< MeshComponent > MeshComponentData::createComponent(world::Entity* owner, re
 	Ref< MeshComponent > component;
 
 	if (is_a< BlendMesh >(mesh.getResource()))
-		component = new BlendMeshComponent(owner, m_screenSpaceCulling, resource::Proxy< BlendMesh >(mesh.getHandle()));
+		component = new BlendMeshComponent(resource::Proxy< BlendMesh >(mesh.getHandle()), m_screenSpaceCulling);
 	else if (is_a< IndoorMesh >(mesh.getResource()))
-		component = new IndoorMeshComponent(owner, m_screenSpaceCulling, resource::Proxy< IndoorMesh >(mesh.getHandle()));
+		component = new IndoorMeshComponent(resource::Proxy< IndoorMesh >(mesh.getHandle()), m_screenSpaceCulling);
 	else if (is_a< InstanceMesh >(mesh.getResource()))
-		component = new InstanceMeshComponent(owner, m_screenSpaceCulling, resource::Proxy< InstanceMesh >(mesh.getHandle()));
+		component = new InstanceMeshComponent(resource::Proxy< InstanceMesh >(mesh.getHandle()), m_screenSpaceCulling);
 	else if (is_a< AutoLodMesh >(mesh.getResource()))
-		component = new AutoLodMeshComponent(owner, m_screenSpaceCulling, resource::Proxy< AutoLodMesh >(mesh.getHandle()));
+		component = new AutoLodMeshComponent(resource::Proxy< AutoLodMesh >(mesh.getHandle()), m_screenSpaceCulling);
 	else if (is_a< PartitionMesh >(mesh.getResource()))
-		component = new PartitionMeshComponent(owner, m_screenSpaceCulling, resource::Proxy< PartitionMesh >(mesh.getHandle()));
+		component = new PartitionMeshComponent(resource::Proxy< PartitionMesh >(mesh.getHandle()), m_screenSpaceCulling);
 	else if (is_a< SkinnedMesh >(mesh.getResource()))
-		component = new SkinnedMeshComponent(owner, m_screenSpaceCulling, resource::Proxy< SkinnedMesh >(mesh.getHandle()));
+		component = new SkinnedMeshComponent(resource::Proxy< SkinnedMesh >(mesh.getHandle()), m_screenSpaceCulling);
 	else if (is_a< StaticMesh >(mesh.getResource()))
-		component = new StaticMeshComponent(owner, m_screenSpaceCulling, resource::Proxy< StaticMesh >(mesh.getHandle()));
+		component = new StaticMeshComponent(resource::Proxy< StaticMesh >(mesh.getHandle()), m_screenSpaceCulling);
 	else if (is_a< StreamMesh >(mesh.getResource()))
-		component = new StreamMeshComponent(owner, m_screenSpaceCulling, resource::Proxy< StreamMesh >(mesh.getHandle()));
+		component = new StreamMeshComponent(resource::Proxy< StreamMesh >(mesh.getHandle()), m_screenSpaceCulling);
 
 	return component;
 }

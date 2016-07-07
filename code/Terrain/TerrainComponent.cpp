@@ -586,6 +586,10 @@ void TerrainComponent::destroy()
 {
 }
 
+void TerrainComponent::setOwner(world::Entity* owner)
+{
+}
+
 void TerrainComponent::setTransform(const Transform& transform)
 {
 }

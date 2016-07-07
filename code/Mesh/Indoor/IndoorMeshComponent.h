@@ -27,7 +27,7 @@ class T_DLLCLASS IndoorMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	IndoorMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< IndoorMesh >& mesh);
+	IndoorMeshComponent(const resource::Proxy< IndoorMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
