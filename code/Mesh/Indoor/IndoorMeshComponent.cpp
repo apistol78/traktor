@@ -12,8 +12,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IndoorMeshComponent", IndoorMeshComponent, MeshComponent)
 
-IndoorMeshComponent::IndoorMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< IndoorMesh >& mesh)
-:	MeshComponent(owner, screenSpaceCulling)
+IndoorMeshComponent::IndoorMeshComponent(const resource::Proxy< IndoorMesh >& mesh, bool screenSpaceCulling)
+:	MeshComponent(screenSpaceCulling)
 ,	m_mesh(mesh)
 {
 }

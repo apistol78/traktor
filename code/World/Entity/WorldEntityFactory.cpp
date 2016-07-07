@@ -161,7 +161,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		Ref< ComponentEntity > componentEntity = new ComponentEntity(componentData->getTransform());
 		for (uint32_t i = 0; i < componentData->m_components.size(); ++i)
 		{
-			Ref< IEntityComponent > component = builder->create(componentEntity, componentData->m_components[i]);
+			Ref< IEntityComponent > component = builder->create(componentData->m_components[i]);
 			if (!component)
 			{
 				if (!m_editor)
@@ -194,7 +194,7 @@ Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* 
 	return 0;
 }
 
-Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, Entity* owner, const IEntityComponentData& entityComponentData) const
+Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const
 {
 	if (const CameraComponentData* cameraComponentData = dynamic_type_cast< const CameraComponentData* >(&entityComponentData))
 		return new CameraComponent(cameraComponentData);
@@ -217,17 +217,17 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 	}
 
 	if (const GodRayComponentData* godRayComponentData = dynamic_type_cast< const GodRayComponentData* >(&entityComponentData))
-		return new GodRayComponent(owner);
+		return new GodRayComponent();
 
 	if (const ScriptComponentData* scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(&entityComponentData))
 	{
 		// Do not instantiate script components inside editor.
 		if (!m_editor)
-			return scriptComponentData->createComponent(owner, m_resourceManager);
+			return scriptComponentData->createComponent(m_resourceManager);
 	}
 
 	if (const VolumeComponentData* volumeComponentData = dynamic_type_cast< const VolumeComponentData* >(&entityComponentData))
-		return new VolumeComponent(owner, volumeComponentData);
+		return new VolumeComponent(volumeComponentData);
 
 	return 0;
 }

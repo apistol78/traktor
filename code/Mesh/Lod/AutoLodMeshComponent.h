@@ -27,7 +27,7 @@ class T_DLLCLASS AutoLodMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	AutoLodMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< AutoLodMesh >& mesh);
+	AutoLodMeshComponent(const resource::Proxy< AutoLodMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

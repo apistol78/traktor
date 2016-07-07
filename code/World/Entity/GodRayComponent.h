@@ -26,9 +26,11 @@ class T_DLLCLASS GodRayComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	GodRayComponent(Entity* owner);
+	GodRayComponent();
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual void setOwner(Entity* owner) T_OVERRIDE T_FINAL;
 
 	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
 

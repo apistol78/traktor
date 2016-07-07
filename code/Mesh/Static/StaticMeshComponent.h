@@ -27,7 +27,7 @@ class T_DLLCLASS StaticMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	StaticMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< StaticMesh >& mesh);
+	StaticMeshComponent(const resource::Proxy< StaticMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

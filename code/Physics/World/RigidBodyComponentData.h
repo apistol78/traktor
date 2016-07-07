@@ -45,7 +45,6 @@ class T_DLLCLASS RigidBodyComponentData : public world::IEntityComponentData
 
 public:
 	Ref< RigidBodyComponent > createComponent(
-		world::Entity* owner,
 		const world::IEntityBuilder* entityBuilder,
 		world::IEntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,

@@ -43,7 +43,7 @@ public:
 
 	virtual Ref< IEntityEvent > createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, Entity* owner, const IEntityComponentData& entityComponentData) const T_OVERRIDE T_FINAL;
+	virtual Ref< IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const T_OVERRIDE T_FINAL;
 
 private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;

@@ -9,12 +9,11 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathComponent", PathComponent, world::IEntityComponent)
 
 PathComponent::PathComponent(
-	world::Entity* owner,
 	const TransformPath& path,
 	TimeMode timeMode,
 	float timeOffset
 )
-:	m_owner(owner)
+:	m_owner(0)
 ,	m_transform(Transform::identity())
 ,	m_path(path)
 ,	m_timeMode(timeMode)
@@ -22,13 +21,17 @@ PathComponent::PathComponent(
 ,	m_timeDeltaSign(1.0f)
 ,	m_time(timeOffset)
 {
-	if (m_owner)
-		m_owner->getTransform(m_transform);
 }
 
 void PathComponent::destroy()
 {
 	m_owner = 0;
+}
+
+void PathComponent::setOwner(world::Entity* owner)
+{
+	if ((m_owner = owner) != 0)
+		m_owner->getTransform(m_transform);
 }
 
 void PathComponent::setTransform(const Transform& transform)

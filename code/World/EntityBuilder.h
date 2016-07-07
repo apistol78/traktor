@@ -41,7 +41,7 @@ public:
 
 	virtual Ref< IEntityEvent > create(const IEntityEventData* entityEventData) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IEntityComponent > create(Entity* owner, const IEntityComponentData* entityComponentData) const T_OVERRIDE T_FINAL;
+	virtual Ref< IEntityComponent > create(const IEntityComponentData* entityComponentData) const T_OVERRIDE T_FINAL;
 
 	virtual const IEntityBuilder* getCompositeEntityBuilder() const T_OVERRIDE T_FINAL;
 

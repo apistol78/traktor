@@ -12,13 +12,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ScriptComponentData", 0, ScriptComponentData, IEntityComponentData)
 
-Ref< ScriptComponent > ScriptComponentData::createComponent(Entity* owner, resource::IResourceManager* resourceManager) const
+Ref< ScriptComponent > ScriptComponentData::createComponent(resource::IResourceManager* resourceManager) const
 {
 	resource::Proxy< IRuntimeClass > clazz;
 	if (!resourceManager->bind(m_class, clazz))
 		return 0;
 
-	return new ScriptComponent(owner, clazz);
+	return new ScriptComponent(clazz);
 }
 
 void ScriptComponentData::serialize(ISerializer& s)

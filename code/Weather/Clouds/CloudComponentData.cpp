@@ -27,7 +27,7 @@ CloudComponentData::CloudComponentData()
 {
 }
 
-Ref< CloudComponent > CloudComponentData::createComponent(world::Entity* owner, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< CloudComponent > CloudComponentData::createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	resource::Proxy< render::Shader > particleShader;
 	resource::Proxy< render::ITexture > particleTexture;
@@ -47,7 +47,7 @@ Ref< CloudComponent > CloudComponentData::createComponent(world::Entity* owner, 
 			return 0;
 	}
 
-	Ref< CloudComponent > cloudComponent = new CloudComponent(owner);
+	Ref< CloudComponent > cloudComponent = new CloudComponent();
 	if (cloudComponent->create(
 		renderSystem,
 		particleShader,

@@ -40,13 +40,14 @@ public:
 	};
 
 	PathComponent(
-		world::Entity* owner,
 		const TransformPath& path,
 		TimeMode timeMode,
 		float timeOffset
 	);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual void setOwner(world::Entity* owner) T_OVERRIDE T_FINAL;
 
 	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 

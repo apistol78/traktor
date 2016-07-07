@@ -60,13 +60,15 @@ class T_DLLCLASS OceanComponent : public world::IEntityComponent
 public:
 	enum { MaxWaves = 32 };
 
-	OceanComponent(world::Entity* owner);
+	OceanComponent();
 
 	virtual ~OceanComponent();
 
 	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanComponentData& data);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual void setOwner(world::Entity* owner) T_OVERRIDE T_FINAL;
 
 	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 

@@ -37,7 +37,7 @@ Ref< world::IEntityEvent > BoidsEntityFactory::createEntityEvent(const world::IE
 	return 0;
 }
 
-Ref< world::IEntityComponent > BoidsEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+Ref< world::IEntityComponent > BoidsEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	return 0;
 }

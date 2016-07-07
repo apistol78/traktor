@@ -87,9 +87,9 @@ Ref< IEntityEvent > EntityBuilderWithSchema::create(const IEntityEventData* enti
 	return m_entityBuilder->create(entityEventData);
 }
 
-Ref< IEntityComponent > EntityBuilderWithSchema::create(Entity* owner, const IEntityComponentData* entityComponentData) const
+Ref< IEntityComponent > EntityBuilderWithSchema::create(const IEntityComponentData* entityComponentData) const
 {
-	return m_entityBuilder->create(owner, entityComponentData);
+	return m_entityBuilder->create(entityComponentData);
 }
 
 const IEntityBuilder* EntityBuilderWithSchema::getCompositeEntityBuilder() const

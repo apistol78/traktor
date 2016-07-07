@@ -40,10 +40,10 @@ Ref< world::IEntityEvent > PathEntityFactory::createEntityEvent(const world::IEn
 	return 0;
 }
 
-Ref< world::IEntityComponent > PathEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+Ref< world::IEntityComponent > PathEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	if (const PathComponentData* pathComponentData = dynamic_type_cast< const PathComponentData* >(&entityComponentData))
-		return pathComponentData->createComponent(owner);
+		return pathComponentData->createComponent();
 
 	return 0;
 }

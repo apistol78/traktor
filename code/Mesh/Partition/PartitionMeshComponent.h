@@ -27,7 +27,7 @@ class T_DLLCLASS PartitionMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	PartitionMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< PartitionMesh >& mesh);
+	PartitionMeshComponent(const resource::Proxy< PartitionMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

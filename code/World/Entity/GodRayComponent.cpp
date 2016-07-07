@@ -8,13 +8,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GodRayComponent", GodRayComponent, IEntityComponent)
 
-GodRayComponent::GodRayComponent(Entity* owner)
-:	m_owner(owner)
+GodRayComponent::GodRayComponent()
+:	m_owner(0)
 {
 }
 
 void GodRayComponent::destroy()
 {
+}
+
+void GodRayComponent::setOwner(Entity* owner)
+{
+	m_owner = owner;
 }
 
 void GodRayComponent::update(const UpdateParams& update)

@@ -63,10 +63,10 @@ Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntity
 	return 0;
 }
 
-Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	if (const RigidBodyComponentData* rigidBodyComponentData = dynamic_type_cast< const RigidBodyComponentData* >(&entityComponentData))
-		return rigidBodyComponentData->createComponent(owner, builder, m_eventManager, m_resourceManager, m_physicsManager);
+		return rigidBodyComponentData->createComponent(builder, m_eventManager, m_resourceManager, m_physicsManager);
 
 	return 0;
 }

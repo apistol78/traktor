@@ -12,8 +12,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.PartitionMeshComponent", PartitionMeshComponent, MeshComponent)
 
-PartitionMeshComponent::PartitionMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< PartitionMesh >& mesh)
-:	MeshComponent(owner, screenSpaceCulling)
+PartitionMeshComponent::PartitionMeshComponent(const resource::Proxy< PartitionMesh >& mesh, bool screenSpaceCulling)
+:	MeshComponent(screenSpaceCulling)
 ,	m_mesh(mesh)
 {
 }

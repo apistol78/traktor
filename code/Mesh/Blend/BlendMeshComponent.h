@@ -26,7 +26,7 @@ class T_DLLCLASS BlendMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	BlendMeshComponent(world::Entity* owner, bool screenSpaceCulling, const resource::Proxy< BlendMesh >& mesh);
+	BlendMeshComponent(const resource::Proxy< BlendMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

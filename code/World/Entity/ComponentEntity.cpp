@@ -57,6 +57,11 @@ void ComponentEntity::update(const UpdateParams& update)
 void ComponentEntity::setComponent(IEntityComponent* component)
 {
 	T_FATAL_ASSERT (component);
+
+	component->setOwner(this);
+	component->setTransform(m_transform);
+
+	// Replace existing component of same type.
 	for (RefArray< IEntityComponent >::iterator i = m_components.begin(); i != m_components.end(); ++i)
 	{
 		if (is_type_a(type_of(*i), type_of(component)))
@@ -65,8 +70,9 @@ void ComponentEntity::setComponent(IEntityComponent* component)
 			return;
 		}
 	}
+
+	// No such component, add last.
 	m_components.push_back(component);
-	component->setTransform(m_transform);
 }
 
 IEntityComponent* ComponentEntity::getComponent(const TypeInfo& componentType) const

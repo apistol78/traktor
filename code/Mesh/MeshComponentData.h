@@ -46,7 +46,7 @@ public:
 
 	MeshComponentData(const resource::Id< IMesh >& mesh);
 
-	Ref< MeshComponent > createComponent(world::Entity* owner, resource::IResourceManager* resourceManager) const;
+	Ref< MeshComponent > createComponent(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 

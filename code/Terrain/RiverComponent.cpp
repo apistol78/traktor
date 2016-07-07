@@ -163,6 +163,10 @@ void RiverComponent::destroy()
 	safeDestroy(m_indexBuffer);
 }
 
+void RiverComponent::setOwner(world::Entity* owner)
+{
+}
+
 void RiverComponent::setTransform(const Transform& transform)
 {
 }

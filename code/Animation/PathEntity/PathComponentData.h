@@ -13,13 +13,6 @@
 
 namespace traktor
 {
-	namespace world
-	{
-
-class Entity;
-
-	}
-
 	namespace animation
 	{
 
@@ -35,7 +28,7 @@ class T_DLLCLASS PathComponentData : public world::IEntityComponentData
 public:
 	PathComponentData();
 
-	Ref< PathComponent > createComponent(world::Entity* owner) const;
+	Ref< PathComponent > createComponent() const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 

@@ -52,7 +52,7 @@ Ref< world::IEntityEvent > NavMeshEntityFactory::createEntityEvent(const world::
 	return 0;
 }
 
-Ref< world::IEntityComponent > NavMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+Ref< world::IEntityComponent > NavMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	return 0;
 }

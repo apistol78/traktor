@@ -16,9 +16,9 @@ PathComponentData::PathComponentData()
 {
 }
 
-Ref< PathComponent > PathComponentData::createComponent(world::Entity* owner) const
+Ref< PathComponent > PathComponentData::createComponent() const
 {
-	return new PathComponent(owner, m_path, m_timeMode, m_timeOffset);
+	return new PathComponent(m_path, m_timeMode, m_timeOffset);
 }
 
 void PathComponentData::serialize(ISerializer& s)
