@@ -111,9 +111,9 @@ public:
 	/*! \brief
 	 */
 	template < typename EntityComponentType >
-	Ref< EntityComponentType > create(Entity* owner, const IEntityComponentData* entityComponentData) const
+	Ref< EntityComponentType > create(const IEntityComponentData* entityComponentData) const
 	{
-		return checked_type_cast< EntityComponentType*, true >(create(owner, entityComponentData));
+		return checked_type_cast< EntityComponentType*, true >(create(entityComponentData));
 	}
 };
 
