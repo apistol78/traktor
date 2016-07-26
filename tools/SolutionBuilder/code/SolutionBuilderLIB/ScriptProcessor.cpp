@@ -287,7 +287,7 @@ bool ScriptProcessor::generateFromSource(const Solution* solution, const Project
 	if (!scriptBlob)
 		return false;
 
-	Ref< script::IScriptContext > scriptContext = m_scriptManager->createContext();
+	Ref< script::IScriptContext > scriptContext = m_scriptManager->createContext(true);
 	if (!scriptContext)
 		return false;
 
