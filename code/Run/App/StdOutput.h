@@ -9,6 +9,9 @@ namespace traktor
 	namespace run
 	{
 
+/*! \brief Standard IO output writer.
+ * \ingroup Run
+ */
 class StdOutput : public IOutput
 {
 	T_RTTI_CLASS;

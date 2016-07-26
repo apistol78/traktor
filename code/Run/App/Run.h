@@ -12,6 +12,9 @@ class Environment;
 	namespace run
 	{
 
+/*! \brief Simplified interface for common scriptable actions.
+ * \ingroup Run
+ */
 class Run : public Object
 {
 	T_RTTI_CLASS;

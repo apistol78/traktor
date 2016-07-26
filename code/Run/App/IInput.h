@@ -8,6 +8,9 @@ namespace traktor
 	namespace run
 	{
 
+/*! \brief Scriptable input reader interface.
+ * \ingroup Run
+ */
 class IInput : public Object
 {
 	T_RTTI_CLASS;
