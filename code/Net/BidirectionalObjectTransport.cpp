@@ -11,25 +11,6 @@ namespace traktor
 {
 	namespace net
 	{
-		namespace
-		{
-
-struct ObjectTypePred
-{
-	const TypeInfo& m_objectType;
-
-	ObjectTypePred(const TypeInfo& objectType)
-	:	m_objectType(objectType)
-	{
-	}
-
-	bool operator () (const ISerializable* object) const
-	{
-		return is_type_of(m_objectType, type_of(object));
-	}
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BidirectionalObjectTransport", BidirectionalObjectTransport, Object)
 
@@ -82,11 +63,11 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		return RtDisconnected;
 
 	// Check queue if any object of given type has already been received.
-	RefArray< ISerializable >::iterator i = std::find_if(m_inQueue.begin(), m_inQueue.end(), ObjectTypePred(objectType));
-	if (i != m_inQueue.end())
+	RefArray< ISerializable >& typeInQueue = m_inQueue[&objectType];
+	if (!typeInQueue.empty())
 	{
-		outObject = *i;
-		m_inQueue.erase(i);
+		outObject = typeInQueue.front();
+		typeInQueue.pop_front();
 		return RtSuccess;
 	}
 
@@ -105,13 +86,16 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		Ref< ISerializable > object = s.readObject();
 		if (object)
 		{
-			if (ObjectTypePred(objectType)(object))
+			if (is_type_of(objectType, type_of(object)))
 			{
 				outObject = object;
 				return RtSuccess;
 			}
 			else
-				m_inQueue.push_back(object);
+			{
+				RefArray< ISerializable >& typeInQueue = m_inQueue[&type_of(object)];
+				typeInQueue.push_back(object);
+			}
 		}
 	}
 
@@ -120,12 +104,10 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 
 void BidirectionalObjectTransport::flush(const TypeInfo& objectType)
 {
-	for (;;)
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	{
-		RefArray< ISerializable >::iterator i = std::find_if(m_inQueue.begin(), m_inQueue.end(), ObjectTypePred(objectType));
-		if (i == m_inQueue.end())
-			break;
-		m_inQueue.erase(i);
+		RefArray< ISerializable >& typeInQueue = m_inQueue[&objectType];
+		typeInQueue.clear();
 	}
 }
 

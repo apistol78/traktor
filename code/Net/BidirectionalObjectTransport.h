@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Semaphore.h"
@@ -78,7 +79,7 @@ public:
 
 private:
 	Ref< TcpSocket > m_socket;
-	RefArray< ISerializable > m_inQueue;
+	SmallMap< const TypeInfo*, RefArray< ISerializable > > m_inQueue;
 	std::vector< uint8_t* > m_buffers;
 	ThreadLocal m_threadBuffer;
 	Semaphore m_lock;
