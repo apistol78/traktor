@@ -8,6 +8,9 @@ namespace traktor
 	namespace run
 	{
 
+/*! \brief Scriptable output writer interface.
+ * \ingroup Run
+ */
 class IOutput : public Object
 {
 	T_RTTI_CLASS;

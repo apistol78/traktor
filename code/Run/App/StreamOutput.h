@@ -9,6 +9,9 @@ namespace traktor
 	namespace run
 	{
 
+/*! \brief Stream output writer.
+ * \ingroup Run
+ */
 class StreamOutput : public IOutput
 {
 	T_RTTI_CLASS;

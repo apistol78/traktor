@@ -9,6 +9,9 @@ namespace traktor
 	namespace run
 	{
 
+/*! \brief Stream input reader.
+ * \ingroup Run
+ */
 class StreamInput : public IInput
 {
 	T_RTTI_CLASS;

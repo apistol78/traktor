@@ -1,6 +1,7 @@
 #ifndef traktor_net_MemberUrl_H
 #define traktor_net_MemberUrl_H
 
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Net/Url.h"
 
@@ -9,21 +10,24 @@ namespace traktor
 	namespace net
 	{
 
+/*! \brief URL serialization member.
+ * \ingroup Net
+ */
 class MemberUrl : public MemberComplex
 {
 public:
 	typedef Url value_type;
 
-	MemberUrl(const std::wstring& name, value_type& ref)
+	MemberUrl(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{
 	}
 	
-	virtual void serialize(Serializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		std::wstring url;
-		if (s.getDirection() == Serializer::SdRead)
+		if (s.getDirection() == ISerializer::SdRead)
 		{
 			s >> Member< std::wstring >(getName(), url);
 			m_ref = Url(url);
