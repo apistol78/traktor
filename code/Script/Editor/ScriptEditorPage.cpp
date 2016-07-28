@@ -1,4 +1,7 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Io/StringReader.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -21,6 +24,7 @@
 #include "Script/Editor/IScriptOutline.h"
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
+#include "Script/Editor/ScriptAsset.h"
 #include "Script/Editor/ScriptClassesView.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditorPage.h"
@@ -104,12 +108,14 @@ ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageS
 	m_bitmapFunction = new ui::StyleBitmap(L"Script.DefineGlobalFunction");
 	m_bitmapFunctionLocal = new ui::StyleBitmap(L"Script.DefineLocalFunction");
 	m_bitmapFunctionReference = new ui::StyleBitmap(L"Script.ReferenceFunction");
+	m_assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 }
 
 bool ScriptEditorPage::create(ui::Container* parent)
 {
 	m_script = m_document->getObject< Script >(0);
-	if (!m_script)
+	m_scriptAsset = m_document->getObject< ScriptAsset >(0);
+	if (!m_script && !m_scriptAsset)
 		return false;
 
 	// Explorer panel container.
@@ -149,33 +155,65 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	// Edit area panel.
 	Ref< ui::Container > containerEdit = new ui::Container();
-	if (!containerEdit->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
-		return false;
 
-	Ref< ui::custom::ToolBar > toolBarEdit = new ui::custom::ToolBar();
-	toolBarEdit->create(containerEdit);
-	toolBarEdit->addImage(new ui::StyleBitmap(L"Script.RemoveBreakpoints"), 1);
-	toolBarEdit->addImage(new ui::StyleBitmap(L"Script.ToggleComments"), 1);
-	toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_TOGGLE_COMMENTS"), 1, ui::Command(L"Script.Editor.ToggleComments")));
-	toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS"), 0, ui::Command(L"Script.Editor.RemoveAllBreakpoints")));
-	toolBarEdit->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventToolBarEditClick);
+	if (m_script)
+	{
+		if (!containerEdit->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
+			return false;
+
+		Ref< ui::custom::ToolBar > toolBarEdit = new ui::custom::ToolBar();
+		toolBarEdit->create(containerEdit);
+		toolBarEdit->addImage(new ui::StyleBitmap(L"Script.RemoveBreakpoints"), 1);
+		toolBarEdit->addImage(new ui::StyleBitmap(L"Script.ToggleComments"), 1);
+		toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_TOGGLE_COMMENTS"), 1, ui::Command(L"Script.Editor.ToggleComments")));
+		toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS"), 0, ui::Command(L"Script.Editor.RemoveAllBreakpoints")));
+		toolBarEdit->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventToolBarEditClick);
+	}
+	else if (m_scriptAsset)
+	{
+		if (!containerEdit->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0)))
+			return false;
+	}
 
 	m_edit = new ui::custom::SyntaxRichEdit();
 	if (!m_edit->create(containerEdit, L"", ui::WsDoubleBuffer))
 		return false;
 	m_edit->addImage(new ui::StyleBitmap(L"Script.Breakpoint"), 1);
 
-	// Escape text and set into editor, embedded dependencies are wrapped as "special characters".
-	m_edit->setText(m_script->escape([&] (const Guid& g) -> std::wstring {
-		const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
-		if (instance)
+	if (m_script)
+	{
+		// Escape text and set into editor, embedded dependencies are wrapped as "special characters".
+		m_edit->setText(m_script->escape([&] (const Guid& g) -> std::wstring {
+			const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
+			if (instance)
+			{
+				wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(g, instance->getPath()));
+				return std::wstring(1, ch);
+			}
+			else
+				return L"\"\"";
+		}));
+	}
+	else if (m_scriptAsset)
+	{
+		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + Path(m_scriptAsset->getFileName().getOriginal()));
+		Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
+		if (file)
 		{
-			wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(g, instance->getPath()));
-			return std::wstring(1, ch);
+			StringOutputStream ss;
+			std::wstring line;
+
+			// Read script using utf-8 encoding.
+			Utf8Encoding encoding;
+			StringReader sr(file, &encoding);
+			while (sr.readLine(line) >= 0)
+				ss << line << Endl;
+
+			m_edit->setText(ss.str());
 		}
 		else
-			return L"\"\"";
-	}));
+			log::error << L"Unable to open external script (" << m_scriptAsset->getFileName().getOriginal() << L")" << Endl;
+	}
 
 	std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
 	int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
@@ -232,7 +270,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	}
 
 	// Setup compile timer.
-	if (m_scriptManager)
+	if (m_script && m_scriptManager)
 	{
 		parent->addEventHandler< ui::TimerEvent >(this, &ScriptEditorPage::eventTimer);
 		parent->startTimer(100);
@@ -307,7 +345,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.Undo")
 	{
-		if (m_document->undo())
+		if (m_script && m_document->undo())
 		{
 			m_script = m_document->getObject< Script >(0);
 
@@ -328,7 +366,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Redo")
 	{
-		if (m_document->redo())
+		if (m_script && m_document->redo())
 		{
 			m_script = m_document->getObject< Script >(0);
 
@@ -566,6 +604,9 @@ void ScriptEditorPage::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent
 
 void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 {
+	if (!m_script)
+		return;
+
 	// Transform editor text into "escaped" text.
 	std::wstring text = m_edit->getText(
 		[&] (wchar_t ch) -> std::wstring {
@@ -608,6 +649,9 @@ void ScriptEditorPage::eventScriptButtonDown(ui::MouseButtonDownEvent* event)
 
 void ScriptEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
 {
+	if (!m_script)
+		return;
+
 	if (event->getButton() != ui::MbtRight)
 		return;
 
@@ -704,6 +748,8 @@ void ScriptEditorPage::eventSearch(SearchEvent* event)
 
 void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 {
+	T_FATAL_ASSERT (m_script);
+
 	if (--m_compileCountDown == 0)
 	{
 		// This is triggered by script change; push for undo here

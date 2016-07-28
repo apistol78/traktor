@@ -1,4 +1,5 @@
 #include "Script/Editor/Script.h"
+#include "Script/Editor/ScriptAsset.h"
 #include "Script/Editor/ScriptEditorPage.h"
 #include "Script/Editor/ScriptEditorPageFactory.h"
 #include "Ui/Command.h"
@@ -14,6 +15,7 @@ const TypeInfoSet ScriptEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Script >());
+	typeSet.insert(&type_of< ScriptAsset >());
 	return typeSet;
 }
 

@@ -58,6 +58,7 @@ class IScriptContext;
 class IScriptManager;
 class Preprocessor;
 class Script;
+class ScriptAsset;
 class ScriptBreakpointEvent;
 class ScriptClassesView;
 class SearchControl;
@@ -93,7 +94,9 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 
+	std::wstring m_assetPath;
 	Ref< Script > m_script;
+	Ref< ScriptAsset > m_scriptAsset;
 	Ref< IScriptDebuggerSessions > m_scriptDebuggerSessions;
 	Ref< IScriptManager > m_scriptManager;
 	Ref< IScriptOutline > m_scriptOutline;
