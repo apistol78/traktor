@@ -131,7 +131,7 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 		if (m_font)
 			canvas.setFont(*m_font);
 
-		if (getWidget()->isEnable())
+		if (getWidget()->isEnable() && getRow())
 			canvas.setForeground(ss->getColor(getWidget(), (getRow()->getState() & GridRow::RsSelected) ? L"item-color-selected" : L"color"));
 		else
 			canvas.setForeground(ss->getColor(getWidget(), L"color-disabled"));

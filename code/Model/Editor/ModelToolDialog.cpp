@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Model/Model.h"
@@ -34,6 +35,10 @@
 #include "Ui/PopupMenu.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
+#include "Ui/Custom/GridView/GridColumn.h"
+#include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
@@ -107,10 +112,35 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(this, true, ui::scaleBySystemDPI(300), false);
 
+	Ref< ui::custom::Splitter > splitterH = new ui::custom::Splitter();
+	splitterH->create(splitter, false, 50, true);
+
 	m_modelTree = new ui::custom::TreeView();
-	m_modelTree->create(splitter, ui::WsDoubleBuffer);
+	m_modelTree->create(splitterH, ui::WsDoubleBuffer);
 	m_modelTree->addEventHandler< ui::MouseButtonDownEvent >(this, &ModelToolDialog::eventModelTreeButtonDown);
 	m_modelTree->addEventHandler< ui::SelectionChangeEvent >(this, &ModelToolDialog::eventModelTreeSelect);
+
+	m_materialGrid = new ui::custom::GridView();
+	m_materialGrid->create(splitterH, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Name", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Diffuse Map", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Map", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Transparency Map", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Emissive Map", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Reflective Map", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Normal Map", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Light Map", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Color", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Diffuse Term", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Term", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Roughness", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Metalness", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Transparency", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Emissive", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Reflective", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Rim Light Intensity", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Blend Operator", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Double Sided", ui::scaleBySystemDPI(100)));
 
 	m_modelRootPopup = new ui::PopupMenu();
 	m_modelRootPopup->create();
@@ -467,6 +497,8 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 		m_modelAdjacency = 0;
 	}
 
+	m_materialGrid->removeAllRows();
+
 	if (m_model)
 	{
 		m_modelTris = new Model(*m_model);
@@ -479,6 +511,32 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 		float maxExtent = extent[majorAxis3(extent)];
 		
 		m_normalScale = maxExtent / 10.0f;
+
+		const std::vector< Material >& materials = m_model->getMaterials();
+		for (std::vector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+		{
+			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+			row->add(new ui::custom::GridItem(i->getName()));
+			row->add(new ui::custom::GridItem(i->getDiffuseMap().name));
+			row->add(new ui::custom::GridItem(i->getSpecularMap().name));
+			row->add(new ui::custom::GridItem(i->getTransparencyMap().name));
+			row->add(new ui::custom::GridItem(i->getEmissiveMap().name));
+			row->add(new ui::custom::GridItem(i->getReflectiveMap().name));
+			row->add(new ui::custom::GridItem(i->getNormalMap().name));
+			row->add(new ui::custom::GridItem(i->getLightMap().name));
+			row->add(new ui::custom::GridItem(L"0, 0, 0, 0"));
+			row->add(new ui::custom::GridItem(toString(i->getDiffuseTerm())));
+			row->add(new ui::custom::GridItem(toString(i->getSpecularTerm())));
+			row->add(new ui::custom::GridItem(toString(i->getSpecularRoughness())));
+			row->add(new ui::custom::GridItem(toString(i->getMetalness())));
+			row->add(new ui::custom::GridItem(toString(i->getTransparency())));
+			row->add(new ui::custom::GridItem(toString(i->getEmissive())));
+			row->add(new ui::custom::GridItem(toString(i->getReflective())));
+			row->add(new ui::custom::GridItem(toString(i->getRimLightIntensity())));
+			row->add(new ui::custom::GridItem(L"Default"));
+			row->add(new ui::custom::GridItem(i->isDoubleSided() ? L"Yes" : L"No"));
+			m_materialGrid->addRow(row);
+		}
 	}
 
 	m_renderWidget->update();
