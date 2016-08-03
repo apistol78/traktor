@@ -31,6 +31,7 @@ class PopupMenu;
 		namespace custom
 		{
 
+class GridView;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
 class TreeView;
@@ -74,6 +75,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolNonSharedEdges;
 	Ref< ui::custom::ToolBarButton > m_toolUV;
 	Ref< ui::custom::TreeView > m_modelTree;
+	Ref< ui::custom::GridView > m_materialGrid;
 	Ref< ui::PopupMenu > m_modelRootPopup;
 	Ref< ui::PopupMenu > m_modelChildPopup;
 	Ref< ui::Widget > m_renderWidget;
