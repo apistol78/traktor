@@ -1,9 +1,12 @@
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Editor/Assets.h"
 #include "Editor/AssetsPipeline.h"
 #include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
 #include "Editor/VirtualAsset.h"
 
 namespace traktor
@@ -13,8 +16,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.AssetsPipeline", 1, AssetsPipeline, IPipeline)
 
+AssetsPipeline::AssetsPipeline()
+:	m_editorDeploy(false)
+{
+}
+
 bool AssetsPipeline::create(const IPipelineSettings* settings)
 {
+	m_editorDeploy = settings->getProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", false);
 	return true;
 }
 
@@ -40,8 +49,11 @@ bool AssetsPipeline::buildDependencies(
 {
 	if (const Assets* assets = dynamic_type_cast< const Assets* >(sourceAsset))
 	{
-		for (std::vector< Guid >::const_iterator i = assets->m_dependencies.begin(); i != assets->m_dependencies.end(); ++i)
-			pipelineDepends->addDependency(*i, editor::PdfBuild);
+		for (std::vector< Assets::Dependency >::const_iterator i = assets->m_dependencies.begin(); i != assets->m_dependencies.end(); ++i)
+		{
+			if (!i->editorDeployOnly || m_editorDeploy)
+				pipelineDepends->addDependency(i->id, editor::PdfBuild);
+		}
 	}
 	else if (const VirtualAsset* virtualAsset = dynamic_type_cast< const VirtualAsset* >(sourceAsset))
 	{

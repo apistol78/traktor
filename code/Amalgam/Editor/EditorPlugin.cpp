@@ -526,6 +526,9 @@ void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
 		}
 
+		// Also add property for pipelines to indicate we're launching through editor.
+		pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
+
 		// Add build output data action.
 		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
 		action.action = new BuildTargetAction(
