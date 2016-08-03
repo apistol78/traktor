@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -30,7 +30,17 @@ public:
 private:
 	friend class AssetsPipeline;
 
-	std::vector< Guid > m_dependencies;
+	struct Dependency
+	{
+		Guid id;
+		bool editorDeployOnly;	//!< Only built when deployed from editor.
+
+		Dependency();
+
+		void serialize(ISerializer& s);
+	};
+
+	std::vector< Dependency > m_dependencies;
 };
 
 	}
