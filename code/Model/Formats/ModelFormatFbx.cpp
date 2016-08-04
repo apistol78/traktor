@@ -343,7 +343,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				if (phongShininess.IsValid())
 				{
 					FbxDouble shininess = phongShininess.Get();
-					mm.setSpecularRoughness(float(shininess / 16.0));
+					mm.setSpecularRoughness(max(float(shininess / 16.0), 0.2f));
 				}
 
 				FbxPropertyT<FbxDouble3> phongEmissive = mayaExported ? phongMaterial->Ambient : phongMaterial->Emissive;
