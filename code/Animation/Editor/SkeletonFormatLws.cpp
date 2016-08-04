@@ -106,7 +106,7 @@ Ref< Skeleton > SkeletonFormatLws::create(LwsDocument* document) const
 	return skeleton;
 }
 
-Ref< Skeleton > SkeletonFormatLws::import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const
+Ref< Skeleton > SkeletonFormatLws::import(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const
 {
 	Ref< LwsDocument > document = LwsDocument::parse(stream);
 	if (!document)

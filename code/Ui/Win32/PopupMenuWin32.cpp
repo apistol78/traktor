@@ -143,7 +143,7 @@ HMENU PopupMenuWin32::buildMenu(MenuItem* item)
 			AppendMenu(
 				hMenu,
 				flags,
-				UINT_PTR(m_flatten.size()),
+				UINT_PTR(m_flatten.size() + 1),
 				(LPTSTR)tmp.c_str()
 			);
 			m_flatten.push_back(subItem);

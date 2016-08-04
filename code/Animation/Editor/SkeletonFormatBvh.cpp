@@ -66,7 +66,7 @@ Ref< Skeleton > SkeletonFormatBvh::create(const BvhDocument* document, const Vec
 	return skeleton;
 }
 
-Ref< Skeleton > SkeletonFormatBvh::import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const
+Ref< Skeleton > SkeletonFormatBvh::import(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const
 {
 	Vector4 jointModifier(
 		invertX ? -1.0f : 1.0f, 
