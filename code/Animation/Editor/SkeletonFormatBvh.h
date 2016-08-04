@@ -17,7 +17,7 @@ class SkeletonFormatBvh : public ISkeletonFormat
 public:
 	Ref< Skeleton > create(const BvhDocument* document, const Vector4& offset, float radius) const;
 
-	virtual Ref< Skeleton > import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const T_OVERRIDE T_FINAL;
+	virtual Ref< Skeleton > import(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const T_OVERRIDE T_FINAL;
 };
 
 	}

@@ -28,6 +28,8 @@ public:
 
 	const Vector4& getOffset() const { return m_offset; }
 
+	float getScale() const { return m_scale; }
+
 	float getRadius() const { return m_radius; }
 
 	bool getInvertX() const { return m_invertX; }
@@ -36,6 +38,7 @@ public:
 
 private:
 	Vector4 m_offset;
+	float m_scale;
 	float m_radius;
 	bool m_invertX;
 	bool m_invertZ;

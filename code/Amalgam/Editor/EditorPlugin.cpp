@@ -277,6 +277,9 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 				scriptPrepDefinitions.insert(L"_DEBUG");
 				pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
 
+				// Also add property for pipelines to indicate we're launching through editor.
+				pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
+
 				// Add build output data action.
 				action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
 				action.action = new BuildTargetAction(
@@ -609,6 +612,9 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
 		}
 
+		// Also add property for pipelines to indicate we're launching through editor.
+		pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
+
 		// Add build output data action.
 		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
 		action.action = new BuildTargetAction(
@@ -684,6 +690,9 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 			scriptPrepDefinitions.insert(L"_DEBUG");
 			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
 		}
+
+		// Also add property for pipelines to indicate we're launching through editor.
+		pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
 
 		// Add build output data action.
 		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);

@@ -196,7 +196,7 @@ void createJoints(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonFormatFbx", SkeletonFormatFbx, ISkeletonFormat)
 
-Ref< Skeleton > SkeletonFormatFbx::import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const
+Ref< Skeleton > SkeletonFormatFbx::import(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_fbxLock);
 
@@ -279,7 +279,7 @@ Ref< Skeleton > SkeletonFormatFbx::import(IStream* stream, const Vector4& offset
 		leftHanded = true;
 
 	float sign = upSign < 0 ? -1.0f : 1.0f;
-	float scale = leftHanded ? 1.0f : -1.0f;
+	float scale2 = leftHanded ? 1.0f : -1.0f;
 
 	switch (up)
 	{
@@ -287,14 +287,14 @@ Ref< Skeleton > SkeletonFormatFbx::import(IStream* stream, const Vector4& offset
 		axisTransform = Matrix44(
 			0.0f, sign, 0.0f, 0.0f,
 			-sign, 0.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, scale, 0.0f,
+			0.0f, 0.0f, scale2, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
 		break;
 
 	case FbxAxisSystem::eYAxis:
 		axisTransform = Matrix44(
-			sign * scale, 0.0f, 0.0f, 0.0f,
+			sign * scale2, 0.0f, 0.0f, 0.0f,
 			0.0f, sign, 0.0f, 0.0f,
 			0.0f, 0.0f, lightwaveExported ? -1.0f : 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
@@ -304,7 +304,7 @@ Ref< Skeleton > SkeletonFormatFbx::import(IStream* stream, const Vector4& offset
 	case FbxAxisSystem::eZAxis:
 		axisTransform = Matrix44(
 			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, -sign * scale, 0.0f,
+			0.0f, 0.0f, -sign * scale2, 0.0f,
 			0.0f, sign, 0.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
@@ -336,7 +336,7 @@ Ref< Skeleton > SkeletonFormatFbx::import(IStream* stream, const Vector4& offset
 
 				FbxVector4 scaleVector = scene->GetAnimationEvaluator()->GetNodeLocalScaling(childNode);
 				FbxVector4 translation = scene->GetAnimationEvaluator()->GetNodeLocalTranslation(childNode);
-				Matrix44 scaleMatrix = traktor::scale(convertVector(scaleVector));
+				Matrix44 scaleMatrix = traktor::scale(scale * (invertX ? -1.0f : 1.0f), scale, scale * (invertZ ? -1.0f : 1.0f)) * traktor::scale(convertVector(scaleVector));
 				axisTransform = axisTransform * scaleMatrix;
 
 				createJoints(

@@ -42,6 +42,7 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/TreeView/TreeView.h"
 #include "Ui/Custom/TreeView/TreeViewItem.h"
@@ -106,6 +107,12 @@ bool ModelToolDialog::create(ui::Widget* parent)
 
 	m_toolUV = new ui::custom::ToolBarButton(L"UV", ui::Command(L"ModelTool.ToggleUV"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolUV);
+
+	m_toolWeight = new ui::custom::ToolBarButton(L"Weights", ui::Command(L"ModelTool.ToggleWeights"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
+	toolBar->addItem(m_toolWeight);
+
+	m_toolJoint = new ui::custom::ToolBarDropDown(ui::Command(L"ModelTool.Joint"), ui::scaleBySystemDPI(200), L"Joints");
+	toolBar->addItem(m_toolJoint);
 
 	toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ModelToolDialog::eventToolBarClick);
 
@@ -498,6 +505,7 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 	}
 
 	m_materialGrid->removeAllRows();
+	m_toolJoint->removeAll();
 
 	if (m_model)
 	{
@@ -537,6 +545,10 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			row->add(new ui::custom::GridItem(i->isDoubleSided() ? L"Yes" : L"No"));
 			m_materialGrid->addRow(row);
 		}
+
+		uint32_t jointCount = m_model->getJointCount();
+		for (uint32_t i = 0; i < jointCount; ++i)
+			m_toolJoint->add(m_model->getJoint(i));
 	}
 
 	m_renderWidget->update();
@@ -653,6 +665,8 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				const std::vector< Polygon >& polygons = m_modelTris->getPolygons();
 				const AlignedVector< Vector4 >& positions = m_modelTris->getPositions();
 
+				int32_t weightJoint = m_toolJoint->getSelected();
+
 				m_primitiveRenderer->pushDepthState(true, true, false);
 				for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 				{
@@ -676,29 +690,43 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 							continue;
 					}
 
-					if (vertices[indices[0]].getTexCoordCount() > 0)
+					if (!m_toolWeight->isToggled())
 					{
-						m_primitiveRenderer->drawTextureTriangle(
-							p[2], m_modelTris->getTexCoord(vertices[indices[2]].getTexCoord(0)),
-							p[1], m_modelTris->getTexCoord(vertices[indices[1]].getTexCoord(0)),
-							p[0], m_modelTris->getTexCoord(vertices[indices[0]].getTexCoord(0)),
-							Color4ub(
-								int32_t(diffuse * 255),
-								int32_t(diffuse * 255),
-								int32_t(diffuse * 255),
+						if (vertices[indices[0]].getTexCoordCount() > 0)
+						{
+							m_primitiveRenderer->drawTextureTriangle(
+								p[2], m_modelTris->getTexCoord(vertices[indices[2]].getTexCoord(0)),
+								p[1], m_modelTris->getTexCoord(vertices[indices[1]].getTexCoord(0)),
+								p[0], m_modelTris->getTexCoord(vertices[indices[0]].getTexCoord(0)),
+								Color4ub(
+									int32_t(diffuse * 255),
+									int32_t(diffuse * 255),
+									int32_t(diffuse * 255),
+									255
+								),
+								m_textureDebug
+							);
+						}
+						else
+						{
+							m_primitiveRenderer->drawSolidTriangle(p[2], p[1], p[0], Color4ub(
+								int32_t(diffuse * 81),
+								int32_t(diffuse * 105),
+								int32_t(diffuse * 195),
 								255
-							),
-							m_textureDebug
-						);
+							));
+						}
 					}
 					else
 					{
-						m_primitiveRenderer->drawSolidTriangle(p[2], p[1], p[0], Color4ub(
-							int32_t(diffuse * 81),
-							int32_t(diffuse * 105),
-							int32_t(diffuse * 195),
-							255
-						));
+						const Color4ub c_noWeight(0, 255, 0, 255);
+						const Color4ub c_fullWeight(255, 0, 0, 255);
+
+						m_primitiveRenderer->drawSolidTriangle(
+							p[2], lerp(c_noWeight, c_fullWeight, vertices[indices[2]].getJointInfluence(weightJoint)),
+							p[1], lerp(c_noWeight, c_fullWeight, vertices[indices[1]].getJointInfluence(weightJoint)),
+							p[0], lerp(c_noWeight, c_fullWeight, vertices[indices[0]].getJointInfluence(weightJoint))
+						);
 					}
 				}
 				m_primitiveRenderer->popDepthState();

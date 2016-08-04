@@ -9,10 +9,11 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.SkeletonAsset", 2, SkeletonAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.SkeletonAsset", 3, SkeletonAsset, editor::Asset)
 
 SkeletonAsset::SkeletonAsset()
 :	m_offset(Vector4::origo())
+,	m_scale(1.0f)
 ,	m_radius(0.25f)
 ,	m_invertX(false)
 ,	m_invertZ(false)
@@ -26,6 +27,9 @@ void SkeletonAsset::serialize(ISerializer& s)
 	if (s.getVersion() >= 1)
 	{
 		s >> Member< Vector4 >(L"offset", m_offset, AttributePoint());
+
+		if (s.getVersion() >= 3)
+			s >> Member< float >(L"scale", m_scale, AttributeRange(0.0f));
 		
 		if (s.getVersion() >= 2)
 			s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));

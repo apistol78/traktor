@@ -19,7 +19,7 @@ class ISkeletonFormat : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Skeleton > import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const = 0;
+	virtual Ref< Skeleton > import(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const = 0;
 };
 
 	}

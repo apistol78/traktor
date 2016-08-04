@@ -70,6 +70,7 @@ bool SkeletonWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db:
 	Ref< Skeleton > skeleton = format->import(
 		file,
 		Vector4::zero(),
+		1.0f,
 		0.1f,
 		false,
 		false

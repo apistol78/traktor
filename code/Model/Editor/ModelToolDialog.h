@@ -34,6 +34,7 @@ class PopupMenu;
 class GridView;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
+class ToolBarDropDown;
 class TreeView;
 class TreeViewItem;
 
@@ -74,6 +75,8 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolCull;
 	Ref< ui::custom::ToolBarButton > m_toolNonSharedEdges;
 	Ref< ui::custom::ToolBarButton > m_toolUV;
+	Ref< ui::custom::ToolBarButton > m_toolWeight;
+	Ref< ui::custom::ToolBarDropDown > m_toolJoint;
 	Ref< ui::custom::TreeView > m_modelTree;
 	Ref< ui::custom::GridView > m_materialGrid;
 	Ref< ui::PopupMenu > m_modelRootPopup;
