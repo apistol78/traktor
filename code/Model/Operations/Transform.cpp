@@ -22,7 +22,7 @@ bool Transform::apply(Model& model) const
 
 	AlignedVector< Vector4 > normals = model.getNormals();
 	for (AlignedVector< Vector4 >::iterator i = normals.begin(); i != normals.end(); ++i)
-		*i = m_transform * (*i);
+		*i = (m_transform * (*i)).normalized();
 	model.setNormals(normals);
 	return true;
 }

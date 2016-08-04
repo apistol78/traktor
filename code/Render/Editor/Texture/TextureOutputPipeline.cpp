@@ -377,6 +377,13 @@ bool TextureOutputPipeline::buildOutput(
 		image->apply(&mirrorFilter);
 	}
 
+	// Invert alpha channel.
+	if (textureOutput->m_invertAlpha)
+	{
+		drawing::TransformFilter invertAlphaFilter(Color4f(1.0f, 1.0f, 1.0f, -1.0f), Color4f(0.0f, 0.0f, 0.0f, 1.0f));
+		image->apply(&invertAlphaFilter);
+	}
+
 	// Generate sphere map from cube map.
 	if (textureOutput->m_textureType == TtCube && textureOutput->m_generateSphereMap)
 	{

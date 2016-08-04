@@ -30,6 +30,7 @@ public:
 	TextureType m_textureType;
 	bool m_hasAlpha;
 	bool m_ignoreAlpha;
+	bool m_invertAlpha;
 	bool m_premultiplyAlpha;
 	bool m_scaleImage;
 	int32_t m_scaleWidth;
