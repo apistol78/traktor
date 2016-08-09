@@ -43,9 +43,9 @@ private:
 
 	void Configuration_set_fullscreen(AsConfiguration* self, bool fullscreen) const;
 
-	bool Configuration_get_waitVBlank(const AsConfiguration* self) const;
+	int32_t Configuration_get_waitVBlanks(const AsConfiguration* self) const;
 
-	void Configuration_set_waitVBlank(AsConfiguration* self, bool waitVBlank) const;
+	void Configuration_set_waitVBlanks(AsConfiguration* self, int32_t waitVBlanks) const;
 
 	int32_t Configuration_get_multisample(const AsConfiguration* self) const;
 

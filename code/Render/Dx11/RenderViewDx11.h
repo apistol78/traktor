@@ -123,7 +123,7 @@ private:
 	D3D11_VIEWPORT m_d3dViewport;
 	StateCache m_stateCache;
 	bool m_fullScreen;
-	bool m_waitVBlank;
+	int32_t m_waitVBlanks;
 	bool m_cursorVisible;
 	bool m_targetsDirty;
 	uint32_t m_drawCalls;

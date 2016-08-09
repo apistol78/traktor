@@ -13,7 +13,7 @@ struct WrContext
 {
 	NSView* view;
 	NSOpenGLContext* context;
-	bool waitVBlank;
+	int32_t waitVBlanks;
 };
 		
 		}
@@ -40,7 +40,7 @@ void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depth
 	WrContext* wrc = new WrContext();
 	wrc->view = (NSView*)nativeWindowHandle;
 	wrc->context = nsctx;
-	wrc->waitVBlank = false;
+	wrc->waitVBlanks = 0;
 
 	[pool release];	
 
@@ -92,16 +92,15 @@ bool cglwMakeCurrent(void* context)
 	return true;
 }
 
-void cglwSwapBuffers(void* context, bool waitVBlank)
+void cglwSwapBuffers(void* context, int32_t waitVBlanks)
 {
 	WrContext* wrc = (WrContext*)context;
 	if (wrc)
 	{
-		if (waitVBlank != wrc->waitVBlank)
+		if (waitVBlanks != wrc->waitVBlanks)
 		{
-			int32_t param = waitVBlank ? 1 : 0;
-			[wrc->context setValues: &param forParameter: NSOpenGLCPSwapInterval];
-			wrc->waitVBlank = waitVBlank;
+			[wrc->context setValues: &waitBlanks forParameter: NSOpenGLCPSwapInterval];
+			wrc->waitVBlanks = waitVBlanks;
 		}
 		[wrc->context flushBuffer];
 	}

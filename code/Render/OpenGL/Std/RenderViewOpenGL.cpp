@@ -52,7 +52,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
 ,	m_cursorVisible(true)
-,	m_waitVBlank(false)
+,	m_waitVBlanks(0)
 ,	m_targetsDirty(false)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
@@ -66,7 +66,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
 	m_primaryTargetDesc.preferTiled = false;
 	m_primaryTargetDesc.ignoreStencil = bool(desc.stencilBits == 0);
-	m_waitVBlank = desc.waitVBlank;
+	m_waitVBlanks = desc.waitVBlanks;
 
 	if (m_window)
 		m_window->addListener(this);
@@ -84,7 +84,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
 ,	m_cursorVisible(true)
-,	m_waitVBlank(false)
+,	m_waitVBlanks(0)
 {
 	m_primaryTargetDesc.count = 1;
 	m_primaryTargetDesc.width = 0;
@@ -95,7 +95,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
 	m_primaryTargetDesc.preferTiled = false;
 	m_primaryTargetDesc.ignoreStencil = bool(desc.stencilBits == 0);
-	m_waitVBlank = desc.waitVBlank;
+	m_waitVBlanks = desc.waitVBlanks;
 }
 
 #elif defined(__LINUX__)
@@ -110,7 +110,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
 ,	m_cursorVisible(true)
-,	m_waitVBlank(false)
+,	m_waitVBlank(0)
 ,	m_targetsDirty(false)
 {
 	m_primaryTargetDesc.count = 1;
@@ -122,7 +122,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
 	m_primaryTargetDesc.preferTiled = false;
 	m_primaryTargetDesc.ignoreStencil = bool(desc.stencilBits == 0);
-	m_waitVBlank = desc.waitVBlank;
+	m_waitVBlanks = desc.waitVBlanks;
 }
 
 #endif
@@ -236,7 +236,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 		}
 	}
 
-	m_waitVBlank = desc.waitVBlank;
+	m_waitVBlanks = desc.waitVBlanks;
 	m_targetsDirty = false;
 	return true;
 }
@@ -763,7 +763,7 @@ void RenderViewOpenGL::end()
 
 void RenderViewOpenGL::present()
 {
-	m_renderContext->swapBuffers(m_waitVBlank);
+	m_renderContext->swapBuffers(m_waitVBlanks);
 	m_renderContext->leave();
 
 	// Clean pending resources.

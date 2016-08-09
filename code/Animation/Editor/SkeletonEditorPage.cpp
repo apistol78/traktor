@@ -106,7 +106,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", 4);
-	desc.waitVBlank = false;
+	desc.waitVBlanks = 0;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 
 	m_renderView = renderSystem->createRenderView(desc);

@@ -199,7 +199,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	m_renderViewDesc.depthBits = settings->getProperty< PropertyInteger >(L"Render.DepthBits", 24);
 	m_renderViewDesc.stencilBits = settings->getProperty< PropertyInteger >(L"Render.StencilBits", 8);
 	m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 0);
-	m_renderViewDesc.waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
+	m_renderViewDesc.waitVBlanks = settings->getProperty< PropertyInteger >(L"Render.WaitVBlanks", 1);
 	m_renderViewDesc.title = settings->getProperty< PropertyString >(L"Render.Title", L"Traktor");
 	m_renderViewDesc.fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
 
@@ -337,7 +337,7 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 	rvdd.depthBits = settings->getProperty< PropertyInteger >(L"Render.DepthBits", 16);
 	rvdd.stencilBits = settings->getProperty< PropertyInteger >(L"Render.StencilBits", 8);
 	rvdd.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 4);
-	rvdd.waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
+	rvdd.waitVBlanks = settings->getProperty< PropertyInteger >(L"Render.WaitVBlanks", 1);
 	rvdd.fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
 	rvdd.title = settings->getProperty< PropertyString >(L"Render.Title", L"Traktor");
 
@@ -411,7 +411,7 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 		m_renderViewDesc.depthBits != rvdd.depthBits ||
 		m_renderViewDesc.stencilBits != rvdd.stencilBits ||
 		m_renderViewDesc.multiSample != rvdd.multiSample ||
-		m_renderViewDesc.waitVBlank != rvdd.waitVBlank ||
+		m_renderViewDesc.waitVBlanks != rvdd.waitVBlanks ||
 		m_renderViewDesc.fullscreen != rvdd.fullscreen ||
 		m_renderViewDesc.displayMode.width != rvdd.displayMode.width ||
 		m_renderViewDesc.displayMode.height != rvdd.displayMode.height ||

@@ -278,9 +278,9 @@
 				</second>
 			</item>
 			<item>
-				<first>Render.WaitVBlank</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
+				<first>Render.WaitVBlanks</first>
+				<second type="traktor.PropertyInteger">
+					<value>1</value>
 				</second>
 			</item>
 			<item>

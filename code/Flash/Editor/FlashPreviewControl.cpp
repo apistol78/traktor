@@ -109,7 +109,7 @@ bool FlashPreviewControl::create(
 	desc.depthBits = 16;
 	desc.stencilBits = 8;
 	desc.multiSample = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", 4);
-	desc.waitVBlank = false;
+	desc.waitVBlanks = 0;
 	desc.syswin = getIWidget()->getSystemWindow();
 
 	m_renderView = renderSystem->createRenderView(desc);

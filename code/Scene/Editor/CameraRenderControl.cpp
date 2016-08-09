@@ -92,7 +92,7 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 	desc.depthBits = 24;
 	desc.stencilBits = 0;
 	desc.multiSample = m_multiSample;
-	desc.waitVBlank = false;
+	desc.waitVBlanks = 0;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 
 	m_renderView = m_context->getRenderSystem()->createRenderView(desc);

@@ -30,7 +30,7 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 
 	// Render
 	prototype->addProperty("fullscreen", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_fullscreen), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_fullscreen));
-	prototype->addProperty("waitVBlank", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_waitVBlank), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_waitVBlank));
+	prototype->addProperty("waitVBlanks", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_waitVBlanks), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_waitVBlanks));
 	prototype->addProperty("multisample", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_multisample), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_multisample));
 	prototype->addProperty("stereoscopic", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_stereoscopic), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_stereoscopic));
 
@@ -112,14 +112,14 @@ void As_traktor_amalgam_Configuration::Configuration_set_fullscreen(AsConfigurat
 	self->setFullscreen(fullscreen);
 }
 
-bool As_traktor_amalgam_Configuration::Configuration_get_waitVBlank(const AsConfiguration* self) const
+int32_t As_traktor_amalgam_Configuration::Configuration_get_waitVBlanks(const AsConfiguration* self) const
 {
-	return self->getWaitVBlank();
+	return self->getWaitVBlanks();
 }
 
-void As_traktor_amalgam_Configuration::Configuration_set_waitVBlank(AsConfiguration* self, bool waitVBlank) const
+void As_traktor_amalgam_Configuration::Configuration_set_waitVBlanks(AsConfiguration* self, int32_t waitVBlanks) const
 {
-	self->setWaitVBlank(waitVBlank);
+	self->setWaitVBlanks(waitVBlanks);
 }
 
 int32_t As_traktor_amalgam_Configuration::Configuration_get_multisample(const AsConfiguration* self) const

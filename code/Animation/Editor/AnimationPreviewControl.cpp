@@ -74,7 +74,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	desc.depthBits = 24;
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
-	desc.waitVBlank = false;
+	desc.waitVBlanks = 0;
 	desc.syswin = getIWidget()->getSystemWindow();
 
 	m_renderView = m_renderSystem->createRenderView(desc);

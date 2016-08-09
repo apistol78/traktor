@@ -21,7 +21,7 @@ AsConfiguration::AsConfiguration()
 ,	m_displayModeWidth(1280)
 ,	m_displayModeHeight(720)
 ,	m_fullscreen(false)
-,	m_waitVBlank(true)
+,	m_waitVBlanks(1)
 ,	m_multiSample(0)
 ,	m_stereoscopic(false)
 ,	m_textureQuality(QtMedium)
@@ -72,7 +72,7 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(IEnvironment* environment)
 
 	// Get other current settings.
 	current->m_fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
-	current->m_waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
+	current->m_waitVBlanks = settings->getProperty< PropertyInteger >(L"Render.WaitVBlanks", 1);
 	current->m_multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 0);
 	current->m_stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
 	current->m_textureQuality = (Quality)settings->getProperty< PropertyInteger >(L"Render.TextureQuality", QtMedium);
@@ -130,14 +130,14 @@ void AsConfiguration::setFullscreen(bool fullscreen)
 	m_fullscreen = fullscreen;
 }
 
-bool AsConfiguration::getWaitVBlank() const
+int32_t AsConfiguration::getWaitVBlanks() const
 {
-	return m_waitVBlank;
+	return m_waitVBlanks;
 }
 
-void AsConfiguration::setWaitVBlank(bool waitVBlank)
+void AsConfiguration::setWaitVBlanks(int32_t waitVBlanks)
 {
-	m_waitVBlank = waitVBlank;
+	m_waitVBlanks = waitVBlanks;
 }
 
 int32_t AsConfiguration::getMultiSample() const
@@ -361,7 +361,7 @@ bool AsConfiguration::apply(IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_displayModeWidth);
 	settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_displayModeHeight);
 	settings->setProperty< PropertyBoolean >(L"Render.FullScreen", m_fullscreen);
-	settings->setProperty< PropertyBoolean >(L"Render.WaitVBlank", m_waitVBlank);
+	settings->setProperty< PropertyInteger >(L"Render.WaitVBlanks", m_waitVBlanks);
 	settings->setProperty< PropertyInteger >(L"Render.MultiSample", m_multiSample);
 	settings->setProperty< PropertyBoolean >(L"Render.Stereoscopic", m_stereoscopic);
 	settings->setProperty< PropertyInteger >(L"Render.TextureQuality", m_textureQuality);

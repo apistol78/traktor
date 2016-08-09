@@ -145,7 +145,7 @@ private:
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
 	AlignedVector< TargetScope > m_targetStack;
 	bool m_cursorVisible;
-	bool m_waitVBlank;
+	int32_t m_waitVBlanks;
 	bool m_targetsDirty;
 	uint32_t m_drawCalls;
 	uint32_t m_primitiveCount;
