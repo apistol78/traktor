@@ -61,8 +61,10 @@ Ref< ISoundBufferCursor > SimultaneousGrain::createCursor() const
 	for (RefArray< IGrain >::const_iterator i = m_grains.begin(); i != m_grains.end(); ++i)
 	{
 		Ref< ISoundBufferCursor > childCursor = (*i)->createCursor();
-		if (childCursor)
-			cursor->m_grainCursors.push_back(childCursor);
+		if (!childCursor)
+			return 0;
+
+		cursor->m_grainCursors.push_back(childCursor);
 	}
 
 	const uint32_t outputSamplesCount = 1024/*hwFrameSamples*/ * c_outputSamplesBlockCount;
