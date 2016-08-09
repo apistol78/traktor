@@ -121,7 +121,7 @@ bool EffectPreviewControl::create(
 	desc.depthBits = 32;
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
-	desc.waitVBlank = false;
+	desc.waitVBlanks = 0;
 	desc.syswin = getIWidget()->getSystemWindow();
 
 	m_renderView = renderSystem->createRenderView(desc);

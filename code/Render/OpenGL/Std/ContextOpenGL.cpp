@@ -134,16 +134,16 @@ void ContextOpenGL::update(int32_t width, int32_t height)
 #endif
 }
 
-void ContextOpenGL::swapBuffers(bool waitVBlank)
+void ContextOpenGL::swapBuffers(int32_t waitVBlanks)
 {
 #if defined(_WIN32)
 	if (wglSwapIntervalEXT)
-		wglSwapIntervalEXT(waitVBlank ? 1 : 0);
+		wglSwapIntervalEXT(waitVBlanks);
 	SwapBuffers(m_hDC);
 #elif defined(__APPLE__)
-	cglwSwapBuffers(m_context, waitVBlank);
+	cglwSwapBuffers(m_context, waitVBlanks);
 #elif defined(__LINUX__)
-	glXSwapIntervalEXT(m_display, m_window, waitVBlank ? 1 : 0);
+	glXSwapIntervalEXT(m_display, m_window, waitVBlanks);
 	glXSwapBuffers(m_display, m_window);
 #endif
 }

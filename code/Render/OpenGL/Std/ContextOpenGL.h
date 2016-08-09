@@ -72,7 +72,7 @@ public:
 	void update(int32_t width, int32_t height);
 #endif
 
-	void swapBuffers(bool waitVBlank);
+	void swapBuffers(int32_t waitVBlanks);
 
 	void destroy();
 

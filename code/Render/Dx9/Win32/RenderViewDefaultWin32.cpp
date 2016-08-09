@@ -119,7 +119,7 @@ bool RenderViewDefaultWin32::reset(const RenderViewDefaultDesc& desc)
 	m_d3dPresent.hDeviceWindow = *m_window;
 	m_d3dPresent.Windowed = desc.fullscreen ? FALSE : TRUE;
 	m_d3dPresent.EnableAutoDepthStencil = FALSE;
-	m_d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
+	m_d3dPresent.PresentationInterval = (desc.waitVBlanks > 0) ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
 	m_d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
 	// Modify render window; temporarily remove ourself as listener as we don't want resize events during

@@ -488,13 +488,13 @@ struct RenderViewDesc
 	uint16_t depthBits;
 	uint16_t stencilBits;
 	uint32_t multiSample;
-	bool waitVBlank;
+	int32_t waitVBlanks;
 
 	RenderViewDesc()
 	:	depthBits(0)
 	,	stencilBits(0)
 	,	multiSample(0)
-	,	waitVBlank(false)
+	,	waitVBlanks(0)
 	{
 	}
 };

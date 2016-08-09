@@ -14,7 +14,7 @@ void cglwGetSize(void* context, int32_t& outWidth, int32_t& outHeight);
 
 bool cglwMakeCurrent(void* context);
 
-void cglwSwapBuffers(void* context, bool waitVBlank);
+void cglwSwapBuffers(void* context, int32_t waitVBlanks);
 
 bool cglwCheckHardwarePath();
 

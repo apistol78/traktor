@@ -43,9 +43,9 @@ public:
 
 	void setFullscreen(bool fullscreen);
 
-	bool getWaitVBlank() const;
+	int32_t getWaitVBlanks() const;
 
-	void setWaitVBlank(bool waitVBlank);
+	void setWaitVBlanks(int32_t waitVBlanks);
 
 	int32_t getMultiSample() const;
 
@@ -130,7 +130,7 @@ private:
 	int32_t m_displayModeWidth;
 	int32_t m_displayModeHeight;
 	bool m_fullscreen;
-	bool m_waitVBlank;
+	int32_t m_waitVBlanks;
 	int32_t m_multiSample;
 	bool m_stereoscopic;
 	Quality m_textureQuality;

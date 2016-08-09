@@ -54,7 +54,7 @@ RenderViewDx11::RenderViewDx11(
 ,	m_window(window)
 ,	m_stateCache(context->getD3DDeviceContext())
 ,	m_fullScreen(false)
-,	m_waitVBlank(true)
+,	m_waitVBlanks(1)
 ,	m_cursorVisible(true)
 ,	m_targetsDirty(false)
 ,	m_drawCalls(0)
@@ -75,7 +75,7 @@ RenderViewDx11::RenderViewDx11(
 ,	m_dxgiSwapChain(dxgiSwapChain)
 ,	m_stateCache(context->getD3DDeviceContext())
 ,	m_fullScreen(false)
-,	m_waitVBlank(true)
+,	m_waitVBlanks(1)
 ,	m_cursorVisible(true)
 ,	m_targetsDirty(false)
 ,	m_drawCalls(0)
@@ -283,7 +283,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	m_targetSize[1] = scd.BufferDesc.Height;
 
 	m_fullScreen = desc.fullscreen;
-	m_waitVBlank = desc.waitVBlank;
+	m_waitVBlanks = desc.waitVBlanks;
 
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - DirectX 11 Renderer");
 	m_window->addListener(this);
@@ -885,7 +885,7 @@ void RenderViewDx11::end()
 
 void RenderViewDx11::present()
 {
-	m_dxgiSwapChain->Present(m_waitVBlank ? 1 : 0, 0);
+	m_dxgiSwapChain->Present(m_waitVBlanks, 0);
 	m_context->deleteResources();
 
 	// Check if swap chain is still in same mode as window.

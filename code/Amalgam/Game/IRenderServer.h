@@ -32,7 +32,7 @@ class IRenderView;
  * "Render.DepthBits"			- Depth buffer bits.
  * "Render.StencilBits"			- Stencil buffer bits.
  * "Render.MultiSample"			- Multisample taps.
- * "Render.WaitVBlank"			- Wait for vblank enable.
+ * "Render.WaitVBlanks"			- Wait for # vblank.
  * "Render.FullScreen"			- Fullscreen mode.
  * "Render.DisplayMode/Width"	- Display width.
  * "Render.DisplayMode/Height"	- Display height.

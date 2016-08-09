@@ -716,7 +716,7 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 		if (m_toolTweaks->get(2)->isChecked())
 			tweakSettings->setProperty< PropertyBoolean >(L"Amalgam.RenderThread", false);
 		if (m_toolTweaks->get(3)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Render.WaitVBlank", false);
+			tweakSettings->setProperty< PropertyInteger >(L"Render.WaitVBlanks", 0);
 		if (m_toolTweaks->get(4)->isChecked())
 			tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 0.25f);
 		if (m_toolTweaks->get(5)->isChecked())
