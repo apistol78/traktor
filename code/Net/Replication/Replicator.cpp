@@ -26,6 +26,7 @@ namespace traktor
 		namespace
 		{
 
+const double c_catastrophicDeltaTime = 30.0;
 const double c_maxDeltaTime = 0.1;
 const uint32_t c_maxDeltaTimeCount = 10;
 
@@ -63,7 +64,6 @@ bool Replicator::create(INetworkTopology* topology, const Configuration& configu
 	m_topology = topology;
 	m_topology->setCallback(this);
 	m_configuration = configuration;
-	m_timer.start();
 	return true;
 }
 
@@ -141,7 +141,22 @@ bool Replicator::update()
 	net_handle_t from;
 
 	// Need to use real-time delta; cannot use engine filtered and clamped delta.
-	double dT = m_timer.getDeltaTime();
+	double dT = 0.0;
+	if (m_timer.started())
+	{
+		dT = m_timer.getDeltaTime();
+		if (dT > c_catastrophicDeltaTime)
+		{
+			log::error << getLogPrefix() << L"Catastrophic delta time measured (" << dT << L" second(s)), cannot sustain reliable networking." << Endl;
+			return false;
+		}
+	}
+	else
+	{
+		// Do nothing on first iteration, just start timer so we get a correct reading next time.
+		m_timer.start();
+		return true;
+	}
 
 	// Update underlying network topology layer.
 	if (!m_topology->update(dT))

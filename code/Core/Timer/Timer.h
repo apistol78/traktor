@@ -32,6 +32,9 @@ public:
 	
 	/*! \brief Stop timer. */
 	void stop();
+
+	/*! \brief Is timer started? */
+	bool started() const { return !m_paused; }
 	
 	/*! \brief Get number of seconds since timer started. */
 	double getElapsedTime() const;
