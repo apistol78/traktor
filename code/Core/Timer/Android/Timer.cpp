@@ -12,7 +12,6 @@ Timer::Timer()
 ,	m_last(0)
 ,	m_paused(true)
 {
-	start();
 }
 
 void Timer::start()
