@@ -110,7 +110,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
 ,	m_cursorVisible(true)
-,	m_waitVBlank(0)
+,	m_waitVBlanks(0)
 ,	m_targetsDirty(false)
 {
 	m_primaryTargetDesc.count = 1;

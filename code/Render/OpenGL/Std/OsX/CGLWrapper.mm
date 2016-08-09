@@ -99,7 +99,7 @@ void cglwSwapBuffers(void* context, int32_t waitVBlanks)
 	{
 		if (waitVBlanks != wrc->waitVBlanks)
 		{
-			[wrc->context setValues: &waitBlanks forParameter: NSOpenGLCPSwapInterval];
+			[wrc->context setValues: &waitVBlanks forParameter: NSOpenGLCPSwapInterval];
 			wrc->waitVBlanks = waitVBlanks;
 		}
 		[wrc->context flushBuffer];
