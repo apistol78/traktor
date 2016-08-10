@@ -1,6 +1,6 @@
 #include "Core/Log/Log.h"
-#include "Render/OpenGL/Glsl.h"
-#include "Render/OpenGL/GlslProgram.h"
+#include "Render/OpenGL/Glsl/Glsl.h"
+#include "Render/OpenGL/Glsl/GlslProgram.h"
 #include "Render/OpenGL/Std/ProgramCompilerOpenGL.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
 

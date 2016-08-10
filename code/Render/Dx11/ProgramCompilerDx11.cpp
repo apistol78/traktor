@@ -5,10 +5,10 @@
 #include "Core/Misc/ComRef.h"
 #include "Core/Misc/TString.h"
 #include "Render/Dx11/Blob.h"
-#include "Render/Dx11/Hlsl.h"
-#include "Render/Dx11/HlslProgram.h"
 #include "Render/Dx11/ProgramCompilerDx11.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
+#include "Render/Dx11/Hlsl/Hlsl.h"
+#include "Render/Dx11/Hlsl/HlslProgram.h"
 
 namespace traktor
 {

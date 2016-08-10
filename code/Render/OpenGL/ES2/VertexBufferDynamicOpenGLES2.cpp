@@ -1,10 +1,10 @@
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 #include "Render/OpenGL/ES2/VertexBufferDynamicOpenGLES2.h"
+#include "Render/OpenGL/Glsl/GlslType.h"
 
 #if !defined(T_OFFLINE_ONLY)
 

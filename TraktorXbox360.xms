@@ -5644,6 +5644,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Hlsl</name>
+					<items>
+						<item type="File">
+							<fileName>Hlsl/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">

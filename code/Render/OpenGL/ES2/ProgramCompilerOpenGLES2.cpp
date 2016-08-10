@@ -6,10 +6,10 @@
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
-#include "Render/OpenGL/Glsl.h"
-#include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/ES2/ProgramCompilerOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
+#include "Render/OpenGL/Glsl/Glsl.h"
+#include "Render/OpenGL/Glsl/GlslProgram.h"
 
 namespace traktor
 {

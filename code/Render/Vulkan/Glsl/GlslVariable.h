@@ -3,7 +3,7 @@
 
 #include <string>
 #include "Core/Object.h"
-#include "Render/OpenGL/GlslType.h"
+#include "Render/Vulkan/Glsl/GlslType.h"
 
 namespace traktor
 {

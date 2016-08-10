@@ -13939,6 +13939,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Hlsl</name>
+					<items>
+						<item type="File">
+							<fileName>Hlsl/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -14100,6 +14109,15 @@
 									<items/>
 								</item>
 							</items>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Glsl</name>
+					<items>
+						<item type="File">
+							<fileName>Glsl/*.*</fileName>
+							<items/>
 						</item>
 					</items>
 				</item>
@@ -14369,6 +14387,15 @@
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>Glsl</name>
+					<items>
+						<item type="File">
+							<fileName>Glsl/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
@@ -15550,62 +15577,6 @@
 			</configurations>
 			<items>
 				<item type="File">
-					<fileName>Cg.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>Cg.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgContext.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgContext.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgEmitter.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgEmitter.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgProgram.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgProgram.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgShader.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgShader.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgType.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgType.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgVariable.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgVariable.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
 					<fileName>PlatformPs3.h</fileName>
 					<items/>
 				</item>
@@ -15632,6 +15603,15 @@
 				<item type="File">
 					<fileName>Blob.h</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>Cg</name>
+					<items>
+						<item type="File">
+							<fileName>Cg/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
@@ -15971,62 +15951,6 @@
 					</items>
 				</item>
 				<item type="File">
-					<fileName>Hlsl.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>Hlsl.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslContext.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslContext.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslEmitter.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslEmitter.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslProgram.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslProgram.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslShader.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslShader.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslType.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslType.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslVariable.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>HlslVariable.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
 					<fileName>Platform.h</fileName>
 					<items/>
 				</item>
@@ -16053,6 +15977,15 @@
 				<item type="File">
 					<fileName>ParameterCache.h</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>Hlsl</name>
+					<items>
+						<item type="File">
+							<fileName>Hlsl/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
@@ -21522,6 +21455,15 @@
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>Hlsl</name>
+					<items>
+						<item type="File">
+							<fileName>Hlsl/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
