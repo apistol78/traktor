@@ -1,10 +1,11 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Render/Dx11/Platform.h"
+#include "Render/Dx11/Hlsl/Hlsl.h"
+#include "Render/Dx11/Hlsl/HlslProgram.h"
+#include "Render/Dx11/Hlsl/HlslContext.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Render/Dx9/Hlsl.h"
-#include "Render/Dx9/HlslContext.h"
-#include "Render/Dx9/HlslProgram.h"
 
 namespace traktor
 {
@@ -24,7 +25,7 @@ bool Hlsl::generate(
 
 	if (vertexOutputs.size() != 1 || pixelOutputs.size() != 1)
 	{
-		log::error << L"Unable to generate HLSL shader; incorrect number of outputs" << Endl;
+		log::error << L"Unable to generate HLSL shader; incorrect number of outputs (VS " << vertexOutputs.size() << L", PS " << pixelOutputs.size() << L")" << Endl;
 		return false;
 	}
 
@@ -43,13 +44,14 @@ bool Hlsl::generate(
 	}
 
 	outProgram = HlslProgram(
-		cx.getVertexShader().getGeneratedShader(cx.needVPos()),
-		cx.getPixelShader().getGeneratedShader(cx.needVPos()),
-		cx.getVertexShader().getTextures(),
+		cx.getVertexShader().getGeneratedShader(),
+		cx.getPixelShader().getGeneratedShader(),
+		cx.getD3DRasterizerDesc(),
+		cx.getD3DDepthStencilDesc(),
+		cx.getD3DBlendDesc(),
+		cx.getStencilReference(),
 		cx.getVertexShader().getSamplers(),
-		cx.getPixelShader().getTextures(),
-		cx.getPixelShader().getSamplers(),
-		cx.getState()
+		cx.getPixelShader().getSamplers()
 	);
 
 	return true;

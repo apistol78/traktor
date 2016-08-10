@@ -2,8 +2,8 @@
 #define traktor_render_HlslContext_H
 
 #include <map>
-#include "Render/Dx11/HlslEmitter.h"
-#include "Render/Dx11/HlslShader.h"
+#include "Render/Dx11/Hlsl/HlslEmitter.h"
+#include "Render/Dx11/Hlsl/HlslShader.h"
 
 namespace traktor
 {

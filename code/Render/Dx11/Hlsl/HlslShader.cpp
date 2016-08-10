@@ -1,42 +1,31 @@
-#include "Core/Log/Log.h"
-#include "Core/Misc/Adler32.h"
-#include "Render/Dx9/HlslShader.h"
+#include <cassert>
+#include "Render/Dx11/Platform.h"
+#include "Render/Dx11/Hlsl/HlslShader.h"
 
 namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-const uint32_t c_registerInternalTargetSize = 0;
-
-		}
 
 HlslShader::HlslShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
-,	m_uniformAllocated(256, false)
+,	m_interpolatorCount(0)
+,	m_booleanRegisterCount(0)
 ,	m_nextTemporaryVariable(0)
-,	m_nextStage(0)
+,	m_needVPos(false)
+,	m_needVFace(false)
+,	m_needTargetSize(false)
+,	m_needInstanceID(false)
 {
 	pushScope();
-	pushOutputStream(BtUniform, new StringOutputStream());
-	pushOutputStream(BtInput, new StringOutputStream());
-	pushOutputStream(BtOutput, new StringOutputStream());
-	pushOutputStream(BtScript, new StringOutputStream());
-	pushOutputStream(BtBody, new StringOutputStream());
-
-	// Ensure internal registers are marked as allocated.
-	m_uniformAllocated[c_registerInternalTargetSize] = true;
+	for (int32_t i = 0; i < BtLast; ++i)
+		pushOutputStream((BlockType)i, new StringOutputStream());
 }
 
 HlslShader::~HlslShader()
 {
-	popOutputStream(BtBody);
-	popOutputStream(BtScript);
-	popOutputStream(BtOutput);
-	popOutputStream(BtInput);
-	popOutputStream(BtUniform);
+	for (int32_t i = 0; i < BtLast; ++i)
+		popOutputStream((BlockType)i);
 	popScope();
 }
 
@@ -61,7 +50,7 @@ HlslVariable* HlslShader::createVariable(const OutputPin* outputPin, const std::
 {
 	T_ASSERT (!m_variables.empty());
 
-	Ref< HlslVariable > variable = new HlslVariable(variableName, type);
+	HlslVariable* variable = new HlslVariable(variableName, type);
 	m_variables.back().insert(std::make_pair(outputPin, variable));
 
 	return variable;
@@ -71,7 +60,7 @@ HlslVariable* HlslShader::createOuterVariable(const OutputPin* outputPin, const 
 {
 	T_ASSERT (!m_variables.empty());
 
-	Ref< HlslVariable > variable = new HlslVariable(variableName, type);
+	HlslVariable* variable = new HlslVariable(variableName, type);
 	m_variables.front().insert(std::make_pair(outputPin, variable));
 
 	return variable;
@@ -107,27 +96,34 @@ void HlslShader::popScope()
 	m_variables.pop_back();
 }
 
-bool HlslShader::defineTexture(const std::wstring& textureName)
+int32_t HlslShader::allocateInterpolator()
 {
-	m_textures.insert(textureName);
-	return true;
+	return m_interpolatorCount++;
 }
 
-bool HlslShader::defineSampler(uint32_t samplerHash, const std::wstring& textureName, int32_t& outStage)
+int32_t HlslShader::allocateBooleanRegister()
 {
-	std::map< uint32_t, std::pair< std::wstring, int32_t > >::const_iterator i = m_samplers.find(samplerHash);
-	if (i != m_samplers.end())
-	{
-		T_ASSERT (i->second.first == textureName);
-		outStage = i->second.second;
-		return false;
-	}
-	else
-	{
-		outStage = m_nextStage++;
-		m_samplers[samplerHash] = std::make_pair(textureName, outStage);
-		return true;
-	}
+	return m_booleanRegisterCount++;
+}
+
+void HlslShader::allocateVPos()
+{
+	m_needVPos = true;
+}
+
+void HlslShader::allocateVFace()
+{
+	m_needVFace = true;
+}
+
+void HlslShader::allocateInstanceID()
+{
+	m_needInstanceID = true;
+}
+
+void HlslShader::allocateTargetSize()
+{
+	m_needTargetSize = true;
 }
 
 bool HlslShader::defineScript(const std::wstring& signature)
@@ -140,65 +136,19 @@ bool HlslShader::defineScript(const std::wstring& signature)
 	return true;
 }
 
-const std::set< std::wstring >& HlslShader::getTextures() const
+void HlslShader::addSampler(const std::wstring& sampler, const D3D11_SAMPLER_DESC& dsd)
 {
-	return m_textures;
+	m_samplers.insert(std::make_pair(sampler, dsd));
 }
 
-const std::map< uint32_t, std::pair< std::wstring, int32_t > >& HlslShader::getSamplers() const
+const std::map< std::wstring, D3D11_SAMPLER_DESC >& HlslShader::getSamplers() const
 {
 	return m_samplers;
 }
 
-uint32_t HlslShader::addUniform(const std::wstring& uniform, HlslType type, uint32_t count)
+void HlslShader::addUniform(const std::wstring& uniform)
 {
-	const int32_t c_elementCounts[] = { 0, 0, 1, 1, 1, 1, 4, 0 };
-	int32_t elementCount = c_elementCounts[int(type)] * count;
-	int32_t index = 0;
-
-	// Allocate register with float uniforms.
-	if (elementCount > 0)
-	{
-		// Ensure index are within limits.
-		//int32_t fromIndex = 0;
-		int32_t toIndex = (m_shaderType == StVertex ? 256 : 224) - elementCount;
-
-		/*
-		// Use hash of parameter name to get at least some locality.
-		Adler32 cs;
-		cs.begin();
-		cs.feed(uniform.c_str(), uniform.length() * sizeof(wchar_t));
-		cs.end();
-		index = (int32_t)cs.get();
-		index = fromIndex + index % (toIndex - fromIndex + 1);
-		*/
-
-		// Ensure index isn't colliding.
-		for (;;)
-		{
-			bool occupied = false;
-			for (int32_t i = 0; i < elementCount; ++i)
-			{
-				if (m_uniformAllocated[index + i])
-				{
-					occupied = true;
-					break;
-				}
-			}
-			if (!occupied)
-				break;
-			//if (++index >= toIndex)
-			//	fromIndex = 0;
-
-			++index;
-		}
-
-		for (int32_t i = 0; i < elementCount; ++i)
-			m_uniformAllocated[index + i] = true;
-	}
-
 	m_uniforms.insert(uniform);
-	return index;
 }
 
 const std::set< std::wstring >& HlslShader::getUniforms() const
@@ -222,20 +172,66 @@ StringOutputStream& HlslShader::getOutputStream(BlockType blockType)
 	return *(m_outputStreams[int(blockType)].back());
 }
 
-std::wstring HlslShader::getGeneratedShader(bool needVPos)
+std::wstring HlslShader::getGeneratedShader()
 {
 	StringOutputStream ss;
 
-	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
-	ss << Endl;
-
-	ss << L"uniform float2 __private__targetSize : register(c" << c_registerInternalTargetSize << L");" << Endl;
-	ss << Endl;
-
-	std::wstring uniformText = getOutputStream(BtUniform).str();
-	if (!uniformText.empty())
+	std::wstring cbufferOnceText = getOutputStream(BtCBufferOnce).str();
+	if (!cbufferOnceText.empty())
 	{
-		ss << uniformText;
+		ss << L"cbuffer cbOnce" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
+
+		ss << cbufferOnceText;
+
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
+	std::wstring cbufferFrameText = getOutputStream(BtCBufferFrame).str();
+	if (!cbufferFrameText.empty() || m_needTargetSize)
+	{
+		ss << L"cbuffer cbFrame" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
+
+		ss << cbufferFrameText;
+
+		if (m_needTargetSize)
+			ss << L"float4 _dx11_targetSize;" << Endl;
+
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
+	std::wstring cbufferDrawText = getOutputStream(BtCBufferDraw).str();
+	if (!cbufferDrawText.empty())
+	{
+		ss << L"cbuffer cbDraw" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
+
+		ss << cbufferDrawText;
+
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
+	std::wstring texturesText = getOutputStream(BtTextures).str();
+	if (!texturesText.empty())
+	{
+		ss << texturesText;
+		ss << Endl;
+	}
+
+	std::wstring samplersText = getOutputStream(BtSamplers).str();
+	if (!samplersText.empty())
+	{
+		ss << samplersText;
 		ss << Endl;
 	}
 
@@ -265,11 +261,18 @@ std::wstring HlslShader::getGeneratedShader(bool needVPos)
 
 	std::wstring scriptText = getOutputStream(BtScript).str();
 	if (!scriptText.empty())
+	{
+		ss << Endl;
 		ss << scriptText;
+		ss << Endl;
+	}
 
 	if (m_shaderType == StVertex)
 	{
 		ss << L"void main(InputData i";
+
+		if (m_needInstanceID)
+			ss << L", uint instanceID : SV_InstanceID";
 
 		if (!outputDataText.empty())
 			ss << L", out OutputData o";
@@ -291,16 +294,19 @@ std::wstring HlslShader::getGeneratedShader(bool needVPos)
 
 	if (m_shaderType == StPixel)
 	{
-#if defined(_XBOX)
-		ss << L"[removeUnusedInputs]" << Endl;
-#endif
 		ss << L"void main(";
 		
 		if (!inputDataText.empty())
 			ss << L"InputData i, ";
 
-		if (needVPos)
-			ss << L"float2 vPos : VPOS, ";
+		if (m_needInstanceID)
+			ss << L"float instanceID : SV_InstanceID, ";
+
+		if (m_needVPos)
+			ss << L"float4 vPos : SV_Position, ";
+
+		if (m_needVFace)
+			ss << L"bool vFace : SV_IsFrontFace, ";
 		
 		ss << L"out OutputData o)" << Endl;
 

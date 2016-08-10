@@ -7,9 +7,9 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Render/VertexElement.h"
-#include "Render/OpenGL/GlslContext.h"
-#include "Render/OpenGL/GlslEmitter.h"
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/Glsl/GlslContext.h"
+#include "Render/OpenGL/Glsl/GlslEmitter.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/Script.h"
 

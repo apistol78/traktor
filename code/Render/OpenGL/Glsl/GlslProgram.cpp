@@ -1,4 +1,4 @@
-#include "Render/OpenGL/GlslProgram.h"
+#include "Render/OpenGL/Glsl/GlslProgram.h"
 
 namespace traktor
 {

@@ -8,8 +8,8 @@
 #include "Core/RefArray.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
-#include "Render/Dx11/HlslType.h"
-#include "Render/Dx11/HlslVariable.h"
+#include "Render/Dx11/Hlsl/HlslType.h"
+#include "Render/Dx11/Hlsl/HlslVariable.h"
 
 namespace traktor
 {

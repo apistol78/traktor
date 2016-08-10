@@ -8,8 +8,8 @@
 #include "Core/RefArray.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
-#include "Render/OpenGL/GlslType.h"
-#include "Render/OpenGL/GlslVariable.h"
+#include "Render/OpenGL/Glsl/GlslType.h"
+#include "Render/OpenGL/Glsl/GlslVariable.h"
 
 namespace traktor
 {

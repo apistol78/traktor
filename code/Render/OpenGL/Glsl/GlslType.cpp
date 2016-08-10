@@ -1,5 +1,5 @@
 #include <sstream>
-#include "Render/OpenGL/GlslType.h"
+#include "Render/OpenGL/Glsl/GlslType.h"
 
 namespace traktor
 {

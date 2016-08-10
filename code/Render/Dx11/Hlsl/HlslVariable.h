@@ -3,7 +3,7 @@
 
 #include <string>
 #include "Core/Object.h"
-#include "Render/Dx9/HlslType.h"
+#include "Render/Dx11/Hlsl/HlslType.h"
 
 namespace traktor
 {
@@ -11,7 +11,7 @@ namespace traktor
 	{
 
 /*!
- * \ingroup DX9 Xbox360
+ * \ingroup DX11
  */
 class HlslVariable : public Object
 {

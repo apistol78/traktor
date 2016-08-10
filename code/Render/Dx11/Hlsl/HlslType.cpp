@@ -1,5 +1,5 @@
 #include <sstream>
-#include "Render/Dx11/HlslType.h"
+#include "Render/Dx11/Hlsl/HlslType.h"
 
 namespace traktor
 {

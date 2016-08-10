@@ -5,8 +5,6 @@
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/GlslType.h"
-#include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/ProgramResourceOpenGL.h"
 #include "Render/OpenGL/ES2/CubeTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
@@ -15,6 +13,8 @@
 #include "Render/OpenGL/ES2/StateCache.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
+#include "Render/OpenGL/Glsl/GlslType.h"
+#include "Render/OpenGL/Glsl/GlslProgram.h"
 
 namespace traktor
 {

@@ -6,7 +6,6 @@
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/CubeTextureDx11.h"
-#include "Render/Dx11/HlslProgram.h"
 #include "Render/Dx11/ProgramDx11.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
 #include "Render/Dx11/RenderTargetDepthDx11.h"

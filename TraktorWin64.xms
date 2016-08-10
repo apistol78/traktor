@@ -12997,6 +12997,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Hlsl</name>
+					<items>
+						<item type="File">
+							<fileName>Hlsl/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -13158,6 +13167,15 @@
 									<items/>
 								</item>
 							</items>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Glsl</name>
+					<items>
+						<item type="File">
+							<fileName>Glsl/*.*</fileName>
+							<items/>
 						</item>
 					</items>
 				</item>
@@ -16843,6 +16861,15 @@
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>Hlsl</name>
+					<items>
+						<item type="File">
+							<fileName>Hlsl/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
@@ -21419,6 +21446,15 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="Filter">
+					<name>Glsl</name>
+					<items>
+						<item type="File">
+							<fileName>Glsl/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -22320,62 +22356,6 @@
 			</configurations>
 			<items>
 				<item type="File">
-					<fileName>Cg.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>Cg.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgContext.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgContext.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgEmitter.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgEmitter.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgProgram.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgProgram.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgShader.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgShader.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgType.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgType.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgVariable.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>CgVariable.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
 					<fileName>PlatformPs3.h</fileName>
 					<items/>
 				</item>
@@ -22402,6 +22382,15 @@
 				<item type="File">
 					<fileName>Blob.h</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>Cg</name>
+					<items>
+						<item type="File">
+							<fileName>Cg/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
@@ -23542,61 +23531,14 @@
 					<fileName>ProgramResourcePs4.h</fileName>
 					<items/>
 				</item>
-				<item type="File">
-					<fileName>Pssl.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>Pssl.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslContext.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslContext.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslEmitter.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslEmitter.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslProgram.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslProgram.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslShader.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslShader.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslType.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslType.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslVariable.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>PsslVariable.h</fileName>
-					<items/>
+				<item type="Filter">
+					<name>Pssl</name>
+					<items>
+						<item type="File">
+							<fileName>Pssl/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>

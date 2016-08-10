@@ -1,4 +1,4 @@
-#include "Render/Dx11/HlslProgram.h"
+#include "Render/Dx11/Hlsl/HlslProgram.h"
 
 namespace traktor
 {

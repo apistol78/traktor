@@ -1,11 +1,13 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/String.h"
 #include "Render/VertexElement.h"
-#include "Render/Dx9/HlslContext.h"
-#include "Render/Dx9/HlslEmitter.h"
-#include "Render/Shader/Script.h"
+#include "Render/Dx11/Platform.h"
+#include "Render/Dx11/Hlsl/HlslContext.h"
+#include "Render/Dx11/Hlsl/HlslEmitter.h"
 #include "Render/Shader/Nodes.h"
+#include "Render/Shader/Script.h"
 
 namespace traktor
 {
@@ -14,9 +16,9 @@ namespace traktor
 		namespace
 		{
 
-StringOutputStream& assign(StringOutputStream& f, HlslVariable* out)
+StringOutputStream& assign(HlslContext& cx, StringOutputStream& f, HlslVariable* out)
 {
-	f << hlsl_type_name(out->getType()) << L" " << out->getName() << L" = ";
+	f << hlsl_type_name(out->getType(), cx.inPixel()) << L" " << out->getName() << L" = ";
 	return f;
 }
 
@@ -27,7 +29,7 @@ bool emitAbs(HlslContext& cx, Abs* node)
 	if (!in)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"abs(" << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"abs(" << in->getName() << L");" << Endl;
 	return true;
 }
 
@@ -40,7 +42,7 @@ bool emitAdd(HlslContext& cx, Add* node)
 		return false;
 	HlslType type = std::max< HlslType >(in1->getType(), in2->getType());
 	HlslVariable* out = cx.emitOutput(node, L"Output", type);
-	assign(f, out) << in1->cast(type) << L" + " << in2->cast(type) << L";" << Endl;
+	assign(cx, f, out) << in1->cast(type) << L" + " << in2->cast(type) << L";" << Endl;
 	return true;
 }
 
@@ -51,7 +53,7 @@ bool emitArcusCos(HlslContext& cx, ArcusCos* node)
 	if (!theta || theta->getType() != HtFloat)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
-	assign(f, out) << L"acos(" << theta->getName() << L");" << Endl;
+	assign(cx, f, out) << L"acos(" << theta->getName() << L");" << Endl;
 	return true;
 }
 
@@ -62,7 +64,7 @@ bool emitArcusTan(HlslContext& cx, ArcusTan* node)
 	if (!xy || xy->getType() != HtFloat2)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
-	assign(f, out) << L"atan2(" << xy->getName() << L".x, " << xy->getName() << L".y);" << Endl;
+	assign(cx, f, out) << L"atan2(" << xy->getName() << L".x, " << xy->getName() << L".y);" << Endl;
 	return true;
 }
 
@@ -74,9 +76,9 @@ bool emitClamp(HlslContext& cx, Clamp* node)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
 	if (node->getMin() == 0.0f && node->getMax() == 1.0f)
-		assign(f, out) << L"saturate(" << in->getName() << L");" << Endl;
+		assign(cx, f, out) << L"saturate(" << in->getName() << L");" << Endl;
 	else
-		assign(f, out) << L"clamp(" << in->getName() << L", " << node->getMin() << L", " << node->getMax() << L");" << Endl;
+		assign(cx, f, out) << L"clamp(" << in->getName() << L", " << node->getMin() << L", " << node->getMax() << L");" << Endl;
 	return true;
 }
 
@@ -151,7 +153,7 @@ bool emitConditional(HlslContext& cx, Conditional* node)
 	HlslType outputType = std::max< HlslType >(caseTrue.getType(), caseFalse.getType());
 	
 	HlslVariable* out = cx.emitOutput(node, L"Output", outputType);
-	f << hlsl_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
+	f << hlsl_type_name(out->getType(), cx.inPixel()) << L" " << out->getName() << L";" << Endl;
 
 	if (node->getBranch() == Conditional::BrStatic)
 		f << L"[flatten]" << Endl;
@@ -211,7 +213,7 @@ bool emitCos(HlslContext& cx, Cos* node)
 	if (!theta || theta->getType() != HtFloat)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
-	assign(f, out) << L"cos(" << theta->getName() << L");" << Endl;
+	assign(cx, f, out) << L"cos(" << theta->getName() << L");" << Endl;
 	return true;
 }
 
@@ -223,7 +225,7 @@ bool emitCross(HlslContext& cx, Cross* node)
 	if (!in1 || !in2)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat3);
-	assign(f, out) << L"cross(" << in1->cast(HtFloat3) << L", " << in2->cast(HtFloat3) << L");" << Endl;
+	assign(cx, f, out) << L"cross(" << in1->cast(HtFloat3) << L", " << in2->cast(HtFloat3) << L");" << Endl;
 	return true;
 }
 
@@ -237,10 +239,10 @@ bool emitDerivative(HlslContext& cx, Derivative* node)
 	switch (node->getAxis())
 	{
 	case Derivative::DaX:
-		assign(f, out) << L"ddx(" << input->getName() << L");" << Endl;
+		assign(cx, f, out) << L"ddx(" << input->getName() << L");" << Endl;
 		break;
 	case Derivative::DaY:
-		assign(f, out) << L"ddy(" << input->getName() << L");" << Endl;
+		assign(cx, f, out) << L"ddy(" << input->getName() << L");" << Endl;
 		break;
 	default:
 		return false;
@@ -257,7 +259,7 @@ bool emitDiv(HlslContext& cx, Div* node)
 		return false;
 	HlslType type = std::max< HlslType >(in1->getType(), in2->getType());
 	HlslVariable* out = cx.emitOutput(node, L"Output", type);
-	assign(f, out) << in1->cast(type) << L" / " << in2->cast(type) << L";" << Endl;
+	assign(cx, f, out) << in1->cast(type) << L" / " << in2->cast(type) << L";" << Endl;
 	return true;
 }
 
@@ -305,7 +307,7 @@ bool emitDiscard(HlslContext& cx, Discard* node)
 		return false;
 
 	HlslVariable* out = cx.emitOutput(node, L"Output", pass->getType());
-	assign(f, out) << pass->getName() << L";" << Endl;
+	assign(cx, f, out) << pass->getName() << L";" << Endl;
 
 	return true;
 }
@@ -319,7 +321,7 @@ bool emitDot(HlslContext& cx, Dot* node)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
 	HlslType type = std::max< HlslType >(in1->getType(), in2->getType());
-	assign(f, out) << L"dot(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
+	assign(cx, f, out) << L"dot(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 	return true;
 }
 
@@ -330,7 +332,7 @@ bool emitExp(HlslContext& cx, Exp* node)
 	if (!in)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"exp(" << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"exp(" << in->getName() << L");" << Endl;
 	return true;
 }
 
@@ -341,7 +343,7 @@ bool emitFraction(HlslContext& cx, Fraction* node)
 	if (!in)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"frac(" << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"frac(" << in->getName() << L");" << Endl;
 	return true;
 }
 
@@ -350,11 +352,25 @@ bool emitFragmentPosition(HlslContext& cx, FragmentPosition* node)
 	if (!cx.inPixel())
 		return false;
 
-	cx.allocateVPos();
+	cx.getShader().allocateVPos();
 
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat2);
-	assign(f, out) << L"vPos;" << Endl;
+	assign(cx, f, out) << L"vPos;" << Endl;
+
+	return true;
+}
+
+bool emitFrontFace(HlslContext& cx, FrontFace* node)
+{
+	if (!cx.inPixel())
+		return false;
+
+	cx.getShader().allocateVFace();
+
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
+	assign(cx, f, out) << L"vFace ? 1.0f : 0.0f;" << Endl;
 
 	return true;
 }
@@ -371,14 +387,15 @@ bool emitIndexedUniform(HlslContext& cx, IndexedUniform* node)
 	);
 
 	StringOutputStream& fb = cx.getShader().getOutputStream(HlslShader::BtBody);
-	assign(fb, out) << node->getParameterName() << L"[" << index->getName() << L"];" << Endl;
+	assign(cx, fb, out) << node->getParameterName() << L"[" << index->getName() << L"];" << Endl;
 
 	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 	if (uniforms.find(node->getParameterName()) == uniforms.end())
 	{
-		uint32_t registerIndex = cx.getShader().addUniform(node->getParameterName(), out->getType(), node->getLength());
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-		fu << L"uniform " << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L"[" << node->getLength() << L"] : register(c" << registerIndex << L");" << Endl;
+		const HlslShader::BlockType c_blockType[] = { HlslShader::BtCBufferOnce, HlslShader::BtCBufferFrame, HlslShader::BtCBufferDraw };
+		StringOutputStream& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
+		fu << hlsl_type_name(out->getType(), false) << L" " << node->getParameterName() << L"[" << node->getLength() << L"];" << Endl;
+		cx.getShader().addUniform(node->getParameterName());
 	}
 
 	return true;
@@ -386,19 +403,11 @@ bool emitIndexedUniform(HlslContext& cx, IndexedUniform* node)
 
 bool emitInstance(HlslContext& cx, Instance* node)
 {
-	HlslVariable* out = cx.getShader().createVariable(
-		node->findOutputPin(L"Output"),
-		L"__private__instanceID",
-		HtFloat
-	);
+	cx.getShader().allocateInstanceID();
 
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(L"__private__instanceID") == uniforms.end())
-	{
-		uint32_t registerIndex = cx.getShader().addUniform(L"__private__instanceID", HtFloat, 1);
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-		fu << L"uniform float __private__instanceID : register(c" << registerIndex << L");" << Endl;
-	}
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
+	assign(cx, f, out) << L"float(instanceID);" << Endl;
 
 	return true;
 }
@@ -415,7 +424,7 @@ bool emitInterpolator(HlslContext& cx, Interpolator* node)
 		HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
 
 		StringOutputStream& fb = cx.getShader().getOutputStream(HlslShader::BtBody);
-		assign(fb, out) << in->getName() << L";" << Endl;
+		assign(cx, fb, out) << in->getName() << L";" << Endl;
 
 		return true;
 	}
@@ -518,9 +527,9 @@ bool emitIterate(HlslContext& cx, Iterate* node)
 	// initialize it.
 	HlslVariable* initial = cx.emitInput(node, L"Initial");
 	if (initial)
-		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
+		assign(cx, f, out) << initial->cast(out->getType()) << L";" << Endl;
 	else
-		assign(f, out) << L"0;" << Endl;
+		assign(cx, f, out) << L"0;" << Endl;
 
 	// Write outer for-loop statement.
 	if (cx.inPixel())
@@ -599,9 +608,9 @@ bool emitIterate2d(HlslContext& cx, Iterate2d* node)
 	// initialize it.
 	HlslVariable* initial = cx.emitInput(node, L"Initial");
 	if (initial)
-		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
+		assign(cx, f, out) << initial->cast(out->getType()) << L";" << Endl;
 	else
-		assign(f, out) << L"0;" << Endl;
+		assign(cx, f, out) << L"0;" << Endl;
 
 	// Write outer for-loop statement.
 	if (cx.inPixel())
@@ -644,7 +653,7 @@ bool emitLength(HlslContext& cx, Length* node)
 	if (!in)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
-	assign(f, out) << L"length(" << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"length(" << in->getName() << L");" << Endl;
 	return true;
 }
 
@@ -660,7 +669,7 @@ bool emitLerp(HlslContext& cx, Lerp* node)
 	if (!blend || blend->getType() != HtFloat)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in1->getType());
-	assign(f, out) << L"lerp(" << in1->cast(type) << L", " << in2->cast(type) << L", " << blend->getName() << L");" << Endl;
+	assign(cx, f, out) << L"lerp(" << in1->cast(type) << L", " << in2->cast(type) << L", " << blend->getName() << L");" << Endl;
 	return true;
 }
 
@@ -674,15 +683,15 @@ bool emitLog(HlslContext& cx, Log* node)
 	switch (node->getBase())
 	{
 	case Log::LbTwo:
-		assign(f, out) << L"log2(" << in->getName() << L");" << Endl;
+		assign(cx, f, out) << L"log2(" << in->getName() << L");" << Endl;
 		break;
 
 	case Log::LbTen:
-		assign(f, out) << L"log10(" << in->getName() << L");" << Endl;
+		assign(cx, f, out) << L"log10(" << in->getName() << L");" << Endl;
 		break;
 
 	case Log::LbNatural:
-		assign(f, out) << L"log(" << in->getName() << L");" << Endl;
+		assign(cx, f, out) << L"log(" << in->getName() << L");" << Endl;
 		break;
 	}
 	return true;
@@ -696,7 +705,7 @@ bool emitMatrixIn(HlslContext& cx, MatrixIn* node)
 	HlslVariable* zaxis = cx.emitInput(node, L"ZAxis");
 	HlslVariable* translate = cx.emitInput(node, L"Translate");
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4x4);
-	assign(f, out) << Endl;
+	assign(cx, f, out) << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 	f << (xaxis     ? xaxis->cast(HtFloat4)     : L"1.0f, 0.0f, 0.0f, 0.0f") << L"," << Endl;
@@ -716,16 +725,16 @@ bool emitMatrixOut(HlslContext& cx, MatrixOut* node)
 		return false;
 	HlslVariable* xaxis = cx.emitOutput(node, L"XAxis", HtFloat4);
 	if (xaxis)
-		assign(f, xaxis) << in->getName() << L"._11_21_31_41;" << Endl;
+		assign(cx, f, xaxis) << in->getName() << L"._11_21_31_41;" << Endl;
 	HlslVariable* yaxis = cx.emitOutput(node, L"YAxis", HtFloat4);
 	if (yaxis)
-		assign(f, yaxis) << in->getName() << L"._12_22_32_42;" << Endl;
+		assign(cx, f, yaxis) << in->getName() << L"._12_22_32_42;" << Endl;
 	HlslVariable* zaxis = cx.emitOutput(node, L"ZAxis", HtFloat4);
 	if (zaxis)
-		assign(f, zaxis) << in->getName() << L"._13_23_33_43;" << Endl;
+		assign(cx, f, zaxis) << in->getName() << L"._13_23_33_43;" << Endl;
 	HlslVariable* translate = cx.emitOutput(node, L"Translate", HtFloat4);
 	if (translate)
-		assign(f, translate) << in->getName() << L"._14_24_34_44;" << Endl;
+		assign(cx, f, translate) << in->getName() << L"._14_24_34_44;" << Endl;
 	return true;
 }
 
@@ -738,7 +747,7 @@ bool emitMax(HlslContext& cx, Max* node)
 		return false;
 	HlslType type = std::max< HlslType >(in1->getType(), in2->getType());
 	HlslVariable* out = cx.emitOutput(node, L"Output", type);
-	assign(f, out) << L"max(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
+	assign(cx, f, out) << L"max(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 	return true;
 }
 
@@ -751,7 +760,7 @@ bool emitMin(HlslContext& cx, Min* node)
 		return false;
 	HlslType type = std::max< HlslType >(in1->getType(), in2->getType());
 	HlslVariable* out = cx.emitOutput(node, L"Output", type);
-	assign(f, out) << L"min(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
+	assign(cx, f, out) << L"min(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 	return true;
 }
 
@@ -766,22 +775,22 @@ bool emitMixIn(HlslContext& cx, MixIn* node)
 	if (!y && !z && !w)
 	{
 		HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
-		assign(f, out) << L"float(" << (x ? x->getName() : L"0.0f") << L");" << Endl;
+		assign(cx, f, out) << L"float(" << (x ? x->getName() : L"0.0f") << L");" << Endl;
 	}
 	else if (!z && !w)
 	{
 		HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat2);
-		assign(f, out) << L"float2(" << (x ? x->getName() : L"0.0f") << L", " << (y ? y->getName() : L"0.0f") << L");" << Endl;
+		assign(cx, f, out) << L"float2(" << (x ? x->getName() : L"0.0f") << L", " << (y ? y->getName() : L"0.0f") << L");" << Endl;
 	}
 	else if (!w)
 	{
 		HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat3);
-		assign(f, out) << L"float3(" << (x ? x->getName() : L"0.0f") << L", " << (y ? y->getName() : L"0.0f") << L", " << (z ? z->getName() : L"0.0f") << L");" << Endl;
+		assign(cx, f, out) << L"float3(" << (x ? x->getName() : L"0.0f") << L", " << (y ? y->getName() : L"0.0f") << L", " << (z ? z->getName() : L"0.0f") << L");" << Endl;
 	}
 	else
 	{
 		HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
-		assign(f, out) << L"float4(" << (x ? x->getName() : L"0.0f") << L", " << (y ? y->getName() : L"0.0f") << L", " << (z ? z->getName() : L"0.0f") << L", " << (w ? w->getName() : L"0.0f") << L");" << Endl;
+		assign(cx, f, out) << L"float4(" << (x ? x->getName() : L"0.0f") << L", " << (y ? y->getName() : L"0.0f") << L", " << (z ? z->getName() : L"0.0f") << L", " << (w ? w->getName() : L"0.0f") << L");" << Endl;
 	}
 
 	return true;
@@ -799,7 +808,7 @@ bool emitMixOut(HlslContext& cx, MixOut* node)
 	case HtFloat:
 		{
 			HlslVariable* x = cx.emitOutput(node, L"X", HtFloat);
-			assign(f, x) << in->getName() << L".x;" << Endl;
+			assign(cx, f, x) << in->getName() << L".x;" << Endl;
 		}
 		break;
 
@@ -807,8 +816,8 @@ bool emitMixOut(HlslContext& cx, MixOut* node)
 		{
 			HlslVariable* x = cx.emitOutput(node, L"X", HtFloat);
 			HlslVariable* y = cx.emitOutput(node, L"Y", HtFloat);
-			assign(f, x) << in->getName() << L".x;" << Endl;
-			assign(f, y) << in->getName() << L".y;" << Endl;
+			assign(cx, f, x) << in->getName() << L".x;" << Endl;
+			assign(cx, f, y) << in->getName() << L".y;" << Endl;
 		}
 		break;
 
@@ -817,9 +826,9 @@ bool emitMixOut(HlslContext& cx, MixOut* node)
 			HlslVariable* x = cx.emitOutput(node, L"X", HtFloat);
 			HlslVariable* y = cx.emitOutput(node, L"Y", HtFloat);
 			HlslVariable* z = cx.emitOutput(node, L"Z", HtFloat);
-			assign(f, x) << in->getName() << L".x;" << Endl;
-			assign(f, y) << in->getName() << L".y;" << Endl;
-			assign(f, z) << in->getName() << L".z;" << Endl;
+			assign(cx, f, x) << in->getName() << L".x;" << Endl;
+			assign(cx, f, y) << in->getName() << L".y;" << Endl;
+			assign(cx, f, z) << in->getName() << L".z;" << Endl;
 		}
 		break;
 
@@ -829,10 +838,10 @@ bool emitMixOut(HlslContext& cx, MixOut* node)
 			HlslVariable* y = cx.emitOutput(node, L"Y", HtFloat);
 			HlslVariable* z = cx.emitOutput(node, L"Z", HtFloat);
 			HlslVariable* w = cx.emitOutput(node, L"W", HtFloat);
-			assign(f, x) << in->getName() << L".x;" << Endl;
-			assign(f, y) << in->getName() << L".y;" << Endl;
-			assign(f, z) << in->getName() << L".z;" << Endl;
-			assign(f, w) << in->getName() << L".w;" << Endl;
+			assign(cx, f, x) << in->getName() << L".x;" << Endl;
+			assign(cx, f, y) << in->getName() << L".y;" << Endl;
+			assign(cx, f, z) << in->getName() << L".z;" << Endl;
+			assign(cx, f, w) << in->getName() << L".w;" << Endl;
 		}
 		break;
 
@@ -852,7 +861,7 @@ bool emitMul(HlslContext& cx, Mul* node)
 		return false;
 	HlslType type = std::max< HlslType >(in1->getType(), in2->getType());
 	HlslVariable* out = cx.emitOutput(node, L"Output", type);
-	assign(f, out) << in1->cast(type) << L" * " << in2->cast(type) << L";" << Endl;
+	assign(cx, f, out) << in1->cast(type) << L" * " << in2->cast(type) << L";" << Endl;
 	return true;
 }
 
@@ -866,7 +875,7 @@ bool emitMulAdd(HlslContext& cx, MulAdd* node)
 		return false;
 	HlslType type = std::max< HlslType >(std::max< HlslType >(in1->getType(), in2->getType()), in3->getType());
 	HlslVariable* out = cx.emitOutput(node, L"Output", type);
-	assign(f, out) << in1->cast(type) << L" * " << in2->cast(type) << L" + " << in3->cast(type) << L";" << Endl;
+	assign(cx, f, out) << in1->cast(type) << L" * " << in2->cast(type) << L" + " << in3->cast(type) << L";" << Endl;
 	return true;
 }
 
@@ -877,7 +886,7 @@ bool emitNeg(HlslContext& cx, Neg* node)
 	if (!in)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"-" << in->getName() << L";" << Endl;
+	assign(cx, f, out) << L"-" << in->getName() << L";" << Endl;
 	return true;
 }
 
@@ -888,76 +897,64 @@ bool emitNormalize(HlslContext& cx, Normalize* node)
 	if (!in)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"normalize(" << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"normalize(" << in->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 {
-	const DWORD d3dCullMode[] =
+	const D3D11_CULL_MODE d3dCullMode[] =
 	{
-		D3DCULL_NONE,
-		D3DCULL_CW,
-		D3DCULL_CCW
+		D3D11_CULL_NONE,
+		D3D11_CULL_FRONT,
+		D3D11_CULL_BACK
 	};
 
-	const DWORD d3dBlendOperation[] =
+	const D3D11_BLEND_OP d3dBlendOperation[] =
 	{
-		D3DBLENDOP_ADD,
-		D3DBLENDOP_SUBTRACT,
-		D3DBLENDOP_REVSUBTRACT,
-		D3DBLENDOP_MIN,
-		D3DBLENDOP_MAX
+		D3D11_BLEND_OP_ADD,
+		D3D11_BLEND_OP_SUBTRACT,
+		D3D11_BLEND_OP_REV_SUBTRACT,
+		D3D11_BLEND_OP_MIN,
+		D3D11_BLEND_OP_MAX
 	};
 
-	const DWORD d3dBlendFactor[] =
+	const D3D11_BLEND d3dBlendFactor[] =
 	{
-		D3DBLEND_ONE,
-		D3DBLEND_ZERO,
-		D3DBLEND_SRCCOLOR,
-		D3DBLEND_INVSRCCOLOR,
-		D3DBLEND_DESTCOLOR,
-		D3DBLEND_INVDESTCOLOR,
-		D3DBLEND_SRCALPHA,
-		D3DBLEND_INVSRCALPHA,
-		D3DBLEND_DESTALPHA,
-		D3DBLEND_INVDESTALPHA
+		D3D11_BLEND_ONE,
+		D3D11_BLEND_ZERO,
+		D3D11_BLEND_SRC_COLOR,
+		D3D11_BLEND_INV_SRC_COLOR,
+		D3D11_BLEND_DEST_COLOR,
+		D3D11_BLEND_INV_DEST_COLOR,
+		D3D11_BLEND_SRC_ALPHA,
+		D3D11_BLEND_INV_SRC_ALPHA,
+		D3D11_BLEND_DEST_ALPHA,
+		D3D11_BLEND_INV_DEST_ALPHA
 	};
 
-	const DWORD d3dCompareFunction[] =
+	const D3D11_COMPARISON_FUNC d3dCompareFunction[] =
 	{
-		D3DCMP_ALWAYS,
-		D3DCMP_NEVER,
-		D3DCMP_LESS,
-		D3DCMP_LESSEQUAL,
-		D3DCMP_GREATER,
-		D3DCMP_GREATEREQUAL,
-		D3DCMP_EQUAL,
-		D3DCMP_NOTEQUAL
+		D3D11_COMPARISON_ALWAYS,
+		D3D11_COMPARISON_NEVER,
+		D3D11_COMPARISON_LESS,
+		D3D11_COMPARISON_LESS_EQUAL,
+		D3D11_COMPARISON_GREATER,
+		D3D11_COMPARISON_GREATER_EQUAL,
+		D3D11_COMPARISON_EQUAL,
+		D3D11_COMPARISON_NOT_EQUAL
 	};
 
-#if defined(_XBOX)
-	const DWORD d3dDepthCompareFunction[] =
+	const D3D11_STENCIL_OP d3dStencilOperation[] =
 	{
-		D3DCMP_ALWAYS,
-		D3DCMP_NEVER,
-		D3DCMP_GREATEREQUAL,
-		D3DCMP_GREATER,
-		D3DCMP_LESSEQUAL,
-		D3DCMP_LESS
-	};
-#endif
-
-	const DWORD d3dStencilOperation[] =
-	{
-		D3DSTENCILOP_KEEP,
-		D3DSTENCILOP_ZERO,
-		D3DSTENCILOP_REPLACE,
-		D3DSTENCILOP_INCRSAT,
-		D3DSTENCILOP_DECRSAT,
-		D3DSTENCILOP_INVERT,
-		D3DSTENCILOP_INCR,
-		D3DSTENCILOP_DECR
+		D3D11_STENCIL_OP_KEEP,
+		D3D11_STENCIL_OP_ZERO,
+		D3D11_STENCIL_OP_REPLACE,
+		D3D11_STENCIL_OP_INCR_SAT,
+		D3D11_STENCIL_OP_DECR_SAT,
+		D3D11_STENCIL_OP_INVERT,
+		D3D11_STENCIL_OP_INCR,
+		D3D11_STENCIL_OP_DECR
 	};
 
 	RenderState rs = node->getRenderState();
@@ -966,7 +963,7 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 
 	const wchar_t* inputs[] = { L"Input", L"Input1", L"Input2", L"Input3" };
 	HlslVariable* in[4];
-	
+
 	for (int32_t i = 0; i < sizeof_array(in); ++i)
 		in[i] = cx.emitInput(node, inputs[i]);
 
@@ -979,63 +976,107 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 			continue;
 
 		StringOutputStream& fpo = cx.getPixelShader().getOutputStream(HlslShader::BtOutput);
-		fpo << L"float4 Color" << i << L" : COLOR" << i << L";" << Endl;
+		fpo << L"half4 Color" << i << L" : SV_Target" << i << L";" << Endl;
 
 		StringOutputStream& fpb = cx.getPixelShader().getOutputStream(HlslShader::BtBody);
-		fpb << L"o.Color" << i << L" = " << in[i]->cast(HtFloat4) << L";" << Endl;
+		fpb << L"half4 out_Color" << i << L" = " << in[i]->cast(HtFloat4) << L";" << Endl;
+
+		// Emulate old fashion alpha test through "discard" instruction.
+		if (i == 0 && rs.alphaTestEnable)
+		{
+			float alphaRef = rs.alphaTestReference / 255.0f;
+
+			if (rs.alphaTestFunction == CfLess)
+				fpb << L"if (out_Color" << i << L".w >= " << alphaRef << L")" << Endl;
+			else if (rs.alphaTestFunction == CfLessEqual)
+				fpb << L"if (out_Color" << i << L".w > " << alphaRef << L")" << Endl;
+			else if (rs.alphaTestFunction == CfGreater)
+				fpb << L"if (out_Color" << i << L".w <= " << alphaRef << L")" << Endl;
+			else if (rs.alphaTestFunction == CfGreaterEqual)
+				fpb << L"if (out_Color" << i << L".w < " << alphaRef << L")" << Endl;
+			else if (rs.alphaTestFunction == CfEqual)
+				fpb << L"if (out_Color" << i << L".w != " << alphaRef << L")" << Endl;
+			else if (rs.alphaTestFunction == CfNotEqual)
+				fpb << L"if (out_Color" << i << L".w == " << alphaRef << L")" << Endl;
+			else
+				return false;
+
+			fpb << L"\tdiscard;" << Endl;
+		}
+
+		fpb << L"o.Color" << i << L" = out_Color" << i << L";" << Endl;
 	}
 
-	DWORD d3dColorWriteEnable =
-		((rs.colorWriteMask & CwRed) ? D3DCOLORWRITEENABLE_RED : 0) |
-		((rs.colorWriteMask & CwGreen) ? D3DCOLORWRITEENABLE_GREEN : 0) |
-		((rs.colorWriteMask & CwBlue) ? D3DCOLORWRITEENABLE_BLUE : 0) |
-		((rs.colorWriteMask & CwAlpha) ? D3DCOLORWRITEENABLE_ALPHA : 0);
+	cx.getD3DRasterizerDesc().FillMode = rs.wireframe ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
+	cx.getD3DRasterizerDesc().CullMode = d3dCullMode[rs.cullMode];
 
-	StateBlockDx9& sb = cx.getState();
-
-	sb.setRenderState(D3DRS_CULLMODE, d3dCullMode[rs.cullMode]);
-
-	if (rs.blendEnable)
-	{
-		sb.setRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-		sb.setRenderState(D3DRS_BLENDOP, d3dBlendOperation[rs.blendOperation]);
-		sb.setRenderState(D3DRS_SRCBLEND, d3dBlendFactor[rs.blendSource]);
-		sb.setRenderState(D3DRS_DESTBLEND, d3dBlendFactor[rs.blendDestination]);
-	}
-	else
-		sb.setRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-
-	sb.setRenderState(D3DRS_ZENABLE, rs.depthEnable ? TRUE : FALSE);
-	sb.setRenderState(D3DRS_COLORWRITEENABLE, d3dColorWriteEnable);
-	sb.setRenderState(D3DRS_ZWRITEENABLE, rs.depthWriteEnable ? TRUE : FALSE);
-#if !defined(_XBOX)
-	sb.setRenderState(D3DRS_ZFUNC, d3dCompareFunction[rs.depthFunction]);
-#else
-	sb.setRenderState(D3DRS_ZFUNC, d3dDepthCompareFunction[rs.depthFunction]);
-#endif
-
-	if (rs.alphaTestEnable)
-	{
-		sb.setRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-		sb.setRenderState(D3DRS_ALPHAFUNC, d3dCompareFunction[rs.alphaTestFunction]);
-		sb.setRenderState(D3DRS_ALPHAREF, rs.alphaTestReference);
-	}
-	else
-		sb.setRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-
-	sb.setRenderState(D3DRS_FILLMODE, rs.wireframe ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
+	cx.getD3DDepthStencilDesc().DepthEnable = rs.depthEnable ? TRUE : FALSE;
+	cx.getD3DDepthStencilDesc().DepthWriteMask = rs.depthWriteEnable ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
+	cx.getD3DDepthStencilDesc().DepthFunc = rs.depthEnable ? d3dCompareFunction[rs.depthFunction] : D3D11_COMPARISON_ALWAYS;
 
 	if (rs.stencilEnable)
 	{
-		sb.setRenderState(D3DRS_STENCILENABLE, TRUE);
-		sb.setRenderState(D3DRS_STENCILFAIL, d3dStencilOperation[rs.stencilFail]);
-		sb.setRenderState(D3DRS_STENCILZFAIL, d3dStencilOperation[rs.stencilZFail]);
-		sb.setRenderState(D3DRS_STENCILPASS, d3dStencilOperation[rs.stencilPass]);
-		sb.setRenderState(D3DRS_STENCILFUNC, d3dCompareFunction[rs.stencilFunction]);
-		sb.setRenderState(D3DRS_STENCILREF, rs.stencilReference);
+		cx.getD3DDepthStencilDesc().StencilEnable = TRUE;
+		cx.getD3DDepthStencilDesc().StencilReadMask = 0xff;
+		cx.getD3DDepthStencilDesc().StencilWriteMask = 0xff;
+		cx.getD3DDepthStencilDesc().FrontFace.StencilFailOp = d3dStencilOperation[rs.stencilFail];
+		cx.getD3DDepthStencilDesc().FrontFace.StencilDepthFailOp = d3dStencilOperation[rs.stencilZFail];
+		cx.getD3DDepthStencilDesc().FrontFace.StencilPassOp = d3dStencilOperation[rs.stencilPass];
+		cx.getD3DDepthStencilDesc().FrontFace.StencilFunc = d3dCompareFunction[rs.stencilFunction];
+		cx.getD3DDepthStencilDesc().BackFace.StencilFailOp = d3dStencilOperation[rs.stencilFail];
+		cx.getD3DDepthStencilDesc().BackFace.StencilDepthFailOp = d3dStencilOperation[rs.stencilZFail];
+		cx.getD3DDepthStencilDesc().BackFace.StencilPassOp = d3dStencilOperation[rs.stencilPass];
+		cx.getD3DDepthStencilDesc().BackFace.StencilFunc = d3dCompareFunction[rs.stencilFunction];
+		cx.setStencilReference(rs.stencilReference);
 	}
 	else
-		sb.setRenderState(D3DRS_STENCILENABLE, FALSE);
+	{
+		cx.getD3DDepthStencilDesc().StencilEnable = FALSE;
+		cx.getD3DDepthStencilDesc().StencilReadMask = 0xff;
+		cx.getD3DDepthStencilDesc().StencilWriteMask = 0xff;
+		cx.getD3DDepthStencilDesc().FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		cx.getD3DDepthStencilDesc().BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().BackFace.StencilFunc =D3D11_COMPARISON_ALWAYS;
+		cx.setStencilReference(0);
+	}
+
+	cx.getD3DBlendDesc().AlphaToCoverageEnable = rs.alphaToCoverageEnable ? TRUE : FALSE;
+
+	if (rs.blendEnable)
+	{
+		cx.getD3DBlendDesc().RenderTarget[0].BlendEnable = TRUE;
+		cx.getD3DBlendDesc().RenderTarget[0].SrcBlend = d3dBlendFactor[rs.blendSource];
+		cx.getD3DBlendDesc().RenderTarget[0].DestBlend = d3dBlendFactor[rs.blendDestination];
+		cx.getD3DBlendDesc().RenderTarget[0].BlendOp = d3dBlendOperation[rs.blendOperation];
+	}
+	else
+	{
+		cx.getD3DBlendDesc().RenderTarget[0].BlendEnable = FALSE;
+		cx.getD3DBlendDesc().RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		cx.getD3DBlendDesc().RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+		cx.getD3DBlendDesc().RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	}
+
+	UINT8 d3dWriteMask = 0;
+	if (rs.colorWriteMask & CwRed)
+		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_RED;
+	if (rs.colorWriteMask & CwGreen)
+		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_GREEN;
+	if (rs.colorWriteMask & CwBlue)	
+		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_BLUE;
+	if (rs.colorWriteMask & CwAlpha)
+		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_ALPHA;
+
+	for (int32_t i = 0; i < sizeof_array(in); ++i)
+	{
+		if (in[i])
+			cx.getD3DBlendDesc().RenderTarget[i].RenderTargetWriteMask = d3dWriteMask;
+	}
 
 	return true;
 }
@@ -1050,7 +1091,7 @@ bool emitPolynomial(HlslContext& cx, Polynomial* node)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
 
-	assign(f, out);
+	assign(cx, f, out);
 	switch (coeffs->getType())
 	{
 	case HtFloat:
@@ -1075,23 +1116,39 @@ bool emitPow(HlslContext& cx, Pow* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* exponent = cx.emitInput(node, L"Exponent");
+	
+	const Node* inputNode = cx.getInputNode(node, L"Input");
+	if (!inputNode)
+		return false;
+
+	if (const Scalar* inputScalar = dynamic_type_cast< const Scalar* >(inputNode))
+	{
+		if (abs(inputScalar->get() - 2.0f) < FUZZY_EPSILON)
+		{
+			// 2 as base; emit exp2 intrinsic instead of pow as it's more efficient.
+			HlslType type = std::max< HlslType >(exponent->getType(), HtFloat);
+			HlslVariable* out = cx.emitOutput(node, L"Output", type);
+			assign(cx, f, out) << L"exp2(" << exponent->cast(type) << L");" << Endl;
+			return true;
+		}
+		else if (abs(inputScalar->get() - 2.718f) < FUZZY_EPSILON)
+		{
+			// e as base; emit exp intrinsic instead of pow as it's more efficient.
+			HlslType type = std::max< HlslType >(exponent->getType(), HtFloat);
+			HlslVariable* out = cx.emitOutput(node, L"Output", type);
+			assign(cx, f, out) << L"exp(" << exponent->cast(type) << L");" << Endl;
+			return true;
+		}
+	}
+
+	// Non-trivial base.	
 	HlslVariable* in = cx.emitInput(node, L"Input");
 	if (!exponent || !in)
 		return false;
+
 	HlslType type = std::max< HlslType >(exponent->getType(), in->getType());
 	HlslVariable* out = cx.emitOutput(node, L"Output", type);
-	assign(f, out) << L"pow(" << in->cast(type) << L", " << exponent->cast(type) << L");" << Endl;
-	return true;
-}
-
-bool emitRecipSqrt(HlslContext& cx, RecipSqrt* node)
-{
-	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
-	HlslVariable* in = cx.emitInput(node, L"Input");
-	if (!in)
-		return false;
-	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"rsqrt(" << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"pow(" << in->cast(type) << L", " << exponent->cast(type) << L");" << Endl;
 	return true;
 }
 
@@ -1103,7 +1160,95 @@ bool emitReflect(HlslContext& cx, Reflect* node)
 	if (!normal || !direction)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", direction->getType());
-	assign(f, out) << L"reflect(" << direction->getName() << L", " << normal->cast(direction->getType()) << L");" << Endl;
+	assign(cx, f, out) << L"reflect(" << direction->getName() << L", " << normal->cast(direction->getType()) << L");" << Endl;
+	return true;
+}
+
+bool emitRecipSqrt(HlslContext& cx, RecipSqrt* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(cx, f, out) << L"rsqrt(" << in->getName() << L");" << Endl;
+	return true;
+}
+
+bool emitRepeat(HlslContext& cx, Repeat* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	std::wstring inputName;
+
+	// Create iterator variable.
+	HlslVariable* N = cx.emitOutput(node, L"N", HtFloat);
+	T_ASSERT (N);
+
+	// Create void output variable; change type later when we know
+	// the type of the input branch.
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtVoid);
+	T_ASSERT (out);
+
+	// Find non-dependent, external, output pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	std::vector< const OutputPin* > outputPins;
+	std::vector< const OutputPin* > dependentOutputPins(2);
+	dependentOutputPins[0] = node->findOutputPin(L"N");
+	dependentOutputPins[1] = node->findOutputPin(L"Output");
+	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
+	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
+		cx.emit((*i)->getNode());
+
+	// Write input branch in a temporary output stream.
+	StringOutputStream fs;
+	cx.getShader().pushOutputStream(HlslShader::BtBody, &fs);
+	cx.getShader().pushScope();
+
+	{
+		// Emit pre-condition, break iteration if condition is false.
+		HlslVariable* condition = cx.emitInput(node, L"Condition");
+		if (condition)
+		{
+			fs << L"if (!(bool)" << condition->cast(HtFloat) << L")" << Endl;
+			fs << L"\tbreak;" << Endl;
+		}
+
+		HlslVariable* input = cx.emitInput(node, L"Input");
+		if (!input)
+			return false;
+
+		inputName = input->getName();
+
+		// Modify output variable; need to have input variable ready as it
+		// will determine output type.
+		out->setType(input->getType());
+	}
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(HlslShader::BtBody);
+
+	// As we now know the type of output variable we can safely
+	// initialize it.
+	HlslVariable* initial = cx.emitInput(node, L"Initial");
+	if (initial)
+		assign(cx, f, out) << initial->cast(out->getType()) << L";" << Endl;
+	else
+		assign(cx, f, out) << L"0;" << Endl;
+
+	// Write outer for-loop statement.
+	f << L"for (float " << N->getName() << L" = 0.0f;; ++" << N->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	// Insert input branch here; it's already been generated in a temporary
+	// output stream.
+	f << fs.str();
+	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
 	return true;
 }
 
@@ -1114,32 +1259,12 @@ bool emitRound(HlslContext& cx, Round* node)
 	if (!in)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"round(" << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"round(" << in->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitSampler(HlslContext& cx, Sampler* node)
 {
-	const DWORD d3dMinMagFilter[] =
-	{
-		D3DTEXF_POINT,
-		D3DTEXF_ANISOTROPIC
-	};
-
-	const DWORD d3dMipFilter[] =
-	{
-		D3DTEXF_POINT,
-		D3DTEXF_LINEAR
-	};
-
-	const DWORD d3dAddress[] =
-	{
-		D3DTADDRESS_WRAP,
-		D3DTADDRESS_MIRROR,
-		D3DTADDRESS_CLAMP,
-		D3DTADDRESS_BORDER
-	};
-
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 
 	HlslVariable* texture = cx.emitInput(node, L"Texture");
@@ -1150,110 +1275,188 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	if (!texCoord)
 		return false;
 
-	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
+	HlslVariable* mip = cx.emitInput(node, L"Mip");
+
+	// Define sampler class.
+	const D3D11_TEXTURE_ADDRESS_MODE c_d3dAddress[] =
+	{
+		D3D11_TEXTURE_ADDRESS_WRAP,
+		D3D11_TEXTURE_ADDRESS_MIRROR,
+		D3D11_TEXTURE_ADDRESS_CLAMP,
+		D3D11_TEXTURE_ADDRESS_BORDER
+	};
+
+	const D3D11_COMPARISON_FUNC c_d3dComparison[] =
+	{
+		D3D11_COMPARISON_ALWAYS,
+		D3D11_COMPARISON_NEVER,
+		D3D11_COMPARISON_LESS,
+		D3D11_COMPARISON_LESS_EQUAL,
+		D3D11_COMPARISON_GREATER,
+		D3D11_COMPARISON_GREATER_EQUAL,
+		D3D11_COMPARISON_EQUAL,
+		D3D11_COMPARISON_NOT_EQUAL,
+		D3D11_COMPARISON_NEVER
+	};
 
 	const SamplerState& samplerState = node->getSamplerState();
-	bool needAddressW = bool(texture->getType() > HtTexture2D);
 
-	// Calculate sampler hash.
-	Adler32 samplerHash;
-	samplerHash.feed(texture->getName());
-	samplerHash.feed(samplerState.minFilter);
-	samplerHash.feed(samplerState.mipFilter);
-	samplerHash.feed(samplerState.magFilter);
-	samplerHash.feed(samplerState.addressU);
-	samplerHash.feed(samplerState.addressV);
-	if (needAddressW)
-		samplerHash.feed(samplerState.addressW);
+	D3D11_SAMPLER_DESC dsd;
+	std::memset(&dsd, 0, sizeof(dsd));
 
-	// Register sampler, return stage index of sampler.
-	int32_t stage;
-	bool defineSampler = cx.getShader().defineSampler(samplerHash.get(), texture->getName(), stage);
+	dsd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	dsd.AddressU = c_d3dAddress[samplerState.addressU];
+	dsd.AddressV = c_d3dAddress[samplerState.addressV];
+	if (texture->getType() > HtTexture2D)
+		dsd.AddressW = c_d3dAddress[samplerState.addressW];
+	else
+		dsd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	dsd.MipLODBias = samplerState.mipBias;
+	dsd.MaxAnisotropy = 1;
+	dsd.ComparisonFunc = c_d3dComparison[samplerState.compare];
+	dsd.BorderColor[0] =
+	dsd.BorderColor[1] =
+	dsd.BorderColor[2] =
+	dsd.BorderColor[3] = 1.0f;
+	dsd.MinLOD = -D3D11_FLOAT32_MAX;
+	dsd.MaxLOD =  D3D11_FLOAT32_MAX;
 
-	// Generate sampler name.
-	std::wstring samplerName = L"sampler_" + toString(stage);
-
-	// Define sampler in HLSL if required.
-	if (defineSampler)
+	switch (samplerState.mipFilter)
 	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+	case FtPoint:
+		break;
+	case FtLinear:
+		(UINT&)dsd.Filter |= 0x1;
+		break;
+	}
 
-		switch (texture->getType())
+	switch (samplerState.magFilter)
+	{
+	case FtPoint:
+		break;
+	case FtLinear:
+		(UINT&)dsd.Filter |= 0x4;
+		break;
+	}
+
+	switch (samplerState.minFilter)
+	{
+	case FtPoint:
+		break;
+	case FtLinear:
+		(UINT&)dsd.Filter |= 0x10;
+		break;
+	}
+
+	if (samplerState.compare == CfNone)
+	{
+		if (
+			samplerState.useAnisotropic &&
+			dsd.Filter == (0x10 | 0x4 | 0x1)
+		)
+			dsd.Filter = D3D11_FILTER_ANISOTROPIC;
+	}
+	else
+		(UINT&)dsd.Filter |= 0x80;
+
+	Adler32 samplerHash;
+	samplerHash.begin();
+	samplerHash.feed(&dsd, sizeof(dsd));
+	samplerHash.end();
+
+	std::wstring samplerName = L"S" + toString(samplerHash.get()) + L"_samplerState";
+	std::wstring textureName = texture->getName();
+
+	const std::map< std::wstring, D3D11_SAMPLER_DESC >& samplers = cx.getShader().getSamplers();
+	if (samplers.find(samplerName) == samplers.end())
+	{
+		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtSamplers);
+
+		if (samplerState.compare == CfNone)
+			fu << L"SamplerState " << samplerName << L";" << Endl;
+		else
+			fu << L"SamplerComparisonState " << samplerName << L";" << Endl;
+
+		cx.getShader().addSampler(samplerName, dsd);
+	}
+
+	HlslVariable* out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? HtFloat4 : HtFloat);
+
+	if (!mip && cx.inPixel() && !samplerState.ignoreMips)
+	{
+		if (samplerState.compare == CfNone)
 		{
-		case HtTexture2D:
-			fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
-			break;
-
-		case HtTexture3D:
-			fu << L"sampler3D " << samplerName << L" : register(s" << stage << L");" << Endl;
-			break;
-
-		case HtTextureCube:
-			fu << L"samplerCUBE " << samplerName << L" : register(s" << stage << L");" << Endl;
-			break;
-		}
-
-		if (cx.inPixel())
-		{
-			StateBlockDx9& state = cx.getState();
-			state.setPixelSamplerState(stage, D3DSAMP_MINFILTER, d3dMinMagFilter[samplerState.minFilter]);
-			state.setPixelSamplerState(stage, D3DSAMP_MIPFILTER, d3dMipFilter[samplerState.mipFilter]);
-			state.setPixelSamplerState(stage, D3DSAMP_MAGFILTER, d3dMinMagFilter[samplerState.magFilter]);
-			state.setPixelSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[samplerState.addressU]);
-			state.setPixelSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[samplerState.addressV]);
-			if (needAddressW)
-				state.setPixelSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[samplerState.addressW]);
-			state.setPixelSamplerState(stage, D3DSAMP_BORDERCOLOR, 0xffffffff);
+			switch (texture->getType())
+			{
+			case HtTexture2D:
+				assign(cx, f, out) << textureName << L".Sample(" << samplerName << L", " << texCoord->cast(HtFloat2) << L");" << Endl;
+				break;
+			case HtTexture3D:
+			case HtTextureCube:
+				assign(cx, f, out) << textureName << L".Sample(" << samplerName << L", " << texCoord->cast(HtFloat3) << L");" << Endl;
+				break;
+			}
 		}
 		else
 		{
-			StateBlockDx9& state = cx.getState();
-			state.setVertexSamplerState(stage, D3DSAMP_MINFILTER, d3dMinMagFilter[samplerState.minFilter]);
-			state.setVertexSamplerState(stage, D3DSAMP_MIPFILTER, d3dMipFilter[samplerState.mipFilter]);
-			state.setVertexSamplerState(stage, D3DSAMP_MAGFILTER, d3dMinMagFilter[samplerState.magFilter]);
-			state.setVertexSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[samplerState.addressU]);
-			state.setVertexSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[samplerState.addressV]);
-			if (needAddressW)
-				state.setVertexSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[samplerState.addressW]);
-			state.setVertexSamplerState(stage, D3DSAMP_BORDERCOLOR, 0xffffffff);
+			if (!samplerState.ignoreMips)
+			{
+				switch (texture->getType())
+				{
+				case HtTexture2D:
+					assign(cx, f, out) << textureName << L".SampleCmp(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", " << texCoord->cast(HtFloat3) << L".z);" << Endl;
+					break;
+				case HtTexture3D:
+				case HtTextureCube:
+					assign(cx, f, out) << textureName << L".SampleCmp(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", " << texCoord->cast(HtFloat4) << L".w);" << Endl;
+					break;
+				}
+			}
+			else
+			{
+				switch (texture->getType())
+				{
+				case HtTexture2D:
+					assign(cx, f, out) << textureName << L".SampleCmpLevelZero(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", " << texCoord->cast(HtFloat3) << L".z);" << Endl;
+					break;
+				case HtTexture3D:
+				case HtTextureCube:
+					assign(cx, f, out) << textureName << L".SampleCmpLevelZero(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", " << texCoord->cast(HtFloat4) << L".w);" << Endl;
+					break;
+				}
+			}
 		}
 	}
-
-	if (cx.inPixel())
+	else
 	{
-		switch (texture->getType())
+		if (samplerState.compare == CfNone)
 		{
-		case HtTexture2D:
-			assign(f, out) << L"tex2D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
-			break;
-
-		case HtTexture3D:
-			assign(f, out) << L"tex3D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
-			break;
-
-		case HtTextureCube:
-			assign(f, out) << L"texCUBE(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
-			break;
+			switch (texture->getType())
+			{
+			case HtTexture2D:
+				assign(cx, f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", " << (mip ? mip->cast(HtFloat) : L"0.0f") << L");" << Endl;
+				break;
+			case HtTexture3D:
+			case HtTextureCube:
+				assign(cx, f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", " << (mip ? mip->cast(HtFloat) : L"0.0f") << L");" << Endl;
+				break;
+			}
+		}
+		else
+		{
+			switch (texture->getType())
+			{
+			case HtTexture2D:
+				assign(cx, f, out) << textureName << L".SampleCmpLevelZero(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", " << texCoord->cast(HtFloat3) << L".z);" << Endl;
+				break;
+			case HtTexture3D:
+			case HtTextureCube:
+				assign(cx, f, out) << textureName << L".SampleCmpLevelZero(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", " << texCoord->cast(HtFloat4) << L".w);" << Endl;
+				break;
+			}
 		}
 	}
-	if (cx.inVertex())
-	{
-		switch (texture->getType())
-		{
-		case HtTexture2D:
-			assign(f, out) << L"tex2Dlod(" << samplerName << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
-			break;
 
-		case HtTexture3D:
-			assign(f, out) << L"tex3Dlod(" << samplerName << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
-			break;
-
-		case HtTextureCube:
-			assign(f, out) << L"texCUBElod(" << samplerName << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
-			break;
-		}
-	}
-	
 	return true;
 }
 
@@ -1269,8 +1472,7 @@ bool emitScript(HlslContext& cx, Script* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 
-	// Get platform specific script from node.
-	std::wstring script = node->getScript();
+	const std::wstring& script = node->getScript();
 	if (script.empty())
 		return false;
 
@@ -1300,6 +1502,109 @@ bool emitScript(HlslContext& cx, Script* node)
 			return false;
 	}
 
+	// Define samplers.
+	const std::map< std::wstring, SamplerState >& samplers = node->getSamplers();
+	for (std::map< std::wstring, SamplerState >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
+	{
+		const D3D11_TEXTURE_ADDRESS_MODE c_d3dAddress[] =
+		{
+			D3D11_TEXTURE_ADDRESS_WRAP,
+			D3D11_TEXTURE_ADDRESS_MIRROR,
+			D3D11_TEXTURE_ADDRESS_CLAMP,
+			D3D11_TEXTURE_ADDRESS_BORDER
+		};
+
+		const D3D11_COMPARISON_FUNC c_d3dComparison[] =
+		{
+			D3D11_COMPARISON_ALWAYS,
+			D3D11_COMPARISON_NEVER,
+			D3D11_COMPARISON_LESS,
+			D3D11_COMPARISON_LESS_EQUAL,
+			D3D11_COMPARISON_GREATER,
+			D3D11_COMPARISON_GREATER_EQUAL,
+			D3D11_COMPARISON_EQUAL,
+			D3D11_COMPARISON_NOT_EQUAL,
+			D3D11_COMPARISON_NEVER
+		};
+
+		const SamplerState& samplerState = i->second;
+
+		D3D11_SAMPLER_DESC dsd;
+		std::memset(&dsd, 0, sizeof(dsd));
+
+		dsd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		dsd.AddressU = c_d3dAddress[samplerState.addressU];
+		dsd.AddressV = c_d3dAddress[samplerState.addressV];
+		dsd.AddressW = c_d3dAddress[samplerState.addressW];
+		dsd.MipLODBias = samplerState.mipBias;
+		dsd.MaxAnisotropy = 1;
+		dsd.ComparisonFunc = c_d3dComparison[samplerState.compare];
+		dsd.BorderColor[0] =
+		dsd.BorderColor[1] =
+		dsd.BorderColor[2] =
+		dsd.BorderColor[3] = 1.0f;
+		dsd.MinLOD = -D3D11_FLOAT32_MAX;
+		dsd.MaxLOD =  D3D11_FLOAT32_MAX;
+
+		switch (samplerState.mipFilter)
+		{
+		case FtPoint:
+			break;
+		case FtLinear:
+			(UINT&)dsd.Filter |= 0x1;
+			break;
+		}
+
+		switch (samplerState.magFilter)
+		{
+		case FtPoint:
+			break;
+		case FtLinear:
+			(UINT&)dsd.Filter |= 0x4;
+			break;
+		}
+
+		switch (samplerState.minFilter)
+		{
+		case FtPoint:
+			break;
+		case FtLinear:
+			(UINT&)dsd.Filter |= 0x10;
+			break;
+		}
+
+		if (samplerState.compare == CfNone)
+		{
+			if (
+				samplerState.useAnisotropic &&
+				dsd.Filter == (0x10 | 0x4 | 0x1)
+			)
+				dsd.Filter = D3D11_FILTER_ANISOTROPIC;
+		}
+		else
+			(UINT&)dsd.Filter |= 0x80;
+
+		Adler32 samplerHash;
+		samplerHash.begin();
+		samplerHash.feed(&dsd, sizeof(dsd));
+		samplerHash.end();
+
+		std::wstring samplerName = i->first;
+
+		const std::map< std::wstring, D3D11_SAMPLER_DESC >& samplers = cx.getShader().getSamplers();
+		if (samplers.find(samplerName) == samplers.end())
+		{
+			StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtSamplers);
+
+			if (samplerState.compare == CfNone)
+				fu << L"SamplerState " << samplerName << L";" << Endl;
+			else
+				fu << L"SamplerComparisonState " << samplerName << L";" << Endl;
+
+			cx.getShader().addSampler(samplerName, dsd);
+		}
+	}
+
 	// Define script instance.
 	if (cx.getShader().defineScript(node->getName()))
 	{
@@ -1311,7 +1616,7 @@ bool emitScript(HlslContext& cx, Script* node)
 		{
 			if (i > 0)
 				fs << L", ";
-			fs << hlsl_type_name(in[i]->getType()) << L" " << node->getInputPin(i)->getName();
+			fs << hlsl_type_name(in[i]->getType(), false) << L" " << node->getInputPin(i)->getName();
 		}
 
 		if (!in.empty())
@@ -1321,7 +1626,7 @@ bool emitScript(HlslContext& cx, Script* node)
 		{
 			if (i > 0)
 				fs << L", ";
-			fs << L"out " << hlsl_type_name(out[i]->getType()) << L" " << node->getOutputPin(i)->getName();
+			fs << L"out " << hlsl_type_name(out[i]->getType(), false) << L" " << node->getOutputPin(i)->getName();
 		}
 
 		fs << L")" << Endl;
@@ -1335,7 +1640,7 @@ bool emitScript(HlslContext& cx, Script* node)
 
 	// Emit script invocation.
 	for (int32_t i = 0; i < outputPinCount; ++i)
-		f << hlsl_type_name(out[i]->getType()) << L" " << out[i]->getName() << L";" << Endl;
+		f << hlsl_type_name(out[i]->getType(), cx.inPixel()) << L" " << out[i]->getName() << L";" << Endl;
 
 	f << node->getName() << L"(";
 
@@ -1367,7 +1672,7 @@ bool emitSign(HlslContext& cx, Sign* node)
 	if (!in)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"sign(" << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"sign(" << in->getName() << L");" << Endl;
 	return true;
 }
 
@@ -1378,7 +1683,7 @@ bool emitSin(HlslContext& cx, Sin* node)
 	if (!theta || theta->getType() != HtFloat)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
-	assign(f, out) << L"sin(" << theta->getName() << L");" << Endl;
+	assign(cx, f, out) << L"sin(" << theta->getName() << L");" << Endl;
 	return true;
 }
 
@@ -1389,7 +1694,7 @@ bool emitSqrt(HlslContext& cx, Sqrt* node)
 	if (!in)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"sqrt(" << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"sqrt(" << in->getName() << L");" << Endl;
 	return true;
 }
 
@@ -1402,7 +1707,7 @@ bool emitStep(HlslContext& cx, Step* node)
 		return false;
 	HlslType type = std::max< HlslType >(in1->getType(), in2->getType());
 	HlslVariable* out = cx.emitOutput(node, L"Output", type);
-	assign(f, out) << L"step(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
+	assign(cx, f, out) << L"step(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 	return true;
 }
 
@@ -1415,7 +1720,7 @@ bool emitSub(HlslContext& cx, Sub* node)
 		return false;
 	HlslType type = std::max< HlslType >(in1->getType(), in2->getType());
 	HlslVariable* out = cx.emitOutput(node, L"Output", type);
-	assign(f, out) << in1->cast(type) << L" - " << in2->cast(type) << L";" << Endl;
+	assign(cx, f, out) << in1->cast(type) << L" - " << in2->cast(type) << L";" << Endl;
 	return true;
 }
 
@@ -1466,7 +1771,7 @@ bool emitSum(HlslContext& cx, Sum* node)
 
 	// As we now know the type of output variable we can safely
 	// initialize it.
-	assign(f, out) << L"0;" << Endl;
+	assign(cx, f, out) << L"0;" << Endl;
 
 	// Write outer for-loop statement.
 	if (cx.inPixel())
@@ -1497,6 +1802,51 @@ bool emitSwizzle(HlslContext& cx, Swizzle* node)
 	const HlslType types[] = { HtFloat, HtFloat2, HtFloat3, HtFloat4 };
 	HlslType type = types[map.length() - 1];
 
+	// Check if input is a constant Vector node; thus pack directly instead of swizzle.
+	const Vector* constVector = dynamic_type_cast< const Vector* >(cx.getInputNode(node, L"Input"));
+	if (constVector)
+	{
+		HlslVariable* out = cx.emitOutput(node, L"Output", type);
+		StringOutputStream ss;
+		ss << hlsl_type_name(type, cx.inPixel()) << L"(";
+		for (size_t i = 0; i < map.length(); ++i)
+		{
+			if (i > 0)
+				ss << L", ";
+
+			switch (map[i])
+			{
+			case '0':
+				ss << L"0.0f";
+				break;
+
+			case '1':
+				ss << L"1.0f";
+				break;
+
+			case 'x':
+				ss << constVector->get().x();
+				break;
+
+			case 'y':
+				ss << constVector->get().y();
+				break;
+
+			case 'z':
+				ss << constVector->get().z();
+				break;
+
+			case 'w':
+				ss << constVector->get().w();
+				break;
+			}
+		}
+		ss << L")";
+		assign(cx, f, out) << ss.str() << L";" << Endl;
+		return true;
+	}
+
+	// Not constant input; need to evaluate input further.
 	HlslVariable* in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
@@ -1525,7 +1875,7 @@ bool emitSwizzle(HlslContext& cx, Swizzle* node)
 		StringOutputStream ss;
 		if (containConstant || (map.length() > 1 && in->getType() == HtFloat))
 		{
-			ss << hlsl_type_name(type) << L"(";
+			ss << hlsl_type_name(type, cx.inPixel()) << L"(";
 			for (size_t i = 0; i < map.length(); ++i)
 			{
 				if (i > 0)
@@ -1568,7 +1918,7 @@ bool emitSwizzle(HlslContext& cx, Swizzle* node)
 				ss << in->getName() << L'.' << map[0];
 		}
 
-		assign(f, out) << ss.str() << L";" << Endl;
+		assign(cx, f, out) << ss.str() << L";" << Endl;
 	}
 
 	return true;
@@ -1632,12 +1982,7 @@ bool emitSwitch(HlslContext& cx, Switch* node)
 
 	// Create output variable.
 	HlslVariable* out = cx.emitOutput(node, L"Output", outputType);
-	assign(f, out) << L"0;" << Endl;
-
-	if (node->getBranch() == Switch::BrStatic)
-		f << L"[flatten]" << Endl;
-	else if (node->getBranch() == Switch::BrDynamic)
-		f << L"[branch]" << Endl;
+	assign(cx, f, out) << L"0;" << Endl;
 
 	for (uint32_t i = 0; i < uint32_t(caseConditions.size()); ++i)
 	{
@@ -1678,7 +2023,7 @@ bool emitTan(HlslContext& cx, Tan* node)
 	if (!theta || theta->getType() != HtFloat)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
-	assign(f, out) << L"tan(" << theta->getName() << L");" << Endl;
+	assign(cx, f, out) << L"tan(" << theta->getName() << L");" << Endl;
 	return true;
 }
 
@@ -1686,30 +2031,40 @@ bool emitTargetSize(HlslContext& cx, TargetSize* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat2);
-	assign(f, out) << L"__private__targetSize;" << Endl;
+	assign(cx, f, out) << L"_dx11_targetSize.xy;" << Endl;
+	cx.getShader().allocateTargetSize();
 	return true;
 }
 
 bool emitTextureSize(HlslContext& cx, TextureSize* node)
 {
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+
 	HlslVariable* in = cx.emitInput(node, L"Input");
-	if (!in || in->getType() < HtTexture2D)
+	if (!in)
 		return false;
 
-	std::wstring uniformName = L"__private__" + in->getName() + L"_size";
+	std::wstring textureName = in->getName();
 
-	HlslVariable* out = cx.getShader().createVariable(
-		node->findOutputPin(L"Output"),
-		uniformName,
-		HtFloat3
-	);
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat3);
 
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(uniformName) == uniforms.end())
+	f << L"float3 " << out->getName() << L" = float3(0.0f, 0.0f, 0.0f);" << Endl;
+	switch (in->getType())
 	{
-		uint32_t registerIndex = cx.getShader().addUniform(uniformName, HtFloat3, 1);
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-		fu << L"uniform float3 " << uniformName << L" : register(c" << registerIndex << L");" << Endl;
+	case HtTexture2D:
+		f << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y);" << Endl;
+		break;
+
+	case HtTexture3D:
+		f << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y, " << out->getName() << L".z);" << Endl;
+		break;
+
+	case HtTextureCube:
+		f << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y);" << Endl;
+		break;
+
+	default:
+		return false;
 	}
 
 	return true;
@@ -1723,7 +2078,7 @@ bool emitTransform(HlslContext& cx, Transform* node)
 	if (!in || !transform)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"mul(" << transform->getName() << L", " << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"mul(" << transform->getName() << L", " << in->getName() << L");" << Endl;
 	return true;
 }
 
@@ -1734,7 +2089,7 @@ bool emitTranspose(HlslContext& cx, Transpose* node)
 	if (!in)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"transpose(" << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"transpose(" << in->getName() << L");" << Endl;
 	return true;
 }
 
@@ -1745,7 +2100,7 @@ bool emitTruncate(HlslContext& cx, Truncate* node)
 	if (!in)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"trunc(" << in->getName() << L");" << Endl;
+	assign(cx, f, out) << L"trunc(" << in->getName() << L");" << Endl;
 	return true;
 }
 
@@ -1757,18 +2112,36 @@ bool emitUniform(HlslContext& cx, Uniform* node)
 		hlsl_from_parameter_type(node->getParameterType())
 	);
 
-	if (out->getType() < HtTexture2D)
+	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+	if (uniforms.find(node->getParameterName()) == uniforms.end())
 	{
-		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-		if (uniforms.find(node->getParameterName()) == uniforms.end())
+		if (out->getType() < HtTexture2D)
 		{
-			uint32_t registerIndex = cx.getShader().addUniform(node->getParameterName(), out->getType(), 1);
-			StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-			fu << L"uniform " << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L" : register(c" << registerIndex << L");" << Endl;
+			const HlslShader::BlockType c_blockType[] = { HlslShader::BtCBufferOnce, HlslShader::BtCBufferFrame, HlslShader::BtCBufferDraw };
+			StringOutputStream& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
+			fu << hlsl_type_name(out->getType(), false) << L" " << node->getParameterName() << L";" << Endl;
 		}
+		else
+		{
+			StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtTextures);
+			switch (node->getParameterType())
+			{
+			case PtTexture2D:
+				fu << L"Texture2D " << node->getParameterName() << L";" << Endl;
+				break;
+
+			case PtTexture3D:
+				fu << L"Texture3D " << node->getParameterName() << L";" << Endl;
+				break;
+
+			case PtTextureCube:
+				fu << L"TextureCube " << node->getParameterName() << L";" << Endl;
+				break;
+			}
+		}
+
+		cx.getShader().addUniform(node->getParameterName());
 	}
-	else
-		cx.getShader().defineTexture(node->getParameterName());
 
 	return true;
 }
@@ -1777,7 +2150,7 @@ bool emitVector(HlslContext& cx, Vector* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
-	assign(f, out) << L"float4(" << node->get().x() << L", " << node->get().y() << L", " << node->get().z() << L", " << node->get().w() << L");" << Endl;
+	assign(cx, f, out) << L"float4(" << node->get().x() << L", " << node->get().y() << L", " << node->get().z() << L", " << node->get().w() << L");" << Endl;
 	return true;
 }
 
@@ -1795,7 +2168,7 @@ bool emitVertexInput(HlslContext& cx, VertexInput* node)
 		std::wstring semantic = hlsl_semantic(node->getDataUsage(), node->getIndex());
 
 		StringOutputStream& fi = shader.getOutputStream(HlslShader::BtInput);
-		fi << hlsl_type_name(type) << L" " << node->getName() << L" : " << semantic << L";" << Endl;
+		fi << hlsl_type_name(type, cx.inPixel()) << L" " << node->getName() << L" : " << semantic << L";" << Endl;
 
 		shader.addInput(node->getName());
 	}
@@ -1811,19 +2184,19 @@ bool emitVertexInput(HlslContext& cx, VertexInput* node)
 		switch (type)
 		{
 		case HtFloat:
-			assign(f, out) << L"float4(i." << node->getName() << L".x, 0.0f, 0.0f, 1.0f);" << Endl;
+			assign(cx, f, out) << L"float4(i." << node->getName() << L".x, 0.0f, 0.0f, 1.0f);" << Endl;
 			break;
 
 		case HtFloat2:
-			assign(f, out) << L"float4(i." << node->getName() << L".xy, 0.0f, 1.0f);" << Endl;
+			assign(cx, f, out) << L"float4(i." << node->getName() << L".xy, 0.0f, 1.0f);" << Endl;
 			break;
 
 		case HtFloat3:
-			assign(f, out) << L"float4(i." << node->getName() << L".xyz, 1.0f);" << Endl;
+			assign(cx, f, out) << L"float4(i." << node->getName() << L".xyz, 1.0f);" << Endl;
 			break;
 
 		default:
-			assign(f, out) << L"i." << node->getName() << L";" << Endl;
+			assign(cx, f, out) << L"i." << node->getName() << L";" << Endl;
 			break;
 		}
 	}
@@ -1837,19 +2210,19 @@ bool emitVertexInput(HlslContext& cx, VertexInput* node)
 		switch (type)
 		{
 		case HtFloat:
-			assign(f, out) << L"float4(i." << node->getName() << L".x, 0.0f, 0.0f, 0.0f);" << Endl;
+			assign(cx, f, out) << L"float4(i." << node->getName() << L".x, 0.0f, 0.0f, 0.0f);" << Endl;
 			break;
 
 		case HtFloat2:
-			assign(f, out) << L"float4(i." << node->getName() << L".xy, 0.0f, 0.0f);" << Endl;
+			assign(cx, f, out) << L"float4(i." << node->getName() << L".xy, 0.0f, 0.0f);" << Endl;
 			break;
 
 		case HtFloat3:
-			assign(f, out) << L"float4(i." << node->getName() << L".xyz, 0.0f);" << Endl;
+			assign(cx, f, out) << L"float4(i." << node->getName() << L".xyz, 0.0f);" << Endl;
 			break;
 
 		default:
-			assign(f, out) << L"i." << node->getName() << L";" << Endl;
+			assign(cx, f, out) << L"i." << node->getName() << L";" << Endl;
 			break;
 		}
 	}
@@ -1860,7 +2233,7 @@ bool emitVertexInput(HlslContext& cx, VertexInput* node)
 			type
 		);
 		StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
-		assign(f, out) << L"i." << node->getName() << L";" << Endl;
+		assign(cx, f, out) << L"i." << node->getName() << L";" << Endl;
 	}
 
 	return true;
@@ -1869,26 +2242,27 @@ bool emitVertexInput(HlslContext& cx, VertexInput* node)
 bool emitVertexOutput(HlslContext& cx, VertexOutput* node)
 {
 	cx.enterVertex();
+
 	HlslVariable* in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
 
 	StringOutputStream& fo = cx.getVertexShader().getOutputStream(HlslShader::BtOutput);
-	fo << L"float4 Position : POSITION0;" << Endl;
+	fo << L"float4 Position : SV_Position;" << Endl;
 
 	StringOutputStream& fb = cx.getVertexShader().getOutputStream(HlslShader::BtBody);
 	switch (in->getType())
 	{
 	case HtFloat:
-		fb << L"o.Position = float4(" << in->getName() << L".x, 0.0f, 0.0f, 1.0f);" << Endl;
+		fb << L"o.Position = float4(" << in->getName() << L".x, 0, 0, 1);" << Endl;
 		break;
 
 	case HtFloat2:
-		fb << L"o.Position = float4(" << in->getName() << L".xy, 0.0f, 1.0f);" << Endl;
+		fb << L"o.Position = float4(" << in->getName() << L".xy, 0, 1);" << Endl;
 		break;
 
 	case HtFloat3:
-		fb << L"o.Position = float4(" << in->getName() << L".xyz, 1.0f);" << Endl;
+		fb << L"o.Position = float4(" << in->getName() << L".xyz, 1);" << Endl;
 		break;
 
 	case HtFloat4:
@@ -1943,6 +2317,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Exp >()] = new EmitterCast< Exp >(emitExp);
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
 	m_emitters[&type_of< FragmentPosition >()] = new EmitterCast< FragmentPosition >(emitFragmentPosition);
+	m_emitters[&type_of< FrontFace >()] = new EmitterCast< FrontFace >(emitFrontFace);
 	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
 	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
@@ -1964,12 +2339,13 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
-	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
+	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
+	m_emitters[&type_of< Repeat >()] = new EmitterCast< Repeat >(emitRepeat);
 	m_emitters[&type_of< Round >()] = new EmitterCast< Round >(emitRound);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
-	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
 	m_emitters[&type_of< Script >()] = new EmitterCast< Script >(emitScript);
+	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
 	m_emitters[&type_of< Sign >()] = new EmitterCast< Sign >(emitSign);
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);

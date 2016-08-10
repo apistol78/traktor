@@ -3,10 +3,10 @@
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Render/Dx9/Hlsl.h"
-#include "Render/Dx9/HlslProgram.h"
 #include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/ProgramResourceDx9.h"
+#include "Render/Dx9/Hlsl/Hlsl.h"
+#include "Render/Dx9/Hlsl/HlslProgram.h"
 #include "Render/Dx9/Win32/ProgramCompilerWin32.h"
 
 namespace traktor

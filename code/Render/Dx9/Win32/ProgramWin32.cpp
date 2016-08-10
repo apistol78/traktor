@@ -2,7 +2,6 @@
 #include "Core/Misc/TString.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/CubeTextureDx9.h"
-#include "Render/Dx9/HlslProgram.h"
 #include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/ProgramResourceDx9.h"
 #include "Render/Dx9/ResourceManagerDx9.h"

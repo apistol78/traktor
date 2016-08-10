@@ -1,9 +1,9 @@
 #ifndef traktor_render_HlslContext_H
 #define traktor_render_HlslContext_H
 
-#include "Render/Dx9/HlslEmitter.h"
-#include "Render/Dx9/HlslShader.h"
 #include "Render/Dx9/StateBlockDx9.h"
+#include "Render/Dx9/Hlsl/HlslEmitter.h"
+#include "Render/Dx9/Hlsl/HlslShader.h"
 
 namespace traktor
 {

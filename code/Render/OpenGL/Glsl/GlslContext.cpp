@@ -1,6 +1,6 @@
 #include "Core/Log/Log.h"
-#include "Render/OpenGL/GlslContext.h"
-#include "Render/OpenGL/GlslShader.h"
+#include "Render/OpenGL/Glsl/GlslContext.h"
+#include "Render/OpenGL/Glsl/GlslShader.h"
 #include "Render/Shader/InputPin.h"
 #include "Render/Shader/Node.h"
 #include "Render/Shader/OutputPin.h"

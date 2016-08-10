@@ -1,6 +1,6 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Render/OpenGL/GlslShader.h"
+#include "Render/OpenGL/Glsl/GlslShader.h"
 
 namespace traktor
 {

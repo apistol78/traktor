@@ -3,9 +3,9 @@
 
 #include <map>
 #include <vector>
-#include "Render/OpenGL/GlslEmitter.h"
-#include "Render/OpenGL/GlslShader.h"
 #include "Render/OpenGL/TypesOpenGL.h"
+#include "Render/OpenGL/Glsl/GlslEmitter.h"
+#include "Render/OpenGL/Glsl/GlslShader.h"
 
 namespace traktor
 {
