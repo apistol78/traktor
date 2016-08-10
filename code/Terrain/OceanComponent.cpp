@@ -31,6 +31,7 @@ render::handle_t s_handleReflectionEnable;
 render::handle_t s_handleEye;
 render::handle_t s_handleShallowTint;
 render::handle_t s_handleReflectionTint;
+render::handle_t s_handleShadowTint;
 render::handle_t s_handleDeepColor;
 render::handle_t s_handleOpacity;
 render::handle_t s_handleWavesA;
@@ -63,6 +64,7 @@ OceanComponent::OceanComponent()
 	s_handleEye = render::getParameterHandle(L"Eye");
 	s_handleShallowTint = render::getParameterHandle(L"ShallowTint");
 	s_handleReflectionTint = render::getParameterHandle(L"ReflectionTint");
+	s_handleShadowTint = render::getParameterHandle(L"ShadowTint");
 	s_handleDeepColor = render::getParameterHandle(L"DeepColor");
 	s_handleOpacity = render::getParameterHandle(L"Opacity");
 	s_handleWavesA = render::getParameterHandle(L"WavesA");
@@ -157,6 +159,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 	m_shallowTint = data.m_shallowTint;
 	m_reflectionTint = data.m_reflectionTint;
+	m_shadowTint = data.m_shadowTint;
 	m_deepColor = data.m_deepColor;
 	m_opacity = data.m_opacity;
 	m_maxAmplitude = 0.0f;
@@ -237,6 +240,7 @@ void OceanComponent::render(
 	renderBlock->programParams->setVectorParameter(s_handleEye, eye);
 	renderBlock->programParams->setVectorParameter(s_handleShallowTint, m_shallowTint);
 	renderBlock->programParams->setVectorParameter(s_handleReflectionTint, m_reflectionTint);
+	renderBlock->programParams->setVectorParameter(s_handleShadowTint, m_shadowTint);
 	renderBlock->programParams->setVectorParameter(s_handleDeepColor, m_deepColor);
 	renderBlock->programParams->setFloatParameter(s_handleOpacity, m_opacity);
 	renderBlock->programParams->setVectorArrayParameter(s_handleWavesA, m_wavesA, sizeof_array(m_wavesA));

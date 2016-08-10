@@ -116,6 +116,7 @@ private:
 	static render::handle_t ms_handleReflectionMap;
 	static render::handle_t ms_handleFogDistanceAndDensity;
 	static render::handle_t ms_handleFogColor;
+	static render::handle_t ms_handleShadowMask;
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;

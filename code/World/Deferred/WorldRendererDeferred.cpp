@@ -69,6 +69,7 @@ render::handle_t WorldRendererDeferred::ms_handleNormalMap = 0;
 render::handle_t WorldRendererDeferred::ms_handleReflectionMap = 0;
 render::handle_t WorldRendererDeferred::ms_handleFogDistanceAndDensity = 0;
 render::handle_t WorldRendererDeferred::ms_handleFogColor = 0;
+render::handle_t WorldRendererDeferred::ms_handleShadowMask = 0;
 
 WorldRendererDeferred::WorldRendererDeferred()
 :	m_shadowsQuality(QuDisabled)
@@ -93,6 +94,7 @@ WorldRendererDeferred::WorldRendererDeferred()
 	ms_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
 	ms_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
 	ms_handleFogColor = render::getParameterHandle(L"World_FogColor");
+	ms_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
 }
 
 bool WorldRendererDeferred::create(
@@ -789,6 +791,12 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
+	render::RenderTargetSet* shadowMask = 0;
+	if (m_shadowMaskFilterTargetSet)
+		shadowMask = m_shadowMaskFilterTargetSet;
+	else
+		shadowMask = m_shadowMaskProjectTargetSet;
+
 	// Render shadow and light maps.
 	if ((flags & (WrfShadowMap | WrfLightMap)) != 0 && !f.lights.empty())
 	{
@@ -903,13 +911,6 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 							firstLight = false;
 						}
 
-						render::RenderTargetSet* shadowMask = 0;
-
-						if (m_shadowMaskFilterTargetSet)
-							shadowMask = m_shadowMaskFilterTargetSet;
-						else
-							shadowMask = m_shadowMaskProjectTargetSet;
-
 						m_lightRenderer->renderLight(
 							m_renderView,
 							f.time,
@@ -1015,6 +1016,7 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 	{
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
+
 		visualProgramParams.setFloatParameter(ms_handleTime, f.time);
 		visualProgramParams.setVectorParameter(ms_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
 		visualProgramParams.setVectorParameter(ms_handleFogColor, m_fogColor);
@@ -1025,6 +1027,10 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 		visualProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
 		visualProgramParams.setTextureParameter(ms_handleReflectionMap, m_reflectionMap);
+
+		if (shadowMask)
+			visualProgramParams.setTextureParameter(ms_handleShadowMask, shadowMask->getColorTexture(0));
+
 		visualProgramParams.endParameters(m_globalContext);
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual opaque");
@@ -1390,8 +1396,9 @@ void WorldRendererDeferred::buildVisual(WorldRenderView& worldRenderView, int fr
 	WorldRenderPassDeferred defaultPreLitPass(
 		ms_techniqueDeferredColor,
 		worldRenderView,
-		m_settings.fogEnabled,
-		m_gbufferTargetSet->getColorTexture(0) != 0
+		m_settings.fogEnabled,							// Fog enabled.
+		m_gbufferTargetSet->getColorTexture(0) != 0,		// Depth enabled.
+		m_shadowMaskProjectTargetSet != 0				// Shadows enabled.
 	);
 	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
 		f.visual->build(worldRenderView, defaultPreLitPass, *i);
