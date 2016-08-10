@@ -1,5 +1,5 @@
 @echo off
-call %~dp0config.bat
+call "%~dp0config.bat"
 
 set FILE="%1"
 set /p VERSION=< %FILE%
