@@ -23,6 +23,11 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	RefArray< ISoundBufferCursor > m_cursors;
 	float* m_outputSamples[SbcMaxChannelCount];
 
+	EnvelopeGrainCursor()
+	{
+		m_outputSamples[0] = 0;
+	}
+
 	virtual ~EnvelopeGrainCursor()
 	{
 		Alloc::freeAlign(m_outputSamples[0]);

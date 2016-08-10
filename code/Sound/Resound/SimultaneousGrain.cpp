@@ -19,6 +19,11 @@ struct SimultaneousGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	RefArray< ISoundBufferCursor > m_grainCursors;
 	float* m_outputSamples[SbcMaxChannelCount];
 
+	SimultaneousGrainCursor()
+	{
+		m_outputSamples[0] = 0;
+	}
+
 	virtual ~SimultaneousGrainCursor()
 	{
 		Alloc::freeAlign(m_outputSamples[0]);
