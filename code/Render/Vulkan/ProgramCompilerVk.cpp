@@ -1,4 +1,6 @@
 #include "Render/Vulkan/ProgramCompilerVk.h"
+#include "Render/Vulkan/Glsl/Glsl.h"
+#include "Render/Vulkan/Glsl/GlslProgram.h"
 
 namespace traktor
 {
@@ -13,7 +15,7 @@ ProgramCompilerVk::ProgramCompilerVk()
 
 const wchar_t* ProgramCompilerVk::getPlatformSignature() const
 {
-	return L"Vulkan";
+	return L"Vulkan GLSL";
 }
 
 Ref< ProgramResource > ProgramCompilerVk::compile(
@@ -24,6 +26,10 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	Stats* outStats
 ) const
 {
+	GlslProgram glslProgram;
+	if (!Glsl().generate(shaderGraph, settings, glslProgram))
+		return 0;
+
 	return 0;
 }
 
@@ -35,7 +41,13 @@ bool ProgramCompilerVk::generate(
 	std::wstring& outPixelShader
 ) const
 {
-	return false;
+	GlslProgram glslProgram;
+	if (!Glsl().generate(shaderGraph, settings, glslProgram))
+		return false;
+
+	outVertexShader = glslProgram.getVertexShader();
+	outPixelShader = glslProgram.getFragmentShader();
+	return true;
 }
 
 	}

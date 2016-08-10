@@ -15,6 +15,10 @@
 #include "Render/Vulkan/VertexBufferDynamicVk.h"
 #include "Render/Vulkan/VertexBufferStaticVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
+#if defined(_WIN32)
+#	include "Render/Vulkan/Win32/ApiLoader.h"
+#	include "Render/Vulkan/Win32/Window.h"
+#endif
 
 namespace traktor
 {
@@ -24,20 +28,94 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVk", 0, RenderSystemVk, IRenderSystem)
 
 RenderSystemVk::RenderSystemVk()
+:	m_vkInstance(0)
 {
 }
 
 bool RenderSystemVk::create(const RenderSystemDesc& desc)
 {
+#if defined(_WIN32)
+
+	if (!initializeVulkanApi())
+		return false;
+
+	// Create render window; used by default render view and also by shared context.
+	m_window = new Window();
+	if (!m_window->create())
+	{
+		log::error << L"Failed to create render window." << Endl;
+		return false;
+	}
+
+#endif
+
+	uint32_t layerCount = 0;
+	vkEnumerateInstanceLayerProperties(&layerCount, 0);
+	if (layerCount == 0)
+	{
+		log::error << L"Failed to create Vulkan instance layer properties." << Endl;
+		return false;
+	}
+ 
+	VkLayerProperties* layersAvailable = new VkLayerProperties[layerCount];
+	vkEnumerateInstanceLayerProperties(&layerCount, layersAvailable);
+
+	const char* validationLayerNames[] = { "VK_LAYER_LUNARG_standard_validation" };
+	bool foundValidation = false;
+	for (uint32_t i = 0; i < layerCount; ++i)
+	{
+	   if (strcmp(layersAvailable[i].layerName, validationLayerNames[0]) == 0)
+	   {
+			foundValidation = true;
+			break;
+	   }
+	}
+	if (!foundValidation)
+		log::warning << L"No Vulkan validation layer found." << Endl;
+
+	VkApplicationInfo applicationInfo = {};
+	applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	applicationInfo.pNext = 0;
+	applicationInfo.pApplicationName = "Traktor";
+	applicationInfo.pEngineName = "Traktor";
+	applicationInfo.engineVersion = 1;
+	applicationInfo.apiVersion = VK_MAKE_VERSION(1, 0, 0);
+
+	VkInstanceCreateInfo instanceInfo = {};
+	instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	instanceInfo.pApplicationInfo = &applicationInfo;
+	instanceInfo.enabledLayerCount = 0;
+	instanceInfo.ppEnabledLayerNames = 0;
+	instanceInfo.enabledExtensionCount = 0;
+	instanceInfo.ppEnabledExtensionNames = 0;
+
+	if (foundValidation)
+	{
+		instanceInfo.enabledLayerCount = 1;
+		instanceInfo.ppEnabledLayerNames = validationLayerNames;
+	}
+	
+	if (vkCreateInstance(&instanceInfo, 0, &m_vkInstance) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan instance." << Endl;
+		return false;
+	}
+
 	return true;
 }
 
 void RenderSystemVk::destroy()
 {
+#if defined(_WIN32)
+
+	finalizeVulkanApi();
+
+#endif
 }
 
 bool RenderSystemVk::reset(const RenderSystemDesc& desc)
 {
+	// \todo Update mipmap bias and maximum anisotropy.
 	return true;
 }
 
@@ -73,7 +151,11 @@ float RenderSystemVk::getDisplayAspectRatio() const
 
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc& desc)
 {
+#if defined(_WIN32)
+	Ref< RenderViewVk > renderView = new RenderViewVk(m_window);
+#else
 	Ref< RenderViewVk > renderView = new RenderViewVk();
+#endif
 
 	if (!renderView->reset(desc))
 		return 0;

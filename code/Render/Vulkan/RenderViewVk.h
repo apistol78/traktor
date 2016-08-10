@@ -2,6 +2,9 @@
 #define traktor_render_RenderViewVk_H
 
 #include "Render/IRenderView.h"
+#if defined(_WIN32)
+#	include "Render/Vulkan/Win32/Window.h"
+#endif
 
 namespace traktor
 {
@@ -11,16 +14,22 @@ namespace traktor
 /*!
  * \ingroup Vulkan
  */
-class RenderViewVk : public IRenderView
+class RenderViewVk
+:	public IRenderView
+#if defined(_WIN32)
+,	public IWindowListener
+#endif
 {
 	T_RTTI_CLASS;
 
 public:
+#if defined(_WIN32)
+	RenderViewVk(Window* window);
+#else
 	RenderViewVk();
+#endif
 
 	virtual ~RenderViewVk();
-
-	bool create();
 
 	virtual bool nextEvent(RenderEvent& outEvent) T_OVERRIDE T_FINAL;
 
@@ -75,6 +84,18 @@ public:
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const T_OVERRIDE T_FINAL;
 
 	virtual bool getBackBufferContent(void* buffer) const T_OVERRIDE T_FINAL;
+
+private:
+#if defined(_WIN32)
+	Ref< Window > m_window;
+
+	// \name IWindowListener implementation.
+	// \{
+
+	virtual bool windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult) T_OVERRIDE T_FINAL;
+
+	// \}
+#endif
 };
 
 	}
