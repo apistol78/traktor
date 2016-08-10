@@ -65,6 +65,7 @@ private:
 	resource::Id< render::ITexture > m_reflectionMap;
 	Color4f m_shallowTint;
 	Color4f m_reflectionTint;
+	Color4f m_shadowTint;
 	Color4f m_deepColor;
 	float m_opacity;
 	bool m_allowSSReflections;

@@ -20,6 +20,8 @@ void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classOceanComponent->addMethod("getShallowTint", &OceanComponent::getShallowTint);
 	classOceanComponent->addMethod("setReflectionTint", &OceanComponent::setReflectionTint);
 	classOceanComponent->addMethod("getReflectionTint", &OceanComponent::getReflectionTint);
+	classOceanComponent->addMethod("setShadowTint", &OceanComponent::setShadowTint);
+	classOceanComponent->addMethod("getShadowTint", &OceanComponent::getShadowTint);
 	classOceanComponent->addMethod("setDeepColor", &OceanComponent::setDeepColor);
 	classOceanComponent->addMethod("getDeepColor", &OceanComponent::getDeepColor);
 	classOceanComponent->addMethod("setOpacity", &OceanComponent::setOpacity);

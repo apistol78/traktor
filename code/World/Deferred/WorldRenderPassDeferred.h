@@ -30,7 +30,8 @@ public:
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
 		bool fogEnabled,
-		bool depthEnable
+		bool depthEnable,
+		bool shadowEnable
 	);
 
 	WorldRenderPassDeferred(
@@ -55,6 +56,7 @@ private:
 	const WorldRenderView& m_worldRenderView;
 	bool m_fogEnabled;
 	bool m_depthEnable;
+	bool m_shadowEnable;
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const;
 

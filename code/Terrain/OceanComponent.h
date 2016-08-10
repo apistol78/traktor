@@ -91,6 +91,10 @@ public:
 
 	const Color4f& getReflectionTint() const { return m_reflectionTint; }
 
+	void setShadowTint(const Color4f& shadowTint) { m_shadowTint = shadowTint; }
+
+	const Color4f& getShadowTint() const { return m_shadowTint; }
+
 	void setDeepColor(const Color4f& deepColor) { m_deepColor = deepColor; }
 
 	const Color4f& getDeepColor() const { return m_deepColor; }
@@ -110,6 +114,7 @@ private:
 	render::Primitives m_primitives;
 	Color4f m_shallowTint;
 	Color4f m_reflectionTint;
+	Color4f m_shadowTint;
 	Color4f m_deepColor;
 	float m_opacity;
 	float m_maxAmplitude;

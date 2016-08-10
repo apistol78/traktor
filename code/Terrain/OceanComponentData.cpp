@@ -11,11 +11,12 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 0, OceanComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 1, OceanComponentData, world::IEntityComponentData)
 
 OceanComponentData::OceanComponentData()
 :	m_shallowTint(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_reflectionTint(1.0f, 1.0f, 1.0f, 1.0f)
+,	m_shadowTint(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_deepColor(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_opacity(0.04f)
 ,	m_allowSSReflections(true)
@@ -28,6 +29,10 @@ void OceanComponentData::serialize(ISerializer& s)
 	s >> resource::Member< render::ITexture >(L"reflectionMap", m_reflectionMap);
 	s >> Member< Color4f >(L"shallowTint", m_shallowTint);
 	s >> Member< Color4f >(L"reflectionTint", m_reflectionTint);
+	
+	if (s.getVersion() >= 1)
+		s >> Member< Color4f >(L"shadowTint", m_shadowTint);
+
 	s >> Member< Color4f >(L"deepColor", m_deepColor);
 	s >> Member< float >(L"opacity", m_opacity);
 	s >> Member< bool >(L"allowSSReflections", m_allowSSReflections);
