@@ -1,6 +1,10 @@
 #ifndef traktor_render_RenderSystemVk_H
 #define traktor_render_RenderSystemVk_H
 
+#define VK_USE_PLATFORM_WIN32_KHR
+#define VK_NO_PROTOTYPES
+#include <vulkan.h>
+
 #include "Core/Ref.h"
 #include "Render/IRenderSystem.h"
 
@@ -16,6 +20,10 @@ namespace traktor
 {
 	namespace render
 	{
+
+#if defined(_WIN32)
+class Window;
+#endif
 
 /*! \brief Vulkan render system.
  * \ingroup Vulkan
@@ -70,6 +78,13 @@ public:
 	virtual void purge() T_OVERRIDE T_FINAL;
 
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const T_OVERRIDE T_FINAL;
+
+private:
+#if defined(_WIN32)
+	Ref< Window > m_window;
+#endif
+
+	VkInstance m_vkInstance;
 };
 
 	}

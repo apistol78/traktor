@@ -3,6 +3,9 @@
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
+#if defined(_WIN32)
+#	include "Render/Vulkan/Win32/Window.h"
+#endif
 
 namespace traktor
 {
@@ -11,18 +14,22 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVk", RenderViewVk, IRenderView)
 
+#if defined(_WIN32)
+RenderViewVk::RenderViewVk(Window* window)
+:	m_window(window)
+{
+	if (m_window)
+		m_window->addListener(this);
+}
+#else
 RenderViewVk::RenderViewVk()
 {
 }
+#endif
 
 RenderViewVk::~RenderViewVk()
 {
 	close();
-}
-
-bool RenderViewVk::create()
-{
-	return true;
 }
 
 bool RenderViewVk::nextEvent(RenderEvent& outEvent)
@@ -36,6 +43,17 @@ void RenderViewVk::close()
 
 bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 {
+#if defined(_WIN32)
+
+	// Cannot reset embedded view.
+	if (!m_window)
+		return false;
+
+	m_window->removeListener(this);
+	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
+	m_window->addListener(this);
+
+#endif
 	return true;
 }
 
@@ -150,6 +168,13 @@ bool RenderViewVk::getBackBufferContent(void* buffer) const
 {
 	return false;
 }
+
+#if defined(_WIN32)
+bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)
+{
+	return false;
+}
+#endif
 
 	}
 }

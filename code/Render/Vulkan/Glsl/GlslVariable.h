@@ -11,7 +11,7 @@ namespace traktor
 	{
 
 /*!
- * \ingroup OGL
+ * \ingroup Vulkan
  */
 class GlslVariable : public Object
 {

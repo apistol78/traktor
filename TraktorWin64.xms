@@ -24221,6 +24221,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src/vulkan</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
@@ -24248,6 +24249,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src/vulkan</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
@@ -24275,6 +24277,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src/vulkan</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -24302,6 +24305,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src/vulkan</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -24327,6 +24331,24 @@
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>Win32</name>
+					<items>
+						<item type="File">
+							<fileName>Win32/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Glsl</name>
+					<items>
+						<item type="File">
+							<fileName>Glsl/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
