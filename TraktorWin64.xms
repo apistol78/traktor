@@ -24304,8 +24304,198 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.vulkan.glslang</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/vulkan/glslang</sourcePath>
+						<configurations>
+							<item type="Configuration" version="3">
+								<name>DebugShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/vulkan/glslang</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+							</item>
+							<item type="Configuration" version="3">
+								<name>ReleaseShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/vulkan/glslang</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+							</item>
+							<item type="Configuration" version="3">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/vulkan/glslang</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+							</item>
+							<item type="Configuration" version="3">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/vulkan/glslang</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+							</item>
+						</configurations>
+						<items>
+							<item type="Filter">
+								<name>glslang</name>
+								<items>
+									<item type="Filter">
+										<name>GenericCodeGen</name>
+										<items>
+											<item type="File">
+												<fileName>glslang/GenericCodeGen/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>Include</name>
+										<items>
+											<item type="File">
+												<fileName>glslang/Include/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>MachineIndependent</name>
+										<items>
+											<item type="File">
+												<fileName>glslang/MachineIndependent/*.*</fileName>
+												<items/>
+											</item>
+											<item type="Filter">
+												<name>preprocessor</name>
+												<items>
+													<item type="File">
+														<fileName>glslang/MachineIndependent/preprocessor/*.*</fileName>
+														<items/>
+													</item>
+												</items>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>OSDependent</name>
+										<items>
+											<item type="Filter">
+												<name>Windows</name>
+												<items>
+													<item type="File">
+														<fileName>glslang/OSDependent/Windows/ossource.cpp</fileName>
+														<items/>
+													</item>
+												</items>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>Public</name>
+										<items>
+											<item type="File">
+												<fileName>glslang/Public/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Spirv</name>
+								<items>
+									<item type="File">
+										<fileName>Spirv/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>hlsl</name>
+								<items>
+									<item type="File">
+										<fileName>hlsl/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>OGLCompilersDLL</name>
+								<items>
+									<item type="File">
+										<fileName>OGLCompilersDLL/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
+				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[140]/dependencies/item[2]/project"/>
 	</projects>
 	<aggregations/>
 </object>

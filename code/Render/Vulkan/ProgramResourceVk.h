@@ -23,6 +23,9 @@ public:
 private:
 	friend class ProgramVk;
 	friend class ProgramCompilerVk;
+
+	std::vector< uint32_t > m_vertexShader;
+	std::vector< uint32_t > m_fragmentShader;
 };
 
 	}

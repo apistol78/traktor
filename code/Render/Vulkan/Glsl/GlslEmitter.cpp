@@ -1520,9 +1520,6 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		switch (texture->getType())
 		{
 		case GtTexture2D:
-			assign(f, out) << L"texture2DBilinear(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
-			break;
-
 		case GtTexture3D:
 		case GtTextureCube:
 			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
@@ -2199,7 +2196,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 		std::wstring attributeName = glsl_vertex_attr_name(node->getDataUsage(), node->getIndex());
 
 		StringOutputStream& fi = cx.getVertexShader().getOutputStream(GlslShader::BtInput);
-		fi << L"in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
+		fi << L"layout (location = " << node->getIndex() << L") in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
 
 		if (node->getDataUsage() == DuPosition && type != GtFloat4)
 		{
@@ -2315,19 +2312,19 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 	switch (in->getType())
 	{
 	case GtFloat:
-		fb << L"gl_Position = PV(vec4(" << in->getName() << L", 0.0, 0.0, 1.0));" << Endl;
+		fb << L"gl_Position = vec4(" << in->getName() << L", 0.0, 0.0, 1.0);" << Endl;
 		break;
 
 	case GtFloat2:
-		fb << L"gl_Position = PV(vec4(" << in->getName() << L".xy, 0.0, 1.0));" << Endl;
+		fb << L"gl_Position = vec4(" << in->getName() << L".xy, 0.0, 1.0);" << Endl;
 		break;
 
 	case GtFloat3:
-		fb << L"gl_Position = PV(vec4(" << in->getName() << L".xyz, 1.0));" << Endl;
+		fb << L"gl_Position = vec4(" << in->getName() << L".xyz, 1.0);" << Endl;
 		break;
 
 	case GtFloat4:
-		fb << L"gl_Position = PV(" << in->getName() << L");" << Endl;
+		fb << L"gl_Position = " << in->getName() << L";" << Endl;
 		break;
 
 	default:

@@ -22,7 +22,9 @@ ShaderDependencyPane::ShaderDependencyPane(editor::IEditor* editor, const Guid& 
 
 void ShaderDependencyPane::destroy()
 {
-	m_dependencyTracker->removeListener(this);
+	if (m_dependencyTracker)
+		m_dependencyTracker->removeListener(this);
+
 	ui::Container::destroy();
 }
 
@@ -35,9 +37,18 @@ bool ShaderDependencyPane::create(ui::Widget* parent)
 
 	m_refereeList = new ui::ListBox();
 	m_refereeList->create(this, L"", ui::ListBox::WsSingle);
-	m_refereeList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ShaderDependencyPane::eventRefereeListDoubleClick);
 
-	m_dependencyTracker->addListener(this);
+	if (m_dependencyTracker)
+	{
+		m_refereeList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ShaderDependencyPane::eventRefereeListDoubleClick);
+		m_dependencyTracker->addListener(this);
+	}
+	else
+	{
+		m_refereeList->add(i18n::Text(L"SHADERGRAPH_NO_DEPENDENCY_TRACKER_ERROR"));
+		m_refereeList->setEnable(false);
+	}
+
 	return true;
 }
 

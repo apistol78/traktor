@@ -145,35 +145,8 @@ std::wstring GlslShader::getGeneratedShader() const
 	ss << L"#extension GL_ARB_separate_shader_objects : enable" << Endl;
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
 	ss << Endl;
-	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
-	ss << Endl;
 
-	if (m_shaderType == StVertex)
-	{
-		// Add post-scale transform function.
-		ss << L"vec4 PV(in vec4 cp0)" << Endl;
-		ss << L"{" << Endl;
-		ss << L"\treturn vec4(cp0.x, -cp0.y, cp0.z, cp0.w);" << Endl;
-		ss << L"}" << Endl;
-		ss << Endl;
-
-		// Add bilinear texture fetch.
-		ss << L"vec4 texture2DBilinear(sampler2D sampler, vec2 uv)" << Endl;
-		ss << L"{" << Endl;
-		ss << L"\tvec2 textureSize = vec2(textureSize(sampler, 0));" << Endl;
-		ss << L"\tvec2 texelSize = 1.0 / textureSize;" << Endl;
-		ss << L"\tvec4 tl = texture(sampler, uv);" << Endl;
-		ss << L"\tvec4 tr = texture(sampler, uv + vec2(texelSize.x, 0.0));" << Endl;
-		ss << L"\tvec4 bl = texture(sampler, uv + vec2(0.0, texelSize.y));" << Endl;
-		ss << L"\tvec4 br = texture(sampler, uv + texelSize);" << Endl;
-		ss << L"\tvec2 f = fract(uv * textureSize);" << Endl;
-		ss << L"\tvec4 a = mix(tl, tr, f.x);" << Endl;
-		ss << L"\tvec4 b = mix(bl, br, f.x);" << Endl;
-		ss << L"\treturn mix(a, b, f.y);" << Endl;
-		ss << L"}" << Endl;
-		ss << Endl;
-	}
-	else
+	if (m_shaderType == StFragment)
 	{
 		// Add fragment outputs.
 		ss << L"out vec4 _gl_FragData_0;" << Endl;
@@ -182,8 +155,8 @@ std::wstring GlslShader::getGeneratedShader() const
 		ss << L"out vec4 _gl_FragData_3;" << Endl;
 	}
 
-	ss << L"uniform vec2 _gl_targetSize;" << Endl;
-	ss << Endl;
+	//ss << L"uniform vec2 _gl_targetSize;" << Endl;
+	//ss << Endl;
 
 	ss << getOutputStream(BtUniform).str();
 	ss << Endl;
