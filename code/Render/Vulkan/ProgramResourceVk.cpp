@@ -1,3 +1,5 @@
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 
 namespace traktor
@@ -13,6 +15,8 @@ ProgramResourceVk::ProgramResourceVk()
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
+	s >> MemberStlVector< uint32_t >(L"vertexShader", m_vertexShader);
+	s >> MemberStlVector< uint32_t >(L"fragmentShader", m_fragmentShader);
 }
 
 	}
