@@ -21,6 +21,8 @@ namespace traktor
 	namespace render
 	{
 
+class ContextVk;
+
 #if defined(_WIN32)
 class Window;
 #endif
@@ -83,8 +85,7 @@ private:
 #if defined(_WIN32)
 	Ref< Window > m_window;
 #endif
-
-	VkInstance m_vkInstance;
+	Ref< ContextVk > m_sharedContext;
 };
 
 	}
