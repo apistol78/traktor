@@ -8,6 +8,7 @@ namespace traktor
 	namespace render
 	{
 
+class ContextVk;
 class ProgramResourceVk;
 
 /*!
@@ -18,7 +19,7 @@ class ProgramVk : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramVk();
+	ProgramVk(ContextVk* sharedContext);
 
 	virtual ~ProgramVk();
 
@@ -41,6 +42,9 @@ public:
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) T_OVERRIDE T_FINAL;
 
 	virtual void setStencilReference(uint32_t stencilReference) T_OVERRIDE T_FINAL;
+
+private:
+	Ref< ContextVk > m_sharedContext;
 };
 
 	}

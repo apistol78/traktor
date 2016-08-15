@@ -12,9 +12,25 @@ namespace traktor
 
 extern PFN_vkCreateInstance vkCreateInstance;
 extern PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
+extern PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
+extern PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices;
+extern PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties;
+extern PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties;
+extern PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties;
+extern PFN_vkCreateDevice vkCreateDevice;
+extern PFN_vkGetDeviceQueue vkGetDeviceQueue;
 extern PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
+extern PFN_vkCreateCommandPool vkCreateCommandPool;
+extern PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers;
+extern PFN_vkCreateShaderModule vkCreateShaderModule;
+
+// Win32 Vulkan extensions.
+extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;
+extern PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
 
 bool initializeVulkanApi();
+
+bool initializeVulkanExtensions(VkInstance instance);
 
 void finalizeVulkanApi();
 
