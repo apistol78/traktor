@@ -83,6 +83,8 @@ public:
 
 	std::wstring getName() const;
 
+	std::wstring getPath() const;
+
 	std::wstring getTypeName() const;
 
 	//@}
