@@ -952,6 +952,10 @@ void SceneEditorPage::updateStatusBar()
 	ss << rad2deg(angles.x()) << L", " << rad2deg(angles.y()) << L", " << rad2deg(angles.z()) << L" deg" << L"     ";
 	ss << m_context->getEntityCount() << L" entities";
 
+	RefArray< EntityAdapter > selectedEntities;
+	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
+		ss << L"     " << selectedEntities[0]->getPath();
+
 	m_statusBar->setText(ss.str());
 }
 
@@ -1131,6 +1135,7 @@ void SceneEditorPage::eventContextSelect(ui::SelectionChangeEvent* event)
 {
 	updateInstanceGrid();
 	updatePropertyObject();
+	updateStatusBar();
 }
 
 void SceneEditorPage::eventContextPreModify(PreModifyEvent* event)

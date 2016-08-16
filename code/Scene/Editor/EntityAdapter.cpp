@@ -79,6 +79,11 @@ std::wstring EntityAdapter::getName() const
 	return m_entityData ? m_entityData->getName() : L"< Null >";
 }
 
+std::wstring EntityAdapter::getPath() const
+{
+	return m_parent ? m_parent->getPath() + L"/" + getName() : getName();
+}
+
 std::wstring EntityAdapter::getTypeName() const
 {
 	return m_entityData ? type_name(m_entityData) : L"< void >";
