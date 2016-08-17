@@ -35,7 +35,7 @@ end
 
 function getSystemPaths()
 	if os.getRegistry == nil then
-		stderr:printLn("Unforntunally statically link win64 product is currently only available from a Windows host.")
+		stderr:printLn("Unfortunately statically link win64 product is currently only available from a Windows host.")
 		return nil
 	end
 
@@ -55,8 +55,12 @@ function getSystemPaths()
 		return nil
 	end
 
-	-- Get Visual Studio 2012 installation path.
-	local vsPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", "11.0")
+	-- Get Visual Studio 2015 installation path.
+	local vsPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\WOW6432Node\\Microsoft\\VisualStudio\\SxS\\VS7", "14.0")
+	if vsPath == nil then
+		vsPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", "14.0")
+	end
+	-- Remove? BEGIN
 	if vsPath == nil then
 		vsPath = os:getRegistry("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", "InstallationFolder")
 	end
@@ -66,8 +70,9 @@ function getSystemPaths()
 	if vsPath == nil then
 		vsPath = os:getRegistry("HKEY_CURRENT_USER", "SOFTWARE\\Wow6432Node\\VisualStudio\\SxS\\VS7", "InstallationFolder")
 	end	
+	-- Remove? END
 	if vsPath == nil then
-		stderr:printLn("Unable to determine Visual Studio 2012 install path; please ensure Visual Studio 2012 is properly installed.")
+		stderr:printLn("Unable to determine Visual Studio 2015 install path; please ensure Visual Studio 2015 is properly installed.")
 		return nil
 	end
 
