@@ -5,13 +5,14 @@
 #include "Render/Shader.h"
 #include "Resource/Member.h"
 #include "Terrain/OceanComponentData.h"
+#include "Terrain/Terrain.h"
 
 namespace traktor
 {
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 1, OceanComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 2, OceanComponentData, world::IEntityComponentData)
 
 OceanComponentData::OceanComponentData()
 :	m_shallowTint(1.0f, 1.0f, 1.0f, 1.0f)
@@ -27,6 +28,10 @@ void OceanComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> resource::Member< render::ITexture >(L"reflectionMap", m_reflectionMap);
+
+	if (s.getVersion() >= 2)
+		s >> resource::Member< Terrain >(L"terrain", m_terrain);
+
 	s >> Member< Color4f >(L"shallowTint", m_shallowTint);
 	s >> Member< Color4f >(L"reflectionTint", m_reflectionTint);
 	
