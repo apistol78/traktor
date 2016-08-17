@@ -22185,7 +22185,7 @@
 		<item ref="/object/projects/item[13]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[4]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[49]/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Render.Ps3</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Ps3</sourcePath>
 			<configurations>
