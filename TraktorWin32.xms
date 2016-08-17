@@ -13210,7 +13210,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Physics.Havok</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Physics/Havok</sourcePath>
 			<configurations>
@@ -13421,7 +13421,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Physics.PhysX</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Physics/PhysX</sourcePath>
 			<configurations>
@@ -15406,7 +15406,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Render.Ps3</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Ps3</sourcePath>
 			<configurations>
