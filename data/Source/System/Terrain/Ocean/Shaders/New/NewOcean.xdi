@@ -89,8 +89,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-623</first>
-				<second>-152</second>
+				<first>-690</first>
+				<second>-148</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -100,8 +100,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-606</first>
-				<second>-88</second>
+				<first>-673</first>
+				<second>-84</second>
 			</position>
 			<name>Edge</name>
 			<usage>DuCustom</usage>
@@ -881,8 +881,8 @@ read-back color buffer.
 			]]>
 			</comment>
 			<position>
-				<first>4351</first>
-				<second>224</second>
+				<first>5139</first>
+				<second>75</second>
 			</position>
 			<priority>
 				<setup>false</setup>
@@ -973,8 +973,8 @@ read-back color buffer.
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>4860</first>
-				<second>246</second>
+				<first>5648</first>
+				<second>97</second>
 			</position>
 			<technique>World_DeferredColor</technique>
 			<priority>
@@ -1016,8 +1016,8 @@ read-back color buffer.
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>4884</first>
-				<second>0</second>
+				<first>5672</first>
+				<second>-149</second>
 			</position>
 			<technique>World_PreLitColor</technique>
 			<priority>
@@ -1059,8 +1059,8 @@ read-back color buffer.
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>4892</first>
-				<second>-236</second>
+				<first>5680</first>
+				<second>-385</second>
 			</position>
 			<technique>World_ForwardColor</technique>
 			<priority>
@@ -1211,6 +1211,58 @@ read-back color buffer.
 			<parameterName>ShadowTint</parameterName>
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>4649</first>
+				<second>-741</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Discard">
+			<comment/>
+			<position>
+				<first>4785</first>
+				<second>-758</second>
+			</position>
+			<operator>CoLess</operator>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>4305</first>
+				<second>-799</second>
+			</position>
+			<fragmentGuid>{67D59220-38DB-3D4E-B62E-7194179D3A6C}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>WorldPosition</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>4653</first>
+				<second>-669</second>
+			</position>
+			<swizzle>y</swizzle>
+		</item>
+		<item type="traktor.render.Branch">
+			<comment/>
+			<position>
+				<first>5239</first>
+				<second>-651</second>
+			</position>
+			<parameterName>TerrainAvailable</parameterName>
 		</item>
 	</nodes>
 	<edges>
@@ -2406,26 +2458,6 @@ read-back color buffer.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[88]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[93]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[88]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[92]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[87]"/>
 				<name>Output</name>
 			</source>
@@ -2622,6 +2654,106 @@ read-back color buffer.
 			<destination>
 				<node ref="/object/nodes/item[102]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[88]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[106]"/>
+				<name>Pass</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[105]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[106]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[107]"/>
+				<name>WorldPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[107]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[105]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[108]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[108]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[106]"/>
+				<name>Reference</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[106]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[109]"/>
+				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[109]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[93]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[109]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[92]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[88]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[109]"/>
+				<name>False</name>
 			</destination>
 		</item>
 	</edges>

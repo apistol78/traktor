@@ -15,6 +15,7 @@
 #include "Resource/IResourceManager.h"
 #include "Terrain/OceanComponent.h"
 #include "Terrain/OceanComponentData.h"
+#include "Terrain/Terrain.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
@@ -28,6 +29,10 @@ namespace traktor
 
 render::handle_t s_handleReflectionMap;
 render::handle_t s_handleReflectionEnable;
+render::handle_t s_handleTerrainAvailable;
+render::handle_t s_handleHeightfield;
+render::handle_t s_handleWorldOrigin;
+render::handle_t s_handleWorldExtent;
 render::handle_t s_handleEye;
 render::handle_t s_handleShallowTint;
 render::handle_t s_handleReflectionTint;
@@ -61,6 +66,10 @@ OceanComponent::OceanComponent()
 {
 	s_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
 	s_handleReflectionEnable = render::getParameterHandle(L"ReflectionEnable");
+	s_handleTerrainAvailable = render::getParameterHandle(L"TerrainAvailable");
+	s_handleHeightfield = render::getParameterHandle(L"Heightfield");
+	s_handleWorldOrigin = render::getParameterHandle(L"WorldOrigin");
+	s_handleWorldExtent = render::getParameterHandle(L"WorldExtent");
 	s_handleEye = render::getParameterHandle(L"Eye");
 	s_handleShallowTint = render::getParameterHandle(L"ShallowTint");
 	s_handleReflectionTint = render::getParameterHandle(L"ReflectionTint");
@@ -157,6 +166,12 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 			return false;
 	}
 
+	if (data.m_terrain)
+	{
+		if (!resourceManager->bind(data.m_terrain, m_terrain))
+			return false;
+	}
+
 	m_shallowTint = data.m_shallowTint;
 	m_reflectionTint = data.m_reflectionTint;
 	m_shadowTint = data.m_shadowTint;
@@ -222,6 +237,7 @@ void OceanComponent::render(
 	worldRenderPass.setShaderCombination(m_shader);
 
 	m_shader->setCombination(s_handleReflectionEnable, reflectionEnable && m_allowSSReflections);
+	m_shader->setCombination(s_handleTerrainAvailable, m_terrain);
 
 	render::IProgram* program = m_shader->getCurrentProgram();
 	if (!program)
@@ -255,6 +271,16 @@ void OceanComponent::render(
 
 	if (m_reflectionMap)
 		renderBlock->programParams->setTextureParameter(s_handleReflectionMap, m_reflectionMap);
+
+	if (m_terrain)
+	{
+		const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
+		Vector4 worldOrigin = -worldExtent * Scalar(0.5f);
+
+		renderBlock->programParams->setTextureParameter(s_handleHeightfield, m_terrain->getHeightMap());
+		renderBlock->programParams->setVectorParameter(s_handleWorldOrigin, worldOrigin);
+		renderBlock->programParams->setVectorParameter(s_handleWorldExtent, worldExtent);
+	}
 
 	renderBlock->programParams->endParameters(renderContext);
 
