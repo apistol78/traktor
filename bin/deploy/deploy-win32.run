@@ -35,53 +35,11 @@ end
 
 function getSystemPaths()
 	if os.getRegistry == nil then
-		stderr:printLn("Unfortunately statically link win64 product is currently only available from a Windows host.")
-		return nil
-	end
-
-	-- Get Windows SDK installation path.
-	local sdkPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v7.1A", "InstallationFolder")
-	if sdkPath == nil then
-		sdkPath = os:getRegistry("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v7.1A", "InstallationFolder")
-	end
-	if sdkPath == nil then
-		sdkPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\Wow6432Node\\Microsoft SDKs\\Windows\\v7.1A", "InstallationFolder")
-	end
-	if sdkPath == nil then
-		sdkPath = os:getRegistry("HKEY_CURRENT_USER", "SOFTWARE\\Wow6432Node\\Microsoft SDKs\\Windows\\v7.1A", "InstallationFolder")
-	end
-	if sdkPath == nil then
-		stderr:printLn("Unable to determine Windows SDK install path; please ensure Windows SDK 7.1A is properly installed")
-		return nil
-	end
-
-	-- Get Visual Studio 2015 installation path.
-	local vsPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\WOW6432Node\\Microsoft\\VisualStudio\\SxS\\VS7", "14.0")
-	if vsPath == nil then
-		vsPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", "14.0")
-	end
-	-- Remove? BEGIN
-	if vsPath == nil then
-		vsPath = os:getRegistry("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", "InstallationFolder")
-	end
-	if vsPath == nil then
-		vsPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\Wow6432Node\\VisualStudio\\SxS\\VS7", "InstallationFolder")
-	end
-	if vsPath == nil then
-		vsPath = os:getRegistry("HKEY_CURRENT_USER", "SOFTWARE\\Wow6432Node\\VisualStudio\\SxS\\VS7", "InstallationFolder")
-	end	
-	-- Remove? END
-	if vsPath == nil then
-		stderr:printLn("Unable to determine Visual Studio 2015 install path; please ensure Visual Studio 2015 is properly installed.")
+		stderr:printLn("Unfortunately statically link win32 product is currently only available from a Windows host.")
 		return nil
 	end
 
 	local p = {}
-	p.vcBinPath = vsPath .. "VC\\bin"
-	p.vcCommonPath = vsPath .. "Common7\\IDE"
-	p.vcLibPath = vsPath .. "VC\\lib"
-	p.sdkBinPath = sdkPath .. "Bin"
-	p.sdkLibPath = sdkPath .. "Lib"
 	p.dxLibPath = "$(TRAKTOR_HOME)\\3rdp\\DirectX SDK (June 2010)\\Lib\\x86"
 
 	return p
@@ -94,24 +52,6 @@ function deployStatic(args)
 	local p = getSystemPaths()
 	if p == nil then return 1 end
 
-	local link = p.vcBinPath .. "\\link.exe"
-	if not fileSystem:exist(Path(link)) then
-		stderr:printLn("Unable to find Visual Studio 2012 C++ linker; please ensure Visual Studio 2012 is properly installed.")
-		return 1
-	end
-
-	local mt = p.sdkBinPath .. "\\mt.exe"
-	if not fileSystem:exist(Path(mt)) then
-		stderr:printLn("Unable to find Windows SDK manifest tool; please ensure Windows SDK 7.1A is properly installed.")
-		return 1
-	end
-
-	local rc = p.sdkBinPath .. "\\rc.exe"
-	if not fileSystem:exist(Path(mt)) then
-		stderr:printLn("Unable to find Windows SDK resource tool; please ensure Windows SDK 7.1A is properly installed.")
-		return 1
-	end
-
 	-- Determine path to module libraries.
 	local prepend
 	if not debug then
@@ -120,6 +60,9 @@ function deployStatic(args)
 		stdout:printLn("Using *DEBUG* binaries")
 	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/debugstatic/"
 	end
+
+	local preamble = "cmd.exe /C \"\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\" && "
+	local postamble = "\""
 
 	-- Append system path to files.
 	local wholeLinkFiles = ""
@@ -149,8 +92,8 @@ function deployStatic(args)
 	end
 
 	-- Compile resources.
-	local cmd = "\"" .. rc .. "\" /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
-	local result = run:execute(cmd, nil)
+	local cmd = "rc /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
+	local result = run:execute(preamble .. cmd .. postamble, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build product resources.")
 		stderr:printLn(cmd)
@@ -159,7 +102,7 @@ function deployStatic(args)
 	end
 
 	-- Link files into an executable product.
-	local cmd = "\"" .. link .. "\" " .. externalLinkFiles .. " " .. wholeLinkFiles .. " " .. linkerIncludes
+	local cmd = "link " .. externalLinkFiles .. " " .. wholeLinkFiles .. " " .. linkerIncludes
 	cmd = cmd .. " msvcrt.lib winmm.lib iphlpapi.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib"
 	cmd = cmd .. " comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
 	cmd = cmd .. " comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
@@ -167,8 +110,6 @@ function deployStatic(args)
 	cmd = cmd .. " /OUT:$(DEPLOY_EXECUTABLE).exe"
 	cmd = cmd .. " /PDB:$(DEPLOY_EXECUTABLE).pdb"
 	cmd = cmd .. " /LIBPATH:\"" .. p.dxLibPath .. "\""
-	cmd = cmd .. " /LIBPATH:\"" .. p.sdkLibPath .. "\""
-	cmd = cmd .. " /LIBPATH:\"" .. p.vcLibPath .. "\""
 	cmd = cmd .. " /MACHINE:X86"
 	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
 	if not debug then
@@ -176,9 +117,7 @@ function deployStatic(args)
 	else
 		cmd = cmd .. " /DEBUG"
 	end
-	local env = os:getEnvironment()
-	env:set("PATH", env:get("PATH") .. ";" .. p.vcCommonPath)
-	local result = run:execute(cmd, nil, env)
+	local result = run:execute(preamble .. cmd .. postamble, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
@@ -187,8 +126,8 @@ function deployStatic(args)
 	end
 
 	-- Embed manifest in executable product.
-	local cmd = "\"" .. mt .. "\" -manifest $(TRAKTOR_HOME)/res/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
-	local result = run:execute(cmd, nil)
+	local cmd = "mt -manifest $(TRAKTOR_HOME)/res/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
+	local result = run:execute(preamble .. cmd .. postamble, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to embed manifest into executable product.")
 		stderr:printLn(cmd)
@@ -277,24 +216,6 @@ function migrateStatic(args)
 	local p = getSystemPaths()
 	if p == nil then return 1 end
 
-	local link = p.vcBinPath .. "\\link.exe"
-	if not fileSystem:exist(Path(link)) then
-		stderr:printLn("Unable to find Visual Studio 2012 C++ linker; please ensure Visual Studio 2012 is properly installed.")
-		return 1
-	end
-
-	local mt = p.sdkBinPath .. "\\mt.exe"
-	if not fileSystem:exist(Path(mt)) then
-		stderr:printLn("Unable to find Windows SDK manifest tool; please ensure Windows SDK 7.1A is properly installed.")
-		return 1
-	end
-
-	local rc = p.sdkBinPath .. "\\rc.exe"
-	if not fileSystem:exist(Path(mt)) then
-		stderr:printLn("Unable to find Windows SDK resource tool; please ensure Windows SDK 7.1A is properly installed.")
-		return 1
-	end
-
 	-- Determine path to module libraries.
 	local prepend
 	if not debug then
@@ -303,6 +224,9 @@ function migrateStatic(args)
 		stdout:printLn("Using *DEBUG* binaries")
 	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/debugstatic/"
 	end
+
+	local preamble = "cmd.exe /C \"\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\" && "
+	local postamble = "\""
 
 	-- Append system path to files.
 	local wholeLinkFiles = ""
@@ -332,8 +256,8 @@ function migrateStatic(args)
 	end
 
 	-- Compile resources.
-	local cmd = "\"" .. rc .. "\" /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
-	local result = run:execute(cmd, nil)
+	local cmd = "rc /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
+	local result = run:execute(preamble .. cmd .. postamble, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build product resources.")
 		stderr:printLn(cmd)
@@ -342,7 +266,7 @@ function migrateStatic(args)
 	end
 
 	-- Link files into an executable product.
-	local cmd = "\"" .. link .. "\" " .. externalLinkFiles .. " " .. wholeLinkFiles .. " " .. linkerIncludes
+	local cmd = "link " .. externalLinkFiles .. " " .. wholeLinkFiles .. " " .. linkerIncludes
 	cmd = cmd .. " msvcrt.lib winmm.lib iphlpapi.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib"
 	cmd = cmd .. " comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
 	cmd = cmd .. " comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
@@ -350,8 +274,6 @@ function migrateStatic(args)
 	cmd = cmd .. " /OUT:$(DEPLOY_EXECUTABLE).exe"
 	cmd = cmd .. " /PDB:$(DEPLOY_EXECUTABLE).pdb"
 	cmd = cmd .. " /LIBPATH:\"" .. p.dxLibPath .. "\""
-	cmd = cmd .. " /LIBPATH:\"" .. p.sdkLibPath .. "\""
-	cmd = cmd .. " /LIBPATH:\"" .. p.vcLibPath .. "\""
 	cmd = cmd .. " /MACHINE:X86"
 	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
 	if not debug then
@@ -359,9 +281,7 @@ function migrateStatic(args)
 	else
 		cmd = cmd .. " /DEBUG"
 	end
-	local env = os:getEnvironment()
-	env:set("PATH", env:get("PATH") .. ";" .. p.vcCommonPath)
-	local result = run:execute(cmd, nil, env)
+	local result = run:execute(preamble .. cmd .. postamble, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
@@ -370,8 +290,8 @@ function migrateStatic(args)
 	end
 
 	-- Embed manifest in executable product.
-	local cmd = "\"" .. mt .. "\" -manifest $(TRAKTOR_HOME)/res/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
-	local result = run:execute(cmd, nil)
+	local cmd = "mt -manifest $(TRAKTOR_HOME)/res/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
+	local result = run:execute(preamble .. cmd .. postamble, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to embed manifest into executable product.")
 		stderr:printLn(cmd)
