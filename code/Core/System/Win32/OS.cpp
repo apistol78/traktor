@@ -276,8 +276,7 @@ Ref< IProcess > OS::execute(
 			executable = resolvedCommandLine;
 	}
 
-	// Resolve absolute paths.
-	Path fileAbs = FileSystem::getInstance().getAbsolutePath(executable);
+	Path executablePath = executable;
 	Path workingDirectoryAbs = FileSystem::getInstance().getAbsolutePath(workingDirectory);
 
 	// Create environment variables.
@@ -307,7 +306,11 @@ Ref< IProcess > OS::execute(
 	}
 
 	StringOutputStream ss;
-	ss << L"\"" << fileAbs.getPathName() << L"\"";
+	if (executablePath.getPathName().find(' ') != std::wstring::npos)
+		ss << L"\"" << executablePath.getPathName() << L"\"";
+	else
+		ss << executablePath.getPathName();
+
 	if (!arguments.empty())
 		ss << L" " << arguments;
 
