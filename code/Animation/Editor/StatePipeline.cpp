@@ -1,3 +1,4 @@
+#include "Animation/Animation/SimpleAnimationControllerData.h"
 #include "Animation/Animation/StateNodeAnimation.h"
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Animation/StatePoseControllerData.h"
@@ -14,6 +15,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePipeline", 0, StatePipel
 TypeInfoSet StatePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< SimpleAnimationControllerData >());
 	typeSet.insert(&type_of< StateNode >());
 	typeSet.insert(&type_of< StateNodeAnimation >());
 	typeSet.insert(&type_of< StateGraph >());
@@ -29,7 +31,9 @@ bool StatePipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const StateNodeAnimation* state = dynamic_type_cast< const StateNodeAnimation* >(sourceAsset))
+	if (const SimpleAnimationControllerData* simpleControllerData = dynamic_type_cast< const SimpleAnimationControllerData* >(sourceAsset))
+		pipelineDepends->addDependency(simpleControllerData->getAnimation(), editor::PdfBuild | editor::PdfResource);
+	else if (const StateNodeAnimation* state = dynamic_type_cast< const StateNodeAnimation* >(sourceAsset))
 		pipelineDepends->addDependency(state->getAnimation().getId(), editor::PdfBuild | editor::PdfResource);
 	else if (const StateGraph* stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
 	{
