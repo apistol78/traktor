@@ -19,7 +19,6 @@ render::handle_t s_handleWorld;
 render::handle_t s_handleWorldView;
 render::handle_t s_handleFogEnable;
 render::handle_t s_handleDepthEnable;
-render::handle_t s_handleShadowEnable;
 render::handle_t s_handleLightPositionAndType;
 render::handle_t s_handleLightDirectionAndRange;
 render::handle_t s_handleLightSunColor;
@@ -37,7 +36,6 @@ void initializeHandles()
 	s_handleWorldView = render::getParameterHandle(L"World_WorldView");
 	s_handleFogEnable = render::getParameterHandle(L"World_FogEnable");
 	s_handleDepthEnable = render::getParameterHandle(L"World_DepthEnable");
-	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
 	s_handleLightPositionAndType = render::getParameterHandle(L"World_LightPositionAndType");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
 	s_handleLightSunColor = render::getParameterHandle(L"World_LightSunColor");
@@ -55,14 +53,12 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
 	bool fogEnabled,
-	bool depthEnable,
-	bool shadowEnable
+	bool depthEnable
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
 ,	m_fogEnabled(fogEnabled)
 ,	m_depthEnable(depthEnable)
-,	m_shadowEnable(shadowEnable)
 {
 	initializeHandles();
 }
@@ -75,7 +71,6 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 ,	m_worldRenderView(worldRenderView)
 ,	m_fogEnabled(false)
 ,	m_depthEnable(false)
-,	m_shadowEnable(false)
 {
 	initializeHandles();
 }
@@ -96,7 +91,6 @@ void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader) const
 	{
 		shader->setCombination(s_handleFogEnable, m_fogEnabled);
 		shader->setCombination(s_handleDepthEnable, m_depthEnable);
-		shader->setCombination(s_handleShadowEnable, m_shadowEnable);
 	}
 }
 
@@ -106,7 +100,6 @@ void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader, const
 	{
 		shader->setCombination(s_handleFogEnable, m_fogEnabled);
 		shader->setCombination(s_handleDepthEnable, m_depthEnable);
-		shader->setCombination(s_handleShadowEnable, m_shadowEnable);
 	}
 }
 
