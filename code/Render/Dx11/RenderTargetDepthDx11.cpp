@@ -159,5 +159,10 @@ void RenderTargetDepthDx11::unlock(int level)
 {
 }
 
+void* RenderTargetDepthDx11::getInternalHandle()
+{
+	return m_d3dTexture;
+}
+
 	}
 }

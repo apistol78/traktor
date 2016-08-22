@@ -51,6 +51,7 @@ public:
 protected:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
+	Ref< render::IVRCompositor > m_vrCompositor;
 	Ref< render::TextureFactory > m_textureFactory;
 
 private:

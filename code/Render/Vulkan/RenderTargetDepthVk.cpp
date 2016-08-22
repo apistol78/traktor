@@ -54,5 +54,10 @@ void RenderTargetDepthVk::unlock(int level)
 {
 }
 
+void* RenderTargetDepthVk::getInternalHandle()
+{
+	return 0;
+}
+
 	}
 }

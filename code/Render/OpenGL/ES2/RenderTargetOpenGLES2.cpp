@@ -79,6 +79,11 @@ void RenderTargetOpenGLES2::unlock(int level)
 {
 }
 
+void* RenderTargetOpenGLES2::getInternalHandle()
+{
+	return (void*)m_colorTexture;
+}
+
 void RenderTargetOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));

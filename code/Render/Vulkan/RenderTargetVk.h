@@ -37,6 +37,8 @@ public:
 
 	virtual void unlock(int level) T_OVERRIDE T_FINAL;
 
+	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
+
 private:
 	int32_t m_width;
 	int32_t m_height;

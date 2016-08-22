@@ -300,6 +300,11 @@ void SimpleTextureOpenGLES2::unlock(int level)
 	m_dirty = level;
 }
 
+void* SimpleTextureOpenGLES2::getInternalHandle()
+{
+	return (void*)m_textureName;
+}
+
 void SimpleTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));

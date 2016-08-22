@@ -38,6 +38,8 @@ public:
 
 	virtual void unlock(int level) T_OVERRIDE T_FINAL;
 
+	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
+
 	ID3D11ShaderResourceView* getD3D11TextureResourceView() const;
 
 private:

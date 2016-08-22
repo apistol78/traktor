@@ -130,6 +130,11 @@ void SimpleTextureDx11::unlock(int level)
 	m_context->getD3DDeviceContext()->Unmap(m_d3dTexture, level);
 }
 
+void* SimpleTextureDx11::getInternalHandle()
+{
+	return m_d3dTexture;
+}
+
 ID3D11ShaderResourceView* SimpleTextureDx11::getD3D11TextureResourceView() const
 {
 	return m_d3dTextureResourceView;

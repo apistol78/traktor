@@ -64,6 +64,11 @@ public:
 		m_texture->unlock(level);
 	}
 
+	virtual void* getInternalHandle() T_OVERRIDE T_FINAL
+	{
+		return m_texture->getInternalHandle();
+	}
+
 private:
 	Ref< AccTextureCache > m_cache;
 	Ref< render::ISimpleTexture > m_texture;

@@ -155,5 +155,10 @@ void RenderTargetWin32::unlock(int level)
 {
 }
 
+void* RenderTargetWin32::getInternalHandle()
+{
+	return m_d3dTargetTexture;
+}
+
 	}
 }

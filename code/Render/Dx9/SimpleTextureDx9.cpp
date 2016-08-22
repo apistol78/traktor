@@ -170,6 +170,11 @@ void SimpleTextureDx9::unlock(int level)
 	m_lock = 0;
 }
 
+void* SimpleTextureDx9::getInternalHandle()
+{
+	return m_d3dTexture;
+}
+
 HRESULT SimpleTextureDx9::lostDevice()
 {
 	return S_OK;
