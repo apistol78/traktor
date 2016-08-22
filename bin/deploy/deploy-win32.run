@@ -1,4 +1,5 @@
 import(traktor)
+import(traktor.run)
 
 
 -- Tools
@@ -23,17 +24,7 @@ function string:endswith(send)
 end
 
 
-function build(args)
-	stdout:printLn("Building asset(s)...")
-	local cmdline = tools.pipeline .. " -p -s=Pipeline"
-	for i = 1, args:size() - 1 do
-		cmdline = cmdline .. " " .. args:get(i)
-	end
-	return run:execute(cmdline)
-end
-
-
-function getSystemPaths()
+local function getSystemPaths()
 	if os.getRegistry == nil then
 		stderr:printLn("Unfortunately statically link win32 product is currently only available from a Windows host.")
 		return nil
@@ -43,6 +34,31 @@ function getSystemPaths()
 	p.dxLibPath = "$(TRAKTOR_HOME)\\3rdp\\DirectX SDK (June 2010)\\Lib\\x86"
 
 	return p
+end
+
+
+local function generateResponseFile(files)
+	local f = fileSystem:open(Path("link.rsp"), 2)
+	assert (f ~= nil)
+
+	local s = StreamOutput(f, Utf8Encoding())
+	local fna = files:split(" ")
+	for _, fn in ipairs(fna) do
+		s:printLn(Path(fn):getPathName())
+	end
+
+	f:close()
+	return "link.rsp"
+end
+
+
+function build(args)
+	stdout:printLn("Building asset(s)...")
+	local cmdline = tools.pipeline .. " -p -s=Pipeline"
+	for i = 1, args:size() - 1 do
+		cmdline = cmdline .. " " .. args:get(i)
+	end
+	return run:execute(cmdline)
 end
 
 
@@ -102,11 +118,16 @@ function deployStatic(args)
 		return 1
 	end
 
+	-- Generate link response file.
+	local rsp = generateResponseFile(
+		externalLinkFiles .. " " .. wholeLinkFiles .. " " ..
+		" msvcrt.lib winmm.lib iphlpapi.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib" ..
+		" comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib" ..
+		" comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
+	)
+
 	-- Link files into an executable product.
-	local cmd = "link " .. externalLinkFiles .. " " .. wholeLinkFiles .. " " .. linkerIncludes
-	cmd = cmd .. " msvcrt.lib winmm.lib iphlpapi.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib"
-	cmd = cmd .. " comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
-	cmd = cmd .. " comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
+	local cmd = "link @" .. rsp .. " " .. linkerIncludes
 	cmd = cmd .. " $(DEPLOY_EXECUTABLE).res"
 	cmd = cmd .. " /OUT:$(DEPLOY_EXECUTABLE).exe"
 	cmd = cmd .. " /PDB:$(DEPLOY_EXECUTABLE).pdb"
@@ -158,6 +179,7 @@ function deployStatic(args)
 	run:rm("*.exp")
 	run:rm("*.lib")
 	run:rm("*.res")
+	run:rm(rsp)
 
 	return 0
 end
@@ -269,11 +291,16 @@ function migrateStatic(args)
 		return 1
 	end
 
+	-- Generate link response file.
+	local rsp = generateResponseFile(
+		externalLinkFiles .. " " .. wholeLinkFiles .. " " ..
+		" msvcrt.lib winmm.lib iphlpapi.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib" ..
+		" comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib" ..
+		" comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
+	)
+
 	-- Link files into an executable product.
-	local cmd = "link " .. externalLinkFiles .. " " .. wholeLinkFiles .. " " .. linkerIncludes
-	cmd = cmd .. " msvcrt.lib winmm.lib iphlpapi.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib"
-	cmd = cmd .. " comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
-	cmd = cmd .. " comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
+	local cmd = "link @" .. rsp .. " " .. linkerIncludes
 	cmd = cmd .. " $(DEPLOY_EXECUTABLE).res"
 	cmd = cmd .. " /OUT:$(DEPLOY_EXECUTABLE).exe"
 	cmd = cmd .. " /PDB:$(DEPLOY_EXECUTABLE).pdb"
@@ -309,6 +336,7 @@ function migrateStatic(args)
 	run:rm("*.exp")
 	run:rm("*.lib")
 	run:rm("*.res")
+	run:rm(rsp)
 
 	-- Copy binaries into "bin".
 	run:mkdir("bin32")
