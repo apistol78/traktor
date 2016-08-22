@@ -35,6 +35,8 @@ public:
 	virtual bool lock(int level, Lock& lock) T_OVERRIDE T_FINAL;
 
 	virtual void unlock(int level) T_OVERRIDE T_FINAL;
+
+	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
 };
 		
 	}

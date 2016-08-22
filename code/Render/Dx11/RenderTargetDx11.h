@@ -39,6 +39,8 @@ public:
 
 	virtual void unlock(int level) T_OVERRIDE T_FINAL;
 
+	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
+
 	void unbind();
 
 	ID3D11RenderTargetView* getD3D11RenderTargetView() const {

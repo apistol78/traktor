@@ -243,6 +243,11 @@ render::IRenderView* RenderServerEmbedded::getRenderView()
 	return m_renderView;
 }
 
+render::IVRCompositor* RenderServerEmbedded::getVRCompositor()
+{
+	return m_vrCompositor;
+}
+
 float RenderServerEmbedded::getScreenAspectRatio() const
 {
 	return m_screenAspectRatio;
@@ -262,11 +267,6 @@ float RenderServerEmbedded::getAspectRatio() const
 bool RenderServerEmbedded::getStereoscopic() const
 {
 	return m_renderViewDesc.stereoscopic;
-}
-
-bool RenderServerEmbedded::getVR() const
-{
-	return false;
 }
 
 int32_t RenderServerEmbedded::getMultiSample() const

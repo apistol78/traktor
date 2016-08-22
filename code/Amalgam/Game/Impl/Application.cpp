@@ -45,6 +45,7 @@
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/IVRCompositor.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
 #include "World/IEntityEventManager.h"
@@ -1114,9 +1115,11 @@ void Application::threadRender()
 			double renderBegin = m_timer.getElapsedTime();
 
 			render::IRenderView* renderView = m_renderServer->getRenderView();
+			render::IVRCompositor* vrCompositor = m_renderServer->getVRCompositor();
+
 			if (renderView)
 			{
-				if (!m_renderServer->getStereoscopic() && !m_renderServer->getVR())
+				if (!m_renderServer->getStereoscopic() && !vrCompositor)
 				{
 					if (renderView->begin(render::EtCyclop))
 					{
@@ -1136,39 +1139,35 @@ void Application::threadRender()
 						renderView->present();
 					}
 				}
-				else if (m_renderServer->getVR())
+				else if (vrCompositor)
 				{
-					if (renderView->begin(render::EtCyclop))
+					if (vrCompositor->beginRenderEye(renderView, render::EtLeft))
 					{
 						if (m_stateRender)
-						{
-							renderView->setViewport(render::Viewport(
-								0, 0,
-								renderView->getWidth() / 2, renderView->getHeight(),
-								0.0f, 1.0f
-							));
 							m_stateRender->render(m_frameRender, render::EtLeft, m_updateInfoRender);
-
-							renderView->setViewport(render::Viewport(
-								renderView->getWidth() / 2, 0,
-								renderView->getWidth() / 2, renderView->getHeight(),
-								0.0f, 1.0f
-							));
-							m_stateRender->render(m_frameRender, render::EtRight, m_updateInfoRender);
-						}
 						else
-						{
 							renderView->clear(
 								render::CfColor | render::CfDepth | render::CfStencil,
 								&m_backgroundColor,
 								1.0f,
 								0
 							);
-						}
-
-						renderView->end();
-						renderView->present();
+						vrCompositor->endRenderEye(renderView, render::EtLeft);
 					}
+					if (vrCompositor->beginRenderEye(renderView, render::EtRight))
+					{
+						if (m_stateRender)
+							m_stateRender->render(m_frameRender, render::EtRight, m_updateInfoRender);
+						else
+							renderView->clear(
+								render::CfColor | render::CfDepth | render::CfStencil,
+								&m_backgroundColor,
+								1.0f,
+								0
+							);
+						vrCompositor->endRenderEye(renderView, render::EtRight);
+					}
+					vrCompositor->presentCompositeOutput(renderView);
 				}
 				else if (m_renderServer->getStereoscopic())
 				{

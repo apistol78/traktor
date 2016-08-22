@@ -13,6 +13,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/IVRCompositor.h"
 #include "Render/ImageProcess/ImageProcessFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
@@ -143,7 +144,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.RenderServerDefault", RenderServerDefau
 
 RenderServerDefault::RenderServerDefault()
 :	m_screenAspectRatio(1.0f)
-,	m_vr(false)
 {
 }
 
@@ -151,6 +151,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 {
 	std::wstring renderType = defaultSettings->getProperty< PropertyString >(L"Render.Type");
 	std::wstring captureRenderType = settings->getProperty< PropertyString >(L"Render.CaptureType");
+	std::wstring vrCompositorType = settings->getProperty< PropertyString >(L"Render.VRCompositorType");
 
 	Ref< render::IRenderSystem > renderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(renderType));
 	if (!renderSystem)
@@ -164,6 +165,14 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 			return false;
 
 		std::swap(captureRenderSystem, renderSystem);
+	}
+
+	Ref< render::IVRCompositor > vrCompositor;
+	if (!vrCompositorType.empty())
+	{
+		vrCompositor = dynamic_type_cast< render::IVRCompositor* >(TypeInfo::createInstance(vrCompositorType));
+		if (!vrCompositor)
+			return false;
 	}
 
 	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
@@ -258,8 +267,6 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	m_renderViewDesc.displayMode.stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
 	m_renderViewDesc.displayMode.colorBits = 24;
 
-	m_vr = settings->getProperty< PropertyBoolean >(L"Render.VR", false);
-
 #endif
 
 	// Ensure no invalid multi-sample configuration is entered.
@@ -294,22 +301,25 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 #endif
 
 	settings->setProperty< PropertyBoolean >(L"Render.Stereoscopic", m_renderViewDesc.displayMode.stereoscopic);
-	settings->setProperty< PropertyBoolean >(L"Render.VR", m_vr);
+
+	// Create VR compositor.
+	if (vrCompositor)
+	{
+		if (!vrCompositor->create(renderSystem, renderView))
+			return false;
+	}
 
 	m_renderSystem = renderSystem;
 	m_renderView = renderView;
+	m_vrCompositor = vrCompositor;
 
 	return true;
 }
 
 void RenderServerDefault::destroy()
 {
-	if (m_renderView)
-	{
-		m_renderView->close();
-		m_renderView = 0;
-	}
-
+	safeDestroy(m_vrCompositor);
+	safeClose(m_renderView);
 	safeDestroy(m_renderSystem);
 }
 
@@ -520,6 +530,11 @@ render::IRenderView* RenderServerDefault::getRenderView()
 	return m_renderView;
 }
 
+render::IVRCompositor* RenderServerDefault::getVRCompositor()
+{
+	return m_vrCompositor;
+}
+
 float RenderServerDefault::getScreenAspectRatio() const
 {
 	return m_screenAspectRatio;
@@ -539,11 +554,6 @@ float RenderServerDefault::getAspectRatio() const
 bool RenderServerDefault::getStereoscopic() const
 {
 	return m_renderViewDesc.displayMode.stereoscopic;
-}
-
-bool RenderServerDefault::getVR() const
-{
-	return m_vr;
 }
 
 int32_t RenderServerDefault::getMultiSample() const

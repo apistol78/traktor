@@ -172,6 +172,11 @@ void SimpleTextureOpenGL::unlock(int level)
 	));
 }
 
+void* SimpleTextureOpenGL::getInternalHandle()
+{
+	return (void*)m_textureName;
+}
+
 void SimpleTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));

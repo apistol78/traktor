@@ -25,12 +25,12 @@ public:
 	{
 	}
 
-	virtual Vector4 getSize() const
+	virtual Vector4 getSize() const T_OVERRIDE T_FINAL
 	{
 		return Vector4(float(m_width), float(m_height), 0.0f, 0.0f);
 	}
 
-	virtual Vector4 get(const Vector4& texCoord) const
+	virtual Vector4 get(const Vector4& texCoord) const T_OVERRIDE T_FINAL
 	{
 		int x = int(m_width * texCoord.x());
 		int y = int(m_height * texCoord.y());
@@ -101,6 +101,11 @@ bool RenderTargetSw::lock(int level, Lock& lock)
 
 void RenderTargetSw::unlock(int level)
 {
+}
+
+void* RenderTargetSw::getInternalHandle()
+{
+	return 0;
 }
 
 uint32_t* RenderTargetSw::getColorSurface()

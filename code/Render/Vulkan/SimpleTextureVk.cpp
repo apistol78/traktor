@@ -49,5 +49,10 @@ void SimpleTextureVk::unlock(int level)
 {
 }
 
+void* SimpleTextureVk::getInternalHandle()
+{
+	return 0;
+}
+
 	}
 }

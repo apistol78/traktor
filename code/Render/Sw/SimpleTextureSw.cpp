@@ -31,12 +31,12 @@ public:
 		return Vector4(sample, sample, sample, sample);
 	}
 
-	virtual Vector4 getSize() const
+	virtual Vector4 getSize() const T_OVERRIDE T_FINAL
 	{
 		return Vector4(float(m_width), float(m_height), 0.0f, 0.0f);
 	}
 
-	virtual Vector4 get(const Vector4& texCoord) const
+	virtual Vector4 get(const Vector4& texCoord) const T_OVERRIDE T_FINAL
 	{
 		float tx = texCoord.x();
 		float ty = texCoord.y();
@@ -296,6 +296,11 @@ void SimpleTextureSw::unlock(int level)
 
 	delete[] m_lock;
 	m_lock = 0;
+}
+
+void* SimpleTextureSw::getInternalHandle()
+{
+	return 0;
 }
 
 Ref< AbstractSampler > SimpleTextureSw::createSampler() const

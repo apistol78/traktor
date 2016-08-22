@@ -75,6 +75,11 @@ void RenderTargetOpenGL::unlock(int level)
 {
 }
 
+void* RenderTargetOpenGL::getInternalHandle()
+{
+	return (void*)m_colorTexture;
+}
+
 void RenderTargetOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_colorTexture));

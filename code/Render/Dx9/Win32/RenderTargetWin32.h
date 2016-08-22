@@ -35,22 +35,24 @@ public:
 	// \name ITexture
 	// \{
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual ITexture* resolve();
+	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
 
 	// \}
 
 	// \name ISimpleTexture
 	// \{
 
-	virtual int getWidth() const;
+	virtual int getWidth() const T_OVERRIDE T_FINAL;
 	
-	virtual int getHeight() const;
+	virtual int getHeight() const T_OVERRIDE T_FINAL;
 
-	virtual bool lock(int level, Lock& lock);
+	virtual bool lock(int level, Lock& lock) T_OVERRIDE T_FINAL;
 
-	virtual void unlock(int level);
+	virtual void unlock(int level) T_OVERRIDE T_FINAL;
+
+	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
 
 	// \}
 

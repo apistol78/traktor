@@ -19,6 +19,7 @@ namespace traktor
 
 class IRenderSystem;
 class IRenderView;
+class IVRCompositor;
 
 	}
 
@@ -47,6 +48,8 @@ public:
 
 	virtual render::IRenderView* getRenderView() = 0;
 
+	virtual render::IVRCompositor* getVRCompositor() = 0;
+
 	virtual float getScreenAspectRatio() const = 0;
 
 	virtual float getViewAspectRatio() const = 0;
@@ -54,8 +57,6 @@ public:
 	virtual float getAspectRatio() const = 0;
 
 	virtual bool getStereoscopic() const = 0;
-
-	virtual bool getVR() const = 0;
 
 	virtual int32_t getMultiSample() const = 0;
 

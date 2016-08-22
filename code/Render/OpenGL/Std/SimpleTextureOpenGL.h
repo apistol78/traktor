@@ -40,6 +40,8 @@ public:
 
 	virtual void unlock(int level) T_OVERRIDE T_FINAL;
 
+	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
+
 	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) T_OVERRIDE T_FINAL;
 
 	virtual void bindSize(GLint locationSize) T_OVERRIDE T_FINAL;

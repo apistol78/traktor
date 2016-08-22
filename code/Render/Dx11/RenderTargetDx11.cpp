@@ -190,6 +190,11 @@ void RenderTargetDx11::unlock(int level)
 {
 }
 
+void* RenderTargetDx11::getInternalHandle()
+{
+	return (m_d3dTexture != m_d3dTextureRead) ? m_d3dTextureRead : m_d3dTexture;
+}
+
 void RenderTargetDx11::unbind()
 {
 	if (m_d3dTexture != m_d3dTextureRead)
