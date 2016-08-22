@@ -73,6 +73,11 @@ FileSystem* FileSystem_getInstance()
 	return &FileSystem::getInstance();
 }
 
+IVolume* FileSystem_getVolume(FileSystem* self, int32_t index)
+{
+	return self->getVolume(index);
+}
+
 RefArray< File > FileSystem_find(FileSystem* self, const std::wstring& mask)
 {
 	RefArray< File > files;
@@ -225,6 +230,11 @@ Any PropertyGroup_getPropertyRaw(PropertyGroup* self, const std::wstring& proper
 bool PropertyBoolean_get(PropertyBoolean* self)
 {
 	return PropertyBoolean::get(self);
+}
+
+Color4ub PropertyColor_get(PropertyColor* self)
+{
+	return PropertyColor::get(self);
 }
 
 float PropertyFloat_get(PropertyFloat* self)
@@ -388,7 +398,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFileSystem->addMethod("mount", &FileSystem::mount);
 	classFileSystem->addMethod("umount", &FileSystem::umount);
 	classFileSystem->addMethod("getVolumeCount", &FileSystem::getVolumeCount);
-	//classFileSystem->addMethod("getVolume", &FileSystem::getVolume);
+	classFileSystem->addMethod("getVolume", &FileSystem_getVolume);
 	classFileSystem->addMethod("getVolumeId", &FileSystem::getVolumeId);
 	classFileSystem->addMethod("setCurrentVolume", &FileSystem::setCurrentVolume);
 	classFileSystem->addMethod("getCurrentVolume", &FileSystem::getCurrentVolume);
@@ -513,6 +523,8 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< PropertyColor > > classPropertyColor = new AutoRuntimeClass< PropertyColor >();
 	classPropertyColor->addConstructor();
+	classPropertyColor->addConstructor< Color4ub >();
+	classPropertyColor->addMethod("get", &PropertyColor_get);
 	registrar->registerClass(classPropertyColor);
 
 	Ref< AutoRuntimeClass< PropertyFloat > > classPropertyFloat = new AutoRuntimeClass< PropertyFloat >();

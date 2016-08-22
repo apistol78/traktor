@@ -57,21 +57,21 @@ public:
 	 *
 	 * \return Number of mounted volumes.
 	 */
-	int getVolumeCount() const;
+	int32_t getVolumeCount() const;
 
 	/*! \brief Get volume by index.
 	 *
 	 * \param index Index of mounted volume.
 	 * \return Volume instance.
 	 */
-	Ref< IVolume > getVolume(int index) const;
+	IVolume* getVolume(int32_t index) const;
 
 	/*! \brief Get identifier of volume.
 	 *
 	 * \param index Index of mounted volume.
 	 * \return Volume mount identifier.
 	 */
-	std::wstring getVolumeId(int index) const;
+	std::wstring getVolumeId(int32_t index) const;
 	
 	/*! \brief Set volume as current volume.
 	 *
@@ -83,7 +83,7 @@ public:
 	 *
 	 * \return Current volume.
 	 */
-	Ref< IVolume > getCurrentVolume() const;
+	IVolume* getCurrentVolume() const;
 
 	/*! \brief Set current volume and directory.
 	 *
@@ -109,7 +109,7 @@ public:
 	 * \param out Array of file descriptions.
 	 * \return Number of files matching fileMask.
 	 */
-	int find(const Path& fileMask, RefArray< File >& out);
+	int32_t find(const Path& fileMask, RefArray< File >& out);
 
 	/*! \brief Modify file's flags.
 	 *
@@ -225,7 +225,7 @@ private:
 	std::map< std::wstring, Ref< IVolume > > m_volumes;
 	Ref< IVolume > m_currentVolume;
 
-	Ref< IVolume > getVolume(const Path& path) const;
+	IVolume* getVolume(const Path& path) const;
 };
 
 }

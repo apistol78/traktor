@@ -73,12 +73,12 @@ void FileSystem::umount(const std::wstring& id)
 		m_volumes.erase(i);
 }
 
-int FileSystem::getVolumeCount() const
+int32_t FileSystem::getVolumeCount() const
 {
 	return int(std::distance(m_volumes.begin(), m_volumes.end()));
 }
 
-Ref< IVolume > FileSystem::getVolume(int index) const
+IVolume* FileSystem::getVolume(int32_t index) const
 {
 	std::map< std::wstring, Ref< IVolume > >::const_iterator i = m_volumes.begin();
 	while (i != m_volumes.end() && index-- > 0)
@@ -86,7 +86,7 @@ Ref< IVolume > FileSystem::getVolume(int index) const
 	return i != m_volumes.end() ? i->second : 0;
 }
 
-std::wstring FileSystem::getVolumeId(int index) const
+std::wstring FileSystem::getVolumeId(int32_t index) const
 {
 	std::map< std::wstring, Ref< IVolume > >::const_iterator i = m_volumes.begin();
 	while (i != m_volumes.end() && index-- > 0)
@@ -99,7 +99,7 @@ void FileSystem::setCurrentVolume(IVolume* volume)
 	m_currentVolume = volume;
 }
 
-Ref< IVolume > FileSystem::getCurrentVolume() const
+IVolume* FileSystem::getCurrentVolume() const
 {
 	return m_currentVolume;
 }
@@ -348,9 +348,9 @@ void FileSystem::destroy()
 	T_SAFE_RELEASE(this);
 }
 
-Ref< IVolume > FileSystem::getVolume(const Path& path) const
+IVolume* FileSystem::getVolume(const Path& path) const
 {
-	Ref< IVolume > volume;
+	IVolume* volume = 0;
 	
 	if (path.hasVolume() == true)
 	{
