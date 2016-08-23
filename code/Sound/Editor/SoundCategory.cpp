@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeDecibel.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
@@ -29,7 +30,7 @@ void SoundCategory::serialize(ISerializer& s)
 		s >> Member< std::wstring >(L"configurationId", m_configurationId);
 
 	if (s.getVersion() >= 5)
-		s >> Member< float >(L"gain", m_gain);
+		s >> Member< float >(L"gain", m_gain, AttributeDecibel());
 	else
 	{
 		float volumeLin = 1.0f;

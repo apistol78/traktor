@@ -3,6 +3,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
 #include "Core/Serialization/AttributeAngles.h"
+#include "Core/Serialization/AttributeDecibel.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributeHex.h"
 #include "Core/Serialization/AttributeMultiLine.h"
@@ -112,6 +113,8 @@ void InspectReflector::operator >> (const Member< int8_t >& m)
 		m,
 		min,
 		max,
+		false,
+		false,
 		false
 	));
 }
@@ -136,7 +139,8 @@ void InspectReflector::operator >> (const Member< uint8_t >& m)
 		min,
 		max,
 		false,
-		hex != 0
+		hex != 0,
+		false
 	));
 }
 
@@ -157,6 +161,8 @@ void InspectReflector::operator >> (const Member< int16_t >& m)
 		m,
 		min,
 		max,
+		false,
+		false,
 		false
 	));
 }
@@ -181,7 +187,8 @@ void InspectReflector::operator >> (const Member< uint16_t >& m)
 		min,
 		max,
 		false,
-		hex != 0
+		hex != 0,
+		false
 	));
 }
 
@@ -202,6 +209,8 @@ void InspectReflector::operator >> (const Member< int32_t >& m)
 		m,
 		min,
 		max,
+		false,
+		false,
 		false
 	));
 }
@@ -226,7 +235,8 @@ void InspectReflector::operator >> (const Member< uint32_t >& m)
 		min,
 		max,
 		false,
-		hex != 0
+		hex != 0,
+		false
 	));
 }
 
@@ -247,6 +257,8 @@ void InspectReflector::operator >> (const Member< int64_t >& m)
 		(double)m,
 		min,
 		max,
+		false,
+		false,
 		false
 	));
 }
@@ -271,7 +283,8 @@ void InspectReflector::operator >> (const Member< uint64_t >& m)
 		min,
 		max,
 		false,
-		hex != 0
+		hex != 0,
+		false
 	));
 }
 
@@ -292,7 +305,9 @@ void InspectReflector::operator >> (const Member< float >& m)
 		m,
 		min,
 		max,
-		true
+		true,
+		false,
+		bool(findAttribute< AttributeDecibel >(m) != 0)
 	));
 }
 
@@ -313,7 +328,9 @@ void InspectReflector::operator >> (const Member< double >& m)
 		m,
 		min,
 		max,
-		true
+		true,
+		false,
+		bool(findAttribute< AttributeDecibel >(m) != 0)
 	));
 }
 
@@ -381,7 +398,9 @@ void InspectReflector::operator >> (const Member< Scalar >& m)
 		float(v),
 		min,
 		max,
-		true
+		true,
+		false,
+		bool(findAttribute< AttributeDecibel >(m) != 0)
 	));
 }
 

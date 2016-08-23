@@ -30,7 +30,7 @@ class T_DLLCLASS NumericPropertyItem : public PropertyItem
 	T_RTTI_CLASS;
 
 public:
-	NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint = true, bool hex = false);
+	NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex, bool db);
 
 	void setValue(double value);
 
@@ -72,6 +72,7 @@ private:
 	double m_limitMax;
 	bool m_floatPoint;
 	bool m_hex;
+	bool m_db;
 	bool m_mouseAdjust;
 	Point m_mouseLastPosition;
 

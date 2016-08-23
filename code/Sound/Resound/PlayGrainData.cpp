@@ -15,7 +15,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.PlayGrainData", 1, PlayGrainData, IGrainData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.PlayGrainData", 2, PlayGrainData, IGrainData)
 
 PlayGrainData::PlayGrainData()
 :	m_gain(0.0f, 0.0f)
@@ -43,7 +43,16 @@ void PlayGrainData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Sound >(L"sound", m_sound);
 	s >> MemberRefArray< IFilter >(L"filters", m_filters);
-	s >> MemberComposite< Range< float > >(L"gain", m_gain);
+	
+	if (s.getVersion() >= 2)
+		s >> MemberComposite< Range< float > >(L"gain", m_gain);
+	else
+	{
+		s >> MemberComposite< Range< float > >(L"gain", m_gain);
+		m_gain.min = linearToDecibel(1.0f + m_gain.min);
+		m_gain.max = linearToDecibel(1.0f + m_gain.max);
+	}
+
 	s >> MemberComposite< Range< float > >(L"pitch", m_pitch);
 
 	if (s.getVersion() >= 1)

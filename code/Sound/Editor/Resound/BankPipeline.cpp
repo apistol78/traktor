@@ -83,7 +83,7 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 9, BankPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 10, BankPipeline, editor::DefaultPipeline)
 
 TypeInfoSet BankPipeline::getAssetTypes() const
 {
