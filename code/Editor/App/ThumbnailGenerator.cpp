@@ -17,8 +17,9 @@ ThumbnailGenerator::ThumbnailGenerator(const Path& thumbsPath)
 {
 }
 
-Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t width, int32_t height, bool visibleAlpha)
+Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t width, int32_t height, AlphaMode alphaMode)
 {
+	const wchar_t* alphaPrefix[] = { L"o", L"a", L"ao" };
 	std::wstring pathName = fileName.getPathName();
 
 	// Generate checksum of full path to source image.
@@ -32,7 +33,7 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 		fileName.getFileNameNoExtension() + L"_" +
 		toString(adler.get()) + L"_" +
 		toString(width) + L"x" + toString(height) + L"_" +
-		(visibleAlpha ? L"a" : L"o") +
+		alphaPrefix[int32_t(alphaMode)] +
 		L".png";
 
 	if (FileSystem::getInstance().exist(thumbFileName))
@@ -60,7 +61,7 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	);
 	image->apply(&scale);
 
-	if (image->getPixelFormat().getAlphaBits() > 0 && visibleAlpha)
+	if (image->getPixelFormat().getAlphaBits() > 0 && alphaMode == AmWithAlpha)
 	{
 		Color4f pixel;
 		for (int32_t y = 0; y < height; ++y)
@@ -78,6 +79,18 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 				pixel.setAlpha(Scalar(1.0f));
 
 				image->setPixelUnsafe(x, y, pixel);
+			}
+		}
+	}
+	else if (alphaMode == AmAlphaOnly)
+	{
+		Color4f pixel;
+		for (int32_t y = 0; y < height; ++y)
+		{
+			for (int32_t x = 0; x < width; ++x)
+			{
+				image->getPixelUnsafe(x, y, pixel);
+				image->setPixelUnsafe(x, y, Color4f(pixel.getAlpha(), pixel.getAlpha(), pixel.getAlpha(), 1.0f));
 			}
 		}
 	}

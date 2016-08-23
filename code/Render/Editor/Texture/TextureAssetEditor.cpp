@@ -45,10 +45,16 @@ bool TextureAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"*,100%", L"100%", 0, 0));
 
 	Ref< ui::Container > imageContainer = new ui::Container();
-	imageContainer->create(container, ui::WsNone, new ui::TableLayout(L"128", L"100%", 8, 8));
+	imageContainer->create(container, ui::WsNone, new ui::TableLayout(toString(ui::scaleBySystemDPI(128)), L"*,*,*,100%", 8, 8));
 
-	m_imageTexture = new ui::Image();
-	m_imageTexture->create(imageContainer, 0, ui::Image::WsTransparent | ui::WsDoubleBuffer);
+	m_imageTextureWithAlpha = new ui::Image();
+	m_imageTextureWithAlpha->create(imageContainer, 0, ui::Image::WsTransparent | ui::WsDoubleBuffer);
+
+	m_imageTextureNoAlpha = new ui::Image();
+	m_imageTextureNoAlpha->create(imageContainer, 0, ui::Image::WsTransparent | ui::WsDoubleBuffer);
+
+	m_imageTextureAlphaOnly = new ui::Image();
+	m_imageTextureAlphaOnly->create(imageContainer, 0, ui::Image::WsTransparent | ui::WsDoubleBuffer);
 
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(container, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
@@ -95,27 +101,58 @@ ui::Size TextureAssetEditor::getPreferredSize() const
 
 void TextureAssetEditor::updatePreview()
 {
+	Ref< drawing::Image > textureThumb;
+
 	Ref< editor::IThumbnailGenerator > thumbnailGenerator = m_editor->getStoreObject< editor::IThumbnailGenerator >(L"ThumbnailGenerator");
 	if (!thumbnailGenerator)
 		return;
 
 	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
+	int32_t size = ui::scaleBySystemDPI(128);
 
 	bool visibleAlpha = (m_asset->m_output.m_hasAlpha == true && m_asset->m_output.m_ignoreAlpha == false);
-	Ref< drawing::Image > textureThumb = thumbnailGenerator->get(
+	textureThumb = thumbnailGenerator->get(
 		fileName,
-		128,
-		128,
-		visibleAlpha
+		size,
+		size,
+		visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha
 	);
 	if (textureThumb)
 	{
 		Ref< ui::Bitmap > textureBitmap = new ui::Bitmap(textureThumb);
-		m_imageTexture->setImage(textureBitmap, false);
+		m_imageTextureWithAlpha->setImage(textureBitmap, false);
 	}
 	else
-		m_imageTexture->setImage(0, false);
+		m_imageTextureWithAlpha->setImage(0, false);
+
+	textureThumb = thumbnailGenerator->get(
+		fileName,
+		size,
+		size,
+		editor::IThumbnailGenerator::AmNoAlpha
+	);
+	if (textureThumb)
+	{
+		Ref< ui::Bitmap > textureBitmap = new ui::Bitmap(textureThumb);
+		m_imageTextureNoAlpha->setImage(textureBitmap, false);
+	}
+	else
+		m_imageTextureNoAlpha->setImage(0, false);
+
+	textureThumb = thumbnailGenerator->get(
+		fileName,
+		size,
+		size,
+		editor::IThumbnailGenerator::AmAlphaOnly
+	);
+	if (textureThumb)
+	{
+		Ref< ui::Bitmap > textureBitmap = new ui::Bitmap(textureThumb);
+		m_imageTextureAlphaOnly->setImage(textureBitmap, false);
+	}
+	else
+		m_imageTextureAlphaOnly->setImage(0, false);
 }
 
 void TextureAssetEditor::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)

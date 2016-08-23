@@ -40,7 +40,7 @@ Ref< ui::Bitmap > TextureBrowsePreview::generate(const editor::IEditor* editor, 
 		fileName,
 		64,
 		64,
-		visibleAlpha
+		visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha
 	);
 
 	return textureThumb ? new ui::Bitmap(textureThumb) : 0;
