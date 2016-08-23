@@ -76,7 +76,7 @@ Ref< ISoundBufferCursor > PlayGrain::createCursor() const
 	playCursor->m_soundBuffer = soundBuffer;
 	playCursor->m_soundCursor = soundCursor;
 	playCursor->m_repeat = m_repeat;
-	playCursor->m_gain = decibelToLinear(m_sound->getGain()) + clamp(m_gain.random(m_random), -1.0f, 1.0f);
+	playCursor->m_gain = decibelToLinear(m_sound->getGain() + m_gain.random(m_random));
 	playCursor->m_pitch = clamp(m_pitch.random(m_random), 0.5f, 1.5f);
 
 	for (RefArray< IFilter >::const_iterator i = m_filters.begin(); i != m_filters.end(); ++i)
@@ -128,7 +128,7 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, S
 
 		playCursor->m_soundBuffer = soundBuffer;
 		playCursor->m_soundCursor = soundCursor;
-		playCursor->m_gain = decibelToLinear(m_sound->getGain()) + clamp(m_gain.random(m_random), -1.0f, 1.0f);
+		playCursor->m_gain = decibelToLinear(m_sound->getGain() + m_gain.random(m_random));
 
 		m_sound.consume();
 	}

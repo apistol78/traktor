@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeDecibel.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
@@ -43,7 +44,7 @@ void SoundAsset::serialize(ISerializer& s)
 	if (s.getVersion() >= 5)
 	{
 		if (s.getVersion() >= 6)
-			s >> Member< float >(L"gain", m_gain);
+			s >> Member< float >(L"gain", m_gain, AttributeDecibel());
 		else
 		{
 			float volumeLin = 1.0f;

@@ -26,13 +26,14 @@ double trunc(double value)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.NumericPropertyItem", NumericPropertyItem, PropertyItem)
 
-NumericPropertyItem::NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex)
+NumericPropertyItem::NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex, bool db)
 :	PropertyItem(text)
 ,	m_value(value)
 ,	m_limitMin(limitMin)
 ,	m_limitMax(limitMax)
 ,	m_floatPoint(floatPoint)
 ,	m_hex(hex)
+,	m_db(db)
 ,	m_mouseAdjust(false)
 {
 }
@@ -165,6 +166,9 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 		ss << L"0x" << std::hex << uint32_t(value);
 	else
 		ss << value;
+
+	if (m_db)
+		ss << L" dB";
 	
 	canvas.drawText(rc.inflate(-2, 0), ss.str(), AnLeft, AnCenter);
 

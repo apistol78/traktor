@@ -24,8 +24,8 @@ std::wstring PlayGrainFacade::getText(const IGrainData* grain) const
 	const PlayGrainData* playGrain = static_cast< const PlayGrainData* >(grain);
 	return i18n::Format(
 		L"RESOUND_PLAY_GRAIN_TEXT",
-		int32_t((playGrain->getGain().min + 1.0f) * 100),
-		int32_t((playGrain->getGain().max + 1.0f) * 100)
+		playGrain->getGain().min,
+		playGrain->getGain().max
 	);
 }
 

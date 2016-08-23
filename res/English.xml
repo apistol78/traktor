@@ -1830,7 +1830,7 @@
     </item>
     <item>
       <first>RESOUND_PLAY_GRAIN_TEXT</first>
-      <second>{0}% - {1}%</second>
+      <second>{0} dB - {1} dB</second>
     </item>
     <item>
       <first>RESOUND_RANDOM_GRAIN_TEXT</first>
