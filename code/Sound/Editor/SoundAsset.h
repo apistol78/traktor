@@ -30,7 +30,7 @@ public:
 
 	float getPresenceRate() const { return m_presenceRate; }
 
-	float getVolume() const { return m_volume; }
+	float getGain() const { return m_gain; }
 
 private:
 	friend class SoundPipeline;
@@ -40,7 +40,7 @@ private:
 	bool m_preload;
 	float m_presence;
 	float m_presenceRate;
-	float m_volume;
+	float m_gain;
 };
 
 	}

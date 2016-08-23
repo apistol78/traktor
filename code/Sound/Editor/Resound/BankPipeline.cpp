@@ -83,7 +83,7 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 8, BankPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 9, BankPipeline, editor::DefaultPipeline)
 
 TypeInfoSet BankPipeline::getAssetTypes() const
 {
@@ -139,7 +139,7 @@ bool BankPipeline::buildOutput(
 
 	bool categorized = false;
 	std::wstring configurationId;
-	float volume = 1.0f;
+	float gain = 0.0f;
 	float presence = bankAsset->m_presence;
 	float presenceRate = bankAsset->m_presenceRate;
 	float range = 0.0f;
@@ -152,7 +152,7 @@ bool BankPipeline::buildOutput(
 	while (category)
 	{
 		categorized = true;
-		volume *= category->getVolume();
+		gain += category->getGain();
 
 		if (presence <= FUZZY_EPSILON)
 		{
@@ -167,7 +167,7 @@ bool BankPipeline::buildOutput(
 
 	if (categorized)
 	{
-		log::info << L"Category volume " << int32_t(volume * 100.0f) << L" %" << Endl;
+		log::info << L"Category gain " << gain << L" dB" << Endl;
 		log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
 		log::info << L"Category range " << range << Endl;
 	}
@@ -177,7 +177,7 @@ bool BankPipeline::buildOutput(
 	Ref< BankResource > bankResource = new BankResource(
 		bankAsset->m_grains,
 		configurationId,
-		volume,
+		gain,
 		presence,
 		presenceRate,
 		range

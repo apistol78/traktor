@@ -30,7 +30,7 @@ public:
 	Sound(
 		ISoundBuffer* buffer,
 		handle_t category,
-		float volume,
+		float gain,
 		float presence,
 		float presenceRate,
 		float range
@@ -40,7 +40,7 @@ public:
 
 	uint32_t getCategory() const { return m_category; }
 
-	float getVolume() const { return m_volume; }
+	float getGain() const { return m_gain; }
 
 	float getPresence() const { return m_presence; }
 
@@ -51,7 +51,7 @@ public:
 private:
 	Ref< ISoundBuffer > m_buffer;
 	handle_t m_category;
-	float m_volume;
+	float m_gain;
 	float m_presence;
 	float m_presenceRate;
 	float m_range;

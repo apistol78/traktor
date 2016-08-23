@@ -131,7 +131,7 @@ void SoundChannel::disableRepeat()
 bool SoundChannel::play(
 	const ISoundBuffer* buffer,
 	handle_t category,
-	float volume,
+	float gain,
 	float presence,
 	float presenceRate,
 	uint32_t repeat
@@ -149,7 +149,7 @@ bool SoundChannel::play(
 	ss.buffer = buffer;
 	ss.cursor = cursor;
 	ss.category = category;
-	ss.volume = volume;
+	ss.volume = decibelToLinear(gain);
 	ss.presence = presence;
 	ss.presenceRate = presenceRate;
 	ss.repeat = max< uint32_t >(repeat, 1);

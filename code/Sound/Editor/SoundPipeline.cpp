@@ -53,7 +53,7 @@ bool isMute(const SoundBlock& soundBlock, uint32_t& outMuteOffset)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 31, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 32, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 {
@@ -142,7 +142,7 @@ bool SoundPipeline::buildOutput(
 
 	bool categorized = false;
 	std::wstring configurationId;
-	float volume = soundAsset->m_volume;
+	float gain = soundAsset->m_gain;
 	float presence = soundAsset->m_presence;
 	float presenceRate = soundAsset->m_presenceRate;
 	float range = 0.0f;
@@ -155,7 +155,7 @@ bool SoundPipeline::buildOutput(
 	while (category)
 	{
 		categorized = true;
-		volume *= category->getVolume();
+		gain += category->getGain();
 
 		if (presence <= FUZZY_EPSILON)
 		{
@@ -171,7 +171,7 @@ bool SoundPipeline::buildOutput(
 	if (!categorized)
 		log::warning << L"Uncategorized sound \"" << sourceInstance->getName() << L"\"" << Endl;
 
-	log::info << L"Final volume " << int32_t(volume * 100.0f) << L" %" << Endl;
+	log::info << L"Final gain " << gain << L" dB" << Endl;
 	log::info << L"      presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
 	log::info << L"      range " << range << Endl;
 
@@ -181,7 +181,7 @@ bool SoundPipeline::buildOutput(
 
 		resource->m_decoderType = &type_of(decoder);
 		resource->m_category = configurationId;
-		resource->m_volume = volume;
+		resource->m_gain = gain;
 		resource->m_presence = presence;
 		resource->m_presenceRate = presenceRate;
 		resource->m_range = range;
@@ -354,7 +354,7 @@ bool SoundPipeline::buildOutput(
 		resource->m_sampleRate = sampleRate;
 		resource->m_samplesCount = samplesCount;
 		resource->m_channelsCount = maxChannel;
-		resource->m_volume = volume;
+		resource->m_gain = gain;
 		resource->m_presence = presence;
 		resource->m_presenceRate = presenceRate;
 		resource->m_range = range;
