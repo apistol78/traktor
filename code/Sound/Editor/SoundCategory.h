@@ -29,7 +29,7 @@ public:
 
 	const std::wstring& getConfigurationId() const { return m_configurationId; }
 
-	float getVolume() const { return m_volume; }
+	float getGain() const { return m_gain; }
 
 	float getPresence() const { return m_presence; }
 
@@ -40,7 +40,7 @@ public:
 private:
 	Guid m_parent;
 	std::wstring m_configurationId;
-	float m_volume;
+	float m_gain;
 	float m_presence;
 	float m_presenceRate;
 	float m_range;

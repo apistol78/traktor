@@ -1,6 +1,7 @@
 #ifndef traktor_sound_Types_H
 #define traktor_sound_Types_H
 
+#include <cmath>
 #include "Core/Config.h"
 #include "Core/Platform.h"
 
@@ -127,6 +128,16 @@ struct SoundBlockMeta
  * \return Parameter handle.
  */
 handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
+
+/*! \brief Linear to decibel. */
+inline float linearToDecibel(float lin) {
+	return 20.0f * std::log10(lin);
+}
+
+/*! \brief Decibel to linear. */
+inline float decibelToLinear(float db) {
+	return std::powf(10.0f, db / 20.0f);
+}
 
 //@}
 

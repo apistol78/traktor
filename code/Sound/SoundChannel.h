@@ -66,7 +66,7 @@ public:
 	 *
 	 * \param buffer Sound buffer.
 	 * \param category Sound category.
-	 * \param volume Sound volume.
+	 * \param gain Sound gain in dB.
 	 * \param presence Sound presence.
 	 * \param presenceRate Sound presence recover rate.
 	 * \param repeat Number of times to repeat sound.
@@ -75,7 +75,7 @@ public:
 	bool play(
 		const ISoundBuffer* buffer,
 		handle_t category,
-		float volume,
+		float gain,
 		float presence,
 		float presenceRate,
 		uint32_t repeat = 0

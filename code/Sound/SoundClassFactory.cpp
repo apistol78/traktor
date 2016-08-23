@@ -55,7 +55,7 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSound->addConstructor< ISoundBuffer*, handle_t, float, float, float, float >();
 	classSound->addMethod("getBuffer", &Sound::getBuffer);
 	classSound->addMethod("getCategory", &Sound::getCategory);
-	classSound->addMethod("getVolume", &Sound::getVolume);
+	classSound->addMethod("getGain", &Sound::getGain);
 	classSound->addMethod("getPresence", &Sound::getPresence);
 	classSound->addMethod("getPresenceRate", &Sound::getPresenceRate);
 	classSound->addMethod("getRange", &Sound::getRange);

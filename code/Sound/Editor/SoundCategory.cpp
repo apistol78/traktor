@@ -2,6 +2,7 @@
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Sound/Types.h"
 #include "Sound/Editor/SoundCategory.h"
 
 namespace traktor
@@ -9,11 +10,11 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundCategory", 4, SoundCategory, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundCategory", 5, SoundCategory, ISerializable)
 
 
 SoundCategory::SoundCategory()
-:	m_volume(1.0f)
+:	m_gain(0.0f)
 ,	m_presence(0.0f)
 ,	m_presenceRate(0.25f)
 ,	m_range(0.0f)
@@ -27,7 +28,14 @@ void SoundCategory::serialize(ISerializer& s)
 	if (s.getVersion() >= 4)
 		s >> Member< std::wstring >(L"configurationId", m_configurationId);
 
-	s >> Member< float >(L"volume", m_volume);
+	if (s.getVersion() >= 5)
+		s >> Member< float >(L"gain", m_gain);
+	else
+	{
+		float volumeLin = 1.0f;
+		s >> Member< float >(L"volume", volumeLin);
+		m_gain = linearToDecibel(volumeLin);
+	}
 
 	if (s.getVersion() >= 1)
 		s >> Member< float >(L"presence", m_presence, AttributeRange(0.0f));
