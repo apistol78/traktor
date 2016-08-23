@@ -30,7 +30,14 @@ class T_DLLCLASS IThumbnailGenerator : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< drawing::Image > get(const Path& fileName, int32_t width, int32_t height, bool visibleAlpha) = 0;
+	enum AlphaMode
+	{
+		AmNoAlpha = 0,
+		AmWithAlpha = 1,
+		AmAlphaOnly = 2
+	};
+
+	virtual Ref< drawing::Image > get(const Path& fileName, int32_t width, int32_t height, AlphaMode alphaMode) = 0;
 };
 
 	}

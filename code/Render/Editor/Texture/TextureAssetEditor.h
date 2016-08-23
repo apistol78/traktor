@@ -63,7 +63,9 @@ private:
 	editor::IEditor* m_editor;
 	Ref< db::Instance > m_instance;
 	Ref< TextureAsset > m_asset;
-	Ref< ui::Image > m_imageTexture;
+	Ref< ui::Image > m_imageTextureWithAlpha;
+	Ref< ui::Image > m_imageTextureNoAlpha;
+	Ref< ui::Image > m_imageTextureAlphaOnly;
 	Ref< ui::custom::AutoPropertyList > m_propertyList;
 
 	void updatePreview();
