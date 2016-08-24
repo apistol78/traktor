@@ -2,6 +2,7 @@
 
 #if defined(T_STATIC)
 #	include "Animation/AnimationClassFactory.h"
+#	include "Animation/Animation/SimpleAnimationControllerData.h"
 #	include "Animation/Animation/StatePoseControllerData.h"
 #	include "Animation/Animation/StateNodeAnimation.h"
 #	include "Animation/IK/IKPoseControllerData.h"
@@ -15,6 +16,7 @@ namespace traktor
 extern "C" void __module__Traktor_Animation()
 {
 	T_FORCE_LINK_REF(AnimationClassFactory);
+	T_FORCE_LINK_REF(SimpleAnimationControllerData);
 	T_FORCE_LINK_REF(StatePoseControllerData);
 	T_FORCE_LINK_REF(StateNodeAnimation);
 	T_FORCE_LINK_REF(IKPoseControllerData);
