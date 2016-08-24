@@ -136,7 +136,7 @@ inline float linearToDecibel(float lin) {
 
 /*! \brief Decibel to linear. */
 inline float decibelToLinear(float db) {
-	return std::powf(10.0f, db / 20.0f);
+	return std::pow(10.0f, db / 20.0f);
 }
 
 //@}
