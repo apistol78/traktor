@@ -75,7 +75,10 @@ bool SteamCloudSaveData::set(const std::wstring& saveDataId, const SaveDataDesc&
 	if (!replace)
 	{
 		if (SteamRemoteStorage()->FileExists(fileName.c_str()))
+		{
+			log::error << L"Steam save data error; save " << saveDataId << L" already exists." << Endl;
 			return false;
+		}
 	}
 
 	DynamicMemoryStream dms(false, true);
@@ -88,15 +91,20 @@ bool SteamCloudSaveData::set(const std::wstring& saveDataId, const SaveDataDesc&
 	std::vector< uint8_t >& buffer = dms.getBuffer();
 	T_ASSERT (buffer.size() >= 16);
 
+	// Calculate new MD5 checksum.
 	MD5 cs;
 	cs.begin();
 	cs.feed(&buffer[16], buffer.size() - 16);
 	cs.end();
 
+	// Prepend checksum at the beginning of actual data.
 	std::memcpy(&buffer[0], cs.get(), 16);
 
 	if (!SteamRemoteStorage()->FileWrite(fileName.c_str(), &buffer[0], buffer.size()))
+	{
+		log::error << L"Steam save data error; failed to write data to Steam cloud." << Endl;
 		return false;
+	}
 
 	return true;
 }
