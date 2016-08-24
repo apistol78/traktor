@@ -28,6 +28,7 @@ namespace traktor
 		{
 
 render::handle_t s_handleReflectionMap;
+render::handle_t s_handleReflectionMapAvailable;
 render::handle_t s_handleReflectionEnable;
 render::handle_t s_handleTerrainAvailable;
 render::handle_t s_handleHeightfield;
@@ -65,6 +66,7 @@ OceanComponent::OceanComponent()
 ,	m_allowSSReflections(true)
 {
 	s_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
+	s_handleReflectionMapAvailable = render::getParameterHandle(L"ReflectionMapAvailable");
 	s_handleReflectionEnable = render::getParameterHandle(L"ReflectionEnable");
 	s_handleTerrainAvailable = render::getParameterHandle(L"TerrainAvailable");
 	s_handleHeightfield = render::getParameterHandle(L"Heightfield");
@@ -236,6 +238,7 @@ void OceanComponent::render(
 	worldRenderPass.setShaderTechnique(m_shader);
 	worldRenderPass.setShaderCombination(m_shader);
 
+	m_shader->setCombination(s_handleReflectionMapAvailable, (bool)m_reflectionMap);
 	m_shader->setCombination(s_handleReflectionEnable, reflectionEnable && m_allowSSReflections);
 	m_shader->setCombination(s_handleTerrainAvailable, m_terrain);
 
