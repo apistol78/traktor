@@ -1881,6 +1881,10 @@
       <second>Finished</second>
     </item>
     <item>
+      <first>SCENE_CREATE_PREVIEW_SCENE_DESCRIPTION</first>
+      <second>Create preview scene...</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_ADD_ENTITY</first>
       <second>Add entity...</second>
     </item>
