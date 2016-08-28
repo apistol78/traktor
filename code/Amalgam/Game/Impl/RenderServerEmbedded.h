@@ -31,6 +31,10 @@ public:
 
 	virtual render::IVRCompositor* getVRCompositor() T_OVERRIDE T_FINAL;
 
+	virtual int32_t getWidth() const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getHeight() const T_OVERRIDE T_FINAL;
+
 	virtual float getScreenAspectRatio() const T_OVERRIDE T_FINAL;
 
 	virtual float getViewAspectRatio() const T_OVERRIDE T_FINAL;

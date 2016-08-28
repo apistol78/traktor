@@ -535,6 +535,22 @@ render::IVRCompositor* RenderServerDefault::getVRCompositor()
 	return m_vrCompositor;
 }
 
+int32_t RenderServerDefault::getWidth() const
+{
+	if (m_vrCompositor)
+		return m_vrCompositor->getWidth();
+	else
+		return m_renderView->getWidth();
+}
+
+int32_t RenderServerDefault::getHeight() const
+{
+	if (m_vrCompositor)
+		return m_vrCompositor->getHeight();
+	else
+		return m_renderView->getHeight();
+}
+
 float RenderServerDefault::getScreenAspectRatio() const
 {
 	return m_screenAspectRatio;
@@ -542,7 +558,7 @@ float RenderServerDefault::getScreenAspectRatio() const
 
 float RenderServerDefault::getViewAspectRatio() const
 {
-	float aspectRatio = float(m_renderView->getWidth()) / m_renderView->getHeight();
+	float aspectRatio = float(getWidth()) / getHeight();
 	return min(aspectRatio, c_maxAspectRatio);
 }
 

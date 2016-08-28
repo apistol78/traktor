@@ -177,8 +177,6 @@ private:
 	float m_fieldOfView;
 	float m_feedbackScale;
 	bool m_controllerEnable;
-
-	void createWorldRenderer();
 };
 
 	}

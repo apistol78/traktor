@@ -124,8 +124,8 @@ bool WorldRendererPreLit::create(
 
 	// Calculate target render size.
 	int32_t superSample = int32_t(desc.superSample > 0 ? desc.superSample : 1);
-	int32_t frameWidth = renderView->getWidth();
-	int32_t frameHeight = renderView->getHeight();
+	int32_t frameWidth = desc.width;
+	int32_t frameHeight = desc.height;
 	int32_t width = frameWidth * superSample;
 	int32_t height = frameHeight * superSample;
 

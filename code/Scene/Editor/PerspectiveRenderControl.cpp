@@ -207,6 +207,8 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.imageProcessQuality = m_imageProcessQuality;
+	wcd.width = sz.cx;
+	wcd.height = sz.cy;
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
 	wcd.allTargetsPersistent = true;
