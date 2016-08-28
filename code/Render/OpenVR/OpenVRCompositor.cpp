@@ -38,15 +38,29 @@ bool OpenVRCompositor::create(IRenderSystem* renderSystem, IRenderView* renderVi
 		return false;
 	}
 
+	int32_t adapterIndex = 0;
+	m_vr->GetDXGIOutputInfo(&adapterIndex);
+	log::info << L"OpenVR; Should use adapter " << adapterIndex << L" for DX11 initialization." << Endl;
+
+	uint32_t width = 0, height = 0;
+	m_vr->GetRecommendedRenderTargetSize(&width, &height);
+	if (!width || !height)
+	{
+		log::error << L"Failed to initialize OpenVR compositor; Unable to determine intermediate render target size." << Endl;
+		return false;
+	}
+
+	log::info << L"OpenVR; Using intermediate render target size " << width << L" * " << height << Endl;
+
 	// Create render target set.
 	RenderTargetSetCreateDesc rtscd;
 	rtscd.count = 2;
-	rtscd.width = renderView->getWidth();
-	rtscd.height = renderView->getHeight();
+	rtscd.width = width;
+	rtscd.height = height;
 	rtscd.multiSample = 0;
-	rtscd.createDepthStencil = false;
+	rtscd.createDepthStencil = true;
 	rtscd.usingDepthStencilAsTexture = false;
-	rtscd.usingPrimaryDepthStencil = true;
+	rtscd.usingPrimaryDepthStencil = false;
 	rtscd.preferTiled = false;
 	rtscd.ignoreStencil = false;
 	rtscd.generateMips = false;
@@ -74,6 +88,16 @@ void OpenVRCompositor::destroy()
 	}
 }
 
+int32_t OpenVRCompositor::getWidth() const
+{
+	return m_targetSet->getWidth();
+}
+
+int32_t OpenVRCompositor::getHeight() const
+{
+	return m_targetSet->getHeight();
+}
+
 bool OpenVRCompositor::beginRenderEye(IRenderView* renderView, int32_t eye)
 {
 	if (!renderView->begin(m_targetSet, eye == EtLeft ? 0 : 1))
@@ -98,6 +122,12 @@ bool OpenVRCompositor::endRenderEye(IRenderView* renderView, int32_t eye)
 
 bool OpenVRCompositor::presentCompositeOutput(IRenderView* renderView)
 {
+	vr::VREvent_t event;
+	while (m_vr->PollNextEvent(&event, sizeof(event)))
+	{
+		//ProcessVREvent(event);
+	}
+
 	vr::Texture_t leftEyeTexture =
 	{
 		m_targetSet->getColorTexture(0)->getInternalHandle(),
@@ -114,6 +144,11 @@ bool OpenVRCompositor::presentCompositeOutput(IRenderView* renderView)
 	};
 	vr::VRCompositor()->Submit(vr::Eye_Right, &rightEyeTexture);
 
+	renderView->present();
+
+	vr::VRCompositor()->WaitGetPoses(NULL, 0, NULL, 0);
+
+	//vr::VRCompositor()->PostPresentHandoff();
 	return true;
 }
 

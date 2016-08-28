@@ -218,6 +218,8 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.multiSample = m_multiSample;
+	wcd.width = sz.cx;
+	wcd.height = sz.cy;
 	wcd.frameCount = 1;
 
 	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();

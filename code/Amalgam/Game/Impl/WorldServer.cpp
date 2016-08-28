@@ -301,13 +301,14 @@ spray::IFeedbackManager* WorldServer::getFeedbackManager()
 Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings)
 {
 	world::WorldCreateDesc wcd;
-
 	wcd.worldRenderSettings = worldRenderSettings;
 	wcd.entityRenderers = m_entityRenderers;
 	wcd.shadowsQuality = m_shadowQuality;
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.imageProcessQuality = m_imageProcessQuality;
+	wcd.width = m_renderServer->getWidth();
+	wcd.height = m_renderServer->getHeight();
 	wcd.multiSample = m_renderServer->getMultiSample();
 	wcd.superSample = m_superSample;
 	wcd.frameCount = m_renderServer->getThreadFrameQueueCount();

@@ -100,9 +100,6 @@ bool WorldRendererForward::create(
 	m_settings.fogColor.getRGBA32F(fogColor);
 	m_fogColor = Vector4::loadUnaligned(fogColor);
 
-	int32_t width = renderView->getWidth();
-	int32_t height = renderView->getHeight();
-
 	// Create post process target pool to enable sharing of targets between multiple processes.
 	Ref< render::ImageProcessTargetPool > postProcessTargetPool = new render::ImageProcessTargetPool(renderSystem);
 
@@ -112,8 +109,8 @@ bool WorldRendererForward::create(
 		render::RenderTargetSetCreateDesc rtscd;
 
 		rtscd.count = 1;
-		rtscd.width = width;
-		rtscd.height = height;
+		rtscd.width = desc.width;
+		rtscd.height = desc.height;
 		rtscd.multiSample = desc.multiSample;
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = true;
@@ -150,7 +147,7 @@ bool WorldRendererForward::create(
 		if (info.dedicatedMemoryTotal < 512 * 1024 * 1024)
 			maxResolution /= 2;
 
-		int32_t resolution = min< int32_t >(nearestLog2(int32_t(max< int32_t >(width, height) * 1.9f)), maxResolution);
+		int32_t resolution = min< int32_t >(nearestLog2(int32_t(max< int32_t >(desc.width, desc.height) * 1.9f)), maxResolution);
 		T_DEBUG(L"Using shadow map resolution " << resolution);
 
 		// Create shadow map target.
@@ -167,8 +164,8 @@ bool WorldRendererForward::create(
 
 		// Create shadow mask target.
 		rtscd.count = 1;
-		rtscd.width = width / m_shadowSettings.maskDenominator;
-		rtscd.height = height / m_shadowSettings.maskDenominator;
+		rtscd.width = desc.width / m_shadowSettings.maskDenominator;
+		rtscd.height = desc.height / m_shadowSettings.maskDenominator;
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = false;
@@ -316,8 +313,8 @@ bool WorldRendererForward::create(
 				postProcessTargetPool,
 				resourceManager,
 				renderSystem,
-				width,
-				height,
+				desc.width,
+				desc.height,
 				desc.allTargetsPersistent
 			))
 			{
@@ -369,8 +366,8 @@ bool WorldRendererForward::create(
 				postProcessTargetPool,
 				resourceManager,
 				renderSystem,
-				width,
-				height,
+				desc.width,
+				desc.height,
 				desc.allTargetsPersistent
 			))
 			{
@@ -397,8 +394,8 @@ bool WorldRendererForward::create(
 					postProcessTargetPool,
 					resourceManager,
 					renderSystem,
-					width,
-					height,
+					desc.width,
+					desc.height,
 					desc.allTargetsPersistent
 					))
 				{
@@ -424,8 +421,8 @@ bool WorldRendererForward::create(
 				postProcessTargetPool,
 				resourceManager,
 				renderSystem,
-				width,
-				height,
+				desc.width,
+				desc.height,
 				desc.allTargetsPersistent
 			))
 			{
@@ -453,8 +450,8 @@ bool WorldRendererForward::create(
 		render::RenderTargetSetCreateDesc rtscd;
 		
 		rtscd.count = 1;
-		rtscd.width = width;
-		rtscd.height = height;
+		rtscd.width = desc.width;
+		rtscd.height = desc.height;
 		rtscd.multiSample = desc.multiSample;
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = true;

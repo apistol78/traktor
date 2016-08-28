@@ -133,9 +133,6 @@ void WorldLayer::transition(Layer* fromLayer)
 
 void WorldLayer::prepare(const UpdateInfo& info)
 {
-	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-	T_ASSERT (renderView);
-
 	if (m_scene.changed())
 	{
 		// If render group already exist then ensure it doesn't contain anything
@@ -163,14 +160,14 @@ void WorldLayer::prepare(const UpdateInfo& info)
 	// Re-create world renderer.
 	if (!m_worldRenderer)
 	{
-		createWorldRenderer();
+		m_worldRenderer = m_environment->getWorld()->createWorldRenderer(m_scene->getWorldRenderSettings());
 		if (!m_worldRenderer)
 			return;
 	}
 
 	// Get render view dimensions.
-	int32_t width = renderView->getWidth();
-	int32_t height = renderView->getHeight();
+	int32_t width = m_environment->getRender()->getWidth();
+	int32_t height = m_environment->getRender()->getHeight();
 
 	// Update world view.
 	m_worldRenderView.setPerspective(
@@ -198,13 +195,6 @@ void WorldLayer::prepare(const UpdateInfo& info)
 			}
 			else // CtPerspective
 			{
-				render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-				T_ASSERT (renderView);
-
-				// Get render view dimensions.
-				int32_t width = renderView->getWidth();
-				int32_t height = renderView->getHeight();
-
 				m_worldRenderView.setPerspective(
 					width,
 					height,
@@ -219,6 +209,12 @@ void WorldLayer::prepare(const UpdateInfo& info)
 
 	if (m_cameraEntity)
 		m_worldRenderView.setView((m_cameraTransform.get(info.getInterval()) * m_cameraOffset).inverse().toMatrix44());
+
+	m_worldRenderView.setTimes(
+		info.getStateTime(),
+		info.getFrameDeltaTime(),
+		info.getInterval()
+	);
 
 	// Update sound listener transform.
 	if (m_environment->getAudio())
@@ -236,13 +232,6 @@ void WorldLayer::prepare(const UpdateInfo& info)
 			surroundEnvironment->setListenerTransform(listenerTransform);
 		}
 	}
-
-	// Build frame through world renderer.
-	m_worldRenderView.setTimes(
-		info.getStateTime(),
-		info.getFrameDeltaTime(),
-		info.getInterval()
-	);	
 }
 
 void WorldLayer::update(const UpdateInfo& info)
@@ -607,23 +596,6 @@ void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, i
 		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
 		if (postProcess)
 			postProcess->setVectorParameter(s_handleFeedback, Vector4::loadUnaligned(values));
-	}
-}
-
-void WorldLayer::createWorldRenderer()
-{
-	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-
-	// Get render view dimensions.
-	int32_t width = renderView->getWidth();
-	int32_t height = renderView->getHeight();
-
-	// Create world renderer.
-	m_worldRenderer = m_environment->getWorld()->createWorldRenderer(m_scene->getWorldRenderSettings());
-	if (!m_worldRenderer)
-	{
-		log::error << L"Unable to create world renderer; world layer disabled" << Endl;
-		return;
 	}
 }
 

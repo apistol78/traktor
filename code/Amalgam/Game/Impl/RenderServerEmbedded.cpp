@@ -248,6 +248,16 @@ render::IVRCompositor* RenderServerEmbedded::getVRCompositor()
 	return m_vrCompositor;
 }
 
+int32_t RenderServerEmbedded::getWidth() const
+{
+	return m_renderView->getWidth();
+}
+
+int32_t RenderServerEmbedded::getHeight() const
+{
+	return m_renderView->getHeight();
+}
+
 float RenderServerEmbedded::getScreenAspectRatio() const
 {
 	return m_screenAspectRatio;

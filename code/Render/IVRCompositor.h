@@ -31,6 +31,10 @@ public:
 
 	virtual void destroy() = 0;
 
+	virtual int32_t getWidth() const = 0;
+
+	virtual int32_t getHeight() const = 0;
+
 	virtual bool beginRenderEye(IRenderView* renderView, int32_t eye) = 0;
 
 	virtual bool endRenderEye(IRenderView* renderView, int32_t eye) = 0;

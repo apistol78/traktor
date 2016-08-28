@@ -39,6 +39,10 @@ public:
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
+	virtual int32_t getWidth() const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getHeight() const T_OVERRIDE T_FINAL;
+
 	virtual bool beginRenderEye(IRenderView* renderView, int32_t eye) T_OVERRIDE T_FINAL;
 
 	virtual bool endRenderEye(IRenderView* renderView, int32_t eye) T_OVERRIDE T_FINAL;
