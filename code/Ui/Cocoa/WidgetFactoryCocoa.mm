@@ -21,6 +21,7 @@
 #include "Ui/Cocoa/TreeViewCocoa.h"
 #include "Ui/Cocoa/UserWidgetCocoa.h"
 #include "Ui/Cocoa/BitmapCocoa.h"
+#include "Ui/Cocoa/UtilitiesCocoa.h"
 
 namespace traktor
 {
@@ -267,6 +268,9 @@ bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color4ub& outCo
 
 void WidgetFactoryCocoa::getSystemFonts(std::list< std::wstring >& outFonts)
 {
+	NSArray* availableFontFamilies = [[NSFontManager sharedFontManager] availableFontFamilies];
+	for (NSString* family in availableFontFamilies)
+		outFonts.push_back(fromNSString(family));
 }
 
 	}
