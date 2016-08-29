@@ -139,4 +139,18 @@ for i = 0, projects:size() - 1 do
 	end
 end
 
+output:printLn(".PHONY: install")
+output:printLn("install :")
+local projects = solution:getProjects()
+for i = 0, projects:size() - 1 do
+	local project = projects:get(i)
+	if project:getEnable() then
+		if dialect == "nmake" then
+			output:printLn("\tpushd " .. project:getName() .. " & $(MAKE) install & popd")
+		elseif dialect == "make" then
+			output:printLn("\t$(MAKE) -C " .. project:getName() .. " install")
+		end
+	end
+end
+
 --?>
