@@ -357,6 +357,33 @@ end
 ------------------------------------------------
 output:printLn("")
 
+-- "install" target.
+output:printLn(".PHONY: install")
+output:printLn("install :")
+for i = 0, configurations:size() - 1 do
+	local configuration = configurations:get(i)
+	local aggregationItems = configuration:getAggregationItems()
+	for i = 0, aggregationItems:size() - 1 do
+		local aggregationItem = aggregationItems:get(i)
+		local sourceFile = aggregationItem:getSourceFile()
+		local targetPath = aggregationItem:getTargetPath()
+
+		sourceFile = Path("../" .. configuration:getName()):concat(Path(sourceFile))
+
+		if os == "windows" then
+			targetPath = Path(targetPath)
+			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
+		elseif os == "osx" or os == "linux" then
+			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath)
+			output:printLn("\t@mkdir -p \"" .. targetPath .. "/\"")
+			output:printLn("\t@-cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath .. "/\"")
+		end
+	end
+end
+
+------------------------------------------------
+output:printLn("")
+
 -- Link targets.
 for i = 0, configurations:size() - 1 do
 	local configuration = configurations:get(i)
@@ -447,14 +474,14 @@ for i = 0, configurations:size() - 1 do
 		local targetPath = aggregationItem:getTargetPath()
 
 		sourceFile = Path("../" .. configuration:getName()):concat(Path(sourceFile))
-		targetPath = Path(targetPath)
 
 		if os == "windows" then
+			targetPath = Path(targetPath)
 			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
 		elseif os == "osx" or os == "linux" then
-			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
-			output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
-			output:printLn("\t@cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath)
+			output:printLn("\t@mkdir -p \"" .. targetPath .. "/\"")
+			output:printLn("\t@cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath .. "/\"")
 		end
 	end
 
