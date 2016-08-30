@@ -75,6 +75,11 @@ bool RenderViewEmbeddedWin32::isActive() const
 		return false;
 }
 
+bool RenderViewEmbeddedWin32::isMinimized() const
+{
+	return false;
+}
+
 bool RenderViewEmbeddedWin32::isFullScreen() const
 {
 	return !m_d3dPresent.Windowed;

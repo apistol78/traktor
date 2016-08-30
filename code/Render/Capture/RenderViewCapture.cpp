@@ -58,6 +58,11 @@ bool RenderViewCapture::isActive() const
 	return m_renderView->isActive();
 }
 
+bool RenderViewCapture::isMinimized() const
+{
+	return m_renderView->isMinimized();
+}
+
 bool RenderViewCapture::isFullScreen() const
 {
 	return m_renderView->isFullScreen();

@@ -77,6 +77,11 @@ bool RenderViewVk::isActive() const
 	return true;
 }
 
+bool RenderViewVk::isMinimized() const
+{
+	return false;
+}
+
 bool RenderViewVk::isFullScreen() const
 {
 	return true;

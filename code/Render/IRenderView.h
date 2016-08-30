@@ -76,6 +76,8 @@ public:
 
 	virtual bool isActive() const = 0;
 
+	virtual bool isMinimized() const = 0;
+
 	virtual bool isFullScreen() const = 0;
 
 	virtual void showCursor() = 0;

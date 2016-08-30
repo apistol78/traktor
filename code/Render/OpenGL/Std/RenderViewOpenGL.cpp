@@ -313,6 +313,18 @@ bool RenderViewOpenGL::isActive() const
 #endif
 }
 
+bool RenderViewOpenGL::isMinimized() const
+{
+#if defined(_WIN32)
+	if (m_window)
+		return bool(IsIconic(*m_window) == TRUE);
+	else
+		return false;
+#else
+	return false;
+#endif
+}
+
 bool RenderViewOpenGL::isFullScreen() const
 {
 #if defined(__APPLE__)

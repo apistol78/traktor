@@ -60,16 +60,7 @@ StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info
 
 bool StageState::render(uint32_t frame, render::EyeType eye, const UpdateInfo& info)
 {
-	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-
-	//if (eye == render::EtCyclop || eye == render::EtLeft)
-	//{
-	//	const Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	//	renderView->clear(render::CfColor | render::CfDepth | render::CfStencil, &clearColor, 1.0f, 0);
-	//}
-
 	m_stage->render(eye, frame);
-
 	return true;
 }
 

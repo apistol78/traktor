@@ -203,6 +203,11 @@ bool RenderViewSw::isActive() const
 	return true;
 }
 
+bool RenderViewSw::isMinimized() const
+{
+	return false;
+}
+
 bool RenderViewSw::isFullScreen() const
 {
 	return false;

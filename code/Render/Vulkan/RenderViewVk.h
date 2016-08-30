@@ -45,6 +45,8 @@ public:
 
 	virtual bool isActive() const T_OVERRIDE T_FINAL;
 
+	virtual bool isMinimized() const T_OVERRIDE T_FINAL;
+
 	virtual bool isFullScreen() const T_OVERRIDE T_FINAL;
 
 	virtual void showCursor() T_OVERRIDE T_FINAL;

@@ -28,34 +28,36 @@ public:
 
 	virtual ~RenderViewEmbeddedWin32();
 
-	virtual bool nextEvent(RenderEvent& outEvent);
+	virtual bool nextEvent(RenderEvent& outEvent) T_OVERRIDE T_FINAL;
 
-	virtual bool reset(const RenderViewDefaultDesc& desc);
+	virtual bool reset(const RenderViewDefaultDesc& desc) T_OVERRIDE T_FINAL;
 
-	virtual bool reset(int32_t width, int32_t height);
+	virtual bool reset(int32_t width, int32_t height) T_OVERRIDE T_FINAL;
 
-	virtual int getWidth() const;
+	virtual int getWidth() const T_OVERRIDE T_FINAL;
 
-	virtual int getHeight() const;
+	virtual int getHeight() const T_OVERRIDE T_FINAL;
 
-	virtual bool isActive() const;
+	virtual bool isActive() const T_OVERRIDE T_FINAL;
 
-	virtual bool isFullScreen() const;
+	virtual bool isMinimized() const T_OVERRIDE T_FINAL;
 
-	virtual void showCursor();
+	virtual bool isFullScreen() const T_OVERRIDE T_FINAL;
 
-	virtual void hideCursor();
+	virtual void showCursor() T_OVERRIDE T_FINAL;
 
-	virtual bool isCursorVisible() const;
+	virtual void hideCursor() T_OVERRIDE T_FINAL;
+
+	virtual bool isCursorVisible() const T_OVERRIDE T_FINAL;
 
 	virtual SystemWindow getSystemWindow();
 
 	// \name Swap-chain management
 	// \{
 
-	HRESULT lostDevice();
+	virtual HRESULT lostDevice() T_OVERRIDE T_FINAL;
 
-	HRESULT resetDevice();
+	virtual HRESULT resetDevice() T_OVERRIDE T_FINAL;
 
 	// \}
 

@@ -398,6 +398,11 @@ bool RenderViewDx11::isActive() const
 		return true;
 }
 
+bool RenderViewDx11::isMinimized() const
+{
+	return bool(IsIconic(*m_window) == TRUE);
+}
+
 bool RenderViewDx11::isFullScreen() const
 {
 	return m_fullScreen;

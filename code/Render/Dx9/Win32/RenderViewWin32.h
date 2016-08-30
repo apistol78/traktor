@@ -38,37 +38,37 @@ public:
 		IDirect3DDevice9* d3dDevice
 	);
 
-	virtual void close();
+	virtual void close() T_OVERRIDE;
 
-	virtual bool setGamma(float gamma);
+	virtual bool setGamma(float gamma) T_OVERRIDE T_FINAL;
 
-	virtual void setViewport(const Viewport& viewport);
+	virtual void setViewport(const Viewport& viewport) T_OVERRIDE T_FINAL;
 
-	virtual Viewport getViewport();
+	virtual Viewport getViewport() T_OVERRIDE T_FINAL;
 
-	virtual bool begin(EyeType eye);
+	virtual bool begin(EyeType eye) T_OVERRIDE T_FINAL;
 
-	virtual bool begin(RenderTargetSet* renderTargetSet);
+	virtual bool begin(RenderTargetSet* renderTargetSet) T_OVERRIDE T_FINAL;
 
-	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget);
+	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget) T_OVERRIDE T_FINAL;
 
-	virtual void clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil);
+	virtual void clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil) T_OVERRIDE T_FINAL;
 
-	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives);
+	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) T_OVERRIDE T_FINAL;
 
-	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount);
+	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) T_OVERRIDE T_FINAL;
 
-	virtual void end();
+	virtual void end() T_OVERRIDE T_FINAL;
 
-	virtual void present();
+	virtual void present() T_OVERRIDE T_FINAL;
 
-	virtual void pushMarker(const char* const marker);
+	virtual void pushMarker(const char* const marker) T_OVERRIDE T_FINAL;
 
-	virtual void popMarker();
+	virtual void popMarker() T_OVERRIDE T_FINAL;
 
-	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
+	virtual void getStatistics(RenderViewStatistics& outStatistics) const T_OVERRIDE T_FINAL;
 
-	virtual bool getBackBufferContent(void* buffer) const;
+	virtual bool getBackBufferContent(void* buffer) const T_OVERRIDE T_FINAL;
 
 	// \name Swap-chain management
 	// \{
