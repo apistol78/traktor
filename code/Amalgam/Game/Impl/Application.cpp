@@ -60,7 +60,7 @@ namespace traktor
 const int32_t c_databasePollInterval = 5;
 const float c_maxDeltaTime = 1.0f / 5.0f;
 const int32_t c_maxDeltaTimeErrors = 300;
-const float c_deltaTimeFilterCoeff = 0.99f;
+const float c_deltaTimeFilterCoeff = 0.95f;
 
 		}
 
@@ -125,7 +125,7 @@ bool Application::create(
 #endif
 
 	// Simulation setup.
-	m_maxSimulationUpdates = defaultSettings->getProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 4);
+	m_maxSimulationUpdates = defaultSettings->getProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 8);
 	m_maxSimulationUpdates = max(m_maxSimulationUpdates, 1);
 
 	m_stateManager = new StateManager();
@@ -600,7 +600,7 @@ bool Application::update()
 	{
 #if !defined(__IOS__)
 		// Check render active state; notify application when changes.
-		bool renderViewActive = m_renderServer->getRenderView()->isActive();
+		bool renderViewActive = m_renderServer->getRenderView()->isActive() && !m_renderServer->getRenderView()->isMinimized();
 		if (renderViewActive != m_renderViewActive)
 		{
 			ActiveEvent activeEvent(renderViewActive);
@@ -674,7 +674,8 @@ bool Application::update()
 			// Calculate number of required updates in order to
 			// keep game in sync with render time.
 			float simulationEndTime = m_updateInfo.m_stateTime;
-			updateCount = std::min(int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / dT), m_maxSimulationUpdates);
+			int32_t updateCountNoClamp = int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / dT);
+			updateCount = std::min(updateCountNoClamp, m_maxSimulationUpdates);
 
 			// Execute fixed update(s).
 			bool renderCollision = false;
@@ -746,6 +747,11 @@ bool Application::update()
 					break;
 			}
 
+			// Cannot allow time to drift even if number of updates are clamped,
+			// this is quite a bad situation.
+			m_updateInfo.m_simulationTime += dT * (updateCountNoClamp - updateCount);
+
+			// Step both total and state time.
 			m_updateInfo.m_totalTime += m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
 			m_updateInfo.m_stateTime += m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
 		}
@@ -942,7 +948,7 @@ bool Application::update()
 
 #if T_MEASURE_PERFORMANCE
 		// Calculate frame rate.
-		m_fps = m_fps * 0.9f + (1.0f / m_updateInfo.m_frameDeltaTime) * 0.1f;
+		m_fps = m_fps * 0.8f + (1.0f / m_updateInfo.m_frameDeltaTime) * 0.2f;
 
 		// Publish performance to target manager.
 		if (m_targetManagerConnection && m_targetManagerConnection->connected())
@@ -1117,7 +1123,7 @@ void Application::threadRender()
 			render::IRenderView* renderView = m_renderServer->getRenderView();
 			render::IVRCompositor* vrCompositor = m_renderServer->getVRCompositor();
 
-			if (renderView)
+			if (renderView && !renderView->isMinimized())
 			{
 				if (!m_renderServer->getStereoscopic() && !vrCompositor)
 				{

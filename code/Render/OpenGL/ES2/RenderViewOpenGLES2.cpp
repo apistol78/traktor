@@ -159,6 +159,11 @@ bool RenderViewOpenGLES2::isActive() const
 	return true;
 }
 
+bool RenderViewOpenGLES2::isMinimized() const
+{
+	return false;
+}
+
 bool RenderViewOpenGLES2::isFullScreen() const
 {
 #if defined(T_OPENGL_ES2_HAVE_EGL) || defined(__PNACL__)

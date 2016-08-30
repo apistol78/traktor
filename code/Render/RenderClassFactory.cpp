@@ -56,6 +56,7 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIRenderView->addMethod("getWidth", &IRenderView::getWidth);
 	classIRenderView->addMethod("getHeight", &IRenderView::getHeight);
 	classIRenderView->addMethod("isActive", &IRenderView::isActive);
+	classIRenderView->addMethod("isMinimized", &IRenderView::isMinimized);
 	classIRenderView->addMethod("isFullScreen", &IRenderView::isFullScreen);
 	classIRenderView->addMethod("showCursor", &IRenderView::showCursor);
 	classIRenderView->addMethod("hideCursor", &IRenderView::hideCursor);
