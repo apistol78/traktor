@@ -149,6 +149,16 @@ bool IProcess_signalCtrlBreak(IProcess* self)
 	return self->signal(IProcess::StCtrlBreak);
 }
 
+bool IProcess_wait_0(IProcess* self)
+{
+	return self->wait();
+}
+
+bool IProcess_wait_1(IProcess* self, int32_t timeout)
+{
+	return self->wait(timeout);
+}
+
 OS* OS_getInstance()
 {
 	return &OS::getInstance();
@@ -463,6 +473,8 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIProcess->addMethod("signalCtrlC", &IProcess_signalCtrlC);
 	classIProcess->addMethod("signalCtrlBreak", &IProcess_signalCtrlBreak);
 	classIProcess->addMethod("exitCode", &IProcess::exitCode);
+	classIProcess->addMethod("wait", &IProcess_wait_0);
+	classIProcess->addMethod("wait", &IProcess_wait_1);
 	registrar->registerClass(classIProcess);
 
 	Ref< AutoRuntimeClass< ISharedMemory > > classISharedMemory = new AutoRuntimeClass< ISharedMemory >();
