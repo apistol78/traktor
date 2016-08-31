@@ -1,5 +1,5 @@
 #include "Spray/Editor/ConeSourceRenderer.h"
-#include "Spray/Sources/ConeSource.h"
+#include "Spray/Sources/ConeSourceData.h"
 #include "Render/PrimitiveRenderer.h"
 
 namespace traktor
@@ -9,19 +9,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.ConeSourceRenderer", ConeSourceRenderer, SourceRenderer)
 
-void ConeSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
+void ConeSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const SourceData* sourceData) const
 {
-	const ConeSource* coneSource = checked_type_cast< const ConeSource* >(source);
+	const ConeSourceData* coneSource = checked_type_cast< const ConeSourceData* >(sourceData);
 
-	Vector4 position = coneSource->getPosition();
-	Vector4 normal = coneSource->getNormal();
-	float angle1 = asinf(coneSource->getAngle1s());
-	float angle2 = asinf(coneSource->getAngle2s());
+	float angle1 = asinf(coneSource->m_angle1);
+	float angle2 = asinf(coneSource->m_angle2);
 
 	for (int i = 0; i < 20; ++i)
 	{
 		primitiveRenderer->drawCone(
-			translate(position) * Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), normal).toMatrix44(),
+			translate(coneSource->m_position) * Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), coneSource->m_normal).toMatrix44(),
 			angle2,
 			angle1,
 			1.0f,
@@ -30,7 +28,7 @@ void ConeSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, co
 		);
 	}
 
-	primitiveRenderer->drawLine(position, position + normal, Color4ub(255, 255, 0));
+	primitiveRenderer->drawLine(coneSource->m_position, coneSource->m_position + coneSource->m_normal, Color4ub(255, 255, 0));
 }
 
 	}

@@ -470,14 +470,14 @@ void EffectEditorPage::updateEffectPreview()
 			effectLayers
 		);
 
-		m_previewControl->setEffect(effect);
+		m_previewControl->setEffect(m_effectData, effect);
 
 		float time = m_sequencer->getCursor() / 1000.0f;
 		m_previewControl->setTotalTime(time);
 		m_previewControl->syncEffect();
 	}
 	else
-		m_previewControl->setEffect(0);
+		m_previewControl->setEffect(0, 0);
 }
 
 void EffectEditorPage::updateSequencer()

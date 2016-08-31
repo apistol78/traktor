@@ -32,6 +32,8 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
+	friend class LineSourceRenderer;
+
 	Vector4 m_startPosition;
 	Vector4 m_endPosition;
 	int32_t m_segments;

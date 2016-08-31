@@ -32,6 +32,8 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
+	friend class DiscSourceRenderer;
+
 	Vector4 m_position;
 	Vector4 m_normal;
 	Range< float > m_radius;

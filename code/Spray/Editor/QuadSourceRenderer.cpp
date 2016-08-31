@@ -1,6 +1,6 @@
 #include "Render/PrimitiveRenderer.h"
 #include "Spray/Editor/QuadSourceRenderer.h"
-#include "Spray/Sources/QuadSource.h"
+#include "Spray/Sources/QuadSourceData.h"
 
 namespace traktor
 {
@@ -9,14 +9,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.QuadSourceRenderer", QuadSourceRenderer, SourceRenderer)
 
-void QuadSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
+void QuadSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const SourceData* sourceData) const
 {
-	const QuadSource* quadSource = checked_type_cast< const QuadSource* >(source);
+	const QuadSourceData* quadSource = checked_type_cast< const QuadSourceData* >(sourceData);
 
-	Vector4 center = quadSource->getCenter();
-	Vector4 axis1 = quadSource->getAxis1();
-	Vector4 axis2 = quadSource->getAxis2();
-	Vector4 normal = quadSource->getNormal();
+	Vector4 center = quadSource->m_center;
+	Vector4 axis1 = quadSource->m_axis1;
+	Vector4 axis2 = quadSource->m_axis2;
+	Vector4 normal = quadSource->m_normal;
 
 	Vector4 corners[] =
 	{

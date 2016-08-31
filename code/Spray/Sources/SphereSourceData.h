@@ -1,6 +1,8 @@
 #ifndef traktor_spray_SphereSourceData_H
 #define traktor_spray_SphereSourceData_H
 
+#include "Core/Math/Range.h"
+#include "Core/Math/Vector4.h"
 #include "Spray/SourceData.h"
 
 // import/export mechanism.
@@ -31,6 +33,8 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
+	friend class SphereSourceRenderer;
+
 	Vector4 m_position;
 	Range< float > m_radius;
 	Range< float > m_velocity;

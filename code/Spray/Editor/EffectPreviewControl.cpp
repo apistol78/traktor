@@ -18,13 +18,17 @@
 #include "Sound/SoundSystem.h"
 #include "Sound/Player/SoundPlayer.h"
 #include "Spray/Effect.h"
+#include "Spray/EffectData.h"
 #include "Spray/EffectInstance.h"
 #include "Spray/EffectLayer.h"
+#include "Spray/EffectLayerData.h"
 #include "Spray/EffectLayerInstance.h"
 #include "Spray/Emitter.h"
+#include "Spray/EmitterData.h"
 #include "Spray/EmitterInstance.h"
 #include "Spray/MeshRenderer.h"
 #include "Spray/PointRenderer.h"
+#include "Spray/SourceData.h"
 #include "Spray/TrailRenderer.h"
 #include "Spray/Editor/BoxSourceRenderer.h"
 #include "Spray/Editor/ConeSourceRenderer.h"
@@ -35,14 +39,14 @@
 #include "Spray/Editor/PointSetSourceRenderer.h"
 #include "Spray/Editor/QuadSourceRenderer.h"
 #include "Spray/Editor/SphereSourceRenderer.h"
-#include "Spray/Sources/BoxSource.h"
-#include "Spray/Sources/ConeSource.h"
-#include "Spray/Sources/DiscSource.h"
-#include "Spray/Sources/LineSource.h"
-#include "Spray/Sources/PointSource.h"
-#include "Spray/Sources/PointSetSource.h"
-#include "Spray/Sources/QuadSource.h"
-#include "Spray/Sources/SphereSource.h"
+#include "Spray/Sources/BoxSourceData.h"
+#include "Spray/Sources/ConeSourceData.h"
+#include "Spray/Sources/DiscSourceData.h"
+#include "Spray/Sources/LineSourceData.h"
+#include "Spray/Sources/PointSourceData.h"
+#include "Spray/Sources/PointSetSourceData.h"
+#include "Spray/Sources/QuadSourceData.h"
+#include "Spray/Sources/SphereSourceData.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
 #include "Ui/PopupMenu.h"
@@ -89,14 +93,14 @@ EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 	m_context.eventManager = 0;
 	m_context.soundPlayer = 0;
 
-	m_sourceRenderers[&type_of< BoxSource >()] = new BoxSourceRenderer();
-	m_sourceRenderers[&type_of< ConeSource >()] = new ConeSourceRenderer();
-	m_sourceRenderers[&type_of< DiscSource >()] = new DiscSourceRenderer();
-	m_sourceRenderers[&type_of< LineSource >()] = new LineSourceRenderer();
-	m_sourceRenderers[&type_of< PointSource >()] = new PointSourceRenderer();
-	m_sourceRenderers[&type_of< PointSetSource >()] = new PointSetSourceRenderer();
-	m_sourceRenderers[&type_of< QuadSource >()] = new QuadSourceRenderer();
-	m_sourceRenderers[&type_of< SphereSource >()] = new SphereSourceRenderer();
+	m_sourceRenderers[&type_of< BoxSourceData >()] = new BoxSourceRenderer();
+	m_sourceRenderers[&type_of< ConeSourceData >()] = new ConeSourceRenderer();
+	m_sourceRenderers[&type_of< DiscSourceData >()] = new DiscSourceRenderer();
+	m_sourceRenderers[&type_of< LineSourceData >()] = new LineSourceRenderer();
+	m_sourceRenderers[&type_of< PointSourceData >()] = new PointSourceRenderer();
+	m_sourceRenderers[&type_of< PointSetSourceData >()] = new PointSetSourceRenderer();
+	m_sourceRenderers[&type_of< QuadSourceData >()] = new QuadSourceRenderer();
+	m_sourceRenderers[&type_of< SphereSourceData >()] = new SphereSourceRenderer();
 }
 
 bool EffectPreviewControl::create(
@@ -196,8 +200,9 @@ void EffectPreviewControl::destroy()
 	Widget::destroy();
 }
 
-void EffectPreviewControl::setEffect(Effect* effect)
+void EffectPreviewControl::setEffect(const EffectData* effectData, Effect* effect)
 {
+	m_effectData = effectData;
 	if ((m_effect = effect) != 0)
 		m_effectInstance = m_effect->createInstance();
 	else
@@ -669,22 +674,22 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	// Draw emitter sources.
-	if (m_effect && m_guideVisible)
+	if (m_effectData && m_guideVisible)
 	{
-		const RefArray< EffectLayer >& layers = m_effect->getLayers();
-		for (RefArray< EffectLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		const RefArray< EffectLayerData >& layers = m_effectData->getLayers();
+		for (RefArray< EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 		{
-			Ref< const Emitter > emitter = (*i)->getEmitter();
-			if (!emitter)
+			Ref< const EmitterData > emitterData = (*i)->getEmitter();
+			if (!emitterData)
 				continue;
 
-			Ref< const Source > source = emitter->getSource();
-			if (!source)
+			Ref< const SourceData > sourceData = emitterData->getSource();
+			if (!sourceData)
 				continue;
 
-			std::map< const TypeInfo*, Ref< SourceRenderer > >::const_iterator j = m_sourceRenderers.find(&type_of(source));
+			std::map< const TypeInfo*, Ref< SourceRenderer > >::const_iterator j = m_sourceRenderers.find(&type_of(sourceData));
 			if (j != m_sourceRenderers.end())
-				j->second->render(m_primitiveRenderer, source);
+				j->second->render(m_primitiveRenderer, sourceData);
 		}
 	}
 
