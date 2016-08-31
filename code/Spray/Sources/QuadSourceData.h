@@ -1,6 +1,8 @@
 #ifndef traktor_spray_QuadSourceData_H
 #define traktor_spray_QuadSourceData_H
 
+#include "Core/Math/Range.h"
+#include "Core/Math/Vector4.h"
 #include "Spray/SourceData.h"
 
 // import/export mechanism.
@@ -31,6 +33,8 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
+	friend class QuadSourceRenderer;
+
 	Vector4 m_center;
 	Vector4 m_axis1;
 	Vector4 m_axis2;

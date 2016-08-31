@@ -1,5 +1,5 @@
 #include "Spray/Editor/LineSourceRenderer.h"
-#include "Spray/Sources/LineSource.h"
+#include "Spray/Sources/LineSourceData.h"
 #include "Render/PrimitiveRenderer.h"
 
 namespace traktor
@@ -9,16 +9,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.LineSourceRenderer", LineSourceRenderer, SourceRenderer)
 
-void LineSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
+void LineSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const SourceData* sourceData) const
 {
-	const LineSource* lineSource = checked_type_cast< const LineSource* >(source);
+	const LineSourceData* lineSource = checked_type_cast< const LineSourceData* >(sourceData);
 
-	Vector4 startPosition = lineSource->getStartPosition();
-	Vector4 endPosition = lineSource->getEndPosition();
+	Vector4 startPosition = lineSource->m_startPosition;
+	Vector4 endPosition = lineSource->m_endPosition;
 
 	primitiveRenderer->drawLine(startPosition, endPosition, 1.0f, Color4ub(255, 255, 0));
 
-	int32_t npoints = 2 + lineSource->getSegments();
+	int32_t npoints = 2 + lineSource->m_segments;
 	for (int32_t i = 0; i < npoints; ++i)
 	{
 		float k = float(i) / (npoints - 1);

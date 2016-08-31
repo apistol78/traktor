@@ -58,6 +58,7 @@ class SoundSystem;
 	{
 
 class Effect;
+class EffectData;
 class EffectInstance;
 class EffectLayer;
 class MeshRenderer;
@@ -82,7 +83,7 @@ public:
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	void setEffect(Effect* effect);
+	void setEffect(const EffectData* effectData, Effect* effect);
 
 	uint32_t getEffectLayerPoints(const EffectLayer* effectLayer) const;
 
@@ -127,6 +128,7 @@ private:
 	Ref< PointRenderer > m_pointRenderer;
 	Ref< MeshRenderer > m_meshRenderer;
 	Ref< TrailRenderer > m_trailRenderer;
+	Ref< const EffectData > m_effectData;
 	Ref< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;
 	Color4ub m_colorClear;

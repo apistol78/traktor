@@ -32,6 +32,8 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
+	friend class BoxSourceRenderer;
+
 	Vector4 m_position;
 	Vector4 m_extent;
 	Range< float > m_velocity;

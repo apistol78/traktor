@@ -1,5 +1,5 @@
 #include "Spray/Editor/DiscSourceRenderer.h"
-#include "Spray/Sources/DiscSource.h"
+#include "Spray/Sources/DiscSourceData.h"
 #include "Render/PrimitiveRenderer.h"
 
 namespace traktor
@@ -9,14 +9,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.DiscSourceRenderer", DiscSourceRenderer, SourceRenderer)
 
-void DiscSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
+void DiscSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const SourceData* sourceData) const
 {
-	const DiscSource* discSource = checked_type_cast< const DiscSource* >(source);
+	const DiscSourceData* discSource = checked_type_cast< const DiscSourceData* >(sourceData);
 
-	Vector4 position = discSource->getPosition();
-	Vector4 normal = discSource->getNormal();
-	Scalar minRadius = Scalar(discSource->getRadius().min);
-	Scalar maxRadius = Scalar(discSource->getRadius().max);
+	Vector4 position = discSource->m_position;
+	Vector4 normal = discSource->m_normal;
+	Scalar minRadius = Scalar(discSource->m_radius.min);
+	Scalar maxRadius = Scalar(discSource->m_radius.max);
 
 	const Vector4 c_axisZ(0.0f, 0.0f, 1.0f, 0.0f);
 

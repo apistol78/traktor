@@ -111,15 +111,34 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 
 	// Erase dead particles.
 	size_t size = m_points.size();
-	for (size_t i = 0; i < size; )
+	if (!m_emitter->getEffect() || m_effectInstances.size() != m_points.size())
 	{
-		Point& point = m_points[i];
-		if ((point.age += context.deltaTime) < point.maxAge)
-			++i;
-		else if (i < --size)
-			point = m_points[size];
+		for (size_t i = 0; i < size; )
+		{
+			Point& point = m_points[i];
+			if ((point.age += context.deltaTime) < point.maxAge)
+				++i;
+			else if (i < --size)
+				point = m_points[size];
+		}
+		m_points.resize(size);
 	}
-	m_points.resize(size);
+	else
+	{
+		for (size_t i = 0; i < size; )
+		{
+			Point& point = m_points[i];
+			if ((point.age += context.deltaTime) < point.maxAge)
+				++i;
+			else if (i < --size)
+			{
+				point = m_points[size];
+				m_effectInstances[i] = m_effectInstances[size];
+			}
+		}
+		m_points.resize(size);
+		m_effectInstances.resize(size);
+	}
 
 	// Emit particles.
 	if (emit)
@@ -403,10 +422,8 @@ void EmitterInstance::updateTask(float deltaTime)
 		// Update child effect instances.
 		Context childContext;
 		childContext.deltaTime = deltaTime;
-		childContext.owner = 0;
-		childContext.eventManager = 0;
-		childContext.soundPlayer = 0;
 
+		float duration = m_emitter->getEffect()->getDuration();
 		for (uint32_t i = 0; i < m_renderPoints.size(); ++i)
 		{
 			if (!m_effectInstances[i])
@@ -420,7 +437,7 @@ void EmitterInstance::updateTask(float deltaTime)
 					point.position,
 					Quaternion(Vector4(0.0f, 1.0f, 0.0f), point.velocity)
 				),
-				true
+				m_effectInstances[i]->getTime() < duration
 			);
 		}
 	}

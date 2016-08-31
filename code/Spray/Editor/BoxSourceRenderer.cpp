@@ -1,5 +1,5 @@
 #include "Spray/Editor/BoxSourceRenderer.h"
-#include "Spray/Sources/BoxSource.h"
+#include "Spray/Sources/BoxSourceData.h"
 #include "Render/PrimitiveRenderer.h"
 
 namespace traktor
@@ -9,14 +9,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.BoxSourceRenderer", BoxSourceRenderer, SourceRenderer)
 
-void BoxSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
+void BoxSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const SourceData* sourceData) const
 {
-	const BoxSource* boxSource = checked_type_cast< const BoxSource* >(source);
-
-	Vector4 position = boxSource->getPosition();
-	Vector4 extent = boxSource->getExtent();
-
-	primitiveRenderer->drawWireAabb(position, extent, Color4ub(255, 255, 0));
+	const BoxSourceData* boxSource = checked_type_cast< const BoxSourceData* >(sourceData);
+	primitiveRenderer->drawWireAabb(boxSource->m_position, boxSource->m_extent, Color4ub(255, 255, 0));
 }
 
 	}
