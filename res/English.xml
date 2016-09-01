@@ -665,6 +665,14 @@
       <first>DATABASE_WIZARDS</first>
       <second>Wizards</second>
     </item>
+    <item>
+      <first>EDITOR_HOME</first>
+      <second>Home</second>
+    </item>
+    <item>
+      <first>MENU_VIEW_HOME</first>
+      <second>Home</second>
+    </item>
 	<item>
 		<first>EDITOR_HTTP_GET</first>
 		<second>Http GET</second>
