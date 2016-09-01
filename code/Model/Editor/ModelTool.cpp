@@ -29,7 +29,7 @@ Ref< ui::IBitmap > ModelTool::getIcon() const
 	return 0;
 }
 
-bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor)
+bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor, const std::wstring& param)
 {
 	safeDestroy(m_dialog);
 
@@ -50,7 +50,7 @@ bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor)
 	);
 
 	m_dialog = new ModelToolDialog(resourceManager, renderSystem);
-	if (!m_dialog->create(parent))
+	if (!m_dialog->create(parent, param))
 	{
 		safeDestroy(m_dialog);
 		return false;

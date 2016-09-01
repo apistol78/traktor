@@ -1218,6 +1218,20 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 	return true;
 }
 
+bool EditorForm::openTool(const std::wstring& toolType, const std::wstring& param)
+{
+	for (RefArray< IEditorTool >::const_iterator i = m_editorTools.begin(); i != m_editorTools.end(); ++i)
+	{
+		if (type_name(*i) == toolType)
+		{
+			if ((*i)->launch(this, this, param))
+				m_dataBaseView->updateView();
+			return true;
+		}
+	}
+	return false;
+}
+
 bool EditorForm::openBrowser(const net::Url& url)
 {
 	Ref< ui::TabPage > tabPage = new ui::TabPage();
@@ -2494,7 +2508,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		Ref< IEditorTool > tool = m_editorTools[command.getId()];
 		T_ASSERT (tool);
 
-		if (tool->launch(this, this))
+		if (tool->launch(this, this, L""))
 			m_dataBaseView->updateView();
 		else
 			result = false;

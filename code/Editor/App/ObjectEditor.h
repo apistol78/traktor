@@ -63,6 +63,8 @@ public:
 
 	virtual bool openDefaultEditor(db::Instance* instance) T_OVERRIDE T_FINAL;
 
+	virtual bool openTool(const std::wstring& toolType, const std::wstring& param) T_OVERRIDE T_FINAL;
+
 	virtual bool openBrowser(const net::Url& url) T_OVERRIDE T_FINAL;
 
 	virtual Ref< IEditorPage > getActiveEditorPage() T_OVERRIDE T_FINAL;

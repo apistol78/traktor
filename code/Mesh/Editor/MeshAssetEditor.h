@@ -118,6 +118,8 @@ private:
 
 	void eventBrowseClick(ui::ButtonClickEvent* event);
 
+	void eventPreviewModelClick(ui::ButtonClickEvent* event);
+
 	void eventMaterialShaderToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
 	void eventMaterialShaderListDoubleClick(ui::MouseDoubleClickEvent* event);

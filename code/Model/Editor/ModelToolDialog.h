@@ -58,7 +58,7 @@ public:
 		render::IRenderSystem* renderSystem
 	);
 
-	bool create(ui::Widget* parent);
+	bool create(ui::Widget* parent, const std::wstring& fileName);
 
 	void destroy();
 

@@ -101,7 +101,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 
 	Ref< ui::Container > containerFileName = new ui::Container();
-	if (!containerFileName->create(containerFile, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, 0)))
+	if (!containerFileName->create(containerFile, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"*", 0, 0)))
 		return false;
 
 	m_editFileName = new ui::Edit();
@@ -111,8 +111,12 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	Ref< ui::custom::MiniButton > browseButton = new ui::custom::MiniButton();
 	if (!browseButton->create(containerFileName, L"..."))
 		return false;
-
 	browseButton->addEventHandler< ui::ButtonClickEvent >(this, &MeshAssetEditor::eventBrowseClick);
+
+	Ref< ui::custom::MiniButton > previewModelButton = new ui::custom::MiniButton();
+	if (!previewModelButton->create(containerFileName, i18n::Text(L"MESHASSET_EDITOR_PREVIEW_MESH")))
+		return false;
+	previewModelButton->addEventHandler< ui::ButtonClickEvent >(this, &MeshAssetEditor::eventPreviewModelClick);
 
 	Ref< ui::Static > staticMeshType = new ui::Static();
 	if (!staticMeshType->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE")))
@@ -620,6 +624,12 @@ void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 	}
 
 	fileDialog.destroy();
+}
+
+void MeshAssetEditor::eventPreviewModelClick(ui::ButtonClickEvent* event)
+{
+	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_editor->openTool(L"traktor.model.ModelTool", assetPath + L"/" + m_editFileName->getText());
 }
 
 void MeshAssetEditor::eventMaterialShaderToolClick(ui::custom::ToolBarButtonClickEvent* event)

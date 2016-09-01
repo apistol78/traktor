@@ -75,7 +75,7 @@ ModelToolDialog::ModelToolDialog(
 {
 }
 
-bool ModelToolDialog::create(ui::Widget* parent)
+bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 {
 	if (!ui::Dialog::create(parent, L"Model Tool", ui::scaleBySystemDPI(1000), ui::scaleBySystemDPI(800), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
@@ -212,6 +212,21 @@ bool ModelToolDialog::create(ui::Widget* parent)
 		return false;
 
 	m_resourceManager->bind(c_textureDebug, m_textureDebug);
+
+	if (!fileName.empty())
+	{
+		Ref< Model > model = ModelFormat::readAny(fileName);
+		if (model)
+		{
+			Aabb3 boundingBox = model->getBoundingBox();
+			Transform(translate(-boundingBox.getCenter())).apply(*model);
+
+			Ref< ui::custom::TreeViewItem > item = m_modelTree->createItem(0, fileName);
+			item->setData(L"MODEL", model);
+		}
+		else
+			log::error << L"Unable to load \"" << fileName << L"\"." << Endl;
+	}
 
 	update();
 	show();

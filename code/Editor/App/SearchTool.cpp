@@ -22,7 +22,7 @@ Ref< ui::IBitmap > SearchTool::getIcon() const
 	return new ui::StyleBitmap(L"Editor.Tool.Search");
 }
 
-bool SearchTool::launch(ui::Widget* parent, IEditor* editor)
+bool SearchTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
 {
 	safeDestroy(m_searchDialog);
 

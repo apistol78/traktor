@@ -22,7 +22,7 @@ Ref< ui::IBitmap > ScriptProfilerTool::getIcon() const
 	return new ui::StyleBitmap(L"Script.Tool.Profiler");
 }
 
-bool ScriptProfilerTool::launch(ui::Widget* parent, editor::IEditor* script)
+bool ScriptProfilerTool::launch(ui::Widget* parent, editor::IEditor* script, const std::wstring& param)
 {
 	// If profiler dialog is already created then we only need to show it.
 	if (m_profilerDialog)
