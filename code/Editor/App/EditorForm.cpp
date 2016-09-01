@@ -464,7 +464,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.OpenWorkspace"), i18n::Text(L"MENU_FILE_OPEN_WORKSPACE")));
 	menuFile->add(m_menuItemRecent);
 	menuFile->add(new ui::MenuItem(L"-"));
-	//menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE"), ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"png")));
+	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.SaveAll"), i18n::Text(L"MENU_FILE_SAVE_ALL")));
 	menuFile->add(new ui::MenuItem(L"-"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Exit"), i18n::Text(L"MENU_FILE_EXIT")));
@@ -484,6 +484,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuBar->add(menuEdit);
 
 	Ref< ui::MenuItem > menuView = new ui::MenuItem(i18n::Text(L"MENU_VIEW"));
+	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewHome"), i18n::Text(L"MENU_VIEW_HOME")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewDatabase"), i18n::Text(L"MENU_VIEW_DATABASE")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewProperties"), i18n::Text(L"MENU_VIEW_PROPERTIES")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewLog"), i18n::Text(L"MENU_VIEW_LOG")));
@@ -762,10 +763,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	setStoreObject(L"ThumbnailGenerator", new ThumbnailGenerator(thumbsPath));
 
 	// Restore last used form settings.
-	int x = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.PositionX");
-	int y = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.PositionY");
-	int width = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeWidth", ui::scaleBySystemDPI(1280));
-	int height = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeHeight", ui::scaleBySystemDPI(900));
+	int32_t x = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.PositionX");
+	int32_t y = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.PositionY");
+	int32_t width = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeWidth", ui::scaleBySystemDPI(1280));
+	int32_t height = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeHeight", ui::scaleBySystemDPI(900));
 	setRect(ui::Rect(x, y, x + width, y + height));
 
 	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.Maximized"))
@@ -1400,7 +1401,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	if (!url.empty())
 	{
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
-		tabPage->create(m_tab, L"Home", 0, new ui::FloodLayout());
+		tabPage->create(m_tab, i18n::Text(L"EDITOR_HOME"), 0, new ui::FloodLayout());
 
 		Ref< WebBrowserPage > homePage = new WebBrowserPage(this);
 		homePage->create(tabPage, url);
@@ -2097,16 +2098,30 @@ void EditorForm::closeAllEditors()
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
 
-	while (m_tab->getPageCount() > 0)
+	// Get all other pages to close; ignore home.
+	RefArray< ui::TabPage > closePages;
+	for (int32_t i = 0; i < m_tab->getPageCount(); ++i)
 	{
-		Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-		T_ASSERT (tabPage);
+		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
+		if (tabPage->getData< IEditorPage >(L"EDITORPAGE") == 0)
+			continue;
 
+		closePages.push_back(tabPage);
+	}
+
+	// Close found pages.
+	while (!closePages.empty())
+	{
+		Ref< ui::TabPage > tabPage = closePages.back();
+		closePages.pop_back();
+
+		T_ASSERT (tabPage);
 		m_tab->removePage(tabPage);
 
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		if (editorPage)
 		{
+			T_ASSERT (editorPage != m_activeEditorPage);
 			editorPage->deactivate();
 			editorPage->destroy();
 		}
@@ -2132,11 +2147,22 @@ void EditorForm::closeAllOtherEditors()
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
 
-	while (m_tab->getPageCount() > 1)
+	// Get all other pages to close; ignore active page and home.
+	RefArray< ui::TabPage > closePages;
+	for (int32_t i = 0; i < m_tab->getPageCount(); ++i)
 	{
-		Ref< ui::TabPage > tabPage = m_tab->getPage(0);
-		if (tabPage == m_tab->getActivePage())
-			tabPage = m_tab->getPage(1);
+		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
+		if (tabPage == m_tab->getActivePage() || tabPage->getData< IEditorPage >(L"EDITORPAGE") == 0)
+			continue;
+
+		closePages.push_back(tabPage);
+	}
+
+	// Close found pages.
+	while (!closePages.empty())
+	{
+		Ref< ui::TabPage > tabPage = closePages.back();
+		closePages.pop_back();
 
 		T_ASSERT (tabPage);
 		m_tab->removePage(tabPage);
@@ -2412,6 +2438,21 @@ bool EditorForm::handleCommand(const ui::Command& command)
 			}
 
 			settingsDialog.destroy();
+		}
+	}
+	else if (command == L"Editor.ViewHome")
+	{
+		std::wstring url = m_mergedSettings->getProperty< PropertyString >(L"Editor.HomeUrl", L"");
+		if (!url.empty())
+		{
+			Ref< ui::TabPage > tabPage = new ui::TabPage();
+			tabPage->create(m_tab, i18n::Text(L"EDITOR_HOME"), 0, new ui::FloodLayout());
+
+			Ref< WebBrowserPage > homePage = new WebBrowserPage(this);
+			homePage->create(tabPage, url);
+
+			m_tab->addPage(tabPage);
+			m_tab->update(0, true);
 		}
 	}
 	else if (command == L"Editor.ViewDatabase")
