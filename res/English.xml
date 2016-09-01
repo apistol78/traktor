@@ -1581,6 +1581,10 @@
       <second>Properties</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_PREVIEW_MESH</first>
+      <second>Preview...</second>
+    </item>
+    <item>
     	<first>MESHASSET_EDITOR_SCALE_FACTOR</first>
     	<second>Scale factor</second>
     </item>

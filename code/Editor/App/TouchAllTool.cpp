@@ -24,7 +24,7 @@ Ref< ui::IBitmap > TouchAllTool::getIcon() const
 	return 0;
 }
 
-bool TouchAllTool::launch(ui::Widget* parent, IEditor* editor)
+bool TouchAllTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
 {
 	Ref< db::Database > database = editor->getSourceDatabase();
 	if (!database)

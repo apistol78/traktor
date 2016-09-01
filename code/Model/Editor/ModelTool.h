@@ -21,7 +21,7 @@ public:
 
 	virtual Ref< ui::IBitmap > getIcon() const T_OVERRIDE T_FINAL;
 
-	virtual bool launch(ui::Widget* parent, editor::IEditor* editor) T_OVERRIDE T_FINAL;
+	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, const std::wstring& param) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ModelToolDialog > m_dialog;

@@ -39,7 +39,7 @@ public:
 
 	virtual Ref< ui::IBitmap > getIcon() const = 0;
 
-	virtual bool launch(ui::Widget* parent, IEditor* editor) = 0;
+	virtual bool launch(ui::Widget* parent, IEditor* editor, const std::wstring& param) = 0;
 };
 
 	}

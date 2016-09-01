@@ -28,7 +28,7 @@ Ref< ui::IBitmap > CheckAssetsTool::getIcon() const
 	return 0;
 }
 
-bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor)
+bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
 {
 	Ref< db::Database > database = editor->getSourceDatabase();
 	if (!database)

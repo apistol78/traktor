@@ -25,7 +25,7 @@ Ref< ui::IBitmap > HttpGetTool::getIcon() const
 	return 0;
 }
 
-bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor)
+bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
 {
 	ui::custom::InputDialog inputDialog;
 	ui::custom::InputDialog::Field f[] =

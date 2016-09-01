@@ -104,6 +104,9 @@ public:
 	/*! \brief Open instance using default editor. */
 	virtual bool openDefaultEditor(db::Instance* instance) = 0;
 
+	/*! \brief Open tool. */
+	virtual bool openTool(const std::wstring& toolType, const std::wstring& param) = 0;
+
 	/*! \brief Open browser to given resource. */
 	virtual bool openBrowser(const net::Url& url) = 0;
 

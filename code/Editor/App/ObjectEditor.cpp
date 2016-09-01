@@ -118,6 +118,11 @@ bool ObjectEditor::openDefaultEditor(db::Instance* instance)
 	return m_editor->openDefaultEditor(instance);
 }
 
+bool ObjectEditor::openTool(const std::wstring& toolType, const std::wstring& param)
+{
+	return m_editor->openTool(toolType, param);
+}
+
 bool ObjectEditor::openBrowser(const net::Url& url)
 {
 	return m_editor->openBrowser(url);
