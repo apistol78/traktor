@@ -100,6 +100,45 @@ struct PhysicsStatistics
 	uint32_t queryCount;
 };
 
+/*! \brief Query filter.
+ * \ingroup Physics
+ *
+ * To be included in query following rule must be satisfied:
+ * (body.group & query.includeGroup != 0) && (body.group & query.ignoreGroup == 0) && (body.clusterId != query.ignoreClusterId)
+ */
+struct QueryFilter
+{
+	uint32_t includeGroup;
+	uint32_t ignoreGroup;
+	uint32_t ignoreClusterId;
+
+	QueryFilter(uint32_t includeGroup_)
+	:	includeGroup(includeGroup_)
+	,	ignoreGroup(0)
+	,	ignoreClusterId(0)
+	{
+	}
+
+	QueryFilter(uint32_t includeGroup_, uint32_t ignoreGroup_)
+	:	includeGroup(includeGroup_)
+	,	ignoreGroup(ignoreGroup_)
+	,	ignoreClusterId(0)
+	{
+	}
+
+	QueryFilter(uint32_t includeGroup_, uint32_t ignoreGroup_, uint32_t ignoreClusterId_)
+	:	includeGroup(includeGroup_)
+	,	ignoreGroup(ignoreGroup_)
+	,	ignoreClusterId(ignoreClusterId_)
+	{
+	}
+
+	static QueryFilter onlyIgnoreClusterId(uint32_t ignoreClusterId)
+	{
+		return QueryFilter(~0U, 0U, ignoreClusterId);
+	}
+};
+
 /*! \brief Physics manager.
  * \ingroup Physics
  */
@@ -256,8 +295,7 @@ public:
 	 * \param at Ray origin in world space.
 	 * \param direction Ray direction in world space.
 	 * \param maxLength Maximum length of ray.
-	 * \param group Collision groups.
-	 * \param ignoreClusterId Ignore ray casting bodies with cluster id, 0 means no cluster filter.
+	 * \param queryFilter Query group and cluster filter.
 	 * \param ignoreBackFace Ignore intersection with back-facing surfaces.
 	 * \param outResult Intersection result, only modified if method returns true.
 	 * \return True if intersection found.
@@ -266,8 +304,7 @@ public:
 		const Vector4& at,
 		const Vector4& direction,
 		float maxLength,
-		uint32_t group,
-		uint32_t ignoreClusterId,
+		const QueryFilter& queryFilter,
 		bool ignoreBackFace,
 		QueryResult& outResult
 	) const = 0;
@@ -280,25 +317,23 @@ public:
 	 * \param at Ray origin in world space.
 	 * \param direction Ray direction in world space.
 	 * \param maxLength Maximum length of ray.
-	 * \param group Collision groups.
+	 * \param queryFilter Query group and cluster filter.
 	 * \param queryTypes Type of bodies, @sa QueryTypes
-	 * \param ignoreClusterId Ignore ray casting bodies with cluster id, 0 means no cluster filter.
 	 * \return True if any intersection found.
 	 */
 	virtual bool queryShadowRay(
 		const Vector4& at,
 		const Vector4& direction,
 		float maxLength,
-		uint32_t group,
-		uint32_t queryTypes,
-		uint32_t ignoreClusterId
+		const QueryFilter& queryFilter,
+		uint32_t queryTypes
 	) const = 0;
 
 	/*! \brief Get all bodies within a sphere.
 	 *
 	 * \param at Sphere origin in world space.
 	 * \param radius Sphere radius.
-	 * \param group Collision groups.
+	 * \param queryFilter Query group and cluster filter.
 	 * \param queryTypes Type of bodies, @sa QueryTypes
 	 * \param outBodies Array of intersecting bodies.
 	 * \return Number of bodies found.
@@ -306,7 +341,7 @@ public:
 	virtual uint32_t querySphere(
 		const Vector4& at,
 		float radius,
-		uint32_t group,
+		const QueryFilter& queryFilter,
 		uint32_t queryTypes,
 		RefArray< Body >& outBodies
 	) const = 0;
@@ -317,8 +352,7 @@ public:
 	 * \param direction Sweep direction in world space.
 	 * \param maxLength Max sweep length.
 	 * \param radius Sphere radius.
-	 * \param group Collision groups.
-	 * \param ignoreClusterId Ignore ray casting bodies with cluster id, 0 means no cluster filter.
+	 * \param queryFilter Query group and cluster filter.
 	 * \param outResult Intersection result, only modified if method returns true.
 	 * \return True if intersection found.
 	 */
@@ -327,8 +361,7 @@ public:
 		const Vector4& direction,
 		float maxLength,
 		float radius,
-		uint32_t group,
-		uint32_t ignoreClusterId,
+		const QueryFilter& queryFilter,
 		QueryResult& outResult
 	) const = 0;
 
@@ -339,9 +372,7 @@ public:
 	 * \param at Shape origin in world space.
 	 * \param direction Sweep direction in world space.
 	 * \param maxLength Max sweep length.
-	 * \param radius Sphere radius.
-	 * \param group Collision groups.
-	 * \param ignoreClusterId Ignore ray casting bodies with cluster id, 0 means no cluster filter.
+	 * \param queryFilter Query group and cluster filter.
 	 * \param outResult Intersection result, only modified if method returns true.
 	 * \return True if intersection found.
 	 */
@@ -351,8 +382,7 @@ public:
 		const Vector4& at,
 		const Vector4& direction,
 		float maxLength,
-		uint32_t group,
-		uint32_t ignoreClusterId,
+		const QueryFilter& queryFilter,
 		QueryResult& outResult
 	) const = 0;
 
@@ -362,8 +392,7 @@ public:
 	 * \param direction Sweep direction in world space.
 	 * \param maxLength Max sweep length.
 	 * \param radius Sphere radius.
-	 * \param group Collision groups.
-	 * \param ignoreClusterId Ignore ray casting bodies with cluster id, 0 means no cluster filter.
+	 * \param queryFilter Query group and cluster filter.
 	 * \param outResult Overlapping bodies result.
 	 */
 	virtual void querySweep(
@@ -371,8 +400,7 @@ public:
 		const Vector4& direction,
 		float maxLength,
 		float radius,
-		uint32_t group,
-		uint32_t ignoreClusterId,
+		const QueryFilter& queryFilter,
 		AlignedVector< QueryResult >& outResult
 	) const = 0;
 
