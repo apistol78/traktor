@@ -23,7 +23,7 @@ namespace traktor
 std::string generateKey(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	std::stringstream ss;
-	ss << wstombs(guid.format()) << ":" << hash.pipelineHash << ":" << hash.sourceAssetHash << ":" << hash.sourceDataHash << ":" << hash.filesHash << ":" << hash.pipelineVersion;
+	ss << wstombs(guid.format()) << ":" << hash.pipelineHash << ":" << hash.sourceAssetHash << ":" << hash.sourceDataHash << ":" << hash.filesHash;
 	return ss.str();
 }
 

@@ -188,14 +188,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 			if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
 			{
 #if defined(_DEBUG)
-				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed" << Endl;
-#endif
-				m_reasons[i] |= PbrSourceModified;
-			}
-			else if (previousDependencyHash.pipelineVersion != dependency->pipelineType->getVersion())
-			{
-#if defined(_DEBUG)
-				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; pipeline version differ" << Endl;
+				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed." << Endl;
 #endif
 				m_reasons[i] |= PbrSourceModified;
 			}
@@ -207,7 +200,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 			)
 			{
 #if defined(_DEBUG)
-				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
+				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified (or new pipeline version)." << Endl;
 				log::info << IncreaseIndent;
 				log::info << L"Pipeline hash "; FormatHex(log::info, pipelineHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.pipelineHash, 8); log::info << L")" << Endl;
 				log::info << L"Source asset hash "; FormatHex(log::info, sourceAssetHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.sourceAssetHash, 8); log::info << L")" << Endl;
@@ -584,7 +577,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	);
 
 	// Create hash entry.
-	currentDependencyHash.pipelineVersion = dependency->pipelineType->getVersion();
 	currentDependencyHash.pipelineHash = pipelineHash;
 	currentDependencyHash.sourceAssetHash = sourceAssetHash;
 	currentDependencyHash.sourceDataHash = sourceDataHash;

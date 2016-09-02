@@ -39,7 +39,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 							if (currentDistance < it->second.distance)
 							{
 								it->second.pipeline = pipeline;
-								it->second.hash = pipelineSettings.getHash();
+								it->second.hash = pipelineSettings.getHash() + type_of(pipeline).getVersion();
 								it->second.distance = currentDistance;
 							}
 						}
@@ -47,7 +47,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 						{
 							PipelineMatch& pm = m_pipelineMap[*k];
 							pm.pipeline = pipeline;
-							pm.hash = pipelineSettings.getHash();
+							pm.hash = pipelineSettings.getHash() + type_of(pipeline).getVersion();
 							pm.distance = type_difference(*(*j), *(*k));
 						}
 					}

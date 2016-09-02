@@ -111,12 +111,7 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 			PipelineDependencyHash previousDependencyHash;
 			if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
 			{
-				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed" << Endl;
-				reasons[i] |= PbrSourceModified;
-			}
-			else if (previousDependencyHash.pipelineVersion != dependency->pipelineType->getVersion())
-			{
-				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; pipeline version differ" << Endl;
+				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed." << Endl;
 				reasons[i] |= PbrSourceModified;
 			}
 			else if (
@@ -126,7 +121,7 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 				previousDependencyHash.filesHash != filesHash
 			)
 			{
-				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
+				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified (or new pipeline version)." << Endl;
 				reasons[i] |= PbrSourceModified;
 			}
 		}
@@ -283,7 +278,6 @@ bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* depe
 	bool result = true;
 
 	// Create hash entry.
-	currentDependencyHash.pipelineVersion = dependency->pipelineType->getVersion();
 	calculateGlobalHash(
 		dependencySet,
 		dependency,

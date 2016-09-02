@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_version = 6;
+const int32_t c_version = 7;
 
 int32_t hash(const std::wstring& s)
 {
@@ -72,7 +72,6 @@ bool PipelineDb::open(const std::wstring& connectionString)
 		if (connection->executeUpdate(
 			L"create table PipelineHash ("
 			L"guid char(37) primary key,"
-			L"pipelineVersion integer,"
 			L"pipelineHash integer,"
 			L"sourceAssetHash integer,"
 			L"sourceDataHash integer,"
@@ -142,10 +141,9 @@ void PipelineDb::setDependency(const Guid& guid, const PipelineDependencyHash& h
 
 	m_ss.reset();
 	m_ss <<
-		L"insert or replace into PipelineHash (guid, pipelineVersion, pipelineHash, sourceAssetHash, sourceDataHash, filesHash) "
+		L"insert or replace into PipelineHash (guid, pipelineHash, sourceAssetHash, sourceDataHash, filesHash) "
 		L"values (" <<
 		L"'" << guid.format() << L"'," <<
-		hash.pipelineVersion << L"," <<
 		hash.pipelineHash << L"," <<
 		hash.sourceAssetHash << L"," <<
 		hash.sourceDataHash << L"," <<
@@ -168,7 +166,6 @@ bool PipelineDb::getDependency(const Guid& guid, PipelineDependencyHash& outHash
 	if (!rs || !rs->next())
 		return false;
 
-	outHash.pipelineVersion = rs->getInt32(L"pipelineVersion");
 	outHash.pipelineHash = rs->getInt32(L"pipelineHash");
 	outHash.sourceAssetHash = rs->getInt32(L"sourceAssetHash");
 	outHash.sourceDataHash = rs->getInt32(L"sourceDataHash");
