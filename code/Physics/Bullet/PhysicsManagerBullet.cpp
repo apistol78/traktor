@@ -180,14 +180,14 @@ uint32_t getClusterId(const btCollisionObject* collisionObject)
 struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConvexResultCallback
 {
 	const BodyBullet* m_ignoreBody;
+	const QueryFilter& m_queryFilter;
 	uint32_t m_group;
 	uint32_t m_ignoreClusterId;
 
-	ClosestConvexExcludeResultCallback(const BodyBullet* ignoreBody, uint32_t group, uint32_t ignoreClusterId, const btVector3& convexFromWorld, const btVector3& convexToWorld)
+	ClosestConvexExcludeResultCallback(const BodyBullet* ignoreBody, const QueryFilter& queryFilter, const btVector3& convexFromWorld, const btVector3& convexToWorld)
 	:	btCollisionWorld::ClosestConvexResultCallback(convexFromWorld, convexToWorld)
 	,	m_ignoreBody(ignoreBody)
-	,	m_group(group)
-	,	m_ignoreClusterId(ignoreClusterId)
+	,	m_queryFilter(queryFilter)
 	{
 	}
 
@@ -198,10 +198,12 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 		if (m_ignoreBody == static_cast< BodyBullet* >(convexResult.m_hitCollisionObject->getUserPointer()))
 			return 1.0f;
 
-		if (m_ignoreClusterId != 0 && getClusterId(convexResult.m_hitCollisionObject) == m_ignoreClusterId)
+		if (m_queryFilter.ignoreClusterId != 0 && getClusterId(convexResult.m_hitCollisionObject) == m_queryFilter.ignoreClusterId)
 			return 1.0f;
 
-		if (m_group != ~0U && (getCollisionGroup(convexResult.m_hitCollisionObject) & m_group) == 0)
+		uint32_t group = getCollisionGroup(convexResult.m_hitCollisionObject);
+
+		if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 			return 1.0f;
 
 		return btCollisionWorld::ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
@@ -214,16 +216,14 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	btVector3 m_rayToWorld;
 	btVector3 m_hitNormalWorld;
 	btVector3 m_hitPointWorld;
-	uint32_t m_ignoreClusterId;
-	uint32_t m_group;
+	const QueryFilter& m_queryFilter;
 	uint32_t m_queryTypes;
 	int32_t m_triangleIndex;
 
-	ClosestRayExcludeResultCallback(uint32_t ignoreClusterId, uint32_t group, uint32_t queryTypes, const btVector3& rayFromWorld, const btVector3& rayToWorld)
+	ClosestRayExcludeResultCallback(const QueryFilter& queryFilter, uint32_t queryTypes, const btVector3& rayFromWorld, const btVector3& rayToWorld)
 	:	m_rayFromWorld(rayFromWorld)
 	,	m_rayToWorld(rayToWorld)
-	,	m_ignoreClusterId(ignoreClusterId)
-	,	m_group(group)
+	,	m_queryFilter(queryFilter)
 	,	m_queryTypes(queryTypes)
 	,	m_triangleIndex(-1)
 	{
@@ -238,10 +238,12 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	{
 		T_ASSERT (rayResult.m_hitFraction <= m_closestHitFraction);
 
-		if (m_ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_ignoreClusterId)
+		if (m_queryFilter.ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_queryFilter.ignoreClusterId)
 			return m_closestHitFraction;
 
-		if (m_group != ~0U && (getCollisionGroup(rayResult.m_collisionObject) & m_group) == 0)
+		uint32_t group = getCollisionGroup(rayResult.m_collisionObject);
+
+		if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 			return m_closestHitFraction;
 
 		bool isStatic = rayResult.m_collisionObject->isStaticOrKinematicObject();
@@ -276,15 +278,13 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 	btVector3 m_rayToWorld;
 	btVector3 m_hitNormalWorld;
 	btVector3 m_hitPointWorld;
-	uint32_t m_ignoreClusterId;
-	uint32_t m_group;
+	const QueryFilter& m_queryFilter;
 	int32_t m_triangleIndex;
 
-	ClosestRayExcludeAndCullResultCallback(uint32_t ignoreClusterId, uint32_t group, const btVector3& rayFromWorld, const btVector3& rayToWorld)
+	ClosestRayExcludeAndCullResultCallback(const QueryFilter& queryFilter, const btVector3& rayFromWorld, const btVector3& rayToWorld)
 	:	m_rayFromWorld(rayFromWorld)
 	,	m_rayToWorld(rayToWorld)
-	,	m_ignoreClusterId(ignoreClusterId)
-	,	m_group(group)
+	,	m_queryFilter(queryFilter)
 	,	m_triangleIndex(-1)
 	{
 	}
@@ -298,10 +298,12 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 	{
 		T_ASSERT (rayResult.m_hitFraction <= m_closestHitFraction);
 
-		if (m_ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_ignoreClusterId)
+		if (m_queryFilter.ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_queryFilter.ignoreClusterId)
 			return m_closestHitFraction;
 
-		if (m_group != ~0U && (getCollisionGroup(rayResult.m_collisionObject) & m_group) == 0)
+		uint32_t group = getCollisionGroup(rayResult.m_collisionObject);
+
+		if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 			return m_closestHitFraction;
 
 		btVector3 hitNormalWorld;
@@ -329,13 +331,11 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 
 struct ConvexExcludeResultCallback : public btCollisionWorld::ConvexResultCallback
 {
-	uint32_t m_group;
-	uint32_t m_ignoreClusterId;
+	const QueryFilter& m_queryFilter;
 	AlignedVector< QueryResult >& m_outResult;
 
-	ConvexExcludeResultCallback(uint32_t group, uint32_t ignoreClusterId, AlignedVector< QueryResult >& outResult)
-	:	m_group(group)
-	,	m_ignoreClusterId(ignoreClusterId)
+	ConvexExcludeResultCallback(const QueryFilter& queryFilter, AlignedVector< QueryResult >& outResult)
+	:	m_queryFilter(queryFilter)
 	,	m_outResult(outResult)
 	{
 	}
@@ -350,10 +350,12 @@ struct ConvexExcludeResultCallback : public btCollisionWorld::ConvexResultCallba
 		BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(convexResult.m_hitCollisionObject->getUserPointer());
 		T_ASSERT (bodyBullet);
 
-		if (m_group != ~0U && (bodyBullet->getCollisionGroup() & m_group) == 0)
+		if (m_queryFilter.ignoreClusterId != 0 && bodyBullet->getClusterId() == m_queryFilter.ignoreClusterId)
 			return 1.0f;
 
-		if (m_ignoreClusterId != 0 && bodyBullet->getClusterId() == m_ignoreClusterId)
+		uint32_t group = bodyBullet->getCollisionGroup();
+
+		if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 			return 1.0f;
 
 		QueryResult result;
@@ -1286,8 +1288,7 @@ bool PhysicsManagerBullet::queryRay(
 	const Vector4& at,
 	const Vector4& direction,
 	float maxLength,
-	uint32_t group,
-	uint32_t ignoreClusterId,
+	const QueryFilter& queryFilter,
 	bool ignoreBackFace,
 	QueryResult& outResult
 ) const
@@ -1300,7 +1301,7 @@ bool PhysicsManagerBullet::queryRay(
 
 	if (!ignoreBackFace)
 	{
-		ClosestRayExcludeResultCallback callback(ignoreClusterId, group, QtAll, from, to);
+		ClosestRayExcludeResultCallback callback(queryFilter, QtAll, from, to);
 		m_dynamicsWorld->rayTest(from, to, callback);
 		if (!callback.hasHit())
 			return false;
@@ -1329,7 +1330,7 @@ bool PhysicsManagerBullet::queryRay(
 	}
 	else
 	{
-		ClosestRayExcludeAndCullResultCallback callback(ignoreClusterId, group, from, to);
+		ClosestRayExcludeAndCullResultCallback callback(queryFilter, from, to);
 		m_dynamicsWorld->rayTest(from, to, callback);
 		if (!callback.hasHit())
 			return false;
@@ -1364,9 +1365,8 @@ bool PhysicsManagerBullet::queryShadowRay(
 	const Vector4& at,
 	const Vector4& direction,
 	float maxLength,
-	uint32_t group,
-	uint32_t queryTypes,
-	uint32_t ignoreClusterId
+	const QueryFilter& queryFilter,
+	uint32_t queryTypes
 ) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -1375,7 +1375,7 @@ bool PhysicsManagerBullet::queryShadowRay(
 	btVector3 from = toBtVector3(at);
 	btVector3 to = toBtVector3(at + direction * Scalar(maxLength));
 
-	ClosestRayExcludeResultCallback callback(ignoreClusterId, group, queryTypes, from, to);
+	ClosestRayExcludeResultCallback callback(queryFilter, queryTypes, from, to);
 	m_dynamicsWorld->rayTest(from, to, callback);
 	if (!callback.hasHit())
 		return false;
@@ -1386,7 +1386,7 @@ bool PhysicsManagerBullet::queryShadowRay(
 uint32_t PhysicsManagerBullet::querySphere(
 	const Vector4& at,
 	float radius,
-	uint32_t group,
+	const QueryFilter& queryFilter,
 	uint32_t queryTypes,
 	RefArray< Body >& outBodies
 ) const
@@ -1407,7 +1407,9 @@ uint32_t PhysicsManagerBullet::querySphere(
 
 	for (RefArray< BodyBullet >::const_iterator i = callback.bodies.begin(); i != callback.bodies.end(); ++i)
 	{
-		if (((*i)->getCollisionGroup() & group) == 0)
+		uint32_t group = (*i)->getCollisionGroup();
+
+		if ((group & queryFilter.includeGroup) == 0 || (group & queryFilter.ignoreGroup) != 0)
 			continue;
 
 		bool st = (*i)->isStatic();
@@ -1437,8 +1439,7 @@ bool PhysicsManagerBullet::querySweep(
 	const Vector4& direction,
 	float maxLength,
 	float radius,
-	uint32_t group,
-	uint32_t ignoreClusterId,
+	const QueryFilter& queryFilter,
 	QueryResult& outResult
 ) const
 {
@@ -1454,7 +1455,7 @@ bool PhysicsManagerBullet::querySweep(
 	to.setIdentity();
 	to.setOrigin(toBtVector3(at + direction * Scalar(maxLength)));
 
-	ClosestConvexExcludeResultCallback callback(0, group, ignoreClusterId, from.getOrigin(), to.getOrigin());
+	ClosestConvexExcludeResultCallback callback(0, queryFilter, from.getOrigin(), to.getOrigin());
 	m_dynamicsWorld->convexSweepTest(
 		&sphereShape,
 		from,
@@ -1483,8 +1484,7 @@ bool PhysicsManagerBullet::querySweep(
 	const Vector4& at,
 	const Vector4& direction,
 	float maxLength,
-	uint32_t group,
-	uint32_t ignoreClusterId,
+	const QueryFilter& queryFilter,
 	QueryResult& outResult
 ) const
 {
@@ -1520,7 +1520,7 @@ bool PhysicsManagerBullet::querySweep(
 	to.setRotation(toBtQuaternion(orientation) * localRotation);
 	to.setOrigin(toBtVector3(at + direction * Scalar(maxLength)));
 
-	ClosestConvexExcludeResultCallback callback(checked_type_cast< const BodyBullet* >(body), group, ignoreClusterId, from.getOrigin(), to.getOrigin());
+	ClosestConvexExcludeResultCallback callback(checked_type_cast< const BodyBullet* >(body), queryFilter, from.getOrigin(), to.getOrigin());
 	m_dynamicsWorld->convexSweepTest(
 		static_cast< const btConvexShape* >(shape),
 		from,
@@ -1548,8 +1548,7 @@ void PhysicsManagerBullet::querySweep(
 	const Vector4& direction,
 	float maxLength,
 	float radius,
-	uint32_t group,
-	uint32_t ignoreClusterId,
+	const QueryFilter& queryFilter,
 	AlignedVector< QueryResult >& outResult
 ) const
 {
@@ -1566,8 +1565,7 @@ void PhysicsManagerBullet::querySweep(
 	to.setOrigin(toBtVector3(at + direction * Scalar(maxLength)));
 
 	ConvexExcludeResultCallback callback(
-		group,
-		ignoreClusterId,
+		queryFilter,
 		outResult
 	);
 	m_dynamicsWorld->convexSweepTest(

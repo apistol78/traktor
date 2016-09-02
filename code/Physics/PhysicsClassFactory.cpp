@@ -84,6 +84,37 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.CollisionListener", CollisionListenerWrapper, CollisionListener)
 
+class QueryFilterWrapper : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	QueryFilterWrapper(uint32_t includeGroup)
+	:	m_queryFilter(includeGroup)
+	{
+	}
+
+	QueryFilterWrapper(uint32_t includeGroup, uint32_t ignoreGroup)
+	:	m_queryFilter(includeGroup, ignoreGroup)
+	{
+	}
+
+	QueryFilterWrapper(uint32_t includeGroup, uint32_t ignoreGroup, uint32_t ignoreClusterId)
+	:	m_queryFilter(includeGroup, ignoreGroup, ignoreClusterId)
+	{
+	}
+
+	operator const QueryFilter& () const
+	{
+		return m_queryFilter;
+	}
+
+private:
+	QueryFilter m_queryFilter;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.QueryFilter", QueryFilterWrapper, Object)
+
 class QueryResultWrapper : public Object
 {
 	T_RTTI_CLASS;
@@ -169,13 +200,12 @@ Ref< QueryResultWrapper > PhysicsManager_queryRay(
 	const Vector4& at,
 	const Vector4& direction,
 	float maxLength,
-	uint32_t group,
-	uint32_t ignoreClusterId,
+	const QueryFilterWrapper* queryFilter,
 	bool ignoreBackFace
 )
 {
 	QueryResult result;
-	if (this_->queryRay(at, direction, maxLength, group, ignoreClusterId, ignoreBackFace, result))
+	if (this_->queryRay(at, direction, maxLength, *queryFilter, ignoreBackFace, result))
 		return new QueryResultWrapper(result);
 	else
 		return 0;
@@ -186,24 +216,23 @@ bool PhysicsManager_queryShadowRay(
 	const Vector4& at,
 	const Vector4& direction,
 	float maxLength,
-	uint32_t group,
-	uint32_t queryTypes,
-	uint32_t ignoreClusterId
+	const QueryFilterWrapper* queryFilter,
+	uint32_t queryTypes
 )
 {
-	return this_->queryShadowRay(at, direction, maxLength, group, queryTypes, ignoreClusterId);
+	return this_->queryShadowRay(at, direction, maxLength, *queryFilter, queryTypes);
 }
 
 RefArray< Body > PhysicsManager_querySphere(
 	PhysicsManager* this_,
 	const Vector4& at,
 	float radius,
-	uint32_t group,
+	const QueryFilterWrapper* queryFilter,
 	uint32_t queryTypes
 )
 {
 	RefArray< Body > bodies;
-	this_->querySphere(at, radius, group, queryTypes, bodies);
+	this_->querySphere(at, radius, *queryFilter, queryTypes, bodies);
 	return bodies;
 }
 
@@ -213,12 +242,11 @@ Ref< QueryResultWrapper > PhysicsManager_querySweep_1(
 	const Vector4& direction,
 	float maxLength,
 	float radius,
-	uint32_t group,
-	uint32_t ignoreClusterId
+	const QueryFilterWrapper* queryFilter
 )
 {
 	QueryResult result;
-	if (this_->querySweep(at, direction, maxLength, radius, group, ignoreClusterId, result))
+	if (this_->querySweep(at, direction, maxLength, radius, *queryFilter, result))
 		return new QueryResultWrapper(result);
 	else
 		return 0;
@@ -231,12 +259,11 @@ Ref< QueryResultWrapper > PhysicsManager_querySweep_2(
 	const Vector4& at,
 	const Vector4& direction,
 	float maxLength,
-	uint32_t group,
-	uint32_t ignoreClusterId
+	const QueryFilterWrapper* queryFilter
 )
 {
 	QueryResult result;
-	if (this_->querySweep(body, orientation, at, direction, maxLength, group, ignoreClusterId, result))
+	if (this_->querySweep(body, orientation, at, direction, maxLength, *queryFilter, result))
 		return new QueryResultWrapper(result);
 	else
 		return 0;
@@ -261,6 +288,12 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsClassFactory", 0, Physic
 
 void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	Ref< AutoRuntimeClass< QueryFilterWrapper > > classQueryFilter = new AutoRuntimeClass< QueryFilterWrapper >();
+	classQueryFilter->addConstructor< uint32_t >();
+	classQueryFilter->addConstructor< uint32_t, uint32_t >();
+	classQueryFilter->addConstructor< uint32_t, uint32_t, uint32_t >();
+	registrar->registerClass(classQueryFilter);
+
 	Ref< AutoRuntimeClass< QueryResultWrapper > > classQueryResult = new AutoRuntimeClass< QueryResultWrapper >();
 	classQueryResult->addMethod("body", &QueryResultWrapper::body);
 	classQueryResult->addMethod("position", &QueryResultWrapper::position);

@@ -74,8 +74,7 @@ public:
 		const Vector4& at,
 		const Vector4& direction,
 		float maxLength,
-		uint32_t group,
-		uint32_t ignoreClusterId,
+		const QueryFilter& queryFilter,
 		bool ignoreBackFace,
 		QueryResult& outResult
 	) const T_OVERRIDE T_FINAL;
@@ -84,15 +83,14 @@ public:
 		const Vector4& at,
 		const Vector4& direction,
 		float maxLength,
-		uint32_t group,
-		uint32_t queryTypes,
-		uint32_t ignoreClusterId
+		const QueryFilter& queryFilter,
+		uint32_t queryTypes
 	) const T_OVERRIDE T_FINAL;
 
 	virtual uint32_t querySphere(
 		const Vector4& at,
 		float radius,
-		uint32_t group,
+		const QueryFilter& queryFilter,
 		uint32_t queryTypes,
 		RefArray< Body >& outBodies
 	) const T_OVERRIDE T_FINAL;
@@ -102,8 +100,7 @@ public:
 		const Vector4& direction,
 		float maxLength,
 		float radius,
-		uint32_t group,
-		uint32_t ignoreClusterId,
+		const QueryFilter& queryFilter,
 		QueryResult& outResult
 	) const T_OVERRIDE T_FINAL;
 
@@ -113,8 +110,7 @@ public:
 		const Vector4& at,
 		const Vector4& direction,
 		float maxLength,
-		uint32_t group,
-		uint32_t ignoreClusterId,
+		const QueryFilter& queryFilter,
 		QueryResult& outResult
 	) const T_OVERRIDE T_FINAL;
 
@@ -123,8 +119,7 @@ public:
 		const Vector4& direction,
 		float maxLength,
 		float radius,
-		uint32_t group,
-		uint32_t ignoreClusterId,
+		const QueryFilter& queryFilter,
 		AlignedVector< QueryResult >& outResult
 	) const T_OVERRIDE T_FINAL;
 
