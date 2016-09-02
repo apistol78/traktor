@@ -42,7 +42,7 @@ Ref< IStream > FilePipelineCache::get(const Guid& guid, const PipelineDependency
 		return 0;
 
 	StringOutputStream ss;
-	ss << m_path << L"/" << guid.format() << L"_" << hash.pipelineVersion << L"_" << hash.pipelineHash << L"_" << hash.sourceAssetHash << L"_" << hash.sourceDataHash << L"_" << hash.filesHash << L"_" << hash.pipelineVersion << L".cache";
+	ss << m_path << L"/" << guid.format() << L"_" << hash.pipelineHash << L"_" << hash.sourceAssetHash << L"_" << hash.sourceDataHash << L"_" << hash.filesHash << L".cache";
 	
 	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str(), File::FmRead);
 	if (!fileStream)
@@ -57,7 +57,7 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependency
 		return 0;
 
 	StringOutputStream ss;
-	ss << m_path << L"/" << guid.format() << L"_" << hash.pipelineVersion << L"_" << hash.pipelineHash << L"_" << hash.sourceAssetHash << L"_" << hash.sourceDataHash << L"_" << hash.filesHash << L"_" << hash.pipelineVersion << L".cache";
+	ss << m_path << L"/" << guid.format() << L"_" << hash.pipelineHash << L"_" << hash.sourceAssetHash << L"_" << hash.sourceDataHash << L"_" << hash.filesHash << L".cache";
 	
 	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str() + L"~", File::FmWrite);
 	if (!fileStream)

@@ -16,7 +16,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_version = 2;
+const uint32_t c_version = 3;
 const uint32_t c_flushAfterChanges = 10;	//!< Flush pipeline after N changes.
 
 class MemberPipelineDependencyHash : public MemberComplex
@@ -30,7 +30,6 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		s >> Member< uint32_t >(L"pipelineVersion", m_ref.pipelineVersion);
 		s >> Member< uint32_t >(L"pipelineHash", m_ref.pipelineHash);
 		s >> Member< uint32_t >(L"sourceAssetHash", m_ref.sourceAssetHash);
 		s >> Member< uint32_t >(L"sourceDataHash", m_ref.sourceDataHash);

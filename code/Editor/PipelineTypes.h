@@ -37,15 +37,13 @@ enum PipelineBuildReason
  */
 struct PipelineDependencyHash
 {
-	uint32_t pipelineVersion;
 	uint32_t pipelineHash;
 	uint32_t sourceAssetHash;
 	uint32_t sourceDataHash;
 	uint32_t filesHash;
 
 	PipelineDependencyHash()
-	:	pipelineVersion(0)
-	,	pipelineHash(0)
+	:	pipelineHash(0)
 	,	sourceAssetHash(0)
 	,	sourceDataHash(0)
 	,	filesHash(0)
