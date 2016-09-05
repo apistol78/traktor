@@ -329,8 +329,7 @@ void CloudComponent::renderCluster(
 )
 {
 	if (
-		worldRenderPass.getTechnique() != render::getParameterHandle(L"World_ForwardColor") && 
-		worldRenderPass.getTechnique() != render::getParameterHandle(L"World_PreLitColor")
+		worldRenderPass.getTechnique() != render::getParameterHandle(L"World_ForwardColor")
 	)
 		return;
 

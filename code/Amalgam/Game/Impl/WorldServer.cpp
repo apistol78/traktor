@@ -38,14 +38,13 @@
 #include "World/EntityEventManager.h"
 #include "World/EntityEventResourceFactory.h"
 #include "World/EntityResourceFactory.h"
+#include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/Entity/ComponentEntityRenderer.h"
 #include "World/Entity/DecalRenderer.h"
 #include "World/Entity/GroupEntityRenderer.h"
 #include "World/Entity/LightEntityRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
-#include "World/Forward/WorldRendererForward.h"
-#include "World/PreLit/WorldRendererPreLit.h"
 
 namespace traktor
 {
