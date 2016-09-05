@@ -3727,15 +3727,6 @@
 											</items>
 										</item>
 										<item type="Filter">
-											<name>PreLit</name>
-											<items>
-												<item type="File">
-													<fileName>PreLit/*.*</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
 											<name>Deferred</name>
 											<items>
 												<item type="File">

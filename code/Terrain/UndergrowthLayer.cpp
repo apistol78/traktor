@@ -169,7 +169,6 @@ void UndergrowthLayer::render(
 	// \fixme Assume depth pass enabled; need some information about first pass from camera POV.
 	bool updateClusters = bool(
 		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DepthWrite") ||
-		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_PreLitGBufferWrite") ||
 		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DeferredGBufferWrite")
 	);
 

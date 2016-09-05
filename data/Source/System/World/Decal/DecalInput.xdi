@@ -7,7 +7,7 @@
 				<first>1177</first>
 				<second>403</second>
 			</position>
-			<technique>World_PreLitColor</technique>
+			<technique/>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
