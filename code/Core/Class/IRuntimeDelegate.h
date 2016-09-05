@@ -1,5 +1,5 @@
-#ifndef traktor_IScriptDelegate_H
-#define traktor_IScriptDelegate_H
+#ifndef traktor_IRuntimeDelegate_H
+#define traktor_IRuntimeDelegate_H
 
 #include "Core/Object.h"
 #include "Core/Class/Any.h"
@@ -28,4 +28,4 @@ public:
 
 }
 
-#endif	// traktor_IScriptDelegate_H
+#endif	// traktor_IRuntimeDelegate_H

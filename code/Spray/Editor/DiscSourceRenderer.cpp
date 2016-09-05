@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Spray/Editor/DiscSourceRenderer.h"
 #include "Spray/Sources/DiscSourceData.h"
 #include "Render/PrimitiveRenderer.h"

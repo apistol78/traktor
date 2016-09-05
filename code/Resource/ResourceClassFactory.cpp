@@ -13,9 +13,57 @@ namespace traktor
 		namespace
 		{
 
-Ref< ResourceHandle > IResourceManager_bind(IResourceManager* self, const TypeInfo& type, const Guid& guid)
+class ProxyWrapper : public Object
 {
-	return self->bind(type, guid);
+	T_RTTI_CLASS;
+
+public:
+	ProxyWrapper(ResourceHandle* handle)
+	:	m_handle(handle)
+	,	m_tag(0)
+	{
+	}
+
+	void clear()
+	{
+		m_handle = 0;
+	}
+
+	bool changed() const
+	{
+		return m_handle != 0 && m_tag != (intptr_t)m_handle->get();
+	}
+
+	void consume()
+	{
+		m_tag = (intptr_t)m_handle->get();
+	}
+
+	Object* get()
+	{
+		return m_handle ? m_handle->get() : 0;
+	}
+
+private:
+	Ref< ResourceHandle > m_handle;
+	mutable intptr_t m_tag;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.Proxy", ProxyWrapper, Object)
+
+Ref< ProxyWrapper > IResourceManager_bind(IResourceManager* self, const TypeInfo& type, const Any& id)
+{
+	Ref< ResourceHandle > handle;
+
+	if (CastAny< Guid >::accept(id))
+		handle = self->bind(type, CastAny< Guid >::get(id));
+	else if (id.isString())
+		handle = self->bind(type, Guid(id.getWideString()));
+
+	if (handle)
+		return new ProxyWrapper(handle);
+	else
+		return 0;
 }
 
 void IResourceManager_reload(IResourceManager* self, const Any& guidOrType, bool flushedOnly)
@@ -24,6 +72,8 @@ void IResourceManager_reload(IResourceManager* self, const Any& guidOrType, bool
 		self->reload(CastAny< Guid >::get(guidOrType), flushedOnly);
 	else if (CastAny< TypeInfo >::accept(guidOrType))
 		self->reload(CastAny< TypeInfo >::get(guidOrType), flushedOnly);
+	else if (guidOrType.isString())
+		self->reload(Guid(guidOrType.getWideString()), flushedOnly);
 }
 
 		}
@@ -32,6 +82,13 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.resource.ResourceClassFactory", 0, Reso
 
 void ResourceClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	Ref< AutoRuntimeClass< ProxyWrapper > > classProxyWrapper = new AutoRuntimeClass< ProxyWrapper >();
+	classProxyWrapper->addMethod("clear", &ProxyWrapper::clear);
+	classProxyWrapper->addMethod("changed", &ProxyWrapper::changed);
+	classProxyWrapper->addMethod("consume", &ProxyWrapper::consume);
+	classProxyWrapper->addMethod("get", &ProxyWrapper::get);
+	registrar->registerClass(classProxyWrapper);
+
 	Ref< AutoRuntimeClass< ResourceBundle > > classResourceBundle = new AutoRuntimeClass< ResourceBundle >();
 	registrar->registerClass(classResourceBundle);
 
