@@ -30,6 +30,8 @@ class T_DLLCLASS NavMeshEntity : public world::Entity
 	T_RTTI_CLASS;
 
 public:
+	NavMeshEntity();
+
 	NavMeshEntity(const resource::Proxy< NavMesh >& navMesh);
 
 	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;

@@ -11,8 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshEntityFactory", NavMeshEntityFactory, world::IEntityFactory)
 
-NavMeshEntityFactory::NavMeshEntityFactory(resource::IResourceManager* resourceManager)
+NavMeshEntityFactory::NavMeshEntityFactory(resource::IResourceManager* resourceManager, bool editor)
 :	m_resourceManager(resourceManager)
+,	m_editor(editor)
 {
 }
 
@@ -38,13 +39,18 @@ Ref< world::Entity > NavMeshEntityFactory::createEntity(
 	const world::EntityData& entityData
 ) const
 {
-	const NavMeshEntityData* navMeshEntityData = checked_type_cast< const NavMeshEntityData* >(&entityData);
+	if (!m_editor)
+	{
+		const NavMeshEntityData* navMeshEntityData = checked_type_cast< const NavMeshEntityData* >(&entityData);
 
-	resource::Proxy< NavMesh > navMesh;
-	if (!m_resourceManager->bind(navMeshEntityData->get(), navMesh))
-		return 0;
+		resource::Proxy< NavMesh > navMesh;
+		if (!m_resourceManager->bind(navMeshEntityData->get(), navMesh))
+			return 0;
 
-	return new NavMeshEntity(navMesh);
+		return new NavMeshEntity(navMesh);
+	}
+	else
+		return new NavMeshEntity();
 }
 
 Ref< world::IEntityEvent > NavMeshEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const

@@ -14,8 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshFactory", NavMeshFactory, resource::IResourceFactory)
 
-NavMeshFactory::NavMeshFactory(db::Database* db)
+NavMeshFactory::NavMeshFactory(db::Database* db, bool editor)
 :	m_db(db)
+,	m_editor(editor)
 {
 }
 
@@ -40,9 +41,15 @@ bool NavMeshFactory::isCacheable() const
 
 Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
+	Ref< NavMesh > outputNavMesh = new NavMesh();
+
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)
-		return 0;
+	{
+		// In case we're running within editor return an empty nav mesh instead of failing.
+		// NavMeshes must be explicitly built in editor to be visualized.
+		return m_editor ? outputNavMesh : 0;
+	}
 
 	Ref< NavMeshResource > resource = instance->getObject< NavMeshResource >();
 	if (!resource)
@@ -52,7 +59,6 @@ Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager
 	if (!stream)
 		return 0;
 
-	Ref< NavMesh > outputNavMesh = new NavMesh();
 	Reader r(stream);
 
 	uint8_t version;
