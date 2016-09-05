@@ -31,7 +31,7 @@ class T_DLLCLASS NavMeshFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	NavMeshFactory(db::Database* db);
+	NavMeshFactory(db::Database* db, bool editor);
 
 	virtual const TypeInfoSet getResourceTypes() const T_OVERRIDE T_FINAL;
 
@@ -43,6 +43,7 @@ public:
 
 private:
 	Ref< db::Database> m_db;
+	bool m_editor;
 };
 
 	}

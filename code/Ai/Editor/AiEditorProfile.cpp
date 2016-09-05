@@ -36,7 +36,7 @@ void AiEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new NavMeshFactory(context->getResourceDatabase()));
+	outResourceFactories.push_back(new NavMeshFactory(context->getResourceDatabase(), true));
 }
 
 void AiEditorProfile::createEntityFactories(
@@ -44,7 +44,7 @@ void AiEditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new NavMeshEntityFactory(context->getResourceManager()));
+	outEntityFactories.push_back(new NavMeshEntityFactory(context->getResourceManager(), true));
 }
 
 void AiEditorProfile::createEntityRenderers(

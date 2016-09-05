@@ -7,6 +7,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshEntity", NavMeshEntity, world::Entity)
 
+NavMeshEntity::NavMeshEntity()
+{
+}
+
 NavMeshEntity::NavMeshEntity(const resource::Proxy< NavMesh >& navMesh)
 :	m_navMesh(navMesh)
 {
