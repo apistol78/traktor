@@ -24080,6 +24080,10 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
+							<sourceFile>$(TOBII_SDK)/lib/x64/Tobii.EyeX.Client.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>$(TOBII_SDK)/lib/x64/Tobii.EyeX.Client.dll</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
@@ -24113,6 +24117,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Tobii.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(TOBII_SDK)/lib/x64/Tobii.EyeX.Client.lib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
