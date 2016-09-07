@@ -24845,7 +24845,7 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TOBII_SDK)/lib/x64</item>
+						<item>$(TOBII_SDK)/lib/x86</item>
 					</libraryPaths>
 					<libraries>
 						<item>Tobii.EyeX.Client.lib</item>
@@ -24881,7 +24881,7 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TOBII_SDK)/lib/x64</item>
+						<item>$(TOBII_SDK)/lib/x86</item>
 					</libraryPaths>
 					<libraries>
 						<item>Tobii.EyeX.Client.lib</item>
@@ -24917,7 +24917,7 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TOBII_SDK)/lib/x64</item>
+						<item>$(TOBII_SDK)/lib/x86</item>
 					</libraryPaths>
 					<libraries>
 						<item>Tobii.EyeX.Client.lib</item>
@@ -24957,7 +24957,7 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TOBII_SDK)/lib/x64</item>
+						<item>$(TOBII_SDK)/lib/x86</item>
 					</libraryPaths>
 					<libraries>
 						<item>Tobii.EyeX.Client.lib</item>
