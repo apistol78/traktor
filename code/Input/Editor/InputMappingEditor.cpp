@@ -19,6 +19,7 @@
 #include "Input/Binding/InGestureSwipe.h"
 #include "Input/Binding/InGestureTap.h"
 #include "Input/Binding/InHysteresis.h"
+#include "Input/Binding/InLowPass.h"
 #include "Input/Binding/InPulse.h"
 #include "Input/Binding/InReadValue.h"
 #include "Input/Binding/InRemapAxis.h"
@@ -35,6 +36,7 @@
 #include "Input/Editor/InGestureSwipeTraits.h"
 #include "Input/Editor/InGestureTapTraits.h"
 #include "Input/Editor/InHysteresisTraits.h"
+#include "Input/Editor/InLowPassTraits.h"
 #include "Input/Editor/InPulseTraits.h"
 #include "Input/Editor/InReadValueTraits.h"
 #include "Input/Editor/InRemapAxisTraits.h"
@@ -179,6 +181,7 @@ InputMappingEditor::InputMappingEditor(editor::IEditor* editor, editor::IEditorP
 	m_traits[&type_of< InGestureSwipe >()] = new InGestureSwipeTraits();
 	m_traits[&type_of< InGestureTap >()] = new InGestureTapTraits();
 	m_traits[&type_of< InHysteresis >()] = new InHysteresisTraits();
+	m_traits[&type_of< InLowPass >()] = new InLowPassTraits();
 	m_traits[&type_of< InPulse >()] = new InPulseTraits();
 	m_traits[&type_of< InReadValue >()] = new InReadValueTraits();
 	m_traits[&type_of< InRemapAxis >()] = new InRemapAxisTraits();
