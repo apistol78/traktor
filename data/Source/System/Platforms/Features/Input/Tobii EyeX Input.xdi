@@ -9,6 +9,15 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
+						<first>DEPLOY_EXTERN_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Tobii.EyeX.Client.dll</item>
+								<item>Tobii.EyeX.Client.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
@@ -23,7 +32,6 @@
 						<first>DEPLOY_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Tobii.EyeX.Client.dll</item>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Input.Tobii.lib</item>
 								<item>Traktor.Input.lib</item>
@@ -39,6 +47,15 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
+						<first>DEPLOY_EXTERN_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Tobii.EyeX.Client.dll</item>
+								<item>Tobii.EyeX.Client.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
@@ -53,7 +70,6 @@
 						<first>DEPLOY_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Tobii.EyeX.Client.dll</item>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Input.Tobii.lib</item>
 								<item>Traktor.Input.lib</item>
