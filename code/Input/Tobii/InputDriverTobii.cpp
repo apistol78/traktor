@@ -48,36 +48,60 @@ bool InputDriverTobii::create(const SystemApplication& sysapp, const SystemWindo
 {
 	TX_HANDLE hInteractor = TX_EMPTY_HANDLE;
 	TX_GAZEPOINTDATAPARAMS params = { TX_GAZEPOINTDATAMODE_LIGHTLYFILTERED };
+	TX_RESULT result;
 
 	m_hWnd = syswin.hWnd;
 
-	if (txInitializeEyeX(TX_EYEXCOMPONENTOVERRIDEFLAG_NONE, NULL, NULL, NULL, NULL) != TX_RESULT_OK)
+	if ((result = txInitializeEyeX(TX_EYEXCOMPONENTOVERRIDEFLAG_NONE, NULL, NULL, NULL, NULL)) != TX_RESULT_OK)
+	{
+		log::error << L"Unable to initialize Tobii EyeX; txInitializeEyeX failed (result = " << int32_t(result) << L")." << Endl;
 		return false;
+	}
 
-	if (txCreateContext(&m_hContext, TX_FALSE) != TX_RESULT_OK)
+	if ((result = txCreateContext(&m_hContext, TX_FALSE)) != TX_RESULT_OK)
+	{
+		log::error << L"Unable to initialize Tobii EyeX; txCreateContext failed (result = " << int32_t(result) << L")." << Endl;
 		return false;
+	}
 
-	if (txCreateGlobalInteractorSnapshot(
+	if ((result = txCreateGlobalInteractorSnapshot(
 		m_hContext,
 		s_InteractorId,
 		&m_hGlobalInteractorSnapshot,
 		&hInteractor
-	) != TX_RESULT_OK)
+	)) != TX_RESULT_OK)
+	{
+		log::error << L"Unable to initialize Tobii EyeX; txCreateGlobalInteractorSnapshot failed (result = " << int32_t(result) << L")." << Endl;
 		return false;
+	}
 
-	if (txCreateGazePointDataBehavior(hInteractor, &params) != TX_RESULT_OK)
+	if ((result = txCreateGazePointDataBehavior(hInteractor, &params)) != TX_RESULT_OK)
+	{
+		log::error << L"Unable to initialize Tobii EyeX; txCreateGazePointDataBehavior failed (result = " << int32_t(result) << L")." << Endl;
 		return false;
+	}
 
 	txReleaseObject(&hInteractor);
 
-	if (txRegisterConnectionStateChangedHandler(m_hContext, &m_hConnectionStateChangedTicket, engineConnectionStateChanged, this) != TX_RESULT_OK)
+	if ((result = txRegisterConnectionStateChangedHandler(m_hContext, &m_hConnectionStateChangedTicket, engineConnectionStateChanged, this)) != TX_RESULT_OK)
+	{
+		log::error << L"Unable to initialize Tobii EyeX; txRegisterConnectionStateChangedHandler failed (result = " << int32_t(result) << L")." << Endl;
 		return false;
+	}
 
-	if (txRegisterEventHandler(m_hContext, &m_hEventHandlerTicket, handleEvent, this) != TX_RESULT_OK)
+	if ((result = txRegisterEventHandler(m_hContext, &m_hEventHandlerTicket, handleEvent, this)) != TX_RESULT_OK)
+	{
+		log::error << L"Unable to initialize Tobii EyeX; txRegisterEventHandler failed (result = " << int32_t(result) << L")." << Endl;
 		return false;
+	}
 
-	if (txEnableConnection(m_hContext) != TX_RESULT_OK)
+	if ((result = txEnableConnection(m_hContext)) != TX_RESULT_OK)
+	{
+		log::error << L"Unable to initialize Tobii EyeX; txEnableConnection failed (result = " << int32_t(result) << L")." << Endl;
 		return false;
+	}
+
+	log::info << L"Tobii EyeX initialized; Waiting for connection state..." << Endl;
 
 	m_device = new InputDeviceGaze();
 	return true;
