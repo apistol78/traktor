@@ -1,6 +1,8 @@
+#include "Render/VertexElement.h"
 #include "Render/Capture/ProgramCapture.h"
 #include "Render/Capture/RenderSystemCapture.h"
 #include "Render/Capture/RenderViewCapture.h"
+#include "Render/Capture/VertexBufferCapture.h"
 
 namespace traktor
 {
@@ -72,7 +74,12 @@ Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewEmbedde
 
 Ref< VertexBuffer > RenderSystemCapture::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	return m_renderSystem->createVertexBuffer(vertexElements, bufferSize, dynamic);
+	Ref< VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(vertexElements, bufferSize, dynamic);
+	if (!vertexBuffer)
+		return 0;
+
+	uint32_t vertexSize = getVertexSize(vertexElements);
+	return new VertexBufferCapture(vertexBuffer, bufferSize, vertexSize);
 }
 
 Ref< IndexBuffer > RenderSystemCapture::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)

@@ -3,11 +3,13 @@
 #include "Core/Log/Log.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ITimeQuery.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/Capture/ProgramCapture.h"
 #include "Render/Capture/RenderViewCapture.h"
+#include "Render/Capture/VertexBufferCapture.h"
 
 namespace traktor
 {
@@ -108,18 +110,18 @@ bool RenderViewCapture::begin(EyeType eye)
 	if (!m_renderView->begin(eye))
 		return false;
 
-	if (m_timeQuery)
-	{
-		m_timeQuery->begin();
+	//if (m_timeQuery)
+	//{
+	//	m_timeQuery->begin();
 
-		ProfileCapture pc;
-		pc.name = L"Frame";
-		pc.begin = m_timeQuery->stamp();
-		pc.end = 0;
+	//	ProfileCapture pc;
+	//	pc.name = L"Frame";
+	//	pc.begin = m_timeQuery->stamp();
+	//	pc.end = 0;
 
-		m_timeStamps.resize(0);
-		m_timeStamps.push_back(pc);
-	}
+	//	m_timeStamps.resize(0);
+	//	m_timeStamps.push_back(pc);
+	//}
 
 	m_targetDepth = 1;
 	return true;
@@ -145,70 +147,180 @@ bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet, int renderTarget
 
 void RenderViewCapture::clear(uint32_t clearMask, const Color4f* color, float depth, int32_t stencil)
 {
+	T_FATAL_ASSERT_M (m_targetDepth >= 1, L"Render error: Cannot clear outside of begin/end.");
 	m_renderView->clear(clearMask, color, depth, stencil);
 }
 
 void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
+	T_FATAL_ASSERT_M (m_targetDepth >= 1, L"Render error: Cannot draw outside of begin/end.");
+
 	ProgramCapture* programCapture = checked_type_cast< ProgramCapture* >(program);
 	if (!programCapture)
 		return;
 
-	if (m_timeQuery)
+	T_FATAL_ASSERT_M (vertexBuffer, L"Render error: No vertex buffer.");
+
+	VertexBufferCapture* vb = checked_type_cast< VertexBufferCapture* >(vertexBuffer);
+
+	// Validate draw call.
+	uint32_t vertexCount = 0;
+	switch (primitives.type)
 	{
-		ProfileCapture pc;
-		pc.name = programCapture->m_tag.c_str();
-		pc.begin = m_timeQuery->stamp();
+	case PtPoints:
+		vertexCount = primitives.count;
+		break;
 
-		m_renderView->draw(vertexBuffer, indexBuffer, programCapture->m_program, primitives);
+	case PtLineStrip:
+		T_ASSERT (0);
+		break;
 
-		pc.end = m_timeQuery->stamp();
-		m_timeStamps.push_back(pc);
+	case PtLines:
+		vertexCount = primitives.count * 2;
+		break;
+
+	case PtTriangleStrip:
+		vertexCount = primitives.count + 2;
+		break;
+
+	case PtTriangles:
+		vertexCount = primitives.count * 3;
+		break;
 	}
+
+	if (primitives.indexed)
+	{
+		T_FATAL_ASSERT_M (indexBuffer, L"Render error: Drawing indexed primitives but no index buffer.");
+
+		uint32_t maxVertexCount = indexBuffer->getBufferSize();
+		if (indexBuffer->getIndexType() == ItUInt16)
+			maxVertexCount /= 2;
+		else
+			maxVertexCount /= 4;
+
+		T_FATAL_ASSERT_M (primitives.offset + vertexCount <= maxVertexCount, L"Render error: Trying to draw more primitives than size of index buffer.");
+	}
+	else
+	{
+		T_FATAL_ASSERT_M (!indexBuffer, L"Render error: Drawing non-indexed primitives but index buffer provided.");
+
+		uint32_t maxVertexCount = vb->getBufferSize() / vb->getVertexSize();
+		T_FATAL_ASSERT_M (primitives.offset + vertexCount <= maxVertexCount, L"Render error: Trying to draw more primitives than size of vertex buffer.");
+	}
+
+	//if (m_timeQuery)
+	//{
+	//	ProfileCapture pc;
+	//	pc.name = programCapture->m_tag.c_str();
+	//	pc.begin = m_timeQuery->stamp();
+
+		m_renderView->draw(vb->getVertexBuffer(), indexBuffer, programCapture->m_program, primitives);
+
+	//	pc.end = m_timeQuery->stamp();
+	//	m_timeStamps.push_back(pc);
+	//}
 }
 
 void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
+	T_FATAL_ASSERT_M (m_targetDepth >= 1, L"Render error: Cannot draw outside of begin/end.");
+
 	ProgramCapture* programCapture = checked_type_cast< ProgramCapture* >(program);
 	if (!programCapture)
 		return;
 
-	if (m_timeQuery)
+	T_FATAL_ASSERT_M (vertexBuffer, L"Render error: No vertex buffer.");
+
+	VertexBufferCapture* vb = checked_type_cast< VertexBufferCapture* >(vertexBuffer);
+
+	// Validate draw call.
+	uint32_t vertexCount = 0;
+	switch (primitives.type)
 	{
-		ProfileCapture pc;
-		pc.name = programCapture->m_tag.c_str();
-		pc.begin = m_timeQuery->stamp();
+	case PtPoints:
+		vertexCount = primitives.count;
+		break;
 
-		m_renderView->draw(vertexBuffer, indexBuffer, programCapture->m_program, primitives, instanceCount);
+	case PtLineStrip:
+		T_ASSERT (0);
+		break;
 
-		pc.end = m_timeQuery->stamp();
-		m_timeStamps.push_back(pc);
+	case PtLines:
+		vertexCount = primitives.count * 2;
+		break;
+
+	case PtTriangleStrip:
+		vertexCount = primitives.count + 2;
+		break;
+
+	case PtTriangles:
+		vertexCount = primitives.count * 3;
+		break;
 	}
+
+	if (primitives.indexed)
+	{
+		T_FATAL_ASSERT_M (indexBuffer, L"Render error: Drawing indexed primitives but no index buffer.");
+
+		uint32_t maxVertexCount = indexBuffer->getBufferSize();
+		if (indexBuffer->getIndexType() == ItUInt16)
+			maxVertexCount /= 2;
+		else
+			maxVertexCount /= 4;
+
+		T_FATAL_ASSERT_M (primitives.offset + vertexCount <= maxVertexCount, L"Render error: Trying to draw more primitives than size of index buffer.");
+	}
+	else
+	{
+		T_FATAL_ASSERT_M (!indexBuffer, L"Render error: Drawing non-indexed primitives but index buffer provided.");
+
+		uint32_t maxVertexCount = vb->getBufferSize() / vb->getVertexSize();
+		T_FATAL_ASSERT_M (primitives.offset + vertexCount <= maxVertexCount, L"Render error: Trying to draw more primitives than size of vertex buffer.");
+	}
+
+	//if (m_timeQuery)
+	//{
+	//	ProfileCapture pc;
+	//	pc.name = programCapture->m_tag.c_str();
+	//	pc.begin = m_timeQuery->stamp();
+
+		m_renderView->draw(vb->getVertexBuffer(), indexBuffer, programCapture->m_program, primitives, instanceCount);
+
+	//	pc.end = m_timeQuery->stamp();
+	//	m_timeStamps.push_back(pc);
+	//}
 }
 
 void RenderViewCapture::end()
 {
-	if (--m_targetDepth == 0)
-	{
-		if (m_timeQuery)
-		{
-			ProfileCapture& pc = m_timeStamps.front();
-			pc.end = m_timeQuery->stamp();
-			m_timeQuery->end();
-		}
-	}
+	T_FATAL_ASSERT_M (m_targetDepth >= 1, L"Render error: Cannot end without begin.");
+
+	//if (--m_targetDepth == 0)
+	//{
+	//	if (m_timeQuery)
+	//	{
+	//		ProfileCapture& pc = m_timeStamps.front();
+	//		pc.end = m_timeQuery->stamp();
+	//		m_timeQuery->end();
+	//	}
+	//}
 
 	m_renderView->end();
 }
 
 void RenderViewCapture::present()
 {
+	T_FATAL_ASSERT_M (m_targetDepth >= 1, L"Render error: Cannot present inside begin/end.");
+
+	/*
 	for (std::vector< ProfileCapture >::const_iterator i = m_timeStamps.begin(); i != m_timeStamps.end(); ++i)
 	{
 		uint64_t timeBegin = m_timeQuery->get(i->begin);
 		uint64_t timeEnd = m_timeQuery->get(i->end);
 		log::info << i->name << L" -> " << (timeEnd - timeBegin) / 1000.0f << L" ms" << Endl;
 	}
+	*/
+
 	m_renderView->present();
 }
 
