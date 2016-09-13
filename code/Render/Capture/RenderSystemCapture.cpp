@@ -1,8 +1,13 @@
 #include "Render/VertexElement.h"
+#include "Render/Capture/CubeTextureCapture.h"
+#include "Render/Capture/IndexBufferCapture.h"
 #include "Render/Capture/ProgramCapture.h"
 #include "Render/Capture/RenderSystemCapture.h"
+#include "Render/Capture/RenderTargetSetCapture.h"
 #include "Render/Capture/RenderViewCapture.h"
+#include "Render/Capture/SimpleTextureCapture.h"
 #include "Render/Capture/VertexBufferCapture.h"
+#include "Render/Capture/VolumeTextureCapture.h"
 
 namespace traktor
 {
@@ -74,41 +79,113 @@ Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewEmbedde
 
 Ref< VertexBuffer > RenderSystemCapture::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
+	T_FATAL_ASSERT_M (bufferSize > 0, L"Render error: Invalid buffer size.");
+
+	uint32_t vertexSize = getVertexSize(vertexElements);
+	T_FATAL_ASSERT_M (bufferSize % vertexSize == 0, L"Render error: Invalid buffer size, is not aligned with size of vertex.");
+
 	Ref< VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(vertexElements, bufferSize, dynamic);
 	if (!vertexBuffer)
 		return 0;
 
-	uint32_t vertexSize = getVertexSize(vertexElements);
 	return new VertexBufferCapture(vertexBuffer, bufferSize, vertexSize);
 }
 
 Ref< IndexBuffer > RenderSystemCapture::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	return m_renderSystem->createIndexBuffer(indexType, bufferSize, dynamic);
+	T_FATAL_ASSERT_M (bufferSize > 0, L"Render error: Invalid buffer size.");
+
+	Ref< IndexBuffer > indexBuffer = m_renderSystem->createIndexBuffer(indexType, bufferSize, dynamic);
+	if (!indexBuffer)
+		return 0;
+
+	return new IndexBufferCapture(indexBuffer, indexType, bufferSize);
 }
 
 Ref< ISimpleTexture > RenderSystemCapture::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	return m_renderSystem->createSimpleTexture(desc);
+	T_FATAL_ASSERT_M (desc.width > 0, L"Render error: Invalid size.");
+	T_FATAL_ASSERT_M (desc.height > 0, L"Render error: Invalid size.");
+	T_FATAL_ASSERT_M (desc.mipCount >= 1, L"Render error: Invalid number of mips.");
+	T_FATAL_ASSERT_M (desc.mipCount < 16, L"Render error: Too many mips.");
+
+	if (desc.immutable)
+	{
+		for (int32_t i = 0; i < desc.mipCount; ++i)
+		{
+			T_FATAL_ASSERT_M (desc.initialData[i].data, L"Render error: No initial data of immutable texture.");
+		}
+	}
+
+	Ref< ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
+	if (!texture)
+		return 0;
+
+	return new SimpleTextureCapture(texture);
 }
 
 Ref< ICubeTexture > RenderSystemCapture::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	return m_renderSystem->createCubeTexture(desc);
+	T_FATAL_ASSERT_M (desc.side > 0, L"Render error: Invalid size.");
+	T_FATAL_ASSERT_M (desc.mipCount >= 1, L"Render error: Invalid number of mips.");
+	T_FATAL_ASSERT_M (desc.mipCount < 16, L"Render error: Too many mips.");
+
+	if (desc.immutable)
+	{
+		for (int32_t i = 0; i < desc.mipCount * 6; ++i)
+		{
+			T_FATAL_ASSERT_M (desc.initialData[i].data, L"Render error: No initial data of immutable texture.");
+		}
+	}
+
+	Ref< ICubeTexture > texture = m_renderSystem->createCubeTexture(desc);
+	if (!texture)
+		return 0;
+
+	return new CubeTextureCapture(texture);
 }
 
 Ref< IVolumeTexture > RenderSystemCapture::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	return m_renderSystem->createVolumeTexture(desc);
+	T_FATAL_ASSERT_M (desc.width > 0, L"Render error: Invalid size.");
+	T_FATAL_ASSERT_M (desc.height > 0, L"Render error: Invalid size.");
+	T_FATAL_ASSERT_M (desc.depth > 0, L"Render error: Invalid size.");
+	T_FATAL_ASSERT_M (desc.mipCount >= 1, L"Render error: Invalid number of mips.");
+	T_FATAL_ASSERT_M (desc.mipCount < 16, L"Render error: Too many mips.");
+
+	if (desc.immutable)
+	{
+		for (int32_t i = 0; i < desc.mipCount; ++i)
+		{
+			T_FATAL_ASSERT_M (desc.initialData[i].data, L"Render error: No initial data of immutable texture.");
+		}
+	}
+
+	Ref< IVolumeTexture > texture = m_renderSystem->createVolumeTexture(desc);
+	if (!texture)
+		return 0;
+
+	return new VolumeTextureCapture(texture);
 }
 
 Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	return m_renderSystem->createRenderTargetSet(desc);
+	T_FATAL_ASSERT_M (desc.count > 0, L"Render error: Must have atleast one target.");
+	T_FATAL_ASSERT_M (desc.count < 4, L"Render error: Too many targets.");
+	T_FATAL_ASSERT_M (desc.width < 0, L"Render error: Invalid size.");
+	T_FATAL_ASSERT_M (desc.height < 0, L"Render error: Invalid size.");
+	T_FATAL_ASSERT_M (desc.multiSample >= 0, L"Render error: Invalid multisample count.");
+
+	Ref< RenderTargetSet > renderTargetSet = m_renderSystem->createRenderTargetSet(desc);
+	if (!renderTargetSet)
+		return 0;
+
+	return new RenderTargetSetCapture(renderTargetSet);
 }
 
 Ref< IProgram > RenderSystemCapture::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
+	T_FATAL_ASSERT_M (programResource, L"Render error: No program resource.");
 	Ref< IProgram > program = m_renderSystem->createProgram(programResource, tag);
 	return program ? new ProgramCapture(program, tag) : 0;
 }

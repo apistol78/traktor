@@ -43,8 +43,15 @@ void* Alloc::acquire(size_t size, const char* tag)
 #endif
 	block->size = size;
 
-	Atomic::add(s_allocated, int32_t(size + sizeof(Block)));
-	s_peek = std::max(s_peek, s_allocated);
+	int32_t a = Atomic::add(s_allocated, int32_t(size + sizeof(Block)));
+	
+	// Read current peek value.
+	int32_t p;
+	Atomic::exchange(p, s_peek);
+
+	// If allocated exceed peek than replace peek value.
+	if (a > p)
+		Atomic::exchange(s_peek, a);
 
 	return block + 1;
 }
@@ -94,8 +101,16 @@ void Alloc::freeAlign(void* ptr)
 
 size_t Alloc::allocated()
 {
-	int32_t allocated = std::max(s_peek, s_allocated); s_peek = 0;
-	return allocated;
+	int32_t p, a;
+
+	// Read peek and allocated values.
+	Atomic::exchange(p, s_peek);
+	Atomic::exchange(a, s_allocated);
+
+	// Reset peek value.
+	Atomic::exchange(s_peek, 0);
+
+	return p > a ? p : a;
 }
 
 }

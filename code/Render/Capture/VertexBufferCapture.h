@@ -26,13 +26,13 @@ public:
 
 	virtual void unlock() T_OVERRIDE T_FINAL;
 
-	uint32_t getVertexSize() const { return m_vertexSize; }
-
 	VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
 
+	uint32_t getVertexSize() const { return m_vertexSize; }
+
 protected:
-	uint32_t m_vertexSize;
 	Ref< VertexBuffer > m_vertexBuffer;
+	uint32_t m_vertexSize;
 	bool m_locked;
 };
 	

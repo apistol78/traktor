@@ -1,6 +1,7 @@
 #ifndef traktor_render_ProgramCapture_H
 #define traktor_render_ProgramCapture_H
 
+#include <map>
 #include "Render/IProgram.h"
 
 namespace traktor
@@ -33,11 +34,14 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference) T_OVERRIDE T_FINAL;
 
+	void verify();
+
 private:
 	friend class RenderViewCapture;
 
 	Ref< IProgram > m_program;
 	std::wstring m_tag;
+	std::map< handle_t, Ref< ITexture > > m_boundTextures;
 };
 
 	}
