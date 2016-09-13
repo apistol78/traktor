@@ -11,6 +11,7 @@
 #	include "Input/Binding/InCombine.h"
 #	include "Input/Binding/InConst.h"
 #	include "Input/Binding/InDelay.h"
+#	include "Input/Binding/InEnvelope.h"
 #	include "Input/Binding/InGesturePinch.h"
 #	include "Input/Binding/InGestureSwipe.h"
 #	include "Input/Binding/InGestureTap.h"
@@ -43,6 +44,7 @@ extern "C" void __module__Traktor_Input()
 	T_FORCE_LINK_REF(InCombine);
 	T_FORCE_LINK_REF(InConst);
 	T_FORCE_LINK_REF(InDelay);
+	T_FORCE_LINK_REF(InEnvelope);
 	T_FORCE_LINK_REF(InGesturePinch);
 	T_FORCE_LINK_REF(InGestureSwipe);
 	T_FORCE_LINK_REF(InGestureTap);
