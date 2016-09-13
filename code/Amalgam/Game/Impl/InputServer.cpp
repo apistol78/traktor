@@ -73,7 +73,13 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 	m_settings = settings;
 	m_inputSystem = new input::InputSystem();
 
-	std::set< std::wstring > driverTypes = settings->getProperty< PropertyStringSet >(L"Input.DriverTypes");
+	// Merge user settings with default settings in order to get new properties in case application has been updated.
+	Ref< const PropertyGroup > mergedSettings = defaultSettings;
+	if (settings)
+		mergedSettings = defaultSettings->mergeJoin(settings);
+
+	// Instanciate input drivers.
+	std::set< std::wstring > driverTypes = mergedSettings->getProperty< PropertyStringSet >(L"Input.DriverTypes");
 	for (std::set< std::wstring >::const_iterator i = driverTypes.begin(); i != driverTypes.end(); ++i)
 	{
 		Ref< input::IInputDriver > driver = dynamic_type_cast< input::IInputDriver* >(TypeInfo::createInstance(*i));
@@ -92,6 +98,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 		m_inputSystem->addDriver(driver);
 	}
 
+	// Read default input mapping.
 	Guid defaultSourceDataGuid(defaultSettings->getProperty< PropertyString >(L"Input.Default"));
 	if (defaultSourceDataGuid.isNotNull())
 	{
@@ -106,17 +113,20 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 		m_inputMappingStateData = inputMappingResource->getStateData();
 	}
 
-	m_inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(settings->getProperty< PropertyObject >(L"Input.Sources"));
+	// Read input sources.
+	m_inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(mergedSettings->getProperty< PropertyObject >(L"Input.Sources"));
 	if (!m_inputMappingSourceData)
 		m_inputMappingSourceData = DeepClone(m_inputMappingDefaultSourceData).create< input::InputMappingSourceData >();
 
-	if (settings->getProperty< PropertyBoolean >(L"Input.Rumble", true))
+	// Create rumble effect player.
+	if (mergedSettings->getProperty< PropertyBoolean >(L"Input.Rumble", true))
 		m_rumbleEffectPlayer = new input::RumbleEffectPlayer();
 
 	m_inputFabricatorAborted = false;
 	m_inputActive = false;
 
-	Ref< const PropertyGroup > inputConstants = settings->getProperty< PropertyGroup >(L"Input.Constants");
+	// Create input mapping, and also set input constants from configuration.
+	Ref< const PropertyGroup > inputConstants = mergedSettings->getProperty< PropertyGroup >(L"Input.Constants");
 	m_inputConstantsHash = DeepHash(inputConstants).get();
 
 	if (m_inputMappingSourceData && m_inputMappingStateData)

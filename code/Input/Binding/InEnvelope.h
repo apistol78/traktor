@@ -1,5 +1,5 @@
-#ifndef traktor_input_InLowPass_H
-#define traktor_input_InLowPass_H
+#ifndef traktor_input_InEnvelope_H
+#define traktor_input_InEnvelope_H
 
 #include "Input/Binding/IInputNode.h"
 
@@ -19,14 +19,14 @@ namespace traktor
 /*! \brief
  * \ingroup Input
  */
-class T_DLLCLASS InLowPass : public IInputNode
+class T_DLLCLASS InEnvelope : public IInputNode
 {
 	T_RTTI_CLASS;
 	
 public:
-	InLowPass();
+	InEnvelope();
 
-	InLowPass(IInputNode* source, IInputNode* coeff);
+	InEnvelope(IInputNode* source, float delay);
 	
 	virtual Ref< Instance > createInstance() const T_OVERRIDE T_FINAL;
 
@@ -40,13 +40,15 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 	
 private:
-	friend class InLowPassTraits;
+	friend class InEnvelopeTraits;
 
 	Ref< IInputNode > m_source;
-	Ref< IInputNode > m_coeff;
+	float m_keys[4];
+	float m_center;
+	float m_width;
 };
 
 	}
 }
 
-#endif	// traktor_input_InLowPass_H
+#endif	// traktor_input_InEnvelope_H

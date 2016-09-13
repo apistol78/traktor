@@ -14,8 +14,7 @@ std::wstring InLowPassTraits::getHeader(const IInputNode* node) const
 
 std::wstring InLowPassTraits::getDescription(const IInputNode* node) const
 {
-	const InLowPass* ilp = checked_type_cast< const InLowPass*, false >(node);
-	return L"Low pass " + toString(ilp->m_coeff);
+	return L"Low pass";
 }
 
 Ref< IInputNode > InLowPassTraits::createNode() const
@@ -27,18 +26,25 @@ void InLowPassTraits::getInputNodes(const IInputNode* node, std::map< const std:
 {
 	const InLowPass* ilp = checked_type_cast< const InLowPass*, false >(node);
 	outInputNodes[L"Input"] = ilp->m_source;
+	outInputNodes[L"Coeff"] = ilp->m_coeff;
 }
 
 void InLowPassTraits::connectInputNode(IInputNode* node, const std::wstring& inputName, IInputNode* sourceNode) const
 {
 	InLowPass* ilp = checked_type_cast< InLowPass*, false >(node);
-	ilp->m_source = sourceNode;
+	if (inputName == L"Input")
+		ilp->m_source = sourceNode;
+	else
+		ilp->m_coeff = sourceNode;
 }
 
 void InLowPassTraits::disconnectInputNode(IInputNode* node, const std::wstring& inputName) const
 {
 	InLowPass* ilp = checked_type_cast< InLowPass*, false >(node);
-	ilp->m_source = 0;
+	if (inputName == L"Input")
+		ilp->m_source = 0;
+	else
+		ilp->m_coeff = 0;
 }
 
 	}
