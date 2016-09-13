@@ -8,6 +8,8 @@ namespace traktor
 	namespace render
 	{
 
+class SimpleTextureCapture;
+
 /*!
  * \ingroup Capture
  */
@@ -38,6 +40,8 @@ public:
 
 private:
 	Ref< RenderTargetSet > m_renderTargetSet;
+	mutable Ref< SimpleTextureCapture > m_colorTextures[4];
+	mutable Ref< SimpleTextureCapture > m_depthTexture;
 };
 
 	}
