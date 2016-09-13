@@ -7,7 +7,9 @@
 #include "Render/IRenderSystem.h"
 #include "Render/ITimeQuery.h"
 #include "Render/RenderTargetSet.h"
+#include "Render/Capture/IndexBufferCapture.h"
 #include "Render/Capture/ProgramCapture.h"
+#include "Render/Capture/RenderTargetSetCapture.h"
 #include "Render/Capture/RenderViewCapture.h"
 #include "Render/Capture/VertexBufferCapture.h"
 
@@ -129,7 +131,9 @@ bool RenderViewCapture::begin(EyeType eye)
 
 bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet)
 {
-	if (!m_renderView->begin(renderTargetSet))
+	RenderTargetSetCapture* rtsc = mandatory_non_null_type_cast< RenderTargetSetCapture* >(renderTargetSet);
+
+	if (!m_renderView->begin(rtsc->getRenderTargetSet()))
 		return false;
 
 	++m_targetDepth;
@@ -138,7 +142,9 @@ bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet)
 
 bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
-	if (!m_renderView->begin(renderTargetSet, renderTarget))
+	RenderTargetSetCapture* rtsc = mandatory_non_null_type_cast< RenderTargetSetCapture* >(renderTargetSet);
+
+	if (!m_renderView->begin(rtsc->getRenderTargetSet(), renderTarget))
 		return false;
 
 	++m_targetDepth;
@@ -159,9 +165,11 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 	if (!programCapture)
 		return;
 
+	T_FATAL_ASSERT_M (programCapture->m_program, L"Render error: Trying to draw with destroyed program.");
 	T_FATAL_ASSERT_M (vertexBuffer, L"Render error: No vertex buffer.");
 
 	VertexBufferCapture* vb = checked_type_cast< VertexBufferCapture* >(vertexBuffer);
+	IndexBufferCapture* ib = checked_type_cast< IndexBufferCapture* >(indexBuffer);
 
 	// Validate draw call.
 	uint32_t vertexCount = 0;
@@ -190,10 +198,10 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 
 	if (primitives.indexed)
 	{
-		T_FATAL_ASSERT_M (indexBuffer, L"Render error: Drawing indexed primitives but no index buffer.");
+		T_FATAL_ASSERT_M (ib, L"Render error: Drawing indexed primitives but no index buffer.");
 
-		uint32_t maxVertexCount = indexBuffer->getBufferSize();
-		if (indexBuffer->getIndexType() == ItUInt16)
+		uint32_t maxVertexCount = ib->getBufferSize();
+		if (ib->getIndexType() == ItUInt16)
 			maxVertexCount /= 2;
 		else
 			maxVertexCount /= 4;
@@ -202,11 +210,13 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 	}
 	else
 	{
-		T_FATAL_ASSERT_M (!indexBuffer, L"Render error: Drawing non-indexed primitives but index buffer provided.");
+		T_FATAL_ASSERT_M (!ib, L"Render error: Drawing non-indexed primitives but index buffer provided.");
 
 		uint32_t maxVertexCount = vb->getBufferSize() / vb->getVertexSize();
 		T_FATAL_ASSERT_M (primitives.offset + vertexCount <= maxVertexCount, L"Render error: Trying to draw more primitives than size of vertex buffer.");
 	}
+
+	programCapture->verify();
 
 	//if (m_timeQuery)
 	//{
@@ -214,7 +224,7 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 	//	pc.name = programCapture->m_tag.c_str();
 	//	pc.begin = m_timeQuery->stamp();
 
-		m_renderView->draw(vb->getVertexBuffer(), indexBuffer, programCapture->m_program, primitives);
+		m_renderView->draw(vb->getVertexBuffer(), ib ? ib->getIndexBuffer() : 0, programCapture->m_program, primitives);
 
 	//	pc.end = m_timeQuery->stamp();
 	//	m_timeStamps.push_back(pc);
@@ -229,9 +239,11 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 	if (!programCapture)
 		return;
 
+	T_FATAL_ASSERT_M (programCapture->m_program, L"Render error: Trying to draw with destroyed program.");
 	T_FATAL_ASSERT_M (vertexBuffer, L"Render error: No vertex buffer.");
 
 	VertexBufferCapture* vb = checked_type_cast< VertexBufferCapture* >(vertexBuffer);
+	IndexBufferCapture* ib = checked_type_cast< IndexBufferCapture* >(indexBuffer);
 
 	// Validate draw call.
 	uint32_t vertexCount = 0;
@@ -260,10 +272,10 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 
 	if (primitives.indexed)
 	{
-		T_FATAL_ASSERT_M (indexBuffer, L"Render error: Drawing indexed primitives but no index buffer.");
+		T_FATAL_ASSERT_M (ib, L"Render error: Drawing indexed primitives but no index buffer.");
 
-		uint32_t maxVertexCount = indexBuffer->getBufferSize();
-		if (indexBuffer->getIndexType() == ItUInt16)
+		uint32_t maxVertexCount = ib->getBufferSize();
+		if (ib->getIndexType() == ItUInt16)
 			maxVertexCount /= 2;
 		else
 			maxVertexCount /= 4;
@@ -272,11 +284,13 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 	}
 	else
 	{
-		T_FATAL_ASSERT_M (!indexBuffer, L"Render error: Drawing non-indexed primitives but index buffer provided.");
+		T_FATAL_ASSERT_M (!ib, L"Render error: Drawing non-indexed primitives but index buffer provided.");
 
 		uint32_t maxVertexCount = vb->getBufferSize() / vb->getVertexSize();
 		T_FATAL_ASSERT_M (primitives.offset + vertexCount <= maxVertexCount, L"Render error: Trying to draw more primitives than size of vertex buffer.");
 	}
+
+	programCapture->verify();
 
 	//if (m_timeQuery)
 	//{
@@ -284,7 +298,7 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 	//	pc.name = programCapture->m_tag.c_str();
 	//	pc.begin = m_timeQuery->stamp();
 
-		m_renderView->draw(vb->getVertexBuffer(), indexBuffer, programCapture->m_program, primitives, instanceCount);
+		m_renderView->draw(vb->getVertexBuffer(), ib ? ib->getIndexBuffer() : 0, programCapture->m_program, primitives, instanceCount);
 
 	//	pc.end = m_timeQuery->stamp();
 	//	m_timeStamps.push_back(pc);
