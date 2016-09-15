@@ -9,7 +9,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_distanceQuantizeRangeInv = 1.0f / 4.0f;
+const float c_distanceQuantizeRangeInv = 1.0f / 10.0f;
 
 T_FORCE_INLINE bool SortOpaquePredicate(const RenderBlock* renderBlock1, const RenderBlock* renderBlock2)
 {
