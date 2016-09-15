@@ -21,7 +21,7 @@ class T_DLLCLASS BooleanTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	BooleanTemplate(float threshold = 0.0f);
+	BooleanTemplate(const wchar_t* const tag, float threshold = 0.0f);
 
 	virtual const TypeInfo& getValueType() const T_OVERRIDE T_FINAL;
 
@@ -36,6 +36,7 @@ public:
 	virtual bool threshold(const IValue* Vn1, const IValue* V) const T_OVERRIDE T_FINAL;
 
 private:
+	const wchar_t* const m_tag;
 	float m_threshold;
 };
 
