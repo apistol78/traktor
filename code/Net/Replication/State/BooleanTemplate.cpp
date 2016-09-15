@@ -26,8 +26,9 @@ float safeDeltaTime(float v)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BooleanTemplate", BooleanTemplate, IValueTemplate)
 
-BooleanTemplate::BooleanTemplate(float threshold)
-:	m_threshold(threshold)
+BooleanTemplate::BooleanTemplate(const wchar_t* const tag, float threshold)
+:	m_tag(tag)
+,	m_threshold(threshold)
 {
 }
 

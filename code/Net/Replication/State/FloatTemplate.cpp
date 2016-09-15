@@ -53,16 +53,19 @@ float cyclicLerp(float a, float b, float t, float mn, float mx)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.FloatTemplate", FloatTemplate, IValueTemplate)
 
-FloatTemplate::FloatTemplate(float threshold)
-:	m_threshold(threshold)
+FloatTemplate::FloatTemplate(const wchar_t* const tag, float threshold)
+:	m_tag(tag)
+,	m_threshold(threshold)
 ,	m_min(std::numeric_limits< float >::max())
 ,	m_max(-std::numeric_limits< float >::max())
 ,	m_precision(Ftp32)
+,	m_cyclic(false)
 {
 }
 
-FloatTemplate::FloatTemplate(float threshold, float min, float max, FloatTemplatePrecision precision, bool cyclic)
-:	m_threshold(threshold)
+FloatTemplate::FloatTemplate(const wchar_t* const tag, float threshold, float min, float max, FloatTemplatePrecision precision, bool cyclic)
+:	m_tag(tag)
+,	m_threshold(threshold)
 ,	m_min(min)
 ,	m_max(max)
 ,	m_precision(precision)

@@ -25,7 +25,7 @@ void CaseValueTemplate::run()
 {
 	{
 		net::StateTemplate st;
-		st.declare(new net::FloatTemplate());
+		st.declare(new net::FloatTemplate(L""));
 
 		net::State s0;
 		s0.pack< net::FloatValue >(0.0f);
@@ -64,7 +64,7 @@ void CaseValueTemplate::run()
 
 	{
 		net::StateTemplate st;
-		st.declare(new net::FloatTemplate(1.0f, 0.0f, 2.5f, net::Ftp8, false));
+		st.declare(new net::FloatTemplate(L"", 1.0f, 0.0f, 2.5f, net::Ftp8, false));
 
 		net::State s0;
 		s0.pack< net::FloatValue >(0.0f);
@@ -138,7 +138,7 @@ void CaseValueTemplate::run()
 		bs2.setAngularVelocity(Vector4(0.0f, 0.0f, 1.0f, 0.0f));
 
 		net::StateTemplate st;
-		st.declare(new net::BodyStateTemplate());
+		st.declare(new net::BodyStateTemplate(L""));
 
 		net::State s0;
 		s0.pack< net::BodyStateValue >(bs0);

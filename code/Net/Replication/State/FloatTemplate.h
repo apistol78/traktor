@@ -30,9 +30,9 @@ class T_DLLCLASS FloatTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	FloatTemplate(float threshold = std::numeric_limits< float >::max());
+	FloatTemplate(const wchar_t* const tag, float threshold = std::numeric_limits< float >::max());
 
-	explicit FloatTemplate(float threshold, float min, float max, FloatTemplatePrecision precision, bool cyclic);
+	explicit FloatTemplate(const wchar_t* const tag, float threshold, float min, float max, FloatTemplatePrecision precision, bool cyclic);
 
 	virtual const TypeInfo& getValueType() const T_OVERRIDE T_FINAL;
 
@@ -47,6 +47,7 @@ public:
 	virtual bool threshold(const IValue* Vn1, const IValue* V) const T_OVERRIDE T_FINAL;
 
 private:
+	const wchar_t* const m_tag;
 	float m_threshold;
 	float m_min;
 	float m_max;
