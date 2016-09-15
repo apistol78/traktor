@@ -132,7 +132,7 @@
 			<addressW>AdClamp</addressW>
 			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
@@ -227,7 +227,7 @@
 			<addressW>AdClamp</addressW>
 			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
