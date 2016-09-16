@@ -54,6 +54,7 @@ bool CubeTextureCapture::lock(int side, int level, Lock& lock)
 	{
 		m_locked[0] = side;
 		m_locked[1] = level;
+		return true;
 	}
 	else
 		return false;

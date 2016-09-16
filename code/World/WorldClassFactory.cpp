@@ -22,6 +22,8 @@
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityData.h"
+#include "World/Entity/LightComponent.h"
+#include "World/Entity/LightComponentData.h"
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
@@ -269,6 +271,44 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCameraComponent->addMethod("setHeight", &CameraComponent::setHeight);
 	classCameraComponent->addMethod("getHeight", &CameraComponent::getHeight);
 	registrar->registerClass(classCameraComponent);
+
+	Ref< AutoRuntimeClass< LightComponentData > > classLightComponentData = new AutoRuntimeClass< LightComponentData >();
+	classLightComponentData->addMethod("setSunColor", &LightComponentData::setSunColor);
+	classLightComponentData->addMethod("getSunColor", &LightComponentData::getSunColor);
+	classLightComponentData->addMethod("setBaseColor", &LightComponentData::setBaseColor);
+	classLightComponentData->addMethod("getBaseColor", &LightComponentData::getBaseColor);
+	classLightComponentData->addMethod("setShadowColor", &LightComponentData::setShadowColor);
+	classLightComponentData->addMethod("getShadowColor", &LightComponentData::getShadowColor);
+	classLightComponentData->addMethod("setCastShadow", &LightComponentData::setCastShadow);
+	classLightComponentData->addMethod("getCastShadow", &LightComponentData::getCastShadow);
+	classLightComponentData->addMethod("setRange", &LightComponentData::setRange);
+	classLightComponentData->addMethod("getRange", &LightComponentData::getRange);
+	classLightComponentData->addMethod("setRadius", &LightComponentData::setRadius);
+	classLightComponentData->addMethod("getRadius", &LightComponentData::getRadius);
+	classLightComponentData->addMethod("setFlickerAmount", &LightComponentData::setFlickerAmount);
+	classLightComponentData->addMethod("getFlickerAmount", &LightComponentData::getFlickerAmount);
+	classLightComponentData->addMethod("setFlickerFilter", &LightComponentData::setFlickerFilter);
+	classLightComponentData->addMethod("getFlickerFilter", &LightComponentData::getFlickerFilter);
+	registrar->registerClass(classLightComponentData);
+
+	Ref< AutoRuntimeClass< LightComponent > > classLightComponent = new AutoRuntimeClass< LightComponent >();
+	classLightComponent->addMethod("setSunColor", &LightComponent::setSunColor);
+	classLightComponent->addMethod("getSunColor", &LightComponent::getSunColor);
+	classLightComponent->addMethod("setBaseColor", &LightComponent::setBaseColor);
+	classLightComponent->addMethod("getBaseColor", &LightComponent::getBaseColor);
+	classLightComponent->addMethod("setShadowColor", &LightComponent::setShadowColor);
+	classLightComponent->addMethod("getShadowColor", &LightComponent::getShadowColor);
+	classLightComponent->addMethod("setCastShadow", &LightComponent::setCastShadow);
+	classLightComponent->addMethod("getCastShadow", &LightComponent::getCastShadow);
+	classLightComponent->addMethod("setRange", &LightComponent::setRange);
+	classLightComponent->addMethod("getRange", &LightComponent::getRange);
+	classLightComponent->addMethod("setRadius", &LightComponent::setRadius);
+	classLightComponent->addMethod("getRadius", &LightComponent::getRadius);
+	classLightComponent->addMethod("setFlickerAmount", &LightComponent::setFlickerAmount);
+	classLightComponent->addMethod("getFlickerAmount", &LightComponent::getFlickerAmount);
+	classLightComponent->addMethod("setFlickerFilter", &LightComponent::setFlickerFilter);
+	classLightComponent->addMethod("getFlickerFilter", &LightComponent::getFlickerFilter);
+	registrar->registerClass(classLightComponent);
 
 	Ref< AutoRuntimeClass< ScriptComponentData > > classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
 	registrar->registerClass(classScriptComponentData);

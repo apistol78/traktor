@@ -21,7 +21,7 @@
 // Entity renderers
 #include "World/Entity/ComponentEntityRenderer.h"
 #include "World/Entity/DecalRenderer.h"
-#include "World/Entity/LightEntityRenderer.h"
+#include "World/Entity/LightRenderer.h"
 #include "World/Entity/GroupEntityRenderer.h"
 #include "Weather/WeatherRenderer.h"
 
@@ -93,7 +93,7 @@ void DefaultEditorProfile::createEntityRenderers(
 {
 	outEntityRenderers.push_back(new world::ComponentEntityRenderer());
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
-	outEntityRenderers.push_back(new world::LightEntityRenderer());
+	outEntityRenderers.push_back(new world::LightRenderer());
 	outEntityRenderers.push_back(new world::GroupEntityRenderer());
 	outEntityRenderers.push_back(new weather::WeatherRenderer(primitiveRenderer));
 }

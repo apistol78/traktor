@@ -26,16 +26,56 @@ bool Library::open(const Path& libraryName)
 	path = wstots(libraryName.getPathName() + L".dll");
 	m_handle = (void*)LoadLibrary(path.c_str());
 
-	if (!m_handle)
+	if (m_handle == NULL)
+	{
+		DWORD errorCode = GetLastError();
+		LPWSTR errorMessage = NULL;
+		FormatMessage(
+			FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_ARGUMENT_ARRAY | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+			NULL,
+			errorCode,
+			0,
+			(LPWSTR)&errorMessage,
+			0,
+			NULL
+		);
+		if (errorMessage)
+		{
+			log::warning << L"Unable to load module \"" << libraryName.getPathName() << L"\" (1); error code " << int32_t(errorCode) << L", " << errorMessage;
+			HeapFree(GetProcessHeap(), LMEM_FIXED, errorMessage);
+		}
+		else
+			log::warning << L"Unable to load module \"" << libraryName.getPathName() << L"\" (1); error code " << int32_t(errorCode) << Endl;
+	}
+
+	if (m_handle == NULL)
 	{
 		path = wstots(libraryName.getPathName());
 		m_handle = (void*)LoadLibrary(path.c_str());
 	}
+
 	if (m_handle == NULL)
 	{
 		DWORD errorCode = GetLastError();
-		log::warning << L"Unable to load module \"" << libraryName.getPathName() << L"\"; error code " << int32_t(errorCode) << Endl;
+		LPWSTR errorMessage = NULL;
+		FormatMessage(
+			FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_ARGUMENT_ARRAY | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+			NULL,
+			errorCode,
+			0,
+			(LPWSTR)&errorMessage,
+			0,
+			NULL
+		);
+		if (errorMessage)
+		{
+			log::warning << L"Unable to load module \"" << libraryName.getPathName() << L"\" (2); error code " << int32_t(errorCode) << L", " << errorMessage;
+			HeapFree(GetProcessHeap(), LMEM_FIXED, errorMessage);
+		}
+		else
+			log::warning << L"Unable to load module \"" << libraryName.getPathName() << L"\" (2); error code " << int32_t(errorCode) << Endl;
 	}	
+
 	return bool(m_handle != NULL);
 }
 

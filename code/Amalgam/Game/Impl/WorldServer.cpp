@@ -43,7 +43,7 @@
 #include "World/Entity/ComponentEntityRenderer.h"
 #include "World/Entity/DecalRenderer.h"
 #include "World/Entity/GroupEntityRenderer.h"
-#include "World/Entity/LightEntityRenderer.h"
+#include "World/Entity/LightRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
 
 namespace traktor
@@ -148,7 +148,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_entityRenderers->add(new world::ComponentEntityRenderer());
 	m_entityRenderers->add(new world::DecalRenderer(m_renderServer->getRenderSystem()));
 	m_entityRenderers->add(new world::GroupEntityRenderer());
-	m_entityRenderers->add(new world::LightEntityRenderer());
+	m_entityRenderers->add(new world::LightRenderer());
 	m_entityRenderers->add(new mesh::MeshComponentRenderer());
 	m_entityRenderers->add(new mesh::MeshEntityRenderer());
 	m_entityRenderers->add(new mesh::InstanceMeshComponentRenderer());

@@ -97,17 +97,26 @@
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
 			<entityData>
-				<item type="traktor.world.DirectionalLightEntityData" version="2">
+				<item type="traktor.world.ComponentEntityData">
 					<name>Light</name>
 					<transform>
-						<translation>0, 7.8, 0, 0</translation>
-						<rotation>-0.357926, 0.283994, 0.115246, 0.882017</rotation>
+						<translation>0, 0, 0, 0</translation>
+						<rotation>-0.364972, 0.277816, 0.115075, 0.88112</rotation>
 					</transform>
-					<sunColor>1, 1, 1, 0</sunColor>
-					<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-					<shadowColor>0.25, 0.25, 0.25, 0</shadowColor>
-					<cloudShadowTexture>{00000000-0000-0000-0000-000000000000}</cloudShadowTexture>
-					<castShadow>true</castShadow>
+					<components>
+						<item type="traktor.world.LightComponentData">
+							<lightType>LtDirectional</lightType>
+							<sunColor>1, 1, 1, 0</sunColor>
+							<baseColor>0.5, 0.5, 0.5, 0</baseColor>
+							<shadowColor>0.25, 0.25, 0.25, 0</shadowColor>
+							<cloudShadowTexture>{00000000-0000-0000-0000-000000000000}</cloudShadowTexture>
+							<castShadow>true</castShadow>
+							<range>10</range>
+							<radius>1.570796</radius>
+							<flickerAmount>0</flickerAmount>
+							<flickerFilter>0</flickerFilter>
+						</item>
+					</components>
 				</item>
 			</entityData>
 			<visible>true</visible>
