@@ -1,5 +1,5 @@
-#ifndef traktor_world_LightEntityRenderer_H
-#define traktor_world_LightEntityRenderer_H
+#ifndef traktor_world_LightRenderer_H
+#define traktor_world_LightRenderer_H
 
 #include "World/IEntityRenderer.h"
 
@@ -16,10 +16,10 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief Light entity renderer.
+/*! \brief Light renderer.
  * \ingroup World
  */
-class T_DLLCLASS LightEntityRenderer : public IEntityRenderer
+class T_DLLCLASS LightRenderer : public IEntityRenderer
 {
 	T_RTTI_CLASS;
 
@@ -43,4 +43,4 @@ public:
 	}
 }
 
-#endif	// traktor_world_LightEntityRenderer_H
+#endif	// traktor_world_LightRenderer_H

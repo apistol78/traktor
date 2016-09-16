@@ -30,9 +30,7 @@ class ITexture;
 	namespace world
 	{
 
-class IWorldCulling;
 class IWorldRenderPass;
-class OccluderMesh;
 
 	}
 
@@ -74,7 +72,6 @@ private:
 	friend class StaticMeshResource;
 
 	resource::Proxy< render::Shader > m_shader;
-	Ref< world::OccluderMesh > m_occluderMesh;
 	Ref< render::Mesh > m_renderMesh;
 	SmallMap< render::handle_t, std::vector< Part > > m_parts;
 #if defined(_DEBUG)

@@ -18,6 +18,8 @@
 #include "World/Entity/GodRayComponentData.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityData.h"
+#include "World/Entity/LightComponent.h"
+#include "World/Entity/LightComponentData.h"
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/PointLightEntityData.h"
 #include "World/Entity/ScriptComponent.h"
@@ -44,12 +46,12 @@ WorldEntityFactory::WorldEntityFactory(resource::IResourceManager* resourceManag
 const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< ComponentEntityData >());
+	typeSet.insert(&type_of< DirectionalLightEntityData >());
 	typeSet.insert(&type_of< ExternalEntityData >());
 	typeSet.insert(&type_of< GroupEntityData >());
-	typeSet.insert(&type_of< DirectionalLightEntityData >());
 	typeSet.insert(&type_of< PointLightEntityData >());
 	typeSet.insert(&type_of< SpotLightEntityData >());
-	typeSet.insert(&type_of< ComponentEntityData >());
 	return typeSet;
 }
 
@@ -66,6 +68,7 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	typeSet.insert(&type_of< CameraComponentData >());
 	typeSet.insert(&type_of< DecalComponentData >());
 	typeSet.insert(&type_of< GodRayComponentData >());
+	typeSet.insert(&type_of< LightComponentData >());
 	typeSet.insert(&type_of< ScriptComponentData >());
 	typeSet.insert(&type_of< VolumeComponentData >());
 	return typeSet;
@@ -218,6 +221,30 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 	if (const GodRayComponentData* godRayComponentData = dynamic_type_cast< const GodRayComponentData* >(&entityComponentData))
 		return new GodRayComponent();
+
+	if (const LightComponentData* lightComponentData = dynamic_type_cast<const LightComponentData*>(&entityComponentData))
+	{
+		resource::Proxy< render::ITexture > cloudShadowTexture;
+
+		if (lightComponentData->getCloudShadowTexture())
+		{
+			if (!m_resourceManager->bind(lightComponentData->getCloudShadowTexture(), cloudShadowTexture))
+				return 0;
+		}
+
+		return new LightComponent(
+			lightComponentData->getLightType(),
+			lightComponentData->getSunColor(),
+			lightComponentData->getBaseColor(),
+			lightComponentData->getShadowColor(),
+			cloudShadowTexture,
+			lightComponentData->getCastShadow(),
+			lightComponentData->getRange(),
+			lightComponentData->getRadius(),
+			lightComponentData->getFlickerAmount(),
+			lightComponentData->getFlickerFilter()
+		);
+	}
 
 	if (const ScriptComponentData* scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(&entityComponentData))
 	{

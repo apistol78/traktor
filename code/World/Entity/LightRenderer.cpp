@@ -3,7 +3,8 @@
 #include "World/WorldRenderView.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/GodRayComponent.h"
-#include "World/Entity/LightEntityRenderer.h"
+#include "World/Entity/LightComponent.h"
+#include "World/Entity/LightRenderer.h"
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/SpotLightEntity.h"
 
@@ -12,19 +13,20 @@ namespace traktor
 	namespace world
 	{
 	
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightEntityRenderer", LightEntityRenderer, IEntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightRenderer", LightRenderer, IEntityRenderer)
 
-const TypeInfoSet LightEntityRenderer::getRenderableTypes() const
+const TypeInfoSet LightRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< DirectionalLightEntity >());
 	typeSet.insert(&type_of< GodRayComponent >());
+	typeSet.insert(&type_of< LightComponent >());
 	typeSet.insert(&type_of< PointLightEntity >());
 	typeSet.insert(&type_of< SpotLightEntity >());
 	return typeSet;
 }
 
-void LightEntityRenderer::render(
+void LightRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
 	IWorldRenderPass& worldRenderPass,
@@ -104,6 +106,25 @@ void LightEntityRenderer::render(
 
 		worldRenderView.addLight(light);
 	}
+
+	else if (const LightComponent* lightComponent = dynamic_type_cast<const LightComponent*>(renderable))
+	{
+		Transform transform = lightComponent->getTransform();
+
+		light.type = lightComponent->getLightType();
+		light.position = transform.translation();
+		light.direction = transform.rotation() * Vector4(0.0f, 1.0f, 0.0f);
+		light.sunColor = lightComponent->getSunColor();
+		light.baseColor = lightComponent->getBaseColor();
+		light.shadowColor = lightComponent->getShadowColor();
+		light.range = Scalar(lightComponent->getRange());
+		light.radius = Scalar(lightComponent->getRadius());
+		light.texture = lightComponent->getCloudShadowTexture();
+		light.castShadow = lightComponent->getCastShadow();
+
+		worldRenderView.addLight(light);
+	}
+
 	else if (const GodRayComponent* godRayComponent = dynamic_type_cast< const GodRayComponent* >(renderable))
 	{
 		Transform transform = godRayComponent->getTransform();
@@ -111,7 +132,7 @@ void LightEntityRenderer::render(
 	}
 }
 
-void LightEntityRenderer::flush(
+void LightRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
 	IWorldRenderPass& worldRenderPass

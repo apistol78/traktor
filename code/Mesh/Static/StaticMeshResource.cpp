@@ -30,7 +30,6 @@ Ref< IMesh > StaticMeshResource::createMesh(
 	render::MeshFactory* meshFactory
 ) const
 {
-	Ref< world::OccluderMesh > occluderMesh;
 	Ref< render::Mesh > renderMesh;
 
 	if (m_haveRenderMesh)
@@ -48,7 +47,6 @@ Ref< IMesh > StaticMeshResource::createMesh(
 	if (!resourceManager->bind(m_shader, staticMesh->m_shader))
 		return 0;
 
-	staticMesh->m_occluderMesh = occluderMesh;
 	staticMesh->m_renderMesh = renderMesh;
 
 	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
