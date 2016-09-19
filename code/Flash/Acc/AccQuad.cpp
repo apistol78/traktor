@@ -160,8 +160,8 @@ void AccQuad::render(
 	renderBlock->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
 	renderBlock->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
 	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, 0.0f);
-	renderBlock->programParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-	renderBlock->programParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+	renderBlock->programParams->setVectorParameter(s_handleCxFormMul, cxform.mul);
+	renderBlock->programParams->setVectorParameter(s_handleCxFormAdd, cxform.add);
 	renderBlock->programParams->setStencilReference(maskReference);
 	
 	if (texture)

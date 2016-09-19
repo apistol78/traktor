@@ -63,10 +63,8 @@ public:
 		,	placeDepth(0)
 		,	placeMatrix(Matrix33::identity())
 		{
-			cxform.red[0]   = 1.0f; cxform.red[1]   = 0.0f;
-			cxform.green[0] = 1.0f; cxform.green[1] = 0.0f;
-			cxform.blue[0]  = 1.0f; cxform.blue[1]  = 0.0f;
-			cxform.alpha[0] = 1.0f; cxform.alpha[1] = 0.0f;
+			cxform.mul = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+			cxform.add = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 		}
 
 		void serialize(ISerializer& s);

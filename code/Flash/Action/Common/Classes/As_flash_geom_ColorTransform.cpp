@@ -41,14 +41,18 @@ void As_flash_geom_ColorTransform::construct(ActionObject* self, const ActionVal
 	SwfCxTransform transform;
 	if (args.size() >= 8)
 	{
-		transform.red[0]   = float(args[0].getNumber());
-		transform.green[0] = float(args[1].getNumber());
-		transform.blue[0]  = float(args[2].getNumber());
-		transform.alpha[0] = float(args[3].getNumber());
-		transform.red[1]   = float(args[4].getNumber()) / 255.0f;
-		transform.green[1] = float(args[5].getNumber()) / 255.0f;
-		transform.blue[1]  = float(args[6].getNumber()) / 255.0f;
-		transform.alpha[1] = float(args[7].getNumber()) / 255.0f;
+		transform.mul = Color4f(
+			float(args[0].getNumber()),
+			float(args[1].getNumber()),
+			float(args[2].getNumber()),
+			float(args[3].getNumber())
+		);
+		transform.add = Color4f(
+			float(args[4].getNumber() / 255.0f),
+			float(args[5].getNumber() / 255.0f),
+			float(args[6].getNumber() / 255.0f),
+			float(args[7].getNumber() / 255.0f)
+		);
 	}
 	self->setRelay(new ColorTransform(transform));
 }
@@ -60,82 +64,82 @@ ActionValue As_flash_geom_ColorTransform::xplicit(const ActionValueArray& args)
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier(ColorTransform* self) const
 {
-	return avm_number_t(self->getTransform().alpha[0]);
+	return avm_number_t(self->getTransform().mul.getAlpha());
 }
 
 void As_flash_geom_ColorTransform::ColorTransform_set_alphaMultiplier(ColorTransform* self, avm_number_t value) const
 {
-	self->getTransform().alpha[0] = float(value);
+	self->getTransform().mul.setAlpha(Scalar(value));
 }
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_alphaOffset(ColorTransform* self) const
 {
-	return avm_number_t(self->getTransform().alpha[1] * 255.0f);
+	return avm_number_t(self->getTransform().add.getAlpha() * 255.0f);
 }
 
 void As_flash_geom_ColorTransform::ColorTransform_set_alphaOffset(ColorTransform* self, avm_number_t value) const
 {
-	self->getTransform().alpha[1] = float(value) / 255.0f;
+	self->getTransform().add.setAlpha(Scalar(value / 255.0f));
 }
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_blueMultiplier(ColorTransform* self) const
 {
-	return avm_number_t(self->getTransform().blue[0]);
+	return avm_number_t(self->getTransform().mul.getBlue());
 }
 
 void As_flash_geom_ColorTransform::ColorTransform_set_blueMultiplier(ColorTransform* self, avm_number_t value) const
 {
-	self->getTransform().blue[0] = float(value);
+	self->getTransform().mul.setBlue(Scalar(value));
 }
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_blueOffset(ColorTransform* self) const
 {
-	return avm_number_t(self->getTransform().blue[1] * 255.0f);
+	return avm_number_t(self->getTransform().add.getBlue() * 255.0f);
 }
 
 void As_flash_geom_ColorTransform::ColorTransform_set_blueOffset(ColorTransform* self, avm_number_t value) const
 {
-	self->getTransform().blue[1] = float(value) / 255.0f;
+	self->getTransform().add.setBlue(Scalar(value / 255.0f));
 }
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_greenMultiplier(ColorTransform* self) const
 {
-	return avm_number_t(self->getTransform().green[0]);
+	return avm_number_t(self->getTransform().mul.getGreen());
 }
 
 void As_flash_geom_ColorTransform::ColorTransform_set_greenMultiplier(ColorTransform* self, avm_number_t value) const
 {
-	self->getTransform().green[0] = float(value);
+	self->getTransform().mul.setGreen(Scalar(value));
 }
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_greenOffset(ColorTransform* self) const
 {
-	return avm_number_t(self->getTransform().green[1] * 255.0f);
+	return avm_number_t(self->getTransform().add.getGreen() * 255.0f);
 }
 
 void As_flash_geom_ColorTransform::ColorTransform_set_greenOffset(ColorTransform* self, avm_number_t value) const
 {
-	self->getTransform().green[1] = float(value) / 255.0f;
+	self->getTransform().add.setGreen(Scalar(value / 255.0f));
 }
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_redMultiplier(ColorTransform* self) const
 {
-	return avm_number_t(self->getTransform().red[0]);
+	return avm_number_t(self->getTransform().mul.getRed());
 }
 
 void As_flash_geom_ColorTransform::ColorTransform_set_redMultiplier(ColorTransform* self, avm_number_t value) const
 {
-	self->getTransform().red[0] = float(value);
+	self->getTransform().mul.setRed(Scalar(value));
 }
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_redOffset(ColorTransform* self) const
 {
-	return avm_number_t(self->getTransform().red[1] * 255.0f);
+	return avm_number_t(self->getTransform().add.getRed() * 255.0f);
 }
 
 void As_flash_geom_ColorTransform::ColorTransform_set_redOffset(ColorTransform* self, avm_number_t value) const
 {
-	self->getTransform().red[1] = float(value) / 255.0f;
+	self->getTransform().add.setRed(Scalar(value / 255.0f));
 }
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_rgb(ColorTransform* self) const

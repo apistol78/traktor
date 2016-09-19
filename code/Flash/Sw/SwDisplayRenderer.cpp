@@ -49,7 +49,7 @@ bool SwDisplayRenderer::wantDirtyRegion() const
 
 void SwDisplayRenderer::begin(
 	const FlashDictionary& dictionary,
-	const SwfColor& backgroundColor,
+	const Color4f& backgroundColor,
 	const Aabb2& frameBounds,
 	const Vector4& frameTransform,
 	float viewWidth,
@@ -58,12 +58,7 @@ void SwDisplayRenderer::begin(
 )
 {
 	if (m_clearBackground)
-		m_image->clear(Color4f(
-			backgroundColor.red / 255.0f,
-			backgroundColor.green / 255.0f,
-			backgroundColor.blue / 255.0f,
-			0.0f
-		));
+		m_image->clear(backgroundColor.rgb0());
 	m_frameBounds = frameBounds;
 }
 
@@ -118,8 +113,8 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 	if (!m_writeEnable)
 		return;
 
-	const Color4f cxm(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]);
-	const Color4f cxa(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]);
+	const Color4f& cxm = cxform.mul;
+	const Color4f& cxa = cxform.add;
 	int32_t width = m_image->getWidth();
 	int32_t height = m_image->getHeight();
 	float frameWidth = m_frameBounds.mx.x;
@@ -157,12 +152,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 			{
 				if (colorRecords.size() == 1)
 				{
-					Color4f c(
-						colorRecords[0].color.red / 255.0f,
-						colorRecords[0].color.green / 255.0f,
-						colorRecords[0].color.blue / 255.0f,
-						colorRecords[0].color.alpha / 255.0f
-					);
+					const Color4f& c = colorRecords[0].color;
 					m_raster->defineSolidStyle(c * cxm + cxa);
 				}
 				else if (colorRecords.size() > 1)
@@ -174,12 +164,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)
 							{
-								Color4f c(
-									colorRecords[j].color.red / 255.0f,
-									colorRecords[j].color.green / 255.0f,
-									colorRecords[j].color.blue / 255.0f,
-									colorRecords[j].color.alpha / 255.0f
-								);
+								const Color4f& c = colorRecords[j].color;
 								colors.push_back(std::make_pair(c * cxm + cxa, colorRecords[j].ratio));
 							}
 							m_raster->defineLinearGradientStyle(
@@ -194,12 +179,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)
 							{
-								Color4f c(
-									colorRecords[j].color.red / 255.0f,
-									colorRecords[j].color.green / 255.0f,
-									colorRecords[j].color.blue / 255.0f,
-									colorRecords[j].color.alpha / 255.0f
-								);
+								const Color4f& c = colorRecords[j].color;
 								colors.push_back(std::make_pair(c * cxm + cxa, colorRecords[j].ratio));
 							}
 							m_raster->defineRadialGradientStyle(
@@ -224,13 +204,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 		for (uint32_t i = 0; i < uint32_t(lineStyles.size()); ++i)
 		{
 			const FlashLineStyle& style = lineStyles[i];
-			Color4f c(
-				style.getLineColor().red / 255.0f,
-				style.getLineColor().green / 255.0f,
-				style.getLineColor().blue / 255.0f,
-				style.getLineColor().alpha / 255.0f
-			);
-			m_raster->defineSolidStyle(c * cxm + cxa);
+			m_raster->defineSolidStyle(style.getLineColor() * cxm + cxa);
 		}
 	}
 	else
@@ -289,7 +263,7 @@ void SwDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, cons
 {
 }
 
-void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor)
+void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const Color4f& color, const SwfCxTransform& cxform, uint8_t filter, const Color4f& filterColor)
 {
 	if (!m_writeEnable)
 		return;
@@ -348,8 +322,8 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanva
 	if (!m_writeEnable)
 		return;
 
-	const Color4f cxm(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]);
-	const Color4f cxa(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]);
+	const Color4f& cxm = cxform.mul;
+	const Color4f& cxa = cxform.add;
 	int32_t width = m_image->getWidth();
 	int32_t height = m_image->getHeight();
 	float frameWidth = m_frameBounds.mx.x;
@@ -388,12 +362,7 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanva
 			{
 				if (colorRecords.size() == 1)
 				{
-					Color4f c(
-						colorRecords[0].color.red / 255.0f,
-						colorRecords[0].color.green / 255.0f,
-						colorRecords[0].color.blue / 255.0f,
-						colorRecords[0].color.alpha / 255.0f
-					);
+					const Color4f& c = colorRecords[0].color;
 					m_raster->defineSolidStyle(c * cxm + cxa);
 				}
 				else if (colorRecords.size() > 1)
@@ -405,12 +374,7 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanva
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)
 							{
-								Color4f c(
-									colorRecords[j].color.red / 255.0f,
-									colorRecords[j].color.green / 255.0f,
-									colorRecords[j].color.blue / 255.0f,
-									colorRecords[j].color.alpha / 255.0f
-								);
+								const Color4f& c = colorRecords[j].color;
 								colors.push_back(std::make_pair(c * cxm + cxa, colorRecords[j].ratio));
 							}
 							m_raster->defineLinearGradientStyle(
@@ -425,12 +389,7 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanva
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)
 							{
-								Color4f c(
-									colorRecords[j].color.red / 255.0f,
-									colorRecords[j].color.green / 255.0f,
-									colorRecords[j].color.blue / 255.0f,
-									colorRecords[j].color.alpha / 255.0f
-								);
+								const Color4f& c = colorRecords[j].color;
 								colors.push_back(std::make_pair(c * cxm + cxa, colorRecords[j].ratio));
 							}
 							m_raster->defineRadialGradientStyle(
@@ -455,13 +414,7 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanva
 		for (uint32_t i = 0; i < uint32_t(lineStyles.size()); ++i)
 		{
 			const FlashLineStyle& style = lineStyles[i];
-			Color4f c(
-				style.getLineColor().red / 255.0f,
-				style.getLineColor().green / 255.0f,
-				style.getLineColor().blue / 255.0f,
-				style.getLineColor().alpha / 255.0f
-			);
-			m_raster->defineSolidStyle(c * cxm + cxa);
+			m_raster->defineSolidStyle(style.getLineColor() * cxm + cxa);
 		}
 	}
 	else

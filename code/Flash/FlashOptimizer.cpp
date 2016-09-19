@@ -21,17 +21,13 @@ namespace traktor
 		namespace
 		{
 
-const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
+const SwfCxTransform c_cxfIdentity = { Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
 
 SwfCxTransform concateCxTransform(const SwfCxTransform& cxt1, const SwfCxTransform& cxt2)
 {
-	SwfCxTransform cxtr = 
-	{
-		{ cxt1.red[0]   * cxt2.red[0]  , clamp(cxt1.red[1]   * cxt2.red[0]   + cxt2.red[1],   0.0f, 1.0f) },
-		{ cxt1.green[0] * cxt2.green[0], clamp(cxt1.green[1] * cxt2.green[0] + cxt2.green[1], 0.0f, 1.0f) },
-		{ cxt1.blue[0]  * cxt2.blue[0] , clamp(cxt1.blue[1]  * cxt2.blue[0]  + cxt2.blue[1],  0.0f, 1.0f) },
-		{ cxt1.alpha[0] * cxt2.alpha[0], clamp(cxt1.alpha[1] * cxt2.alpha[0] + cxt2.alpha[1], 0.0f, 1.0f) }
-	};
+	SwfCxTransform cxtr;
+	cxtr.mul = cxt1.mul * cxt2.mul;
+	cxtr.add = (cxt1.add * cxt2.mul + cxt2.add).saturated();
 	return cxtr;
 }
 

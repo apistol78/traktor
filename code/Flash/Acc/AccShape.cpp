@@ -245,10 +245,11 @@ bool AccShape::createFromTriangles(
 				}
 				else if (colorRecords.size() == 1)
 				{
-					color.r = colorRecords.front().color.red;
-					color.g = colorRecords.front().color.green;
-					color.b = colorRecords.front().color.blue;
-					color.a = colorRecords.front().color.alpha;
+					Color4f c = colorRecords.front().color * Scalar(255.0f);
+					color.r = uint8_t(c.getRed());
+					color.g = uint8_t(c.getGreen());
+					color.b = uint8_t(c.getBlue());
+					color.a = uint8_t(c.getAlpha());
 					m_batchFlags |= BfHaveSolid;
 				}
 
@@ -485,8 +486,8 @@ void AccShape::render(
 			renderBlockSolid->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleFrameBounds, frameBounds);
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleFrameTransform, frameTransform);
-			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, cxform.mul);
+			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, cxform.add);
 			renderBlockSolid->programParams->setStencilReference(maskReference);
 			renderBlockSolid->programParams->endParameters(renderContext);
 			renderContext->draw(render::RpOverlay, renderBlockSolid);
@@ -505,8 +506,8 @@ void AccShape::render(
 			renderBlockTextured->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleFrameBounds, frameBounds);
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleFrameTransform, frameTransform);
-			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, cxform.mul);
+			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, cxform.add);
 			renderBlockTextured->programParams->setStencilReference(maskReference);
 			renderBlockTextured->programParams->endParameters(renderContext);
 			renderContext->draw(render::RpOverlay, renderBlockTextured);

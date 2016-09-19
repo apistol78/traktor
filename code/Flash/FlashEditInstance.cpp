@@ -22,37 +22,31 @@ namespace traktor
 		namespace
 		{
 
-const struct { const wchar_t* name; SwfColor color; } c_colorTable[] =
+const struct { const wchar_t* name; Color4f color; } c_colorTable[] =
 {
-	L"black",	{ 0x00, 0x00, 0x00, 0xff },
-	L"red",		{ 0xff, 0x00, 0x00, 0xff },
-	L"green",	{ 0x00, 0xff, 0x00, 0xff },
-	L"blue",	{ 0x00, 0x00, 0xff, 0xff },
-	L"yellow",	{ 0xff, 0xff, 0x00, 0xff },
-	L"white",	{ 0xff, 0xff, 0xff, 0xff },
-	L"lime",	{ 0x40, 0x80, 0xff, 0xff }
+	L"black",	Color4f(0.0f, 0.0f, 0.0f, 1.0f),
+	L"red",		Color4f(1.0f, 0.0f, 0.0f, 1.0f),
+	L"green",	Color4f(0.0f, 1.0f, 0.0f, 1.0f),
+	L"blue",	Color4f(0.0f, 0.0f, 1.0f, 1.0f),
+	L"yellow",	Color4f(1.0f, 1.0f, 0.0f, 1.0f),
+	L"white",	Color4f(1.0f, 1.0f, 1.0f, 1.0f),
+	L"lime",	Color4f(0.3f, 0.5f, 1.0f, 1.0f)
 };
 
-bool parseColor(const std::wstring& color, SwfColor& outColor)
+bool parseColor(const std::wstring& color, Color4f& outColor)
 {
 	if (startsWith< std::wstring >(color, L"#"))
 	{
 		int32_t red, green, blue;
 		swscanf(color.c_str(), L"#%02x%02x%02x", &red, &green, &blue);
-		outColor.red = uint8_t(red);
-		outColor.green = uint8_t(green);
-		outColor.blue = uint8_t(blue);
-		outColor.alpha = 0xff;
+		outColor = Color4f(red, green, blue, 255) / Scalar(255.0f);
 		return true;
 	}
 	else if (startsWith< std::wstring >(color, L"rgb"))
 	{
 		int32_t red, green, blue;
 		swscanf(color.c_str(), L"rgb(%d,%d,%d)", &red, &green, &blue);
-		outColor.red = uint8_t(red);
-		outColor.green = uint8_t(green);
-		outColor.blue = uint8_t(blue);
-		outColor.alpha = 0xff;
+		outColor = Color4f(red, green, blue, 255) / Scalar(255.0f);
 		return true;
 	}
 	else if (toLower(color) == L"none")
@@ -70,9 +64,9 @@ bool parseColor(const std::wstring& color, SwfColor& outColor)
 	return false;
 }
 
-void traverseHtmlDOM(const html::Element* element, const FlashFont* font, const SwfColor& textColor, TextLayout* layout, StringOutputStream& text)
+void traverseHtmlDOM(const html::Element* element, const FlashFont* font, const Color4f& textColor, TextLayout* layout, StringOutputStream& text)
 {
-	SwfColor color = textColor;
+	Color4f color = textColor;
 
 	if (element->getName() == L"font")
 	{
@@ -193,7 +187,7 @@ void FlashEditInstance::setTextBounds(const Aabb2& textBounds)
 	m_textBounds = textBounds;
 }
 
-void FlashEditInstance::setTextColor(const SwfColor& textColor)
+void FlashEditInstance::setTextColor(const Color4f& textColor)
 {
 	m_textColor = textColor;
 	updateLayout();

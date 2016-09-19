@@ -160,7 +160,7 @@ public:
 	 *
 	 * \return Background colors.
 	 */
-	const SwfColor& getBackgroundColor() const { return m_backgroundColor; }
+	const Color4f& getBackgroundColor() const { return m_backgroundColor; }
 
 	/*! \brief Get depth layers.
 	 *
@@ -170,7 +170,7 @@ public:
 
 private:
 	ActionContext* m_context;
-	SwfColor m_backgroundColor;
+	Color4f m_backgroundColor;
 	layer_map_t m_layers;
 };
 

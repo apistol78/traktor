@@ -55,7 +55,7 @@ struct AtlasBucket
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 48, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 50, FlashPipeline, editor::IPipeline)
 
 FlashPipeline::FlashPipeline()
 :	m_generateMips(false)
@@ -171,11 +171,11 @@ bool FlashPipeline::buildOutput(
 	else if (const FlashEmptyMovieAsset* emptyMovieAsset = dynamic_type_cast< const FlashEmptyMovieAsset* >(sourceAsset))
 	{
 		const Color4ub& bc = emptyMovieAsset->getBackgroundColor();
-		SwfColor backgroundColor = { bc.r, bc.g, bc.b, bc.a };
+		
 		Ref< FlashSprite > sprite = new FlashSprite(0, emptyMovieAsset->getFrameRate());
 
 		Ref< FlashFrame > frame = new FlashFrame();
-		frame->changeBackgroundColor(backgroundColor);
+		frame->changeBackgroundColor(Color4f(bc.r, bc.g, bc.b, bc.a) / Scalar(255.0f));
 		sprite->addFrame(frame);
 
 		movie = new FlashMovie(

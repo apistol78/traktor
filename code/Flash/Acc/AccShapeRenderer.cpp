@@ -34,8 +34,8 @@ const uint32_t c_cacheHeight = 2048;
 #endif
 const uint32_t c_cacheMargin = 1;
 
-const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f } };
-const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
+const SwfCxTransform c_cxfZero = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
+const SwfCxTransform c_cxfIdentity = { Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
 
 		}
 

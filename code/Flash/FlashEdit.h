@@ -32,7 +32,7 @@ public:
 		uint16_t fontId,
 		uint16_t fontHeight,
 		const Aabb2& textBounds,
-		const SwfColor& textColor,
+		const Color4f& textColor,
 		uint16_t maxLength,
 		const std::wstring& initialText,
 		SwfTextAlignType align,
@@ -79,7 +79,7 @@ public:
 	 *
 	 * \return Text color.
 	 */
-	const SwfColor& getTextColor() const;
+	const Color4f& getTextColor() const;
 
 	/*! \brief Get max length of input text.
 	 *
@@ -159,7 +159,7 @@ private:
 	uint16_t m_fontId;
 	uint16_t m_fontHeight;
 	Aabb2 m_textBounds;
-	SwfColor m_textColor;
+	Color4f m_textColor;
 	std::wstring m_initialText;
 	uint16_t m_maxLength;
 	SwfTextAlignType m_align;

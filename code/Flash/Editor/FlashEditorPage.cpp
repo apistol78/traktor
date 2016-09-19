@@ -330,10 +330,10 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 
 	characterItem->setData(L"CHARACTER", characterInstance);
 
-	const SwfCxTransform& cxform = characterInstance->getColorTransform();
-	ss.reset();
-	ss << L"Color transform: [*] = {" << cxform.red[0] << L", " << cxform.green[0] << L", " << cxform.blue[0] << L", " << cxform.alpha[0] << L"}, [+] = {" << cxform.red[1] << L", " << cxform.green[1] << L", " << cxform.blue[1] << L", " << cxform.alpha[1] << L"}";
-	m_treeMovie->createItem(characterItem, ss.str());
+	//const SwfCxTransform& cxform = characterInstance->getColorTransform();
+	//ss.reset();
+	//ss << L"Color transform: [*] = {" << cxform.red[0] << L", " << cxform.green[0] << L", " << cxform.blue[0] << L", " << cxform.alpha[0] << L"}, [+] = {" << cxform.red[1] << L", " << cxform.green[1] << L", " << cxform.blue[1] << L", " << cxform.alpha[1] << L"}";
+	//m_treeMovie->createItem(characterItem, ss.str());
 
 	ss.reset();
 	ss << L"Blend mode: ";
@@ -475,7 +475,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 				const AlignedVector< FlashFillStyle::ColorRecord >& cr = fs.getColorRecords();
 
 				ss.reset();
-				ss << (cr[0].color.red / 255.0f) << L", " << (cr[0].color.green / 255.0f) << L", " << (cr[0].color.blue / 255.0f) << L", " << (cr[0].color.alpha / 255.0f);
+				ss << (cr[0].color.getRed()) << L", " << (cr[0].color.getGreen()) << L", " << (cr[0].color.getBlue()) << L", " << (cr[0].color.getAlpha());
 				m_treeMovie->createItem(styleItem, ss.str());
 			}
 		}
@@ -577,10 +577,8 @@ void FlashEditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 			m_selectedCharacterInstanceBlendMode = m_selectedCharacterInstance->getBlendMode();
 
 			SwfCxTransform cxform;
-			cxform.red[0] = 0.5f; cxform.red[1] = 0.0f;
-			cxform.green[0] = 0.5f; cxform.green[1] = 0.5f;
-			cxform.blue[0] = 0.5f; cxform.blue[1] = 1.0f;
-			cxform.alpha[0] = 1.0f; cxform.alpha[1] = 0.0f;
+			cxform.mul = Color4f(0.5f, 0.5f, 0.5f, 1.0f);
+			cxform.add = Color4f(0.0f, 0.5f, 1.0f, 0.0f);
 
 			m_selectedCharacterInstance->setColorTransform(cxform);
 			m_selectedCharacterInstance->setBlendMode(SbmDefault);

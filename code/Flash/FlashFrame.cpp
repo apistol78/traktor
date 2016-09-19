@@ -15,15 +15,12 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashFrame", 1, FlashFrame, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashFrame", 0, FlashFrame, ISerializable)
 
 FlashFrame::FlashFrame()
 :	m_backgroundColorChange(false)
+,	m_backgroundColor(1.0f, 1.0f, 1.0f, 1.0f)
 {
-	m_backgroundColor.red =
-	m_backgroundColor.green =
-	m_backgroundColor.blue =
-	m_backgroundColor.alpha = 255;
 }
 
 void FlashFrame::setLabel(const std::string& label)
@@ -36,7 +33,7 @@ const std::string& FlashFrame::getLabel() const
 	return m_label;
 }
 
-void FlashFrame::changeBackgroundColor(const SwfColor& backgroundColor)
+void FlashFrame::changeBackgroundColor(const Color4f& backgroundColor)
 {
 	m_backgroundColor = backgroundColor;
 	m_backgroundColorChange = true;
@@ -47,7 +44,7 @@ bool FlashFrame::hasBackgroundColorChanged() const
 	return m_backgroundColorChange;
 }
 
-const SwfColor& FlashFrame::getBackgroundColor() const
+const Color4f& FlashFrame::getBackgroundColor() const
 {
 	return m_backgroundColor;
 }
@@ -96,14 +93,9 @@ const RefArray< const IActionVMImage >& FlashFrame::getActionScripts() const
 
 void FlashFrame::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 1);
-
 	s >> Member< std::string >(L"label", m_label);
 	s >> Member< bool >(L"backgroundColorChange", m_backgroundColorChange);
-	
-	if (m_backgroundColorChange)
-		s >> MemberSwfColor(L"backgroundColor", m_backgroundColor);
-
+	s >> Member< Color4f >(L"backgroundColor", m_backgroundColor);
 	s >> MemberSmallMap< uint16_t, PlaceObject, Member< uint16_t >, MemberComposite< PlaceObject > >(L"placeObjects", m_placeObjects);
 	s >> MemberSmallMap< uint16_t, RemoveObject, Member< uint16_t >, MemberComposite< RemoveObject > >(L"removeObjects", m_removeObjects);
 	s >> MemberAlignedVector< uint16_t >(L"startSounds", m_startSounds);
@@ -124,7 +116,7 @@ void FlashFrame::PlaceObject::serialize(ISerializer& s)
 	if (hasFlags & PfHasFilters)
 	{
 		s >> Member< uint8_t >(L"filter", filter);
-		s >> MemberSwfColor(L"filterColor", filterColor);
+		s >> Member< Color4f >(L"filterColor", filterColor);
 	}
 
 	if (hasFlags & PfHasActions)

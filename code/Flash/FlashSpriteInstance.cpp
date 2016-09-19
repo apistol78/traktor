@@ -246,7 +246,7 @@ Ref< FlashEditInstance > FlashSpriteInstance::createTextField(const std::string&
 		Vector2(0.0f, 0.0f),
 		Vector2(width, height)
 	);
-	SwfColor color = { 0, 0, 0, 0 };
+	Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Create edit character.
 	Ref< FlashEdit > edit = new FlashEdit(

@@ -1,6 +1,7 @@
 #ifndef traktor_flash_FlashLineStyle_H
 #define traktor_flash_FlashLineStyle_H
 
+#include "Core/Math/Color4f.h"
 #include "Core/Math/Matrix33.h"
 #include "Flash/SwfTypes.h"
 
@@ -32,14 +33,14 @@ public:
 
 	void transform(const SwfCxTransform& cxform);
 
-	const SwfColor& getLineColor() const;
+	const Color4f& getLineColor() const;
 
 	uint16_t getLineWidth() const;
 
 	void serialize(ISerializer& s);
 
 private:
-	SwfColor m_lineColor;
+	Color4f m_lineColor;
 	uint16_t m_lineWidth;
 };
 

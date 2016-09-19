@@ -26,13 +26,13 @@ bool FlashFillStyle::create(const SwfFillStyle* fillStyle)
 	// Create solid white if null descriptor given.
 	if (!fillStyle)
 	{
-		SwfColor dummy = { 255, 255, 255, 255 };
+		Color4f dummy(1.0f, 1.0f, 1.0f, 1.0f);
 		m_colorRecords.push_back(ColorRecord(0.0f, dummy));
 		return true;
 	}
 
 	if (fillStyle->type == FstSolid)
-		m_colorRecords.push_back(ColorRecord(0.0f, fillStyle->solid.color));
+		m_colorRecords.push_back(ColorRecord(0.0f, Color4f::loadUnaligned(fillStyle->solid.color)));
 	else if (fillStyle->type == FstLinearGradient || fillStyle->type == FstRadialGradient)
 	{
 		m_colorRecords.reserve(fillStyle->gradient.gradient->numGradientRecords);
@@ -53,7 +53,7 @@ bool FlashFillStyle::create(const SwfFillStyle* fillStyle)
 	}
 	else
 	{
-		SwfColor dummy = { 255, 255, 255, 255 };
+		Color4f dummy(1.0f, 1.0f, 1.0f, 1.0f);
 		m_colorRecords.push_back(ColorRecord(0.0f, dummy));
 	}
 	
@@ -72,7 +72,7 @@ bool FlashFillStyle::create(const SwfFillStyle* fillStyle)
 	return true;
 }
 
-bool FlashFillStyle::create(const SwfColor& solidColor)
+bool FlashFillStyle::create(const Color4f& solidColor)
 {
 	m_colorRecords.push_back(ColorRecord(0.0f, solidColor));
 	return true;
@@ -97,12 +97,7 @@ bool FlashFillStyle::create(uint16_t fillBitmap, const Matrix33& fillBitmapMatri
 void FlashFillStyle::transform(const Matrix33& transform, const SwfCxTransform& cxform)
 {
 	for (AlignedVector< ColorRecord >::iterator i = m_colorRecords.begin(); i != m_colorRecords.end(); ++i)
-	{
-		i->color.red =   uint8_t(((i->color.red   / 255.0f) * cxform.red[0]   + cxform.red[1]  ) * 255.0f);
-		i->color.green = uint8_t(((i->color.green / 255.0f) * cxform.green[0] + cxform.green[1]) * 255.0f);
-		i->color.blue =  uint8_t(((i->color.blue  / 255.0f) * cxform.blue[0]  + cxform.blue[1] ) * 255.0f);
-		i->color.alpha = uint8_t(((i->color.alpha / 255.0f) * cxform.alpha[0] + cxform.alpha[1]) * 255.0f);
-	}
+		i->color = i->color * cxform.mul + cxform.add;
 
 	if (m_gradientType != GtInvalid)
 		m_gradientMatrix = transform * m_gradientMatrix;
@@ -132,7 +127,7 @@ void FlashFillStyle::serialize(ISerializer& s)
 void FlashFillStyle::ColorRecord::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"ratio", ratio);
-	s >> MemberSwfColor(L"color", color);
+	s >> Member< Color4f >(L"color", color);
 }
 
 	}

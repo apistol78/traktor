@@ -32,7 +32,7 @@ public:
 		int16_t offsetX;
 		int16_t offsetY;
 		int16_t height;
-		SwfColor color;
+		Color4f color;
 		union
 		{
 			uint32_t glyphIndex;

@@ -502,7 +502,7 @@ void opx_getProperty(ExecutionState& state)
 	case 6:
 		{
 			const SwfCxTransform& colorTransform = movieClip->getColorTransform();
-			stack.push(ActionValue(colorTransform.alpha[0] * 100.0f));
+			stack.push(ActionValue(colorTransform.mul.getAlpha() * 100.0f));
 		}
 		break;
 
@@ -661,7 +661,7 @@ void opx_setProperty(ExecutionState& state)
 	case 6:
 		{
 			SwfCxTransform colorTransform = movieClip->getColorTransform();
-			colorTransform.alpha[0] = value.getNumber() / 100.0f;
+			colorTransform.mul.setAlpha(Scalar(value.getNumber() / 100.0f));
 			movieClip->setColorTransform(colorTransform);
 		}
 		break;

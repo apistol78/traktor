@@ -20,7 +20,7 @@ public:
 	struct Attribute
 	{
 		const FlashFont* font;
-		SwfColor color;
+		Color4f color;
 	};
 
 	struct Character
@@ -60,7 +60,7 @@ public:
 
 	void setAlignment(SwfTextAlignType alignment);
 
-	void setAttribute(const FlashFont* font, const SwfColor& textColor);
+	void setAttribute(const FlashFont* font, const Color4f& textColor);
 
 	void insertText(const std::wstring& text);
 

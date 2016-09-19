@@ -141,9 +141,9 @@ SwfFillStyle* SwfReader::readFillStyle(int shapeType)
 	if (fillStyle->type == FstSolid)
 	{
 		if (shapeType == 1 || shapeType == 2)
-			fillStyle->solid.color = readRgb();
+			readRgb().storeUnaligned(fillStyle->solid.color);
 		else if (shapeType == 3 || shapeType == 4)
-			fillStyle->solid.color = readRgba();
+			readRgba().storeUnaligned(fillStyle->solid.color);
 	}
 	else if (fillStyle->type == FstLinearGradient || fillStyle->type == FstRadialGradient)
 	{
@@ -207,7 +207,7 @@ SwfLineStyle* SwfReader::readLineStyle(int shapeType)
 		else
 		{
 			SwfFillStyle* fill = readFillStyle(shapeType);
-			lineStyle->color = fill->solid.color;
+			lineStyle->color = Color4f::loadUnaligned(fill->solid.color);
 		}
 	}
 
@@ -285,8 +285,8 @@ bool SwfReader::readMorphFillStyle(SwfFillStyle*& outStartFillStyle, SwfFillStyl
 
 	if (outStartFillStyle->type == FstSolid)
 	{
-		outStartFillStyle->solid.color = readRgba();
-		outEndFillStyle->solid.color = readRgba();
+		readRgba().storeUnaligned(outStartFillStyle->solid.color);
+		readRgba().storeUnaligned(outEndFillStyle->solid.color);
 	}
 	else if (outStartFillStyle->type == FstLinearGradient || outStartFillStyle->type == FstRadialGradient)
 	{
@@ -356,8 +356,8 @@ bool SwfReader::readMorphLineStyle(SwfLineStyle*& outStartLineStyle, SwfLineStyl
 			return false;
 
 		// @fixme As for now we just assume solid fill style and grab the color.
-		outStartLineStyle->color = startFillStyle->solid.color;
-		outEndLineStyle->color = endFillStyle->solid.color;
+		outStartLineStyle->color = Color4f::loadUnaligned(startFillStyle->solid.color);
+		outEndLineStyle->color = Color4f::loadUnaligned(endFillStyle->solid.color);
 	}
 
 	return true;
@@ -574,9 +574,9 @@ SwfTextRecord* SwfReader::readTextRecord(uint8_t numGlyphBits, uint8_t numAdvanc
 		if (textRecord->style.hasColor)
 		{
 			if (textType == 2)
-				textRecord->style.color = readRgba();
+				readRgba().storeUnaligned(textRecord->style.color);
 			else
-				textRecord->style.color = readRgb();
+				readRgb().storeUnaligned(textRecord->style.color);
 		}
 		if (textRecord->style.hasXOffset)
 			textRecord->style.XOffset = m_bs->readInt16();
@@ -612,7 +612,7 @@ SwfFilter* SwfReader::readFilter()
 	{
 	case 0:
 		{
-			filter->dropShadow.dropShadowColor = readRgba();
+			readRgba().storeUnaligned(filter->dropShadow.dropShadowColor);
 			filter->dropShadow.blurX = readFixed();
 			filter->dropShadow.blurY = readFixed();
 			filter->dropShadow.angle = readFixed();
@@ -634,7 +634,7 @@ SwfFilter* SwfReader::readFilter()
 		break;
 	case 2:
 		{
-			filter->glow.glowColor = readRgba();
+			readRgba().storeUnaligned(filter->glow.glowColor);
 			filter->glow.blurX = readFixed();
 			filter->glow.blurY = readFixed();
 			filter->glow.strength = readFixed8();
@@ -646,8 +646,8 @@ SwfFilter* SwfReader::readFilter()
 		break;
 	case 3:
 		{
-			filter->bevel.shadowColor = readRgba();
-			filter->bevel.highlightColor = readRgba();
+			readRgba().storeUnaligned(filter->bevel.shadowColor);
+			readRgba().storeUnaligned(filter->bevel.highlightColor);
 			filter->bevel.blurX = readFixed();
 			filter->bevel.blurY = readFixed();
 			filter->bevel.angle = readFixed();
@@ -671,7 +671,7 @@ SwfFilter* SwfReader::readFilter()
 			filter->convolution.matrix = m_pool->alloc< float >(filter->convolution.matrixX * filter->convolution.matrixY);
 			for (int i = 0; i < filter->convolution.matrixX * filter->convolution.matrixY; ++i)
 				filter->convolution.matrix[i] = readFloat32();
-			filter->convolution.defaultColor = readRgba();
+			readRgba().storeUnaligned(filter->convolution.defaultColor);
 			m_bs->skip(6);
 			filter->convolution.clamp = m_bs->readBit();
 			filter->convolution.preserveAlpha = m_bs->readBit();
@@ -748,10 +748,8 @@ SwfCxTransform SwfReader::readCxTransform(bool withAlpha)
 {
 	SwfCxTransform cxTransform;
 
-	cxTransform.red[0]   = 1.0f; cxTransform.red[1]   = 0.0f;
-	cxTransform.green[0] = 1.0f; cxTransform.green[1] = 0.0f;
-	cxTransform.blue[0]  = 1.0f; cxTransform.blue[1]  = 0.0f;
-	cxTransform.alpha[0] = 1.0f; cxTransform.alpha[1] = 0.0f;
+	cxTransform.mul = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	cxTransform.add = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
 	m_bs->alignByte();
 
@@ -766,10 +764,12 @@ SwfCxTransform SwfReader::readCxTransform(bool withAlpha)
 		int16_t blueMul = m_bs->readSigned(nbits);
 		int16_t alphaMul = withAlpha ? m_bs->readSigned(nbits) : (1 << 8);
 
-		cxTransform.red[0] = redMul / 256.0f;
-		cxTransform.green[0] = greenMul / 256.0f;
-		cxTransform.blue[0] = blueMul / 256.0f;
-		cxTransform.alpha[0] = alphaMul / 256.0f;
+		cxTransform.mul = Color4f(
+			redMul / 255.0f,
+			greenMul / 255.0f,
+			blueMul / 255.0f,
+			alphaMul / 255.0f
+		);
 	}
 
 	if (hasAddTerms)
@@ -779,10 +779,12 @@ SwfCxTransform SwfReader::readCxTransform(bool withAlpha)
 		int16_t blueAdd = m_bs->readSigned(nbits);
 		int16_t alphaAdd = withAlpha ? m_bs->readSigned(nbits) : 0;
 
-		cxTransform.red[1] = redAdd / 256.0f;
-		cxTransform.green[1] = greenAdd / 256.0f;
-		cxTransform.blue[1] = blueAdd / 256.0f;
-		cxTransform.alpha[1] = alphaAdd / 256.0f;
+		cxTransform.add = Color4f(
+			redAdd / 255.0f,
+			greenAdd / 255.0f,
+			blueAdd / 255.0f,
+			alphaAdd / 255.0f
+		);
 	}
 
 	return cxTransform;
@@ -816,28 +818,22 @@ Aabb2 SwfReader::readRect()
 	return rect;
 }
 
-SwfColor SwfReader::readRgb()
+Color4f SwfReader::readRgb()
 {
-	SwfColor color;
-
-	color.red = m_bs->readUInt8();
-	color.green = m_bs->readUInt8();
-	color.blue = m_bs->readUInt8();
-	color.alpha = 255;
-
-	return color;
+	uint8_t r = m_bs->readUInt8();
+	uint8_t g = m_bs->readUInt8();
+	uint8_t b = m_bs->readUInt8();
+	uint8_t a = 255;
+	return Color4f(r, g, b, a) / Scalar(255.0f);
 }
 
-SwfColor SwfReader::readRgba()
+Color4f SwfReader::readRgba()
 {
-	SwfColor color;
-
-	color.red = m_bs->readUInt8();
-	color.green = m_bs->readUInt8();
-	color.blue = m_bs->readUInt8();
-	color.alpha = m_bs->readUInt8();
-
-	return color;
+	uint8_t r = m_bs->readUInt8();
+	uint8_t g = m_bs->readUInt8();
+	uint8_t b = m_bs->readUInt8();
+	uint8_t a = m_bs->readUInt8();
+	return Color4f(r, g, b, a) / Scalar(255.0f);
 }
 
 SwfMatrix SwfReader::readMatrix()

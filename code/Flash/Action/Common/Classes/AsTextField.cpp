@@ -219,13 +219,13 @@ std::string AsTextField::TextField_toString(const FlashEditInstance* self) const
 avm_number_t AsTextField::TextField_get_alpha(FlashEditInstance* self) const
 {
 	const SwfCxTransform& colorTransform = self->getColorTransform();
-	return colorTransform.alpha[0] * 100.0f;
+	return colorTransform.mul.getAlpha() * 100.0f;
 }
 
 void AsTextField::TextField_set_alpha(FlashEditInstance* self, avm_number_t alpha) const
 {
 	SwfCxTransform colorTransform = self->getColorTransform();
-	colorTransform.alpha[0] = alpha / 100.0f;
+	colorTransform.mul.setAlpha(Scalar(alpha / 100.0f));
 	self->setColorTransform(colorTransform);
 }
 
@@ -719,21 +719,20 @@ void AsTextField::TextField_set_text(FlashEditInstance* self, const std::wstring
 
 avm_number_t AsTextField::TextField_get_textColor(FlashEditInstance* self) const
 {
-	const SwfColor& textColor = self->getTextColor();
-	return avm_number_t((textColor.red << 16) | (textColor.green << 8) | (textColor.blue));
+	Color4f textColor = self->getTextColor() * Scalar(255.0f);
+	uint8_t r = uint8_t(textColor.getRed());
+	uint8_t g = uint8_t(textColor.getGreen());
+	uint8_t b = uint8_t(textColor.getBlue());
+	return avm_number_t((r << 16) | (g << 8) | b);
 }
 
 void AsTextField::TextField_set_textColor(FlashEditInstance* self, avm_number_t textColor) const
 {
 	uint32_t n = uint32_t(textColor);
-	SwfColor tc =
-	{
-		(uint8_t)((n >> 16) & 255),
-		(uint8_t)((n >> 8) & 255),
-		(uint8_t)((n) & 255),
-		255
-	};
-	self->setTextColor(tc);
+	uint8_t r = uint8_t((n >> 16) & 255);
+	uint8_t g = uint8_t((n >> 8) & 255);
+	uint8_t b = uint8_t((n) & 255);
+	self->setTextColor(Color4f(r, g, b, 255.0f) / Scalar(255.0f));
 }
 
 avm_number_t AsTextField::TextField_get_textWidth(FlashEditInstance* self) const

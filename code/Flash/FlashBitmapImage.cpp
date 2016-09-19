@@ -35,9 +35,9 @@ FlashBitmapImage::FlashBitmapImage(const drawing::Image* image)
 	m_height = uint32_t(m_image->getHeight());
 }
 
-const SwfColor* FlashBitmapImage::getBits() const
+const void* FlashBitmapImage::getBits() const
 {
-	return static_cast< const SwfColor* >(m_image->getData());
+	return m_image->getData();
 }
 
 void FlashBitmapImage::serialize(ISerializer& s)
@@ -54,7 +54,7 @@ void FlashBitmapImage::serialize(ISerializer& s)
 	if (m_image)
 	{
 		void* bits = m_image->getData();
-		uint32_t size = m_width * m_height * sizeof(SwfColor);
+		uint32_t size = m_width * m_height * 4;
 		s >> Member< void* >(L"bits", bits, size);
 	}
 }

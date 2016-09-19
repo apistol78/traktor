@@ -48,11 +48,11 @@ const uint32_t c_cacheGlyphCount = c_cacheGlyphCountX * c_cacheGlyphCountY;
 const uint32_t c_cacheGlyphDimX = c_cacheGlyphSize * c_cacheGlyphCountX;
 const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize * c_cacheGlyphCountY;
 
-const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f } };
-const SwfCxTransform c_cxfWhite = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f } };
-const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
-const SwfCxTransform c_cxfYellow = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f } };
-const SwfCxTransform c_cxfDebug = { { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.2f } };
+const SwfCxTransform c_cxfZero = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
+const SwfCxTransform c_cxfWhite = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 1.0f, 1.0f, 1.0f) };
+const SwfCxTransform c_cxfIdentity = { Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
+const SwfCxTransform c_cxfYellow = { Color4f(0.0f, 0.0f, 0.0f, 1.0f), Color4f(1.0f, 1.0f, 0.0f, 0.0f) };
+const SwfCxTransform c_cxfDebug = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 0.0f, 0.0f, 0.2f) };
 
 bool rectangleVisible(const Aabb2& frame, const Aabb2& bounds)
 {
@@ -62,18 +62,9 @@ bool rectangleVisible(const Aabb2& frame, const Aabb2& bounds)
 		return false;
 }
 
-bool colorsEqual(const SwfColor& a, const SwfColor& b)
+bool colorsEqual(const Color4f& a, const Color4f& b)
 {
-	if (abs(int32_t(a.red) - int32_t(b.red)) > 2)
-		return false;
-	else if (abs(int32_t(a.green) - int32_t(b.green)) > 2)
-		return false;
-	else if (abs(int32_t(a.blue) - int32_t(b.blue)) > 2)
-		return false;
-	else if (abs(int32_t(a.alpha) - int32_t(b.alpha)) > 2)
-		return false;
-	else
-		return true;
+	return Vector4(a - b).absolute().max() <= 2 / 255.0f;
 }
 
 		}
@@ -91,9 +82,9 @@ AccDisplayRenderer::AccDisplayRenderer()
 ,	m_maskIncrement(false)
 ,	m_maskReference(0)
 ,	m_glyphFilter(0)
+,	m_glyphColor(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_glyphFilterColor(0.0f, 0.0f, 0.0f, 0.0f)
 {
-	std::memset(&m_glyphColor, 0, sizeof(SwfColor));
-	std::memset(&m_glyphFilterColor, 0, sizeof(SwfColor));
 }
 
 AccDisplayRenderer::~AccDisplayRenderer()
@@ -261,7 +252,7 @@ bool AccDisplayRenderer::wantDirtyRegion() const
 
 void AccDisplayRenderer::begin(
 	const FlashDictionary& dictionary,
-	const SwfColor& backgroundColor,
+	const Color4f& backgroundColor,
 	const Aabb2& frameBounds,
 	const Vector4& frameTransform,
 	float viewWidth,
@@ -309,11 +300,7 @@ void AccDisplayRenderer::begin(
 	{
 		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (color+stencil)");
 		renderBlock->clearMask = render::CfColor | render::CfStencil;
-		renderBlock->clearColor.set(
-			backgroundColor.red / 255.0f,
-			backgroundColor.green / 255.0f,
-			backgroundColor.blue / 255.0f
-		);
+		renderBlock->clearColor = backgroundColor;
 		m_renderContext->draw(render::RpOverlay, renderBlock);
 	}
 	else
@@ -359,7 +346,7 @@ void AccDisplayRenderer::begin(
 			// Clear background by drawing a solid quad with given color; cannot clear as it doesn't handle stencil.
 			if (m_clearBackground)
 			{
-				SwfCxTransform clearCxForm = { { 0.0f, backgroundColor.red / 255.0f }, { 0.0f, backgroundColor.green / 255.0f }, { 0.0f, backgroundColor.blue / 255.0f }, { 0.0f, 1.0f } };
+				SwfCxTransform clearCxForm = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), backgroundColor.rgb1() };
 				renderQuad(Matrix33::identity(), m_dirtyRegion, clearCxForm);
 			}
 		}
@@ -497,19 +484,13 @@ void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, con
 {
 }
 
-void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor)
+void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const Color4f& color, const SwfCxTransform& cxform, uint8_t filter, const Color4f& filterColor)
 {
 	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
 	if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
 		return;
 
-	SwfColor glyphColor = 
-	{
-		uint8_t(color.red * cxform.red[0] + cxform.red[1] * 255.0f),
-		uint8_t(color.green * cxform.green[0] + cxform.green[1] * 255.0f),
-		uint8_t(color.blue * cxform.blue[0] + cxform.blue[1] * 255.0f),
-		uint8_t(color.alpha * cxform.alpha[0] + cxform.alpha[1] * 255.0f)
-	};
+	Color4f glyphColor = color * cxform.mul + cxform.add;
 
 	if (m_glyphFilter != filter || !colorsEqual(glyphColor, m_glyphColor))
 	{
