@@ -3,6 +3,7 @@
 
 #include "Core/Config.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Math/Color4f.h"
 #include "Core/Containers/AlignedVector.h"
 
 namespace traktor
@@ -13,14 +14,6 @@ namespace traktor
 //@{
 /*! \ingroup Flash */
 
-struct SwfColor
-{
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
-	uint8_t alpha;
-};
-
 struct SwfMatrix
 {
 	float m[9];
@@ -28,10 +21,8 @@ struct SwfMatrix
 
 struct SwfCxTransform
 {
-	float red[2];		// 0 - mul, 1 - add
-	float green[2];
-	float blue[2];
-	float alpha[2];
+	Color4f mul;
+	Color4f add;
 };
 
 struct SwfKerningRecord
@@ -129,7 +120,7 @@ struct SwfTag
 struct SwfGradientRecord
 {
 	uint8_t ratio;
-	SwfColor color;
+	Color4f color;
 };
 
 struct SwfGradient
@@ -153,7 +144,7 @@ enum SwfFillStyleTypes
 
 struct SwfFillStyleSolid
 {
-	SwfColor color;
+	float color[4];
 };
 
 struct SwfFillStyleGradient
@@ -182,7 +173,7 @@ struct SwfFillStyle
 struct SwfLineStyle
 {
 	uint16_t width;
-	SwfColor color;
+	Color4f color;
 };
 
 struct SwfStyles
@@ -259,7 +250,7 @@ struct SwfTextStyleRecord
 	bool hasYOffset;
 	bool hasXOffset;
 	uint16_t fontId;
-	SwfColor color;
+	float color[4];
 	int16_t XOffset;
 	int16_t YOffset;
 	int16_t height;
@@ -289,7 +280,7 @@ struct SwfTextRecord
 
 struct SwfFilterDropShadow
 {
-	SwfColor dropShadowColor;
+	float dropShadowColor[4];
 	float blurX;
 	float blurY;
 	float angle;
@@ -310,7 +301,7 @@ struct SwfFilterBlur
 
 struct SwfFilterGlow
 {
-	SwfColor glowColor;
+	float glowColor[4];
 	float blurX;
 	float blurY;
 	float strength;
@@ -322,8 +313,8 @@ struct SwfFilterGlow
 
 struct SwfFilterBevel
 {
-	SwfColor shadowColor;
-	SwfColor highlightColor;
+	float shadowColor[4];
+	float highlightColor[4];
 	float blurX;
 	float blurY;
 	float angle;
@@ -339,7 +330,7 @@ struct SwfFilterBevel
 struct SwfFilterGradientGlow
 {
 	uint8_t numColors;
-	SwfColor gradientColors;
+	float gradientColors[4];
 	uint8_t* gradientRatio;
 	float blurX;
 	float blurY;
@@ -359,7 +350,7 @@ struct SwfFilterConvolution
 	float divisor;
 	float bias;
 	float* matrix;
-	SwfColor defaultColor;
+	float defaultColor[4];
 	bool clamp;
 	bool preserveAlpha;
 };
@@ -372,7 +363,7 @@ struct SwfFilterColorMatrix
 struct SwfFilterGradientBevel
 {
 	uint8_t numColors;
-	SwfColor gradientColors;
+	float gradientColors[4];
 	uint8_t* gradientRatio;
 	float blurX;
 	float blurY;

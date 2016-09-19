@@ -37,7 +37,7 @@ void FlashCanvas::clear()
 	++m_dirtyTag;
 }
 
-void FlashCanvas::beginFill(const SwfColor& color)
+void FlashCanvas::beginFill(const Color4f& color)
 {
 	FlashFillStyle style;
 	style.create(color);

@@ -211,8 +211,8 @@ void AccGlyph::render(
 	render::ITexture* texture,
 	uint8_t maskReference,
 	uint8_t glyphFilter,
-	const SwfColor& glyphColor,
-	const SwfColor& glyphFilterColor
+	const Color4f& glyphColor,
+	const Color4f& glyphFilterColor
 )
 {
 	if (!m_count)
@@ -241,21 +241,10 @@ void AccGlyph::render(
 	renderBlock->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
 	renderBlock->programParams->setStencilReference(maskReference);
 	renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
-
-	renderBlock->programParams->setVectorParameter(s_handleColor, Vector4(
-		glyphColor.red / 255.0f,
-		glyphColor.green / 255.0f,
-		glyphColor.blue / 255.0f,
-		glyphColor.alpha / 255.0f
-	));
+	renderBlock->programParams->setVectorParameter(s_handleColor, glyphColor);
 
 	if (glyphFilter != 0)
-		renderBlock->programParams->setVectorParameter(s_handleFilterColor, Vector4(
-			glyphFilterColor.red / 255.0f,
-			glyphFilterColor.green / 255.0f,
-			glyphFilterColor.blue / 255.0f,
-			glyphFilterColor.alpha / 255.0f
-		));
+		renderBlock->programParams->setVectorParameter(s_handleFilterColor, glyphFilterColor);
 
 	renderBlock->programParams->endParameters(renderContext);
 

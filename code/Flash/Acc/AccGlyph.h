@@ -62,8 +62,8 @@ public:
 		render::ITexture* texture,
 		uint8_t maskReference,
 		uint8_t glyphFilter,
-		const SwfColor& glyphColor,
-		const SwfColor& glyphFilterColor
+		const Color4f& glyphColor,
+		const Color4f& glyphFilterColor
 	);
 
 private:

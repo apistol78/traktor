@@ -24,6 +24,7 @@ FlashCharacterInstance::FlashCharacterInstance(
 ,	m_context(context)
 ,	m_dictionary(dictionary)
 ,	m_parent(parent)
+,	m_filterColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_filter(0)
 ,	m_blendMode(0)
 ,	m_visible(true)
@@ -31,14 +32,8 @@ FlashCharacterInstance::FlashCharacterInstance(
 {
 	Atomic::increment(ms_instanceCount);
 
-	m_cxform.red[0] =
-	m_cxform.green[0] =
-	m_cxform.blue[0] =
-	m_cxform.alpha[0] = 1.0f;
-	m_cxform.red[1] =
-	m_cxform.green[1] =
-	m_cxform.blue[1] =
-	m_cxform.alpha[1] = 0.0f;
+	m_cxform.mul = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	m_cxform.add = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
 	m_transform = Matrix33::identity();
 }
@@ -134,7 +129,7 @@ void FlashCharacterInstance::setFilter(uint8_t filter)
 	m_filter = filter;
 }
 
-void FlashCharacterInstance::setFilterColor(const SwfColor& filterColor)
+void FlashCharacterInstance::setFilterColor(const Color4f& filterColor)
 {
 	m_filterColor = filterColor;
 }

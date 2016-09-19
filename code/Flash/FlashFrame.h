@@ -58,7 +58,7 @@ public:
 		uint8_t visible;
 		uint8_t blendMode;
 		uint8_t filter;
-		SwfColor filterColor;
+		Color4f filterColor;
 		SmallMap< uint32_t, Ref< const IActionVMImage > > events;
 		uint16_t clipDepth;
 		std::string name;
@@ -121,7 +121,7 @@ public:
 	 *
 	 * \param backgroundColor Background color.
 	 */
-	void changeBackgroundColor(const SwfColor& backgroundColor);
+	void changeBackgroundColor(const Color4f& backgroundColor);
 
 	/*! \brief Check if this frame changes background color.
 	 *
@@ -133,7 +133,7 @@ public:
 	 *
 	 * \return Background color.
 	 */
-	const SwfColor& getBackgroundColor() const;
+	const Color4f& getBackgroundColor() const;
 
 	/*! \brief Place object onto display list.
 	 *
@@ -186,7 +186,7 @@ public:
 private:
 	std::string m_label;
 	bool m_backgroundColorChange;
-	SwfColor m_backgroundColor;
+	Color4f m_backgroundColor;
 	SmallMap< uint16_t, PlaceObject > m_placeObjects;
 	SmallMap< uint16_t, RemoveObject > m_removeObjects;
 	AlignedVector< uint16_t > m_startSounds;

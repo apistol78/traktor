@@ -38,13 +38,13 @@ public:
 	struct ColorRecord
 	{
 		float ratio;
-		SwfColor color;
+		Color4f color;
 
 		ColorRecord()
 		{
 		}
 
-		ColorRecord(float ratio_, const SwfColor color_)
+		ColorRecord(float ratio_, const Color4f& color_)
 		:	ratio(ratio_)
 		,	color(color_)
 		{
@@ -57,7 +57,7 @@ public:
 
 	bool create(const SwfFillStyle* fillStyle);
 
-	bool create(const SwfColor& solidColor);
+	bool create(const Color4f& solidColor);
 
 	bool create(GradientType gradientType, const AlignedVector< ColorRecord >& colorRecords, const Matrix33& gradientMatrix);
 

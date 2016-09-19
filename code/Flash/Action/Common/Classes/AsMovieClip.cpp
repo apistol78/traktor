@@ -298,14 +298,11 @@ void AsMovieClip::MovieClip_beginFill_1(FlashSpriteInstance* self, uint32_t rgb)
 
 void AsMovieClip::MovieClip_beginFill_2(FlashSpriteInstance* self, uint32_t rgb, int32_t alpha) const
 {
-	SwfColor c;
-
-	c.red = rgb >> 16;
-	c.green = (rgb >> 8) & 255;
-	c.blue = rgb & 255;
-	c.alpha = (255 * clamp(alpha, 0, 100)) / 100;
-
-	self->createCanvas()->beginFill(c);
+	uint8_t r = rgb >> 16;
+	uint8_t g = (rgb >> 8) & 255;
+	uint8_t b = rgb & 255;
+	uint8_t a = (255 * clamp(alpha, 0, 100)) / 100;
+	self->createCanvas()->beginFill(Color4f(r, g, b, a) / Scalar(255.0f));
 }
 
 bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const std::string& fillType, const Array* colors, const Array* alphas, const Array* ratios, ActionObject* matrix) const
@@ -331,11 +328,13 @@ bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const s
 		uint32_t rgb = uint32_t((*colors)[i].getNumber());
 		int32_t alpha = int32_t((*alphas)[i].getNumber());
 
+		uint8_t r = rgb >> 16;
+		uint8_t g = (rgb >> 8) & 255;
+		uint8_t b = rgb & 255;
+		uint8_t a = (255 * clamp(alpha, 0, 100)) / 100;
+
 		colorRecords[i].ratio = clamp< float >((*ratios)[i].getNumber() / 100.0f, 0.0f, 1.0f);
-		colorRecords[i].color.red = rgb >> 16;
-		colorRecords[i].color.green = (rgb >> 8) & 255;
-		colorRecords[i].color.blue = rgb & 255;
-		colorRecords[i].color.alpha = (255 * clamp(alpha, 0, 100)) / 100;
+		colorRecords[i].color = Color4f(r, g, b, a) / Scalar(255.0f);
 	}
 
 	Matrix33 gradientMatrix = Matrix33::identity();
@@ -737,13 +736,13 @@ void AsMovieClip::MovieClip_unloadMovie(FlashSpriteInstance* self) const
 avm_number_t AsMovieClip::MovieClip_get_alpha(const FlashSpriteInstance* self) const
 {
 	const SwfCxTransform& colorTransform = self->getColorTransform();
-	return colorTransform.alpha[0] * 100.0f;
+	return colorTransform.mul.getAlpha() * 100.0f;
 }
 
 void AsMovieClip::MovieClip_set_alpha(FlashSpriteInstance* self, avm_number_t alpha) const
 {
 	SwfCxTransform colorTransform = self->getColorTransform();
-	colorTransform.alpha[0] = alpha / 100.0f;
+	colorTransform.mul.setAlpha(Scalar(alpha / 100.0f));
 	self->setColorTransform(colorTransform);
 }
 

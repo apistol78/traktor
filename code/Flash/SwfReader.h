@@ -137,9 +137,9 @@ public:
 
 	Aabb2 readRect();
 
-	SwfColor readRgb();
+	Color4f readRgb();
 
-	SwfColor readRgba();
+	Color4f readRgba();
 
 	SwfMatrix readMatrix();
 

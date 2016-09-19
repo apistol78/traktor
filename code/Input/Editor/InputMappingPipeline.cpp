@@ -114,10 +114,6 @@ Ref< ISerializable > InputMappingPipeline::buildOutput(editor::IPipelineBuilder*
 
 		if (mergeInputAsset->getStateData())
 		{
-			const RefArray< IInputFilter >& filters = mergeInputAsset->getStateData()->getFilters();
-			for (RefArray< IInputFilter >::const_iterator j = filters.begin(); j != filters.end(); ++j)
-				mergedStateData->addFilter(*j);
-
 			const std::map< std::wstring, Ref< InputStateData > >& stateData = mergeInputAsset->getStateData()->getStateData();
 			for (std::map< std::wstring, Ref< InputStateData > >::const_iterator j = stateData.begin(); j != stateData.end(); ++j)
 			{
@@ -144,10 +140,6 @@ Ref< ISerializable > InputMappingPipeline::buildOutput(editor::IPipelineBuilder*
 
 	if (inputAsset->getStateData())
 	{
-		const RefArray< IInputFilter >& filters = inputAsset->getStateData()->getFilters();
-		for (RefArray< IInputFilter >::const_iterator j = filters.begin(); j != filters.end(); ++j)
-			mergedStateData->addFilter(*j);
-
 		const std::map< std::wstring, Ref< InputStateData > >& stateData = inputAsset->getStateData()->getStateData();
 		for (std::map< std::wstring, Ref< InputStateData > >::const_iterator j = stateData.begin(); j != stateData.end(); ++j)
 		{

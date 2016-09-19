@@ -181,13 +181,9 @@ Any FlashDictionary_getExportName(FlashDictionary* self, uint16_t exportId)
 
 void FlashCharacterInstance_setColorTransform(FlashCharacterInstance* self, const Color4f& mul, const Color4f& add)
 {
-	SwfCxTransform cxform =
-	{
-		{ mul.getRed()  , add.getRed()   },
-		{ mul.getGreen(), add.getGreen() },
-		{ mul.getBlue() , add.getBlue()  },
-		{ mul.getAlpha(), add.getAlpha() }
-	};
+	SwfCxTransform cxform;
+	cxform.mul = mul;
+	cxform.add = add;
 	self->setColorTransform(cxform);
 }
 

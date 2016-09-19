@@ -17,11 +17,6 @@ bool isWhiteSpace(wchar_t ch)
 	return ch == 0 || ch == L' ' || ch == L'\t' || ch == L'\n' || ch == L'\r';
 }
 
-bool operator == (const SwfColor& a, const SwfColor& b)
-{
-	return std::memcmp(&a, &b, sizeof(SwfColor)) == 0;
-}
-
 enum LineBreak
 {
 	BreakAny,
@@ -176,7 +171,7 @@ void TextLayout::setAlignment(SwfTextAlignType alignment)
 	m_alignment = alignment;
 }
 
-void TextLayout::setAttribute(const FlashFont* font, const SwfColor& textColor)
+void TextLayout::setAttribute(const FlashFont* font, const Color4f& textColor)
 {
 	if (!m_attribs.empty())
 	{

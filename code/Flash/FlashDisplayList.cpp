@@ -3,7 +3,6 @@
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashDisplayList.h"
 #include "Flash/FlashCharacter.h"
-//#include "Flash/FlashCharacterInstance.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/Action/ActionContext.h"
 
@@ -43,13 +42,7 @@ FlashDisplayList::FlashDisplayList(ActionContext* context)
 
 void FlashDisplayList::reset()
 {
-	// Set default background color.
-	m_backgroundColor.red =
-	m_backgroundColor.green =
-	m_backgroundColor.blue =
-	m_backgroundColor.alpha = 255;
-
-	// Clear all layers.
+	m_backgroundColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	m_layers.clear();
 }
 

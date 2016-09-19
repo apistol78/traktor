@@ -37,7 +37,7 @@ public:
 
 	FlashBitmapImage(const drawing::Image* image);
 
-	const SwfColor* getBits() const;
+	const void* getBits() const;
 
 	const drawing::Image* getImage() const { return m_image; }
 

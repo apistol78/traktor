@@ -21,7 +21,6 @@ namespace traktor
 	{
 
 class DeviceControlManager;
-class IInputFilter;
 class IInputSource;
 class InputMappingSourceData;
 class InputMappingStateData;
@@ -132,7 +131,6 @@ public:
 private:
 	Ref< DeviceControlManager > m_deviceControlManager;
 	SmallMap< handle_t, Ref< IInputSource > > m_sources;
-	RefArray< IInputFilter > m_filters;
 	SmallMap< handle_t, Ref< InputState > > m_states;
 	InputValueSet m_valueSet;
 	float m_idleTimer;

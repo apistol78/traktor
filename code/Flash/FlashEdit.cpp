@@ -16,6 +16,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashEdit", 0, FlashEdit, FlashCh
 FlashEdit::FlashEdit()
 :	m_fontId(0)
 ,	m_fontHeight(0)
+,	m_textColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_maxLength(std::numeric_limits< uint16_t >::max())
 ,	m_align(StaLeft)
 ,	m_leftMargin(0)
@@ -28,10 +29,6 @@ FlashEdit::FlashEdit()
 ,	m_password(false)
 ,	m_renderHtml(false)
 {
-	m_textColor.red =
-	m_textColor.green =
-	m_textColor.blue =
-	m_textColor.alpha = 0;
 }
 
 FlashEdit::FlashEdit(
@@ -39,7 +36,7 @@ FlashEdit::FlashEdit(
 	uint16_t fontId,
 	uint16_t fontHeight,
 	const Aabb2& textBounds,
-	const SwfColor& textColor,
+	const Color4f& textColor,
 	uint16_t maxLength,
 	const std::wstring& initialText,
 	SwfTextAlignType align,
@@ -101,7 +98,7 @@ const Aabb2& FlashEdit::getTextBounds() const
 	return m_textBounds;
 }
 
-const SwfColor& FlashEdit::getTextColor() const
+const Color4f& FlashEdit::getTextColor() const
 {
 	return m_textColor;
 }
@@ -182,7 +179,7 @@ void FlashEdit::serialize(ISerializer& s)
 	s >> Member< uint16_t >(L"fontId", m_fontId);
 	s >> Member< uint16_t >(L"fontHeight", m_fontHeight);
 	s >> MemberAabb2(L"textBounds", m_textBounds);
-	s >> MemberSwfColor(L"textColor", m_textColor);
+	s >> Member< Color4f >(L"textColor", m_textColor);
 	s >> Member< uint16_t >(L"maxLength", m_maxLength);
 	s >> Member< std::wstring >(L"initialText", m_initialText);
 	s >> MemberEnum< SwfTextAlignType >(L"align", m_align, kAlign);

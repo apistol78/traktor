@@ -29,7 +29,7 @@ FlashText::FlashText(uint16_t id, const Aabb2& textBounds, const Matrix33& textM
 
 bool FlashText::create(const AlignedVector< SwfTextRecord* >& textRecords)
 {
-	Character character = { 0, 0, 0, 0, { 255, 255, 255, 255 }, 0 };
+	Character character = { 0, 0, 0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f), 0 };
 	for (AlignedVector< SwfTextRecord* >::const_iterator i = textRecords.begin(); i != textRecords.end(); ++i)
 	{
 		const SwfTextRecord* textRecord = *i;
@@ -38,7 +38,7 @@ bool FlashText::create(const AlignedVector< SwfTextRecord* >& textRecords)
 			if (textRecord->style.hasFont)
 				character.fontId = textRecord->style.fontId;
 			if (textRecord->style.hasColor)
-				character.color = textRecord->style.color;
+				character.color = Color4f::loadUnaligned(textRecord->style.color);
 			if (textRecord->style.hasXOffset)
 				character.offsetX = textRecord->style.XOffset;
 			if (textRecord->style.hasYOffset)
@@ -102,7 +102,7 @@ void FlashText::Character::serialize(ISerializer& s)
 	s >> Member< int16_t >(L"offsetX", offsetX);
 	s >> Member< int16_t >(L"offsetY", offsetY);
 	s >> Member< int16_t >(L"height", height);
-	s >> MemberSwfColor(L"color", color);
+	s >> Member< Color4f >(L"color", color);
 	s >> Member< uint32_t >(L"glyphIndexOrCode", glyphIndex);
 }
 

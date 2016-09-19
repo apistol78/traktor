@@ -41,7 +41,7 @@ public:
 
 	void clear();
 
-	void beginFill(const SwfColor& color);
+	void beginFill(const Color4f& color);
 
 	void beginGradientFill(FlashFillStyle::GradientType gradientType, const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords, const Matrix33& gradientMatrix);
 

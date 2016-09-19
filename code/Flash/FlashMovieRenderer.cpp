@@ -28,31 +28,23 @@ namespace traktor
 		namespace
 		{
 
-const SwfCxTransform c_cxWhite = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f } };
+const SwfCxTransform c_cxWhite = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 1.0f, 1.0f, 1.0f) };
 
 Timer s_timer;
 
-SwfCxTransform convertColor(const SwfColor& c)
+SwfCxTransform convertColor(const Color4f& c)
 {
-	SwfCxTransform cxtr =
-	{
-		{ 0.0f, c.red / 255.0f },
-		{ 0.0f, c.green / 255.0f },
-		{ 0.0f, c.blue / 255.0f },
-		{ 0.0f, c.alpha / 255.0f },
-	};
+	SwfCxTransform cxtr;
+	cxtr.mul = Color4f(Vector4::zero());
+	cxtr.add = c;
 	return cxtr;
 }
 
 SwfCxTransform concateCxTransform(const SwfCxTransform& cxt1, const SwfCxTransform& cxt2)
 {
-	SwfCxTransform cxtr = 
-	{
-		{ cxt1.red[0]   * cxt2.red[0]  , clamp(cxt1.red[1]   * cxt2.red[0]   + cxt2.red[1],   0.0f, 1.0f) },
-		{ cxt1.green[0] * cxt2.green[0], clamp(cxt1.green[1] * cxt2.green[0] + cxt2.green[1], 0.0f, 1.0f) },
-		{ cxt1.blue[0]  * cxt2.blue[0] , clamp(cxt1.blue[1]  * cxt2.blue[0]  + cxt2.blue[1],  0.0f, 1.0f) },
-		{ cxt1.alpha[0] * cxt2.alpha[0], clamp(cxt1.alpha[1] * cxt2.alpha[0] + cxt2.alpha[1], 0.0f, 1.0f) }
-	};
+	SwfCxTransform cxtr;
+	cxtr.mul = cxt1.mul * cxt2.mul;
+	cxtr.add = (cxt1.add * cxt2.mul + cxt2.add).saturated();
 	return cxtr;
 }
 
@@ -76,7 +68,7 @@ void FlashMovieRenderer::renderFrame(
 	float viewHeight
 )
 {
-	const SwfColor& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
+	const Color4f& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
 
 	Aabb2 dirtyRegion;
 	if (m_wantDirtyRegion && !ms_forceRedraw)
@@ -361,7 +353,7 @@ void FlashMovieRenderer::renderCharacter(
 	SwfCxTransform cxTransform2 = concateCxTransform(cxTransform, characterInstance->getColorTransform());
 
 	// Don't render completely transparent shapes.
-	if (cxTransform2.alpha[0] + cxTransform2.alpha[1] <= FUZZY_EPSILON)
+	if (cxTransform2.mul.getAlpha() + cxTransform2.add.getAlpha() <= FUZZY_EPSILON)
 		return;
 
 	FlashDictionary* dictionary = characterInstance->getDictionary();

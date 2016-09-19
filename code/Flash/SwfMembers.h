@@ -9,17 +9,6 @@ namespace traktor
 	namespace flash
 	{
 
-class MemberSwfColor : public MemberComplex
-{
-public:
-	MemberSwfColor(const wchar_t* const name, SwfColor& ref);
-
-	virtual void serialize(ISerializer& s) const;
-
-private:
-	SwfColor& m_ref;
-};
-
 class MemberSwfCxTransform : public MemberComplex
 {
 public:

@@ -40,9 +40,9 @@ public:
 
 	const Aabb2& getTextBounds() const { return m_textBounds; }
 
-	void setTextColor(const SwfColor& textColor);
+	void setTextColor(const Color4f& textColor);
 
-	const SwfColor& getTextColor() const { return m_textColor; }
+	const Color4f& getTextColor() const { return m_textColor; }
 
 	void setLetterSpacing(float letterSpacing);
 
@@ -134,7 +134,7 @@ public:
 private:
 	Ref< const FlashEdit > m_edit;
 	Aabb2 m_textBounds;
-	SwfColor m_textColor;
+	Color4f m_textColor;
 	float m_letterSpacing;
 	SwfTextAlignType m_align;
 	float m_fontHeight;

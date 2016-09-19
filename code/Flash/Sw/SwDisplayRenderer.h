@@ -43,7 +43,7 @@ public:
 	
 	virtual void begin(
 		const FlashDictionary& dictionary,
-		const SwfColor& backgroundColor,
+		const Color4f& backgroundColor,
 		const Aabb2& frameBounds,
 		const Vector4& frameTransform,
 		float viewWidth,
@@ -63,7 +63,7 @@ public:
 
 	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL;
 
-	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor) T_OVERRIDE T_FINAL;
+	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const Color4f& color, const SwfCxTransform& cxform, uint8_t filter, const Color4f& filterColor) T_OVERRIDE T_FINAL;
 
 	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL;
 

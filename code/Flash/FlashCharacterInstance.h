@@ -138,11 +138,11 @@ public:
 
 	/*! \brief
 	 */
-	void setFilterColor(const SwfColor& filterColor);
+	void setFilterColor(const Color4f& filterColor);
 
 	/*! \brief
 	 */
-	const SwfColor& getFilterColor() const { return m_filterColor; }
+	const Color4f& getFilterColor() const { return m_filterColor; }
 
 	/*! \brief
 	 */
@@ -250,7 +250,7 @@ private:
 	FlashCharacterInstance* m_parent;
 	Ref< IRefCount > m_cacheObject;
 	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
-	SwfColor m_filterColor;
+	Color4f m_filterColor;
 	uint8_t m_filter;
 	uint8_t m_blendMode;
 	bool m_visible;

@@ -37,7 +37,7 @@ namespace traktor
 
 bool FlashTagSetBackgroundColor::read(SwfReader* swf, ReadContext& context)
 {
-	SwfColor color = swf->readRgb();
+	Color4f color = swf->readRgb();
 	context.frame->changeBackgroundColor(color);
 	return true;
 }
@@ -341,7 +341,7 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 
 	uint16_t textId = bs.readUInt16();
 	Aabb2 textBounds = swf->readRect();
-	SwfColor textColor = { 255, 255, 255, 255 };
+	Color4f textColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	bs.alignByte();
 
@@ -993,9 +993,9 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 				{
 					placeObject.filter = filterList.front()->filterId + 1;
 					if (placeObject.filter == 1)	// Drop shadow
-						placeObject.filterColor = filterList.front()->dropShadow.dropShadowColor;
+						placeObject.filterColor = Color4f::loadUnaligned(filterList.front()->dropShadow.dropShadowColor);
 					if (placeObject.filter == 3)	// Glow
-						placeObject.filterColor = filterList.front()->glow.glowColor;
+						placeObject.filterColor = Color4f::loadUnaligned(filterList.front()->glow.glowColor);
 				}
 			}
 
