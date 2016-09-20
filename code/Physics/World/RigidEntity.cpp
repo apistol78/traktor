@@ -23,7 +23,8 @@ RigidEntity::RigidEntity(
 ,	m_eventManager(eventManager)
 ,	m_eventCollide(eventCollide)
 {
-	m_body->addCollisionListener(physics::createCollisionListener(this, &RigidEntity::collisionListener));
+	if (m_body && m_eventCollide)
+		m_body->addCollisionListener(physics::createCollisionListener(this, &RigidEntity::collisionListener));
 }
 
 RigidEntity::~RigidEntity()

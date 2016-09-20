@@ -25,6 +25,7 @@ class IEntityEventManager;
 	{
 
 class Body;
+struct CollisionInfo;
 
 /*! \brief
  * \ingroup Physics
@@ -55,6 +56,8 @@ private:
 	Ref< Body > m_body;
 	Ref< world::IEntityEventManager > m_eventManager;
 	Ref< world::IEntityEvent > m_eventCollide;
+
+	void collisionListener(const physics::CollisionInfo& collisionInfo);
 };
 
 	}
