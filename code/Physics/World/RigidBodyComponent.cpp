@@ -1,7 +1,9 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/Body.h"
+#include "Physics/CollisionListener.h"
 #include "Physics/World/RigidBodyComponent.h"
 #include "World/Entity.h"
+#include "World/IEntityEventManager.h"
 
 namespace traktor
 {
@@ -20,6 +22,8 @@ RigidBodyComponent::RigidBodyComponent(
 ,	m_eventManager(eventManager)
 ,	m_eventCollide(eventCollide)
 {
+	if (m_body && m_eventCollide)
+		m_body->addCollisionListener(physics::createCollisionListener(this, &RigidBodyComponent::collisionListener));
 }
 
 void RigidBodyComponent::destroy()
@@ -53,6 +57,29 @@ Aabb3 RigidBodyComponent::getBoundingBox() const
 void RigidBodyComponent::update(const world::UpdateParams& update)
 {
 	m_owner->setTransform(m_body->getTransform());
+}
+
+void RigidBodyComponent::collisionListener(const physics::CollisionInfo& collisionInfo)
+{
+	Vector4 position = Vector4::zero();
+	Vector4 normal = Vector4::zero();
+
+	for (AlignedVector< physics::CollisionContact >::const_iterator i = collisionInfo.contacts.begin(); i != collisionInfo.contacts.end(); ++i)
+	{
+		position += i->position;
+		normal += i->normal;
+	}
+
+	position = position / Scalar(float(collisionInfo.contacts.size()));
+	normal = normal.normalized();
+
+	Transform Tworld(
+		position,
+		Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), normal)
+	);
+
+	Transform T = m_body->getTransform();
+	m_eventManager->raise(m_eventCollide, m_owner, T.inverse() * Tworld);
 }
 
 	}
