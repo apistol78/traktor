@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.InLoopOutGrainFacade", InLoopOutGrainFacade, IGrainFacade)
 
-ui::Widget* InLoopOutGrainFacade::createView(IGrainData* grain, ui::Widget* parent) const
+ui::Widget* InLoopOutGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
 	return 0;
 }

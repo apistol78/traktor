@@ -1,5 +1,6 @@
 #include "I18N/Format.h"
 #include "Sound/Editor/Resound/BankControlGrain.h"
+#include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 
@@ -58,16 +59,21 @@ void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
 	bool focus = bool(getWidget()->getFocusCell() == this);
 
+	ui::Size sz = m_bitmapGrain->getSize();
+	
+	int32_t dx = sz.cx / 4;
+	int32_t dy = sz.cy / 6;
+
 	int32_t y = 0;
 	if (focus)
-		y += 32;
+		y += dy;
 	if (m_active)
-		y += 64;
+		y += 2 * dy;
 
 	canvas.drawBitmap(
 		rect.getTopLeft(),
 		ui::Point(0, y),
-		ui::Size(128, 32),
+		ui::Size(sz.cx, dy),
 		m_bitmapGrain,
 		ui::BmAlpha
 	);
@@ -75,10 +81,10 @@ void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	canvas.drawBitmap(
 		rect.getTopLeft(),
 		ui::Point(
-			(m_image % 4) * 32,
-			128 + (m_image / 4) * 32
+			(m_image % 4) * dx,
+			(m_image / 4) * dy + 4 * dy
 		),
-		ui::Size(32, 32),
+		ui::Size(dx, dy),
 		m_bitmapGrain,
 		ui::BmAlpha
 	);
@@ -86,7 +92,7 @@ void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	if (!m_text.empty())
 	{
 		ui::Rect textRect = rect;
-		textRect.left += 36;
+		textRect.left += dx + ui::scaleBySystemDPI(4);
 
 		canvas.setForeground(Color4ub(0, 0, 0));
 		canvas.drawText(textRect, m_text, ui::AnLeft, ui::AnCenter);

@@ -1,5 +1,7 @@
+#include "Core/Math/Random.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Sound/Resound/MuteGrain.h"
 #include "Sound/Resound/MuteGrainData.h"
 
@@ -7,22 +9,35 @@ namespace traktor
 {
 	namespace sound
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.MuteGrainData", 0, MuteGrainData, IGrainData)
+Random s_random;
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.MuteGrainData", 1, MuteGrainData, IGrainData)
 
 MuteGrainData::MuteGrainData()
-:	m_duration(0.0)
+:	m_duration(0.0f, 0.0f)
 {
 }
 
 Ref< IGrain > MuteGrainData::createInstance(IGrainFactory* grainFactory) const
 {
-	return new MuteGrain(m_duration);
+	return new MuteGrain(m_duration.random(s_random));
 }
 
 void MuteGrainData::serialize(ISerializer& s)
 {
-	s >> Member< double >(L"duration", m_duration);
+	if (s.getVersion() >= 1)
+		s >> MemberComposite< Range< float > >(L"duration", m_duration);
+	else
+	{
+		double duration;
+		s >> Member< double >(L"duration", duration);
+		m_duration = Range< float >(float(duration), float(duration));
+	}
 }
 
 	}

@@ -1,6 +1,7 @@
 #ifndef traktor_sound_MuteGrainData_H
 #define traktor_sound_MuteGrainData_H
 
+#include "Core/Math/Range.h"
 #include "Sound/Resound/IGrainData.h"
 
 // import/export mechanism.
@@ -27,10 +28,10 @@ public:
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
-	double getDuration() const { return m_duration; }
+	const Range< float >& getDuration() const { return m_duration; }
 
 private:
-	double m_duration;
+	Range< float > m_duration;
 };
 
 	}

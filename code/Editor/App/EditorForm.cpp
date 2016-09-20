@@ -1150,7 +1150,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 		// Issue a build if resources need to be up-to-date.
 		needOutputResources = objectEditorFactory->needOutputResources(type_of(object), dependencies);
-		if (!dependencies.empty())
+		if (needOutputResources || !dependencies.empty())
 		{
 			if (needOutputResources)
 				dependencies.insert(instance->getGuid());

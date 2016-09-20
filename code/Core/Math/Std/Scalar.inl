@@ -123,6 +123,11 @@ T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)
 	return Scalar(1.0f / (float)std::sqrt(s.m_data));
 }
 
+T_MATH_INLINE Scalar power(const Scalar& base, const Scalar& exp)
+{
+	return Scalar(std::pow(base.m_data, exp.m_data));
+}
+
 T_MATH_INLINE Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c)
 {
 	return Scalar(a.m_data * (1.0f - c.m_data) + b.m_data * c.m_data);

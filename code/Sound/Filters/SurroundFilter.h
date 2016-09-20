@@ -27,9 +27,7 @@ class T_DLLCLASS SurroundFilter : public IFilter
 	T_RTTI_CLASS;
 
 public:
-	static Ref< SurroundFilter > create(SurroundEnvironment* environment, const Vector4& speakerPosition);
-
-	SurroundFilter(SurroundEnvironment* environment, const Vector4& speakerPosition = Vector4::origo(), float maxDistance = 0.0f);
+	SurroundFilter(SurroundEnvironment* environment, const Vector4& speakerPosition, float maxDistance);
 
 	void setSpeakerPosition(const Vector4& speakerPosition);
 
