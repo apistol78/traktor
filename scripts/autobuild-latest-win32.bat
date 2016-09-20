@@ -1,7 +1,7 @@
 @echo off
 
 :: Setup VC environment variables.
-call "%VS110COMNTOOLS%..\..\VC\vcvarsall.bat"
+call "%VS140COMNTOOLS%..\..\VC\vcvarsall.bat"
 
 :: Setup our build environment.
 call %~dp0../config.bat
@@ -16,7 +16,7 @@ if "%AGGREGATE_OUTPUT_PATH%" == "" (
 
 :: Rebuild entire solution.
 pushd %TRAKTOR_HOME%
-call build-projects-vs2012-win32.bat
+call build-projects-vs2015-win32.bat
 devenv "build\win32\Traktor Win32.sln" /Build DebugShared /Out %~dp0autobuild-win32.log
 devenv "build\win32\Traktor Win32.sln" /Build ReleaseShared /Out %~dp0autobuild-win32.log
 devenv "build\win32\Traktor Win32.sln" /Build DebugStatic /Out %~dp0autobuild-win32.log
