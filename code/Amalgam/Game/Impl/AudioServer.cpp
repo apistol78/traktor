@@ -106,9 +106,11 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	// Create surround environment.
 	float surroundMaxDistance = settings->getProperty< PropertyFloat >(L"Audio.Surround/MaxDistance", 10.0f);
 	float surroundInnerRadius = settings->getProperty< PropertyFloat >(L"Audio.Surround/InnerRadius", 1.0f);
+	float surroundFallOffExponent = settings->getProperty< PropertyFloat >(L"Audio.Surround/FallOffExponent", 4.0f);
 	m_surroundEnvironment = new sound::SurroundEnvironment(
 		surroundMaxDistance,
 		surroundInnerRadius,
+		surroundFallOffExponent,
 		sscd.driverDesc.hwChannels >= 5+1
 	);
 

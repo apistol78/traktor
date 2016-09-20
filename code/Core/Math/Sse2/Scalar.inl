@@ -144,6 +144,11 @@ T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)
 	return Scalar(_mm_rsqrt_ps(s.m_data));
 }
 
+T_MATH_INLINE Scalar power(const Scalar& base, const Scalar& exp)
+{
+	return Scalar(std::pow(base, exp));
+}
+
 T_MATH_INLINE Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c)
 {
 	return a * (Scalar(1.0f) - c) + b * c;

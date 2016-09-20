@@ -1,5 +1,6 @@
 #include <sstream>
 #include "Core/Math/MathUtils.h"
+#include "Ui/Application.h"
 #include "Ui/Custom/Envelope/EnvelopeContentChangeEvent.h"
 #include "Ui/Custom/Envelope/EnvelopeControl.h"
 #include "Ui/Custom/Envelope/EnvelopeEvaluator.h"
@@ -72,12 +73,15 @@ void EnvelopeControl::eventButtonDown(MouseButtonDownEvent* event)
 
 	if (event->getButton() == MbtLeft)
 	{
+		int32_t sx = scaleBySystemDPI(2);
+		int32_t sy = scaleBySystemDPI(2);
+
 		for (RefArray< EnvelopeKey >::iterator i = m_keys.begin(); i != m_keys.end(); ++i)
 		{
 			EnvelopeKey* key = *i;
-			int x = m_rcEnv.left + int(m_rcEnv.getWidth() * key->getT());
-			int y = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(key->getValue(), m_minValue, m_maxValue));
-			if (Rect(x - 2, y - 2, x + 3, y + 3).inside(pt))
+			int32_t x = m_rcEnv.left + int32_t(m_rcEnv.getWidth() * key->getT());
+			int32_t y = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(key->getValue(), m_minValue, m_maxValue));
+			if (Rect(x - sx, y - sy, x + sx, y + sy).inside(pt))
 			{
 				m_selectedKey = key;
 				break;
@@ -156,8 +160,8 @@ void EnvelopeControl::eventPaint(PaintEvent* event)
 	Size mne = canvas.getTextExtent(mnv.str());
 	Size mxe = canvas.getTextExtent(mxv.str());
 
-	int x = std::max< int >(mne.cx, mxe.cx);
-	int y = std::max< int >(mne.cy, mxe.cy);
+	int32_t x = std::max< int32_t >(mne.cx, mxe.cx);
+	int32_t y = std::max< int32_t >(mne.cy, mxe.cy);
 	m_rcEnv = Rect(
 		rcInner.left + x + 8,
 		rcInner.top + y / 2 + 4,
@@ -170,10 +174,10 @@ void EnvelopeControl::eventPaint(PaintEvent* event)
 
 	for (std::vector< Range >::const_iterator i = m_ranges.begin(); i != m_ranges.end(); ++i)
 	{
-		int y0 = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(i->limits[0], m_minValue, m_maxValue) + 0.5f);
-		int y1 = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(i->limits[1], m_minValue, m_maxValue) + 0.5f);
-		int y2 = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(i->limits[2], m_minValue, m_maxValue) + 0.5f);
-		int y3 = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(i->limits[3], m_minValue, m_maxValue) + 0.5f);
+		int32_t y0 = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(i->limits[0], m_minValue, m_maxValue) + 0.5f);
+		int32_t y1 = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(i->limits[1], m_minValue, m_maxValue) + 0.5f);
+		int32_t y2 = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(i->limits[2], m_minValue, m_maxValue) + 0.5f);
+		int32_t y3 = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(i->limits[3], m_minValue, m_maxValue) + 0.5f);
 
 		canvas.setForeground(i->color * Color4ub(255, 255, 255, 0));
 		canvas.setBackground(i->color * Color4ub(255, 255, 255, 255));
@@ -224,15 +228,15 @@ void EnvelopeControl::eventPaint(PaintEvent* event)
 
 	canvas.setForeground(Color4ub(120, 120, 120));
 
-	int zero = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(0, m_minValue, m_maxValue));
+	int32_t zero = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(0, m_minValue, m_maxValue));
 	canvas.drawLine(m_rcEnv.left, zero, m_rcEnv.right, zero);
 
 	if (!m_keys.empty())
 	{
 		if (m_selectedKey)
 		{
-			int sx = m_rcEnv.left + int(m_rcEnv.getWidth() * m_selectedKey->getT() + 0.5f);
-			int sy = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(m_selectedKey->getValue(), m_minValue, m_maxValue) + 0.5f);
+			int32_t sx = m_rcEnv.left + int32_t(m_rcEnv.getWidth() * m_selectedKey->getT() + 0.5f);
+			int32_t sy = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(m_selectedKey->getValue(), m_minValue, m_maxValue) + 0.5f);
 			canvas.setForeground(Color4ub(200, 200, 200));
 			canvas.drawLine(m_rcEnv.left, sy, sx, sy);
 			canvas.drawLine(sx, m_rcEnv.bottom, sx, sy);
@@ -242,12 +246,12 @@ void EnvelopeControl::eventPaint(PaintEvent* event)
 
 		float dT = 1.0f / (rcInner.getSize().cx / 4.0f);
 
-		int px = m_rcEnv.left;
-		int py = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(m_evaluator->evaluate(m_keys, 0.0f), m_minValue, m_maxValue));
+		int32_t px = m_rcEnv.left;
+		int32_t py = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(m_evaluator->evaluate(m_keys, 0.0f), m_minValue, m_maxValue));
 		for (float T = dT; T <= 1.0f; T += dT)
 		{
-			int sx = m_rcEnv.left + int(m_rcEnv.getWidth() * T + 0.5f);
-			int sy = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(m_evaluator->evaluate(m_keys, T), m_minValue, m_maxValue) + 0.5f);
+			int32_t sx = m_rcEnv.left + int32_t(m_rcEnv.getWidth() * T + 0.5f);
+			int32_t sy = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(m_evaluator->evaluate(m_keys, T), m_minValue, m_maxValue) + 0.5f);
 			canvas.drawLine(px, py, sx, sy);
 			px = sx;
 			py = sy;
@@ -258,8 +262,8 @@ void EnvelopeControl::eventPaint(PaintEvent* event)
 		for (RefArray< EnvelopeKey >::iterator i = m_keys.begin(); i != m_keys.end(); ++i)
 		{
 			EnvelopeKey* key = *i;
-			int sx = m_rcEnv.left + int(m_rcEnv.getWidth() * key->getT() + 0.5f);
-			int sy = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(key->getValue(), m_minValue, m_maxValue) + 0.5f);
+			int32_t sx = m_rcEnv.left + int32_t(m_rcEnv.getWidth() * key->getT() + 0.5f);
+			int32_t sy = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(key->getValue(), m_minValue, m_maxValue) + 0.5f);
 			canvas.fillRect(Rect(sx - 2, sy - 2, sx + 3, sy + 3));
 		}
 	}

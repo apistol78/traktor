@@ -23,9 +23,10 @@ class T_DLLCLASS SurroundEnvironment : public Object
 
 public:
 	SurroundEnvironment(
-		float maxDistance = 10.0f,
-		float innerRadius = 1.0f,
-		bool fullSurround = true
+		float maxDistance,
+		float innerRadius,
+		float fallOffExponent,
+		bool fullSurround
 	);
 
 	void setMaxDistance(float maxDistance);
@@ -35,6 +36,10 @@ public:
 	void setInnerRadius(float innerRadius);
 
 	const Scalar& getInnerRadius() const { return m_innerRadius; }
+
+	void setFallOffExponent(float fallOffExponent);
+
+	const Scalar& getFallOffExponent() const { return m_fallOffExponent;  }
 
 	void setFullSurround(bool fullSurround);
 
@@ -49,6 +54,7 @@ public:
 private:
 	Scalar m_maxDistance;
 	Scalar m_innerRadius;
+	Scalar m_fallOffExponent;
 	bool m_fullSurround;
 	Transform m_listenerTransform;
 	Transform m_listenerTransformInv;

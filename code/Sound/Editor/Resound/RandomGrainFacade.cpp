@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.RandomGrainFacade", RandomGrainFacade, IGrainFacade)
 
-ui::Widget* RandomGrainFacade::createView(IGrainData* grain, ui::Widget* parent) const
+ui::Widget* RandomGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
 	return 0;
 }

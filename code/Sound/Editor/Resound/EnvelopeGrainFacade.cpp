@@ -27,7 +27,7 @@ const Color4ub c_rangeColors[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.EnvelopeGrainFacade", EnvelopeGrainFacade, IGrainFacade)
 
-ui::Widget* EnvelopeGrainFacade::createView(IGrainData* grain, ui::Widget* parent) const
+ui::Widget* EnvelopeGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
 	EnvelopeGrainData* envelopeGrain = checked_type_cast< EnvelopeGrainData*, false >(grain);
 	const float* levels = envelopeGrain->getLevels();
@@ -53,7 +53,7 @@ ui::Widget* EnvelopeGrainFacade::createView(IGrainData* grain, ui::Widget* paren
 	}
 
 	envelopeControl->setData(L"GRAIN", grain);
-	//envelopeControl->addEventHandler< ui::custom::EnvelopeContentChangeEvent >(this, &EnvelopeGrainFacade::eventEnvelopeChange);
+	envelopeControl->addEventHandler< ui::custom::EnvelopeContentChangeEvent >(this, &EnvelopeGrainFacade::eventEnvelopeChange);
 
 	return envelopeControl;
 }

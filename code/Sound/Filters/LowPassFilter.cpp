@@ -45,7 +45,7 @@ Ref< IFilterInstance > LowPassFilter::createInstance() const
 void LowPassFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	LowPassFilterInstance* lpfi = static_cast< LowPassFilterInstance* >(instance);
-	if (m_cutOff > FUZZY_EPSILON)
+	if (m_cutOff > FUZZY_EPSILON && m_cutOff <= 22050.0f)
 	{
 		float dt = 1.0f / outBlock.sampleRate;
 		Scalar alpha(dt / (dt + 1.0f / m_cutOff));

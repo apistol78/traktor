@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.TriggerGrainFacade", TriggerGrainFacade, IGrainFacade)
 
-ui::Widget* TriggerGrainFacade::createView(IGrainData* grain, ui::Widget* parent) const
+ui::Widget* TriggerGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
 	return 0;
 }

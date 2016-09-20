@@ -23,7 +23,7 @@ class EnvelopeGrainFacade : public IGrainFacade
 	T_RTTI_CLASS;
 
 public:
-	virtual ui::Widget* createView(IGrainData* grain, ui::Widget* parent) const T_OVERRIDE T_FINAL;
+	virtual ui::Widget* createView(IGrainData* grain, ui::Widget* parent) T_OVERRIDE T_FINAL;
 
 	virtual int32_t getImage(const IGrainData* grain) const T_OVERRIDE T_FINAL;
 

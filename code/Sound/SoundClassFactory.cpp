@@ -147,9 +147,9 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classRingModulationFilter);
 
 	Ref< AutoRuntimeClass< SurroundFilter > > classSurroundFilter = new AutoRuntimeClass< SurroundFilter >();
-	classSurroundFilter->addConstructor< SurroundEnvironment* >();
-	classSurroundFilter->addConstructor< SurroundEnvironment*, const Vector4& >();
+	classSurroundFilter->addConstructor< SurroundEnvironment*, const Vector4&, float >();
 	classSurroundFilter->addMethod("setSpeakerPosition", &SurroundFilter::setSpeakerPosition);
+	classSurroundFilter->addMethod("setMaxDistance", &SurroundFilter::setMaxDistance);
 	registrar->registerClass(classSurroundFilter);
 
 	Ref< AutoRuntimeClass< ISoundHandle > > classISoundHandle = new AutoRuntimeClass< ISoundHandle >();

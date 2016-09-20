@@ -117,29 +117,11 @@ const uint32_t c_speakersFullMaxChannel = SbcRearRight + 1;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SurroundFilter", SurroundFilter, IFilter)
 
-Ref< SurroundFilter > SurroundFilter::create(SurroundEnvironment* environment, const Vector4& speakerPosition)
-{
-	if (!environment)
-		return 0;
-
-	const Transform& listenerTransformInv = environment->getListenerTransformInv();
-
-	Vector4 speakerPositionL = listenerTransformInv * speakerPosition.xyz1();
-	Scalar speakerDistance = speakerPositionL.xyz0().length();
-
-	if (speakerDistance >= environment->getMaxDistance())
-		return 0;
-
-	return new SurroundFilter(environment, speakerPosition);
-}
-
 SurroundFilter::SurroundFilter(SurroundEnvironment* environment, const Vector4& speakerPosition, float maxDistance)
 :	m_environment(environment)
 ,	m_speakerPosition(speakerPosition)
 ,	m_maxDistance(maxDistance)
 {
-	if (m_maxDistance <= m_environment->getInnerRadius())
-		m_maxDistance = m_environment->getMaxDistance();
 }
 
 void SurroundFilter::setSpeakerPosition(const Vector4& speakerPosition)
@@ -194,8 +176,8 @@ void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock
 
 	const Scalar& innerRadius = m_environment->getInnerRadius();
 
-	Scalar innerAtten = c_one - clamp(squareRoot(speakerDistance / innerRadius), c_zero, c_one);
-	Scalar distanceAtten = c_one - clamp(squareRoot(speakerDistance / m_maxDistance), c_zero, c_one);
+	Scalar innerAtten = power(clamp(c_one - speakerDistance / innerRadius, c_zero, c_one), Scalar(4.0f));
+	Scalar distanceAtten = power(clamp(c_one - speakerDistance / m_maxDistance, c_zero, c_one), Scalar(4.0f));
 
 	for (uint32_t i = 0; i < sizeof_array(c_speakersStereo); ++i)
 	{

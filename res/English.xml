@@ -1838,7 +1838,7 @@
     </item>
     <item>
       <first>RESOUND_MUTE_GRAIN_TEXT</first>
-      <second>{0} ms</second>
+      <second>{0} ms - {1} ms</second>
     </item>
     <item>
       <first>RESOUND_PLAY_GRAIN_TEXT</first>
