@@ -5,7 +5,6 @@
 #	include "Input/Binding/CombinedInputSourceData.h"
 #	include "Input/Binding/ConstantInputSourceData.h"
 #	include "Input/Binding/GenericInputSourceData.h"
-#	include "Input/Binding/IfInclusiveExclusive.h"
 #	include "Input/Binding/InBoolean.h"
 #	include "Input/Binding/InClamp.h"
 #	include "Input/Binding/InCombine.h"
@@ -38,7 +37,6 @@ extern "C" void __module__Traktor_Input()
 	T_FORCE_LINK_REF(CombinedInputSourceData);
 	T_FORCE_LINK_REF(ConstantInputSourceData);
 	T_FORCE_LINK_REF(GenericInputSourceData);
-	T_FORCE_LINK_REF(IfInclusiveExclusive);
 	T_FORCE_LINK_REF(InBoolean);
 	T_FORCE_LINK_REF(InClamp);
 	T_FORCE_LINK_REF(InCombine);
