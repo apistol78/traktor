@@ -154,14 +154,15 @@ function deploy(args)
 			iconFile = "$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png"
 		end
 
-		local iconImage = Image.loadFromFile(iconFile)
+		local iconPath = Path("$(DEPLOY_SYSTEM_ROOT)"):concat(Path(iconFile))
+		local iconImage = Image.loadFromFile(iconPath:getPathName())
 		if iconImage ~= nil then
 			generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
 			generateImage("res/drawable-ldpi/ic_launcher.png", iconImage, 36, 36)
 			generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
 			generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
 		else
-			stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconFile .. "\".")
+			stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconPath:getPathName() .. "\".")
 			return 1
 		end
 
@@ -264,14 +265,15 @@ function launch(args)
 			iconFile = "$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png"
 		end
 
-		local iconImage = Image.loadFromFile(iconFile)
+		local iconPath = Path("$(DEPLOY_SYSTEM_ROOT)"):concat(Path(iconFile))
+		local iconImage = Image.loadFromFile(iconPath:getPathName())
 		if iconImage ~= nil then
 			generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
 			generateImage("res/drawable-ldpi/ic_launcher.png", iconImage, 36, 36)
 			generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
 			generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
 		else
-			stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconFile .. "\".")
+			stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconPath:getPathName() .. "\".")
 			return 1
 		end
 
@@ -444,14 +446,15 @@ function migrate(args)
 		iconFile = "$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png"
 	end
 
-	local iconImage = Image.loadFromFile(iconFile)
+	local iconPath = Path("$(DEPLOY_SYSTEM_ROOT)"):concat(Path(iconFile))
+	local iconImage = Image.loadFromFile(iconPath:getPathName())
 	if iconImage ~= nil then
 		generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
 		generateImage("res/drawable-ldpi/ic_launcher.png", iconImage, 36, 36)
 		generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
 		generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
 	else
-		stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconFile .. "\".")
+		stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconPath:getPathName() .. "\".")
 		return 1
 	end
 
