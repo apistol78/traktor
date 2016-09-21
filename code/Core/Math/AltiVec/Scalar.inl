@@ -174,6 +174,16 @@ T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)
 	return Scalar(estimate);
 }
 
+T_MATH_INLINE Scalar logarithm(const Scalar& s)
+{
+	return Scalar(std::log(s));
+}
+
+T_MATH_INLINE Scalar exponential(const Scalar& s)
+{
+	return Scalar(std::exp(s));
+}
+
 T_MATH_INLINE Scalar power(const Scalar& base, const Scalar& exp)
 {
 	return Scalar(std::pow(base, exp));

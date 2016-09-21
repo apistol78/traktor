@@ -170,9 +170,19 @@ T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)
 #endif
 }
 
+T_MATH_INLINE Scalar logarithm(const Scalar& s)
+{
+	return Scalar(0.0f);
+}
+
+T_MATH_INLINE Scalar exponential(const Scalar& s)
+{
+	return Scalar(0.0f);
+}
+
 T_MATH_INLINE Scalar power(const Scalar& base, const Scalar& exp)
 {
-	return Scalar(std::pow(base, exp));
+	return Scalar(0.0f);
 }
 
 T_MATH_INLINE Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c)
