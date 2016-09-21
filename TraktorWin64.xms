@@ -20759,12 +20759,7 @@
 								<debugArguments/>
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Extern.angle.libANGLE.dll</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
-									</item>
-								</aggregationItems>
+								<aggregationItems/>
 							</item>
 							<item type="Configuration" version="3">
 								<name>ReleaseShared</name>
@@ -20794,12 +20789,7 @@
 								<debugArguments/>
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Extern.angle.libANGLE.dll</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
-									</item>
-								</aggregationItems>
+								<aggregationItems/>
 							</item>
 							<item type="Configuration" version="3">
 								<name>DebugStatic</name>

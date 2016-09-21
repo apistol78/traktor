@@ -101,6 +101,22 @@ T_MATH_INLINE void Vector4::set(float x, float y, float z, float w)
 	m_data = (float32x4_t){ x, y, z, w };
 }
 
+T_MATH_INLINE Scalar Vector4::min() const
+{
+	Vector4 xxyy = shuffle< 0, 0, 1, 1 >();
+	Vector4 zzww = shuffle< 2, 2, 3, 3 >();
+	Vector4 t0 = traktor::min(xxyy, zzww);
+	return traktor::min(t0.shuffle< 3, 2, 1, 0 >(), t0).x();
+}
+
+T_MATH_INLINE Scalar Vector4::max() const
+{
+	Vector4 xxyy = shuffle< 0, 0, 1, 1 >();
+	Vector4 zzww = shuffle< 2, 2, 3, 3 >();
+	Vector4 t0 = traktor::max(xxyy, zzww);
+	return traktor::max(t0.shuffle< 3, 2, 1, 0 >(), t0).x();
+}
+
 T_MATH_INLINE Scalar Vector4::x() const
 {
 	return Scalar(vgetq_lane_f32(m_data, 0));
