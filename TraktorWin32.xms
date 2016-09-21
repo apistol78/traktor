@@ -14990,7 +14990,9 @@
 															<item>ANGLE_PLATFORM_WINDOWS</item>
 														</definitions>
 														<libraryPaths/>
-														<libraries/>
+														<libraries>
+															<item>dxguid.lib</item>
+														</libraries>
 														<additionalCompilerOptions/>
 														<additionalLinkerOptions/>
 														<debugExecutable/>
@@ -15020,7 +15022,9 @@
 															<item>ANGLE_PLATFORM_WINDOWS</item>
 														</definitions>
 														<libraryPaths/>
-														<libraries/>
+														<libraries>
+															<item>dxguid.lib</item>
+														</libraries>
 														<additionalCompilerOptions/>
 														<additionalLinkerOptions/>
 														<debugExecutable/>
@@ -15050,7 +15054,9 @@
 															<item>ANGLE_PLATFORM_WINDOWS</item>
 														</definitions>
 														<libraryPaths/>
-														<libraries/>
+														<libraries>
+															<item>dxguid.lib</item>
+														</libraries>
 														<additionalCompilerOptions/>
 														<additionalLinkerOptions/>
 														<debugExecutable/>
@@ -15085,7 +15091,9 @@
 															<item>ANGLE_PLATFORM_WINDOWS</item>
 														</definitions>
 														<libraryPaths/>
-														<libraries/>
+														<libraries>
+															<item>dxguid.lib</item>
+														</libraries>
 														<additionalCompilerOptions/>
 														<additionalLinkerOptions/>
 														<debugExecutable/>
