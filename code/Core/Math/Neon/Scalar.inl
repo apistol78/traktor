@@ -123,6 +123,16 @@ T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)
 	return Scalar(1.0f / (float)std::sqrt(s.m_data));
 }
 
+T_MATH_INLINE Scalar logarithm(const Scalar& s)
+{
+	return Scalar(std::log(s.m_data));
+}
+
+T_MATH_INLINE Scalar exponential(const Scalar& s)
+{
+	return Scalar(std::exp(s.m_data));
+}
+
 T_MATH_INLINE Scalar power(const Scalar& base, const Scalar& exp)
 {
 	return Scalar(std::pow(base, exp));
