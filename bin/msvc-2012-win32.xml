@@ -843,15 +843,15 @@
         <name>ClInclude</name>
         <fileType>hpp</fileType>
       </item>
-      <item type="SolutionBuilderMsvcVCXBuildTool">
+      <item type="SolutionBuilderMsvcVCXClCompileBuildTool">
         <name>ClCompile</name>
         <fileType>cpp</fileType>
       </item>
-      <item type="SolutionBuilderMsvcVCXBuildTool">
+      <item type="SolutionBuilderMsvcVCXClCompileBuildTool">
         <name>ClCompile</name>
         <fileType>cc</fileType>
       </item>
-      <item type="SolutionBuilderMsvcVCXBuildTool">
+      <item type="SolutionBuilderMsvcVCXClCompileBuildTool">
         <name>ClCompile</name>
         <fileType>c</fileType>
       </item>
