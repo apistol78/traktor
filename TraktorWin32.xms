@@ -14671,21 +14671,14 @@
 								<includePaths>
 									<item>$(ANGLE_SDK)/src</item>
 									<item>$(ANGLE_SDK)/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
 									<item>NOMINMAX</item>
 								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-								</libraryPaths>
-								<libraries>
-									<item>d3d9.lib</item>
-									<item>dxguid.lib</item>
-									<item>dwmapi.lib</item>
-								</libraries>
+								<libraryPaths/>
+								<libraries/>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 								<debugExecutable/>
@@ -14707,7 +14700,6 @@
 								<includePaths>
 									<item>$(ANGLE_SDK)/src</item>
 									<item>$(ANGLE_SDK)/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 								</includePaths>
 								<definitions>
 									<item>ANGLE_DISABLE_TRACE</item>
@@ -14716,14 +14708,8 @@
 									<item>NOMINMAX</item>
 									<item>_SECURE_SCL=0</item>
 								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-								</libraryPaths>
-								<libraries>
-									<item>d3d9.lib</item>
-									<item>dxguid.lib</item>
-									<item>dwmapi.lib</item>
-								</libraries>
+								<libraryPaths/>
+								<libraries/>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 								<debugExecutable/>
@@ -14745,22 +14731,14 @@
 								<includePaths>
 									<item>$(ANGLE_SDK)/src</item>
 									<item>$(ANGLE_SDK)/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 								</includePaths>
 								<definitions>
-									<item>T_STATIC</item>
 									<item>_DEBUG</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
 									<item>NOMINMAX</item>
 								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-								</libraryPaths>
-								<libraries>
-									<item>d3d9.lib</item>
-									<item>dxguid.lib</item>
-									<item>dwmapi.lib</item>
-								</libraries>
+								<libraryPaths/>
+								<libraries/>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 								<debugExecutable/>
@@ -14782,23 +14760,15 @@
 								<includePaths>
 									<item>$(ANGLE_SDK)/src</item>
 									<item>$(ANGLE_SDK)/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 								</includePaths>
 								<definitions>
-									<item>T_STATIC</item>
 									<item>NDEBUG</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
 									<item>NOMINMAX</item>
 									<item>_SECURE_SCL=0</item>
 								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-								</libraryPaths>
-								<libraries>
-									<item>d3d9.lib</item>
-									<item>dxguid.lib</item>
-									<item>dwmapi.lib</item>
-								</libraries>
+								<libraryPaths/>
+								<libraries/>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 								<debugExecutable/>
@@ -14848,23 +14818,17 @@
 											<includePaths>
 												<item>$(ANGLE_SDK)/src</item>
 												<item>$(ANGLE_SDK)/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 												<item>$(ANGLE_SDK)/src/libGLESv2</item>
+												<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 											</includePaths>
 											<definitions>
 												<item>_DEBUG</item>
 												<item>_CRT_SECURE_NO_DEPRECATE</item>
 												<item>NOMINMAX</item>
-												<item>ANGLE_ENABLE_D3D9</item>
+												<item>LIBGLESV2_IMPLEMENTATION</item>
 											</definitions>
-											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
-											</libraryPaths>
-											<libraries>
-												<item>d3d9.lib</item>
-												<item>d3dx9.lib</item>
-												<item>d3dcompiler.lib</item>
-											</libraries>
+											<libraryPaths/>
+											<libraries/>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
 											<debugExecutable/>
@@ -14886,8 +14850,8 @@
 											<includePaths>
 												<item>$(ANGLE_SDK)/src</item>
 												<item>$(ANGLE_SDK)/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 												<item>$(ANGLE_SDK)/src/libGLESv2</item>
+												<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 											</includePaths>
 											<definitions>
 												<item>ANGLE_DISABLE_TRACE</item>
@@ -14895,16 +14859,10 @@
 												<item>_CRT_SECURE_NO_DEPRECATE</item>
 												<item>NOMINMAX</item>
 												<item>_SECURE_SCL=0</item>
-												<item>ANGLE_ENABLE_D3D9</item>
+												<item>LIBGLESV2_IMPLEMENTATION</item>
 											</definitions>
-											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
-											</libraryPaths>
-											<libraries>
-												<item>d3d9.lib</item>
-												<item>d3dx9.lib</item>
-												<item>d3dcompiler.lib</item>
-											</libraries>
+											<libraryPaths/>
+											<libraries/>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
 											<debugExecutable/>
@@ -14926,24 +14884,17 @@
 											<includePaths>
 												<item>$(ANGLE_SDK)/src</item>
 												<item>$(ANGLE_SDK)/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 												<item>$(ANGLE_SDK)/src/libGLESv2</item>
+												<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 											</includePaths>
 											<definitions>
-												<item>T_STATIC</item>
 												<item>_DEBUG</item>
 												<item>_CRT_SECURE_NO_DEPRECATE</item>
 												<item>NOMINMAX</item>
-												<item>ANGLE_ENABLE_D3D9</item>
+												<item>LIBGLESV2_IMPLEMENTATION</item>
 											</definitions>
-											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
-											</libraryPaths>
-											<libraries>
-												<item>d3d9.lib</item>
-												<item>d3dx9.lib</item>
-												<item>d3dcompiler.lib</item>
-											</libraries>
+											<libraryPaths/>
+											<libraries/>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
 											<debugExecutable/>
@@ -14965,25 +14916,18 @@
 											<includePaths>
 												<item>$(ANGLE_SDK)/src</item>
 												<item>$(ANGLE_SDK)/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 												<item>$(ANGLE_SDK)/src/libGLESv2</item>
+												<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 											</includePaths>
 											<definitions>
-												<item>T_STATIC</item>
 												<item>NDEBUG</item>
 												<item>_CRT_SECURE_NO_DEPRECATE</item>
 												<item>NOMINMAX</item>
 												<item>_SECURE_SCL=0</item>
-												<item>ANGLE_ENABLE_D3D9</item>
+												<item>LIBGLESV2_IMPLEMENTATION</item>
 											</definitions>
-											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
-											</libraryPaths>
-											<libraries>
-												<item>d3d9.lib</item>
-												<item>d3dx9.lib</item>
-												<item>d3dcompiler.lib</item>
-											</libraries>
+											<libraryPaths/>
+											<libraries/>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
 											<debugExecutable/>
@@ -15015,58 +14959,6 @@
 											<fileName>*.cpp</fileName>
 											<items/>
 										</item>
-										<item type="Filter">
-											<name>renderer</name>
-											<items>
-												<item type="File">
-													<fileName>renderer/*.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>renderer/*.cpp</fileName>
-													<items/>
-												</item>
-												<item type="Filter">
-													<name>d3d</name>
-													<items>
-														<item type="File">
-															<fileName>renderer/d3d/*.h</fileName>
-															<items/>
-														</item>
-														<item type="File">
-															<fileName>renderer/d3d/*.cpp</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-												<item type="Filter">
-													<name>d3d9</name>
-													<items>
-														<item type="File">
-															<fileName>renderer/d3d9/*.*</fileName>
-															<items/>
-														</item>
-														<item type="File">
-															<fileName>renderer/d3d9/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
-											<name>common</name>
-											<items>
-												<item type="File">
-													<fileName>../common/*.cpp</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../common/*.h</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -15074,8 +14966,8 @@
 											<link>LnkYes</link>
 											<project type="Project" version="1">
 												<enable>true</enable>
-												<name>Extern.angle.translator</name>
-												<sourcePath>$(ANGLE_SDK)/src/compiler/translator</sourcePath>
+												<name>Extern.angle.libANGLE</name>
+												<sourcePath>$(ANGLE_SDK)/src</sourcePath>
 												<configurations>
 													<item type="Configuration" version="3">
 														<name>DebugShared</name>
@@ -15083,73 +14975,19 @@
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
 														<includePaths>
-															<item>$(ANGLE_SDK)/src/compiler</item>
 															<item>$(ANGLE_SDK)/src</item>
 															<item>$(ANGLE_SDK)/include</item>
+															<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 														</includePaths>
 														<definitions>
-															<item>WIN32</item>
-															<item>_DEBUG</item>
-															<item>_LIB</item>
-															<item>_CRT_SECURE_NO_DEPRECATE</item>
-															<item>NOMINMAX</item>
-															<item>ANGLE_USE_NEW_PREPROCESSOR=1</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseShared</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(ANGLE_SDK)/src/compiler</item>
-															<item>$(ANGLE_SDK)/src</item>
-															<item>$(ANGLE_SDK)/include</item>
-														</includePaths>
-														<definitions>
-															<item>WIN32</item>
-															<item>NDEBUG</item>
-															<item>_LIB</item>
-															<item>_CRT_SECURE_NO_DEPRECATE</item>
-															<item>NOMINMAX</item>
-															<item>_SECURE_SCL=0</item>
-															<item>ANGLE_USE_NEW_PREPROCESSOR=1</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>DebugStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(ANGLE_SDK)/src</item>
-															<item>$(ANGLE_SDK)/include</item>
-															<item>$(ANGLE_SDK)/src/compiler</item>
-														</includePaths>
-														<definitions>
-															<item>T_STATIC</item>
 															<item>_DEBUG</item>
 															<item>_CRT_SECURE_NO_DEPRECATE</item>
 															<item>NOMINMAX</item>
-															<item>ANGLE_USE_NEW_PREPROCESSOR=1</item>
+															<item>ANGLE_ENABLE_GLSL</item>
+															<item>ANGLE_ENABLE_HLSL</item>
+															<item>LIBANGLE_IMPLEMENTATION</item>
+															<item>ANGLE_ENABLE_D3D11</item>
+															<item>ANGLE_PLATFORM_WINDOWS</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -15161,7 +14999,77 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>Extern.angle.translator.lib</sourceFile>
+																<sourceFile>Extern.angle.libANGLE.dll</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
+															</item>
+														</aggregationItems>
+													</item>
+													<item type="Configuration" version="3">
+														<name>ReleaseShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(ANGLE_SDK)/src</item>
+															<item>$(ANGLE_SDK)/include</item>
+															<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
+														</includePaths>
+														<definitions>
+															<item>NDEBUG</item>
+															<item>_CRT_SECURE_NO_DEPRECATE</item>
+															<item>NOMINMAX</item>
+															<item>ANGLE_ENABLE_GLSL</item>
+															<item>ANGLE_ENABLE_HLSL</item>
+															<item>LIBANGLE_IMPLEMENTATION</item>
+															<item>ANGLE_ENABLE_D3D11</item>
+															<item>ANGLE_PLATFORM_WINDOWS</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Extern.angle.libANGLE.dll</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+															</item>
+														</aggregationItems>
+													</item>
+													<item type="Configuration" version="3">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(ANGLE_SDK)/src</item>
+															<item>$(ANGLE_SDK)/include</item>
+															<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
+														</includePaths>
+														<definitions>
+															<item>_DEBUG</item>
+															<item>_CRT_SECURE_NO_DEPRECATE</item>
+															<item>NOMINMAX</item>
+															<item>ANGLE_ENABLE_GLSL</item>
+															<item>ANGLE_ENABLE_HLSL</item>
+															<item>LIBANGLE_IMPLEMENTATION</item>
+															<item>ANGLE_ENABLE_D3D11</item>
+															<item>ANGLE_PLATFORM_WINDOWS</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Extern.angle.libANGLE.lib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 															</item>
 														</aggregationItems>
@@ -15174,15 +15082,17 @@
 														<includePaths>
 															<item>$(ANGLE_SDK)/src</item>
 															<item>$(ANGLE_SDK)/include</item>
-															<item>$(ANGLE_SDK)/src/compiler</item>
+															<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 														</includePaths>
 														<definitions>
-															<item>T_STATIC</item>
 															<item>NDEBUG</item>
 															<item>_CRT_SECURE_NO_DEPRECATE</item>
 															<item>NOMINMAX</item>
-															<item>_SECURE_SCL=0</item>
-															<item>ANGLE_USE_NEW_PREPROCESSOR=1</item>
+															<item>ANGLE_ENABLE_GLSL</item>
+															<item>ANGLE_ENABLE_HLSL</item>
+															<item>LIBANGLE_IMPLEMENTATION</item>
+															<item>ANGLE_ENABLE_D3D11</item>
+															<item>ANGLE_PLATFORM_WINDOWS</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -15194,43 +15104,135 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>Extern.angle.translator.lib</sourceFile>
+																<sourceFile>Extern.angle.libANGLE.lib</sourceFile>
 																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 															</item>
 														</aggregationItems>
 													</item>
 												</configurations>
 												<items>
-													<item type="File">
-														<fileName>*.cpp</fileName>
-														<items/>
-													</item>
-													<item type="File">
-														<fileName>*.h*</fileName>
-														<items/>
-													</item>
 													<item type="Filter">
-														<name>depgraph</name>
+														<name>common</name>
 														<items>
 															<item type="File">
-																<fileName>depgraph/*.cpp</fileName>
+																<fileName>common/*.cpp</fileName>
 																<items/>
 															</item>
 															<item type="File">
-																<fileName>depgraph/*.h</fileName>
+																<fileName>common/*.h</fileName>
 																<items/>
 															</item>
 														</items>
 													</item>
 													<item type="Filter">
-														<name>timing</name>
+														<name>libANGLE</name>
 														<items>
 															<item type="File">
-																<fileName>timing/*.cpp</fileName>
+																<fileName>libANGLE/*.cpp</fileName>
 																<items/>
 															</item>
 															<item type="File">
-																<fileName>timing/*.h</fileName>
+																<fileName>libANGLE/*.h</fileName>
+																<items/>
+															</item>
+															<item type="Filter">
+																<name>renderer</name>
+																<items>
+																	<item type="File">
+																		<fileName>libANGLE/renderer/*.cpp</fileName>
+																		<items/>
+																	</item>
+																	<item type="File">
+																		<fileName>libANGLE/renderer/*.h</fileName>
+																		<items/>
+																	</item>
+																	<item type="Filter">
+																		<name>d3d</name>
+																		<items>
+																			<item type="Filter">
+																				<name>d3d11</name>
+																				<items>
+																					<item type="File">
+																						<fileName>libANGLE/renderer/d3d/d3d11/*.cpp</fileName>
+																						<items/>
+																					</item>
+																					<item type="File">
+																						<fileName>libANGLE/renderer/d3d/d3d11/*.h</fileName>
+																						<items/>
+																					</item>
+																					<item type="Filter">
+																						<name>win32</name>
+																						<items>
+																							<item type="File">
+																								<fileName>libANGLE/renderer/d3d/d3d11/win32/*.cpp</fileName>
+																								<items/>
+																							</item>
+																							<item type="File">
+																								<fileName>libANGLE/renderer/d3d/d3d11/win32/*.h</fileName>
+																								<items/>
+																							</item>
+																						</items>
+																					</item>
+																				</items>
+																			</item>
+																			<item type="File">
+																				<fileName>libANGLE/renderer/d3d/*.cpp</fileName>
+																				<items/>
+																			</item>
+																			<item type="File">
+																				<fileName>libANGLE/renderer/d3d/*.h</fileName>
+																				<items/>
+																			</item>
+																		</items>
+																	</item>
+																</items>
+															</item>
+														</items>
+													</item>
+													<item type="Filter">
+														<name>compiler</name>
+														<items>
+															<item type="Filter">
+																<name>preprocessor</name>
+																<items>
+																	<item type="File">
+																		<fileName>compiler/preprocessor/*.cpp</fileName>
+																		<items/>
+																	</item>
+																	<item type="File">
+																		<fileName>compiler/preprocessor/*.h</fileName>
+																		<items/>
+																	</item>
+																</items>
+															</item>
+															<item type="Filter">
+																<name>translator</name>
+																<items>
+																	<item type="File">
+																		<fileName>compiler/translator/*.cpp</fileName>
+																		<items/>
+																	</item>
+																	<item type="File">
+																		<fileName>compiler/translator/*.h</fileName>
+																		<items/>
+																	</item>
+																</items>
+															</item>
+															<item type="File">
+																<fileName>compiler/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+													<item type="Filter">
+														<name>image_util</name>
+														<items>
+															<item type="File">
+																<fileName>image_util/*.cpp</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>image_util/*.h</fileName>
 																<items/>
 															</item>
 														</items>
@@ -15239,145 +15241,32 @@
 														<name>third_party</name>
 														<items>
 															<item type="Filter">
-																<name>compiler</name>
+																<name>murmurhash</name>
 																<items>
 																	<item type="File">
-																		<fileName>../../third_party/compiler/*.cpp</fileName>
+																		<fileName>third_party/murmurhash/*.cpp</fileName>
 																		<items/>
 																	</item>
 																	<item type="File">
-																		<fileName>../../third_party/compiler/*.h</fileName>
+																		<fileName>third_party/murmurhash/*.h</fileName>
+																		<items/>
+																	</item>
+																</items>
+															</item>
+															<item type="Filter">
+																<name>compiler</name>
+																<items>
+																	<item type="File">
+																		<fileName>third_party/compiler/*.cpp</fileName>
+																		<items/>
+																	</item>
+																	<item type="File">
+																		<fileName>third_party/compiler/*.h</fileName>
 																		<items/>
 																	</item>
 																</items>
 															</item>
 														</items>
-													</item>
-												</items>
-												<dependencies/>
-											</project>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project type="Project" version="1">
-												<enable>true</enable>
-												<name>Extern.angle.preprocessor</name>
-												<sourcePath>$(ANGLE_SDK)/src/compiler/preprocessor</sourcePath>
-												<configurations>
-													<item type="Configuration" version="3">
-														<name>DebugShared</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths/>
-														<definitions>
-															<item>WIN32</item>
-															<item>_DEBUG</item>
-															<item>_WINDOWS</item>
-															<item>_USRDLL</item>
-															<item>_CRT_SECURE_NO_DEPRECATE</item>
-															<item>NOMINMAX</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseShared</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths/>
-														<definitions>
-															<item>WIN32</item>
-															<item>NDEBUG</item>
-															<item>_WINDOWS</item>
-															<item>_USRDLL</item>
-															<item>_CRT_SECURE_NO_DEPRECATE</item>
-															<item>NOMINMAX</item>
-															<item>_SECURE_SCL=0</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>DebugStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths/>
-														<definitions>
-															<item>T_STATIC</item>
-															<item>_DEBUG</item>
-															<item>_CRT_SECURE_NO_DEPRECATE</item>
-															<item>NOMINMAX</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>Extern.angle.preprocessor.lib</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-															</item>
-														</aggregationItems>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths/>
-														<definitions>
-															<item>T_STATIC</item>
-															<item>NDEBUG</item>
-															<item>_CRT_SECURE_NO_DEPRECATE</item>
-															<item>NOMINMAX</item>
-															<item>_SECURE_SCL=0</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>Extern.angle.preprocessor.lib</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-															</item>
-														</aggregationItems>
-													</item>
-												</configurations>
-												<items>
-													<item type="File">
-														<fileName>*.cpp</fileName>
-														<items/>
-													</item>
-													<item type="File">
-														<fileName>*.h</fileName>
-														<items/>
 													</item>
 												</items>
 												<dependencies/>
@@ -22829,10 +22718,6 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[51]/dependencies/item[3]/project/dependencies/item/project/dependencies/item/project"/>
-		<item ref="/object/projects/item[51]/dependencies/item[3]/project/dependencies/item/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[51]/dependencies/item[3]/project/dependencies/item/project"/>
-		<item ref="/object/projects/item[51]/dependencies/item[3]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Illuminate.Editor</name>
@@ -24516,7 +24401,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[138]"/>
+					<project ref="/object/projects/item[134]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -25003,6 +24888,9 @@
 				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[51]/dependencies/item[3]/project/dependencies/item/project"/>
+		<item ref="/object/projects/item[51]/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[51]/dependencies/item[3]/project/dependencies/item/project/dependencies/item/project"/>
 	</projects>
 	<aggregations/>
 </object>

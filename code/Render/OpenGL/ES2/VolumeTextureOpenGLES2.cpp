@@ -146,7 +146,7 @@ bool VolumeTextureOpenGLES2::create(const VolumeTextureCreateDesc& desc)
 
 	convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type);
 
-#if !defined(T_OFFLINE_ONLY) && !defined(__IOS__) && !defined(__PNACL__) && !defined(__EMSCRIPTEN__)
+#if !defined(T_OFFLINE_ONLY) && !defined(_WIN32) && !defined(__IOS__) && !defined(__PNACL__) && !defined(__EMSCRIPTEN__)
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 
@@ -157,7 +157,7 @@ bool VolumeTextureOpenGLES2::create(const VolumeTextureCreateDesc& desc)
 
 		if (desc.format >= TfPVRTC1 && desc.format <= TfPVRTC4)
 		{
-#if defined(__APPLE__)
+#	if defined(__APPLE__)
 			uint32_t mipPitch = getTextureMipPitch(desc.format, m_width, m_height);
 			T_OGL_SAFE(glCompressedTexImage3DOES(
 				GL_TEXTURE_3D_OES,
@@ -170,10 +170,10 @@ bool VolumeTextureOpenGLES2::create(const VolumeTextureCreateDesc& desc)
 				mipPitch,
 				desc.initialData[0].data
 			));
-#else
+#	else
 			log::error << L"Compressed 3D textures not supported on non-iOS platforms" << Endl;
 			return false;
-#endif
+#	endif
 		}
 		else
 		{
