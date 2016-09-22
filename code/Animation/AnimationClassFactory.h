@@ -16,6 +16,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS AnimationClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;

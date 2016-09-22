@@ -8,6 +8,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class ProgressCell : public ui::custom::AutoWidgetCell
 {
 public:

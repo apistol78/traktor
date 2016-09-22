@@ -19,6 +19,9 @@ namespace traktor
 class IEnvironment;
 class Stage;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS StageState : public IState
 {
 	T_RTTI_CLASS;

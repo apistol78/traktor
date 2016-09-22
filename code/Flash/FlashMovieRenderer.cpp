@@ -117,9 +117,6 @@ void FlashMovieRenderer::renderSprite(
 	const FlashSprite* sprite = spriteInstance->getSprite();
 	const Aabb2& scalingGrid = sprite->getScalingGrid();
 
-	FlashDictionary* dictionary = spriteInstance->getDictionary();
-	T_ASSERT (dictionary);
-
 	const FlashDisplayList& displayList = spriteInstance->getDisplayList();
 	const FlashDisplayList::layer_map_t& layers = displayList.getLayers();
 
@@ -477,7 +474,6 @@ void FlashMovieRenderer::renderCharacter(
 		if (!editInstance->isVisible())
 			return;
 
-		const Aabb2& textBounds = editInstance->getTextBounds();
 		Matrix33 editTransform = transform * editInstance->getTransform();
 
 		const TextLayout* layout = editInstance->getTextLayout();
@@ -485,7 +481,7 @@ void FlashMovieRenderer::renderCharacter(
 
 #if !defined(__ANDROID__)
 		m_displayRenderer->beginMask(true);
-		m_displayRenderer->renderQuad(editTransform, textBounds, c_cxWhite);
+		m_displayRenderer->renderQuad(editTransform, editInstance->getTextBounds(), c_cxWhite);
 		m_displayRenderer->endMask();
 #endif
 
@@ -574,7 +570,7 @@ void FlashMovieRenderer::renderCharacter(
 
 #if !defined(__ANDROID__)
 		m_displayRenderer->beginMask(false);
-		m_displayRenderer->renderQuad(editTransform, textBounds, c_cxWhite);
+		m_displayRenderer->renderQuad(editTransform, editInstance->getTextBounds(), c_cxWhite);
 		m_displayRenderer->endMask();
 #endif
 		return;
@@ -621,8 +617,6 @@ void FlashMovieRenderer::calculateDirtyRegion(FlashCharacterInstance* characterI
 	if (&type_of(characterInstance) == &type_of< FlashSpriteInstance >())
 	{
 		FlashSpriteInstance* spriteInstance = static_cast< FlashSpriteInstance* >(characterInstance);
-		FlashDictionary* dictionary = spriteInstance->getDictionary();
-		T_ASSERT (dictionary);
 
 		const Matrix33 T = transform * spriteInstance->getTransform();
 		const FlashDisplayList& displayList = spriteInstance->getDisplayList();

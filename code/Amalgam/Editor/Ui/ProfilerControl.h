@@ -10,6 +10,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class ProfilerControl : public ui::Widget
 {
 	T_RTTI_CLASS;

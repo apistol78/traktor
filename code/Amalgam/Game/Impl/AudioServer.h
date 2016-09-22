@@ -21,6 +21,9 @@ class SoundPlayer;
 
 class IEnvironment;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class AudioServer : public IAudioServer
 {
 	T_RTTI_CLASS;

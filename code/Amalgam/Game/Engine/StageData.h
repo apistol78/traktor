@@ -47,6 +47,9 @@ class IScriptContext;
 class LayerData;
 class Stage;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS StageData : public ISerializable
 {
 	T_RTTI_CLASS;

@@ -30,6 +30,9 @@ class Database;
 class Target;
 class TargetConfiguration;
 
+/*! \brief Migrate target action.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS MigrateTargetAction : public ITargetAction
 {
 	T_RTTI_CLASS;

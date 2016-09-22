@@ -32,6 +32,9 @@ class WorldRenderView;
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS ClothEntity : public world::Entity
 {
 	T_RTTI_CLASS;

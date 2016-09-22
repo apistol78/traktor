@@ -16,6 +16,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS PoseControllerPipeline : public editor::DefaultPipeline
 {
 	T_RTTI_CLASS;

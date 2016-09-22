@@ -32,6 +32,9 @@ class IScriptContext;
 
 class IEnvironment;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class ScriptServer
 :	public IScriptServer
 ,	public script::IScriptDebugger::IListener

@@ -16,6 +16,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Abstract target action class.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS ITargetAction : public Object
 {
 	T_RTTI_CLASS;

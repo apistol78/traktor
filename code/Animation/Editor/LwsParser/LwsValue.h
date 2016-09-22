@@ -8,6 +8,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class LwsValue : public LwsNode
 {
 	T_RTTI_CLASS;

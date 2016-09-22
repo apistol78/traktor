@@ -9,7 +9,9 @@ namespace traktor
 	namespace amalgam
 	{
 
-/*! \brief State manager. */
+/*! \brief State manager.
+ * \ingroup Amalgam
+ */
 class StateManager : public IStateManager
 {
 	T_RTTI_CLASS;

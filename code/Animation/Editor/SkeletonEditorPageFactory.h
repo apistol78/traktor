@@ -16,6 +16,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS SkeletonEditorPageFactory : public editor::IEditorPageFactory
 {
 	T_RTTI_CLASS;

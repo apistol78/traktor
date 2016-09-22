@@ -78,8 +78,8 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 			EGL_LEVEL, 0,
 			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
 			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-			EGL_DEPTH_SIZE, 16,
-			EGL_STENCIL_SIZE, 4,
+			EGL_DEPTH_SIZE, desc.depthBits,
+			EGL_STENCIL_SIZE, desc.stencilBits,
 			EGL_SAMPLES, (EGLint)desc.multiSample,
 			EGL_NONE
 		};
@@ -102,8 +102,8 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 			EGL_LEVEL, 0,
 			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
 			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-			EGL_DEPTH_SIZE, 16,
-			EGL_STENCIL_SIZE, 4,
+			EGL_DEPTH_SIZE, desc.depthBits,
+			EGL_STENCIL_SIZE, desc.stencilBits,
 			EGL_NONE
 		};
 
@@ -446,9 +446,6 @@ void ContextOpenGLES2::deleteResources()
 
 GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderType)
 {
-	char errorBuf[32000];
-	GLint status;
-
 	Adler32 adler;
 	adler.begin();
 	adler.feed(shader, strlen(shader));
@@ -469,7 +466,11 @@ GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderTyp
 
 	T_OGL_SAFE(glShaderSource(shaderObject, 1, &shader, NULL));
 	T_OGL_SAFE(glCompileShader(shaderObject));
-	/*
+
+#if defined(_DEBUG)
+	char errorBuf[32000];
+	GLint status;
+
 	T_OGL_SAFE(glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &status));
 	if (status == 0)
 	{
@@ -480,7 +481,7 @@ GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderTyp
 		FormatMultipleLines(log::error, mbstows(shader));
 		return 0;
 	}
-	*/
+#endif
 
 	m_shaderObjects.insert(std::make_pair(hash, shaderObject));
 	return shaderObject;

@@ -73,6 +73,9 @@ class Animation;
 class Skeleton;
 class Pose;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS AnimationEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS;

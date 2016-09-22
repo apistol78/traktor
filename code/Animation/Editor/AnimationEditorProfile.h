@@ -16,6 +16,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS AnimationEditorProfile : public scene::ISceneEditorProfile
 {
 	T_RTTI_CLASS;

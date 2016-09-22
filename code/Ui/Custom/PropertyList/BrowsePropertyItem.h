@@ -53,8 +53,8 @@ protected:
 	virtual bool paste() T_OVERRIDE;
 
 private:
-	Guid m_value;
 	const TypeInfo* m_filterType;
+	Guid m_value;
 	Ref< MiniButton > m_buttonEdit;
 	Ref< MiniButton > m_buttonBrowse;
 

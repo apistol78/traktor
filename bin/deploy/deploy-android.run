@@ -66,28 +66,23 @@ end
 function deploy(args)
 	stdout:printLn("Deploying...")
 
-	local toolchain = "arm-linux-androideabi-4.9"
-	local android = "android-15"
+	local ndk = os:getEnvironment("DEPLOY_ANDROID_NDK_ROOT")
+	local toolchain = os:getEnvironment("DEPLOY_ANDROID_TOOLCHAIN") -- "4.9"
+	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL") -- "android-19"
 	local architecture = "arch-arm"
-
+	local abi = "arm-linux-androideabi"
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
-
-	local ndk = os:getEnvironment("ANDROID_NDK_ROOT")
-	if #ndk <= 0 then
-		stderr:printLn("ANDROID_NDK_ROOT not set; ensure Android NDK is properly installed and try again.")
-		return 1
-	end
 
 	-- Determine tool suitable for os.
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		host = "windows-x86_64"
-		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host)) then
+		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host)) then
 			host = "windows"
 		end
 	elseif host == "osx" then
 		host = "darwin-x86_64"
-		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host)) then
+		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host)) then
 			host = "darwin"
 		end		
 	else
@@ -95,11 +90,33 @@ function deploy(args)
 		return 1
 	end
 
-	local toolpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .."/bin"
-	local libpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .."/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+	-- Generate paths to NDK.
+	local toolpath = ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host .."/bin"
+	local crtpath = ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host .."/lib/gcc/" .. abi .. "/" .. toolchain .. "/armv7-a"
+	local cxxpath = ndk .. "/sources/cxx-stl/gnu-libstdc++/" .. toolchain .. "/libs/armeabi-v7a"
+	local syspath = ndk .. "/platforms/" .. apilevel .. "/" .. architecture
+	local libpath = syspath .. "/usr/lib"
+	local cl = toolpath .. "/" .. abi .. "-g++"
 
-	-- Get toolchain binaries.
-	local cl = toolpath .. "/arm-linux-androideabi-g++"
+	-- Check all paths exist.
+	local ok =
+		fileSystem:exist(Path(toolpath)) and
+		fileSystem:exist(Path(crtpath)) and
+		fileSystem:exist(Path(cxxpath)) and
+		fileSystem:exist(Path(syspath)) and
+		fileSystem:exist(Path(libpath))
+
+	if not ok then
+		stderr:printLn("Android NDK installation not valid; ensure Android NDK is properly installed and try again.")
+		stderr:printLn("[toolpath] = \"" .. toolpath .. "\"")
+		stderr:printLn("[crtpath] = \"" .. crtpath .. "\"")
+		stderr:printLn("[cxxpath] = \"" .. cxxpath .. "\"")
+		stderr:printLn("[syspath] = \"" .. syspath .. "\"")
+		stderr:printLn("[libpath] = \"" .. libpath .. "\"")
+		return 1
+	end
+
+	stdout:printLn("Android NDK installation ok.")
 
 	-- Determine path to module libraries.
 	local prepend
@@ -178,6 +195,7 @@ function deploy(args)
 		end	
 
 		-- Link files into an executable product.
+		stdout:printLn("Linking...")
 		local cmd = cl .. " Linkage.o " .. wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles .. " -o lib$(DEPLOY_EXECUTABLE).so"
 		cmd = cmd .. " -lc"
 		cmd = cmd .. " -lm"
@@ -191,15 +209,15 @@ function deploy(args)
 		cmd = cmd .. " -Wl,--no-undefined"
 		cmd = cmd .. " -shared"
 		cmd = cmd .. " -Wl,-z,noexecstack"
-		cmd = cmd .. " -Wl,-rpath-link=" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
-		cmd = cmd .. " --sysroot=" .. ndk .. "/platforms/" .. android .. "/" .. architecture
+		cmd = cmd .. " -Wl,-rpath-link=" .. libpath
+		cmd = cmd .. " --sysroot=" .. syspath
 		cmd = cmd .. " -lstdc++"
 		cmd = cmd .. " -lsupc++"
 		cmd = cmd .. " -lgnustl_static"
 		cmd = cmd .. " -lgcc"
-		cmd = cmd .. " -L" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
-		cmd = cmd .. " -L" .. ndk .. "/sources/cxx-stl/gnu-libstdc++/4.8/libs/armeabi-v7a"
-		cmd = cmd .. " -L" .. ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .."/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+		cmd = cmd .. " -L" .. libpath
+		cmd = cmd .. " -L" .. cxxpath
+		cmd = cmd .. " -L" .. crtpath
 
 		local result = run:execute(cmd)
 		if result ~= 0 then
@@ -223,12 +241,6 @@ function launch(args)
 		stderr:printLn("No device ready; ensure an Android device is connected and properly configured.")
 		return 1
 	end	
-
-	local ant = os:getEnvironment("ANT_HOME")
-	if #ant <= 0 then
-		stderr:printLn("ANT_HOME not set; ensure Apache ANT is properly installed and try again.")
-		return 1
-	end
 
 	local useNsight = (os:getEnvironment("DEPLOY_USE_NSIGHT") ~= "")
 	if useNsight then
@@ -306,41 +318,23 @@ end
 function migrate(args)
 	stdout:printLn("Migrating...")
 
-	local toolchain = "arm-linux-androideabi-4.9"
-	local android = "android-15"
+	local ndk = os:getEnvironment("DEPLOY_ANDROID_NDK_ROOT")
+	local toolchain = os:getEnvironment("DEPLOY_ANDROID_TOOLCHAIN") -- "4.9"
+	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL") -- "android-19"
 	local architecture = "arch-arm"
-
+	local abi = "arm-linux-androideabi"
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
-
-	local ndk = os:getEnvironment("ANDROID_NDK_ROOT")
-	if #ndk <= 0 then
-		stderr:printLn("ANDROID_NDK_ROOT not set; ensure Android NDK is properly installed and try again.")
-		return 1
-	end
-
-	local ant = os:getEnvironment("ANT_HOME")
-	if #ant <= 0 then
-		stderr:printLn("ANT_HOME not set; ensure Apache ANT is properly installed and try again.")
-		return 1
-	end
-
-	-- Migrate database into compact database.
-	stdout:printLn("Migrating Android...")
-	if run:execute(tools.migrate .. " -p -s=Migrate") ~= 0 then
-		stderr:printLn("Failed to migrate Android database")
-		return 1
-	end
 
 	-- Determine tool suitable for os.
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		host = "windows-x86_64"
-		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host)) then
+		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host)) then
 			host = "windows"
 		end
 	elseif host == "osx" then
 		host = "darwin-x86_64"
-		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host)) then
+		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host)) then
 			host = "darwin"
 		end		
 	else
@@ -348,11 +342,40 @@ function migrate(args)
 		return 1
 	end
 
-	local toolpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .. "/bin"
-	local libpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .. "/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+	-- Generate paths to NDK.
+	local toolpath = ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host .."/bin"
+	local crtpath = ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host .."/lib/gcc/" .. abi .. "/" .. toolchain .. "/armv7-a"
+	local cxxpath = ndk .. "/sources/cxx-stl/gnu-libstdc++/" .. toolchain .. "/libs/armeabi-v7a"
+	local syspath = ndk .. "/platforms/" .. apilevel .. "/" .. architecture
+	local libpath = syspath .. "/usr/lib"
+	local cl = toolpath .. "/" .. abi .. "-g++"
 
-	-- Get toolchain binaries.
-	local cl = toolpath .. "/arm-linux-androideabi-g++"
+	-- Check all paths exist.
+	local ok =
+		fileSystem:exist(Path(toolpath)) and
+		fileSystem:exist(Path(crtpath)) and
+		fileSystem:exist(Path(cxxpath)) and
+		fileSystem:exist(Path(syspath)) and
+		fileSystem:exist(Path(libpath))
+
+	if not ok then
+		stderr:printLn("Android NDK installation not valid; ensure Android NDK is properly installed and try again.")
+		stderr:printLn("[toolpath] = \"" .. toolpath .. "\"")
+		stderr:printLn("[crtpath] = \"" .. crtpath .. "\"")
+		stderr:printLn("[cxxpath] = \"" .. cxxpath .. "\"")
+		stderr:printLn("[syspath] = \"" .. syspath .. "\"")
+		stderr:printLn("[libpath] = \"" .. libpath .. "\"")
+		return 1
+	end
+
+	stdout:printLn("Android NDK installation ok.")
+
+	-- Migrate database into compact database.
+	stdout:printLn("Migrating Android...")
+	if run:execute(tools.migrate .. " -p -s=Migrate") ~= 0 then
+		stderr:printLn("Failed to migrate Android database")
+		return 1
+	end
 
 	-- Determine path to module libraries.
 	local prepend
@@ -392,6 +415,7 @@ function migrate(args)
 	end	
 
 	-- Link files into an executable product.
+	stdout:printLn("Linking...")
 	local cmd = cl .. " Linkage.o " .. wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles .. " -o lib$(DEPLOY_EXECUTABLE).so"
 	cmd = cmd .. " -lc"
 	cmd = cmd .. " -lm"
@@ -405,15 +429,15 @@ function migrate(args)
 	cmd = cmd .. " -Wl,--no-undefined"
 	cmd = cmd .. " -shared"
 	cmd = cmd .. " -Wl,-z,noexecstack"
-	cmd = cmd .. " -Wl,-rpath-link=" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
-	cmd = cmd .. " --sysroot=" .. ndk .. "/platforms/" .. android .. "/" .. architecture
+	cmd = cmd .. " -Wl,-rpath-link=" .. libpath
+	cmd = cmd .. " --sysroot=" .. syspath
 	cmd = cmd .. " -lstdc++"
 	cmd = cmd .. " -lsupc++"
 	cmd = cmd .. " -lgnustl_static"
 	cmd = cmd .. " -lgcc"
-	cmd = cmd .. " -L" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
-	cmd = cmd .. " -L" .. ndk .. "/sources/cxx-stl/gnu-libstdc++/4.8/libs/armeabi-v7a"
-	cmd = cmd .. " -L" .. ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .. "/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+	cmd = cmd .. " -L" .. libpath
+	cmd = cmd .. " -L" .. cxxpath
+	cmd = cmd .. " -L" .. crtpath
 
 	local result = run:execute(cmd)
 	if result ~= 0 then

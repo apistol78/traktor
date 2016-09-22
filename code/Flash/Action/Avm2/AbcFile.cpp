@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/Io/BitReader.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"

@@ -57,6 +57,9 @@ class StateNode;
 class StatePoseController;
 class Transition;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLEXPORT StateGraphEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS;

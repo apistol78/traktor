@@ -63,8 +63,8 @@ private:
 
 MergeQueue::MergeQueue(FlashMovie* outputMovie, FlashFrame* outputFrame)
 :	m_outputMovie(outputMovie)
-,	m_nextDepth(1)
 ,	m_nextShapeId(2)
+,	m_nextDepth(1)
 ,	m_lastBlendMode(0)
 {
 	m_outputFrame.push_back(outputFrame);

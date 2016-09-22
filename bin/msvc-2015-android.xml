@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="SolutionBuilderMsvcSettings">
-	<slnVersion>12.00</slnVersion>
-	<vsVersion>11</vsVersion>
+  <slnVersion>12.00</slnVersion>
+  <vsVersion>14</vsVersion>
 	<project type="SolutionBuilderMsvcVCXProj" version="6">
 		<platform>ARM</platform>
 		<keyword>Android</keyword>
@@ -18,14 +18,18 @@
 			<item/>
 		</targetExts>
 		<propertyGroups>
-			<item type="SolutionBuilderMsvcVCXPropertyGroup" version="1">
-				<label>NsightTegraProject</label>
+      <item type="SolutionBuilderMsvcVCXPropertyGroup" version="1">
+				<label>Globals</label>
 				<condition/>
 				<values>
 					<item>
-						<first>NsightTegraProjectRevisionNumber</first>
-						<second>11</second>
+						<first>ApplicationType</first>
+						<second>Android</second>
 					</item>
+          <item>
+            <first>ApplicationTypeRevision</first>
+            <second>2.0</second>
+          </item>
 				</values>
 			</item>
 		</propertyGroups>
@@ -35,357 +39,44 @@
 				<project>$(VCTargetsPath)\Microsoft.Cpp.props</project>
 				<condition/>
 			</item>
-			<item type="SolutionBuilderMsvcVCXImportGroup">
-				<label>PropertySheets</label>
-				<condition/>
-				<imports>
-					<item type="SolutionBuilderMsvcVCXImport">
-						<label/>
-						<project>$(LocalAppData)\Microsoft\VisualStudio\10.0\Microsoft.Cpp.$(Platform).user.props</project>
-						<condition>exists(&apos;$(LocalAppData)\Microsoft\VisualStudio\10.0\Microsoft.Cpp.$(Platform).user.props&apos;)</condition>
-					</item>
-				</imports>
-			</item>
 		</imports>
 		<configurationDefinitionsDebug>
 			<staticLibrary>
-				<item>
-					<first>AndroidAPILevel</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidArch</first>
-					<second>armv7-a</second>
-				</item>
-				<item>
-					<first>AndroidMinAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidNativeAPI</first>
-					<second>UseTarget</second>
-				</item>
-				<item>
-					<first>AndroidTargetAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>CharacterSet</first>
-					<second>MultiByte</second>
-				</item>
-				<item>
-					<first>ConfigurationType</first>
-					<second>StaticLibrary</second>
-				</item>
-				<item>
-					<first>NdkToolchainVersion</first>
-					<second>gcc-4.8</second>
-				</item>
-				<item>
-					<first>PlatformToolset</first>
-					<second>arm-linux-androideabi-4.8</second>
-				</item>
-				<item>
-					<first>WholeProgramOptimization</first>
-					<second>false</second>
-				</item>
-			</staticLibrary>
-			<sharedLibrary>
-				<item>
-					<first>AndroidAPILevel</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidArch</first>
-					<second>armv7-a</second>
-				</item>
-				<item>
-					<first>AndroidMinAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidNativeAPI</first>
-					<second>UseTarget</second>
-				</item>
-				<item>
-					<first>AndroidTargetAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>CharacterSet</first>
-					<second>MultiByte</second>
-				</item>
-				<item>
-					<first>ConfigurationType</first>
-					<second>DynamicLibrary</second>
-				</item>
-				<item>
-					<first>NdkToolchainVersion</first>
-					<second>gcc-4.8</second>
-				</item>
-				<item>
-					<first>PlatformToolset</first>
-					<second>arm-linux-androideabi-4.8</second>
-				</item>
-				<item>
-					<first>WholeProgramOptimization</first>
-					<second>false</second>
-				</item>
-			</sharedLibrary>
-			<executable>
-				<item>
-					<first>AndroidAPILevel</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidArch</first>
-					<second>armv7-a</second>
-				</item>
-				<item>
-					<first>AndroidMinAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidNativeAPI</first>
-					<second>UseTarget</second>
-				</item>
-				<item>
-					<first>AndroidTargetAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>CharacterSet</first>
-					<second>MultiByte</second>
-				</item>
-				<item>
-					<first>ConfigurationType</first>
-					<second>Executable</second>
-				</item>
-				<item>
-					<first>NdkToolchainVersion</first>
-					<second>gcc-4.8</second>
-				</item>
-				<item>
-					<first>PlatformToolset</first>
-					<second>arm-linux-androideabi-4.8</second>
-				</item>
-				<item>
-					<first>WholeProgramOptimization</first>
-					<second>false</second>
-				</item>
-			</executable>
-			<executableConsole>
-				<item>
-					<first>AndroidAPILevel</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidArch</first>
-					<second>armv7-a</second>
-				</item>
-				<item>
-					<first>AndroidMinAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidNativeAPI</first>
-					<second>UseTarget</second>
-				</item>
-				<item>
-					<first>AndroidTargetAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>CharacterSet</first>
-					<second>MultiByte</second>
-				</item>
-				<item>
-					<first>ConfigurationType</first>
-					<second>Executable</second>
-				</item>
-				<item>
-					<first>NdkToolchainVersion</first>
-					<second>gcc-4.8</second>
-				</item>
-				<item>
-					<first>PlatformToolset</first>
-					<second>arm-linux-androideabi-4.8</second>
-				</item>
-				<item>
-					<first>WholeProgramOptimization</first>
-					<second>false</second>
-				</item>
-			</executableConsole>
+        <item>
+          <first>ConfigurationType</first>
+          <second>StaticLibrary</second>
+        </item>        
+        <item>
+          <first>UseDebugLibraries</first>
+          <second>true</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>Clang_3_8</second>
+        </item>
+      </staticLibrary>
+			<sharedLibrary/>
+			<executable/>
+			<executableConsole/>
 		</configurationDefinitionsDebug>
 		<configurationDefinitionsRelease>
-			<staticLibrary>
-				<item>
-					<first>AndroidAPILevel</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidArch</first>
-					<second>armv7-a</second>
-				</item>
-				<item>
-					<first>AndroidMinAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidNativeAPI</first>
-					<second>UseTarget</second>
-				</item>
-				<item>
-					<first>AndroidTargetAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>CharacterSet</first>
-					<second>MultiByte</second>
-				</item>
-				<item>
-					<first>ConfigurationType</first>
-					<second>StaticLibrary</second>
-				</item>
-				<item>
-					<first>NdkToolchainVersion</first>
-					<second>gcc-4.8</second>
-				</item>
-				<item>
-					<first>PlatformToolset</first>
-					<second>arm-linux-androideabi-4.8</second>
-				</item>
-				<item>
-					<first>WholeProgramOptimization</first>
-					<second>false</second>
-				</item>
-			</staticLibrary>
-			<sharedLibrary>
-				<item>
-					<first>AndroidAPILevel</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidArch</first>
-					<second>armv7-a</second>
-				</item>
-				<item>
-					<first>AndroidMinAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidNativeAPI</first>
-					<second>UseTarget</second>
-				</item>
-				<item>
-					<first>AndroidTargetAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>CharacterSet</first>
-					<second>MultiByte</second>
-				</item>
-				<item>
-					<first>ConfigurationType</first>
-					<second>DynamicLibrary</second>
-				</item>
-				<item>
-					<first>NdkToolchainVersion</first>
-					<second>gcc-4.8</second>
-				</item>
-				<item>
-					<first>PlatformToolset</first>
-					<second>arm-linux-androideabi-4.8</second>
-				</item>
-				<item>
-					<first>WholeProgramOptimization</first>
-					<second>false</second>
-				</item>
-			</sharedLibrary>
-			<executable>
-				<item>
-					<first>AndroidAPILevel</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidArch</first>
-					<second>armv7-a</second>
-				</item>
-				<item>
-					<first>AndroidMinAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidNativeAPI</first>
-					<second>UseTarget</second>
-				</item>
-				<item>
-					<first>AndroidTargetAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>CharacterSet</first>
-					<second>MultiByte</second>
-				</item>
-				<item>
-					<first>ConfigurationType</first>
-					<second>Executable</second>
-				</item>
-				<item>
-					<first>NdkToolchainVersion</first>
-					<second>gcc-4.8</second>
-				</item>
-				<item>
-					<first>PlatformToolset</first>
-					<second>arm-linux-androideabi-4.8</second>
-				</item>
-				<item>
-					<first>WholeProgramOptimization</first>
-					<second>false</second>
-				</item>
-			</executable>
-			<executableConsole>
-				<item>
-					<first>AndroidAPILevel</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidArch</first>
-					<second>armv7-a</second>
-				</item>
-				<item>
-					<first>AndroidMinAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>AndroidNativeAPI</first>
-					<second>UseTarget</second>
-				</item>
-				<item>
-					<first>AndroidTargetAPI</first>
-					<second>android-15</second>
-				</item>
-				<item>
-					<first>CharacterSet</first>
-					<second>MultiByte</second>
-				</item>
-				<item>
-					<first>ConfigurationType</first>
-					<second>Executable</second>
-				</item>
-				<item>
-					<first>NdkToolchainVersion</first>
-					<second>gcc-4.8</second>
-				</item>
-				<item>
-					<first>PlatformToolset</first>
-					<second>arm-linux-androideabi-4.8</second>
-				</item>
-				<item>
-					<first>WholeProgramOptimization</first>
-					<second>false</second>
-				</item>
-			</executableConsole>
+      <staticLibrary>
+        <item>
+          <first>ConfigurationType</first>
+          <second>StaticLibrary</second>
+        </item>        
+        <item>
+          <first>UseDebugLibraries</first>
+          <second>false</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>Clang_3_8</second>
+        </item>
+      </staticLibrary>
+			<sharedLibrary/>
+			<executable/>
+			<executableConsole/>
 		</configurationDefinitionsRelease>
 		<buildDefinitionsDebug>
 			<staticLibrary>
@@ -401,44 +92,22 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-						<item>
-							<name>DebugInformationFormat</name>
-							<value>ProgramDatabase</value>
-						</item>
-						<item>
-							<name>MinimalRebuild</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>Optimization</name>
-							<value>Disabled</value>
-						</item>
-						<item>
-							<name>RuntimeLibrary</name>
-							<value>MultiThreadedDebugDLL</value>
-						</item>
-						<item>
-							<name>WarningLevel</name>
-							<value>Level3</value>
-						</item>
-						<item>
-							<name>CppLanguageStandard</name>
-							<value>c++11</value>
-						</item>
-						<item>
-							<name>StrictAliasing</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ResourceCompile</name>
-					<fileTypes>rc</fileTypes>
-					<options>
-						<item>
-							<name>AdditionalIncludeDirectories</name>
-							<value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
 					</options>
 				</item>
 			</staticLibrary>
@@ -455,44 +124,22 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-						<item>
-							<name>DebugInformationFormat</name>
-							<value>ProgramDatabase</value>
-						</item>
-						<item>
-							<name>MinimalRebuild</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>Optimization</name>
-							<value>Disabled</value>
-						</item>
-						<item>
-							<name>RuntimeLibrary</name>
-							<value>MultiThreadedDebugDLL</value>
-						</item>
-						<item>
-							<name>WarningLevel</name>
-							<value>Level3</value>
-						</item>
-						<item>
-							<name>CppLanguageStandard</name>
-							<value>c++11</value>
-						</item>
-						<item>
-							<name>StrictAliasing</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ResourceCompile</name>
-					<fileTypes>rc</fileTypes>
-					<options>
-						<item>
-							<name>AdditionalIncludeDirectories</name>
-							<value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -506,72 +153,6 @@
 						<item>
 							<name>AdditionalLibraryDirectories</name>
 							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-						</item>
-						<item>
-							<name>GenerateDebugInformation</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
-						</item>
-						<item>
-							<name>ImportLibrary</name>
-							<value>$(OutDir)%(PROJECT_NAME).lib</value>
-						</item>
-						<item>
-							<name>TargetExt</name>
-							<value>.so</value>
-						</item>
-						<item>
-							<name>RandomizedBaseAddress</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>SubSystem</name>
-							<value>Windows</value>
-						</item>
-						<item>
-							<name>ModuleDefinitionFile</name>
-							<value>%(MODULE_DEFINITION_FILE)</value>
-						</item>
-						<item>
-							<name>AndroidSystemLibs</name>
-							<value>c;m;log;gcc;dl</value>
-						</item>
-						<item>
-							<name>SoName</name>
-							<value>$(TargetName)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>Manifest</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>AdditionalManifestFiles</name>
-							<value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>LinkLibraryDependencies</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>UseLibraryDependencyInputs</name>
-							<value>false</value>
 						</item>
 					</options>
 				</item>
@@ -589,44 +170,22 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-						<item>
-							<name>DebugInformationFormat</name>
-							<value>ProgramDatabase</value>
-						</item>
-						<item>
-							<name>MinimalRebuild</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>Optimization</name>
-							<value>Disabled</value>
-						</item>
-						<item>
-							<name>RuntimeLibrary</name>
-							<value>MultiThreadedDebugDLL</value>
-						</item>
-						<item>
-							<name>WarningLevel</name>
-							<value>Level3</value>
-						</item>
-						<item>
-							<name>CppLanguageStandard</name>
-							<value>c++11</value>
-						</item>
-						<item>
-							<name>StrictAliasing</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ResourceCompile</name>
-					<fileTypes>rc</fileTypes>
-					<options>
-						<item>
-							<name>AdditionalIncludeDirectories</name>
-							<value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -640,64 +199,6 @@
 						<item>
 							<name>AdditionalLibraryDirectories</name>
 							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-						</item>
-						<item>
-							<name>GenerateDebugInformation</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
-						</item>
-						<item>
-							<name>RandomizedBaseAddress</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>SubSystem</name>
-							<value>Windows</value>
-						</item>
-						<item>
-							<name>ModuleDefinitionFile</name>
-							<value>%(MODULE_DEFINITION_FILE)</value>
-						</item>
-						<item>
-							<name>AndroidSystemLibs</name>
-							<value>c;m;log;gcc;dl</value>
-						</item>
-						<item>
-							<name>SoName</name>
-							<value>$(TargetName)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>Manifest</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>AdditionalManifestFiles</name>
-							<value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>LinkLibraryDependencies</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>UseLibraryDependencyInputs</name>
-							<value>false</value>
 						</item>
 					</options>
 				</item>
@@ -715,44 +216,22 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);WIN32;_CONSOLE;UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-						<item>
-							<name>DebugInformationFormat</name>
-							<value>ProgramDatabase</value>
-						</item>
-						<item>
-							<name>MinimalRebuild</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>Optimization</name>
-							<value>Disabled</value>
-						</item>
-						<item>
-							<name>RuntimeLibrary</name>
-							<value>MultiThreadedDebugDLL</value>
-						</item>
-						<item>
-							<name>WarningLevel</name>
-							<value>Level3</value>
-						</item>
-						<item>
-							<name>CppLanguageStandard</name>
-							<value>c++11</value>
-						</item>
-						<item>
-							<name>StrictAliasing</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ResourceCompile</name>
-					<fileTypes>rc</fileTypes>
-					<options>
-						<item>
-							<name>AdditionalIncludeDirectories</name>
-							<value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -766,64 +245,6 @@
 						<item>
 							<name>AdditionalLibraryDirectories</name>
 							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-						</item>
-						<item>
-							<name>GenerateDebugInformation</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
-						</item>
-						<item>
-							<name>RandomizedBaseAddress</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>SubSystem</name>
-							<value>Console</value>
-						</item>
-						<item>
-							<name>ModuleDefinitionFile</name>
-							<value>%(MODULE_DEFINITION_FILE)</value>
-						</item>
-						<item>
-							<name>AndroidSystemLibs</name>
-							<value>c;m;log;gcc;dl</value>
-						</item>
-						<item>
-							<name>SoName</name>
-							<value>$(TargetName)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>Manifest</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>AdditionalManifestFiles</name>
-							<value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>LinkLibraryDependencies</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>UseLibraryDependencyInputs</name>
-							<value>false</value>
 						</item>
 					</options>
 				</item>
@@ -843,72 +264,22 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-						<item>
-							<name>BufferSecurityCheck</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>IntrinsicFunctions</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>FavorSizeOrSpeed</name>
-							<value>Speed</value>
-						</item>
-						<item>
-							<name>FloatingPointModel</name>
-							<value>Fast</value>
-						</item>
-						<item>
-							<name>InlineFunctionExpansion</name>
-							<value>AnySuitable</value>
-						</item>
-						<item>
-							<name>OmitFramePointers</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>Optimization</name>
-							<value>Full</value>
-						</item>
-						<item>
-							<name>RuntimeLibrary</name>
-							<value>MultiThreadedDLL</value>
-						</item>
-						<item>
-							<name>RuntimeTypeInfo</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>WarningLevel</name>
-							<value>Level3</value>
-						</item>
-						<item>
-							<name>OptimizationLevel</name>
-							<value>O3</value>
-						</item>
-						<item>
-							<name>GenerateDebugInformation</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>CppLanguageStandard</name>
-							<value>c++11</value>
-						</item>
-						<item>
-							<name>StrictAliasing</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ResourceCompile</name>
-					<fileTypes>rc</fileTypes>
-					<options>
-						<item>
-							<name>AdditionalIncludeDirectories</name>
-							<value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
 					</options>
 				</item>
 			</staticLibrary>
@@ -925,72 +296,22 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-						<item>
-							<name>BufferSecurityCheck</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>IntrinsicFunctions</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>FavorSizeOrSpeed</name>
-							<value>Speed</value>
-						</item>
-						<item>
-							<name>FloatingPointModel</name>
-							<value>Fast</value>
-						</item>
-						<item>
-							<name>InlineFunctionExpansion</name>
-							<value>AnySuitable</value>
-						</item>
-						<item>
-							<name>OmitFramePointers</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>Optimization</name>
-							<value>Full</value>
-						</item>
-						<item>
-							<name>RuntimeLibrary</name>
-							<value>MultiThreadedDLL</value>
-						</item>
-						<item>
-							<name>RuntimeTypeInfo</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>WarningLevel</name>
-							<value>Level3</value>
-						</item>
-						<item>
-							<name>OptimizationLevel</name>
-							<value>O3</value>
-						</item>
-						<item>
-							<name>GenerateDebugInformation</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>CppLanguageStandard</name>
-							<value>c++11</value>
-						</item>
-						<item>
-							<name>StrictAliasing</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ResourceCompile</name>
-					<fileTypes>rc</fileTypes>
-					<options>
-						<item>
-							<name>AdditionalIncludeDirectories</name>
-							<value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -1004,72 +325,6 @@
 						<item>
 							<name>AdditionalLibraryDirectories</name>
 							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-						</item>
-						<item>
-							<name>TargetExt</name>
-							<value>.so</value>
-						</item>
-						<item>
-							<name>GenerateDebugInformation</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
-						</item>
-						<item>
-							<name>ImportLibrary</name>
-							<value>$(OutDir)%(PROJECT_NAME).lib</value>
-						</item>
-						<item>
-							<name>RandomizedBaseAddress</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>SubSystem</name>
-							<value>Windows</value>
-						</item>
-						<item>
-							<name>ModuleDefinitionFile</name>
-							<value>%(MODULE_DEFINITION_FILE)</value>
-						</item>
-						<item>
-							<name>AndroidSystemLibs</name>
-							<value>c;m;log;gcc;dl</value>
-						</item>
-						<item>
-							<name>SoName</name>
-							<value>$(TargetName)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>Manifest</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>AdditionalManifestFiles</name>
-							<value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>LinkLibraryDependencies</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>UseLibraryDependencyInputs</name>
-							<value>false</value>
 						</item>
 					</options>
 				</item>
@@ -1087,72 +342,22 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-						<item>
-							<name>BufferSecurityCheck</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>IntrinsicFunctions</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>FavorSizeOrSpeed</name>
-							<value>Speed</value>
-						</item>
-						<item>
-							<name>FloatingPointModel</name>
-							<value>Fast</value>
-						</item>
-						<item>
-							<name>InlineFunctionExpansion</name>
-							<value>AnySuitable</value>
-						</item>
-						<item>
-							<name>OmitFramePointers</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>Optimization</name>
-							<value>Full</value>
-						</item>
-						<item>
-							<name>RuntimeLibrary</name>
-							<value>MultiThreadedDLL</value>
-						</item>
-						<item>
-							<name>RuntimeTypeInfo</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>WarningLevel</name>
-							<value>Level3</value>
-						</item>
-						<item>
-							<name>OptimizationLevel</name>
-							<value>O3</value>
-						</item>
-						<item>
-							<name>GenerateDebugInformation</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>CppLanguageStandard</name>
-							<value>c++11</value>
-						</item>
-						<item>
-							<name>StrictAliasing</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ResourceCompile</name>
-					<fileTypes>rc</fileTypes>
-					<options>
-						<item>
-							<name>AdditionalIncludeDirectories</name>
-							<value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -1166,64 +371,6 @@
 						<item>
 							<name>AdditionalLibraryDirectories</name>
 							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-						</item>
-						<item>
-							<name>GenerateDebugInformation</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
-						</item>
-						<item>
-							<name>RandomizedBaseAddress</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>SubSystem</name>
-							<value>Windows</value>
-						</item>
-						<item>
-							<name>ModuleDefinitionFile</name>
-							<value>%(MODULE_DEFINITION_FILE)</value>
-						</item>
-						<item>
-							<name>AndroidSystemLibs</name>
-							<value>c;m;log;gcc;dl</value>
-						</item>
-						<item>
-							<name>SoName</name>
-							<value>$(TargetName)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>Manifest</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>AdditionalManifestFiles</name>
-							<value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>LinkLibraryDependencies</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>UseLibraryDependencyInputs</name>
-							<value>false</value>
 						</item>
 					</options>
 				</item>
@@ -1241,72 +388,22 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-						<item>
-							<name>BufferSecurityCheck</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>IntrinsicFunctions</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>FavorSizeOrSpeed</name>
-							<value>Speed</value>
-						</item>
-						<item>
-							<name>FloatingPointModel</name>
-							<value>Fast</value>
-						</item>
-						<item>
-							<name>InlineFunctionExpansion</name>
-							<value>AnySuitable</value>
-						</item>
-						<item>
-							<name>OmitFramePointers</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>Optimization</name>
-							<value>Full</value>
-						</item>
-						<item>
-							<name>RuntimeLibrary</name>
-							<value>MultiThreadedDLL</value>
-						</item>
-						<item>
-							<name>RuntimeTypeInfo</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>WarningLevel</name>
-							<value>Level3</value>
-						</item>
-						<item>
-							<name>OptimizationLevel</name>
-							<value>O3</value>
-						</item>
-						<item>
-							<name>GenerateDebugInformation</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>CppLanguageStandard</name>
-							<value>c++11</value>
-						</item>
-						<item>
-							<name>StrictAliasing</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ResourceCompile</name>
-					<fileTypes>rc</fileTypes>
-					<options>
-						<item>
-							<name>AdditionalIncludeDirectories</name>
-							<value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -1320,64 +417,6 @@
 						<item>
 							<name>AdditionalLibraryDirectories</name>
 							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-						</item>
-						<item>
-							<name>GenerateDebugInformation</name>
-							<value>true</value>
-						</item>
-						<item>
-							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
-						</item>
-						<item>
-							<name>RandomizedBaseAddress</name>
-							<value>false</value>
-						</item>
-						<item>
-							<name>SubSystem</name>
-							<value>Console</value>
-						</item>
-						<item>
-							<name>ModuleDefinitionFile</name>
-							<value>%(MODULE_DEFINITION_FILE)</value>
-						</item>
-						<item>
-							<name>AndroidSystemLibs</name>
-							<value>c;m;log;gcc;dl</value>
-						</item>
-						<item>
-							<name>SoName</name>
-							<value>$(TargetName)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>Manifest</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>AdditionalManifestFiles</name>
-							<value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>LinkLibraryDependencies</name>
-							<value>true</value>
-						</item>
-					</options>
-				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
-					<name>ProjectReference</name>
-					<fileTypes/>
-					<options>
-						<item>
-							<name>UseLibraryDependencyInputs</name>
-							<value>false</value>
 						</item>
 					</options>
 				</item>
@@ -1433,24 +472,12 @@
 				<fileType>c</fileType>
 			</item>
 			<item type="SolutionBuilderMsvcVCXBuildTool">
-				<name>ResourceCompile</name>
-				<fileType>rc</fileType>
-			</item>
-			<item type="SolutionBuilderMsvcVCXBuildTool">
 				<name>None</name>
 				<fileType>inl</fileType>
 			</item>
 			<item type="SolutionBuilderMsvcVCXBuildTool">
 				<name>None</name>
 				<fileType>java</fileType>
-			</item>
-			<item type="SolutionBuilderMsvcVCXBuildTool">
-				<name>Midl</name>
-				<fileType>idl</fileType>
-			</item>
-			<item type="SolutionBuilderMsvcVCXBuildTool">
-				<name>Object</name>
-				<fileType>obj</fileType>
 			</item>
 		</buildTools>
 	</project>

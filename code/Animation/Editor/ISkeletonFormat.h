@@ -14,6 +14,9 @@ class Vector4;
 
 class Skeleton;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class ISkeletonFormat : public Object
 {
 	T_RTTI_CLASS;

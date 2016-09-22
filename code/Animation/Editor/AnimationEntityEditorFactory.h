@@ -8,6 +8,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class AnimationEntityEditorFactory : public scene::IEntityEditorFactory
 {
 	T_RTTI_CLASS;

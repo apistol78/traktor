@@ -16,6 +16,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLEXPORT ClothEntityEditor : public scene::DefaultEntityEditor
 {
 	T_RTTI_CLASS;

@@ -12,6 +12,9 @@ namespace traktor
 class HostEnumerator;
 class TargetInstance;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class DropListCell : public ui::custom::AutoWidgetCell
 {
 public:

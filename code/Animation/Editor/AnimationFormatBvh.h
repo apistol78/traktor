@@ -8,6 +8,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class AnimationFormatBvh : public IAnimationFormat
 {
 	T_RTTI_CLASS;

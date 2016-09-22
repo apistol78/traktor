@@ -386,13 +386,13 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 	{
 	}
 
-	virtual bool needsCollision(btBroadphaseProxy* proxy0) const
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const T_OVERRIDE T_FINAL
 	{
 		return true;
 	}
 
 #if 0
-	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0, int partId0, int index0, const btCollisionObjectWrapper* colObj1, int partId1, int index1)
+	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0, int partId0, int index0, const btCollisionObjectWrapper* colObj1, int partId1, int index1) T_OVERRIDE T_FINAL
 	{
 		if (m_colObj == colObj0->getCollisionObject())
 		{
@@ -415,8 +415,11 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 		return 0.0f;
 	}
 #else
-	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObject* colObj0, int partId0, int index0, const btCollisionObject* colObj1, int partId1, int index1)
+	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1) T_OVERRIDE T_FINAL
 	{
+		const btCollisionObject* colObj0 = colObj0Wrap->getCollisionObject();
+		const btCollisionObject* colObj1 = colObj1Wrap->getCollisionObject();
+
 		if (m_colObj == colObj0)
 		{
 			T_ASSERT (colObj1);
@@ -435,6 +438,7 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 
 			m_outResult.push_back(bodyBullet);
 		}
+
 		return 0.0f;
 	}
 #endif
@@ -675,11 +679,9 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			return 0;
 		}
 
-		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
-		const AlignedVector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
-
 		if (is_a< DynamicBodyDesc >(desc))
 		{
+			const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 			const AlignedVector< uint32_t >& hullIndices = mesh->getHullIndices();
 			if (hullIndices.empty())
 			{

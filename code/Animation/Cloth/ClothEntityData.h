@@ -34,6 +34,9 @@ class IResourceManager;
 
 class ClothEntity;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS ClothEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;

@@ -8,6 +8,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class SkeletonFormatFbx : public ISkeletonFormat
 {
 	T_RTTI_CLASS;

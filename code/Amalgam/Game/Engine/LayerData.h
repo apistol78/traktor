@@ -26,6 +26,9 @@ class IEnvironment;
 class Layer;
 class Stage;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS LayerData : public ISerializable
 {
 	T_RTTI_CLASS;

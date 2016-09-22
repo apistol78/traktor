@@ -24,7 +24,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.DeploySettingsPage", 0, DeployS
 bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,*,*,100%", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,*,*,*,100%", 0, 4)))
 		return false;
 
 	m_checkInheritCache = new ui::CheckBox();
@@ -56,6 +56,27 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 
 	bool useNsight = settings->getProperty< PropertyBoolean >(L"Amalgam.UseNsightTegra", false);
 	m_checkUseNsight->setChecked(useNsight);
+
+	Ref< ui::Container > containerAndroid = new ui::Container();
+	containerAndroid->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
+
+	Ref< ui::Static > staticAndroidNdkRoot = new ui::Static();
+	staticAndroidNdkRoot->create(containerAndroid, L"Android NDK root");
+
+	m_editAndroidNdkRoot = new ui::Edit();
+	m_editAndroidNdkRoot->create(containerAndroid, settings->getProperty< PropertyString >(L"Amalgam.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"));
+
+	Ref< ui::Static > staticAndroidToolchain = new ui::Static();
+	staticAndroidToolchain->create(containerAndroid, L"Android Toolchain");
+
+	m_editAndroidToolchain = new ui::Edit();
+	m_editAndroidToolchain->create(containerAndroid, settings->getProperty< PropertyString >(L"Amalgam.AndroidToolchain", L"4.9"));
+
+	Ref< ui::Static > staticAndroidApiLevel = new ui::Static();
+	staticAndroidApiLevel->create(containerAndroid, L"Android API level");
+
+	m_editAndroidApiLevel = new ui::Edit();
+	m_editAndroidApiLevel->create(containerAndroid, settings->getProperty< PropertyString >(L"Amalgam.AndroidApiLevel", L"android-19"));
 
 	Ref< ui::Container > containerEnvironment = new ui::Container();
 	containerEnvironment->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));
@@ -109,6 +130,15 @@ bool DeploySettingsPage::apply(PropertyGroup* settings)
 
 	bool useNsight = m_checkUseNsight->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Amalgam.UseNsightTegra", useNsight);
+
+	std::wstring androidNdkRoot = m_editAndroidNdkRoot->getText();
+	settings->setProperty< PropertyString >(L"Amalgam.AndroidNdkRoot", androidNdkRoot);
+
+	std::wstring androidToolchain = m_editAndroidToolchain->getText();
+	settings->setProperty< PropertyString >(L"Amalgam.AndroidToolchain", androidToolchain);
+
+	std::wstring androidApiLevel = m_editAndroidApiLevel->getText();
+	settings->setProperty< PropertyString >(L"Amalgam.AndroidApiLevel", androidApiLevel);
 
 	return true;
 }

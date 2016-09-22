@@ -20,6 +20,9 @@ class TextureFactory;
 
 class IEnvironment;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class RenderServer : public IRenderServer
 {
 	T_RTTI_CLASS;

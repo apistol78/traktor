@@ -40,6 +40,9 @@ class Video;
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS VideoLayer : public Layer
 {
 	T_RTTI_CLASS;

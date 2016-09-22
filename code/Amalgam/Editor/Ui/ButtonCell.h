@@ -10,6 +10,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class ButtonCell : public ui::custom::AutoWidgetCell
 {
 	T_RTTI_CLASS;

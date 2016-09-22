@@ -13,6 +13,9 @@ class PropertyGroup;
 
 class IEnvironment;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class ResourceServer : public IResourceServer
 {
 	T_RTTI_CLASS;
