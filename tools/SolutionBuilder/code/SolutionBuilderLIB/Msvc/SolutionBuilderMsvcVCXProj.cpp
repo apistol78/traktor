@@ -39,7 +39,7 @@ namespace
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 5, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 6, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
 
 SolutionBuilderMsvcVCXProj::SolutionBuilderMsvcVCXProj()
 {
@@ -93,6 +93,7 @@ bool SolutionBuilderMsvcVCXProj::generate(
 
 void SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 {
+	const wchar_t* itemNames[] = { L"staticLibrary", L"sharedLibrary", L"executable", L"executableConsole" };
 	std::wstring toolset;
 
 	s >> Member< std::wstring >(L"platform", m_platform);
@@ -126,8 +127,6 @@ void SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 
 	if (s.getVersion() >= 3)
 	{
-		const wchar_t* itemNames[] = { L"staticLibrary", L"sharedLibrary", L"executable", L"executableConsole" };
-
 		s >> MemberStaticArray<
 			std::map< std::wstring, std::wstring >,
 			4,
@@ -168,16 +167,33 @@ void SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 		m_configurationDefinitionsRelease[3] = m_configurationDefinitionsDebug[3];
 	}
 
-	s >> MemberStaticArray<
-			RefArray< SolutionBuilderMsvcVCXDefinition >,
-			sizeof_array(m_buildDefinitionsDebug),
-			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-		>(L"buildDefinitionsDebug", m_buildDefinitionsDebug);
-	s >> MemberStaticArray<
-			RefArray< SolutionBuilderMsvcVCXDefinition >,
-			sizeof_array(m_buildDefinitionsRelease),
-			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-		>(L"buildDefinitionsRelease", m_buildDefinitionsRelease);
+	if (s.getVersion() >= 6)
+	{
+		s >> MemberStaticArray<
+				RefArray< SolutionBuilderMsvcVCXDefinition >,
+				sizeof_array(m_buildDefinitionsDebug),
+				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
+			>(L"buildDefinitionsDebug", m_buildDefinitionsDebug, itemNames);
+		s >> MemberStaticArray<
+				RefArray< SolutionBuilderMsvcVCXDefinition >,
+				sizeof_array(m_buildDefinitionsRelease),
+				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
+			>(L"buildDefinitionsRelease", m_buildDefinitionsRelease, itemNames);
+	}
+	else
+	{
+		s >> MemberStaticArray<
+				RefArray< SolutionBuilderMsvcVCXDefinition >,
+				sizeof_array(m_buildDefinitionsDebug),
+				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
+			>(L"buildDefinitionsDebug", m_buildDefinitionsDebug);
+		s >> MemberStaticArray<
+				RefArray< SolutionBuilderMsvcVCXDefinition >,
+				sizeof_array(m_buildDefinitionsRelease),
+				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
+			>(L"buildDefinitionsRelease", m_buildDefinitionsRelease);
+	}
+
 	s >> MemberRefArray< SolutionBuilderMsvcVCXBuildTool >(L"buildTools", m_buildTools);
 }
 

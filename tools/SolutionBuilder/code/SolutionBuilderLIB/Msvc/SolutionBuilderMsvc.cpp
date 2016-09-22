@@ -8,6 +8,7 @@
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/IStream.h>
 #include <Xml/XmlDeserializer.h>
+#include <Xml/XmlSerializer.h>
 #include "SolutionBuilderLIB/Configuration.h"
 #include "SolutionBuilderLIB/ExternalDependency.h"
 #include "SolutionBuilderLIB/Project.h"
@@ -83,6 +84,29 @@ bool SolutionBuilderMsvc::create(const CommandLine& cmdLine)
 			traktor::log::error << L"Unable to read platform type \"" << platform << L"\"" << Endl;
 			return false;
 		}
+
+		file->close();
+	}
+
+	if (cmdLine.hasOption('w', L"msvc-write-platform"))
+	{
+		const std::wstring& outputFileName = cmdLine.getOption('w', L"msvc-write-platform").getString();
+		if (outputFileName.empty())
+		{
+			traktor::log::error << L"No output filename specified." << Endl;
+			return false;
+		}
+
+		traktor::log::info << L"Writing settings \"" << outputFileName << L"\"..." << Endl;
+
+		Ref< IStream > file = FileSystem::getInstance().open(outputFileName, traktor::File::FmWrite);
+		if (!file)
+		{
+			traktor::log::error << L"Unable to create output file \"" << outputFileName << L"\"" << Endl;
+			return false;
+		}
+
+		xml::XmlSerializer(file).writeObject(settings);
 
 		file->close();
 	}
@@ -488,5 +512,6 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 void SolutionBuilderMsvc::showOptions() const
 {
-	traktor::log::info << L"\t-p=[platform],-msvc-platform=[platform]	(Platform description file)" << Endl;
+	traktor::log::info << L"\t-p=[platform],-msvc-platform=[platform]			(Platform description file)" << Endl;
+	traktor::log::info << L"\t-w=[filename],-msvc-write-platform=[filename]		(Write platform description file)" << Endl;
 }

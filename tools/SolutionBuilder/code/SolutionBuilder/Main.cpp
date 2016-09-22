@@ -20,7 +20,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v3.1.3"
+#define TITLE L"SolutionBuilder v3.1.4"
 
 #define ERROR_UNKNOWN_FORMAT 1
 #define ERROR_UNABLE_TO_READ_SOLUTION 2
@@ -89,7 +89,7 @@ int main(int argc, const char** argv)
 	else
 		builder = new SolutionBuilderMsvc();
 
-	if (cmdLine.hasOption('?') || cmdLine.hasOption('h', L"help") || cmdLine.getCount() <= 0)
+	if (cmdLine.hasOption('?') || cmdLine.hasOption('h', L"help"))
 	{
 		traktor::log::info << TITLE << Endl;
 		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution]" << Endl;
@@ -104,85 +104,90 @@ int main(int argc, const char** argv)
 	Timer timer;
 	timer.start();
 
-	SolutionLoader solutionLoader;
+	Ref< Solution > solution;
 
-	if (cmdLine.hasOption('v', L"verbose"))
+	if (cmdLine.getCount() >= 1)
 	{
-		traktor::log::info << TITLE << Endl;
-		traktor::log::info << L"Loading solution \"" << cmdLine.getString(0) << L"\"..." << Endl;
-	}
+		SolutionLoader solutionLoader;
 
-	Ref< Solution > solution = solutionLoader.load(cmdLine.getString(0));
-	if (!solution)
-	{
-		traktor::log::error << L"Unable to read solution \"" << cmdLine.getString(0) << L"\"" << Endl;
-		return ERROR_UNABLE_TO_READ_SOLUTION;
-	}
-
-	if (cmdLine.hasOption(L"rootPath"))
-	{
-		Path rootPath(cmdLine.getOption(L"rootPath").getString());
-		solution->setRootPath(rootPath.normalized().getPathName());
-	}
-
-	if (cmdLine.hasOption('v', L"verbose"))
-	{
-		traktor::log::info << L"Using root path \"" << solution->getRootPath() << L"\"" << Endl;
-		traktor::log::info << L"Resolving dependencies..." << Endl;
-	}
-
-	const RefArray< Project >& projects = solution->getProjects();
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
-	{
-		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
-		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		if (cmdLine.hasOption('v', L"verbose"))
 		{
-			if (!(*j)->resolve(&solutionLoader))
+			traktor::log::info << TITLE << Endl;
+			traktor::log::info << L"Loading solution \"" << cmdLine.getString(0) << L"\"..." << Endl;
+		}
+
+		solution = solutionLoader.load(cmdLine.getString(0));
+		if (!solution)
+		{
+			traktor::log::error << L"Unable to read solution \"" << cmdLine.getString(0) << L"\"" << Endl;
+			return ERROR_UNABLE_TO_READ_SOLUTION;
+		}
+
+		if (cmdLine.hasOption(L"rootPath"))
+		{
+			Path rootPath(cmdLine.getOption(L"rootPath").getString());
+			solution->setRootPath(rootPath.normalized().getPathName());
+		}
+
+		if (cmdLine.hasOption('v', L"verbose"))
+		{
+			traktor::log::info << L"Using root path \"" << solution->getRootPath() << L"\"" << Endl;
+			traktor::log::info << L"Resolving dependencies..." << Endl;
+		}
+
+		const RefArray< Project >& projects = solution->getProjects();
+		for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+		{
+			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
-				traktor::log::error << L"Unable to resolve all dependencies" << Endl;
-				return ERROR_UNABLE_TO_RESOLVE_DEPENDENCIES;
+				if (!(*j)->resolve(&solutionLoader))
+				{
+					traktor::log::error << L"Unable to resolve all dependencies" << Endl;
+					return ERROR_UNABLE_TO_RESOLVE_DEPENDENCIES;
+				}
 			}
 		}
-	}
 
-	const RefArray< Aggregation >& aggregations = solution->getAggregations();
-	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
-	{
-		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
-		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		const RefArray< Aggregation >& aggregations = solution->getAggregations();
+		for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
 		{
-			if (!(*j)->resolve(&solutionLoader))
+			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
-				traktor::log::error << L"Unable to resolve all dependencies" << Endl;
-				return ERROR_UNABLE_TO_RESOLVE_DEPENDENCIES;
+				if (!(*j)->resolve(&solutionLoader))
+				{
+					traktor::log::error << L"Unable to resolve all dependencies" << Endl;
+					return ERROR_UNABLE_TO_RESOLVE_DEPENDENCIES;
+				}
 			}
 		}
-	}
 
-	if (cmdLine.hasOption('v', L"verbose"))
-		traktor::log::info << L"Flatten include paths..." << Endl;
+		if (cmdLine.hasOption('v', L"verbose"))
+			traktor::log::info << L"Flatten include paths..." << Endl;
 
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
-	{
-		std::map< std::wstring, std::set< std::wstring > > configurationIncludePaths;
-		flattenIncludePaths(*i, configurationIncludePaths);
-
-		const RefArray< Configuration >& configurations = (*i)->getConfigurations();
-		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+		for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		{
-			const std::set< std::wstring >& includePaths = configurationIncludePaths[(*j)->getName()];
+			std::map< std::wstring, std::set< std::wstring > > configurationIncludePaths;
+			flattenIncludePaths(*i, configurationIncludePaths);
 
-			if (cmdLine.hasOption('v', L"verbose"))
+			const RefArray< Configuration >& configurations = (*i)->getConfigurations();
+			for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 			{
-				traktor::log::info << L"Include paths of \"" << (*i)->getName() << L"\" " << (*j)->getName() << Endl;
-				for (std::set< std::wstring >::const_iterator k = includePaths.begin(); k != includePaths.end(); ++k)
-					traktor::log::info << L"\t" << *k << Endl;
-			}
+				const std::set< std::wstring >& includePaths = configurationIncludePaths[(*j)->getName()];
 
-			(*j)->setIncludePaths(std::vector< std::wstring >(
-				includePaths.begin(),
-				includePaths.end()
-			));
+				if (cmdLine.hasOption('v', L"verbose"))
+				{
+					traktor::log::info << L"Include paths of \"" << (*i)->getName() << L"\" " << (*j)->getName() << Endl;
+					for (std::set< std::wstring >::const_iterator k = includePaths.begin(); k != includePaths.end(); ++k)
+						traktor::log::info << L"\t" << *k << Endl;
+				}
+
+				(*j)->setIncludePaths(std::vector< std::wstring >(
+					includePaths.begin(),
+					includePaths.end()
+				));
+			}
 		}
 	}
 
@@ -195,16 +200,19 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption('v', L"verbose"))
 		traktor::log::info << L"Generating target solution..." << Endl;
 
-	if (!builder->generate(solution))
+	if (solution)
 	{
-		traktor::log::error << L"Unable to generate target solution" << Endl;
-		return ERROR_UNABLE_TO_CREATE_SOLUTION;
+		if (!builder->generate(solution))
+		{
+			traktor::log::error << L"Unable to generate target solution" << Endl;
+			return ERROR_UNABLE_TO_CREATE_SOLUTION;
+		}
 	}
 
 	timer.stop();
 	
 	if (cmdLine.hasOption('v', L"verbose"))
-		traktor::log::info << L"Target solution created successfully, " << timer.getElapsedTime() << L" second(s)" << Endl;
+		traktor::log::info << L"Finished successfully in " << timer.getElapsedTime() << L" second(s)" << Endl;
 
 	return 0;
 }
