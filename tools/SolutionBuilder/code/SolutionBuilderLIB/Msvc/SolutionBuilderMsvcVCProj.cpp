@@ -23,7 +23,7 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCProj", 0, SolutionBuilderMsvcVCProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCProj", 1, SolutionBuilderMsvcVCProj, SolutionBuilderMsvcProject)
 
 std::wstring SolutionBuilderMsvcVCProj::getPlatform() const
 {
@@ -137,9 +137,27 @@ bool SolutionBuilderMsvcVCProj::generate(
 
 void SolutionBuilderMsvcVCProj::serialize(traktor::ISerializer& s)
 {
+	const wchar_t* itemNames[] = { L"staticLibrary", L"sharedLibrary", L"executable", L"executableConsole" };
+
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);
 	s >> Member< std::wstring >(L"platform", m_platform);
-	s >> MemberStaticArray< Ref< SolutionBuilderMsvcConfiguration >, 4, MemberRef< SolutionBuilderMsvcConfiguration > >(L"configurations", m_configurations);
+
+	if (s.getVersion() >= 1)
+	{
+		s >> MemberStaticArray< Ref< SolutionBuilderMsvcConfiguration >, 4, MemberRef< SolutionBuilderMsvcConfiguration > >(
+			L"configurations",
+			m_configurations,
+			itemNames
+		);
+	}
+	else
+	{
+		s >> MemberStaticArray< Ref< SolutionBuilderMsvcConfiguration >, 4, MemberRef< SolutionBuilderMsvcConfiguration > >(
+			L"configurations",
+			m_configurations
+		);
+	}
+
 	s >> MemberStlMap<
 		std::wstring,
 		Ref< SolutionBuilderMsvcTool >,
