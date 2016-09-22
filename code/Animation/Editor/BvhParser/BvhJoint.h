@@ -10,6 +10,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class BvhJoint : public Object
 {
 	T_RTTI_CLASS;

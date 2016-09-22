@@ -17,6 +17,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS AnimationAsset : public editor::Asset
 {
 	T_RTTI_CLASS;

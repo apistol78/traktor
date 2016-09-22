@@ -14,6 +14,9 @@ class Vector4;
 
 class Animation;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class IAnimationFormat : public Object
 {
 	T_RTTI_CLASS;

@@ -16,6 +16,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS SkeletonWizardTool : public editor::IWizardTool
 {
 	T_RTTI_CLASS;

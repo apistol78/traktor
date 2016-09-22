@@ -14,7 +14,6 @@ namespace traktor
 		{
 
 const int32_t c_maximumStep = 32;
-const int32_t c_raycastStepSize = 4;
 
 inline float quantizeMin(float v)
 {

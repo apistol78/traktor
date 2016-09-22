@@ -13,6 +13,9 @@ class IStream;
 
 class LwsGroup;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class LwsDocument : public Object
 {
 	T_RTTI_CLASS;

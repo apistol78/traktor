@@ -22,6 +22,9 @@ class DropListCell;
 class HostEnumerator;
 class ProgressCell;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class TargetInstanceListItem : public ui::custom::AutoWidgetCell
 {
 public:

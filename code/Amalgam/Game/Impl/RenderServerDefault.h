@@ -8,6 +8,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class RenderServerDefault : public RenderServer
 {
 	T_RTTI_CLASS;

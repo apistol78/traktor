@@ -54,7 +54,7 @@ void displayKeyboard(ANativeActivity* activity, bool pShow)
 	{
 		// Runs lInputMethodManager.showSoftInput(...).
 		jmethodID MethodShowSoftInput = lJNIEnv->GetMethodID(ClassInputMethodManager, "showSoftInput", "(Landroid/view/View;I)Z");
-		jboolean lResult = lJNIEnv->CallBooleanMethod(lInputMethodManager, MethodShowSoftInput, lDecorView, lFlags);
+		lJNIEnv->CallBooleanMethod(lInputMethodManager, MethodShowSoftInput, lDecorView, lFlags);
 	}
 	else
 	{
@@ -64,8 +64,8 @@ void displayKeyboard(ANativeActivity* activity, bool pShow)
 		jobject lBinder = lJNIEnv->CallObjectMethod(lDecorView, MethodGetWindowToken);
 
 		// lInputMethodManager.hideSoftInput(...).
-		jmethodID MethodHideSoftInput = lJNIEnv->GetMethodID(ClassInputMethodManager, "hideSoftInputFromWindow",	 "(Landroid/os/IBinder;I)Z");
-		jboolean lRes = lJNIEnv->CallBooleanMethod(lInputMethodManager, MethodHideSoftInput, lBinder, lFlags);
+		jmethodID MethodHideSoftInput = lJNIEnv->GetMethodID(ClassInputMethodManager, "hideSoftInputFromWindow", "(Landroid/os/IBinder;I)Z");
+		lJNIEnv->CallBooleanMethod(lInputMethodManager, MethodHideSoftInput, lBinder, lFlags);
 	}
 
 	// Finished with the JVM.

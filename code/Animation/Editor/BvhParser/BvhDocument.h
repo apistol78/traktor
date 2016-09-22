@@ -16,6 +16,9 @@ class Vector4;
 
 class BvhJoint;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class BvhDocument : public Object
 {
 	T_RTTI_CLASS;

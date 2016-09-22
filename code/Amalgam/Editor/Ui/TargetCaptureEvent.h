@@ -10,6 +10,9 @@ namespace traktor
 
 class TargetInstance;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class TargetCaptureEvent : public ui::Event
 {
 	T_RTTI_CLASS;

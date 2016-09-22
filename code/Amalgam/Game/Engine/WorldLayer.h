@@ -54,6 +54,9 @@ class IWorldRenderer;
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS WorldLayer
 :	public Layer
 ,	public spray::IFeedbackListener

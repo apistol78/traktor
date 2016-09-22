@@ -110,10 +110,6 @@ void WorldLayer::transition(Layer* fromLayer)
 		return;
 
 	WorldLayer* fromWorldLayer = checked_type_cast< WorldLayer*, false >(fromLayer);
-
-	// Get post process quality from settings.
-	int32_t imageProcessQuality = m_environment->getSettings()->getProperty< PropertyInteger >(L"World.ImageProcessQuality", world::QuHigh);
-
 	if (DeepHash(m_scene->getWorldRenderSettings()) == DeepHash(fromWorldLayer->m_scene->getWorldRenderSettings()))
 	{
 		m_worldRenderer = fromWorldLayer->m_worldRenderer;
@@ -313,9 +309,6 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 {
 	if (!m_worldRenderer || !m_scene)
 		return;
-
-	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-	T_ASSERT (renderView);
 
 	if (m_worldRenderer->beginRender(frame, eye, c_clearColor))
 	{

@@ -13,6 +13,9 @@ class PropertyGroup;
 
 class IEnvironment;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class PhysicsServer : public IPhysicsServer
 {
 	T_RTTI_CLASS;

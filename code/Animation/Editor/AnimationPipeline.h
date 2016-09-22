@@ -16,6 +16,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS AnimationPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS;

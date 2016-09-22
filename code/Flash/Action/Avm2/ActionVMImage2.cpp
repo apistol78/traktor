@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/RefArray.h"
 #include "Core/Misc/StringSplit.h"
 #include "Flash/Action/ActionContext.h"

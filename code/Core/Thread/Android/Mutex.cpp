@@ -16,8 +16,8 @@ struct InternalData
 	}
 
 Mutex::Mutex()
-:	m_existing(false)
-,	m_handle(0)
+:	m_handle(0)
+,	m_existing(false)
 {
 	InternalData* data = new InternalData();
 	std::memset(data, 0, sizeof(InternalData));

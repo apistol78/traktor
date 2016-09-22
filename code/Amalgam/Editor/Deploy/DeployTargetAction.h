@@ -31,6 +31,9 @@ class Database;
 class Target;
 class TargetConfiguration;
 
+/*! \brief Deploy target action.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS DeployTargetAction : public ITargetAction
 {
 	T_RTTI_CLASS;

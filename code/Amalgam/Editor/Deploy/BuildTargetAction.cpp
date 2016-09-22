@@ -20,6 +20,7 @@
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
 #include "Core/System/PipeReader.h"
+#include "Core/System/ResolveEnv.h"
 #include "Database/ConnectionString.h"
 #include "Database/Database.h"
 #include "Xml/XmlDeserializer.h"
@@ -247,6 +248,9 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	env->set(L"DEPLOY_DEBUG", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
 	env->set(L"DEPLOY_STATIC_LINK", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", false) ? L"YES" : L"");
 	env->set(L"DEPLOY_USE_NSIGHT", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseNsightTegra", false) ? L"YES" : L"");
+	env->set(L"DEPLOY_ANDROID_NDK_ROOT", resolveEnv(m_globalSettings->getProperty< PropertyString >(L"Amalgam.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"), 0));
+	env->set(L"DEPLOY_ANDROID_TOOLCHAIN", m_globalSettings->getProperty< PropertyString >(L"Amalgam.AndroidToolchain", L"4.9"));
+	env->set(L"DEPLOY_ANDROID_APILEVEL", m_globalSettings->getProperty< PropertyString >(L"Amalgam.AndroidApiLevel", L"android-19"));
 
 	// Flatten feature deploy variables.
 	const std::map< std::wstring, Ref< IPropertyValue > >& values = deploy->getValues();

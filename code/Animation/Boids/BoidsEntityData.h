@@ -25,6 +25,9 @@ class IEntityBuilder;
 
 class BoidsEntity;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS BoidsEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;

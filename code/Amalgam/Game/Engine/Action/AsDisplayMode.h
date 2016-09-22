@@ -17,6 +17,9 @@ class IEnvironment;
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class AsDisplayMode : public flash::ActionObjectRelay
 {
 	T_RTTI_CLASS;

@@ -19,6 +19,9 @@ namespace traktor
 class IEnvironment;
 class IState;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS IRuntimePlugin : public Object
 {
 	T_RTTI_CLASS;

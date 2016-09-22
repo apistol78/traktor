@@ -16,6 +16,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS AnimatedMeshEntityPipeline : public world::EntityPipeline
 {
 	T_RTTI_CLASS;

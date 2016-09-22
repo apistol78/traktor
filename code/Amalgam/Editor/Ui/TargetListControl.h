@@ -11,6 +11,9 @@ namespace traktor
 
 class TargetInstanceListItem;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class TargetListControl : public ui::custom::AutoWidget
 {
 	T_RTTI_CLASS;

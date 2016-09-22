@@ -69,6 +69,9 @@ class PrimitiveRenderer;
 
 class Skeleton;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS SkeletonEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS;

@@ -21,6 +21,9 @@ class ScriptServer;
 class UpdateControl;
 class WorldServer;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class Environment : public IEnvironment
 {
 	T_RTTI_CLASS;

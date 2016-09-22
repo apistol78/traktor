@@ -53,6 +53,9 @@ class AnimatedMeshEntity;
 class IPoseController;
 class Skeleton;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class AnimationPreviewControl : public ui::Widget
 {
 	T_RTTI_CLASS;

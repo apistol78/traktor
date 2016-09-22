@@ -17,6 +17,9 @@ class IPropertyValue;
 class AsDisplayMode;
 class AsSoundDriver;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class AsConfiguration : public flash::ActionObjectRelay
 {
 	T_RTTI_CLASS;

@@ -11,6 +11,9 @@ namespace traktor
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class VolumePicker : public Object
 {
 	T_RTTI_CLASS;

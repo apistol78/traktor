@@ -91,7 +91,6 @@ bool UndergrowthLayer::create(
 		return false;
 
 	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
-	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
 
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, position)));

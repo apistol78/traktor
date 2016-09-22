@@ -10,6 +10,9 @@ namespace traktor
 
 class LwsDocument;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class SkeletonFormatLws : public ISkeletonFormat
 {
 	T_RTTI_CLASS;

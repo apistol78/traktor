@@ -9,6 +9,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class AsSoundDriver : public flash::ActionObjectRelay
 {
 	T_RTTI_CLASS;

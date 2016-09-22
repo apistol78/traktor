@@ -30,6 +30,9 @@ class InputSourceFabricator;
 
 class IEnvironment;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class InputServer : public IInputServer
 {
 	T_RTTI_CLASS;

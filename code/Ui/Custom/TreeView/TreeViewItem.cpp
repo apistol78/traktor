@@ -309,7 +309,6 @@ Rect TreeViewItem::calculateLabelRect() const
 	int32_t depth = calculateDepth();
 
 	int32_t imageWidth = m_view->m_imageWidth;
-	int32_t imageHeight = m_view->m_imageHeight;
 
 	Rect rcItem = m_view->getCellClientRect(this);
 	rcItem.left += ui::scaleBySystemDPI(4 + depth * 20 + 44);

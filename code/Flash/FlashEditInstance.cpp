@@ -24,13 +24,13 @@ namespace traktor
 
 const struct { const wchar_t* name; Color4f color; } c_colorTable[] =
 {
-	L"black",	Color4f(0.0f, 0.0f, 0.0f, 1.0f),
-	L"red",		Color4f(1.0f, 0.0f, 0.0f, 1.0f),
-	L"green",	Color4f(0.0f, 1.0f, 0.0f, 1.0f),
-	L"blue",	Color4f(0.0f, 0.0f, 1.0f, 1.0f),
-	L"yellow",	Color4f(1.0f, 1.0f, 0.0f, 1.0f),
-	L"white",	Color4f(1.0f, 1.0f, 1.0f, 1.0f),
-	L"lime",	Color4f(0.3f, 0.5f, 1.0f, 1.0f)
+	{ L"black",  Color4f(0.0f, 0.0f, 0.0f, 1.0f) },
+	{ L"red",    Color4f(1.0f, 0.0f, 0.0f, 1.0f) },
+	{ L"green",  Color4f(0.0f, 1.0f, 0.0f, 1.0f) },
+	{ L"blue",   Color4f(0.0f, 0.0f, 1.0f, 1.0f) },
+	{ L"yellow", Color4f(1.0f, 1.0f, 0.0f, 1.0f) },
+	{ L"white",  Color4f(1.0f, 1.0f, 1.0f, 1.0f) },
+	{ L"lime",   Color4f(0.3f, 0.5f, 1.0f, 1.0f) }
 };
 
 bool parseColor(const std::wstring& color, Color4f& outColor)

@@ -32,7 +32,9 @@ class ScriptServer;
 class Environment;
 class TargetManagerConnection;
 
-/*! \brief Amalgam application implementation. */
+/*! \brief Amalgam application implementation.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS Application : public IApplication
 {
 	T_RTTI_CLASS;

@@ -84,7 +84,6 @@ bool ImageFormatIco::write(IStream* stream, Image* image)
 	offsets.push_back(stream->tell());
 
 	// Patch offset and size entries.
-	int32_t end = stream->tell();
 	int32_t entry = 6 + 8;
 	for (int32_t i = 0; i < lods; ++i)
 	{

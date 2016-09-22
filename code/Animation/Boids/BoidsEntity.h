@@ -27,6 +27,9 @@ class WorldRenderView;
 	namespace animation
 	{
 
+/*! \brief
+ * \ingroup Animation
+ */
 class T_DLLCLASS BoidsEntity : public world::Entity
 {
 	T_RTTI_CLASS;

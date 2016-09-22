@@ -31,6 +31,9 @@ class IEnvironment;
 class IRenderServer;
 class IResourceServer;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class WorldServer : public IWorldServer
 {
 	T_RTTI_CLASS;

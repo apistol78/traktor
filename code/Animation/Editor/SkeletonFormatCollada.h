@@ -10,6 +10,9 @@ namespace traktor
 
 //class BvhDocument;
 
+/*! \brief
+ * \ingroup Animation
+ */
 class SkeletonFormatCollada : public ISkeletonFormat
 {
 	T_RTTI_CLASS;

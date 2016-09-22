@@ -40,11 +40,7 @@ void As_traktor_amalgam_InputFabricator::initialize(flash::ActionObject* self)
 
 void As_traktor_amalgam_InputFabricator::construct(flash::ActionObject* self, const flash::ActionValueArray& args)
 {
-	flash::ActionContext* context = getContext();
-	T_ASSERT (context);
-
 	Ref< AsInputFabricator > inp = new AsInputFabricator(m_environment);
-
 	self->setRelay(inp);
 }
 

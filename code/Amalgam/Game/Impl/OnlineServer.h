@@ -20,6 +20,9 @@ class Database;
 
 class IAudioServer;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class OnlineServer : public IOnlineServer
 {
 	T_RTTI_CLASS;

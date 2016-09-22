@@ -110,7 +110,7 @@ Vector2 AsStage::toScreen(const Vector2& pos) const
 	float sx = vx * m_viewWidth;
 	float sy = vy * m_viewHeight;
 
-	return Vector2(tx, sy);
+	return Vector2(sx, sy);
 }
 
 void AsStage::updateViewOffset()
