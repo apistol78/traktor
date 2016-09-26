@@ -21,6 +21,7 @@ InputDriverTobii::InputDriverTobii()
 ,	m_hGlobalInteractorSnapshot(TX_EMPTY_HANDLE)
 ,	m_hConnectionStateChangedTicket(TX_INVALID_TICKET)
 ,	m_hEventHandlerTicket(TX_INVALID_TICKET)
+,	m_hPresenceStateChangedTicket(TX_INVALID_TICKET)
 ,	m_hWnd(NULL)
 {
 }
@@ -95,6 +96,12 @@ bool InputDriverTobii::create(const SystemApplication& sysapp, const SystemWindo
 		return false;
 	}
 
+	if ((result = txRegisterStateChangedHandler(m_hContext, &m_hPresenceStateChangedTicket, TX_STATEPATH_USERPRESENCE, engineStateChanged, this)) != TX_RESULT_OK)
+	{
+		log::error << L"Unable to initialize Tobii EyeX; txRegisterStateChangedHandler failed (result = " << int32_t(result) << L")." << Endl;
+		return false;
+	}
+
 	if ((result = txEnableConnection(m_hContext)) != TX_RESULT_OK)
 	{
 		log::error << L"Unable to initialize Tobii EyeX; txEnableConnection failed (result = " << int32_t(result) << L")." << Endl;
@@ -146,10 +153,7 @@ void TX_CALLCONVENTION InputDriverTobii::engineConnectionStateChanged(TX_CONNECT
 		{
 			log::info << L"Tobii EyeX connected." << Endl;
 			if (txCommitSnapshotAsync(this_->m_hGlobalInteractorSnapshot, snapshotCommitted, this_) == TX_RESULT_OK)
-			{
 				log::info << L"Gaze data streaming started." << Endl;
-				this_->m_device->m_connected = true;
-			}
 			else
 				log::error << L"Failed to start gaze data streaming." << Endl;
 		}
@@ -160,6 +164,10 @@ void TX_CALLCONVENTION InputDriverTobii::engineConnectionStateChanged(TX_CONNECT
 			log::info << L"Tobii EyeX disconnected." << Endl;
 			this_->m_device->m_connected = false;
 		}
+		break;
+
+	default:
+		log::debug << L"Unhandled Tobii EyeX connection state change, " << int32_t(connectionState) << Endl;
 		break;
 	}
 }
@@ -189,12 +197,30 @@ void TX_CALLCONVENTION InputDriverTobii::handleEvent(TX_CONSTHANDLE hAsyncData, 
 			this_->m_device->m_rangeY = rcClient.bottom - rcClient.top;
 			this_->m_device->m_positionX = pnt.x;
 			this_->m_device->m_positionY = pnt.y;
+			this_->m_device->m_connected = true;
 		}
-
 		txReleaseObject(&hBehavior);
 	}
 
 	txReleaseObject(&hEvent);
+}
+
+void TX_CALLCONVENTION InputDriverTobii::engineStateChanged(TX_CONSTHANDLE hAsyncData, TX_USERPARAM userParam)
+{
+	InputDriverTobii* this_ = reinterpret_cast< InputDriverTobii* >(userParam);
+	T_FATAL_ASSERT (this_);
+
+	TX_RESULT result = TX_RESULT_UNKNOWN;
+	TX_HANDLE hStateBag = TX_EMPTY_HANDLE;
+	TX_INTEGER eyeTrackingState;
+	TX_BOOL success;
+
+	if (txGetAsyncDataResultCode(hAsyncData, &result) == TX_RESULT_OK && txGetAsyncDataContent(hAsyncData, &hStateBag) == TX_RESULT_OK)
+	{
+		success = (txGetStateValueAsInteger(hStateBag, TX_STATEPATH_EYETRACKINGSTATE, &eyeTrackingState) == TX_RESULT_OK);
+		this_->m_device->m_connected = bool(success && eyeTrackingState == TX_EYETRACKINGDEVICESTATUS_TRACKING);
+		txReleaseObject(&hStateBag);
+	}
 }
 
 	}
