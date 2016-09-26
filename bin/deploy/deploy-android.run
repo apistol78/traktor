@@ -146,8 +146,8 @@ function deploy(args)
 		return 1
 	end	
 
-	local useNsight = (os:getEnvironment("DEPLOY_USE_NSIGHT") ~= "")
-	if useNsight then
+	local useVS = (os:getEnvironment("DEPLOY_ANDROID_USE_VS") ~= "")
+	if useVS then
 
 		-- Create android NSight project.
 		run:mkdir("assets")
@@ -242,8 +242,8 @@ function launch(args)
 		return 1
 	end	
 
-	local useNsight = (os:getEnvironment("DEPLOY_USE_NSIGHT") ~= "")
-	if useNsight then
+	local useVS = (os:getEnvironment("DEPLOY_ANDROID_USE_VS") ~= "")
+	if useVS then
 
 		-- Open generated solution in Visual Studio.
 		local projectName = os:getEnvironment("DEPLOY_PROJECT_NAME")
