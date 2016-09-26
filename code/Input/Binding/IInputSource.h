@@ -31,6 +31,17 @@ public:
 	
 	virtual void prepare(float T, float dT) = 0;
 
+	/*! \brief Read value from input source.
+	 *
+	 * \note
+	 * Should return NaN if unable to read value
+	 * from source as it's possibly used by input
+	 * graph to mask features.
+	 *
+	 * \param T Simulation time.
+	 * \param dT Delta time since last read.
+	 * \return Input source value.
+	 */
 	virtual float read(float T, float dT) = 0;
 };
 

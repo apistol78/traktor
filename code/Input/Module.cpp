@@ -4,6 +4,7 @@
 #	include "Input/InputClassFactory.h"
 #	include "Input/Binding/CombinedInputSourceData.h"
 #	include "Input/Binding/ConstantInputSourceData.h"
+#	include "Input/Binding/ControlInputSourceData.h"
 #	include "Input/Binding/GenericInputSourceData.h"
 #	include "Input/Binding/InBoolean.h"
 #	include "Input/Binding/InClamp.h"
@@ -36,6 +37,7 @@ extern "C" void __module__Traktor_Input()
 	T_FORCE_LINK_REF(InputClassFactory);
 	T_FORCE_LINK_REF(CombinedInputSourceData);
 	T_FORCE_LINK_REF(ConstantInputSourceData);
+	T_FORCE_LINK_REF(ControlInputSourceData);
 	T_FORCE_LINK_REF(GenericInputSourceData);
 	T_FORCE_LINK_REF(InBoolean);
 	T_FORCE_LINK_REF(InClamp);

@@ -5,25 +5,24 @@
 #include "Input/InputSystem.h"
 #include "Input/Binding/DeviceControl.h"
 #include "Input/Binding/DeviceControlManager.h"
-#include "Input/Binding/GenericInputSource.h"
-#include "Input/Binding/GenericInputSourceData.h"
+#include "Input/Binding/ControlInputSource.h"
+#include "Input/Binding/ControlInputSourceData.h"
 
 namespace traktor
 {
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.GenericInputSource", GenericInputSource, IInputSource)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.ControlInputSource", ControlInputSource, IInputSource)
 
-GenericInputSource::GenericInputSource(const GenericInputSourceData* data, DeviceControlManager* deviceControlManager)
+ControlInputSource::ControlInputSource(const ControlInputSourceData* data, DeviceControlManager* deviceControlManager)
 :	m_data(data)
 ,	m_deviceControlManager(deviceControlManager)
 ,	m_matchingDeviceCount(0)
-,	m_lastValue(0.0f)
 {
 }
 
-std::wstring GenericInputSource::getDescription() const
+std::wstring ControlInputSource::getDescription() const
 {
 	// Use name of control as description; use first valid name as it should be the same on all our devices.
 	for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
@@ -37,11 +36,11 @@ std::wstring GenericInputSource::getDescription() const
 	return L"";
 }
 
-void GenericInputSource::prepare(float T, float dT)
+void ControlInputSource::prepare(float T, float dT)
 {
 }
 
-float GenericInputSource::read(float T, float dT)
+float ControlInputSource::read(float T, float dT)
 {
 	InputCategory category = m_data->getCategory();
 	InputDefaultControlType controlType = m_data->getControlType();
@@ -80,36 +79,15 @@ float GenericInputSource::read(float T, float dT)
 		m_matchingDeviceCount = deviceCount;
 	}
 
-	if (!m_deviceControls.empty())
+	// Check if any matching control is connected.
+	for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
 	{
-		// Return first found modified value.
-		for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
-		{
-			float previousValue = (*i)->getPreviousValue();
-			float currentValue = (*i)->getCurrentValue();
-
-			if (abs< float >(currentValue - previousValue) > FUZZY_EPSILON)
-			{
-				// Normalize input value if desired.
-				if (m_data->normalize())
-				{
-					float rangeMin = (*i)->getRangeMin();
-					float rangeMax = (*i)->getRangeMax();
-					if (abs(rangeMax - rangeMin) > FUZZY_EPSILON)
-						currentValue = (currentValue - rangeMin) / (rangeMax - rangeMin);
-				}
-				m_lastValue = currentValue;
-				break;
-			}
-		}
-	}
-	else
-	{
-		// No control available; ensure we reset our state as control might have been disconnected.
-		m_lastValue = 0.0f;
+		if ((*i)->getDevice()->isConnected())
+			return 1.0f;
 	}
 
-	return m_lastValue;
+	// No connected matching controls.
+	return 0.0f;
 }
 
 	}
