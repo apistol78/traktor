@@ -151,7 +151,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 	env->set(L"DEPLOY_OUTPUT_URL", L"http://localhost:44246/" + outputRelativePath.getPathName());
 	env->set(L"DEPLOY_DEBUG", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
 	env->set(L"DEPLOY_STATIC_LINK", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", false) ? L"YES" : L"");
-	env->set(L"DEPLOY_USE_NSIGHT", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseNsightTegra", false) ? L"YES" : L"");
+	env->set(L"DEPLOY_ANDROID_USE_VS", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.AndroidUseVS", false) ? L"YES" : L"");
 	env->set(L"DEPLOY_ANDROID_NDK_ROOT", resolveEnv(m_globalSettings->getProperty< PropertyString >(L"Amalgam.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"), 0));
 	env->set(L"DEPLOY_ANDROID_TOOLCHAIN", m_globalSettings->getProperty< PropertyString >(L"Amalgam.AndroidToolchain", L"4.9"));
 	env->set(L"DEPLOY_ANDROID_APILEVEL", m_globalSettings->getProperty< PropertyString >(L"Amalgam.AndroidApiLevel", L"android-19"));

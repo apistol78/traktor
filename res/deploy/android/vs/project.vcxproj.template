@@ -12,8 +12,10 @@ function string:starts(start)
    return string.sub(self, 1, string.len(start)) == start
 end
 
-local systemRoot = Path(environment:get("DEPLOY_SYSTEM_ROOT")):getPathName()
+local projectName = os:getEnvironment("DEPLOY_PROJECT_NAME")
+assert (projectName ~= nil)
 
+local systemRoot = Path(environment:get("DEPLOY_SYSTEM_ROOT")):getPathName()
 local files = environment:get("DEPLOY_FILES"):split(" ")
 
 local wholeLinkFiles = ""
@@ -28,63 +30,76 @@ for _, f in ipairs(files) do
 end
 
 --!><?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Label="NsightTegraProject">
-    <NsightTegraProjectRevisionNumber>11</NsightTegraProjectRevisionNumber>
-  </PropertyGroup>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="DebugStatic|Tegra-Android">
+    <ProjectConfiguration Include="DebugStatic|ARM">
       <Configuration>DebugStatic</Configuration>
-      <Platform>Tegra-Android</Platform>
+      <Platform>ARM</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="ReleaseStatic|Tegra-Android">
+    <ProjectConfiguration Include="ReleaseStatic|ARM">
       <Configuration>ReleaseStatic</Configuration>
-      <Platform>Tegra-Android</Platform>
+      <Platform>ARM</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{99574D42-4CEE-4755-A5BF-DCB461F71BA5}</ProjectGuid>
-    <RootNamespace>stardoll</RootNamespace>
+    <ProjectGuid>{aa7b2d7f-e48e-46bd-b738-568c16c87823}</ProjectGuid>
+    <Keyword>Android</Keyword>
+    <RootNamespace><!-- output:print(projectName) --!></RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <ApplicationType>Android</ApplicationType>
+    <ApplicationTypeRevision>2.0</ApplicationTypeRevision>
   </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Tegra-Android'">
-    <AndroidTargetAPI>android-16</AndroidTargetAPI>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|ARM'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>Clang_3_8</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Tegra-Android'">
-    <AndroidTargetAPI>android-16</AndroidTargetAPI>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|ARM'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>Clang_3_8</PlatformToolset>
   </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
   </PropertyGroup>
+
   <PropertyGroup />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Tegra-Android'">
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|ARM'">
     <TargetName>libTraktor.Amalgam.Game.App</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Tegra-Android'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|ARM'">
     <TargetName>libTraktor.Amalgam.Game.App</TargetName>
-  </PropertyGroup>    
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Tegra-Android'">
+  </PropertyGroup>   
+
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|ARM'">
     <ClCompile>
-      <CppLanguageStandard>gnu++11</CppLanguageStandard>
-      <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>android;EGL;GLESv2;OpenSLES<!-- output:print(wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles) --!></AdditionalDependencies>
-      <AdditionalLibraryDirectories><!-- output:print(systemRoot) --!>\bin\latest\android\debugstatic</AdditionalLibraryDirectories>
+      <LibraryDependencies>m;android;EGL;GLESv2;OpenSLES<!-- output:print(wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles) --!>;$(StlLibraryName);%(LibraryDependencies)</LibraryDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);<!-- output:print(systemRoot) --!>\bin\latest\android\debugstatic</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Tegra-Android'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|ARM'">
     <ClCompile>
-      <CppLanguageStandard>gnu++11</CppLanguageStandard>
-      <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>android;EGL;GLESv2;OpenSLES<!-- output:print(wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles) --!></AdditionalDependencies>
-      <AdditionalLibraryDirectories><!-- output:print(systemRoot) --!>\bin\latest\android\releasestatic</AdditionalLibraryDirectories>
+      <LibraryDependencies>m;android;EGL;GLESv2;OpenSLES<!-- output:print(wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles) --!>;$(StlLibraryName);%(LibraryDependencies)</LibraryDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);<!-- output:print(systemRoot) --!>\bin\latest\android\releasestatic</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
+
   <ItemGroup>
     <AndroidBuild Include="AndroidManifest.xml" />
     <AndroidBuild Include="res\values\strings.xml" />
@@ -93,7 +108,7 @@ end
   <ItemGroup>
     <ClCompile Include="Linkage.cpp" />
   </ItemGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

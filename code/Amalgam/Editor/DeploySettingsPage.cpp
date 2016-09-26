@@ -51,11 +51,11 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 	bool staticallyLinked = settings->getProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", false);
 	m_checkStaticallyLinked->setChecked(staticallyLinked);
 
-	m_checkUseNsight = new ui::CheckBox();
-	m_checkUseNsight->create(container, L"Build Android through Nsight Tegra SDK");
+	m_checkUseVS = new ui::CheckBox();
+	m_checkUseVS->create(container, L"Build Android using MS Visual Studio");
 
-	bool useNsight = settings->getProperty< PropertyBoolean >(L"Amalgam.UseNsightTegra", false);
-	m_checkUseNsight->setChecked(useNsight);
+	bool useVS = settings->getProperty< PropertyBoolean >(L"Amalgam.AndroidUseVS", false);
+	m_checkUseVS->setChecked(useVS);
 
 	Ref< ui::Container > containerAndroid = new ui::Container();
 	containerAndroid->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
@@ -128,8 +128,8 @@ bool DeploySettingsPage::apply(PropertyGroup* settings)
 	bool staticallyLinked = m_checkStaticallyLinked->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", staticallyLinked);
 
-	bool useNsight = m_checkUseNsight->isChecked();
-	settings->setProperty< PropertyBoolean >(L"Amalgam.UseNsightTegra", useNsight);
+	bool useNsight = m_checkUseVS->isChecked();
+	settings->setProperty< PropertyBoolean >(L"Amalgam.AndroidUseVS", useNsight);
 
 	std::wstring androidNdkRoot = m_editAndroidNdkRoot->getText();
 	settings->setProperty< PropertyString >(L"Amalgam.AndroidNdkRoot", androidNdkRoot);

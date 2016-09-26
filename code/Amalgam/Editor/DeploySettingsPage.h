@@ -37,7 +37,7 @@ private:
 	Ref< ui::CheckBox > m_checkHidePipeline;
 	Ref< ui::CheckBox > m_checkUseDebugBinaries;
 	Ref< ui::CheckBox > m_checkStaticallyLinked;
-	Ref< ui::CheckBox > m_checkUseNsight;
+	Ref< ui::CheckBox > m_checkUseVS;
 	Ref< ui::Edit > m_editAndroidNdkRoot;
 	Ref< ui::Edit > m_editAndroidToolchain;
 	Ref< ui::Edit > m_editAndroidApiLevel;
