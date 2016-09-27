@@ -1,7 +1,7 @@
 #ifndef traktor_render_InterpolatorNodeFacade_H
 #define traktor_render_InterpolatorNodeFacade_H
 
-#include "Render/Editor/Shader/NodeFacade.h"
+#include "Render/Editor/Shader/INodeFacade.h"
 
 namespace traktor
 {
@@ -18,7 +18,7 @@ class NodeShape;
 	namespace render
 	{
 
-class InterpolatorNodeFacade : public NodeFacade
+class InterpolatorNodeFacade : public INodeFacade
 {
 	T_RTTI_CLASS;
 

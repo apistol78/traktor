@@ -11,7 +11,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwitchNodeFacade", SwitchNodeFacade, NodeFacade)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwitchNodeFacade", SwitchNodeFacade, INodeFacade)
 
 SwitchNodeFacade::SwitchNodeFacade(ui::custom::GraphControl* graphControl)
 {

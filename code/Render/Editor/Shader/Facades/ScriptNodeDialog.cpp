@@ -56,8 +56,6 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	)
 		return false;
 
-	addEventHandler< ui::ButtonClickEvent >(this, &ScriptNodeDialog::eventClick);
-
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(this, true, ui::scaleBySystemDPI(230));
 
@@ -121,66 +119,45 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	return true;
 }
 
-//void ScriptNodeDialog::eventInputEditEvent(ui::custom::EditListEditEvent* event)
-//{
-//	if (event->getIndex() < 0)	// Add item.
-//	{
-//		m_script->addInputPin(event->getText(), render::PtScalar);
-//		m_inputPinList->add(event->getText());
-//	}
-//	else if (event->getText().empty())	// Remove item.
-//	{
-//		m_script->removeInputPin(event->getText());
-//		event->consume();
-//	}
-//	else	// Rename item.
-//	{
-//		std::wstring currentName = m_inputPinList->getItem(event->getIndex());
-//		const TypedInputPin* currentPin = static_cast< const TypedInputPin* >(m_script->findInputPin(currentName));
-//		if (currentPin)
-//		{
-//			ParameterType pinType = currentPin->getType();
-//			m_script->removeInputPin(currentName);
-//			m_script->addInputPin(currentName, pinType);
-//		}
-//		event->consume();
-//	}
-//}
-//
-//void ScriptNodeDialog::eventOutputEditEvent(ui::custom::EditListEditEvent* event)
-//{
-//	if (event->getIndex() < 0)	// Add item.
-//	{
-//		m_script->addOutputPin(event->getText(), render::PtScalar);
-//		m_outputPinList->add(event->getText());
-//	}
-//	else if (event->getText().empty())	// Remove item.
-//	{
-//		m_script->removeOutputPin(event->getText());
-//		event->consume();
-//	}
-//	else	// Rename item.
-//	{
-//		std::wstring currentName = m_outputPinList->getItem(event->getIndex());
-//		const TypedOutputPin* currentPin = static_cast< const TypedOutputPin* >(m_script->findOutputPin(currentName));
-//		if (currentPin)
-//		{
-//			ParameterType pinType = currentPin->getType();
-//			m_script->removeOutputPin(currentName);
-//			m_script->addOutputPin(currentName, pinType);
-//		}
-//		event->consume();
-//	}
-//}
-
-void ScriptNodeDialog::eventClick(ui::ButtonClickEvent* event)
+std::wstring ScriptNodeDialog::getText() const
 {
-	const ui::Command& command = event->getCommand();
-	if (command.getId() == ui::DrOk || command.getId() == ui::DrApply)
-	{
-		std::wstring script = m_edit->getText();
-		m_script->setScript(script);
-	}
+	return m_edit->getText();
+}
+
+int32_t ScriptNodeDialog::getInputPinCount() const
+{
+	return int32_t(m_inputPinList->getRows().size() - 1);
+}
+
+std::wstring ScriptNodeDialog::getInputPinName(int32_t index) const
+{
+	ui::custom::GridRow* row = m_inputPinList->getRow(index);
+	T_FATAL_ASSERT (row);
+
+	return row->get(0)->getText();
+}
+
+ParameterType ScriptNodeDialog::getInputPinType(int32_t index) const
+{
+	return PtScalar;
+}
+
+int32_t ScriptNodeDialog::getOutputPinCount() const
+{
+	return int32_t(m_outputPinList->getRows().size() - 1);
+}
+
+std::wstring ScriptNodeDialog::getOutputPinName(int32_t index) const
+{
+	ui::custom::GridRow* row = m_outputPinList->getRow(index);
+	T_FATAL_ASSERT (row);
+
+	return row->get(0)->getText();
+}
+
+ParameterType ScriptNodeDialog::getOutputPinType(int32_t index) const
+{
+	return PtScalar;
 }
 
 void ScriptNodeDialog::eventInputPinRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event)
@@ -188,8 +165,6 @@ void ScriptNodeDialog::eventInputPinRowDoubleClick(ui::custom::GridRowDoubleClic
 	ui::custom::GridRow* row = event->getRow();
 	if (m_inputPinList->getRows().back() != row)
 		return;
-
-	m_script->addInputPin(L"Unnamed", render::PtScalar);
 
 	row->set(0, new ui::custom::GridItem(L"Unnamed"));
 	row->set(1, new ui::custom::GridItem(c_parameterTypes[0]));
@@ -207,8 +182,6 @@ void ScriptNodeDialog::eventOutputPinRowDoubleClick(ui::custom::GridRowDoubleCli
 	ui::custom::GridRow* row = event->getRow();
 	if (m_outputPinList->getRows().back() != row)
 		return;
-
-	m_script->addOutputPin(L"Unnamed", render::PtScalar);
 
 	row->set(0, new ui::custom::GridItem(L"Unnamed"));
 	row->set(1, new ui::custom::GridItem(c_parameterTypes[0]));

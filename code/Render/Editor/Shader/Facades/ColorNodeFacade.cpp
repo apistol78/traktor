@@ -11,7 +11,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ColorNodeFacade", ColorNodeFacade, NodeFacade)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ColorNodeFacade", ColorNodeFacade, INodeFacade)
 
 ColorNodeFacade::ColorNodeFacade(ui::custom::GraphControl* graphControl)
 {

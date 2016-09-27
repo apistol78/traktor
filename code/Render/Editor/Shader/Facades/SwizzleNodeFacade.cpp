@@ -10,7 +10,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwizzleNodeFacade", SwizzleNodeFacade, NodeFacade)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwizzleNodeFacade", SwizzleNodeFacade, INodeFacade)
 
 SwizzleNodeFacade::SwizzleNodeFacade(ui::custom::GraphControl* graphControl)
 {

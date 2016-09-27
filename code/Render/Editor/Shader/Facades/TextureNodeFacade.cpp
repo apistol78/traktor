@@ -19,7 +19,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureNodeFacade", TextureNodeFacade, NodeFacade)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureNodeFacade", TextureNodeFacade, INodeFacade)
 
 TextureNodeFacade::TextureNodeFacade(ui::custom::GraphControl* graphControl)
 {

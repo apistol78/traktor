@@ -1,5 +1,5 @@
-#ifndef traktor_render_NodeFacade_H
-#define traktor_render_NodeFacade_H
+#ifndef traktor_render_INodeFacade_H
+#define traktor_render_INodeFacade_H
 
 #include "Core/Object.h"
 
@@ -28,7 +28,7 @@ class Node;
 
 class Node;
 
-class NodeFacade : public Object
+class INodeFacade : public Object
 {
 	T_RTTI_CLASS;
 
@@ -67,4 +67,4 @@ public:
 	}
 }
 
-#endif	// traktor_render_NodeFacade_H
+#endif	// traktor_render_INodeFacade_H

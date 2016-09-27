@@ -1,7 +1,7 @@
 #ifndef traktor_render_ScriptNodeFacade_H
 #define traktor_render_ScriptNodeFacade_H
 
-#include "Render/Editor/Shader/NodeFacade.h"
+#include "Render/Editor/Shader/INodeFacade.h"
 
 namespace traktor
 {
@@ -19,7 +19,7 @@ class NodeShape;
 	namespace render
 	{
 
-class ScriptNodeFacade : public NodeFacade
+class ScriptNodeFacade : public INodeFacade
 {
 	T_RTTI_CLASS;
 

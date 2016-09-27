@@ -54,8 +54,8 @@ class ToolBarDropDown;
 
 class Edge;
 class External;
+class INodeFacade;
 class Node;
-class NodeFacade;
 class QuickMenuTool;
 class ShaderDependencyPane;
 class ShaderGraph;
@@ -94,7 +94,7 @@ private:
 	Ref< ShaderViewer > m_shaderViewer;
 	Ref< ui::PopupMenu > m_menuPopup;
 	Ref< QuickMenuTool > m_menuQuick;
-	std::map< const TypeInfo*, Ref< NodeFacade > > m_nodeFacades;
+	std::map< const TypeInfo*, Ref< INodeFacade > > m_nodeFacades;
 	bool m_lastValidationResult;
 
 	void createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges);
