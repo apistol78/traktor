@@ -287,7 +287,7 @@ void ImageProcess::getDebugTargets(std::vector< DebugTarget >& outTargets) const
 {
 	for (SmallMap< handle_t, Target >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
 	{
-		if (i->second.rts)
+		if (i->second.rts && !i->second.name.empty())
 			outTargets.push_back(DebugTarget(i->second.name, DtvDefault, i->second.rts->getColorTexture(0)));
 	}
 }

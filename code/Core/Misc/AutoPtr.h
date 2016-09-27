@@ -114,6 +114,12 @@ namespace traktor
 			m_ptr = ptr;
 		}
 
+		void move(AutoPtr< Type, ReleasePolicy >& lh)
+		{
+			m_ptr = lh.m_ptr;
+			lh.m_ptr = 0;
+		}
+
 		Type* operator -> ()
 		{
 			return ptr();
@@ -186,6 +192,12 @@ namespace traktor
 		{
 			release();
 			m_ptr = ptr;
+		}
+
+		void move(AutoArrayPtr< Type, ReleasePolicy >& lh)
+		{
+			m_ptr = lh.m_ptr;
+			lh.m_ptr = 0;
 		}
 
 		Type& operator [] (int index)
