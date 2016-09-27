@@ -138,6 +138,8 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	updateSettings();
 	updateWorldRenderer();
 
+	m_worldRenderView.setIndex(cameraId);
+
 	m_camera = m_context->getCamera(cameraId);
 	m_camera->setEnable(true);
 	m_timer.start();

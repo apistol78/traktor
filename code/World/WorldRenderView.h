@@ -35,6 +35,8 @@ class T_DLLCLASS WorldRenderView : public Object
 public:
 	WorldRenderView();
 
+	void setIndex(int32_t index);
+
 	void setOrthogonal(float width, float height, float nearZ, float farZ);
 
 	void setPerspective(float width, float height, float aspect, float fov, float nearZ, float farZ);
@@ -68,6 +70,10 @@ public:
 	void addLight(const Light& light);
 
 	void resetLights();
+
+	T_FORCE_INLINE int getIndex() const {
+		return m_index;
+	}
 
 	T_FORCE_INLINE const Frustum& getViewFrustum() const {
 		return m_viewFrustum;
@@ -138,6 +144,7 @@ public:
 	}
 
 private:
+	int32_t m_index;
 	Frustum m_viewFrustum;
 	Frustum m_cullFrustum;
 	Matrix44 m_projection;

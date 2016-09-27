@@ -2,6 +2,7 @@
 #define traktor_terrain_UndergrowthLayer_H
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/BitVector.h"
 #include "Core/Math/Vector4.h"
 #include "Resource/Proxy.h"
 #include "Terrain/ITerrainLayer.h"
@@ -58,12 +59,18 @@ private:
 	struct Cluster
 	{
 		Vector4 center;
-		float distance;
 		uint8_t plant;
 		float plantScale;
-		bool visible;
 		int32_t from;
 		int32_t to;
+	};
+
+	struct ViewState
+	{
+		AlignedVector< Vector4 > plants;
+		AlignedVector< float > distances;
+		BitVector pvs;
+		uint32_t count;
 	};
 
 	UndergrowthLayerData m_layerData;
@@ -71,10 +78,10 @@ private:
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	resource::Proxy< render::Shader > m_shader;
-	AlignedVector< Vector4 > m_plants;
 	AlignedVector< Cluster > m_clusters;
+	SmallMap< int32_t, ViewState > m_viewState;
 	float m_clusterSize;
-	uint32_t m_count;
+	uint32_t m_plantsCount;
 };
 
 	}

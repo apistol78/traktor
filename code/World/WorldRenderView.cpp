@@ -8,7 +8,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderView", WorldRenderView, Object)
 
 WorldRenderView::WorldRenderView()
-:	m_projection(Matrix44::identity())
+:	m_index(0)
+,	m_projection(Matrix44::identity())
 ,	m_view(Matrix44::identity())
 ,	m_viewSize(0.0f, 0.0f)
 ,	m_time(0.0f)
@@ -19,6 +20,11 @@ WorldRenderView::WorldRenderView()
 ,	m_screenPlaneDistance(13.0f)
 ,	m_godRayDirection(Vector4::zero())
 {
+}
+
+void WorldRenderView::setIndex(int32_t index)
+{
+	m_index = index;
 }
 
 void WorldRenderView::setOrthogonal(float width, float height, float nearZ, float farZ)

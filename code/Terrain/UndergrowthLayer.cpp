@@ -66,7 +66,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.UndergrowthLayer", UndergrowthLayer, IT
 
 UndergrowthLayer::UndergrowthLayer()
 :	m_clusterSize(0.0f)
-,	m_count(0)
+,	m_plantsCount(0)
 {
 	s_handleNormals = render::getParameterHandle(L"Normals");
 	s_handleHeightfield = render::getParameterHandle(L"Heightfield");
@@ -176,6 +176,16 @@ void UndergrowthLayer::render(
 	Matrix44 viewInv = view.inverse();
 	Vector4 eye = viewInv.translation();
 
+	// Get plant state for current view.
+	ViewState& vs = m_viewState[worldRenderView.getIndex()];
+	if (vs.plants.size() != m_plantsCount * 2)
+	{
+		vs.plants.resize(m_plantsCount * 2, Vector4::zero());
+		vs.distances.resize(m_clusters.size(), 0.0f);
+		vs.pvs.assign(m_clusters.size(), false);
+		updateClusters = true;
+	}
+
 	if (updateClusters)
 	{
 		Frustum viewFrustum = worldRenderView.getViewFrustum();
@@ -183,19 +193,17 @@ void UndergrowthLayer::render(
 
 		// Only perform "replanting" half of clusters each frame.
 		const Scalar clusterSize(m_clusterSize);
-		for (uint32_t i = m_count % 2; i < m_clusters.size(); i += 2)
+		for (uint32_t i = vs.count % 2; i < m_clusters.size(); i += 2)
 		{
-			Cluster& cluster = m_clusters[i];
+			const Cluster& cluster = m_clusters[i];
 
-			cluster.distance = (cluster.center - eye).length();
+			vs.distances[i] = (cluster.center - eye).length();
 
-			bool visible = cluster.visible;
-
-			cluster.visible = (viewFrustum.inside(view * cluster.center, clusterSize) != Frustum::IrOutside);
-			if (!cluster.visible)
+			bool visible = vs.pvs[i];
+			vs.pvs.set(i, viewFrustum.inside(view * cluster.center, clusterSize) != Frustum::IrOutside);
+			if (!vs.pvs[i])
 				continue;
-
-			if (cluster.visible && visible)
+			if (vs.pvs[i] && visible)
 				continue;
 
 			RandomGeometry random(int32_t(cluster.center.x() * 919.0f + cluster.center.z() * 463.0f));
@@ -207,13 +215,13 @@ void UndergrowthLayer::render(
 				float px = cluster.center.x() + dx;
 				float pz = cluster.center.z() + dz;
 
-				m_plants[j * 2 + 0] = Vector4(
+				vs.plants[j * 2 + 0] = Vector4(
 					px,
 					pz,
 					float(cluster.plant),
 					0.0f
 				);
-				m_plants[j * 2 + 1] = Vector4(
+				vs.plants[j * 2 + 1] = Vector4(
 					cluster.plantScale * (random.nextFloat() * 0.5f + 0.5f),
 					random.nextFloat(),
 					0.0f,
@@ -222,7 +230,7 @@ void UndergrowthLayer::render(
 			}
 		}
 
-		m_count++;
+		vs.count++;
 	}
 
 	worldRenderPass.setShaderTechnique(m_shader);
@@ -237,25 +245,27 @@ void UndergrowthLayer::render(
 	Vector4 instanceData1[c_maxInstanceCount];
 	Vector4 instanceData2[c_maxInstanceCount];
 
-	for (AlignedVector< Cluster >::const_iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
+	for (uint32_t i = 0; i < m_clusters.size(); ++i)
 	{
-		if (!i->visible)
+		if (!vs.pvs[i])
 			continue;
 
-		int32_t count = i->to - i->from;
+		const Cluster& cluster = m_clusters[i];
+
+		int32_t count = cluster.to - cluster.from;
 		for (int32_t j = 0; j < count; )
 		{
 			int32_t batch = std::min(count - j, c_maxInstanceCount);
 
 			for (int32_t k = 0; k < batch; ++k, ++j)
 			{
-				instanceData1[k] = m_plants[(j + i->from) * 2 + 0];
-				instanceData2[k] = m_plants[(j + i->from) * 2 + 1];
+				instanceData1[k] = vs.plants[(j + cluster.from) * 2 + 0];
+				instanceData2[k] = vs.plants[(j + cluster.from) * 2 + 1];
 			}
 
 			render::IndexedInstancingRenderBlock* renderBlock = renderContext->alloc< render::IndexedInstancingRenderBlock >();
 
-			renderBlock->distance = i->distance;
+			renderBlock->distance = vs.distances[i];
 			renderBlock->program = program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_indexBuffer;
@@ -289,8 +299,8 @@ void UndergrowthLayer::render(
 
 void UndergrowthLayer::updatePatches(const TerrainComponent& terrainComponent)
 {
-	m_plants.resize(0);
 	m_clusters.resize(0);
+	m_plantsCount = 0;
 
 	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
 	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
@@ -352,23 +362,18 @@ void UndergrowthLayer::updatePatches(const TerrainComponent& terrainComponent)
 						if (density <= 4)
 							continue;
 
-						int32_t from = int32_t(m_plants.size());
-						for (int32_t k = 0; k < density; ++k)
-						{
-							m_plants.push_back(Vector4::zero());
-							m_plants.push_back(Vector4::zero());
-						}
-						int32_t to = int32_t(m_plants.size());
+						int32_t from = m_plantsCount;
+						int32_t to = from + density;
 
 						Cluster c;
 						c.center = Vector4(wx, wy, wz, 1.0f);
-						c.distance = std::numeric_limits< float >::max();
-						c.visible = false;
 						c.plant = j->plant;
 						c.plantScale = j->scale * (0.5f + 0.5f * densityFactor / (16.0f * 16.0f));
-						c.from = from / 2;
-						c.to = to / 2;
+						c.from = from;
+						c.to = to;
 						m_clusters.push_back(c);
+
+						m_plantsCount = to;
 					}
 				}
 			}

@@ -1225,6 +1225,12 @@ render::ImageProcess* WorldRendererDeferred::getVisualImageProcess()
 
 void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& outTargets) const
 {
+	if (m_visualTargetSet)
+		outTargets.push_back(render::DebugTarget(L"Visual", render::DtvDefault, m_visualTargetSet->getColorTexture(0)));
+
+	if (m_intermediateTargetSet)
+		outTargets.push_back(render::DebugTarget(L"Intermediate", render::DtvDefault, m_intermediateTargetSet->getColorTexture(0)));
+
 	if (m_gbufferTargetSet)
 	{
 		outTargets.push_back(render::DebugTarget(L"GBuffer depth", render::DtvDepth, m_gbufferTargetSet->getColorTexture(0)));
@@ -1235,6 +1241,9 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		outTargets.push_back(render::DebugTarget(L"GBuffer metalness", render::DtvDeferredMetalness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(3)));
 	}
+
+	if (m_colorTargetSet)
+		outTargets.push_back(render::DebugTarget(L"Color read-back copy", render::DtvDefault, m_colorTargetSet->getColorTexture(0)));
 
 	if (m_shadowTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow map (last cascade)", render::DtvShadowMap, m_shadowTargetSet->getDepthTexture()));

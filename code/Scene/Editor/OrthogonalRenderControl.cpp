@@ -82,6 +82,7 @@ OrthogonalRenderControl::OrthogonalRenderControl()
 ,	m_viewFarZ(0.0f)
 ,	m_magnification(10.0f)
 ,	m_dirtySize(0, 0)
+,	m_worldIndex(0)
 {
 }
 
@@ -125,6 +126,8 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 
 	updateSettings();
 	updateWorldRenderer();
+
+	m_worldIndex = cameraId;
 
 	m_camera = m_context->getCamera(cameraId);
 	m_camera->setEnable(false);
@@ -484,6 +487,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		float height = m_magnification / ratio;
 
 		world::WorldRenderView worldRenderView;
+		worldRenderView.setIndex(m_worldIndex);
 		worldRenderView.setOrthogonal(
 			width,
 			height,

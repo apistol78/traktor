@@ -105,6 +105,7 @@ private:
 	Ref< Camera > m_camera;
 	ui::Rect m_selectionRectangle;
 	ui::Size m_dirtySize;
+	int32_t m_worldIndex;
 
 	void updateSettings();
 
