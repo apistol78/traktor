@@ -48,6 +48,10 @@ public:
 
 	void removeOutputPin(const std::wstring& name);
 
+	void removeAllInputPins();
+
+	void removeAllOutputPins();
+
 	ParameterType getInputPinType(int index) const;
 
 	std::wstring getInputPinSamplerId(int index) const;

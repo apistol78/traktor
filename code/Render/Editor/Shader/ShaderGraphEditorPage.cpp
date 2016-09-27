@@ -18,8 +18,8 @@
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Shader/Edge.h"
+#include "Render/Editor/Shader/INodeFacade.h"
 #include "Render/Editor/Shader/NodeCategories.h"
-#include "Render/Editor/Shader/NodeFacade.h"
 #include "Render/Editor/Shader/ShaderDependencyPane.h"
 #include "Render/Editor/Shader/ShaderDependencyTracker.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
@@ -830,7 +830,7 @@ void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNode
 
 Ref< ui::custom::Node > ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
 {
-	Ref< NodeFacade > nodeFacade = m_nodeFacades[&type_of(shaderNode)];
+	Ref< INodeFacade > nodeFacade = m_nodeFacades[&type_of(shaderNode)];
 	T_ASSERT_M (nodeFacade, L"No node facade class found");
 
 	Ref< ui::custom::Node > editorNode = nodeFacade->createEditorNode(
@@ -873,7 +873,7 @@ void ShaderGraphEditorPage::refreshGraph()
 		ui::custom::Node* editorNode = *i;
 
 		Node* shaderNode = editorNode->getData< Node >(L"SHADERNODE");
-		NodeFacade* nodeFacade = editorNode->getData< NodeFacade >(L"FACADE");
+		INodeFacade* nodeFacade = editorNode->getData< INodeFacade >(L"FACADE");
 
 		if (!shaderNode || !nodeFacade)
 			continue;
@@ -910,7 +910,7 @@ void ShaderGraphEditorPage::updateGraph()
 		Ref< Node > shaderNode = (*i)->getData< Node >(L"SHADERNODE");
 		T_ASSERT (shaderNode);
 
-		Ref< NodeFacade > nodeFacade = (*i)->getData< NodeFacade >(L"FACADE");
+		Ref< INodeFacade > nodeFacade = (*i)->getData< INodeFacade >(L"FACADE");
 		T_ASSERT (nodeFacade);
 
 		if (std::find(errorNodes.begin(), errorNodes.end(), shaderNode) != errorNodes.end())

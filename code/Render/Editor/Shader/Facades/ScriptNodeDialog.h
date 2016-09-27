@@ -42,6 +42,20 @@ public:
 
 	bool create(ui::Widget* parent);
 
+	std::wstring getText() const;
+
+	int32_t getInputPinCount() const;
+
+	std::wstring getInputPinName(int32_t index) const;
+
+	ParameterType getInputPinType(int32_t index) const;
+
+	int32_t getOutputPinCount() const;
+
+	std::wstring getOutputPinName(int32_t index) const;
+
+	ParameterType getOutputPinType(int32_t index) const;
+
 private:
 	editor::IEditor* m_editor;
 	Ref< Script > m_script;
@@ -49,8 +63,6 @@ private:
 	Ref< ui::custom::GridView > m_outputPinList;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	
-	void eventClick(ui::ButtonClickEvent* event);
-
 	void eventInputPinRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event);
 
 	void eventOutputPinRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event);

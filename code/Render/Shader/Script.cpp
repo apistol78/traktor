@@ -320,6 +320,20 @@ void Script::removeInputPin(const std::wstring& name)
 	}
 }
 
+void Script::removeAllInputPins()
+{
+	for (std::vector< TypedInputPin* >::iterator i = m_inputPins.begin(); i != m_inputPins.end(); ++i)
+		delete *i;
+	m_inputPins.clear();
+}
+
+void Script::removeAllOutputPins()
+{
+	for (std::vector< TypedOutputPin* >::iterator i = m_outputPins.begin(); i != m_outputPins.end(); ++i)
+		delete *i;
+	m_outputPins.clear();
+}
+
 void Script::removeOutputPin(const std::wstring& name)
 {
 	std::vector< TypedOutputPin* >::iterator i = std::find_if(m_outputPins.begin(), m_outputPins.end(), NamedPinPredicate< TypedOutputPin >(name));

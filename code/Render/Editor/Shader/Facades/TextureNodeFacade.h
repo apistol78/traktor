@@ -1,7 +1,7 @@
 #ifndef traktor_render_TextureNodeFacade_H
 #define traktor_render_TextureNodeFacade_H
 
-#include "Render/Editor/Shader/NodeFacade.h"
+#include "Render/Editor/Shader/INodeFacade.h"
 
 namespace traktor
 {
@@ -21,7 +21,7 @@ class NodeShape;
 
 class Texture;
 
-class TextureNodeFacade : public NodeFacade
+class TextureNodeFacade : public INodeFacade
 {
 	T_RTTI_CLASS;
 
