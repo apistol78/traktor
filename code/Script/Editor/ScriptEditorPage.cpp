@@ -544,7 +544,7 @@ void ScriptEditorPage::eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event)
 	if (!selectedRow)
 		return;
 
-	const ui::custom::GridItem* lineItem = checked_type_cast< const ui::custom::GridItem*, false >(selectedRow->get(2));
+	const ui::custom::GridItem* lineItem = selectedRow->get(2);
 	int32_t line = parseString< int32_t >(lineItem->getText()) - 1;
 	if (line >= 0)
 	{

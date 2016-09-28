@@ -2,11 +2,11 @@
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
-#include "Ui/Custom/GridView/GridCell.h"
-#include "Ui/Custom/GridView/GridCellContentChangeEvent.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridColumnClickEvent.h"
-#include "Ui/Custom/GridView/GridHeaderCell.h"
+#include "Ui/Custom/GridView/GridHeader.h"
+#include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/GridView/GridItemContentChangeEvent.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/Custom/GridView/GridView.h"
@@ -35,9 +35,9 @@ struct SortRowPredicateLexical
 
 	bool operator () (const GridRow* row1, const GridRow* row2) const
 	{
-		const GridCell* cell1 = row1->get().at(columnIndex);
-		const GridCell* cell2 = row2->get().at(columnIndex);
-		int32_t cmp = cell1->getText().compare(cell2->getText());
+		const GridItem* item1 = row1->get(columnIndex);
+		const GridItem* item2 = row2->get(columnIndex);
+		int32_t cmp = item1->getText().compare(item2->getText());
 		if (cmp < 0)
 			return !ascending;
 		else
@@ -58,11 +58,11 @@ struct SortRowPredicateNumerical
 
 	bool operator () (const GridRow* row1, const GridRow* row2) const
 	{
-		const GridCell* cell1 = row1->get().at(columnIndex);
-		const GridCell* cell2 = row2->get().at(columnIndex);
+		const GridItem* item1 = row1->get(columnIndex);
+		const GridItem* item2 = row2->get(columnIndex);
 		
-		float num1 = parseString< float >(cell1->getText());
-		float num2 = parseString< float >(cell2->getText());
+		float num1 = parseString< float >(item1->getText());
+		float num2 = parseString< float >(item2->getText());
 
 		if (num1 < num2)
 			return !ascending;
@@ -89,6 +89,7 @@ GridView::GridView()
 ,	m_sortColumnIndex(-1)
 ,	m_sortAscending(false)
 ,	m_sortMode(SmLexical)
+,	m_autoEdit(false)
 {
 }
 
@@ -96,6 +97,8 @@ bool GridView::create(Widget* parent, uint32_t style)
 {
 	if (!AutoWidget::create(parent, style))
 		return false;
+
+	m_autoEdit = bool((style & WsAutoEdit) == WsAutoEdit);
 
 	addEventHandler< MouseButtonDownEvent >(this, &GridView::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &GridView::eventButtonUp);
@@ -107,7 +110,7 @@ bool GridView::create(Widget* parent, uint32_t style)
 	m_itemEditor->addEventHandler< FocusEvent >(this, &GridView::eventEditFocus);
 
 	if ((style & WsColumnHeader) != 0)
-		m_headerCell = new GridHeaderCell();
+		m_header = new GridHeader();
 
 	return true;
 }
@@ -244,12 +247,12 @@ void GridView::layoutCells(const Rect& rc)
 {
 	Rect rcLayout = rc;
 
-	if (m_headerCell)
+	if (m_header)
 	{
-		m_headerCell->setColumns(m_columns);
+		m_header->setColumns(m_columns);
 
 		Rect rcHeader(rcLayout.left, rcLayout.top, rcLayout.right, rcLayout.top + scaleBySystemDPI(c_headerSize));
-		placeCell(m_headerCell, rcHeader);
+		placeCell(m_header, rcHeader);
 
 		rcLayout.top += scaleBySystemDPI(c_headerSize);
 	}
@@ -285,7 +288,7 @@ void GridView::layoutCells(const Rect& rc)
 	}
 }
 
-void GridView::beginEdit(GridCell* item)
+void GridView::beginEdit(GridItem* item)
 {
 	releaseCapturedCell();
 
@@ -309,7 +312,7 @@ void GridView::eventEditFocus(FocusEvent* event)
 
 		m_editItem->setText(newText);
 
-		GridCellContentChangeEvent changeEvent(this, m_editItem);
+		GridItemContentChangeEvent changeEvent(this, m_editItem);
 		raiseEvent(&changeEvent);
 
 		if (!changeEvent.consumed())

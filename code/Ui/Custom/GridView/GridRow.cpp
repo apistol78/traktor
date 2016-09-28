@@ -5,6 +5,7 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/GridView/GridColumn.h"
+#include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridRowStateChangeEvent.h"
 #include "Ui/Custom/GridView/GridView.h"
@@ -19,7 +20,7 @@ namespace traktor
 		namespace custom
 		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridRow", GridRow, GridCell)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridRow", GridRow, AutoWidgetCell)
 
 GridRow::GridRow(uint32_t initialState)
 :	m_state(initialState)
@@ -32,7 +33,7 @@ GridRow::GridRow(uint32_t initialState)
 
 GridRow::~GridRow()
 {
-	for (RefArray< GridCell >::iterator i = m_items.begin(); i != m_items.end(); ++i)
+	for (RefArray< GridItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
 		(*i)->m_row = 0;
 }
 
@@ -51,7 +52,15 @@ void GridRow::setMinimumHeight(int32_t minimumHeight)
 	m_minimumHeight = minimumHeight;
 }
 
-uint32_t GridRow::add(GridCell* item)
+int32_t GridRow::getHeight() const
+{
+	int32_t rowHeight = m_minimumHeight;
+	for (RefArray< GridItem >::const_iterator i = m_items.begin(); i != m_items.end(); ++i)
+		rowHeight = std::max(rowHeight, (*i)->getHeight());
+	return rowHeight;
+}
+
+uint32_t GridRow::add(GridItem* item)
 {
 	T_ASSERT (item->m_row == 0);
 	item->m_row = this;
@@ -59,7 +68,7 @@ uint32_t GridRow::add(GridCell* item)
 	return uint32_t(m_items.size() - 1);
 }
 
-void GridRow::set(uint32_t index, GridCell* item)
+void GridRow::set(uint32_t index, GridItem* item)
 {
 	if (index < m_items.size())
 	{
@@ -74,7 +83,7 @@ void GridRow::set(uint32_t index, GridCell* item)
 	}
 }
 
-Ref< GridCell > GridRow::get(uint32_t index) const
+Ref< GridItem > GridRow::get(uint32_t index) const
 {
 	return index < m_items.size() ? m_items[index] : 0;
 }
@@ -227,28 +236,6 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	}
 
 	canvas.drawLine(0, rect.bottom - 1, rect.getWidth(), rect.bottom - 1);
-}
-
-int32_t GridRow::getHeight() const
-{
-	int32_t rowHeight = m_minimumHeight;
-	for (RefArray< GridCell >::const_iterator i = m_items.begin(); i != m_items.end(); ++i)
-		rowHeight = std::max(rowHeight, (*i)->getHeight());
-	return rowHeight;
-}
-
-void GridRow::setText(const std::wstring& text)
-{
-}
-
-std::wstring GridRow::getText() const
-{
-	return L"";
-}
-
-bool GridRow::edit()
-{
-	return false;
 }
 
 int32_t GridRow::getDepth() const

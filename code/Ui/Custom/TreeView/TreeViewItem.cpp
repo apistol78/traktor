@@ -30,7 +30,7 @@ struct ItemSortPredicate
 
 			}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.TreeViewItem", TreeViewItem, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.TreeViewItem", TreeViewItem, AutoWidgetCell)
 
 TreeViewItem::TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstring& text, int32_t image, int32_t expandedImage)
 :	m_view(view)

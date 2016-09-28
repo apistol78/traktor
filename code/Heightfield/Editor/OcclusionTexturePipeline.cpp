@@ -233,7 +233,7 @@ struct TraceTask : public Object
 		int32_t width = mxx - mnx + c_margin * 2 + 1;
 		int32_t height = mxz - mnz + c_margin * 2 + 1;
 
-		occlusion = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), width, height);
+		occlusion = new drawing::Image(drawing::PixelFormat::getR8(), width, height);
 
 		x = mnx - c_margin;
 		y = mnz - c_margin;
@@ -460,7 +460,7 @@ bool OcclusionTexturePipeline::buildOutput(
 
 	log::info << L"Collecting task(s)..." << Endl;
 
-	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), asset->m_size, asset->m_size);
+	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getR8(), asset->m_size, asset->m_size);
 	image->clear(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
 	for (size_t i = 0; i < jobs.size(); ++i)

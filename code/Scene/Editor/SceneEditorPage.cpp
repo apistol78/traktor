@@ -1017,7 +1017,7 @@ void SceneEditorPage::eventGuideClick(ui::custom::GridColumnClickEvent* event)
 	if (event->getColumn() == 1)
 	{
 		ui::custom::GridRow* row = event->getRow();
-		std::wstring id = checked_type_cast< const ui::custom::GridItem*, false >(row->get(0))->getText();
+		std::wstring id = row->get(0)->getText();
 
 		bool shouldDraw = !m_context->shouldDrawGuide(id);
 		m_context->setDrawGuide(id, shouldDraw);
@@ -1084,7 +1084,7 @@ void SceneEditorPage::eventInstanceClick(ui::custom::GridColumnClickEvent* event
 	if (event->getColumn() == 1)
 	{
 		ui::custom::GridRow* row = event->getRow();
-		ui::custom::GridItem* item = checked_type_cast< ui::custom::GridItem*, false >(row->get(1));
+		ui::custom::GridItem* item = row->get(1);
 
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT (entityAdapter);
@@ -1105,7 +1105,7 @@ void SceneEditorPage::eventInstanceClick(ui::custom::GridColumnClickEvent* event
 	else if (event->getColumn() == 2)
 	{
 		ui::custom::GridRow* row = event->getRow();
-		ui::custom::GridItem* item = checked_type_cast< ui::custom::GridItem*, false >(row->get(2));
+		ui::custom::GridItem* item = row->get(2);
 
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT (entityAdapter);
