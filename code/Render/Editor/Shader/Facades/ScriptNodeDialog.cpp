@@ -11,6 +11,7 @@
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/GridView/GridItemContentChangeEvent.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/Custom/GridView/GridView.h"
@@ -64,10 +65,11 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 
 	m_inputPinList = new ui::custom::GridView();
 	m_inputPinList->create(splitter2, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Input", ui::scaleBySystemDPI(90)));
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::scaleBySystemDPI(70)));
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Sampler", ui::scaleBySystemDPI(110)));
+	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Input", ui::scaleBySystemDPI(90), true));
+	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::scaleBySystemDPI(70), false));
+	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Sampler", ui::scaleBySystemDPI(110), false));
 	m_inputPinList->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventInputPinRowDoubleClick);
+	m_inputPinList->addEventHandler< ui::custom::GridItemContentChangeEvent >(this, &ScriptNodeDialog::eventInputPinEdit);
 
 	int32_t inputPinCount = m_script->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
@@ -86,10 +88,11 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	m_inputPinList->addRow(lastInputRow);
 
 	m_outputPinList = new ui::custom::GridView();
-	m_outputPinList->create(splitter2, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Output", ui::scaleBySystemDPI(90)));
-	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::scaleBySystemDPI(70)));
+	m_outputPinList->create(splitter2, ui::custom::GridView::WsColumnHeader | ui::custom::GridView::WsAutoEdit | ui::WsDoubleBuffer);
+	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Output", ui::scaleBySystemDPI(90), true));
+	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::scaleBySystemDPI(70), false));
 	m_outputPinList->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventOutputPinRowDoubleClick);
+	m_outputPinList->addEventHandler< ui::custom::GridItemContentChangeEvent >(this, &ScriptNodeDialog::eventOutputPinEdit);
 
 	int32_t outputPinCount = m_script->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
@@ -177,6 +180,13 @@ void ScriptNodeDialog::eventInputPinRowDoubleClick(ui::custom::GridRowDoubleClic
 	m_inputPinList->addRow(lastInputRow);
 }
 
+void ScriptNodeDialog::eventInputPinEdit(ui::custom::GridItemContentChangeEvent* event)
+{
+	event->consume();
+	//ui::custom::GridItem* item = event->getItem();
+	//ui::custom::GridRow* row = item->getRow();
+}
+
 void ScriptNodeDialog::eventOutputPinRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event)
 {
 	ui::custom::GridRow* row = event->getRow();
@@ -190,6 +200,11 @@ void ScriptNodeDialog::eventOutputPinRowDoubleClick(ui::custom::GridRowDoubleCli
 	lastOutputRow->add(new ui::custom::GridItem(L"(Add pin)"));
 	lastOutputRow->add(new ui::custom::GridItem(L""));
 	m_outputPinList->addRow(lastOutputRow);
+}
+
+void ScriptNodeDialog::eventOutputPinEdit(ui::custom::GridItemContentChangeEvent* event)
+{
+	event->consume();
 }
 
 	}

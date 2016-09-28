@@ -3,7 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Ui/Custom/GridView/GridCell.h"
+#include "Ui/Custom/Auto/AutoWidgetCell.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,12 +23,12 @@ class IBitmap;
 		namespace custom
 		{
 
-class GridCell;
+class GridItem;
 
 /*! \brief Grid row.
  * \ingroup UIC
  */
-class T_DLLCLASS GridRow : public GridCell
+class T_DLLCLASS GridRow : public AutoWidgetCell
 {
 	T_RTTI_CLASS;
 
@@ -55,13 +55,15 @@ public:
 
 	const int32_t getMinimumHeight() const { return m_minimumHeight; }
 
-	uint32_t add(GridCell* item);
+	int32_t getHeight() const;
 
-	void set(uint32_t index, GridCell* item);
+	uint32_t add(GridItem* item);
 
-	Ref< GridCell > get(uint32_t index) const;
+	void set(uint32_t index, GridItem* item);
 
-	const RefArray< GridCell >& get() const { return m_items; }
+	Ref< GridItem > get(uint32_t index) const;
+
+	const RefArray< GridItem >& get() const { return m_items; }
 
 	void addChild(GridRow* row);
 
@@ -83,14 +85,6 @@ public:
 
 	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE T_FINAL;
 
-	virtual int32_t getHeight() const T_OVERRIDE T_FINAL;
-
-	virtual void setText(const std::wstring& text) T_OVERRIDE T_FINAL;
-
-	virtual std::wstring getText() const T_OVERRIDE T_FINAL;
-
-	virtual bool edit() T_OVERRIDE T_FINAL;
-
 private:
 	friend class GridView;
 
@@ -98,7 +92,7 @@ private:
 	Color4ub m_background;
 	int32_t m_minimumHeight;
 	Ref< IBitmap > m_expand;
-	RefArray< GridCell > m_items;
+	RefArray< GridItem > m_items;
 	GridRow* m_parent;
 	RefArray< GridRow > m_children;
 

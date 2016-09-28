@@ -1,5 +1,5 @@
-#ifndef traktor_ui_custom_GridHeaderCell_H
-#define traktor_ui_custom_GridHeaderCell_H
+#ifndef traktor_ui_custom_GridHeader_H
+#define traktor_ui_custom_GridHeader_H
 
 #include "Core/RefArray.h"
 #include "Ui/Custom/Auto/AutoWidgetCell.h"
@@ -21,7 +21,7 @@ namespace traktor
 
 class GridColumn;
 
-class T_DLLCLASS GridHeaderCell : public AutoWidgetCell
+class T_DLLCLASS GridHeader : public AutoWidgetCell
 {
 	T_RTTI_CLASS;
 
@@ -47,4 +47,4 @@ private:
 	}
 }
 
-#endif	// traktor_ui_custom_GridHeaderCell_H
+#endif	// traktor_ui_custom_GridHeader_H

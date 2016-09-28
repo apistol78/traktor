@@ -113,11 +113,11 @@ void ScriptProfilerView::updateProfileGrid()
 		}
 		else
 		{
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(2))->setText(toString(pe.inclusiveDuration * 1000.0, 2));
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(3))->setText(toString(pe.exclusiveDuration * 1000.0, 2));
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(4))->setText(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2));
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(5))->setText(toString(pe.exclusiveDuration * 100.0 / totalDuration, 2));
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(6))->setText(toString(pe.callCount));
+			pe.row->get(2)->setText(toString(pe.inclusiveDuration * 1000.0, 2));
+			pe.row->get(3)->setText(toString(pe.exclusiveDuration * 1000.0, 2));
+			pe.row->get(4)->setText(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2));
+			pe.row->get(5)->setText(toString(pe.exclusiveDuration * 100.0 / totalDuration, 2));
+			pe.row->get(6)->setText(toString(pe.callCount));
 		}
 	}
 

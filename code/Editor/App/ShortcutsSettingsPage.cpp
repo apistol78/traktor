@@ -72,7 +72,7 @@ bool ShortcutsSettingsPage::apply(PropertyGroup* settings)
 	const RefArray< ui::custom::GridRow >& rows = m_gridShortcuts->getRows();
 	for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
 	{
-		const RefArray< ui::custom::GridCell >& items = (*i)->get();
+		const RefArray< ui::custom::GridItem >& items = (*i)->get();
 		T_ASSERT (items.size() == 2);
 
 		Ref< PropertyString > propertyKey = (*i)->getData< PropertyString >(L"PROPERTYKEY");
@@ -81,7 +81,7 @@ bool ShortcutsSettingsPage::apply(PropertyGroup* settings)
 		PropertyString::value_type_t value = PropertyString::get(propertyKey);
 		if (!value.empty())
 			settings->setProperty(
-				L"Editor.Shortcuts/" + checked_type_cast< ui::custom::GridItem*, false >(items[0])->getText(),
+				L"Editor.Shortcuts/" + items[0]->getText(),
 				propertyKey
 			);
 	}
@@ -93,7 +93,7 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 	const RefArray< ui::custom::GridRow >& rows = m_gridShortcuts->getRows();
 	for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
 	{
-		const RefArray< ui::custom::GridCell >& items = (*i)->get();
+		const RefArray< ui::custom::GridItem >& items = (*i)->get();
 		T_ASSERT (items.size() == 2);
 
 		Ref< PropertyString > propertyKey = (*i)->getData< PropertyString >(L"PROPERTYKEY");
@@ -122,10 +122,10 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 			std::wstring keyName = ui::Application::getInstance()->translateVirtualKey(key.second);
 			keyDesc = keyDesc.empty() ? keyName : keyDesc + L", " + keyName;
 
-			checked_type_cast< ui::custom::GridItem*, false >(items[1])->setText(keyDesc);
+			items[1]->setText(keyDesc);
 		}
 		else
-			checked_type_cast< ui::custom::GridItem*, false >(items[1])->setText(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED"));
+			items[1]->setText(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED"));
 	}
 	m_gridShortcuts->update();
 }

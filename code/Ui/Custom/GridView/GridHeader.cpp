@@ -2,7 +2,7 @@
 #include "Ui/Canvas.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
-#include "Ui/Custom/GridView/GridHeaderCell.h"
+#include "Ui/Custom/GridView/GridHeader.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 
 namespace traktor
@@ -12,14 +12,14 @@ namespace traktor
 		namespace custom
 		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridHeaderCell", GridHeaderCell, AutoWidgetCell)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridHeader", GridHeader, AutoWidgetCell)
 
-void GridHeaderCell::setColumns(const RefArray< GridColumn >& columns)
+void GridHeader::setColumns(const RefArray< GridColumn >& columns)
 {
 	m_columns = columns;
 }
 
-void GridHeaderCell::mouseDown(MouseButtonDownEvent* event, const Point& position)
+void GridHeader::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
 	if (m_columns.size() < 2)
 		return;
@@ -41,12 +41,12 @@ void GridHeaderCell::mouseDown(MouseButtonDownEvent* event, const Point& positio
 	}
 }
 
-void GridHeaderCell::mouseUp(MouseButtonUpEvent* event, const Point& position)
+void GridHeader::mouseUp(MouseButtonUpEvent* event, const Point& position)
 {
 	m_resizeColumn = 0;
 }
 
-void GridHeaderCell::mouseMove(MouseMoveEvent* event, const Point& position)
+void GridHeader::mouseMove(MouseMoveEvent* event, const Point& position)
 {
 	if (!m_resizeColumn)
 		return;
@@ -59,7 +59,7 @@ void GridHeaderCell::mouseMove(MouseMoveEvent* event, const Point& position)
 	getWidget()->requestUpdate();
 }
 
-void GridHeaderCell::paint(Canvas& canvas, const Rect& rect)
+void GridHeader::paint(Canvas& canvas, const Rect& rect)
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 

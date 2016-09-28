@@ -1,7 +1,7 @@
 #ifndef traktor_ui_GridItem_H
 #define traktor_ui_GridItem_H
 
-#include "Ui/Custom/GridView/GridCell.h"
+#include "Ui/Custom/Auto/AutoWidgetCell.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,10 +22,12 @@ class IBitmap;
 		namespace custom
 		{
 
+class GridRow;
+
 /*! \brief Grid item.
  * \ingroup UIC
  */
-class T_DLLCLASS GridItem : public GridCell
+class T_DLLCLASS GridItem : public AutoWidgetCell
 {
 	T_RTTI_CLASS;
 
@@ -40,11 +42,11 @@ public:
 
 	explicit GridItem(IBitmap* image);
 
-	virtual void setText(const std::wstring& text) T_OVERRIDE T_FINAL;
+	void setText(const std::wstring& text);
 
-	virtual std::wstring getText() const T_OVERRIDE T_FINAL;
+	std::wstring getText() const;
 
-	virtual bool edit() T_OVERRIDE;
+	bool edit();
 
 	void setFont(Font* font);
 
@@ -54,14 +56,31 @@ public:
 
 	IBitmap* getImage() const;
 
+	int32_t getHeight() const;
+
+	GridRow* getRow() const;
+
 private:
+	friend class GridRow;
+
+	GridRow* m_row;
 	std::wstring m_text;
 	Ref< Font > m_font;
 	Ref< IBitmap > m_image;
-
-	virtual int32_t getHeight() const T_OVERRIDE T_FINAL;
+	Point m_mouseDownPosition;
+	int32_t m_editMode;
 
 	virtual AutoWidgetCell* hitTest(const Point& position) T_OVERRIDE T_FINAL;
+
+	virtual void interval() T_OVERRIDE T_FINAL;
+
+	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+
+	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+
+	virtual void mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+
+	virtual void mouseMove(MouseMoveEvent* event, const Point& position) T_OVERRIDE T_FINAL;
 
 	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE T_FINAL;
 };

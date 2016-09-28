@@ -27,7 +27,7 @@ class IEditorPageSite;
 		namespace custom
 		{
 
-class GridCellContentChangeEvent;
+class GridItemContentChangeEvent;
 class GridRowDoubleClickEvent;
 class GridView;
 class ToolBarButtonClickEvent;
@@ -75,7 +75,7 @@ private:
 
 	void eventGridRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event);
 
-	void eventGridCellChange(ui::custom::GridCellContentChangeEvent* event);
+	void eventGridItemChange(ui::custom::GridItemContentChangeEvent* event);
 };
 
 	}

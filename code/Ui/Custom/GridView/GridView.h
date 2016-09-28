@@ -22,9 +22,9 @@ class Edit;
 		namespace custom
 		{
 
-class GridCell;
+class GridItem;
 class GridColumn;
-class GridHeaderCell;
+class GridHeader;
 class GridRow;
 
 /*! \brief Grid view control.
@@ -37,7 +37,8 @@ class T_DLLCLASS GridView : public AutoWidget
 public:
 	enum StyleFlags
 	{
-		WsColumnHeader = WsUser
+		WsColumnHeader = WsUser,
+		WsAutoEdit = WsUser << 1,
 	};
 
 	enum GetFlags
@@ -87,7 +88,7 @@ public:
 private:
 	friend class GridItem;
 
-	Ref< GridHeaderCell > m_headerCell;
+	Ref< GridHeader > m_header;
 	RefArray< GridColumn > m_columns;
 	RefArray< GridRow > m_rows;
 	Ref< GridRow > m_clickRow;
@@ -95,12 +96,13 @@ private:
 	int32_t m_sortColumnIndex;
 	bool m_sortAscending;
 	SortMode m_sortMode;
+	bool m_autoEdit;
 	Ref< Edit > m_itemEditor;
-	Ref< GridCell > m_editItem;
+	Ref< GridItem > m_editItem;
 
 	virtual void layoutCells(const Rect& rc) T_OVERRIDE T_FINAL;
 
-	void beginEdit(GridCell* item);
+	void beginEdit(GridItem* item);
 
 	void eventEditFocus(FocusEvent* event);
 

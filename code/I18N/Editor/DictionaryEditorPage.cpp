@@ -14,9 +14,9 @@
 #include "Ui/FileDialog.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/InputDialog.h"
-#include "Ui/Custom/GridView/GridCellContentChangeEvent.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/GridView/GridItemContentChangeEvent.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/Custom/GridView/GridView.h"
@@ -142,7 +142,7 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 	m_gridDictionary->addColumn(new ui::custom::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_TEXT"), ui::scaleBySystemDPI(600)));
 	m_gridDictionary->addColumn(new ui::custom::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_REFERENCE"), ui::scaleBySystemDPI(600)));
 	m_gridDictionary->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &DictionaryEditorPage::eventGridRowDoubleClick);
-	m_gridDictionary->addEventHandler< ui::custom::GridCellContentChangeEvent >(this, &DictionaryEditorPage::eventGridCellChange);
+	m_gridDictionary->addEventHandler< ui::custom::GridItemContentChangeEvent >(this, &DictionaryEditorPage::eventGridItemChange);
 
 	updateGrid();
 	return true;
@@ -364,7 +364,7 @@ void DictionaryEditorPage::eventGridRowDoubleClick(ui::custom::GridRowDoubleClic
 		if (event->getColumnIndex() != 1)
 			return;
 
-		ui::custom::GridCell* cell = row->get(event->getColumnIndex());
+		ui::custom::GridItem* cell = row->get(event->getColumnIndex());
 		T_ASSERT (cell);
 
 		cell->edit();
@@ -383,7 +383,7 @@ void DictionaryEditorPage::eventGridRowDoubleClick(ui::custom::GridRowDoubleClic
 	}
 }
 
-void DictionaryEditorPage::eventGridCellChange(ui::custom::GridCellContentChangeEvent* event)
+void DictionaryEditorPage::eventGridItemChange(ui::custom::GridItemContentChangeEvent* event)
 {
 	ui::custom::GridRow* row = event->getItem()->getRow();
 	T_ASSERT (row);

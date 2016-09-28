@@ -31,6 +31,8 @@ class T_DLLCLASS GridColumn
 public:
 	GridColumn(const std::wstring& title, uint32_t width);
 
+	GridColumn(const std::wstring& title, uint32_t width, bool editable);
+
 	void setTitle(const std::wstring& title);
 	
 	const std::wstring& getTitle() const;

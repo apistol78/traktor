@@ -16,6 +16,13 @@ GridColumn::GridColumn(const std::wstring& title, uint32_t width)
 {
 }
 
+GridColumn::GridColumn(const std::wstring& title, uint32_t width, bool editable)
+:	m_title(title)
+,	m_width(width)
+,	m_editable(editable)
+{
+}
+
 void GridColumn::setTitle(const std::wstring& title)
 {
 	m_title = title;
