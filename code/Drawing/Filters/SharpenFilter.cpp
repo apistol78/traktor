@@ -1,3 +1,4 @@
+#include "Core/Containers/AlignedVector.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/SharpenFilter.h"
@@ -30,24 +31,27 @@ void SharpenFilter::apply(Image* image) const
 		break;
 
 	default:
+		unsharpenMask->apply(ConvolutionFilter::createGaussianBlur(m_radius));
 		break;
 	}
 
-	Color4f in, inMask;
-
+	AlignedVector< Color4f > span(image->getWidth());
+	AlignedVector< Color4f > spanMask(image->getWidth());
+	
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
+		image->getSpanUnsafe(y, span.ptr());
+		unsharpenMask->getSpanUnsafe(y, spanMask.ptr());
+
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			image->getPixelUnsafe(x, y, in);
-			unsharpenMask->getPixelUnsafe(x, y, inMask);
-
-			in.setRed  (in.getRed()   + in.getRed()   - inMask.getRed());
-			in.setGreen(in.getGreen() + in.getGreen() - inMask.getGreen());
-			in.setBlue (in.getBlue()  + in.getBlue()  - inMask.getBlue());
-
-			image->setPixelUnsafe(x, y, in);
+			Color4f& in = span[x];
+			Scalar alpha = in.getAlpha();
+			in = in + in - spanMask[x];
+			in.setAlpha(alpha);
 		}
+
+		image->setSpanUnsafe(y, span.c_ptr());
 	}
 }
 

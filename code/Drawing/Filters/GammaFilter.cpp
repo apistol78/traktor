@@ -1,6 +1,7 @@
 #include <cmath>
-#include "Drawing/Filters/GammaFilter.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Drawing/Image.h"
+#include "Drawing/Filters/GammaFilter.h"
 
 namespace traktor
 {
@@ -8,13 +9,6 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.GammaFilter", GammaFilter, IImageFilter)
-
-template <typename T> T clamp(T value, T min, T max)
-{
-	if (value < min) return min;
-	if (value > max) return max;
-	return value;
-}
 
 GammaFilter::GammaFilter(float gamma)
 {
@@ -34,20 +28,20 @@ GammaFilter::GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA)
 
 void GammaFilter::apply(Image* image) const
 {
-	Color4f in;
+	AlignedVector< Color4f > span(image->getWidth());
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
+		image->getSpanUnsafe(y, span.ptr());
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			image->getPixelUnsafe(x, y, in);
-			Color4f out(
-				std::pow(in.getRed(), m_gamma[0]),
-				std::pow(in.getGreen(), m_gamma[1]),
-				std::pow(in.getBlue(), m_gamma[2]),
-				std::pow(in.getAlpha(), m_gamma[3])
+			span[x] = Color4f(
+				std::pow(span[x].getRed(), m_gamma[0]),
+				std::pow(span[x].getGreen(), m_gamma[1]),
+				std::pow(span[x].getBlue(), m_gamma[2]),
+				std::pow(span[x].getAlpha(), m_gamma[3])
 			);
-			image->setPixelUnsafe(x, y, out);
 		}
+		image->setSpanUnsafe(y, span.c_ptr());
 	}
 }
 	
