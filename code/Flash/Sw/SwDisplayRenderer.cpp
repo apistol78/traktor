@@ -310,7 +310,6 @@ void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Mat
 
 		m_raster->submit();
 	}
-
 }
 
 void SwDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform)

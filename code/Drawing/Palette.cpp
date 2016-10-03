@@ -9,29 +9,29 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.Palette", Palette, Object)
 
-Palette::Palette(int size)
+Palette::Palette(int32_t size)
 :	m_colors(size)
 {
 }
 
-int Palette::getSize() const
+int32_t Palette::getSize() const
 {
-	return int(m_colors.size());
+	return int32_t(m_colors.size());
 }
 
-void Palette::set(int index, const Color4f& c)
+void Palette::set(int32_t index, const Color4f& c)
 {
 	m_colors[index] = c;
 }
 
-const Color4f& Palette::get(int index) const
+const Color4f& Palette::get(int32_t index) const
 {
 	return m_colors[index];
 }
 
-int Palette::find(const Color4f& c, bool exact) const
+int32_t Palette::find(const Color4f& c, bool exact) const
 {
-	std::pair< float, int > mn(std::numeric_limits< float >::max(), -1);
+	std::pair< float, int32_t > mn(std::numeric_limits< float >::max(), -1);
 	for (AlignedVector< Color4f >::const_iterator i = m_colors.begin(); i != m_colors.end(); ++i)
 	{
 		float diff =
@@ -43,7 +43,7 @@ int Palette::find(const Color4f& c, bool exact) const
 		if (diff < mn.first)
 		{
 			mn.first = diff;
-			mn.second = int(std::distance(m_colors.begin(), i));
+			mn.second = int32_t(std::distance(m_colors.begin(), i));
 		}
 	}
 	return (exact && mn.first != 0.0f) ? -1 : mn.second;

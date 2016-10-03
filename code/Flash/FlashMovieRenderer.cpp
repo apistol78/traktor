@@ -142,6 +142,7 @@ void FlashMovieRenderer::renderSprite(
 					layer.instance,
 					transform,
 					cxTransform,
+					renderAsMask,
 					spriteInstance->getBlendMode()
 				);
 				++i;
@@ -154,6 +155,7 @@ void FlashMovieRenderer::renderSprite(
 					layer.instance,
 					transform,
 					cxTransform,
+					true,
 					SbmDefault
 				);
 				m_displayRenderer->endMask();
@@ -172,6 +174,7 @@ void FlashMovieRenderer::renderSprite(
 						clippedLayer.instance,
 						transform,
 						cxTransform,
+						renderAsMask,
 						spriteInstance->getBlendMode()
 					);
 				}
@@ -182,6 +185,7 @@ void FlashMovieRenderer::renderSprite(
 					layer.instance,
 					transform,
 					cxTransform,
+					true,
 					SbmDefault
 				);
 				m_displayRenderer->endMask();
@@ -278,6 +282,7 @@ void FlashMovieRenderer::renderSprite(
 						layer.instance,
 						T,
 						cxTransform,
+						renderAsMask,
 						spriteInstance->getBlendMode()
 					);
 					++j;
@@ -290,6 +295,7 @@ void FlashMovieRenderer::renderSprite(
 						layer.instance,
 						T,
 						cxTransform,
+						true,
 						SbmDefault
 					);
 					m_displayRenderer->endMask();
@@ -308,6 +314,7 @@ void FlashMovieRenderer::renderSprite(
 							clippedLayer.instance,
 							T,
 							cxTransform,
+							renderAsMask,
 							spriteInstance->getBlendMode()
 						);
 					}
@@ -318,6 +325,7 @@ void FlashMovieRenderer::renderSprite(
 						layer.instance,
 						T,
 						cxTransform,
+						true,
 						SbmDefault
 					);
 					m_displayRenderer->endMask();
@@ -344,13 +352,14 @@ void FlashMovieRenderer::renderCharacter(
 	FlashCharacterInstance* characterInstance,
 	const Matrix33& transform,
 	const SwfCxTransform& cxTransform,
+	bool renderAsMask,
 	uint8_t blendMode
 )
 {
 	SwfCxTransform cxTransform2 = concateCxTransform(cxTransform, characterInstance->getColorTransform());
 
-	// Don't render completely transparent shapes.
-	if (cxTransform2.mul.getAlpha() + cxTransform2.add.getAlpha() <= FUZZY_EPSILON)
+	// Don't render completely transparent, non-mask, shapes.
+	if (!renderAsMask && cxTransform2.mul.getAlpha() + cxTransform2.add.getAlpha() <= FUZZY_EPSILON)
 		return;
 
 	FlashDictionary* dictionary = characterInstance->getDictionary();
@@ -600,6 +609,7 @@ void FlashMovieRenderer::renderCharacter(
 				referenceInstance,
 				buttonTransform * layer.placeMatrix,
 				cxTransform2,
+				renderAsMask,
 				buttonInstance->getBlendMode()
 			);
 		}

@@ -71,6 +71,7 @@ private:
 		FlashCharacterInstance* characterInstance,
 		const Matrix33& transform,
 		const SwfCxTransform& cxTransform,
+		bool renderAsMask,
 		uint8_t blendMode
 	);
 

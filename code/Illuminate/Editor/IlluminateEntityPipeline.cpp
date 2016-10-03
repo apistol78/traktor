@@ -31,11 +31,10 @@
 #include "Model/Operations/MergeModel.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Editor/Texture/TextureOutput.h"
-#include "World/Entity/DirectionalLightEntityData.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupEntityData.h"
-#include "World/Entity/PointLightEntityData.h"
+#include "World/Entity/LightComponentData.h"
 
 namespace traktor
 {
@@ -93,8 +92,7 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 
 void collectTraceEntities(
 	const ISerializable* object,
-	RefArray< world::DirectionalLightEntityData >& outDirectionalLightEntityData,
-	RefArray< world::PointLightEntityData >& outPointLightEntityData,
+	RefArray< world::ComponentEntityData >& outLightEntityData,
 	RefArray< world::ComponentEntityData >& outMeshEntityData
 )
 {
@@ -110,15 +108,13 @@ void collectTraceEntities(
 
 		if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
 		{
+			if (componentEntityData->getComponent< world::LightComponentData >() != 0)
+				outLightEntityData.push_back(componentEntityData);
 			if (componentEntityData->getComponent< mesh::MeshComponentData >() != 0)
 				outMeshEntityData.push_back(componentEntityData);
 		}
-		else if (world::DirectionalLightEntityData* directionalLightEntityData = dynamic_type_cast< world::DirectionalLightEntityData* >(objectMember->get()))
-			outDirectionalLightEntityData.push_back(directionalLightEntityData);
-		else if (world::PointLightEntityData* pointLightEntityData = dynamic_type_cast< world::PointLightEntityData* >(objectMember->get()))
-			outPointLightEntityData.push_back(pointLightEntityData);
 		else if (objectMember->get())
-			collectTraceEntities(objectMember->get(), outDirectionalLightEntityData, outPointLightEntityData, outMeshEntityData);
+			collectTraceEntities(objectMember->get(), outLightEntityData, outMeshEntityData);
 	}
 }
 
@@ -180,36 +176,39 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		}
 
 		// Get all trace entities.
-		RefArray< world::DirectionalLightEntityData > directionalLightEntityData;
-		RefArray< world::PointLightEntityData > pointLightEntityData;
+		RefArray< world::ComponentEntityData > lightEntityData;
 		RefArray< world::ComponentEntityData > meshEntityData;
-		collectTraceEntities(illumEntityData, directionalLightEntityData, pointLightEntityData, meshEntityData);
+		collectTraceEntities(illumEntityData, lightEntityData, meshEntityData);
 
 		// Setup lights.
 		AlignedVector< Light > lights;
 
-		for (RefArray< world::DirectionalLightEntityData >::const_iterator i = directionalLightEntityData.begin(); i != directionalLightEntityData.end(); ++i)
+		for (RefArray< world::ComponentEntityData >::const_iterator i = lightEntityData.begin(); i != lightEntityData.end(); ++i)
 		{
-			Light light;
-			light.type = 0;
-			light.position = Vector4::origo();
-			light.direction = (*i)->getTransform().rotation() * Vector4(0.0f, -1.0f, 0.0f);
-			light.sunColor = Color4f((*i)->getSunColor());
-			light.baseColor = Color4f((*i)->getBaseColor());
-			light.shadowColor = Color4f((*i)->getShadowColor());
-			light.range = Scalar(0.0f);
-			lights.push_back(light);
-		}
+			world::LightComponentData* lightComponentData = (*i)->getComponent< world::LightComponentData >();
+			T_FATAL_ASSERT (lightComponentData != 0);
 
-		for (RefArray< world::PointLightEntityData >::const_iterator i = pointLightEntityData.begin(); i != pointLightEntityData.end(); ++i)
-		{
 			Light light;
-			light.type = 1;
-			light.position = (*i)->getTransform().translation().xyz1();
-			light.direction = Vector4::zero();
-			light.sunColor = Color4f((*i)->getSunColor());
-			light.range = Scalar((*i)->getRange());
-			lights.push_back(light);
+			if (lightComponentData->getLightType() == world::LtDirectional)
+			{
+				light.type = 0;
+				light.position = Vector4::origo();
+				light.direction = (*i)->getTransform().rotation() * Vector4(0.0f, -1.0f, 0.0f);
+				light.sunColor = Color4f(lightComponentData->getSunColor());
+				light.baseColor = Color4f(lightComponentData->getBaseColor());
+				light.shadowColor = Color4f(lightComponentData->getShadowColor());
+				light.range = Scalar(0.0f);
+				lights.push_back(light);
+			}
+			else if (lightComponentData->getLightType() == world::LtPoint)
+			{
+				light.type = 1;
+				light.position = (*i)->getTransform().translation().xyz1();
+				light.direction = Vector4::zero();
+				light.sunColor = Color4f(lightComponentData->getSunColor());
+				light.range = Scalar(lightComponentData->getRange());
+				lights.push_back(light);
+			}
 		}
 
 		Ref< model::Model > mergedModel = new model::Model();

@@ -2,6 +2,7 @@
 #define traktor_Color4f_H
 
 #include "Core/Config.h"
+#include "Core/Math/Color4ub.h"
 #include "Core/Math/MathConfig.h"
 #include "Core/Math/Vector4.h"
 
@@ -59,6 +60,8 @@ public:
 	T_MATH_INLINE Color4f rgb0() const;
 
 	T_MATH_INLINE Color4f rgb1() const;
+
+	T_MATH_INLINE Color4ub toColor4ub() const;
 
 	static T_MATH_INLINE Color4f loadAligned(const float* in);
 

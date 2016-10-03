@@ -112,6 +112,9 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 				return 0;
 		}
 
+		const float invGradWidth = 1.0f / float(c_gradientsWidth);
+		const float invGradHeight = 1.0f / float(c_gradientsHeight);
+
 		uint8_t* gd = &m_gradientsData[(m_currentGradientColumn + m_nextGradient * c_gradientsWidth) * 4];
 		int32_t x1 = 0;
 		for (int32_t i = 1; i < int32_t(colorRecords.size()); ++i)
@@ -120,29 +123,29 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 			for (int32_t x = x1; x < x2; ++x)
 			{
 				float f = float(x - x1) / (x2 - x1);
-				Color4f c = (colorRecords[i - 1].color * Scalar(1.0f - f) + colorRecords[i].color * Scalar(f)) * Scalar(255.0f);
-				gd[x * 4 + 0] = uint8_t(c.getRed());
-				gd[x * 4 + 1] = uint8_t(c.getGreen());
-				gd[x * 4 + 2] = uint8_t(c.getBlue());
-				gd[x * 4 + 3] = uint8_t(c.getAlpha());
+				Color4ub c = (colorRecords[i - 1].color * Scalar(1.0f - f) + colorRecords[i].color * Scalar(f)).toColor4ub();
+				gd[x * 4 + 0] = c.r;
+				gd[x * 4 + 1] = c.g;
+				gd[x * 4 + 2] = c.b;
+				gd[x * 4 + 3] = c.a;
 			}
 			x1 = x2;
 		}
 
-		Color4f c = colorRecords.back().color * Scalar(255.0f);
+		Color4ub c = colorRecords.back().color.toColor4ub();
 		for (; x1 < c_gradientsSize; ++x1)
 		{
-			gd[x1 * 4 + 0] = uint8_t(c.getRed());
-			gd[x1 * 4 + 1] = uint8_t(c.getGreen());
-			gd[x1 * 4 + 2] = uint8_t(c.getBlue());
-			gd[x1 * 4 + 3] = uint8_t(c.getAlpha());
+			gd[x1 * 4 + 0] = c.r;
+			gd[x1 * 4 + 1] = c.g;
+			gd[x1 * 4 + 2] = c.b;
+			gd[x1 * 4 + 3] = c.a;
 		}
 
 		m_cache[hash] = new AccBitmapRect(
 			resource::Proxy< render::ISimpleTexture >(m_gradientsTexture),
-			m_currentGradientColumn * 1.0f / c_gradientsWidth,
-			m_nextGradient * 1.0f / c_gradientsHeight + 0.5f / c_gradientsHeight,
-			1.0f / c_gradientsColumns - 1.0f / c_gradientsWidth,
+			m_currentGradientColumn * invGradWidth,
+			(m_nextGradient + 0.5f) * invGradHeight,
+			1.0f / c_gradientsColumns - invGradWidth,
 			0.0f
 		);
 
@@ -161,6 +164,8 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 		}
 
 		const float s = float(c_gradientsSize) / 2.0f;
+		const float invGradWidth = 1.0f / float(c_gradientsWidth);
+		const float invGradHeight = 1.0f / float(c_gradientsHeight);
 
 		uint8_t* gd = &m_gradientsData[(m_currentGradientColumn + m_nextGradient * c_gradientsWidth) * 4];
 		for (int y = 0; y < c_gradientsSize; ++y)
@@ -171,21 +176,21 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 				float fy = y / s - 1.0f;
 				float f = sqrtf(fx * fx + fy * fy);
 
-				Color4f c = interpolateGradient(colorRecords, f) * Scalar(255.0f);
-				gd[x * 4 + 0] = uint8_t(c.getRed());
-				gd[x * 4 + 1] = uint8_t(c.getGreen());
-				gd[x * 4 + 2] = uint8_t(c.getBlue());
-				gd[x * 4 + 3] = uint8_t(c.getAlpha());
+				Color4ub c = interpolateGradient(colorRecords, f).toColor4ub();
+				gd[x * 4 + 0] = c.r;
+				gd[x * 4 + 1] = c.g;
+				gd[x * 4 + 2] = c.b;
+				gd[x * 4 + 3] = c.a;
 			}
 			gd += c_gradientsWidth * 4;
 		}
 
 		m_cache[hash] = new AccBitmapRect(
 			resource::Proxy< render::ISimpleTexture >(m_gradientsTexture),
-			m_currentGradientColumn * 1.0f / c_gradientsWidth + 0.5f / c_gradientsWidth,
-			m_nextGradient * 1.0f / c_gradientsHeight + 0.5f / c_gradientsHeight,
-			(c_gradientsSize - 1) / float(c_gradientsWidth),
-			(c_gradientsSize - 1) / float(c_gradientsHeight)
+			(m_currentGradientColumn + 0.5f) * invGradWidth,
+			(m_nextGradient + 0.5f) * invGradHeight,
+			(c_gradientsSize - 1) * invGradWidth,
+			(c_gradientsSize - 1) * invGradHeight
 		);
 
 		m_nextGradient += c_gradientsSize;

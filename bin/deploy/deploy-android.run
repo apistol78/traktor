@@ -30,7 +30,7 @@ end
 
 
 local function isDeviceConnected()
-	run:execute("$(ANDROID_HOME)/platform-tools/adb get-state", nil)
+	run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb get-state", nil)
 	local s = run:stdOut():trim()
 	return s == "device"
 end
@@ -69,6 +69,7 @@ function deploy(args)
 	local ndk = os:getEnvironment("DEPLOY_ANDROID_NDK_ROOT")
 	local toolchain = os:getEnvironment("DEPLOY_ANDROID_TOOLCHAIN") -- "4.9"
 	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL") -- "android-19"
+	local antHome = os:getEnvironment("DEPLOY_ANDROID_ANT_HOME") -- "$(ANT_HOME)"
 	local architecture = "arch-arm"
 	local abi = "arm-linux-androideabi"
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
@@ -291,18 +292,18 @@ function launch(args)
 
 		-- Use ant to build apk package.
 		stdout:printLn("Building package...")
-		run:execute("$(ANT_HOME)/bin/ant.bat debug", nil)
+		run:execute(antHome .. "/bin/ant.bat debug", nil)
 
 		-- Launch application on attached device.
 		stdout:printLn("Installing package...")
-		local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", nil)
+		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", nil)
 		if result ~= 0 then
 			stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
 			return 1
 		end
 
 		stdout:printLn("Launching...")
-		local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $(DEPLOY_PROJECT_IDENTIFIER)/android.app.NativeActivity", nil)
+		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $(DEPLOY_PROJECT_IDENTIFIER)/android.app.NativeActivity", nil)
 		if result ~= 0 then
 			stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode.")
 			return 1
@@ -321,6 +322,7 @@ function migrate(args)
 	local ndk = os:getEnvironment("DEPLOY_ANDROID_NDK_ROOT")
 	local toolchain = os:getEnvironment("DEPLOY_ANDROID_TOOLCHAIN") -- "4.9"
 	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL") -- "android-19"
+	local antHome = os:getEnvironment("DEPLOY_ANDROID_ANT_HOME") -- "$(ANT_HOME)"
 	local architecture = "arch-arm"
 	local abi = "arm-linux-androideabi"
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
@@ -484,7 +486,7 @@ function migrate(args)
 
 	-- Use ant to build apk package.
 	stdout:printLn("Building package...")
-	run:execute("$(ANT_HOME)/bin/ant.bat debug", nil)
+	run:execute(antHome .. "/bin/ant.bat debug", nil)
 
 	-- Ensure device is ready.
 	if not isDeviceConnected() then
@@ -494,7 +496,7 @@ function migrate(args)
 
 	-- Install application on attached device.
 	stdout:printLn("Installing package...")
-	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", nil)
+	local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", nil)
 	if result ~= 0 then
 		stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
 		return 1

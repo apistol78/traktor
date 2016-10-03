@@ -26,15 +26,15 @@ class T_DLLCLASS Palette : public Object
 	T_RTTI_CLASS;
 
 public:
-	Palette(int size = 256);
+	Palette(int32_t size = 256);
 
-	int getSize() const;
+	int32_t getSize() const;
 	
-	void set(int index, const Color4f& c);
+	void set(int32_t index, const Color4f& c);
 	
-	const Color4f& get(int index) const;
+	const Color4f& get(int32_t index) const;
 	
-	int find(const Color4f& c, bool exact = false) const;
+	int32_t find(const Color4f& c, bool exact = false) const;
 	
 private:
 	AlignedVector< Color4f > m_colors;
