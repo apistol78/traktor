@@ -99,6 +99,18 @@ T_MATH_INLINE Color4f Color4f::rgb1() const
 	return Color4f(m_data.xyz1());
 }
 
+T_MATH_INLINE Color4ub Color4f::toColor4ub() const
+{
+	float T_MATH_ALIGN16 tmp[4];
+	(*this * Scalar(255.0f)).storeAligned(tmp);
+	return Color4ub(
+		uint8_t(clamp< int32_t >(int32_t(tmp[0]), 0, 255)),
+		uint8_t(clamp< int32_t >(int32_t(tmp[1]), 0, 255)),
+		uint8_t(clamp< int32_t >(int32_t(tmp[2]), 0, 255)),
+		uint8_t(clamp< int32_t >(int32_t(tmp[3]), 0, 255))
+	);
+}
+
 T_MATH_INLINE Color4f Color4f::loadAligned(const float* in)
 {
 	T_ASSERT (in);

@@ -122,48 +122,7 @@ Ref< Image > Image::clone(bool includeData) const
 
 void Image::copy(const Image* src, int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	int32_t srcWidth = int32_t(src->getWidth());
-	int32_t srcHeight = int32_t(src->getHeight());
-
-	if (x >= srcWidth || y >= srcHeight)
-		return;
-
-	if (x < 0)
-	{
-		width -= -x;
-		x = 0;
-	}
-	if (y < 0)
-	{
-		height -= y;
-		y = 0;
-	}
-
-	if (x + width > srcWidth)
-		width = srcWidth - x;
-	if (y + height > srcHeight)
-		height = srcHeight - y;
-
-	if (width > m_width)
-		width = m_width;
-	if (height > m_height)
-		height = m_height;
-
-	if (width <= 0 || height <= 0)
-		return;
-
-	T_ASSERT (x >= 0 && y >= 0);
-	T_ASSERT (width >= 0 && height >= 0);
-
-	const PixelFormat& pf = src->m_pixelFormat;
-	for (int32_t yy = 0; yy < height; ++yy)
-	{
-		const uint8_t* sd = &src->m_data[x * pf.getByteSize() + (y + yy) * src->m_pitch];
-		uint8_t* dd = &m_data[yy * m_pitch];
-		pf.convert(0, sd, m_pixelFormat, 0, dd, width);
-	}
-
-	checkData(m_data, m_size);
+	copy(src, 0, 0, x, y, width, height);
 }
 
 void Image::copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y, int32_t width, int32_t height)
@@ -171,19 +130,33 @@ void Image::copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y,
 	int32_t srcWidth = int32_t(src->getWidth());
 	int32_t srcHeight = int32_t(src->getHeight());
 
-	if (x >= srcWidth || y >= srcHeight)
-		return;
-
 	if (x < 0)
 	{
+		dx += -x;
 		width -= -x;
 		x = 0;
 	}
 	if (y < 0)
 	{
+		dy += -y;
 		height -= y;
 		y = 0;
 	}
+	if (dx < 0)
+	{
+		x += -dx;
+		width -= -dx;
+		dx = 0;
+	}
+	if (dy < 0)
+	{
+		y += -dy;
+		height -= -dy;
+		dy = 0;
+	}
+
+	if (x >= srcWidth || y >= srcHeight)
+		return;
 
 	if (x + width > srcWidth)
 		width = srcWidth - x;
@@ -217,16 +190,11 @@ void Image::copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y,
 
 void Image::clear(const Color4f& color)
 {
-	float tmp[] =
-	{
-		color.getRed(),
-		color.getGreen(),
-		color.getBlue(),
-		color.getAlpha()
-	};
+	float T_MATH_ALIGN16 tmp[4];
+	color.storeAligned(tmp);
 	
 	uint32_t byteSize = m_pixelFormat.getByteSize();
-	std::vector< uint8_t > c(byteSize);
+	AlignedVector< uint8_t > c(byteSize);
 
 	PixelFormat::getRGBAF32().convert(
 		0,
@@ -245,13 +213,15 @@ void Image::clear(const Color4f& color)
 
 void Image::clearAlpha(float alpha)
 {
+	const Scalar sa(alpha);
 	Color4f cl;
+
 	for (int32_t y = 0; y < m_height; ++y)
 	{
 		for (int32_t x = 0; x < m_width; ++x)
 		{
 			getPixelUnsafe(x, y, cl);
-			cl.setAlpha(Scalar(alpha));
+			cl.setAlpha(sa);
 			setPixelUnsafe(x, y, cl);
 		}
 	}

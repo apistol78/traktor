@@ -60,11 +60,23 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 	Ref< ui::Container > containerAndroid = new ui::Container();
 	containerAndroid->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
 
+	Ref< ui::Static > staticAndroidHome = new ui::Static();
+	staticAndroidHome->create(containerAndroid, L"Android SDK home");
+
+	m_editAndroidHome = new ui::Edit();
+	m_editAndroidHome->create(containerAndroid, settings->getProperty< PropertyString >(L"Amalgam.AndroidHome", L"$(ANDROID_HOME"));
+
 	Ref< ui::Static > staticAndroidNdkRoot = new ui::Static();
 	staticAndroidNdkRoot->create(containerAndroid, L"Android NDK root");
 
 	m_editAndroidNdkRoot = new ui::Edit();
 	m_editAndroidNdkRoot->create(containerAndroid, settings->getProperty< PropertyString >(L"Amalgam.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"));
+
+	Ref< ui::Static > staticAndroidAntHome = new ui::Static();
+	staticAndroidAntHome->create(containerAndroid, L"Android ANT home");
+
+	m_editAndroidAntHome = new ui::Edit();
+	m_editAndroidAntHome->create(containerAndroid, settings->getProperty< PropertyString >(L"Amalgam.AndroidAntHome", L"$(ANT_HOME)"));
 
 	Ref< ui::Static > staticAndroidToolchain = new ui::Static();
 	staticAndroidToolchain->create(containerAndroid, L"Android Toolchain");
@@ -131,8 +143,14 @@ bool DeploySettingsPage::apply(PropertyGroup* settings)
 	bool useNsight = m_checkUseVS->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Amalgam.AndroidUseVS", useNsight);
 
+	std::wstring androidHome = m_editAndroidHome->getText();
+	settings->setProperty< PropertyString >(L"Amalgam.AndroidHome", androidHome);
+
 	std::wstring androidNdkRoot = m_editAndroidNdkRoot->getText();
 	settings->setProperty< PropertyString >(L"Amalgam.AndroidNdkRoot", androidNdkRoot);
+
+	std::wstring androidAntHome = m_editAndroidAntHome->getText();
+	settings->setProperty< PropertyString >(L"Amalgam.AndroidAntHome", androidAntHome);
 
 	std::wstring androidToolchain = m_editAndroidToolchain->getText();
 	settings->setProperty< PropertyString >(L"Amalgam.AndroidToolchain", androidToolchain);

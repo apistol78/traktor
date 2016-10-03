@@ -245,11 +245,7 @@ bool AccShape::createFromTriangles(
 				}
 				else if (colorRecords.size() == 1)
 				{
-					Color4f c = colorRecords.front().color * Scalar(255.0f);
-					color.r = uint8_t(c.getRed());
-					color.g = uint8_t(c.getGreen());
-					color.b = uint8_t(c.getBlue());
-					color.a = uint8_t(c.getAlpha());
+					color = colorRecords.front().color.toColor4ub();
 					m_batchFlags |= BfHaveSolid;
 				}
 
