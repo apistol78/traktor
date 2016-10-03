@@ -420,6 +420,21 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classFlashDictionary);
 
 	Ref< AutoRuntimeClass< FlashCharacterInstance > > classFlashCharacterInstance = new AutoRuntimeClass< FlashCharacterInstance >();
+	classFlashCharacterInstance->addConstant("SbmDefault", Any::fromInteger(SbmDefault));
+	classFlashCharacterInstance->addConstant("SbmNormal", Any::fromInteger(SbmNormal));
+	classFlashCharacterInstance->addConstant("SbmLayer", Any::fromInteger(SbmLayer));
+	classFlashCharacterInstance->addConstant("SbmMultiply", Any::fromInteger(SbmMultiply));
+	classFlashCharacterInstance->addConstant("SbmScreen", Any::fromInteger(SbmScreen));
+	classFlashCharacterInstance->addConstant("SbmLighten", Any::fromInteger(SbmLighten));
+	classFlashCharacterInstance->addConstant("SbmDarken", Any::fromInteger(SbmDarken));
+	classFlashCharacterInstance->addConstant("SbmDifference", Any::fromInteger(SbmDifference));
+	classFlashCharacterInstance->addConstant("SbmAdd", Any::fromInteger(SbmAdd));
+	classFlashCharacterInstance->addConstant("SbmSubtract", Any::fromInteger(SbmSubtract));
+	classFlashCharacterInstance->addConstant("SbmInvert", Any::fromInteger(SbmInvert));
+	classFlashCharacterInstance->addConstant("SbmAlpha", Any::fromInteger(SbmAlpha));
+	classFlashCharacterInstance->addConstant("SbmErase", Any::fromInteger(SbmErase));
+	classFlashCharacterInstance->addConstant("SbmOverlay", Any::fromInteger(SbmOverlay));
+	classFlashCharacterInstance->addConstant("SbmHardlight", Any::fromInteger(SbmHardlight));
 	classFlashCharacterInstance->addStaticMethod("getInstanceCount", &FlashCharacterInstance::getInstanceCount);
 	classFlashCharacterInstance->addMethod("destroy", &FlashCharacterInstance::destroy);
 	classFlashCharacterInstance->addMethod("getContext", &FlashCharacterInstance::getContext);
@@ -433,6 +448,12 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashCharacterInstance->addMethod("getTransform", &FlashCharacterInstance::getTransform);
 	classFlashCharacterInstance->addMethod("getFullTransform", &FlashCharacterInstance::getFullTransform);
 	classFlashCharacterInstance->addMethod("transformInto", &FlashCharacterInstance::transformInto);
+	classFlashCharacterInstance->addMethod("setFilter", &FlashCharacterInstance::setFilter);
+	classFlashCharacterInstance->addMethod("getFilter", &FlashCharacterInstance::getFilter);
+	classFlashCharacterInstance->addMethod("setFilterColor", &FlashCharacterInstance::setFilterColor);
+	classFlashCharacterInstance->addMethod("getFilterColor", &FlashCharacterInstance::getFilterColor);
+	classFlashCharacterInstance->addMethod("setBlendMode", &FlashCharacterInstance::setBlendMode);
+	classFlashCharacterInstance->addMethod("getBlendMode", &FlashCharacterInstance::getBlendMode);
 	classFlashCharacterInstance->addMethod("setVisible", &FlashCharacterInstance::setVisible);
 	classFlashCharacterInstance->addMethod("isVisible", &FlashCharacterInstance::isVisible);
 	classFlashCharacterInstance->addMethod("setEnabled", &FlashCharacterInstance::setEnabled);
