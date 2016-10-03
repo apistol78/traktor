@@ -22,6 +22,7 @@
 #include "Drawing/Filters/PremultiplyAlphaFilter.h"
 #include "Drawing/Filters/QuantizeFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Drawing/Filters/SeparateAlphaFilter.h"
 #include "Drawing/Filters/SharpenFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Filters/TonemapFilter.h"
@@ -313,6 +314,10 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< ScaleFilter > > classScaleFilter = new AutoRuntimeClass< ScaleFilter >();
 	classScaleFilter->addConstructor< int32_t, int32_t >(&ScaleFilter_constructor);
 	registrar->registerClass(classScaleFilter);
+
+	Ref< AutoRuntimeClass< SeparateAlphaFilter > > classSeparateAlphaFilter = new AutoRuntimeClass< SeparateAlphaFilter >();
+	classSeparateAlphaFilter->addConstructor();
+	registrar->registerClass(classSeparateAlphaFilter);
 
 	Ref< AutoRuntimeClass< SharpenFilter > > classSharpenFilter = new AutoRuntimeClass< SharpenFilter >();
 	classSharpenFilter->addConstructor< int, float >();
