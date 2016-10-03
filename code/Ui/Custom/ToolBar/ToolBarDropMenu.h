@@ -32,7 +32,7 @@ class T_DLLCLASS ToolBarDropMenu : public ToolBarItem
 	T_RTTI_CLASS;
 
 public:
-	ToolBarDropMenu(const Command& command, int32_t width, const std::wstring& text, const std::wstring& toolTip);
+	ToolBarDropMenu(int32_t width, const std::wstring& text, bool arrow, const std::wstring& toolTip);
 
 	int32_t add(MenuItem* item);
 
@@ -63,6 +63,7 @@ private:
 	Command m_command;
 	int32_t m_width;
 	std::wstring m_text;
+	bool m_arrow;
 	std::wstring m_toolTip;
 	RefArray< ui::MenuItem > m_items;
 	bool m_hover;

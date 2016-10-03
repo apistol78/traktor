@@ -84,7 +84,7 @@
 #include "Ui/ShortcutTable.h"
 #include "Ui/Dock.h"
 #include "Ui/DockPane.h"
-#include "Ui/MenuBar.h"
+//#include "Ui/MenuBar.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/StyleBitmap.h"
@@ -96,6 +96,7 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarDropMenu.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/ProgressBar.h"
 #include "Ui/Custom/InputDialog.h"
@@ -439,7 +440,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Load recently used files dictionary.
 	m_mru = loadRecent(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Traktor.Editor.mru");
 
-	if (!ui::Form::create(c_title, ui::scaleBySystemDPI(1280), ui::scaleBySystemDPI(900), ui::Form::WsDefault, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
+	if (!ui::Form::create(c_title, ui::scaleBySystemDPI(1280), ui::scaleBySystemDPI(900), ui::Form::WsDefault, new ui::TableLayout(L"100%", L"*,*,100%,*", 0, 0)))
 		return false;
 
 	//setIcon(ui::Bitmap::load(c_ResourceTraktorSmall, sizeof(c_ResourceTraktorSmall), L"png"));
@@ -453,13 +454,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutTable->addEventHandler< ui::ShortcutEvent >(this, &EditorForm::eventShortcut);
 
 	// Create menu bar.
-	m_menuBar = new ui::MenuBar();
+	m_menuBar = new ui::custom::ToolBar();
 	m_menuBar->create(this);
-	m_menuBar->addEventHandler< ui::MenuClickEvent >(this, &EditorForm::eventMenuClick);
+	m_menuBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EditorForm::eventMenuClick);
 
 	m_menuItemRecent = new ui::MenuItem(i18n::Text(L"MENU_FILE_OPEN_RECENT_WORKSPACE"));
 
-	Ref< ui::MenuItem > menuFile = new ui::MenuItem(i18n::Text(L"MENU_FILE"));
+	Ref< ui::custom::ToolBarDropMenu > menuFile = new ui::custom::ToolBarDropMenu(0, i18n::Text(L"MENU_FILE"), false, L"");
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.NewWorkspace"), i18n::Text(L"MENU_FILE_NEW_WORKSPACE")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.OpenWorkspace"), i18n::Text(L"MENU_FILE_OPEN_WORKSPACE")));
 	menuFile->add(m_menuItemRecent);
@@ -468,9 +469,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.SaveAll"), i18n::Text(L"MENU_FILE_SAVE_ALL")));
 	menuFile->add(new ui::MenuItem(L"-"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Exit"), i18n::Text(L"MENU_FILE_EXIT")));
-	m_menuBar->add(menuFile);
+	m_menuBar->addItem(menuFile);
 
-	Ref< ui::MenuItem > menuEdit = new ui::MenuItem(i18n::Text(L"MENU_EDIT"));
+	Ref< ui::custom::ToolBarDropMenu > menuEdit = new ui::custom::ToolBarDropMenu(0, i18n::Text(L"MENU_EDIT"), false, L"");
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Undo"), i18n::Text(L"MENU_EDIT_UNDO")));
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Redo"), i18n::Text(L"MENU_EDIT_REDO")));
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Cut"), i18n::Text(L"MENU_EDIT_CUT")));
@@ -481,9 +482,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuEdit->add(new ui::MenuItem(L"-"));
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Workspace"), i18n::Text(L"MENU_EDIT_WORKSPACE")));
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Settings"), i18n::Text(L"MENU_EDIT_SETTINGS")));
-	m_menuBar->add(menuEdit);
+	m_menuBar->addItem(menuEdit);
 
-	Ref< ui::MenuItem > menuView = new ui::MenuItem(i18n::Text(L"MENU_VIEW"));
+	Ref< ui::custom::ToolBarDropMenu > menuView = new ui::custom::ToolBarDropMenu(0, i18n::Text(L"MENU_VIEW"), false, L"");
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewHome"), i18n::Text(L"MENU_VIEW_HOME")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewDatabase"), i18n::Text(L"MENU_VIEW_DATABASE")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewProperties"), i18n::Text(L"MENU_VIEW_PROPERTIES")));
@@ -491,12 +492,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuView->add(new ui::MenuItem(L"-"));
 	m_menuItemOtherPanels = new ui::MenuItem(i18n::Text(L"MENU_VIEW_OTHER"));
 	menuView->add(m_menuItemOtherPanels);
-	m_menuBar->add(menuView);
+	m_menuBar->addItem(menuView);
 
-	Ref< ui::MenuItem > menuBuild = new ui::MenuItem(i18n::Text(L"MENU_BUILD"));
+	Ref< ui::custom::ToolBarDropMenu > menuBuild = new ui::custom::ToolBarDropMenu(0, i18n::Text(L"MENU_BUILD"), false, L"");
 	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Build"), i18n::Text(L"MENU_BUILD_BUILD")));
 	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Rebuild"), i18n::Text(L"MENU_BUILD_REBUILD")));
-	m_menuBar->add(menuBuild);
+	m_menuBar->addItem(menuBuild);
 
 	// Create toolbar.
 	m_toolBar = new ui::custom::ToolBar();
@@ -673,7 +674,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	type_of< IEditorTool >().findAllOf(toolTypes, false);
 	if (!toolTypes.empty())
 	{
-		m_menuTools = new ui::MenuItem(i18n::Text(L"MENU_TOOLS"));
+		m_menuTools = new ui::custom::ToolBarDropMenu(0, i18n::Text(L"MENU_TOOLS"), false, L"");
 
 		for (TypeInfoSet::iterator i = toolTypes.begin(); i != toolTypes.end(); ++i)
 		{
@@ -701,7 +702,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		}
 
 		if (!m_editorTools.empty())
-			m_menuBar->add(m_menuTools);
+			m_menuBar->addItem(m_menuTools);
 		else
 			m_menuTools = 0;
 	}
@@ -2588,9 +2589,9 @@ void EditorForm::eventShortcut(ui::ShortcutEvent* event)
 		event->consume();
 }
 
-void EditorForm::eventMenuClick(ui::MenuClickEvent* event)
+void EditorForm::eventMenuClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::Command& command = event->getItem()->getCommand();
+	const ui::Command& command = event->getCommand();
 	if (handleCommand(command))
 		event->consume();
 }

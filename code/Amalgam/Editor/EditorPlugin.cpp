@@ -158,7 +158,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 
-	m_toolTweaks = new ui::custom::ToolBarDropMenu(ui::Command(L"Amalgam.Tweaks"), ui::scaleBySystemDPI(70), i18n::Text(L"AMALGAM_TWEAKS"), i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
+	m_toolTweaks = new ui::custom::ToolBarDropMenu(ui::scaleBySystemDPI(70), i18n::Text(L"AMALGAM_TWEAKS"), true, i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
 	m_toolTweaks->add(createTweakMenuItem(L"Mute Audio", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Audio \"Write Out\"", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Force Render Thread Off", false));

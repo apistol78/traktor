@@ -30,7 +30,6 @@ class StreamServer;
 class ShortcutTable;
 class Dock;
 class DockPane;
-class MenuBar;
 class PopupMenu;
 class MenuItem;
 class Tab;
@@ -40,6 +39,7 @@ class Tab;
 
 class ToolBar;
 class ToolBarButtonClickEvent;
+class ToolBarDropMenu;
 class StatusBar;
 class ProgressBar;
 
@@ -177,7 +177,7 @@ private:
 	Ref< ui::DockPane > m_paneWest;
 	Ref< ui::DockPane > m_paneEast;
 	Ref< ui::DockPane > m_paneSouth;
-	Ref< ui::MenuBar > m_menuBar;
+	Ref< ui::custom::ToolBar > m_menuBar;
 	Ref< ui::MenuItem > m_menuItemRecent;
 	Ref< ui::MenuItem > m_menuItemOtherPanels;
 	Ref< ui::custom::ToolBar > m_toolBar;
@@ -185,7 +185,7 @@ private:
 	Ref< ui::custom::ProgressBar > m_buildProgress;
 	Ref< ui::Tab > m_tab;
 	Ref< ui::PopupMenu > m_menuTab;
-	Ref< ui::MenuItem > m_menuTools;
+	Ref< ui::custom::ToolBarDropMenu > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
 	Ref< PropertiesView > m_propertiesView;
 	Ref< ui::Tab > m_tabOutput;
@@ -274,7 +274,7 @@ private:
 
 	void eventShortcut(ui::ShortcutEvent* event);
 
-	void eventMenuClick(ui::MenuClickEvent* event);
+	void eventMenuClick(ui::custom::ToolBarButtonClickEvent* event);
 
 	void eventToolClicked(ui::custom::ToolBarButtonClickEvent* event);
 
