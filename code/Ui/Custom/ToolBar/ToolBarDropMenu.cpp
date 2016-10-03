@@ -16,10 +16,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ToolBarDropMenu", ToolBarDropMenu, ToolBarItem)
 
-ToolBarDropMenu::ToolBarDropMenu(const Command& command, int32_t width, const std::wstring& text, const std::wstring& toolTip)
-:	m_command(command)
-,	m_width(width)
+ToolBarDropMenu::ToolBarDropMenu(int32_t width, const std::wstring& text, bool arrow, const std::wstring& toolTip)
+:	m_width(width)
 ,	m_text(text)
+,	m_arrow(arrow)
 ,	m_toolTip(toolTip)
 ,	m_hover(false)
 ,	m_dropPosition(0)
@@ -67,7 +67,13 @@ bool ToolBarDropMenu::getToolTip(std::wstring& outToolTip) const
 
 Size ToolBarDropMenu::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
 {
-	return Size(m_width, imageHeight + 4);
+	if (m_width > 0)
+		return Size(m_width, imageHeight + scaleBySystemDPI(4));
+	else
+	{
+		Size sz = toolBar->getTextExtent(m_text);
+		return Size(sz.cx + scaleBySystemDPI(32), imageHeight + scaleBySystemDPI(4));
+	}
 }
 
 void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
@@ -75,49 +81,65 @@ void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Size size = getSize(toolBar, imageWidth, imageHeight);
 
-	int32_t sep = ui::scaleBySystemDPI(14);
+	int32_t sep = scaleBySystemDPI(14);
 
-	Rect rcText(
-		at.x + 4,
-		at.y + 2,
-		at.x + size.cx - sep - 2,
-		at.y + size.cy - 2
-	);
-	Rect rcButton(
-		at.x + size.cx - sep,
-		at.y + 1,
-		at.x + size.cx - 1,
-		at.y + size.cy - 1
-	);
+	Rect rcText;
+	if (m_arrow)
+		rcText = Rect(
+			at.x + scaleBySystemDPI(4),
+			at.y + 2,
+			at.x + size.cx - sep - 2,
+			at.y + size.cy - 2
+		);
+	else
+		rcText = Rect(
+			at.x + 2,
+			at.y + 2,
+			at.x + size.cx - 2,
+			at.y + size.cy - 2
+		);
 
 	canvas.setBackground(ss->getColor(toolBar, m_hover ? L"item-background-color-dropdown-hover" : L"item-background-color-dropdown"));
 	canvas.fillRect(Rect(at, size));
 
-	canvas.setBackground(ss->getColor(toolBar, L"item-background-color-dropdown-button"));
-	canvas.fillRect(rcButton);
-
-	if (m_hover)
+	if (m_arrow)
 	{
-		canvas.setForeground(ss->getColor(toolBar, L"item-color-dropdown-hover"));
-		canvas.drawRect(Rect(at, size));
-		canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom);
+		Rect rcButton(
+			at.x + size.cx - sep,
+			at.y + 1,
+			at.x + size.cx - 1,
+			at.y + size.cy - 1
+		);
+
+		canvas.setBackground(ss->getColor(toolBar, L"item-background-color-dropdown-button"));
+		canvas.fillRect(rcButton);
+
+		if (m_hover)
+		{
+			canvas.setForeground(ss->getColor(toolBar, L"item-color-dropdown-hover"));
+			canvas.drawRect(Rect(at, size));
+			canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom);
+		}
+
+		Point center = rcButton.getCenter();
+		Point pnts[] =
+		{
+			ui::Point(center.x - scaleBySystemDPI(3), center.y - scaleBySystemDPI(1)),
+			ui::Point(center.x + scaleBySystemDPI(2), center.y - scaleBySystemDPI(1)),
+			ui::Point(center.x - scaleBySystemDPI(1), center.y + scaleBySystemDPI(2))
+		};
+
+		canvas.setBackground(ss->getColor(toolBar, L"item-color-dropdown-arrow"));
+		canvas.fillPolygon(pnts, 3);
+
+		m_dropPosition = rcButton.left;
 	}
-
-	Point center = rcButton.getCenter();
-	Point pnts[] =
-	{
-		ui::Point(center.x - ui::scaleBySystemDPI(3), center.y - ui::scaleBySystemDPI(1)),
-		ui::Point(center.x + ui::scaleBySystemDPI(2), center.y - ui::scaleBySystemDPI(1)),
-		ui::Point(center.x - ui::scaleBySystemDPI(1), center.y + ui::scaleBySystemDPI(2))
-	};
-
-	canvas.setBackground(ss->getColor(toolBar, L"item-color-dropdown-arrow"));
-	canvas.fillPolygon(pnts, 3);
+	else
+		m_dropPosition = 0;
 
 	canvas.setForeground(ss->getColor(toolBar, L"color"));
-	canvas.drawText(rcText, m_text, AnLeft, AnCenter);
+	canvas.drawText(rcText, m_text, m_arrow ? AnLeft : AnCenter, AnCenter);
 
-	m_dropPosition = rcButton.left;
 	m_menuPosition = Point(at.x, at.y + size.cy);
 }
 
