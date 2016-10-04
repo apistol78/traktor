@@ -120,15 +120,15 @@ Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 {
 	Rect rc = getInnerRect();
 
-	int x = c_marginWidth;
-	int y = c_marginHeight;
+	int x = scaleBySystemDPI(c_marginWidth);
+	int y = scaleBySystemDPI(c_marginHeight);
 
 	for (RefArray< ToolBarItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
 	{
 		Size size = (*i)->getSize(this, m_imageWidth, m_imageHeight);
 
 		// Calculate item rectangle.
-		int offset = (rc.getHeight() - c_marginHeight * 2 - size.cy) / 2;
+		int offset = (rc.getHeight() - scaleBySystemDPI(c_marginHeight * 2) - size.cy) / 2;
 		Rect rc(
 			Point(x, y + offset),
 			size
@@ -154,7 +154,7 @@ Size ToolBar::getPreferedSize() const
 		height = std::max(height, size.cy);
 	}
 
-	return Size(width, height + c_marginHeight * 2 + 1);
+	return Size(width, height + scaleBySystemDPI(c_marginHeight * 2 + 1));
 }
 
 void ToolBar::eventMouseMove(MouseMoveEvent* event)
@@ -243,15 +243,15 @@ void ToolBar::eventPaint(PaintEvent* event)
 	}
 	*/
 
-	int x = rc.left + c_marginWidth;
-	int y = rc.top + c_marginHeight;
+	int x = rc.left + scaleBySystemDPI(c_marginWidth);
+	int y = rc.top + scaleBySystemDPI(c_marginHeight);
 
 	for (RefArray< ToolBarItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
 	{
 		Size size = (*i)->getSize(this, m_imageWidth, m_imageHeight);
 
 		// Calculate top-left position of item, center vertically.
-		int offset = (rc.getHeight() - c_marginHeight * 2 - size.cy) / 2;
+		int offset = (rc.getHeight() - scaleBySystemDPI(c_marginHeight) * 2 - size.cy) / 2;
 		Point at(x, y + offset);
 
 		(*i)->paint(
