@@ -76,6 +76,17 @@ private:
 	{
 		std::wstring cacheFileName = net::Url::encode(m_url);
 
+		if (m_merge || m_triangulate || m_includeAS)
+		{
+			cacheFileName += L"_";
+			if (m_merge)
+				cacheFileName += L"m";
+			if (m_triangulate)
+				cacheFileName += L"t";
+			if (m_includeAS)
+				cacheFileName += L"i";
+		}
+
 		if (!m_cacheDirectory.empty())
 		{
 			Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmRead);
