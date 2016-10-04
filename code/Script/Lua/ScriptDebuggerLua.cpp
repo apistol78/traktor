@@ -331,12 +331,22 @@ bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outL
 
 					if (object)
 						variable->setTypeName(type_name(object));
+
+					uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+					Boxed* b = dynamic_type_cast< Boxed* >(object);
+					if (b)
+						variable->setValue(new ValueObject(objectRef, b->toString()));
+					else
+						variable->setValue(new ValueObject(objectRef));
 				}
 				else
+				{
 					lua_pop(L, 1);
 
-				uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
-				variable->setValue(new ValueObject(objectRef));
+					uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+					variable->setValue(new ValueObject(objectRef));
+				}
 			}
 			else
 				lua_pop(L, 1);

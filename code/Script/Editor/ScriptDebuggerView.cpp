@@ -124,7 +124,7 @@ Ref< ui::custom::GridRow > ScriptDebuggerView::createVariableRow(const Variable*
 	}
 	else if (const script::ValueObject* valueObject = dynamic_type_cast< const script::ValueObject* >(local->getValue()))
 	{
-		row->add(new ui::custom::GridItem(L""));
+		row->add(new ui::custom::GridItem(valueObject->getValueOf()));
 		row->add(new ui::custom::GridItem(local->getTypeName()));
 
 		Ref< ui::custom::GridRow > objectRow = new ui::custom::GridRow(0);
