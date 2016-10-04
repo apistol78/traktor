@@ -333,13 +333,15 @@ bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const s
 		uint8_t b = rgb & 255;
 		uint8_t a = (255 * clamp(alpha, 0, 100)) / 100;
 
-		colorRecords[i].ratio = clamp< float >((*ratios)[i].getNumber() / 100.0f, 0.0f, 1.0f);
+		colorRecords[i].ratio = clamp< float >((*ratios)[i].getNumber() / 255.0f, 0.0f, 1.0f);
 		colorRecords[i].color = Color4f(r, g, b, a) / Scalar(255.0f);
 	}
 
 	Matrix33 gradientMatrix = Matrix33::identity();
 
 	ActionValue matrixTypeValue;
+	Matrix* mx;
+
 	if (matrix->getMember("matrixType", matrixTypeValue))
 	{
 		if (compareIgnoreCase< std::string >(matrixTypeValue.getString(), "box") != 0)
@@ -364,6 +366,10 @@ bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const s
 		r = memberValue.getNumber();
 
 		gradientMatrix = translate(w * 10.0f + x * 20.0f, h * 10.0f + y * 20.0f) * rotate(r) * scale(1.0f / w, 1.0f / h) * scale(20.0f, 20.0f);
+	}
+	else if ((mx = matrix->getRelay< Matrix >()) != 0)
+	{
+		gradientMatrix = mx->m_v;
 	}
 
 	self->createCanvas()->beginGradientFill(gradientType, colorRecords, gradientMatrix);
@@ -400,19 +406,7 @@ void AsMovieClip::MovieClip_curveTo(FlashSpriteInstance* self, avm_number_t cont
 
 Ref< FlashSpriteInstance > AsMovieClip::MovieClip_duplicateMovieClip(FlashSpriteInstance* self, const std::string& name, int32_t depth) const
 {
-	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(self->getParent());
-
-	Ref< FlashSpriteInstance > cloneClipInstance = self->clone();
-	cloneClipInstance->setName(name);
-
-	parentClipInstance->getDisplayList().showObject(
-		depth,
-		cloneClipInstance->getSprite()->getId(),
-		cloneClipInstance,
-		true
-	);
-
-	return cloneClipInstance;
+	return self->duplicateMovieClip(name, depth);
 }
 
 void AsMovieClip::MovieClip_endFill(FlashSpriteInstance* self) const
