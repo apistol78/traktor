@@ -1,3 +1,4 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Common/Matrix.h"
 
@@ -41,7 +42,15 @@ void Matrix::createBox(avm_number_t scaleX, avm_number_t scaleY, avm_number_t ro
 
 void Matrix::createGradientBox(avm_number_t width, avm_number_t height, avm_number_t rotation, avm_number_t tx, avm_number_t ty)
 {
-	T_FATAL_ERROR;
+	float x = tx;
+	float y = ty;
+	float w = width;
+	float h = height;
+	float r = rotation;
+	m_v =
+		traktor::translate(10.0f * w + 20.0f * x, 10.0f * h + 20.0f * y) *
+		traktor::rotate(r) *
+		traktor::scale(w / 2000.0f, h / 2000.0f);
 }
 
 Ref< Point > Matrix::deltaTransformPoint(const Point* pt)
@@ -72,7 +81,9 @@ void Matrix::scale(avm_number_t scaleX, avm_number_t scaleY)
 
 std::wstring Matrix::toString()
 {
-	return L"N/A";
+	StringOutputStream ss;
+	ss << L"(a=" << m_v.e11 << L", b=" << m_v.e12 << L", c=" << m_v.e21 << L", d=" << m_v.e22 << L", tx=" << m_v.e13 << L", ty=" << m_v.e23 << L")";
+	return ss.str();
 }
 
 Ref< Point > Matrix::transformPoint(const Point* pt)

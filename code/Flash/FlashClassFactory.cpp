@@ -197,6 +197,16 @@ Any FlashShapeInstance_invoke(FlashShapeInstance* self, const std::string& metho
 	return ActionObjectRelay_invoke(self, methodName, argc, argv);
 }
 
+Ref< FlashSpriteInstance > FlashSpriteInstance_duplicateMovieClip_1(FlashSpriteInstance* self, const std::string& cloneName, int32_t depth)
+{
+	return self->duplicateMovieClip(cloneName, depth);
+}
+
+Ref< FlashSpriteInstance > FlashSpriteInstance_duplicateMovieClip_2(FlashSpriteInstance* self, const std::string& cloneName, int32_t depth, FlashSpriteInstance* intoParent)
+{
+	return self->duplicateMovieClip(cloneName, depth, intoParent);
+}
+
 Any FlashSpriteInstance_invoke(FlashSpriteInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
 {
 	return ActionObjectRelay_invoke(self, methodName, argc, argv);
@@ -506,6 +516,8 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashSpriteInstance->addMethod("createTextField", &FlashSpriteInstance::createTextField);
 	classFlashSpriteInstance->addMethod("removeMovieClip", &FlashSpriteInstance::removeMovieClip);
 	classFlashSpriteInstance->addMethod("clone", &FlashSpriteInstance::clone);
+	classFlashSpriteInstance->addMethod("duplicateMovieClip", &FlashSpriteInstance_duplicateMovieClip_1);
+	classFlashSpriteInstance->addMethod("duplicateMovieClip", &FlashSpriteInstance_duplicateMovieClip_2);
 	classFlashSpriteInstance->addMethod("getLocalBounds", &FlashSpriteInstance::getLocalBounds);
 	classFlashSpriteInstance->addMethod("getVisibleLocalBounds", &FlashSpriteInstance::getVisibleLocalBounds);
 	classFlashSpriteInstance->addMethod("setMask", &FlashSpriteInstance::setMask);

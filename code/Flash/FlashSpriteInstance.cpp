@@ -337,6 +337,36 @@ Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
 	return cloneInstance;
 }
 
+Ref< FlashSpriteInstance > FlashSpriteInstance::duplicateMovieClip(const std::string& cloneName, int32_t depth)
+{
+	FlashSpriteInstance* parent = mandatory_non_null_type_cast< FlashSpriteInstance* >(getParent());
+	return duplicateMovieClip(cloneName, depth, parent);
+}
+
+Ref< FlashSpriteInstance > FlashSpriteInstance::duplicateMovieClip(const std::string& cloneName, int32_t depth, FlashSpriteInstance* intoParent)
+{
+	const SmallMap< uint32_t, Ref< const IActionVMImage > >& events = getEvents();
+
+	Ref< FlashSpriteInstance > cloneInstance = checked_type_cast< FlashSpriteInstance* >(m_sprite->createInstance(
+		getContext(),
+		getDictionary(),
+		intoParent,
+		cloneName,
+		getTransform(),
+		0,
+		&events
+	));
+
+	intoParent->getDisplayList().showObject(
+		depth,
+		cloneInstance->getSprite()->getId(),
+		cloneInstance,
+		true
+	);
+
+	return cloneInstance;
+}
+
 Aabb2 FlashSpriteInstance::getLocalBounds() const
 {
 	Aabb2 bounds;

@@ -76,6 +76,10 @@ public:
 
 	Ref< FlashSpriteInstance > clone() const;
 
+	Ref< FlashSpriteInstance > duplicateMovieClip(const std::string& cloneName, int32_t depth);
+
+	Ref< FlashSpriteInstance > duplicateMovieClip(const std::string& cloneName, int32_t depth, FlashSpriteInstance* intoParent);
+
 	Aabb2 getLocalBounds() const;
 
 	Aabb2 getVisibleLocalBounds() const;
