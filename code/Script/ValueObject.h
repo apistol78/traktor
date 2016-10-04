@@ -28,16 +28,23 @@ class T_DLLCLASS ValueObject : public IValue
 public:
 	ValueObject();
 
-	ValueObject(uint32_t objectRef);
+	explicit ValueObject(uint32_t objectRef);
+
+	explicit ValueObject(uint32_t objectRef, const std::wstring& valueOf);
 
 	void setObjectRef(uint32_t objectRef);
 
 	uint32_t getObjectRef() const;
 
+	void setValueOf(const std::wstring& valueOf);
+
+	const std::wstring& getValueOf() const;
+
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	uint32_t m_objectRef;
+	std::wstring m_valueOf;
 };
 
 	}
