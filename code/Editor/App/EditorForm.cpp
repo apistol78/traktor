@@ -96,7 +96,7 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarDropMenu.h"
+#include "Ui/Custom/ToolBar/ToolBarMenu.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/ProgressBar.h"
 #include "Ui/Custom/InputDialog.h"
@@ -460,7 +460,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	m_menuItemRecent = new ui::MenuItem(i18n::Text(L"MENU_FILE_OPEN_RECENT_WORKSPACE"));
 
-	Ref< ui::custom::ToolBarDropMenu > menuFile = new ui::custom::ToolBarDropMenu(0, i18n::Text(L"MENU_FILE"), false, L"");
+	Ref< ui::custom::ToolBarMenu > menuFile = new ui::custom::ToolBarMenu(i18n::Text(L"MENU_FILE"), L"");
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.NewWorkspace"), i18n::Text(L"MENU_FILE_NEW_WORKSPACE")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.OpenWorkspace"), i18n::Text(L"MENU_FILE_OPEN_WORKSPACE")));
 	menuFile->add(m_menuItemRecent);
@@ -471,7 +471,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Exit"), i18n::Text(L"MENU_FILE_EXIT")));
 	m_menuBar->addItem(menuFile);
 
-	Ref< ui::custom::ToolBarDropMenu > menuEdit = new ui::custom::ToolBarDropMenu(0, i18n::Text(L"MENU_EDIT"), false, L"");
+	Ref< ui::custom::ToolBarMenu > menuEdit = new ui::custom::ToolBarMenu(i18n::Text(L"MENU_EDIT"), L"");
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Undo"), i18n::Text(L"MENU_EDIT_UNDO")));
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Redo"), i18n::Text(L"MENU_EDIT_REDO")));
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Cut"), i18n::Text(L"MENU_EDIT_CUT")));
@@ -484,7 +484,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Settings"), i18n::Text(L"MENU_EDIT_SETTINGS")));
 	m_menuBar->addItem(menuEdit);
 
-	Ref< ui::custom::ToolBarDropMenu > menuView = new ui::custom::ToolBarDropMenu(0, i18n::Text(L"MENU_VIEW"), false, L"");
+	Ref< ui::custom::ToolBarMenu > menuView = new ui::custom::ToolBarMenu(i18n::Text(L"MENU_VIEW"), L"");
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewHome"), i18n::Text(L"MENU_VIEW_HOME")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewDatabase"), i18n::Text(L"MENU_VIEW_DATABASE")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewProperties"), i18n::Text(L"MENU_VIEW_PROPERTIES")));
@@ -494,7 +494,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuView->add(m_menuItemOtherPanels);
 	m_menuBar->addItem(menuView);
 
-	Ref< ui::custom::ToolBarDropMenu > menuBuild = new ui::custom::ToolBarDropMenu(0, i18n::Text(L"MENU_BUILD"), false, L"");
+	Ref< ui::custom::ToolBarMenu > menuBuild = new ui::custom::ToolBarMenu(i18n::Text(L"MENU_BUILD"), L"");
 	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Build"), i18n::Text(L"MENU_BUILD_BUILD")));
 	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Rebuild"), i18n::Text(L"MENU_BUILD_REBUILD")));
 	m_menuBar->addItem(menuBuild);
@@ -674,7 +674,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	type_of< IEditorTool >().findAllOf(toolTypes, false);
 	if (!toolTypes.empty())
 	{
-		m_menuTools = new ui::custom::ToolBarDropMenu(0, i18n::Text(L"MENU_TOOLS"), false, L"");
+		m_menuTools = new ui::custom::ToolBarMenu(i18n::Text(L"MENU_TOOLS"), L"");
 
 		for (TypeInfoSet::iterator i = toolTypes.begin(); i != toolTypes.end(); ++i)
 		{
