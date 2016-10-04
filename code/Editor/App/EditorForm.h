@@ -39,7 +39,7 @@ class Tab;
 
 class ToolBar;
 class ToolBarButtonClickEvent;
-class ToolBarDropMenu;
+class ToolBarMenu;
 class StatusBar;
 class ProgressBar;
 
@@ -185,7 +185,7 @@ private:
 	Ref< ui::custom::ProgressBar > m_buildProgress;
 	Ref< ui::Tab > m_tab;
 	Ref< ui::PopupMenu > m_menuTab;
-	Ref< ui::custom::ToolBarDropMenu > m_menuTools;
+	Ref< ui::custom::ToolBarMenu > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
 	Ref< PropertiesView > m_propertiesView;
 	Ref< ui::Tab > m_tabOutput;
