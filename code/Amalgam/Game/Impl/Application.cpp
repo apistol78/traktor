@@ -267,10 +267,10 @@ bool Application::create(
 
 	// Entity factories.
 	T_DEBUG(L"Creating entity factories...");
-	if (m_physicsServer)
-		m_physicsServer->createEntityFactories(m_environment);
 	if (m_worldServer)
 		m_worldServer->createEntityFactories(m_environment);
+	if (m_worldServer && m_physicsServer)
+		m_physicsServer->createEntityFactories(m_environment);
 
 	// Setup voice chat feature.
 	if (m_onlineServer && m_audioServer)
