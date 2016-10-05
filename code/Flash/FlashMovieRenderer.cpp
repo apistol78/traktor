@@ -257,62 +257,82 @@ void FlashMovieRenderer::renderSpriteLayered(
 				break;
 		}
 
-		// Render all shapes until modifying layer but with only alpha output to ensure
-		// entire area beneath sprite has alpha prepared.
-		for (FlashDisplayList::layer_map_t::const_iterator i = is; i != ie; ++i)
-		{
-			const FlashDisplayList::Layer& layer = i->second;
-			if (!layer.instance)
-				continue;
-
-			T_ASSERT (!layer.clipEnable);
-
-			renderCharacter(
-				layer.instance,
-				transform,
-				cxTransform,
-				renderAsMask,
-				SbmAlpha
-			);
-		}
-
-		// Then render alpha modifying (masking) layer, will replace alpha values.
 		if (ie != layers.end())
 		{
-			T_ASSERT (ie->second.instance);
+			// Render all shapes until modifying layer but with only alpha output to ensure
+			// entire area beneath sprite has alpha prepared.
+			for (FlashDisplayList::layer_map_t::const_iterator i = is; i != ie; ++i)
+			{
+				const FlashDisplayList::Layer& layer = i->second;
+				if (!layer.instance)
+					continue;
 
-			renderCharacter(
-				ie->second.instance,
-				transform,
-				cxTransform,
-				renderAsMask,
-				blendMode
-			);
+				T_ASSERT (!layer.clipEnable);
+
+				renderCharacter(
+					layer.instance,
+					transform,
+					cxTransform,
+					renderAsMask,
+					SbmAlpha
+				);
+			}
+
+			// Then render alpha modifying (masking) layer, will replace alpha values.
+			if (ie != layers.end())
+			{
+				T_ASSERT (ie->second.instance);
+
+				renderCharacter(
+					ie->second.instance,
+					transform,
+					cxTransform,
+					renderAsMask,
+					blendMode
+				);
+			}
+
+			// Then finally render all layers until modifying layer using destination alpha for composition.
+			for (FlashDisplayList::layer_map_t::const_iterator i = is; i != ie; ++i)
+			{
+				const FlashDisplayList::Layer& layer = i->second;
+				if (!layer.instance)
+					continue;
+
+				T_ASSERT (!layer.clipEnable);
+
+				renderCharacter(
+					layer.instance,
+					transform,
+					cxTransform,
+					renderAsMask,
+					blendMode
+				);
+			}
+
+			is = ie + 1;
 		}
-
-		// Then finally render all layers until modifying layer using destination alpha for composition.
-		for (FlashDisplayList::layer_map_t::const_iterator i = is; i != ie; ++i)
+		else
 		{
-			const FlashDisplayList::Layer& layer = i->second;
-			if (!layer.instance)
-				continue;
+			// No complimentary blend layers found, render remaining layers with default blend.
+			for (FlashDisplayList::layer_map_t::const_iterator i = is; i != ie; ++i)
+			{
+				const FlashDisplayList::Layer& layer = i->second;
+				if (!layer.instance)
+					continue;
 
-			T_ASSERT (!layer.clipEnable);
+				T_ASSERT (!layer.clipEnable);
 
-			renderCharacter(
-				layer.instance,
-				transform,
-				cxTransform,
-				renderAsMask,
-				blendMode
-			);
+				renderCharacter(
+					layer.instance,
+					transform,
+					cxTransform,
+					renderAsMask,
+					SbmDefault
+				);
+			}
+			break;
 		}
-
-		// Skip modifying layer.
-		if (ie != layers.end())
-			++ie;
-
-		is = ie;
 	}
 
 	FlashCanvas* canvas = spriteInstance->getCanvas();
