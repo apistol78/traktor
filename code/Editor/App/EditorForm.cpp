@@ -2493,13 +2493,16 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.QuickOpen")
 	{
-		QuickOpenDialog quickOpenDlg(this);
-		if (quickOpenDlg.create(this))
+		if (m_sourceDatabase)
 		{
-			Ref< db::Instance > instance = quickOpenDlg.showDialog();
-			quickOpenDlg.destroy();
-			if (instance)
-				openEditor(instance);
+			QuickOpenDialog quickOpenDlg(this);
+			if (quickOpenDlg.create(this))
+			{
+				Ref< db::Instance > instance = quickOpenDlg.showDialog();
+				quickOpenDlg.destroy();
+				if (instance)
+					openEditor(instance);
+			}
 		}
 	}
 	else if (command == L"Editor.Exit")
