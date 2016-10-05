@@ -31,18 +31,16 @@ enum BatchFlags
 	BfHaveTextured = 2
 };
 
-const float c_controlPoints[3][2] =
-{
-	{ 0.0f, 0.0f },
-	{ 0.5f, 0.0f },
-	{ 1.0f, 1.0f }
-};
+const uint8_t c_cpNegOne = 0;
+const uint8_t c_cpZero = 127;
+const uint8_t c_cpHalf = 191;
+const uint8_t c_cpOne = 255;
 
-const float c_curveSign[3] =
+const uint8_t c_controlPoints[3][2] =
 {
-	0.0f,
-	1.0f,
-	-1.0f
+	{ c_cpZero, c_cpZero },
+	{ c_cpHalf, c_cpZero },
+	{ c_cpOne, c_cpOne }
 };
 
 const static Matrix33 c_textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f);
@@ -218,11 +216,11 @@ bool AccShape::createFromTriangles(
 		{
 			T_ASSERT (j->fillStyle);
 
-			float curveSign = 0.0f;
+			uint8_t curveSign = c_cpZero;
 			if (j->type == TcIn)
-				curveSign = 1.0f;
+				curveSign = c_cpOne;
 			else if (j->type == TcOut)
-				curveSign = -1.0f;
+				curveSign = c_cpNegOne;
 
 			if (
 				!fillStyles.empty() &&

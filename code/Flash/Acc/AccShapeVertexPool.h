@@ -27,7 +27,7 @@ public:
 	struct Vertex
 	{
 		float pos[2];
-		float curvature[3];
+		uint8_t curvature[4];
 		float texCoord[2];
 		float texRect[4];
 		uint8_t color[4];
