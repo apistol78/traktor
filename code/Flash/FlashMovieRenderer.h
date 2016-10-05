@@ -67,6 +67,27 @@ private:
 		bool renderAsMask
 	);
 
+	void renderSpriteDefault(
+		FlashSpriteInstance* spriteInstance,
+		const Matrix33& transform,
+		const SwfCxTransform& cxTransform,
+		bool renderAsMask
+	);
+
+	void renderSpriteLayered(
+		FlashSpriteInstance* spriteInstance,
+		const Matrix33& transform,
+		const SwfCxTransform& cxTransform,
+		bool renderAsMask
+	);
+
+	void renderSpriteWithScalingGrid(
+		FlashSpriteInstance* spriteInstance,
+		const Matrix33& transform,
+		const SwfCxTransform& cxTransform,
+		bool renderAsMask
+	);
+
 	void renderCharacter(
 		FlashCharacterInstance* characterInstance,
 		const Matrix33& transform,
