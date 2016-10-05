@@ -639,7 +639,7 @@ void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& boun
 	);
 }
 
-void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform, uint8_t blendMode)
 {
 	Ref< AccShape > accShape;
 
@@ -686,7 +686,7 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanv
 		m_maskWrite,
 		m_maskIncrement,
 		m_maskReference,
-		SbmDefault
+		blendMode
 	);
 }
 
