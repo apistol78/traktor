@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-#if defined(GL_OES_vertex_array_object) && !defined(__IOS__)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__IOS__)
 PFNGLBINDVERTEXARRAYOESPROC g_glBindVertexArrayOES = 0;
 PFNGLDELETEVERTEXARRAYSOESPROC g_glDeleteVertexArraysOES = 0;
 PFNGLGENVERTEXARRAYSOESPROC g_glGenVertexArraysOES = 0;

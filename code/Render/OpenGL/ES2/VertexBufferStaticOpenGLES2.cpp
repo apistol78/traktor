@@ -32,7 +32,7 @@ struct DeleteBufferCallback : public ContextOpenGLES2::IDeleteCallback
 	}
 };
 
-#if defined(GL_OES_vertex_array_object)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32)
 struct DeleteVertexArrayCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_arrayName;
@@ -181,7 +181,7 @@ void VertexBufferStaticOpenGLES2::destroy()
 			m_context->deleteResource(new DeleteBufferCallback(m_bufferObject));
 		m_bufferObject = 0;
 	}
-#if defined(GL_OES_vertex_array_object)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32)
 	if (m_arrayObject)
 	{
 		if (m_context)
@@ -247,7 +247,7 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 		}
 		m_buffer.release();
 	
-#if defined(GL_OES_vertex_array_object)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32)
 		if (m_arrayObject)
 		{
 			if (m_context)
@@ -258,7 +258,7 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 		m_dirty = false;
 	}
 
-#if defined(GL_OES_vertex_array_object)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32)
 	if (m_arrayObject == 0 && g_glGenVertexArraysOES != 0)
 	{
 		T_OGL_SAFE(g_glGenVertexArraysOES(1, &m_arrayObject));
