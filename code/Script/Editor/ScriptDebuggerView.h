@@ -17,6 +17,7 @@ class IEditor;
 	{
 
 class Command;
+class PopupMenu;
 
 		namespace custom
 		{
@@ -58,6 +59,7 @@ private:
 	Ref< ui::custom::ToolBar > m_debuggerTools;
 	Ref< ui::custom::GridView > m_callStackGrid;
 	Ref< ui::custom::GridView > m_localsGrid;
+	Ref< ui::PopupMenu > m_localsPopup;
 	RefArray< StackFrame > m_stackFrames;
 	int32_t m_activeFrame;
 
@@ -77,6 +79,8 @@ private:
 	void eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent* event);
 
 	void eventLocalsGridStateChange(ui::custom::GridRowStateChangeEvent* event);
+
+	void eventLocalsGridButtonDown(ui::MouseButtonDownEvent* event);
 };
 
 	}

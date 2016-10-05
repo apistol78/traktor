@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -14,6 +15,9 @@
 #include "Script/ValueObject.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Ui/Application.h"
+#include "Ui/Clipboard.h"
+#include "Ui/MenuItem.h"
+#include "Ui/PopupMenu.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
@@ -81,6 +85,11 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_TYPE"), ui::scaleBySystemDPI(150)));
 	m_localsGrid->setEnable(false);
 	m_localsGrid->addEventHandler< ui::custom::GridRowStateChangeEvent >(this, &ScriptDebuggerView::eventLocalsGridStateChange);
+	m_localsGrid->addEventHandler< ui::MouseButtonDownEvent >(this, &ScriptDebuggerView::eventLocalsGridButtonDown);
+
+	m_localsPopup = new ui::PopupMenu();
+	m_localsPopup->create();
+	m_localsPopup->add(new ui::MenuItem(ui::Command(L"Script.Editor.CopyLocalValue"), i18n::Text(L"SCRIPT_EDITOR_DEBUG_COPY_LOCAL_VALUE")));
 
 	m_scriptDebugger->addListener(this);
 	return true;
@@ -93,6 +102,7 @@ void ScriptDebuggerView::destroy()
 		m_scriptDebugger->removeListener(this);
 		m_scriptDebugger = 0;
 	}
+	safeDestroy(m_localsPopup);
 	ui::Container::destroy();
 }
 
@@ -275,6 +285,26 @@ void ScriptDebuggerView::eventLocalsGridStateChange(ui::custom::GridRowStateChan
 	}
 
 	m_localsGrid->update();
+}
+
+void ScriptDebuggerView::eventLocalsGridButtonDown(ui::MouseButtonDownEvent* event)
+{
+	if (event->getButton() != ui::MbtRight)
+		return;
+
+	Ref< ui::MenuItem > selected = m_localsPopup->show(m_localsGrid, event->getPosition());
+	if (!selected)
+		return;
+
+	if (selected->getCommand() == L"Script.Editor.CopyLocalValue")
+	{
+		ui::custom::GridRow* selectedRow = m_localsGrid->getSelectedRow();
+		if (selectedRow)
+		{
+			std::wstring value = selectedRow->get(1)->getText();
+			ui::Application::getInstance()->getClipboard()->setText(value);
+		}
+	}
 }
 
 	}

@@ -2277,6 +2277,10 @@
       <second>Value</second>
     </item>
     <item>
+      <first>SCRIPT_EDITOR_DEBUG_COPY_LOCAL_VALUE</first>
+      <second>Copy value</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
       <second>Add dependency</second>
     </item>
