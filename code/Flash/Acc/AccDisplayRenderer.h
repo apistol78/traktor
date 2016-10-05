@@ -114,7 +114,7 @@ public:
 
 	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL;
 
-	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL;
+	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
 
 	virtual void end() T_OVERRIDE T_FINAL;
 

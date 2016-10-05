@@ -117,8 +117,9 @@ public:
 	 * \param transform Shape transform.
 	 * \param canvas Canvas
 	 * \param cxform Color transform.
+	 * \param blendMode Blend mode.
 	 */
-	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform) = 0;
+	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform, uint8_t blendMode) = 0;
 
 	/*! \brief End frame. */
 	virtual void end() = 0;

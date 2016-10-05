@@ -213,7 +213,8 @@ void FlashMovieRenderer::renderSpriteDefault(
 		m_displayRenderer->renderCanvas(
 			transform,
 			*canvas,
-			cxTransform
+			cxTransform,
+			blendMode
 		);
 
 	m_displayRenderer->endSprite(
@@ -319,7 +320,8 @@ void FlashMovieRenderer::renderSpriteLayered(
 		m_displayRenderer->renderCanvas(
 			transform,
 			*canvas,
-			cxTransform
+			cxTransform,
+			blendMode
 		);
 
 	m_displayRenderer->endSprite(
@@ -490,7 +492,8 @@ void FlashMovieRenderer::renderSpriteWithScalingGrid(
 		m_displayRenderer->renderCanvas(
 			transform,
 			*canvas,
-			cxTransform
+			cxTransform,
+			blendMode
 		);
 
 	m_displayRenderer->endSprite(
