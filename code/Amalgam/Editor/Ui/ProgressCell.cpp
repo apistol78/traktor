@@ -28,24 +28,34 @@ void ProgressCell::setProgress(int32_t progress)
 
 void ProgressCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	if (m_progress >= 0)
+	canvas.setBackground(Color4ub(255, 255, 255, 255));
+	canvas.fillRect(rect);
+
+	int32_t x = (rect.getWidth() * m_progress) / 100;
+	if (x > 0)
 	{
-		canvas.setBackground(Color4ub(255, 255, 255, 255));
-		canvas.fillRect(rect);
+		ui::Rect rect2 = rect;
+		rect2.right = rect2.left + x;
 
-		int32_t x = (rect.getWidth() * m_progress) / 100;
-		if (x > 0)
-		{
-			ui::Rect rect2 = rect;
-			rect2.right = rect2.left + x;
+		canvas.setBackground(Color4ub(0, 153, 0, 255));
+		canvas.fillRect(rect2);
 
-			canvas.setBackground(Color4ub(0, 153, 0, 255));
-			canvas.fillRect(rect2);
-		}
+		ui::Rect rect3 = rect;
+		rect3.left += ui::scaleBySystemDPI(2);
+
+		canvas.setForeground(Color4ub(0, 0, 0, 255));
+		canvas.drawText(rect3, m_text, ui::AnLeft, ui::AnCenter);
+
+		canvas.setClipRect(rect2);
+		canvas.setForeground(Color4ub(255, 255, 255, 255));
+		canvas.drawText(rect3, m_text, ui::AnLeft, ui::AnCenter);
 	}
-	if (!m_text.empty())
+	else if (!m_text.empty())
 	{
-		ui::Rect rect2 = rect; rect2.left += 2;
+		ui::Rect rect2 = rect;
+		rect2.left += ui::scaleBySystemDPI(2);
+
+		canvas.setForeground(Color4ub(0, 0, 0, 255));
 		canvas.drawText(rect2, m_text, ui::AnLeft, ui::AnCenter);
 	}
 }
