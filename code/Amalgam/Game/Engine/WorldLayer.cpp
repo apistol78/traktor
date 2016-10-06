@@ -235,7 +235,7 @@ void WorldLayer::update(const UpdateInfo& info)
 	if (!m_worldRenderer)
 		return;
 
-	info.getProfiler()->beginScope(FptWorldLayer);
+	info.getProfiler()->beginScope(FptWorldLayerUpdate);
 
 	// Update camera transform.
 	if (m_cameraEntity)
@@ -273,11 +273,7 @@ void WorldLayer::update(const UpdateInfo& info)
 		// Update entity events.
 		world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
 		if (eventManager)
-		{
-			info.getProfiler()->beginScope(FptWorldLayerEvents);
 			eventManager->update(up);
-			info.getProfiler()->endScope();
-		}
 	}
 
 	// In case not explicitly set we update the alternative time also.
@@ -291,6 +287,8 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 	if (!m_worldRenderer || !m_scene)
 		return;
 
+	info.getProfiler()->beginScope(FptWorldLayerBuild);
+
 	if (m_worldRenderer->beginBuild())
 	{
 		m_worldRenderer->build(m_renderGroup);
@@ -303,6 +301,8 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 	}
 
 	m_deltaTime = info.getFrameDeltaTime();
+
+	info.getProfiler()->endScope();
 }
 
 void WorldLayer::render(render::EyeType eye, uint32_t frame)

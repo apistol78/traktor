@@ -35,40 +35,30 @@ const int32_t c_performanceLineHeight = 14;
 const int32_t c_performanceHeight = 7 * c_performanceLineHeight;
 const int32_t c_commandHeight = 22;
 
-const Color4ub c_markerColors[] =
+const struct
 {
-	Color4ub(255, 255, 120),
-	Color4ub(200, 200, 80),
-	Color4ub(255, 120, 255),
-	Color4ub(200, 80, 200),
-	Color4ub(120, 255, 255),
-	Color4ub(80, 200, 200),
-	Color4ub(255, 120, 120),
-	Color4ub(200, 80, 80),
-	Color4ub(120, 255, 120),
-	Color4ub(80, 200, 80),
-	Color4ub(120, 120, 255),
-	Color4ub(80, 80, 200)
-};
-
-const wchar_t* c_markerNames[] =
+	const wchar_t* name;
+	Color4ub color;
+}
+c_markers[] =
 {
-	L"End",
-	L"Render update",
-	L"Session",
-	L"Script GC",
-	L"Audio",
-	L"Rumble",
-	L"Input",
-	L"State",
-	L"Physics",
-	L"Build",
-	L"Audio Layer",
-	L"Flash Layer",
-	L"Video Layer",
-	L"World Layer",
-	L"Entity Events",
-	L"Script"
+	{ L"End", Color4ub(255, 255, 120) },
+	{ L"Render update", Color4ub(200, 200, 80) },
+	{ L"Session", Color4ub(255, 120, 255) },
+	{ L"Script GC", Color4ub(200, 80, 200) },
+	{ L"Audio", Color4ub(120, 255, 255) },
+	{ L"Rumble", Color4ub(80, 200, 200) },
+	{ L"Input", Color4ub(255, 120, 120) },
+	{ L"State", Color4ub(200, 80, 80) },
+	{ L"Physics", Color4ub(120, 255, 120) },
+	{ L"Build", Color4ub(80, 200, 80) },
+	{ L"Audio update", Color4ub(120, 120, 255) },
+	{ L"Flash update", Color4ub(80, 80, 200) },
+	{ L"Flash build", Color4ub(80, 200, 80) },
+	{ L"Video update", Color4ub(200, 80, 80) },
+	{ L"World update", Color4ub(200, 80, 200) },
+	{ L"World build", Color4ub(200, 200, 80) },
+	{ L"Script", Color4ub(255, 80, 128) }
 };
 
 std::wstring formatPerformanceTime(float time)
@@ -437,18 +427,18 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 				if (xe <= xb)
 					continue;
 
-				int32_t o = fm.level * 2;
+				int32_t o = fm.level * ui::scaleBySystemDPI(2);
 
 				ui::Rect markerRect(
 					xb, graphRect.top + o,
 					xe, graphRect.bottom - o
 				);
 
-				canvas.setBackground(c_markerColors[j % sizeof_array(c_markerColors)]);
+				canvas.setBackground(c_markers[fm.id].color);
 				canvas.fillRect(markerRect);
 
 				canvas.setClipRect(markerRect);
-				canvas.drawText(markerRect, c_markerNames[fm.id], ui::AnLeft, ui::AnCenter);
+				canvas.drawText(markerRect, c_markers[fm.id].name, ui::AnLeft, ui::AnCenter);
 
 				canvas.setClipRect(performanceRect);
 			}

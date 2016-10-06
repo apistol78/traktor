@@ -24,11 +24,12 @@ enum FrameProfilerTags
 	FptStateUpdate,
 	FptPhysicsServerUpdate,
 	FptBuildFrame,
-	FptAudioLayer,
-	FptFlashLayer,
-	FptVideoLayer,
-	FptWorldLayer,
-	FptWorldLayerEvents,
+	FptAudioLayerUpdate,
+	FptFlashLayerUpdate,
+	FptFlashLayerBuild,
+	FptVideoLayerUpdate,
+	FptWorldLayerUpdate,
+	FptWorldLayerBuild,
 	FptScript
 };
 

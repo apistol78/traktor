@@ -5,10 +5,21 @@
 
 namespace traktor
 {
+	namespace ui
+	{
+		namespace custom
+		{
+		
+class BuildChartControl;
+class ToolBar;
+class ToolBarButtonClickEvent;
+
+		}
+	}
+
 	namespace amalgam
 	{
 
-class ProfilerControl;
 class TargetConnection;
 
 /*! \brief Visual profiler dialog.
@@ -27,7 +38,10 @@ public:
 
 private:
 	Ref< TargetConnection > m_connection;
-	Ref< ProfilerControl > m_control;
+	Ref< ui::custom::ToolBar > m_toolBar;
+	Ref< ui::custom::BuildChartControl > m_chart;
+
+	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
 	void eventClose(ui::CloseEvent* event);
 

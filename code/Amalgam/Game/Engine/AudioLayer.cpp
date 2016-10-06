@@ -114,7 +114,7 @@ void AudioLayer::prepare(const UpdateInfo& info)
 
 void AudioLayer::update(const UpdateInfo& info)
 {
-	info.getProfiler()->beginScope(FptAudioLayer);
+	info.getProfiler()->beginScope(FptAudioLayerUpdate);
 
 	if (
 		m_autoPlay &&

@@ -113,7 +113,7 @@ void VideoLayer::prepare(const UpdateInfo& info)
 
 void VideoLayer::update(const UpdateInfo& info)
 {
-	info.getProfiler()->beginScope(FptVideoLayer);
+	info.getProfiler()->beginScope(FptVideoLayerUpdate);
 
 	if (m_playing)
 	{
