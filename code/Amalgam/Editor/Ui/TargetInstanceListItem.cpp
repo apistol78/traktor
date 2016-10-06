@@ -123,6 +123,8 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 	ui::Rect controlRect = rect;
 	controlRect.bottom = rect.top + ui::scaleBySystemDPI(28);
 
+	int32_t logoSize = s_bitmapLogos->getSize().cy;
+
 	if (m_instance->getState() == TsIdle)
 	{
 		widget->placeCell(
@@ -140,7 +142,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 		widget->placeCell(
 			m_progressCell,
 			ui::Rect(
-				controlRect.left + ui::scaleBySystemDPI(30),
+				controlRect.left + logoSize + 10,
 				controlRect.getCenter().y - ui::scaleBySystemDPI(8),
 				controlRect.right - ui::scaleBySystemDPI(24) * 4 - 8,
 				controlRect.getCenter().y + ui::scaleBySystemDPI(8)
@@ -308,12 +310,15 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		ui::BmAlpha
 	);
 
-	ui::Rect textRect = controlRect;
-	textRect.left += logoSize + 10;
-	textRect.right -= ui::scaleBySystemDPI(24) * 3 - 8;
+	if (m_instance->getState() == TsIdle)
+	{
+		ui::Rect textRect = controlRect;
+		textRect.left += logoSize + 10;
+		textRect.right -= ui::scaleBySystemDPI(24) * 3 - 8;
 
-	canvas.setForeground(ss->getColor(getWidget(), L"color"));
-	canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
+		canvas.setForeground(ss->getColor(getWidget(), L"color"));
+		canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
+	}
 
 	ui::Font widgetFont = getWidget()->getFont();
 	ui::Font performanceFont = widgetFont; performanceFont.setSize(10);
