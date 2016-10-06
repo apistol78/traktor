@@ -1,7 +1,11 @@
 #ifndef traktor_script_ScriptUtilitiesLua_H
 #define traktor_script_ScriptUtilitiesLua_H
 
-#define T_SCRIPT_LUA_FORCE_STACK_CHECK 1
+#if defined(_DEBUG)
+#	define T_SCRIPT_LUA_FORCE_STACK_CHECK 1
+#else
+#	define T_SCRIPT_LUA_FORCE_STACK_CHECK 0
+#endif
 
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
@@ -21,7 +25,7 @@ class OutputStream;
 	namespace script
 	{
 
-#if defined(_DEBUG) || T_SCRIPT_LUA_FORCE_STACK_CHECK
+#if T_SCRIPT_LUA_FORCE_STACK_CHECK
 class CheckStack
 {
 public:
