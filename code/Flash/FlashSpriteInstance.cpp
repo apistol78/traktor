@@ -176,7 +176,7 @@ void FlashSpriteInstance::updateDisplayList()
 	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
 		if (&type_of(instance) == &type_of< FlashSpriteInstance >())
 			static_cast< FlashSpriteInstance* >(instance)->updateDisplayList();
-	});
+	}, m_forEachArr);
 }
 
 void FlashSpriteInstance::updateSounds(FlashSoundPlayer* soundPlayer)
@@ -200,7 +200,7 @@ void FlashSpriteInstance::updateSounds(FlashSoundPlayer* soundPlayer)
 	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
 		if (&type_of(instance) == &type_of< FlashSpriteInstance >())
 			static_cast< FlashSpriteInstance* >(instance)->updateSounds(soundPlayer);
-	});
+	}, m_forEachArr);
 }
 
 Ref< FlashSpriteInstance > FlashSpriteInstance::createEmptyMovieClip(const std::string& clipName, int32_t depth)
@@ -422,7 +422,7 @@ void FlashSpriteInstance::clearCacheObject()
 	FlashCharacterInstance::clearCacheObject();
 	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
 		instance->clearCacheObject();
-	});
+	}, m_forEachArr);
 }
 
 bool FlashSpriteInstance::enumerateMembers(std::vector< uint32_t >& outMemberNames) const
@@ -475,7 +475,7 @@ void FlashSpriteInstance::preDispatchEvents()
 	// Issue dispatch event on visible child instances.
 	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
 		instance->preDispatchEvents();
-	});
+	}, m_forEachArr);
 }
 
 void FlashSpriteInstance::postDispatchEvents()
@@ -493,7 +493,7 @@ void FlashSpriteInstance::postDispatchEvents()
 	// Issue post dispatch event on child sprite instances.
 	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
 		instance->postDispatchEvents();
-	});
+	}, m_forEachArr);
 
 	m_inDispatch = false;
 }
@@ -619,7 +619,7 @@ void FlashSpriteInstance::eventFrame()
 	// Issue events on "visible" characters.
 	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
 		instance->eventFrame();
-	});
+	}, m_forEachArr);
 
 	FlashCharacterInstance::eventFrame();
 
@@ -631,7 +631,7 @@ void FlashSpriteInstance::eventKey(wchar_t unicode)
 	// Issue events on "visible" characters.
 	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
 		instance->eventKey(unicode);
-	});
+	}, m_forEachArr);
 
 	FlashCharacterInstance::eventKey(unicode);
 }
@@ -648,7 +648,7 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 	// Issue events on "visible" characters.
 	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
 		instance->eventKeyDown(keyCode);
-	});
+	}, m_forEachArr);
 
 	// Issue script assigned event.
 	if (context->getFocus() == this)
@@ -671,7 +671,7 @@ void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 	// Issue events on "visible" characters.
 	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
 		instance->eventKeyUp(keyCode);
-	});
+	}, m_forEachArr);
 
 	// Issue script assigned event.
 	if (context->getFocus() == this)
@@ -703,7 +703,7 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	// Issue events on "visible" characters.
 	m_displayList.forEachVisibleObjectReverse([&] (FlashCharacterInstance* instance) {
 		instance->eventMouseDown(x, y, button);
-	});
+	}, m_forEachArr);
 
 	// Issue script assigned event.
 	executeScriptEvent(ActionContext::IdOnMouseDown, ActionValue());
@@ -745,7 +745,7 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	// Issue events on "visible" characters.
 	m_displayList.forEachVisibleObjectReverse([&] (FlashCharacterInstance* instance) {
 		instance->eventMouseUp(x, y, button);
-	});
+	}, m_forEachArr);
 
 	// Issue script assigned event.
 	executeScriptEvent(ActionContext::IdOnMouseUp, ActionValue());
@@ -786,7 +786,7 @@ void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
 	// Issue events on "visible" characters.
 	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
 		instance->eventMouseMove0(x, y, button);
-	});
+	}, m_forEachArr);
 
 	// Issue script assigned event.
 	executeScriptEvent(ActionContext::IdOnMouseMove, ActionValue());
@@ -839,7 +839,7 @@ void FlashSpriteInstance::eventMouseMove1(int32_t x, int32_t y, int32_t button)
 	// Issue events on "visible" characters.
 	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
 		instance->eventMouseMove1(x, y, button);
-	});
+	}, m_forEachArr);
 
 	FlashCharacterInstance::eventMouseMove1(x, y, button);
 
