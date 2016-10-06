@@ -275,7 +275,7 @@ void FlashLayer::update(const UpdateInfo& info)
 	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
 	std::string command, args;
 
-	info.getProfiler()->beginScope(FptFlashLayer);
+	info.getProfiler()->beginScope(FptFlashLayerUpdate);
 
 	// Do NOT propagate input in case user is fabricating input.
 	if (!m_environment->getInput()->isFabricating())
@@ -476,8 +476,12 @@ void FlashLayer::build(const UpdateInfo& info, uint32_t frame)
 	if (!m_displayRenderer || !m_moviePlayer || !m_visible)
 		return;
 
+	info.getProfiler()->beginScope(FptFlashLayerBuild);
+
 	m_displayRenderer->build(frame);
 	m_moviePlayer->renderFrame();
+
+	info.getProfiler()->endScope();
 }
 
 void FlashLayer::render(render::EyeType eye, uint32_t frame)

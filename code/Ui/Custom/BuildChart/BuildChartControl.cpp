@@ -15,14 +15,18 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.BuildChartControl", BuildChartControl
 
 BuildChartControl::BuildChartControl()
 :	m_running(false)
+,	m_selecting(false)
+,	m_moving(false)
 ,	m_time(0.0)
-,	m_offset(0.0)
-,	m_scale(32.0)
+,	m_fromTime(0.0)
+,	m_toTime(1.0)
+,	m_lastSize(0)
 ,	m_lastMouse(0)
+,	m_selectionTo(0)
 {
 }
 
-bool BuildChartControl::create(Widget* parent, int style)
+bool BuildChartControl::create(Widget* parent, uint32_t laneCount, int style)
 {
 	if (!Widget::create(parent, style))
 		return false;
@@ -32,16 +36,54 @@ bool BuildChartControl::create(Widget* parent, int style)
 	addEventHandler< MouseMoveEvent >(this, &BuildChartControl::eventMouseMove);
 	addEventHandler< MouseWheelEvent >(this, &BuildChartControl::eventMouseWheel);
 	addEventHandler< PaintEvent >(this, &BuildChartControl::eventPaint);
+	addEventHandler< SizeEvent >(this, &BuildChartControl::eventSize);
 	addEventHandler< TimerEvent >(this, &BuildChartControl::eventTimer);
+
+	m_lanes.resize(laneCount);
 
 	startTimer(100);
 	return true;
 }
 
+void BuildChartControl::showRange(double fromTime, double toTime)
+{
+	m_fromTime = fromTime;
+	m_toTime = toTime;
+	update();
+}
+
+double BuildChartControl::positionToTime(int32_t x) const
+{
+	return m_fromTime + (m_toTime - m_fromTime) * double(x) / m_lastSize;
+}
+
+int32_t BuildChartControl::timeToPosition(double time) const
+{
+	return int32_t(m_lastSize * (time - m_fromTime) / (m_toTime - m_fromTime) + 0.5f);
+}
+
+void BuildChartControl::removeAllTasks()
+{
+	for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
+		m_lanes[lane].resize(0);
+
+	m_time = 0.0;
+	m_running = false;
+}
+
+void BuildChartControl::addTask(int32_t lane, const std::wstring& text, const Color4ub& color, double timeStart, double timeEnd)
+{
+	m_lanes[lane].push_back(Task());
+	m_lanes[lane].back().time0 = timeStart;
+	m_lanes[lane].back().time1 = timeEnd;
+	m_lanes[lane].back().text = text;
+	m_lanes[lane].back().color = color;
+}
+
 void BuildChartControl::begin()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lanesLock);
-	for (int32_t lane = 0; lane < sizeof_array(m_lanes); ++lane)
+	for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
 		m_lanes[lane].resize(0);
 
 	m_running = true;
@@ -88,32 +130,29 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 	// Draw tasks.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lanesLock);
-		Rect rcLane(rc.left, rc.top, rc.right, rc.top + 24);
-		for (int32_t lane = 0; lane < 32; ++lane)
+		Rect rcLane(rc.left, rc.top, rc.right, rc.top + scaleBySystemDPI(24));
+		for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
 		{
 			canvas.setForeground(Color4ub(0, 0, 0, 40));
 			canvas.drawLine(rcLane.left, rcLane.getCenter().y, rcLane.right, rcLane.getCenter().y);
 
-			const std::vector< Task >& tasks = m_lanes[lane];
-			for (std::vector< Task >::const_iterator i = tasks.begin(); i != tasks.end(); ++i)
+			const taskVector_t& tasks = m_lanes[lane];
+			for (taskVector_t::const_iterator i = tasks.begin(); i != tasks.end(); ++i)
 			{
-				int32_t x0 = int32_t((i->time0 - m_offset) * m_scale) + 1;
-				int32_t x1 = int32_t((m_time - m_offset) * m_scale) - 1;
+				int32_t x0 = timeToPosition(i->time0);
+				int32_t x1 = timeToPosition(i->time1 >= 0.0 ? i->time1 : m_time);
 
-				if (i->time1 >= 0.0)
-					x1 = int32_t((i->time1 - m_offset) * m_scale);
-
-				if (x1 < x0 + 4)
-					x1 = x0 + 4;
+				if (x1 < x0 + scaleBySystemDPI(4))
+					x1 = x0 + scaleBySystemDPI(4);
 
 				if (x0 >= rcLane.right || x1 <= rcLane.left)
 					continue;
 
 				Rect rcTask(
 					rcLane.left + x0,
-					rcLane.top + 2,
+					rcLane.top + scaleBySystemDPI(2),
 					rcLane.left + x1,
-					rcLane.bottom - 2
+					rcLane.bottom - scaleBySystemDPI(2)
 				);
 
 				canvas.setForeground(Color4ub(220, 255, 220, 255));
@@ -127,48 +166,70 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 				canvas.drawText(rcTask, i->text, AnLeft, AnCenter);
 			}
 
-			rcLane = rcLane.offset(0, 24);
+			rcLane = rcLane.offset(0, scaleBySystemDPI(24));
 		}
 	}
 
 	// Draw time axis.
-	Rect rcTime(rc.left, rc.bottom - 16, rc.right, rc.bottom);
+	Rect rcTime(rc.left, rc.bottom - scaleBySystemDPI(16), rc.right, rc.bottom);
 	
 	canvas.setBackground(Color4ub(255, 255, 255, 255));
 	canvas.fillRect(rcTime);
 	
-	canvas.setForeground(Color4ub(0, 0, 0, 80));
+	canvas.setForeground(Color4ub(0, 0, 0, 100));
 	canvas.drawLine(rcTime.left, rcTime.top, rcTime.right, rcTime.top);
 
-	double time = (rcTime.right - rcTime.left) / m_scale;
-	
-	int32_t x0 = 0;
-	int32_t x1 = int32_t(ceil(time));
-	int32_t xs = max(1, (x1 - x0) / 10);
+	double duration = m_toTime - m_fromTime;
 
-	for (int32_t i = x0; i < x1; i += xs)
+	double l = std::log10(duration);
+	double f = std::floor(l);
+	double d = std::pow(10.0, f);
+	double a = std::fmod(m_fromTime, d);
+
+	for (double t = m_fromTime - a; t <= m_toTime; t += d / 10.0)
 	{
-		int32_t x = int32_t(i * m_scale);
-		canvas.drawLine(x, rcTime.bottom - 4, x, rcTime.bottom);
+		int32_t x = timeToPosition(t);
+		canvas.drawLine(x, rcTime.bottom - scaleBySystemDPI(8), x, rcTime.bottom);
 	}
 
-	// Animate back to zero.
-	if (m_offset < 0.0 && !hasCapture())
-		m_offset += -m_offset / 10.0;
+	if (m_selecting)
+	{
+		Rect rcSelection(
+			std::min(m_lastMouse, m_selectionTo), rc.top,
+			std::max(m_lastMouse, m_selectionTo), rc.bottom
+		);
+	
+		canvas.setBackground(Color4ub(150, 150, 255, 50));
+		canvas.fillRect(rcSelection);
+
+		canvas.setForeground(Color4ub(150, 150, 255, 100));
+		canvas.drawLine(rcSelection.getTopLeft(), rcSelection.getBottomLeft());
+		canvas.drawLine(rcSelection.getTopRight(), rcSelection.getBottomRight());
+	}
 
 	event->consume();
+}
+
+void BuildChartControl::eventSize(SizeEvent* event)
+{
+	if (event->getSize().cx <= 0)
+		return;
+
+	if (m_lastSize > 0)
+		m_toTime = positionToTime(event->getSize().cx);
+
+	m_lastSize = event->getSize().cx;
 }
 
 void BuildChartControl::eventTimer(TimerEvent* event)
 {
 	if (m_running && !hasCapture())
 	{
-		Rect rc = getInnerRect();
-		int32_t x = int32_t((m_time - m_offset) * m_scale);
-		if (x >= rc.right)
+		if (m_time > m_toTime)
 		{
-			x = (rc.left + rc.right) / 2;
-			m_offset = -(x / m_scale - m_time);
+			double d = m_time - m_toTime;
+			m_fromTime += d;
+			m_toTime += d;
 		}
 	}
 
@@ -179,6 +240,7 @@ void BuildChartControl::eventButtonDown(MouseButtonDownEvent* event)
 {
 	if (event->getButton() == MbtLeft)
 	{
+		m_selectionTo =
 		m_lastMouse = event->getPosition().x;
 		setCapture();
 	}
@@ -186,28 +248,69 @@ void BuildChartControl::eventButtonDown(MouseButtonDownEvent* event)
 
 void BuildChartControl::eventButtonUp(MouseButtonUpEvent* event)
 {
-	releaseCapture();
+	if (hasCapture())
+	{
+		if (m_selecting)
+		{
+			int32_t x0 = m_lastMouse;
+			int32_t x1 = event->getPosition().x;
+
+			if (x1 < x0)
+				std::swap(x0, x1);
+
+			double t0 = positionToTime(x0);
+			double t1 = positionToTime(x1);
+
+			showRange(t0, t1);
+		}
+
+		m_moving = false;
+		m_selecting = false;
+
+		releaseCapture();
+	}
 }
 
 void BuildChartControl::eventMouseMove(MouseMoveEvent* event)
 {
 	if (hasCapture())
 	{
-		int32_t delta = event->getPosition().x - m_lastMouse;
-		m_offset -= delta / m_scale;
-		m_lastMouse = event->getPosition().x;
+		if (!m_selecting && !m_moving)
+		{
+			if ((event->getKeyState() & ui::KsMenu) != 0)
+				m_moving = true;
+			else
+				m_selecting = true;
+		}
+
+		if (m_moving)
+		{
+			int32_t x0 = m_selectionTo;
+			int32_t x1 = event->getPosition().x;
+
+			double t0 = positionToTime(x0);
+			double t1 = positionToTime(x1);
+
+			m_fromTime -= (t1 - t0);
+			m_toTime -= (t1 - t0);
+		}
+
+		m_selectionTo = event->getPosition().x;
 		update();
 	}
 }
 
 void BuildChartControl::eventMouseWheel(MouseWheelEvent* event)
 {
-	double pivot = event->getPosition().x / m_scale + m_offset;
+	double pivot = positionToTime(event->getPosition().x);
+	double duration = m_toTime - m_fromTime;
 
-	m_scale += event->getRotation() * 4.0;
-	m_scale = clamp(m_scale, 1.0, 1000.0);
+	int32_t r = event->getRotation();
+	double expand = duration * r * 0.1;
 
-	m_offset = pivot - event->getPosition().x / m_scale;
+	double w = clamp((pivot - m_fromTime) / duration, 0.0, 1.0);
+	m_fromTime -= expand * w;
+	m_toTime += expand * (1.0 - w);
 
 	update();
 }

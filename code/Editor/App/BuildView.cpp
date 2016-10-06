@@ -15,7 +15,7 @@ bool BuildView::create(ui::Widget* parent)
 		return false;
 
 	m_chartControl = new ui::custom::BuildChartControl();
-	m_chartControl->create(this);
+	m_chartControl->create(this, 32);
 
 	return true;
 }
