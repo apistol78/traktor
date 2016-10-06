@@ -183,6 +183,7 @@ protected:
 private:
 	Ref< const FlashSprite > m_sprite;
 	FlashDisplayList m_displayList;
+	RefArray< FlashCharacterInstance > m_forEachArr;
 	Ref< FlashSpriteInstance > m_mask;
 	Ref< FlashCanvas > m_canvas;
 	int32_t m_mouseX;
