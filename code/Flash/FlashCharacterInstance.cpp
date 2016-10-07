@@ -24,6 +24,7 @@ FlashCharacterInstance::FlashCharacterInstance(
 ,	m_context(context)
 ,	m_dictionary(dictionary)
 ,	m_parent(parent)
+,	m_eventScriptsMask(0)
 ,	m_filterColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_filter(0)
 ,	m_blendMode(0)
@@ -152,6 +153,11 @@ void FlashCharacterInstance::setEnabled(bool enabled)
 void FlashCharacterInstance::setEvents(const SmallMap< uint32_t, Ref< const IActionVMImage > >& eventScripts)
 {
 	m_eventScripts = eventScripts;
+
+	// Build mask of all event ID, as each ID is a bit then we can easily create a mask of all.
+	m_eventScriptsMask = 0;
+	for (SmallMap< uint32_t, Ref< const IActionVMImage > >::const_iterator i = eventScripts.begin(); i != eventScripts.end(); ++i)
+		m_eventScriptsMask |= i->first;
 }
 
 void FlashCharacterInstance::preDispatchEvents()
@@ -164,6 +170,9 @@ void FlashCharacterInstance::postDispatchEvents()
 
 void FlashCharacterInstance::eventInit()
 {
+	if ((m_eventScriptsMask & EvtInitialize) == 0)
+		return;
+
 	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtInitialize);
 	if (i != m_eventScripts.end())
 	{
@@ -188,6 +197,9 @@ void FlashCharacterInstance::eventInit()
 
 void FlashCharacterInstance::eventConstruct()
 {
+	if ((m_eventScriptsMask & EvtConstruct) == 0)
+		return;
+
 	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtConstruct);
 	if (i != m_eventScripts.end())
 	{
@@ -212,6 +224,9 @@ void FlashCharacterInstance::eventConstruct()
 
 void FlashCharacterInstance::eventLoad()
 {
+	if ((m_eventScriptsMask & EvtLoad) == 0)
+		return;
+
 	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtLoad);
 	if (i != m_eventScripts.end())
 	{
@@ -236,6 +251,9 @@ void FlashCharacterInstance::eventLoad()
 
 void FlashCharacterInstance::eventFrame()
 {
+	if ((m_eventScriptsMask & EvtEnterFrame) == 0)
+		return;
+
 	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtEnterFrame);
 	if (i != m_eventScripts.end())
 	{
