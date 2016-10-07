@@ -75,6 +75,8 @@ private:
 
 	void eventProfilerToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
+	void eventProfileGridDoubleClick(ui::MouseDoubleClickEvent* event);
+
 	/*! \name IScriptProfiler::IListener */
 	/*! \{ */
 
