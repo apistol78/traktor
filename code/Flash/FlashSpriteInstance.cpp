@@ -178,10 +178,52 @@ void FlashSpriteInstance::updateDisplayList()
 		if (&type_of(instance) == &type_of< FlashSpriteInstance >())
 			static_cast< FlashSpriteInstance* >(instance)->updateDisplayList();
 	}, m_forEachArr);
+
+	m_inDispatch = true;
+	m_gotoIssued = false;
+
+	// Initialize sprite instance.
+	if (!m_initialized)
+	{
+		eventLoad();
+		m_initialized = true;
+	}
+
+	// Set initial next frame index, this might change during execution of events.
+	if (m_playing)
+		m_nextFrame = (m_currentFrame + 1) % m_sprite->getFrameCount();
+	else
+		m_nextFrame = m_currentFrame;
 }
 
-void FlashSpriteInstance::updateSounds(FlashSoundPlayer* soundPlayer)
+void FlashSpriteInstance::updateDisplayListAndSounds(FlashSoundPlayer* soundPlayer)
 {
+	// Update sprite instance's display list.
+	if (m_currentFrame < m_lastUpdateFrame)
+	{
+		m_displayList.updateBegin(true);
+		for (uint32_t i = 0; i <= m_currentFrame; ++i)
+		{
+			FlashFrame* frame = m_sprite->getFrame(i);
+			if (frame)
+				m_displayList.updateFrame(this, frame);
+		}
+		m_displayList.updateEnd();
+	}
+	else if (m_currentFrame > m_lastUpdateFrame)
+	{
+		m_displayList.updateBegin(false);
+		for (uint32_t i = m_lastUpdateFrame; i <= m_currentFrame; ++i)
+		{
+			FlashFrame* frame = m_sprite->getFrame(i);
+			if (frame)
+				m_displayList.updateFrame(this, frame);
+		}
+		m_displayList.updateEnd();
+	}
+	m_lastUpdateFrame = m_currentFrame;
+
+	// Update sprite instance's sound.
 	if (m_lastSoundFrame != m_currentFrame)
 	{
 		FlashFrame* frame = m_sprite->getFrame(m_currentFrame);
@@ -195,13 +237,29 @@ void FlashSpriteInstance::updateSounds(FlashSoundPlayer* soundPlayer)
 					soundPlayer->play(sound);
 			}
 		}
-		m_lastSoundFrame = m_currentFrame;
 	}
+	m_lastSoundFrame = m_currentFrame;
 
 	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
 		if (&type_of(instance) == &type_of< FlashSpriteInstance >())
-			static_cast< FlashSpriteInstance* >(instance)->updateSounds(soundPlayer);
+			static_cast< FlashSpriteInstance* >(instance)->updateDisplayListAndSounds(soundPlayer);
 	}, m_forEachArr);
+
+	m_inDispatch = true;
+	m_gotoIssued = false;
+
+	// Initialize sprite instance.
+	if (!m_initialized)
+	{
+		eventLoad();
+		m_initialized = true;
+	}
+
+	// Set initial next frame index, this might change during execution of events.
+	if (m_playing)
+		m_nextFrame = (m_currentFrame + 1) % m_sprite->getFrameCount();
+	else
+		m_nextFrame = m_currentFrame;
 }
 
 Ref< FlashSpriteInstance > FlashSpriteInstance::createEmptyMovieClip(const std::string& clipName, int32_t depth)
@@ -461,53 +519,6 @@ bool FlashSpriteInstance::getMember(ActionContext* context, uint32_t memberName,
 	return FlashCharacterInstance::getMember(context, memberName, outMemberValue);
 }
 
-void FlashSpriteInstance::preDispatchEvents()
-{
-	if (m_inDispatch)
-		return;
-
-	m_inDispatch = true;
-	m_gotoIssued = false;
-
-	// Initialize sprite instance.
-	if (!m_initialized)
-	{
-		eventLoad();
-		m_initialized = true;
-	}
-
-	// Set initial next frame index, this might change during execution of events.
-	if (m_playing)
-		m_nextFrame = (m_currentFrame + 1) % m_sprite->getFrameCount();
-	else
-		m_nextFrame = m_currentFrame;
-
-	// Issue dispatch event on visible child instances.
-	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
-		instance->preDispatchEvents();
-	}, m_forEachArr);
-}
-
-void FlashSpriteInstance::postDispatchEvents()
-{
-	if (!m_inDispatch)
-		return;
-
-	// Update current frame index.
-	if (m_playing || m_gotoIssued)
-	{
-		T_ASSERT (m_nextFrame < m_sprite->getFrameCount());
-		m_currentFrame = m_nextFrame;
-	}
-
-	// Issue post dispatch event on child sprite instances.
-	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
-		instance->postDispatchEvents();
-	}, m_forEachArr);
-
-	m_inDispatch = false;
-}
-
 void FlashSpriteInstance::eventInit()
 {
 	ActionContext* context = getContext();
@@ -637,6 +648,17 @@ void FlashSpriteInstance::eventFrame()
 	FlashCharacterInstance::eventFrame();
 
 	context->setMovieClip(current);
+
+	// Update current frame index.
+	if (m_inDispatch)
+	{
+		if (m_playing || m_gotoIssued)
+		{
+			T_ASSERT (m_nextFrame < m_sprite->getFrameCount());
+			m_currentFrame = m_nextFrame;
+		}
+		m_inDispatch = false;
+	}
 }
 
 void FlashSpriteInstance::eventKey(wchar_t unicode)

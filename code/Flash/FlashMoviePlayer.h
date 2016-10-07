@@ -4,6 +4,7 @@
 #include <list>
 #include <map>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -256,7 +257,7 @@ private:
 	Ref< As_flash_external_ExternalInterface > m_externalInterface;
 	Ref< FlashMovie > m_movie;
 	Ref< FlashSpriteInstance > m_movieInstance;
-	std::list< Event > m_events;
+	AlignedVector< Event > m_events;
 	std::list< std::pair< std::string, std::string > > m_fsCommands;
 	std::map< uint32_t, Interval > m_interval;
 	uint32_t m_intervalNextId;
