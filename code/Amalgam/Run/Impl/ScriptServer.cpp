@@ -302,6 +302,14 @@ void ScriptServer::debugeeStateChange(script::IScriptDebugger* scriptDebugger)
 	m_transport->send(&stateChange);
 }
 
+void ScriptServer::callEnter(const Guid& scriptId, const std::wstring& function)
+{
+}
+
+void ScriptServer::callLeave(const Guid& scriptId, const std::wstring& function)
+{
+}
+
 void ScriptServer::callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
 {
 	CallSample& sample = m_callSamples[m_callSamplesIndex][std::make_pair(scriptId, function)];

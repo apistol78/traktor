@@ -23,6 +23,7 @@ class BidirectionalObjectTransport;
 	namespace amalgam
 	{
 
+class FrameProfiler;
 class IEnvironment;
 
 /*! \brief
@@ -38,7 +39,14 @@ class ScriptServer
 public:
 	ScriptServer();
 
-	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, bool debugger, bool profiler, net::BidirectionalObjectTransport* transport);
+	bool create(
+		const PropertyGroup* defaultSettings,
+		const PropertyGroup* settings,
+		bool debugger,
+		bool profiler,
+		net::BidirectionalObjectTransport* transport,
+		FrameProfiler* frameProfiler
+	);
 
 	void destroy();
 
@@ -72,13 +80,18 @@ private:
 	Ref< script::IScriptDebugger > m_scriptDebugger;
 	Ref< script::IScriptProfiler > m_scriptProfiler;
 	Ref< net::BidirectionalObjectTransport > m_transport;
+	FrameProfiler* m_frameProfiler;
 	std::map< std::pair< Guid, std::wstring >, CallSample > m_callSamples[3];
 	int32_t m_callSamplesIndex;
 	Thread* m_scriptDebuggerThread;
-
+	
 	void threadDebugger();
 
 	virtual void debugeeStateChange(script::IScriptDebugger* scriptDebugger) T_OVERRIDE T_FINAL;
+
+	virtual void callEnter(const Guid& scriptId, const std::wstring& function) T_OVERRIDE T_FINAL;
+
+	virtual void callLeave(const Guid& scriptId, const std::wstring& function) T_OVERRIDE T_FINAL;
 
 	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) T_OVERRIDE T_FINAL;
 };
