@@ -250,6 +250,7 @@ private:
 	FlashCharacterInstance* m_parent;
 	Ref< IRefCount > m_cacheObject;
 	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
+	uint32_t m_eventScriptsMask;
 	Color4f m_filterColor;
 	uint8_t m_filter;
 	uint8_t m_blendMode;
