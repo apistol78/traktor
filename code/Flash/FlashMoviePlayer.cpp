@@ -206,16 +206,14 @@ void FlashMoviePlayer::executeFrame()
 	// Issue all events in sequence as each event possibly update
 	// the play head and other aspects of the movie.
 
-	m_movieInstance->updateDisplayList();
-
 	if (m_soundPlayer)
-		m_movieInstance->updateSounds(m_soundPlayer);
+		m_movieInstance->updateDisplayListAndSounds(m_soundPlayer);
+	else
+		m_movieInstance->updateDisplayList();
 
-	m_movieInstance->preDispatchEvents();
-
-	while (!m_events.empty())
+	for (AlignedVector< Event >::const_iterator i = m_events.begin(); i != m_events.end(); ++i)
 	{
-		const Event& evt = m_events.front();
+		const Event& evt = *i;
 		switch (evt.eventType)
 		{
 		case EvtKey:
@@ -263,8 +261,8 @@ void FlashMoviePlayer::executeFrame()
 				m_stage->eventResize(evt.view.width, evt.view.height);
 			break;
 		}
-		m_events.pop_front();
 	}
+	m_events.resize(0);
 
 	// Finally issue the frame event.
 	m_movieInstance->eventFrame();
@@ -272,8 +270,7 @@ void FlashMoviePlayer::executeFrame()
 	// Notify frame listeners.
 	context->notifyFrameListeners(avm_number_t(m_timeCurrent));
 
-	// End of frame events.
-	m_movieInstance->postDispatchEvents();
+	// Pop current movie clip.
 	context->setMovieClip(current);
 
 	// Flush pool memory; release all lingering object references etc.

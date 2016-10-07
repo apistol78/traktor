@@ -160,14 +160,6 @@ void FlashCharacterInstance::setEvents(const SmallMap< uint32_t, Ref< const IAct
 		m_eventScriptsMask |= i->first;
 }
 
-void FlashCharacterInstance::preDispatchEvents()
-{
-}
-
-void FlashCharacterInstance::postDispatchEvents()
-{
-}
-
 void FlashCharacterInstance::eventInit()
 {
 	if ((m_eventScriptsMask & EvtInitialize) == 0)

@@ -60,13 +60,15 @@ public:
 
 	bool getPlaying() const { return m_playing; }
 
+	/*! \brief Update display list and begin event dispatching. */
 	void updateDisplayList();
+
+	/*! \brief Update display list, sounds and begin event dispatching. */
+	void updateDisplayListAndSounds(FlashSoundPlayer* soundPlayer);
 
 	FlashDisplayList& getDisplayList() { return m_displayList; }
 
 	const FlashDisplayList& getDisplayList() const { return m_displayList; }
-
-	void updateSounds(FlashSoundPlayer* soundPlayer);
 
 	Ref< FlashSpriteInstance > createEmptyMovieClip(const std::string& clipName, int32_t depth);
 
@@ -103,10 +105,6 @@ public:
 	virtual bool setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue) T_OVERRIDE T_FINAL;
 
 	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) T_OVERRIDE T_FINAL;
-
-	virtual void preDispatchEvents() T_OVERRIDE T_FINAL;
-
-	virtual void postDispatchEvents() T_OVERRIDE T_FINAL;
 
 	virtual void eventInit() T_OVERRIDE T_FINAL;
 
