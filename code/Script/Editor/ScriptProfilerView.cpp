@@ -1,8 +1,11 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPage.h"
 #include "I18N/Text.h"
 #include "Script/Editor/ScriptProfilerView.h"
 #include "Ui/Application.h"
@@ -57,6 +60,7 @@ bool ScriptProfilerView::create(ui::Widget* parent)
 	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_PERCENT"), ui::scaleBySystemDPI(80)));
 	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_PERCENT"), ui::scaleBySystemDPI(80)));
 	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_COUNT"), ui::scaleBySystemDPI(100)));
+	m_profileGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptProfilerView::eventProfileGridDoubleClick);
 
 	return true;
 }
@@ -93,6 +97,9 @@ void ScriptProfilerView::updateProfileGrid()
 			pe.row = new ui::custom::GridRow();
 			pe.row->add(new ui::custom::GridItem(i->first.second));
 
+			pe.row->setData(L"SCRIPT_ID", 0);
+			pe.row->setData(L"SCRIPT_LINE", 0);
+
 			if (i->first.first.isNotNull())
 			{
 				Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(i->first.first);
@@ -100,6 +107,12 @@ void ScriptProfilerView::updateProfileGrid()
 					pe.row->add(new ui::custom::GridItem(scriptInstance->getName()));
 				else
 					pe.row->add(new ui::custom::GridItem(i->first.first.format()));
+
+				pe.row->setData(L"SCRIPT_ID", new PropertyString(i->first.first.format()));
+
+				size_t p = i->first.second.find(L':');
+				if (p != std::wstring::npos)
+					pe.row->setData(L"SCRIPT_LINE", new PropertyInteger(parseString< int32_t >(i->first.second.substr(p + 1))));
 			}
 			else
 				pe.row->add(new ui::custom::GridItem(i18n::Text(L"SCRIPT_PROFILER_NATIVE_FUNCTION")));
@@ -109,6 +122,7 @@ void ScriptProfilerView::updateProfileGrid()
 			pe.row->add(new ui::custom::GridItem(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2)));
 			pe.row->add(new ui::custom::GridItem(toString(pe.exclusiveDuration * 100.0 / totalDuration, 2)));
 			pe.row->add(new ui::custom::GridItem(toString(pe.callCount)));
+
 			m_profileGrid->addRow(pe.row);
 		}
 		else
@@ -128,6 +142,30 @@ void ScriptProfilerView::updateProfileGrid()
 void ScriptProfilerView::eventProfilerToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	handleCommand(event->getCommand());
+}
+
+void ScriptProfilerView::eventProfileGridDoubleClick(ui::MouseDoubleClickEvent* event)
+{
+	ui::custom::GridRow* selectedRow = m_profileGrid->getSelectedRow();
+	if (selectedRow)
+	{
+		const PropertyString* scriptIdProp = selectedRow->getData< PropertyString >(L"SCRIPT_ID");
+		if (scriptIdProp)
+		{
+			Guid scriptId = Guid(*scriptIdProp);
+			int32_t line = *(selectedRow->getData< PropertyInteger >(L"SCRIPT_LINE"));
+
+			Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(scriptId);
+			if (scriptInstance)
+			{
+				m_editor->openEditor(scriptInstance);
+
+				editor::IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
+				if (activeEditorPage)
+					activeEditorPage->handleCommand(ui::Command(line, L"Script.Editor.GotoLine"));
+			}
+		}
+	}
 }
 
 void ScriptProfilerView::callEnter(const Guid& scriptId, const std::wstring& function)
