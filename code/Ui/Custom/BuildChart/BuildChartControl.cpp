@@ -73,6 +73,9 @@ void BuildChartControl::removeAllTasks()
 
 void BuildChartControl::addTask(int32_t lane, const std::wstring& text, const Color4ub& color, double timeStart, double timeEnd)
 {
+	if (lane < 0 || lane >= m_lanes.size())
+		return;
+
 	m_lanes[lane].push_back(Task());
 	m_lanes[lane].back().time0 = timeStart;
 	m_lanes[lane].back().time1 = timeEnd;
@@ -101,6 +104,10 @@ void BuildChartControl::end()
 void BuildChartControl::beginTask(int32_t lane, const std::wstring& text, const Color4ub& color)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lanesLock);
+
+	if (lane < 0 || lane >= m_lanes.size())
+		return;
+
 	m_lanes[lane].push_back(Task());
 	m_lanes[lane].back().time0 = m_timer.getElapsedTime();
 	m_lanes[lane].back().text = text;
@@ -110,6 +117,10 @@ void BuildChartControl::beginTask(int32_t lane, const std::wstring& text, const 
 void BuildChartControl::endTask(int32_t lane, const Color4ub& color)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lanesLock);
+
+	if (lane < 0 || lane >= m_lanes.size())
+		return;
+
 	m_lanes[lane].back().time1 = m_timer.getElapsedTime();
 	m_lanes[lane].back().color = color;
 }

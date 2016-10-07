@@ -34,6 +34,24 @@ void ScriptProfilerLua::removeListener(IListener* listener)
 	m_listeners.erase(listener);
 }
 
+void ScriptProfilerLua::notifyCallEnter()
+{
+	Guid scriptId;
+	std::wstring name;
+
+	for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+		(*i)->callEnter(scriptId, name);
+}
+
+void ScriptProfilerLua::notifyCallLeave()
+{
+	Guid scriptId;
+	std::wstring name;
+
+	for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+		(*i)->callLeave(scriptId, name);
+}
+
 void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 {
 	if (ar->event == LUA_HOOKLINE)

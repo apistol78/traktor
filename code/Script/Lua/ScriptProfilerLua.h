@@ -29,6 +29,10 @@ public:
 
 	virtual void removeListener(IListener* listener) T_OVERRIDE T_FINAL;
 
+	void notifyCallEnter();
+
+	void notifyCallLeave();
+
 private:
 	friend class ScriptManagerLua;
 

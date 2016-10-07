@@ -130,6 +130,14 @@ void ScriptProfilerView::eventProfilerToolClick(ui::custom::ToolBarButtonClickEv
 	handleCommand(event->getCommand());
 }
 
+void ScriptProfilerView::callEnter(const Guid& scriptId, const std::wstring& function)
+{
+}
+
+void ScriptProfilerView::callLeave(const Guid& scriptId, const std::wstring& function)
+{
+}
+
 void ScriptProfilerView::callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
 {
 	ProfileEntry& pe = m_profile[std::make_pair(scriptId, function)];

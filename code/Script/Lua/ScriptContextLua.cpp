@@ -8,6 +8,7 @@
 #include "Script/Lua/ScriptDelegateLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptObjectLua.h"
+#include "Script/Lua/ScriptProfilerLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
 namespace traktor
@@ -279,9 +280,15 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 				}
 			}
 
+			if (m_scriptManager->m_profiler)
+				m_scriptManager->m_profiler->notifyCallEnter();
+
 			int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
 			if (err == 0)
 				returnValue = m_scriptManager->toAny(-1);
+
+			if (m_scriptManager->m_profiler)
+				m_scriptManager->m_profiler->notifyCallLeave();
 		}
 		else
 			log::error << L"Unable to call " << mbstows(functionName) << L"; no such function" << Endl;
@@ -329,9 +336,16 @@ Any ScriptContextLua::executeDelegate(ScriptDelegateLua* delegate, uint32_t argc
 			}
 		}
 
+		if (m_scriptManager->m_profiler)
+			m_scriptManager->m_profiler->notifyCallEnter();
+
+		// Call script method.
 		int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
 		if (err == 0)
 			returnValue = m_scriptManager->toAny(-1);
+
+		if (m_scriptManager->m_profiler)
+			m_scriptManager->m_profiler->notifyCallLeave();
 
 		lua_pop(m_luaState, 2);
 	}
@@ -380,11 +394,17 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 					lua_pushnil(m_luaState);
 			}
 		}
+
+		if (m_scriptManager->m_profiler)
+			m_scriptManager->m_profiler->notifyCallEnter();
 		
 		// Call script function.
 		int32_t err = lua_pcall(m_luaState, argc + (self ? 1 : 0), 1, errfunc);
 		if (err == 0)
 			returnValue = m_scriptManager->toAny(-1);
+
+		if (m_scriptManager->m_profiler)
+			m_scriptManager->m_profiler->notifyCallLeave();
 
 		lua_pop(m_luaState, 2);
 	}

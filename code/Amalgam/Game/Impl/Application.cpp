@@ -204,12 +204,12 @@ bool Application::create(
 
 		if ((attachDebugger || attachProfiler) && m_targetManagerConnection)
 		{
-			if (!m_scriptServer->create(defaultSettings, settings, attachDebugger, attachProfiler, m_targetManagerConnection->getTransport()))
+			if (!m_scriptServer->create(defaultSettings, settings, attachDebugger, attachProfiler, m_targetManagerConnection->getTransport(), &m_frameProfiler))
 				return false;
 		}
 		else
 		{
-			if (!m_scriptServer->create(defaultSettings, settings, false, false, 0))
+			if (!m_scriptServer->create(defaultSettings, settings, false, false, 0, 0))
 				return false;
 		}
 	}
