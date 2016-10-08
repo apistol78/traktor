@@ -41,7 +41,6 @@ public:
 		int32_t clipDepth;
 		bool immutable;
 		bool collect;
-		bool visible;
 
 		Layer()
 		:	id(0)
@@ -50,7 +49,6 @@ public:
 		,	clipDepth(0)
 		,	immutable(false)
 		,	collect(false)
-		,	visible(false)
 		{
 		}
 	};
@@ -125,41 +123,37 @@ public:
 	/*! \brief For each visible character instances.
 	 *
 	 * \param fn Callback function.
-	 * \param tmparr Temporary array required to traverse the objects, this is provided to keep reallocations to a minimum.
 	 */
 	template < typename fn_t >
-	void forEachVisibleObject(fn_t fn, RefArray< FlashCharacterInstance >& tmparr) const
+	void forEachVisibleObject(fn_t fn) const
 	{
-		T_ASSERT (tmparr.empty());
+		RefArray< FlashCharacterInstance > tmp;
 		for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
 			T_ASSERT (i->second.instance);
 			if (i->second.instance->isVisible())
-				tmparr.push_back(i->second.instance);
+				tmp.push_back(i->second.instance);
 		}
-		for (RefArray< FlashCharacterInstance >::const_iterator i = tmparr.begin(); i != tmparr.end(); ++i)
+		for (RefArray< FlashCharacterInstance >::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
 			fn(*i);
-		tmparr.resize(0);
 	}
 
 	/*! \brief For each visible character instances in reverse.
 	 *
 	 * \param fn Callback function.
-	 * \param tmparr Temporary array required to traverse the objects, this is provided to keep reallocations to a minimum.
 	 */
 	template < typename fn_t >
-	void forEachVisibleObjectReverse(fn_t fn, RefArray< FlashCharacterInstance >& tmparr) const
+	void forEachVisibleObjectReverse(fn_t fn) const
 	{
-		T_ASSERT (tmparr.empty());
+		RefArray< FlashCharacterInstance > tmp;
 		for (FlashDisplayList::layer_map_t::const_reverse_iterator i = m_layers.rbegin(); i != m_layers.rend(); ++i)
 		{
 			T_ASSERT (i->second.instance);
 			if (i->second.instance->isVisible())
-				tmparr.push_back(i->second.instance);
+				tmp.push_back(i->second.instance);
 		}
-		for (RefArray< FlashCharacterInstance >::const_iterator i = tmparr.begin(); i != tmparr.end(); ++i)
+		for (RefArray< FlashCharacterInstance >::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
 			fn(*i);
-		tmparr.resize(0);
 	}
 
 	/*! \brief Get background clear color.
