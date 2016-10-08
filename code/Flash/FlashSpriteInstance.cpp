@@ -43,7 +43,6 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashDictionary
 ,	m_inside(false)
 ,	m_inDispatch(false)
 ,	m_gotoIssued(false)
-,	m_haveEnterFrame(false)
 {
 	T_ASSERT (m_sprite->getFrameCount() > 0);
 }
@@ -493,15 +492,6 @@ bool FlashSpriteInstance::enumerateMembers(std::vector< uint32_t >& outMemberNam
 	return true;
 }
 
-bool FlashSpriteInstance::setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue)
-{
-	// Intercept "onEnterFrame" member; flag if it's a function and we need to call it.
-	if (memberName == ActionContext::IdOnEnterFrame)
-		m_haveEnterFrame = bool(memberValue.getObject< ActionFunction >() != 0);
-
-	return FlashCharacterInstance::setMember(context, memberName, memberValue);
-}
-
 bool FlashSpriteInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
 {
 	// Find visible named character in display list.
@@ -598,10 +588,7 @@ void FlashSpriteInstance::eventFrame()
 
 	// Issue script assigned event; hack to skip events when using goto methods.
 	if (!m_skipEnterFrame)
-	{
-		if (m_haveEnterFrame)
-			executeScriptEvent(ActionContext::IdOnEnterFrame, ActionValue());
-	}
+		executeScriptEvent(ActionContext::IdOnEnterFrame, ActionValue());
 	else
 		--m_skipEnterFrame;
 
