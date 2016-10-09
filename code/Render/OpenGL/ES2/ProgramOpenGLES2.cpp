@@ -444,7 +444,13 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 		std::string uniformName = wstombs(uniforms[i].name);
 
 		GLint location = glGetUniformLocation(m_program, uniformName.c_str());
-		T_FATAL_ASSERT_M (location >= 0, L"Invalid uniform location");
+		if (location < 0)
+		{
+			// This probably happen when the GLSL optimizer of the driver is more intelligent than
+			// our GLSL shader generator, thus the uniform has been discarded when the program was loaded.
+			T_DEBUG(L"No location of GL uniform \"" << uniforms[i].name << L"\"; shader parameter ignored.");
+			continue;
+		}
 
 		uint32_t offsetUniform = uint32_t(m_uniforms.size());
 		uint32_t offsetData = uint32_t(m_uniformData.size());

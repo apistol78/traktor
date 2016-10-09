@@ -53,12 +53,40 @@ void RenderSystemOpenGLES2::getInformation(RenderSystemInformation& outInfo) con
 
 uint32_t RenderSystemOpenGLES2::getDisplayModeCount() const
 {
+#if defined(_WIN32)
+	uint32_t count = 0;
+
+	DEVMODE dmgl;
+	std::memset(&dmgl, 0, sizeof(dmgl));
+	dmgl.dmSize = sizeof(dmgl);
+
+	while (EnumDisplaySettings(NULL, count, &dmgl))
+		++count;
+
+	return count;
+#else
 	return 0;
+#endif
 }
 
 DisplayMode RenderSystemOpenGLES2::getDisplayMode(uint32_t index) const
 {
+#if defined(_WIN32)
+	DEVMODE dmgl;
+	std::memset(&dmgl, 0, sizeof(dmgl));
+	dmgl.dmSize = sizeof(dmgl);
+
+	EnumDisplaySettings(NULL, index, &dmgl);
+
+	DisplayMode dm;
+	dm.width = dmgl.dmPelsWidth;
+	dm.height = dmgl.dmPelsHeight;
+	dm.refreshRate = (uint16_t)dmgl.dmDisplayFrequency;
+	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
+	return dm;
+#else
 	return DisplayMode();
+#endif
 }
 
 DisplayMode RenderSystemOpenGLES2::getCurrentDisplayMode() const

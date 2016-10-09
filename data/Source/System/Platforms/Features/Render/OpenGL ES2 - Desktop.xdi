@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.amalgam.Feature" version="8">
-	<description>Render - OpenGL ES 2.0</description>
+	<description>Render - OpenGL ES 2.0 - Desktop</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
@@ -292,7 +292,7 @@
 			<item>
 				<first>Render.FullScreen</first>
 				<second type="traktor.PropertyBoolean">
-					<value>true</value>
+					<value>false</value>
 				</second>
 			</item>
 			<item>
