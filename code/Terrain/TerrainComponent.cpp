@@ -166,16 +166,11 @@ void TerrainComponent::render(
 	if (!coarseProgram || !detailProgram)
 		return;
 
-#if !defined(__IOS__) && !defined(__PS3__)
-	// \fixme Assume depth pass enabled; need some information about first pass from camera POV.
+	// Update cache only once per frame and when rendering from camera.
 	bool updateCache = bool(
-		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DepthWrite") ||
+		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_ForwardColor") ||
 		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DeferredGBufferWrite")
 	);
-#else
-	// Only using a single pass on iOS.
-	bool updateCache = true;
-#endif
 
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 
