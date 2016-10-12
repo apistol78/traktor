@@ -36,10 +36,17 @@ bool InstanceMeshConverter::convert(
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const std::vector< render::VertexElement >& vertexElements,
+	int32_t maxInstanceCount,
 	IMeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {
+	if (maxInstanceCount <= 0)
+	{
+		log::error << L"No per-instance parameter data, max instance count is zero." << Endl;
+		return false;
+	}
+
 	// Create a copy of the first source model and triangulate it.
 	model::Model model = *models[0];
 
@@ -200,6 +207,7 @@ bool InstanceMeshConverter::convert(
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_haveRenderMesh = true;
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_parts = parts;
+	checked_type_cast< InstanceMeshResource* >(meshResource)->m_maxInstanceCount = maxInstanceCount;
 
 	return true;
 }

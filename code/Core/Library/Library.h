@@ -68,6 +68,12 @@ public:
 	 */
 	void* find(const std::wstring& symbol);
 
+	/*! \brief Get library path.
+	 *
+	 * \return Path to library.
+	 */
+	Path getPath() const;
+
 private:
 	void* m_handle;
 };

@@ -425,7 +425,7 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 			m_textures.push_back(0);
 		}
 		
-		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(i->stage);
+		std::wstring samplerName = i->name; // L"_gl_sampler_" + texture + L"_" + toString(i->stage);
 		
 		Sampler sampler;
 		sampler.locationTexture = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
@@ -433,6 +433,9 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 		sampler.stage = i->stage;
 
 		m_samplers.push_back(sampler);
+
+		if (sampler.locationTexture < 0)
+			log::warning << L"No GL sampler defined for texture \"" << texture << L"\"" << Endl;
 	}
 
 	const std::vector< NamedUniformType >& uniforms = resourceOpenGL->getUniforms();

@@ -59,6 +59,7 @@ private:
 	bool m_haveRenderMesh;
 	resource::Id< render::Shader > m_shader;
 	std::map< std::wstring, parts_t > m_parts;
+	int32_t m_maxInstanceCount;
 };
 
 	}

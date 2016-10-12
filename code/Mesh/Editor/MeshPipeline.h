@@ -16,6 +16,13 @@ namespace traktor
 
 class PropertyGroup;
 
+	namespace render
+	{
+
+class IProgramCompiler;
+
+	}
+
 	namespace mesh
 	{
 
@@ -65,6 +72,7 @@ private:
 	bool m_enableCustomTemplates;
 	bool m_enableBakeOcclusion;
 	std::set< std::wstring > m_includeOnlyTechniques;
+	Ref< render::IProgramCompiler > m_programCompiler;
 };
 
 	}

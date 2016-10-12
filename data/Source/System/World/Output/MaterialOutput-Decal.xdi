@@ -5,7 +5,7 @@
 			<comment/>
 			<position>
 				<first>314</first>
-				<second>454</second>
+				<second>353</second>
 			</position>
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
 			<inputPins>
@@ -86,7 +86,7 @@
 			<comment/>
 			<position>
 				<first>314</first>
-				<second>1197</second>
+				<second>1187</second>
 			</position>
 			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
 			<inputPins>
@@ -102,7 +102,7 @@
 			<comment/>
 			<position>
 				<first>314</first>
-				<second>1102</second>
+				<second>1085</second>
 			</position>
 			<fragmentGuid>{6EF33326-74C7-B640-BB38-5C57D2199FB4}</fragmentGuid>
 			<inputPins>
@@ -228,7 +228,7 @@
 			<comment/>
 			<position>
 				<first>314</first>
-				<second>1292</second>
+				<second>1289</second>
 			</position>
 			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
 			<inputPins>
@@ -357,7 +357,7 @@
 			<comment/>
 			<position>
 				<first>314</first>
-				<second>695</second>
+				<second>671</second>
 			</position>
 			<fragmentGuid>{D0106B3E-E48F-C24E-AA07-165B6053E8D3}</fragmentGuid>
 			<inputPins>

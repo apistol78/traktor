@@ -134,4 +134,11 @@ void* Library::find(const std::wstring& symbol)
 	return (void*)GetProcAddress((HMODULE)m_handle, wstombs(symbol).c_str());
 }
 
+Path Library::getPath() const
+{
+	wchar_t fileName[MAX_PATH + 1] = { 0 };
+	GetModuleFileName((HMODULE)m_handle, fileName, sizeof_array(fileName));
+	return Path(fileName);
+}
+
 }

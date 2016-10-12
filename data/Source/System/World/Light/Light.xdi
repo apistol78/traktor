@@ -4,16 +4,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>617</first>
-				<second>92</second>
+				<first>659</first>
+				<second>136</second>
 			</position>
 			<name>Diffuse</name>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-429</first>
-				<second>88</second>
+				<first>-540</first>
+				<second>87</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -23,8 +23,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-406</first>
-				<second>114</second>
+				<first>-500</first>
+				<second>116</second>
 			</position>
 			<name>Position</name>
 			<connectable>true</connectable>
@@ -34,8 +34,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-466</first>
-				<second>166</second>
+				<first>-590</first>
+				<second>174</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -45,8 +45,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-403</first>
-				<second>140</second>
+				<first>-500</first>
+				<second>145</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -56,8 +56,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-405</first>
-				<second>192</second>
+				<first>-500</first>
+				<second>203</second>
 			</position>
 			<name>Shadow</name>
 			<connectable>true</connectable>
@@ -67,8 +67,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-187</first>
-				<second>174</second>
+				<first>-194</first>
+				<second>221</second>
 			</position>
 			<fragmentGuid>{2254EFFF-7251-B94E-A985-6BBD3B34E05D}</fragmentGuid>
 			<inputPins>
@@ -102,15 +102,15 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>617</first>
-				<second>159</second>
+				<first>659</first>
+				<second>203</second>
 			</position>
 			<name>Specular</name>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-187</first>
+				<first>-194</first>
 				<second>27</second>
 			</position>
 			<fragmentGuid>{EAA97CF2-F886-FB44-84BF-E7AEED5338CB}</fragmentGuid>
@@ -149,16 +149,16 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>517</first>
-				<second>99</second>
+				<first>559</first>
+				<second>143</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>517</first>
-				<second>150</second>
+				<first>559</first>
+				<second>194</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -166,7 +166,7 @@
 			<comment/>
 			<position>
 				<first>182</first>
-				<second>135</second>
+				<second>188</second>
 			</position>
 			<parameterName>World_LightEnableComplex</parameterName>
 		</item>

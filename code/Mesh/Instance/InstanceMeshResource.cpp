@@ -17,10 +17,11 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 5, InstanceMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 6, InstanceMeshResource, IMeshResource)
 
 InstanceMeshResource::InstanceMeshResource()
 :	m_haveRenderMesh(false)
+,	m_maxInstanceCount(0)
 {
 }
 
@@ -187,12 +188,13 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		}
 	}
 
+	instanceMesh->m_maxInstanceCount = std::min< int32_t >(m_maxInstanceCount, InstanceMesh::MaxInstanceCount);
 	return instanceMesh;
 }
 
 void InstanceMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 5, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 6, L"Incorrect version");
 	s >> Member< bool >(L"haveRenderMesh", m_haveRenderMesh);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
@@ -205,6 +207,7 @@ void InstanceMeshResource::serialize(ISerializer& s)
 			MemberStlList< Part, MemberComposite< Part > >
 		>
 	>(L"parts", m_parts);
+	s >> Member< int32_t >(L"maxInstanceCount", m_maxInstanceCount);
 }
 
 InstanceMeshResource::Part::Part()

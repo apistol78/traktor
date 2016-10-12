@@ -347,6 +347,7 @@ public:
 	PipelineParameters(
 		const std::wstring& workingDirectory,
 		const std::wstring& settings,
+		bool verbose,
 		bool progress,
 		bool rebuild,
 		bool noCache,
@@ -359,6 +360,8 @@ public:
 
 	const std::wstring& getSettings() const { return m_settings; }
 
+	bool getVerbose() const { return m_verbose; }
+
 	bool getProgress() const { return m_progress; }
 
 	bool getRebuild() const { return m_rebuild; }
@@ -370,6 +373,7 @@ public:
 private:
 	std::wstring m_workingDirectory;
 	std::wstring m_settings;
+	bool m_verbose;
 	bool m_progress;
 	bool m_rebuild;
 	bool m_noCache;
@@ -379,7 +383,8 @@ private:
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"PipelineParameters", 0, PipelineParameters, ISerializable)
 
 PipelineParameters::PipelineParameters()
-:	m_progress(false)
+:	m_verbose(false)
+,	m_progress(false)
 ,	m_rebuild(false)
 ,	m_noCache(false)
 {
@@ -388,6 +393,7 @@ PipelineParameters::PipelineParameters()
 PipelineParameters::PipelineParameters(
 	const std::wstring& workingDirectory,
 	const std::wstring& settings,
+	bool verbose,
 	bool progress,
 	bool rebuild,
 	bool noCache,
@@ -395,6 +401,7 @@ PipelineParameters::PipelineParameters(
 )
 :	m_workingDirectory(workingDirectory)
 ,	m_settings(settings)
+,	m_verbose(verbose)
 ,	m_progress(progress)
 ,	m_rebuild(rebuild)
 ,	m_noCache(noCache)
@@ -406,6 +413,7 @@ void PipelineParameters::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"workingDirectory", m_workingDirectory);
 	s >> Member< std::wstring >(L"settings", m_settings);
+	s >> Member< bool >(L"verbose", m_verbose);
 	s >> Member< bool >(L"progress", m_progress);
 	s >> Member< bool >(L"rebuild", m_rebuild);
 	s >> Member< bool >(L"noCache", m_noCache);
@@ -527,6 +535,9 @@ bool perform(const PipelineParameters* params)
 		return false;
 	}
 
+	if (params->getVerbose())
+		traktor::log::info << L"Using settings \"" << params->getSettings() << L"\"." << Endl;
+
 	Ref< PropertyGroup > settings = loadSettings(params->getSettings());
 	if (!settings)
 	{
@@ -551,6 +562,10 @@ bool perform(const PipelineParameters* params)
 				traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
 				return false;
 			}
+
+			if (params->getVerbose())
+				traktor::log::info << L"Library \"" << library.getPath().getPathName() << L"\" loaded." << Endl;
+
 			library.detach();
 			g_loadedModules.insert(*i);
 		}
@@ -899,6 +914,7 @@ int master(const CommandLine& cmdLine)
 	PipelineParameters params(
 		FileSystem::getInstance().getAbsolutePath(L"").getPathName(),
 		settingsFile,
+		cmdLine.hasOption('v', L"verbose"),
 		cmdLine.hasOption('p', L"progress"),
 		cmdLine.hasOption('f', L"force"),
 		cmdLine.hasOption('n', L"no-cache"),
@@ -1006,6 +1022,7 @@ int standalone(const CommandLine& cmdLine)
 	PipelineParameters params(
 		FileSystem::getInstance().getAbsolutePath(L"").getPathName(),
 		settingsFile,
+		cmdLine.hasOption('v', L"verbose"),
 		cmdLine.hasOption('p', L"progress"),
 		cmdLine.hasOption('f', L"force"),
 		cmdLine.hasOption('n', L"no-cache"),
