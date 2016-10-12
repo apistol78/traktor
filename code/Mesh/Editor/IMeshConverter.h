@@ -37,6 +37,7 @@ public:
 		const Guid& materialGuid,
 		const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 		const std::vector< render::VertexElement >& vertexElements,
+		int32_t maxInstanceCount,
 		IMeshResource* meshResource,
 		IStream* meshResourceStream
 	) const = 0;

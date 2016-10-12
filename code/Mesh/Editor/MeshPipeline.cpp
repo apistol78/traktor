@@ -33,6 +33,7 @@
 #include "Model/Operations/BakeVertexOcclusion.h"
 #include "Model/Operations/CullDistantFaces.h"
 #include "Model/Operations/Transform.h"
+#include "Render/IProgramCompiler.h"
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
@@ -133,7 +134,7 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 27, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 28, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -151,6 +152,23 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 	m_enableCustomTemplates = settings->getProperty< PropertyBoolean >(L"MeshPipeline.EnableCustomTemplates", true);
 	m_enableBakeOcclusion = settings->getProperty< PropertyBoolean >(L"MeshPipeline.BakeOcclusion", true);
 	m_includeOnlyTechniques = settings->getProperty< PropertyStringSet >(L"ShaderPipeline.IncludeOnlyTechniques");
+
+	std::wstring programCompilerTypeName = settings->getProperty< PropertyString >(L"ShaderPipeline.ProgramCompiler");
+
+	const TypeInfo* programCompilerType = TypeInfo::find(programCompilerTypeName);
+	if (!programCompilerType)
+	{
+		log::error << L"Mesh pipeline; unable to find program compiler type \"" << programCompilerTypeName << L"\"" << Endl;
+		return false;
+	}
+
+	m_programCompiler = dynamic_type_cast< render::IProgramCompiler* >(programCompilerType->createInstance());
+	if (!m_programCompiler)
+	{
+		log::error << L"Mesh pipeline; unable to instanciate program compiler \"" << programCompilerTypeName << L"\"" << Endl;
+		return false;
+	}
+
 	return true;
 }
 
@@ -335,6 +353,7 @@ bool MeshPipeline::buildOutput(
 
 	MaterialShaderGenerator generator;
 
+	int32_t maxInstanceCount = 0;
 	int32_t jointCount = models[0]->getJointCount();
 	bool vertexColor = haveVertexColors(*models[0]);
 
@@ -395,6 +414,17 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
+		// Extract platform permutation.
+		const wchar_t* platformSignature = m_programCompiler->getPlatformSignature();
+		T_ASSERT (platformSignature);
+
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getPlatformPermutation(platformSignature);
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to get platform permutation" << Endl;
+			return false;
+		}
+
 		// Freeze types, get typed permutation.
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getTypePermutation();
 		if (!materialShaderGraph)
@@ -422,7 +452,21 @@ bool MeshPipeline::buildOutput(
 					// Quantize joint count to reduce number of vertex shader permutations as it
 					// will cost more than excessive parameters.
 					int32_t uniformJointCount = alignUp(jointCount, 4);
-					indexedUniform->setLength(uniformJointCount * 2);		// Each bone is represented of a quaternion and a vector thus multiply by 2.
+					if (uniformJointCount * 2 != indexedUniform->getLength())
+					{
+						indexedUniform->setLength(uniformJointCount * 2);		// Each bone is represented of a quaternion and a vector thus multiply by 2.
+						log::info << L"Found \"Joints\" uniform parameter in material \"" << i->first << L"\"; setting length to " << uniformJointCount * 2 << L" entries." << Endl;
+					}
+				}
+				else if (indexedUniform->getParameterName() == L"InstanceWorld")
+				{
+					// Determine how many instances we can use when rendering instanced meshed
+					// based on how many entries in uniform.
+					if (maxInstanceCount <= 0 || maxInstanceCount > indexedUniform->getLength() / 2)
+					{
+						maxInstanceCount = indexedUniform->getLength() / 2;		// Length of uniform is twice of max number of instances.
+						log::info << L"Found \"InstanceWorld\" uniform parameter in material \"" << i->first << L"\"; using max batch size " << maxInstanceCount << L" of instance(s)." << Endl;
+					}
 				}
 			}
 		}
@@ -613,6 +657,8 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
+	log::info << L"Creating mesh resource \"" << type_name(resource) << L"\"..." << Endl;
+
 	// Create output instance.
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
 		outputPath,
@@ -642,6 +688,7 @@ bool MeshPipeline::buildOutput(
 		materialGuid,
 		materialTechniqueMap,
 		vertexElements,
+		maxInstanceCount,
 		resource,
 		stream
 	))

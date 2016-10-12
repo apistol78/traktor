@@ -249,25 +249,25 @@ void CubeTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& sa
 	if (m_mipCount > 1)
 		minFilter = samplerState.minFilter;
 
-	if (m_shadowState.minFilter != minFilter)
+	//if (m_shadowState.minFilter != minFilter)
 	{
 		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, minFilter));
 		m_shadowState.minFilter = minFilter;
 	}
 
-	if (m_shadowState.magFilter != samplerState.magFilter)
+	//if (m_shadowState.magFilter != samplerState.magFilter)
 	{
 		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
 		m_shadowState.magFilter = samplerState.magFilter;
 	}
 
-	if (m_shadowState.wrapS != samplerState.wrapS)
+	//if (m_shadowState.wrapS != samplerState.wrapS)
 	{
 		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, samplerState.wrapS));
 		m_shadowState.wrapS = samplerState.wrapS;
 	}
 
-	if (m_shadowState.wrapT != samplerState.wrapT)
+	//if (m_shadowState.wrapT != samplerState.wrapT)
 	{
 		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 		m_shadowState.wrapT = samplerState.wrapT;

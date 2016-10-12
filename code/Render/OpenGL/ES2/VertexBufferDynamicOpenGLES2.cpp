@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
@@ -170,7 +171,10 @@ void* VertexBufferDynamicOpenGLES2::lock()
 	m_lockSize = getBufferSize();
 	
 	if (!m_buffer.ptr())
-		m_buffer.reset((uint8_t*)Alloc::acquireAlign(m_lockSize, 16, "VB"));
+	{
+		m_buffer.reset((uint8_t*)Alloc::acquireAlign(getBufferSize(), 16, "VB"));
+		std::memset(m_buffer.ptr(), 0, getBufferSize());
+	}
 
 	return m_buffer.ptr();
 }
@@ -181,9 +185,12 @@ void* VertexBufferDynamicOpenGLES2::lock(uint32_t vertexOffset, uint32_t vertexC
 	m_lockSize = vertexCount * m_vertexStride;
 
 	if (!m_buffer.ptr())
-		m_buffer.reset((uint8_t*)Alloc::acquireAlign(m_lockSize, 16, "VB"));
+	{
+		m_buffer.reset((uint8_t*)Alloc::acquireAlign(getBufferSize(), 16, "VB"));
+		std::memset(m_buffer.ptr(), 0, getBufferSize());
+	}
 
-	return m_buffer.ptr();
+	return m_buffer.ptr() + m_lockOffset;
 }
 
 void VertexBufferDynamicOpenGLES2::unlock()
@@ -194,17 +201,19 @@ void VertexBufferDynamicOpenGLES2::unlock()
 
 void VertexBufferDynamicOpenGLES2::activate(StateCache* stateCache)
 {
+	stateCache->setArrayBuffer(m_bufferObject);
+
 	if (m_dirty)
 	{
 		int32_t bufferSize = getBufferSize();
 
-		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_bufferObject));
+		//T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_bufferObject));
 
 		if (m_lockOffset <= 0 && m_lockSize >= bufferSize)
 		{
 			T_OGL_SAFE(glBufferData(
 				GL_ARRAY_BUFFER,
-				m_lockSize,
+				bufferSize,
 				m_buffer.ptr(),
 				GL_DYNAMIC_DRAW
 			));
@@ -219,13 +228,12 @@ void VertexBufferDynamicOpenGLES2::activate(StateCache* stateCache)
 			));
 		}
 
-		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, 0));
-		T_OGL_SAFE(glFlush());
+		//T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, 0));
+		//T_OGL_SAFE(glFlush());
 
 		m_dirty = false;
 	}
 
-	stateCache->setArrayBuffer(m_bufferObject);
 	stateCache->setVertexArrayObject(0);
 
 	GLint maxAttributeIndex = 0;

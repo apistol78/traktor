@@ -81,6 +81,10 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 			EGL_DEPTH_SIZE, desc.depthBits,
 			EGL_STENCIL_SIZE, desc.stencilBits,
 			EGL_SAMPLES, (EGLint)desc.multiSample,
+			EGL_RED_SIZE, 8,
+			EGL_GREEN_SIZE, 8,
+			EGL_BLUE_SIZE, 8,
+			EGL_ALPHA_SIZE, (desc.displayMode.colorBits >= 32) ? 8 : 0,
 			EGL_NONE
 		};
 
@@ -104,6 +108,10 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 			EGL_DEPTH_SIZE, desc.depthBits,
 			EGL_STENCIL_SIZE, desc.stencilBits,
+			EGL_RED_SIZE, 8,
+			EGL_GREEN_SIZE, 8,
+			EGL_BLUE_SIZE, 8,
+			EGL_ALPHA_SIZE, (desc.displayMode.colorBits >= 32) ? 8 : 0,
 			EGL_NONE
 		};
 

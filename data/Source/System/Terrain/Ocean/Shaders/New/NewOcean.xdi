@@ -2680,5 +2680,25 @@ read-back color buffer.
 				<name>False</name>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[95]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[96]"/>
+				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[89]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<name>OpenGL ES2</name>
+			</destination>
+		</item>
 	</edges>
 </object>

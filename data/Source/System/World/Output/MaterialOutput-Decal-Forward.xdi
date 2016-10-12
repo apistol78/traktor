@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>2089</first>
-				<second>330</second>
+				<first>2638</first>
+				<second>286</second>
 			</position>
 			<technique>World_ForwardColor</technique>
 			<priority>
@@ -47,16 +47,16 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1905</first>
-				<second>366</second>
+				<first>2454</first>
+				<second>322</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1643</first>
-				<second>346</second>
+				<first>2192</first>
+				<second>302</second>
 			</position>
 			<fragmentGuid>{9F5649E4-3234-3B4F-BFA9-E124110B9969}</fragmentGuid>
 			<inputPins>
@@ -107,8 +107,8 @@ Eye direction
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-175</first>
-				<second>299</second>
+				<first>-675</first>
+				<second>238</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -118,15 +118,15 @@ Eye direction
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>1150</first>
-				<second>265</second>
+				<first>1511</first>
+				<second>197</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-175</first>
-				<second>139</second>
+				<first>-675</first>
+				<second>78</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -136,15 +136,15 @@ Eye direction
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>722</first>
-				<second>242</second>
+				<first>1019</first>
+				<second>183</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-172</first>
-				<second>171</second>
+				<first>-665</first>
+				<second>110</second>
 			</position>
 			<name>DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -202,8 +202,8 @@ Eye direction
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-172</first>
-				<second>331</second>
+				<first>-675</first>
+				<second>270</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -213,8 +213,8 @@ Eye direction
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>317</first>
-				<second>420</second>
+				<first>69</first>
+				<second>433</second>
 			</position>
 			<fragmentGuid>{BAFF9338-89FC-074F-ADB8-050FD2747021}</fragmentGuid>
 			<inputPins/>
@@ -228,8 +228,8 @@ Eye direction
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-211</first>
-				<second>235</second>
+				<first>-725</first>
+				<second>174</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -239,23 +239,23 @@ Eye direction
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1005</first>
-				<second>356</second>
+				<first>1366</first>
+				<second>288</second>
 			</position>
 			<swizzle>xxx</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>785</first>
-				<second>333</second>
+				<first>1082</first>
+				<second>274</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-180</first>
-				<second>203</second>
+				<first>-685</first>
+				<second>142</second>
 			</position>
 			<name>SpecularTerm</name>
 			<connectable>true</connectable>
@@ -265,8 +265,8 @@ Eye direction
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-160</first>
-				<second>363</second>
+				<first>-655</first>
+				<second>302</second>
 			</position>
 			<name>Reflection</name>
 			<connectable>true</connectable>
@@ -276,8 +276,8 @@ Eye direction
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-156</first>
-				<second>427</second>
+				<first>-645</first>
+				<second>366</second>
 			</position>
 			<name>RimColor</name>
 			<connectable>true</connectable>
@@ -287,8 +287,8 @@ Eye direction
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-173</first>
-				<second>395</second>
+				<first>-675</first>
+				<second>334</second>
 			</position>
 			<name>RimIntensity</name>
 			<connectable>true</connectable>
@@ -298,8 +298,8 @@ Eye direction
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-152</first>
-				<second>267</second>
+				<first>-645</first>
+				<second>206</second>
 			</position>
 			<name>Emissive</name>
 			<connectable>true</connectable>
@@ -309,15 +309,15 @@ Eye direction
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>939</first>
-				<second>187</second>
+				<first>1300</first>
+				<second>119</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1394</first>
-				<second>249</second>
+				<first>1812</first>
+				<second>193</second>
 			</position>
 			<fragmentGuid>{5961D8B7-FFC0-8742-B87F-1AD8B232D84E}</fragmentGuid>
 			<inputPins>
@@ -369,15 +369,44 @@ Eye direction
 		<item type="traktor.render.Normalize">
 			<comment/>
 			<position>
-				<first>188</first>
-				<second>488</second>
+				<first>181</first>
+				<second>509</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>94</first>
-				<second>508</second>
+				<first>-273</first>
+				<second>238</second>
+			</position>
+			<swizzle>xyz</swizzle>
+		</item>
+		<item type="traktor.render.Interpolator">
+			<comment/>
+			<position>
+				<first>-227</first>
+				<second>612</second>
+			</position>
+		</item>
+		<item type="traktor.render.Normalize">
+			<comment/>
+			<position>
+				<first>-132</first>
+				<second>584</second>
+			</position>
+		</item>
+		<item type="traktor.render.Interpolator">
+			<comment/>
+			<position>
+				<first>-60</first>
+				<second>388</second>
+			</position>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>-318</first>
+				<second>612</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -411,26 +440,6 @@ Eye direction
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>EyeDirection</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Normal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Position</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -491,16 +500,6 @@ Eye direction
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>EyeDirection</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Normal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -575,16 +574,6 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<name>Normal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
@@ -645,16 +634,6 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[22]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
@@ -670,6 +649,96 @@ Eye direction
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Normal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Normal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Normal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Position</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
 				<name>Input</name>
 			</destination>
 		</item>

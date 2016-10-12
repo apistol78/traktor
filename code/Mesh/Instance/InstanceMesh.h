@@ -95,6 +95,7 @@ private:
 	Ref< world::OccluderMesh > m_occluderMesh;
 	Ref< render::Mesh > m_renderMesh;
 	SmallMap< render::handle_t, std::vector< Part > > m_parts;
+	int32_t m_maxInstanceCount;
 };
 
 	}

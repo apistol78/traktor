@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
 #include "Mesh/Instance/InstanceMesh.h"
+#include "Render/IProgram.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
@@ -27,6 +28,7 @@ struct SortInstanceDistance
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
 
 InstanceMesh::InstanceMesh()
+:	m_maxInstanceCount(0)
 {
 	if (!s_handleInstanceWorld)
 		s_handleInstanceWorld = render::getParameterHandle(L"InstanceWorld");
@@ -136,7 +138,7 @@ void InstanceMesh::render(
 
 		for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )
 		{
-			uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, MaxInstanceCount);
+			uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, m_maxInstanceCount);
 
 			for (uint32_t j = 0; j < batchCount; ++j)
 				instanceBatch[j] = instanceWorld[batchOffset + j].first;
@@ -220,7 +222,7 @@ void InstanceMesh::render(
 
 			for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )
 			{
-				uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, MaxInstanceCount);
+				uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, m_maxInstanceCount);
 
 				for (uint32_t j = 0; j < batchCount; ++j)
 					instanceBatch[j] = instanceWorld[batchOffset + j].first;
