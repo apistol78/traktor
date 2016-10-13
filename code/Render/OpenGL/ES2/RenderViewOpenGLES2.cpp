@@ -1,17 +1,22 @@
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
+#include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
+#include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
+#include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
+#include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
+#include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
+#include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
-
-#if !defined(T_OFFLINE_ONLY)
-
-#	include "Core/Log/Log.h"
-#	include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
-#	include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
-#	include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
-#	include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
-#	include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
-#	include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
-#	include "Render/OpenGL/ES2/StateCache.h"
+#include "Render/OpenGL/ES2/StateCache.h"
+#if defined(__ANDROID__)
+#	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
+#elif defined(__IOS__)
+#	include "Render/OpenGL/ES2/iOS/EAGLContextWrapper.h"
+#elif defined(__PNACL__)
+#	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
+#elif defined(_WIN32)
+#	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
+#endif
 
 namespace traktor
 {
@@ -136,6 +141,18 @@ void RenderViewOpenGLES2::close()
 
 bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
 {
+#if defined(_WIN32)
+	m_context->getWindow()->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL ES 2.0 Renderer");
+	if (desc.fullscreen)
+		m_context->getWindow()->setFullScreenStyle();
+	else
+		m_context->getWindow()->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+
+	m_context->reset(desc.displayMode.width, desc.displayMode.height);
+
+	m_width = m_context->getWidth();
+	m_height = m_context->getHeight();
+#endif
 	return true;
 }
 
@@ -792,5 +809,3 @@ bool RenderViewOpenGLES2::windowListenerEvent(Window* window, UINT message, WPAR
 
 	}
 }
-
-#endif

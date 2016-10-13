@@ -11,8 +11,6 @@ namespace traktor
 	namespace render
 	{
 
-#if !defined(T_OFFLINE_ONLY)
-
 class ContextOpenGLES2;
 
 /*!
@@ -54,8 +52,6 @@ private:
 	int32_t m_height;
 	SamplerStateOpenGL m_shadowState;
 };
-
-#endif
 
 	}
 }

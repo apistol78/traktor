@@ -16,9 +16,16 @@
 #include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
-#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
-#if defined(__IOS__)
+
+#if defined(__ANDROID__)
+#	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
+#elif defined(__IOS__)
+#	include "Render/OpenGL/ES2/iOS/ContextOpenGLES2.h"
 #	include "Render/OpenGL/ES2/iOS/EAGLContextWrapper.h"
+#elif defined(__PNACL__)
+#	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
+#elif defined(_WIN32)
+#	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
 #endif
 
 namespace traktor
@@ -139,117 +146,88 @@ float RenderSystemOpenGLES2::getDisplayAspectRatio() const
 
 Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefaultDesc& desc)
 {
-#if defined(_WIN32) || defined(__PNACL__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__)
 	m_context = ContextOpenGLES2::createContext(
 		m_sysapp,
 		desc
 	);
-	return new RenderViewOpenGLES2(m_context);
-#else
-	return 0;
-#endif
+	if (m_context)
+		return new RenderViewOpenGLES2(m_context);
+	else
+		return 0;
 }
 
 Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
-#if !defined(T_OFFLINE_ONLY)
 	m_context = ContextOpenGLES2::createContext(
 		m_sysapp,
 		desc
 	);
-	return new RenderViewOpenGLES2(m_context);
-#else
-	return 0;
-#endif
+	if (m_context)
+		return new RenderViewOpenGLES2(m_context);
+	else
+		return 0;
 }
 
 Ref< VertexBuffer > RenderSystemOpenGLES2::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-#if !defined(T_OFFLINE_ONLY)
+
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	if (!dynamic)
 		return new VertexBufferStaticOpenGLES2(m_context, vertexElements, bufferSize);
 	else
 		return new VertexBufferDynamicOpenGLES2(m_context, vertexElements, bufferSize);
-#else
-	return 0;
-#endif
 }
 
 Ref< IndexBuffer > RenderSystemOpenGLES2::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-#if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	return new IndexBufferOpenGLES2(m_context, indexType, bufferSize, dynamic);
-#else
-	return 0;
-#endif
 }
 
 Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-#if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	Ref< SimpleTextureOpenGLES2 > texture = new SimpleTextureOpenGLES2(m_context);
 	if (texture->create(desc))
 		return texture;
 	else
-		return texture;
-#else
-	return 0;
-#endif
+		return 0;
 }
 
 Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-#if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	Ref< CubeTextureOpenGLES2 > texture = new CubeTextureOpenGLES2(m_context);
 	if (texture->create(desc))
 		return texture;
 	else
-		return texture;
-#else
-	return 0;
-#endif
+		return 0;
 }
 
 Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-#if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	Ref< VolumeTextureOpenGLES2 > texture = new VolumeTextureOpenGLES2(m_context);
 	if (texture->create(desc))
 		return texture;
 	else
-		return texture;
-#else
-	return 0;
-#endif
+		return 0;
 }
 
 Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-#if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = new RenderTargetSetOpenGLES2(m_context);
 	if (renderTargetSet->create(desc))
 		return renderTargetSet;
 	else
 		return 0;
-#else
-	return 0;
-#endif
 }
 
 Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
-#if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	return ProgramOpenGLES2::create(m_context, programResource);
-#else
-	return 0;
-#endif
 }
 
 Ref< IProgramCompiler > RenderSystemOpenGLES2::createProgramCompiler() const

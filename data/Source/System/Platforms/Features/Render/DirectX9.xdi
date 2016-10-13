@@ -163,12 +163,6 @@
 				</second>
 			</item>
 			<item>
-				<first>Amalgam.RenderThread</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
-				</second>
-			</item>
-			<item>
 				<first>Render.DepthBits</first>
 				<second type="traktor.PropertyInteger">
 					<value>24</value>

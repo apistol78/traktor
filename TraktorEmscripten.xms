@@ -5146,7 +5146,7 @@
 		</item>
 		<item ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Render.OpenGL.ES2</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
 			<configurations>

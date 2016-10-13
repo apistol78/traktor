@@ -17,13 +17,8 @@ std::wstring getOpenGLErrorString(GLenum glError)
 		return L"GL_INVALID_VALUE";
 	case GL_INVALID_OPERATION:
 		return L"GL_INVALID_OPERATION";
-#if defined(T_OPENGL_STD)
 	case GL_INVALID_FRAMEBUFFER_OPERATION:
 		return L"GL_INVALID_FRAMEBUFFER_OPERATION";
-#elif defined(T_OPENGL_ES2) && !defined(T_OFFLINE_ONLY)
-	case GL_INVALID_FRAMEBUFFER_OPERATION:
-		return L"GL_INVALID_FRAMEBUFFER_OPERATION";
-#endif
 	case GL_OUT_OF_MEMORY:
 		return L"GL_OUT_OF_MEMORY";
 	}
