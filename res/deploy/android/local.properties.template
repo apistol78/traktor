@@ -1,5 +1,5 @@
 <!-- 
 
-local home = environment:get("ANDROID_HOME"):gsub("\\", "/")
+local home = environment:get("DEPLOY_ANDROID_HOME"):gsub("\\", "/")
 
 --!>sdk.dir=<!-- output:print(home) --!>
