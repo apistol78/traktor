@@ -39,11 +39,6 @@
 #	if TARGET_OS_IPHONE || TARGET_OS_IPAD
 #		include <OpenGLES/ES2/gl.h>
 #		include <OpenGLES/ES2/glext.h>
-#	elif TARGET_OS_MAC
-		// OSX target doesn't have an ES implementation,
-		// we just include vanilla GL.
-#		include <OpenGL/gl.h>
-#		define T_OFFLINE_ONLY
 #	elif __PNACL__
 #		include <GLES2/gl2.h>
 #		include <GLES2/gl2ext.h>

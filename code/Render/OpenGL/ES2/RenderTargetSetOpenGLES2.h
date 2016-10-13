@@ -9,8 +9,6 @@ namespace traktor
 	namespace render
 	{
 	
-#if !defined(T_OFFLINE_ONLY)
-
 class ContextOpenGLES2;
 class RenderTargetOpenGLES2;
 
@@ -56,8 +54,6 @@ private:
 
 	bool createFramebuffer(GLuint primaryDepthBuffer);
 };
-
-#endif
 
 	}
 }

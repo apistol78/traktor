@@ -1,10 +1,16 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
-
-#if !defined(T_OFFLINE_ONLY)
+#if defined(__ANDROID__)
+#	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
+#elif defined(__IOS__)
+#	include "Render/OpenGL/ES2/iOS/EAGLContextWrapper.h"
+#elif defined(__PNACL__)
+#	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
+#elif defined(_WIN32)
+#	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
+#endif
 
 namespace traktor
 {
@@ -146,7 +152,7 @@ bool VolumeTextureOpenGLES2::create(const VolumeTextureCreateDesc& desc)
 
 	convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type);
 
-#if !defined(T_OFFLINE_ONLY) && !defined(_WIN32) && !defined(__IOS__) && !defined(__PNACL__) && !defined(__EMSCRIPTEN__)
+#if !defined(_WIN32) && !defined(__IOS__) && !defined(__PNACL__) && !defined(__EMSCRIPTEN__)
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 
@@ -228,7 +234,7 @@ int VolumeTextureOpenGLES2::getDepth() const
 
 void VolumeTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
 {
-#if !defined(T_OFFLINE_ONLY) && !defined(__IOS__) && !defined(__PNACL__)
+#if !defined(__IOS__) && !defined(__PNACL__)
 
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D_OES, m_textureName));
@@ -273,5 +279,3 @@ void VolumeTextureOpenGLES2::bindSize(GLint locationSize)
 
 	}
 }
-
-#endif

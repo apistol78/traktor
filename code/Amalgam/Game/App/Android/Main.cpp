@@ -105,13 +105,13 @@ AndroidApplication::AndroidApplication(struct android_app* app)
 bool AndroidApplication::readSettings()
 {
 	Path settingsPath = L"Application.config";
-	traktor::log::info << L"Using settings \"" << settingsPath.getPathName() << L"\"" << Endl;
+	log::info << L"Using settings \"" << settingsPath.getPathName() << L"\"" << Endl;
 
 	Ref< PropertyGroup > defaultSettings = loadSettings(settingsPath);
 	if (!defaultSettings)
 	{
-		traktor::log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L"); please reinstall application" << Endl;
-		traktor::log::error << L"Please reinstall application." << Endl;
+		log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L"); please reinstall application" << Endl;
+		log::error << L"Please reinstall application." << Endl;
 		return false;
 	}
 
@@ -120,8 +120,8 @@ bool AndroidApplication::readSettings()
 
 	if (!settings)
 	{
-		traktor::log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L")." << Endl;
-		traktor::log::error << L"Please reinstall application." << Endl;
+		log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L")." << Endl;
+		log::error << L"Please reinstall application." << Endl;
 		return false;
 	}
 
@@ -194,77 +194,77 @@ void AndroidApplication::handleCommand(int32_t cmd)
 	switch (cmd)
 	{
 	case APP_CMD_INPUT_CHANGED:
-		log::info << L"handleCommand APP_CMD_INPUT_CHANGED" << Endl;
+		log::debug << L"handleCommand APP_CMD_INPUT_CHANGED" << Endl;
 		break;
 
 	case APP_CMD_INIT_WINDOW:
-		log::info << L"handleCommand APP_CMD_INIT_WINDOW (window: " << int32_t(m_app->window) << L")" << Endl;
+		log::debug << L"handleCommand APP_CMD_INIT_WINDOW (window: " << int32_t(m_app->window) << L")" << Endl;
 		if (!m_application && m_app->window != 0)
 			createApplication();
 		break;
 
 	case APP_CMD_TERM_WINDOW:
-		log::info << L"handleCommand APP_CMD_TERM_WINDOW" << Endl;
+		log::debug << L"handleCommand APP_CMD_TERM_WINDOW" << Endl;
 		suspendApplication();
 		break;
 
 	case APP_CMD_WINDOW_RESIZED:
-		log::info << L"handleCommand APP_CMD_WINDOW_RESIZED" << Endl;
+		log::debug << L"handleCommand APP_CMD_WINDOW_RESIZED" << Endl;
 		break;
 
 	case APP_CMD_WINDOW_REDRAW_NEEDED:
-		log::info << L"handleCommand APP_CMD_WINDOW_REDRAW_NEEDED" << Endl;
+		log::debug << L"handleCommand APP_CMD_WINDOW_REDRAW_NEEDED" << Endl;
 		break;
 
 	case APP_CMD_CONTENT_RECT_CHANGED:
-		log::info << L"handleCommand APP_CMD_CONTENT_RECT_CHANGED" << Endl;
+		log::debug << L"handleCommand APP_CMD_CONTENT_RECT_CHANGED" << Endl;
 		break;
 
 	case APP_CMD_GAINED_FOCUS:
-		log::info << L"handleCommand APP_CMD_GAINED_FOCUS" << Endl;
+		log::debug << L"handleCommand APP_CMD_GAINED_FOCUS" << Endl;
 		resumeApplication();
 		break;
 
 	case APP_CMD_LOST_FOCUS:
-		log::info << L"handleCommand APP_CMD_LOST_FOCUS" << Endl;
+		log::debug << L"handleCommand APP_CMD_LOST_FOCUS" << Endl;
 		suspendApplication();
 		break;
 
 	case APP_CMD_CONFIG_CHANGED:
-		log::info << L"handleCommand APP_CMD_CONFIG_CHANGED" << Endl;
+		log::debug << L"handleCommand APP_CMD_CONFIG_CHANGED" << Endl;
 		break;
 
 	case APP_CMD_LOW_MEMORY:
-		log::info << L"handleCommand APP_CMD_LOW_MEMORY" << Endl;
+		log::debug << L"handleCommand APP_CMD_LOW_MEMORY" << Endl;
 		break;
 
 	case APP_CMD_START:
-		log::info << L"handleCommand APP_CMD_START" << Endl;
+		log::debug << L"handleCommand APP_CMD_START" << Endl;
 		break;
 
 	case APP_CMD_RESUME:
-		log::info << L"handleCommand APP_CMD_RESUME" << Endl;
+		log::debug << L"handleCommand APP_CMD_RESUME" << Endl;
 		break;
 
 	case APP_CMD_SAVE_STATE:
-		log::info << L"handleCommand APP_CMD_SAVE_STATE" << Endl;
+		log::debug << L"handleCommand APP_CMD_SAVE_STATE" << Endl;
 		break;
 
 	case APP_CMD_PAUSE:
-		log::info << L"handleCommand APP_CMD_PAUSE" << Endl;
+		log::debug << L"handleCommand APP_CMD_PAUSE" << Endl;
 		break;
 
 	case APP_CMD_STOP:
-		log::info << L"handleCommand APP_CMD_STOP" << Endl;
+		log::debug << L"handleCommand APP_CMD_STOP" << Endl;
 		break;
 
 	case APP_CMD_DESTROY:
-		log::info << L"handleCommand APP_CMD_DESTROY" << Endl;
+		log::debug << L"handleCommand APP_CMD_DESTROY" << Endl;
 		destroyApplication();
 		break;
 
 	default:
-		log::info << L"handleCommand <Unknown command>" << Endl;
+		log::warning << L"handleCommand <Unknown command>" << Endl;
 		break;
 	}
 	DelegateInstance::handleCommand(cmd);

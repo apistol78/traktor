@@ -15,8 +15,6 @@ namespace traktor
 	namespace render
 	{
 
-#if !defined(T_OFFLINE_ONLY)
-
 class ContextOpenGLES2;
 class VertexBufferOpenGLES2;
 class IndexBufferOpenGLES2;
@@ -122,8 +120,6 @@ private:
 	bool windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult);
 #endif
 };
-
-#endif
 
 	}
 }

@@ -5,18 +5,9 @@
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
-#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/ExtensionsGLES2.h"
-
-#if defined(_WIN32)
-#	include "Render/OpenGL/ES2/Win32/Window.h"
-#elif defined(__IOS__)
-#	include "Render/OpenGL/ES2/iOS/EAGLContextWrapper.h"
-#elif defined(__PNACL__)
-#	include "Render/OpenGL/ES2/PNaCl/PPContextWrapper.h"
-#endif
-
-#if !defined(T_OFFLINE_ONLY)
+#include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
+#include "Render/OpenGL/ES2/Win32/Window.h"
 
 namespace traktor
 {
@@ -39,18 +30,15 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 {
 	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
 
-#if defined(T_OPENGL_ES2_HAVE_EGL)
-#	if defined(_WIN32)
 	context->m_window = new Window();
 	if (!context->m_window->create())
 		return 0;
 
-	context->m_window->setTitle(desc.title.c_str());
+	context->m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL ES 2.0 Renderer");
 	context->m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 
 	context->m_display = eglGetDisplay(GetDC(*context->m_window));
 	if (context->m_display == EGL_NO_DISPLAY)
-#	endif
 	{
 		context->m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 		if (context->m_display == EGL_NO_DISPLAY)
@@ -138,19 +126,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 	}
 
 	context->m_config = matchingConfigs[0];
-
-#	if defined(_WIN32)
 	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, *context->m_window, 0);
-#	elif defined(__EMSCRIPTEN__)
-	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, 0, 0);
-#	else
-	EGLint surfaceAttrs[] =
-	{
-		EGL_NONE
-	};
-	context->m_surface = eglCreatePbufferSurface(context->m_display, context->m_config, surfaceAttrs);
-#	endif
-
 	if (context->m_surface == EGL_NO_SURFACE)
 	{
 		EGLint error = eglGetError();
@@ -179,17 +155,8 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 		return 0;
 	}
 
-#	if defined(_WIN32)
 	eglQuerySurface(context->m_display, context->m_surface, EGL_WIDTH, &context->m_width);
 	eglQuerySurface(context->m_display, context->m_surface, EGL_HEIGHT, &context->m_height);
-#	endif
-#elif defined(__PNACL__)
-	context->m_context = PPContextWrapper::createRenderContext(sysapp.instance);
-	if (!context->m_context)
-		return 0;
-#else
-	return 0;
-#endif
 
 	if (!context->enter())
 		return 0;
@@ -204,7 +171,6 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 {
 	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
 
-#if defined(T_OPENGL_ES2_HAVE_EGL)
 	context->m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	if (context->m_display == EGL_NO_DISPLAY)
 	{
@@ -285,17 +251,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 
 	context->m_config = matchingConfigs[0];
 
-#if defined(_WIN32)
 	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, (EGLNativeWindowType)desc.syswin.hWnd, 0);
-#elif defined(__LINUX__)
-	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, (EGLNativeWindowType)desc.syswin.window, 0);
-#elif defined(__APPLE__)
-	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, (EGLNativeWindowType)desc.syswin.view, 0);
-#elif defined(__ANDROID__)
-	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, (EGLNativeWindowType)(*desc.syswin.window), 0);
-#else
-	context->m_surface = EGL_NO_SURFACE;
-#endif
 	if (context->m_surface == EGL_NO_SURFACE)
 	{
 		EGLint error = eglGetError();
@@ -303,9 +259,8 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 		return 0;
 	}
 
-#if defined(__ANDROID__)
-	context->m_syswin = desc.syswin;
-#endif
+	eglQuerySurface(context->m_display, context->m_surface, EGL_WIDTH, &context->m_width);
+	eglQuerySurface(context->m_display, context->m_surface, EGL_HEIGHT, &context->m_height);
 
 	eglBindAPI(EGL_OPENGL_ES_API);
 
@@ -331,20 +286,6 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 	if (!eglSurfaceAttrib(context->m_display, context->m_surface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_DESTROYED))
 		log::warning << L"Unable to specify swap behaviour on EGL surface; might affect performance." << Endl;
 
-#elif defined(__IOS__)
-
-	context->m_context = new EAGLContextWrapper();
-	if (!context->m_context->create(desc.syswin.view))
-		return 0;
-
-#elif defined(__PNACL__)
-
-	context->m_context = PPContextWrapper::createRenderContext(sysapp.instance);
-	if (!context->m_context)
-		return 0;
-
-#endif
-
 	if (!context->enter())
 		return 0;
 	initializeExtensions();
@@ -356,17 +297,21 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 
 bool ContextOpenGLES2::reset(int32_t width, int32_t height)
 {
-#if defined(__PNACL__)
-	return m_context->resize(width, height);
-#elif defined(_WIN32)
 	m_width = width;
 	m_height = height;
-	m_primaryDepth = 0;	// \fixme Should release depth buffer!
-#elif defined(__ANDROID__)
-	eglDestroySurface(m_display, m_surface);
-	m_surface = eglCreateWindowSurface(m_display, m_config, (EGLNativeWindowType)(*m_syswin.window), 0);
-	return m_surface != EGL_NO_SURFACE;
-#endif
+
+	if (m_primaryDepth != 0)
+	{
+		glDeleteRenderbuffers(1, &m_primaryDepth);
+		m_primaryDepth = 0;
+	}
+
+	if (m_window)
+	{
+		eglDestroySurface(m_display, m_surface);
+		m_surface = eglCreateWindowSurface(m_display, m_config, (EGLNativeWindowType)*m_window, 0);
+	}
+
 	return true;
 }
 
@@ -382,18 +327,10 @@ bool ContextOpenGLES2::enter()
 		ms_contextStack.set(stack);
 	}
 
-#if defined(__IOS__)
-	if (!EAGLContextWrapper::setCurrent(m_context))
-#elif defined(__PNACL__)
-	if (!m_context->makeCurrent())
-#elif defined(T_OPENGL_ES2_HAVE_EGL)
 	if (!eglMakeCurrent(m_display, m_surface, m_surface, m_context))
-#endif
 	{
-#if defined(T_OPENGL_ES2_HAVE_EGL)
 		EGLint error = eglGetError();
 		log::error << L"Enter OpenGL ES2.0 context failed; " << getEGLErrorString(error) << Endl;
-#endif
 		m_lock.release();
 		return false;
 	}
@@ -412,24 +349,12 @@ void ContextOpenGLES2::leave()
 
 	stack->pop_back();
 
-#if defined(__IOS__)
-	if (!stack->empty())
-		EAGLContextWrapper::setCurrent(stack->back()->m_context);
-	else
-		EAGLContextWrapper::setCurrent(0);
-#elif defined(__PNACL__)
-	if (!stack->empty())
-		stack->back()->m_context->makeCurrent();
-#elif defined(T_OPENGL_ES2_HAVE_EGL)
 	if (!stack->empty())
 		eglMakeCurrent(m_display, stack->back()->m_surface, stack->back()->m_surface, stack->back()->m_context);
 	else
 		eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-#	if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
-	eglReleaseThread();
-#	endif
-#endif
 
+	eglReleaseThread();
 	m_lock.release();
 }
 
@@ -497,41 +422,17 @@ GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderTyp
 
 int32_t ContextOpenGLES2::getWidth() const
 {
-#if defined(__IOS__) || defined(__PNACL__)
-	return m_context->getWidth();
-#elif defined(_WIN32)
 	return m_width;
-#elif defined(T_OPENGL_ES2_HAVE_EGL)
-	EGLint width;
-	eglQuerySurface(m_display, m_surface, EGL_WIDTH, &width);
-	return width;
-#else
-	return 0;
-#endif
 }
 
 int32_t ContextOpenGLES2::getHeight() const
 {
-#if defined(__IOS__) || defined(__PNACL__)
-	return m_context->getHeight();
-#elif defined(_WIN32)
 	return m_height;
-#elif defined(T_OPENGL_ES2_HAVE_EGL)
-	EGLint height;
-	eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &height);
-	return height;
-#else
-	return 0;
-#endif
 }
 
 void ContextOpenGLES2::swapBuffers()
 {
-#if defined(T_OPENGL_ES2_HAVE_EGL)
 	eglSwapBuffers(m_display, m_surface);
-#elif defined(__IOS__) || defined(__PNACL__)
-	m_context->swapBuffers();
-#endif
 }
 
 Semaphore& ContextOpenGLES2::lock()
@@ -541,12 +442,7 @@ Semaphore& ContextOpenGLES2::lock()
 
 void ContextOpenGLES2::bindPrimary()
 {
-#if defined(__IOS__) || defined(__PNACL__)
-	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_context->getFrameBuffer()));
-#else
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-#endif
-
 	T_OGL_SAFE(glViewport(
 		0,
 		0,
@@ -554,7 +450,6 @@ void ContextOpenGLES2::bindPrimary()
 		getHeight()
 	));
 
-#if defined(T_OPENGL_ES2_HAVE_EGL)
 	if (!m_primaryDepth)
 	{
 		T_OGL_SAFE(glGenRenderbuffers(1, &m_primaryDepth));
@@ -566,43 +461,19 @@ void ContextOpenGLES2::bindPrimary()
 			getHeight()
 		));
 	}
-#endif
 }
 
 GLuint ContextOpenGLES2::getPrimaryDepth() const
 {
-#if defined(T_OPENGL_ES2_HAVE_EGL)
 	return m_primaryDepth;
-#elif defined(__IOS__) || defined(__PNACL__)
-	return m_context->getDepthBuffer();
-#else
-	return 0;
-#endif
 }
 
-#if defined(__IOS__)
 ContextOpenGLES2::ContextOpenGLES2()
-:	m_context(0)
-{
-}
-#elif defined(__PNACL__)
-ContextOpenGLES2::ContextOpenGLES2()
-{
-}
-#elif defined(T_OPENGL_ES2_HAVE_EGL)
-ContextOpenGLES2::ContextOpenGLES2()
-#	if defined(_WIN32)
 :	m_width(0)
 ,	m_height(0)
 ,	m_primaryDepth(0)
-#	else
-:	m_primaryDepth(0)
-#	endif
 {
 }
-#endif
 
 	}
 }
-
-#endif

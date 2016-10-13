@@ -32,7 +32,7 @@ public:
 
 	void setWindowedStyle(int32_t width, int32_t height);
 
-	void setFullScreenStyle(int32_t width, int32_t height);
+	void setFullScreenStyle();
 
 	void hide();
 

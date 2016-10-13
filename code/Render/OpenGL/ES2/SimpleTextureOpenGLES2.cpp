@@ -3,10 +3,16 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
-
-#if !defined(T_OFFLINE_ONLY)
+#if defined(__ANDROID__)
+#	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
+#elif defined(__IOS__)
+#	include "Render/OpenGL/ES2/iOS/EAGLContextWrapper.h"
+#elif defined(__PNACL__)
+#	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
+#elif defined(_WIN32)
+#	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
+#endif
 
 namespace traktor
 {
@@ -368,5 +374,3 @@ void SimpleTextureOpenGLES2::bindSize(GLint locationSize)
 
 	}
 }
-
-#endif

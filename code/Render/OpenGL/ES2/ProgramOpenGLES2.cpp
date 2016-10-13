@@ -11,10 +11,18 @@
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
-#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
 #include "Render/OpenGL/Glsl/GlslType.h"
 #include "Render/OpenGL/Glsl/GlslProgram.h"
+#if defined(__ANDROID__)
+#	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
+#elif defined(__IOS__)
+#	include "Render/OpenGL/ES2/iOS/ContextOpenGLES2.h"
+#elif defined(__PNACL__)
+#	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
+#elif defined(_WIN32)
+#	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
+#endif
 
 namespace traktor
 {
@@ -22,8 +30,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-#if !defined(T_OFFLINE_ONLY)
 
 struct DeleteProgramCallback : public ContextOpenGLES2::IDeleteCallback
 {
@@ -40,8 +46,6 @@ struct DeleteProgramCallback : public ContextOpenGLES2::IDeleteCallback
 		delete this;
 	}
 };
-            
-#endif
 
 bool storeIfNotEqual(const float* source, int length, float* dest)
 {
@@ -132,8 +136,6 @@ Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram,
 
 Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceContext, const ProgramResource* resource)
 {
-#if !defined(T_OFFLINE_ONLY)
-
 	const ProgramResourceOpenGL* resourceOpenGL = mandatory_non_null_type_cast< const ProgramResourceOpenGL* >(resource);
 	char errorBuf[32000];
 	GLsizei errorBufLen;
@@ -199,16 +201,10 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 		log::warning << L"Prewarming shader failed; might cause stall during normal render" << Endl;
 
 	return new ProgramOpenGLES2(resourceContext, programObject, resource);
-	
-#else
-	return 0;
-#endif
 }
 
 void ProgramOpenGLES2::destroy()
 {
-#if !defined(T_OFFLINE_ONLY)
-
 	if (ms_current == this)
 		ms_current = 0;
 
@@ -218,8 +214,6 @@ void ProgramOpenGLES2::destroy()
 			m_resourceContext->deleteResource(new DeleteProgramCallback(m_program));
 		m_program = 0;
 	}
-	
-#endif
 }
 
 void ProgramOpenGLES2::setFloatParameter(handle_t handle, float param)
@@ -278,11 +272,9 @@ void ProgramOpenGLES2::setMatrixArrayParameter(handle_t handle, const Matrix44* 
 
 void ProgramOpenGLES2::setTextureParameter(handle_t handle, ITexture* texture)
 {
-#if !defined(T_OFFLINE_ONLY)
 	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 		m_textures[i->second] = texture;
-#endif
 }
 
 void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
@@ -292,8 +284,6 @@ void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
 
 bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull, uint32_t instanceID)
 {
-#if !defined(T_OFFLINE_ONLY)
-
 	// Bind program and set state display list.
 	stateCache->setRenderState(m_renderState, invertCull);
 	stateCache->setProgram(m_program);
@@ -384,8 +374,6 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 			);
 		}
 	}
-	
-#endif
 
 	ms_current = this;
 	return true;
