@@ -39,4 +39,9 @@ void* Library::find(const std::wstring& symbol)
 	return 0;
 }
 
+Path Library::getPath() const
+{
+    return Path();
+}
+
 }

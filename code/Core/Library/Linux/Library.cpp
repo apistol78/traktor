@@ -89,4 +89,9 @@ void* Library::find(const std::wstring& symbol)
 	return dlsym(m_handle, symb.c_str());
 }
 
+Path Library::getPath() const
+{
+    return Path();
+}
+
 }
