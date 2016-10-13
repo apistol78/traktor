@@ -49,6 +49,7 @@ void ProgressCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.setClipRect(rect2);
 		canvas.setForeground(Color4ub(255, 255, 255, 255));
 		canvas.drawText(rect3, m_text, ui::AnLeft, ui::AnCenter);
+		canvas.resetClipRect();
 	}
 	else if (!m_text.empty())
 	{
