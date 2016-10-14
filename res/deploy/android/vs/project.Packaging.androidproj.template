@@ -16,7 +16,7 @@ assert (projectName ~= nil)
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <RootNamespace>ForwardTest</RootNamespace>
+    <RootNamespace><!-- output:print(projectName:gsub("%s", "_") .. "") --!></RootNamespace>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <ProjectVersion>1.0</ProjectVersion>
     <ProjectGuid>{0b1b84d6-012a-483d-a8fe-ed280ede2425}</ProjectGuid>
