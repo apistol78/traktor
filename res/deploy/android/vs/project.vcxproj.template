@@ -43,7 +43,7 @@ end
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{aa7b2d7f-e48e-46bd-b738-568c16c87823}</ProjectGuid>
+    <ProjectGuid>{AA7B2D7F-E48E-46BD-B738-568C16C87823}</ProjectGuid>
     <Keyword>Android</Keyword>
     <RootNamespace><!-- output:print(projectName) --!></RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
@@ -100,11 +100,6 @@ end
     </Link>
   </ItemDefinitionGroup>
 
-  <ItemGroup>
-    <AndroidBuild Include="AndroidManifest.xml" />
-    <AndroidBuild Include="res\values\strings.xml" />
-    <AndroidBuild Include="assets\Application.config" />
-  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Linkage.cpp" />
   </ItemGroup>

@@ -150,7 +150,7 @@ function deploy(args)
 	local useVS = (os:getEnvironment("DEPLOY_ANDROID_USE_VS") ~= "")
 	if useVS then
 
-		-- Create android NSight project.
+		-- Create Android Visual Studio 2015 project.
 		run:mkdir("assets")
 		run:mkdir("res/values")
 		run:mkdir("res/drawable-hdpi")
@@ -159,9 +159,12 @@ function deploy(args)
 		run:mkdir("res/drawable-xhdpi")		
 		run:replace("Application.config", "assets/Application.config")
 		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/AndroidManifest.xml.template", "AndroidManifest.xml")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/build.xml.template", "build.xml")
 		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/strings.xml.template", "res/values/strings.xml")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/project.properties.template", "project.properties")
 		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/project.vcxproj.template", "$(DEPLOY_PROJECT_NAME).vcxproj")
 		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/project.vcxproj.filters.template", "$(DEPLOY_PROJECT_NAME).vcxproj.filters")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/project.Packaging.androidproj.template", "$(DEPLOY_PROJECT_NAME).Packaging.androidproj")
 		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/solution.sln.template", "$(DEPLOY_PROJECT_NAME).sln")
 
 		-- Create icons.
