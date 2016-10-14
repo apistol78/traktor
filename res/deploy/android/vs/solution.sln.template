@@ -7,7 +7,9 @@ assert (projectName ~= nil)
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "<!-- output:print(projectName) --!>", "<!-- output:print(projectName) --!>.vcxproj", "{99574D42-4CEE-4755-A5BF-DCB461F71BA5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "<!-- output:print(projectName) --!>", "<!-- output:print(projectName) --!>.vcxproj", "{AA7B2D7F-E48E-46BD-B738-568C16C87823}"
+EndProject
+Project("{39E2626F-3545-4960-A6E8-258AD8476CE5}") = "<!-- output:print(projectName) --!>.Packaging", "<!-- output:print(projectName) --!>.Packaging.androidproj", "{0B1B84D6-012A-483D-A8FE-ED280EDE2425}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
