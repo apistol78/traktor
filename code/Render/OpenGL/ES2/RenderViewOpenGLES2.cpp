@@ -258,6 +258,8 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 {
 	if (!m_context->enter())
 		return false;
+
+	m_stateCache->reset();
 		
 	m_context->bindPrimary();
 	

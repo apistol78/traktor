@@ -50,8 +50,15 @@ public:
 	) const T_OVERRIDE T_FINAL;
 
 private:
+	enum HeightFormatType
+	{
+		HfFloat16 = 0,
+		HfFloat32 = 1,
+		HfARGBEncoded = 2
+	};
+
 	std::wstring m_assetPath;
-	bool m_use32bitHeightFormat;
+	HeightFormatType m_heightFormat;
 	bool m_compressNormals;
 	mutable Semaphore m_lock;
 };

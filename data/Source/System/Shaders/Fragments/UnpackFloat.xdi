@@ -4,8 +4,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>374</first>
-				<second>237</second>
+				<first>406</first>
+				<second>186</second>
 			</position>
 			<name>Value</name>
 			<connectable>true</connectable>
@@ -15,75 +15,75 @@
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>511</first>
-				<second>287</second>
+				<first>693</first>
+				<second>342</second>
 			</position>
 		</item>
 		<item type="traktor.render.Dot">
 			<comment/>
 			<position>
-				<first>652</first>
-				<second>242</second>
+				<first>1017</first>
+				<second>265</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1165</first>
-				<second>352</second>
+				<first>1886</first>
+				<second>370</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>361</first>
-				<second>303</second>
+				<first>333</first>
+				<second>322</second>
 			</position>
 			<value>1, 1, 1, 1</value>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>132</first>
-				<second>460</second>
+				<first>-107</first>
+				<second>473</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>130</first>
-				<second>369</second>
+				<first>-105</first>
+				<second>208</second>
 			</position>
 		</item>
 		<item type="traktor.render.MixIn">
 			<comment/>
 			<position>
-				<first>356</first>
-				<second>371</second>
+				<first>307</first>
+				<second>442</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>5</first>
-				<second>338</second>
+				<first>-296</first>
+				<second>771</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>2</first>
-				<second>309</second>
+				<first>-448</first>
+				<second>202</second>
 			</position>
 			<value>255</value>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>546</first>
-				<second>527</second>
+				<first>611</first>
+				<second>697</second>
 			</position>
 			<name>Range Max</name>
 			<connectable>true</connectable>
@@ -93,8 +93,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>548</first>
-				<second>437</second>
+				<first>619</first>
+				<second>591</second>
 			</position>
 			<name>Range Min</name>
 			<connectable>true</connectable>
@@ -104,22 +104,22 @@
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>763</first>
-				<second>465</second>
+				<first>1212</first>
+				<second>584</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>977</first>
-				<second>332</second>
+				<first>1575</first>
+				<second>360</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>531</first>
-				<second>237</second>
+				<first>807</first>
+				<second>240</second>
 			</position>
 			<swizzle>wzyx</swizzle>
 		</item>

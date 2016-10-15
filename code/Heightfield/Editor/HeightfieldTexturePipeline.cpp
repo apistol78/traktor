@@ -23,6 +23,11 @@ namespace traktor
 		namespace
 		{
 
+float fract(float v)
+{
+	return v - std::floor(v);
+}
+
 Vector4 normalAt(const Heightfield* heightfield, int32_t u, int32_t v)
 {
 	const float c_distance = 0.5f;
@@ -76,10 +81,10 @@ Vector4 normalAt(const Heightfield* heightfield, int32_t u, int32_t v)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 4, HeightfieldTexturePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 5, HeightfieldTexturePipeline, editor::DefaultPipeline)
 
 HeightfieldTexturePipeline::HeightfieldTexturePipeline()
-:	m_use32bitHeightFormat(false)
+:	m_heightFormat(HfFloat16)
 ,	m_compressNormals(false)
 {
 }
@@ -87,7 +92,20 @@ HeightfieldTexturePipeline::HeightfieldTexturePipeline()
 bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-	m_use32bitHeightFormat = settings->getProperty< PropertyBoolean >(L"HeightfieldTexturePipeline.Use32bitHeightFormat", false);
+	
+	std::wstring hf = settings->getProperty< PropertyString >(L"HeightfieldTexturePipeline.HeightFormat", L"HtFloat16");
+	if (hf == L"HtFloat16")
+		m_heightFormat = HfFloat16;
+	else if (hf == L"HfFloat32")
+		m_heightFormat = HfFloat32;
+	else if (hf == L"HfARGBEncoded")
+		m_heightFormat = HfARGBEncoded;
+	else
+	{
+		log::error << L"Heightfield pipeline error; Unknown height format \"" << hf << L"\"." << Endl;
+		return false;
+	}
+
 	m_compressNormals = settings->getProperty< PropertyBoolean >(L"HeightfieldTexturePipeline.CompressNormals", false);
 	return true;
 }
@@ -179,18 +197,32 @@ bool HeightfieldTexturePipeline::buildOutput(
 			for (int32_t u = 0; u < size; ++u)
 			{
 				float height = heightfield->getGridHeightNearest(u, v) * asset->m_scale;
-				outputMap->setPixelUnsafe(u, v, Color4f(height, height, height, height));
+				if (m_heightFormat == HfARGBEncoded)
+				{
+					Vector4 enc = Vector4(
+						fract(1.0f * height),
+						fract(255.0f * height),
+						fract(65025.0f * height),
+						fract(160581375.0f * height)
+					);
+					enc -= enc.shuffle< 1, 2, 3, 3 >() * Vector4(1.0 / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f, 0.0f);
+					outputMap->setPixelUnsafe(u, v, Color4f(enc));
+				}
+				else
+					outputMap->setPixelUnsafe(u, v, Color4f(height, height, height, height));
 			}
 		}
 
+		const render::TextureFormat c_heightTextureFormats[] = { render::TfR16F, render::TfR32F, render::TfR8G8B8A8 };
+
 		Ref< render::TextureOutput > output = new render::TextureOutput();
-		output->m_textureFormat = m_use32bitHeightFormat ? render::TfR32F : render::TfR16F;
+		output->m_textureFormat = c_heightTextureFormats[m_heightFormat];
 		output->m_generateNormalMap = false;
 		output->m_scaleDepth = 0.0f;
 		output->m_generateMips = false;
 		output->m_keepZeroAlpha = false;
 		output->m_textureType = render::Tt2D;
-		output->m_hasAlpha = false;
+		output->m_hasAlpha = bool(m_heightFormat == HfARGBEncoded);
 		output->m_ignoreAlpha = false;
 		output->m_scaleImage = false;
 		output->m_scaleWidth = 0;

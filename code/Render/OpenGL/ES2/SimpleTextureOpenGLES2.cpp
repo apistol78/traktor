@@ -131,7 +131,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 #if defined(GL_OES_compressed_ETC1_RGB8_texture)
 	case TfETC1:
 		outPixelSize = 0;
-		outComponents = GL_OES_compressed_ETC1_RGB8_texture;
+		outComponents = GL_ETC1_RGB8_OES; // GL_OES_compressed_ETC1_RGB8_texture;
 		outFormat = GL_RGBA;
 		outType = GL_UNSIGNED_BYTE;
 		break;

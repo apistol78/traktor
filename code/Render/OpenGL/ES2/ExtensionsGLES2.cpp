@@ -23,22 +23,28 @@ void initializeExtensions()
 	if (libhandle)
 	{
 		g_glBindVertexArrayOES = (PFNGLBINDVERTEXARRAYOESPROC)dlsym(libhandle, "glBindVertexArrayOES");
+#		if defined(_DEBUG)
 		if (g_glBindVertexArrayOES)
 			log::info << L"glBindVertexArrayOES found!" << Endl;
 		else
 			log::info << L"glBindVertexArrayOES NOT found!" << Endl;
+#		endif
 
 		g_glDeleteVertexArraysOES = (PFNGLDELETEVERTEXARRAYSOESPROC)dlsym(libhandle, "glDeleteVertexArraysOES");
+#		if defined(_DEBUG)
 		if (g_glDeleteVertexArraysOES)
 			log::info << L"glDeleteVertexArraysOES found!" << Endl;
 		else
 			log::info << L"glDeleteVertexArraysOES NOT found!" << Endl;
+#		endif
 
 		g_glGenVertexArraysOES = (PFNGLGENVERTEXARRAYSOESPROC)dlsym(libhandle, "glGenVertexArraysOES");
+#		if defined(_DEBUG)
 		if (g_glGenVertexArraysOES)
 			log::info << L"glGenVertexArraysOES found!" << Endl;
 		else
 			log::info << L"glGenVertexArraysOES NOT found!" << Endl;
+#		endif
 	}
 #	endif
 #endif

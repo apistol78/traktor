@@ -42,25 +42,6 @@
 			</deploy>
 		</item>
 		<item>
-			<platform>{991B63B2-97FC-AA44-9FAE-466B5B153B4A}</platform>
-			<executableFile/>
-			<deploy type="traktor.PropertyGroup">
-				<value>
-					<item>
-						<first>DEPLOY_FILES</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>Traktor.Core.dll</item>
-								<item>Traktor.Net.dll</item>
-								<item>Traktor.Online.Lan.dll</item>
-								<item>Traktor.Online.dll</item>
-							</value>
-						</second>
-					</item>
-				</value>
-			</deploy>
-		</item>
-		<item>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
 			<executableFile/>
 			<deploy type="traktor.PropertyGroup">

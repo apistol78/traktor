@@ -135,6 +135,15 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			type = GL_UNSIGNED_BYTE;
 			break;
 
+		case TfR5G6B5:
+		case TfR5G5B5A1:
+		case TfR4G4B4A4:
+		case TfR10G10B10A2:
+			internalFormat = GL_RGBA;
+			format = GL_RGBA;
+			type = GL_UNSIGNED_BYTE;
+			break;
+
 		case TfR11G11B10F:
 			internalFormat = GL_RGBA;
 			format = GL_RGBA;
@@ -155,8 +164,8 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			type = GL_FLOAT;
 			break;
 
-#if defined(GL_HALF_FLOAT_OES) && defined(GL_RED_EXT)
 		case TfR16F:
+#if defined(GL_HALF_FLOAT_OES) && defined(GL_RED_EXT)
 			if (haveExtension("GL_EXT_texture_rg"))
 			{
 				internalFormat = GL_RED_EXT;
@@ -170,9 +179,16 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 				format = GL_RGBA;
 				type = GL_HALF_FLOAT_OES;
 			}
+#else
+			log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues (TfR32F requested)." << Endl;
+			internalFormat = GL_RGBA;
+			format = GL_RGBA;
+			type = GL_FLOAT;
+#endif
 			break;
 
 		case TfR32F:
+#if defined(GL_RED_EXT)
 			if (haveExtension("GL_EXT_texture_rg"))
 			{
 				internalFormat = GL_RED_EXT;
@@ -180,6 +196,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 				type = GL_FLOAT;
 			}
 			else
+#endif
 			{
 				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues (TfR32F requested)." << Endl;
 				internalFormat = GL_RGBA;
@@ -187,10 +204,9 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 				type = GL_FLOAT;
 			}
 			break;
-#endif
 
 		default:
-			log::error << L"Unable to create render target, unsupported format" << Endl;
+			log::error << L"Unable to create render target, unsupported format " << int32_t(desc.targets[i].format) << Endl;
 			return false;
 		}
 

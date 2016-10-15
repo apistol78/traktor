@@ -4,16 +4,16 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>785</first>
-				<second>286</second>
+				<first>1481</first>
+				<second>158</second>
 			</position>
 			<technique/>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>591</first>
-				<second>251</second>
+				<first>1106</first>
+				<second>239</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
@@ -26,23 +26,23 @@
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>192</first>
-				<second>173</second>
+				<first>-132</first>
+				<second>232</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-129</first>
-				<second>104</second>
+				<first>-469</first>
+				<second>100</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-435</first>
-				<second>66</second>
+				<first>-1093</first>
+				<second>50</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -52,8 +52,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-15</first>
-				<second>221</second>
+				<first>-593</first>
+				<second>344</second>
 			</position>
 			<parameterName>PatchExtent</parameterName>
 			<type>PtVector</type>
@@ -62,8 +62,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-14</first>
-				<second>250</second>
+				<first>-423</first>
+				<second>574</second>
 			</position>
 			<parameterName>PatchOrigin</parameterName>
 			<type>PtVector</type>
@@ -72,8 +72,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>204</first>
-				<second>268</second>
+				<first>-67</first>
+				<second>581</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
@@ -82,8 +82,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>403</first>
-				<second>310</second>
+				<first>419</first>
+				<second>408</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
@@ -92,8 +92,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>2097</first>
-				<second>-31</second>
+				<first>3278</first>
+				<second>97</second>
 			</position>
 			<fragmentGuid>{B633DBF6-FC42-5341-B0D8-940670973041}</fragmentGuid>
 			<inputPins>
@@ -173,16 +173,16 @@
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>1119</first>
-				<second>-138</second>
+				<first>1859</first>
+				<second>324</second>
 			</position>
 			<parameterName>VisualizeLods</parameterName>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>892</first>
-				<second>-146</second>
+				<first>1472</first>
+				<second>248</second>
 			</position>
 			<parameterName>DebugPatchColor</parameterName>
 			<type>PtVector</type>
@@ -195,8 +195,8 @@ Generated texture from surface cache.
 			]]>
 			</comment>
 			<position>
-				<first>624</first>
-				<second>-36</second>
+				<first>1023</first>
+				<second>411</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -212,8 +212,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>407</first>
-				<second>-73</second>
+				<first>452</first>
+				<second>600</second>
 			</position>
 			<parameterName>Surface</parameterName>
 			<type>PtTexture2D</type>
@@ -222,22 +222,22 @@ Generated texture from surface cache.
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>545</first>
-				<second>11</second>
+				<first>1181</first>
+				<second>-41</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>399</first>
-				<second>5</second>
+				<first>845</first>
+				<second>-114</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-133</first>
-				<second>38</second>
+				<first>-473</first>
+				<second>34</second>
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
@@ -252,8 +252,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>60</first>
-				<second>74</second>
+				<first>-54</first>
+				<second>-24</second>
 			</position>
 			<parameterName>SurfaceOffset</parameterName>
 			<type>PtVector</type>
@@ -270,15 +270,15 @@ Generated texture from surface cache.
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>1122</first>
-				<second>137</second>
+				<first>2533</first>
+				<second>271</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>434</first>
-				<second>-156</second>
+				<first>428</first>
+				<second>-197</second>
 			</position>
 			<fragmentGuid>{53930A33-0CD2-0247-838C-3561FD095306}</fragmentGuid>
 			<inputPins>
@@ -304,8 +304,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>971</first>
-				<second>190</second>
+				<first>2200</first>
+				<second>414</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
@@ -321,8 +321,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-61</first>
-				<second>-238</second>
+				<first>-275</first>
+				<second>-299</second>
 			</position>
 			<fragmentGuid>{E848C73B-E979-E445-AD18-E843CECF0928}</fragmentGuid>
 			<inputPins>
@@ -341,16 +341,16 @@ Generated texture from surface cache.
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>1361</first>
-				<second>-252</second>
+				<first>2115</first>
+				<second>-200</second>
 			</position>
 			<parameterName>CutEnable</parameterName>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>803</first>
-				<second>-286</second>
+				<first>1114</first>
+				<second>-512</second>
 			</position>
 			<parameterName>CutMap</parameterName>
 			<type>PtTexture2D</type>
@@ -359,8 +359,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>1004</first>
-				<second>-254</second>
+				<first>1504</first>
+				<second>-403</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -376,78 +376,48 @@ Generated texture from surface cache.
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1237</first>
-				<second>-234</second>
+				<first>1972</first>
+				<second>-173</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1224</first>
-				<second>-184</second>
+				<first>1859</first>
+				<second>-115</second>
 			</position>
 			<value>1</value>
-		</item>
-		<item type="traktor.render.Swizzle">
-			<comment/>
-			<position>
-				<first>1024</first>
-				<second>2</second>
-			</position>
-			<swizzle>w</swizzle>
-		</item>
-		<item type="traktor.render.Mul">
-			<comment/>
-			<position>
-				<first>1385</first>
-				<second>-55</second>
-			</position>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>1057</first>
-				<second>52</second>
-			</position>
-			<value>16</value>
-		</item>
-		<item type="traktor.render.Mul">
-			<comment/>
-			<position>
-				<first>1177</first>
-				<second>-18</second>
-			</position>
 		</item>
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>1737</first>
-				<second>-148</second>
+				<first>2519</first>
+				<second>-43</second>
 			</position>
 			<operator>CoGreaterEqual</operator>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1577</first>
-				<second>-96</second>
+				<first>2224</first>
+				<second>80</second>
 			</position>
 			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>1742</first>
-				<second>-322</second>
+				<first>2904</first>
+				<second>-287</second>
 			</position>
 			<parameterName>VisualizeMap</parameterName>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1260</first>
-				<second>-512</second>
+				<first>1072</first>
+				<second>-711</second>
 			</position>
 			<parameterName>DebugMap</parameterName>
 			<type>PtTexture2D</type>
@@ -456,8 +426,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>1458</first>
-				<second>-460</second>
+				<first>1480</first>
+				<second>-622</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -477,8 +447,8 @@ Disabled emissive for now as it doesn't work on OpenGL
 			]]>
 			</comment>
 			<position>
-				<first>1374</first>
-				<second>-40</second>
+				<first>1381</first>
+				<second>544</second>
 			</position>
 		</item>
 	</nodes>
@@ -685,16 +655,6 @@ Disabled emissive for now as it doesn't work on OpenGL
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[21]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[22]"/>
 				<name>Output</name>
 			</source>
@@ -815,71 +775,21 @@ Disabled emissive for now as it doesn't work on OpenGL
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[32]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[34]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[35]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[32]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[35]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[35]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[27]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[36]"/>
+				<node ref="/object/nodes/item[32]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[37]"/>
+				<node ref="/object/nodes/item[33]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[36]"/>
+				<node ref="/object/nodes/item[32]"/>
 				<name>Reference</name>
 			</destination>
 		</item>
@@ -889,28 +799,18 @@ Disabled emissive for now as it doesn't work on OpenGL
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[36]"/>
+				<node ref="/object/nodes/item[32]"/>
 				<name>Pass</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[39]"/>
+				<node ref="/object/nodes/item[35]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[40]"/>
+				<node ref="/object/nodes/item[36]"/>
 				<name>Texture</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[40]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[38]"/>
-				<name>True</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -919,13 +819,23 @@ Disabled emissive for now as it doesn't work on OpenGL
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[38]"/>
+				<node ref="/object/nodes/item[34]"/>
+				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
 				<name>False</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[38]"/>
+				<node ref="/object/nodes/item[34]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -939,8 +849,18 @@ Disabled emissive for now as it doesn't work on OpenGL
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[40]"/>
+				<node ref="/object/nodes/item[36]"/>
 				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 	</edges>

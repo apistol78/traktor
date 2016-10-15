@@ -112,7 +112,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 31, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 32, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_generateMipsThread(false)

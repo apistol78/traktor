@@ -68,8 +68,8 @@ void StatusBar::eventSize(SizeEvent* event)
 		Rect rc = getInnerRect();
 		Size preferedSize = child->getPreferedSize();
 
-		rc.top += 2;
-		rc.bottom -= 2;
+		rc.top += scaleBySystemDPI(2);
+		rc.bottom -= scaleBySystemDPI(2);
 		rc.right -= scaleBySystemDPI(20);
 		rc.left = rc.right - preferedSize.cx;
 
@@ -89,21 +89,21 @@ void StatusBar::eventPaint(PaintEvent* event)
 
 	std::wstring text = getText();
 	canvas.setForeground(ss->getColor(this, L"color"));
-	canvas.drawText(rc.inflate(-8, 0), text, AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(scaleBySystemDPI(-8), 0), text, AnLeft, AnCenter);
 
 	// Draw scale grip if parent is a form and isn't maximized.
 	Ref< Form > parentForm = dynamic_type_cast< Form* >(getParent());
 	if (parentForm && !parentForm->isMaximized())
 	{
-		rc = rc.inflate(-2, -2);
+		rc = rc.inflate(-scaleBySystemDPI(2), -scaleBySystemDPI(2));
 		for (int i = 0; i <= 2; ++i)
 		{
 			canvas.setForeground(getSystemColor(ScButtonShadow));
-			canvas.drawLine(rc.right, rc.bottom - i * 4 - 1, rc.right - i * 4 - 1, rc.bottom);
-			canvas.drawLine(rc.right, rc.bottom - i * 4 - 2, rc.right - i * 4 - 2, rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - scaleBySystemDPI(i * 4 - 1), rc.right - scaleBySystemDPI(i * 4 - 1), rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - scaleBySystemDPI(i * 4 - 2), rc.right - scaleBySystemDPI(i * 4 - 2), rc.bottom);
 
 			canvas.setForeground(Color4ub(255, 255, 255));
-			canvas.drawLine(rc.right, rc.bottom - i * 4 - 3, rc.right - i * 4 - 3, rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - scaleBySystemDPI(i * 4 - 3), rc.right - scaleBySystemDPI(i * 4 - 3), rc.bottom);
 		}
 	}
 

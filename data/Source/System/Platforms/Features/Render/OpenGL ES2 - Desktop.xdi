@@ -251,6 +251,12 @@
 					<value>false</value>
 				</second>
 			</item>
+			<item>
+				<first>HeightfieldTexturePipeline.HeightFormat</first>
+				<second type="traktor.PropertyString">
+					<value>HfARGBEncoded</value>
+				</second>
+			</item>
 		</value>
 	</pipelineProperties>
 	<migrateProperties type="traktor.PropertyGroup">

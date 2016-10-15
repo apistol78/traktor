@@ -51,9 +51,9 @@
 				</second>
 			</item>
 			<item>
-				<first>HeightfieldTexturePipeline.Use32bitHeightFormat</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
+				<first>HeightfieldTexturePipeline.HeightFormat</first>
+				<second type="traktor.PropertyString">
+					<value>HfFloat32</value>
 				</second>
 			</item>
 			<item>

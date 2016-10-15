@@ -84,7 +84,7 @@ c_textureFormatInfo[] =
 	{ L"TfPVRTC3", 2, 2 },
 	{ L"TfPVRTC4", 2, 4 },
 
-	{ L"TfETC1", 16, 4 }
+	{ L"TfETC1", 8, 4 }
 };
 
 		}

@@ -16,6 +16,8 @@ class StateCache : public Object
 	
 public:
 	StateCache();
+
+	void reset();
 	
 	void setRenderState(const RenderStateOpenGL& renderState, bool invertCull);
 	

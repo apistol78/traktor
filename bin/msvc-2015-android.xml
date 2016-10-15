@@ -108,6 +108,10 @@
               <name>CppLanguageStandard</name>
               <value>c++11</value>
             </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
 					</options>
 				</item>
 			</staticLibrary>
@@ -139,6 +143,10 @@
             <item>
               <name>CppLanguageStandard</name>
               <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
             </item>
 					</options>
 				</item>
@@ -186,6 +194,10 @@
               <name>CppLanguageStandard</name>
               <value>c++11</value>
             </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -231,6 +243,10 @@
             <item>
               <name>CppLanguageStandard</name>
               <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
             </item>
 					</options>
 				</item>
@@ -280,6 +296,10 @@
               <name>CppLanguageStandard</name>
               <value>c++11</value>
             </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
 					</options>
 				</item>
 			</staticLibrary>
@@ -311,6 +331,10 @@
             <item>
               <name>CppLanguageStandard</name>
               <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
             </item>
 					</options>
 				</item>
@@ -358,6 +382,10 @@
               <name>CppLanguageStandard</name>
               <value>c++11</value>
             </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -403,6 +431,10 @@
             <item>
               <name>CppLanguageStandard</name>
               <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
             </item>
 					</options>
 				</item>

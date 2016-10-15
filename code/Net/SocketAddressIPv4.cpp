@@ -17,6 +17,12 @@
 #   include <netinet/if_ether.h>
 #endif
 
+#if defined(__ANDROID__)
+#   include <sys/ioctl.h>
+#   include <net/if.h>
+#   include <netinet/if_ether.h>
+#endif
+
 namespace traktor
 {
 	namespace net
@@ -165,7 +171,7 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 		outInterfaces.push_back(itf);
 	}
 
-#elif (defined(_WIN32) && !defined(_XBOX)) || TARGET_OS_MAC
+#elif TARGET_OS_MAC
 
 	char hostName[200];
 	if (gethostname(hostName, sizeof(hostName)) == 0)
@@ -202,7 +208,7 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 		return false;
 	}
 
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__ANDROID__)
 
     uint8_t buf[1024] = { 0 };
     struct ifconf ifc = { 0 };

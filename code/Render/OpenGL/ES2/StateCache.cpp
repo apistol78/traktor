@@ -16,6 +16,14 @@ StateCache::StateCache()
 {
 }
 
+void StateCache::reset()
+{
+	m_arrayBuffer = 0;
+	m_elemArrayBuffer = 0;
+	m_vertexArrayObject = 0;
+	m_program = 0;
+}
+
 void StateCache::setRenderState(const RenderStateOpenGL& renderState, bool invertCull)
 {
 	if (renderState.cullFaceEnable)
