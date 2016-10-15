@@ -115,9 +115,12 @@ Ref< AsDisplayMode > AsConfiguration::getDisplayMode() const
 
 void AsConfiguration::setDisplayMode(const AsDisplayMode* displayMode)
 {
-	const render::DisplayMode& dm = displayMode->getDisplayMode();
-	m_displayModeWidth = dm.width;
-	m_displayModeHeight = dm.height;
+	if (displayMode)
+	{
+		const render::DisplayMode& dm = displayMode->getDisplayMode();
+		m_displayModeWidth = dm.width;
+		m_displayModeHeight = dm.height;
+	}
 }
 
 bool AsConfiguration::getFullscreen() const

@@ -358,6 +358,8 @@ void SahTree::buildNode(Node* node, int32_t depth)
 
 	// Split triangles into left and right sets.
 	std::vector< int32_t > leftIndices, rightIndices;
+	leftIndices.reserve(bestCandidate->countLeft);
+	rightIndices.reserve(bestCandidate->countRight);
 	for (std::vector< int32_t >::iterator i = node->indices.begin(); i != node->indices.end(); ++i)
 	{
 		const std::pair< float, float >& range = spatialRanges[std::distance(node->indices.begin(), i)];
@@ -385,10 +387,10 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	node->rightChild->rightChild = 0;
 
 	// Release memory before recursing.
-	leftIndices.resize(0);
-	rightIndices.resize(0);
-	splitCandidates.resize(0);
-	spatialRanges.resize(0);
+	leftIndices.clear();
+	rightIndices.clear();
+	splitCandidates.clear();
+	spatialRanges.clear();
 
 	// Recursively build branches.
 	buildNode(node->leftChild, depth + 1);
