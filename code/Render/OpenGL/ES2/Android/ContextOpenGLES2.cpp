@@ -61,7 +61,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 			EGL_BUFFER_SIZE, 32,
 			EGL_DEPTH_SIZE, 16,
-			EGL_STENCIL_SIZE, 4,
+			EGL_STENCIL_SIZE, (desc.stencilBits > 0) ? 4 : 0,
 			EGL_SAMPLES, (EGLint)desc.multiSample,
 			EGL_NONE
 		};
@@ -86,7 +86,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 			EGL_BUFFER_SIZE, 32,
 			EGL_DEPTH_SIZE, 16,
-			EGL_STENCIL_SIZE, 4,
+			EGL_STENCIL_SIZE, (desc.stencilBits > 0) ? 4 : 0,
 			EGL_NONE
 		};
 
@@ -153,6 +153,11 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 	initializeExtensions();
 	context->leave();
     
+	if (desc.depthBits >= 24)
+		context->m_primaryDepthFormat = (desc.stencilBits > 0) ? GL_DEPTH24_STENCIL8_OES : GL_DEPTH_COMPONENT24_OES;
+	else
+		context->m_primaryDepthFormat = (desc.stencilBits > 0) ? GL_DEPTH24_STENCIL8_OES : GL_DEPTH_COMPONENT16;
+
 	log::info << L"OpenGL ES 2.0 render context created successfully (embedded)" << Endl;
 	return context;
 }
@@ -308,7 +313,7 @@ void ContextOpenGLES2::bindPrimary()
 		T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_primaryDepth));
 		T_OGL_SAFE(glRenderbufferStorage(
 			GL_RENDERBUFFER,
-			GL_DEPTH_COMPONENT16,
+			m_primaryDepthFormat,
 			getWidth(),
 			getHeight()
 		));
@@ -321,7 +326,8 @@ GLuint ContextOpenGLES2::getPrimaryDepth() const
 }
 
 ContextOpenGLES2::ContextOpenGLES2()
-:	m_primaryDepth(0)
+:	m_primaryDepthFormat(GL_DEPTH_COMPONENT16)
+,	m_primaryDepth(0)
 {
 }
 

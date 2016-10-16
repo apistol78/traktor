@@ -134,12 +134,18 @@ bool AndroidApplication::readSettings()
 bool AndroidApplication::createApplication()
 {
 	m_application = new amalgam::Application();
-	return m_application->create(
+	if (m_application->create(
 		m_defaultSettings,
 		m_settings,
 		m_sysapp,
 		&m_syswin
-	);
+	))
+		return true;
+	else
+	{
+		safeDestroy(m_application);
+		return false;
+	}
 }
 
 void AndroidApplication::destroyApplication()

@@ -116,7 +116,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 		return 0;
 	}
 
-#if !defined(__PS3__)
+#if !defined(__IOS__) && !defined(__ANDROID__) && !defined(__PS3__)
 	net::sendBatch< uint8_t, uint32_t >(socket, 0x01, id);
 #else
 	net::sendBatch< uint8_t, uint32_t >(socket, 0x81, id);

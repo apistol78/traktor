@@ -511,7 +511,6 @@ void TerrainComponent::render(
 		renderBlock->vertexBuffer = patch.vertexBuffer;
 		renderBlock->primitives = m_primitives[patch.lastPatchLod];
 
-		//renderBlock->programParams->attachParameters(renderBlock->programParams);
 		renderBlock->programParams->beginParameters(renderContext);
 
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
@@ -640,6 +639,8 @@ bool TerrainComponent::updatePatches()
 					*vertex++ = fz;
 				}
 			}
+
+			patch.vertexBuffer->unlock();
 #endif
 
 			patch.minHeight = patchData.height[0];
@@ -649,10 +650,6 @@ bool TerrainComponent::updatePatches()
 			patch.error[1] = patchData.error[0];
 			patch.error[2] = patchData.error[1];
 			patch.error[3] = patchData.error[2];
-
-#if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-			patch.vertexBuffer->unlock();
-#endif
 
 			if (m_surfaceCache)
 				m_surfaceCache->flush(patchId);
@@ -855,7 +852,6 @@ bool TerrainComponent::createPatches()
 
 		T_ASSERT (minIndex < patchVertexCount);
 		T_ASSERT (maxIndex < patchVertexCount);
-		//T_ASSERT (maxIndex + patchVertexCount * (PatchInstanceCount - 1) < 65536);
 
 		m_primitives[lod].setIndexed(
 			render::PtTriangles,
@@ -966,6 +962,10 @@ bool TerrainComponent::createPatches()
 
 		uint32_t minIndex = *std::min_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
 		uint32_t maxIndex = *std::max_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
+
+		T_FATAL_ASSERT (minIndex < patchVertexCount);
+		T_FATAL_ASSERT (maxIndex < patchVertexCount);
+		T_FATAL_ASSERT ((indexEndOffset - indexOffset) % 3 == 0);
 
 		m_primitives[lod].setIndexed(
 			render::PtTriangles,

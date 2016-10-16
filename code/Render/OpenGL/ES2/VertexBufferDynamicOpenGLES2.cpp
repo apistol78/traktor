@@ -54,10 +54,6 @@ VertexBufferDynamicOpenGLES2::VertexBufferDynamicOpenGLES2(ContextOpenGLES2* con
 {
 	m_vertexStride = getVertexSize(vertexElements);
 	T_ASSERT (m_vertexStride > 0);
-	
-	T_OGL_SAFE(glGenBuffers(1, &m_bufferObject));
-	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_bufferObject));
-	T_OGL_SAFE(glBufferData(GL_ARRAY_BUFFER, bufferSize, 0, GL_DYNAMIC_DRAW));
 
 	for (size_t i = 0; i < vertexElements.size(); ++i)
 	{
@@ -207,13 +203,17 @@ void VertexBufferDynamicOpenGLES2::unlock()
 
 void VertexBufferDynamicOpenGLES2::activate(StateCache* stateCache)
 {
+	if (!m_bufferObject)
+	{
+		T_OGL_SAFE(glGenBuffers(1, &m_bufferObject));
+		T_FATAL_ASSERT (m_bufferObject != 0);
+	}
+
 	stateCache->setArrayBuffer(m_bufferObject);
 
 	if (m_dirty)
 	{
 		int32_t bufferSize = getBufferSize();
-
-		//T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_bufferObject));
 
 		if (m_lockOffset <= 0 && m_lockSize >= bufferSize)
 		{
@@ -233,9 +233,6 @@ void VertexBufferDynamicOpenGLES2::activate(StateCache* stateCache)
 				m_buffer.ptr()
 			));
 		}
-
-		//T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, 0));
-		//T_OGL_SAFE(glFlush());
 
 		m_dirty = false;
 	}

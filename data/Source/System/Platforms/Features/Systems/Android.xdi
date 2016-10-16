@@ -54,7 +54,13 @@
 			<item>
 				<first>TexturePipeline.SkipMips</first>
 				<second type="traktor.PropertyInteger">
-					<value>2</value>
+					<value>1</value>
+				</second>
+			</item>
+			<item>
+				<first>TerrainPipeline.SuppressDetailShader</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
 				</second>
 			</item>
 		</value>
