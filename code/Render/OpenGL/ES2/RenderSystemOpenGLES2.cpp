@@ -170,7 +170,6 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbed
 
 Ref< VertexBuffer > RenderSystemOpenGLES2::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	if (!dynamic)
 		return new VertexBufferStaticOpenGLES2(m_context, vertexElements, bufferSize);

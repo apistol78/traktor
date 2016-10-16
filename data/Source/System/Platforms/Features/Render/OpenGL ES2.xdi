@@ -286,7 +286,7 @@
 			<item>
 				<first>Render.DepthBits</first>
 				<second type="traktor.PropertyInteger">
-					<value>16</value>
+					<value>24</value>
 				</second>
 			</item>
 			<item>

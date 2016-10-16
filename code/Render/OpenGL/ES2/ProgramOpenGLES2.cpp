@@ -51,7 +51,7 @@ bool storeIfNotEqual(const float* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
 	{
-		//if (dest[i] != source[i])
+		if (dest[i] != source[i])
 		{
 			for (; i < length; ++i)
 				dest[i] = source[i];
@@ -65,7 +65,7 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
 	{
-		//if (Vector4::loadAligned(&dest[i * 4]) != source[i])
+		if (Vector4::loadAligned(&dest[i * 4]) != source[i])
 		{
 			for (; i < length; ++i)
 				source[i].storeAligned(&dest[i * 4]);
@@ -79,7 +79,7 @@ bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
 	{
-		//if (Matrix44::loadAligned(&dest[i * 4 * 4]) != source[i])
+		if (Matrix44::loadAligned(&dest[i * 4 * 4]) != source[i])
 		{
 			for (; i < length; ++i)
 				source[i].storeAligned(&dest[i * 4 * 4]);
@@ -291,8 +291,8 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 	// Update dirty uniforms.
 	for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
 	{
-//		if (!i->dirty)
-//			continue;
+		if (!i->dirty)
+			continue;
 			
 		const float* uniformData = &m_uniformData[i->offset];
 		switch (i->type)
@@ -413,7 +413,7 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 			m_textures.push_back(0);
 		}
 		
-		std::wstring samplerName = i->name; // L"_gl_sampler_" + texture + L"_" + toString(i->stage);
+		std::wstring samplerName = i->name;
 		
 		Sampler sampler;
 		sampler.locationTexture = glGetUniformLocation(m_program, wstombs(samplerName).c_str());

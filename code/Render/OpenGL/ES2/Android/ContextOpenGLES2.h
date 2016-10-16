@@ -90,6 +90,7 @@ private:
 	EGLConfig m_config;
 	EGLSurface m_surface;
 	EGLContext m_context;
+	GLenum m_primaryDepthFormat;
 	GLuint m_primaryDepth;
 	Semaphore m_lock;
 	std::vector< IDeleteCallback* > m_deleteResources;

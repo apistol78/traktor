@@ -44,8 +44,6 @@ IndexBufferOpenGLES2::IndexBufferOpenGLES2(ContextOpenGLES2* context, IndexType 
 ,	m_dynamic(dynamic)
 {
 	T_OGL_SAFE(glGenBuffers(1, &m_name));
-	//T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));
-	//T_OGL_SAFE(glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferSize, 0, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
 }
 
 IndexBufferOpenGLES2::~IndexBufferOpenGLES2()

@@ -169,7 +169,7 @@ void StateCache::setDepthMask(GLboolean depthMask)
 
 void StateCache::setArrayBuffer(GLint arrayBuffer)
 {
-	if (m_arrayBuffer != arrayBuffer)
+	//if (m_arrayBuffer != arrayBuffer)
 	{
 		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer));
 		m_arrayBuffer = arrayBuffer;
@@ -178,7 +178,7 @@ void StateCache::setArrayBuffer(GLint arrayBuffer)
 
 void StateCache::setElementArrayBuffer(GLint elemArrayBuffer)
 {
-	if (m_elemArrayBuffer != elemArrayBuffer)
+	//if (m_elemArrayBuffer != elemArrayBuffer)
 	{
 		T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elemArrayBuffer));
 		m_elemArrayBuffer = elemArrayBuffer;
