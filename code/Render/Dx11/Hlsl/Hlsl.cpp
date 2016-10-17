@@ -25,21 +25,21 @@ bool Hlsl::generate(
 
 	if (vertexOutputs.size() != 1 || pixelOutputs.size() != 1)
 	{
-		log::error << L"Unable to generate HLSL shader; incorrect number of outputs (VS " << vertexOutputs.size() << L", PS " << pixelOutputs.size() << L")" << Endl;
+		log::error << L"Unable to generate HLSL shader; incorrect number of outputs (VS " << vertexOutputs.size() << L", PS " << pixelOutputs.size() << L")." << Endl;
 		return false;
 	}
 
 	HlslContext cx(shaderGraph);
-
-	if (!cx.getEmitter().emit(cx, pixelOutputs[0]))
+	if (!cx.emit(pixelOutputs[0]))
 	{
-		log::error << L"Unable to generate HLSL shader; emitter failed with pixel graph" << Endl;
+		log::error << L"Unable to generate HLSL shader; emitter failed with pixel graph." << Endl;
+		log::error << L"\t" << cx.getError() << Endl;
 		return false;
 	}
-
-	if (!cx.getEmitter().emit(cx, vertexOutputs[0]))
+	if (!cx.emit(vertexOutputs[0]))
 	{
-		log::error << L"Unable to generate HLSL shader; emitter failed with vertex graph" << Endl;
+		log::error << L"Unable to generate HLSL shader; emitter failed with vertex graph." << Endl;
+		log::error << L"\t" << cx.getError() << Endl;
 		return false;
 	}
 

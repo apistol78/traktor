@@ -27,7 +27,7 @@ public:
 
 	Node* getInputNode(Node* node, const std::wstring& inputPinName);
 
-	void emit(Node* node);
+	bool emit(Node* node);
 
 	HlslVariable* emitInput(const InputPin* inputPin);
 
@@ -69,7 +69,27 @@ public:
 
 	uint32_t getStencilReference() const;
 
+	const std::wstring& getError() const { return m_error; }
+
 private:
+	struct Scope
+	{
+		const InputPin* inputPin;
+		const OutputPin* outputPin;
+
+		Scope()
+		:	inputPin(0)
+		,	outputPin(0)
+		{
+		}
+
+		Scope(const InputPin* inputPin_, const OutputPin* outputPin_)
+		:	inputPin(inputPin_)
+		,	outputPin(outputPin_)
+		{
+		}
+	};
+
 	Ref< const ShaderGraph > m_shaderGraph;
 	HlslShader m_vertexShader;
 	HlslShader m_pixelShader;
@@ -80,6 +100,8 @@ private:
 	D3D11_DEPTH_STENCIL_DESC m_d3dDepthStencilDesc;
 	D3D11_BLEND_DESC m_d3dBlendDesc;
 	uint32_t m_stencilReference;
+	std::list< Scope > m_emitScope;
+	std::wstring m_error;
 };
 
 	}

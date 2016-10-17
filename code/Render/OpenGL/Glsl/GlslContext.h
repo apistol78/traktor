@@ -32,7 +32,7 @@ public:
 
 	Node* getInputNode(Node* node, const std::wstring& inputPinName);
 
-	void emit(Node* node);
+	bool emit(Node* node);
 
 	GlslVariable* emitInput(const InputPin* inputPin);
 
@@ -88,7 +88,27 @@ public:
 
 	const std::vector< SamplerBindingOpenGL >& getSamplers() const;
 
+	const std::wstring& getError() const { return m_error; }
+
 private:
+	struct Scope
+	{
+		const InputPin* inputPin;
+		const OutputPin* outputPin;
+
+		Scope()
+		:	inputPin(0)
+		,	outputPin(0)
+		{
+		}
+
+		Scope(const InputPin* inputPin_, const OutputPin* outputPin_)
+		:	inputPin(inputPin_)
+		,	outputPin(outputPin_)
+		{
+		}
+	};
+
 	Ref< const ShaderGraph > m_shaderGraph;
 	Ref< const PropertyGroup > m_settings;
 	GlslShader m_vertexShader;
@@ -104,6 +124,8 @@ private:
 	std::vector< NamedUniformType > m_uniforms;
 	std::vector< SamplerBindingOpenGL > m_samplers;
 	std::vector< uint32_t > m_samplerStateHashes;
+	std::list< Scope > m_emitScope;
+	std::wstring m_error;
 };
 
 	}

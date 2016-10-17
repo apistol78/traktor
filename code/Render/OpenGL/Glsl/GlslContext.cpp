@@ -11,6 +11,17 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+std::wstring getClassNameOnly(const Object* o)
+{
+	std::wstring qn = type_name(o);
+	size_t p = qn.find_last_of('.');
+	return qn.substr(p + 1);
+}
+
+		}
 
 GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings)
 :	m_shaderGraph(shaderGraph)
@@ -38,47 +49,74 @@ Node* GlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
 	return getInputNode(inputPin);
 }
 
-void GlslContext::emit(Node* node)
+bool GlslContext::emit(Node* node)
 {
+	// In case we're in failure state we ignore recursing further.
+	if (!m_error.empty())
+		return false;
+
+	bool allOutputsEmitted = true;
+
+	// Check if all outputs of node already has been emitted.
 	int32_t outputPinCount = node->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
 		GlslVariable* variable = m_currentShader->getVariable(node->getOutputPin(i));
 		if (!variable)
 		{
-			if (!m_emitter.emit(*this, node))
-			{
-				log::error << L"Failed to emit " << type_name(node) << Endl;
-				log::error << L"  " << type_name(node) << L"[" << node->getOutputPin(i)->getName() << L"] " << node->getInformation() << Endl;
-			}
+			allOutputsEmitted = false;
 			break;
 		}
 	}
+	if (outputPinCount > 0 && allOutputsEmitted)
+		return true;
+
+	return m_emitter.emit(*this, node);
 }
 
 GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 {
+	// In case we're in failure state we ignore recursing further.
+	if (!m_error.empty())
+		return 0;
+
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	if (!sourcePin)
 		return 0;
 
+	// Check if node's output already has been emitted.
 	GlslVariable* variable = m_currentShader->getVariable(sourcePin);
-	if (!variable)
+	if (variable)
+		return variable;
+
+	Node* node = sourcePin->getNode();
+
+	m_emitScope.push_back(Scope(
+		inputPin,
+		sourcePin
+	));
+
+	bool result = m_emitter.emit(*this, node);
+	if (result)
 	{
-		Node* node = sourcePin->getNode();
-		if (m_emitter.emit(*this, node))
+		variable = m_currentShader->getVariable(sourcePin);
+		T_ASSERT (variable);
+	}
+	else
+	{
+		// Only log first failure point; all recursions will also fail.
+		if (m_error.empty())
 		{
-			variable = m_currentShader->getVariable(sourcePin);
-			T_ASSERT (variable);
-		}
-		else
-		{
-			log::error << L"Failed to emit " << type_name(node) << Endl;
-			log::error << L"  " << type_name(node) << L"[" << sourcePin->getName() << L"] " << node->getInformation() << L" -->" << Endl;
-			log::error << L"  " << type_name(inputPin->getNode()) << L"[" << inputPin->getName() << L"] " << inputPin->getNode()->getInformation() << Endl;
+			// Format chain to properly indicate source of error.
+			StringOutputStream ss;
+			for (std::list< Scope >::const_reverse_iterator i = m_emitScope.rbegin(); i != m_emitScope.rend(); ++i)
+				ss << getClassNameOnly(i->outputPin->getNode()) << L"[" << i->outputPin->getName() << L"] <-- [" << i->inputPin->getName() << L"]";
+			ss << getClassNameOnly(m_emitScope.front().inputPin->getNode());
+			m_error = ss.str();
 		}
 	}
 
+	m_emitScope.pop_back();
 	return variable;
 }
 
