@@ -50,6 +50,8 @@ render::handle_t s_techniqueDefault = 0;
 render::handle_t s_techniqueDepth = 0;
 render::handle_t s_techniqueShadow = 0;
 render::handle_t s_handleTime = 0;
+render::handle_t s_handleView = 0;
+render::handle_t s_handleViewInverse = 0;
 render::handle_t s_handleProjection = 0;
 render::handle_t s_handleReflectionMap = 0;
 
@@ -70,6 +72,8 @@ WorldRendererForward::WorldRendererForward()
 
 	// Global parameters.
 	s_handleTime = render::getParameterHandle(L"World_Time");
+	s_handleView = render::getParameterHandle(L"World_View");
+	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
 	s_handleProjection = render::getParameterHandle(L"World_Projection");
 	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
 }
@@ -152,14 +156,14 @@ bool WorldRendererForward::create(
 
 		// Create shadow map target.
 		render::RenderTargetSetCreateDesc rtscd;
-		rtscd.count = 1;
+		rtscd.count = 0;
 		rtscd.width =
 		rtscd.height = resolution;
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = true;
+		rtscd.usingDepthStencilAsTexture = true;
 		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.preferTiled = true;
-		rtscd.targets[0].format = render::TfR16F;
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
 		// Create shadow mask target.
@@ -597,8 +601,6 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 			buildNoShadows(worldRenderView, *i, frame);
 	}
 
-	worldRenderView.resetLights();
-
 	// Prepare stereoscopic projection.
 	float screenWidth = float(m_renderView->getWidth());
 	f.A = std::abs((worldRenderView.getDistortionValue() * worldRenderView.getInterocularDistance()) / screenWidth);
@@ -681,14 +683,15 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 				render::ProgramParameters shadowProgramParams;
 				shadowProgramParams.beginParameters(m_globalContext);
 				shadowProgramParams.setFloatParameter(s_handleTime, f.time);
+				shadowProgramParams.setMatrixParameter(s_handleView, f.slice[i].shadowLightView);
+				shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.slice[i].shadowLightView.inverse());
 				shadowProgramParams.setMatrixParameter(s_handleProjection, f.slice[i].shadowLightProjection);
 				shadowProgramParams.endParameters(m_globalContext);
 
 				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
-				if (m_renderView->begin(m_shadowTargetSet, 0))
+				if (m_renderView->begin(m_shadowTargetSet))
 				{
-					const Color4f shadowClear(1.0f, 1.0f, 1.0f, 1.0f);
-					m_renderView->clear(render::CfColor | render::CfDepth, &shadowClear, 1.0f, 0);
+					m_renderView->clear(render::CfDepth, 0, 1.0f, 0);
 					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpOpaque, &shadowProgramParams);
 					m_renderView->end();
 				}
@@ -892,10 +895,10 @@ void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& o
 		outTargets.push_back(render::DebugTarget(L"Shadow map (last cascade)", render::DtvShadowMap, m_shadowTargetSet->getDepthTexture()));
 	
 	if (m_shadowMaskProjectTargetSet)
-		outTargets.push_back(render::DebugTarget(L"Shadow mask (projection)",render:: DtvShadowMask, m_shadowMaskProjectTargetSet->getDepthTexture()));
+		outTargets.push_back(render::DebugTarget(L"Shadow mask (projection)",render:: DtvShadowMask, m_shadowMaskProjectTargetSet->getColorTexture(0)));
 
 	if (m_shadowMaskFilterTargetSet)
-		outTargets.push_back(render::DebugTarget(L"Shadow mask (SS filtered)", render::DtvShadowMask, m_shadowMaskFilterTargetSet->getDepthTexture()));
+		outTargets.push_back(render::DebugTarget(L"Shadow mask (SS filtered)", render::DtvShadowMask, m_shadowMaskFilterTargetSet->getColorTexture(0)));
 }
 
 void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
@@ -976,9 +979,12 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
 		f.slice[slice].shadow->flush(shadowRenderView, shadowPass);
 		
+		f.slice[slice].shadowLightView = shadowLightView;
 		f.slice[slice].shadowLightProjection = shadowLightProjection;
 		f.slice[slice].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
 	}
+
+	worldRenderView.resetLights();
 
 	// Render visuals.
 	WorldRenderPassForward defaultPass(
@@ -1006,6 +1012,8 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
 {
 	Frame& f = m_frames[frame];
+
+	worldRenderView.resetLights();
 
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
