@@ -68,6 +68,18 @@ private:
 		uint32_t stage;
 	};
 
+	struct TextureSize
+	{
+		GLint location;
+		uint32_t texture;
+
+		TextureSize()
+		:	location(0)
+		,	texture(0)
+		{
+		}
+	};
+
 	struct TextureData
 	{
 		GLenum target;
@@ -84,8 +96,9 @@ private:
 	GLint m_locationPostTransform;
 	GLint m_locationInstanceID;
 	SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
-	std::vector< Uniform > m_uniforms;						//!< Scalar uniforms.
-	std::vector< Sampler > m_samplers;						//!< Samplers.
+	AlignedVector< Uniform > m_uniforms;					//!< Scalar uniforms.
+	AlignedVector< Sampler > m_samplers;					//!< Samplers.
+	AlignedVector< TextureSize > m_textureSize;
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
 	RefArray< ITexture > m_textures;
 	float m_targetSize[4];
