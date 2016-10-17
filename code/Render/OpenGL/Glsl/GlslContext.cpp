@@ -33,6 +33,7 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_requireDerivatives(false)
 ,	m_requireTranspose(false)
 ,	m_requireTexture3D(false)
+,	m_requireShadowSamplers(false)
 {
 }
 
@@ -235,6 +236,16 @@ void GlslContext::setRequireTexture3D()
 bool GlslContext::getRequireTexture3D() const
 {
 	return m_requireTexture3D;
+}
+
+void GlslContext::setRequireShadowSamplers()
+{
+	m_requireShadowSamplers = true;
+}
+
+bool GlslContext::getRequireShadowSamplers() const
+{
+	return m_requireShadowSamplers;
 }
 
 const PropertyGroup* GlslContext::getSettings() const

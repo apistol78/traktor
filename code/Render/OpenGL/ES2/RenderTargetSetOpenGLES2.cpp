@@ -6,6 +6,7 @@
 #include "Core/Math/Log2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/RenderTargetDepthOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #if defined(__ANDROID__)
@@ -85,7 +86,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGLES2", RenderTargetS
 
 RenderTargetSetOpenGLES2::RenderTargetSetOpenGLES2(ContextOpenGLES2* context)
 :	m_context(context)
-,	m_depthBuffer(0)
+,	m_depthBufferOrTexture(0)
 {
 	m_targetFBO[0] = 0;
 }
@@ -98,6 +99,65 @@ RenderTargetSetOpenGLES2::~RenderTargetSetOpenGLES2()
 bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 {
 	m_desc = desc;
+
+	// Create depth/stencil buffer.
+	if (desc.createDepthStencil && !desc.usingPrimaryDepthStencil)
+	{
+		if (!desc.usingDepthStencilAsTexture)
+		{
+			T_OGL_SAFE(glGenRenderbuffers(1, &m_depthBufferOrTexture));
+			T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferOrTexture));
+
+			GLenum format = GL_DEPTH_COMPONENT16;
+#if GL_OES_packed_depth_stencil
+			if (!m_desc.ignoreStencil)
+				format = GL_DEPTH24_STENCIL8_OES;
+#endif
+
+			T_OGL_SAFE(glRenderbufferStorage(
+				GL_RENDERBUFFER,
+				format,
+				desc.width,
+				desc.height
+			));
+		}
+		else
+		{
+			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
+
+			T_OGL_SAFE(glGenTextures(1, &m_depthBufferOrTexture));
+			T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_depthBufferOrTexture));
+
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+
+			GLenum format = GL_DEPTH_COMPONENT16;
+#if GL_OES_packed_depth_stencil
+			if (!m_desc.ignoreStencil)
+				format = GL_DEPTH24_STENCIL8_OES;
+#endif
+			T_OGL_SAFE(glTexImage2D(
+				GL_TEXTURE_2D,
+				0,
+				format,
+				m_desc.width,
+				m_desc.height,
+				0,
+				format,
+				GL_FLOAT,
+				NULL
+			));
+
+			m_depthTarget = new RenderTargetDepthOpenGLES2(
+				m_context,
+				m_depthBufferOrTexture,
+				m_desc.width,
+				m_desc.height
+			);
+		}
+	}
 
 	// Create color targets.
 	T_ASSERT (desc.count < sizeof_array(m_targetTextures));
@@ -248,6 +308,8 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 
 void RenderTargetSetOpenGLES2::destroy()
 {
+	safeDestroy(m_depthTarget);
+
 	for (uint32_t i = 0; i < sizeof_array(m_renderTargets); ++i)
 		safeDestroy(m_renderTargets[i]);
 
@@ -280,7 +342,7 @@ ISimpleTexture* RenderTargetSetOpenGLES2::getColorTexture(int index) const
 
 ISimpleTexture* RenderTargetSetOpenGLES2::getDepthTexture() const
 {
-	return 0;
+	return m_depthTarget;
 }
 
 void RenderTargetSetOpenGLES2::swap(int index1, int index2)
@@ -365,42 +427,37 @@ bool RenderTargetSetOpenGLES2::createFramebuffer(GLuint primaryDepthBuffer)
 		// Create depth/stencil buffer.
 		if (m_desc.createDepthStencil && !m_desc.usingPrimaryDepthStencil)
 		{
-			T_OGL_SAFE(glGenRenderbuffers(1, &m_depthBuffer));
-			T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
-
-			GLenum format = GL_DEPTH_COMPONENT16;
-#if GL_OES_packed_depth_stencil
-			if (!m_desc.ignoreStencil)
-				format = GL_DEPTH24_STENCIL8_OES;
-#endif
-
-			T_OGL_SAFE(glRenderbufferStorage(
-				GL_RENDERBUFFER,
-				format,
-				m_desc.width,
-				m_desc.height
-			));
-
-			T_OGL_SAFE(glFramebufferRenderbuffer(
-				GL_FRAMEBUFFER,
-				GL_DEPTH_ATTACHMENT,
-				GL_RENDERBUFFER,
-				m_depthBuffer
-			));
-
-			if (!m_desc.ignoreStencil)
+			if (!m_desc.usingDepthStencilAsTexture)
 			{
 				T_OGL_SAFE(glFramebufferRenderbuffer(
 					GL_FRAMEBUFFER,
-					GL_STENCIL_ATTACHMENT,
+					GL_DEPTH_ATTACHMENT,
 					GL_RENDERBUFFER,
-					m_depthBuffer
+					m_depthBufferOrTexture
+				));
+
+				if (!m_desc.ignoreStencil)
+				{
+					T_OGL_SAFE(glFramebufferRenderbuffer(
+						GL_FRAMEBUFFER,
+						GL_STENCIL_ATTACHMENT,
+						GL_RENDERBUFFER,
+						m_depthBufferOrTexture
+					));
+				}
+			}
+			else
+			{
+				T_OGL_SAFE(glFramebufferTexture2D(
+					GL_FRAMEBUFFER,
+					GL_DEPTH_ATTACHMENT,
+					GL_TEXTURE_2D,
+					m_depthBufferOrTexture,
+					0
 				));
 			}
 		}
-
-		// Attach primary depth buffer.
-		if (m_desc.usingPrimaryDepthStencil)
+		else if (m_desc.usingPrimaryDepthStencil)
 		{
 			T_OGL_SAFE(glFramebufferRenderbuffer(
 				GL_FRAMEBUFFER,

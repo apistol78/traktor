@@ -10,6 +10,7 @@ namespace traktor
 	{
 	
 class ContextOpenGLES2;
+class RenderTargetDepthOpenGLES2;
 class RenderTargetOpenGLES2;
 
 /*!
@@ -48,8 +49,9 @@ private:
 	Ref< ContextOpenGLES2 > m_context;
 	RenderTargetSetCreateDesc m_desc;
 	GLuint m_targetFBO[8];
-	GLuint m_depthBuffer;
+	GLuint m_depthBufferOrTexture;
 	GLuint m_targetTextures[8];
+	Ref< RenderTargetDepthOpenGLES2 > m_depthTarget;
 	Ref< RenderTargetOpenGLES2 > m_renderTargets[8];
 
 	bool createFramebuffer(GLuint primaryDepthBuffer);

@@ -1427,6 +1427,8 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 			if (!cx.inFragment())
 				return false;
 
+			cx.setRequireShadowSamplers();
+
 			switch (texture->getType())
 			{
 			case GtTexture2D:

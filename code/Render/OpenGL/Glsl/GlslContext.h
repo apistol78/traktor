@@ -68,6 +68,10 @@ public:
 
 	bool getRequireTexture3D() const;
 
+	void setRequireShadowSamplers();
+
+	bool getRequireShadowSamplers() const;
+
 	const PropertyGroup* getSettings() const;
 
 	GlslShader& getVertexShader();
@@ -124,6 +128,7 @@ private:
 	bool m_requireDerivatives;
 	bool m_requireTranspose;
 	bool m_requireTexture3D;
+	bool m_requireShadowSamplers;
 	std::vector< uint8_t > m_interpolatorMap;
 	std::vector< std::wstring > m_textures;
 	std::vector< NamedUniformType > m_uniforms;

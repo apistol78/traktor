@@ -133,7 +133,7 @@ StringOutputStream& GlslShader::getOutputStream(BlockType blockType)
 	return *(m_outputStreams[int(blockType)].back());
 }
 
-std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool requireDerivatives, bool requireTranspose, bool requireTexture3D)
+std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool requireDerivatives, bool requireTranspose, bool requireTexture3D, bool requireShadowSamplers)
 {
 	StringOutputStream ss;
 
@@ -143,6 +143,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 
 	if (m_shaderType == StFragment && requireTexture3D)
 		ss << L"#extension GL_OES_texture_3D : enable" << Endl;
+
+	if (m_shaderType == StFragment && requireShadowSamplers)
+		ss << L"#extension GL_EXT_shadow_samplers : require" << Endl;
 
 	if (settings && settings->getProperty< PropertyBoolean >(L"Glsl.ES2.SupportHwInstancing", false))
 		ss << L"#extension GL_EXT_draw_instanced : enable" << Endl;
