@@ -77,7 +77,7 @@ public:
 
 	StringOutputStream& getOutputStream(BlockType blockType);
 
-	std::wstring getGeneratedShader(const PropertyGroup* settings, bool requireDerivatives, bool requireTranspose, bool requireTexture3D);
+	std::wstring getGeneratedShader(const PropertyGroup* settings, bool requireDerivatives, bool requireTranspose, bool requireTexture3D, bool requireShadowSamplers);
 
 private:
 	typedef std::map< const OutputPin*, Ref< GlslVariable > > scope_t;

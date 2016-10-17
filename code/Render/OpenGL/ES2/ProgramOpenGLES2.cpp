@@ -9,6 +9,7 @@
 #include "Render/OpenGL/ES2/CubeTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
+#include "Render/OpenGL/ES2/RenderTargetDepthOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 #include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
@@ -364,6 +365,8 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 			binding = static_cast< ITextureBinding* >(vt);
 		else if (RenderTargetOpenGLES2* rt = dynamic_type_cast< RenderTargetOpenGLES2* >(resolved))
 			binding = static_cast< ITextureBinding* >(rt);
+		else if (RenderTargetDepthOpenGLES2* rtd = dynamic_type_cast< RenderTargetDepthOpenGLES2* >(resolved))
+			binding = static_cast< ITextureBinding* >(rtd);
 			
 		if (binding)
 		{
@@ -399,7 +402,9 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 			binding = static_cast< ITextureBinding* >(vt);
 		else if (RenderTargetOpenGLES2* rt = dynamic_type_cast< RenderTargetOpenGLES2* >(resolved))
 			binding = static_cast< ITextureBinding* >(rt);
-			
+		else if (RenderTargetDepthOpenGLES2* rtd = dynamic_type_cast< RenderTargetDepthOpenGLES2* >(resolved))
+			binding = static_cast< ITextureBinding* >(rtd);
+
 		if (binding)
 			binding->bindSize(textureSize.location);
 	}
