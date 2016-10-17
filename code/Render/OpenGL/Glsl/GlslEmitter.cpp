@@ -1345,6 +1345,10 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		return false;
 	}
 
+	// ES 2.0 require extension for sampling 3D textures.
+	if (texture->getType() == GtTexture3D)
+		cx.setRequireTexture3D();
+
 	// Calculate sampler hash.
 	Adler32 samplerHash;
 	samplerHash.feed(texture->getName());
