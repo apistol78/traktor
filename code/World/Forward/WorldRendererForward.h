@@ -87,6 +87,7 @@ private:
 	struct Slice
 	{
 		Ref< WorldContext > shadow;
+		Matrix44 shadowLightView;
 		Matrix44 shadowLightProjection;
 		Matrix44 viewToLightSpace;
 	};
