@@ -32,6 +32,7 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_nextStage(0)
 ,	m_requireDerivatives(false)
 ,	m_requireTranspose(false)
+,	m_requireTexture3D(false)
 {
 }
 
@@ -224,6 +225,16 @@ void GlslContext::setRequireTranspose()
 bool GlslContext::getRequireTranspose() const
 {
 	return m_requireTranspose;
+}
+
+void GlslContext::setRequireTexture3D()
+{
+	m_requireTexture3D = true;
+}
+
+bool GlslContext::getRequireTexture3D() const
+{
+	return m_requireTexture3D;
 }
 
 const PropertyGroup* GlslContext::getSettings() const

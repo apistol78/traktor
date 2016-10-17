@@ -18,6 +18,10 @@
 #	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
 #endif
 
+#if !defined(GL_RED_EXT)
+#	define GL_RED_EXT 0x1903
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -165,30 +169,27 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			break;
 
 		case TfR16F:
-#if defined(GL_HALF_FLOAT_OES) && defined(GL_RED_EXT)
 			if (haveExtension("GL_EXT_texture_rg"))
 			{
 				internalFormat = GL_RED_EXT;
 				format = GL_RED_EXT;
-				type = GL_HALF_FLOAT_OES;
 			}
 			else
 			{
 				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues (TfR16F requested)." << Endl;
 				internalFormat = GL_RGBA;
 				format = GL_RGBA;
-				type = GL_HALF_FLOAT_OES;
 			}
-#else
-			log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues (TfR32F requested)." << Endl;
-			internalFormat = GL_RGBA;
-			format = GL_RGBA;
-			type = GL_FLOAT;
-#endif
+			if (haveExtension("GL_OES_texture_half_float"))
+				type = GL_HALF_FLOAT_OES;
+			else
+			{
+				log::warning << L"Extension \"GL_OES_texture_half_float\" not supported; using different format (TfR32F) which may cause performance issues (TfR16F requested)." << Endl;
+				type = GL_FLOAT;
+			}
 			break;
 
 		case TfR32F:
-#if defined(GL_RED_EXT)
 			if (haveExtension("GL_EXT_texture_rg"))
 			{
 				internalFormat = GL_RED_EXT;
@@ -196,7 +197,6 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 				type = GL_FLOAT;
 			}
 			else
-#endif
 			{
 				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues (TfR32F requested)." << Endl;
 				internalFormat = GL_RGBA;

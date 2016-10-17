@@ -64,6 +64,10 @@ public:
 
 	bool getRequireTranspose() const;
 
+	void setRequireTexture3D();
+
+	bool getRequireTexture3D() const;
+
 	const PropertyGroup* getSettings() const;
 
 	GlslShader& getVertexShader();
@@ -119,6 +123,7 @@ private:
 	int32_t m_nextStage;
 	bool m_requireDerivatives;
 	bool m_requireTranspose;
+	bool m_requireTexture3D;
 	std::vector< uint8_t > m_interpolatorMap;
 	std::vector< std::wstring > m_textures;
 	std::vector< NamedUniformType > m_uniforms;
