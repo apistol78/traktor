@@ -289,7 +289,7 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 	stateCache->setProgram(m_program);
 	
 	// Update dirty uniforms.
-	for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
+	for (AlignedVector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
 	{
 		if (!i->dirty)
 			continue;
@@ -375,6 +375,35 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 		}
 	}
 
+	// Bind texture sizes.
+	uint32_t ntextureSize = m_textureSize.size();
+	for (uint32_t i = 0; i < ntextureSize; ++i)
+	{
+		const TextureSize& textureSize = m_textureSize[i];
+
+		ITexture* texture = m_textures[textureSize.texture];
+		if (!texture)
+			continue;
+
+		Ref< ITexture > resolved = texture->resolve();
+		if (!resolved)
+			continue;
+
+		ITextureBinding* binding = 0;
+
+		if (SimpleTextureOpenGLES2* st = dynamic_type_cast< SimpleTextureOpenGLES2* >(resolved))
+			binding = static_cast< ITextureBinding* >(st);
+		else if (CubeTextureOpenGLES2* ct = dynamic_type_cast< CubeTextureOpenGLES2* >(resolved))
+			binding = static_cast< ITextureBinding* >(ct);
+		else if (VolumeTextureOpenGLES2* vt = dynamic_type_cast< VolumeTextureOpenGLES2* >(resolved))
+			binding = static_cast< ITextureBinding* >(vt);
+		else if (RenderTargetOpenGLES2* rt = dynamic_type_cast< RenderTargetOpenGLES2* >(resolved))
+			binding = static_cast< ITextureBinding* >(rt);
+			
+		if (binding)
+			binding->bindSize(textureSize.location);
+	}
+
 	ms_current = this;
 	return true;
 }
@@ -424,6 +453,31 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 
 		if (sampler.locationTexture < 0)
 			log::warning << L"No GL sampler defined for texture \"" << texture << L"\"" << Endl;
+	}
+
+	// Map texture size parameters.
+	for (std::vector< std::wstring >::const_iterator i = textures.begin(); i != textures.end(); ++i)
+	{
+		const std::wstring& texture = *i;
+		std::wstring textureSizeName = L"_gl_textureSize_" + texture;
+
+		GLint location = glGetUniformLocation(m_program, wstombs(textureSizeName).c_str());
+		if (location <= 0)
+			continue;
+
+		handle_t handle = getParameterHandle(texture);
+
+		if (m_parameterMap.find(handle) == m_parameterMap.end())
+		{
+			m_parameterMap[handle] = m_textures.size();
+			m_textures.push_back(0);
+		}
+
+		TextureSize textureSize;
+		textureSize.location = location;
+		textureSize.texture = m_parameterMap[handle];
+
+		m_textureSize.push_back(textureSize);
 	}
 
 	const std::vector< NamedUniformType >& uniforms = resourceOpenGL->getUniforms();
