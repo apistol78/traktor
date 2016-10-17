@@ -30,8 +30,18 @@ bool Glsl::generate(
 	}
 
 	GlslContext cx(shaderGraph, settings);
-	cx.getEmitter().emit(cx, pixelOutputs[0]);
-	cx.getEmitter().emit(cx, vertexOutputs[0]);
+	if (!cx.emit(pixelOutputs[0]))
+	{
+		log::error << L"Unable to generate GLSL shader; emitter failed with fragment graph." << Endl;
+		log::error << L"\t" << cx.getError() << Endl;
+		return false;
+	}
+	if (!cx.emit(vertexOutputs[0]))
+	{
+		log::error << L"Unable to generate GLSL shader; emitter failed with vertex graph." << Endl;
+		log::error << L"\t" << cx.getError() << Endl;
+		return false;
+	}
 
 	bool requireDerivatives = cx.getRequireDerivatives();
 	bool requireTranspose = cx.getRequireTranspose();
