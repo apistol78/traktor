@@ -893,7 +893,7 @@ Surface modulated
 				</item>
 				<item>
 					<first>SpecularTerm</first>
-					<second>1</second>
+					<second>0</second>
 				</item>
 			</values>
 		</item>
