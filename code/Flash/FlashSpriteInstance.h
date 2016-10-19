@@ -200,6 +200,8 @@ private:
 	bool m_inside;
 	bool m_inDispatch;
 	bool m_gotoIssued;
+
+	void preDispatchEvents();
 };
 
 	}

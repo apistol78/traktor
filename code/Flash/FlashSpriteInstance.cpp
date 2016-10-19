@@ -178,21 +178,7 @@ void FlashSpriteInstance::updateDisplayList()
 			static_cast< FlashSpriteInstance* >(instance)->updateDisplayList();
 	});
 
-	m_inDispatch = true;
-	m_gotoIssued = false;
-
-	// Initialize sprite instance.
-	if (!m_initialized)
-	{
-		eventLoad();
-		m_initialized = true;
-	}
-
-	// Set initial next frame index, this might change during execution of events.
-	if (m_playing)
-		m_nextFrame = (m_currentFrame + 1) % m_sprite->getFrameCount();
-	else
-		m_nextFrame = m_currentFrame;
+	preDispatchEvents();
 }
 
 void FlashSpriteInstance::updateDisplayListAndSounds(FlashSoundPlayer* soundPlayer)
@@ -244,21 +230,7 @@ void FlashSpriteInstance::updateDisplayListAndSounds(FlashSoundPlayer* soundPlay
 			static_cast< FlashSpriteInstance* >(instance)->updateDisplayListAndSounds(soundPlayer);
 	});
 
-	m_inDispatch = true;
-	m_gotoIssued = false;
-
-	// Initialize sprite instance.
-	if (!m_initialized)
-	{
-		eventLoad();
-		m_initialized = true;
-	}
-
-	// Set initial next frame index, this might change during execution of events.
-	if (m_playing)
-		m_nextFrame = (m_currentFrame + 1) % m_sprite->getFrameCount();
-	else
-		m_nextFrame = m_currentFrame;
+	preDispatchEvents();
 }
 
 Ref< FlashSpriteInstance > FlashSpriteInstance::createEmptyMovieClip(const std::string& clipName, int32_t depth)
@@ -1070,6 +1042,28 @@ void FlashSpriteInstance::dereference()
 	m_displayList.reset();
 
 	FlashCharacterInstance::dereference();
+}
+
+void FlashSpriteInstance::preDispatchEvents()
+{
+	if (m_inDispatch)
+		return;
+
+	m_inDispatch = true;
+	m_gotoIssued = false;
+
+	// Initialize sprite instance.
+	if (!m_initialized)
+	{
+		eventLoad();
+		m_initialized = true;
+	}
+
+	// Set initial next frame index, this might change during execution of events.
+	if (m_playing)
+		m_nextFrame = (m_currentFrame + 1) % m_sprite->getFrameCount();
+	else
+		m_nextFrame = m_currentFrame;
 }
 
 	}
