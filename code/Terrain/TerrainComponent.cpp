@@ -167,10 +167,7 @@ void TerrainComponent::render(
 		return;
 
 	// Update cache only once per frame and when rendering from camera.
-	bool updateCache = bool(
-		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_ForwardColor") ||
-		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DeferredGBufferWrite")
-	);
+	bool updateCache = worldRenderPass.isFirstPassFromEye();
 
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 

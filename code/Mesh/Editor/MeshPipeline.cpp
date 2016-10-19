@@ -425,6 +425,14 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
+		// Get connected permutation.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getConnectedPermutation();
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to freeze connected conditionals, material shader \"" << i->first << L"\"" << Endl;
+			return false;
+		}
+
 		// Freeze types, get typed permutation.
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getTypePermutation();
 		if (!materialShaderGraph)

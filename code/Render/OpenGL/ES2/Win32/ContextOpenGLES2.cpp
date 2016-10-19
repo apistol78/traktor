@@ -400,7 +400,6 @@ GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderTyp
 	T_OGL_SAFE(glShaderSource(shaderObject, 1, &shader, NULL));
 	T_OGL_SAFE(glCompileShader(shaderObject));
 
-#if defined(_DEBUG)
 	char errorBuf[32000];
 	GLint status;
 
@@ -414,7 +413,6 @@ GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderTyp
 		FormatMultipleLines(log::error, mbstows(shader));
 		return 0;
 	}
-#endif
 
 	m_shaderObjects.insert(std::make_pair(hash, shaderObject));
 	return shaderObject;

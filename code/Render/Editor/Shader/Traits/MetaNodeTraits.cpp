@@ -30,6 +30,7 @@ TypeInfoSet MetaNodeTraits::getNodeTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Branch >());
 	typeSet.insert(&type_of< Comment >());
+	typeSet.insert(&type_of< Connected >());
 	typeSet.insert(&type_of< External >());
 	typeSet.insert(&type_of< InputPort >());
 	typeSet.insert(&type_of< OutputPort >());

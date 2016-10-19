@@ -29,16 +29,20 @@ public:
 	WorldRenderPassDeferred(
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
+		bool firstPassFromEye,
 		bool fogEnabled,
 		bool depthEnable
 	);
 
 	WorldRenderPassDeferred(
 		render::handle_t technique,
-		const WorldRenderView& worldRenderView
+		const WorldRenderView& worldRenderView,
+		bool firstPassFromEye
 	);
 
 	virtual render::handle_t getTechnique() const T_OVERRIDE T_FINAL;
+
+	virtual bool isFirstPassFromEye() const T_OVERRIDE T_FINAL;
 
 	virtual void setShaderTechnique(render::Shader* shader) const T_OVERRIDE T_FINAL;
 
@@ -53,6 +57,7 @@ public:
 private:
 	render::handle_t m_technique;
 	const WorldRenderView& m_worldRenderView;
+	bool m_firstPassFromEye;
 	bool m_fogEnabled;
 	bool m_depthEnable;
 

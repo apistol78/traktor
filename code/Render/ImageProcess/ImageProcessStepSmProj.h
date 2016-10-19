@@ -55,7 +55,8 @@ public:
 		uint32_t m_frame;
 		handle_t m_handleInputColor;
 		handle_t m_handleInputDepth;
-		handle_t m_handleShadowMap;
+		handle_t m_handleShadowMapColor;
+		handle_t m_handleShadowMapDepth;
 		handle_t m_handleShadowMapDiscRotation;
 		handle_t m_handleShadowMapSizeAndBias;
 		handle_t m_handleShadowMapPoissonTaps;

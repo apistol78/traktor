@@ -28,6 +28,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Color >(), L"SHADERGRAPH_VALUE", L"Color constant" },
 	{ type_of< Comment >(), L"SHADERGRAPH_MISCELLANEOUS", L"Comment" },
 	{ type_of< Conditional >(), L"SHADERGRAPH_CONDITIONAL", L"Evaluate different branches based on condition" },
+	{ type_of< Connected >(), L"SHADERGRAPH_CONDITIONAL", L"Check if input is connected" },
 	{ type_of< Cos >(), L"SHADERGRAPH_TRIGONOMETRY", L"Cosine" },
 	{ type_of< Cross >(), L"SHADERGRAPH_ALGEBRA", L"Cross product of two vectors" },
 	{ type_of< Derivative >(), L"SHADERGRAPH_ARITHMETIC", L"Partial derivate of function f(x,y) in respect to x or y screen coordinate" },

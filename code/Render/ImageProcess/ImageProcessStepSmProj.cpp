@@ -116,7 +116,8 @@ ImageProcessStepSmProj::InstanceSmProj::InstanceSmProj(
 	m_handleInputColor = getParameterHandle(L"InputColor");
 	m_handleInputDepth = getParameterHandle(L"InputDepth");
 
-	m_handleShadowMap = getParameterHandle(L"ShadowMap");
+	m_handleShadowMapColor = getParameterHandle(L"ShadowMapColor");
+	m_handleShadowMapDepth = getParameterHandle(L"ShadowMapDepth");
 	m_handleShadowMapDiscRotation = getParameterHandle(L"ShadowMapDiscRotation");
 	m_handleShadowMapSizeAndBias = getParameterHandle(L"ShadowMapSizeAndBias");
 	m_handleShadowMapPoissonTaps = getParameterHandle(L"ShadowMapPoissonTaps");
@@ -169,7 +170,11 @@ void ImageProcessStepSmProj::InstanceSmProj::render(
 	Scalar p11 = params.projection.get(0, 0);
 	Scalar p22 = params.projection.get(1, 1);
 
-	m_shader->setTextureParameter(m_handleShadowMap, sourceShMap->getDepthTexture());
+	// Bind shadow map; some implementations use depth written in color channels (if shadow samplers not supported etc).
+	if (sourceShMap->getColorTexture(0))
+		m_shader->setTextureParameter(m_handleShadowMapColor, sourceShMap->getColorTexture(0));
+	m_shader->setTextureParameter(m_handleShadowMapDepth, sourceShMap->getDepthTexture());
+
 	m_shader->setTextureParameter(m_handleShadowMapDiscRotation, m_shadowMapDiscRotation[m_frame & 1]);
 	m_shader->setVectorParameter(m_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
 	m_shader->setVectorArrayParameter(m_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));

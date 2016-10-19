@@ -71,6 +71,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassForward", WorldRenderPassF
 WorldRenderPassForward::WorldRenderPassForward(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
+	bool firstPassFromEye,
 	bool fogEnabled,
 	float fogDistanceY,
 	float fogDistanceZ,
@@ -83,6 +84,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
+,	m_firstPassFromEye(firstPassFromEye)
 ,	m_fogEnabled(fogEnabled)
 ,	m_fogDistanceY(fogDistanceY)
 ,	m_fogDistanceZ(fogDistanceZ)
@@ -101,11 +103,13 @@ WorldRenderPassForward::WorldRenderPassForward(
 WorldRenderPassForward::WorldRenderPassForward(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
+	bool firstPassFromEye,
 	render::ISimpleTexture* colorMap,
 	render::ISimpleTexture* depthMap
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
+,	m_firstPassFromEye(firstPassFromEye)
 ,	m_fogEnabled(false)
 ,	m_fogDistanceY(0.0f)
 ,	m_fogDistanceZ(0.0f)
@@ -124,6 +128,11 @@ WorldRenderPassForward::WorldRenderPassForward(
 render::handle_t WorldRenderPassForward::getTechnique() const
 {
 	return m_technique;
+}
+
+bool WorldRenderPassForward::isFirstPassFromEye() const
+{
+	return m_firstPassFromEye;
 }
 
 void WorldRenderPassForward::setShaderTechnique(render::Shader* shader) const
