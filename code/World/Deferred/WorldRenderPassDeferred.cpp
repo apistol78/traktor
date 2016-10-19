@@ -52,11 +52,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassDeferred", WorldRenderPass
 WorldRenderPassDeferred::WorldRenderPassDeferred(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
+	bool firstPassFromEye,
 	bool fogEnabled,
 	bool depthEnable
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
+,	m_firstPassFromEye(firstPassFromEye)
 ,	m_fogEnabled(fogEnabled)
 ,	m_depthEnable(depthEnable)
 {
@@ -65,10 +67,12 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 
 WorldRenderPassDeferred::WorldRenderPassDeferred(
 	render::handle_t technique,
-	const WorldRenderView& worldRenderView
+	const WorldRenderView& worldRenderView,
+	bool firstPassFromEye
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
+,	m_firstPassFromEye(firstPassFromEye)
 ,	m_fogEnabled(false)
 ,	m_depthEnable(false)
 {
@@ -78,6 +82,11 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 render::handle_t WorldRenderPassDeferred::getTechnique() const
 {
 	return m_technique;
+}
+
+bool WorldRenderPassDeferred::isFirstPassFromEye() const
+{
+	return m_firstPassFromEye;
 }
 
 void WorldRenderPassDeferred::setShaderTechnique(render::Shader* shader) const

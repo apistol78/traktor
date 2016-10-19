@@ -183,6 +183,15 @@ private:
 	Operator m_operator;
 };
 
+/*! \brief Connected. */
+class T_DLLCLASS Connected : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Connected();
+};
+
 /*! \brief Cosine. */
 class T_DLLCLASS Cos : public ImmutableNode
 {

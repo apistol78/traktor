@@ -438,6 +438,18 @@ void Conditional::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Connected", 0, Connected, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Connected_i[] = { { L"Input", true }, { L"True", false }, { L"False", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Connected_o[] = { L"Output", 0 };
+
+Connected::Connected()
+:	ImmutableNode(c_Connected_i, c_Connected_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Cos", 0, Cos, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Cos_i[] = { { L"Theta", false }, 0 };

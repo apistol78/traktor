@@ -84,11 +84,8 @@ void RubbleLayer::render(
 {
 	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
 
-	// \fixme Assume depth pass enabled; need some information about first pass from camera POV.
-	bool updateClusters = bool(
-		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DepthWrite") ||
-		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DeferredGBufferWrite")
-	);
+	// Update clusters at first pass from eye pow.
+	bool updateClusters = worldRenderPass.isFirstPassFromEye();
 
 	const Matrix44& view = worldRenderView.getView();
 	Vector4 eye = view.inverse().translation();

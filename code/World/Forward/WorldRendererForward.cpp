@@ -94,8 +94,8 @@ bool WorldRendererForward::create(
 	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
 	m_antiAliasQuality = desc.antiAliasQuality;
 
-	// Disable shadows early if filter or projection is null.
-	if (m_shadowSettings.maskFilter.isNull() || m_shadowSettings.maskProject.isNull())
+	// Disable shadows early if projection is null.
+	if (m_shadowSettings.maskProject.isNull())
 		m_shadowsQuality = QuDisabled;
 
 	m_frames.resize(desc.frameCount);
@@ -141,6 +141,26 @@ bool WorldRendererForward::create(
 		}
 	}
 
+	// Create projection and filter processes.
+	resource::Proxy< render::ImageProcessSettings > shadowMaskProject;
+	resource::Proxy< render::ImageProcessSettings > shadowMaskFilter;
+
+	if (!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject))
+	{
+		log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
+		m_shadowsQuality = QuDisabled;
+	}
+
+	if (
+		m_shadowsQuality > QuDisabled &&
+		m_shadowSettings.maskFilter &&
+		!resourceManager->bind(m_shadowSettings.maskFilter, shadowMaskFilter)
+	)
+	{
+		log::warning << L"Unable to create shadow filter process; shadows disabled" << Endl;
+		m_shadowsQuality = QuDisabled;
+	}
+
 	// Allocate "shadow map" targets.
 	if (m_shadowsQuality > QuDisabled)
 	{
@@ -156,13 +176,13 @@ bool WorldRendererForward::create(
 
 		// Create shadow map target.
 		render::RenderTargetSetCreateDesc rtscd;
-		rtscd.count = 0;
+		rtscd.count = 1;
 		rtscd.width =
 		rtscd.height = resolution;
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = true;
-		rtscd.usingDepthStencilAsTexture = true;
 		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.targets[0].format = render::TfR16F;
 		rtscd.preferTiled = true;
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
@@ -177,70 +197,46 @@ bool WorldRendererForward::create(
 		rtscd.preferTiled = true;
 		m_shadowMaskProjectTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
-		// Create filtered shadow mask target.
-		rtscd.count = 1;
-		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = false;
-		rtscd.usingPrimaryDepthStencil = false;
-		rtscd.targets[0].format = render::TfR8;
-		rtscd.preferTiled = true;
-		m_shadowMaskFilterTargetSet = renderSystem->createRenderTargetSet(rtscd);
-
-		if (
-			m_shadowTargetSet &&
-			m_shadowMaskProjectTargetSet &&
-			m_shadowMaskFilterTargetSet
-		)
+		m_shadowMaskProject = new render::ImageProcess();
+		if (!m_shadowMaskProject->create(
+			shadowMaskProject,
+			postProcessTargetPool,
+			resourceManager,
+			renderSystem,
+			rtscd.width,
+			rtscd.height,
+			desc.allTargetsPersistent
+		))
 		{
-			resource::Proxy< render::ImageProcessSettings > shadowMaskProject;
-			resource::Proxy< render::ImageProcessSettings > shadowMaskFilter;
+			log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
+			m_shadowsQuality = QuDisabled;
+		}
 
-			if (
-				!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject) ||
-				!resourceManager->bind(m_shadowSettings.maskFilter, shadowMaskFilter)
-			)
+		if (shadowMaskFilter)
+		{
+			// Create filtered shadow mask target.
+			rtscd.count = 1;
+			rtscd.multiSample = 0;
+			rtscd.createDepthStencil = false;
+			rtscd.usingPrimaryDepthStencil = false;
+			rtscd.targets[0].format = render::TfR8;
+			rtscd.preferTiled = true;
+			m_shadowMaskFilterTargetSet = renderSystem->createRenderTargetSet(rtscd);
+
+			m_shadowMaskFilter = new render::ImageProcess();
+			if (!m_shadowMaskFilter->create(
+				shadowMaskFilter,
+				postProcessTargetPool,
+				resourceManager,
+				renderSystem,
+				rtscd.width,
+				rtscd.height,
+				desc.allTargetsPersistent
+			))
 			{
-				log::warning << L"Unable to create shadow project process; shadows disabled (1)" << Endl;
+				log::warning << L"Unable to create shadow filter process; shadows disabled (3)" << Endl;
 				m_shadowsQuality = QuDisabled;
 			}
-
-			if (m_shadowsQuality > QuDisabled)
-			{
-				m_shadowMaskProject = new render::ImageProcess();
-				if (!m_shadowMaskProject->create(
-					shadowMaskProject,
-					postProcessTargetPool,
-					resourceManager,
-					renderSystem,
-					rtscd.width,
-					rtscd.height,
-					desc.allTargetsPersistent
-				))
-				{
-					log::warning << L"Unable to create shadow project process; shadows disabled (2)" << Endl;
-					m_shadowsQuality = QuDisabled;
-				}
-
-				m_shadowMaskFilter = new render::ImageProcess();
-				if (!m_shadowMaskFilter->create(
-					shadowMaskFilter,
-					postProcessTargetPool,
-					resourceManager,
-					renderSystem,
-					rtscd.width,
-					rtscd.height,
-					desc.allTargetsPersistent
-				))
-				{
-					log::warning << L"Unable to create shadow filter process; shadows disabled (3)" << Endl;
-					m_shadowsQuality = QuDisabled;
-				}
-			}
-		}
-		else
-		{
-			log::warning << L"Unable to create shadow render targets; shadows disabled (4)" << Endl;
-			m_shadowsQuality = QuDisabled;
 		}
 
 		if (m_shadowsQuality > QuDisabled)
@@ -401,7 +397,7 @@ bool WorldRendererForward::create(
 					desc.width,
 					desc.height,
 					desc.allTargetsPersistent
-					))
+				))
 				{
 					log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
 					m_visualImageProcess = 0;
@@ -574,16 +570,16 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 
 	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
 	{
-		WorldRenderView depthRenderView = worldRenderView;
 		WorldRenderPassForward pass(
 			s_techniqueDepth,
-			depthRenderView,
+			worldRenderView,
+			true,
 			0,
 			0
 		);
 		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-			f.depth->build(depthRenderView, pass, *i);
-		f.depth->flush(depthRenderView, pass);
+			f.depth->build(worldRenderView, pass, *i);
+		f.depth->flush(worldRenderView, pass);
 
 		f.haveDepth = true;
 	}
@@ -689,9 +685,10 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 				shadowProgramParams.endParameters(m_globalContext);
 
 				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
-				if (m_renderView->begin(m_shadowTargetSet))
+				if (m_renderView->begin(m_shadowTargetSet, 0))
 				{
-					m_renderView->clear(render::CfDepth, 0, 1.0f, 0);
+					const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
+					m_renderView->clear(render::CfColor | render::CfDepth, &maskClear, 1.0f, 0);
 					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpOpaque, &shadowProgramParams);
 					m_renderView->end();
 				}
@@ -734,27 +731,30 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 				T_RENDER_POP_MARKER(m_renderView);
 			}
 
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask filter");
-			if (m_renderView->begin(m_shadowMaskFilterTargetSet, 0))
+			if (m_shadowMaskFilterTargetSet)
 			{
-				render::ImageProcessStep::Instance::RenderParams params;
-				params.viewFrustum = f.viewFrustum;
-				params.projection = projection;
-				params.sliceNearZ = 0.0f;
-				params.sliceFarZ = m_shadowSettings.farZ;
-				params.shadowMapBias = m_shadowSettings.bias;
-				params.deltaTime = 0.0f;
+				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask filter");
+				if (m_renderView->begin(m_shadowMaskFilterTargetSet, 0))
+				{
+					render::ImageProcessStep::Instance::RenderParams params;
+					params.viewFrustum = f.viewFrustum;
+					params.projection = projection;
+					params.sliceNearZ = 0.0f;
+					params.sliceFarZ = m_shadowSettings.farZ;
+					params.shadowMapBias = m_shadowSettings.bias;
+					params.deltaTime = 0.0f;
 
-				m_shadowMaskFilter->render(
-					m_renderView,
-					m_shadowMaskProjectTargetSet,
-					m_depthTargetSet,
-					0,
-					params
-				);
-				m_renderView->end();
+					m_shadowMaskFilter->render(
+						m_renderView,
+						m_shadowMaskProjectTargetSet,
+						m_depthTargetSet,
+						0,
+						params
+					);
+					m_renderView->end();
+				}
+				T_RENDER_POP_MARKER(m_renderView);
 			}
-			T_RENDER_POP_MARKER(m_renderView);
 		}
 	}
 
@@ -892,7 +892,7 @@ void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& o
 		outTargets.push_back(render::DebugTarget(L"View depth", render::DtvDepth, m_depthTargetSet->getColorTexture(0)));
 
 	if (m_shadowTargetSet)
-		outTargets.push_back(render::DebugTarget(L"Shadow map (last cascade)", render::DtvShadowMap, m_shadowTargetSet->getDepthTexture()));
+		outTargets.push_back(render::DebugTarget(L"Shadow map (last cascade)", render::DtvShadowMap, m_shadowTargetSet->getColorTexture(0)));
 	
 	if (m_shadowMaskProjectTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow mask (projection)",render:: DtvShadowMask, m_shadowMaskProjectTargetSet->getColorTexture(0)));
@@ -973,6 +973,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		WorldRenderPassForward shadowPass(
 			s_techniqueShadow,
 			shadowRenderView,
+			false,
 			0,
 			0
 		);
@@ -986,10 +987,17 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 
 	worldRenderView.resetLights();
 
+	render::RenderTargetSet* shadowMask = 0;
+	if (m_shadowMaskFilterTargetSet)
+		shadowMask = m_shadowMaskFilterTargetSet;
+	else
+		shadowMask = m_shadowMaskProjectTargetSet;
+
 	// Render visuals.
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
 		worldRenderView,
+		(m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled) ? false : true,
 		m_settings.fogEnabled,
 		m_settings.fogDistanceY,
 		m_settings.fogDistanceZ,
@@ -998,7 +1006,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		m_fogColor,
 		0,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
-		m_shadowMaskFilterTargetSet->getColorTexture(0)
+		shadowMask->getColorTexture(0)
 	);
 	f.visual->build(worldRenderView, defaultPass, entity);
 	f.visual->flush(worldRenderView, defaultPass);
@@ -1018,6 +1026,7 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
 		worldRenderView,
+		(m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled) ? false : true,
 		m_settings.fogEnabled,
 		m_settings.fogDistanceY,
 		m_settings.fogDistanceZ,

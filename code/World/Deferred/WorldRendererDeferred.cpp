@@ -330,6 +330,7 @@ bool WorldRendererDeferred::create(
 		{
 			safeDestroy(m_shadowTargetSet);
 			safeDestroy(m_shadowMaskProjectTargetSet);
+			safeDestroy(m_shadowMaskFilterTargetSet);
 		}
 	}
 
@@ -901,7 +902,6 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 						}
 
 						render::RenderTargetSet* shadowMask = 0;
-
 						if (m_shadowMaskFilterTargetSet)
 							shadowMask = m_shadowMaskFilterTargetSet;
 						else
@@ -1285,7 +1285,8 @@ void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int f
 
 	WorldRenderPassDeferred gbufferPass(
 		ms_techniqueDeferredGBufferWrite,
-		gbufferRenderView
+		gbufferRenderView,
+		true
 	);
 	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
 		f.gbuffer->build(gbufferRenderView, gbufferPass, *i);
@@ -1358,7 +1359,8 @@ void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderVi
 
 				WorldRenderPassDeferred shadowPass(
 					ms_techniqueShadow,
-					shadowRenderView
+					shadowRenderView,
+					false
 				);
 				for (RefArray< Entity >::const_iterator j = m_buildEntities.begin(); j != m_buildEntities.end(); ++j)
 					f.slice[slice].shadow[i]->build(shadowRenderView, shadowPass, *j);
@@ -1396,6 +1398,7 @@ void WorldRendererDeferred::buildVisual(WorldRenderView& worldRenderView, int fr
 	WorldRenderPassDeferred defaultPreLitPass(
 		ms_techniqueDeferredColor,
 		worldRenderView,
+		false,
 		m_settings.fogEnabled,
 		m_gbufferTargetSet->getColorTexture(0) != 0
 	);

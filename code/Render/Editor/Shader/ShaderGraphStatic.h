@@ -31,6 +31,8 @@ public:
 
 	Ref< ShaderGraph > getPlatformPermutation(const std::wstring& platform) const;
 
+	Ref< ShaderGraph > getConnectedPermutation() const;
+
 	Ref< ShaderGraph > getTypePermutation() const;
 
 	Ref< ShaderGraph > getSwizzledPermutation() const;

@@ -131,8 +131,16 @@ struct BuildCombinationTask : public Object
 		Ref< const ShaderGraph > combinationGraph = combinations->getCombinationShaderGraph(combination);
 		T_ASSERT (combinationGraph);
 
+		// Get connected permutation.
+		Ref< ShaderGraph > programGraph = render::ShaderGraphStatic(combinationGraph).getConnectedPermutation();
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to freeze connected conditionals, material shader \"" << name << L"\"" << Endl;
+			return;
+		}
+
 		// Freeze type permutation.
-		Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getTypePermutation();
+		programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to get type permutation of \"" << name << L"\"" << Endl;

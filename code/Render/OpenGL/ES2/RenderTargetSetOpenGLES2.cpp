@@ -419,10 +419,80 @@ bool RenderTargetSetOpenGLES2::createFramebuffer(GLuint primaryDepthBuffer)
 	if (m_targetFBO[0] != 0)
 		return true;
 	
-	T_OGL_SAFE(glGenFramebuffers(m_desc.count, m_targetFBO));
-	for (int32_t i = 0; i < m_desc.count; ++i)
+	if (m_desc.count > 0)
 	{
-		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO[i]));
+		T_OGL_SAFE(glGenFramebuffers(m_desc.count, m_targetFBO));
+		for (int32_t i = 0; i < m_desc.count; ++i)
+		{
+			T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO[i]));
+
+			// Create depth/stencil buffer.
+			if (m_desc.createDepthStencil && !m_desc.usingPrimaryDepthStencil)
+			{
+				if (!m_desc.usingDepthStencilAsTexture)
+				{
+					T_OGL_SAFE(glFramebufferRenderbuffer(
+						GL_FRAMEBUFFER,
+						GL_DEPTH_ATTACHMENT,
+						GL_RENDERBUFFER,
+						m_depthBufferOrTexture
+					));
+
+					if (!m_desc.ignoreStencil)
+					{
+						T_OGL_SAFE(glFramebufferRenderbuffer(
+							GL_FRAMEBUFFER,
+							GL_STENCIL_ATTACHMENT,
+							GL_RENDERBUFFER,
+							m_depthBufferOrTexture
+						));
+					}
+				}
+				else
+				{
+					T_OGL_SAFE(glFramebufferTexture2D(
+						GL_FRAMEBUFFER,
+						GL_DEPTH_ATTACHMENT,
+						GL_TEXTURE_2D,
+						m_depthBufferOrTexture,
+						0
+					));
+				}
+			}
+			else if (m_desc.usingPrimaryDepthStencil)
+			{
+				T_OGL_SAFE(glFramebufferRenderbuffer(
+					GL_FRAMEBUFFER,
+					GL_DEPTH_ATTACHMENT,
+					GL_RENDERBUFFER,
+					primaryDepthBuffer
+				));
+				if (!m_desc.ignoreStencil)
+				{
+					T_OGL_SAFE(glFramebufferRenderbuffer(
+						GL_FRAMEBUFFER,
+						GL_STENCIL_ATTACHMENT,
+						GL_RENDERBUFFER,
+						primaryDepthBuffer
+					));
+				}
+			}
+
+			// Attach color target.
+			T_OGL_SAFE(glFramebufferTexture2D(
+				GL_FRAMEBUFFER,
+				GL_COLOR_ATTACHMENT0,
+				GL_TEXTURE_2D,
+				m_targetTextures[i],
+				0
+			));
+		}
+	}
+	else
+	{
+		// No color targets, just plain depth.
+		T_OGL_SAFE(glGenFramebuffers(1, m_targetFBO));
+		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO[0]));
 
 		// Create depth/stencil buffer.
 		if (m_desc.createDepthStencil && !m_desc.usingPrimaryDepthStencil)
@@ -475,16 +545,6 @@ bool RenderTargetSetOpenGLES2::createFramebuffer(GLuint primaryDepthBuffer)
 				));
 			}
 		}
-
-		// Attach color target.
-		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO[i]));
-		T_OGL_SAFE(glFramebufferTexture2D(
-			GL_FRAMEBUFFER,
-			GL_COLOR_ATTACHMENT0,
-			GL_TEXTURE_2D,
-			m_targetTextures[i],
-			0
-		));
 	}
 
 	return true;

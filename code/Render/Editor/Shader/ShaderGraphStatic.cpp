@@ -181,6 +181,46 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 	return shaderGraph;
 }
 
+Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
+{
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+
+	RefArray< Connected > nodes;
+	if (shaderGraph->findNodesOf< Connected >(nodes) <= 0)
+		return shaderGraph;
+
+	for (RefArray< Connected >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+	{
+		const InputPin* inputPin = (*i)->findInputPin(L"Input");
+		T_ASSERT (inputPin);
+
+		inputPin = (*i)->findInputPin(shaderGraph->findEdge(inputPin) ? L"True" : L"False");
+		T_ASSERT (inputPin);
+
+		Ref< Edge > sourceEdge = shaderGraph->findEdge(inputPin);
+		if (!sourceEdge)
+			return 0;
+
+		const OutputPin* outputPin = (*i)->findOutputPin(L"Output");
+		T_ASSERT (outputPin);
+
+		RefSet< Edge > destinationEdges;
+		shaderGraph->findEdges(outputPin, destinationEdges);
+
+		shaderGraph->removeEdge(sourceEdge);
+		for (RefSet< Edge >::const_iterator j = destinationEdges.begin(); j != destinationEdges.end(); ++j)
+		{
+			shaderGraph->removeEdge(*j);
+			shaderGraph->addEdge(new Edge(
+				sourceEdge->getSource(),
+				(*j)->getDestination()
+			));
+		}
+	}
+
+	return shaderGraph;
+}
+
 Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 {
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();

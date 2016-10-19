@@ -28,7 +28,7 @@ bool storeIfNotEqual(const float* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
 	{
-		if (abs(dest[i] - source[i]) > FUZZY_EPSILON)
+		if (dest[i] != source[i])
 		{
 			for (; i < length; ++i)
 				dest[i] = source[i];
@@ -42,7 +42,7 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
 	{
-		if (!compareFuzzyEqual(Vector4::loadAligned(&dest[i * 4]), source[i]))
+		if (Vector4::loadAligned(&dest[i * 4]) != source[i])
 		{
 			for (; i < length; ++i)
 				source[i].storeAligned(&dest[i * 4]);

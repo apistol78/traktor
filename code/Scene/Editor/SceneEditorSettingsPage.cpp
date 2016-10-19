@@ -35,7 +35,7 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, PropertyGroup* setti
 		return false;
 
 	Ref< ui::Container > containerSliders = new ui::Container();
-	containerSliders->create(m_container, ui::WsNone, new ui::TableLayout(L"*,300,*", L"*", 0, 4));
+	containerSliders->create(m_container, ui::WsNone, new ui::TableLayout(L"*,100%,*", L"*", 0, 4));
 
 	Ref< ui::Static > staticWorldRenderer = new ui::Static();
 	staticWorldRenderer->create(containerSliders, i18n::Text(L"SCENE_EDITOR_SETTINGS_WORLD_RENDERER"));

@@ -2529,6 +2529,10 @@
       <second>Conditional</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_CONNECTED</first>
+      <second>Connected</second>
+    </item>    
+    <item>
       <first>SHADERGRAPH_NODE_COS</first>
       <second>Cos</second>
     </item>
