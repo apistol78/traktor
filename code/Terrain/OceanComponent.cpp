@@ -267,7 +267,6 @@ void OceanComponent::render(
 
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
-		m_shader->getCurrentPriority(),
 		transform.toMatrix44(),
 		Aabb3()
 	);

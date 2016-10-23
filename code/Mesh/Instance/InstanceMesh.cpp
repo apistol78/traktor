@@ -130,7 +130,6 @@ void InstanceMesh::render(
 		batchParameters->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			batchParameters,
-			m_shader->getCurrentPriority(),
 			boundingBoxCenter,
 			boundingBoxWorld
 		);
@@ -214,7 +213,6 @@ void InstanceMesh::render(
 			batchParameters->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(
 				batchParameters,
-				m_shader->getCurrentPriority(),
 				boundingBoxCenter,
 				boundingBoxWorld
 			);

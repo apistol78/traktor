@@ -70,7 +70,6 @@ void StaticMesh::render(
 		
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			m_shader->getCurrentPriority(),
 			transform,
 			boundingBox
 		);

@@ -45,9 +45,9 @@ public:
 
 	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const = 0;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority) const = 0;
+	virtual void setProgramParameters(render::ProgramParameters* programParams) const = 0;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority, const Matrix44& world, const Aabb3& bounds) const = 0;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const = 0;
 };
 	
 	}

@@ -204,7 +204,7 @@ void RiverComponent::render(
 
 	renderBlock->programParams->beginParameters(renderContext);
 	
-	worldRenderPass.setProgramParameters(renderBlock->programParams, false);
+	worldRenderPass.setProgramParameters(renderBlock->programParams);
 
 	renderBlock->programParams->endParameters(renderContext);
 

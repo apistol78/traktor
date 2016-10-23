@@ -219,7 +219,6 @@ void ClothEntity::render(
 	renderBlock->programParams->beginParameters(renderContext);
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
-		m_shader->getCurrentPriority(),
 		m_transform.toMatrix44(),
 		m_aabb
 	);
