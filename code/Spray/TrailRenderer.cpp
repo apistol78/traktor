@@ -217,7 +217,7 @@ void TrailRenderer::flush(
 		renderBlock->maxIndex = c_trailCount * c_stripeLength * 2;
 
 		renderBlock->programParams->beginParameters(renderContext);
-		worldRenderPass.setProgramParameters(renderBlock->programParams, false);
+		worldRenderPass.setProgramParameters(renderBlock->programParams);
 		renderBlock->programParams->setVectorParameter(s_handleTimeAndAge, i->timeAndAge);
 		renderBlock->programParams->endParameters(renderContext);
 

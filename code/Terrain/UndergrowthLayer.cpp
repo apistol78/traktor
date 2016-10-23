@@ -275,7 +275,7 @@ void UndergrowthLayer::render(
 			renderBlock->instanceCount = batch;
 
 			renderBlock->programParams->beginParameters(renderContext);
-			worldRenderPass.setProgramParameters(renderBlock->programParams, false);
+			worldRenderPass.setProgramParameters(renderBlock->programParams);
 			renderBlock->programParams->setTextureParameter(s_handleNormals, terrain->getNormalMap());
 			renderBlock->programParams->setTextureParameter(s_handleHeightfield, terrain->getHeightMap());
 			renderBlock->programParams->setTextureParameter(s_handleSurface, terrainComponent.getSurfaceCache()->getBaseTexture());

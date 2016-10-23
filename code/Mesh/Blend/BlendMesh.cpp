@@ -306,7 +306,6 @@ void BlendMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			m_shader->getCurrentPriority(),
 			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);

@@ -112,26 +112,18 @@ void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader, const
 	}
 }
 
-void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams, uint32_t priority) const
+void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams) const
 {
 	setWorldProgramParameters(programParams, Matrix44::identity());
-
 	if (m_technique == s_techniqueDeferredColor)
-	{
-		if ((priority & (render::RpAlphaBlend | render::RpPostAlphaBlend)) != 0)
-			setLightProgramParameters(programParams);
-	}
+		setLightProgramParameters(programParams);
 }
 
-void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams, uint32_t priority, const Matrix44& world, const Aabb3& bounds) const
+void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const
 {
 	setWorldProgramParameters(programParams, world);
-
 	if (m_technique == s_techniqueDeferredColor)
-	{
-		if ((priority & (render::RpAlphaBlend | render::RpPostAlphaBlend)) != 0)
-			setLightProgramParameters(programParams);
-	}
+		setLightProgramParameters(programParams);
 }
 
 void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const

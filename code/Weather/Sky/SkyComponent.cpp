@@ -102,7 +102,7 @@ void SkyComponent::render(
 
 	renderBlock->programParams->beginParameters(renderContext);
 
-	worldRenderPass.setProgramParameters(renderBlock->programParams, false);
+	worldRenderPass.setProgramParameters(renderBlock->programParams);
 	
 	renderBlock->programParams->setFloatParameter(s_handleSkyDomeRadius, worldRenderView.getViewFrustum().getFarZ() - 100.0f);
 	renderBlock->programParams->setFloatParameter(s_handleSkyDomeOffset, m_offset);

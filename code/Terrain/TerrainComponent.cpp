@@ -486,7 +486,7 @@ void TerrainComponent::render(
 		else if (m_visualizeMode == VmMaterialMap)
 			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getMaterialMap());
 
-		worldRenderPass.setProgramParameters(renderBlock->programParams, render::RpOpaque);
+		worldRenderPass.setProgramParameters(renderBlock->programParams);
 
 		renderBlock->programParams->endParameters(renderContext);
 

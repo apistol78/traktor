@@ -1,6 +1,8 @@
 #include "Weather/WeatherFactory.h"
 #include "Weather/Clouds/CloudComponent.h"
 #include "Weather/Clouds/CloudComponentData.h"
+#include "Weather/Precipitation/PrecipitationComponent.h"
+#include "Weather/Precipitation/PrecipitationComponentData.h"
 #include "Weather/Sky/SkyComponent.h"
 #include "Weather/Sky/SkyComponentData.h"
 
@@ -31,6 +33,7 @@ const TypeInfoSet WeatherFactory::getEntityComponentTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< CloudComponentData >());
+	typeSet.insert(&type_of< PrecipitationComponentData >());
 	typeSet.insert(&type_of< SkyComponentData >());
 	return typeSet;
 }
@@ -49,6 +52,8 @@ Ref< world::IEntityComponent > WeatherFactory::createEntityComponent(const world
 {
 	if (const CloudComponentData* cloudComponentData = dynamic_type_cast< const CloudComponentData* >(&entityComponentData))
 		return cloudComponentData->createComponent(m_resourceManager, m_renderSystem);
+	else if (const PrecipitationComponentData* precipitationComponentData = dynamic_type_cast< const PrecipitationComponentData* >(&entityComponentData))
+		return precipitationComponentData->createComponent(m_resourceManager, m_renderSystem);
 	else if (const SkyComponentData* skyComponentData = dynamic_type_cast< const SkyComponentData* >(&entityComponentData))
 		return skyComponentData->createComponent(m_resourceManager, m_renderSystem);
 	else

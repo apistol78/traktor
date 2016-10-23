@@ -66,9 +66,9 @@ public:
 
 	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority) const T_OVERRIDE T_FINAL;
+	virtual void setProgramParameters(render::ProgramParameters* programParams) const T_OVERRIDE T_FINAL;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority, const Matrix44& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
 
 private:
 	render::handle_t m_technique;

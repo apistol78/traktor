@@ -82,7 +82,6 @@ void SkinnedMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			m_shader->getCurrentPriority(),
 			world,
 			boundingBox
 		);
