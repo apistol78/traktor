@@ -8914,6 +8914,11 @@
 											<link>LnkYes</link>
 											<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[14]/dependencies/item[2]/project"/>
+										</item>
 									</dependencies>
 								</project>
 							</item>

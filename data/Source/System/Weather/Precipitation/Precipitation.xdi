@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mesh.MeshAsset" version="12">
+	<fileName>d:/private/traktor/data/Assets/System/Weather/Precipitation.lwo</fileName>
+	<meshType>MtStatic</meshType>
+	<materialTemplates/>
+	<materialShaders>
+		<item>
+			<first>Rain</first>
+			<second>{ED547F55-1E96-634B-9B79-9D9289FA5818}</second>
+		</item>
+	</materialShaders>
+	<materialTextures>
+		<item>
+			<first>Rain</first>
+			<second>{F0EA9A0D-A635-7B42-8BB9-7B5F6BC3ED08}</second>
+		</item>
+	</materialTextures>
+	<scaleFactor>1</scaleFactor>
+	<bakeOcclusion>false</bakeOcclusion>
+	<cullDistantFaces>false</cullDistantFaces>
+	<lodSteps>8</lodSteps>
+	<lodMaxDistance>100</lodMaxDistance>
+	<lodCullDistance>200</lodCullDistance>
+</object>

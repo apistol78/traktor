@@ -36,7 +36,7 @@ bool WeatherPipeline::buildDependencies(
 		pipelineDepends->addDependency(cloudComponentData->getMask(), editor::PdfBuild | editor::PdfResource);
 	}
 	else if (const PrecipitationComponentData* precipitationComponentData = dynamic_type_cast< const PrecipitationComponentData* >(sourceAsset))
-		pipelineDepends->addDependency(precipitationComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(precipitationComponentData->getMesh(), editor::PdfBuild | editor::PdfResource);
 	else if (const SkyComponentData* skyComponentData = dynamic_type_cast< const SkyComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(skyComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	return true;

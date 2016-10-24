@@ -126,6 +126,11 @@ const RefArray< GridColumn >& GridView::getColumns() const
 	return m_columns;
 }
 
+GridColumn* GridView::getColumn(uint32_t index) const
+{
+	return m_columns[index];
+}
+
 void GridView::setSortColumn(int32_t columnIndex, bool ascending, SortMode mode)
 {
 	m_sortColumnIndex = columnIndex;

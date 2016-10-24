@@ -65,6 +65,8 @@ public:
 
 	const RefArray< GridItem >& get() const { return m_items; }
 
+	uint32_t getIndex(const GridItem* item) const;
+
 	void addChild(GridRow* row);
 
 	void insertChildBefore(GridRow* insertBefore, GridRow* row);
@@ -79,12 +81,6 @@ public:
 
 	const RefArray< GridRow >& getChildren() const { return m_children; }
 
-	virtual void placeCells(AutoWidget* widget, const Rect& rect) T_OVERRIDE T_FINAL;
-
-	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) T_OVERRIDE T_FINAL;
-
-	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE T_FINAL;
-
 private:
 	friend class GridView;
 
@@ -95,8 +91,24 @@ private:
 	RefArray< GridItem > m_items;
 	GridRow* m_parent;
 	RefArray< GridRow > m_children;
+	Point m_mouseDownPosition;
+	int32_t m_editMode;
 
 	int32_t getDepth() const;
+
+	virtual void placeCells(AutoWidget* widget, const Rect& rect) T_OVERRIDE T_FINAL;
+
+	virtual void interval() T_OVERRIDE T_FINAL;
+
+	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+
+	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+
+	virtual void mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+
+	virtual void mouseMove(MouseMoveEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+
+	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE T_FINAL;
 };
 
 		}

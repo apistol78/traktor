@@ -64,7 +64,7 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	splitter2->create(splitter, false, ui::scaleBySystemDPI(-20), true);
 
 	m_inputPinList = new ui::custom::GridView();
-	m_inputPinList->create(splitter2, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
+	m_inputPinList->create(splitter2, ui::custom::GridView::WsColumnHeader | ui::custom::GridView::WsAutoEdit| ui::WsDoubleBuffer);
 	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Input", ui::scaleBySystemDPI(90), true));
 	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::scaleBySystemDPI(70), false));
 	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Sampler", ui::scaleBySystemDPI(110), false));

@@ -1,8 +1,6 @@
-#include "Core/Misc/SafeDestroy.h"
-#include "Render/IndexBuffer.h"
-#include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
-#include "Render/Context/RenderContext.h"
+#include "Mesh/IMeshParameterCallback.h"
+#include "Mesh/Static/StaticMesh.h"
+#include "Render/Context/ProgramParameters.h"
 #include "Weather/Precipitation/PrecipitationComponent.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
@@ -12,27 +10,36 @@ namespace traktor
 {
 	namespace weather
 	{
+		namespace
+		{
+
+class PrecipitationMeshCallback : public RefCountImpl< mesh::IMeshParameterCallback >
+{
+public:
+	Vector4 m_frustumEdges[4];
+
+	virtual void setCombination(render::Shader* shader) const T_FINAL {}
+
+	virtual void setParameters(render::ProgramParameters* programParameters) const T_FINAL
+	{
+		programParameters->setVectorArrayParameter(L"Precipitation_FrustumEdges", m_frustumEdges, sizeof_array(m_frustumEdges));
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.PrecipitationComponent", PrecipitationComponent, world::IEntityComponent)
 
-PrecipitationComponent::PrecipitationComponent(
-	render::VertexBuffer* vertexBuffer,
-	render::IndexBuffer* indexBuffer,
-	const render::Primitives& primitives,
-	const resource::Proxy< render::Shader >& shader
-)
-:	m_vertexBuffer(vertexBuffer)
-,	m_indexBuffer(indexBuffer)
-,	m_primitives(primitives)
-,	m_shader(shader)
+PrecipitationComponent::PrecipitationComponent(const resource::Proxy< mesh::StaticMesh >& mesh)
+:	m_mesh(mesh)
+,	m_lastEyePosition(Vector4::origo())
+,	m_rotation(Quaternion::identity())
 {
 }
 
 void PrecipitationComponent::destroy()
 {
-	safeDestroy(m_vertexBuffer);
-	safeDestroy(m_indexBuffer);
-	m_shader.clear();
+	m_mesh.clear();
 }
 
 void PrecipitationComponent::setOwner(world::Entity* owner)
@@ -52,61 +59,45 @@ void PrecipitationComponent::update(const world::UpdateParams& update)
 {
 }
 
-void PrecipitationComponent::render(
-	render::RenderContext* renderContext,
-	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
-)
+void PrecipitationComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass)
 {
-	worldRenderPass.setShaderTechnique(m_shader);
-	worldRenderPass.setShaderCombination(m_shader);
-
-	render::IProgram* program = m_shader->getCurrentProgram();
-	if (!program)
+	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
+
+	const Matrix44& view = worldRenderView.getView();
+	Matrix44 viewInv = view.inverse();
+	Vector4 eyePosition = viewInv.translation().xyz1();
+	Vector4 movement = m_lastEyePosition - eyePosition;
+
+	Vector4 pivot = Vector4::zero();
+	Scalar angle(0.0f);
+
+	if (movement.length2() > Scalar(FUZZY_EPSILON))
+	{
+		pivot = cross(movement, Vector4(0.0f, 1.0f, 0.0f)).normalized();
+		angle = clamp(movement.length() * Scalar(0.8f), Scalar(-HALF_PI), Scalar(HALF_PI));
+	}
+
+	m_lastEyePosition = eyePosition;
+
+	Quaternion Q = Quaternion::fromAxisAngle(pivot, angle);
+	m_rotation = lerp(m_rotation, Q, 0.1f);
 
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 
-	Vector4 origins[] =
-	{
-		viewFrustum.corners[0],
-		viewFrustum.corners[1],
-		viewFrustum.corners[2],
-		viewFrustum.corners[3]
-	};
+	PrecipitationMeshCallback mc;
+	mc.m_frustumEdges[0] = viewFrustum.corners[4] - viewFrustum.corners[0];
+	mc.m_frustumEdges[1] = viewFrustum.corners[5] - viewFrustum.corners[1];
+	mc.m_frustumEdges[2] = viewFrustum.corners[6] - viewFrustum.corners[2];
+	mc.m_frustumEdges[3] = viewFrustum.corners[7] - viewFrustum.corners[3];
 
-	Vector4 edges[] =
-	{
-		viewFrustum.corners[4] - viewFrustum.corners[0],
-		viewFrustum.corners[5] - viewFrustum.corners[1],
-		viewFrustum.corners[6] - viewFrustum.corners[2],
-		viewFrustum.corners[7] - viewFrustum.corners[3]
-	};
-
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Precipitation");
-
-	// Render precipitation after all opaques but first of all alpha blended.
-	renderBlock->distance = std::numeric_limits< float >::max();
-	renderBlock->program = program;
-	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-	renderBlock->indexBuffer = m_indexBuffer;
-	renderBlock->vertexBuffer = m_vertexBuffer;
-	renderBlock->primitives = m_primitives;
-
-	renderBlock->programParams->beginParameters(renderContext);
-
-	worldRenderPass.setProgramParameters(renderBlock->programParams);
-
-	renderBlock->programParams->setVectorArrayParameter(L"Precipitation_FrustumOrigins", origins, sizeof_array(origins));
-	renderBlock->programParams->setVectorArrayParameter(L"Precipitation_FrustumEdges", edges, sizeof_array(edges));
-	
-	//renderBlock->programParams->setFloatParameter(s_handleSkyDomeRadius, worldRenderView.getViewFrustum().getFarZ() - 100.0f);
-	//renderBlock->programParams->setFloatParameter(s_handleSkyDomeOffset, m_offset);
-	//renderBlock->programParams->setVectorParameter(s_handleSunDirection, m_sunDirection);
-
-	renderBlock->programParams->endParameters(renderContext);
-
-	renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
+	m_mesh->render(
+		worldContext.getRenderContext(),
+		worldRenderPass,
+		Transform(m_rotation),
+		0.0f,
+		&mc
+	);
 }
 
 	}

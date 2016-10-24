@@ -67,20 +67,8 @@ private:
 	std::wstring m_text;
 	Ref< Font > m_font;
 	Ref< IBitmap > m_image;
-	Point m_mouseDownPosition;
-	int32_t m_editMode;
 
 	virtual AutoWidgetCell* hitTest(const Point& position) T_OVERRIDE T_FINAL;
-
-	virtual void interval() T_OVERRIDE T_FINAL;
-
-	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) T_OVERRIDE T_FINAL;
-
-	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position) T_OVERRIDE T_FINAL;
-
-	virtual void mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position) T_OVERRIDE T_FINAL;
-
-	virtual void mouseMove(MouseMoveEvent* event, const Point& position) T_OVERRIDE T_FINAL;
 
 	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE T_FINAL;
 };
