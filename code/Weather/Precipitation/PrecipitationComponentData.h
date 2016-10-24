@@ -14,11 +14,10 @@
 
 namespace traktor
 {
-	namespace render
+	namespace mesh
 	{
 
-class IRenderSystem;
-class Shader;
+class StaticMesh;
 
 	}
 
@@ -44,16 +43,14 @@ class T_DLLCLASS PrecipitationComponentData : public world::IEntityComponentData
 public:
 	PrecipitationComponentData();
 
-	Ref< PrecipitationComponent > createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+	Ref< PrecipitationComponent > createComponent(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
-	const resource::Id< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< mesh::StaticMesh >& getMesh() const { return m_mesh; }
 
 private:
-	resource::Id< render::Shader > m_shader;
-	uint32_t m_layers;
-	float m_distance;
+	resource::Id< mesh::StaticMesh > m_mesh;
 };
 
 	}

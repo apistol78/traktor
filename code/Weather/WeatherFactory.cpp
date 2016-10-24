@@ -53,7 +53,7 @@ Ref< world::IEntityComponent > WeatherFactory::createEntityComponent(const world
 	if (const CloudComponentData* cloudComponentData = dynamic_type_cast< const CloudComponentData* >(&entityComponentData))
 		return cloudComponentData->createComponent(m_resourceManager, m_renderSystem);
 	else if (const PrecipitationComponentData* precipitationComponentData = dynamic_type_cast< const PrecipitationComponentData* >(&entityComponentData))
-		return precipitationComponentData->createComponent(m_resourceManager, m_renderSystem);
+		return precipitationComponentData->createComponent(m_resourceManager);
 	else if (const SkyComponentData* skyComponentData = dynamic_type_cast< const SkyComponentData* >(&entityComponentData))
 		return skyComponentData->createComponent(m_resourceManager, m_renderSystem);
 	else

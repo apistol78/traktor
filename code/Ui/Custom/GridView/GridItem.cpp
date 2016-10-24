@@ -3,6 +3,7 @@
 #include "Ui/IBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
+#include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridView.h"
@@ -17,33 +18,28 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridItem", GridItem, AutoWidgetCell)
 
 GridItem::GridItem()
-:	m_editMode(0)
 {
 }
 
 GridItem::GridItem(const std::wstring& text)
 :	m_text(text)
-,	m_editMode(0)
 {
 }
 
 GridItem::GridItem(const std::wstring& text, Font* font)
 :	m_text(text)
 ,	m_font(font)
-,	m_editMode(0)
 {
 }
 
 GridItem::GridItem(const std::wstring& text, IBitmap* image)
 :	m_text(text)
 ,	m_image(image)
-,	m_editMode(0)
 {
 }
 
 GridItem::GridItem(IBitmap* image)
 :	m_image(image)
-,	m_editMode(0)
 {
 }
 
@@ -59,7 +55,7 @@ std::wstring GridItem::getText() const
 
 bool GridItem::edit()
 {
-	GridView* gridView = checked_type_cast< GridView*, false >(getWidget());
+	GridView* gridView = mandatory_non_null_type_cast< GridView* >(getWidget());
 	gridView->beginEdit(this);
 	return true;
 }
@@ -106,66 +102,6 @@ AutoWidgetCell* GridItem::hitTest(const Point& position)
 	// Not allowed to pick items; entire row must be picked as selection
 	// is handled by the GridView class.
 	return 0;
-}
-
-void GridItem::interval()
-{
-	// Cancel pending edit.
-	if (m_editMode != 0)
-		m_editMode = 0;
-}
-
-void GridItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
-{
-	m_mouseDownPosition = position;
-
-	if (true /*m_editable*/)
-	{
-		if (m_editMode == 0)
-		{
-			// Wait for next tap; cancel wait after 2 seconds.
-			getWidget()->requestInterval(this, 2000);
-			m_editMode = 1;
-		}
-		else if (m_editMode == 1)
-		{
-			// Double tap detected; begin edit after mouse is released.
-			getWidget()->requestInterval(this, 1000);
-			m_editMode = 2;
-		}
-	}
-
-	getWidget()->requestUpdate();
-}
-
-void GridItem::mouseUp(MouseButtonUpEvent* event, const Point& position)
-{
-	if (m_editMode == 2)
-	{
-		//if (m_view->m_autoEdit)
-		//	m_view->beginEdit(this);
-		m_editMode = 0;
-	}
-}
-
-void GridItem::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position)
-{
-	// Ensure edit isn't triggered.
-	m_editMode = 0;
-
-	//// Raise activation event.
-	//TreeViewItemActivateEvent activateEvent(m_view, this);
-	//m_view->raiseEvent(&activateEvent);
-}
-
-void GridItem::mouseMove(MouseMoveEvent* event, const Point& position)
-{
-	Size d = position - m_mouseDownPosition;
-	if (abs(d.cx) > scaleBySystemDPI(2) || abs(d.cy) > scaleBySystemDPI(2))
-	{
-		// Ensure edit isn't triggered if mouse moved during edit state tracking.
-		m_editMode = 0;
-	}
 }
 
 void GridItem::paint(Canvas& canvas, const Rect& rect)

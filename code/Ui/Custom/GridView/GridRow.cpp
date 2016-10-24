@@ -27,6 +27,7 @@ GridRow::GridRow(uint32_t initialState)
 ,	m_background(255, 255, 255, 0)
 ,	m_minimumHeight(0)
 ,	m_parent(0)
+,	m_editMode(0)
 {
 	m_expand = new ui::StyleBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
 }
@@ -88,6 +89,12 @@ Ref< GridItem > GridRow::get(uint32_t index) const
 	return index < m_items.size() ? m_items[index] : 0;
 }
 
+uint32_t GridRow::getIndex(const GridItem* item) const
+{
+	RefArray< GridItem >::const_iterator i = std::find(m_items.begin(), m_items.end(), item);
+	return (i != m_items.end()) ? std::distance(m_items.begin(), i) : 0;
+}
+
 void GridRow::addChild(GridRow* row)
 {
 	T_ASSERT (!row->m_parent);
@@ -130,6 +137,14 @@ void GridRow::removeAllChildren()
 	m_children.clear();
 }
 
+int32_t GridRow::getDepth() const
+{
+	int32_t depth = 0;
+	for (GridRow* row = m_parent; row; row = row->m_parent)
+		++depth;
+	return depth;
+}
+
 void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 {
 	GridView* gridView = checked_type_cast< GridView*, false >(widget);
@@ -165,6 +180,13 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 	AutoWidgetCell::placeCells(widget, rect);
 }
 
+void GridRow::interval()
+{
+	// Cancel pending edit.
+	if (m_editMode != 0)
+		m_editMode = 0;
+}
+
 void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
 	// Handle expand/collapse.
@@ -183,7 +205,62 @@ void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 			GridRowStateChangeEvent expandEvent(getWidget(), this);
 			getWidget()->raiseEvent(&expandEvent);
 			getWidget()->requestUpdate();
+			return;
 		}
+	}
+
+	m_mouseDownPosition = position;
+
+	if (true /*m_editable*/)
+	{
+		if (m_editMode == 0)
+		{
+			// Wait for next tap; cancel wait after 2 seconds.
+			getWidget()->requestInterval(this, 2000);
+			m_editMode = 1;
+		}
+		else if (m_editMode == 1)
+		{
+			// Double tap detected; begin edit after mouse is released.
+			getWidget()->requestInterval(this, 1000);
+			m_editMode = 2;
+		}
+	}
+
+	getWidget()->requestUpdate();
+}
+
+void GridRow::mouseUp(MouseButtonUpEvent* event, const Point& position)
+{
+	if (m_editMode == 2)
+	{
+		GridView* view = mandatory_non_null_type_cast< GridView* >(getWidget());
+
+		int32_t index = view->getColumnIndex(position.x);
+		if (index >= 0)
+		{
+			const GridColumn* column = view->getColumn(index);
+			if (column && column->isEditable())
+				view->beginEdit(m_items[index]);
+		}
+
+		m_editMode = 0;
+	}
+}
+
+void GridRow::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position)
+{
+	// Ensure edit isn't triggered.
+	m_editMode = 0;
+}
+
+void GridRow::mouseMove(MouseMoveEvent* event, const Point& position)
+{
+	Size d = position - m_mouseDownPosition;
+	if (abs(d.cx) > scaleBySystemDPI(2) || abs(d.cy) > scaleBySystemDPI(2))
+	{
+		// Ensure edit isn't triggered if mouse moved during edit state tracking.
+		m_editMode = 0;
 	}
 }
 
@@ -236,14 +313,6 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	}
 
 	canvas.drawLine(0, rect.bottom - 1, rect.getWidth(), rect.bottom - 1);
-}
-
-int32_t GridRow::getDepth() const
-{
-	int32_t depth = 0;
-	for (GridRow* row = m_parent; row; row = row->m_parent)
-		++depth;
-	return depth;
 }
 
 		}

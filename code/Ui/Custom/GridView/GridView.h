@@ -61,6 +61,8 @@ public:
 
 	void addColumn(GridColumn* column);
 
+	GridColumn* getColumn(uint32_t index) const;
+
 	const RefArray< GridColumn >& getColumns() const;
 
 	void setSortColumn(int32_t columnIndex, bool ascending, SortMode mode);
@@ -87,6 +89,7 @@ public:
 
 private:
 	friend class GridItem;
+	friend class GridRow;
 
 	Ref< GridHeader > m_header;
 	RefArray< GridColumn > m_columns;

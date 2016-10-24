@@ -15,13 +15,10 @@
 
 namespace traktor
 {
-	namespace render
+	namespace mesh
 	{
 
-class IndexBuffer;
-class RenderContext;
-class Shader;
-class VertexBuffer;
+class StaticMesh;
 
 	}
 
@@ -29,6 +26,7 @@ class VertexBuffer;
 	{
 
 class IWorldRenderPass;
+class WorldContext;
 class WorldRenderView;
 
 	}
@@ -44,12 +42,7 @@ class T_DLLCLASS PrecipitationComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	PrecipitationComponent(
-		render::VertexBuffer* vertexBuffer,
-		render::IndexBuffer* indexBuffer,
-		const render::Primitives& primitives,
-		const resource::Proxy< render::Shader >& shader
-	);
+	PrecipitationComponent(const resource::Proxy< mesh::StaticMesh >& mesh);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
@@ -61,17 +54,12 @@ public:
 
 	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
-	void render(
-		render::RenderContext* renderContext,
-		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
-	);
+	void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass);
 
 private:
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
-	render::Primitives m_primitives;
-	resource::Proxy< render::Shader > m_shader;
+	resource::Proxy< mesh::StaticMesh > m_mesh;
+	Vector4 m_lastEyePosition;
+	Quaternion m_rotation;
 };
 
 	}
