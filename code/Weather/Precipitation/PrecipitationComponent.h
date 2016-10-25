@@ -42,7 +42,13 @@ class T_DLLCLASS PrecipitationComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	PrecipitationComponent(const resource::Proxy< mesh::StaticMesh >& mesh);
+	PrecipitationComponent(
+		const resource::Proxy< mesh::StaticMesh >& mesh,
+		float tiltRate,
+		float parallaxDistance,
+		float depthDistance,
+		float opacity
+	);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
@@ -58,8 +64,13 @@ public:
 
 private:
 	resource::Proxy< mesh::StaticMesh > m_mesh;
+	float m_tiltRate;
+	float m_parallaxDistance;
+	float m_depthDistance;
+	float m_opacity;
 	Vector4 m_lastEyePosition;
 	Quaternion m_rotation;
+	float m_layerAngle[4];
 };
 
 	}

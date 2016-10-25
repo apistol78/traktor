@@ -51,6 +51,10 @@ public:
 
 private:
 	resource::Id< mesh::StaticMesh > m_mesh;
+	float m_tiltRate;
+	float m_parallaxDistance;
+	float m_depthDistance;
+	float m_opacity;
 };
 
 	}
