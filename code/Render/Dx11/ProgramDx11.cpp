@@ -240,7 +240,17 @@ void ProgramDx11::destroy()
 
 void ProgramDx11::setFloatParameter(handle_t handle, float param)
 {
-	setFloatArrayParameter(handle, &param, 1);
+	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
+	if (i != m_parameterMap.end())
+	{
+		if (storeIfNotEqual(&param, 1, &m_parameterFloatArray[i->second.offset]))
+		{
+			if (i->second.cbuffer[0])
+				i->second.cbuffer[0]->dirty = true;
+			if (i->second.cbuffer[1])
+				i->second.cbuffer[1]->dirty = true;
+		}
+	}
 }
 
 void ProgramDx11::setFloatArrayParameter(handle_t handle, const float* param, int length)
@@ -248,14 +258,18 @@ void ProgramDx11::setFloatArrayParameter(handle_t handle, const float* param, in
 	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT (length <= i->second.count);
-		if (storeIfNotEqual(param, length, &m_parameterFloatArray[i->second.offset]))
+		float* out = &m_parameterFloatArray[i->second.offset];
+		for (int j = 0; j < length - 1; ++j)
 		{
-			if (i->second.cbuffer[0])
-				i->second.cbuffer[0]->dirty = true;
-			if (i->second.cbuffer[1])
-				i->second.cbuffer[1]->dirty = true;
+			Vector4(Scalar(param[j])).storeAligned(out);
+			out += 4;
 		}
+		*out++ = param[length - 1];
+
+		if (i->second.cbuffer[0])
+			i->second.cbuffer[0]->dirty = true;
+		if (i->second.cbuffer[1])
+			i->second.cbuffer[1]->dirty = true;
 	}
 }
 
