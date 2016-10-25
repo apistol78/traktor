@@ -68,10 +68,11 @@ Ref< ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instan
 		if (cachedLastModifyDate == lastModifyDate)
 		{
 			Ref< ISerializable > object = BinarySerializer(&bufferedStream).readObject();
-			T_FATAL_ASSERT (object);
-
-			m_readCache[instanceGuid] = object;
-			return object;
+			if (object)
+			{
+				m_readCache[instanceGuid] = object;
+				return object;
+			}
 		}
 
 		bufferedStream.close();
