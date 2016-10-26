@@ -145,9 +145,11 @@ private:
 	uint32_t m_count;
 	Vector4 m_fogColor;
 
-	void buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame);
+	void buildDepth(WorldRenderView& worldRenderView, int frame);
 
-	void buildNoShadows(WorldRenderView& worldRenderView, Entity* entity, int frame);
+	void buildShadows(WorldRenderView& worldRenderView, int frame);
+
+	void buildNoShadows(WorldRenderView& worldRenderView, int frame);
 };
 
 	}

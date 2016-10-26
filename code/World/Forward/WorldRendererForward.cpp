@@ -550,7 +550,10 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 	Frame& f = m_frames[frame];
 
 	if (f.haveDepth)
+	{
 		f.depth->getRenderContext()->flush();
+		f.haveDepth = false;
+	}
 
 	if (f.haveShadows)
 	{
@@ -569,33 +572,12 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 	f.time = worldRenderView.getTime();
 
 	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
-	{
-		WorldRenderPassForward pass(
-			s_techniqueDepth,
-			worldRenderView,
-			true,
-			0,
-			0
-		);
-		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-			f.depth->build(worldRenderView, pass, *i);
-		f.depth->flush(worldRenderView, pass);
-
-		f.haveDepth = true;
-	}
-	else
-		f.haveDepth = false;
+		buildDepth(worldRenderView, frame);
 
 	if (m_shadowsQuality > QuDisabled)
-	{
-		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-			buildShadows(worldRenderView, *i, frame);
-	}
+		buildShadows(worldRenderView, frame);
 	else
-	{
-		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-			buildNoShadows(worldRenderView, *i, frame);
-	}
+		buildNoShadows(worldRenderView, frame);
 
 	// Prepare stereoscopic projection.
 	float screenWidth = float(m_renderView->getWidth());
@@ -901,7 +883,25 @@ void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& o
 		outTargets.push_back(render::DebugTarget(L"Shadow mask (SS filtered)", render::DtvShadowMask, m_shadowMaskFilterTargetSet->getColorTexture(0)));
 }
 
-void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
+void WorldRendererForward::buildDepth(WorldRenderView& worldRenderView, int frame)
+{
+	Frame& f = m_frames[frame];
+
+	WorldRenderPassForward pass(
+		s_techniqueDepth,
+		worldRenderView,
+		true,
+		0,
+		0
+	);
+	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+		f.depth->build(worldRenderView, pass, *i);
+	f.depth->flush(worldRenderView, pass);
+
+	f.haveDepth = true;
+}
+
+void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int frame)
 {
 	// Find first directional light casting shadow.
 	const Light* shadowLight = 0;
@@ -918,7 +918,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	// If no shadow casting light found, we do simple path.
 	if (!shadowLight)
 	{
-		buildNoShadows(worldRenderView, entity, frame);
+		buildNoShadows(worldRenderView, frame);
 		return;
 	}
 
@@ -977,7 +977,8 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 			0,
 			0
 		);
-		f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
+		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+			f.slice[slice].shadow->build(shadowRenderView, shadowPass, *i);
 		f.slice[slice].shadow->flush(shadowRenderView, shadowPass);
 		
 		f.slice[slice].shadowLightView = shadowLightView;
@@ -1008,7 +1009,8 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
 		shadowMask->getColorTexture(0)
 	);
-	f.visual->build(worldRenderView, defaultPass, entity);
+	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+		f.visual->build(worldRenderView, defaultPass, *i);
 	f.visual->flush(worldRenderView, defaultPass);
 
 	f.projection = worldRenderView.getProjection();
@@ -1017,7 +1019,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	f.haveShadows = true;
 }
 
-void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
+void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -1037,7 +1039,8 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
 		0
 	);
-	f.visual->build(worldRenderView, defaultPass, entity);
+	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+		f.visual->build(worldRenderView, defaultPass, *i);
 	f.visual->flush(worldRenderView, defaultPass);
 
 	f.projection = worldRenderView.getProjection();
