@@ -215,6 +215,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	glslang::GlslangToSpv(*program->getIntermediate(EShLangVertex), programResource->m_vertexShader);
 	glslang::GlslangToSpv(*program->getIntermediate(EShLangFragment), programResource->m_fragmentShader);
 
+	/*
 	// Disassemble SPIR-V.
 	std::ostringstream vos;
 	spv::Disassemble(vos, programResource->m_vertexShader);
@@ -225,6 +226,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	spv::Disassemble(fos, programResource->m_fragmentShader);
 	log::info << L"Fragment SPIRV:" << Endl;
 	log::info << mbstows(fos.str()) << Endl;
+	*/
 
 	// \note Need to delete program before shaders due to glslang weirdness.
 	delete program;

@@ -8,9 +8,14 @@ namespace traktor
 GlslShader::GlslShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
 ,	m_nextTemporaryVariable(0)
+,	m_needTargetSize(false)
 {
 	pushScope();
-	pushOutputStream(BtUniform, new StringOutputStream());
+	pushOutputStream(BtCBufferOnce, new StringOutputStream());
+	pushOutputStream(BtCBufferFrame, new StringOutputStream());
+	pushOutputStream(BtCBufferDraw, new StringOutputStream());
+	pushOutputStream(BtTextures, new StringOutputStream());
+	pushOutputStream(BtSamplers, new StringOutputStream());
 	pushOutputStream(BtInput, new StringOutputStream());
 	pushOutputStream(BtOutput, new StringOutputStream());
 	pushOutputStream(BtScript, new StringOutputStream());
@@ -23,7 +28,11 @@ GlslShader::~GlslShader()
 	popOutputStream(BtScript);
 	popOutputStream(BtOutput);
 	popOutputStream(BtInput);
-	popOutputStream(BtUniform);
+	popOutputStream(BtSamplers);
+	popOutputStream(BtTextures);
+	popOutputStream(BtCBufferDraw);
+	popOutputStream(BtCBufferFrame);
+	popOutputStream(BtCBufferOnce);
 	popScope();
 }
 
@@ -95,6 +104,11 @@ void GlslShader::popScope()
 	m_variables.pop_back();
 }
 
+void GlslShader::allocateTargetSize()
+{
+	m_needTargetSize = true;
+}
+
 void GlslShader::addUniform(const std::wstring& uniform)
 {
 	m_uniforms.insert(uniform);
@@ -141,7 +155,7 @@ std::wstring GlslShader::getGeneratedShader() const
 {
 	StringOutputStream ss;
 
-	ss << L"#version 400" << Endl;
+	ss << L"#version 450" << Endl;
 	ss << L"#extension GL_ARB_separate_shader_objects : enable" << Endl;
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
 	ss << Endl;
@@ -149,23 +163,93 @@ std::wstring GlslShader::getGeneratedShader() const
 	if (m_shaderType == StFragment)
 	{
 		// Add fragment outputs.
-		ss << L"out vec4 _gl_FragData_0;" << Endl;
-		ss << L"out vec4 _gl_FragData_1;" << Endl;
-		ss << L"out vec4 _gl_FragData_2;" << Endl;
-		ss << L"out vec4 _gl_FragData_3;" << Endl;
+		ss << L"layout (location = 0) out vec4 _gl_FragData_0;" << Endl;
+		ss << L"layout (location = 1) out vec4 _gl_FragData_1;" << Endl;
+		ss << L"layout (location = 2) out vec4 _gl_FragData_2;" << Endl;
+		ss << L"layout (location = 3) out vec4 _gl_FragData_3;" << Endl;
+		ss << Endl;
 	}
 
-	//ss << L"uniform vec2 _gl_targetSize;" << Endl;
-	//ss << Endl;
+	std::wstring cbufferOnceText = getOutputStream(BtCBufferOnce).str();
+	if (!cbufferOnceText.empty())
+	{
+		ss << L"layout (binding = 0) uniform cbOnce" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
 
-	ss << getOutputStream(BtUniform).str();
-	ss << Endl;
-	ss <<getOutputStream(BtInput).str();
-	ss << Endl;
-	ss << getOutputStream(BtOutput).str();
-	ss << Endl;
-	ss << getOutputStream(BtScript).str();
-	ss << Endl;
+		ss << cbufferOnceText;
+
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
+	std::wstring cbufferFrameText = getOutputStream(BtCBufferFrame).str();
+	if (!cbufferFrameText.empty() || m_needTargetSize)
+	{
+		ss << L"layout (binding = 1) uniform cbFrame" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
+
+		ss << cbufferFrameText;
+
+		if (m_needTargetSize)
+			ss << L"vec2 _gl_targetSize;" << Endl;
+
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
+	std::wstring cbufferDrawText = getOutputStream(BtCBufferDraw).str();
+	if (!cbufferDrawText.empty())
+	{
+		ss << L"layout (binding = 2) uniform cbDraw" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
+
+		ss << cbufferDrawText;
+
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
+	std::wstring texturesText = getOutputStream(BtTextures).str();
+	if (!texturesText.empty())
+	{
+		ss << texturesText;
+		ss << Endl;
+	}
+
+	std::wstring samplersText = getOutputStream(BtSamplers).str();
+	if (!samplersText.empty())
+	{
+		ss << samplersText;
+		ss << Endl;
+	}
+
+	std::wstring inputText = getOutputStream(BtInput).str();
+	if (!inputText.empty())
+	{
+		ss << inputText;
+		ss << Endl;
+	}
+
+	std::wstring outputText = getOutputStream(BtOutput).str();
+	if (!outputText.empty())
+	{
+		ss << outputText;
+		ss << Endl;
+	}
+
+	std::wstring scriptText = getOutputStream(BtScript).str();
+	if (!scriptText.empty())
+	{
+		ss << scriptText;
+		ss << Endl;
+	}
+
 	ss << L"void main()" << Endl;
 	ss << L"{" << Endl;
 	ss << IncreaseIndent;

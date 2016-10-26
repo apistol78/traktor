@@ -32,7 +32,11 @@ public:
 
 	enum BlockType
 	{
-		BtUniform,
+		BtCBufferOnce,
+		BtCBufferFrame,
+		BtCBufferDraw,
+		BtTextures,
+		BtSamplers,
 		BtInput,
 		BtOutput,
 		BtScript,
@@ -62,6 +66,8 @@ public:
 
 	void popScope();
 
+	void allocateTargetSize();
+
 	void addUniform(const std::wstring& uniform);
 
 	const std::set< std::wstring >& getUniforms() const;
@@ -87,6 +93,7 @@ private:
 	std::set< std::wstring > m_uniforms;
 	std::set< std::wstring > m_scriptSignatures;
 	int32_t m_nextTemporaryVariable;
+	bool m_needTargetSize;
 	RefArray< StringOutputStream > m_outputStreams[BtLast];
 };
 
