@@ -416,8 +416,9 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 	if (uniforms.find(node->getParameterName()) == uniforms.end())
 	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		fu << L"uniform " << glsl_type_name(out->getType()) << L" " << node->getParameterName() << L"[" << node->getLength() << L"];" << Endl;
+		const GlslShader::BlockType c_blockType[] = { GlslShader::BtCBufferOnce, GlslShader::BtCBufferFrame, GlslShader::BtCBufferDraw };
+		StringOutputStream& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
+		fu << glsl_type_name(out->getType()) << L" " << node->getParameterName() << L"[" << node->getLength() << L"];" << Endl;
 		cx.getShader().addUniform(node->getParameterName());
 	}
 
@@ -523,13 +524,8 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 		StringOutputStream& fvo = cx.getVertexShader().getOutputStream(GlslShader::BtOutput);
 		StringOutputStream& fpi = cx.getFragmentShader().getOutputStream(GlslShader::BtInput);
 
-#if !defined(T_OPENGL_ES2)
-		fvo << L"out vec4 " << interpolatorName << L";" << Endl;
-		fpi << L"in vec4 " << interpolatorName << L";" << Endl;
-#else
-		fvo << L"varying vec4 " << interpolatorName << L";" << Endl;
-		fpi << L"varying vec4 " << interpolatorName << L";" << Endl;
-#endif
+		fvo << L"layout (location = " << interpolatorId << L") out vec4 " << interpolatorName << L";" << Endl;
+		fpi << L"layout (location = " << interpolatorId << L") in vec4 " << interpolatorName << L";" << Endl;
 	}
 
 	return true;
@@ -1386,7 +1382,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 	if (cx.getShader().getUniforms().find(samplerName) == cx.getShader().getUniforms().end())
 	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
+		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtSamplers);
 		if (samplerState.compare == CfNone)
 		{
 			switch (texture->getType())
@@ -1668,7 +1664,7 @@ bool emitScript(GlslContext& cx, Script* node)
 
 			if (cx.getShader().getUniforms().find(samplerId) == cx.getShader().getUniforms().end())
 			{
-				StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
+				StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtSamplers);
 				if (samplerState.compare == CfNone)
 				{
 					fu << L"uniform sampler2D " << samplerId << L";" << Endl;
@@ -2065,31 +2061,37 @@ bool emitTargetSize(GlslContext& cx, TargetSize* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
 	assign(f, out) << L"_gl_targetSize;" << Endl;
+	cx.getShader().allocateTargetSize();
 	return true;
 }
 
 bool emitTextureSize(GlslContext& cx, TextureSize* node)
 {
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	if (!in || in->getType() < GtTexture2D)
 		return false;
 
-	std::wstring uniformName = L"_gl_textureSize_" + in->getName();
+	std::wstring textureName = in->getName();
 
-	GlslVariable* out = cx.getShader().createVariable(
-		node->findOutputPin(L"Output"),
-		uniformName,
-		GtFloat4
-	);
-    if (!out)
-        return false;
-
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(uniformName) == uniforms.end())
+	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat3);
+	switch (in->getType())
 	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		fu << L"uniform vec4 " << uniformName << L";" << Endl;
-		cx.getShader().addUniform(uniformName);
+	case GtTexture2D:
+		f << L"vec3 " << out->getName() << L" = vec3(textureSize(_gl_sampler_" << textureName << L", 0).xy, 0.0f);" << Endl;
+		break;
+
+	case GtTexture3D:
+		f << L"vec3 " << out->getName() << L" = textureSize(_gl_sampler_" << textureName << L", 0);" << Endl;
+		break;
+
+	case GtTextureCube:
+		f << L"vec3 " << out->getName() << L" = textureSize(_gl_sampler_" << textureName << L", 0);" << Endl;
+		break;
+
+	default:
+		return false;
 	}
 
 	return true;
@@ -2142,8 +2144,9 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 		if (uniforms.find(node->getParameterName()) == uniforms.end())
 		{
-			StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-			fu << L"uniform " << glsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
+			const GlslShader::BlockType c_blockType[] = { GlslShader::BtCBufferOnce, GlslShader::BtCBufferFrame, GlslShader::BtCBufferDraw };
+			StringOutputStream& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
+			fu << glsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
 			cx.getShader().addUniform(node->getParameterName());
 		}
 
