@@ -23,10 +23,41 @@ extern PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
 extern PFN_vkCreateCommandPool vkCreateCommandPool;
 extern PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers;
 extern PFN_vkCreateShaderModule vkCreateShaderModule;
+extern PFN_vkCreateFence vkCreateFence;
+extern PFN_vkBeginCommandBuffer vkBeginCommandBuffer;
+extern PFN_vkCmdPipelineBarrier vkCmdPipelineBarrier;
+extern PFN_vkEndCommandBuffer vkEndCommandBuffer;
+extern PFN_vkQueueSubmit vkQueueSubmit;
+extern PFN_vkWaitForFences vkWaitForFences;
+extern PFN_vkResetFences vkResetFences;
+extern PFN_vkResetCommandBuffer vkResetCommandBuffer;
+extern PFN_vkCreateImageView vkCreateImageView;
+extern PFN_vkCreateBuffer vkCreateBuffer;
+extern PFN_vkGetBufferMemoryRequirements vkGetBufferMemoryRequirements;
+extern PFN_vkAllocateMemory vkAllocateMemory;
+extern PFN_vkMapMemory vkMapMemory;
+extern PFN_vkUnmapMemory vkUnmapMemory;
+extern PFN_vkBindBufferMemory vkBindBufferMemory;
+extern PFN_vkCreateSemaphore vkCreateSemaphore;
+extern PFN_vkCmdBeginRenderPass vkCmdBeginRenderPass;
+extern PFN_vkDestroySemaphore vkDestroySemaphore;
+extern PFN_vkDestroyFence vkDestroyFence;
+extern PFN_vkCreateImage vkCreateImage;
+extern PFN_vkGetImageMemoryRequirements vkGetImageMemoryRequirements;
+extern PFN_vkBindImageMemory vkBindImageMemory;
+extern PFN_vkCreateRenderPass vkCreateRenderPass;
+extern PFN_vkCreateFramebuffer vkCreateFramebuffer;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;
 extern PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
+extern PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR;
+extern PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
+extern PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModesKHR;
+extern PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR;
+extern PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR;
+extern PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR;
+extern PFN_vkQueuePresentKHR vkQueuePresentKHR;
 
 bool initializeVulkanApi();
 

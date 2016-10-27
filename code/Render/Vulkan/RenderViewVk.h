@@ -1,6 +1,12 @@
 #ifndef traktor_render_RenderViewVk_H
 #define traktor_render_RenderViewVk_H
 
+#define VK_USE_PLATFORM_WIN32_KHR
+#define VK_NO_PROTOTYPES
+#include <vulkan.h>
+
+#include <list>
+#include "Core/Containers/AlignedVector.h"
 #include "Render/IRenderView.h"
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
@@ -24,9 +30,19 @@ class RenderViewVk
 
 public:
 #if defined(_WIN32)
-	RenderViewVk(Window* window);
+	RenderViewVk(
+		Window* window,
+		VkDevice device,
+		VkSwapchainKHR swapChain,
+		VkQueue presentQueue,
+		VkCommandBuffer drawCmdBuffer,
+		const AlignedVector< VkImage >& presentImages,
+		VkImage depthImage,
+		VkRenderPass renderPass,
+		const AlignedVector< VkFramebuffer >& frameBuffers
+	);
 #else
-	RenderViewVk();
+	RenderViewVk(VkDevice device);
 #endif
 
 	virtual ~RenderViewVk();
@@ -90,7 +106,23 @@ public:
 private:
 #if defined(_WIN32)
 	Ref< Window > m_window;
+#endif
+	VkDevice m_device;
+#if defined(_WIN32)
+	VkSwapchainKHR m_swapChain;
+	VkQueue m_presentQueue;
+	uint32_t m_currentImageIndex;
+#endif
+	VkCommandBuffer m_drawCmdBuffer;
+	AlignedVector< VkImage > m_presentImages;
+	VkImage m_depthImage;
+	VkRenderPass m_renderPass;
+	AlignedVector< VkFramebuffer > m_frameBuffers;
+	VkSemaphore m_presentCompleteSemaphore;
+	VkSemaphore m_renderingCompleteSemaphore;
+	std::list< RenderEvent > m_eventQueue;
 
+#if defined(_WIN32)
 	// \name IWindowListener implementation.
 	// \{
 

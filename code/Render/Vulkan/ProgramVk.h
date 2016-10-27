@@ -1,6 +1,10 @@
 #ifndef traktor_render_ProgramVk_H
 #define traktor_render_ProgramVk_H
 
+#define VK_USE_PLATFORM_WIN32_KHR
+#define VK_NO_PROTOTYPES
+#include <vulkan.h>
+
 #include "Render/IProgram.h"
 
 namespace traktor
@@ -8,7 +12,6 @@ namespace traktor
 	namespace render
 	{
 
-class ContextVk;
 class ProgramResourceVk;
 
 /*!
@@ -19,7 +22,7 @@ class ProgramVk : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramVk(ContextVk* sharedContext);
+	ProgramVk(VkDevice device);
 
 	virtual ~ProgramVk();
 
@@ -44,7 +47,7 @@ public:
 	virtual void setStencilReference(uint32_t stencilReference) T_OVERRIDE T_FINAL;
 
 private:
-	Ref< ContextVk > m_sharedContext;
+	VkDevice m_device;
 };
 
 	}

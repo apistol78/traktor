@@ -85,7 +85,14 @@ private:
 #if defined(_WIN32)
 	Ref< Window > m_window;
 #endif
-	Ref< ContextVk > m_sharedContext;
+	//Ref< ContextVk > m_sharedContext;
+
+	VkInstance m_instance;
+	VkSurfaceKHR m_surface;
+	VkPhysicalDevice m_physicalDevice;
+	uint32_t m_physicalDeviceQueueIndex;
+	VkDevice m_device;
+	bool m_haveValidationLayer;
 };
 
 	}
