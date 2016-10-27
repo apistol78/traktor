@@ -1,9 +1,8 @@
+#include "Render/Vulkan/ProgramVk.h"
+#include "Render/Vulkan/ProgramResourceVk.h"
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/ApiLoader.h"
 #endif
-#include "Render/Vulkan/ContextVk.h"
-#include "Render/Vulkan/ProgramResourceVk.h"
-#include "Render/Vulkan/ProgramVk.h"
 
 namespace traktor
 {
@@ -12,8 +11,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
 
-ProgramVk::ProgramVk(ContextVk* sharedContext)
-:	m_sharedContext(sharedContext)
+ProgramVk::ProgramVk(VkDevice device)
+:	m_device(device)
 {
 }
 
@@ -31,10 +30,18 @@ bool ProgramVk::create(const ProgramResourceVk* resource)
 	vertexShaderCreationInfo.pCode = &resource->m_vertexShader[0];
  
 	VkShaderModule vertexShaderModule;
-	if (vkCreateShaderModule(m_sharedContext->getVkDevice(), &vertexShaderCreationInfo, NULL, &vertexShaderModule) != VK_SUCCESS)
+	if (vkCreateShaderModule(m_device, &vertexShaderCreationInfo, nullptr, &vertexShaderModule) != VK_SUCCESS)
 		return false;
 
 	// Create fragment shader module.
+	VkShaderModuleCreateInfo fragmentShaderCreationInfo = {};
+	fragmentShaderCreationInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	fragmentShaderCreationInfo.codeSize = resource->m_fragmentShader.size() * sizeof(uint32_t);
+	fragmentShaderCreationInfo.pCode = &resource->m_fragmentShader[0];
+ 
+	VkShaderModule fragmentShaderModule;
+	if (vkCreateShaderModule(m_device, &fragmentShaderCreationInfo, nullptr, &fragmentShaderModule) != VK_SUCCESS)
+		return false;
 
 	return true;
 }
