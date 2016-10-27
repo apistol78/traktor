@@ -10,7 +10,9 @@
 #include "Render/Vulkan/ProgramCompilerVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/RenderSystemVk.h"
+#include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
+#include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/TimeQueryVk.h"
@@ -31,6 +33,83 @@ namespace traktor
 const char* c_validationLayerNames[] = { "VK_LAYER_LUNARG_standard_validation" };
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_report" };
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
+
+
+bool performImageTranslation(VkDevice device, VkQueue presentQueue, VkCommandBuffer setupCmdBuffer, VkImage image, VkAccessFlags dstAccessMask, VkImageLayout newLayout)
+{
+	VkFence submitFence;
+ 
+	VkFenceCreateInfo fenceCreateInfo = {};
+	fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	vkCreateFence(device, &fenceCreateInfo, nullptr, &submitFence);
+
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	vkBeginCommandBuffer(setupCmdBuffer, &beginInfo);
+
+	VkImageMemoryBarrier layoutTransitionBarrier = {};
+	layoutTransitionBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	layoutTransitionBarrier.srcAccessMask = 0;
+	layoutTransitionBarrier.dstAccessMask = dstAccessMask;
+	layoutTransitionBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	layoutTransitionBarrier.newLayout = newLayout;
+	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	layoutTransitionBarrier.image = image;
+	VkImageSubresourceRange resourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
+	layoutTransitionBarrier.subresourceRange = resourceRange;
+
+	vkCmdPipelineBarrier(
+		setupCmdBuffer, 
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
+		0,
+		0, nullptr,
+		0, nullptr, 
+		1, &layoutTransitionBarrier
+	);
+ 
+	vkEndCommandBuffer(setupCmdBuffer);
+ 
+	VkPipelineStageFlags waitStageMask[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.waitSemaphoreCount = 0;
+	submitInfo.pWaitSemaphores = nullptr;
+	submitInfo.pWaitDstStageMask = waitStageMask;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &setupCmdBuffer;
+	submitInfo.signalSemaphoreCount = 0;
+	submitInfo.pSignalSemaphores = nullptr;
+	if (vkQueueSubmit(presentQueue, 1, &submitInfo, submitFence) != VK_SUCCESS)
+		return false;
+ 
+	vkWaitForFences(device, 1, &submitFence, VK_TRUE, UINT64_MAX);
+	vkResetFences(device, 1, &submitFence);
+	vkResetCommandBuffer(setupCmdBuffer, 0);
+	vkDestroyFence(device, submitFence, nullptr);
+	return true;
+}
+
+uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements)
+{
+	VkPhysicalDeviceMemoryProperties memoryProperties = {};
+	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
+
+	uint32_t memoryTypeBits = memoryRequirements.memoryTypeBits;
+	for (uint32_t i = 0; i < 32; ++i)
+	{
+		VkMemoryType memoryType = memoryProperties.memoryTypes[i];
+		if (memoryTypeBits & 1)
+		{
+			if ((memoryType.propertyFlags & memoryFlags) == memoryFlags)
+				return i;
+		}
+		memoryTypeBits = memoryTypeBits >> 1;
+	}
+	return 0; 
+}
 
 		}
 
@@ -329,8 +408,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	VkCommandBuffer setupCmdBuffer = 0;
 	VkCommandBuffer drawCmdBuffer = 0;
 	VkImage depthImage = 0;
-	VkImageView depthImageView = 0;
-	VkRenderPass renderPass = 0;
+	//VkRenderPass renderPass = 0;
 
 
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
@@ -433,7 +511,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	if (vkCreateCommandPool(m_device, &commandPoolCreateInfo, 0, &commandPool) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create command pool." << Endl;
-		return false;
+		return 0;
 	}
 
 	// Create command buffers from pool.
@@ -445,12 +523,12 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	if (vkAllocateCommandBuffers(m_device, &commandBufferAllocationInfo, &setupCmdBuffer) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; failed to allocate setup command buffer." << Endl;
-		return false;
+		return 0;
 	}
 	if (vkAllocateCommandBuffers(m_device, &commandBufferAllocationInfo, &drawCmdBuffer) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; failed to allocate draw command buffer." << Endl;
-		return false;
+		return 0;
 	}
 
 
@@ -460,97 +538,20 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 
 	AlignedVector< VkImage > presentImages(imageCount);
 	vkGetSwapchainImagesKHR(m_device, swapChain, &imageCount, presentImages.ptr());
- 
-	VkImageViewCreateInfo presentImagesViewCreateInfo = {};
-	presentImagesViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	presentImagesViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	presentImagesViewCreateInfo.format = colorFormat;
-	presentImagesViewCreateInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
-	presentImagesViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	presentImagesViewCreateInfo.subresourceRange.baseMipLevel = 0;
-	presentImagesViewCreateInfo.subresourceRange.levelCount = 1;
-	presentImagesViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-	presentImagesViewCreateInfo.subresourceRange.layerCount = 1;
 
+	//for (uint32_t i = 0; i < imageCount; ++i)
+	//{
+	//	if (!performImageTranslation(
+	//		m_device,
+	//		presentQueue,
+	//		setupCmdBuffer,
+	//		presentImages[i],
+	//		VK_ACCESS_MEMORY_READ_BIT,
+	//		VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+	//	))
+	//		return 0;
+	//}
 
-
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
- 
-	VkFenceCreateInfo fenceCreateInfo = {};
-	fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	VkFence submitFence;
-	vkCreateFence(m_device, &fenceCreateInfo, nullptr, &submitFence);
-
-
-
-	AlignedVector< VkImageView > presentImageViews(imageCount);
-	for (uint32_t i = 0; i < imageCount; ++i)
-	{
-		// complete VkImageViewCreateInfo with image i:
-		presentImagesViewCreateInfo.image = presentImages[i];
- 
-		// start recording on our setup command buffer:
-		vkBeginCommandBuffer(setupCmdBuffer, &beginInfo);
- 
-		VkImageMemoryBarrier layoutTransitionBarrier = {};
-		layoutTransitionBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		layoutTransitionBarrier.srcAccessMask = 0; 
-		layoutTransitionBarrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-		layoutTransitionBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		layoutTransitionBarrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-		layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		layoutTransitionBarrier.image = presentImages[i];
-		VkImageSubresourceRange resourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
-		layoutTransitionBarrier.subresourceRange = resourceRange;
- 
-		vkCmdPipelineBarrier(
-			setupCmdBuffer, 
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-			0,
-			0, nullptr,
-			0, nullptr, 
-			1, &layoutTransitionBarrier
-		);
- 
-		vkEndCommandBuffer(setupCmdBuffer);
- 
-		// submitting code to the queue:
-		VkPipelineStageFlags waitStageMask[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-		VkSubmitInfo submitInfo = {};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.waitSemaphoreCount = 0;
-		submitInfo.pWaitSemaphores = NULL;
-		submitInfo.pWaitDstStageMask = waitStageMask;
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &setupCmdBuffer;
-		submitInfo.signalSemaphoreCount = 0;
-		submitInfo.pSignalSemaphores = NULL;
-		if (vkQueueSubmit(presentQueue, 1, &submitInfo, submitFence) != VK_SUCCESS)
-		{
-			return 0;
-		}
- 
-		// waiting for it to finish:
-		vkWaitForFences(m_device, 1, &submitFence, VK_TRUE, UINT64_MAX);
-		vkResetFences(m_device, 1, &submitFence);
- 
-		vkResetCommandBuffer(setupCmdBuffer, 0);
- 
-		// create the image view:
-		if (vkCreateImageView(m_device, &presentImagesViewCreateInfo, NULL, &presentImageViews[i]) != VK_SUCCESS)
-		{
-			return 0;
-		}
-	}
-
-
-	VkPhysicalDeviceMemoryProperties memoryProperties = {};
-	vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memoryProperties);
- 
 	VkImageCreateInfo imageCreateInfo = {};
 	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -574,25 +575,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	VkMemoryAllocateInfo imageAllocateInfo = {};
 	imageAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	imageAllocateInfo.allocationSize = memoryRequirements.size;
- 
-	// memoryTypeBits is a bitfield where if bit i is set, it means that 
-	// the VkMemoryType i of the VkPhysicalDeviceMemoryProperties structure 
-	// satisfies the memory requirements:
-	uint32_t memoryTypeBits = memoryRequirements.memoryTypeBits;
-	VkMemoryPropertyFlags desiredMemoryFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-	for (uint32_t i = 0; i < 32; ++i)
-	{
-		VkMemoryType memoryType = memoryProperties.memoryTypes[i];
-		if (memoryTypeBits & 1)
-		{
-			if ((memoryType.propertyFlags & desiredMemoryFlags) == desiredMemoryFlags)
-			{
-				imageAllocateInfo.memoryTypeIndex = i;
-				break;
-			}
-		}
-		memoryTypeBits = memoryTypeBits >> 1;
-	}
+	imageAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
  
 	VkDeviceMemory imageMemory = {};
 	if (vkAllocateMemory(m_device, &imageAllocateInfo, nullptr, &imageMemory) != VK_SUCCESS)
@@ -601,134 +584,33 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	if (vkBindImageMemory(m_device, depthImage, imageMemory, 0) != VK_SUCCESS)
 		return 0;
 
-	//VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	vkBeginCommandBuffer(setupCmdBuffer, &beginInfo);
- 
-	VkImageMemoryBarrier layoutTransitionBarrier = {};
-	layoutTransitionBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	layoutTransitionBarrier.srcAccessMask = 0;
-	layoutTransitionBarrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-	layoutTransitionBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	layoutTransitionBarrier.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.image = depthImage;
-	VkImageSubresourceRange resourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
-	layoutTransitionBarrier.subresourceRange = resourceRange;
-
-	vkCmdPipelineBarrier(
-		setupCmdBuffer, 
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-		0,
-		0, nullptr,
-		0, nullptr, 
-		1, &layoutTransitionBarrier
-	);
- 
-	vkEndCommandBuffer(setupCmdBuffer);
- 
-	VkPipelineStageFlags waitStageMask[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-	VkSubmitInfo submitInfo = {};
-	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.waitSemaphoreCount = 0;
-	submitInfo.pWaitSemaphores = nullptr;
-	submitInfo.pWaitDstStageMask = waitStageMask;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &setupCmdBuffer;
-	submitInfo.signalSemaphoreCount = 0;
-	submitInfo.pSignalSemaphores = nullptr;
-	if (vkQueueSubmit(presentQueue, 1, &submitInfo, submitFence) != VK_SUCCESS)
-		return 0;
- 
-	vkWaitForFences(m_device, 1, &submitFence, VK_TRUE, UINT64_MAX);
-	vkResetFences(m_device, 1, &submitFence);
-	vkResetCommandBuffer(setupCmdBuffer, 0);
-
-
-	VkImageAspectFlags aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-	VkImageViewCreateInfo imageViewCreateInfo = {};
-	imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	imageViewCreateInfo.image = depthImage;
-	imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	imageViewCreateInfo.format = imageCreateInfo.format;
-	imageViewCreateInfo.components = { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY };
-	imageViewCreateInfo.subresourceRange.aspectMask = aspectMask;
-	imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
-	imageViewCreateInfo.subresourceRange.levelCount = 1;
-	imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-	imageViewCreateInfo.subresourceRange.layerCount = 1;
- 	if (vkCreateImageView(m_device, &imageViewCreateInfo, nullptr, &depthImageView) != VK_SUCCESS)
+	if (!performImageTranslation(
+		m_device,
+		presentQueue,
+		setupCmdBuffer,
+		depthImage,
+		VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	))
 		return 0;
 
 
-	VkAttachmentDescription passAttachments[2] = { };
-	passAttachments[0].format = colorFormat;
-	passAttachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
-	passAttachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	passAttachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-	passAttachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	passAttachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	passAttachments[0].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-	passAttachments[0].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
- 
-	passAttachments[1].format = VK_FORMAT_D16_UNORM;
-	passAttachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
-	passAttachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	passAttachments[1].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	passAttachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	passAttachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	passAttachments[1].initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	passAttachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
- 
-	VkAttachmentReference colorAttachmentReference = {};
-	colorAttachmentReference.attachment = 0;
-	colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
- 
-	VkAttachmentReference depthAttachmentReference = {};
-	depthAttachmentReference.attachment = 1;
-	depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-	VkSubpassDescription subpass = {};
-	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	subpass.colorAttachmentCount = 1;
-	subpass.pColorAttachments = &colorAttachmentReference;
-	subpass.pDepthStencilAttachment = &depthAttachmentReference;
- 
-	VkRenderPassCreateInfo renderPassCreateInfo = {};
-	renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassCreateInfo.attachmentCount = 2;
-	renderPassCreateInfo.pAttachments = passAttachments;
-	renderPassCreateInfo.subpassCount = 1;
-	renderPassCreateInfo.pSubpasses = &subpass;
-	if (vkCreateRenderPass(m_device, &renderPassCreateInfo, nullptr, &renderPass) != VK_SUCCESS)
-		return 0;
-
-
-
-	VkImageView frameBufferAttachments[2];
-	frameBufferAttachments[1] = depthImageView;
- 
-	VkFramebufferCreateInfo frameBufferCreateInfo = {};
-	frameBufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-	frameBufferCreateInfo.renderPass = renderPass;
-	frameBufferCreateInfo.attachmentCount = 2;
-	frameBufferCreateInfo.pAttachments = frameBufferAttachments;
-	frameBufferCreateInfo.width = desc.displayMode.width;
-	frameBufferCreateInfo.height = desc.displayMode.height;
-	frameBufferCreateInfo.layers = 1;
- 
-	// create a framebuffer per swap chain imageView:
-	AlignedVector< VkFramebuffer > frameBuffers(imageCount);
+	RefArray< RenderTargetSetVk > primaryTargets(imageCount);
 	for (uint32_t i = 0; i < imageCount; ++i)
 	{
-		frameBufferAttachments[0] = presentImageViews[ i ];
-		if (vkCreateFramebuffer(m_device, &frameBufferCreateInfo, nullptr, &frameBuffers[i]) != VK_SUCCESS)
+		primaryTargets[i] = new RenderTargetSetVk();
+		if (!primaryTargets[i]->createPrimary(
+			m_physicalDevice,
+			m_device,
+			desc.displayMode.width,
+			desc.displayMode.height,
+			colorFormat,
+			presentImages[i],
+			imageCreateInfo.format,
+			depthImage
+		))
 			return 0;
 	}
-
 
 #if defined(_WIN32)
 	Ref< RenderViewVk > renderView = new RenderViewVk(
@@ -737,10 +619,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		swapChain,
 		presentQueue,
 		drawCmdBuffer,
-		presentImages,
-		depthImage,
-		renderPass,
-		frameBuffers
+		primaryTargets
 	);
 #else
 	Ref< RenderViewVk > renderView = new RenderViewVk(m_device);
@@ -775,22 +654,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const std::vector< Vertex
 	VkMemoryAllocateInfo bufferAllocateInfo = {};
 	bufferAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	bufferAllocateInfo.allocationSize = vertexBufferMemoryRequirements.size;
- 
-	uint32_t vertexMemoryTypeBits = vertexBufferMemoryRequirements.memoryTypeBits;
-	VkMemoryPropertyFlags vertexDesiredMemoryFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-	for (uint32_t i = 0; i < 32; ++i)
-	{
-		VkMemoryType memoryType = memoryProperties.memoryTypes[i];
-		if (vertexMemoryTypeBits & 1)
-		{
-			if ((memoryType.propertyFlags & vertexDesiredMemoryFlags) == vertexDesiredMemoryFlags)
-			{
-				bufferAllocateInfo.memoryTypeIndex = i;
-				break;
-			}
-		}
-		vertexMemoryTypeBits = vertexMemoryTypeBits >> 1;
-	}
+	bufferAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertexBufferMemoryRequirements);
  
 	VkDeviceMemory vertexBufferMemory;
 	if (vkAllocateMemory(m_device, &bufferAllocateInfo, nullptr, &vertexBufferMemory) != VK_SUCCESS)
@@ -820,22 +684,7 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 	VkMemoryAllocateInfo bufferAllocateInfo = {};
 	bufferAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	bufferAllocateInfo.allocationSize = indexBufferMemoryRequirements.size;
- 
-	uint32_t vertexMemoryTypeBits = indexBufferMemoryRequirements.memoryTypeBits;
-	VkMemoryPropertyFlags vertexDesiredMemoryFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-	for (uint32_t i = 0; i < 32; ++i)
-	{
-		VkMemoryType memoryType = memoryProperties.memoryTypes[i];
-		if (vertexMemoryTypeBits & 1)
-		{
-			if ((memoryType.propertyFlags & vertexDesiredMemoryFlags) == vertexDesiredMemoryFlags)
-			{
-				bufferAllocateInfo.memoryTypeIndex = i;
-				break;
-			}
-		}
-		vertexMemoryTypeBits = vertexMemoryTypeBits >> 1;
-	}
+ 	bufferAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, indexBufferMemoryRequirements);
  
 	VkDeviceMemory indexBufferMemory;
 	if (vkAllocateMemory(m_device, &bufferAllocateInfo, nullptr, &indexBufferMemory) != VK_SUCCESS)
@@ -874,7 +723,7 @@ Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCre
 Ref< RenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk();
-	if (renderTargetSet->create(desc))
+	if (renderTargetSet->create(m_physicalDevice, m_device, desc))
 		return renderTargetSet;
 	else
 		return 0;

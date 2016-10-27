@@ -1,6 +1,10 @@
 #ifndef traktor_render_RenderTargetSetVk_H
 #define traktor_render_RenderTargetSetVk_H
 
+#define VK_USE_PLATFORM_WIN32_KHR
+#define VK_NO_PROTOTYPES
+#include <vulkan.h>
+
 #include "Core/RefArray.h"
 #include "Render/RenderTargetSet.h"
 
@@ -25,7 +29,9 @@ public:
 
 	virtual ~RenderTargetSetVk();
 
-	bool create(const RenderTargetSetCreateDesc& setDesc);
+	bool createPrimary(VkPhysicalDevice physicalDevice, VkDevice device, int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage);
+
+	bool create(VkPhysicalDevice physicalDevice, VkDevice device, const RenderTargetSetCreateDesc& setDesc);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
@@ -47,9 +53,17 @@ public:
 
 	RenderTargetDepthVk* getDepthTargetVk() const { return m_depthTarget; }
 
+	VkRenderPass getVkRenderPass() const { return m_renderPass; }
+
+	VkFramebuffer getVkFramebuffer() const { return m_framebuffer; }
+
 private:
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
+	int32_t m_width;
+	int32_t m_height;
+	VkRenderPass m_renderPass;
+	VkFramebuffer m_framebuffer;
 };
 
 	}

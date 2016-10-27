@@ -1,6 +1,10 @@
 #ifndef traktor_render_RenderTargetVk_H
 #define traktor_render_RenderTargetVk_H
 
+#define VK_USE_PLATFORM_WIN32_KHR
+#define VK_NO_PROTOTYPES
+#include <vulkan.h>
+
 #include "Render/ISimpleTexture.h"
 
 namespace traktor
@@ -23,7 +27,9 @@ public:
 
 	virtual ~RenderTargetVk();
 
-	bool create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
+	bool createPrimary(VkPhysicalDevice physicalDevice, VkDevice device, int32_t width, int32_t height, VkFormat format, VkImage image);
+
+	bool create(VkPhysicalDevice physicalDevice, VkDevice device, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
@@ -39,7 +45,16 @@ public:
 
 	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
 
+	VkFormat getVkFormat() const { return m_format; }
+
+	VkImage getVkImage() const { return m_image; }
+
+	VkImageView getVkImageView() const { return m_imageView; }
+
 private:
+	VkFormat m_format;
+	VkImage m_image;
+	VkImageView m_imageView;
 	int32_t m_width;
 	int32_t m_height;
 };

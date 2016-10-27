@@ -17,6 +17,8 @@ namespace traktor
 	namespace render
 	{
 
+class RenderTargetSetVk;
+
 /*!
  * \ingroup Vulkan
  */
@@ -36,10 +38,7 @@ public:
 		VkSwapchainKHR swapChain,
 		VkQueue presentQueue,
 		VkCommandBuffer drawCmdBuffer,
-		const AlignedVector< VkImage >& presentImages,
-		VkImage depthImage,
-		VkRenderPass renderPass,
-		const AlignedVector< VkFramebuffer >& frameBuffers
+		const RefArray< RenderTargetSetVk >& primaryTargets
 	);
 #else
 	RenderViewVk(VkDevice device);
@@ -114,10 +113,7 @@ private:
 	uint32_t m_currentImageIndex;
 #endif
 	VkCommandBuffer m_drawCmdBuffer;
-	AlignedVector< VkImage > m_presentImages;
-	VkImage m_depthImage;
-	VkRenderPass m_renderPass;
-	AlignedVector< VkFramebuffer > m_frameBuffers;
+	RefArray< RenderTargetSetVk > m_primaryTargets;
 	VkSemaphore m_presentCompleteSemaphore;
 	VkSemaphore m_renderingCompleteSemaphore;
 	std::list< RenderEvent > m_eventQueue;
