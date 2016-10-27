@@ -41,10 +41,7 @@ RenderViewVk::RenderViewVk(
 	VkSwapchainKHR swapChain,
 	VkQueue presentQueue,
 	VkCommandBuffer drawCmdBuffer,
-	const AlignedVector< VkImage >& presentImages,
-	VkImage depthImage,
-	VkRenderPass renderPass,
-	const AlignedVector< VkFramebuffer >& frameBuffers
+	const RefArray< RenderTargetSetVk >& primaryTargets
 )
 :	m_window(window)
 ,	m_device(device)
@@ -52,10 +49,7 @@ RenderViewVk::RenderViewVk(
 ,	m_presentQueue(presentQueue)
 ,	m_currentImageIndex(0)
 ,	m_drawCmdBuffer(drawCmdBuffer)
-,	m_presentImages(presentImages)
-,	m_depthImage(depthImage)
-,	m_renderPass(renderPass)
-,	m_frameBuffers(frameBuffers)
+,	m_primaryTargets(primaryTargets)
 ,	m_presentCompleteSemaphore(0)
 ,	m_renderingCompleteSemaphore(0)
 {
@@ -122,12 +116,12 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 
 int RenderViewVk::getWidth() const
 {
-	return 0;
+	return m_primaryTargets.front()->getWidth();
 }
 
 int RenderViewVk::getHeight() const
 {
-	return 0;
+	return m_primaryTargets.front()->getHeight();
 }
 
 bool RenderViewVk::isActive() const
@@ -203,7 +197,7 @@ bool RenderViewVk::begin(EyeType eye)
 	layoutTransitionBarrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.image = m_presentImages[m_currentImageIndex];
+	layoutTransitionBarrier.image = m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->getVkImage();
 	VkImageSubresourceRange resourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 	layoutTransitionBarrier.subresourceRange = resourceRange;
 	
@@ -221,9 +215,12 @@ bool RenderViewVk::begin(EyeType eye)
 
 	VkRenderPassBeginInfo renderPassBeginInfo = {};
 	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassBeginInfo.renderPass = m_renderPass;
-	renderPassBeginInfo.framebuffer = m_frameBuffers[m_currentImageIndex];
-	renderPassBeginInfo.renderArea = { 0, 0, 1920, 1080 };
+	renderPassBeginInfo.renderPass = m_primaryTargets[m_currentImageIndex]->getVkRenderPass();
+	renderPassBeginInfo.framebuffer = m_primaryTargets[m_currentImageIndex]->getVkFramebuffer();
+	renderPassBeginInfo.renderArea.offset.x = 0;
+	renderPassBeginInfo.renderArea.offset.y = 0;
+	renderPassBeginInfo.renderArea.extent.width = m_primaryTargets[m_currentImageIndex]->getWidth();
+	renderPassBeginInfo.renderArea.extent.height = m_primaryTargets[m_currentImageIndex]->getHeight();
 	renderPassBeginInfo.clearValueCount = 2;
 	renderPassBeginInfo.pClearValues = clearValue;
 	vkCmdBeginRenderPass(m_drawCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
@@ -269,7 +266,7 @@ void RenderViewVk::present()
 	prePresentBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	prePresentBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	prePresentBarrier.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
-	prePresentBarrier.image = m_presentImages[m_currentImageIndex];
+	prePresentBarrier.image = m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->getVkImage();
     
 	vkCmdPipelineBarrier(
 		m_drawCmdBuffer, 
@@ -311,7 +308,7 @@ void RenderViewVk::present()
     presentInfo.pSwapchains = &m_swapChain;
     presentInfo.pImageIndices = &m_currentImageIndex;
     presentInfo.pResults = nullptr;
-    vkQueuePresentKHR(m_presentQueue, &presentInfo );
+    vkQueuePresentKHR(m_presentQueue, &presentInfo);
  
     vkDestroySemaphore(m_device, m_presentCompleteSemaphore, nullptr);
     vkDestroySemaphore(m_device, m_renderingCompleteSemaphore, nullptr);
