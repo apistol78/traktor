@@ -3,6 +3,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
+#include "Render/VertexElement.h"
 #include "Render/Vulkan/ContextVk.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
@@ -30,7 +31,7 @@ namespace traktor
 		namespace
 		{
 
-const char* c_validationLayerNames[] = { "VK_LAYER_LUNARG_standard_validation" };
+const char* c_validationLayerNames[] = { "VK_LAYER_RENDERDOC_Capture" }; //{ "VK_LAYER_LUNARG_standard_validation" };
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_report" };
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
 
@@ -408,8 +409,6 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	VkCommandBuffer setupCmdBuffer = 0;
 	VkCommandBuffer drawCmdBuffer = 0;
 	VkImage depthImage = 0;
-	//VkRenderPass renderPass = 0;
-
 
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
 	m_window->setWindowedStyle(
@@ -539,19 +538,6 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	AlignedVector< VkImage > presentImages(imageCount);
 	vkGetSwapchainImagesKHR(m_device, swapChain, &imageCount, presentImages.ptr());
 
-	//for (uint32_t i = 0; i < imageCount; ++i)
-	//{
-	//	if (!performImageTranslation(
-	//		m_device,
-	//		presentQueue,
-	//		setupCmdBuffer,
-	//		presentImages[i],
-	//		VK_ACCESS_MEMORY_READ_BIT,
-	//		VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
-	//	))
-	//		return 0;
-	//}
-
 	VkImageCreateInfo imageCreateInfo = {};
 	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -593,7 +579,6 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	))
 		return 0;
-
 
 	RefArray< RenderTargetSetVk > primaryTargets(imageCount);
 	for (uint32_t i = 0; i < imageCount; ++i)
@@ -660,7 +645,46 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const std::vector< Vertex
 	if (vkAllocateMemory(m_device, &bufferAllocateInfo, nullptr, &vertexBufferMemory) != VK_SUCCESS)
 		return 0;
 
-	return new VertexBufferVk(bufferSize, m_device, vertexBuffer, vertexBufferMemory);
+	VkVertexInputBindingDescription vertexBindingDescription = {};
+	vertexBindingDescription.binding = 0;
+	vertexBindingDescription.stride = getVertexSize(vertexElements);
+	vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+ 
+	AlignedVector< VkVertexInputAttributeDescription > vertexAttributeDescriptions;
+	for (std::vector< VertexElement >::const_iterator i = vertexElements.begin(); i != vertexElements.end(); ++i)
+	{
+		const VkFormat c_formats[] =
+		{
+			VK_FORMAT_R32_SFLOAT, // DtFloat1
+			VK_FORMAT_R32G32_SFLOAT, // DtFloat2
+			VK_FORMAT_R32G32B32_SFLOAT, // DtFloat3
+			VK_FORMAT_R32G32B32A32_SFLOAT, // DtFloat4
+			VK_FORMAT_R8G8B8A8_SNORM, // DtByte4
+			VK_FORMAT_R8G8B8A8_UNORM, // DtByte4N
+			VK_FORMAT_R16G16_SNORM, // DtShort2
+			VK_FORMAT_R16G16B16A16_SNORM, // DtShort4
+			VK_FORMAT_R16G16_UNORM, // DtShort2N
+			VK_FORMAT_R16G16B16A16_UNORM, // DtShort4N
+			VK_FORMAT_R16G16_SFLOAT, // DtHalf2
+			VK_FORMAT_R16G16B16A16_SFLOAT // DtHalf4
+		};
+
+		VkVertexInputAttributeDescription vertexAttributeDescription = {};
+		vertexAttributeDescription.location = 0;
+		vertexAttributeDescription.binding = 0;
+		vertexAttributeDescription.format = c_formats[i->getDataType()];
+		vertexAttributeDescription.offset = i->getOffset();
+		vertexAttributeDescriptions.push_back(vertexAttributeDescription);
+	}
+
+	return new VertexBufferVk(
+		bufferSize,
+		m_device,
+		vertexBuffer,
+		vertexBufferMemory,
+		vertexBindingDescription,
+		vertexAttributeDescriptions
+	);
 }
 
 Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)

@@ -5,6 +5,7 @@
 #define VK_NO_PROTOTYPES
 #include <vulkan.h>
 
+#include "Core/Containers/AlignedVector.h"
 #include "Render/VertexBuffer.h"
 
 namespace traktor
@@ -20,7 +21,14 @@ class VertexBufferVk : public VertexBuffer
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferVk(uint32_t bufferSize, VkDevice device, VkBuffer vertexBuffer, VkDeviceMemory vertexBufferMemory);
+	VertexBufferVk(
+		uint32_t bufferSize,
+		VkDevice device,
+		VkBuffer vertexBuffer,
+		VkDeviceMemory vertexBufferMemory,
+		const VkVertexInputBindingDescription& vertexBindingDescription,
+		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions
+	);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
@@ -30,10 +38,14 @@ public:
 
 	virtual void unlock() T_OVERRIDE T_FINAL;
 
+	VkBuffer getVkBuffer() const { return m_vertexBuffer; }
+
 private:
 	VkDevice m_device;
 	VkBuffer m_vertexBuffer;
 	VkDeviceMemory m_vertexBufferMemory;
+	VkVertexInputBindingDescription m_vertexBindingDescription;
+	AlignedVector< VkVertexInputAttributeDescription > m_vertexAttributeDescriptions;
 };
 	
 	}

@@ -10,11 +10,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferVk", VertexBufferVk, VertexBuffer)
 
-VertexBufferVk::VertexBufferVk(uint32_t bufferSize, VkDevice device, VkBuffer vertexBuffer, VkDeviceMemory vertexBufferMemory)
+VertexBufferVk::VertexBufferVk(
+	uint32_t bufferSize,
+	VkDevice device,
+	VkBuffer vertexBuffer,
+	VkDeviceMemory vertexBufferMemory,
+	const VkVertexInputBindingDescription& vertexBindingDescription,
+	const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions
+)
 :	VertexBuffer(bufferSize)
 ,	m_device(device)
 ,	m_vertexBuffer(vertexBuffer)
 ,	m_vertexBufferMemory(vertexBufferMemory)
+,	m_vertexBindingDescription(vertexBindingDescription)
+,	m_vertexAttributeDescriptions(vertexAttributeDescriptions)
 {
 }
 

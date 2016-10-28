@@ -49,6 +49,13 @@ PFN_vkGetImageMemoryRequirements vkGetImageMemoryRequirements = 0;
 PFN_vkBindImageMemory vkBindImageMemory = 0;
 PFN_vkCreateRenderPass vkCreateRenderPass = 0;
 PFN_vkCreateFramebuffer vkCreateFramebuffer = 0;
+PFN_vkCmdEndRenderPass vkCmdEndRenderPass = 0;
+PFN_vkCmdBindVertexBuffers vkCmdBindVertexBuffers = 0;
+PFN_vkCmdDraw vkCmdDraw = 0;
+PFN_vkCmdBindIndexBuffer vkCmdBindIndexBuffer = 0;
+PFN_vkCmdDrawIndexed vkCmdDrawIndexed = 0;
+PFN_vkCmdBindPipeline vkCmdBindPipeline = 0;
+PFN_vkCreatePipelineLayout vkCreatePipelineLayout = 0;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = 0;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = 0;
@@ -325,6 +332,55 @@ bool initializeVulkanApi()
 	if (vkCreateFramebuffer == NULL)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkCreateFramebuffer\"." << Endl;
+		return false;
+	}
+
+	vkCmdEndRenderPass = (PFN_vkCmdEndRenderPass)GetProcAddress(s_hVulkanModule, "vkCmdEndRenderPass");
+	if (vkCmdEndRenderPass == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdEndRenderPass\"." << Endl;
+		return false;
+	}
+
+	vkCmdBindVertexBuffers = (PFN_vkCmdBindVertexBuffers)GetProcAddress(s_hVulkanModule, "vkCmdBindVertexBuffers");
+	if (vkCmdBindVertexBuffers == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdBindVertexBuffers\"." << Endl;
+		return false;
+	}
+
+	vkCmdDraw = (PFN_vkCmdDraw)GetProcAddress(s_hVulkanModule, "vkCmdDraw");
+	if (vkCmdDraw == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdDraw\"." << Endl;
+		return false;
+	}
+
+	vkCmdBindIndexBuffer = (PFN_vkCmdBindIndexBuffer)GetProcAddress(s_hVulkanModule, "vkCmdBindIndexBuffer");
+	if (vkCmdBindIndexBuffer == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdBindIndexBuffer\"." << Endl;
+		return false;
+	}
+
+	vkCmdDrawIndexed = (PFN_vkCmdDrawIndexed)GetProcAddress(s_hVulkanModule, "vkCmdDrawIndexed");
+	if (vkCmdDrawIndexed == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdDrawIndexed\"." << Endl;
+		return false;
+	}
+
+	vkCmdBindPipeline = (PFN_vkCmdBindPipeline)GetProcAddress(s_hVulkanModule, "vkCmdBindPipeline");
+	if (vkCmdBindPipeline == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdBindPipeline\"." << Endl;
+		return false;
+	}
+
+	vkCreatePipelineLayout = (PFN_vkCreatePipelineLayout)GetProcAddress(s_hVulkanModule, "vkCreatePipelineLayout");
+	if (vkCreatePipelineLayout == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCreatePipelineLayout\"." << Endl;
 		return false;
 	}
 
