@@ -122,7 +122,7 @@ bool RenderTargetSetVk::create(VkPhysicalDevice physicalDevice, VkDevice device,
 	AlignedVector< VkAttachmentDescription > passAttachments;
 	for (int i = 0; i < setDesc.count; ++i)
 	{
-		VkAttachmentDescription passAttachment;
+		VkAttachmentDescription passAttachment = {};
 		passAttachment.format = m_colorTargets[i]->getVkFormat();
 		passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 		passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -136,7 +136,7 @@ bool RenderTargetSetVk::create(VkPhysicalDevice physicalDevice, VkDevice device,
 
 	if (m_depthTarget)
 	{
-		VkAttachmentDescription passAttachment;
+		VkAttachmentDescription passAttachment = {};
 		passAttachment.format = m_depthTarget->getVkFormat();
 		passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 		passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -160,7 +160,8 @@ bool RenderTargetSetVk::create(VkPhysicalDevice physicalDevice, VkDevice device,
 	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 	subpass.colorAttachmentCount = 1;
 	subpass.pColorAttachments = &colorAttachmentReference;
-	subpass.pDepthStencilAttachment = &depthAttachmentReference;
+	if (m_depthTarget)
+		subpass.pDepthStencilAttachment = &depthAttachmentReference;
  
 	VkRenderPassCreateInfo renderPassCreateInfo = {};
 	renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;

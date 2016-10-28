@@ -97,6 +97,7 @@ RenderTargetVk::RenderTargetVk()
 :	m_format(VK_FORMAT_UNDEFINED)
 ,	m_image(0)
 ,	m_imageView(0)
+,	m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
 ,	m_width(0)
 ,	m_height(0)
 {
@@ -229,6 +230,68 @@ void RenderTargetVk::unlock(int level)
 void* RenderTargetVk::getInternalHandle()
 {
 	return 0;
+}
+
+void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
+{
+	if (m_imageLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+		return;
+
+	VkImageMemoryBarrier layoutTransitionBarrier = {};
+	layoutTransitionBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	layoutTransitionBarrier.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+	layoutTransitionBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	layoutTransitionBarrier.oldLayout = m_imageLayout;
+	layoutTransitionBarrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	layoutTransitionBarrier.image = m_image;
+	layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
+	
+	vkCmdPipelineBarrier(
+		cmdBuffer, 
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
+		0,
+		0, nullptr,
+		0, nullptr, 
+		1, &layoutTransitionBarrier
+	);
+
+	m_imageLayout = layoutTransitionBarrier.newLayout;
+}
+
+void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
+{
+	if (m_imageLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
+		return;
+
+	VkImageMemoryBarrier layoutTransitionBarrier = {};
+	layoutTransitionBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	layoutTransitionBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	layoutTransitionBarrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+	layoutTransitionBarrier.oldLayout = m_imageLayout;
+	layoutTransitionBarrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
+	layoutTransitionBarrier.image = m_image;
+    
+	vkCmdPipelineBarrier(
+		cmdBuffer, 
+		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 
+		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 
+		0, 
+		0, nullptr, 
+		0, nullptr, 
+		1, &layoutTransitionBarrier
+	);
+
+	m_imageLayout = layoutTransitionBarrier.newLayout;
+}
+
+void RenderTargetVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
+{
 }
 
 	}

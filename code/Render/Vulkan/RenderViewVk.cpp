@@ -1,8 +1,10 @@
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
+#include "Render/Vulkan/VertexBufferVk.h"
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/ApiLoader.h"
 #	include "Render/Vulkan/Win32/Window.h"
@@ -52,6 +54,7 @@ RenderViewVk::RenderViewVk(
 ,	m_primaryTargets(primaryTargets)
 ,	m_presentCompleteSemaphore(0)
 ,	m_renderingCompleteSemaphore(0)
+,	m_targetStateDirty(false)
 {
 	if (m_window)
 		m_window->addListener(this);
@@ -168,13 +171,11 @@ Viewport RenderViewVk::getViewport()
 
 SystemWindow RenderViewVk::getSystemWindow()
 {
-	SystemWindow sw;
-	return sw;
+	return SystemWindow(*m_window);
 }
 
 bool RenderViewVk::begin(EyeType eye)
 {
-#if defined(_WIN32)
     VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, 0, 0 };
     vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_presentCompleteSemaphore);
     vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_renderingCompleteSemaphore);
@@ -182,102 +183,153 @@ bool RenderViewVk::begin(EyeType eye)
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_presentCompleteSemaphore, VK_NULL_HANDLE, &m_currentImageIndex);
 
+	// Begin recording command buffer.
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 	vkBeginCommandBuffer(m_drawCmdBuffer, &beginInfo);
 	
-	// change image layout from VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
-	// to VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
-	VkImageMemoryBarrier layoutTransitionBarrier = {};
-	layoutTransitionBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	layoutTransitionBarrier.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-	layoutTransitionBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-	layoutTransitionBarrier.oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-	layoutTransitionBarrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.image = m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->getVkImage();
-	VkImageSubresourceRange resourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
-	layoutTransitionBarrier.subresourceRange = resourceRange;
-	
-	vkCmdPipelineBarrier(
-		m_drawCmdBuffer, 
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-		0,
-		0, nullptr,
-		0, nullptr, 
-		1, &layoutTransitionBarrier
-	);
+	// Push primary target onto stack.
+	TargetState ts;
+	ts.rts = m_primaryTargets[m_currentImageIndex];
+	ts.colorIndex = 0;
+	ts.clearMask = 0;
 
-	VkClearValue clearValue[] = { { 1.0f, 0.0f, 0.0f, 1.0f }, { 1.0, 0.0 } };
+	m_targetStateStack.push_back(ts);
+	m_targetStateDirty = true;
 
-	VkRenderPassBeginInfo renderPassBeginInfo = {};
-	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassBeginInfo.renderPass = m_primaryTargets[m_currentImageIndex]->getVkRenderPass();
-	renderPassBeginInfo.framebuffer = m_primaryTargets[m_currentImageIndex]->getVkFramebuffer();
-	renderPassBeginInfo.renderArea.offset.x = 0;
-	renderPassBeginInfo.renderArea.offset.y = 0;
-	renderPassBeginInfo.renderArea.extent.width = m_primaryTargets[m_currentImageIndex]->getWidth();
-	renderPassBeginInfo.renderArea.extent.height = m_primaryTargets[m_currentImageIndex]->getHeight();
-	renderPassBeginInfo.clearValueCount = 2;
-	renderPassBeginInfo.pClearValues = clearValue;
-	vkCmdBeginRenderPass(m_drawCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-#endif
 	return true;
 }
 
 bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
 {
+	TargetState ts;
+	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
+	ts.colorIndex = 0;
+	ts.clearMask = 0;
+
+	m_targetStateStack.push_back(ts);
+	m_targetStateDirty = true;
+
 	return true;
 }
 
 bool RenderViewVk::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
+	TargetState ts;
+	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
+	ts.colorIndex = renderTarget;
+	ts.clearMask = 0;
+
+	m_targetStateStack.push_back(ts);
+	m_targetStateDirty = true;
+
 	return true;
 }
 
 void RenderViewVk::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
 {
+	TargetState& ts = m_targetStateStack.back();
+	if (m_targetStateDirty)
+	{
+		ts.clearMask |= clearMask;
+	}
+	else
+	{
+		// Target state already validated; clear again or begin/end render pass?
+	}
 }
 
 void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
+	validateTargetState();
+
+	// \tbd Need to implement pipeline caching
+	return;
+
+	//vkCmdBindPipeline(m_drawCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline);
+
+	uint32_t vertexCount = 0;
+	switch (primitives.type)
+	{
+	case PtPoints:
+		vertexCount = primitives.count;
+		break;
+
+	case PtLineStrip:
+		T_ASSERT (0);
+		break;
+
+	case PtLines:
+		vertexCount = primitives.count * 2;
+		break;
+
+	case PtTriangleStrip:
+		vertexCount = primitives.count + 2;
+		break;
+
+	case PtTriangles:
+		vertexCount = primitives.count * 3;
+		break;
+	}
+
+	VertexBufferVk* vb = mandatory_non_null_type_cast< VertexBufferVk* >(vertexBuffer);
+	VkBuffer vbb = vb->getVkBuffer();
+    VkDeviceSize offsets = {};
+    vkCmdBindVertexBuffers(m_drawCmdBuffer, 0, 1, &vbb, &offsets);
+ 
+	if (indexBuffer && primitives.indexed)
+	{
+		IndexBufferVk* ib = mandatory_non_null_type_cast<IndexBufferVk*>(indexBuffer);
+		VkBuffer ibb = ib->getVkBuffer();
+		VkDeviceSize offset = {};
+		vkCmdBindIndexBuffer(m_drawCmdBuffer, ibb, offset, (ib->getIndexType() == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
+
+		vkCmdDrawIndexed(
+			m_drawCmdBuffer,
+			vertexCount,	// index count
+			1,	// instance count
+			primitives.offset,	// first index
+			0,	// vertex offset
+			0	// first instance id
+		);
+	}
+	else
+	{
+		vkCmdDraw(
+			m_drawCmdBuffer,
+			vertexCount,   // vertex count
+			1,   // instance count
+			primitives.offset,   // first vertex
+			0 // first instance
+		);
+	}
 }
 
 void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
+	validateTargetState();
 }
 
 void RenderViewVk::end()
 {
+	// Close current render pass if it has begun.
+	if (!m_targetStateDirty)
+		vkCmdEndRenderPass(m_drawCmdBuffer);
+
+	// Pop previous render pass from stack.
+	m_targetStateStack.pop_back();
+	m_targetStateDirty = true;
 }
 
 void RenderViewVk::present()
 {
-#if defined(_WIN32)
-	VkImageMemoryBarrier prePresentBarrier = {};
-	prePresentBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	prePresentBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-	prePresentBarrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-	prePresentBarrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-	prePresentBarrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-	prePresentBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	prePresentBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	prePresentBarrier.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
-	prePresentBarrier.image = m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->getVkImage();
-    
-	vkCmdPipelineBarrier(
-		m_drawCmdBuffer, 
-		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 
-		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 
-		0, 
-		0, nullptr, 
-		0, nullptr, 
-		1, &prePresentBarrier
-	);
+	T_FATAL_ASSERT (m_targetStateStack.empty());
+
+	// Prepare primary color for presentation.
+	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_drawCmdBuffer);
  
+	// End recording command buffer.
 	vkEndCommandBuffer(m_drawCmdBuffer);
 
     VkFence renderFence;
@@ -312,7 +364,6 @@ void RenderViewVk::present()
  
     vkDestroySemaphore(m_device, m_presentCompleteSemaphore, nullptr);
     vkDestroySemaphore(m_device, m_renderingCompleteSemaphore, nullptr);
-#endif
 }
 
 void RenderViewVk::pushMarker(const char* const marker)
@@ -332,6 +383,34 @@ void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 bool RenderViewVk::getBackBufferContent(void* buffer) const
 {
 	return false;
+}
+
+void RenderViewVk::validateTargetState()
+{
+	if (!m_targetStateDirty)
+		return;
+
+	T_FATAL_ASSERT (!m_targetStateStack.empty());
+	TargetState& ts = m_targetStateStack.back();
+
+	// Prepare primary color for target rendering.
+	ts.rts->getColorTargetVk(ts.colorIndex)->prepareAsTarget(m_drawCmdBuffer);
+
+	// Bind render pass and framebuffer.
+	VkClearValue clearValue[] = { { 1.0f, 0.0f, 0.0f, 1.0f }, { 1.0, 0.0 } };
+	VkRenderPassBeginInfo renderPassBeginInfo = {};
+	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	renderPassBeginInfo.renderPass = ts.rts->getVkRenderPass();
+	renderPassBeginInfo.framebuffer = ts.rts->getVkFramebuffer();
+	renderPassBeginInfo.renderArea.offset.x = 0;
+	renderPassBeginInfo.renderArea.offset.y = 0;
+	renderPassBeginInfo.renderArea.extent.width = ts.rts->getWidth();
+	renderPassBeginInfo.renderArea.extent.height = ts.rts->getHeight();
+	renderPassBeginInfo.clearValueCount = 2;
+	renderPassBeginInfo.pClearValues = clearValue;
+	vkCmdBeginRenderPass(m_drawCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+	m_targetStateDirty = false;
 }
 
 #if defined(_WIN32)

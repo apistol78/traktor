@@ -28,6 +28,8 @@ public:
 	
 	virtual void unlock() T_OVERRIDE T_FINAL;
 
+	VkBuffer getVkBuffer() const { return m_indexBuffer; }
+
 private:
 	VkDevice m_device;
 	VkBuffer m_indexBuffer;

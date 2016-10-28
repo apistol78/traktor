@@ -47,6 +47,13 @@ extern PFN_vkGetImageMemoryRequirements vkGetImageMemoryRequirements;
 extern PFN_vkBindImageMemory vkBindImageMemory;
 extern PFN_vkCreateRenderPass vkCreateRenderPass;
 extern PFN_vkCreateFramebuffer vkCreateFramebuffer;
+extern PFN_vkCmdEndRenderPass vkCmdEndRenderPass;
+extern PFN_vkCmdBindVertexBuffers vkCmdBindVertexBuffers;
+extern PFN_vkCmdDraw vkCmdDraw;
+extern PFN_vkCmdBindIndexBuffer vkCmdBindIndexBuffer;
+extern PFN_vkCmdDrawIndexed vkCmdDrawIndexed;
+extern PFN_vkCmdBindPipeline vkCmdBindPipeline;
+extern PFN_vkCreatePipelineLayout vkCreatePipelineLayout;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;

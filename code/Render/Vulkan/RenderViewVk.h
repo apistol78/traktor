@@ -118,6 +118,21 @@ private:
 	VkSemaphore m_renderingCompleteSemaphore;
 	std::list< RenderEvent > m_eventQueue;
 
+
+	struct TargetState
+	{
+		Ref< RenderTargetSetVk > rts;
+		int32_t colorIndex;
+		uint32_t clearMask;
+	};
+
+	AlignedVector< TargetState > m_targetStateStack;
+	bool m_targetStateDirty;
+
+
+	void validateTargetState();
+
+
 #if defined(_WIN32)
 	// \name IWindowListener implementation.
 	// \{
