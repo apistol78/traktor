@@ -17,7 +17,9 @@ namespace traktor
 	namespace render
 	{
 
+class ProgramVk;
 class RenderTargetSetVk;
+class VertexBufferVk;
 
 /*!
  * \ingroup Vulkan
@@ -38,6 +40,10 @@ public:
 		VkSwapchainKHR swapChain,
 		VkQueue presentQueue,
 		VkCommandBuffer drawCmdBuffer,
+		VkDescriptorSetLayout descriptorSetLayout,
+		VkPipelineLayout pipelineLayout,
+		VkDescriptorPool descriptorPool,
+		VkDescriptorSet descriptorSet,
 		const RefArray< RenderTargetSetVk >& primaryTargets
 	);
 #else
@@ -113,6 +119,10 @@ private:
 	uint32_t m_currentImageIndex;
 #endif
 	VkCommandBuffer m_drawCmdBuffer;
+	VkDescriptorSetLayout m_descriptorSetLayout;
+	VkPipelineLayout m_pipelineLayout;
+	VkDescriptorPool m_descriptorPool;
+	VkDescriptorSet m_descriptorSet;
 	RefArray< RenderTargetSetVk > m_primaryTargets;
 	VkSemaphore m_presentCompleteSemaphore;
 	VkSemaphore m_renderingCompleteSemaphore;
@@ -129,8 +139,12 @@ private:
 	AlignedVector< TargetState > m_targetStateStack;
 	bool m_targetStateDirty;
 
+	VkPipeline m_pipeline;
+
 
 	void validateTargetState();
+
+	bool validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
 
 
 #if defined(_WIN32)

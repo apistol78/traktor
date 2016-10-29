@@ -54,6 +54,12 @@ extern PFN_vkCmdBindIndexBuffer vkCmdBindIndexBuffer;
 extern PFN_vkCmdDrawIndexed vkCmdDrawIndexed;
 extern PFN_vkCmdBindPipeline vkCmdBindPipeline;
 extern PFN_vkCreatePipelineLayout vkCreatePipelineLayout;
+extern PFN_vkCreateGraphicsPipelines vkCreateGraphicsPipelines;
+extern PFN_vkCreateDescriptorSetLayout vkCreateDescriptorSetLayout;
+extern PFN_vkCreateDescriptorPool vkCreateDescriptorPool;
+extern PFN_vkAllocateDescriptorSets vkAllocateDescriptorSets;
+extern PFN_vkUpdateDescriptorSets vkUpdateDescriptorSets;
+extern PFN_vkCmdBindDescriptorSets vkCmdBindDescriptorSets;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;

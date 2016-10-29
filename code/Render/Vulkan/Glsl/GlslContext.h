@@ -22,6 +22,14 @@ class GlslVariable;
 class GlslContext
 {
 public:
+	struct Parameter
+	{
+		std::wstring name;
+		ParameterType type;
+		int32_t length;
+		UpdateFrequency frequency;
+	};
+
 	GlslContext(const ShaderGraph* shaderGraph);
 
 	Node* getInputNode(const InputPin* inputPin);
@@ -52,13 +60,19 @@ public:
 	
 	bool allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset);
 
-	GlslShader& getVertexShader();
+	void defineParameter(const std::wstring& name, ParameterType type, int32_t length, UpdateFrequency frequency);
 
-	GlslShader& getFragmentShader();
+	const Parameter* getParameter(const std::wstring& name) const;
 
-	GlslShader& getShader();
+	GlslShader& getVertexShader() { return m_vertexShader; }
 
-	GlslEmitter& getEmitter();
+	GlslShader& getFragmentShader() { return m_fragmentShader; }
+
+	GlslShader& getShader() { return *m_currentShader; }
+
+	GlslEmitter& getEmitter() { return m_emitter; }
+
+	const std::vector< Parameter >& getParameters() const { return m_parameters; }
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
@@ -67,6 +81,7 @@ private:
 	GlslShader* m_currentShader;
 	GlslEmitter m_emitter;
 	std::vector< uint8_t > m_interpolatorMap;
+	std::vector< Parameter > m_parameters;
 };
 
 	}

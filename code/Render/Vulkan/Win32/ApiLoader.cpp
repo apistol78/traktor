@@ -56,6 +56,12 @@ PFN_vkCmdBindIndexBuffer vkCmdBindIndexBuffer = 0;
 PFN_vkCmdDrawIndexed vkCmdDrawIndexed = 0;
 PFN_vkCmdBindPipeline vkCmdBindPipeline = 0;
 PFN_vkCreatePipelineLayout vkCreatePipelineLayout = 0;
+PFN_vkCreateGraphicsPipelines vkCreateGraphicsPipelines = 0;
+PFN_vkCreateDescriptorSetLayout vkCreateDescriptorSetLayout = 0;
+PFN_vkCreateDescriptorPool vkCreateDescriptorPool = 0;
+PFN_vkAllocateDescriptorSets vkAllocateDescriptorSets = 0;
+PFN_vkUpdateDescriptorSets vkUpdateDescriptorSets = 0;
+PFN_vkCmdBindDescriptorSets vkCmdBindDescriptorSets = 0;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = 0;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = 0;
@@ -381,6 +387,48 @@ bool initializeVulkanApi()
 	if (vkCreatePipelineLayout == NULL)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkCreatePipelineLayout\"." << Endl;
+		return false;
+	}
+
+	vkCreateGraphicsPipelines = (PFN_vkCreateGraphicsPipelines)GetProcAddress(s_hVulkanModule, "vkCreateGraphicsPipelines");
+	if (vkCreateGraphicsPipelines == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCreateGraphicsPipelines\"." << Endl;
+		return false;
+	}
+
+	vkCreateDescriptorSetLayout = (PFN_vkCreateDescriptorSetLayout)GetProcAddress(s_hVulkanModule, "vkCreateDescriptorSetLayout");
+	if (vkCreateDescriptorSetLayout == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCreateDescriptorSetLayout\"." << Endl;
+		return false;
+	}
+
+	vkCreateDescriptorPool = (PFN_vkCreateDescriptorPool)GetProcAddress(s_hVulkanModule, "vkCreateDescriptorPool");
+	if (vkCreateDescriptorPool == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCreateDescriptorPool\"." << Endl;
+		return false;
+	}
+
+	vkAllocateDescriptorSets = (PFN_vkAllocateDescriptorSets)GetProcAddress(s_hVulkanModule, "vkAllocateDescriptorSets");
+	if (vkAllocateDescriptorSets == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkAllocateDescriptorSets\"." << Endl;
+		return false;
+	}
+
+	vkUpdateDescriptorSets = (PFN_vkUpdateDescriptorSets)GetProcAddress(s_hVulkanModule, "vkUpdateDescriptorSets");
+	if (vkUpdateDescriptorSets == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkUpdateDescriptorSets\"." << Endl;
+		return false;
+	}
+
+	vkCmdBindDescriptorSets = (PFN_vkCmdBindDescriptorSets)GetProcAddress(s_hVulkanModule, "vkCmdBindDescriptorSets");
+	if (vkCmdBindDescriptorSets == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdBindDescriptorSets\"." << Endl;
 		return false;
 	}
 

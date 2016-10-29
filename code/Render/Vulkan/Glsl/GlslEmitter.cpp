@@ -422,29 +422,8 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 		cx.getShader().addUniform(node->getParameterName());
 	}
 
-	//switch (out->getType())
-	//{
-	//case GtFloat:
-	//	if (!cx.defineUniform(node->getParameterName(), GL_FLOAT, node->getLength()))
-	//		return false;
-	//	break;
-
-	//case GtFloat2:
-	//case GtFloat3:
-	//case GtFloat4:
-	//	if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_VEC4, node->getLength()))
-	//		return false;
-	//	break;
-
-	//case GtFloat4x4:
-	//	if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_MAT4, node->getLength()))
-	//		return false;
-	//	break;
-
-	//default:
-	//	return false;
-	//}
-
+	// Record parameter in context.
+	cx.defineParameter(node->getParameterName(), node->getParameterType(), node->getLength(), node->getFrequency());
 	return true;
 }
 
@@ -2141,6 +2120,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 
 	if (out->getType() < GtTexture2D)
 	{
+		// Add uniform to shader if not already used.
 		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 		if (uniforms.find(node->getParameterName()) == uniforms.end())
 		{
@@ -2150,28 +2130,8 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 			cx.getShader().addUniform(node->getParameterName());
 		}
 
-		//switch (out->getType())
-		//{
-		//case GtFloat:
-		//	if (!cx.defineUniform(node->getParameterName(), GL_FLOAT, 1))
-		//		return false;
-		//	break;
-
-		//case GtFloat2:
-		//case GtFloat3:
-		//case GtFloat4:
-		//	if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_VEC4, 1))
-		//		return false;
-		//	break;
-
-		//case GtFloat4x4:
-		//	if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_MAT4, 1))
-		//		return false;
-		//	break;
-
-		//default:
-		//	return false;
-		//}
+		// Record parameter in context.
+		cx.defineParameter(node->getParameterName(), node->getParameterType(), 1, node->getFrequency());
 	}
 	//else
 	//	cx.defineTexture(node->getParameterName());

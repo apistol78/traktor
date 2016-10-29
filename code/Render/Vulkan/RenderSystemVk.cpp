@@ -17,6 +17,7 @@
 #include "Render/Vulkan/RenderViewVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/TimeQueryVk.h"
+#include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
 #if defined(_WIN32)
@@ -31,86 +32,9 @@ namespace traktor
 		namespace
 		{
 
-const char* c_validationLayerNames[] = { "VK_LAYER_RENDERDOC_Capture" }; //{ "VK_LAYER_LUNARG_standard_validation" };
+const char* c_validationLayerNames[] = { "VK_LAYER_RENDERDOC_Capture" }; // { "VK_LAYER_LUNARG_standard_validation" };
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_report" };
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
-
-
-bool performImageTranslation(VkDevice device, VkQueue presentQueue, VkCommandBuffer setupCmdBuffer, VkImage image, VkAccessFlags dstAccessMask, VkImageLayout newLayout)
-{
-	VkFence submitFence;
- 
-	VkFenceCreateInfo fenceCreateInfo = {};
-	fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	vkCreateFence(device, &fenceCreateInfo, nullptr, &submitFence);
-
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	vkBeginCommandBuffer(setupCmdBuffer, &beginInfo);
-
-	VkImageMemoryBarrier layoutTransitionBarrier = {};
-	layoutTransitionBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	layoutTransitionBarrier.srcAccessMask = 0;
-	layoutTransitionBarrier.dstAccessMask = dstAccessMask;
-	layoutTransitionBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	layoutTransitionBarrier.newLayout = newLayout;
-	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.image = image;
-	VkImageSubresourceRange resourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
-	layoutTransitionBarrier.subresourceRange = resourceRange;
-
-	vkCmdPipelineBarrier(
-		setupCmdBuffer, 
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-		0,
-		0, nullptr,
-		0, nullptr, 
-		1, &layoutTransitionBarrier
-	);
- 
-	vkEndCommandBuffer(setupCmdBuffer);
- 
-	VkPipelineStageFlags waitStageMask[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-	VkSubmitInfo submitInfo = {};
-	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.waitSemaphoreCount = 0;
-	submitInfo.pWaitSemaphores = nullptr;
-	submitInfo.pWaitDstStageMask = waitStageMask;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &setupCmdBuffer;
-	submitInfo.signalSemaphoreCount = 0;
-	submitInfo.pSignalSemaphores = nullptr;
-	if (vkQueueSubmit(presentQueue, 1, &submitInfo, submitFence) != VK_SUCCESS)
-		return false;
- 
-	vkWaitForFences(device, 1, &submitFence, VK_TRUE, UINT64_MAX);
-	vkResetFences(device, 1, &submitFence);
-	vkResetCommandBuffer(setupCmdBuffer, 0);
-	vkDestroyFence(device, submitFence, nullptr);
-	return true;
-}
-
-uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements)
-{
-	VkPhysicalDeviceMemoryProperties memoryProperties = {};
-	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
-
-	uint32_t memoryTypeBits = memoryRequirements.memoryTypeBits;
-	for (uint32_t i = 0; i < 32; ++i)
-	{
-		VkMemoryType memoryType = memoryProperties.memoryTypes[i];
-		if (memoryTypeBits & 1)
-		{
-			if ((memoryType.propertyFlags & memoryFlags) == memoryFlags)
-				return i;
-		}
-		memoryTypeBits = memoryTypeBits >> 1;
-	}
-	return 0; 
-}
 
 		}
 
@@ -409,6 +333,10 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	VkCommandBuffer setupCmdBuffer = 0;
 	VkCommandBuffer drawCmdBuffer = 0;
 	VkImage depthImage = 0;
+	VkDescriptorSetLayout descriptorSetLayout = 0;
+	VkPipelineLayout pipelineLayout = 0;
+	VkDescriptorPool descriptorPool = 0;
+	VkDescriptorSet descriptorSet = 0;
 
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
 	m_window->setWindowedStyle(
@@ -570,7 +498,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	if (vkBindImageMemory(m_device, depthImage, imageMemory, 0) != VK_SUCCESS)
 		return 0;
 
-	if (!performImageTranslation(
+	if (!changeImageLayout(
 		m_device,
 		presentQueue,
 		setupCmdBuffer,
@@ -596,6 +524,67 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		))
 			return 0;
 	}
+	
+
+
+
+	VkDescriptorSetLayoutBinding layoutBindings[6];
+	for (int32_t i = 0; i < 3; ++i)
+	{
+		layoutBindings[i] = {};
+		layoutBindings[i].binding = i;
+		layoutBindings[i].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		layoutBindings[i].descriptorCount = 1;
+		layoutBindings[i].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+		layoutBindings[i + 3] = {};
+		layoutBindings[i + 3].binding = i + 3;
+		layoutBindings[i + 3].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		layoutBindings[i + 3].descriptorCount = 1;
+		layoutBindings[i + 3].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	}
+
+	VkDescriptorSetLayoutCreateInfo descriptorLayoutCreateInfo = {};
+	descriptorLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	descriptorLayoutCreateInfo.pNext = nullptr;
+	descriptorLayoutCreateInfo.bindingCount = sizeof_array(layoutBindings);
+	descriptorLayoutCreateInfo.pBindings = layoutBindings;
+	if (vkCreateDescriptorSetLayout(m_device, &descriptorLayoutCreateInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS)
+		return false;
+
+
+
+	VkDescriptorPoolSize descriptorPoolSize[1];
+	descriptorPoolSize[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descriptorPoolSize[0].descriptorCount = 6;
+
+	VkDescriptorPoolCreateInfo descriptorPoolCreationInfo = {};
+	descriptorPoolCreationInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	descriptorPoolCreationInfo.pNext = nullptr;
+	descriptorPoolCreationInfo.maxSets = 1;
+	descriptorPoolCreationInfo.poolSizeCount = 1;
+	descriptorPoolCreationInfo.pPoolSizes = descriptorPoolSize;
+	if (vkCreateDescriptorPool(m_device, &descriptorPoolCreationInfo, nullptr, &descriptorPool) != VK_SUCCESS)
+		return false;
+
+	VkDescriptorSetAllocateInfo allocateInfo;
+	allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocateInfo.pNext = nullptr;
+	allocateInfo.descriptorPool = descriptorPool;
+	allocateInfo.descriptorSetCount = 1;
+	allocateInfo.pSetLayouts = &descriptorSetLayout;
+	if (vkAllocateDescriptorSets(m_device, &allocateInfo, &descriptorSet) != VK_SUCCESS)
+		return false;
+
+
+	VkPipelineLayoutCreateInfo layoutCreateInfo = {};
+	layoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	layoutCreateInfo.setLayoutCount = 1;
+	layoutCreateInfo.pSetLayouts = &descriptorSetLayout;
+	layoutCreateInfo.pushConstantRangeCount = 0;
+	layoutCreateInfo.pPushConstantRanges = nullptr;
+	if (vkCreatePipelineLayout(m_device, &layoutCreateInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
+		return false;
 
 #if defined(_WIN32)
 	Ref< RenderViewVk > renderView = new RenderViewVk(
@@ -604,6 +593,10 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		swapChain,
 		presentQueue,
 		drawCmdBuffer,
+		descriptorSetLayout,
+		pipelineLayout,
+		descriptorPool,
+		descriptorSet,
 		primaryTargets
 	);
 #else
@@ -759,8 +752,8 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 	if (!resource)
 		return 0;
 
-	Ref< ProgramVk > program = new ProgramVk(m_device);
-	if (!program->create(resource))
+	Ref< ProgramVk > program = new ProgramVk();
+	if (!program->create(m_physicalDevice, m_device, resource))
 		return 0;
 
 	return program;
