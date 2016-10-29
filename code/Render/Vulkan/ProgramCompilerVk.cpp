@@ -10,11 +10,14 @@
 #include <SPIRV/disassemble.h>
 
 #include "Core/Log/Log.h"
+#include "Core/Misc/Align.h"
 #include "Core/Misc/Split.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
+
 #include "Render/Vulkan/ProgramCompilerVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
-#include "Render/Vulkan/Glsl/Glsl.h"
-#include "Render/Vulkan/Glsl/GlslProgram.h"
+#include "Render/Vulkan/Glsl/GlslContext.h"
 
 namespace traktor
 {
@@ -148,15 +151,24 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	Stats* outStats
 ) const
 {
-	GlslProgram glslProgram;
-	if (!Glsl().generate(shaderGraph, settings, glslProgram))
+	RefArray< VertexOutput > vertexOutputs;
+	RefArray< PixelOutput > pixelOutputs;
+
+	shaderGraph->findNodesOf< VertexOutput >(vertexOutputs);
+	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
+
+	if (vertexOutputs.size() != 1 || pixelOutputs.size() != 1)
 	{
-		log::error << L"Failed to compile shader; Unable to generate GLSL from shader graph." << Endl;
-		return 0;
+		log::error << L"Unable to generate Vulkan GLSL shader; incorrect number of outputs" << Endl;
+		return false;
 	}
 
-	const char* vertexShaderText = strdup(wstombs(glslProgram.getVertexShader()).c_str());
-	const char* fragmentShaderText = strdup(wstombs(glslProgram.getFragmentShader()).c_str());
+	GlslContext cx(shaderGraph);
+	cx.getEmitter().emit(cx, pixelOutputs[0]);
+	cx.getEmitter().emit(cx, vertexOutputs[0]);
+
+	const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader()).c_str());
+	const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader()).c_str());
 
 	glslang::TProgram* program = new glslang::TProgram();
 
@@ -215,6 +227,56 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	glslang::GlslangToSpv(*program->getIntermediate(EShLangVertex), programResource->m_vertexShader);
 	glslang::GlslangToSpv(*program->getIntermediate(EShLangFragment), programResource->m_fragmentShader);
 
+	// Setup parameter mapping to uniforms.
+	const uint32_t scalarTypeSize[] = { 1, 4, 16, 0, 0, 0 };
+	std::map< std::wstring, uint32_t > pm;
+
+	uint32_t offset = 0;
+	for (auto p : cx.getParameters())
+	{
+		if (p.type <= PtMatrix)
+		{
+			programResource->m_parameters.push_back(ProgramResourceVk::ParameterDesc(
+				p.name,
+				offset,
+				scalarTypeSize[p.type] * p.length
+			));
+			pm[p.name] = offset;
+			offset = alignUp(offset + scalarTypeSize[p.type] * p.length, 4);
+		}
+	}
+	programResource->m_parameterScalarSize = offset;
+
+	for (auto u : cx.getVertexShader().getUniforms())
+	{
+		const GlslContext::Parameter* parameter = cx.getParameter(u);
+		if (parameter)
+		{
+			ProgramResourceVk::UniformBufferDesc& ubd = programResource->m_vertexUniformBuffers[parameter->frequency];
+			ubd.parameters.push_back(ProgramResourceVk::ParameterMappingDesc(
+				ubd.size,
+				pm[parameter->name],
+				scalarTypeSize[parameter->type] * parameter->length
+			));
+			ubd.size += scalarTypeSize[parameter->type] * parameter->length;
+		}
+	}
+	
+	for (auto u : cx.getFragmentShader().getUniforms())
+	{
+		const GlslContext::Parameter* parameter = cx.getParameter(u);
+		if (parameter)
+		{
+			ProgramResourceVk::UniformBufferDesc& ubd = programResource->m_fragmentUniformBuffers[parameter->frequency];
+			ubd.parameters.push_back(ProgramResourceVk::ParameterMappingDesc(
+				ubd.size,
+				pm[parameter->name],
+				scalarTypeSize[parameter->type] * parameter->length
+			));
+			ubd.size += scalarTypeSize[parameter->type] * parameter->length;
+		}
+	}
+
 	/*
 	// Disassemble SPIR-V.
 	std::ostringstream vos;
@@ -244,12 +306,24 @@ bool ProgramCompilerVk::generate(
 	std::wstring& outPixelShader
 ) const
 {
-	GlslProgram glslProgram;
-	if (!Glsl().generate(shaderGraph, settings, glslProgram))
-		return false;
+	RefArray< VertexOutput > vertexOutputs;
+	RefArray< PixelOutput > pixelOutputs;
 
-	outVertexShader = glslProgram.getVertexShader();
-	outPixelShader = glslProgram.getFragmentShader();
+	shaderGraph->findNodesOf< VertexOutput >(vertexOutputs);
+	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
+
+	if (vertexOutputs.size() != 1 || pixelOutputs.size() != 1)
+	{
+		log::error << L"Unable to generate Vulkan GLSL shader; incorrect number of outputs" << Endl;
+		return false;
+	}
+
+	GlslContext cx(shaderGraph);
+	cx.getEmitter().emit(cx, pixelOutputs[0]);
+	cx.getEmitter().emit(cx, vertexOutputs[0]);
+
+	outVertexShader = cx.getVertexShader().getGeneratedShader();
+	outPixelShader = cx.getFragmentShader().getGeneratedShader();
 	return true;
 }
 

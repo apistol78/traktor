@@ -173,7 +173,11 @@ std::wstring GlslShader::getGeneratedShader() const
 	std::wstring cbufferOnceText = getOutputStream(BtCBufferOnce).str();
 	if (!cbufferOnceText.empty())
 	{
-		ss << L"layout (binding = 0) uniform cbOnce" << Endl;
+		if (m_shaderType == StFragment)
+			ss << L"layout (std140, binding = 3) uniform cbOnce" << Endl;
+		else
+			ss << L"layout (std140, binding = 0) uniform cbOnce" << Endl;
+
 		ss << L"{" << Endl;
 		ss << IncreaseIndent;
 
@@ -187,7 +191,11 @@ std::wstring GlslShader::getGeneratedShader() const
 	std::wstring cbufferFrameText = getOutputStream(BtCBufferFrame).str();
 	if (!cbufferFrameText.empty() || m_needTargetSize)
 	{
-		ss << L"layout (binding = 1) uniform cbFrame" << Endl;
+		if (m_shaderType == StFragment)
+			ss << L"layout (std140, binding = 4) uniform cbFrame" << Endl;
+		else
+			ss << L"layout (std140, binding = 1) uniform cbFrame" << Endl;
+
 		ss << L"{" << Endl;
 		ss << IncreaseIndent;
 
@@ -204,7 +212,11 @@ std::wstring GlslShader::getGeneratedShader() const
 	std::wstring cbufferDrawText = getOutputStream(BtCBufferDraw).str();
 	if (!cbufferDrawText.empty())
 	{
-		ss << L"layout (binding = 2) uniform cbDraw" << Endl;
+		if (m_shaderType == StFragment)
+			ss << L"layout (std140, binding = 5) uniform cbDraw" << Endl;
+		else
+			ss << L"layout (std140, binding = 2) uniform cbDraw" << Endl;
+
 		ss << L"{" << Endl;
 		ss << IncreaseIndent;
 

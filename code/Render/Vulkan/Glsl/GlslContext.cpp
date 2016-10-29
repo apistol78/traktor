@@ -160,29 +160,29 @@ bool GlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& o
 	outOffset = 0;
 
 	m_interpolatorMap.push_back(width);
-
 	return true;
 }
 
-GlslShader& GlslContext::getVertexShader()
+void GlslContext::defineParameter(const std::wstring& name, ParameterType type, int32_t length, UpdateFrequency frequency)
 {
-	return m_vertexShader;
+	if (getParameter(name) != 0)
+		return;
+	m_parameters.push_back({
+		name,
+		type,
+		length,
+		frequency
+	});
 }
 
-GlslShader& GlslContext::getFragmentShader()
+const GlslContext::Parameter* GlslContext::getParameter(const std::wstring& name) const
 {
-	return m_fragmentShader;
-}
-
-GlslShader& GlslContext::getShader()
-{
-	T_ASSERT (m_currentShader);
-	return *m_currentShader;
-}
-
-GlslEmitter& GlslContext::getEmitter()
-{
-	return m_emitter;
+	for (std::vector< Parameter >::const_iterator i = m_parameters.begin(); i != m_parameters.end(); ++i)
+	{
+		if (i->name == name)
+			return &(*i);
+	}
+	return 0;
 }
 
 	}

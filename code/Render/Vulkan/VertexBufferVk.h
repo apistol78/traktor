@@ -40,6 +40,10 @@ public:
 
 	VkBuffer getVkBuffer() const { return m_vertexBuffer; }
 
+	const VkVertexInputBindingDescription& getVkVertexInputBindingDescription() const { return m_vertexBindingDescription; }
+
+	const AlignedVector< VkVertexInputAttributeDescription >& getVkVertexInputAttributeDescriptions() const { return m_vertexAttributeDescriptions; }
+
 private:
 	VkDevice m_device;
 	VkBuffer m_vertexBuffer;
