@@ -111,12 +111,18 @@ void GlslShader::allocateTargetSize()
 
 void GlslShader::addUniform(const std::wstring& uniform)
 {
-	m_uniforms.insert(uniform);
+	if (std::find(m_uniforms.begin(), m_uniforms.end(), uniform) == m_uniforms.end())
+		m_uniforms.push_back(uniform);
 }
 
-const std::set< std::wstring >& GlslShader::getUniforms() const
+const std::list< std::wstring >& GlslShader::getUniforms() const
 {
 	return m_uniforms;
+}
+
+bool GlslShader::haveUniform(const std::wstring& uniform) const
+{
+	return std::find(m_uniforms.begin(), m_uniforms.end(), uniform) != m_uniforms.end();
 }
 
 bool GlslShader::defineScript(const std::wstring& signature)

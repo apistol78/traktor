@@ -70,7 +70,9 @@ public:
 
 	void addUniform(const std::wstring& uniform);
 
-	const std::set< std::wstring >& getUniforms() const;
+	bool haveUniform(const std::wstring& uniform) const;
+
+	const std::list< std::wstring >& getUniforms() const;
 
 	bool defineScript(const std::wstring& signature);
     
@@ -90,7 +92,7 @@ private:
 	ShaderType m_shaderType;
 	std::map< std::wstring, GlslVariable* > m_inputVariables;
 	std::list< scope_t > m_variables;
-	std::set< std::wstring > m_uniforms;
+	std::list< std::wstring > m_uniforms;
 	std::set< std::wstring > m_scriptSignatures;
 	int32_t m_nextTemporaryVariable;
 	bool m_needTargetSize;
