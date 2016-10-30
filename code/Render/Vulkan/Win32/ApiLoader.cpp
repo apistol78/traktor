@@ -62,6 +62,7 @@ PFN_vkCreateDescriptorPool vkCreateDescriptorPool = 0;
 PFN_vkAllocateDescriptorSets vkAllocateDescriptorSets = 0;
 PFN_vkUpdateDescriptorSets vkUpdateDescriptorSets = 0;
 PFN_vkCmdBindDescriptorSets vkCmdBindDescriptorSets = 0;
+PFN_vkDestroyPipeline vkDestroyPipeline = 0;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = 0;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = 0;
@@ -429,6 +430,13 @@ bool initializeVulkanApi()
 	if (vkCmdBindDescriptorSets == NULL)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkCmdBindDescriptorSets\"." << Endl;
+		return false;
+	}
+
+	vkDestroyPipeline = (PFN_vkDestroyPipeline)GetProcAddress(s_hVulkanModule, "vkDestroyPipeline");
+	if (vkDestroyPipeline == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyPipeline\"." << Endl;
 		return false;
 	}
 

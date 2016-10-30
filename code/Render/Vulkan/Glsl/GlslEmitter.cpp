@@ -413,8 +413,7 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 		assign(fb, out) << node->getParameterName() << L"[int(" << index->getName() << L")];" << Endl;
 	}
 
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(node->getParameterName()) == uniforms.end())
+	if (!cx.getShader().haveUniform(node->getParameterName()))
 	{
 		const GlslShader::BlockType c_blockType[] = { GlslShader::BtCBufferOnce, GlslShader::BtCBufferFrame, GlslShader::BtCBufferDraw };
 		StringOutputStream& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
@@ -1359,7 +1358,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	//	rs.samplerStates[stage].compare = c_glCompare[samplerState.compare];
 	//}
 
-	if (cx.getShader().getUniforms().find(samplerName) == cx.getShader().getUniforms().end())
+	if (!cx.getShader().haveUniform(samplerName))
 	{
 		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtSamplers);
 		if (samplerState.compare == CfNone)
@@ -1641,7 +1640,7 @@ bool emitScript(GlslContext& cx, Script* node)
 			//	rs.samplerStates[stage].compare = c_glCompare[samplerState.compare];
 			//}
 
-			if (cx.getShader().getUniforms().find(samplerId) == cx.getShader().getUniforms().end())
+			if (!cx.getShader().haveUniform(samplerId))
 			{
 				StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtSamplers);
 				if (samplerState.compare == CfNone)
@@ -2121,8 +2120,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	if (out->getType() < GtTexture2D)
 	{
 		// Add uniform to shader if not already used.
-		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-		if (uniforms.find(node->getParameterName()) == uniforms.end())
+		if (!cx.getShader().haveUniform(node->getParameterName()))
 		{
 			const GlslShader::BlockType c_blockType[] = { GlslShader::BtCBufferOnce, GlslShader::BtCBufferFrame, GlslShader::BtCBufferDraw };
 			StringOutputStream& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
@@ -2159,7 +2157,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 		std::wstring attributeName = glsl_vertex_attr_name(node->getDataUsage(), node->getIndex());
 
 		StringOutputStream& fi = cx.getVertexShader().getOutputStream(GlslShader::BtInput);
-		fi << L"layout (location = " << node->getIndex() << L") in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
+		fi << L"layout (location = " << glsl_vertex_attr_location(node->getDataUsage(), node->getIndex()) << L") in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
 
 		if (node->getDataUsage() == DuPosition && type != GtFloat4)
 		{

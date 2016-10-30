@@ -60,6 +60,7 @@ extern PFN_vkCreateDescriptorPool vkCreateDescriptorPool;
 extern PFN_vkAllocateDescriptorSets vkAllocateDescriptorSets;
 extern PFN_vkUpdateDescriptorSets vkUpdateDescriptorSets;
 extern PFN_vkCmdBindDescriptorSets vkCmdBindDescriptorSets;
+extern PFN_vkDestroyPipeline vkDestroyPipeline;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;

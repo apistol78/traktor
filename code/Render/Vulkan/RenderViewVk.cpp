@@ -109,7 +109,6 @@ void RenderViewVk::close()
 bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 {
 #if defined(_WIN32)
-
 	// Cannot reset embedded view.
 	if (!m_window)
 		return false;
@@ -117,7 +116,6 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 	m_window->removeListener(this);
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
 	m_window->addListener(this);
-
 #endif
 	return true;
 }
@@ -149,7 +147,11 @@ bool RenderViewVk::isMinimized() const
 
 bool RenderViewVk::isFullScreen() const
 {
+#if defined(_WIN32)
+	return m_window->haveFullScreenStyle();
+#else
 	return true;
+#endif
 }
 
 void RenderViewVk::showCursor()
@@ -571,6 +573,12 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	pipelineCreateInfo.subpass = 0;
 	pipelineCreateInfo.basePipelineHandle = nullptr;
 	pipelineCreateInfo.basePipelineIndex = 0;
+
+	if (m_pipeline)
+	{
+		vkDestroyPipeline(m_device, m_pipeline, nullptr);
+		m_pipeline = 0;
+	}
 	 
 	if (vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &m_pipeline) != VK_SUCCESS)
 		return false;

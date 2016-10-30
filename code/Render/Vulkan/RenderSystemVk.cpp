@@ -20,6 +20,7 @@
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
+#include "Render/Vulkan/Glsl/GlslType.h"
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/ApiLoader.h"
 #	include "Render/Vulkan/Win32/Window.h"
@@ -32,7 +33,7 @@ namespace traktor
 		namespace
 		{
 
-const char* c_validationLayerNames[] = { "VK_LAYER_RENDERDOC_Capture" }; // { "VK_LAYER_LUNARG_standard_validation" };
+const char* c_validationLayerNames[] = /*{ "VK_LAYER_RENDERDOC_Capture" };*/ { "VK_LAYER_LUNARG_standard_validation" };
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_report" };
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
 
@@ -144,7 +145,6 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-
 	// Create Windows renderable surface.
     VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {};
     surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
@@ -242,9 +242,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 void RenderSystemVk::destroy()
 {
 #if defined(_WIN32)
-
 	finalizeVulkanApi();
-
 #endif
 }
 
@@ -330,7 +328,6 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	VkSwapchainKHR swapChain = 0;
 	VkQueue presentQueue = 0;
 	VkCommandPool commandPool = 0;
-	VkCommandBuffer setupCmdBuffer = 0;
 	VkCommandBuffer drawCmdBuffer = 0;
 	VkImage depthImage = 0;
 	VkDescriptorSetLayout descriptorSetLayout = 0;
@@ -447,17 +444,11 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	commandBufferAllocationInfo.commandPool = commandPool;
 	commandBufferAllocationInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	commandBufferAllocationInfo.commandBufferCount = 1;
-	if (vkAllocateCommandBuffers(m_device, &commandBufferAllocationInfo, &setupCmdBuffer) != VK_SUCCESS)
-	{
-		log::error << L"Failed to create Vulkan; failed to allocate setup command buffer." << Endl;
-		return 0;
-	}
 	if (vkAllocateCommandBuffers(m_device, &commandBufferAllocationInfo, &drawCmdBuffer) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; failed to allocate draw command buffer." << Endl;
 		return 0;
 	}
-
 
 	uint32_t imageCount = 0;
 	vkGetSwapchainImagesKHR(m_device, swapChain, &imageCount, nullptr);
@@ -469,7 +460,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	VkImageCreateInfo imageCreateInfo = {};
 	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-	imageCreateInfo.format = VK_FORMAT_D16_UNORM;
+	imageCreateInfo.format = VK_FORMAT_D24_UNORM_S8_UINT;
 	imageCreateInfo.extent = { desc.displayMode.width, desc.displayMode.height, 1 };
 	imageCreateInfo.mipLevels = 1;
 	imageCreateInfo.arrayLayers = 1;
@@ -501,7 +492,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	if (!changeImageLayout(
 		m_device,
 		presentQueue,
-		setupCmdBuffer,
+		drawCmdBuffer, //setupCmdBuffer,
 		depthImage,
 		VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
@@ -525,9 +516,6 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 			return 0;
 	}
 	
-
-
-
 	VkDescriptorSetLayoutBinding layoutBindings[6];
 	for (int32_t i = 0; i < 3; ++i)
 	{
@@ -552,8 +540,6 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	if (vkCreateDescriptorSetLayout(m_device, &descriptorLayoutCreateInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS)
 		return false;
 
-
-
 	VkDescriptorPoolSize descriptorPoolSize[1];
 	descriptorPoolSize[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorPoolSize[0].descriptorCount = 6;
@@ -575,7 +561,6 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	allocateInfo.pSetLayouts = &descriptorSetLayout;
 	if (vkAllocateDescriptorSets(m_device, &allocateInfo, &descriptorSet) != VK_SUCCESS)
 		return false;
-
 
 	VkPipelineLayoutCreateInfo layoutCreateInfo = {};
 	layoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -644,7 +629,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const std::vector< Vertex
 	vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
  
 	AlignedVector< VkVertexInputAttributeDescription > vertexAttributeDescriptions;
-	for (std::vector< VertexElement >::const_iterator i = vertexElements.begin(); i != vertexElements.end(); ++i)
+	for (auto ve : vertexElements)
 	{
 		const VkFormat c_formats[] =
 		{
@@ -663,10 +648,10 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const std::vector< Vertex
 		};
 
 		VkVertexInputAttributeDescription vertexAttributeDescription = {};
-		vertexAttributeDescription.location = 0;
+		vertexAttributeDescription.location = glsl_vertex_attr_location(ve.getDataUsage(), ve.getIndex());
 		vertexAttributeDescription.binding = 0;
-		vertexAttributeDescription.format = c_formats[i->getDataType()];
-		vertexAttributeDescription.offset = i->getOffset();
+		vertexAttributeDescription.format = c_formats[ve.getDataType()];
+		vertexAttributeDescription.offset = ve.getOffset();
 		vertexAttributeDescriptions.push_back(vertexAttributeDescription);
 	}
 
@@ -713,7 +698,7 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureVk > texture = new SimpleTextureVk();
-	if (texture->create(desc))
+	if (texture->create(m_physicalDevice, m_device, desc))
 		return texture;
 	else
 		return 0;
@@ -753,10 +738,10 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 		return 0;
 
 	Ref< ProgramVk > program = new ProgramVk();
-	if (!program->create(m_physicalDevice, m_device, resource))
+	if (program->create(m_physicalDevice, m_device, resource))
+		return program;
+	else
 		return 0;
-
-	return program;
 }
 
 Ref< IProgramCompiler > RenderSystemVk::createProgramCompiler() const
