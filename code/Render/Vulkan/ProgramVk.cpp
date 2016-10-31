@@ -182,7 +182,7 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorSet descriptorSet)
 		for (auto p : m_vertexUniformBuffers[i].parameters)
 		{
 			std::memcpy(
-				ptr + p.uniformBufferOffset,
+				ptr + p.uniformBufferOffset * 4,
 				&m_parameterScalarData[p.offset],
 				p.size * sizeof(float)
 			);
@@ -220,7 +220,7 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorSet descriptorSet)
 		for (auto p : m_fragmentUniformBuffers[i].parameters)
 		{
 			std::memcpy(
-				ptr + p.uniformBufferOffset,
+				ptr + p.uniformBufferOffset * 4,
 				&m_parameterScalarData[p.offset],
 				p.size * sizeof(float)
 			);

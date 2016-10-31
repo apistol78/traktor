@@ -577,6 +577,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		m_device,
 		swapChain,
 		presentQueue,
+		commandPool,
 		drawCmdBuffer,
 		descriptorSetLayout,
 		pipelineLayout,
