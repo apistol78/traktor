@@ -39,6 +39,7 @@ public:
 		VkDevice device,
 		VkSwapchainKHR swapChain,
 		VkQueue presentQueue,
+		VkCommandPool commandPool,
 		VkCommandBuffer drawCmdBuffer,
 		VkDescriptorSetLayout descriptorSetLayout,
 		VkPipelineLayout pipelineLayout,
@@ -118,6 +119,7 @@ private:
 	VkQueue m_presentQueue;
 	uint32_t m_currentImageIndex;
 #endif
+	VkCommandPool m_commandPool;
 	VkCommandBuffer m_drawCmdBuffer;
 	VkDescriptorSetLayout m_descriptorSetLayout;
 	VkPipelineLayout m_pipelineLayout;
@@ -144,7 +146,7 @@ private:
 
 	void validateTargetState();
 
-	bool validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
+	bool validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
 
 
 #if defined(_WIN32)

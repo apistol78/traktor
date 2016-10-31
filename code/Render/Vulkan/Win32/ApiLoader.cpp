@@ -63,6 +63,11 @@ PFN_vkAllocateDescriptorSets vkAllocateDescriptorSets = 0;
 PFN_vkUpdateDescriptorSets vkUpdateDescriptorSets = 0;
 PFN_vkCmdBindDescriptorSets vkCmdBindDescriptorSets = 0;
 PFN_vkDestroyPipeline vkDestroyPipeline = 0;
+PFN_vkCreateEvent vkCreateEvent = 0;
+PFN_vkDestroyEvent vkDestroyEvent = 0;
+PFN_vkCmdSetEvent vkCmdSetEvent = 0;
+PFN_vkGetEventStatus vkGetEventStatus = 0;
+PFN_vkCmdExecuteCommands vkCmdExecuteCommands = 0;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = 0;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = 0;
@@ -437,6 +442,41 @@ bool initializeVulkanApi()
 	if (vkDestroyPipeline == NULL)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyPipeline\"." << Endl;
+		return false;
+	}
+
+	vkCreateEvent = (PFN_vkCreateEvent)GetProcAddress(s_hVulkanModule, "vkCreateEvent");
+	if (vkCreateEvent == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCreateEvent\"." << Endl;
+		return false;
+	}
+
+	vkDestroyEvent = (PFN_vkDestroyEvent)GetProcAddress(s_hVulkanModule, "vkDestroyEvent");
+	if (vkDestroyEvent == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyEvent\"." << Endl;
+		return false;
+	}
+
+	vkCmdSetEvent = (PFN_vkCmdSetEvent)GetProcAddress(s_hVulkanModule, "vkCmdSetEvent");
+	if (vkCmdSetEvent == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdSetEvent\"." << Endl;
+		return false;
+	}
+
+	vkGetEventStatus = (PFN_vkGetEventStatus)GetProcAddress(s_hVulkanModule, "vkGetEventStatus");
+	if (vkGetEventStatus == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkGetEventStatus\"." << Endl;
+		return false;
+	}
+
+	vkCmdExecuteCommands = (PFN_vkCmdExecuteCommands)GetProcAddress(s_hVulkanModule, "vkCmdExecuteCommands");
+	if (vkCmdExecuteCommands == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdExecuteCommands\"." << Endl;
 		return false;
 	}
 

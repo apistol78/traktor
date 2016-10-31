@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/ProgramVk.h"
@@ -43,6 +44,7 @@ RenderViewVk::RenderViewVk(
 	VkDevice device,
 	VkSwapchainKHR swapChain,
 	VkQueue presentQueue,
+	VkCommandPool commandPool,
 	VkCommandBuffer drawCmdBuffer,
 	VkDescriptorSetLayout descriptorSetLayout,
 	VkPipelineLayout pipelineLayout,
@@ -55,6 +57,7 @@ RenderViewVk::RenderViewVk(
 ,	m_swapChain(swapChain)
 ,	m_presentQueue(presentQueue)
 ,	m_currentImageIndex(0)
+,	m_commandPool(commandPool)
 ,	m_drawCmdBuffer(drawCmdBuffer)
 ,	m_descriptorSetLayout(descriptorSetLayout)
 ,	m_pipelineLayout(pipelineLayout)
@@ -188,6 +191,8 @@ SystemWindow RenderViewVk::getSystemWindow()
 
 bool RenderViewVk::begin(EyeType eye)
 {
+	log::info << L"** Begin **" << Endl;
+
     VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, 0, 0 };
     vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_presentCompleteSemaphore);
     vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_renderingCompleteSemaphore);
@@ -195,12 +200,12 @@ bool RenderViewVk::begin(EyeType eye)
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_presentCompleteSemaphore, VK_NULL_HANDLE, &m_currentImageIndex);
 
-	// Begin recording command buffer.
+	// Begin recording *PRIMARY* command buffer.
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 	vkBeginCommandBuffer(m_drawCmdBuffer, &beginInfo);
-	
+
 	// Push primary target onto stack.
 	TargetState ts;
 	ts.rts = m_primaryTargets[m_currentImageIndex];
@@ -215,6 +220,8 @@ bool RenderViewVk::begin(EyeType eye)
 
 bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
 {
+	log::info << L"** Begin RT 1 **" << Endl;
+
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = 0;
@@ -228,6 +235,8 @@ bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
 
 bool RenderViewVk::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
+	log::info << L"** Begin RT 2 **" << Endl;
+
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = renderTarget;
@@ -257,14 +266,61 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	VertexBufferVk* vb = mandatory_non_null_type_cast< VertexBufferVk* >(vertexBuffer);
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 
-	// Validate render pass, framebuffer and graphics pipeline.
+	log::info << L"** Draw **" << Endl;
+
+	// Validate render pass and framebuffer, into *PRIMARY* command buffer.
 	validateTargetState();
-	validatePipeline(vb, p, primitives.type);
+
+
+	// Create *SECONDARY* command buffer for each draw.
+	VkCommandBuffer cmdBuffer = 0;
+	VkCommandBufferAllocateInfo commandBufferAllocationInfo = {};
+	commandBufferAllocationInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	commandBufferAllocationInfo.commandPool = m_commandPool;
+	commandBufferAllocationInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+	commandBufferAllocationInfo.commandBufferCount = 1;
+	if (vkAllocateCommandBuffers(m_device, &commandBufferAllocationInfo, &cmdBuffer) != VK_SUCCESS)
+		return;
+
+
+	// Begin recording *SECONDARY* command buffer.
+	T_FATAL_ASSERT (!m_targetStateStack.empty());
+	TargetState& ts = m_targetStateStack.back();
+
+	VkCommandBufferInheritanceInfo inheritanceInfo = {};
+	inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+	inheritanceInfo.renderPass = ts.rts->getVkRenderPass();
+	inheritanceInfo.subpass = 0;
+	inheritanceInfo.framebuffer = ts.rts->getVkFramebuffer();
+	inheritanceInfo.occlusionQueryEnable = VK_FALSE;
+
+
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+	beginInfo.pInheritanceInfo = &inheritanceInfo;
+	vkBeginCommandBuffer(cmdBuffer, &beginInfo);
+
+
+	validatePipeline(cmdBuffer, vb, p, primitives.type);
+
+
+	//VkDescriptorSet descriptorSet = 0;
+	//VkDescriptorSetAllocateInfo allocateInfo;
+	//allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	//allocateInfo.pNext = nullptr;
+	//allocateInfo.descriptorPool = m_descriptorPool;
+	//allocateInfo.descriptorSetCount = 1;
+	//allocateInfo.pSetLayouts = &m_descriptorSetLayout;
+	//if (vkAllocateDescriptorSets(m_device, &allocateInfo, &descriptorSet) != VK_SUCCESS)
+	//	return;
+
 
 	p->validate(m_device, m_descriptorSet);
 
+
 	vkCmdBindDescriptorSets(
-		m_drawCmdBuffer,
+		cmdBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
 		m_pipelineLayout,
 		0,
@@ -297,18 +353,18 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	}
 
 	VkBuffer vbb = vb->getVkBuffer();
-    VkDeviceSize offsets = {};
-    vkCmdBindVertexBuffers(m_drawCmdBuffer, 0, 1, &vbb, &offsets);
+	VkDeviceSize offsets = {};
+	vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &vbb, &offsets);
  
 	if (indexBuffer && primitives.indexed)
 	{
 		IndexBufferVk* ib = mandatory_non_null_type_cast<IndexBufferVk*>(indexBuffer);
 		VkBuffer ibb = ib->getVkBuffer();
 		VkDeviceSize offset = {};
-		vkCmdBindIndexBuffer(m_drawCmdBuffer, ibb, offset, (ib->getIndexType() == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(cmdBuffer, ibb, offset, (ib->getIndexType() == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
 
 		vkCmdDrawIndexed(
-			m_drawCmdBuffer,
+			cmdBuffer,
 			vertexCount,	// index count
 			1,	// instance count
 			primitives.offset,	// first index
@@ -319,13 +375,21 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	else
 	{
 		vkCmdDraw(
-			m_drawCmdBuffer,
+			cmdBuffer,
 			vertexCount,   // vertex count
 			1,   // instance count
 			primitives.offset,   // first vertex
 			0 // first instance
 		);
 	}
+
+
+	// End recording *SECONDARY* command buffer.
+	vkEndCommandBuffer(cmdBuffer);
+
+
+	// Execute *SECONDARY* command buffer from *PRIMARY*
+	vkCmdExecuteCommands(m_drawCmdBuffer, 1, &cmdBuffer);
 }
 
 void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
@@ -335,6 +399,8 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 void RenderViewVk::end()
 {
+	log::info << L"** End **" << Endl;
+
 	// Close current render pass if it has begun.
 	if (!m_targetStateDirty)
 		vkCmdEndRenderPass(m_drawCmdBuffer);
@@ -347,6 +413,8 @@ void RenderViewVk::end()
 void RenderViewVk::present()
 {
 	T_FATAL_ASSERT (m_targetStateStack.empty());
+
+	log::info << L"** Present **" << Endl;
 
 	// Prepare primary color for presentation.
 	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_drawCmdBuffer);
@@ -430,12 +498,12 @@ void RenderViewVk::validateTargetState()
 	renderPassBeginInfo.renderArea.extent.height = ts.rts->getHeight();
 	renderPassBeginInfo.clearValueCount = 2;
 	renderPassBeginInfo.pClearValues = clearValue;
-	vkCmdBeginRenderPass(m_drawCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(m_drawCmdBuffer, &renderPassBeginInfo, /*VK_SUBPASS_CONTENTS_INLINE*/VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 
 	m_targetStateDirty = false;
 }
 
-bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt)
+bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt)
 {
 	T_FATAL_ASSERT (!m_targetStateStack.empty());
 	TargetState& ts = m_targetStateStack.back();
@@ -485,8 +553,8 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	rasterizationState.depthClampEnable = VK_FALSE;
 	rasterizationState.rasterizerDiscardEnable = VK_FALSE;
 	rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-	rasterizationState.cullMode = VK_CULL_MODE_NONE;
-	rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+	rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
+	rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE; //  VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	rasterizationState.depthBiasEnable = VK_FALSE;
 	rasterizationState.depthBiasConstantFactor = 0;
 	rasterizationState.depthBiasClamp = 0;
@@ -574,16 +642,16 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	pipelineCreateInfo.basePipelineHandle = nullptr;
 	pipelineCreateInfo.basePipelineIndex = 0;
 
-	if (m_pipeline)
-	{
-		vkDestroyPipeline(m_device, m_pipeline, nullptr);
-		m_pipeline = 0;
-	}
+	//if (m_pipeline)
+	//{
+	//	vkDestroyPipeline(m_device, m_pipeline, nullptr);
+	//	m_pipeline = 0;
+	//}
 	 
 	if (vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &m_pipeline) != VK_SUCCESS)
 		return false;
 
-	vkCmdBindPipeline(m_drawCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
+	vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
 	return true;
 }
 
