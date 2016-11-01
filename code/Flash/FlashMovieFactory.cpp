@@ -125,7 +125,11 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf) const
 		if (!tag || tag->id == TiEnd)
 			break;
 
-		Ref< FlashTag > tagReader = m_tagReaders.at(tag->id);
+		Ref< FlashTag > tagReader;
+		std::map< uint16_t, Ref< FlashTag > >::const_iterator i = m_tagReaders.find(tag->id);
+		if (i != m_tagReaders.end())
+			tagReader = i->second;
+
 		if (tagReader)
 		{
 			context.tagSize = tag->length;

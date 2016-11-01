@@ -87,6 +87,8 @@ public:
 		uint8_t blendMode
 	);
 
+	bool shouldCull() const;
+
 private:
 	struct Cache
 	{
