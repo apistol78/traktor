@@ -416,8 +416,11 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 	Ref< AccShape > accShape;
 
 	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
-	if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
-		return;
+	if (!m_shapeRenderer || m_shapeRenderer->shouldCull())
+	{
+		if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
+			return;
+	}
 
 	// Get accelerated shape.
 	int32_t tag = shape.getCacheTag();
@@ -487,8 +490,11 @@ void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, con
 void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const Color4f& color, const SwfCxTransform& cxform, uint8_t filter, const Color4f& filterColor)
 {
 	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
-	if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
-		return;
+	if (!m_shapeRenderer || m_shapeRenderer->shouldCull())
+	{
+		if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
+			return;
+	}
 
 	Color4f glyphColor = color * cxform.mul + cxform.add;
 
@@ -621,8 +627,11 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 
 void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform)
 {
-	if (!rectangleVisible(m_dirtyRegion, transform * bounds))
-		return;
+	if (!m_shapeRenderer || m_shapeRenderer->shouldCull())
+	{
+		if (!rectangleVisible(m_dirtyRegion, transform * bounds))
+			return;
+	}
 
 	m_quad->render(
 		m_renderContext,
@@ -672,8 +681,11 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanv
 		accShape = it->second.shape;
 	}
 
-	if (!rectangleVisible(m_dirtyRegion, transform * accShape->getBounds()))
-		return;
+	if (!m_shapeRenderer || m_shapeRenderer->shouldCull())
+	{
+		if (!rectangleVisible(m_dirtyRegion, transform * accShape->getBounds()))
+			return;
+	}
 
 	renderEnqueuedGlyphs();
 

@@ -215,6 +215,11 @@ void AccShapeRenderer::render(
 	}
 }
 
+bool AccShapeRenderer::shouldCull() const
+{
+	return m_renderIntoSlot < 0;
+}
+
 void AccShapeRenderer::beginCacheAsBitmap(
 	render::RenderContext* renderContext,
 	const FlashSpriteInstance& spriteInstance,
