@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace drawing
+	{
+	
+class Image;
+
+	}
+
 	namespace flash
 	{
 
@@ -31,7 +38,9 @@ class T_DLLCLASS FlashMovieFactory : public Object
 public:
 	FlashMovieFactory(bool includeAS);
 
-	Ref< FlashMovie > createMovie(SwfReader* swf);
+	Ref< FlashMovie > createMovie(SwfReader* swf) const;
+
+	Ref< FlashMovie > createMovieFromImage(const drawing::Image* image) const;
 
 private:
 	bool m_includeAS;

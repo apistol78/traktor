@@ -12,13 +12,10 @@
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Drawing/Image.h"
-#include "Flash/FlashBitmapImage.h"
-#include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashMovieLoader.h"
 #include "Flash/FlashOptimizer.h"
-#include "Flash/FlashShape.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/SwfReader.h"
 #include "Net/UrlConnection.h"
@@ -136,29 +133,7 @@ private:
 		// not supported then this fail quickly.
 		Ref< drawing::Image > image = drawing::Image::load(d, ext);
 		if (image)
-		{
-			// Create a single frame and place shape.
-			Ref< FlashFrame > frame = new FlashFrame();
-			
-			FlashFrame::PlaceObject p;
-			p.hasFlags = FlashFrame::PfHasCharacterId;
-			p.depth = 0;
-			p.characterId = 1;
-			frame->placeObject(p);
-
-			// Create sprite and add frame.
-			Ref< FlashSprite > sprite = new FlashSprite();
-			sprite->addFrame(frame);
-
-			// Create quad shape and fill with bitmap.
-			Ref< FlashShape > shape = new FlashShape();
-			shape->create(1, image->getWidth() * 20, image->getHeight() * 20);
-
-			// Setup dictionary.
-			m_movie = new FlashMovie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20, image->getHeight() * 20)), sprite);
-			m_movie->defineBitmap(1, new FlashBitmapImage(image));
-			m_movie->defineCharacter(1, shape);
-		}
+			m_movie = FlashMovieFactory(false).createMovieFromImage(image);
 		else
 		{
 			SwfReader swfReader(d);
