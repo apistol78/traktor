@@ -1,12 +1,10 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Types.h"
+#include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
-#if defined(_WIN32)
-#	include "Render/Vulkan/Win32/ApiLoader.h"
-#endif
 
 namespace traktor
 {
@@ -228,7 +226,9 @@ ISimpleTexture* RenderTargetSetVk::getDepthTexture() const
 
 void RenderTargetSetVk::swap(int index1, int index2)
 {
+#if defined(_WIN32)
 	std::swap(m_colorTargets[index1], m_colorTargets[index2]);
+#endif
 }
 
 void RenderTargetSetVk::discard()

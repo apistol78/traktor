@@ -1,9 +1,15 @@
 #ifndef traktor_render_RenderViewVk_H
 #define traktor_render_RenderViewVk_H
 
-#define VK_USE_PLATFORM_WIN32_KHR
-#define VK_NO_PROTOTYPES
-#include <vulkan.h>
+#if defined(_WIN32)
+#	define VK_USE_PLATFORM_WIN32_KHR
+#	define VK_NO_PROTOTYPES
+#	include <vulkan.h>
+#elif defined(__ANDROID__)
+#	define VK_USE_PLATFORM_ANDROID_KHR
+#	define VK_NO_PROTOTYPES
+#	include <vulkan.h>
+#endif
 
 #include <list>
 #include "Core/Containers/AlignedVector.h"
@@ -113,11 +119,9 @@ private:
 	Ref< Window > m_window;
 #endif
 	VkDevice m_device;
-#if defined(_WIN32)
 	VkSwapchainKHR m_swapChain;
 	VkQueue m_presentQueue;
 	uint32_t m_currentImageIndex;
-#endif
 	VkCommandPool m_commandPool;
 	VkCommandBuffer m_drawCmdBuffer;
 	VkDescriptorSetLayout m_descriptorSetLayout;

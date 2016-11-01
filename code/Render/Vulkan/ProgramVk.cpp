@@ -1,10 +1,8 @@
 #include <cstring>
+#include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
-#if defined(_WIN32)
-#	include "Render/Vulkan/Win32/ApiLoader.h"
-#endif
 
 namespace traktor
 {

@@ -1,7 +1,5 @@
+#include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/VertexBufferVk.h"
-#if defined(_WIN32)
-#	include "Render/Vulkan/Win32/ApiLoader.h"
-#endif
 
 namespace traktor
 {

@@ -1,9 +1,15 @@
 #ifndef traktor_render_SimpleTextureVk_H
 #define traktor_render_SimpleTextureVk_H
 
-#define VK_USE_PLATFORM_WIN32_KHR
-#define VK_NO_PROTOTYPES
-#include <vulkan.h>
+#if defined(_WIN32)
+#	define VK_USE_PLATFORM_WIN32_KHR
+#	define VK_NO_PROTOTYPES
+#	include <vulkan.h>
+#elif defined(__ANDROID__)
+#	define VK_USE_PLATFORM_ANDROID_KHR
+#	define VK_NO_PROTOTYPES
+#	include <vulkan.h>
+#endif
 
 #include "Render/ISimpleTexture.h"
 

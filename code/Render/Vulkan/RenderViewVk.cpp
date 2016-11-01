@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
@@ -8,7 +9,6 @@
 #include "Render/Vulkan/RenderViewVk.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 #if defined(_WIN32)
-#	include "Render/Vulkan/Win32/ApiLoader.h"
 #	include "Render/Vulkan/Win32/Window.h"
 #endif
 
@@ -184,20 +184,26 @@ Viewport RenderViewVk::getViewport()
 
 SystemWindow RenderViewVk::getSystemWindow()
 {
+#if defined(_WIN32)
 	return SystemWindow(*m_window);
+#else
+	return SystemWindow();
+#endif
 }
 
 bool RenderViewVk::begin(EyeType eye)
 {
-    VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, 0, 0 };
+#if defined(_WIN32)
+	VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, 0, 0 };
     vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_presentCompleteSemaphore);
     vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_renderingCompleteSemaphore);
 
-	// Reset descriptor pool.
-	vkResetDescriptorPool(m_device, m_descriptorPool, 0);
-
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_presentCompleteSemaphore, VK_NULL_HANDLE, &m_currentImageIndex);
+#endif
+
+	// Reset descriptor pool.
+	vkResetDescriptorPool(m_device, m_descriptorPool, 0);
 
 	// Begin recording *PRIMARY* command buffer.
 	VkCommandBufferBeginInfo beginInfo = {};
@@ -213,7 +219,6 @@ bool RenderViewVk::begin(EyeType eye)
 
 	m_targetStateStack.push_back(ts);
 	m_targetStateDirty = true;
-
 	return true;
 }
 
@@ -418,6 +423,7 @@ void RenderViewVk::present()
     vkWaitForFences(m_device, 1, &renderFence, VK_TRUE, UINT64_MAX);
     vkDestroyFence(m_device, renderFence, nullptr);
  
+#if defined(_WIN32)
     VkPresentInfoKHR presentInfo = {};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.waitSemaphoreCount = 1;
@@ -427,7 +433,7 @@ void RenderViewVk::present()
     presentInfo.pImageIndices = &m_currentImageIndex;
     presentInfo.pResults = nullptr;
     vkQueuePresentKHR(m_presentQueue, &presentInfo);
-
+#endif
 
 	for (auto c : m_cleanupCmdBuffers)
 		vkFreeCommandBuffers(m_device, m_commandPool, 1, &c);
@@ -686,7 +692,7 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 	pipelineCreateInfo.layout = m_pipelineLayout;
 	pipelineCreateInfo.renderPass = ts.rts->getVkRenderPass();
 	pipelineCreateInfo.subpass = 0;
-	pipelineCreateInfo.basePipelineHandle = nullptr;
+	pipelineCreateInfo.basePipelineHandle = 0;
 	pipelineCreateInfo.basePipelineIndex = 0;
 
 	if (m_pipeline)
