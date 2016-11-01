@@ -1,4 +1,3 @@
-#include "Core/Log/Log.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 

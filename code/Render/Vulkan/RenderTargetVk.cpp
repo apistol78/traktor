@@ -1,9 +1,7 @@
 #include "Render/Types.h"
+#include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
-#if defined(_WIN32)
-#	include "Render/Vulkan/Win32/ApiLoader.h"
-#endif
 
 namespace traktor
 {

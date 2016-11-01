@@ -4,6 +4,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Render/VertexElement.h"
+#include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/ContextVk.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
@@ -22,7 +23,6 @@
 #include "Render/Vulkan/VolumeTextureVk.h"
 #include "Render/Vulkan/Glsl/GlslType.h"
 #if defined(_WIN32)
-#	include "Render/Vulkan/Win32/ApiLoader.h"
 #	include "Render/Vulkan/Win32/Window.h"
 #endif
 
@@ -131,7 +131,6 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 	
 	// Create Vulkan instance.
-	VkInstance vkInstance = 0;
 	if (vkCreateInstance(&instanceInfo, 0, &m_instance) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan instance." << Endl;
@@ -145,6 +144,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
+#if defined(_WIN32)
 	// Create Windows renderable surface.
     VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {};
     surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
@@ -233,13 +233,15 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::error << L"Failed to create Vulkan; unable to create device." << Endl;
 		return false;
 	}
+#elif defined(__ANDROID__)
+#endif
 
 	return true;
 }
 
 void RenderSystemVk::destroy()
 {
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__ANDROID__)
 	finalizeVulkanApi();
 #endif
 }
@@ -323,6 +325,7 @@ float RenderSystemVk::getDisplayAspectRatio() const
 
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc& desc)
 {
+#if defined(_WIN32)
 	VkSwapchainKHR swapChain = 0;
 	VkQueue presentQueue = 0;
 	VkCommandPool commandPool = 0;
@@ -561,7 +564,6 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	if (vkCreatePipelineLayout(m_device, &layoutCreateInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
 		return false;
 
-#if defined(_WIN32)
 	Ref< RenderViewVk > renderView = new RenderViewVk(
 		m_window,
 		m_device,
@@ -574,11 +576,12 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		descriptorPool,
 		primaryTargets
 	);
-#else
-	Ref< RenderViewVk > renderView = new RenderViewVk(m_device);
-#endif
-
 	return renderView;
+#elif defined(__ANDROID__)
+	return 0;
+#else
+	return 0;
+#endif
 }
 
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc& desc)

@@ -1,9 +1,15 @@
 #ifndef traktor_render_RenderSystemVk_H
 #define traktor_render_RenderSystemVk_H
 
-#define VK_USE_PLATFORM_WIN32_KHR
-#define VK_NO_PROTOTYPES
-#include <vulkan.h>
+#if defined(_WIN32)
+#	define VK_USE_PLATFORM_WIN32_KHR
+#	define VK_NO_PROTOTYPES
+#	include <vulkan.h>
+#elif defined(__ANDROID__)
+#	define VK_USE_PLATFORM_ANDROID_KHR
+#	define VK_NO_PROTOTYPES
+#	include <vulkan.h>
+#endif
 
 #include "Core/Ref.h"
 #include "Render/IRenderSystem.h"
@@ -85,8 +91,6 @@ private:
 #if defined(_WIN32)
 	Ref< Window > m_window;
 #endif
-	//Ref< ContextVk > m_sharedContext;
-
 	VkInstance m_instance;
 	VkSurfaceKHR m_surface;
 	VkPhysicalDevice m_physicalDevice;
