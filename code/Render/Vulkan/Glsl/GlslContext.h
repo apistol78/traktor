@@ -64,6 +64,8 @@ public:
 
 	const Parameter* getParameter(const std::wstring& name) const;
 
+	void setRenderState(const RenderState& renderState);
+
 	GlslShader& getVertexShader() { return m_vertexShader; }
 
 	GlslShader& getFragmentShader() { return m_fragmentShader; }
@@ -74,6 +76,8 @@ public:
 
 	const std::vector< Parameter >& getParameters() const { return m_parameters; }
 
+	const RenderState& getRenderState() const { return m_renderState;  }
+
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 	GlslShader m_vertexShader;
@@ -82,6 +86,7 @@ private:
 	GlslEmitter m_emitter;
 	std::vector< uint8_t > m_interpolatorMap;
 	std::vector< Parameter > m_parameters;
+	RenderState m_renderState;
 };
 
 	}

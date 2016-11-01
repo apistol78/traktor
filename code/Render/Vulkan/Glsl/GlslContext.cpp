@@ -185,5 +185,10 @@ const GlslContext::Parameter* GlslContext::getParameter(const std::wstring& name
 	return 0;
 }
 
+void GlslContext::setRenderState(const RenderState& renderState)
+{
+	m_renderState = renderState;
+}
+
 	}
 }

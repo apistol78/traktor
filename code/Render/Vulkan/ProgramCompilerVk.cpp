@@ -223,6 +223,9 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 	Ref< ProgramResourceVk > programResource = new ProgramResourceVk();
 
+	// Output render state.
+	programResource->m_renderState = cx.getRenderState();
+
 	// Generate SPIR-V from program AST.
 	glslang::GlslangToSpv(*program->getIntermediate(EShLangVertex), programResource->m_vertexShader);
 	glslang::GlslangToSpv(*program->getIntermediate(EShLangFragment), programResource->m_fragmentShader);
@@ -254,14 +257,16 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		{
 			ProgramResourceVk::UniformBufferDesc& ubd = programResource->m_vertexUniformBuffers[parameter->frequency];
 
-			log::info << L"V \"" << parameter->name << L"\", ubo " << ubd.size << Endl;
+			if (parameter->length > 1)
+				ubd.size = alignUp(ubd.size, 4);
 
 			ubd.parameters.push_back(ProgramResourceVk::ParameterMappingDesc(
 				ubd.size,
 				pm[parameter->name],
 				scalarTypeSize[parameter->type] * parameter->length
 			));
-			ubd.size = alignUp(ubd.size + scalarTypeSize[parameter->type] * parameter->length, 4);
+
+			ubd.size += scalarTypeSize[parameter->type] * parameter->length;
 		}
 	}
 	
@@ -272,14 +277,16 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		{
 			ProgramResourceVk::UniformBufferDesc& ubd = programResource->m_fragmentUniformBuffers[parameter->frequency];
 
-			log::info << L"F \"" << parameter->name << L"\", ubo " << ubd.size << Endl;
+			if (parameter->length > 1)
+				ubd.size = alignUp(ubd.size, 4);
 
 			ubd.parameters.push_back(ProgramResourceVk::ParameterMappingDesc(
 				ubd.size,
 				pm[parameter->name],
 				scalarTypeSize[parameter->type] * parameter->length
 			));
-			ubd.size = alignUp(ubd.size + scalarTypeSize[parameter->type] * parameter->length, 4);
+
+			ubd.size += scalarTypeSize[parameter->type] * parameter->length;
 		}
 	}
 

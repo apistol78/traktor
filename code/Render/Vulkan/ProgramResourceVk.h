@@ -1,6 +1,7 @@
 #ifndef traktor_render_ProgramResourceVk_H
 #define traktor_render_ProgramResourceVk_H
 
+#include "Render/Types.h"
 #include "Render/Resource/ProgramResource.h"
 
 namespace traktor
@@ -84,6 +85,8 @@ public:
 private:
 	friend class ProgramVk;
 	friend class ProgramCompilerVk;
+
+	RenderState m_renderState;
 
 	std::vector< uint32_t > m_vertexShader;
 	std::vector< uint32_t > m_fragmentShader;

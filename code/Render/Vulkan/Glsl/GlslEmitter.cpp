@@ -1053,6 +1053,8 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 		fpb << L"_gl_FragData_" << i << L" = " << in[i]->cast(GtFloat4) << L";" << Endl;
 	}
 
+	cx.setRenderState(rs);
+
 	//uint32_t colorMask =
 	//	((rs.colorWriteMask & CwRed) ? RenderStateOpenGL::CmRed : 0) |
 	//	((rs.colorWriteMask & CwGreen) ? RenderStateOpenGL::CmGreen : 0) |
@@ -2273,19 +2275,19 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 	switch (in->getType())
 	{
 	case GtFloat:
-		fb << L"gl_Position = vec4(" << in->getName() << L", 0.0, 0.0, 1.0);" << Endl;
+		fb << L"gl_Position = vec4(1.0f, -1.0f, 1.0f, 1.0f) * vec4(" << in->getName() << L", 0.0, 0.0, 1.0);" << Endl;
 		break;
 
 	case GtFloat2:
-		fb << L"gl_Position = vec4(" << in->getName() << L".xy, 0.0, 1.0);" << Endl;
+		fb << L"gl_Position = vec4(1.0f, -1.0f, 1.0f, 1.0f) * vec4(" << in->getName() << L".xy, 0.0, 1.0);" << Endl;
 		break;
 
 	case GtFloat3:
-		fb << L"gl_Position = vec4(" << in->getName() << L".xyz, 1.0);" << Endl;
+		fb << L"gl_Position = vec4(1.0f, -1.0f, 1.0f, 1.0f) * vec4(" << in->getName() << L".xyz, 1.0);" << Endl;
 		break;
 
 	case GtFloat4:
-		fb << L"gl_Position = " << in->getName() << L";" << Endl;
+		fb << L"gl_Position = vec4(1.0f, -1.0f, 1.0f, 1.0f) * " << in->getName() << L";" << Endl;
 		break;
 
 	default:

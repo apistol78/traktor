@@ -49,7 +49,6 @@ RenderViewVk::RenderViewVk(
 	VkDescriptorSetLayout descriptorSetLayout,
 	VkPipelineLayout pipelineLayout,
 	VkDescriptorPool descriptorPool,
-	VkDescriptorSet descriptorSet,
 	const RefArray< RenderTargetSetVk >& primaryTargets
 )
 :	m_window(window)
@@ -62,7 +61,6 @@ RenderViewVk::RenderViewVk(
 ,	m_descriptorSetLayout(descriptorSetLayout)
 ,	m_pipelineLayout(pipelineLayout)
 ,	m_descriptorPool(descriptorPool)
-,	m_descriptorSet(descriptorSet)
 ,	m_primaryTargets(primaryTargets)
 ,	m_presentCompleteSemaphore(0)
 ,	m_renderingCompleteSemaphore(0)
@@ -191,11 +189,12 @@ SystemWindow RenderViewVk::getSystemWindow()
 
 bool RenderViewVk::begin(EyeType eye)
 {
-	log::info << L"** Begin **" << Endl;
-
     VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, 0, 0 };
     vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_presentCompleteSemaphore);
     vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_renderingCompleteSemaphore);
+
+	// Reset descriptor pool.
+	vkResetDescriptorPool(m_device, m_descriptorPool, 0);
 
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_presentCompleteSemaphore, VK_NULL_HANDLE, &m_currentImageIndex);
@@ -220,8 +219,6 @@ bool RenderViewVk::begin(EyeType eye)
 
 bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
 {
-	log::info << L"** Begin RT 1 **" << Endl;
-
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = 0;
@@ -235,8 +232,6 @@ bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
 
 bool RenderViewVk::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
-	log::info << L"** Begin RT 2 **" << Endl;
-
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = renderTarget;
@@ -254,6 +249,12 @@ void RenderViewVk::clear(uint32_t clearMask, const Color4f* colors, float depth,
 	if (m_targetStateDirty)
 	{
 		ts.clearMask |= clearMask;
+		if (clearMask & CfColor)
+			ts.clearColors[0] = colors[0];
+		if (clearMask & CfDepth)
+			ts.clearDepth = depth;
+		if (clearMask & CfStencil)
+			ts.clearStencil = stencil;
 	}
 	else
 	{
@@ -266,7 +267,6 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	VertexBufferVk* vb = mandatory_non_null_type_cast< VertexBufferVk* >(vertexBuffer);
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 
-	log::info << L"** Draw **" << Endl;
 
 	// Validate render pass and framebuffer, into *PRIMARY* command buffer.
 	validateTargetState();
@@ -281,6 +281,8 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	commandBufferAllocationInfo.commandBufferCount = 1;
 	if (vkAllocateCommandBuffers(m_device, &commandBufferAllocationInfo, &cmdBuffer) != VK_SUCCESS)
 		return;
+
+	m_cleanupCmdBuffers.push_back(cmdBuffer);
 
 
 	// Begin recording *SECONDARY* command buffer.
@@ -305,52 +307,30 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	validatePipeline(cmdBuffer, vb, p, primitives.type);
 
 
-	//VkDescriptorSet descriptorSet = 0;
-	//VkDescriptorSetAllocateInfo allocateInfo;
-	//allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	//allocateInfo.pNext = nullptr;
-	//allocateInfo.descriptorPool = m_descriptorPool;
-	//allocateInfo.descriptorSetCount = 1;
-	//allocateInfo.pSetLayouts = &m_descriptorSetLayout;
-	//if (vkAllocateDescriptorSets(m_device, &allocateInfo, &descriptorSet) != VK_SUCCESS)
-	//	return;
+	VkDescriptorSet descriptorSet = 0;
+	VkDescriptorSetAllocateInfo allocateInfo;
+	allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocateInfo.pNext = nullptr;
+	allocateInfo.descriptorPool = m_descriptorPool;
+	allocateInfo.descriptorSetCount = 1;
+	allocateInfo.pSetLayouts = &m_descriptorSetLayout;
+	if (vkAllocateDescriptorSets(m_device, &allocateInfo, &descriptorSet) != VK_SUCCESS)
+		return;
 
-
-	p->validate(m_device, m_descriptorSet);
-
+	p->validate(m_device, descriptorSet);
 
 	vkCmdBindDescriptorSets(
 		cmdBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
 		m_pipelineLayout,
 		0,
-		1, &m_descriptorSet,
+		1, &descriptorSet,
 		0, nullptr
 	);
 
-	uint32_t vertexCount = 0;
-	switch (primitives.type)
-	{
-	case PtPoints:
-		vertexCount = primitives.count;
-		break;
 
-	case PtLineStrip:
-		T_ASSERT (0);
-		break;
-
-	case PtLines:
-		vertexCount = primitives.count * 2;
-		break;
-
-	case PtTriangleStrip:
-		vertexCount = primitives.count + 2;
-		break;
-
-	case PtTriangles:
-		vertexCount = primitives.count * 3;
-		break;
-	}
+	const uint32_t c_primitiveMul[] = { 1, 0, 2, 2, 3 };
+	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type];
 
 	VkBuffer vbb = vb->getVkBuffer();
 	VkDeviceSize offsets = {};
@@ -399,8 +379,6 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 void RenderViewVk::end()
 {
-	log::info << L"** End **" << Endl;
-
 	// Close current render pass if it has begun.
 	if (!m_targetStateDirty)
 		vkCmdEndRenderPass(m_drawCmdBuffer);
@@ -413,8 +391,6 @@ void RenderViewVk::end()
 void RenderViewVk::present()
 {
 	T_FATAL_ASSERT (m_targetStateStack.empty());
-
-	log::info << L"** Present **" << Endl;
 
 	// Prepare primary color for presentation.
 	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_drawCmdBuffer);
@@ -451,6 +427,16 @@ void RenderViewVk::present()
     presentInfo.pImageIndices = &m_currentImageIndex;
     presentInfo.pResults = nullptr;
     vkQueuePresentKHR(m_presentQueue, &presentInfo);
+
+
+	for (auto c : m_cleanupCmdBuffers)
+		vkFreeCommandBuffers(m_device, m_commandPool, 1, &c);
+	m_cleanupCmdBuffers.resize(0);
+
+	for (auto p : m_cleanupPipelines)
+		vkDestroyPipeline(m_device, p, nullptr);
+	m_cleanupPipelines.resize(0);
+
  
     vkDestroySemaphore(m_device, m_presentCompleteSemaphore, nullptr);
     vkDestroySemaphore(m_device, m_renderingCompleteSemaphore, nullptr);
@@ -487,7 +473,11 @@ void RenderViewVk::validateTargetState()
 	ts.rts->getColorTargetVk(ts.colorIndex)->prepareAsTarget(m_drawCmdBuffer);
 
 	// Bind render pass and framebuffer.
-	VkClearValue clearValue[] = { { 1.0f, 0.0f, 0.0f, 1.0f }, { 1.0, 0.0 } };
+	VkClearValue clearValue[2];
+	ts.clearColors[0].storeUnaligned(clearValue[0].color.float32);
+	clearValue[1].depthStencil.depth = ts.clearDepth;
+	clearValue[1].depthStencil.stencil = ts.clearStencil;
+
 	VkRenderPassBeginInfo renderPassBeginInfo = {};
 	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderPassBeginInfo.renderPass = ts.rts->getVkRenderPass();
@@ -498,7 +488,7 @@ void RenderViewVk::validateTargetState()
 	renderPassBeginInfo.renderArea.extent.height = ts.rts->getHeight();
 	renderPassBeginInfo.clearValueCount = 2;
 	renderPassBeginInfo.pClearValues = clearValue;
-	vkCmdBeginRenderPass(m_drawCmdBuffer, &renderPassBeginInfo, /*VK_SUBPASS_CONTENTS_INLINE*/VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+	vkCmdBeginRenderPass(m_drawCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 
 	m_targetStateDirty = false;
 }
@@ -507,6 +497,63 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 {
 	T_FATAL_ASSERT (!m_targetStateStack.empty());
 	TargetState& ts = m_targetStateStack.back();
+
+	const RenderState& rs = p->getRenderState();
+
+	const VkCullModeFlagBits c_cullMode[] =
+	{
+		VK_CULL_MODE_NONE,
+		VK_CULL_MODE_FRONT_BIT,
+		VK_CULL_MODE_BACK_BIT
+	};
+
+	const VkCompareOp c_compareOperations[] =
+	{
+		VK_COMPARE_OP_ALWAYS,
+		VK_COMPARE_OP_NEVER,
+		VK_COMPARE_OP_LESS,
+		VK_COMPARE_OP_LESS_OR_EQUAL,
+		VK_COMPARE_OP_GREATER,
+		VK_COMPARE_OP_GREATER_OR_EQUAL,
+		VK_COMPARE_OP_EQUAL,
+		VK_COMPARE_OP_NOT_EQUAL,
+		VK_COMPARE_OP_NEVER
+	};
+
+	const VkStencilOp c_stencilOperations[] =
+	{
+		VK_STENCIL_OP_KEEP,
+		VK_STENCIL_OP_ZERO,
+		VK_STENCIL_OP_REPLACE,
+		VK_STENCIL_OP_INCREMENT_AND_CLAMP,
+		VK_STENCIL_OP_DECREMENT_AND_CLAMP,
+		VK_STENCIL_OP_INVERT,
+		VK_STENCIL_OP_INCREMENT_AND_WRAP,
+		VK_STENCIL_OP_DECREMENT_AND_WRAP
+	};
+
+	const VkBlendFactor c_blendFactors[] =
+	{
+		VK_BLEND_FACTOR_ONE,
+		VK_BLEND_FACTOR_ZERO,
+		VK_BLEND_FACTOR_SRC_COLOR,
+		VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR,
+		VK_BLEND_FACTOR_DST_COLOR,
+		VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR,
+		VK_BLEND_FACTOR_SRC_ALPHA,
+		VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+		VK_BLEND_FACTOR_DST_ALPHA,
+		VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA
+	};
+
+	const VkBlendOp c_blendOperations[] =
+	{
+		VK_BLEND_OP_ADD,
+		VK_BLEND_OP_SUBTRACT,
+		VK_BLEND_OP_REVERSE_SUBTRACT,
+		VK_BLEND_OP_MIN,
+		VK_BLEND_OP_MAX
+	};
 
 	VkViewport viewport = {};
 	viewport.x = 0.0f;
@@ -552,9 +599,9 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 	rasterizationState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	rasterizationState.depthClampEnable = VK_FALSE;
 	rasterizationState.rasterizerDiscardEnable = VK_FALSE;
-	rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-	rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
-	rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE; //  VK_FRONT_FACE_COUNTER_CLOCKWISE;
+	rasterizationState.polygonMode = rs.wireframe ? VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_FILL;
+	rasterizationState.cullMode = c_cullMode[rs.cullMode];
+	rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
 	rasterizationState.depthBiasEnable = VK_FALSE;
 	rasterizationState.depthBiasConstantFactor = 0;
 	rasterizationState.depthBiasClamp = 0;
@@ -567,39 +614,39 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 	multisampleState.sampleShadingEnable = VK_FALSE;
 	multisampleState.minSampleShading = 0;
 	multisampleState.pSampleMask = NULL;
-	multisampleState.alphaToCoverageEnable = VK_FALSE;
+	multisampleState.alphaToCoverageEnable = rs.alphaToCoverageEnable ? VK_TRUE : VK_FALSE;
 	multisampleState.alphaToOneEnable = VK_FALSE;	
 
 	VkStencilOpState noOPStencilState = {};
-	noOPStencilState.failOp = VK_STENCIL_OP_KEEP;
-	noOPStencilState.passOp = VK_STENCIL_OP_KEEP;
-	noOPStencilState.depthFailOp = VK_STENCIL_OP_KEEP;
-	noOPStencilState.compareOp = VK_COMPARE_OP_ALWAYS;
-	noOPStencilState.compareMask = 0;
-	noOPStencilState.writeMask = 0;
-	noOPStencilState.reference = 0;
-	 
+	noOPStencilState.failOp = c_stencilOperations[rs.stencilFail];
+	noOPStencilState.passOp = c_stencilOperations[rs.stencilPass];
+	noOPStencilState.depthFailOp = c_stencilOperations[rs.stencilZFail];
+	noOPStencilState.compareOp = c_compareOperations[rs.stencilFunction];
+	noOPStencilState.compareMask = rs.stencilMask;
+	noOPStencilState.writeMask = rs.stencilMask;
+	noOPStencilState.reference = rs.stencilReference;
+
 	VkPipelineDepthStencilStateCreateInfo depthState = {};
 	depthState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-	depthState.depthTestEnable = VK_TRUE;
-	depthState.depthWriteEnable = VK_TRUE;
-	depthState.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+	depthState.depthTestEnable = rs.depthEnable ? VK_TRUE : VK_FALSE;
+	depthState.depthWriteEnable = rs.depthWriteEnable ? VK_TRUE : VK_FALSE;
+	depthState.depthCompareOp = c_compareOperations[rs.depthFunction];
 	depthState.depthBoundsTestEnable = VK_FALSE;
-	depthState.stencilTestEnable = VK_FALSE;
+	depthState.stencilTestEnable = rs.stencilEnable ? VK_TRUE : VK_FALSE;
 	depthState.front = noOPStencilState;
 	depthState.back = noOPStencilState;
 	depthState.minDepthBounds = 0;
 	depthState.maxDepthBounds = 0;
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachmentState = {};
-	colorBlendAttachmentState.blendEnable = VK_FALSE;
-	colorBlendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_COLOR;
-	colorBlendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
-	colorBlendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
+	colorBlendAttachmentState.blendEnable = rs.blendEnable ? VK_TRUE : VK_FALSE;
+	colorBlendAttachmentState.srcColorBlendFactor = c_blendFactors[rs.blendSource];
+	colorBlendAttachmentState.dstColorBlendFactor = c_blendFactors[rs.blendDestination];
+	colorBlendAttachmentState.colorBlendOp = c_blendOperations[rs.blendOperation];
 	colorBlendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
 	colorBlendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
 	colorBlendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
-	colorBlendAttachmentState.colorWriteMask = 0xf;
+	colorBlendAttachmentState.colorWriteMask = rs.colorWriteMask;
 	 
 	VkPipelineColorBlendStateCreateInfo colorBlendState = {};
 	colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
@@ -642,11 +689,11 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 	pipelineCreateInfo.basePipelineHandle = nullptr;
 	pipelineCreateInfo.basePipelineIndex = 0;
 
-	//if (m_pipeline)
-	//{
-	//	vkDestroyPipeline(m_device, m_pipeline, nullptr);
-	//	m_pipeline = 0;
-	//}
+	if (m_pipeline)
+	{
+		m_cleanupPipelines.push_back(m_pipeline);
+		m_pipeline = 0;
+	}
 	 
 	if (vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &m_pipeline) != VK_SUCCESS)
 		return false;

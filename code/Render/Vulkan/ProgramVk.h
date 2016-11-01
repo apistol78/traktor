@@ -49,6 +49,8 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference) T_OVERRIDE T_FINAL;
 
+	const RenderState& getRenderState() const { return m_renderState; }
+
 	VkShaderModule getVertexVkShaderModule() const { return m_vertexShaderModule; }
 
 	VkShaderModule getFragmentVkShaderModule() const { return m_fragmentShaderModule; }
@@ -68,21 +70,33 @@ private:
 		}
 	};
 
-	struct UniformBuffer
+	struct DeviceBuffer
 	{
 		VkBuffer buffer;
 		VkDeviceMemory memory;
-		uint32_t size;
 
-		AlignedVector< ParameterMap > parameters;
-
-		UniformBuffer()
+		DeviceBuffer()
 		:	buffer(0)
 		,	memory(0)
-		,	size(0)
 		{
 		}
 	};
+
+	struct UniformBuffer
+	{
+		AlignedVector< DeviceBuffer > deviceBuffers;
+		uint32_t size;
+		uint32_t updateCount;
+		AlignedVector< ParameterMap > parameters;
+
+		UniformBuffer()
+		:	size(0)
+		,	updateCount(0)
+		{
+		}
+	};
+
+	RenderState m_renderState;
 
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;

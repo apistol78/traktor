@@ -150,7 +150,6 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
     surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     surfaceCreateInfo.hinstance = GetModuleHandle(NULL);
     surfaceCreateInfo.hwnd = (HWND)*m_window;
-
     if (vkCreateWin32SurfaceKHR(m_instance, &surfaceCreateInfo, NULL, &m_surface) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface." << Endl;
@@ -229,7 +228,6 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
     VkPhysicalDeviceFeatures features = {};
     features.shaderClipDistance = VK_TRUE;
     deviceInfo.pEnabledFeatures = &features;
-
     if (vkCreateDevice(m_physicalDevice, &deviceInfo, 0, &m_device) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create device." << Endl;
@@ -359,6 +357,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	VkColorSpaceKHR colorSpace;
 	colorSpace = surfaceFormats[0].colorSpace;
 
+
 	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities);
  
@@ -460,7 +459,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	VkImageCreateInfo imageCreateInfo = {};
 	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-	imageCreateInfo.format = VK_FORMAT_D24_UNORM_S8_UINT;
+	imageCreateInfo.format = VK_FORMAT_D16_UNORM;
 	imageCreateInfo.extent = { desc.displayMode.width, desc.displayMode.height, 1 };
 	imageCreateInfo.mipLevels = 1;
 	imageCreateInfo.arrayLayers = 1;
@@ -542,24 +541,15 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 
 	VkDescriptorPoolSize descriptorPoolSize[1];
 	descriptorPoolSize[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	descriptorPoolSize[0].descriptorCount = 6;
+	descriptorPoolSize[0].descriptorCount = 4 * 6;
 
 	VkDescriptorPoolCreateInfo descriptorPoolCreationInfo = {};
 	descriptorPoolCreationInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	descriptorPoolCreationInfo.pNext = nullptr;
-	descriptorPoolCreationInfo.maxSets = 1;
+	descriptorPoolCreationInfo.maxSets = 4;
 	descriptorPoolCreationInfo.poolSizeCount = 1;
 	descriptorPoolCreationInfo.pPoolSizes = descriptorPoolSize;
 	if (vkCreateDescriptorPool(m_device, &descriptorPoolCreationInfo, nullptr, &descriptorPool) != VK_SUCCESS)
-		return false;
-
-	VkDescriptorSetAllocateInfo allocateInfo;
-	allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocateInfo.pNext = nullptr;
-	allocateInfo.descriptorPool = descriptorPool;
-	allocateInfo.descriptorSetCount = 1;
-	allocateInfo.pSetLayouts = &descriptorSetLayout;
-	if (vkAllocateDescriptorSets(m_device, &allocateInfo, &descriptorSet) != VK_SUCCESS)
 		return false;
 
 	VkPipelineLayoutCreateInfo layoutCreateInfo = {};
@@ -582,7 +572,6 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		descriptorSetLayout,
 		pipelineLayout,
 		descriptorPool,
-		descriptorSet,
 		primaryTargets
 	);
 #else
