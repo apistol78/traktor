@@ -1,8 +1,11 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Drawing/Image.h"
+#include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashMovieFactoryTags.h"
 #include "Flash/FlashMovie.h"
+#include "Flash/FlashShape.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/SwfReader.h"
@@ -86,7 +89,7 @@ FlashMovieFactory::FlashMovieFactory(bool includeAS)
 	m_tagReaders[TiDefineFontName] = new FlashTagUnsupported(TiDefineFontName);
 }
 
-Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
+Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf) const
 {
 	SwfHeader* header = swf->readHeader();
 	if (!header)
@@ -122,7 +125,7 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 		if (!tag || tag->id == TiEnd)
 			break;
 
-		Ref< FlashTag > tagReader = m_tagReaders[tag->id];
+		Ref< FlashTag > tagReader = m_tagReaders.at(tag->id);
 		if (tagReader)
 		{
 			context.tagSize = tag->length;
@@ -167,6 +170,32 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 		log::info << i->first->getName() << L" " << i->second << Endl;
 #endif
 
+	return movie;
+}
+
+Ref< FlashMovie > FlashMovieFactory::createMovieFromImage(const drawing::Image* image) const
+{
+	// Create a single frame and place shape.
+	Ref< FlashFrame > frame = new FlashFrame();
+			
+	FlashFrame::PlaceObject p;
+	p.hasFlags = FlashFrame::PfHasCharacterId;
+	p.depth = 0;
+	p.characterId = 1;
+	frame->placeObject(p);
+
+	// Create sprite and add frame.
+	Ref< FlashSprite > sprite = new FlashSprite();
+	sprite->addFrame(frame);
+
+	// Create quad shape and fill with bitmap.
+	Ref< FlashShape > shape = new FlashShape();
+	shape->create(1, image->getWidth() * 20, image->getHeight() * 20);
+
+	// Setup dictionary.
+	Ref< FlashMovie > movie = new FlashMovie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20, image->getHeight() * 20)), sprite);
+	movie->defineBitmap(1, new FlashBitmapImage(image));
+	movie->defineCharacter(1, shape);
 	return movie;
 }
 

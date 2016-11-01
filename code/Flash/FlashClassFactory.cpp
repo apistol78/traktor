@@ -394,6 +394,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< FlashMovieFactory > > classFlashMovieFactory = new AutoRuntimeClass< FlashMovieFactory >();
 	classFlashMovieFactory->addConstructor< bool >();
 	classFlashMovieFactory->addMethod("createMovie", &FlashMovieFactory::createMovie);
+	classFlashMovieFactory->addMethod("createMovieFromImage", &FlashMovieFactory::createMovieFromImage);
 	registrar->registerClass(classFlashMovieFactory);
 
 	Ref< AutoRuntimeClass< FlashMoviePlayer > > classFlashMoviePlayer = new AutoRuntimeClass< FlashMoviePlayer >();
