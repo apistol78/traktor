@@ -68,6 +68,8 @@ PFN_vkDestroyEvent vkDestroyEvent = 0;
 PFN_vkCmdSetEvent vkCmdSetEvent = 0;
 PFN_vkGetEventStatus vkGetEventStatus = 0;
 PFN_vkCmdExecuteCommands vkCmdExecuteCommands = 0;
+PFN_vkResetDescriptorPool vkResetDescriptorPool = 0;
+PFN_vkFreeCommandBuffers vkFreeCommandBuffers = 0;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = 0;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = 0;
@@ -477,6 +479,20 @@ bool initializeVulkanApi()
 	if (vkCmdExecuteCommands == NULL)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkCmdExecuteCommands\"." << Endl;
+		return false;
+	}
+
+	vkResetDescriptorPool = (PFN_vkResetDescriptorPool)GetProcAddress(s_hVulkanModule, "vkResetDescriptorPool");
+	if (vkResetDescriptorPool == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkResetDescriptorPool\"." << Endl;
+		return false;
+	}
+
+	vkFreeCommandBuffers = (PFN_vkFreeCommandBuffers)GetProcAddress(s_hVulkanModule, "vkFreeCommandBuffers");
+	if (vkFreeCommandBuffers == NULL)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkFreeCommandBuffers\"." << Endl;
 		return false;
 	}
 

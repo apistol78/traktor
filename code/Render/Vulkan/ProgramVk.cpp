@@ -58,6 +58,8 @@ ProgramVk::~ProgramVk()
 
 bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const ProgramResourceVk* resource)
 {
+	m_renderState = resource->m_renderState;
+
 	// Create vertex shader module.
 	VkShaderModuleCreateInfo vertexShaderCreationInfo = {};
 	vertexShaderCreationInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -80,29 +82,33 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		// Vertex
 		if (resource->m_vertexUniformBuffers[i].size > 0)
 		{
-			VkBufferCreateInfo uniformBufferCreationInfo = {};
-			uniformBufferCreationInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-			uniformBufferCreationInfo.pNext = nullptr;
-			uniformBufferCreationInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-			uniformBufferCreationInfo.size = resource->m_vertexUniformBuffers[i].size * 4;
-			uniformBufferCreationInfo.queueFamilyIndexCount = 0;
-			uniformBufferCreationInfo.pQueueFamilyIndices = nullptr;
-			uniformBufferCreationInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-			uniformBufferCreationInfo.flags = 0;
-			if (vkCreateBuffer(device, &uniformBufferCreationInfo, nullptr, &m_vertexUniformBuffers[i].buffer) != VK_SUCCESS)
-				return false;
+			m_vertexUniformBuffers[i].deviceBuffers.resize(4);
+			for (uint32_t j = 0; j < 4; ++j)
+			{
+				VkBufferCreateInfo uniformBufferCreationInfo = {};
+				uniformBufferCreationInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+				uniformBufferCreationInfo.pNext = nullptr;
+				uniformBufferCreationInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+				uniformBufferCreationInfo.size = resource->m_vertexUniformBuffers[i].size * 4;
+				uniformBufferCreationInfo.queueFamilyIndexCount = 0;
+				uniformBufferCreationInfo.pQueueFamilyIndices = nullptr;
+				uniformBufferCreationInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+				uniformBufferCreationInfo.flags = 0;
+				if (vkCreateBuffer(device, &uniformBufferCreationInfo, nullptr, &m_vertexUniformBuffers[i].deviceBuffers[j].buffer) != VK_SUCCESS)
+					return false;
 
-			VkMemoryRequirements memoryRequirements = {};
-			vkGetBufferMemoryRequirements(device, m_vertexUniformBuffers[i].buffer, &memoryRequirements);
+				VkMemoryRequirements memoryRequirements = {};
+				vkGetBufferMemoryRequirements(device, m_vertexUniformBuffers[i].deviceBuffers[j].buffer, &memoryRequirements);
 
-			VkMemoryAllocateInfo bufferAllocateInfo = {};
-			bufferAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-			bufferAllocateInfo.allocationSize = memoryRequirements.size;
-			bufferAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
-			if (vkAllocateMemory(device, &bufferAllocateInfo, nullptr, &m_vertexUniformBuffers[i].memory) != VK_SUCCESS)
-				return false;
+				VkMemoryAllocateInfo bufferAllocateInfo = {};
+				bufferAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				bufferAllocateInfo.allocationSize = memoryRequirements.size;
+				bufferAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
+				if (vkAllocateMemory(device, &bufferAllocateInfo, nullptr, &m_vertexUniformBuffers[i].deviceBuffers[j].memory) != VK_SUCCESS)
+					return false;
 
-			vkBindBufferMemory(device, m_vertexUniformBuffers[i].buffer, m_vertexUniformBuffers[i].memory, 0);
+				vkBindBufferMemory(device, m_vertexUniformBuffers[i].deviceBuffers[j].buffer, m_vertexUniformBuffers[i].deviceBuffers[j].memory, 0);
+			}
 
 			m_vertexUniformBuffers[i].size = resource->m_vertexUniformBuffers[i].size * 4;
 
@@ -119,29 +125,33 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		// Fragment
 		if (resource->m_fragmentUniformBuffers[i].size > 0)
 		{
-			VkBufferCreateInfo uniformBufferCreationInfo = {};
-			uniformBufferCreationInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-			uniformBufferCreationInfo.pNext = nullptr;
-			uniformBufferCreationInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-			uniformBufferCreationInfo.size = resource->m_fragmentUniformBuffers[i].size * 4;
-			uniformBufferCreationInfo.queueFamilyIndexCount = 0;
-			uniformBufferCreationInfo.pQueueFamilyIndices = nullptr;
-			uniformBufferCreationInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-			uniformBufferCreationInfo.flags = 0;
-			if (vkCreateBuffer(device, &uniformBufferCreationInfo, nullptr, &m_fragmentUniformBuffers[i].buffer) != VK_SUCCESS)
-				return false;
+			m_fragmentUniformBuffers[i].deviceBuffers.resize(4);
+			for (uint32_t j = 0; j < 4; ++j)
+			{
+				VkBufferCreateInfo uniformBufferCreationInfo = {};
+				uniformBufferCreationInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+				uniformBufferCreationInfo.pNext = nullptr;
+				uniformBufferCreationInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+				uniformBufferCreationInfo.size = resource->m_fragmentUniformBuffers[i].size * 4;
+				uniformBufferCreationInfo.queueFamilyIndexCount = 0;
+				uniformBufferCreationInfo.pQueueFamilyIndices = nullptr;
+				uniformBufferCreationInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+				uniformBufferCreationInfo.flags = 0;
+				if (vkCreateBuffer(device, &uniformBufferCreationInfo, nullptr, &m_fragmentUniformBuffers[i].deviceBuffers[j].buffer) != VK_SUCCESS)
+					return false;
 
-			VkMemoryRequirements memoryRequirements = {};
-			vkGetBufferMemoryRequirements(device, m_fragmentUniformBuffers[i].buffer, &memoryRequirements);
+				VkMemoryRequirements memoryRequirements = {};
+				vkGetBufferMemoryRequirements(device, m_fragmentUniformBuffers[i].deviceBuffers[j].buffer, &memoryRequirements);
 
-			VkMemoryAllocateInfo bufferAllocateInfo = {};
-			bufferAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-			bufferAllocateInfo.allocationSize = memoryRequirements.size;
-			bufferAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
-			if (vkAllocateMemory(device, &bufferAllocateInfo, nullptr, &m_fragmentUniformBuffers[i].memory) != VK_SUCCESS)
-				return false;
+				VkMemoryAllocateInfo bufferAllocateInfo = {};
+				bufferAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				bufferAllocateInfo.allocationSize = memoryRequirements.size;
+				bufferAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
+				if (vkAllocateMemory(device, &bufferAllocateInfo, nullptr, &m_fragmentUniformBuffers[i].deviceBuffers[j].memory) != VK_SUCCESS)
+					return false;
 
-			vkBindBufferMemory(device, m_fragmentUniformBuffers[i].buffer, m_fragmentUniformBuffers[i].memory, 0);
+				vkBindBufferMemory(device, m_fragmentUniformBuffers[i].deviceBuffers[j].buffer, m_fragmentUniformBuffers[i].deviceBuffers[j].memory, 0);
+			}
 
 			m_fragmentUniformBuffers[i].size = resource->m_fragmentUniformBuffers[i].size * 4;
 
@@ -175,8 +185,11 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorSet descriptorSet)
 		if (!m_vertexUniformBuffers[i].size)
 			continue;
 
+		DeviceBuffer& db = m_vertexUniformBuffers[i].deviceBuffers[m_vertexUniformBuffers[i].updateCount];
+		m_vertexUniformBuffers[i].updateCount = (m_vertexUniformBuffers[i].updateCount + 1) % 4;
+
 		uint8_t* ptr = 0;
-		if (vkMapMemory(device, m_vertexUniformBuffers[i].memory, 0, m_vertexUniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
+		if (vkMapMemory(device, db.memory, 0, m_vertexUniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
 			return false;
 
 		for (auto p : m_vertexUniformBuffers[i].parameters)
@@ -188,10 +201,10 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorSet descriptorSet)
 			);
 		}
 
-		vkUnmapMemory(device, m_vertexUniformBuffers[i].memory);
+		vkUnmapMemory(device, db.memory);
 
 		VkDescriptorBufferInfo bufferInfo;
-		bufferInfo.buffer = m_vertexUniformBuffers[i].buffer;
+		bufferInfo.buffer = db.buffer;
 		bufferInfo.offset = 0;
 		bufferInfo.range = m_vertexUniformBuffers[i].size;
 
@@ -213,8 +226,11 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorSet descriptorSet)
 		if (!m_fragmentUniformBuffers[i].size)
 			continue;
 
+		DeviceBuffer& db = m_fragmentUniformBuffers[i].deviceBuffers[m_fragmentUniformBuffers[i].updateCount];
+		m_fragmentUniformBuffers[i].updateCount = (m_fragmentUniformBuffers[i].updateCount + 1) % 4;
+
 		uint8_t* ptr = 0;
-		if (vkMapMemory(device, m_fragmentUniformBuffers[i].memory, 0, m_fragmentUniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
+		if (vkMapMemory(device, db.memory, 0, m_fragmentUniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
 			return false;
 
 		for (auto p : m_fragmentUniformBuffers[i].parameters)
@@ -226,10 +242,10 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorSet descriptorSet)
 			);
 		}
 
-		vkUnmapMemory(device, m_fragmentUniformBuffers[i].memory);
+		vkUnmapMemory(device, db.memory);
 
 		VkDescriptorBufferInfo bufferInfo;
-		bufferInfo.buffer = m_fragmentUniformBuffers[i].buffer;
+		bufferInfo.buffer = db.buffer;
 		bufferInfo.offset = 0;
 		bufferInfo.range = m_fragmentUniformBuffers[i].size;
 

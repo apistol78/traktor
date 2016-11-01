@@ -108,16 +108,6 @@ bool RenderTargetDepthVk::create(VkPhysicalDevice physicalDevice, VkDevice devic
 	if (vkBindImageMemory(device, m_image, imageMemory, 0) != VK_SUCCESS)
 		return 0;
 
-	//if (!performImageTranslation(
-	//	device,
-	//	presentQueue,
-	//	setupCmdBuffer,
-	//	m_image,
-	//	VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
-	//	VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-	//))
-	//	return 0;
-
 	VkImageViewCreateInfo imageViewCreateInfo = {};
 	imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	imageViewCreateInfo.image = m_image;

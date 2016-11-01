@@ -66,6 +66,8 @@ extern PFN_vkDestroyEvent vkDestroyEvent;
 extern PFN_vkCmdSetEvent vkCmdSetEvent;
 extern PFN_vkGetEventStatus vkGetEventStatus;
 extern PFN_vkCmdExecuteCommands vkCmdExecuteCommands;
+extern PFN_vkResetDescriptorPool vkResetDescriptorPool;
+extern PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;

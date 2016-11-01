@@ -1,5 +1,6 @@
 #include "Render/Types.h"
 #include "Render/Vulkan/RenderTargetVk.h"
+#include "Render/Vulkan/UtilitiesVk.h"
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/ApiLoader.h"
 #endif
@@ -68,25 +69,6 @@ VkFormat convertFormat(TextureFormat textureFormat)
 	default:
 		return VK_FORMAT_UNDEFINED;
 	}
-}
-
-uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements)
-{
-	VkPhysicalDeviceMemoryProperties memoryProperties = {};
-	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
-
-	uint32_t memoryTypeBits = memoryRequirements.memoryTypeBits;
-	for (uint32_t i = 0; i < 32; ++i)
-	{
-		VkMemoryType memoryType = memoryProperties.memoryTypes[i];
-		if (memoryTypeBits & 1)
-		{
-			if ((memoryType.propertyFlags & memoryFlags) == memoryFlags)
-				return i;
-		}
-		memoryTypeBits = memoryTypeBits >> 1;
-	}
-	return 0; 
 }
 
 		}

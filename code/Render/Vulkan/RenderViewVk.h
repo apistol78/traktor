@@ -44,7 +44,6 @@ public:
 		VkDescriptorSetLayout descriptorSetLayout,
 		VkPipelineLayout pipelineLayout,
 		VkDescriptorPool descriptorPool,
-		VkDescriptorSet descriptorSet,
 		const RefArray< RenderTargetSetVk >& primaryTargets
 	);
 #else
@@ -124,7 +123,6 @@ private:
 	VkDescriptorSetLayout m_descriptorSetLayout;
 	VkPipelineLayout m_pipelineLayout;
 	VkDescriptorPool m_descriptorPool;
-	VkDescriptorSet m_descriptorSet;
 	RefArray< RenderTargetSetVk > m_primaryTargets;
 	VkSemaphore m_presentCompleteSemaphore;
 	VkSemaphore m_renderingCompleteSemaphore;
@@ -136,6 +134,9 @@ private:
 		Ref< RenderTargetSetVk > rts;
 		int32_t colorIndex;
 		uint32_t clearMask;
+		Color4f clearColors[4];
+		float clearDepth;
+		int32_t clearStencil;
 	};
 
 	AlignedVector< TargetState > m_targetStateStack;
@@ -143,6 +144,8 @@ private:
 
 	VkPipeline m_pipeline;
 
+	AlignedVector< VkPipeline > m_cleanupPipelines;
+	AlignedVector< VkCommandBuffer > m_cleanupCmdBuffers;
 
 	void validateTargetState();
 

@@ -228,7 +228,7 @@ ISimpleTexture* RenderTargetSetVk::getDepthTexture() const
 
 void RenderTargetSetVk::swap(int index1, int index2)
 {
-	//std::swap(m_colorTextures[index1], m_colorTextures[index2]);
+	std::swap(m_colorTargets[index1], m_colorTargets[index2]);
 }
 
 void RenderTargetSetVk::discard()
