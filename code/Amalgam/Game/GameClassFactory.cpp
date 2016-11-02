@@ -167,6 +167,24 @@ Ref< BoxedVector2 > WorldLayer_viewToScreen(WorldLayer* self, const Vector4& vie
 		return 0;
 }
 
+Ref< BoxedRay3 > WorldLayer_screenToView(WorldLayer* self, const Vector2& screenPosition)
+{
+	Ray3 viewRay;
+	if (self->screenToView(screenPosition, viewRay))
+		return new BoxedRay3(viewRay);
+	else
+		return 0;
+}
+
+Ref< BoxedRay3 > WorldLayer_screenToWorld(WorldLayer* self, const Vector2& screenPosition)
+{
+	Ray3 worldRay;
+	if (self->screenToWorld(screenPosition, worldRay))
+		return new BoxedRay3(worldRay);
+	else
+		return 0;
+}
+
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.GameClassFactory", 0, GameClassFactory, IRuntimeClassFactory)
@@ -346,6 +364,8 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addMethod("viewToWorld", &WorldLayer_viewToWorld);
 	classWorldLayer->addMethod("worldToScreen", &WorldLayer_worldToScreen);
 	classWorldLayer->addMethod("viewToScreen", &WorldLayer_viewToScreen);
+	classWorldLayer->addMethod("screenToView", &WorldLayer_screenToView);
+	classWorldLayer->addMethod("screenToWorld", &WorldLayer_screenToWorld);
 	classWorldLayer->addMethod("setFieldOfView", &WorldLayer::setFieldOfView);
 	classWorldLayer->addMethod("getFieldOfView", &WorldLayer::getFieldOfView);
 	classWorldLayer->addMethod("setAlternateTime", &WorldLayer::setAlternateTime);

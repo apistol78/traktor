@@ -18,6 +18,7 @@
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/Range.h"
+#include "Core/Math/Ray3.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector2.h"
 
@@ -857,6 +858,31 @@ private:
 	RandomGeometry m_value;
 };
 
+class T_DLLCLASS BoxedRay3 : public Boxed
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedRay3();
+
+	explicit BoxedRay3(const Ray3& value);
+
+	const Vector4& origin() const { return m_value.origin; }
+
+	const Vector4& direction() const { return m_value.direction; }
+
+	float distance(const BoxedVector4* v) { return m_value.distance(v->unbox()); }
+
+	Vector4 mul(float f) const { return m_value * Scalar(f); }
+
+	const Ray3& unbox() const { return m_value; }
+
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
+
+private:
+	Ray3 m_value;
+};
+
 class T_DLLCLASS BoxedRefArray : public Boxed
 {
 	T_RTTI_CLASS;
@@ -1610,6 +1636,40 @@ struct CastAny < const RandomGeometry&, false >
 	}
 	static const RandomGeometry& get(const Any& value) {
 		return mandatory_non_null_type_cast< BoxedRandomGeometry* >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < Ray3, false >
+{
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"traktor.Ray3";
+	}
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedRay3 >(value.getObjectUnsafe());
+	}
+	static Any set(const Ray3& value) {
+		return Any::fromObject(new BoxedRay3(value));
+	}
+	static const Ray3& get(const Any& value) {
+		return mandatory_non_null_type_cast< BoxedRay3* >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Ray3&, false >
+{
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const traktor.Ray3&";
+	}
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedRay3 >(value.getObjectUnsafe());
+	}
+	static Any set(const Ray3& value) {
+		return Any::fromObject(new BoxedRay3(value));
+	}
+	static const Ray3& get(const Any& value) {
+		return mandatory_non_null_type_cast< BoxedRay3* >(value.getObject())->unbox();
 	}
 };
 

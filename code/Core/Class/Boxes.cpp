@@ -4,6 +4,7 @@
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Format.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Misc/String.h"
@@ -93,8 +94,8 @@ BoxedAllocator< BoxedMatrix33, 256 > s_allocBoxedMatrix33;
 BoxedAllocator< BoxedMatrix44, 16 > s_allocBoxedMatrix44;
 BoxedAllocator< BoxedColor4f, 16 > s_allocBoxedColor4f;
 BoxedAllocator< BoxedColor4ub, 16 > s_allocBoxedColor4ub;
-BoxedAllocator< BoxedRandom, 8 > s_allocBoxedRandom;
-BoxedAllocator< BoxedRandomGeometry, 8 > s_allocBoxedRandomGeometry;
+BoxedAllocator< BoxedRandom, 4 > s_allocBoxedRandom;
+BoxedAllocator< BoxedRandomGeometry, 4 > s_allocBoxedRandomGeometry;
 BoxedAllocator< BoxedRefArray, 512 > s_allocBoxedRefArray;
 BoxedAllocator< BoxedRange, 256 > s_allocBoxedRange;
 BoxedAllocator< BoxedStdVector, 16 > s_allocBoxedStdVector;
@@ -217,7 +218,7 @@ BoxedVector2::BoxedVector2(float x, float y)
 std::wstring BoxedVector2::toString() const
 {
 	StringOutputStream ss;
-	ss << m_value.x << L", " << m_value.y;
+	ss << m_value;
 	return ss.str();
 }
 
@@ -257,7 +258,7 @@ BoxedVector4::BoxedVector4(float x, float y, float z, float w)
 std::wstring BoxedVector4::toString() const
 {
 	StringOutputStream ss;
-	ss << m_value.x() << L", " << m_value.y() << L", " << m_value.z() << L", " << m_value.w();
+	ss << m_value;
 	return ss.str();
 }
 
@@ -425,7 +426,7 @@ Quaternion BoxedQuaternion::fromAxisAngle(const BoxedVector4* axisAngle)
 std::wstring BoxedQuaternion::toString() const
 {
 	StringOutputStream ss;
-	ss << m_value.e.x() << L", " << m_value.e.y() << L", " << m_value.e.z() << L", " << m_value.e.w();
+	ss << m_value.e;
 	return ss.str();
 }
 
@@ -515,7 +516,7 @@ Ref< BoxedVector4 > BoxedPlane::uniqueIntersectionPoint(
 std::wstring BoxedPlane::toString() const
 {
 	StringOutputStream ss;
-	ss << m_value.normal().x() << L", " << m_value.normal().y() << L", " << m_value.normal().z() << L", " << m_value.distance();
+	ss << m_value.normal() << L", " << m_value.distance();
 	return ss.str();
 }
 
@@ -1173,6 +1174,25 @@ void BoxedRandomGeometry::operator delete (void* ptr)
 }
 
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Ray3", BoxedRay3, Boxed)
+
+BoxedRay3::BoxedRay3()
+{
+}
+
+BoxedRay3::BoxedRay3(const Ray3& value)
+:	m_value(value)
+{
+}
+
+std::wstring BoxedRay3::toString() const
+{
+	StringOutputStream ss;
+	ss << L"(" << m_value.origin << L") - (" << m_value.direction << L")";
+	return ss.str();
+}
+
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.RefArray", BoxedRefArray, Boxed)
 
 BoxedRefArray::BoxedRefArray()
@@ -1664,6 +1684,15 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedRandomGeometry->addMethod("nextUnit", &BoxedRandomGeometry::nextUnit);
 	classBoxedRandomGeometry->addMethod("nextHemi", &BoxedRandomGeometry::nextHemi);
 	registrar->registerClass(classBoxedRandomGeometry);
+
+	Ref< AutoRuntimeClass< BoxedRay3 > > classBoxedRay3 = new AutoRuntimeClass< BoxedRay3 >();
+	classBoxedRay3->addConstructor();
+	classBoxedRay3->addConstructor< const Ray3& >();
+	classBoxedRay3->addMethod("origin", &BoxedRay3::origin);
+	classBoxedRay3->addMethod("direction", &BoxedRay3::direction);
+	classBoxedRay3->addMethod("distance", &BoxedRay3::distance);
+	classBoxedRay3->addOperator< Vector4, float >('*', &BoxedRay3::mul);
+	registrar->registerClass(classBoxedRay3);
 
 	Ref< AutoRuntimeClass< BoxedRange > > classBoxedRange = new AutoRuntimeClass< BoxedRange >();
 	classBoxedRange->addConstructor();
