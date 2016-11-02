@@ -523,6 +523,31 @@ bool WorldLayer::viewToScreen(const Vector4& viewPosition, Vector2& outScreenPos
 	return true;
 }
 
+bool WorldLayer::screenToView(const Vector2& screenPosition, Ray3& outViewRay) const
+{
+	const Frustum& viewFrustum = m_worldRenderView.getViewFrustum();
+
+	Vector4 t = lerp(viewFrustum.corners[0], viewFrustum.corners[1], Scalar(screenPosition.x * 0.5f + 0.5f));
+	Vector4 b = lerp(viewFrustum.corners[3], viewFrustum.corners[2], Scalar(screenPosition.x * 0.5f + 0.5f));
+	Vector4 p = lerp(b, t, Scalar(screenPosition.y * 0.5f + 0.5f));
+
+	outViewRay.origin = Vector4::origo();
+	outViewRay.direction = p.xyz0().normalized();
+	return true;
+}
+
+bool WorldLayer::screenToWorld(const Vector2& screenPosition, Ray3& outWorldRay) const
+{
+	Ray3 viewRay;
+	if (!screenToView(screenPosition, viewRay))
+		return false;
+
+	Matrix44 viewInverse = m_worldRenderView.getView().inverse();
+	outWorldRay.origin = viewInverse * viewRay.origin;
+	outWorldRay.direction = viewInverse * viewRay.direction;
+	return true;
+}
+
 void WorldLayer::setFieldOfView(float fieldOfView)
 {
 	m_fieldOfView = fieldOfView;

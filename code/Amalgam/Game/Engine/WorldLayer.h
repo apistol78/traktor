@@ -5,6 +5,7 @@
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Core/RefArray.h"
 #include "Core/Math/IntervalTransform.h"
+#include "Core/Math/Ray3.h"
 #include "Resource/Proxy.h"
 #include "Spray/Feedback/IFeedbackListener.h"
 #include "World/WorldRenderView.h"
@@ -138,6 +139,10 @@ public:
 	bool worldToScreen(const Vector4& worldPosition, Vector2& outScreenPosition) const;
 
 	bool viewToScreen(const Vector4& viewPosition, Vector2& outScreenPosition) const;
+
+	bool screenToView(const Vector2& screenPosition, Ray3& outViewRay) const;
+
+	bool screenToWorld(const Vector2& screenPosition, Ray3& outWorldRay) const;
 
 	void setFieldOfView(float fieldOfView);
 
