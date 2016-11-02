@@ -933,7 +933,9 @@ void AsMovieClip::MovieClip_get_opaqueBackground(const FlashSpriteInstance* self
 
 void AsMovieClip::MovieClip_set_opaqueBackground(FlashSpriteInstance* self, const ActionValue& value) const
 {
-	self->setOpaqueBackground(!value.isUndefined());
+	T_IF_VERBOSE(
+		log::warning << L"MovieClip::set_opaqueBackground not implemented" << Endl;
+	)
 }
 
 FlashCharacterInstance* AsMovieClip::MovieClip_get_parent(FlashSpriteInstance* self) const

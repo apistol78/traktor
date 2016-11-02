@@ -44,10 +44,6 @@ public:
 
 	bool getCacheAsBitmap() const { return m_cacheAsBitmap; }
 
-	void setOpaqueBackground(bool opaqueBackground);
-
-	bool getOpaqueBackground() const { return m_opaqueBackground; }
-
 	void gotoFrame(uint32_t frameId);
 
 	void gotoPrevious();
@@ -192,7 +188,6 @@ private:
 	uint16_t m_lastSoundFrame;
 	uint8_t m_skipEnterFrame;
 	bool m_cacheAsBitmap;
-	bool m_opaqueBackground;
 	bool m_initialized;
 	bool m_playing;
 	bool m_visible;
