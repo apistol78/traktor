@@ -446,6 +446,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashCharacterInstance->addConstant("SbmErase", Any::fromInteger(SbmErase));
 	classFlashCharacterInstance->addConstant("SbmOverlay", Any::fromInteger(SbmOverlay));
 	classFlashCharacterInstance->addConstant("SbmHardlight", Any::fromInteger(SbmHardlight));
+	classFlashCharacterInstance->addConstant("SbmOpaque", Any::fromInteger(SbmOpaque));
 	classFlashCharacterInstance->addStaticMethod("getInstanceCount", &FlashCharacterInstance::getInstanceCount);
 	classFlashCharacterInstance->addMethod("destroy", &FlashCharacterInstance::destroy);
 	classFlashCharacterInstance->addMethod("getContext", &FlashCharacterInstance::getContext);
@@ -504,8 +505,6 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashSpriteInstance->addMethod("getSprite", &FlashSpriteInstance::getSprite);
 	classFlashSpriteInstance->addMethod("setCacheAsBitmap", &FlashSpriteInstance::setCacheAsBitmap);
 	classFlashSpriteInstance->addMethod("getCacheAsBitmap", &FlashSpriteInstance::getCacheAsBitmap);
-	classFlashSpriteInstance->addMethod("setOpaqueBackground", &FlashSpriteInstance::setOpaqueBackground);
-	classFlashSpriteInstance->addMethod("getOpaqueBackground", &FlashSpriteInstance::getOpaqueBackground);
 	classFlashSpriteInstance->addMethod("gotoFrame", &FlashSpriteInstance::gotoFrame);
 	classFlashSpriteInstance->addMethod("gotoPrevious", &FlashSpriteInstance::gotoPrevious);
 	classFlashSpriteInstance->addMethod("gotoNext", &FlashSpriteInstance::gotoNext);

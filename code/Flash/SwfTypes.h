@@ -466,6 +466,7 @@ enum SwfBlendMode
 	SbmErase = 12,
 	SbmOverlay = 13,
 	SbmHardlight = 14,
+	SbmOpaque = 15,		//!< Not actually part of SWF.
 	SbmLast
 };
 

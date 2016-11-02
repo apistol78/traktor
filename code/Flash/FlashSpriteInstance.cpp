@@ -35,7 +35,6 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashDictionary
 ,	m_lastSoundFrame(~0)
 ,	m_skipEnterFrame(0)
 ,	m_cacheAsBitmap(false)
-,	m_opaqueBackground(false)
 ,	m_initialized(false)
 ,	m_playing(true)
 ,	m_visible(false)
@@ -84,11 +83,6 @@ void FlashSpriteInstance::destroy()
 void FlashSpriteInstance::setCacheAsBitmap(bool cacheAsBitmap)
 {
 	m_cacheAsBitmap = cacheAsBitmap;
-}
-
-void FlashSpriteInstance::setOpaqueBackground(bool opaqueBackground)
-{
-	m_opaqueBackground = opaqueBackground;
 }
 
 void FlashSpriteInstance::gotoFrame(uint32_t frameId)

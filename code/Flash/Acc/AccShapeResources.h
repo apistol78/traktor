@@ -43,7 +43,6 @@ private:
 	render::handle_t m_handleCxFormAdd;
 	render::handle_t m_handleTexture;
 	render::handle_t m_handleTextureClamp;
-
 	render::handle_t m_handleTechniques[SbmLast];
 };
 

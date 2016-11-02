@@ -52,6 +52,7 @@ bool AccShapeResources::create(resource::IResourceManager* resourceManager)
 	m_handleTechniques[SbmErase] = render::getParameterHandle(L"Flash_Erase");
 	m_handleTechniques[SbmOverlay] = render::getParameterHandle(L"Flash_Overlay");
 	m_handleTechniques[SbmHardlight] = render::getParameterHandle(L"Flash_Hardlight");
+	m_handleTechniques[SbmOpaque] = render::getParameterHandle(L"Flash_Opaque");
 
 	return true;
 }
