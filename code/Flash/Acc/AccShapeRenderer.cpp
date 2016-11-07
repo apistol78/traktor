@@ -1,4 +1,5 @@
-#include <GuillotineBinPack.h>
+#define STB_RECT_PACK_IMPLEMENTATION
+#include <stb_rect_pack.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -19,12 +20,6 @@ namespace traktor
 		namespace
 		{
 
-const Matrix33 c_flipped(
-	0.0f, 1, 0,
-	1, 0, 0,
-	0, 0, 1
-);
-
 #if defined(__ANDROID__) || defined(__IOS__)
 const uint32_t c_cacheWidth = 1024;
 const uint32_t c_cacheHeight = 1024;
@@ -42,7 +37,8 @@ const SwfCxTransform c_cxfIdentity = { Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccShapeRenderer", AccShapeRenderer, Object)
 
 AccShapeRenderer::AccShapeRenderer()
-:	m_renderIntoSlot(0)
+:	m_packer(0)
+,	m_renderIntoSlot(0)
 ,	m_renderFromSlot(0)
 ,	m_cacheAsBitmap(0)
 {
@@ -74,17 +70,15 @@ bool AccShapeRenderer::create(render::IRenderSystem* renderSystem, resource::IRe
 		return false;
 	}
 
-	m_packer = new rbp::GuillotineBinPack(c_cacheWidth, c_cacheHeight);
+	m_packer.reset(new stbrp_context());
+	m_nodes.reset(new stbrp_node [c_cacheWidth]);
+	stbrp_setup_allow_out_of_mem(m_packer.ptr(), 1);
+	stbrp_init_target(m_packer.ptr(), c_cacheWidth, c_cacheHeight, m_nodes.ptr(), c_cacheWidth);
 	return true;
 }
 
 void AccShapeRenderer::destroy()
 {
-	if (m_packer)
-	{
-		delete m_packer;
-		m_packer = 0;
-	}
 	safeDestroy(m_quad);
 	safeDestroy(m_renderTargetShapes);
 }
@@ -96,7 +90,7 @@ void AccShapeRenderer::beginFrame()
 		if (++m_cache[i].unused >= 20)
 		{
 			m_cache.resize(0);
-			m_packer->Init(c_cacheWidth, c_cacheHeight);
+			stbrp_init_target(m_packer.ptr(), c_cacheWidth, c_cacheHeight, m_nodes.ptr(), c_cacheWidth);
 			break;
 		}
 	}
@@ -189,8 +183,8 @@ void AccShapeRenderer::render(
 		Matrix33 delta = c.transform.inverse() * transform;
 		shape->render(
 			renderContext,
-			(c.flipped ? c_flipped : Matrix33::identity()) * delta,
-			c.flipped ? cacheFrameSize.shuffle< 1, 0, 3, 2 >() : cacheFrameSize,
+			delta,
+			cacheFrameSize,
 			cacheViewOffset,
 			cxform,
 			maskWrite,
@@ -259,40 +253,28 @@ void AccShapeRenderer::beginCacheAsBitmap(
 	int32_t slot = -1;
 	for (int32_t i = 0; i < m_cache.size(); ++i)
 	{
-		if (m_cache[i].tag == tag)
+		if (m_cache[i].tag == tag && m_cache[i].width == pixelWidth && m_cache[i].height == pixelHeight)
 		{
-			if (
-				(!m_cache[i].flipped && m_cache[i].width == pixelWidth && m_cache[i].height == pixelHeight) ||
-				( m_cache[i].flipped && m_cache[i].width == pixelHeight && m_cache[i].height == pixelWidth)
-			)
-			{
-				slot = i;
-				break;
-			}
+			slot = i;
+			break;
 		}
 	}
 
 	// If not cached then allocate a new region and begin rendering into cache.
 	if (slot < 0)
 	{
-		int32_t allocWidth = pixelWidth + c_cacheMargin * 2;
-		int32_t allocHeight = pixelHeight + c_cacheMargin * 2;
-		rbp::Rect node = m_packer->Insert(
-			allocWidth,
-			allocHeight,
-			false,
-			rbp::GuillotineBinPack::RectBestAreaFit,
-			rbp::GuillotineBinPack::SplitShorterLeftoverAxis
-		);
-		if (node.width > 0 && node.height > 0)
+		stbrp_rect r = { 0 };
+		r.w = pixelWidth + c_cacheMargin * 2;
+		r.h = pixelHeight + c_cacheMargin * 2;
+		stbrp_pack_rects(m_packer.ptr(), &r, 1);
+		if (r.was_packed)
 		{
 			Cache c;
 			c.tag = tag;
-			c.x = node.x + c_cacheMargin;
-			c.y = node.y + c_cacheMargin;
-			c.width = node.width - c_cacheMargin * 2;
-			c.height = node.height - c_cacheMargin * 2;
-			c.flipped = bool(node.width != allocWidth);
+			c.x = r.x + c_cacheMargin;
+			c.y = r.y + c_cacheMargin;
+			c.width = r.w - c_cacheMargin * 2;
+			c.height = r.h - c_cacheMargin * 2;
 			c.unused = 0;
 			c.bounds = bounds;
 			c.transform = transform;
@@ -357,8 +339,8 @@ void AccShapeRenderer::endCacheAsBitmap(
 
 		m_quad->render(
 			renderContext,
-			c.flipped ? Aabb2(c.bounds.mn.shuffle< 1, 0 >(), c.bounds.mx.shuffle< 1, 0 >()) : c.bounds,
-			transform * (c.flipped ? c_flipped : Matrix33::identity()),
+			c.bounds,
+			transform,
 			frameBounds,
 			frameTransform,
 			c_cxfIdentity,

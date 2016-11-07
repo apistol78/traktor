@@ -10035,7 +10035,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
 												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -10071,7 +10071,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
 												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -10107,7 +10107,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
 												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -10143,7 +10143,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
 												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2016.1.2/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -10210,122 +10210,6 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project type="Project" version="1">
-												<enable>true</enable>
-												<name>Extern.RectangleBinPack</name>
-												<sourcePath>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</sourcePath>
-												<configurations>
-													<item type="Configuration" version="3">
-														<name>DebugShared</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
-														<definitions>
-															<item>_DEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseShared</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
-														<definitions>
-															<item>NDEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>DebugStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
-														<definitions>
-															<item>_DEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libExtern.RectangleBinPack.a</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-															</item>
-														</aggregationItems>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
-														<definitions>
-															<item>NDEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libExtern.RectangleBinPack.a</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-															</item>
-														</aggregationItems>
-													</item>
-												</configurations>
-												<items>
-													<item type="File">
-														<fileName>*.cpp</fileName>
-														<items/>
-													</item>
-													<item type="File">
-														<fileName>*.h</fileName>
-														<items/>
-													</item>
-												</items>
-												<dependencies/>
-											</project>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -11439,7 +11323,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_FLASH_EXPORT</item>
@@ -11467,7 +11351,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_FLASH_EXPORT</item>
@@ -11495,7 +11379,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -11523,7 +11407,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -12447,11 +12331,6 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[14]/project/dependencies/item[5]/project/dependencies/item[3]/project"/>
-				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
@@ -12466,7 +12345,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_FLASH_EDITOR_EXPORT</item>
@@ -12494,7 +12373,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_FLASH_EDITOR_EXPORT</item>
@@ -12522,7 +12401,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -12550,7 +12429,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -12839,11 +12718,6 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[14]/project/dependencies/item[7]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[14]/project/dependencies/item[5]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -19815,7 +19689,6 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[15]/dependencies/item[14]/project/dependencies/item[5]/project/dependencies/item[3]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Illuminate.Editor</name>
@@ -20552,7 +20425,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -20582,7 +20455,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -20612,7 +20485,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -20642,7 +20515,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -20767,11 +20640,6 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[14]/project/dependencies/item[7]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[14]/project/dependencies/item[5]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>

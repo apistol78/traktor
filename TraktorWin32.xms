@@ -8869,6 +8869,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -8906,6 +8907,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -8943,6 +8945,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -8980,6 +8983,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -9055,122 +9059,6 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project type="Project" version="1">
-												<enable>true</enable>
-												<name>Extern.RectangleBinPack</name>
-												<sourcePath>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</sourcePath>
-												<configurations>
-													<item type="Configuration" version="3">
-														<name>DebugShared</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
-														</includePaths>
-														<definitions>
-															<item>_DEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseShared</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
-														</includePaths>
-														<definitions>
-															<item>NDEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>DebugStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
-														</includePaths>
-														<definitions>
-															<item>_DEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>Extern.RectangleBinPack.lib</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-															</item>
-														</aggregationItems>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
-														</includePaths>
-														<definitions>
-															<item>NDEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>Extern.RectangleBinPack.lib</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-															</item>
-														</aggregationItems>
-													</item>
-												</configurations>
-												<items>
-													<item type="File">
-														<fileName>*.cpp</fileName>
-														<items/>
-													</item>
-													<item type="File">
-														<fileName>*.h</fileName>
-														<items/>
-													</item>
-												</items>
-												<dependencies/>
-											</project>
 										</item>
 									</dependencies>
 								</project>
@@ -10527,7 +10415,9 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+					</includePaths>
 					<definitions>
 						<item>T_FLASH_EXPORT</item>
 						<item>_DEBUG</item>
@@ -10552,7 +10442,9 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+					</includePaths>
 					<definitions>
 						<item>T_FLASH_EXPORT</item>
 						<item>NDEBUG</item>
@@ -10577,7 +10469,9 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
@@ -10602,7 +10496,9 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
@@ -11502,11 +11398,6 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[15]/project/dependencies/item[5]/project/dependencies/item[4]/project"/>
-				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
@@ -11519,7 +11410,9 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+					</includePaths>
 					<definitions>
 						<item>T_FLASH_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
@@ -11544,7 +11437,9 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+					</includePaths>
 					<definitions>
 						<item>T_FLASH_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
@@ -11569,7 +11464,9 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
@@ -11594,7 +11491,9 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
@@ -12009,11 +11908,6 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[15]/project/dependencies/item[5]/project/dependencies/item[4]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Graphics.Gdi</name>
@@ -12143,7 +12037,7 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[27]/dependencies/item[8]/project"/>
-		<item ref="/object/projects/item[27]/dependencies/item[15]/project"/>
+		<item ref="/object/projects/item[27]/dependencies/item[14]/project"/>
 		<item ref="/object/projects/item[26]/dependencies/item[6]/project"/>
 		<item ref="/object/projects/item[14]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 		<item type="Project" version="1">
@@ -15427,7 +15321,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]/dependencies/item[15]/project"/>
+					<project ref="/object/projects/item[27]/dependencies/item[14]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -22639,7 +22533,6 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[14]/dependencies/item[15]/project/dependencies/item[5]/project/dependencies/item[4]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Online.Gc</name>
@@ -23178,6 +23071,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -23205,6 +23099,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -23232,6 +23127,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -23259,6 +23155,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -23374,11 +23271,6 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[14]/dependencies/item[15]/project/dependencies/item[8]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[15]/project/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -24157,7 +24049,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[133]"/>
+					<project ref="/object/projects/item[132]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>

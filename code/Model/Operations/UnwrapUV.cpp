@@ -1,10 +1,12 @@
-#include <MaxRectsBinPack.h>
+#define STB_RECT_PACK_IMPLEMENTATION
+#include <stb_rect_pack.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Log2.h"
 #include "Core/Math/Winding2.h"
 #include "Core/Math/Winding3.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 #include "Model/Operations/UnwrapUV.h"
@@ -170,10 +172,13 @@ bool UnwrapUV::apply(Model& model) const
 	int32_t size = std::max(int32_t(std::sqrt(totalTexelArea) / 2.0f), 16);
 	
 	// Pack each group into a separate rectangle.
-	rbp::MaxRectsBinPack binPack;
-	binPack.Init(size, size);
+	AutoPtr< stbrp_context > packer(new stbrp_context());
+	AutoArrayPtr< stbrp_node > nodes(new stbrp_node [size]);
 
-	std::vector< rbp::Rect > rects;
+	stbrp_setup_allow_out_of_mem(packer.ptr(), 1);
+	stbrp_init_target(packer.ptr(), size, size, nodes.ptr(), size);
+
+	std::vector< stbrp_rect > rects;
 	for (uint32_t i = 0; i < aabbuvs.size(); )
 	{
 		int32_t width = int32_t((aabbuvs[i].mx - aabbuvs[i].mn).x + 0.5f);
@@ -181,17 +186,26 @@ bool UnwrapUV::apply(Model& model) const
 		T_FATAL_ASSERT (width > 0);
 		T_FATAL_ASSERT (height > 0);
 
-		rbp::Rect packedRect = binPack.Insert(width, height, rbp::MaxRectsBinPack::RectBestAreaFit);
-		if (packedRect.height <= 0)
+		stbrp_rect r = { 0 };
+		r.w = width + 2;
+		r.h = height + 2;
+		stbrp_pack_rects(packer.ptr(), &r, 1);
+		if (!r.was_packed)
 		{
 			i = 0;
 			size += size / 4;
-			binPack.Init(size, size);
+
+			packer.reset(new stbrp_context());
+			nodes.reset(new stbrp_node [size]);
+
+			stbrp_setup_allow_out_of_mem(packer.ptr(), 1);
+			stbrp_init_target(packer.ptr(), size, size, nodes.ptr(), size);
+
 			rects.resize(0);
 			continue;
 		}
 
-		rects.push_back(packedRect);
+		rects.push_back(r);
 		++i;
 	}
 
@@ -202,22 +216,10 @@ bool UnwrapUV::apply(Model& model) const
 	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
 	{
 		uint32_t g = groups[i];
-		const rbp::Rect& packedRect = rects[g];
+		const stbrp_rect& packedRect = rects[g];
 
 		int32_t width = int32_t((aabbuvs[g].mx - aabbuvs[g].mn).x + 0.5f);
 		int32_t height = int32_t((aabbuvs[g].mx - aabbuvs[g].mn).y + 0.5f);
-
-		bool flipped = false;
-		if (packedRect.width > packedRect.height)
-		{
-			if (width < height)
-				flipped = true;
-		}
-		else if (packedRect.width < packedRect.height)
-		{
-			if (width > height)
-				flipped = true;
-		}
 
 		for (uint32_t j = 0; j < wuvs[i].points.size(); ++j)
 		{
@@ -227,14 +229,8 @@ bool UnwrapUV::apply(Model& model) const
 			T_FATAL_ASSERT (uv.x >= -FUZZY_EPSILON && uv.x <= 1.0f + FUZZY_EPSILON);
 			T_FATAL_ASSERT (uv.y >= -FUZZY_EPSILON && uv.y <= 1.0f + FUZZY_EPSILON);
 
-			if (flipped)
-			{
-				std::swap(uv.x, uv.y);
-				uv.x = 1.0f - uv.x;
-			}
-
-			uv.x = (uv.x * packedRect.width + packedRect.x) / size;
-			uv.y = (uv.y * packedRect.height + packedRect.y) / size;
+			uv.x = (uv.x * packedRect.w + packedRect.x) / size;
+			uv.y = (uv.y * packedRect.h + packedRect.y) / size;
 
 			if (m_ustep > 0.0f)
 				uv.x = std::floor(uv.x / m_ustep) * m_ustep;

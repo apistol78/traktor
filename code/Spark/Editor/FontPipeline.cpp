@@ -1,11 +1,11 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
-
-#include <MaxRectsBinPack.h>
-
+#define STB_RECT_PACK_IMPLEMENTATION
+#include <stb_rect_pack.h>
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyString.h"
@@ -247,8 +247,11 @@ bool FontPipeline::buildOutput(
 	int32_t size = nearestLog2(std::max(int32_t(std::sqrt(totalArea) / 2.0f), 16));
 
 	// Pack atlas of all glyphs.
-	rbp::MaxRectsBinPack binPack;
-	binPack.Init(size, size);
+	AutoPtr< stbrp_context > packer(new stbrp_context());
+	AutoArrayPtr< stbrp_node > nodes(new stbrp_node [size]);
+
+	stbrp_setup_allow_out_of_mem(packer.ptr(), 1);
+	stbrp_init_target(packer.ptr(), size, size, nodes.ptr(), size);
 
 	for (uint32_t i = 0; i < glyphImages.size(); )
 	{
@@ -260,20 +263,27 @@ bool FontPipeline::buildOutput(
 
 		int32_t width = glyphImages[i]->getWidth();
 		int32_t height = glyphImages[i]->getHeight();
-		int32_t packSize = std::max(width, height) + 2;
 
-		rbp::Rect packedRect = binPack.Insert(packSize, packSize, rbp::MaxRectsBinPack::RectBestAreaFit);
-		if (packedRect.height <= 0)
+		stbrp_rect r = { 0 };
+		r.w = width + 2;
+		r.h = height + 2;
+		stbrp_pack_rects(packer.ptr(), &r, 1);
+		if (!r.was_packed)
 		{
 			// Not enough space available in atlas, enlarge atlas and try again.
 			i = 0;
 			size <<= 1;
-			binPack.Init(size, size);
+
+			packer.reset(new stbrp_context());
+			nodes.reset(new stbrp_node [size]);
+
+			stbrp_setup_allow_out_of_mem(packer.ptr(), 1);
+			stbrp_init_target(packer.ptr(), size, size, nodes.ptr(), size);
 			continue;
 		}
 
-		glyphRects[i].x = packedRect.x + 1;
-		glyphRects[i].y = packedRect.y + 1;
+		glyphRects[i].x = r.x + 1;
+		glyphRects[i].y = r.y + 1;
 		glyphRects[i].width = width;
 		glyphRects[i].height = height;
 
