@@ -3,15 +3,9 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Vector4.h"
-
-namespace rbp
-{
-
-class GuillotineBinPack;
-
-}
 
 namespace traktor
 {
@@ -100,13 +94,13 @@ private:
 		int32_t unused;
 		Aabb2 bounds;
 		Matrix33 transform;
-		bool flipped;
 	};
 
 	Ref< render::RenderTargetSet > m_renderTargetShapes;
 	Ref< AccQuad > m_quad;
 	AlignedVector< Cache > m_cache;
-	rbp::GuillotineBinPack* m_packer;
+	AutoPtr< struct stbrp_context > m_packer;
+	AutoArrayPtr< struct stbrp_node > m_nodes;
 	int32_t m_renderIntoSlot;
 	int32_t m_renderFromSlot;
 	int32_t m_cacheAsBitmap;

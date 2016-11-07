@@ -1,6 +1,7 @@
 #include <cstring>
 #include <list>
-#include <MaxRectsBinPack.h>
+#define STB_RECT_PACK_IMPLEMENTATION
+#include <stb_rect_pack.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -44,12 +45,13 @@ struct AtlasBitmap
 {
 	uint16_t id;
 	Ref< const FlashBitmapImage > bitmap;
-	rbp::Rect packedRect;
+	stbrp_rect packedRect;
 };
 
 struct AtlasBucket
 {
-	rbp::MaxRectsBinPack binPack;
+	AutoPtr< stbrp_context > packer;
+	AutoArrayPtr< stbrp_node > nodes;
 	std::list< AtlasBitmap > bitmaps;
 };
 
@@ -238,22 +240,20 @@ bool FlashPipeline::buildOutput(
 
 		for (std::list< AtlasBucket >::iterator j = buckets.begin(); j != buckets.end(); ++j)
 		{
-			int32_t mdim = std::max(bitmapData->getWidth(), bitmapData->getHeight());
-			rbp::Rect packedRect = j->binPack.Insert(
-				mdim + 2,
-				mdim + 2,
-				rbp::MaxRectsBinPack::RectBestAreaFit
-			);
-			if (packedRect.height > 0)
+			stbrp_rect r = { 0 };
+			r.w = bitmapData->getWidth() + 2;
+			r.h = bitmapData->getHeight() + 2;
+			stbrp_pack_rects(j->packer.ptr(), &r, 1);
+			if (r.was_packed)
 			{
 				AtlasBitmap ab;
 				ab.id = i->first;
 				ab.bitmap = bitmapData;
-				ab.packedRect = packedRect;
+				ab.packedRect = r;
 				ab.packedRect.x += 1;
 				ab.packedRect.y += 1;
-				ab.packedRect.width = bitmapData->getWidth();
-				ab.packedRect.height = bitmapData->getHeight();
+				ab.packedRect.w = bitmapData->getWidth();
+				ab.packedRect.h = bitmapData->getHeight();
 				j->bitmaps.push_back(ab);
 				foundBucket = true;
 				break;
@@ -263,25 +263,28 @@ bool FlashPipeline::buildOutput(
 		if (!foundBucket)
 		{
 			buckets.push_back(AtlasBucket());
-			buckets.back().binPack.Init(1024, 1024);
 
-			int32_t mdim = std::max(bitmapData->getWidth(), bitmapData->getHeight());
-			rbp::Rect packedRect = buckets.back().binPack.Insert(
-				mdim + 2,
-				mdim + 2,
-				rbp::MaxRectsBinPack::RectBestAreaFit
-			);
-			if (packedRect.height > 0)
+			AtlasBucket& b = buckets.back();
+			b.packer.reset(new stbrp_context());
+			b.nodes.reset(new stbrp_node [1024]);
+			stbrp_setup_allow_out_of_mem(b.packer.ptr(), 1);
+			stbrp_init_target(b.packer.ptr(), 1024, 1024, b.nodes.ptr(), 1024);
+
+			stbrp_rect r = { 0 };
+			r.w = bitmapData->getWidth() + 2;
+			r.h = bitmapData->getHeight() + 2;
+			stbrp_pack_rects(b.packer.ptr(), &r, 1);
+			if (r.was_packed)
 			{
 				AtlasBitmap ab;
 				ab.id = i->first;
 				ab.bitmap = bitmapData;
-				ab.packedRect = packedRect;
+				ab.packedRect = r;
 				ab.packedRect.x += 1;
 				ab.packedRect.y += 1;
-				ab.packedRect.width = bitmapData->getWidth();
-				ab.packedRect.height = bitmapData->getHeight();
-				buckets.back().bitmaps.push_back(ab);
+				ab.packedRect.w = bitmapData->getWidth();
+				ab.packedRect.h = bitmapData->getHeight();
+				b.bitmaps.push_back(ab);
 			}
 			else
 			{
@@ -290,8 +293,8 @@ bool FlashPipeline::buildOutput(
 				ab.bitmap = bitmapData;
 				ab.packedRect.x = 0;
 				ab.packedRect.y = 0;
-				ab.packedRect.width = bitmapData->getWidth();
-				ab.packedRect.height = bitmapData->getHeight();
+				ab.packedRect.w = bitmapData->getWidth();
+				ab.packedRect.h = bitmapData->getHeight();
 				standalone.push_back(ab);
 			}
 		}
@@ -329,21 +332,21 @@ bool FlashPipeline::buildOutput(
 					j->bitmap->getWidth() * j->bitmap->getHeight() * 4
 				);
 
-				for (int32_t y = -1; y < j->packedRect.height + 1; ++y)
+				for (int32_t y = -1; y < j->packedRect.h + 1; ++y)
 				{
-					for (int32_t x = -1; x < j->packedRect.width + 1; ++x)
+					for (int32_t x = -1; x < j->packedRect.w + 1; ++x)
 					{
 						int32_t sx = x;
 						int32_t sy = y;
 
 						if (sx < 0)
-							sx = j->packedRect.width - 1;
-						else if (sx > j->packedRect.width - 1)
+							sx = j->packedRect.w - 1;
+						else if (sx > j->packedRect.w - 1)
 							sx = 0;
 
 						if (sy < 0)
-							sy = j->packedRect.height - 1;
-						else if (sy > j->packedRect.height - 1)
+							sy = j->packedRect.h - 1;
+						else if (sy > j->packedRect.h - 1)
 							sy = 0;
 
 						Color4f tmp;
@@ -404,8 +407,8 @@ bool FlashPipeline::buildOutput(
 				movie->defineBitmap(j->id, new FlashBitmapResource(
 					j->packedRect.x,
 					j->packedRect.y,
-					j->packedRect.width,
-					j->packedRect.height,
+					j->packedRect.w,
+					j->packedRect.h,
 					1024,
 					1024,
 					bitmapOutputGuid
@@ -417,8 +420,8 @@ bool FlashPipeline::buildOutput(
 			AtlasBitmap ab = i->bitmaps.front();
 			ab.packedRect.x = 0;
 			ab.packedRect.y = 0;
-			ab.packedRect.width = ab.bitmap->getWidth();
-			ab.packedRect.height = ab.bitmap->getHeight();
+			ab.packedRect.w = ab.bitmap->getWidth();
+			ab.packedRect.h = ab.bitmap->getHeight();
 			standalone.push_back(ab);
 		}
 	}

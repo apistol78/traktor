@@ -2240,6 +2240,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -2267,6 +2268,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3448,80 +3450,6 @@
 								</project>
 							</item>
 						</dependencies>
-					</project>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Extern.RectangleBinPack</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</sourcePath>
-						<configurations>
-							<item type="Configuration" version="3">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
-								</includePaths>
-								<definitions>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Extern.RectangleBinPack.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
-								</includePaths>
-								<definitions>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Extern.RectangleBinPack.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.cpp</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>*.h</fileName>
-								<items/>
-							</item>
-						</items>
-						<dependencies/>
 					</project>
 				</item>
 			</dependencies>
@@ -7384,7 +7312,6 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[47]/dependencies/item[23]/project"/>
-		<item ref="/object/projects/item[17]/dependencies/item[8]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Json</name>
