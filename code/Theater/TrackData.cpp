@@ -41,6 +41,11 @@ Ref< world::EntityData > TrackData::getLookAtEntityData() const
 	return m_lookAtEntityData;
 }
 
+void TrackData::setPath(const TransformPath& path)
+{
+	m_path = path;
+}
+
 const TransformPath& TrackData::getPath() const
 {
 	return m_path;
@@ -51,9 +56,19 @@ TransformPath& TrackData::getPath()
 	return m_path;
 }
 
+void TrackData::setLoopStart(float loopStart)
+{
+	m_loopStart = loopStart;
+}
+
 float TrackData::getLoopStart() const
 {
 	return m_loopStart;
+}
+
+void TrackData::setLoopEnd(float loopEnd)
+{
+	m_loopEnd = loopEnd;
 }
 
 float TrackData::getLoopEnd() const
@@ -61,14 +76,29 @@ float TrackData::getLoopEnd() const
 	return m_loopEnd;
 }
 
+void TrackData::setTimeOffset(float timeOffset)
+{
+	m_timeOffset = timeOffset;
+}
+
 float TrackData::getTimeOffset() const
 {
 	return m_timeOffset;
 }
 
+void TrackData::setWobbleMagnitude(float wobbleMagnitude)
+{
+	m_wobbleMagnitude = wobbleMagnitude;
+}
+
 float TrackData::getWobbleMagnitude() const
 {
 	return m_wobbleMagnitude;
+}
+
+void TrackData::setWobbleRate(float wobbleRate)
+{
+	m_wobbleRate = wobbleRate;
 }
 
 float TrackData::getWobbleRate() const

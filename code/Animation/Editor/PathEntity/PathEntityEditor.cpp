@@ -61,8 +61,8 @@ bool PathEntityEditor::handleCommand(const ui::Command& command)
 	else if (command == L"Animation.Editor.InsertKey")
 	{
 		TransformPath& path = entityData->getPath();
-		TransformPath::Frame frame = path.evaluate(m_time, false);
-		path.insert(m_time, frame);
+		TransformPath::Key key = path.evaluate(m_time, false);
+		path.insert(key);
 		getContext()->buildEntities();
 	}
 	else
@@ -84,7 +84,7 @@ void PathEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) c
 		for (AlignedVector< TransformPath::Key >::const_iterator i = keys.begin(); i != keys.end(); ++i)
 		{
 			primitiveRenderer->drawWireAabb(
-				i->value.position,
+				i->position,
 				Vector4(0.2f, 0.2f, 0.2f),
 				Color4ub(255, 255, 0)
 			);
@@ -96,8 +96,8 @@ void PathEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) c
 			for (uint32_t i = 0; i < keys.size() - 1; ++i)
 			{
 				primitiveRenderer->drawLine(
-					keys[i].value.position,
-					keys[i + 1].value.position,
+					keys[i].position,
+					keys[i + 1].position,
 					Color4ub(0, 255, 0)
 				);
 			}

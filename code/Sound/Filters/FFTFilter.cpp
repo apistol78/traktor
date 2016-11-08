@@ -123,6 +123,7 @@ struct PairAccessor
 	}
 
 	static inline float combine(
+		float t,
 		float v0, float w0,
 		float v1, float w1,
 		float v2, float w2,

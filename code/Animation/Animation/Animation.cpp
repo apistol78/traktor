@@ -26,6 +26,7 @@ struct KeyPoseAccessor
 	}
 
 	static inline Pose combine(
+		float t,
 		const Pose& v0, float w0,
 		const Pose& v1, float w1,
 		const Pose& v2, float w2,

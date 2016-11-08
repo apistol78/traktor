@@ -16,8 +16,11 @@ void TheaterEditorProfile::getCommands(
 {
 	outCommands.push_back(ui::Command(L"Theater.CaptureEntities"));
 	outCommands.push_back(ui::Command(L"Theater.DeleteSelectedKey"));
+	outCommands.push_back(ui::Command(L"Theater.SetLookAtEntity"));
+	outCommands.push_back(ui::Command(L"Theater.EaseVelocity"));
 	outCommands.push_back(ui::Command(L"Theater.GotoPreviousKey"));
 	outCommands.push_back(ui::Command(L"Theater.GotoNextKey"));
+	outCommands.push_back(ui::Command(L"Theater.SplitAct"));
 }
 
 void TheaterEditorProfile::getGuideDrawIds(

@@ -79,6 +79,10 @@ private:
 
 	void gotoNextKey();
 
+	void splitAct();
+
+	void timeScaleAct();
+
 	void eventActSelected(ui::SelectionChangeEvent* event);
 
 	void eventActEdit(ui::custom::EditListEditEvent* event);

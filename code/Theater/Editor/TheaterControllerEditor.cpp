@@ -8,7 +8,6 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Events/PostFrameEvent.h"
 #include "Theater/ActData.h"
-#include "Theater/TheaterController.h"
 #include "Theater/TheaterControllerData.h"
 #include "Theater/TrackData.h"
 #include "Theater/Editor/TheaterControllerEditor.h"
@@ -111,6 +110,9 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_GOTO_PREVIOUS_KEY"), 2, ui::Command(L"Theater.GotoPreviousKey")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_GOTO_NEXT_KEY"), 3, ui::Command(L"Theater.GotoNextKey")));
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_SPLIT_ACT"), 2, ui::Command(L"Theater.SplitAct")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_TIME_SCALE_ACT"), 2, ui::Command(L"Theater.TimeScaleAct")));
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &TheaterControllerEditor::eventToolBarClick);
 
 	m_trackSequencer = new ui::custom::SequencerControl();
@@ -144,7 +146,7 @@ void TheaterControllerEditor::destroy()
 void TheaterControllerEditor::entityRemoved(scene::EntityAdapter* entityAdapter)
 {
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 
 	RefArray< ActData >& acts = controllerData->getActs();
 	for (RefArray< ActData >::iterator i = acts.begin(); i != acts.end(); ++i)
@@ -173,7 +175,7 @@ bool TheaterControllerEditor::handleCommand(const ui::Command& command)
 	if (command == L"Theater.AddAct")
 	{
 		Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-		Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+		Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 		controllerData->getActs().push_back(new ActData());
 		m_context->buildController();
 		updateView();
@@ -192,7 +194,7 @@ bool TheaterControllerEditor::handleCommand(const ui::Command& command)
 			if (result == ui::DrYes)
 			{
 				Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-				Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+				Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 				RefArray< ActData >& acts = controllerData->getActs();
 				acts.erase(acts.begin() + selected);
 				m_context->buildController();
@@ -211,21 +213,17 @@ bool TheaterControllerEditor::handleCommand(const ui::Command& command)
 		updateView();
 	}
 	else if (command == L"Theater.SetLookAtEntity")
-	{
 		setLookAtEntity();
-	}
 	else if (command == L"Theater.EaseVelocity")
-	{
 		easeVelocity();
-	}
 	else if (command == L"Theater.GotoPreviousKey")
-	{
 		gotoPreviousKey();
-	}
 	else if (command == L"Theater.GotoNextKey")
-	{
 		gotoNextKey();
-	}
+	else if (command == L"Theater.SplitAct")
+		splitAct();
+	else if (command == L"Theater.TimeScaleAct")
+		timeScaleAct();
 	else
 		return false;
 
@@ -243,7 +241,7 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 		return;
 
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 	Ref< ActData > act = controllerData->getActs().at(selected);
 
 	RefArray< ui::custom::SequenceItem > items;
@@ -269,11 +267,11 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 		const TransformPath& path = (*i)->getPath();
 		int32_t steps = int32_t(duration) * 10;
 		
-		TransformPath::Frame F0 = path.evaluate(0.0f, duration);
+		TransformPath::Key F0 = path.evaluate(0.0f, duration);
 		for (int32_t i = 1; i <= steps; ++i)
 		{
 			float T = (float(i) / steps) * duration;
-			TransformPath::Frame F1 = path.evaluate(T, duration);
+			TransformPath::Key F1 = path.evaluate(T, duration);
 
 			primitiveRenderer->drawLine(
 				F0.position,
@@ -287,7 +285,7 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 		for (int32_t i = 0; i <= steps; ++i)
 		{
 			float T = (float(i) / steps) * duration;
-			TransformPath::Frame F0 = path.evaluate(T, duration);
+			TransformPath::Key F0 = path.evaluate(T, duration);
 
 			primitiveRenderer->drawSolidPoint(
 				F0.position,
@@ -300,13 +298,13 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 		for (AlignedVector< TransformPath::Key >::const_iterator i = keys.begin(); i != keys.end(); ++i)
 		{
 			primitiveRenderer->drawSolidPoint(
-				i->value.position,
+				i->position,
 				8.0f,
 				pathColor
 			);
 		}
 
-		TransformPath::Frame F = path.evaluate(cursorTime, duration);
+		TransformPath::Key F = path.evaluate(cursorTime, duration);
 		primitiveRenderer->drawWireFrame(
 			F.transform().toMatrix44(),
 			1.0f
@@ -317,7 +315,7 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 void TheaterControllerEditor::updateView()
 {
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData*, false >(sceneAsset->getControllerData());
+	Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 
 	RefArray< ActData >& acts = controllerData->getActs();
 
@@ -387,7 +385,7 @@ void TheaterControllerEditor::captureEntities()
 	}
 
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 	Ref< ActData > act = controllerData->getActs().at(selected);
 
 	float time = m_context->getTime() - m_timeOffset;
@@ -418,15 +416,16 @@ void TheaterControllerEditor::captureEntities()
 		TransformPath::Key* closestKey = pathData.getClosestKey(time);
 		if (closestKey && abs(closestKey->T - time) < c_clampKeyDistance)
 		{
-			closestKey->value.position = transform.translation();
-			closestKey->value.orientation = transform.rotation().toEulerAngles();
+			closestKey->position = transform.translation();
+			closestKey->orientation = transform.rotation().toEulerAngles();
 		}
 		else
 		{
-			TransformPath::Frame frame;
-			frame.position = transform.translation();
-			frame.orientation = transform.rotation().toEulerAngles();
-			pathData.insert(time, frame);
+			TransformPath::Key key;
+			key.T = time;
+			key.position = transform.translation();
+			key.orientation = transform.rotation().toEulerAngles();
+			pathData.insert(key);
 		}
 	}
 
@@ -470,7 +469,7 @@ void TheaterControllerEditor::deleteSelectedKey()
 void TheaterControllerEditor::setLookAtEntity()
 {
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 
 	RefArray< ui::custom::SequenceItem > sequenceItems;
 	m_trackSequencer->getSequenceItems(sequenceItems, ui::custom::SequencerControl::GfSelectedOnly | ui::custom::SequencerControl::GfDescendants);
@@ -498,7 +497,7 @@ void TheaterControllerEditor::setLookAtEntity()
 void TheaterControllerEditor::easeVelocity()
 {
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 
 	RefArray< ui::custom::SequenceItem > sequenceItems;
 	m_trackSequencer->getSequenceItems(sequenceItems, ui::custom::SequencerControl::GfSelectedOnly | ui::custom::SequencerControl::GfDescendants);
@@ -529,8 +528,8 @@ void TheaterControllerEditor::easeVelocity()
 			const float c_measureStep = 1.0f / 1000.0f;
 			for (float T = T0; T <= T1 - c_measureStep; T += c_measureStep)
 			{
-				TransformPath::Frame Fc = path.evaluate(T);
-				TransformPath::Frame Fn = path.evaluate(T + c_measureStep);
+				TransformPath::Key Fc = path.evaluate(T);
+				TransformPath::Key Fn = path.evaluate(T + c_measureStep);
 				totalDistance += (Fn.position - Fc.position).length();
 			}
 
@@ -616,21 +615,85 @@ void TheaterControllerEditor::gotoNextKey()
 	m_context->setPlaying(false);
 }
 
+void TheaterControllerEditor::splitAct()
+{
+	int32_t selected = m_listActs->getSelected();
+	if (selected < 0)
+		return;
+
+	int32_t cursorTick = m_trackSequencer->getCursor();
+	float cursorTime = float(cursorTick / 1000.0f);
+	if (cursorTime < FUZZY_EPSILON)
+		return;
+
+	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
+	Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+
+	Ref< ActData > actLeft = controllerData->getActs().at(selected);
+
+	float actTotalDuration = actLeft->getDuration();
+	std::wstring actName = actLeft->getName();
+
+	actLeft->setName(actName + L" (Left)");
+	actLeft->setDuration(cursorTime);
+
+	Ref< ActData > actRight = new ActData();
+	actRight->setName(actName + L" (Right)");
+	actRight->setDuration(actTotalDuration - cursorTime);
+
+	// Remove looping and split paths.
+	for (size_t i = 0; i < actLeft->getTracks().size(); ++i)
+	{
+		TrackData* trackLeft = actLeft->getTracks().at(i);
+		trackLeft->setLoopStart(0.0f);
+		trackLeft->setLoopEnd(0.0f);
+
+		Ref< TrackData > trackRight = new TrackData();
+		trackRight->setEntityData(trackLeft->getEntityData());
+		trackRight->setLookAtEntityData(trackLeft->getLookAtEntityData());
+		trackRight->setWobbleMagnitude(trackLeft->getWobbleMagnitude());
+		trackRight->setWobbleRate(trackLeft->getWobbleRate());
+
+		TransformPath pathLeft, pathRight;
+		trackLeft->getPath().split(cursorTime, pathLeft, pathRight);
+		trackLeft->setPath(pathLeft);
+		trackRight->setPath(pathRight);
+
+		actRight->getTracks().push_back(trackRight);
+	}
+
+	// Add new act after splitted act.
+	RefArray< ActData >& acts = controllerData->getActs();
+	acts.insert(acts.begin() + selected + 1, actRight);
+
+	// Update UI and scene editor.
+	m_context->setTime(m_timeOffset + cursorTime);
+	m_context->setPlaying(false);
+
+	updateView();
+
+	m_context->buildController();
+}
+
+void TheaterControllerEditor::timeScaleAct()
+{
+}
+
 void TheaterControllerEditor::eventActSelected(ui::SelectionChangeEvent* event)
 {
 	int32_t selected = m_listActs->getSelected();
 	if (selected >= 0)
 	{
-		Ref< TheaterController > controller = checked_type_cast< TheaterController*, false >(m_context->getScene()->getController());
-		m_timeOffset = controller->getActStartTime(selected);
+		Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
+		Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+		m_timeOffset = controllerData->getActStartTime(selected);
 	}
 	else
 		m_timeOffset = 0.0f;
 
-	int32_t cursorTick = m_trackSequencer->getCursor();
-	float cursorTime = float(cursorTick / 1000.0f);
+	m_trackSequencer->setCursor(0);
 
-	m_context->setTime(m_timeOffset + cursorTime);
+	m_context->setTime(m_timeOffset);
 	m_context->setPlaying(false);
 
 	updateView();
@@ -639,7 +702,7 @@ void TheaterControllerEditor::eventActSelected(ui::SelectionChangeEvent* event)
 void TheaterControllerEditor::eventActEdit(ui::custom::EditListEditEvent* event)
 {
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 	Ref< ActData > act = controllerData->getActs().at(event->getIndex());
 	act->setName(event->getText());
 	updateView();

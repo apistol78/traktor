@@ -39,17 +39,29 @@ public:
 
 	Ref< world::EntityData > getLookAtEntityData() const;
 
+	void setPath(const TransformPath& path);
+
 	const TransformPath& getPath() const;
 
 	TransformPath& getPath();
 
+	void setLoopStart(float loopStart);
+
 	float getLoopStart() const;
+
+	void setLoopEnd(float loopEnd);
 
 	float getLoopEnd() const;
 
+	void setTimeOffset(float timeOffset);
+
 	float getTimeOffset() const;
 
+	void setWobbleMagnitude(float wobbleMagnitude);
+
 	float getWobbleMagnitude() const;
+
+	void setWobbleRate(float wobbleRate);
 
 	float getWobbleRate() const;
 

@@ -29,6 +29,7 @@ struct HermiteAccessor
 	}
 
 	static inline Value combine(
+		float t,
 		const Value& v0, float w0,
 		const Value& v1, float w1,
 		const Value& v2, float w2,
@@ -68,11 +69,11 @@ public:
 		float Tcurr = TimeControl::t(T, Tfirst, Tlast, m_Tend > 0.0f ? m_Tend : Tlast);
 
 		// Binary search for key.
-		int index = 0;
+		int32_t index = 0;
 		if (Tcurr < Tlast)
 		{
-			int index0 = 0;
-			int index1 = int(m_nkeys - 2);
+			int32_t index0 = 0;
+			int32_t index1 = int32_t(m_nkeys - 2);
 			while (index0 < index1)
 			{
 				index = (index0 + index1) / 2;
@@ -89,11 +90,11 @@ public:
 			}
 		}
 		else
-			index = m_nkeys - 1;
+			index = int32_t(m_nkeys - 1);
 
-		int index_n1 = TimeControl::index(index - 1, int(m_nkeys - 1));
-		int index_1 = TimeControl::index(index + 1, int(m_nkeys - 1));
-		int index_2 = TimeControl::index(index + 2, int(m_nkeys - 1));
+		int32_t index_n1 = TimeControl::index(index - 1, int32_t(m_nkeys - 1));
+		int32_t index_1 = TimeControl::index(index + 1, int32_t(m_nkeys - 1));
+		int32_t index_2 = TimeControl::index(index + 2, int32_t(m_nkeys - 1));
 		
 		const Key& cp0 = m_keys[index];
 		const Key& cp1 = m_keys[index_1];
@@ -126,6 +127,7 @@ public:
 		h4 *= m_stiffness;
 
 		return Accessor::combine(
+			t,
 			v0, h1 - h4,
 			v1, h2 + h3,
 			vp, -h3,
