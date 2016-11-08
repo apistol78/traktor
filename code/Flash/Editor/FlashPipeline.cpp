@@ -50,8 +50,8 @@ struct AtlasBitmap
 
 struct AtlasBucket
 {
-	AutoPtr< stbrp_context > packer;
-	AutoArrayPtr< stbrp_node > nodes;
+	stbrp_context* packer;
+	stbrp_node* nodes;
 	std::list< AtlasBitmap > bitmaps;
 };
 
@@ -243,7 +243,7 @@ bool FlashPipeline::buildOutput(
 			stbrp_rect r = { 0 };
 			r.w = bitmapData->getWidth() + 2;
 			r.h = bitmapData->getHeight() + 2;
-			stbrp_pack_rects(j->packer.ptr(), &r, 1);
+			stbrp_pack_rects(j->packer, &r, 1);
 			if (r.was_packed)
 			{
 				AtlasBitmap ab;
@@ -265,15 +265,15 @@ bool FlashPipeline::buildOutput(
 			buckets.push_back(AtlasBucket());
 
 			AtlasBucket& b = buckets.back();
-			b.packer.reset(new stbrp_context());
-			b.nodes.reset(new stbrp_node [1024]);
-			stbrp_setup_allow_out_of_mem(b.packer.ptr(), 1);
-			stbrp_init_target(b.packer.ptr(), 1024, 1024, b.nodes.ptr(), 1024);
+			b.packer = new stbrp_context();
+			b.nodes = new stbrp_node [1024];
+			stbrp_setup_allow_out_of_mem(b.packer, 1);
+			stbrp_init_target(b.packer, 1024, 1024, b.nodes, 1024);
 
 			stbrp_rect r = { 0 };
 			r.w = bitmapData->getWidth() + 2;
 			r.h = bitmapData->getHeight() + 2;
-			stbrp_pack_rects(b.packer.ptr(), &r, 1);
+			stbrp_pack_rects(b.packer, &r, 1);
 			if (r.was_packed)
 			{
 				AtlasBitmap ab;
@@ -424,6 +424,12 @@ bool FlashPipeline::buildOutput(
 			ab.packedRect.h = ab.bitmap->getHeight();
 			standalone.push_back(ab);
 		}
+	}
+
+	for (std::list< AtlasBucket >::const_iterator i = buckets.begin(); i != buckets.end(); ++i)
+	{
+		delete i->packer;
+		delete[] i->nodes;
 	}
 
 	log::info << uint32_t(standalone.size()) << L" bitmap(s) didn't fit in any atlas..." << Endl;
