@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Theater/ActData.h"
