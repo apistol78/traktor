@@ -17,6 +17,28 @@ namespace traktor
 	namespace
 	{
 
+/*! \brief Key value wrapped into separate member to be compatible with legacy data. */
+class MemberKeyValue : public MemberComplex  
+{
+public:
+	MemberKeyValue(const wchar_t* const name, Vector4& refPosition, Vector4& refOrientation)
+	:	MemberComplex(name, true)
+	,	m_refPosition(refPosition)
+	,	m_refOrientation(refOrientation)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	{
+		s >> Member< Vector4 >(L"position", m_refPosition, AttributePoint());
+		s >> Member< Vector4 >(L"orientation", m_refOrientation, AttributeDirection());
+	}
+
+private:
+	Vector4& m_refPosition;
+	Vector4& m_refOrientation;
+};
+
 /*! \brief Open uniform TCB spline accessor. */
 class T_MATH_ALIGN16 OpenUniformAccessor
 {
@@ -31,10 +53,10 @@ public:
 		float& outTension,
 		float& outBias,
 		float& outContinuity,
-		TransformPath::Frame& outV0,
-		TransformPath::Frame& outV1,
-		TransformPath::Frame& outVp,
-		TransformPath::Frame& outVn
+		TransformPath::Key& outV0,
+		TransformPath::Key& outV1,
+		TransformPath::Key& outVp,
+		TransformPath::Key& outVn
 	) const
 	{
 		int32_t nkeys = int32_t(m_keys.size());
@@ -49,37 +71,37 @@ public:
 
 		T0 = m_keys[index].T;
 
-		outV0 = m_keys[index].value;
+		outV0 = m_keys[index];
 
 		int32_t index_1 = index + 1;
 		if (index_1 < nkeys)
 		{
 			T1 = m_keys[index_1].T;
-			outV1 = m_keys[index_1].value;
+			outV1 = m_keys[index_1];
 		}
 		else
 		{
 			index_1 = nkeys - 1;
 			T1 = m_keys[nkeys - 1].T;
-			outV1 = m_keys[nkeys - 1].value;
+			outV1 = m_keys[nkeys - 1];
 		}
 
 		int32_t index_p = index - 1;
 		if (index_p >= 0)
-			outVp = m_keys[index_p].value;
+			outVp = m_keys[index_p];
 		else
 		{
 			index_p = nkeys - 1;
-			outVp = m_keys[0].value;
+			outVp = m_keys[0];
 		}
 
 		int32_t index_n = index_1 + 1;
 		if (index_n < nkeys)
-			outVn = m_keys[index_n].value;
+			outVn = m_keys[index_n];
 		else
 		{
 			index_n = nkeys - 1;
-			outVn = m_keys[nkeys - 1].value;
+			outVn = m_keys[nkeys - 1];
 		}
 
 		if (T0 < T1 - FUZZY_EPSILON)
@@ -92,14 +114,17 @@ public:
 		outContinuity = lerp(m_keys[index].tcb.z(), m_keys[index].tcb.z(), inoutT);
 	}
 
-	TransformPath::Frame combine(
-		const TransformPath::Frame& v0, float w0,
-		const TransformPath::Frame& v1, float w1,
-		const TransformPath::Frame& v2, float w2,
-		const TransformPath::Frame& v3, float w3
+	TransformPath::Key combine(
+		float t,
+		const TransformPath::Key& v0, float w0,
+		const TransformPath::Key& v1, float w1,
+		const TransformPath::Key& v2, float w2,
+		const TransformPath::Key& v3, float w3
 	) const
 	{
-		TransformPath::Frame f;
+		TransformPath::Key f;
+		f.T = t;
+		f.tcb = v0.tcb;
 		f.position = v0.position * Scalar(w0) + v1.position * Scalar(w1) + v2.position * Scalar(w2) + v3.position * Scalar(w3);
 		f.orientation = v0.orientation * Scalar(w0) + v1.orientation * Scalar(w1) + v2.orientation * Scalar(w2) + v3.orientation * Scalar(w3);
 		return f;
@@ -132,10 +157,10 @@ public:
 		float& outTension,
 		float& outBias,
 		float& outContinuity,
-		TransformPath::Frame& outV0,
-		TransformPath::Frame& outV1,
-		TransformPath::Frame& outVp,
-		TransformPath::Frame& outVn
+		TransformPath::Key& outV0,
+		TransformPath::Key& outV1,
+		TransformPath::Key& outVp,
+		TransformPath::Key& outVn
 	) const
 	{
 		int32_t nkeys = int32_t(m_keys.size());
@@ -154,37 +179,37 @@ public:
 
 			T0 = m_keys[index].T;
 
-			outV0 = m_keys[index].value;
+			outV0 = m_keys[index];
 
 			int32_t index_1 = index + 1;
 			if (index_1 < nkeys)
 			{
 				T1 = m_keys[index_1].T;
-				outV1 = m_keys[index_1].value;
+				outV1 = m_keys[index_1];
 			}
 			else
 			{
 				index_1 = m_Iloop + 1;
 				T1 = m_Tend + (m_keys[index_1].T - m_Tloop);
-				outV1 = m_keys[index_1].value;
+				outV1 = m_keys[index_1];
 			}
 
 			int32_t index_p = index - 1;
 			if (index_p >= 0)
-				outVp = m_keys[index_p].value;
+				outVp = m_keys[index_p];
 			else
 			{
 				index_p = nkeys - 1;
-				outVp = m_keys[0].value;
+				outVp = m_keys[0];
 			}
 
 			int32_t index_n = index_1 + 1;
 			if (index_n < nkeys)
-				outVn = m_keys[index_n].value;
+				outVn = m_keys[index_n];
 			else
 			{
 				index_n = m_Iloop + 1;
-				outVn = m_keys[index_n].value;
+				outVn = m_keys[index_n];
 			}
 
 			inoutT = (inoutT - T0) / (T1 - T0);
@@ -216,37 +241,37 @@ public:
 
 			T0 = m_keys[index].T;
 
-			outV0 = m_keys[index].value;
+			outV0 = m_keys[index];
 
 			int32_t index_1 = index + 1;
 			if (index_1 < nkeys)
 			{
 				T1 = m_keys[index_1].T;
-				outV1 = m_keys[index_1].value;
+				outV1 = m_keys[index_1];
 			}
 			else
 			{
 				index_1 = m_Iloop + 1;
 				T1 = m_Tend + (m_keys[index_1].T - m_Tloop);
-				outV1 = m_keys[index_1].value;
+				outV1 = m_keys[index_1];
 			}
 
 			int32_t index_p = index - 1;
 			if (index_p > m_Iloop)
-				outVp = m_keys[index_p].value;
+				outVp = m_keys[index_p];
 			else
 			{
 				index_p = nkeys - 1;
-				outVp = m_keys[nkeys - 1].value;
+				outVp = m_keys[nkeys - 1];
 			}
 
 			int32_t index_n = index_1 + 1;
 			if (index_n < nkeys)
-				outVn = m_keys[index_n].value;
+				outVn = m_keys[index_n];
 			else
 			{
 				index_n = m_Iloop + 1;
-				outVn = m_keys[index_n].value;
+				outVn = m_keys[index_n];
 			}
 
 			if (inoutT < T0)
@@ -260,14 +285,17 @@ public:
 		}
 	}
 
-	TransformPath::Frame combine(
-		const TransformPath::Frame& v0, float w0,
-		const TransformPath::Frame& v1, float w1,
-		const TransformPath::Frame& v2, float w2,
-		const TransformPath::Frame& v3, float w3
+	TransformPath::Key combine(
+		float t,
+		const TransformPath::Key& v0, float w0,
+		const TransformPath::Key& v1, float w1,
+		const TransformPath::Key& v2, float w2,
+		const TransformPath::Key& v3, float w3
 	) const
 	{
-		TransformPath::Frame f;
+		TransformPath::Key f;
+		f.T = t;
+		f.tcb = v0.tcb;
 		f.position = v0.position * Scalar(w0) + v1.position * Scalar(w1) + v2.position * Scalar(w2) + v3.position * Scalar(w3);
 		f.orientation = v0.orientation * Scalar(w0) + v1.orientation * Scalar(w1) + v2.orientation * Scalar(w2) + v3.orientation * Scalar(w3);
 		return f;
@@ -293,18 +321,14 @@ TransformPath::TransformPath(const TransformPath& path)
 {
 }
 
-void TransformPath::insert(float at, const Frame& frame)
+void TransformPath::insert(const Key& key)
 {
-	Key key;
-	key.T = at;
-	key.value = frame;
-
 	size_t keys = m_keys.size();
 	if (keys >= 1)
 	{
-		if (at <= m_keys.front().T)
+		if (key.T <= m_keys.front().T)
 			m_keys.insert(m_keys.begin(), key);
-		else if (at >= m_keys.back().T)
+		else if (key.T >= m_keys.back().T)
 			m_keys.insert(m_keys.end(), key);
 		else
 		{
@@ -312,7 +336,7 @@ void TransformPath::insert(float at, const Frame& frame)
 			{
 				const Key& k1 = m_keys[i];
 				const Key& k2 = m_keys[i + 1];
-				if (at > k1.T && at < k2.T)
+				if (key.T > k1.T && key.T < k2.T)
 				{
 					AlignedVector< Key >::iterator iter = m_keys.begin();
                     std::advance(iter, int(i + 1));
@@ -326,61 +350,62 @@ void TransformPath::insert(float at, const Frame& frame)
 	{
 		m_keys.push_back(key);
 	}
-
 	m_spline.release();
 }
 
-TransformPath::Frame TransformPath::evaluate(float at) const
+TransformPath::Key TransformPath::evaluate(float at) const
 {
 	float Tend = getEndTime() + getStartTime();
 	return evaluate(at, Tend);
 }
 
-TransformPath::Frame TransformPath::evaluate(float at, float end) const
+TransformPath::Key TransformPath::evaluate(float at, float end) const
 {
 	size_t nkeys = m_keys.size();
 	if (nkeys == 0)
-		return Frame();
+		return Key();
 	else if (nkeys == 1)
-		return m_keys[0].value;
+		return m_keys[0];
 	else
 	{
 		if (!m_spline.ptr())
 		{
-			m_spline.reset(new TcbSpline< Key, Frame, OpenUniformAccessor >(
+			m_spline.reset(new TcbSpline< Key, Key, OpenUniformAccessor >(
 				OpenUniformAccessor(m_keys)
 			));
 		}
 
-		Frame frame = m_spline->evaluate(at);
-		frame.position = frame.position.xyz1();
-		frame.orientation = frame.orientation.xyz0();
+		Key key = m_spline->evaluate(at);
+		key.T = at;
+		key.position = key.position.xyz1();
+		key.orientation = key.orientation.xyz0();
 
-		return frame;
+		return key;
 	}
 }
 
-TransformPath::Frame TransformPath::evaluate(float at, float end, float loop) const
+TransformPath::Key TransformPath::evaluate(float at, float end, float loop) const
 {
 	size_t nkeys = m_keys.size();
 	if (nkeys == 0)
-		return Frame();
+		return Key();
 	else if (nkeys == 1)
-		return m_keys[0].value;
+		return m_keys[0];
 	else
 	{
 		if (!m_spline.ptr())
 		{
-			m_spline.reset(new TcbSpline< Key, Frame, ClosedUniformAccessor >(
+			m_spline.reset(new TcbSpline< Key, Key, ClosedUniformAccessor >(
 				ClosedUniformAccessor(m_keys, end, loop)
 			));
 		}
 
-		Frame frame = m_spline->evaluate(at);
-		frame.position = frame.position.xyz1();
-		frame.orientation = frame.orientation.xyz0();
+		Key key = m_spline->evaluate(at);
+		key.T = at;
+		key.position = key.position.xyz1();
+		key.orientation = key.orientation.xyz0();
 
-		return frame;
+		return key;
 	}
 }
 
@@ -453,10 +478,24 @@ TransformPath::Key* TransformPath::getClosestNextKey(float at)
 	return minK;
 }
 
-TransformPath::Frame* TransformPath::getClosestKeyFrame(float at)
+void TransformPath::split(float at, TransformPath& outPath1, TransformPath& outPath2) const
 {
-	TransformPath::Key* closestKey = getClosestKey(at);
-	return closestKey ? &closestKey->value : 0;
+	for (uint32_t i = 0; i < uint32_t(m_keys.size()); ++i)
+	{
+		if (m_keys[i].T < at)
+			outPath1.m_keys.push_back(m_keys[i]);
+		else
+		{
+			outPath2.m_keys.push_back(m_keys[i]);
+			outPath2.m_keys.back().T -= at;
+		}
+	}
+
+	Key f = evaluate(at);
+	outPath1.insert(f);
+
+	f.T = 0.0f;
+	outPath2.insert(f);
 }
 
 void TransformPath::serialize(ISerializer& s)
@@ -464,14 +503,7 @@ void TransformPath::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Key, MemberComposite< Key > >(L"keys", m_keys);
 }
 
-void TransformPath::Key::serialize(ISerializer& s)
-{
-	s >> Member< float >(L"T", T, AttributeRange(0.0f));
-	s >> Member< Vector4 >(L"tcb", tcb);
-	s >> MemberComposite< Frame >(L"value", value);
-}
-
-Transform TransformPath::Frame::transform() const
+Transform TransformPath::Key::transform() const
 {
 	return Transform(
 		position.xyz0(),
@@ -483,10 +515,17 @@ Transform TransformPath::Frame::transform() const
 	);
 }
 
-void TransformPath::Frame::serialize(ISerializer& s)
+void TransformPath::Key::serialize(ISerializer& s)
 {
-	s >> Member< Vector4 >(L"position", position, AttributePoint());
-	s >> Member< Vector4 >(L"orientation", orientation, AttributeDirection());
+	s >> Member< float >(L"T", T, AttributeRange(0.0f));
+	s >> Member< Vector4 >(L"tcb", tcb);
+	s >> MemberKeyValue(L"value", position, orientation);
+}
+
+TransformPath& TransformPath::operator = (const TransformPath& path)
+{
+	m_keys = path.m_keys;
+	return *this;
 }
 
 }

@@ -9,7 +9,13 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerData", 0, TheaterControllerData, scene::ISceneControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerData", 1, TheaterControllerData, scene::ISceneControllerData)
+
+TheaterControllerData::TheaterControllerData()
+:	m_repeatActs(false)
+,	m_randomizeActs(false)
+{
+}
 
 Ref< scene::ISceneController > TheaterControllerData::createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const
 {
@@ -20,12 +26,29 @@ Ref< scene::ISceneController > TheaterControllerData::createController(const std
 		if (!acts[i])
 			return 0;
 	}
-	return new TheaterController(acts);
+
+	if (m_randomizeActs)
+		std::random_shuffle(acts.begin(), acts.end());
+
+	return new TheaterController(acts, m_repeatActs);
+}
+
+float TheaterControllerData::getActStartTime(int32_t act) const
+{
+	float actStartTime = 0.0f;
+	for (int32_t i = 0; i < std::min(act, int32_t(m_acts.size())); ++i)
+		actStartTime += m_acts[i]->getDuration();
+	return actStartTime;
 }
 
 void TheaterControllerData::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< ActData >(L"acts", m_acts);
+	if (s.getVersion() >= 1)
+	{
+		s >> Member< bool >(L"repeatActs", m_repeatActs);
+		s >> Member< bool >(L"randomizeActs", m_randomizeActs);
+	}
 }
 
 	}

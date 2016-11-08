@@ -24,14 +24,14 @@ class T_DLLCLASS TheaterController : public scene::ISceneController
 	T_RTTI_CLASS;
 
 public:
-	TheaterController(const RefArray< const Act >& acts);
+	TheaterController(const RefArray< const Act >& acts, bool repeatActs);
 
 	virtual void update(scene::Scene* scene, float time, float deltaTime) T_OVERRIDE T_FINAL;
 
-	float getActStartTime(int32_t act) const;
-
 private:
 	RefArray< const Act > m_acts;
+	bool m_repeatActs;
+	float m_totalDuration;
 	float m_lastTime;
 };
 

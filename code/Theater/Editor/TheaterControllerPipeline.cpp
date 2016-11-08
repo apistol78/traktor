@@ -11,7 +11,7 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerPipeline", 1, TheaterControllerPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerPipeline", 2, TheaterControllerPipeline, editor::IPipeline)
 
 bool TheaterControllerPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -65,6 +65,8 @@ Ref< ISerializable > TheaterControllerPipeline::buildOutput(
 	const RefArray< ActData >& sourceActs = sourceControllerData->getActs();
 
 	Ref< TheaterControllerData > controllerData = new TheaterControllerData();
+	controllerData->m_repeatActs = sourceControllerData->m_repeatActs;
+	controllerData->m_randomizeActs = sourceControllerData->m_randomizeActs;
 	
 	RefArray< ActData >& acts = controllerData->getActs();
 	acts.resize(sourceActs.size());

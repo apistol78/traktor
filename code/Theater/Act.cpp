@@ -60,7 +60,7 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 
 	uint32_t ntracks = uint32_t(m_tracks.size());
 
-	TransformPath::Frame frame;
+	TransformPath::Key key;
 	Transform lookAtTransform;
 	Transform transform;
 
@@ -78,13 +78,13 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 
 		if (loopStart + FUZZY_EPSILON < loopEnd)
 		{
-			frame = path.evaluate(time + timeOffset, loopEnd, loopStart);
-			transform = frame.transform();
+			key = path.evaluate(time + timeOffset, loopEnd, loopStart);
+			transform = key.transform();
 		}
 		else
 		{
-			frame = path.evaluate(clamp(time + timeOffset, 0.0f, m_duration - FUZZY_EPSILON), m_duration);
-			transform = frame.transform();
+			key = path.evaluate(clamp(time + timeOffset, 0.0f, m_duration - FUZZY_EPSILON), m_duration);
+			transform = key.transform();
 		}
 
 		entity->setTransform(transform);

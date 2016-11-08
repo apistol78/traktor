@@ -27,37 +27,24 @@ class T_DLLCLASS TransformPath : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	struct T_DLLCLASS Frame
-	{
-		Vector4 position;
-		Vector4 orientation;
-
-		Frame()
-		:	position(Vector4::origo())
-		,	orientation(Vector4::zero())
-		{
-		}
-		
-		virtual ~Frame() {}
-
-		Transform transform() const;
-
-		void serialize(ISerializer& s);
-	};
-
-	struct Key
+	struct T_DLLCLASS Key
 	{
 		float T;
 		Vector4 tcb;
-		Frame value;
+		Vector4 position;
+		Vector4 orientation;
 
 		Key()
 		:	T(0.0f)
 		,	tcb(0.0f, 0.0f, 0.0f, 0.0f)
+		,	position(Vector4::origo())
+		,	orientation(Vector4::zero())
 		{
 		}
 		
 		virtual ~Key() {}
+
+		Transform transform() const;
 
 		void serialize(ISerializer& s);
 	};
@@ -66,13 +53,13 @@ public:
 
 	TransformPath(const TransformPath& path);
 
-	void insert(float at, const Frame& frame);
+	void insert(const Key& key);
 
-	Frame evaluate(float at) const;
+	Key evaluate(float at) const;
 
-	Frame evaluate(float at, float end) const;
+	Key evaluate(float at, float end) const;
 
-	Frame evaluate(float at, float end, float loop) const;
+	Key evaluate(float at, float end, float loop) const;
 
 	Key* getClosestKey(float at);
 
@@ -80,7 +67,7 @@ public:
 
 	Key* getClosestNextKey(float at);
 
-	Frame* getClosestKeyFrame(float at);
+	void split(float at, TransformPath& outPath1, TransformPath& outPath2) const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
@@ -92,9 +79,11 @@ public:
 
 	AlignedVector< Key >& getKeys() { return m_keys; }
 
+	TransformPath& operator = (const TransformPath& path);
+
 private:
 	AlignedVector< Key > m_keys;
-	mutable AutoPtr< ISpline< Frame > > m_spline;
+	mutable AutoPtr< ISpline< Key > > m_spline;
 };
 
 }

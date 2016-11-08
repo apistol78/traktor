@@ -36,10 +36,11 @@ struct ControlPointAccessor
 	}
 
 	static key_t combine(
-		const key_t& v0, const time_t& w0,
-		const key_t& v1, const time_t& w1,
-		const key_t& v2, const time_t& w2,
-		const key_t& v3, const time_t& w3
+		time_t t,
+		const key_t& v0, time_t w0,
+		const key_t& v1, time_t w1,
+		const key_t& v2, time_t w2,
+		const key_t& v3, time_t w3
 	)
 	{
 		key_t c;

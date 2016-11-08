@@ -24,6 +24,8 @@ class T_DLLCLASS TheaterControllerData : public scene::ISceneControllerData
 	T_RTTI_CLASS;
 
 public:
+	TheaterControllerData();
+
 	virtual Ref< scene::ISceneController > createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const T_OVERRIDE T_FINAL;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
@@ -32,8 +34,14 @@ public:
 
 	RefArray< ActData >& getActs() { return m_acts; }
 
+	float getActStartTime(int32_t act) const;
+
 private:
+	friend class TheaterControllerPipeline;
+
 	RefArray< ActData > m_acts;
+	bool m_repeatActs;
+	bool m_randomizeActs;
 };
 
 	}

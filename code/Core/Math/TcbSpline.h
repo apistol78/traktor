@@ -51,6 +51,7 @@ public:
 		float k22 = (one_t * (1.0f + c - b - bc)) / 2.0f;
 
 		Value d0 = m_accessor.combine(
+			T,
 			v0, k11,
 			vp, -k11,
 			v1, k12,
@@ -58,6 +59,7 @@ public:
 		);
 
 		Value d1 = m_accessor.combine(
+			T,
 			v1, k21,
 			v0, -k21,
 			vn, k22,
@@ -73,6 +75,7 @@ public:
 		float h4 = T3 - T2;
 
 		return m_accessor.combine(
+			T,
 			v0, h1,
 			v1, h2,
 			d0, h3,

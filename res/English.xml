@@ -2901,6 +2901,10 @@
       <second>Remove act</second>
     </item>
     <item>
+    	<first>THEATER_EDITOR_SPLIT_ACT</first>
+    	<second>Split act</second>
+    </item>
+    <item>
       <first>THEATER_EDITOR_MESSAGE_REMOVE_ACT</first>
       <second>Are you sure you want to remove selected act?</second>
     </item>

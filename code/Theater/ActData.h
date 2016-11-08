@@ -44,6 +44,8 @@ public:
 
 	const std::wstring& getName() const { return m_name; }
 
+	void setDuration(float duration) { m_duration = duration; }
+
 	float getDuration() const { return m_duration; }
 
 	const RefArray< TrackData >& getTracks() const { return m_tracks; }
