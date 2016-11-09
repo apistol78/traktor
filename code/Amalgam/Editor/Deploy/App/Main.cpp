@@ -64,6 +64,7 @@ int main(int argc, const char** argv)
 		log::info << L"    -standalone               Build using a standalone pipeline." << Endl;
 		log::info << L"    -debug                    Use debug binaries in deploy or migrate actions." << Endl;
 		log::info << L"    -static-link              Statically link product in deploy or migrate actions." << Endl;
+		log::info << L"    -file-cache               Specify pipeline file cache directory, cache disabled if none specified." << Endl;
 		return 1;
 	}
 
@@ -97,6 +98,15 @@ int main(int argc, const char** argv)
 		settings->setProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", true);
 	if (cmdLine.hasOption(L"static-link"))
 		settings->setProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", true);
+
+	if (cmdLine.hasOption(L"file-cache"))
+	{
+		settings->setProperty< PropertyBoolean >(L"Amalgam.InheritCache", true);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", true);
+		settings->setProperty< PropertyString >(L"Pipeline.FileCache.Path", cmdLine.getOption(L"file-cache").getString());
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", true);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", true);
+	}
 
 	db::ConnectionString sourceDatabaseCS = settings->getProperty< PropertyString >(L"Editor.SourceDatabase");
 	sourceDatabaseCS.set(L"fileStore", L"");
