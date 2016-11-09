@@ -879,6 +879,10 @@ public:
 
 	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Ray3 m_value;
 };

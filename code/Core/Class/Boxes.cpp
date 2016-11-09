@@ -99,6 +99,7 @@ BoxedAllocator< BoxedRandomGeometry, 4 > s_allocBoxedRandomGeometry;
 BoxedAllocator< BoxedRefArray, 512 > s_allocBoxedRefArray;
 BoxedAllocator< BoxedRange, 256 > s_allocBoxedRange;
 BoxedAllocator< BoxedStdVector, 16 > s_allocBoxedStdVector;
+BoxedAllocator< BoxedRay3, 8 > s_allocBoxedRay3;
 
 	}
 
@@ -1190,6 +1191,16 @@ std::wstring BoxedRay3::toString() const
 	StringOutputStream ss;
 	ss << L"(" << m_value.origin << L") - (" << m_value.direction << L")";
 	return ss.str();
+}
+
+void* BoxedRay3::operator new (size_t size)
+{
+	return s_allocBoxedRay3.alloc();
+}
+
+void BoxedRay3::operator delete (void* ptr)
+{
+	s_allocBoxedRay3.free(ptr);
 }
 
 
