@@ -222,6 +222,10 @@
 							<name>EnableEnhancedInstructionSet</name>
 							<value>StreamingSIMDExtensions2</value>
 						</item>
+						<item>
+							<name>MultiProcessorCompilation</name>
+							<value>true</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -271,6 +275,10 @@
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
 							<value>StreamingSIMDExtensions2</value>
+						</item>
+						<item>
+							<name>MultiProcessorCompilation</name>
+							<value>true</value>
 						</item>
 					</options>
 				</item>
@@ -370,6 +378,10 @@
 							<name>EnableEnhancedInstructionSet</name>
 							<value>StreamingSIMDExtensions2</value>
 						</item>
+						<item>
+							<name>MultiProcessorCompilation</name>
+							<value>true</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -463,6 +475,10 @@
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
 							<value>StreamingSIMDExtensions2</value>
+						</item>
+						<item>
+							<name>MultiProcessorCompilation</name>
+							<value>true</value>
 						</item>
 					</options>
 				</item>
@@ -580,6 +596,10 @@
 							<name>EnableEnhancedInstructionSet</name>
 							<value>StreamingSIMDExtensions2</value>
 						</item>
+						<item>
+							<name>MultiProcessorCompilation</name>
+							<value>true</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -649,6 +669,10 @@
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
 							<value>StreamingSIMDExtensions2</value>
+						</item>
+						<item>
+							<name>MultiProcessorCompilation</name>
+							<value>true</value>
 						</item>
 					</options>
 				</item>
@@ -768,6 +792,10 @@
 							<name>EnableEnhancedInstructionSet</name>
 							<value>StreamingSIMDExtensions2</value>
 						</item>
+						<item>
+							<name>MultiProcessorCompilation</name>
+							<value>true</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -881,6 +909,10 @@
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
 							<value>StreamingSIMDExtensions2</value>
+						</item>
+						<item>
+							<name>MultiProcessorCompilation</name>
+							<value>true</value>
 						</item>
 					</options>
 				</item>
