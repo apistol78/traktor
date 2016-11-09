@@ -10,6 +10,7 @@ namespace traktor
 	namespace theater
 	{
 
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerData", 1, TheaterControllerData, scene::ISceneControllerData)
 
 TheaterControllerData::TheaterControllerData()
@@ -29,7 +30,19 @@ Ref< scene::ISceneController > TheaterControllerData::createController(const std
 	}
 
 	if (m_randomizeActs)
-		std::random_shuffle(acts.begin(), acts.end());
+	{
+		std::vector< size_t > indices(acts.size());
+		for (size_t i = 0; i < indices.size(); ++i)
+			indices[i] = i;
+
+		std::random_shuffle(indices.begin(), indices.end());
+
+		RefArray< const Act > tmp(m_acts.size());
+		for (size_t i = 0; i < indices.size(); ++i)
+			tmp[i] = acts[indices[i]];
+
+		acts = tmp;
+	}
 
 	return new TheaterController(acts, m_repeatActs);
 }
