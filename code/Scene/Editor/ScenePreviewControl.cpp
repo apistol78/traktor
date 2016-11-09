@@ -24,6 +24,7 @@
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/Events/FrameEvent.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
+#include "Scene/Editor/Events/RedrawEvent.h"
 #include "Ui/Application.h"
 #include "Ui/Command.h"
 #include "Ui/NumericEditValidator.h"
@@ -120,6 +121,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_context = context;
 	m_context->addEventHandler< ModifierChangedEvent >(this, &ScenePreviewControl::eventModifierChanged);
+	m_context->addEventHandler< RedrawEvent >(this, &ScenePreviewControl::eventRedraw);
 
 	// Create modifiers.
 	m_modifierTranslate = new TranslateModifier(m_context);
@@ -133,7 +135,8 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	updateEditState();
 
-	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &ScenePreviewControl::eventIdle);
+	addEventHandler< ui::TimerEvent >(this, &ScenePreviewControl::eventTimer);
+	startTimer(1000 / 60);
 
 	m_timer.start();
 	return true;
@@ -141,8 +144,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 void ScenePreviewControl::destroy()
 {
-	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
-
 	// Save editor configuration.
 	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
 	T_ASSERT (settings);
@@ -445,7 +446,7 @@ void ScenePreviewControl::eventModifierChanged(ModifierChangedEvent* event)
 	m_toolBarActions->update();
 }
 
-void ScenePreviewControl::eventIdle(ui::IdleEvent* event)
+void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 {
 	if (isVisible(true))
 	{
@@ -518,8 +519,13 @@ void ScenePreviewControl::eventIdle(ui::IdleEvent* event)
 		// Update context time.
 		m_context->setTime(scaledTime + scaledDeltaTime);
 
-		event->requestMore();
+		//event->requestMore();
 	}
+}
+
+void ScenePreviewControl::eventTimer(ui::TimerEvent* event)
+{
+	eventRedraw(0);
 }
 
 	}

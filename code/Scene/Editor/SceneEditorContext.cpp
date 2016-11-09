@@ -31,6 +31,7 @@
 #include "Scene/Editor/Events/PostFrameEvent.h"
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/Events/PreModifyEvent.h"
+#include "Scene/Editor/Events/RedrawEvent.h"
 #include "Ui/Events/SelectionChangeEvent.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityBuilderWithSchema.h"
@@ -361,7 +362,7 @@ void SceneEditorContext::buildEntities()
 					(*i)->getEntity()
 				));
 
-			controller = m_sceneAsset->getControllerData()->createController(entityProducts);
+			controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
 		}
 
 		T[3] = timer.getElapsedTime();
@@ -436,7 +437,7 @@ void SceneEditorContext::buildController()
 				(*i)->getEntity()
 			));
 
-		controller = m_sceneAsset->getControllerData()->createController(entityProducts);
+		controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
 	}
 
 	// Create our scene.
@@ -757,6 +758,12 @@ void SceneEditorContext::raiseModifierChanged()
 {
 	ModifierChangedEvent modifierChangedEvent(this);
 	raiseEvent(&modifierChangedEvent);
+}
+
+void SceneEditorContext::raiseRedraw()
+{
+	RedrawEvent redrawEvent(this);
+	raiseEvent(&redrawEvent);
 }
 
 	}

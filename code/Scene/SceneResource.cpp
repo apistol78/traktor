@@ -49,7 +49,7 @@ Ref< Scene > SceneResource::createScene(
 	Ref< ISceneController > controller;
 	if (m_controllerData)
 	{
-		controller = m_controllerData->createController(entityProducts);
+		controller = m_controllerData->createController(entityProducts, false);
 		if (!controller)
 		{
 			log::error << L"Failed to create scene; unable to instantiate scene controller" << Endl;

@@ -18,6 +18,9 @@ class Scene;
 
 class Track;
 
+/*! \brief Act
+ * \ingroup Theater
+ */
 class Act : public Object
 {
 	T_RTTI_CLASS;

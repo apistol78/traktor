@@ -29,6 +29,9 @@ class EntityData;
 class Act;
 class TrackData;
 
+/*! \brief Act description.
+ * \ingroup Theater
+ */
 class T_DLLCLASS ActData : public ISerializable
 {
 	T_RTTI_CLASS;

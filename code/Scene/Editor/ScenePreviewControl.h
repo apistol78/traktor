@@ -32,6 +32,7 @@ class ToolBarDropDown;
 	{
 
 class ModifierChangedEvent;
+class RedrawEvent;
 class SceneEditorContext;
 class ISceneRenderControl;
 class IModifier;
@@ -63,7 +64,6 @@ private:
 		StQuadruple = 4
 	};
 
-	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	Ref< ui::custom::ToolBar > m_toolBarActions;
 	Ref< ui::custom::ToolBarButton > m_toolTogglePick;
 	Ref< ui::custom::ToolBarButton > m_toolToggleTranslate;
@@ -89,7 +89,9 @@ private:
 
 	void eventModifierChanged(ModifierChangedEvent* event);
 
-	void eventIdle(ui::IdleEvent* event);
+	void eventRedraw(RedrawEvent* event);
+
+	void eventTimer(ui::TimerEvent* event);
 };
 
 	}

@@ -24,6 +24,9 @@ class Entity;
 	namespace theater
 	{
 
+/*! \brief Track
+ * \ingroup Theater
+ */
 class T_DLLCLASS Track : public Object
 {
 	T_RTTI_CLASS;

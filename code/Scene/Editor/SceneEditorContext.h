@@ -301,6 +301,8 @@ public:
 
 	void raiseModifierChanged();
 
+	void raiseRedraw();
+
 	//@}
 
 private:

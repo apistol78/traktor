@@ -265,7 +265,7 @@ bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 
 void PerspectiveRenderControl::update()
 {
-	m_renderWidget->update();
+	m_renderWidget->update(0, true);
 }
 
 bool PerspectiveRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
