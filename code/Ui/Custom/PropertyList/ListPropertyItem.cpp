@@ -1,3 +1,4 @@
+#include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/ListBox.h"
@@ -155,7 +156,7 @@ void ListPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widget
 		rc.left,
 		rc.top + rc.getHeight(),
 		rc.right,
-		rc.top + rc.getHeight() + 16 * 4
+		rc.top + rc.getHeight() + scaleBySystemDPI(16) * 4
 	);
 }
 
