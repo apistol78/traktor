@@ -474,6 +474,10 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 
 			const float c_updateDeltaTime = 1.0f / 60.0f;
 
+			// Prevent too many iterations in case time has changed too much.
+			if (scaledTime - m_lastPhysicsTime > c_updateDeltaTime * 10.0f)
+				m_lastPhysicsTime = scaledTime - c_updateDeltaTime * 10.0f;
+
 			while (m_lastPhysicsTime < scaledTime)
 			{
 				world::UpdateParams update;
