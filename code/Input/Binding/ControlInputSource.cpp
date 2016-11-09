@@ -79,10 +79,19 @@ float ControlInputSource::read(float T, float dT)
 		m_matchingDeviceCount = deviceCount;
 	}
 
-	// Check if any matching control is connected.
-	for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
+	if (m_data->getControlQuery() == ControlInputSourceData::CqConnectedDevice)
 	{
-		if ((*i)->getDevice()->isConnected())
+		// Check if any matching control is connected.
+		for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
+		{
+			if ((*i)->getDevice()->isConnected())
+				return 1.0f;
+		}
+	}
+	else if (m_data->getControlQuery() == ControlInputSourceData::CqMatchingDevice)
+	{
+		// As long as we have found any device then this satisfy the query.
+		if (!m_deviceControls.empty())
 			return 1.0f;
 	}
 

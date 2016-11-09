@@ -30,21 +30,29 @@ class T_DLLCLASS ControlInputSourceData : public IInputSourceData
 	T_RTTI_CLASS;
 
 public:
+	enum ControlQuery
+	{
+		CqMatchingDevice,
+		CqConnectedDevice
+	};
+
 	ControlInputSourceData();
 	
 	ControlInputSourceData(
 		InputCategory category,
 		InputDefaultControlType controlType,
+		ControlQuery controlQuery,
 		bool analogue,
 		bool normalize
 	);
 
 	ControlInputSourceData(
 		InputCategory category,
-		int32_t index,
 		InputDefaultControlType controlType,
+		ControlQuery controlQuery,
 		bool analogue,
-		bool normalize
+		bool normalize,
+		int32_t index
 	);
 	
 	void setCategory(InputCategory category);
@@ -54,6 +62,10 @@ public:
 	void setControlType(InputDefaultControlType controlType);
 	
 	InputDefaultControlType getControlType() const;
+
+	void setControlQuery(ControlQuery controlQuery);
+
+	ControlQuery getControlQuery() const;
 
 	void setAnalogue(bool analogue);
 
@@ -70,6 +82,7 @@ public:
 private:
 	InputCategory m_category;
 	InputDefaultControlType m_controlType;
+	ControlQuery m_controlQuery;
 	bool m_analogue;
 	int32_t m_index;
 };
