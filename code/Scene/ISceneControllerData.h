@@ -39,7 +39,13 @@ class T_DLLCLASS ISceneControllerData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< ISceneController > createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const = 0;
+	/*! \brief Create controller instance.
+	 *
+	 * \param entityProducts Entites created from entity data.
+	 * \param editor True if scene is created in editor.
+	 * \return Controller instance.
+	 */
+	virtual Ref< ISceneController > createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts, bool editor) const = 0;
 };
 
 	}

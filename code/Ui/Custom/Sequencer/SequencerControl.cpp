@@ -455,10 +455,11 @@ void SequencerControl::eventMouseMove(MouseMoveEvent* event)
 			return;
 
 		m_cursor = cursor;
-		update();
 
 		CursorMoveEvent cursorMoveEvent(this, m_cursor);
 		raiseEvent(&cursorMoveEvent);
+
+		update();
 
 		// Notify track item mouse move.
 		if (m_mouseTrackItem.item)

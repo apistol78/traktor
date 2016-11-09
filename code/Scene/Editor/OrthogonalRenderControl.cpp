@@ -269,7 +269,7 @@ bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 
 void OrthogonalRenderControl::update()
 {
-	m_renderWidget->update();
+	m_renderWidget->update(0, true);
 }
 
 bool OrthogonalRenderControl::hitTest(const ui::Point& position) const

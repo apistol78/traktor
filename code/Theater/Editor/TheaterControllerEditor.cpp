@@ -11,6 +11,7 @@
 #include "Theater/TheaterControllerData.h"
 #include "Theater/TrackData.h"
 #include "Theater/Editor/TheaterControllerEditor.h"
+#include "Ui/Application.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/MessageBox.h"
@@ -78,7 +79,7 @@ TheaterControllerEditor::TheaterControllerEditor()
 bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Container* parent)
 {
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(parent, true, 100);
+	splitter->create(parent, true, ui::scaleBySystemDPI(100));
 
 	Ref< ui::Container > containerActs = new ui::Container();
 	if (!containerActs->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -116,7 +117,7 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &TheaterControllerEditor::eventToolBarClick);
 
 	m_trackSequencer = new ui::custom::SequencerControl();
-	if (!m_trackSequencer->create(containerSequencer, ui::WsDoubleBuffer))
+	if (!m_trackSequencer->create(containerSequencer, ui::WsAccelerated))
 		return false;
 
 	m_trackSequencer->addEventHandler< ui::custom::CursorMoveEvent >(this, &TheaterControllerEditor::eventSequencerCursorMove);
@@ -578,6 +579,7 @@ void TheaterControllerEditor::gotoPreviousKey()
 	m_trackSequencer->update();
 
 	m_context->setTime(m_timeOffset + previousTime);
+	m_context->setPhysicsEnable(false);
 	m_context->setPlaying(false);
 }
 
@@ -612,6 +614,7 @@ void TheaterControllerEditor::gotoNextKey()
 	m_trackSequencer->update();
 
 	m_context->setTime(m_timeOffset + nextTime);
+	m_context->setPhysicsEnable(false);
 	m_context->setPlaying(false);
 }
 
@@ -668,6 +671,7 @@ void TheaterControllerEditor::splitAct()
 
 	// Update UI and scene editor.
 	m_context->setTime(m_timeOffset + cursorTime);
+	m_context->setPhysicsEnable(false);
 	m_context->setPlaying(false);
 
 	updateView();
@@ -694,6 +698,7 @@ void TheaterControllerEditor::eventActSelected(ui::SelectionChangeEvent* event)
 	m_trackSequencer->setCursor(0);
 
 	m_context->setTime(m_timeOffset);
+	m_context->setPhysicsEnable(false);
 	m_context->setPlaying(false);
 
 	updateView();
@@ -720,7 +725,9 @@ void TheaterControllerEditor::eventSequencerCursorMove(ui::custom::CursorMoveEve
 	float cursorTime = float(cursorTick / 1000.0f);
 
 	m_context->setTime(m_timeOffset + cursorTime);
+	m_context->setPhysicsEnable(false);
 	m_context->setPlaying(false);
+	m_context->raiseRedraw();
 }
 
 void TheaterControllerEditor::eventSequencerKeyMove(ui::custom::KeyMoveEvent* event)

@@ -19,7 +19,7 @@ TheaterControllerData::TheaterControllerData()
 {
 }
 
-Ref< scene::ISceneController > TheaterControllerData::createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const
+Ref< scene::ISceneController > TheaterControllerData::createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts, bool editor) const
 {
 	RefArray< const Act > acts(m_acts.size());
 	for (size_t i = 0; i < m_acts.size(); ++i)
@@ -29,7 +29,8 @@ Ref< scene::ISceneController > TheaterControllerData::createController(const std
 			return 0;
 	}
 
-	if (m_randomizeActs)
+	// Do not randomize acts if in editor.
+	if (!editor && m_randomizeActs)
 	{
 		std::vector< size_t > indices(acts.size());
 		for (size_t i = 0; i < indices.size(); ++i)

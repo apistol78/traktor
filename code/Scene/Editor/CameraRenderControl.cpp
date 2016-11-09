@@ -228,7 +228,7 @@ bool CameraRenderControl::handleCommand(const ui::Command& command)
 
 void CameraRenderControl::update()
 {
-	m_renderWidget->update();
+	m_renderWidget->update(0, true);
 }
 
 bool CameraRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const

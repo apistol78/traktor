@@ -19,6 +19,9 @@ namespace traktor
 
 class ActData;
 
+/*! \brief Theater scene controller data.
+ * \ingroup Theater
+ */
 class T_DLLCLASS TheaterControllerData : public scene::ISceneControllerData
 {
 	T_RTTI_CLASS;
@@ -26,7 +29,7 @@ class T_DLLCLASS TheaterControllerData : public scene::ISceneControllerData
 public:
 	TheaterControllerData();
 
-	virtual Ref< scene::ISceneController > createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const T_OVERRIDE T_FINAL;
+	virtual Ref< scene::ISceneController > createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts, bool editor) const T_OVERRIDE T_FINAL;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
