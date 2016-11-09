@@ -135,7 +135,9 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_pathControl->create(splitterV, ui::WsAccelerated | ui::WsDoubleBuffer);
 
 	m_previewControl = new FlashPreviewControl(m_editor);
-	m_previewControl->create(splitter, ui::WsNone, database, m_resourceManager, renderSystem, soundPlayer);
+	if (!m_previewControl->create(splitter, ui::WsNone, database, m_resourceManager, renderSystem, soundPlayer))
+		return false;
+
 	m_previewControl->setMovie(m_movie);
 	m_previewControl->update();
 
