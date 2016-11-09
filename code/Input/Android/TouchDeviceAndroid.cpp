@@ -101,13 +101,33 @@ float TouchDeviceAndroid::getControlValue(int32_t control)
 	else if (mc.controlType == DtPositionY4)
 		return m_positionY[3];
 	else if (mc.controlType == DtButton1)
-		return (m_activePointerIds.size() >= 1) ? 1.0f : 0.0f;
+	{
+		if (m_activePointerIds.size() >= 1)
+			return m_activePointerIds[0].active ? 1.0f : 0.0f;
+		else
+			return 0.0f;
+	}
 	else if (mc.controlType == DtButton2)
-		return (m_activePointerIds.size() >= 2) ? 1.0f : 0.0f;
+	{
+		if (m_activePointerIds.size() >= 2)
+			return m_activePointerIds[1].active ? 1.0f : 0.0f;
+		else
+			return 0.0f;
+	}
 	else if (mc.controlType == DtButton3)
-		return (m_activePointerIds.size() >= 3) ? 1.0f : 0.0f;
+	{
+		if (m_activePointerIds.size() >= 3)
+			return m_activePointerIds[2].active ? 1.0f : 0.0f;
+		else
+			return 0.0f;
+	}
 	else if (mc.controlType == DtButton4)
-		return (m_activePointerIds.size() >= 4) ? 1.0f : 0.0f;
+	{
+		if (m_activePointerIds.size() >= 4)
+			return m_activePointerIds[3].active ? 1.0f : 0.0f;
+		else
+			return 0.0f;
+	}
 	else
 		return 0.0f;
 }
@@ -190,7 +210,7 @@ void TouchDeviceAndroid::handleInput(AInputEvent* event)
 		// Touch begin, first finger.
 		int32_t pointerId = AMotionEvent_getPointerId(event, 0);
 		T_FATAL_ASSERT (m_activePointerIds.empty());
-		m_activePointerIds.push_back(pointerId);
+		m_activePointerIds.push_back({ pointerId, true });
 	}
 	else if (actionEvent == AMOTION_EVENT_ACTION_UP)
 	{
@@ -206,7 +226,7 @@ void TouchDeviceAndroid::handleInput(AInputEvent* event)
 		bool alreadyAdded = false;
 		for (size_t i = 0; i < m_activePointerIds.size(); ++i)
 		{
-			if (m_activePointerIds[i] == pointerId)
+			if (m_activePointerIds[i].id == pointerId)
 			{
 				alreadyAdded = true;
 				break;
@@ -216,7 +236,21 @@ void TouchDeviceAndroid::handleInput(AInputEvent* event)
 		if (!alreadyAdded)
 		{
 			if (!m_activePointerIds.full())
-				m_activePointerIds.push_back(pointerId);
+				m_activePointerIds.push_back({ pointerId, true });
+		}
+	}
+	else if (actionEvent == AMOTION_EVENT_ACTION_POINTER_UP)
+	{
+		int32_t pointerIndex = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+		int32_t pointerId = AMotionEvent_getPointerId(event, pointerIndex);
+
+		for (size_t i = 0; i < m_activePointerIds.size(); ++i)
+		{
+			if (m_activePointerIds[i].id == pointerId)
+			{
+				m_activePointerIds[i].active = false;
+				break;
+			}
 		}
 	}
 
@@ -226,7 +260,7 @@ void TouchDeviceAndroid::handleInput(AInputEvent* event)
 		int32_t pointerId = AMotionEvent_getPointerId(event, i);
 		for (size_t j = 0; j < m_activePointerIds.size(); ++j)
 		{
-			if (m_activePointerIds[j] == pointerId)
+			if (m_activePointerIds[j].id == pointerId)
 			{
 				m_positionX[j] = AMotionEvent_getX(event, i);
 				m_positionY[j]= AMotionEvent_getY(event, i);

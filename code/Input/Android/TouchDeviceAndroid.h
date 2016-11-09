@@ -54,11 +54,17 @@ public:
 private:
 	friend class InputDriverAndroid;
 
+	struct ActivePointer
+	{
+		int32_t id;
+		bool active;
+	};
+
 	int32_t m_width;
 	int32_t m_height;
 	float m_positionX[4];
 	float m_positionY[4];
-	StaticVector< int32_t, 4 > m_activePointerIds;
+	StaticVector< ActivePointer, 4 > m_activePointerIds;
 
 	void handleInput(AInputEvent* event);
 };
