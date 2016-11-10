@@ -15,7 +15,7 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
-#include "Drawing/Filters/ConvolutionFilter.h"
+#include "Drawing/Filters/GaussianBlurFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -500,7 +500,7 @@ bool OcclusionTexturePipeline::buildOutput(
 
 	if (asset->m_blurRadius > 0)
 	{
-		Ref< drawing::ConvolutionFilter > blurFilter = drawing::ConvolutionFilter::createGaussianBlur(asset->m_blurRadius);
+		Ref< drawing::GaussianBlurFilter > blurFilter = new drawing::GaussianBlurFilter(asset->m_blurRadius);
 		image->apply(blurFilter);
 	}
 
