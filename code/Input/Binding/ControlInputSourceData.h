@@ -37,21 +37,15 @@ public:
 	};
 
 	ControlInputSourceData();
-	
+
 	ControlInputSourceData(
 		InputCategory category,
-		InputDefaultControlType controlType,
-		ControlQuery controlQuery,
-		bool analogue,
-		bool normalize
+		ControlQuery controlQuery
 	);
 
 	ControlInputSourceData(
 		InputCategory category,
-		InputDefaultControlType controlType,
 		ControlQuery controlQuery,
-		bool analogue,
-		bool normalize,
 		int32_t index
 	);
 	
@@ -59,17 +53,9 @@ public:
 	
 	InputCategory getCategory() const;
 	
-	void setControlType(InputDefaultControlType controlType);
-	
-	InputDefaultControlType getControlType() const;
-
 	void setControlQuery(ControlQuery controlQuery);
 
 	ControlQuery getControlQuery() const;
-
-	void setAnalogue(bool analogue);
-
-	bool isAnalogue() const;
 
 	void setIndex(int32_t index);
 	
@@ -81,9 +67,7 @@ public:
 
 private:
 	InputCategory m_category;
-	InputDefaultControlType m_controlType;
 	ControlQuery m_controlQuery;
-	bool m_analogue;
 	int32_t m_index;
 };
 

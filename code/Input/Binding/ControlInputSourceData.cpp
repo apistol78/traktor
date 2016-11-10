@@ -10,44 +10,32 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.ControlInputSourceData", 1, ControlInputSourceData, IInputSourceData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.ControlInputSourceData", 2, ControlInputSourceData, IInputSourceData)
 
 ControlInputSourceData::ControlInputSourceData()
 :	m_category(CtUnknown)
-,	m_controlType(DtInvalid)
 ,	m_controlQuery(CqConnectedDevice)
-,	m_analogue(false)
 ,	m_index(-1)
 {
 }
 
 ControlInputSourceData::ControlInputSourceData(
 	InputCategory category,
-	InputDefaultControlType controlType,
-	ControlQuery controlQuery,
-	bool analogue,
-	bool normalize
+	ControlQuery controlQuery
 )
 :	m_category(category)
-,	m_controlType(controlType)
 ,	m_controlQuery(controlQuery)
-,	m_analogue(analogue)
 ,	m_index(-1)
 {
 }
 
 ControlInputSourceData::ControlInputSourceData(
 	InputCategory category,
-	InputDefaultControlType controlType,
 	ControlQuery controlQuery,
-	bool analogue,
-	bool normalize,
 	int32_t index
 )
 :	m_category(category)
-,	m_controlType(controlType)
 ,	m_controlQuery(controlQuery)
-,	m_analogue(analogue)
 ,	m_index(index)
 {
 }
@@ -62,16 +50,6 @@ InputCategory ControlInputSourceData::getCategory() const
 	return m_category;
 }
 
-void ControlInputSourceData::setControlType(InputDefaultControlType controlType)
-{
-	m_controlType = controlType;
-}
-
-InputDefaultControlType ControlInputSourceData::getControlType() const
-{
-	return m_controlType;
-}
-
 void ControlInputSourceData::setControlQuery(ControlQuery controlQuery)
 {
 	m_controlQuery = controlQuery;
@@ -80,16 +58,6 @@ void ControlInputSourceData::setControlQuery(ControlQuery controlQuery)
 ControlInputSourceData::ControlQuery ControlInputSourceData::getControlQuery() const
 {
 	return m_controlQuery;
-}
-
-void ControlInputSourceData::setAnalogue(bool analogue)
-{
-	m_analogue = analogue;
-}
-
-bool ControlInputSourceData::isAnalogue() const
-{
-	return m_analogue;
 }
 
 void ControlInputSourceData::setIndex(int32_t index)
@@ -117,12 +85,22 @@ void ControlInputSourceData::serialize(ISerializer& s)
 	};
 
 	s >> MemberEnum< InputCategory >(L"category", m_category, g_InputCategory_Keys);
-	s >> MemberEnum< InputDefaultControlType >(L"controlType", m_controlType, g_InputDefaultControlType_Keys);
+
+	if (s.getVersion() < 2)
+	{
+		InputDefaultControlType controlType;
+		s >> MemberEnum< InputDefaultControlType >(L"controlType", controlType, g_InputDefaultControlType_Keys);
+	}
 
 	if (s.getVersion() >= 1)
 		s >> MemberEnum< ControlQuery >(L"controlQuery", m_controlQuery, c_ControlQuery_Keys);
 
-	s >> Member< bool >(L"analogue", m_analogue);
+	if (s.getVersion() < 2)
+	{
+		bool analogue;
+		s >> Member< bool >(L"analogue", analogue);
+	}
+
 	s >> Member< int32_t >(L"index", m_index);
 }
 	

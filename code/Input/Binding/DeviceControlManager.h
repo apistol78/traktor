@@ -29,6 +29,8 @@ public:
 
 	void update();
 
+	InputSystem* getInputSystem() { return m_inputSystem; }
+
 private:
 	Ref< InputSystem > m_inputSystem;
 	RefArray< DeviceControl > m_deviceControls;
