@@ -234,7 +234,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 		m_inputActive = false;
 
 	// Poll all devices.
-	m_inputSystem->update(deltaTime, renderViewActive);
+	m_inputSystem->update();
 
 	// If input is disabled then only check if we can become active.
 	if (!m_inputActive)

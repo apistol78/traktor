@@ -1,7 +1,6 @@
 #ifndef traktor_input_InputSystem_H
 #define traktor_input_InputSystem_H
 
-#include <list>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Input/InputTypes.h"
@@ -9,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_INPUT_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -48,18 +47,11 @@ public:
 
 	void setExclusive(bool exclusive);
 
-	bool update(float deltaTime, bool enable);
+	bool update();
 
 private:
-	struct PendingDevice
-	{
-		Ref< IInputDevice > device;
-		float timeout;
-	};
-	
 	RefArray< IInputDriver > m_drivers;
 	RefArray< IInputDevice > m_devices;
-	std::list< PendingDevice > m_pendingDevices;
 
 	void updateDevices();
 };

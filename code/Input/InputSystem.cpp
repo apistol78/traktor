@@ -1,41 +1,11 @@
-#include <algorithm>
-#include "Core/Log/Log.h"
 #include "Input/InputSystem.h"
 #include "Input/IInputDriver.h"
 #include "Input/IInputDevice.h"
-
-#undef min
-#undef max
 
 namespace traktor
 {
 	namespace input
 	{
-		namespace
-		{
-
-const float c_deviceStuckTimeout = 3 * 60.0f;
-
-bool isDeviceReady(IInputDevice* device)
-{
-	if (!device)
-		return false;
-			
-	int32_t controlCount = device->getControlCount();
-	for (int32_t i = 0; i < controlCount; ++i)
-	{
-		if (!device->isControlStable(i))
-			continue;
-
-		float v = device->getControlValue(i);
-		if (v < -0.5f || v > 0.5f)
-			return false;
-	}
-
-	return true;
-}
-		
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputSystem", InputSystem, Object)
 
@@ -106,73 +76,24 @@ void InputSystem::setExclusive(bool exclusive)
 {
 	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
 		(*i)->setExclusive(exclusive);
-	for (std::list< PendingDevice >::iterator i = m_pendingDevices.begin(); i != m_pendingDevices.end(); ++i)
-		i->device->setExclusive(exclusive);
 }
 
-bool InputSystem::update(float deltaTime, bool enable)
+bool InputSystem::update()
 {
-	deltaTime = std::min(deltaTime, 1.0f / 30.0f);
-
-	if (enable)
+	// Update drivers.
+	bool shouldUpdateDevices = false;
+	for (RefArray< IInputDriver >::iterator i = m_drivers.begin(); i != m_drivers.end(); ++i)
 	{
-		// Update drivers.
-		bool shouldUpdateDevices = false;
-		for (RefArray< IInputDriver >::iterator i = m_drivers.begin(); i != m_drivers.end(); ++i)
-		{
-			IInputDriver::UpdateResult result = (*i)->update();
-			if (result == IInputDriver::UrDevicesChanged)
-				shouldUpdateDevices |= true;
-		}
-		if (shouldUpdateDevices)
-			updateDevices();
-		
-		// Check if pending devices are ready.
-		for (std::list< PendingDevice >::iterator i = m_pendingDevices.begin(); i != m_pendingDevices.end(); )
-		{
-			i->device->readState();
-
-			if (!i->device->isConnected())
-			{
-				i->timeout = c_deviceStuckTimeout;
-				++i;
-				continue;
-			}
-
-			if (isDeviceReady(i->device))
-			{
-				m_devices.push_back(i->device);
-				i = m_pendingDevices.erase(i);
-			}
-			else
-			{
-				if ((i->timeout -= deltaTime) <= 0.0f)
-				{
-					log::warning << L"Input device \"" << i->device->getName() << L"\" seems stuck; ignoring input from device" << Endl;
-					i = m_pendingDevices.erase(i);
-				}
-				else
-					++i;
-			}
-		}
-
-		// Read state of all ready devices.
-		for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
-			(*i)->readState();
+		IInputDriver::UpdateResult result = (*i)->update();
+		if (result == IInputDriver::UrDevicesChanged)
+			shouldUpdateDevices |= true;
 	}
-	else
-	{
-		// Ensure all devices are put in pending list; need to be re-configured when
-		// application becomes active again.
-		for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
-		{
-			PendingDevice pd;
-			pd.device = *i;
-			pd.timeout = c_deviceStuckTimeout;
-			m_pendingDevices.push_back(pd);
-		}
-		m_devices.clear();
-	}
+	if (shouldUpdateDevices)
+		updateDevices();
+
+	// Read state of all ready devices.
+	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+		(*i)->readState();
 
 	return true;
 }
@@ -180,22 +101,17 @@ bool InputSystem::update(float deltaTime, bool enable)
 void InputSystem::updateDevices()
 {
 	m_devices.resize(0);
-	m_pendingDevices.resize(0);
-	
 	for (RefArray< IInputDriver >::iterator i = m_drivers.begin(); i != m_drivers.end(); ++i)
 	{
 		IInputDriver* inputDriver = *i;
 		T_ASSERT (inputDriver);
 
-		for (int j = 0; j < inputDriver->getDeviceCount(); ++j)
+		for (int32_t j = 0; j < inputDriver->getDeviceCount(); ++j)
 		{
 			Ref< IInputDevice > inputDevice = inputDriver->getDevice(j);
 			T_ASSERT (inputDevice);
 
-			PendingDevice pd;
-			pd.device = inputDevice;
-			pd.timeout = c_deviceStuckTimeout;
-			m_pendingDevices.push_back(pd);
+			m_devices.push_back(inputDevice);
 		}
 	}
 }

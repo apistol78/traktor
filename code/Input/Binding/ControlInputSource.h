@@ -17,11 +17,8 @@ namespace traktor
 	namespace input
 	{
 
-class DeviceControl;
 class DeviceControlManager;
 class ControlInputSourceData;
-class IInputDevice;
-class InputSystem;
 
 /*! \brief Control input source.
  * \ingroup Input
@@ -42,7 +39,6 @@ public:
 private:
 	Ref< const ControlInputSourceData > m_data;
 	Ref< DeviceControlManager > m_deviceControlManager;
-	RefArray< DeviceControl > m_deviceControls;
 	int32_t m_matchingDeviceCount;
 };
 
