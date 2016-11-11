@@ -10,8 +10,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.GaussianBlurFilter", GaussianBlurFilter, IImageFilter)
 
-GaussianBlurFilter::GaussianBlurFilter(int32_t size)
-:	m_size(size | 1)
+GaussianBlurFilter::GaussianBlurFilter(int32_t radius)
+:	m_size((radius * 2) | 1)
 {
 	m_kernel.resize(m_size);
 
@@ -55,19 +55,31 @@ void GaussianBlurFilter::apply(Image* image) const
 	AlignedVector< Color4f > span(std::max(w, h));
 	AlignedVector< Color4f > out(std::max(w, h));
 
-	// \tbd Edges not included in blur.
-
 	// Horizontal pass.
 	{
 		for (int32_t y = 0; y < h; ++y)
 		{
 			image->getSpanUnsafe(y, span.ptr());
 
+			for (int32_t x = 0; x < m; ++x)
+			{
+				out[x] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+				for (int32_t dx = 0; dx < m_size; ++dx)
+					out[x] += span[std::max(x + dx - m, 0)] * m_kernel[dx];
+			}
+
 			for (int32_t x = m; x < w - m; ++x)
 			{
 				out[x] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 				for (int32_t dx = 0; dx < m_size; ++dx)
 					out[x] += span[x + dx - m] * m_kernel[dx];
+			}
+
+			for (int32_t x = w - m; x < w; ++x)
+			{
+				out[x] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+				for (int32_t dx = 0; dx < m_size; ++dx)
+					out[x] += span[std::min(x + dx - m, w - 1)] * m_kernel[dx];
 			}
 
 			imm->setSpanUnsafe(y, out.c_ptr());
@@ -80,11 +92,25 @@ void GaussianBlurFilter::apply(Image* image) const
 		{
 			imm->getVerticalSpanUnsafe(x, span.ptr());
 
+			for (int32_t y = 0; y < m; ++y)
+			{
+				out[y] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+				for (int32_t dy = 0; dy < m_size; ++dy)
+					out[y] += span[std::max(y + dy - m, 0)] * m_kernel[dy];
+			}
+
 			for (int32_t y = m; y < h - m; ++y)
 			{
 				out[y] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 				for (int32_t dy = 0; dy < m_size; ++dy)
 					out[y] += span[y + dy - m] * m_kernel[dy];
+			}
+
+			for (int32_t y = h - m; y < h; ++y)
+			{
+				out[y] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+				for (int32_t dy = 0; dy < m_size; ++dy)
+					out[y] += span[std::min(y + dy - m, h - 1)] * m_kernel[dy];
 			}
 
 			image->setVerticalSpanUnsafe(x, out.c_ptr());

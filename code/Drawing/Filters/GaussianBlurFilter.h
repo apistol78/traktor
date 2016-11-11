@@ -26,7 +26,7 @@ class T_DLLCLASS GaussianBlurFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	explicit GaussianBlurFilter(int32_t size);
+	explicit GaussianBlurFilter(int32_t radius);
 
 protected:
 	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;

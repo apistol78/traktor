@@ -14,6 +14,7 @@
 #include "Drawing/Filters/CropFilter.h"
 #include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Filters/GammaFilter.h"
+#include "Drawing/Filters/GaussianBlurFilter.h"
 #include "Drawing/Filters/GrayscaleFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/NormalizeFilter.h"
@@ -282,6 +283,10 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classGammaFilter->addConstructor< float >();
 	//classGammaFilter->addConstructor< float, float, float, float >();
 	registrar->registerClass(classGammaFilter);
+
+	Ref< AutoRuntimeClass< GaussianBlurFilter > > classGaussianBlurFilter = new AutoRuntimeClass< GaussianBlurFilter >();
+	classGaussianBlurFilter->addConstructor< int32_t >();
+	registrar->registerClass(classGaussianBlurFilter);
 
 	Ref< AutoRuntimeClass< GrayscaleFilter > > classGrayscaleFilter = new AutoRuntimeClass< GrayscaleFilter >();
 	classGrayscaleFilter->addConstructor();
