@@ -124,7 +124,8 @@ void BitmapWin32::copySubImage(drawing::Image* image, const Rect& srcRect, const
 			h[1] = (h[1] * h[3]) >> 8;
 			h[2] = (h[2] * h[3]) >> 8;
 
-			dstAlpha[dstOffset] = c;
+			if (dstAlpha)
+				dstAlpha[dstOffset] = c;
 		}
 	}
 
