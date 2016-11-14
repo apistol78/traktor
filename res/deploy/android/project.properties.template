@@ -1,1 +1,1 @@
-target=android-15
+target=<!-- output:print(environment:get("DEPLOY_ANDROID_APILEVEL")) --!>
