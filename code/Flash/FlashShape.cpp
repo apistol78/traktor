@@ -267,7 +267,7 @@ bool FlashShape::create(uint16_t fillBitmap, int32_t width, int32_t height)
 	return true;
 }
 
-void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const SwfCxTransform& cxform)
+void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const ColorTransform& cxform)
 {
 	uint32_t fillStyleBase = uint32_t(m_fillStyles.size());
 	uint32_t lineStyleBase = uint32_t(m_lineStyles.size());

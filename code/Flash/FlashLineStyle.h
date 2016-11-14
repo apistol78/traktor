@@ -21,6 +21,8 @@ class ISerializer;
 	namespace flash
 	{
 
+class ColorTransform;
+
 /*! \brief Shape line style.
  * \ingroup Flash
  */
@@ -31,7 +33,7 @@ public:
 
 	bool create(const SwfLineStyle* lineStyle);
 
-	void transform(const SwfCxTransform& cxform);
+	void transform(const ColorTransform& cxform);
 
 	const Color4f& getLineColor() const;
 

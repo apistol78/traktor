@@ -1,5 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Flash/ColorTransform.h"
 #include "Flash/FlashLineStyle.h"
 #include "Flash/SwfMembers.h"
 
@@ -24,7 +25,7 @@ bool FlashLineStyle::create(const SwfLineStyle* lineStyle)
 	return true;
 }
 
-void FlashLineStyle::transform(const SwfCxTransform& cxform)
+void FlashLineStyle::transform(const ColorTransform& cxform)
 {
 	m_lineColor = m_lineColor * cxform.mul + cxform.add;
 }

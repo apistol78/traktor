@@ -137,7 +137,7 @@ void FlashFrame::PlaceObject::serialize(ISerializer& s)
 		s >> Member< uint16_t >(L"ratio", ratio);
 
 	if (hasFlags & PfHasCxTransform)
-		s >> MemberSwfCxTransform(L"cxTransform", cxTransform);
+		s >> MemberColorTransform(L"cxTransform", cxTransform);
 
 	if (hasFlags & PfHasMatrix)
 		s >> Member< Matrix33 >(L"matrix", matrix);

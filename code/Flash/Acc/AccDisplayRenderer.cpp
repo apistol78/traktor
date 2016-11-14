@@ -48,11 +48,11 @@ const uint32_t c_cacheGlyphCount = c_cacheGlyphCountX * c_cacheGlyphCountY;
 const uint32_t c_cacheGlyphDimX = c_cacheGlyphSize * c_cacheGlyphCountX;
 const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize * c_cacheGlyphCountY;
 
-const SwfCxTransform c_cxfZero = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
-const SwfCxTransform c_cxfWhite = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 1.0f, 1.0f, 1.0f) };
-const SwfCxTransform c_cxfIdentity = { Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
-const SwfCxTransform c_cxfYellow = { Color4f(0.0f, 0.0f, 0.0f, 1.0f), Color4f(1.0f, 1.0f, 0.0f, 0.0f) };
-const SwfCxTransform c_cxfDebug = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 0.0f, 0.0f, 0.2f) };
+const ColorTransform c_cxfZero(Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+const ColorTransform c_cxfWhite(Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+const ColorTransform c_cxfIdentity(Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+const ColorTransform c_cxfYellow(Color4f(0.0f, 0.0f, 0.0f, 1.0f), Color4f(1.0f, 1.0f, 0.0f, 0.0f));
+const ColorTransform c_cxfDebug(Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 0.0f, 0.0f, 0.2f));
 
 bool rectangleVisible(const Aabb2& frame, const Aabb2& bounds)
 {
@@ -346,7 +346,7 @@ void AccDisplayRenderer::begin(
 			// Clear background by drawing a solid quad with given color; cannot clear as it doesn't handle stencil.
 			if (m_clearBackground)
 			{
-				SwfCxTransform clearCxForm = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), backgroundColor.rgb1() };
+				ColorTransform clearCxForm(Color4f(0.0f, 0.0f, 0.0f, 0.0f), backgroundColor.rgb1());
 				renderQuad(Matrix33::identity(), m_dirtyRegion, clearCxForm);
 			}
 		}
@@ -411,7 +411,7 @@ void AccDisplayRenderer::endMask()
 	}
 }
 
-void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform, uint8_t blendMode)
+void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const ColorTransform& cxform, uint8_t blendMode)
 {
 	Ref< AccShape > accShape;
 
@@ -483,11 +483,11 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 	}
 }
 
-void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const ColorTransform& cxform)
 {
 }
 
-void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const Color4f& color, const SwfCxTransform& cxform, uint8_t filter, const Color4f& filterColor)
+void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const Color4f& color, const ColorTransform& cxform, uint8_t filter, const Color4f& filterColor)
 {
 	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
 	if (!m_shapeRenderer || m_shapeRenderer->shouldCull())
@@ -625,7 +625,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 	);
 }
 
-void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform)
 {
 	if (!m_shapeRenderer || m_shapeRenderer->shouldCull())
 	{
@@ -648,7 +648,7 @@ void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& boun
 	);
 }
 
-void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform, uint8_t blendMode)
+void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const ColorTransform& cxform, uint8_t blendMode)
 {
 	Ref< AccShape > accShape;
 

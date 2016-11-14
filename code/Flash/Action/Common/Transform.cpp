@@ -1,5 +1,5 @@
+#include "Flash/ColorTransform.h"
 #include "Flash/FlashCharacterInstance.h"
-#include "Flash/Action/Common/ColorTransform.h"
 #include "Flash/Action/Common/Transform.h"
 
 namespace traktor
@@ -22,7 +22,7 @@ Ref< ColorTransform > Transform::getColorTransform() const
 
 void Transform::setColorTransform(const ColorTransform* colorTransform)
 {
-	m_instance->setColorTransform(colorTransform->getTransform());
+	m_instance->setColorTransform(*colorTransform);
 }
 
 void Transform::trace(visitor_t visitor) const

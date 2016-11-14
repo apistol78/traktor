@@ -22,6 +22,8 @@ class ISerializer;
 	namespace flash
 	{
 
+class ColorTransform;
+
 /*! \brief Shape fill style.
  * \ingroup Flash
  */
@@ -63,7 +65,7 @@ public:
 
 	bool create(uint16_t fillBitmap, const Matrix33& fillBitmapMatrix, bool fillBitmapRepeat);
 
-	void transform(const Matrix33& transform, const SwfCxTransform& cxform);
+	void transform(const Matrix33& transform, const ColorTransform& cxform);
 
 	const AlignedVector< ColorRecord >& getColorRecords() const { return m_colorRecords; }
 

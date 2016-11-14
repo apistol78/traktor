@@ -71,7 +71,7 @@ void FlashButton::ButtonLayer::serialize(ISerializer& s)
 	s >> Member< uint16_t >(L"characterId", characterId);
 	s >> Member< uint16_t >(L"placeDepth", placeDepth);
 	s >> Member< Matrix33 >(L"placeMatrix", placeMatrix);
-	s >> MemberSwfCxTransform(L"cxform", cxform);
+	s >> MemberColorTransform(L"cxform", cxform);
 }
 
 void FlashButton::ButtonCondition::serialize(ISerializer& s)

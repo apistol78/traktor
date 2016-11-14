@@ -30,6 +30,7 @@ class IResourceManager;
 
 class AccShape;
 class AccQuad;
+class ColorTransform;
 
 /*! \brief
  */
@@ -71,7 +72,7 @@ public:
 		render::RenderContext* renderContext,
 		AccShape* shape,
 		int32_t tag,
-		const SwfCxTransform& cxform,
+		const ColorTransform& cxform,
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
 		const Matrix33& transform,

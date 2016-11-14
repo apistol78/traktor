@@ -5,7 +5,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Flash/SwfTypes.h"
+#include "Flash/ColorTransform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -63,7 +63,7 @@ public:
 		uint16_t clipDepth;
 		std::string name;
 		uint16_t ratio;
-		SwfCxTransform cxTransform;
+		ColorTransform cxTransform;
 		Matrix33 matrix;
 		uint16_t characterId;
 

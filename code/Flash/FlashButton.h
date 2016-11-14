@@ -3,6 +3,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Matrix33.h"
+#include "Flash/ColorTransform.h"
 #include "Flash/FlashCharacter.h"
 
 // import/export mechanism.
@@ -55,7 +56,7 @@ public:
 		uint16_t characterId;
 		uint16_t placeDepth;
 		Matrix33 placeMatrix;
-		SwfCxTransform cxform;
+		ColorTransform cxform;
 
 		ButtonLayer()
 		:	state(0)
@@ -63,8 +64,6 @@ public:
 		,	placeDepth(0)
 		,	placeMatrix(Matrix33::identity())
 		{
-			cxform.mul = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-			cxform.add = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 		}
 
 		void serialize(ISerializer& s);

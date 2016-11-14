@@ -29,8 +29,6 @@ class VertexBuffer;
 	namespace flash
 	{
 
-struct SwfCxTransform;
-
 class AccGlyph : public Object
 {
 	T_RTTI_CLASS;

@@ -21,11 +21,11 @@ namespace traktor
 		namespace
 		{
 
-const SwfCxTransform c_cxfIdentity = { Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
+const ColorTransform c_cxfIdentity(Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-SwfCxTransform concateCxTransform(const SwfCxTransform& cxt1, const SwfCxTransform& cxt2)
+ColorTransform concateCxTransform(const ColorTransform& cxt1, const ColorTransform& cxt2)
 {
-	SwfCxTransform cxtr;
+	ColorTransform cxtr;
 	cxtr.mul = cxt1.mul * cxt2.mul;
 	cxtr.add = (cxt1.add * cxt2.mul + cxt2.add).saturated();
 	return cxtr;
@@ -42,7 +42,7 @@ public:
 
 	void endClip();
 
-	void insertShape(const FlashShape* shape, const Matrix33& transform, const SwfCxTransform& cxform, uint8_t blendMode);
+	void insertShape(const FlashShape* shape, const Matrix33& transform, const ColorTransform& cxform, uint8_t blendMode);
 
 private:
 	Ref< FlashMovie > m_outputMovie;
@@ -134,7 +134,7 @@ void MergeQueue::endClip()
 	m_mergeShape = 0;
 }
 
-void MergeQueue::insertShape(const FlashShape* shape, const Matrix33& transform, const SwfCxTransform& cxform, uint8_t blendMode)
+void MergeQueue::insertShape(const FlashShape* shape, const Matrix33& transform, const ColorTransform& cxform, uint8_t blendMode)
 {
 	if (m_maskFrame)
 	{
@@ -181,7 +181,7 @@ uint16_t MergeQueue::cloneShape(const FlashShape& shape)
 	return m_nextShapeId++;
 }
 
-void traverse(MergeQueue& queue, const FlashMovie* movie, const FlashSprite* sprite, const Matrix33& transform, const SwfCxTransform& cxform, uint8_t blendMode)
+void traverse(MergeQueue& queue, const FlashMovie* movie, const FlashSprite* sprite, const Matrix33& transform, const ColorTransform& cxform, uint8_t blendMode)
 {
 	const FlashFrame* frame = sprite->getFrame(0);
 	if (!frame)
@@ -208,7 +208,7 @@ void traverse(MergeQueue& queue, const FlashMovie* movie, const FlashSprite* spr
 
 		if (placeObject.has(FlashFrame::PfHasMove) || placeObject.has(FlashFrame::PfHasCharacterId))
 		{
-			SwfCxTransform childCxForm = c_cxfIdentity;
+			ColorTransform childCxForm = c_cxfIdentity;
 			Matrix33 childTransform = Matrix33::identity();
 
 			if (placeObject.has(FlashFrame::PfHasCxTransform))

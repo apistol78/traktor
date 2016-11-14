@@ -2,8 +2,8 @@
 #define traktor_flash_FlashMovieRenderer_H
 
 #include "Core/Object.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Math/Matrix33.h"
-#include "Flash/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,8 +18,7 @@ namespace traktor
 	namespace flash
 	{
 
-struct SwfCxTransform;
-
+class ColorTransform;
 class IDisplayRenderer;
 class FlashDictionary;
 class FlashSprite;
@@ -63,35 +62,35 @@ private:
 	void renderSprite(
 		FlashSpriteInstance* spriteInstance,
 		const Matrix33& transform,
-		const SwfCxTransform& cxTransform,
+		const ColorTransform& cxTransform,
 		bool renderAsMask
 	);
 
 	void renderSpriteDefault(
 		FlashSpriteInstance* spriteInstance,
 		const Matrix33& transform,
-		const SwfCxTransform& cxTransform,
+		const ColorTransform& cxTransform,
 		bool renderAsMask
 	);
 
 	void renderSpriteLayered(
 		FlashSpriteInstance* spriteInstance,
 		const Matrix33& transform,
-		const SwfCxTransform& cxTransform,
+		const ColorTransform& cxTransform,
 		bool renderAsMask
 	);
 
 	void renderSpriteWithScalingGrid(
 		FlashSpriteInstance* spriteInstance,
 		const Matrix33& transform,
-		const SwfCxTransform& cxTransform,
+		const ColorTransform& cxTransform,
 		bool renderAsMask
 	);
 
 	void renderCharacter(
 		FlashCharacterInstance* characterInstance,
 		const Matrix33& transform,
-		const SwfCxTransform& cxTransform,
+		const ColorTransform& cxTransform,
 		bool renderAsMask,
 		uint8_t blendMode
 	);

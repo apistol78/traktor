@@ -3,7 +3,7 @@
 
 #include <map>
 #include "Editor/IEditorPage.h"
-#include "Flash/SwfTypes.h"
+#include "Flash/ColorTransform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -90,7 +90,7 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< FlashMovie > m_movie;
 	Ref< FlashCharacterInstance > m_selectedCharacterInstance;
-	SwfCxTransform m_selectedCharacterInstanceCxForm;
+	ColorTransform m_selectedCharacterInstanceCxForm;
 	uint8_t m_selectedCharacterInstanceBlendMode;
 
 	void updateTreeObject(ui::custom::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);

@@ -161,6 +161,26 @@ Any ActionObjectRelay_invoke(ActionObjectRelay* self, const std::string& methodN
 	return Any();
 }
 
+void ColorTransform_setMul(ColorTransform* self, const Color4f& mul)
+{
+	self->mul = mul;
+}
+
+const Color4f& ColorTransform_getMul(ColorTransform* self)
+{
+	return self->mul;
+}
+
+void ColorTransform_setAdd(ColorTransform* self, const Color4f& add)
+{
+	self->add = add;
+}
+
+const Color4f& ColorTransform_getAdd(ColorTransform* self)
+{
+	return self->add;
+}
+
 Any FlashDictionary_getExportId(FlashDictionary* self, const std::string& exportName)
 {
 	uint16_t exportId;
@@ -181,10 +201,7 @@ Any FlashDictionary_getExportName(FlashDictionary* self, uint16_t exportId)
 
 void FlashCharacterInstance_setColorTransform(FlashCharacterInstance* self, const Color4f& mul, const Color4f& add)
 {
-	SwfCxTransform cxform;
-	cxform.mul = mul;
-	cxform.add = add;
-	self->setColorTransform(cxform);
+	self->setColorTransform(ColorTransform(mul, add));
 }
 
 Any FlashCharacterInstance_invoke(FlashCharacterInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
@@ -417,6 +434,15 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSwfReader->addConstructor< IStream* >();
 	registrar->registerClass(classSwfReader);
 
+	Ref< AutoRuntimeClass< ColorTransform > > classColorTransform = new AutoRuntimeClass< ColorTransform >();
+	classColorTransform->addConstructor();
+	classColorTransform->addConstructor< const Color4f&, const Color4f& >();
+	classColorTransform->addMethod("setMul", &ColorTransform_setMul);
+	classColorTransform->addMethod("getMul", &ColorTransform_getMul);
+	classColorTransform->addMethod("setAdd", &ColorTransform_setAdd);
+	classColorTransform->addMethod("getAdd", &ColorTransform_getAdd);
+	registrar->registerClass(classColorTransform);
+
 	Ref< AutoRuntimeClass< FlashDictionary > > classFlashDictionary = new AutoRuntimeClass< FlashDictionary >();
 	classFlashDictionary->addMethod("addFont", &FlashDictionary::addFont);
 	classFlashDictionary->addMethod("addBitmap", &FlashDictionary::addBitmap);
@@ -455,7 +481,9 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashCharacterInstance->addMethod("setName", &FlashCharacterInstance::setName);
 	classFlashCharacterInstance->addMethod("getName", &FlashCharacterInstance::getName);
 	classFlashCharacterInstance->addMethod("getTarget", &FlashCharacterInstance::getTarget);
+	classFlashCharacterInstance->addMethod("setColorTransform", &FlashCharacterInstance::setColorTransform);
 	classFlashCharacterInstance->addMethod("setColorTransform", &FlashCharacterInstance_setColorTransform);
+	classFlashCharacterInstance->addMethod("getColorTransform", &FlashCharacterInstance::getColorTransform);
 	classFlashCharacterInstance->addMethod("setTransform", &FlashCharacterInstance::setTransform);
 	classFlashCharacterInstance->addMethod("getTransform", &FlashCharacterInstance::getTransform);
 	classFlashCharacterInstance->addMethod("getFullTransform", &FlashCharacterInstance::getFullTransform);

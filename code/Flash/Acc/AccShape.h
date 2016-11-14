@@ -30,12 +30,12 @@ class AccBitmapRect;
 class AccGradientCache;
 class AccShapeResources;
 class AccTextureCache;
+class ColorTransform;
 class FlashCanvas;
 class FlashDictionary;
 class FlashFillStyle;
 class FlashLineStyle;
 class FlashShape;
-struct SwfCxTransform;
 
 /*! \brief Accelerated shape.
  * \ingroup Flash
@@ -105,7 +105,7 @@ public:
 		const Matrix33& transform,
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
-		const SwfCxTransform& cxform,
+		const ColorTransform& cxform,
 		bool maskWrite,
 		bool maskIncrement,
 		uint8_t maskReference,

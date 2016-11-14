@@ -218,13 +218,13 @@ std::string AsTextField::TextField_toString(const FlashEditInstance* self) const
 
 avm_number_t AsTextField::TextField_get_alpha(FlashEditInstance* self) const
 {
-	const SwfCxTransform& colorTransform = self->getColorTransform();
+	const ColorTransform& colorTransform = self->getColorTransform();
 	return colorTransform.mul.getAlpha() * 100.0f;
 }
 
 void AsTextField::TextField_set_alpha(FlashEditInstance* self, avm_number_t alpha) const
 {
-	SwfCxTransform colorTransform = self->getColorTransform();
+	ColorTransform colorTransform = self->getColorTransform();
 	colorTransform.mul.setAlpha(Scalar(alpha / 100.0f));
 	self->setColorTransform(colorTransform);
 }

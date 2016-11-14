@@ -578,7 +578,7 @@ void FlashEditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 			m_selectedCharacterInstanceCxForm = m_selectedCharacterInstance->getColorTransform();
 			m_selectedCharacterInstanceBlendMode = m_selectedCharacterInstance->getBlendMode();
 
-			SwfCxTransform cxform;
+			ColorTransform cxform;
 			cxform.mul = Color4f(0.5f, 0.5f, 0.5f, 1.0f);
 			cxform.add = Color4f(0.0f, 0.5f, 1.0f, 0.0f);
 
