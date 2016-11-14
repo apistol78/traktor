@@ -4,6 +4,7 @@
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -23,10 +24,19 @@
 #include "Sql/Sqlite3/Sqlite3ClassFactory.h"
 #include "Xml/XmlClassFactory.h"
 
+namespace
+{
+		
+traktor::Ref< traktor::script::IScriptManager > g_scriptManager;		
+
+}
+
 namespace traktor
 {
 	namespace run
 	{
+
+void registerRuntimeClasses();
 
 int32_t Run_run_1(Run* self, const std::wstring& command)
 {
@@ -58,20 +68,39 @@ int32_t Run_execute_3(Run* self, const std::wstring& command, const Any& saveOut
 	return self->execute(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)", env);
 }
 
-Ref< script::IScriptManager > createScriptManager()
+bool Run_loadModule(Run* self, const std::wstring& moduleName)
 {
-	Ref< script::IScriptManager > scriptManager = new script::ScriptManagerLua();
+	Library library;
+	if (!library.open(Path(moduleName)))
+		return false;
 
+	// Re-register all runtime classes in-case a new factory has been loaded.
+	registerRuntimeClasses();
+
+	library.detach();
+	return true;
+}
+
+void registerRuntimeClasses()
+{
 	OrderedClassRegistrar registrar;
 
 	// System classes.
-	BoxesClassFactory().createClasses(&registrar);
-	CoreClassFactory().createClasses(&registrar);
-	drawing::DrawingClassFactory().createClasses(&registrar);
-	xml::XmlClassFactory().createClasses(&registrar);
-	net::NetClassFactory().createClasses(&registrar);
-	sql::SqlClassFactory().createClasses(&registrar);
-	sql::Sqlite3ClassFactory().createClasses(&registrar);
+	T_FORCE_LINK_REF(drawing::DrawingClassFactory);
+	T_FORCE_LINK_REF(xml::XmlClassFactory);
+	T_FORCE_LINK_REF(sql::SqlClassFactory);
+	T_FORCE_LINK_REF(sql::Sqlite3ClassFactory);
+
+	// Register all runtime classes, first collect all classes
+	// and then register them in class dependency order.
+	std::set< const TypeInfo* > runtimeClassFactoryTypes;
+	type_of< IRuntimeClassFactory >().findAllOf(runtimeClassFactoryTypes, false);
+	for (std::set< const TypeInfo* >::const_iterator i = runtimeClassFactoryTypes.begin(); i != runtimeClassFactoryTypes.end(); ++i)
+	{
+		Ref< IRuntimeClassFactory > runtimeClassFactory = dynamic_type_cast< IRuntimeClassFactory* >((*i)->createInstance());
+		if (runtimeClassFactory)
+			runtimeClassFactory->createClasses(&registrar);
+	}
 
 	// IOutput
 	Ref< AutoRuntimeClass< IOutput > > classIOutput = new AutoRuntimeClass< IOutput >();
@@ -130,17 +159,17 @@ Ref< script::IScriptManager > createScriptManager()
 	classRun->addMethod("mkdir", &Run::mkdir);
 	classRun->addMethod("rmdir", &Run::rmdir);
 	classRun->addMethod("sleep", &Run::sleep);
+	classRun->addMethod("loadModule", &Run_loadModule);
 	registrar.registerClass(classRun);
 
 	// Register all classes to script manager; in class hierarchy order.
-	registrar.registerClassesInOrder(scriptManager);
-	return scriptManager;
+	registrar.registerClassesInOrder(g_scriptManager);
 }
 
-int32_t executeRun(script::IScriptManager* scriptManager, const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)
+int32_t executeRun(const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)
 {
 	// Compile script into a runnable blob.
-	Ref< script::IScriptBlob > scriptBlob = scriptManager->compile(fileName.getPathName(), text, 0);
+	Ref< script::IScriptBlob > scriptBlob = g_scriptManager->compile(fileName.getPathName(), text, 0);
 	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script" << Endl;
@@ -148,7 +177,7 @@ int32_t executeRun(script::IScriptManager* scriptManager, const std::wstring& te
 	}
 
 	// Create script context..
-	Ref< script::IScriptContext > scriptContext = scriptManager->createContext(false);
+	Ref< script::IScriptContext > scriptContext = g_scriptManager->createContext(false);
 	if (!scriptContext)
 		return 1;
 
@@ -183,7 +212,7 @@ int32_t executeRun(script::IScriptManager* scriptManager, const std::wstring& te
 	return retval.getInteger();
 }
 
-int32_t executeTemplate(script::IScriptManager* scriptManager, const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)
+int32_t executeTemplate(const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)
 {
 	Ref< ProduceOutput > o = new ProduceOutput();
 
@@ -214,7 +243,7 @@ int32_t executeTemplate(script::IScriptManager* scriptManager, const std::wstrin
 	int32_t id = o->addSection(text.substr(offset));
 	ss << L"output:printSection(" << id << L")" << Endl;
 
-	Ref< script::IScriptBlob > scriptBlob = scriptManager->compile(fileName.getPathName(), ss.str(), 0);
+	Ref< script::IScriptBlob > scriptBlob = g_scriptManager->compile(fileName.getPathName(), ss.str(), 0);
 	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script" << Endl;
@@ -226,7 +255,7 @@ int32_t executeTemplate(script::IScriptManager* scriptManager, const std::wstrin
 	for (int32_t i = 1; i < cmdLine.getCount(); ++i)
 		args.push_back(cmdLine.getString(i));
 
-	Ref< script::IScriptContext > scriptContext = scriptManager->createContext(false);
+	Ref< script::IScriptContext > scriptContext = g_scriptManager->createContext(false);
 	if (!scriptContext)
 		return 1;
 
@@ -282,7 +311,7 @@ int main(int argc, const char** argv)
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
 	if (!file)
 	{
-		log::error << L"Failed to open \"" << fileName.getPathName() << L"\"" << Endl;
+		log::error << L"Failed to open \"" << fileName.getPathName() << L"\"." << Endl;
 		return 1;
 	}
 
@@ -299,12 +328,14 @@ int main(int argc, const char** argv)
 
 	std::wstring text = ss.str();
 
-	Ref< script::IScriptManager > scriptManager = run::createScriptManager();
-	if (!scriptManager)
+	g_scriptManager = new script::ScriptManagerLua();
+	if (!g_scriptManager)
 	{
-		log::error << L"Failed to create script manager" << Endl;
+		log::error << L"Failed to create script manager." << Endl;
 		return 1;
 	}
+
+	run::registerRuntimeClasses();
 
 	net::Network::initialize();
 
@@ -314,14 +345,14 @@ int main(int argc, const char** argv)
 	bool explicitTemplate = cmdLine.hasOption(L"as-template");
 
 	if ((explicitRun && !explicitTemplate) || compareIgnoreCase< std::wstring >(fileName.getExtension(), L"run") == 0)
-		result = run::executeRun(scriptManager, text, fileName, cmdLine);
+		result = run::executeRun(text, fileName, cmdLine);
 	else if ((!explicitRun && explicitTemplate) || compareIgnoreCase< std::wstring >(fileName.getExtension(), L"template") == 0)
-		result = run::executeTemplate(scriptManager, text, fileName, cmdLine);
+		result = run::executeTemplate(text, fileName, cmdLine);
 	else
-		log::error << L"Unknown file type \"" << fileName.getExtension() << L"\"; must be either \"run\" or \"template\"" << Endl;
+		log::error << L"Unknown file type \"" << fileName.getExtension() << L"\"; must be either \"run\" or \"template\"." << Endl;
 
 	net::Network::finalize();
 
-	safeDestroy(scriptManager);
+	safeDestroy(g_scriptManager);
 	return result;
 }
