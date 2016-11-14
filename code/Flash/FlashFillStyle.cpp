@@ -4,6 +4,7 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
+#include "Flash/ColorTransform.h"
 #include "Flash/FlashFillStyle.h"
 #include "Flash/SwfMembers.h"
 
@@ -94,7 +95,7 @@ bool FlashFillStyle::create(uint16_t fillBitmap, const Matrix33& fillBitmapMatri
 	return true;
 }
 
-void FlashFillStyle::transform(const Matrix33& transform, const SwfCxTransform& cxform)
+void FlashFillStyle::transform(const Matrix33& transform, const ColorTransform& cxform)
 {
 	for (AlignedVector< ColorRecord >::iterator i = m_colorRecords.begin(); i != m_colorRecords.end(); ++i)
 		i->color = i->color * cxform.mul + cxform.add;

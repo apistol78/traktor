@@ -744,9 +744,9 @@ SwfSoundInfo* SwfReader::readSoundInfo()
 	return info;
 }
 
-SwfCxTransform SwfReader::readCxTransform(bool withAlpha)
+ColorTransform SwfReader::readCxTransform(bool withAlpha)
 {
-	SwfCxTransform cxTransform;
+	ColorTransform cxTransform;
 
 	cxTransform.mul = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	cxTransform.add = Color4f(0.0f, 0.0f, 0.0f, 0.0f);

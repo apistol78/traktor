@@ -1,5 +1,6 @@
 #include "Drawing/Image.h"
 #include "Drawing/Raster.h"
+#include "Flash/ColorTransform.h"
 #include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashDictionary.h"
@@ -108,7 +109,7 @@ void SwDisplayRenderer::endMask()
 		m_raster->setMask(0);
 }
 
-void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform, uint8_t blendMode)
+void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const ColorTransform& cxform, uint8_t blendMode)
 {
 	if (!m_writeEnable)
 		return;
@@ -259,11 +260,11 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 	}
 }
 
-void SwDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform)
+void SwDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const ColorTransform& cxform)
 {
 }
 
-void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const Color4f& color, const SwfCxTransform& cxform, uint8_t filter, const Color4f& filterColor)
+void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const Color4f& color, const ColorTransform& cxform, uint8_t filter, const Color4f& filterColor)
 {
 	if (!m_writeEnable)
 		return;
@@ -312,11 +313,11 @@ void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Mat
 	}
 }
 
-void SwDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform)
+void SwDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform)
 {
 }
 
-void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform, uint8_t blendMode)
+void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const ColorTransform& cxform, uint8_t blendMode)
 {
 	if (!m_writeEnable)
 		return;

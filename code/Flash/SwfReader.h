@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Io/BitReader.h"
+#include "Flash/ColorTransform.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
@@ -131,7 +132,7 @@ public:
 	/*! \name Simple types */
 	//@{
 
-	SwfCxTransform readCxTransform(bool withAlpha);
+	ColorTransform readCxTransform(bool withAlpha);
 
 	SwfKerningRecord readKerningRecord(bool wideCodes);
 

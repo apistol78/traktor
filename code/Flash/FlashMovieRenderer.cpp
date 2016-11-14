@@ -28,25 +28,9 @@ namespace traktor
 		namespace
 		{
 
-const SwfCxTransform c_cxWhite = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 1.0f, 1.0f, 1.0f) };
+const ColorTransform c_cxWhite(Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
 Timer s_timer;
-
-SwfCxTransform convertColor(const Color4f& c)
-{
-	SwfCxTransform cxtr;
-	cxtr.mul = Color4f(Vector4::zero());
-	cxtr.add = c;
-	return cxtr;
-}
-
-SwfCxTransform concateCxTransform(const SwfCxTransform& cxt1, const SwfCxTransform& cxt2)
-{
-	SwfCxTransform cxtr;
-	cxtr.mul = cxt1.mul * cxt2.mul;
-	cxtr.add = (cxt1.add * cxt2.mul + cxt2.add).saturated();
-	return cxtr;
-}
 
 		}
 
@@ -107,7 +91,7 @@ void FlashMovieRenderer::renderFrame(
 void FlashMovieRenderer::renderSprite(
 	FlashSpriteInstance* spriteInstance,
 	const Matrix33& transform,
-	const SwfCxTransform& cxTransform,
+	const ColorTransform& cxTransform,
 	bool renderAsMask
 )
 {
@@ -129,7 +113,7 @@ void FlashMovieRenderer::renderSprite(
 void FlashMovieRenderer::renderSpriteDefault(
 	FlashSpriteInstance* spriteInstance,
 	const Matrix33& transform,
-	const SwfCxTransform& cxTransform,
+	const ColorTransform& cxTransform,
 	bool renderAsMask
 )
 {
@@ -226,7 +210,7 @@ void FlashMovieRenderer::renderSpriteDefault(
 void FlashMovieRenderer::renderSpriteLayered(
 	FlashSpriteInstance* spriteInstance,
 	const Matrix33& transform,
-	const SwfCxTransform& cxTransform,
+	const ColorTransform& cxTransform,
 	bool renderAsMask
 )
 {
@@ -353,7 +337,7 @@ void FlashMovieRenderer::renderSpriteLayered(
 void FlashMovieRenderer::renderSpriteWithScalingGrid(
 	FlashSpriteInstance* spriteInstance,
 	const Matrix33& transform,
-	const SwfCxTransform& cxTransform,
+	const ColorTransform& cxTransform,
 	bool renderAsMask
 )
 {
@@ -525,12 +509,12 @@ void FlashMovieRenderer::renderSpriteWithScalingGrid(
 void FlashMovieRenderer::renderCharacter(
 	FlashCharacterInstance* characterInstance,
 	const Matrix33& transform,
-	const SwfCxTransform& cxTransform,
+	const ColorTransform& cxTransform,
 	bool renderAsMask,
 	uint8_t blendMode
 )
 {
-	SwfCxTransform cxTransform2 = concateCxTransform(cxTransform, characterInstance->getColorTransform());
+	ColorTransform cxTransform2 = cxTransform * characterInstance->getColorTransform();
 
 	// Don't render completely transparent, non-mask, shapes.
 	if (!renderAsMask && cxTransform2.mul.getAlpha() + cxTransform2.add.getAlpha() <= FUZZY_EPSILON)
@@ -712,7 +696,7 @@ void FlashMovieRenderer::renderCharacter(
 							m_displayRenderer->renderQuad(
 								editTransform * translate(caretEndPosition + 50.0f, 0.0f),
 								caretBounds,
-								convertColor(editInstance->getTextColor())
+								ColorTransform(editInstance->getTextColor())
 							);
 					}
 
@@ -747,7 +731,7 @@ void FlashMovieRenderer::renderCharacter(
 				m_displayRenderer->renderQuad(
 					editTransform * translate(caretEndPosition + 50.0f, 0.0f),
 					caretBounds,
-					convertColor(editInstance->getTextColor())
+					ColorTransform(editInstance->getTextColor())
 				);
 		}
 

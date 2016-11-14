@@ -19,12 +19,6 @@ struct SwfMatrix
 	float m[9];
 };
 
-struct SwfCxTransform
-{
-	Color4f mul;
-	Color4f add;
-};
-
 struct SwfKerningRecord
 {
 	uint16_t code1;

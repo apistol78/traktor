@@ -39,7 +39,7 @@ public:
 
 	bool create(uint16_t fillBitmap, int32_t width, int32_t height);
 
-	void merge(const FlashShape& shape, const Matrix33& transform, const SwfCxTransform& cxform);
+	void merge(const FlashShape& shape, const Matrix33& transform, const ColorTransform& cxform);
 
 	void triangulate(bool oddEven);
 

@@ -1,5 +1,6 @@
 #include "Flash/FlashCharacterInstance.h"
 #include "Flash/FlashTypes.h"
+#include "Flash/SwfTypes.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
@@ -99,7 +100,7 @@ std::string FlashCharacterInstance::getTarget() const
 	return m_parent ? (m_parent->getTarget() + "/" + getName()) : "";
 }
 
-void FlashCharacterInstance::setColorTransform(const SwfCxTransform& cxform)
+void FlashCharacterInstance::setColorTransform(const ColorTransform& cxform)
 {
 	clearCacheObject();
 	m_cxform = cxform;

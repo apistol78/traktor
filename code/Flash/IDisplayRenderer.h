@@ -18,6 +18,7 @@ namespace traktor
 	namespace flash
 	{
 
+class ColorTransform;
 class FlashCanvas;
 class FlashDictionary;
 class FlashSpriteInstance;
@@ -81,7 +82,7 @@ public:
 	 * \param cxform Color transform.
 	 * \param blendMode Blend mode.
 	 */
-	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform, uint8_t blendMode) = 0;
+	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const ColorTransform& cxform, uint8_t blendMode) = 0;
 
 	/*! \brief Render morph shape.
 	 *
@@ -90,7 +91,7 @@ public:
 	 * \param shape Shape
 	 * \param cxform Color transform.
 	 */
-	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform) = 0;
+	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const ColorTransform& cxform) = 0;
 
 	/*! \brief Render glyph.
 	 *
@@ -101,7 +102,7 @@ public:
 	 * \param color Color
 	 * \param cxform Color transform.
 	 */
-	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const Color4f& color, const SwfCxTransform& cxform, uint8_t filter, const Color4f& filterColor) = 0;
+	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const Color4f& color, const ColorTransform& cxform, uint8_t filter, const Color4f& filterColor) = 0;
 
 	/*! \brief Render solid quad.
 	 *
@@ -110,7 +111,7 @@ public:
 	 * \param color Color
 	 * \param cxform Color transform.
 	 */
-	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform) = 0;
+	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform) = 0;
 
 	/*! \brief Render canvas.
 	 *
@@ -119,7 +120,7 @@ public:
 	 * \param cxform Color transform.
 	 * \param blendMode Blend mode.
 	 */
-	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform, uint8_t blendMode) = 0;
+	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const ColorTransform& cxform, uint8_t blendMode) = 0;
 
 	/*! \brief End frame. */
 	virtual void end() = 0;

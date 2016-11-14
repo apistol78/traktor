@@ -2,22 +2,22 @@
 #define traktor_flash_SwfMembers_H
 
 #include "Core/Serialization/MemberComplex.h"
-#include "Flash/SwfTypes.h"
+#include "Flash/ColorTransform.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 
-class MemberSwfCxTransform : public MemberComplex
+class MemberColorTransform : public MemberComplex
 {
 public:
-	MemberSwfCxTransform(const wchar_t* const name, SwfCxTransform& ref);
+	MemberColorTransform(const wchar_t* const name, ColorTransform& ref);
 
 	virtual void serialize(ISerializer& s) const;
 
 private:
-	SwfCxTransform& m_ref;
+	ColorTransform& m_ref;
 };
 
 	}

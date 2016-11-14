@@ -29,7 +29,7 @@ class VertexBuffer;
 	namespace flash
 	{
 
-struct SwfCxTransform;
+class ColorTransform;
 
 /*! \brief Simple unit-quad shape.
  * \ingroup Flash
@@ -50,7 +50,7 @@ public:
 		const Matrix33& transform,
 		const Vector4& frameSize,
 		const Vector4& frameTransform,
-		const SwfCxTransform& cxform,
+		const ColorTransform& cxform,
 		render::ITexture* texture,
 		const Vector4& textureOffset,
 		bool maskWrite,

@@ -1,6 +1,6 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Flash/SwfTypes.h"
+#include "Flash/ColorTransform.h"
 #include "Flash/Acc/AccQuad.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
@@ -103,7 +103,7 @@ void AccQuad::render(
 	const Matrix33& transform,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
-	const SwfCxTransform& cxform,
+	const ColorTransform& cxform,
 	render::ITexture* texture,
 	const Vector4& textureOffset,
 	bool maskWrite,

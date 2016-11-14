@@ -29,8 +29,8 @@ const uint32_t c_cacheHeight = 2048;
 #endif
 const uint32_t c_cacheMargin = 1;
 
-const SwfCxTransform c_cxfZero = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
-const SwfCxTransform c_cxfIdentity = { Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
+const ColorTransform c_cxfZero(Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+const ColorTransform c_cxfIdentity(Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 		}
 
@@ -158,7 +158,7 @@ void AccShapeRenderer::render(
 	render::RenderContext* renderContext,
 	AccShape* shape,
 	int32_t tag,
-	const SwfCxTransform& cxform,
+	const ColorTransform& cxform,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
 	const Matrix33& transform,

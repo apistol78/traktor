@@ -729,13 +729,13 @@ void AsMovieClip::MovieClip_unloadMovie(FlashSpriteInstance* self) const
 
 avm_number_t AsMovieClip::MovieClip_get_alpha(const FlashSpriteInstance* self) const
 {
-	const SwfCxTransform& colorTransform = self->getColorTransform();
+	const ColorTransform& colorTransform = self->getColorTransform();
 	return colorTransform.mul.getAlpha() * 100.0f;
 }
 
 void AsMovieClip::MovieClip_set_alpha(FlashSpriteInstance* self, avm_number_t alpha) const
 {
-	SwfCxTransform colorTransform = self->getColorTransform();
+	ColorTransform colorTransform = self->getColorTransform();
 	colorTransform.mul.setAlpha(Scalar(alpha / 100.0f));
 	self->setColorTransform(colorTransform);
 }

@@ -3,6 +3,7 @@
 #include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Color4ub.h"
+#include "Flash/ColorTransform.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashShape.h"
@@ -433,7 +434,7 @@ void AccShape::render(
 	const Matrix33& transform,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
-	const SwfCxTransform& cxform,
+	const ColorTransform& cxform,
 	bool maskWrite,
 	bool maskIncrement,
 	uint8_t maskReference,

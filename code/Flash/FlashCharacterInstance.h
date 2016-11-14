@@ -2,8 +2,9 @@
 #define traktor_flash_FlashCharacterInstance_H
 
 #include "Core/Containers/SmallMap.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Math/Matrix33.h"
-#include "Flash/SwfTypes.h"
+#include "Flash/ColorTransform.h"
 #include "Flash/Action/ActionObjectRelay.h"
 
 // import/export mechanism.
@@ -98,13 +99,13 @@ public:
 	 *
 	 * \param cxform Color transform.
 	 */
-	void setColorTransform(const SwfCxTransform& cxform);
+	void setColorTransform(const ColorTransform& cxform);
 
 	/*! \brief Get color transform.
 	 *
 	 * \return Color transform.
 	 */
-	const SwfCxTransform& getColorTransform() const { return m_cxform; }
+	const ColorTransform& getColorTransform() const { return m_cxform; }
 
 	/*! \brief Set coordinate transformation.
 	 *
@@ -240,7 +241,7 @@ private:
 
 	std::string m_name;
 	Matrix33 m_transform;
-	SwfCxTransform m_cxform;
+	ColorTransform m_cxform;
 	Ref< ActionContext > m_context;
 	Ref< FlashDictionary > m_dictionary;
 	FlashCharacterInstance* m_parent;

@@ -106,15 +106,15 @@ public:
 
 	virtual void endMask() T_OVERRIDE T_FINAL;
 
-	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
+	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const ColorTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
 
-	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL;
+	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const ColorTransform& cxform) T_OVERRIDE T_FINAL;
 
-	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const Color4f& color, const SwfCxTransform& cxform, uint8_t filter, const Color4f& filterColor) T_OVERRIDE T_FINAL;
+	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const Color4f& color, const ColorTransform& cxform, uint8_t filter, const Color4f& filterColor) T_OVERRIDE T_FINAL;
 
-	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform) T_OVERRIDE T_FINAL;
+	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform) T_OVERRIDE T_FINAL;
 
-	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
+	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const ColorTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
 
 	virtual void end() T_OVERRIDE T_FINAL;
 
