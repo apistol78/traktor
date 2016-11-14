@@ -640,7 +640,7 @@ void TargetEditor::eventBrowseIconClick(ui::MouseButtonDownEvent* event)
 			if (!FileSystem::getInstance().getRelativePath(fileName, systemRoot, relativePath))
 				relativePath = fileName;
 
-			targetConfiguration->setIcon(relativePath.getPathName());
+			targetConfiguration->setIcon(relativePath.normalized().getPathName());
 			updateIcon();
 		}
 		fileDialog.destroy();
