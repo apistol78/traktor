@@ -35,6 +35,7 @@ class FlashMovie;
 class FlashMoviePlayer;
 class FlashSpriteInstance;
 class ISoundRenderer;
+class WireDisplayRenderer;
 
 	}
 
@@ -169,7 +170,8 @@ private:
 	resource::Proxy< flash::FlashMovie > m_movie;
 	std::map< std::wstring, resource::Proxy< flash::FlashMovie > > m_externalMovies;
 	Ref< flash::FlashMoviePlayer > m_moviePlayer;
-	Ref< flash::AccDisplayRenderer > m_displayRenderer;
+	Ref< flash::AccDisplayRenderer > m_displayRendererAcc;
+	Ref< flash::WireDisplayRenderer > m_displayRendererWire;
 	Ref< flash::ISoundRenderer > m_soundRenderer;
 	Ref< render::RenderTargetSet > m_imageTargetSet;
 	resource::Proxy< render::ImageProcessSettings > m_imageProcessSettings;

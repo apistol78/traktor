@@ -196,6 +196,12 @@
 				</second>
 			</item>
 			<item>
+				<first>HeightfieldTexturePipeline.HeightFormat</first>
+				<second type="traktor.PropertyString">
+					<value>HfARGBEncoded</value>
+				</second>
+			</item>
+			<item>
 				<first>MeshPipeline.PromoteHalf</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
@@ -249,12 +255,6 @@
 				<first>TexturePipeline.sRGB</first>
 				<second type="traktor.PropertyBoolean">
 					<value>false</value>
-				</second>
-			</item>
-			<item>
-				<first>HeightfieldTexturePipeline.HeightFormat</first>
-				<second type="traktor.PropertyString">
-					<value>HfARGBEncoded</value>
 				</second>
 			</item>
 		</value>
@@ -334,5 +334,7 @@
 		</value>
 	</runtimeProperties>
 	<environment/>
-	<dependencies/>
+	<dependencies>
+		<item>{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}</item>
+	</dependencies>
 </object>

@@ -102,7 +102,8 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
 		m_context->getResourceManager(),
-		m_context->getRenderSystem()
+		m_context->getRenderSystem(),
+		1
 	))
 		return false;
 
@@ -295,7 +296,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 
 	m_colorClear.getRGBA32F(colorClear);
 
-	if (!sceneInstance || !m_renderView || !m_primitiveRenderer)
+	if (!sceneInstance || !m_renderView)
 		return;
 
 	// Lazy create world renderer.
@@ -379,8 +380,6 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 		);
 
 		m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
-
-		m_primitiveRenderer->end();
 
 		m_renderView->end();
 		m_renderView->present();

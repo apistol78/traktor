@@ -65,7 +65,7 @@ bool SparkEditControl::create(
 		return false;
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(resourceManager, renderSystem))
+	if (!m_primitiveRenderer->create(resourceManager, renderSystem, 1))
 		return false;
 
 	m_sparkRenderer = new SparkRenderer();
@@ -175,7 +175,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
 
-		m_primitiveRenderer->begin(m_renderView, projection);
+		m_primitiveRenderer->begin(0, projection);
 		m_primitiveRenderer->pushDepthState(false, false, false);
 
 		// Draw grid and bounds.
@@ -245,9 +245,6 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		// Draw sprites.
 		if (m_sparkRenderer && m_editContext->getRoot() && m_editContext->getRoot()->getCharacter())
 		{
-			// Flush to make sure grid is drawn beneath sprites.
-			m_primitiveRenderer->flush();
-
 			m_sparkRenderer->build(m_editContext->getRoot()->getCharacter(), 0);
 			m_sparkRenderer->render(m_renderView, projection, 0);
 
@@ -276,7 +273,8 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		}
 
 		m_primitiveRenderer->popDepthState();
-		m_primitiveRenderer->end();
+		m_primitiveRenderer->end(0);
+		m_primitiveRenderer->render(m_renderView, 0);
 
 		m_renderView->end();
 		m_renderView->present();

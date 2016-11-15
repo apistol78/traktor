@@ -170,6 +170,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Profile Rendering", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Render Flash Debug Wires", false));
 	m_toolBar->addItem(m_toolTweaks);
 
 	m_toolLanguage = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Language"), ui::scaleBySystemDPI(85), i18n::Text(L"AMALGAM_LANGUAGE"));
@@ -736,6 +737,8 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 			tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
 		if (m_toolTweaks->get(10)->isChecked())
 			tweakSettings->setProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 1);
+		if (m_toolTweaks->get(11)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Amalgam.FlashDebugWires", true);
 
 		int32_t language = m_toolLanguage->getSelected();
 		if (language > 0)

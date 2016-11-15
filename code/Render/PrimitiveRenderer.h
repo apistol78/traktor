@@ -2,15 +2,17 @@
 #define traktor_render_PrimitiveRenderer_H
 
 #include <stack>
+#include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
-#include "Core/Math/Aabb3.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Thread/Semaphore.h"
+#include "Render/Types.h"
 #include "Resource/Id.h"
 #include "Resource/Proxy.h"
-#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,6 +40,8 @@ class ITexture;
 class Shader;
 class VertexBuffer;
 
+struct Vertex;
+
 /*! \brief Primitive renderer.
  * \ingroup Render
  *
@@ -57,16 +61,24 @@ public:
 
 	bool create(
 		resource::IResourceManager* resourceManager,
-		IRenderSystem* renderSystem
+		IRenderSystem* renderSystem,
+		uint32_t frameCount
 	);
 
 	bool create(
 		resource::IResourceManager* resourceManager,
 		IRenderSystem* renderSystem,
-		const resource::Id< Shader >& shader
+		const resource::Id< Shader >& shader,
+		uint32_t frameCount
 	);
 
 	void destroy();
+
+	bool begin(uint32_t frame, const Matrix44& projection);
+
+	void end(uint32_t frame);
+
+	void render(IRenderView* renderView, uint32_t frame);
 
 	void pushView(const Matrix44& view);
 
@@ -273,13 +285,7 @@ public:
 		const Color4ub& colorHint
 	);
 
-	bool begin(IRenderView* renderView, const Matrix44& projection);
-
-	void end();
-
-	void flush();
-
-	const Matrix44& getProjection() const { return m_projection.back(); }
+	const Matrix44& getProjection() const { return m_currentFrame->projections.back(); }
 
 	const Matrix44& getView() const { return m_view.back(); }
 
@@ -321,27 +327,40 @@ private:
 	{
 		uint32_t projection;
 		DepthState depthState;
+		Ref< VertexBuffer > vertexBuffer;
 		Ref< ITexture > texture;
 		Primitives primitives;
 	};
 
+	struct Frame
+	{
+		RefArray< VertexBuffer > vertexBuffers;
+		AlignedVector< Matrix44 > projections;
+		AlignedVector< Batch > batches;
+	};
+
+	// System
+	Ref< IRenderSystem > m_renderSystem;
 	resource::Proxy< Shader > m_shader;
-	IRenderView* m_renderView;
-	Ref< VertexBuffer > m_vertexBuffers[16];
-	int m_currentBuffer;
-	struct Vertex* m_vertexStart;
-	struct Vertex* m_vertex;
-	AlignedVector< Batch > m_batches;
-	AlignedVector< Matrix44 > m_projection;
+	RefArray< VertexBuffer > m_freeVertexBuffers;
+	Semaphore m_lock;
+
+	// Frame
+	AlignedVector< Frame > m_frames;
+	Frame* m_currentFrame;
+
+	// Assembly state.
 	AlignedVector< Matrix44 > m_view;
 	AlignedVector< Matrix44 > m_world;
 	AlignedVector< DepthState > m_depthState;
 	Matrix44 m_worldView;
 	float m_viewNearZ;
-	float m_viewWidth;
-	float m_viewHeight;
+	Vertex* m_vertexHead;
+	Vertex* m_vertexTail;
 
 	void updateTransforms();
+
+	Vertex* allocBatch(render::PrimitiveType primitiveType, uint32_t primitiveCount, render::ITexture* texture);
 };
 
 	}

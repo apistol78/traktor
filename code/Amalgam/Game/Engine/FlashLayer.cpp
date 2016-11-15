@@ -12,6 +12,8 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Flash/FlashCast.h"
 #include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
@@ -21,6 +23,7 @@
 #include "Flash/ISoundRenderer.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
 #include "Flash/Action/Common/Classes/AsKey.h"
+#include "Flash/Debug/WireDisplayRenderer.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
@@ -170,7 +173,8 @@ void FlashLayer::destroy()
 	m_imageProcessSettings.clear();
 
 	safeDestroy(m_moviePlayer);
-	safeDestroy(m_displayRenderer);
+	//safeDestroy(m_displayRendererWire);
+	safeDestroy(m_displayRendererAcc);
 	safeDestroy(m_soundRenderer);
 	safeDestroy(m_imageTargetSet);
 	safeDestroy(m_imageProcess);
@@ -210,14 +214,16 @@ void FlashLayer::transition(Layer* fromLayer)
 	}
 
 	// Keep display and sound renderer.
-	m_displayRenderer = fromFlashLayer->m_displayRenderer;
+	m_displayRendererAcc = fromFlashLayer->m_displayRendererAcc;
+	m_displayRendererWire = fromFlashLayer->m_displayRendererWire;
 	m_soundRenderer = fromFlashLayer->m_soundRenderer;
-	fromFlashLayer->m_displayRenderer = 0;
+	fromFlashLayer->m_displayRendererAcc = 0;
+	fromFlashLayer->m_displayRendererWire = 0;
 	fromFlashLayer->m_soundRenderer = 0;
 
 	// Ensure display renderer's caches are fresh.
-	if (m_displayRenderer && shouldFlush)
-		m_displayRenderer->flushCaches();
+	if (m_displayRendererAcc && shouldFlush)
+		m_displayRendererAcc->flushCaches();
 }
 
 void FlashLayer::prepare(const UpdateInfo& info)
@@ -473,20 +479,27 @@ void FlashLayer::update(const UpdateInfo& info)
 
 void FlashLayer::build(const UpdateInfo& info, uint32_t frame)
 {
-	if (!m_displayRenderer || !m_moviePlayer || !m_visible)
+	if (!m_displayRendererAcc || !m_moviePlayer || !m_visible)
 		return;
 
 	info.getProfiler()->beginScope(FptFlashLayerBuild);
 
-	m_displayRenderer->build(frame);
+	m_displayRendererAcc->build(frame);
+
+	if (m_displayRendererWire)
+		m_displayRendererWire->begin(frame);
+
 	m_moviePlayer->renderFrame();
+
+	if (m_displayRendererWire)
+		m_displayRendererWire->end(frame);
 
 	info.getProfiler()->endScope();
 }
 
 void FlashLayer::render(render::EyeType eye, uint32_t frame)
 {
-	if (!m_displayRenderer || !m_visible)
+	if (!m_displayRendererAcc || !m_visible)
 		return;
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
@@ -499,13 +512,16 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 			const static Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
 
-			m_displayRenderer->render(
+			m_displayRendererAcc->render(
 				renderView,
 				frame,
 				eye,
 				m_offset,
 				m_scale
 			);
+
+			if (m_displayRendererWire)
+				m_displayRendererWire->render(renderView, frame);
 
 			renderView->end();
 
@@ -521,20 +537,23 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 	}
 	else
 	{
-		m_displayRenderer->render(
+		m_displayRendererAcc->render(
 			renderView,
 			frame,
 			eye,
 			m_offset,
 			m_scale
 		);
+
+		if (m_displayRendererWire)
+			m_displayRendererWire->render(renderView, frame);
 	}
 }
 
 void FlashLayer::flush()
 {
-	if (m_displayRenderer)
-		m_displayRenderer->flush();
+	if (m_displayRendererAcc)
+		m_displayRendererAcc->flush();
 }
 
 void FlashLayer::preReconfigured()
@@ -653,7 +672,7 @@ std::wstring FlashLayer::getPrintableString(const std::wstring& text, const std:
 void FlashLayer::createMoviePlayer()
 {
 	// Create accelerated Flash renderer.
-	if (!m_displayRenderer)
+	if (!m_displayRendererAcc)
 	{
 		Ref< flash::AccDisplayRenderer > displayRenderer = new flash::AccDisplayRenderer();
 		if (!displayRenderer->create(
@@ -667,11 +686,31 @@ void FlashLayer::createMoviePlayer()
 			0.006f
 		))
 		{
-			log::error << L"Unable to create display renderer" << Endl;
+			log::error << L"Unable to create display renderer." << Endl;
 			return;
 		}
 		
-		m_displayRenderer = displayRenderer;
+		m_displayRendererAcc = displayRenderer;
+	}
+
+	// Create debug Flash renderer.
+	if (!m_displayRendererWire)
+	{
+		if (m_environment->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.FlashDebugWires", false))
+		{
+			Ref< flash::WireDisplayRenderer > displayRenderer = new flash::WireDisplayRenderer(m_displayRendererAcc);
+			if (!displayRenderer->create(
+				m_environment->getResource()->getResourceManager(),
+				m_environment->getRender()->getRenderSystem(),
+				m_environment->getRender()->getThreadFrameQueueCount()
+			))
+			{
+				log::error << L"Unable to create wire renderer." << Endl;
+				return;
+			}
+		
+			m_displayRendererWire = displayRenderer;
+		}
 	}
 
 	// Create sound Flash renderer.
@@ -703,8 +742,12 @@ void FlashLayer::createMoviePlayer()
 
 		width = int32_t(width * aspectRatio / viewRatio);
 
+		flash::IDisplayRenderer* displayRenderer = m_displayRendererAcc;
+		if (m_displayRendererWire)
+			displayRenderer = m_displayRendererWire;
+
 		Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(
-			m_displayRenderer,
+			displayRenderer,
 			m_soundRenderer,
 			new CustomFlashMovieLoader(m_externalMovies)
 		);

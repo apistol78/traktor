@@ -207,5 +207,7 @@
 		</value>
 	</runtimeProperties>
 	<environment/>
-	<dependencies/>
+	<dependencies>
+		<item>{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}</item>
+	</dependencies>
 </object>

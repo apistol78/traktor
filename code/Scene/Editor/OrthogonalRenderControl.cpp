@@ -112,7 +112,8 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
 		m_context->getResourceManager(),
-		m_context->getRenderSystem()
+		m_context->getRenderSystem(),
+		1
 	))
 		return false;
 
@@ -525,7 +526,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
 
 		// Draw wire guides.
-		m_primitiveRenderer->begin(m_renderView, worldRenderView.getProjection());
+		m_primitiveRenderer->begin(0, worldRenderView.getProjection());
 		m_primitiveRenderer->setClipDistance(worldRenderView.getViewFrustum().getNearZ());
 
 		// Render grid.
@@ -685,7 +686,8 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 			m_primitiveRenderer->popView();
 		}
 
-		m_primitiveRenderer->end();
+		m_primitiveRenderer->end(0);
+		m_primitiveRenderer->render(m_renderView, 0);
 
 		m_renderView->end();
 		m_renderView->present();
