@@ -82,7 +82,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 		return false;
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem))
+	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem, 1))
 		return false;
 
 	addEventHandler< ui::MouseButtonDownEvent >(this, &AnimationPreviewControl::eventButtonDown);
@@ -373,7 +373,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
 
-	if (m_primitiveRenderer->begin(m_renderView, projectionTransform))
+	if (m_primitiveRenderer->begin(0, projectionTransform))
 	{
 		m_primitiveRenderer->pushView(viewTransform);
 
@@ -451,7 +451,8 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 			m_primitiveRenderer->popDepthState();
 		}
 
-		m_primitiveRenderer->end();
+		m_primitiveRenderer->end(0);
+		m_primitiveRenderer->render(m_renderView, 0);
 	}
 
 	m_renderView->end();

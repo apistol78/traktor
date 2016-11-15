@@ -123,7 +123,8 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
 		m_context->getResourceManager(),
-		m_context->getRenderSystem()
+		m_context->getRenderSystem(),
+		1
 	))
 		return false;
 
@@ -530,7 +531,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
 
 		// Render wire guides.
-		m_primitiveRenderer->begin(m_renderView, projection);
+		m_primitiveRenderer->begin(0, projection);
 		m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
 		m_primitiveRenderer->pushView(view);
 
@@ -611,7 +612,8 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			m_primitiveRenderer->popView();
 		}
 
-		m_primitiveRenderer->end();
+		m_primitiveRenderer->end(0);
+		m_primitiveRenderer->render(m_renderView, 0);
 
 		m_renderView->end();
 		m_renderView->present();

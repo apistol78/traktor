@@ -124,7 +124,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem))
+	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem, 0))
 		return false;
 
 	m_site->setPropertyObject(m_skeleton);
@@ -424,7 +424,7 @@ void SkeletonEditorPage::eventPaint(ui::PaintEvent* event)
 		2000.0f
 	);
 
-	if (m_primitiveRenderer->begin(m_renderView, projectionTransform))
+	if (m_primitiveRenderer->begin(0, projectionTransform))
 	{
 		m_primitiveRenderer->pushView(viewTransform);
 
@@ -528,7 +528,8 @@ void SkeletonEditorPage::eventPaint(ui::PaintEvent* event)
 			}
 		}
 
-		m_primitiveRenderer->end();
+		m_primitiveRenderer->end(0);
+		m_primitiveRenderer->render(m_renderView, 0);
 	}
 
 	m_renderView->end();

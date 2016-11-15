@@ -263,7 +263,7 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem))
+	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem, 1))
 		return false;
 
 	updateSettings();
@@ -902,7 +902,7 @@ void AnimationEditorPage::eventRenderPaint(ui::PaintEvent* event)
 	data->picker->setViewTransform(view);
 
 	// Begin rendering primitives.
-	if (m_primitiveRenderer->begin(data->renderView, projection))
+	if (m_primitiveRenderer->begin(0, projection))
 	{
 		m_primitiveRenderer->pushView(view);
 
@@ -989,7 +989,8 @@ void AnimationEditorPage::eventRenderPaint(ui::PaintEvent* event)
 			//}
 		}
 
-		m_primitiveRenderer->end();
+		m_primitiveRenderer->end(0);
+		m_primitiveRenderer->render(data->renderView, 0);
 	}
 
 	data->renderView->end();

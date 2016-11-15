@@ -208,7 +208,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 		return false;
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem))
+	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem, 1))
 		return false;
 
 	m_resourceManager->bind(c_textureDebug, m_textureDebug);
@@ -646,7 +646,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 		2000.0f
 	);
 
-	if (m_primitiveRenderer->begin(m_renderView, projectionTransform))
+	if (m_primitiveRenderer->begin(0, projectionTransform))
 	{
 		m_primitiveRenderer->pushView(viewTransform);
 
@@ -863,7 +863,8 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			}
 		}
 
-		m_primitiveRenderer->end();
+		m_primitiveRenderer->end(0);
+		m_primitiveRenderer->render(m_renderView, 0);
 	}
 
 	m_renderView->end();

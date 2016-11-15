@@ -153,7 +153,7 @@ bool EffectPreviewControl::create(
 	}
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(resourceManager, renderSystem))
+	if (!m_primitiveRenderer->create(resourceManager, renderSystem, 1))
 		return false;
 
 	m_renderContext = new render::RenderContext(512 * 1024);
@@ -468,7 +468,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	Vector4 cameraPosition = viewInverse.translation().xyz1();
 	Plane cameraPlane(viewInverse.axisZ(), viewInverse.translation());
 
-	if (!m_primitiveRenderer->begin(m_renderView, Matrix44::identity()))
+	if (!m_primitiveRenderer->begin(0, Matrix44::identity()))
 		return;
 
 	if (m_background)
@@ -503,7 +503,8 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_primitiveRenderer->popDepthState();
 	}
 
-	m_primitiveRenderer->end();
+	m_primitiveRenderer->end(0);
+	m_primitiveRenderer->render(m_renderView, 0);
 
 	// Draw depth-only ground plane.
 	if (m_depthTexture && m_renderView->begin(m_depthTexture, 0))
@@ -512,7 +513,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		const Color4f clearColor(farZ, farZ, farZ, farZ);
 		m_renderView->clear(render::CfColor, &clearColor, 1.0f, 0);
 
-		if (m_groundClip && m_primitiveRenderer->begin(m_renderView, projectionTransform))
+		if (m_groundClip && m_primitiveRenderer->begin(0, projectionTransform))
 		{
 			m_primitiveRenderer->pushView(viewTransform);
 
@@ -527,7 +528,8 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 			m_primitiveRenderer->popDepthState();
 
 			m_primitiveRenderer->popView();
-			m_primitiveRenderer->end();
+			m_primitiveRenderer->end(0);
+			m_primitiveRenderer->render(m_renderView, 0);
 		}
 
 		m_renderView->end();
@@ -653,7 +655,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		);
 	}
 
-	if (!m_primitiveRenderer->begin(m_renderView, projectionTransform))
+	if (!m_primitiveRenderer->begin(0, projectionTransform))
 		return;
 
 	m_primitiveRenderer->pushView(viewTransform);
@@ -694,7 +696,8 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		}
 	}
 
-	m_primitiveRenderer->end();
+	m_primitiveRenderer->end(0);
+	m_primitiveRenderer->render(m_renderView, 0);
 
 	m_renderView->end();
 	m_renderView->present();
