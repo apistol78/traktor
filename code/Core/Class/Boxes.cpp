@@ -857,7 +857,11 @@ Matrix33 BoxedMatrix33::rotate(float angle)
 
 std::wstring BoxedMatrix33::toString() const
 {
-	return L"(matrix33)";
+	StringOutputStream ss;
+	ss << m_value.e11 << L", " << m_value.e12 << L", " << m_value.e13 << Endl;
+	ss << m_value.e21 << L", " << m_value.e22 << L", " << m_value.e23 << Endl;
+	ss << m_value.e31 << L", " << m_value.e32 << L", " << m_value.e33 << Endl;
+	return ss.str();
 }
 
 void* BoxedMatrix33::operator new (size_t size)
@@ -998,7 +1002,12 @@ Vector4 BoxedMatrix44::transform(const BoxedVector4* v) const
 
 std::wstring BoxedMatrix44::toString() const
 {
-	return L"(matrix44)";
+	StringOutputStream ss;
+	ss << m_value(0, 0) << L", " << m_value(0, 1) << L", " << m_value(0, 2) << L", " << m_value(0, 3) << Endl;
+	ss << m_value(1, 0) << L", " << m_value(1, 1) << L", " << m_value(1, 2) << L", " << m_value(1, 3) << Endl;
+	ss << m_value(2, 0) << L", " << m_value(2, 1) << L", " << m_value(2, 2) << L", " << m_value(2, 3) << Endl;
+	ss << m_value(3, 0) << L", " << m_value(3, 1) << L", " << m_value(3, 2) << L", " << m_value(3, 3) << Endl;
+	return ss.str();
 }
 
 void* BoxedMatrix44::operator new (size_t size)

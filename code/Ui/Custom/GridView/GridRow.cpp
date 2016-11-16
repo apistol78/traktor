@@ -65,6 +65,7 @@ uint32_t GridRow::add(GridItem* item)
 {
 	T_ASSERT (item->m_row == 0);
 	item->m_row = this;
+	item->placeCells(getWidget(), Rect());
 	m_items.push_back(item);
 	return uint32_t(m_items.size() - 1);
 }

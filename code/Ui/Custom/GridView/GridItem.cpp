@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/IBitmap.h"
@@ -80,12 +81,18 @@ IBitmap* GridItem::getImage() const
 	return m_image;
 }
 
-int32_t GridItem::getHeight() const
+int32_t GridItem::getHeight()
 {
 	int32_t height = scaleBySystemDPI(19);
 
 	if (m_font)
-		height = std::max(height, m_font->getPixelSize() + scaleBySystemDPI(10));
+	{
+		int32_t lines = std::max< int32_t >(1, std::count(m_text.begin(), m_text.end(), L'\n'));
+		height = std::max(height, lines * m_font->getPixelSize() + scaleBySystemDPI(10));
+	}
+	else if (getWidget())
+		height = std::max(height, getWidget()->getTextExtent(m_text).cy);
+
 	if (m_image)
 		height = std::max(height, m_image->getSize().cy + scaleBySystemDPI(4));
 

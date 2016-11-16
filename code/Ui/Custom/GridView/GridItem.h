@@ -56,7 +56,7 @@ public:
 
 	IBitmap* getImage() const;
 
-	int32_t getHeight() const;
+	int32_t getHeight();
 
 	GridRow* getRow() const;
 

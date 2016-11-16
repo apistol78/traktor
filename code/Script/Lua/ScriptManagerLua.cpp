@@ -913,6 +913,12 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 
 	int32_t methodId = (int32_t)lua_tonumber(luaState, lua_upvalueindex(1));
 
+#if defined(_DEBUG)
+	Ref< StackFrame > calledFrom;
+	if (manager->m_debugger)
+		manager->m_debugger->captureStackFrame(1, calledFrom);
+#endif
+
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
 		return 0;
