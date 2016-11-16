@@ -110,19 +110,22 @@ void WireDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const M
 		const Vector2& mn = bounds.mn;
 		const Vector2& mx = bounds.mx;
 
-		// Pivot
-		m_primitiveRenderer->drawSolidPoint(
-			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(0.0f, 0.0f)),
-			2.0f,
-			m_wireEnable.top() ? Color4ub(255, 0, 0, 200) : Color4ub(255, 255, 0, 200)
-		);
+		if (m_wireEnable.top())
+		{
+			// Pivot
+			m_primitiveRenderer->drawSolidPoint(
+				transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(0.0f, 0.0f)),
+				2.0f,
+				Color4ub(255, 0, 0, 200)
+			);
 
-		// Line from pivot to top-left corner of bounds.
-		m_primitiveRenderer->drawLine(
-			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(0.0f, 0.0f)),
-			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mn.x, mn.y)),
-			m_wireEnable.top() ? Color4ub(255, 0, 0, 200) : Color4ub(255, 255, 0, 200)
-		);
+			// Line from pivot to top-left corner of bounds.
+			m_primitiveRenderer->drawLine(
+				transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(0.0f, 0.0f)),
+				transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mn.x, mn.y)),
+				Color4ub(255, 0, 0, 200)
+			);
+		}
 
 		// Bounds.
 		m_primitiveRenderer->drawSolidQuad(
