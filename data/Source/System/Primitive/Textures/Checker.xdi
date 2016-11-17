@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.TextureAsset" version="10">
-	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Textures/Checker.png</fileName>
+<object type="traktor.render.TextureAsset" version="13">
+	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Primitive/Textures/Checker.png</fileName>
 	<textureFormat>TfInvalid</textureFormat>
 	<generateNormalMap>false</generateNormalMap>
 	<scaleDepth>0</scaleDepth>
@@ -8,6 +8,8 @@
 	<keepZeroAlpha>true</keepZeroAlpha>
 	<textureType>Tt2D</textureType>
 	<hasAlpha>false</hasAlpha>
+	<generateAlpha>false</generateAlpha>
+	<invertAlpha>false</invertAlpha>
 	<ignoreAlpha>true</ignoreAlpha>
 	<premultiplyAlpha>false</premultiplyAlpha>
 	<scaleImage>false</scaleImage>
@@ -22,5 +24,7 @@
 	<generateSphereMap>false</generateSphereMap>
 	<preserveAlphaCoverage>false</preserveAlphaCoverage>
 	<alphaCoverageReference>0.5</alphaCoverageReference>
+	<sharpenRadius>5</sharpenRadius>
+	<sharpenStrength>1</sharpenStrength>
 	<systemTexture>true</systemTexture>
 </object>
