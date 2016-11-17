@@ -128,7 +128,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	splitterV->create(splitter, false, ui::scaleBySystemDPI(-200));
 
 	m_treeMovie = new ui::custom::TreeView();
-	m_treeMovie->create(splitterV, (ui::custom::TreeView::WsDefault & ~ui::WsClientBorder) | ui::WsDoubleBuffer);
+	m_treeMovie->create(splitterV, ui::custom::TreeView::WsTreeButtons | ui::custom::TreeView::WsTreeLines | ui::WsDoubleBuffer);
 	m_treeMovie->addEventHandler< ui::SelectionChangeEvent >(this, &FlashEditorPage::eventTreeMovieSelect);
 
 	m_pathControl = new FlashPathControl();
