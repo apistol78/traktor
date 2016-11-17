@@ -38,6 +38,7 @@ local outputs =
 		resources =
 		{
 			{ name = "DockClose", column = 2, row = 25, width = 1, height = 1, base = 12 },
+			{ name = "DockGripper", column = 0, row = 37, width = 2, height = 1, base = 7 },
 		}
 	},
 	{
