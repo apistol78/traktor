@@ -63,7 +63,7 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 	m_bitmapClose = new ui::StyleBitmap(L"UI.DockClose", c_ResourceDockClose, sizeof(c_ResourceDockClose));
 	T_FATAL_ASSERT (m_bitmapClose);
 
-	m_bitmapGripper = Bitmap::load(c_ResourceDockGripper, sizeof(c_ResourceDockGripper), L"png");
+	m_bitmapGripper = new ui::StyleBitmap(L"UI.DockGripper", c_ResourceDockGripper, sizeof(c_ResourceDockGripper));
 	T_FATAL_ASSERT (m_bitmapGripper);
 
 	m_focusEventHandler = new EventSubject::MethodEventHandler< DockPane, FocusEvent >(this, &DockPane::eventFocus);
@@ -417,29 +417,19 @@ void DockPane::draw(Canvas& canvas)
 
 		int32_t gx = titleRect.left + titleExtent.cx + scaleBySystemDPI(4);
 		int32_t gx1 = captionRect.right - closeWidth - scaleBySystemDPI(4);
-		while (gx < gx1 - 256)
-		{
-			int32_t w = min(256, gx1 - gx);
-			canvas.drawBitmap(
-				Point(gx, captionRect.getCenter().y - 3),
-				Point(0, m_focus ? 5 : 0),
-				Size(w, 5),
-				m_bitmapGripper,
-				BmAlpha
-			);
-			gx += 256;
-		}
-
+		int32_t gw = m_bitmapGripper->getSize().cx;
+		int32_t gh = m_bitmapGripper->getSize().cy;
 		while (gx < gx1)
 		{
+			int32_t w = min(gw, gx1 - gx);
 			canvas.drawBitmap(
-				Point(gx, captionRect.getCenter().y - 3),
-				Point(0, m_focus ? 5 : 0),
-				Size(4, 5),
+				Point(gx, captionRect.getCenter().y - gh / 2),
+				Point(0, 0), //m_focus ? 5 : 0),
+				Size(w, gh),
 				m_bitmapGripper,
 				BmAlpha
 			);
-			gx += 4;
+			gx += gw;
 		}
 
 		// \fixme White when focus

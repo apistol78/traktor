@@ -884,6 +884,10 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/UI/DockClose.image</value>
 		</item>
 		<item>
+			<name>UI.DockGripper</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/UI/DockGripper.image</value>
+		</item>	
+		<item>
 			<name>UI.TabClose</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/UI/TabClose.image</value>
 		</item>
