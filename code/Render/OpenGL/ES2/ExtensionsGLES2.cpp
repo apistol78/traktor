@@ -16,6 +16,10 @@ PFNGLDELETEVERTEXARRAYSOESPROC g_glDeleteVertexArraysOES = 0;
 PFNGLGENVERTEXARRAYSOESPROC g_glGenVertexArraysOES = 0;
 #endif
 
+#if defined(__ANDROID__)
+PFNGLDISCARDFRAMEBUFFEREXTPROC s_glDiscardFramebufferEXT = 0;
+#endif
+
 void initializeExtensions()
 {
 	const char* supported = (const char*)glGetString(GL_EXTENSIONS);
@@ -45,10 +49,10 @@ void initializeExtensions()
 	}
 
 #if defined(__ANDROID__)
-#	if defined(GL_OES_vertex_array_object)	
 	void* libhandle = dlopen("libGLESv2.so", RTLD_LAZY);
 	if (libhandle)
 	{
+#	if defined(GL_OES_vertex_array_object)	
 		g_glBindVertexArrayOES = (PFNGLBINDVERTEXARRAYOESPROC)dlsym(libhandle, "glBindVertexArrayOES");
 #		if defined(_DEBUG)
 		if (g_glBindVertexArrayOES)
@@ -72,8 +76,14 @@ void initializeExtensions()
 		else
 			log::info << L"glGenVertexArraysOES NOT found!" << Endl;
 #		endif
-	}
 #	endif
+
+		s_glDiscardFramebufferEXT = (PFNGLDISCARDFRAMEBUFFEREXTPROC)dlsym(RTLD_DEFAULT, "glDiscardFramebufferEXT");
+		if (g_glGenVertexArraysOES)
+			log::info << L"glDiscardFramebufferEXT found!" << Endl;
+		else
+			log::info << L"glDiscardFramebufferEXT NOT found!" << Endl;
+	}
 #endif
 }
 

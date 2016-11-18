@@ -20,6 +20,10 @@ extern PFNGLGENVERTEXARRAYSOESPROC g_glGenVertexArraysOES;
 #	endif
 #endif
 
+#if defined(__ANDROID__)
+extern PFNGLDISCARDFRAMEBUFFEREXTPROC s_glDiscardFramebufferEXT;
+#endif
+
 void initializeExtensions();
 
 	}
