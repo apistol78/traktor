@@ -39,6 +39,7 @@ public:
 	:	m_owner(owner)
 	,	m_doubleBuffer(false)
 	,	m_canvasImpl(0)
+	,	m_hCursor(NULL)
 	{
 	}
 
@@ -354,7 +355,9 @@ public:
 		default:
 			break;
 		};
+
 		SetCursor(hCursor);
+		m_hCursor = hCursor;
 	}
 	
 	virtual Point getMousePosition(bool relative) const
@@ -476,6 +479,7 @@ protected:
 	bool m_doubleBuffer;
 	CanvasWin32* m_canvasImpl;
 	SmartFont m_hFont;
+	HCURSOR m_hCursor;
 	std::map< uint32_t, uint32_t > m_timers;
 
 	static
@@ -549,6 +553,7 @@ protected:
 		if (style & WsWantAllInput)
 			m_hWnd.registerMessageHandler(WM_GETDLGCODE, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventGetDlgCode));
 
+		setCursor(CrArrow);
 		return true;
 	}
 
@@ -701,6 +706,8 @@ protected:
 
 		if (!m.consumed())
 			outPass = true;
+
+		SetCursor(m_hCursor);
 		return TRUE;
 	}
 
