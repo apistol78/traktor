@@ -689,17 +689,38 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanv
 
 	renderEnqueuedGlyphs();
 
-	accShape->render(
-		m_renderContext,
-		transform,
-		m_frameBounds,
-		m_frameTransform,
-		cxform,
-		m_maskWrite,
-		m_maskIncrement,
-		m_maskReference,
-		blendMode
-	);
+		if (m_shapeRenderer)
+	{
+		// Render shape through shape cache.
+		m_shapeRenderer->render(
+			m_renderContext,
+			accShape,
+			tag,
+			cxform,
+			m_frameBounds,
+			m_frameTransform,
+			transform,
+			m_maskWrite,
+			m_maskIncrement,
+			m_maskReference,
+			blendMode
+		);
+	}
+	else
+	{
+		// No shape cache; render directly.
+		accShape->render(
+			m_renderContext,
+			transform,
+			m_frameBounds,
+			m_frameTransform,
+			cxform,
+			m_maskWrite,
+			m_maskIncrement,
+			m_maskReference,
+			blendMode
+		);
+	}
 }
 
 void AccDisplayRenderer::end()
