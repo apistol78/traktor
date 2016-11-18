@@ -8,7 +8,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.OcclusionTextureAsset", 9, OcclusionTextureAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.OcclusionTextureAsset", 13, OcclusionTextureAsset, editor::Asset)
 
 void OcclusionTextureAsset::serialize(ISerializer& s)
 {

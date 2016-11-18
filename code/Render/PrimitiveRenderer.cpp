@@ -1,12 +1,15 @@
+#include "Core/Io/AnsiEncoding.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Misc/Endian.h"
+#include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Shader.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
 #include "Resource/IResourceManager.h"
@@ -19,6 +22,8 @@ namespace traktor
 		{
 
 const resource::Id< Shader > c_idPrimitiveShader(Guid(L"{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}"));
+const resource::Id< ISimpleTexture > c_idFontTexture(Guid(L"{123602E4-BC6F-874D-92E8-A20852D140A3}"));
+
 const int c_bufferCount = 16 * 1024;
 
 static handle_t s_handleProjection;
@@ -84,6 +89,8 @@ bool PrimitiveRenderer::create(
 )
 {
 	if (!resourceManager->bind(shader, m_shader))
+		return 0;
+	if (!resourceManager->bind(c_idFontTexture, m_fontTexture))
 		return 0;
 
 	m_renderSystem = renderSystem;
@@ -937,6 +944,40 @@ void PrimitiveRenderer::drawCone(
 			vx[i],
 			colorHint
 		);
+	}
+}
+
+void PrimitiveRenderer::drawText(
+	const Vector4& position,
+	float glyphWidth,
+	float glyphHeight,
+	const std::wstring& text,
+	const Color4ub& color
+)
+{
+	Vector4 p = position;
+	Vector4 dx(glyphWidth, 0.0f, 0.0f);
+	Vector4 dy(0.0f, glyphHeight, 0.0f);
+
+	float du = 1.0f / 16.0f;
+	float dv = 1.0f / 16.0f;
+
+	std::string tx = wstombs(AnsiEncoding(), text);
+	for (std::string::const_iterator i = tx.begin(); i != tx.end(); ++i)
+	{
+		float u = (int32_t(*i - L' ') % 16) * du;
+		float v = (int32_t(*i - L' ') / 16) * dv;
+
+		drawTextureQuad(
+			p, Vector2(u, v + dv),
+			p + dx, Vector2(u + du, v + dv),
+			p + dx + dy, Vector2(u + du, v),
+			p + dy, Vector2(u, v),
+			color,
+			m_fontTexture
+		);
+
+		p += dx;
 	}
 }
 

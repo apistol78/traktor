@@ -36,6 +36,7 @@ class IResourceManager;
 
 class IRenderSystem;
 class IRenderView;
+class ISimpleTexture;
 class ITexture;
 class Shader;
 class VertexBuffer;
@@ -285,6 +286,14 @@ public:
 		const Color4ub& colorHint
 	);
 
+	void drawText(
+		const Vector4& position,
+		float glyphWidth,
+		float glyphHeight,
+		const std::wstring& text,
+		const Color4ub& color
+	);
+
 	const Matrix44& getProjection() const { return m_currentFrame->projections.back(); }
 
 	const Matrix44& getView() const { return m_view.back(); }
@@ -342,6 +351,7 @@ private:
 	// System
 	Ref< IRenderSystem > m_renderSystem;
 	resource::Proxy< Shader > m_shader;
+	resource::Proxy< ISimpleTexture > m_fontTexture;
 	RefArray< VertexBuffer > m_freeVertexBuffers;
 	Semaphore m_lock;
 
