@@ -1,11 +1,9 @@
-#if defined(__ANDROID__)
-#	include <dlfcn.h>
-#endif
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/ExtensionsGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetDepthOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
@@ -30,16 +28,16 @@ namespace traktor
 		namespace
 		{
 
-#if defined(__ANDROID__)
-PFNGLDISCARDFRAMEBUFFEREXTPROC s_glDiscardFramebufferEXT = 0;
-#endif
-
 struct DeleteFramebufferCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_framebufferName;
 
 	DeleteFramebufferCallback(GLuint framebufferName)
 	:	m_framebufferName(framebufferName)
+	{
+	}
+
+	virtual ~DeleteFramebufferCallback()
 	{
 	}
 
@@ -300,9 +298,6 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 		);
 	}
 
-#if defined(__ANDROID__)
-	s_glDiscardFramebufferEXT = (PFNGLDISCARDFRAMEBUFFEREXTPROC)dlsym(RTLD_DEFAULT, "glDiscardFramebufferEXT");
-#endif
 	return true;
 }
 
