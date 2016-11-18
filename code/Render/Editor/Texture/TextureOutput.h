@@ -29,6 +29,7 @@ public:
 	bool m_keepZeroAlpha;
 	TextureType m_textureType;
 	bool m_hasAlpha;
+	bool m_generateAlpha;
 	bool m_ignoreAlpha;
 	bool m_invertAlpha;
 	bool m_premultiplyAlpha;

@@ -289,6 +289,7 @@ bool TextureOutputPipeline::buildOutput(
 		// Determine pixel and texture format from source image (and hints).
 		needAlpha = 
 			(image->getPixelFormat().getAlphaBits() > 0 && !textureOutput->m_ignoreAlpha) ||
+			textureOutput->m_generateAlpha ||
 			textureOutput->m_enableNormalMapCompression;
 
 		if (needAlpha)
@@ -375,6 +376,29 @@ bool TextureOutputPipeline::buildOutput(
 	{
 		drawing::MirrorFilter mirrorFilter(textureOutput->m_flipX, textureOutput->m_flipY);
 		image->apply(&mirrorFilter);
+	}
+
+	// Generate alpha, maximum of color channels.
+	if (textureOutput->m_generateAlpha)
+	{
+		log::info << L"Generating alpha channel..." << Endl;
+
+		Color4f tmp;
+		for (int32_t y = 0; y < image->getHeight(); ++y)
+		{
+			for (int32_t x = 0; x < image->getWidth(); ++x)
+			{
+				image->getPixelUnsafe(x, y, tmp);
+
+				Scalar alpha(0.0f);
+				alpha = max(alpha, tmp.getRed());
+				alpha = max(alpha, tmp.getGreen());
+				alpha = max(alpha, tmp.getBlue());
+				tmp.setAlpha(alpha);
+
+				image->setPixelUnsafe(x, y, tmp);
+			}
+		}
 	}
 
 	// Invert alpha channel.

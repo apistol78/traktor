@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 12, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 13, TextureOutput, ISerializable)
 
 TextureOutput::TextureOutput()
 :	m_textureFormat(TfInvalid)
@@ -18,6 +18,7 @@ TextureOutput::TextureOutput()
 ,	m_keepZeroAlpha(true)
 ,	m_textureType(Tt2D)
 ,	m_hasAlpha(false)
+,	m_generateAlpha(false)
 ,	m_ignoreAlpha(false)
 ,	m_invertAlpha(false)
 ,	m_premultiplyAlpha(false)
@@ -97,6 +98,9 @@ void TextureOutput::serialize(ISerializer& s)
 	}
 
 	s >> Member< bool >(L"hasAlpha", m_hasAlpha);
+
+	if (s.getVersion() >= 13)
+		s >> Member< bool >(L"generateAlpha", m_generateAlpha);
 
 	if (s.getVersion() >= 12)
 		s >> Member< bool >(L"invertAlpha", m_invertAlpha);
