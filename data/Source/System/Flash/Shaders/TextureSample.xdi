@@ -14,8 +14,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-460</first>
-				<second>874</second>
+				<first>-527</first>
+				<second>880</second>
 			</position>
 			<name>TexCoord</name>
 			<connectable>true</connectable>
@@ -25,8 +25,8 @@
 		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>1097</first>
-				<second>452</second>
+				<first>1101</first>
+				<second>432</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -42,8 +42,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-196</first>
-				<second>585</second>
+				<first>-697</first>
+				<second>603</second>
 			</position>
 			<parameterName>Flash_TextureClamp</parameterName>
 			<type>PtScalar</type>
@@ -109,8 +109,8 @@
 		<item type="traktor.render.Fraction">
 			<comment/>
 			<position>
-				<first>-123</first>
-				<second>903</second>
+				<first>-115</first>
+				<second>911</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
@@ -145,8 +145,8 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-345</first>
-				<second>1112</second>
+				<first>-380</first>
+				<second>1137</second>
 			</position>
 			<value>32</value>
 		</item>
@@ -161,7 +161,7 @@
 			<comment/>
 			<position>
 				<first>1101</first>
-				<second>626</second>
+				<second>637</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -177,13 +177,31 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>173</first>
-				<second>543</second>
+				<first>101</first>
+				<second>538</second>
 			</position>
 			<name>TextureRect</name>
 			<usage>DuCustom</usage>
 			<type>DtFloat4</type>
 			<index>2</index>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-641</first>
+				<second>547</second>
+			</position>
+			<name>Clamp</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.Connected">
+			<comment/>
+			<position>
+				<first>-219</first>
+				<second>485</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -215,16 +233,6 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>CaseTrue</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -405,6 +413,46 @@
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
 				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>False</name>
 			</destination>
 		</item>
 	</edges>

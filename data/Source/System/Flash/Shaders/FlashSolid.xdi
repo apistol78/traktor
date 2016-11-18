@@ -4,15 +4,15 @@
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>904</first>
-				<second>144</second>
+				<first>1014</first>
+				<second>212</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>640</first>
-				<second>154</second>
+				<first>572</first>
+				<second>240</second>
 			</position>
 			<parameterName>Flash_CxFormMul</parameterName>
 			<type>PtVector</type>
@@ -21,8 +21,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>639</first>
-				<second>255</second>
+				<first>569</first>
+				<second>394</second>
 			</position>
 			<parameterName>Flash_CxFormAdd</parameterName>
 			<type>PtVector</type>
@@ -80,8 +80,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1371</first>
-				<second>144</second>
+				<first>1449</first>
+				<second>89</second>
 			</position>
 			<fragmentGuid>{AC47E91D-696B-A647-BB33-022614658D3B}</fragmentGuid>
 			<inputPins>
@@ -93,12 +93,20 @@
 					<name>Edge</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>Opaque</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
 				<item>
 					<first>Edge</first>
 					<second>1</second>
+				</item>
+				<item>
+					<first>Opaque</first>
+					<second>0</second>
 				</item>
 			</values>
 		</item>
