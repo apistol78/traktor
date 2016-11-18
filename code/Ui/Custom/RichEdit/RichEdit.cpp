@@ -1152,6 +1152,8 @@ void RichEdit::eventMouseMove(MouseMoveEvent* event)
 	Point position = event->getPosition();
 	if (position.x >= m_lineMargin)
 		setCursor(CrIBeam);
+	else
+		setCursor(CrArrow);
 
 	if (!hasCapture())
 		return;
