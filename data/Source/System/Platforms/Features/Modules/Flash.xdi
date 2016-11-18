@@ -413,6 +413,7 @@
 						<item>Flash_Overlay</item>
 						<item>Flash_Screen</item>
 						<item>Flash_Subtract</item>
+						<item>Flash_Opaque</item>
 						<item>Glow</item>
 					</value>
 				</second>

@@ -703,7 +703,7 @@
 			<comment/>
 			<position>
 				<first>1194</first>
-				<second>1320</second>
+				<second>1321</second>
 			</position>
 			<name>Input</name>
 		</item>
@@ -837,19 +837,11 @@
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
-		<item type="traktor.render.Variable">
-			<comment/>
-			<position>
-				<first>1656</first>
-				<second>1340</second>
-			</position>
-			<name>Input</name>
-		</item>
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1636</first>
-				<second>1614</second>
+				<first>1764</first>
+				<second>1591</second>
 			</position>
 			<technique>Flash_Opaque</technique>
 			<priority>
@@ -887,6 +879,32 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>1562</first>
+				<second>1251</second>
+			</position>
+			<name>Opaque</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.Connected">
+			<comment/>
+			<position>
+				<first>2054</first>
+				<second>1259</second>
+			</position>
+		</item>
+		<item type="traktor.render.Variable">
+			<comment/>
+			<position>
+				<first>1625</first>
+				<second>1321</second>
+			</position>
+			<name>Input</name>
 		</item>
 	</nodes>
 	<edges>
@@ -1192,11 +1210,41 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[43]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[45]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[44]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
+				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[46]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
+				<name>False</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[43]"/>
 				<name>Input</name>
 			</destination>
 		</item>
