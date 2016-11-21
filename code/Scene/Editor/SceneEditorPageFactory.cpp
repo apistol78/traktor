@@ -26,6 +26,7 @@ const TypeInfoSet SceneEditorPageFactory::getEditableTypes() const
 bool SceneEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	outDependencies.insert(Guid(L"{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}"));	// System/Primitive/Shaders/Primitive
+	outDependencies.insert(Guid(L"{123602E4-BC6F-874D-92E8-A20852D140A3}"));	// System/Primitive/Textures/SmallFont
 	outDependencies.insert(Guid(L"{4D4647F5-AC2D-B04A-AAC9-309A7BC9D980}"));	// System/World/WorldDeferredAssets
 	outDependencies.insert(Guid(L"{BCCEE4A9-4054-5A46-B179-8353133C0D65}"));	// System/World/WorldForwardAssets
 	outDependencies.insert(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));	// System/Scene/Shaders/DebugTargets
