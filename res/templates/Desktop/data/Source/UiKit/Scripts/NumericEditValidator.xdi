@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{9C4A9F23-52C0-2F45-989C-118732FF1DDD}
+
+-- NumericEditValidator
+
+NumericEditValidator = NumericEditValidator or inherit(IEditValidator)
+NumericEditValidator_meta = NumericEditValidator_meta or { name = "NumericEditValidator", __index = NumericEditValidator }
+
+function NumericEditValidator.new()
+	local o = {}
+	setmetatable(o, NumericEditValidator_meta)
+
+	return o
+end
+
+function NumericEditValidator:check(text)
+	return tonumber(text) ~= nil
+end
+
+	]]>
+	</text>
+</object>

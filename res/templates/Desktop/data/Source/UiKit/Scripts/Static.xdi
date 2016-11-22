@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- Static
+
+Static = Static or inherit(Widget)
+Static_meta = Static_meta or { name = "Static", __index = Static }
+
+function Static.new(parent, text)
+	local o = {}
+	setmetatable(o, Static_meta)
+
+	local depth = parent._inner_mc:getNextHighestDepth()
+	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_Static", depth)
+	assert (mc ~= nil)
+
+	o:_initialize(parent, mc, text)
+	return o
+end
+
+function Static:getPreferredSize()
+	return self._preferredSize
+end
+
+function Static:setText(text)
+	self._text_tb:parseText(text)
+	self._preferredSize.width = self._text_tb:getTextWidth()
+	self._preferredSize.height = self._mc:getHeight()
+end
+
+-- Private
+
+function Static:_initialize(parent, mc, text)
+	self._text_tb = mc:getMember("text_tb")
+	self._text_tb:parseText(text)
+
+	self._preferredSize =
+	{
+		width = self._text_tb:getTextWidth(),
+		height = mc:getHeight()
+	}
+
+	Widget._initialize(self, parent, mc)
+end
+
+	]]>
+	</text>
+</object>

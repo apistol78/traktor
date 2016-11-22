@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- Widget
+
+Widget = Widget or {}
+Widget_meta = Widget_meta or { name = "Widget", __index = Widget }
+
+Widget.ALIGN_LEFT = "L"
+Widget.ALIGN_CENTER = "C"
+Widget.ALIGN_RIGHT = "R"
+Widget.ALIGN_TOP = "T"
+Widget.ALIGN_BOTTOM = "B"
+
+function Widget.initialize(resourceKit, env)
+	Widget._resourceKit = resourceKit
+	Widget._env = env
+end
+
+function Widget:remove()
+	if self._parent ~= nil then
+		self._parent:_removeChild(self)
+		self._parent = nil
+	end
+	if self._mc ~= nil then
+		self._mc:removeMovieClip()
+		self._mc = nil
+	end
+end
+
+function Widget:setVisible(visible)
+	self._mc:setVisible(visible)
+end
+
+function Widget:isVisible()
+	if not self._mc:isVisible() then return false end
+	if self._parent ~= nil then
+		if not self._parent:isVisible() then return false end
+	end
+	return true
+end
+
+function Widget:setEnable(enable)
+	self._mc:setEnabled(enable)
+end
+
+function Widget:isEnabled()
+	return self._mc:isEnabled()
+end
+
+function Widget:getPlacement()
+	return self._placement
+end
+
+function Widget:getPreferredSize()
+	error("getPreferredSize must be overrided")
+end
+
+function Widget:place(x, y, width, height)
+	self._placement.x = x
+	self._placement.y = y
+	self._placement.width = width
+	self._placement.height = height
+
+	local ps = self:getPreferredSize()
+
+	local ax = x
+	if self.halign == Widget.ALIGN_RIGHT then
+		ax = x + width - ps.width
+	elseif self.halign == Widget.ALIGN_CENTER then
+		ax = x + (width - ps.width) / 2
+	end
+	self._placement.x = ax
+	self._mc:setX(ax)
+
+	local ay = y
+	if self.valign == Widget.ALIGN_BOTTOM then
+		ay = y + height - ps.height
+	elseif self.valign == Widget.ALIGN_CENTER then
+		ay = y + (height - ps.height) / 2
+	end
+	self._placement.y = ay
+	self._mc:setY(ay)
+end
+
+function Widget:debug(indent)
+	local mt = getmetatable(self)
+	if indent == nil then indent = "" end
+	if mt.name ~= nil then
+		print(indent .. "class: " .. mt.name)
+	end
+	if self.name ~= nil then
+		print(indent .. "name: " .. self.name)
+	end
+	print(indent .. "position: " .. self._placement.x .. ", " .. self._placement.y)
+	print(indent .. "size: " .. self._placement.width .. ", " .. self._placement.height)
+end
+
+-- Private
+
+function Widget:_initialize(parent, mc)
+	self._parent = parent
+	self._mc = mc
+	self._mc:setPlaying(false)
+	self._placement = { x = 0, y = 0, width = 0, height = 0 }
+	if parent ~= nil then
+		parent:_addChild(self)
+	end
+end
+
+function Widget:_playSound(soundId)
+	local resourceManager = Widget._env:getResource():getResourceManager()
+	assert (resourceManager ~= nil)
+
+	local soundPlayer = Widget._env:getAudio():getSoundPlayer()
+	assert (soundPlayer ~= nil)
+
+	if not isa(soundId, Guid) then
+		soundId = Guid(soundId)
+	end
+
+	local sound = resourceManager:bind(traktor.sound.Sound, soundId)
+	if sound == nil or sound:get() == nil then return end
+
+	soundPlayer:play(sound:get(), 0)
+end
+
+	]]>
+	</text>
+</object>

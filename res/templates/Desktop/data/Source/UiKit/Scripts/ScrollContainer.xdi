@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{7947759C-88DB-794E-8D09-7F30A40B6669}
+
+-- ScrollContainer
+
+ScrollContainer = ScrollContainer or inherit(Container)
+ScrollContainer_meta = ScrollContainer_meta or { name = "ScrollContainer", __index = ScrollContainer }
+
+ScrollContainer.HORIZONTAL = 1
+ScrollContainer.VERTICAL = 2
+ScrollContainer.BOTH = ScrollContainer.HORIZONTAL | ScrollContainer.VERTICAL
+
+function ScrollContainer.new(parent, layout, mode)
+	local o = {}
+	setmetatable(o, ScrollContainer_meta)
+
+	local depth = parent._inner_mc:getNextHighestDepth()
+	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_ScrollContainer", depth)
+	assert (mc ~= nil)
+
+	o:_initialize(parent, mc, layout, mode)
+	return o
+end
+
+function ScrollContainer:remove()
+	self._mc:setMember("onMouseDown", nil)
+	self._mc:setMember("onMouseUp", nil)
+	self._mc:setMember("onMouseMove", nil)
+	self._mc:setMember("onEnterFrame", nil)
+	Container.remove(self)
+end
+
+function ScrollContainer:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
+
+	self._mask_mc:setWidth(width)
+	self._mask_mc:setHeight(height)
+
+	self._scrollSize.width = width
+	self._scrollSize.height = height
+
+	if self._layout ~= nil then
+		local innerSize = self:_getInnerSize()
+		self._layout:update(self, innerSize.width, innerSize.height)
+	end
+
+	self:_clampScrollOffsets()
+	self._inner_mc:setX(-self._scroll.x)
+	self._inner_mc:setY(-self._scroll.y)
+end
+
+function ScrollContainer:debug(indent)
+	Widget.debug(self, indent)
+	if indent == nil then indent = "" end
+
+	print(indent .. "mode: " .. self._mode)
+	print(indent .. "scrollSize: " .. self._scrollSize.width .. ", " .. self._scrollSize.height)
+	print(indent .. "scroll: " .. self._scroll.x .. ", " .. self._scroll.y)
+
+	if self._layout ~= nil then
+		local innerSize = self:_getInnerSize()
+		print(indent .. "innerSize: " .. innerSize.width .. ", " .. innerSize.height)
+	end
+
+	for i = 1, #self._children do
+		print(indent .. "child[" .. i .. "]")
+		self._children[i]:debug(indent .. "\\t")
+	end
+end
+
+-- Private
+
+function ScrollContainer:_initialize(parent, mc, layout, mode)
+	self._inner_mc = mc:getMember("innerContainer_mc")
+	self._mask_mc = mc:getMember("mask_mc")
+
+	self._mode = mode
+	self._scrollSize = { width = 0, height = 0 }
+	self._scrollFrom = nil
+	self._scroll = { x = 0, y = 0 }
+	self._motion = { x = 0, y = 0 }
+	self._timer = Timer()
+
+	mc:setMember("onMouseDown", function() self:_onMouseDown() end)
+	mc:setMember("onMouseUp", function() self:_onMouseUp() end)
+	mc:setMember("onMouseMove", function() self:_onMouseMove() end)
+	mc:setMember("onEnterFrame", function() self:_onFrame() end)
+
+	Container._initialize(self, parent, mc, self._inner_mc, layout)
+end
+
+function ScrollContainer:_getInnerSize()
+	local w = 0
+	local h = 0
+
+	if self._layout ~= nil then
+		w, h = self._layout:estimate(self)
+		assert (w ~= nil)
+		assert (h ~= nil)
+	end
+
+	-- Restrict scroll axises.
+	if w > 0 and h > 0 then
+		local a = w / h
+		if (self._mode & ScrollContainer.HORIZONTAL) == 0 then	-- No horizontal scroll
+			w = self._scrollSize.width
+			--h = w / a
+		end
+		if (self._mode & ScrollContainer.VERTICAL) == 0 then	-- No vertical scroll
+			h = self._scrollSize.height
+			--w = h * a
+		end
+	end
+	return { width = w, height = h }
+end
+
+function ScrollContainer:_clampScrollOffsets()
+	local innerSize = self:_getInnerSize()
+	if self._scroll.x > innerSize.width - self._scrollSize.width then
+		self._scroll.x = innerSize.width - self._scrollSize.width
+	end
+	if self._scroll.x < 0 then
+		self._scroll.x = 0
+	end
+	if self._scroll.y > innerSize.height - self._scrollSize.height then
+		self._scroll.y = innerSize.height - self._scrollSize.height
+	end
+	if self._scroll.y < 0 then
+		self._scroll.y = 0
+	end
+end
+
+function ScrollContainer:_onMouseDown()
+	if self:isVisible() then
+		local x = self._mc:getMouseX()
+		local y = self._mc:getMouseY()
+		if x >= 0 and y >= 0 and x < self._scrollSize.width and y < self._scrollSize.height then
+			self._scrollFrom =
+			{
+				mouseX = x,
+				mouseY = y,
+				scrollX = self._scroll.x,
+				scrollY = self._scroll.y,
+				time = self._timer:getElapsedTime()
+			}
+		end
+	end
+end
+
+function ScrollContainer:_onMouseUp()
+	self._scrollFrom = nil
+end
+
+function ScrollContainer:resetScroll()
+	self._scroll.y = 0
+	self._scroll.x = 0
+	self._inner_mc:setX(-self._scroll.x)
+	self._inner_mc:setY(-self._scroll.y)
+end
+
+function ScrollContainer:_onMouseMove()
+	if self._scrollFrom ~= nil then
+		local time = self._timer:getElapsedTime()
+
+		local dx = self._mc:getMouseX() - self._scrollFrom.mouseX
+		local dy = self._mc:getMouseY() - self._scrollFrom.mouseY
+
+		self._scroll.x = self._scrollFrom.scrollX - dx
+		self._scroll.y = self._scrollFrom.scrollY - dy
+		self:_clampScrollOffsets()
+
+		self._inner_mc:setX(-self._scroll.x)
+		self._inner_mc:setY(-self._scroll.y)
+
+		if time > self._scrollFrom.time then
+			local dt = time - self._scrollFrom.time
+			self._motion.x = dx / dt
+			self._motion.y = dy / dt
+		end
+	end
+end
+
+function ScrollContainer:_onFrame()
+	if self._scrollFrom == nil and (math.abs(self._motion.x) > 1 or math.abs(self._motion.y) > 1) then
+		self._scroll.x = self._scroll.x - self._motion.x * 1/60
+		self._scroll.y = self._scroll.y - self._motion.y * 1/60
+		self:_clampScrollOffsets()
+
+		self._inner_mc:setX(-self._scroll.x)
+		self._inner_mc:setY(-self._scroll.y)
+
+		self._motion.x = self._motion.x * 0.85
+		self._motion.y = self._motion.y * 0.85
+	end
+end
+
+	]]>
+	</text>
+</object>

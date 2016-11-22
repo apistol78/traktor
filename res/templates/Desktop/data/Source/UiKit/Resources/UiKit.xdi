@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.flash.FlashMovieAsset" version="3">
+	<fileName>UiKit/Resources/UiKit.swf</fileName>
+	<staticMovie>false</staticMovie>
+	<includeAS>true</includeAS>
+</object>

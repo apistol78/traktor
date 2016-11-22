@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- FloodLayout
+
+FloodLayout = FloodLayout or inherit(ILayout)
+FloodLayout_meta = FloodLayout_meta or { name = "FloodLayout", __index = FloodLayout }
+
+function FloodLayout.new(o)
+	local o = {}
+	setmetatable(o, FloodLayout_meta)
+
+	return o
+end
+
+function FloodLayout:estimate(container)
+	local children = container:_getChildren()
+	local p = container:getPlacement()
+	local w, h = p.width, p.height
+	for _, child in ipairs(children) do
+		local ps = child:getPreferredSize()
+		w = math.max(w, ps.width)
+		h = math.max(h, ps.height)
+	end
+	return w, h
+end
+
+function FloodLayout:update(container, width, height)
+	local children = container:_getChildren()
+	for _, child in ipairs(children) do
+		child:place(0, 0, width, height)
+	end
+end
+
+	]]>
+	</text>
+</object>

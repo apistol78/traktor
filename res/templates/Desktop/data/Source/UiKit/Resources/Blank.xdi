@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.flash.FlashEmptyMovieAsset">
+	<stageWidth>1280</stageWidth>
+	<stageHeight>720</stageHeight>
+	<frameRate>60</frameRate>
+	<backgroundColor>192, 145, 254, 255</backgroundColor>
+</object>

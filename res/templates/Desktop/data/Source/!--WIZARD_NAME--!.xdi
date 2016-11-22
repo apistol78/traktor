@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.amalgam.Target">
-	<identifier>com.yourcompany.<!-- output:print(os:getEnvironment("WIZARD_NAME")) --!></identifier>
+	<identifier>com.yourcompany.UpdateDesktop</identifier>
 	<configurations>
-		<item type="traktor.amalgam.TargetConfiguration" version="2">
+		<item type="traktor.amalgam.TargetConfiguration" version="3">
 			<name>Windows (x86)</name>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
-			<systemRoot>$(TRAKTOR_HOME)</systemRoot>
 			<icon/>
 			<features>
 				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
@@ -27,22 +26,21 @@
 				<item>{4ABEE6EB-D9B8-7649-84B3-B1F12645CBAB}</item>
 				<item>{1D195B35-AE58-5C4A-8ED8-ECC4078584CD}</item>
 				<item>{8D42C46E-67F5-114A-9AD7-12C3C3CA28F5}</item>
-				<item>{1BE4C3D9-114D-1743-8E80-A3CED9EB2207}</item>
 				<item>{EE8D31DB-694F-AE4F-AC73-68A9209DED76}</item>
 				<item>{F7AFCB02-ED1D-1540-A95E-999C52CF640C}</item>
 				<item>{AD556440-A93A-A44E-9A1F-6C84F6099DA7}</item>
 				<item>{6AB9B70A-60FD-5D4E-A2C5-9501C7192957}</item>
 				<item>{805454A8-73DC-BF43-990B-266E51956C47}</item>
+				<item>{A061EF9A-AEBB-5946-994B-2D0EA2F4B639}</item>
 			</features>
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
 			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
 			<defaultInput>{E7DE1157-DA53-B14F-9A14-70707DACAFB9}</defaultInput>
 		</item>
-		<item type="traktor.amalgam.TargetConfiguration" version="2">
+		<item type="traktor.amalgam.TargetConfiguration" version="3">
 			<name>Windows (x64)</name>
 			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
-			<systemRoot>$(TRAKTOR_HOME)</systemRoot>
 			<icon/>
 			<features>
 				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
@@ -63,23 +61,22 @@
 				<item>{4ABEE6EB-D9B8-7649-84B3-B1F12645CBAB}</item>
 				<item>{1D195B35-AE58-5C4A-8ED8-ECC4078584CD}</item>
 				<item>{8D42C46E-67F5-114A-9AD7-12C3C3CA28F5}</item>
-				<item>{1BE4C3D9-114D-1743-8E80-A3CED9EB2207}</item>
 				<item>{EE8D31DB-694F-AE4F-AC73-68A9209DED76}</item>
 				<item>{F7AFCB02-ED1D-1540-A95E-999C52CF640C}</item>
 				<item>{AD556440-A93A-A44E-9A1F-6C84F6099DA7}</item>
 				<item>{44DA7651-8D13-E54B-8564-ED92EE552376}</item>
 				<item>{6AB9B70A-60FD-5D4E-A2C5-9501C7192957}</item>
 				<item>{805454A8-73DC-BF43-990B-266E51956C47}</item>
+				<item>{A061EF9A-AEBB-5946-994B-2D0EA2F4B639}</item>
 			</features>
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
 			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
 			<defaultInput>{E7DE1157-DA53-B14F-9A14-70707DACAFB9}</defaultInput>
 		</item>
-		<item type="traktor.amalgam.TargetConfiguration" version="2">
+		<item type="traktor.amalgam.TargetConfiguration" version="3">
 			<name>OSX</name>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
-			<systemRoot>$(TRAKTOR_HOME)</systemRoot>
 			<icon/>
 			<features>
 				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
@@ -96,7 +93,6 @@
 				<item>{60E74182-039E-2849-85F9-448449CC1DE3}</item>
 				<item>{4ABEE6EB-D9B8-7649-84B3-B1F12645CBAB}</item>
 				<item>{1D195B35-AE58-5C4A-8ED8-ECC4078584CD}</item>
-				<item>{1BE4C3D9-114D-1743-8E80-A3CED9EB2207}</item>
 				<item>{AD556440-A93A-A44E-9A1F-6C84F6099DA7}</item>
 				<item>{39D2D77C-0235-5E4C-A0E1-AFA086059852}</item>
 				<item>{7196E6E1-3FB4-FB42-9F4D-D72731F33EB0}</item>
@@ -104,16 +100,16 @@
 				<item>{635B11D0-6C69-154D-A9E1-F59EFD59B8F7}</item>
 				<item>{6AB9B70A-60FD-5D4E-A2C5-9501C7192957}</item>
 				<item>{805454A8-73DC-BF43-990B-266E51956C47}</item>
+				<item>{A061EF9A-AEBB-5946-994B-2D0EA2F4B639}</item>
 			</features>
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
 			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
 			<defaultInput>{E7DE1157-DA53-B14F-9A14-70707DACAFB9}</defaultInput>
 		</item>
-		<item type="traktor.amalgam.TargetConfiguration" version="2">
+		<item type="traktor.amalgam.TargetConfiguration" version="3">
 			<name>Linux</name>
 			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
-			<systemRoot>$(TRAKTOR_HOME)</systemRoot>
 			<icon/>
 			<features>
 				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
@@ -130,7 +126,6 @@
 				<item>{60E74182-039E-2849-85F9-448449CC1DE3}</item>
 				<item>{4ABEE6EB-D9B8-7649-84B3-B1F12645CBAB}</item>
 				<item>{1D195B35-AE58-5C4A-8ED8-ECC4078584CD}</item>
-				<item>{1BE4C3D9-114D-1743-8E80-A3CED9EB2207}</item>
 				<item>{AD556440-A93A-A44E-9A1F-6C84F6099DA7}</item>
 				<item>{7196E6E1-3FB4-FB42-9F4D-D72731F33EB0}</item>
 				<item>{5E352384-51D2-3846-A650-C26AAB2233B8}</item>
@@ -140,6 +135,7 @@
 				<item>{02901748-F3D8-3F45-AB56-6180514151F7}</item>
 				<item>{6AB9B70A-60FD-5D4E-A2C5-9501C7192957}</item>
 				<item>{805454A8-73DC-BF43-990B-266E51956C47}</item>
+				<item>{A061EF9A-AEBB-5946-994B-2D0EA2F4B639}</item>
 			</features>
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>

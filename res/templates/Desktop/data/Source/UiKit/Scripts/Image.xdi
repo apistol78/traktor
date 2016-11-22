@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- Image
+
+Image = Image or inherit(Widget)
+Image_meta = Image_meta or { name = "Image", __index = Image }
+
+function Image.new(parent, image)
+	local o = {}
+	setmetatable(o, Image_meta)
+
+	local depth = parent._inner_mc:getNextHighestDepth()
+	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_Empty", depth)
+	assert (mc ~= nil)
+
+	o:_initialize(parent, mc, image)
+	return o
+end
+
+function Image:getPreferredSize()
+	return self._preferredSize
+end
+
+function Image:setImage(image)
+
+	if isa(image, traktor.drawing.Image) then
+		local bm = self._mc:getContext():createBitmap(image)
+		if bm == nil then return false end
+		self._image_mc = self._mc:createEmptyMovieClip("image_mc", 0)
+		self._image_mc:attachBitmap(bm, 0)
+
+	elseif isa(image, traktor.flash.FlashMovie) then
+		self._image_mc = image:createExternalMovieClipInstance(self._mc, 0)
+
+	elseif type(image) == "string" then
+		self._image_mc = self._resourceKit:createExternalSpriteInstance(self._mc, image, 0)
+	end
+
+	if self._image_mc == nil then
+		return false
+	end
+
+	self._preferredSize.width = self._image_mc:getWidth()
+	self._preferredSize.height = self._image_mc:getHeight()
+end
+
+-- Private
+
+function Image:_initialize(parent, mc, image)
+	self._preferredSize = { width = 0, height = 0 }
+	Widget._initialize(self, parent, mc)
+	if image ~= nil then
+		self:setImage(image)
+	end
+end
+
+	]]>
+	</text>
+</object>
