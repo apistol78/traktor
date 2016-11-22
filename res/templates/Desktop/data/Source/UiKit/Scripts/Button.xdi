@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
+
+-- Button
+
+Button = Button or inherit(Widget)
+Button_meta = Button_meta or { name = "Button", __index = Button }
+
+function Button.new(parent, imageUp, imageDown)
+	local o = {}
+	setmetatable(o, Button_meta)
+
+	local depth = parent._inner_mc:getNextHighestDepth()
+	local mc = parent._inner_mc:createEmptyMovieClip("container_mc", depth)
+	assert (mc ~= nil)
+
+	o:_initialize(parent, mc, imageUp, imageDown)
+	return o
+end
+
+function Button:remove()
+	self._mc:setMember("onPress", nil)
+	self._mc:setMember("onRelease", nil)
+	self._mc:setMember("onMouseUp", nil)
+	Widget.remove(self)
+end
+
+function Button:getPreferredSize()
+	return self._preferredSize
+end
+
+function Button:setOnClick(fn)
+	self._clickFn = fn
+end
+
+-- Private
+
+function Button:_initialize(parent, mc, imageUp, imageDown)
+	self._mc_imageUp = Widget._resourceKit:createExternalSpriteInstance(mc, imageUp, mc:getNextHighestDepth())
+	if imageDown ~= nil then
+		self._mc_imageDown = Widget._resourceKit:createExternalSpriteInstance(mc, imageDown, mc:getNextHighestDepth())
+	else
+		self._mc_imageDown = self._mc_imageUp
+	end
+
+	self._preferredSize =
+	{
+		width = mc:getWidth(),
+		height = mc:getHeight()
+	}
+	self._clickFn = nil
+
+	mc:setMember("onPress", function() self:_onPress() end)
+	mc:setMember("onRelease", function() self:_onRelease() end)
+	mc:setMember("onMouseUp", function() self:_onMouseUp() end)
+
+	self._mc_imageDown:setVisible(false)
+	self._mc_imageUp:setVisible(true)
+
+	Widget._initialize(self, parent, mc)
+end
+
+function Button:_onPress()
+	self._mc_imageUp:setVisible(false)
+	self._mc_imageDown:setVisible(true)
+end
+
+function Button:_onRelease()
+	if self._clickFn ~= nil then self._clickFn() end
+end
+
+function Button:_onMouseUp()
+	self._mc_imageDown:setVisible(false)
+	self._mc_imageUp:setVisible(true)
+end
+
+	]]>
+	</text>
+</object>

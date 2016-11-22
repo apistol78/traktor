@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
+
+-- CheckBox
+
+CheckBox = CheckBox or inherit(Widget)
+CheckBox_meta = CheckBox_meta or { name = "CheckBox", __index = CheckBox }
+
+function CheckBox.new(parent, caption)
+	local o = {}
+	setmetatable(o, CheckBox_meta)
+
+	local depth = parent._inner_mc:getNextHighestDepth()
+	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_CheckBox", depth)
+	assert (mc ~= nil)
+
+	o:_initialize(parent, mc, caption)
+	return o
+end
+
+function CheckBox:remove()
+	self._mc:setMember("onPress", nil)
+	self._mc:setMember("onRelease", nil)
+	Widget.remove(self)
+end
+
+function CheckBox:getPreferredSize()
+	return self._preferredSize
+end
+
+function CheckBox:setCaption(s)
+	self._caption_tb:parseText(s)
+
+	local w = self._caption_tb:getTextWidth()
+	if w > 100 then
+		self._background_mc:setWidth(w + self._margin * 2)
+		self._caption_tb:setX(self._margin)
+		self._caption_tb:setWidth(w)
+	else
+		self._background_mc:setWidth(100 + self._margin * 2)
+		self._caption_tb:setX(self._margin + (100 - w) / 2)
+		self._caption_tb:setWidth(w)
+	end
+
+	self._preferredSize.width = w + self._margin * 2
+end
+
+function CheckBox:setChecked(checked)
+	if checked ~= self._checked then
+		if checked then
+			self._background_mc:gotoAndStop("down")
+		else
+			self._background_mc:gotoAndStop("up")
+		end
+		self._checked = checked
+	end
+end
+
+function CheckBox:isChecked()
+	return self._checked
+end
+
+function CheckBox:setOnClick(fn)
+	self._clickFn = fn
+end
+
+-- Private
+
+function CheckBox:_initialize(parent, mc, caption)
+	self._background_mc = mc:getMember("background_mc")
+	self._caption_tb = mc:getMember("caption_tb")
+
+	self._margin = self._caption_tb:getX()
+	self._preferredSize =
+	{
+		width = mc:getWidth(),
+		height = mc:getHeight()
+	}
+	self._checked = false
+	self._clickFn = nil
+
+	mc:setMember("onPress", function() self:_onPress() end)
+	mc:setMember("onRelease", function() self:_onRelease() end)
+
+	Widget._initialize(self, parent, mc)
+
+	self:setCaption(caption)
+end
+
+function CheckBox:_onPress()
+	self:_playSound("\{356FD8B2-69A8-C445-B616-B50E445B59AA}")
+	self:setChecked(not self._checked)
+end
+
+function CheckBox:_onRelease()
+	if self._clickFn ~= nil then
+		self._clickFn()
+	end
+end
+
+	]]>
+	</text>
+</object>

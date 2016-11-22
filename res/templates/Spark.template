@@ -2,106 +2,27 @@
 <template>
 	<description>Spark</description>
 	<image>Spark/meta/Preview.png</image>
-	<items>
-		<item>
-			<source>Spark/data/Assets/Shapes/LogoShape.svg</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Assets/Shapes/LogoShape.svg</target>
+	<path>Spark</path>
+	<rules>
+		<rule>
+			<pattern>data/.*</pattern>
 			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Scripts/MyStage.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Scripts/MyStage.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Scripts/MyStage.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Scripts/MyStage.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Scripts/MySprite.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Scripts/MySprite.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Scripts/MySprite.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Scripts/MySprite.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Shapes/LogoShape.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Shapes/LogoShape.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Shapes/LogoShape.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Shapes/LogoShape.xdm</target>
-			<transform>false</transform>
-		</item>	
-		<item>
-			<source>Spark/data/Source/Sprites/LogoSprite.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Sprites/LogoSprite.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Sprites/LogoSprite.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Sprites/LogoSprite.xdm</target>
-			<transform>false</transform>
-		</item>	
-		<item>
-			<source>Spark/data/Source/Stages/Stage.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Stages/Stage.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Stages/Stage.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Stages/Stage.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Template - Assets.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME) - Assets.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Template - Assets.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME) - Assets.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Template - Feature.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME) - Feature.xdi</target>
+		</rule>
+		<rule>
+			<pattern>data/.*%.xdi</pattern>
 			<transform>true</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Template - Feature.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME) - Feature.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Template.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME).xdi</target>
+		</rule>		
+		<rule>
+			<pattern>data/.*%.xdm</pattern>
 			<transform>true</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/Template.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME).xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/data/Source/System.xgl</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/System.xgl</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Spark/info/index.html</source>
-			<target>$(WIZARD_OUTPUT_PATH)/info/index.html</target>
+		</rule>		
+		<rule>
+			<pattern>info/.*</pattern>
 			<transform>true</transform>
-		</item>
-		<item>
-			<source>Spark/Template.workspace</source>
-			<target>$(WIZARD_OUTPUT_PATH)/$(WIZARD_NAME).workspace</target>
+		</rule>
+		<rule>
+			<pattern>.*%.workspace</pattern>
 			<transform>true</transform>
-		</item>
-	</items>
+		</rule>
+	</rules>
 </template>

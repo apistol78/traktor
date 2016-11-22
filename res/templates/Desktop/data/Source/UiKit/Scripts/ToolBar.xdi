@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{7947759C-88DB-794E-8D09-7F30A40B6669}
+
+-- ToolBar
+
+ToolBar = ToolBar or inherit(Container)
+ToolBar_meta = ToolBar_meta or { name = "ToolBar", __index = ToolBar }
+
+function ToolBar.new(parent)
+	local o = {}
+	setmetatable(o, ToolBar_meta)
+
+	local depth = parent._inner_mc:getNextHighestDepth()
+	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_ToolBar", depth)
+	assert (mc ~= nil)
+
+	o:_initialize(parent, mc)
+	return o
+end
+
+function ToolBar:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
+
+	local cc = #self._children
+	local cw = 0
+	local ch = 0
+
+	for _, child in ipairs(self._children) do
+		local ps = child:getPreferredSize()
+		cw = cw + ps.width
+		ch = math.max(ch, ps.height)
+	end
+
+	self._background_mc:setWidth(width)
+	self._background_mc:setHeight(ch)
+
+	local mx = (width - cw) / (cc + 1)
+	local cx = mx
+
+	for _, child in ipairs(self._children) do
+		local cw = child:getPreferredSize().width
+		child:place(cx, 0, cw, ch)
+		cx = cx + cw + mx
+	end
+end
+
+-- Private
+
+function ToolBar:_initialize(parent, mc)
+	local inner_mc = mc:getMember("innerContainer_mc")
+	self._background_mc = mc:getMember("background_mc")
+	Container._initialize(self, parent, mc, inner_mc, nil)
+end
+
+	]]>
+	</text>
+</object>

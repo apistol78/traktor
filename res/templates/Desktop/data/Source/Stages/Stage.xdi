@@ -3,24 +3,32 @@
 	<name/>
 	<inherit>{00000000-0000-0000-0000-000000000000}</inherit>
 	<layers>
-		<item type="traktor.amalgam.WorldLayerData" version="3">
+		<item type="traktor.amalgam.WorldLayerData" version="6">
 			<name>world</name>
 			<permitTransition>true</permitTransition>
 			<scene>{646C7F9F-A386-A74E-9279-DD00117958A2}</scene>
 			<entities/>
 		</item>
-		<item type="traktor.amalgam.FlashLayerData" version="3">
+		<item type="traktor.amalgam.FlashLayerData" version="6">
 			<name>ui</name>
 			<permitTransition>true</permitTransition>
-			<movie>{2027BB20-6117-F343-B133-38F35CC6246E}</movie>
-			<externalMovies/>
+			<movie>{E7EB59C5-57F9-BE42-93A3-FE38268D507D}</movie>
+			<externalMovies>
+				<item>
+					<first>UiKit</first>
+					<second>{5ABEAE05-EB26-934F-932F-7F3C7C582383}</second>
+				</item>
+			</externalMovies>
 			<imageProcess>{00000000-0000-0000-0000-000000000000}</imageProcess>
 			<clearBackground>false</clearBackground>
 			<enableSound>true</enableSound>
+			<enableShapeCache>false</enableShapeCache>
+			<enableDirtyRegions>false</enableDirtyRegions>
+			<contextSize>1</contextSize>
 		</item>
 	</layers>
-	<class>{00000000-0000-0000-0000-000000000000}</class>
-	<script>{B28D762A-98CA-F149-B82B-988E7D09D64E}</script>
+	<class>{8227E4BB-9B52-E647-BEF1-6E3F32ED4810}</class>
+	<script>{00000000-0000-0000-0000-000000000000}</script>
 	<shaderFade>{00000000-0000-0000-0000-000000000000}</shaderFade>
 	<fadeRate>1.5</fadeRate>
 	<transitions/>

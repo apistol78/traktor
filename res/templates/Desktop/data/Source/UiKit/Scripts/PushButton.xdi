@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
+
+-- PushButton
+
+PushButton = PushButton or inherit(Widget)
+PushButton_meta = PushButton_meta or { name = "PushButton", __index = PushButton }
+
+function PushButton.new(parent, caption)
+	local o = {}
+	setmetatable(o, PushButton_meta)
+
+	local depth = parent._inner_mc:getNextHighestDepth()
+	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_PushButton", depth)
+	assert (mc ~= nil)
+
+	o:_initialize(parent, mc, caption)
+	return o
+end
+
+function PushButton:remove()
+	self._mc:setMember("onPress", nil)
+	self._mc:setMember("onRelease", nil)
+	self._mc:setMember("onMouseUp", nil)
+	Widget.remove(self)
+end
+
+function PushButton:getPreferredSize()
+	return self._preferredSize
+end
+
+function PushButton:setCaption(s)
+	self._caption_tb:parseText(s)
+end
+
+function PushButton:setOnClick(fn)
+	self._clickFn = fn
+end
+
+-- Private
+
+function PushButton:_initialize(parent, mc, caption)
+	self._background_mc = mc:getMember("background_mc")
+	self._caption_tb = mc:getMember("caption_tb")
+
+	self._margin = self._caption_tb:getX()
+	self._preferredSize =
+	{
+		width = mc:getWidth(),
+		height = mc:getHeight()
+	}
+	self._clickFn = nil
+
+	mc:setMember("onPress", function() self:_onPress() end)
+	mc:setMember("onRelease", function() self:_onRelease() end)
+	mc:setMember("onMouseUp", function() self:_onMouseUp() end)
+
+	Widget._initialize(self, parent, mc)
+
+	self:setCaption(caption)
+end
+
+function PushButton:_onPress()
+	self._background_mc:gotoAndStop("down")
+end
+
+function PushButton:_onRelease()
+	if self._clickFn ~= nil then
+		self._clickFn()
+	end
+end
+
+function PushButton:_onMouseUp()
+	self._background_mc:gotoAndStop("up")
+end
+
+	]]>
+	</text>
+</object>

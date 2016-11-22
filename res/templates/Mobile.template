@@ -2,106 +2,27 @@
 <template>
 	<description>Mobile</description>
 	<image>Mobile/meta/Preview.png</image>
-	<items>
-		<item>
-			<source>Mobile/data/Assets/Objects/Cube/Cube.lwo</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Assets/Objects/Cube/Cube.lwo</target>
+	<path>Mobile</path>
+	<rules>
+		<rule>
+			<pattern>data/.*</pattern>
 			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Input/Input.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Input/Input.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Input/Input.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Input/Input.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Objects/Cube/Cube.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Objects/Cube/Cube.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Objects/Cube/Cube.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Objects/Cube/Cube.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Objects/Cube/Cube-Entity.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Objects/Cube/Cube-Entity.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Objects/Cube/Cube-Entity.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Objects/Cube/Cube-Entity.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Scenes/Scene.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Scenes/Scene.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Scenes/Scene.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Scenes/Scene.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Scripts/Main.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Scripts/Main.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Scripts/Main.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Scripts/Main.xdm</target>
-			<transform>false</transform>
-		</item>		
-		<item>
-			<source>Mobile/data/Source/Stages/Stage.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Stages/Stage.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Stages/Stage.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Stages/Stage.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Template - Assets.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME) - Assets.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Template - Assets.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME) - Assets.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Template.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME).xdi</target>
+		</rule>
+		<rule>
+			<pattern>data/.*%.xdi</pattern>
 			<transform>true</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/Template.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME).xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/data/Source/System.xgl</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/System.xgl</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Mobile/info/index.html</source>
-			<target>$(WIZARD_OUTPUT_PATH)/info/index.html</target>
+		</rule>		
+		<rule>
+			<pattern>data/.*%.xdm</pattern>
 			<transform>true</transform>
-		</item>
-		<item>
-			<source>Mobile/Template.workspace</source>
-			<target>$(WIZARD_OUTPUT_PATH)/$(WIZARD_NAME).workspace</target>
+		</rule>		
+		<rule>
+			<pattern>info/.*</pattern>
 			<transform>true</transform>
-		</item>
-	</items>
+		</rule>
+		<rule>
+			<pattern>.*%.workspace</pattern>
+			<transform>true</transform>
+		</rule>
+	</rules>
 </template>

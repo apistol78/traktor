@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- Edit
+import(traktor.input)
+
+Edit = Edit or inherit(Widget)
+Edit_meta = Edit_meta or { name = "Edit", __index = Edit }
+
+Edit.MODE_DEFAULT = 0
+Edit.MODE_PASSWORD = 1
+
+function Edit.new(parent, text, hint, validator)
+	local o = {}
+	setmetatable(o, Edit_meta)
+
+	local depth = parent._inner_mc:getNextHighestDepth()
+	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_Edit", depth)
+	assert (mc ~= nil)
+
+	o:_initialize(parent, mc, text, hint, validator)
+	return o
+end
+
+function Edit:remove()
+	self._mc:setMember("onSetFocus", nil)
+	self._mc:setMember("onKillFocus", nil)
+	self._mc:setMember("onChanged", nil)
+	Widget.remove(self)
+end
+
+function Edit:setMode(mode)
+	self._text_tb:setPassword((mode & Edit.MODE_PASSWORD) ~= 0)
+end
+
+function Edit:setText(text)
+	self._text_tb:parseText(text)
+end
+
+function Edit:getText()
+	return self._text_tb:getText()
+end
+
+function Edit:getPreferredSize()
+	return self._preferredSize
+end
+
+function Edit:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
+
+	local mx = self._text_tb:getX()
+	self._text_tb:setWidth(width - mx * 2)
+
+	self._background_mc:setWidth(width)
+	self._background_mc:setHeight(height)
+end
+
+-- private
+
+function Edit:_initialize(parent, mc, text, hint, validator)
+	self._background_mc = mc:getMember("background_mc")
+	self._text_tb = mc:getMember("text_tb")
+	self._text_tb:setMember("onSetFocus", function() self:_onSetFocus() end)
+	self._text_tb:setMember("onKillFocus", function() self:_onKillFocus() end)
+	self._text_tb:setMember("onChanged", function() self:_onChanged() end)
+
+	self._preferredSize =
+	{
+		width = mc:getWidth(),
+		height = mc:getHeight()
+	}
+
+	self._hint = hint
+	self._validator = validator
+	self._text0 = ""
+
+	if text ~= nil then
+		if validator ~= nil then
+			assert(validator:check(text))	-- Initial text must be valid.
+		end
+		self._text_tb:parseText(text)
+		self._text0 = text
+		self._hintActive = false
+	elseif hint ~= nil then
+		self._text_tb:parseText(hint)
+		self._hintActive = true
+	end
+
+	Widget._initialize(self, parent, mc)
+end
+
+function Edit:_onSetFocus()
+	if self._hintActive then
+		self._text_tb:parseText("")
+		self._hintActive = false
+	end
+#if defined(ANDROID)
+	KeyboardDeviceAndroid.showSoftKeyboard()
+#endif
+end
+
+function Edit:_onKillFocus()
+	if self._hint ~= "" and self._text_tb:getText() == "" then
+		self._text_tb:parseText(self._hint)
+		self._hintActive = true
+	end
+#if defined(ANDROID)
+	KeyboardDeviceAndroid.hideSoftKeyboard()
+#endif
+end
+
+function Edit:_onChanged()
+	if self._validator ~= nil then
+		local text = self._text_tb:getText()
+		if self._validator:check(text) then
+			self._text0 = text
+		else
+			self._text_tb:parseText(self.text0)
+		end
+	end
+end
+
+	]]>
+	</text>
+</object>

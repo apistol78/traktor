@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{7947759C-88DB-794E-8D09-7F30A40B6669}
+
+-- Dialog
+
+Dialog = Dialog or inherit(Container)
+Dialog_meta = Dialog_meta or { name = "Dialog", __index = Dialog }
+
+function Dialog.new(parent, layout)
+	local o = {}
+	setmetatable(o, Dialog_meta)
+
+	local depth = parent._inner_mc:getNextHighestDepth()
+	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_Dialog", depth)
+	assert (mc ~= nil)
+
+	o:_initialize(parent, mc, layout)
+	return o
+end
+
+function Dialog:getPreferredSize()
+	return self._preferredSize
+end
+
+function Dialog:place(x, y, width, height)
+	self._background_mc:setWidth(width)
+	self._background_mc:setHeight(height / 2)
+	self._preferredSize.width = width
+	self._preferredSize.height = height / 2
+	Container.place(self, x, y, width, height / 2)
+end
+
+-- Private
+
+function Dialog:_initialize(parent, mc, layout)
+	local inner_mc = mc:getMember("innerContainer_mc")
+
+	self._background_mc = mc:getMember("background_mc")
+	self._preferredSize =
+	{
+		width = mc:getWidth(),
+		height = mc:getHeight()
+	}
+
+	Container._initialize(self, parent, mc, inner_mc, layout)
+end
+
+	]]>
+	</text>
+</object>

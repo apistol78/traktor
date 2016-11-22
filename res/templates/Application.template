@@ -2,51 +2,27 @@
 <template>
 	<description>Application</description>
 	<image>Application/meta/Preview.png</image>
-	<items>
-		<item>
-			<source>Application/data/Source/Scripts/Main.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Scripts/Main.xdi</target>
+	<path>Application</path>
+	<rules>
+		<rule>
+			<pattern>data/.*</pattern>
 			<transform>false</transform>
-		</item>
-		<item>
-			<source>Application/data/Source/Scripts/Main.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Scripts/Main.xdm</target>
-			<transform>false</transform>
-		</item>		
-		<item>
-			<source>Application/data/Source/Template - Assets.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME) - Assets.xdi</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Application/data/Source/Template - Assets.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME) - Assets.xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Application/data/Source/Template.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME).xdi</target>
+		</rule>
+		<rule>
+			<pattern>data/.*%.xdi</pattern>
 			<transform>true</transform>
-		</item>
-		<item>
-			<source>Application/data/Source/Template.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME).xdm</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Application/data/Source/System.xgl</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/System.xgl</target>
-			<transform>false</transform>
-		</item>
-		<item>
-			<source>Application/info/index.html</source>
-			<target>$(WIZARD_OUTPUT_PATH)/info/index.html</target>
+		</rule>		
+		<rule>
+			<pattern>data/.*%.xdm</pattern>
 			<transform>true</transform>
-		</item>
-		<item>
-			<source>Application/Template.workspace</source>
-			<target>$(WIZARD_OUTPUT_PATH)/$(WIZARD_NAME).workspace</target>
+		</rule>		
+		<rule>
+			<pattern>info/.*</pattern>
 			<transform>true</transform>
-		</item>
-	</items>
+		</rule>
+		<rule>
+			<pattern>.*%.workspace</pattern>
+			<transform>true</transform>
+		</rule>
+	</rules>
 </template>

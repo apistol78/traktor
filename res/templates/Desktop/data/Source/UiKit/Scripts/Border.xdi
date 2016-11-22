@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- Border
+
+Border = Border or inherit(Widget)
+Border_meta = Border_meta or { name = "Border", __index = Border }
+
+function Border.new(parent)
+	local o = {}
+	setmetatable(o, Border_meta)
+
+	local depth = parent._inner_mc:getNextHighestDepth()
+	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_Border", depth)
+	assert (mc ~= nil)
+
+	o:_initialize(parent, mc)
+	return o
+end
+
+function Border:getPreferredSize()
+	return self._preferredSize
+end
+
+function Border:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
+	self._mc:setSize(Vector2(width, height))
+end
+
+-- Private
+
+function Border:_initialize(parent, mc)
+	self._preferredSize =
+	{
+		width = mc:getWidth(),
+		height = mc:getHeight()
+	}
+	Widget._initialize(self, parent, mc)
+end
+
+	]]>
+	</text>
+</object>
