@@ -61,19 +61,36 @@ void JobTraceDirect::execute()
 			{
 				if (i->type == 0)	// Directional
 				{
-					//int32_t shadowCount = 0;
-					//for (int32_t j = 0; j < c_shadowSamples; ++j)
-					//{
-					//	Vector4 shadowPosition = position + shadowU * Scalar(c_shadowSampleRadius * (random.nextFloat() * 2.0f - 1.0f)) + shadowV * Scalar(c_shadowSampleRadius * (random.nextFloat() * 2.0f - 1.0f));
-					//	Vector4 shadowOrigin = (shadowPosition + normal * c_traceRayOffset).xyz1();
-					//	if (m_sah.queryAnyIntersection(shadowOrigin, -i->direction, 1e3f, surfaceId, cache))
-					//		shadowCount++;
-					//}
-					//phi *= Scalar(1.0f - float(shadowCount) / c_shadowSamples);
+					Vector4 lightDirection = -i->direction;
 
-					Scalar phi = dot3(-i->direction, gb.normal);
-					if (phi > 0.0f)
-						radiance += i->sunColor * phi;
+					// Cosine
+					Scalar phi = dot3(lightDirection, gb.normal);
+					if (phi <= 0.0f)
+						continue;
+
+					// Shadow
+					Vector4 u, v;
+					orthogonalFrame(lightDirection, u, v);
+
+					int32_t shadowCount = 0;
+					for (int32_t j = 0; j < m_shadowSamples; ++j)
+					{
+						float a, b;
+						do
+						{
+							a = random.nextFloat() * 2.0f - 1.0f;
+							b = random.nextFloat() * 2.0f - 1.0f;
+						}
+						while ((a * a) + (b * b) > 1.0f);
+
+						Vector4 shadowPosition = gb.position + u * Scalar(a * m_pointLightRadius) + v * Scalar(b * m_pointLightRadius);
+						Vector4 shadowOrigin = (shadowPosition + gb.normal * c_traceOffset).xyz1();
+						if (m_sah.queryAnyIntersection(shadowOrigin, lightDirection, 1e3f, gb.surfaceIndex, cache))
+							shadowCount++;
+					}
+					Scalar shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_shadowSamples);
+
+					radiance += i->sunColor * shadowAttenuate * phi;
 				}
 				else if (i->type == 1)	// Point
 				{
