@@ -347,8 +347,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 					gbuffer,
 					lights,
 					outputImageRadiance,
-					sourceIlluminateEntityData->getShadowSamples(),
-					sourceIlluminateEntityData->getPointLightRadius()
+					sourceIlluminateEntityData->getPointLightRadius(),
+					sourceIlluminateEntityData->getShadowSamples()
 				);
 
 				Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceDirect >(trace, &JobTraceDirect::execute));
