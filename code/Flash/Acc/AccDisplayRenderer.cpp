@@ -6,6 +6,7 @@
 #include "Flash/FlashBitmap.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashDictionary.h"
+#include "Flash/FlashEditInstance.h"
 #include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
@@ -384,6 +385,24 @@ void AccDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matr
 			transform,
 			m_maskReference
 		);
+}
+
+void AccDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix33& transform)
+{
+#if !defined(__ANDROID__)
+	beginMask(true);
+	renderQuad(transform, edit.getTextBounds(), c_cxfWhite);
+	endMask();
+#endif
+}
+
+void AccDisplayRenderer::endEdit(const FlashEditInstance& edit, const Matrix33& transform)
+{
+#if !defined(__ANDROID__)
+	beginMask(false);
+	renderQuad(transform, edit.getTextBounds(), c_cxfWhite);
+	endMask();
+#endif
 }
 
 void AccDisplayRenderer::beginMask(bool increment)

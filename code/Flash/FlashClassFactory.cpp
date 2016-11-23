@@ -22,6 +22,7 @@
 #include "Flash/FlashSound.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
+#include "Flash/FlashTextFormat.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
@@ -251,6 +252,25 @@ FlashDisplayList* FlashSpriteInstance_getDisplayList(FlashSpriteInstance* self)
 	return &self->getDisplayList();
 }
 
+void FlashEditInstance_setTextFormat_1(FlashEditInstance* self, const FlashTextFormat* textFormat)
+{
+	self->setTextFormat(textFormat);
+}
+
+Ref< FlashTextFormat > FlashEditInstance_getTextFormat_0(FlashEditInstance* self)
+{
+	return self->getTextFormat();
+}
+
+void FlashEditInstance_setTextFormat_3(FlashEditInstance* self, const FlashTextFormat* textFormat, int32_t beginIndex, int32_t endIndex)
+{
+	self->setTextFormat(textFormat, beginIndex, endIndex);
+}
+
+Ref< FlashTextFormat > FlashEditInstance_getTextFormat_2(FlashEditInstance* self, int32_t beginIndex, int32_t endIndex)
+{
+	return self->getTextFormat(beginIndex, endIndex);
+}
 
 Ref< ActionObject > ActionContext_createObject_0(ActionContext* self)
 {
@@ -577,19 +597,29 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashSpriteInstance->setUnknownHandler(&FlashSpriteInstance_invoke);
 	registrar->registerClass(classFlashSpriteInstance);
 
+	Ref< AutoRuntimeClass< FlashTextFormat > > classFlashTextFormat = new AutoRuntimeClass< FlashTextFormat >();
+	//classFlashTextFormat->addConstructor< float, int32_t, float >();
+	classFlashTextFormat->addMethod("setLetterSpacing", &FlashTextFormat::setLetterSpacing);
+	classFlashTextFormat->addMethod("getLetterSpacing", &FlashTextFormat::getLetterSpacing);
+	//classFlashTextFormat->addMethod("setAlign", &FlashTextFormat::setAlign);
+	//classFlashTextFormat->addMethod("getAlign", &FlashTextFormat::getAlign);
+	classFlashTextFormat->addMethod("setSize", &FlashTextFormat::setSize);
+	classFlashTextFormat->addMethod("getSize", &FlashTextFormat::getSize);
+	registrar->registerClass(classFlashTextFormat);
+
 	Ref< AutoRuntimeClass< FlashEditInstance > > classFlashEditInstance = new AutoRuntimeClass< FlashEditInstance >();
 	classFlashEditInstance->addMethod("parseText", &FlashEditInstance::parseText);
 	classFlashEditInstance->addMethod("parseHtml", &FlashEditInstance::parseHtml);
 	classFlashEditInstance->addMethod("setTextBounds", &FlashEditInstance::setTextBounds);
 	classFlashEditInstance->addMethod("getTextBounds", &FlashEditInstance::getTextBounds);
-	//classFlashEditInstance->addMethod("setTextColor", &FlashEditInstance::setTextColor);
-	//classFlashEditInstance->addMethod("getTextColor", &FlashEditInstance::getTextColor);
+	classFlashEditInstance->addMethod("setTextColor", &FlashEditInstance::setTextColor);
+	classFlashEditInstance->addMethod("getTextColor", &FlashEditInstance::getTextColor);
 	classFlashEditInstance->addMethod("setLetterSpacing", &FlashEditInstance::setLetterSpacing);
 	classFlashEditInstance->addMethod("getLetterSpacing", &FlashEditInstance::getLetterSpacing);
-	//classFlashEditInstance->addMethod("setTextFormat", &FlashEditInstance_setTextFormat_1);
-	//classFlashEditInstance->addMethod("getTextFormat", &FlashEditInstance_getTextFormat_0);
-	//classFlashEditInstance->addMethod("setTextFormat", &FlashEditInstance_setTextFormat_3);
-	//classFlashEditInstance->addMethod("getTextFormat", &FlashEditInstance_getTextFormat_2);
+	classFlashEditInstance->addMethod("setTextFormat", &FlashEditInstance_setTextFormat_1);
+	classFlashEditInstance->addMethod("getTextFormat", &FlashEditInstance_getTextFormat_0);
+	classFlashEditInstance->addMethod("setTextFormat", &FlashEditInstance_setTextFormat_3);
+	classFlashEditInstance->addMethod("getTextFormat", &FlashEditInstance_getTextFormat_2);
 	classFlashEditInstance->addMethod("getText", &FlashEditInstance::getText);
 	classFlashEditInstance->addMethod("getHtmlText", &FlashEditInstance::getHtmlText);
 	classFlashEditInstance->addMethod("setPassword", &FlashEditInstance::setPassword);

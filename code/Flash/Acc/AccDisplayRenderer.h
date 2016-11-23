@@ -102,6 +102,10 @@ public:
 
 	virtual void endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) T_OVERRIDE T_FINAL;
 
+	virtual void beginEdit(const FlashEditInstance& edit, const Matrix33& transform) T_OVERRIDE T_FINAL;
+
+	virtual void endEdit(const FlashEditInstance& edit, const Matrix33& transform) T_OVERRIDE T_FINAL;
+
 	virtual void beginMask(bool increment) T_OVERRIDE T_FINAL;
 
 	virtual void endMask() T_OVERRIDE T_FINAL;

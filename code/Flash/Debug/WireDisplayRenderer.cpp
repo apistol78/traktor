@@ -1,4 +1,5 @@
 #include "Core/Misc/SafeDestroy.h"
+#include "Flash/FlashEditInstance.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionObject.h"
@@ -149,6 +150,67 @@ void WireDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const M
 void WireDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
 {
 	m_displayRenderer->endSprite(sprite, transform);
+	m_wireEnable.pop();
+}
+
+void WireDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix33& transform)
+{
+	m_displayRenderer->beginEdit(edit, transform);
+
+	bool parentWireEnable = m_wireEnable.top();
+
+	ActionValue wireOutline;	
+	if (edit.getAsObject()->getMember("__renderWireOutline", wireOutline) && wireOutline.getBoolean())
+		m_wireEnable.push(true);
+	else
+		m_wireEnable.push(false);
+
+	if (parentWireEnable || m_wireEnable.top())
+	{
+		const Aabb2& bounds = edit.getTextBounds();
+
+		const Vector2& mn = bounds.mn;
+		const Vector2& mx = bounds.mx;
+
+		if (m_wireEnable.top())
+		{
+			// Pivot
+			m_primitiveRenderer->drawSolidPoint(
+				transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(0.0f, 0.0f)),
+				2.0f,
+				Color4ub(255, 0, 255, 200)
+			);
+
+			// Line from pivot to top-left corner of bounds.
+			m_primitiveRenderer->drawLine(
+				transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(0.0f, 0.0f)),
+				transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mn.x, mn.y)),
+				Color4ub(255, 0, 255, 200)
+			);
+		}
+
+		// Bounds.
+		m_primitiveRenderer->drawSolidQuad(
+			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mn.x, mn.y)),
+			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mx.x, mn.y)),
+			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mx.x, mx.y)),
+			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mn.x, mx.y)),
+			m_wireEnable.top() ? Color4ub(255, 0, 255, 20) : Color4ub(0, 255, 255, 20)
+		);
+
+		m_primitiveRenderer->drawWireQuad(
+			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mn.x, mn.y)),
+			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mx.x, mn.y)),
+			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mx.x, mx.y)),
+			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mn.x, mx.y)),
+			m_wireEnable.top() ? Color4ub(255, 0, 255, 255) : Color4ub(0, 255, 255, 255)
+		);
+	}
+}
+
+void WireDisplayRenderer::endEdit(const FlashEditInstance& edit, const Matrix33& transform)
+{
+	m_displayRenderer->endEdit(edit, transform);
 	m_wireEnable.pop();
 }
 

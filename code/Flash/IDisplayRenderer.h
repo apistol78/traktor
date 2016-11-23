@@ -21,6 +21,7 @@ namespace traktor
 class ColorTransform;
 class FlashCanvas;
 class FlashDictionary;
+class FlashEditInstance;
 class FlashSpriteInstance;
 class FlashShape;
 class FlashMorphShape;
@@ -64,6 +65,12 @@ public:
 	/*! \brief End rendering sprite.
 	 */
 	virtual void endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) = 0;
+
+	/*! \brief Begin rendering edit field. */
+	virtual void beginEdit(const FlashEditInstance& edit, const Matrix33& transform) = 0;
+
+	/*! \brief End rendering edit field. */
+	virtual void endEdit(const FlashEditInstance& edit, const Matrix33& transform) = 0;
 
 	/*! \brief Begin rendering mask.
 	 *

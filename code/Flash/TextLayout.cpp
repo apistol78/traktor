@@ -383,6 +383,21 @@ void TextLayout::end()
 			i->x = m_bounds.mn.x + offset;
 		}
 	}
+
+	float lineHeight = m_fontHeight + m_leading;
+
+	if (!m_attribs.empty())
+	{
+		const Attribute& attrib = m_attribs[m_currentAttrib];
+		if (attrib.font)
+		{
+			float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+			float fontScale = coordScale * m_fontHeight;
+			lineHeight += attrib.font->getDescent() * fontScale;
+		}
+	}
+
+	m_height = std::max(m_height, m_cursorY + lineHeight);
 }
 
 	}
