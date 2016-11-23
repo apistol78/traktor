@@ -71,6 +71,14 @@ void SwDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matri
 {
 }
 
+void SwDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix33& transform)
+{
+}
+
+void SwDisplayRenderer::endEdit(const FlashEditInstance& edit, const Matrix33& transform)
+{
+}
+
 void SwDisplayRenderer::beginMask(bool increment)
 {
 	m_writeMask = true;

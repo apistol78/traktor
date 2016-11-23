@@ -2,6 +2,7 @@
 #define traktor_flash_FlashEditInstance_H
 
 #include "Flash/FlashCharacterInstance.h"
+#include "Flash/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

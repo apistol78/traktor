@@ -646,11 +646,7 @@ void FlashMovieRenderer::renderCharacter(
 		const TextLayout* layout = editInstance->getTextLayout();
 		T_ASSERT (layout);
 
-#if !defined(__ANDROID__)
-		m_displayRenderer->beginMask(true);
-		m_displayRenderer->renderQuad(editTransform, editInstance->getTextBounds(), c_cxWhite);
-		m_displayRenderer->endMask();
-#endif
+		m_displayRenderer->beginEdit(*editInstance, editTransform);
 
 		const AlignedVector< TextLayout::Line >& lines = layout->getLines();
 		const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();
@@ -735,11 +731,7 @@ void FlashMovieRenderer::renderCharacter(
 				);
 		}
 
-#if !defined(__ANDROID__)
-		m_displayRenderer->beginMask(false);
-		m_displayRenderer->renderQuad(editTransform, editInstance->getTextBounds(), c_cxWhite);
-		m_displayRenderer->endMask();
-#endif
+		m_displayRenderer->endEdit(*editInstance, editTransform);
 		return;
 	}
 
