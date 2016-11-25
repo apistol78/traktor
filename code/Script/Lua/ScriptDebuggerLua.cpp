@@ -374,6 +374,14 @@ bool ScriptDebuggerLua::captureObject(uint32_t object, RefArray< Variable >& out
 	lua_rawgeti(L, LUA_REGISTRYINDEX, object);
 	T_ASSERT (lua_istable(L, -1));
 
+	if (lua_getmetatable(L, -1))
+	{
+		Ref< Variable > variable = new Variable(L"(meta)", L"", 0);
+		uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+		variable->setValue(new ValueObject(objectRef));
+		outMembers.push_back(variable);
+	}
+
 	lua_pushnil(L);
 	while (lua_next(L, -2))
 	{

@@ -32,6 +32,15 @@ HostEnumerator::HostEnumerator(const PropertyGroup* settings, net::DiscoveryMana
 
 int32_t HostEnumerator::count() const
 {
+	// Get new hosts if updated from thread.
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		if (!m_pending.empty())
+		{
+			m_hosts = m_pending;
+			m_pending.clear();
+		}
+	}
 	return int32_t(m_hosts.size());
 }
 
@@ -89,8 +98,8 @@ void HostEnumerator::update()
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-		m_hosts.clear();
-		m_hosts.insert(m_hosts.end(), m_manual.begin(), m_manual.end());
+		m_pending.clear();
+		m_pending.insert(m_pending.end(), m_manual.begin(), m_manual.end());
 
 		for (RefArray< net::NetworkService >::const_iterator i = services.begin(); i != services.end(); ++i)
 		{
@@ -108,10 +117,10 @@ void HostEnumerator::update()
 			h.httpPort = properties->getProperty< PropertyInteger >(L"HttpPort");
 			h.platforms = properties->getProperty< PropertyStringArray >(L"Platforms");
 			h.local = bool(itf.addr != 0 && itf.addr->getHostName() == h.host);
-			m_hosts.push_back(h);
+			m_pending.push_back(h);
 		}
 
-		std::sort(m_hosts.begin(), m_hosts.end());
+		std::sort(m_pending.begin(), m_pending.end());
 	}
 }
 
