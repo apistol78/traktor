@@ -63,7 +63,8 @@ private:
 	Ref< net::DiscoveryManager > m_discoveryManager;
 	mutable Semaphore m_lock;
 	std::vector< Host > m_manual;
-	std::vector< Host > m_hosts;
+	mutable std::vector< Host > m_hosts;
+	mutable std::vector< Host > m_pending;
 };
 
 	}
