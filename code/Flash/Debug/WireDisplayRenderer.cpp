@@ -1,7 +1,9 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Flash/FlashEditInstance.h"
+#include "Flash/FlashFont.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashSpriteInstance.h"
+#include "Flash/TextLayout.h"
 #include "Flash/Action/ActionObject.h"
 #include "Flash/Debug/WireDisplayRenderer.h"
 #include "Render/PrimitiveRenderer.h"
@@ -172,23 +174,6 @@ void WireDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix3
 		const Vector2& mn = bounds.mn;
 		const Vector2& mx = bounds.mx;
 
-		if (m_wireEnable.top())
-		{
-			// Pivot
-			m_primitiveRenderer->drawSolidPoint(
-				transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(0.0f, 0.0f)),
-				2.0f,
-				Color4ub(255, 0, 255, 200)
-			);
-
-			// Line from pivot to top-left corner of bounds.
-			m_primitiveRenderer->drawLine(
-				transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(0.0f, 0.0f)),
-				transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mn.x, mn.y)),
-				Color4ub(255, 0, 255, 200)
-			);
-		}
-
 		// Bounds.
 		m_primitiveRenderer->drawSolidQuad(
 			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mn.x, mn.y)),
@@ -205,6 +190,57 @@ void WireDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix3
 			transformIntoView(m_frameBounds, m_frameTransform, transform, Vector2(mn.x, mx.y)),
 			m_wireEnable.top() ? Color4ub(255, 0, 255, 255) : Color4ub(0, 255, 255, 255)
 		);
+
+		if (m_wireEnable.top())
+		{
+			const TextLayout* layout = edit.getTextLayout();
+			T_ASSERT (layout);
+
+			const AlignedVector< TextLayout::Line >& lines = layout->getLines();
+			const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();
+
+			float textOffsetX = 0.0f;
+			float textOffsetY = -(layout->getFontHeight() + layout->getLeading()) * edit.getScroll();
+
+			for (AlignedVector< TextLayout::Line >::const_iterator i = lines.begin(); i != lines.end(); ++i)
+			{
+				for (AlignedVector< TextLayout::Word >::const_iterator j = i->words.begin(); j != i->words.end(); ++j)
+				{
+					const TextLayout::Attribute& attrib = attribs[j->attrib];
+					const AlignedVector< TextLayout::Character >& chars = j->chars;
+
+					float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+					float fontScale = coordScale * layout->getFontHeight();
+
+					for (uint32_t k = 0; k < chars.size(); ++k)
+					{
+						if (chars[k].ch != 0)
+						{
+							uint16_t glyphIndex = attrib.font->lookupIndex(chars[k].ch);
+
+							const FlashShape* glyphShape = attrib.font->getShape(glyphIndex);
+							if (!glyphShape)
+								continue;
+
+							Matrix33 glyphTransform = transform * translate(textOffsetX + i->x + chars[k].x, textOffsetY + i->y) * scale(fontScale, fontScale);
+
+							const Aabb2& shapeBounds = glyphShape->getShapeBounds();
+
+							const Vector2& mn = shapeBounds.mn;
+							const Vector2& mx = shapeBounds.mx;
+
+							m_primitiveRenderer->drawWireQuad(
+								transformIntoView(m_frameBounds, m_frameTransform, glyphTransform, Vector2(mn.x, mn.y)),
+								transformIntoView(m_frameBounds, m_frameTransform, glyphTransform, Vector2(mx.x, mn.y)),
+								transformIntoView(m_frameBounds, m_frameTransform, glyphTransform, Vector2(mx.x, mx.y)),
+								transformIntoView(m_frameBounds, m_frameTransform, glyphTransform, Vector2(mn.x, mx.y)),
+								Color4ub(0, 0, 255, 128)
+							);
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
