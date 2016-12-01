@@ -13,9 +13,7 @@ function ToolBar.new(parent)
 	local o = {}
 	setmetatable(o, ToolBar_meta)
 
-	local depth = parent._inner_mc:getNextHighestDepth()
-	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_ToolBar", depth)
-	assert (mc ~= nil)
+	local mc = Widget._createResource(parent, "MC_ToolBar")
 
 	o:_initialize(parent, mc)
 	return o

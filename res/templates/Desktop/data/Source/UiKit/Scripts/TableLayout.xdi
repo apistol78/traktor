@@ -24,13 +24,51 @@ function TableLayout.new(cdef, rdef, hmargin, vmargin, hpad, vpad)
 end
 
 function TableLayout:estimate(container)
-	local p = container:getPlacement()
-	local w, h = self:_calculate(container, p.width, p.height)
+	local children = container:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
+
+	local nc = #self._cdef
+	local nr = (#children + nc - 1) / math.max(nc, 1)
+
+	-- Measure widest preferred row.
+	local widest = 0
+	for r = 1, nr do
+		local w = 0
+		for c = 1, nc do
+			local i = c + (r - 1) * nc
+			if i <= #children then
+				w = w + children[i]:getPreferredSize().width
+			end
+		end
+		widest = math.max(widest, w)
+	end
+
+	-- Measure tallest preferred column.
+	local tallest = 0
+	for c = 1, nc do
+		local h = 0
+		for r = 1, nr do
+			local i = c + (r - 1) * nc
+			if i <= #children then
+				h = h + children[i]:getPreferredSize().height
+			end
+		end
+		tallest = math.max(tallest, h)
+	end
 
 	local mx = self._hmargin
 	local my = self._vmargin
 	local px = self._hpad
 	local py = self._vpad
+
+	-- Calculate largest preferred size.
+	local p =
+	{
+		width = mx * 2 + widest + px * math.max(nc - 1, 0),
+		height = my * 2 + tallest + py * math.max(nr - 1, 0)
+	}
+
+	-- Calculate final dimensions by applying table algorithm.
+	local w, h = self:_calculate(container, p.width, p.height)
 
 	local tw = mx * 2 + math.max(#w - 1, 0) * px
 	for _, v in ipairs(w) do tw = tw + v end
@@ -53,7 +91,7 @@ function TableLayout:update(container, width, height)
 	local x = mx
 	local y = my
 
-	local children = container:_getChildren()
+	local children = container:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	for i = 1, #children do
 		local c = math.floor((i - 1) % nc + 1)
 		local r = math.floor((i - 1) / nc + 1)
@@ -74,16 +112,13 @@ function TableLayout:_calculate(container, width, height)
 	local px = self._hpad
 	local py = self._vpad
 
-	local children = container:_getChildren()
+	local children = container:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 
 	local nc = #self._cdef
 	local nr = (#children + nc - 1) / math.max(nc, 1)
 
-	local aw = width - mx * 2 - math.max((nc - 2), 0) * px
-	local ah = height - my * 2 - math.max((nr - 2), 0) * py
-
-	local nc = #self._cdef
-	local nr = (#children + nc - 1) / math.max(nc, 1)
+	local aw = width - mx * 2 - math.max((nc - 1), 0) * px
+	local ah = height - my * 2 - math.max((nr - 1), 0) * py
 
 	local w = {}
 	for c = 1, nc do

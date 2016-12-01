@@ -7,52 +7,106 @@
 Image = Image or inherit(Widget)
 Image_meta = Image_meta or { name = "Image", __index = Image }
 
-function Image.new(parent, image)
+Image.MODE_DEFAULT = 0
+Image.MODE_STRETCH = 1
+Image.MODE_CLIP = 2
+
+function Image.new(parent, image, mode)
 	local o = {}
 	setmetatable(o, Image_meta)
 
-	local depth = parent._inner_mc:getNextHighestDepth()
-	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_Empty", depth)
-	assert (mc ~= nil)
+	local mc = Widget._createEmptyResource(parent)
 
-	o:_initialize(parent, mc, image)
+	o:_initialize(parent, mc, image, mode)
 	return o
 end
 
 function Image:getPreferredSize()
-	return self._preferredSize
+	return
+	{
+		width = self._preferredSize.width * self._hscale,
+		height = self._preferredSize.height * self._vscale
+	}
 end
 
-function Image:setImage(image)
+function Image:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
 
+	if self._mode == Image.MODE_STRETCH then
+		self._image_mc:setWidth(width)
+		self._image_mc:setHeight(height)
+
+	elseif self._mode == Image.MODE_CLIP then
+		self._clipper_mc:setWidth(width)
+		self._clipper_mc:setHeight(height)
+	end
+end
+
+function Image:setImage(image, mode)
+	if mode == nil then
+		mode = Image.MODE_DEFAULT
+	end
+
+	-- Create image resource.
 	if isa(image, traktor.drawing.Image) then
 		local bm = self._mc:getContext():createBitmap(image)
 		if bm == nil then return false end
-		self._image_mc = self._mc:createEmptyMovieClip("image_mc", 0)
+		self._image_mc = Widget._createEmptyResource(self)
 		self._image_mc:attachBitmap(bm, 0)
 
 	elseif isa(image, traktor.flash.FlashMovie) then
 		self._image_mc = image:createExternalMovieClipInstance(self._mc, 0)
 
 	elseif type(image) == "string" then
-		self._image_mc = self._resourceKit:createExternalSpriteInstance(self._mc, image, 0)
+		self._image_mc = Widget._createResource(self, image)
 	end
 
 	if self._image_mc == nil then
 		return false
 	end
 
+	-- Keep original size as preferred size.
 	self._preferredSize.width = self._image_mc:getWidth()
 	self._preferredSize.height = self._image_mc:getHeight()
+
+	-- Ensure scale is 
+	self._image_mc:setScale(Vector2(self._hscale * 100, self._vscale * 100))
+
+	-- Create clipper.
+	if mode == Image.MODE_CLIP then
+		self._clipper_mc = Widget._createResource(self, "MC_Clipper")
+		self._clipper_mc:setWidth(self._preferredSize.width)
+		self._clipper_mc:setHeight(self._preferredSize.height)
+		self._image_mc:setMask(self._clipper_mc)
+	end
+
+	self._mode = mode
+end
+
+function Image:setScale(hscale, vscale)
+	self._hscale = hscale
+	self._vscale = hscale
+	if self._image_mc ~= nil then
+		self._image_mc:setScale(Vector2(hscale * 100, vscale * 100))
+	end
+	return self
 end
 
 -- Private
 
-function Image:_initialize(parent, mc, image)
+function Image:_initialize(parent, mc, image, mode)
+#if defined(_DEBUG)
+	mc:setMember("__renderWireOutline", true)
+#endif
+
+	self._hscale = 1
+	self._vscale = 1
 	self._preferredSize = { width = 0, height = 0 }
+
 	Widget._initialize(self, parent, mc)
+
 	if image ~= nil then
-		self:setImage(image)
+		self:setImage(image, mode)
 	end
 end
 

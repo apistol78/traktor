@@ -13,12 +13,27 @@ Widget.ALIGN_RIGHT = "R"
 Widget.ALIGN_TOP = "T"
 Widget.ALIGN_BOTTOM = "B"
 
-function Widget.initialize(resourceKit, env)
-	Widget._resourceKit = resourceKit
+function Widget.initialize(env, resourceKits)
 	Widget._env = env
+	Widget._resourceKits = {}
+	for _, rkid in ipairs(resourceKits) do
+		local rk = env:getResource():getResourceManager():bind(traktor.flash.FlashMovie, rkid)
+		if rk == nil then return false end
+		table.insert(Widget._resourceKits, rk)
+	end
+	return true
 end
 
 function Widget:remove()
+	if Widget._modal == self then
+		Widget._modal = nil
+	end
+	for e, _ in pairs(self._events) do
+		self._mc:setMember(e, nil)
+	end
+	while #self._children > 0 do
+		self._children[1]:remove()
+	end
 	if self._parent ~= nil then
 		self._parent:_removeChild(self)
 		self._parent = nil
@@ -29,8 +44,30 @@ function Widget:remove()
 	end
 end
 
+function Widget:getParent()
+	return self._parent
+end
+
+function Widget:getAncestor()
+	if self._parent == nil then return self end
+	return self._parent:getAncestor()
+end
+
+function Widget:getChildren(filterFn)
+	if filterFn == nil then
+		return self._children
+	else
+		local children = {}
+		for _, c in ipairs(self._children) do
+			if filterFn(c) then table.insert(children, c) end
+		end
+		return children
+	end
+end
+
 function Widget:setVisible(visible)
 	self._mc:setVisible(visible)
+	return self
 end
 
 function Widget:isVisible()
@@ -43,10 +80,35 @@ end
 
 function Widget:setEnable(enable)
 	self._mc:setEnabled(enable)
+	return self
 end
 
 function Widget:isEnabled()
 	return self._mc:isEnabled()
+end
+
+function Widget:setModal()
+	if Widget._modal == nil then
+		Widget._modal = self
+		return true
+	else
+		return false
+	end
+end
+
+function Widget:releaseModal()
+	assert (Widget._modal == self)
+	Widget._modal = nil
+end
+
+function Widget:setHorizontalAlign(halign)
+	self._halign = halign
+	return self
+end
+
+function Widget:setVerticalAlign(valign)
+	self._valign = valign
+	return self
 end
 
 function Widget:getPlacement()
@@ -66,22 +128,35 @@ function Widget:place(x, y, width, height)
 	local ps = self:getPreferredSize()
 
 	local ax = x
-	if self.halign == Widget.ALIGN_RIGHT then
+	if self._halign == Widget.ALIGN_RIGHT then
 		ax = x + width - ps.width
-	elseif self.halign == Widget.ALIGN_CENTER then
+	elseif self._halign == Widget.ALIGN_CENTER then
 		ax = x + (width - ps.width) / 2
 	end
 	self._placement.x = ax
 	self._mc:setX(ax)
 
 	local ay = y
-	if self.valign == Widget.ALIGN_BOTTOM then
+	if self._valign == Widget.ALIGN_BOTTOM then
 		ay = y + height - ps.height
-	elseif self.valign == Widget.ALIGN_CENTER then
+	elseif self._valign == Widget.ALIGN_CENTER then
 		ay = y + (height - ps.height) / 2
 	end
 	self._placement.y = ay
 	self._mc:setY(ay)
+end
+
+function Widget:transformInto(pt, into)
+	local from_mc = self._inner_mc
+	if from_mc == nil then from_mc = self._mc end
+	assert (from_mc ~= nil)
+
+	local into_mc = into._inner_mc
+	if into_mc == nil then into_mc = into._mc end
+	assert (into_mc ~= nil)
+
+	local r = from_mc:transformInto(into_mc, Vector2(pt.x * 20, pt.y * 20))
+	return { x = r:x() / 20, y = r:y() / 20 }
 end
 
 function Widget:debug(indent)
@@ -95,6 +170,10 @@ function Widget:debug(indent)
 	end
 	print(indent .. "position: " .. self._placement.x .. ", " .. self._placement.y)
 	print(indent .. "size: " .. self._placement.width .. ", " .. self._placement.height)
+	for i = 1, #self._children do
+		print(indent .. "child[" .. i .. "]")
+		self._children[i]:debug(indent .. "\\t")
+	end
 end
 
 -- Private
@@ -104,9 +183,75 @@ function Widget:_initialize(parent, mc)
 	self._mc = mc
 	self._mc:setPlaying(false)
 	self._placement = { x = 0, y = 0, width = 0, height = 0 }
+	self._events = {}
+	self._children = {}
 	if parent ~= nil then
 		parent:_addChild(self)
 	end
+end
+
+function Widget:_addChild(child)
+	table.insert(self._children, child)
+end
+
+function Widget:_removeChild(child)
+	for i, k in ipairs(self._children) do
+		if k == child then
+			table.remove(self._children, i)
+			return
+		end
+	end
+	error("Not a child of this container")
+end
+
+function Widget:_isChild(child)
+	if child == self then return true end
+	local children = {}
+	for _, c in ipairs(self._children) do
+		if c:_isChild(child) then return true end
+	end
+	return false
+end
+
+function Widget:_registerEvent(event, eventFn)
+	if eventFn ~= nil then
+		self._mc:setMember(event, function()
+			if Widget._modal == nil or Widget._modal:_isChild(self) then
+				eventFn()
+			end
+		end)
+	else
+		self._mc:setMember(event, nil)
+	end
+	self._events[event] = eventFn
+end
+
+function Widget._createEmptyResource(parent)
+	local into_mc = parent._inner_mc
+	if into_mc == nil then into_mc = parent._mc end
+	assert (into_mc ~= nil)
+
+	local depth = into_mc:getNextHighestDepth()
+	local mc = into_mc:createEmptyMovieClip("", depth)
+	assert (mc ~= nil)
+
+	return mc
+end
+
+function Widget._createResource(parent, resource)
+	local into_mc = parent._inner_mc
+	if into_mc == nil then into_mc = parent._mc end
+	assert (into_mc ~= nil)
+
+	local depth = into_mc:getNextHighestDepth()
+	local mc = nil
+	for _, rk in ipairs(Widget._resourceKits) do
+		mc = rk:get():createExternalSpriteInstance(into_mc, resource, depth)
+		if mc ~= nil then break end
+	end
+	assert (mc ~= nil)
+
+	return mc
 end
 
 function Widget:_playSound(soundId)

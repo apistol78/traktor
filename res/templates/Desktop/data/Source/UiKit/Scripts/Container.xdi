@@ -13,25 +13,20 @@ function Container.new(parent, layout)
 	local o = {}
 	setmetatable(o, Container_meta)
 
-	local depth = parent._inner_mc:getNextHighestDepth()
-	local mc = parent._inner_mc:createEmptyMovieClip("mc", depth)
-	assert (mc ~= nil)
+	local mc = Widget._createEmptyResource(parent)
 
 	o:_initialize(parent, mc, mc, layout)
 	return o
 end
 
-function Container:remove()
-	while #self._children > 0 do
-		self._children[1]:remove()
-	end
-	Widget.remove(self)
-end
-
 function Container:getPreferredSize()
 	if self._layout ~= nil then
-		local w, h = self._layout:estimate(self)
-		return { width = w, height = h }
+		if self:isVisible() then
+			local w, h = self._layout:estimate(self)
+			return { width = w, height = h }
+		else
+			return { width = 0, height = 0 }
+		end
 	else
 		local w, h = 0, 0
 		for _, child in ipairs(self._children) do
@@ -45,25 +40,22 @@ end
 
 function Container:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
-	if self._layout ~= nil then
+	if self:isVisible() and self._layout ~= nil then
 		self._layout:update(self, width, height)
 	end
 end
 
 function Container:layout()
-	if self._layout ~= nil then
+	if self:isVisible() and self._layout ~= nil then
 		local p = self:getPlacement()
 		self._layout:update(self, p.width, p.height)
 	end
 end
 
-function Container:debug(indent)
-	Widget.debug(self, indent)
-	if indent == nil then indent = "" end
-	for i = 1, #self._children do
-		print(indent .. "child[" .. i .. "]")
-		self._children[i]:debug(indent .. "\\t")
-	end
+function Container:setVisible(visible)
+	Widget.setVisible(self, visible)
+	self:layout()
+	return self
 end
 
 -- Private
@@ -71,27 +63,10 @@ end
 function Container:_initialize(parent, mc, inner_mc, layout)
 	self._inner_mc = inner_mc
 	self._layout = layout
-	self._children = {}
 	Widget._initialize(self, parent, mc)
 end
 
-function Container:_addChild(child)
-	table.insert(self._children, child)
-end
 
-function Container:_removeChild(child)
-	for i, k in ipairs(self._children) do
-		if k == child then
-			table.remove(self._children, i)
-			return
-		end
-	end
-	error("Not a child of this container")
-end
-
-function Container:_getChildren()
-	return self._children
-end
 
 	]]>
 	</text>

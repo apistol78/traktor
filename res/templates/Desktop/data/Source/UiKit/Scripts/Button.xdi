@@ -13,19 +13,10 @@ function Button.new(parent, imageUp, imageDown)
 	local o = {}
 	setmetatable(o, Button_meta)
 
-	local depth = parent._inner_mc:getNextHighestDepth()
-	local mc = parent._inner_mc:createEmptyMovieClip("container_mc", depth)
-	assert (mc ~= nil)
+	local mc = Widget._createEmptyResource(parent)
 
 	o:_initialize(parent, mc, imageUp, imageDown)
 	return o
-end
-
-function Button:remove()
-	self._mc:setMember("onPress", nil)
-	self._mc:setMember("onRelease", nil)
-	self._mc:setMember("onMouseUp", nil)
-	Widget.remove(self)
 end
 
 function Button:getPreferredSize()
@@ -39,11 +30,44 @@ end
 -- Private
 
 function Button:_initialize(parent, mc, imageUp, imageDown)
-	self._mc_imageUp = Widget._resourceKit:createExternalSpriteInstance(mc, imageUp, mc:getNextHighestDepth())
+	Widget._initialize(self, parent, mc)
+
+	if isa(imageUp, traktor.drawing.Image) then
+		local bm = self._mc:getContext():createBitmap(imageUp)
+		if bm == nil then return false end
+		self._imageUp_mc = Widget._createEmptyResource(self)
+		self._imageUp_mc:attachBitmap(bm, 0)
+
+	elseif isa(imageUp, traktor.flash.FlashMovie) then
+		self._imageUp_mc = image:createExternalMovieClipInstance(self._mc, 0)
+
+	elseif type(imageUp) == "string" then
+		self._imageUp_mc = Widget._createResource(self, imageUp)
+	end
+
+	if self._imageUp_mc == nil then
+		return false
+	end
+
 	if imageDown ~= nil then
-		self._mc_imageDown = Widget._resourceKit:createExternalSpriteInstance(mc, imageDown, mc:getNextHighestDepth())
+		if isa(imageDown, traktor.drawing.Image) then
+			local bm = self._mc:getContext():createBitmap(imageDown)
+			if bm == nil then return false end
+			self._imageDown_mc = Widget._createEmptyResource(self)
+			self._imageDown_mc:attachBitmap(bm, 0)
+	
+		elseif isa(imageDown, traktor.flash.FlashMovie) then
+			self._imageDown_mc = image:createExternalMovieClipInstance(self._mc, 0)
+	
+		elseif type(imageDown) == "string" then
+			self._imageDown_mc = Widget._createResource(self, imageDown)
+		end
+	
+		if self._imageDown_mc == nil then
+			return false
+		end
 	else
-		self._mc_imageDown = self._mc_imageUp
+		self._imageDown_mc = self._imageUp_mc
 	end
 
 	self._preferredSize =
@@ -53,19 +77,17 @@ function Button:_initialize(parent, mc, imageUp, imageDown)
 	}
 	self._clickFn = nil
 
-	mc:setMember("onPress", function() self:_onPress() end)
-	mc:setMember("onRelease", function() self:_onRelease() end)
-	mc:setMember("onMouseUp", function() self:_onMouseUp() end)
+	self:_registerEvent("onPress", function() self:_onPress() end)
+	self:_registerEvent("onRelease", function() self:_onRelease() end)
+	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
 
-	self._mc_imageDown:setVisible(false)
-	self._mc_imageUp:setVisible(true)
-
-	Widget._initialize(self, parent, mc)
+	self._imageDown_mc:setVisible(false)
+	self._imageUp_mc:setVisible(true)
 end
 
 function Button:_onPress()
-	self._mc_imageUp:setVisible(false)
-	self._mc_imageDown:setVisible(true)
+	self._imageUp_mc:setVisible(false)
+	self._imageDown_mc:setVisible(true)
 end
 
 function Button:_onRelease()
@@ -73,8 +95,8 @@ function Button:_onRelease()
 end
 
 function Button:_onMouseUp()
-	self._mc_imageDown:setVisible(false)
-	self._mc_imageUp:setVisible(true)
+	self._imageDown_mc:setVisible(false)
+	self._imageUp_mc:setVisible(true)
 end
 
 	]]>
