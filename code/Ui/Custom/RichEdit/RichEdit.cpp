@@ -8,6 +8,7 @@
 #include "Ui/Clipboard.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/ScrollBar.h"
+#include "Ui/Custom/RichEdit/CaretEvent.h"
 #include "Ui/Custom/RichEdit/RichEdit.h"
 
 namespace traktor
@@ -143,10 +144,17 @@ void RichEdit::setText(const std::wstring& text)
 
 	int32_t lastOffset = int32_t(m_text.size());
 	if (m_caret >= lastOffset)
+	{
 		m_caret = lastOffset;
+
+		CaretEvent caretEvent(this);
+		raiseEvent(&caretEvent);
+	}
 
 	updateCharacterWidths();
 	updateScrollBars();
+
+	santiyCheck();
 }
 
 std::wstring RichEdit::getText() const
@@ -254,6 +262,7 @@ void RichEdit::setBackgroundAttribute(int32_t line, int32_t attribute)
 		m_lines[line].attrib = attribute;
 		update();
 	}
+	santiyCheck();
 }
 
 void RichEdit::setAttributes(int32_t start, int32_t length, int32_t textAttribute, int32_t backgroundAttribute)
@@ -294,6 +303,7 @@ void RichEdit::setImage(int32_t line, int32_t image)
 {
 	if (line >= 0 && line < int32_t(m_lines.size()))
 		m_lines[line].image = image;
+	santiyCheck();
 }
 
 wchar_t RichEdit::addSpecialCharacter(const ISpecialCharacter* specialCharacter)
@@ -331,6 +341,8 @@ void RichEdit::clear(bool attributes, bool images, bool content)
 	updateCharacterWidths();
 	updateScrollBars();
 	update();
+
+	santiyCheck();
 }
 
 void RichEdit::insert(const std::wstring& text)
@@ -447,6 +459,7 @@ void RichEdit::setLine(int32_t line, const std::wstring& text)
 	ln.stop = ln.start + int32_t(text.size());
 
 	updateCharacterWidths();
+	santiyCheck();
 }
 
 std::wstring RichEdit::getLine(int32_t line) const
@@ -466,6 +479,7 @@ void RichEdit::setLineData(int32_t line, Object* data)
 {
 	if (line < int32_t(m_lines.size()))
 		m_lines[line].data = data;
+	santiyCheck();
 }
 
 Object* RichEdit::getLineData(int32_t line) const
@@ -530,6 +544,10 @@ bool RichEdit::showLine(int32_t line)
 void RichEdit::placeCaret(int32_t offset)
 {
 	m_caret = offset;
+	
+	CaretEvent caretEvent(this);
+	raiseEvent(&caretEvent);
+
 	update();
 }
 
@@ -655,63 +673,68 @@ void RichEdit::deleteCharacters()
 	int32_t start = m_caret;
 	int32_t stop = m_caret;
 
-	if (m_selectionStart >= 0)
+	if (m_selectionStart < m_selectionStop)
 	{
 		start = m_selectionStart;
 		stop = m_selectionStop - 1;
 	}
 
-	stop = std::min(stop, int32_t(m_text.size() - 2));
-	if (stop < start)
+	T_FATAL_ASSERT (start <= stop);
+
+	if (start >= m_text.size() - 1)
 		return;
+
+	// Naiive implementation, delete each character
+	// individually as we don't have to intersect selection with lines etc.
+
+	for (int32_t i = stop; i >= start; --i)
+	{
+		for (uint32_t j = 0; j < m_lines.size(); )
+		{
+			Line& ln = m_lines[j];
+			if (i >= ln.start && i <= ln.stop)
+			{
+				if (i == ln.stop)
+				{
+					if (j < m_lines.size() - 1)
+					{
+						Line& nx = m_lines[j + 1];
+						ln.stop = nx.stop - 1;
+						m_lines.erase(m_lines.begin() + j + 1);
+					}
+					++j;
+				}
+				else if (ln.start < ln.stop)
+				{
+					ln.stop--;
+					++j;
+				}
+				else
+					m_lines.erase(m_lines.begin() + j);
+			}
+			else if (i <= ln.start)
+			{
+				ln.start--;
+				ln.stop--;
+				++j;
+			}
+			else
+				++j;
+		}
+	}
 
 	m_text.erase(m_text.begin() + start, m_text.begin() + stop + 1);
 
-	for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); )
-	{
-		if (
-			start == i->stop ||
-			(start <= i->start && stop >= i->stop)
-		)
-		{
-			int32_t start0 = i->start;
-			Ref< Object > data0 = i->data;
-			
-			i = m_lines.erase(i);
-
-			if (i != m_lines.end())
-			{
-				i->start = start0;
-				i->data = data0;
-			}
-		}
-		else
-			++i;
-	}
-
-	for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
-	{
-		bool startIn = (start >= i->start && start <= i->stop);
-		bool stopIn = (stop >= i->start && stop <= i->stop);
-
-		if (startIn && stopIn)
-			i->stop -= (stop - start) + 1;
-		else if (startIn)
-			i->stop = start;
-		else if (stopIn)
-			i->start = stop;
-		else if (stop <= i->start)
-		{
-			i->start -= (stop - start) + 1;
-			i->stop -= (stop - start) + 1;
-		}
-	}
-
 	m_selectionStart = -1;
 	m_selectionStop = -1;
+
 	m_caret = start;
 
+	CaretEvent caretEvent(this);
+	raiseEvent(&caretEvent);
+
 	updateCharacterWidths();
+	santiyCheck();
 
 	ContentChangeEvent contentChangeEvent(this);
 	raiseEvent(&contentChangeEvent);
@@ -725,6 +748,9 @@ void RichEdit::insertCharacter(wchar_t ch)
 			deleteCharacters();
 
 		insertAt(m_caret++, L'\n');
+
+		CaretEvent caretEvent(this);
+		raiseEvent(&caretEvent);
 
 		ContentChangeEvent contentChangeEvent(this);
 		raiseEvent(&contentChangeEvent);
@@ -760,6 +786,9 @@ void RichEdit::insertCharacter(wchar_t ch)
 
 		insertAt(m_caret++, L'\t');
 
+		CaretEvent caretEvent(this);
+		raiseEvent(&caretEvent);
+
 		ContentChangeEvent contentChangeEvent(this);
 		raiseEvent(&contentChangeEvent);
 	}
@@ -769,6 +798,9 @@ void RichEdit::insertCharacter(wchar_t ch)
 			deleteCharacters();
 
 		insertAt(m_caret++, ch);
+
+		CaretEvent caretEvent(this);
+		raiseEvent(&caretEvent);
 
 		ContentChangeEvent contentChangeEvent(this);
 		raiseEvent(&contentChangeEvent);
@@ -816,6 +848,7 @@ void RichEdit::insertAt(int32_t offset, wchar_t ch)
 	}
 
 	updateCharacterWidths();
+	santiyCheck();
 }
 
 void RichEdit::scrollToCaret()
@@ -845,6 +878,18 @@ void RichEdit::scrollToCaret()
 
 		update();
 	}
+}
+
+void RichEdit::santiyCheck()
+{
+	int32_t last = 0;
+	for (uint32_t i = 0; i < m_lines.size(); ++i)
+	{
+		T_FATAL_ASSERT (m_lines[i].start == last);
+		T_FATAL_ASSERT (m_lines[i].start <= m_lines[i].stop);
+		last = m_lines[i].stop + 1;
+	}
+	T_FATAL_ASSERT (last == m_text.size());
 }
 
 void RichEdit::eventKeyDown(KeyDownEvent* event)
@@ -1062,22 +1107,30 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			if (m_selectionStart > m_selectionStop)
 				std::swap(m_selectionStart, m_selectionStop);
 		}
+
+		CaretEvent caretEvent(this);
+		raiseEvent(&caretEvent);
 	}
 	// If caret moved but no "shift" key held, discard selection.
 	else if (caretMovement)
 	{
 		m_selectionStart =
 		m_selectionStop = -1;
+
+		CaretEvent caretEvent(this);
+		raiseEvent(&caretEvent);
 	}
 
 	updateScrollBars();
 	scrollToCaret();
 	update();
+	santiyCheck();
 }
 
 void RichEdit::eventKey(KeyEvent* event)
 {
 	wchar_t ch = event->getCharacter();
+
 	if (ch == 3)
 		copy();
 	else if (ch == 22)
@@ -1093,6 +1146,7 @@ void RichEdit::eventKey(KeyEvent* event)
 	updateScrollBars();
 	scrollToCaret();
 	update();
+	santiyCheck();
 }
 
 void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
@@ -1126,6 +1180,9 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 				if (i != m_specialCharacters.end())
 					i->second->mouseButtonDown(event);
 			}
+
+			CaretEvent caretEvent(this);
+			raiseEvent(&caretEvent);
 
 			setCapture();
 			update();
@@ -1164,6 +1221,10 @@ void RichEdit::eventMouseMove(MouseMoveEvent* event)
 		m_caret = offset;
 		m_selectionStart = std::min(m_fromCaret, m_caret);
 		m_selectionStop = std::max(m_fromCaret, m_caret);
+
+		CaretEvent caretEvent(this);
+		raiseEvent(&caretEvent);
+
 		update();
 	}
 }
@@ -1198,6 +1259,10 @@ void RichEdit::eventDoubleClick(MouseDoubleClickEvent* event)
 				break;
 		}
 		m_caret = m_selectionStop;
+
+		CaretEvent caretEvent(this);
+		raiseEvent(&caretEvent);
+
 		update();
 	}
 }

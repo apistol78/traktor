@@ -256,6 +256,8 @@ private:
 
 	void scrollToCaret();
 
+	void santiyCheck();
+
 	void eventKeyDown(KeyDownEvent* event);
 
 	void eventKey(KeyEvent* event);
