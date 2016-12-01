@@ -302,19 +302,6 @@ void TextLayout::insertText(const std::wstring& text)
 		if (word.empty())
 			return;
 
-		float wordWidth = 0.0f;
-
-		for (uint32_t j = 0; j < word.length(); ++j)
-		{
-			uint16_t glyphIndex = attrib.font->lookupIndex(word[j]);
-			int16_t glyphAdvance = attrib.font->getAdvance(glyphIndex);
-
-			if (j < word.length() - 1)
-				glyphAdvance += attrib.font->lookupKerning(word[j], word[j + 1]);
-
-			wordWidth += (glyphAdvance + letterSpacing) * fontScale;
-		}
-
 		Word w = { m_currentAttrib };
 
 		for (uint32_t j = 0; j < word.length(); ++j)
@@ -345,18 +332,7 @@ void TextLayout::insertText(const std::wstring& text)
 void TextLayout::newLine()
 {
 	float lineHeight = m_fontHeight + m_leading;
-	/*
-	if (!m_attribs.empty())
-	{
-		const Attribute& attrib = m_attribs[m_currentAttrib];
-		if (attrib.font)
-		{
-			lineHeight = (attrib.font->getAscent() + attrib.font->getDescent() + attrib.font->getLeading());
-			if (attrib.font->getCoordinateType() == FlashFont::CtEMSquare)
-				lineHeight /= 20.0f * 4.0f;
-		}
-	}
-	*/
+
 	m_cursorX = 0.0f;
 	m_cursorY += lineHeight;
 	m_height = std::max(m_height, m_cursorY + lineHeight);
