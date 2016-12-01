@@ -2,6 +2,8 @@
 <object type="traktor.script.Script" version="2">
 	<text>
 	<![CDATA[
+#using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
+
 -- Static
 
 Static = Static or inherit(Widget)
@@ -11,9 +13,7 @@ function Static.new(parent, text)
 	local o = {}
 	setmetatable(o, Static_meta)
 
-	local depth = parent._inner_mc:getNextHighestDepth()
-	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_Static", depth)
-	assert (mc ~= nil)
+	local mc = Widget._createResource(parent, "MC_Static")
 
 	o:_initialize(parent, mc, text)
 	return o
@@ -23,25 +23,63 @@ function Static:getPreferredSize()
 	return self._preferredSize
 end
 
+function Static:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
+	self._text_tb:setTextBounds(Aabb2(
+		Vector2(0, 0),
+		Vector2(width * 20, height * 20)
+	))
+
+end
+
 function Static:setText(text)
 	self._text_tb:parseText(text)
-	self._preferredSize.width = self._text_tb:getTextWidth()
-	self._preferredSize.height = self._mc:getHeight()
+
+	local sz = self._text_tb:getTextSize()
+	self._preferredSize.width = sz:x()
+	self._preferredSize.height = sz:y()
+	return self
+end
+
+function Static:setTextSize(size)
+	local tf = self._text_tb:getTextFormat()
+	tf:setSize(size * 20)
+	self._text_tb:setTextFormat(tf)
+
+	local sz = self._text_tb:getTextSize()
+	self._preferredSize.width = sz:x()
+	self._preferredSize.height = sz:y()
+	return self
+end
+
+function Static:setTextColor(color)
+	self._text_tb:setTextColor(color)
+	return self
+end
+
+function Static:setOnClick(fn)
+	self:_registerEvent("onRelease", fn)
 end
 
 -- Private
 
 function Static:_initialize(parent, mc, text)
+	Widget._initialize(self, parent, mc)
+
 	self._text_tb = mc:getMember("text_tb")
+	self._text_tb:setTransform(Matrix33.identity)
 	self._text_tb:parseText(text)
 
+	local sz = self._text_tb:getTextSize()
 	self._preferredSize =
 	{
-		width = self._text_tb:getTextWidth(),
-		height = mc:getHeight()
+		width = sz:x(),
+		height = sz:y()
 	}
 
-	Widget._initialize(self, parent, mc)
+#if defined(_DEBUG)
+	self._text_tb:setMember("__renderWireOutline", true)
+#endif
 end
 
 	]]>

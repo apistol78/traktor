@@ -13,9 +13,7 @@ function Dialog.new(parent, layout)
 	local o = {}
 	setmetatable(o, Dialog_meta)
 
-	local depth = parent._inner_mc:getNextHighestDepth()
-	local mc = Widget._resourceKit:createExternalSpriteInstance(parent._inner_mc, "MC_Dialog", depth)
-	assert (mc ~= nil)
+	local mc = Widget._createResource(parent, "MC_Dialog")
 
 	o:_initialize(parent, mc, layout)
 	return o

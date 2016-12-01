@@ -7,6 +7,9 @@
 ILayout = ILayout or {}
 ILayout_meta = ILayout_meta or { name = "ILayout", __index = ILayout }
 
+ILayout.NONE = "none"
+ILayout.FLOAT = "float"
+
 -- Estimate bounds desired for children.
 function ILayout:estimate(container)
 end
