@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{BA802A78-F9E0-7843-B731-198BEB633236}
+#using \{23E42A52-C55F-5141-BB83-518DFA4CF222}
+#using \{A77BBB9A-E386-814D-BFC5-11AB7713577E}
+#using \{A1037592-62F9-6048-B54A-AADFD485DC18}
+
+-- ListBox
+
+ListBox = ListBox or inherit(Widget)
+ListBox_meta = ListBox_meta or { name = "ListBox", __index = ListBox }
+
+function ListBox.new(parent)
+	local o = {}
+	setmetatable(o, ListBox_meta)
+
+	local mc = Widget._createEmptyResource(parent)
+
+	o:_initialize(parent, mc)
+	return o
+end
+
+function ListBox:getPreferredSize()
+	return self._panel:getPreferredSize()
+end
+
+function ListBox:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
+	self._panel:place(0, 0, width, height)
+end
+
+function ListBox:add(item)
+	local s = Static.new(self._listContainer, item)
+	s:setTextColor(self._textColor)
+
+	self._index = self._index + 1
+	local index = self._index
+
+	s:setOnClick(function()
+		if self._clickFn ~= nil then
+			self._clickFn(index)
+		end
+	end)
+
+	self._panel:layout()
+	return index
+end
+
+function ListBox:setColor(color)
+	self._panel:setColor(color)
+	return self
+end
+
+function ListBox:setTextColor(textColor)
+	local children = self._listContainer:getChildren()
+	for _, child in ipairs(children) do
+		children:setTextColor(textColor)
+	end
+	self._textColor = textColor
+	return self
+end
+
+function ListBox:setOnClick(clickFn)
+	self._clickFn = clickFn
+	return self
+end
+
+-- private
+
+function ListBox:_initialize(parent, mc)
+	Widget._initialize(self, parent, mc)
+
+	self._textColor = Color4f(0, 0, 0, 1)
+	self._index = 0
+
+	self._panel = Panel.new(self, FloodLayout.new())
+	self._listContainer = ScrollContainer.new(self._panel, TableLayout.new({ 100 }, { 0 }, 4, 4, 0, 0), ScrollContainer.VERTICAL)
+end
+
+	]]>
+	</text>
+</object>
