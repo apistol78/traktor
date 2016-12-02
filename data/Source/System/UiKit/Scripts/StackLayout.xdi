@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- StackLayout
+
+StackLayout = StackLayout or inherit(ILayout)
+StackLayout_meta = StackLayout_meta or { name = "StackLayout", __index = StackLayout }
+
+function StackLayout.new(margin, pad)
+	local o = {}
+	setmetatable(o, StackLayout_meta)
+
+	o._margin = margin
+	o._pad = pad
+
+	return o
+end
+
+function StackLayout:estimate(container)
+	local children = container:getChildren()
+	local p = container:getPlacement()
+
+	local w, h = 0, 0
+	for _, child in ipairs(children) do
+		local ps = child:getPreferredSize()
+		w = w + ps.width
+		h = math.max(h, ps.height)
+	end
+
+	w = w + self._margin * 2 + math.max(#children - 1, 0) * self._pad
+
+	w = math.max(w, p.width)
+	h = math.max(h, p.height)
+
+	return w, h
+end
+
+function StackLayout:update(container, width, height)
+	local x = self._margin
+	local children = container:getChildren()
+	for _, child in ipairs(children) do
+		local ps = child:getPreferredSize()
+		child:place(x, 0, ps.width, height)
+		x = x + ps.width + self._pad
+	end
+end
+
+	]]>
+	</text>
+</object>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{73B653B2-7D15-A345-93EE-B2511B60F0D0}
+#using \{DE154DCB-944D-804F-90BF-2876D1B0923F}
+
+-- DropDown
+
+DropDown = DropDown or inherit(Widget)
+DropDown_meta = DropDown_meta or { name = "DropDown", __index = DropDown }
+
+function DropDown.new(parent, items)
+	local o = {}
+	setmetatable(o, DropDown_meta)
+
+	local mc = Widget._createResource(parent, "MC_DropDown")
+
+	o:_initialize(parent, mc, items)
+	return o
+end
+
+function DropDown:getPreferredSize()
+	return self._preferredSize
+end
+
+function DropDown:add(item)
+	table.insert(self._items, item)
+end
+
+function DropDown:setColor(color)
+	self._background_mc:setColorTransform(ColorTransform(
+		color,
+		Color4f(0, 0, 0, 0)
+	))
+	self._color = color
+	return self
+end
+
+function DropDown:setTextColor(textColor)
+	self._caption_tb:setTextColor(textColor)
+	self._arrow_mc:setColorTransform(ColorTransform(
+		textColor,
+		Color4f(0, 0, 0, 0)
+	))
+	self._textColor = textColor
+	return self
+end
+
+function DropDown:setOnClick(clickFn)
+	self._clickFn = clickFn
+	return self
+end
+
+-- private
+
+function DropDown:_initialize(parent, mc, items)
+	Widget._initialize(self, parent, mc)
+
+	self._background_mc = mc:getMember("background_mc")
+	self._arrow_mc = mc:getMember("arrow_mc")
+
+	self._caption_tb = mc:getMember("caption_tb")
+	self._caption_tb:parseText("")
+
+	self._margin = self._caption_tb:getX()
+	self._preferredSize =
+	{
+		width = mc:getWidth(),
+		height = mc:getHeight()
+	}
+
+	if items ~= nil then
+		self._items = items
+	else
+		self._items = {}
+	end
+
+	self:_registerEvent("onPress", function() self:_onPress() end)
+end
+
+function DropDown:_onPress()
+	assert (self._list == nil)
+
+	local ancestor = self:getAncestor()
+
+	self._list = ListBox.new(ancestor)
+	self._list.__layout = ILayout.FLOAT
+
+	if self._color ~= nil then self._list:setColor(self._color) end
+	if self._textColor ~= nil then self._list:setTextColor(self._textColor) end
+
+	for _, item in ipairs(self._items) do
+		self._list:add(item)
+	end
+
+	local p = self:getPlacement()
+	local ps = self._list:getPreferredSize()
+
+	-- Transform local coordinate into ancestor frame as
+	-- list box is temporarily added as child to ancestor in
+	-- order to be top most.
+	local pp = self:transformInto(
+		{
+			x = 0,
+			y = p.height
+		},
+		ancestor
+	)
+
+	self._list:place(
+		pp.x,
+		pp.y,
+		p.width,
+		ps.height
+	)
+
+	self._list:setOnClick(function(index) self:_onListClick(index) end)
+	self._list:setModal()
+end
+
+function DropDown:_onListClick(index)
+	assert (self._list ~= nil)
+
+	self._list:remove()
+	self._list = nil
+
+	self._caption_tb:parseText(self._items[index])
+
+end
+
+
+	]]>
+	</text>
+</object>

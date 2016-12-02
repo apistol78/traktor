@@ -78,15 +78,6 @@ function Widget:isVisible()
 	return true
 end
 
-function Widget:setEnable(enable)
-	self._mc:setEnabled(enable)
-	return self
-end
-
-function Widget:isEnabled()
-	return self._mc:isEnabled()
-end
-
 function Widget:setModal()
 	if Widget._modal == nil then
 		Widget._modal = self

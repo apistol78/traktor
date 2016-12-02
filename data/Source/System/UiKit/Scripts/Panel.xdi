@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{7947759C-88DB-794E-8D09-7F30A40B6669}
+
+import(traktor.flash)
+
+-- Panel
+
+Panel = Panel or inherit(Container)
+Panel_meta = Panel_meta or { name = "Panel", __index = Panel }
+
+function Panel.new(parent, layout)
+	local o = {}
+	setmetatable(o, Panel_meta)
+
+	local mc = Widget._createResource(parent, "MC_Panel")
+
+	o:_initialize(parent, mc, layout)
+	return o
+end
+
+function Panel:place(x, y, width, height)
+	self._background_mc:setWidth(width)
+	self._background_mc:setHeight(height)
+	Container.place(self, x, y, width, height)
+end
+
+function Panel:setColor(color)
+	self._background_mc:setColorTransform(ColorTransform(
+		color,
+		Color4f(0, 0, 0, 0)
+	))
+	return self
+end
+
+-- Private
+
+function Panel:_initialize(parent, mc, layout)
+	local inner_mc = mc:getMember("innerContainer_mc")
+
+	self._background_mc = mc:getMember("background_mc")
+
+	Container._initialize(self, parent, mc, inner_mc, layout)
+end
+
+	]]>
+	</text>
+</object>

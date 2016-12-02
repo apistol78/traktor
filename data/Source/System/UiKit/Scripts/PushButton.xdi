@@ -35,10 +35,26 @@ end
 
 function PushButton:setCaption(s)
 	self._caption_tb:parseText(s)
+	return self
+end
+
+function PushButton:setEnable(enable)
+	self._enable = enable
+	if self._enable then
+		self._mc:setProperty("_alpha", 100)
+	else
+		self._mc:setProperty("_alpha", 50)
+	end
+	return self
+end
+
+function PushButton:isEnabled()
+	return self._enable
 end
 
 function PushButton:setOnClick(fn)
 	self._clickFn = fn
+	return self
 end
 
 -- Private
@@ -55,6 +71,8 @@ function PushButton:_initialize(parent, mc, caption)
 		width = mc:getWidth(),
 		height = mc:getHeight()
 	}
+
+	self._enable = true
 	self._clickFn = nil
 
 	self:_registerEvent("onPress", function() self:_onPress() end)
@@ -65,17 +83,21 @@ function PushButton:_initialize(parent, mc, caption)
 end
 
 function PushButton:_onPress()
-	self._background_mc:gotoAndStop("down")
+	if self._enable then
+		self._background_mc:gotoAndStop("down")
+	end
 end
 
 function PushButton:_onRelease()
-	if self._clickFn ~= nil then
+	if self._enable and self._clickFn ~= nil then
 		self._clickFn()
 	end
 end
 
 function PushButton:_onMouseUp()
-	self._background_mc:gotoAndStop("up")
+	if self._enable then
+		self._background_mc:gotoAndStop("up")
+	end
 end
 
 	]]>
