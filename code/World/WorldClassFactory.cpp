@@ -5,6 +5,7 @@
 #include "World/EntityBuilder.h"
 #include "World/EntityBuilderWithSchema.h"
 #include "World/EntityData.h"
+#include "World/EntityEventSet.h"
 #include "World/EntitySchema.h"
 #include "World/IEntityComponent.h"
 #include "World/IEntityComponentData.h"
@@ -45,6 +46,16 @@ void IEntityEventInstance_cancelImmediate(IEntityEventInstance* this_)
 void IEntityEventInstance_cancelEnd(IEntityEventInstance* this_)
 {
 	this_->cancel(CtEnd);
+}
+
+IEntityEventInstance* IEntityEventManager_raise_1(IEntityEventManager* this_, const IEntityEvent* event, Entity* sender, const Transform& Toffset)
+{
+	return this_->raise(event, sender, Toffset);
+}
+
+IEntityEventInstance* IEntityEventManager_raise_2(IEntityEventManager* this_, const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset)
+{
+	return this_->raise(eventSet, eventId, sender, Toffset);
 }
 
 void IEntityEventManager_cancelAllImmediate(IEntityEventManager* this_)
@@ -158,6 +169,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIEntityEvent);
 
 	Ref< AutoRuntimeClass< IEntityEventManager > > classIEntityEventManager = new AutoRuntimeClass< IEntityEventManager >();
+	classIEntityEventManager->addMethod("raise", &IEntityEventManager_raise_1);
+	classIEntityEventManager->addMethod("raise", &IEntityEventManager_raise_2);
 	classIEntityEventManager->addMethod("cancelAllImmediate", &IEntityEventManager_cancelAllImmediate);
 	classIEntityEventManager->addMethod("cancelAllEnd", &IEntityEventManager_cancelAllEnd);
 	registrar->registerClass(classIEntityEventManager);
@@ -247,6 +260,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIEntityComponentData);
 
 	Ref< AutoRuntimeClass< IEntityComponent > > classIEntityComponent = new AutoRuntimeClass< IEntityComponent >();
+	classIEntityComponent->addMethod("setTransform", &IEntityComponent::setTransform);
+	classIEntityComponent->addMethod("getBoundingBox", &IEntityComponent::getBoundingBox);
 	registrar->registerClass(classIEntityComponent);
 
 	Ref< AutoRuntimeClass< CameraComponentData > > classCameraComponentData = new AutoRuntimeClass< CameraComponentData >();

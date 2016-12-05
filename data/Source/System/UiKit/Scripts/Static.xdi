@@ -4,6 +4,8 @@
 	<![CDATA[
 #using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
 
+import(traktor)
+
 -- Static
 
 Static = Static or inherit(Widget)

@@ -43,13 +43,15 @@ public:
 
 	virtual void setOwner(world::Entity* owner) T_OVERRIDE T_FINAL;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) T_OVERRIDE;
 
-	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual void update(const world::UpdateParams& update) T_OVERRIDE;
 
 	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) = 0;
 
 	const IntervalTransform& getTransform() const { return m_transform; }
+
+	IntervalTransform& getTransform() { return m_transform; }
 
 protected:
 	world::Entity* m_owner;

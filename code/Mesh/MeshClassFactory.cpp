@@ -9,6 +9,7 @@
 #include "Mesh/Blend/BlendMesh.h"
 #include "Mesh/Blend/BlendMeshComponent.h"
 #include "Mesh/Blend/BlendMeshEntity.h"
+#include "Mesh/Composite/CompositeMeshComponent.h"
 #include "Mesh/Composite/CompositeMeshEntity.h"
 #include "Mesh/Indoor/IndoorMesh.h"
 #include "Mesh/Indoor/IndoorMeshComponent.h"
@@ -161,6 +162,13 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBlendMeshEntity->addMethod("setBlendWeights", &BlendMeshEntity::setBlendWeights);
 	classBlendMeshEntity->addMethod("getBlendWeights", &BlendMeshEntity::getBlendWeights);
 	registrar->registerClass(classBlendMeshEntity);
+
+	Ref< AutoRuntimeClass< CompositeMeshComponent > > classCompositeMeshComponent = new AutoRuntimeClass< CompositeMeshComponent >();
+	classCompositeMeshComponent->addConstructor();
+	classCompositeMeshComponent->addMethod("removeAll", &CompositeMeshComponent::removeAll);
+	classCompositeMeshComponent->addMethod("remove", &CompositeMeshComponent::remove);
+	classCompositeMeshComponent->addMethod("add", &CompositeMeshComponent::add);
+	registrar->registerClass(classCompositeMeshComponent);
 
 	Ref< AutoRuntimeClass< CompositeMeshEntity > > classCompositeMeshEntity = new AutoRuntimeClass< CompositeMeshEntity >();
 	classCompositeMeshEntity->addMethod("addMeshEntity", &CompositeMeshEntity::addMeshEntity);
