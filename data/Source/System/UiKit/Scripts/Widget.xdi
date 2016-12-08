@@ -197,7 +197,6 @@ end
 
 function Widget:_isChild(child)
 	if child == self then return true end
-	local children = {}
 	for _, c in ipairs(self._children) do
 		if c:_isChild(child) then return true end
 	end
@@ -240,7 +239,6 @@ function Widget._createResource(parent, resource)
 		mc = rk:get():createExternalSpriteInstance(into_mc, resource, depth)
 		if mc ~= nil then break end
 	end
-	assert (mc ~= nil)
 
 	return mc
 end

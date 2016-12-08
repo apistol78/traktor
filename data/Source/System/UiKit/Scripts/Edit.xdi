@@ -30,14 +30,26 @@ end
 
 function Edit:setMode(mode)
 	self._text_tb:setPassword((mode & Edit.MODE_PASSWORD) ~= 0)
+	return self
 end
 
 function Edit:setText(text)
 	self._text_tb:parseText(text)
+	return self
 end
 
 function Edit:getText()
 	return self._text_tb:getText()
+end
+
+function Edit:setOnChange(fn)
+	self._changeFn = fn
+	return self
+end
+
+function Edit:setOnEdited(fn)
+	self._editedFn = fn
+	return self
 end
 
 function Edit:getPreferredSize()
@@ -103,6 +115,9 @@ function Edit:_onKillFocus()
 		self._text_tb:parseText(self._hint)
 		self._hintActive = true
 	end
+	if self._editedFn ~= nil then
+		self._editedFn()
+	end
 #if defined(ANDROID)
 	KeyboardDeviceAndroid.hideSoftKeyboard()
 #endif
@@ -115,6 +130,9 @@ function Edit:_onChanged()
 			self._text0 = text
 		else
 			self._text_tb:parseText(self.text0)
+		end
+		if self._changeFn ~= nil then
+			self._changeFn()
 		end
 	end
 end

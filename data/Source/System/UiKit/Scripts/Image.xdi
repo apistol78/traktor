@@ -59,6 +59,9 @@ function Image:setImage(image, mode)
 
 	elseif type(image) == "string" then
 		self._image_mc = Widget._createResource(self, image)
+#if defined(_DEBUG)
+		if self._image_mc == nil then print("No such image \\"" .. image .. "\\"") end
+#endif
 	end
 
 	if self._image_mc == nil then
