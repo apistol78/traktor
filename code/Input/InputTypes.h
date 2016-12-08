@@ -228,13 +228,15 @@ enum InputDefaultControlType
  */
 enum InputCategory
 {
-	CtKeyboard	= 1,
-	CtMouse		= 2,
-	CtJoystick	= 4,
-	CtWheel		= 8,
-	CtTouch		= 16,
-	CtGaze		= 32,
-	CtUnknown	= 64
+	CtKeyboard		= 1,
+	CtMouse			= 2,
+	CtJoystick		= 4,
+	CtWheel			= 8,
+	CtTouch			= 16,
+	CtGaze			= 32,
+	CtAcceleration	= 64,
+	CtOrientation	= 128,
+	CtUnknown		= 256
 };
 
 /*! \brief Input rumble specification.

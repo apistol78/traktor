@@ -329,6 +329,8 @@ extern "C" void traktor_main(struct android_app* state)
 		{
 			if (source != NULL)
 				source->process(state, source);
+
+			aa.handleEvents();
 		}
 
 		if (!aa.updateApplication())
