@@ -23,6 +23,20 @@ function Button:getPreferredSize()
 	return self._preferredSize
 end
 
+function Button:setEnable(enable)
+	self._enable = enable
+	if self._enable then
+		self._mc:setProperty("_alpha", 100)
+	else
+		self._mc:setProperty("_alpha", 50)
+	end
+	return self
+end
+
+function Button:isEnabled()
+	return self._enable
+end
+
 function Button:setOnClick(fn)
 	self._clickFn = fn
 end
@@ -43,6 +57,9 @@ function Button:_initialize(parent, mc, imageUp, imageDown)
 
 	elseif type(imageUp) == "string" then
 		self._imageUp_mc = Widget._createResource(self, imageUp)
+#if defined(_DEBUG)
+		if self._imageUp_mc == nil then print("No such image \\"" .. image .. "\\"") end
+#endif
 	end
 
 	if self._imageUp_mc == nil then
@@ -61,6 +78,9 @@ function Button:_initialize(parent, mc, imageUp, imageDown)
 	
 		elseif type(imageDown) == "string" then
 			self._imageDown_mc = Widget._createResource(self, imageDown)
+#if defined(_DEBUG)
+			if self._imageDown_mc == nil then print("No such image \\"" .. image .. "\\"") end
+#endif
 		end
 	
 		if self._imageDown_mc == nil then
