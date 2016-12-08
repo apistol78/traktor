@@ -28,4 +28,10 @@ void DelegateInstance::handleInput(AInputEvent* event)
 		(*i)->notifyHandleInput(this, event);
 }
 
+void DelegateInstance::handleEvents()
+{
+	for (std::vector< IDelegate* >::iterator i = m_delegates.begin(); i != m_delegates.end(); ++i)
+		(*i)->notifyHandleEvents(this);
+}
+
 }

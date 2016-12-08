@@ -1,6 +1,7 @@
 #ifndef traktor_input_InputDriverAndroid_H
 #define traktor_input_InputDriverAndroid_H
 
+#include <android/sensor.h>
 #include "Core/RefArray.h"
 #include "Core/System/Android/DelegateInstance.h"
 #include "Input/IInputDriver.h"
@@ -20,6 +21,7 @@ namespace traktor
 
 class KeyboardDeviceAndroid;
 class MouseDeviceAndroid;
+class SensorDeviceAndroid;
 class TouchDeviceAndroid;
 
 class T_DLLCLASS InputDriverAndroid
@@ -43,11 +45,16 @@ public:
 
 	virtual void notifyHandleInput(DelegateInstance* instance, AInputEvent* event) T_OVERRIDE T_FINAL;
 
+	virtual void notifyHandleEvents(DelegateInstance* instance) T_OVERRIDE T_FINAL;
+
 private:
 	DelegateInstance* m_instance;
+	ASensorEventQueue* m_sensorQueue;
 	Ref< KeyboardDeviceAndroid > m_keyboardDevice;
 	Ref< MouseDeviceAndroid > m_mouseDevice;
 	Ref< TouchDeviceAndroid > m_touchDevice;
+	Ref< SensorDeviceAndroid > m_accelerationDevice;
+	Ref< SensorDeviceAndroid > m_orientationDevice;
 	RefArray< IInputDevice > m_devices;
 };
 

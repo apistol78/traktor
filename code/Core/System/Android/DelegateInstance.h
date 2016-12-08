@@ -30,6 +30,8 @@ public:
 		virtual void notifyHandleCommand(DelegateInstance* instance, int32_t cmd) {}
 
 		virtual void notifyHandleInput(DelegateInstance* instance, AInputEvent* event) {}
+
+		virtual void notifyHandleEvents(DelegateInstance* instance) {}
 	};
 
 	virtual struct android_app* getApplication() = 0;
@@ -43,6 +45,8 @@ public:
 	virtual void handleCommand(int32_t cmd);
 
 	virtual void handleInput(AInputEvent* event);
+
+	virtual void handleEvents();
 
 private:
 	std::vector< IDelegate* > m_delegates;

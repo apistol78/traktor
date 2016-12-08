@@ -3,6 +3,7 @@
 #include "Input/Android/InputAndroidClassFactory.h"
 #include "Input/Android/KeyboardDeviceAndroid.h"
 #include "Input/Android/MouseDeviceAndroid.h"
+#include "Input/Android/SensorDeviceAndroid.h"
 #include "Input/Android/TouchDeviceAndroid.h"
 
 namespace traktor
@@ -21,6 +22,9 @@ void InputAndroidClassFactory::createClasses(IRuntimeClassRegistrar* registrar) 
 
 	Ref< AutoRuntimeClass< MouseDeviceAndroid > > classMouseDeviceAndroid = new AutoRuntimeClass< MouseDeviceAndroid >();
 	registrar->registerClass(classMouseDeviceAndroid);
+
+	Ref< AutoRuntimeClass< SensorDeviceAndroid > > classSensorDeviceAndroid = new AutoRuntimeClass< SensorDeviceAndroid >();
+	registrar->registerClass(classSensorDeviceAndroid);
 
 	Ref< AutoRuntimeClass< TouchDeviceAndroid > > classTouchDeviceAndroid = new AutoRuntimeClass< TouchDeviceAndroid >();
 	registrar->registerClass(classTouchDeviceAndroid);
