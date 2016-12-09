@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
+
+import(traktor)
+
+-- Tab
+
+Tab = Tab or inherit(Widget)
+Tab_meta = Tab_meta or { name = "Tab", __index = Tab }
+
+function Tab.new(parent)
+	local o = {}
+	setmetatable(o, Tab_meta)
+
+	local mc = Widget._createEmptyResource(parent)
+
+	o:_initialize(parent, mc, mc)
+	return o
+end
+
+function Tab:getPreferredSize()
+	local w, h = 0, 0
+	for _, child in ipairs(self._children) do
+		local ps = child:getPreferredSize()
+		w = math.max(w, ps.width)
+		h = math.max(h, ps.height)
+	end
+	return { width = w, height = self._tabHeight + self._separatorHeight + h }
+end
+
+function Tab:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
+
+	local tx = 0
+	for _, tab_mc in ipairs(self._tab_mc) do
+		tab_mc:setPosition(Vector2(tx, 0))
+		tx = tx + tab_mc:getWidth() + 8
+	end
+
+	self._separator_mc:setPosition(Vector2(0, self._tabHeight))
+	self._separator_mc:setSize(Vector2(width, self._separatorHeight))
+
+	for _, child in ipairs(self._children) do
+		child:place(0, self._tabHeight + self._separatorHeight, width, height - self._tabHeight)
+	end
+end
+
+function Tab:setColor(color)
+	self._color = color
+	self._separator_mc:setColorTransform(ColorTransform(
+		color,
+		Color4f(0, 0, 0, 0)
+	))
+	return self
+end
+
+-- Private
+
+function Tab:_initialize(parent, mc, inner_mc)
+	Widget._initialize(self, parent, mc)
+
+	local separator_mc = Widget._createResource(self, "MC_TabSeparator")
+	assert (separator_mc ~= nil)
+
+	self._inner_mc = inner_mc
+	self._separator_mc = separator_mc
+	self._separatorHeight = separator_mc:getHeight()
+	self._tab_mc = {}
+	self._tabHeight = 0
+	self._active = 1
+end
+
+function Tab:_addChild(child)
+	Widget._addChild(self, child)
+
+	local n = #self._tab_mc + 1
+
+	local tab_mc = Widget._createResource(self, "MC_Tab")
+	tab_mc:setMember("onPress", function()
+		self._active = n
+		self:_updateState()
+	end)
+
+	if self._color ~= nil then
+		tab_mc:getMember("background_mc"):setColorTransform(ColorTransform(
+			self._color,
+			Color4f(0, 0, 0, 0)
+		))
+	end
+
+#if defined(_DEBUG)
+	tab_mc:getMember("caption_tb"):setMember("__renderWireOutline", true)
+#endif
+
+	child.setTabCaption = function(childSelf, caption)
+
+		local background_mc = tab_mc:getMember("background_mc")
+		local caption_tb = tab_mc:getMember("caption_tb")
+
+		caption_tb:parseText(caption)
+
+		local mx = caption_tb:getX()
+		local sz = caption_tb:getTextSize() + Vector2(4, 0)	-- \\hack Slight error
+
+		background_mc:setWidth(sz:x() + mx * 2)
+		caption_tb:setTextBounds(Aabb2(
+			Vector2(mx, 0),
+			Vector2(sz:x() * 20, sz:y() * 20)
+		))
+
+		return childSelf
+	end
+	
+	table.insert(self._tab_mc, tab_mc)
+
+	self._tabHeight = math.max(self._tabHeight, tab_mc:getHeight())
+	self:_updateState()
+end
+
+function Tab:_updateState()
+	local children = self:getChildren()
+	local nc = #children
+	for i = 1, nc do
+		local background_mc = self._tab_mc[i]:getMember("background_mc")
+		local caption_tb = self._tab_mc[i]:getMember("caption_tb")
+
+		if i == self._active then
+			background_mc:gotoAndStop("active")
+			caption_tb:setProperty("_alpha", 100)
+			children[i]:setVisible(true)
+		else
+			background_mc:gotoAndStop("other")
+			caption_tb:setProperty("_alpha", 50)
+			children[i]:setVisible(false)
+		end
+
+		if children[i].tabCaption ~= nil then
+			caption_tb:parseText(children[i].tabCaption)
+		end
+	end
+end
+
+	]]>
+	</text>
+</object>
