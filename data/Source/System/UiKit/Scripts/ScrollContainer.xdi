@@ -45,11 +45,20 @@ end
 function ScrollContainer:setOffset(x, y)
 	self._scroll.x = x
 	self._scroll.y = y
+	self:_clampScrollOffsets()
+	self._inner_mc:setX(-self._scroll.x)
+	self._inner_mc:setY(-self._scroll.y)
 	return self
 end
 
 function ScrollContainer:getOffset()
 	return self._scroll
+end
+
+function ScrollContainer:getRange()
+	return
+		self._innerSize.width - self._scrollSize.width,
+		self._innerSize.height - self._scrollSize.height
 end
 
 function ScrollContainer:setMotion(x, y)
@@ -61,6 +70,11 @@ end
 
 function ScrollContainer:getMotion()
 	return self._motion
+end
+
+function ScrollContainer:setOnScroll(scrollFn)
+	self._scrollFn = scrollFn
+	return self
 end
 
 function ScrollContainer:debug(indent)
@@ -192,6 +206,10 @@ function ScrollContainer:_onMouseMove()
 			self._motion.y = dy / dt
 			self._motion.k = 0.85
 		end
+
+		if self._scrollFn ~= nil then
+			self._scrollFn()
+		end
 	end
 end
 
@@ -206,6 +224,10 @@ function ScrollContainer:_onFrame()
 
 		self._motion.x = self._motion.x * self._motion.k
 		self._motion.y = self._motion.y * self._motion.k
+
+		if self._scrollFn ~= nil then
+			self._scrollFn()
+		end
 	end
 end
 

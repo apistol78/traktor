@@ -27,6 +27,7 @@ end
 
 function ScrollBar:place(x, y, width, height)
 	self._background_mc:setWidth(width)
+	self:_updateKnobSize()
 	Widget.place(self, x, y, width, height)
 end
 
@@ -46,7 +47,39 @@ function ScrollBar:setKnobColor(color)
 	return self
 end
 
+function ScrollBar:setRange(range, size)
+	self._range = range
+	self._size = size
+	self:_updateKnobSize()
+	return self
+end
+
+function ScrollBar:setPosition(position)
+	local bw = self._background_mc:getWidth()
+	local kw = self._knob_mc:getWidth()
+	local f = position / self._range
+	self._knob_mc:setX((bw - kw) * f)
+	return self
+end
+
+function ScrollBar:getPosition()
+	local bw = self._background_mc:getWidth()
+	local kw = self._knob_mc:getWidth()
+	local kx = self._knob_mc:getX()
+	return self._range * kx / (bw - kw)
+end
+
+function ScrollBar:setOnScroll(scrollFn)
+	self._scrollFn = scrollFn
+	return self
+end
+
 -- Private
+
+function ScrollBar:_updateKnobSize()
+	local w = (self._size / self._range) * self._background_mc:getWidth()
+	self._knob_mc:setWidth(w)
+end
 
 function ScrollBar:_initialize(parent, mc)
 	Widget._initialize(self, parent, mc)
@@ -63,6 +96,8 @@ function ScrollBar:_initialize(parent, mc)
 	self:_registerEvent("onPress", function() self:_onPress() end)
 	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
 	self:_registerEvent("onMouseMove", function() self:_onMouseMove() end)
+
+	self:setRange(100, 20)
 end
 
 function ScrollBar:_onPress()
@@ -87,6 +122,10 @@ function ScrollBar:_onMouseMove()
 		end
 
 		self._knob_mc:setX(x)
+
+		if self._scrollFn ~= nil then
+			self._scrollFn()
+		end
 	end
 end
 
