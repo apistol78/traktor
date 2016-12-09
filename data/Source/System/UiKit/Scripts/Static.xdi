@@ -31,7 +31,6 @@ function Static:place(x, y, width, height)
 		Vector2(0, 0),
 		Vector2(width * 20, height * 20)
 	))
-
 end
 
 function Static:setText(text)
