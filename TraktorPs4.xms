@@ -2103,6 +2103,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Functions</name>
+					<items>
+						<item type="File">
+							<fileName>Functions/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">

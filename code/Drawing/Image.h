@@ -24,6 +24,7 @@ class IStream;
 	
 class Palette;
 class IImageFilter;
+class ITransferFunction;
 
 /*! \brief Image class.
  * \ingroup Drawing
@@ -76,6 +77,28 @@ public:
 	 */
 	void copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y, int32_t width, int32_t height);
 	
+	/*! \brief Copy sub-rectangle of a source image into this image.
+	 *
+	 * \param src Source image.
+	 * \param x Source left coordinate.
+	 * \param y Source top coordinate.
+	 * \param width Sub rectangle width.
+	 * \param height Sub rectangle height.
+	 */
+	void copy(const Image* src, int32_t x, int32_t y, int32_t width, int32_t height, const ITransferFunction& tf);
+
+	/*! \brief Copy sub-rectangle of a source image into this image.
+	 *
+	 * \param src Source image.
+	 * \param dx Destination left coordinate.
+	 * \param dy Destination top coordinate.
+	 * \param x Source left coordinate.
+	 * \param y Source top coordinate.
+	 * \param width Sub rectangle width.
+	 * \param height Sub rectangle height.
+	 */
+	void copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y, int32_t width, int32_t height, const ITransferFunction& tf);
+
 	/*! \brief Clear entire image. */
 	void clear(const Color4f& color);
 

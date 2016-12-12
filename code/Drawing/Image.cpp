@@ -8,6 +8,7 @@
 #include "Drawing/Palette.h"
 #include "Drawing/IImageFormat.h"
 #include "Drawing/IImageFilter.h"
+#include "Drawing/ITransferFunction.h"
 
 namespace traktor
 {
@@ -183,6 +184,81 @@ void Image::copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y,
 		const uint8_t* sd = &src->m_data[x * pf.getByteSize() + (y + yy) * src->m_pitch];
 		uint8_t* dd = &m_data[dx * m_pixelFormat.getByteSize() + (dy + yy) * m_pitch];
 		pf.convert(0, sd, m_pixelFormat, 0, dd, width);
+	}
+
+	checkData(m_data, m_size);
+}
+
+void Image::copy(const Image* src, int32_t x, int32_t y, int32_t width, int32_t height, const ITransferFunction& tf)
+{
+	copy(src, 0, 0, x, y, width, height, tf);
+}
+
+void Image::copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y, int32_t width, int32_t height, const ITransferFunction& tf)
+{
+	int32_t srcWidth = int32_t(src->getWidth());
+	int32_t srcHeight = int32_t(src->getHeight());
+	Color4f sp, dp;
+
+	if (x < 0)
+	{
+		dx += -x;
+		width -= -x;
+		x = 0;
+	}
+	if (y < 0)
+	{
+		dy += -y;
+		height -= y;
+		y = 0;
+	}
+	if (dx < 0)
+	{
+		x += -dx;
+		width -= -dx;
+		dx = 0;
+	}
+	if (dy < 0)
+	{
+		y += -dy;
+		height -= -dy;
+		dy = 0;
+	}
+
+	if (x >= srcWidth || y >= srcHeight)
+		return;
+
+	if (x + width > srcWidth)
+		width = srcWidth - x;
+	if (y + height > srcHeight)
+		height = srcHeight - y;
+
+	int32_t mx = m_width - dx;
+	int32_t my = m_height - dy;
+
+	if (width > mx)
+		width = mx;
+	if (height > my)
+		height = my;
+
+	if (width <= 0 || height <= 0)
+		return;
+
+	T_ASSERT (x >= 0 && y >= 0);
+	T_ASSERT (width >= 0 && height >= 0);
+
+	const PixelFormat& pf = src->m_pixelFormat;
+	for (int32_t yy = 0; yy < height; ++yy)
+	{
+		for (int32_t xx = 0; xx < width; ++xx)
+		{
+			const uint8_t* sd = &src->m_data[(x + xx) * pf.getByteSize() + (y + yy) * src->m_pitch];
+			uint8_t* dd = &m_data[(dx + xx) * m_pixelFormat.getByteSize() + (dy + yy) * m_pitch];
+			pf.convertTo4f(0, sd, &sp, pf.getByteSize(), 1);
+			pf.convertTo4f(0, dd, &dp, m_pixelFormat.getByteSize(), 1);
+			tf.evaluate(sp, dp);
+			pf.convertFrom4f(&dp, 0, dd, m_pixelFormat.getByteSize(), 1);
+		}
 	}
 
 	checkData(m_data, m_size);
