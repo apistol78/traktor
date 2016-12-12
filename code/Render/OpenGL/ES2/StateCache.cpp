@@ -111,11 +111,22 @@ void StateCache::setRenderState(const RenderStateOpenGL& renderState, bool inver
 		if (!m_renderState.stencilTestEnable)
 		{
 			T_OGL_SAFE(glEnable(GL_STENCIL_TEST));
+			T_OGL_SAFE(glStencilMask(~0UL));
 			m_renderState.stencilTestEnable = true;
 		}
-		T_OGL_SAFE(glStencilMask(~0UL));
-		T_OGL_SAFE(glStencilOp(renderState.stencilOpFail, renderState.stencilOpZFail, renderState.stencilOpZPass));
-		T_OGL_SAFE(glStencilFunc(renderState.stencilFunc, renderState.stencilRef, ~0UL));
+		if (renderState.stencilOpFail != m_renderState.stencilOpFail || renderState.stencilOpZFail != m_renderState.stencilOpZFail || renderState.stencilOpZPass != m_renderState.stencilOpZPass)
+		{
+			T_OGL_SAFE(glStencilOp(renderState.stencilOpFail, renderState.stencilOpZFail, renderState.stencilOpZPass));
+			m_renderState.stencilOpFail = renderState.stencilOpFail;
+			m_renderState.stencilOpZFail = renderState.stencilOpZFail;
+			m_renderState.stencilOpZPass = renderState.stencilOpZPass;
+		}
+		if (renderState.stencilFunc != m_renderState.stencilFunc || renderState.stencilRef != m_renderState.stencilRef)
+		{
+			T_OGL_SAFE(glStencilFunc(renderState.stencilFunc, renderState.stencilRef, ~0UL));
+			m_renderState.stencilFunc = renderState.stencilFunc;
+			m_renderState.stencilRef = renderState.stencilRef;
+		}
 	}
 	else
 	{
@@ -169,7 +180,7 @@ void StateCache::setDepthMask(GLboolean depthMask)
 
 void StateCache::setArrayBuffer(GLint arrayBuffer)
 {
-	//if (m_arrayBuffer != arrayBuffer)
+	if (m_arrayBuffer != arrayBuffer)
 	{
 		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer));
 		m_arrayBuffer = arrayBuffer;
@@ -178,7 +189,7 @@ void StateCache::setArrayBuffer(GLint arrayBuffer)
 
 void StateCache::setElementArrayBuffer(GLint elemArrayBuffer)
 {
-	//if (m_elemArrayBuffer != elemArrayBuffer)
+	if (m_elemArrayBuffer != elemArrayBuffer)
 	{
 		T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elemArrayBuffer));
 		m_elemArrayBuffer = elemArrayBuffer;

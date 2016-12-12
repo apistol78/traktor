@@ -232,16 +232,16 @@ void VertexBufferStaticOpenGLES2::unlock()
 
 void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 {
-	if (!m_bufferObject)
-	{
-		T_OGL_SAFE(glGenBuffers(1, &m_bufferObject));
-		T_FATAL_ASSERT (m_bufferObject != 0);
-	}
-
-	stateCache->setArrayBuffer(m_bufferObject);
-
 	if (m_dirty)
 	{
+		if (!m_bufferObject)
+		{
+			T_OGL_SAFE(glGenBuffers(1, &m_bufferObject));
+			T_FATAL_ASSERT (m_bufferObject != 0);
+		}
+
+		stateCache->setArrayBuffer(m_bufferObject);
+
 		int32_t bufferSize = getBufferSize();
 		if (m_lockOffset <= 0 && m_lockSize >= bufferSize)
 		{
@@ -279,6 +279,9 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 	{
 		T_OGL_SAFE(g_glGenVertexArraysOES(1, &m_arrayObject));
 		stateCache->setVertexArrayObject(m_arrayObject);
+
+		if (m_bufferObject)
+			stateCache->setArrayBuffer(m_bufferObject);
 
 		for (AlignedVector< AttributeDesc >::const_iterator i = m_attributes.begin(); i != m_attributes.end(); ++i)
 		{
