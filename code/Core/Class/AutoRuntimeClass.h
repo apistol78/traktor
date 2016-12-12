@@ -9,8 +9,13 @@
 namespace traktor
 {
 
-#define T_VERIFY_ARGUMENTS(required) \
-	T_FATAL_ASSERT_M (argc >= (required), L"Not enough arguments");
+#if !defined(__ANDROID__) && !defined(__IOS__)
+#	define T_VERIFY_ARGUMENTS(required) \
+		T_FATAL_ASSERT_M (argc >= (required), L"Not enough arguments");
+#else
+#	define T_VERIFY_ARGUMENTS(required) 
+		T_ASSERT_M (argc >= (required), L"Not enough arguments");
+#endif
 
 /*! \ingroup Core */
 /*! \{ */
@@ -1846,6 +1851,51 @@ struct MethodTrunk_8 : public IMethod
 			CastAny< Argument8Type >::get(argv[7])
 		);
 		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type,
+	typename Argument7Type,
+	typename Argument8Type
+>
+struct MethodTrunk_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type > : public IMethod
+{
+	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type);
+
+	method_t m_method;
+
+	MethodTrunk_8(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	{
+		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss); ss << L","; CastAny< Argument8Type >::typeName(ss);
+	}
+
+	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	{
+		T_VERIFY_ARGUMENTS(8)
+		(*m_method)(
+			mandatory_non_null_type_cast< ClassType* >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5]),
+			CastAny< Argument7Type >::get(argv[6]),
+			CastAny< Argument8Type >::get(argv[7])
+		);
+		return Any();
 	}
 };
 

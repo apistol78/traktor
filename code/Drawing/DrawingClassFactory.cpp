@@ -5,6 +5,7 @@
 #include "Drawing/DrawingClassFactory.h"
 #include "Drawing/IImageFilter.h"
 #include "Drawing/Image.h"
+#include "Drawing/ITransferFunction.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Raster.h"
 #include "Drawing/Filters/BlurFilter.h"
@@ -28,6 +29,7 @@
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Filters/TonemapFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
+#include "Drawing/Functions/BlendFunction.h"
 
 namespace traktor
 {
@@ -154,6 +156,25 @@ void Image_copy_2(Image* image, const Image* src, int32_t dx, int32_t dy, int32_
 	image->copy(src, dx, dy, x, y, width, height);
 }
 
+void Image_copy_3(Image* image, const Image* src, int32_t x, int32_t y, int32_t width, int32_t height, const ITransferFunction& tf)
+{
+	image->copy(src, x, y, width, height, tf);
+}
+
+void Image_copy_4(Image* image, const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y, int32_t width, int32_t height, const ITransferFunction& tf)
+{
+	image->copy(src, dx, dy, x, y, width, height, tf);
+}
+
+Ref< BlendFunction > BlendFunction_constructor(int32_t sourceFactor, int32_t destinationFactor, int32_t operation)
+{
+	return new BlendFunction(
+		(BlendFunction::Factor)sourceFactor,
+		(BlendFunction::Factor)destinationFactor,
+		(BlendFunction::Operation)operation
+	);
+}
+
 void Raster_moveTo(Raster* self, float x, float y)
 {
 	self->moveTo(x, y);
@@ -234,12 +255,17 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< IImageFilter > > classIImageFilter = new AutoRuntimeClass< IImageFilter >();
 	registrar->registerClass(classIImageFilter);
 
+	Ref< AutoRuntimeClass< ITransferFunction > > classITransferFunction = new AutoRuntimeClass< ITransferFunction >();
+	registrar->registerClass(classITransferFunction);
+
 	Ref< AutoRuntimeClass< Image > > classImage = new AutoRuntimeClass< Image >();
 	classImage->addConstructor();
 	classImage->addConstructor< const BoxedPixelFormat*, uint32_t, uint32_t >(&Image_constructor_3);
 	classImage->addMethod("clone", &Image::clone);
 	classImage->addMethod("copy", &Image_copy_1);
 	classImage->addMethod("copy", &Image_copy_2);
+	classImage->addMethod("copy", &Image_copy_3);
+	classImage->addMethod("copy", &Image_copy_4);
 	classImage->addMethod("clear", &Image::clear);
 	classImage->addMethod("clearAlpha", &Image::clearAlpha);
 	classImage->addMethod("getPixel", &Image_getPixel);
@@ -339,6 +365,25 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< TransformFilter > > classTransformFilter = new AutoRuntimeClass< TransformFilter >();
 	classTransformFilter->addConstructor< const Color4f&, const Color4f& >();
 	registrar->registerClass(classTransformFilter);
+
+	Ref< AutoRuntimeClass< BlendFunction > > classBlendFunction = new AutoRuntimeClass< BlendFunction >();
+	classBlendFunction->addConstant("BfOne", Any::fromInteger(BlendFunction::BfOne));
+	classBlendFunction->addConstant("BfZero", Any::fromInteger(BlendFunction::BfZero));
+	classBlendFunction->addConstant("BfSourceColor", Any::fromInteger(BlendFunction::BfSourceColor));
+	classBlendFunction->addConstant("BfOneMinusSourceColor", Any::fromInteger(BlendFunction::BfOneMinusSourceColor));
+	classBlendFunction->addConstant("BfDestinationColor", Any::fromInteger(BlendFunction::BfDestinationColor));
+	classBlendFunction->addConstant("BfOneMinusDestinationColor", Any::fromInteger(BlendFunction::BfOneMinusDestinationColor));
+	classBlendFunction->addConstant("BfSourceAlpha", Any::fromInteger(BlendFunction::BfSourceAlpha));
+	classBlendFunction->addConstant("BfOneMinusSourceAlpha", Any::fromInteger(BlendFunction::BfOneMinusSourceAlpha));
+	classBlendFunction->addConstant("BfDestinationAlpha", Any::fromInteger(BlendFunction::BfDestinationAlpha));
+	classBlendFunction->addConstant("BfOneMinusDestinationAlpha", Any::fromInteger(BlendFunction::BfOneMinusDestinationAlpha));
+	classBlendFunction->addConstant("BoAdd", Any::fromInteger(BlendFunction::BoAdd));
+	classBlendFunction->addConstant("BoSubtract", Any::fromInteger(BlendFunction::BoSubtract));
+	classBlendFunction->addConstant("BoReverseSubtract", Any::fromInteger(BlendFunction::BoReverseSubtract));
+	classBlendFunction->addConstant("BoMin", Any::fromInteger(BlendFunction::BoMin));
+	classBlendFunction->addConstant("BoMax", Any::fromInteger(BlendFunction::BoMax));
+	classBlendFunction->addConstructor< int32_t, int32_t, int32_t >(&BlendFunction_constructor);
+	registrar->registerClass(classBlendFunction);
 
 	Ref< AutoRuntimeClass< Raster > > classRaster = new AutoRuntimeClass< Raster >();
 	classRaster->addConstant("ScButt", Any::fromInteger(Raster::ScButt));
