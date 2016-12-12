@@ -1,8 +1,12 @@
 #include <android/native_activity.h>
+#include "Core/Io/StreamCopy.h"
 #include "Core/Io/Android/AssetsStream.h"
 #include "Core/Io/Android/AssetsVolume.h"
+#include "Core/Io/Android/NativeStream.h"
+#include "Core/Io/Android/NativeVolume.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Core/System/OS.h"
 
 namespace traktor
 {
@@ -36,17 +40,34 @@ bool AssetsVolume::modify(const Path& fileName, uint32_t flags)
 
 Ref< IStream > AssetsVolume::open(const Path& filename, uint32_t mode)
 {
+	Ref< NativeVolume > nv = new NativeVolume(filename);
+	Path cpath(L"$(INTERNAL_DATA_PATH)/" + filename.getFileName());
+
+	Ref< IStream > os = nv->open(cpath, File::FmWrite);
+
 	AAssetManager* assetManager = m_activity->assetManager;
 	T_FATAL_ASSERT (assetManager);
 
 	AAsset* assetFile = AAssetManager_open(assetManager, wstombs(filename.getPathNameNoVolume()).c_str(), AASSET_MODE_STREAMING);
 	if (!assetFile)
 	{
-		log::error << L"Unable to open asset \"" << filename.getPathNameNoVolume() << L"\"; AAssetManager_open return null." << Endl; 
+		log::error << L"Unable to open asset \"" << filename.getPathNameNoVolume() << L"\"; AAssetManager_open return null." << Endl;
 		return 0;
 	}
 
-	return new AssetsStream(assetFile);
+	Ref< IStream > is = new AssetsStream(assetFile);
+	StreamCopy(os, is).execute();
+	is->close();
+	os->close();
+
+	Ref< IStream > ret = nv->open(cpath, File::FmRead);
+	if (!ret)
+	{
+		log::error << L"Unable to open cached asset \"" << cpath.getPathNameNoVolume() << L"\"; NativeVolume return null." << Endl;
+		ret = 0;
+	}
+
+	return ret;
 }
 
 bool AssetsVolume::exist(const Path& filename)
