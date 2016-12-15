@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Functor/Functor.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/SahTree.h"
 #include "Core/Math/Winding3.h"
@@ -18,6 +19,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Illuminate/Editor/CubeProbe.h"
 #include "Illuminate/Editor/GBuffer.h"
 #include "Illuminate/Editor/IlluminateEntityData.h"
 #include "Illuminate/Editor/IlluminateEntityPipeline.h"
@@ -30,6 +32,7 @@
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/MergeModel.h"
 #include "Model/Operations/UnwrapUV.h"
+#include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -209,6 +212,32 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				light.range = Scalar(lightComponentData->getRange());
 				lights.push_back(light);
 			}
+			else if (lightComponentData->getLightType() == world::LtProbe)
+			{
+				Ref< const render::TextureAsset > probeTextureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(lightComponentData->getProbeTexture());
+				if (!probeTextureAsset)
+					return 0;
+
+				Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), probeTextureAsset->getFileName().getOriginal());
+				if (!file)
+				{
+					log::error << L"IlluminateEntityPipeline failed; unable to open source image \"" << probeTextureAsset->getFileName().getOriginal() << L"\"" << Endl;
+					return false;
+				}
+
+				Ref< drawing::Image > image = drawing::Image::load(file, probeTextureAsset->getFileName().getExtension());
+				if (!image)
+				{
+					log::error << L"IlluminateEntityPipeline failed; unable to load source image \"" << probeTextureAsset->getFileName().getOriginal() << L"\"" << Endl;
+					return false;
+				}
+
+				file->close();
+
+				light.type = 2;
+				light.probe = new CubeProbe(image);
+				lights.push_back(light);
+			}
 		}
 
 		Ref< model::Model > mergedModel = new model::Model();
@@ -348,7 +377,11 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 					lights,
 					outputImageRadiance,
 					sourceIlluminateEntityData->getPointLightRadius(),
-					sourceIlluminateEntityData->getShadowSamples()
+					sourceIlluminateEntityData->getShadowSamples(),
+					sourceIlluminateEntityData->getProbeSamples(),
+					sourceIlluminateEntityData->getProbeCoeff(),
+					sourceIlluminateEntityData->getProbeSpread(),
+					sourceIlluminateEntityData->getProbeShadowSpread()
 				);
 
 				Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceDirect >(trace, &JobTraceDirect::execute));
@@ -370,7 +403,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		jobs.clear();
 
 		log::info << L"Dilating direct light map..." << Endl;
-		drawing::DilateFilter dilateFilter(4);
+		drawing::DilateFilter dilateFilter(8);
 		outputImageRadiance->apply(&dilateFilter);
 
 		if (illumEntityData->getDirectConvolveRadius() > 0)
@@ -431,7 +464,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				jobs.clear();
 
 				log::info << L"Dilating indirect light map..." << Endl;
-				drawing::DilateFilter dilateFilter(4);
+				drawing::DilateFilter dilateFilter(8);
 				outputImageIndirectTarget->apply(&dilateFilter);
 
 				if (illumEntityData->getIndirectConvolveRadius() > 0)

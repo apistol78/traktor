@@ -2,6 +2,7 @@
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/SahTree.h"
 #include "Drawing/Image.h"
+#include "Illuminate/Editor/CubeProbe.h"
 #include "Illuminate/Editor/GBuffer.h"
 #include "Illuminate/Editor/JobTraceDirect.h"
 
@@ -26,7 +27,11 @@ JobTraceDirect::JobTraceDirect(
 	const AlignedVector< Light >& lights,
 	drawing::Image* outputImageDirect,
 	float pointLightRadius,
-	int32_t shadowSamples
+	int32_t shadowSamples,
+	int32_t probeSamples,
+	float probeCoeff,
+	float probeSpread,
+	float probeShadowSpread
 )
 :	m_tileX(tileX)
 ,	m_tileY(tileY)
@@ -36,6 +41,10 @@ JobTraceDirect::JobTraceDirect(
 ,	m_outputImageDirect(outputImageDirect)
 ,	m_pointLightRadius(pointLightRadius)
 ,	m_shadowSamples(shadowSamples)
+,	m_probeSamples(probeSamples)
+,	m_probeCoeff(probeCoeff)
+,	m_probeSpread(probeSpread)
+,	m_probeShadowSpread(probeShadowSpread)
 {
 }
 
@@ -131,6 +140,37 @@ void JobTraceDirect::execute()
 					Scalar shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_shadowSamples);
 
 					radiance += i->sunColor * shadowAttenuate * distanceAttenuate * phi;
+				}
+				else if (i->type == 2)	// Probe
+				{
+					Color4f irradiance(0.0f, 0.0f, 0.0f, 0.0f);
+
+					const Scalar probeSampleCoeff(m_probeCoeff/*0.001f*/);
+					const Scalar probeSpread(m_probeSpread/*0.2f*/);
+					const Scalar shadowSpread(m_probeShadowSpread/*0.5f*/);
+
+					Vector4 u, v;
+					orthogonalFrame(gb.normal, u, v);
+
+					for (int32_t j = 0; j < m_probeSamples; ++j)
+					{
+						float a, b;
+						do
+						{
+							a = random.nextFloat() * 2.0f - 1.0f;
+							b = random.nextFloat() * 2.0f - 1.0f;
+						} while ((a * a) + (b * b) > 1.0f);
+
+						Vector4 hemi = (gb.normal + u * Scalar(a) + v * Scalar(b)).normalized();
+						Vector4 shadowDirection = lerp(gb.normal, hemi, shadowSpread).xyz0().normalized();
+						if (!m_sah.queryAnyIntersection(gb.position + gb.normal * c_traceOffset, shadowDirection, Scalar(2.0f), gb.surfaceIndex, cache))
+						{
+							Vector4 sampleDirection = lerp(gb.normal, hemi, probeSpread).xyz0().normalized();
+							irradiance += i->probe->sample(sampleDirection) * dot3(sampleDirection, gb.normal) * probeSampleCoeff;
+						}
+					}
+
+					radiance += irradiance;
 				}
 			}
 

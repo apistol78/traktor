@@ -491,15 +491,15 @@ Fall off
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1147</first>
-				<second>781</second>
+				<first>1226</first>
+				<second>706</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>889</first>
-				<second>720</second>
+				<first>1017</first>
+				<second>706</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -521,6 +521,13 @@ Fall off
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>817</first>
+				<second>706</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -996,16 +1003,6 @@ Fall off
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Specular</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[42]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[42]"/>
 				<name>Output</name>
 			</source>
@@ -1092,6 +1089,36 @@ Fall off
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Specular</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[44]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[44]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
