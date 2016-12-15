@@ -9,7 +9,7 @@ namespace traktor
 	namespace illuminate
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.illuminate.IlluminateEntityData", 0, IlluminateEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.illuminate.IlluminateEntityData", 1, IlluminateEntityData, world::EntityData)
 
 IlluminateEntityData::IlluminateEntityData()
 :	m_seedGuid(Guid::create())
@@ -17,6 +17,10 @@ IlluminateEntityData::IlluminateEntityData()
 ,	m_indirectLighting(true)
 ,	m_pointLightRadius(0.02f)
 ,	m_shadowSamples(64)
+,	m_probeSamples(64)
+,	m_probeCoeff(0.001f)
+,	m_probeSpread(0.5f)
+,	m_probeShadowSpread(0.5f)
 ,	m_directConvolveRadius(0)
 ,	m_indirectTraceSamples(64)
 ,	m_indirectTraceIterations(1)
@@ -64,6 +68,15 @@ void IlluminateEntityData::serialize(ISerializer& s)
 	s >> Member< bool >(L"indirectLighting", m_indirectLighting);
 	s >> Member< float >(L"pointLightRadius", m_pointLightRadius);
 	s >> Member< int32_t >(L"shadowSamples", m_shadowSamples, AttributeRange(1));
+
+	if (s.getVersion() >= 1)
+	{
+		s >> Member< int32_t >(L"probeSamples", m_probeSamples, AttributeRange(1));
+		s >> Member< float >(L"probeCoeff", m_probeCoeff, AttributeRange(0.0f));
+		s >> Member< float >(L"probeSpread", m_probeSpread, AttributeRange(0.0f, 1.0f));
+		s >> Member< float >(L"probeShadowSpread", m_probeShadowSpread, AttributeRange(0.0f, 1.0f));
+	}
+
 	s >> Member< int32_t >(L"directConvolveRadius", m_directConvolveRadius, AttributeRange(0));
 	s >> Member< int32_t >(L"indirectTraceSamples", m_indirectTraceSamples, AttributeRange(1));
 	s >> Member< int32_t >(L"indirectTraceIterations", m_indirectTraceIterations, AttributeRange(1));

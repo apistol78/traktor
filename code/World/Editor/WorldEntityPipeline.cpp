@@ -53,8 +53,11 @@ bool WorldEntityPipeline::buildDependencies(
 		for (RefArray< EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
 			pipelineDepends->addDependency(*i);
 	}
-	else if (const LightComponentData* lightComponentData = dynamic_type_cast< const LightComponentData* >(sourceAsset))
+	else if (const LightComponentData* lightComponentData = dynamic_type_cast<const LightComponentData*>(sourceAsset))
+	{
+		pipelineDepends->addDependency(lightComponentData->getProbeTexture(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(lightComponentData->getCloudShadowTexture(), editor::PdfBuild | editor::PdfResource);
+	}
 	return true;
 }
 

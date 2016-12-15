@@ -93,6 +93,7 @@ private:
 	resource::Proxy< render::Shader > m_lightDirectionalShader;
 	resource::Proxy< render::Shader > m_lightPointShader;
 	resource::Proxy< render::Shader > m_lightSpotShader;
+	resource::Proxy< render::Shader > m_lightProbeShader;
 	resource::Proxy< render::Shader > m_reflectionShader;
 	resource::Proxy< render::Shader > m_fogShader;
 	Ref< render::VertexBuffer > m_vertexBufferQuad;

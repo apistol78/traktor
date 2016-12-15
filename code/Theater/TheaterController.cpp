@@ -43,7 +43,7 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 	for (int32_t i = 0; i < int32_t(m_acts.size()); ++i)
 	{
 		float actDuration = m_acts[i]->getDuration();
-		if (time >= actStartTime && (m_acts[i]->isInfinite() || time <= actStartTime + actDuration + FUZZY_EPSILON))
+		if (time >= actStartTime && (m_acts[i]->isInfinite() || time <= actStartTime + actDuration - FUZZY_EPSILON))
 		{
 			act = m_acts[i];
 			break;

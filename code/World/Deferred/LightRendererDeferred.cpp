@@ -19,6 +19,7 @@ namespace traktor
 const resource::Id< render::Shader > c_lightDirectionalShader(Guid(L"{F4F7C11E-BCB3-1045-9C78-1F0658D34229}"));
 const resource::Id< render::Shader > c_lightPointShader(Guid(L"{E00C6B91-3266-A044-BE9E-56C8E70CA539}"));
 const resource::Id< render::Shader > c_lightSpotShader(Guid(L"{3FD07AEE-3FB5-C84D-87E1-3F9A2F0CAD5E}"));
+const resource::Id< render::Shader > c_lightProbeShader(Guid(L"{673434A8-2663-9141-8E23-91A2F38A7B69}"));
 const resource::Id< render::Shader > c_reflectionShader(Guid(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}"));
 const resource::Id< render::Shader > c_fogShader(Guid(L"{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}"));
 
@@ -40,6 +41,7 @@ render::handle_t s_handleColorMap;
 render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleShadowMask;
 render::handle_t s_handleCloudShadow;
+render::handle_t s_handleProbe;
 render::handle_t s_handleLightPosition;
 render::handle_t s_handleLightPositionAndRadius;
 render::handle_t s_handleLightDirectionAndRange;
@@ -78,6 +80,7 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleShadowMaskSize = render::getParameterHandle(L"World_ShadowMaskSize");
 	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
 	s_handleCloudShadow = render::getParameterHandle(L"World_CloudShadow");
+	s_handleProbe = render::getParameterHandle(L"World_Probe");
 	s_handleLightPosition = render::getParameterHandle(L"World_LightPosition");
 	s_handleLightPositionAndRadius = render::getParameterHandle(L"World_LightPositionAndRadius");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
@@ -98,6 +101,8 @@ bool LightRendererDeferred::create(
 	if (!resourceManager->bind(c_lightPointShader, m_lightPointShader))
 		return false;
 	if (!resourceManager->bind(c_lightSpotShader, m_lightSpotShader))
+		return false;
+	if (!resourceManager->bind(c_lightProbeShader, m_lightProbeShader))
 		return false;
 	if (!resourceManager->bind(c_reflectionShader, m_reflectionShader))
 		return false;
@@ -160,13 +165,13 @@ void LightRendererDeferred::renderLight(
 		Vector4 lightDirectionAndRange = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
 
 		m_lightDirectionalShader->setCombination(s_handleShadowEnable, shadowMask != 0);
-		m_lightDirectionalShader->setCombination(s_handleCloudShadowEnable, light.texture != 0);
+		m_lightDirectionalShader->setCombination(s_handleCloudShadowEnable, light.cloudShadow != 0);
 		m_lightDirectionalShader->setFloatParameter(s_handleTime, time);
 		m_lightDirectionalShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
 		m_lightDirectionalShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		m_lightDirectionalShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 		m_lightDirectionalShader->setTextureParameter(s_handleShadowMask, shadowMask);
-		m_lightDirectionalShader->setTextureParameter(s_handleCloudShadow, light.texture);
+		m_lightDirectionalShader->setTextureParameter(s_handleCloudShadow, light.cloudShadow);
 		m_lightDirectionalShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightDirectionalShader->setTextureParameter(s_handleNormalMap, normalMap);
 		m_lightDirectionalShader->setTextureParameter(s_handleMiscMap, miscMap);
@@ -332,6 +337,21 @@ void LightRendererDeferred::renderLight(
 		m_lightSpotShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
 
 		m_lightSpotShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
+	}
+	else if (light.type == LtProbe)
+	{
+		m_lightProbeShader->setFloatParameter(s_handleTime, time);
+		m_lightProbeShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
+		m_lightProbeShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+		m_lightProbeShader->setMatrixParameter(s_handleViewInverse, view.inverse());
+		m_lightProbeShader->setTextureParameter(s_handleShadowMask, shadowMask);
+		m_lightProbeShader->setTextureParameter(s_handleProbe, light.probe);
+		m_lightProbeShader->setTextureParameter(s_handleDepthMap, depthMap);
+		m_lightProbeShader->setTextureParameter(s_handleNormalMap, normalMap);
+		m_lightProbeShader->setTextureParameter(s_handleMiscMap, miscMap);
+		m_lightProbeShader->setTextureParameter(s_handleColorMap, colorMap);
+
+		m_lightProbeShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 	}
 }
 

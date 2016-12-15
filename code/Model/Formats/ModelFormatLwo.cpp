@@ -230,7 +230,12 @@ bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::str
 
 		material.setDiffuseTerm(surface->diffuse.val);
 		material.setSpecularTerm(surface->specularity.val);
-		material.setSpecularRoughness(surface->glossiness.val);
+		
+		if (surface->specularity.val > FUZZY_EPSILON)
+			material.setSpecularRoughness(surface->glossiness.val);
+		else
+			material.setSpecularRoughness(0.0f);
+
 		material.setMetalness(surface->color_hilite.val);
 		material.setEmissive(surface->luminosity.val);
 		material.setReflective(surface->reflection.val.val);

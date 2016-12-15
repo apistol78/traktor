@@ -48,7 +48,8 @@ enum LightType
 	LtDisabled = 0,
 	LtDirectional = 1,
 	LtPoint = 2,
-	LtSpot = 3
+	LtSpot = 3,
+	LtProbe = 4
 };
 
 struct Light
@@ -61,7 +62,8 @@ struct Light
 	Vector4 shadowColor;
 	Scalar range;
 	Scalar radius;
-	render::ITexture* texture;
+	render::ITexture* probe;
+	render::ITexture* cloudShadow;
 	bool castShadow;
 };
 
