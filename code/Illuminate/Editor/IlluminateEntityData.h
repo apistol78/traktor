@@ -42,6 +42,8 @@ public:
 
 	bool traceIndirectLighting() const { return m_indirectLighting; }
 
+	float getLumelDensity() const { return m_lumelDensity; }
+
 	float getPointLightRadius() const { return m_pointLightRadius; }
 
 	int32_t getShadowSamples() const { return m_shadowSamples; }
@@ -72,6 +74,7 @@ private:
 	Guid m_seedGuid;
 	bool m_directLighting;
 	bool m_indirectLighting;
+	float m_lumelDensity;
 	float m_pointLightRadius;
 	int32_t m_shadowSamples;
 	int32_t m_probeSamples;

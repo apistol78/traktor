@@ -13,8 +13,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_jobTileWidth = 128;
-const int32_t c_jobTileHeight = 128;
+const int32_t c_jobTileSize = 128;
 const Scalar c_traceOffset(0.01f);
 
 		}
@@ -55,9 +54,9 @@ void JobTraceDirect::execute()
 	SahTree::QueryResult result;
 	Color4f tmp;
 
-	for (int32_t y = m_tileY; y < m_tileY + c_jobTileHeight; ++y)
+	for (int32_t y = m_tileY; y < m_tileY + c_jobTileSize; ++y)
 	{
-		for (int32_t x = m_tileX; x < m_tileX + c_jobTileWidth; ++x)
+		for (int32_t x = m_tileX; x < m_tileX + c_jobTileSize; ++x)
 		{
 			const GBuffer::Element& gb = m_gbuffer.get(x, y);
 
@@ -145,9 +144,9 @@ void JobTraceDirect::execute()
 				{
 					Color4f irradiance(0.0f, 0.0f, 0.0f, 0.0f);
 
-					const Scalar probeSampleCoeff(m_probeCoeff/*0.001f*/);
-					const Scalar probeSpread(m_probeSpread/*0.2f*/);
-					const Scalar shadowSpread(m_probeShadowSpread/*0.5f*/);
+					const Scalar probeSampleCoeff(m_probeCoeff);
+					const Scalar probeSpread(m_probeSpread);
+					const Scalar shadowSpread(m_probeShadowSpread);
 
 					Vector4 u, v;
 					orthogonalFrame(gb.normal, u, v);

@@ -2,6 +2,7 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Core/Math/SahTree.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Reflection/Reflection.h"
@@ -46,10 +47,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_outputWidth = 2048;
-const int32_t c_outputHeight = 2048;
-const int32_t c_jobTileWidth = 128;
-const int32_t c_jobTileHeight = 128;
+const int32_t c_jobTileSize = 128;
 
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
 {
@@ -284,11 +282,21 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 		// UV unwrap entire model.
 		log::info << L"UV unwrapping, using channel " << channel << L"..." << Endl;
-		if (!model::UnwrapUV(channel, 3.0f, 1.0f / c_outputWidth, 1.0f / c_outputHeight).apply(*mergedModel))
+		if (!model::UnwrapUV(channel, 3.0f, 0.0f, 0.0f).apply(*mergedModel))
 		{
 			log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV." << Endl;
 			return 0;
 		}
+
+		// Calculate output size from lumel density.
+		const model::Polygon& p = mergedModel->getPolygon(0);
+		const model::Vertex& v0 = mergedModel->getVertex(p.getVertex(0));
+		const model::Vertex& v1 = mergedModel->getVertex(p.getVertex(1));
+		Vector4 dP = mergedModel->getPosition(v1.getPosition()) - mergedModel->getPosition(v0.getPosition());
+		Vector2 dUV = mergedModel->getTexCoord(v1.getTexCoord(channel)) - mergedModel->getTexCoord(v0.getTexCoord(channel));
+		float size = sourceIlluminateEntityData->getLumelDensity() * dP.length() / dUV.length();
+		int32_t outputSize = alignUp(int32_t(size + 0.5f), c_jobTileSize);
+		log::info << L"Lumel density " << sourceIlluminateEntityData->getLumelDensity() << L" lumels/unit, lightmap size " << outputSize << Endl;
 
 		// Setup tracer.
 		log::info << L"Preparing tracer..." << Endl;
@@ -355,19 +363,19 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 		// Create GBuffer.
 		GBuffer gbuffer;
-		gbuffer.create(surfaces, c_outputWidth, c_outputHeight);
+		gbuffer.create(surfaces, outputSize, outputSize);
 
 		// Create output image.
-		Ref< drawing::Image > outputImageRadiance = new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight);
+		Ref< drawing::Image > outputImageRadiance = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
 		outputImageRadiance->clear(Color4f(0.0f, 0.0f, 1.0f, 0.0f));
 
 		RefArray< Job > jobs;
 
 		log::info << L"Tracing direct lighting..." << Endl;
 		std::list< JobTraceDirect* > tracesDirect;
-		for (int32_t y = 0; y < c_outputHeight; y += c_jobTileHeight)
+		for (int32_t y = 0; y < outputSize; y += c_jobTileSize)
 		{
-			for (int32_t x = 0; x < c_outputWidth; x += c_jobTileWidth)
+			for (int32_t x = 0; x < outputSize; x += c_jobTileSize)
 			{
 				JobTraceDirect* trace = new JobTraceDirect(
 					x,
@@ -419,8 +427,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 			Ref< drawing::Image > outputImageIndirect[] = 
 			{
-				new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight),
-				new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight)
+				new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize),
+				new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize)
 			};
 
 			Ref< drawing::Image > imageIrradiance = outputImageRadiance;
@@ -430,9 +438,9 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				Ref< drawing::Image > outputImageIndirectTarget = outputImageIndirect[i % 2];
 				outputImageIndirectTarget->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-				for (int32_t y = 0; y < c_outputHeight; y += c_jobTileHeight)
+				for (int32_t y = 0; y < outputSize; y += c_jobTileSize)
 				{
-					for (int32_t x = 0; x < c_outputWidth; x += c_jobTileWidth)
+					for (int32_t x = 0; x < outputSize; x += c_jobTileSize)
 					{
 						JobTraceIndirect* trace = new JobTraceIndirect(
 							x,
@@ -474,9 +482,9 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				}
 
 				log::info << L"Merging direct and indirect lighting..." << Endl;
-				for (int32_t y = 0; y < c_outputHeight; ++y)
+				for (int32_t y = 0; y < outputSize; ++y)
 				{
-					for (int32_t x = 0; x < c_outputWidth; ++x)
+					for (int32_t x = 0; x < outputSize; ++x)
 					{
 						Color4f inA, inB;
 						outputImageIndirectTarget->getPixelUnsafe(x, y, inA);
