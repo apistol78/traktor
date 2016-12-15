@@ -40,6 +40,7 @@ public:
 		const Transform& transform,
 		const Vector4& spawnPositionDiagonal,
 		const Vector4& spawnVelocityDiagonal,
+		const Vector4& constrain,
 		float followForce,
 		float repelDistance,
 		float repelForce,
@@ -76,6 +77,7 @@ private:
 	RefArray< world::Entity > m_boidEntities;
 	AlignedVector< Boid > m_boids;
 	Transform m_transform;
+	Vector4 m_constrain;
 	float m_followForce;
 	float m_repelDistance;
 	float m_repelForce;

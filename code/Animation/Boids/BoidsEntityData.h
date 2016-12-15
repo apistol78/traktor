@@ -46,6 +46,7 @@ private:
 	uint32_t m_boidCount;
 	Vector4 m_spawnPositionDiagonal;
 	Vector4 m_spawnVelocityDiagonal;
+	Vector4 m_constrain;
 	float m_followForce;
 	float m_repelDistance;
 	float m_repelForce;

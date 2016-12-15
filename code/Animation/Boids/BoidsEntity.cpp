@@ -14,6 +14,7 @@ BoidsEntity::BoidsEntity(
 	const Transform& transform,
 	const Vector4& spawnPositionDiagonal,
 	const Vector4& spawnVelocityDiagonal,
+	const Vector4& constrain,
 	float followForce,
 	float repelDistance,
 	float repelForce,
@@ -23,6 +24,7 @@ BoidsEntity::BoidsEntity(
 )
 :	m_boidEntities(boidEntities)
 ,	m_transform(transform)
+,	m_constrain(constrain)
 ,	m_followForce(followForce)
 ,	m_repelDistance(repelDistance)
 ,	m_repelForce(repelForce)
@@ -103,6 +105,8 @@ void BoidsEntity::update(const world::UpdateParams& update)
 		velocity += m_boids[i].velocity;
 	}
 
+	Vector4 constrainAdd = attraction * (Vector4::one() - m_constrain);
+
 	Scalar invBoidsSize(1.0f / (float(m_boids.size()) - 1.0f));
 
 	// Update boids.
@@ -123,7 +127,7 @@ void BoidsEntity::update(const world::UpdateParams& update)
 			if (i != j)
 			{
 				Vector4 d = m_boids[j].position - m_boids[i].position;
-				if (d.length() < m_repelDistance)
+				if (d.normalize() < m_repelDistance)
 					m_boids[i].velocity -= d * Scalar(m_repelForce);
 			}
 		}
@@ -140,6 +144,9 @@ void BoidsEntity::update(const world::UpdateParams& update)
 
 		// Integrate position.
 		m_boids[i].position += m_boids[i].velocity * deltaTime;
+
+		// Constrain position.
+		m_boids[i].position = m_boids[i].position * m_constrain + constrainAdd;
 
 		// Update boid entity.
 		if (m_boidEntities[i])
