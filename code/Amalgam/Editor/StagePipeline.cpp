@@ -6,6 +6,7 @@
 #include "Amalgam/Game/Engine/VideoLayerData.h"
 #include "Amalgam/Game/Engine/WorldLayerData.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Log/Log.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -63,6 +64,14 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		// Replace resource bundle.
 		if (stageDataOut->getResourceBundle().isNull())
 			stageDataOut->setResourceBundle(downStageDataFlatten->getResourceBundle());
+
+		if (stageDataOut->getProperties() && downStageData->getProperties())
+		{
+			Ref< const PropertyGroup > mergedProperties = downStageData->getProperties()->mergeReplace(stageDataOut->getProperties());
+			stageDataOut->setProperties(mergedProperties);
+		}
+		else if (downStageData->getProperties())
+			stageDataOut->setProperties(downStageData->getProperties());
 	}
 
 	return stageDataOut;

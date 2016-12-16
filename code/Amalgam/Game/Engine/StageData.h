@@ -19,6 +19,7 @@ namespace traktor
 {
 
 class IRuntimeClass;
+class PropertyGroup;
 
 	namespace amalgam
 	{
@@ -93,6 +94,10 @@ public:
 
 	const Guid& getResourceBundle() const { return m_resourceBundle; }
 
+	void setProperties(const PropertyGroup* properties) { m_properties = properties; }
+
+	const PropertyGroup* getProperties() const { return m_properties; }
+
 private:
 	friend class StagePipeline;
 
@@ -105,6 +110,7 @@ private:
 	float m_fadeRate;
 	std::map< std::wstring, Guid > m_transitions;
 	Guid m_resourceBundle;
+	Ref< const PropertyGroup > m_properties;
 };
 
 	}
