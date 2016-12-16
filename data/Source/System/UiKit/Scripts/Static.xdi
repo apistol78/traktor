@@ -27,22 +27,27 @@ end
 
 function Static:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
-	self._text_tb:setTextBounds(Aabb2(
-		Vector2(0, 0),
-		Vector2(width * 20, height * 20)
-	))
+	self._text_tb:setTextBounds(Aabb2(Vector2(0, 0), Vector2(width * 20, height * 20)))
 end
 
 function Static:setText(text)
+
+	-- Reset original text bounds as text layout engine
+	-- use bounds to figure out the layout. And because
+	-- we want layout to behave same regardless of bounds
+	-- we need to restore it before changing the value.
+	self._text_tb:setTextBounds(self._originalBounds)
 	self._text_tb:parseText(text)
 
 	local sz = self._text_tb:getTextSize()
 	self._preferredSize.width = sz:x()
 	self._preferredSize.height = sz:y()
+
 	return self
 end
 
 function Static:setTextSize(size)
+
 	local tf = self._text_tb:getTextFormat()
 	tf:setSize(size * 20)
 	self._text_tb:setTextFormat(tf)
@@ -50,6 +55,7 @@ function Static:setTextSize(size)
 	local sz = self._text_tb:getTextSize()
 	self._preferredSize.width = sz:x()
 	self._preferredSize.height = sz:y()
+
 	return self
 end
 
@@ -69,14 +75,10 @@ function Static:_initialize(parent, mc, text)
 
 	self._text_tb = mc:getMember("text_tb")
 	self._text_tb:setTransform(Matrix33.identity)
-	self._text_tb:parseText(text)
+	self._originalBounds = self._text_tb:getTextBounds()
+	self._preferredSize = { width = 0, height = 0 }
 
-	local sz = self._text_tb:getTextSize()
-	self._preferredSize =
-	{
-		width = sz:x(),
-		height = sz:y()
-	}
+	self:setText(text)
 
 #if defined(_DEBUG)
 	self._text_tb:setMember("__renderWireOutline", true)

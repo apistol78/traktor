@@ -39,6 +39,7 @@ end
 
 function Button:setOnClick(fn)
 	self._clickFn = fn
+	return self
 end
 
 -- Private
