@@ -7,6 +7,7 @@
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -25,7 +26,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.StageData", 8, StageData, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.StageData", 9, StageData, ISerializable)
 
 StageData::StageData()
 :	m_fadeRate(1.5f)
@@ -127,6 +128,9 @@ void StageData::serialize(ISerializer& s)
 		Guid dummy;
 		s >> Member< Guid >(L"localizationDictionary", dummy);
 	}
+
+	if (s.getVersion() >= 9)
+		s >> MemberRef< const PropertyGroup >(L"properties", m_properties);
 }
 
 	}

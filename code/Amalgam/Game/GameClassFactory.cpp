@@ -281,7 +281,15 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedTransition);
 
 	Ref< AutoRuntimeClass< StageData > > classStageData = new AutoRuntimeClass< StageData >();
+	classStageData->addMethod("getName", &StageData::getName);
+	classStageData->addMethod("getInherit", &StageData::getInherit);
+	classStageData->addMethod("setFadeRate", &StageData::setFadeRate);
+	classStageData->addMethod("getFadeRate", &StageData::getFadeRate);
 	classStageData->addMethod("getTransitions", &StageData_getTransitions);
+	classStageData->addMethod("setResourceBundle", &StageData::setResourceBundle);
+	classStageData->addMethod("getResourceBundle", &StageData::getResourceBundle);
+	classStageData->addMethod("setProperties", &StageData::setProperties);
+	classStageData->addMethod("getProperties", &StageData::getProperties);
 	registrar->registerClass(classStageData);
 
 	Ref< AutoRuntimeClass< Stage > > classStage = new AutoRuntimeClass< Stage >();
