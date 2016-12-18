@@ -5,15 +5,10 @@
 
 namespace traktor
 {
-	namespace drawing
-	{
-
-class Image;
-
-	}
-
 	namespace illuminate
 	{
+
+class CubeMap;
 
 class CubeProbe : public IProbe
 {
@@ -25,7 +20,7 @@ public:
 	virtual Color4f sample(const Vector4& direction) const T_OVERRIDE T_FINAL;
 
 private:
-	Ref< drawing::Image > m_side[6];
+	Ref< CubeMap > m_cubeMap;
 };
 
 	}

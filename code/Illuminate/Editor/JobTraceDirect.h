@@ -31,6 +31,7 @@ public:
 		const GBuffer& gbuffer,
 		const AlignedVector< Light >& lights,
 		drawing::Image* outputImageDirect,
+		const drawing::Image* imageOcclusion,
 		float pointLightRadius,
 		int32_t shadowSamples,
 		int32_t probeSamples,
@@ -48,6 +49,7 @@ private:
 	const GBuffer& m_gbuffer;
 	const AlignedVector< Light >& m_lights;
 	drawing::Image* m_outputImageDirect;
+	const drawing::Image* m_imageOcclusion;
 	float m_pointLightRadius;
 	int32_t m_shadowSamples;
 	int32_t m_probeSamples;

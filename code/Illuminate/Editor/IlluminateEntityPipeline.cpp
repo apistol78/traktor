@@ -26,6 +26,7 @@
 #include "Illuminate/Editor/IlluminateEntityPipeline.h"
 #include "Illuminate/Editor/JobTraceDirect.h"
 #include "Illuminate/Editor/JobTraceIndirect.h"
+#include "Illuminate/Editor/JobTraceOcclusion.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
@@ -365,11 +366,59 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		GBuffer gbuffer;
 		gbuffer.create(surfaces, outputSize, outputSize);
 
-		// Create output image.
+		// Create images.
 		Ref< drawing::Image > outputImageRadiance = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
 		outputImageRadiance->clear(Color4f(0.0f, 0.0f, 1.0f, 0.0f));
 
+		Ref< drawing::Image > outputImageOcclusion = new drawing::Image(drawing::PixelFormat::getR32F(), outputSize, outputSize);
+		outputImageOcclusion->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
 		RefArray< Job > jobs;
+
+		log::info << L"Tracing occlusion..." << Endl;
+		std::list< JobTraceOcclusion* > tracesOcclusion;
+		for (int32_t y = 0; y < outputSize; y += c_jobTileSize)
+		{
+			for (int32_t x = 0; x < outputSize; x += c_jobTileSize)
+			{
+				JobTraceOcclusion* trace = new JobTraceOcclusion(
+					x,
+					y,
+					sah,
+					gbuffer,
+					outputImageOcclusion,
+					64
+				);
+
+				Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceOcclusion >(trace, &JobTraceOcclusion::execute));
+				if (!job)
+					return 0;
+
+				tracesOcclusion.push_back(trace);
+				jobs.push_back(job);
+			}
+		}
+
+		for (RefArray< Job >::iterator j = jobs.begin(); j != jobs.end(); ++j)
+			(*j)->wait();
+
+		for(std::list< JobTraceOcclusion* >::iterator j = tracesOcclusion.begin(); j != tracesOcclusion.end(); ++j)
+			delete *j;
+
+		tracesOcclusion.clear();
+		jobs.clear();
+
+		//log::info << L"Dilating occlusion map..." << Endl;
+		//drawing::DilateFilter dilateFilter(8);
+		//outputImageRadiance->apply(&dilateFilter);
+
+		if (illumEntityData->getDirectConvolveRadius() > 0)
+		{
+			log::info << L"Convolving occlusion..." << Endl;
+			outputImageOcclusion->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getDirectConvolveRadius()));
+		}
+
+		outputImageOcclusion->save(L"Occlusion.png");
 
 		log::info << L"Tracing direct lighting..." << Endl;
 		std::list< JobTraceDirect* > tracesDirect;
@@ -384,6 +433,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 					gbuffer,
 					lights,
 					outputImageRadiance,
+					outputImageOcclusion,
 					sourceIlluminateEntityData->getPointLightRadius(),
 					sourceIlluminateEntityData->getShadowSamples(),
 					sourceIlluminateEntityData->getProbeSamples(),
