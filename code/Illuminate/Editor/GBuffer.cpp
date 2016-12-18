@@ -116,32 +116,41 @@ bool GBuffer::create(const AlignedVector< Surface >& surfaces, int32_t width, in
 		}
 	}
 
-	// Final pass, dilate gbuffer to ensure no gaps.
 	m_data.resize(width * height);
-	for (int32_t y = 0; y < height; ++y)
+
+	Element* from = data.ptr();
+	Element* to = m_data.ptr();
+
+	for (int32_t iter = 0; iter < 9; ++iter)
 	{
-		for (int32_t x = 0; x < width; ++x)
+		for (int32_t y = 0; y < height; ++y)
 		{
-			if (data[x + y * width].surfaceIndex >= 0)
+			for (int32_t x = 0; x < width; ++x)
 			{
-				m_data[x + y * width] = data[x + y * width];
-				continue;
-			}
-			for (int32_t i = 0; i < sizeof_array(c_dilateOffsets); ++i)
-			{
-				int32_t sx = x + c_dilateOffsets[i][0];
-				int32_t sy = y + c_dilateOffsets[i][1];
-				if (sx >= 0 && sx < width && sy >= 0 && sy < height)
+				if (from[x + y * width].surfaceIndex >= 0)
 				{
-					if (data[sx + sy * width].surfaceIndex >= 0)
+					to[x + y * width] = from[x + y * width];
+					continue;
+				}
+				for (int32_t i = 0; i < sizeof_array(c_dilateOffsets); ++i)
+				{
+					int32_t sx = x + c_dilateOffsets[i][0];
+					int32_t sy = y + c_dilateOffsets[i][1];
+					if (sx >= 0 && sx < width && sy >= 0 && sy < height)
 					{
-						m_data[x + y * width] = data[sx + sy * width];
-						break;
+						if (from[sx + sy * width].surfaceIndex >= 0)
+						{
+							to[x + y * width] = from[sx + sy * width];
+							break;
+						}
 					}
 				}
 			}
 		}
+
+		std::swap(from, to);
 	}
+	T_FATAL_ASSERT(from == m_data.ptr());
 
 	return true;
 }

@@ -25,6 +25,7 @@ JobTraceDirect::JobTraceDirect(
 	const GBuffer& gbuffer,
 	const AlignedVector< Light >& lights,
 	drawing::Image* outputImageDirect,
+	const drawing::Image* imageOcclusion,
 	float pointLightRadius,
 	int32_t shadowSamples,
 	int32_t probeSamples,
@@ -38,6 +39,7 @@ JobTraceDirect::JobTraceDirect(
 ,	m_gbuffer(gbuffer)
 ,	m_lights(lights)
 ,	m_outputImageDirect(outputImageDirect)
+,	m_imageOcclusion(imageOcclusion)
 ,	m_pointLightRadius(pointLightRadius)
 ,	m_shadowSamples(shadowSamples)
 ,	m_probeSamples(probeSamples)
@@ -62,6 +64,9 @@ void JobTraceDirect::execute()
 
 			if (gb.surfaceIndex < 0)
 				continue;
+
+			Color4f occlusion(0.0f, 0.0f, 0.0f, 0.0f);
+			m_imageOcclusion->getPixel(x, y, occlusion);
 
 			Color4f radiance(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -142,36 +147,11 @@ void JobTraceDirect::execute()
 				}
 				else if (i->type == 2)	// Probe
 				{
-					Color4f irradiance(0.0f, 0.0f, 0.0f, 0.0f);
-
-					const Scalar probeSampleCoeff(m_probeCoeff);
-					const Scalar probeSpread(m_probeSpread);
-					const Scalar shadowSpread(m_probeShadowSpread);
-
-					Vector4 u, v;
-					orthogonalFrame(gb.normal, u, v);
-
-					for (int32_t j = 0; j < m_probeSamples; ++j)
-					{
-						float a, b;
-						do
-						{
-							a = random.nextFloat() * 2.0f - 1.0f;
-							b = random.nextFloat() * 2.0f - 1.0f;
-						} while ((a * a) + (b * b) > 1.0f);
-
-						Vector4 hemi = (gb.normal + u * Scalar(a) + v * Scalar(b)).normalized();
-						Vector4 shadowDirection = lerp(gb.normal, hemi, shadowSpread).xyz0().normalized();
-						if (!m_sah.queryAnyIntersection(gb.position + gb.normal * c_traceOffset, shadowDirection, Scalar(2.0f), gb.surfaceIndex, cache))
-						{
-							Vector4 sampleDirection = lerp(gb.normal, hemi, probeSpread).xyz0().normalized();
-							irradiance += i->probe->sample(sampleDirection) * dot3(sampleDirection, gb.normal) * probeSampleCoeff;
-						}
-					}
-
-					radiance += irradiance;
+					radiance += i->probe->sample(gb.normal) * Scalar(m_probeCoeff);
 				}
 			}
+
+			radiance *= occlusion.getRed();
 
 			m_outputImageDirect->setPixel(x, y, Color4f(Vector4(radiance).xyz1()));
 		}

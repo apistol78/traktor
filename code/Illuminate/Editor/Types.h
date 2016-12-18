@@ -23,6 +23,7 @@ struct Surface
 	Color4f color;
 	Scalar emissive;
 	Scalar translucency;
+	std::vector< uint32_t > shared[16];
 
 	Surface()
 	:	count(0)
