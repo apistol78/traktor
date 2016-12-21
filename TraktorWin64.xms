@@ -9451,6 +9451,144 @@
 												<dependencies/>
 											</project>
 										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Extern.CubeMapGen</name>
+												<sourcePath>$(TRAKTOR_HOME)/3rdp/CubeMapGen-1.4-Source</sourcePath>
+												<configurations>
+													<item type="Configuration" version="3">
+														<name>DebugShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/CubeMapGen-1.4-Source</item>
+														</includePaths>
+														<definitions>
+															<item>_DEBUG</item>
+															<item>_LIB</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems/>
+													</item>
+													<item type="Configuration" version="3">
+														<name>ReleaseShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/CubeMapGen-1.4-Source</item>
+														</includePaths>
+														<definitions>
+															<item>NDEBUG</item>
+															<item>_LIB</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems/>
+													</item>
+													<item type="Configuration" version="3">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/CubeMapGen-1.4-Source</item>
+														</includePaths>
+														<definitions>
+															<item>_DEBUG</item>
+															<item>_LIB</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems/>
+													</item>
+													<item type="Configuration" version="3">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/CubeMapGen-1.4-Source</item>
+														</includePaths>
+														<definitions>
+															<item>NDEBUG</item>
+															<item>_LIB</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems/>
+													</item>
+												</configurations>
+												<items>
+													<item type="File">
+														<fileName>CBBoxInt32.cpp</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>CCubeMapProcessor.cpp</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>CImageSurface.cpp</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>ErrorMsg.cpp</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>CBBoxInt32.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>CCubeMapProcessor.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>CImageSurface.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>Types.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>VectorMacros.h</fileName>
+														<items/>
+													</item>
+												</items>
+												<dependencies/>
+											</project>
+										</item>
 									</dependencies>
 								</project>
 							</item>
@@ -21597,140 +21735,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Extern.CubeMapGen</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/CubeMapGen-1.4-Source</sourcePath>
-						<configurations>
-							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/CubeMapGen-1.4-Source</item>
-								</includePaths>
-								<definitions>
-									<item>_DEBUG</item>
-									<item>_LIB</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/CubeMapGen-1.4-Source</item>
-								</includePaths>
-								<definitions>
-									<item>NDEBUG</item>
-									<item>_LIB</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/CubeMapGen-1.4-Source</item>
-								</includePaths>
-								<definitions>
-									<item>_DEBUG</item>
-									<item>_LIB</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/CubeMapGen-1.4-Source</item>
-								</includePaths>
-								<definitions>
-									<item>NDEBUG</item>
-									<item>_LIB</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>CBBoxInt32.cpp</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>CCubeMapProcessor.cpp</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>CImageSurface.cpp</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>ErrorMsg.cpp</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>CBBoxInt32.h</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>CCubeMapProcessor.h</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>CImageSurface.h</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>Types.h</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>VectorMacros.h</fileName>
-								<items/>
-							</item>
-						</items>
-						<dependencies/>
-					</project>
+					<project ref="/object/projects/item[13]/dependencies/item[12]/project/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -24352,7 +24357,7 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[109]/dependencies/item/project"/>
-		<item ref="/object/projects/item[113]/dependencies/item[10]/project"/>
+		<item ref="/object/projects/item[13]/dependencies/item[12]/project/dependencies/item[8]/project/dependencies/item[13]/project"/>
 	</projects>
 	<aggregations/>
 </object>
