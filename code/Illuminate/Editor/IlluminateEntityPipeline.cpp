@@ -17,6 +17,7 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/DilateFilter.h"
+#include "Editor/Asset.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -213,21 +214,21 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			}
 			else if (lightComponentData->getLightType() == world::LtProbe)
 			{
-				Ref< const render::TextureAsset > probeTextureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(lightComponentData->getProbeTexture());
-				if (!probeTextureAsset)
+				Ref< const editor::Asset > probeAsset = pipelineBuilder->getObjectReadOnly< editor::Asset >(lightComponentData->getProbeDiffuseTexture());
+				if (!probeAsset)
 					return 0;
 
-				Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), probeTextureAsset->getFileName().getOriginal());
+				Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), probeAsset->getFileName().getOriginal());
 				if (!file)
 				{
-					log::error << L"IlluminateEntityPipeline failed; unable to open source image \"" << probeTextureAsset->getFileName().getOriginal() << L"\"" << Endl;
+					log::error << L"IlluminateEntityPipeline failed; unable to open source image \"" << probeAsset->getFileName().getOriginal() << L"\"" << Endl;
 					return false;
 				}
 
-				Ref< drawing::Image > image = drawing::Image::load(file, probeTextureAsset->getFileName().getExtension());
+				Ref< drawing::Image > image = drawing::Image::load(file, probeAsset->getFileName().getExtension());
 				if (!image)
 				{
-					log::error << L"IlluminateEntityPipeline failed; unable to load source image \"" << probeTextureAsset->getFileName().getOriginal() << L"\"" << Endl;
+					log::error << L"IlluminateEntityPipeline failed; unable to load source image \"" << probeAsset->getFileName().getOriginal() << L"\"" << Endl;
 					return false;
 				}
 

@@ -49,7 +49,8 @@ void LightRenderer::render(
 		light.shadowColor = directionalLightEntity->getShadowColor();
 		light.range = Scalar(0.0f);
 		light.radius = Scalar(0.0f);
-		light.probe = 0;
+		light.probeDiffuse = 0;
+		light.probeSpecular = 0;
 		light.cloudShadow = directionalLightEntity->getCloudShadowTexture();
 		light.castShadow = directionalLightEntity->getCastShadow();
 
@@ -72,7 +73,8 @@ void LightRenderer::render(
 		light.shadowColor = pointLightEntity->getShadowColor();
 		light.range = Scalar(pointLightEntity->getRange());
 		light.radius = Scalar(0.0f);
-		light.probe = 0;
+		light.probeDiffuse = 0;
+		light.probeSpecular = 0;
 		light.cloudShadow = 0;
 		light.castShadow = false;
 
@@ -103,7 +105,8 @@ void LightRenderer::render(
 		light.shadowColor = spotLightEntity->getShadowColor();
 		light.range = Scalar(spotLightEntity->getRange());
 		light.radius = Scalar(spotLightEntity->getRadius());
-		light.probe = 0;
+		light.probeDiffuse = 0;
+		light.probeSpecular = 0;
 		light.cloudShadow = 0;
 		light.castShadow = spotLightEntity->getCastShadow();
 
@@ -122,7 +125,8 @@ void LightRenderer::render(
 		light.shadowColor = lightComponent->getShadowColor();
 		light.range = Scalar(lightComponent->getRange());
 		light.radius = Scalar(lightComponent->getRadius());
-		light.probe = lightComponent->getProbeTexture();
+		light.probeDiffuse = lightComponent->getProbeDiffuseTexture();
+		light.probeSpecular = lightComponent->getProbeSpecularTexture();
 		light.cloudShadow = lightComponent->getCloudShadowTexture();
 		light.castShadow = lightComponent->getCastShadow();
 

@@ -54,9 +54,13 @@ public:
 
 	const Vector4& getShadowColor() const { return m_shadowColor; }
 
-	void setProbeTexture(const resource::Id< render::ITexture >& probeTexture) { m_probeTexture = probeTexture; }
+	void setProbeDiffuseTexture(const resource::Id< render::ITexture >& probeTexture) { m_probeDiffuseTexture = probeTexture; }
 
-	const resource::Id< render::ITexture >& getProbeTexture() const { return m_probeTexture; }
+	const resource::Id< render::ITexture >& getProbeDiffuseTexture() const { return m_probeDiffuseTexture; }
+
+	void setProbeSpecularTexture(const resource::Id< render::ITexture >& probeTexture) { m_probeSpecularTexture = probeTexture; }
+
+	const resource::Id< render::ITexture >& getProbeSpecularTexture() const { return m_probeSpecularTexture; }
 
 	void setCloudShadowTexture(const resource::Id< render::ITexture >& cloudShadowTexture) { m_cloudShadowTexture = cloudShadowTexture; }
 
@@ -87,7 +91,8 @@ private:
 	Vector4 m_sunColor;
 	Vector4 m_baseColor;
 	Vector4 m_shadowColor;
-	resource::Id< render::ITexture > m_probeTexture;
+	resource::Id< render::ITexture > m_probeDiffuseTexture;
+	resource::Id< render::ITexture > m_probeSpecularTexture;
 	resource::Id< render::ITexture > m_cloudShadowTexture;
 	bool m_castShadow;
 	float m_range;

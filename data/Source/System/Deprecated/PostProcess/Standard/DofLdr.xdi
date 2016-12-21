@@ -6,8 +6,8 @@
 			<id>3</id>
 			<width>0</width>
 			<height>0</height>
-			<screenWidthDenom>1</screenWidthDenom>
-			<screenHeightDenom>1</screenHeightDenom>
+			<screenWidthDenom>4</screenWidthDenom>
+			<screenHeightDenom>4</screenHeightDenom>
 			<maxWidth>0</maxWidth>
 			<maxHeight>0</maxHeight>
 			<format>TfR8G8B8A8</format>
@@ -21,23 +21,8 @@
 			<id>4</id>
 			<width>0</width>
 			<height>0</height>
-			<screenWidthDenom>1</screenWidthDenom>
-			<screenHeightDenom>1</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<format>TfR8G8B8A8</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>false</preferTiled>
-			<multiSample>0</multiSample>
-			<clearColor>0, 0, 0, 0</clearColor>
-			<persistent>false</persistent>
-		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
-			<id>5</id>
-			<width>0</width>
-			<height>0</height>
-			<screenWidthDenom>1</screenWidthDenom>
-			<screenHeightDenom>1</screenHeightDenom>
+			<screenWidthDenom>4</screenWidthDenom>
+			<screenHeightDenom>4</screenHeightDenom>
 			<maxWidth>0</maxWidth>
 			<maxHeight>0</maxHeight>
 			<format>TfR8G8B8A8</format>
@@ -60,14 +45,9 @@
 					<source>InputColor</source>
 					<index>0</index>
 				</item>
-				<item>
-					<param>Depth</param>
-					<source>InputDepth</source>
-					<index>0</index>
-				</item>
 			</sources>
 			<direction>4, 0, 0, 0</direction>
-			<taps>15</taps>
+			<taps>5</taps>
 			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
@@ -81,56 +61,9 @@
 					<source>3</source>
 					<index>0</index>
 				</item>
-				<item>
-					<param>Depth</param>
-					<source>InputDepth</source>
-					<index>0</index>
-				</item>
 			</sources>
-			<direction>0, 4, 0, 0</direction>
-			<taps>15</taps>
-			<blurType>BtGaussian</blurType>
-		</item>
-		<item type="traktor.render.ImageProcessStepSetTarget">
-			<target>3</target>
-		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
-			<shader>{2E0680E0-DF2A-EA45-A5B2-9889CE092CA0}</shader>
-			<sources>
-				<item>
-					<param>Source</param>
-					<source>4</source>
-					<index>0</index>
-				</item>
-				<item>
-					<param>Depth</param>
-					<source>InputDepth</source>
-					<index>0</index>
-				</item>
-			</sources>
-			<direction>4, 0, 0, 0</direction>
-			<taps>15</taps>
-			<blurType>BtGaussian</blurType>
-		</item>
-		<item type="traktor.render.ImageProcessStepSetTarget">
-			<target>5</target>
-		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
-			<shader>{2E0680E0-DF2A-EA45-A5B2-9889CE092CA0}</shader>
-			<sources>
-				<item>
-					<param>Source</param>
-					<source>4</source>
-					<index>0</index>
-				</item>
-				<item>
-					<param>Depth</param>
-					<source>InputDepth</source>
-					<index>0</index>
-				</item>
-			</sources>
-			<direction>0, 4, 0, 0</direction>
-			<taps>15</taps>
+			<direction>0, 2, 0, 0</direction>
+			<taps>5</taps>
 			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
@@ -150,13 +83,8 @@
 					<index>0</index>
 				</item>
 				<item>
-					<param>BlurLow</param>
+					<param>Blur</param>
 					<source>4</source>
-					<index>0</index>
-				</item>
-				<item>
-					<param>BlurHigh</param>
-					<source>5</source>
 					<index>0</index>
 				</item>
 			</sources>

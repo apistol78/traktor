@@ -13,7 +13,8 @@ LightComponent::LightComponent(
 	const Vector4& sunColor,
 	const Vector4& baseColor,
 	const Vector4& shadowColor,
-	const resource::Proxy< render::ITexture >& probeTexture,
+	const resource::Proxy< render::ITexture >& probeDiffuseTexture,
+	const resource::Proxy< render::ITexture >& probeSpecularTexture,
 	const resource::Proxy< render::ITexture >& cloudShadowTexture,
 	bool castShadow,
 	float range,
@@ -26,7 +27,8 @@ LightComponent::LightComponent(
 ,	m_sunColor(sunColor)
 ,	m_baseColor(baseColor)
 ,	m_shadowColor(shadowColor)
-,	m_probeTexture(probeTexture)
+,	m_probeDiffuseTexture(probeDiffuseTexture)
+,	m_probeSpecularTexture(probeSpecularTexture)
 ,	m_cloudShadowTexture(cloudShadowTexture)
 ,	m_castShadow(castShadow)
 ,	m_range(range)

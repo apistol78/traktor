@@ -62,7 +62,8 @@ struct Light
 	Vector4 shadowColor;
 	Scalar range;
 	Scalar radius;
-	render::ITexture* probe;
+	render::ITexture* probeDiffuse;
+	render::ITexture* probeSpecular;
 	render::ITexture* cloudShadow;
 	bool castShadow;
 };
