@@ -118,6 +118,7 @@ bool GBuffer::create(const AlignedVector< Surface >& surfaces, int32_t width, in
 
 	m_data.resize(width * height);
 
+	// Dilate gbuffer.
 	Element* from = data.ptr();
 	Element* to = m_data.ptr();
 

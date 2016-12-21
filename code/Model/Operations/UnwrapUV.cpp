@@ -139,6 +139,50 @@ bool UnwrapUV::apply(Model& model) const
 
 	T_FATAL_ASSERT (groups.size() == originalPolygons.size());
 
+
+	// Rotate each group so longest edge of it's hull is horizontal.
+	for (uint32_t i = 0; i < lastGroupId; ++i)
+	{
+		AlignedVector< Vector2 > pnts;
+		for (uint32_t j = 0; j < originalPolygons.size(); ++j)
+		{
+			if (groups[j] == i)
+			{
+				for (uint32_t k = 0; k < wuvs[j].points.size(); ++k)
+					pnts.push_back(wuvs[j].points[k]);
+			}
+		}
+
+		T_FATAL_ASSERT (pnts.size() >= 3);
+
+		Winding2 hull = Winding2::convexHull(pnts);
+
+		float mln = 0.0f;
+		float angle = 0.0f;
+
+		for (uint32_t j = 0; j < hull.points.size(); ++j)
+		{
+			uint32_t k = (j + 1) % hull.points.size();
+			Vector2 edge = hull.points[k] - hull.points[j];
+			float ln = edge.length();
+			if (ln > mln)
+			{
+				mln = ln;
+				angle = std::atan2f(edge.y, edge.x);
+			}
+		}
+
+		for (uint32_t j = 0; j < originalPolygons.size(); ++j)
+		{
+			if (groups[j] == i)
+			{
+				for (uint32_t k = 0; k < wuvs[j].points.size(); ++k)
+					wuvs[j].points[k] = rotate(-angle) * wuvs[j].points[k];
+			}
+		}
+	}
+
+
 	// For each group calculate bounding boxes.
 	AlignedVector< Aabb2 > aabbuvs;
 	float totalTexelArea = 0.0f;

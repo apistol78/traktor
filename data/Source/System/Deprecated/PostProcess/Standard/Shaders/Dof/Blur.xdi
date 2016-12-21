@@ -7,7 +7,7 @@
 				<first>-192</first>
 				<second>170</second>
 			</position>
-			<value>0.5</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
@@ -37,8 +37,8 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>79</first>
-				<second>99</second>
+				<first>109</first>
+				<second>116</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -60,8 +60,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-101</first>
-				<second>108</second>
+				<first>-107</first>
+				<second>90</second>
 			</position>
 			<parameterName>Direction</parameterName>
 			<type>PtVector</type>
@@ -77,17 +77,17 @@
 		<item type="traktor.render.Sum">
 			<comment/>
 			<position>
-				<first>1227</first>
-				<second>315</second>
+				<first>1284</first>
+				<second>300</second>
 			</position>
 			<from>0</from>
-			<to>14</to>
+			<to>4</to>
 		</item>
 		<item type="traktor.render.IndexedUniform" version="1">
 			<comment/>
 			<position>
-				<first>358</first>
-				<second>565</second>
+				<first>280</first>
+				<second>566</second>
 			</position>
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>PtVector</type>
@@ -97,8 +97,8 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1455</first>
-				<second>315</second>
+				<first>1512</first>
+				<second>300</second>
 			</position>
 			<technique>Default</technique>
 			<priority>

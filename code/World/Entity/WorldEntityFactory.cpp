@@ -224,15 +224,20 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 	if (const LightComponentData* lightComponentData = dynamic_type_cast<const LightComponentData*>(&entityComponentData))
 	{
-		resource::Proxy< render::ITexture > probeTexture;
+		resource::Proxy< render::ITexture > probeDiffuseTexture;
+		resource::Proxy< render::ITexture > probeSpecularTexture;
 		resource::Proxy< render::ITexture > cloudShadowTexture;
 
-		if (lightComponentData->getProbeTexture())
+		if (lightComponentData->getProbeDiffuseTexture())
 		{
-			if (!m_resourceManager->bind(lightComponentData->getProbeTexture(), probeTexture))
+			if (!m_resourceManager->bind(lightComponentData->getProbeDiffuseTexture(), probeDiffuseTexture))
 				return 0;
 		}
-
+		if (lightComponentData->getProbeSpecularTexture())
+		{
+			if (!m_resourceManager->bind(lightComponentData->getProbeSpecularTexture(), probeSpecularTexture))
+				return 0;
+		}
 		if (lightComponentData->getCloudShadowTexture())
 		{
 			if (!m_resourceManager->bind(lightComponentData->getCloudShadowTexture(), cloudShadowTexture))
@@ -244,7 +249,8 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 			lightComponentData->getSunColor(),
 			lightComponentData->getBaseColor(),
 			lightComponentData->getShadowColor(),
-			probeTexture,
+			probeDiffuseTexture,
+			probeSpecularTexture,
 			cloudShadowTexture,
 			lightComponentData->getCastShadow(),
 			lightComponentData->getRange(),

@@ -4,8 +4,8 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Drawing/Image.h"
-#include "Illuminate/Editor/CubeMap.h"
 #include "Illuminate/Editor/CubeProbe.h"
+#include "Render/Editor/Texture/CubeMap.h"
 
 namespace traktor
 {
@@ -19,7 +19,7 @@ CubeProbe::CubeProbe(const drawing::Image* cubeMap)
 	Ref< drawing::Image > cubeMap4f = cubeMap->clone();
 	cubeMap4f->convert(drawing::PixelFormat::getARGBF32());
 
-	m_cubeMap = new CubeMap(cubeMap4f);
+	m_cubeMap = new render::CubeMap(cubeMap4f);
 	int32_t size = m_cubeMap->getSize();
 
 	CCubeMapProcessor cubeMapProcessor;
@@ -63,7 +63,6 @@ CubeProbe::CubeProbe(const drawing::Image* cubeMap)
 			size * size * 4 * sizeof(float)
 		);
 	}
-
 }
 
 Color4f CubeProbe::sample(const Vector4& direction) const

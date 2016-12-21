@@ -41,7 +41,10 @@ render::handle_t s_handleColorMap;
 render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleShadowMask;
 render::handle_t s_handleCloudShadow;
-render::handle_t s_handleProbe;
+render::handle_t s_handleProbeDiffuseEnable;
+render::handle_t s_handleProbeDiffuse;
+render::handle_t s_handleProbeSpecularEnable;
+render::handle_t s_handleProbeSpecular;
 render::handle_t s_handleLightPosition;
 render::handle_t s_handleLightPositionAndRadius;
 render::handle_t s_handleLightDirectionAndRange;
@@ -80,7 +83,10 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleShadowMaskSize = render::getParameterHandle(L"World_ShadowMaskSize");
 	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
 	s_handleCloudShadow = render::getParameterHandle(L"World_CloudShadow");
-	s_handleProbe = render::getParameterHandle(L"World_Probe");
+	s_handleProbeDiffuseEnable = render::getParameterHandle(L"World_ProbeDiffuseEnable");
+	s_handleProbeDiffuse = render::getParameterHandle(L"World_ProbeDiffuse");
+	s_handleProbeSpecularEnable = render::getParameterHandle(L"World_ProbeSpecularEnable");
+	s_handleProbeSpecular = render::getParameterHandle(L"World_ProbeSpecular");
 	s_handleLightPosition = render::getParameterHandle(L"World_LightPosition");
 	s_handleLightPositionAndRadius = render::getParameterHandle(L"World_LightPositionAndRadius");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
@@ -340,12 +346,16 @@ void LightRendererDeferred::renderLight(
 	}
 	else if (light.type == LtProbe)
 	{
+		m_lightProbeShader->setCombination(s_handleProbeDiffuseEnable, light.probeDiffuse != 0);
+		m_lightProbeShader->setCombination(s_handleProbeSpecularEnable, light.probeSpecular != 0);
+
 		m_lightProbeShader->setFloatParameter(s_handleTime, time);
 		m_lightProbeShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
 		m_lightProbeShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		m_lightProbeShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 		m_lightProbeShader->setTextureParameter(s_handleShadowMask, shadowMask);
-		m_lightProbeShader->setTextureParameter(s_handleProbe, light.probe);
+		m_lightProbeShader->setTextureParameter(s_handleProbeDiffuse, light.probeDiffuse);
+		m_lightProbeShader->setTextureParameter(s_handleProbeSpecular, light.probeSpecular);
 		m_lightProbeShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightProbeShader->setTextureParameter(s_handleNormalMap, normalMap);
 		m_lightProbeShader->setTextureParameter(s_handleMiscMap, miscMap);

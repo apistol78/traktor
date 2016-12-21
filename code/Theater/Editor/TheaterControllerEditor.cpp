@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
+#include "Core/Misc/String.h"
 #include "I18N/Text.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Scene.h"
@@ -15,10 +16,12 @@
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/MessageBox.h"
+#include "Ui/NumericEditValidator.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/EditList.h"
 #include "Ui/Custom/EditListEditEvent.h"
+#include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -681,6 +684,48 @@ void TheaterControllerEditor::splitAct()
 
 void TheaterControllerEditor::timeScaleAct()
 {
+	int32_t selected = m_listActs->getSelected();
+	if (selected < 0)
+		return;
+
+	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
+	Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	Ref< ActData > act = controllerData->getActs().at(selected);
+
+	float fromDuration = act->getDuration();
+
+	ui::custom::InputDialog::Field fields[] = { { i18n::Text(L"THEATER_EDITOR_TIME_SCALE_NEW_TIME"), toString(fromDuration), new ui::NumericEditValidator(true, 0.0f), 0 } };
+
+	ui::custom::InputDialog enterTimeDialog;
+	enterTimeDialog.create(m_listActs, i18n::Text(L"THEATER_EDITOR_TIME_SCALE_TITLE"), i18n::Text(L"THEATER_EDITOR_TIME_SCALE_MESSAGE"), fields, sizeof_array(fields));
+
+	if (enterTimeDialog.showModal() == ui::DrOk)
+	{
+		float toDuration = parseString< float >(fields[0].value);
+		float f = toDuration / fromDuration;
+
+		RefArray< TrackData >& t = act->getTracks();
+		for (RefArray< TrackData >::iterator i = t.begin(); i != t.end(); ++i)
+		{
+			(*i)->setLoopStart((*i)->getLoopStart() * f);
+			(*i)->setLoopEnd((*i)->getLoopEnd() * f);
+			(*i)->setTimeOffset((*i)->getTimeOffset() * f);
+
+			TransformPath& tp = (*i)->getPath();
+			
+			AlignedVector< TransformPath::Key >& k = tp.getKeys();
+			for (AlignedVector< TransformPath::Key >::iterator j = k.begin(); j != k.end(); ++j)
+				j->T *= f;
+		}
+
+		act->setDuration(toDuration);
+
+		updateView();
+
+		m_context->buildController();
+	}
+
+	enterTimeDialog.destroy();
 }
 
 void TheaterControllerEditor::eventActSelected(ui::SelectionChangeEvent* event)

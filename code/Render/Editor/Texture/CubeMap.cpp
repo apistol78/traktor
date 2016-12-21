@@ -1,14 +1,14 @@
 #include "Core/Math/MathUtils.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/MirrorFilter.h"
-#include "Illuminate/Editor/CubeMap.h"
+#include "Render/Editor/Texture/CubeMap.h"
 
 namespace traktor
 {
-	namespace illuminate
+	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.illuminate.CubeMap", CubeMap, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeMap", CubeMap, Object)
 
 CubeMap::CubeMap(int32_t size, const drawing::PixelFormat& pixelFormat)
 :	m_size(size)
@@ -104,6 +104,46 @@ CubeMap::CubeMap(const drawing::Image* cubeMap)
 			}
 		}
 	}
+}
+
+Ref< drawing::Image > CubeMap::createCrossImage() const
+{
+	Ref< drawing::Image > cross = new drawing::Image(m_side[0]->getPixelFormat(), m_size * 3, m_size * 4);
+	cross->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+	for (int32_t i = 0; i < 6; ++i)
+	{
+		const int32_t c_sideOffsets[][2] =
+		{
+			{ 2, 1 },
+			{ 0, 1 },
+			{ 1, 0 },
+			{ 1, 2 },
+			{ 1, 1 },
+			{ 1, 3 }
+		};
+
+		Ref< drawing::Image > side = m_side[i];
+
+		if (i == 5)
+		{
+			drawing::MirrorFilter filter(true, true);
+			side = side->clone();
+			side->apply(&filter);
+		}
+
+		cross->copy(
+			side,
+			c_sideOffsets[i][0] * m_size,
+			c_sideOffsets[i][1] * m_size,
+			0,
+			0,
+			m_size,
+			m_size
+		);
+	}
+
+	return cross;
 }
 
 Vector4 CubeMap::getDirection(int32_t side, int32_t x, int32_t y) const
