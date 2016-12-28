@@ -329,6 +329,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			lightMapTextureNode->setComment(L"");
 			lightMapTextureNode->setExternal(lightMapTexture);
 		}
+		else if (comment == L"Tag_LightMapRange")
+		{
+			render::Scalar* lightMapRangeNode = checked_type_cast< render::Scalar* >(*i);
+			lightMapRangeNode->setComment(L"");
+			lightMapRangeNode->set(material.getLightMapRange());
+		}
 	}
 
 	render::ShaderGraphValidator(materialShaderGraph).validateIntegrity();

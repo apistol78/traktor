@@ -72,6 +72,10 @@ public:
 
 	bool getRequireShadowSamplers() const;
 
+	void setPrecisionHint(PrecisionHint precisionHint);
+
+	PrecisionHint getPrecisionHint() const;
+
 	const PropertyGroup* getSettings() const;
 
 	GlslShader& getVertexShader();
@@ -129,6 +133,7 @@ private:
 	bool m_requireTranspose;
 	bool m_requireTexture3D;
 	bool m_requireShadowSamplers;
+	PrecisionHint m_precisionHint;
 	std::vector< uint8_t > m_interpolatorMap;
 	std::vector< std::wstring > m_textures;
 	std::vector< NamedUniformType > m_uniforms;

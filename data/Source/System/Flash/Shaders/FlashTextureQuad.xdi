@@ -27,7 +27,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>1282</first>
@@ -69,6 +69,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>

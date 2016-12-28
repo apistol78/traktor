@@ -205,4 +205,14 @@ T_MATH_INLINE Color4f::operator const Vector4& () const
 	return m_data;
 }
 
+T_MATH_INLINE Color4f min(const Color4f& l, const Color4f& r)
+{
+	return Color4f(min((Vector4)l, (Vector4)r));
+}
+
+T_MATH_INLINE Color4f max(const Color4f& l, const Color4f& r)
+{
+	return Color4f(max((Vector4)l, (Vector4)r));
+}
+
 }

@@ -34,6 +34,7 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_requireTranspose(false)
 ,	m_requireTexture3D(false)
 ,	m_requireShadowSamplers(false)
+,	m_precisionHint(PhUndefined)
 {
 }
 
@@ -246,6 +247,16 @@ void GlslContext::setRequireShadowSamplers()
 bool GlslContext::getRequireShadowSamplers() const
 {
 	return m_requireShadowSamplers;
+}
+
+void GlslContext::setPrecisionHint(PrecisionHint precisionHint)
+{
+	m_precisionHint = precisionHint;
+}
+
+PrecisionHint GlslContext::getPrecisionHint() const
+{
+	return m_precisionHint;
 }
 
 const PropertyGroup* GlslContext::getSettings() const

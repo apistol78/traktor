@@ -9,6 +9,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Material", Material, PropertyGroup)
 		
 Material::Material()
 :	m_name(L"")
+,	m_lightMapRange(0.0f)
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
@@ -25,6 +26,7 @@ Material::Material()
 
 Material::Material(const std::wstring& name)
 :	m_name(name)
+,	m_lightMapRange(0.0f)
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
@@ -109,14 +111,20 @@ const Material::Map& Material::getNormalMap() const
 	return m_normalMap;
 }
 
-void Material::setLightMap(const Map& lightMap)
+void Material::setLightMap(const Map& lightMap, float lightMapRange)
 {
 	m_lightMap = lightMap;
+	m_lightMapRange = lightMapRange;
 }
 
 const Material::Map& Material::getLightMap() const
 {
 	return m_lightMap;
+}
+
+float Material::getLightMapRange() const
+{
+	return m_lightMapRange;
 }
 
 void Material::setColor(const Color4ub& color)

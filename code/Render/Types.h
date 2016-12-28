@@ -22,6 +22,14 @@ namespace traktor
 /*! \ingroup Render */
 //@{
 
+enum PrecisionHint
+{
+	PhUndefined = 0,
+	PhLow = 1,
+	PhMedium = 2,
+	PhHigh = 3
+};
+
 enum RenderPriority
 {
 	RpSetup = 1,

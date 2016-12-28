@@ -369,7 +369,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 		// Create images.
 		Ref< drawing::Image > outputImageRadiance = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
-		outputImageRadiance->clear(Color4f(0.0f, 0.0f, 1.0f, 0.0f));
+		outputImageRadiance->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 		Ref< drawing::Image > outputImageOcclusion = new drawing::Image(drawing::PixelFormat::getR32F(), outputSize, outputSize);
 		outputImageOcclusion->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
@@ -569,6 +569,66 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		textureOutput->m_systemTexture = true;
 		textureOutput->m_generateMips = false;
 
+		// Measure max range of illumination texture, also encode lightmap with RGBM encoding.
+		float lumelRange = 1.0f;
+		if (!illumEntityData->highDynamicRange())
+		{
+			/*
+			lumelRange = 0.0f;
+			for (int32_t y = 0; y < outputSize; ++y)
+			{
+				for (int32_t x = 0; x < outputSize; ++x)
+				{
+					Color4f lumel;
+					outputImageRadiance->getPixelUnsafe(x, y, lumel);
+					lumelRange = max< float >(lumelRange, lumel.getRed());
+					lumelRange = max< float >(lumelRange, lumel.getGreen());
+					lumelRange = max< float >(lumelRange, lumel.getBlue());
+				}
+			}
+			log::info << L"Luminance range 0-" << lumelRange << L" lumels" << Endl;
+			*/
+			/*
+			// Normalize lightmap into 0-1 range.
+			for (int32_t y = 0; y < outputSize; ++y)
+			{
+				for (int32_t x = 0; x < outputSize; ++x)
+				{
+					Color4f lumel;
+					outputImageRadiance->getPixelUnsafe(x, y, lumel);
+					outputImageRadiance->setPixelUnsafe(x, y, lumel / Scalar(lumelRange));
+				}
+			}
+			*/
+
+			for (int32_t y = 0; y < outputSize; ++y)
+			{
+				for (int32_t x = 0; x < outputSize; ++x)
+				{
+					Color4f lumel;
+					outputImageRadiance->getPixelUnsafe(x, y, lumel);
+
+					lumel = lumel / Scalar(6.0f);
+
+					Scalar mx = max(
+						max(lumel.getRed(), lumel.getGreen()),
+						max(lumel.getBlue(), Scalar(1e-6f))
+					);
+
+					mx = clamp(mx, Scalar(0.0f), Scalar(1.0f));
+					mx = Scalar(std::ceil(mx * 255.0f)) / Scalar(255.0f);
+
+					lumel = lumel / mx;
+					lumel.setAlpha(mx);
+
+					outputImageRadiance->setPixelUnsafe(x, y, lumel);
+				}
+			}
+
+			textureOutput->m_hasAlpha = true;
+			textureOutput->m_ignoreAlpha = false;
+		}
+
 		pipelineBuilder->buildOutput(
 			textureOutput,
 			L"Generated/__Illumination__Texture__" + illumEntityData->getSeedGuid().permutate(0).format(),
@@ -580,7 +640,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		std::vector< model::Material > materials = mergedModel->getMaterials();
 		for (std::vector< model::Material >::iterator j = materials.begin(); j != materials.end(); ++j)
 		{
-			j->setLightMap(model::Material::Map(L"__Illumination__", channel, false));
+			j->setLightMap(model::Material::Map(L"__Illumination__", channel, false), lumelRange);
 			j->setEmissive(0.0f);
 		}
 		mergedModel->setMaterials(materials);
