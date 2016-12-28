@@ -666,6 +666,10 @@ public:
 
 	uint32_t getRegisterCount() const;
 
+	void setPrecisionHint(PrecisionHint precisionHint);
+
+	PrecisionHint getPrecisionHint() const;
+
 	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 	
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
@@ -675,6 +679,7 @@ private:
 	uint32_t m_priority;
 	RenderState m_renderState;
 	uint32_t m_registerCount;
+	PrecisionHint m_precisionHint;
 };
 
 /*! \brief Conditional based on render platform. */

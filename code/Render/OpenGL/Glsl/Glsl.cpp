@@ -49,8 +49,8 @@ bool Glsl::generate(
 	bool requireShadowSamplers = cx.getRequireShadowSamplers();
 
 	outProgram = GlslProgram(
-		cx.getVertexShader().getGeneratedShader(settings, false, requireTranspose, requireTexture3D, requireShadowSamplers),
-		cx.getFragmentShader().getGeneratedShader(settings, requireDerivatives, requireTranspose, requireTexture3D, requireShadowSamplers),
+		cx.getVertexShader().getGeneratedShader(settings, false, requireTranspose, requireTexture3D, requireShadowSamplers, PhHigh),
+		cx.getFragmentShader().getGeneratedShader(settings, requireDerivatives, requireTranspose, requireTexture3D, requireShadowSamplers, cx.getPrecisionHint()),
 		cx.getTextures(),
 		cx.getUniforms(),
 		cx.getSamplers(),

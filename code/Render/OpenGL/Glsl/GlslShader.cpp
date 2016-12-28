@@ -133,7 +133,7 @@ StringOutputStream& GlslShader::getOutputStream(BlockType blockType)
 	return *(m_outputStreams[int(blockType)].back());
 }
 
-std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool requireDerivatives, bool requireTranspose, bool requireTexture3D, bool requireShadowSamplers)
+std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool requireDerivatives, bool requireTranspose, bool requireTexture3D, bool requireShadowSamplers, PrecisionHint precisionHint)
 {
 	StringOutputStream ss;
 
@@ -160,8 +160,24 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 	ss << Endl;
 
 #if defined(T_OPENGL_ES2)
-	ss << L"precision highp float;" << Endl;
-	ss << Endl;
+	switch (precisionHint)
+	{
+	case PhLow:
+		ss << L"precision lowp float;" << Endl;
+		ss << Endl;
+		break;
+
+	case PhMedium:
+		ss << L"precision mediump float;" << Endl;
+		ss << Endl;
+		break;
+
+	case PhHigh:
+	case PhUndefined:
+		ss << L"precision highp float;" << Endl;
+		ss << Endl;
+		break;
+	}
 
 	if (m_shaderType == StVertex)
 	{

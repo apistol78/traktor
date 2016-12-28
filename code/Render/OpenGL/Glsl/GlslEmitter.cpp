@@ -1113,6 +1113,9 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	rsogl.stencilOpZFail = c_oglStencilOperation[rs.stencilZFail];
 	rsogl.stencilOpZPass = c_oglStencilOperation[rs.stencilPass];
 
+#if defined(T_OPENGL_ES2)
+	cx.setPrecisionHint(node->getPrecisionHint());
+#endif
 	return true;
 }
 

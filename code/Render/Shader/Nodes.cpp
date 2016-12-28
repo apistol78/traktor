@@ -1177,7 +1177,7 @@ void OutputPort::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 5, PixelOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 6, PixelOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, { L"State", true }, 0 };
 
@@ -1186,6 +1186,7 @@ PixelOutput::PixelOutput()
 ,	m_technique(L"Default")
 ,	m_priority(0)
 ,	m_registerCount(0)
+,	m_precisionHint(PhUndefined)
 {
 }
 
@@ -1229,6 +1230,16 @@ uint32_t PixelOutput::getRegisterCount() const
 	return m_registerCount;
 }
 
+void PixelOutput::setPrecisionHint(PrecisionHint precisionHint)
+{
+	m_precisionHint = precisionHint;
+}
+
+PrecisionHint PixelOutput::getPrecisionHint() const
+{
+	return m_precisionHint;
+}
+
 std::wstring PixelOutput::getInformation() const
 {
 	return m_technique;
@@ -1259,6 +1270,19 @@ void PixelOutput::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 3)
 		s >> Member< uint32_t >(L"registerCount", m_registerCount);
+
+	if (s.getVersion() >= 6)
+	{
+		const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] = 
+		{
+			{ L"PhUndefined", PhUndefined },
+			{ L"PhLow", PhLow },
+			{ L"PhMedium", PhMedium },
+			{ L"PhHigh", PhHigh },
+			0
+		};
+		s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+	}
 }
 
 /*---------------------------------------------------------------------------*/

@@ -107,8 +107,9 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 	self._scrollSize = { width = 0, height = 0 }
 	self._scrollFrom = nil
 	self._scroll = { x = 0, y = 0 }
-	self._motion = { x = 0, y = 0, k = 0.85 }
+	self._motion = { x = 0, y = 0, k = 0.95 }
 	self._timer = Timer()
+	self._timer:start()
 
 	self:_registerEvent("onMouseDown", function() self:_onMouseDown() end)
 	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
@@ -204,7 +205,7 @@ function ScrollContainer:_onMouseMove()
 			local dt = time - self._scrollFrom.time
 			self._motion.x = dx / dt
 			self._motion.y = dy / dt
-			self._motion.k = 0.85
+			self._motion.k = 0.95
 		end
 
 		if self._scrollFn ~= nil then

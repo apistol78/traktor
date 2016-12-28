@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>-154</first>
@@ -43,8 +43,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>-152</first>
@@ -86,8 +87,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>-152</first>
@@ -129,8 +131,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>288</first>
@@ -172,8 +175,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>1168</first>
@@ -215,8 +219,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>2521</first>
@@ -258,8 +263,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>2117</first>
@@ -301,8 +307,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>271</first>
@@ -344,8 +351,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>759</first>
@@ -387,8 +395,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>1192</first>
@@ -430,8 +439,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>1709</first>
@@ -473,8 +483,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>256</first>
@@ -516,8 +527,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>731</first>
@@ -559,8 +571,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>1174</first>
@@ -602,6 +615,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
 		<item type="traktor.render.Variable">
 			<comment/>
@@ -837,7 +851,7 @@
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="6">
 			<comment/>
 			<position>
 				<first>1764</first>
@@ -879,6 +893,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhLow</precisionHint>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>

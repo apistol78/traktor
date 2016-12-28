@@ -101,6 +101,10 @@ private:
 	Vector4 m_data;
 };
 
+T_MATH_INLINE T_DLLCLASS Color4f min(const Color4f& l, const Color4f& r);
+
+T_MATH_INLINE T_DLLCLASS Color4f max(const Color4f& l, const Color4f& r);
+
 }
 
 #if defined(T_MATH_USE_INLINE)
