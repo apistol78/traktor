@@ -631,6 +631,17 @@ public:
 		}
 	}
 
+	/*! \brief Push default value onto vector.
+	 *
+	 * \param item Item value.
+	 */
+	ItemType& push_back()
+	{
+		grow(1);
+		Constructor::construct(m_data[m_size - 1]);
+		return m_data[m_size - 1];
+	}
+
 	/*! \brief Push value onto vector.
 	 *
 	 * \param item Item value.
