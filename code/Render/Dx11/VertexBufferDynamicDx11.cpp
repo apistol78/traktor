@@ -150,7 +150,7 @@ void VertexBufferDynamicDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, Sta
 		HRESULT hr;
 
 		// See GCN Performance Tip 29: http://developer.amd.com/wordpress/media/2013/05/GCNPerformanceTweets.pdf
-		hr = d3dDeviceContext->Map(m_d3dBuffer, 0, /*D3D11_MAP_WRITE_DISCARD*/D3D11_MAP_WRITE_NO_OVERWRITE, 0, &dm);
+		hr = d3dDeviceContext->Map(m_d3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
 		if (FAILED(hr))
 		{
 			T_DEBUG(L"Failed to map dynamic vertex buffer; unable to update");
