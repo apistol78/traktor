@@ -201,12 +201,12 @@ void opx_prevFrame(ExecutionState& state)
 
 void opx_play(ExecutionState& state)
 {
-	state.movieClip->setPlaying(true);
+	state.movieClip->setPlaying(true, false);
 }
 
 void opx_stop(ExecutionState& state)
 {
-	state.movieClip->setPlaying(false);
+	state.movieClip->setPlaying(false, false);
 }
 
 void opx_toggleQuality(ExecutionState& state)
@@ -1883,7 +1883,7 @@ void opx_gotoLabel(ExecutionState& state)
 	int frame = movieClip->getSprite()->findFrame(label);
 	if (frame >= 0)
 	{
-		movieClip->setPlaying(false);
+		movieClip->setPlaying(false, false);
 		movieClip->gotoFrame(frame);
 	}
 }
@@ -2460,9 +2460,9 @@ void opx_gotoFrame2(ExecutionState& state)
 
 	// Play or stop
 	if ((state.data[0] & 2) == 2)
-		movieClip->setPlaying(true);
+		movieClip->setPlaying(true, false);
 	else
-		movieClip->setPlaying(false);
+		movieClip->setPlaying(false, false);
 
 	movieClip->gotoFrame(frameIndex);
 }

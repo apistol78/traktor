@@ -18,9 +18,11 @@ namespace traktor
 	{
 
 class ActionContext;
+class FlashBitmap;
 class FlashCanvas;
 class FlashCharacter;
 class FlashEditInstance;
+class FlashShapeInstance;
 class FlashSoundPlayer;
 class FlashSprite;
 
@@ -52,7 +54,7 @@ public:
 
 	uint32_t getCurrentFrame() const { return m_currentFrame; }
 
-	void setPlaying(bool playing);
+	void setPlaying(bool playing, bool recursive);
 
 	bool getPlaying() const { return m_playing; }
 
@@ -77,6 +79,8 @@ public:
 	Ref< FlashSpriteInstance > duplicateMovieClip(const std::string& cloneName, int32_t depth);
 
 	Ref< FlashSpriteInstance > duplicateMovieClip(const std::string& cloneName, int32_t depth, FlashSpriteInstance* intoParent);
+
+	Ref< FlashShapeInstance > attachBitmap(FlashBitmap* bm, int32_t depth);
 
 	Aabb2 getLocalBounds() const;
 

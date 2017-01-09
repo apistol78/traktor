@@ -172,7 +172,7 @@ end
 function Widget:_initialize(parent, mc)
 	self._parent = parent
 	self._mc = mc
-	self._mc:setPlaying(false)
+	self._mc:setPlaying(false, true)
 	self._placement = { x = 0, y = 0, width = 0, height = 0 }
 	self._events = {}
 	self._children = {}

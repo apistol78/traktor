@@ -545,7 +545,7 @@ void AsMovieClip::MovieClip_gotoAndPlay(FlashSpriteInstance* self, const ActionV
 			log::warning << L"No such frame, \"" << arg0.getWideString() << L"\"" << Endl;
 #endif
 	}
-	self->setPlaying(true);
+	self->setPlaying(true, false);
 }
 
 void AsMovieClip::MovieClip_gotoAndStop(FlashSpriteInstance* self, const ActionValue& arg0) const
@@ -565,7 +565,7 @@ void AsMovieClip::MovieClip_gotoAndStop(FlashSpriteInstance* self, const ActionV
 			log::warning << L"No such frame, \"" << arg0.getWideString() << L"\"" << Endl;
 #endif
 	}
-	self->setPlaying(false);
+	self->setPlaying(false, false);
 }
 
 bool AsMovieClip::MovieClip_hitTest_1(const FlashSpriteInstance* self, const FlashCharacterInstance* shape) const
@@ -655,7 +655,7 @@ void AsMovieClip::MovieClip_nextFrame(FlashSpriteInstance* self) const
 
 void AsMovieClip::MovieClip_play(FlashSpriteInstance* self) const
 {
-	self->setPlaying(true);
+	self->setPlaying(true, false);
 }
 
 void AsMovieClip::MovieClip_prevFrame(FlashSpriteInstance* self) const
@@ -682,7 +682,7 @@ void AsMovieClip::MovieClip_startDrag(FlashSpriteInstance* self) const
 
 void AsMovieClip::MovieClip_stop(FlashSpriteInstance* self) const
 {
-	self->setPlaying(false);
+	self->setPlaying(false, false);
 }
 
 void AsMovieClip::MovieClip_stopDrag(FlashSpriteInstance* self) const
