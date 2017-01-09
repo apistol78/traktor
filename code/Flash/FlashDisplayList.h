@@ -120,6 +120,23 @@ public:
 	 */
 	void getObjects(RefArray< FlashCharacterInstance >& outCharacterInstances) const;
 
+	/*! \brief For each character instances.
+	 *
+	 * \param fn Callback function.
+	 */
+	template < typename fn_t >
+	void forEachObject(fn_t fn) const
+	{
+		RefArray< FlashCharacterInstance > tmp;
+		for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		{
+			T_ASSERT (i->second.instance);
+			tmp.push_back(i->second.instance);
+		}
+		for (RefArray< FlashCharacterInstance >::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
+			fn(*i);
+	}
+
 	/*! \brief For each visible character instances.
 	 *
 	 * \param fn Callback function.

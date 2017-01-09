@@ -129,13 +129,13 @@ void FlashMoviePlayer::destroy()
 
 void FlashMoviePlayer::gotoAndPlay(uint32_t frame)
 {
-	m_movieInstance->setPlaying(true);
+	m_movieInstance->setPlaying(true, false);
 	m_movieInstance->gotoFrame(frame);
 }
 
 void FlashMoviePlayer::gotoAndStop(uint32_t frame)
 {
-	m_movieInstance->setPlaying(false);
+	m_movieInstance->setPlaying(false, false);
 	m_movieInstance->gotoFrame(frame);
 }
 
@@ -145,7 +145,7 @@ bool FlashMoviePlayer::gotoAndPlay(const std::string& frameLabel)
 	if (frame < 0)
 		return false;
 
-	m_movieInstance->setPlaying(true);
+	m_movieInstance->setPlaying(true, false);
 	m_movieInstance->gotoFrame(frame);
 	
 	return true;
@@ -157,7 +157,7 @@ bool FlashMoviePlayer::gotoAndStop(const std::string& frameLabel)
 	if (frame < 0)
 		return false;
 
-	m_movieInstance->setPlaying(false);
+	m_movieInstance->setPlaying(false, false);
 	m_movieInstance->gotoFrame(frame);
 
 	return true;

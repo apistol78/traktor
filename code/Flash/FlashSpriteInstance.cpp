@@ -1,11 +1,14 @@
 #include <limits>
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
-#include "Flash/FlashDictionary.h"
+#include "Flash/FlashBitmap.h"
 #include "Flash/FlashCanvas.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
 #include "Flash/FlashFrame.h"
+#include "Flash/FlashShape.h"
+#include "Flash/FlashShapeInstance.h"
 #include "Flash/FlashSound.h"
 #include "Flash/FlashSoundPlayer.h"
 #include "Flash/FlashSprite.h"
@@ -135,9 +138,16 @@ void FlashSpriteInstance::gotoNext()
 	}
 }
 
-void FlashSpriteInstance::setPlaying(bool playing)
+void FlashSpriteInstance::setPlaying(bool playing, bool recursive)
 {
 	m_playing = playing;
+	if (recursive)
+	{
+		m_displayList.forEachObject([&] (FlashCharacterInstance* instance) {
+			if (&type_of(instance) == &type_of< FlashSpriteInstance >())
+				static_cast< FlashSpriteInstance* >(instance)->setPlaying(playing, true);
+		});
+	}
 }
 
 void FlashSpriteInstance::updateDisplayList()
@@ -389,6 +399,38 @@ Ref< FlashSpriteInstance > FlashSpriteInstance::duplicateMovieClip(const std::st
 	);
 
 	return cloneInstance;
+}
+
+Ref< FlashShapeInstance > FlashSpriteInstance::attachBitmap(FlashBitmap* bm, int32_t depth)
+{
+	ActionContext* context = getContext();
+
+	// Get dictionary.
+	FlashDictionary* dictionary = getDictionary();
+	if (!dictionary)
+		return 0;
+
+	// Define bitmap symbol.
+	uint16_t bitmapId = dictionary->addBitmap(bm);
+
+	// Create a quad shape.
+	Ref< FlashShape > shape = new FlashShape();
+	shape->create(
+		bitmapId,
+		bm->getWidth() * 20,
+		bm->getHeight() * 20
+	);
+
+	// Define shape character.
+	uint16_t shapeId = dictionary->addCharacter(shape);
+
+	// Create new instance of shape.
+	Ref< FlashShapeInstance > attachShapeInstance = checked_type_cast< FlashShapeInstance* >(shape->createInstance(context, dictionary, this, "", Matrix33::identity(), 0, 0));
+	T_ASSERT (attachShapeInstance);
+
+	// Add new instance to display list.
+	getDisplayList().showObject(depth, shapeId, attachShapeInstance, true);
+	return attachShapeInstance;
 }
 
 Aabb2 FlashSpriteInstance::getLocalBounds() const

@@ -3,7 +3,8 @@
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Io/IStream.h"
 #include "Drawing/Image.h"
-#include "Flash/FlashBitmap.h"
+#include "Flash/FlashBitmapImage.h"
+#include "Flash/FlashBitmapResource.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashCast.h"
 #include "Flash/FlashCharacter.h"
@@ -462,6 +463,24 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classColorTransform->addMethod("setAdd", &ColorTransform_setAdd);
 	classColorTransform->addMethod("getAdd", &ColorTransform_getAdd);
 	registrar->registerClass(classColorTransform);
+
+	Ref< AutoRuntimeClass< FlashBitmap > > classFlashBitmap = new AutoRuntimeClass< FlashBitmap >();
+	classFlashBitmap->addMethod("getX", &FlashBitmap::getX);
+	classFlashBitmap->addMethod("getY", &FlashBitmap::getY);
+	classFlashBitmap->addMethod("getWidth", &FlashBitmap::getWidth);
+	classFlashBitmap->addMethod("getHeight", &FlashBitmap::getHeight);
+	registrar->registerClass(classFlashBitmap);
+
+	Ref< AutoRuntimeClass< FlashBitmapImage > > classFlashBitmapImage = new AutoRuntimeClass< FlashBitmapImage >();
+	classFlashBitmapImage->addConstructor< const drawing::Image* >();
+	classFlashBitmapImage->addMethod("getImage", &FlashBitmapImage::getImage);
+	registrar->registerClass(classFlashBitmapImage);
+
+	Ref< AutoRuntimeClass< FlashBitmapResource > > classFlashBitmapResource = new AutoRuntimeClass< FlashBitmapResource >();
+	classFlashBitmapResource->addMethod("getAtlasWidth", &FlashBitmapResource::getAtlasWidth);
+	classFlashBitmapResource->addMethod("getAtlasHeight", &FlashBitmapResource::getAtlasHeight);
+	classFlashBitmapResource->addMethod("getResourceId", &FlashBitmapResource::getResourceId);
+	registrar->registerClass(classFlashBitmapResource);
 
 	Ref< AutoRuntimeClass< FlashDictionary > > classFlashDictionary = new AutoRuntimeClass< FlashDictionary >();
 	classFlashDictionary->addMethod("addFont", &FlashDictionary::addFont);
