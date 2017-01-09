@@ -290,6 +290,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			return 0;
 		}
 
+		model::ModelFormat::writeAny(Path(L"./MergedModel.obj"), mergedModel);
+
 		// Calculate output size from lumel density.
 		const model::Polygon& p = mergedModel->getPolygon(0);
 		const model::Vertex& v0 = mergedModel->getVertex(p.getVertex(0));
@@ -366,6 +368,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		// Create GBuffer.
 		GBuffer gbuffer;
 		gbuffer.create(surfaces, outputSize, outputSize);
+		gbuffer.saveAsImages(Path(L"."));
+		//gbuffer.dilate(8);
 
 		// Create images.
 		Ref< drawing::Image > outputImageRadiance = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);

@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Io/Path.h"
 #include "Core/Math/Vector4.h"
 #include "Illuminate/Editor/Types.h"
 
@@ -24,6 +25,8 @@ public:
 
 		Element()
 		:	surfaceIndex(-1)
+		,	position(Vector4::zero())
+		,	normal(Vector4::zero())
 		{
 		}
 	};
@@ -31,6 +34,10 @@ public:
 	GBuffer();
 
 	bool create(const AlignedVector< Surface >& surfaces, int32_t width, int32_t height);
+
+	void dilate(int32_t iterations);
+
+	void saveAsImages(const Path& outputPath) const;
 
 	const Element& get(int32_t x, int32_t y) const { return m_data[x + y * m_width]; }
 
