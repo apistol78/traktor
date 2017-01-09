@@ -177,10 +177,13 @@ bool ModelFormatObj::write(IStream* stream, const Model* model) const
 					const Vertex& vertex = model->getVertex(*j);
 
 					s << L" " << vertex.getPosition() + 1;
-					if (vertex.getTexCoord(0) != c_InvalidIndex)
+					if (vertex.getTexCoord(1) != c_InvalidIndex)
+						s << L"/" << vertex.getTexCoord(1) + 1;
+					else if (vertex.getTexCoord(0) != c_InvalidIndex)
 						s << L"/" << vertex.getTexCoord(0) + 1;
 					else
 						s << L"/";
+
 					if (vertex.getNormal() != c_InvalidIndex)
 						s << L"/" << vertex.getNormal() + 1;
 					else

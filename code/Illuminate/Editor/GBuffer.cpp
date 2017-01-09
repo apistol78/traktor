@@ -1,6 +1,8 @@
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Math/Winding2.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Illuminate/Editor/GBuffer.h"
 
 namespace traktor
@@ -40,8 +42,7 @@ bool GBuffer::create(const AlignedVector< Surface >& surfaces, int32_t width, in
 
 	m_width = width;
 	m_height = height;
-
-	AlignedVector< Element > data(width * height);
+	m_data.resize(width * height);
 
 	// Rasterize each surface into gbuffer.
 	for (uint32_t j = 0; j < surfaces.size(); ++j)
@@ -90,25 +91,38 @@ bool GBuffer::create(const AlignedVector< Surface >& surfaces, int32_t width, in
 			{
 				for (int32_t x = x0; x <= x1; ++x)
 				{
-					Vector2 pt = Vector2(x + 0.5f, y + 0.5f);
+					if (x < 0 || y < 0 || x >= width || y >= height)
+						continue;
+
+					Vector2 pt = Vector2(x, y);
 
 					float alpha = ((t.points[1].y - t.points[2].y) * (pt.x - t.points[2].x) + (t.points[2].x - t.points[1].x) * (pt.y - t.points[2].y)) * invDenom;
 					float beta = ((t.points[2].y - t.points[0].y) * (pt.x - t.points[2].x) + (t.points[0].x - t.points[2].x) * (pt.y - t.points[2].y)) * invDenom;
 					float gamma = 1.0f - alpha - beta;
 
-					if (alpha >= 0.0f && beta >= 0.0f && gamma >= 0.0f)
+					if (alpha < 0.0f || beta < 0.0f || gamma < 0.0f)
+						continue;
+
+					for (int32_t iy = -1; iy <= 1; ++iy)
 					{
-						if (x >= 0 && y >= 0 && x < width && y < height)
+						for (int32_t ix = -1; ix <= 1; ++ix)
 						{
-							Element& e = data[x + y * width];
-							if (e.surfaceIndex < 0)
-							{
-								Vector4 position = (P[0] * Scalar(alpha) + P[1] * Scalar(beta) + P[2] * Scalar(gamma)).xyz1();
-								Vector4 normal = (N[0] * Scalar(alpha) + N[1] * Scalar(beta) + N[2] * Scalar(gamma)).xyz0().normalized();
-								e.surfaceIndex = j;
-								e.position = position;
-								e.normal = normal;
-							}
+							Element& e = m_data[x + ix + (y + iy) * width];
+							if ((ix != 0 || iy != 0) && e.surfaceIndex >= 0)
+								continue;
+
+							Vector2 pt = Vector2(x + ix, y + iy);
+
+							float alpha = ((t.points[1].y - t.points[2].y) * (pt.x - t.points[2].x) + (t.points[2].x - t.points[1].x) * (pt.y - t.points[2].y)) * invDenom;
+							float beta = ((t.points[2].y - t.points[0].y) * (pt.x - t.points[2].x) + (t.points[0].x - t.points[2].x) * (pt.y - t.points[2].y)) * invDenom;
+							float gamma = 1.0f - alpha - beta;
+
+							Vector4 position = (P[0] * Scalar(alpha) + P[1] * Scalar(beta) + P[2] * Scalar(gamma)).xyz1();
+							Vector4 normal = (N[0] * Scalar(alpha) + N[1] * Scalar(beta) + N[2] * Scalar(gamma)).xyz0().normalized();
+
+							e.surfaceIndex = j;
+							e.position = position;
+							e.normal = normal;
 						}
 					}
 				}
@@ -116,32 +130,36 @@ bool GBuffer::create(const AlignedVector< Surface >& surfaces, int32_t width, in
 		}
 	}
 
-	m_data.resize(width * height);
+	return true;
+}
 
-	// Dilate gbuffer.
-	Element* from = data.ptr();
-	Element* to = m_data.ptr();
+void GBuffer::dilate(int32_t iterations)
+{
+	AlignedVector< Element > data(m_width * m_height);
 
-	for (int32_t iter = 0; iter < 9; ++iter)
+	Element* from = m_data.ptr();
+	Element* to = data.ptr();
+
+	for (int32_t iter = 0; iter < iterations; ++iter)
 	{
-		for (int32_t y = 0; y < height; ++y)
+		for (int32_t y = 0; y < m_height; ++y)
 		{
-			for (int32_t x = 0; x < width; ++x)
+			for (int32_t x = 0; x < m_width; ++x)
 			{
-				if (from[x + y * width].surfaceIndex >= 0)
+				if (from[x + y * m_width].surfaceIndex >= 0)
 				{
-					to[x + y * width] = from[x + y * width];
+					to[x + y * m_width] = from[x + y * m_width];
 					continue;
 				}
 				for (int32_t i = 0; i < sizeof_array(c_dilateOffsets); ++i)
 				{
 					int32_t sx = x + c_dilateOffsets[i][0];
 					int32_t sy = y + c_dilateOffsets[i][1];
-					if (sx >= 0 && sx < width && sy >= 0 && sy < height)
+					if (sx >= 0 && sx < m_width && sy >= 0 && sy < m_height)
 					{
-						if (from[sx + sy * width].surfaceIndex >= 0)
+						if (from[sx + sy * m_width].surfaceIndex >= 0)
 						{
-							to[x + y * width] = from[sx + sy * width];
+							to[x + y * m_width] = from[sx + sy * m_width];
 							break;
 						}
 					}
@@ -151,9 +169,54 @@ bool GBuffer::create(const AlignedVector< Surface >& surfaces, int32_t width, in
 
 		std::swap(from, to);
 	}
-	T_FATAL_ASSERT(from == m_data.ptr());
 
-	return true;
+	if (from == data.ptr())
+	{
+		for (int32_t i = 0; i < m_width * m_height; ++i)
+			m_data[i] = data[i];
+	}
+}
+
+void GBuffer::saveAsImages(const Path& outputPath) const
+{
+	Ref< drawing::Image > image;
+
+	// Positions as a checker pattern.
+	image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);
+	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+	for (int32_t y = 0; y < m_height; ++y)
+	{
+		for (int32_t x = 0; x < m_width; ++x)
+		{
+			const Element& e = m_data[x + y * m_width];
+			if (e.surfaceIndex < 0)
+				continue;
+
+			int32_t bx = int32_t(e.position.x() * 32.0f) & 1;
+			int32_t by = int32_t(e.position.y() * 32.0f) & 1;
+			int32_t bz = int32_t(e.position.z() * 32.0f) & 1;
+
+			image->setPixel(x, y, (bx ^ by ^ bz) ? Color4f(1.0f, 1.0f, 1.0f, 1.0f) : Color4f(0.2f, 0.2f, 0.2f, 1.0f));
+		}
+	}
+	image->save(outputPath + L"GBuffer_Positions.png");
+
+	// Normals.
+	image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);
+	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+	for (int32_t y = 0; y < m_height; ++y)
+	{
+		for (int32_t x = 0; x < m_width; ++x)
+		{
+			const Element& e = m_data[x + y * m_width];
+			if (e.surfaceIndex < 0)
+				continue;
+
+			Vector4 n = e.normal * Scalar(0.5f) + Scalar(0.5f);
+			image->setPixel(x, y, Color4f(n.x(), n.y(), n.z(), 1.0f));
+		}
+	}
+	image->save(outputPath + L"GBuffer_Normals.png");
 }
 
 	}
