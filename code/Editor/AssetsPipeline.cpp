@@ -7,7 +7,6 @@
 #include "Editor/AssetsPipeline.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Editor/VirtualAsset.h"
 
 namespace traktor
 {
@@ -35,7 +34,6 @@ TypeInfoSet AssetsPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Assets >());
-	typeSet.insert(&type_of< VirtualAsset >());
 	return typeSet;
 }
 
@@ -54,25 +52,6 @@ bool AssetsPipeline::buildDependencies(
 			if (!i->editorDeployOnly || m_editorDeploy)
 				pipelineDepends->addDependency(i->id, editor::PdfBuild);
 		}
-	}
-	else if (const VirtualAsset* virtualAsset = dynamic_type_cast< const VirtualAsset* >(sourceAsset))
-	{
-		Ref< db::Instance > virtualSourceInstance = pipelineDepends->getSourceDatabase()->getInstance(virtualAsset->getSourceInstance());
-		Ref< db::Instance > virtualPlaceholderInstance = pipelineDepends->getSourceDatabase()->getInstance(virtualAsset->getPlaceholderInstance());
-
-		if (!virtualSourceInstance || !virtualPlaceholderInstance)
-			return false;
-
-		Ref< ISerializable > object = virtualSourceInstance->getObject< ISerializable >();
-		if (!object)
-			return false;
-
-		pipelineDepends->addDependency(
-			object,
-			virtualPlaceholderInstance->getPath(),
-			virtualPlaceholderInstance->getGuid(),
-			editor::PdfBuild
-		);
 	}
 	return true;
 }
