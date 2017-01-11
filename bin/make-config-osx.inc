@@ -3,7 +3,7 @@
 # Toolchain and SDK configuration.
 XCODE_PATH=$(shell xcode-select --print-path)
 TOOLCHAIN_BIN=$(XCODE_PATH)/Toolchains/XcodeDefault.xctoolchain/usr/bin
-SDK_SYSROOT=$(XCODE_PATH)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
+SDK_SYSROOT=$(XCODE_PATH)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk
 ARCH=i386
 MAC_OS_MIN_VERSION=10.8
 
