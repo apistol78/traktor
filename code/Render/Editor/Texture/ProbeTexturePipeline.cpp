@@ -1,5 +1,7 @@
-#include <CCubeMapProcessor.h>
-#include <ErrorMsg.h>
+#if defined(_WIN32)
+#	include <CCubeMapProcessor.h>
+#	include <ErrorMsg.h>
+#endif
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
@@ -83,6 +85,7 @@ bool ProbeTexturePipeline::buildOutput(
 	// Ensure source image has high dynamic range.
 	image->convert(drawing::PixelFormat::getARGBF32());
 
+#if defined(_WIN32)
 	Ref< CubeMap > cm = new CubeMap(image);
 	int32_t size = cm->getSize();
 
@@ -134,6 +137,11 @@ bool ProbeTexturePipeline::buildOutput(
 		log::error << L"Probe texture asset pipeline failed; unable to create cross image." << Endl;
 		return false;
 	}
+#else
+	// \fixme Since CubeMapGen doesn't compile on non-windows we cannot
+	// filter probe yet on Linux nor OSX.
+	Ref< drawing::Image > cross = image;
+#endif
 
 	output = new TextureOutput();
 	output->m_textureFormat = TfInvalid;
