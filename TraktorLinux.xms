@@ -10604,7 +10604,7 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<project type="Project" version="1">
-												<enable>true</enable>
+												<enable>false</enable>
 												<name>Extern.CubeMapGen</name>
 												<sourcePath>$(TRAKTOR_HOME)/3rdp/CubeMapGen-1.4-Source</sourcePath>
 												<configurations>
@@ -19846,7 +19846,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Illuminate.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Illuminate/Editor</sourcePath>
 			<configurations>
