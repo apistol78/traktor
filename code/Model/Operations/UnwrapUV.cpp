@@ -169,7 +169,7 @@ bool UnwrapUV::apply(Model& model) const
 			if (ln > mln)
 			{
 				mln = ln;
-				angle = std::atan2f(edge.y, edge.x);
+				angle = std::atan2(edge.y, edge.x);
 			}
 		}
 
