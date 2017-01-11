@@ -1,5 +1,5 @@
 #define STB_RECT_PACK_IMPLEMENTATION
-#include <math.h>
+#include <cmath>
 #include <stb_rect_pack.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
