@@ -73,11 +73,11 @@ public:
 
 	/*! \brief Bind handle to resource identifier.
 	 *
-	 * \param type Type of resource.
+	 * \param productType Type of product.
 	 * \param guid Resource identifier.
 	 * \return Resource handle.
 	 */
-	virtual Ref< ResourceHandle > bind(const TypeInfo& type, const Guid& guid) = 0;
+	virtual Ref< ResourceHandle > bind(const TypeInfo& productType, const Guid& guid) = 0;
 
 	/*! \brief Reload resource.
 	 *
@@ -88,16 +88,16 @@ public:
 
 	/*! \brief Reload all resources of given type.
 	 *
-	 * \param type Type of resource.
+	 * \param productType Type of product.
 	 * \param flushedOnly Reload flushed resources only.
 	 */
-	virtual void reload(const TypeInfo& type, bool flushedOnly) = 0;
+	virtual void reload(const TypeInfo& productType, bool flushedOnly) = 0;
 
 	/*! \brief Unload all resources of given type.
 	 *
-	 * \param type Type of resource.
+	 * \param productType Type of product.
 	 */
-	virtual void unload(const TypeInfo& type) = 0;
+	virtual void unload(const TypeInfo& productType) = 0;
 
 	/*! \brief Unload externally unused, resident, resources.
 	 *
@@ -133,11 +133,11 @@ public:
 	 * \param proxy Resource identifier proxy.
 	 */
 	template <
-		typename ResourceType
+		typename ProductType
 	>
-	bool bind(IdProxy< ResourceType >& outProxy)
+	bool bind(IdProxy< ProductType >& outProxy)
 	{
-		Ref< ResourceHandle > handle = bind(type_of< ResourceType >(), outProxy.getId());
+		Ref< ResourceHandle > handle = bind(type_of< ProductType >(), outProxy.getId());
 		if (!handle)
 			return false;
 

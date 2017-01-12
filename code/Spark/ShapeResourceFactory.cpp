@@ -1,4 +1,3 @@
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Spark/Shape.h"
 #include "Spark/ShapeResource.h"
@@ -11,43 +10,33 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.ShapeResourceFactory", ShapeResourceFactory, resource::IResourceFactory)
 
-ShapeResourceFactory::ShapeResourceFactory(db::Database* db, render::IRenderSystem* renderSystem)
-:	m_db(db)
-,	m_renderSystem(renderSystem)
+ShapeResourceFactory::ShapeResourceFactory(render::IRenderSystem* renderSystem)
+:	m_renderSystem(renderSystem)
 {
 }
 
 const TypeInfoSet ShapeResourceFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ShapeResource >());
-	return typeSet;
-
+	return makeTypeInfoSet< ShapeResource >();
 }
 
-const TypeInfoSet ShapeResourceFactory::getProductTypes() const
+const TypeInfoSet ShapeResourceFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Shape >());
-	return typeSet;
+	return makeTypeInfoSet< Shape >();
 }
 
-bool ShapeResourceFactory::isCacheable() const
+bool ShapeResourceFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > ShapeResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > ShapeResourceFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< db::Instance > instance = m_db->getInstance(guid);
-	if (!instance)
-		return 0;
-
 	Ref< ShapeResource > resource = instance->getObject< ShapeResource >();
-	if (!resource)
+	if (resource)
+		return resource->create(resourceManager, m_renderSystem, instance);
+	else
 		return 0;
-
-	return resource->create(resourceManager, m_renderSystem, instance);
 }
 
 	}

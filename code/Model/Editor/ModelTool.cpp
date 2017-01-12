@@ -41,13 +41,9 @@ bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor, const std::w
 	if (!database)
 		return false;
 
-	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager(true);
-	resourceManager->addFactory(
-		new render::TextureFactory(database, renderSystem, 0)
-	);
-	resourceManager->addFactory(
-		new render::ShaderFactory(database, renderSystem)
-	);
+	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager(database, true);
+	resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
+	resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 
 	m_dialog = new ModelToolDialog(resourceManager, renderSystem);
 	if (!m_dialog->create(parent, param))

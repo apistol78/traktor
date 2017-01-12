@@ -1,4 +1,4 @@
-#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "World/EntityData.h"
 #include "World/EntityResourceFactory.h"
 
@@ -9,33 +9,24 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityResourceFactory", EntityResourceFactory, resource::IResourceFactory)
 
-EntityResourceFactory::EntityResourceFactory(db::Database* db)
-:	m_db(db)
-{
-}
-
 const TypeInfoSet EntityResourceFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	type_of< EntityData >().findAllOf(typeSet);
-	return typeSet;
+	return makeTypeInfoSet< EntityData >();
 }
 
-const TypeInfoSet EntityResourceFactory::getProductTypes() const
+const TypeInfoSet EntityResourceFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	type_of< EntityData >().findAllOf(typeSet);
-	return typeSet;
+	return makeTypeInfoSet< EntityData >();
 }
 
-bool EntityResourceFactory::isCacheable() const
+bool EntityResourceFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > EntityResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > EntityResourceFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	return m_db->getObjectReadOnly< EntityData >(guid);
+	return instance->getObject< EntityData >();
 }
 
 	}

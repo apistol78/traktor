@@ -19,6 +19,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/ImageProcess/ImageProcessFactory.h"
 #include "Render/Resource/ShaderFactory.h"
+#include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
@@ -63,12 +64,13 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	if (!resourceDatabase)
 		return false;
 
-	m_resourceManager = new resource::ResourceManager(true);
-	m_resourceManager->addFactory(new AnimationFactory(resourceDatabase));
-	m_resourceManager->addFactory(new mesh::MeshFactory(resourceDatabase, m_renderSystem));
-	m_resourceManager->addFactory(new render::ShaderFactory(resourceDatabase, m_renderSystem));
-	m_resourceManager->addFactory(new render::TextureFactory(resourceDatabase, m_renderSystem, 0));
-	m_resourceManager->addFactory(new render::ImageProcessFactory(resourceDatabase));
+	m_resourceManager = new resource::ResourceManager(resourceDatabase, true);
+	m_resourceManager->addFactory(new AnimationFactory());
+	m_resourceManager->addFactory(new mesh::MeshFactory(m_renderSystem));
+	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
+	m_resourceManager->addFactory(new render::SequenceTextureFactory());
+	m_resourceManager->addFactory(new render::TextureFactory(m_renderSystem, 0));
+	m_resourceManager->addFactory(new render::ImageProcessFactory());
 
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 24;

@@ -179,14 +179,13 @@ void WorldServer::destroy()
 
 void WorldServer::createResourceFactories(IEnvironment* environment)
 {
-	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	db::Database* database = environment->getDatabase();
+	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 
-	resourceManager->addFactory(new scene::SceneFactory(database, renderSystem, m_entityBuilder));
-	resourceManager->addFactory(new terrain::TerrainFactory(database));
-	resourceManager->addFactory(new world::EntityEventResourceFactory(database, m_entityBuilder));
-	resourceManager->addFactory(new world::EntityResourceFactory(database));
+	resourceManager->addFactory(new scene::SceneFactory(renderSystem, m_entityBuilder));
+	resourceManager->addFactory(new terrain::TerrainFactory());
+	resourceManager->addFactory(new world::EntityEventResourceFactory(m_entityBuilder));
+	resourceManager->addFactory(new world::EntityResourceFactory());
 }
 
 void WorldServer::createEntityFactories(IEnvironment* environment)

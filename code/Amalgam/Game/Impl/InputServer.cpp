@@ -160,9 +160,7 @@ void InputServer::destroy()
 void InputServer::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	db::Database* database = environment->getDatabase();
-
-	resourceManager->addFactory(new input::RumbleEffectFactory(database));
+	resourceManager->addFactory(new input::RumbleEffectFactory());
 }
 
 int32_t InputServer::reconfigure(const PropertyGroup* settings)

@@ -25,6 +25,7 @@
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Resource/TextureFactory.h"
+#include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
@@ -251,16 +252,11 @@ bool AnimationEditorPage::create(ui::Container* parent)
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
-	m_resourceManager = new resource::ResourceManager(true);
-	m_resourceManager->addFactory(
-		new render::TextureFactory(database, renderSystem, 0)
-	);
-	m_resourceManager->addFactory(
-		new render::ShaderFactory(database, renderSystem)
-	);
-	m_resourceManager->addFactory(
-		new AnimationFactory(database)
-	);
+	m_resourceManager = new resource::ResourceManager(database, true);
+	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
+	m_resourceManager->addFactory(new render::SequenceTextureFactory());
+	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
+	m_resourceManager->addFactory(new AnimationFactory());
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem, 1))

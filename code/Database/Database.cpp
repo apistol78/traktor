@@ -247,13 +247,22 @@ Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint3
 	return group->createInstance(instanceName, flags, guid);
 }
 
-Ref< ISerializable > Database::getObjectReadOnly(const Guid& guid)
+Ref< ISerializable > Database::getObjectReadOnly(const Guid& guid) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (m_providerDatabase);
 
-	Ref< Instance > instance = getInstance(guid);
-	return instance ? instance->getObject() : 0;
+	if (guid.isNull() || !guid.isValid())
+		return 0;
+
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerDatabase);
+
+	std::map< Guid, Ref< Instance > >::const_iterator i = m_instanceMap.find(guid);
+	if (i == m_instanceMap.end() || !i->second)
+		return 0;
+
+	return i->second->getObject();
 }
 
 bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)

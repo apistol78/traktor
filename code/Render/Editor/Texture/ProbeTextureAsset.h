@@ -24,8 +24,6 @@ class T_DLLCLASS ProbeTextureAsset : public editor::Asset
 public:
 	ProbeTextureAsset();
 
-	virtual const TypeInfo* getOutputType() const;
-
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:

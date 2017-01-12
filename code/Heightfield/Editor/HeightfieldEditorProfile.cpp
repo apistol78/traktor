@@ -33,7 +33,7 @@ void HeightfieldEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new HeightfieldFactory(context->getResourceDatabase()));
+	outResourceFactories.push_back(new HeightfieldFactory());
 }
 
 void HeightfieldEditorProfile::createEntityFactories(

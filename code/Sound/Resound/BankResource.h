@@ -31,7 +31,7 @@ public:
 
 	BankResource(const RefArray< IGrainData >& grains, const std::wstring& category, float gain, float presence, float presenceRate, float range);
 
-	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const T_OVERRIDE T_FINAL;
+	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const T_OVERRIDE T_FINAL;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 

@@ -1,4 +1,4 @@
-#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Spark/CharacterData.h"
 #include "Spark/CharacterResourceFactory.h"
 
@@ -9,33 +9,24 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.CharacterResourceFactory", CharacterResourceFactory, resource::IResourceFactory)
 
-CharacterResourceFactory::CharacterResourceFactory(db::Database* db)
-:	m_db(db)
-{
-}
-
 const TypeInfoSet CharacterResourceFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	type_of< CharacterData >().findAllOf(typeSet);
-	return typeSet;
+	return makeTypeInfoSet< CharacterData >();
 }
 
-const TypeInfoSet CharacterResourceFactory::getProductTypes() const
+const TypeInfoSet CharacterResourceFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	type_of< CharacterData >().findAllOf(typeSet);
-	return typeSet;
+	return makeTypeInfoSet< CharacterData >();
 }
 
-bool CharacterResourceFactory::isCacheable() const
+bool CharacterResourceFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > CharacterResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > CharacterResourceFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	return m_db->getObjectReadOnly< CharacterData >(guid);
+	return instance->getObject< CharacterData >();
 }
 
 	}

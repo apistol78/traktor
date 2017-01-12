@@ -14,13 +14,6 @@
 
 namespace traktor
 {
-	namespace db
-	{
-
-class Database;
-
-	}
-
 	namespace render
 	{
 
@@ -48,26 +41,23 @@ class T_DLLCLASS SceneFactory : public resource::IResourceFactory
 public:
 	/*! \brief Construct scene factory.
 	 *
-	 * \param database Database
 	 * \param renderSystem Render system.
 	 * \param entityBuilder Entity builder.
 	 */
 	SceneFactory(
-		db::Database* database,
 		render::IRenderSystem* renderSystem,
 		world::IEntityBuilder* entityBuilder
 	);
 
 	virtual const TypeInfoSet getResourceTypes() const T_OVERRIDE T_FINAL;
 
-	virtual const TypeInfoSet getProductTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getProductTypes(const TypeInfo& resourceType) const T_OVERRIDE T_FINAL;
 
-	virtual bool isCacheable() const T_OVERRIDE T_FINAL;
+	virtual bool isCacheable(const TypeInfo& productType) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const T_OVERRIDE T_FINAL;
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const T_OVERRIDE T_FINAL;
 
 private:
-	Ref< db::Database > m_database;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< world::IEntityBuilder > m_entityBuilder;
 };

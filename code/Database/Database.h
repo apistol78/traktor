@@ -108,7 +108,7 @@ public:
 	 * \param guid Instance guid.
 	 * \return Instance's object; null if no instance found.
 	 */
-	virtual Ref< ISerializable > getObjectReadOnly(const Guid& guid);
+	virtual Ref< ISerializable > getObjectReadOnly(const Guid& guid) const;
 
 	/*! \brief Get instance object by guid.
 	 *
@@ -116,7 +116,7 @@ public:
 	 * \return Instance's object; null if no instance found.
 	 */
 	template < typename T >
-	Ref< T > getObjectReadOnly(const Guid& guid)
+	Ref< T > getObjectReadOnly(const Guid& guid) const
 	{
 		Ref< ISerializable > object = getObjectReadOnly(guid);
 		return dynamic_type_cast< T* >(object);
@@ -138,7 +138,7 @@ private:
 	Ref< IProviderDatabase > m_providerDatabase;
 	Ref< IProviderBus > m_providerBus;
 	Ref< Group > m_rootGroup;
-	Semaphore m_lock;
+	mutable Semaphore m_lock;
 	std::map< Guid, Ref< Instance > > m_instanceMap;
 
 	// \name IInstanceEventListener

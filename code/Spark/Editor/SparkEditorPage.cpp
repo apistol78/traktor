@@ -8,6 +8,7 @@
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
 #include "Render/IRenderSystem.h"
+#include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
@@ -59,12 +60,13 @@ bool SparkEditorPage::create(ui::Container* parent)
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	// Create resource manager.
-	Ref< resource::ResourceManager > resourceManager = new resource::ResourceManager(true);
-	resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
-	resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
-	resourceManager->addFactory(new CharacterResourceFactory(database));
-	resourceManager->addFactory(new FontResourceFactory(database, renderSystem));
-	resourceManager->addFactory(new ShapeResourceFactory(database, renderSystem));
+	Ref< resource::ResourceManager > resourceManager = new resource::ResourceManager(database, true);
+	resourceManager->addFactory(new render::SequenceTextureFactory());
+	resourceManager->addFactory(new render::ShaderFactory(renderSystem));
+	resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
+	resourceManager->addFactory(new CharacterResourceFactory());
+	resourceManager->addFactory(new FontResourceFactory(renderSystem));
+	resourceManager->addFactory(new ShapeResourceFactory(renderSystem));
 
 	// Create runtime context.
 	Ref< Context > context = new Context(

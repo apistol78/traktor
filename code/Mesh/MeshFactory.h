@@ -13,13 +13,6 @@
 
 namespace traktor
 {
-	namespace db
-	{
-
-class Database;
-
-	}
-
 	namespace render
 	{
 
@@ -36,18 +29,17 @@ class T_DLLCLASS MeshFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	MeshFactory(db::Database* database, render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory = 0);
+	MeshFactory(render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory = 0);
 
 	virtual const TypeInfoSet getResourceTypes() const T_OVERRIDE T_FINAL;
 
-	virtual const TypeInfoSet getProductTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getProductTypes(const TypeInfo& resourceType) const T_OVERRIDE T_FINAL;
 
-	virtual bool isCacheable() const T_OVERRIDE T_FINAL;
+	virtual bool isCacheable(const TypeInfo& productType) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const T_OVERRIDE T_FINAL;
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const T_OVERRIDE T_FINAL;
 
 private:
-	Ref< db::Database > m_database;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::MeshFactory > m_meshFactory;
 };

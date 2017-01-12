@@ -41,7 +41,7 @@ void PhysicsEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new MeshFactory(context->getResourceDatabase()));
+	outResourceFactories.push_back(new MeshFactory());
 }
 
 void PhysicsEditorProfile::createEntityFactories(

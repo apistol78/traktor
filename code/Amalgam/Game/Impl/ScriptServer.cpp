@@ -20,8 +20,7 @@
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
-#include "Script/ScriptClassFactory.h"
-#include "Script/ScriptModuleFactory.h"
+#include "Script/ScriptFactory.h"
 #include "Script/StackFrame.h"
 
 namespace traktor
@@ -142,10 +141,7 @@ void ScriptServer::destroy()
 void ScriptServer::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	db::Database* database = environment->getDatabase();
-
-	resourceManager->addFactory(new script::ScriptClassFactory(database, m_scriptContext));
-	resourceManager->addFactory(new script::ScriptModuleFactory(database, m_scriptManager));
+	resourceManager->addFactory(new script::ScriptFactory(m_scriptManager, m_scriptContext));
 
 	// Expose environment as a global in shared script environment.
 	m_scriptContext->setGlobal("environment", Any::fromObject(environment));

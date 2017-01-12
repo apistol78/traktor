@@ -1,4 +1,4 @@
-#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Input/RumbleEffect.h"
 #include "Input/RumbleEffectFactory.h"
 
@@ -9,33 +9,24 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.RumbleEffectFactory", RumbleEffectFactory, resource::IResourceFactory)
 
-RumbleEffectFactory::RumbleEffectFactory(db::Database* db)
-:	m_db(db)
-{
-}
-
 const TypeInfoSet RumbleEffectFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< RumbleEffect >());
-	return typeSet;
+	return makeTypeInfoSet< RumbleEffect >();
 }
 
-const TypeInfoSet RumbleEffectFactory::getProductTypes() const
+const TypeInfoSet RumbleEffectFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< RumbleEffect >());
-	return typeSet;
+	return makeTypeInfoSet< RumbleEffect >();
 }
 
-bool RumbleEffectFactory::isCacheable() const
+bool RumbleEffectFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > RumbleEffectFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > RumbleEffectFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	return m_db->getObjectReadOnly< RumbleEffect >(guid);
+	return instance->getObject< RumbleEffect >();
 }
 
 	}

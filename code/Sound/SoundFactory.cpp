@@ -1,4 +1,3 @@
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Sound/ISoundResource.h"
 #include "Sound/Sound.h"
@@ -11,41 +10,28 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundFactory", SoundFactory, resource::IResourceFactory)
 
-SoundFactory::SoundFactory(db::Database* db)
-:	m_db(db)
-{
-}
-
 const TypeInfoSet SoundFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	type_of< ISoundResource >().findAllOf(typeSet);
-	return typeSet;
+	return makeTypeInfoSet< ISoundResource >();
 }
 
-const TypeInfoSet SoundFactory::getProductTypes() const
+const TypeInfoSet SoundFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	type_of< Sound >().findAllOf(typeSet);
-	return typeSet;
+	return makeTypeInfoSet< Sound >();
 }
 
-bool SoundFactory::isCacheable() const
+bool SoundFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< db::Instance > instance = m_db->getInstance(guid);
-	if (!instance)
-		return 0;
-
 	Ref< ISoundResource > resource = instance->getObject< ISoundResource >();
-	if (!resource)
+	if (resource)
+		return resource->createSound(resourceManager, instance);
+	else
 		return 0;
-
-	return resource->createSound(resourceManager, instance);
 }
 
 	}

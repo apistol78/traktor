@@ -2,7 +2,7 @@
 #define traktor_resource_ResourceManager_H
 
 #include <map>
-#include <stack>
+#include <vector>
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
 #include "Resource/IResourceManager.h"
@@ -17,6 +17,13 @@
 
 namespace traktor
 {
+	namespace db
+	{
+
+class Database;
+
+	}
+
 	namespace resource
 	{
 
@@ -32,7 +39,7 @@ class T_DLLCLASS ResourceManager : public IResourceManager
 	T_RTTI_CLASS;
 
 public:
-	ResourceManager(bool verbose);
+	ResourceManager(db::Database* database, bool verbose);
 
 	virtual ~ResourceManager();
 
@@ -46,45 +53,29 @@ public:
 
 	virtual bool load(const ResourceBundle* bundle) T_OVERRIDE T_FINAL;
 	
-	virtual Ref< ResourceHandle > bind(const TypeInfo& type, const Guid& guid) T_OVERRIDE T_FINAL;
+	virtual Ref< ResourceHandle > bind(const TypeInfo& productType, const Guid& guid) T_OVERRIDE T_FINAL;
 
 	virtual void reload(const Guid& guid, bool flushedOnly) T_OVERRIDE T_FINAL;
 
-	virtual void reload(const TypeInfo& type, bool flushedOnly) T_OVERRIDE T_FINAL;
+	virtual void reload(const TypeInfo& productType, bool flushedOnly) T_OVERRIDE T_FINAL;
 
-	virtual void unload(const TypeInfo& type) T_OVERRIDE T_FINAL;
+	virtual void unload(const TypeInfo& productType) T_OVERRIDE T_FINAL;
 
 	virtual void unloadUnusedResident() T_OVERRIDE T_FINAL;
 	
 	virtual void getStatistics(ResourceManagerStatistics& outStatistics) const T_OVERRIDE T_FINAL;
 
 private:
-	struct TimeCount
-	{
-		uint32_t count;
-		double time;
-
-		TimeCount()
-		:	count(0)
-		,	time(0.0)
-		{
-		}
-	};
-
-	std::map< const TypeInfo*, Ref< const IResourceFactory > > m_resourceToFactory;
-	std::map< const TypeInfo*, Ref< const IResourceFactory > > m_productToFactory;
+	Ref< db::Database > m_database;
+	std::vector< std::pair< const TypeInfo*, Ref< const IResourceFactory > > > m_resourceFactories;
 	std::map< Guid, Ref< ResidentResourceHandle > > m_residentHandles;
 	std::map< Guid, RefArray< ExclusiveResourceHandle > > m_exclusiveHandles;
-	std::map< const TypeInfo*, TimeCount > m_times;
-	std::stack< double > m_timeStack;
 	mutable Semaphore m_lock;
 	bool m_verbose;
 
-	const IResourceFactory* findFactoryFromResourceType(const TypeInfo& type);
+	const IResourceFactory* findFactory(const TypeInfo& resourceType) const;
 
-	const IResourceFactory* findFactoryFromProductType(const TypeInfo& type);
-
-	void load(const Guid& guid, const IResourceFactory* factory, const TypeInfo& resourceType, ResourceHandle* handle);
+	void load(const db::Instance* instance, const IResourceFactory* factory, const TypeInfo& productType, ResourceHandle* handle);
 };
 	
 	}
