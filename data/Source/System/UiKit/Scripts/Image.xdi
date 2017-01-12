@@ -97,6 +97,11 @@ function Image:setScale(hscale, vscale)
 	return self
 end
 
+function Image:setOnClick(fn)
+	self._clickFn = fn
+	return self
+end
+
 -- Private
 
 function Image:_initialize(parent, mc, image, mode)
@@ -113,7 +118,14 @@ function Image:_initialize(parent, mc, image, mode)
 	if image ~= nil then
 		self:setImage(image, mode)
 	end
+
+	self:_registerEvent("onRelease", function() self:_onRelease() end)
 end
+
+function Image:_onRelease()
+	if self._clickFn ~= nil then self._clickFn() end
+end
+
 
 	]]>
 	</text>
