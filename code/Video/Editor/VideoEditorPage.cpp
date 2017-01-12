@@ -172,7 +172,6 @@ void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 			if (texture)
 			{
 				m_shader->setTextureParameter(L"Texture", texture);
-				m_shader->setFloatParameter(L"Format", float(m_video->getFormat()));
 				m_shader->setVectorParameter(L"Bounds", Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 				m_screenRenderer->draw(m_renderView, m_shader);
 			}
