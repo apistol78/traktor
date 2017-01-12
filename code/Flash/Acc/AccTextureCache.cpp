@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashBitmapResource.h"
+#include "Flash/FlashBitmapTexture.h"
 #include "Flash/Acc/AccBitmapRect.h"
 #include "Flash/Acc/AccTextureCache.h"
 #include "Render/IRenderSystem.h"
@@ -129,6 +130,19 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap
 			bitmapResource->getY() / h,
 			bitmapResource->getWidth() / w,
 			bitmapResource->getHeight() / h
+		);
+
+		bitmap.setCacheObject(br);
+		return br;
+	}
+	else if (const FlashBitmapTexture* bitmapTexture = dynamic_type_cast< const FlashBitmapTexture* >(&bitmap))
+	{
+		Ref< AccBitmapRect > br = new AccBitmapRect(
+			resource::Proxy< render::ISimpleTexture >(bitmapTexture->getTexture()),
+			0.0f,
+			0.0f,
+			1.0f,
+			1.0f
 		);
 
 		bitmap.setCacheObject(br);
