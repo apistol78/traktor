@@ -2,6 +2,7 @@
 #include "Video/Video.h"
 #include "Video/VideoFactory.h"
 #include "Video/VideoResource.h"
+#include "Video/VideoTexture.h"
 #include "Video/Decoders/VideoDecoderTheora.h"
 
 namespace traktor
@@ -23,7 +24,7 @@ const TypeInfoSet VideoFactory::getResourceTypes() const
 
 const TypeInfoSet VideoFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	return makeTypeInfoSet< Video >();
+	return makeTypeInfoSet< Video, render::ITexture >();
 }
 
 bool VideoFactory::isCacheable(const TypeInfo& productType) const
@@ -41,11 +42,20 @@ Ref< Object > VideoFactory::create(resource::IResourceManager* resourceManager, 
 	if (!decoder->create(stream))
 		return 0;
 
-	Ref< Video > video = new Video();
-	if (!video->create(m_renderSystem, decoder))
-		return 0;
+	if (is_type_of< Video >(productType))
+	{
+		Ref< Video > video = new Video();
+		if (video->create(m_renderSystem, decoder))
+			return video;
+	}
+	else if (is_type_of< render::ITexture >(productType))
+	{
+		Ref< VideoTexture > videoTexture = new VideoTexture();
+		if (videoTexture->create(m_renderSystem, decoder))
+			return videoTexture;
+	}
 
-	return video;
+	return 0;
 }
 
 	}

@@ -3,7 +3,6 @@
 
 #include "Core/Object.h"
 #include "Core/Misc/AutoPtr.h"
-#include "Video/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -55,12 +54,9 @@ public:
 
 	render::ISimpleTexture* getTexture();
 
-	VideoFormat getFormat() const;
-
 private:
 	Ref< IVideoDecoder > m_decoder;
 	Ref< render::ISimpleTexture > m_textures[4];
-	VideoFormat m_format;
 	float m_time;
 	float m_rate;
 	AutoPtr< uint8_t, AllocFreeAlign > m_frameBuffer;

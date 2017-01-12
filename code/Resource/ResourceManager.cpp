@@ -96,7 +96,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 		const IResourceFactory* factory = findFactory(*resourceType);
 		if (!factory)
 		{
-			log::error << L"Unable to preload resource " << i->second.format() << L"; no factory for specified resource type." << Endl;
+			log::error << L"Unable to preload resource " << i->second.format() << L"; no factory for specified resource type \"" << resourceType->getName() << "\"." << Endl;
 			return 0;
 		}
 
@@ -166,7 +166,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 	const IResourceFactory* factory = findFactory(*resourceType);
 	if (!factory)
 	{
-		log::error << L"Unable to create " << productType.getName() << L" resource; no factory for specified type." << Endl;
+		log::error << L"Unable to create " << productType.getName() << L" resource; no factory for specified resource type \"" << resourceType->getName() << "\"." << Endl;
 		return 0;
 	}
 
@@ -429,7 +429,7 @@ void ResourceManager::load(const db::Instance* instance, const IResourceFactory*
 		currentThread->sleep(0);
 	}
 	else
-		log::error << L"Unable to create resource \"" << instance->getGuid().format() << L"\" (" << productType.getName() << L")." << Endl;
+		log::error << L"Unable to create resource \"" << instance->getGuid().format() << L"\" (" << productType.getName() << L") using factory \"" << type_name(factory) << L"\"." << Endl;
 }
 
 	}

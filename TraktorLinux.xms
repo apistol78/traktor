@@ -9759,6 +9759,326 @@
 									</dependencies>
 								</project>
 							</item>
+							<item type="ProjectDependency" version="3">
+								<inheritIncludePaths>true</inheritIncludePaths>
+								<link>LnkYes</link>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Video</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Video</sourcePath>
+									<configurations>
+										<item type="Configuration" version="3">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+											</includePaths>
+											<definitions>
+												<item>T_VIDEO_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+											<debugExecutable/>
+											<debugArguments/>
+											<debugEnvironment/>
+											<debugWorkingDirectory/>
+											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Video.so</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
+												</item>
+											</aggregationItems>
+										</item>
+										<item type="Configuration" version="3">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+											</includePaths>
+											<definitions>
+												<item>T_VIDEO_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+											<debugExecutable/>
+											<debugArguments/>
+											<debugEnvironment/>
+											<debugWorkingDirectory/>
+											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Video.so</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+											</aggregationItems>
+										</item>
+										<item type="Configuration" version="3">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+											<debugExecutable/>
+											<debugArguments/>
+											<debugEnvironment/>
+											<debugWorkingDirectory/>
+											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Video.a</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+												</item>
+											</aggregationItems>
+										</item>
+										<item type="Configuration" version="3">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+											<debugExecutable/>
+											<debugArguments/>
+											<debugEnvironment/>
+											<debugWorkingDirectory/>
+											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Video.a</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+												</item>
+											</aggregationItems>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+										<item type="Filter">
+											<name>Decoders</name>
+											<items>
+												<item type="File">
+													<fileName>Decoders/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[6]"/>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Extern.libtheora-1.1.1</name>
+												<sourcePath>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</sourcePath>
+												<configurations>
+													<item type="Configuration" version="3">
+														<name>DebugShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+															<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+														</includePaths>
+														<definitions>
+															<item>_DEBUG</item>
+															<item>OC_X86_ASM</item>
+															<item>_CRT_SECURE_NO_WARNINGS</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems/>
+													</item>
+													<item type="Configuration" version="3">
+														<name>ReleaseShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+															<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+														</includePaths>
+														<definitions>
+															<item>NDEBUG</item>
+															<item>OC_X86_ASM</item>
+															<item>_CRT_SECURE_NO_WARNINGS</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems/>
+													</item>
+													<item type="Configuration" version="3">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+															<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+														</includePaths>
+														<definitions>
+															<item>_DEBUG</item>
+															<item>OC_X86_ASM</item>
+															<item>_CRT_SECURE_NO_WARNINGS</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+															</item>
+														</aggregationItems>
+													</item>
+													<item type="Configuration" version="3">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+															<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+														</includePaths>
+														<definitions>
+															<item>NDEBUG</item>
+															<item>OC_X86_ASM</item>
+															<item>_CRT_SECURE_NO_WARNINGS</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+															</item>
+														</aggregationItems>
+													</item>
+												</configurations>
+												<items>
+													<item type="File">
+														<fileName>*.c</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>*.h</fileName>
+														<items/>
+													</item>
+													<item type="Filter">
+														<name>x86</name>
+														<items>
+															<item type="File">
+																<fileName>x86/*.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>x86/*.h</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+												</items>
+												<dependencies>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item[6]"/>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item[7]"/>
+													</item>
+												</dependencies>
+											</project>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+									</dependencies>
+								</project>
+							</item>
 						</dependencies>
 					</project>
 				</item>
@@ -16279,322 +16599,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project type="Project" version="1">
-									<enable>true</enable>
-									<name>Traktor.Video</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Video</sourcePath>
-									<configurations>
-										<item type="Configuration" version="3">
-											<name>DebugShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-											</includePaths>
-											<definitions>
-												<item>T_VIDEO_EXPORT</item>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libTraktor.Video.so</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-										<item type="Configuration" version="3">
-											<name>ReleaseShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-											</includePaths>
-											<definitions>
-												<item>T_VIDEO_EXPORT</item>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libTraktor.Video.so</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-										<item type="Configuration" version="3">
-											<name>DebugStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-											</includePaths>
-											<definitions>
-												<item>T_STATIC</item>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libTraktor.Video.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-										<item type="Configuration" version="3">
-											<name>ReleaseStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-											</includePaths>
-											<definitions>
-												<item>T_STATIC</item>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libTraktor.Video.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-									</configurations>
-									<items>
-										<item type="File">
-											<fileName>*.*</fileName>
-											<items/>
-										</item>
-										<item type="Filter">
-											<name>Decoders</name>
-											<items>
-												<item type="File">
-													<fileName>Decoders/*.*</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-									</items>
-									<dependencies>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item[6]"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project type="Project" version="1">
-												<enable>true</enable>
-												<name>Extern.libtheora-1.1.1</name>
-												<sourcePath>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</sourcePath>
-												<configurations>
-													<item type="Configuration" version="3">
-														<name>DebugShared</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-															<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-														</includePaths>
-														<definitions>
-															<item>_DEBUG</item>
-															<item>OC_X86_ASM</item>
-															<item>_CRT_SECURE_NO_WARNINGS</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseShared</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-															<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-														</includePaths>
-														<definitions>
-															<item>NDEBUG</item>
-															<item>OC_X86_ASM</item>
-															<item>_CRT_SECURE_NO_WARNINGS</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems/>
-													</item>
-													<item type="Configuration" version="3">
-														<name>DebugStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-															<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-														</includePaths>
-														<definitions>
-															<item>_DEBUG</item>
-															<item>OC_X86_ASM</item>
-															<item>_CRT_SECURE_NO_WARNINGS</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-															</item>
-														</aggregationItems>
-													</item>
-													<item type="Configuration" version="3">
-														<name>ReleaseStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-															<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-															<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-														</includePaths>
-														<definitions>
-															<item>NDEBUG</item>
-															<item>OC_X86_ASM</item>
-															<item>_CRT_SECURE_NO_WARNINGS</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-															</item>
-														</aggregationItems>
-													</item>
-												</configurations>
-												<items>
-													<item type="File">
-														<fileName>*.c</fileName>
-														<items/>
-													</item>
-													<item type="File">
-														<fileName>*.h</fileName>
-														<items/>
-													</item>
-													<item type="Filter">
-														<name>x86</name>
-														<items>
-															<item type="File">
-																<fileName>x86/*.c</fileName>
-																<items/>
-															</item>
-															<item type="File">
-																<fileName>x86/*.h</fileName>
-																<items/>
-															</item>
-														</items>
-													</item>
-												</items>
-												<dependencies>
-													<item type="ProjectDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<project ref="/object/projects/item[6]"/>
-													</item>
-													<item type="ProjectDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<project ref="/object/projects/item[7]"/>
-													</item>
-												</dependencies>
-											</project>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item[14]/dependencies/item/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-										</item>
-									</dependencies>
-								</project>
+								<project ref="/object/projects/item[15]/dependencies/item[6]/project/dependencies/item[15]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -18139,8 +18144,8 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[74]/dependencies/item[14]/project/dependencies/item[20]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[74]/dependencies/item[14]/project/dependencies/item[20]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[6]/project/dependencies/item[15]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[6]/project/dependencies/item[15]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Video.Editor</name>
@@ -18275,7 +18280,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[74]/dependencies/item[14]/project/dependencies/item[20]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[6]/project/dependencies/item[15]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>

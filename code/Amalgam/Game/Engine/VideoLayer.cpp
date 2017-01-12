@@ -157,7 +157,6 @@ void VideoLayer::render(render::EyeType eye, uint32_t frame)
 	if (texture)
 	{
 		m_shader->setTextureParameter(L"Texture", texture);
-		m_shader->setFloatParameter(L"Format", float(m_video->getFormat()));
 		m_shader->setVectorParameter(L"Bounds", Vector4(m_screenBounds.mn.x, m_screenBounds.mn.y, m_screenBounds.mx.x, m_screenBounds.mx.y));
 
 		m_screenRenderer->draw(

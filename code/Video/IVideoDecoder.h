@@ -2,7 +2,6 @@
 #define traktor_video_IVideoDecoder_H
 
 #include "Core/Object.h"
-#include "Video/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +27,6 @@ struct VideoDecoderInfo
 	uint32_t width;
 	uint32_t height;
 	float rate;
-	VideoFormat format;
 };
 
 /*! \brief Video decoder stream interface.
