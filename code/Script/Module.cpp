@@ -1,7 +1,7 @@
 #include "Core/Rtti/TypeInfo.h"
 
 #if defined(T_STATIC)
-#	include "Script/ScriptClassFactory.h"
+#	include "Script/ScriptFactory.h"
 
 namespace traktor
 {
@@ -10,7 +10,7 @@ namespace traktor
 
 extern "C" void __module__Traktor_Script()
 {
-	T_FORCE_LINK_REF(ScriptClassFactory);
+	T_FORCE_LINK_REF(ScriptFactory);
 }
 
 	}
