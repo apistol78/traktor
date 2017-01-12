@@ -1,4 +1,3 @@
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Render/IProgram.h"
 #include "Render/IProgramCompiler.h"
@@ -46,44 +45,34 @@ private:
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderFactory", ShaderFactory, resource::IResourceFactory)
 
 ShaderFactory::ShaderFactory(
-	db::Database* database,
 	IRenderSystem* renderSystem
 )
-:	m_database(database)
-,	m_renderSystem(renderSystem)
+:	m_renderSystem(renderSystem)
 {
 }
 
 const TypeInfoSet ShaderFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ShaderResource >());
-	return typeSet;
+	return makeTypeInfoSet< ShaderResource >();
 }
 
-const TypeInfoSet ShaderFactory::getProductTypes() const
+const TypeInfoSet ShaderFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Shader >());
-	return typeSet;
+	return makeTypeInfoSet< Shader >();
 }
 
-bool ShaderFactory::isCacheable() const
+bool ShaderFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< db::Instance > shaderResourceInstance = m_database->getInstance(guid);
-	if (!shaderResourceInstance)
-		return 0;
-
-	Ref< ShaderResource > shaderResource = shaderResourceInstance->getObject< ShaderResource >();
+	Ref< ShaderResource > shaderResource = instance->getObject< ShaderResource >();
 	if (!shaderResource)
 		return 0;
 
-	std::wstring shaderName = shaderResourceInstance->getName();
+	std::wstring shaderName = instance->getName();
 
 	Ref< Shader > shader = new Shader();
 

@@ -4,7 +4,7 @@
 #include "Animation/Animation/Animation.h"
 #include "Animation/Skeleton.h"
 #include "Animation/Pose.h"
-#include "Database/Database.h"
+#include "Database/Instance.h"
 
 namespace traktor
 {
@@ -12,11 +12,6 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationFactory", AnimationFactory, resource::IResourceFactory)
-
-AnimationFactory::AnimationFactory(db::Database* db)
-:	m_db(db)
-{
-}
 
 const TypeInfoSet AnimationFactory::getResourceTypes() const
 {
@@ -28,24 +23,19 @@ const TypeInfoSet AnimationFactory::getResourceTypes() const
 	return typeSet;
 }
 
-const TypeInfoSet AnimationFactory::getProductTypes() const
+const TypeInfoSet AnimationFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< StateGraph >());
-	typeSet.insert(&type_of< Animation >());
-	typeSet.insert(&type_of< Skeleton >());
-	typeSet.insert(&type_of< Pose >());
-	return typeSet;
+	return makeTypeInfoSet(resourceType);
 }
 
-bool AnimationFactory::isCacheable() const
+bool AnimationFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > AnimationFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > AnimationFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< Object > object = m_db->getObjectReadOnly(guid);
+	Ref< Object > object = instance->getObject();
 	if (StateGraph* stateGraph = dynamic_type_cast< StateGraph* >(object))
 	{
 		// Ensure state node resources are loaded as well.

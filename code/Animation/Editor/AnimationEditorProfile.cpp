@@ -52,7 +52,7 @@ void AnimationEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new AnimationFactory(context->getResourceDatabase()));
+	outResourceFactories.push_back(new AnimationFactory());
 }
 
 void AnimationEditorProfile::createEntityFactories(

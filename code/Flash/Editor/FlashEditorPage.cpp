@@ -102,8 +102,8 @@ bool FlashEditorPage::create(ui::Container* parent)
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
-	m_resourceManager = new resource::ResourceManager(true);
-	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
+	m_resourceManager = new resource::ResourceManager(database, true);
+	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));

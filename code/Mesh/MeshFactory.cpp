@@ -1,6 +1,5 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Mesh/IMesh.h"
 #include "Mesh/IMeshResource.h"
@@ -20,9 +19,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshFactory", MeshFactory, resource::IResourceFactory)
 
-MeshFactory::MeshFactory(db::Database* database, render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory)
-:	m_database(database)
-,	m_renderSystem(renderSystem)
+MeshFactory::MeshFactory(render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory)
+:	m_renderSystem(renderSystem)
 ,	m_meshFactory(meshFactory)
 {
 	if (!m_meshFactory)
@@ -31,32 +29,21 @@ MeshFactory::MeshFactory(db::Database* database, render::IRenderSystem* renderSy
 
 const TypeInfoSet MeshFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	type_of< IMeshResource >().findAllOf(typeSet);
-	return typeSet;
+	return makeTypeInfoSet< IMeshResource >();
 }
 
-const TypeInfoSet MeshFactory::getProductTypes() const
+const TypeInfoSet MeshFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	type_of< IMesh >().findAllOf(typeSet);
-	return typeSet;
+	return makeTypeInfoSet< IMesh >();
 }
 
-bool MeshFactory::isCacheable() const
+bool MeshFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< db::Instance > instance = m_database->getInstance(guid);
-	if (!instance)
-	{
-		log::error << L"Mesh factory failed; no such instance" << Endl;
-		return 0;
-	}
-
 	Ref< IMeshResource > resource = instance->getObject< IMeshResource >();
 	if (!resource)
 	{

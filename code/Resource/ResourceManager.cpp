@@ -3,7 +3,8 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Core/Timer/Timer.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Resource/ExclusiveResourceHandle.h"
 #include "Resource/IResourceFactory.h"
 #include "Resource/ResourceBundle.h"
@@ -17,8 +18,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceManager", ResourceManager, IResourceManager)
 
-ResourceManager::ResourceManager(bool verbose)
-:	m_verbose(verbose)
+ResourceManager::ResourceManager(db::Database* database, bool verbose)
+:	m_database(database)
+,	m_verbose(verbose)
 {
 }
 
@@ -39,11 +41,9 @@ void ResourceManager::destroy()
 		i->second.clear();
 	}
 
-	m_resourceToFactory.clear();
-	m_productToFactory.clear();
+	m_resourceFactories.clear();
 	m_residentHandles.clear();
 	m_exclusiveHandles.clear();
-	m_times.clear();
 }
 
 void ResourceManager::addFactory(const IResourceFactory* factory)
@@ -52,12 +52,7 @@ void ResourceManager::addFactory(const IResourceFactory* factory)
 	{
 		TypeInfoSet typeSet = factory->getResourceTypes();
 		for (TypeInfoSet::const_iterator i = typeSet.begin(); i != typeSet.end(); ++i)
-			m_resourceToFactory[*i] = factory;
-	}
-	{
-		TypeInfoSet typeSet = factory->getProductTypes();
-		for (TypeInfoSet::const_iterator i = typeSet.begin(); i != typeSet.end(); ++i)
-			m_productToFactory[*i] = factory;
+			m_resourceFactories.push_back(std::make_pair(*i, factory));
 	}
 }
 
@@ -69,8 +64,7 @@ void ResourceManager::removeFactory(const IResourceFactory* factory)
 void ResourceManager::removeAllFactories()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_resourceToFactory.clear();
-	m_productToFactory.clear();
+	m_resourceFactories.clear();
 }
 
 bool ResourceManager::load(const ResourceBundle* bundle)
@@ -82,30 +76,57 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 	{
 		T_DEBUG(L"Preloading " << int32_t(1 + std::distance(resources.begin(), i)) << L" / " << int32_t(resources.size()) << L" " << i->first->getName());
 
-		const IResourceFactory* factory = findFactoryFromResourceType(*i->first);
-		if (!factory)
+		// Get resource instance from database.
+		Ref< db::Instance > instance = m_database->getInstance(i->second);
+		if (!instance)
 		{
-			log::error << L"Unable to preload resource " << i->second.format() << L"; no resource factory for type " << (i->first != 0 ? i->first->getName() : L"(null)") << Endl;
+			log::error << L"Unable to preload resource " << i->second.format() << L"; no such instance." << Endl;
 			return 0;
 		}
 
-		bool cacheable = factory->isCacheable();
+		// Get type of resource.
+		const TypeInfo* resourceType = instance->getPrimaryType();
+		if (!resourceType)
+		{
+			log::error << L"Unable to preload resource " << i->second.format() << L"; unable to read resource type." << Endl;
+			return 0;
+		}
+
+		// Find factory which can create products from resource.
+		const IResourceFactory* factory = findFactory(*resourceType);
+		if (!factory)
+		{
+			log::error << L"Unable to preload resource " << i->second.format() << L"; no factory for specified resource type." << Endl;
+			return 0;
+		}
+
+		// Determine product type; must be explicitly determined if we can safely preload the resource.
+		TypeInfoSet productTypes = factory->getProductTypes(*resourceType);
+		if (productTypes.size() != 1)
+		{
+			log::warning << L"Unable to preload resource " << i->second.format() << L"; unable to determine product type, skipped." << Endl;
+			continue;
+		}
+
+		bool cacheable = factory->isCacheable(*i->first);
 		if (!cacheable)
 		{
-			log::warning << L"Non cacheable resource cannot be preloaded; skipped" << Endl;
+			log::warning << L"Unable to preload resource " << i->second.format() << L"; resource non cacheable, skipped." << Endl;
 			continue;
 		}
 
 		Ref< ResidentResourceHandle >& residentHandle = m_residentHandles[i->second];
 		if (residentHandle == 0 || residentHandle->get() == 0)
 		{
-			if (!residentHandle)
-				residentHandle = new ResidentResourceHandle(*i->first, bundle->persistent());
+			const TypeInfo& productType = *(*productTypes.begin());
 
-			load(i->second, factory, *i->first, residentHandle);
+			if (!residentHandle)
+				residentHandle = new ResidentResourceHandle(productType, bundle->persistent());
+
+			load(instance, factory, productType, residentHandle);
 			if (!residentHandle->get())
 			{
-				log::error << L"Unable to preload resource " << i->second.format() << L"; skipped" << Endl;
+				log::error << L"Unable to preload resource " << i->second.format() << L"; skipped." << Endl;
 				continue;
 			}
 		}
@@ -114,25 +135,43 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 	return true;
 }
 
-Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& guid)
+Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const Guid& guid)
 {
 	Ref< ResourceHandle > handle;
 
 	if (guid.isNull() || !guid.isValid())
 	{
 		if (!guid.isNull())
-			log::error << L"Unable to create " << type.getName() << L" resource; invalid id" << Endl;
+			log::error << L"Unable to create " << productType.getName() << L" resource; invalid id." << Endl;
 		return 0;
 	}
 
-	const IResourceFactory* factory = findFactoryFromProductType(type);
+	// Get resource instance from database.
+	Ref< db::Instance > instance = m_database->getInstance(guid);
+	if (!instance)
+	{
+		log::error << L"Unable to create " << productType.getName() << L" resource; no such instance." << Endl;
+		return 0;
+	}
+
+	// Get type of resource.
+	const TypeInfo* resourceType = instance->getPrimaryType();
+	if (!resourceType)
+	{
+		log::error << L"Unable to create " << productType.getName() << L" resource; unable to read resource type." << Endl;
+		return 0;
+	}
+
+	// Find factory which can create products from resource.
+	const IResourceFactory* factory = findFactory(*resourceType);
 	if (!factory)
 	{
-		log::error << L"Unable to create " << type.getName() << L" resource; no factory for specified type" << Endl;
+		log::error << L"Unable to create " << productType.getName() << L" resource; no factory for specified type." << Endl;
 		return 0;
 	}
 
-	bool cacheable = factory->isCacheable();
+	// Create resource handle.
+	bool cacheable = factory->isCacheable(productType);
 	if (cacheable)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -141,7 +180,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& gu
 			handle = i->second;
 		else
 		{
-			Ref< ResidentResourceHandle > residentHandle = new ResidentResourceHandle(type, false);
+			Ref< ResidentResourceHandle > residentHandle = new ResidentResourceHandle(productType, false);
 			m_residentHandles[guid] = residentHandle;
 			handle = residentHandle;
 		}
@@ -163,16 +202,16 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& gu
 
 		if (!handle)
 		{
-			Ref< ExclusiveResourceHandle > exclusiveHandle = new ExclusiveResourceHandle(type);
+			Ref< ExclusiveResourceHandle > exclusiveHandle = new ExclusiveResourceHandle(productType);
 			handles.push_back(exclusiveHandle);
 			handle = exclusiveHandle;
 		}
 	}
-	
 	T_ASSERT (handle);
 
+	// If no resource loaded into handle then load resource through factory.
 	if (!handle->get())
-		load(guid, factory, type, handle);
+		load(instance, factory, productType, handle);
 
 	return handle;
 }
@@ -181,6 +220,24 @@ void ResourceManager::reload(const Guid& guid, bool flushedOnly)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
+	if (guid.isNull() || !guid.isValid())
+		return;
+
+	// Get resource instance from database.
+	Ref< db::Instance > instance = m_database->getInstance(guid);
+	if (!instance)
+		return;
+
+	// Get type of resource.
+	const TypeInfo* resourceType = instance->getPrimaryType();
+	if (!resourceType)
+		return;
+
+	// Find factory which can create products from resource.
+	const IResourceFactory* factory = findFactory(*resourceType);
+	if (!factory)
+		return;
+
 	std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i0 = m_exclusiveHandles.find(guid);
 	if (i0 != m_exclusiveHandles.end())
 	{
@@ -188,9 +245,8 @@ void ResourceManager::reload(const Guid& guid, bool flushedOnly)
 		for (RefArray< ExclusiveResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
 		{
 			const TypeInfo& productType = (*i)->getProductType();
-			const IResourceFactory* factory = findFactoryFromProductType(productType);
-			if (factory && (!flushedOnly || (*i)->get() == 0))
-				load(guid, factory, productType, *i);
+			if (!flushedOnly || (*i)->get() == 0)
+				load(instance, factory, productType, *i);
 		}
 		return;
 	}
@@ -199,30 +255,44 @@ void ResourceManager::reload(const Guid& guid, bool flushedOnly)
 	if (i1 != m_residentHandles.end())
 	{
 		const TypeInfo& productType = i1->second->getProductType();
-		const IResourceFactory* factory = findFactoryFromProductType(productType);
-		if (factory && (!flushedOnly || i1->second->get() == 0))
-			load(guid, factory, productType, i1->second);
+		if (!flushedOnly || i1->second->get() == 0)
+			load(instance, factory, productType, i1->second);
 		return;
 	}
 }
 
-void ResourceManager::reload(const TypeInfo& type, bool flushedOnly)
+void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	for (std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
 	{
+		// Get resource instance from database.
+		Ref< db::Instance > instance = m_database->getInstance(i->first);
+		if (!instance)
+			continue;
+
+		// Get type of resource.
+		const TypeInfo* resourceType = instance->getPrimaryType();
+		if (!resourceType)
+			continue;
+
+		// Find factory which can create products from resource.
+		const IResourceFactory* factory = findFactory(*resourceType);
+		if (!factory)
+			continue;
+
+		// Reload all resources through factory.
 		const RefArray< ExclusiveResourceHandle >& handles = i->second;
 		for (RefArray< ExclusiveResourceHandle >::const_iterator j = handles.begin(); j != handles.end(); ++j)
 		{
-			const TypeInfo& productType = (*j)->getProductType();
-			if (is_type_of(type, productType))
+			const TypeInfo& handleProductType = (*j)->getProductType();
+			if (is_type_of(productType, handleProductType))
 			{
-				const IResourceFactory* factory = findFactoryFromProductType(productType);
-				if (factory && (!flushedOnly || (*j)->get() == 0))
+				if (!flushedOnly || (*j)->get() == 0)
 				{
 					(*j)->flush();
-					load(i->first, factory, productType, *j);
+					load(instance, factory, handleProductType, *j);
 				}
 			}
 		}
@@ -230,20 +300,34 @@ void ResourceManager::reload(const TypeInfo& type, bool flushedOnly)
 
 	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
 	{
-		const TypeInfo& productType = i->second->getProductType();
-		if (is_type_of(type, productType))
+		const TypeInfo& handleProductType = i->second->getProductType();
+		if (is_type_of(productType, handleProductType))
 		{
-			const IResourceFactory* factory = findFactoryFromProductType(productType);
-			if (factory && (!flushedOnly || i->second->get() == 0))
+			// Get resource instance from database.
+			Ref< db::Instance > instance = m_database->getInstance(i->first);
+			if (!instance)
+				continue;
+
+			// Get type of resource.
+			const TypeInfo* resourceType = instance->getPrimaryType();
+			if (!resourceType)
+				continue;
+
+			// Find factory which can create products from resource.
+			const IResourceFactory* factory = findFactory(*resourceType);
+			if (!factory)
+				continue;
+
+			if (!flushedOnly || i->second->get() == 0)
 			{
 				i->second->flush();
-				load(i->first, factory, productType, i->second);
+				load(instance, factory, handleProductType, i->second);
 			}
 		}
 	}
 }
 
-void ResourceManager::unload(const TypeInfo& type)
+void ResourceManager::unload(const TypeInfo& productType)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -252,25 +336,15 @@ void ResourceManager::unload(const TypeInfo& type)
 		const RefArray< ExclusiveResourceHandle >& handles = i->second;
 		for (RefArray< ExclusiveResourceHandle >::const_iterator j = handles.begin(); j != handles.end(); ++j)
 		{
-			const TypeInfo& productType = (*j)->getProductType();
-			if (is_type_of(type, productType))
-			{
-				const IResourceFactory* factory = findFactoryFromProductType(productType);
-				if (factory)
-					(*j)->flush();
-			}
+			if (is_type_of(productType, (*j)->getProductType()))
+				(*j)->flush();
 		}
 	}
 
 	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
 	{
-		const TypeInfo& productType = i->second->getProductType();
-		if (is_type_of(type, productType))
-		{
-			const IResourceFactory* factory = findFactoryFromProductType(productType);
-			if (factory)
-				i->second->flush();
-		}
+		if (is_type_of(productType, i->second->getProductType()))
+			i->second->flush();
 	}
 }
 
@@ -287,7 +361,7 @@ void ResourceManager::unloadUnusedResident()
 		)
 		{
 			if (m_verbose)
-				log::info << L"Unload resource \"" << i->first.format() << L"\" (" << type_name(i->second->get()) << L")" << Endl;
+				log::info << L"Unload resource \"" << i->first.format() << L"\" (" << type_name(i->second->get()) << L")." << Endl;
 			i->second->replace(0);
 		}
 	}
@@ -318,19 +392,17 @@ void ResourceManager::getStatistics(ResourceManagerStatistics& outStatistics) co
 	m_lock.release();
 }
 
-const IResourceFactory* ResourceManager::findFactoryFromResourceType(const TypeInfo& type)
+const IResourceFactory* ResourceManager::findFactory(const TypeInfo& resourceType) const
 {
-	std::map< const TypeInfo*, Ref< const IResourceFactory > >::const_iterator i = m_resourceToFactory.find(&type);
-	return i != m_resourceToFactory.end() ? i->second : 0;
+	for (std::vector< std::pair< const TypeInfo*, Ref< const IResourceFactory > > >::const_iterator i = m_resourceFactories.begin(); i != m_resourceFactories.end(); ++i)
+	{
+		if (is_type_of(*i->first, resourceType))
+			return i->second;
+	}
+	return 0;
 }
 
-const IResourceFactory* ResourceManager::findFactoryFromProductType(const TypeInfo& type)
-{
-	std::map< const TypeInfo*, Ref< const IResourceFactory > >::const_iterator i = m_productToFactory.find(&type);
-	return i != m_productToFactory.end() ? i->second : 0;
-}
-
-void ResourceManager::load(const Guid& guid, const IResourceFactory* factory, const TypeInfo& resourceType, ResourceHandle* handle)
+void ResourceManager::load(const db::Instance* instance, const IResourceFactory* factory, const TypeInfo& productType, ResourceHandle* handle)
 {
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 
@@ -339,20 +411,15 @@ void ResourceManager::load(const Guid& guid, const IResourceFactory* factory, co
 	if (currentThread->stopped())
 	{
 		if (m_verbose)
-			log::info << L"Resource loader thread stopped; skipped loading resource" << Endl;
+			log::info << L"Resource loader thread stopped; skipped loading resource." << Endl;
 		return;
 	}
 
-	m_timeStack.push(0.0);
-
-	Timer timer;
-	timer.start();
-
-	Ref< Object > object = factory->create(this, resourceType, guid, handle->get());
+	Ref< Object > object = factory->create(this, m_database, instance, productType, handle->get());
 	if (object)
 	{
 		if (m_verbose)
-			log::info << L"Resource \"" << guid.format() << L"\" (" << type_name(object) << L") created" << Endl;
+			log::info << L"Resource \"" << instance->getGuid().format() << L"\" (" << type_name(object) << L") created." << Endl;
 
 		handle->replace(object);
 
@@ -362,17 +429,7 @@ void ResourceManager::load(const Guid& guid, const IResourceFactory* factory, co
 		currentThread->sleep(0);
 	}
 	else
-		log::error << L"Unable to create resource \"" << guid.format() << L"\" (" << resourceType.getName() << L")" << Endl;
-
-	// Accumulate time spend on creating resources.
-	double time = timer.getElapsedTime();
-
-	m_times[&resourceType].count++;
-	m_times[&resourceType].time += time + m_timeStack.top();
-	m_timeStack.pop();
-
-	if (!m_timeStack.empty())
-		m_timeStack.top() -= time;
+		log::error << L"Unable to create resource \"" << instance->getGuid().format() << L"\" (" << productType.getName() << L")." << Endl;
 }
 
 	}

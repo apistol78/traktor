@@ -7,6 +7,7 @@
 
 // Resource factories
 #include "Render/ImageProcess/ImageProcessFactory.h"
+#include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
@@ -66,12 +67,13 @@ void DefaultEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new render::ImageProcessFactory(context->getResourceDatabase()));
-	outResourceFactories.push_back(new render::ShaderFactory(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem(), 0));
-	outResourceFactories.push_back(new weather::CloudMaskFactory(context->getResourceDatabase()));
-	outResourceFactories.push_back(new world::EntityResourceFactory(context->getResourceDatabase()));
-	//outResourceFactories.push_back(new world::EntityEventResourceFactory(context->getResourceDatabase()));
+	outResourceFactories.push_back(new render::ImageProcessFactory());
+	outResourceFactories.push_back(new render::SequenceTextureFactory());
+	outResourceFactories.push_back(new render::ShaderFactory(context->getRenderSystem()));
+	outResourceFactories.push_back(new render::TextureFactory(context->getRenderSystem(), 0));
+	outResourceFactories.push_back(new weather::CloudMaskFactory());
+	outResourceFactories.push_back(new world::EntityResourceFactory());
+	//outResourceFactories.push_back(new world::EntityEventResourceFactory());
 }
 
 void DefaultEditorProfile::createEntityFactories(

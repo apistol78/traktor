@@ -14,42 +14,24 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshFactory", NavMeshFactory, resource::IResourceFactory)
 
-NavMeshFactory::NavMeshFactory(db::Database* db, bool editor)
-:	m_db(db)
-,	m_editor(editor)
-{
-}
-
 const TypeInfoSet NavMeshFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< NavMeshResource >());
-	return typeSet;
+	return makeTypeInfoSet< NavMeshResource >();
 }
 
-const TypeInfoSet NavMeshFactory::getProductTypes() const
+const TypeInfoSet NavMeshFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< NavMesh >());
-	return typeSet;
+	return makeTypeInfoSet< NavMesh >();
 }
 
-bool NavMeshFactory::isCacheable() const
+bool NavMeshFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
 	Ref< NavMesh > outputNavMesh = new NavMesh();
-
-	Ref< db::Instance > instance = m_db->getInstance(guid);
-	if (!instance)
-	{
-		// In case we're running within editor return an empty nav mesh instead of failing.
-		// NavMeshes must be explicitly built in editor to be visualized.
-		return m_editor ? outputNavMesh : 0;
-	}
 
 	Ref< NavMeshResource > resource = instance->getObject< NavMeshResource >();
 	if (!resource)

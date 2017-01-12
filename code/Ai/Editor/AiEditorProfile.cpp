@@ -36,7 +36,7 @@ void AiEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new NavMeshFactory(context->getResourceDatabase(), true));
+	outResourceFactories.push_back(new NavMeshFactory());
 }
 
 void AiEditorProfile::createEntityFactories(

@@ -16,6 +16,7 @@
 #include "Render/ITexture.h"
 #include "Render/ImageProcess/ImageProcessFactory.h"
 #include "Render/ImageProcess/ImageProcessSettings.h"
+#include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
@@ -122,13 +123,14 @@ bool EffectEditorPage::create(ui::Container* parent)
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 	T_ASSERT (database);
 
-	m_resourceManager = new resource::ResourceManager(true);
-	m_resourceManager->addFactory(new mesh::MeshFactory(database, renderSystem));
-	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
-	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
-	m_resourceManager->addFactory(new sound::SoundFactory(database));
-	m_resourceManager->addFactory(new render::ImageProcessFactory(database));
-	m_resourceManager->addFactory(new EffectFactory(database, 0));
+	m_resourceManager = new resource::ResourceManager(database, true);
+	m_resourceManager->addFactory(new mesh::MeshFactory(renderSystem));
+	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
+	m_resourceManager->addFactory(new render::SequenceTextureFactory());
+	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
+	m_resourceManager->addFactory(new sound::SoundFactory());
+	m_resourceManager->addFactory(new render::ImageProcessFactory());
+	m_resourceManager->addFactory(new EffectFactory(0));
 
 	m_effectData = m_document->getObject< EffectData >(0);
 	if (!m_effectData)

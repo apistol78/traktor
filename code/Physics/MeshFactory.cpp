@@ -1,5 +1,4 @@
 #include "Core/Io/IStream.h"
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Physics/Mesh.h"
 #include "Physics/MeshFactory.h"
@@ -12,36 +11,23 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.MeshFactory", MeshFactory, resource::IResourceFactory)
 
-MeshFactory::MeshFactory(db::Database* db)
-:	m_db(db)
-{
-}
-
 const TypeInfoSet MeshFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< MeshResource >());
-	return typeSet;
+	return makeTypeInfoSet< MeshResource >();
 }
 
-const TypeInfoSet MeshFactory::getProductTypes() const
+const TypeInfoSet MeshFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Mesh >());
-	return typeSet;
+	return makeTypeInfoSet< Mesh >();
 }
 
-bool MeshFactory::isCacheable() const
+bool MeshFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< db::Instance > instance = m_db->getInstance(guid);
-	if (!instance)
-		return 0;
-
 	Ref< MeshResource > resource = instance->getObject< MeshResource >();
 	if (!resource)
 		return 0;

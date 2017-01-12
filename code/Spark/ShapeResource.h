@@ -46,7 +46,7 @@ class T_DLLCLASS ShapeResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Ref< Shape > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, db::Instance* resourceInstance) const;
+	Ref< Shape > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const db::Instance* resourceInstance) const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 

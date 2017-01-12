@@ -1,4 +1,4 @@
-#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneFactory.h"
 #include "Scene/SceneResource.h"
@@ -11,38 +11,32 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::IResourceFactory)
 
 SceneFactory::SceneFactory(
-	db::Database* database,
 	render::IRenderSystem* renderSystem,
 	world::IEntityBuilder* entityBuilder
 )
-:	m_database(database)
-,	m_renderSystem(renderSystem)
+:	m_renderSystem(renderSystem)
 ,	m_entityBuilder(entityBuilder)
 {
 }
 
 const TypeInfoSet SceneFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SceneResource >());
-	return typeSet;
+	return makeTypeInfoSet< SceneResource >();
 }
 
-const TypeInfoSet SceneFactory::getProductTypes() const
+const TypeInfoSet SceneFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Scene >());
-	return typeSet;
+	return makeTypeInfoSet< Scene >();
 }
 
-bool SceneFactory::isCacheable() const
+bool SceneFactory::isCacheable(const TypeInfo& productType) const
 {
 	return false;
 }
 
-Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< SceneResource > sceneResource = m_database->getObjectReadOnly< SceneResource >(guid);
+	Ref< SceneResource > sceneResource = instance->getObject< SceneResource >();
 	if (!sceneResource)
 		return 0;
 

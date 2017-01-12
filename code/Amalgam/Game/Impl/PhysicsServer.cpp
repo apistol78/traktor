@@ -55,7 +55,7 @@ void PhysicsServer::destroy()
 void PhysicsServer::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	resourceManager->addFactory(new physics::MeshFactory(environment->getDatabase()));
+	resourceManager->addFactory(new physics::MeshFactory());
 }
 
 void PhysicsServer::createEntityFactories(IEnvironment* environment)

@@ -1,6 +1,5 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Render/Resource/TextureResource.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 
 namespace traktor
@@ -9,11 +8,6 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 13, TextureAsset, editor::Asset)
-
-const TypeInfo* TextureAsset::getOutputType() const
-{
-	return &type_of< TextureResource >();
-}
 
 void TextureAsset::serialize(ISerializer& s)
 {

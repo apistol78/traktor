@@ -1,4 +1,4 @@
-#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Render/ImageProcess/ImageProcessFactory.h"
 #include "Render/ImageProcess/ImageProcessSettings.h"
 
@@ -9,33 +9,24 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageProcessFactory", ImageProcessFactory, resource::IResourceFactory)
 
-ImageProcessFactory::ImageProcessFactory(db::Database* db)
-:	m_db(db)
-{
-}
-
 const TypeInfoSet ImageProcessFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ImageProcessSettings >());
-	return typeSet;
+	return makeTypeInfoSet< ImageProcessSettings >();
 }
 
-const TypeInfoSet ImageProcessFactory::getProductTypes() const
+const TypeInfoSet ImageProcessFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ImageProcessSettings >());
-	return typeSet;
+	return makeTypeInfoSet< ImageProcessSettings >();
 }
 
-bool ImageProcessFactory::isCacheable() const
+bool ImageProcessFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > ImageProcessFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > ImageProcessFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	return m_db->getObjectReadOnly< ImageProcessSettings >(guid);
+	return instance->getObject< ImageProcessSettings >();
 }
 
 	}

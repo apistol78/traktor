@@ -34,7 +34,7 @@ StaticSoundResource::StaticSoundResource()
 {
 }
 
-Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const
+Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const
 {
 	Ref< IStream > stream = resourceInstance->readData(L"Data");
 	if (!stream)

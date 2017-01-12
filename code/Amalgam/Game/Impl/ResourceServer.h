@@ -8,6 +8,13 @@ namespace traktor
 
 class PropertyGroup;
 
+	namespace db
+	{
+	
+class Database;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -21,7 +28,7 @@ class ResourceServer : public IResourceServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const PropertyGroup* settings);
+	bool create(const PropertyGroup* settings, db::Database* database);
 
 	void destroy();
 

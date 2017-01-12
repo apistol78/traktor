@@ -1,4 +1,4 @@
-#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
@@ -14,33 +14,24 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainFactory", TerrainFactory, resource::IResourceFactory)
 
-TerrainFactory::TerrainFactory(db::Database* db)
-:	m_db(db)
-{
-}
-
 const TypeInfoSet TerrainFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TerrainResource >());
-	return typeSet;
+	return makeTypeInfoSet< TerrainResource >();
 }
 
-const TypeInfoSet TerrainFactory::getProductTypes() const
+const TypeInfoSet TerrainFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Terrain >());
-	return typeSet;
+	return makeTypeInfoSet< Terrain >();
 }
 
-bool TerrainFactory::isCacheable() const
+bool TerrainFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< const TerrainResource > terrainResource = m_db->getObjectReadOnly< TerrainResource >(guid);
+	Ref< const TerrainResource > terrainResource = instance->getObject< TerrainResource >();
 	if (!terrainResource)
 		return 0;
 

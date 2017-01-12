@@ -13,13 +13,6 @@
 
 namespace traktor
 {
-	namespace db
-	{
-
-class Database;
-
-	}
-
 	namespace world
 	{
 
@@ -38,18 +31,17 @@ class T_DLLCLASS EffectFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	EffectFactory(db::Database* db, const world::IEntityBuilder* entityBuilder);
+	EffectFactory(const world::IEntityBuilder* entityBuilder);
 
 	virtual const TypeInfoSet getResourceTypes() const T_OVERRIDE T_FINAL;
 
-	virtual const TypeInfoSet getProductTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getProductTypes(const TypeInfo& resourceType) const T_OVERRIDE T_FINAL;
 
-	virtual bool isCacheable() const T_OVERRIDE T_FINAL;
+	virtual bool isCacheable(const TypeInfo& productType) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const T_OVERRIDE T_FINAL;
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const T_OVERRIDE T_FINAL;
 
 private:
-	Ref< db::Database > m_db;
 	Ref< const world::IEntityBuilder > m_entityBuilder;
 };
 

@@ -44,7 +44,7 @@ void MeshEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new mesh::MeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new mesh::MeshFactory(context->getRenderSystem()));
 }
 
 void MeshEditorProfile::createEntityFactories(

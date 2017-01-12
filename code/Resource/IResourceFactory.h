@@ -14,6 +14,14 @@
 
 namespace traktor
 {
+	namespace db
+	{
+
+class Database;
+class Instance;
+
+	}
+
 	namespace resource
 	{
 
@@ -38,24 +46,30 @@ public:
 	 *
 	 * Return a set of resource types this factory
 	 * accepts.
+	 *
+	 * \return Set of resource types.
 	 */
 	virtual const TypeInfoSet getResourceTypes() const = 0;
 
-	/*! \brief Get product types.
+	/*! \brief Get product types from resource.
 	 *
-	 * Return a set of product types this factory
-	 * creates.
+	 * Return which product types can be created from a
+	 * resource type.
+	 *
+	 * \param resourceType Type of resource.
+	 * \return Set of product types.
 	 */
-	virtual const TypeInfoSet getProductTypes() const = 0;
+	virtual const TypeInfoSet getProductTypes(const TypeInfo& resourceType) const = 0;
 
 	/*! \brief Check if resource is cacheable.
 	 *
 	 * A non cacheable resource are recreated for each
 	 * proxy trying to validate the resource.
 	 *
+	 * \param productType Type of product.
 	 * \return True if resource is cacheable.
 	 */
-	virtual bool isCacheable() const = 0;
+	virtual bool isCacheable(const TypeInfo& productType) const = 0;
 
 	/*! \brief Create resource from guid.
 	 *
@@ -65,12 +79,13 @@ public:
 	 * as a result of creating this resource.
 	 *
 	 * \param resourceManager Resource manager.
-	 * \param resourceType Type of resource.
-	 * \param guid Guid of resource.
+	 * \param database Resource database.
+	 * \param instance Resource database instance.
+	 * \param productType Type of product.
 	 * \param original Previously created resource if any; null if first time create.
-	 * \return Resource instance.
+	 * \return Product.
 	 */
-	virtual Ref< Object > create(IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const = 0;
+	virtual Ref< Object > create(IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const = 0;
 };
 	
 	}

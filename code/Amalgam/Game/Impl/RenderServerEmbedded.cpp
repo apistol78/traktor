@@ -12,6 +12,7 @@
 #include "Render/IRenderView.h"
 #include "Render/ImageProcess/ImageProcessFactory.h"
 #include "Render/Resource/ShaderFactory.h"
+#include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/IResourceManager.h"
 
@@ -163,16 +164,16 @@ void RenderServerEmbedded::destroy()
 void RenderServerEmbedded::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	db::Database* database = environment->getDatabase();
 
 	int32_t textureQuality = environment->getSettings()->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
 	int32_t skipMips = skipMipsFromQuality(textureQuality);
 
-	m_textureFactory = new render::TextureFactory(database, m_renderSystem, skipMips);
+	m_textureFactory = new render::TextureFactory(m_renderSystem, skipMips);
 
 	resourceManager->addFactory(m_textureFactory);
-	resourceManager->addFactory(new render::ShaderFactory(database, m_renderSystem));
-	resourceManager->addFactory(new render::ImageProcessFactory(database));
+	resourceManager->addFactory(new render::SequenceTextureFactory());
+	resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
+	resourceManager->addFactory(new render::ImageProcessFactory());
 }
 
 int32_t RenderServerEmbedded::reconfigure(IEnvironment* environment, const PropertyGroup* settings)

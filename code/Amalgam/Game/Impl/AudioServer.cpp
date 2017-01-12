@@ -137,9 +137,7 @@ void AudioServer::destroy()
 void AudioServer::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	db::Database* database = environment->getDatabase();
-
-	resourceManager->addFactory(new sound::SoundFactory(database));
+	resourceManager->addFactory(new sound::SoundFactory());
 }
 
 void AudioServer::update(float dT, bool renderViewActive)

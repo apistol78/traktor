@@ -55,7 +55,7 @@ void TerrainEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new TerrainFactory(context->getResourceDatabase()));
+	outResourceFactories.push_back(new TerrainFactory());
 }
 
 void TerrainEditorProfile::createEntityFactories(

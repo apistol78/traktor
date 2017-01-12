@@ -34,7 +34,7 @@ BankResource::BankResource(const RefArray< IGrainData >& grains, const std::wstr
 {
 }
 
-Ref< Sound > BankResource::createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const
+Ref< Sound > BankResource::createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const
 {
 	GrainFactory grainFactory(resourceManager);
 	RefArray< IGrain > grains;

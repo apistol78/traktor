@@ -3,7 +3,6 @@
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
@@ -11,6 +10,7 @@
 #include "Render/IVolumeTexture.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Render/Resource/TextureResource.h"
+#include "Resource/IResourceManager.h"
 
 #undef min
 #undef max
@@ -36,9 +36,8 @@ uint32_t mipChainSize(TextureFormat format, int width, int height, int mipCount)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureFactory", TextureFactory, resource::IResourceFactory)
 
-TextureFactory::TextureFactory(db::Database* db, IRenderSystem* renderSystem, int32_t skipMips)
-:	m_db(db)
-,	m_renderSystem(renderSystem)
+TextureFactory::TextureFactory(IRenderSystem* renderSystem, int32_t skipMips)
+:	m_renderSystem(renderSystem)
 ,	m_skipMips(skipMips)
 {
 }
@@ -55,30 +54,22 @@ int32_t TextureFactory::getSkipMips() const
 
 const TypeInfoSet TextureFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TextureResource >());
-	return typeSet;
+	return makeTypeInfoSet< TextureResource >();
 }
 
-const TypeInfoSet TextureFactory::getProductTypes() const
+const TypeInfoSet TextureFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	type_of< ITexture >().findAllOf(typeSet);
-	return typeSet;
+	return makeTypeInfoSet< ITexture >();
 }
 
-bool TextureFactory::isCacheable() const
+bool TextureFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
 	Ref< ITexture > texture;
-
-	Ref< db::Instance > instance = m_db->getInstance(guid);
-	if (!instance)
-		return 0;
 
 	Ref< TextureResource > resource = instance->getObject< TextureResource >();
 	if (!resource)
@@ -301,6 +292,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 	}
 
 	stream->close();
+
 	return texture;
 }
 

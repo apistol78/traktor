@@ -13,13 +13,6 @@
 
 namespace traktor
 {
-	namespace db
-	{
-
-class Database;
-
-	}
-
 	namespace render
 	{
 
@@ -38,18 +31,17 @@ class T_DLLCLASS FontResourceFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	FontResourceFactory(db::Database* db, render::IRenderSystem* renderSystem);
+	FontResourceFactory(render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getResourceTypes() const T_FINAL;
 
-	virtual const TypeInfoSet getProductTypes() const T_FINAL;
+	virtual const TypeInfoSet getProductTypes(const TypeInfo& resourceType) const T_OVERRIDE T_FINAL;
 
-	virtual bool isCacheable() const T_FINAL;
+	virtual bool isCacheable(const TypeInfo& productType) const T_FINAL;
 
-	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const T_FINAL;
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const T_FINAL;
 
 private:
-	Ref< db::Database > m_db;
 	Ref< render::IRenderSystem > m_renderSystem;
 };
 

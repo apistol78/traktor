@@ -1,4 +1,4 @@
-#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "World/EntityEventResourceFactory.h"
 #include "World/EntityEventSet.h"
 #include "World/EntityEventSetData.h"
@@ -13,38 +13,36 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityEventResourceFactory", EntityEventResourceFactory, resource::IResourceFactory)
 
-EntityEventResourceFactory::EntityEventResourceFactory(db::Database* db, const IEntityBuilder* entityBuilder)
-:	m_db(db)
-,	m_entityBuilder(entityBuilder)
+EntityEventResourceFactory::EntityEventResourceFactory(const IEntityBuilder* entityBuilder)
+:	m_entityBuilder(entityBuilder)
 {
 }
 
 const TypeInfoSet EntityEventResourceFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EntityEventSetData >());
-	typeSet.insert(&type_of< IEntityEventData >());
-	return typeSet;
+	return makeTypeInfoSet< EntityEventSetData, IEntityEventData >();
 }
 
-const TypeInfoSet EntityEventResourceFactory::getProductTypes() const
+const TypeInfoSet EntityEventResourceFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EntityEventSet >());
-	typeSet.insert(&type_of< IEntityEvent >());
-	return typeSet;
+	if (is_type_a< EntityEventSetData >(resourceType))
+		return makeTypeInfoSet< EntityEventSet >();
+	else if (is_type_a< IEntityEventData >(resourceType))
+		return makeTypeInfoSet< IEntityEvent >();
+	else
+		return TypeInfoSet();
 }
 
-bool EntityEventResourceFactory::isCacheable() const
+bool EntityEventResourceFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > EntityEventResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > EntityEventResourceFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	if (is_type_a< EntityEventSet >(resourceType) || is_type_a< EntityEventSetData >(resourceType))
+	if (is_type_a< EntityEventSet >(productType))
 	{
-		Ref< const EntityEventSetData > eventSetData = m_db->getObjectReadOnly< EntityEventSetData >(guid);
+		Ref< const EntityEventSetData > eventSetData = instance->getObject< EntityEventSetData >();
 		if (!eventSetData)
 			return 0;
 
@@ -54,9 +52,9 @@ Ref< Object > EntityEventResourceFactory::create(resource::IResourceManager* res
 
 		return eventSet;
 	}
-	else if (is_type_a< IEntityEvent >(resourceType) || is_type_a< IEntityEventData >(resourceType))
+	else if (is_type_a< IEntityEvent >(productType))
 	{
-		Ref< const IEntityEventData > eventData = m_db->getObjectReadOnly< IEntityEventData >(guid);
+		Ref< const IEntityEventData > eventData = instance->getObject< IEntityEventData >();
 		if (!eventData)
 			return 0;
 

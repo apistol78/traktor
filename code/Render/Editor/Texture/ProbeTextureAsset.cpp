@@ -1,7 +1,6 @@
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Render/Resource/TextureResource.h"
 #include "Render/Editor/Texture/ProbeTextureAsset.h"
 
 namespace traktor
@@ -15,11 +14,6 @@ ProbeTextureAsset::ProbeTextureAsset()
 :	m_filterAngle(20.0f)
 ,	m_filterMipDeltaAngle(1.0f)
 {
-}
-
-const TypeInfo* ProbeTextureAsset::getOutputType() const
-{
-	return &type_of< TextureResource >();
 }
 
 void ProbeTextureAsset::serialize(ISerializer& s)

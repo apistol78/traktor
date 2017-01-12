@@ -1,6 +1,5 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Weather/Clouds/CloudMask.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
@@ -13,36 +12,23 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudMaskFactory", CloudMaskFactory, resource::IResourceFactory)
 
-CloudMaskFactory::CloudMaskFactory(db::Database* db)
-:	m_db(db)
-{
-}
-
 const TypeInfoSet CloudMaskFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< CloudMaskResource >());
-	return typeSet;
+	return makeTypeInfoSet< CloudMaskResource >();
 }
 
-const TypeInfoSet CloudMaskFactory::getProductTypes() const
+const TypeInfoSet CloudMaskFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< CloudMask >());
-	return typeSet;
+	return makeTypeInfoSet< CloudMask >();
 }
 
-bool CloudMaskFactory::isCacheable() const
+bool CloudMaskFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > CloudMaskFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > CloudMaskFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< db::Instance > instance = m_db->getInstance(guid);
-	if (!instance)
-		return 0;
-
 	Ref< CloudMaskResource > resource = instance->getObject< CloudMaskResource >();
 	if (!resource)
 		return 0;

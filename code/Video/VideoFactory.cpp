@@ -1,4 +1,3 @@
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Video/Video.h"
 #include "Video/VideoFactory.h"
@@ -12,37 +11,28 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.video.VideoFactory", VideoFactory, resource::IResourceFactory)
 
-VideoFactory::VideoFactory(db::Database* database, render::IRenderSystem* renderSystem)
-:	m_database(database)
-,	m_renderSystem(renderSystem)
+VideoFactory::VideoFactory(render::IRenderSystem* renderSystem)
+:	m_renderSystem(renderSystem)
 {
 }
 
 const TypeInfoSet VideoFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< VideoResource >());
-	return typeSet;
+	return makeTypeInfoSet< VideoResource >();
 }
 
-const TypeInfoSet VideoFactory::getProductTypes() const
+const TypeInfoSet VideoFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Video >());
-	return typeSet;
+	return makeTypeInfoSet< Video >();
 }
 
-bool VideoFactory::isCacheable() const
+bool VideoFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > VideoFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > VideoFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< db::Instance > instance = m_database->getInstance(guid);
-	if (!instance)
-		return 0;
-
 	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
 		return 0;

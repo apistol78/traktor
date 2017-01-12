@@ -40,7 +40,7 @@ class T_DLLCLASS ISoundResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const = 0;
+	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const = 0;
 };
 
 	}

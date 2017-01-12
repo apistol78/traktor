@@ -1,5 +1,4 @@
 #include "Core/Io/Reader.h"
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectData.h"
@@ -14,49 +13,43 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectFactory", EffectFactory, resource::IResourceFactory)
 
-EffectFactory::EffectFactory(db::Database* db, const world::IEntityBuilder* entityBuilder)
-:	m_db(db)
-,	m_entityBuilder(entityBuilder)
+EffectFactory::EffectFactory(const world::IEntityBuilder* entityBuilder)
+:	m_entityBuilder(entityBuilder)
 {
 }
 
 const TypeInfoSet EffectFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EffectData >());
-	typeSet.insert(&type_of< PointSetResource >());
-	return typeSet;
+	return makeTypeInfoSet< EffectData, PointSetResource >();
 }
 
-const TypeInfoSet EffectFactory::getProductTypes() const
+const TypeInfoSet EffectFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Effect >());
-	typeSet.insert(&type_of< PointSet >());
-	return typeSet;
+	if (is_type_a< EffectData >(resourceType))
+		return makeTypeInfoSet< Effect >();
+	else if (is_type_a< PointSetResource >(resourceType))
+		return makeTypeInfoSet< PointSet >();
+	else
+		return TypeInfoSet();
 }
 
-bool EffectFactory::isCacheable() const
+bool EffectFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	if (is_type_a< EffectData >(resourceType) || is_type_a< Effect >(resourceType))
+	if (is_type_a< Effect >(productType))
 	{
-		Ref< EffectData > effectData = m_db->getObjectReadOnly< EffectData >(guid);
+		Ref< EffectData > effectData = instance->getObject< EffectData >();
 		if (effectData)
 			return effectData->createEffect(resourceManager, m_entityBuilder);
 		else
 			return 0;
 	}
-	else if (is_type_a< PointSetResource >(resourceType) || is_type_a< PointSet >(resourceType))
+	else if (is_type_a< PointSet >(productType))
 	{
-		Ref< db::Instance > instance = m_db->getInstance(guid);
-		if (!instance)
-			return 0;
-	
 		Ref< IStream > stream = instance->readData(L"Data");
 		if (!stream)
 			return 0;

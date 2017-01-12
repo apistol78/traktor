@@ -1,7 +1,6 @@
 #include <limits>
 #include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFactory.h"
@@ -15,36 +14,23 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.HeightfieldFactory", HeightfieldFactory, resource::IResourceFactory)
 
-HeightfieldFactory::HeightfieldFactory(db::Database* database)
-:	m_database(database)
-{
-}
-
 const TypeInfoSet HeightfieldFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< HeightfieldResource >());
-	return typeSet;
+	return makeTypeInfoSet< HeightfieldResource >();
 }
 
-const TypeInfoSet HeightfieldFactory::getProductTypes() const
+const TypeInfoSet HeightfieldFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Heightfield >());
-	return typeSet;
+	return makeTypeInfoSet< Heightfield >();
 }
 
-bool HeightfieldFactory::isCacheable() const
+bool HeightfieldFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< db::Instance > instance = m_database->getInstance(guid);
-	if (!instance)
-		return 0;
-
 	Ref< HeightfieldResource > resource = instance->getObject< HeightfieldResource >();
 	if (!resource)
 		return 0;

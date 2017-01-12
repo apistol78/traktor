@@ -23,9 +23,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ResourceServer", ResourceServer, IResourceServer)
 
-bool ResourceServer::create(const PropertyGroup* settings)
+bool ResourceServer::create(const PropertyGroup* settings, db::Database* database)
 {
-	m_resourceManager = new resource::ResourceManager(settings->getProperty< PropertyBoolean >(L"Resource.Verbose", false));
+	m_resourceManager = new resource::ResourceManager(database, settings->getProperty< PropertyBoolean >(L"Resource.Verbose", false));
 	return true;
 }
 
@@ -37,23 +37,22 @@ void ResourceServer::destroy()
 void ResourceServer::createResourceFactories(IEnvironment* environment)
 {
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
-	db::Database* database = environment->getDatabase();
 
-	m_resourceManager->addFactory(new ai::NavMeshFactory(database, false));
-	m_resourceManager->addFactory(new animation::AnimationFactory(database));
-	m_resourceManager->addFactory(new mesh::MeshFactory(database, renderSystem));
-	m_resourceManager->addFactory(new spark::CharacterResourceFactory(database));
-	m_resourceManager->addFactory(new spark::FontResourceFactory(database, renderSystem));
-	m_resourceManager->addFactory(new spark::ShapeResourceFactory(database, renderSystem));
-	m_resourceManager->addFactory(new flash::FlashMovieResourceFactory(database));
-	m_resourceManager->addFactory(new hf::HeightfieldFactory(database));
-	m_resourceManager->addFactory(new video::VideoFactory(database, renderSystem));
-	m_resourceManager->addFactory(new weather::CloudMaskFactory(database));
+	m_resourceManager->addFactory(new ai::NavMeshFactory());
+	m_resourceManager->addFactory(new animation::AnimationFactory());
+	m_resourceManager->addFactory(new mesh::MeshFactory(renderSystem));
+	m_resourceManager->addFactory(new spark::CharacterResourceFactory());
+	m_resourceManager->addFactory(new spark::FontResourceFactory(renderSystem));
+	m_resourceManager->addFactory(new spark::ShapeResourceFactory(renderSystem));
+	m_resourceManager->addFactory(new flash::FlashMovieResourceFactory());
+	m_resourceManager->addFactory(new hf::HeightfieldFactory());
+	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
+	m_resourceManager->addFactory(new weather::CloudMaskFactory());
 
 	if (environment->getWorld())
 	{
 		const world::IEntityBuilder* entityBuilder = environment->getWorld()->getEntityBuilder();
-		m_resourceManager->addFactory(new spray::EffectFactory(database, entityBuilder));
+		m_resourceManager->addFactory(new spray::EffectFactory(entityBuilder));
 	}
 }
 

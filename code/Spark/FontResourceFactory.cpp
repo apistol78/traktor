@@ -1,4 +1,3 @@
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Spark/Font.h"
 #include "Spark/FontResource.h"
@@ -11,39 +10,33 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.FontResourceFactory", FontResourceFactory, resource::IResourceFactory)
 
-FontResourceFactory::FontResourceFactory(db::Database* db, render::IRenderSystem* renderSystem)
-:	m_db(db)
-,	m_renderSystem(renderSystem)
+FontResourceFactory::FontResourceFactory(render::IRenderSystem* renderSystem)
+:	m_renderSystem(renderSystem)
 {
 }
 
 const TypeInfoSet FontResourceFactory::getResourceTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< FontResource >());
-	return typeSet;
-
+	return makeTypeInfoSet< FontResource >();
 }
 
-const TypeInfoSet FontResourceFactory::getProductTypes() const
+const TypeInfoSet FontResourceFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Font >());
-	return typeSet;
+	return makeTypeInfoSet< Font >();
 }
 
-bool FontResourceFactory::isCacheable() const
+bool FontResourceFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > FontResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
+Ref< Object > FontResourceFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< FontResource > resource = m_db->getObjectReadOnly< FontResource >(guid);
-	if (!resource)
+	Ref< FontResource > resource = instance->getObject< FontResource >();
+	if (resource)
+		return resource->create(resourceManager, m_renderSystem);
+	else
 		return 0;
-
-	return resource->create(resourceManager, m_renderSystem);
 }
 
 	}
