@@ -5,6 +5,7 @@
 #include "Drawing/Image.h"
 #include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashBitmapResource.h"
+#include "Flash/FlashBitmapTexture.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashCast.h"
 #include "Flash/FlashCharacter.h"
@@ -29,6 +30,7 @@
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Common/BitmapData.h"
+#include "Render/ISimpleTexture.h"
 
 namespace traktor
 {
@@ -482,6 +484,11 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashBitmapResource->addMethod("getResourceId", &FlashBitmapResource::getResourceId);
 	registrar->registerClass(classFlashBitmapResource);
 
+	Ref< AutoRuntimeClass< FlashBitmapTexture > > classFlashBitmapTexture = new AutoRuntimeClass< FlashBitmapTexture >();
+	classFlashBitmapTexture->addConstructor< render::ISimpleTexture* >();
+	classFlashBitmapTexture->addMethod("getTexture", &FlashBitmapTexture::getTexture);
+	registrar->registerClass(classFlashBitmapTexture);
+
 	Ref< AutoRuntimeClass< FlashDictionary > > classFlashDictionary = new AutoRuntimeClass< FlashDictionary >();
 	classFlashDictionary->addMethod("addFont", &FlashDictionary::addFont);
 	classFlashDictionary->addMethod("addBitmap", &FlashDictionary::addBitmap);
@@ -585,6 +592,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashSpriteInstance->addMethod("clone", &FlashSpriteInstance::clone);
 	classFlashSpriteInstance->addMethod("duplicateMovieClip", &FlashSpriteInstance_duplicateMovieClip_1);
 	classFlashSpriteInstance->addMethod("duplicateMovieClip", &FlashSpriteInstance_duplicateMovieClip_2);
+	classFlashSpriteInstance->addMethod("attachBitmap", &FlashSpriteInstance::attachBitmap);
 	classFlashSpriteInstance->addMethod("getLocalBounds", &FlashSpriteInstance::getLocalBounds);
 	classFlashSpriteInstance->addMethod("getVisibleLocalBounds", &FlashSpriteInstance::getVisibleLocalBounds);
 	classFlashSpriteInstance->addMethod("setMask", &FlashSpriteInstance::setMask);
