@@ -135,6 +135,33 @@ inline const TypeInfo& type_of(const ITypedObject* obj)
 	return obj->getTypeInfo();
 }
 
+/*! \brief Create type info set from single type.
+ * \ingroup Core
+ */
+template < typename T1 >
+inline TypeInfoSet makeTypeInfoSet()
+{
+	return makeTypeInfoSet(type_of< T1 >());
+}
+
+/*! \brief Create type info set from two types.
+ * \ingroup Core
+ */
+template < typename T1, typename T2 >
+inline TypeInfoSet makeTypeInfoSet()
+{
+	return makeTypeInfoSet(type_of< T1 >(), type_of< T2 >());
+}
+
+/*! \brief Create type info set from three types.
+ * \ingroup Core
+ */
+template < typename T1, typename T2, typename T3 >
+inline TypeInfoSet makeTypeInfoSet()
+{
+	return makeTypeInfoSet(type_of< T1 >(), type_of< T2 >(), type_of< T3 >());
+}
+
 /*! \brief Return type name.
  * \ingroup Core
  *

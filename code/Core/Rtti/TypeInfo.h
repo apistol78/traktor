@@ -193,42 +193,6 @@ inline TypeInfoSet makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, const
 	return typeSet;
 }
 
-/*! \brief Create type info set from single type.
- * \ingroup Core
- */
-template < typename T1 >
-inline TypeInfoSet makeTypeInfoSet()
-{
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< T1 >());
-	return typeSet;
-}
-
-/*! \brief Create type info set from two types.
- * \ingroup Core
- */
-template < typename T1, typename T2 >
-inline TypeInfoSet makeTypeInfoSet()
-{
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< T1 >());
-	typeSet.insert(&type_of< T2 >());
-	return typeSet;
-}
-
-/*! \brief Create type info set from three types.
- * \ingroup Core
- */
-template < typename T1, typename T2, typename T3 >
-inline TypeInfoSet makeTypeInfoSet()
-{
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< T1 >());
-	typeSet.insert(&type_of< T2 >());
-	typeSet.insert(&type_of< T3 >());
-	return typeSet;
-}
-
 /*! \brief Check if type is identical.
  * \ingroup Core
  */
