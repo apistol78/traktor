@@ -84,7 +84,6 @@
 #include "Ui/ShortcutTable.h"
 #include "Ui/Dock.h"
 #include "Ui/DockPane.h"
-//#include "Ui/MenuBar.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/StyleBitmap.h"
@@ -2447,6 +2446,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 						if (editorPage)
 							editorPage->handleCommand(ui::Command(L"Editor.SettingsChanged"));
 					}
+					m_propertiesView->handleCommand(ui::Command(L"Editor.SettingsChanged"));
 				}
 
 				update();

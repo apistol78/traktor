@@ -877,6 +877,10 @@
       <second>Open last project at startup</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_PROPERTY_HELP_VISIBLE</first>
+      <second>Help section visible in property view</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_SOURCE_DATABASE</first>
       <second>Source database</second>
     </item>

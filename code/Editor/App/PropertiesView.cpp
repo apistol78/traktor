@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
@@ -29,6 +30,25 @@ namespace traktor
 {
 	namespace editor
 	{
+		namespace
+		{
+
+std::wstring lookupDocumentation(const std::wstring& id)
+{
+	std::wstring id_;
+		
+	id_ = toUpper< std::wstring >(id);
+	id_ = replaceAll< std::wstring >(id_, L'.', L'_');
+	id_ = replaceAll< std::wstring >(id_, L' ', L'_');
+
+	std::wstring documentation = i18n::I18N::getInstance().get(id_);
+	if (documentation.empty())
+		log::debug << L"No documentation \"" << id_ << L"\"" << Endl;
+
+	return documentation;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PropertiesView", PropertiesView, ui::Container)
 
@@ -52,6 +72,7 @@ bool PropertiesView::create(ui::Widget* parent)
 	m_staticHelp = new ui::custom::GradientStatic();
 	m_staticHelp->create(this, L"", ui::WsDoubleBuffer);
 
+	updateHelp();
 	return true;
 }
 
@@ -104,6 +125,11 @@ bool PropertiesView::handleCommand(const ui::Command& command)
 		else
 			return false;
 	}
+	else if (command == L"Editor.SettingsChanged")
+	{
+		updateHelp();
+		return false;
+	}
 	else
 		return false;
 }
@@ -118,73 +144,66 @@ bool PropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& resolve
 	return true;
 }
 
-namespace
-{
-	std::wstring lookupDocumentation(const std::wstring& id)
-	{
-		std::wstring id_;
-		
-		id_ = toUpper< std::wstring >(id);
-		id_ = replaceAll< std::wstring >(id_, L'.', L'_');
-		id_ = replaceAll< std::wstring >(id_, L' ', L'_');
-
-		std::wstring documentation = i18n::I18N::getInstance().get(id_);
-		if (documentation.empty())
-			log::debug << L"No documentation \"" << id_ << L"\"" << Endl;
-
-		return documentation;
-	}
-}
-
 void PropertiesView::updateHelp()
 {
-	const TypeInfo* helpType = m_propertyObject ? &type_of(m_propertyObject) : 0;
-	std::wstring help;
-
-	RefArray< ui::custom::PropertyItem > selectedItems;
-	if (m_propertyList->getPropertyItems(selectedItems, ui::custom::PropertyList::GfSelectedOnly | ui::custom::PropertyList::GfDescendants) == 1)
+	bool visible = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Editor.PropertyHelpVisible", false);
+	if (visible != m_staticHelp->isVisible(false))
 	{
-		std::wstring helpPropId;
+		m_staticHelp->setVisible(visible);
+		setLayout(new ui::TableLayout(L"100%", visible ? L"100%,75" : L"100%,0", 0, 4));
+		update();
+	}
 
-		ui::custom::PropertyItem* parent = selectedItems[0]->getParentItem();
-		while (parent)
+	if (visible)
+	{
+		const TypeInfo* helpType = m_propertyObject ? &type_of(m_propertyObject) : 0;
+		std::wstring help;
+
+		RefArray< ui::custom::PropertyItem > selectedItems;
+		if (m_propertyList->getPropertyItems(selectedItems, ui::custom::PropertyList::GfSelectedOnly | ui::custom::PropertyList::GfDescendants) == 1)
 		{
-			ui::custom::ObjectPropertyItem* objectItem = dynamic_type_cast< ui::custom::ObjectPropertyItem* >(parent);
-			if (objectItem)
+			std::wstring helpPropId;
+
+			ui::custom::PropertyItem* parent = selectedItems[0]->getParentItem();
+			while (parent)
 			{
-				helpType = objectItem->getObject() ? &type_of(objectItem->getObject()) : objectItem->getObjectType();
-				break;
+				ui::custom::ObjectPropertyItem* objectItem = dynamic_type_cast< ui::custom::ObjectPropertyItem* >(parent);
+				if (objectItem)
+				{
+					helpType = objectItem->getObject() ? &type_of(objectItem->getObject()) : objectItem->getObjectType();
+					break;
+				}
+				helpPropId = L"_" + parent->getText() + helpPropId;
+				parent = parent->getParentItem();
 			}
-			helpPropId = L"_" + parent->getText() + helpPropId;
-			parent = parent->getParentItem();
-		}
 
-		while (helpType)
+			while (helpType)
+			{
+				help = lookupDocumentation(L"HELP_" + std::wstring(helpType->getName()) + helpPropId + L"_" + selectedItems[0]->getText());
+				if (!help.empty())
+					break;
+
+				helpType = helpType->getSuper();
+			}
+
+			if (help.empty())
+				help = lookupDocumentation(L"HELP" + helpPropId + L"_" + selectedItems[0]->getText());
+		}
+		else if (helpType)
 		{
-			help = lookupDocumentation(L"HELP_" + std::wstring(helpType->getName()) + helpPropId + L"_" + selectedItems[0]->getText());
-			if (!help.empty())
-				break;
+			while (helpType)
+			{
+				help = lookupDocumentation(L"HELP_" + std::wstring(helpType->getName()));
+				if (!help.empty())
+					break;
 
-			helpType = helpType->getSuper();
+				helpType = helpType->getSuper();
+			}
 		}
 
-		if (help.empty())
-			help = lookupDocumentation(L"HELP" + helpPropId + L"_" + selectedItems[0]->getText());
+		m_staticHelp->setText(help);
+		m_staticHelp->update();
 	}
-	else if (helpType)
-	{
-		while (helpType)
-		{
-			help = lookupDocumentation(L"HELP_" + std::wstring(helpType->getName()));
-			if (!help.empty())
-				break;
-
-			helpType = helpType->getSuper();
-		}
-	}
-
-	m_staticHelp->setText(help);
-	m_staticHelp->update();
 }
 
 void PropertiesView::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
