@@ -111,6 +111,10 @@ bool GeneralSettingsPage::create(ui::Container* parent, PropertyGroup* settings,
 	m_checkBuildAfterBrowseInstance->create(container, i18n::Text(L"EDITOR_SETTINGS_BUILD_AFTER_BROWSE_INSTANCE"));
 	m_checkBuildAfterBrowseInstance->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.BuildAfterBrowseInstance"));
 
+	m_checkPropertyHelpVisible = new ui::CheckBox();
+	m_checkPropertyHelpVisible->create(container, i18n::Text(L"EDITOR_SETTINGS_PROPERTY_HELP_VISIBLE"));
+	m_checkPropertyHelpVisible->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.PropertyHelpVisible"));
+
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_GENERAL"));
 	return true;
 }
@@ -130,6 +134,7 @@ bool GeneralSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified", m_checkBuildWhenSourceModified->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified", m_checkBuildWhenAssetModified->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildAfterBrowseInstance", m_checkBuildAfterBrowseInstance->isChecked());
+	settings->setProperty< PropertyBoolean >(L"Editor.PropertyHelpVisible", m_checkPropertyHelpVisible->isChecked());
 	return true;
 }
 
