@@ -22,12 +22,12 @@ bool LanLeaderboards::set(const uint64_t handle, int32_t score)
 	return true;
 }
 
-bool LanLeaderboards::getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+bool LanLeaderboards::getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores)
 {
 	return false;
 }
 
-bool LanLeaderboards::getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+bool LanLeaderboards::getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores)
 {
 	return false;
 }

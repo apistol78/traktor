@@ -24,15 +24,18 @@ class T_DLLCLASS Score : public Object
 	T_RTTI_CLASS;
 
 public:
-	Score(const IUser* user, int32_t score);
+	Score(const IUser* user, int32_t score, uint32_t rank);
 
 	const IUser* getUser() const { return m_user; }
 
 	int32_t getScore() const { return m_score; }
 
+	uint32_t getRank() const { return m_rank; }
+
 private:
 	Ref< const IUser > m_user;
 	int32_t m_score;
+	uint32_t m_rank;
 };
 
 	}

@@ -308,6 +308,7 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< Score > > classScore = new AutoRuntimeClass< Score >();
 	classScore->addMethod("getUser", &Score::getUser);
 	classScore->addMethod("getScore", &Score::getScore);
+	classScore->addMethod("getRank", &Score::getRank);
 	registrar->registerClass(classScore);
 
 	Ref< AutoRuntimeClass< ScoreArrayResult > > classScoreArrayResult = new AutoRuntimeClass< ScoreArrayResult >();

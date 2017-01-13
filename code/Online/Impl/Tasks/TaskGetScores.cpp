@@ -33,7 +33,7 @@ TaskGetScores::TaskGetScores(
 
 void TaskGetScores::execute(TaskQueue* taskQueue)
 {
-	std::vector< std::pair< uint64_t, int32_t > > providerScores;
+	std::vector< ILeaderboardsProvider::ScoreData > providerScores;
 	RefArray< Score > scores;
 
 	bool result = false;
@@ -45,11 +45,11 @@ void TaskGetScores::execute(TaskQueue* taskQueue)
 	if (result)
 	{
 		scores.reserve(providerScores.size());
-		for (std::vector< std::pair< uint64_t, int32_t > >::const_iterator i = providerScores.begin(); i != providerScores.end(); ++i)
+		for (std::vector< ILeaderboardsProvider::ScoreData >::const_iterator i = providerScores.begin(); i != providerScores.end(); ++i)
 		{
-			Ref< IUser > user = m_userCache->get(i->first);
+			Ref< IUser > user = m_userCache->get(i->handle);
 			if (user)
-				scores.push_back(new Score(user, i->second));
+				scores.push_back(new Score(user, i->score, i->rank));
 		}
 		m_result->succeed(scores);
 	}

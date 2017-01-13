@@ -19,9 +19,9 @@ public:
 
 	virtual bool set(uint64_t handle, int32_t score) T_OVERRIDE T_FINAL;
 
-	virtual bool getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores) T_OVERRIDE T_FINAL;
+	virtual bool getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores) T_OVERRIDE T_FINAL;
 
-	virtual bool getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores) T_OVERRIDE T_FINAL;
+	virtual bool getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores) T_OVERRIDE T_FINAL;
 };
 
 	}
