@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Thread.h"
