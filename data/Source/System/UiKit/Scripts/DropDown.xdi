@@ -26,6 +26,21 @@ end
 
 function DropDown:add(item)
 	table.insert(self._items, item)
+	return #self._items
+end
+
+function DropDown:removeAll()
+	self._items = {}
+end
+
+function DropDown:select(index)
+	if index > 0 and index <= #self._items then
+		self._caption_tb:parseText(self._items[index])
+		self._selected = index
+	else
+		self._caption_tb:parseText("")
+		self._selected = 0
+	end
 end
 
 function DropDown:setColor(color)
@@ -75,6 +90,7 @@ function DropDown:_initialize(parent, mc, items)
 	else
 		self._items = {}
 	end
+	self._selected = 0
 
 	self:_registerEvent("onPress", function() self:_onPress() end)
 end
@@ -96,6 +112,7 @@ function DropDown:_onPress()
 
 	local p = self:getPlacement()
 	local ps = self._list:getPreferredSize()
+	local itemHeight = 21
 
 	-- Transform local coordinate into ancestor frame as
 	-- list box is temporarily added as child to ancestor in
@@ -112,7 +129,7 @@ function DropDown:_onPress()
 		pp.x,
 		pp.y,
 		p.width,
-		ps.height
+		math.min(ps.height, itemHeight * 6)
 	)
 
 	self._list:setOnClick(function(index) self:_onListClick(index) end)
@@ -125,10 +142,8 @@ function DropDown:_onListClick(index)
 	self._list:remove()
 	self._list = nil
 
-	self._caption_tb:parseText(self._items[index])
-
+	self:select(index)
 end
-
 
 	]]>
 	</text>
