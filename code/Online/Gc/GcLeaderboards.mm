@@ -135,12 +135,12 @@ bool GcLeaderboards::set(const uint64_t handle, int32_t score)
 	return result;
 }
 
-bool GcLeaderboards::getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+bool GcLeaderboards::getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores)
 {
 	return false;
 }
 
-bool GcLeaderboards::getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+bool GcLeaderboards::getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores)
 {
 	return false;
 }

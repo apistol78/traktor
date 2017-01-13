@@ -24,7 +24,14 @@ class T_DLLCLASS ILeaderboardsProvider : public Object
 public:
 	struct LeaderboardData
 	{
-		uint64_t handle;
+		uint64_t handle;	//!< Leaderboard handle.
+		int32_t score;
+		uint32_t rank;
+	};
+
+	struct ScoreData
+	{
+		uint64_t handle;	//!< User handle.
 		int32_t score;
 		uint32_t rank;
 	};
@@ -35,9 +42,9 @@ public:
 
 	virtual bool set(uint64_t handle, int32_t score) = 0;
 
-	virtual bool getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores) = 0;
+	virtual bool getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores) = 0;
 
-	virtual bool getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores) = 0;
+	virtual bool getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores) = 0;
 };
 
 	}

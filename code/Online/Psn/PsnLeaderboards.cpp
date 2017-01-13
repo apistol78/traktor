@@ -22,12 +22,12 @@ bool PsnLeaderboards::set(const uint64_t handle, int32_t score)
 	return false;
 }
 
-bool PsnLeaderboards::getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+bool PsnLeaderboards::getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores)
 {
 	return false;
 }
 
-bool PsnLeaderboards::getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+bool PsnLeaderboards::getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores)
 {
 	return false;
 }

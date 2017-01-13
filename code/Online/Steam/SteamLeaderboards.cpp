@@ -216,7 +216,7 @@ bool SteamLeaderboards::set(uint64_t handle, int32_t score)
 	return m_uploadedScoreSucceeded;
 }
 
-bool SteamLeaderboards::getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+bool SteamLeaderboards::getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores)
 {
 	if (!handle || !::SteamUser()->BLoggedOn())
 		return false;
@@ -240,7 +240,7 @@ bool SteamLeaderboards::getGlobalScores(uint64_t handle, int32_t from, int32_t t
 	return m_downloadedScoreSucceeded;
 }
 
-bool SteamLeaderboards::getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+bool SteamLeaderboards::getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores)
 {
 	if (!handle || !::SteamUser()->BLoggedOn())
 		return false;
@@ -282,10 +282,11 @@ void SteamLeaderboards::OnLeaderboardDownloaded(LeaderboardScoresDownloaded_t* p
 		LeaderboardEntry_t entry;
 		if (SteamUserStats()->GetDownloadedLeaderboardEntry(pCallback->m_hSteamLeaderboardEntries, i, &entry, 0, 0))
 		{
-			m_outScores->push_back(std::make_pair(
-				entry.m_steamIDUser.ConvertToUint64(),
-				entry.m_nScore
-			));
+			ScoreData sd;
+			sd.handle = entry.m_steamIDUser.ConvertToUint64();
+			sd.score = entry.m_nScore;
+			sd.rank = entry.m_nGlobalRank;
+			m_outScores->push_back(sd);
 		}
 	}
 

@@ -25,9 +25,9 @@ public:
 
 	virtual bool set(uint64_t handle, int32_t score) T_OVERRIDE T_FINAL;
 
-	virtual bool getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores) T_OVERRIDE T_FINAL;
+	virtual bool getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores) T_OVERRIDE T_FINAL;
 
-	virtual bool getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores) T_OVERRIDE T_FINAL;
+	virtual bool getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores) T_OVERRIDE T_FINAL;
 
 private:
 	SteamSessionManager* m_sessionManager;
@@ -38,7 +38,7 @@ private:
 	bool m_uploadedScoreSucceeded;
 	bool m_downloadedScore;
 	bool m_downloadedScoreSucceeded;
-	std::vector< std::pair< uint64_t, int32_t > >* m_outScores;
+	std::vector< ScoreData >* m_outScores;
 
 	void OnLeaderboardUploaded(LeaderboardScoreUploaded_t* pCallback, bool bIOFailure);
 
