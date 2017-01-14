@@ -10,14 +10,12 @@ namespace traktor
 	namespace script
 	{
 
-class ScriptClassLua;
-
 class ScriptObjectLua : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	ScriptObjectLua(lua_State*& luaState, int32_t tableRef, const ScriptClassLua* scriptClass);
+	ScriptObjectLua(lua_State*& luaState, int32_t tableRef);
 
 	virtual ~ScriptObjectLua();
 
@@ -26,7 +24,6 @@ public:
 private:
 	lua_State*& m_luaState;
 	int32_t m_tableRef;
-	const ScriptClassLua* m_scriptClass;
 };
 
 	}

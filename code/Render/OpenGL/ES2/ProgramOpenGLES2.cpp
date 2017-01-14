@@ -41,6 +41,10 @@ struct DeleteProgramCallback : public ContextOpenGLES2::IDeleteCallback
 	{
 	}
 
+	virtual ~DeleteProgramCallback()
+	{
+	}
+
 	virtual void deleteResource()
 	{
 		T_OGL_SAFE(glDeleteProgram(m_programName));
@@ -141,8 +145,6 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 	char errorBuf[32000];
 	GLsizei errorBufLen;
 	GLint status;
-	
-	uint32_t hash = resourceOpenGL->getHash();
 	
 	const std::string& vertexShader = resourceOpenGL->getVertexShader();
 	const std::string& fragmentShader = resourceOpenGL->getFragmentShader();

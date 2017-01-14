@@ -202,7 +202,7 @@ void InGesturePinch::serialize(ISerializer& s)
 		{ L"PdAny", PdAny },
 		{ L"PdX", PdX },
 		{ L"PdY", PdY },
-		0
+		{ 0 }
 	};
 
 	s >> MemberRef< IInputNode >(L"sourceActive", m_sourceActive);

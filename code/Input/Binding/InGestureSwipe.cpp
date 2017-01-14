@@ -153,7 +153,7 @@ void InGestureSwipe::serialize(ISerializer& s)
 		{ L"SdDown", SdDown },
 		{ L"SdLeft", SdLeft },
 		{ L"SdRight", SdRight },
-		0
+		{ 0 }
 	};
 
 	s >> MemberRef< IInputNode >(L"sourceActive", m_sourceActive);

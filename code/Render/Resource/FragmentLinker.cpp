@@ -16,8 +16,8 @@ namespace traktor
 		namespace
 		{
 
-const ImmutableNode::InputPinDesc c_PortConnectionNode_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_PortConnectionNode_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_PortConnectionNode_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_PortConnectionNode_o[] = { { L"Output" }, { 0 } };
 
 class PortConnectionNode : public ImmutableNode
 {

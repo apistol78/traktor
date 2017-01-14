@@ -60,10 +60,8 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BodyStateTemplate", BodyStateTemplate, IValueTemplate)
 
-BodyStateTemplate::BodyStateTemplate(const wchar_t* const tag, float linearError, float angularError)
+BodyStateTemplate::BodyStateTemplate(const wchar_t* const tag)
 :	m_tag(tag)
-,	m_linearError(linearError)
-,	m_angularError(angularError)
 {
 }
 

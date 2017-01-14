@@ -90,7 +90,7 @@ void InCombine::serialize(ISerializer& s)
 			{ L"CoSub", CoSub },
 			{ L"CoMul", CoMul },
 			{ L"CoDiv", CoDiv },
-			0
+			{ 0 }
 		};
 		s >> MemberEnum< CombineOperator >(L"operator", m_operator, c_CombineOperator_Keys);
 	}

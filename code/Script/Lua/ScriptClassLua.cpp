@@ -58,7 +58,7 @@ Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc,
 	// Create a script object box for "self".
 	m_scriptManager->pushObject(self);
 	int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
-	Ref< ScriptObjectLua > scriptSelf = new ScriptObjectLua(m_luaState, tableRef, this);
+	Ref< ScriptObjectLua > scriptSelf = new ScriptObjectLua(m_luaState, tableRef);
 
 	// Initialize prototype members before calling constructor.
 	for (prototype_t::const_iterator i = proto.begin(); i != proto.end(); ++i)

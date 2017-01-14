@@ -52,7 +52,6 @@ public:
 	void getWidgets(Ref< Widget > outWidgets[4]) const;
 	
 private:
-	bool m_vertical;
 	Point m_position;
 	bool m_negativeX;
 	bool m_negativeY;

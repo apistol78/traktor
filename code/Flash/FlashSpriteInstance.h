@@ -194,8 +194,6 @@ private:
 	bool m_cacheAsBitmap;
 	bool m_initialized;
 	bool m_playing;
-	bool m_visible;
-	bool m_enabled;
 	bool m_inside;
 	bool m_inDispatch;
 	bool m_gotoIssued;

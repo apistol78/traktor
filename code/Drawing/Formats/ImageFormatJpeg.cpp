@@ -198,7 +198,10 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 	uint8_t* data = (uint8_t *)image->getData();
 	for (uint32_t y = 0; y < m_cinfo.output_height; ++y)
 	{
-		int linesRead = jpeg_read_scanlines(&m_cinfo, &data, 1);
+#if defined(_DEBUG)
+		int linesRead =
+#endif
+		jpeg_read_scanlines(&m_cinfo, &data, 1);
 		T_ASSERT (linesRead == 1);
 		data += m_cinfo.output_width * m_cinfo.output_components;
 	}

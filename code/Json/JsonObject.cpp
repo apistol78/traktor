@@ -64,7 +64,7 @@ Any JsonObject::getValue(const std::wstring& path) const
 		else if (JsonArray* nodeArray = dynamic_type_cast< JsonArray* >(iter.getObject()))
 		{
 			uint32_t index = parseString< int32_t >(*i, ~0U);
-			if (index >= 0 && index < nodeArray->size())
+			if (index < nodeArray->size())
 				iter = nodeArray->get(index);
 			else
 				return Any();

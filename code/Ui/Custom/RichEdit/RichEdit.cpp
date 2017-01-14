@@ -360,7 +360,6 @@ int32_t RichEdit::getOffsetFromPosition(const Point& position)
 	uint32_t lineCount = uint32_t(m_lines.size());
 	uint32_t lineOffset = m_scrollBarV->getPosition();
 	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
-	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 	uint32_t line = lineOffset + position.y / lineHeight;
 	if (line >= lineCount)
@@ -605,7 +604,6 @@ void RichEdit::updateScrollBars()
 	Rect rc = getEditRect();
 
 	uint32_t lineCount = uint32_t(m_lines.size());
-	uint32_t lineOffset = 0;
 	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 

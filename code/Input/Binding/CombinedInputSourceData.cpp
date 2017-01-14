@@ -56,7 +56,7 @@ void CombinedInputSourceData::serialize(ISerializer& s)
 		{ L"CmAny", CombinedInputSource::CmAny },
 		{ L"CmExclusive", CombinedInputSource::CmExclusive },
 		{ L"CmAll", CombinedInputSource::CmAll },
-		0
+		{ 0 }
 	};
 
 	s >> MemberRefArray< IInputSourceData >(L"sources", m_sources);

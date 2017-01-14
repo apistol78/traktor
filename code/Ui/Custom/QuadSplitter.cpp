@@ -18,8 +18,7 @@ const int c_splitterSize = 2;
 const int c_relativeScale = 100000;
 
 QuadSplitter::QuadSplitter()
-:	m_vertical(false)
-,	m_position(0, 0)
+:	m_position(0, 0)
 ,	m_negativeX(false)
 ,	m_negativeY(false)
 ,	m_relative(false)

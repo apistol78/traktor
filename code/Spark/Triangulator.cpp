@@ -105,6 +105,9 @@ void Triangulator::fill(const Path* path, AlignedVector< Triangle >& outTriangle
 				}
 			}
 			break;
+
+		default:
+			break;
 		}
 
 		if (lastSubPath)
@@ -189,6 +192,9 @@ void Triangulator::stroke(const Path* path, float width, AlignedVector< Triangle
 					p_01_r = p_r;
 				}
 			}
+			break;
+
+		default:
 			break;
 		}
 

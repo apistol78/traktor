@@ -18,7 +18,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverWriteOut", 0, SoundDri
 
 SoundDriverWriteOut::SoundDriverWriteOut(ISoundDriver* childDriver)
 :	m_childDriver(childDriver)
-,	m_peek(0.0f)
 ,	m_wait(true)
 {
 }

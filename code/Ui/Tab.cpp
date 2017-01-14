@@ -181,12 +181,7 @@ void Tab::setActivePage(TabPage* page)
 		return;
 
 	if (m_selectedPage)
-	{
-		PageState* state = findPageState(m_selectedPage);
-		T_ASSERT (state);
-
 		m_selectedPage->setVisible(false);
-	}
 
 #if defined(_DEBUG)
 	checkPageStates();
@@ -372,10 +367,11 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 
 			if (m_selectedPage)
 			{
+#if defined(_DEBUG)
 				PageState* state = findPageState(m_selectedPage);
 				T_ASSERT (state);
 				T_ASSERT (state->depth == 0);
-
+#endif
 				m_selectedPage->setVisible(false);
 			}
 

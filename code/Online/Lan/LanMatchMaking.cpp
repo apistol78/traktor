@@ -21,7 +21,6 @@ const wchar_t* c_keyServiceTypeUserInLobby = L"UIL";
 const wchar_t* c_keyLobbyHandle = L"LH";
 const wchar_t* c_keyLobbyOwner = L"LO";
 const wchar_t* c_keyUserHandle = L"UH";
-const wchar_t* c_keyUserRecvPort = L"UP";
 const wchar_t* c_keyOrder = L"O";
 const wchar_t* c_keyPrefixLobbyMeta = L"LM";
 const wchar_t* c_keyPrefixUserMeta = L"UM";

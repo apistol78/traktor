@@ -40,8 +40,6 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashDictionary
 ,	m_cacheAsBitmap(false)
 ,	m_initialized(false)
 ,	m_playing(true)
-,	m_visible(false)
-,	m_enabled(true)
 ,	m_inside(false)
 ,	m_inDispatch(false)
 ,	m_gotoIssued(false)
