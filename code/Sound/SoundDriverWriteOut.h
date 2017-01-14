@@ -43,7 +43,6 @@ private:
 	SoundDriverCreateDesc m_desc;
 	Ref< IStream > m_stream;
 	AutoArrayPtr< float > m_interleaved;
-	float m_peek;
 	bool m_wait;
 };
 

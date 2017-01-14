@@ -193,8 +193,8 @@ private:
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Abs", 0, Abs, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Abs_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Abs_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Abs_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Abs_o[] = { { L"Output" }, { 0 } };
 
 Abs::Abs()
 :	ImmutableNode(c_Abs_i, c_Abs_o)
@@ -205,8 +205,8 @@ Abs::Abs()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Add", 0, Add, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Add_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Add_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Add_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Add_o[] = { { L"Output" }, { 0 } };
 
 Add::Add()
 :	ImmutableNode(c_Add_i, c_Add_o)
@@ -217,8 +217,8 @@ Add::Add()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArcusCos", 0, ArcusCos, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_ArcusCos_i[] = { { L"Theta", false }, 0 };
-const ImmutableNode::OutputPinDesc c_ArcusCos_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_ArcusCos_i[] = { { L"Theta", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_ArcusCos_o[] = { { L"Output" }, { 0 } };
 
 ArcusCos::ArcusCos()
 :	ImmutableNode(c_ArcusCos_i, c_ArcusCos_o)
@@ -229,8 +229,8 @@ ArcusCos::ArcusCos()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArcusTan", 0, ArcusTan, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_ArcusTan_i[] = { { L"XY", false }, 0 };
-const ImmutableNode::OutputPinDesc c_ArcusTan_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_ArcusTan_i[] = { { L"XY", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_ArcusTan_o[] = { { L"Output" }, { 0 } };
 
 ArcusTan::ArcusTan()
 :	ImmutableNode(c_ArcusTan_i, c_ArcusTan_o)
@@ -241,8 +241,8 @@ ArcusTan::ArcusTan()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Clamp", 0, Clamp, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Clamp_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Clamp_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Clamp_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Clamp_o[] = { { L"Output" }, { 0 } };
 
 Clamp::Clamp(float min, float max)
 :	ImmutableNode(c_Clamp_i, c_Clamp_o)
@@ -290,8 +290,8 @@ void Clamp::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Branch", 0, Branch, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Branch_i[] = { { L"True", false }, { L"False", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Branch_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Branch_i[] = { { L"True", false }, { L"False", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Branch_o[] = { { L"Output" }, { 0 } };
 
 Branch::Branch(const std::wstring& parameterName)
 :	ImmutableNode(c_Branch_i, c_Branch_o)
@@ -324,7 +324,7 @@ void Branch::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Color", 0, Color, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_Color_o[] = { L"Output", 0 };
+const ImmutableNode::OutputPinDesc c_Color_o[] = { { L"Output" }, { 0 } };
 
 Color::Color(const traktor::Color4ub& color)
 :	ImmutableNode(0, c_Color_o)
@@ -359,8 +359,8 @@ void Color::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Comment", 0, Comment, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Comment_i[] = { 0 };
-const ImmutableNode::OutputPinDesc c_Comment_o[] = { 0 };
+const ImmutableNode::InputPinDesc c_Comment_i[] = { { 0 } };
+const ImmutableNode::OutputPinDesc c_Comment_o[] = { { 0 } };
 
 Comment::Comment()
 :	ImmutableNode(c_Comment_i, c_Comment_o)
@@ -371,8 +371,8 @@ Comment::Comment()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Conditional", 1, Conditional, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Conditional_i[] = { { L"Input", false }, { L"Reference", false }, { L"CaseTrue", false }, { L"CaseFalse", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Conditional_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Conditional_i[] = { { L"Input", false }, { L"Reference", false }, { L"CaseTrue", false }, { L"CaseFalse", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Conditional_o[] = { { L"Output" }, { 0 } };
 
 Conditional::Conditional()
 :	ImmutableNode(c_Conditional_i, c_Conditional_o)
@@ -440,8 +440,8 @@ void Conditional::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Connected", 0, Connected, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Connected_i[] = { { L"Input", true }, { L"True", false }, { L"False", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Connected_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Connected_i[] = { { L"Input", true }, { L"True", false }, { L"False", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Connected_o[] = { { L"Output" }, { 0 } };
 
 Connected::Connected()
 :	ImmutableNode(c_Connected_i, c_Connected_o)
@@ -452,8 +452,8 @@ Connected::Connected()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Cos", 0, Cos, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Cos_i[] = { { L"Theta", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Cos_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Cos_i[] = { { L"Theta", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Cos_o[] = { { L"Output" }, { 0 } };
 
 Cos::Cos()
 :	ImmutableNode(c_Cos_i, c_Cos_o)
@@ -464,8 +464,8 @@ Cos::Cos()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Cross", 0, Cross, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Cross_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Cross_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Cross_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Cross_o[] = { { L"Output" }, { 0 } };
 
 Cross::Cross()
 :	ImmutableNode(c_Cross_i, c_Cross_o)
@@ -476,8 +476,8 @@ Cross::Cross()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Derivative", 0, Derivative, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Derivative_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Derivative_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Derivative_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Derivative_o[] = { { L"Output" }, { 0 } };
 
 Derivative::Derivative()
 :	ImmutableNode(c_Derivative_i, c_Derivative_o)
@@ -520,8 +520,8 @@ void Derivative::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Discard", 0, Discard, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Discard_i[] = { { L"Input", false }, { L"Reference", false }, { L"Pass", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Discard_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Discard_i[] = { { L"Input", false }, { L"Reference", false }, { L"Pass", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Discard_o[] = { { L"Output" }, { 0 } };
 
 Discard::Discard()
 :	ImmutableNode(c_Discard_i, c_Discard_o)
@@ -567,8 +567,8 @@ void Discard::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Div", 0, Div, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Div_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Div_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Div_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Div_o[] = { { L"Output" }, { 0 } };
 
 Div::Div()
 :	ImmutableNode(c_Div_i, c_Div_o)
@@ -579,8 +579,8 @@ Div::Div()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Dot", 0, Dot, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Dot_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Dot_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Dot_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Dot_o[] = { { L"Output" }, { 0 } };
 
 Dot::Dot()
 :	ImmutableNode(c_Dot_i, c_Dot_o)
@@ -591,8 +591,8 @@ Dot::Dot()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Exp", 0, Exp, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Exp_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Exp_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Exp_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Exp_o[] = { { L"Output" }, { 0 } };
 
 Exp::Exp()
 :	ImmutableNode(c_Exp_i, c_Exp_o)
@@ -603,8 +603,8 @@ Exp::Exp()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Fraction", 0, Fraction, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Fraction_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Fraction_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Fraction_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Fraction_o[] = { { L"Output" }, { 0 } };
 
 Fraction::Fraction()
 :	ImmutableNode(c_Fraction_i, c_Fraction_o)
@@ -615,7 +615,7 @@ Fraction::Fraction()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FragmentPosition", 0, FragmentPosition, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_FragmentPosition_o[] = { L"Output", 0 };
+const ImmutableNode::OutputPinDesc c_FragmentPosition_o[] = { { L"Output" }, { 0 } };
 
 FragmentPosition::FragmentPosition()
 :	ImmutableNode(0, c_FragmentPosition_o)
@@ -626,7 +626,7 @@ FragmentPosition::FragmentPosition()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FrontFace", 0, FrontFace, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_FrontFace_o[] = { L"Output", 0 };
+const ImmutableNode::OutputPinDesc c_FrontFace_o[] = { { L"Output" }, { 0 } };
 
 FrontFace::FrontFace()
 :	ImmutableNode(0, c_FrontFace_o)
@@ -637,8 +637,8 @@ FrontFace::FrontFace()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", 1, IndexedUniform, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_IndexedUniform_i[] = { { L"Index", false }, 0 };
-const ImmutableNode::OutputPinDesc c_IndexedUniform_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_IndexedUniform_i[] = { { L"Index", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_IndexedUniform_o[] = { { L"Output" }, { 0 } };
 
 IndexedUniform::IndexedUniform(
 	const std::wstring& parameterName,
@@ -734,7 +734,7 @@ void IndexedUniform::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.InputPort", 1, InputPort, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_InputPort_o[] = { L"Output", 0 };
+const ImmutableNode::OutputPinDesc c_InputPort_o[] = { { L"Output" }, { 0 } };
 
 InputPort::InputPort(const std::wstring& name, bool connectable, bool optional, float defaultValue)
 :	ImmutableNode(0, c_InputPort_o)
@@ -808,7 +808,7 @@ void InputPort::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Instance", 0, Instance, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_Instance_o[] = { L"Output", 0 };
+const ImmutableNode::OutputPinDesc c_Instance_o[] = { { L"Output" }, { 0 } };
 
 Instance::Instance()
 :	ImmutableNode(0, c_Instance_o)
@@ -819,8 +819,8 @@ Instance::Instance()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Interpolator", 0, Interpolator, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Interpolator_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Interpolator_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Interpolator_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Interpolator_o[] = { { L"Output" }, { 0 } };
 
 Interpolator::Interpolator()
 :	ImmutableNode(c_Interpolator_i, c_Interpolator_o)
@@ -831,8 +831,8 @@ Interpolator::Interpolator()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Iterate", 0, Iterate, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Iterate_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", true }, 0 };
-const ImmutableNode::OutputPinDesc c_Iterate_o[] = { L"N", L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Iterate_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", true }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Iterate_o[] = { { L"N" }, { L"Output" }, { 0 } };
 
 Iterate::Iterate(int32_t from, int32_t to)
 :	ImmutableNode(c_Iterate_i, c_Iterate_o)
@@ -880,8 +880,8 @@ void Iterate::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Iterate2d", 0, Iterate2d, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Iterate2d_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", true }, 0 };
-const ImmutableNode::OutputPinDesc c_Iterate2d_o[] = { L"X", L"Y", L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Iterate2d_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", true }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Iterate2d_o[] = { { L"X" }, { L"Y" }, { L"Output" }, { 0 } };
 
 Iterate2d::Iterate2d(int32_t fromX, int32_t toX, int32_t fromY, int32_t toY)
 :	ImmutableNode(c_Iterate2d_i, c_Iterate2d_o)
@@ -953,8 +953,8 @@ void Iterate2d::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Length", 0, Length, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Length_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Length_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Length_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Length_o[] = { { L"Output" }, { 0 } };
 
 Length::Length()
 :	ImmutableNode(c_Length_i, c_Length_o)
@@ -965,8 +965,8 @@ Length::Length()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Lerp", 0, Lerp, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Lerp_i[] = { { L"Input1", false }, { L"Input2", false }, { L"Blend", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Lerp_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Lerp_i[] = { { L"Input1", false }, { L"Input2", false }, { L"Blend", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Lerp_o[] = { { L"Output" }, { 0 } };
 
 Lerp::Lerp()
 :	ImmutableNode(c_Lerp_i, c_Lerp_o)
@@ -977,8 +977,8 @@ Lerp::Lerp()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Log", 0, Log, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Log_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Log_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Log_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Log_o[] = { { L"Output" }, { 0 } };
 
 Log::Log(Base base)
 :	ImmutableNode(c_Log_i, c_Log_o)
@@ -1026,8 +1026,8 @@ void Log::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MatrixIn", 0, MatrixIn, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_MatrixIn_i[] = { { L"XAxis", true }, { L"YAxis", true }, { L"ZAxis", true }, { L"Translate", true }, 0 };
-const ImmutableNode::OutputPinDesc c_MatrixIn_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_MatrixIn_i[] = { { L"XAxis", true }, { L"YAxis", true }, { L"ZAxis", true }, { L"Translate", true }, { 0 } };
+const ImmutableNode::OutputPinDesc c_MatrixIn_o[] = { { L"Output" }, { 0 } };
 
 MatrixIn::MatrixIn()
 :	ImmutableNode(c_MatrixIn_i, c_MatrixIn_o)
@@ -1038,8 +1038,8 @@ MatrixIn::MatrixIn()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MatrixOut", 0, MatrixOut, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_MatrixOut_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_MatrixOut_o[] = { L"XAxis", L"YAxis", L"ZAxis", L"Translate", 0 };
+const ImmutableNode::InputPinDesc c_MatrixOut_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_MatrixOut_o[] = { { L"XAxis" }, { L"YAxis" }, { L"ZAxis" }, { L"Translate" }, { 0 } };
 
 MatrixOut::MatrixOut()
 :	ImmutableNode(c_MatrixOut_i, c_MatrixOut_o)
@@ -1050,8 +1050,8 @@ MatrixOut::MatrixOut()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Max", 0, Max, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Max_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Max_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Max_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Max_o[] = { { L"Output" }, { 0 } };
 
 Max::Max()
 :	ImmutableNode(c_Max_i, c_Max_o)
@@ -1062,8 +1062,8 @@ Max::Max()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Min", 0, Min, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Min_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Min_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Min_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Min_o[] = { { L"Output" }, { 0 } };
 
 Min::Min()
 :	ImmutableNode(c_Min_i, c_Min_o)
@@ -1074,8 +1074,8 @@ Min::Min()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MixIn", 0, MixIn, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_MixIn_i[] = { { L"X", true }, { L"Y", true }, { L"Z", true }, { L"W", true }, 0 };
-const ImmutableNode::OutputPinDesc c_MixIn_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_MixIn_i[] = { { L"X", true }, { L"Y", true }, { L"Z", true }, { L"W", true }, { 0 } };
+const ImmutableNode::OutputPinDesc c_MixIn_o[] = { { L"Output" }, { 0 } };
 
 MixIn::MixIn()
 :	ImmutableNode(c_MixIn_i, c_MixIn_o)
@@ -1086,8 +1086,8 @@ MixIn::MixIn()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MixOut", 0, MixOut, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_MixOut_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_MixOut_o[] = { L"X", L"Y", L"Z", L"W", 0 };
+const ImmutableNode::InputPinDesc c_MixOut_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_MixOut_o[] = { { L"X" }, { L"Y" }, { L"Z" }, { L"W" }, { 0 } };
 
 MixOut::MixOut()
 :	ImmutableNode(c_MixOut_i, c_MixOut_o)
@@ -1098,8 +1098,8 @@ MixOut::MixOut()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Mul", 0, Mul, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Mul_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Mul_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Mul_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Mul_o[] = { { L"Output" }, { 0 } };
 
 Mul::Mul()
 :	ImmutableNode(c_Mul_i, c_Mul_o)
@@ -1110,8 +1110,8 @@ Mul::Mul()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MulAdd", 0, MulAdd, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_MulAdd_i[] = { { L"Input1", false }, { L"Input2", false }, { L"Input3", false }, 0 };
-const ImmutableNode::OutputPinDesc c_MulAdd_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_MulAdd_i[] = { { L"Input1", false }, { L"Input2", false }, { L"Input3", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_MulAdd_o[] = { { L"Output" }, { 0 } };
 
 MulAdd::MulAdd()
 :	ImmutableNode(c_MulAdd_i, c_MulAdd_o)
@@ -1122,8 +1122,8 @@ MulAdd::MulAdd()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Neg", 0, Neg, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Neg_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Neg_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Neg_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Neg_o[] = { { L"Output" }, { 0 } };
 
 Neg::Neg()
 :	ImmutableNode(c_Neg_i, c_Neg_o)
@@ -1134,8 +1134,8 @@ Neg::Neg()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Normalize", 0, Normalize, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Normalize_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Normalize_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Normalize_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Normalize_o[] = { { L"Output" }, { 0 } };
 
 Normalize::Normalize()
 :	ImmutableNode(c_Normalize_i, c_Normalize_o)
@@ -1146,7 +1146,7 @@ Normalize::Normalize()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.OutputPort", 0, OutputPort, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_OutputPort_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::InputPinDesc c_OutputPort_i[] = { { L"Input", false }, { 0 } };
 
 OutputPort::OutputPort(const std::wstring& name)
 :	ImmutableNode(c_OutputPort_i, 0)
@@ -1179,7 +1179,7 @@ void OutputPort::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 6, PixelOutput, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, { L"State", true }, 0 };
+const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, { L"State", true }, { 0 } };
 
 PixelOutput::PixelOutput()
 :	ImmutableNode(c_PixelOutput_i, 0)
@@ -1261,7 +1261,7 @@ void PixelOutput::serialize(ISerializer& s)
 			{ L"alphaBlend", RpAlphaBlend },
 			{ L"postAlphaBlend", RpPostAlphaBlend },
 			{ L"overlay", RpOverlay },
-			0
+			{ 0 }
 		};
 		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);
 	}
@@ -1279,7 +1279,7 @@ void PixelOutput::serialize(ISerializer& s)
 			{ L"PhLow", PhLow },
 			{ L"PhMedium", PhMedium },
 			{ L"PhHigh", PhHigh },
-			0
+			{ 0 }
 		};
 		s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
 	}
@@ -1300,9 +1300,9 @@ const ImmutableNode::InputPinDesc c_Platform_i[] =
 	{ L"GNM", true },
 	{ L"Software", true },
 	{ L"Other", false },
-	0
+	{ 0 }
 };
-const ImmutableNode::OutputPinDesc c_Platform_o[] = { L"Output", 0 };
+const ImmutableNode::OutputPinDesc c_Platform_o[] = { { L"Output" }, { 0 } };
 
 Platform::Platform()
 :	ImmutableNode(c_Platform_i, c_Platform_o)
@@ -1313,8 +1313,8 @@ Platform::Platform()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Polynomial", 0, Polynomial, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Polynomial_i[] = { { L"X", false }, { L"Coefficients", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Polynomial_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Polynomial_i[] = { { L"X", false }, { L"Coefficients", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Polynomial_o[] = { { L"Output" }, { 0 } };
 
 Polynomial::Polynomial()
 :	ImmutableNode(c_Polynomial_i, c_Polynomial_o)
@@ -1325,8 +1325,8 @@ Polynomial::Polynomial()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Pow", 0, Pow, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Pow_i[] = { { L"Exponent", false }, { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Pow_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Pow_i[] = { { L"Exponent", false }, { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Pow_o[] = { { L"Output" }, { 0 } };
 
 Pow::Pow()
 :	ImmutableNode(c_Pow_i, c_Pow_o)
@@ -1337,8 +1337,8 @@ Pow::Pow()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Reflect", 0, Reflect, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Reflect_i[] = { { L"Normal", false }, { L"Direction", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Reflect_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Reflect_i[] = { { L"Normal", false }, { L"Direction", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Reflect_o[] = { { L"Output" }, { 0 } };
 
 Reflect::Reflect()
 :	ImmutableNode(c_Reflect_i, c_Reflect_o)
@@ -1349,8 +1349,8 @@ Reflect::Reflect()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RecipSqrt", 0, RecipSqrt, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_RecipSqrt_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_RecipSqrt_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_RecipSqrt_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_RecipSqrt_o[] = { { L"Output" }, { 0 } };
 
 RecipSqrt::RecipSqrt()
 :	ImmutableNode(c_RecipSqrt_i, c_RecipSqrt_o)
@@ -1361,8 +1361,8 @@ RecipSqrt::RecipSqrt()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Repeat", 0, Repeat, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Repeat_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Repeat_o[] = { L"N", L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Repeat_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Repeat_o[] = { { L"N" }, { L"Output" }, { 0 } };
 
 Repeat::Repeat()
 :	ImmutableNode(c_Repeat_i, c_Repeat_o)
@@ -1373,8 +1373,8 @@ Repeat::Repeat()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Round", 0, Round, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Round_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Round_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Round_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Round_o[] = { { L"Output" }, { 0 } };
 
 Round::Round()
 :	ImmutableNode(c_Round_i, c_Round_o)
@@ -1385,8 +1385,8 @@ Round::Round()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 5, Sampler, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"TexCoord", false }, { L"Mip", true }, 0 };
-const ImmutableNode::OutputPinDesc c_Sampler_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"TexCoord", false }, { L"Mip", true }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Sampler_o[] = { { L"Output" }, { 0 } };
 
 Sampler::Sampler()
 :	ImmutableNode(c_Sampler_i, c_Sampler_o)
@@ -1472,7 +1472,7 @@ void Sampler::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Scalar", 0, Scalar, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_Scalar_o[] = { L"Output", 0 };
+const ImmutableNode::OutputPinDesc c_Scalar_o[] = { { L"Output" }, { 0 } };
 
 Scalar::Scalar(float value)
 :	ImmutableNode(0, c_Scalar_o)
@@ -1507,8 +1507,8 @@ void Scalar::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sign", 0, Sign, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sign_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Sign_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Sign_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Sign_o[] = { { L"Output" }, { 0 } };
 
 Sign::Sign()
 :	ImmutableNode(c_Sign_i, c_Sign_o)
@@ -1519,8 +1519,8 @@ Sign::Sign()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sin", 0, Sin, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sin_i[] = { { L"Theta", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Sin_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Sin_i[] = { { L"Theta", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Sin_o[] = { { L"Output" }, { 0 } };
 
 Sin::Sin()
 :	ImmutableNode(c_Sin_i, c_Sin_o)
@@ -1531,8 +1531,8 @@ Sin::Sin()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sqrt", 0, Sqrt, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sqrt_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Sqrt_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Sqrt_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Sqrt_o[] = { { L"Output" }, { 0 } };
 
 Sqrt::Sqrt()
 :	ImmutableNode(c_Sqrt_i, c_Sqrt_o)
@@ -1544,7 +1544,7 @@ Sqrt::Sqrt()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 5, State, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_State_o[] = { L"Output", 0 };
+const ImmutableNode::OutputPinDesc c_State_o[] = { { L"Output" }, { 0 } };
 
 State::State()
 :	ImmutableNode(0, c_State_o)
@@ -1586,7 +1586,7 @@ void State::serialize(ISerializer& s)
 			{ L"alphaBlend", RpAlphaBlend },
 			{ L"postAlphaBlend", RpPostAlphaBlend },
 			{ L"overlay", RpOverlay },
-			0
+			{ 0 }
 		};
 		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);
 	}
@@ -1598,8 +1598,8 @@ void State::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Step", 0, Step, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Step_i[] = { { L"X", false }, { L"Y", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Step_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Step_i[] = { { L"X", false }, { L"Y", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Step_o[] = { { L"Output" }, { 0 } };
 
 Step::Step()
 :	ImmutableNode(c_Step_i, c_Step_o)
@@ -1610,8 +1610,8 @@ Step::Step()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sub", 0, Sub, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sub_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Sub_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Sub_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Sub_o[] = { { L"Output" }, { 0 } };
 
 Sub::Sub()
 :	ImmutableNode(c_Sub_i, c_Sub_o)
@@ -1622,8 +1622,8 @@ Sub::Sub()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sum", 0, Sum, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sum_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Sum_o[] = { L"N", L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Sum_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Sum_o[] = { { L"N" }, { L"Output" }, { 0 } };
 
 Sum::Sum(int32_t from, int32_t to)
 :	ImmutableNode(c_Sum_i, c_Sum_o)
@@ -1756,8 +1756,8 @@ void Switch::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Swizzle", 0, Swizzle, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Swizzle_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Swizzle_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Swizzle_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Swizzle_o[] = { { L"Output" }, { 0 } };
 
 Swizzle::Swizzle(const std::wstring& swizzle)
 :	ImmutableNode(c_Swizzle_i, c_Swizzle_o)
@@ -1790,8 +1790,8 @@ void Swizzle::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Tan", 0, Tan, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Tan_i[] = { { L"Theta", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Tan_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Tan_i[] = { { L"Theta", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Tan_o[] = { { L"Output" }, { 0 } };
 
 Tan::Tan()
 :	ImmutableNode(c_Tan_i, c_Tan_o)
@@ -1802,8 +1802,8 @@ Tan::Tan()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TargetSize", 0, TargetSize, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_TargetSize_i[] = { 0 };
-const ImmutableNode::OutputPinDesc c_TargetSize_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_TargetSize_i[] = { { 0 } };
+const ImmutableNode::OutputPinDesc c_TargetSize_o[] = { { L"Output" }, { 0 } };
 
 TargetSize::TargetSize()
 :	ImmutableNode(c_TargetSize_i, c_TargetSize_o)
@@ -1814,8 +1814,8 @@ TargetSize::TargetSize()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Texture", 0, Texture, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Texture_i[] = { 0 };
-const ImmutableNode::OutputPinDesc c_Texture_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Texture_i[] = { { 0 } };
+const ImmutableNode::OutputPinDesc c_Texture_o[] = { { L"Output" }, { 0 } };
 
 Texture::Texture(const Guid& external, ParameterType type)
 :	ImmutableNode(c_Texture_i, c_Texture_o)
@@ -1864,8 +1864,8 @@ void Texture::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureSize", 0, TextureSize, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_TextureSize_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_TextureSize_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_TextureSize_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_TextureSize_o[] = { { L"Output" }, { 0 } };
 
 TextureSize::TextureSize()
 :	ImmutableNode(c_TextureSize_i, c_TextureSize_o)
@@ -1876,8 +1876,8 @@ TextureSize::TextureSize()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Transform", 0, Transform, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Transform_i[] = { { L"Input", false }, { L"Transform", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Transform_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Transform_i[] = { { L"Input", false }, { L"Transform", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Transform_o[] = { { L"Output" }, { 0 } };
 
 Transform::Transform()
 :	ImmutableNode(c_Transform_i, c_Transform_o)
@@ -1888,8 +1888,8 @@ Transform::Transform()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Transpose", 0, Transpose, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Transpose_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Transpose_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Transpose_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Transpose_o[] = { { L"Output" }, { 0 } };
 
 Transpose::Transpose()
 :	ImmutableNode(c_Transpose_i, c_Transpose_o)
@@ -1900,8 +1900,8 @@ Transpose::Transpose()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Truncate", 0, Truncate, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Truncate_i[] = { { L"Input", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Truncate_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Truncate_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Truncate_o[] = { { L"Output" }, { 0 } };
 
 Truncate::Truncate()
 :	ImmutableNode(c_Truncate_i, c_Truncate_o)
@@ -1912,8 +1912,8 @@ Truncate::Truncate()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Type", 0, Type, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Type_i[] = { { L"Type", true }, { L"Scalar", true }, { L"Vector", true }, { L"Matrix", true }, { L"Texture", true }, { L"State", true }, { L"Default", false }, 0 };
-const ImmutableNode::OutputPinDesc c_Type_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Type_i[] = { { L"Type", true }, { L"Scalar", true }, { L"Vector", true }, { L"Matrix", true }, { L"Texture", true }, { L"State", true }, { L"Default", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Type_o[] = { { L"Output" }, { 0 } };
 
 Type::Type()
 :	ImmutableNode(c_Type_i, c_Type_o)
@@ -1924,8 +1924,8 @@ Type::Type()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 1, Uniform, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Uniform_i[] = { { L"Initial", true }, 0 };
-const ImmutableNode::OutputPinDesc c_Uniform_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Uniform_i[] = { { L"Initial", true }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Uniform_o[] = { { L"Output" }, { 0 } };
 
 Uniform::Uniform(
 	const std::wstring& parameterName,
@@ -2008,8 +2008,8 @@ void Uniform::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Variable", 0, Variable, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Variable_i[] = { { L"Input", true }, 0 };
-const ImmutableNode::OutputPinDesc c_Variable_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_Variable_i[] = { { L"Input", true }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Variable_o[] = { { L"Output" }, { 0 } };
 
 Variable::Variable()
 :	ImmutableNode(c_Variable_i, c_Variable_o)
@@ -2041,7 +2041,7 @@ void Variable::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Vector", 0, Vector, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_Vector_o[] = { L"Output", 0 };
+const ImmutableNode::OutputPinDesc c_Vector_o[] = { { L"Output" }, { 0 } };
 
 Vector::Vector(const Vector4& value)
 :	ImmutableNode(0, c_Vector_o)
@@ -2076,7 +2076,7 @@ void Vector::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexInput", 0, VertexInput, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_VertexInput_o[] = { L"Output", 0 };
+const ImmutableNode::OutputPinDesc c_VertexInput_o[] = { { L"Output" }, { 0 } };
 
 VertexInput::VertexInput(const std::wstring& name, DataUsage usage, DataType type, int index)
 :	ImmutableNode(0, c_VertexInput_o)
@@ -2174,7 +2174,7 @@ void VertexInput::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexOutput", 1, VertexOutput, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_VertexOutput_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::InputPinDesc c_VertexOutput_i[] = { { L"Input", false }, { 0 } };
 
 VertexOutput::VertexOutput()
 :	ImmutableNode(c_VertexOutput_i, 0)

@@ -42,8 +42,8 @@ RandomGrain::RandomGrain(
 	bool humanize
 )
 :	m_grains(grains)
-,	m_random(uint32_t(clock()))
 ,	m_humanize(humanize)
+,	m_random(uint32_t(clock()))
 ,	m_last(-1)
 {
 }

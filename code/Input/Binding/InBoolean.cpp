@@ -90,7 +90,7 @@ void InBoolean::serialize(ISerializer& s)
 		{ L"OpAnd", OpAnd },
 		{ L"OpOr", OpOr },
 		{ L"OpXor", OpXor },
-		0
+		{ 0 }
 	};
 	
 	s >> MemberRefArray< IInputNode >(L"source", m_source);

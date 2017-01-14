@@ -26,15 +26,20 @@ Mutex::Mutex()
 	pthread_mutexattr_init(&ma);
 	pthread_mutexattr_settype(&ma, PTHREAD_MUTEX_RECURSIVE);
 
-	int rc = pthread_mutex_init(&data->outer, &ma);
+#if defined(_DEBUG)
+	int rc =
+#endif
+	pthread_mutex_init(&data->outer, &ma);
+#if defined(_DEBUG)
 	T_ASSERT (rc == 0);
+#endif
 
 	m_handle = data;
 }
 
 Mutex::Mutex(const Guid& id)
-:	m_existing(false)
-,	m_handle(0)
+:	m_handle(0)
+,	m_existing(false)
 {
 	// @fixme Currently we just create an unnamed local mutex as
 	// pthreads doesn't seem to support system wide mutexes.
@@ -46,8 +51,13 @@ Mutex::Mutex(const Guid& id)
 	pthread_mutexattr_init(&ma);
 	pthread_mutexattr_settype(&ma, PTHREAD_MUTEX_RECURSIVE);
 
-	int rc = pthread_mutex_init(&data->outer, &ma);
+#if defined(_DEBUG)
+	int rc =
+#endif
+	pthread_mutex_init(&data->outer, &ma);
+#if defined(_DEBUG)
 	T_ASSERT (rc == 0);
+#endif
 
 	m_handle = data;
 }
@@ -69,8 +79,13 @@ void Mutex::release()
 {
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
 
-	int rc = pthread_mutex_unlock(&data->outer);
-	T_ASSERT(rc == 0);
+#if defined(_DEBUG)
+	int rc =
+#endif
+	pthread_mutex_unlock(&data->outer);
+#if defined(_DEBUG)
+	T_ASSERT (rc == 0);
+#endif
 }
 
 bool Mutex::existing() const

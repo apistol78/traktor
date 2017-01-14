@@ -200,7 +200,7 @@ void ApplyReflector::operator >> (const Member< Matrix44 >& m)
 	const VectorPropertyItem::vector_t& r1 = propertyItemRow1->getValue();
 	const VectorPropertyItem::vector_t& r2 = propertyItemRow2->getValue();
 	const VectorPropertyItem::vector_t& r3 = propertyItemRow3->getValue();
-	const VectorPropertyItem::vector_t& r4 = propertyItemRow3->getValue();
+	const VectorPropertyItem::vector_t& r4 = propertyItemRow4->getValue();
 
 	m = Matrix44(
 		r1[0], r1[1], r1[2], r1[3],

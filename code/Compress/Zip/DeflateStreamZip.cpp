@@ -68,7 +68,10 @@ public:
 		{
 			T_ASSERT (m_zstream.avail_in == 0);
 			T_ASSERT (m_zstream.avail_out > 0);
-			int rc = deflate(&m_zstream, Z_FULL_FLUSH);
+#if defined(_DEBUG)
+			int rc =
+#endif
+			deflate(&m_zstream, Z_FULL_FLUSH);
 			T_ASSERT (rc == Z_OK || rc == Z_BUF_ERROR);
 
 			int nwrite = int(m_buf.size()) - m_zstream.avail_out;

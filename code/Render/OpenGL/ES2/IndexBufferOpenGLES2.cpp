@@ -27,6 +27,10 @@ struct DeleteBufferCallback : public ContextOpenGLES2::IDeleteCallback
 	{
 	}
 
+	virtual ~DeleteBufferCallback()
+	{
+	}
+
 	virtual void deleteResource()
 	{
 		T_OGL_SAFE(glDeleteBuffers(1, &m_bufferName));

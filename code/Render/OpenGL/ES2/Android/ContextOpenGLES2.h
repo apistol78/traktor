@@ -84,8 +84,6 @@ public:
 private:
 	static ThreadLocal ms_contextStack;
 	SystemWindow m_syswin;
-	EGLint m_width;
-	EGLint m_height;	
 	EGLDisplay m_display;
 	EGLConfig m_config;
 	EGLSurface m_surface;

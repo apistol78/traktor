@@ -300,7 +300,8 @@ void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 			version = parseString< int >(a->second);
 
 		int32_t typeVersion = type->getVersion();
-		T_ASSERT_M (version <= typeVersion, L"Serialized data has a higher version number than supported by the code");
+		if (!ensure(version <= typeVersion))
+			return;
 
 		rememberObject(o);
 		serialize(o, version);

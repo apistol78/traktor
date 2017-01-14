@@ -17,8 +17,8 @@ public:
 	:	m_stream(stream)
 	,	m_uncompressedBuffer(blockSize)
 	,	m_compressedBlock(blockSize + blockSize / 16 + 64 + 3)
-	,	m_uncompressedBufferCount(0)
 	,	m_workMemory(LZO1X_1_MEM_COMPRESS + sizeof(lzo_align_t))
+	,	m_uncompressedBufferCount(0)
 	{
 	}
 

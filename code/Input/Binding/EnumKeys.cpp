@@ -16,7 +16,7 @@ const MemberEnum< InputCategory >::Key g_InputCategory_Keys[] =
 	{ L"CtAcceleration", CtAcceleration },
 	{ L"CtOrientation", CtOrientation },
 	{ L"CtUnknown", CtUnknown },
-	0
+	{ 0 }
 };
 
 const MemberEnum< InputDefaultControlType >::Key g_InputDefaultControlType_Keys[] =
@@ -207,7 +207,7 @@ const MemberEnum< InputDefaultControlType >::Key g_InputDefaultControlType_Keys[
 	{ L"DtKeyMyComputer", DtKeyMyComputer },
 	{ L"DtKeyMail", DtKeyMail },
 	{ L"DtKeyMediaSelect", DtKeyMediaSelect },
-	0
+	{ 0 }
 };
 
 	}

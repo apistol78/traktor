@@ -1,4 +1,3 @@
-#include "Script/Lua/ScriptClassLua.h"
 #include "Script/Lua/ScriptObjectLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
@@ -15,10 +14,9 @@ const int32_t c_tableKey_instance = -2;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptObjectLua", ScriptObjectLua, Object)
 
-ScriptObjectLua::ScriptObjectLua(lua_State*& luaState, int32_t tableRef, const ScriptClassLua* scriptClass)
+ScriptObjectLua::ScriptObjectLua(lua_State*& luaState, int32_t tableRef)
 :	m_luaState(luaState)
 ,	m_tableRef(tableRef)
-,	m_scriptClass(scriptClass)
 {
 }
 

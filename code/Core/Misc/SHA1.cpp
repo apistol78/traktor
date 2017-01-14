@@ -14,8 +14,6 @@ const uint32_t SHA1_K0 = 0x5a827999;
 const uint32_t SHA1_K20 = 0x6ed9eba1;
 const uint32_t SHA1_K40 = 0x8f1bbcdc;
 const uint32_t SHA1_K60 = 0xca62c1d6;
-const uint32_t HMAC_IPAD = 0x36;
-const uint32_t HMAC_OPAD = 0x5c;
 const uint8_t HASH_LENGTH = 20;
 const uint8_t BLOCK_LENGTH = 64;
 
@@ -109,12 +107,6 @@ void sha1_writebyte(sha1info* s, uint8_t data)
 	sha1_addUncounted(s, data);
 }
 
-void sha1_write(sha1info* s, const char *data, size_t len)
-{
-	for (; len--; )
-		sha1_writebyte(s, (uint8_t)*data++);
-}
-
 void sha1_pad(sha1info* s)
 {
 	// Implement SHA-1 padding (fips180-2 §5.1.1).
@@ -153,44 +145,6 @@ uint8_t* sha1_result(sha1info* s)
 
 	// Return pointer to hash (20 characters).
 	return (uint8_t*)s->state;
-}
-
-void sha1_initHmac(sha1info* s, const uint8_t* key, int32_t keyLength)
-{
-	std::memset(s->keyBuffer, 0, BLOCK_LENGTH);
-	if (keyLength > BLOCK_LENGTH)
-	{
-		// Hash long keys.
-		sha1_init(s);
-		for (; keyLength--; )
-			sha1_writebyte(s, *key++);
-		std::memcpy(s->keyBuffer, sha1_result(s), HASH_LENGTH);
-	}
-	else
-	{
-		// Block length keys are used as is.
-		std::memcpy(s->keyBuffer, key, keyLength);
-	}
-
-	// Start inner hash,
-	sha1_init(s);
-	for (uint8_t i = 0; i < BLOCK_LENGTH; ++i)
-		sha1_writebyte(s, s->keyBuffer[i] ^ HMAC_IPAD);
-}
-
-uint8_t* sha1_resultHmac(sha1info* s)
-{
-	// Complete inner hash.
-	std::memcpy(s->innerHash, sha1_result(s), HASH_LENGTH);
-
-	// Calculate outer hash.
-	sha1_init(s);
-	for (uint8_t i = 0; i < BLOCK_LENGTH; ++i)
-		sha1_writebyte(s, s->keyBuffer[i] ^ HMAC_OPAD);
-	for (uint8_t i = 0; i < HASH_LENGTH; ++i)
-		sha1_writebyte(s, s->innerHash[i]);
-
-	return sha1_result(s);
 }
 
 	}

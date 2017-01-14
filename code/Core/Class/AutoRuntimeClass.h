@@ -12,9 +12,9 @@ namespace traktor
 #if !defined(__ANDROID__) && !defined(__IOS__)
 #	define T_VERIFY_ARGUMENTS(required) \
 		T_FATAL_ASSERT_M (argc >= (required), L"Not enough arguments");
-#else
+#endif
+#if !defined(T_VERIFY_ARGUMENTS)
 #	define T_VERIFY_ARGUMENTS(required) 
-		T_ASSERT_M (argc >= (required), L"Not enough arguments");
 #endif
 
 /*! \ingroup Core */

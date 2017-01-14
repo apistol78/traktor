@@ -21,7 +21,7 @@ class T_DLLCLASS BodyStateTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	BodyStateTemplate(const wchar_t* const tag, float linearError = 8.0f, float angularError = 24.0f);
+	BodyStateTemplate(const wchar_t* const tag);
 
 	virtual const TypeInfo& getValueType() const T_OVERRIDE T_FINAL;
 
@@ -37,8 +37,6 @@ public:
 
 private:
 	const wchar_t* const m_tag;
-	float m_linearError;
-	float m_angularError;
 };
 
 	}

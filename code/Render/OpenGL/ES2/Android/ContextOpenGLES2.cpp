@@ -107,7 +107,6 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 
 	if (numMatchingConfigs == 0)
 	{
-		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 failed; no matching configurations." << Endl;
 		return 0;
 	}

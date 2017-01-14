@@ -29,7 +29,7 @@ FlashText::FlashText(uint16_t id, const Aabb2& textBounds, const Matrix33& textM
 
 bool FlashText::create(const AlignedVector< SwfTextRecord* >& textRecords)
 {
-	Character character = { 0, 0, 0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f), 0 };
+	Character character = { 0, 0, 0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f), { 0 } };
 	for (AlignedVector< SwfTextRecord* >::const_iterator i = textRecords.begin(); i != textRecords.end(); ++i)
 	{
 		const SwfTextRecord* textRecord = *i;

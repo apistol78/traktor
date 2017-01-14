@@ -39,7 +39,6 @@ public:
 private:
 	Ref< const ControlInputSourceData > m_data;
 	Ref< DeviceControlManager > m_deviceControlManager;
-	int32_t m_matchingDeviceCount;
 };
 
 	}

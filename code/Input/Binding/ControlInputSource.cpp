@@ -14,7 +14,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.ControlInputSource", ControlInputSource, 
 ControlInputSource::ControlInputSource(const ControlInputSourceData* data, DeviceControlManager* deviceControlManager)
 :	m_data(data)
 ,	m_deviceControlManager(deviceControlManager)
-,	m_matchingDeviceCount(0)
 {
 }
 

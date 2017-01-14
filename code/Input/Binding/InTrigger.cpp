@@ -84,7 +84,7 @@ void InTrigger::serialize(ISerializer& s)
 	{
 		{ L"FlPositive", FlPositive },
 		{ L"FlNegative", FlNegative },
-		0
+		{ 0 }
 	};
 
 	s >> MemberRef< IInputNode >(L"source", m_source);
