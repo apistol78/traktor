@@ -37,6 +37,8 @@ class T_DLLCLASS VideoTexture : public render::ISimpleTexture
 public:
 	VideoTexture();
 
+	virtual ~VideoTexture();
+
 	bool create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;

@@ -26,6 +26,11 @@ VideoTexture::VideoTexture()
 {
 }
 
+VideoTexture::~VideoTexture()
+{
+	destroy();
+}
+
 bool VideoTexture::create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder)
 {
 	VideoDecoderInfo info;
