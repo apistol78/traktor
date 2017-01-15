@@ -207,6 +207,22 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 		primitiveRenderer->popWorld();
 	}
 
+	if (const world::VolumeComponentData* volumeComponent = m_entityAdapter->getComponentData< world::VolumeComponentData >())
+	{
+		if (m_context->shouldDrawGuide(L"Entity.Volumes"))
+		{
+			Transform T = getEntityAdapter()->getTransform();
+			primitiveRenderer->pushWorld(T.toMatrix44());
+			const AlignedVector< Aabb3 >& volumes = volumeComponent->getVolumes();
+			for (AlignedVector< Aabb3 >::const_iterator i = volumes.begin(); i != volumes.end(); ++i)
+			{
+				primitiveRenderer->drawSolidAabb(*i, Color4ub(120, 255, 120, 80));
+				primitiveRenderer->drawWireAabb(*i, Color4ub(120, 255, 120, 255));
+			}
+			primitiveRenderer->popWorld();
+		}
+	}
+
 	if (is_a< world::DirectionalLightEntity >(m_entityAdapter->getEntity()))
 	{
 		if (m_context->shouldDrawGuide(L"Entity.Light"))
@@ -238,21 +254,6 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			primitiveRenderer->popWorld();
 		}
 	}
-	//else if (const world::VolumeComponentData* volumeEntity = dynamic_type_cast< const world::VolumeComponentData* >(m_entityAdapter->getEntityData()))
-	//{
-	//	if (m_context->shouldDrawGuide(L"Entity.Volumes"))
-	//	{
-	//		Transform T = getEntityAdapter()->getTransform();
-	//		primitiveRenderer->pushWorld(T.toMatrix44());
-	//		const AlignedVector< Aabb3 >& volumes = volumeEntity->getVolumes();
-	//		for (AlignedVector< Aabb3 >::const_iterator i = volumes.begin(); i != volumes.end(); ++i)
-	//		{
-	//			primitiveRenderer->drawSolidAabb(*i, Color4ub(120, 255, 120, 80));
-	//			primitiveRenderer->drawWireAabb(*i, Color4ub(120, 255, 120, 255));
-	//		}
-	//		primitiveRenderer->popWorld();
-	//	}
-	//}
 	else
 	{
 		if (!m_entityAdapter->getParent())
