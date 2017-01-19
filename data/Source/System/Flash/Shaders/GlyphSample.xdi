@@ -4,8 +4,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-179</first>
-				<second>339</second>
+				<first>-850</first>
+				<second>176</second>
 			</position>
 			<name>TexCoord</name>
 			<usage>DuCustom</usage>
@@ -15,8 +15,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>742</first>
-				<second>341</second>
+				<first>913</first>
+				<second>392</second>
 			</position>
 			<parameterName>Flash_Texture</parameterName>
 			<type>PtTexture2D</type>
@@ -25,15 +25,15 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>585</first>
-				<second>303</second>
+				<first>588</first>
+				<second>341</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>240</first>
-				<second>313</second>
+				<first>-51</first>
+				<second>353</second>
 			</position>
 			<name>Offset</name>
 			<connectable>true</connectable>
@@ -43,8 +43,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>298</first>
-				<second>554</second>
+				<first>-197</first>
+				<second>679</second>
 			</position>
 			<name>TexOffsetAndScale</name>
 			<usage>DuCustom</usage>
@@ -54,23 +54,23 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>573</first>
-				<second>554</second>
+				<first>385</first>
+				<second>598</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>798</first>
-				<second>417</second>
+				<first>563</first>
+				<second>517</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>848</first>
-				<second>172</second>
+				<first>1131</first>
+				<second>120</second>
 			</position>
 			<fragmentGuid>{EDA225B8-9183-FA44-B9AD-239ECC807D78}</fragmentGuid>
 			<inputPins>
@@ -98,8 +98,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>848</first>
-				<second>240</second>
+				<first>1134</first>
+				<second>235</second>
 			</position>
 			<fragmentGuid>{EDA225B8-9183-FA44-B9AD-239ECC807D78}</fragmentGuid>
 			<inputPins>
@@ -127,115 +127,115 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>995</first>
-				<second>196</second>
+				<first>1489</first>
+				<second>188</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>750</first>
-				<second>219</second>
+				<first>1014</first>
+				<second>187</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>750</first>
-				<second>278</second>
+				<first>1014</first>
+				<second>246</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1234</first>
-				<second>316</second>
+				<first>1901</first>
+				<second>359</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1403</first>
-				<second>336</second>
+				<first>2308</first>
+				<second>467</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>414</first>
-				<second>239</second>
+				<first>279</first>
+				<second>225</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1119</first>
-				<second>398</second>
+				<first>1728</first>
+				<second>506</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>227</first>
-				<second>447</second>
+				<first>-302</first>
+				<second>509</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>180</first>
-				<second>484</second>
+				<first>-354</first>
+				<second>548</second>
 			</position>
 			<value>16, 8, 0, 0</value>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>401</first>
-				<second>448</second>
+				<first>-21</first>
+				<second>495</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>572</first>
-				<second>453</second>
+				<first>384</first>
+				<second>497</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Derivative">
 			<comment/>
 			<position>
-				<first>103</first>
-				<second>130</second>
+				<first>-366</first>
+				<second>43</second>
 			</position>
 			<axis>DaX</axis>
 		</item>
 		<item type="traktor.render.Derivative">
 			<comment/>
 			<position>
-				<first>104</first>
-				<second>219</second>
+				<first>-365</first>
+				<second>196</second>
 			</position>
 			<axis>DaY</axis>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>271</first>
-				<second>199</second>
+				<first>-45</first>
+				<second>105</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>955</first>
-				<second>378</second>
+				<first>1387</first>
+				<second>459</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -247,13 +247,6 @@
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
-		</item>
-		<item type="traktor.render.Platform">
-			<comment/>
-			<position>
-				<first>1278</first>
-				<second>462</second>
-			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -515,26 +508,6 @@
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<name>Software</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<name>Other</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
