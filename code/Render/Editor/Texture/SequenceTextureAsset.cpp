@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.SequenceTextureAsset", 13, SequenceTextureAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.SequenceTextureAsset", 14, SequenceTextureAsset, ISerializable)
 
 SequenceTextureAsset::SequenceTextureAsset()
 :	m_rate(10.0f)

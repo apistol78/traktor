@@ -18,6 +18,7 @@
 #include "Drawing/Filters/GaussianBlurFilter.h"
 #include "Drawing/Filters/GrayscaleFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
+#include "Drawing/Filters/NoiseFilter.h"
 #include "Drawing/Filters/NormalizeFilter.h"
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/PerlinNoiseFilter.h"
@@ -321,6 +322,10 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< MirrorFilter > > classMirrorFilter = new AutoRuntimeClass< MirrorFilter >();
 	classMirrorFilter->addConstructor< bool, bool >();
 	registrar->registerClass(classMirrorFilter);
+
+	Ref< AutoRuntimeClass< NoiseFilter > > classNoiseFilter = new AutoRuntimeClass< NoiseFilter >();
+	classNoiseFilter->addConstructor< float >();
+	registrar->registerClass(classNoiseFilter);
 
 	Ref< AutoRuntimeClass< NormalizeFilter > > classNormalizeFilter = new AutoRuntimeClass< NormalizeFilter >();
 	classNormalizeFilter->addConstructor();

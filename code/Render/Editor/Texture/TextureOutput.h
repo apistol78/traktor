@@ -47,6 +47,7 @@ public:
 	float m_alphaCoverageReference;
 	int32_t m_sharpenRadius;
 	float m_sharpenStrength;
+	float m_noiseStrength;
 	bool m_systemTexture;
 
 	TextureOutput();

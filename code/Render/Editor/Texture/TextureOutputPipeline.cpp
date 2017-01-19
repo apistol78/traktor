@@ -23,6 +23,7 @@
 #include "Drawing/Filters/ChainFilter.h"
 #include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
+#include "Drawing/Filters/NoiseFilter.h"
 #include "Drawing/Filters/NormalizeFilter.h"
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/PremultiplyAlphaFilter.h"
@@ -433,6 +434,13 @@ bool TextureOutputPipeline::buildOutput(
 			drawing::GammaFilter gammaFilter(m_gamma);
 			image->apply(&gammaFilter);
 		}
+	}
+
+	// Apply noise.
+	if (textureOutput->m_noiseStrength > 0.0f)
+	{
+		drawing::NoiseFilter noiseFilter(textureOutput->m_noiseStrength);
+		image->apply(&noiseFilter);
 	}
 
 	// Multiply with alpha.
