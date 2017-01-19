@@ -7,6 +7,7 @@
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -208,9 +209,8 @@ struct EditorToolPredicate
 	}
 };
 
-Ref< PropertyGroup > loadProperties(const Path& pathName)
+bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSettings, Ref< PropertyGroup >* outSettings)
 {
-	Ref< PropertyGroup > settings;
 	Ref< IStream > file;
 
 #if defined(_WIN32)
@@ -223,16 +223,15 @@ Ref< PropertyGroup > loadProperties(const Path& pathName)
 
 	std::wstring globalFile = pathName.getPathName();
 	std::wstring systemFile = pathName.getPathNameNoExtension() + L"." + system + L"." + pathName.getExtension();
-	std::wstring userFile = pathName.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + pathName.getExtension();
 
     // Read global properties.
 	if ((file = FileSystem::getInstance().open(globalFile, File::FmRead)) != 0)
 	{
-		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		outOriginalSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 		file->close();
 
-		if (!settings)
-            log::error << L"Error while parsing properties \"" << globalFile << L"\"" << Endl;
+		if (!outOriginalSettings)
+	        log::error << L"Error while parsing properties \"" << globalFile << L"\"" << Endl;
         else
             T_DEBUG(L"Successfully read properties from \"" << globalFile << L"\"");
 	}
@@ -247,46 +246,54 @@ Ref< PropertyGroup > loadProperties(const Path& pathName)
 
         if (systemSettings)
         {
-            if (settings)
+            if (outOriginalSettings)
             {
-                settings = settings->mergeReplace(systemSettings);
-                T_ASSERT (settings);
+                outOriginalSettings = outOriginalSettings->mergeReplace(systemSettings);
+                T_ASSERT (outOriginalSettings);
             }
             else
-                settings = systemSettings;
+                outOriginalSettings = systemSettings;
 
             T_DEBUG(L"Successfully read properties from \"" << systemFile << L"\"");
         }
 		else
+		{
             log::error << L"Error while parsing properties \"" << systemFile << L"\"" << Endl;
+			return false;
+		}
     }
 
-    // Read user properties.
-	if ((file = FileSystem::getInstance().open(userFile, File::FmRead)) != 0)
+	if (!outOriginalSettings)
+		return false;
+
+	if (outSettings)
 	{
-		Ref< PropertyGroup > userSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
-		file->close();
+		std::wstring userFile = pathName.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + pathName.getExtension();
 
-		if (userSettings)
+		*outSettings = DeepClone(outOriginalSettings).create< PropertyGroup >();
+		T_FATAL_ASSERT (*outSettings);
+
+		// Read user properties.
+		if ((file = FileSystem::getInstance().open(userFile, File::FmRead)) != 0)
 		{
-			if (settings)
-			{
-				settings = settings->mergeReplace(userSettings);
-				T_ASSERT (settings);
-			}
-			else
-				settings = userSettings;
+			Ref< PropertyGroup > userSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+			file->close();
 
-            T_DEBUG(L"Successfully read properties from \"" << userFile << L"\"");
+			if (!userSettings)
+			{
+				log::error << L"Error while parsing properties \"" << userFile << L"\"" << Endl;
+				return false;
+			}
+
+			*outSettings = (*outSettings)->mergeReplace(userSettings);
+			T_ASSERT (*outSettings);  
 		}
-		else
-            log::error << L"Error while parsing properties \"" << userFile << L"\"" << Endl;
 	}
 
-	return settings;
+	return true;
 }
 
-bool saveProperties(const Path& pathName, const PropertyGroup* properties, bool saveGlobal)
+bool saveSettings(const Path& pathName, const PropertyGroup* properties, bool saveGlobal)
 {
 	std::wstring globalFile = pathName.getPathName();
 	std::wstring userFile = pathName.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + pathName.getExtension();
@@ -396,13 +403,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_startupDirectory = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 
 	// Load settings; use only global settings as merged settings until workspace has been loaded.
-	m_globalSettings = loadProperties(settingsPath);
-	if (!m_globalSettings)
+	if (!loadSettings(settingsPath, m_originalSettings, &m_globalSettings))
 	{
 		log::error << L"Unable to load global settings" << Endl;
 		return false;
 	}
-
 	m_mergedSettings = m_globalSettings;
 
 	// Load editor stylesheet.
@@ -827,6 +832,11 @@ void EditorForm::destroy()
 	Form::destroy();
 }
 
+Ref< const PropertyGroup > EditorForm::getOriginalSettings() const
+{
+	return m_originalSettings;
+}
+
 Ref< const PropertyGroup > EditorForm::getSettings() const
 {
 	return m_mergedSettings;
@@ -869,7 +879,7 @@ void EditorForm::commitWorkspaceSettings()
 	if (m_workspaceSettings)
 	{
 		m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
-		saveProperties(m_workspacePath, m_workspaceSettings, true);
+		saveSettings(m_workspacePath, m_workspaceSettings, true);
 	}
 	else
 		m_mergedSettings = m_globalSettings;
@@ -2393,7 +2403,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 						m_mergedSettings = m_globalSettings;
 
 					// Save modified workspace.
-					if (saveProperties(m_workspacePath, m_workspaceSettings, true))
+					if (saveSettings(m_workspacePath, m_workspaceSettings, true))
 					{
 						// Re-open workspace.
 						Path workspacePath = m_workspacePath;
@@ -2408,7 +2418,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.Settings")
 	{
 		SettingsDialog settingsDialog;
-		if (settingsDialog.create(this, m_globalSettings, m_shortcutCommands))
+		if (settingsDialog.create(this, m_originalSettings, m_globalSettings, m_shortcutCommands))
 		{
 			if (settingsDialog.showModal() == ui::DrOk)
 			{
@@ -2436,7 +2446,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 #else
 				Path settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
 #endif
-				if (saveProperties(settingsPath, m_globalSettings, false))
+				if (saveSettings(settingsPath, m_globalSettings, false))
 				{
 					updateShortcutTable();
 					for (int i = 0; i < m_tab->getPageCount(); ++i)
@@ -2741,7 +2751,7 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 #else
 	Path settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
 #endif
-	saveProperties(settingsPath, m_globalSettings, false);
+	saveSettings(settingsPath, m_globalSettings, false);
 	ui::Application::getInstance()->exit(0);
 }
 
@@ -2926,8 +2936,7 @@ void EditorForm::threadAssetMonitor()
 
 void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progress)
 {
-	m_workspaceSettings = loadProperties(workspacePath);
-	if (!m_workspaceSettings)
+	if (!loadSettings(workspacePath, m_workspaceSettings, 0))
 		return;
 
 	progress = 100;

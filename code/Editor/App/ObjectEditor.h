@@ -25,6 +25,8 @@ class ObjectEditor
 public:
 	ObjectEditor(IEditor* editor, ui::Dialog* parent);
 
+	virtual Ref< const PropertyGroup > getOriginalSettings() const T_OVERRIDE T_FINAL;
+
 	virtual Ref< const PropertyGroup > getSettings() const T_OVERRIDE T_FINAL;
 
 	virtual Ref< const PropertyGroup > getGlobalSettings() const T_OVERRIDE T_FINAL;

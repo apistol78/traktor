@@ -38,7 +38,7 @@ struct SettingsPagePredicate
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.SettingsDialog", SettingsDialog, ui::ConfigDialog)
 
-bool SettingsDialog::create(ui::Widget* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
+bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container;
 
@@ -69,7 +69,7 @@ bool SettingsDialog::create(ui::Widget* parent, PropertyGroup* settings, const s
 		if (!tabPage->create(tab, L"", new ui::FloodLayout(ui::Size(four, four))))
 			continue;
 
-		if (!settingsPage->create(tabPage, settings, shortcutCommands))
+		if (!settingsPage->create(tabPage, originalSettings, settings, shortcutCommands))
 			continue;
 
 		m_settingPages.push_back(settingsPage);

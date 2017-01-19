@@ -40,7 +40,7 @@
 #			endif
 #		elif defined(__LINUX__)
 #			define T_MATH_USE_SSE2
-#		elif defined(__ANDROID__)
+#		elif defined(__ANDROID__) && defined(__ARM_NEON)
 #			define T_MATH_USE_NEON
 #		endif
 #	else	// _DEBUG
@@ -52,7 +52,7 @@
 #			endif
 #		elif defined(__LINUX__)
 #			define T_MATH_USE_SSE2
-#		elif defined(__ANDROID__)
+#		elif defined(__ANDROID__) && defined(__ARM_NEON)
 #			define T_MATH_USE_NEON
 #		endif
 #	endif

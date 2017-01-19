@@ -40,7 +40,7 @@ c_propertyColors[] =
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ColorSettingsPage", 0, ColorSettingsPage, ISettingsPage)
 
-bool ColorSettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
+bool ColorSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 4)))
