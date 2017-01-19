@@ -45,6 +45,9 @@ public:
 	/*! \name Settings */
 	/*! \{ */
 
+	/*! \brief Get read-only settings; original settings. */
+	virtual Ref< const PropertyGroup > getOriginalSettings() const = 0;
+
 	/*! \brief Get read-only settings; contain merged workspace and global settings. */
 	virtual Ref< const PropertyGroup > getSettings() const = 0;
 

@@ -14,6 +14,11 @@ ObjectEditor::ObjectEditor(IEditor* editor, ui::Dialog* parent)
 {
 }
 
+Ref< const PropertyGroup > ObjectEditor::getOriginalSettings() const
+{
+	return m_editor->getOriginalSettings();
+}
+
 Ref< const PropertyGroup > ObjectEditor::getSettings() const
 {
 	return m_editor->getSettings();

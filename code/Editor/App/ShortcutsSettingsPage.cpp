@@ -5,6 +5,7 @@
 #include "Editor/App/ShortcutsSettingsPage.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
+#include "Ui/Button.h"
 #include "Ui/Command.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Container.h"
@@ -21,7 +22,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ShortcutsSettingsPage", 0, ShortcutsSettingsPage, ISettingsPage)
 
-bool ShortcutsSettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
+bool ShortcutsSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, ui::scaleBySystemDPI(4))))
@@ -33,9 +34,17 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, PropertyGroup* setting
 	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), ui::scaleBySystemDPI(200)));
 	m_gridShortcuts->addEventHandler< ui::SelectionChangeEvent >(this, &ShortcutsSettingsPage::eventShortcutSelect);
 
+	Ref< ui::Container > containerEdit = new ui::Container();
+	if (!containerEdit->create(container, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, ui::scaleBySystemDPI(4))))
+		return false;
+
 	m_editShortcut = new ui::custom::ShortcutEdit();
-	m_editShortcut->create(container, 0, ui::VkNull);
+	m_editShortcut->create(containerEdit, 0, ui::VkNull);
 	m_editShortcut->addEventHandler< ui::ContentChangeEvent >(this, &ShortcutsSettingsPage::eventShortcutModified);
+
+	m_buttonResetAll = new ui::Button();
+	m_buttonResetAll->create(containerEdit, i18n::Text(L"EDITOR_SETTINGS_RESET_ALL_SHORTCUTS"));
+	m_buttonResetAll->addEventHandler< ui::ButtonClickEvent >(this, &ShortcutsSettingsPage::eventResetAll);
 
 	Ref< const PropertyGroup > shortcutGroup = checked_type_cast< const PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
 	if (shortcutGroup)
@@ -60,6 +69,8 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, PropertyGroup* setting
 	}
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_SHORTCUTS"));
+
+	m_originalSettings = originalSettings;
 	return true;
 }
 
@@ -168,6 +179,24 @@ void ShortcutsSettingsPage::eventShortcutModified(ui::ContentChangeEvent* event)
 			m_editShortcut->getKeyState(),
 			m_editShortcut->getVirtualKey()
 		))));
+		updateShortcutGrid();
+	}
+}
+
+void ShortcutsSettingsPage::eventResetAll(ui::ButtonClickEvent* event)
+{
+	Ref< const PropertyGroup > shortcutGroup = checked_type_cast< const PropertyGroup* >(m_originalSettings->getProperty(L"Editor.Shortcuts"));
+	if (shortcutGroup)
+	{
+		const RefArray< ui::custom::GridRow >& rows = m_gridShortcuts->getRows();
+		for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
+		{
+			const RefArray< ui::custom::GridItem >& items = (*i)->get();
+			T_ASSERT (items.size() == 2);
+
+			std::wstring value = m_originalSettings->getProperty< PropertyString >(L"Editor.Shortcuts/" + items[0]->getText());
+			(*i)->setData(L"PROPERTYKEY", new PropertyString(value));
+		}
 		updateShortcutGrid();
 	}
 }

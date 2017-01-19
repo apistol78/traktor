@@ -95,6 +95,8 @@ public:
 	/*! \name IEditor implementation */
 	//@{
 
+	virtual Ref< const PropertyGroup > getOriginalSettings() const T_OVERRIDE T_FINAL;
+
 	virtual Ref< const PropertyGroup > getSettings() const T_OVERRIDE T_FINAL;
 
 	virtual Ref< const PropertyGroup > getGlobalSettings() const T_OVERRIDE T_FINAL;
@@ -203,9 +205,10 @@ private:
 	Semaphore m_lockBuild;
 	Path m_startupDirectory;
 	Path m_workspacePath;
-	Ref< PropertyGroup > m_globalSettings;
-	Ref< PropertyGroup > m_workspaceSettings;
-	Ref< PropertyGroup > m_mergedSettings;
+	Ref< PropertyGroup > m_originalSettings;	//!< Traktor.Editor.config + Traktor.Editor.<platform>.config
+	Ref< PropertyGroup > m_globalSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config
+	Ref< PropertyGroup > m_workspaceSettings;	//!< <Application>.workspace
+	Ref< PropertyGroup > m_mergedSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config + <Application>.workspace
 
 	bool createWorkspace();
 

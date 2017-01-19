@@ -36,7 +36,7 @@ class T_DLLCLASS ISettingsPage : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands) = 0;
+	virtual bool create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands) = 0;
 
 	virtual void destroy() = 0;
 

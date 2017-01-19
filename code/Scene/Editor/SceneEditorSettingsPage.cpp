@@ -28,7 +28,7 @@ const float c_defaultMouseWheelRate = 10.0f;
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneEditorSettingsPage", 0, SceneEditorSettingsPage, editor::ISettingsPage)
 
-bool SceneEditorSettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
+bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	m_container = new ui::Container();
 	if (!m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
