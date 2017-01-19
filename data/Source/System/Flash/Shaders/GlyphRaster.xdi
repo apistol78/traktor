@@ -11,23 +11,23 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>-742</first>
-				<second>438</second>
+				<first>-757</first>
+				<second>399</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-928</first>
-				<second>438</second>
+				<first>-943</first>
+				<second>399</second>
 			</position>
 			<swizzle>0x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-913</first>
-				<second>415</second>
+				<first>-928</first>
+				<second>376</second>
 			</position>
 			<swizzle>x0</swizzle>
 		</item>
@@ -45,7 +45,7 @@
 				<first>764</first>
 				<second>481</second>
 			</position>
-			<value>25</value>
+			<value>9</value>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -70,10 +70,10 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-649</first>
+				<first>-643</first>
 				<second>565</second>
 			</position>
-			<value>0.2</value>
+			<value>0.3</value>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
@@ -92,10 +92,10 @@
 				<first>346</first>
 				<second>185</second>
 			</position>
-			<fromX>-2</fromX>
-			<toX>2</toX>
-			<fromY>-2</fromY>
-			<toY>2</toY>
+			<fromX>-1</fromX>
+			<toX>1</toX>
+			<fromY>-1</fromY>
+			<toY>1</toY>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -698,7 +698,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[29]"/>
+				<node ref="/object/nodes/item"/>
 				<name>Output</name>
 			</source>
 			<destination>
