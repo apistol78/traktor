@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 13, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 14, TextureOutput, ISerializable)
 
 TextureOutput::TextureOutput()
 :	m_textureFormat(TfInvalid)
@@ -36,6 +36,7 @@ TextureOutput::TextureOutput()
 ,	m_alphaCoverageReference(0.5f)
 ,	m_sharpenRadius(5)
 ,	m_sharpenStrength(1.0f)
+,	m_noiseStrength(0.0f)
 ,	m_systemTexture(false)
 {
 }
@@ -144,6 +145,9 @@ void TextureOutput::serialize(ISerializer& s)
 		s >> Member< int32_t >(L"sharpenRadius", m_sharpenRadius);
 		s >> Member< float >(L"sharpenStrength", m_sharpenStrength, AttributeRange(0.0f));
 	}
+
+	if (s.getVersion() >= 14)
+		s >> Member< float >(L"noiseStrength", m_noiseStrength, AttributeRange(0.0f, 1.0f));
 
 	if (s.getVersion() >= 10)
 		s >> Member< bool >(L"systemTexture", m_systemTexture);
