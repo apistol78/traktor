@@ -309,7 +309,7 @@ void ModelToolDialog::bakeOcclusion(Model* model)
 	);
 	Ref< IModelOperation > operation = new BakePixelOcclusion(
 		imageOcclusion,
-		1024,
+		64,
 		0.75f,
 		0.05f
 	);
