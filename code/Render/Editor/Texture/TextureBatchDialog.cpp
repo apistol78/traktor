@@ -8,9 +8,9 @@
 #include "Ui/Application.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/ListBox.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/ListBox/ListBox.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -56,8 +56,8 @@ bool TextureBatchDialog::create(ui::Widget* parent)
 	textureListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_REMOVE"), 1, ui::Command(L"TextureBatch.Remove")));
 	textureListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &TextureBatchDialog::eventTextureListToolClick);
 
-	m_textureList = new ui::ListBox();
-	m_textureList->create(textureListContainer, L"", ui::ListBox::WsExtended);
+	m_textureList = new ui::custom::ListBox();
+	m_textureList->create(textureListContainer, ui::custom::ListBox::WsExtended);
 	m_textureList->addEventHandler< ui::SelectionChangeEvent >(this, &TextureBatchDialog::eventTextureListSelect);
 
 	m_texturePropertyList = new ui::custom::AutoPropertyList();

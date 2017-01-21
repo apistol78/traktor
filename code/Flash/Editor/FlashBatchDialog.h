@@ -15,13 +15,11 @@ class IEditor;
 
 	namespace ui
 	{
-
-class ListBox;
-
 		namespace custom
 		{
 
 class AutoPropertyList;
+class ListBox;
 class ToolBarButtonClickEvent;
 
 		}
@@ -47,7 +45,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< ui::ListBox > m_movieList;
+	Ref< ui::custom::ListBox > m_movieList;
 	Ref< ui::custom::AutoPropertyList > m_moviePropertyList;
 
 	void addTexture();

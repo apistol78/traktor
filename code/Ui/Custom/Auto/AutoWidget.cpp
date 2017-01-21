@@ -331,6 +331,7 @@ void AutoWidget::eventPaint(PaintEvent* event)
 
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 
+	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(innerRect);
 

@@ -229,7 +229,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 	splitter->create(container, true, 10, true);
 
 	m_listValueSources = new ui::custom::EditList();
-	m_listValueSources->create(splitter, ui::ListBox::WsSingle | ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove);
+	m_listValueSources->create(splitter, ui::custom::ListBox::WsSingle | ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove);
 	m_listValueSources->addEventHandler< ui::SelectionChangeEvent >(this, &InputMappingEditor::eventListValueSourceSelect);
 	m_listValueSources->addEventHandler< ui::custom::EditListEditEvent >(this, &InputMappingEditor::eventListValueEdit);
 

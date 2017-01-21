@@ -201,7 +201,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 		if (!m_editCells[i])
 		{
 			Ref< ui::Edit > edit = new ui::Edit();
-			edit->create(getWidget(), L"", ui::WsNone | ui::WsWantAllInput);
+			edit->create(getWidget< ui::custom::AutoWidget >(), L"", ui::WsNone | ui::WsWantAllInput);
 			edit->addEventHandler< ui::KeyDownEvent >(this, &TargetInstanceListItem::eventCommandEditKeyDown);
 			m_editCells[i] = new ui::custom::ChildWidgetCell(edit);
 		}
@@ -251,7 +251,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 
 	ui::Rect controlRect = rect; controlRect.bottom = rect.top + ui::scaleBySystemDPI(28);
 
-	canvas.setBackground(ss->getColor(getWidget(), L"item-background-color"));
+	canvas.setBackground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"item-background-color"));
 	canvas.fillRect(controlRect);
 
 	ui::Rect performanceRect = rect;
@@ -259,12 +259,12 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	performanceRect.bottom = performanceRect.top + ui::scaleBySystemDPI(c_performanceHeight);
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
-		canvas.setBackground(ss->getColor(getWidget(), L"item-connection-background-color"));
+		canvas.setBackground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"item-connection-background-color"));
 		canvas.fillRect(performanceRect);
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}
 
-	canvas.setForeground(ss->getColor(getWidget(), L"item-seperator-color"));
+	canvas.setForeground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"item-seperator-color"));
 	canvas.drawLine(rect.left, rect.bottom - 1, rect.right, rect.bottom - 1);
 
 	if (m_instance->getState() != m_lastInstanceState)
@@ -306,11 +306,11 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		textRect.left += logoSize + 10;
 		textRect.right -= ui::scaleBySystemDPI(24) * 3 - 8;
 
-		canvas.setForeground(ss->getColor(getWidget(), L"color"));
+		canvas.setForeground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"color"));
 		canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
 	}
 
-	ui::Font widgetFont = getWidget()->getFont();
+	ui::Font widgetFont = getWidget< ui::custom::AutoWidget >()->getFont();
 	ui::Font performanceFont = widgetFont; performanceFont.setSize(10);
 	ui::Font performanceBoldFont = performanceFont; performanceBoldFont.setBold(true);
 	ui::Font markerFont = widgetFont; markerFont.setSize(7);
@@ -458,37 +458,37 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 void TargetInstanceListItem::eventPlayButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetPlayEvent playEvent(this, m_instance);
-	getWidget()->raiseEvent(&playEvent);
+	raiseEvent(&playEvent);
 }
 
 void TargetInstanceListItem::eventBuildButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetBuildEvent buildEvent(this, m_instance);
-	getWidget()->raiseEvent(&buildEvent);
+	raiseEvent(&buildEvent);
 }
 
 void TargetInstanceListItem::eventMigrateButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetMigrateEvent migrateEvent(this, m_instance);
-	getWidget()->raiseEvent(&migrateEvent);
+	raiseEvent(&migrateEvent);
 }
 
 void TargetInstanceListItem::eventBrowseButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetBrowseEvent browseEvent(this, m_instance);
-	getWidget()->raiseEvent(&browseEvent);
+	raiseEvent(&browseEvent);
 }
 
 void TargetInstanceListItem::eventStopButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetStopEvent stopEvent(this, m_instance, event->getCommand().getId());
-	getWidget()->raiseEvent(&stopEvent);
+	raiseEvent(&stopEvent);
 }
 
 void TargetInstanceListItem::eventCaptureButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetCaptureEvent captureEvent(this, m_instance, event->getCommand().getId());
-	getWidget()->raiseEvent(&captureEvent);
+	raiseEvent(&captureEvent);
 }
 
 void TargetInstanceListItem::eventCommandEditKeyDown(ui::KeyDownEvent* event)
@@ -506,7 +506,7 @@ void TargetInstanceListItem::eventCommandEditKeyDown(ui::KeyDownEvent* event)
 		if (!command.empty())
 		{
 			TargetCommandEvent commandEvent(this, m_instance, connectionIndex, command);
-			getWidget()->raiseEvent(&commandEvent);
+			raiseEvent(&commandEvent);
 			edit->setText(L"");
 		}
 	}

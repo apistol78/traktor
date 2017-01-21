@@ -25,7 +25,6 @@
 #include "Ui/FileDialog.h"
 #include "Ui/FlowLayout.h"
 #include "Ui/Image.h"
-#include "Ui/ListBox.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/EditList.h"
@@ -34,6 +33,7 @@
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/Panel.h"
 #include "Ui/Custom/Splitter.h"
+#include "Ui/Custom/ListBox/ListBox.h"
 
 // Resources
 #include "Resources/NoIcon.h"
@@ -65,7 +65,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	containerTargetConfigurations->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 4));
 
 	m_listBoxTargetConfigurations = new ui::custom::EditList();
-	m_listBoxTargetConfigurations->create(containerTargetConfigurations, ui::ListBox::WsSingle);
+	m_listBoxTargetConfigurations->create(containerTargetConfigurations, ui::custom::ListBox::WsSingle);
 	m_listBoxTargetConfigurations->addEventHandler< ui::custom::EditListEditEvent >(this, &TargetEditor::eventListBoxTargetConfigurationsEdit);
 	m_listBoxTargetConfigurations->addEventHandler< ui::SelectionChangeEvent >(this, &TargetEditor::eventListBoxTargetConfigurationsSelect);
 
@@ -171,8 +171,8 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	Ref< ui::Static > staticAvailFeatures = new ui::Static();
 	staticAvailFeatures->create(containerAvailFeatures, L"Available");
 
-	m_listBoxAvailFeatures = new ui::ListBox();
-	m_listBoxAvailFeatures->create(containerAvailFeatures, L"", ui::ListBox::WsMultiple);
+	m_listBoxAvailFeatures = new ui::custom::ListBox();
+	m_listBoxAvailFeatures->create(containerAvailFeatures, ui::custom::ListBox::WsMultiple | ui::WsDoubleBuffer);
 
 	Ref< ui::Container > containerManageFeatures = new ui::Container();
 	containerManageFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"*", L"*,*", 0, 0));
@@ -191,8 +191,8 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	Ref< ui::Static > staticUsedFeatures = new ui::Static();
 	staticUsedFeatures->create(containerUsedFeatures, L"Using");
 
-	m_listBoxUsedFeatures = new ui::ListBox();
-	m_listBoxUsedFeatures->create(containerUsedFeatures, L"", ui::ListBox::WsMultiple);
+	m_listBoxUsedFeatures = new ui::custom::ListBox();
+	m_listBoxUsedFeatures->create(containerUsedFeatures, ui::custom::ListBox::WsMultiple | ui::WsDoubleBuffer);
 
 	// Collect all available platforms.
 	db::recursiveFindChildInstances(

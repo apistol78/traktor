@@ -11,12 +11,12 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/ListBox.h"
 #include "Ui/Custom/Splitter.h"
+#include "Ui/Custom/ListBox/ListBox.h"
+#include "Ui/Custom/PropertyList/AutoPropertyList.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
 
 namespace traktor
 {
@@ -57,8 +57,8 @@ bool FlashBatchDialog::create(ui::Widget* parent)
 	movieListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_BATCH_REMOVE"), 1, ui::Command(L"FlashBatch.Remove")));
 	movieListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashBatchDialog::eventTextureListToolClick);
 
-	m_movieList = new ui::ListBox();
-	m_movieList->create(textureListContainer, L"", ui::ListBox::WsExtended);
+	m_movieList = new ui::custom::ListBox();
+	m_movieList->create(textureListContainer, ui::custom::ListBox::WsExtended);
 	m_movieList->addEventHandler< ui::SelectionChangeEvent >(this, &FlashBatchDialog::eventTextureListSelect);
 
 	m_moviePropertyList = new ui::custom::AutoPropertyList();

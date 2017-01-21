@@ -6,9 +6,9 @@
 #include "Ui/Application.h"
 #include "Ui/Button.h"
 #include "Ui/Container.h"
-#include "Ui/ListBox.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/InputDialog.h"
+#include "Ui/Custom/ListBox/ListBox.h"
 
 namespace traktor
 {
@@ -23,8 +23,8 @@ bool ModulesSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, ui::scaleBySystemDPI(4))))
 		return false;
 
-	m_listModules = new ui::ListBox();
-	m_listModules->create(container, i18n::Text(L"EDITOR_SETTINGS_DEPENDENT_MODULES"), ui::ListBox::WsSingle | ui::ListBox::WsSort);
+	m_listModules = new ui::custom::ListBox();
+	m_listModules->create(container, ui::custom::ListBox::WsSingle | ui::custom::ListBox::WsSort);
 
 	Ref< ui::Container > containerModulesTools = new ui::Container();
 	containerModulesTools->create(container, ui::WsNone, new ui::TableLayout(L"*,*,*", L"100%", 0, ui::scaleBySystemDPI(4)));

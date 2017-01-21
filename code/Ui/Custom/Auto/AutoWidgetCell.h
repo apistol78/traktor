@@ -41,6 +41,8 @@ class T_DLLCLASS AutoWidgetCell
 public:
 	AutoWidgetCell();
 
+	virtual ~AutoWidgetCell();
+
 	virtual void placeCells(AutoWidget* widget, const Rect& rect);
 
 	virtual AutoWidgetCell* hitTest(const Point& position);
@@ -64,7 +66,15 @@ public:
 	virtual void paint(Canvas& canvas, const Rect& rect);
 
 protected:
-	AutoWidget* getWidget();
+	template < typename WidgetType >
+	WidgetType* getWidget()
+	{
+		return dynamic_type_cast< WidgetType* >(m_widget);
+	}
+
+	void requestUpdate();
+
+	void raiseEvent(Event* event);
 
 private:
 	AutoWidget* m_widget;

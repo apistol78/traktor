@@ -15,9 +15,12 @@ class IEditor;
 
 	namespace ui
 	{
+		namespace custom
+		{
 
 class ListBox;
 
+		}
 	}
 
 	namespace render
@@ -42,7 +45,7 @@ private:
 	editor::IEditor* m_editor;
 	Guid m_shaderId;
 	Ref< ShaderDependencyTracker > m_dependencyTracker;
-	Ref< ui::ListBox > m_refereeList;
+	Ref< ui::custom::ListBox > m_refereeList;
 
 	virtual void dependencyAdded(const Guid& fromShader, const Guid& toShader) T_OVERRIDE T_FINAL;
 

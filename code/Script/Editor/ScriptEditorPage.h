@@ -33,7 +33,6 @@ class IEditorPageSite;
 	{
 
 class IBitmap;
-class ListBox;
 class PopupMenu;
 class Tab;
 

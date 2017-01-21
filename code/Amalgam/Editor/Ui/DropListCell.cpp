@@ -36,7 +36,7 @@ void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& p
 			}
 		}
 
-		Ref< ui::MenuItem > selectedItem = menu.show(getWidget(), m_menuPosition);
+		Ref< ui::MenuItem > selectedItem = menu.show(getWidget< ui::custom::AutoWidget >(), m_menuPosition);
 		if (selectedItem)
 			m_instance->setDeployHostId(selectedItem->getCommand().getId());
 

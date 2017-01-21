@@ -56,8 +56,7 @@ std::wstring GridItem::getText() const
 
 bool GridItem::edit()
 {
-	GridView* gridView = mandatory_non_null_type_cast< GridView* >(getWidget());
-	gridView->beginEdit(this);
+	getWidget< GridView >()->beginEdit(this);
 	return true;
 }
 
@@ -90,8 +89,8 @@ int32_t GridItem::getHeight()
 		int32_t lines = std::max< int32_t >(1, std::count(m_text.begin(), m_text.end(), L'\n'));
 		height = std::max(height, lines * m_font->getPixelSize() + scaleBySystemDPI(10));
 	}
-	else if (getWidget())
-		height = std::max(height, getWidget()->getTextExtent(m_text).cy);
+	else if (getWidget< GridView >())
+		height = std::max(height, getWidget< GridView >()->getTextExtent(m_text).cy);
 
 	if (m_image)
 		height = std::max(height, m_image->getSize().cy + scaleBySystemDPI(4));
@@ -144,15 +143,15 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 		if (m_font)
 			canvas.setFont(*m_font);
 
-		if (getWidget()->isEnable() && getRow())
-			canvas.setForeground(ss->getColor(getWidget(), (getRow()->getState() & GridRow::RsSelected) ? L"item-color-selected" : L"color"));
+		if (getWidget< GridView >()->isEnable() && getRow())
+			canvas.setForeground(ss->getColor(getWidget< GridView >(), (getRow()->getState() & GridRow::RsSelected) ? L"item-color-selected" : L"color"));
 		else
-			canvas.setForeground(ss->getColor(getWidget(), L"color-disabled"));
+			canvas.setForeground(ss->getColor(getWidget< GridView >(), L"color-disabled"));
 
 		canvas.drawText(rcText, m_text, AnLeft, AnCenter);
 
 		if (m_font)
-			canvas.setFont(getWidget()->getFont());
+			canvas.setFont(getWidget< GridView >()->getFont());
 	}
 }
 
