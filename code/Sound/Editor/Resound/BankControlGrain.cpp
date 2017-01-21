@@ -51,13 +51,13 @@ void BankControlGrain::setActive(bool active)
 
 void BankControlGrain::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position)
 {
-	ui::SelectionChangeEvent selectionChange(getWidget(), this);
-	getWidget()->raiseEvent(&selectionChange);
+	ui::SelectionChangeEvent selectionChange(getWidget< ui::custom::AutoWidget >(), this);
+	getWidget< ui::custom::AutoWidget >()->raiseEvent(&selectionChange);
 }
 
 void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	bool focus = bool(getWidget()->getFocusCell() == this);
+	bool focus = bool(getWidget< ui::custom::AutoWidget >()->getFocusCell() == this);
 
 	ui::Size sz = m_bitmapGrain->getSize();
 	

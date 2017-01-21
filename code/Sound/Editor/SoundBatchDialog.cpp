@@ -10,12 +10,12 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/ListBox.h"
 #include "Ui/Custom/Splitter.h"
+#include "Ui/Custom/ListBox/ListBox.h"
+#include "Ui/Custom/PropertyList/AutoPropertyList.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
 
 namespace traktor
 {
@@ -56,8 +56,8 @@ bool SoundBatchDialog::create(ui::Widget* parent)
 	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_REMOVE"), 1, ui::Command(L"SoundBatch.Remove")));
 	soundListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SoundBatchDialog::eventSoundListToolClick);
 
-	m_soundList = new ui::ListBox();
-	m_soundList->create(soundListContainer, L"", ui::ListBox::WsExtended);
+	m_soundList = new ui::custom::ListBox();
+	m_soundList->create(soundListContainer, ui::custom::ListBox::WsExtended);
 	m_soundList->addEventHandler< ui::SelectionChangeEvent >(this, &SoundBatchDialog::eventSoundListSelect);
 
 	m_soundPropertyList = new ui::custom::AutoPropertyList();

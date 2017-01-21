@@ -3,8 +3,8 @@
 #include "Render/Editor/Shader/NodeCategories.h"
 #include "Render/Editor/Shader/QuickMenuTool.h"
 #include "Ui/Edit.h"
-#include "Ui/ListBox.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/ListBox/ListBox.h"
 
 namespace traktor
 {
@@ -38,8 +38,8 @@ bool QuickMenuTool::create(ui::Widget* parent)
 	m_editFilter->addEventHandler< ui::ContentChangeEvent >(this, &QuickMenuTool::eventFilterChange);
 	m_editFilter->addEventHandler< ui::KeyDownEvent >(this, &QuickMenuTool::eventFilterKey);
 
-	m_listBoxSuggestions = new ui::ListBox();
-	m_listBoxSuggestions->create(this, L"");
+	m_listBoxSuggestions = new ui::custom::ListBox();
+	m_listBoxSuggestions->create(this);
 	m_listBoxSuggestions->addEventHandler< ui::SelectionChangeEvent >(this, &QuickMenuTool::eventSuggestionSelect);
 
 	update();

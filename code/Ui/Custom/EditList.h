@@ -2,7 +2,7 @@
 #define traktor_ui_custom_EditList_H
 
 #include "Ui/Edit.h"
-#include "Ui/ListBox.h"
+#include "Ui/Custom/ListBox/ListBox.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 		namespace custom
 		{
 
-class T_DLLCLASS EditList : public ListBox
+class T_DLLCLASS EditList : public traktor::ui::custom::ListBox
 {
 	T_RTTI_CLASS;
 
@@ -32,7 +32,7 @@ public:
 
 	EditList();
 
-	bool create(Widget* parent, int style = ListBox::WsDefault);
+	bool create(Widget* parent, int32_t style = traktor::ui::custom::ListBox::WsDefault);
 
 private:
 	Ref< Edit > m_editItem;

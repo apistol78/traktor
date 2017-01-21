@@ -1,3 +1,4 @@
+#include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/Auto/AutoWidgetCell.h"
 
 namespace traktor
@@ -12,6 +13,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.AutoWidgetCell", AutoWidgetCell, ui::
 AutoWidgetCell::AutoWidgetCell()
 :	m_widget(0)
 {
+}
+
+AutoWidgetCell::~AutoWidgetCell()
+{
+	m_widget = 0;
 }
 
 void AutoWidgetCell::placeCells(AutoWidget* widget, const Rect& rect)
@@ -61,9 +67,16 @@ void AutoWidgetCell::paint(Canvas& canvas, const Rect& rect)
 {
 }
 
-AutoWidget* AutoWidgetCell::getWidget()
+void AutoWidgetCell::requestUpdate()
 {
-	return m_widget;
+	if (m_widget)
+		m_widget->requestUpdate();
+}
+
+void AutoWidgetCell::raiseEvent(Event* event)
+{
+	if (m_widget)
+		m_widget->raiseEvent(event);
 }
 
 		}

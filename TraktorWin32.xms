@@ -7812,6 +7812,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>ListBox</name>
+								<items>
+									<item type="File">
+										<fileName>ListBox/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">

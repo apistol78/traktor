@@ -31,13 +31,13 @@ class Container;
 class DropDown;
 class Edit;
 class Image;
-class ListBox;
 
 		namespace custom
 		{
 
 class EditList;
 class EditListEditEvent;
+class ListBox;
 class MiniButton;
 
 		}
@@ -100,8 +100,8 @@ private:
 	Ref< ui::Edit > m_editStartupInstance;
 	Ref< ui::Edit > m_editDefaultInputInstance;
 	Ref< ui::Edit > m_editOnlineConfigInstance;
-	Ref< ui::ListBox > m_listBoxAvailFeatures;
-	Ref< ui::ListBox > m_listBoxUsedFeatures;
+	Ref< ui::custom::ListBox > m_listBoxAvailFeatures;
+	Ref< ui::custom::ListBox > m_listBoxUsedFeatures;
 
 	void updateTargetConfigurations();
 

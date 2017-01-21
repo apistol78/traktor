@@ -9,8 +9,13 @@ namespace traktor
 	{
 
 class Edit;
+
+		namespace custom
+		{
+
 class ListBox;
 
+		}
 	}
 
 	namespace render
@@ -27,7 +32,7 @@ public:
 
 private:
 	Ref< ui::Edit > m_editFilter;
-	Ref< ui::ListBox > m_listBoxSuggestions;
+	Ref< ui::custom::ListBox > m_listBoxSuggestions;
 
 	void updateSuggestions(const std::wstring& filter);
 

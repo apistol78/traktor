@@ -96,7 +96,7 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 	m_toolBarActs->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &TheaterControllerEditor::eventToolBarClick);
 
 	m_listActs = new ui::custom::EditList();
-	m_listActs->create(containerActs, ui::ListBox::WsSingle);
+	m_listActs->create(containerActs, ui::custom::ListBox::WsSingle);
 	m_listActs->addEventHandler< ui::SelectionChangeEvent >(this, &TheaterControllerEditor::eventActSelected);
 	m_listActs->addEventHandler< ui::custom::EditListEditEvent >(this, &TheaterControllerEditor::eventActEdit);
 

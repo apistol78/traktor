@@ -3,8 +3,8 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Shader/ShaderDependencyPane.h"
-#include "Ui/ListBox.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/ListBox/ListBox.h"
 
 namespace traktor
 {
@@ -35,8 +35,8 @@ bool ShaderDependencyPane::create(ui::Widget* parent)
 
 	setText(i18n::Text(L"SHADERGRAPH_REFEREES"));
 
-	m_refereeList = new ui::ListBox();
-	m_refereeList->create(this, L"", ui::ListBox::WsSingle);
+	m_refereeList = new ui::custom::ListBox();
+	m_refereeList->create(this, ui::custom::ListBox::WsSingle);
 
 	if (m_dependencyTracker)
 	{

@@ -65,7 +65,7 @@ uint32_t GridRow::add(GridItem* item)
 {
 	T_ASSERT (item->m_row == 0);
 	item->m_row = this;
-	item->placeCells(getWidget(), Rect());
+	item->placeCells(getWidget< GridView >(), Rect());
 	m_items.push_back(item);
 	return uint32_t(m_items.size() - 1);
 }
@@ -203,9 +203,9 @@ void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 			else
 				m_state |= RsExpanded;
 
-			GridRowStateChangeEvent expandEvent(getWidget(), this);
-			getWidget()->raiseEvent(&expandEvent);
-			getWidget()->requestUpdate();
+			GridRowStateChangeEvent expandEvent(getWidget< GridView >(), this);
+			getWidget< GridView >()->raiseEvent(&expandEvent);
+			getWidget< GridView >()->requestUpdate();
 			return;
 		}
 	}
@@ -217,34 +217,31 @@ void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 		if (m_editMode == 0)
 		{
 			// Wait for next tap; cancel wait after 2 seconds.
-			getWidget()->requestInterval(this, 2000);
+			getWidget< GridView >()->requestInterval(this, 2000);
 			m_editMode = 1;
 		}
 		else if (m_editMode == 1)
 		{
 			// Double tap detected; begin edit after mouse is released.
-			getWidget()->requestInterval(this, 1000);
+			getWidget< GridView >()->requestInterval(this, 1000);
 			m_editMode = 2;
 		}
 	}
 
-	getWidget()->requestUpdate();
+	getWidget< GridView >()->requestUpdate();
 }
 
 void GridRow::mouseUp(MouseButtonUpEvent* event, const Point& position)
 {
 	if (m_editMode == 2)
 	{
-		GridView* view = mandatory_non_null_type_cast< GridView* >(getWidget());
-
-		int32_t index = view->getColumnIndex(position.x);
+		int32_t index = getWidget< GridView >()->getColumnIndex(position.x);
 		if (index >= 0)
 		{
-			const GridColumn* column = view->getColumn(index);
+			const GridColumn* column = getWidget< GridView >()->getColumn(index);
 			if (column && column->isEditable())
-				view->beginEdit(m_items[index]);
+				getWidget< GridView >()->beginEdit(m_items[index]);
 		}
-
 		m_editMode = 0;
 	}
 }
@@ -269,9 +266,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 
-	GridView* gridView = checked_type_cast< GridView*, false >(getWidget());
-
-	const RefArray< GridColumn >& columns = gridView->getColumns();
+	const RefArray< GridColumn >& columns = getWidget< GridView >()->getColumns();
 	Rect rowRect(0, rect.top, rect.getWidth(), rect.bottom);
 
 	// Paint custom background.
@@ -284,7 +279,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	// Paint selection background.
 	if (m_state & GridRow::RsSelected)
 	{
-		canvas.setBackground(ss->getColor(gridView, L"item-background-color-selected"));
+		canvas.setBackground(ss->getColor(getWidget< GridView >(), L"item-background-color-selected"));
 		canvas.fillRect(rowRect);
 	}
 
@@ -301,7 +296,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 		);
 	}
 
-	canvas.setForeground(ss->getColor(gridView, L"line-color"));
+	canvas.setForeground(ss->getColor(getWidget< GridView >(), L"line-color"));
 
 	if (columns.size() >= 2)
 	{
