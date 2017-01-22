@@ -1,3 +1,4 @@
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Custom/ListBox/ListBox.h"
 #include "Ui/Custom/ListBox/ListBoxItem.h"
@@ -8,11 +9,24 @@ namespace traktor
 	{
 		namespace custom
 		{
+			namespace
+			{
+			
+struct ListBoxItemPred
+{
+	bool operator () (const ListBoxItem* lh, const ListBoxItem* rh) const
+	{
+		return compareIgnoreCase(lh->getText(), rh->getText()) < 0;
+	}
+};
+
+			}
 		
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ListBox", ListBox, AutoWidget)
 
 ListBox::ListBox()
 :	m_style(0)
+,	m_lastHitIndex(-1)
 {
 }
 
@@ -24,6 +38,7 @@ bool ListBox::create(Widget* parent, int32_t style)
 	addEventHandler< MouseButtonDownEvent >(this, &ListBox::eventButtonDown);
 
 	m_style = style;
+	m_lastHitIndex = -1;
 	return true;
 }
 
@@ -38,6 +53,7 @@ int32_t ListBox::add(const std::wstring& item, Object* data)
 	lbi->setText(item);
 	lbi->setData(L"DATA", data);
 	m_items.push_back(lbi);
+	m_lastHitIndex = -1;
 	requestUpdate();
 	return int32_t(m_items.size() - 1);
 }
@@ -47,6 +63,7 @@ bool ListBox::remove(int32_t index)
 	if (index >= 0 && index < m_items.size())
 	{
 		m_items.erase(m_items.begin() + index);
+		m_lastHitIndex = -1;
 		requestUpdate();
 		return true;
 	}
@@ -57,6 +74,7 @@ bool ListBox::remove(int32_t index)
 void ListBox::removeAll()
 {
 	m_items.clear();
+	m_lastHitIndex = -1;
 	requestUpdate();
 }
 
@@ -167,19 +185,49 @@ void ListBox::eventButtonDown(MouseButtonDownEvent* event)
 	if (event->getButton() != MbtLeft)
 		return;
 
+	Ref< ListBoxItem > hitItem = dynamic_type_cast< ListBoxItem* >(hitTest(event->getPosition()));
+
+	int32_t hitIndex = -1;
+	for (int32_t i = 0; i < int32_t(m_items.size()); ++i)
+	{
+		if (hitItem == m_items[i])
+		{
+			hitIndex = i;
+			break;
+		}
+	}
+	if (hitIndex < 0)
+		return;
+
 	bool modified = false;
 
-	if ((m_style & (WsMultiple | WsExtended)) == 0)
+	if ((m_style & (WsMultiple | WsExtended)) == WsMultiple)
 	{
-		Ref< ListBoxItem > hitItem = dynamic_type_cast< ListBoxItem* >(hitTest(event->getPosition()));
-		for (RefArray< ListBoxItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
-			modified |= (*i)->setSelected(hitItem == *i);
+		if (hitItem)
+			modified |= hitItem->setSelected(!hitItem->isSelected());
+	}
+	else if ((m_style & WsExtended) == WsExtended)
+	{
+		if ((event->getKeyState() & KsControl) == KsControl)
+			modified |= hitItem->setSelected(!hitItem->isSelected());
+		else if ((event->getKeyState() & KsShift) == KsShift)
+		{
+			if (m_lastHitIndex >= 0)
+			{
+				for (int32_t i = std::min(m_lastHitIndex, hitIndex); i <= std::max(m_lastHitIndex, hitIndex); ++i)
+					modified |= m_items[i]->setSelected(true);
+			}
+		}
+		else
+		{
+			for (RefArray< ListBoxItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
+				modified |= (*i)->setSelected(hitItem == *i);
+		}
 	}
 	else
 	{
-		Ref< ListBoxItem > hitItem = dynamic_type_cast< ListBoxItem* >(hitTest(event->getPosition()));
-		if (hitItem)
-			modified |= hitItem->setSelected(!hitItem->isSelected());
+		for (RefArray< ListBoxItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
+			modified |= (*i)->setSelected(hitItem == *i);
 	}
 
 	if (modified)
@@ -187,6 +235,8 @@ void ListBox::eventButtonDown(MouseButtonDownEvent* event)
 		SelectionChangeEvent selectionChangeEvent(this);
 		this->raiseEvent(&selectionChangeEvent);
 	}
+
+	m_lastHitIndex = hitIndex;
 }
 
 void ListBox::layoutCells(const Rect& rc)
@@ -194,10 +244,23 @@ void ListBox::layoutCells(const Rect& rc)
 	int32_t height = getItemHeight();
 
 	Rect rcItem(rc.left, rc.top, rc.right, rc.top + height);
-	for (uint32_t i = 0; i < m_items.size(); ++i)
+	if ((m_style & WsSort) == WsSort)
 	{
-		placeCell(m_items[i], rcItem);
-		rcItem = rcItem.offset(0, height);
+		RefArray< ListBoxItem > items = m_items;
+		items.sort(ListBoxItemPred());
+		for (uint32_t i = 0; i < items.size(); ++i)
+		{
+			placeCell(items[i], rcItem);
+			rcItem = rcItem.offset(0, height);
+		}
+	}
+	else
+	{
+		for (uint32_t i = 0; i < m_items.size(); ++i)
+		{
+			placeCell(m_items[i], rcItem);
+			rcItem = rcItem.offset(0, height);
+		}
 	}
 }
 

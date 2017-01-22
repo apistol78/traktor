@@ -92,6 +92,7 @@ private:
 	friend class ListBoxItem;
 
 	int32_t m_style;
+	int32_t m_lastHitIndex;
 	RefArray< ListBoxItem > m_items;
 
 	void eventButtonDown(MouseButtonDownEvent* event);
