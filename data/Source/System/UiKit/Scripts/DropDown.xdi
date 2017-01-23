@@ -43,6 +43,10 @@ function DropDown:select(index)
 	end
 end
 
+function DropDown:getSelected()
+	return self._selected
+end
+
 function DropDown:setColor(color)
 	self._background_mc:setColorTransform(ColorTransform(
 		color,
@@ -142,7 +146,12 @@ function DropDown:_onListClick(index)
 	self._list:remove()
 	self._list = nil
 
-	self:select(index)
+	if self._selected ~= index then
+		self:select(index)
+		if self._clickFn ~= nil then
+			self._clickFn()
+		end
+	end
 end
 
 	]]>
