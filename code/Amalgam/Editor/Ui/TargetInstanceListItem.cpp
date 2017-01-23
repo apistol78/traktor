@@ -77,6 +77,8 @@ std::wstring formatPerformanceValue(float value)
 
 		}
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetInstanceListItem", TargetInstanceListItem, ui::custom::AutoWidgetCell)
+
 TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, TargetInstance* instance)
 :	m_instance(instance)
 ,	m_lastInstanceState((TargetState)-1)
@@ -458,37 +460,37 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 void TargetInstanceListItem::eventPlayButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetPlayEvent playEvent(this, m_instance);
-	raiseEvent(&playEvent);
+	raiseWidgetEvent(&playEvent);
 }
 
 void TargetInstanceListItem::eventBuildButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetBuildEvent buildEvent(this, m_instance);
-	raiseEvent(&buildEvent);
+	raiseWidgetEvent(&buildEvent);
 }
 
 void TargetInstanceListItem::eventMigrateButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetMigrateEvent migrateEvent(this, m_instance);
-	raiseEvent(&migrateEvent);
+	raiseWidgetEvent(&migrateEvent);
 }
 
 void TargetInstanceListItem::eventBrowseButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetBrowseEvent browseEvent(this, m_instance);
-	raiseEvent(&browseEvent);
+	raiseWidgetEvent(&browseEvent);
 }
 
 void TargetInstanceListItem::eventStopButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetStopEvent stopEvent(this, m_instance, event->getCommand().getId());
-	raiseEvent(&stopEvent);
+	raiseWidgetEvent(&stopEvent);
 }
 
 void TargetInstanceListItem::eventCaptureButtonClick(ui::ButtonClickEvent* event)
 {
 	TargetCaptureEvent captureEvent(this, m_instance, event->getCommand().getId());
-	raiseEvent(&captureEvent);
+	raiseWidgetEvent(&captureEvent);
 }
 
 void TargetInstanceListItem::eventCommandEditKeyDown(ui::KeyDownEvent* event)

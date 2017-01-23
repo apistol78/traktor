@@ -33,7 +33,7 @@ bool ListBoxItem::setSelected(bool selected)
 	if (selected != m_selected)
 	{
 		m_selected = selected;
-		requestUpdate();
+		requestWidgetUpdate();
 		return true;
 	}
 	else

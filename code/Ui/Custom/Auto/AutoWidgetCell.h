@@ -72,9 +72,9 @@ protected:
 		return dynamic_type_cast< WidgetType* >(m_widget);
 	}
 
-	void requestUpdate();
+	void requestWidgetUpdate();
 
-	void raiseEvent(Event* event);
+	void raiseWidgetEvent(Event* event);
 
 private:
 	AutoWidget* m_widget;

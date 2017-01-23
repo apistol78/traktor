@@ -67,13 +67,13 @@ void AutoWidgetCell::paint(Canvas& canvas, const Rect& rect)
 {
 }
 
-void AutoWidgetCell::requestUpdate()
+void AutoWidgetCell::requestWidgetUpdate()
 {
 	if (m_widget)
 		m_widget->requestUpdate();
 }
 
-void AutoWidgetCell::raiseEvent(Event* event)
+void AutoWidgetCell::raiseWidgetEvent(Event* event)
 {
 	if (m_widget)
 		m_widget->raiseEvent(event);
