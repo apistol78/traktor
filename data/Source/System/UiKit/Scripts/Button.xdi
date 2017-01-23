@@ -59,7 +59,7 @@ function Button:_initialize(parent, mc, imageUp, imageDown)
 	elseif type(imageUp) == "string" then
 		self._imageUp_mc = Widget._createResource(self, imageUp)
 #if defined(_DEBUG)
-		if self._imageUp_mc == nil then print("No such image \\"" .. image .. "\\"") end
+		if self._imageUp_mc == nil then print("No such image \\"" .. imageUp.. "\\"") end
 #endif
 	end
 
@@ -80,7 +80,7 @@ function Button:_initialize(parent, mc, imageUp, imageDown)
 		elseif type(imageDown) == "string" then
 			self._imageDown_mc = Widget._createResource(self, imageDown)
 #if defined(_DEBUG)
-			if self._imageDown_mc == nil then print("No such image \\"" .. image .. "\\"") end
+			if self._imageDown_mc == nil then print("No such image \\"" .. imageDown .. "\\"") end
 #endif
 		end
 	
