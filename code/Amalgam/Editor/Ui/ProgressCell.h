@@ -13,6 +13,8 @@ namespace traktor
  */
 class ProgressCell : public ui::custom::AutoWidgetCell
 {
+	T_RTTI_CLASS;
+
 public:
 	ProgressCell();
 

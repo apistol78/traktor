@@ -17,6 +17,8 @@ class TargetInstance;
  */
 class DropListCell : public ui::custom::AutoWidgetCell
 {
+	T_RTTI_CLASS;
+
 public:
 	DropListCell(HostEnumerator* hostEnumerator, TargetInstance* instance);
 

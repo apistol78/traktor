@@ -13,6 +13,8 @@ namespace traktor
 	namespace amalgam
 	{
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.DropListCell", DropListCell, ui::custom::AutoWidgetCell)
+
 DropListCell::DropListCell(HostEnumerator* hostEnumerator, TargetInstance* instance)
 :	m_hostEnumerator(hostEnumerator)
 ,	m_instance(instance)

@@ -27,6 +27,8 @@ class ProgressCell;
  */
 class TargetInstanceListItem : public ui::custom::AutoWidgetCell
 {
+	T_RTTI_CLASS;
+
 public:
 	TargetInstanceListItem(HostEnumerator* hostEnumerator, TargetInstance* instance);
 
