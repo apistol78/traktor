@@ -55,17 +55,17 @@ function ScrollBar:setRange(range, size)
 end
 
 function ScrollBar:setPosition(position)
-	local bw = self._background_mc:getWidth()
+	local bw = self._background_mc:getWidth() - self._knobMargin * 2
 	local kw = self._knob_mc:getWidth()
 	local f = position / self._range
-	self._knob_mc:setX((bw - kw) * f)
+	self._knob_mc:setX((bw - kw) * f + self._knobMargin)
 	return self
 end
 
 function ScrollBar:getPosition()
-	local bw = self._background_mc:getWidth()
+	local bw = self._background_mc:getWidth() - self._knobMargin * 2
 	local kw = self._knob_mc:getWidth()
-	local kx = self._knob_mc:getX()
+	local kx = self._knob_mc:getX() - self._knobMargin
 	return self._range * kx / (bw - kw)
 end
 
@@ -77,7 +77,8 @@ end
 -- Private
 
 function ScrollBar:_updateKnobSize()
-	local w = (self._size / self._range) * self._background_mc:getWidth()
+	local bw = self._background_mc:getWidth() - self._knobMargin * 2
+	local w = (self._size / self._range) * bw
 	self._knob_mc:setWidth(w)
 end
 
@@ -92,6 +93,8 @@ function ScrollBar:_initialize(parent, mc)
 
 	self._background_mc = mc:getMember("background_mc")
 	self._knob_mc = mc:getMember("knob_mc")
+
+	self._knobMargin = self._knob_mc:getX()
 
 	self:_registerEvent("onPress", function() self:_onPress() end)
 	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
@@ -111,17 +114,18 @@ end
 
 function ScrollBar:_onMouseMove()
 	if self._track then
-		local x = self._mc:getMouseX() - self._trackOffset
+		local x = self._mc:getMouseX() - self._trackOffset - self._knobMargin
 
 		-- Clamp range.
-		local mx = self._background_mc:getWidth() - self._knob_mc:getWidth()
+		local bw = self._background_mc:getWidth() - self._knobMargin * 2
+		local mx = bw - self._knob_mc:getWidth()
 		if x < 0 then
 			x = 0
 		elseif x > mx then
 			x = mx
 		end
 
-		self._knob_mc:setX(x)
+		self._knob_mc:setX(x + self._knobMargin)
 
 		if self._scrollFn ~= nil then
 			self._scrollFn()
