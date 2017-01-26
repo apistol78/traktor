@@ -177,6 +177,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 					// Non-connected or value-only input port; replace with scalar value node.
 					float value = externalNode->getValue(inputPortName, (*j)->getDefaultValue());
 					Ref< Scalar > valueNode = new Scalar(value);
+					valueNode->setComment(L"__synthesized__");
 					T_ASSERT (inputEstablishedPorts[inputPortName] == 0);
 					inputEstablishedPorts[inputPortName] = valueNode;
 					resolvedNodes.push_back(valueNode);

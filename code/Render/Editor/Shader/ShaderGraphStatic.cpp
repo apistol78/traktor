@@ -194,7 +194,17 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 		const InputPin* inputPin = (*i)->findInputPin(L"Input");
 		T_ASSERT (inputPin);
 
-		inputPin = (*i)->findInputPin(shaderGraph->findEdge(inputPin) ? L"True" : L"False");
+		bool inputConnected = false;
+
+		// Check if input edge is connected; and not to a synthesized default value.
+		const Edge* inputEdge = shaderGraph->findEdge(inputPin);
+		if (inputEdge)
+		{
+			if (inputEdge->getSource()->getNode()->getComment() != L"__synthesized__")
+				inputConnected = true;
+		}
+
+		inputPin = (*i)->findInputPin(inputConnected ? L"True" : L"False");
 		T_ASSERT (inputPin);
 
 		Ref< Edge > sourceEdge = shaderGraph->findEdge(inputPin);
