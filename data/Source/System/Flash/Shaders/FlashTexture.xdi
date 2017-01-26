@@ -201,6 +201,16 @@
 			</position>
 			<value>0</value>
 		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>-731</first>
+				<second>109</second>
+			</position>
+			<parameterName>Flash_TextureClamp</parameterName>
+			<type>PtScalar</type>
+			<frequency>UfDraw</frequency>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -340,6 +350,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
+				<name>Clamp</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Clamp</name>
 			</destination>
 		</item>
