@@ -150,6 +150,10 @@ function Widget:transformInto(pt, into)
 	return { x = r:x() / 20, y = r:y() / 20 }
 end
 
+function Widget:getMousePosition()
+	return { x = self._mc:getMouseX(), y = self._mc:getMouseY() }
+end
+
 function Widget:debug(indent)
 	local mt = getmetatable(self)
 	if indent == nil then indent = "" end
