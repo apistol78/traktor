@@ -9,13 +9,13 @@
 Button = Button or inherit(Widget)
 Button_meta = Button_meta or { name = "Button", __index = Button }
 
-function Button.new(parent, imageUp, imageDown)
+function Button.new(parent, imageUp, imageDown, imageHover)
 	local o = {}
 	setmetatable(o, Button_meta)
 
 	local mc = Widget._createEmptyResource(parent)
 
-	o:_initialize(parent, mc, imageUp, imageDown)
+	o:_initialize(parent, mc, imageUp, imageDown, imageHover)
 	return o
 end
 
@@ -44,7 +44,7 @@ end
 
 -- Private
 
-function Button:_initialize(parent, mc, imageUp, imageDown)
+function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 	Widget._initialize(self, parent, mc)
 
 	if isa(imageUp, traktor.drawing.Image) then
@@ -91,6 +91,30 @@ function Button:_initialize(parent, mc, imageUp, imageDown)
 		self._imageDown_mc = self._imageUp_mc
 	end
 
+	if imageHover ~= nil then
+		if isa(imageHover, traktor.drawing.Image) then
+			local bm = self._mc:getContext():createBitmap(imageHover)
+			if bm == nil then return false end
+			self._imageHover_mc = Widget._createEmptyResource(self)
+			self._imageHover_mc:attachBitmap(bm, 0)
+	
+		elseif isa(imageHover, traktor.flash.FlashMovie) then
+			self._imageHover_mc = image:createExternalMovieClipInstance(self._mc, 0)
+	
+		elseif type(imageHover) == "string" then
+			self._imageHover_mc = Widget._createResource(self, imageHover)
+#if defined(_DEBUG)
+			if self._imageHover_mc == nil then print("No such image \\"" .. imageHover .. "\\"") end
+#endif
+		end
+	
+		if self._imageHover_mc == nil then
+			return false
+		end
+	else
+		self._imageHover_mc = self._imageUp_mc
+	end
+
 	self._preferredSize =
 	{
 		width = mc:getWidth(),
@@ -101,24 +125,61 @@ function Button:_initialize(parent, mc, imageUp, imageDown)
 	self:_registerEvent("onPress", function() self:_onPress() end)
 	self:_registerEvent("onRelease", function() self:_onRelease() end)
 	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
+	self:_registerEvent("onRollOver", function() self:_onRollOver() end)
+	self:_registerEvent("onRollOut", function() self:_onRollOut() end)
 
 	self._imageDown_mc:setVisible(false)
+	self._imageHover_mc:setVisible(false)
 	self._imageUp_mc:setVisible(true)
+
+	self._isPressed = false
+	self._isRolledOver = false	
 end
 
 function Button:_onPress()
 	self._imageUp_mc:setVisible(false)
+	self._imageHover_mc:setVisible(false)
 	self._imageDown_mc:setVisible(true)
+	self._isPressed = true
 end
 
 function Button:_onRelease()
 	if self._clickFn ~= nil then self._clickFn() end
+	self._isPressed = false
 end
 
 function Button:_onMouseUp()
 	self._imageDown_mc:setVisible(false)
-	self._imageUp_mc:setVisible(true)
+	if not self._isRolledOver then
+		self._imageHover_mc:setVisible(false)
+		self._imageUp_mc:setVisible(true)
+	else
+		self._imageUp_mc:setVisible(false)
+		self._imageHover_mc:setVisible(true)
+	end
 end
+
+function Button:_onRollOver()
+	if not self._isPressed then
+		self._imageUp_mc:setVisible(false)
+		self._imageDown_mc:setVisible(false)
+		self._imageHover_mc:setVisible(true)
+	end
+	self._isRolledOver = true
+end
+
+function Button:_onRollOut()
+	self._imageHover_mc:setVisible(false)
+	if not self._isPressed then
+		self._imageDown_mc:setVisible(false)
+		self._imageUp_mc:setVisible(true)
+	else
+		self._imageUp_mc:setVisible(false)
+		self._imageDown_mc:setVisible(true)
+	end
+	self._isRolledOver = false
+end
+
 
 	]]>
 	</text>
