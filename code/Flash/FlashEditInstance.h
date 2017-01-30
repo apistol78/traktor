@@ -75,6 +75,10 @@ public:
 
 	const TextLayout* getTextLayout() const { return m_layout; }
 
+	void setRenderClipMask(bool renderClipMask);
+
+	bool getRenderClipMask() const { return m_renderClipMask; }
+
 	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
 
 	virtual void eventKey(wchar_t unicode) T_OVERRIDE T_FINAL;
@@ -146,6 +150,7 @@ private:
 	int32_t m_caret;
 	int32_t m_scroll;
 	Ref< TextLayout > m_layout;
+	bool m_renderClipMask;
 
 	bool internalParseText(const std::wstring& text);
 
