@@ -655,6 +655,8 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashEditInstance->addMethod("setScroll", &FlashEditInstance::setScroll);
 	classFlashEditInstance->addMethod("getScroll", &FlashEditInstance::getScroll);
 	classFlashEditInstance->addMethod("getMaxScroll", &FlashEditInstance::getMaxScroll);
+	classFlashEditInstance->addMethod("setRenderClipMask", &FlashEditInstance::setRenderClipMask);
+	classFlashEditInstance->addMethod("getRenderClipMask", &FlashEditInstance::getRenderClipMask);
 	classFlashEditInstance->addMethod("setPosition", &FlashEditInstance::setPosition);
 	classFlashEditInstance->addMethod("getPosition", &FlashEditInstance::getPosition);
 	classFlashEditInstance->addMethod("setX", &FlashEditInstance::setX);

@@ -133,6 +133,7 @@ FlashEditInstance::FlashEditInstance(ActionContext* context, FlashDictionary* di
 ,	m_caret(0)
 ,	m_scroll(0)
 ,	m_layout(new TextLayout())
+,	m_renderClipMask(true)
 {
 	if (m_edit->renderHtml())
 		parseHtml(html);
@@ -255,6 +256,11 @@ int32_t FlashEditInstance::getMaxScroll() const
 	}
 	else
 		return 0;
+}
+
+void FlashEditInstance::setRenderClipMask(bool renderClipMask)
+{
+	m_renderClipMask = renderClipMask;
 }
 
 Aabb2 FlashEditInstance::getBounds() const

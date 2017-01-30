@@ -390,18 +390,24 @@ void AccDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matr
 void AccDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix33& transform)
 {
 #if !defined(__ANDROID__)
-	beginMask(true);
-	renderQuad(transform, edit.getTextBounds(), c_cxfWhite);
-	endMask();
+	if (edit.getRenderClipMask())
+	{
+		beginMask(true);
+		renderQuad(transform, edit.getTextBounds(), c_cxfWhite);
+		endMask();
+	}
 #endif
 }
 
 void AccDisplayRenderer::endEdit(const FlashEditInstance& edit, const Matrix33& transform)
 {
 #if !defined(__ANDROID__)
-	beginMask(false);
-	renderQuad(transform, edit.getTextBounds(), c_cxfWhite);
-	endMask();
+	if (edit.getRenderClipMask())
+	{
+		beginMask(false);
+		renderQuad(transform, edit.getTextBounds(), c_cxfWhite);
+		endMask();
+	}
 #endif
 }
 
