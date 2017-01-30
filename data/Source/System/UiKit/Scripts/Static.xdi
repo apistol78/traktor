@@ -75,6 +75,7 @@ function Static:_initialize(parent, mc, text)
 
 	self._text_tb = mc:getMember("text_tb")
 	self._text_tb:setTransform(Matrix33.identity)
+	self._text_tb:setRenderClipMask(false)
 	self._originalBounds = self._text_tb:getTextBounds()
 	self._preferredSize = { width = 0, height = 0 }
 

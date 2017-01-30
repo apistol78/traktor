@@ -99,8 +99,18 @@ function DropDown:_initialize(parent, mc, items)
 	self:_registerEvent("onPress", function() self:_onPress() end)
 end
 
+function DropDown:_removeList()
+	if self._list ~= nil then
+		self._list:remove()
+		self._list = nil
+		self._background_mc:gotoAndStop("default")
+	end
+end
+
 function DropDown:_onPress()
 	assert (self._list == nil)
+
+	self._background_mc:gotoAndStop("active")
 
 	local ancestor = self:getAncestor()
 
@@ -137,22 +147,28 @@ function DropDown:_onPress()
 	)
 
 	self._list:setOnClick(function(index) self:_onListClick(index) end)
+	self._list:_registerEvent("onMouseDown", function() self:_onListMouseDown() end)
+
 	self._list:setModal()
 end
 
 function DropDown:_onListClick(index)
-	assert (self._list ~= nil)
-
-	self._list:remove()
-	self._list = nil
-
 	if self._selected ~= index then
 		self:select(index)
 		if self._clickFn ~= nil then
 			self._clickFn()
 		end
 	end
+	self:_removeList()
 end
+
+function DropDown:_onListMouseDown()
+	local mp = self._list:getMousePosition()
+	if self._list:hitTest(mp) == nil then
+		self:_removeList()
+	end
+end
+
 
 	]]>
 	</text>
