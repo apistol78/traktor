@@ -43,32 +43,32 @@ enum RenderPriority
 
 enum CullMode
 {
-	CmNever,
-	CmClockWise,
-	CmCounterClockWise
+	CmNever = 0,
+	CmClockWise = 1,
+	CmCounterClockWise = 2
 };
 
 enum BlendOperation
 {
-	BoAdd,
-	BoSubtract,
-	BoReverseSubtract,
-	BoMin,
-	BoMax
+	BoAdd = 0,
+	BoSubtract = 1,
+	BoReverseSubtract = 2,
+	BoMin = 3,
+	BoMax = 4
 };
 
 enum BlendFactor
 {
-	BfOne,
-	BfZero,
-	BfSourceColor,
-	BfOneMinusSourceColor,
-	BfDestinationColor,
-	BfOneMinusDestinationColor,
-	BfSourceAlpha,
-	BfOneMinusSourceAlpha,
-	BfDestinationAlpha,
-	BfOneMinusDestinationAlpha
+	BfOne = 0,
+	BfZero = 1,
+	BfSourceColor = 2,
+	BfOneMinusSourceColor = 3,
+	BfDestinationColor = 4,
+	BfOneMinusDestinationColor = 5,
+	BfSourceAlpha = 6,
+	BfOneMinusSourceAlpha = 7,
+	BfDestinationAlpha = 8,
+	BfOneMinusDestinationAlpha = 9
 };
 
 enum ColorWrite
@@ -81,41 +81,41 @@ enum ColorWrite
 
 enum CompareFunction
 {
-	CfAlways,
-	CfNever,
-	CfLess,
-	CfLessEqual,
-	CfGreater,
-	CfGreaterEqual,
-	CfEqual,
-	CfNotEqual,
-	CfNone
+	CfAlways = 0,
+	CfNever = 1,
+	CfLess = 2,
+	CfLessEqual = 3,
+	CfGreater = 4,
+	CfGreaterEqual = 5,
+	CfEqual = 6,
+	CfNotEqual = 7,
+	CfNone = 8
 };
 
 enum StencilOperation
 {
-	SoKeep,
-	SoZero,
-	SoReplace,
-	SoIncrementSaturate,
-	SoDecrementSaturate,
-	SoInvert,
-	SoIncrement,
-	SoDecrement
+	SoKeep = 0,
+	SoZero = 1,
+	SoReplace = 2,
+	SoIncrementSaturate = 3,
+	SoDecrementSaturate = 4,
+	SoInvert = 5,
+	SoIncrement = 6,
+	SoDecrement = 7
 };
 
 enum Filter
 {
-	FtPoint,
-	FtLinear
+	FtPoint = 0,
+	FtLinear = 1
 };
 
 enum Address
 {
-	AdWrap,
-	AdMirror,
-	AdClamp,
-	AdBorder
+	AdWrap = 0,
+	AdMirror = 1,
+	AdClamp = 2,
+	AdBorder = 3
 };
 
 /*! \brief Render state. */
@@ -324,19 +324,19 @@ enum TextureFormat
 /*! \brief Primitive topology type. */
 enum PrimitiveType
 {
-	PtPoints,
-	PtLineStrip,
-	PtLines,
-	PtTriangleStrip,
-	PtTriangles
+	PtPoints = 0,
+	PtLineStrip = 1,
+	PtLines = 2,
+	PtTriangleStrip = 3,
+	PtTriangles = 4
 };
 
 /*! \brief Eye in stereoscopic rendering */
 enum EyeType
 {
-	EtCyclop,	//< Not using stereoscopic rendering.
-	EtLeft,
-	EtRight,
+	EtCyclop = 0,	//< Not using stereoscopic rendering.
+	EtLeft = 1,
+	EtRight = 2
 };
 
 /*! \brief Render view event. */
