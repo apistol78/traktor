@@ -77,6 +77,11 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Transition", BoxedTransition, Object)
 
+bool IInputServer_fabricateInputSource(IInputServer* self, const std::wstring& sourceId, int32_t category, bool analogue)
+{
+	return self->fabricateInputSource(sourceId, (input::InputCategory)category, analogue);
+}
+
 RefArray< BoxedTransition > StageData_getTransitions(StageData* self)
 {
 	RefArray< BoxedTransition > out;
@@ -213,10 +218,13 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classAudioServer);
 
 	Ref< AutoRuntimeClass< IInputServer > > classInputServer = new AutoRuntimeClass< IInputServer >();
+	classInputServer->addMethod("fabricateInputSource", &IInputServer_fabricateInputSource);
 	classInputServer->addMethod("isFabricating", &IInputServer::isFabricating);
 	classInputServer->addMethod("abortedFabricating", &IInputServer::abortedFabricating);
 	classInputServer->addMethod("resetInputSource", &IInputServer::resetInputSource);
 	classInputServer->addMethod("isIdle", &IInputServer::isIdle);
+	classInputServer->addMethod("apply", &IInputServer::apply);
+	classInputServer->addMethod("revert", &IInputServer::revert);
 	classInputServer->addMethod("getInputSystem", &IInputServer::getInputSystem);
 	classInputServer->addMethod("getInputMapping", &IInputServer::getInputMapping);
 	classInputServer->addMethod("getRumbleEffectPlayer", &IInputServer::getRumbleEffectPlayer);
