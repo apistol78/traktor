@@ -96,19 +96,20 @@ function Tab:_addChild(child)
 		))
 	end
 
+	local caption_tb = tab_mc:getMember("caption_tb")
+	caption_tb:setRenderClipMask(false)
 #if defined(_DEBUG)
-	tab_mc:getMember("caption_tb"):setMember("__renderWireOutline", true)
+	caption_tb:setMember("__renderWireOutline", true)
 #endif
 
 	child.setTabCaption = function(childSelf, caption)
-
 		local background_mc = tab_mc:getMember("background_mc")
 		local caption_tb = tab_mc:getMember("caption_tb")
 
 		caption_tb:parseText(caption)
 
 		local mx = caption_tb:getX()
-		local sz = caption_tb:getTextSize() + Vector2(4, 0)	-- \\hack Slight error
+		local sz = caption_tb:getTextSize()
 
 		background_mc:setWidth(sz:x() + mx * 2)
 		caption_tb:setTextBounds(Aabb2(
@@ -118,7 +119,7 @@ function Tab:_addChild(child)
 
 		return childSelf
 	end
-	
+
 	table.insert(self._tab_mc, tab_mc)
 
 	self._tabHeight = math.max(self._tabHeight, tab_mc:getHeight())

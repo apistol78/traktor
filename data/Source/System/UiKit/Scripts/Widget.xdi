@@ -150,6 +150,12 @@ function Widget:transformInto(pt, into)
 	return { x = r:x() / 20, y = r:y() / 20 }
 end
 
+function Widget:hitTest(position)
+	if position.x < 0 or position.y < 0 then return nil end
+	if position.x > self._placement.width or position.y > self._placement.height then return nil end
+	return self
+end
+
 function Widget:getMousePosition()
 	return { x = self._mc:getMouseX(), y = self._mc:getMouseY() }
 end

@@ -64,6 +64,7 @@ function PushButton:_initialize(parent, mc, caption)
 
 	self._background_mc = mc:getMember("background_mc")
 	self._caption_tb = mc:getMember("caption_tb")
+	self._caption_tb:setRenderClipMask(false)
 
 	self._margin = self._caption_tb:getX()
 	self._preferredSize =
