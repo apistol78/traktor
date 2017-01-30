@@ -34,7 +34,7 @@ const int32_t c_fontHeightMargin = 2;
 
 bool isWordSeparator(wchar_t ch)
 {
-	return !std::iswalnum(ch);
+	return !(std::iswalnum(ch) || ch == L'_');
 }
 
 			}
