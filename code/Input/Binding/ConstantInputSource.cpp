@@ -6,7 +6,7 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.ConstantInputSource", ConstantInputSource, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.ConstantInputSource", ConstantInputSource, IInputSource)
 
 ConstantInputSource::ConstantInputSource(float value)
 :	m_value(value)

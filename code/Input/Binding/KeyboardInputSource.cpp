@@ -46,7 +46,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardInputSource", KeyboardInputSource, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardInputSource", KeyboardInputSource, IInputSource)
 
 KeyboardInputSource::KeyboardInputSource(
 	const std::vector< InputDefaultControlType >& controlTypes,

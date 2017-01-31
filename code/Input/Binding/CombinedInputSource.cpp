@@ -7,7 +7,7 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.CombinedInputSource", CombinedInputSource, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.CombinedInputSource", CombinedInputSource, IInputSource)
 
 CombinedInputSource::CombinedInputSource(const RefArray< IInputSource >& sources, CombineMode mode)
 :	m_sources(sources)
