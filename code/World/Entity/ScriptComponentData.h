@@ -37,6 +37,10 @@ class T_DLLCLASS ScriptComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
+	ScriptComponentData();
+
+	explicit ScriptComponentData(const resource::Id< IRuntimeClass >& _class);
+
 	Ref< ScriptComponent > createComponent(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;

@@ -44,6 +44,12 @@ class T_DLLCLASS RigidBodyComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
+	RigidBodyComponentData();
+
+	explicit RigidBodyComponentData(BodyDesc* bodyDesc);
+
+	explicit RigidBodyComponentData(BodyDesc* bodyDesc, world::IEntityEventData* eventCollide);
+
 	Ref< RigidBodyComponent > createComponent(
 		const world::IEntityBuilder* entityBuilder,
 		world::IEntityEventManager* eventManager,
@@ -52,6 +58,10 @@ public:
 	) const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+
+	const BodyDesc* getBodyDesc() const { return m_bodyDesc; }
+
+	const world::IEntityEventData* getEventCollide() const { return m_eventCollide; }
 
 private:
 	Ref< BodyDesc > m_bodyDesc;
