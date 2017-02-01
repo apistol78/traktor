@@ -22,10 +22,9 @@ function MainStage.new(o, params, environment)
 	local cameraTransform = cameraEntity:getTransform()
 
 	-- Initialize UiKit.
-	local uiKit = o.ui:getExternal("UiKit")
 	Widget.initialize(
-		uiKit,
-		o.environment
+		environment,
+		{ "\{5ABEAE05-EB26-934F-932F-7F3C7C582383}" }
 	)
 
 	-- Create UI frame with virtual size of 1280x720.
