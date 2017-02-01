@@ -501,6 +501,8 @@ void PropertyList::eventMouseMove(MouseMoveEvent* event)
 {
 	Point p = event->getPosition();
 
+	setCursor(CrArrow);
+
 	if (m_mode == MdMoveSeparator)
 	{
 		m_separator = p.x;

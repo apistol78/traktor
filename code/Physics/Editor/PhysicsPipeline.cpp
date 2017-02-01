@@ -1,8 +1,11 @@
-#include "Physics/Editor/PhysicsPipeline.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Physics/BodyDesc.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/HeightfieldShapeDesc.h"
+#include "Physics/Editor/PhysicsPipeline.h"
+#include "Physics/World/RigidBodyComponentData.h"
 #include "Editor/IPipelineDepends.h"
+#include "World/IEntityEventData.h"
 
 namespace traktor
 {
@@ -24,6 +27,7 @@ TypeInfoSet PhysicsPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< BodyDesc >());
+	typeSet.insert(&type_of< RigidBodyComponentData >());
 	return typeSet;
 }
 
@@ -41,6 +45,11 @@ bool PhysicsPipeline::buildDependencies(
 			pipelineDepends->addDependency(meshShapeDesc->getMesh(), editor::PdfBuild | editor::PdfResource);
 		else if (const HeightfieldShapeDesc* heightfieldShapeDesc = dynamic_type_cast< const HeightfieldShapeDesc* >(bodyDesc->getShape()))
 			pipelineDepends->addDependency(heightfieldShapeDesc->getHeightfield(), editor::PdfBuild | editor::PdfResource);
+	}
+	else if (const RigidBodyComponentData* componentData = dynamic_type_cast< const RigidBodyComponentData* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(componentData->getBodyDesc());
+		pipelineDepends->addDependency(componentData->getEventCollide());
 	}
 	return true;
 }
@@ -66,8 +75,7 @@ Ref< ISerializable > PhysicsPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	T_FATAL_ERROR;
-	return 0;
+	return DeepClone(sourceAsset).create();
 }
 
 	}

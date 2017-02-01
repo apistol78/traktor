@@ -17,6 +17,21 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.RigidBodyComponentData", 0, RigidBodyComponentData, world::IEntityComponentData)
 
+RigidBodyComponentData::RigidBodyComponentData()
+{
+}
+
+RigidBodyComponentData::RigidBodyComponentData(BodyDesc* bodyDesc)
+:	m_bodyDesc(bodyDesc)
+{
+}
+
+RigidBodyComponentData::RigidBodyComponentData(BodyDesc* bodyDesc, world::IEntityEventData* eventCollide)
+:	m_bodyDesc(bodyDesc)
+,	m_eventCollide(eventCollide)
+{
+}
+
 Ref< RigidBodyComponent > RigidBodyComponentData::createComponent(
 	const world::IEntityBuilder* entityBuilder,
 	world::IEntityEventManager* eventManager,

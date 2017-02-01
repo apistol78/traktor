@@ -12,6 +12,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ScriptComponentData", 0, ScriptComponentData, IEntityComponentData)
 
+ScriptComponentData::ScriptComponentData()
+{
+}
+
+ScriptComponentData::ScriptComponentData(const resource::Id< IRuntimeClass >& _class)
+:	m_class(_class)
+{
+}
+
 Ref< ScriptComponent > ScriptComponentData::createComponent(resource::IResourceManager* resourceManager) const
 {
 	resource::Proxy< IRuntimeClass > clazz;

@@ -3292,5 +3292,69 @@
       <first>POSTPROCESS_EDITOR_ID</first>
       <second>Id</second>
     </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_DESCRIPTION</first>
+      <second>Create game entity...</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_DIALOG_TITLE</first>
+      <second>Create game entity</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_ENTITY_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_UNNAMED</first>
+      <second>Unnamed</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_VISUAL_MESH</first>
+      <second>Visual mesh</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_COLLISION_MESH</first>
+      <second>Collision mesh</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_PHYSICS_TYPE</first>
+      <second>Type of physics</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_PHYSICS_STATIC</first>
+      <second>Static - Non movable</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_PHYSICS_KINEMATIC</first>
+      <second>Kinematic - Movable</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_PHYSICS_DYNAMIC</first>
+      <second>Dynamic - Movable and simulated</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_COLLISION_GROUP</first>
+      <second>Collision group</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_COLLISION_MASK</first>
+      <second>Collision mask</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_MATERIAL</first>
+      <second>Material</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_FRICTION</first>
+      <second>Friction</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_CREATE_SCRIPT</first>
+      <second>Create script</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_FILE_TITLE</first>
+      <second>Select mesh</second>
+    </item>
   </map>
 </object>
