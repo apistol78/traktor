@@ -31,9 +31,7 @@ public:
 
 	virtual Ref< IProviderInstance > createInstance(const std::wstring& instanceName, const Guid& instanceGuid) T_OVERRIDE T_FINAL;
 
-	virtual bool getChildGroups(RefArray< IProviderGroup >& outChildGroups) T_OVERRIDE T_FINAL;
-
-	virtual bool getChildInstances(RefArray< IProviderInstance >& outChildInstances) T_OVERRIDE T_FINAL;
+	virtual bool getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< Context > m_context;

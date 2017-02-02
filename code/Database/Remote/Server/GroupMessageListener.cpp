@@ -7,8 +7,8 @@
 #include "Database/Remote/Messages/DbmRemoveGroup.h"
 #include "Database/Remote/Messages/DbmCreateGroup.h"
 #include "Database/Remote/Messages/DbmCreateInstance.h"
-#include "Database/Remote/Messages/DbmGetChildGroups.h"
-#include "Database/Remote/Messages/DbmGetChildInstances.h"
+#include "Database/Remote/Messages/DbmGetChildren.h"
+#include "Database/Remote/Messages/MsgGetChildrenResult.h"
 #include "Database/Remote/Messages/MsgStatus.h"
 #include "Database/Remote/Messages/MsgStringResult.h"
 #include "Database/Remote/Messages/MsgHandleResult.h"
@@ -29,8 +29,7 @@ GroupMessageListener::GroupMessageListener(Connection* connection)
 	registerMessage< DbmRemoveGroup >(&GroupMessageListener::messageRemoveGroup);
 	registerMessage< DbmCreateGroup >(&GroupMessageListener::messageCreateGroup);
 	registerMessage< DbmCreateInstance >(&GroupMessageListener::messageCreateInstance);
-	registerMessage< DbmGetChildGroups >(&GroupMessageListener::messageGetChildGroups);
-	registerMessage< DbmGetChildInstances >(&GroupMessageListener::messageGetChildInstances);
+	registerMessage< DbmGetChildren >(&GroupMessageListener::messageGetChildren);
 }
 
 bool GroupMessageListener::messageGetGroupName(const DbmGetGroupName* message)
@@ -121,7 +120,7 @@ bool GroupMessageListener::messageCreateInstance(const DbmCreateInstance* messag
 	return true;
 }
 
-bool GroupMessageListener::messageGetChildGroups(const DbmGetChildGroups* message)
+bool GroupMessageListener::messageGetChildren(const DbmGetChildren* message)
 {
 	uint32_t groupHandle = message->getHandle();
 	Ref< IProviderGroup > group = m_connection->getObject< IProviderGroup >(groupHandle);
@@ -132,40 +131,19 @@ bool GroupMessageListener::messageGetChildGroups(const DbmGetChildGroups* messag
 	}
 
 	RefArray< IProviderGroup > childGroup;
-	if (!group->getChildGroups(childGroup))
-	{
-		m_connection->sendReply(MsgStatus(StFailure));
-		return true;
-	}
-
-	MsgHandleArrayResult result;
-	for (RefArray< IProviderGroup >::iterator i = childGroup.begin(); i != childGroup.end(); ++i)
-		result.add(m_connection->putObject(*i));
-
-	m_connection->sendReply(result);
-	return true;
-}
-
-bool GroupMessageListener::messageGetChildInstances(const DbmGetChildInstances* message)
-{
-	uint32_t groupHandle = message->getHandle();
-	Ref< IProviderGroup > group = m_connection->getObject< IProviderGroup >(groupHandle);
-	if (!group)
-	{
-		m_connection->sendReply(MsgStatus(StFailure));
-		return true;
-	}
-
 	RefArray< IProviderInstance > childInstances;
-	if (!group->getChildInstances(childInstances))
+
+	if (!group->getChildren(childGroup, childInstances))
 	{
 		m_connection->sendReply(MsgStatus(StFailure));
 		return true;
 	}
 
-	MsgHandleArrayResult result;
+	MsgGetChildrenResult result;
+	for (RefArray< IProviderGroup >::iterator i = childGroup.begin(); i != childGroup.end(); ++i)
+		result.addGroup(m_connection->putObject(*i));
 	for (RefArray< IProviderInstance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
-		result.add(m_connection->putObject(*i));
+		result.addInstance(m_connection->putObject(*i));
 
 	m_connection->sendReply(result);
 	return true;

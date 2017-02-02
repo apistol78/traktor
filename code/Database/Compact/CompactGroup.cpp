@@ -103,17 +103,16 @@ Ref< IProviderInstance > CompactGroup::createInstance(const std::wstring& instan
 	return childInstance;
 }
 
-bool CompactGroup::getChildGroups(RefArray< IProviderGroup >& outChildGroups)
+bool CompactGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances)
 {
+	outChildGroups.reserve(m_childGroups.size());
 	for (RefArray< CompactGroup >::iterator i = m_childGroups.begin(); i != m_childGroups.end(); ++i)
 		outChildGroups.push_back(*i);
-	return true;
-}
 
-bool CompactGroup::getChildInstances(RefArray< IProviderInstance >& outChildInstances)
-{
+	outChildInstances.reserve(m_childInstances.size());
 	for (RefArray< CompactInstance >::iterator i = m_childInstances.begin(); i != m_childInstances.end(); ++i)
 		outChildInstances.push_back(*i);
+
 	return true;
 }
 

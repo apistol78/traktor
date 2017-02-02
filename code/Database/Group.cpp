@@ -198,7 +198,8 @@ bool Group::internalCreate(IProviderGroup* providerGroup, Group* parent)
 	m_childInstances.resize(0);
 
 	RefArray< IProviderGroup > providerChildGroups;
-	m_providerGroup->getChildGroups(providerChildGroups);
+	RefArray< IProviderInstance > providerChildInstances;
+	m_providerGroup->getChildren(providerChildGroups, providerChildInstances);
 
 	m_childGroups.reserve(providerChildGroups.size());
 	for (RefArray< IProviderGroup >::iterator i = providerChildGroups.begin(); i != providerChildGroups.end(); ++i)
@@ -209,9 +210,6 @@ bool Group::internalCreate(IProviderGroup* providerGroup, Group* parent)
 
 		m_childGroups.push_back(childGroup);
 	}
-
-	RefArray< IProviderInstance > providerChildInstances;
-	m_providerGroup->getChildInstances(providerChildInstances);
 
 	m_childInstances.reserve(providerChildInstances.size());
 	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
@@ -250,8 +248,9 @@ bool Group::internalFlushChildInstances()
 {
 	m_childInstances.resize(0);
 
+	RefArray< IProviderGroup > providerChildGroups;
 	RefArray< IProviderInstance > providerChildInstances;
-	m_providerGroup->getChildInstances(providerChildInstances);
+	m_providerGroup->getChildren(providerChildGroups, providerChildInstances);
 
 	m_childInstances.reserve(providerChildInstances.size());
 	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
@@ -271,7 +270,8 @@ bool Group::internalAddExtGroup(const std::wstring& groupName)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	RefArray< IProviderGroup > providerChildGroups;
-	m_providerGroup->getChildGroups(providerChildGroups);
+	RefArray< IProviderInstance > providerChildInstances;
+	m_providerGroup->getChildren(providerChildGroups, providerChildInstances);
 
 	for (RefArray< IProviderGroup >::iterator i = providerChildGroups.begin(); i != providerChildGroups.end(); ++i)
 	{
@@ -293,8 +293,9 @@ bool Group::internalAddExtInstance(const Guid& instanceGuid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
+	RefArray< IProviderGroup > providerChildGroups;
 	RefArray< IProviderInstance > providerChildInstances;
-	m_providerGroup->getChildInstances(providerChildInstances);
+	m_providerGroup->getChildren(providerChildGroups, providerChildInstances);
 
 	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
 	{

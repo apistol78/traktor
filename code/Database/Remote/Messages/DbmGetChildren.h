@@ -1,5 +1,5 @@
-#ifndef traktor_db_DbmGetChildInstances_H
-#define traktor_db_DbmGetChildInstances_H
+#ifndef traktor_db_DbmGetChildren_H
+#define traktor_db_DbmGetChildren_H
 
 #include "Database/Remote/IMessage.h"
 
@@ -16,15 +16,15 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Get child instances.
+/*! \brief Get children.
  * \ingroup Database
  */
-class T_DLLCLASS DbmGetChildInstances : public IMessage
+class T_DLLCLASS DbmGetChildren : public IMessage
 {
 	T_RTTI_CLASS;
 
 public:
-	DbmGetChildInstances(uint32_t handle = 0);
+	DbmGetChildren(uint32_t handle = 0);
 
 	uint32_t getHandle() const { return m_handle; }
 
@@ -37,4 +37,4 @@ private:
 	}
 }
 
-#endif	// traktor_db_DbmGetChildInstances_H
+#endif	// traktor_db_DbmGetChildren_H
