@@ -649,6 +649,8 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashEditInstance->addMethod("getTextFormat", &FlashEditInstance_getTextFormat_2);
 	classFlashEditInstance->addMethod("getText", &FlashEditInstance::getText);
 	classFlashEditInstance->addMethod("getHtmlText", &FlashEditInstance::getHtmlText);
+	classFlashEditInstance->addMethod("setWordWrap", &FlashEditInstance::setWordWrap);
+	classFlashEditInstance->addMethod("getWordWrap", &FlashEditInstance::getWordWrap);
 	classFlashEditInstance->addMethod("setPassword", &FlashEditInstance::setPassword);
 	classFlashEditInstance->addMethod("getPassword", &FlashEditInstance::getPassword);
 	classFlashEditInstance->addMethod("getCaret", &FlashEditInstance::getCaret);

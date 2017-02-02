@@ -129,6 +129,7 @@ FlashEditInstance::FlashEditInstance(ActionContext* context, FlashDictionary* di
 ,	m_align(edit->getAlign())
 ,	m_fontHeight(edit->getFontHeight())
 ,	m_html(false)
+,	m_wordWrap(edit->wordWrap())
 ,	m_password(edit->password())
 ,	m_caret(0)
 ,	m_scroll(0)
@@ -229,6 +230,12 @@ Ref< FlashTextFormat > FlashEditInstance::getTextFormat(int32_t beginIndex, int3
 const std::wstring& FlashEditInstance::getHtmlText() const
 {
 	return m_html ? m_htmlText : m_text;
+}
+
+void FlashEditInstance::setWordWrap(bool wordWrap)
+{
+	m_wordWrap = wordWrap;
+	updateLayout();
 }
 
 void FlashEditInstance::setPassword(bool password)
@@ -485,7 +492,7 @@ bool FlashEditInstance::internalParseText(const std::wstring& text)
 	m_layout->setLeading(m_edit->getLeading());
 	m_layout->setLetterSpacing(m_password ? 6 : m_letterSpacing);
 	m_layout->setFontHeight(m_fontHeight);
-	m_layout->setWordWrap(m_edit->wordWrap());
+	m_layout->setWordWrap(m_wordWrap);
 	m_layout->setAlignment(m_align);
 	m_layout->setAttribute(font, m_textColor);
 
@@ -533,7 +540,7 @@ bool FlashEditInstance::internalParseHtml(const std::wstring& html)
 	m_layout->setLeading(m_edit->getLeading());
 	m_layout->setLetterSpacing(m_letterSpacing);
 	m_layout->setFontHeight(m_fontHeight);
-	m_layout->setWordWrap(m_edit->wordWrap());
+	m_layout->setWordWrap(m_wordWrap);
 	m_layout->setAlignment(m_align);
 	m_layout->setAttribute(font, m_textColor);
 
