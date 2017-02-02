@@ -61,6 +61,10 @@ public:
 
 	const std::wstring& getHtmlText() const;
 
+	void setWordWrap(bool wordWrap);
+
+	bool getWordWrap() const { return m_wordWrap; }
+
 	void setPassword(bool password);
 
 	bool getPassword() const { return m_password; }
@@ -146,6 +150,7 @@ private:
 	std::wstring m_text;
 	std::wstring m_htmlText;
 	bool m_html;
+	bool m_wordWrap;
 	bool m_password;
 	int32_t m_caret;
 	int32_t m_scroll;

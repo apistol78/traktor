@@ -820,14 +820,12 @@ void AsTextField::TextField_set_width(FlashEditInstance* self, avm_number_t widt
 
 bool AsTextField::TextField_get_wordWrap(FlashEditInstance* self) const
 {
-	return self->getEdit()->wordWrap();
+	return self->getWordWrap();
 }
 
 void AsTextField::TextField_set_wordWrap(FlashEditInstance* self, bool wordWrap) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_wordWrap not implemented" << Endl;
-	)
+	self->setWordWrap(wordWrap);
 }
 
 avm_number_t AsTextField::TextField_get_x(FlashEditInstance* self) const

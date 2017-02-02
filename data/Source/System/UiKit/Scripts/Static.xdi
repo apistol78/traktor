@@ -64,8 +64,14 @@ function Static:setTextColor(color)
 	return self
 end
 
+function Static:setWordWrap(wordWrap)
+	self._text_tb:setWordWrap(wordWrap)
+	return self
+end
+
 function Static:setOnClick(fn)
 	self:_registerEvent("onRelease", fn)
+	return self
 end
 
 -- Private
