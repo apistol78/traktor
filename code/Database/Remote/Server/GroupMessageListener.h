@@ -33,9 +33,7 @@ private:
 
 	bool messageCreateInstance(const class DbmCreateInstance* message);
 
-	bool messageGetChildGroups(const class DbmGetChildGroups* message);
-
-	bool messageGetChildInstances(const class DbmGetChildInstances* message);
+	bool messageGetChildren(const class DbmGetChildren* message);
 };
 
 	}

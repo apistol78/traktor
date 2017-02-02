@@ -62,19 +62,13 @@ public:
 	 */
 	virtual Ref< IProviderInstance > createInstance(const std::wstring& instanceName, const Guid& instanceGuid) = 0;
 
-	/*! \brief Get all child groups.
+	/*! \brief Get all children.
 	 *
 	 * \param outChildGroups Returning array of all child groups.
-	 * \return True if child groups was returned.
-	 */
-	virtual bool getChildGroups(RefArray< IProviderGroup >& outChildGroups) = 0;
-
-	/*! \brief Get all child instances.
-	 *
 	 * \param outChildInstances Returning array of all child instances.
-	 * \return True if child instances was returned.
+	 * \return True if children was returned.
 	 */
-	virtual bool getChildInstances(RefArray< IProviderInstance >& outChildInstances) = 0;
+	virtual bool getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances) = 0;
 };
 
 	}

@@ -7,8 +7,8 @@
 #include "Database/Remote/Messages/DbmRemoveGroup.h"
 #include "Database/Remote/Messages/DbmCreateGroup.h"
 #include "Database/Remote/Messages/DbmCreateInstance.h"
-#include "Database/Remote/Messages/DbmGetChildGroups.h"
-#include "Database/Remote/Messages/DbmGetChildInstances.h"
+#include "Database/Remote/Messages/DbmGetChildren.h"
+#include "Database/Remote/Messages/MsgGetChildrenResult.h"
 #include "Database/Remote/Messages/MsgStringResult.h"
 #include "Database/Remote/Messages/MsgHandleResult.h"
 #include "Database/Remote/Messages/MsgHandleArrayResult.h"
@@ -62,26 +62,17 @@ Ref< IProviderInstance > RemoteGroup::createInstance(const std::wstring& instanc
 	return result ? new RemoteInstance(m_connection, result->get()) : 0;
 }
 
-bool RemoteGroup::getChildGroups(RefArray< IProviderGroup >& outChildGroups)
+bool RemoteGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances)
 {
-	Ref< MsgHandleArrayResult > result = m_connection->sendMessage< MsgHandleArrayResult >(DbmGetChildGroups(m_handle));
+	Ref< MsgGetChildrenResult > result = m_connection->sendMessage< MsgGetChildrenResult >(DbmGetChildren(m_handle));
 	if (!result)
 		return false;
 
-	for (uint32_t i = 0; i < result->count(); ++i)
-		outChildGroups.push_back(new RemoteGroup(m_connection, result->get(i)));
+	for (std::vector< uint32_t >::const_iterator i = result->getGroups().begin(); i != result->getGroups().end(); ++i)
+		outChildGroups.push_back(new RemoteGroup(m_connection, *i));
 
-	return true;
-}
-
-bool RemoteGroup::getChildInstances(RefArray< IProviderInstance >& outChildInstances)
-{
-	Ref< MsgHandleArrayResult > result = m_connection->sendMessage< MsgHandleArrayResult >(DbmGetChildInstances(m_handle));
-	if (!result)
-		return false;
-
-	for (uint32_t i = 0; i < result->count(); ++i)
-		outChildInstances.push_back(new RemoteInstance(m_connection, result->get(i)));
+	for (std::vector< uint32_t >::const_iterator i = result->getInstances().begin(); i != result->getInstances().end(); ++i)
+		outChildInstances.push_back(new RemoteInstance(m_connection, *i));
 
 	return true;
 }

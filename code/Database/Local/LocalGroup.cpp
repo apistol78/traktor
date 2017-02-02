@@ -72,18 +72,22 @@ Ref< IProviderInstance > LocalGroup::createInstance(const std::wstring& instance
 	return instance;
 }
 
-bool LocalGroup::getChildGroups(RefArray< IProviderGroup >& outChildGroups)
+bool LocalGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances)
 {
 	T_ASSERT (outChildGroups.empty());
+	T_ASSERT (outChildInstances.empty());
 
 	RefArray< File > groupFiles;
 	if (!FileSystem::getInstance().find(m_groupPath.getPathName() + L"/*.*", groupFiles))
 		return false;
 
 	outChildGroups.reserve(groupFiles.size());
+	outChildInstances.reserve(groupFiles.size());
+
 	for (RefArray< File >::iterator i = groupFiles.begin(); i != groupFiles.end(); ++i)
 	{
 		const Path& path = (*i)->getPath();
+
 		if ((*i)->isDirectory() && path.getFileName() != L"." && path.getFileName() != L"..")
 		{
 			outChildGroups.push_back(new LocalGroup(
@@ -91,50 +95,36 @@ bool LocalGroup::getChildGroups(RefArray< IProviderGroup >& outChildGroups)
 				path
 			));
 		}
-		else if (!(*i)->isDirectory() && compareIgnoreCase< std::wstring >(path.getExtension(), L"xgl") == 0)
+		else if (!(*i)->isDirectory())
 		{
-			Ref< LocalFileLink > link = readPhysicalObject< LocalFileLink >(path);
-			if (link)
-			{
-				outChildGroups.push_back(new LocalGroup(
-					m_context,
-					Path(link->getPath())
-				));
-			}
-		}
-	}
-
-	return true;
-}
-
-bool LocalGroup::getChildInstances(RefArray< IProviderInstance >& outChildInstances)
-{
-	T_ASSERT (outChildInstances.empty());
-
-	RefArray< File > groupFiles;
-	if (!FileSystem::getInstance().find(m_groupPath.getPathName() + L"/*.*", groupFiles))
-		return false;
-
-	outChildInstances.reserve(groupFiles.size());
-	for (RefArray< File >::iterator i = groupFiles.begin(); i != groupFiles.end(); ++i)
-	{
-		const Path& path = (*i)->getPath();
-		if (compareIgnoreCase< std::wstring >(path.getExtension(), L"xdm") == 0)
-		{
-			outChildInstances.push_back(new LocalInstance(
-				m_context,
-				path.getPathNameNoExtension()
-			));
-		}
-		else if (compareIgnoreCase< std::wstring >(path.getExtension(), L"xil") == 0)
-		{
-			Ref< LocalFileLink > link = readPhysicalObject< LocalFileLink >(path);
-			if (link)
+			if (compareIgnoreCase< std::wstring >(path.getExtension(), L"xdm") == 0)
 			{
 				outChildInstances.push_back(new LocalInstance(
 					m_context,
-					Path(link->getPath()).getPathNameNoExtension()
+					path.getPathNameNoExtension()
 				));
+			}
+			else if (compareIgnoreCase< std::wstring >(path.getExtension(), L"xgl") == 0)
+			{
+				Ref< LocalFileLink > link = readPhysicalObject< LocalFileLink >(path);
+				if (link)
+				{
+					outChildGroups.push_back(new LocalGroup(
+						m_context,
+						Path(link->getPath())
+					));
+				}
+			}
+			else if (compareIgnoreCase< std::wstring >(path.getExtension(), L"xil") == 0)
+			{
+				Ref< LocalFileLink > link = readPhysicalObject< LocalFileLink >(path);
+				if (link)
+				{
+					outChildInstances.push_back(new LocalInstance(
+						m_context,
+						Path(link->getPath()).getPathNameNoExtension()
+					));
+				}
 			}
 		}
 	}
