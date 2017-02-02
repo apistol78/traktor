@@ -212,13 +212,12 @@ private:
 };
 
 /*! \brief Image style for 32-bit colors. */
-class ImageStyle : public IStyle< agg::rgba8 >
+class ImageClampStyle : public IStyle< agg::rgba8 >
 {
 public:
-	ImageStyle(const Matrix33& imageMatrix, const drawing::Image* image, bool repeat)
+	ImageClampStyle(const Matrix33& imageMatrix, const drawing::Image* image)
 	:	m_imageMatrix(imageMatrix)
 	,	m_image(image)
-	,	m_repeat(repeat)
 	{
 	}
 
@@ -232,50 +231,70 @@ public:
 		const int32_t w = m_image->getWidth();
 		const int32_t h = m_image->getHeight();
 
-		if (m_repeat)
+		for (unsigned i = 0; i < len; ++i)
 		{
-			for (unsigned i = 0; i < len; ++i)
-			{
-				int32_t sx = int32_t(pt.x) % w;
-				int32_t sy = int32_t(pt.y) % h;
+			int32_t sx = clamp(int32_t(pt.x), 0, w - 1);
+			int32_t sy = clamp(int32_t(pt.y), 0, h - 1);
 
-				m_image->getPixelUnsafe(sx, sy, c);
+			m_image->getPixelUnsafe(sx, sy, c);
 
-				span[i] = agg::rgba8(
-					agg::int8u(c.getRed() * 255.0f),
-					agg::int8u(c.getGreen() * 255.0f),
-					agg::int8u(c.getBlue() * 255.0f),
-					agg::int8u(c.getAlpha() * 255.0f)
-				);
+			span[i] = agg::rgba8(
+				agg::int8u(c.getRed() * 255.0f),
+				agg::int8u(c.getGreen() * 255.0f),
+				agg::int8u(c.getBlue() * 255.0f),
+				agg::int8u(c.getAlpha() * 255.0f)
+			);
 
-				pt += dt;
-			}
-		}
-		else
-		{
-			for (unsigned i = 0; i < len; ++i)
-			{
-				int32_t sx = clamp(int32_t(pt.x), 0, w);
-				int32_t sy = clamp(int32_t(pt.y), 0, h);
-
-				m_image->getPixelUnsafe(sx, sy, c);
-
-				span[i] = agg::rgba8(
-					agg::int8u(c.getRed() * 255.0f),
-					agg::int8u(c.getGreen() * 255.0f),
-					agg::int8u(c.getBlue() * 255.0f),
-					agg::int8u(c.getAlpha() * 255.0f)
-				);
-
-				pt += dt;
-			}
+			pt += dt;
 		}
 	}
 
 private:
 	Matrix33 m_imageMatrix;
 	Ref< const drawing::Image > m_image;
-	bool m_repeat;
+};
+
+/*! \brief Image style for 32-bit colors. */
+class ImageRepeatStyle : public IStyle< agg::rgba8 >
+{
+public:
+	ImageRepeatStyle(const Matrix33& imageMatrix, const drawing::Image* image)
+	:	m_imageMatrix(imageMatrix)
+	,	m_image(image)
+	{
+	}
+
+	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	{
+		Color4f c(0.0f, 0.0f, 0.0f, 0.0f);
+
+		Vector2 pt = m_imageMatrix * Vector2(float(x), float(y));
+		Vector2 dt = m_imageMatrix * Vector2(float(x + 1.0f), float(y)) - pt;
+
+		const int32_t w = m_image->getWidth();
+		const int32_t h = m_image->getHeight();
+
+		for (unsigned i = 0; i < len; ++i)
+		{
+			int32_t sx = std::abs(int32_t(pt.x)) % w;
+			int32_t sy = std::abs(int32_t(pt.y)) % h;
+
+			m_image->getPixelUnsafe(sx, sy, c);
+
+			span[i] = agg::rgba8(
+				agg::int8u(c.getRed() * 255.0f),
+				agg::int8u(c.getGreen() * 255.0f),
+				agg::int8u(c.getBlue() * 255.0f),
+				agg::int8u(c.getAlpha() * 255.0f)
+			);
+
+			pt += dt;
+		}
+	}
+
+private:
+	Matrix33 m_imageMatrix;
+	Ref< const drawing::Image > m_image;
 };
 
 /*! \brief Style handler partial template. */
@@ -363,7 +382,10 @@ public:
 
 	int32_t defineImageStyle(const Matrix33& imageMatrix, const Image* image, bool repeat)
 	{
-		m_styles.push_back(new ImageStyle(imageMatrix, image, repeat));
+		if (repeat)
+			m_styles.push_back(new ImageRepeatStyle(imageMatrix, image));
+		else
+			m_styles.push_back(new ImageClampStyle(imageMatrix, image));
 		return int32_t(m_styles.size() - 1);
 	}
 
