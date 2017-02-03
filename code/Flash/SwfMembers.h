@@ -9,6 +9,9 @@ namespace traktor
 	namespace flash
 	{
 
+/*! \brief Color transform member.
+ * \ingroup Flash
+ */
 class MemberColorTransform : public MemberComplex
 {
 public:

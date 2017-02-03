@@ -39,22 +39,31 @@ public:
 
 	int32_t getDirtyTag() const;
 
+	/*! \brief Clear canvas. */
 	void clear();
 
+	/*! \brief Begin solid fill. */
 	void beginFill(const Color4f& color);
 
+	/*! \brief Begin gradient fill. */
 	void beginGradientFill(FlashFillStyle::GradientType gradientType, const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords, const Matrix33& gradientMatrix);
 
+	/*! \brief Begin bitmap fill. */
 	void beginBitmapFill(FlashBitmap* image, const Matrix33& bitmapMatrix, bool repeat);
 
+	/*! \brief End fill. */
 	void endFill();
 
+	/*! \brief Move cursor. */
 	void moveTo(avm_number_t x, avm_number_t y);
 
+	/*! \brief Add a line from cursor. */
 	void lineTo(avm_number_t x, avm_number_t y);
 
+	/*! \brief Add a curve from cursor. */
 	void curveTo(avm_number_t controlX, avm_number_t controlY, avm_number_t anchorX, avm_number_t anchorY);
 
+	/*! \brief Get bounds of shapes in canvas. */
 	const Aabb2& getBounds() const { return m_bounds; }
 
 	const FlashDictionary& getDictionary() const { return m_dictionary; }
