@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_WX_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,18 +21,20 @@ class T_DLLCLASS EventLoopWx : public IEventLoop
 public:
 	EventLoopWx();
 
-	virtual bool process(EventSubject* owner);
+	virtual bool process(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual int execute(EventSubject* owner);
+	virtual int32_t execute(EventSubject* owner) T_OVERRIDE T_FINAL;
 	
-	virtual void exit(int exitCode);
+	virtual void exit(int32_t exitCode) T_OVERRIDE T_FINAL;
 
-	virtual int getExitCode() const;
+	virtual int32_t getExitCode() const T_OVERRIDE T_FINAL;
 
-	virtual int getAsyncKeyState() const;
+	virtual int32_t getAsyncKeyState() const T_OVERRIDE T_FINAL;
+
+	virtual bool isKeyDown(VirtualKey vk) const T_OVERRIDE T_FINAL;
 
 private:
-	int m_exitCode;
+	int32_t m_exitCode;
 	bool m_terminate;
 };
 
