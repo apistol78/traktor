@@ -12,6 +12,9 @@ namespace traktor
 
 class FlashFont;
 
+/*! \brief Text layout engine.
+ * \ingroup Flash
+ */
 class TextLayout : public Object
 {
 	T_RTTI_CLASS;

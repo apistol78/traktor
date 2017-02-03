@@ -18,12 +18,21 @@ namespace traktor
 	namespace flash
 	{
 
+/*! \brief Cast AS value to Any.
+ * \ingroup Flash
+ */
 Any T_DLLCLASS castActionToAny(const ActionValue& value);
 
+/*! \brief Cast Any value to AS.
+ * \ingroup Flash
+ */
 ActionValue T_DLLCLASS castAnyToAction(const Any& value);
 
 	}
 
+/*! \brief AS value cast rule.
+ * \ingroup Flash
+ */
 template < >
 struct CastAny < flash::ActionValue, false >
 {
@@ -40,6 +49,9 @@ struct CastAny < flash::ActionValue, false >
 	}
 };
 
+/*! \brief AS value cast rule.
+ * \ingroup Flash
+ */
 template < >
 struct CastAny < const flash::ActionValue&, false >
 {

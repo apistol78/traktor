@@ -18,6 +18,9 @@ namespace traktor
 	namespace flash
 	{
 
+/*! \brief Base of garbage collectable classes.
+ * \ingroup Flash
+ */
 class T_DLLCLASS Collectable : public Object
 {
 	T_RTTI_CLASS;
@@ -47,8 +50,10 @@ public:
 
 	virtual void release(void* owner) const T_OVERRIDE T_FINAL;
 
+	/*! \brief Register a weak reference. */
 	void addWeakRef(IWeakRefDispose* weakRefDispose);
 
+	/*! \brief Remove a weak reference. */
 	void releaseWeakRef(IWeakRefDispose* weakRefDispose);
 
 	/*! \brief Get alive collectible instance count. */

@@ -16,6 +16,9 @@ namespace traktor
 	namespace flash
 	{
 
+/*! \brief Flash runtime class factory.
+ * \ingroup Flash
+ */
 class T_DLLCLASS FlashClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;
