@@ -276,8 +276,8 @@ public:
 
 		for (unsigned i = 0; i < len; ++i)
 		{
-			int32_t sx = std::abs(int32_t(pt.x)) % w;
-			int32_t sy = std::abs(int32_t(pt.y)) % h;
+			int32_t sx = abs(int32_t(pt.x)) % w;
+			int32_t sy = abs(int32_t(pt.y)) % h;
 
 			m_image->getPixelUnsafe(sx, sy, c);
 
