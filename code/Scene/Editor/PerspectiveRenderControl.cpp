@@ -31,6 +31,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Scene/Editor/Events/FrameEvent.h"
+#include "Ui/Application.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
@@ -106,7 +107,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_containerAspect->create(parent, ui::WsNone, new ui::FloodLayout());
 
 	m_renderWidget = new ui::Widget();
-	if (!m_renderWidget->create(m_containerAspect))
+	if (!m_renderWidget->create(m_containerAspect, ui::WsWantAllInput))
 		return false;
 
 	render::RenderViewEmbeddedDesc desc;
@@ -486,6 +487,29 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		worldRenderSettings->viewNearZ,
 		worldRenderSettings->viewFarZ
 	);
+
+	// Update automatic camera movement.
+	if (m_renderWidget->hasFocus())
+	{
+		Vector4 movement(0.0f, 0.0f, 0.0f, 0.0f);
+
+		ui::IEventLoop* eventLoop = ui::Application::getInstance()->getEventLoop();
+		if (eventLoop->isKeyDown(ui::VkA))
+			movement += Vector4(-1.0f, 0.0f, 0.0f);
+		if (eventLoop->isKeyDown(ui::VkD))
+			movement += Vector4(1.0f, 0.0f, 0.0f);
+		if (eventLoop->isKeyDown(ui::VkW))
+			movement += Vector4(0.0f, 0.0f, 1.0f);
+		if (eventLoop->isKeyDown(ui::VkS))
+			movement += Vector4(0.0f, 0.0f, -1.0f);
+		if (eventLoop->isKeyDown(ui::VkShift))
+			movement *= Scalar(3.0f);
+		if (eventLoop->isKeyDown(ui::VkControl))
+			movement *= Scalar(1.0f / 3.0f);
+
+		if (movement.length2() > FUZZY_EPSILON)
+			m_camera->move(movement * Scalar(60.0f * deltaTime));
+	}
 
 	// Get current transformations.
 	Matrix44 projection = getProjectionTransform();

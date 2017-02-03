@@ -100,6 +100,7 @@ private:
 	bool m_invertPanY;
 	Timer m_timer;
 	Ref< Camera > m_camera;
+	Vector4 m_movement;
 	ui::Rect m_selectionRectangle;
 	ui::Size m_dirtySize;
 
