@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <stack>
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/StyleSheet.h"
@@ -30,9 +31,18 @@ const int c_wheelRotationFactor = 2;
 std::wstring buildPath(const PropertyItem* item)
 {
 	std::wstring path = item->getText();
+
 	const PropertyItem* parent = item->getParentItem();
 	if (parent)
-		path = buildPath(parent) + L"/" + path;
+	{
+		const RefArray< PropertyItem >& children = parent->getChildItems();
+		
+		RefArray< PropertyItem >::const_iterator it = std::find(children.begin(), children.end(), item);
+		T_FATAL_ASSERT (it != children.end());
+
+		path = buildPath(parent) + L"/" + path + L":" + toString(std::distance(children.begin(), it));
+	}
+
 	return path;
 }
 
