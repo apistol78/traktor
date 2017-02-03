@@ -103,7 +103,7 @@ bool EventLoopWin32::process(EventSubject* owner)
 	return true;
 }
 
-int EventLoopWin32::execute(EventSubject* owner)
+int32_t EventLoopWin32::execute(EventSubject* owner)
 {
 	bool m_idle = false;
 	MSG msg;
@@ -154,21 +154,21 @@ int EventLoopWin32::execute(EventSubject* owner)
 	return m_exitCode;
 }
 
-void EventLoopWin32::exit(int exitCode)
+void EventLoopWin32::exit(int32_t exitCode)
 {
 	m_terminate = true;
 	m_exitCode = exitCode;
 	PostQuitMessage(exitCode);
 }
 
-int EventLoopWin32::getExitCode() const
+int32_t EventLoopWin32::getExitCode() const
 {
 	return m_exitCode;
 }
 
-int EventLoopWin32::getAsyncKeyState() const
+int32_t EventLoopWin32::getAsyncKeyState() const
 {
-	int keyState = KsNone;
+	int32_t keyState = KsNone;
 
 	if (GetAsyncKeyState(VK_CONTROL))
 		keyState |= KsControl | KsCommand;
@@ -180,18 +180,27 @@ int EventLoopWin32::getAsyncKeyState() const
 	return keyState;
 }
 
+bool EventLoopWin32::isKeyDown(VirtualKey vk) const
+{
+	uint32_t keyCode = translateToKeyCode(vk);
+	if (keyCode)
+		return GetAsyncKeyState(keyCode) != 0;
+	else
+		return false;
+}
+
 bool EventLoopWin32::preTranslateMessage(EventSubject* owner, const MSG& msg)
 {
 	bool consumed = false;
 	if (msg.message == WM_KEYDOWN)
 	{
-		KeyDownEvent keyEvent(owner, translateKeyCode(int(msg.wParam)), int(msg.wParam), 0);
+		KeyDownEvent keyEvent(owner, translateToVirtualKey(int(msg.wParam)), int(msg.wParam), 0);
 		owner->raiseEvent(&keyEvent);
 		consumed = keyEvent.consumed();
 	}
 	else if (msg.message == WM_KEYUP)
 	{
-		KeyUpEvent keyEvent(owner, translateKeyCode(int(msg.wParam)), int(msg.wParam), 0);
+		KeyUpEvent keyEvent(owner, translateToVirtualKey(int(msg.wParam)), int(msg.wParam), 0);
 		owner->raiseEvent(&keyEvent);
 		consumed = keyEvent.consumed();
 	}

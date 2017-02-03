@@ -1,7 +1,7 @@
 #include <wx/wx.h>
 #include <wx/evtloop.h>
-#include "Ui/Wx/EventLoopWx.h"
 #include "Ui/Enums.h"
+#include "Ui/Wx/EventLoopWx.h"
 
 namespace traktor
 {
@@ -45,12 +45,12 @@ bool EventLoopWx::process(EventSubject* owner)
 	return true;
 }
 
-int EventLoopWx::execute(EventSubject* owner)
+int32_t EventLoopWx::execute(EventSubject* owner)
 {
 	return wxGetApp().MainLoop();
 }
 
-void EventLoopWx::exit(int exitCode)
+void EventLoopWx::exit(int32_t exitCode)
 {
 	m_exitCode = exitCode;
 	m_terminate = true;
@@ -61,14 +61,14 @@ void EventLoopWx::exit(int exitCode)
 		eventLoop->Exit(exitCode);
 }
 
-int EventLoopWx::getExitCode() const
+int32_t EventLoopWx::getExitCode() const
 {
 	return m_exitCode;
 }
 
-int EventLoopWx::getAsyncKeyState() const
+int32_t EventLoopWx::getAsyncKeyState() const
 {
-	int keyState = KsNone;
+	int32_t keyState = KsNone;
 
 	if (wxGetKeyState(WXK_CONTROL))
 		keyState |= KsControl | KsCommand;
@@ -78,6 +78,11 @@ int EventLoopWx::getAsyncKeyState() const
 		keyState |= KsShift;
 
 	return keyState;
+}
+
+bool EventLoopWx::isKeyDown(VirtualKey vk) const
+{
+	return false;	
 }
 
 	}

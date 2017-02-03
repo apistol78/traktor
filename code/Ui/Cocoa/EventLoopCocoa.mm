@@ -148,20 +148,20 @@ int EventLoopCocoa::execute(EventSubject* owner)
 	return m_exitCode;
 }
 
-void EventLoopCocoa::exit(int exitCode)
+void EventLoopCocoa::exit(int32_t exitCode)
 {
 	m_exitCode = exitCode;
 	m_terminated = true;
 }
 
-int EventLoopCocoa::getExitCode() const
+int32_t EventLoopCocoa::getExitCode() const
 {
 	return m_exitCode;
 }
 
-int EventLoopCocoa::getAsyncKeyState() const
+int32_t EventLoopCocoa::getAsyncKeyState() const
 {
-	int keyState = KsNone;
+	int32_t keyState = KsNone;
 	
 	if (m_modifierFlags & NSControlKeyMask)
 		keyState |= KsControl;
@@ -173,6 +173,11 @@ int EventLoopCocoa::getAsyncKeyState() const
 		keyState |= KsCommand;
 
 	return keyState;
+}
+
+bool EventLoopCocoa::isKeyDown(VirtualKey vk) const
+{
+	return false;	
 }
 
 bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, void* event)

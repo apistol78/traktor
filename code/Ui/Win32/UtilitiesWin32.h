@@ -15,8 +15,16 @@ namespace traktor
  * \param keyCode Win32 virtual key.
  * \return Virtual key.
  */
-VirtualKey translateKeyCode(uint32_t keyCode);
-	
+VirtualKey translateToVirtualKey(uint32_t keyCode);
+
+/*! \brief Translate virtual key to Win32 virtual key.
+ * \ingroup UIW32
+ *
+ * \param vk Virtual key.
+ * \return Key code.
+ */
+uint32_t translateToKeyCode(VirtualKey vk);
+
 	}
 }
 

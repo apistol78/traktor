@@ -559,7 +559,7 @@ protected:
 
 	LRESULT eventChar(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyEvent k(m_owner, translateKeyCode(int(wParam)), int(wParam), wchar_t(wParam));
+		KeyEvent k(m_owner, translateToVirtualKey(int(wParam)), int(wParam), wchar_t(wParam));
 		m_owner->raiseEvent(&k);
 		if (!k.consumed())
 			outPass = true;
@@ -568,7 +568,7 @@ protected:
 
 	LRESULT eventKeyDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyDownEvent k(m_owner, translateKeyCode(int(wParam)), int(wParam), 0);
+		KeyDownEvent k(m_owner, translateToVirtualKey(int(wParam)), int(wParam), 0);
 		m_owner->raiseEvent(&k);
 		if (!k.consumed())
 			outPass = true;
@@ -577,7 +577,7 @@ protected:
 
 	LRESULT eventKeyUp(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyUpEvent k(m_owner, translateKeyCode(int(wParam)), int(wParam), 0);
+		KeyUpEvent k(m_owner, translateToVirtualKey(int(wParam)), int(wParam), 0);
 		m_owner->raiseEvent(&k);
 		if (!k.consumed())
 			outPass = true;
