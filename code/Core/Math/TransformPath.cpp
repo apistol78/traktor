@@ -4,7 +4,7 @@
 #include "Core/Math/Float.h"
 #include "Core/Math/TcbSpline.h"
 #include "Core/Math/TransformPath.h"
-#include "Core/Serialization/AttributeDirection.h"
+#include "Core/Serialization/AttributeAngles.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
@@ -31,7 +31,7 @@ public:
 	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		s >> Member< Vector4 >(L"position", m_refPosition, AttributePoint());
-		s >> Member< Vector4 >(L"orientation", m_refOrientation, AttributeDirection());
+		s >> Member< Vector4 >(L"orientation", m_refOrientation, AttributeAngles());
 	}
 
 private:
@@ -321,15 +321,16 @@ TransformPath::TransformPath(const TransformPath& path)
 {
 }
 
-void TransformPath::insert(const Key& key)
+size_t TransformPath::insert(const Key& key)
 {
+	AlignedVector< Key >::iterator at = m_keys.end();
 	size_t keys = m_keys.size();
 	if (keys >= 1)
 	{
 		if (key.T <= m_keys.front().T)
-			m_keys.insert(m_keys.begin(), key);
+			at = m_keys.insert(m_keys.begin(), key);
 		else if (key.T >= m_keys.back().T)
-			m_keys.insert(m_keys.end(), key);
+			at = m_keys.insert(m_keys.end(), key);
 		else
 		{
 			for (size_t i = 0; i < keys - 1; ++i)
@@ -339,8 +340,8 @@ void TransformPath::insert(const Key& key)
 				if (key.T > k1.T && key.T < k2.T)
 				{
 					AlignedVector< Key >::iterator iter = m_keys.begin();
-                    std::advance(iter, int(i + 1));
-					m_keys.insert(iter, key);
+                    std::advance(iter, int32_t(i + 1));
+					at = m_keys.insert(iter, key);
 					break;
 				}
 			}
@@ -349,8 +350,10 @@ void TransformPath::insert(const Key& key)
 	else
 	{
 		m_keys.push_back(key);
+		at = m_keys.end();
 	}
 	m_spline.release();
+	return std::distance(m_keys.begin(), at);
 }
 
 TransformPath::Key TransformPath::evaluate(float at) const
@@ -409,15 +412,15 @@ TransformPath::Key TransformPath::evaluate(float at, float end, float loop) cons
 	}
 }
 
-TransformPath::Key* TransformPath::getClosestKey(float at)
+int32_t TransformPath::getClosestKey(float at) const
 {
 	if (m_keys.empty())
-		return 0;
+		return -1;
 
 	float minT = std::numeric_limits< float >::max();
-	uint32_t minI = 0;
+	int32_t minI = 0;
 
-	for (uint32_t i = 0; i < uint32_t(m_keys.size()); ++i)
+	for (int32_t i = 0; i < int32_t(m_keys.size()); ++i)
 	{
 		float dT = abs(at - m_keys[i].T);
 		if (dT < minT)
@@ -427,18 +430,18 @@ TransformPath::Key* TransformPath::getClosestKey(float at)
 		}
 	}
 
-	return &m_keys[minI];
+	return minI;
 }
 
-TransformPath::Key* TransformPath::getClosestPreviousKey(float at)
+int32_t TransformPath::getClosestPreviousKey(float at) const
 {
 	if (m_keys.empty())
-		return 0;
+		return -1;
 
 	float minT = std::numeric_limits< float >::max();
-	Key* minK = 0;
+	int32_t minI = -1;
 
-	for (uint32_t i = 0; i < uint32_t(m_keys.size()); ++i)
+	for (int32_t i = 0; i < int32_t(m_keys.size()); ++i)
 	{
 		if (at <= m_keys[i].T + FUZZY_EPSILON)
 			continue;
@@ -447,22 +450,22 @@ TransformPath::Key* TransformPath::getClosestPreviousKey(float at)
 		if (dT < minT)
 		{
 			minT = dT;
-			minK = &m_keys[i];
+			minI = i;
 		}
 	}
 
-	return minK;
+	return minI;
 }
 
-TransformPath::Key* TransformPath::getClosestNextKey(float at)
+int32_t TransformPath::getClosestNextKey(float at) const
 {
 	if (m_keys.empty())
-		return 0;
+		return -1;
 
 	float minT = std::numeric_limits< float >::max();
-	Key* minK = 0;
+	int32_t minI = -1;
 
-	for (uint32_t i = 0; i < uint32_t(m_keys.size()); ++i)
+	for (int32_t i = 0; i < int32_t(m_keys.size()); ++i)
 	{
 		if (at >= m_keys[i].T - FUZZY_EPSILON)
 			continue;
@@ -471,11 +474,11 @@ TransformPath::Key* TransformPath::getClosestNextKey(float at)
 		if (dT < minT)
 		{
 			minT = dT;
-			minK = &m_keys[i];
+			minI = i;
 		}
 	}
 
-	return minK;
+	return minI;
 }
 
 void TransformPath::split(float at, TransformPath& outPath1, TransformPath& outPath2) const

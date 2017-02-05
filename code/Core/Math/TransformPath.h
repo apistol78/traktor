@@ -53,31 +53,111 @@ public:
 
 	TransformPath(const TransformPath& path);
 
-	void insert(const Key& key);
+	/*! \brief Insert key into path.
+	 *
+	 * \param key New key frame.
+	 * \return Index where key was inserted.
+	 */
+	size_t insert(const Key& key);
 
+	/*! \brief Evaluate frame.
+	 *
+	 * \param at Time to evaluate.
+	 * \return Evaluated frame.
+	 */
 	Key evaluate(float at) const;
 
+	/*! \brief Evaluate frame.
+	 *
+	 * \param at Time to evaluate.
+	 * \param end End time of path.
+	 * \return Evaluated frame.
+	 */
 	Key evaluate(float at, float end) const;
 
+	/*! \brief Evaluate frame.
+	 *
+	 * \param at Time to evaluate.
+	 * \param end End time of path.
+	 * \param loop Loop time point.
+	 * \return Evaluated frame.
+	 */
 	Key evaluate(float at, float end, float loop) const;
 
-	Key* getClosestKey(float at);
+	/*! \brief Get closest key frame from time.
+	 *
+	 * \param at Closest to time.
+	 * \return Index of closest key frame, -1 if no key frame found.
+	 */
+	int32_t getClosestKey(float at) const;
 
-	Key* getClosestPreviousKey(float at);
+	/*! \brief Get closest previous key frame from time.
+	 *
+	 * \param at Closest to time.
+	 * \return Index of closest key frame, -1 if no key frame found.
+	 */
+	int32_t getClosestPreviousKey(float at) const;
 
-	Key* getClosestNextKey(float at);
+	/*! \brief Get closest next key frame from time.
+	 *
+	 * \param at Closest to time.
+	 * \return Index of closest key frame, -1 if no key frame found.
+	 */
+	int32_t getClosestNextKey(float at) const;
 
+	/*! \brief Split path into two paths at given time.
+	 *
+	 * \param at Split at time.
+	 * \param outPath1 Path before split point.
+	 * \param outPath2 Path after split point.
+	 */
 	void split(float at, TransformPath& outPath1, TransformPath& outPath2) const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
+	/*! \brief Get time of first key frame.
+	 *
+	 * \return Path's first key frame time.
+	 */
 	float getStartTime() const { return !m_keys.empty() ? m_keys.front().T : 0.0f; }
 
+	/*! \brief Get time of last key frame.
+	 *
+	 * \return Path's last key frame time.
+	 */
 	float getEndTime() const { return !m_keys.empty() ? m_keys.back().T : 0.0f; }
 
+	/*! \brief Get key frames.
+	 *
+	 * \return Key frames.
+	 */
 	const AlignedVector< Key >& getKeys() const { return m_keys; }
 
+	/*! \brief Get key frames.
+	 *
+	 * \return Key frames.
+	 */
 	AlignedVector< Key >& getKeys() { return m_keys; }
+
+	/*! \brief Get number of key frames. 
+	 *
+	 * \return Number of key frames.
+	 */
+	size_t size() const { return m_keys.size(); }
+
+	/*! \brief Get key frame at index.
+	 *
+	 * \param at Index.
+	 * \return Key frame at index.
+	 */
+	const Key& operator [] (size_t at) const { return m_keys[at]; }
+
+	/*! \brief Get key frame at index.
+	 *
+	 * \param at Index.
+	 * \return Key frame at index.
+	 */
+	Key& operator [] (size_t at) { return m_keys[at]; }
 
 	TransformPath& operator = (const TransformPath& path);
 

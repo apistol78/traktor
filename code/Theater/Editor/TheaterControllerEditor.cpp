@@ -70,6 +70,28 @@ public:
 	}
 };
 
+Vector4 fixupOrientation(const Vector4& orientation, const Vector4& reference)
+{
+	Vector4 out(0.0f, 0.0f, 0.0f, 0.0f);
+	for (int32_t i = 0; i < 3; ++i)
+	{
+		float a = orientation[i];
+		float r = reference[i];
+
+		float d1 = abs(a - r);
+		float d2 = abs(a + TWO_PI - r);
+		float d3 = abs(a - TWO_PI - r);
+
+		if (d2 < d1 && d2 < d3)
+			a += TWO_PI;
+		else if (d3 < d1 && d3 < d2)
+			a -= TWO_PI;
+
+		out.set(i, Scalar(a));
+	}
+	return out;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterControllerEditor", TheaterControllerEditor, scene::ISceneControllerEditor)
@@ -417,11 +439,22 @@ void TheaterControllerEditor::captureEntities()
 		T_ASSERT (instanceTrackData);
 		TransformPath& pathData = instanceTrackData->getPath();
 
-		TransformPath::Key* closestKey = pathData.getClosestKey(time);
+		int32_t cki = pathData.getClosestKey(time);
+		TransformPath::Key* closestKey = (cki >= 0) ? &pathData[cki] : 0;
+
 		if (closestKey && abs(closestKey->T - time) < c_clampKeyDistance)
 		{
 			closestKey->position = transform.translation();
 			closestKey->orientation = transform.rotation().toEulerAngles();
+
+			// Ensure orientation are "logially" fixed up to previous key.
+			if (cki > 0)
+			{
+				pathData[cki].orientation = fixupOrientation(
+					pathData[cki].orientation,
+					pathData[cki - 1].orientation
+				);
+			}
 		}
 		else
 		{
@@ -429,7 +462,16 @@ void TheaterControllerEditor::captureEntities()
 			key.T = time;
 			key.position = transform.translation();
 			key.orientation = transform.rotation().toEulerAngles();
-			pathData.insert(key);
+			size_t at = pathData.insert(key);
+
+			// Ensure orientation are "logially" fixed up to previous key.
+			if (at > 0)
+			{
+				pathData[at].orientation = fixupOrientation(
+					pathData[at].orientation,
+					pathData[at - 1].orientation
+				);
+			}
 		}
 	}
 
@@ -571,9 +613,12 @@ void TheaterControllerEditor::gotoPreviousKey()
 	for (RefArray< TrackData >::const_iterator i = tracks.begin(); i != tracks.end(); ++i)
 	{
 		TransformPath& path = (*i)->getPath();
-		TransformPath::Key* key = path.getClosestPreviousKey(time);
-		if (key && key->T > previousTime)
-			previousTime = key->T;
+		int32_t pki = path.getClosestPreviousKey(time);
+		if (pki >= 0)
+		{
+			if (path[pki].T > previousTime)
+				previousTime = path[pki].T;
+		}
 	}
 
 	int32_t cursorTick = int32_t(previousTime * 1000.0f);
@@ -606,9 +651,12 @@ void TheaterControllerEditor::gotoNextKey()
 	for (RefArray< TrackData >::const_iterator i = tracks.begin(); i != tracks.end(); ++i)
 	{
 		TransformPath& path = (*i)->getPath();
-		TransformPath::Key* key = path.getClosestNextKey(time);
-		if (key && key->T < nextTime)
-			nextTime = key->T;
+		int32_t nki = path.getClosestNextKey(time);
+		if (nki >= 0)
+		{
+			if (path[nki].T < nextTime)
+				nextTime = path[nki].T;
+		}
 	}
 
 	int32_t cursorTick = int32_t(nextTime * 1000.0f);
