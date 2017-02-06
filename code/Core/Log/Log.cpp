@@ -7,6 +7,8 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 
 namespace traktor
 {
@@ -21,22 +23,29 @@ extern void NSLogCpp(const wchar_t* s);
 class LogTargetConsole : public ILogTarget
 {
 public:
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-#if !defined(WINCE)
 		if (level == 0)
+		{
 			fwprintf(stdout, L"%ls\n", str.c_str());
+			fflush(stdout);
+		}
 		else if (level == 1)
+		{
 			fwprintf(stdout, L"(WARN) %ls\n", str.c_str());
+			fflush(stdout);
+		}
 		else
+		{
 			fwprintf(stderr, L"(ERROR) %ls\n", str.c_str());
-#endif
+			fflush(stderr);
+		}
 #if defined(__IOS__)
 		NSLogCpp(str.c_str());
 #elif defined(__ANDROID__)
 		__android_log_print(ANDROID_LOG_INFO, "Traktor", "%s", wstombs(str).c_str());
-#elif defined(_WIN32)
+#elif defined(_WIN32) && !defined(_XBOX_ONE)
 		tstring tss = wstots(str + L"\n");
 		OutputDebugString(tss.c_str());
 #endif
@@ -49,10 +58,10 @@ private:
 class LogTargetDebug : public ILogTarget
 {
 public:
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(_XBOX_ONE)
 		StringOutputStream ss;
 		ss << L"(" << uint32_t(GetCurrentThreadId()) << L") " << str << Endl;
 		OutputDebugString(wstots(ss.str()).c_str());
@@ -125,11 +134,13 @@ public:
 			wchar_t c = buffer[i];
 			if (c == L'\n')
 			{
+				uint32_t threadId = ThreadManager::getInstance().getCurrentThread()->id();
+
 				if (m_globalTarget)
-					m_globalTarget->log(m_level, m_buffer.str());
+					m_globalTarget->log(threadId, m_level, m_buffer.str());
 				
 				if (m_localTarget)
-					m_localTarget->log(m_level, m_buffer.str());
+					m_localTarget->log(threadId, m_level, m_buffer.str());
 
 				m_buffer.reset();
 			}
