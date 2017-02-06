@@ -16,9 +16,13 @@ if "%AGGREGATE_OUTPUT_PATH%" == "" (
 
 :: Rebuild entire solution.
 pushd %TRAKTOR_HOME%
+
 call build-projects-vs2015-win64.bat
+call config-vsenv.bat build\win32\version.txt
+
 devenv "build\win64\Traktor Win64.sln" /Build DebugShared /Out %~dp0autobuild-win64.log
 devenv "build\win64\Traktor Win64.sln" /Build ReleaseShared /Out %~dp0autobuild-win64.log
 devenv "build\win64\Traktor Win64.sln" /Build DebugStatic /Out %~dp0autobuild-win64.log
 devenv "build\win64\Traktor Win64.sln" /Build ReleaseStatic /Out %~dp0autobuild-win64.log
+
 popd
