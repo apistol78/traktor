@@ -66,11 +66,11 @@ class StackWalkerToConsole : public StackWalker
 {
 protected:
 	// Overload to get less output by stackwalker.
-	virtual void OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUserName) {}	
-	virtual void OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr) {}
-	virtual void OnLoadModule(LPCSTR img, LPCSTR mod, DWORD64 baseAddr, DWORD size, DWORD result, LPCSTR symType, LPCSTR pdbName, ULONGLONG fileVersion) {}
+	virtual void OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUserName) T_OVERRIDE T_FINAL {}
+	virtual void OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr) T_OVERRIDE T_FINAL {}
+	virtual void OnLoadModule(LPCSTR img, LPCSTR mod, DWORD64 baseAddr, DWORD size, DWORD result, LPCSTR symType, LPCSTR pdbName, ULONGLONG fileVersion) T_OVERRIDE T_FINAL {}
 
-	virtual void OnOutput(LPCSTR szText)
+	virtual void OnOutput(LPCSTR szText) T_OVERRIDE T_FINAL
 	{
 		log::info << mbstows(szText);
 	}
@@ -161,7 +161,7 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
 		(*m_stream) << str << Endl;
 	}
@@ -179,10 +179,10 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
-		m_target1->log(level, str);
-		m_target2->log(level, str);
+		m_target1->log(threadId, level, str);
+		m_target2->log(threadId, level, str);
 	}
 
 private:
@@ -197,7 +197,7 @@ struct StatusListener : public editor::IPipelineBuilder::IListener
 		int32_t index,
 		int32_t count,
 		const editor::PipelineDependency* dependency
-	) const
+	) const T_OVERRIDE T_FINAL
 	{
 		log::info << L":" << index << L":" << count << Endl;
 	}
@@ -208,7 +208,7 @@ struct StatusListener : public editor::IPipelineBuilder::IListener
 		int32_t count,
 		const editor::PipelineDependency* dependency,
 		editor::IPipelineBuilder::BuildResult result
-	) const
+	) const T_OVERRIDE T_FINAL
 	{
 	}
 };
@@ -464,7 +464,9 @@ class PipelineLog : public ISerializable
 public:
 	PipelineLog();
 
-	PipelineLog(int32_t level, const std::wstring& text);
+	PipelineLog(uint32_t threadId, int32_t level, const std::wstring& text);
+
+	uint32_t getThreadId() const { return m_threadId; }
 
 	int32_t getLevel() const { return m_level; }
 
@@ -473,6 +475,7 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
+	uint32_t m_threadId;
 	int32_t m_level;
 	std::wstring m_text;
 };
@@ -481,18 +484,21 @@ private:
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"PipelineLog", 0, PipelineLog, ISerializable)
 
 PipelineLog::PipelineLog()
-:	m_level(0)
+:	m_threadId(0)
+,	m_level(0)
 {
 }
 
-PipelineLog::PipelineLog(int32_t level, const std::wstring& text)
-:	m_level(level)
+PipelineLog::PipelineLog(uint32_t threadId, int32_t level, const std::wstring& text)
+:	m_threadId(threadId)
+,	m_level(level)
 ,	m_text(text)
 {
 }
 
 void PipelineLog::serialize(ISerializer& s)
 {
+	s >> Member< uint32_t >(L"threadId", m_threadId);
 	s >> Member< int32_t >(L"level", m_level);
 	s >> Member< std::wstring >(L"text", m_text);
 }
@@ -510,14 +516,14 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
 		if (m_originalTarget)
-			m_originalTarget->log(level, str);
+			m_originalTarget->log(threadId, level, str);
 
 		if (m_transport->connected())
 		{
-			const PipelineLog tlog(level, str);
+			const PipelineLog tlog(threadId, level, str);
 			m_transport->send(&tlog);
 		}
 	}

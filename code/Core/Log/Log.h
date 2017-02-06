@@ -25,7 +25,7 @@ namespace traktor
 class T_DLLCLASS ILogTarget : public Object
 {
 public:
-	virtual void log(int32_t level, const std::wstring& str) = 0;
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) = 0;
 };
 
 /*! \brief Log stream.

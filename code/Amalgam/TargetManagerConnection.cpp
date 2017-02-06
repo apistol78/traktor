@@ -27,14 +27,14 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
 		if (m_originalTarget)
-			m_originalTarget->log(level, str);
+			m_originalTarget->log(threadId, level, str);
 
 		if (m_transport->connected())
 		{
-			const TargetLog tlog(level, str);
+			const TargetLog tlog(threadId, level, str);
 			m_transport->send(&tlog);
 		}
 	}
