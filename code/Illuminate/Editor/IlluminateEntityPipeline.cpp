@@ -126,14 +126,14 @@ void collectTraceEntities(
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.illuminate.IlluminateEntityPipeline", 0, IlluminateEntityPipeline, world::EntityPipeline)
 
 IlluminateEntityPipeline::IlluminateEntityPipeline()
-:	m_targetEditor(false)
+:	m_build(true)
 {
 }
 
 bool IlluminateEntityPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-	m_targetEditor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor", false);
+	m_build = settings->getProperty< PropertyBoolean >(L"IlluminatePipeline.Build", true);
 	return true;
 }
 
@@ -166,7 +166,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	if (!m_targetEditor)
+	if (m_build)
 	{
 		const IlluminateEntityData* sourceIlluminateEntityData = checked_type_cast< const IlluminateEntityData* >(sourceAsset);
 
