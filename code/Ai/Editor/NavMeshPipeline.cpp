@@ -179,6 +179,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 12, NavMeshPipelin
 
 NavMeshPipeline::NavMeshPipeline()
 :	m_editor(false)
+,	m_build(true)
 ,	m_terrainStepSize(16)
 {
 }
@@ -187,6 +188,7 @@ bool NavMeshPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_editor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor", false);
+	m_build = settings->getProperty< PropertyBoolean >(L"NavMeshPipeline.Build", true);
 	m_terrainStepSize = settings->getProperty< PropertyInteger >(L"NavMeshPipeline.TerrainStepSize", 16);
 	return true;
 }
@@ -208,9 +210,7 @@ bool NavMeshPipeline::buildDependencies(
 {
 	const NavMeshAsset* asset = checked_type_cast< const NavMeshAsset*, false >(sourceAsset);
 
-	// As editor doesn't use navigation mesh then we don't
-	// have this dependency.
-	if (!m_editor)
+	if (!m_build)
 		pipelineDepends->addDependency(asset->m_source, editor::PdfUse);
 
 	return true;
@@ -231,9 +231,7 @@ bool NavMeshPipeline::buildOutput(
 {
 	const NavMeshAsset* asset = checked_type_cast< const NavMeshAsset*, false >(sourceAsset);
 
-	// Skip navigation mesh generation in editor; allow editor to build
-	// if being forced.
-	if (m_editor && (reason & editor::PbrForced) == 0)
+	if (!m_build)
 		return true;
 
 	Ref< const ISerializable > sourceData = pipelineBuilder->getObjectReadOnly(asset->m_source);

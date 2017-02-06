@@ -2221,6 +2221,14 @@
       <second>World renderer</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS_BUILD_NAVMESH</first>
+      <second>Build NavMesh in editor</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_BUILD_LIGHTING</first>
+      <second>Bake lighting in editor</second>
+    </item>
+    <item>
     	<first>SCRIPT_DEBUGGER_TOOL</first>
     	<second>Script debugger</second>
     </item>

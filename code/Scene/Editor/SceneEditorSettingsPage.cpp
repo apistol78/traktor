@@ -82,6 +82,14 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 	m_checkBuildWhenDrop->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP"));
 	m_checkBuildWhenDrop->setChecked(settings->getProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", true));
 
+	m_checkBuildNavMesh = new ui::CheckBox();
+	m_checkBuildNavMesh->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_NAVMESH"));
+	m_checkBuildNavMesh->setChecked(settings->getProperty< PropertyBoolean >(L"NavMeshPipeline.Build", true));
+
+	m_checkBuildLighting = new ui::CheckBox();
+	m_checkBuildLighting->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_LIGHTING"));
+	m_checkBuildLighting->setChecked(settings->getProperty< PropertyBoolean >(L"IlluminatePipeline.Build", true));
+
 	parent->setText(i18n::Text(L"SCENE_EDITOR_SETTINGS"));
 
 	std::wstring worldRendererTypeName = settings->getProperty< PropertyString >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
@@ -113,6 +121,8 @@ bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.InvertMouseWheel", m_checkInvertMouseWheel->isChecked());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.InvertPanY", m_checkInvertPanY->isChecked());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", m_checkBuildWhenDrop->isChecked());
+	settings->setProperty< PropertyBoolean >(L"NavMeshPipeline.Build", m_checkBuildNavMesh->isChecked());
+	settings->setProperty< PropertyBoolean >(L"IlluminatePipeline.Build", m_checkBuildLighting->isChecked());
 	return true;
 }
 

@@ -42,7 +42,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
-	bool m_targetEditor;
+	bool m_build;
 };
 
 	}
