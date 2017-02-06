@@ -61,10 +61,10 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 	return true;
 }
 
-void LogList::add(LogLevel level, const std::wstring& text)
+void LogList::add(uint32_t threadId, LogLevel level, const std::wstring& text)
 {
 	Entry e;
-	e.threadId = ThreadManager::getInstance().getCurrentThread()->id();
+	e.threadId = threadId;
 	e.logLevel = level;
 	e.logText = text;
 

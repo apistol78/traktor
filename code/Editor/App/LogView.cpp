@@ -29,9 +29,9 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
-		m_logList->add((ui::custom::LogList::LogLevel)(1 << level), str);
+		m_logList->add(threadId, (ui::custom::LogList::LogLevel)(1 << level), str);
 	}
 
 private:

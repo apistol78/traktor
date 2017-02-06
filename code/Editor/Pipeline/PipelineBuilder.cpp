@@ -43,11 +43,11 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
 		++m_count;
 		if (m_target)
-			m_target->log(level, str);
+			m_target->log(threadId, level, str);
 	}
 
 	ILogTarget* getTarget() const { return m_target; }

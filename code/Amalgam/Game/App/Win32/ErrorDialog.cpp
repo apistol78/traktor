@@ -64,7 +64,7 @@ bool ErrorDialog::create()
 
 void ErrorDialog::addErrorString(const std::wstring& errorString)
 {
-	m_listLog->add(ui::custom::LogList::LvInfo, errorString);
+	m_listLog->add(0, ui::custom::LogList::LvInfo, errorString);
 }
 
 void ErrorDialog::eventButtonCopyQuit(ui::ButtonClickEvent* event)

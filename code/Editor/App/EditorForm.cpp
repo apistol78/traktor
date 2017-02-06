@@ -134,10 +134,10 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
-		m_target1->log(level, str);
-		m_target2->log(level, str);
+		m_target1->log(threadId, level, str);
+		m_target2->log(threadId, level, str);
 	}
 
 private:
@@ -164,7 +164,7 @@ struct StatusListener : public IPipelineBuilder::IListener
 		int32_t index,
 		int32_t count,
 		const PipelineDependency* dependency
-	) const
+	) const T_OVERRIDE T_FINAL
 	{
 		m_buildView->beginBuild(core, dependency->outputPath);
 		m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
@@ -176,7 +176,7 @@ struct StatusListener : public IPipelineBuilder::IListener
 		int32_t count,
 		const PipelineDependency* dependency,
 		IPipelineBuilder::BuildResult result
-	) const
+	) const T_OVERRIDE T_FINAL
 	{
 		m_buildView->endBuild(core, result);
 	}
@@ -444,7 +444,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Load recently used files dictionary.
 	m_mru = loadRecent(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Traktor.Editor.mru");
 
-	if (!ui::Form::create(c_title, ui::scaleBySystemDPI(1280), ui::scaleBySystemDPI(900), ui::Form::WsDefault, new ui::TableLayout(L"100%", L"*,*,100%,*", 0, 0)))
+	if (!ui::Form::create(
+		c_title,
+		ui::scaleBySystemDPI(1280),
+		ui::scaleBySystemDPI(900),
+		ui::Form::WsDefault,
+		new ui::TableLayout(L"100%", L"*,*,100%,*", 0, 0)
+	))
 		return false;
 
 	//setIcon(ui::Bitmap::load(c_ResourceTraktorSmall, sizeof(c_ResourceTraktorSmall), L"png"));

@@ -39,11 +39,11 @@ class StackWalkerToConsole : public StackWalker
 {
 protected:
 	// Overload to get less output by stackwalker.
-	virtual void OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUserName) {}	
-	virtual void OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr) {}
-	virtual void OnLoadModule(LPCSTR img, LPCSTR mod, DWORD64 baseAddr, DWORD size, DWORD result, LPCSTR symType, LPCSTR pdbName, ULONGLONG fileVersion) {}
+	virtual void OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUserName) T_OVERRIDE T_FINAL {}	
+	virtual void OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr) T_OVERRIDE T_FINAL {}
+	virtual void OnLoadModule(LPCSTR img, LPCSTR mod, DWORD64 baseAddr, DWORD size, DWORD result, LPCSTR symType, LPCSTR pdbName, ULONGLONG fileVersion) T_OVERRIDE T_FINAL {}
 
-	virtual void OnOutput(LPCSTR szText)
+	virtual void OnOutput(LPCSTR szText) T_OVERRIDE T_FINAL
 	{
 		log::info << mbstows(szText);
 	}
@@ -55,7 +55,7 @@ public:
 	Semaphore m_lock;
 	std::list< std::wstring > m_tail;
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		if (m_tail.size() > 100)
@@ -72,7 +72,7 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
 		(*m_stream) << L"[" << DateTime::now().format(L"%H:%M:%S") << L"] " << str << Endl;
 	}
@@ -90,10 +90,10 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
-		m_target1->log(level, str);
-		m_target2->log(level, str);
+		m_target1->log(threadId, level, str);
+		m_target2->log(threadId, level, str);
 	}
 
 private:
@@ -365,7 +365,7 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 
 	if (outputCallStack)
 	{
-		log::info << L"Thread " << uint32_t(GetCurrentThread()) << L":" << Endl;
+		log::info << L"Thread " << (uint32_t)GetCurrentThread() << L":" << Endl;
 		log::info << IncreaseIndent;
 
 		StackWalkerToConsole sw;

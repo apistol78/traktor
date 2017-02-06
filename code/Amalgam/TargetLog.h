@@ -26,7 +26,9 @@ class T_DLLCLASS TargetLog : public ISerializable
 public:
 	TargetLog();
 
-	TargetLog(int32_t level, const std::wstring& text);
+	TargetLog(uint32_t threadId, int32_t level, const std::wstring& text);
+
+	uint32_t getThreadId() const { return m_threadId; }
 
 	int32_t getLevel() const { return m_level; }
 
@@ -35,6 +37,7 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
+	uint32_t m_threadId;
 	int32_t m_level;
 	std::wstring m_text;
 };

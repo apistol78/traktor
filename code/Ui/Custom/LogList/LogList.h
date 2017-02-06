@@ -53,7 +53,7 @@ public:
 
 	bool create(Widget* parent, int style, const ISymbolLookup* lookup);
 
-	void add(LogLevel level, const std::wstring& text);
+	void add(uint32_t threadId, LogLevel level, const std::wstring& text);
 
 	void removeAll();
 
