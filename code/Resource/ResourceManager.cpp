@@ -166,7 +166,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 	const IResourceFactory* factory = findFactory(*resourceType);
 	if (!factory)
 	{
-		log::error << L"Unable to create " << productType.getName() << L" resource; no factory for specified resource type \"" << resourceType->getName() << "\"." << Endl;
+		log::error << L"Unable to create " << productType.getName() << L" resource; no factory for specified resource type \"" << resourceType->getName() << L"\"." << Endl;
 		return 0;
 	}
 
