@@ -48,6 +48,29 @@ function Slider:setKnobColor(color)
 	return self
 end
 
+function Slider:setRange(range)
+	self._range = range
+	return self
+end
+
+function Slider:setPosition(position)
+	local w = self._background_mc:getWidth() - self._knob_mc:getWidth()
+	local f = position / self._range
+	self._knob_mc:setX(w * f)
+	return self
+end
+
+function Slider:getPosition()
+	local w = self._background_mc:getWidth() - self._knob_mc:getWidth()
+	local x = self._knob_mc:getX()
+	return self._range * x / w
+end
+
+function Slider:setOnScroll(scrollFn)
+	self._scrollFn = scrollFn
+	return self
+end
+
 -- Private
 
 function Slider:_initialize(parent, mc)
@@ -65,6 +88,8 @@ function Slider:_initialize(parent, mc)
 	self:_registerEvent("onPress", function() self:_onPress() end)
 	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
 	self:_registerEvent("onMouseMove", function() self:_onMouseMove() end)
+
+	self:setRange(100)
 end
 
 function Slider:_onPress()
@@ -89,6 +114,10 @@ function Slider:_onMouseMove()
 		end
 
 		self._knob_mc:setX(x)
+
+		if self._scrollFn ~= nil then
+			self._scrollFn()
+		end
 	end
 end
 
