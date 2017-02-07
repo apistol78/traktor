@@ -2229,6 +2229,10 @@
       <second>Bake lighting in editor</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS_BUILD_OCCLUSION</first>
+      <second>Bake terrain occlusion in editor</second>
+    </item>
+    <item>
     	<first>SCRIPT_DEBUGGER_TOOL</first>
     	<second>Script debugger</second>
     </item>
