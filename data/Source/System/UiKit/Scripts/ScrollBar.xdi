@@ -26,9 +26,11 @@ function ScrollBar:getPreferredSize()
 end
 
 function ScrollBar:place(x, y, width, height)
-	self._background_mc:setWidth(width)
-	self:_updateKnobSize()
 	Widget.place(self, x, y, width, height)
+
+	local p = self:getPlacement()
+	self._background_mc:setWidth(p.width)
+	self:_updateKnobSize()
 end
 
 function ScrollBar:setColor(color)

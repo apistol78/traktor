@@ -26,11 +26,13 @@ end
 function ScrollContainer:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
-	self._mask_mc:setWidth(width)
-	self._mask_mc:setHeight(height)
+	local p = self:getPlacement()
 
-	self._scrollSize.width = width
-	self._scrollSize.height = height
+	self._mask_mc:setWidth(p.width)
+	self._mask_mc:setHeight(p.height)
+
+	self._scrollSize.width = p.width
+	self._scrollSize.height = p.height
 
 	if self._layout ~= nil then
 		self._innerSize = self:_getInnerSize()

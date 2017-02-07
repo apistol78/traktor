@@ -22,9 +22,11 @@ function Panel.new(parent, layout)
 end
 
 function Panel:place(x, y, width, height)
-	self._background_mc:setWidth(width)
-	self._background_mc:setHeight(height)
 	Container.place(self, x, y, width, height)
+
+	local p = self:getPlacement()
+	self._background_mc:setWidth(p.width)
+	self._background_mc:setHeight(p.height)
 end
 
 function Panel:setColor(color)

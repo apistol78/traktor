@@ -26,8 +26,10 @@ function Slider:getPreferredSize()
 end
 
 function Slider:place(x, y, width, height)
-	self._background_mc:setWidth(width)
 	Widget.place(self, x, y, width, height)
+
+	local p = self:getPlacement()
+	self._background_mc:setWidth(p.width)
 end
 
 function Slider:setColor(color)
@@ -89,8 +91,6 @@ function Slider:_onMouseMove()
 		self._knob_mc:setX(x)
 	end
 end
-
-
 
 	]]>
 	</text>

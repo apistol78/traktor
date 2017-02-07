@@ -23,7 +23,9 @@ end
 
 function Border:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
-	self._mc:setSize(Vector2(width, height))
+
+	local p = self:getPlacement()
+	self._mc:setSize(Vector2(p.width, p.height))
 end
 
 -- Private
