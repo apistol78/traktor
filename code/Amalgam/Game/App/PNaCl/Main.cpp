@@ -59,7 +59,7 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
 		m_instance->LogToConsole(PP_LOGLEVEL_LOG, pp::Var(wstombs(str)));
 	}
@@ -89,22 +89,22 @@ public:
 	{
 	}
 
-	virtual std::wstring getDescription() const
+	virtual std::wstring getDescription() const T_OVERRIDE T_FINAL
 	{
 		return L"Pepper FileIO";
 	}
 
-	virtual Ref< File > get(const Path& path)
+	virtual Ref< File > get(const Path& path) T_OVERRIDE T_FINAL
 	{
 		return 0;
 	}
 
-	virtual int find(const Path& mask, RefArray< File >& out)
+	virtual int find(const Path& mask, RefArray< File >& out) T_OVERRIDE T_FINAL
 	{
 		return 0;
 	}
 
-	virtual bool modify(const Path& fileName, uint32_t flags)
+	virtual bool modify(const Path& fileName, uint32_t flags) T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
@@ -163,7 +163,7 @@ public:
 		m_urlLoader.Open(m_urlRequest, m_callback);
 	}
 
-	virtual Ref< IStream > open(const Path& fileName, uint32_t mode)
+	virtual Ref< IStream > open(const Path& fileName, uint32_t mode) T_OVERRIDE T_FINAL
 	{
 		m_volumeLock.wait();
 
@@ -185,47 +185,47 @@ public:
 		return m_stream;
 	}
 
-	virtual bool exist(const Path& fileName)
+	virtual bool exist(const Path& fileName) T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
 
-	virtual bool remove(const Path& fileName)
+	virtual bool remove(const Path& fileName) T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
 
-	virtual bool move(const Path& fileName, const std::wstring& newName, bool overwrite)
+	virtual bool move(const Path& fileName, const std::wstring& newName, bool overwrite) T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
 
-	virtual bool copy(const Path& fileName, const std::wstring& newName, bool overwrite)
+	virtual bool copy(const Path& fileName, const std::wstring& newName, bool overwrite) T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
 
-	virtual bool makeDirectory(const Path& directory)
+	virtual bool makeDirectory(const Path& directory) T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
 
-	virtual bool removeDirectory(const Path& directory)
+	virtual bool removeDirectory(const Path& directory) T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
 
-	virtual bool renameDirectory(const Path& directory, const std::wstring& newName)
+	virtual bool renameDirectory(const Path& directory, const std::wstring& newName) T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
 
-	virtual bool setCurrentDirectory(const Path& directory)
+	virtual bool setCurrentDirectory(const Path& directory) T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
 
-	virtual Path getCurrentDirectory() const
+	virtual Path getCurrentDirectory() const T_OVERRIDE T_FINAL
 	{
 		return Path();
 	}
@@ -262,12 +262,12 @@ public:
 		log::debug  .setGlobalTarget(0);
 	}
 
-	virtual void DidChangeView(const pp::View& view)
+	virtual void DidChangeView(const pp::View& view) T_OVERRIDE T_FINAL
 	{
 		DelegateInstance::DidChangeView(view);
 	}
 
-	virtual void HandleMessage(const pp::Var& var_message)
+	virtual void HandleMessage(const pp::Var& var_message) T_OVERRIDE T_FINAL
 	{
 		if (!var_message.is_string())
 			return;
@@ -356,7 +356,7 @@ public:
 	{
 	}
 
-	virtual pp::Instance* CreateInstance(PP_Instance instance)
+	virtual pp::Instance* CreateInstance(PP_Instance instance) T_OVERRIDE T_FINAL
 	{
 		return new AmalgamInstance(instance);
 	}

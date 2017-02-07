@@ -34,7 +34,7 @@ public:
 	Semaphore m_lock;
 	std::list< std::wstring > m_tail;
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		if (m_tail.size() > 100)
@@ -51,7 +51,7 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
 		(*m_stream) << L"[" << DateTime::now().format(L"%H:%M:%S") << L"] " << str << Endl;
 	}
@@ -69,10 +69,10 @@ public:
 	{
 	}
 
-	virtual void log(int32_t level, const std::wstring& str)
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
 	{
-		m_target1->log(level, str);
-		m_target2->log(level, str);
+		m_target1->log(threadId, level, str);
+		m_target2->log(threadId, level, str);
 	}
 
 private:
