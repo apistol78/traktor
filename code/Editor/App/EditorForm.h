@@ -125,7 +125,9 @@ public:
 
 	virtual bool highlightInstance(const db::Instance* instance) T_OVERRIDE T_FINAL;
 
-	virtual const TypeInfo* browseType(const TypeInfo* base) T_OVERRIDE T_FINAL;
+	virtual const TypeInfo* browseType() T_OVERRIDE T_FINAL;
+
+	virtual const TypeInfo* browseType(const TypeInfoSet& base) T_OVERRIDE T_FINAL;
 
 	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) T_OVERRIDE T_FINAL;
 

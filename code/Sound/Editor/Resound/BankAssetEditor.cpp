@@ -238,7 +238,7 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 				return true;
 		}
 
-		const TypeInfo* grainType = m_editor->browseType(&type_of< IGrainData >());
+		const TypeInfo* grainType = m_editor->browseType(makeTypeInfoSet< IGrainData >());
 		if (grainType)
 		{
 			Ref< IGrainData > grain = checked_type_cast< IGrainData*, false >(grainType->createInstance());

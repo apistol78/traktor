@@ -205,7 +205,8 @@ local outputs =
 			{ name = "RemoveEntity", column = 10, row = 9, width = 1, height = 1 },
 			{ name = "MoveToEntity", column = 11, row = 9, width = 1, height = 1 },
 			{ name = "ToggleGrid", column = 12, row = 9, width = 1, height = 1 },
-			{ name = "ToggleGuide", column = 13, row = 9, width = 1, height = 1 },		
+			{ name = "ToggleGuide", column = 13, row = 9, width = 1, height = 1 },	
+			{ name = "FilterEntity", column = 14, row = 9, width = 1, height = 1 },
 		}
 	},
 	{

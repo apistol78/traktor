@@ -317,7 +317,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Effect.Editor.ReplaceEmitterSource")
 	{
-		const TypeInfo* sourceType = m_editor->browseType(&type_of< SourceData >());
+		const TypeInfo* sourceType = m_editor->browseType(makeTypeInfoSet< SourceData >());
 		if (sourceType)
 		{
 			RefArray< ui::custom::SequenceItem > selectedItems;

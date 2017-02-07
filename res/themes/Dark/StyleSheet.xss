@@ -828,6 +828,10 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Scene/RemoveEntity.image</value>
 		</item>
 		<item>
+			<name>Scene.FilterEntity</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Scene/FilterEntity.image</value>
+		</item>		
+		<item>
 			<name>Scene.LayerHidden</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Scene/LayerHidden.image</value>
 		</item>

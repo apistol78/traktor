@@ -565,7 +565,7 @@ void InputMappingEditor::eventListValueEdit(ui::custom::EditListEditEvent* event
 			return;
 
 		// Browse for type of source.
-		const TypeInfo* inputSourceDataType = m_editor->browseType(&type_of< IInputSourceData >());
+		const TypeInfo* inputSourceDataType = m_editor->browseType(makeTypeInfoSet< IInputSourceData >());
 		if (!inputSourceDataType)
 			return;
 

@@ -646,8 +646,9 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.Database.ReplaceInstance")	// Replace instance
 		{
+			TypeInfoSet serializableTypeSet = makeTypeInfoSet< ISerializable >();
 			BrowseTypeDialog browseTypeDlg(m_editor->checkoutGlobalSettings());
-			browseTypeDlg.create(this, &type_of< ISerializable >(), true, true);
+			browseTypeDlg.create(this, &serializableTypeSet, true, true);
 
 			if (browseTypeDlg.showModal() == ui::DrOk)
 			{
@@ -1203,7 +1204,7 @@ void DatabaseView::eventToolSelectionClicked(ui::custom::ToolBarButtonClickEvent
 	{
 		if (m_toolFilterType->isToggled())
 		{
-			const TypeInfo* filterType = m_editor->browseType(&type_of< ISerializable >());
+			const TypeInfo* filterType = m_editor->browseType(makeTypeInfoSet< ISerializable >());
 			if (filterType)
 			{
 				TypeInfoSet typeSet;

@@ -107,7 +107,7 @@ void DefaultObjectEditor::eventPropertyCommand(ui::custom::PropertyCommandEvent*
 		{
 			if (arrayItem->getElementType())
 			{
-				const TypeInfo* objectType = m_editor->browseType(arrayItem->getElementType());
+				const TypeInfo* objectType = m_editor->browseType(makeTypeInfoSet(*arrayItem->getElementType()));
 				if (objectType)
 				{
 					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
@@ -193,7 +193,7 @@ void DefaultObjectEditor::eventPropertyCommand(ui::custom::PropertyCommandEvent*
 
 			if (!objectItem->getObject())
 			{
-				objectType = m_editor->browseType(objectType);
+				objectType = m_editor->browseType(makeTypeInfoSet(*objectType));
 				if (objectType)
 				{
 					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
