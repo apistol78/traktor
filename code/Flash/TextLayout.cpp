@@ -255,14 +255,11 @@ void TextLayout::insertText(const std::wstring& text)
 				wordWidth += (glyphAdvance + letterSpacing) * fontScale;
 			}
 
-			if (m_wordWrap)
-			{
-				if (
-					m_cursorX > FUZZY_EPSILON &&
-					m_cursorX + wordWidth > boundsWidth
-				)
-					newLine();
-			}
+			if (
+				m_cursorX > FUZZY_EPSILON &&
+				m_cursorX + wordWidth > boundsWidth
+			)
+				newLine();
 
 			if (m_cursorX > FUZZY_EPSILON)
 				m_cursorX += spaceWidth * fontScale;
