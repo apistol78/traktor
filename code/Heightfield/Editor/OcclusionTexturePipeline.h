@@ -49,6 +49,7 @@ public:
 private:
 	std::wstring m_assetPath;
 	bool m_editor;
+	bool m_build;
 };
 
 	}

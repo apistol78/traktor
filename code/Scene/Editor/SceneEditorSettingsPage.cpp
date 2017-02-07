@@ -90,6 +90,10 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 	m_checkBuildLighting->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_LIGHTING"));
 	m_checkBuildLighting->setChecked(settings->getProperty< PropertyBoolean >(L"IlluminatePipeline.Build", true));
 
+	m_checkBuildOcclusion = new ui::CheckBox();
+	m_checkBuildOcclusion->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_OCCLUSION"));
+	m_checkBuildOcclusion->setChecked(settings->getProperty< PropertyBoolean >(L"OcclusionPipeline.Build", true));
+
 	parent->setText(i18n::Text(L"SCENE_EDITOR_SETTINGS"));
 
 	std::wstring worldRendererTypeName = settings->getProperty< PropertyString >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
@@ -123,6 +127,7 @@ bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", m_checkBuildWhenDrop->isChecked());
 	settings->setProperty< PropertyBoolean >(L"NavMeshPipeline.Build", m_checkBuildNavMesh->isChecked());
 	settings->setProperty< PropertyBoolean >(L"IlluminatePipeline.Build", m_checkBuildLighting->isChecked());
+	settings->setProperty< PropertyBoolean >(L"OcclusionPipeline.Build", m_checkBuildOcclusion->isChecked());
 	return true;
 }
 
