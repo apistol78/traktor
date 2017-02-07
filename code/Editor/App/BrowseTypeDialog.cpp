@@ -49,11 +49,14 @@ BrowseTypeDialog::BrowseTypeDialog(PropertyGroup* settings)
 {
 }
 
-bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onlyEditable, bool onlyInstantiable)
+bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool onlyEditable, bool onlyInstantiable)
 {
 	TypeInfoSet types;
 	if (base)
-		base->findAllOf(types);
+	{
+		for (TypeInfoSet::const_iterator i = base->begin(); i != base->end(); ++i)
+			(*i)->findAllOf(types);
+	}
 	else
 		type_of< Object >().findAllOf(types, false);
 

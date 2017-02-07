@@ -93,7 +93,10 @@ public:
 	virtual bool highlightInstance(const db::Instance* instance) = 0;
 
 	/*! \brief Browse for rtti type. */
-	virtual const TypeInfo* browseType(const TypeInfo* base = 0) = 0;
+	virtual const TypeInfo* browseType() = 0;
+
+	/*! \brief Browse for rtti type. */
+	virtual const TypeInfo* browseType(const TypeInfoSet& base) = 0;
 
 	/*! \brief Browse database instance. */
 	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) = 0;

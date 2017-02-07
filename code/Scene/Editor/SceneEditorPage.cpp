@@ -61,6 +61,7 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/EntityEventManager.h"
+#include "World/IEntityComponent.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
 
@@ -87,6 +88,27 @@ bool isChildEntitySelected(const EntityAdapter* entityAdapter)
 	return false;
 }
 
+bool filterIncludeEntity(const TypeInfo& entityOrComponentType, EntityAdapter* entityAdapter)
+{
+	if (!entityAdapter->getEntity())
+		return true;
+
+	if (is_type_of(entityOrComponentType, type_of(entityAdapter->getEntity())))
+		return true;
+
+	if (entityAdapter->getComponent(entityOrComponentType) != 0)
+		return true;
+
+	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
+	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
+	{
+		if (filterIncludeEntity(entityOrComponentType, *i))
+			return true;
+	}
+
+	return false;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorPage", SceneEditorPage, editor::IEditorPage)
@@ -95,6 +117,7 @@ SceneEditorPage::SceneEditorPage(editor::IEditor* editor, editor::IEditorPageSit
 :	m_editor(editor)
 ,	m_site(site)
 ,	m_document(document)
+,	m_entityFilterType(0)
 {
 }
 
@@ -211,8 +234,13 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->create(m_entityPanel);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.RemoveEntity"), 1);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveToEntity"), 1);
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.FilterEntity"), 1);
 	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 0, ui::Command(L"Editor.Delete")));
 	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 1, ui::Command(L"Scene.Editor.MoveToEntity")));
+	
+	m_buttonFilterEntity = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_FILTER_ENTITY"), 2, ui::Command(L"Scene.Editor.FilterEntity"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_entityToolBar->addItem(m_buttonFilterEntity);
+
 	m_entityToolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SceneEditorPage::eventEntityToolClick);
 
 	m_imageHidden = new ui::StyleBitmap(L"Scene.LayerHidden");
@@ -593,6 +621,15 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		result = addEntity();
 	else if (command == L"Scene.Editor.MoveToEntity")
 		result = moveToEntity();
+	else if (command == L"Scene.Editor.FilterEntity")
+	{
+		if (m_buttonFilterEntity->isToggled())
+			m_entityFilterType = m_editor->browseType(makeTypeInfoSet< world::Entity, world::IEntityComponent >());
+		else
+			m_entityFilterType = 0;
+
+		createInstanceGrid();
+	}
 	else if (command == L"Scene.Editor.EnlargeGuide")
 	{
 		float guideSize = m_context->getGuideSize();
@@ -833,6 +870,9 @@ void SceneEditorPage::updateScene()
 
 Ref< ui::custom::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityAdapter)
 {
+	if (m_entityFilterType && !filterIncludeEntity(*m_entityFilterType, entityAdapter))
+		return 0;
+
 	Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
 	row->setData(L"ENTITY", entityAdapter);
 	row->setState(
@@ -978,7 +1018,7 @@ bool SceneEditorPage::addEntity()
 	}
 
 	// Select type of entity to create.
-	const TypeInfo* entityType = m_context->getEditor()->browseType(&type_of< world::EntityData >());
+	const TypeInfo* entityType = m_context->getEditor()->browseType(makeTypeInfoSet< world::EntityData >());
 	if (!entityType)
 		return false;
 

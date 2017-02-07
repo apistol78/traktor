@@ -30,7 +30,7 @@ class BrowseTypeDialog : public ui::ConfigDialog
 public:
 	BrowseTypeDialog(PropertyGroup* settings);
 
-	bool create(ui::Widget* parent, const TypeInfo* base, bool onlyEditable, bool onlyInstantiable);
+	bool create(ui::Widget* parent, const TypeInfoSet* base, bool onlyEditable, bool onlyInstantiable);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

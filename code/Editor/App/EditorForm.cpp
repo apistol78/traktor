@@ -939,12 +939,27 @@ bool EditorForm::highlightInstance(const db::Instance* instance)
 	return m_dataBaseView->highlight(instance);
 }
 
-const TypeInfo* EditorForm::browseType(const TypeInfo* base)
+const TypeInfo* EditorForm::browseType()
 {
 	const TypeInfo* type = 0;
 
 	BrowseTypeDialog dlgBrowse(m_mergedSettings);
-	if (dlgBrowse.create(this, base, false, false))
+	if (dlgBrowse.create(this, 0, false, false))
+	{
+		if (dlgBrowse.showModal() == ui::DrOk)
+			type = dlgBrowse.getSelectedType();
+		dlgBrowse.destroy();
+	}
+
+	return type;
+}
+
+const TypeInfo* EditorForm::browseType(const TypeInfoSet& base)
+{
+	const TypeInfo* type = 0;
+
+	BrowseTypeDialog dlgBrowse(m_mergedSettings);
+	if (dlgBrowse.create(this, &base, false, false))
 	{
 		if (dlgBrowse.showModal() == ui::DrOk)
 			type = dlgBrowse.getSelectedType();

@@ -106,6 +106,7 @@ private:
 	Ref< ui::PopupMenu > m_entityMenuExternal;
 	Ref< ui::Container > m_controllerPanel;
 	Ref< ui::custom::ToolBar > m_entityToolBar;
+	Ref< ui::custom::ToolBarButton > m_buttonFilterEntity;
 	Ref< ui::IBitmap > m_imageHidden;
 	Ref< ui::IBitmap > m_imageVisible;
 	Ref< ui::IBitmap > m_imageLocked;
@@ -113,6 +114,7 @@ private:
 	Ref< ui::custom::GridView > m_instanceGrid;
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< ui::Font > m_instanceGridFontHuge;
+	const TypeInfo* m_entityFilterType;
 	uint32_t m_currentHash;
 
 	bool createSceneAsset();

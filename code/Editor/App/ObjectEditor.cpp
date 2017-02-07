@@ -89,7 +89,15 @@ bool ObjectEditor::highlightInstance(const db::Instance* instance)
 	return m_editor->highlightInstance(instance);
 }
 
-const TypeInfo* ObjectEditor::browseType(const TypeInfo* base)
+const TypeInfo* ObjectEditor::browseType()
+{
+	m_parent->setEnable(false);
+	const TypeInfo* browsedType = m_editor->browseType();
+	m_parent->setEnable(true);
+	return browsedType;
+}
+
+const TypeInfo* ObjectEditor::browseType(const TypeInfoSet& base)
 {
 	m_parent->setEnable(false);
 	const TypeInfo* browsedType = m_editor->browseType(base);
