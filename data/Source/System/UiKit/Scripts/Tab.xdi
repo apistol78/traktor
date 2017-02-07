@@ -34,6 +34,8 @@ end
 function Tab:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
+	local p = self:getPlacement()
+
 	local tx = 0
 	for _, tab_mc in ipairs(self._tab_mc) do
 		tab_mc:setPosition(Vector2(tx, 0))
@@ -41,13 +43,13 @@ function Tab:place(x, y, width, height)
 	end
 
 	self._separatorTop_mc:setPosition(Vector2(0, self._tabHeight))
-	self._separatorTop_mc:setSize(Vector2(width, self._separatorHeight))
+	self._separatorTop_mc:setSize(Vector2(p.width, self._separatorHeight))
 
-	self._separatorBottom_mc:setPosition(Vector2(0, height - self._separatorHeight))
-	self._separatorBottom_mc:setSize(Vector2(width, self._separatorHeight))
+	self._separatorBottom_mc:setPosition(Vector2(0, p.height - self._separatorHeight))
+	self._separatorBottom_mc:setSize(Vector2(p.width, self._separatorHeight))
 
 	for _, child in ipairs(self._children) do
-		child:place(0, self._tabHeight + self._separatorHeight, width, height - self._tabHeight - self._separatorHeight * 2)
+		child:place(0, self._tabHeight + self._separatorHeight, p.width, p.height - self._tabHeight - self._separatorHeight * 2)
 	end
 end
 

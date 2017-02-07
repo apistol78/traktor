@@ -41,7 +41,8 @@ end
 function Container:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 	if self:isVisible() and self._layout ~= nil then
-		self._layout:update(self, width, height)
+		local p = self:getPlacement()
+		self._layout:update(self, p.width, p.height)
 	end
 end
 
@@ -65,8 +66,6 @@ function Container:_initialize(parent, mc, inner_mc, layout)
 	self._layout = layout
 	Widget._initialize(self, parent, mc)
 end
-
-
 
 	]]>
 	</text>

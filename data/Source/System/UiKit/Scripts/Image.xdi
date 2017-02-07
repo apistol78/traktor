@@ -32,13 +32,14 @@ end
 function Image:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
+	local p = self:getPlacement()
 	if self._mode == Image.MODE_STRETCH then
-		self._image_mc:setWidth(width)
-		self._image_mc:setHeight(height)
+		self._image_mc:setWidth(p.width)
+		self._image_mc:setHeight(p.height)
 
 	elseif self._mode == Image.MODE_CLIP then
-		self._clipper_mc:setWidth(width)
-		self._clipper_mc:setHeight(height)
+		self._clipper_mc:setWidth(p.width)
+		self._clipper_mc:setHeight(p.height)
 	end
 end
 
@@ -125,7 +126,6 @@ end
 function Image:_onRelease()
 	if self._clickFn ~= nil then self._clickFn() end
 end
-
 
 	]]>
 	</text>

@@ -25,6 +25,17 @@ function PushButton:getPreferredSize()
 	return self._preferredSize
 end
 
+function PushButton:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
+
+	local p = self:getPlacement()
+	self._background_mc:setWidth(p.width)
+
+	local sz = self._caption_tb:getTextSize()
+	local m = p.width - sz:x()
+	self._caption_tb:setX(m / 2)
+end
+
 function PushButton:setColor(color)
 	self._background_mc:setColorTransform(ColorTransform(
 		color,
@@ -34,7 +45,17 @@ function PushButton:setColor(color)
 end
 
 function PushButton:setCaption(s)
+
+	-- Reset original text bounds as text layout engine
+	-- use bounds to figure out the layout. And because
+	-- we want layout to behave same regardless of bounds
+	-- we need to restore it before changing the value.
+	self._caption_tb:setTextBounds(self._originalBounds)
 	self._caption_tb:parseText(s)
+
+	local sz = self._caption_tb:getTextSize()
+	self._preferredSize.width = math.max(sz:x() + self._margin * 2, self._minimumWidth)
+
 	return self
 end
 
@@ -66,7 +87,9 @@ function PushButton:_initialize(parent, mc, caption)
 	self._caption_tb = mc:getMember("caption_tb")
 	self._caption_tb:setRenderClipMask(false)
 
+	self._originalBounds = self._caption_tb:getTextBounds()
 	self._margin = self._caption_tb:getX()
+	self._minimumWidth = mc:getWidth()
 	self._preferredSize =
 	{
 		width = mc:getWidth(),
@@ -81,6 +104,11 @@ function PushButton:_initialize(parent, mc, caption)
 	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
 
 	self:setCaption(caption)
+
+#if defined(_DEBUG)
+	self._background_mc:setMember("__renderWireOutline", true)
+	self._caption_tb:setMember("__renderWireOutline", true)
+#endif
 end
 
 function PushButton:_onPress()

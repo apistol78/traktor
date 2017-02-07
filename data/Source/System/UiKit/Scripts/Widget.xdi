@@ -119,21 +119,29 @@ function Widget:place(x, y, width, height)
 	local ps = self:getPreferredSize()
 
 	local ax = x
+	local aw = width
 	if self._halign == Widget.ALIGN_RIGHT then
 		ax = x + width - ps.width
+		aw = ps.width
 	elseif self._halign == Widget.ALIGN_CENTER then
 		ax = x + (width - ps.width) / 2
+		aw = ps.width
 	end
 	self._placement.x = ax
+	self._placement.width = aw
 	self._mc:setX(ax)
 
 	local ay = y
+	local ah = height
 	if self._valign == Widget.ALIGN_BOTTOM then
 		ay = y + height - ps.height
+		ah = ps.height
 	elseif self._valign == Widget.ALIGN_CENTER then
 		ay = y + (height - ps.height) / 2
+		ah = ps.height
 	end
 	self._placement.y = ay
+	self._placement.height = ah
 	self._mc:setY(ay)
 end
 
