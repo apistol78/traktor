@@ -1,5 +1,5 @@
-#ifndef traktor_physics_MeshFactory_H
-#define traktor_physics_MeshFactory_H
+#ifndef traktor_physics_PhysicsFactory_H
+#define traktor_physics_PhysicsFactory_H
 
 #include "Resource/IResourceFactory.h"
 
@@ -16,10 +16,10 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Mesh geometry resource factory.
+/*! \brief Physics resource factory.
  * \ingroup Physics
  */
-class T_DLLCLASS MeshFactory : public resource::IResourceFactory
+class T_DLLCLASS PhysicsFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;
 
@@ -36,4 +36,4 @@ public:
 	}
 }
 
-#endif	// traktor_physics_MeshFactory_H
+#endif	// traktor_physics_PhysicsFactory_H

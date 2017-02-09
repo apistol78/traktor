@@ -8,7 +8,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.BoxShapeDesc", 3, BoxShapeDesc, ShapeDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.BoxShapeDesc", ShapeDesc::Version, BoxShapeDesc, ShapeDesc)
 
 BoxShapeDesc::BoxShapeDesc()
 :	m_extent(0.0f, 0.0f, 0.0f, 0.0f)

@@ -11,6 +11,7 @@
 #include "Physics/BoxShapeDesc.h"
 #include "Physics/CapsuleShapeDesc.h"
 #include "Physics/CollisionListener.h"
+#include "Physics/CollisionSpecification.h"
 #include "Physics/CompoundShapeDesc.h"
 #include "Physics/ConeTwistJointDesc.h"
 #include "Physics/CylinderShapeDesc.h"
@@ -768,6 +769,31 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			rigidBody->setActivationState(DISABLE_DEACTIVATION);
 		}
 
+		// Resolve collision group and mask value.
+		uint32_t mergedCollisionGroup = 0;
+		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionGroup().begin(); i != shapeDesc->getCollisionGroup().end(); ++i)
+		{
+			resource::Proxy< CollisionSpecification > collisionGroup;
+			if (!resourceManager->bind(*i, collisionGroup))
+			{
+				log::error << L"Unable to bind collision group specification" << Endl;
+				return 0;
+			}
+			mergedCollisionGroup |= collisionGroup->getBitMask();
+		}
+
+		uint32_t mergedCollisionMask = 0;
+		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionMask().begin(); i != shapeDesc->getCollisionMask().end(); ++i)
+		{
+			resource::Proxy< CollisionSpecification > collisionMask;
+			if (!resourceManager->bind(*i, collisionMask))
+			{
+				log::error << L"Unable to bind collision mask specification" << Endl;
+				return 0;
+			}
+			mergedCollisionMask |= collisionMask->getBitMask();
+		}
+
 		// Create our wrapper.
 		Ref< BodyBullet > staticBody = new BodyBullet(
 			tag,
@@ -777,8 +803,8 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			rigidBody,
 			shape,
 			centerOfGravity,
-			shapeDesc->getCollisionGroup(),
-			shapeDesc->getCollisionMask(),
+			mergedCollisionGroup,
+			mergedCollisionMask,
 			shapeDesc->getMaterial()
 		);
 		m_bodies.push_back(staticBody);
@@ -816,6 +842,31 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 				rigidBody->forceActivationState(ACTIVE_TAG);
 		}
 
+		// Resolve collision group and mask value.
+		uint32_t mergedCollisionGroup = 0;
+		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionGroup().begin(); i != shapeDesc->getCollisionGroup().end(); ++i)
+		{
+			resource::Proxy< CollisionSpecification > collisionGroup;
+			if (!resourceManager->bind(*i, collisionGroup))
+			{
+				log::error << L"Unable to bind collision group specification" << Endl;
+				return 0;
+			}
+			mergedCollisionGroup |= collisionGroup->getBitMask();
+		}
+
+		uint32_t mergedCollisionMask = 0;
+		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionMask().begin(); i != shapeDesc->getCollisionMask().end(); ++i)
+		{
+			resource::Proxy< CollisionSpecification > collisionMask;
+			if (!resourceManager->bind(*i, collisionMask))
+			{
+				log::error << L"Unable to bind collision mask specification" << Endl;
+				return 0;
+			}
+			mergedCollisionMask |= collisionMask->getBitMask();
+		}
+
 		// Create our wrapper.
 		Ref< BodyBullet > dynamicBody = new BodyBullet(
 			tag,
@@ -825,8 +876,8 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			rigidBody,
 			shape,
 			centerOfGravity,
-			shapeDesc->getCollisionGroup(),
-			shapeDesc->getCollisionMask(),
+			mergedCollisionGroup,
+			mergedCollisionMask,
 			shapeDesc->getMaterial()
 		);
 		m_bodies.push_back(dynamicBody);

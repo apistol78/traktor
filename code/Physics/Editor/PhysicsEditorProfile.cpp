@@ -1,5 +1,5 @@
 #include "Core/Serialization/ISerializable.h"
-#include "Physics/MeshFactory.h"
+#include "Physics/PhysicsFactory.h"
 #include "Physics/Editor/PhysicsEditorProfile.h"
 #include "Physics/Editor/PhysicsEntityEditorFactory.h"
 #include "Physics/World/EntityFactory.h"
@@ -41,7 +41,7 @@ void PhysicsEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new MeshFactory());
+	outResourceFactories.push_back(new PhysicsFactory());
 }
 
 void PhysicsEditorProfile::createEntityFactories(

@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.CompoundShapeDesc", 3, CompoundShapeDesc, ShapeDesc)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.CompoundShapeDesc", ShapeDesc::Version, CompoundShapeDesc, ShapeDesc)
 
 void CompoundShapeDesc::serialize(ISerializer& s)
 {

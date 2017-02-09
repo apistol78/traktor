@@ -88,8 +88,8 @@ bool RagDollPoseController::create(
 			Vector4 centerOfMass = (start + end) * Scalar(0.5f);
 
 			physics::CapsuleShapeDesc shapeDesc;
-			shapeDesc.setCollisionGroup(collisionGroup);
-			shapeDesc.setCollisionMask(collisionMask);
+			//shapeDesc.setCollisionGroup(collisionGroup);
+			//shapeDesc.setCollisionMask(collisionMask);
 			shapeDesc.setRadius(joint->getRadius());
 			shapeDesc.setLength(length);
 

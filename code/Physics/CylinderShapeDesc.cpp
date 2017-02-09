@@ -8,7 +8,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.CylinderShapeDesc", 3, CylinderShapeDesc, ShapeDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.CylinderShapeDesc", ShapeDesc::Version, CylinderShapeDesc, ShapeDesc)
 
 CylinderShapeDesc::CylinderShapeDesc()
 :	m_radius(0.0f)

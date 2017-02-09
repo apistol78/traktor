@@ -1,8 +1,10 @@
 #ifndef traktor_physics_ShapeDesc_H
 #define traktor_physics_ShapeDesc_H
 
+#include <set>
 #include "Core/Math/Transform.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,6 +19,8 @@ namespace traktor
 	namespace physics
 	{
 
+class CollisionSpecification;
+
 /*! \brief Collision shape description.
  * \ingroup Physics
  */
@@ -25,19 +29,21 @@ class T_DLLCLASS ShapeDesc : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	enum { Version = 5 };
+
 	ShapeDesc();
 
 	void setLocalTransform(const Transform& localTransform);
 
 	const Transform& getLocalTransform() const;
 
-	void setCollisionGroup(uint32_t collisionGroup);
+	void setCollisionGroup(const std::set< resource::Id< CollisionSpecification > >& collisionGroup);
 
-	uint32_t getCollisionGroup() const;
+	const std::set< resource::Id< CollisionSpecification > >& getCollisionGroup() const;
 
-	void setCollisionMask(uint32_t collisionMask);
+	void setCollisionMask(const std::set< resource::Id< CollisionSpecification > >& collisionMask);
 
-	uint32_t getCollisionMask() const;
+	const std::set< resource::Id< CollisionSpecification > >& getCollisionMask() const;
 
 	void setMaterial(int32_t material);
 
@@ -47,8 +53,8 @@ public:
 
 private:
 	Transform m_localTransform;
-	uint32_t m_collisionGroup;
-	uint32_t m_collisionMask;
+	std::set< resource::Id< CollisionSpecification > > m_collisionGroup;
+	std::set< resource::Id< CollisionSpecification > > m_collisionMask;
 	int32_t m_material;
 };
 
