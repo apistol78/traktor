@@ -6,7 +6,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Physics/MeshFactory.h"
+#include "Physics/PhysicsFactory.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/EntityFactory.h"
 #include "Resource/IResourceManager.h"
@@ -55,7 +55,7 @@ void PhysicsServer::destroy()
 void PhysicsServer::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	resourceManager->addFactory(new physics::MeshFactory());
+	resourceManager->addFactory(new physics::PhysicsFactory());
 }
 
 void PhysicsServer::createEntityFactories(IEnvironment* environment)

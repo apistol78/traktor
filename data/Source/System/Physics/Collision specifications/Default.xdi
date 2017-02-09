@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.physics.CollisionSpecification">
+	<bitMask>1</bitMask>
+</object>

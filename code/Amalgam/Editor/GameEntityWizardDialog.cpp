@@ -266,8 +266,12 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 
 			Ref< physics::MeshShapeDesc > meshShapeDesc = new physics::MeshShapeDesc();
 			meshShapeDesc->setMesh(resource::Id< physics::Mesh >(meshAssetInstance->getGuid()));
-			meshShapeDesc->setCollisionGroup(parseString< uint32_t >(m_editCollisionGroup->getText()));
-			meshShapeDesc->setCollisionMask(parseString< uint32_t >(m_editCollisionMask->getText()));
+			
+			//m_collisionGroup.insert(resource::Id< CollisionSpecification >(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}")));
+			//m_collisionMask.insert(resource::Id< CollisionSpecification >(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}")));
+			//meshShapeDesc->setCollisionGroup(parseString< uint32_t >(m_editCollisionGroup->getText()));
+			//meshShapeDesc->setCollisionMask(parseString< uint32_t >(m_editCollisionMask->getText()));
+
 			meshShapeDesc->setMaterial(parseString< int32_t >(m_editMaterial->getText()));
 
 			if (physics == 0 || physics == 1)
