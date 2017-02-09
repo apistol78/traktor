@@ -172,7 +172,35 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 		return true;
 	}
 	else
-		return false;
+	{
+		float offset = 0.0f;
+
+		if (command == L"Scene.Editor.SnapToNext")
+			offset = m_context->getSnapSpacing();
+		else if (command == L"Scene.Editor.SnapToPrevious")
+			offset = -m_context->getSnapSpacing();
+		else
+			return false;
+
+		Vector4 delta(
+			(m_axisHot & 1) ? offset : 0.0f,
+			(m_axisHot & 2) ? offset : 0.0f,
+			(m_axisHot & 4) ? offset : 0.0f,
+			0.0f
+		);
+	
+		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+		{
+			Transform T = m_entityAdapters[i]->getTransform();
+			m_entityAdapters[i]->setTransform(Transform(
+				snap(m_baseTranslations[i] + delta, m_axisHot),
+				T.rotation()
+			));
+		}
+
+		selectionChanged();
+		return true;
+	}
 }
 
 bool TranslateModifier::begin(
