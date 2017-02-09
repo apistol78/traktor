@@ -67,6 +67,8 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.RotateMinus30"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.RotateMinus45"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.RotateMinus90"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.SnapToNext"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.SnapToPrevious"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.FindInDatabase"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.LockEntities"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.UnlockEntities"));
