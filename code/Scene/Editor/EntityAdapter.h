@@ -18,6 +18,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class PrimitiveRenderer;
+
+	}
+
 	namespace world
 	{
 
@@ -31,7 +38,9 @@ class IEntityComponentData;
 	namespace scene
 	{
 
+class IComponentEditor;
 class IEntityEditor;
+class SceneEditorContext;
 
 /*! \brief Entity adapter class.
  *
@@ -43,16 +52,24 @@ class T_DLLCLASS EntityAdapter : public Object
 	T_RTTI_CLASS;
 
 public:
-	EntityAdapter();
+	EntityAdapter(SceneEditorContext* context);
+
+	/*! \brief Prepare adapter.
+	 *
+	 * Prepare adapter for editor use.
+	 * This might be called multiple times for
+	 * same adapter (but with different entities of same type).
+	 */
+	void prepare(
+		world::EntityData* entityData,
+		world::Entity* entity,
+		uint32_t hash
+	);
 
 	/*! \name Accessors */
 	//@{
 
-	void setEntityData(world::EntityData* entityData);
-
 	world::EntityData* getEntityData() const;
-
-	void setEntity(world::Entity* entity);
 
 	world::Entity* getEntity() const;
 
@@ -71,8 +88,6 @@ public:
 	{
 		return checked_type_cast< ComponentType* >(getComponent(type_of< ComponentType >()));
 	}
-
-	void setHash(uint32_t hash);
 
 	uint32_t getHash() const;
 
@@ -155,10 +170,8 @@ public:
 
 	//@}
 
-	/*! \name Entity editor. */
+	/*! \name Entity/component editor. */
 	//@{
-
-	void setEntityEditor(IEntityEditor* entityEditor);
 
 	IEntityEditor* getEntityEditor() const;
 
@@ -194,11 +207,14 @@ public:
 
 	AlignedVector< SnapPoint > getSnapPoints() const;
 
+	void drawGuides(render::PrimitiveRenderer* primitiveRenderer) const;
+
 	//@}
 
 private:
 	friend class SceneEditorContext;
 
+	SceneEditorContext* m_context;
 	Ref< world::EntityData > m_entityData;
 	Ref< world::Entity > m_entity;
 	uint32_t m_hash;
@@ -206,6 +222,7 @@ private:
 	RefArray< EntityAdapter > m_children;
 	SmallMap< const world::Entity*, EntityAdapter* > m_childMap;
 	Ref< IEntityEditor > m_entityEditor;
+	RefArray< IComponentEditor > m_componentEditors;
 	bool m_selected;
 	bool m_expanded;
 	bool m_visible;

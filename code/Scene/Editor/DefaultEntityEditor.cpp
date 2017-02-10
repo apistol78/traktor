@@ -7,19 +7,15 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Scene/Editor/CameraMesh.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "World/Entity/CameraComponent.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/SpotLightEntity.h"
-#include "World/Entity/VolumeComponent.h"
-#include "World/Entity/VolumeComponentData.h"
 
 namespace traktor
 {
@@ -176,52 +172,6 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 	Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
 	boundingBox.mn -= c_expandBoundingBox;
 	boundingBox.mx += c_expandBoundingBox;
-
-	if (m_entityAdapter->getComponent< world::CameraComponent >() != 0)
-	{
-		primitiveRenderer->pushWorld(transform.toMatrix44());
-		primitiveRenderer->pushDepthState(false, false, false);
-
-		primitiveRenderer->drawWireAabb(
-			Vector4::origo(),
-			Vector4(0.1f, 0.1f, 0.1f, 0.0f),
-			Color4ub(255, 255, 255, 255)
-		);
-
-		for (int j = 0; j < sizeof_array(c_cameraMeshIndices); j += 2)
-		{
-			int32_t i1 = c_cameraMeshIndices[j + 0] - 1;
-			int32_t i2 = c_cameraMeshIndices[j + 1] - 1;
-
-			const float* v1 = &c_cameraMeshVertices[i1 * 3];
-			const float* v2 = &c_cameraMeshVertices[i2 * 3];
-
-			primitiveRenderer->drawLine(
-				Vector4(v1[0], v1[1], v1[2], 1.0f),
-				Vector4(v2[0], v2[1], v2[2], 1.0f),
-				Color4ub(255, 255, 255, 255)
-			);
-		}
-
-		primitiveRenderer->popDepthState();
-		primitiveRenderer->popWorld();
-	}
-
-	if (const world::VolumeComponentData* volumeComponent = m_entityAdapter->getComponentData< world::VolumeComponentData >())
-	{
-		if (m_context->shouldDrawGuide(L"Entity.Volumes"))
-		{
-			Transform T = getEntityAdapter()->getTransform();
-			primitiveRenderer->pushWorld(T.toMatrix44());
-			const AlignedVector< Aabb3 >& volumes = volumeComponent->getVolumes();
-			for (AlignedVector< Aabb3 >::const_iterator i = volumes.begin(); i != volumes.end(); ++i)
-			{
-				primitiveRenderer->drawSolidAabb(*i, Color4ub(120, 255, 120, 80));
-				primitiveRenderer->drawWireAabb(*i, Color4ub(120, 255, 120, 255));
-			}
-			primitiveRenderer->popWorld();
-		}
-	}
 
 	if (is_a< world::DirectionalLightEntity >(m_entityAdapter->getEntity()))
 	{

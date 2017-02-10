@@ -33,6 +33,11 @@ IEntityComponentData* ComponentEntityData::getComponent(const TypeInfo& componen
 	return 0;
 }
 
+const RefArray< IEntityComponentData >& ComponentEntityData::getComponents() const
+{
+	return m_components;
+}
+
 void ComponentEntityData::serialize(ISerializer& s)
 {
 	EntityData::serialize(s);

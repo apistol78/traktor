@@ -83,6 +83,13 @@ void MeshEditorProfile::createEntityEditorFactories(
 {
 }
 
+void MeshEditorProfile::createComponentEditorFactories(
+	scene::SceneEditorContext* context,
+	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
+) const
+{
+}
+
 Ref< world::EntityData > MeshEditorProfile::createEntityData(
 	scene::SceneEditorContext* context,
 	db::Instance* instance

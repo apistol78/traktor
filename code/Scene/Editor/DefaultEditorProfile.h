@@ -56,6 +56,11 @@ public:
 		RefArray< const IEntityEditorFactory >& outEntityEditorFactories
 	) const T_OVERRIDE T_FINAL;
 
+	virtual void createComponentEditorFactories(
+		SceneEditorContext* context,
+		RefArray< const IComponentEditorFactory >& outComponentEditorFactories
+	) const T_OVERRIDE T_FINAL;
+
 	virtual Ref< world::EntityData > createEntityData(
 		SceneEditorContext* context,
 		db::Instance* instance

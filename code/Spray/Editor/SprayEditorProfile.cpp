@@ -72,6 +72,13 @@ void SprayEditorProfile::createEntityEditorFactories(
 {
 }
 
+void SprayEditorProfile::createComponentEditorFactories(
+	scene::SceneEditorContext* context,
+	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
+) const
+{
+}
+
 Ref< world::EntityData > SprayEditorProfile::createEntityData(
 	scene::SceneEditorContext* context,
 	db::Instance* instance

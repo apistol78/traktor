@@ -58,6 +58,7 @@ class IEntityRenderer;
 	{
 
 class SceneEditorContext;
+class IComponentEditorFactory;
 class ISceneEditorPlugin;
 class ISceneControllerEditorFactory;
 class IEntityEditorFactory;
@@ -150,6 +151,16 @@ public:
 	virtual void createEntityEditorFactories(
 		SceneEditorContext* context,
 		RefArray< const IEntityEditorFactory >& outEntityEditorFactories
+	) const = 0;
+
+	/*! \brief Create entity component editor factories.
+	 *
+	 * \param context Scene editor context.
+	 * \param outComponentEditorFactories Component editor factories.
+	 */
+	virtual void createComponentEditorFactories(
+		SceneEditorContext* context,
+		RefArray< const IComponentEditorFactory >& outComponentEditorFactories
 	) const = 0;
 
 	/*! \brief Create entity from database instance.
