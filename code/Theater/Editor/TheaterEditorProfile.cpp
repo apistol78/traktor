@@ -74,6 +74,13 @@ void TheaterEditorProfile::createEntityEditorFactories(
 {
 }
 
+void TheaterEditorProfile::createComponentEditorFactories(
+	scene::SceneEditorContext* context,
+	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
+) const
+{
+}
+
 Ref< world::EntityData > TheaterEditorProfile::createEntityData(
 	scene::SceneEditorContext* context,
 	db::Instance* instance

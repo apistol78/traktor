@@ -52,8 +52,6 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
-class ITexture;
-class PrimitiveRenderer;
 
 	}
 
@@ -71,6 +69,8 @@ class IEntityEventManager;
 
 class Camera;
 class EntityAdapter;
+class IComponentEditorFactory;
+class IEntityEditorFactory;
 class IModifier;
 class ISceneControllerEditor;
 class ISceneEditorPlugin;
@@ -126,6 +126,8 @@ public:
 	void addEditorProfile(ISceneEditorProfile* editorProfile);
 
 	void addEditorPlugin(ISceneEditorPlugin* editorPlugin);
+
+	void createFactories();
 
 	void setControllerEditor(ISceneControllerEditor* controllerEditor);
 
@@ -194,8 +196,6 @@ public:
 	/*! \name Entity editors. */
 	//@{
 
-	void drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter);
-
 	void setDrawGuide(const std::wstring& guideId, bool shouldDraw);
 
 	bool shouldDrawGuide(const std::wstring& guideId) const;
@@ -203,6 +203,10 @@ public:
 	//@}
 
 	void setSceneAsset(SceneAsset* sceneAsset);
+
+	const IEntityEditorFactory* findEntityEditorFactory(const TypeInfo& entityDataType) const;
+
+	const IComponentEditorFactory* findComponentEditorFactory(const TypeInfo& componentDataType) const;
 
 	void buildEntities();
 
@@ -317,6 +321,8 @@ private:
 	Ref< physics::PhysicsManager > m_physicsManager;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
 	RefArray< ISceneEditorPlugin > m_editorPlugins;
+	RefArray< const IEntityEditorFactory > m_entityEditorFactories;
+	RefArray< const IComponentEditorFactory > m_componentEditorFactories;
 	Ref< ISceneControllerEditor > m_controllerEditor;
 	Ref< IModifier > m_modifier;
 	std::map< std::wstring, bool > m_drawGuide;

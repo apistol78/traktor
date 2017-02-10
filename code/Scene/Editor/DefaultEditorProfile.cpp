@@ -28,6 +28,7 @@
 #include "Weather/WeatherRenderer.h"
 
 // Entity editor factories
+#include "Scene/Editor/DefaultComponentEditorFactory.h"
 #include "Scene/Editor/DefaultEntityEditorFactory.h"
 
 namespace traktor
@@ -115,6 +116,14 @@ void DefaultEditorProfile::createEntityEditorFactories(
 ) const
 {
 	outEntityEditorFactories.push_back(new DefaultEntityEditorFactory());
+}
+
+void DefaultEditorProfile::createComponentEditorFactories(
+	SceneEditorContext* context,
+	RefArray< const IComponentEditorFactory >& outComponentEditorFactories
+) const
+{
+	outComponentEditorFactories.push_back(new DefaultComponentEditorFactory());
 }
 
 Ref< world::EntityData > DefaultEditorProfile::createEntityData(

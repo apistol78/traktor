@@ -93,6 +93,13 @@ void AnimationEditorProfile::createEntityEditorFactories(
 	outEntityEditorFactories.push_back(new AnimationEntityEditorFactory());
 }
 
+void AnimationEditorProfile::createComponentEditorFactories(
+	scene::SceneEditorContext* context,
+	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
+) const
+{
+}
+
 Ref< world::EntityData > AnimationEditorProfile::createEntityData(
 	scene::SceneEditorContext* context,
 	db::Instance* instance

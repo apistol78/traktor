@@ -1,10 +1,15 @@
 #include <algorithm>
 #include "Core/Math/Const.h"
 #include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/IComponentEditor.h"
+#include "Scene/Editor/IComponentEditorFactory.h"
 #include "Scene/Editor/IEntityEditor.h"
+#include "Scene/Editor/IEntityEditorFactory.h"
+#include "Scene/Editor/SceneEditorContext.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -16,8 +21,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapter", EntityAdapter, Object)
 
-EntityAdapter::EntityAdapter()
-:	m_parent(0)
+EntityAdapter::EntityAdapter(SceneEditorContext* context)
+:	m_context(context)
+,	m_parent(0)
 ,	m_selected(false)
 ,	m_expanded(false)
 ,	m_visible(true)
@@ -26,19 +32,48 @@ EntityAdapter::EntityAdapter()
 {
 }
 
-void EntityAdapter::setEntityData(world::EntityData* entityData)
+void EntityAdapter::prepare(
+	world::EntityData* entityData,
+	world::Entity* entity,
+	uint32_t hash
+)
 {
 	m_entityData = entityData;
+	m_entity = entity;
+	m_hash = hash;
+
+	// Create entity editor; assume type of entity data is same if already created.
+	if (!m_entityEditor)
+	{
+		const IEntityEditorFactory* f = m_context->findEntityEditorFactory(type_of(entityData));
+		T_FATAL_ASSERT (f);
+
+		m_entityEditor = f->createEntityEditor(m_context, this);
+		T_FATAL_ASSERT (m_entityEditor != 0);
+	}
+
+	// Create component editors.
+	if (const world::ComponentEntityData* componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(m_entityData))
+	{
+		m_componentEditors.resize(0);
+
+		const RefArray< world::IEntityComponentData >& componentData = componentEntityData->getComponents();
+		for (RefArray< world::IEntityComponentData >::const_iterator i = componentData.begin(); i != componentData.end(); ++i)
+		{
+			const IComponentEditorFactory* f = m_context->findComponentEditorFactory(type_of(*i));
+			T_FATAL_ASSERT (f);
+
+			Ref< IComponentEditor > componentEditor = f->createComponentEditor(m_context, this, *i);
+			T_FATAL_ASSERT (componentEditor);
+
+			m_componentEditors.push_back(componentEditor);
+		}
+	}
 }
 
 world::EntityData* EntityAdapter::getEntityData() const
 {
 	return m_entityData;
-}
-
-void EntityAdapter::setEntity(world::Entity* entity)
-{
-	m_entity = entity;
 }
 
 world::Entity* EntityAdapter::getEntity() const
@@ -62,11 +97,6 @@ world::IEntityComponent* EntityAdapter::getComponent(const TypeInfo& componentTy
 		return componentEntity->getComponent(componentType);
 	else
 		return 0;
-}
-
-void EntityAdapter::setHash(uint32_t hash)
-{
-	m_hash = hash;
 }
 
 uint32_t EntityAdapter::getHash() const
@@ -258,11 +288,6 @@ void EntityAdapter::unlinkFromParent()
 	T_FATAL_ASSERT (m_parent == 0);
 }
 
-void EntityAdapter::setEntityEditor(IEntityEditor* entityEditor)
-{
-	m_entityEditor = entityEditor;
-}
-
 IEntityEditor* EntityAdapter::getEntityEditor() const
 {
 	return m_entityEditor;
@@ -361,6 +386,18 @@ AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const
 	}
 
 	return snapPoints;
+}
+
+void EntityAdapter::drawGuides(render::PrimitiveRenderer* primitiveRenderer) const
+{
+	if (!isVisible(true))
+		return;
+
+	if (m_entityEditor)
+		m_entityEditor->drawGuide(primitiveRenderer);
+
+	for (RefArray< IComponentEditor >::const_iterator i = m_componentEditors.begin(); i != m_componentEditors.end(); ++i)
+		(*i)->drawGuide(primitiveRenderer);
 }
 
 	}

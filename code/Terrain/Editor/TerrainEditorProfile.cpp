@@ -93,6 +93,13 @@ void TerrainEditorProfile::createEntityEditorFactories(
 {
 }
 
+void TerrainEditorProfile::createComponentEditorFactories(
+	scene::SceneEditorContext* context,
+	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
+) const
+{
+}
+
 Ref< world::EntityData > TerrainEditorProfile::createEntityData(
 	scene::SceneEditorContext* context,
 	db::Instance* instance

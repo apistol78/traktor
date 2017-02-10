@@ -598,7 +598,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		m_primitiveRenderer->pushView(view);
 
 		// Draw cameras.
-		for (int i = 0; i < 4; ++i)
+		for (int32_t i = 0; i < 4; ++i)
 		{
 			const Camera* camera = m_context->getCamera(i);
 			if (!camera || !camera->isEnable())
@@ -614,7 +614,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 				m_colorCamera
 			);
 
-			for (int j = 0; j < sizeof_array(c_cameraMeshIndices); j += 2)
+			for (int32_t j = 0; j < sizeof_array(c_cameraMeshIndices); j += 2)
 			{
 				int32_t i1 = c_cameraMeshIndices[j + 0] - 1;
 				int32_t i2 = c_cameraMeshIndices[j + 1] - 1;
@@ -639,12 +639,8 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		{
 			RefArray< EntityAdapter > entityAdapters;
 			m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
-
 			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-			{
-				if ((*i)->isVisible(true))
-					m_context->drawGuide(m_primitiveRenderer, *i);
-			}
+				(*i)->drawGuides(m_primitiveRenderer);
 
 			// Draw controller guides.
 			Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();

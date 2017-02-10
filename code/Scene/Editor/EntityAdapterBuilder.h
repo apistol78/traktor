@@ -4,7 +4,6 @@
 #include <map>
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
-#include "Core/Timer/Timer.h"
 #include "World/IEntityBuilder.h"
 
 namespace traktor
@@ -13,7 +12,6 @@ namespace traktor
 	{
 
 class EntityAdapter;
-class IEntityEditorFactory;
 class SceneEditorContext;
 
 class EntityAdapterBuilder : public world::IEntityBuilder
@@ -24,7 +22,6 @@ public:
 	EntityAdapterBuilder(
 		SceneEditorContext* context,
 		world::IEntityBuilder* entityBuilder,
-		const RefArray< const IEntityEditorFactory >& entityEditorFactories,
 		EntityAdapter* currentEntityAdapter
 	);
 
@@ -50,8 +47,6 @@ public:
 
 	EntityAdapter* getRootAdapter() const;
 
-	uint32_t getAdapterCount() const;
-
 private:
 	struct Cache
 	{
@@ -59,17 +54,11 @@ private:
 		std::map< uint32_t, RefArray< world::Entity > > leafEntities;
 	};
 
-	Ref< SceneEditorContext > m_context;
+	SceneEditorContext* m_context;
 	Ref< world::IEntityBuilder > m_entityBuilder;
-	RefArray< const IEntityEditorFactory > m_entityEditorFactories;
 	mutable std::map< const TypeInfo*, Cache > m_cache;
 	mutable Ref< EntityAdapter > m_currentAdapter;
 	mutable Ref< EntityAdapter > m_rootAdapter;
-	mutable uint32_t m_adapterCount;
-	mutable Timer m_timer;
-	mutable std::vector< double > m_buildTimeStack;
-	mutable std::map< const TypeInfo*, std::pair< int32_t, double > > m_buildTimes;
-	mutable std::set< const world::Entity* > m_builtEntities;
 };
 
 	}

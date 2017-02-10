@@ -566,7 +566,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			float vx = floorf(viewPosition.x());
 			float vz = floorf(viewPosition.z());
 
-			for (int x = -20; x <= 20; ++x)
+			for (int32_t x = -20; x <= 20; ++x)
 			{
 				float fx = float(x);
 				m_primitiveRenderer->drawLine(
@@ -589,15 +589,11 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		{
 			RefArray< EntityAdapter > entityAdapters;
 			m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
-
 			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-			{
-				if ((*i)->isVisible(true))
-					m_context->drawGuide(m_primitiveRenderer, *i);
-			}
+				(*i)->drawGuides(m_primitiveRenderer);
 
 			// Draw controller guides.
-			Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
+			ISceneControllerEditor* controllerEditor = m_context->getControllerEditor();
 			if (controllerEditor)
 				controllerEditor->draw(m_primitiveRenderer);
 		}
@@ -644,11 +640,10 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	// Expose various render targets for debugging.
-	m_context->clearDebugTargets();
-
 	std::vector< render::DebugTarget > worldTargets;
 	m_worldRenderer->getDebugTargets(worldTargets);
 
+	m_context->clearDebugTargets();
 	for (std::vector< render::DebugTarget >::const_iterator i = worldTargets.begin(); i != worldTargets.end(); ++i)
 		m_context->addDebugTarget(*i);
 

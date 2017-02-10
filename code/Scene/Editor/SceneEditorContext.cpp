@@ -17,7 +17,8 @@
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
-#include "Scene/Editor/IEntityEditor.h"
+#include "Scene/Editor/IComponentEditorFactory.h"
+#include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
@@ -113,6 +114,18 @@ void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
 void SceneEditorContext::addEditorPlugin(ISceneEditorPlugin* editorPlugin)
 {
 	m_editorPlugins.push_back(editorPlugin);
+}
+
+void SceneEditorContext::createFactories()
+{
+	m_entityEditorFactories.resize(0);
+	m_componentEditorFactories.resize(0);
+
+	for (RefArray< ISceneEditorProfile >::const_iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
+	{
+		(*i)->createEntityEditorFactories(this, m_entityEditorFactories);
+		(*i)->createComponentEditorFactories(this, m_componentEditorFactories);
+	}
 }
 
 void SceneEditorContext::setControllerEditor(ISceneControllerEditor* controllerEditor)
@@ -260,16 +273,6 @@ float SceneEditorContext::getTime() const
 	return m_time;
 }
 
-void SceneEditorContext::drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter)
-{
-	if (entityAdapter)
-	{
-		IEntityEditor* entityEditor = entityAdapter->getEntityEditor();
-		if (entityEditor)
-			entityEditor->drawGuide(primitiveRenderer);
-	}
-}
-
 void SceneEditorContext::setDrawGuide(const std::wstring& guideId, bool shouldDraw)
 {
 	m_drawGuide[guideId] = shouldDraw;
@@ -286,6 +289,56 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 	m_sceneAsset = sceneAsset;
 }
 
+const IEntityEditorFactory* SceneEditorContext::findEntityEditorFactory(const TypeInfo& entityDataType) const
+{
+	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+	const IEntityEditorFactory* entityEditorFactory = 0;
+
+	for (RefArray< const IEntityEditorFactory >::const_iterator i = m_entityEditorFactories.begin(); i != m_entityEditorFactories.end(); ++i)
+	{
+		TypeInfoSet entityDataTypes = (*i)->getEntityDataTypes();
+		for (TypeInfoSet::const_iterator j = entityDataTypes.begin(); j != entityDataTypes.end(); ++j)
+		{
+			if (is_type_of(**j, entityDataType))
+			{
+				uint32_t classDifference = type_difference(**j, entityDataType);
+				if (classDifference < minClassDifference)
+				{
+					entityEditorFactory = *i;
+					minClassDifference = classDifference;
+				}
+			}
+		}
+	}
+
+	return entityEditorFactory;
+}
+
+const IComponentEditorFactory* SceneEditorContext::findComponentEditorFactory(const TypeInfo& componentDataType) const
+{
+	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+	const IComponentEditorFactory* componentEditorFactory = 0;
+
+	for (RefArray< const IComponentEditorFactory >::const_iterator i = m_componentEditorFactories.begin(); i != m_componentEditorFactories.end(); ++i)
+	{
+		TypeInfoSet componentDataTypes = (*i)->getComponentDataTypes();
+		for (TypeInfoSet::const_iterator j = componentDataTypes.begin(); j != componentDataTypes.end(); ++j)
+		{
+			if (is_type_of(**j, componentDataType))
+			{
+				uint32_t classDifference = type_difference(**j, componentDataType);
+				if (classDifference < minClassDifference)
+				{
+					componentEditorFactory = *i;
+					minClassDifference = classDifference;
+				}
+			}
+		}
+	}
+
+	return componentEditorFactory;
+}
+
 void SceneEditorContext::buildEntities()
 {
 	double T[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
@@ -300,11 +353,6 @@ void SceneEditorContext::buildEntities()
 
 	if (m_sceneAsset)
 	{
-		// Create entity editor factories.
-		RefArray< const IEntityEditorFactory > entityEditorFactories;
-		for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
-			(*i)->createEntityEditorFactories(this, entityEditorFactories);
-
 		Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
 		Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder();
 		Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, entitySchema);
@@ -330,7 +378,7 @@ void SceneEditorContext::buildEntities()
 			world::LayerEntityData* layerEntityData = layers[i];
 			T_ASSERT (layerEntityData);
 
-			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilderSchema, entityEditorFactories, m_layerEntityAdapters[i]);
+			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilderSchema, m_layerEntityAdapters[i]);
 			for (RefArray< const world::IEntityFactory >::iterator k = entityFactories.begin(); k != entityFactories.end(); ++k)
 				entityAdapterBuilder->addFactory(*k);
 
@@ -676,8 +724,8 @@ void SceneEditorContext::cloneSelected()
 		Ref< world::EntityData > clonedEntityData = DeepClone((*i)->getEntityData()).create< world::EntityData >();
 		T_ASSERT (clonedEntityData);
 
-		Ref< EntityAdapter > clonedEntityAdapter = new EntityAdapter();
-		clonedEntityAdapter->setEntityData(clonedEntityData);
+		Ref< EntityAdapter > clonedEntityAdapter = new EntityAdapter(this);
+		clonedEntityAdapter->prepare(clonedEntityData, 0, 0);
 		parentContainerGroup->addChild(clonedEntityAdapter);
 
 		(*i)->m_selected = false;

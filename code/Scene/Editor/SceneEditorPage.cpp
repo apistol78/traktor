@@ -195,6 +195,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 		profile->getGuideDrawIds(guideIds);
 	}
+	m_context->createFactories();
 
 	// Create editor panel.
 	m_editPanel = new ui::Container();
@@ -436,8 +437,8 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		m_context->getDocument()->push();
 
 		// Create instance and adapter.
-		Ref< EntityAdapter > entityAdapter = new EntityAdapter();
-		entityAdapter->setEntityData(entityData);
+		Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
+		entityAdapter->prepare(entityData, 0, 0);
 
 		// Place instance in front of perspective camera.
 		const Camera* camera = m_context->getCamera(viewIndex);
@@ -565,8 +566,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		// Create new instances and adapters for each entity found in clipboard.
 		for (RefArray< world::EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
 		{
-			Ref< EntityAdapter > entityAdapter = new EntityAdapter();
-			entityAdapter->setEntityData(*i);
+			Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
+			entityAdapter->prepare(*i, 0, 0);
 			parentEntity->addChild(entityAdapter);
 		}
 
@@ -1027,8 +1028,8 @@ bool SceneEditorPage::addEntity()
 
 	m_context->getDocument()->push();
 
-	Ref< EntityAdapter > entityAdapter = new EntityAdapter();
-	entityAdapter->setEntityData(entityData);
+	Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
+	entityAdapter->prepare(entityData, 0, 0);
 	parentGroupAdapter->addChild(entityAdapter);
 
 	updateScene();

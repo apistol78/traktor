@@ -71,6 +71,13 @@ void AiEditorProfile::createEntityEditorFactories(
 	outEntityEditorFactories.push_back(new NavMeshEntityEditorFactory());
 }
 
+void AiEditorProfile::createComponentEditorFactories(
+	scene::SceneEditorContext* context,
+	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
+) const
+{
+}
+
 Ref< world::EntityData > AiEditorProfile::createEntityData(
 	scene::SceneEditorContext* context,
 	db::Instance* instance

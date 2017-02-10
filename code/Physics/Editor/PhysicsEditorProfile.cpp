@@ -1,5 +1,6 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Physics/PhysicsFactory.h"
+#include "Physics/Editor/PhysicsComponentEditorFactory.h"
 #include "Physics/Editor/PhysicsEditorProfile.h"
 #include "Physics/Editor/PhysicsEntityEditorFactory.h"
 #include "Physics/World/EntityFactory.h"
@@ -75,6 +76,14 @@ void PhysicsEditorProfile::createEntityEditorFactories(
 ) const
 {
 	outEntityEditorFactories.push_back(new PhysicsEntityEditorFactory());
+}
+
+void PhysicsEditorProfile::createComponentEditorFactories(
+	scene::SceneEditorContext* context,
+	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
+) const
+{
+	outComponentEditorFactories.push_back(new PhysicsComponentEditorFactory());
 }
 
 Ref< world::EntityData > PhysicsEditorProfile::createEntityData(
