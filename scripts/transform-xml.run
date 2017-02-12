@@ -1,0 +1,130 @@
+import(traktor)
+
+local function transform_xdi_MeshEntityData_to_ComponentEntityData(xcurrent)
+
+	local xa = xcurrent:getAttribute("type")
+	if xa == nil then return end
+	if xa:getValue() ~= "traktor.mesh.MeshEntityData" then return end
+
+	stdout:printLn("Found MeshEntityData, modifying to a ComponentEntityData...")
+
+	xcurrent:setAttribute("type", "traktor.world.ComponentEntityData")
+	xcurrent:setAttribute("version", "0")
+
+	local xmesh = xcurrent:getSingle("mesh")
+	local xscreenSpaceCulling = xcurrent:getSingle("screenSpaceCulling")
+
+	xcurrent:removeChild(xmesh)
+	xcurrent:removeChild(xscreenSpaceCulling)
+
+	-- <components>
+	-- 	<item type="traktor.mesh.MeshComponentData">
+	-- 		<mesh>{998A8400-9E70-9C4F-8C74-1DCFF3B69932}</mesh>
+	-- 		<screenSpaceCulling>false</screenSpaceCulling>
+	-- 	</item>
+	-- </components>	
+
+	local xcomponents = xml.Element("components")
+		local xcomponents_item = xml.Element("item")
+			xcomponents_item:setAttribute("type", "traktor.mesh.MeshComponentData")
+			local xcomponents_item_mesh = xml.Element("mesh")
+				xcomponents_item_mesh:setValue(xmesh:getValue())
+			xcomponents_item:addChild(xcomponents_item_mesh)
+			local xcomponents_item_screenSpaceCulling = xml.Element("screenSpaceCulling")
+				xcomponents_item_screenSpaceCulling:setValue(xscreenSpaceCulling:getValue())
+			xcomponents_item:addChild(xcomponents_item_screenSpaceCulling)
+		xcomponents:addChild(xcomponents_item)
+
+	xcurrent:addChild(xcomponents)
+end
+
+local function transform_xdm_MeshEntityData_to_ComponentEntityData(xcurrent)
+
+
+	if xcurrent:getName() ~= "primaryType" then return end
+
+stdout:printLn(xcurrent:getValue())
+
+	if xcurrent:getValue() ~= "traktor.mesh.MeshEntityData" then return end
+	xcurrent:setValue("traktor.world.ComponentEntityData")
+
+end
+
+
+local function transform(xcurrent)
+	local before = xcurrent:write()
+
+	-- tbd Call element modifier
+	transform_xdi_MeshEntityData_to_ComponentEntityData(xcurrent)
+	transform_xdm_MeshEntityData_to_ComponentEntityData(xcurrent)
+
+	local after = xcurrent:write()
+	local modified = (before ~= after)
+
+	local xchildren = {}
+
+	-- Collect all element children.
+	local xiter = xcurrent:getFirstChild()
+	while xiter ~= nil do
+		if isa(xiter, xml.Element) then
+			table.insert(xchildren, xiter)
+		end
+		xiter = xiter:getNextSibling()
+	end
+
+	-- Recurse with all child elements.
+	for _, xc in ipairs(xchildren) do
+		modified = modified or transform(xc)
+	end
+
+	return modified
+end
+
+local function update(path)
+	-- stdout:printLn("Scanning " .. path:getPathName() .. "...")
+
+	local doc = xml.Document()
+	if not doc:loadFromFile(path) then
+		stderr:printLn("Unable to read xml document")
+		return false
+	end
+
+	if transform(doc:getDocumentElement()) then
+		stdout:printLn("Document modified, saving...")
+		if not doc:saveAsFile(path) then
+			stderr:printLn("Failed to save document")
+		end
+	end
+
+	-- stdout:printLn("Done")
+	return true	
+end
+
+local function traverse(path)
+	local fa = FileSystem.getInstance():find(path:getPathName() .. "/*.*")
+	for i = 0, fa:size() - 1 do
+		local f = fa:get(i)
+		local p = f:getPath()
+		local fn = p:getFileName()
+		local pn = p:getPathName()
+
+		if f:isDirectory() then
+			if fn ~= "." and fn ~= ".." then
+				traverse(p)
+			end
+		else
+			if not f:isReadOnly() then
+				local x = p:getExtension():lower()
+				if x == "xdi" or x == "xdm" then
+					update(p)
+				end
+			end
+		end
+	end
+end
+
+function main(args)
+	traverse(
+		Path(".")
+	)
+end
