@@ -63,7 +63,6 @@ void Element::write(OutputStream& os) const
 	if (getFirstChild())
 	{
 		os << L">";
-		os << IncreaseIndent;
 
 		uint32_t childElements = 0, childText = 0;
 		for (Node* child = getFirstChild(); child; child = child->getNextSibling())
@@ -75,11 +74,16 @@ void Element::write(OutputStream& os) const
 		}
 
 		if (childElements > 0 || childText > 1)
+		{
 			os << Endl;
+			os << IncreaseIndent;
+		}
 
 		Node::write(os);
 
-		os << DecreaseIndent;
+		if (childElements > 0 || childText > 1)
+			os << DecreaseIndent;
+
 		os << L"</" << m_name << L">" << Endl;
 	}
 	else
