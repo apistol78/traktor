@@ -63,7 +63,7 @@ bool Document::loadFromStream(IStream* stream)
 
 		case XmlPullParser::EtText:
 			{
-				if (!stack.empty())
+				if (!stack.empty() && !trim(e.value).empty())
 				{
 					Ref< Text > text = new Text(e.value);
 					stack.back()->addChild(text);
