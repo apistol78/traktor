@@ -1,5 +1,44 @@
 import(traktor)
 
+local function transform_xdi_RigidEntityData_to_ComponentEntityData(xcurrent)
+	local xa = xcurrent:getAttribute("type")
+	if xa == nil then return end
+	if xa:getValue() ~= "traktor.physics.RigidEntityData" then return end
+
+	local xbodyDesc = xcurrent:getSingle("bodyDesc")
+	local xentityData = xcurrent:getSingle("entityData")
+	local xeventCollide = xcurrent:getSingle("eventCollide")
+
+	if xbodyDesc == nil then stderr:printLn("No bodyDesc"); return end
+	if xentityData == nil then stderr:printLn("No entityData"); return end
+	if xeventCollide == nil then stderr:printLn("No eventCollide"); return end
+
+	local xmeshComponentData = xcurrent:getSingle("entityData/components/item[@type=traktor.mesh.MeshComponentData]")
+	if xmeshComponentData == nil then stderr:printLn("No child MeshComponentData"); return end
+
+	xcurrent:removeChild(xbodyDesc)
+	xcurrent:removeChild(xentityData)
+
+	xcurrent:setAttribute("type", "traktor.world.ComponentEntityData")
+	xcurrent:setAttribute("version", "0")
+
+	local xcomponents = xml.Element("components")
+		local xcomponents_item = xml.Element("item")
+			xcomponents_item:setAttribute("type", "traktor.physics.RigidBodyComponentData")
+			xcomponents_item:addChild(xbodyDesc)
+			xcomponents_item:addChild(xeventCollide)
+		xcomponents:addChild(xcomponents_item)
+		xcomponents:addChild(xmeshComponentData)
+
+	xcurrent:addChild(xcomponents)
+end
+
+local function transform_xdm_RigidEntityData_to_ComponentEntityData(xcurrent)
+	if xcurrent:getName() ~= "primaryType" then return end
+	if xcurrent:getValue() ~= "traktor.physics.RigidEntityData" then return end
+	xcurrent:setValue("traktor.world.ComponentEntityData")
+end
+
 local function transform_xdi_MeshEntityData_to_ComponentEntityData(xcurrent)
 	local xa = xcurrent:getAttribute("type")
 	if xa == nil then return end
@@ -34,13 +73,14 @@ local function transform_xdm_MeshEntityData_to_ComponentEntityData(xcurrent)
 	xcurrent:setValue("traktor.world.ComponentEntityData")
 end
 
-
 local function transform(xcurrent)
 	local before = xcurrent:write()
 
 	-- tbd Call element modifier
 	transform_xdi_MeshEntityData_to_ComponentEntityData(xcurrent)
 	transform_xdm_MeshEntityData_to_ComponentEntityData(xcurrent)
+	transform_xdi_RigidEntityData_to_ComponentEntityData(xcurrent)
+	transform_xdm_RigidEntityData_to_ComponentEntityData(xcurrent)
 
 	local after = xcurrent:write()
 	local modified = (before ~= after)
@@ -65,22 +105,21 @@ local function transform(xcurrent)
 end
 
 local function update(path)
-	-- stdout:printLn("Scanning " .. path:getPathName() .. "...")
+	stdout:printLn(path:getPathName() .. "...")
 
 	local doc = xml.Document()
 	if not doc:loadFromFile(path) then
-		stderr:printLn("Unable to read xml document")
+		stderr:printLn("Unable to read xml document " .. path:getPathName())
 		return false
 	end
 
 	if transform(doc:getDocumentElement()) then
-		stdout:printLn("Document modified, saving...")
+		stdout:printLn("Document " .. path:getPathName() .. " modified, saving...")
 		if not doc:saveAsFile(path) then
 			stderr:printLn("Failed to save document")
 		end
 	end
 
-	-- stdout:printLn("Done")
 	return true	
 end
 
