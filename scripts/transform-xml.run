@@ -1,12 +1,9 @@
 import(traktor)
 
 local function transform_xdi_MeshEntityData_to_ComponentEntityData(xcurrent)
-
 	local xa = xcurrent:getAttribute("type")
 	if xa == nil then return end
 	if xa:getValue() ~= "traktor.mesh.MeshEntityData" then return end
-
-	stdout:printLn("Found MeshEntityData, modifying to a ComponentEntityData...")
 
 	xcurrent:setAttribute("type", "traktor.world.ComponentEntityData")
 	xcurrent:setAttribute("version", "0")
@@ -16,13 +13,6 @@ local function transform_xdi_MeshEntityData_to_ComponentEntityData(xcurrent)
 
 	xcurrent:removeChild(xmesh)
 	xcurrent:removeChild(xscreenSpaceCulling)
-
-	-- <components>
-	-- 	<item type="traktor.mesh.MeshComponentData">
-	-- 		<mesh>{998A8400-9E70-9C4F-8C74-1DCFF3B69932}</mesh>
-	-- 		<screenSpaceCulling>false</screenSpaceCulling>
-	-- 	</item>
-	-- </components>	
 
 	local xcomponents = xml.Element("components")
 		local xcomponents_item = xml.Element("item")
@@ -39,15 +29,9 @@ local function transform_xdi_MeshEntityData_to_ComponentEntityData(xcurrent)
 end
 
 local function transform_xdm_MeshEntityData_to_ComponentEntityData(xcurrent)
-
-
 	if xcurrent:getName() ~= "primaryType" then return end
-
-stdout:printLn(xcurrent:getValue())
-
 	if xcurrent:getValue() ~= "traktor.mesh.MeshEntityData" then return end
 	xcurrent:setValue("traktor.world.ComponentEntityData")
-
 end
 
 
