@@ -59,8 +59,6 @@ public:
 		float distance
 	) = 0;
 
-	void pushTransform();
-
 	void setParameterCallback(const IMeshParameterCallback* parameterCallback) { m_parameterCallback = parameterCallback; }
 
 	const IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }

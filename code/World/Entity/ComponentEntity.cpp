@@ -64,7 +64,7 @@ void ComponentEntity::setComponent(IEntityComponent* component)
 	// Replace existing component of same type.
 	for (RefArray< IEntityComponent >::iterator i = m_components.begin(); i != m_components.end(); ++i)
 	{
-		if (is_type_a(type_of(*i), type_of(component)))
+		if (is_type_of(type_of(*i), type_of(component)))
 		{
 			*i = component;
 			return;
@@ -79,7 +79,7 @@ IEntityComponent* ComponentEntity::getComponent(const TypeInfo& componentType) c
 {
 	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
 	{
-		if (is_type_a(componentType, type_of(*i)))
+		if (is_type_of(componentType, type_of(*i)))
 			return *i;
 	}
 	return 0;

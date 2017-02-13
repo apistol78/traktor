@@ -28,6 +28,7 @@
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Mesh/MeshComponentData.h"
 #include "Mesh/MeshEntityData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
@@ -149,7 +150,8 @@ void collectNavigationEntities(const ISerializable* object, RefArray< world::Ent
 		{
 			if (
 				componentEntityData->getComponent< terrain::TerrainComponentData >() != 0 ||
-				componentEntityData->getComponent< terrain::OceanComponentData >() != 0
+				componentEntityData->getComponent< terrain::OceanComponentData >() != 0 ||
+				componentEntityData->getComponent< mesh::MeshComponentData >() != 0
 			)
 				outEntityData.push_back(componentEntityData);
 		}
@@ -175,7 +177,7 @@ void collectNavigationEntities(const ISerializable* object, RefArray< world::Ent
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 12, NavMeshPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 13, NavMeshPipeline, editor::DefaultPipeline)
 
 NavMeshPipeline::NavMeshPipeline()
 :	m_editor(false)
@@ -351,6 +353,48 @@ bool NavMeshPipeline::buildOutput(
 			}
 			else if (const world::ComponentEntityData* componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(*i))
 			{
+				if (const mesh::MeshComponentData* meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >())
+				{
+					const resource::Id< mesh::IMesh >& mesh = meshComponentData->getMesh();
+
+					Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(mesh);
+					if (!meshAsset)
+						continue;
+
+					std::map< std::wstring, Ref< const model::Model > >::const_iterator j = modelCache.find(meshAsset->getFileName().getOriginal());
+					if (j != modelCache.end())
+					{
+						navModels.push_back(NavMeshSourceModel(j->second, (*i)->getTransform()));
+					}
+					else
+					{
+						Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), meshAsset->getFileName().getOriginal());
+						if (!file)
+						{
+							log::warning << L"Unable to open file \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
+							continue;
+						}
+
+						Ref< model::Model > meshModel = model::ModelFormat::readAny(
+							file,
+							meshAsset->getFileName().getExtension(),
+							model::ModelFormat::IfMeshPositions |
+							model::ModelFormat::IfMeshVertices |
+							model::ModelFormat::IfMeshPolygons
+						);
+						if (!meshModel)
+						{
+							log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
+							continue;
+						}
+
+						model::Triangulate().apply(*meshModel);
+
+						modelCache[meshAsset->getFileName().getOriginal()] = meshModel;
+						navModels.push_back(NavMeshSourceModel(meshModel, (*i)->getTransform()));
+					}
+				}
+
 				if (const terrain::TerrainComponentData* terrainComponentData = componentEntityData->getComponent< terrain::TerrainComponentData >())
 				{
 					const resource::Id< terrain::Terrain >& terrain = terrainComponentData->getTerrain();

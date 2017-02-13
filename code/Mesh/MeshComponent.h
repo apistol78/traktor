@@ -49,6 +49,10 @@ public:
 
 	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) = 0;
 
+	void setParameterCallback(const IMeshParameterCallback* parameterCallback) { m_parameterCallback = parameterCallback; }
+
+	const IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
+
 	const IntervalTransform& getTransform() const { return m_transform; }
 
 	IntervalTransform& getTransform() { return m_transform; }
