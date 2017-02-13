@@ -1,6 +1,8 @@
 #include "Resource/IResourceManager.h"
 #include "Sound/Sound.h"
 #include "Spray/Effect.h"
+#include "Spray/EffectComponent.h"
+#include "Spray/EffectComponentData.h"
 #include "Spray/EffectEntity.h"
 #include "Spray/EffectEntityData.h"
 #include "Spray/EffectEntityFactory.h"
@@ -53,7 +55,7 @@ const TypeInfoSet EffectEntityFactory::getEntityEventTypes() const
 
 const TypeInfoSet EffectEntityFactory::getEntityComponentTypes() const
 {
-	return TypeInfoSet();
+	return makeTypeInfoSet< EffectComponentData >();
 }
 
 Ref< world::Entity > EffectEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
@@ -99,7 +101,10 @@ Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::I
 
 Ref< world::IEntityComponent > EffectEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	return 0;
+	if (const EffectComponentData* effectComponentData = dynamic_type_cast< const EffectComponentData* >(&entityComponentData))
+		return effectComponentData->createComponent(m_resourceManager, m_eventManager, m_soundPlayer);
+	else
+		return 0;
 }
 
 	}
