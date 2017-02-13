@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
+
+import(traktor.flash)
+
+-- ProgressBar
+
+ProgressBar = ProgressBar or inherit(Widget)
+ProgressBar_meta = ProgressBar_meta or { name = "ProgressBar", __index = ProgressBar }
+
+function ProgressBar.new(parent)
+	local o = {}
+	setmetatable(o, ProgressBar_meta)
+
+	local mc = Widget._createResource(parent, "MC_ProgressBar")
+
+	o:_initialize(parent, mc)
+	return o
+end
+
+function ProgressBar:getPreferredSize()
+	return self._preferredSize
+end
+
+function ProgressBar:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
+
+	local p = self:getPlacement()
+	self._back_mc:setWidth(p.width)
+	self._back_mc:setHeight(p.height)
+	self._front_mc:setWidth(p.width)
+	self._front_mc:setHeight(p.height)
+
+	self:setValue(self._value)
+end
+
+function ProgressBar:setBackColor(color)
+	self._back_mc:setColorTransform(ColorTransform(
+		color,
+		Color4f(0, 0, 0, 0)
+	))
+	return self
+end
+
+function ProgressBar:setFrontColor(color)
+	self._front_mc:setColorTransform(ColorTransform(
+		color,
+		Color4f(0, 0, 0, 0)
+	))
+	return self
+end
+
+function ProgressBar:setValue(value)
+	self._value = math.max(math.min(value, 1), 0)
+	local w = self._back_mc:getWidth()
+	self._mask_mc:setWidth(w * value)
+	return self
+end
+
+function ProgressBar:getValue()
+	return self._value
+end
+
+-- Private
+
+function ProgressBar:_initialize(parent, mc)
+	Widget._initialize(self, parent, mc)
+
+	self._preferredSize =
+	{
+		width = mc:getWidth(),
+		height = mc:getHeight()
+	}
+
+	self._back_mc = mc:getMember("back_mc")
+	self._front_mc = mc:getMember("front_mc")
+	self._mask_mc = mc:getMember("mask_mc")
+
+#if defined(_DEBUG)
+	self._back_mc:setMember("__renderWireOutline", true)
+#endif
+
+	self:setValue(0.5)
+end
+
+
+	]]>
+	</text>
+</object>
