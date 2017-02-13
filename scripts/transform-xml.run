@@ -1,5 +1,27 @@
 import(traktor)
 
+-- Keep MeshEntityData for LodMeshEntityData; this should be fixed...
+local function transform_xdi_LodMeshEntityData_fix(xcurrent)
+	local xa = xcurrent:getAttribute("type")
+	if xa == nil then return end
+	if xa:getValue() ~= "traktor.mesh.LodMeshEntityData" then return end
+
+	local xitems = xcurrent:get("lods/item")
+	for i = 0, xitems:size() - 1 do
+		local xitem = xitems:get(i)
+		if xitem:getAttribute("type", ""):getValue() == "traktor.world.ComponentEntityData" then
+			local xmeshComponentData = xitem:getSingle("components/item[@type=traktor.mesh.MeshComponentData]")
+			if xmeshComponentData ~= nil then
+				xitem:setAttribute("type", "traktor.mesh.MeshEntityData")
+				xitem:setAttribute("version", "1")
+				xitem:removeChild(xitem:getSingle("components"))
+				xitem:addChild(xmeshComponentData:getSingle("mesh"))
+				xitem:addChild(xmeshComponentData:getSingle("screenSpaceCulling"))
+			end
+		end
+	end
+end
+
 local function transform_xdi_RigidEntityData_to_ComponentEntityData(xcurrent)
 	local xa = xcurrent:getAttribute("type")
 	if xa == nil then return end
@@ -77,10 +99,11 @@ local function transform(xcurrent)
 	local before = xcurrent:write()
 
 	-- tbd Call element modifier
-	transform_xdi_MeshEntityData_to_ComponentEntityData(xcurrent)
-	transform_xdm_MeshEntityData_to_ComponentEntityData(xcurrent)
-	transform_xdi_RigidEntityData_to_ComponentEntityData(xcurrent)
-	transform_xdm_RigidEntityData_to_ComponentEntityData(xcurrent)
+--	transform_xdi_MeshEntityData_to_ComponentEntityData(xcurrent)
+--	transform_xdm_MeshEntityData_to_ComponentEntityData(xcurrent)
+--	transform_xdi_RigidEntityData_to_ComponentEntityData(xcurrent)
+--	transform_xdm_RigidEntityData_to_ComponentEntityData(xcurrent)
+	transform_xdi_LodMeshEntityData_fix(xcurrent)
 
 	local after = xcurrent:write()
 	local modified = (before ~= after)
@@ -105,7 +128,7 @@ local function transform(xcurrent)
 end
 
 local function update(path)
-	stdout:printLn(path:getPathName() .. "...")
+--	stdout:printLn(path:getPathName() .. "...")
 
 	local doc = xml.Document()
 	if not doc:loadFromFile(path) then
