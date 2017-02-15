@@ -44,6 +44,14 @@ function ScrollContainer:place(x, y, width, height)
 	self._inner_mc:setY(-self._scroll.y)
 end
 
+function ScrollContainer:layout()
+	if self:isVisible() and self._layout ~= nil then
+		local p = self:getPlacement()
+		self._innerSize = self:_getInnerSize()
+		self._layout:update(self, p.width, p.height)
+	end
+end
+
 function ScrollContainer:setOffset(x, y)
 	self._scroll.x = x
 	self._scroll.y = y
