@@ -116,7 +116,7 @@ function Widget:place(x, y, width, height)
 	self._placement.width = width
 	self._placement.height = height
 
-	local ps = self:getPreferredSize()
+	local ps = self:getPreferredSize({ width = width, height = height })
 
 	local ax = x
 	local aw = width
