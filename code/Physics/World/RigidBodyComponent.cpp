@@ -40,7 +40,10 @@ void RigidBodyComponent::setOwner(world::Entity* owner)
 	{
 		Transform transform;
 		if (m_owner->getTransform(transform))
+		{
 			m_body->setTransform(transform);
+			m_body->setEnable(true);
+		}
 	}
 }
 
