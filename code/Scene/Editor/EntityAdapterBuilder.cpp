@@ -43,6 +43,8 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 )
 :	m_context(context)
 ,	m_entityBuilder(entityBuilder)
+,	m_cacheHit(0)
+,	m_cacheMiss(0)
 {
 	RefArray< EntityAdapter > entityAdapters;
 	collectAllAdapters(currentEntityAdapter, entityAdapters);
@@ -105,14 +107,15 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 {
 	Ref< EntityAdapter > entityAdapter;
 	Ref< world::Entity > entity;
-	uint32_t hash;
 
 	if (!entityData)
 		return 0;
 
-	Cache& cache = m_cache[&type_of(entityData)];
+	// Calculate deep hash of entity data.
+	uint32_t hash = DeepHash(entityData).get();
 
 	// Get adapter; reuse adapters containing same type of entity.
+	Cache& cache = m_cache[&type_of(entityData)];
 	if (!cache.adapters.empty())
 	{
 		entityAdapter = cache.adapters.front();
@@ -148,16 +151,14 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	// Re-use leaf entities if hash match.
 	if (!cache.leafEntities.empty())
 	{
-		hash = DeepHash(entityData).get();
 		RefArray< world::Entity >& entities = cache.leafEntities[hash];
 		if (!entities.empty())
 		{
 			entity = entities.front();
 			entities.pop_front();
+			m_cacheHit++;
 		}
 	}
-	else
-		hash = 0;
 
 	// If no leaf entity then we need to re-create the entity.
 	if (!entity)
@@ -180,6 +181,8 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 			log::debug << L"Unable to create entity from \"" << type_name(entityData) << L"\"; using empty entity as placeholder" << Endl;
 			entity = new world::ComponentEntity(entityData->getTransform());
 		}
+
+		m_cacheMiss++;
 	}
 
 	T_FATAL_ASSERT (entity);
@@ -208,11 +211,6 @@ Ref< world::IEntityComponent > EntityAdapterBuilder::create(const world::IEntity
 const world::IEntityBuilder* EntityAdapterBuilder::getCompositeEntityBuilder() const
 {
 	return m_entityBuilder->getCompositeEntityBuilder();
-}
-
-EntityAdapter* EntityAdapterBuilder::getRootAdapter() const
-{
-	return m_rootAdapter;
 }
 
 	}
