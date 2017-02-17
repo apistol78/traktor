@@ -392,6 +392,8 @@ void SceneEditorContext::buildEntities()
 			T_FATAL_ASSERT (m_layerEntityAdapters[i]->getParent() == 0);
 
 			rootGroupEntity->addEntity(entity);
+
+			log::debug << L"Layer " << i << L", cache hit " << entityAdapterBuilder->getCacheHit() << L", miss " << entityAdapterBuilder->getCacheMiss() << Endl;
 		}
 
 		T[2] = timer.getElapsedTime();

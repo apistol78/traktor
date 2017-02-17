@@ -9269,6 +9269,669 @@
 									</dependencies>
 								</project>
 							</item>
+							<item type="ProjectDependency" version="3">
+								<inheritIncludePaths>true</inheritIncludePaths>
+								<link>LnkYes</link>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Sound</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Sound</sourcePath>
+									<configurations>
+										<item type="Configuration" version="3">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+											</includePaths>
+											<definitions>
+												<item>T_SOUND_EXPORT</item>
+												<item>_DEBUG</item>
+												<item>FLAC_NO_DLL</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+											<debugExecutable/>
+											<debugArguments/>
+											<debugEnvironment/>
+											<debugWorkingDirectory/>
+											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Sound.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Sound.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
+											</aggregationItems>
+										</item>
+										<item type="Configuration" version="3">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+											</includePaths>
+											<definitions>
+												<item>T_SOUND_EXPORT</item>
+												<item>NDEBUG</item>
+												<item>FLAC_NO_DLL</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+											<debugExecutable/>
+											<debugArguments/>
+											<debugEnvironment/>
+											<debugWorkingDirectory/>
+											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Sound.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
+												</item>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Sound.dylib</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
+												</item>
+											</aggregationItems>
+										</item>
+										<item type="Configuration" version="3">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+											<debugExecutable/>
+											<debugArguments/>
+											<debugEnvironment/>
+											<debugWorkingDirectory/>
+											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Sound.a</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+												</item>
+											</aggregationItems>
+										</item>
+										<item type="Configuration" version="3">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+											<debugExecutable/>
+											<debugArguments/>
+											<debugEnvironment/>
+											<debugWorkingDirectory/>
+											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>libTraktor.Sound.a</sourceFile>
+													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+												</item>
+											</aggregationItems>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+										<item type="Filter">
+											<name>Decoders</name>
+											<items>
+												<item type="File">
+													<fileName>Decoders/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Filters</name>
+											<items>
+												<item type="File">
+													<fileName>Filters/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Resound</name>
+											<items>
+												<item type="File">
+													<fileName>Resound/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Player</name>
+											<items>
+												<item type="File">
+													<fileName>Player/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[12]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[4]"/>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Extern.mpg123-1.13.2</name>
+												<sourcePath>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2</sourcePath>
+												<configurations>
+													<item type="Configuration" version="3">
+														<name>DebugShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
+														</includePaths>
+														<definitions>
+															<item>T_MPG123_EXPORT</item>
+															<item>_DEBUG</item>
+															<item>OPT_I386</item>
+															<item>_CRT_SECURE_NO_WARNINGS</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems/>
+													</item>
+													<item type="Configuration" version="3">
+														<name>ReleaseShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
+														</includePaths>
+														<definitions>
+															<item>T_MPG123_EXPORT</item>
+															<item>NDEBUG</item>
+															<item>OPT_I386</item>
+															<item>_CRT_SECURE_NO_WARNINGS</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems/>
+													</item>
+													<item type="Configuration" version="3">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>_DEBUG</item>
+															<item>OPT_I386</item>
+															<item>_CRT_SECURE_NO_WARNINGS</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+															</item>
+														</aggregationItems>
+													</item>
+													<item type="Configuration" version="3">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+															<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>NDEBUG</item>
+															<item>OPT_I386</item>
+															<item>_CRT_SECURE_NO_WARNINGS</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+															</item>
+														</aggregationItems>
+													</item>
+												</configurations>
+												<items>
+													<item type="Filter">
+														<name>libmpg123</name>
+														<items>
+															<item type="File">
+																<fileName>src/libmpg123/compat.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/dct64.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/equalizer.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/feature.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/format.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/frame.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/icy.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/icy2utf8.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/id3.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/index.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/layer1.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/layer2.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/layer3.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/libmpg123.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/ntom.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/optimize.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/parse.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/readers.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/stringbuf.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/synth.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/tabinit.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/testcpu.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/compat.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/debug.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/decode.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/frame.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/getbits.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/getcpuflags.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/huffman.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/icy.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/icy2utf8.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/id3.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/index.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/intsym.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/l12_integer_tables.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/l2tables.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/l3_integer_tables.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/mangle.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/mpg123lib_intern.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/optimize.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/parse.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/reader.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/sample.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/synth.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/synths.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/true.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/synth_8bit.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/synth_8bit.h</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/synth_real.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/synth_s32.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>src/libmpg123/dct64_i386.c</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+													<item type="Filter">
+														<name>ports</name>
+														<items>
+															<item type="File">
+																<fileName>ports/osx/*.c</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>ports/osx/*.h</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+												</items>
+												<dependencies/>
+											</project>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Extern.stb_vorbis</name>
+												<sourcePath>$(TRAKTOR_HOME)/3rdp/stb_vorbis</sourcePath>
+												<configurations>
+													<item type="Configuration" version="3">
+														<name>DebugShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths/>
+														<definitions>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems/>
+													</item>
+													<item type="Configuration" version="3">
+														<name>ReleaseShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths/>
+														<definitions>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems/>
+													</item>
+													<item type="Configuration" version="3">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths/>
+														<definitions>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>libExtern.stb_vorbis.a</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+															</item>
+														</aggregationItems>
+													</item>
+													<item type="Configuration" version="3">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths/>
+														<definitions>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>libExtern.stb_vorbis.a</sourceFile>
+																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+															</item>
+														</aggregationItems>
+													</item>
+												</configurations>
+												<items>
+													<item type="File">
+														<fileName>*.*</fileName>
+														<items/>
+													</item>
+												</items>
+												<dependencies/>
+											</project>
+										</item>
+									</dependencies>
+								</project>
+							</item>
 						</dependencies>
 					</project>
 				</item>
@@ -11374,665 +12037,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.Sound</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Sound</sourcePath>
-						<configurations>
-							<item type="Configuration" version="3">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
-								</includePaths>
-								<definitions>
-									<item>T_SOUND_EXPORT</item>
-									<item>_DEBUG</item>
-									<item>FLAC_NO_DLL</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>libTraktor.Sound.dylib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>libTraktor.Sound.dylib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
-								</includePaths>
-								<definitions>
-									<item>T_SOUND_EXPORT</item>
-									<item>NDEBUG</item>
-									<item>FLAC_NO_DLL</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>libTraktor.Sound.dylib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>libTraktor.Sound.dylib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-							<item type="Configuration" version="3">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>libTraktor.Sound.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-							<item type="Configuration" version="3">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>libTraktor.Sound.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-							<item type="Filter">
-								<name>Decoders</name>
-								<items>
-									<item type="File">
-										<fileName>Decoders/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Filters</name>
-								<items>
-									<item type="File">
-										<fileName>Filters/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Resound</name>
-								<items>
-									<item type="File">
-										<fileName>Resound/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Player</name>
-								<items>
-									<item type="File">
-										<fileName>Player/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item[12]/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item[4]"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project type="Project" version="1">
-									<enable>true</enable>
-									<name>Extern.mpg123-1.13.2</name>
-									<sourcePath>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2</sourcePath>
-									<configurations>
-										<item type="Configuration" version="3">
-											<name>DebugShared</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
-											</includePaths>
-											<definitions>
-												<item>T_MPG123_EXPORT</item>
-												<item>_DEBUG</item>
-												<item>OPT_I386</item>
-												<item>_CRT_SECURE_NO_WARNINGS</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
-										<item type="Configuration" version="3">
-											<name>ReleaseShared</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
-											</includePaths>
-											<definitions>
-												<item>T_MPG123_EXPORT</item>
-												<item>NDEBUG</item>
-												<item>OPT_I386</item>
-												<item>_CRT_SECURE_NO_WARNINGS</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
-										<item type="Configuration" version="3">
-											<name>DebugStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
-											</includePaths>
-											<definitions>
-												<item>T_STATIC</item>
-												<item>_DEBUG</item>
-												<item>OPT_I386</item>
-												<item>_CRT_SECURE_NO_WARNINGS</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-										<item type="Configuration" version="3">
-											<name>ReleaseStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
-											</includePaths>
-											<definitions>
-												<item>T_STATIC</item>
-												<item>NDEBUG</item>
-												<item>OPT_I386</item>
-												<item>_CRT_SECURE_NO_WARNINGS</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-									</configurations>
-									<items>
-										<item type="Filter">
-											<name>libmpg123</name>
-											<items>
-												<item type="File">
-													<fileName>src/libmpg123/compat.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/dct64.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/equalizer.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/feature.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/format.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/frame.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/icy.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/icy2utf8.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/id3.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/index.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/layer1.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/layer2.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/layer3.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/libmpg123.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/ntom.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/optimize.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/parse.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/readers.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/stringbuf.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/tabinit.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/testcpu.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/compat.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/debug.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/decode.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/frame.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/getbits.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/getcpuflags.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/huffman.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/icy.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/icy2utf8.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/id3.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/index.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/intsym.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/l12_integer_tables.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/l2tables.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/l3_integer_tables.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/mangle.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/mpg123lib_intern.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/optimize.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/parse.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/reader.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/sample.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synths.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/true.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth_8bit.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth_8bit.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth_real.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth_s32.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/dct64_i386.c</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
-											<name>ports</name>
-											<items>
-												<item type="File">
-													<fileName>ports/osx/*.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>ports/osx/*.h</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-									</items>
-									<dependencies/>
-								</project>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project type="Project" version="1">
-									<enable>true</enable>
-									<name>Extern.stb_vorbis</name>
-									<sourcePath>$(TRAKTOR_HOME)/3rdp/stb_vorbis</sourcePath>
-									<configurations>
-										<item type="Configuration" version="3">
-											<name>DebugShared</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths/>
-											<definitions>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
-										<item type="Configuration" version="3">
-											<name>ReleaseShared</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths/>
-											<definitions>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems/>
-										</item>
-										<item type="Configuration" version="3">
-											<name>DebugStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths/>
-											<definitions>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libExtern.stb_vorbis.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-										<item type="Configuration" version="3">
-											<name>ReleaseStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths/>
-											<definitions>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libExtern.stb_vorbis.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-									</configurations>
-									<items>
-										<item type="File">
-											<fileName>*.*</fileName>
-											<items/>
-										</item>
-									</items>
-									<dependencies/>
-								</project>
-							</item>
-						</dependencies>
-					</project>
+					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -12241,7 +12246,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -12423,7 +12428,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[25]/dependencies/item[7]/project"/>
+								<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -14318,7 +14323,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[25]/dependencies/item[7]/project"/>
+		<item ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 		<item ref="/object/projects/item[26]/dependencies/item[11]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -14461,7 +14466,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -14649,7 +14654,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -14859,7 +14864,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16268,7 +16273,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16934,7 +16939,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -17881,7 +17886,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[25]/dependencies/item[7]/project"/>
+								<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -18531,7 +18536,7 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[25]/dependencies/item[7]/project"/>
+											<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -18902,7 +18907,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[25]/dependencies/item[7]/project/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[4]/project"/>
 		<item ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[2]/project"/>
 		<item ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[3]/project"/>
 		<item ref="/object/projects/item[55]/dependencies/item[10]/project"/>
@@ -19256,7 +19261,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[25]/dependencies/item[7]/project/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[5]/project"/>
 		<item ref="/object/projects/item[42]/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -21031,7 +21036,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[15]/project"/>
 				</item>
 			</dependencies>
 		</item>

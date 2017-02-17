@@ -10,6 +10,7 @@
 #include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
+#include "Sound/SoundFactory.h"
 #include "Video/VideoFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
 #include "World/EntityEventResourceFactory.h"
@@ -73,6 +74,7 @@ void DefaultEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new render::SequenceTextureFactory());
 	outResourceFactories.push_back(new render::ShaderFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new render::TextureFactory(context->getRenderSystem(), 0));
+	outResourceFactories.push_back(new sound::SoundFactory());
 	outResourceFactories.push_back(new video::VideoFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new weather::CloudMaskFactory());
 	outResourceFactories.push_back(new world::EntityResourceFactory());

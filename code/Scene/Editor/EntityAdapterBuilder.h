@@ -45,7 +45,11 @@ public:
 
 	virtual const world::IEntityBuilder* getCompositeEntityBuilder() const T_OVERRIDE T_FINAL;
 
-	EntityAdapter* getRootAdapter() const;
+	EntityAdapter* getRootAdapter() const { return m_rootAdapter; }
+
+	uint32_t getCacheHit() const { return m_cacheHit; }
+
+	uint32_t getCacheMiss() const { return m_cacheMiss; }
 
 private:
 	struct Cache
@@ -59,6 +63,8 @@ private:
 	mutable std::map< const TypeInfo*, Cache > m_cache;
 	mutable Ref< EntityAdapter > m_currentAdapter;
 	mutable Ref< EntityAdapter > m_rootAdapter;
+	mutable uint32_t m_cacheHit;
+	mutable uint32_t m_cacheMiss;
 };
 
 	}
