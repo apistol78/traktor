@@ -37,6 +37,8 @@ public:
 
 	bool parseHtml(const std::wstring& html);
 
+	Vector2 measureText(const std::wstring& text) const;
+
 	void setTextBounds(const Aabb2& textBounds);
 
 	const Aabb2& getTextBounds() const { return m_textBounds; }

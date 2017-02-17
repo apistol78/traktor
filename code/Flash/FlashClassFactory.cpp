@@ -637,6 +637,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< FlashEditInstance > > classFlashEditInstance = new AutoRuntimeClass< FlashEditInstance >();
 	classFlashEditInstance->addMethod("parseText", &FlashEditInstance::parseText);
 	classFlashEditInstance->addMethod("parseHtml", &FlashEditInstance::parseHtml);
+	classFlashEditInstance->addMethod("measureText", &FlashEditInstance::measureText);
 	classFlashEditInstance->addMethod("setTextBounds", &FlashEditInstance::setTextBounds);
 	classFlashEditInstance->addMethod("getTextBounds", &FlashEditInstance::getTextBounds);
 	classFlashEditInstance->addMethod("setTextColor", &FlashEditInstance::setTextColor);
