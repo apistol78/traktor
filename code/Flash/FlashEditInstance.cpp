@@ -156,7 +156,7 @@ bool FlashEditInstance::parseText(const std::wstring& text)
 		{
 			const AlignedVector< TextLayout::Word >& words = lines.back().words;
 			for (AlignedVector< TextLayout::Word >::const_iterator j = words.begin(); j != words.end(); ++j)
-				m_caret += j->chars.size();
+				m_caret += (int32_t)j->chars.size();
 		}
 	}
 
@@ -177,11 +177,36 @@ bool FlashEditInstance::parseHtml(const std::wstring& html)
 		{
 			const AlignedVector< TextLayout::Word >& words = lines.back().words;
 			for (AlignedVector< TextLayout::Word >::const_iterator j = words.begin(); j != words.end(); ++j)
-				m_caret += j->chars.size();
+				m_caret += (int32_t)j->chars.size();
 		}
 	}
 
 	return true;
+}
+
+Vector2 FlashEditInstance::measureText(const std::wstring& text) const
+{
+	const FlashDictionary* dictionary = getDictionary();
+	T_ASSERT (dictionary);
+
+	const FlashFont* font = dictionary->getFont(m_edit->getFontId());
+	T_ASSERT (font);
+
+	const float mxf = std::numeric_limits< float >::max();
+
+	TextLayout layout;
+	layout.begin();
+	layout.setBounds(Aabb2(Vector2(0.0f, 0.0f), Vector2(mxf, mxf)));
+	layout.setLeading(m_edit->getLeading());
+	layout.setLetterSpacing(m_password ? 6 : m_letterSpacing);
+	layout.setFontHeight(m_fontHeight);
+	layout.setWordWrap(false);
+	layout.setAlignment(m_align);
+	layout.setAttribute(font, m_textColor);
+	layout.insertText(text);
+	layout.end();
+
+	return Vector2(layout.getWidth(), layout.getHeight());
 }
 
 void FlashEditInstance::setTextBounds(const Aabb2& textBounds)
