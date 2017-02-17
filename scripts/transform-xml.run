@@ -1,5 +1,132 @@
 import(traktor)
 
+local function transform_xdi_LightEntityData_to_ComponentEntityData(xcurrent)
+	local xa = xcurrent:getAttribute("type")
+	if xa == nil then return end
+
+	local lightType
+
+	local xsunColor
+	local xbaseColor
+	local xshadowColor
+	local xrange
+	local xrandomFlickerAmount
+	local xrandomFlickerFilter
+	local xcloudShadowTexture
+	local xcastShadow
+
+	local type = xa:getValue()
+	if type == "traktor.world.DirectionalLightEntityData" then
+
+		lightType = "LtDirectional"
+		xsunColor = xcurrent:getSingle("sunColor")
+		xbaseColor = xcurrent:getSingle("baseColor")
+		xshadowColor = xcurrent:getSingle("shadowColor")
+		xcloudShadowTexture = xcurrent:getSingle("cloudShadowTexture")
+		xcastShadow = xcurrent:getSingle("castShadow")
+		xrange = xml.Element("range")
+		xrange:setValue("0")
+		xradius = xml.Element("radius")
+		xradius:setValue("0")
+		xrandomFlickerAmount = xml.Element("flickerAmount")
+		xrandomFlickerAmount:setValue("0")
+		xrandomFlickerFilter = xml.Element("flickerFilter")
+		xrandomFlickerFilter:setValue("0")
+
+	elseif type == "traktor.world.PointLightEntityData" then
+
+		lightType = "LtPoint"
+		xsunColor = xcurrent:getSingle("sunColor")
+		xbaseColor = xcurrent:getSingle("baseColor")
+		xshadowColor = xcurrent:getSingle("shadowColor")
+		xcloudShadowTexture = xml.Element("cloudShadowTexture")
+		xcastShadow = xml.Element("castShadow")
+		xcastShadow:setValue("false")
+		xrange = xcurrent:getSingle("range")
+		xradius = xml.Element("radius")
+		xradius:setValue("0")
+		local xrandomFlicker = xcurrent:getSingle("randomFlicker")
+		if xrandomFlicker ~= nil then
+			xrandomFlickerAmount = xrandomFlicker
+			xrandomFlickerFilter = xml.Element("randomFlickerFilter")
+			xrandomFlickerFilter:setValue("0.5")
+		else
+			xrandomFlickerAmount = xcurrent:getSingle("randomFlickerAmount")
+			xrandomFlickerFilter = xcurrent:getSingle("randomFlickerFilter")
+		end
+		xrandomFlickerAmount:setName("flickerAmount")
+		xrandomFlickerFilter:setName("flickerFilter")
+
+	elseif type == "traktor.world.SpotLightEntityData" then
+
+		lightType = "LtSpot"
+		xsunColor = xcurrent:getSingle("sunColor")
+		xbaseColor = xcurrent:getSingle("baseColor")
+		xshadowColor = xcurrent:getSingle("shadowColor")
+		xcloudShadowTexture = xml.Element("cloudShadowTexture")
+		xcastShadow = xml.Element("castShadow")
+		xcastShadow:setValue("false")
+		xrange = xcurrent:getSingle("range")
+		xradius = xcurrent:getSingle("radius")
+		xcastShadow = xcurrent:getSingle("castShadow")
+		xrandomFlickerAmount = xml.Element("flickerAmount")
+		xrandomFlickerAmount:setValue("0")
+		xrandomFlickerFilter = xml.Element("flickerFilter")
+		xrandomFlickerFilter:setValue("0")
+
+	else
+		return
+	end
+
+	xcurrent:setAttribute("type", "traktor.world.ComponentEntityData")
+	xcurrent:setAttribute("version", "0")
+
+	local xname = xcurrent:getSingle("name")
+	local xtransform = xcurrent:getSingle("transform")
+
+	xcurrent:removeAllChildren()
+	xcurrent:addChild(xname)
+	xcurrent:addChild(xtransform)
+
+	local xcomponents = xml.Element("components")
+	xcurrent:addChild(xcomponents)
+
+	local xitem = xml.Element("item")
+	xitem:setAttribute("type", "traktor.world.LightComponentData")
+	xitem:setAttribute("version", "2")
+
+	local xlightType = xml.Element("lightType")
+	xlightType:setValue(lightType)
+	xitem:addChild(xlightType)
+
+	xitem:addChild(xsunColor)
+	xitem:addChild(xbaseColor)
+	xitem:addChild(xshadowColor)
+	xitem:addChild(xml.Element("probeDiffuseTexture"))
+	xitem:addChild(xml.Element("probeSpecularTexture"))
+	xitem:addChild(xcloudShadowTexture)
+	xitem:addChild(xcastShadow)
+	xitem:addChild(xrange)
+	xitem:addChild(xradius)
+	xitem:addChild(xrandomFlickerAmount)
+	xitem:addChild(xrandomFlickerFilter)
+
+	xcomponents:addChild(xitem)
+
+end
+
+local function transform_xdm_LightEntityData_to_ComponentEntityData(xcurrent)
+	if xcurrent:getName() ~= "primaryType" then return end
+	if 
+		xcurrent:getValue() ~= "traktor.world.DirectionalLightEntityData" and
+		xcurrent:getValue() ~= "traktor.world.PointLightEntityData" and
+		xcurrent:getValue() ~= "traktor.world.SpotLightEntityData"
+	then
+		return
+	end
+	xcurrent:setValue("traktor.world.ComponentEntityData")
+end
+
 -- Keep MeshEntityData for LodMeshEntityData; this should be fixed...
 local function transform_xdi_LodMeshEntityData_fix(xcurrent)
 	local xa = xcurrent:getAttribute("type")
@@ -103,7 +230,9 @@ local function transform(xcurrent)
 --	transform_xdm_MeshEntityData_to_ComponentEntityData(xcurrent)
 --	transform_xdi_RigidEntityData_to_ComponentEntityData(xcurrent)
 --	transform_xdm_RigidEntityData_to_ComponentEntityData(xcurrent)
-	transform_xdi_LodMeshEntityData_fix(xcurrent)
+--	transform_xdi_LodMeshEntityData_fix(xcurrent)
+	transform_xdi_LightEntityData_to_ComponentEntityData(xcurrent)
+	transform_xdm_LightEntityData_to_ComponentEntityData(xcurrent)
 
 	local after = xcurrent:write()
 	local modified = (before ~= after)
