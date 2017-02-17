@@ -43,7 +43,7 @@ Ref< RigidBodyComponent > RigidBodyComponentData::createComponent(
 	if (!body)
 		return 0;
 
-	body->setEnable(true);
+	body->setEnable(false);
 
 	Ref< world::IEntityEvent > eventCollide;
 	if (m_eventCollide)
