@@ -1,8 +1,10 @@
 #include <cstring>
-#include <pthread.h>
-#include <sched.h>
-#include <unistd.h>
-#include <sys/time.h>
+#if defined(__EMSCRIPTEN_PTHREADS__)
+#	include <pthread.h>
+#	include <sched.h>
+#	include <unistd.h>
+#	include <sys/time.h>
+#endif
 #include "Core/Thread/Thread.h"
 #include "Core/Functor/Functor.h"
 
@@ -11,6 +13,7 @@ namespace traktor
 	namespace
 	{
 
+#if defined(__EMSCRIPTEN_PTHREADS__)
 struct Internal
 {
 	pthread_t thread;
@@ -31,6 +34,7 @@ void* trampoline(void* data)
 	pthread_exit(0);
 	return 0;
 }
+#endif
 
 	}
 
@@ -44,11 +48,14 @@ Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
 
 Thread::~Thread()
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	delete reinterpret_cast< Internal* >(m_handle);
+#endif
 }
 
 bool Thread::start(Priority priority)
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	pthread_attr_t attr;
 	sched_param param;
 	int rc;
@@ -105,10 +112,14 @@ bool Thread::start(Priority priority)
 		delete in;
 
 	return bool(rc == 0);
+#else
+	return true;
+#endif
 }
 
 bool Thread::wait(int timeout)
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	if (!in)
 		return true;
@@ -149,12 +160,19 @@ bool Thread::wait(int timeout)
 	);
 
 	return bool(rc == 0);
+#else
+	return true;
+#endif
 }
 
 bool Thread::stop(int timeout)
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	m_stopped = true;
 	return wait(timeout);
+#else
+	return true;
+#endif
 }
 
 bool Thread::pause()
@@ -169,12 +187,16 @@ bool Thread::resume()
 
 void Thread::sleep(int duration)
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	usleep(long(duration) * 1000);
+#endif
 }
 
 void Thread::yield()
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	sched_yield();
+#endif
 }
 
 bool Thread::stopped() const
@@ -184,17 +206,25 @@ bool Thread::stopped() const
 
 bool Thread::current() const
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	if (!in)
 		return false;
 
 	return bool(pthread_equal(in->thread, pthread_self()) == 1);
+#else
+	return true;
+#endif
 }
 
 bool Thread::finished() const
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	return in ? in->finished : true;
+#else
+	return true;
+#endif
 }
 
 }

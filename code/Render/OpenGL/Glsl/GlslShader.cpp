@@ -159,6 +159,18 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 	ss << Endl;
 
+	ss << L"precision highp float;" << Endl;
+	ss << Endl;
+
+#if defined(T_OPENGL_ES2)
+	ss << L"uniform vec4 _gl_targetSize;" << Endl;
+	if (!settings || !settings->getProperty< PropertyBoolean >(L"Glsl.ES2.SupportHwInstancing", false))
+		ss << L"uniform float _gl_instanceID;" << Endl;
+#else
+	ss << L"uniform vec2 _gl_targetSize;" << Endl;
+#endif
+	ss << Endl;
+
 #if defined(T_OPENGL_ES2)
 	switch (precisionHint)
 	{
@@ -249,15 +261,6 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 	}
 
 #endif
-
-#if defined(T_OPENGL_ES2)
-	ss << L"uniform vec4 _gl_targetSize;" << Endl;
-	if (!settings || !settings->getProperty< PropertyBoolean >(L"Glsl.ES2.SupportHwInstancing", false))
-		ss << L"uniform float _gl_instanceID;" << Endl;
-#else
-	ss << L"uniform vec2 _gl_targetSize;" << Endl;
-#endif
-	ss << Endl;
 
 	ss << getOutputStream(BtUniform).str();
 	ss << Endl;

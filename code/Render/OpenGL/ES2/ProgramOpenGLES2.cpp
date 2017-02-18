@@ -19,6 +19,8 @@
 #	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
 #elif defined(__IOS__)
 #	include "Render/OpenGL/ES2/iOS/ContextOpenGLES2.h"
+#elif defined(__EMSCRIPTEN__)
+#	include "Render/OpenGL/ES2/Emscripten/ContextOpenGLES2.h"
 #elif defined(__PNACL__)
 #	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
 #elif defined(_WIN32)
@@ -197,11 +199,13 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 	while (glGetError() != GL_NO_ERROR)
 		;
 
+#if !defined(__EMSCRIPTEN__)
 	glUseProgram(programObject);
 	glDrawArrays(GL_TRIANGLES, 0, 0);
 
 	if (glGetError() != GL_NO_ERROR)
 		log::warning << L"Prewarming shader failed; might cause stall during normal render" << Endl;
+#endif
 
 	return new ProgramOpenGLES2(resourceContext, programObject, resource);
 }

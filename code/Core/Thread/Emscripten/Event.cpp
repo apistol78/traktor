@@ -1,8 +1,10 @@
 #include <cassert>
-#include <pthread.h>
-#include <sys/time.h>
-#include <unistd.h>
-#include <time.h>
+#if defined(__EMSCRIPTEN_PTHREADS__)
+#	include <pthread.h>
+#	include <sys/time.h>
+#	include <unistd.h>
+#	include <time.h>
+#endif
 #include "Core/Thread/Event.h"
 
 namespace traktor
@@ -10,6 +12,7 @@ namespace traktor
 	namespace
 	{
 
+#if defined(__EMSCRIPTEN_PTHREADS__)
 const uint32_t c_broadcast = ~0U;
 
 struct Internal
@@ -19,29 +22,35 @@ struct Internal
 	uint32_t signal;
 	uint32_t waiters;
 };
+#endif
 
 	}
 
 Event::Event()
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	Internal* in = new Internal();
 	pthread_mutex_init(&in->mutex, 0);
 	pthread_cond_init(&in->cond, 0);
 	in->signal = 0;
 	in->waiters = 0;
 	m_handle = in;
+#endif
 }
 
 Event::~Event()
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	Internal* in = static_cast< Internal* >(m_handle);
 	pthread_cond_destroy(&in->cond);
 	pthread_mutex_destroy(&in->mutex);
 	delete in;
+#endif
 }
 
 void Event::pulse(int count)
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	Internal* in = static_cast< Internal* >(m_handle);
 	pthread_mutex_lock(&in->mutex);
 
@@ -49,10 +58,12 @@ void Event::pulse(int count)
 	pthread_cond_broadcast(&in->cond);
 
 	pthread_mutex_unlock(&in->mutex);
+#endif
 }
 
 void Event::broadcast()
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	Internal* in = static_cast< Internal* >(m_handle);
 	pthread_mutex_lock(&in->mutex);
 
@@ -60,20 +71,24 @@ void Event::broadcast()
 	pthread_cond_broadcast(&in->cond);
 
 	pthread_mutex_unlock(&in->mutex);
+#endif
 }
 
 void Event::reset()
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	Internal* in = static_cast< Internal* >(m_handle);
 	pthread_mutex_lock(&in->mutex);
 
 	in->signal = 0;
 
 	pthread_mutex_unlock(&in->mutex);
+#endif
 }
 
 bool Event::wait(int timeout)
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	Internal* in = static_cast< Internal* >(m_handle);
 	int rc = 0;
 
@@ -117,6 +132,9 @@ bool Event::wait(int timeout)
 	pthread_mutex_unlock(&in->mutex);
 
 	return bool(rc == 0);
+#else
+	return true;
+#endif
 }
 
 }

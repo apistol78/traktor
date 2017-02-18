@@ -5,6 +5,8 @@
 #	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
 #elif defined(__IOS__)
 #	include "Render/OpenGL/ES2/iOS/ContextOpenGLES2.h"
+#elif defined(__EMSCRIPTEN__)
+#	include "Render/OpenGL/ES2/Emscripten/ContextOpenGLES2.h"
 #elif defined(__PNACL__)
 #	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
 #elif defined(_WIN32)

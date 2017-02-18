@@ -1,6 +1,10 @@
 import(traktor)
 
 
+-- Total amount of memory allocated by Emscripten product at runtime.
+local totalMemory = 128 * 1024 * 1024
+
+
 -- Tools
 local tools =
 {
@@ -122,7 +126,6 @@ function deploy(args)
 	end
 
 	-- Build linker command line.
-	local totalMemory = 64 * 1024 * 1024
 	local cmd = "\"" .. emcc .. "\" "
 	cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 	cmd = cmd .. " -s USE_PTHREADS=0"
@@ -198,9 +201,9 @@ function migrate(args)
 	end
 
 	-- Ensure debug symbols are kept when linking.
-	if debug then
-		emcc = emcc .. " -g"
-	end
+--	if debug then
+--		emcc = emcc .. " -g"
+--	end
 
 	-- Determine path to module libraries.
 	local prepend
@@ -247,7 +250,6 @@ function migrate(args)
 	end
 
 	-- Build linker command line.
-	local totalMemory = 64 * 1024 * 1024
 	local cmd = "\"" .. emcc .. "\" "
 	cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 	cmd = cmd .. " -s USE_PTHREADS=0"

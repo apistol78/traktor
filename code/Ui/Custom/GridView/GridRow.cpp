@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstdlib>
 #include "Ui/Application.h"
 #include "Ui/Event.h"
 #include "Ui/StyleBitmap.h"

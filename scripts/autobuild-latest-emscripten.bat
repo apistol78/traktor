@@ -1,7 +1,7 @@
 @echo off
 
 :: Setup VC environment variables.
-call "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcvarsall.bat"
+call "%VS140COMNTOOLS%..\..\VC\vcvarsall.bat"
 
 :: Setup our build environment.
 call %~dp0../config.bat
