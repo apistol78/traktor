@@ -1,5 +1,7 @@
-#include <pthread.h>
-#include <sys/time.h>
+#if defined(__EMSCRIPTEN_PTHREADS__)
+#	include <pthread.h>
+#	include <sys/time.h>
+#endif
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Atomic.h"
 #include "Core/Thread/Event.h"
@@ -10,6 +12,7 @@ namespace traktor
 	namespace
 	{
 
+#if defined(__EMSCRIPTEN_PTHREADS__)
 struct InternalData
 {
 	int32_t count;
@@ -17,12 +20,14 @@ struct InternalData
 	pthread_t owner;
 	Event event;
 };
+#endif
 
 	}
 
 Semaphore::Semaphore()
 :	m_handle(0)
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	InternalData* in = new InternalData();
 
 	in->count = 0;
@@ -30,16 +35,20 @@ Semaphore::Semaphore()
 	in->owner = 0;
 
 	m_handle = in;
+#endif
 }
 
 Semaphore::~Semaphore()
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	InternalData* in = reinterpret_cast< InternalData* >(m_handle);
 	delete in;
+#endif
 }
 
 bool Semaphore::wait(int32_t timeout)
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	InternalData* in = reinterpret_cast< InternalData* >(m_handle);
 
 	pthread_t current = pthread_self();
@@ -64,12 +73,13 @@ bool Semaphore::wait(int32_t timeout)
 	T_ASSERT (in->owner == 0);
 	in->owner = current;
 	in->count = 1;
-
+#endif
 	return true;
 }
 
 void Semaphore::release()
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
 	InternalData* in = reinterpret_cast< InternalData* >(m_handle);
 	T_ASSERT (pthread_equal(in->owner, pthread_self()) != 0);
 
@@ -83,6 +93,7 @@ void Semaphore::release()
 		if (Atomic::decrement(in->value) > 0)
 			in->event.pulse();
 	}
+#endif
 }
 
 }

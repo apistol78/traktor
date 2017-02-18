@@ -5092,7 +5092,7 @@
 		</item>
 		<item ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.OpenGL.ES2</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
 			<configurations>
@@ -5166,6 +5166,15 @@
 						<item type="File">
 							<fileName>ES2/*.*</fileName>
 							<items/>
+						</item>
+						<item type="Filter">
+							<name>ES2/Emscripten/*.*</name>
+							<items>
+								<item type="File">
+									<fileName>ES2/Emscripten/*.*</fileName>
+									<items/>
+								</item>
+							</items>
 						</item>
 					</items>
 				</item>
@@ -7840,7 +7849,7 @@
 		<item ref="/object/projects/item[52]/dependencies/item[22]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[52]/dependencies/item[22]/project"/>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>UnitTest</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/UnitTest</sourcePath>
 			<configurations>

@@ -52,6 +52,7 @@ void mainLoop()
 int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
+	SystemApplication sysapp;
 
 	__traktor__emscripten__linkage__();
 
@@ -82,7 +83,7 @@ int main(int argc, const char** argv)
 	if (!g_application->create(
 		defaultSettings,
 		settings,
-		0,
+		sysapp,
 		0
 	))
 		return 0;

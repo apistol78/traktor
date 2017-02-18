@@ -8,6 +8,8 @@
 #	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
 #elif defined(__IOS__)
 #	include "Render/OpenGL/ES2/iOS/EAGLContextWrapper.h"
+#elif defined(__EMSCRIPTEN__)
+#	include "Render/OpenGL/ES2/Emscripten/ContextOpenGLES2.h"
 #elif defined(__PNACL__)
 #	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
 #elif defined(_WIN32)
@@ -42,7 +44,7 @@ struct DeleteBufferCallback : public ContextOpenGLES2::IDeleteCallback
 	}
 };
 
-#if defined(GL_OES_vertex_array_object) && !defined(_WIN32)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__)
 struct DeleteVertexArrayCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_arrayName;
@@ -191,7 +193,7 @@ void VertexBufferStaticOpenGLES2::destroy()
 			m_context->deleteResource(new DeleteBufferCallback(m_bufferObject));
 		m_bufferObject = 0;
 	}
-#if defined(GL_OES_vertex_array_object) && !defined(_WIN32)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__)
 	if (m_arrayObject)
 	{
 		if (m_context)
@@ -232,16 +234,16 @@ void VertexBufferStaticOpenGLES2::unlock()
 
 void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 {
-	if (m_dirty)
+	if (!m_bufferObject)
 	{
-		if (!m_bufferObject)
-		{
-			T_OGL_SAFE(glGenBuffers(1, &m_bufferObject));
-			T_FATAL_ASSERT (m_bufferObject != 0);
-		}
+		T_OGL_SAFE(glGenBuffers(1, &m_bufferObject));
+		T_FATAL_ASSERT (m_bufferObject != 0);
+	}
 
-		stateCache->setArrayBuffer(m_bufferObject);
+	stateCache->setArrayBuffer(m_bufferObject);
 
+	if (m_dirty)
+	{	
 		int32_t bufferSize = getBufferSize();
 		if (m_lockOffset <= 0 && m_lockSize >= bufferSize)
 		{
@@ -263,7 +265,7 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 		}
 		m_buffer.release();
 	
-#if defined(GL_OES_vertex_array_object) && !defined(_WIN32)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__)
 		if (m_arrayObject)
 		{
 			if (m_context)
@@ -274,14 +276,11 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 		m_dirty = false;
 	}
 
-#if defined(GL_OES_vertex_array_object) && !defined(_WIN32)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__)
 	if (m_arrayObject == 0 && g_glGenVertexArraysOES != 0)
 	{
 		T_OGL_SAFE(g_glGenVertexArraysOES(1, &m_arrayObject));
 		stateCache->setVertexArrayObject(m_arrayObject);
-
-		if (m_bufferObject)
-			stateCache->setArrayBuffer(m_bufferObject);
 
 		for (AlignedVector< AttributeDesc >::const_iterator i = m_attributes.begin(); i != m_attributes.end(); ++i)
 		{

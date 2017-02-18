@@ -12,15 +12,15 @@ class ProcessEmscripten : public IProcess
 	T_RTTI_CLASS;
 
 public:
-	virtual bool setPriority(Priority priority);
+	virtual bool setPriority(Priority priority) T_OVERRIDE T_FINAL;
 	
-	virtual Ref< IStream > getPipeStream(StdPipe pipe);
+	virtual Ref< IStream > getPipeStream(StdPipe pipe) T_OVERRIDE T_FINAL;
 
-	virtual bool signal(SignalType signalType);
+	virtual bool signal(SignalType signalType) T_OVERRIDE T_FINAL;
 
-	virtual int32_t exitCode() const;
+	virtual int32_t exitCode() const T_OVERRIDE T_FINAL;
 
-	virtual bool wait(int32_t timeout = -1);
+	virtual bool wait(int32_t timeout = -1) T_OVERRIDE T_FINAL;
 
 private:
 	friend class OS;
