@@ -16,6 +16,7 @@ Widget.ALIGN_BOTTOM = "B"
 function Widget.initialize(env, resourceKits)
 	Widget._env = env
 	Widget._resourceKits = {}
+	Widget._modal = {}
 	for _, rkid in ipairs(resourceKits) do
 		local rk = env:getResource():getResourceManager():bind(traktor.flash.FlashMovie, rkid)
 		if rk == nil then return false end
@@ -25,8 +26,11 @@ function Widget.initialize(env, resourceKits)
 end
 
 function Widget:remove()
-	if Widget._modal == self then
-		Widget._modal = nil
+	for k, w in ipairs(Widget._modal) do
+		if w == self then
+			table.remove(Widget._modal, k)
+			break
+		end
 	end
 	for e, _ in pairs(self._events) do
 		self._mc:setMember(e, nil)
@@ -79,17 +83,14 @@ function Widget:isVisible()
 end
 
 function Widget:setModal()
-	if Widget._modal == nil then
-		Widget._modal = self
-		return true
-	else
-		return false
-	end
+	table.insert(Widget._modal, self)
+	return true
 end
 
 function Widget:releaseModal()
-	assert (Widget._modal == self)
-	Widget._modal = nil
+	local m = #Widget._modal
+	assert (Widget._modal[m] == self)
+	table.remove(Widget._modal, m)
 end
 
 function Widget:setHorizontalAlign(halign)
@@ -146,12 +147,10 @@ function Widget:place(x, y, width, height)
 end
 
 function Widget:transformInto(pt, into)
-	local from_mc = self._inner_mc
-	if from_mc == nil then from_mc = self._mc end
+	local from_mc = self:_getInnerClip()
 	assert (from_mc ~= nil)
 
-	local into_mc = into._inner_mc
-	if into_mc == nil then into_mc = into._mc end
+	local into_mc = into:_getInnerClip()
 	assert (into_mc ~= nil)
 
 	local r = from_mc:transformInto(into_mc, Vector2(pt.x * 20, pt.y * 20))
@@ -166,23 +165,6 @@ end
 
 function Widget:getMousePosition()
 	return { x = self._mc:getMouseX(), y = self._mc:getMouseY() }
-end
-
-function Widget:debug(indent)
-	local mt = getmetatable(self)
-	if indent == nil then indent = "" end
-	if mt.name ~= nil then
-		print(indent .. "class: " .. mt.name)
-	end
-	if self.name ~= nil then
-		print(indent .. "name: " .. self.name)
-	end
-	print(indent .. "position: " .. self._placement.x .. ", " .. self._placement.y)
-	print(indent .. "size: " .. self._placement.width .. ", " .. self._placement.height)
-	for i = 1, #self._children do
-		print(indent .. "child[" .. i .. "]")
-		self._children[i]:debug(indent .. "\\t")
-	end
 end
 
 -- Private
@@ -224,7 +206,14 @@ end
 function Widget:_registerEvent(event, eventFn)
 	if eventFn ~= nil then
 		self._mc:setMember(event, function()
-			if Widget._modal == nil or Widget._modal:_isChild(self) then
+			local m = #Widget._modal
+			if m > 0 then
+				-- Check if modal widget is myself.
+				if Widget._modal[m]:_isChild(self) then
+					eventFn()
+				end
+			else
+				-- No modal widgets.
 				eventFn()
 			end
 		end)
@@ -234,9 +223,14 @@ function Widget:_registerEvent(event, eventFn)
 	self._events[event] = eventFn
 end
 
+-- Retrieve "inner" movie clip; into which child resources are created.
+-- \\note Override this if other movie clip than widget clip should be used.
+function Widget:_getInnerClip()
+	return self._mc
+end
+
 function Widget._createEmptyResource(parent)
-	local into_mc = parent._inner_mc
-	if into_mc == nil then into_mc = parent._mc end
+	local into_mc = parent:_getInnerClip()
 	assert (into_mc ~= nil)
 
 	local depth = into_mc:getNextHighestDepth()
@@ -247,8 +241,7 @@ function Widget._createEmptyResource(parent)
 end
 
 function Widget._createResource(parent, resource)
-	local into_mc = parent._inner_mc
-	if into_mc == nil then into_mc = parent._mc end
+	local into_mc = parent:_getInnerClip()
 	assert (into_mc ~= nil)
 
 	local depth = into_mc:getNextHighestDepth()

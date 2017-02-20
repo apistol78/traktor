@@ -46,8 +46,9 @@ end
 -- Private
 
 function Frame:_initialize(mc, vwidth, vheight, layout)
+	Container._initialize(self, nil, mc, layout)
+
 	local depth = mc:getNextHighestDepth()
-	local inner_mc = mc:createEmptyMovieClip("inner_mc", depth)
 
 	-- Disable stage scale and position, register listener of changes in stage size.
 	local cx = mc:getContext()
@@ -61,7 +62,8 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	self._vwidth = vwidth
 	self._vheight = vheight
 
-	Container._initialize(self, nil, mc, inner_mc, layout)
+	self._inner_mc = mc:createEmptyMovieClip("inner_mc", depth)
+	self._getInnerClip = function() return self._inner_mc end
 end
 
 	]]>

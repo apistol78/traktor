@@ -3,6 +3,7 @@
 	<text>
 	<![CDATA[
 #using \{7947759C-88DB-794E-8D09-7F30A40B6669}
+#using \{8AB41567-9AE8-D24F-BC6A-6805F6CB114B}
 
 -- ScrollContainer
 
@@ -12,6 +13,8 @@ ScrollContainer_meta = ScrollContainer_meta or { name = "ScrollContainer", __ind
 ScrollContainer.HORIZONTAL = 1
 ScrollContainer.VERTICAL = 2
 ScrollContainer.BOTH = ScrollContainer.HORIZONTAL | ScrollContainer.VERTICAL
+ScrollContainer.AUTO = 4
+ScrollContainer.SCROLLBARS = 8
 
 function ScrollContainer.new(parent, layout, mode)
 	local o = {}
@@ -28,11 +31,20 @@ function ScrollContainer:place(x, y, width, height)
 
 	local p = self:getPlacement()
 
-	self._mask_mc:setWidth(p.width)
-	self._mask_mc:setHeight(p.height)
-
 	self._scrollSize.width = p.width
 	self._scrollSize.height = p.height
+
+	if self._scrollBarHorizontal ~= nil then
+		local ps = self._scrollBarhorizontal:getPreferredSize()
+		self._scrollSize.height = self._scrollSize.height - ps.height
+	end
+	if self._scrollBarVertical ~= nil then
+		local ps = self._scrollBarVertical:getPreferredSize()
+		self._scrollSize.width = self._scrollSize.width - ps.width
+	end
+
+	self._mask_mc:setWidth(self._scrollSize.width)
+	self._mask_mc:setHeight(self._scrollSize.height)
 
 	if self._layout ~= nil then
 		self._innerSize = self:_getInnerSize()
@@ -42,6 +54,17 @@ function ScrollContainer:place(x, y, width, height)
 	self:_clampScrollOffsets()
 	self._inner_mc:setX(-self._scroll.x)
 	self._inner_mc:setY(-self._scroll.y)
+
+	if self._scrollBarHorizontal ~= nil then
+		local range = self._innerSize.width - self._scrollSize.width
+		self._scrollBarHorizontal:place(0, self._scrollSize.height, self._scrollSize.width, p.height - self._scrollSize.height)
+		self._scrollBarHorizontal:setRange(range, 100)
+	end
+	if self._scrollBarVertical ~= nil then
+		local range = self._innerSize.height - self._scrollSize.height
+		self._scrollBarVertical:place(self._scrollSize.width, 0, p.width - self._scrollSize.width, self._scrollSize.height)
+		self._scrollBarVertical:setRange(range, 100)
+	end
 end
 
 function ScrollContainer:layout()
@@ -82,36 +105,28 @@ function ScrollContainer:getMotion()
 	return self._motion
 end
 
+function ScrollContainer:getScrollBar(orientation)
+	if orientation == ScrollContainer.HORIZONTAL then
+		return self._scrollBarHorizontal
+	elseif orientation == ScrollContainer.VERTICAL then
+		return self._scrollBarVertical
+	else
+		return nil
+	end
+end
+
 function ScrollContainer:setOnScroll(scrollFn)
 	self._scrollFn = scrollFn
 	return self
 end
 
-function ScrollContainer:debug(indent)
-	Widget.debug(self, indent)
-	if indent == nil then indent = "" end
-
-	print(indent .. "mode: " .. self._mode)
-	print(indent .. "scrollSize: " .. self._scrollSize.width .. ", " .. self._scrollSize.height)
-	print(indent .. "scroll: " .. self._scroll.x .. ", " .. self._scroll.y)
-
-	if self._innerSize ~= nil then
-		print(indent .. "innerSize: " .. self._innerSize.width .. ", " .. self._innerSize.height)
-	end
-
-	for i = 1, #self._children do
-		print(indent .. "child[" .. i .. "]")
-		self._children[i]:debug(indent .. "\\t")
-	end
-end
-
 -- Private
 
 function ScrollContainer:_initialize(parent, mc, layout, mode)
+	Container._initialize(self, parent, mc, layout)
+
 	self._inner_mc = mc:getMember("innerContainer_mc")
 	self._mask_mc = mc:getMember("mask_mc")
-
-	Container._initialize(self, parent, mc, self._inner_mc, layout)
 
 	self._mode = mode
 	self._scrollSize = { width = 0, height = 0 }
@@ -121,10 +136,41 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 	self._timer = Timer()
 	self._timer:start()
 
-	self:_registerEvent("onMouseDown", function() self:_onMouseDown() end)
-	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
-	self:_registerEvent("onMouseMove", function() self:_onMouseMove() end)
+	-- Create scrollbars.
+	if (mode & ScrollContainer.SCROLLBARS) ~= 0 then
+		if (mode & ScrollContainer.HORIZONTAL) ~= 0 then
+			self._scrollBarHorizontal = ScrollBar.new(self, ScrollBar.HORIZONTAL)
+			self._scrollBarHorizontal.__layout = ILayout.FLOAT
+			self._scrollBarHorizontal:setOnScroll(function()
+				local v = self._scrollBarHorizontal:getPosition()
+				local o = self:getOffset()
+				self:setOffset(v, o.y)
+			end)
+			self:_removeChild(self._scrollBarHorizontal)	-- Remove to ensure it's not part of external getChildren query.
+		end
+		if (mode & ScrollContainer.VERTICAL) ~= 0 then
+			self._scrollBarVertical = ScrollBar.new(self, ScrollBar.VERTICAL)
+			self._scrollBarVertical.__layout = ILayout.FLOAT
+			self._scrollBarVertical:setOnScroll(function()
+				local v = self._scrollBarVertical:getPosition()
+				local o = self:getOffset()
+				self:setOffset(o.x, v)
+			end)
+			self:_removeChild(self._scrollBarVertical)	-- Remove to ensure it's not part of external getChildren query.
+		end
+	end
+
+	-- Setup event listeners for auto scrolling.
+	if (mode & ScrollContainer.AUTO) ~= 0 then
+		self:_registerEvent("onMouseDown", function() self:_onMouseDown() end)
+		self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
+		self:_registerEvent("onMouseMove", function() self:_onMouseMove() end)
+	end
 	self:_registerEvent("onEnterFrame", function() self:_onFrame() end)
+
+	-- Override inner clip access to ensure following child widgets
+	-- are created into innerContainer_mc
+	self._getInnerClip = function() return self._inner_mc end
 end
 
 function ScrollContainer:_getInnerSize()
@@ -146,6 +192,16 @@ function ScrollContainer:_getInnerSize()
 			h = self._scrollSize.height
 		end
 	end
+
+	if self._scrollBarHorizontal ~= nil then
+		local ps = self._scrollBarHorizontal:getPreferredSize()
+		h = h - ps.height
+	end
+	if self._scrollBarVertical ~= nil then
+		local ps = self._scrollBarVertical:getPreferredSize()
+		w = w - ps.width
+	end
+
 	return { width = w, height = h }
 end
 
@@ -162,6 +218,13 @@ function ScrollContainer:_clampScrollOffsets()
 	if self._scroll.y < 0 then
 		self._scroll.y = 0
 	end
+end
+
+function ScrollContainer:resetScroll()
+	self._scroll.y = 0
+	self._scroll.x = 0
+	self._inner_mc:setX(-self._scroll.x)
+	self._inner_mc:setY(-self._scroll.y)
 end
 
 function ScrollContainer:_onMouseDown()
@@ -188,13 +251,6 @@ function ScrollContainer:_onMouseUp()
 		self._scrollFrom = nil
 		self:releaseModal()
 	end
-end
-
-function ScrollContainer:resetScroll()
-	self._scroll.y = 0
-	self._scroll.x = 0
-	self._inner_mc:setX(-self._scroll.x)
-	self._inner_mc:setY(-self._scroll.y)
 end
 
 function ScrollContainer:_onMouseMove()

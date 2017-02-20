@@ -34,7 +34,7 @@ end
 -- Private
 
 function Dialog:_initialize(parent, mc, layout)
-	local inner_mc = mc:getMember("innerContainer_mc")
+	Container._initialize(self, parent, mc, layout)
 
 	self._background_mc = mc:getMember("background_mc")
 	self._preferredSize =
@@ -43,8 +43,10 @@ function Dialog:_initialize(parent, mc, layout)
 		height = mc:getHeight()
 	}
 
-	Container._initialize(self, parent, mc, inner_mc, layout)
+	local inner_mc = mc:getMember("innerContainer_mc")
+	self._getInnerClip = function() return inner_mc end
 end
+
 
 	]]>
 	</text>

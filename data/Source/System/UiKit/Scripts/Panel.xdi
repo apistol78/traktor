@@ -40,12 +40,16 @@ end
 -- Private
 
 function Panel:_initialize(parent, mc, layout)
-	local inner_mc = mc:getMember("innerContainer_mc")
+	Container._initialize(self, parent, mc, layout)
 
 	self._background_mc = mc:getMember("background_mc")
-
-	Container._initialize(self, parent, mc, inner_mc, layout)
+	self._inner_mc = mc:getMember("innerContainer_mc")
 end
+
+function Panel:_getInnerClip()
+	return self._inner_mc
+end
+
 
 	]]>
 	</text>

@@ -49,9 +49,12 @@ end
 -- Private
 
 function ToolBar:_initialize(parent, mc)
-	local inner_mc = mc:getMember("innerContainer_mc")
-	self._background_mc = mc:getMember("background_mc")
 	Container._initialize(self, parent, mc, inner_mc, nil)
+
+	self._background_mc = mc:getMember("background_mc")
+
+	local inner_mc = mc:getMember("innerContainer_mc")
+	self._getInnerClip = function() return inner_mc end
 end
 
 	]]>
