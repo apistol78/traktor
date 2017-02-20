@@ -1096,9 +1096,12 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	rsogl.cullFaceEnable = (rs.cullMode == CmNever) ? GL_FALSE : GL_TRUE;
 	rsogl.cullFace = c_oglCullFace[rs.cullMode];
 	rsogl.blendEnable = rs.blendEnable ? GL_TRUE : GL_FALSE;
-	rsogl.blendEquation = c_oglBlendEquation[rs.blendOperation];
-	rsogl.blendFuncSrc = c_oglBlendFunction[rs.blendSource];
-	rsogl.blendFuncDest = c_oglBlendFunction[rs.blendDestination];
+	rsogl.blendColorEquation = c_oglBlendEquation[rs.blendColorOperation];
+	rsogl.blendFuncColorSrc = c_oglBlendFunction[rs.blendColorSource];
+	rsogl.blendFuncColorDest = c_oglBlendFunction[rs.blendColorDestination];
+	rsogl.blendAlphaEquation = c_oglBlendEquation[rs.blendAlphaOperation];
+	rsogl.blendFuncAlphaSrc = c_oglBlendFunction[rs.blendAlphaSource];
+	rsogl.blendFuncAlphaDest = c_oglBlendFunction[rs.blendAlphaDestination];
 	rsogl.depthTestEnable = rs.depthEnable ? GL_TRUE : GL_FALSE;
 	rsogl.colorMask = colorMask;
 	rsogl.depthMask = rs.depthWriteEnable ? GL_TRUE : GL_FALSE;

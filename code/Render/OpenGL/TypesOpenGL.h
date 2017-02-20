@@ -74,9 +74,12 @@ struct RenderStateOpenGL
 	GLboolean cullFaceEnable;
 	GLenum cullFace;
 	GLboolean blendEnable;
-	GLenum blendEquation;
-	GLenum blendFuncSrc;
-	GLenum blendFuncDest;
+	GLenum blendColorEquation;
+	GLenum blendAlphaEquation;
+	GLenum blendFuncColorSrc;
+	GLenum blendFuncColorDest;
+	GLenum blendFuncAlphaSrc;
+	GLenum blendFuncAlphaDest;
 	GLboolean depthTestEnable;
 	uint32_t colorMask;
 	GLboolean depthMask;
@@ -96,9 +99,12 @@ struct RenderStateOpenGL
 	:	cullFaceEnable(GL_TRUE)
 	,	cullFace(GL_BACK)
 	,	blendEnable(GL_FALSE)
-	,	blendEquation(GL_FUNC_ADD)
-	,	blendFuncSrc(GL_ONE)
-	,	blendFuncDest(GL_ZERO)
+	,	blendColorEquation(GL_FUNC_ADD)
+	,	blendAlphaEquation(GL_FUNC_ADD)
+	,	blendFuncColorSrc(GL_ONE)
+	,	blendFuncColorDest(GL_ZERO)
+	,	blendFuncAlphaSrc(GL_ONE)
+	,	blendFuncAlphaDest(GL_ZERO)
 	,	depthTestEnable(GL_TRUE)
 	,	colorMask(CmAll)
 	,	depthMask(GL_TRUE)

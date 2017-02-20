@@ -24,9 +24,12 @@ public:
 	{
 		s >> MemberEnumByValue< CullMode >(L"cullMode", m_ref.cullMode);
 		s >> Member< bool >(L"blendEnable", m_ref.blendEnable);
-		s >> MemberEnumByValue< BlendOperation >(L"blendOperation", m_ref.blendOperation);
-		s >> MemberEnumByValue< BlendFactor >(L"blendSource", m_ref.blendSource);
-		s >> MemberEnumByValue< BlendFactor >(L"blendDestination", m_ref.blendDestination);
+		s >> MemberEnumByValue< BlendOperation >(L"blendColorOperation", m_ref.blendColorOperation);
+		s >> MemberEnumByValue< BlendFactor >(L"blendColorSource", m_ref.blendColorSource);
+		s >> MemberEnumByValue< BlendFactor >(L"blendColorDestination", m_ref.blendColorDestination);
+		s >> MemberEnumByValue< BlendOperation >(L"blendAlphaOperation", m_ref.blendAlphaOperation);
+		s >> MemberEnumByValue< BlendFactor >(L"blendAlphaSource", m_ref.blendAlphaSource);
+		s >> MemberEnumByValue< BlendFactor >(L"blendAlphaDestination", m_ref.blendAlphaDestination);
 		s >> Member< uint32_t >(L"colorWriteMask", m_ref.colorWriteMask);
 		s >> Member< bool >(L"depthEnable", m_ref.depthEnable);
 		s >> Member< bool >(L"depthWriteEnable", m_ref.depthWriteEnable);

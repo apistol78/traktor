@@ -350,9 +350,12 @@ uint32_t ContextOpenGL::createRenderStateObject(const RenderStateOpenGL& renderS
 	adler.feed(renderState.cullFaceEnable);
 	adler.feed(renderState.cullFace);
 	adler.feed(renderState.blendEnable);
-	adler.feed(renderState.blendEquation);
-	adler.feed(renderState.blendFuncSrc);
-	adler.feed(renderState.blendFuncDest);
+	adler.feed(renderState.blendColorEquation);
+	adler.feed(renderState.blendAlphaEquation);
+	adler.feed(renderState.blendFuncColorSrc);
+	adler.feed(renderState.blendFuncColorDest);
+	adler.feed(renderState.blendFuncAlphaSrc);
+	adler.feed(renderState.blendFuncAlphaDest);
 	adler.feed(renderState.depthTestEnable);
 	adler.feed(renderState.colorMask);
 	adler.feed(renderState.depthMask);
@@ -483,8 +486,8 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 	else
 		{ T_OGL_SAFE(glDisable(GL_BLEND)); }
 
-	T_OGL_SAFE(glBlendFuncSeparate(rs.blendFuncSrc, rs.blendFuncDest, GL_ONE, GL_ONE));
-	T_OGL_SAFE(glBlendEquationSeparate(rs.blendEquation, GL_FUNC_ADD));
+	T_OGL_SAFE(glBlendFuncSeparate(rs.blendFuncColorSrc, rs.blendFuncColorDest, rs.blendFuncAlphaSrc, rs.blendFuncAlphaDest));
+	T_OGL_SAFE(glBlendEquationSeparate(rs.blendColorEquation, rs.blendAlphaEquation));
 
 	if (rs.depthTestEnable)
 		{ T_OGL_SAFE(glEnable(GL_DEPTH_TEST)); }

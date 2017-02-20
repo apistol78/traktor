@@ -998,9 +998,17 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	if (rs.blendEnable)
 	{
 		sb.setRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-		sb.setRenderState(D3DRS_BLENDOP, d3dBlendOperation[rs.blendOperation]);
-		sb.setRenderState(D3DRS_SRCBLEND, d3dBlendFactor[rs.blendSource]);
-		sb.setRenderState(D3DRS_DESTBLEND, d3dBlendFactor[rs.blendDestination]);
+		sb.setRenderState(D3DRS_BLENDOP, d3dBlendOperation[rs.blendColorOperation]);
+		sb.setRenderState(D3DRS_SRCBLEND, d3dBlendFactor[rs.blendColorSource]);
+		sb.setRenderState(D3DRS_DESTBLEND, d3dBlendFactor[rs.blendColorDestination]);
+
+		if (rs.blendColorOperation != rs.blendAlphaOperation || rs.blendColorSource != rs.blendAlphaSource || rs.blendColorDestination != rs.blendAlphaDestination)
+		{
+			sb.setRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
+			sb.setRenderState(D3DRS_BLENDOPALPHA, d3dBlendOperation[rs.blendAlphaOperation]);
+			sb.setRenderState(D3DRS_SRCBLENDALPHA, d3dBlendFactor[rs.blendAlphaSource]);
+			sb.setRenderState(D3DRS_DESTBLENDALPHA, d3dBlendFactor[rs.blendAlphaDestination]);
+		}
 	}
 	else
 		sb.setRenderState(D3DRS_ALPHABLENDENABLE, FALSE);

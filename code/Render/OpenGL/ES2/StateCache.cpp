@@ -63,16 +63,29 @@ void StateCache::setRenderState(const RenderStateOpenGL& renderState, bool inver
 			T_OGL_SAFE(glEnable(GL_BLEND));
 			m_renderState.blendEnable = true;
 		}
-		if (renderState.blendFuncSrc != m_renderState.blendFuncSrc || renderState.blendFuncDest != m_renderState.blendFuncDest)
+		if (
+			renderState.blendFuncColorSrc != m_renderState.blendFuncColorSrc ||
+			renderState.blendFuncColorDest != m_renderState.blendFuncColorDest ||
+			renderState.blendFuncAlphaSrc != m_renderState.blendFuncAlphaSrc ||
+			renderState.blendFuncAlphaDest != m_renderState.blendFuncAlphaDest
+		)
 		{
-			T_OGL_SAFE(glBlendFuncSeparate(renderState.blendFuncSrc, renderState.blendFuncDest, GL_ONE, GL_ONE));
-			m_renderState.blendFuncSrc = renderState.blendFuncSrc;
-			m_renderState.blendFuncDest = renderState.blendFuncDest;
+			T_OGL_SAFE(glBlendFuncSeparate(
+				renderState.blendFuncColorSrc, renderState.blendFuncColorDest,
+				renderState.blendFuncAlphaSrc, renderState.blendFuncAlphaDest
+			));
+			m_renderState.blendFuncColorSrc = renderState.blendFuncColorSrc;
+			m_renderState.blendFuncColorDest = renderState.blendFuncColorDest;
+			m_renderState.blendFuncAlphaSrc = renderState.blendFuncAlphaSrc;
+			m_renderState.blendFuncAlphaDest = renderState.blendFuncAlphaDest;
 		}
-		if (renderState.blendEquation != m_renderState.blendEquation)
+		if (
+			renderState.blendColorEquation != m_renderState.blendColorEquation ||
+			renderState.blendAlphaEquation != m_renderState.blendAlphaEquation
+		)
 		{
-			T_OGL_SAFE(glBlendEquationSeparate(renderState.blendEquation, GL_FUNC_ADD));
-			m_renderState.blendEquation = renderState.blendEquation;
+			T_OGL_SAFE(glBlendEquationSeparate(renderState.blendColorEquation, renderState.blendAlphaEquation));
+			m_renderState.blendColorEquation = renderState.blendColorEquation;
 		}
 	}
 	else

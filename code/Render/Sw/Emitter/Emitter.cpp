@@ -1009,9 +1009,9 @@ bool emitPixelOutput(EmitterContext& cx, PixelOutput* node)
 	state.depthWriteEnable = rs.depthWriteEnable;
 	state.cullMode = rs.cullMode;
 	state.blendEnable = rs.blendEnable;
-	state.blendOperation = rs.blendOperation;
-	state.blendSource = rs.blendSource;
-	state.blendDestination = rs.blendDestination;
+	state.blendOperation = rs.blendColorOperation;
+	state.blendSource = rs.blendColorSource;
+	state.blendDestination = rs.blendColorDestination;
 	cx.setRenderState(state);
 
 	return true;
