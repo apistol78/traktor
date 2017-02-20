@@ -11,13 +11,22 @@ import(traktor.flash)
 ScrollBar = ScrollBar or inherit(Widget)
 ScrollBar_meta = ScrollBar_meta or { name = "ScrollBar", __index = ScrollBar }
 
-function ScrollBar.new(parent)
+ScrollBar.HORIZONTAL = 0
+ScrollBar.VERTICAL = 1
+
+function ScrollBar.new(parent, orientation)
 	local o = {}
 	setmetatable(o, ScrollBar_meta)
 
-	local mc = Widget._createResource(parent, "MC_ScrollBar")
+	local mc
+	if orientation == ScrollBar.HORIZONTAL then
+		mc = Widget._createResource(parent, "MC_ScrollBar_Horizontal")
+	elseif orientation == ScrollBar.VERTICAL then
+		mc = Widget._createResource(parent, "MC_ScrollBar_Vertical")
+	end
+	assert (mc ~= nil)
 
-	o:_initialize(parent, mc)
+	o:_initialize(parent, mc, orientation)
 	return o
 end
 
@@ -29,7 +38,11 @@ function ScrollBar:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
 	local p = self:getPlacement()
-	self._background_mc:setWidth(p.width)
+	if self._orientation == ScrollBar.HORIZONTAL then
+		self._background_mc:setWidth(p.width)
+	elseif self._orientation == ScrollBar.VERTICAL then
+		self._background_mc:setHeight(p.height)
+	end
 	self:_updateKnobSize()
 end
 
@@ -57,18 +70,33 @@ function ScrollBar:setRange(range, size)
 end
 
 function ScrollBar:setPosition(position)
-	local bw = self._background_mc:getWidth() - self._knobMargin * 2
-	local kw = self._knob_mc:getWidth()
-	local f = position / self._range
-	self._knob_mc:setX((bw - kw) * f + self._knobMargin)
+	if self._orientation == ScrollBar.HORIZONTAL then
+		local bw = self._background_mc:getWidth() - self._knobMargin * 2
+		local kw = self._knob_mc:getWidth()
+		local f = position / self._range
+		self._knob_mc:setX((bw - kw) * f + self._knobMargin)
+	elseif self._orientation == ScrollBar.VERTICAL then
+		local bh = self._background_mc:getHeight() - self._knobMargin * 2
+		local kh = self._knob_mc:getHeight()
+		local f = position / self._range
+		self._knob_mc:setY((bh - kh) * f + self._knobMargin)
+	end
 	return self
 end
 
 function ScrollBar:getPosition()
-	local bw = self._background_mc:getWidth() - self._knobMargin * 2
-	local kw = self._knob_mc:getWidth()
-	local kx = self._knob_mc:getX() - self._knobMargin
-	return self._range * kx / (bw - kw)
+	if self._orientation == ScrollBar.HORIZONTAL then
+		local bw = self._background_mc:getWidth() - self._knobMargin * 2
+		local kw = self._knob_mc:getWidth()
+		local kx = self._knob_mc:getX() - self._knobMargin
+		return self._range * kx / (bw - kw)
+	elseif self._orientation == ScrollBar.VERTICAL then
+		local bh = self._background_mc:getHeight() - self._knobMargin * 2
+		local kh = self._knob_mc:getHeight()
+		local ky = self._knob_mc:getY() - self._knobMargin
+		return self._range * ky / (bh - kh)
+	end
+	return 0
 end
 
 function ScrollBar:setOnScroll(scrollFn)
@@ -79,12 +107,18 @@ end
 -- Private
 
 function ScrollBar:_updateKnobSize()
-	local bw = self._background_mc:getWidth() - self._knobMargin * 2
-	local w = (self._size / self._range) * bw
-	self._knob_mc:setWidth(w)
+	if self._orientation == ScrollBar.HORIZONTAL then
+		local bw = self._background_mc:getWidth() - self._knobMargin * 2
+		local w = (self._size / self._range) * bw
+		self._knob_mc:setWidth(w)
+	elseif self._orientation == ScrollBar.VERTICAL then
+		local bh = self._background_mc:getHeight() - self._knobMargin * 2
+		local h = (self._size / self._range) * bh
+		self._knob_mc:setHeight(h)
+	end
 end
 
-function ScrollBar:_initialize(parent, mc)
+function ScrollBar:_initialize(parent, mc, orientation)
 	Widget._initialize(self, parent, mc)
 
 	self._preferredSize =
@@ -96,7 +130,13 @@ function ScrollBar:_initialize(parent, mc)
 	self._background_mc = mc:getMember("background_mc")
 	self._knob_mc = mc:getMember("knob_mc")
 
-	self._knobMargin = self._knob_mc:getX()
+	self._orientation = orientation
+
+	if self._orientation == ScrollBar.HORIZONTAL then
+		self._knobMargin = self._knob_mc:getX()
+	elseif self._orientation == ScrollBar.VERTICAL then
+		self._knobMargin = self._knob_mc:getY()
+	end
 
 	self:_registerEvent("onPress", function() self:_onPress() end)
 	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
@@ -106,8 +146,13 @@ function ScrollBar:_initialize(parent, mc)
 end
 
 function ScrollBar:_onPress()
-	self._trackOffset = self._mc:getMouseX() - self._knob_mc:getX()
-	self._track = (self._trackOffset >= 0 and self._trackOffset < self._knob_mc:getWidth())
+	if self._orientation == ScrollBar.HORIZONTAL then
+		self._trackOffset = self._mc:getMouseX() - self._knob_mc:getX()
+		self._track = (self._trackOffset >= 0 and self._trackOffset < self._knob_mc:getWidth())
+	elseif self._orientation == ScrollBar.VERTICAL then
+		self._trackOffset = self._mc:getMouseY() - self._knob_mc:getY()
+		self._track = (self._trackOffset >= 0 and self._trackOffset < self._knob_mc:getHeight())
+	end
 end
 
 function ScrollBar:_onMouseUp()
@@ -115,7 +160,9 @@ function ScrollBar:_onMouseUp()
 end
 
 function ScrollBar:_onMouseMove()
-	if self._track then
+	if not self._track then return end
+
+	if self._orientation == ScrollBar.HORIZONTAL then
 		local x = self._mc:getMouseX() - self._trackOffset - self._knobMargin
 
 		-- Clamp range.
@@ -128,6 +175,24 @@ function ScrollBar:_onMouseMove()
 		end
 
 		self._knob_mc:setX(x + self._knobMargin)
+
+		if self._scrollFn ~= nil then
+			self._scrollFn()
+		end
+
+	elseif self._orientation == ScrollBar.VERTICAL then
+		local y = self._mc:getMouseY() - self._trackOffset - self._knobMargin
+
+		-- Clamp range.
+		local bh = self._background_mc:getHeight() - self._knobMargin * 2
+		local my = bh - self._knob_mc:getHeight()
+		if y < 0 then
+			y = 0
+		elseif y > my then
+			y = my
+		end
+
+		self._knob_mc:setY(y + self._knobMargin)
 
 		if self._scrollFn ~= nil then
 			self._scrollFn()

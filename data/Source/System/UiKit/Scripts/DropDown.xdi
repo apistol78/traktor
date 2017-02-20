@@ -78,7 +78,6 @@ function DropDown:_initialize(parent, mc, items)
 
 	self._background_mc = mc:getMember("background_mc")
 	self._arrow_mc = mc:getMember("arrow_mc")
-
 	self._caption_tb = mc:getMember("caption_tb")
 	self._caption_tb:parseText("")
 
@@ -104,6 +103,7 @@ function DropDown:_removeList()
 		self._list:remove()
 		self._list = nil
 		self._background_mc:gotoAndStop("default")
+		self._arrow_mc:gotoAndStop("default")
 	end
 end
 
@@ -111,6 +111,7 @@ function DropDown:_onPress()
 	assert (self._list == nil)
 
 	self._background_mc:gotoAndStop("active")
+	self._arrow_mc:gotoAndStop("active")
 
 	local ancestor = self:getAncestor()
 
@@ -168,7 +169,6 @@ function DropDown:_onListMouseDown()
 		self:_removeList()
 	end
 end
-
 
 	]]>
 	</text>

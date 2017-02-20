@@ -52,10 +52,12 @@ end
 
 function ListBox:setColor(color)
 	self._panel:setColor(color)
+	self._listContainer:getScrollBar(ScrollContainer.VERTICAL):setColor(color)
 	return self
 end
 
 function ListBox:setTextColor(textColor)
+	self._listContainer:getScrollBar(ScrollContainer.VERTICAL):setKnobColor(textColor)
 	local children = self._listContainer:getChildren()
 	for _, child in ipairs(children) do
 		children:setTextColor(textColor)
@@ -78,7 +80,7 @@ function ListBox:_initialize(parent, mc)
 	self._index = 0
 
 	self._panel = Panel.new(self, FloodLayout.new())
-	self._listContainer = ScrollContainer.new(self._panel, TableLayout.new({ 100 }, { 0 }, 4, 4, 0, 0), ScrollContainer.VERTICAL)
+	self._listContainer = ScrollContainer.new(self._panel, TableLayout.new({ 100 }, { 0 }, 4, 4, 0, 0), ScrollContainer.VERTICAL | ScrollContainer.SCROLLBARS)
 end
 
 	]]>
