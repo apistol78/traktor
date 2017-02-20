@@ -89,9 +89,12 @@ public:
 		s >> Member< GLboolean >(L"cullFaceEnable", m_ref.cullFaceEnable);
 		s >> Member< GLenum >(L"cullFace", m_ref.cullFace);
 		s >> Member< GLboolean >(L"blendEnable", m_ref.blendEnable);
-		s >> Member< GLenum >(L"blendEquation", m_ref.blendEquation);
-		s >> Member< GLenum >(L"blendFuncSrc", m_ref.blendFuncSrc);
-		s >> Member< GLenum >(L"blendFuncDest", m_ref.blendFuncDest);
+		s >> Member< GLenum >(L"blendColorEquation", m_ref.blendColorEquation);
+		s >> Member< GLenum >(L"blendAlphaEquation", m_ref.blendAlphaEquation);
+		s >> Member< GLenum >(L"blendFuncColorSrc", m_ref.blendFuncColorSrc);
+		s >> Member< GLenum >(L"blendFuncColorDest", m_ref.blendFuncColorDest);
+		s >> Member< GLenum >(L"blendFuncAlphaSrc", m_ref.blendFuncAlphaSrc);
+		s >> Member< GLenum >(L"blendFuncAlphaDest", m_ref.blendFuncAlphaDest);
 		s >> Member< GLboolean >(L"depthTestEnable", m_ref.depthTestEnable);
 		s >> Member< uint32_t >(L"colorMask", m_ref.colorMask);
 		s >> Member< GLboolean >(L"depthMask", m_ref.depthMask);

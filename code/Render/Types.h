@@ -123,9 +123,12 @@ struct RenderState
 {
 	CullMode cullMode;
 	bool blendEnable;
-	BlendOperation blendOperation;
-	BlendFactor blendSource;
-	BlendFactor blendDestination;
+	BlendOperation blendColorOperation;
+	BlendFactor blendColorSource;
+	BlendFactor blendColorDestination;
+	BlendOperation blendAlphaOperation;
+	BlendFactor blendAlphaSource;
+	BlendFactor blendAlphaDestination;
 	uint32_t colorWriteMask;
 	bool depthEnable;
 	bool depthWriteEnable;
@@ -146,9 +149,12 @@ struct RenderState
 	RenderState()
 	:	cullMode(CmCounterClockWise)
 	,	blendEnable(false)
-	,	blendOperation(BoAdd)
-	,	blendSource(BfOne)
-	,	blendDestination(BfZero)
+	,	blendColorOperation(BoAdd)
+	,	blendColorSource(BfOne)
+	,	blendColorDestination(BfZero)
+	,	blendAlphaOperation(BoAdd)
+	,	blendAlphaSource(BfOne)
+	,	blendAlphaDestination(BfOne)
 	,	colorWriteMask(CwRed | CwGreen | CwBlue | CwAlpha)
 	,	depthEnable(true)
 	,	depthWriteEnable(true)

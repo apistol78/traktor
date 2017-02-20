@@ -1046,13 +1046,17 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	}
 
 	cx.getD3DBlendDesc().AlphaToCoverageEnable = rs.alphaToCoverageEnable ? TRUE : FALSE;
+	cx.getD3DBlendDesc().IndependentBlendEnable = FALSE;
 
 	if (rs.blendEnable)
 	{
 		cx.getD3DBlendDesc().RenderTarget[0].BlendEnable = TRUE;
-		cx.getD3DBlendDesc().RenderTarget[0].SrcBlend = d3dBlendFactor[rs.blendSource];
-		cx.getD3DBlendDesc().RenderTarget[0].DestBlend = d3dBlendFactor[rs.blendDestination];
-		cx.getD3DBlendDesc().RenderTarget[0].BlendOp = d3dBlendOperation[rs.blendOperation];
+		cx.getD3DBlendDesc().RenderTarget[0].SrcBlend = d3dBlendFactor[rs.blendColorSource];
+		cx.getD3DBlendDesc().RenderTarget[0].DestBlend = d3dBlendFactor[rs.blendColorDestination];
+		cx.getD3DBlendDesc().RenderTarget[0].BlendOp = d3dBlendOperation[rs.blendColorOperation];
+		cx.getD3DBlendDesc().RenderTarget[0].SrcBlendAlpha = d3dBlendFactor[rs.blendAlphaSource];
+		cx.getD3DBlendDesc().RenderTarget[0].DestBlendAlpha = d3dBlendFactor[rs.blendAlphaDestination];
+		cx.getD3DBlendDesc().RenderTarget[0].BlendOpAlpha = d3dBlendOperation[rs.blendAlphaOperation];
 	}
 	else
 	{
@@ -1060,6 +1064,9 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 		cx.getD3DBlendDesc().RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
 		cx.getD3DBlendDesc().RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
 		cx.getD3DBlendDesc().RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		cx.getD3DBlendDesc().RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		cx.getD3DBlendDesc().RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		cx.getD3DBlendDesc().RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	}
 
 	UINT8 d3dWriteMask = 0;

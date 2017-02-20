@@ -97,9 +97,27 @@ public:
 
 		s >> MemberEnum< CullMode >(L"cullMode", m_ref.cullMode, kCullMode);
 		s >> Member< bool >(L"blendEnable", m_ref.blendEnable);
-		s >> MemberEnum< BlendOperation >(L"blendOperation", m_ref.blendOperation, kBlendOperations);
-		s >> MemberEnum< BlendFactor >(L"blendSource", m_ref.blendSource, kBlendFactors);
-		s >> MemberEnum< BlendFactor >(L"blendDestination", m_ref.blendDestination, kBlendFactors);
+
+		if (s.getVersion() >= 7)
+		{
+			s >> MemberEnum< BlendOperation >(L"blendColorOperation", m_ref.blendColorOperation, kBlendOperations);
+			s >> MemberEnum< BlendFactor >(L"blendColorSource", m_ref.blendColorSource, kBlendFactors);
+			s >> MemberEnum< BlendFactor >(L"blendColorDestination", m_ref.blendColorDestination, kBlendFactors);
+			s >> MemberEnum< BlendOperation >(L"blendAlphaOperation", m_ref.blendAlphaOperation, kBlendOperations);
+			s >> MemberEnum< BlendFactor >(L"blendAlphaSource", m_ref.blendAlphaSource, kBlendFactors);
+			s >> MemberEnum< BlendFactor >(L"blendAlphaDestination", m_ref.blendAlphaDestination, kBlendFactors);
+		}
+		else
+		{
+			s >> MemberEnum< BlendOperation >(L"blendOperation", m_ref.blendColorOperation, kBlendOperations);
+			s >> MemberEnum< BlendFactor >(L"blendSource", m_ref.blendColorSource, kBlendFactors);
+			s >> MemberEnum< BlendFactor >(L"blendDestination", m_ref.blendColorDestination, kBlendFactors);
+
+			m_ref.blendAlphaOperation = BoAdd;
+			m_ref.blendAlphaSource = BfOne;
+			m_ref.blendAlphaDestination = BfOne;
+		}
+
 		s >> MemberBitMask(L"colorWriteMask", m_ref.colorWriteMask, kColorWriteBits);
 		s >> Member< bool >(L"depthEnable", m_ref.depthEnable);
 		s >> Member< bool >(L"depthWriteEnable", m_ref.depthWriteEnable);
@@ -1177,7 +1195,7 @@ void OutputPort::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 6, PixelOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 7, PixelOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, { L"State", true }, { 0 } };
 
@@ -1542,7 +1560,7 @@ Sqrt::Sqrt()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 5, State, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 7, State, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_State_o[] = { { L"Output" }, { 0 } };
 

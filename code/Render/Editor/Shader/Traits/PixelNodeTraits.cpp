@@ -62,10 +62,8 @@ PinType PixelNodeTraits::getInputPinType(
 	if (statePin)
 	{
 		const State* state = dynamic_type_cast< const State* >(statePin->getNode());
-		if (!state)
-			return PntScalar4;
-
-		rs = state->getRenderState();
+		if (state)
+			rs = state->getRenderState();
 	}
 
 	if (!rs.blendEnable && !rs.alphaTestEnable)
@@ -82,35 +80,7 @@ PinType PixelNodeTraits::getInputPinType(
 			return PntVoid;
 	}
 	else
-	{
-		if (rs.blendEnable)
-		{
-			if (
-				rs.blendSource == BfSourceAlpha ||
-				rs.blendSource == BfOneMinusSourceAlpha ||
-				rs.blendDestination == BfSourceAlpha ||
-				rs.blendDestination == BfOneMinusSourceAlpha
-			)
-				return PntScalar4;
-		}
-		if (rs.alphaTestEnable)
-			return PntScalar4;
-		if (rs.alphaToCoverageEnable)
-			return PntScalar4;
-
-		// Blend enable but not using alpha as a blend factor; determine
-		// from write mask as if opaque.
-		if (rs.colorWriteMask & CwAlpha)
-			return PntScalar4;
-		else if (rs.colorWriteMask & CwBlue)
-			return PntScalar3;
-		else if (rs.colorWriteMask & CwGreen)
-			return PntScalar2;
-		else if (rs.colorWriteMask & CwRed)
-			return PntScalar1;
-		else
-			return PntVoid;
-	}
+		return PntScalar4;
 
 	return PntScalar3;
 }

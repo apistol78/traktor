@@ -646,9 +646,9 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachmentState = {};
 	colorBlendAttachmentState.blendEnable = rs.blendEnable ? VK_TRUE : VK_FALSE;
-	colorBlendAttachmentState.srcColorBlendFactor = c_blendFactors[rs.blendSource];
-	colorBlendAttachmentState.dstColorBlendFactor = c_blendFactors[rs.blendDestination];
-	colorBlendAttachmentState.colorBlendOp = c_blendOperations[rs.blendOperation];
+	colorBlendAttachmentState.srcColorBlendFactor = c_blendFactors[rs.blendColorSource];
+	colorBlendAttachmentState.dstColorBlendFactor = c_blendFactors[rs.blendColorDestination];
+	colorBlendAttachmentState.colorBlendOp = c_blendOperations[rs.blendColorOperation];
 	colorBlendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
 	colorBlendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
 	colorBlendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
