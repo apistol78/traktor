@@ -994,7 +994,7 @@ void opx_callFunction(ExecutionState& state)
 	Ref< ActionFunction > fn = functionObject.getObject< ActionFunction >();
 	if (fn)
 	{
-		stack.push(fn->call(state.frame));
+		stack.push(fn->call(state.frame, state.frame->getSelf()));
 		return;
 	}
 
