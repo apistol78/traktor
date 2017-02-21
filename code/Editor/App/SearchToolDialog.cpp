@@ -165,11 +165,18 @@ void searchInstance(db::Instance* instance, const std::wstring& needle, bool cas
 		Ref< const ReflectionMember > foundMember = searchMember(instance, reflection, *i, visited, needle, caseSensitive, gridResults);
 		if (foundMember)
 		{
+			std::wstring value = getMemberValue(foundMember);
+
 			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
 			row->add(new ui::custom::GridItem(instance->getPath()));
 			row->add(new ui::custom::GridItem(instance->getPrimaryType()->getName()));
 			row->add(new ui::custom::GridItem(stylizeMemberName(foundMember->getName())));
-			row->add(new ui::custom::GridItem(getMemberValue(foundMember)));
+			
+			if (value.find_first_of(L"\n\r") == value.npos)
+				row->add(new ui::custom::GridItem(getMemberValue(foundMember)));
+			else
+				row->add(new ui::custom::GridItem(L"..."));
+
 			row->setData(L"INSTANCE", instance);
 			gridResults->addRow(row);
 		}
