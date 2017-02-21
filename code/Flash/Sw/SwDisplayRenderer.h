@@ -81,6 +81,7 @@ private:
 	Ref< drawing::Raster > m_raster;
 	Matrix33 m_transform;
 	Aabb2 m_frameBounds;
+	Vector4 m_frameTransform;
 	bool m_clearBackground;
 	bool m_writeMask;
 	bool m_writeEnable;

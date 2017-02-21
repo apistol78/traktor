@@ -61,6 +61,7 @@ void SwDisplayRenderer::begin(
 	if (m_clearBackground)
 		m_image->clear(backgroundColor.rgb0());
 	m_frameBounds = frameBounds;
+	m_frameTransform = frameTransform;
 }
 
 void SwDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
@@ -129,7 +130,13 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 	float frameWidth = m_frameBounds.mx.x;
 	float frameHeight = m_frameBounds.mx.y;
 
-	Matrix33 rasterTransform = traktor::scale(width / frameWidth, height / frameHeight) * transform * m_transform;
+	Matrix33 rasterTransform =
+		traktor::scale(width / frameWidth, height / frameHeight) *
+		traktor::scale(m_frameTransform.z(), m_frameTransform.w()) *
+		traktor::translate(m_frameTransform.x(), m_frameTransform.y()) *
+		transform *
+		m_transform;
+
 	float strokeScale = std::min(width / frameWidth, height / frameHeight);
 
 	const AlignedVector< FlashFillStyle >& fillStyles = shape.getFillStyles();
@@ -277,16 +284,20 @@ void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Mat
 	if (!m_writeEnable)
 		return;
 
-	// Add single style for glyph, using color transform to tint glyph.
 	m_raster->clearStyles();
-	m_raster->defineSolidStyle(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+	m_raster->defineSolidStyle(color * cxform.mul + cxform.add);
 
 	int32_t width = m_image->getWidth();
 	int32_t height = m_image->getHeight();
 	float frameWidth = m_frameBounds.mx.x;
 	float frameHeight = m_frameBounds.mx.y;
 
-	Matrix33 rasterTransform = traktor::scale(width / frameWidth, height / frameHeight) * transform * m_transform;
+	Matrix33 rasterTransform =
+		traktor::scale(width / frameWidth, height / frameHeight) *
+		traktor::scale(m_frameTransform.z(), m_frameTransform.w()) *
+		traktor::translate(m_frameTransform.x(), m_frameTransform.y()) *
+		transform *
+		m_transform;
 
 	// Rasterize every path in shape.
 	const AlignedVector< Path >& paths = glyphShape.getPaths();
@@ -337,7 +348,13 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanva
 	float frameWidth = m_frameBounds.mx.x;
 	float frameHeight = m_frameBounds.mx.y;
 
-	Matrix33 rasterTransform = traktor::scale(width / frameWidth, height / frameHeight) * transform * m_transform;
+	Matrix33 rasterTransform =
+		traktor::scale(width / frameWidth, height / frameHeight) *
+		traktor::scale(m_frameTransform.z(), m_frameTransform.w()) *
+		traktor::translate(m_frameTransform.x(), m_frameTransform.y()) *
+		transform *
+		m_transform;
+
 	float strokeScale = std::min(width / frameWidth, height / frameHeight);
 
 	const FlashDictionary& dictionary = canvas.getDictionary();
