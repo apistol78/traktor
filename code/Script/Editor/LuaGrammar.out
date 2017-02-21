@@ -6,8 +6,8 @@ State 0:
           scope ::= * scope statlist binding semi
 
                          chunk accept
-                         block shift  107
-                         scope shift  51
+                         block shift  111
+                         scope shift  53
                      {default} reduce 6
 
 State 1:
@@ -26,6 +26,8 @@ State 1:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -43,27 +45,27 @@ State 1:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  54
-                         conds shift  91
-                  functioncall shift  143
-                      condlist shift  79
-                          cond shift  115
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  56
+                         conds shift  98
+                  functioncall shift  147
+                      condlist shift  86
+                          cond shift  119
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 2:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
@@ -75,6 +77,8 @@ State 2:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -100,28 +104,28 @@ State 2:
           field ::= * LEFT_BRACKET exp RIGHT_BRACKET EQUAL exp
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  98
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  105
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                   LEFT_BRACKET shift  17
                     LEFT_BRACE shift  2
-                   RIGHT_BRACE shift  134
-                           exp shift  65
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
-                     fieldlist shift  72
-                         field shift  130
+                   RIGHT_BRACE shift  138
+                           exp shift  67
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
+                     fieldlist shift  76
+                         field shift  134
 
 State 3:
       (3) block ::= scope statlist *
@@ -156,24 +160,24 @@ State 3:
           functioncall ::= * prefixexp COLON NAME args
 
                           OPEN shift  19
-                            DO shift  45
-                         WHILE shift  29
-                        REPEAT shift  31
+                            DO shift  47
+                         WHILE shift  31
+                        REPEAT shift  33
                             IF shift  1
-                      FUNCTION shift  38
-                           FOR shift  47
-                          NAME shift  145
-                         BREAK shift  109
+                      FUNCTION shift  40
+                           FOR shift  49
+                          NAME shift  149
+                         BREAK shift  113
                         RETURN shift  7
-                         LOCAL shift  46
-                      laststat shift  50
-                       binding shift  49
-                          stat shift  48
-                    repetition shift  94
-                       setlist shift  77
-                  functioncall shift  70
-                     prefixexp shift  32
-                           var shift  73
+                         LOCAL shift  48
+                      laststat shift  52
+                       binding shift  51
+                          stat shift  50
+                    repetition shift  101
+                       setlist shift  84
+                  functioncall shift  74
+                     prefixexp shift  34
+                           var shift  80
                      {default} reduce 3
 
 State 4:
@@ -186,6 +190,8 @@ State 4:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -208,27 +214,27 @@ State 4:
           field ::= * LEFT_BRACKET exp RIGHT_BRACKET EQUAL exp
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  98
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  105
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                   LEFT_BRACKET shift  17
                     LEFT_BRACE shift  2
-                   RIGHT_BRACE shift  132
-                           exp shift  65
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
-                         field shift  131
+                   RIGHT_BRACE shift  136
+                           exp shift  67
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
+                         field shift  135
 
 State 5:
           explist1 ::= * exp
@@ -242,6 +248,8 @@ State 5:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -261,26 +269,26 @@ State 5:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
-             RIGHT_PARANTHESIS shift  124
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
+             RIGHT_PARANTHESIS shift  128
                     LEFT_BRACE shift  2
-                           exp shift  62
-                      explist1 shift  80
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  64
+                      explist1 shift  87
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 6:
           binding ::= LOCAL namelist EQUAL * explist1
@@ -295,6 +303,8 @@ State 6:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -312,25 +322,25 @@ State 6:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  62
-                      explist1 shift  83
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  64
+                      explist1 shift  90
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 7:
      (26) laststat ::= RETURN *
@@ -346,6 +356,8 @@ State 7:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -363,25 +375,25 @@ State 7:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  62
-                      explist1 shift  84
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  64
+                      explist1 shift  91
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
                      {default} reduce 26
 
 State 8:
@@ -397,6 +409,8 @@ State 8:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -414,25 +428,25 @@ State 8:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  62
-                      explist1 shift  86
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  64
+                      explist1 shift  93
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 9:
           repetition ::= FOR NAME EQUAL * explist23
@@ -447,6 +461,8 @@ State 9:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -464,25 +480,25 @@ State 9:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  53
-                  functioncall shift  143
-                     explist23 shift  110
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  55
+                  functioncall shift  147
+                     explist23 shift  114
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 10:
           stat ::= setlist EQUAL * explist1
@@ -497,6 +513,8 @@ State 10:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -514,25 +532,25 @@ State 10:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  62
-                      explist1 shift  88
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  64
+                      explist1 shift  95
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 11:
           condlist ::= condlist ELSEIF * cond
@@ -546,6 +564,8 @@ State 11:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -563,25 +583,25 @@ State 11:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  54
-                  functioncall shift  143
-                          cond shift  117
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  56
+                  functioncall shift  147
+                          cond shift  121
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 12:
           explist23 ::= exp COMMA exp COMMA * exp
@@ -594,6 +614,8 @@ State 12:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -611,24 +633,24 @@ State 12:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  59
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  61
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 13:
           explist23 ::= exp COMMA * exp
@@ -642,6 +664,8 @@ State 13:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -659,24 +683,24 @@ State 13:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  52
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  54
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 14:
           ublock ::= block UNTIL * exp
@@ -689,6 +713,8 @@ State 14:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -706,24 +732,24 @@ State 14:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  60
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  62
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 15:
           explist1 ::= explist1 COMMA * exp
@@ -736,6 +762,8 @@ State 15:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -753,24 +781,24 @@ State 15:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  61
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  63
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 16:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
@@ -782,6 +810,8 @@ State 16:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -800,24 +830,24 @@ State 16:
           field ::= LEFT_BRACKET exp RIGHT_BRACKET EQUAL * exp
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  63
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  65
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 17:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
@@ -829,6 +859,8 @@ State 17:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -847,24 +879,24 @@ State 17:
           field ::= LEFT_BRACKET * exp RIGHT_BRACKET EQUAL exp
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  56
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  58
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 18:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
@@ -876,6 +908,8 @@ State 18:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -894,24 +928,24 @@ State 18:
           field ::= NAME EQUAL * exp
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  64
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  66
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 19:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
@@ -923,6 +957,8 @@ State 19:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -941,24 +977,24 @@ State 19:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  57
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  59
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 20:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
@@ -970,6 +1006,8 @@ State 20:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -988,24 +1026,24 @@ State 20:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  102
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  77
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 21:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
@@ -1017,6 +1055,8 @@ State 21:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp MULTIPLY|DIVIDE|MODULO * exp
@@ -1035,24 +1075,24 @@ State 21:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  103
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  78
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 22:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
@@ -1064,6 +1104,8 @@ State 22:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= exp PLUS|MINUS * exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
@@ -1082,24 +1124,24 @@ State 22:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  71
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  75
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 23:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
@@ -1111,7 +1153,9 @@ State 23:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
-          exp ::= exp DOT_DOT * exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
+          exp ::= exp BITWISE_AND * exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -1129,24 +1173,24 @@ State 23:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
                            exp shift  68
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 24:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
@@ -1157,8 +1201,10 @@ State 24:
           exp ::= * exp OR exp
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
-          exp ::= exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL * exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= exp BITWISE_OR * exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -1176,26 +1222,124 @@ State 24:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
                            exp shift  69
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
 State 25:
+          exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
+          exp ::= * function
+          exp ::= * prefixexp
+          exp ::= * tableconstructor
+          exp ::= * NOT|HASH|MINUS exp
+          exp ::= * exp OR exp
+          exp ::= * exp AND exp
+          exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
+          exp ::= * exp DOT_DOT exp
+          exp ::= exp DOT_DOT * exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
+          exp ::= * exp PLUS|MINUS exp
+          exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
+          exp ::= * exp RAISE exp
+          var ::= * NAME
+          var ::= * prefixexp LEFT_BRACKET exp RIGHT_BRACKET
+          var ::= * prefixexp DOT NAME
+          prefixexp ::= * var
+          prefixexp ::= * functioncall
+          prefixexp ::= * OPEN exp RIGHT_PARANTHESIS
+          functioncall ::= * prefixexp args
+          functioncall ::= * prefixexp COLON NAME args
+          function ::= * FUNCTION funcbody
+          tableconstructor ::= * LEFT_BRACE RIGHT_BRACE
+          tableconstructor ::= * LEFT_BRACE fieldlist RIGHT_BRACE
+          tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
+
+                          OPEN shift  19
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
+                    LEFT_BRACE shift  2
+                           exp shift  72
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
+
+State 26:
+          exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
+          exp ::= * function
+          exp ::= * prefixexp
+          exp ::= * tableconstructor
+          exp ::= * NOT|HASH|MINUS exp
+          exp ::= * exp OR exp
+          exp ::= * exp AND exp
+          exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
+          exp ::= exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL * exp
+          exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
+          exp ::= * exp PLUS|MINUS exp
+          exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
+          exp ::= * exp RAISE exp
+          var ::= * NAME
+          var ::= * prefixexp LEFT_BRACKET exp RIGHT_BRACKET
+          var ::= * prefixexp DOT NAME
+          prefixexp ::= * var
+          prefixexp ::= * functioncall
+          prefixexp ::= * OPEN exp RIGHT_PARANTHESIS
+          functioncall ::= * prefixexp args
+          functioncall ::= * prefixexp COLON NAME args
+          function ::= * FUNCTION funcbody
+          tableconstructor ::= * LEFT_BRACE RIGHT_BRACE
+          tableconstructor ::= * LEFT_BRACE fieldlist RIGHT_BRACE
+          tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
+
+                          OPEN shift  19
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
+                    LEFT_BRACE shift  2
+                           exp shift  73
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
+
+State 27:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
           exp ::= * function
           exp ::= * prefixexp
@@ -1206,6 +1350,8 @@ State 25:
           exp ::= exp AND * exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -1223,26 +1369,26 @@ State 25:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  67
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  71
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
-State 26:
+State 28:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
           exp ::= * function
           exp ::= * prefixexp
@@ -1253,6 +1399,8 @@ State 26:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -1270,26 +1418,26 @@ State 26:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  104
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  79
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
-State 27:
+State 29:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
           exp ::= * function
           exp ::= * prefixexp
@@ -1299,6 +1447,8 @@ State 27:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -1317,26 +1467,26 @@ State 27:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  55
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  57
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
-State 28:
+State 30:
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
           exp ::= * function
           exp ::= * prefixexp
@@ -1347,6 +1497,8 @@ State 28:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -1364,26 +1516,26 @@ State 28:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  66
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  70
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
-State 29:
+State 31:
           stat ::= WHILE * exp DO block END
           exp ::= * NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT
           exp ::= * function
@@ -1394,6 +1546,8 @@ State 29:
           exp ::= * exp AND exp
           exp ::= * exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= * exp DOT_DOT exp
+          exp ::= * exp BITWISE_OR exp
+          exp ::= * exp BITWISE_AND exp
           exp ::= * exp PLUS|MINUS exp
           exp ::= * exp MULTIPLY|DIVIDE|MODULO exp
           exp ::= * exp RAISE exp
@@ -1411,26 +1565,26 @@ State 29:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
                           OPEN shift  19
-                      FUNCTION shift  39
-                          NAME shift  145
-                         MINUS shift  26
-                           NOT shift  26
-                          HASH shift  26
-                           NIL shift  148
-                          TRUE shift  148
-                         FALSE shift  148
-                        NUMBER shift  148
-                        STRING shift  148
-                   DOT_DOT_DOT shift  148
+                      FUNCTION shift  41
+                          NAME shift  149
+                         MINUS shift  28
+                           NOT shift  28
+                          HASH shift  28
+                           NIL shift  152
+                          TRUE shift  152
+                         FALSE shift  152
+                        NUMBER shift  152
+                        STRING shift  152
+                   DOT_DOT_DOT shift  152
                     LEFT_BRACE shift  2
-                           exp shift  58
-                  functioncall shift  143
-                      function shift  147
-                     prefixexp shift  33
-              tableconstructor shift  146
-                           var shift  144
+                           exp shift  60
+                  functioncall shift  147
+                      function shift  151
+                     prefixexp shift  35
+              tableconstructor shift  150
+                           var shift  148
 
-State 30:
+State 32:
           setlist ::= setlist COMMA * var
           var ::= * NAME
           var ::= * prefixexp LEFT_BRACKET exp RIGHT_BRACKET
@@ -1442,12 +1596,12 @@ State 30:
           functioncall ::= * prefixexp COLON NAME args
 
                           OPEN shift  19
-                          NAME shift  145
-                  functioncall shift  143
-                     prefixexp shift  32
-                           var shift  76
+                          NAME shift  149
+                  functioncall shift  147
+                     prefixexp shift  34
+                           var shift  83
 
-State 31:
+State 33:
           block ::= * scope statlist
           block ::= * scope statlist laststat semi
           ublock ::= * block UNTIL exp
@@ -1455,12 +1609,12 @@ State 31:
           scope ::= * scope statlist binding semi
           stat ::= REPEAT * ublock
 
-                         block shift  92
-                         scope shift  51
-                        ublock shift  120
+                         block shift  99
+                         scope shift  53
+                        ublock shift  124
                      {default} reduce 6
 
-State 32:
+State 34:
           var ::= prefixexp * LEFT_BRACKET exp RIGHT_BRACKET
           var ::= prefixexp * DOT NAME
           functioncall ::= prefixexp * args
@@ -1474,15 +1628,15 @@ State 32:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
               LEFT_PARANTHESIS shift  5
-                         COLON shift  95
-                           DOT shift  96
-                        STRING shift  122
-                  LEFT_BRACKET shift  27
+                         COLON shift  102
+                           DOT shift  103
+                        STRING shift  126
+                  LEFT_BRACKET shift  29
                     LEFT_BRACE shift  2
-              tableconstructor shift  123
-                          args shift  127
+              tableconstructor shift  127
+                          args shift  131
 
-State 33:
+State 35:
      (43) exp ::= prefixexp *
           var ::= prefixexp * LEFT_BRACKET exp RIGHT_BRACKET
           var ::= prefixexp * DOT NAME
@@ -1497,16 +1651,16 @@ State 33:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
               LEFT_PARANTHESIS shift  5
-                         COLON shift  95
-                           DOT shift  96
-                        STRING shift  122
-                  LEFT_BRACKET shift  27
+                         COLON shift  102
+                           DOT shift  103
+                        STRING shift  126
+                  LEFT_BRACKET shift  29
                     LEFT_BRACE shift  2
-              tableconstructor shift  123
-                          args shift  127
+              tableconstructor shift  127
+                          args shift  131
                      {default} reduce 43
 
-State 34:
+State 36:
           functioncall ::= prefixexp COLON NAME * args
           args ::= * LEFT_PARANTHESIS RIGHT_PARANTHESIS
           args ::= * LEFT_PARANTHESIS explist1 RIGHT_PARANTHESIS
@@ -1517,95 +1671,73 @@ State 34:
           tableconstructor ::= * LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE
 
               LEFT_PARANTHESIS shift  5
-                        STRING shift  122
+                        STRING shift  126
                     LEFT_BRACE shift  2
-              tableconstructor shift  123
-                          args shift  126
+              tableconstructor shift  127
+                          args shift  130
 
-State 35:
+State 37:
           namelist ::= * NAME
           namelist ::= * namelist COMMA NAME
           params ::= LEFT_PARANTHESIS * parlist RIGHT_PARANTHESIS
-     (70) parlist ::= *
+     (72) parlist ::= *
           parlist ::= * namelist
           parlist ::= * DOT_DOT_DOT
           parlist ::= * namelist COMMA DOT_DOT_DOT
 
-                          NAME shift  139
-                   DOT_DOT_DOT shift  135
-                      namelist shift  100
-                       parlist shift  99
-                     {default} reduce 70
+                          NAME shift  143
+                   DOT_DOT_DOT shift  139
+                      namelist shift  107
+                       parlist shift  106
+                     {default} reduce 72
 
-State 36:
+State 38:
           binding ::= LOCAL FUNCTION NAME * funcbody
           funcbody ::= * params block END
           params ::= * LEFT_PARANTHESIS parlist RIGHT_PARANTHESIS
 
-              LEFT_PARANTHESIS shift  35
-                      funcbody shift  108
-                        params shift  43
+              LEFT_PARANTHESIS shift  37
+                      funcbody shift  112
+                        params shift  45
 
-State 37:
+State 39:
           stat ::= FUNCTION funcname * funcbody
           funcbody ::= * params block END
           params ::= * LEFT_PARANTHESIS parlist RIGHT_PARANTHESIS
 
-              LEFT_PARANTHESIS shift  35
-                      funcbody shift  114
-                        params shift  43
+              LEFT_PARANTHESIS shift  37
+                      funcbody shift  118
+                        params shift  45
 
-State 38:
+State 40:
           stat ::= FUNCTION * funcname funcbody
           funcname ::= * dottedname
           funcname ::= * dottedname COLON NAME
           dottedname ::= * NAME
           dottedname ::= * dottedname DOT NAME
 
-                          NAME shift  111
-                      funcname shift  37
-                    dottedname shift  78
+                          NAME shift  115
+                      funcname shift  39
+                    dottedname shift  85
 
-State 39:
+State 41:
           function ::= FUNCTION * funcbody
           funcbody ::= * params block END
           params ::= * LEFT_PARANTHESIS parlist RIGHT_PARANTHESIS
 
-              LEFT_PARANTHESIS shift  35
-                      funcbody shift  141
-                        params shift  43
-
-State 40:
-          block ::= * scope statlist
-          block ::= * scope statlist laststat semi
-      (6) scope ::= *
-          scope ::= * scope statlist binding semi
-          cond ::= exp THEN * block
-
-                         block shift  116
-                         scope shift  51
-                     {default} reduce 6
-
-State 41:
-          block ::= * scope statlist
-          block ::= * scope statlist laststat semi
-      (6) scope ::= *
-          scope ::= * scope statlist binding semi
-          conds ::= condlist ELSE * block
-
-                         block shift  118
-                         scope shift  51
-                     {default} reduce 6
+              LEFT_PARANTHESIS shift  37
+                      funcbody shift  145
+                        params shift  45
 
 State 42:
           block ::= * scope statlist
           block ::= * scope statlist laststat semi
       (6) scope ::= *
           scope ::= * scope statlist binding semi
-          stat ::= repetition DO * block END
+          cond ::= exp THEN * block
 
-                         block shift  93
-                         scope shift  51
+                         block shift  120
+                         scope shift  53
                      {default} reduce 6
 
 State 43:
@@ -1613,10 +1745,10 @@ State 43:
           block ::= * scope statlist laststat semi
       (6) scope ::= *
           scope ::= * scope statlist binding semi
-          funcbody ::= params * block END
+          conds ::= condlist ELSE * block
 
-                         block shift  101
-                         scope shift  51
+                         block shift  122
+                         scope shift  53
                      {default} reduce 6
 
 State 44:
@@ -1624,10 +1756,10 @@ State 44:
           block ::= * scope statlist laststat semi
       (6) scope ::= *
           scope ::= * scope statlist binding semi
-          stat ::= WHILE exp DO * block END
+          stat ::= repetition DO * block END
 
-                         block shift  105
-                         scope shift  51
+                         block shift  100
+                         scope shift  53
                      {default} reduce 6
 
 State 45:
@@ -1635,60 +1767,82 @@ State 45:
           block ::= * scope statlist laststat semi
       (6) scope ::= *
           scope ::= * scope statlist binding semi
-          stat ::= DO * block END
+          funcbody ::= params * block END
 
-                         block shift  106
-                         scope shift  51
+                         block shift  108
+                         scope shift  53
                      {default} reduce 6
 
 State 46:
+          block ::= * scope statlist
+          block ::= * scope statlist laststat semi
+      (6) scope ::= *
+          scope ::= * scope statlist binding semi
+          stat ::= WHILE exp DO * block END
+
+                         block shift  109
+                         scope shift  53
+                     {default} reduce 6
+
+State 47:
+          block ::= * scope statlist
+          block ::= * scope statlist laststat semi
+      (6) scope ::= *
+          scope ::= * scope statlist binding semi
+          stat ::= DO * block END
+
+                         block shift  110
+                         scope shift  53
+                     {default} reduce 6
+
+State 48:
           binding ::= LOCAL * namelist
           binding ::= LOCAL * namelist EQUAL explist1
           binding ::= LOCAL * FUNCTION NAME funcbody
           namelist ::= * NAME
           namelist ::= * namelist COMMA NAME
 
-                      FUNCTION shift  82
-                          NAME shift  139
-                      namelist shift  74
+                      FUNCTION shift  89
+                          NAME shift  143
+                      namelist shift  81
 
-State 47:
+State 49:
           repetition ::= FOR * NAME EQUAL explist23
           repetition ::= FOR * namelist IN explist1
           namelist ::= * NAME
           namelist ::= * namelist COMMA NAME
 
-                          NAME shift  87
-                      namelist shift  75
-
-State 48:
-          semi ::= * SEMICOLON
-      (2) semi ::= *
-          statlist ::= statlist stat * semi
-
-                     SEMICOLON shift  154
-                          semi shift  151
-                     {default} reduce 2
-
-State 49:
-          semi ::= * SEMICOLON
-      (2) semi ::= *
-          scope ::= scope statlist binding * semi
-
-                     SEMICOLON shift  154
-                          semi shift  152
-                     {default} reduce 2
+                          NAME shift  94
+                      namelist shift  82
 
 State 50:
           semi ::= * SEMICOLON
       (2) semi ::= *
-          block ::= scope statlist laststat * semi
+          statlist ::= statlist stat * semi
 
-                     SEMICOLON shift  154
-                          semi shift  153
+                     SEMICOLON shift  158
+                          semi shift  155
                      {default} reduce 2
 
 State 51:
+          semi ::= * SEMICOLON
+      (2) semi ::= *
+          scope ::= scope statlist binding * semi
+
+                     SEMICOLON shift  158
+                          semi shift  156
+                     {default} reduce 2
+
+State 52:
+          semi ::= * SEMICOLON
+      (2) semi ::= *
+          block ::= scope statlist laststat * semi
+
+                     SEMICOLON shift  158
+                          semi shift  157
+                     {default} reduce 2
+
+State 53:
           block ::= scope * statlist
           block ::= scope * statlist laststat semi
           scope ::= scope * statlist binding semi
@@ -1698,495 +1852,673 @@ State 51:
                       statlist shift  3
                      {default} reduce 8
 
-State 52:
+State 54:
      (39) explist23 ::= exp COMMA exp *
           explist23 ::= exp COMMA exp * COMMA exp
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
 
                          COMMA shift  12
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
                      {default} reduce 39
 
-State 53:
+State 55:
           explist23 ::= exp * COMMA exp
           explist23 ::= exp * COMMA exp COMMA exp
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
 
                          COMMA shift  13
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
 
-State 54:
+State 56:
           cond ::= exp * THEN block
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
 
-                          THEN shift  40
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                          THEN shift  42
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
-
-State 55:
-          exp ::= exp * OR exp
-          exp ::= exp * AND exp
-          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
-          exp ::= exp * DOT_DOT exp
-          exp ::= exp * PLUS|MINUS exp
-          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
-          exp ::= exp * RAISE exp
-          var ::= prefixexp LEFT_BRACKET exp * RIGHT_BRACKET
-
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
-                          PLUS shift  22
-                         MINUS shift  22
-                      MULTIPLY shift  21
-                        DIVIDE shift  21
-                        MODULO shift  21
-                         RAISE shift  20
-                 RIGHT_BRACKET shift  129
-
-State 56:
-          exp ::= exp * OR exp
-          exp ::= exp * AND exp
-          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
-          exp ::= exp * DOT_DOT exp
-          exp ::= exp * PLUS|MINUS exp
-          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
-          exp ::= exp * RAISE exp
-          field ::= LEFT_BRACKET exp * RIGHT_BRACKET EQUAL exp
-
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
-                          PLUS shift  22
-                         MINUS shift  22
-                      MULTIPLY shift  21
-                        DIVIDE shift  21
-                        MODULO shift  21
-                         RAISE shift  20
-                 RIGHT_BRACKET shift  97
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
 
 State 57:
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
+          exp ::= exp * PLUS|MINUS exp
+          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
+          exp ::= exp * RAISE exp
+          var ::= prefixexp LEFT_BRACKET exp * RIGHT_BRACKET
+
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
+                          PLUS shift  22
+                         MINUS shift  22
+                      MULTIPLY shift  21
+                        DIVIDE shift  21
+                        MODULO shift  21
+                         RAISE shift  20
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
+                 RIGHT_BRACKET shift  133
+
+State 58:
+          exp ::= exp * OR exp
+          exp ::= exp * AND exp
+          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
+          exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
+          exp ::= exp * PLUS|MINUS exp
+          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
+          exp ::= exp * RAISE exp
+          field ::= LEFT_BRACKET exp * RIGHT_BRACKET EQUAL exp
+
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
+                          PLUS shift  22
+                         MINUS shift  22
+                      MULTIPLY shift  21
+                        DIVIDE shift  21
+                        MODULO shift  21
+                         RAISE shift  20
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
+                 RIGHT_BRACKET shift  104
+
+State 59:
+          exp ::= exp * OR exp
+          exp ::= exp * AND exp
+          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
+          exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
           prefixexp ::= OPEN exp * RIGHT_PARANTHESIS
 
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
-             RIGHT_PARANTHESIS shift  142
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
+             RIGHT_PARANTHESIS shift  146
 
-State 58:
+State 60:
           stat ::= WHILE exp * DO block END
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
 
-                            DO shift  44
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                            DO shift  46
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
 
-State 59:
+State 61:
      (40) explist23 ::= exp COMMA exp COMMA exp *
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
 
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
                      {default} reduce 40
 
-State 60:
+State 62:
       (5) ublock ::= block UNTIL exp *
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
 
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
                      {default} reduce 5
 
-State 61:
+State 63:
      (38) explist1 ::= explist1 COMMA exp *
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
 
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
                      {default} reduce 38
 
-State 62:
+State 64:
      (37) explist1 ::= exp *
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
 
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
                      {default} reduce 37
-
-State 63:
-          exp ::= exp * OR exp
-          exp ::= exp * AND exp
-          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
-          exp ::= exp * DOT_DOT exp
-          exp ::= exp * PLUS|MINUS exp
-          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
-          exp ::= exp * RAISE exp
-     (81) field ::= LEFT_BRACKET exp RIGHT_BRACKET EQUAL exp *
-
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
-                          PLUS shift  22
-                         MINUS shift  22
-                      MULTIPLY shift  21
-                        DIVIDE shift  21
-                        MODULO shift  21
-                         RAISE shift  20
-                     {default} reduce 81
-
-State 64:
-          exp ::= exp * OR exp
-          exp ::= exp * AND exp
-          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
-          exp ::= exp * DOT_DOT exp
-          exp ::= exp * PLUS|MINUS exp
-          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
-          exp ::= exp * RAISE exp
-     (80) field ::= NAME EQUAL exp *
-
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
-                          PLUS shift  22
-                         MINUS shift  22
-                      MULTIPLY shift  21
-                        DIVIDE shift  21
-                        MODULO shift  21
-                         RAISE shift  20
-                     {default} reduce 80
 
 State 65:
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
-     (79) field ::= exp *
+     (83) field ::= LEFT_BRACKET exp RIGHT_BRACKET EQUAL exp *
 
-                            OR shift  28
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
-                     {default} reduce 79
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
+                     {default} reduce 83
 
 State 66:
           exp ::= exp * OR exp
-     (46) exp ::= exp OR exp *
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
+     (82) field ::= NAME EQUAL exp *
 
-                           AND shift  25
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
-                     {default} reduce 46
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
+                     {default} reduce 82
 
 State 67:
           exp ::= exp * OR exp
           exp ::= exp * AND exp
-     (47) exp ::= exp AND exp *
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
+     (81) field ::= exp *
 
-                          LESS shift  24
-                    LESS_EQUAL shift  24
-                       GREATER shift  24
-                 GREATER_EQUAL shift  24
-                   EQUAL_EQUAL shift  24
-                     NOT_EQUAL shift  24
-                       DOT_DOT shift  23
+                            OR shift  30
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
-                     {default} reduce 47
+                    BITWISE_OR shift  24
+                   BITWISE_AND shift  23
+                     {default} reduce 81
 
 State 68:
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
-     (49) exp ::= exp DOT_DOT exp *
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
+     (51) exp ::= exp BITWISE_AND exp *
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
 
-                       DOT_DOT shift  23
+                            OR shift  30
+                            OR reduce 51  ** Parsing conflict **
+                           AND shift  27
+                           AND reduce 51  ** Parsing conflict **
+                          LESS shift  26
+                          LESS reduce 51  ** Parsing conflict **
+                    LESS_EQUAL shift  26
+                    LESS_EQUAL reduce 51  ** Parsing conflict **
+                       GREATER shift  26
+                       GREATER reduce 51  ** Parsing conflict **
+                 GREATER_EQUAL shift  26
+                 GREATER_EQUAL reduce 51  ** Parsing conflict **
+                   EQUAL_EQUAL shift  26
+                   EQUAL_EQUAL reduce 51  ** Parsing conflict **
+                     NOT_EQUAL shift  26
+                     NOT_EQUAL reduce 51  ** Parsing conflict **
+                       DOT_DOT shift  25
+                       DOT_DOT reduce 51  ** Parsing conflict **
                           PLUS shift  22
+                          PLUS reduce 51  ** Parsing conflict **
                          MINUS shift  22
+                         MINUS reduce 51  ** Parsing conflict **
                       MULTIPLY shift  21
+                      MULTIPLY reduce 51  ** Parsing conflict **
                         DIVIDE shift  21
+                        DIVIDE reduce 51  ** Parsing conflict **
                         MODULO shift  21
+                        MODULO reduce 51  ** Parsing conflict **
                          RAISE shift  20
-                     {default} reduce 49
+                         RAISE reduce 51  ** Parsing conflict **
+                    BITWISE_OR shift  24
+                    BITWISE_OR reduce 51  ** Parsing conflict **
+                   BITWISE_AND shift  23
+                   BITWISE_AND reduce 51  ** Parsing conflict **
+                     {default} reduce 51
 
 State 69:
           exp ::= exp * OR exp
           exp ::= exp * AND exp
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
-     (48) exp ::= exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp *
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+     (50) exp ::= exp BITWISE_OR exp *
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
 
-                       DOT_DOT shift  23
+                            OR shift  30
+                            OR reduce 50  ** Parsing conflict **
+                           AND shift  27
+                           AND reduce 50  ** Parsing conflict **
+                          LESS shift  26
+                          LESS reduce 50  ** Parsing conflict **
+                    LESS_EQUAL shift  26
+                    LESS_EQUAL reduce 50  ** Parsing conflict **
+                       GREATER shift  26
+                       GREATER reduce 50  ** Parsing conflict **
+                 GREATER_EQUAL shift  26
+                 GREATER_EQUAL reduce 50  ** Parsing conflict **
+                   EQUAL_EQUAL shift  26
+                   EQUAL_EQUAL reduce 50  ** Parsing conflict **
+                     NOT_EQUAL shift  26
+                     NOT_EQUAL reduce 50  ** Parsing conflict **
+                       DOT_DOT shift  25
+                       DOT_DOT reduce 50  ** Parsing conflict **
+                          PLUS shift  22
+                          PLUS reduce 50  ** Parsing conflict **
+                         MINUS shift  22
+                         MINUS reduce 50  ** Parsing conflict **
+                      MULTIPLY shift  21
+                      MULTIPLY reduce 50  ** Parsing conflict **
+                        DIVIDE shift  21
+                        DIVIDE reduce 50  ** Parsing conflict **
+                        MODULO shift  21
+                        MODULO reduce 50  ** Parsing conflict **
+                         RAISE shift  20
+                         RAISE reduce 50  ** Parsing conflict **
+                    BITWISE_OR shift  24
+                    BITWISE_OR reduce 50  ** Parsing conflict **
+                   BITWISE_AND shift  23
+                   BITWISE_AND reduce 50  ** Parsing conflict **
+                     {default} reduce 50
+
+State 70:
+          exp ::= exp * OR exp
+     (46) exp ::= exp OR exp *
+          exp ::= exp * AND exp
+          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
+          exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
+          exp ::= exp * PLUS|MINUS exp
+          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
+          exp ::= exp * RAISE exp
+
+                           AND shift  27
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
                           PLUS shift  22
                          MINUS shift  22
                       MULTIPLY shift  21
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
-                     {default} reduce 48
-
-State 70:
-     (17) stat ::= functioncall *
-     (59) prefixexp ::= functioncall *
-
-              LEFT_PARANTHESIS reduce 59
-                         COLON reduce 59
-                           DOT reduce 59
-                        STRING reduce 59
-                  LEFT_BRACKET reduce 59
-                    LEFT_BRACE reduce 59
-                     {default} reduce 17
+                    BITWISE_OR shift  24
+                    BITWISE_OR reduce 46  ** Parsing conflict **
+                   BITWISE_AND shift  23
+                   BITWISE_AND reduce 46  ** Parsing conflict **
+                     {default} reduce 46
 
 State 71:
           exp ::= exp * OR exp
           exp ::= exp * AND exp
+     (47) exp ::= exp AND exp *
           exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
           exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
           exp ::= exp * PLUS|MINUS exp
-     (50) exp ::= exp PLUS|MINUS exp *
+          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
+          exp ::= exp * RAISE exp
+
+                          LESS shift  26
+                    LESS_EQUAL shift  26
+                       GREATER shift  26
+                 GREATER_EQUAL shift  26
+                   EQUAL_EQUAL shift  26
+                     NOT_EQUAL shift  26
+                       DOT_DOT shift  25
+                          PLUS shift  22
+                         MINUS shift  22
+                      MULTIPLY shift  21
+                        DIVIDE shift  21
+                        MODULO shift  21
+                         RAISE shift  20
+                    BITWISE_OR shift  24
+                    BITWISE_OR reduce 47  ** Parsing conflict **
+                   BITWISE_AND shift  23
+                   BITWISE_AND reduce 47  ** Parsing conflict **
+                     {default} reduce 47
+
+State 72:
+          exp ::= exp * OR exp
+          exp ::= exp * AND exp
+          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
+          exp ::= exp * DOT_DOT exp
+     (49) exp ::= exp DOT_DOT exp *
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
+          exp ::= exp * PLUS|MINUS exp
+          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
+          exp ::= exp * RAISE exp
+
+                       DOT_DOT shift  25
+                          PLUS shift  22
+                         MINUS shift  22
+                      MULTIPLY shift  21
+                        DIVIDE shift  21
+                        MODULO shift  21
+                         RAISE shift  20
+                    BITWISE_OR shift  24
+                    BITWISE_OR reduce 49  ** Parsing conflict **
+                   BITWISE_AND shift  23
+                   BITWISE_AND reduce 49  ** Parsing conflict **
+                     {default} reduce 49
+
+State 73:
+          exp ::= exp * OR exp
+          exp ::= exp * AND exp
+          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
+     (48) exp ::= exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp *
+          exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
+          exp ::= exp * PLUS|MINUS exp
+          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
+          exp ::= exp * RAISE exp
+
+                       DOT_DOT shift  25
+                          PLUS shift  22
+                         MINUS shift  22
+                      MULTIPLY shift  21
+                        DIVIDE shift  21
+                        MODULO shift  21
+                         RAISE shift  20
+                    BITWISE_OR shift  24
+                    BITWISE_OR reduce 48  ** Parsing conflict **
+                   BITWISE_AND shift  23
+                   BITWISE_AND reduce 48  ** Parsing conflict **
+                     {default} reduce 48
+
+State 74:
+     (17) stat ::= functioncall *
+     (61) prefixexp ::= functioncall *
+
+              LEFT_PARANTHESIS reduce 61
+                         COLON reduce 61
+                           DOT reduce 61
+                        STRING reduce 61
+                  LEFT_BRACKET reduce 61
+                    LEFT_BRACE reduce 61
+                     {default} reduce 17
+
+State 75:
+          exp ::= exp * OR exp
+          exp ::= exp * AND exp
+          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
+          exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
+          exp ::= exp * PLUS|MINUS exp
+     (52) exp ::= exp PLUS|MINUS exp *
           exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
           exp ::= exp * RAISE exp
 
@@ -2194,488 +2526,510 @@ State 71:
                         DIVIDE shift  21
                         MODULO shift  21
                          RAISE shift  20
-                     {default} reduce 50
+                    BITWISE_OR shift  24
+                    BITWISE_OR reduce 52  ** Parsing conflict **
+                   BITWISE_AND shift  23
+                   BITWISE_AND reduce 52  ** Parsing conflict **
+                     {default} reduce 52
 
-State 72:
+State 76:
           tableconstructor ::= LEFT_BRACE fieldlist * RIGHT_BRACE
           tableconstructor ::= LEFT_BRACE fieldlist * COMMA|SEMICOLON RIGHT_BRACE
           fieldlist ::= fieldlist * COMMA|SEMICOLON field
 
                      SEMICOLON shift  4
                          COMMA shift  4
-                   RIGHT_BRACE shift  133
+                   RIGHT_BRACE shift  137
 
-State 73:
-     (53) setlist ::= var *
-     (58) prefixexp ::= var *
+State 77:
+          exp ::= exp * OR exp
+          exp ::= exp * AND exp
+          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
+          exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
+          exp ::= exp * PLUS|MINUS exp
+          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
+          exp ::= exp * RAISE exp
+     (54) exp ::= exp RAISE exp *
 
-                         EQUAL reduce 53
-                         COMMA reduce 53
-                     {default} reduce 58
+                         RAISE shift  20
+                    BITWISE_OR shift  24
+                    BITWISE_OR reduce 54  ** Parsing conflict **
+                   BITWISE_AND shift  23
+                   BITWISE_AND reduce 54  ** Parsing conflict **
+                     {default} reduce 54
 
-State 74:
+State 78:
+          exp ::= exp * OR exp
+          exp ::= exp * AND exp
+          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
+          exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
+          exp ::= exp * PLUS|MINUS exp
+          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
+     (53) exp ::= exp MULTIPLY|DIVIDE|MODULO exp *
+          exp ::= exp * RAISE exp
+
+                         RAISE shift  20
+                    BITWISE_OR shift  24
+                    BITWISE_OR reduce 53  ** Parsing conflict **
+                   BITWISE_AND shift  23
+                   BITWISE_AND reduce 53  ** Parsing conflict **
+                     {default} reduce 53
+
+State 79:
+     (45) exp ::= NOT|HASH|MINUS exp *
+          exp ::= exp * OR exp
+          exp ::= exp * AND exp
+          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
+          exp ::= exp * DOT_DOT exp
+          exp ::= exp * BITWISE_OR exp
+          exp ::= exp * BITWISE_AND exp
+          exp ::= exp * PLUS|MINUS exp
+          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
+          exp ::= exp * RAISE exp
+
+                         RAISE shift  20
+                    BITWISE_OR shift  24
+                    BITWISE_OR reduce 45  ** Parsing conflict **
+                   BITWISE_AND shift  23
+                   BITWISE_AND reduce 45  ** Parsing conflict **
+                     {default} reduce 45
+
+State 80:
+     (55) setlist ::= var *
+     (60) prefixexp ::= var *
+
+                         EQUAL reduce 55
+                         COMMA reduce 55
+                     {default} reduce 60
+
+State 81:
      (28) binding ::= LOCAL namelist *
           binding ::= LOCAL namelist * EQUAL explist1
           namelist ::= namelist * COMMA NAME
 
                          EQUAL shift  6
-                         COMMA shift  85
+                         COMMA shift  92
                      {default} reduce 28
 
-State 75:
+State 82:
           repetition ::= FOR namelist * IN explist1
           namelist ::= namelist * COMMA NAME
 
                             IN shift  8
-                         COMMA shift  85
+                         COMMA shift  92
 
-State 76:
-     (54) setlist ::= setlist COMMA var *
-     (58) prefixexp ::= var *
+State 83:
+     (56) setlist ::= setlist COMMA var *
+     (60) prefixexp ::= var *
 
-                         EQUAL reduce 54
-                         COMMA reduce 54
-                     {default} reduce 58
+                         EQUAL reduce 56
+                         COMMA reduce 56
+                     {default} reduce 60
 
-State 77:
+State 84:
           stat ::= setlist * EQUAL explist1
           setlist ::= setlist * COMMA var
 
                          EQUAL shift  10
-                         COMMA shift  30
+                         COMMA shift  32
 
-State 78:
+State 85:
      (31) funcname ::= dottedname *
           funcname ::= dottedname * COLON NAME
           dottedname ::= dottedname * DOT NAME
 
-                         COLON shift  90
-                           DOT shift  89
+                         COLON shift  97
+                           DOT shift  96
                      {default} reduce 31
 
-State 79:
+State 86:
      (20) conds ::= condlist *
           conds ::= condlist * ELSE block
           condlist ::= condlist * ELSEIF cond
 
-                          ELSE shift  41
+                          ELSE shift  43
                         ELSEIF shift  11
                      {default} reduce 20
 
-State 80:
+State 87:
           explist1 ::= explist1 * COMMA exp
           args ::= LEFT_PARANTHESIS explist1 * RIGHT_PARANTHESIS
 
                          COMMA shift  15
-             RIGHT_PARANTHESIS shift  125
+             RIGHT_PARANTHESIS shift  129
 
-State 81:
+State 88:
           namelist ::= namelist COMMA * NAME
           parlist ::= namelist COMMA * DOT_DOT_DOT
 
-                          NAME shift  138
-                   DOT_DOT_DOT shift  137
+                          NAME shift  142
+                   DOT_DOT_DOT shift  141
 
-State 82:
+State 89:
           binding ::= LOCAL FUNCTION * NAME funcbody
 
-                          NAME shift  36
+                          NAME shift  38
 
-State 83:
+State 90:
      (29) binding ::= LOCAL namelist EQUAL explist1 *
           explist1 ::= explist1 * COMMA exp
 
                          COMMA shift  15
                      {default} reduce 29
 
-State 84:
+State 91:
      (27) laststat ::= RETURN explist1 *
           explist1 ::= explist1 * COMMA exp
 
                          COMMA shift  15
                      {default} reduce 27
 
-State 85:
+State 92:
           namelist ::= namelist COMMA * NAME
 
-                          NAME shift  138
+                          NAME shift  142
 
-State 86:
+State 93:
      (19) repetition ::= FOR namelist IN explist1 *
           explist1 ::= explist1 * COMMA exp
 
                          COMMA shift  15
                      {default} reduce 19
 
-State 87:
+State 94:
           repetition ::= FOR NAME * EQUAL explist23
      (35) namelist ::= NAME *
 
                          EQUAL shift  9
                      {default} reduce 35
 
-State 88:
+State 95:
      (16) stat ::= setlist EQUAL explist1 *
           explist1 ::= explist1 * COMMA exp
 
                          COMMA shift  15
                      {default} reduce 16
 
-State 89:
+State 96:
           dottedname ::= dottedname DOT * NAME
 
-                          NAME shift  112
+                          NAME shift  116
 
-State 90:
+State 97:
           funcname ::= dottedname COLON * NAME
 
-                          NAME shift  113
+                          NAME shift  117
 
-State 91:
+State 98:
           stat ::= IF conds * END
 
-                           END shift  119
+                           END shift  123
 
-State 92:
+State 99:
           ublock ::= block * UNTIL exp
 
                          UNTIL shift  14
 
-State 93:
+State 100:
           stat ::= repetition DO block * END
 
-                           END shift  121
+                           END shift  125
 
-State 94:
+State 101:
           stat ::= repetition * DO block END
 
-                            DO shift  42
+                            DO shift  44
 
-State 95:
+State 102:
           functioncall ::= prefixexp COLON * NAME args
 
-                          NAME shift  34
+                          NAME shift  36
 
-State 96:
+State 103:
           var ::= prefixexp DOT * NAME
 
-                          NAME shift  128
+                          NAME shift  132
 
-State 97:
+State 104:
           field ::= LEFT_BRACKET exp RIGHT_BRACKET * EQUAL exp
 
                          EQUAL shift  16
 
-State 98:
-     (55) var ::= NAME *
+State 105:
+     (57) var ::= NAME *
           field ::= NAME * EQUAL exp
 
                          EQUAL shift  18
-                     {default} reduce 55
-
-State 99:
-          params ::= LEFT_PARANTHESIS parlist * RIGHT_PARANTHESIS
-
-             RIGHT_PARANTHESIS shift  136
-
-State 100:
-          namelist ::= namelist * COMMA NAME
-     (71) parlist ::= namelist *
-          parlist ::= namelist * COMMA DOT_DOT_DOT
-
-                         COMMA shift  81
-                     {default} reduce 71
-
-State 101:
-          funcbody ::= params block * END
-
-                           END shift  140
-
-State 102:
-          exp ::= exp * OR exp
-          exp ::= exp * AND exp
-          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
-          exp ::= exp * DOT_DOT exp
-          exp ::= exp * PLUS|MINUS exp
-          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
-          exp ::= exp * RAISE exp
-     (52) exp ::= exp RAISE exp *
-
-                         RAISE shift  20
-                     {default} reduce 52
-
-State 103:
-          exp ::= exp * OR exp
-          exp ::= exp * AND exp
-          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
-          exp ::= exp * DOT_DOT exp
-          exp ::= exp * PLUS|MINUS exp
-          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
-     (51) exp ::= exp MULTIPLY|DIVIDE|MODULO exp *
-          exp ::= exp * RAISE exp
-
-                         RAISE shift  20
-                     {default} reduce 51
-
-State 104:
-     (45) exp ::= NOT|HASH|MINUS exp *
-          exp ::= exp * OR exp
-          exp ::= exp * AND exp
-          exp ::= exp * LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp
-          exp ::= exp * DOT_DOT exp
-          exp ::= exp * PLUS|MINUS exp
-          exp ::= exp * MULTIPLY|DIVIDE|MODULO exp
-          exp ::= exp * RAISE exp
-
-                         RAISE shift  20
-                     {default} reduce 45
-
-State 105:
-          stat ::= WHILE exp DO block * END
-
-                           END shift  149
+                     {default} reduce 57
 
 State 106:
-          stat ::= DO block * END
+          params ::= LEFT_PARANTHESIS parlist * RIGHT_PARANTHESIS
 
-                           END shift  150
+             RIGHT_PARANTHESIS shift  140
 
 State 107:
+          namelist ::= namelist * COMMA NAME
+     (73) parlist ::= namelist *
+          parlist ::= namelist * COMMA DOT_DOT_DOT
+
+                         COMMA shift  88
+                     {default} reduce 73
+
+State 108:
+          funcbody ::= params block * END
+
+                           END shift  144
+
+State 109:
+          stat ::= WHILE exp DO block * END
+
+                           END shift  153
+
+State 110:
+          stat ::= DO block * END
+
+                           END shift  154
+
+State 111:
       (0) chunk ::= block *
 
                              $ reduce 0
 
-State 108:
+State 112:
      (30) binding ::= LOCAL FUNCTION NAME funcbody *
 
                      {default} reduce 30
 
-State 109:
+State 113:
      (25) laststat ::= BREAK *
 
                      {default} reduce 25
 
-State 110:
+State 114:
      (18) repetition ::= FOR NAME EQUAL explist23 *
 
                      {default} reduce 18
 
-State 111:
+State 115:
      (33) dottedname ::= NAME *
 
                      {default} reduce 33
 
-State 112:
+State 116:
      (34) dottedname ::= dottedname DOT NAME *
 
                      {default} reduce 34
 
-State 113:
+State 117:
      (32) funcname ::= dottedname COLON NAME *
 
                      {default} reduce 32
 
-State 114:
+State 118:
      (15) stat ::= FUNCTION funcname funcbody *
 
                      {default} reduce 15
 
-State 115:
+State 119:
      (22) condlist ::= cond *
 
                      {default} reduce 22
 
-State 116:
+State 120:
      (24) cond ::= exp THEN block *
 
                      {default} reduce 24
 
-State 117:
+State 121:
      (23) condlist ::= condlist ELSEIF cond *
 
                      {default} reduce 23
 
-State 118:
+State 122:
      (21) conds ::= condlist ELSE block *
 
                      {default} reduce 21
 
-State 119:
+State 123:
      (14) stat ::= IF conds END *
 
                      {default} reduce 14
 
-State 120:
+State 124:
      (13) stat ::= REPEAT ublock *
 
                      {default} reduce 13
 
-State 121:
+State 125:
      (12) stat ::= repetition DO block END *
 
                      {default} reduce 12
 
-State 122:
-     (66) args ::= STRING *
+State 126:
+     (68) args ::= STRING *
 
-                     {default} reduce 66
+                     {default} reduce 68
 
-State 123:
-     (65) args ::= tableconstructor *
+State 127:
+     (67) args ::= tableconstructor *
+
+                     {default} reduce 67
+
+State 128:
+     (65) args ::= LEFT_PARANTHESIS RIGHT_PARANTHESIS *
 
                      {default} reduce 65
 
-State 124:
-     (63) args ::= LEFT_PARANTHESIS RIGHT_PARANTHESIS *
+State 129:
+     (66) args ::= LEFT_PARANTHESIS explist1 RIGHT_PARANTHESIS *
 
-                     {default} reduce 63
+                     {default} reduce 66
 
-State 125:
-     (64) args ::= LEFT_PARANTHESIS explist1 RIGHT_PARANTHESIS *
+State 130:
+     (64) functioncall ::= prefixexp COLON NAME args *
 
                      {default} reduce 64
 
-State 126:
-     (62) functioncall ::= prefixexp COLON NAME args *
-
-                     {default} reduce 62
-
-State 127:
-     (61) functioncall ::= prefixexp args *
-
-                     {default} reduce 61
-
-State 128:
-     (57) var ::= prefixexp DOT NAME *
-
-                     {default} reduce 57
-
-State 129:
-     (56) var ::= prefixexp LEFT_BRACKET exp RIGHT_BRACKET *
-
-                     {default} reduce 56
-
-State 130:
-     (77) fieldlist ::= field *
-
-                     {default} reduce 77
-
 State 131:
-     (78) fieldlist ::= fieldlist COMMA|SEMICOLON field *
+     (63) functioncall ::= prefixexp args *
+
+                     {default} reduce 63
+
+State 132:
+     (59) var ::= prefixexp DOT NAME *
+
+                     {default} reduce 59
+
+State 133:
+     (58) var ::= prefixexp LEFT_BRACKET exp RIGHT_BRACKET *
+
+                     {default} reduce 58
+
+State 134:
+     (79) fieldlist ::= field *
+
+                     {default} reduce 79
+
+State 135:
+     (80) fieldlist ::= fieldlist COMMA|SEMICOLON field *
+
+                     {default} reduce 80
+
+State 136:
+     (78) tableconstructor ::= LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE *
 
                      {default} reduce 78
 
-State 132:
-     (76) tableconstructor ::= LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE *
+State 137:
+     (77) tableconstructor ::= LEFT_BRACE fieldlist RIGHT_BRACE *
+
+                     {default} reduce 77
+
+State 138:
+     (76) tableconstructor ::= LEFT_BRACE RIGHT_BRACE *
 
                      {default} reduce 76
 
-State 133:
-     (75) tableconstructor ::= LEFT_BRACE fieldlist RIGHT_BRACE *
-
-                     {default} reduce 75
-
-State 134:
-     (74) tableconstructor ::= LEFT_BRACE RIGHT_BRACE *
+State 139:
+     (74) parlist ::= DOT_DOT_DOT *
 
                      {default} reduce 74
 
-State 135:
-     (72) parlist ::= DOT_DOT_DOT *
+State 140:
+     (71) params ::= LEFT_PARANTHESIS parlist RIGHT_PARANTHESIS *
 
-                     {default} reduce 72
+                     {default} reduce 71
 
-State 136:
-     (69) params ::= LEFT_PARANTHESIS parlist RIGHT_PARANTHESIS *
+State 141:
+     (75) parlist ::= namelist COMMA DOT_DOT_DOT *
 
-                     {default} reduce 69
+                     {default} reduce 75
 
-State 137:
-     (73) parlist ::= namelist COMMA DOT_DOT_DOT *
-
-                     {default} reduce 73
-
-State 138:
+State 142:
      (36) namelist ::= namelist COMMA NAME *
 
                      {default} reduce 36
 
-State 139:
+State 143:
      (35) namelist ::= NAME *
 
                      {default} reduce 35
 
-State 140:
-     (68) funcbody ::= params block END *
+State 144:
+     (70) funcbody ::= params block END *
 
-                     {default} reduce 68
+                     {default} reduce 70
 
-State 141:
-     (67) function ::= FUNCTION funcbody *
+State 145:
+     (69) function ::= FUNCTION funcbody *
 
-                     {default} reduce 67
+                     {default} reduce 69
 
-State 142:
-     (60) prefixexp ::= OPEN exp RIGHT_PARANTHESIS *
+State 146:
+     (62) prefixexp ::= OPEN exp RIGHT_PARANTHESIS *
+
+                     {default} reduce 62
+
+State 147:
+     (61) prefixexp ::= functioncall *
+
+                     {default} reduce 61
+
+State 148:
+     (60) prefixexp ::= var *
 
                      {default} reduce 60
 
-State 143:
-     (59) prefixexp ::= functioncall *
+State 149:
+     (57) var ::= NAME *
 
-                     {default} reduce 59
+                     {default} reduce 57
 
-State 144:
-     (58) prefixexp ::= var *
-
-                     {default} reduce 58
-
-State 145:
-     (55) var ::= NAME *
-
-                     {default} reduce 55
-
-State 146:
+State 150:
      (44) exp ::= tableconstructor *
 
                      {default} reduce 44
 
-State 147:
+State 151:
      (42) exp ::= function *
 
                      {default} reduce 42
 
-State 148:
+State 152:
      (41) exp ::= NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT *
 
                      {default} reduce 41
 
-State 149:
+State 153:
      (11) stat ::= WHILE exp DO block END *
 
                      {default} reduce 11
 
-State 150:
+State 154:
      (10) stat ::= DO block END *
 
                      {default} reduce 10
 
-State 151:
+State 155:
       (9) statlist ::= statlist stat semi *
 
                      {default} reduce 9
 
-State 152:
+State 156:
       (7) scope ::= scope statlist binding semi *
 
                      {default} reduce 7
 
-State 153:
+State 157:
       (4) block ::= scope statlist laststat semi *
 
                      {default} reduce 4
 
-State 154:
+State 158:
       (1) semi ::= SEMICOLON *
 
                      {default} reduce 1
@@ -2729,40 +3083,42 @@ Symbols:
    44: NUMBER
    45: STRING
    46: DOT_DOT_DOT
-   47: LEFT_BRACKET
-   48: RIGHT_BRACKET
-   49: RIGHT_PARANTHESIS
-   50: LEFT_BRACE
-   51: RIGHT_BRACE
-   52: error:
-   53: chunk: <lambda> OPEN DO WHILE REPEAT IF FUNCTION FOR NAME BREAK RETURN LOCAL
-   54: block: <lambda> OPEN DO WHILE REPEAT IF FUNCTION FOR NAME BREAK RETURN LOCAL
-   55: semi: <lambda> SEMICOLON
-   56: scope: <lambda> OPEN DO WHILE REPEAT IF FUNCTION FOR NAME LOCAL
-   57: statlist: <lambda> OPEN DO WHILE REPEAT IF FUNCTION FOR NAME
-   58: laststat: BREAK RETURN
-   59: ublock: OPEN UNTIL DO WHILE REPEAT IF FUNCTION FOR NAME BREAK RETURN LOCAL
-   60: exp: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
-   61: binding: LOCAL
-   62: stat: OPEN DO WHILE REPEAT IF FUNCTION FOR NAME
-   63: repetition: FOR
-   64: conds: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
-   65: funcname: NAME
-   66: funcbody: LEFT_PARANTHESIS
-   67: setlist: OPEN NAME
-   68: explist1: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
-   69: functioncall: OPEN NAME
-   70: explist23: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
-   71: namelist: NAME
-   72: condlist: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
-   73: cond: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
-   74: dottedname: NAME
-   75: function: FUNCTION
-   76: prefixexp: OPEN NAME
-   77: tableconstructor: LEFT_BRACE
-   78: var: OPEN NAME
-   79: args: LEFT_PARANTHESIS STRING LEFT_BRACE
-   80: params: LEFT_PARANTHESIS
-   81: parlist: <lambda> NAME DOT_DOT_DOT
-   82: fieldlist: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACKET LEFT_BRACE
-   83: field: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACKET LEFT_BRACE
+   47: BITWISE_OR
+   48: BITWISE_AND
+   49: LEFT_BRACKET
+   50: RIGHT_BRACKET
+   51: RIGHT_PARANTHESIS
+   52: LEFT_BRACE
+   53: RIGHT_BRACE
+   54: error:
+   55: chunk: <lambda> OPEN DO WHILE REPEAT IF FUNCTION FOR NAME BREAK RETURN LOCAL
+   56: block: <lambda> OPEN DO WHILE REPEAT IF FUNCTION FOR NAME BREAK RETURN LOCAL
+   57: semi: <lambda> SEMICOLON
+   58: scope: <lambda> OPEN DO WHILE REPEAT IF FUNCTION FOR NAME LOCAL
+   59: statlist: <lambda> OPEN DO WHILE REPEAT IF FUNCTION FOR NAME
+   60: laststat: BREAK RETURN
+   61: ublock: OPEN UNTIL DO WHILE REPEAT IF FUNCTION FOR NAME BREAK RETURN LOCAL
+   62: exp: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
+   63: binding: LOCAL
+   64: stat: OPEN DO WHILE REPEAT IF FUNCTION FOR NAME
+   65: repetition: FOR
+   66: conds: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
+   67: funcname: NAME
+   68: funcbody: LEFT_PARANTHESIS
+   69: setlist: OPEN NAME
+   70: explist1: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
+   71: functioncall: OPEN NAME
+   72: explist23: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
+   73: namelist: NAME
+   74: condlist: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
+   75: cond: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACE
+   76: dottedname: NAME
+   77: function: FUNCTION
+   78: prefixexp: OPEN NAME
+   79: tableconstructor: LEFT_BRACE
+   80: var: OPEN NAME
+   81: args: LEFT_PARANTHESIS STRING LEFT_BRACE
+   82: params: LEFT_PARANTHESIS
+   83: parlist: <lambda> NAME DOT_DOT_DOT
+   84: fieldlist: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACKET LEFT_BRACE
+   85: field: OPEN FUNCTION NAME MINUS NOT HASH NIL TRUE FALSE NUMBER STRING DOT_DOT_DOT LEFT_BRACKET LEFT_BRACE

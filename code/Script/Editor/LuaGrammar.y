@@ -156,6 +156,8 @@ exp(A)     ::= exp(B) OR exp(C) .															{ A = merge(B, C); }
 exp(A)     ::= exp(B) AND exp(C) .															{ A = merge(B, C); }
 exp(A)     ::= exp(B) LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp(C) .	{ A = merge(B, C); }
 exp(A)     ::= exp(B) DOT_DOT exp(C) .														{ A = merge(B, C); }
+exp(A)     ::= exp(B) BITWISE_OR exp(C) .                                                   { A = merge(B, C); }
+exp(A)     ::= exp(B) BITWISE_AND exp(C) .                                                  { A = merge(B, C); }
 exp(A)     ::= exp(B) PLUS|MINUS exp(C) .													{ A = merge(B, C); }
 exp(A)     ::= exp(B) MULTIPLY|DIVIDE|MODULO exp(C) .										{ A = merge(B, C); }
 exp(A)     ::= exp(B) RAISE exp(C) .														{ A = merge(B, C); }
