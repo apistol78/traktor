@@ -23,6 +23,12 @@ namespace traktor
 	namespace drawing
 	{
 
+int32_t cycle(float f)
+{
+	int32_t n = int32_t(f);
+	return f >= 0.0f ? n : n - 1;
+}
+
 /*! \brief Rasterizer implementation interface. */
 class IRasterImpl : public IRefCount
 {
@@ -276,8 +282,11 @@ public:
 
 		for (unsigned i = 0; i < len; ++i)
 		{
-			int32_t sx = abs(int32_t(pt.x)) % w;
-			int32_t sy = abs(int32_t(pt.y)) % h;
+			int32_t nx = cycle(pt.x / w);
+			int32_t sx = int32_t(pt.x - nx * w);
+
+			int32_t ny = cycle(pt.y / h);
+			int32_t sy = int32_t(pt.y - ny * h);
 
 			m_image->getPixelUnsafe(sx, sy, c);
 
