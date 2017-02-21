@@ -39,6 +39,8 @@ const std::map< wchar_t, int32_t >& getSingles()
 		single[L')'] = TOKEN_RIGHT_PARANTHESIS;
 		single[L'{'] = TOKEN_LEFT_BRACE;
 		single[L'}'] = TOKEN_RIGHT_BRACE;
+		single[L'|'] = TOKEN_BITWISE_OR;
+		single[L'&'] = TOKEN_BITWISE_AND;
 	}
 	return single;
 }

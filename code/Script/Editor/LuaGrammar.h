@@ -44,8 +44,10 @@
 #define TOKEN_NUMBER                          44
 #define TOKEN_STRING                          45
 #define TOKEN_DOT_DOT_DOT                     46
-#define TOKEN_LEFT_BRACKET                    47
-#define TOKEN_RIGHT_BRACKET                   48
-#define TOKEN_RIGHT_PARANTHESIS               49
-#define TOKEN_LEFT_BRACE                      50
-#define TOKEN_RIGHT_BRACE                     51
+#define TOKEN_BITWISE_OR                      47
+#define TOKEN_BITWISE_AND                     48
+#define TOKEN_LEFT_BRACKET                    49
+#define TOKEN_RIGHT_BRACKET                   50
+#define TOKEN_RIGHT_PARANTHESIS               51
+#define TOKEN_LEFT_BRACE                      52
+#define TOKEN_RIGHT_BRACE                     53
