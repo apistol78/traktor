@@ -267,8 +267,7 @@
 			</item>
 		</sourceData>
 	</sourceData>
-	<stateData type="traktor.input.InputMappingStateData" version="1">
-		<filters/>
+	<stateData type="traktor.input.InputMappingStateData">
 		<stateData>
 			<item>
 				<first>STATE_MOVE_X</first>
