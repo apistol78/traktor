@@ -4,6 +4,7 @@
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/IBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/TreeView/TreeView.h"
 #include "Ui/Custom/TreeView/TreeViewDragEvent.h"
@@ -269,36 +270,32 @@ int32_t TreeViewItem::calculateDepth() const
 
 Rect TreeViewItem::calculateExpandRect() const
 {
+	int32_t d = m_view->m_imageState->getSize().cy;
 	int32_t depth = calculateDepth();
-
-	int32_t imageWidth = m_view->m_imageWidth;
-	int32_t imageHeight = m_view->m_imageHeight;
 
 	Rect rcItem = m_view->getCellClientRect(this);
 	rcItem.left += ui::scaleBySystemDPI(4 + depth * 20);
-	rcItem.right = rcItem.left + imageWidth;
+	rcItem.right = rcItem.left + d;
 
-	int32_t dy = (rcItem.getHeight() - imageHeight) / 2;
+	int32_t dy = (rcItem.getHeight() - d) / 2;
 	rcItem.top += dy;
-	rcItem.bottom = rcItem.top + imageHeight;
+	rcItem.bottom = rcItem.top + d;
 
 	return rcItem;
 }
 
 Rect TreeViewItem::calculateImageRect() const
 {
+	int32_t d = m_view->m_image->getSize().cy;
 	int32_t depth = calculateDepth();
-
-	int32_t imageWidth = m_view->m_imageWidth;
-	int32_t imageHeight = m_view->m_imageHeight;
 
 	Rect rcItem = m_view->getCellClientRect(this);
 	rcItem.left += ui::scaleBySystemDPI(4 + depth * 20 + 22);
-	rcItem.right = rcItem.left + imageWidth;
+	rcItem.right = rcItem.left + d;
 
-	int32_t dy = (rcItem.getHeight() - imageHeight) / 2;
+	int32_t dy = (rcItem.getHeight() - d) / 2;
 	rcItem.top += dy;
-	rcItem.bottom = rcItem.top + imageHeight;
+	rcItem.bottom = rcItem.top + d;
 
 	return rcItem;
 }
@@ -306,13 +303,12 @@ Rect TreeViewItem::calculateImageRect() const
 Rect TreeViewItem::calculateLabelRect() const
 {
 	Size extent = m_view->getTextExtent(m_text);
+	int32_t d = m_view->m_imageState->getSize().cy;
 	int32_t depth = calculateDepth();
-
-	int32_t imageWidth = m_view->m_imageWidth;
 
 	Rect rcItem = m_view->getCellClientRect(this);
 	rcItem.left += ui::scaleBySystemDPI(4 + depth * 20 + 44);
-	rcItem.right = rcItem.left + extent.cx + imageWidth;
+	rcItem.right = rcItem.left + extent.cx + d;
 
 	return rcItem;
 }
@@ -320,7 +316,8 @@ Rect TreeViewItem::calculateLabelRect() const
 int32_t TreeViewItem::calculateWidth() const
 {
 	Size extent = m_view->getTextExtent(m_text);
-	return ui::scaleBySystemDPI(4 + calculateDepth() * 20 + 44) + extent.cx + m_view->m_imageWidth;
+	int32_t d = m_view->m_imageState->getSize().cy;
+	return ui::scaleBySystemDPI(4 + calculateDepth() * 20 + 44) + extent.cx + d;
 }
 
 void TreeViewItem::interval()
@@ -439,16 +436,14 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 		canvas.fillRect(rect);
 	}
 
-	int32_t imageWidth = m_view->m_imageWidth;
-	int32_t imageHeight = m_view->m_imageHeight;
-
 	if (m_view->m_imageState && hasChildren())
 	{
 		Rect rcExpand = calculateExpandRect();
+		int32_t d = m_view->m_imageState->getSize().cy;
 		canvas.drawBitmap(
 			rcExpand.getTopLeft(),
-			Point(isExpanded() ? imageWidth : 0, /*isSelected() ? imageHeight :*/ 0),
-			Size(imageWidth, imageHeight),
+			Point(isExpanded() ? d : 0, 0),
+			Size(d, d),
 			m_view->m_imageState,
 			BmAlpha
 		);
@@ -461,10 +456,11 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 	if (m_view->m_image && image >= 0)
 	{
 		Rect rcImage = calculateImageRect();
+		int32_t d = m_view->m_image->getSize().cy;
 		canvas.drawBitmap(
 			rcImage.getTopLeft(),
-			Point(image * imageWidth, 0),
-			Size(imageWidth, imageHeight),
+			Point(image * d, 0),
+			Size(d, d),
 			m_view->m_image,
 			BmAlpha
 		);

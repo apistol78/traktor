@@ -24,9 +24,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.TreeView", TreeView, AutoWidget)
 
 TreeView::TreeView()
-:	m_imageWidth(scaleBySystemDPI(16))
-,	m_imageHeight(scaleBySystemDPI(16))
-,	m_imageCount(0)
+:	m_imageCount(0)
 ,	m_autoEdit(false)
 {
 }
@@ -52,12 +50,6 @@ bool TreeView::create(Widget* parent, int32_t style)
 
 int32_t TreeView::addImage(IBitmap* image, int32_t imageCount)
 {
-	if (m_imageCount <= 0)
-	{
-		m_imageWidth =
-		m_imageHeight = 0;
-	}
-
 	if (m_image)
 	{
 		uint32_t width = m_image->getSize().cx + image->getSize().cx;
@@ -69,11 +61,7 @@ int32_t TreeView::addImage(IBitmap* image, int32_t imageCount)
 		m_image = newImage;
 	}
 	else
-	{
 		m_image = image;
-		m_imageWidth = std::max< uint32_t >(m_imageWidth, m_image->getSize().cx / imageCount);
-		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_image->getSize().cy);
-	}
 
 	m_imageCount += imageCount;
 	return m_imageCount - imageCount;

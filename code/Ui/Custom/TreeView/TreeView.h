@@ -76,8 +76,6 @@ private:
 	RefArray< TreeViewItem > m_roots;
 	Ref< IBitmap > m_imageState;
 	Ref< IBitmap > m_image;
-	int32_t m_imageWidth;
-	int32_t m_imageHeight;
 	int32_t m_imageCount;
 	Ref< Edit > m_itemEditor;
 	Ref< TreeViewItem > m_editItem;
