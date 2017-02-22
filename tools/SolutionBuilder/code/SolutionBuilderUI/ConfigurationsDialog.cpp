@@ -22,8 +22,8 @@ bool ConfigurationsDialog::create(ui::Widget* parent, Solution* solution)
 	))
 		return false;
 
-	m_listConfigurations = new ui::ListBox();
-	m_listConfigurations->create(this, L"", ui::WsClientBorder);
+	m_listConfigurations = new ui::custom::ListBox();
+	m_listConfigurations->create(this, ui::custom::ListBox::WsSingle);
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(this, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));

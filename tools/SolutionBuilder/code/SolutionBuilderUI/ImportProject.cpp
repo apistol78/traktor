@@ -31,7 +31,7 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 			file->close();
 
 			ImportProjectDialog importDialog;
-			importDialog.create(parent, L"Import project(s)", otherSolution);
+			importDialog.create(parent, L"Import project(s)", false, otherSolution);
 
 			if (importDialog.showModal() == ui::DrOk)
 			{
@@ -40,6 +40,25 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 
 				for (RefArray< Project >::iterator i = otherProjects.begin(); i != otherProjects.end(); ++i)
 				{
+					// Ensure project doesn't already exist in solution.
+					bool existing = false;
+
+					const RefArray< Project >& projects = solution->getProjects();
+					for (RefArray< Project >::const_iterator k = projects.begin(); k != projects.end(); ++k)
+					{
+						if ((*k)->getName() == (*i)->getName())
+						{
+							existing = true;
+							break;
+						}
+					}
+
+					if (existing)
+					{
+						ui::MessageBox::show(parent, L"Project " + (*i)->getName() + L" already exists\nin solution.", L"Error", ui::MbIconExclamation | ui::MbOk);
+						continue;
+					}
+
 					RefArray< Dependency > resolvedDependencies;
 
 					// Find local project for each dependency of the imported projects.

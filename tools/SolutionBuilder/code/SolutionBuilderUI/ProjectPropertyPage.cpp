@@ -287,7 +287,7 @@ void ProjectPropertyPage::eventClickAddExternal(ui::ButtonClickEvent* event)
 		if (solution)
 		{
 			ImportProjectDialog importDialog;
-			importDialog.create(this, L"Select project(s)", solution);
+			importDialog.create(this, L"Select project(s)", false, solution);
 
 			if (importDialog.showModal() == ui::DrOk)
 			{

@@ -2,7 +2,7 @@
 #define ConfigurationsDialog_H
 
 #include <Ui/ConfigDialog.h>
-#include <Ui/ListBox.h>
+#include <Ui/Custom/ListBox/ListBox.h>
 
 class Solution;
 
@@ -28,7 +28,7 @@ public:
 	const std::vector< Action >& getActions() const;
 
 private:
-	traktor::Ref< traktor::ui::ListBox > m_listConfigurations;
+	traktor::Ref< traktor::ui::custom::ListBox > m_listConfigurations;
 	std::vector< Action > m_actions;
 
 	void eventButtonNew(traktor::ui::ButtonClickEvent* event);
