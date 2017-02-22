@@ -68,6 +68,10 @@ Ref< StyleSheet > StyleSheet::createDefault()
 	ss->setColor(L"traktor.ui.custom.ScrollBar", L"color-arrow", Color4ub(120, 120, 120));
 	ss->setColor(L"traktor.ui.custom.ScrollBar", L"color-slider", Color4ub(189, 189, 192));
 
+	ss->setColor(L"traktor.ui.custom.ListBox", L"background-color", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.custom.ListBox", L"item-color-selected", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.custom.ListBox", L"item-background-color-selected", Color4ub(51, 153, 255));
+
 	ss->setColor(L"traktor.ui.custom.LogList", L"background-color", Color4ub(255, 255, 255));
 	ss->setColor(L"traktor.ui.custom.LogList", L"background-color-info", Color4ub(255, 255, 255, 0));
 	ss->setColor(L"traktor.ui.custom.LogList", L"background-color-warning", Color4ub(255, 210, 87));
