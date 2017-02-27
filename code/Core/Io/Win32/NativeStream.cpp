@@ -10,8 +10,6 @@ NativeStream::NativeStream(HANDLE hFile, uint32_t mode)
 ,	m_mode(mode)
 ,	m_fileSize(0)
 {
-	if (m_mode & File::FmRead)
-		m_fileSize = GetFileSize(m_hFile, NULL);
 }
 
 NativeStream::~NativeStream()
@@ -54,6 +52,9 @@ int NativeStream::tell() const
 
 int NativeStream::available() const
 {
+	if ((m_mode & File::FmRead) == File::FmRead && m_fileSize == 0)
+		m_fileSize = GetFileSize(m_hFile, NULL);
+
 	return m_hFile != 0 ? ((int)m_fileSize - tell()) : 0;
 }
 
