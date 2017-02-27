@@ -380,6 +380,8 @@ void PerspectiveRenderControl::updateSettings()
 	m_invertPanY = settings->getProperty< PropertyBoolean >(L"SceneEditor.InvertPanY");
 	m_fieldOfView = settings->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
 	m_mouseWheelRate = settings->getProperty< PropertyFloat >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
+
+	updateWorldRenderer();
 }
 
 Matrix44 PerspectiveRenderControl::getProjectionTransform() const
