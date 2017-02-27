@@ -48,7 +48,7 @@ public:
 private:
 	HANDLE m_hFile;
 	uint32_t m_mode;
-	size_t m_fileSize;
+	mutable size_t m_fileSize;
 };
 
 }
