@@ -18,7 +18,7 @@ const TypeInfoSet TextureAssetEditorFactory::getEditableTypes() const
 
 bool TextureAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
-	return true;
+	return false;
 }
 
 Ref< editor::IObjectEditor > TextureAssetEditorFactory::createObjectEditor(editor::IEditor* editor) const
