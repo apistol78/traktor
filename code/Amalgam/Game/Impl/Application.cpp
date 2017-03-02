@@ -911,6 +911,9 @@ bool Application::update()
 							renderView->end();
 						}
 						renderView->present();
+#if T_MEASURE_PERFORMANCE
+						renderView->getStatistics(m_renderViewStats);
+#endif
 					}
 				}
 
@@ -953,9 +956,6 @@ bool Application::update()
 		// Publish performance to target manager.
 		if (m_targetManagerConnection && m_targetManagerConnection->connected())
 		{
-			render::RenderViewStatistics rvs;
-			m_renderServer->getRenderView()->getStatistics(rvs);
-
 			resource::ResourceManagerStatistics rms;
 			m_resourceServer->getResourceManager()->getStatistics(rms);
 
@@ -976,8 +976,8 @@ bool Application::update()
 			performance.heapObjects = Object::getHeapObjectCount();
 			performance.build = float(buildTimeEnd - buildTimeStart);
 			performance.render = m_renderDuration;
-			performance.drawCalls = rvs.drawCalls;
-			performance.primitiveCount = rvs.primitiveCount;
+			performance.drawCalls = m_renderViewStats.drawCalls;
+			performance.primitiveCount = m_renderViewStats.primitiveCount;
 			performance.residentResourcesCount = rms.residentCount;
 			performance.exclusiveResourcesCount = rms.exclusiveCount;
 
@@ -1211,6 +1211,10 @@ void Application::threadRender()
 					}
 					renderView->present();
 				}
+
+#if T_MEASURE_PERFORMANCE
+				renderView->getStatistics(m_renderViewStats);
+#endif
 			}
 			else
 			{
