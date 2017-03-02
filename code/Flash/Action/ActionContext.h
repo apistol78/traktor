@@ -89,7 +89,7 @@ public:
 
 	void removeFrameListener(ActionObject* frameListener);
 
-	void notifyFrameListeners(avm_number_t time);
+	void notifyFrameListeners(float time);
 
 	ActionObject* lookupClass(const std::string& className);
 

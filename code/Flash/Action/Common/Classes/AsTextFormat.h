@@ -31,9 +31,9 @@ private:
 
 	void TextFormat_set_align(FlashTextFormat* self, const std::string& value) const;
 
-	avm_number_t TextFormat_get_blockIndent(FlashTextFormat* self) const;
+	float TextFormat_get_blockIndent(FlashTextFormat* self) const;
 
-	void TextFormat_set_blockIndent(FlashTextFormat* self, avm_number_t value) const;
+	void TextFormat_set_blockIndent(FlashTextFormat* self, float value) const;
 
 	bool TextFormat_get_bold(FlashTextFormat* self) const;
 
@@ -51,9 +51,9 @@ private:
 
 	void TextFormat_set_font(FlashTextFormat* self, const std::string& value) const;
 
-	avm_number_t TextFormat_get_indent(FlashTextFormat* self) const;
+	float TextFormat_get_indent(FlashTextFormat* self) const;
 
-	void TextFormat_set_indent(FlashTextFormat* self, avm_number_t value) const;
+	void TextFormat_set_indent(FlashTextFormat* self, float value) const;
 
 	bool TextFormat_get_italic(FlashTextFormat* self) const;
 
@@ -63,25 +63,25 @@ private:
 
 	void TextFormat_set_kerning(FlashTextFormat* self, bool value) const;
 
-	avm_number_t TextFormat_get_leading(FlashTextFormat* self) const;
+	float TextFormat_get_leading(FlashTextFormat* self) const;
 
-	void TextFormat_set_leading(FlashTextFormat* self, avm_number_t value) const;
+	void TextFormat_set_leading(FlashTextFormat* self, float value) const;
 
-	avm_number_t TextFormat_get_leftMargin(FlashTextFormat* self) const;
+	float TextFormat_get_leftMargin(FlashTextFormat* self) const;
 
-	void TextFormat_set_leftMargin(FlashTextFormat* self, avm_number_t value) const;
+	void TextFormat_set_leftMargin(FlashTextFormat* self, float value) const;
 
-	avm_number_t TextFormat_get_letterSpacing(FlashTextFormat* self) const;
+	float TextFormat_get_letterSpacing(FlashTextFormat* self) const;
 
-	void TextFormat_set_letterSpacing(FlashTextFormat* self, avm_number_t value) const;
+	void TextFormat_set_letterSpacing(FlashTextFormat* self, float value) const;
 
-	avm_number_t TextFormat_get_rightMargin(FlashTextFormat* self) const;
+	float TextFormat_get_rightMargin(FlashTextFormat* self) const;
 
-	void TextFormat_set_rightMargin(FlashTextFormat* self, avm_number_t value) const;
+	void TextFormat_set_rightMargin(FlashTextFormat* self, float value) const;
 
-	avm_number_t TextFormat_get_size(FlashTextFormat* self) const;
+	float TextFormat_get_size(FlashTextFormat* self) const;
 
-	void TextFormat_set_size(FlashTextFormat* self, avm_number_t value) const;
+	void TextFormat_set_size(FlashTextFormat* self, float value) const;
 
 	ActionValue TextFormat_get_tabStops(FlashTextFormat* self) const;
 

@@ -42,12 +42,12 @@ void As_flash_geom_Point::initialize(ActionObject* self)
 
 void As_flash_geom_Point::construct(ActionObject* self, const ActionValueArray& args)
 {
-	avm_number_t v[2] = { avm_number_t(0) };
+	float v[2] = { 0.0f };
 
 	if (args.size() > 0)
-		v[0] = args[0].getNumber();
+		v[0] = args[0].getFloat();
 	if (args.size() > 1)
-		v[1] = args[1].getNumber();
+		v[1] = args[1].getFloat();
 
 	self->setRelay(new Point(v[0], v[1]));
 }
@@ -77,7 +77,7 @@ void As_flash_geom_Point::Point_interpolate(CallArgs& ca)
 	Point* pt1 = apt1->getRelay< Point >();
 	Point* pt2 = apt2->getRelay< Point >();
 
-	avm_number_t f = ca.args[2].getNumber();
+	float f = ca.args[2].getFloat();
 
 	if (pt1 && pt2)
 		ca.ret = ActionValue(new ActionObject(ca.context, Point::interpolate(*pt1, *pt2, f)));
@@ -85,8 +85,8 @@ void As_flash_geom_Point::Point_interpolate(CallArgs& ca)
 
 void As_flash_geom_Point::Point_polar(CallArgs& ca)
 {
-	avm_number_t length = ca.args[0].getNumber();
-	avm_number_t angle = ca.args[1].getNumber();
+	float length = ca.args[0].getFloat();
+	float angle = ca.args[1].getFloat();
 	ca.ret = ActionValue(new ActionObject(ca.context, Point::polar(length, angle)));
 }
 

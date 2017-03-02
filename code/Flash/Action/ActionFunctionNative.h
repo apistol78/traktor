@@ -69,29 +69,29 @@ struct ActionValueCast< bool, false >
 template < >
 struct ActionValueCast< int32_t, false >
 {
-	static ActionValue set(ActionContext* cx, int32_t v) { return ActionValue(avm_number_t(v)); }
-	static int32_t get(ActionContext* cx, const ActionValue& av) { return int32_t(av.getNumber()); }
+	static ActionValue set(ActionContext* cx, int32_t v) { return ActionValue(v); }
+	static int32_t get(ActionContext* cx, const ActionValue& av) { return av.getInteger(); }
 };
 
 template < >
 struct ActionValueCast< uint32_t, false >
 {
-	static ActionValue set(ActionContext* cx, uint32_t v) { return ActionValue(avm_number_t(v)); }
-	static uint32_t get(ActionContext* cx, const ActionValue& av) { return uint32_t(av.getNumber()); }
+	static ActionValue set(ActionContext* cx, uint32_t v) { return ActionValue(int32_t(v)); }
+	static uint32_t get(ActionContext* cx, const ActionValue& av) { return uint32_t(av.getInteger()); }
 };
 
 template < >
 struct ActionValueCast< float, false >
 {
-	static ActionValue set(ActionContext* cx, float v) { return ActionValue(avm_number_t(v)); }
-	static float get(ActionContext* cx, const ActionValue& av) { return float(av.getNumber()); }
+	static ActionValue set(ActionContext* cx, float v) { return ActionValue(float(v)); }
+	static float get(ActionContext* cx, const ActionValue& av) { return float(av.getFloat()); }
 };
 
 template < >
 struct ActionValueCast< double, false >
 {
-	static ActionValue set(ActionContext* cx, double v) { return ActionValue(avm_number_t(v)); }
-	static double get(ActionContext* cx, const ActionValue& av) { return double(av.getNumber()); }
+	static ActionValue set(ActionContext* cx, double v) { return ActionValue(float(v)); }
+	static double get(ActionContext* cx, const ActionValue& av) { return double(av.getFloat()); }
 };
 
 template < >

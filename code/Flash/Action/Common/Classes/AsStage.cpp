@@ -325,7 +325,7 @@ void AsStage::Stage_set_align(CallArgs& ca)
 
 void AsStage::Stage_get_height(CallArgs& ca)
 {
-	ca.ret = ActionValue(avm_number_t(m_height));
+	ca.ret = ActionValue(m_height);
 }
 
 void AsStage::Stage_get_scaleMode(CallArgs& ca)
@@ -376,7 +376,7 @@ void AsStage::Stage_set_showMenu(CallArgs& ca)
 
 void AsStage::Stage_get_width(CallArgs& ca)
 {
-	ca.ret = ActionValue(avm_number_t(m_width));
+	ca.ret = ActionValue(m_width);
 }
 
 	}

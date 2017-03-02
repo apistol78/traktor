@@ -35,9 +35,9 @@ void As_flash_filters_BlurFilter::construct(ActionObject* self, const ActionValu
 	if (args.size() >= 3)
 	{
 		self->setRelay(new BlurFilter(
-			args[0].getNumber(),
-			args[1].getNumber(),
-			int32_t(args[2].getNumber())
+			args[0].getFloat(),
+			args[1].getFloat(),
+			args[2].getInteger()
 		));
 	}
 	else

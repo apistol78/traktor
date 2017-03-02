@@ -13,10 +13,10 @@ As_traktor_amalgam_InputFabricator::As_traktor_amalgam_InputFabricator(flash::Ac
 :	flash::ActionClass(context, "traktor.amalgam.InputFabricator")
 ,	m_environment(environment)
 {
-	setMember("KEYBOARD", flash::ActionValue((flash::avm_number_t)input::CtKeyboard));
-	setMember("MOUSE", flash::ActionValue((flash::avm_number_t)input::CtMouse));
-	setMember("JOYSTICK", flash::ActionValue((flash::avm_number_t)input::CtJoystick));
-	setMember("WHEEL", flash::ActionValue((flash::avm_number_t)input::CtWheel));
+	setMember("KEYBOARD", flash::ActionValue((int32_t)input::CtKeyboard));
+	setMember("MOUSE", flash::ActionValue((int32_t)input::CtMouse));
+	setMember("JOYSTICK", flash::ActionValue((int32_t)input::CtJoystick));
+	setMember("WHEEL", flash::ActionValue((int32_t)input::CtWheel));
 
 	Ref< flash::ActionObject > prototype = new flash::ActionObject(context);
 
@@ -55,7 +55,7 @@ void As_traktor_amalgam_InputFabricator::InputFabricator_fabricateSource(flash::
 
 	bool r = inp->fabricateSource(
 		ca.args[0].getWideString(),
-		int32_t(ca.args[1].getNumber()),
+		ca.args[1].getInteger(),
 		ca.args[2].getBoolean()
 	);
 

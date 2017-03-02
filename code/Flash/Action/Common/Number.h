@@ -24,14 +24,14 @@ class T_DLLCLASS Number : public ActionObjectRelay
 	T_RTTI_CLASS;
 
 public:
-	Number(avm_number_t value);
+	Number(float value);
 
-	void set(avm_number_t value) { m_value = value; }
+	void set(float value) { m_value = value; }
 
-	avm_number_t get() const { return m_value; }
+	float get() const { return m_value; }
 
 private:
-	avm_number_t m_value;
+	float m_value;
 };
 
 	}

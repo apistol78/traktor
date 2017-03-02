@@ -106,7 +106,7 @@ void ActionContext::removeFrameListener(ActionObject* frameListener)
 	}
 }
 
-void ActionContext::notifyFrameListeners(avm_number_t time)
+void ActionContext::notifyFrameListeners(float time)
 {
 	if (m_frameListeners.empty())
 		return;

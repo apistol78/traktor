@@ -48,8 +48,10 @@ Any castActionToAny(const ActionValue& value)
 	{
 	case flash::ActionValue::AvtBoolean:
 		return Any::fromBoolean(value.getBoolean());
-	case flash::ActionValue::AvtNumber:
-		return Any::fromFloat(float(value.getNumber()));
+	case flash::ActionValue::AvtInteger:
+		return Any::fromInteger(value.getInteger());
+	case flash::ActionValue::AvtFloat:
+		return Any::fromFloat(value.getFloat());
 	case flash::ActionValue::AvtString:
 		return Any::fromString(value.getString());
 	case flash::ActionValue::AvtObject:
@@ -72,7 +74,7 @@ ActionValue castAnyToAction(const Any& value)
 	if (value.isBoolean())
 		return flash::ActionValue(value.getBooleanUnsafe());
 	else if (value.isInteger())
-		return flash::ActionValue((flash::avm_number_t)value.getIntegerUnsafe());
+		return flash::ActionValue(value.getIntegerUnsafe());
 	else if (value.isFloat())
 		return flash::ActionValue(value.getFloatUnsafe());
 	else if (value.isString())

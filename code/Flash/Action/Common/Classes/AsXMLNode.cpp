@@ -144,12 +144,12 @@ void AsXMLNode::XMLNode_set_nodeName(XMLNode* self, const std::wstring& nodeName
 	)
 }
 
-avm_number_t AsXMLNode::XMLNode_get_nodeType(XMLNode* self) const
+float AsXMLNode::XMLNode_get_nodeType(XMLNode* self) const
 {
-	return avm_number_t(self->getNodeType());
+	return float(self->getNodeType());
 }
 
-void AsXMLNode::XMLNode_set_nodeType(XMLNode* self, avm_number_t nodeType) const
+void AsXMLNode::XMLNode_set_nodeType(XMLNode* self, float nodeType) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"XMLNode::nodeType not implemented" << Endl;

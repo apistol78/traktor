@@ -15,7 +15,7 @@ Matrix::Matrix()
 {
 }
 
-Matrix::Matrix(const avm_number_t v[6])
+Matrix::Matrix(const float v[6])
 :	ActionObjectRelay("Matrix")
 {
 	m_v.e11 = v[0]; m_v.e12 = v[1]; m_v.e13 = v[4];
@@ -35,12 +35,12 @@ void Matrix::concat(const Matrix* rh)
 	m_v *= rh->m_v;
 }
 
-void Matrix::createBox(avm_number_t scaleX, avm_number_t scaleY, avm_number_t rotation, avm_number_t tx, avm_number_t ty)
+void Matrix::createBox(float scaleX, float scaleY, float rotation, float tx, float ty)
 {
 	T_FATAL_ERROR;
 }
 
-void Matrix::createGradientBox(avm_number_t width, avm_number_t height, avm_number_t rotation, avm_number_t tx, avm_number_t ty)
+void Matrix::createGradientBox(float width, float height, float rotation, float tx, float ty)
 {
 	float x = tx;
 	float y = ty;
@@ -69,12 +69,12 @@ void Matrix::invert()
 	m_v = m_v.inverse();
 }
 
-void Matrix::rotate(avm_number_t angle)
+void Matrix::rotate(float angle)
 {
 	m_v *= traktor::rotate(angle);
 }
 
-void Matrix::scale(avm_number_t scaleX, avm_number_t scaleY)
+void Matrix::scale(float scaleX, float scaleY)
 {
 	m_v *= traktor::scale(scaleX, scaleY);
 }
@@ -92,7 +92,7 @@ Ref< Point > Matrix::transformPoint(const Point* pt)
 	return 0;
 }
 
-void Matrix::translate(avm_number_t x, avm_number_t y)
+void Matrix::translate(float x, float y)
 {
 	m_v *= traktor::translate(x, y);
 }

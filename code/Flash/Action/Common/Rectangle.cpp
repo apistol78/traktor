@@ -13,14 +13,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Rectangle", Rectangle, ActionObjectRelay)
 
 Rectangle::Rectangle()
 :	ActionObjectRelay("flash.geom.Rectangle")
-,	m_x(avm_number_t(0))
-,	m_y(avm_number_t(0))
-,	m_width(avm_number_t(0))
-,	m_height(avm_number_t(0))
+,	m_x(0.0f)
+,	m_y(0.0f)
+,	m_width(0.0f)
+,	m_height(0.0f)
 {
 }
 
-Rectangle::Rectangle(const avm_number_t v[4])
+Rectangle::Rectangle(const float v[4])
 :	ActionObjectRelay("flash.geom.Rectangle")
 ,	m_x(v[0])
 ,	m_y(v[1])
@@ -39,7 +39,7 @@ Ref< Rectangle > Rectangle::clone(const Rectangle* s)
 	return c;
 }
 
-bool Rectangle::contains(avm_number_t x, avm_number_t y)
+bool Rectangle::contains(float x, float y)
 {
 	return x >= m_x && y >= m_y && x <= m_x + m_width && y <= m_y + m_height;
 }
@@ -60,12 +60,12 @@ bool Rectangle::equals(const Rectangle* s)
 	return m_x == s->m_x && m_y == s->m_y && m_width == s->m_width && m_height == s->m_height;
 }
 
-void Rectangle::inflate(avm_number_t x, avm_number_t y)
+void Rectangle::inflate(float x, float y)
 {
 	m_x -= x;
 	m_y -= y;
-	m_width += x * avm_number_t(2);
-	m_height += y * avm_number_t(2);
+	m_width += x * float(2);
+	m_height += y * float(2);
 }
 
 void Rectangle::inflatePoint(const Point* pt)
@@ -85,10 +85,10 @@ void Rectangle::intersects()
 
 bool Rectangle::isEmpty()
 {
-	return m_width <= avm_number_t(0) || m_height <= avm_number_t(0);
+	return m_width <= 0.0f || m_height <= 0.0f;
 }
 
-void Rectangle::offset(avm_number_t x, avm_number_t y)
+void Rectangle::offset(float x, float y)
 {
 	m_x += x;
 	m_y += y;
@@ -104,7 +104,7 @@ void Rectangle::setEmpty()
 	m_x =
 	m_y =
 	m_width =
-	m_height = avm_number_t(0);
+	m_height = 0.0f;
 }
 
 std::wstring Rectangle::toString()
@@ -119,12 +119,12 @@ void Rectangle::union_()
 	T_FATAL_ERROR;
 }
 
-avm_number_t Rectangle::getBottom()
+float Rectangle::getBottom()
 {
 	return m_y + m_height;
 }
 
-void Rectangle::setBottom(avm_number_t v)
+void Rectangle::setBottom(float v)
 {
 	m_height = v - m_y;
 }
@@ -140,23 +140,23 @@ void Rectangle::setBottomRight(const Point* pt)
 	setBottom(pt->m_y);
 }
 
-avm_number_t Rectangle::getLeft()
+float Rectangle::getLeft()
 {
 	return m_x;
 }
 
-void Rectangle::setLeft(avm_number_t v)
+void Rectangle::setLeft(float v)
 {
 	m_width = getRight() - v;
 	m_x = v;
 }
 
-avm_number_t Rectangle::getRight()
+float Rectangle::getRight()
 {
 	return m_x + m_width;
 }
 
-void Rectangle::setRight(avm_number_t v)
+void Rectangle::setRight(float v)
 {
 	m_width = v - m_x;
 }
@@ -172,12 +172,12 @@ void Rectangle::setSize(const Point* pt)
 	m_height = pt->m_y;
 }
 
-avm_number_t Rectangle::getTop()
+float Rectangle::getTop()
 {
 	return m_y;
 }
 
-void Rectangle::setTop(avm_number_t v)
+void Rectangle::setTop(float v)
 {
 	m_height = getBottom() - v;
 	m_y = v;
@@ -199,19 +199,19 @@ bool Rectangle::setMember(ActionContext* context, uint32_t memberName, const Act
 	switch (memberName)
 	{
 	case ActionContext::IdX:
-		m_x = memberValue.getNumber();
+		m_x = memberValue.getFloat();
 		return true;
 
 	case ActionContext::IdY:
-		m_y = memberValue.getNumber();
+		m_y = memberValue.getFloat();
 		return true;
 
 	case ActionContext::IdWidth:
-		m_width = memberValue.getNumber();
+		m_width = memberValue.getFloat();
 		return true;
 
 	case ActionContext::IdHeight:
-		m_height = memberValue.getNumber();
+		m_height = memberValue.getFloat();
 		return true;
 
 	default:

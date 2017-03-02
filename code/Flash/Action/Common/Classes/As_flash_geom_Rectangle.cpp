@@ -53,16 +53,16 @@ void As_flash_geom_Rectangle::initialize(ActionObject* self)
 
 void As_flash_geom_Rectangle::construct(ActionObject* self, const ActionValueArray& args)
 {
-	avm_number_t v[4] = { avm_number_t(0) };
+	float v[4] = { 0.0f };
 
 	if (args.size() > 0)
-		v[0] = args[0].getNumber();
+		v[0] = args[0].getFloat();
 	if (args.size() > 1)
-		v[1] = args[1].getNumber();
+		v[1] = args[1].getFloat();
 	if (args.size() > 2)
-		v[2] = args[2].getNumber();
+		v[2] = args[2].getFloat();
 	if (args.size() > 3)
-		v[3] = args[30].getNumber();
+		v[3] = args[30].getFloat();
 
 	self->setRelay(new Rectangle(v));
 }

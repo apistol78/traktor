@@ -62,13 +62,13 @@ private:
 		FlashSpriteInstance* self,
 		const std::string& name,
 		int32_t depth,
-		avm_number_t x,
-		avm_number_t y,
-		avm_number_t width,
-		avm_number_t height
+		float x,
+		float y,
+		float width,
+		float height
 	) const;
 
-	void MovieClip_curveTo(FlashSpriteInstance* self, avm_number_t controlX, avm_number_t controlY, avm_number_t anchorX, avm_number_t anchorY) const;
+	void MovieClip_curveTo(FlashSpriteInstance* self, float controlX, float controlY, float anchorX, float anchorY) const;
 
 	Ref< FlashSpriteInstance > MovieClip_duplicateMovieClip(FlashSpriteInstance* self, const std::string& name, int32_t depth) const;
 
@@ -102,13 +102,13 @@ private:
 
 	bool MovieClip_hitTest_1(const FlashSpriteInstance* self, const FlashCharacterInstance* shape) const;
 
-	bool MovieClip_hitTest_2(const FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const;
+	bool MovieClip_hitTest_2(const FlashSpriteInstance* self, float x, float y) const;
 
 	void MovieClip_lineGradientStyle(FlashSpriteInstance* self) const;
 
 	void MovieClip_lineStyle(FlashSpriteInstance* self) const;
 
-	void MovieClip_lineTo(FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const;
+	void MovieClip_lineTo(FlashSpriteInstance* self, float x, float y) const;
 
 	Ref< FlashSpriteInstance > MovieClip_loadMovie(FlashSpriteInstance* self, const std::wstring& fileName) const;
 
@@ -116,7 +116,7 @@ private:
 
 	void MovieClip_localToGlobal(const FlashSpriteInstance* self) const;
 
-	void MovieClip_moveTo(FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const;
+	void MovieClip_moveTo(FlashSpriteInstance* self, float x, float y) const;
 
 	void MovieClip_nextFrame(FlashSpriteInstance* self) const;
 
@@ -140,9 +140,9 @@ private:
 
 	void MovieClip_unloadMovie(FlashSpriteInstance* self) const;
 
-	avm_number_t MovieClip_get_alpha(const FlashSpriteInstance* self) const;
+	float MovieClip_get_alpha(const FlashSpriteInstance* self) const;
 
-	void MovieClip_set_alpha(FlashSpriteInstance* self, avm_number_t alpha) const;
+	void MovieClip_set_alpha(FlashSpriteInstance* self, float alpha) const;
 
 	void MovieClip_get_blendMode(const FlashSpriteInstance* self) const;
 

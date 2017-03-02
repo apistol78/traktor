@@ -19,37 +19,37 @@ As_mx_transitions_easing_None::As_mx_transitions_easing_None(ActionContext* cont
 
 void As_mx_transitions_easing_None::None_easeIn(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumber();
-	avm_number_t B = ca.args[1].getNumber();
-	avm_number_t C = ca.args[2].getNumber();
-	avm_number_t D = ca.args[3].getNumber();
+	float T = ca.args[0].getFloat();
+	float B = ca.args[1].getFloat();
+	float C = ca.args[2].getFloat();
+	float D = ca.args[3].getFloat();
 	ca.ret = ActionValue(B + C * T / D);
 }
 
 void As_mx_transitions_easing_None::None_easeInOut(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumber();
-	avm_number_t B = ca.args[1].getNumber();
-	avm_number_t C = ca.args[2].getNumber();
-	avm_number_t D = ca.args[3].getNumber();
+	float T = ca.args[0].getFloat();
+	float B = ca.args[1].getFloat();
+	float C = ca.args[2].getFloat();
+	float D = ca.args[3].getFloat();
 	ca.ret = ActionValue(B + C * T / D);
 }
 
 void As_mx_transitions_easing_None::None_easeOut(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumber();
-	avm_number_t B = ca.args[1].getNumber();
-	avm_number_t C = ca.args[2].getNumber();
-	avm_number_t D = ca.args[3].getNumber();
+	float T = ca.args[0].getFloat();
+	float B = ca.args[1].getFloat();
+	float C = ca.args[2].getFloat();
+	float D = ca.args[3].getFloat();
 	ca.ret = ActionValue(B + C * T / D);
 }
 
 void As_mx_transitions_easing_None::None_easeNone(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumber();
-	avm_number_t B = ca.args[1].getNumber();
-	avm_number_t C = ca.args[2].getNumber();
-	avm_number_t D = ca.args[3].getNumber();
+	float T = ca.args[0].getFloat();
+	float B = ca.args[1].getFloat();
+	float C = ca.args[2].getFloat();
+	float D = ca.args[3].getFloat();
 	ca.ret = ActionValue(B + C * T / D);
 }
 

@@ -19,13 +19,13 @@ public:
 		ActionObject* target,
 		const std::string& propertyName,
 		ActionFunction* function,
-		avm_number_t begin,
-		avm_number_t finish,
-		avm_number_t duration,
+		float begin,
+		float finish,
+		float duration,
 		bool useSeconds
 	);
 
-	void continueTo(avm_number_t finish, avm_number_t duration);
+	void continueTo(float finish, float duration);
 
 	void fforward();
 
@@ -35,7 +35,7 @@ public:
 
 	void resume();
 
-	void rewind(avm_number_t t);
+	void rewind(float t);
 
 	void start();
 
@@ -45,12 +45,12 @@ public:
 
 private:
 	ActionContext* m_context;
-	avm_number_t m_begin;
-	avm_number_t m_finish;
-	avm_number_t m_duration;
+	float m_begin;
+	float m_finish;
+	float m_duration;
 	bool m_useSeconds;
-	avm_number_t m_timeStart;
-	avm_number_t m_current;
+	float m_timeStart;
+	float m_current;
 	bool m_playing;
 
 	void onFrame(CallArgs& ca);

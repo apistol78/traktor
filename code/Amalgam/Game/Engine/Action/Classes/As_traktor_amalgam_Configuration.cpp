@@ -17,10 +17,10 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 ,	m_environment(environment)
 {
 	// Quality enumeration.
-	setMember("LOW", flash::ActionValue(flash::avm_number_t(AsConfiguration::QtLow)));
-	setMember("MEDIUM", flash::ActionValue(flash::avm_number_t(AsConfiguration::QtMedium)));
-	setMember("HIGH", flash::ActionValue(flash::avm_number_t(AsConfiguration::QtHigh)));
-	setMember("ULTRA", flash::ActionValue(flash::avm_number_t(AsConfiguration::QtUltra)));
+	setMember("LOW", flash::ActionValue(int32_t(AsConfiguration::QtLow)));
+	setMember("MEDIUM", flash::ActionValue(int32_t(AsConfiguration::QtMedium)));
+	setMember("HIGH", flash::ActionValue(int32_t(AsConfiguration::QtHigh)));
+	setMember("ULTRA", flash::ActionValue(int32_t(AsConfiguration::QtUltra)));
 
 	// Current configuration accessors.
 	addProperty("current", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_current), 0);

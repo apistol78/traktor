@@ -84,12 +84,12 @@ void AsTextFormat::TextFormat_set_align(FlashTextFormat* self, const std::string
 		self->setAlign(StaJustify);
 }
 
-avm_number_t AsTextFormat::TextFormat_get_blockIndent(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_blockIndent(FlashTextFormat* self) const
 {
-	return avm_number_t(0);
+	return 0.0f;
 }
 
-void AsTextFormat::TextFormat_set_blockIndent(FlashTextFormat* self, avm_number_t value) const
+void AsTextFormat::TextFormat_set_blockIndent(FlashTextFormat* self, float value) const
 {
 }
 
@@ -129,12 +129,12 @@ void AsTextFormat::TextFormat_set_font(FlashTextFormat* self, const std::string&
 {
 }
 
-avm_number_t AsTextFormat::TextFormat_get_indent(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_indent(FlashTextFormat* self) const
 {
-	return avm_number_t(0);
+	return 0.0f;
 }
 
-void AsTextFormat::TextFormat_set_indent(FlashTextFormat* self, avm_number_t value) const
+void AsTextFormat::TextFormat_set_indent(FlashTextFormat* self, float value) const
 {
 }
 
@@ -156,49 +156,49 @@ void AsTextFormat::TextFormat_set_kerning(FlashTextFormat* self, bool value) con
 {
 }
 
-avm_number_t AsTextFormat::TextFormat_get_leading(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_leading(FlashTextFormat* self) const
 {
-	return avm_number_t(0);
+	return 0.0f;
 }
 
-void AsTextFormat::TextFormat_set_leading(FlashTextFormat* self, avm_number_t value) const
-{
-}
-
-avm_number_t AsTextFormat::TextFormat_get_leftMargin(FlashTextFormat* self) const
-{
-	return avm_number_t(0);
-}
-
-void AsTextFormat::TextFormat_set_leftMargin(FlashTextFormat* self, avm_number_t value) const
+void AsTextFormat::TextFormat_set_leading(FlashTextFormat* self, float value) const
 {
 }
 
-avm_number_t AsTextFormat::TextFormat_get_letterSpacing(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_leftMargin(FlashTextFormat* self) const
+{
+	return 0.0f;
+}
+
+void AsTextFormat::TextFormat_set_leftMargin(FlashTextFormat* self, float value) const
+{
+}
+
+float AsTextFormat::TextFormat_get_letterSpacing(FlashTextFormat* self) const
 {
 	return self->getLetterSpacing();
 }
 
-void AsTextFormat::TextFormat_set_letterSpacing(FlashTextFormat* self, avm_number_t value) const
+void AsTextFormat::TextFormat_set_letterSpacing(FlashTextFormat* self, float value) const
 {
 	self->setLetterSpacing(value);
 }
 
-avm_number_t AsTextFormat::TextFormat_get_rightMargin(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_rightMargin(FlashTextFormat* self) const
 {
-	return avm_number_t(0);
+	return 0.0f;
 }
 
-void AsTextFormat::TextFormat_set_rightMargin(FlashTextFormat* self, avm_number_t value) const
+void AsTextFormat::TextFormat_set_rightMargin(FlashTextFormat* self, float value) const
 {
 }
 
-avm_number_t AsTextFormat::TextFormat_get_size(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_size(FlashTextFormat* self) const
 {
 	return self->getSize();
 }
 
-void AsTextFormat::TextFormat_set_size(FlashTextFormat* self, avm_number_t value) const
+void AsTextFormat::TextFormat_set_size(FlashTextFormat* self, float value) const
 {
 	self->setSize(value);
 }

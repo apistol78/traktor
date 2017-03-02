@@ -42,16 +42,16 @@ void As_flash_geom_ColorTransform::construct(ActionObject* self, const ActionVal
 	if (args.size() >= 8)
 	{
 		cxform.mul = Color4f(
-			float(args[0].getNumber()),
-			float(args[1].getNumber()),
-			float(args[2].getNumber()),
-			float(args[3].getNumber())
+			args[0].getFloat(),
+			args[1].getFloat(),
+			args[2].getFloat(),
+			args[3].getFloat()
 		);
 		cxform.add = Color4f(
-			float(args[4].getNumber() / 255.0f),
-			float(args[5].getNumber() / 255.0f),
-			float(args[6].getNumber() / 255.0f),
-			float(args[7].getNumber() / 255.0f)
+			args[4].getFloat() / 255.0f,
+			args[5].getFloat() / 255.0f,
+			args[6].getFloat() / 255.0f,
+			args[7].getFloat() / 255.0f
 		);
 	}
 	self->setRelay(new ColorTransform(cxform));
@@ -62,87 +62,87 @@ ActionValue As_flash_geom_ColorTransform::xplicit(const ActionValueArray& args)
 	return ActionValue();
 }
 
-avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier(ColorTransform* self) const
+float As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier(ColorTransform* self) const
 {
-	return avm_number_t(self->mul.getAlpha());
+	return float(self->mul.getAlpha());
 }
 
-void As_flash_geom_ColorTransform::ColorTransform_set_alphaMultiplier(ColorTransform* self, avm_number_t value) const
+void As_flash_geom_ColorTransform::ColorTransform_set_alphaMultiplier(ColorTransform* self, float value) const
 {
 	self->mul.setAlpha(Scalar(value));
 }
 
-avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_alphaOffset(ColorTransform* self) const
+float As_flash_geom_ColorTransform::ColorTransform_get_alphaOffset(ColorTransform* self) const
 {
-	return avm_number_t(self->add.getAlpha() * 255.0f);
+	return float(self->add.getAlpha() * 255.0f);
 }
 
-void As_flash_geom_ColorTransform::ColorTransform_set_alphaOffset(ColorTransform* self, avm_number_t value) const
+void As_flash_geom_ColorTransform::ColorTransform_set_alphaOffset(ColorTransform* self, float value) const
 {
 	self->add.setAlpha(Scalar(value / 255.0f));
 }
 
-avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_blueMultiplier(ColorTransform* self) const
+float As_flash_geom_ColorTransform::ColorTransform_get_blueMultiplier(ColorTransform* self) const
 {
-	return avm_number_t(self->mul.getBlue());
+	return float(self->mul.getBlue());
 }
 
-void As_flash_geom_ColorTransform::ColorTransform_set_blueMultiplier(ColorTransform* self, avm_number_t value) const
+void As_flash_geom_ColorTransform::ColorTransform_set_blueMultiplier(ColorTransform* self, float value) const
 {
 	self->mul.setBlue(Scalar(value));
 }
 
-avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_blueOffset(ColorTransform* self) const
+float As_flash_geom_ColorTransform::ColorTransform_get_blueOffset(ColorTransform* self) const
 {
-	return avm_number_t(self->add.getBlue() * 255.0f);
+	return float(self->add.getBlue() * 255.0f);
 }
 
-void As_flash_geom_ColorTransform::ColorTransform_set_blueOffset(ColorTransform* self, avm_number_t value) const
+void As_flash_geom_ColorTransform::ColorTransform_set_blueOffset(ColorTransform* self, float value) const
 {
 	self->add.setBlue(Scalar(value / 255.0f));
 }
 
-avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_greenMultiplier(ColorTransform* self) const
+float As_flash_geom_ColorTransform::ColorTransform_get_greenMultiplier(ColorTransform* self) const
 {
-	return avm_number_t(self->mul.getGreen());
+	return float(self->mul.getGreen());
 }
 
-void As_flash_geom_ColorTransform::ColorTransform_set_greenMultiplier(ColorTransform* self, avm_number_t value) const
+void As_flash_geom_ColorTransform::ColorTransform_set_greenMultiplier(ColorTransform* self, float value) const
 {
 	self->mul.setGreen(Scalar(value));
 }
 
-avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_greenOffset(ColorTransform* self) const
+float As_flash_geom_ColorTransform::ColorTransform_get_greenOffset(ColorTransform* self) const
 {
-	return avm_number_t(self->add.getGreen() * 255.0f);
+	return float(self->add.getGreen() * 255.0f);
 }
 
-void As_flash_geom_ColorTransform::ColorTransform_set_greenOffset(ColorTransform* self, avm_number_t value) const
+void As_flash_geom_ColorTransform::ColorTransform_set_greenOffset(ColorTransform* self, float value) const
 {
 	self->add.setGreen(Scalar(value / 255.0f));
 }
 
-avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_redMultiplier(ColorTransform* self) const
+float As_flash_geom_ColorTransform::ColorTransform_get_redMultiplier(ColorTransform* self) const
 {
-	return avm_number_t(self->mul.getRed());
+	return float(self->mul.getRed());
 }
 
-void As_flash_geom_ColorTransform::ColorTransform_set_redMultiplier(ColorTransform* self, avm_number_t value) const
+void As_flash_geom_ColorTransform::ColorTransform_set_redMultiplier(ColorTransform* self, float value) const
 {
 	self->mul.setRed(Scalar(value));
 }
 
-avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_redOffset(ColorTransform* self) const
+float As_flash_geom_ColorTransform::ColorTransform_get_redOffset(ColorTransform* self) const
 {
-	return avm_number_t(self->add.getRed() * 255.0f);
+	return float(self->add.getRed() * 255.0f);
 }
 
-void As_flash_geom_ColorTransform::ColorTransform_set_redOffset(ColorTransform* self, avm_number_t value) const
+void As_flash_geom_ColorTransform::ColorTransform_set_redOffset(ColorTransform* self, float value) const
 {
 	self->add.setRed(Scalar(value / 255.0f));
 }
 
-avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_rgb(ColorTransform* self) const
+float As_flash_geom_ColorTransform::ColorTransform_get_rgb(ColorTransform* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"ColorTransform::get_rgb not implemented" << Endl;
@@ -150,7 +150,7 @@ avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_rgb(ColorTransform
 	return 0.0f;
 }
 
-void As_flash_geom_ColorTransform::ColorTransform_set_rgb(ColorTransform* self, avm_number_t value) const
+void As_flash_geom_ColorTransform::ColorTransform_set_rgb(ColorTransform* self, float value) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"ColorTransform::set_rgb not implemented" << Endl;

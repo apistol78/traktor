@@ -81,7 +81,7 @@ void FlashCanvas::endFill()
 	++m_dirtyTag;
 }
 
-void FlashCanvas::moveTo(avm_number_t x, avm_number_t y)
+void FlashCanvas::moveTo(float x, float y)
 {
 	if (!m_drawing)
 		return;
@@ -91,7 +91,7 @@ void FlashCanvas::moveTo(avm_number_t x, avm_number_t y)
 	m_bounds.contain(Vector2(x, y));
 }
 
-void FlashCanvas::lineTo(avm_number_t x, avm_number_t y)
+void FlashCanvas::lineTo(float x, float y)
 {
 	if (!m_drawing)
 		return;
@@ -101,7 +101,7 @@ void FlashCanvas::lineTo(avm_number_t x, avm_number_t y)
 	m_bounds.contain(Vector2(x, y));
 }
 
-void FlashCanvas::curveTo(avm_number_t controlX, avm_number_t controlY, avm_number_t anchorX, avm_number_t anchorY)
+void FlashCanvas::curveTo(float controlX, float controlY, float anchorX, float anchorY)
 {
 	if (!m_drawing)
 		return;

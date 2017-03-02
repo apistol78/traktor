@@ -38,7 +38,8 @@ public:
 	{
 		AvtUndefined,
 		AvtBoolean,
-		AvtNumber,
+		AvtInteger,
+		AvtFloat,
 		AvtString,
 		AvtObject,
 		AvtObjectWeak
@@ -54,7 +55,9 @@ public:
 
 	explicit ActionValue(bool b);
 
-	explicit ActionValue(avm_number_t n);
+	explicit ActionValue(int32_t i);
+
+	explicit ActionValue(float f);
 
 	explicit ActionValue(const char* s, int32_t id = -1);
 
@@ -76,8 +79,11 @@ public:
 	/*! \brief Cast to boolean. */
 	ActionValue toBoolean() const { return ActionValue(getBoolean()); }
 
-	/*! \brief Cast to number. */
-	ActionValue toNumber() const { return ActionValue(getNumber()); }
+	/*! \brief Cast to integer. */
+	ActionValue toInteger() const { return ActionValue(getInteger()); }
+
+	/*! \brief Cast to float. */
+	ActionValue toFloat() const { return ActionValue(getFloat()); }
 
 	/*! \brief Cast to string. */
 	ActionValue toString() const { return ActionValue(getString()); }
@@ -91,8 +97,14 @@ public:
 	/*! \brief Check if boolean. */
 	bool isBoolean() const { return m_type == AvtBoolean; }
 
+	/*! \brief Check if integer. */
+	bool isInteger() const { return m_type == AvtInteger; }
+
+	/*! \brief Check if float. */
+	bool isFloat() const { return m_type == AvtFloat; }
+
 	/*! \brief Check if number. */
-	bool isNumeric() const { return m_type == AvtNumber; }
+	bool isNumeric() const { return m_type == AvtInteger || m_type == AvtFloat; }
 
 	/*! \brief Check if string. */
 	bool isString() const { return m_type == AvtString; }
@@ -113,8 +125,11 @@ public:
 	/*! \brief Get boolean value. */
 	bool getBoolean() const;
 
-	/*! \brief Get number value. */
-	avm_number_t getNumber() const;
+	/*! \brief Get integer value. */
+	int32_t getInteger() const;
+
+	/*! \brief Get float value. */
+	float getFloat() const;
 
 	/*! \brief Get string value. */
 	std::string getString() const;
@@ -159,6 +174,9 @@ public:
 	/*! \brief Multiply */
 	ActionValue operator * (const ActionValue& r) const;
 
+	/*! \brief Divide */
+	ActionValue operator / (const ActionValue& r) const;
+
 	/*! \brief Compare equal. */
 	bool operator == (const ActionValue& r) const;
 
@@ -166,7 +184,8 @@ private:
 	union Value
 	{
 		bool b;
-		avm_number_t n;
+		int32_t i;
+		float f;
 		char* s;
 		ActionObject* o;
 	};

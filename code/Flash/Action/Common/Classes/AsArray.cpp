@@ -23,7 +23,7 @@ struct ArrayPredicateSort
 		(*predicateFunctionArgs)[1] = avr;
 
 		ActionValue resv = predicateFunction->call(0, 0, (*predicateFunctionArgs));
-		int32_t res = int32_t(resv.getNumber());
+		int32_t res = resv.getInteger();
 
 		return res < 0;
 	}
@@ -47,11 +47,11 @@ AsArray::AsArray(ActionContext* context)
 {
 	Ref< ActionObject > prototype = new ActionObject(context);
 
-	prototype->setMember("CASEINSENSITIVE", ActionValue(avm_number_t(0)));
-	prototype->setMember("DESCENDING", ActionValue(avm_number_t(1)));
-	prototype->setMember("NUMERIC", ActionValue(avm_number_t(2)));
-	prototype->setMember("RETURNINDEXEDARRAY", ActionValue(avm_number_t(3)));
-	prototype->setMember("UNIQUESORT", ActionValue(avm_number_t(4)));
+	prototype->setMember("CASEINSENSITIVE", ActionValue(0.0f));
+	prototype->setMember("DESCENDING", ActionValue(1));
+	prototype->setMember("NUMERIC", ActionValue(2));
+	prototype->setMember("RETURNINDEXEDARRAY", ActionValue(3));
+	prototype->setMember("UNIQUESORT", ActionValue(4));
 	prototype->setMember("concat", ActionValue(createNativeFunction(context, this, &AsArray::Array_concat)));
 	prototype->setMember("join", ActionValue(createNativeFunction(context, this, &AsArray::Array_join)));
 	prototype->setMember("pop", ActionValue(createNativeFunction(context, &Array::pop)));
@@ -126,9 +126,9 @@ void AsArray::Array_slice(CallArgs& ca)
 		int32_t endIndex = 16777215;
 		
 		if (ca.args.size() >= 1)
-			startIndex = int32_t(ca.args[0].getNumber());
+			startIndex = ca.args[0].getInteger();
 		if (ca.args.size() >= 2)
-			endIndex = int32_t(ca.args[1].getNumber());
+			endIndex = ca.args[1].getInteger();
 
 		ca.ret = ActionValue(arr->slice(startIndex, endIndex)->getAsObject(ca.context));
 	}
@@ -172,8 +172,8 @@ void AsArray::Array_splice(CallArgs& ca)
 	Array* arr = ca.self->getRelay< Array >();
 	if (arr)
 	{
-		int32_t startIndex = int32_t(ca.args[0].getNumber());
-		uint32_t deleteCount = uint32_t(ca.args[1].getNumber());
+		int32_t startIndex = ca.args[0].getInteger();
+		uint32_t deleteCount = uint32_t(ca.args[1].getInteger());
 
 		Ref< Array > removed = arr->splice(startIndex, deleteCount, ca.args, 2);
 		ca.ret = ActionValue(removed->getAsObject(ca.context));
@@ -198,7 +198,7 @@ ActionValue AsArray::Array_toString(const Array* self) const
 void AsArray::Array_unshift(CallArgs& ca)
 {
 	Ref< Array > arr = ca.self->getRelay< Array >();
-	ca.ret = ActionValue(avm_number_t(arr->unshift(ca.args)));
+	ca.ret = ActionValue(int32_t(arr->unshift(ca.args)));
 }
 
 uint32_t AsArray::Array_get_length(const Array* self) const
