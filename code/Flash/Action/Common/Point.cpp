@@ -13,35 +13,35 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Point", Point, ActionObjectRelay)
 
 Point::Point()
 :	ActionObjectRelay("flash.geom.Point")
-,	m_x(avm_number_t(0))
-,	m_y(avm_number_t(0))
+,	m_x(0.0f)
+,	m_y(0.0f)
 {
 }
 
-Point::Point(avm_number_t x, avm_number_t y)
+Point::Point(float x, float y)
 :	ActionObjectRelay("flash.geom.Point")
 ,	m_x(x)
 ,	m_y(y)
 {
 }
 
-avm_number_t Point::distance(const Point& pt1, const Point& pt2)
+float Point::distance(const Point& pt1, const Point& pt2)
 {
-	avm_number_t dx = pt2.m_x - pt1.m_x;
-	avm_number_t dy = pt2.m_y - pt1.m_y;
-	return avm_number_t(sqrtf(dx * dx + dy * dy));
+	float dx = pt2.m_x - pt1.m_x;
+	float dy = pt2.m_y - pt1.m_y;
+	return float(sqrtf(dx * dx + dy * dy));
 }
 
-Ref< Point > Point::interpolate(const Point& pt1, const Point& pt2, avm_number_t f)
+Ref< Point > Point::interpolate(const Point& pt1, const Point& pt2, float f)
 {
-	avm_number_t F = avm_number_t(1) - f;
+	float F = float(1) - f;
 	return new Point(
 		pt1.m_x * F + pt2.m_x * f,
 		pt1.m_y * F + pt2.m_y * f
 	);
 }
 
-Ref< Point > Point::polar(avm_number_t length, avm_number_t angle)
+Ref< Point > Point::polar(float length, float angle)
 {
 	return new Point(
 		sin(angle) * length,
@@ -57,7 +57,7 @@ Ref< Point > Point::add_1(const Point* pt)
 	);
 }
 
-Ref< Point > Point::add_2(avm_number_t x, avm_number_t y)
+Ref< Point > Point::add_2(float x, float y)
 {
 	return new Point(
 		m_x + x,
@@ -80,18 +80,18 @@ bool Point::equals(const Point* pt)
 
 void Point::normalize()
 {
-	avm_number_t ln = avm_number_t(sqrtf(m_x * m_x + m_y * m_y));
+	float ln = float(sqrtf(m_x * m_x + m_y * m_y));
 	m_x /= ln;
 	m_y /= ln;
 }
 
-void Point::offset(avm_number_t x, avm_number_t y)
+void Point::offset(float x, float y)
 {
 	m_x += x;
 	m_y += y;
 }
 
-void Point::subtract(avm_number_t x, avm_number_t y)
+void Point::subtract(float x, float y)
 {
 	m_x -= x;
 	m_y -= y;
@@ -104,15 +104,15 @@ std::wstring Point::toString()
 	return ss.str();
 }
 
-avm_number_t Point::getLength()
+float Point::getLength()
 {
-	return avm_number_t(sqrtf(m_x * m_x + m_y * m_y));
+	return float(sqrtf(m_x * m_x + m_y * m_y));
 }
 
-void Point::setLength(avm_number_t length)
+void Point::setLength(float length)
 {
-	avm_number_t ln = avm_number_t(sqrtf(m_x * m_x + m_y * m_y));
-	avm_number_t f = length / ln;
+	float ln = float(sqrtf(m_x * m_x + m_y * m_y));
+	float f = length / ln;
 	m_x *= f;
 	m_y *= f;
 }
@@ -122,11 +122,11 @@ bool Point::setMember(ActionContext* context, uint32_t memberName, const ActionV
 	switch (memberName)
 	{
 	case ActionContext::IdX:
-		m_x = memberValue.getNumber();
+		m_x = memberValue.getFloat();
 		return true;
 
 	case ActionContext::IdY:
-		m_y = memberValue.getNumber();
+		m_y = memberValue.getFloat();
 		return true;
 
 	default:

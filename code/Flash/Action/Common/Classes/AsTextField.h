@@ -34,7 +34,7 @@ public:
 private:
 	void TextField_addListener(FlashEditInstance* editInstance, ActionObject* listener) const;
 
-	avm_number_t TextField_getDepth(FlashEditInstance* editInstance) const;
+	float TextField_getDepth(FlashEditInstance* editInstance) const;
 
 	Ref< Array > TextField_getFontList(FlashEditInstance* editInstance) const;
 
@@ -60,9 +60,9 @@ private:
 
 	std::string TextField_toString(const FlashEditInstance* self) const;
 
-	avm_number_t TextField_get_alpha(FlashEditInstance* editInstance) const;
+	float TextField_get_alpha(FlashEditInstance* editInstance) const;
 
-	void TextField_set_alpha(FlashEditInstance* editInstance, avm_number_t alpha) const;
+	void TextField_set_alpha(FlashEditInstance* editInstance, float alpha) const;
 
 	std::wstring TextField_get_antiAliasType(FlashEditInstance* editInstance) const;
 
@@ -76,19 +76,19 @@ private:
 
 	void TextField_set_background(FlashEditInstance* editInstance, bool hasBackground) const;
 
-	avm_number_t TextField_get_backgroundColor(FlashEditInstance* editInstance) const;
+	float TextField_get_backgroundColor(FlashEditInstance* editInstance) const;
 
-	void TextField_set_backgroundColor(FlashEditInstance* editInstance, avm_number_t backgroundColor) const;
+	void TextField_set_backgroundColor(FlashEditInstance* editInstance, float backgroundColor) const;
 
 	bool TextField_get_border(FlashEditInstance* editInstance) const;
 
 	void TextField_set_border(FlashEditInstance* editInstance, bool hasBorder) const;
 
-	avm_number_t TextField_get_borderColor(FlashEditInstance* editInstance) const;
+	float TextField_get_borderColor(FlashEditInstance* editInstance) const;
 
-	void TextField_set_borderColor(FlashEditInstance* editInstance, avm_number_t borderColor) const;
+	void TextField_set_borderColor(FlashEditInstance* editInstance, float borderColor) const;
 
-	avm_number_t TextField_get_bottomScroll(FlashEditInstance* editInstance) const;
+	float TextField_get_bottomScroll(FlashEditInstance* editInstance) const;
 
 	bool TextField_get_condenseWhite(FlashEditInstance* editInstance) const;
 
@@ -106,17 +106,17 @@ private:
 
 	void TextField_set_gridFitType(FlashEditInstance* editInstance, const std::wstring& gridFitType) const;
 
-	avm_number_t TextField_get_height(FlashEditInstance* editInstance) const;
+	float TextField_get_height(FlashEditInstance* editInstance) const;
 
-	void TextField_set_height(FlashEditInstance* editInstance, avm_number_t height) const;
+	void TextField_set_height(FlashEditInstance* editInstance, float height) const;
 
-	avm_number_t TextField_get_highquality(FlashEditInstance* editInstance) const;
+	float TextField_get_highquality(FlashEditInstance* editInstance) const;
 
-	void TextField_set_highquality(FlashEditInstance* editInstance, avm_number_t highQuality) const;
+	void TextField_set_highquality(FlashEditInstance* editInstance, float highQuality) const;
 
-	avm_number_t TextField_get_hscroll(FlashEditInstance* editInstance) const;
+	float TextField_get_hscroll(FlashEditInstance* editInstance) const;
 
-	void TextField_set_hscroll(FlashEditInstance* editInstance, avm_number_t hscroll) const;
+	void TextField_set_hscroll(FlashEditInstance* editInstance, float hscroll) const;
 
 	bool TextField_get_html(FlashEditInstance* editInstance) const;
 
@@ -132,7 +132,7 @@ private:
 
 	void TextField_set_maxChars(FlashEditInstance* editInstance, int32_t maxChars) const;
 
-	avm_number_t TextField_get_maxhscroll(FlashEditInstance* editInstance) const;
+	float TextField_get_maxhscroll(FlashEditInstance* editInstance) const;
 
 	int32_t TextField_get_maxscroll(FlashEditInstance* editInstance) const;
 
@@ -168,9 +168,9 @@ private:
 
 	void TextField_set_restrict(FlashEditInstance* editInstance, const std::wstring& restrict) const;
 
-	avm_number_t TextField_get_rotation(FlashEditInstance* editInstance) const;
+	float TextField_get_rotation(FlashEditInstance* editInstance) const;
 
-	void TextField_set_rotation(FlashEditInstance* editInstance, avm_number_t rotation) const;
+	void TextField_set_rotation(FlashEditInstance* editInstance, float rotation) const;
 
 	int32_t TextField_get_scroll(FlashEditInstance* editInstance) const;
 
@@ -180,13 +180,13 @@ private:
 
 	void TextField_set_selectable(FlashEditInstance* editInstance, bool selectable) const;
 
-	avm_number_t TextField_get_sharpness(FlashEditInstance* editInstance) const;
+	float TextField_get_sharpness(FlashEditInstance* editInstance) const;
 
-	void TextField_set_sharpness(FlashEditInstance* editInstance, avm_number_t sharpness) const;
+	void TextField_set_sharpness(FlashEditInstance* editInstance, float sharpness) const;
 
-	avm_number_t TextField_get_soundbuftime(FlashEditInstance* editInstance) const;
+	float TextField_get_soundbuftime(FlashEditInstance* editInstance) const;
 
-	void TextField_set_soundbuftime(FlashEditInstance* editInstance, avm_number_t soundbuftime) const;
+	void TextField_set_soundbuftime(FlashEditInstance* editInstance, float soundbuftime) const;
 
 	Ref< FlashStyleSheet > TextField_get_styleSheet(FlashEditInstance* editInstance) const;
 
@@ -206,17 +206,17 @@ private:
 
 	void TextField_set_text(FlashEditInstance* editInstance, const std::wstring& text) const;
 
-	avm_number_t TextField_get_textColor(FlashEditInstance* editInstance) const;
+	float TextField_get_textColor(FlashEditInstance* editInstance) const;
 
-	void TextField_set_textColor(FlashEditInstance* editInstance, avm_number_t textColor) const;
+	void TextField_set_textColor(FlashEditInstance* editInstance, float textColor) const;
 
-	avm_number_t TextField_get_textWidth(FlashEditInstance* editInstance) const;
+	float TextField_get_textWidth(FlashEditInstance* editInstance) const;
 
-	avm_number_t TextField_get_textHeight(FlashEditInstance* editInstance) const;
+	float TextField_get_textHeight(FlashEditInstance* editInstance) const;
 
-	avm_number_t TextField_get_thickness(FlashEditInstance* editInstance) const;
+	float TextField_get_thickness(FlashEditInstance* editInstance) const;
 
-	void TextField_set_thickness(FlashEditInstance* editInstance, avm_number_t thickness) const;
+	void TextField_set_thickness(FlashEditInstance* editInstance, float thickness) const;
 
 	std::wstring TextField_get_type(FlashEditInstance* editInstance) const;
 
@@ -232,33 +232,33 @@ private:
 
 	void TextField_set_visible(FlashEditInstance* editInstance, bool visible) const;
 
-	avm_number_t TextField_get_width(FlashEditInstance* editInstance) const;
+	float TextField_get_width(FlashEditInstance* editInstance) const;
 
-	void TextField_set_width(FlashEditInstance* editInstance, avm_number_t width) const;
+	void TextField_set_width(FlashEditInstance* editInstance, float width) const;
 
 	bool TextField_get_wordWrap(FlashEditInstance* editInstance) const;
 
 	void TextField_set_wordWrap(FlashEditInstance* editInstance, bool wordWrap) const;
 
-	avm_number_t TextField_get_x(FlashEditInstance* editInstance) const;
+	float TextField_get_x(FlashEditInstance* editInstance) const;
 
-	void TextField_set_x(FlashEditInstance* editInstance, avm_number_t x) const;
+	void TextField_set_x(FlashEditInstance* editInstance, float x) const;
 
-	avm_number_t TextField_get_xmouse(FlashEditInstance* editInstance) const;
+	float TextField_get_xmouse(FlashEditInstance* editInstance) const;
 
-	avm_number_t TextField_get_xscale(FlashEditInstance* editInstance) const;
+	float TextField_get_xscale(FlashEditInstance* editInstance) const;
 
-	void TextField_set_xscale(FlashEditInstance* editInstance, avm_number_t xscale) const;
+	void TextField_set_xscale(FlashEditInstance* editInstance, float xscale) const;
 
-	avm_number_t TextField_get_y(FlashEditInstance* editInstance) const;
+	float TextField_get_y(FlashEditInstance* editInstance) const;
 
-	void TextField_set_y(FlashEditInstance* editInstance, avm_number_t y) const;
+	void TextField_set_y(FlashEditInstance* editInstance, float y) const;
 
-	avm_number_t TextField_get_ymouse(FlashEditInstance* editInstance) const;
+	float TextField_get_ymouse(FlashEditInstance* editInstance) const;
 
-	avm_number_t TextField_get_yscale(FlashEditInstance* editInstance) const;
+	float TextField_get_yscale(FlashEditInstance* editInstance) const;
 
-	void TextField_set_yscale(FlashEditInstance* editInstance, avm_number_t yscale) const;
+	void TextField_set_yscale(FlashEditInstance* editInstance, float yscale) const;
 };
 
 	}

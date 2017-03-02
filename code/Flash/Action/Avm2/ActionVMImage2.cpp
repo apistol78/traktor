@@ -62,7 +62,7 @@ bool getMemberOrProperty(ActionFrame* frame, ActionObject* self, int32_t variabl
 
 	if (self->getPropertyGet(variableId, propertyGet))
 	{
-		stack.push(ActionValue(avm_number_t(0)));
+		stack.push(ActionValue(0.0f));
 		outValue = propertyGet->call(frame, self);
 		return true;
 	}
@@ -143,7 +143,7 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_BEGIN(Avm2OpAdd_i)
 			ActionValue value2 = operationStack.pop();
 			ActionValue value1 = operationStack.pop();
-			avm_number_t result = value1.getNumber() + value2.getNumber();
+			int32_t result = value1.getInteger() + value2.getInteger();
 			operationStack.push(ActionValue(result));
 		VM_END()
 
@@ -459,14 +459,14 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_BEGIN(Avm2OpMultiply_i)
 			ActionValue value2 = operationStack.pop();
 			ActionValue value1 = operationStack.pop();
-			avm_number_t result = value1.getNumber() * value2.getNumber();
+			int32_t result = value1.getInteger() * value2.getInteger();
 			operationStack.push(ActionValue(result));
 		VM_END()
 
 		VM_BEGIN(Avm2OpNegate)
 			ActionValue& top = operationStack.top();
 			if (top.isNumeric())
-				top = ActionValue(-top.getNumber());
+				top = ActionValue(-top.getFloat());
 			else
 				top = ActionValue();
 		VM_END()
@@ -474,7 +474,7 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_BEGIN(Avm2OpNegate_i)
 			ActionValue& top = operationStack.top();
 			if (top.isNumeric())
-				top = ActionValue(-top.getNumber());
+				top = ActionValue(-top.getInteger());
 			else
 				top = ActionValue();
 		VM_END()
@@ -523,12 +523,12 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 
 		VM_BEGIN(Avm2OpPushByte)
 			int32_t value = *pc++;
-			operationStack.push(ActionValue(avm_number_t(value)));
+			operationStack.push(ActionValue(value));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushDouble)
 			uint32_t index = decodeU30(pc);
-			operationStack.push(ActionValue(avm_number_t(m_abcFile.cpool.doubles[index])));
+			operationStack.push(ActionValue(float(m_abcFile.cpool.doubles[index])));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushFalse)
@@ -537,14 +537,14 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 
 		VM_BEGIN(Avm2OpPushInt)
 			uint32_t index = decodeU30(pc);
-			operationStack.push(ActionValue(avm_number_t(m_abcFile.cpool.s32[index])));
+			operationStack.push(ActionValue(m_abcFile.cpool.s32[index]));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushNamespace)
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushNan)
-			operationStack.push(ActionValue(avm_number_t(0)));
+			operationStack.push(ActionValue(0.0f));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushNull)
@@ -558,7 +558,7 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 
 		VM_BEGIN(Avm2OpPushShort)
 			uint32_t value = decodeU30(pc);
-			operationStack.push(ActionValue(avm_number_t(value)));
+			operationStack.push(ActionValue(int32_t(value)));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushString)
@@ -572,7 +572,7 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 
 		VM_BEGIN(Avm2OpPushUInt)
 			uint32_t index = decodeU30(pc);
-			operationStack.push(ActionValue(avm_number_t(m_abcFile.cpool.u32[index])));
+			operationStack.push(ActionValue(int32_t(m_abcFile.cpool.u32[index])));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushUndefined)
@@ -638,7 +638,7 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_BEGIN(Avm2OpSubtract_i)
 			ActionValue value2 = operationStack.pop();
 			ActionValue value1 = operationStack.pop();
-			avm_number_t result = value1.getNumber() - value2.getNumber();
+			int32_t result = value1.getInteger() - value2.getInteger();
 			operationStack.push(ActionValue(result));
 		VM_END()
 

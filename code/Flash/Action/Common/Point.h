@@ -24,22 +24,22 @@ class T_DLLCLASS Point : public ActionObjectRelay
 	T_RTTI_CLASS;
 
 public:
-	avm_number_t m_x;
-	avm_number_t m_y;
+	float m_x;
+	float m_y;
 
 	Point();
 
-	Point(avm_number_t x, avm_number_t y);
+	Point(float x, float y);
 
-	static avm_number_t distance(const Point& pt1, const Point& pt2);
+	static float distance(const Point& pt1, const Point& pt2);
 
-	static Ref< Point > interpolate(const Point& pt1, const Point& pt2, avm_number_t f);
+	static Ref< Point > interpolate(const Point& pt1, const Point& pt2, float f);
 
-	static Ref< Point > polar(avm_number_t length, avm_number_t angle);
+	static Ref< Point > polar(float length, float angle);
 
 	Ref< Point > add_1(const Point* pt);
 
-	Ref< Point > add_2(avm_number_t x, avm_number_t y);
+	Ref< Point > add_2(float x, float y);
 
 	Ref< Point > clone(const Point* pt);
 
@@ -47,15 +47,15 @@ public:
 
 	void normalize();
 
-	void offset(avm_number_t x, avm_number_t y);
+	void offset(float x, float y);
 
-	void subtract(avm_number_t x, avm_number_t y);
+	void subtract(float x, float y);
 
 	std::wstring toString();
 
-	avm_number_t getLength();
+	float getLength();
 
-	void setLength(avm_number_t length);
+	void setLength(float length);
 
 	virtual bool setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue) T_OVERRIDE T_FINAL;
 

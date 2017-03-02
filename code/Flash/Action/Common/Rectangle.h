@@ -26,18 +26,18 @@ class T_DLLCLASS Rectangle : public ActionObjectRelay
 	T_RTTI_CLASS;
 
 public:
-	avm_number_t m_x;
-	avm_number_t m_y;
-	avm_number_t m_width;
-	avm_number_t m_height;
+	float m_x;
+	float m_y;
+	float m_width;
+	float m_height;
 
 	Rectangle();
 
-	Rectangle(const avm_number_t v[4]);
+	Rectangle(const float v[4]);
 
 	Ref< Rectangle > clone(const Rectangle* s);
 
-	bool contains(avm_number_t x, avm_number_t y);
+	bool contains(float x, float y);
 
 	bool containsPoint(const Point* pt);
 
@@ -45,7 +45,7 @@ public:
 
 	bool equals(const Rectangle* s);
 
-	void inflate(avm_number_t x, avm_number_t y);
+	void inflate(float x, float y);
 
 	void inflatePoint(const Point* pt);
 
@@ -55,7 +55,7 @@ public:
 
 	bool isEmpty();
 
-	void offset(avm_number_t x, avm_number_t y);
+	void offset(float x, float y);
 
 	void offsetPoint(const Point* pt);
 
@@ -65,29 +65,29 @@ public:
 
 	void union_();
 
-	avm_number_t getBottom();
+	float getBottom();
 
-	void setBottom(avm_number_t v);
+	void setBottom(float v);
 
 	Ref< Point > getBottomRight();
 
 	void setBottomRight(const Point* pt);
 
-	avm_number_t getLeft();
+	float getLeft();
 
-	void setLeft(avm_number_t v);
+	void setLeft(float v);
 
-	avm_number_t getRight();
+	float getRight();
 
-	void setRight(avm_number_t v);
+	void setRight(float v);
 
 	Ref< Point > getSize();
 
 	void setSize(const Point* pt);
 
-	avm_number_t getTop();
+	float getTop();
 
-	void setTop(avm_number_t v);
+	void setTop(float v);
 
 	Ref< Point > getTopLeft();
 

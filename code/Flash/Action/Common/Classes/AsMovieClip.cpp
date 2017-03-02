@@ -325,15 +325,15 @@ bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const s
 	AlignedVector< FlashFillStyle::ColorRecord > colorRecords(colors->length());
 	for (uint32_t i = 0; i < colors->length(); ++i)
 	{
-		uint32_t rgb = uint32_t((*colors)[i].getNumber());
-		int32_t alpha = int32_t((*alphas)[i].getNumber());
+		uint32_t rgb = uint32_t((*colors)[i].getInteger());
+		int32_t alpha = (*alphas)[i].getInteger();
 
 		uint8_t r = rgb >> 16;
 		uint8_t g = (rgb >> 8) & 255;
 		uint8_t b = rgb & 255;
 		uint8_t a = (255 * clamp(alpha, 0, 100)) / 100;
 
-		colorRecords[i].ratio = clamp< float >((*ratios)[i].getNumber() / 255.0f, 0.0f, 1.0f);
+		colorRecords[i].ratio = clamp< float >((*ratios)[i].getInteger() / 255.0f, 0.0f, 1.0f);
 		colorRecords[i].color = Color4f(r, g, b, a) / Scalar(255.0f);
 	}
 
@@ -348,22 +348,22 @@ bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const s
 			return false;
 
 		ActionValue memberValue;
-		avm_number_t x, y, w, h, r;
+		float x, y, w, h, r;
 
 		matrix->getMember("x", memberValue);
-		x = memberValue.getNumber();
+		x = memberValue.getFloat();
 
 		matrix->getMember("y", memberValue);
-		y = memberValue.getNumber();
+		y = memberValue.getFloat();
 
 		matrix->getMember("w", memberValue);
-		w = memberValue.getNumber();
+		w = memberValue.getFloat();
 
 		matrix->getMember("h", memberValue);
-		h = memberValue.getNumber();
+		h = memberValue.getFloat();
 
 		matrix->getMember("r", memberValue);
-		r = memberValue.getNumber();
+		r = memberValue.getFloat();
 
 		gradientMatrix = translate(w * 10.0f + x * 20.0f, h * 10.0f + y * 20.0f) * rotate(r) * scale(1.0f / w, 1.0f / h) * scale(20.0f, 20.0f);
 	}
@@ -390,16 +390,16 @@ Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
 	FlashSpriteInstance* self,
 	const std::string& name,
 	int32_t depth,
-	avm_number_t x,
-	avm_number_t y,
-	avm_number_t width,
-	avm_number_t height
+	float x,
+	float y,
+	float width,
+	float height
 ) const
 {
 	return self->createTextField(name, depth, x, y, width, height);
 }
 
-void AsMovieClip::MovieClip_curveTo(FlashSpriteInstance* self, avm_number_t controlX, avm_number_t controlY, avm_number_t anchorX, avm_number_t anchorY) const
+void AsMovieClip::MovieClip_curveTo(FlashSpriteInstance* self, float controlX, float controlY, float anchorX, float anchorY) const
 {
 	self->createCanvas()->curveTo(controlX * 20.0f, controlY * 20.0f, anchorX * 20.0f, anchorY * 20.0f);
 }
@@ -534,7 +534,7 @@ void AsMovieClip::MovieClip_globalToLocal(FlashSpriteInstance* self) const
 void AsMovieClip::MovieClip_gotoAndPlay(FlashSpriteInstance* self, const ActionValue& arg0) const
 {
 	if (arg0.isNumeric())
-		self->gotoFrame(uint32_t(arg0.getNumber() - 1));
+		self->gotoFrame(uint32_t(arg0.getInteger() - 1));
 	else if (arg0.isString())
 	{
 		int32_t frame = self->getSprite()->findFrame(arg0.getString());
@@ -552,7 +552,7 @@ void AsMovieClip::MovieClip_gotoAndStop(FlashSpriteInstance* self, const ActionV
 {
 	if (arg0.isNumeric())
 	{
-		int32_t frame = int32_t(arg0.getNumber());
+		int32_t frame = arg0.getInteger();
 		self->gotoFrame(max< int32_t >(frame - 1, 0));
 	}
 	else if (arg0.isString())
@@ -583,7 +583,7 @@ bool AsMovieClip::MovieClip_hitTest_1(const FlashSpriteInstance* self, const Fla
 		(bounds.mx.y > shapeBounds.mn.y);
 }
 
-bool AsMovieClip::MovieClip_hitTest_2(const FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const
+bool AsMovieClip::MovieClip_hitTest_2(const FlashSpriteInstance* self, float x, float y) const
 {
 	// Transform coordinates into local space.
 	Matrix33 Tinv = self->getFullTransform().inverse();
@@ -608,7 +608,7 @@ void AsMovieClip::MovieClip_lineStyle(FlashSpriteInstance* self) const
 	)
 }
 
-void AsMovieClip::MovieClip_lineTo(FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const
+void AsMovieClip::MovieClip_lineTo(FlashSpriteInstance* self, float x, float y) const
 {
 	self->createCanvas()->lineTo(x * 20.0f, y * 20.0f);
 }
@@ -643,7 +643,7 @@ void AsMovieClip::MovieClip_localToGlobal(const FlashSpriteInstance* self) const
 	)
 }
 
-void AsMovieClip::MovieClip_moveTo(FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const
+void AsMovieClip::MovieClip_moveTo(FlashSpriteInstance* self, float x, float y) const
 {
 	self->createCanvas()->moveTo(x * 20.0f, y * 20.0f);
 }
@@ -703,7 +703,7 @@ void AsMovieClip::MovieClip_swapDepths(FlashSpriteInstance* self, const ActionVa
 	int32_t targetDepth = depth;
 
 	if (arg0.isNumeric())
-		targetDepth = int32_t(arg0.getNumber());
+		targetDepth = arg0.getInteger();
 	else if (arg0.isObject())
 	{
 		Ref< FlashSpriteInstance > targetClipInstance = arg0.getObject()->getRelay< FlashSpriteInstance >();
@@ -727,13 +727,13 @@ void AsMovieClip::MovieClip_unloadMovie(FlashSpriteInstance* self) const
 	)
 }
 
-avm_number_t AsMovieClip::MovieClip_get_alpha(const FlashSpriteInstance* self) const
+float AsMovieClip::MovieClip_get_alpha(const FlashSpriteInstance* self) const
 {
 	const ColorTransform& colorTransform = self->getColorTransform();
 	return colorTransform.mul.getAlpha() * 100.0f;
 }
 
-void AsMovieClip::MovieClip_set_alpha(FlashSpriteInstance* self, avm_number_t alpha) const
+void AsMovieClip::MovieClip_set_alpha(FlashSpriteInstance* self, float alpha) const
 {
 	ColorTransform colorTransform = self->getColorTransform();
 	colorTransform.mul.setAlpha(Scalar(alpha / 100.0f));

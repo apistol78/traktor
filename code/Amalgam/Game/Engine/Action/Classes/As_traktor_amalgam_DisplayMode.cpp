@@ -39,10 +39,10 @@ void As_traktor_amalgam_DisplayMode::construct(flash::ActionObject* self, const 
 	if (args.size() >= 4)
 	{
 		render::DisplayMode displayMode;
-		displayMode.width = int32_t(args[0].getNumber());
-		displayMode.height = int32_t(args[1].getNumber());
-		displayMode.refreshRate = int32_t(args[2].getNumber());
-		displayMode.colorBits = int32_t(args[3].getNumber());
+		displayMode.width = args[0].getInteger();
+		displayMode.height = args[1].getInteger();
+		displayMode.refreshRate = args[2].getInteger();
+		displayMode.colorBits = args[3].getInteger();
 		self->setRelay(new AsDisplayMode(
 			displayMode
 		));

@@ -28,9 +28,9 @@ void Tween::init(
 	ActionObject* target,
 	const std::string& propertyName,
 	ActionFunction* function,
-	avm_number_t begin,
-	avm_number_t finish,
-	avm_number_t duration,
+	float begin,
+	float finish,
+	float duration,
 	bool useSeconds
 )
 {
@@ -41,7 +41,7 @@ void Tween::init(
 	m_finish = finish;
 	m_duration = duration;
 	m_useSeconds = useSeconds;
-	m_timeStart = avm_number_t(-1);
+	m_timeStart = float(-1);
 	m_current = begin;
 	m_playing = false;
 
@@ -61,12 +61,12 @@ void Tween::init(
 	start();
 }
 
-void Tween::continueTo(avm_number_t finish, avm_number_t duration)
+void Tween::continueTo(float finish, float duration)
 {
 	m_begin = m_current;
 	m_finish = finish;
 	m_duration = duration;
-	m_timeStart = avm_number_t(-1);
+	m_timeStart = float(-1);
 	resume();
 }
 
@@ -93,9 +93,9 @@ void Tween::resume()
 	m_playing = true;
 }
 
-void Tween::rewind(avm_number_t t)
+void Tween::rewind(float t)
 {
-	m_timeStart = avm_number_t(-1);
+	m_timeStart = float(-1);
 }
 
 void Tween::start()
@@ -103,7 +103,7 @@ void Tween::start()
 	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
-	m_timeStart = avm_number_t(-1);
+	m_timeStart = float(-1);
 
 	if (!m_playing)
 	{
@@ -124,7 +124,7 @@ void Tween::start()
 			if (m_duration > 0.0f)
 			{
 				ActionValueArray argv0(m_context->getPool(), 4);
-				argv0[0] = ActionValue(avm_number_t(0));
+				argv0[0] = ActionValue(0.0f);
 				argv0[1] = ActionValue(m_begin);
 				argv0[2] = ActionValue(m_finish - m_begin);
 				argv0[3] = ActionValue(m_duration);
@@ -133,7 +133,7 @@ void Tween::start()
 			else
 				value = ActionValue(m_begin);
 
-			m_current = value.getNumber();
+			m_current = value.getFloat();
 
 			// Set property value.
 			if (!value.isUndefined())
@@ -193,13 +193,13 @@ void Tween::onFrame(CallArgs& ca)
 
 	ActionValue value;
 
-	avm_number_t time = ca.args[0].getNumber();
+	float time = ca.args[0].getFloat();
 	if (m_timeStart < 0)
 		m_timeStart = time;
 
 	// Calculate interpolated value.
-	avm_number_t t = time - m_timeStart;
-	avm_number_t T = clamp(t, avm_number_t(0), m_duration);
+	float t = time - m_timeStart;
+	float T = clamp(t, 0.0f, m_duration);
 
 	// Calculate eased value.
 	if (m_duration > 0.0f)
@@ -214,7 +214,7 @@ void Tween::onFrame(CallArgs& ca)
 	else
 		value = ActionValue(m_begin);
 
-	m_current = value.getNumber();
+	m_current = value.getFloat();
 
 	// Set property value.
 	if (!value.isUndefined())

@@ -18,10 +18,10 @@ As_mx_transitions_easing_Regular::As_mx_transitions_easing_Regular(ActionContext
 
 void As_mx_transitions_easing_Regular::Regular_easeIn(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumber();
-	avm_number_t B = ca.args[1].getNumber();
-	avm_number_t C = ca.args[2].getNumber();
-	avm_number_t D = ca.args[3].getNumber();
+	float T = ca.args[0].getFloat();
+	float B = ca.args[1].getFloat();
+	float C = ca.args[2].getFloat();
+	float D = ca.args[3].getFloat();
 
 	T /= D;
 	ca.ret = ActionValue(C * T * T * T + B);
@@ -29,10 +29,10 @@ void As_mx_transitions_easing_Regular::Regular_easeIn(CallArgs& ca)
 
 void As_mx_transitions_easing_Regular::Regular_easeInOut(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumber();
-	avm_number_t B = ca.args[1].getNumber();
-	avm_number_t C = ca.args[2].getNumber();
-	avm_number_t D = ca.args[3].getNumber();
+	float T = ca.args[0].getFloat();
+	float B = ca.args[1].getFloat();
+	float C = ca.args[2].getFloat();
+	float D = ca.args[3].getFloat();
 
 	T /= D * 0.5f;
 	if (T < 1.0f)
@@ -46,10 +46,10 @@ void As_mx_transitions_easing_Regular::Regular_easeInOut(CallArgs& ca)
 
 void As_mx_transitions_easing_Regular::Regular_easeOut(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumber();
-	avm_number_t B = ca.args[1].getNumber();
-	avm_number_t C = ca.args[2].getNumber();
-	avm_number_t D = ca.args[3].getNumber();
+	float T = ca.args[0].getFloat();
+	float B = ca.args[1].getFloat();
+	float C = ca.args[2].getFloat();
+	float D = ca.args[3].getFloat();
 
 	T = (T / D) - 1.0f;
 	ca.ret = ActionValue(C * (T * T * T + 1.0f) + B);

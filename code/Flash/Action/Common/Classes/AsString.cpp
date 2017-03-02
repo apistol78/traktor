@@ -66,7 +66,7 @@ ActionValue AsString::xplicit(const ActionValueArray& args)
 
 void AsString::String_fromCharCode(CallArgs& ca)
 {
-	char charCode[] = { char(ca.args[0].getNumber()), 0 };
+	char charCode[] = { char(ca.args[0].getInteger()), 0 };
 	ca.ret = ActionValue(charCode);
 }
 
@@ -124,8 +124,8 @@ void AsString::String_slice(CallArgs& ca)
 
 	if (ca.args.size() >= 2)
 	{
-		uint32_t start = uint32_t(ca.args[0].getNumber());
-		uint32_t end = uint32_t(ca.args[1].getNumber());
+		uint32_t start = uint32_t(ca.args[0].getInteger());
+		uint32_t end = uint32_t(ca.args[1].getInteger());
 		if (start < st.length())
 			ca.ret = ActionValue(st.substr(start, end - start));
 		else
@@ -133,7 +133,7 @@ void AsString::String_slice(CallArgs& ca)
 	}
 	else if (ca.args.size() >= 1)
 	{
-		uint32_t start = uint32_t(ca.args[0].getNumber());
+		uint32_t start = uint32_t(ca.args[0].getInteger());
 		if (start < st.length())
 			ca.ret = ActionValue(st.substr(start));
 		else
@@ -152,7 +152,7 @@ void AsString::String_split(CallArgs& ca)
 		std::string delim = ca.args[0].getString();
 		if (!delim.empty())
 		{
-			uint32_t limit = uint32_t(ca.args[1].getNumber());
+			uint32_t limit = uint32_t(ca.args[1].getInteger());
 			words.reserve(limit);
 
 			Split< std::string >::any(st, delim, words, true, limit);
@@ -181,7 +181,7 @@ void AsString::String_substr(CallArgs& ca)
 	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
 
-	int32_t index = int32_t(ca.args[0].getNumber());
+	int32_t index = int32_t(ca.args[0].getInteger());
 	if (index < 0)
 	{
 		index = int32_t(st.length()) + index;
@@ -191,7 +191,7 @@ void AsString::String_substr(CallArgs& ca)
 
 	if (ca.args.size() >= 2)
 	{
-		int32_t count = int32_t(ca.args[1].getNumber());
+		int32_t count = int32_t(ca.args[1].getInteger());
 		if (index < st.length())
 			ca.ret = ActionValue(st.substr(index, count));
 		else
@@ -211,10 +211,10 @@ void AsString::String_substring(CallArgs& ca)
 	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
 
-	uint32_t start = uint32_t(ca.args[0].getNumber());
+	uint32_t start = uint32_t(ca.args[0].getInteger());
 	if (ca.args.size() >= 2)
 	{
-		uint32_t end = uint32_t(ca.args[1].getNumber());
+		uint32_t end = uint32_t(ca.args[1].getInteger());
 		if (start < st.length())
 			ca.ret = ActionValue(st.substr(start, end - start));
 		else

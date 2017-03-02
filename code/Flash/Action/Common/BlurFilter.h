@@ -25,25 +25,25 @@ class T_DLLCLASS BlurFilter : public BitmapFilter
 	T_RTTI_CLASS;
 
 public:
-	BlurFilter(avm_number_t blurX, avm_number_t blurY, int32_t quality);
+	BlurFilter(float blurX, float blurY, int32_t quality);
 
 	virtual Ref< BitmapFilter > clone() T_OVERRIDE T_FINAL;
 
-	avm_number_t getBlurX();
+	float getBlurX();
 
-	void setBlurX(avm_number_t blurX);
+	void setBlurX(float blurX);
 
-	avm_number_t getBlurY();
+	float getBlurY();
 
-	void setBlurY(avm_number_t blurY);
+	void setBlurY(float blurY);
 
 	int32_t getQuality();
 
 	void setQuality(int32_t quality);
 
 private:
-	avm_number_t m_blurX;
-	avm_number_t m_blurY;
+	float m_blurX;
+	float m_blurY;
 	int32_t m_quality;
 };
 

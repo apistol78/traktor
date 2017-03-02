@@ -268,7 +268,7 @@ void FlashMoviePlayer::executeFrame()
 	m_movieInstance->eventFrame();
 
 	// Notify frame listeners.
-	context->notifyFrameListeners(avm_number_t(m_timeCurrent));
+	context->notifyFrameListeners(float(m_timeCurrent));
 
 	// Pop current movie clip.
 	context->setMovieClip(current);
@@ -468,14 +468,14 @@ void FlashMoviePlayer::Global_setInterval(CallArgs& ca)
 		if (!target->getMember(ca.args[1].getString(), functionValue))
 			return;
 		function = functionValue.getObject< ActionFunction >();
-		interval = uint32_t(ca.args[2].getNumber());
+		interval = uint32_t(ca.args[2].getInteger());
 	}
 	else
 	{
 		// (functionReference:Function, interval:Number, [param1:Object, param2, ..., paramN])
 		target = ca.self;
 		function = ca.args[0].getObject< ActionFunction >();
-		interval = uint32_t(ca.args[1].getNumber());
+		interval = uint32_t(ca.args[1].getInteger());
 	}
 
 	if (!function)
@@ -489,12 +489,12 @@ void FlashMoviePlayer::Global_setInterval(CallArgs& ca)
 	iv.target = target;
 	iv.function = function;
 
-	ca.ret = ActionValue(avm_number_t(id));
+	ca.ret = ActionValue(int32_t(id));
 }
 
 void FlashMoviePlayer::Global_clearInterval(CallArgs& ca)
 {
-	uint32_t id = uint32_t(ca.args[0].getNumber());
+	uint32_t id = uint32_t(ca.args[0].getInteger());
 	std::map< uint32_t, Interval >::iterator i = m_interval.find(id);
 	if (i != m_interval.end())
 		m_interval.erase(i);

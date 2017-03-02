@@ -98,7 +98,7 @@ bool getMemberOrProperty(ExecutionState& state, ActionObject* self, int32_t vari
 
 	if (self->getPropertyGet(variableId, propertyGet))
 	{
-		stack.push(ActionValue(avm_number_t(0)));
+		stack.push(ActionValue(0.0f));
 		outValue = propertyGet->call(state.frame, self);
 		return true;
 	}
@@ -114,7 +114,7 @@ void setMemberOrProperty(ExecutionState& state, ActionObject* self, int32_t vari
 	if (self->getPropertySet(variableId, propertySet))
 	{
 		stack.push(value);
-		stack.push(ActionValue(avm_number_t(1)));
+		stack.push(ActionValue(1));
 		propertySet->call(state.frame, self);
 	}
 	else
@@ -226,15 +226,9 @@ void opx_stopSounds(ExecutionState& state)
 void opx_add(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-
 	ActionValue& number2 = stack.top(0);
 	ActionValue& number1 = stack.top(-1);
-
-	if (number1.isNumeric() && number2.isNumeric())
-		number1 = ActionValue(number1.getNumber() + number2.getNumber());
-	else
-		number1 = ActionValue();
-
+	number1 = number1 + number2;
 	stack.drop(1);
 }
 
@@ -259,15 +253,9 @@ void opx_multiply(ExecutionState& state)
 void opx_divide(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-
 	ActionValue& number2 = stack.top(0);
 	ActionValue& number1 = stack.top(-1);
-
-	if (number1.isNumeric() && number2.isNumeric())
-		number1 = ActionValue(number1.getNumber() / number2.getNumber());
-	else
-		number1 = ActionValue();
-
+	number1 = number1 / number2;
 	stack.drop(1);
 }
 
@@ -279,7 +267,7 @@ void opx_equal(ExecutionState& state)
 	ActionValue& number1 = stack.top(-1);
 
 	if (number1.isNumeric() && number2.isNumeric())
-		number1 = ActionValue(bool(number1.getNumber() == number2.getNumber()));
+		number1 = ActionValue(bool(number1.getFloat() == number2.getFloat()));
 	else
 		number1 = ActionValue();
 
@@ -294,7 +282,7 @@ void opx_lessThan(ExecutionState& state)
 	ActionValue& number1 = stack.top(-1);
 
 	if (number1.isNumeric() && number2.isNumeric())
-		number1 = ActionValue(bool(number1.getNumber() < number2.getNumber()));
+		number1 = ActionValue(bool(number1.getFloat() < number2.getFloat()));
 	else
 		number1 = ActionValue();
 
@@ -336,7 +324,7 @@ void opx_stringLength(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue str = stack.pop();
-	stack.push(ActionValue(avm_number_t(str.getString().length())));
+	stack.push(ActionValue(int32_t(str.getString().length())));
 }
 
 void opx_stringExtract(ExecutionState& state)
@@ -348,10 +336,10 @@ void opx_stringExtract(ExecutionState& state)
 	if (count.isNumeric() && index.isNumeric())
 	{
 		std::string str = strng.getString();
-		int32_t offset = int32_t(index.getNumber());
+		int32_t offset = index.getInteger();
 		if (offset >= 0 && offset < int32_t(str.length()))
 		{
-			std::string res = str.substr(offset, int(count.getNumber()));
+			std::string res = str.substr(offset, count.getInteger());
 			stack.push(ActionValue(res));
 		}
 		else
@@ -371,9 +359,9 @@ void opx_int(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue& number = stack.top();
 	if (number.isNumeric())
-		number = ActionValue(avm_number_t(std::floor(number.getNumber())));
+		number = ActionValue(number.getInteger());
 	else if (number.isString())
-		number = ActionValue(avm_number_t(parseString< int32_t >(number.getString())));
+		number = ActionValue(parseString< int32_t >(number.getString()));
 	else
 		number = ActionValue();
 }
@@ -466,7 +454,7 @@ void opx_getProperty(ExecutionState& state)
 		}
 	}
 
-	switch (int(index.getNumber()))
+	switch (index.getInteger())
 	{
 	// _x
 	case 0:
@@ -490,12 +478,12 @@ void opx_getProperty(ExecutionState& state)
 
 	// _currentframe
 	case 4:
-		stack.push(ActionValue(avm_number_t(movieClip->getCurrentFrame())));
+		stack.push(ActionValue(int32_t(movieClip->getCurrentFrame())));
 		break;
 
 	// _totalframes
 	case 5:
-		stack.push(ActionValue(avm_number_t(movieClip->getSprite()->getFrameCount())));
+		stack.push(ActionValue(int32_t(movieClip->getSprite()->getFrameCount())));
 		break;
 
 	// _alpha
@@ -541,7 +529,7 @@ void opx_getProperty(ExecutionState& state)
 	// _framesloaded
 	case 12:
 		{
-			stack.push(ActionValue(avm_number_t(movieClip->getSprite()->getFrameCount())));
+			stack.push(ActionValue(int32_t(movieClip->getSprite()->getFrameCount())));
 		}
 		break;
 
@@ -579,14 +567,14 @@ void opx_getProperty(ExecutionState& state)
 	// _xmouse
 	case 20:
 		{
-			stack.push(ActionValue(avm_number_t(movieClip->getMouseX())));
+			stack.push(ActionValue(int32_t(movieClip->getMouseX())));
 		}
 		break;
 
 	// _ymouse
 	case 21:
 		{
-			stack.push(ActionValue(avm_number_t(movieClip->getMouseY())));
+			stack.push(ActionValue(int32_t(movieClip->getMouseY())));
 		}
 		break;
 
@@ -619,13 +607,13 @@ void opx_setProperty(ExecutionState& state)
 		}
 	}
 
-	switch (int(index.getNumber()))
+	switch (index.getInteger())
 	{
 	// _x
 	case 0:
 		{
 			Matrix33 transform = movieClip->getTransform();
-			transform.e13 = float(value.getNumber() * 20.0f);
+			transform.e13 = value.getFloat() * 20.0f;
 			movieClip->setTransform(transform);
 		}
 		break;
@@ -634,7 +622,7 @@ void opx_setProperty(ExecutionState& state)
 	case 1:
 		{
 			Matrix33 transform = movieClip->getTransform();
-			transform.e23 = float(value.getNumber() * 20.0f);
+			transform.e23 = value.getFloat() * 20.0f;
 			movieClip->setTransform(transform);
 		}
 		break;
@@ -643,7 +631,7 @@ void opx_setProperty(ExecutionState& state)
 	case 2:
 		{
 			Matrix33 transform = movieClip->getTransform();
-			transform.e11 = float(value.getNumber() * 100.0f);
+			transform.e11 = value.getFloat() * 100.0f;
 			movieClip->setTransform(transform);
 		}
 		break;
@@ -652,7 +640,7 @@ void opx_setProperty(ExecutionState& state)
 	case 3:
 		{
 			Matrix33 transform = movieClip->getTransform();
-			transform.e22 = float(value.getNumber() * 100.0f);
+			transform.e22 = value.getFloat() * 100.0f;
 			movieClip->setTransform(transform);
 		}
 		break;
@@ -661,7 +649,7 @@ void opx_setProperty(ExecutionState& state)
 	case 6:
 		{
 			ColorTransform colorTransform = movieClip->getColorTransform();
-			colorTransform.mul.setAlpha(Scalar(value.getNumber() / 100.0f));
+			colorTransform.mul.setAlpha(Scalar(value.getFloat() / 100.0f));
 			movieClip->setColorTransform(colorTransform);
 		}
 		break;
@@ -703,7 +691,7 @@ void opx_cloneSprite(ExecutionState& state)
 	cloneClip->setName(target.getString());
 
 	state.movieClip->getDisplayList().showObject(
-		int32_t(depth.getNumber()),
+		depth.getInteger(),
 		cloneClip->getSprite()->getId(),
 		cloneClip,
 		true
@@ -731,8 +719,8 @@ void opx_startDragMovie(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue target = stack.pop();
-	uint32_t lockCenter = uint32_t(stack.pop().getNumber());
-	uint32_t constraint = uint32_t(stack.pop().getNumber());
+	uint32_t lockCenter = uint32_t(stack.pop().getInteger());
+	uint32_t constraint = uint32_t(stack.pop().getInteger());
 	if (constraint)
 	{
 		ActionValue y2 = stack.pop();
@@ -755,7 +743,7 @@ void opx_stringCompare(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue str2 = stack.pop();
 	ActionValue str1 = stack.pop();
-	stack.push(ActionValue(avm_number_t(str1.getString().compare(str2.getString()))));
+	stack.push(ActionValue(str1.getString().compare(str2.getString())));
 }
 
 void opx_throw(ExecutionState& state)
@@ -821,14 +809,14 @@ void opx_castOp(ExecutionState& state)
 		}
 	}
 
-	stack.push(ActionValue((avm_number_t)0));
+	stack.push(ActionValue((float)0));
 }
 
 void opx_implementsOp(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue implementationClass = stack.pop();
-	uint32_t interfaceCount = uint32_t(stack.pop().getNumber());
+	uint32_t interfaceCount = uint32_t(stack.pop().getInteger());
 
 	for (uint32_t i = 0; i < interfaceCount; ++i)
 	{
@@ -844,8 +832,8 @@ void opx_random(ExecutionState& state)
 	ActionValue& max = stack.top();
 	if (max.isNumeric())
 	{
-		int32_t rnd = std::rand() % std::max< int32_t >(int32_t(max.getNumber()), 1);
-		max = ActionValue(avm_number_t(rnd));
+		int32_t rnd = std::rand() % std::max< int32_t >(max.getInteger(), 1);
+		max = ActionValue(rnd);
 	}
 	else
 		max = ActionValue();
@@ -875,7 +863,7 @@ void opx_chr(ExecutionState& state)
 void opx_getTime(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	avm_number_t time = avm_number_t(int32_t(state.timer->getElapsedTime() * 1000.0f));
+	float time = float(int32_t(state.timer->getElapsedTime() * 1000.0f));
 	stack.push(ActionValue(time));
 }
 
@@ -1002,7 +990,7 @@ void opx_callFunction(ExecutionState& state)
 		*state.trace << L"AopCallFunction: Undefined function \"" << functionName.getWideString() << L"\"" << Endl;
 	)
 
-	int argCount = int(stack.pop().getNumber());
+	int32_t argCount = stack.pop().getInteger();
 	stack.drop(argCount);
 	stack.push(ActionValue());
 }
@@ -1014,9 +1002,9 @@ void opx_modulo(ExecutionState& state)
 	ActionValue number1 = stack.pop();
 	if (number1.isNumeric() && number2.isNumeric())
 	{
-		int n2 = int(number2.getNumber());
-		int n1 = int(number1.getNumber());
-		stack.push(ActionValue(avm_number_t(n1 % n2)));
+		int32_t n2 = number2.getInteger();
+		int32_t n1 = number1.getInteger();
+		stack.push(ActionValue(n1 % n2));
 	}
 	else
 		stack.push(ActionValue());
@@ -1037,7 +1025,7 @@ void opx_new(ExecutionState& state)
 
 	if (!classFunction)
 	{
-		int32_t argCount = int32_t(stack.pop().getNumber());
+		int32_t argCount = stack.pop().getInteger();
 		stack.drop(argCount);
 		stack.push(ActionValue());
 		return;
@@ -1049,7 +1037,7 @@ void opx_new(ExecutionState& state)
 
 	if (!prototypeValue.isObject())
 	{
-		int32_t argCount = int32_t(stack.pop().getNumber());
+		int32_t argCount = stack.pop().getInteger();
 		stack.drop(argCount);
 		stack.push(ActionValue());
 		return;
@@ -1118,7 +1106,7 @@ void opx_initObject(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 
-	int32_t initialPropertyCount = int32_t(stack.pop().getNumber());
+	int32_t initialPropertyCount = stack.pop().getInteger();
 
 	Ref< ActionObject > scriptObject = new ActionObject(state.context);
 	for (int32_t i = 0; i < initialPropertyCount; ++i)
@@ -1209,12 +1197,12 @@ void opx_newLessThan(ExecutionState& state)
 	}
 	else
 	{
-		ActionValue number2 = value2.toNumber();
-		ActionValue number1 = value1.toNumber();
+		ActionValue number2 = value2.toFloat();
+		ActionValue number1 = value1.toFloat();
 		if (number2.isNumeric() && number1.isNumeric())
 		{
-			avm_number_t n2 = number2.getNumber();
-			avm_number_t n1 = number1.getNumber();
+			float n2 = number2.getFloat();
+			float n1 = number1.getFloat();
 			stack.push(ActionValue(bool(n1 < n2)));
 		}
 		else
@@ -1233,7 +1221,8 @@ void opx_newEquals(ExecutionState& state)
 void opx_toNumber(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	stack.top() = stack.top().toNumber();
+	if (!stack.top().isNumeric())
+		stack.top() = stack.top().toFloat();
 }
 
 void opx_toString(ExecutionState& state)
@@ -1277,7 +1266,7 @@ void opx_getMember(ExecutionState& state)
 		int32_t index;
 
 		if (memberNameValue.isNumeric())
-			index = int32_t(memberNameValue.getNumber());
+			index = memberNameValue.getInteger();
 		else
 			index = parseIndex(memberNameValue.getString().c_str());
 
@@ -1314,7 +1303,7 @@ void opx_getMember(ExecutionState& state)
 	Ref< ActionFunction > propertyGet;
 	if (target->getPropertyGet(memberId, propertyGet))
 	{
-		stack.push(ActionValue(avm_number_t(0)));
+		stack.push(ActionValue(0.0f));
 		memberValue = propertyGet->call(state.frame, target);
 
 		T_IF_TRACE(
@@ -1354,7 +1343,7 @@ void opx_setMember(ExecutionState& state)
 		int32_t index;
 
 		if (memberNameValue.isNumeric())
-			index = int32_t(memberNameValue.getNumber());
+			index = memberNameValue.getInteger();
 		else
 			index = parseIndex(memberNameValue.getString().c_str());
 
@@ -1390,7 +1379,7 @@ void opx_setMember(ExecutionState& state)
 	if (target->getPropertySet(memberId, propertySet))
 	{
 		stack.push(memberValue);
-		stack.push(ActionValue(avm_number_t(1)));
+		stack.push(ActionValue(1));
 		propertySet->call(state.frame, target);
 	}
 	else
@@ -1407,8 +1396,10 @@ void opx_increment(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue& number = stack.top();
-	if (number.isNumeric())
-		number = ActionValue(number.getNumber() + 1);
+	if (number.isInteger())
+		number = ActionValue(number.getInteger() + 1);
+	else if (number.isFloat())
+		number = ActionValue(number.getFloat() + 1.0f);
 	else
 		number = ActionValue();
 }
@@ -1417,8 +1408,10 @@ void opx_decrement(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue& number = stack.top();
-	if (number.isNumeric())
-		number = ActionValue(number.getNumber() - 1);
+	if (number.isInteger())
+		number = ActionValue(number.getInteger() - 1);
+	else if (number.isFloat())
+		number = ActionValue(number.getFloat() - 1.0f);
 	else
 		number = ActionValue();
 }
@@ -1474,7 +1467,7 @@ void opx_callMethod(ExecutionState& state)
 		T_IF_TRACE(
 			*state.trace << L"AopCallMethod: Undefined method \"" << methodName.getWideString() << L"\"" << Endl;
 		)
-		int argCount = int(stack.pop().getNumber());
+		int32_t argCount = stack.pop().getInteger();
 		stack.drop(argCount);
 	}
 
@@ -1599,7 +1592,7 @@ void opx_enum2(ExecutionState& state)
 			if (arr)
 			{
 				for (uint32_t i = 0; i < arr->length(); ++i)
-					stack.push(ActionValue(avm_number_t(i)));
+					stack.push(ActionValue(int32_t(i)));
 			}
 		}
 
@@ -1616,9 +1609,9 @@ void opx_bitwiseAnd(ExecutionState& state)
 	ActionValue number1 = stack.pop();
 	if (number1.isNumeric() && number2.isNumeric())
 	{
-		int32_t n2 = int32_t(number2.getNumber());
-		int32_t n1 = int32_t(number1.getNumber());
-		stack.push(ActionValue(avm_number_t(n1 & n2)));
+		int32_t n2 = number2.getInteger();
+		int32_t n1 = number1.getInteger();
+		stack.push(ActionValue(n1 & n2));
 	}
 	else
 		stack.push(ActionValue());
@@ -1631,9 +1624,9 @@ void opx_bitwiseOr(ExecutionState& state)
 	ActionValue& number1 = stack.top(0);
 	if (number1.isNumeric() && number2.isNumeric())
 	{
-		int32_t n2 = int32_t(number2.getNumber());
-		int32_t n1 = int32_t(number1.getNumber());
-		number2 = ActionValue(avm_number_t(n1 | n2));
+		int32_t n2 = number2.getInteger();
+		int32_t n1 = number1.getInteger();
+		number2 = ActionValue(n1 | n2);
 	}
 	else
 		number2 = ActionValue();
@@ -1647,9 +1640,9 @@ void opx_bitwiseXor(ExecutionState& state)
 	ActionValue& number1 = stack.top(0);
 	if (number1.isNumeric() && number2.isNumeric())
 	{
-		int32_t n2 = int32_t(number2.getNumber());
-		int32_t n1 = int32_t(number1.getNumber());
-		number2 = ActionValue(avm_number_t(n1 ^ n2));
+		int32_t n2 = number2.getInteger();
+		int32_t n1 = number1.getInteger();
+		number2 = ActionValue(n1 ^ n2);
 	}
 	else
 		number2 = ActionValue();
@@ -1690,10 +1683,16 @@ void opx_strictEq(ExecutionState& state)
 			bool b1 = value1.getBoolean();
 			stack.push(ActionValue(b1 == b2));
 		}
-		else if (value1.isNumeric())
+		else if (value1.isInteger())
 		{
-			avm_number_t n2 = value2.getNumber();
-			avm_number_t n1 = value1.getNumber();
+			int32_t n2 = value2.getInteger();
+			int32_t n1 = value1.getInteger();
+			stack.push(ActionValue(n1 == n2));
+		}
+		else if (value1.isFloat())
+		{
+			float n2 = value2.getFloat();
+			float n1 = value1.getFloat();
 			stack.push(ActionValue(n1 == n2));
 		}
 		else if (value1.isString())
@@ -1735,12 +1734,12 @@ void opx_greater(ExecutionState& state)
 	}
 	else
 	{
-		ActionValue number2 = value2.toNumber();
-		ActionValue number1 = value1.toNumber();
+		ActionValue number2 = value2.toFloat();
+		ActionValue number1 = value1.toFloat();
 		if (number2.isNumeric() && number1.isNumeric())
 		{
-			avm_number_t n2 = number2.getNumber();
-			avm_number_t n1 = number1.getNumber();
+			float n2 = number2.getFloat();
+			float n1 = number1.getFloat();
 			stack.push(ActionValue(bool(n1 > n2)));
 		}
 		else
@@ -1807,7 +1806,7 @@ void opx_getUrl(ExecutionState& state)
 		{
 			stack.push(ActionValue(query));
 			stack.push(ActionValue(url));
-			stack.push(ActionValue(avm_number_t(2)));
+			stack.push(ActionValue(2));
 			fn->call(state.frame);
 		}
 		else
@@ -2093,7 +2092,7 @@ void opp_pushData(PreparationState& state)
 				w.b[7] = data[4];
 #endif
 
-				uint16_t index = state.image->addConstData(ActionValue(avm_number_t(w.d)));
+				uint16_t index = state.image->addConstData(ActionValue(float(w.d)));
 
 				*ndp++ = 100;
 				unalignedWrite< uint16_t >(ndp, index);
@@ -2107,7 +2106,7 @@ void opp_pushData(PreparationState& state)
 #if defined(T_BIG_ENDIAN)
 				swap8in32(value);
 #endif
-				uint16_t index = state.image->addConstData(ActionValue(avm_number_t(value)));
+				uint16_t index = state.image->addConstData(ActionValue(value));
 
 				*ndp++ = 100;
 				unalignedWrite< uint16_t >(ndp, index);
@@ -2173,7 +2172,7 @@ void opx_pushData(ExecutionState& state)
 		}
 		else if (type == 1)	// Number
 		{
-			value = ActionValue(avm_number_t(*(const float*)data));
+			value = ActionValue(float(*(const float*)data));
 			data += sizeof(float);
 		}
 		else if (type == 2)	// Null
@@ -2211,13 +2210,13 @@ void opx_pushData(ExecutionState& state)
 			w.b[7] = data[4];
 #endif
 
-			value = ActionValue(avm_number_t(w.d));
+			value = ActionValue(float(w.d));
 			data += sizeof(double);
 		}
 		else if (type == 7)	// Integer (32bit)
 		{
 			int32_t n = unalignedRead< int32_t >(data);
-			value = ActionValue(avm_number_t(n));
+			value = ActionValue(n);
 			data += sizeof(int32_t);
 		}
 		else if (type == 8)	// Dictionary (8bit index)
@@ -2288,7 +2287,7 @@ void opx_getUrl2(ExecutionState& state)
 
 			stack.push(target);
 			stack.push(url);
-			stack.push(ActionValue(avm_number_t(2)));
+			stack.push(ActionValue(2));
 
 			fn->call(state.frame);
 		}
@@ -2429,7 +2428,7 @@ void opx_gotoFrame2(ExecutionState& state)
 
 	if (frame.isNumeric())
 	{
-		frameIndex = int(frame.getNumber());
+		frameIndex = frame.getInteger();
 	}
 	else if (frame.isString())
 	{

@@ -85,7 +85,7 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	setMember("ASSetPropFlags", ActionValue(createNativeFunction(context, this, &ActionGlobal::Global_ASSetPropFlags)));
 	setMember("escape", ActionValue(createNativeFunction(context, this, &ActionGlobal::Global_escape)));
 	setMember("isNaN", ActionValue(createNativeFunction(context, this, &ActionGlobal::Global_isNaN)));
-	setMember("Infinity", ActionValue(std::numeric_limits< avm_number_t >::infinity()));
+	setMember("Infinity", ActionValue(std::numeric_limits< float >::infinity()));
 
 	// Create prototypes.
 	setMember("Object", ActionValue(new AsObject(context)));
@@ -215,7 +215,7 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 void ActionGlobal::Global_ASSetPropFlags(CallArgs& ca)
 {
 	Ref< ActionObject > object = ca.args[0].getObject();
-	uint32_t flags = uint32_t(ca.args[2].getNumber());
+	uint32_t flags = uint32_t(ca.args[2].getInteger());
 
 	// Read-only; protect classes from being modified.
 	if (object != 0 && flags & 4)
@@ -254,7 +254,7 @@ void ActionGlobal::Global_isNaN(CallArgs& ca)
 	bool nan = true;
 	if (!ca.args.empty() && ca.args[0].isNumeric())
 	{
-		avm_number_t n = ca.args[0].getNumber();
+		float n = ca.args[0].getFloat();
 		if (n != n)
 			nan = true;
 		else

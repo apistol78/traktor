@@ -54,9 +54,9 @@ private:
 
 	void XMLNode_set_nodeName(XMLNode* self, const std::wstring& nodeName) const;
 
-	avm_number_t XMLNode_get_nodeType(XMLNode* self) const;
+	float XMLNode_get_nodeType(XMLNode* self) const;
 
-	void XMLNode_set_nodeType(XMLNode* self, avm_number_t nodeType) const;
+	void XMLNode_set_nodeType(XMLNode* self, float nodeType) const;
 
 	std::wstring XMLNode_get_nodeValue(XMLNode* self) const;
 

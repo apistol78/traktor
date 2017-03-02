@@ -16,11 +16,11 @@ AsNumber::AsNumber(ActionContext* context)
 {
 	Ref< ActionObject > prototype = new ActionObject(context);
 
-	prototype->setMember("MAX_VALUE", ActionValue(std::numeric_limits< avm_number_t >::max()));
-	prototype->setMember("MIN_VALUE", ActionValue(std::numeric_limits< avm_number_t >::min()));
-	prototype->setMember("NaN", ActionValue(std::numeric_limits< avm_number_t >::signaling_NaN()));
-	prototype->setMember("NEGATIVE_INFINITY", ActionValue(-std::numeric_limits< avm_number_t >::infinity()));
-	prototype->setMember("POSITIVE_INFINITY", ActionValue(std::numeric_limits< avm_number_t >::infinity()));
+	prototype->setMember("MAX_VALUE", ActionValue(std::numeric_limits< float >::max()));
+	prototype->setMember("MIN_VALUE", ActionValue(std::numeric_limits< float >::min()));
+	prototype->setMember("NaN", ActionValue(std::numeric_limits< float >::signaling_NaN()));
+	prototype->setMember("NEGATIVE_INFINITY", ActionValue(-std::numeric_limits< float >::infinity()));
+	prototype->setMember("POSITIVE_INFINITY", ActionValue(std::numeric_limits< float >::infinity()));
 	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsNumber::Number_toString)));
 	prototype->setMember("valueOf", ActionValue(createNativeFunction(context, this, &AsNumber::Number_valueOf)));
 
@@ -38,16 +38,16 @@ void AsNumber::construct(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< Number > n;
 	if (args.size() > 0)
-		n = new Number(args[0].getNumber());
+		n = new Number(args[0].getFloat());
 	else
-		n = new Number(avm_number_t(0));
+		n = new Number(0.0f);
 	self->setRelay(n);
 }
 
 ActionValue AsNumber::xplicit(const ActionValueArray& args)
 {
 	if (args.size() > 0)
-		return ActionValue(args[0].getNumber());
+		return ActionValue(args[0].getFloat());
 	else
 		return ActionValue();
 }
@@ -57,7 +57,7 @@ std::wstring AsNumber::Number_toString(const Number* self) const
 	return traktor::toString(self->get());
 }
 
-avm_number_t AsNumber::Number_valueOf(const Number* self) const
+float AsNumber::Number_valueOf(const Number* self) const
 {
 	return self->get();
 }

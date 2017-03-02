@@ -45,9 +45,9 @@ void As_mx_transitions_Tween::construct(ActionObject* self, const ActionValueArr
 			args[0].getObjectAlways(getContext()),
 			args[1].getString(),
 			args[2].getObject< ActionFunction >(),
-			args[3].getNumber(),
-			args[4].getNumber(),
-			args[5].getNumber(),
+			args[3].getFloat(),
+			args[4].getFloat(),
+			args[5].getFloat(),
 			args[6].getBoolean()
 		);
 	}

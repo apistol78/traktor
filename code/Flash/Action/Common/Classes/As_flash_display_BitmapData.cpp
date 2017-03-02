@@ -72,11 +72,11 @@ void As_flash_display_BitmapData::construct(ActionObject* self, const ActionValu
 			transparent = args[2].getBoolean();
 
 		if (args.size() >= 4)
-			fillColor = uint32_t(args[3].getNumber());
+			fillColor = uint32_t(args[3].getInteger());
 
 		bm = new BitmapData(
-			int32_t(args[0].getNumber()),
-			int32_t(args[1].getNumber()),
+			args[0].getInteger(),
+			args[1].getInteger(),
 			transparent,
 			fillColor
 		);

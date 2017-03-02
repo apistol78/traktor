@@ -136,15 +136,19 @@ ActionValue::ActionValue(ActionValue&& v)
 ActionValue::ActionValue(bool b)
 :	m_type(AvtBoolean)
 {
-	m_value.o = 0;
 	m_value.b = b;
 }
 
-ActionValue::ActionValue(avm_number_t n)
-:	m_type(AvtNumber)
+ActionValue::ActionValue(int32_t i)
+:	m_type(AvtInteger)
 {
-	m_value.o = 0;
-	m_value.n = n;
+	m_value.i = i;
+}
+
+ActionValue::ActionValue(float f)
+:	m_type(AvtFloat)
+{
+	m_value.f = f;
 }
 
 ActionValue::ActionValue(const char* s, int32_t id)
@@ -222,8 +226,11 @@ bool ActionValue::getBoolean() const
 	case AvtBoolean:
 		return m_value.b;
 
-	case AvtNumber:
-		return bool(m_value.n != 0.0);
+	case AvtInteger:
+		return bool(m_value.i != 0);
+
+	case AvtFloat:
+		return bool(m_value.f != 0.0);
 
 	case AvtString:
 		return std::strlen(m_value.s) > 0;
@@ -238,25 +245,52 @@ bool ActionValue::getBoolean() const
 	return false;
 }
 
-avm_number_t ActionValue::getNumber() const
+int32_t ActionValue::getInteger() const
 {
 	T_VALIDATE(*this);
 	switch (m_type)
 	{
 	case AvtBoolean:
-		return m_value.b ? avm_number_t(1) : avm_number_t(0);
+		return m_value.b ? 1 : 0;
 
-	case AvtNumber:
-		return m_value.n;
+	case AvtInteger:
+		return m_value.i;
+
+	case AvtFloat:
+		return int32_t(m_value.f);
 
 	case AvtObject:
 	case AvtObjectWeak:
-		return m_value.o ? m_value.o->valueOf().getNumber() : avm_number_t(0);
+		return m_value.o ? m_value.o->valueOf().getInteger() : 0;
 
 	default:
 		break;
 	}
-	return avm_number_t(0);
+	return 0;
+}
+
+float ActionValue::getFloat() const
+{
+	T_VALIDATE(*this);
+	switch (m_type)
+	{
+	case AvtBoolean:
+		return m_value.b ? 1.0f : 0.0f;
+
+	case AvtInteger:
+		return float(m_value.i);
+
+	case AvtFloat:
+		return m_value.f;
+
+	case AvtObject:
+	case AvtObjectWeak:
+		return m_value.o ? m_value.o->valueOf().getFloat() : 0.0f;
+
+	default:
+		break;
+	}
+	return 0.0f;
 }
 
 std::string ActionValue::getString() const
@@ -267,8 +301,11 @@ std::string ActionValue::getString() const
 	case AvtBoolean:
 		return m_value.b ? "true" : "false";
 
-	case AvtNumber:
-		return wstombs(traktor::toString(m_value.n));
+	case AvtInteger:
+		return wstombs(traktor::toString(m_value.i));
+
+	case AvtFloat:
+		return wstombs(traktor::toString(m_value.f));
 
 	case AvtString:
 		return m_value.s;
@@ -296,8 +333,11 @@ Ref< ActionObject > ActionValue::getObjectAlways(ActionContext* context) const
 	case AvtBoolean:
 		return (new Boolean(m_value.b))->getAsObject(context);
 
-	case AvtNumber:
-		return (new Number(m_value.n))->getAsObject(context);
+	case AvtInteger:
+		return (new Number(float(m_value.i)))->getAsObject(context);
+
+	case AvtFloat:
+		return (new Number(m_value.f))->getAsObject(context);
 
 	case AvtString:
 		return (new String(m_value.s))->getAsObject(context);
@@ -324,7 +364,8 @@ void ActionValue::serialize(ISerializer& s)
 	{
 		{ L"AvtUndefined", AvtUndefined },
 		{ L"AvtBoolean", AvtBoolean },
-		{ L"AvtNumber", AvtNumber },
+		{ L"AvtInteger", AvtInteger },
+		{ L"AvtFloat", AvtFloat },
 		{ L"AvtString", AvtString },
 		{ L"AvtObject", AvtObject },
 		{ L"AvtObjectWeak", AvtObjectWeak },
@@ -341,8 +382,12 @@ void ActionValue::serialize(ISerializer& s)
 		s >> Member< bool >(L"value", m_value.b);
 		break;
 
-	case AvtNumber:
-		s >> Member< avm_number_t >(L"value", m_value.n);
+	case AvtInteger:
+		s >> Member< int32_t >(L"value", m_value.i);
+		break;
+
+	case AvtFloat:
+		s >> Member< float >(L"value", m_value.f);
 		break;
 
 	case AvtString:
@@ -427,14 +472,26 @@ ActionValue ActionValue::operator + (const ActionValue& r) const
 		else
 			return ActionValue();
 	}
+	else if (r.isInteger() && isInteger())
+	{
+		int32_t n2 = r.getInteger();
+		int32_t n1 = getInteger();
+		return ActionValue(n1 + n2);
+	}
+	else if (isNumeric() && r.isNumeric())
+	{
+		float n2 = r.getFloat();
+		float n1 = getFloat();
+		return ActionValue(n1 + n2);
+	}
 	else
 	{
-		ActionValue number2 = r.toNumber();
-		ActionValue number1 = toNumber();
+		ActionValue number2 = r.toFloat();
+		ActionValue number1 = toFloat();
 		if (number2.isNumeric() && number1.isNumeric())
 		{
-			avm_number_t n2 = number2.getNumber();
-			avm_number_t n1 = number1.getNumber();
+			float n2 = number2.getFloat();
+			float n1 = number1.getFloat();
 			return ActionValue(n1 + n2);
 		}
 		else
@@ -444,16 +501,36 @@ ActionValue ActionValue::operator + (const ActionValue& r) const
 
 ActionValue ActionValue::operator - (const ActionValue& r) const
 {
-	if (isNumeric() && r.isNumeric())
-		return ActionValue(getNumber() - r.getNumber());
+	if (r.isInteger() && isInteger())
+	{
+		int32_t n2 = r.getInteger();
+		int32_t n1 = getInteger();
+		return ActionValue(n1 - n2);
+	}
+	else if (isNumeric() && r.isNumeric())
+		return ActionValue(getFloat() - r.getFloat());
 	else
 		return ActionValue();
 }
 
 ActionValue ActionValue::operator * (const ActionValue& r) const
 {
+	if (r.isInteger() && isInteger())
+	{
+		int32_t n2 = r.getInteger();
+		int32_t n1 = getInteger();
+		return ActionValue(n1 * n2);
+	}
+	else if (isNumeric() && r.isNumeric())
+		return ActionValue(getFloat() * r.getFloat());
+	else
+		return ActionValue();
+}
+
+ActionValue ActionValue::operator / (const ActionValue& r) const
+{
 	if (isNumeric() && r.isNumeric())
-		return ActionValue(getNumber() * r.getNumber());
+		return ActionValue(getFloat() / r.getFloat());
 	else
 		return ActionValue();
 }
@@ -469,10 +546,16 @@ bool ActionValue::operator == (const ActionValue& r) const
 			bool v1 = getBoolean();
 			return v1 == v2;
 		}
-		else if (predicateType == ActionValue::AvtNumber)
+		else if (predicateType == ActionValue::AvtInteger)
 		{
-			avm_number_t v2 = r.getNumber();
-			avm_number_t v1 = getNumber();
+			int32_t v2 = r.getInteger();
+			int32_t v1 = getInteger();
+			return v1 == v2;
+		}
+		else if (predicateType == ActionValue::AvtFloat)
+		{
+			float v2 = r.getFloat();
+			float v1 = getFloat();
 			return v1 == v2;
 		}
 		else if (predicateType == ActionValue::AvtString)

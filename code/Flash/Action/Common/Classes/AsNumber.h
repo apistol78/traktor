@@ -29,7 +29,7 @@ public:
 private:
 	std::wstring Number_toString(const Number* self) const;
 
-	avm_number_t Number_valueOf(const Number* self) const;
+	float Number_valueOf(const Number* self) const;
 };
 
 	}

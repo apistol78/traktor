@@ -7,7 +7,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.BlurFilter", BlurFilter, BitmapFilter)
 
-BlurFilter::BlurFilter(avm_number_t blurX, avm_number_t blurY, int32_t quality)
+BlurFilter::BlurFilter(float blurX, float blurY, int32_t quality)
 :	BitmapFilter("flash.filters.BlurFilter")
 ,	m_blurX(blurX)
 ,	m_blurY(blurY)
@@ -20,22 +20,22 @@ Ref< BitmapFilter > BlurFilter::clone()
 	return new BlurFilter(m_blurX, m_blurY, m_quality);
 }
 
-avm_number_t BlurFilter::getBlurX()
+float BlurFilter::getBlurX()
 {
 	return m_blurX;
 }
 
-void BlurFilter::setBlurX(avm_number_t blurX)
+void BlurFilter::setBlurX(float blurX)
 {
 	m_blurX = blurX;
 }
 
-avm_number_t BlurFilter::getBlurY()
+float BlurFilter::getBlurY()
 {
 	return m_blurY;
 }
 
-void BlurFilter::setBlurY(avm_number_t blurY)
+void BlurFilter::setBlurY(float blurY)
 {
 	m_blurY = blurY;
 }

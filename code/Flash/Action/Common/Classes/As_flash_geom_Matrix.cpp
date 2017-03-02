@@ -42,20 +42,20 @@ void As_flash_geom_Matrix::initialize(ActionObject* self)
 
 void As_flash_geom_Matrix::construct(ActionObject* self, const ActionValueArray& args)
 {
-	avm_number_t v[6] = { avm_number_t(0) };
+	float v[6] = { 0.0f };
 
 	if (args.size() > 0)
-		v[0] = args[0].getNumber();
+		v[0] = args[0].getFloat();
 	if (args.size() > 1)
-		v[1] = args[1].getNumber();
+		v[1] = args[1].getFloat();
 	if (args.size() > 2)
-		v[2] = args[2].getNumber();
+		v[2] = args[2].getFloat();
 	if (args.size() > 3)
-		v[3] = args[3].getNumber();
+		v[3] = args[3].getFloat();
 	if (args.size() > 4)
-		v[4] = args[4].getNumber();
+		v[4] = args[4].getFloat();
 	if (args.size() > 5)
-		v[5] = args[5].getNumber();
+		v[5] = args[5].getFloat();
 
 	self->setRelay(new Matrix(v));
 }

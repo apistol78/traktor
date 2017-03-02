@@ -215,7 +215,7 @@ ActionValue ActionObject::valueOf()
 			return valueOfFn->call(this, args);
 		}
 	}
-	return ActionValue(avm_number_t(0));
+	return ActionValue(0.0f);
 }
 
 ActionValue ActionObject::toString()

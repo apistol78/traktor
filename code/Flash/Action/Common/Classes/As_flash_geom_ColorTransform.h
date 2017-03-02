@@ -24,41 +24,41 @@ public:
 	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
 
 private:
-	avm_number_t ColorTransform_get_alphaMultiplier(ColorTransform* self) const;
+	float ColorTransform_get_alphaMultiplier(ColorTransform* self) const;
 
-	void ColorTransform_set_alphaMultiplier(ColorTransform* self, avm_number_t value) const;
+	void ColorTransform_set_alphaMultiplier(ColorTransform* self, float value) const;
 
-	avm_number_t ColorTransform_get_alphaOffset(ColorTransform* self) const;
+	float ColorTransform_get_alphaOffset(ColorTransform* self) const;
 
-	void ColorTransform_set_alphaOffset(ColorTransform* self, avm_number_t value) const;
+	void ColorTransform_set_alphaOffset(ColorTransform* self, float value) const;
 
-	avm_number_t ColorTransform_get_blueMultiplier(ColorTransform* self) const;
+	float ColorTransform_get_blueMultiplier(ColorTransform* self) const;
 
-	void ColorTransform_set_blueMultiplier(ColorTransform* self, avm_number_t value) const;
+	void ColorTransform_set_blueMultiplier(ColorTransform* self, float value) const;
 
-	avm_number_t ColorTransform_get_blueOffset(ColorTransform* self) const;
+	float ColorTransform_get_blueOffset(ColorTransform* self) const;
 
-	void ColorTransform_set_blueOffset(ColorTransform* self, avm_number_t value) const;
+	void ColorTransform_set_blueOffset(ColorTransform* self, float value) const;
 
-	avm_number_t ColorTransform_get_greenMultiplier(ColorTransform* self) const;
+	float ColorTransform_get_greenMultiplier(ColorTransform* self) const;
 
-	void ColorTransform_set_greenMultiplier(ColorTransform* self, avm_number_t value) const;
+	void ColorTransform_set_greenMultiplier(ColorTransform* self, float value) const;
 
-	avm_number_t ColorTransform_get_greenOffset(ColorTransform* self) const;
+	float ColorTransform_get_greenOffset(ColorTransform* self) const;
 
-	void ColorTransform_set_greenOffset(ColorTransform* self, avm_number_t value) const;
+	void ColorTransform_set_greenOffset(ColorTransform* self, float value) const;
 
-	avm_number_t ColorTransform_get_redMultiplier(ColorTransform* self) const;
+	float ColorTransform_get_redMultiplier(ColorTransform* self) const;
 
-	void ColorTransform_set_redMultiplier(ColorTransform* self, avm_number_t value) const;
+	void ColorTransform_set_redMultiplier(ColorTransform* self, float value) const;
 
-	avm_number_t ColorTransform_get_redOffset(ColorTransform* self) const;
+	float ColorTransform_get_redOffset(ColorTransform* self) const;
 
-	void ColorTransform_set_redOffset(ColorTransform* self, avm_number_t value) const;
+	void ColorTransform_set_redOffset(ColorTransform* self, float value) const;
 
-	avm_number_t ColorTransform_get_rgb(ColorTransform* self) const;
+	float ColorTransform_get_rgb(ColorTransform* self) const;
 
-	void ColorTransform_set_rgb(ColorTransform* self, avm_number_t value) const;
+	void ColorTransform_set_rgb(ColorTransform* self, float value) const;
 
 	std::wstring ColorTransform_toString(const ColorTransform* self) const;
 };

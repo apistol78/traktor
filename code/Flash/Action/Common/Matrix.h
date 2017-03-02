@@ -31,15 +31,15 @@ public:
 
 	Matrix();
 
-	Matrix(const avm_number_t v[6]);
+	Matrix(const float v[6]);
 
 	Ref< Matrix > clone();
 
 	void concat(const Matrix* rh);
 
-	void createBox(avm_number_t scaleX, avm_number_t scaleY, avm_number_t rotation, avm_number_t tx, avm_number_t ty);
+	void createBox(float scaleX, float scaleY, float rotation, float tx, float ty);
 
-	void createGradientBox(avm_number_t width, avm_number_t height, avm_number_t rotation, avm_number_t tx, avm_number_t ty);
+	void createGradientBox(float width, float height, float rotation, float tx, float ty);
 
 	Ref< Point > deltaTransformPoint(const Point* pt);
 
@@ -47,15 +47,15 @@ public:
 
 	void invert();
 
-	void rotate(avm_number_t angle);
+	void rotate(float angle);
 
-	void scale(avm_number_t scaleX, avm_number_t scaleY);
+	void scale(float scaleX, float scaleY);
 
 	std::wstring toString();
 
 	Ref< Point > transformPoint(const Point* pt);
 
-	void translate(avm_number_t x, avm_number_t y);
+	void translate(float x, float y);
 };
 
 	}

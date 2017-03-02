@@ -20,28 +20,28 @@ As_mx_transitions_easing_Elastic::As_mx_transitions_easing_Elastic(ActionContext
 
 void As_mx_transitions_easing_Elastic::Elastic_easeIn(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumber();
-	avm_number_t B = ca.args[1].getNumber();
-	avm_number_t C = ca.args[2].getNumber();
-	avm_number_t D = ca.args[3].getNumber();
+	float T = ca.args[0].getFloat();
+	float B = ca.args[1].getFloat();
+	float C = ca.args[2].getFloat();
+	float D = ca.args[3].getFloat();
 	ca.ret = ActionValue(B + C * T / D);
 }
 
 void As_mx_transitions_easing_Elastic::Elastic_easeInOut(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumber();
-	avm_number_t B = ca.args[1].getNumber();
-	avm_number_t C = ca.args[2].getNumber();
-	avm_number_t D = ca.args[3].getNumber();
+	float T = ca.args[0].getFloat();
+	float B = ca.args[1].getFloat();
+	float C = ca.args[2].getFloat();
+	float D = ca.args[3].getFloat();
 	ca.ret = ActionValue(B + C * T / D);
 }
 
 void As_mx_transitions_easing_Elastic::Elastic_easeOut(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumber();
-	avm_number_t B = ca.args[1].getNumber();
-	avm_number_t C = ca.args[2].getNumber();
-	avm_number_t D = ca.args[3].getNumber();
+	float T = ca.args[0].getFloat();
+	float B = ca.args[1].getFloat();
+	float C = ca.args[2].getFloat();
+	float D = ca.args[3].getFloat();
 
 	if (T <= 0.0f)
 	{
@@ -49,15 +49,15 @@ void As_mx_transitions_easing_Elastic::Elastic_easeOut(CallArgs& ca)
 		return;
 	}
 
-	avm_number_t t = T / D;
+	float t = T / D;
 	if (t >= 1.0f)
 	{
 		ca.ret = ActionValue(B + C);
 		return;
 	}
 
-	avm_number_t p = D * 0.3f;
-	avm_number_t s = p / 4.0f;
+	float p = D * 0.3f;
+	float s = p / 4.0f;
 
 	ca.ret = ActionValue(C * powf(2, -10.0f * t) * sinf((t * D - s) * TWO_PI / p) + C + B);
 }

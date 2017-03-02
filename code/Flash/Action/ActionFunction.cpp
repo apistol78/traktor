@@ -24,7 +24,7 @@ ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self, A
 
 	ActionValueStack& callerStack = callerFrame->getStack();
 
-	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
+	int32_t argCount = !callerStack.empty() ? callerStack.pop().getInteger() : 0;
 	if (argCount < 0)
 		argCount = 0;
 
@@ -41,7 +41,7 @@ ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self)
 
 	ActionValueStack& callerStack = callerFrame->getStack();
 
-	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
+	int32_t argCount = !callerStack.empty() ? callerStack.pop().getInteger() : 0;
 	if (argCount < 0)
 		argCount = 0;
 
@@ -58,7 +58,7 @@ ActionValue ActionFunction::call(ActionFrame* callerFrame)
 
 	ActionValueStack& callerStack = callerFrame->getStack();
 
-	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
+	int32_t argCount = !callerStack.empty() ? callerStack.pop().getInteger() : 0;
 	if (argCount < 0)
 		argCount = 0;
 
