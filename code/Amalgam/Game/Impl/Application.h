@@ -12,6 +12,7 @@
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Signal.h"
 #include "Core/Timer/Timer.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -126,6 +127,7 @@ private:
 	UpdateInfo m_updateInfoRender;
 
 #if T_MEASURE_PERFORMANCE
+	render::RenderViewStatistics m_renderViewStats;
 	float m_fps;
 #endif
 
