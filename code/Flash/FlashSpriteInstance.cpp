@@ -613,21 +613,24 @@ void FlashSpriteInstance::eventFrame()
 			Ref< ActionObject > super = self->getSuper();
 			for (RefArray< const IActionVMImage >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
 			{
-				ActionFrame callFrame(
-					context,
-					self,
-					4,
-					0,
-					0
-				);
+				T_ANONYMOUS_VAR(ActionValuePool::Scope)(context->getPool());
+				{
+					ActionFrame callFrame(
+						context,
+						self,
+						4,
+						0,
+						0
+					);
 
-				callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
-				callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
-				callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
+					callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
+					callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
+					callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
 
-				callFrame.setRegister(0, ActionValue(context->getGlobal()));
+					callFrame.setRegister(0, ActionValue(context->getGlobal()));
 
-				(*i)->execute(&callFrame);
+					(*i)->execute(&callFrame);
+				}
 			}
 		}
 		m_lastExecutedFrame = m_currentFrame;

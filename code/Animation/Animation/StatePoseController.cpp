@@ -93,7 +93,6 @@ bool StatePoseController::evaluate(
 )
 {
 	bool continous = true;
-	Pose currentPose;
 
 	if (!skeleton)
 		return false;
@@ -124,7 +123,7 @@ bool StatePoseController::evaluate(
 	// Evaluate current state.
 	m_currentState->evaluate(
 		m_currentStateContext,
-		currentPose
+		m_evaluatePose
 	);
 	m_currentStateContext.setTime(m_currentStateContext.getTime() + deltaTime * m_timeFactor);
 
@@ -145,7 +144,7 @@ bool StatePoseController::evaluate(
 			Scalar blend = Scalar(sinf((m_blendState / m_blendDuration) * PI / 2.0f));
 
 			blendPoses(
-				&currentPose,
+				&m_evaluatePose,
 				&nextPose,
 				blend,
 				&blendPose
@@ -161,7 +160,7 @@ bool StatePoseController::evaluate(
 		{
 			calculatePoseTransforms(
 				skeleton,
-				&currentPose,
+				&m_evaluatePose,
 				outPoseTransforms
 			);
 		}
@@ -182,7 +181,7 @@ bool StatePoseController::evaluate(
 	{
 		calculatePoseTransforms(
 			skeleton,
-			&currentPose,
+			&m_evaluatePose,
 			outPoseTransforms
 		);
 	}
