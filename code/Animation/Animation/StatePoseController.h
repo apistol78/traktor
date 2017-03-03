@@ -3,6 +3,7 @@
 
 #include <map>
 #include "Animation/IPoseController.h"
+#include "Animation/Pose.h"
 #include "Animation/Animation/StateContext.h"
 #include "Resource/Proxy.h"
 
@@ -69,6 +70,7 @@ private:
 	StateContext m_currentStateContext;
 	Ref< StateNode > m_nextState;
 	StateContext m_nextStateContext;
+	Pose m_evaluatePose;
 	float m_blendState;
 	float m_blendDuration;
 	std::map< std::wstring, std::pair< bool, bool > > m_conditions;

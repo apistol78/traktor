@@ -131,7 +131,7 @@ TextLayout::TextLayout()
 
 void TextLayout::begin()
 {
-	m_lines.clear();
+	m_lines.resize(0);
 	m_cursorX = 0.0f;
 	m_cursorY = 0.0f;
 	m_width = 0.0f;

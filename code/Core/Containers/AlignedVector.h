@@ -958,7 +958,7 @@ public:
 
 	AlignedVector< ItemType >& operator = (const AlignedVector< ItemType >& src)
 	{
-		clear();
+		resize(0);
 		insert(begin(), src.begin(), src.end());
 		return *this;
 	}

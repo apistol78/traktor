@@ -127,14 +127,15 @@ public:
 	template < typename fn_t >
 	void forEachObject(fn_t fn) const
 	{
-		RefArray< FlashCharacterInstance > tmp;
+		size_t f = m_gather.size();
 		for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
 			T_ASSERT (i->second.instance);
-			tmp.push_back(i->second.instance);
+			m_gather.push_back(i->second.instance);
 		}
-		for (RefArray< FlashCharacterInstance >::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
-			fn(*i);
+		for (size_t i = f; i < m_gather.size(); ++i)
+			fn(m_gather[i]);
+		m_gather.resize(f);
 	}
 
 	/*! \brief For each visible character instances.
@@ -144,15 +145,16 @@ public:
 	template < typename fn_t >
 	void forEachVisibleObject(fn_t fn) const
 	{
-		RefArray< FlashCharacterInstance > tmp;
+		size_t f = m_gather.size();
 		for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
 			T_ASSERT (i->second.instance);
 			if (i->second.instance->isVisible())
-				tmp.push_back(i->second.instance);
+				m_gather.push_back(i->second.instance);
 		}
-		for (RefArray< FlashCharacterInstance >::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
-			fn(*i);
+		for (size_t i = f; i < m_gather.size(); ++i)
+			fn(m_gather[i]);
+		m_gather.resize(f);
 	}
 
 	/*! \brief For each visible character instances in reverse.
@@ -162,15 +164,16 @@ public:
 	template < typename fn_t >
 	void forEachVisibleObjectReverse(fn_t fn) const
 	{
-		RefArray< FlashCharacterInstance > tmp;
+		size_t f = m_gather.size();
 		for (FlashDisplayList::layer_map_t::const_reverse_iterator i = m_layers.rbegin(); i != m_layers.rend(); ++i)
 		{
 			T_ASSERT (i->second.instance);
 			if (i->second.instance->isVisible())
-				tmp.push_back(i->second.instance);
+				m_gather.push_back(i->second.instance);
 		}
-		for (RefArray< FlashCharacterInstance >::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
-			fn(*i);
+		for (size_t i = f; i < m_gather.size(); ++i)
+			fn(m_gather[i]);
+		m_gather.resize(f);
 	}
 
 	/*! \brief Get background clear color.
@@ -189,6 +192,7 @@ private:
 	ActionContext* m_context;
 	Color4f m_backgroundColor;
 	layer_map_t m_layers;
+	mutable RefArray< FlashCharacterInstance > m_gather;
 };
 
 	}
