@@ -85,6 +85,7 @@ Application::Application()
 ,	m_frameRender(0)
 ,	m_stateRender(0)
 #if T_MEASURE_PERFORMANCE
+,	m_lastAllocCount(0)
 ,	m_fps(0.0f)
 #endif
 {
@@ -956,6 +957,8 @@ bool Application::update()
 		// Publish performance to target manager.
 		if (m_targetManagerConnection && m_targetManagerConnection->connected())
 		{
+			size_t allocCount = Alloc::count();
+
 			resource::ResourceManagerStatistics rms;
 			m_resourceServer->getResourceManager()->getStatistics(rms);
 
@@ -973,6 +976,7 @@ bool Application::update()
 			performance.interval = updateInterval;
 			performance.collisions = m_renderCollisions;
 			performance.memInUse = uint32_t(Alloc::allocated());
+			performance.memDeltaCount = int32_t(allocCount) - int32_t(m_lastAllocCount);
 			performance.heapObjects = Object::getHeapObjectCount();
 			performance.build = float(buildTimeEnd - buildTimeStart);
 			performance.render = m_renderDuration;
@@ -1018,6 +1022,8 @@ bool Application::update()
 			}
 
 			m_targetManagerConnection->getTransport()->send(&performance);
+
+			m_lastAllocCount = allocCount;
 		}
 #endif
 	}

@@ -392,9 +392,9 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		bottomRect.bottom = bottomRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
 
 		bottomRect.left += ui::scaleBySystemDPI(26);
-		canvas.drawText(bottomRect, L"Mem: " + toString(performance.memInUse / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
+		canvas.drawText(bottomRect, L"Mem: " + toString(performance.memInUse / 1024) + L" KiB, dC: " + toString(performance.memDeltaCount), ui::AnLeft, ui::AnCenter);
 
-		bottomRect.left += ui::scaleBySystemDPI(100);
+		bottomRect.left += ui::scaleBySystemDPI(150);
 		canvas.drawText(bottomRect, L"Obj: " + toString(performance.heapObjects), ui::AnLeft, ui::AnCenter);
 
 		bottomRect.left += ui::scaleBySystemDPI(100);

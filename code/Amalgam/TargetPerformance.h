@@ -56,6 +56,7 @@ public:
 	uint32_t collisions;
 	uint32_t memInUse;
 	uint32_t memInUseScript;
+	int32_t memDeltaCount;
 	uint32_t heapObjects;
 	uint32_t drawCalls;
 	uint32_t primitiveCount;

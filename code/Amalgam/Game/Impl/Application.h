@@ -128,6 +128,7 @@ private:
 
 #if T_MEASURE_PERFORMANCE
 	render::RenderViewStatistics m_renderViewStats;
+	size_t m_lastAllocCount;
 	float m_fps;
 #endif
 
