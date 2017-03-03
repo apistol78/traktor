@@ -27,6 +27,7 @@ TargetPerformance::TargetPerformance()
 ,	collisions(0)
 ,	memInUse(0)
 ,	memInUseScript(0)
+,	memDeltaCount(0)
 ,	heapObjects(0)
 ,	drawCalls(0)
 ,	primitiveCount(0)
@@ -57,6 +58,7 @@ void TargetPerformance::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"collisions", collisions);
 	s >> Member< uint32_t >(L"memInUse", memInUse);
 	s >> Member< uint32_t >(L"memInUseScript", memInUseScript);
+	s >> Member< int32_t >(L"memDeltaCount", memDeltaCount);
 	s >> Member< uint32_t >(L"heapObjects", heapObjects);
 	s >> Member< uint32_t >(L"drawCalls", drawCalls);
 	s >> Member< uint32_t >(L"primitiveCount", primitiveCount);
