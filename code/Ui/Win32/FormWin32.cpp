@@ -72,6 +72,11 @@ bool FormWin32::create(IWidget* parent, const std::wstring& text, int width, int
 		new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventDestroy)
 	);
 
+	m_hWnd.registerMessageHandler(
+		L"TaskbarButtonCreated",
+		new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventTaskBarButtonCreated)
+	);
+
 	return true;
 }
 
@@ -139,6 +144,17 @@ bool FormWin32::isMinimized() const
 	return bool(iconic == TRUE);
 }
 
+void FormWin32::hideProgress()
+{
+	m_taskBarList->SetProgressState(m_hWnd, TBPF_NOPROGRESS);
+}
+
+void FormWin32::showProgress(int32_t current, int32_t total)
+{
+	m_taskBarList->SetProgressState(m_hWnd, TBPF_NORMAL);
+	m_taskBarList->SetProgressValue(m_hWnd, current, total);
+}
+
 void FormWin32::registerMenuBar(MenuBarWin32* menuBar)
 {
 	T_ASSERT_M (!m_menuBar, L"Only a single menubar is allowed");
@@ -194,6 +210,14 @@ LRESULT FormWin32::eventDestroy(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 {
 	PostQuitMessage(0);
 	return TRUE;
+}
+
+LRESULT FormWin32::eventTaskBarButtonCreated(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
+{
+	CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_ALL, IID_ITaskbarList3, (void**)&m_taskBarList.getAssign());
+	if (m_taskBarList)
+		m_taskBarList->SetProgressState(hWnd, TBPF_NOPROGRESS);
+	return 0;
 }
 
 	}

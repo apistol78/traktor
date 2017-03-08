@@ -169,6 +169,12 @@ void Window::registerMessageHandler(UINT message, IMessageHandler* messageHandle
 	m_messageHandlers[message] = messageHandler;
 }
 
+void Window::registerMessageHandler(const wchar_t* message, IMessageHandler* messageHandler)
+{
+	UINT id = RegisterWindowMessage(message);
+	registerMessageHandler(id, messageHandler);
+}
+
 void Window::registerDefaultClass()
 {
 	WNDCLASS wc;

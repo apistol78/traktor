@@ -147,14 +147,17 @@ private:
 
 struct StatusListener : public IPipelineBuilder::IListener
 {
+	Ref< ui::Form > m_form;
 	Ref< BuildView > m_buildView;
 	Ref< ui::custom::ProgressBar > m_buildProgress;
 
 	StatusListener(
+		ui::Form* form,
 		BuildView* buildView,
 		ui::custom::ProgressBar* buildProgress
 	)
-	:	m_buildView(buildView)
+	:	m_form(form)
+	,	m_buildView(buildView)
 	,	m_buildProgress(buildProgress)
 	{
 	}
@@ -166,6 +169,7 @@ struct StatusListener : public IPipelineBuilder::IListener
 		const PipelineDependency* dependency
 	) const T_OVERRIDE T_FINAL
 	{
+		m_form->showProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count, 100);
 		m_buildView->beginBuild(core, dependency->outputPath);
 		m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
 	}
@@ -178,6 +182,7 @@ struct StatusListener : public IPipelineBuilder::IListener
 		IPipelineBuilder::BuildResult result
 	) const T_OVERRIDE T_FINAL
 	{
+		m_form->hideProgress();
 		m_buildView->endBuild(core, result);
 	}
 };
@@ -1750,7 +1755,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildView->beginBuild();
 
 	// Build output.
-	StatusListener listener(m_buildView, m_buildProgress);
+	StatusListener listener(this, m_buildView, m_buildProgress);
 	Ref< IPipelineBuilder > pipelineBuilder;
 
 	if (
