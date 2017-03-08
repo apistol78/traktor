@@ -80,6 +80,11 @@ void ActionContext::setPressed(FlashCharacterInstance* pressed)
 	m_pressed = pressed;
 }
 
+void ActionContext::setRolledOver(FlashCharacterInstance* rolledOver)
+{
+	m_rolledOver = rolledOver;
+}
+
 void ActionContext::addFrameListener(ActionObject* frameListener)
 {
 	ActionValue memberValue;
@@ -160,6 +165,8 @@ void ActionContext::trace(visitor_t visitor) const
 	visitor(m_global);
 	visitor(m_movieClip);
 	visitor(m_focus);
+	visitor(m_pressed);
+	visitor(m_rolledOver);
 
 	for (std::vector< FrameListener >::const_iterator i = m_frameListeners.begin(); i != m_frameListeners.end(); ++i)
 	{
@@ -174,6 +181,7 @@ void ActionContext::dereference()
 	m_movieClip = 0;
 	m_focus = 0;
 	m_pressed = 0;
+	m_rolledOver = 0;
 	m_frameListeners.clear();
 }
 

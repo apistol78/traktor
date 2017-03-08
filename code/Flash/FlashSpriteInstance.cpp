@@ -32,11 +32,9 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashDictionary
 ,	m_mouseX(0)
 ,	m_mouseY(0)
 ,	m_currentFrame(0)
-,	m_nextFrame(0)
 ,	m_lastUpdateFrame(~0)
 ,	m_lastExecutedFrame(~0)
 ,	m_lastSoundFrame(~0)
-,	m_skipEnterFrame(0)
 ,	m_cacheAsBitmap(false)
 ,	m_initialized(false)
 ,	m_playing(true)
@@ -89,51 +87,45 @@ void FlashSpriteInstance::setCacheAsBitmap(bool cacheAsBitmap)
 void FlashSpriteInstance::gotoFrame(uint32_t frameId)
 {
 	frameId = min(frameId, m_sprite->getFrameCount() - 1);
-	if (!m_inDispatch)
+
+	if (m_currentFrame > frameId)
 	{
-		m_currentFrame =
-		m_nextFrame = frameId;
+		m_displayList.updateBegin(true);
+		for (uint32_t i = 0; i <= frameId; ++i)
+		{
+			FlashFrame* frame = m_sprite->getFrame(i);
+			if (frame)
+				m_displayList.updateFrame(this, frame);
+		}
+		m_displayList.updateEnd();
 	}
-	else
+	else if (m_currentFrame < frameId)
 	{
-		m_nextFrame = frameId;
-		m_skipEnterFrame = 1;
-		m_gotoIssued = true;
+		m_displayList.updateBegin(false);
+		for (uint32_t i = m_currentFrame; i <= frameId; ++i)
+		{
+			FlashFrame* frame = m_sprite->getFrame(i);
+			if (frame)
+				m_displayList.updateFrame(this, frame);
+		}
+		m_displayList.updateEnd();
 	}
+
+	m_lastUpdateFrame =
+	m_currentFrame = frameId;
+	m_gotoIssued = true;
 }
 
 void FlashSpriteInstance::gotoPrevious()
 {
-	if (!m_inDispatch)
-	{
-		if (m_currentFrame > 0)
-			m_currentFrame--;
-	}
-	else
-	{
-		if (m_currentFrame > 0)
-		{
-			m_nextFrame = m_currentFrame - 1;
-			m_gotoIssued = true;
-		}
-	}
+	if (m_currentFrame > 0)
+		gotoFrame(m_currentFrame - 1);
 }
 
 void FlashSpriteInstance::gotoNext()
 {
-	if (!m_inDispatch)
-	{
-		if (m_currentFrame < m_sprite->getFrameCount() - 1)
-			m_currentFrame++;
-	}
-	else
-	{
-		if (m_currentFrame < m_sprite->getFrameCount() - 1)
-		{
-			m_nextFrame = m_currentFrame + 1;
-			m_gotoIssued = true;
-		}
-	}
+	if (m_currentFrame < m_sprite->getFrameCount() - 1)
+		gotoFrame(m_currentFrame + 1);
 }
 
 void FlashSpriteInstance::setPlaying(bool playing, bool recursive)
@@ -592,15 +584,14 @@ void FlashSpriteInstance::eventFrame()
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
 
-	// Issue script assigned event; hack to skip events when using goto methods.
-	if (!m_skipEnterFrame)
-		executeScriptEvent(ActionContext::IdOnEnterFrame, ActionValue());
-	else
-		--m_skipEnterFrame;
+	// Issue script assigned event.
+	executeScriptEvent(ActionContext::IdOnEnterFrame, ActionValue());
 
 	// Execute frame scripts.
 	if (m_lastExecutedFrame != m_currentFrame)
 	{
+		m_lastExecutedFrame = m_currentFrame;
+
 		FlashFrame* frame = m_sprite->getFrame(m_currentFrame);
 		T_ASSERT (frame);
 
@@ -633,13 +624,15 @@ void FlashSpriteInstance::eventFrame()
 				}
 			}
 		}
-		m_lastExecutedFrame = m_currentFrame;
 	}
 
-	// Issue events on "visible" characters.
-	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
-		instance->eventFrame();
-	});
+	if (m_lastExecutedFrame == m_currentFrame)
+	{
+		// Issue events on "visible" characters.
+		m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
+			instance->eventFrame();
+		});
+	}
 
 	FlashCharacterInstance::eventFrame();
 
@@ -648,11 +641,8 @@ void FlashSpriteInstance::eventFrame()
 	// Update current frame index.
 	if (m_inDispatch)
 	{
-		if (m_playing || m_gotoIssued)
-		{
-			T_ASSERT (m_nextFrame < m_sprite->getFrameCount());
-			m_currentFrame = m_nextFrame;
-		}
+		if (m_playing && !m_gotoIssued)
+			m_currentFrame = (m_currentFrame + 1) % m_sprite->getFrameCount();
 		m_inDispatch = false;
 	}
 }
@@ -800,7 +790,7 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 		context->setPressed(0);
 }
 
-void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
+void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 {
 	ActionContext* context = getContext();
 	if (!context)
@@ -816,63 +806,28 @@ void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
 
 	// Issue events on "visible" characters.
 	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
-		instance->eventMouseMove0(x, y, button);
+		instance->eventMouseMove(x, y, button);
 	});
 
 	// Issue script assigned event.
 	executeScriptEvent(ActionContext::IdOnMouseMove, ActionValue());
 
 	// Roll over and out event handling.
-	if (haveScriptEvent(ActionContext::IdOnRollOut))
+	if (!context->getRolledOver())
 	{
-		Aabb2 bounds = getVisibleLocalBounds();
-		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
-		if (inside != m_inside)
+		if (haveScriptEvent(ActionContext::IdOnRollOver) || haveScriptEvent(ActionContext::IdOnRollOut))
 		{
-			if (!inside)
-				executeScriptEvent(ActionContext::IdOnRollOut, ActionValue());
-		}
-	}
-
-	FlashCharacterInstance::eventMouseMove0(x, y, button);
-
-	context->setMovieClip(current);
-}
-
-void FlashSpriteInstance::eventMouseMove1(int32_t x, int32_t y, int32_t button)
-{
-	ActionContext* context = getContext();
-	if (!context)
-		return;
-
-	Ref< FlashSpriteInstance > current = context->getMovieClip();
-	context->setMovieClip(this);
-
-	// Transform coordinates into local.
-	Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
-	m_mouseX = int32_t(xy.x / 20.0f);
-	m_mouseY = int32_t(xy.y / 20.0f);
-
-	// Roll over and out event handling.
-	if (haveScriptEvent(ActionContext::IdOnRollOver))
-	{
-		Aabb2 bounds = getVisibleLocalBounds();
-		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
-		if (inside != m_inside)
-		{
+			Aabb2 bounds = getVisibleLocalBounds();
+			bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 			if (inside)
+			{
 				executeScriptEvent(ActionContext::IdOnRollOver, ActionValue());
-
-			m_inside = inside;
+				context->setRolledOver(this);
+			}
 		}
 	}
 
-	// Issue events on "visible" characters.
-	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
-		instance->eventMouseMove1(x, y, button);
-	});
-
-	FlashCharacterInstance::eventMouseMove1(x, y, button);
+	FlashCharacterInstance::eventMouseMove(x, y, button);
 
 	context->setMovieClip(current);
 }
@@ -1095,12 +1050,6 @@ void FlashSpriteInstance::preDispatchEvents()
 		eventLoad();
 		m_initialized = true;
 	}
-
-	// Set initial next frame index, this might change during execution of events.
-	if (m_playing)
-		m_nextFrame = (m_currentFrame + 1) % m_sprite->getFrameCount();
-	else
-		m_nextFrame = m_currentFrame;
 }
 
 	}

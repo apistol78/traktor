@@ -211,6 +211,7 @@ void FlashMoviePlayer::executeFrame()
 	else
 		m_movieInstance->updateDisplayList();
 
+	// Dispatch events.
 	for (AlignedVector< Event >::const_iterator i = m_events.begin(); i != m_events.end(); ++i)
 	{
 		const Event& evt = *i;
@@ -245,10 +246,32 @@ void FlashMoviePlayer::executeFrame()
 			break;
 
 		case EvtMouseMove:
-			if (m_mouse)
-				m_mouse->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
-			m_movieInstance->eventMouseMove0(evt.mouse.x, evt.mouse.y, evt.mouse.button);
-			m_movieInstance->eventMouseMove1(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+			{
+				if (m_mouse)
+					m_mouse->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+
+				// Check if mouse cursor still over "rolled over" character.
+				if (context->getRolledOver())
+				{
+					FlashSpriteInstance* rolledOverSprite = checked_type_cast< FlashSpriteInstance* >(context->getRolledOver());
+					bool inside = false;
+					if (rolledOverSprite->isVisible())
+					{
+						Matrix33 intoCharacter = rolledOverSprite->getFullTransform().inverse();
+						Aabb2 bounds = rolledOverSprite->getVisibleLocalBounds();
+						Vector2 xy = intoCharacter * Vector2(float(evt.mouse.x), float(evt.mouse.y));
+						inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
+					}
+					if (!inside)
+					{
+						// Cursor has escaped; issue roll out.
+						rolledOverSprite->executeScriptEvent(ActionContext::IdOnRollOut, ActionValue());
+						context->setRolledOver(0);
+					}
+				}
+
+				m_movieInstance->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+			}
 			break;
 
 		case EvtMouseWheel:

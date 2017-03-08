@@ -581,7 +581,7 @@ void opx_getProperty(ExecutionState& state)
 	default:
 		{
 			T_IF_TRACE(
-				*state.trace << L"AopGetProperty: Unknown index " << int32_t(index.getNumber()) << Endl;
+				*state.trace << L"AopGetProperty: Unknown index " << index.getInteger() << Endl;
 			)
 			stack.push(ActionValue());
 		}
@@ -671,7 +671,7 @@ void opx_setProperty(ExecutionState& state)
 	default:
 		{
 			T_IF_TRACE(
-				*state.trace << L"AopSetProperty: Unknown index " << int32_t(index.getNumber()) << Endl;
+				*state.trace << L"AopSetProperty: Unknown index " << index.getInteger() << Endl;
 			)
 		}
 		break;

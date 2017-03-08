@@ -66,6 +66,10 @@ void FlashCharacterInstance::destroy()
 	{
 		if (m_context->getFocus() == this)
 			m_context->setFocus(0);
+		if (m_context->getPressed() == this)
+			m_context->setPressed(0);
+		if (m_context->getRolledOver() == this)
+			m_context->setRolledOver(0);
 	}
 
 	m_context = 0;
@@ -271,11 +275,7 @@ void FlashCharacterInstance::eventMouseUp(int x, int y, int button)
 {
 }
 
-void FlashCharacterInstance::eventMouseMove0(int x, int y, int button)
-{
-}
-
-void FlashCharacterInstance::eventMouseMove1(int x, int y, int button)
+void FlashCharacterInstance::eventMouseMove(int x, int y, int button)
 {
 }
 
@@ -298,11 +298,6 @@ bool FlashCharacterInstance::getMember(ActionContext* context, uint32_t memberNa
 	}
 	else
 		return false;
-}
-
-void FlashCharacterInstance::setParent(FlashCharacterInstance* parent)
-{
-	m_parent = parent;
 }
 
 bool FlashCharacterInstance::haveScriptEvent(uint32_t eventName)
@@ -341,6 +336,11 @@ bool FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const Action
 
 	eventFunction->call(self, argv);
 	return true;
+}
+
+void FlashCharacterInstance::setParent(FlashCharacterInstance* parent)
+{
+	m_parent = parent;
 }
 
 void FlashCharacterInstance::trace(visitor_t visitor) const
