@@ -30,6 +30,10 @@ public:
 	virtual bool isMaximized() const = 0;
 
 	virtual bool isMinimized() const = 0;
+
+	virtual void hideProgress() = 0;
+
+	virtual void showProgress(int32_t current, int32_t total) = 0;
 };
 
 	}

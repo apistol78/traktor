@@ -19,21 +19,25 @@ class FormWin32 : public WidgetWin32Impl< IForm >
 public:
 	FormWin32(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style);
+	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void setIcon(ISystemBitmap* icon);
+	virtual void setIcon(ISystemBitmap* icon) T_OVERRIDE T_FINAL;
 
-	virtual void maximize();
+	virtual void maximize() T_OVERRIDE T_FINAL;
 
-	virtual void minimize();
+	virtual void minimize() T_OVERRIDE T_FINAL;
 
-	virtual void restore();
+	virtual void restore() T_OVERRIDE T_FINAL;
 
-	virtual bool isMaximized() const;
+	virtual bool isMaximized() const T_OVERRIDE T_FINAL;
 
-	virtual bool isMinimized() const;
+	virtual bool isMinimized() const T_OVERRIDE T_FINAL;
+
+	virtual void hideProgress() T_OVERRIDE T_FINAL;
+
+	virtual void showProgress(int32_t current, int32_t total) T_OVERRIDE T_FINAL;
 
 	/*! \brief Bar registration.
 	 *
@@ -53,6 +57,7 @@ public:
 
 private:
 	MenuBarWin32* m_menuBar;
+	ComRef< ITaskbarList3 > m_taskBarList;
 
 	LRESULT eventInitMenuPopup(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
@@ -61,6 +66,8 @@ private:
 	LRESULT eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
 	LRESULT eventDestroy(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
+
+	LRESULT eventTaskBarButtonCreated(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 };
 
 	}

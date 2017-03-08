@@ -67,6 +67,16 @@ bool Form::isMinimized() const
 	return static_cast< IForm* >(m_widget)->isMinimized();
 }
 
+void Form::hideProgress()
+{
+	static_cast< IForm* >(m_widget)->hideProgress();
+}
+
+void Form::showProgress(int32_t current, int32_t total)
+{
+	static_cast< IForm* >(m_widget)->showProgress(current, total);
+}
+
 bool Form::acceptLayout() const
 {
 	return false;
