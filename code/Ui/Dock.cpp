@@ -172,6 +172,7 @@ void Dock::eventButtonUp(MouseButtonUpEvent* event)
 void Dock::eventMouseMove(MouseMoveEvent* event)
 {
 	Point position = event->getPosition();
+	Cursor cursor = CrArrow;
 
 	if (!hasCapture())
 	{
@@ -181,14 +182,17 @@ void Dock::eventMouseMove(MouseMoveEvent* event)
 			pane->hitSplitter(position)
 		)
 		{
-			setCursor(pane->m_vertical ? CrSizeNS : CrSizeWE);
+			cursor = pane->m_vertical ? CrSizeNS : CrSizeWE;
 		}
 	}
 	else
 	{
 		m_splittingPane->setSplitterPosition(position);
+		cursor = m_splittingPane->m_vertical ? CrSizeNS : CrSizeWE;
 		update();
 	}
+
+	setCursor(cursor);
 }
 
 void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
