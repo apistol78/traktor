@@ -85,6 +85,8 @@ public:
 
 	void setPressed(FlashCharacterInstance* pressed);
 
+	void setRolledOver(FlashCharacterInstance* rolledOver);
+
 	void addFrameListener(ActionObject* frameListener);
 
 	void removeFrameListener(ActionObject* frameListener);
@@ -109,6 +111,8 @@ public:
 
 	FlashCharacterInstance* getPressed() const { return m_pressed; }
 
+	FlashCharacterInstance* getRolledOver() const { return m_rolledOver; }
+
 	ActionValuePool& getPool() { return m_pool; }
 
 protected:
@@ -129,6 +133,7 @@ private:
 	Ref< FlashSpriteInstance > m_movieClip;
 	Ref< FlashCharacterInstance > m_focus;
 	Ref< FlashCharacterInstance > m_pressed;
+	Ref< FlashCharacterInstance > m_rolledOver;
 	ActionStrings m_strings;
 	ActionValuePool m_pool;
 	std::vector< FrameListener > m_frameListeners;

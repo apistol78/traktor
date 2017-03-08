@@ -63,7 +63,7 @@ public:
 
 	virtual void eventMouseUp(int x, int y, int button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseMove0(int x, int y, int button) T_OVERRIDE T_FINAL;
+	virtual void eventMouseMove(int x, int y, int button) T_OVERRIDE T_FINAL;
 
 	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
 

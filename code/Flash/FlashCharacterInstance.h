@@ -202,9 +202,7 @@ public:
 
 	virtual void eventMouseUp(int x, int y, int button);
 
-	virtual void eventMouseMove0(int x, int y, int button);
-
-	virtual void eventMouseMove1(int x, int y, int button);
+	virtual void eventMouseMove(int x, int y, int button);
 
 	virtual void eventSetFocus();
 
@@ -225,12 +223,16 @@ public:
 
 	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) T_OVERRIDE;
 
-protected:
-	void setParent(FlashCharacterInstance* parent);
-
+	/*! \brief Check if character has associated script event.
+	 */
 	bool haveScriptEvent(uint32_t eventName);
 
+	/*! \brief Execute script event associated with character.
+	 */
 	bool executeScriptEvent(uint32_t eventName, const ActionValue& arg);
+
+protected:
+	void setParent(FlashCharacterInstance* parent);
 
 	virtual void trace(visitor_t visitor) const T_OVERRIDE;
 

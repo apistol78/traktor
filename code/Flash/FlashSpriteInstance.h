@@ -122,9 +122,7 @@ public:
 
 	virtual void eventMouseUp(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseMove0(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
-
-	virtual void eventMouseMove1(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
+	virtual void eventMouseMove(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
 
 	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
 
@@ -186,11 +184,9 @@ private:
 	int32_t m_mouseX;
 	int32_t m_mouseY;
 	uint16_t m_currentFrame;
-	uint16_t m_nextFrame;
 	uint16_t m_lastUpdateFrame;
 	uint16_t m_lastExecutedFrame;
 	uint16_t m_lastSoundFrame;
-	uint8_t m_skipEnterFrame;
 	bool m_cacheAsBitmap;
 	bool m_initialized;
 	bool m_playing;
