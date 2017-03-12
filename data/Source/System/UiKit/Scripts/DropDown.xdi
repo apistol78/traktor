@@ -132,13 +132,7 @@ function DropDown:_onMousePress()
 	-- Transform local coordinate into ancestor frame as
 	-- list box is temporarily added as child to ancestor in
 	-- order to be top most.
-	local pp = self:transformInto(
-		{
-			x = 0,
-			y = p.height
-		},
-		ancestor
-	)
+	local pp = self:localToGlobal({ x = 0, y = p.height})
 
 	self._list:place(
 		pp.x,
@@ -148,7 +142,7 @@ function DropDown:_onMousePress()
 	)
 
 	self._list:setOnClick(function(index) self:_onListClick(index) end)
-	self._list:addEventListener(MouseDownEvent, self, _onListMouseDown)
+	self._list:addEventListener(MouseDownEvent, self, self._onListMouseDown)
 
 	self._list:setModal()
 end
