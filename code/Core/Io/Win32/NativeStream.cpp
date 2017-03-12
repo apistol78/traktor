@@ -45,29 +45,36 @@ bool NativeStream::canSeek() const
 	return m_hFile != 0;
 }
 
-int NativeStream::tell() const
+int64_t NativeStream::tell() const
 {
-	return m_hFile != 0 ? (int)SetFilePointer(m_hFile, 0, NULL, FILE_CURRENT) : 0;
+	return m_hFile != 0 ? (int64_t)SetFilePointer(m_hFile, 0, NULL, FILE_CURRENT) : 0;
 }
 
-int NativeStream::available() const
+int64_t NativeStream::available() const
 {
 	if ((m_mode & File::FmRead) == File::FmRead && m_fileSize == 0)
 		m_fileSize = GetFileSize(m_hFile, NULL);
 
-	return m_hFile != 0 ? ((int)m_fileSize - tell()) : 0;
+	return m_hFile != 0 ? ((int64_t)m_fileSize - tell()) : 0;
 }
 
-int NativeStream::seek(SeekOriginType origin, int offset)
+int64_t NativeStream::seek(SeekOriginType origin, int64_t offset)
 {
 	if (m_hFile == 0)
 		return 0;
 
+	LARGE_INTEGER li;
+	li.QuadPart = offset;
+
 	const DWORD c_origins[] = { FILE_CURRENT, FILE_END, FILE_BEGIN };
-	return (int)SetFilePointer(m_hFile, offset, NULL, c_origins[origin]);
+	li.LowPart = SetFilePointer(m_hFile, li.LowPart, &li.HighPart, c_origins[origin]);
+	if (li.LowPart == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
+		li.QuadPart = -1;
+
+	return li.QuadPart;
 }
 
-int NativeStream::read(void* block, int nbytes)
+int64_t NativeStream::read(void* block, int64_t nbytes)
 {
 	if (m_hFile == 0)
 		return 0;
@@ -76,17 +83,17 @@ int NativeStream::read(void* block, int nbytes)
 	if (ReadFile(
 		m_hFile,
 		block,
-		nbytes,
+		(DWORD)nbytes,
 		&nread,
 		NULL
 	) == FALSE)
 		return 0;
 
 	T_ASSERT (nread <= nbytes);
-	return int(nread);
+	return int64_t(nread);
 }
 
-int NativeStream::write(const void* block, int nbytes)	
+int64_t NativeStream::write(const void* block, int64_t nbytes)	
 {
 	if (m_hFile == 0)
 		return 0;
@@ -95,13 +102,13 @@ int NativeStream::write(const void* block, int nbytes)
 	if (WriteFile(
 		m_hFile,
 		block,
-		nbytes,
+		(DWORD)nbytes,
 		&nwritten,
 		NULL
 	) == FALSE)
 		return 0;
 
-	return int(nwritten);
+	return int64_t(nwritten);
 }
 
 void NativeStream::flush()

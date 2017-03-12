@@ -69,7 +69,7 @@ bool ActionWriteData::execute(Context* context)
 		}
 	}
 
-	int dataBufferSize = int(m_dataBuffer.size());
+	int64_t dataBufferSize = int64_t(m_dataBuffer.size());
 	if (dataBufferSize > 0)
 	{
 		if (writeStream->write(&m_dataBuffer[0], dataBufferSize) != dataBufferSize)

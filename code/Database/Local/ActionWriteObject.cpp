@@ -58,7 +58,7 @@ bool ActionWriteObject::execute(Context* context)
 	m_objectStream->close();
 	m_objectStream = 0;
 
-	int32_t objectBufferSize = int32_t(m_objectBuffer.size());
+	int64_t objectBufferSize = int64_t(m_objectBuffer.size());
 	if (objectBufferSize > 0)
 	{
 		if (instanceStream->write(&m_objectBuffer[0], objectBufferSize) != objectBufferSize)

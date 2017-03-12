@@ -30,7 +30,7 @@ public:
 		m_stream = 0;
 	}
 
-	int write(const void* block, int nbytes)
+	int64_t write(const void* block, int64_t nbytes)
 	{
 		int rc;
 
@@ -91,7 +91,7 @@ public:
 		}
 	}
 
-	int getLogicalPosition() const
+	int64_t getLogicalPosition() const
 	{
 		return m_position;
 	}
@@ -100,7 +100,7 @@ private:
 	Ref< IStream > m_stream;
 	z_stream m_zstream;
 	AlignedVector< uint8_t > m_buf;
-	int m_position;
+	int64_t m_position;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.DeflateStreamZip", DeflateStreamZip, IStream)
@@ -139,31 +139,31 @@ bool DeflateStreamZip::canSeek() const
 	return false;
 }
 
-int DeflateStreamZip::tell() const
+int64_t DeflateStreamZip::tell() const
 {
 	T_ASSERT (m_impl);
 	return m_impl->getLogicalPosition();
 }
 
-int DeflateStreamZip::available() const
+int64_t DeflateStreamZip::available() const
 {
 	T_ASSERT (0);
 	return 0;
 }
 
-int DeflateStreamZip::seek(SeekOriginType origin, int offset)
+int64_t DeflateStreamZip::seek(SeekOriginType origin, int64_t offset)
 {
 	T_ASSERT (0);
 	return 0;
 }
 
-int DeflateStreamZip::read(void* block, int nbytes)
+int64_t DeflateStreamZip::read(void* block, int64_t nbytes)
 {
 	T_ASSERT (0);
 	return 0;
 }
 
-int DeflateStreamZip::write(const void* block, int nbytes)
+int64_t DeflateStreamZip::write(const void* block, int64_t nbytes)
 {
 	T_ASSERT (m_impl);
 	return m_impl->write(block, nbytes);

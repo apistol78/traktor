@@ -28,14 +28,14 @@ public:
 		m_stream = 0;
 	}
 
-	int write(const void* block, int nbytes)
+	int64_t write(const void* block, int64_t nbytes)
 	{
 		const uint8_t* top = static_cast< const uint8_t* >(block);
 		const uint8_t* ptr = static_cast< const uint8_t* >(block);
 
 		while (nbytes > 0)
 		{
-			int32_t ncopy = std::min< int32_t >(nbytes, int32_t(m_uncompressedBuffer.size() - m_uncompressedBufferCount));
+			int64_t ncopy = std::min< int64_t >(nbytes, int64_t(m_uncompressedBuffer.size() - m_uncompressedBufferCount));
 			std::memcpy(&m_uncompressedBuffer[m_uncompressedBufferCount], ptr, ncopy);
 			m_uncompressedBufferCount += ncopy;
 			ptr += ncopy;
@@ -63,7 +63,7 @@ public:
 			}
 		}
 
-		return int(ptr - top);
+		return int64_t(ptr - top);
 	}
 
 	void flush()
@@ -95,7 +95,7 @@ private:
 	AlignedVector< uint8_t > m_uncompressedBuffer;
 	AlignedVector< uint8_t > m_compressedBlock;
 	AlignedVector< uint8_t > m_workMemory;
-	uint32_t m_uncompressedBufferCount;
+	int64_t m_uncompressedBufferCount;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.DeflateStreamLzo", DeflateStreamLzo, IStream)
@@ -134,31 +134,31 @@ bool DeflateStreamLzo::canSeek() const
 	return false;
 }
 
-int DeflateStreamLzo::tell() const
+int64_t DeflateStreamLzo::tell() const
 {
 	T_FATAL_ERROR;
 	return 0;
 }
 
-int DeflateStreamLzo::available() const
+int64_t DeflateStreamLzo::available() const
 {
 	T_FATAL_ERROR;
 	return 0;
 }
 
-int DeflateStreamLzo::seek(SeekOriginType origin, int offset)
+int64_t DeflateStreamLzo::seek(SeekOriginType origin, int64_t offset)
 {
 	T_FATAL_ERROR;
 	return 0;
 }
 
-int DeflateStreamLzo::read(void* block, int nbytes)
+int64_t DeflateStreamLzo::read(void* block, int64_t nbytes)
 {
 	T_FATAL_ERROR;
 	return 0;
 }
 
-int DeflateStreamLzo::write(const void* block, int nbytes)
+int64_t DeflateStreamLzo::write(const void* block, int64_t nbytes)
 {
 	T_ASSERT (m_impl);
 	return m_impl->write(block, nbytes);

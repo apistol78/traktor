@@ -22,9 +22,9 @@ class T_DLLCLASS MemoryStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	MemoryStream(void* buffer, uint32_t bufferSize, bool readAllowed = true, bool writeAllowed = true, bool own = false);
+	MemoryStream(void* buffer, int64_t bufferSize, bool readAllowed = true, bool writeAllowed = true, bool own = false);
 
-	MemoryStream(const void* buffer, uint32_t bufferSize);
+	MemoryStream(const void* buffer, int64_t bufferSize);
 	
 	virtual ~MemoryStream();
 
@@ -36,22 +36,22 @@ public:
 
 	virtual bool canSeek() const T_OVERRIDE;
 
-	virtual int tell() const T_OVERRIDE;
+	virtual int64_t tell() const T_OVERRIDE;
 
-	virtual int available() const T_OVERRIDE;
+	virtual int64_t available() const T_OVERRIDE;
 
-	virtual int seek(SeekOriginType origin, int offset) T_OVERRIDE;
+	virtual int64_t seek(SeekOriginType origin, int64_t offset) T_OVERRIDE;
 
-	virtual int read(void* block, int nbytes) T_OVERRIDE;
+	virtual int64_t read(void* block, int64_t nbytes) T_OVERRIDE;
 
-	virtual int write(const void* block, int nbytes) T_OVERRIDE;
+	virtual int64_t write(const void* block, int64_t nbytes) T_OVERRIDE;
 
 	virtual void flush() T_OVERRIDE;
 
 private:
 	uint8_t* m_buffer;
 	uint8_t* m_bufferPtr;
-	uint32_t m_bufferSize;
+	int64_t m_bufferSize;
 	bool m_readAllowed;
 	bool m_writeAllowed;
 	bool m_own;

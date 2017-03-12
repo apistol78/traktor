@@ -40,12 +40,12 @@ bool HttpChunkStream::canSeek() const
 	return false;
 }
 
-int HttpChunkStream::tell() const
+int64_t HttpChunkStream::tell() const
 {
 	return 0;
 }
 
-int HttpChunkStream::available() const
+int64_t HttpChunkStream::available() const
 {
 	if (m_available > 0)
 		return m_available;
@@ -53,12 +53,12 @@ int HttpChunkStream::available() const
 	return m_stream->available();
 }
 
-int HttpChunkStream::seek(SeekOriginType origin, int offset)
+int64_t HttpChunkStream::seek(SeekOriginType origin, int64_t offset)
 {
 	return 0;
 }
 
-int HttpChunkStream::read(void* block, int nbytes)
+int64_t HttpChunkStream::read(void* block, int64_t nbytes)
 {
 	if (m_available == -1)
 	{
@@ -96,7 +96,7 @@ int HttpChunkStream::read(void* block, int nbytes)
 	if (m_available <= 0)
 		return 0;
 
-	int32_t nread = m_stream->read(block, std::min< int32_t >(nbytes, m_available));
+	int64_t nread = m_stream->read(block, std::min< int64_t >(nbytes, m_available));
 	if (nread > 0)
 	{
 		m_available -= nread;
@@ -107,7 +107,7 @@ int HttpChunkStream::read(void* block, int nbytes)
 	return nread;
 }
 
-int HttpChunkStream::write(const void* block, int nbytes)
+int64_t HttpChunkStream::write(const void* block, int64_t nbytes)
 {
 	return 0;
 }

@@ -43,27 +43,27 @@ bool FilePipelinePutStream::canSeek() const
 	return m_file->canSeek();
 }
 
-int FilePipelinePutStream::tell() const
+int64_t FilePipelinePutStream::tell() const
 {
 	return m_file->tell();
 }
 
-int FilePipelinePutStream::available() const
+int64_t FilePipelinePutStream::available() const
 {
 	return m_file->available();
 }
 
-int FilePipelinePutStream::seek(SeekOriginType origin, int offset)
+int64_t FilePipelinePutStream::seek(SeekOriginType origin, int64_t offset)
 {
 	return m_file->seek(origin, offset);
 }
 
-int FilePipelinePutStream::read(void* block, int nbytes)
+int64_t FilePipelinePutStream::read(void* block, int64_t nbytes)
 {
 	return m_file->read(block, nbytes);
 }
 
-int FilePipelinePutStream::write(const void* block, int nbytes)
+int64_t FilePipelinePutStream::write(const void* block, int64_t nbytes)
 {
 	return m_file->write(block, nbytes);
 }

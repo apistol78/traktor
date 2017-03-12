@@ -35,15 +35,15 @@ public:
 
 	virtual bool canSeek() const T_OVERRIDE T_FINAL;
 
-	virtual int tell() const T_OVERRIDE T_FINAL;
+	virtual int64_t tell() const T_OVERRIDE T_FINAL;
 
-	virtual int available() const T_OVERRIDE T_FINAL;
+	virtual int64_t available() const T_OVERRIDE T_FINAL;
 
-	virtual int seek(SeekOriginType origin, int offset) T_OVERRIDE T_FINAL;
+	virtual int64_t seek(SeekOriginType origin, int64_t offset) T_OVERRIDE T_FINAL;
 
-	virtual int read(void* block, int nbytes) T_OVERRIDE T_FINAL;
+	virtual int64_t read(void* block, int64_t nbytes) T_OVERRIDE T_FINAL;
 
-	virtual int write(const void* block, int nbytes) T_OVERRIDE T_FINAL;
+	virtual int64_t write(const void* block, int64_t nbytes) T_OVERRIDE T_FINAL;
 
 	virtual void flush() T_OVERRIDE T_FINAL;
 
@@ -54,7 +54,7 @@ public:
 private:
 	std::vector< uint8_t > m_internal;
 	std::vector< uint8_t >* m_buffer;
-	uint32_t m_readPosition;
+	int64_t m_readPosition;
 	bool m_readAllowed;
 	bool m_writeAllowed;
 #if defined(_DEBUG)

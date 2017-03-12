@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <sstream>
 #include "Net/SocketStream.h"
 #include "Net/Socket.h"
@@ -42,19 +43,19 @@ bool SocketStream::canSeek() const
 	return false;
 }
 
-int SocketStream::tell() const
+int64_t SocketStream::tell() const
 {
 	return m_offset;
 }
 
-int SocketStream::available() const
+int64_t SocketStream::available() const
 {
 	unsigned long queued = 0;
 	m_socket->ioctl(IccReadPending, &queued);
-	return int(queued);
+	return int64_t(queued);
 }
 
-int SocketStream::seek(SeekOriginType origin, int offset)
+int64_t SocketStream::seek(SeekOriginType origin, int64_t offset)
 {
 	switch (origin)
 	{
@@ -73,14 +74,14 @@ int SocketStream::seek(SeekOriginType origin, int offset)
 	return 0;
 }
 
-int SocketStream::read(void* block, int nbytes)
+int64_t SocketStream::read(void* block, int64_t nbytes)
 {
 	T_ASSERT (m_readAllowed);
 
 	if (!m_socket)
 		return -1;
 
-	int32_t nread = 0;
+	int64_t nread = 0;
 	while (nread < nbytes)
 	{
 		if (m_timeout >= 0)
@@ -93,7 +94,8 @@ int SocketStream::read(void* block, int nbytes)
 			}
 		}
 
-		int32_t result = m_socket->recv((char*)block + nread, nbytes - nread);
+		int32_t nrecv = int32_t(std::min< int64_t >(nbytes - nread, 65536));
+		int32_t result = m_socket->recv((char*)block + nread, nrecv);
 		if (result <= 0)
 		{
 			if (nread <= 0)
@@ -111,14 +113,14 @@ int SocketStream::read(void* block, int nbytes)
 	return nread;
 }
 
-int SocketStream::write(const void* block, int nbytes)
+int64_t SocketStream::write(const void* block, int64_t nbytes)
 {
 	T_ASSERT (m_writeAllowed);
 
 	if (!m_socket)
 		return -1;
 
-	int32_t nwritten = 0;
+	int64_t nwritten = 0;
 	while (nwritten < nbytes)
 	{
 		if (m_timeout >= 0)
@@ -131,7 +133,8 @@ int SocketStream::write(const void* block, int nbytes)
 			}
 		}
 
-		int32_t result = m_socket->send((char*)block + nwritten, nbytes - nwritten);
+		int32_t nsend = int32_t(std::min< int64_t >(nbytes - nwritten, 65536));
+		int32_t result = m_socket->send((char*)block + nwritten, nsend);
 		if (result < 0)
 		{
 			if (nwritten <= 0)

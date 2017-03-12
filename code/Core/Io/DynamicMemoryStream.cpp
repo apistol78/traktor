@@ -53,7 +53,7 @@ bool DynamicMemoryStream::canSeek() const
 	return true;
 }
 
-int DynamicMemoryStream::tell() const
+int64_t DynamicMemoryStream::tell() const
 {
 	if (m_readAllowed)
 		return m_readPosition;
@@ -63,23 +63,23 @@ int DynamicMemoryStream::tell() const
 		return 0;
 }
 
-int DynamicMemoryStream::available() const
+int64_t DynamicMemoryStream::available() const
 {
-	return int(m_buffer->size() - m_readPosition);
+	return int64_t(m_buffer->size() - m_readPosition);
 }
 
-int DynamicMemoryStream::seek(SeekOriginType origin, int offset)
+int64_t DynamicMemoryStream::seek(SeekOriginType origin, int64_t offset)
 {
 	if (origin == SeekCurrent)
 		m_readPosition += offset;
 	else if (origin == SeekEnd)
-		m_readPosition = uint32_t(m_buffer->size() + offset);
+		m_readPosition = int64_t(m_buffer->size() + offset);
 	else if (origin == SeekSet)
 		m_readPosition = offset;
 	return m_readPosition;
 }
 
-int DynamicMemoryStream::read(void* block, int nbytes)
+int64_t DynamicMemoryStream::read(void* block, int64_t nbytes)
 {
 	if (!m_readAllowed)
 		return 0;
@@ -87,7 +87,7 @@ int DynamicMemoryStream::read(void* block, int nbytes)
 	if (nbytes <= 0)
 		return 0;
 
-	int nread = std::min< int >(nbytes, available());
+	int64_t nread = std::min< int64_t >(nbytes, available());
 	if (nread > 0)
 	{
 		std::memcpy(block, &(*m_buffer)[m_readPosition], nread);
@@ -97,7 +97,7 @@ int DynamicMemoryStream::read(void* block, int nbytes)
 	return nread;
 }
 
-int DynamicMemoryStream::write(const void* block, int nbytes)
+int64_t DynamicMemoryStream::write(const void* block, int64_t nbytes)
 {
 	if (!m_writeAllowed)
 		return 0;

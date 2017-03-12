@@ -21,12 +21,12 @@ public:
 	virtual bool canRead() const { return false; }
 	virtual bool canWrite() const { return true; }
 	virtual bool canSeek() const { return false; }
-	virtual int tell() const { return 0; }
-	virtual int available() const { return 0; }
-	virtual int seek(SeekOriginType origin, int offset) { return 0; }
-	virtual int read(void* block, int nbytes) { return 0; }
+	virtual int64_t tell() const { return 0; }
+	virtual int64_t available() const { return 0; }
+	virtual int64_t seek(SeekOriginType origin, int64_t offset) { return 0; }
+	virtual int64_t read(void* block, int64_t nbytes) { return 0; }
 
-	virtual int write(const void* block, int nbytes)
+	virtual int64_t write(const void* block, int64_t nbytes)
 	{
 		m_adler.feed(block, nbytes);
 		return nbytes;

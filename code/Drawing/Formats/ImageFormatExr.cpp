@@ -39,7 +39,7 @@ public:
 
 	virtual void seekg(Imf::Int64 pos)
 	{
-		m_stream->seek(traktor::IStream::SeekSet, int(pos));
+		m_stream->seek(traktor::IStream::SeekSet, int64_t(pos));
 	}
 
 private:
@@ -67,7 +67,7 @@ public:
 
 	virtual void seekp(Imf::Int64 pos)
 	{
-		m_stream->seek(traktor::IStream::SeekSet, int(pos));
+		m_stream->seek(traktor::IStream::SeekSet, int64_t(pos));
 	}
 
 private:

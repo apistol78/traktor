@@ -33,15 +33,15 @@ public:
 
 	virtual bool canSeek() const;
 
-	virtual int tell() const;
+	virtual int64_t tell() const;
 
-	virtual int available() const;
+	virtual int64_t available() const;
 
-	virtual int seek(SeekOriginType origin, int offset);
+	virtual int64_t seek(SeekOriginType origin, int64_t offset);
 
-	virtual int read(void* block, int nbytes);
+	virtual int64_t read(void* block, int64_t nbytes);
 
-	virtual int write(const void* block, int nbytes);
+	virtual int64_t write(const void* block, int64_t nbytes);
 
 	virtual void flush();
 	

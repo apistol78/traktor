@@ -200,25 +200,25 @@ bool MemCachedGetStream::canSeek() const
 	return false;
 }
 
-int MemCachedGetStream::tell() const
+int64_t MemCachedGetStream::tell() const
 {
 	return 0;
 }
 
-int MemCachedGetStream::available() const
+int64_t MemCachedGetStream::available() const
 {
 	return 0;
 }
 
-int MemCachedGetStream::seek(SeekOriginType origin, int offset)
+int64_t MemCachedGetStream::seek(SeekOriginType origin, int64_t offset)
 {
 	return 0;
 }
 
-int MemCachedGetStream::read(void* block, int nbytes)
+int64_t MemCachedGetStream::read(void* block, int64_t nbytes)
 {
 	uint8_t* writePtr = static_cast< uint8_t* >(block);
-	int32_t navail = nbytes;
+	int64_t navail = nbytes;
 
 	while (navail > 0)
 	{
@@ -243,7 +243,7 @@ int MemCachedGetStream::read(void* block, int nbytes)
 	return nbytes - navail;
 }
 
-int MemCachedGetStream::write(const void* block, int nbytes)
+int64_t MemCachedGetStream::write(const void* block, int64_t nbytes)
 {
 	return 0;
 }

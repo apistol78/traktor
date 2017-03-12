@@ -6,7 +6,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.StreamStream", StreamStream, IStream);
 
-StreamStream::StreamStream(IStream* stream, int endOffset)
+StreamStream::StreamStream(IStream* stream, int64_t endOffset)
 :	m_stream(stream)
 ,	m_startOffset(stream->tell())
 ,	m_endOffset(endOffset)
@@ -37,13 +37,13 @@ bool StreamStream::canSeek() const
 	return m_stream->canSeek();
 }
 
-int StreamStream::tell() const
+int64_t StreamStream::tell() const
 {
 	T_ASSERT (m_stream);
 	return m_stream->tell() - m_startOffset;
 }
 
-int StreamStream::available() const
+int64_t StreamStream::available() const
 {
 	T_ASSERT (m_stream);
 	if (m_endOffset >= 0)
@@ -52,11 +52,11 @@ int StreamStream::available() const
 		return m_stream->available();
 }
 
-int StreamStream::seek(SeekOriginType origin, int offset)
+int64_t StreamStream::seek(SeekOriginType origin, int64_t offset)
 {
 	T_ASSERT (m_stream);
 	
-	int result = 0;
+	int64_t result = 0;
 	switch (origin)
 	{
 	case SeekCurrent:
@@ -78,17 +78,17 @@ int StreamStream::seek(SeekOriginType origin, int offset)
 	return result;
 }
 
-int StreamStream::read(void* block, int nbytes)
+int64_t StreamStream::read(void* block, int64_t nbytes)
 {
 	T_ASSERT (m_stream);
 
-	int offset = m_stream->tell();
+	int64_t offset = m_stream->tell();
 	nbytes = std::min(m_endOffset - offset, nbytes);
 
 	return m_stream->read(block, nbytes);
 }
 
-int StreamStream::write(const void* block, int nbytes)
+int64_t StreamStream::write(const void* block, int64_t nbytes)
 {
 	T_ASSERT (m_stream);
 	return m_stream->write(block, nbytes);

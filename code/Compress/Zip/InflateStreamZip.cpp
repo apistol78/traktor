@@ -27,7 +27,7 @@ public:
 		m_stream = 0;
 	}
 
-	int read(void* block, int nbytes)
+	int64_t read(void* block, int64_t nbytes)
 	{
 		int rc;
 
@@ -57,7 +57,7 @@ public:
 		return nread;
 	}
 
-	int setLogicalPosition(int position)
+	int64_t setLogicalPosition(int64_t position)
 	{
 		// Seeking backwards, restart from beginning.
 		if (position < m_position)
@@ -81,7 +81,7 @@ public:
 		return m_position;
 	}
 
-	int getLogicalPosition() const
+	int64_t getLogicalPosition() const
 	{
 		return m_position;
 	}
@@ -90,8 +90,8 @@ private:
 	Ref< IStream > m_stream;
 	z_stream m_zstream;
 	AlignedVector< uint8_t > m_buf;
-	int m_startPosition;
-	int m_position;
+	int64_t m_startPosition;
+	int64_t m_position;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.InflateStreamZip", InflateStreamZip, IStream)
@@ -130,18 +130,18 @@ bool InflateStreamZip::canSeek() const
 	return true;
 }
 
-int InflateStreamZip::tell() const
+int64_t InflateStreamZip::tell() const
 {
 	return m_impl->getLogicalPosition();
 }
 
-int InflateStreamZip::available() const
+int64_t InflateStreamZip::available() const
 {
 	T_ASSERT (0);
 	return 0;
 }
 
-int InflateStreamZip::seek(SeekOriginType origin, int offset)
+int64_t InflateStreamZip::seek(SeekOriginType origin, int64_t offset)
 {
 	T_ASSERT_M (origin != SeekEnd, L"Only SeekEnd is allowed on InflateStreamZip");
 	if (origin == SeekCurrent)
@@ -149,12 +149,12 @@ int InflateStreamZip::seek(SeekOriginType origin, int offset)
 	return m_impl->setLogicalPosition(offset);
 }
 
-int InflateStreamZip::read(void* block, int nbytes)
+int64_t InflateStreamZip::read(void* block, int64_t nbytes)
 {
 	return m_impl->read(block, nbytes);
 }
 
-int InflateStreamZip::write(const void* block, int nbytes)
+int64_t InflateStreamZip::write(const void* block, int64_t nbytes)
 {
 	T_ASSERT (0);
 	return 0;

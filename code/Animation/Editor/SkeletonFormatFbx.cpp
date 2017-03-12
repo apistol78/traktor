@@ -69,7 +69,7 @@ public:
 	virtual int Read(void* pData, int pSize) const
 	{
 		T_ASSERT (m_stream);
-		return m_stream->read(pData, pSize);
+		return (int64_t)m_stream->read(pData, pSize);
 	}
 
 	virtual int GetReaderID() const
@@ -96,13 +96,13 @@ public:
 	virtual long GetPosition() const
 	{
 		T_ASSERT (m_stream);
-		return m_stream->tell();
+		return (long)m_stream->tell();
 	}
 
 	virtual void SetPosition(long pPosition)
 	{
 		T_ASSERT (m_stream);
-		m_stream->seek(IStream::SeekSet, int(pPosition));
+		m_stream->seek(IStream::SeekSet, int64_t(pPosition));
 	}
 
 	virtual int GetError() const

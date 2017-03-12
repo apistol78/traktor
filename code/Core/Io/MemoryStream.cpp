@@ -7,7 +7,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.MemoryStream", MemoryStream, IStream);
 
-MemoryStream::MemoryStream(void* buffer, uint32_t bufferSize, bool readAllowed, bool writeAllowed, bool own)
+MemoryStream::MemoryStream(void* buffer, int64_t bufferSize, bool readAllowed, bool writeAllowed, bool own)
 :	m_buffer(static_cast< uint8_t* >(buffer))
 ,	m_bufferPtr(static_cast< uint8_t* >(buffer))
 ,	m_bufferSize(bufferSize)
@@ -17,7 +17,7 @@ MemoryStream::MemoryStream(void* buffer, uint32_t bufferSize, bool readAllowed, 
 {
 }
 
-MemoryStream::MemoryStream(const void* buffer, uint32_t bufferSize)
+MemoryStream::MemoryStream(const void* buffer, int64_t bufferSize)
 :	m_buffer(static_cast< uint8_t* >(const_cast< void* >(buffer)))
 ,	m_bufferPtr(static_cast< uint8_t* >(const_cast< void* >(buffer)))
 ,	m_bufferSize(bufferSize)
@@ -56,17 +56,17 @@ bool MemoryStream::canSeek() const
 	return true;
 }
 
-int MemoryStream::tell() const
+int64_t MemoryStream::tell() const
 {
-	return int(m_bufferPtr - m_buffer);
+	return int64_t(m_bufferPtr - m_buffer);
 }
 
-int MemoryStream::available() const
+int64_t MemoryStream::available() const
 {
 	return m_bufferSize - tell();
 }
 
-int MemoryStream::seek(SeekOriginType origin, int offset)
+int64_t MemoryStream::seek(SeekOriginType origin, int64_t offset)
 {
 	switch (origin)
 	{
@@ -87,12 +87,12 @@ int MemoryStream::seek(SeekOriginType origin, int offset)
 	return tell();
 }
 
-int MemoryStream::read(void* block, int nbytes)
+int64_t MemoryStream::read(void* block, int64_t nbytes)
 {
 	if (!m_readAllowed)
 		return 0;
 
-	int avail = std::min(nbytes, available());
+	int64_t avail = std::min(nbytes, available());
 	if (avail > 0)
 	{
 		std::memcpy(block, m_bufferPtr, avail);
@@ -102,12 +102,12 @@ int MemoryStream::read(void* block, int nbytes)
 	return avail;
 }
 
-int MemoryStream::write(const void* block, int nbytes)
+int64_t MemoryStream::write(const void* block, int64_t nbytes)
 {
 	if (!m_writeAllowed)
 		return 0;
 
-	int space = std::min(nbytes, available());
+	int64_t space = std::min(nbytes, available());
 	if (space > 0)
 	{
 		std::memcpy(m_bufferPtr, block, space);
