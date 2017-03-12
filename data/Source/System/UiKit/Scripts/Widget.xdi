@@ -63,15 +63,18 @@ function Widget:getAncestor()
 end
 
 function Widget:getChildren(filterFn)
-	if filterFn == nil then
-		return self._children
-	else
-		local children = {}
-		for _, c in ipairs(self._children) do
-			if filterFn(c) then table.insert(children, c) end
+	local children = {}
+	for _, c in ipairs(self._children) do
+		local add = true
+		if not c.__private then
+			if filterFn ~= nil then
+				if filterFn(c) then table.insert(children, c) end
+			else
+				table.insert(children, c)
+			end
 		end
-		return children
 	end
+	return children
 end
 
 function Widget:setVisible(visible)
@@ -88,14 +91,14 @@ function Widget:isVisible()
 end
 
 function Widget:setModal()
-	table.insert(Widget._modal, self)
+--	table.insert(Widget._modal, self)
 	return true
 end
 
 function Widget:releaseModal()
-	local m = #Widget._modal
-	assert (Widget._modal[m] == self)
-	table.remove(Widget._modal, m)
+--	local m = #Widget._modal
+--	assert (Widget._modal[m] == self)
+--	table.remove(Widget._modal, m)
 end
 
 function Widget:setHorizontalAlign(halign)
@@ -151,15 +154,28 @@ function Widget:place(x, y, width, height)
 	self._mc:setY(ay)
 end
 
-function Widget:transformInto(pt, into)
-	local from_mc = self:_getInnerClip()
-	assert (from_mc ~= nil)
+function Widget:globalToLocal(pt)
+	local x, y = pt.x, pt.y
+	local p = self._parent
+	while p ~= nil do
+		local pp = p:getPlacement()
+		x = x - pp.x
+		y = y - pp.y
+		p = p._parent
+	end
+	return { x = x, y = y }
+end
 
-	local into_mc = into:_getInnerClip()
-	assert (into_mc ~= nil)
-
-	local r = from_mc:transformInto(into_mc, Vector2(pt.x * 20, pt.y * 20))
-	return { x = r:x() / 20, y = r:y() / 20 }
+function Widget:localToGlobal(pt)
+	local x, y = pt.x, pt.y
+	local p = self._parent
+	while p ~= nil do
+		local pp = p:getPlacement()
+		x = x + pp.x
+		y = y + pp.y
+		p = p._parent
+	end
+	return { x = x, y = y }
 end
 
 function Widget:hitTest(position)
@@ -234,10 +250,16 @@ function Widget:_dispatchEvent(event)
 	local eventType = getmetatable(event).__index
 	local handled = false
 
+	-- Non-visible widgets are not permitted to receive events.
+	if not self:isVisible() then
+		return
+	end
+
 	-- Synthesize enter/leave mouse events.
 	if eventType == MouseMoveEvent then
 		local ps = self._placement
-		local inside = (event.x >= ps.x and event.y >= ps.y and event.x <= ps.x + ps.width and event.y <= ps.y + ps.height)
+		local pt = self:globalToLocal(event)
+		local inside = (pt.x >= ps.x and pt.y >= ps.y and pt.x <= ps.x + ps.width and pt.y <= ps.y + ps.height)
 		if inside ~= self._mouseInside then
 			if inside then
 				self:_notifyEventListeners(MouseEnterEvent.new())
@@ -251,14 +273,16 @@ function Widget:_dispatchEvent(event)
 	-- Synthesize press/release mouse events.
 	if eventType == MouseDownEvent then
 		local ps = self._placement
-		local inside = (event.x >= ps.x and event.y >= ps.y and event.x <= ps.x + ps.width and event.y <= ps.y + ps.height)
+		local pt = self:globalToLocal(event)
+		local inside = (pt.x >= ps.x and pt.y >= ps.y and pt.x <= ps.x + ps.width and pt.y <= ps.y + ps.height)
 		if inside then
 			self:_notifyEventListeners(MousePressEvent.new())
 			self._mousePressed = true
 		end
 	elseif eventType == MouseUpEvent and self._mousePressed then
 		local ps = self._placement
-		local inside = (event.x >= ps.x and event.y >= ps.y and event.x <= ps.x + ps.width and event.y <= ps.y + ps.height)
+		local pt = self:globalToLocal(event)
+		local inside = (pt.x >= ps.x and pt.y >= ps.y and pt.x <= ps.x + ps.width and pt.y <= ps.y + ps.height)
 		self:_notifyEventListeners(MouseReleaseEvent.new(inside))
 		self._mousePressed = false
 	end

@@ -22,10 +22,10 @@ function Frame.new(root_mc, vwidth, vheight, layout)
 end
 
 function Frame:remove()
-	self._inner_mc:setMember("onEnterFrame", nil)
-	self._inner_mc:setMember("onMouseDown", nil)
-	self._inner_mc:setMember("onMouseUp", nil)
-	self._inner_mc:setMember("onMouseMove", nil)
+	self._mc:setMember("onEnterFrame", nil)
+	self._mc:setMember("onMouseDown", nil)
+	self._mc:setMember("onMouseUp", nil)
+	self._mc:setMember("onMouseMove", nil)
 	Widget.remove(self)
 end
 
@@ -46,8 +46,8 @@ function Frame:update()
 	local yscale = height / self._vheight
 	local scale = math.min(xscale, yscale)
 
-	self._inner_mc:setXScale(scale * 100)
-	self._inner_mc:setYScale(scale * 100)
+	self._mc:setXScale(scale * 100)
+	self._mc:setYScale(scale * 100)
 
 	self:place(0, 0, width / scale, height / scale)
 end
@@ -56,8 +56,6 @@ end
 
 function Frame:_initialize(mc, vwidth, vheight, layout)
 	Container._initialize(self, nil, mc, layout)
-
-	local depth = mc:getNextHighestDepth()
 
 	-- Disable stage scale and position, register listener of changes in stage size.
 	local cx = mc:getContext()
@@ -71,14 +69,11 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	self._vwidth = vwidth
 	self._vheight = vheight
 
-	self._inner_mc = mc:createEmptyMovieClip("inner_mc", depth)
-	self._getInnerClip = function() return self._inner_mc end
-
 	-- Setup event source listeners.
-	self._inner_mc:setMember("onEnterFrame", function() self:_eventEnterFrame() end)
-	self._inner_mc:setMember("onMouseDown", function() self:_eventMouseDown() end)
-	self._inner_mc:setMember("onMouseUp", function() self:_eventMouseUp() end)
-	self._inner_mc:setMember("onMouseMove", function() self:_eventMouseMove() end)
+	self._mc:setMember("onEnterFrame", function() self:_eventEnterFrame() end)
+	self._mc:setMember("onMouseDown", function() self:_eventMouseDown() end)
+	self._mc:setMember("onMouseUp", function() self:_eventMouseUp() end)
+	self._mc:setMember("onMouseMove", function() self:_eventMouseMove() end)
 end
 
 function Frame:_eventEnterFrame()
@@ -86,21 +81,18 @@ function Frame:_eventEnterFrame()
 end
 
 function Frame:_eventMouseDown()
-	local x = self._inner_mc:getMouseX()
-	local y = self._inner_mc:getMouseY()
-	self:_dispatchEvent(MouseDownEvent.new(x, y))
+	local pt = self:getMousePosition()
+	self:_dispatchEvent(MouseDownEvent.new(pt.x, pt.y))
 end
 
 function Frame:_eventMouseUp()
-	local x = self._inner_mc:getMouseX()
-	local y = self._inner_mc:getMouseY()
-	self:_dispatchEvent(MouseUpEvent.new(x, y))
+	local pt = self:getMousePosition()
+	self:_dispatchEvent(MouseUpEvent.new(pt.x, pt.y))
 end
 
 function Frame:_eventMouseMove()
-	local x = self._inner_mc:getMouseX()
-	local y = self._inner_mc:getMouseY()
-	self:_dispatchEvent(MouseMoveEvent.new(x, y))
+	local pt = self:getMousePosition()
+	self:_dispatchEvent(MouseMoveEvent.new(pt.x, pt.y))
 end
 
 	]]>

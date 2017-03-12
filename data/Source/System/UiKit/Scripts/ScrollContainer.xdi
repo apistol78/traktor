@@ -141,6 +141,7 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 	if (mode & ScrollContainer.SCROLLBARS) ~= 0 then
 		if (mode & ScrollContainer.HORIZONTAL) ~= 0 then
 			self._scrollBarHorizontal = ScrollBar.new(self, ScrollBar.HORIZONTAL)
+			self._scrollBarHorizontal.__private = true
 			self._scrollBarHorizontal.__layout = ILayout.FLOAT
 			self._scrollBarHorizontal:setOnScroll(function()
 				local v = self._scrollBarHorizontal:getPosition()
@@ -151,6 +152,7 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 		end
 		if (mode & ScrollContainer.VERTICAL) ~= 0 then
 			self._scrollBarVertical = ScrollBar.new(self, ScrollBar.VERTICAL)
+			self._scrollBarVertical.__private = true
 			self._scrollBarVertical.__layout = ILayout.FLOAT
 			self._scrollBarVertical:setOnScroll(function()
 				local v = self._scrollBarVertical:getPosition()
