@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- MouseLeaveEvent
+
+MouseLeaveEvent = MouseLeaveEvent or {}
+MouseLeaveEvent_meta = MouseLeaveEvent_meta or { __index = MouseLeaveEvent }
+
+function MouseLeaveEvent.new()
+	local o = {}
+	setmetatable(o, MouseLeaveEvent_meta)
+
+	return o
+end
+
+	]]>
+	</text>
+</object>

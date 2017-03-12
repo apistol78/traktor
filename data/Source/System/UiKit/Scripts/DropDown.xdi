@@ -95,7 +95,7 @@ function DropDown:_initialize(parent, mc, items)
 	end
 	self._selected = 0
 
-	self:_registerEvent("onPress", function() self:_onPress() end)
+	self:addEventListener(MousePressEvent, self, self._onMousePress)
 end
 
 function DropDown:_removeList()
@@ -107,7 +107,7 @@ function DropDown:_removeList()
 	end
 end
 
-function DropDown:_onPress()
+function DropDown:_onMousePress()
 	assert (self._list == nil)
 
 	self._background_mc:gotoAndStop("active")
@@ -148,7 +148,7 @@ function DropDown:_onPress()
 	)
 
 	self._list:setOnClick(function(index) self:_onListClick(index) end)
-	self._list:_registerEvent("onMouseDown", function() self:_onListMouseDown() end)
+	self._list:addEventListener(MouseDownEvent, self, _onListMouseDown)
 
 	self._list:setModal()
 end
@@ -163,11 +163,12 @@ function DropDown:_onListClick(index)
 	self:_removeList()
 end
 
-function DropDown:_onListMouseDown()
+function DropDown:_onListMouseDown(event)
 	local mp = self._list:getMousePosition()
 	if self._list:hitTest(mp) == nil then
 		self:_removeList()
 	end
+	return true
 end
 
 	]]>

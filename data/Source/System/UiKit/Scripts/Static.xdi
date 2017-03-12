@@ -75,7 +75,7 @@ function Static:setWordWrap(wordWrap)
 end
 
 function Static:setOnClick(fn)
-	self:_registerEvent("onRelease", fn)
+	self._clickFn = fn
 	return self
 end
 
@@ -90,10 +90,18 @@ function Static:_initialize(parent, mc, text)
 
 	self:setText(text)
 
+	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
+
 #if defined(_DEBUG)
 	self._text_tb:setMember("__renderWireOutline", true)
 #endif
 end
+
+function Static:_onMouseRelease(event)
+	if self._clickFn ~= nil then self._clickFn() end
+	return true
+end
+
 
 	]]>
 	</text>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- FrameEvent
+
+FrameEvent = FrameEvent or {}
+FrameEvent_meta = FrameEvent_meta or { __index = FrameEvent }
+
+function FrameEvent.new()
+	local o = {}
+	setmetatable(o, FrameEvent_meta)
+
+	return o
+end
+
+	]]>
+	</text>
+</object>

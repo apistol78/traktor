@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- MouseUpEvent
+
+MouseUpEvent = MouseUpEvent or {}
+MouseUpEvent_meta = MouseUpEvent_meta or { __index = MouseUpEvent }
+
+function MouseUpEvent.new(x, y)
+	local o = {}
+	setmetatable(o, MouseUpEvent_meta)
+
+	o.x = x
+	o.y = y
+
+	return o
+end
+
+	]]>
+	</text>
+</object>

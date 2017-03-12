@@ -99,9 +99,8 @@ function PushButton:_initialize(parent, mc, caption)
 	self._enable = true
 	self._clickFn = nil
 
-	self:_registerEvent("onPress", function() self:_onPress() end)
-	self:_registerEvent("onRelease", function() self:_onRelease() end)
-	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
+	self:addEventListener(MousePressEvent, self, self._onMousePress)
+	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
 
 	self:setCaption(caption)
 
@@ -111,23 +110,23 @@ function PushButton:_initialize(parent, mc, caption)
 #endif
 end
 
-function PushButton:_onPress()
+function PushButton:_onMousePress(event)
 	if self._enable then
 		self._background_mc:gotoAndStop("down")
 	end
+	return true
 end
 
-function PushButton:_onRelease()
-	if self._enable and self._clickFn ~= nil then
-		self._clickFn()
-	end
-end
-
-function PushButton:_onMouseUp()
+function PushButton:_onMouseRelease(event)
 	if self._enable then
 		self._background_mc:gotoAndStop("up")
+		if event.inside and self._clickFn ~= nil then
+			self._clickFn()
+		end
 	end
+	return true
 end
+
 
 	]]>
 	</text>

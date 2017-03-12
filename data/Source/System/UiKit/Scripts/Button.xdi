@@ -122,11 +122,10 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 	}
 	self._clickFn = nil
 
-	self:_registerEvent("onPress", function() self:_onPress() end)
-	self:_registerEvent("onRelease", function() self:_onRelease() end)
-	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
-	self:_registerEvent("onRollOver", function() self:_onRollOver() end)
-	self:_registerEvent("onRollOut", function() self:_onRollOut() end)
+	self:addEventListener(MousePressEvent, self, self._onMousePress)
+	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
+	self:addEventListener(MouseEnterEvent, self, self._onMouseEnter)
+	self:addEventListener(MouseLeaveEvent, self, self._onMouseLeave)
 
 	self._imageDown_mc:setVisible(false)
 	self._imageHover_mc:setVisible(false)
@@ -136,19 +135,15 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 	self._isRolledOver = false	
 end
 
-function Button:_onPress()
+function Button:_onMousePress(event)
 	self._imageUp_mc:setVisible(false)
 	self._imageHover_mc:setVisible(false)
 	self._imageDown_mc:setVisible(true)
 	self._isPressed = true
+	return true
 end
 
-function Button:_onRelease()
-	if self._clickFn ~= nil then self._clickFn() end
-	self._isPressed = false
-end
-
-function Button:_onMouseUp()
+function Button:_onMouseRelease(event)
 	self._imageDown_mc:setVisible(false)
 	if not self._isRolledOver then
 		self._imageHover_mc:setVisible(false)
@@ -157,18 +152,24 @@ function Button:_onMouseUp()
 		self._imageUp_mc:setVisible(false)
 		self._imageHover_mc:setVisible(true)
 	end
+	if event.inside then
+		if self._clickFn ~= nil then self._clickFn() end
+		self._isPressed = false
+	end
+	return true
 end
 
-function Button:_onRollOver()
+function Button:_onMouseEnter(event)
 	if not self._isPressed then
 		self._imageUp_mc:setVisible(false)
 		self._imageDown_mc:setVisible(false)
 		self._imageHover_mc:setVisible(true)
 	end
 	self._isRolledOver = true
+	return true
 end
 
-function Button:_onRollOut()
+function Button:_onMouseLeave()
 	self._imageHover_mc:setVisible(false)
 	if not self._isPressed then
 		self._imageDown_mc:setVisible(false)
@@ -179,7 +180,6 @@ function Button:_onRollOut()
 	end
 	self._isRolledOver = false
 end
-
 
 	]]>
 	</text>

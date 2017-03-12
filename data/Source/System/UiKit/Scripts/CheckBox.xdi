@@ -68,18 +68,22 @@ function CheckBox:_initialize(parent, mc, caption)
 	self._checked = false
 	self._clickFn = nil
 
-	self:_registerEvent("onPress", function() self:_onPress() end)
-	self:_registerEvent("onRelease", function() self:_onRelease() end)
+	self:addEventListener(MousePressEvent, self, self._onMousePress)
+	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
 end
 
-function CheckBox:_onPress()
+function CheckBox:_onMousePress(event)
 	self:setChecked(not self._checked)
+	return true
 end
 
-function CheckBox:_onRelease()
-	if self._clickFn ~= nil then
-		self._clickFn()
+function CheckBox:_onMouseRelease(event)
+	if event.inside then
+		if self._clickFn ~= nil then
+			self._clickFn()
+		end
 	end
+	return true
 end
 
 	]]>
