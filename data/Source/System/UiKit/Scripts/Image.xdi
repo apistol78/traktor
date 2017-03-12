@@ -120,11 +120,14 @@ function Image:_initialize(parent, mc, image, mode)
 		self:setImage(image, mode)
 	end
 
-	self:_registerEvent("onRelease", function() self:_onRelease() end)
+	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
 end
 
-function Image:_onRelease()
-	if self._clickFn ~= nil then self._clickFn() end
+function Image:_onMouseRelease(event)
+	if event.inside then
+		if self._clickFn ~= nil then self._clickFn() end
+	end
+	return true
 end
 
 	]]>

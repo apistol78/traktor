@@ -85,23 +85,25 @@ function Slider:_initialize(parent, mc)
 	self._background_mc = mc:getMember("background_mc")
 	self._knob_mc = mc:getMember("knob_mc")
 
-	self:_registerEvent("onPress", function() self:_onPress() end)
-	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
-	self:_registerEvent("onMouseMove", function() self:_onMouseMove() end)
+	self:addEventListener(MousePressEvent, self, self._onMousePress)
+	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
+	self:addEventListener(MouseMoveEvent, self, self._onMouseMove)
 
 	self:setRange(0, 100)
 end
 
-function Slider:_onPress()
+function Slider:_onMousePress(event)
 	self._trackOffset = self._mc:getMouseX() - self._knob_mc:getX()
 	self._track = (self._trackOffset >= 0 and self._trackOffset < self._knob_mc:getWidth())
+	return true
 end
 
-function Slider:_onMouseUp()
+function Slider:_onMouseRelease(event)
 	self._track = false
+	return true
 end
 
-function Slider:_onMouseMove()
+function Slider:_onMouseMove(event)
 	if self._track then
 		local x = self._mc:getMouseX() - self._trackOffset
 
@@ -119,6 +121,7 @@ function Slider:_onMouseMove()
 			self._scrollFn()
 		end
 	end
+	return true
 end
 
 	]]>

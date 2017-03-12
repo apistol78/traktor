@@ -4,6 +4,7 @@
 	<![CDATA[
 #using \{7947759C-88DB-794E-8D09-7F30A40B6669}
 #using \{8AB41567-9AE8-D24F-BC6A-6805F6CB114B}
+#using \{26FCC8EA-F349-5545-93B5-6ABDAE065E6F}
 
 -- ScrollContainer
 
@@ -146,7 +147,7 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 				local o = self:getOffset()
 				self:setOffset(v, o.y)
 			end)
-			self:_removeChild(self._scrollBarHorizontal)	-- Remove to ensure it's not part of external getChildren query.
+--			self:_removeChild(self._scrollBarHorizontal)	-- Remove to ensure it's not part of external getChildren query.
 		end
 		if (mode & ScrollContainer.VERTICAL) ~= 0 then
 			self._scrollBarVertical = ScrollBar.new(self, ScrollBar.VERTICAL)
@@ -156,17 +157,17 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 				local o = self:getOffset()
 				self:setOffset(o.x, v)
 			end)
-			self:_removeChild(self._scrollBarVertical)	-- Remove to ensure it's not part of external getChildren query.
+--			self:_removeChild(self._scrollBarVertical)	-- Remove to ensure it's not part of external getChildren query.
 		end
 	end
 
 	-- Setup event listeners for auto scrolling.
 	if (mode & ScrollContainer.AUTO) ~= 0 then
-		self:_registerEvent("onMouseDown", function() self:_onMouseDown() end)
-		self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
-		self:_registerEvent("onMouseMove", function() self:_onMouseMove() end)
+		self:addEventListener(MouseDownEvent, self, self._onMouseDown)
+		self:addEventListener(MouseUpEvent, self, self._onMouseUp)
+		self:addEventListener(MouseMoveEvent, self, self._onMouseMove)
 	end
-	self:_registerEvent("onEnterFrame", function() self:_onFrame() end)
+	self:addEventListener(FrameEvent, self, self._onFrame)
 
 	-- Override inner clip access to ensure following child widgets
 	-- are created into innerContainer_mc
@@ -227,7 +228,7 @@ function ScrollContainer:resetScroll()
 	self._inner_mc:setY(-self._scroll.y)
 end
 
-function ScrollContainer:_onMouseDown()
+function ScrollContainer:_onMouseDown(event)
 	if self:isVisible() then
 		local x = self._mc:getMouseX()
 		local y = self._mc:getMouseY()
@@ -244,16 +245,18 @@ function ScrollContainer:_onMouseDown()
 			end
 		end
 	end
+	return true
 end
 
-function ScrollContainer:_onMouseUp()
+function ScrollContainer:_onMouseUp(event)
 	if self._scrollFrom ~= nil then
 		self._scrollFrom = nil
 		self:releaseModal()
 	end
+	return true
 end
 
-function ScrollContainer:_onMouseMove()
+function ScrollContainer:_onMouseMove(event)
 	if self._scrollFrom ~= nil then
 		local time = self._timer:getElapsedTime()
 
@@ -278,9 +281,10 @@ function ScrollContainer:_onMouseMove()
 			self._scrollFn()
 		end
 	end
+	return true
 end
 
-function ScrollContainer:_onFrame()
+function ScrollContainer:_onFrame(event)
 	if self._scrollFrom == nil and (math.abs(self._motion.x) > 1 or math.abs(self._motion.y) > 1) then
 		self._scroll.x = self._scroll.x - self._motion.x * 1/60
 		self._scroll.y = self._scroll.y - self._motion.y * 1/60
@@ -296,6 +300,7 @@ function ScrollContainer:_onFrame()
 			self._scrollFn()
 		end
 	end
+	return true
 end
 
 	]]>

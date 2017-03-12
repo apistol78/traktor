@@ -2,6 +2,14 @@
 <object type="traktor.script.Script" version="2">
 	<text>
 	<![CDATA[
+#using \{D35E3668-DEFB-924A-B4DB-2E317DD67308}
+#using \{E1AC8A37-C364-5E47-BB5F-41B22A0CDC5E}
+#using \{E57536DD-10D0-E645-9155-9184BFE7809E}
+#using \{1821BA8C-3175-C94C-8520-87FFEFC1EDAF}
+#using \{7122E0C9-1BEE-634A-8BF7-49087F52A189}
+#using \{FE6D486C-DD87-B842-B350-6270791D3E64}
+#using \{816FB49B-11B4-7A40-8F72-5F76DC858D5F}
+
 -- Widget
 
 Widget = Widget or {}
@@ -31,9 +39,6 @@ function Widget:remove()
 			table.remove(Widget._modal, k)
 			break
 		end
-	end
-	for e, _ in pairs(self._events) do
-		self._mc:setMember(e, nil)
 	end
 	while #self._children > 0 do
 		self._children[1]:remove()
@@ -167,6 +172,16 @@ function Widget:getMousePosition()
 	return { x = self._mc:getMouseX(), y = self._mc:getMouseY() }
 end
 
+function Widget:addEventListener(eventType, target, fn)
+	self._eventListeners[eventType] = {
+		target = target,
+		fn = fn
+	}
+end
+
+function Widget:removeEventListener(target, fn)
+end
+
 -- Private
 
 function Widget:_initialize(parent, mc)
@@ -174,7 +189,9 @@ function Widget:_initialize(parent, mc)
 	self._mc = mc
 	self._mc:setPlaying(false, true)
 	self._placement = { x = 0, y = 0, width = 0, height = 0 }
-	self._events = {}
+	self._eventListeners = {}
+	self._mouseInside = false
+	self._mousePressed = false
 	self._children = {}
 	if parent ~= nil then
 		parent:_addChild(self)
@@ -203,24 +220,58 @@ function Widget:_isChild(child)
 	return false
 end
 
-function Widget:_registerEvent(event, eventFn)
-	if eventFn ~= nil then
-		self._mc:setMember(event, function()
-			local m = #Widget._modal
-			if m > 0 then
-				-- Check if modal widget is myself.
-				if Widget._modal[m]:_isChild(self) then
-					eventFn()
-				end
-			else
-				-- No modal widgets.
-				eventFn()
-			end
-		end)
+function Widget:_notifyEventListeners(event)
+	local eventType = getmetatable(event).__index
+	local ln = self._eventListeners[eventType]
+	if ln ~= nil then
+		return ln.fn(ln.target, event)
 	else
-		self._mc:setMember(event, nil)
+		return false
+	end	
+end
+
+function Widget:_dispatchEvent(event)
+	local eventType = getmetatable(event).__index
+	local handled = false
+
+	-- Synthesize enter/leave mouse events.
+	if eventType == MouseMoveEvent then
+		local ps = self._placement
+		local inside = (event.x >= ps.x and event.y >= ps.y and event.x <= ps.x + ps.width and event.y <= ps.y + ps.height)
+		if inside ~= self._mouseInside then
+			if inside then
+				self:_notifyEventListeners(MouseEnterEvent.new())
+			else
+				self:_notifyEventListeners(MouseLeaveEvent.new())
+			end
+			self._mouseInside = inside
+		end
 	end
-	self._events[event] = eventFn
+
+	-- Synthesize press/release mouse events.
+	if eventType == MouseDownEvent then
+		local ps = self._placement
+		local inside = (event.x >= ps.x and event.y >= ps.y and event.x <= ps.x + ps.width and event.y <= ps.y + ps.height)
+		if inside then
+			self:_notifyEventListeners(MousePressEvent.new())
+			self._mousePressed = true
+		end
+	elseif eventType == MouseUpEvent and self._mousePressed then
+		local ps = self._placement
+		local inside = (event.x >= ps.x and event.y >= ps.y and event.x <= ps.x + ps.width and event.y <= ps.y + ps.height)
+		self:_notifyEventListeners(MouseReleaseEvent.new(inside))
+		self._mousePressed = false
+	end
+
+	-- Call listener attached to this widget for specific event.
+	self:_notifyEventListeners(event)
+
+	-- Propagate event further to children if not handled.
+	if not handled then
+		for _, c in ipairs(self._children) do
+			c:_dispatchEvent(event)
+		end
+	end
 end
 
 -- Retrieve "inner" movie clip; into which child resources are created.

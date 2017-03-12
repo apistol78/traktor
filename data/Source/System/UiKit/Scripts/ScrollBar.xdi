@@ -138,14 +138,14 @@ function ScrollBar:_initialize(parent, mc, orientation)
 		self._knobMargin = self._knob_mc:getY()
 	end
 
-	self:_registerEvent("onPress", function() self:_onPress() end)
-	self:_registerEvent("onMouseUp", function() self:_onMouseUp() end)
-	self:_registerEvent("onMouseMove", function() self:_onMouseMove() end)
+	self:addEventListener(MousePressEvent, self, self._onMousePress)
+	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
+	self:addEventListener(MouseMoveEvent, self, self._onMouseMove)
 
 	self:setRange(100, 20)
 end
 
-function ScrollBar:_onPress()
+function ScrollBar:_onMousePress(event)
 	if self._orientation == ScrollBar.HORIZONTAL then
 		self._trackOffset = self._mc:getMouseX() - self._knob_mc:getX()
 		self._track = (self._trackOffset >= 0 and self._trackOffset < self._knob_mc:getWidth())
@@ -153,14 +153,16 @@ function ScrollBar:_onPress()
 		self._trackOffset = self._mc:getMouseY() - self._knob_mc:getY()
 		self._track = (self._trackOffset >= 0 and self._trackOffset < self._knob_mc:getHeight())
 	end
+	return true
 end
 
-function ScrollBar:_onMouseUp()
+function ScrollBar:_onMouseRelease(event)
 	self._track = false
+	return true
 end
 
-function ScrollBar:_onMouseMove()
-	if not self._track then return end
+function ScrollBar:_onMouseMove(event)
+	if not self._track then return false end
 
 	if self._orientation == ScrollBar.HORIZONTAL then
 		local x = self._mc:getMouseX() - self._trackOffset - self._knobMargin
@@ -198,7 +200,10 @@ function ScrollBar:_onMouseMove()
 			self._scrollFn()
 		end
 	end
+
+	return true
 end
+
 
 	]]>
 	</text>

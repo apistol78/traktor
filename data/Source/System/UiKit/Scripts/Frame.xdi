@@ -3,6 +3,7 @@
 	<text>
 	<![CDATA[
 #using \{7947759C-88DB-794E-8D09-7F30A40B6669}
+#using \{26FCC8EA-F349-5545-93B5-6ABDAE065E6F}
 
 -- Frame
 
@@ -18,6 +19,14 @@ function Frame.new(root_mc, vwidth, vheight, layout)
 
 	o:_initialize(mc, vwidth, vheight, layout)
 	return o
+end
+
+function Frame:remove()
+	self._inner_mc:setMember("onEnterFrame", nil)
+	self._inner_mc:setMember("onMouseDown", nil)
+	self._inner_mc:setMember("onMouseUp", nil)
+	self._inner_mc:setMember("onMouseMove", nil)
+	Widget.remove(self)
 end
 
 function Frame:getPreferredSize()
@@ -64,6 +73,34 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 
 	self._inner_mc = mc:createEmptyMovieClip("inner_mc", depth)
 	self._getInnerClip = function() return self._inner_mc end
+
+	-- Setup event source listeners.
+	self._inner_mc:setMember("onEnterFrame", function() self:_eventEnterFrame() end)
+	self._inner_mc:setMember("onMouseDown", function() self:_eventMouseDown() end)
+	self._inner_mc:setMember("onMouseUp", function() self:_eventMouseUp() end)
+	self._inner_mc:setMember("onMouseMove", function() self:_eventMouseMove() end)
+end
+
+function Frame:_eventEnterFrame()
+	self:_dispatchEvent(FrameEvent.new())
+end
+
+function Frame:_eventMouseDown()
+	local x = self._inner_mc:getMouseX()
+	local y = self._inner_mc:getMouseY()
+	self:_dispatchEvent(MouseDownEvent.new(x, y))
+end
+
+function Frame:_eventMouseUp()
+	local x = self._inner_mc:getMouseX()
+	local y = self._inner_mc:getMouseY()
+	self:_dispatchEvent(MouseUpEvent.new(x, y))
+end
+
+function Frame:_eventMouseMove()
+	local x = self._inner_mc:getMouseX()
+	local y = self._inner_mc:getMouseY()
+	self:_dispatchEvent(MouseMoveEvent.new(x, y))
 end
 
 	]]>
