@@ -180,7 +180,7 @@ void TextLayout::setAttribute(const FlashFont* font, const Color4f& textColor)
 			return;
 	}
 
-	m_currentAttrib = m_attribs.size();
+	m_currentAttrib = int32_t(m_attribs.size());
 
 	Attribute attrib = { font, textColor };
 	m_attribs.push_back(attrib);

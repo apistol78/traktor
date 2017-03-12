@@ -88,7 +88,7 @@ void ScriptComponent::eventKey(wchar_t unicode)
 	{
 		Any argv[] =
 		{
-			Any::fromInteger(unicode)
+			Any::fromInt32(unicode)
 		};
 		m_class->invoke(m_object, m_methodEventKey, sizeof_array(argv), argv);
 	}
@@ -100,7 +100,7 @@ void ScriptComponent::eventKeyDown(int32_t keyCode)
 	{
 		Any argv[] =
 		{
-			Any::fromInteger(keyCode)
+			Any::fromInt32(keyCode)
 		};
 		m_class->invoke(m_object, m_methodEventKeyDown, sizeof_array(argv), argv);
 	}
@@ -112,7 +112,7 @@ void ScriptComponent::eventKeyUp(int32_t keyCode)
 	{
 		Any argv[] =
 		{
-			Any::fromInteger(keyCode)
+			Any::fromInt32(keyCode)
 		};
 		m_class->invoke(m_object, m_methodEventKeyUp, sizeof_array(argv), argv);
 	}
@@ -125,7 +125,7 @@ void ScriptComponent::eventMouseDown(const Vector2& position, int32_t button)
 		Any argv[] =
 		{
 			CastAny< Vector2 >::set(position),
-			Any::fromInteger(button)
+			Any::fromInt32(button)
 		};
 		m_class->invoke(m_object, m_methodEventMouseDown, sizeof_array(argv), argv);
 	}
@@ -138,7 +138,7 @@ void ScriptComponent::eventMouseUp(const Vector2& position, int32_t button)
 		Any argv[] =
 		{
 			CastAny< Vector2 >::set(position),
-			Any::fromInteger(button)
+			Any::fromInt32(button)
 		};
 		m_class->invoke(m_object, m_methodEventMouseUp, sizeof_array(argv), argv);
 	}
@@ -151,7 +151,7 @@ void ScriptComponent::eventMousePress(const Vector2& position, int32_t button)
 		Any argv[] =
 		{
 			CastAny< Vector2 >::set(position),
-			Any::fromInteger(button)
+			Any::fromInt32(button)
 		};
 		m_class->invoke(m_object, m_methodEventMousePress, sizeof_array(argv), argv);
 	}
@@ -164,7 +164,7 @@ void ScriptComponent::eventMouseRelease(const Vector2& position, int32_t button)
 		Any argv[] =
 		{
 			CastAny< Vector2 >::set(position),
-			Any::fromInteger(button)
+			Any::fromInt32(button)
 		};
 		m_class->invoke(m_object, m_methodEventMouseRelease, sizeof_array(argv), argv);
 	}
@@ -177,7 +177,7 @@ void ScriptComponent::eventMouseMove(const Vector2& position, int32_t button)
 		Any argv[] =
 		{
 			CastAny< Vector2 >::set(position),
-			Any::fromInteger(button)
+			Any::fromInt32(button)
 		};
 		m_class->invoke(m_object, m_methodEventMouseMove, sizeof_array(argv), argv);
 	}
@@ -190,7 +190,7 @@ void ScriptComponent::eventMouseEnter(const Vector2& position, int32_t button)
 		Any argv[] =
 		{
 			CastAny< Vector2 >::set(position),
-			Any::fromInteger(button)
+			Any::fromInt32(button)
 		};
 		m_class->invoke(m_object, m_methodEventMouseEnter, sizeof_array(argv), argv);
 	}
@@ -203,7 +203,7 @@ void ScriptComponent::eventMouseLeave(const Vector2& position, int32_t button)
 		Any argv[] =
 		{
 			CastAny< Vector2 >::set(position),
-			Any::fromInteger(button)
+			Any::fromInt32(button)
 		};
 		m_class->invoke(m_object, m_methodEventMouseLeave, sizeof_array(argv), argv);
 	}
@@ -216,7 +216,7 @@ void ScriptComponent::eventMouseWheel(const Vector2& position, int32_t delta)
 		Any argv[] =
 		{
 			CastAny< Vector2 >::set(position),
-			Any::fromInteger(delta)
+			Any::fromInt32(delta)
 		};
 		m_class->invoke(m_object, m_methodEventMouseWheel, sizeof_array(argv), argv);
 	}
@@ -228,8 +228,8 @@ void ScriptComponent::eventViewResize(int32_t width, int32_t height)
 	{
 		Any argv[] =
 		{
-			Any::fromInteger(width),
-			Any::fromInteger(height)
+			Any::fromInt32(width),
+			Any::fromInt32(height)
 		};
 		m_class->invoke(m_object, m_methodEventViewResize, sizeof_array(argv), argv);
 	}

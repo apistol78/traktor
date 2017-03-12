@@ -25,7 +25,7 @@ void Adler32::begin()
 	m_feed = 0;
 }
 
-void Adler32::feed(const void* buffer, uint32_t bufferSize)
+void Adler32::feed(const void* buffer, uint64_t bufferSize)
 {
 	for (uint32_t i = 0; i < bufferSize; ++i)
 	{

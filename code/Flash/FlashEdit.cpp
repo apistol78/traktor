@@ -108,6 +108,11 @@ uint16_t FlashEdit::getMaxLength() const
 	return m_maxLength;
 }
 
+void FlashEdit::setInitialText(const std::wstring& initialText)
+{
+	m_initialText = initialText;
+}
+
 const std::wstring& FlashEdit::getInitialText() const
 {
 	return m_initialText;

@@ -195,7 +195,7 @@ int32_t executeRun(const std::wstring& text, const Path& fileName, const Command
 	scriptContext->load(scriptBlob);
 
 	// Execute optional "main" function.
-	Any retval = Any::fromInteger(0);
+	Any retval = Any::fromInt32(0);
 	if (scriptContext->haveFunction("main"))
 	{
 		// Transform arguments into script array.
@@ -209,7 +209,7 @@ int32_t executeRun(const std::wstring& text, const Path& fileName, const Command
 
 	safeDestroy(scriptContext);
 
-	return retval.getInteger();
+	return retval.getInt32();
 }
 
 int32_t executeTemplate(const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)

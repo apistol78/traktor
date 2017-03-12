@@ -40,25 +40,25 @@ public:
 
 	bool Int(int32_t i)
 	{
-		setValue(Any::fromInteger(i));
+		setValue(Any::fromInt32(i));
 		return true;
 	}
 
 	bool Uint(uint32_t u)
 	{
-		setValue(Any::fromInteger(u));
+		setValue(Any::fromInt32(u));
 		return true;
 	}
 
 	bool Int64(int64_t i)
 	{
-		setValue(Any::fromInteger(i));
+		setValue(Any::fromInt64(i));
 		return true;
 	}
 
 	bool Uint64(uint64_t i)
 	{
-		setValue(Any::fromInteger(i));
+		setValue(Any::fromInt64(int64_t(i)));
 		return true;
 	}
 
@@ -319,8 +319,12 @@ bool JsonDocument::saveToStream(IStream* stream)
 			os << (i->getBooleanUnsafe() ? L"true" : L"false");
 			break;
 
-		case Any::AtInteger:
-			os << i->getIntegerUnsafe();
+		case Any::AtInt32:
+			os << i->getInt32Unsafe();
+			break;
+
+		case Any::AtInt64:
+			os << i->getInt64Unsafe();
 			break;
 
 		case Any::AtFloat:

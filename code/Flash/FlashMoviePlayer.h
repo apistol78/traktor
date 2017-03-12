@@ -209,6 +209,10 @@ public:
 	 */
 	ActionValue getGlobal(const std::string& name) const;
 
+	/*! \brief Set GC enable/disable.
+	 */
+	void setGCEnable(bool gcEnable);
+
 private:
 	struct Event
 	{
@@ -264,6 +268,7 @@ private:
 	float m_timeCurrent;
 	float m_timeNext;
 	float m_timeNextFrame;
+	bool m_gcEnable;
 	int32_t m_framesUntilCollection;
 
 	void Global_getURL(CallArgs& ca);

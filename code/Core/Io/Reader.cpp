@@ -155,14 +155,14 @@ Reader& Reader::operator >> (std::wstring& s)
 	return *this;
 }
 
-int Reader::read(void* block, int nbytes)
+int64_t Reader::read(void* block, int64_t nbytes)
 {
 	return m_stream->read(block, nbytes);
 }
 
-int Reader::read(void* block, int count, int size)
+int64_t Reader::read(void* block, int64_t count, int64_t size)
 {
-	int result;
+	int64_t result;
 	
 	result = m_stream->read(block, count * size);
 	
@@ -171,9 +171,9 @@ int Reader::read(void* block, int count, int size)
 	if (result > 0 && size > 1)
 	{
 		char* p = static_cast< char* >(block);
-		for (int i = 0; i < result; i += size)
+		for (int64_t i = 0; i < result; i += size)
 		{
-			for (int j = 0; j < size >> 1; ++j)
+			for (int64_t j = 0; j < size >> 1; ++j)
 				std::swap(p[j], p[size - j - 1]);
 			p += size;
 		}
@@ -184,7 +184,7 @@ int Reader::read(void* block, int count, int size)
 	return result;
 }
 
-int Reader::skip(int nbytes)
+int64_t Reader::skip(int64_t nbytes)
 {
 	return m_stream->seek(IStream::SeekCurrent, nbytes);
 }

@@ -63,7 +63,7 @@ uint32_t File_getSize(File* self)
 	return uint32_t(self->getSize());
 }
 
-int32_t IStream_seek(IStream* self, int32_t origin, int32_t offset)
+int64_t IStream_seek(IStream* self, int64_t origin, int64_t offset)
 {
 	return self->seek((IStream::SeekOriginType)origin, offset);
 }
@@ -203,8 +203,10 @@ void PropertyGroup_setProperty(PropertyGroup* self, const std::wstring& property
 {
 	if (value.isBoolean())
 		self->setProperty< PropertyBoolean >(propertyName, value.getBoolean());
-	else if (value.isInteger())
-		self->setProperty< PropertyInteger >(propertyName, value.getInteger());
+	else if (value.isInt32())
+		self->setProperty< PropertyInteger >(propertyName, value.isInt32());
+	else if (value.isInt64())
+		self->setProperty< PropertyInteger >(propertyName, value.isInt64());
 	else if (value.isFloat())
 		self->setProperty< PropertyFloat >(propertyName, value.getFloat());
 	else if (value.isString())
@@ -219,7 +221,7 @@ Any PropertyGroup_getProperty(PropertyGroup* self, const std::wstring& propertyN
 	if (const PropertyBoolean* propertyBoolean = dynamic_type_cast< const PropertyBoolean* >(property))
 		return Any::fromBoolean(*propertyBoolean);
 	else if (const PropertyInteger* propertyInteger = dynamic_type_cast< const PropertyInteger* >(property))
-		return Any::fromInteger(*propertyInteger);
+		return Any::fromInt32(*propertyInteger);
 	else if (const PropertyFloat* propertyFloat = dynamic_type_cast< const PropertyFloat* >(property))
 		return Any::fromFloat(*propertyFloat);
 	else if (const PropertyString* propertyString = dynamic_type_cast< const PropertyString* >(property))
@@ -312,9 +314,9 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classPath);
 
 	Ref< AutoRuntimeClass< File > > classFile = new AutoRuntimeClass< File >();
-	classFile->addConstant("FmRead", Any::fromInteger(File::FmRead));
-	classFile->addConstant("FmWrite", Any::fromInteger(File::FmWrite));
-	classFile->addConstant("FmAppend", Any::fromInteger(File::FmAppend));
+	classFile->addConstant("FmRead", Any::fromInt32(File::FmRead));
+	classFile->addConstant("FmWrite", Any::fromInt32(File::FmWrite));
+	classFile->addConstant("FmAppend", Any::fromInt32(File::FmAppend));
 	classFile->addConstructor();
 	classFile->addConstructor< const Path&, uint64_t, uint32_t, const DateTime&, const DateTime&, const DateTime& >();
 	classFile->addConstructor< const Path&, uint64_t, uint32_t >();
@@ -348,9 +350,9 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIVolume);
 
 	Ref< AutoRuntimeClass< IStream > > classIStream = new AutoRuntimeClass< IStream >();
-	classIStream->addConstant("SeekCurrent", Any::fromInteger(IStream::SeekCurrent));
-	classIStream->addConstant("SeekEnd", Any::fromInteger(IStream::SeekEnd));
-	classIStream->addConstant("SeekSet", Any::fromInteger(IStream::SeekSet));
+	classIStream->addConstant("SeekCurrent", Any::fromInt32(IStream::SeekCurrent));
+	classIStream->addConstant("SeekEnd", Any::fromInt32(IStream::SeekEnd));
+	classIStream->addConstant("SeekSet", Any::fromInt32(IStream::SeekSet));
 	classIStream->addMethod("close", &IStream::close);
 	classIStream->addMethod("canRead", &IStream::canRead);
 	classIStream->addMethod("canWrite", &IStream::canWrite);

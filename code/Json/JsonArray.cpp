@@ -37,8 +37,12 @@ bool JsonArray::write(OutputStream& os) const
 			os << (i->getBooleanUnsafe() ? L"true" : L"false");
 			break;
 
-		case Any::AtInteger:
-			os << i->getIntegerUnsafe();
+		case Any::AtInt32:
+			os << i->getInt32Unsafe();
+			break;
+
+		case Any::AtInt64:
+			os << i->getInt64Unsafe();
 			break;
 
 		case Any::AtFloat:

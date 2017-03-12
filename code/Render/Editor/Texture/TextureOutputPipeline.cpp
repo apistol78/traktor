@@ -571,7 +571,7 @@ bool TextureOutputPipeline::buildOutput(
 		return false;
 	}
 
-	int32_t dataOffsetBegin = 0, dataOffsetEnd = 0;
+	int64_t dataOffsetBegin = 0, dataOffsetEnd = 0;
 
 	if (textureOutput->m_textureType == Tt2D || textureOutput->m_generateSphereMap)
 	{
@@ -974,7 +974,7 @@ bool TextureOutputPipeline::buildOutput(
 		report->set(L"height", height);
 		report->set(L"mipCount", mipCount);
 		report->set(L"format", int32_t(textureFormat));
-		report->set(L"dataSize", dataOffsetEnd - dataOffsetBegin);
+		report->set(L"dataSize", int32_t(dataOffsetEnd - dataOffsetBegin));
 	}
 
 	return true;

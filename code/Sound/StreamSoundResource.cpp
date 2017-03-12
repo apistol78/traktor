@@ -41,12 +41,12 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 	
 	if (m_preload)
 	{
-		int32_t size = stream->available();
+		int64_t size = stream->available();
 		
 		uint8_t* buffer = new uint8_t [size];
-		for (int32_t i = 0; i < size; )
+		for (int64_t i = 0; i < size; )
 		{
-			int res = stream->read(&buffer[i], size - i);
+			int64_t res = stream->read(&buffer[i], size - i);
 			if (res <= 0)
 				return 0;
 			i += res;

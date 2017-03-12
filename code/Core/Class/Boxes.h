@@ -62,29 +62,6 @@ private:
 	const TypeInfo& m_value;
 };
 
-class T_DLLCLASS BoxedUInt64 : public Boxed
-{
-	T_RTTI_CLASS;
-
-public:
-	BoxedUInt64();
-
-	explicit BoxedUInt64(uint64_t value);
-
-	std::wstring format() const;
-
-	uint64_t unbox() const { return m_value; }
-
-	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
-
-	void* operator new (size_t size);
-
-	void operator delete (void* ptr);
-
-private:
-	uint64_t m_value;
-};
-
 class T_DLLCLASS BoxedGuid : public Boxed
 {
 	T_RTTI_CLASS;
@@ -1062,40 +1039,6 @@ struct CastAny< const TypeInfo&, false >
 	}
 	static const TypeInfo& get(const Any& value) {
 		return mandatory_non_null_type_cast< BoxedTypeInfo* >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny< uint64_t, false >
-{
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"uint64_t";
-	}
-	static bool accept(const Any& value) {
-		return value.isObject() && is_a< BoxedUInt64 >(value.getObjectUnsafe());
-	}
-	static Any set(const uint64_t& value) {
-		return Any::fromObject(new BoxedUInt64(value));
-	}	
-	static uint64_t get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedUInt64* >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny< const uint64_t&, false >
-{
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const uint64_t&";
-	}
-	static bool accept(const Any& value) {
-		return value.isObject() && is_a< BoxedUInt64 >(value.getObjectUnsafe());
-	}
-	static Any set(const uint64_t& value) {
-		return Any::fromObject(new BoxedUInt64(value));
-	}	
-	static uint64_t get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedUInt64* >(value.getObject())->unbox();
 	}
 };
 

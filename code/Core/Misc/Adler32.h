@@ -26,7 +26,7 @@ public:
 
 	void begin();
 
-	void feed(const void* buffer, uint32_t bufferSize);
+	void feed(const void* buffer, uint64_t bufferSize);
 
 	void end();
 
@@ -41,7 +41,7 @@ public:
 	void feed(const std::wstring& value)
 	{
 		if (!value.empty())
-			feed(value.c_str(), uint32_t(value.length()));
+			feed(value.c_str(), uint64_t(value.length()));
 	}
 
 private:

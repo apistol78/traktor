@@ -40,7 +40,7 @@ PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 	while (m_lines.empty())
 	{
 		std::memset(buffer, 0, sizeof(buffer));
-		int32_t nrecv = m_stream->read(buffer, sizeof(buffer));
+		int64_t nrecv = m_stream->read(buffer, sizeof(buffer));
 		if (nrecv < 0)
 		{
 			m_stream = 0;
@@ -58,7 +58,7 @@ PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 		}
 
 		// Transform into lines.
-		for (int32_t i = 0; i < nrecv; ++i)
+		for (int64_t i = 0; i < nrecv; ++i)
 		{
 			char ch = buffer[i];
 

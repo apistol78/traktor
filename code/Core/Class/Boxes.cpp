@@ -72,7 +72,6 @@ private:
 	std::vector< BlockAllocator* > m_allocators;
 };
 
-BoxedAllocator< BoxedUInt64, 16 > s_allocBoxedUInt64;
 BoxedAllocator< BoxedTypeInfo, 16 > s_allocBoxedTypeInfo;
 BoxedAllocator< BoxedGuid, 512 > s_allocBoxedGuid;
 BoxedAllocator< BoxedVector2, 1024 > s_allocBoxedVector2;
@@ -132,38 +131,6 @@ void* BoxedTypeInfo::operator new (size_t size)
 void BoxedTypeInfo::operator delete (void* ptr)
 {
 	s_allocBoxedTypeInfo.free(ptr);
-}
-
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.UInt64", BoxedUInt64, Boxed)
-
-BoxedUInt64::BoxedUInt64()
-{
-}
-
-BoxedUInt64::BoxedUInt64(uint64_t value)
-:	m_value(value)
-{
-}
-
-std::wstring BoxedUInt64::format() const
-{
-	return traktor::toString(m_value);
-}
-
-std::wstring BoxedUInt64::toString() const
-{
-	return format();
-}
-
-void* BoxedUInt64::operator new (size_t size)
-{
-	return s_allocBoxedUInt64.alloc();
-}
-
-void BoxedUInt64::operator delete (void* ptr)
-{
-	s_allocBoxedUInt64.free(ptr);
 }
 
 
@@ -1394,11 +1361,6 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< Boxed > > classBoxed = new AutoRuntimeClass< Boxed >();
 	classBoxed->addMethod("toString", &Boxed::toString);
 	registrar->registerClass(classBoxed);
-
-	Ref< AutoRuntimeClass< BoxedUInt64 > > classBoxedUInt64 = new AutoRuntimeClass< BoxedUInt64 >();
-	classBoxedUInt64->addConstructor();
-	classBoxedUInt64->addMethod("format", &BoxedUInt64::format);
-	registrar->registerClass(classBoxedUInt64);
 
 	Ref< AutoRuntimeClass< BoxedGuid > > classBoxedGuid = new AutoRuntimeClass< BoxedGuid >();
 	classBoxedGuid->addConstructor();

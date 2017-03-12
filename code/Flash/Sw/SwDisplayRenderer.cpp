@@ -4,6 +4,7 @@
 #include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashDictionary.h"
+#include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashShape.h"
 #include "Flash/Sw/SwDisplayRenderer.h"
@@ -279,9 +280,21 @@ void SwDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, cons
 {
 }
 
-void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const Color4f& color, const ColorTransform& cxform, uint8_t filter, const Color4f& filterColor)
+void SwDisplayRenderer::renderGlyph(
+	const FlashDictionary& dictionary,
+	const Matrix33& transform,
+	const FlashFont* font,
+	const FlashShape* glyph,
+	float fontHeight,
+	wchar_t character,
+	const Color4f& color,
+	const ColorTransform& cxform,
+	uint8_t filter,
+	const Color4f& filterColor
+)
 {
-	if (!m_writeEnable)
+	// Only support embedded fonts.
+	if (!glyph || !m_writeEnable)
 		return;
 
 	m_raster->clearStyles();
@@ -292,15 +305,19 @@ void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Mat
 	float frameWidth = m_frameBounds.mx.x;
 	float frameHeight = m_frameBounds.mx.y;
 
+	float coordScale = font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+	float fontScale = coordScale * fontHeight;
+
 	Matrix33 rasterTransform =
 		traktor::scale(width / frameWidth, height / frameHeight) *
 		traktor::scale(m_frameTransform.z(), m_frameTransform.w()) *
 		traktor::translate(m_frameTransform.x(), m_frameTransform.y()) *
 		transform *
+		scale(fontScale, fontScale) *
 		m_transform;
 
 	// Rasterize every path in shape.
-	const AlignedVector< Path >& paths = glyphShape.getPaths();
+	const AlignedVector< Path >& paths = glyph->getPaths();
 	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
 		const AlignedVector< Vector2 >& points = i->getPoints();

@@ -60,7 +60,7 @@ public:
 	void flush();
 
 	/*! \brief Return current bit position. */
-	uint32_t tell() const;
+	int64_t tell() const;
 
 	/*! \brief Get reference to underlying stream. */
 	Ref< IStream > getStream();

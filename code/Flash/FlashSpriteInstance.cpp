@@ -102,7 +102,7 @@ void FlashSpriteInstance::gotoFrame(uint32_t frameId)
 	else if (m_currentFrame < frameId)
 	{
 		m_displayList.updateBegin(false);
-		for (uint32_t i = m_currentFrame; i <= frameId; ++i)
+		for (uint32_t i = m_currentFrame + 1; i <= frameId; ++i)
 		{
 			FlashFrame* frame = m_sprite->getFrame(i);
 			if (frame)
@@ -157,7 +157,7 @@ void FlashSpriteInstance::updateDisplayList()
 	else if (m_currentFrame > m_lastUpdateFrame)
 	{
 		m_displayList.updateBegin(false);
-		for (uint32_t i = m_lastUpdateFrame; i <= m_currentFrame; ++i)
+		for (uint32_t i = m_lastUpdateFrame + 1; i <= m_currentFrame; ++i)
 		{
 			FlashFrame* frame = m_sprite->getFrame(i);
 			if (frame)
@@ -805,7 +805,7 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	m_mouseY = int32_t(xy.y / 20.0f);
 
 	// Issue events on "visible" characters.
-	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+	m_displayList.forEachVisibleObjectReverse([&] (FlashCharacterInstance* instance) {
 		instance->eventMouseMove(x, y, button);
 	});
 

@@ -1,5 +1,7 @@
 #include "Core/RefArray.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/StringSplit.h"
+#include "Core/Misc/TString.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
@@ -109,11 +111,14 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 	T_ASSERT (context);
 
 	// Last script is the first to be executed of ABC.
-	const ScriptInfo& script = m_abcFile.scripts[m_abcFile.scriptsCount - 1];
+	const ScriptInfo& script = m_abcFile.scripts.back();
+
+	const MethodInfo& method = m_abcFile.methods[script.init];
+	log::info << L"Calling \"" << mbstows(m_abcFile.cpool.strings[method.name]) << L"\"..." << Endl;
 
 	// Find initialization method body.
 	const MethodBodyInfo* methodBody = 0;
-	for (uint32_t i = 0; i < m_abcFile.methodBodyCount; ++i)
+	for (uint32_t i = 0; i < m_abcFile.methodBodies.size(); ++i)
 	{
 		if (m_abcFile.methodBodies[i].method == script.init)
 		{

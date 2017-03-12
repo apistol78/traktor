@@ -88,7 +88,7 @@ void BitWriter::flush()
 	m_cnt = 0;
 }
 
-uint32_t BitWriter::tell() const
+int64_t BitWriter::tell() const
 {
 	return (m_stream->tell() << 3) + m_cnt;
 }

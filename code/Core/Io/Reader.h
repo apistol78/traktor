@@ -55,11 +55,11 @@ public:
 	
 	Reader& operator >> (std::wstring& s);
 	
-	int read(void* block, int nbytes);
+	int64_t read(void* block, int64_t nbytes);
 	
-	int read(void* block, int count, int size);
+	int64_t read(void* block, int64_t count, int64_t size);
 
-	int skip(int nbytes);
+	int64_t skip(int64_t nbytes);
 
 private:
 	Ref< IStream > m_stream;

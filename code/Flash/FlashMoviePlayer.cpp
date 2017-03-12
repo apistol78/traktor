@@ -45,6 +45,7 @@ FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRend
 ,	m_timeCurrent(0.0f)
 ,	m_timeNext(0.0f)
 ,	m_timeNextFrame(0.0f)
+,	m_gcEnable(true)
 ,	m_framesUntilCollection(c_framesBetweenCollections)
 {
 }
@@ -300,10 +301,13 @@ void FlashMoviePlayer::executeFrame()
 	context->getPool().flush();
 
 	// Collect reference cycles.
-	if (--m_framesUntilCollection <= 0)
+	if (m_gcEnable)
 	{
-		GC::getInstance().collectCycles(false);
-		m_framesUntilCollection = c_framesBetweenCollections;
+		if (--m_framesUntilCollection <= 0)
+		{
+			GC::getInstance().collectCycles(false);
+			m_framesUntilCollection = c_framesBetweenCollections;
+		}
 	}
 }
 
@@ -461,6 +465,11 @@ ActionValue FlashMoviePlayer::getGlobal(const std::string& name) const
 	global->getMember(name, value);
 
 	return value;
+}
+
+void FlashMoviePlayer::setGCEnable(bool gcEnable)
+{
+	m_gcEnable = gcEnable;
 }
 
 void FlashMoviePlayer::Global_getURL(CallArgs& ca)

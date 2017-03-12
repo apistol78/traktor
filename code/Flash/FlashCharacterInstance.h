@@ -89,6 +89,14 @@ public:
 	 */
 	IRefCount* getCacheObject() { return m_cacheObject; }
 
+	/*! \brief Set user defined object.
+	 */
+	void setUserObject(IRefCount* userObject);
+
+	/*! \brief Get user defined object.
+	 */
+	IRefCount* getUserObject() { return m_userObject; }
+
 	/*! \brief Get instance target path.
 	 *
 	 * \return Path of instance.
@@ -248,6 +256,7 @@ private:
 	Ref< FlashDictionary > m_dictionary;
 	FlashCharacterInstance* m_parent;
 	Ref< IRefCount > m_cacheObject;
+	Ref< IRefCount > m_userObject;
 	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
 	Color4f m_filterColor;
 	uint8_t m_filter;

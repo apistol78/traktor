@@ -200,12 +200,12 @@ namespace traktor
 			lh.m_ptr = 0;
 		}
 
-		Type& operator [] (int index)
+		Type& operator [] (size_t index)
 		{
 			return m_ptr[index];
 		}
 
-		const Type& operator [] (int index) const
+		const Type& operator [] (size_t index) const
 		{
 			return m_ptr[index];
 		}

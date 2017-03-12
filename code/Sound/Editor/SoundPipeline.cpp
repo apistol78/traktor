@@ -207,11 +207,11 @@ bool SoundPipeline::buildOutput(
 			return false;
 		}
 
-		int32_t dataOffsetBegin = stream->tell();
+		int64_t dataOffsetBegin = stream->tell();
 
 		bool result = StreamCopy(stream, sourceStream).execute();
 
-		int32_t dataOffsetEnd = stream->tell();
+		int64_t dataOffsetEnd = stream->tell();
 
 		stream->close();
 		sourceStream->close();
@@ -262,7 +262,7 @@ bool SoundPipeline::buildOutput(
 			return false;
 		}
 
-		int32_t dataOffsetBegin = stream->tell();
+		int64_t dataOffsetBegin = stream->tell();
 
 		// Prepare decoder with source stream.
 		if (!decoder->create(sourceStream))
@@ -360,7 +360,7 @@ bool SoundPipeline::buildOutput(
 		resource->m_range = range;
 		resource->m_decoderType = &type_of< OggStreamDecoder >();
 
-		int32_t dataOffsetEnd = stream->tell();
+		int64_t dataOffsetEnd = stream->tell();
 		stream->close();
 
 		instance->setObject(resource);
@@ -381,7 +381,7 @@ bool SoundPipeline::buildOutput(
 			report->set(L"sampleRate", sampleRate);
 			report->set(L"samplesCount", samplesCount);
 			report->set(L"channelsCount", maxChannel);
-			report->set(L"size", dataOffsetEnd - dataOffsetBegin);
+			report->set(L"size", int32_t(dataOffsetEnd - dataOffsetBegin));
 		}
 	}
 

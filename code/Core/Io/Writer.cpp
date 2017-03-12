@@ -124,12 +124,12 @@ Writer& Writer::operator << (const wchar_t* s)
 	return *this << std::wstring(s);
 }
 
-int Writer::write(const void* block, int nbytes)
+int64_t Writer::write(const void* block, int64_t nbytes)
 {
 	return m_stream->write(block, nbytes);
 }
 
-int Writer::write(const void* block, int count, int size)
+int64_t Writer::write(const void* block, int64_t count, int64_t size)
 {
 #if defined(T_BIG_ENDIAN)
 
@@ -138,7 +138,7 @@ int Writer::write(const void* block, int count, int size)
 		const uint8_t* p = static_cast< const uint8_t* >(block);
 		std::vector< uint8_t > tmp(size);
 		
-		for (int i = 0; i < count; ++i, p += size)
+		for (int64_t i = 0; i < count; ++i, p += size)
 		{
 			std::memcpy(&tmp.front(), p, size);
 			std::reverse(tmp.begin(), tmp.end());

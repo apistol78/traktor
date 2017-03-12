@@ -68,8 +68,8 @@ void Sprite_remove(Sprite* self, const Any& a)
 {
 	if (a.isObject())
 		self->remove(mandatory_non_null_type_cast< Character* >(a.getObject()));
-	else if (a.isInteger())
-		self->remove(a.getIntegerUnsafe());
+	else if (a.isInt32())
+		self->remove(a.getInt32Unsafe());
 }
 
 		}

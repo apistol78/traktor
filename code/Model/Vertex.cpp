@@ -50,7 +50,7 @@ uint32_t Vertex::getTexCoord(uint32_t channel) const
 
 uint32_t Vertex::getTexCoordCount() const
 {
-	return m_texCoords.size();
+	return uint32_t(m_texCoords.size());
 }
 
 void Vertex::clearJointInfluences()
@@ -75,7 +75,7 @@ float Vertex::getJointInfluence(uint32_t jointIndex) const
 
 uint32_t Vertex::getJointInfluenceCount() const
 {
-	return m_jointInfluences.size();
+	return uint32_t(m_jointInfluences.size());
 }
 
 uint32_t Vertex::getHash() const

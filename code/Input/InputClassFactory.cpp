@@ -156,9 +156,9 @@ void InputClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< IInputDevice > > classInputDevice = new AutoRuntimeClass< IInputDevice >();
 
 	for (int32_t i = 0; g_InputCategory_Keys[i].id != 0; ++i)
-		classInputDevice->addConstant(wstombs(g_InputCategory_Keys[i].id), Any::fromInteger(g_InputCategory_Keys[i].val));
+		classInputDevice->addConstant(wstombs(g_InputCategory_Keys[i].id), Any::fromInt32(g_InputCategory_Keys[i].val));
 	for (int32_t i = 0; g_InputDefaultControlType_Keys[i].id != 0; ++i)
-		classInputDevice->addConstant(wstombs(g_InputDefaultControlType_Keys[i].id), Any::fromInteger(g_InputDefaultControlType_Keys[i].val));
+		classInputDevice->addConstant(wstombs(g_InputDefaultControlType_Keys[i].id), Any::fromInt32(g_InputDefaultControlType_Keys[i].val));
 
 	classInputDevice->addMethod("getName", &IInputDevice::getName);
 	classInputDevice->addMethod("getCategory", &input_IInputDevice_getCategory);

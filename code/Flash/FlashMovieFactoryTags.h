@@ -46,7 +46,7 @@ public:
 		Ref< FlashFrame > frame;
 		Ref< drawing::ImageFormatJpeg > jpegFormat;
 		uint32_t tagSize;
-		uint32_t tagEndPosition;
+		int64_t tagEndPosition;
 	};
 
 	virtual bool read(SwfReader* swf, ReadContext& context) = 0;

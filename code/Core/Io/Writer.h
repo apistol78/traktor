@@ -51,9 +51,9 @@ public:
 	
 	Writer& operator << (const wchar_t* s);
 	
-	int write(const void* block, int nbytes);
+	int64_t write(const void* block, int64_t nbytes);
 	
-	int write(const void* block, int count, int size);
+	int64_t write(const void* block, int64_t count, int64_t size);
 	
 private:
 	Ref< IStream > m_stream;

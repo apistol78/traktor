@@ -197,7 +197,7 @@ Ref< FlashMovie > FlashMovieFactory::createMovieFromImage(const drawing::Image* 
 	shape->create(1, image->getWidth() * 20, image->getHeight() * 20);
 
 	// Setup dictionary.
-	Ref< FlashMovie > movie = new FlashMovie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20, image->getHeight() * 20)), sprite);
+	Ref< FlashMovie > movie = new FlashMovie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20.0f, image->getHeight() * 20.0f)), sprite);
 	movie->defineBitmap(1, new FlashBitmapImage(image));
 	movie->defineCharacter(1, shape);
 	return movie;

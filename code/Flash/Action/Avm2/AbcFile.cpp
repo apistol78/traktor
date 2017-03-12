@@ -1,5 +1,6 @@
 #include "Core/Io/BitReader.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
 #include "Flash/SwfReader.h"
@@ -46,15 +47,10 @@ bool NamespaceInfo::load(SwfReader& swf)
 	return true;
 }
 
-NamespaceSetInfo::NamespaceSetInfo()
-:	count(0)
-{
-}
-
 bool NamespaceSetInfo::load(SwfReader& swf)
 {
-	count = swf.readEncodedU30();
-	ns.reset(new uint32_t [count]);
+	uint32_t count = swf.readEncodedU30();
+	ns.resize(count);
 	for (uint32_t i = 0; i < count; ++i)
 		ns[i] = swf.readEncodedU30();
 	return true;
@@ -116,19 +112,19 @@ bool ConstantPool::load(SwfReader& swf)
 	BitReader& br = swf.getBitReader();
 
 	uint32_t cpoolInt32Count = swf.readEncodedU30();
-	s32.reset(new int32_t [std::max(cpoolInt32Count, 1U)]);
+	s32.resize(std::max(cpoolInt32Count, 1U));
 	s32[0] = 0;
 	for (uint32_t i = 1; i < cpoolInt32Count; ++i)
 		s32[i] = swf.readEncodedU32();
 
 	uint32_t cpoolUInt32Count = swf.readEncodedU30();
-	u32.reset(new uint32_t [std::max(cpoolUInt32Count, 1U)]);
+	u32.resize(std::max(cpoolUInt32Count, 1U));
 	u32[0] = 0;
 	for (uint32_t i = 1; i < cpoolUInt32Count; ++i)
 		u32[i] = swf.readEncodedS32();
 
 	uint32_t cpoolDoubleCount = swf.readEncodedU30();
-	doubles.reset(new double [std::max(cpoolDoubleCount, 1U)]);
+	doubles.resize(std::max(cpoolDoubleCount, 1U));
 	doubles[0] = 0.0;
 	for (uint32_t i = 1; i < cpoolDoubleCount; ++i)
 	{
@@ -137,7 +133,7 @@ bool ConstantPool::load(SwfReader& swf)
 	}
 
 	uint32_t cpoolStringCount = swf.readEncodedU30();
-	strings.reset(new std::string [std::max(cpoolStringCount, 1U)]);
+	strings.resize(std::max(cpoolStringCount, 1U));
 	for (uint32_t i = 1; i < cpoolStringCount; ++i)
 	{
 		uint32_t length = swf.readEncodedU30();
@@ -150,7 +146,7 @@ bool ConstantPool::load(SwfReader& swf)
 	}
 
 	uint32_t cpoolNamespaceCount = swf.readEncodedU30();
-	namespaces.reset(new NamespaceInfo [std::max(cpoolNamespaceCount, 1U)]);
+	namespaces.resize(std::max(cpoolNamespaceCount, 1U));
 	for (uint32_t i = 1; i < cpoolNamespaceCount; ++i)
 	{
 		if (!namespaces[i].load(swf))
@@ -158,7 +154,7 @@ bool ConstantPool::load(SwfReader& swf)
 	}
 
 	uint32_t cpoolNsSetCount = swf.readEncodedU30();
-	nsset.reset(new NamespaceSetInfo [std::max(cpoolNsSetCount, 1U)]);
+	nsset.resize(std::max(cpoolNsSetCount, 1U));
 	for (uint32_t i = 1; i < cpoolNsSetCount; ++i)
 	{
 		if (!nsset[i].load(swf))
@@ -166,7 +162,7 @@ bool ConstantPool::load(SwfReader& swf)
 	}
 
 	uint32_t cpoolMultinameCount = swf.readEncodedU30();
-	multinames.reset(new MultinameInfo [std::max(cpoolMultinameCount, 1U)]);
+	multinames.resize(std::max(cpoolMultinameCount, 1U));
 	for (uint32_t i = 1; i < cpoolMultinameCount; ++i)
 	{
 		if (!multinames[i].load(swf))
@@ -196,15 +192,10 @@ void OptionDetail::dump(const ConstantPool& cpool) const
 	log::info << L"kind = " << uint32_t(kind) << Endl;
 }
 
-OptionInfo::OptionInfo()
-:	optionCount(0)
-{
-}
-
 bool OptionInfo::load(SwfReader& swf)
 {
-	optionCount = swf.readEncodedU30();
-	options.reset(new OptionDetail [optionCount]);
+	uint32_t optionCount = swf.readEncodedU30();
+	options.resize(optionCount);
 	for (uint32_t i = 0; i < optionCount; ++i)
 	{
 		if (!options[i].load(swf))
@@ -215,8 +206,8 @@ bool OptionInfo::load(SwfReader& swf)
 
 void OptionInfo::dump(const ConstantPool& cpool) const
 {
-	log::info << L"optionCount = " << optionCount << Endl;
-	for (uint32_t i = 0; i < optionCount; ++i)
+	log::info << L"optionCount = " << options.size() << Endl;
+	for (uint32_t i = 0; i < options.size(); ++i)
 	{
 		log::info << L"options[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -228,21 +219,20 @@ void OptionInfo::dump(const ConstantPool& cpool) const
 
 bool ParamInfo::load(SwfReader& swf, uint32_t paramCount)
 {
-	names.reset(new uint32_t [paramCount]);
+	names.resize(paramCount);
 	for (uint32_t i = 0; i < paramCount; ++i)
 		names[i] = swf.readEncodedU30();
 	return true;
 }
 
-void ParamInfo::dump(const ConstantPool& cpool, uint32_t paramCount) const
+void ParamInfo::dump(const ConstantPool& cpool) const
 {
-	for (uint32_t i = 0; i < paramCount; ++i)
+	for (uint32_t i = 0; i < names.size(); ++i)
 		log::info << L"names[" << i << L"] = " << mbstows(cpool.strings[names[i]]) << Endl;
 }
 
 MethodInfo::MethodInfo()
-:	paramCount(0)
-,	returnType(0)
+:	returnType(0)
 ,	name(0)
 ,	flags(0)
 {
@@ -252,12 +242,12 @@ bool MethodInfo::load(SwfReader& swf)
 {
 	BitReader& br = swf.getBitReader();
 
-	paramCount = swf.readEncodedU30();
+	uint32_t paramCount = swf.readEncodedU30();
 	returnType = swf.readEncodedU30();
 
 	if (paramCount > 0)
 	{
-		paramTypes.reset(new uint32_t [paramCount]);
+		paramTypes.resize(paramCount);
 		for (uint32_t j = 0; j < paramCount; ++j)
 			paramTypes[j] = swf.readEncodedU30();
 	}
@@ -282,10 +272,9 @@ bool MethodInfo::load(SwfReader& swf)
 
 void MethodInfo::dump(const ConstantPool& cpool) const
 {
-	log::info << L"paramCount = " << paramCount << Endl;
 	log::info << L"returnType = " << returnType << Endl;
 		
-	for (uint32_t j = 0; j < paramCount; ++j)
+	for (uint32_t j = 0; j < paramTypes.size(); ++j)
 		log::info << L"paramTypes[" << j << L"] = " << paramTypes[j] << Endl;
 
 	log::info << L"name = " << mbstows(cpool.strings[name]) << Endl;
@@ -304,7 +293,7 @@ void MethodInfo::dump(const ConstantPool& cpool) const
 	{
 		log::info << L"paramNames = {" << Endl;
 		log::info << IncreaseIndent;
-		paramNames.dump(cpool, paramCount);
+		paramNames.dump(cpool);
 		log::info << DecreaseIndent;
 		log::info << L"}" << Endl;
 	}
@@ -331,15 +320,14 @@ void ItemInfo::dump(const ConstantPool& cpool) const
 
 MetaDataInfo::MetaDataInfo()
 :	name(0)
-,	itemCount(0)
 {
 }
 
 bool MetaDataInfo::load(SwfReader& swf)
 {
 	name = swf.readEncodedU30();
-	itemCount = swf.readEncodedU30();
-	items.reset(new ItemInfo [itemCount]);
+	uint32_t itemCount = swf.readEncodedU30();
+	items.resize(itemCount);
 	for (uint32_t j = 0; j < itemCount; ++j)
 	{
 		if (!items[j].load(swf))
@@ -351,8 +339,7 @@ bool MetaDataInfo::load(SwfReader& swf)
 void MetaDataInfo::dump(const ConstantPool& cpool) const
 {
 	log::info << L"name = " << name << Endl;
-	log::info << L"itemCount = " << itemCount << Endl;
-	for (uint32_t i = 0; i < itemCount; ++i)
+	for (uint32_t i = 0; i < items.size(); ++i)
 	{
 		log::info << L"items[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -365,7 +352,6 @@ void MetaDataInfo::dump(const ConstantPool& cpool) const
 TraitsInfo::TraitsInfo()
 :	name(0)
 ,	kind(0)
-,	metaDataCount(0)
 {
 }
 
@@ -422,8 +408,8 @@ bool TraitsInfo::load(SwfReader& swf)
 
 	if (((kind >> 4) & Tia_ATTR_MetaData) == Tia_ATTR_MetaData)
 	{
-		metaDataCount = swf.readEncodedU30();
-		metaData.reset(new uint32_t [metaDataCount]);
+		uint32_t metaDataCount = swf.readEncodedU30();
+		metaData.resize(metaDataCount);
 		for (uint32_t i = 0; i < metaDataCount; ++i)
 			metaData[i] = swf.readEncodedU30();
 	}
@@ -435,8 +421,7 @@ void TraitsInfo::dump(const ConstantPool& cpool) const
 {
 	log::info << L"name = " << getQualifiedName(cpool, name) << Endl;
 	log::info << L"kind = " << uint32_t(kind) << Endl;
-	log::info << L"metaDataCount = " << metaDataCount << Endl;
-	for (uint32_t i = 0; i < metaDataCount; ++i)
+	for (uint32_t i = 0; i < metaData.size(); ++i)
 		log::info << L"metaData[" << i << L"] = " << metaData[i] << Endl;
 }
 
@@ -445,9 +430,7 @@ InstanceInfo::InstanceInfo()
 ,	superName(0)
 ,	flags(0)
 ,	protectedNs(0)
-,	interfaceCount(0)
 ,	iinit(0)
-,	traitsCount(0)
 {
 }
 
@@ -462,15 +445,15 @@ bool InstanceInfo::load(SwfReader& swf)
 	if ((flags & Iif_CONSTANT_ClassProtectedNs) != 0)
 		protectedNs = swf.readEncodedU30();
 
-	interfaceCount = swf.readEncodedU30();
-	interfaces.reset(new uint32_t [interfaceCount]);
+	uint32_t interfaceCount = swf.readEncodedU30();
+	interfaces.resize(interfaceCount);
 	for (uint32_t i = 0; i < interfaceCount; ++i)
 		interfaces[i] = swf.readEncodedU30();
 
 	iinit = swf.readEncodedU30();
 
-	traitsCount = swf.readEncodedU30();
-	traits.reset(new TraitsInfo [traitsCount]);
+	uint32_t traitsCount = swf.readEncodedU30();
+	traits.resize(traitsCount);
 	for (uint32_t i = 0; i < traitsCount; ++i)
 	{
 		if (!traits[i].load(swf))
@@ -486,12 +469,10 @@ void InstanceInfo::dump(const ConstantPool& cpool) const
 	log::info << L"superName = " << getQualifiedName(cpool, superName) << Endl;
 	log::info << L"flags = " << flags << Endl;
 	log::info << L"protectedNs = " << protectedNs << Endl;
-	log::info << L"interfaceCount = " << interfaceCount << Endl;
-	for (uint32_t i = 0; i < interfaceCount; ++i)
+	for (uint32_t i = 0; i < interfaces.size(); ++i)
 		log::info << L"interfaces[" << i << L"] = " << interfaces[i] << Endl;
 	log::info << L"iinit = " << iinit << Endl;
-	log::info << L"traitsCount = " << traitsCount << Endl;
-	for (uint32_t i = 0; i < traitsCount; ++i)
+	for (uint32_t i = 0; i < traits.size(); ++i)
 	{
 		log::info << L"traits[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -503,7 +484,6 @@ void InstanceInfo::dump(const ConstantPool& cpool) const
 
 ClassInfo::ClassInfo()
 :	cinit(0)
-,	traitsCount(0)
 {
 }
 
@@ -511,8 +491,8 @@ bool ClassInfo::load(SwfReader& swf)
 {
 	cinit = swf.readEncodedU30();
 
-	traitsCount = swf.readEncodedU30();
-	traits.reset(new TraitsInfo [traitsCount]);
+	uint32_t traitsCount = swf.readEncodedU30();
+	traits.resize(traitsCount);
 	for (uint32_t i = 0; i < traitsCount; ++i)
 	{
 		if (!traits[i].load(swf))
@@ -525,8 +505,7 @@ bool ClassInfo::load(SwfReader& swf)
 void ClassInfo::dump(const ConstantPool& cpool) const
 {
 	log::info << L"cinit = " << cinit << Endl;
-	log::info << L"traitsCount = " << traitsCount << Endl;
-	for (uint32_t i = 0; i < traitsCount; ++i)
+	for (uint32_t i = 0; i < traits.size(); ++i)
 	{
 		log::info << L"traits[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -538,7 +517,6 @@ void ClassInfo::dump(const ConstantPool& cpool) const
 
 ScriptInfo::ScriptInfo()
 :	init(0)
-,	traitsCount(0)
 {
 }
 
@@ -546,8 +524,8 @@ bool ScriptInfo::load(SwfReader& swf)
 {
 	init = swf.readEncodedU30();
 
-	traitsCount = swf.readEncodedU30();
-	traits.reset(new TraitsInfo [traitsCount]);
+	uint32_t traitsCount = swf.readEncodedU30();
+	traits.resize(traitsCount);
 	for (uint32_t i = 0; i < traitsCount; ++i)
 	{
 		if (!traits[i].load(swf))
@@ -560,8 +538,7 @@ bool ScriptInfo::load(SwfReader& swf)
 void ScriptInfo::dump(const ConstantPool& cpool) const
 {
 	log::info << L"init = " << init << Endl;
-	log::info << L"traitsCount = " << traitsCount << Endl;
-	for (uint32_t i = 0; i < traitsCount; ++i)
+	for (uint32_t i = 0; i < traits.size(); ++i)
 	{
 		log::info << L"traits[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -605,9 +582,6 @@ MethodBodyInfo::MethodBodyInfo()
 ,	localCount(0)
 ,	initScopeDepth(0)
 ,	maxScopeDepth(0)
-,	codeLength(0)
-,	exceptionCount(0)
-,	traitsCount(0)
 {
 }
 
@@ -621,21 +595,21 @@ bool MethodBodyInfo::load(SwfReader& swf)
 	initScopeDepth = swf.readEncodedU30();
 	maxScopeDepth = swf.readEncodedU30();
 
-	codeLength = swf.readEncodedU30();
-	code.reset(new uint8_t [codeLength]);
+	uint32_t codeLength = swf.readEncodedU30();
+	code.resize(codeLength);
 	for (uint32_t i = 0; i < codeLength; ++i)
 		code[i] = br.readUnsigned(8);
 
-	exceptionCount = swf.readEncodedU30();
-	exceptions.reset(new ExceptionInfo [exceptionCount]);
+	uint32_t exceptionCount = swf.readEncodedU30();
+	exceptions.resize(exceptionCount);
 	for (uint32_t i = 0; i < exceptionCount; ++i)
 	{
 		if (!exceptions[i].load(swf))
 			return false;
 	}
 
-	traitsCount = swf.readEncodedU30();
-	traits.reset(new TraitsInfo [traitsCount]);
+	uint32_t traitsCount = swf.readEncodedU30();
+	traits.resize(traitsCount);
 	for (uint32_t i = 0; i < traitsCount; ++i)
 	{
 		if (!traits[i].load(swf))
@@ -652,10 +626,9 @@ void MethodBodyInfo::dump(const ConstantPool& cpool) const
 	log::info << L"localCount = " << localCount << Endl;
 	log::info << L"initScopeDepth = " << initScopeDepth << Endl;
 	log::info << L"maxScopeDepth = " << maxScopeDepth << Endl;
-	log::info << L"codeLength = " << codeLength << Endl;
 
 	const uint8_t T_UNALIGNED * pc = code.c_ptr();
-	for (uint32_t i = 0; i < codeLength; ++i)
+	for (uint32_t i = 0; i < code.size(); ++i)
 	{
 		uint8_t op = *pc++;
 		const Avm2OpCodeInfo* opInfo = findOpCodeInfo(op);
@@ -668,8 +641,7 @@ void MethodBodyInfo::dump(const ConstantPool& cpool) const
 			log::info << i << L": INVALID" << Endl;
 	}
 
-	log::info << L"exceptionCount = " << exceptionCount << Endl;
-	for (uint32_t i = 0; i < exceptionCount; ++i)
+	for (uint32_t i = 0; i < exceptions.size(); ++i)
 	{
 		log::info << L"exceptions[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -677,8 +649,8 @@ void MethodBodyInfo::dump(const ConstantPool& cpool) const
 		log::info << DecreaseIndent;
 		log::info << L"}" << Endl;
 	}
-	log::info << L"traitsCount = " << traitsCount << Endl;
-	for (uint32_t i = 0; i < traitsCount; ++i)
+
+	for (uint32_t i = 0; i < traits.size(); ++i)
 	{
 		log::info << L"traits[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -702,46 +674,46 @@ bool AbcFile::load(SwfReader& swf)
 	if (!cpool.load(swf))
 		return false;
 
-	methodCount = swf.readEncodedU30();
-	methods.reset(new MethodInfo [methodCount]);
+	uint32_t methodCount = swf.readEncodedU30();
+	methods.resize(methodCount);
 	for (uint32_t i = 0; i < methodCount; ++i)
 	{
 		if (!methods[i].load(swf))
 			return false;
 	}
 
-	metaDataCount = swf.readEncodedU30();
-	metaData.reset(new MetaDataInfo [metaDataCount]);
+	uint32_t metaDataCount = swf.readEncodedU30();
+	metaData.resize(metaDataCount);
 	for (uint32_t i = 0; i < metaDataCount; ++i)
 	{
 		if (!metaData[i].load(swf))
 			return false;
 	}
 
-	classCount = swf.readEncodedU30();
-	instances.reset(new InstanceInfo [classCount]);
+	uint32_t classCount = swf.readEncodedU30();
+	instances.resize(classCount);
 	for (uint32_t i = 0; i < classCount; ++i)
 	{
 		if (!instances[i].load(swf))
 			return false;
 	}
-	classes.reset(new ClassInfo [classCount]);
+	classes.resize(classCount);
 	for (uint32_t i = 0; i < classCount; ++i)
 	{
 		if (!classes[i].load(swf))
 			return false;
 	}
 
-	scriptsCount = swf.readEncodedU30();
-	scripts.reset(new ScriptInfo [scriptsCount]);
+	uint32_t scriptsCount = swf.readEncodedU30();
+	scripts.resize(scriptsCount);
 	for (uint32_t i = 0; i < scriptsCount; ++i)
 	{
 		if (!scripts[i].load(swf))
 			return false;
 	}
 
-	methodBodyCount = swf.readEncodedU30();
-	methodBodies.reset(new MethodBodyInfo [methodBodyCount]);
+	uint32_t methodBodyCount = swf.readEncodedU30();
+	methodBodies.resize(methodBodyCount);
 	for (uint32_t i = 0; i < methodBodyCount; ++i)
 	{
 		if (!methodBodies[i].load(swf))
@@ -753,8 +725,7 @@ bool AbcFile::load(SwfReader& swf)
 
 void AbcFile::dump() const
 {
-	log::info << L"methodCount = " << methodCount << Endl;
-	for (uint32_t i = 0; i < methodCount; ++i)
+	for (uint32_t i = 0; i < methods.size(); ++i)
 	{
 		log::info << L"methods[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -763,8 +734,7 @@ void AbcFile::dump() const
 		log::info << L"}" << Endl;
 	}
 
-	log::info << L"metaDataCount = " << metaDataCount << Endl;
-	for (uint32_t i = 0; i < metaDataCount; ++i)
+	for (uint32_t i = 0; i < metaData.size(); ++i)
 	{
 		log::info << L"metaData[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -773,8 +743,7 @@ void AbcFile::dump() const
 		log::info << L"}" << Endl;
 	}
 
-	log::info << L"classCount = " << classCount << Endl;
-	for (uint32_t i = 0; i < classCount; ++i)
+	for (uint32_t i = 0; i < instances.size(); ++i)
 	{
 		log::info << L"instances[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -782,7 +751,8 @@ void AbcFile::dump() const
 		log::info << DecreaseIndent;
 		log::info << L"}" << Endl;
 	}
-	for (uint32_t i = 0; i < classCount; ++i)
+
+	for (uint32_t i = 0; i < classes.size(); ++i)
 	{
 		log::info << L"classes[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -791,8 +761,7 @@ void AbcFile::dump() const
 		log::info << L"}" << Endl;
 	}
 
-	log::info << L"scriptsCount = " << scriptsCount << Endl;
-	for (uint32_t i = 0; i < scriptsCount; ++i)
+	for (uint32_t i = 0; i < scripts.size(); ++i)
 	{
 		log::info << L"scripts[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
@@ -801,8 +770,7 @@ void AbcFile::dump() const
 		log::info << L"}" << Endl;
 	}
 
-	log::info << L"methodBodyCount = " << methodBodyCount << Endl;
-	for (uint32_t i = 0; i < methodBodyCount; ++i)
+	for (uint32_t i = 0; i < methodBodies.size(); ++i)
 	{
 		log::info << L"methodBodies[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;

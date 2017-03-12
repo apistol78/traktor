@@ -20,7 +20,7 @@ wchar_t StringReader::readChar()
 
 	if (m_count < sizeof(m_buffer))
 	{
-		int result = m_stream->read(&m_buffer[m_count], sizeof(m_buffer) - m_count);
+		int64_t result = m_stream->read(&m_buffer[m_count], sizeof(m_buffer) - m_count);
 		if (result > 0)
 			m_count += result;
 		else if (m_count <= 0)
@@ -39,7 +39,7 @@ wchar_t StringReader::readChar()
 	return ch;
 }
 
-int StringReader::readLine(std::wstring& out)
+int64_t StringReader::readLine(std::wstring& out)
 {
 	std::vector< wchar_t > buf;
 	wchar_t ch;
@@ -48,7 +48,7 @@ int StringReader::readLine(std::wstring& out)
 	{
 		if (m_count < sizeof(m_buffer))
 		{
-			int32_t result = -1;
+			int64_t result = -1;
 			if (m_stream)
 			{
 				result = m_stream->read(&m_buffer[m_count], sizeof(m_buffer) - m_count);
@@ -81,7 +81,7 @@ int StringReader::readLine(std::wstring& out)
 	}
 
 	out = std::wstring(buf.begin(), buf.end());
-	return int(out.length());
+	return int64_t(out.length());
 }
 
 }

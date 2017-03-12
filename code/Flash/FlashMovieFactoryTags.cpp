@@ -148,7 +148,7 @@ bool FlashTagDefineFont::read(SwfReader* swf, ReadContext& context)
 
 	if (m_fontType == 1)
 	{
-		uint32_t offsetBase = bs.getStream()->tell();
+		int64_t offsetBase = bs.getStream()->tell();
 		uint16_t firstOffset = bs.readUInt16();
 		uint16_t glyphCount = firstOffset >> 1;
 
@@ -185,21 +185,13 @@ bool FlashTagDefineFont::read(SwfReader* swf, ReadContext& context)
 		
 		bool wideOffsets = bs.readBit();
 		bool wideCodes = bs.readBit();
-		
-		/*
 		bool italic = bs.readBit();
 		bool bold = bs.readBit();
-		*/
-		bs.skip(2);
 		
 		/*uint8_t languageCode = */bs.readUInt8();	// SWF 6.0+
-		std::string name = swf->readStringU8();
-		
+		std::string fontName = swf->readStringU8();
 		uint16_t glyphCount = bs.readUInt16();
-		if (!glyphCount)
-			log::warning << L"Device fonts not supported; must embed fonts if used in dynamic fields" << Endl;
-
-		uint32_t offsetBase = bs.getStream()->tell();
+		int64_t offsetBase = bs.getStream()->tell();
 
 		std::vector< uint32_t > offsetTable(glyphCount);
 		for (uint16_t i = 0; i < glyphCount; ++i)
@@ -216,7 +208,7 @@ bool FlashTagDefineFont::read(SwfReader* swf, ReadContext& context)
 			shapeTable[i] = swf->readShape(0);
 		}
 
-		uint32_t currentPosition = bs.getStream()->tell();
+		int64_t currentPosition = bs.getStream()->tell();
 		T_ASSERT (offsetBase + codeOffset == currentPosition);
 
 		AlignedVector< uint16_t > codeTable(glyphCount);
@@ -250,6 +242,9 @@ bool FlashTagDefineFont::read(SwfReader* swf, ReadContext& context)
 
 		Ref< FlashFont > font = new FlashFont();
 		if (!font->create(
+			fontName,
+			italic,
+			bold,
 			shapeTable,
 			ascent,
 			descent,

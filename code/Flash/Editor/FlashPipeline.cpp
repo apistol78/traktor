@@ -57,7 +57,7 @@ struct AtlasBucket
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 51, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 52, FlashPipeline, editor::IPipeline)
 
 FlashPipeline::FlashPipeline()
 :	m_generateMips(false)
@@ -151,7 +151,7 @@ bool FlashPipeline::buildOutput(
 			shape->create(1, image->getWidth() * 20, image->getHeight() * 20);
 
 			// Setup dictionary.
-			movie = new FlashMovie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20, image->getHeight() * 20)), sprite);
+			movie = new FlashMovie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20.0f, image->getHeight() * 20.0f)), sprite);
 			movie->defineBitmap(1, new FlashBitmapImage(image));
 			movie->defineCharacter(1, shape);
 		}
@@ -192,18 +192,10 @@ bool FlashPipeline::buildOutput(
 	// Show some information about the Flash.
 	log::info << L"SWF successfully loaded," << Endl;
 	log::info << IncreaseIndent;
-	
-	const SmallMap< uint16_t, Ref< FlashFont > >& fonts = movie->getFonts();
-	log::info << fonts.size() << L" font(s)" << Endl;
-	log::info << IncreaseIndent;
-	for (SmallMap< uint16_t, Ref< FlashFont > >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
-		log::info << i->first << L". " << i->second->getShapes().size() << L" glyph(s)" << Endl;
-	log::info << DecreaseIndent;
-
+	log::info << movie->getFonts().size() << L" font(s)" << Endl;
 	log::info << movie->getBitmaps().size() << L" bitmap(s)" << Endl;
 	log::info << movie->getSounds().size() << L" sound(s)" << Endl;
 	log::info << movie->getCharacters().size() << L" character(s)" << Endl;
-
 	log::info << DecreaseIndent;
 
 	// Merge all characters of first frame into a single sprite.

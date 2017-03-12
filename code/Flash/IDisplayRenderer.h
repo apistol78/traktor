@@ -22,6 +22,7 @@ class ColorTransform;
 class FlashCanvas;
 class FlashDictionary;
 class FlashEditInstance;
+class FlashFont;
 class FlashSpriteInstance;
 class FlashShape;
 class FlashMorphShape;
@@ -104,12 +105,27 @@ public:
 	 *
 	 * \param dictionary Flash character dictionary.
 	 * \param transform Shape transform.
-	 * \param fontMaxDimension Max font glyph size.
-	 * \param glyphShape Shape
+	 * \param font Font description.
+	 * \param glyph Glyph shape if available, not available if system font.
+	 * \param fontHeight Height of font.
+	 * \param character Character, not required if shape is specified.
 	 * \param color Color
 	 * \param cxform Color transform.
+	 * \param filter Text filter.
+	 * \param filterColor Text filter color.
 	 */
-	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const Color4f& color, const ColorTransform& cxform, uint8_t filter, const Color4f& filterColor) = 0;
+	virtual void renderGlyph(
+		const FlashDictionary& dictionary,
+		const Matrix33& transform,
+		const FlashFont* font,
+		const FlashShape* glyph,
+		float fontHeight,
+		wchar_t character,
+		const Color4f& color,
+		const ColorTransform& cxform,
+		uint8_t filter,
+		const Color4f& filterColor
+	) = 0;
 
 	/*! \brief Render solid quad.
 	 *

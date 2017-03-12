@@ -142,7 +142,7 @@ bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, cons
 	adler.begin();
 
 	uint8_t buffer[4096];
-	int32_t nread;
+	int64_t nread;
 	while ((nread = fileStream->read(buffer, sizeof(buffer))) > 0)
 		adler.feed(buffer, nread);
 
