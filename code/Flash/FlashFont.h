@@ -40,6 +40,9 @@ public:
 	bool create(const AlignedVector< SwfShape* >& shapeTable);
 
 	bool create(
+		const std::string& fontName,
+		bool italic,
+		bool bold,
 		const AlignedVector< SwfShape* >& shapeTable,
 		int16_t ascent,
 		int16_t descent,
@@ -50,6 +53,12 @@ public:
 		const AlignedVector< uint16_t >& codeTable,
 		CoordinateType coordinateType
 	);
+
+	const std::string& getFontName() const;
+
+	bool isItalic() const;
+
+	bool isBold() const;
 
 	const RefArray< FlashShape >& getShapes() const;
 
@@ -76,6 +85,9 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
+	std::string m_fontName;
+	bool m_italic;
+	bool m_bold;
 	RefArray< FlashShape > m_shapes;
 	int16_t m_ascent;
 	int16_t m_descent;
@@ -84,7 +96,6 @@ private:
 	AlignedVector< Aabb2 > m_boundsTable;
 	Vector2 m_maxDimension;
 	SmallMap< uint32_t, int16_t > m_kerningLookup;
-	//AlignedVector< uint16_t > m_codeTable;
 	SmallMap< uint16_t, uint16_t > m_indexLookup;
 	CoordinateType m_coordinateType;
 };

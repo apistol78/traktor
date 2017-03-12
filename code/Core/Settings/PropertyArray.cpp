@@ -33,7 +33,7 @@ void PropertyArray::removeProperty(IPropertyValue* value)
 
 uint32_t PropertyArray::getPropertyCount() const
 {
-	return m_values.size();
+	return uint32_t(m_values.size());
 }
 
 IPropertyValue* PropertyArray::getProperty(uint32_t index)

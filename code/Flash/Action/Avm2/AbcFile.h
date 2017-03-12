@@ -1,7 +1,7 @@
 #ifndef traktor_flash_AbcFile_H
 #define traktor_flash_AbcFile_H
 
-#include "Core/Misc/AutoPtr.h"
+#include "Core/Containers/AlignedVector.h"
 
 namespace traktor
 {
@@ -43,10 +43,7 @@ struct NamespaceInfo
  */
 struct NamespaceSetInfo
 {
-	uint32_t count;
-	AutoArrayPtr< uint32_t > ns;
-
-	NamespaceSetInfo();
+	AlignedVector< uint32_t > ns;
 
 	bool load(SwfReader& swf);
 };
@@ -114,13 +111,13 @@ struct MultinameInfo
  */
 struct ConstantPool
 {
-	AutoArrayPtr< int32_t > s32;
-	AutoArrayPtr< uint32_t > u32;
-	AutoArrayPtr< double > doubles;
-	AutoArrayPtr< std::string > strings;
-	AutoArrayPtr< NamespaceInfo > namespaces;
-	AutoArrayPtr< NamespaceSetInfo > nsset;
-	AutoArrayPtr< MultinameInfo > multinames;
+	AlignedVector< int32_t > s32;
+	AlignedVector< uint32_t > u32;
+	AlignedVector< double > doubles;
+	AlignedVector< std::string > strings;
+	AlignedVector< NamespaceInfo > namespaces;
+	AlignedVector< NamespaceSetInfo > nsset;
+	AlignedVector< MultinameInfo > multinames;
 
 	bool load(SwfReader& swf);
 };
@@ -167,10 +164,7 @@ struct OptionDetail
  */
 struct OptionInfo
 {
-	uint32_t optionCount;
-	AutoArrayPtr< OptionDetail > options;
-
-	OptionInfo();
+	AlignedVector< OptionDetail > options;
 
 	bool load(SwfReader& swf);
 
@@ -182,11 +176,11 @@ struct OptionInfo
  */
 struct ParamInfo
 {
-	AutoArrayPtr< uint32_t > names;
+	AlignedVector< uint32_t > names;
 
 	bool load(SwfReader& swf, uint32_t paramCount);
 
-	void dump(const ConstantPool& cpool, uint32_t paramCount) const;
+	void dump(const ConstantPool& cpool) const;
 };
 
 /*! \brief
@@ -207,10 +201,9 @@ enum MethodInfoFlags
  */
 struct MethodInfo
 {
-	uint32_t paramCount;
 	uint32_t returnType;
-	AutoArrayPtr< uint32_t > paramTypes;
-	uint32_t name;
+	AlignedVector< uint32_t > paramTypes;
+	uint32_t name;	//!< Index into "ConstantPool::strings"
 	uint8_t flags;
 	OptionInfo options;
 	ParamInfo paramNames;
@@ -243,8 +236,7 @@ struct ItemInfo
 struct MetaDataInfo
 {
 	uint32_t name;
-	uint32_t itemCount;
-	AutoArrayPtr< ItemInfo > items;
+	AlignedVector< ItemInfo > items;
 
 	MetaDataInfo();
 
@@ -317,8 +309,7 @@ struct TraitsInfo
 		method;
 	}
 	data;
-	uint32_t metaDataCount;
-	AutoArrayPtr< uint32_t > metaData;
+	AlignedVector< uint32_t > metaData;
 
 	TraitsInfo();
 
@@ -347,11 +338,9 @@ struct InstanceInfo
 	uint32_t superName;
 	uint8_t flags;
 	uint32_t protectedNs;
-	uint32_t interfaceCount;
-	AutoArrayPtr< uint32_t > interfaces;
+	AlignedVector< uint32_t > interfaces;
 	uint32_t iinit;
-	uint32_t traitsCount;
-	AutoArrayPtr< TraitsInfo > traits;
+	AlignedVector< TraitsInfo > traits;
 
 	InstanceInfo();
 
@@ -366,8 +355,7 @@ struct InstanceInfo
 struct ClassInfo
 {
 	uint32_t cinit;
-	uint32_t traitsCount;
-	AutoArrayPtr< TraitsInfo > traits;
+	AlignedVector< TraitsInfo > traits;
 
 	ClassInfo();
 
@@ -381,9 +369,8 @@ struct ClassInfo
  */
 struct ScriptInfo
 {
-	uint32_t init;
-	uint32_t traitsCount;
-	AutoArrayPtr< TraitsInfo > traits;
+	uint32_t init;	//!< Index into "AbcFile::methods"
+	AlignedVector< TraitsInfo > traits;
 
 	ScriptInfo();
 
@@ -420,12 +407,9 @@ struct MethodBodyInfo
 	uint32_t localCount;
 	uint32_t initScopeDepth;
 	uint32_t maxScopeDepth;
-	uint32_t codeLength;
-	AutoArrayPtr< uint8_t > code;
-	uint32_t exceptionCount;
-	AutoArrayPtr< ExceptionInfo > exceptions;
-	uint32_t traitsCount;
-	AutoArrayPtr< TraitsInfo > traits;
+	AlignedVector< uint8_t > code;
+	AlignedVector< ExceptionInfo > exceptions;
+	AlignedVector< TraitsInfo > traits;
 
 	MethodBodyInfo();
 
@@ -442,17 +426,12 @@ struct AbcFile
 	uint16_t minorVersion;
 	uint16_t majorVersion;
 	ConstantPool cpool;
-	uint32_t methodCount;
-	AutoArrayPtr< MethodInfo > methods;
-	uint32_t metaDataCount;
-	AutoArrayPtr< MetaDataInfo > metaData;
-	uint32_t classCount;
-	AutoArrayPtr< InstanceInfo > instances;
-	AutoArrayPtr< ClassInfo > classes;
-	uint32_t scriptsCount;
-	AutoArrayPtr< ScriptInfo > scripts;
-	uint32_t methodBodyCount;
-	AutoArrayPtr< MethodBodyInfo > methodBodies;
+	AlignedVector< MethodInfo > methods;
+	AlignedVector< MetaDataInfo > metaData;
+	AlignedVector< InstanceInfo > instances;
+	AlignedVector< ClassInfo > classes;
+	AlignedVector< ScriptInfo > scripts;
+	AlignedVector< MethodBodyInfo > methodBodies;
 
 	AbcFile();
 

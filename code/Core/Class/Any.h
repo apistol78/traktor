@@ -32,7 +32,8 @@ public:
 	{
 		AtVoid,
 		AtBoolean,
-		AtInteger,
+		AtInt32,
+		AtInt64,
 		AtFloat,
 		AtString,
 		AtObject
@@ -50,7 +51,9 @@ public:
 
 	static Any fromBoolean(bool value);
 
-	static Any fromInteger(int32_t value);
+	static Any fromInt32(int32_t value);
+
+	static Any fromInt64(int64_t value);
 
 	static Any fromFloat(float value);
 
@@ -66,7 +69,9 @@ public:
 
 	bool getBoolean() const;
 
-	int32_t getInteger() const;
+	int32_t getInt32() const;
+
+	int64_t getInt64() const;
 
 	float getFloat() const;
 
@@ -82,7 +87,9 @@ public:
 
 	bool isBoolean() const { return m_type == AtBoolean; }
 
-	bool isInteger() const { return m_type == AtInteger; }
+	bool isInt32() const { return m_type == AtInt32; }
+
+	bool isInt64() const { return m_type == AtInt64; }
 
 	bool isFloat() const { return m_type == AtFloat; }
 
@@ -90,14 +97,16 @@ public:
 
 	bool isObject() const { return m_type == AtObject; }
 
-	bool isNumeric() const { return isInteger() || isFloat(); }
+	bool isNumeric() const { return isInt32() || isInt64() || isFloat(); }
 
 	// \name Unsafe accessors.
 	// \{
 
 	bool getBooleanUnsafe() const { T_ASSERT (m_type == AtBoolean); return m_data.m_boolean; }
 
-	int32_t getIntegerUnsafe( ) const { T_ASSERT (m_type == AtInteger); return m_data.m_integer; }
+	int32_t getInt32Unsafe( ) const { T_ASSERT (m_type == AtInt32); return m_data.m_int32; }
+
+	int64_t getInt64Unsafe( ) const { T_ASSERT (m_type == AtInt64); return m_data.m_int64; }
 
 	float getFloatUnsafe() const { T_ASSERT (m_type == AtFloat); return m_data.m_float; }
 
@@ -117,7 +126,8 @@ private:
 	union AnyData
 	{
 		bool m_boolean;
-		int32_t m_integer;
+		int32_t m_int32;
+		int64_t m_int64;
 		float m_float;
 		char* m_string;
 		ITypedObject* m_object;

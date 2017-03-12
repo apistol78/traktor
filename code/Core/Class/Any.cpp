@@ -100,11 +100,19 @@ Any Any::fromBoolean(bool value)
 	return any;
 }
 
-Any Any::fromInteger(int32_t value)
+Any Any::fromInt32(int32_t value)
 {
 	Any any;
-	any.m_type = AtInteger;
-	any.m_data.m_integer = value;
+	any.m_type = AtInt32;
+	any.m_data.m_int32 = value;
+	return any;
+}
+
+Any Any::fromInt64(int64_t value)
+{
+	Any any;
+	any.m_type = AtInt64;
+	any.m_data.m_int64 = value;
 	return any;
 }
 
@@ -163,8 +171,10 @@ bool Any::getBoolean() const
 	{
 	case AtBoolean:
 		return m_data.m_boolean;
-	case AtInteger:
-		return m_data.m_integer != 0;
+	case AtInt32:
+		return m_data.m_int32 != 0;
+	case AtInt64:
+		return m_data.m_int64 != 0;
 	case AtFloat:
 		return m_data.m_float != 0.0f;
 	case AtString:
@@ -177,18 +187,40 @@ bool Any::getBoolean() const
 	return false;
 }
 
-int32_t Any::getInteger() const
+int32_t Any::getInt32() const
 {
 	switch (m_type)
 	{
 	case AtBoolean:
 		return m_data.m_boolean ? 1 : 0;
-	case AtInteger:
-		return m_data.m_integer;
+	case AtInt32:
+		return m_data.m_int32;
+	case AtInt64:
+		return int32_t(m_data.m_int64);
 	case AtFloat:
 		return int32_t(m_data.m_float);
 	case AtString:
 		return parseString< int32_t >(m_data.m_string);
+	default:
+		break;
+	}
+	return 0;
+}
+
+int64_t Any::getInt64() const
+{
+	switch (m_type)
+	{
+	case AtBoolean:
+		return m_data.m_boolean ? 1 : 0;
+	case AtInt32:
+		return m_data.m_int32;
+	case AtInt64:
+		return m_data.m_int64;
+	case AtFloat:
+		return int64_t(m_data.m_float);
+	case AtString:
+		return parseString< int64_t >(m_data.m_string);
 	default:
 		break;
 	}
@@ -201,8 +233,10 @@ float Any::getFloat() const
 	{
 	case AtBoolean:
 		return m_data.m_boolean ? 1.0f : 0.0f;
-	case AtInteger:
-		return float(m_data.m_integer);
+	case AtInt32:
+		return float(m_data.m_int32);
+	case AtInt64:
+		return float(m_data.m_int64);
 	case AtFloat:
 		return m_data.m_float;
 	case AtString:
@@ -219,8 +253,10 @@ std::string Any::getString() const
 	{
 	case AtBoolean:
 		return m_data.m_boolean ? "true" : "false";
-	case AtInteger:
-		return wstombs(Utf8Encoding(), toString(m_data.m_integer));
+	case AtInt32:
+		return wstombs(Utf8Encoding(), toString(m_data.m_int32));
+	case AtInt64:
+		return wstombs(Utf8Encoding(), toString(m_data.m_int64));
 	case AtFloat:
 		return wstombs(Utf8Encoding(), toString(m_data.m_float));
 	case AtString:
@@ -237,8 +273,10 @@ std::wstring Any::getWideString() const
 	{
 	case AtBoolean:
 		return m_data.m_boolean ? L"true" : L"false";
-	case AtInteger:
-		return toString(m_data.m_integer);
+	case AtInt32:
+		return toString(m_data.m_int32);
+	case AtInt64:
+		return toString(m_data.m_int64);
 	case AtFloat:
 		return toString(m_data.m_float);
 	case AtString:

@@ -39,14 +39,14 @@ bool parseColor(const std::wstring& color, Color4f& outColor)
 	{
 		int32_t red, green, blue;
 		swscanf(color.c_str(), L"#%02x%02x%02x", &red, &green, &blue);
-		outColor = Color4f(red, green, blue, 255) / Scalar(255.0f);
+		outColor = Color4f(red, green, blue, 255.0f) / Scalar(255.0f);
 		return true;
 	}
 	else if (startsWith< std::wstring >(color, L"rgb"))
 	{
 		int32_t red, green, blue;
 		swscanf(color.c_str(), L"rgb(%d,%d,%d)", &red, &green, &blue);
-		outColor = Color4f(red, green, blue, 255) / Scalar(255.0f);
+		outColor = Color4f(red, green, blue, 255.0f) / Scalar(255.0f);
 		return true;
 	}
 	else if (toLower(color) == L"none")
@@ -283,7 +283,7 @@ int32_t FlashEditInstance::getMaxScroll() const
 		float lineHeight = m_layout->getFontHeight() + m_layout->getLeading();
 		float editHeight = m_textBounds.mx.y - m_textBounds.mn.y;
 
-		int maxScroll = lines.size() - int32_t(editHeight / lineHeight + 0.5f);
+		int32_t maxScroll = int32_t(lines.size()) - int32_t(editHeight / lineHeight + 0.5f);
 		return std::max(maxScroll, 0);
 	}
 	else

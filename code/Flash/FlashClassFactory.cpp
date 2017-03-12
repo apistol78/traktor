@@ -189,7 +189,7 @@ Any FlashDictionary_getExportId(FlashDictionary* self, const std::string& export
 {
 	uint16_t exportId;
 	if (self->getExportId(exportName, exportId))
-		return Any::fromInteger(exportId);
+		return Any::fromInt32(exportId);
 	else
 		return Any();
 }
@@ -503,22 +503,22 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classFlashDictionary);
 
 	Ref< AutoRuntimeClass< FlashCharacterInstance > > classFlashCharacterInstance = new AutoRuntimeClass< FlashCharacterInstance >();
-	classFlashCharacterInstance->addConstant("SbmDefault", Any::fromInteger(SbmDefault));
-	classFlashCharacterInstance->addConstant("SbmNormal", Any::fromInteger(SbmNormal));
-	classFlashCharacterInstance->addConstant("SbmLayer", Any::fromInteger(SbmLayer));
-	classFlashCharacterInstance->addConstant("SbmMultiply", Any::fromInteger(SbmMultiply));
-	classFlashCharacterInstance->addConstant("SbmScreen", Any::fromInteger(SbmScreen));
-	classFlashCharacterInstance->addConstant("SbmLighten", Any::fromInteger(SbmLighten));
-	classFlashCharacterInstance->addConstant("SbmDarken", Any::fromInteger(SbmDarken));
-	classFlashCharacterInstance->addConstant("SbmDifference", Any::fromInteger(SbmDifference));
-	classFlashCharacterInstance->addConstant("SbmAdd", Any::fromInteger(SbmAdd));
-	classFlashCharacterInstance->addConstant("SbmSubtract", Any::fromInteger(SbmSubtract));
-	classFlashCharacterInstance->addConstant("SbmInvert", Any::fromInteger(SbmInvert));
-	classFlashCharacterInstance->addConstant("SbmAlpha", Any::fromInteger(SbmAlpha));
-	classFlashCharacterInstance->addConstant("SbmErase", Any::fromInteger(SbmErase));
-	classFlashCharacterInstance->addConstant("SbmOverlay", Any::fromInteger(SbmOverlay));
-	classFlashCharacterInstance->addConstant("SbmHardlight", Any::fromInteger(SbmHardlight));
-	classFlashCharacterInstance->addConstant("SbmOpaque", Any::fromInteger(SbmOpaque));
+	classFlashCharacterInstance->addConstant("SbmDefault", Any::fromInt32(SbmDefault));
+	classFlashCharacterInstance->addConstant("SbmNormal", Any::fromInt32(SbmNormal));
+	classFlashCharacterInstance->addConstant("SbmLayer", Any::fromInt32(SbmLayer));
+	classFlashCharacterInstance->addConstant("SbmMultiply", Any::fromInt32(SbmMultiply));
+	classFlashCharacterInstance->addConstant("SbmScreen", Any::fromInt32(SbmScreen));
+	classFlashCharacterInstance->addConstant("SbmLighten", Any::fromInt32(SbmLighten));
+	classFlashCharacterInstance->addConstant("SbmDarken", Any::fromInt32(SbmDarken));
+	classFlashCharacterInstance->addConstant("SbmDifference", Any::fromInt32(SbmDifference));
+	classFlashCharacterInstance->addConstant("SbmAdd", Any::fromInt32(SbmAdd));
+	classFlashCharacterInstance->addConstant("SbmSubtract", Any::fromInt32(SbmSubtract));
+	classFlashCharacterInstance->addConstant("SbmInvert", Any::fromInt32(SbmInvert));
+	classFlashCharacterInstance->addConstant("SbmAlpha", Any::fromInt32(SbmAlpha));
+	classFlashCharacterInstance->addConstant("SbmErase", Any::fromInt32(SbmErase));
+	classFlashCharacterInstance->addConstant("SbmOverlay", Any::fromInt32(SbmOverlay));
+	classFlashCharacterInstance->addConstant("SbmHardlight", Any::fromInt32(SbmHardlight));
+	classFlashCharacterInstance->addConstant("SbmOpaque", Any::fromInt32(SbmOpaque));
 	classFlashCharacterInstance->addStaticMethod("getInstanceCount", &FlashCharacterInstance::getInstanceCount);
 	classFlashCharacterInstance->addMethod("destroy", &FlashCharacterInstance::destroy);
 	classFlashCharacterInstance->addMethod("getContext", &FlashCharacterInstance::getContext);

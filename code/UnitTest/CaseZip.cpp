@@ -11,7 +11,7 @@ void CaseZip::run()
 {
 	uint8_t source[4096];
 	uint8_t compressed[8172];
-	int compressedSize;
+	int64_t compressedSize;
 	uint8_t destination[4096];
 
 	// Prepare random source data.
@@ -23,7 +23,7 @@ void CaseZip::run()
 	compress::DeflateStreamZip deflateStream(&deflateDestinationStream);
 	for (size_t i = 0; i < sizeof_array(source); i += 256)
 	{
-		int nwritten = deflateStream.write(&source[i], 256);
+		int64_t nwritten = deflateStream.write(&source[i], 256);
 		CASE_ASSERT_EQUAL (nwritten, 256);
 	}
 	deflateStream.flush();
@@ -39,7 +39,7 @@ void CaseZip::run()
 	for (;;)
 	{
 		uint8_t buf[256];
-		int nread = inflateStream.read(buf, sizeof_array(buf));
+		int64_t nread = inflateStream.read(buf, sizeof_array(buf));
 		if (nread <= 0)
 			break;
 

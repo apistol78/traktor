@@ -31,13 +31,13 @@ public:
 	wchar_t readChar();
 
 	/*! \brief Read string from stream until end-of-line or end-of-file. */
-	int readLine(std::wstring& out);
+	int64_t readLine(std::wstring& out);
 
 private:
 	Ref< IStream > m_stream;
 	Ref< IEncoding > m_encoding;
 	uint8_t m_buffer[IEncoding::MaxEncodingSize];
-	int m_count;
+	int64_t m_count;
 };
 
 }

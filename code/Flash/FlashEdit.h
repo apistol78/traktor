@@ -87,6 +87,10 @@ public:
 	 */
 	uint16_t getMaxLength() const;
 
+	/*! \brief Set initial text string.
+	 */
+	void setInitialText(const std::wstring& initialText);
+
 	/*! \brief Initial text string.
 	 *
 	 * \return Initial text, can be HTML.

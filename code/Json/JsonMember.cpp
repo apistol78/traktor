@@ -31,8 +31,12 @@ bool JsonMember::write(OutputStream& os) const
 		os << (m_value.getBooleanUnsafe() ? L"true" : L"false");
 		break;
 
-	case Any::AtInteger:
-		os << m_value.getIntegerUnsafe();
+	case Any::AtInt32:
+		os << m_value.getInt32Unsafe();
+		break;
+
+	case Any::AtInt64:
+		os << m_value.getInt64Unsafe();
 		break;
 
 	case Any::AtFloat:

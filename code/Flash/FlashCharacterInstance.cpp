@@ -94,6 +94,11 @@ void FlashCharacterInstance::setCacheObject(IRefCount* cacheObject)
 	m_cacheObject = cacheObject;
 }
 
+void FlashCharacterInstance::setUserObject(IRefCount* userObject)
+{
+	m_userObject = userObject;
+}
+
 void FlashCharacterInstance::clearCacheObject()
 {
 	m_cacheObject = 0;

@@ -453,10 +453,10 @@ private:
 		int32_t nread = std::min< int32_t >(PageSize, BufferSize - m_buffered);
 		T_ASSERT (nread > 0);
 
-		int32_t read = m_stream->read(m_data.ptr() + m_buffered, nread);
+		int64_t read = m_stream->read(m_data.ptr() + m_buffered, nread);
 		if (read > 0)
 		{
-			m_buffered += read;
+			m_buffered += int32_t(read);
 			return true;
 		}
 		else

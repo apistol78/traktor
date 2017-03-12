@@ -383,7 +383,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 #endif
 
 	// Add class to registry.
-	uint32_t classRegistryIndex = m_classRegistry.size();
+	uint32_t classRegistryIndex = uint32_t(m_classRegistry.size());
 	m_classRegistry.push_back(rc);
 
 	// Add entries to lookup table; flatten with all specialized types in order
@@ -524,7 +524,7 @@ void ScriptManagerLua::collectGarbage(bool full)
 
 void ScriptManagerLua::getStatistics(ScriptStatistics& outStatistics) const
 {
-	outStatistics.memoryUsage = m_totalMemoryUse;
+	outStatistics.memoryUsage = uint32_t(m_totalMemoryUse);
 }
 
 void ScriptManagerLua::destroyContext(ScriptContextLua* context)
@@ -605,8 +605,10 @@ void ScriptManagerLua::pushAny(const Any& any)
 	CHECK_LUA_STACK(m_luaState, 1);
 	if (any.isBoolean())
 		lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
-	else if (any.isInteger())
-		lua_pushinteger(m_luaState, any.getIntegerUnsafe());
+	else if (any.isInt32())
+		lua_pushinteger(m_luaState, any.getInt32Unsafe());
+	else if (any.isInt64())
+		lua_pushinteger(m_luaState, any.getInt64Unsafe());
 	else if (any.isFloat())
 		lua_pushnumber(m_luaState, any.getFloatUnsafe());
 	else if (any.isString())
@@ -625,8 +627,10 @@ void ScriptManagerLua::pushAny(const Any* anys, int32_t count)
 		const Any& any = anys[i];
 		if (any.isBoolean())
 			lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
-		else if (any.isInteger())
-			lua_pushinteger(m_luaState, any.getIntegerUnsafe());
+		else if (any.isInt32())
+			lua_pushinteger(m_luaState, any.getInt32Unsafe());
+		else if (any.isInt64())
+			lua_pushinteger(m_luaState, any.getInt64Unsafe());
 		else if (any.isFloat())
 			lua_pushnumber(m_luaState, any.getFloatUnsafe());
 		else if (any.isString())

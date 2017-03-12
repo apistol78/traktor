@@ -248,7 +248,7 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	int32_t dataSize = stream->tell();
+	int64_t dataSize = stream->tell();
 
 	mesh.write(stream);
 
@@ -270,7 +270,7 @@ bool MeshPipeline::buildOutput(
 		report->set(L"vertexCount", positions.size());
 		report->set(L"shapeTriangleCount", meshShapeTriangles.size());
 		report->set(L"hullTriangleCount", meshHullTriangles.size());
-		report->set(L"size", dataSize);
+		report->set(L"size", int32_t(dataSize));
 	}
 
 	return true;

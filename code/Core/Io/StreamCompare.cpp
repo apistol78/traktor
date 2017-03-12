@@ -15,8 +15,8 @@ StreamCompare::StreamCompare(IStream* first, IStream* second)
 
 bool StreamCompare::execute()
 {
-	int32_t firstPos = m_first->tell();
-	int32_t secondPos = m_second->tell();
+	int64_t firstPos = m_first->tell();
+	int64_t secondPos = m_second->tell();
 
 	uint8_t firstBuf[1024];
 	uint8_t secondBuf[1024];
@@ -25,8 +25,8 @@ bool StreamCompare::execute()
 
 	for (;;)
 	{
-		int32_t r0 = m_first->read(firstBuf, sizeof(firstBuf));
-		int32_t r1 = m_second->read(secondBuf, sizeof(secondBuf));
+		int64_t r0 = m_first->read(firstBuf, sizeof(firstBuf));
+		int64_t r1 = m_second->read(secondBuf, sizeof(secondBuf));
 
 		if (r0 != r1)
 		{

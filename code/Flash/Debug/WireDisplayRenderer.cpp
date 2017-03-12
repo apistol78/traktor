@@ -294,9 +294,20 @@ void WireDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, co
 	m_displayRenderer->renderMorphShape(dictionary, transform, shape, cxform);
 }
 
-void WireDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const Color4f& color, const ColorTransform& cxform, uint8_t filter, const Color4f& filterColor)
+void WireDisplayRenderer::renderGlyph(
+	const FlashDictionary& dictionary,
+	const Matrix33& transform,
+	const FlashFont* font,
+	const FlashShape* glyph,
+	float fontHeight,
+	wchar_t character,
+	const Color4f& color,
+	const ColorTransform& cxform,
+	uint8_t filter,
+	const Color4f& filterColor
+)
 {
-	m_displayRenderer->renderGlyph(dictionary, transform, fontMaxDimension, glyphShape, color, cxform, filter, filterColor);
+	m_displayRenderer->renderGlyph(dictionary, transform, font, glyph, fontHeight, character, color, cxform, filter, filterColor);
 }
 
 void WireDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform)

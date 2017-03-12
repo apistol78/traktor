@@ -25,8 +25,8 @@ public:
 	struct Block
 	{
 		uint32_t id;
-		uint32_t offset;
-		uint32_t size;
+		int64_t offset;
+		int64_t size;
 	};
 
 	BlockFile();

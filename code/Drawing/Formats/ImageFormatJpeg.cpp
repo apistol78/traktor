@@ -49,7 +49,7 @@ boolean fillInputBuffer(j_decompress_ptr cinfo)
 {
 	my_source_mgr& src = *static_cast< my_source_mgr* >(cinfo->src);
 	
-	int nread = src.stream->read(src.buffer, c_bufferSize);
+	int64_t nread = src.stream->read(src.buffer, c_bufferSize);
 	if (nread <= 0)
 	{
 		src.buffer[0] = (JOCTET)0xFF;

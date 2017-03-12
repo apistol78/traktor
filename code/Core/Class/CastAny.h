@@ -83,10 +83,10 @@ struct CastAny < int8_t, false >
 		return value.isNumeric();
 	}
 	static Any set(int8_t value) {
-		return Any::fromInteger(value);
+		return Any::fromInt32(value);
 	}
 	static int8_t get(const Any& value) {
-		return value.getInteger();
+		return value.getInt32();
 	}
 };
 
@@ -100,10 +100,10 @@ struct CastAny < uint8_t, false >
 		return value.isNumeric();
 	}
 	static Any set(uint8_t value) {
-		return Any::fromInteger(uint8_t(value));
+		return Any::fromInt32(uint8_t(value));
 	}
 	static uint8_t get(const Any& value) {
-		return (uint8_t)value.getInteger();
+		return (uint8_t)value.getInt32();
 	}
 };
 
@@ -117,10 +117,10 @@ struct CastAny < int16_t, false >
 		return value.isNumeric();
 	}
 	static Any set(int16_t value) {
-		return Any::fromInteger(value);
+		return Any::fromInt32(value);
 	}
 	static int16_t get(const Any& value) {
-		return value.getInteger();
+		return value.getInt32();
 	}
 };
 
@@ -134,10 +134,10 @@ struct CastAny < uint16_t, false >
 		return value.isNumeric();
 	}
 	static Any set(uint16_t value) {
-		return Any::fromInteger(uint16_t(value));
+		return Any::fromInt32(uint16_t(value));
 	}
 	static uint16_t get(const Any& value) {
-		return (uint16_t)value.getInteger();
+		return (uint16_t)value.getInt32();
 	}
 };
 
@@ -151,10 +151,10 @@ struct CastAny < int32_t, false >
 		return value.isNumeric();
 	}
 	static Any set(int32_t value) {
-		return Any::fromInteger(value);
+		return Any::fromInt32(value);
 	}
 	static int32_t get(const Any& value) {
-		return value.getInteger();
+		return value.getInt32();
 	}
 };
 
@@ -168,10 +168,44 @@ struct CastAny < uint32_t, false >
 		return value.isNumeric();
 	}
 	static Any set(uint32_t value) {
-		return Any::fromInteger(int32_t(value));
+		return Any::fromInt32(int32_t(value));
 	}
 	static uint32_t get(const Any& value) {
-		return (uint32_t)value.getInteger();
+		return (uint32_t)value.getInt32();
+	}
+};
+
+template < >
+struct CastAny < int64_t, false >
+{
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"int64_t";
+	}
+	static bool accept(const Any& value) {
+		return value.isNumeric();
+	}
+	static Any set(int64_t value) {
+		return Any::fromInt64(value);
+	}
+	static int64_t get(const Any& value) {
+		return value.getInt64();
+	}
+};
+
+template < >
+struct CastAny < uint64_t, false >
+{
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"uint64_t";
+	}
+	static bool accept(const Any& value) {
+		return value.isNumeric();
+	}
+	static Any set(uint64_t value) {
+		return Any::fromInt64(int64_t(value));
+	}
+	static uint64_t get(const Any& value) {
+		return (uint64_t)value.getInt64();
 	}
 };
 

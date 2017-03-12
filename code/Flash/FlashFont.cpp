@@ -17,7 +17,9 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashFont", 0, FlashFont, ISerializable)
 
 FlashFont::FlashFont()
-:	m_ascent(0)
+:	m_italic(false)
+,	m_bold(false)
+,	m_ascent(0)
 ,	m_descent(0)
 ,	m_leading(0)
 ,	m_maxDimension(0.0f, 0.0f)
@@ -42,6 +44,9 @@ bool FlashFont::create(const AlignedVector< SwfShape* >& shapeTable)
 }
 
 bool FlashFont::create(
+	const std::string& fontName,
+	bool italic,
+	bool bold,
 	const AlignedVector< SwfShape* >& shapeTable,
 	int16_t ascent,
 	int16_t descent,
@@ -56,6 +61,9 @@ bool FlashFont::create(
 	if (!create(shapeTable))
 		return false;
 
+	m_fontName = fontName;
+	m_italic = italic;
+	m_bold = bold;
 	m_ascent = ascent;
 	m_descent = descent;
 	m_leading = leading;
@@ -70,17 +78,27 @@ bool FlashFont::create(
 	}
 
 	for (uint32_t i = 0; i < codeTable.size(); ++i)
-	{
-		if (i >= 65535 || i >= shapeTable.size())
-			break;
-
 		m_indexLookup[codeTable[i]] = i;
-	}
 
 	for (AlignedVector< Aabb2 >::const_iterator i = boundsTable.begin(); i != boundsTable.end(); ++i)
 		m_maxDimension = max(m_maxDimension, i->mx - i->mn);
 
 	return true;
+}
+
+const std::string& FlashFont::getFontName() const
+{
+	return m_fontName;
+}
+
+bool FlashFont::isItalic() const
+{
+	return m_italic;
+}
+
+bool FlashFont::isBold() const
+{
+	return m_bold;
 }
 
 const RefArray< FlashShape >& FlashFont::getShapes() const
@@ -150,6 +168,9 @@ void FlashFont::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
+	s >> Member< std::string >(L"fontName", m_fontName);
+	s >> Member< bool >(L"italic", m_italic);
+	s >> Member< bool >(L"bold", m_bold);
 	s >> MemberRefArray< FlashShape >(L"shapes", m_shapes);
 	s >> Member< int16_t >(L"ascent", m_ascent);
 	s >> Member< int16_t >(L"descent", m_descent);

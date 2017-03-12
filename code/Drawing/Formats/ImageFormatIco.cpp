@@ -76,12 +76,12 @@ bool ImageFormatIco::write(IStream* stream, Image* image)
 		ScaleFilter scaleFilter(lodWidth, lodHeight, ScaleFilter::MnAverage, ScaleFilter::MgLinear);
 		clone->apply(&scaleFilter);
 
-		offsets.push_back(stream->tell());
+		offsets.push_back(int32_t(stream->tell()));
 
 		if (!ImageFormatPng().write(stream, clone))
 			return false;
 	}
-	offsets.push_back(stream->tell());
+	offsets.push_back(int32_t(stream->tell()));
 
 	// Patch offset and size entries.
 	int32_t entry = 6 + 8;

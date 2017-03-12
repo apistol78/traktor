@@ -17,8 +17,10 @@ Format::Argument convertArgument(const Any& value)
 {
 	if (value.isBoolean())
 		return Format::Argument(value.getBoolean() ? L"true" : L"false");
-	else if (value.isInteger())
-		return Format::Argument(value.getInteger());
+	else if (value.isInt32())
+		return Format::Argument(value.getInt32());
+	else if (value.isInt64())
+		return Format::Argument(int32_t(value.getInt64()));
 	else if (value.isFloat())
 		return Format::Argument(value.getFloat());
 	else if (value.isString())

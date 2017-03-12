@@ -260,15 +260,17 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 			// Push arguments.
 			{
 				CHECK_LUA_STACK(m_luaState, argc);
-				for (int32_t i = 0; i < argc; ++i)
+				for (uint32_t i = 0; i < argc; ++i)
 				{
 					const Any& any = argv[i];
 					if (any.isVoid())
 						lua_pushnil(m_luaState);
 					else if (any.isBoolean())
 						lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
-					else if (any.isInteger())
-						lua_pushinteger(m_luaState, any.getIntegerUnsafe());
+					else if (any.isInt32())
+						lua_pushinteger(m_luaState, any.getInt32Unsafe());
+					else if (any.isInt64())
+						lua_pushinteger(m_luaState, any.getInt64Unsafe());
 					else if (any.isFloat())
 						lua_pushnumber(m_luaState, any.getFloatUnsafe());
 					else if (any.isString())
@@ -316,15 +318,17 @@ Any ScriptContextLua::executeDelegate(ScriptDelegateLua* delegate, uint32_t argc
 		// Push arguments.
 		{
 			CHECK_LUA_STACK(m_luaState, argc);
-			for (int32_t i = 0; i < argc; ++i)
+			for (uint32_t i = 0; i < argc; ++i)
 			{
 				const Any& any = argv[i];
 				if (any.isVoid())
 					lua_pushnil(m_luaState);
 				else if (any.isBoolean())
 					lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
-				else if (any.isInteger())
-					lua_pushinteger(m_luaState, any.getIntegerUnsafe());
+				else if (any.isInt32())
+					lua_pushinteger(m_luaState, any.getInt32Unsafe());
+				else if (any.isInt64())
+					lua_pushinteger(m_luaState, any.getInt64Unsafe());
 				else if (any.isFloat())
 					lua_pushnumber(m_luaState, any.getFloatUnsafe());
 				else if (any.isString())
@@ -375,15 +379,17 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 		// Push arguments.
 		{
 			CHECK_LUA_STACK(m_luaState, argc);
-			for (int32_t i = 0; i < argc; ++i)
+			for (uint32_t i = 0; i < argc; ++i)
 			{
 				const Any& any = argv[i];
 				if (any.isVoid())
 					lua_pushnil(m_luaState);
 				else if (any.isBoolean())
 					lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
-				else if (any.isInteger())
-					lua_pushinteger(m_luaState, any.getIntegerUnsafe());
+				else if (any.isInt32())
+					lua_pushinteger(m_luaState, any.getInt32Unsafe());
+				else if (any.isInt64())
+					lua_pushinteger(m_luaState, any.getInt64Unsafe());
 				else if (any.isFloat())
 					lua_pushnumber(m_luaState, any.getFloatUnsafe());
 				else if (any.isString())

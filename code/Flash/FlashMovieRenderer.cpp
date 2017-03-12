@@ -608,22 +608,24 @@ void FlashMovieRenderer::renderCharacter(
 			if (!font)
 				continue;
 
-			const FlashShape* shape = font->getShape(i->glyphIndex);
-			if (!shape)
+			const FlashShape* glyph = font->getShape(i->glyphIndex);
+			if (!glyph)
 				continue;
 
-			float scaleHeight = 
-				font->getCoordinateType() == FlashFont::CtTwips ? 
-				1.0f / 1000.0f :
-				1.0f / (20.0f * 1000.0f);
+			//float scaleHeight = 
+			//	font->getCoordinateType() == FlashFont::CtTwips ? 
+			//	1.0f / 1000.0f :
+			//	1.0f / (20.0f * 1000.0f);
 
-			float scaleOffset = i->height * scaleHeight;
+			//float scaleOffset = i->height * scaleHeight;
 
 			m_displayRenderer->renderGlyph(
 				*dictionary,
-				textTransform * translate(i->offsetX, i->offsetY) * scale(scaleOffset, scaleOffset),
-				font->getMaxDimension(),
-				*shape,
+				textTransform * translate(i->offsetX, i->offsetY), // * scale(scaleOffset, scaleOffset),
+				font,
+				glyph,
+				i->height,
+				0,
 				i->color,
 				cxTransform2,
 				textInstance->getFilter(),
@@ -699,16 +701,15 @@ void FlashMovieRenderer::renderCharacter(
 					if (chars[k].ch != 0)
 					{
 						uint16_t glyphIndex = attrib.font->lookupIndex(chars[k].ch);
-
-						const FlashShape* glyphShape = attrib.font->getShape(glyphIndex);
-						if (!glyphShape)
-							continue;
+						const FlashShape* glyph = attrib.font->getShape(glyphIndex);
 
 						m_displayRenderer->renderGlyph(
 							*dictionary,
-							editTransform * translate(textOffsetX + i->x + chars[k].x, textOffsetY + i->y) * scale(fontScale, fontScale),
-							attrib.font->getMaxDimension(),
-							*glyphShape,
+							editTransform * translate(textOffsetX + i->x + chars[k].x, textOffsetY + i->y), // * scale(fontScale, fontScale),
+							attrib.font,
+							glyph,
+							layout->getFontHeight(),
+							chars[k].ch,
 							attrib.color,
 							cxTransform2,
 							editInstance->getFilter(),

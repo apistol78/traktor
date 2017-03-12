@@ -67,7 +67,18 @@ public:
 
 	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const ColorTransform& cxform) T_OVERRIDE T_FINAL;
 
-	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const Color4f& color, const ColorTransform& cxform, uint8_t filter, const Color4f& filterColor) T_OVERRIDE T_FINAL;
+	virtual void renderGlyph(
+		const FlashDictionary& dictionary,
+		const Matrix33& transform,
+		const FlashFont* font,
+		const FlashShape* glyph,
+		float fontHeight,
+		wchar_t character,
+		const Color4f& color,
+		const ColorTransform& cxform,
+		uint8_t filter,
+		const Color4f& filterColor
+	) T_OVERRIDE T_FINAL;
 
 	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform) T_OVERRIDE T_FINAL;
 

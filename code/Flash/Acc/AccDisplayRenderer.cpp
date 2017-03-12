@@ -269,8 +269,8 @@ void AccDisplayRenderer::begin(
 
 		render::RenderTargetSetCreateDesc rtscd;
 		rtscd.count = 1;
-		rtscd.width = viewWidth;
-		rtscd.height = viewHeight;
+		rtscd.width = int32_t(viewWidth);
+		rtscd.height = int32_t(viewHeight);
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = true;
 		rtscd.usingPrimaryDepthStencil = false;
@@ -512,16 +512,34 @@ void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, con
 {
 }
 
-void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const Color4f& color, const ColorTransform& cxform, uint8_t filter, const Color4f& filterColor)
+void AccDisplayRenderer::renderGlyph(
+	const FlashDictionary& dictionary,
+	const Matrix33& transform,
+	const FlashFont* font,
+	const FlashShape* glyph,
+	float fontHeight,
+	wchar_t character,
+	const Color4f& color,
+	const ColorTransform& cxform,
+	uint8_t filter,
+	const Color4f& filterColor
+)
 {
+	// Only support embedded fonts.
+	if (!glyph)
+		return;
+
+	float coordScale = font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+	float fontScale = coordScale * fontHeight;
+	Matrix33 glyphTransform = transform * scale(fontScale, fontScale);
+	Color4f glyphColor = color * cxform.mul + cxform.add;
+
 	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
 	if (!m_shapeRenderer || m_shapeRenderer->shouldCull())
 	{
-		if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
+		if (!rectangleVisible(m_dirtyRegion, glyphTransform * glyph->getShapeBounds()))
 			return;
 	}
-
-	Color4f glyphColor = color * cxform.mul + cxform.add;
 
 	if (m_glyphFilter != filter || !colorsEqual(glyphColor, m_glyphColor))
 	{
@@ -531,7 +549,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 		m_glyphFilterColor = filterColor;
 	}
 
-	uint32_t tag = shape.getCacheTag();
+	uint32_t tag = glyph->getCacheTag();
 
 	SmallMap< int32_t, GlyphCache >::iterator it1 = m_glyphCache.find(tag);
 	if (it1 == m_glyphCache.end())
@@ -542,7 +560,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 			m_gradientCache,
 			m_textureCache,
 			dictionary,
-			shape
+			*glyph
 		))
 		{
 			T_DEBUG(L"Glyph tesselation failed");
@@ -564,7 +582,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 
 	// Always use maximum glyph bounds.
 	Aabb2 bounds = accShape->getBounds();
-	bounds.mx = bounds.mn + fontMaxDimension;
+	bounds.mx = bounds.mn + font->getMaxDimension();
 
 	// Get cached glyph target.
 	if (it1->second.index < 0)
@@ -640,7 +658,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 
 	m_glyph->add(
 		bounds,
-		transform,
+		glyphTransform,
 		Vector4(
 			float(column) / c_cacheGlyphCountX,
 			float(row) / c_cacheGlyphCountY,

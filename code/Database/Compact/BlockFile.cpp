@@ -12,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_version = 2;
+const uint32_t c_version = 3;
 const uint32_t c_maxBlockCount = 8192;
 
 struct BlockPred
@@ -105,28 +105,28 @@ public:
 		return false;
 	}
 
-	virtual int tell() const T_OVERRIDE T_FINAL
+	virtual int64_t tell() const T_OVERRIDE T_FINAL
 	{
 		T_ASSERT (m_stream);
 		return m_stream->tell() - m_outBlock.offset;
 	}
 
-	virtual int available() const T_OVERRIDE T_FINAL
+	virtual int64_t available() const T_OVERRIDE T_FINAL
 	{
 		return 0;
 	}
 
-	virtual int seek(SeekOriginType origin, int offset) T_OVERRIDE T_FINAL
+	virtual int64_t seek(SeekOriginType origin, int64_t offset) T_OVERRIDE T_FINAL
 	{
 		return 0;
 	}
 
-	virtual int read(void* block, int nbytes) T_OVERRIDE T_FINAL
+	virtual int64_t read(void* block, int64_t nbytes) T_OVERRIDE T_FINAL
 	{
 		return 0;
 	}
 
-	virtual int write(const void* block, int nbytes) T_OVERRIDE T_FINAL
+	virtual int64_t write(const void* block, int64_t nbytes) T_OVERRIDE T_FINAL
 	{
 		T_ASSERT (m_stream);
 		return m_stream->write(block, nbytes);
@@ -334,8 +334,8 @@ void BlockFile::flushTOC()
 		writer << i->size;
 	}
 
-	uint32_t padSize = 3 * sizeof(uint32_t) + c_maxBlockCount * (sizeof(uint32_t) + sizeof(Block)) - m_stream->tell();
-	for (uint32_t i = 0; i < padSize; ++i)
+	int64_t padSize = 3 * sizeof(uint32_t) + c_maxBlockCount * (sizeof(uint32_t) + sizeof(Block)) - m_stream->tell();
+	for (int64_t i = 0; i < padSize; ++i)
 	{
 		uint8_t padDummy = 0x00;
 		m_stream->write(&padDummy, 1);
