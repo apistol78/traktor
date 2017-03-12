@@ -1,3 +1,4 @@
+#include <time.h>
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Core/System/OS.h"
@@ -10,25 +11,32 @@ namespace traktor
 {
 	namespace db
 	{
-		namespace
-		{
-
-const wchar_t* c_changeListDescription = L"** CREATED **";
-
-		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.PerforceFileStore", 0, PerforceFileStore, IFileStore)
 
 bool PerforceFileStore::create(const ConnectionString& connectionString)
 {
-	PerforceClientDesc desc;
+	time_t rawtime;
+	struct tm* timeinfo;
+	wchar_t buffer[1024];
 
+	PerforceClientDesc desc;
 	desc.m_host = OS::getInstance().getComputerName();
 	desc.m_port = connectionString.get(L"p4port");
 	desc.m_user = connectionString.get(L"p4user");
 	desc.m_password= connectionString.get(L"p4pwd");
 	desc.m_client = connectionString.get(L"p4client");
 	desc.m_securityLevel = PerforceClientDesc::SlLow;
+
+	// Create change list description.
+	std::wstring changeListDescription = connectionString.get(L"p4changelist");
+	if (changeListDescription.empty())
+		changeListDescription = L"** CREATED %x **";
+
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+	wcsftime(buffer, sizeof_array(buffer), changeListDescription.c_str(), timeinfo);
+	changeListDescription = buffer;
 
 	m_p4client = new PerforceClient(desc);
 
@@ -37,7 +45,7 @@ bool PerforceFileStore::create(const ConnectionString& connectionString)
 	{
 		for (RefArray< PerforceChangeList >::iterator i = changeLists.begin(); i != changeLists.end(); ++i)
 		{
-			if (compareIgnoreCase< std::wstring >((*i)->getDescription(), c_changeListDescription) == 0)
+			if (compareIgnoreCase< std::wstring >((*i)->getDescription(), changeListDescription) == 0)
 			{
 				m_p4changeList = *i;
 				break;
@@ -47,7 +55,7 @@ bool PerforceFileStore::create(const ConnectionString& connectionString)
 
 	if (!m_p4changeList)
 	{
-		m_p4changeList = m_p4client->createChangeList(c_changeListDescription);
+		m_p4changeList = m_p4client->createChangeList(changeListDescription);
 		if (!m_p4changeList)
 			return false;
 	}
