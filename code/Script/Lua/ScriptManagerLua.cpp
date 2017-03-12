@@ -648,7 +648,14 @@ Any ScriptManagerLua::toAny(int32_t index)
 
 	int32_t type = lua_type(m_luaState, index);
 	if (type == LUA_TNUMBER)
-		return Any::fromFloat(float(lua_tonumber(m_luaState, index)));
+	{
+#if defined(T_LUA_5_2)
+		if (lua_isinteger(m_luaState, index))
+			return Any::fromInt64(lua_tointeger(m_luaState, index));
+		else
+#endif
+			return Any::fromFloat(float(lua_tonumber(m_luaState, index)));
+	}
 	else if (type == LUA_TBOOLEAN)
 		return Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
 	else if (type == LUA_TSTRING)
@@ -701,7 +708,14 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 		int32_t type = lua_type(m_luaState, index);
 
 		if (type == LUA_TNUMBER)
-			outAnys[i] = Any::fromFloat(float(lua_tonumber(m_luaState, index)));
+		{
+#if defined(T_LUA_5_2)
+			if (lua_isinteger(m_luaState, index))
+				outAnys[i] = Any::fromInt64(lua_tointeger(m_luaState, index));
+			else
+#endif
+				outAnys[i] = Any::fromFloat(float(lua_tonumber(m_luaState, index)));
+		}
 		else if (type == LUA_TBOOLEAN)
 			outAnys[i] = Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
 		else if (type == LUA_TSTRING)
