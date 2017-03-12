@@ -22,7 +22,7 @@ class T_DLLCLASS StreamStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	StreamStream(IStream* stream, int endOffset = -1);
+	StreamStream(IStream* stream, int64_t endOffset = -1);
 
 	virtual void close() T_OVERRIDE;
 
@@ -32,22 +32,22 @@ public:
 
 	virtual bool canSeek() const T_OVERRIDE T_FINAL;
 
-	virtual int tell() const T_OVERRIDE T_FINAL;
+	virtual int64_t tell() const T_OVERRIDE T_FINAL;
 
-	virtual int available() const T_OVERRIDE T_FINAL;
+	virtual int64_t available() const T_OVERRIDE T_FINAL;
 
-	virtual int seek(SeekOriginType origin, int offset) T_OVERRIDE T_FINAL;
+	virtual int64_t seek(SeekOriginType origin, int64_t offset) T_OVERRIDE T_FINAL;
 
-	virtual int read(void* block, int nbytes) T_OVERRIDE T_FINAL;
+	virtual int64_t read(void* block, int64_t nbytes) T_OVERRIDE T_FINAL;
 
-	virtual int write(const void* block, int nbytes) T_OVERRIDE T_FINAL;
+	virtual int64_t write(const void* block, int64_t nbytes) T_OVERRIDE T_FINAL;
 
 	virtual void flush() T_OVERRIDE T_FINAL;
 
 protected:
 	Ref< IStream > m_stream;
-	int m_startOffset;
-	int m_endOffset;
+	int64_t m_startOffset;
+	int64_t m_endOffset;
 };
 
 }

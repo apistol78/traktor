@@ -12,7 +12,7 @@ int32_t getRange(int32_t index)
 	return 4 << index;
 }
 
-int32_t getIndex(int32_t size, int32_t maxIndex)
+int32_t getIndex(int64_t size, int32_t maxIndex)
 {
 	for (int32_t i = 0; i < maxIndex; ++i)
 	{
@@ -81,37 +81,37 @@ bool DebugStream::canSeek() const
 	return m_stream->canSeek();
 }
 
-int DebugStream::tell() const
+int64_t DebugStream::tell() const
 {
 	T_ASSERT (m_stream)
 	m_tellCalls++;
 	return m_stream->tell();
 }
 
-int DebugStream::available() const
+int64_t DebugStream::available() const
 {
 	T_ASSERT (m_stream)
 	m_availableCalls++;
 	return m_stream->available();
 }
 
-int DebugStream::seek(SeekOriginType origin, int offset)
+int64_t DebugStream::seek(SeekOriginType origin, int64_t offset)
 {
 	T_ASSERT (m_stream)
 	m_seekCalls++;
 	return m_stream->seek(origin, offset);
 }
 
-int DebugStream::read(void* block, int nbytes)
+int64_t DebugStream::read(void* block, int64_t nbytes)
 {
 	T_ASSERT (m_stream)
 	m_readCalls++;
 	m_timer.start();
-	int nread = m_stream->read(block, nbytes);
+	int64_t nread = m_stream->read(block, nbytes);
 	m_timer.stop();
 	if (nread > 0)
 	{
-		int index = getIndex(nread, sizeof_array(m_readTotals) - 1);
+		int32_t index = getIndex(nread, sizeof_array(m_readTotals) - 1);
 		m_readTotals[index]++;
 		m_readTotal += nread;
 	}
@@ -119,16 +119,16 @@ int DebugStream::read(void* block, int nbytes)
 	return nread;
 }
 
-int DebugStream::write(const void* block, int nbytes)
+int64_t DebugStream::write(const void* block, int64_t nbytes)
 {
 	T_ASSERT (m_stream)
 	m_writeCalls++;
 	m_timer.start();
-	int nwritten = m_stream->write(block, nbytes);
+	int64_t nwritten = m_stream->write(block, nbytes);
 	m_timer.stop();
 	if (nwritten > 0)
 	{
-		int index = getIndex(nwritten, sizeof_array(m_writeTotals) - 1);
+		int64_t index = getIndex(nwritten, sizeof_array(m_writeTotals) - 1);
 		m_writeTotals[index]++;
 		m_writeTotal += nwritten;
 	}

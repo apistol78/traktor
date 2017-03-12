@@ -31,7 +31,7 @@ public:
 		m_stream = 0;
 	}
 
-	int read(void* block, int nbytes)
+	int64_t read(void* block, int64_t nbytes)
 	{
 		uint8_t* top = static_cast< uint8_t* >(block);
 		uint8_t* ptr = static_cast< uint8_t* >(block);
@@ -39,7 +39,7 @@ public:
 		// Copy from buffer.
 		if (m_decompressedBufferSize > 0)
 		{
-			int32_t ncopy = std::min< int32_t >(m_decompressedBufferSize, nbytes);
+			int64_t ncopy = std::min< int64_t >(m_decompressedBufferSize, nbytes);
 
 			std::memcpy(ptr, &m_decompressedBuffer[0], ncopy);
 			ptr += ncopy;
@@ -53,15 +53,15 @@ public:
 
 		if (nbytes <= 0)
 		{
-			m_position += int32_t(ptr - top);
-			return int32_t(ptr - top);
+			m_position += int64_t(ptr - top);
+			return int64_t(ptr - top);
 		}
 
 		T_ASSERT (m_decompressedBufferSize == 0);
 
 		// Decompress directly into destination if requested block size is larger than buffer;
 		// and output is large enough to contain a bit of overhead.
-		while (nbytes >= int(m_decompressedBuffer.size()))
+		while (nbytes >= int64_t(m_decompressedBuffer.size()))
 		{
 			uint32_t compressedBlockSize = 0;
 			Reader(m_stream) >> compressedBlockSize;
@@ -154,7 +154,7 @@ public:
 				m_decompressedBufferSize = compressedBlockSize;
 			}
 
-			int32_t ncopy = std::min< int32_t >(m_decompressedBufferSize, nbytes);
+			int64_t ncopy = std::min< int64_t >(m_decompressedBufferSize, nbytes);
 
 			std::memcpy(ptr, &m_decompressedBuffer[0], ncopy);
 			ptr += ncopy;
@@ -166,11 +166,11 @@ public:
 			nbytes -= ncopy;
 		}
 
-		m_position += int32_t(ptr - top);
-		return int32_t(ptr - top);
+		m_position += int64_t(ptr - top);
+		return int64_t(ptr - top);
 	}
 
-	int setLogicalPosition(int position)
+	int64_t setLogicalPosition(int64_t position)
 	{
 		// Seeking backwards, restart from beginning.
 		if (position < m_position)
@@ -183,7 +183,7 @@ public:
 		uint8_t dummy[1024];
 		while (m_position < position)
 		{
-			int nread = read(dummy, std::min< int >(sizeof_array(dummy), position - m_position));
+			int64_t nread = read(dummy, std::min< int >(sizeof_array(dummy), position - m_position));
 			if (nread <=  0)
 				return -1;
 		}
@@ -191,7 +191,7 @@ public:
 		return m_position;
 	}
 
-	int getLogicalPosition() const
+	int64_t getLogicalPosition() const
 	{
 		return m_position;
 	}
@@ -200,9 +200,9 @@ private:
 	Ref< IStream > m_stream;
 	AlignedVector< uint8_t > m_compressedBlock;
 	AlignedVector< uint8_t > m_decompressedBuffer;
-	int32_t m_decompressedBufferSize;
-	int32_t m_startPosition;
-	int32_t m_position;
+	int64_t m_decompressedBufferSize;
+	int64_t m_startPosition;
+	int64_t m_position;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.InflateStreamLzf", InflateStreamLzf, IStream)
@@ -241,18 +241,18 @@ bool InflateStreamLzf::canSeek() const
 	return true;
 }
 
-int InflateStreamLzf::tell() const
+int64_t InflateStreamLzf::tell() const
 {
 	return m_impl->getLogicalPosition();
 }
 
-int InflateStreamLzf::available() const
+int64_t InflateStreamLzf::available() const
 {
 	T_FATAL_ERROR;
 	return 0;
 }
 
-int InflateStreamLzf::seek(SeekOriginType origin, int offset)
+int64_t InflateStreamLzf::seek(SeekOriginType origin, int64_t offset)
 {
 	T_ASSERT_M (origin != SeekEnd, L"SeekEnd is not allowed");
 	if (origin == SeekCurrent)
@@ -260,12 +260,12 @@ int InflateStreamLzf::seek(SeekOriginType origin, int offset)
 	return m_impl->setLogicalPosition(offset);
 }
 
-int InflateStreamLzf::read(void* block, int nbytes)
+int64_t InflateStreamLzf::read(void* block, int64_t nbytes)
 {
 	return m_impl->read(block, nbytes);
 }
 
-int InflateStreamLzf::write(const void* block, int nbytes)
+int64_t InflateStreamLzf::write(const void* block, int64_t nbytes)
 {
 	T_FATAL_ERROR;
 	return 0;

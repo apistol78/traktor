@@ -29,14 +29,14 @@ bool StreamCopy::execute(uint64_t copyBytes)
 	{
 		uint64_t nget = std::min< uint64_t >(copyBytes, 4096);
 
-		int32_t nread = m_source->read(buffer.ptr(), int32_t(nget));
+		int64_t nread = m_source->read(buffer.ptr(), int64_t(nget));
 		if (nread < 0)
 			return false;
 
 		if (nread == 0)
 			break;
 
-		int32_t nwritten = m_target->write(buffer.ptr(), nread);
+		int64_t nwritten = m_target->write(buffer.ptr(), nread);
 		if (nwritten != nread)
 			return false;
 

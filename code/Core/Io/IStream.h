@@ -49,19 +49,19 @@ public:
 	virtual bool canSeek() const = 0;
 
 	/*! \brief Get current position in stream. */
-	virtual int tell() const = 0;
+	virtual int64_t tell() const = 0;
 
 	/*! \brief Get number of bytes available from stream. */
-	virtual int available() const = 0;
+	virtual int64_t available() const = 0;
 
 	/*! \brief Move current position. */
-	virtual int seek(SeekOriginType origin, int offset) = 0;
+	virtual int64_t seek(SeekOriginType origin, int64_t offset) = 0;
 
 	/*! \brief Read block from stream. */
-	virtual int read(void* block, int nbytes) = 0;
+	virtual int64_t read(void* block, int64_t nbytes) = 0;
 
 	/*! \brief Write data to stream. */
-	virtual int write(const void* block, int nbytes) = 0;
+	virtual int64_t write(const void* block, int64_t nbytes) = 0;
 
 	/*! \brief Ensure all data has been written to stream. */
 	virtual void flush() = 0;

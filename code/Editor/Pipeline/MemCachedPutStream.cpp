@@ -47,35 +47,35 @@ bool MemCachedPutStream::canSeek() const
 	return false;
 }
 
-int MemCachedPutStream::tell() const
+int64_t MemCachedPutStream::tell() const
 {
 	return 0;
 }
 
-int MemCachedPutStream::available() const
+int64_t MemCachedPutStream::available() const
 {
 	return 0;
 }
 
-int MemCachedPutStream::seek(SeekOriginType origin, int offset)
+int64_t MemCachedPutStream::seek(SeekOriginType origin, int64_t offset)
 {
 	return 0;
 }
 
-int MemCachedPutStream::read(void* block, int nbytes)
+int64_t MemCachedPutStream::read(void* block, int64_t nbytes)
 {
 	return 0;
 }
 
-int MemCachedPutStream::write(const void* block, int nbytes)
+int64_t MemCachedPutStream::write(const void* block, int64_t nbytes)
 {
 	const uint8_t* blockPtr = static_cast< const uint8_t* >(block);
-	int written = 0;
+	int64_t written = 0;
 
 	while (written < nbytes)
 	{
-		int avail = MaxBlockSize - m_inblock;
-		int copy = std::min(nbytes - written, avail);
+		int64_t avail = MaxBlockSize - m_inblock;
+		int64_t copy = std::min(nbytes - written, avail);
 
 		std::memcpy(&m_block[m_inblock], blockPtr, copy);
 

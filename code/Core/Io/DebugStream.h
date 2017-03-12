@@ -41,15 +41,15 @@ public:
 
 	virtual bool canSeek() const T_OVERRIDE T_FINAL;
 
-	virtual int tell() const T_OVERRIDE T_FINAL;
+	virtual int64_t tell() const T_OVERRIDE T_FINAL;
 
-	virtual int available() const T_OVERRIDE T_FINAL;
+	virtual int64_t available() const T_OVERRIDE T_FINAL;
 
-	virtual int seek(SeekOriginType origin, int offset) T_OVERRIDE T_FINAL;
+	virtual int64_t seek(SeekOriginType origin, int64_t offset) T_OVERRIDE T_FINAL;
 
-	virtual int read(void* block, int nbytes) T_OVERRIDE T_FINAL;
+	virtual int64_t read(void* block, int64_t nbytes) T_OVERRIDE T_FINAL;
 
-	virtual int write(const void* block, int nbytes) T_OVERRIDE T_FINAL;
+	virtual int64_t write(const void* block, int64_t nbytes) T_OVERRIDE T_FINAL;
 
 	virtual void flush() T_OVERRIDE T_FINAL;
 
@@ -66,10 +66,10 @@ private:
 	mutable uint32_t m_readCalls;
 	mutable uint32_t m_writeCalls;
 	mutable uint32_t m_flushCalls;
-	mutable uint32_t m_readTotals[8];
-	mutable uint32_t m_readTotal;
-	mutable uint32_t m_writeTotals[8];
-	mutable uint32_t m_writeTotal;
+	mutable int64_t m_readTotals[8];
+	mutable int64_t m_readTotal;
+	mutable int64_t m_writeTotals[8];
+	mutable int64_t m_writeTotal;
 	mutable double m_readIoTime;
 	mutable double m_writeIoTime;
 	mutable double m_flushIoTime;

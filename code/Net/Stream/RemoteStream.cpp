@@ -123,9 +123,9 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 #endif
 
 	uint8_t status = 0;
-	int32_t avail = 0;
+	int64_t avail = 0;
 
-	if (net::recvBatch< uint8_t, int32_t >(socket, status, avail) <= 0)
+	if (net::recvBatch< uint8_t, int64_t >(socket, status, avail) <= 0)
 	{
 		log::error << L"RemoteStream; no status from server" << Endl;
 		return 0;
@@ -146,9 +146,10 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 		buffer.resize(avail);
 
 		uint8_t* ptr = &buffer[0];
-		for (int32_t nread = 0; nread < avail; )
+		for (int64_t nread = 0; nread < avail; )
 		{
-			int32_t result = socket->recv(ptr, avail - nread);
+			int32_t read = int32_t(std::min< int64_t >(avail - nread, 65535));
+			int32_t result = socket->recv(ptr, read);
 			if (result <= 0)
 			{
 				log::error << L"RemoteStream; unexpected disconnect from server" << Endl;
@@ -204,48 +205,48 @@ bool RemoteStream::canSeek() const
 	return (m_status & 0x04) == 0x04;
 }
 
-int RemoteStream::tell() const
+int64_t RemoteStream::tell() const
 {
-	int32_t result = 0;
+	int64_t result = 0;
 	net::sendBatch< uint8_t >(m_socket, 0x04);
-	net::recvBatch< int32_t >(m_socket, result);
+	net::recvBatch< int64_t >(m_socket, result);
 	return result;
 }
 
-int RemoteStream::available() const
+int64_t RemoteStream::available() const
 {
-	int32_t result = 0;
+	int64_t result = 0;
 	net::sendBatch< uint8_t >(m_socket, 0x05);
-	net::recvBatch< int32_t >(m_socket, result);
+	net::recvBatch< int64_t >(m_socket, result);
 	return result;
 }
 
-int RemoteStream::seek(SeekOriginType origin, int offset)
+int64_t RemoteStream::seek(SeekOriginType origin, int64_t offset)
 {
-	int32_t result = 0;
-	net::sendBatch< uint8_t, int32_t, int32_t >(m_socket, 0x06, origin, offset);
-	net::recvBatch< int32_t >(m_socket, result);
+	int64_t result = 0;
+	net::sendBatch< uint8_t, int64_t, int64_t >(m_socket, 0x06, origin, offset);
+	net::recvBatch< int64_t >(m_socket, result);
 	return result;
 }
 
-int RemoteStream::read(void* block, int nbytes)
+int64_t RemoteStream::read(void* block, int64_t nbytes)
 {
 	int32_t ntotal = 0;
 
-	net::sendBatch< uint8_t, int32_t >(m_socket, 0x07, nbytes);
+	net::sendBatch< uint8_t, int64_t >(m_socket, 0x07, nbytes);
 
 	uint8_t* rp = (uint8_t*)block;
 	while (nbytes > 0)
 	{
-		int32_t navail = 0;
-		net::recvBatch< int32_t >(m_socket, navail);
+		int64_t navail = 0;
+		net::recvBatch< int64_t >(m_socket, navail);
 
 		if (navail == 0 || navail > nbytes)
 			break;
 		if (navail < 0)
 			return navail;
 
-		int32_t nread = 0;
+		int64_t nread = 0;
 		while (nread < navail)
 		{
 			int32_t result = m_socket->recv(rp, navail - nread);
@@ -270,10 +271,22 @@ int RemoteStream::read(void* block, int nbytes)
 	return ntotal;
 }
 
-int RemoteStream::write(const void* block, int nbytes)
+int64_t RemoteStream::write(const void* block, int64_t nbytes)
 {
-	net::sendBatch< uint8_t, int32_t >(m_socket, 0x08, nbytes);
-	return m_socket->send(block, nbytes);
+	net::sendBatch< uint8_t, int64_t >(m_socket, 0x08, nbytes);
+
+	const uint8_t* ptr = static_cast< const uint8_t* >(block);
+	int64_t nwritten = 0;
+	while (nwritten < nbytes)
+	{
+		int32_t write = int32_t(std::min< int64_t >(nbytes - nwritten, 65535));
+		int32_t result = m_socket->send(&ptr[nwritten], write);
+		if (result != write)
+			break;
+		nwritten += write;
+	}
+
+	return nwritten;
 }
 
 void RemoteStream::flush()
