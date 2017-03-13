@@ -14,10 +14,6 @@
 
 namespace traktor
 {
-
-//class Reader;
-//class Writer;
-
 	namespace net
 	{
 
