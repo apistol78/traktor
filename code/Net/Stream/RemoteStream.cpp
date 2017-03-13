@@ -128,12 +128,14 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 	if (net::recvBatch< uint8_t, int64_t >(socket, status, avail) <= 0)
 	{
 		log::error << L"RemoteStream; no status from server" << Endl;
+		ConnectionPool::getInstance().disconnect(socket);
 		return 0;
 	}
 
 	if (!status)
 	{
 		log::error << L"RemoteStream; invalid status from server" << Endl;
+		ConnectionPool::getInstance().disconnect(socket);
 		return 0;
 	}
 
@@ -148,11 +150,12 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 		uint8_t* ptr = &buffer[0];
 		for (int64_t nread = 0; nread < avail; )
 		{
-			int32_t read = int32_t(std::min< int64_t >(avail - nread, 65535));
+			int32_t read = int32_t(std::min< int64_t >(avail - nread, 1024 * 1024));
 			int32_t result = socket->recv(ptr, read);
 			if (result <= 0)
 			{
 				log::error << L"RemoteStream; unexpected disconnect from server" << Endl;
+				ConnectionPool::getInstance().disconnect(socket);
 				return 0;
 			}
 			nread += result;
@@ -160,7 +163,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 		}
 
 		net::sendBatch< uint8_t >(socket, 0x02);
-		socket->close();
+		ConnectionPool::getInstance().disconnect(socket);
 		socket = 0;
 
 		return dm;
@@ -279,7 +282,7 @@ int64_t RemoteStream::write(const void* block, int64_t nbytes)
 	int64_t nwritten = 0;
 	while (nwritten < nbytes)
 	{
-		int32_t write = int32_t(std::min< int64_t >(nbytes - nwritten, 65535));
+		int32_t write = int32_t(std::min< int64_t >(nbytes - nwritten, 1024 * 1024));
 		int32_t result = m_socket->send(&ptr[nwritten], write);
 		if (result != write)
 			break;
