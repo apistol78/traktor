@@ -24,17 +24,13 @@ function Button:getPreferredSize()
 end
 
 function Button:setEnable(enable)
-	self._enable = enable
-	if self._enable then
+	Widget.setEnable(self, enable)
+	if enable then
 		self._mc:setProperty("_alpha", 100)
 	else
 		self._mc:setProperty("_alpha", 50)
 	end
 	return self
-end
-
-function Button:isEnabled()
-	return self._enable
 end
 
 function Button:setOnClick(fn)
