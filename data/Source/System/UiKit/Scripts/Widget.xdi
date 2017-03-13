@@ -40,9 +40,7 @@ function Widget:remove()
 			break
 		end
 	end
-	while #self._children > 0 do
-		self._children[1]:remove()
-	end
+	self:removeAllChildren()
 	if self._parent ~= nil then
 		self._parent:_removeChild(self)
 		self._parent = nil
@@ -50,6 +48,15 @@ function Widget:remove()
 	if self._mc ~= nil then
 		self._mc:removeMovieClip()
 		self._mc = nil
+	end
+end
+
+function Widget:removeAllChildren()
+	local children = self._children
+	while #children > 0 do
+		local ln = #children
+		children[1]:remove()
+		assert (#children < ln)
 	end
 end
 
@@ -78,14 +85,18 @@ function Widget:getChildren(filterFn)
 end
 
 function Widget:setVisible(visible)
-	self._mc:setVisible(visible)
+	if visible ~= self._visible then
+		self._mc:setVisible(visible)
+		self._visible = visible
+	end
 	return self
 end
 
 function Widget:isVisible()
-	if not self._mc:isVisible() then return false end
-	if self._parent ~= nil then
-		if not self._parent:isVisible() then return false end
+	local p = self
+	while p ~= nil do
+		if not p._visible then return false end
+		p = p._parent
 	end
 	return true
 end
@@ -100,14 +111,14 @@ function Widget:isEnabled()
 end
 
 function Widget:setModal()
---	table.insert(Widget._modal, self)
+	table.insert(Widget._modal, self)
 	return true
 end
 
 function Widget:releaseModal()
---	local m = #Widget._modal
---	assert (Widget._modal[m] == self)
---	table.remove(Widget._modal, m)
+	local m = #Widget._modal
+	assert (Widget._modal[m] == self)
+	table.remove(Widget._modal, m)
 end
 
 function Widget:setHorizontalAlign(halign)
@@ -217,6 +228,7 @@ function Widget:_initialize(parent, mc)
 	self._mc = mc
 	self._mc:setPlaying(false, true)
 	self._enable = true
+	self._visible = true
 	self._placement = { x = 0, y = 0, width = 0, height = 0 }
 	self._eventListeners = {}
 	self._mouseInside = false
@@ -250,6 +262,10 @@ function Widget:_isChild(child)
 end
 
 function Widget:_notifyEventListeners(event)
+	local m = #Widget._modal
+	if m > 0 then
+		if not Widget._modal[m]:_isChild(self) then return false end
+	end
 	local eventType = getmetatable(event).__index
 	local ln = self._eventListeners[eventType]
 	if ln ~= nil then
@@ -260,13 +276,13 @@ function Widget:_notifyEventListeners(event)
 end
 
 function Widget:_dispatchEvent(event)
-	local eventType = getmetatable(event).__index
-	local handled = false
-
 	-- Enabled, non-visible, widgets are not permitted to receive events.
-	if not self:isEnabled() or not self:isVisible() then
+	if not self._enable or not self._visible then
 		return
 	end
+
+	local eventType = getmetatable(event).__index
+	local handled = false
 
 	-- Synthesize enter/leave mouse events.
 	if eventType == MouseMoveEvent then
@@ -281,10 +297,8 @@ function Widget:_dispatchEvent(event)
 			end
 			self._mouseInside = inside
 		end
-	end
-
 	-- Synthesize press/release mouse events.
-	if eventType == MouseDownEvent then
+	elseif eventType == MouseDownEvent then
 		local ps = self._placement
 		local pt = self:globalToLocal(event)
 		local inside = (pt.x >= ps.x and pt.y >= ps.y and pt.x <= ps.x + ps.width and pt.y <= ps.y + ps.height)
