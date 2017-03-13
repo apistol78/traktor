@@ -105,7 +105,7 @@ bool ScriptServer::create(
 		if (!m_scriptDebuggerThread)
 			return false;
 
-		m_scriptDebuggerThread->start();
+		m_scriptDebuggerThread->start(Thread::Highest);
 	}
 
 	// Create shared script context.
