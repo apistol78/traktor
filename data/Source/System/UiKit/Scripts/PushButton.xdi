@@ -60,17 +60,13 @@ function PushButton:setCaption(s)
 end
 
 function PushButton:setEnable(enable)
-	self._enable = enable
-	if self._enable then
+	Widget.setEnable(self, enable)
+	if enable then
 		self._mc:setProperty("_alpha", 100)
 	else
 		self._mc:setProperty("_alpha", 50)
 	end
 	return self
-end
-
-function PushButton:isEnabled()
-	return self._enable
 end
 
 function PushButton:setOnClick(fn)
@@ -96,7 +92,6 @@ function PushButton:_initialize(parent, mc, caption)
 		height = mc:getHeight()
 	}
 
-	self._enable = true
 	self._clickFn = nil
 
 	self:addEventListener(MousePressEvent, self, self._onMousePress)
@@ -111,22 +106,17 @@ function PushButton:_initialize(parent, mc, caption)
 end
 
 function PushButton:_onMousePress(event)
-	if self._enable then
-		self._background_mc:gotoAndStop("down")
-	end
+	self._background_mc:gotoAndStop("down")
 	return true
 end
 
 function PushButton:_onMouseRelease(event)
-	if self._enable then
-		self._background_mc:gotoAndStop("up")
-		if event.inside and self._clickFn ~= nil then
-			self._clickFn()
-		end
+	self._background_mc:gotoAndStop("up")
+	if event.inside and self._clickFn ~= nil then
+		self._clickFn()
 	end
 	return true
 end
-
 
 	]]>
 	</text>

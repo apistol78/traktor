@@ -90,6 +90,15 @@ function Widget:isVisible()
 	return true
 end
 
+function Widget:setEnable(enable)
+	self._enable = enable
+	return self
+end
+
+function Widget:isEnabled()
+	return self._enable
+end
+
 function Widget:setModal()
 --	table.insert(Widget._modal, self)
 	return true
@@ -158,6 +167,7 @@ function Widget:globalToLocal(pt)
 	local x, y = pt.x, pt.y
 	local p = self._parent
 	while p ~= nil do
+		assert (p ~= p._parent)
 		local pp = p:getPlacement()
 		x = x - pp.x
 		y = y - pp.y
@@ -170,6 +180,7 @@ function Widget:localToGlobal(pt)
 	local x, y = pt.x, pt.y
 	local p = self._parent
 	while p ~= nil do
+		assert (p ~= p._parent)
 		local pp = p:getPlacement()
 		x = x + pp.x
 		y = y + pp.y
@@ -195,7 +206,8 @@ function Widget:addEventListener(eventType, target, fn)
 	}
 end
 
-function Widget:removeEventListener(target, fn)
+function Widget:removeEventListener(eventType, target, fn)
+	self._eventListeners[eventType] = nil
 end
 
 -- Private
@@ -204,6 +216,7 @@ function Widget:_initialize(parent, mc)
 	self._parent = parent
 	self._mc = mc
 	self._mc:setPlaying(false, true)
+	self._enable = true
 	self._placement = { x = 0, y = 0, width = 0, height = 0 }
 	self._eventListeners = {}
 	self._mouseInside = false
@@ -250,8 +263,8 @@ function Widget:_dispatchEvent(event)
 	local eventType = getmetatable(event).__index
 	local handled = false
 
-	-- Non-visible widgets are not permitted to receive events.
-	if not self:isVisible() then
+	-- Enabled, non-visible, widgets are not permitted to receive events.
+	if not self:isEnabled() or not self:isVisible() then
 		return
 	end
 
