@@ -29,7 +29,7 @@ float Point::distance(const Point& pt1, const Point& pt2)
 {
 	float dx = pt2.m_x - pt1.m_x;
 	float dy = pt2.m_y - pt1.m_y;
-	return float(sqrtf(dx * dx + dy * dy));
+	return float(std::sqrt(dx * dx + dy * dy));
 }
 
 Ref< Point > Point::interpolate(const Point& pt1, const Point& pt2, float f)
@@ -44,8 +44,8 @@ Ref< Point > Point::interpolate(const Point& pt1, const Point& pt2, float f)
 Ref< Point > Point::polar(float length, float angle)
 {
 	return new Point(
-		sin(angle) * length,
-		cos(angle) * length
+		std::sin(angle) * length,
+		std::cos(angle) * length
 	);
 }
 
@@ -80,7 +80,7 @@ bool Point::equals(const Point* pt)
 
 void Point::normalize()
 {
-	float ln = float(sqrtf(m_x * m_x + m_y * m_y));
+	float ln = float(std::sqrt(m_x * m_x + m_y * m_y));
 	m_x /= ln;
 	m_y /= ln;
 }
@@ -106,12 +106,12 @@ std::wstring Point::toString()
 
 float Point::getLength()
 {
-	return float(sqrtf(m_x * m_x + m_y * m_y));
+	return float(std::sqrt(m_x * m_x + m_y * m_y));
 }
 
 void Point::setLength(float length)
 {
-	float ln = float(sqrtf(m_x * m_x + m_y * m_y));
+	float ln = float(std::sqrt(m_x * m_x + m_y * m_y));
 	float f = length / ln;
 	m_x *= f;
 	m_y *= f;
