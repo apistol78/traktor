@@ -42,26 +42,26 @@ bool AssetsStream::canSeek() const
 	return true;
 }
 
-int AssetsStream::tell() const
+int64_t AssetsStream::tell() const
 {
-	return (m_assetFile != 0) ? (int)(m_size - AAsset_getRemainingLength(m_assetFile)) : 0;
+	return (m_assetFile != 0) ? (int64_t)(m_size - AAsset_getRemainingLength(m_assetFile)) : 0;
 }
 
-int AssetsStream::available() const
+int64_t AssetsStream::available() const
 {
-	return (m_assetFile != 0) ? ((int)AAsset_getRemainingLength(m_assetFile)) : 0;
+	return (m_assetFile != 0) ? ((int64_t)AAsset_getRemainingLength(m_assetFile)) : 0;
 }
 
-int AssetsStream::seek(SeekOriginType origin, int offset)
+int64_t AssetsStream::seek(SeekOriginType origin, int64_t offset)
 {
 	if (m_assetFile == 0)
 		return 0;
 
 	const int fo[] = { SEEK_CUR, SEEK_END, SEEK_SET };
-	return (int)AAsset_seek(m_assetFile, offset, fo[origin]);
+	return (int64_t)AAsset_seek(m_assetFile, offset, fo[origin]);
 }
 
-int AssetsStream::read(void* block, int nbytes)
+int64_t AssetsStream::read(void* block, int64_t nbytes)
 {
 	if (m_assetFile == 0)
 		return 0;
@@ -69,7 +69,7 @@ int AssetsStream::read(void* block, int nbytes)
 	return AAsset_read(m_assetFile, block, nbytes);
 }
 
-int AssetsStream::write(const void* block, int nbytes)
+int64_t AssetsStream::write(const void* block, int64_t nbytes)
 {
 	return 0;
 }
