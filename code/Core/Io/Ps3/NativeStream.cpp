@@ -71,24 +71,24 @@ bool NativeStream::canSeek() const
 	return (m_fd != 0);
 }
 
-int NativeStream::tell() const
+int64_t NativeStream::tell() const
 {
 	if (m_fd == 0)
 		return 0;
 
 	uint64_t pos;
 	if (cellFsLseek(m_fd, 0, CELL_FS_SEEK_CUR, &pos) == CELL_FS_SUCCEEDED)
-		return int(pos);
+		return int64_t(pos);
 	else
 		return 0;
 }
 
-int NativeStream::available() const
+int64_t NativeStream::available() const
 {
-	return (m_fd != 0) ? ((int)m_fileSize - tell()) : 0;
+	return (m_fd != 0) ? ((int64_t)m_fileSize - tell()) : 0;
 }
 
-int NativeStream::seek(SeekOriginType origin, int offset)
+int64_t NativeStream::seek(SeekOriginType origin, int64_t offset)
 {
 	if (m_fd == 0)
 		return 0;
@@ -97,31 +97,31 @@ int NativeStream::seek(SeekOriginType origin, int offset)
 	uint64_t pos;
 
 	if (cellFsLseek(m_fd, offset, whence[origin], &pos) == CELL_FS_SUCCEEDED)
-		return int(pos);
+		return int64_t(pos);
 	else
 		return 0;
 }
 
-int NativeStream::read(void* block, int nbytes)
+int64_t NativeStream::read(void* block, int64_t nbytes)
 {
 	if (m_fd == 0)
 		return 0;
 
 	uint64_t nread;
 	if (cellFsRead(m_fd, block, nbytes, &nread) == CELL_FS_SUCCEEDED)
-		return int(nread);
+		return int64_t(nread);
 	else
 		return 0;
 }
 
-int NativeStream::write(const void* block, int nbytes)	
+int64_t NativeStream::write(const void* block, int64_t nbytes)	
 {
 	if (m_fd == 0)
 		return 0;
 
 	uint64_t nwritten;
 	if (cellFsWrite(m_fd, block, nbytes, &nwritten) == CELL_FS_SUCCEEDED)
-		return int(nwritten);
+		return int64_t(nwritten);
 	else
 		return 0;
 }

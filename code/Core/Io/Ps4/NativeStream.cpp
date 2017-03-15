@@ -49,39 +49,39 @@ bool NativeStream::canSeek() const
 	return (m_fd != 0);
 }
 
-int NativeStream::tell() const
+int64_t NativeStream::tell() const
 {
-	return (m_fd != 0) ? (int)sceKernelLseek(m_fd, 0, SCE_KERNEL_SEEK_CUR) : 0;
+	return (m_fd != 0) ? (int64_t)sceKernelLseek(m_fd, 0, SCE_KERNEL_SEEK_CUR) : 0;
 }
 
-int NativeStream::available() const
+int64_t NativeStream::available() const
 {
-	return (m_fd != 0) ? ((int)m_fileSize - tell()) : 0;
+	return (m_fd != 0) ? ((int64_t)m_fileSize - tell()) : 0;
 }
 
-int NativeStream::seek(SeekOriginType origin, int offset)
+int64_t NativeStream::seek(SeekOriginType origin, int64_t offset)
 {
 	if (m_fd == 0)
 		return 0;
 
 	const int whence[] = { SCE_KERNEL_SEEK_CUR, SCE_KERNEL_SEEK_END, SCE_KERNEL_SEEK_SET };
-	return (int)sceKernelLseek(m_fd, offset, whence[origin]);
+	return (int64_t)sceKernelLseek(m_fd, offset, whence[origin]);
 }
 
-int NativeStream::read(void* block, int nbytes)
+int64_t NativeStream::read(void* block, int64_t nbytes)
 {
 	if (m_fd == 0)
 		return 0;
 
-	return int(sceKernelRead(m_fd, block, nbytes));
+	return int64_t(sceKernelRead(m_fd, block, nbytes));
 }
 
-int NativeStream::write(const void* block, int nbytes)
+int64_t NativeStream::write(const void* block, int64_t nbytes)
 {
 	if (m_fd == 0)
 		return 0;
 
-	return int(sceKernelWrite(m_fd, block, nbytes));
+	return int64_t(sceKernelWrite(m_fd, block, nbytes));
 }
 
 void NativeStream::flush()
