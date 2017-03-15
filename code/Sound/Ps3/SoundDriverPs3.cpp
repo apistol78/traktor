@@ -28,7 +28,7 @@ SoundDriverPs3::~SoundDriverPs3()
 {
 }
 
-bool SoundDriverPs3::create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverPs3::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
 	CellAudioOutConfiguration audioOutConfig;
 	CellAudioPortParam audioParam;

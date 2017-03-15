@@ -29,7 +29,7 @@ public:
 
 	virtual ~SoundDriverPs3();
 
-	virtual bool create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
+	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
 
 	virtual void destroy();
 

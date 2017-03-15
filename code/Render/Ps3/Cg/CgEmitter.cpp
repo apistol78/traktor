@@ -953,9 +953,9 @@ bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 	rsgcm.cullFaceEnable = rs.cullMode == CmNever ? CELL_GCM_FALSE : CELL_GCM_TRUE;
 	rsgcm.cullFace = gcmCullFace[rs.cullMode];
 	rsgcm.blendEnable = rs.blendEnable ? CELL_GCM_TRUE : CELL_GCM_FALSE;
-	rsgcm.blendEquation = gcmBlendEquation[rs.blendOperation];
-	rsgcm.blendFuncSrc = gcmBlendFunction[rs.blendSource];
-	rsgcm.blendFuncDest = gcmBlendFunction[rs.blendDestination];
+	rsgcm.blendEquation = gcmBlendEquation[rs.blendColorOperation];
+	rsgcm.blendFuncSrc = gcmBlendFunction[rs.blendColorSource];
+	rsgcm.blendFuncDest = gcmBlendFunction[rs.blendColorDestination];
 	rsgcm.depthTestEnable = rs.depthEnable ? CELL_GCM_TRUE : CELL_GCM_FALSE;
 	rsgcm.depthMask = rs.depthWriteEnable ? CELL_GCM_TRUE : CELL_GCM_FALSE;
 	rsgcm.depthFunc = gcmFunction[rs.depthFunction];
