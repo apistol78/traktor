@@ -222,6 +222,10 @@
 							<name>GenerateDebugInformation</name>
 							<value>true</value>
 						</item>
+						<item>
+							<name>CppLanguageStd</name>
+							<value>Cpp11</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -271,6 +275,10 @@
 						<item>
 							<name>GenerateDebugInformation</name>
 							<value>true</value>
+						</item>
+						<item>
+							<name>CppLanguageStd</name>
+							<value>Cpp11</value>
 						</item>
 					</options>
 				</item>
@@ -370,6 +378,10 @@
 							<name>GenerateDebugInformation</name>
 							<value>true</value>
 						</item>
+						<item>
+							<name>CppLanguageStd</name>
+							<value>Cpp11</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -463,6 +475,10 @@
 						<item>
 							<name>GenerateDebugInformation</name>
 							<value>true</value>
+						</item>
+						<item>
+							<name>CppLanguageStd</name>
+							<value>Cpp11</value>
 						</item>
 					</options>
 				</item>

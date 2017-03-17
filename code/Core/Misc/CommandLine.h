@@ -235,10 +235,13 @@ private:
 
 	std::wstring trim(const std::wstring& s) const
 	{
-		if (s.size() >= 2 && s.front() == L'\"' && s.back() == L'\"')
-			return s.substr(1, s.length() - 2);
-		else
-			return s;
+		size_t ln = s.length();
+		if (ln >= 2)
+		{
+			if (s[0] == L'\"' && s[ln - 1] == L'\"')
+				return s.substr(1, ln - 2);
+		}
+		return s;
 	}
 
 	void parse(const std::wstring& args)
