@@ -187,6 +187,16 @@ T_MATH_INLINE void Vector4::set(int index, const Scalar& value)
 	m_data = vec_insert(value, m_data, index);
 }
 
+T_MATH_INLINE Scalar Vector4::min() const
+{
+	return Scalar(vec_min(m_data, m_data));
+}
+
+T_MATH_INLINE Scalar Vector4::max() const
+{
+	return Scalar(vec_max(m_data, m_data));
+}
+
 T_MATH_INLINE Vector4& Vector4::operator = (const Vector4& v)
 {
 	m_data = v.m_data;

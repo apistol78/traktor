@@ -461,9 +461,7 @@ public:
 		int32_t move = int32_t(size - offset);
 		for (int32_t i = move - 1; i >= 0; --i)
 		{
-			T_ASSERT (i + offset >= 0);
 			T_ASSERT (i + offset < size);
-			T_ASSERT (i + offset + count >= 0);
 			T_ASSERT (i + offset + count < m_size);
 			m_items[i + offset + count] = m_items[i + offset];
 		}

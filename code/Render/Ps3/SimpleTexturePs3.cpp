@@ -207,6 +207,11 @@ void SimpleTexturePs3::unlock(int level)
 {
 }
 
+void* SimpleTexturePs3::getInternalHandle()
+{
+	return 0;
+}
+
 void SimpleTexturePs3::bind(StateCachePs3& stateCache, int stage, const SamplerStateGCM& samplerState)
 {
 	if (m_data)

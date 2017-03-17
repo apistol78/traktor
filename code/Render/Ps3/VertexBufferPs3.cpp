@@ -1,10 +1,10 @@
-#include "Render/Ps3/PlatformPs3.h"
-#include "Render/Ps3/VertexBufferPs3.h"
-#include "Render/Ps3/MemoryHeapObject.h"
-#include "Render/Ps3/StateCachePs3.h"
-#include "Render/Ps3/CgType.h"
-#include "Render/VertexElement.h"
 #include "Core/Log/Log.h"
+#include "Render/VertexElement.h"
+#include "Render/Ps3/MemoryHeapObject.h"
+#include "Render/Ps3/PlatformPs3.h"
+#include "Render/Ps3/StateCachePs3.h"
+#include "Render/Ps3/VertexBufferPs3.h"
+#include "Render/Ps3/Cg/CgType.h"
 
 namespace traktor
 {

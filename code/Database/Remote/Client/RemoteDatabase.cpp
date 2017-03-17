@@ -34,7 +34,7 @@ bool RemoteDatabase::open(const ConnectionString& connectionString)
 
 	if (!net::Network::initialize())
 	{
-		log::error << L"Failed to open database; network initialization failed" << Endl;
+		log::error << L"Failed to open database; network initialization failed." << Endl;
 		return false;
 	}
 
@@ -52,16 +52,21 @@ bool RemoteDatabase::open(const ConnectionString& connectionString)
 	Ref< net::TcpSocket > socket = new net::TcpSocket();
 	if (!socket->connect(net::SocketAddressIPv4(host, port)))
 	{
-		log::error << L"Failed to open database; unable to connect to server \"" << host << L"\" (port " << port << L")" << Endl;
+		log::error << L"Failed to open database; unable to connect to server \"" << host << L"\" (port " << port << L")." << Endl;
 		return false;
 	}
 
 	m_connection = new RemoteConnection(socket);
 
 	Ref< MsgIntResult > result = m_connection->sendMessage< MsgIntResult >(DbmOpen(database));
-	if (!result || result->get() <= 0)
+	if (!result)
 	{
-		log::error << L"Failed to open database; unable to open server database \"" << database << L"\"" << Endl;
+		log::error << L"Failed to open database; unable to open server database \"" << database << L"\", no response." << Endl;
+		return false;
+	}
+	if (result->get() <= 0)
+	{
+		log::error << L"Failed to open database; unable to open server database \"" << database << L"\", error " << result->get() << L"." << Endl;
 		return false;
 	}
 
@@ -76,7 +81,7 @@ void RemoteDatabase::close()
 	{
 		Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmClose());
 		if (!result || result->getStatus() != StSuccess)
-			log::warning << L"Unable to close server database" << Endl;
+			log::warning << L"Unable to close server database." << Endl;
 
 		m_connection->destroy();
 		m_connection = 0;

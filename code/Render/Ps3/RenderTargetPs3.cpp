@@ -224,6 +224,11 @@ void RenderTargetPs3::unlock(int level)
 {
 }
 
+void* RenderTargetPs3::getInternalHandle()
+{
+	return 0;
+}
+
 void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerStateGCM& samplerState)
 {
 	T_ASSERT (!m_inRender);

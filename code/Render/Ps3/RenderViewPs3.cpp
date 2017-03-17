@@ -604,6 +604,11 @@ bool RenderViewPs3::isActive() const
 	return true;
 }
 
+bool RenderViewPs3::isMinimized() const
+{
+	return false;
+}
+
 bool RenderViewPs3::isFullScreen() const
 {
 	return true;

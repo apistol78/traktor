@@ -60,6 +60,8 @@ public:
 
 	virtual bool isActive() const;
 
+	virtual bool isMinimized() const;
+
 	virtual bool isFullScreen() const;
 
 	virtual void showCursor();

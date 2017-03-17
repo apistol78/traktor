@@ -886,6 +886,9 @@ std::string SwfReader::readStringU8()
 	for (uint8_t i = 0; i < len; ++i)
 		buf[i] = m_bs->readUInt8();
 
+	while (!buf.empty() && buf.back() == L'\0')
+		buf.pop_back();
+
 	return std::string(buf.begin(), buf.end());
 }
 

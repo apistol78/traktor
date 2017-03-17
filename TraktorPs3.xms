@@ -2499,7 +2499,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Extern.agg.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
 									</item>
 								</aggregationItems>
 							</item>
@@ -6082,7 +6082,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>UnitTest</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/UnitTest</sourcePath>
 			<configurations>
@@ -7798,8 +7798,8 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Json.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<sourceFile>Traktor.Json.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -7826,8 +7826,8 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Json.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<sourceFile>Traktor.Json.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 				</item>

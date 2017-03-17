@@ -45,6 +45,8 @@ public:
 
 	virtual void unlock(int level);
 
+	virtual void* getInternalHandle();
+
 	void bind(StateCachePs3& stateCache, int stage, const SamplerStateGCM& samplerState);
 
 private:
