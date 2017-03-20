@@ -5,7 +5,6 @@
 #include "Amalgam/ScriptDebuggerStateChange.h"
 #include "Amalgam/ScriptDebuggerStatus.h"
 #include "Amalgam/ScriptProfilerCallMeasured.h"
-#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Impl/ScriptServer.h"
 #include "Core/Class/IRuntimeClassFactory.h"
@@ -31,8 +30,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ScriptServer", ScriptServer, IScriptServer)
 
 ScriptServer::ScriptServer()
-:	m_frameProfiler(0)
-,	m_callSamplesIndex(0)
+:	m_callSamplesIndex(0)
 ,	m_scriptDebuggerThread(0)
 {
 }
@@ -42,8 +40,7 @@ bool ScriptServer::create(
 	const PropertyGroup* settings,
 	bool debugger,
 	bool profiler,
-	net::BidirectionalObjectTransport* transport,
-	FrameProfiler* frameProfiler
+	net::BidirectionalObjectTransport* transport
 )
 {
 	std::wstring scriptType = defaultSettings->getProperty< PropertyString >(L"Script.Type");
@@ -86,7 +83,6 @@ bool ScriptServer::create(
 		m_scriptProfiler = m_scriptManager->createProfiler();
 		if (m_scriptProfiler)
 		{
-			m_frameProfiler = frameProfiler;
 			m_scriptProfiler->addListener(this);
 		}
 		else
@@ -286,12 +282,10 @@ void ScriptServer::debugeeStateChange(script::IScriptDebugger* scriptDebugger)
 
 void ScriptServer::callEnter(const Guid& scriptId, const std::wstring& function)
 {
-	m_frameProfiler->beginScope(FptScript);
 }
 
 void ScriptServer::callLeave(const Guid& scriptId, const std::wstring& function)
 {
-	m_frameProfiler->endScope();
 }
 
 void ScriptServer::callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)

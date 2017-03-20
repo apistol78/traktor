@@ -27,7 +27,7 @@ struct ReadPrimitive
 	{
 		T t;
 		stream->read(&t, sizeof(t));
-		swap8in32(t);
+		swap8in64(t);
 		return t;
 	}
 };
@@ -39,19 +39,6 @@ struct ReadPrimitive < T, 1 >
 	{
 		T t;
 		stream->read(&t, 1);
-		return t;
-	}
-};
-
-template < typename T >
-struct ReadPrimitive < T, 8 >
-{
-	static T read(IStream* stream)
-	{
-		T t;
-		stream->read(&t, 8);
-		swap8in32(*(((uint32_t*)&t) + 0));
-		swap8in32(*(((uint32_t*)&t) + 1));
 		return t;
 	}
 };

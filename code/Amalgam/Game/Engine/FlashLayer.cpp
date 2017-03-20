@@ -1,4 +1,3 @@
-#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/FlashLayer.h"
@@ -14,6 +13,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Timer/Profiler.h"
 #include "Flash/FlashCast.h"
 #include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
@@ -277,11 +277,10 @@ void FlashLayer::prepare(const UpdateInfo& info)
 
 void FlashLayer::update(const UpdateInfo& info)
 {
+	T_PROFILER_SCOPE(L"FlashLayer update");
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
 	std::string command, args;
-
-	info.getProfiler()->beginScope(FptFlashLayerUpdate);
 
 	// Do NOT propagate input in case user is fabricating input.
 	if (!m_environment->getInput()->isFabricating())
@@ -473,16 +472,13 @@ void FlashLayer::update(const UpdateInfo& info)
 		};
 		getStage()->invokeScript(command, sizeof_array(argv), argv);
 	}
-
-	info.getProfiler()->endScope();
 }
 
 void FlashLayer::build(const UpdateInfo& info, uint32_t frame)
 {
+	T_PROFILER_SCOPE(L"FlashLayer build");
 	if (!m_displayRendererAcc || !m_moviePlayer || !m_visible)
 		return;
-
-	info.getProfiler()->beginScope(FptFlashLayerBuild);
 
 	m_displayRendererAcc->build(frame);
 
@@ -493,12 +489,11 @@ void FlashLayer::build(const UpdateInfo& info, uint32_t frame)
 
 	if (m_displayRendererWire)
 		m_displayRendererWire->end(frame);
-
-	info.getProfiler()->endScope();
 }
 
 void FlashLayer::render(render::EyeType eye, uint32_t frame)
 {
+	T_PROFILER_SCOPE(L"FlashLayer render");
 	if (!m_displayRendererAcc || !m_visible)
 		return;
 

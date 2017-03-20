@@ -7,6 +7,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Timer/Profiler.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/ISoundDriver.h"
 #include "Sound/SoundChannel.h"
@@ -142,6 +143,8 @@ void AudioServer::createResourceFactories(IEnvironment* environment)
 
 void AudioServer::update(float dT, bool renderViewActive)
 {
+	T_PROFILER_SCOPE(L"AudioServer update");
+
 	if (!m_soundSystem || !m_soundPlayer)
 		return;
 

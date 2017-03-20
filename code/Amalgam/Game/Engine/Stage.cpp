@@ -1,4 +1,3 @@
-#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/IStateManager.h"
 #include "Amalgam/Game/UpdateControl.h"
@@ -12,6 +11,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
+#include "Core/Timer/Profiler.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
@@ -225,7 +225,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 		// Issue script update.
 		if (validateScriptContext())
 		{
-			info.getProfiler()->beginScope(FptScript);
+			T_PROFILER_SCOPE(L"Script update");
 
 			Any argv[] =
 			{
@@ -245,8 +245,6 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 			{
 				T_MEASURE_STATEMENT(m_scriptContext->executeFunction("update", sizeof_array(argv), argv), 1.0 / 60.0);
 			}
-
-			info.getProfiler()->endScope();
 		}
 
 		// Update each layer.

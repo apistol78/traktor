@@ -249,9 +249,6 @@ Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint3
 
 Ref< ISerializable > Database::getObjectReadOnly(const Guid& guid) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerDatabase);
-
 	if (guid.isNull() || !guid.isValid())
 		return 0;
 

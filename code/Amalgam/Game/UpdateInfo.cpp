@@ -16,7 +16,6 @@ UpdateInfo::UpdateInfo()
 ,	m_frameDeltaTime(0.0f)
 ,	m_frame(0)
 ,	m_runningSlow(false)
-,	m_frameProfiler(0)
 {
 }
 

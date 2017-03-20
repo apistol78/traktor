@@ -23,7 +23,6 @@ class BidirectionalObjectTransport;
 	namespace amalgam
 	{
 
-class FrameProfiler;
 class IEnvironment;
 
 /*! \brief
@@ -44,8 +43,7 @@ public:
 		const PropertyGroup* settings,
 		bool debugger,
 		bool profiler,
-		net::BidirectionalObjectTransport* transport,
-		FrameProfiler* frameProfiler
+		net::BidirectionalObjectTransport* transport
 	);
 
 	void destroy();
@@ -80,7 +78,6 @@ private:
 	Ref< script::IScriptDebugger > m_scriptDebugger;
 	Ref< script::IScriptProfiler > m_scriptProfiler;
 	Ref< net::BidirectionalObjectTransport > m_transport;
-	FrameProfiler* m_frameProfiler;
 	std::map< std::pair< Guid, std::wstring >, CallSample > m_callSamples[3];
 	int32_t m_callSamplesIndex;
 	Thread* m_scriptDebuggerThread;

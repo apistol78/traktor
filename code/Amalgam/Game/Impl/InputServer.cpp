@@ -11,6 +11,7 @@
 #include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
+#include "Core/Timer/Profiler.h"
 #include "Database/Database.h"
 #include "Input/IInputDevice.h"
 #include "Input/IInputDriver.h"
@@ -105,8 +106,8 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 		Ref< input::InputMappingResource > inputMappingResource = db->getObjectReadOnly< input::InputMappingResource >(defaultSourceDataGuid);
 		if (!inputMappingResource)
 		{
-			log::error << L"Input server failed; unable to read default input configuration" << Endl;
-			return false;
+			log::warning << L"Input server; unable to read default input configuration " << defaultSourceDataGuid.format() << L"." << Endl;
+			inputMappingResource = new input::InputMappingResource();
 		}
 
 		m_inputMappingDefaultSourceData = inputMappingResource->getSourceData();
@@ -224,6 +225,8 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 
 void InputServer::update(float deltaTime, bool renderViewActive)
 {
+	T_PROFILER_SCOPE(L"InputServer update");
+
 	if (!m_inputSystem)
 		return;
 

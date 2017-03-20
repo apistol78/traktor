@@ -148,7 +148,11 @@ bool AccDisplayRenderer::create(
 	rtscd.width = c_cacheGlyphDimX;
 	rtscd.height = c_cacheGlyphDimY;
 	rtscd.multiSample = 0;
+#if !defined(__PS3__)
 	rtscd.createDepthStencil = false;
+#else
+	rtscd.createDepthStencil = true;	// RSX crash without depth buffer, why?
+#endif
 	rtscd.usingPrimaryDepthStencil = false;
 	rtscd.targets[0].format = render::TfR8;
 

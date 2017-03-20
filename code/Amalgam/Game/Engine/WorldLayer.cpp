@@ -1,4 +1,3 @@
-#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/IAudioServer.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/UpdateInfo.h"
@@ -11,6 +10,7 @@
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Timer/Profiler.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/ImageProcess/ImageProcess.h"
@@ -232,10 +232,9 @@ void WorldLayer::prepare(const UpdateInfo& info)
 
 void WorldLayer::update(const UpdateInfo& info)
 {
+	T_PROFILER_SCOPE(L"WorldLayer update");
 	if (!m_worldRenderer)
 		return;
-
-	info.getProfiler()->beginScope(FptWorldLayerUpdate);
 
 	// Update camera transform.
 	if (m_cameraEntity)
@@ -278,16 +277,13 @@ void WorldLayer::update(const UpdateInfo& info)
 
 	// In case not explicitly set we update the alternative time also.
 	m_alternateTime += info.getSimulationDeltaTime();
-
-	info.getProfiler()->endScope();
 }
 
 void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 {
+	T_PROFILER_SCOPE(L"WorldLayer build");
 	if (!m_worldRenderer || !m_scene)
 		return;
-
-	info.getProfiler()->beginScope(FptWorldLayerBuild);
 
 	if (m_worldRenderer->beginBuild())
 	{
@@ -301,12 +297,11 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 	}
 
 	m_deltaTime = info.getFrameDeltaTime();
-
-	info.getProfiler()->endScope();
 }
 
 void WorldLayer::render(render::EyeType eye, uint32_t frame)
 {
+	T_PROFILER_SCOPE(L"WorldLayer render");
 	if (!m_worldRenderer || !m_scene)
 		return;
 

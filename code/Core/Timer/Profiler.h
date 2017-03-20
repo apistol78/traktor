@@ -1,7 +1,9 @@
 #ifndef traktor_Profiler_H
 #define traktor_Profiler_H
 
-#include <map>
+#include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Thread/Semaphore.h"
 #include "Core/Timer/Timer.h"
 
 // import/export mechanism.
@@ -15,6 +17,9 @@
 namespace traktor
 {
 
+// Uncomment this line if you want scope profiling enabled.
+#define T_PROFILER_ENABLE
+
 /*! \ingroup Core */
 //@{
 
@@ -22,6 +27,7 @@ class Thread;
 class OutputStream;
 
 /*! \brief Runtime profiler.
+ * \ingroup Core
  *
  * The runtime profiler measures time spent in
  * scopes.
@@ -31,73 +37,88 @@ class T_DLLCLASS Profiler : public Object
 	T_RTTI_CLASS;
 
 public:
-	typedef void* Handle;
+	struct Event
+	{
+		const wchar_t* name;
+		uint32_t threadId;
+		double start;
+		double end;
+	};
+
+	/*! \brief Profiler report listener.
+	 */
+	class IReportListener : public IRefCount
+	{
+	public:
+		virtual void reportProfilerEvents(const AlignedVector< Event >& events) = 0;
+	};
+
+	/*! \brief JSON report listener. 
+	 *
+	 * Format of JSON is Chromium tracer compatible.
+	 */
+	class JSONReportListener : public RefCountImpl< IReportListener >
+	{
+	public:
+		JSONReportListener(OutputStream* output);
+
+		void flush();
+
+		virtual void reportProfilerEvents(const AlignedVector< Event >& events) T_OVERRIDE T_FINAL;
+
+	private:
+		Ref< OutputStream > m_output;
+	};
+
+	typedef void* handle_t;
 
 	static Profiler& getInstance();
 
-	Handle enterScope(const wchar_t* const name);
+	/*! \brief Set report listener.
+	 */
+	void setListener(IReportListener* listener);
 
-	void leaveScope(Handle handle);
+	/*! \brief Begin recording event.
+	 */
+	handle_t beginEvent(const wchar_t* const name);
 
-	void report(OutputStream& os);
+	/*! \brief End recording event.
+	 */
+	void endEvent(handle_t handle);
 
 private:
-	struct Report
-	{
-		typedef std::map< const wchar_t*, Report > Map;
-
-		Report* parent;
-		uint32_t count;
-		double time;
-		double peek;
-		double last;
-		Map reports;
-	};
-
+	Ref< IReportListener > m_listener;
+	Semaphore m_lock;
+	AlignedVector< Event > m_events;
 	Timer m_timer;
-	std::map< Thread*, Report > m_globalReports;
-	std::map< Thread*, Report* > m_currentReports;
-
-	void report(OutputStream& os, const std::wstring& name, Report& r);
-
-	void pushReport(Report& report);
-
-	void popReport();
-
-	Report& getReport();
 };
 
+/*! \brief Scoped profiling event.
+ * \ingroup Core
+ */
 class ProfilerScoped
 {
 public:
 	ProfilerScoped(const wchar_t* const name)
-	: m_handle(Profiler::getInstance().enterScope(name))
+	:	m_handle(Profiler::getInstance().beginEvent(name))
 	{
 	}
 
 	~ProfilerScoped()
 	{
-		Profiler::getInstance().leaveScope(m_handle);
+		Profiler::getInstance().endEvent(m_handle);
 	}
 
 private:
-	Profiler::Handle m_handle;
+	Profiler::handle_t m_handle;
 };
 
-// Uncomment this line if you want scope profiling enabled.
-//#define T_PROFILER_ENABLE
-
 #if defined(T_PROFILER_ENABLE)
-
-#define WIDEN2__(x) L ## #x
-#define WIDEN__(x) WIDEN2__(x)
-
-#define T_PROFILER_SCOPE(name) \
-	ProfilerScoped __profiler_ ## name ## _ ( WIDEN__( name ) );
+#	define T_PROFILER_SCOPE(name) \
+		T_ANONYMOUS_VAR(ProfilerScoped)(name);
 #endif
-
 #if !defined(T_PROFILER_SCOPE)
-#define T_PROFILER_SCOPE(name)
+#	define T_PROFILER_SCOPE(name)
 #endif
 
 //@}

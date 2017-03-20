@@ -59,9 +59,6 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	if (!m_socket)
-		return RtDisconnected;
-
 	// Check queue if any object of given type has already been received.
 	RefArray< ISerializable >& typeInQueue = m_inQueue[&objectType];
 	if (!typeInQueue.empty())
@@ -71,21 +68,23 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		return RtSuccess;
 	}
 
-	// Receive objects from connection; if not of desired type then queue object.
-	while (m_socket->select(true, false, false, timeout) > 0)
+	if (m_socket)
 	{
-		net::SocketStream ss(m_socket, true, false, 10000);
-		if (ss.available() <= 0)
+		// Receive objects from connection; if not of desired type then queue object.
+		while (m_socket->select(true, false, false, timeout) > 0)
 		{
-			m_socket = 0;
-			m_inQueue.clear();
-			return RtDisconnected;
-		}
-
-		BinarySerializer s(&ss);
-		Ref< ISerializable > object = s.readObject();
-		if (object)
-		{
+			Ref< ISerializable > object;
+			{
+				T_ANONYMOUS_VAR(Release< Semaphore >)(m_lock);
+				net::SocketStream ss(m_socket, true, false, 10000);
+				BinarySerializer s(&ss);
+				object = s.readObject();
+			}
+			if (!object)
+			{
+				m_socket = 0;
+				break;
+			}
 			if (is_type_of(objectType, type_of(object)))
 			{
 				outObject = object;
@@ -97,6 +96,18 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 				typeInQueue.push_back(object);
 			}
 		}
+	}
+
+	if (!m_socket)
+	{
+		// If no connection return either timeout or disconnected, if any pending
+		// object is queued then we timeout.
+		for (SmallMap< const TypeInfo*, RefArray< ISerializable > >::const_iterator i = m_inQueue.begin(); i != m_inQueue.end(); ++i)
+		{
+			if (!i->second.empty())
+				return RtTimeout;
+		}
+		return RtDisconnected;
 	}
 
 	return RtTimeout;
