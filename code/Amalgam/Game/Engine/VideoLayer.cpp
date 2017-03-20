@@ -1,10 +1,10 @@
-#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/Stage.h"
 #include "Amalgam/Game/Engine/VideoLayer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Timer/Profiler.h"
 #include "Render/IRenderView.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/ScreenRenderer.h"
@@ -113,7 +113,7 @@ void VideoLayer::prepare(const UpdateInfo& info)
 
 void VideoLayer::update(const UpdateInfo& info)
 {
-	info.getProfiler()->beginScope(FptVideoLayerUpdate);
+	T_PROFILER_SCOPE(L"VideoLayer update");
 
 	if (m_playing)
 	{
@@ -130,8 +130,6 @@ void VideoLayer::update(const UpdateInfo& info)
 			}
 		}
 	}
-
-	info.getProfiler()->endScope();
 }
 
 void VideoLayer::build(const UpdateInfo& info, uint32_t frame)

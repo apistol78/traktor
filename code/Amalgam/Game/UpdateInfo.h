@@ -17,8 +17,6 @@ namespace traktor
 	namespace amalgam
 	{
 
-class FrameProfiler;
-
 /*! \brief Update information.
  * \ingroup Amalgam
  *
@@ -99,10 +97,6 @@ public:
 	 */
 	bool isRunningSlow() const { return m_runningSlow; }
 
-	/*! \brief Access the frame profiler.
-	 */
-	FrameProfiler* getProfiler() const { return m_frameProfiler; }
-
 private:
 	friend class Application;
 
@@ -114,7 +108,6 @@ private:
 	float m_frameDeltaTime;
 	uint64_t m_frame;
 	bool m_runningSlow;
-	FrameProfiler* m_frameProfiler;
 };
 
 	}

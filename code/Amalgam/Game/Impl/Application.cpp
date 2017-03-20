@@ -36,6 +36,7 @@
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Timer/Profiler.h"
 #include "Database/Database.h"
 #include "Database/Events/EvtInstanceCommitted.h"
 #include "Flash/FlashCharacterInstance.h"
@@ -205,12 +206,12 @@ bool Application::create(
 
 		if ((attachDebugger || attachProfiler) && m_targetManagerConnection)
 		{
-			if (!m_scriptServer->create(defaultSettings, settings, attachDebugger, attachProfiler, m_targetManagerConnection->getTransport(), &m_frameProfiler))
+			if (!m_scriptServer->create(defaultSettings, settings, attachDebugger, attachProfiler, m_targetManagerConnection->getTransport()))
 				return false;
 		}
 		else
 		{
-			if (!m_scriptServer->create(defaultSettings, settings, false, false, 0, 0))
+			if (!m_scriptServer->create(defaultSettings, settings, false, false, 0))
 				return false;
 		}
 	}
@@ -457,6 +458,7 @@ void Application::destroy()
 
 bool Application::update()
 {
+	T_PROFILER_SCOPE(L"Application update");
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
 	Ref< IState > currentState;
 
@@ -472,15 +474,13 @@ bool Application::update()
 	pollDatabase();
 #endif
 
-	m_updateInfo.m_frameProfiler = &m_frameProfiler;
-	m_frameProfiler.beginFrame();
-
 	// Update render server.
-	m_frameProfiler.beginScope(FptRenderServerUpdate);
-	RenderServer::UpdateResult updateResult = m_renderServer->update(m_settings);
-	m_frameProfiler.endScope();
-	if (updateResult == RenderServer::UrTerminate)
-		return false;
+	RenderServer::UpdateResult updateResult;
+	{
+		T_PROFILER_SCOPE(L"Application update renderServer");
+		if ((updateResult = m_renderServer->update(m_settings)) == RenderServer::UrTerminate)
+			return false;
+	}
 
 	// Perform reconfiguration if required.
 	if (updateResult == RenderServer::UrReconfigure || m_environment->shouldReconfigure())
@@ -520,9 +520,8 @@ bool Application::update()
 		online::ISessionManager* sessionManager = m_onlineServer->getSessionManager();
 		if (sessionManager)
 		{
-			m_frameProfiler.beginScope(FptSessionManagerUpdate);
+			T_PROFILER_SCOPE(L"Application update sessionManager");
 			sessionManager->update();
-			m_frameProfiler.endScope();
 		}
 	}
 
@@ -650,17 +649,15 @@ bool Application::update()
 		// Update audio.
 		if (m_audioServer)
 		{
-			m_frameProfiler.beginScope(FptAudioServerUpdate);
+			T_PROFILER_SCOPE(L"Application update audioServer");
 			m_audioServer->update(m_updateInfo.m_frameDeltaTime, m_renderViewActive);
-			m_frameProfiler.endScope();
 		}
 
 		// Update rumble.
 		if (m_inputServer)
 		{
-			m_frameProfiler.beginScope(FptRumbleUpdate);
+			T_PROFILER_SCOPE(L"Application update rumble");
 			m_inputServer->updateRumble(m_updateInfo.m_frameDeltaTime, m_updateControl.m_pause);
-			m_frameProfiler.endScope();
 		}
 
 		// Update active state; fixed time step if physics manager is available.
@@ -707,26 +704,28 @@ bool Application::update()
 				double inputTimeStart = m_timer.getElapsedTime();
 				if (m_inputServer)
 				{
-					m_frameProfiler.beginScope(FptInputServerUpdate);
+					T_PROFILER_SCOPE(L"Application update inputServer");
 					m_inputServer->update(m_updateInfo.m_simulationDeltaTime, inputEnabled);
-					m_frameProfiler.endScope();
 				}
 				double inputTimeEnd = m_timer.getElapsedTime();
 				inputDuration += inputTimeEnd - inputTimeStart;
 
 				// Update current state for each simulation tick.
 				double updateTimeStart = m_timer.getElapsedTime();
-				m_frameProfiler.beginScope(FptStateUpdate);
-				IState::UpdateResult result = currentState->update(m_stateManager, m_updateInfo);
-				m_frameProfiler.endScope();
+				IState::UpdateResult result;
+				{
+					T_PROFILER_SCOPE(L"Application update state");
+					result = currentState->update(m_stateManager, m_updateInfo);
+				}
 				double updateTimeEnd = m_timer.getElapsedTime();
 				updateDuration += updateTimeEnd - updateTimeStart;
 
 				// Update physics.
 				double physicsTimeStart = m_timer.getElapsedTime();
-				m_frameProfiler.beginScope(FptPhysicsServerUpdate);
-				m_physicsServer->update(m_updateInfo.m_simulationDeltaTime);
-				m_frameProfiler.endScope();
+				{
+					T_PROFILER_SCOPE(L"Application update physicsServer");
+					m_physicsServer->update(m_updateInfo.m_simulationDeltaTime);
+				}
 				double physicsTimeEnd = m_timer.getElapsedTime();
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
 
@@ -761,9 +760,8 @@ bool Application::update()
 			// Update input.
 			if (m_inputServer)
 			{
-				m_frameProfiler.beginScope(FptInputServerUpdate);
+				T_PROFILER_SCOPE(L"Application update inputServer");
 				m_inputServer->update(m_updateInfo.m_frameDeltaTime, inputEnabled);
-				m_frameProfiler.endScope();
 			}
 
 			// No physics; update in same rate as rendering.
@@ -771,9 +769,11 @@ bool Application::update()
 			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / m_updateInfo.m_frameDeltaTime);
 
 			double updateTimeStart = m_timer.getElapsedTime();
-			m_frameProfiler.beginScope(FptStateUpdate);
-			IState::UpdateResult updateResult = currentState->update(m_stateManager, m_updateInfo);
-			m_frameProfiler.endScope();
+			IState::UpdateResult updateResult;
+			{
+				T_PROFILER_SCOPE(L"Application update state");
+				updateResult = currentState->update(m_stateManager, m_updateInfo);
+			}
 			double updateTimeEnd = m_timer.getElapsedTime();
 			updateDuration += updateTimeEnd - updateTimeStart;
 			updateCount++;
@@ -807,9 +807,11 @@ bool Application::update()
 
 		// Build frame.
 		double buildTimeStart = m_timer.getElapsedTime();
-		m_frameProfiler.beginScope(FptBuildFrame);
-		IState::BuildResult buildResult = currentState->build(m_frameBuild, m_updateInfo);
-		m_frameProfiler.endScope();
+		IState::BuildResult buildResult;
+		{
+			T_PROFILER_SCOPE(L"Application update state");
+			buildResult = currentState->build(m_frameBuild, m_updateInfo);
+		}
 		double buildTimeEnd = m_timer.getElapsedTime();
 		m_buildDuration = float(buildTimeEnd - buildTimeStart);
 
@@ -817,9 +819,8 @@ bool Application::update()
 		double gcTimeStart = m_timer.getElapsedTime();
 		if (m_scriptServer)
 		{
-			m_frameProfiler.beginScope(FptScriptGC);
+			T_PROFILER_SCOPE(L"Application update script GC");
 			m_scriptServer->cleanup(false);
-			m_frameProfiler.endScope();
 		}
 		double gcTimeEnd = m_timer.getElapsedTime();
 		gcDuration = gcTimeEnd - gcTimeStart;
@@ -935,7 +936,6 @@ bool Application::update()
 		}
 
 		m_updateInfo.m_frame++;
-		m_frameProfiler.endFrame();
 
 		// Receive remote events from editor.
 		if (m_targetManagerConnection && m_targetManagerConnection->connected())
@@ -1008,18 +1008,18 @@ bool Application::update()
 			performance.flashCharacterCount = flash::FlashCharacterInstance::getInstanceCount();
 			performance.flashGCCandidates = 0; //flash::GC::getInstance().getCandidateCount();
 
-			{
-				const AlignedVector< FrameProfiler::Marker >& markers = m_frameProfiler.getMarkers();
-				performance.frameMarkers.resize(markers.size());
-				for (uint32_t i = 0; i < markers.size(); ++i)
-				{
-					TargetPerformance::FrameMarker& fm = performance.frameMarkers[i];
-					fm.id = markers[i].id;
-					fm.level = markers[i].level;
-					fm.begin = float(markers[i].begin);
-					fm.end = float(markers[i].end);
-				}
-			}
+			//{
+			//	const AlignedVector< FrameProfiler::Marker >& markers = m_frameProfiler.getMarkers();
+			//	performance.frameMarkers.resize(markers.size());
+			//	for (uint32_t i = 0; i < markers.size(); ++i)
+			//	{
+			//		TargetPerformance::FrameMarker& fm = performance.frameMarkers[i];
+			//		fm.id = markers[i].id;
+			//		fm.level = markers[i].level;
+			//		fm.begin = float(markers[i].begin);
+			//		fm.end = float(markers[i].end);
+			//	}
+			//}
 
 			m_targetManagerConnection->getTransport()->send(&performance);
 
@@ -1064,6 +1064,7 @@ Ref< IStateManager > Application::getStateManager()
 
 void Application::pollDatabase()
 {
+	T_PROFILER_SCOPE(L"Application pollDatabase");
 	std::vector< Guid > eventIds;
 	Ref< const db::IEvent > event;
 	bool remote;
@@ -1118,125 +1119,132 @@ void Application::threadRender()
 		if (!m_signalRenderBegin.wait(100))
 			continue;
 
-		m_signalRenderBegin.reset();
-
-		// Render frame.
 		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+			T_PROFILER_SCOPE(L"Application render");
+			m_signalRenderBegin.reset();
 
-			double renderBegin = m_timer.getElapsedTime();
-
-			render::IRenderView* renderView = m_renderServer->getRenderView();
-			render::IVRCompositor* vrCompositor = m_renderServer->getVRCompositor();
-
-			if (renderView && !renderView->isMinimized())
+			// Render frame.
 			{
-				if (!m_renderServer->getStereoscopic() && !vrCompositor)
+				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+
+				double renderBegin = m_timer.getElapsedTime();
+
+				render::IRenderView* renderView = m_renderServer->getRenderView();
+				render::IVRCompositor* vrCompositor = m_renderServer->getVRCompositor();
+
+				if (renderView && !renderView->isMinimized())
 				{
-					if (renderView->begin(render::EtCyclop))
+					if (!m_renderServer->getStereoscopic() && !vrCompositor)
 					{
-						if (m_stateRender)
-							m_stateRender->render(m_frameRender, render::EtCyclop, m_updateInfoRender);
-						else
+						if (renderView->begin(render::EtCyclop))
 						{
-							renderView->clear(
-								render::CfColor | render::CfDepth | render::CfStencil,
-								&m_backgroundColor,
-								1.0f,
-								0
-							);
+							if (m_stateRender)
+								m_stateRender->render(m_frameRender, render::EtCyclop, m_updateInfoRender);
+							else
+							{
+								renderView->clear(
+									render::CfColor | render::CfDepth | render::CfStencil,
+									&m_backgroundColor,
+									1.0f,
+									0
+								);
+							}
+
+							renderView->end();
+							renderView->present();
+						}
+					}
+					else if (vrCompositor)
+					{
+						if (vrCompositor->beginRenderEye(renderView, render::EtLeft))
+						{
+							if (m_stateRender)
+								m_stateRender->render(m_frameRender, render::EtLeft, m_updateInfoRender);
+							else
+								renderView->clear(
+									render::CfColor | render::CfDepth | render::CfStencil,
+									&m_backgroundColor,
+									1.0f,
+									0
+								);
+							vrCompositor->endRenderEye(renderView, render::EtLeft);
+						}
+						if (vrCompositor->beginRenderEye(renderView, render::EtRight))
+						{
+							if (m_stateRender)
+								m_stateRender->render(m_frameRender, render::EtRight, m_updateInfoRender);
+							else
+								renderView->clear(
+									render::CfColor | render::CfDepth | render::CfStencil,
+									&m_backgroundColor,
+									1.0f,
+									0
+								);
+							vrCompositor->endRenderEye(renderView, render::EtRight);
+						}
+						vrCompositor->presentCompositeOutput(renderView);
+					}
+					else if (m_renderServer->getStereoscopic())
+					{
+						if (renderView->begin(render::EtLeft))
+						{
+							if (m_stateRender)
+								m_stateRender->render(m_frameRender, render::EtLeft, m_updateInfoRender);
+							else
+							{
+								renderView->clear(
+									render::CfColor | render::CfDepth | render::CfStencil,
+									&m_backgroundColor,
+									1.0f,
+									0
+								);
+							}
+
+							renderView->end();
+						}
+						if (renderView->begin(render::EtRight))
+						{
+							if (m_stateRender)
+								m_stateRender->render(m_frameRender, render::EtRight, m_updateInfoRender);
+							else
+							{
+								renderView->clear(
+									render::CfColor | render::CfDepth | render::CfStencil,
+									&m_backgroundColor,
+									1.0f,
+									0
+								);
+							}
+
+							renderView->end();
 						}
 
-						renderView->end();
-						renderView->present();
-					}
-				}
-				else if (vrCompositor)
-				{
-					if (vrCompositor->beginRenderEye(renderView, render::EtLeft))
-					{
-						if (m_stateRender)
-							m_stateRender->render(m_frameRender, render::EtLeft, m_updateInfoRender);
-						else
-							renderView->clear(
-								render::CfColor | render::CfDepth | render::CfStencil,
-								&m_backgroundColor,
-								1.0f,
-								0
-							);
-						vrCompositor->endRenderEye(renderView, render::EtLeft);
-					}
-					if (vrCompositor->beginRenderEye(renderView, render::EtRight))
-					{
-						if (m_stateRender)
-							m_stateRender->render(m_frameRender, render::EtRight, m_updateInfoRender);
-						else
-							renderView->clear(
-								render::CfColor | render::CfDepth | render::CfStencil,
-								&m_backgroundColor,
-								1.0f,
-								0
-							);
-						vrCompositor->endRenderEye(renderView, render::EtRight);
-					}
-					vrCompositor->presentCompositeOutput(renderView);
-				}
-				else if (m_renderServer->getStereoscopic())
-				{
-					if (renderView->begin(render::EtLeft))
-					{
-						if (m_stateRender)
-							m_stateRender->render(m_frameRender, render::EtLeft, m_updateInfoRender);
-						else
 						{
-							renderView->clear(
-								render::CfColor | render::CfDepth | render::CfStencil,
-								&m_backgroundColor,
-								1.0f,
-								0
-							);
+							T_PROFILER_SCOPE(L"Application render present");
+							renderView->present();
 						}
-
-						renderView->end();
 					}
-					if (renderView->begin(render::EtRight))
-					{
-						if (m_stateRender)
-							m_stateRender->render(m_frameRender, render::EtRight, m_updateInfoRender);
-						else
-						{
-							renderView->clear(
-								render::CfColor | render::CfDepth | render::CfStencil,
-								&m_backgroundColor,
-								1.0f,
-								0
-							);
-						}
-
-						renderView->end();
-					}
-					renderView->present();
-				}
 
 #if T_MEASURE_PERFORMANCE
-				renderView->getStatistics(m_renderViewStats);
+					renderView->getStatistics(m_renderViewStats);
 #endif
-			}
-			else
-			{
-				// Yield render thread.
-				m_threadRender->sleep(100);
+				}
+				else
+				{
+					// Yield render thread.
+					m_threadRender->sleep(100);
+				}
+
+				double renderEnd = m_timer.getElapsedTime();
+				m_renderDuration = float(renderEnd - renderBegin);
+
+				m_renderServer->setFrameRate(int32_t(1.0f / m_renderDuration));
+				m_stateRender = 0;
 			}
 
-			double renderEnd = m_timer.getElapsedTime();
-			m_renderDuration = float(renderEnd - renderBegin);
-
-			m_renderServer->setFrameRate(int32_t(1.0f / m_renderDuration));
-			m_stateRender = 0;
+			// Frame finished.
+			m_signalRenderFinish.set();
 		}
-
-		// Frame finished.
-		m_signalRenderFinish.set();
 	}
 }
 

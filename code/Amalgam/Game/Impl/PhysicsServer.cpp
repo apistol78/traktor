@@ -6,6 +6,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Timer/Profiler.h"
 #include "Physics/PhysicsFactory.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/EntityFactory.h"
@@ -72,6 +73,7 @@ int32_t PhysicsServer::reconfigure(const PropertyGroup* settings)
 
 void PhysicsServer::update(float simulationDeltaTime)
 {
+	T_PROFILER_SCOPE(L"PhysicsServer update");
 	m_physicsManager->update(simulationDeltaTime, true);
 }
 

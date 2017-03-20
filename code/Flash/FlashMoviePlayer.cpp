@@ -3,6 +3,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Math/Const.h"
 #include "Core/System/OS.h"
+#include "Core/Timer/Profiler.h"
 #include "Core/Timer/Timer.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashMoviePlayer.h"
@@ -182,6 +183,8 @@ void FlashMoviePlayer::renderFrame()
 
 void FlashMoviePlayer::executeFrame()
 {
+	T_PROFILER_SCOPE(L"FlashMoviePlayer executeFrame");
+
 	ActionContext* context = m_movieInstance->getContext();
 	T_ASSERT (context);
 
@@ -305,6 +308,7 @@ void FlashMoviePlayer::executeFrame()
 	{
 		if (--m_framesUntilCollection <= 0)
 		{
+			T_PROFILER_SCOPE(L"Flash GC");
 			GC::getInstance().collectCycles(false);
 			m_framesUntilCollection = c_framesBetweenCollections;
 		}

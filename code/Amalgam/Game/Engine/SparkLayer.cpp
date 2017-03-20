@@ -2,6 +2,7 @@
 #include "Amalgam/Game/Engine/SparkLayer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Timer/Profiler.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
 #include "Render/IRenderSystem.h"
@@ -133,6 +134,7 @@ void SparkLayer::prepare(const UpdateInfo& info)
 
 void SparkLayer::update(const UpdateInfo& info)
 {
+	T_PROFILER_SCOPE(L"SparkLayer update");
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
 

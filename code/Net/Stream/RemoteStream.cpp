@@ -61,7 +61,6 @@ public:
 	void disconnect(TcpSocket* socket)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 		for (std::list< SocketEntry >::iterator i = m_entries.begin(); i != m_entries.end(); ++i)
 		{
 			if (i->socket == socket)
@@ -71,7 +70,6 @@ public:
 				return;
 			}
 		}
-
 		T_FATAL_ERROR;
 	}
 

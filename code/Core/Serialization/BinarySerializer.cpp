@@ -67,7 +67,7 @@ struct ReadPrimitive
 	{
 		if (stream->read(&t, sizeof(t)) == sizeof(t))
 		{
-			swap8in32(t);
+			swap8in64(t);
 			return true;
 		}
 		else
@@ -81,22 +81,6 @@ struct ReadPrimitive < T, 1 >
 	static bool read(IStream* stream, T& t)
 	{
 		return bool(stream->read(&t, 1) == 1);
-	}
-};
-
-template < typename T >
-struct ReadPrimitive < T, 8 >
-{
-	static bool read(IStream* stream, T& t)
-	{
-		if (stream->read(&t, 8) == 8)
-		{
-			swap8in32(*(((uint32_t*)&t) + 0));
-			swap8in32(*(((uint32_t*)&t) + 1));
-			return true;
-		}
-		else
-			return false;
 	}
 };
 

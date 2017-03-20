@@ -1,7 +1,6 @@
 #ifndef traktor_amalgam_Application_H
 #define traktor_amalgam_Application_H
 
-#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/IApplication.h"
 #include "Amalgam/Game/UpdateControl.h"
 #include "Amalgam/Game/UpdateInfo.h"
@@ -107,7 +106,6 @@ private:
 	Thread* m_threadRender;
 #endif
 	Timer m_timer;
-	FrameProfiler m_frameProfiler;
 	int32_t m_maxSimulationUpdates;
 	int32_t m_deltaTimeError;
 	UpdateControl m_updateControl;

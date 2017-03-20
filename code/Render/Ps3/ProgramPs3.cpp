@@ -6,6 +6,7 @@
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Ps3/PlatformPs3.h"
+#include "Render/Ps3/CubeTexturePs3.h"
 #include "Render/Ps3/MemoryHeap.h"
 #include "Render/Ps3/MemoryHeapObject.h"
 #include "Render/Ps3/ProgramPs3.h"
@@ -13,6 +14,7 @@
 #include "Render/Ps3/RenderTargetPs3.h"
 #include "Render/Ps3/SimpleTexturePs3.h"
 #include "Render/Ps3/StateCachePs3.h"
+#include "Render/Ps3/VolumeTexturePs3.h"
 
 using namespace cell::Gcm;
 
@@ -559,6 +561,10 @@ void ProgramPs3::bind(StateCachePs3& stateCache, const float targetSize[], uint3
 			{
 				if (SimpleTexturePs3* simpleTexture = dynamic_type_cast< SimpleTexturePs3* >(texture))
 					simpleTexture->bind(stateCache, i->stage, m_renderState.samplerStates[i->stage]);
+				else if (CubeTexturePs3* cubeTexture = dynamic_type_cast< CubeTexturePs3* >(texture))
+					cubeTexture->bind(stateCache, i->stage, m_renderState.samplerStates[i->stage]);
+				else if (VolumeTexturePs3* volumeTexture = dynamic_type_cast< VolumeTexturePs3* >(texture))
+					volumeTexture->bind(stateCache, i->stage, m_renderState.samplerStates[i->stage]);
 				else if (RenderTargetPs3* renderTarget = dynamic_type_cast< RenderTargetPs3* >(texture))
 					renderTarget->bind(stateCache, i->stage, m_renderState.samplerStates[i->stage]);
 			}

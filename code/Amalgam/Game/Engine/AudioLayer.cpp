@@ -1,7 +1,7 @@
-#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/AudioLayer.h"
 #include "Core/Math/Float.h"
+#include "Core/Timer/Profiler.h"
 #include "Sound/Sound.h"
 #include "Sound/Player/ISoundHandle.h"
 #include "Sound/Player/ISoundPlayer.h"
@@ -114,7 +114,7 @@ void AudioLayer::prepare(const UpdateInfo& info)
 
 void AudioLayer::update(const UpdateInfo& info)
 {
-	info.getProfiler()->beginScope(FptAudioLayerUpdate);
+	T_PROFILER_SCOPE(L"AudioLayer update");
 
 	if (
 		m_autoPlay &&
@@ -147,8 +147,6 @@ void AudioLayer::update(const UpdateInfo& info)
 			}
 		}
 	}
-
-	info.getProfiler()->endScope();
 }
 
 void AudioLayer::build(const UpdateInfo& info, uint32_t frame)
