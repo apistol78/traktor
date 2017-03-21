@@ -1,6 +1,6 @@
 #include "Amalgam/IRemoteEvent.h"
 #include "Amalgam/TargetManagerConnection.h"
-#include "Amalgam/TargetPerformance.h"
+#include "Amalgam/TargetProfilerEvents.h"
 #include "Amalgam/Game/IRuntimePlugin.h"
 #include "Amalgam/Game/IState.h"
 #include "Amalgam/Game/Events/ActiveEvent.h"
@@ -63,6 +63,24 @@ const float c_maxDeltaTime = 1.0f / 5.0f;
 const int32_t c_maxDeltaTimeErrors = 300;
 const float c_deltaTimeFilterCoeff = 0.95f;
 
+class TargetPerformanceListener : public RefCountImpl< Profiler::IReportListener >
+{
+public:
+	TargetPerformanceListener(TargetManagerConnection* targetManagerConnection)
+	:	m_targetManagerConnection(targetManagerConnection)
+	{
+	}
+
+	virtual void reportProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events) T_OVERRIDE T_FINAL
+	{
+		TargetProfilerEvents targetProfilerEvents(currentTime, events);
+		m_targetManagerConnection->getTransport()->send(&targetProfilerEvents);
+	}
+
+private:
+	Ref< TargetManagerConnection > m_targetManagerConnection;
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Application", Application, IApplication)
@@ -85,10 +103,6 @@ Application::Application()
 ,	m_frameBuild(0)
 ,	m_frameRender(0)
 ,	m_stateRender(0)
-#if T_MEASURE_PERFORMANCE
-,	m_lastAllocCount(0)
-,	m_fps(0.0f)
-#endif
 {
 }
 
@@ -111,6 +125,8 @@ bool Application::create(
 			log::warning << L"Unable to connect to target manager at \"" << targetManagerHost << L"\"; unable to debug" << Endl;
 			m_targetManagerConnection = 0;
 		}
+		if (m_targetManagerConnection)
+			Profiler::getInstance().setListener(new TargetPerformanceListener(m_targetManagerConnection));
 	}
 
 	// Load dependent modules.
@@ -409,6 +425,8 @@ bool Application::create(
 
 void Application::destroy()
 {
+	Profiler::getInstance().setListener(0);
+
 	for (RefArray< IRuntimePlugin >::iterator i = m_plugins.begin(); i != m_plugins.end(); ++i)
 		(*i)->shutdown(m_environment);
 
@@ -458,7 +476,6 @@ void Application::destroy()
 
 bool Application::update()
 {
-	T_PROFILER_SCOPE(L"Application update");
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
 	Ref< IState > currentState;
 
@@ -830,6 +847,8 @@ bool Application::update()
 #if !defined(__EMSCRIPTEN__)
 			if (m_threadRender)
 			{
+				T_PROFILER_SCOPE(L"Application sync render");
+
 				// Synchronize with render thread and issue another rendering.
 				bool renderFinished = m_signalRenderFinish.wait(1000);
 				if (renderFinished)
@@ -852,6 +871,7 @@ bool Application::update()
 			else
 #endif
 			{
+				T_PROFILER_SCOPE(L"Application render");
 				double renderBegin = m_timer.getElapsedTime();
 
 				// Single threaded rendering; perform rendering here.
@@ -913,9 +933,7 @@ bool Application::update()
 							renderView->end();
 						}
 						renderView->present();
-#if T_MEASURE_PERFORMANCE
 						renderView->getStatistics(m_renderViewStats);
-#endif
 					}
 				}
 
@@ -951,79 +969,69 @@ bool Application::update()
 		}
 
 #if T_MEASURE_PERFORMANCE
-		// Calculate frame rate.
-		m_fps = m_fps * 0.8f + (1.0f / m_updateInfo.m_frameDeltaTime) * 0.2f;
-
 		// Publish performance to target manager.
 		if (m_targetManagerConnection && m_targetManagerConnection->connected())
 		{
-			size_t allocCount = Alloc::count();
+			int32_t lastAllocCount = m_targetPerformance.memCount;
+			int32_t allocCount = Alloc::count();
 
 			resource::ResourceManagerStatistics rms;
 			m_resourceServer->getResourceManager()->getStatistics(rms);
 
-			TargetPerformance performance;
-			performance.time = m_updateInfo.m_totalTime;
-			performance.fps = m_fps;
+			m_targetPerformance.time = m_updateInfo.m_totalTime;
+			m_targetPerformance.fps = 1.0f / m_updateInfo.m_frameDeltaTime;
+
 			if (updateCount > 0)
 			{
-				performance.update = float(updateDuration / updateCount);
-				performance.physics = float(physicsDuration / updateCount);
-				performance.input = float(inputDuration / updateCount);
+				m_targetPerformance.update = float(updateDuration / updateCount);
+				m_targetPerformance.physics = float(physicsDuration / updateCount);
+				m_targetPerformance.input = float(inputDuration / updateCount);
 			}
-			performance.garbageCollect = float(gcDuration);
-			performance.steps = float(updateCount);
-			performance.interval = updateInterval;
-			performance.collisions = m_renderCollisions;
-			performance.memInUse = uint32_t(Alloc::allocated());
-			performance.memDeltaCount = int32_t(allocCount) - int32_t(m_lastAllocCount);
-			performance.heapObjects = Object::getHeapObjectCount();
-			performance.build = float(buildTimeEnd - buildTimeStart);
-			performance.render = m_renderDuration;
-			performance.drawCalls = m_renderViewStats.drawCalls;
-			performance.primitiveCount = m_renderViewStats.primitiveCount;
-			performance.residentResourcesCount = rms.residentCount;
-			performance.exclusiveResourcesCount = rms.exclusiveCount;
+			else
+			{
+				m_targetPerformance.update = 0.0f;
+				m_targetPerformance.physics = 0.0f;
+				m_targetPerformance.input = 0.0f;
+			}
+
+			m_targetPerformance.garbageCollect = float(gcDuration);
+			m_targetPerformance.steps = float(updateCount);
+			m_targetPerformance.interval = updateInterval;
+			m_targetPerformance.collisions = m_renderCollisions;
+			m_targetPerformance.memInUse = uint32_t(Alloc::allocated());
+			m_targetPerformance.memCount = allocCount;
+			m_targetPerformance.memDeltaCount = allocCount - lastAllocCount;
+			m_targetPerformance.heapObjects = Object::getHeapObjectCount();
+			m_targetPerformance.build = float(buildTimeEnd - buildTimeStart);
+			m_targetPerformance.render = m_renderDuration;
+			m_targetPerformance.drawCalls = m_renderViewStats.drawCalls;
+			m_targetPerformance.primitiveCount = m_renderViewStats.primitiveCount;
+			m_targetPerformance.residentResourcesCount = rms.residentCount;
+			m_targetPerformance.exclusiveResourcesCount = rms.exclusiveCount;
 
 			if (m_scriptServer)
 			{
 				script::ScriptStatistics ss;
 				m_scriptServer->getScriptManager()->getStatistics(ss);
-				performance.memInUseScript = ss.memoryUsage;
+				m_targetPerformance.memInUseScript = ss.memoryUsage;
 			}
 
 			if (m_physicsServer)
 			{
 				physics::PhysicsStatistics ps;
 				m_physicsServer->getPhysicsManager()->getStatistics(ps);
-				performance.bodyCount = ps.bodyCount;
-				performance.activeBodyCount = ps.activeCount;
-				performance.manifoldCount = ps.manifoldCount;
-				performance.queryCount = ps.queryCount;
+				m_targetPerformance.bodyCount = ps.bodyCount;
+				m_targetPerformance.activeBodyCount = ps.activeCount;
+				m_targetPerformance.manifoldCount = ps.manifoldCount;
+				m_targetPerformance.queryCount = ps.queryCount;
 			}
 
 			if (m_audioServer)
-				performance.activeSoundChannels = m_audioServer->getActiveSoundChannels();
+				m_targetPerformance.activeSoundChannels = m_audioServer->getActiveSoundChannels();
 
-			performance.flashCharacterCount = flash::FlashCharacterInstance::getInstanceCount();
-			performance.flashGCCandidates = 0; //flash::GC::getInstance().getCandidateCount();
+			m_targetPerformance.flashCharacterCount = flash::FlashCharacterInstance::getInstanceCount();
 
-			//{
-			//	const AlignedVector< FrameProfiler::Marker >& markers = m_frameProfiler.getMarkers();
-			//	performance.frameMarkers.resize(markers.size());
-			//	for (uint32_t i = 0; i < markers.size(); ++i)
-			//	{
-			//		TargetPerformance::FrameMarker& fm = performance.frameMarkers[i];
-			//		fm.id = markers[i].id;
-			//		fm.level = markers[i].level;
-			//		fm.begin = float(markers[i].begin);
-			//		fm.end = float(markers[i].end);
-			//	}
-			//}
-
-			m_targetManagerConnection->getTransport()->send(&performance);
-
-			m_lastAllocCount = allocCount;
+			m_targetManagerConnection->getTransport()->send(&m_targetPerformance);
 		}
 #endif
 	}
@@ -1120,7 +1128,6 @@ void Application::threadRender()
 			continue;
 
 		{
-			T_PROFILER_SCOPE(L"Application render");
 			m_signalRenderBegin.reset();
 
 			// Render frame.
@@ -1136,6 +1143,7 @@ void Application::threadRender()
 				{
 					if (!m_renderServer->getStereoscopic() && !vrCompositor)
 					{
+						T_PROFILER_BEGIN(L"Application render");
 						if (renderView->begin(render::EtCyclop))
 						{
 							if (m_stateRender)
@@ -1151,11 +1159,16 @@ void Application::threadRender()
 							}
 
 							renderView->end();
-							renderView->present();
 						}
+						T_PROFILER_END();
+
+						T_PROFILER_BEGIN(L"Application render present");
+						renderView->present();
+						T_PROFILER_END();
 					}
 					else if (vrCompositor)
 					{
+						T_PROFILER_BEGIN(L"Application render left");
 						if (vrCompositor->beginRenderEye(renderView, render::EtLeft))
 						{
 							if (m_stateRender)
@@ -1169,6 +1182,9 @@ void Application::threadRender()
 								);
 							vrCompositor->endRenderEye(renderView, render::EtLeft);
 						}
+						T_PROFILER_END();
+
+						T_PROFILER_BEGIN(L"Application render right");
 						if (vrCompositor->beginRenderEye(renderView, render::EtRight))
 						{
 							if (m_stateRender)
@@ -1182,10 +1198,15 @@ void Application::threadRender()
 								);
 							vrCompositor->endRenderEye(renderView, render::EtRight);
 						}
+						T_PROFILER_END();
+
+						T_PROFILER_BEGIN(L"Application render present");
 						vrCompositor->presentCompositeOutput(renderView);
+						T_PROFILER_END();
 					}
 					else if (m_renderServer->getStereoscopic())
 					{
+						T_PROFILER_BEGIN(L"Application render left");
 						if (renderView->begin(render::EtLeft))
 						{
 							if (m_stateRender)
@@ -1202,6 +1223,9 @@ void Application::threadRender()
 
 							renderView->end();
 						}
+						T_PROFILER_END();
+
+						T_PROFILER_BEGIN(L"Application render left");
 						if (renderView->begin(render::EtRight))
 						{
 							if (m_stateRender)
@@ -1218,16 +1242,14 @@ void Application::threadRender()
 
 							renderView->end();
 						}
+						T_PROFILER_END();
 
-						{
-							T_PROFILER_SCOPE(L"Application render present");
-							renderView->present();
-						}
+						T_PROFILER_BEGIN(L"Application render present");
+						renderView->present();
+						T_PROFILER_END();
 					}
 
-#if T_MEASURE_PERFORMANCE
 					renderView->getStatistics(m_renderViewStats);
-#endif
 				}
 				else
 				{

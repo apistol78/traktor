@@ -1,8 +1,6 @@
 #include "Amalgam/TargetPerformance.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberComposite.h"
-#include "Core/Serialization/MemberAlignedVector.h"
 
 using namespace traktor;
 
@@ -27,6 +25,7 @@ TargetPerformance::TargetPerformance()
 ,	collisions(0)
 ,	memInUse(0)
 ,	memInUseScript(0)
+,	memCount(0)
 ,	memDeltaCount(0)
 ,	heapObjects(0)
 ,	drawCalls(0)
@@ -39,7 +38,6 @@ TargetPerformance::TargetPerformance()
 ,	queryCount(0)
 ,	activeSoundChannels(0)
 ,	flashCharacterCount(0)
-,	flashGCCandidates(0)
 {
 }
 
@@ -58,6 +56,7 @@ void TargetPerformance::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"collisions", collisions);
 	s >> Member< uint32_t >(L"memInUse", memInUse);
 	s >> Member< uint32_t >(L"memInUseScript", memInUseScript);
+	s >> Member< int32_t >(L"memCount", memCount);
 	s >> Member< int32_t >(L"memDeltaCount", memDeltaCount);
 	s >> Member< uint32_t >(L"heapObjects", heapObjects);
 	s >> Member< uint32_t >(L"drawCalls", drawCalls);
@@ -70,16 +69,6 @@ void TargetPerformance::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"queryCount", queryCount);
 	s >> Member< uint32_t >(L"activeSoundChannels", activeSoundChannels);
 	s >> Member< uint32_t >(L"flashCharacterCount", flashCharacterCount);
-	s >> Member< uint32_t >(L"flashGCCandidates", flashGCCandidates);
-	s >> MemberAlignedVector< FrameMarker, MemberComposite< FrameMarker > >(L"frameMarkers", frameMarkers);
-}
-
-void TargetPerformance::FrameMarker::serialize(ISerializer& s)
-{
-	s >> Member< uint8_t >(L"id", id);
-	s >> Member< uint8_t >(L"level", level);
-	s >> Member< float >(L"begin", begin);
-	s >> Member< float >(L"end", end);
 }
 
 	}

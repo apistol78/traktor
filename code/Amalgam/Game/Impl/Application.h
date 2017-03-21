@@ -1,6 +1,7 @@
 #ifndef traktor_amalgam_Application_H
 #define traktor_amalgam_Application_H
 
+#include "Amalgam/TargetPerformance.h"
 #include "Amalgam/Game/IApplication.h"
 #include "Amalgam/Game/UpdateControl.h"
 #include "Amalgam/Game/UpdateInfo.h"
@@ -123,12 +124,8 @@ private:
 	uint32_t m_frameRender;
 	Ref< IState > m_stateRender;
 	UpdateInfo m_updateInfoRender;
-
-#if T_MEASURE_PERFORMANCE
 	render::RenderViewStatistics m_renderViewStats;
-	size_t m_lastAllocCount;
-	float m_fps;
-#endif
+	TargetPerformance m_targetPerformance;
 
 	bool updateInputDevices();
 

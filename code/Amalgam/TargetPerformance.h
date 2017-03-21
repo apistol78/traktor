@@ -1,7 +1,6 @@
 #ifndef traktor_amalgam_TargetPerformance_H
 #define traktor_amalgam_TargetPerformance_H
 
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -25,24 +24,6 @@ class T_DLLCLASS TargetPerformance : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	struct FrameMarker
-	{
-		uint8_t id;
-		uint8_t level;
-		float begin;
-		float end;
-
-		FrameMarker()
-		:	id(0)
-		,	level(0)
-		,	begin(0.0f)
-		,	end(0.0)
-		{
-		}
-
-		void serialize(ISerializer& s);
-	};
-
 	float time;
 	float fps;
 	float update;
@@ -56,6 +37,7 @@ public:
 	uint32_t collisions;
 	uint32_t memInUse;
 	uint32_t memInUseScript;
+	int32_t memCount;
 	int32_t memDeltaCount;
 	uint32_t heapObjects;
 	uint32_t drawCalls;
@@ -68,8 +50,6 @@ public:
 	uint32_t queryCount;
 	uint32_t activeSoundChannels;
 	uint32_t flashCharacterCount;
-	uint32_t flashGCCandidates;
-	AlignedVector< FrameMarker > frameMarkers;
 
 	TargetPerformance();
 

@@ -14,127 +14,96 @@ namespace traktor
 	{
 		namespace
 		{
-
-const struct
+		
+const Color4ub c_threadColors[] =
 {
-	const wchar_t* name;
-	Color4ub color;
-}
-c_markers[] =
-{
-	{ 0/*L"Frame"*/, Color4ub(255, 255, 120) },		// FptEndFrame
-	{ L"Render update", Color4ub(200, 200, 80) },	// FptRenderServerUpdate
-	{ L"Session", Color4ub(255, 120, 255) },		// FptSessionManagerUpdate
-	{ L"Script GC", Color4ub(200, 80, 200) },		// FptScriptGC
-	{ L"Audio", Color4ub(120, 255, 255) },			// FptAudioServerUpdate
-	{ L"Rumble", Color4ub(80, 200, 200) },			// FptRumbleUpdate
-	{ L"Input", Color4ub(255, 120, 120) },			// FptInputServerUpdate
-	{ L"State", Color4ub(200, 80, 80) },			// FptStateUpdate
-	{ L"Physics", Color4ub(120, 255, 120) },		// FptPhysicsServerUpdate
-	{ L"Build", Color4ub(80, 200, 80) },			// FptBuildFrame
-	{ L"Audio update", Color4ub(120, 120, 255) },	// FptAudioLayerUpdate
-	{ L"Flash update", Color4ub(80, 80, 200) },		// FptFlashLayerUpdate
-	{ L"Flash build", Color4ub(80, 200, 80) },		// FptFlashLayerBuild
-	{ L"Video update", Color4ub(200, 80, 80) },		// FptVideoLayerUpdate
-	{ L"World update", Color4ub(200, 80, 200) },	// FptWorldLayerUpdate
-	{ L"World build", Color4ub(200, 200, 80) },		// FptWorldLayerBuild
-	{ L"Script", Color4ub(255, 80, 128) }			// FptScript
+	Color4ub(255, 255, 0, 255),
+	Color4ub(0, 255, 255, 255),
+	Color4ub(255, 0, 255, 255),
+	Color4ub(255, 0, 0, 255),
+	Color4ub(0, 255, 0, 255),
+	Color4ub(0, 0, 255, 255)
 };
-
+		
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ProfilerDialog", ProfilerDialog, ui::Dialog)
 
 ProfilerDialog::ProfilerDialog(TargetConnection* connection)
 :	m_connection(connection)
+,	m_nextThreadLane(0)
+,	m_recording(true)
 {
 }
 
 bool ProfilerDialog::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, L"Profiler", ui::scaleBySystemDPI(800), ui::scaleBySystemDPI(180), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(parent, L"Profiler", ui::scaleBySystemDPI(800), ui::scaleBySystemDPI(350), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(this);
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Capture", ui::Command(L"Amalgam.Profiler.Capture")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Show All", ui::Command(L"Amalgam.Profiler.ShowAll")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Start/Stop", ui::Command(L"Amalgam.Profiler.Capture")));
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ProfilerDialog::eventToolClick);
 
 	m_chart = new ui::custom::BuildChartControl();
-	m_chart->create(this, 4);
+	m_chart->create(this, 4 * 8);
+	m_chart->begin();
 
 	addEventHandler< ui::CloseEvent >(this, &ProfilerDialog::eventClose);
 
 	update();
 	show();
 
+	m_connection->setProfilerEventsCallback(this);
 	return true;
 }
 
 void ProfilerDialog::destroy()
 {
+	m_connection->setProfilerEventsCallback(0);
 	ui::Dialog::destroy();
+}
+
+void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events)
+{
+	if (!m_recording)
+		return;
+
+	const double c_width = 8.0 / 60.0;
+	const double c_eventAge = 2.0;
+
+	m_chart->showRange(currentTime - c_width, currentTime);
+	m_chart->removeTasksOlderThan(currentTime - c_eventAge);
+
+	for (size_t i = 0; i < events.size(); ++i)
+	{
+		const Profiler::Event& e = events[i];
+
+		if (m_threadIdToLane.find(e.threadId) == m_threadIdToLane.end())
+		{
+			m_threadIdToLane[e.threadId] = m_nextThreadLane;
+			m_nextThreadLane++;
+		}
+
+		StringOutputStream ss;
+		ss.setDecimals(1);
+		ss << e.name << L" (" << ((e.end - e.start) * 1000.0f) << L" ms)";
+
+		m_chart->addTask(
+			m_threadIdToLane[e.threadId] * 8 + e.depth,
+			ss.str(),
+			c_threadColors[m_threadIdToLane[e.threadId] % sizeof_array(c_threadColors)],
+			e.start,
+			e.end
+		);
+	}
 }
 
 void ProfilerDialog::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	if (event->getCommand() == L"Amalgam.Profiler.Capture")
-	{
-		const AlignedVector< TargetPerformance::FrameMarker >& markers = m_connection->getPerformance().frameMarkers;
-		float time = m_connection->getPerformance().time;
-
-		float timeMin = 0.0f;
-		float timeMax = 0.0f;
-
-		for (uint32_t i = 0; i < markers.size(); ++i)
-		{
-			const TargetPerformance::FrameMarker& fm = markers[i];
-			timeMin = std::min(timeMin, fm.begin);
-			timeMax = std::max(timeMax, fm.end);
-		}
-
-		float duration = std::max(timeMax - timeMin, 1.0f / 60.0f);
-		m_chart->showRange(0.0, duration);
-
-		m_chart->removeAllTasks();
-		for (uint32_t i = 0; i < markers.size(); ++i)
-		{
-			const TargetPerformance::FrameMarker& fm = markers[i];
-			if (!c_markers[fm.id].name)
-				continue;
-
-			StringOutputStream ss;
-			ss.setDecimals(1);
-			ss << c_markers[fm.id].name << L" (" << ((fm.end - fm.begin) * 1000.0f) << L" ms)";
-
-			m_chart->addTask(
-				fm.level,
-				ss.str(),
-				c_markers[fm.id].color,
-				fm.begin - timeMin,
-				fm.end - timeMin
-			);
-		}
-	}
-	else if (event->getCommand() == L"Amalgam.Profiler.ShowAll")
-	{
-		const AlignedVector< TargetPerformance::FrameMarker >& markers = m_connection->getPerformance().frameMarkers;
-		float time = m_connection->getPerformance().time;
-
-		float timeMin = 0.0f;
-		float timeMax = 0.0f;
-
-		for (uint32_t i = 0; i < markers.size(); ++i)
-		{
-			const TargetPerformance::FrameMarker& fm = markers[i];
-			timeMin = std::min(timeMin, fm.begin);
-			timeMax = std::max(timeMax, fm.end);
-		}
-
-		float duration = std::max(timeMax - timeMin, 1.0f / 60.0f);
-		m_chart->showRange(0.0, duration);
-	}
+		m_recording = !m_recording;
 }
 
 void ProfilerDialog::eventClose(ui::CloseEvent* event)

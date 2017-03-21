@@ -71,6 +71,19 @@ void BuildChartControl::removeAllTasks()
 	m_running = false;
 }
 
+void BuildChartControl::removeTasksOlderThan(double since)
+{
+	for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
+	{
+		while (!m_lanes[lane].empty())
+		{
+			if (m_lanes[lane].front().time1 >= since)
+				break;
+			m_lanes[lane].erase(m_lanes[lane].begin());
+		}
+	}
+}
+
 void BuildChartControl::addTask(int32_t lane, const std::wstring& text, const Color4ub& color, double timeStart, double timeEnd)
 {
 	if (lane < 0 || lane >= m_lanes.size())

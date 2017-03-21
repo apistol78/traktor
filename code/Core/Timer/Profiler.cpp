@@ -1,5 +1,7 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -7,13 +9,25 @@
 
 namespace traktor
 {
+	namespace
+	{
+
+const size_t c_eventQueueThreshold = 16;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Profiler", Profiler, Object)
 
 Profiler& Profiler::getInstance()
 {
-	static Profiler instance;
-	return instance;
+	static Profiler* s_instance = 0;
+	if (!s_instance)
+	{
+		s_instance = new Profiler();
+		s_instance->addRef(0);
+		SingletonManager::getInstance().add(s_instance);
+	}
+	return *s_instance;
 }
 
 void Profiler::setListener(IReportListener* listener)
@@ -21,30 +35,85 @@ void Profiler::setListener(IReportListener* listener)
 	m_listener = listener;
 }
 
-Profiler::handle_t Profiler::beginEvent(const wchar_t* const name)
+void Profiler::beginEvent(const wchar_t* const name)
 {
-	//if (m_listener)
-	//{
-	//	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	//	size_t index = m_events.size();
-	//	Event& e = m_events.push_back();
-	//	e.name = name;
-	//	e.threadId = ThreadManager::getInstance().getCurrentThread()->id();
-	//	e.start = m_timer.getElapsedTime();
-	//	e.end = 0.0;
-	//	return (Profiler::handle_t)index;
-	//}
-	//else
-		return 0;
+	if (!m_listener)
+		return;
+
+	// Get event queue for calling thread.
+	ThreadEvents* te = static_cast< ThreadEvents* >(m_localThreadEvents.get());
+	if (!te)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		te = new ThreadEvents();
+		te->events.reserve(64);
+		m_threadEvents.push_back(te);
+		m_localThreadEvents.set(te);
+	}
+
+	// Begin event.
+	Event& e = te->events.push_back();
+	e.name = name;
+	e.threadId = ThreadManager::getInstance().getCurrentThread()->id();
+	e.depth = uint16_t(te->events.size() - 1);
+	e.start = m_timer.getElapsedTime();
+	e.end = 0.0;
 }
 
-void Profiler::endEvent(handle_t handle)
+void Profiler::endEvent()
 {
-	//if (m_listener)
-	//{
-	//	Event& e = m_events[(size_t)handle];
-	//	e.end = m_timer.getElapsedTime();
-	//}
+	if (!m_listener)
+		return;
+
+	// Get event queue for calling thread.
+	ThreadEvents* te = static_cast< ThreadEvents* >(m_localThreadEvents.get());
+	T_FATAL_ASSERT (te);
+
+	// End event.
+	T_FATAL_ASSERT(!te->events.empty());
+	te->events.back().end = m_timer.getElapsedTime();
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+		// Merge finished event.
+		m_events.push_back(te->events.back());
+		te->events.pop_back();
+
+		// Report events if we've queued enough.
+		if (m_events.size() >= c_eventQueueThreshold)
+		{
+			m_listener->reportProfilerEvents(m_timer.getElapsedTime(), m_events);
+			m_events.resize(0);
+		}
+	}
+}
+
+double Profiler::getTime() const
+{
+	return m_timer.getElapsedTime();
+}
+
+void Profiler::destroy()
+{
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+		if (!m_events.empty())
+		{
+			if (m_listener)
+				m_listener->reportProfilerEvents(m_timer.getElapsedTime(), m_events);
+			m_events.clear();
+		}
+
+		m_listener = 0;
+
+		for (AlignedVector< ThreadEvents* >::iterator i = m_threadEvents.begin(); i != m_threadEvents.end(); ++i)
+			delete *i;
+		
+		m_threadEvents.clear();
+	}
+	T_SAFE_RELEASE(this);
 }
 
 Profiler::JSONReportListener::JSONReportListener(OutputStream* output)
@@ -60,7 +129,7 @@ void Profiler::JSONReportListener::flush()
 	*m_output << L"]" << Endl;
 }
 
-void Profiler::JSONReportListener::reportProfilerEvents(const AlignedVector< Profiler::Event >& events)
+void Profiler::JSONReportListener::reportProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events)
 {
 	for (AlignedVector< Profiler::Event >::const_iterator i = events.begin(); i != events.end(); )
 	{
