@@ -148,6 +148,8 @@ void Stage::terminate()
 
 Any Stage::invokeScript(const std::string& fn, uint32_t argc, const Any* argv)
 {
+	T_PROFILER_SCOPE(L"Script invoke");
+
 	if (!validateScriptContext())
 		return Any();
 
@@ -390,10 +392,11 @@ void Stage::resume()
 
 bool Stage::validateScriptContext()
 {
-	T_MEASURE_BEGIN()
-
 	if (!m_class && !m_scriptContext)
 		return false;
+
+	T_PROFILER_SCOPE(L"Script validate");
+	T_MEASURE_BEGIN()
 
 	if (!m_initialized)
 	{

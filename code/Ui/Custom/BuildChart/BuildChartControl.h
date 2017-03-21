@@ -40,6 +40,8 @@ public:
 
 	void removeAllTasks();
 
+	void removeTasksOlderThan(double since);
+
 	void addTask(int32_t lane, const std::wstring& text, const Color4ub& color, double timeStart, double timeEnd);
 
 	/*! \} */

@@ -1,5 +1,6 @@
 #include "Amalgam/ScriptProfilerCallMeasured.h"
 #include "Amalgam/TargetLog.h"
+#include "Amalgam/TargetProfilerEvents.h"
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetScriptDebugger.h"
 #include "Amalgam/Editor/TargetScriptDebuggerSessions.h"
@@ -20,6 +21,7 @@ TargetConnection::TargetConnection(const std::wstring& name, net::BidirectionalO
 ,	m_transport(transport)
 ,	m_targetLog(targetLog)
 ,	m_targetDebuggerSessions(targetDebuggerSessions)
+,	m_profilerEventsCallback(0)
 {
 	m_targetDebugger = new TargetScriptDebugger(m_transport);
 	m_targetProfiler = new TargetScriptProfiler(m_transport);
@@ -82,6 +84,15 @@ bool TargetConnection::update()
 	}
 
 	{
+		Ref< TargetProfilerEvents > profilerEvents;
+		if (m_transport->recv< TargetProfilerEvents >(0, profilerEvents) == net::BidirectionalObjectTransport::RtSuccess)
+		{
+			if (m_profilerEventsCallback)
+				m_profilerEventsCallback->receivedProfilerEvents(profilerEvents->getCurrentTime(), profilerEvents->getEvents());
+		}
+	}
+
+	{
 		Ref< TargetLog > tlog;
 		while (m_transport->recv< TargetLog >(0, tlog) == net::BidirectionalObjectTransport::RtSuccess)
 			m_targetLog->log(tlog->getThreadId(), tlog->getLevel(), tlog->getText());
@@ -105,6 +116,11 @@ bool TargetConnection::update()
 		m_targetDebugger->update();
 
 	return true;
+}
+
+void TargetConnection::setProfilerEventsCallback(IProfilerEventsCallback* profilerEventsCallback)
+{
+	m_profilerEventsCallback = profilerEventsCallback;
 }
 
 	}

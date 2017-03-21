@@ -228,6 +228,8 @@ void FlashLayer::transition(Layer* fromLayer)
 
 void FlashLayer::prepare(const UpdateInfo& info)
 {
+	T_PROFILER_SCOPE(L"FlashLayer prepare");
+
 	if (m_movie.changed())
 	{
 		m_moviePlayer = 0;
@@ -616,6 +618,8 @@ Any FlashLayer::externalCall(const std::string& methodName, uint32_t argc, const
 {
 	if (!m_moviePlayer)
 		return Any();
+
+	T_PROFILER_SCOPE(L"FlashLayer externCall");
 
 	flash::ActionValue av[16];
 	T_ASSERT (argc < sizeof_array(av));

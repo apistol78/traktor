@@ -32,7 +32,7 @@ namespace traktor
 Ref< ui::IBitmap > s_bitmapLogos;
 
 const int32_t c_performanceLineHeight = 14;
-const int32_t c_performanceHeight = 7 * c_performanceLineHeight;
+const int32_t c_performanceHeight = 6 * c_performanceLineHeight;
 const int32_t c_commandHeight = 22;
 
 const struct
@@ -369,7 +369,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.drawText(middleRect, L"Sim: " + toString(int32_t(performance.steps)) + L", " + formatPerformanceTime(performance.interval) + L", " + toString(performance.collisions), ui::AnLeft, ui::AnCenter);
 
 		middleRect.left += ui::scaleBySystemDPI(150);
-		canvas.drawText(middleRect, L"F: " + toString(performance.flashCharacterCount) + L", " + toString(performance.flashGCCandidates), ui::AnLeft, ui::AnCenter);
+		canvas.drawText(middleRect, L"F: " + toString(performance.flashCharacterCount), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect2 = performanceRect;
 		middleRect2.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 3;
@@ -402,49 +402,6 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 
 		bottomRect.left += ui::scaleBySystemDPI(100);
 		canvas.drawText(bottomRect, L"Res: " + toString(performance.residentResourcesCount) + L", " + toString(performance.exclusiveResourcesCount), ui::AnLeft, ui::AnCenter);
-
-		if (performance.frameMarkers.size() >= 1)
-		{
-			ui::Rect graphRect = performanceRect;
-			graphRect.left += ui::scaleBySystemDPI(26);
-			graphRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 5;
-			graphRect.bottom = graphRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) + ui::scaleBySystemDPI(c_performanceLineHeight) / 2;
-
-			int32_t w = graphRect.getWidth();
-
-			float endTime = performance.frameMarkers.back().end;
-
-			canvas.setBackground(Color4ub(255, 255, 255));
-			canvas.fillRect(graphRect);
-
-			canvas.setFont(markerFont);
-
-			for (uint32_t j = 0; j < performance.frameMarkers.size() - 1; ++j)
-			{
-				const TargetPerformance::FrameMarker& fm = performance.frameMarkers[j];
-
-				int32_t xb = graphRect.left + int32_t(fm.begin * w / endTime);
-				int32_t xe = graphRect.left + int32_t(fm.end * w / endTime);
-
-				if (xe <= xb)
-					continue;
-
-				int32_t o = fm.level * ui::scaleBySystemDPI(2);
-
-				ui::Rect markerRect(
-					xb, graphRect.top + o,
-					xe, graphRect.bottom - o
-				);
-
-				canvas.setBackground(c_markers[fm.id].color);
-				canvas.fillRect(markerRect);
-
-				canvas.setClipRect(markerRect);
-				canvas.drawText(markerRect, c_markers[fm.id].name, ui::AnLeft, ui::AnCenter);
-
-				canvas.setClipRect(performanceRect);
-			}
-		}
 
 		performanceRect = performanceRect.offset(0, ui::scaleBySystemDPI(c_performanceHeight + c_commandHeight));
 	}

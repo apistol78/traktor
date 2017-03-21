@@ -129,6 +129,7 @@ void WorldLayer::transition(Layer* fromLayer)
 
 void WorldLayer::prepare(const UpdateInfo& info)
 {
+	T_PROFILER_SCOPE(L"WorldLayer prepare");
 	if (m_scene.changed())
 	{
 		// If render group already exist then ensure it doesn't contain anything
@@ -398,6 +399,8 @@ RefArray< world::Entity > WorldLayer::getEntitiesOf(const TypeInfo& entityType) 
 
 Ref< world::Entity > WorldLayer::createEntity(const std::wstring& name, world::IEntitySchema* entitySchema)
 {
+	T_PROFILER_SCOPE(L"WorldLayer createEntity");
+
 	std::map< std::wstring, resource::Proxy< world::EntityData > >::iterator i = m_entities.find(name);
 	if (i == m_entities.end())
 		return 0;
