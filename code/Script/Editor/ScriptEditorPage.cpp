@@ -319,7 +319,6 @@ void ScriptEditorPage::destroy()
 
 void ScriptEditorPage::activate()
 {
-	m_edit->setFocus();
 }
 
 void ScriptEditorPage::deactivate()
