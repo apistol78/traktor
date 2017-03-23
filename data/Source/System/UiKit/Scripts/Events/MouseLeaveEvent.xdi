@@ -5,7 +5,7 @@
 -- MouseLeaveEvent
 
 MouseLeaveEvent = MouseLeaveEvent or {}
-MouseLeaveEvent_meta = MouseLeaveEvent_meta or { __index = MouseLeaveEvent }
+MouseLeaveEvent_meta = MouseLeaveEvent_meta or { name = "MouseLeaveEvent", __index = MouseLeaveEvent }
 
 function MouseLeaveEvent.new()
 	local o = {}

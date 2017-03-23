@@ -5,7 +5,7 @@
 -- FrameEvent
 
 FrameEvent = FrameEvent or {}
-FrameEvent_meta = FrameEvent_meta or { __index = FrameEvent }
+FrameEvent_meta = FrameEvent_meta or { name = "FrameEvent", __index = FrameEvent }
 
 function FrameEvent.new()
 	local o = {}

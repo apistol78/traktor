@@ -5,7 +5,7 @@
 -- MouseDownEvent
 
 MouseDownEvent = MouseDownEvent or {}
-MouseDownEvent_meta = MouseDownEvent_meta or { __index = MouseDownEvent }
+MouseDownEvent_meta = MouseDownEvent_meta or { name = "MouseDownEvent", __index = MouseDownEvent }
 
 function MouseDownEvent.new(x, y)
 	local o = {}

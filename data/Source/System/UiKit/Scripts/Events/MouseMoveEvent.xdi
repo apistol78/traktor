@@ -5,7 +5,7 @@
 -- MouseMoveEvent
 
 MouseMoveEvent = MouseMoveEvent or {}
-MouseMoveEvent_meta = MouseMoveEvent_meta or { __index = MouseMoveEvent }
+MouseMoveEvent_meta = MouseMoveEvent_meta or { name = "MouseMoveEvent", __index = MouseMoveEvent }
 
 function MouseMoveEvent.new(x, y)
 	local o = {}

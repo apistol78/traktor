@@ -5,7 +5,7 @@
 -- MouseUpEvent
 
 MouseUpEvent = MouseUpEvent or {}
-MouseUpEvent_meta = MouseUpEvent_meta or { __index = MouseUpEvent }
+MouseUpEvent_meta = MouseUpEvent_meta or { name = "MouseUpEvent", __index = MouseUpEvent }
 
 function MouseUpEvent.new(x, y)
 	local o = {}

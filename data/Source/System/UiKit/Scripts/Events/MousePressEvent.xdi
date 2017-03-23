@@ -5,7 +5,7 @@
 -- MousePressEvent
 
 MousePressEvent = MousePressEvent or {}
-MousePressEvent_meta = MousePressEvent_meta or { __index = MousePressEvent }
+MousePressEvent_meta = MousePressEvent_meta or { name = "MousePressEvent", __index = MousePressEvent }
 
 function MousePressEvent.new()
 	local o = {}
