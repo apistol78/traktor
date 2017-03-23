@@ -108,6 +108,16 @@ public:
 		return true;
 	}
 
+	bool insert(const const_iterator& from, const const_iterator& to)
+	{
+		for (const_iterator i = from; i != to; ++i)
+		{
+			if (!insert(*i))
+				return false;
+		}
+		return true;
+	}
+
 	bool erase(const Key& value)
 	{
 		size_t is = 0;
