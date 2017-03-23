@@ -1,3 +1,6 @@
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
+#include "Editor/IEditor.h"
 #include "Script/Editor/SearchControl.h"
 #include "Script/Editor/SearchEvent.h"
 #include "Ui/Application.h"
@@ -13,6 +16,11 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.SearchControl", SearchControl, ui::Container)
+
+SearchControl::SearchControl(editor::IEditor* editor)
+:	m_editor(editor)
+{
+}
 
 bool SearchControl::create(ui::Widget* parent)
 {
@@ -53,6 +61,14 @@ void SearchControl::setFocus()
 	m_editSearch->setFocus();
 }
 
+void SearchControl::show()
+{
+	if (!isVisible(false))
+		m_editSearch->setText(m_editor->getSettings()->getProperty< PropertyString >(L"Editor.LastSearch", L""));
+
+	ui::Container::show();
+}
+
 ui::Size SearchControl::getPreferedSize() const
 {
 	ui::Size preferedSize = ui::Container::getPreferedSize();
@@ -71,6 +87,10 @@ void SearchControl::eventEditSearchKeyDown(ui::KeyDownEvent* event)
 	{
 		if (!m_editSearch->getText().empty())
 		{
+			// Save last search query in user settings.
+			m_editor->checkoutGlobalSettings()->setProperty< PropertyString >(L"Editor.LastSearch", m_editSearch->getText());
+			m_editor->commitGlobalSettings();
+
 			SearchEvent searchEvent(
 				this,
 				m_editSearch->getText(),

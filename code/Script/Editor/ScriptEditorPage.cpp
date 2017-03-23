@@ -231,7 +231,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_editMenu->create();
 	m_editMenu->add(new ui::MenuItem(ui::Command(L"Script.Editor.AddUsingStatement"), i18n::Text(L"SCRIPT_EDITOR_ADD_USING")));
 
-	m_searchControl = new SearchControl();
+	m_searchControl = new SearchControl(m_editor);
 	m_searchControl->create(m_edit);
 	m_searchControl->hide();
 	m_searchControl->addEventHandler< SearchEvent >(this, &ScriptEditorPage::eventSearch);

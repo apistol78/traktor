@@ -1,7 +1,7 @@
 #ifndef traktor_physics_ShapeDesc_H
 #define traktor_physics_ShapeDesc_H
 
-#include <set>
+#include "Core/Containers/SmallSet.h"
 #include "Core/Math/Transform.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
@@ -37,13 +37,13 @@ public:
 
 	const Transform& getLocalTransform() const;
 
-	void setCollisionGroup(const std::set< resource::Id< CollisionSpecification > >& collisionGroup);
+	void setCollisionGroup(const SmallSet< resource::Id< CollisionSpecification > >& collisionGroup);
 
-	const std::set< resource::Id< CollisionSpecification > >& getCollisionGroup() const;
+	const SmallSet< resource::Id< CollisionSpecification > >& getCollisionGroup() const;
 
-	void setCollisionMask(const std::set< resource::Id< CollisionSpecification > >& collisionMask);
+	void setCollisionMask(const SmallSet< resource::Id< CollisionSpecification > >& collisionMask);
 
-	const std::set< resource::Id< CollisionSpecification > >& getCollisionMask() const;
+	const SmallSet< resource::Id< CollisionSpecification > >& getCollisionMask() const;
 
 	void setMaterial(int32_t material);
 
@@ -53,8 +53,8 @@ public:
 
 private:
 	Transform m_localTransform;
-	std::set< resource::Id< CollisionSpecification > > m_collisionGroup;
-	std::set< resource::Id< CollisionSpecification > > m_collisionMask;
+	SmallSet< resource::Id< CollisionSpecification > > m_collisionGroup;
+	SmallSet< resource::Id< CollisionSpecification > > m_collisionMask;
 	int32_t m_material;
 };
 

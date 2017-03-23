@@ -21,7 +21,7 @@ ActionFunction2::ActionFunction2(
 	const IActionVMImage* image,
 	uint8_t registerCount,
 	uint16_t flags,
-	const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
+	const AlignedVector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
 	const SmallMap< uint32_t, ActionValue >& variables,
 	const ActionDictionary* dictionary
 )
@@ -32,7 +32,7 @@ ActionFunction2::ActionFunction2(
 ,	m_variables(variables)
 ,	m_dictionary(dictionary)
 {
-	for (std::vector< std::pair< std::string, uint8_t > >::const_iterator i = argumentsIntoRegisters.begin(); i != argumentsIntoRegisters.end(); ++i)
+	for (AlignedVector< std::pair< std::string, uint8_t > >::const_iterator i = argumentsIntoRegisters.begin(); i != argumentsIntoRegisters.end(); ++i)
 		m_argumentsIntoRegisters.push_back(std::make_pair(
 			getContext()->getString(i->first),
 			i->second
@@ -118,7 +118,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	// Pass arguments into registers.
 	uint32_t argumentPassed = 0;
 	for (
-		std::vector< std::pair< uint32_t, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();
+		AlignedVector< std::pair< uint32_t, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();
 		argumentPassed < args.size() && i != m_argumentsIntoRegisters.end();
 		++i
 	)

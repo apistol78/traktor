@@ -1579,10 +1579,10 @@ void opx_enum2(ExecutionState& state)
 		const ActionObjectRelay* relay = object->getRelay();
 		if (relay)
 		{
-			std::vector< uint32_t > memberNames;
+			AlignedVector< uint32_t > memberNames;
 			if (relay->enumerateMembers(memberNames))
 			{
-				for (std::vector< uint32_t >::const_iterator i = memberNames.begin(); i != memberNames.end(); ++i)
+				for (AlignedVector< uint32_t >::const_iterator i = memberNames.begin(); i != memberNames.end(); ++i)
 					stack.push(ActionValue(
 						state.context->getString(*i)
 					));
@@ -1948,7 +1948,7 @@ void opx_defineFunction2(ExecutionState& state)
 	uint16_t flags = unalignedRead< uint16_t >(data);
 	data += sizeof(uint16_t);
 
-	std::vector< std::pair< std::string, uint8_t > > argumentsIntoRegisters(argumentCount);
+	AlignedVector< std::pair< std::string, uint8_t > > argumentsIntoRegisters(argumentCount);
 	for (int i = 0; i  < argumentCount; ++i)
 	{
 		uint8_t registerIndex = *data;
@@ -2340,7 +2340,7 @@ void opx_defineFunction(ExecutionState& state)
 	uint16_t argumentCount = unalignedRead< uint16_t >(data);
 	data += sizeof(uint16_t);
 
-	std::vector< std::string > argumentsIntoVariables(argumentCount);
+	AlignedVector< std::string > argumentsIntoVariables(argumentCount);
 	for (int i = 0; i  < argumentCount; ++i)
 	{
 		const char* argumentName = reinterpret_cast< const char* >(data);

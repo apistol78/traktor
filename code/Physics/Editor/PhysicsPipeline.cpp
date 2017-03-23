@@ -44,9 +44,9 @@ bool PhysicsPipeline::buildDependencies(
 		const ShapeDesc* shapeDesc = bodyDesc->getShape();
 		if (shapeDesc)
 		{
-			for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionGroup().begin(); i != shapeDesc->getCollisionGroup().end(); ++i)
+			for (SmallSet< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionGroup().begin(); i != shapeDesc->getCollisionGroup().end(); ++i)
 				pipelineDepends->addDependency(*i, editor::PdfBuild | editor::PdfResource);
-			for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionMask().begin(); i != shapeDesc->getCollisionMask().end(); ++i)
+			for (SmallSet< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionMask().begin(); i != shapeDesc->getCollisionMask().end(); ++i)
 				pipelineDepends->addDependency(*i, editor::PdfBuild | editor::PdfResource);
 
 			if (const MeshShapeDesc* meshShapeDesc = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))

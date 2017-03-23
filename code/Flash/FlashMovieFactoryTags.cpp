@@ -193,7 +193,7 @@ bool FlashTagDefineFont::read(SwfReader* swf, ReadContext& context)
 		uint16_t glyphCount = bs.readUInt16();
 		int64_t offsetBase = bs.getStream()->tell();
 
-		std::vector< uint32_t > offsetTable(glyphCount);
+		AlignedVector< uint32_t > offsetTable(glyphCount);
 		for (uint16_t i = 0; i < glyphCount; ++i)
 			offsetTable[i] = wideOffsets ? bs.readUInt32() : bs.readUInt16();
 

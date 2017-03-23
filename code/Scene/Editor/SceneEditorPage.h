@@ -135,7 +135,7 @@ private:
 
 	void updateStatusBar();
 
-	bool addEntity();
+	bool addEntity(const TypeInfo* entityType);
 
 	bool moveToEntity();
 

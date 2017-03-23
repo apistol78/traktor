@@ -192,7 +192,7 @@ void FlashMoviePlayer::executeFrame()
 	context->setMovieClip(m_movieInstance);
 
 	// Collect interval functions.
-	std::vector< std::pair< ActionObject*, ActionFunction* > > intervalFns;
+	AlignedVector< std::pair< ActionObject*, ActionFunction* > > intervalFns;
 	for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
 	{
 		if (i->second.count++ >= i->second.interval)
@@ -204,7 +204,7 @@ void FlashMoviePlayer::executeFrame()
 
 	// Issue interval functions.
 	ActionValueArray argv;
-	for (std::vector< std::pair< ActionObject*, ActionFunction* > >::const_iterator i = intervalFns.begin(); i != intervalFns.end(); ++i)
+	for (AlignedVector< std::pair< ActionObject*, ActionFunction* > >::const_iterator i = intervalFns.begin(); i != intervalFns.end(); ++i)
 		i->second->call(i->first, argv);
 
 	// Issue all events in sequence as each event possibly update

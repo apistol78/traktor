@@ -85,7 +85,7 @@ public:
 	};
 
 	typedef AlignedVector< ButtonLayer > button_layers_t;
-	typedef std::vector< ButtonCondition > button_conditions_t;
+	typedef AlignedVector< ButtonCondition > button_conditions_t;
 
 	FlashButton();
 

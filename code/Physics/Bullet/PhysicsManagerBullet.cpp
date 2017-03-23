@@ -771,7 +771,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 
 		// Resolve collision group and mask value.
 		uint32_t mergedCollisionGroup = 0;
-		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionGroup().begin(); i != shapeDesc->getCollisionGroup().end(); ++i)
+		for (SmallSet< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionGroup().begin(); i != shapeDesc->getCollisionGroup().end(); ++i)
 		{
 			resource::Proxy< CollisionSpecification > collisionGroup;
 			if (!resourceManager->bind(*i, collisionGroup))
@@ -783,7 +783,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		}
 
 		uint32_t mergedCollisionMask = 0;
-		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionMask().begin(); i != shapeDesc->getCollisionMask().end(); ++i)
+		for (SmallSet< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionMask().begin(); i != shapeDesc->getCollisionMask().end(); ++i)
 		{
 			resource::Proxy< CollisionSpecification > collisionMask;
 			if (!resourceManager->bind(*i, collisionMask))
@@ -844,7 +844,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 
 		// Resolve collision group and mask value.
 		uint32_t mergedCollisionGroup = 0;
-		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionGroup().begin(); i != shapeDesc->getCollisionGroup().end(); ++i)
+		for (SmallSet< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionGroup().begin(); i != shapeDesc->getCollisionGroup().end(); ++i)
 		{
 			resource::Proxy< CollisionSpecification > collisionGroup;
 			if (!resourceManager->bind(*i, collisionGroup))
@@ -856,7 +856,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		}
 
 		uint32_t mergedCollisionMask = 0;
-		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionMask().begin(); i != shapeDesc->getCollisionMask().end(); ++i)
+		for (SmallSet< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionMask().begin(); i != shapeDesc->getCollisionMask().end(); ++i)
 		{
 			resource::Proxy< CollisionSpecification > collisionMask;
 			if (!resourceManager->bind(*i, collisionMask))

@@ -25,6 +25,7 @@ public:
 		s >> Member< uint16_t >(L"depth", m_ref.depth);
 		s >> Member< double >(L"start", m_ref.start);
 		s >> Member< double >(L"end", m_ref.end);
+		s >> Member< int32_t >(L"alloc", m_ref.alloc);
 	}
 
 private:

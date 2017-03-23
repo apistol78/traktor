@@ -46,7 +46,7 @@ public:
 		const IActionVMImage* image,
 		uint8_t registerCount,
 		uint16_t flags,
-		const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
+		const AlignedVector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
 		const SmallMap< uint32_t, ActionValue >& variables,
 		const ActionDictionary* dictionary
 	);
@@ -62,7 +62,7 @@ private:
 	Ref< const IActionVMImage > m_image;
 	uint8_t m_registerCount;
 	uint16_t m_flags;
-	std::vector< std::pair< uint32_t, uint8_t > > m_argumentsIntoRegisters;
+	AlignedVector< std::pair< uint32_t, uint8_t > > m_argumentsIntoRegisters;
 	SmallMap< uint32_t, ActionValue > m_variables;
 	Ref< const ActionDictionary > m_dictionary;
 };

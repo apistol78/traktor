@@ -19,7 +19,7 @@ ActionFunction1::ActionFunction1(
 	const char* name,
 	const IActionVMImage* image,
 	uint16_t argumentCount,
-	const std::vector< std::string >& argumentsIntoVariables,
+	const AlignedVector< std::string >& argumentsIntoVariables,
 	const SmallMap< uint32_t, ActionValue >& variables,
 	const ActionDictionary* dictionary
 )
@@ -29,7 +29,7 @@ ActionFunction1::ActionFunction1(
 ,	m_variables(variables)
 ,	m_dictionary(dictionary)
 {
-	for (std::vector< std::string >::const_iterator i = argumentsIntoVariables.begin(); i != argumentsIntoVariables.end(); ++i)
+	for (AlignedVector< std::string >::const_iterator i = argumentsIntoVariables.begin(); i != argumentsIntoVariables.end(); ++i)
 		m_argumentsIntoVariables.push_back(
 			getContext()->getString(*i)
 		);

@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Singleton/SingletonManager.h"
@@ -58,6 +59,7 @@ void Profiler::beginEvent(const wchar_t* const name)
 	e.depth = uint16_t(te->events.size() - 1);
 	e.start = m_timer.getElapsedTime();
 	e.end = 0.0;
+	e.alloc = Alloc::count();
 }
 
 void Profiler::endEvent()
@@ -71,13 +73,15 @@ void Profiler::endEvent()
 
 	// End event.
 	T_FATAL_ASSERT(!te->events.empty());
-	te->events.back().end = m_timer.getElapsedTime();
+	Event& e = te->events.back();
+	e.end = m_timer.getElapsedTime();
+	e.alloc = Alloc::count() - e.alloc;
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 		// Merge finished event.
-		m_events.push_back(te->events.back());
+		m_events.push_back(e);
 		te->events.pop_back();
 
 		// Report events if we've queued enough.
