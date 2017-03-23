@@ -235,7 +235,7 @@ function ScrollContainer:_onMouseDown(event)
 		local x = self._mc:getMouseX()
 		local y = self._mc:getMouseY()
 		if x >= 0 and y >= 0 and x < self._scrollSize.width and y < self._scrollSize.height then
-			if self:setModal() then
+			if self:setExclusive() then
 				self._scrollFrom =
 				{
 					mouseX = x,
@@ -245,44 +245,49 @@ function ScrollContainer:_onMouseDown(event)
 					time = self._timer:getElapsedTime()
 				}
 			end
+			return true
 		end
 	end
-	return true
+	return false
 end
 
 function ScrollContainer:_onMouseUp(event)
-	if self._scrollFrom ~= nil then
-		self._scrollFrom = nil
-		self:releaseModal()
+	if self._scrollFrom == nil then
+		return false
 	end
+	self._scrollFrom = nil
+	self:releaseExclusive()
 	return true
 end
 
 function ScrollContainer:_onMouseMove(event)
-	if self._scrollFrom ~= nil then
-		local time = self._timer:getElapsedTime()
-
-		local dx = self._mc:getMouseX() - self._scrollFrom.mouseX
-		local dy = self._mc:getMouseY() - self._scrollFrom.mouseY
-
-		self._scroll.x = self._scrollFrom.scrollX - dx
-		self._scroll.y = self._scrollFrom.scrollY - dy
-		self:_clampScrollOffsets()
-
-		self._inner_mc:setX(-self._scroll.x)
-		self._inner_mc:setY(-self._scroll.y)
-
-		if time > self._scrollFrom.time then
-			local dt = time - self._scrollFrom.time
-			self._motion.x = dx / dt
-			self._motion.y = dy / dt
-			self._motion.k = 0.95
-		end
-
-		if self._scrollFn ~= nil then
-			self._scrollFn()
-		end
+	if self._scrollFrom == nil then
+		return false
 	end
+
+	local time = self._timer:getElapsedTime()
+
+	local dx = self._mc:getMouseX() - self._scrollFrom.mouseX
+	local dy = self._mc:getMouseY() - self._scrollFrom.mouseY
+
+	self._scroll.x = self._scrollFrom.scrollX - dx
+	self._scroll.y = self._scrollFrom.scrollY - dy
+	self:_clampScrollOffsets()
+
+	self._inner_mc:setX(-self._scroll.x)
+	self._inner_mc:setY(-self._scroll.y)
+
+	if time > self._scrollFrom.time then
+		local dt = time - self._scrollFrom.time
+		self._motion.x = dx / dt
+		self._motion.y = dy / dt
+		self._motion.k = 0.95
+	end
+
+	if self._scrollFn ~= nil then
+		self._scrollFn()
+	end
+
 	return true
 end
 
@@ -301,8 +306,9 @@ function ScrollContainer:_onFrame(event)
 		if self._scrollFn ~= nil then
 			self._scrollFn()
 		end
+		return true
 	end
-	return true
+	return false
 end
 
 	]]>

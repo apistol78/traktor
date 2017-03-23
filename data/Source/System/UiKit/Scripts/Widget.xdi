@@ -2,6 +2,7 @@
 <object type="traktor.script.Script" version="2">
 	<text>
 	<![CDATA[
+#using \{7F5ADE59-4125-3342-A3F1-AEA3F584834E}
 #using \{D35E3668-DEFB-924A-B4DB-2E317DD67308}
 #using \{E1AC8A37-C364-5E47-BB5F-41B22A0CDC5E}
 #using \{E57536DD-10D0-E645-9155-9184BFE7809E}
@@ -25,6 +26,8 @@ function Widget.initialize(env, resourceKits)
 	Widget._env = env
 	Widget._resourceKits = {}
 	Widget._modal = {}
+	Widget._exclusive = {}
+	Widget._focus = nil
 	for _, rkid in ipairs(resourceKits) do
 		local rk = env:getResource():getResourceManager():bind(traktor.flash.FlashMovie, rkid)
 		if rk == nil then return false end
@@ -39,6 +42,15 @@ function Widget:remove()
 			table.remove(Widget._modal, k)
 			break
 		end
+	end
+	for k, w in ipairs(Widget._exclusive) do
+		if w == self then
+			table.remove(Widget._exclusive, k)
+			break
+		end
+	end
+	if Widget._focus == self then
+		Widget._focus = nil
 	end
 	self:removeAllChildren()
 	if self._parent ~= nil then
@@ -119,6 +131,33 @@ function Widget:releaseModal()
 	local m = #Widget._modal
 	assert (Widget._modal[m] == self)
 	table.remove(Widget._modal, m)
+end
+
+function Widget:setExclusive()
+	table.insert(Widget._exclusive, self)
+	return true
+end
+
+function Widget:releaseExclusive()
+	local x = #Widget._exclusive
+	assert (Widget._exclusive[x] == self)
+	table.remove(Widget._exclusive, x)
+end
+
+function Widget:setFocus()
+	if Widget._focus ~= nil then
+		if Widget._focus ~= self then
+			Widget._focus:_notifyEventListeners(FocusEvent.new(false))
+		else
+			return
+		end
+	end
+	Widget._focus = self
+	Widget._focus:_notifyEventListeners(FocusEvent.new(true))	
+end
+
+function Widget.getFocus()
+	return Widget._focus
 end
 
 function Widget:setHorizontalAlign(halign)
@@ -262,27 +301,46 @@ function Widget:_isChild(child)
 end
 
 function Widget:_notifyEventListeners(event)
+	-- Is target exclusive receiver of events.
+	local x = #Widget._exclusive
+	if x > 0 then
+		if Widget._exclusive[x] ~= self then return false end
+	end
+
+	-- Is target widget part of a modal.
 	local m = #Widget._modal
 	if m > 0 then
 		if not Widget._modal[m]:_isChild(self) then return false end
 	end
+
+	-- Find event listener from type of event.
 	local eventType = getmetatable(event).__index
 	local ln = self._eventListeners[eventType]
 	if ln ~= nil then
-		return ln.fn(ln.target, event)
-	else
-		return false
-	end	
+		if ln.fn(ln.target, event) then
+#if defined(_DEBUG)
+			print("Event " .. getmetatable(event).name .. " handled by " .. getmetatable(self).name)
+#endif
+			return true
+		end
+	end
+
+	-- Event not handled.
+	return false
 end
 
 function Widget:_dispatchEvent(event)
 	-- Enabled, non-visible, widgets are not permitted to receive events.
 	if not self._enable or not self._visible then
-		return
+		return false
 	end
 
 	local eventType = getmetatable(event).__index
-	local handled = false
+
+	-- Propagate event further to children first.
+	for _, c in ipairs(self._children) do
+		if c:_dispatchEvent(event) then return true end
+	end
 
 	-- Synthesize enter/leave mouse events.
 	if eventType == MouseMoveEvent then
@@ -303,6 +361,9 @@ function Widget:_dispatchEvent(event)
 		local pt = self:globalToLocal(event)
 		local inside = (pt.x >= ps.x and pt.y >= ps.y and pt.x <= ps.x + ps.width and pt.y <= ps.y + ps.height)
 		if inside then
+			-- First move focus to this widget.
+			self:setFocus()
+			-- Then issue mouse press event.
 			self:_notifyEventListeners(MousePressEvent.new())
 			self._mousePressed = true
 		end
@@ -315,14 +376,7 @@ function Widget:_dispatchEvent(event)
 	end
 
 	-- Call listener attached to this widget for specific event.
-	self:_notifyEventListeners(event)
-
-	-- Propagate event further to children if not handled.
-	if not handled then
-		for _, c in ipairs(self._children) do
-			c:_dispatchEvent(event)
-		end
-	end
+	return self:_notifyEventListeners(event)
 end
 
 -- Retrieve "inner" movie clip; into which child resources are created.

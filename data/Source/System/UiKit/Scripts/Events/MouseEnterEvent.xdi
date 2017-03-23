@@ -5,7 +5,7 @@
 -- MouseEnterEvent
 
 MouseEnterEvent = MouseEnterEvent or {}
-MouseEnterEvent_meta = MouseEnterEvent_meta or { __index = MouseEnterEvent }
+MouseEnterEvent_meta = MouseEnterEvent_meta or { name = "MouseEnterEvent", __index = MouseEnterEvent }
 
 function MouseEnterEvent.new()
 	local o = {}

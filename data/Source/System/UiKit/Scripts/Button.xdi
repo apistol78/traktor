@@ -136,6 +136,7 @@ function Button:_onMousePress(event)
 	self._imageHover_mc:setVisible(false)
 	self._imageDown_mc:setVisible(true)
 	self._isPressed = true
+	self:setExclusive()
 	return true
 end
 
@@ -148,6 +149,7 @@ function Button:_onMouseRelease(event)
 		self._imageUp_mc:setVisible(false)
 		self._imageHover_mc:setVisible(true)
 	end
+	self:releaseExclusive()
 	if event.inside then
 		if self._clickFn ~= nil then self._clickFn() end
 		self._isPressed = false
@@ -175,6 +177,7 @@ function Button:_onMouseLeave()
 		self._imageDown_mc:setVisible(true)
 	end
 	self._isRolledOver = false
+	return true
 end
 
 	]]>

@@ -5,7 +5,7 @@
 -- MouseReleaseEvent
 
 MouseReleaseEvent = MouseReleaseEvent or {}
-MouseReleaseEvent_meta = MouseReleaseEvent_meta or { __index = MouseReleaseEvent }
+MouseReleaseEvent_meta = MouseReleaseEvent_meta or { name = "MouseReleaseEvent", __index = MouseReleaseEvent }
 
 function MouseReleaseEvent.new(inside)
 	local o = {}
