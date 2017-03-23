@@ -38,6 +38,7 @@ public:
 	virtual bool apply(PropertyGroup* settings) T_OVERRIDE T_FINAL;
 
 private:
+	Ref< ui::CheckBox > m_checkAutoOpenDebugger;
 	Ref< ui::CheckBox > m_checkAutoOpenScript;
 };
 

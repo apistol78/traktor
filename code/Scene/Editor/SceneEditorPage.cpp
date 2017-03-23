@@ -221,6 +221,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 	m_entityMenu->add(new ui::MenuItem(L"-"));
 	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
+	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddGroupEntity"), i18n::Text(L"SCENE_EDITOR_ADD_GROUP_ENTITY")));
 	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 
 	m_entityMenuExternal = new ui::PopupMenu();
@@ -228,6 +229,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 	m_entityMenuExternal->add(new ui::MenuItem(L"-"));
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
+	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddGroupEntity"), i18n::Text(L"SCENE_EDITOR_ADD_GROUP_ENTITY")));
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.FindInDatabase"), i18n::Text(L"SCENE_EDITOR_FIND_IN_DATABASE")));
 
@@ -619,7 +621,9 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		m_context->raiseSelect();
 	}
 	else if (command == L"Scene.Editor.AddEntity")
-		result = addEntity();
+		result = addEntity(0);
+	else if (command == L"Scene.Editor.AddGroupEntity")
+		result = addEntity(&type_of< world::GroupEntityData >());
 	else if (command == L"Scene.Editor.MoveToEntity")
 		result = moveToEntity();
 	else if (command == L"Scene.Editor.FilterEntity")
@@ -1000,7 +1004,7 @@ void SceneEditorPage::updateStatusBar()
 	m_statusBar->setText(ss.str());
 }
 
-bool SceneEditorPage::addEntity()
+bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 {
 	Ref< EntityAdapter > parentGroupAdapter;
 
@@ -1019,9 +1023,11 @@ bool SceneEditorPage::addEntity()
 	}
 
 	// Select type of entity to create.
-	const TypeInfo* entityType = m_context->getEditor()->browseType(makeTypeInfoSet< world::EntityData >());
 	if (!entityType)
-		return false;
+	{
+		if ((entityType = m_context->getEditor()->browseType(makeTypeInfoSet< world::EntityData >())) == 0)
+			return false;
+	}
 
 	Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(entityType->createInstance());
 	T_ASSERT (entityData);

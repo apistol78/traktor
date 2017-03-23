@@ -882,7 +882,7 @@ std::string SwfReader::readStringU8()
 {
 	uint8_t len = m_bs->readUInt8();
 
-	std::vector< uint8_t > buf(len);
+	AlignedVector< uint8_t > buf(len);
 	for (uint8_t i = 0; i < len; ++i)
 		buf[i] = m_bs->readUInt8();
 
@@ -894,7 +894,7 @@ std::string SwfReader::readStringU8()
 
 std::string SwfReader::readString()
 {
-	std::vector< uint8_t > buf;
+	AlignedVector< uint8_t > buf;
 	uint8_t ch;
 
 	while ((ch = m_bs->readUInt8()) != 0)

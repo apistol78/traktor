@@ -49,8 +49,8 @@ void ScriptEditorPlugin::handleWorkspaceClosed()
 
 void ScriptEditorPlugin::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
-	bool autoOpenDebuggedScript = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Editor.AutoOpenDebuggedScript", true);
-	if (autoOpenDebuggedScript)
+	bool autoOpenDebugger = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Editor.AutoOpenDebugger", false);
+	if (autoOpenDebugger)
 		m_editor->openTool(L"traktor.script.ScriptDebuggerTool", L"");
 }
 

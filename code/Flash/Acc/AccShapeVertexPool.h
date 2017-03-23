@@ -4,6 +4,7 @@
 #include <list>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 
 namespace traktor
 {
@@ -68,7 +69,7 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	vr_list_t m_usedRanges;
 	vr_list_t m_freeRanges;
-	std::vector< vr_list_t > m_garbageRanges;
+	AlignedVector< vr_list_t > m_garbageRanges;
 	uint32_t m_frame;
 };
 

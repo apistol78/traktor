@@ -100,7 +100,7 @@ public:
 
 	virtual void clearCacheObject() T_OVERRIDE;
 
-	virtual bool enumerateMembers(std::vector< uint32_t >& outMemberNames) const T_OVERRIDE T_FINAL;
+	virtual bool enumerateMembers(AlignedVector< uint32_t >& outMemberNames) const T_OVERRIDE T_FINAL;
 
 	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) T_OVERRIDE T_FINAL;
 

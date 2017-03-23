@@ -481,7 +481,7 @@ void FlashSpriteInstance::clearCacheObject()
 	});
 }
 
-bool FlashSpriteInstance::enumerateMembers(std::vector< uint32_t >& outMemberNames) const
+bool FlashSpriteInstance::enumerateMembers(AlignedVector< uint32_t >& outMemberNames) const
 {
 	// Visible named character in display list.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();

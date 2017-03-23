@@ -1,6 +1,7 @@
 #ifndef traktor_flash_ActionContext_H
 #define traktor_flash_ActionContext_H
 
+#include "Core/Containers/AlignedVector.h"
 #include "Flash/Collectable.h"
 #include "Flash/Action/ActionStrings.h"
 #include "Flash/Action/ActionValue.h"
@@ -136,7 +137,7 @@ private:
 	Ref< FlashCharacterInstance > m_rolledOver;
 	ActionStrings m_strings;
 	ActionValuePool m_pool;
-	std::vector< FrameListener > m_frameListeners;
+	AlignedVector< FrameListener > m_frameListeners;
 };
 
 	}

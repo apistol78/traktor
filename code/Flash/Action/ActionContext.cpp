@@ -101,7 +101,7 @@ void ActionContext::addFrameListener(ActionObject* frameListener)
 
 void ActionContext::removeFrameListener(ActionObject* frameListener)
 {
-	for (std::vector< FrameListener >::iterator i = m_frameListeners.begin(); i != m_frameListeners.end(); ++i)
+	for (AlignedVector< FrameListener >::iterator i = m_frameListeners.begin(); i != m_frameListeners.end(); ++i)
 	{
 		if (i->listenerTarget == frameListener)
 		{
@@ -119,8 +119,8 @@ void ActionContext::notifyFrameListeners(float time)
 	ActionValueArray argv(m_pool, 1);
 	argv[0] = ActionValue(time);
 
-	std::vector< FrameListener > frameListeners = m_frameListeners;
-	for (std::vector< FrameListener >::iterator i = frameListeners.begin(); i != frameListeners.end(); ++i)
+	AlignedVector< FrameListener > frameListeners = m_frameListeners;
+	for (AlignedVector< FrameListener >::iterator i = frameListeners.begin(); i != frameListeners.end(); ++i)
 		i->listenerFunction->call(i->listenerTarget, argv);
 }
 
@@ -168,7 +168,7 @@ void ActionContext::trace(visitor_t visitor) const
 	visitor(m_pressed);
 	visitor(m_rolledOver);
 
-	for (std::vector< FrameListener >::const_iterator i = m_frameListeners.begin(); i != m_frameListeners.end(); ++i)
+	for (AlignedVector< FrameListener >::const_iterator i = m_frameListeners.begin(); i != m_frameListeners.end(); ++i)
 	{
 		visitor(i->listenerTarget);
 		visitor(i->listenerFunction);

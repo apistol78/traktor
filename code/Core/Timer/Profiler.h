@@ -48,6 +48,7 @@ public:
 		uint16_t depth;
 		double start;
 		double end;
+		int32_t alloc;
 	};
 
 	/*! \brief Profiler report listener.

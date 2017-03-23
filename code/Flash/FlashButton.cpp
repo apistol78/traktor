@@ -2,7 +2,6 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Flash/FlashButton.h"
 #include "Flash/FlashButtonInstance.h"
 #include "Flash/SwfMembers.h"
@@ -62,7 +61,7 @@ void FlashButton::serialize(ISerializer& s)
 	FlashCharacter::serialize(s);
 
 	s >> MemberAlignedVector< ButtonLayer, MemberComposite< ButtonLayer > >(L"layers", m_layers);
-	s >> MemberStlVector< ButtonCondition, MemberComposite< ButtonCondition > >(L"conditions", m_conditions);
+	s >> MemberAlignedVector< ButtonCondition, MemberComposite< ButtonCondition > >(L"conditions", m_conditions);
 }
 
 void FlashButton::ButtonLayer::serialize(ISerializer& s)

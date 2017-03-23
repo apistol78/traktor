@@ -20,8 +20,12 @@ bool ScriptSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
 		return false;
 
+	m_checkAutoOpenDebugger = new ui::CheckBox();
+	m_checkAutoOpenDebugger->create(container, i18n::Text(L"EDITOR_SETTINGS_SCRIPT_AUTO_OPEN_DEBUGGER"), false);
+	m_checkAutoOpenDebugger->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.AutoOpenDebugger", false));
+
 	m_checkAutoOpenScript = new ui::CheckBox();
-	m_checkAutoOpenScript->create(container, i18n::Text(L"EDITOR_SETTINGS_SCRIPT_AUTO_OPEN"), false);
+	m_checkAutoOpenScript->create(container, i18n::Text(L"EDITOR_SETTINGS_SCRIPT_AUTO_OPEN_SCRIPT"), false);
 	m_checkAutoOpenScript->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.AutoOpenDebuggedScript", true));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_SCRIPT"));
@@ -34,6 +38,7 @@ void ScriptSettingsPage::destroy()
 
 bool ScriptSettingsPage::apply(PropertyGroup* settings)
 {
+	settings->setProperty< PropertyBoolean >(L"Editor.AutoOpenDebugger", m_checkAutoOpenDebugger->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoOpenDebuggedScript", m_checkAutoOpenScript->isChecked());
 	return true;
 }

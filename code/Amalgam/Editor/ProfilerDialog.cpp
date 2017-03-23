@@ -88,7 +88,7 @@ void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVec
 
 		StringOutputStream ss;
 		ss.setDecimals(1);
-		ss << e.name << L" (" << ((e.end - e.start) * 1000.0f) << L" ms)";
+		ss << e.name << L" (" << ((e.end - e.start) * 1000.0f) << L" ms , " << e.alloc << L")";
 
 		m_chart->addTask(
 			m_threadIdToLane[e.threadId] * 8 + e.depth,

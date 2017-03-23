@@ -1,6 +1,7 @@
 #ifndef traktor_flash_ActionFunction1_H
 #define traktor_flash_ActionFunction1_H
 
+#include "Core/Containers/AlignedVector.h"
 #include "Flash/Action/ActionFunction.h"
 
 // import/export mechanism.
@@ -31,7 +32,7 @@ public:
 		const char* name,
 		const IActionVMImage* image,
 		uint16_t argumentCount,
-		const std::vector< std::string >& argumentsIntoVariables,
+		const AlignedVector< std::string >& argumentsIntoVariables,
 		const SmallMap< uint32_t, ActionValue >& variables,
 		const ActionDictionary* dictionary
 	);
@@ -46,7 +47,7 @@ protected:
 private:
 	Ref< const IActionVMImage > m_image;
 	uint16_t m_argumentCount;
-	std::vector< uint32_t > m_argumentsIntoVariables;
+	AlignedVector< uint32_t > m_argumentsIntoVariables;
 	SmallMap< uint32_t, ActionValue > m_variables;
 	Ref< const ActionDictionary > m_dictionary;
 };
