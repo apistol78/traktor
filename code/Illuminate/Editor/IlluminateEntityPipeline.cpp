@@ -5,6 +5,7 @@
 #include "Core/Math/Log2.h"
 #include "Core/Math/SahTree.h"
 #include "Core/Math/Winding3.h"
+#include "Core/Misc/String.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
@@ -166,6 +167,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
+	RefArray< Job > jobs;
 	if (m_build)
 	{
 		const IlluminateEntityData* sourceIlluminateEntityData = checked_type_cast< const IlluminateEntityData* >(sourceAsset);
@@ -177,6 +179,10 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			log::error << L"IlluminateEntityPipeline failed; unable to resolve all external entities" << Endl;
 			return 0;
 		}
+
+		int32_t margin = 1;
+		margin = std::max(margin, illumEntityData->getDirectConvolveRadius() + 1);
+		margin = std::max(margin, illumEntityData->getIndirectConvolveRadius() + 1);
 
 		// Get all trace entities.
 		RefArray< world::ComponentEntityData > lightEntityData;
@@ -316,11 +322,11 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 		// UV unwrap entire model.
 		int32_t outputSize = initialOutputSize;
-		if (!model::UnwrapUV(channel, sourceIlluminateEntityData->getLumelDensity(), outputSize, 1).apply(*mergedModel))
+		if (!model::UnwrapUV(channel, sourceIlluminateEntityData->getLumelDensity(), outputSize, margin).apply(*mergedModel))
 		{
 			outputSize *= 2;
 			log::info << L"First UV unwrapping attempt failed, enlarging lightmap to " << outputSize << Endl;
-			if (!model::UnwrapUV(channel, sourceIlluminateEntityData->getLumelDensity(), outputSize, 1).apply(*mergedModel))
+			if (!model::UnwrapUV(channel, sourceIlluminateEntityData->getLumelDensity(), outputSize, margin).apply(*mergedModel))
 			{
 				log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV." << Endl;
 				return 0;
@@ -376,61 +382,62 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		GBuffer gbuffer;
 		gbuffer.create(surfaces, outputSize, outputSize);
 		gbuffer.saveAsImages(Path(L"."));
-		//gbuffer.dilate(2);
+		gbuffer.dilate(margin);
 
 		// Create images.
 		Ref< drawing::Image > outputImageRadiance = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
 		outputImageRadiance->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 		Ref< drawing::Image > outputImageOcclusion = new drawing::Image(drawing::PixelFormat::getR32F(), outputSize, outputSize);
-		outputImageOcclusion->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+		outputImageOcclusion->clear(Color4f(1.0f, 1.0f, 1.0f, 0.0f));
 
-		RefArray< Job > jobs;
-
-		log::info << L"Tracing occlusion..." << Endl;
-		std::list< JobTraceOcclusion* > tracesOcclusion;
-		for (int32_t y = 0; y < outputSize; y += c_jobTileSize)
+		if (sourceIlluminateEntityData->traceOcclusion())
 		{
-			for (int32_t x = 0; x < outputSize; x += c_jobTileSize)
+			log::info << L"Tracing occlusion..." << Endl;
+			std::list< JobTraceOcclusion* > tracesOcclusion;
+			for (int32_t y = 0; y < outputSize; y += c_jobTileSize)
 			{
-				JobTraceOcclusion* trace = new JobTraceOcclusion(
-					x,
-					y,
-					sah,
-					gbuffer,
-					outputImageOcclusion,
-					64
-				);
+				for (int32_t x = 0; x < outputSize; x += c_jobTileSize)
+				{
+					JobTraceOcclusion* trace = new JobTraceOcclusion(
+						x,
+						y,
+						sah,
+						gbuffer,
+						outputImageOcclusion,
+						64
+					);
 
-				Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceOcclusion >(trace, &JobTraceOcclusion::execute));
-				if (!job)
-					return 0;
+					Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceOcclusion >(trace, &JobTraceOcclusion::execute));
+					if (!job)
+						return 0;
 
-				tracesOcclusion.push_back(trace);
-				jobs.push_back(job);
+					tracesOcclusion.push_back(trace);
+					jobs.push_back(job);
+				}
 			}
+
+			for (RefArray< Job >::iterator j = jobs.begin(); j != jobs.end(); ++j)
+				(*j)->wait();
+
+			for(std::list< JobTraceOcclusion* >::iterator j = tracesOcclusion.begin(); j != tracesOcclusion.end(); ++j)
+				delete *j;
+
+			tracesOcclusion.clear();
+			jobs.clear();
+
+			//log::info << L"Dilating occlusion map..." << Endl;
+			//drawing::DilateFilter dilateFilter(8);
+			//outputImageRadiance->apply(&dilateFilter);
+
+			if (illumEntityData->getDirectConvolveRadius() > 0)
+			{
+				log::info << L"Convolving occlusion..." << Endl;
+				outputImageOcclusion->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getDirectConvolveRadius()));
+			}
+
+			outputImageOcclusion->save(L"Occlusion.png");
 		}
-
-		for (RefArray< Job >::iterator j = jobs.begin(); j != jobs.end(); ++j)
-			(*j)->wait();
-
-		for(std::list< JobTraceOcclusion* >::iterator j = tracesOcclusion.begin(); j != tracesOcclusion.end(); ++j)
-			delete *j;
-
-		tracesOcclusion.clear();
-		jobs.clear();
-
-		//log::info << L"Dilating occlusion map..." << Endl;
-		//drawing::DilateFilter dilateFilter(8);
-		//outputImageRadiance->apply(&dilateFilter);
-
-		if (illumEntityData->getDirectConvolveRadius() > 0)
-		{
-			log::info << L"Convolving occlusion..." << Endl;
-			outputImageOcclusion->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getDirectConvolveRadius()));
-		}
-
-		outputImageOcclusion->save(L"Occlusion.png");
 
 		log::info << L"Tracing direct lighting..." << Endl;
 		std::list< JobTraceDirect* > tracesDirect;
@@ -481,6 +488,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			log::info << L"Convolving direct lighting..." << Endl;
 			outputImageRadiance->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getDirectConvolveRadius()));
 		}
+
+		outputImageRadiance->save(L"Direct.png");
 
 		if (illumEntityData->traceIndirectLighting())
 		{
@@ -543,6 +552,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 					outputImageIndirectTarget->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getIndirectConvolveRadius()));
 				}
 
+				outputImageIndirectTarget->save(L"Indirect_" + toString(i) + L".png");
+
 				log::info << L"Merging direct and indirect lighting..." << Endl;
 				for (int32_t y = 0; y < outputSize; ++y)
 				{
@@ -584,34 +595,6 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		float lumelRange = 1.0f;
 		if (!illumEntityData->highDynamicRange())
 		{
-			/*
-			lumelRange = 0.0f;
-			for (int32_t y = 0; y < outputSize; ++y)
-			{
-				for (int32_t x = 0; x < outputSize; ++x)
-				{
-					Color4f lumel;
-					outputImageRadiance->getPixelUnsafe(x, y, lumel);
-					lumelRange = max< float >(lumelRange, lumel.getRed());
-					lumelRange = max< float >(lumelRange, lumel.getGreen());
-					lumelRange = max< float >(lumelRange, lumel.getBlue());
-				}
-			}
-			log::info << L"Luminance range 0-" << lumelRange << L" lumels" << Endl;
-			*/
-			/*
-			// Normalize lightmap into 0-1 range.
-			for (int32_t y = 0; y < outputSize; ++y)
-			{
-				for (int32_t x = 0; x < outputSize; ++x)
-				{
-					Color4f lumel;
-					outputImageRadiance->getPixelUnsafe(x, y, lumel);
-					outputImageRadiance->setPixelUnsafe(x, y, lumel / Scalar(lumelRange));
-				}
-			}
-			*/
-
 			for (int32_t y = 0; y < outputSize; ++y)
 			{
 				for (int32_t x = 0; x < outputSize; ++x)

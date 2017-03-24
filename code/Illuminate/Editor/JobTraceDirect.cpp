@@ -125,23 +125,27 @@ void JobTraceDirect::execute()
 					Vector4 u, v;
 					orthogonalFrame(lightDirection, u, v);
 
-					int32_t shadowCount = 0;
-					for (int32_t j = 0; j < m_shadowSamples; ++j)
+					Scalar shadowAttenuate(1.0f);
+					if (m_shadowSamples > 0)
 					{
-						float a, b;
-						do
+						int32_t shadowCount = 0;
+						for (int32_t j = 0; j < m_shadowSamples; ++j)
 						{
-							a = random.nextFloat() * 2.0f - 1.0f;
-							b = random.nextFloat() * 2.0f - 1.0f;
+							float a, b;
+							do
+							{
+								a = random.nextFloat() * 2.0f - 1.0f;
+								b = random.nextFloat() * 2.0f - 1.0f;
+							}
+							while ((a * a) + (b * b) > 1.0f);
+
+							Vector4 shadowDirection = (i->position + u * Scalar(a * m_pointLightRadius) + v * Scalar(b * m_pointLightRadius) - gb.position).xyz0();
+
+							if (m_sah.queryAnyIntersection(gb.position + gb.normal * c_traceOffset, shadowDirection.normalized(), lightDistance - FUZZY_EPSILON, gb.surfaceIndex, cache))
+								shadowCount++;
 						}
-						while ((a * a) + (b * b) > 1.0f);
-
-						Vector4 shadowDirection = (i->position + u * Scalar(a * m_pointLightRadius) + v * Scalar(b * m_pointLightRadius) - gb.position).xyz0();
-
-						if (m_sah.queryAnyIntersection(gb.position + gb.normal * c_traceOffset, shadowDirection.normalized(), lightDistance - FUZZY_EPSILON, gb.surfaceIndex, cache))
-							shadowCount++;
+						shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_shadowSamples);
 					}
-					Scalar shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_shadowSamples);
 
 					radiance += i->sunColor * shadowAttenuate * distanceAttenuate * phi;
 				}

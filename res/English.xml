@@ -3373,6 +3373,10 @@
       <second>Create script</second>
     </item>
     <item>
+      <first>GAMEENTITY_WIZARD_CREATE_GROUP</first>
+      <second>Create into group entity</second>
+    </item>
+    <item>
       <first>GAMEENTITY_WIZARD_FILE_TITLE</first>
       <second>Select mesh</second>
     </item>

@@ -51,7 +51,11 @@ private:
 	Ref< ui::Edit > m_editCollisionMask;
 	Ref< ui::Edit > m_editMaterial;
 	Ref< ui::Edit > m_editFriction;
+	Ref< ui::CheckBox > m_checkBoxCreateGroup;
 	Ref< ui::CheckBox > m_checkBoxCreateScript;
+	bool m_nameEdited;
+
+	void eventNameChange(ui::ContentChangeEvent* event);
 
 	void eventBrowseVisualMeshClick(ui::ButtonClickEvent* event);
 
