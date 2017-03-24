@@ -279,35 +279,9 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 		model::CleanDegenerate().apply(*mergedModel);
 
-		// Get next free channel to store lightmap UV.
-		uint32_t channel = mergedModel->getAvailableTexCoordChannel();
-
-		// UV unwrap entire model.
-		log::info << L"UV unwrapping, using channel " << channel << L"..." << Endl;
-		if (!model::UnwrapUV(channel, 3.0f, 0.0f, 0.0f).apply(*mergedModel))
-		{
-			log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV." << Endl;
-			return 0;
-		}
-
-		model::ModelFormat::writeAny(Path(L"./MergedModel.obj"), mergedModel);
-
-		// Calculate output size from lumel density.
-		const model::Polygon& p = mergedModel->getPolygon(0);
-		const model::Vertex& v0 = mergedModel->getVertex(p.getVertex(0));
-		const model::Vertex& v1 = mergedModel->getVertex(p.getVertex(1));
-		Vector4 dP = mergedModel->getPosition(v1.getPosition()) - mergedModel->getPosition(v0.getPosition());
-		Vector2 dUV = mergedModel->getTexCoord(v1.getTexCoord(channel)) - mergedModel->getTexCoord(v0.getTexCoord(channel));
-		float size = sourceIlluminateEntityData->getLumelDensity() * dP.length() / dUV.length();
-		int32_t outputSize = alignUp(int32_t(size + 0.5f), c_jobTileSize);
-		log::info << L"Lumel density " << sourceIlluminateEntityData->getLumelDensity() << L" lumels/unit, lightmap size " << outputSize << Endl;
-
-		// Setup tracer.
-		log::info << L"Preparing tracer..." << Endl;
+		// Create 3d windings.
 		const std::vector< model::Polygon >& polygons = mergedModel->getPolygons();
 		std::vector< model::Vertex > vertices = mergedModel->getVertices();
-
-		// Create 3d windings.
 		AlignedVector< Winding3 > windings(polygons.size());
 		for (uint32_t j = 0; j < polygons.size(); ++j)
 		{
@@ -324,6 +298,39 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				w.push(polyVertexPosition);
 			}
 		}
+
+		// Get next free channel to store lightmap UV.
+		uint32_t channel = mergedModel->getAvailableTexCoordChannel();
+		log::info << L"UV unwrapping, using channel " << channel << L"..." << Endl;
+
+		// Calculate output size from lumel density.
+		float totalWorldArea = 0.0f;
+		for (AlignedVector< Winding3 >::const_iterator i = windings.begin(); i != windings.end(); ++i)
+			totalWorldArea += std::abs(i->area());
+
+		float totalLightMapArea = sourceIlluminateEntityData->getLumelDensity() * sourceIlluminateEntityData->getLumelDensity() * totalWorldArea;
+		float size = std::sqrt(totalLightMapArea);
+
+		int32_t initialOutputSize = alignUp(int32_t(size + 0.5f), c_jobTileSize);
+		log::info << L"Lumel density " << sourceIlluminateEntityData->getLumelDensity() << L" lumels/unit => initial lightmap size " << initialOutputSize << Endl;
+
+		// UV unwrap entire model.
+		int32_t outputSize = initialOutputSize;
+		if (!model::UnwrapUV(channel, sourceIlluminateEntityData->getLumelDensity(), outputSize, 1).apply(*mergedModel))
+		{
+			outputSize *= 2;
+			log::info << L"First UV unwrapping attempt failed, enlarging lightmap to " << outputSize << Endl;
+			if (!model::UnwrapUV(channel, sourceIlluminateEntityData->getLumelDensity(), outputSize, 1).apply(*mergedModel))
+			{
+				log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV." << Endl;
+				return 0;
+			}
+		}
+
+		model::ModelFormat::writeAny(Path(L"./MergedModel.obj"), mergedModel);
+
+		// Setup tracer.
+		log::info << L"Preparing tracer..." << Endl;
 
 		// Create traceable surfaces.
 		AlignedVector< Surface > surfaces(polygons.size());
@@ -369,7 +376,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		GBuffer gbuffer;
 		gbuffer.create(surfaces, outputSize, outputSize);
 		gbuffer.saveAsImages(Path(L"."));
-		//gbuffer.dilate(8);
+		//gbuffer.dilate(2);
 
 		// Create images.
 		Ref< drawing::Image > outputImageRadiance = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
@@ -465,9 +472,9 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		tracesDirect.clear();
 		jobs.clear();
 
-		log::info << L"Dilating direct light map..." << Endl;
-		drawing::DilateFilter dilateFilter(8);
-		outputImageRadiance->apply(&dilateFilter);
+		//log::info << L"Dilating direct light map..." << Endl;
+		//drawing::DilateFilter dilateFilter(8);
+		//outputImageRadiance->apply(&dilateFilter);
 
 		if (illumEntityData->getDirectConvolveRadius() > 0)
 		{
@@ -526,9 +533,9 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				tracesIndirect.clear();
 				jobs.clear();
 
-				log::info << L"Dilating indirect light map..." << Endl;
-				drawing::DilateFilter dilateFilter(8);
-				outputImageIndirectTarget->apply(&dilateFilter);
+				//log::info << L"Dilating indirect light map..." << Endl;
+				//drawing::DilateFilter dilateFilter(8);
+				//outputImageIndirectTarget->apply(&dilateFilter);
 
 				if (illumEntityData->getIndirectConvolveRadius() > 0)
 				{

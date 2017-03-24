@@ -24,15 +24,15 @@ class T_DLLCLASS UnwrapUV : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	UnwrapUV(int32_t channel, float margin, float ustep, float vstep);
+	UnwrapUV(int32_t channel, float uvPerUnit, int32_t size, int32_t margin);
 
 	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_channel;
-	float m_margin;
-	float m_ustep;
-	float m_vstep;
+	float m_uvPerUnit;
+	int32_t m_size;
+	int32_t m_margin;
 };
 
 	}

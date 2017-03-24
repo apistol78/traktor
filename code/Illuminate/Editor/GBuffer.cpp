@@ -107,6 +107,9 @@ bool GBuffer::create(const AlignedVector< Surface >& surfaces, int32_t width, in
 					{
 						for (int32_t ix = -1; ix <= 1; ++ix)
 						{
+							if (x + ix < 0 || x + ix >= width || y + iy < 0 || y + iy >= height)
+								continue;
+
 							Element& e = m_data[x + ix + (y + iy) * width];
 							if ((ix != 0 || iy != 0) && e.surfaceIndex >= 0)
 								continue;
