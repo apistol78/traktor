@@ -16,20 +16,14 @@ namespace traktor
 {
 	namespace model
 	{
-		namespace
-		{
-
-const float c_texelsPerUnit = 10.0f;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.UnwrapUV", UnwrapUV, IModelOperation)
 
-UnwrapUV::UnwrapUV(int32_t channel, float margin, float ustep, float vstep)
+UnwrapUV::UnwrapUV(int32_t channel, float uvPerUnit, int32_t size, int32_t margin)
 :	m_channel(channel)
+,	m_uvPerUnit(uvPerUnit)
+,	m_size(size)
 ,	m_margin(margin)
-,	m_ustep(ustep)
-,	m_vstep(vstep)
 {
 }
 
@@ -76,9 +70,9 @@ bool UnwrapUV::apply(Model& model) const
 					float u = w[j].y();
 					float v = w[j].z();
 					if (wp.normal().x() < 0.0f)
-						wuv.points.push_back(Vector2(u, v) * c_texelsPerUnit);
+						wuv.points.push_back(Vector2(u, v) * m_uvPerUnit);
 					else
-						wuv.points.push_back(Vector2(u, -v) * c_texelsPerUnit);
+						wuv.points.push_back(Vector2(u, -v) * m_uvPerUnit);
 				}
 				break;
 
@@ -87,9 +81,9 @@ bool UnwrapUV::apply(Model& model) const
 					float u = w[j].x();
 					float v = w[j].z();
 					if (wp.normal().y() > 0.0f)
-						wuv.points.push_back(Vector2(u, v) * c_texelsPerUnit);
+						wuv.points.push_back(Vector2(u, v) * m_uvPerUnit);
 					else
-						wuv.points.push_back(Vector2(u, -v) * c_texelsPerUnit);
+						wuv.points.push_back(Vector2(u, -v) * m_uvPerUnit);
 				}
 				break;
 
@@ -98,9 +92,9 @@ bool UnwrapUV::apply(Model& model) const
 					float u = w[j].x();
 					float v = w[j].y();
 					if (wp.normal().z() < 0.0f)
-						wuv.points.push_back(Vector2(u, v) * c_texelsPerUnit);
+						wuv.points.push_back(Vector2(u, v) * m_uvPerUnit);
 					else
-						wuv.points.push_back(Vector2(u, -v) * c_texelsPerUnit);
+						wuv.points.push_back(Vector2(u, -v) * m_uvPerUnit);
 				}
 				break;
 
@@ -139,7 +133,6 @@ bool UnwrapUV::apply(Model& model) const
 	}
 
 	T_FATAL_ASSERT (groups.size() == originalPolygons.size());
-
 
 	// Rotate each group so longest edge of it's hull is horizontal.
 	for (uint32_t i = 0; i < lastGroupId; ++i)
@@ -183,15 +176,21 @@ bool UnwrapUV::apply(Model& model) const
 		}
 	}
 
+	// Quantize all UVs to be center of texel.
+	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
+	{
+		for (uint32_t j = 0; j < wuvs[i].points.size(); ++j)
+		{
+			wuvs[i].points[j].x = std::floor(wuvs[i].points[j].x * m_size) / m_size;
+			wuvs[i].points[j].y = std::floor(wuvs[i].points[j].y * m_size) / m_size;
+		}
+	}
 
 	// For each group calculate bounding boxes.
-	AlignedVector< Aabb2 > aabbuvs;
-	float totalTexelArea = 0.0f;
-
+	AlignedVector< Aabb2 > aabbuvs(lastGroupId);
 	for (uint32_t i = 0; i < lastGroupId; ++i)
 	{
-		Aabb2 aabbuv;
-
+		Aabb2& aabbuv = aabbuvs[i];
 		for (uint32_t j = 0; j < originalPolygons.size(); ++j)
 		{
 			if (groups[j] == i)
@@ -200,55 +199,28 @@ bool UnwrapUV::apply(Model& model) const
 					aabbuv.contain(wuvs[j].points[k]);
 			}
 		}
-
 		T_FATAL_ASSERT (!aabbuv.empty());
-
-		aabbuv.mn -= Vector2(m_margin, m_margin);
-		aabbuv.mx += Vector2(m_margin, m_margin);
-
-		Vector2 size = (aabbuv.mx - aabbuv.mn);
-		totalTexelArea += size.x * size.y;
-
-		aabbuvs.push_back(aabbuv);
 	}
-
-	T_FATAL_ASSERT (aabbuvs.size() == lastGroupId);
-
-	int32_t size = std::max(int32_t(std::sqrt(totalTexelArea) / 2.0f), 16);
 	
 	// Pack each group into a separate rectangle.
 	AutoPtr< stbrp_context > packer(new stbrp_context());
-	AutoArrayPtr< stbrp_node > nodes(new stbrp_node [size]);
+	AutoArrayPtr< stbrp_node > nodes(new stbrp_node [m_size]);
 
 	stbrp_setup_allow_out_of_mem(packer.ptr(), 1);
-	stbrp_init_target(packer.ptr(), size, size, nodes.ptr(), size);
+	stbrp_init_target(packer.ptr(), m_size, m_size, nodes.ptr(), m_size);
 
 	std::vector< stbrp_rect > rects;
 	for (uint32_t i = 0; i < aabbuvs.size(); )
 	{
 		int32_t width = int32_t((aabbuvs[i].mx - aabbuvs[i].mn).x + 0.5f);
 		int32_t height = int32_t((aabbuvs[i].mx - aabbuvs[i].mn).y + 0.5f);
-		T_FATAL_ASSERT (width > 0);
-		T_FATAL_ASSERT (height > 0);
 
 		stbrp_rect r = { 0 };
-		r.w = width + 2;
-		r.h = height + 2;
+		r.w = width + m_margin * 2;
+		r.h = height + m_margin * 2;
 		stbrp_pack_rects(packer.ptr(), &r, 1);
 		if (!r.was_packed)
-		{
-			i = 0;
-			size += size / 4;
-
-			packer.reset(new stbrp_context());
-			nodes.reset(new stbrp_node [size]);
-
-			stbrp_setup_allow_out_of_mem(packer.ptr(), 1);
-			stbrp_init_target(packer.ptr(), size, size, nodes.ptr(), size);
-
-			rects.resize(0);
-			continue;
-		}
+			return false;
 
 		rects.push_back(r);
 		++i;
@@ -262,10 +234,6 @@ bool UnwrapUV::apply(Model& model) const
 	{
 		uint32_t g = groups[i];
 		const stbrp_rect& packedRect = rects[g];
-
-		int32_t width = int32_t((aabbuvs[g].mx - aabbuvs[g].mn).x + 0.5f);
-		int32_t height = int32_t((aabbuvs[g].mx - aabbuvs[g].mn).y + 0.5f);
-
 		for (uint32_t j = 0; j < wuvs[i].points.size(); ++j)
 		{
 			Vertex vertex = originalVertices[originalPolygons[i].getVertex(j)];
@@ -274,13 +242,8 @@ bool UnwrapUV::apply(Model& model) const
 			T_FATAL_ASSERT (uv.x >= -FUZZY_EPSILON && uv.x <= 1.0f + FUZZY_EPSILON);
 			T_FATAL_ASSERT (uv.y >= -FUZZY_EPSILON && uv.y <= 1.0f + FUZZY_EPSILON);
 
-			uv.x = (uv.x * packedRect.w + packedRect.x) / size;
-			uv.y = (uv.y * packedRect.h + packedRect.y) / size;
-
-			if (m_ustep > 0.0f)
-				uv.x = std::floor(uv.x / m_ustep) * m_ustep;
-			if (m_vstep > 0.0f)
-				uv.y = std::floor(uv.y / m_vstep) * m_vstep;
+			uv.x = (uv.x * (packedRect.w - m_margin * 2) + packedRect.x + m_margin) / m_size;
+			uv.y = (uv.y * (packedRect.h - m_margin * 2) + packedRect.y + m_margin) / m_size;
 
 			vertex.setTexCoord(m_channel, model.addUniqueTexCoord(uv));
 			originalPolygons[i].setVertex(j, model.addUniqueVertex(vertex));
