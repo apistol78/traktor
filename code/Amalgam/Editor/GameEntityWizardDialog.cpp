@@ -28,6 +28,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/MiniButton.h"
 #include "World/Entity/ComponentEntityData.h"
+#include "World/Entity/GroupEntityData.h"
 #include "World/Entity/ScriptComponentData.h"
 
 namespace traktor
@@ -40,6 +41,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.GameEntityWizardDialog", GameEntityWiza
 GameEntityWizardDialog::GameEntityWizardDialog(editor::IEditor* editor, db::Group* group)
 :	m_editor(editor)
 ,	m_group(group)
+,	m_nameEdited(false)
 {
 }
 
@@ -64,6 +66,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 
 	m_editName = new ui::Edit();
 	m_editName->create(containerName, i18n::Text(L"GAMEENTITY_WIZARD_UNNAMED"));
+	m_editName->addEventHandler< ui::ContentChangeEvent >(this, &GameEntityWizardDialog::eventNameChange);
 
 	// Visual mesh
 	Ref< ui::Container > containerVisualMesh = new ui::Container();
@@ -131,12 +134,20 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	m_editFriction = new ui::Edit();
 	m_editFriction->create(containerPhysics, L"0.75");
 
+	m_checkBoxCreateGroup = new ui::CheckBox();
+	m_checkBoxCreateGroup->create(this, i18n::Text(L"GAMEENTITY_WIZARD_CREATE_GROUP"));
+
 	// Script
 	m_checkBoxCreateScript = new ui::CheckBox();
 	m_checkBoxCreateScript->create(this, i18n::Text(L"GAMEENTITY_WIZARD_CREATE_SCRIPT"));
 
 	addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventDialogClick);
 	return true;
+}
+
+void GameEntityWizardDialog::eventNameChange(ui::ContentChangeEvent* event)
+{
+	m_nameEdited = true;
 }
 
 void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* event)
@@ -162,6 +173,9 @@ void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* ev
 	);
 
 	m_editVisualMesh->setText(fileName.getPathName());
+
+	if (!m_nameEdited)
+		m_editName->setText(fileName.getFileNameNoExtension());
 }
 
 void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent* event)
@@ -341,6 +355,16 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			));
 		}
 
+		Ref< world::EntityData > instanceEntityData = entityData;
+
+		if (m_checkBoxCreateGroup->isChecked())
+		{
+			Ref< world::GroupEntityData > groupEntityData = new world::GroupEntityData();
+			groupEntityData->setName(name);
+			groupEntityData->addEntityData(entityData);
+			instanceEntityData = groupEntityData;
+		}
+
 		// Create entity asset instance.
 		Ref< db::Instance > entityDataInstance = m_group->createInstance(
 			name + L"-Entity",
@@ -352,7 +376,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			return;
 		}
 
-		entityDataInstance->setObject(entityData);
+		entityDataInstance->setObject(instanceEntityData);
 
 		if (!entityDataInstance->commit())
 		{

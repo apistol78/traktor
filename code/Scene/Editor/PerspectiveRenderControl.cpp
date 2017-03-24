@@ -496,18 +496,19 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		Vector4 movement(0.0f, 0.0f, 0.0f, 0.0f);
 
 		ui::IEventLoop* eventLoop = ui::Application::getInstance()->getEventLoop();
-		if (eventLoop->isKeyDown(ui::VkA))
-			movement += Vector4(-1.0f, 0.0f, 0.0f);
-		if (eventLoop->isKeyDown(ui::VkD))
-			movement += Vector4(1.0f, 0.0f, 0.0f);
-		if (eventLoop->isKeyDown(ui::VkW))
-			movement += Vector4(0.0f, 0.0f, 1.0f);
-		if (eventLoop->isKeyDown(ui::VkS))
-			movement += Vector4(0.0f, 0.0f, -1.0f);
-		if (eventLoop->isKeyDown(ui::VkShift))
-			movement *= Scalar(3.0f);
-		if (eventLoop->isKeyDown(ui::VkControl))
-			movement *= Scalar(1.0f / 3.0f);
+		if (!eventLoop->isKeyDown(ui::VkControl))
+		{
+			if (eventLoop->isKeyDown(ui::VkA))
+				movement += Vector4(-1.0f, 0.0f, 0.0f);
+			if (eventLoop->isKeyDown(ui::VkD))
+				movement += Vector4(1.0f, 0.0f, 0.0f);
+			if (eventLoop->isKeyDown(ui::VkW))
+				movement += Vector4(0.0f, 0.0f, 1.0f);
+			if (eventLoop->isKeyDown(ui::VkS))
+				movement += Vector4(0.0f, 0.0f, -1.0f);
+			if (eventLoop->isKeyDown(ui::VkShift))
+				movement *= Scalar(3.0f);
+		}
 
 		if (movement.length2() > FUZZY_EPSILON)
 			m_camera->move(movement * Scalar(60.0f * deltaTime));

@@ -38,6 +38,8 @@ public:
 
 	const Guid& getSeedGuid() const { return m_seedGuid; }
 
+	bool traceOcclusion() const { return m_occlusion; }
+
 	bool traceDirectLighting() const { return m_directLighting; }
 
 	bool traceIndirectLighting() const { return m_indirectLighting; }
@@ -72,6 +74,7 @@ public:
 
 private:
 	Guid m_seedGuid;
+	bool m_occlusion;
 	bool m_directLighting;
 	bool m_indirectLighting;
 	float m_lumelDensity;

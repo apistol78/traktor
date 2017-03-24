@@ -9,10 +9,11 @@ namespace traktor
 	namespace illuminate
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.illuminate.IlluminateEntityData", 2, IlluminateEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.illuminate.IlluminateEntityData", 3, IlluminateEntityData, world::EntityData)
 
 IlluminateEntityData::IlluminateEntityData()
 :	m_seedGuid(Guid::create())
+,	m_occlusion(true)
 ,	m_directLighting(true)
 ,	m_indirectLighting(true)
 ,	m_lumelDensity(8.0f)
@@ -65,6 +66,10 @@ void IlluminateEntityData::serialize(ISerializer& s)
 	world::EntityData::serialize(s);
 	
 	s >> Member< Guid >(L"seedGuid", m_seedGuid);
+
+	if (s.getVersion() >= 3)
+		s >> Member< bool >(L"occlusion", m_occlusion);
+
 	s >> Member< bool >(L"directLighting", m_directLighting);
 	s >> Member< bool >(L"indirectLighting", m_indirectLighting);
 
@@ -72,7 +77,7 @@ void IlluminateEntityData::serialize(ISerializer& s)
 		s >> Member< float >(L"lumelDensity", m_lumelDensity);
 
 	s >> Member< float >(L"pointLightRadius", m_pointLightRadius);
-	s >> Member< int32_t >(L"shadowSamples", m_shadowSamples, AttributeRange(1));
+	s >> Member< int32_t >(L"shadowSamples", m_shadowSamples, AttributeRange(0));
 
 	if (s.getVersion() >= 1)
 	{

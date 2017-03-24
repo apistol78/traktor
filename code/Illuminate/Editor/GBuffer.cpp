@@ -17,7 +17,11 @@ const int32_t c_dilateOffsets[][2] =
 	{ -1,  0 },
 	{  1,  0 },
 	{  0, -1 },
-	{  0,  1 }
+	{  0,  1 },
+	{ -1, -1 },
+	{  1, -1 },
+	{ -1, -1 },
+	{  1,  1 }
 };
 
 		}
@@ -103,31 +107,14 @@ bool GBuffer::create(const AlignedVector< Surface >& surfaces, int32_t width, in
 					if (alpha < 0.0f || beta < 0.0f || gamma < 0.0f)
 						continue;
 
-					for (int32_t iy = -1; iy <= 1; ++iy)
-					{
-						for (int32_t ix = -1; ix <= 1; ++ix)
-						{
-							if (x + ix < 0 || x + ix >= width || y + iy < 0 || y + iy >= height)
-								continue;
+					Element& e = m_data[x + y * width];
 
-							Element& e = m_data[x + ix + (y + iy) * width];
-							if ((ix != 0 || iy != 0) && e.surfaceIndex >= 0)
-								continue;
+					Vector4 position = (P[0] * Scalar(alpha) + P[1] * Scalar(beta) + P[2] * Scalar(gamma)).xyz1();
+					Vector4 normal = (N[0] * Scalar(alpha) + N[1] * Scalar(beta) + N[2] * Scalar(gamma)).xyz0().normalized();
 
-							Vector2 pt = Vector2(x + ix, y + iy);
-
-							float alpha = ((t.points[1].y - t.points[2].y) * (pt.x - t.points[2].x) + (t.points[2].x - t.points[1].x) * (pt.y - t.points[2].y)) * invDenom;
-							float beta = ((t.points[2].y - t.points[0].y) * (pt.x - t.points[2].x) + (t.points[0].x - t.points[2].x) * (pt.y - t.points[2].y)) * invDenom;
-							float gamma = 1.0f - alpha - beta;
-
-							Vector4 position = (P[0] * Scalar(alpha) + P[1] * Scalar(beta) + P[2] * Scalar(gamma)).xyz1();
-							Vector4 normal = (N[0] * Scalar(alpha) + N[1] * Scalar(beta) + N[2] * Scalar(gamma)).xyz0().normalized();
-
-							e.surfaceIndex = j;
-							e.position = position;
-							e.normal = normal;
-						}
-					}
+					e.surfaceIndex = j;
+					e.position = position;
+					e.normal = normal;
 				}
 			}
 		}
