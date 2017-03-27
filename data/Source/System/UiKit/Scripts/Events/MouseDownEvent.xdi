@@ -4,7 +4,7 @@
 	<![CDATA[
 -- MouseDownEvent
 
-MouseDownEvent = MouseDownEvent or {}
+MouseDownEvent = MouseDownEvent or { mask = 0x00000004 }
 MouseDownEvent_meta = MouseDownEvent_meta or { name = "MouseDownEvent", __index = MouseDownEvent }
 
 function MouseDownEvent.new(x, y)

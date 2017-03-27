@@ -4,7 +4,7 @@
 	<![CDATA[
 -- MouseMoveEvent
 
-MouseMoveEvent = MouseMoveEvent or {}
+MouseMoveEvent = MouseMoveEvent or { mask = 0x00000020 }
 MouseMoveEvent_meta = MouseMoveEvent_meta or { name = "MouseMoveEvent", __index = MouseMoveEvent }
 
 function MouseMoveEvent.new(x, y)

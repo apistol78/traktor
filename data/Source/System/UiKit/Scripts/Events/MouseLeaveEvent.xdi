@@ -3,8 +3,9 @@
 	<text>
 	<![CDATA[
 -- MouseLeaveEvent
+#using \{1821BA8C-3175-C94C-8520-87FFEFC1EDAF}
 
-MouseLeaveEvent = MouseLeaveEvent or {}
+MouseLeaveEvent = MouseLeaveEvent or { mask = 0x00000010 | MouseMoveEvent.mask }
 MouseLeaveEvent_meta = MouseLeaveEvent_meta or { name = "MouseLeaveEvent", __index = MouseLeaveEvent }
 
 function MouseLeaveEvent.new()

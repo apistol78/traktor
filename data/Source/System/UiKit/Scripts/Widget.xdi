@@ -250,14 +250,17 @@ function Widget:getMousePosition()
 end
 
 function Widget:addEventListener(eventType, target, fn)
+	assert (eventType.mask ~= nil)
 	self._eventListeners[eventType] = {
 		target = target,
 		fn = fn
 	}
+	self:getAncestor():_updateEventFilter()
 end
 
 function Widget:removeEventListener(eventType, target, fn)
 	self._eventListeners[eventType] = nil
+	self:getAncestor():_updateEventFilter()
 end
 
 -- Private
@@ -270,6 +273,7 @@ function Widget:_initialize(parent, mc)
 	self._visible = true
 	self._placement = { x = 0, y = 0, width = 0, height = 0 }
 	self._eventListeners = {}
+	self._eventFilter = 0x00000000
 	self._mouseInside = false
 	self._mousePressed = false
 	self._children = {}
@@ -280,12 +284,14 @@ end
 
 function Widget:_addChild(child)
 	table.insert(self._children, child)
+	self:getAncestor():_updateEventFilter()
 end
 
 function Widget:_removeChild(child)
 	for i, k in ipairs(self._children) do
 		if k == child then
 			table.remove(self._children, i)
+			self:getAncestor():_updateEventFilter()
 			return
 		end
 	end
@@ -298,6 +304,18 @@ function Widget:_isChild(child)
 		if c:_isChild(child) then return true end
 	end
 	return false
+end
+
+function Widget:_updateEventFilter()
+	self._eventFilter = 0x00000000
+	for k, v in pairs(self._eventListeners) do
+		assert (v ~= nil)
+		self._eventFilter = self._eventFilter | k.mask
+	end
+	for _, c in ipairs(self._children) do
+		self._eventFilter = self._eventFilter | c:_updateEventFilter()
+	end
+	return self._eventFilter
 end
 
 function Widget:_notifyEventListeners(event)
@@ -336,6 +354,9 @@ function Widget:_dispatchEvent(event)
 	end
 
 	local eventType = getmetatable(event).__index
+	if (self._eventFilter & eventType.mask) == 0x00000000 then
+		return false
+	end
 
 	-- Propagate event further to children first.
 	for _, c in ipairs(self._children) do

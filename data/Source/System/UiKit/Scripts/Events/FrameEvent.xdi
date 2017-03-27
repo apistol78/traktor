@@ -4,7 +4,7 @@
 	<![CDATA[
 -- FrameEvent
 
-FrameEvent = FrameEvent or {}
+FrameEvent = FrameEvent or { mask = 0x00000002 }
 FrameEvent_meta = FrameEvent_meta or { name = "FrameEvent", __index = FrameEvent }
 
 function FrameEvent.new()

@@ -4,7 +4,7 @@
 	<![CDATA[
 -- FocusEvent
 
-FocusEvent = FocusEvent or {}
+FocusEvent = FocusEvent or { mask = 0x00000001 }
 FocusEvent_meta = FocusEvent_meta or { name = "FocusEvent", __index = FocusEvent }
 
 function FocusEvent.new(received)
