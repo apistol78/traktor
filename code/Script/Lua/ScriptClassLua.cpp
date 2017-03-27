@@ -1,3 +1,4 @@
+#include "Core/Timer/Profiler.h"
 #include "Script/Lua/ScriptClassLua.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
@@ -127,6 +128,7 @@ std::wstring ScriptClassLua::getMethodSignature(uint32_t methodId) const
 
 Any ScriptClassLua::invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const
 {
+	T_PROFILER_SCOPE(L"Script invoke");
 	return m_scriptContext->executeMethod(
 		mandatory_non_null_type_cast< ScriptObjectLua* >(object),
 		m_methods[methodId].ref,
