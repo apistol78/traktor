@@ -41,7 +41,6 @@ FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRend
 ,	m_soundRenderer(soundRenderer)
 ,	m_movieLoader(movieLoader)
 ,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
-,	m_soundPlayer(new FlashSoundPlayer(soundRenderer))
 ,	m_intervalNextId(1)
 ,	m_timeCurrent(0.0f)
 ,	m_timeNext(0.0f)
@@ -49,6 +48,8 @@ FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRend
 ,	m_gcEnable(true)
 ,	m_framesUntilCollection(c_framesBetweenCollections)
 {
+	if (soundRenderer)
+		m_soundPlayer = new FlashSoundPlayer(soundRenderer);
 }
 
 FlashMoviePlayer::~FlashMoviePlayer()
@@ -191,117 +192,134 @@ void FlashMoviePlayer::executeFrame()
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(m_movieInstance);
 
-	// Collect interval functions.
-	AlignedVector< std::pair< ActionObject*, ActionFunction* > > intervalFns;
-	for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
+	// Collect and issue interval functions.
+	if (!m_interval.empty())
 	{
-		if (i->second.count++ >= i->second.interval)
+		T_PROFILER_SCOPE(L"FlashMoviePlayer interval");
+		AlignedVector< std::pair< ActionObject*, ActionFunction* > > intervalFns;
+		for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
 		{
-			intervalFns.push_back(std::make_pair(i->second.target, i->second.function));
-			i->second.count = 0;
+			if (i->second.count++ >= i->second.interval)
+			{
+				intervalFns.push_back(std::make_pair(i->second.target, i->second.function));
+				i->second.count = 0;
+			}
 		}
+		ActionValueArray argv;
+		for (AlignedVector< std::pair< ActionObject*, ActionFunction* > >::const_iterator i = intervalFns.begin(); i != intervalFns.end(); ++i)
+			i->second->call(i->first, argv);
 	}
-
-	// Issue interval functions.
-	ActionValueArray argv;
-	for (AlignedVector< std::pair< ActionObject*, ActionFunction* > >::const_iterator i = intervalFns.begin(); i != intervalFns.end(); ++i)
-		i->second->call(i->first, argv);
 
 	// Issue all events in sequence as each event possibly update
 	// the play head and other aspects of the movie.
-
-	if (m_soundPlayer)
-		m_movieInstance->updateDisplayListAndSounds(m_soundPlayer);
-	else
-		m_movieInstance->updateDisplayList();
+	{
+		T_PROFILER_SCOPE(L"FlashMoviePlayer updateDisplayList");
+		if (m_soundPlayer)
+			m_movieInstance->updateDisplayListAndSounds(m_soundPlayer);
+		else
+			m_movieInstance->updateDisplayList();
+	}
 
 	// Dispatch events.
-	for (AlignedVector< Event >::const_iterator i = m_events.begin(); i != m_events.end(); ++i)
+	if (!m_events.empty())
 	{
-		const Event& evt = *i;
-		switch (evt.eventType)
+		T_PROFILER_SCOPE(L"FlashMoviePlayer events");
+		for (AlignedVector< Event >::const_iterator i = m_events.begin(); i != m_events.end(); ++i)
 		{
-		case EvtKey:
-			m_movieInstance->eventKey(evt.unicode);
-			break;
-
-		case EvtKeyDown:
-			if (m_key)
-				m_key->eventKeyDown(evt.keyCode);
-			m_movieInstance->eventKeyDown(evt.keyCode);
-			break;
-
-		case EvtKeyUp:
-			if (m_key)
-				m_key->eventKeyUp(evt.keyCode);
-			m_movieInstance->eventKeyUp(evt.keyCode);
-			break;
-
-		case EvtMouseDown:
-			if (m_mouse)
-				m_mouse->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
-			m_movieInstance->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
-			break;
-
-		case EvtMouseUp:
-			if (m_mouse)
-				m_mouse->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
-			m_movieInstance->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
-			break;
-
-		case EvtMouseMove:
+			const Event& evt = *i;
+			switch (evt.eventType)
 			{
+			case EvtKey:
+				m_movieInstance->eventKey(evt.unicode);
+				break;
+
+			case EvtKeyDown:
+				if (m_key)
+					m_key->eventKeyDown(evt.keyCode);
+				m_movieInstance->eventKeyDown(evt.keyCode);
+				break;
+
+			case EvtKeyUp:
+				if (m_key)
+					m_key->eventKeyUp(evt.keyCode);
+				m_movieInstance->eventKeyUp(evt.keyCode);
+				break;
+
+			case EvtMouseDown:
 				if (m_mouse)
-					m_mouse->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+					m_mouse->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+				m_movieInstance->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+				break;
 
-				// Check if mouse cursor still over "rolled over" character.
-				if (context->getRolledOver())
+			case EvtMouseUp:
+				if (m_mouse)
+					m_mouse->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+				m_movieInstance->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+				break;
+
+			case EvtMouseMove:
 				{
-					FlashSpriteInstance* rolledOverSprite = checked_type_cast< FlashSpriteInstance* >(context->getRolledOver());
-					bool inside = false;
-					if (rolledOverSprite->isVisible())
+					if (m_mouse)
+						m_mouse->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+
+					// Check if mouse cursor still over "rolled over" character.
+					if (context->getRolledOver())
 					{
-						Matrix33 intoCharacter = rolledOverSprite->getFullTransform().inverse();
-						Aabb2 bounds = rolledOverSprite->getVisibleLocalBounds();
-						Vector2 xy = intoCharacter * Vector2(float(evt.mouse.x), float(evt.mouse.y));
-						inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
+						FlashSpriteInstance* rolledOverSprite = checked_type_cast< FlashSpriteInstance* >(context->getRolledOver());
+						bool inside = false;
+						if (rolledOverSprite->isVisible())
+						{
+							Matrix33 intoCharacter = rolledOverSprite->getFullTransform().inverse();
+							Aabb2 bounds = rolledOverSprite->getVisibleLocalBounds();
+							Vector2 xy = intoCharacter * Vector2(float(evt.mouse.x), float(evt.mouse.y));
+							inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
+						}
+						if (!inside)
+						{
+							// Cursor has escaped; issue roll out.
+							rolledOverSprite->executeScriptEvent(ActionContext::IdOnRollOut, ActionValue());
+							context->setRolledOver(0);
+						}
 					}
-					if (!inside)
-					{
-						// Cursor has escaped; issue roll out.
-						rolledOverSprite->executeScriptEvent(ActionContext::IdOnRollOut, ActionValue());
-						context->setRolledOver(0);
-					}
+
+					m_movieInstance->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 				}
+				break;
 
-				m_movieInstance->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+			case EvtMouseWheel:
+				if (m_mouse)
+					m_mouse->eventMouseWheel(evt.mouse.x, evt.mouse.y, evt.mouse.delta);
+				break;
+
+			case EvtViewResize:
+				if (m_stage)
+					m_stage->eventResize(evt.view.width, evt.view.height);
+				break;
 			}
-			break;
-
-		case EvtMouseWheel:
-			if (m_mouse)
-				m_mouse->eventMouseWheel(evt.mouse.x, evt.mouse.y, evt.mouse.delta);
-			break;
-
-		case EvtViewResize:
-			if (m_stage)
-				m_stage->eventResize(evt.view.width, evt.view.height);
-			break;
 		}
+		m_events.resize(0);
 	}
-	m_events.resize(0);
 
-	// Finally issue the frame event.
-	m_movieInstance->eventFrame();
+	{
+		// Finally issue the frame event.
+		T_PROFILER_SCOPE(L"Flash eventFrame");
+		m_movieInstance->eventFrame();
+	}
 
-	// Notify frame listeners.
-	context->notifyFrameListeners(float(m_timeCurrent));
+	{
+		// Notify frame listeners.
+		T_PROFILER_SCOPE(L"Flash frame listeners");
+		context->notifyFrameListeners(float(m_timeCurrent));
+	}
 
 	// Pop current movie clip.
 	context->setMovieClip(current);
 
-	// Flush pool memory; release all lingering object references etc.
-	context->getPool().flush();
+	{
+		// Flush pool memory; release all lingering object references etc.
+		T_PROFILER_SCOPE(L"Flash flush pool");
+		context->getPool().flush();
+	}
 
 	// Collect reference cycles.
 	if (m_gcEnable)

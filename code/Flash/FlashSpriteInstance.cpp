@@ -1,6 +1,7 @@
 #include <limits>
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
+#include "Core/Timer/Profiler.h"
 #include "Flash/FlashBitmap.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashDictionary.h"
@@ -192,7 +193,7 @@ void FlashSpriteInstance::updateDisplayListAndSounds(FlashSoundPlayer* soundPlay
 	else if (m_currentFrame > m_lastUpdateFrame)
 	{
 		m_displayList.updateBegin(false);
-		for (uint32_t i = m_lastUpdateFrame; i <= m_currentFrame; ++i)
+		for (uint32_t i = m_lastUpdateFrame + 1; i <= m_currentFrame; ++i)
 		{
 			FlashFrame* frame = m_sprite->getFrame(i);
 			if (frame)
@@ -598,6 +599,8 @@ void FlashSpriteInstance::eventFrame()
 		const RefArray< const IActionVMImage >& scripts = frame->getActionScripts();
 		if (!scripts.empty())
 		{
+			T_PROFILER_SCOPE(L"Flash frame scripts");
+
 			ActionObject* self = getAsObject(context);
 			T_ASSERT (self);
 

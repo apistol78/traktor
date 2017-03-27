@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
+#include "Core/Timer/Profiler.h"
 #include "Script/Lua/ScriptBlobLua.h"
 #include "Script/Lua/ScriptClassLua.h"
 #include "Script/Lua/ScriptContextLua.h"
@@ -241,6 +242,8 @@ bool ScriptContextLua::haveFunction(const std::string& functionName) const
 
 Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t argc, const Any* argv)
 {
+	T_PROFILER_SCOPE(L"Script executeFunction");
+
 	Any returnValue;
 	m_scriptManager->lock(this);
 	{
@@ -303,6 +306,8 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 
 Any ScriptContextLua::executeDelegate(ScriptDelegateLua* delegate, uint32_t argc, const Any* argv)
 {
+	T_PROFILER_SCOPE(L"Script executeDelegate");
+
 	Any returnValue;
 	m_scriptManager->lock(this);
 	{
@@ -359,6 +364,8 @@ Any ScriptContextLua::executeDelegate(ScriptDelegateLua* delegate, uint32_t argc
 
 Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, uint32_t argc, const Any* argv)
 {
+	T_PROFILER_SCOPE(L"Script executeMethod");
+
 	Any returnValue;
 	m_scriptManager->lock(this);
 	{
