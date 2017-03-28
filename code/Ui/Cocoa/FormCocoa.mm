@@ -70,6 +70,14 @@ bool FormCocoa::isMinimized() const
 	return [m_window isZoomed] == NO;
 }
 
+void FormCocoa::hideProgress()
+{
+}
+
+void FormCocoa::showProgress(int32_t current, int32_t total)
+{
+}
+
 // IWidget implementation
 
 void FormCocoa::destroy()

@@ -28,6 +28,10 @@ public:
 
 	virtual bool isMinimized() const;
 
+	virtual void hideProgress();
+
+	virtual void showProgress(int32_t current, int32_t total);
+
 	virtual Rect getInnerRect() const;
 
 	virtual void setOutline(const Point* p, int np);
