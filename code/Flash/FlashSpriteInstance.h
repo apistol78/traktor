@@ -102,6 +102,8 @@ public:
 
 	virtual bool enumerateMembers(AlignedVector< uint32_t >& outMemberNames) const T_OVERRIDE T_FINAL;
 
+	virtual bool setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue) T_OVERRIDE T_FINAL;
+
 	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) T_OVERRIDE T_FINAL;
 
 	virtual void eventInit() T_OVERRIDE T_FINAL;
@@ -193,6 +195,7 @@ private:
 	bool m_inside;
 	bool m_inDispatch;
 	bool m_gotoIssued;
+	bool m_haveEnterFrame;
 
 	void preDispatchEvents();
 };
