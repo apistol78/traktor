@@ -41,25 +41,25 @@ public:
 		return false;
 	}
 
-	virtual int tell() const
+	virtual int64_t tell() const
 	{
 		return 0;
 	}
 
-	virtual int available() const
+	virtual int64_t available() const
 	{
 		return 0;
 	}
 
-	virtual int seek(SeekOriginType origin, int offset)
+	virtual int64_t seek(SeekOriginType origin, int64_t offset)
 	{
 		return 0;
 	}
 
-	virtual int read(void* block, int nbytes)
+	virtual int64_t read(void* block, int64_t nbytes)
 	{
 		int exitCode;
-		int ret;
+		int64_t ret;
 
 		ret = ::read(m_pipe, block, nbytes);
 		if (ret < 0)
@@ -74,7 +74,7 @@ public:
 		return ret;
 	}
 
-	virtual int write(const void* block, int nbytes)
+	virtual int64_t write(const void* block, int64_t nbytes)
 	{
 		return 0;
 	}
