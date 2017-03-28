@@ -138,6 +138,20 @@ public:
 		m_gather.resize(f);
 	}
 
+	/*! \brief For each character instances.
+	 *
+	 * \param fn Callback function.
+	 */
+	template < typename fn_t >
+	void forEachObjectDirect(fn_t fn) const
+	{
+		for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		{
+			T_ASSERT (i->second.instance);
+			fn(i->second.instance);
+		}
+	}
+
 	/*! \brief For each visible character instances.
 	 *
 	 * \param fn Callback function.
@@ -155,6 +169,21 @@ public:
 		for (size_t i = f; i < m_gather.size(); ++i)
 			fn(m_gather[i]);
 		m_gather.resize(f);
+	}
+
+	/*! \brief For each visible character instances.
+	 *
+	 * \param fn Callback function.
+	 */
+	template < typename fn_t >
+	void forEachVisibleObjectDirect(fn_t fn) const
+	{
+		for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		{
+			T_ASSERT (i->second.instance);
+			if (i->second.instance->isVisible())
+				fn(i->second.instance);
+		}
 	}
 
 	/*! \brief For each visible character instances in reverse.

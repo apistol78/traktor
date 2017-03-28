@@ -135,7 +135,7 @@ void FlashSpriteInstance::setPlaying(bool playing, bool recursive)
 	m_playing = playing;
 	if (recursive)
 	{
-		m_displayList.forEachObject([&] (FlashCharacterInstance* instance) {
+		m_displayList.forEachObjectDirect([&] (FlashCharacterInstance* instance) {
 			if (&type_of(instance) == &type_of< FlashSpriteInstance >())
 				static_cast< FlashSpriteInstance* >(instance)->setPlaying(playing, true);
 		});
@@ -169,7 +169,7 @@ void FlashSpriteInstance::updateDisplayList()
 	}
 	m_lastUpdateFrame = m_currentFrame;
 
-	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
+	m_displayList.forEachVisibleObjectDirect([] (FlashCharacterInstance* instance) {
 		if (&type_of(instance) == &type_of< FlashSpriteInstance >())
 			static_cast< FlashSpriteInstance* >(instance)->updateDisplayList();
 	});
@@ -221,7 +221,7 @@ void FlashSpriteInstance::updateDisplayListAndSounds(FlashSoundPlayer* soundPlay
 	}
 	m_lastSoundFrame = m_currentFrame;
 
-	m_displayList.forEachVisibleObject([&] (FlashCharacterInstance* instance) {
+	m_displayList.forEachVisibleObjectDirect([&] (FlashCharacterInstance* instance) {
 		if (&type_of(instance) == &type_of< FlashSpriteInstance >())
 			static_cast< FlashSpriteInstance* >(instance)->updateDisplayListAndSounds(soundPlayer);
 	});
@@ -478,7 +478,7 @@ FlashCanvas* FlashSpriteInstance::createCanvas()
 void FlashSpriteInstance::clearCacheObject()
 {
 	FlashCharacterInstance::clearCacheObject();
-	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
+	m_displayList.forEachVisibleObjectDirect([] (FlashCharacterInstance* instance) {
 		instance->clearCacheObject();
 	});
 }
@@ -639,13 +639,10 @@ void FlashSpriteInstance::eventFrame()
 		}
 	}
 
-	if (m_lastExecutedFrame == m_currentFrame)
-	{
-		// Issue events on "visible" characters.
-		m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
-			instance->eventFrame();
-		});
-	}
+	// Issue events on "visible" characters.
+	m_displayList.forEachVisibleObject([] (FlashCharacterInstance* instance) {
+		instance->eventFrame();
+	});
 
 	FlashCharacterInstance::eventFrame();
 
