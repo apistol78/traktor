@@ -37,6 +37,10 @@ public:
 
 	virtual bool isMinimized() const T_OVERRIDE;
 	
+	virtual void hideProgress() T_OVERRIDE;
+
+	virtual void showProgress(int32_t current, int32_t total) T_OVERRIDE;
+
 	// IWidget implementation
 	
 	virtual void destroy() T_OVERRIDE;

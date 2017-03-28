@@ -95,6 +95,14 @@ bool FormWx::isMinimized() const
 	return m_window->IsIconized();
 }
 
+void FormWx::hideProgress()
+{
+}
+
+void FormWx::showProgress(int32_t current, int32_t total)
+{
+}
+
 Rect FormWx::getInnerRect() const
 {
 	Rect inner = WidgetWxImpl< IForm, wxFrame >::getInnerRect();
