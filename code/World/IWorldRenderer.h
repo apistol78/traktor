@@ -84,19 +84,6 @@ struct WorldCreateDesc
 	}
 };
 
-/*! \brief World render flags.
- * \ingroup World
- */
-enum WorldRenderFlags
-{
-	WrfDepthMap = 1,
-	WrfNormalMap = 2,
-	WrfShadowMap = 4,
-	WrfLightMap = 8,
-	WrfVisualOpaque = 16,
-	WrfVisualAlphaBlend = 32
-};
-
 /*! \brief World renderer.
  * \ingroup World
  *
@@ -161,11 +148,10 @@ public:
 
 	/*! \brief Render "render contexts".
 	 *
-	 * \param flags Combination of world render flags.
 	 * \param frame Multi threaded context frame.
 	 * \param eye Stereoscopic eye.
 	 */
-	virtual void render(uint32_t flags, int frame, render::EyeType eye) = 0;
+	virtual void render(int frame, render::EyeType eye) = 0;
 
 	/*! \brief End render "render contexts".
 	 *

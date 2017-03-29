@@ -161,7 +161,7 @@ void WorldRenderPassForward::setShaderCombination(render::Shader* shader) const
 	}
 }
 
-void WorldRenderPassForward::setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const
+void WorldRenderPassForward::setShaderCombination(render::Shader* shader, const Transform& world, const Aabb3& bounds) const
 {
 	if (m_technique == s_techniqueDefault)
 	{
@@ -205,7 +205,7 @@ void WorldRenderPassForward::setShaderCombination(render::Shader* shader, const 
 
 void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams) const
 {
-	setWorldProgramParameters(programParams, Matrix44::identity());
+	setWorldProgramParameters(programParams, Transform::identity());
 
 	// Set these parameters only if we're rendering using default technique.
 	if (m_technique == s_techniqueDefault)
@@ -218,7 +218,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	}
 }
 
-void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const
+void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const
 {
 	setWorldProgramParameters(programParams, world);
 
@@ -233,12 +233,19 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	}
 }
 
-void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const
+void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, const IntervalTransform& world, const Aabb3& bounds) const
 {
-	programParams->setMatrixParameter(s_handleView, m_worldRenderView.getView());
+	setProgramParameters(programParams, world.get(m_worldRenderView.getInterval()), bounds);
+}
+
+void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& world) const
+{
+	Matrix44 w = world.toMatrix44();
+	const Matrix44& v = m_worldRenderView.getView();
+	programParams->setMatrixParameter(s_handleView, v);
 	programParams->setMatrixParameter(s_handleViewInverse, m_viewInverse);
-	programParams->setMatrixParameter(s_handleWorld, world);
-	programParams->setMatrixParameter(s_handleWorldView, m_worldRenderView.getView() * world);
+	programParams->setMatrixParameter(s_handleWorld, w);
+	programParams->setMatrixParameter(s_handleWorldView, v * w);
 }
 
 void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams) const
@@ -282,7 +289,7 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxForwardLightCount);
 }
 
-void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const
+void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const
 {
 	const Light* lightDirectional[MaxForwardLightCount]; int lightDirectionalCount = 0;
 	const Light* lightPoint[MaxForwardLightCount]; int lightPointCount = 0;

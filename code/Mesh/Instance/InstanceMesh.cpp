@@ -99,7 +99,7 @@ void InstanceMesh::render(
 	}
 
 	// Transform bounding box into origo; keep translation as matrix.
-	Matrix44 boundingBoxCenter = translate(boundingBoxWorld.getCenter());
+	Transform boundingBoxCenter(boundingBoxWorld.getCenter());
 	boundingBoxWorld.transform(Transform(-boundingBoxWorld.getCenter()));
 
 	const std::vector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();

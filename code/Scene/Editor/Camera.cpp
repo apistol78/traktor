@@ -45,12 +45,12 @@ void Camera::rotate(float dy, float dx)
 	m_orientation = m_orientation.normalized();
 }
 
-Matrix44 Camera::getWorld() const
+Transform Camera::getWorld() const
 {
-	return translate(m_position) * m_orientation.toMatrix44();
+	return Transform(m_position) * Transform(m_orientation);
 }
 
-Matrix44 Camera::getView() const
+Transform Camera::getView() const
 {
 	return getWorld().inverse();
 }

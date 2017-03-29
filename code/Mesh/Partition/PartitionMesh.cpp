@@ -36,8 +36,7 @@ void PartitionMesh::render(
 	if (!m_partition)
 		return;
 
-	Matrix44 world = worldTransform.toMatrix44();
-	Matrix44 worldView = worldRenderView.getView() * world;
+	Matrix44 worldView = worldRenderView.getView() * worldTransform.toMatrix44();
 
 	m_partIndices.resize(0);
 	m_partition->traverse(
@@ -58,7 +57,7 @@ void PartitionMesh::render(
 
 		worldRenderPass.setShaderCombination(
 			m_shader,
-			world,
+			worldTransform,
 			getBoundingBox()
 		);
 
@@ -85,7 +84,7 @@ void PartitionMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			worldTransform.toMatrix44(),
+			worldTransform,
 			getBoundingBox()
 		);
 		if (parameterCallback)

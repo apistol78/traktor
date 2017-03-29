@@ -46,8 +46,7 @@ void SkinnedMesh::render(
 	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT (it != m_parts.end());
 
-	const Matrix44 world = worldTransform.toMatrix44();
-	const Aabb3 boundingBox = getBoundingBox();
+	const Aabb3& boundingBox = getBoundingBox();
 
 	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
@@ -56,7 +55,7 @@ void SkinnedMesh::render(
 
 		worldRenderPass.setShaderCombination(
 			m_shader,
-			world,
+			worldTransform,
 			boundingBox
 		);
 
@@ -82,7 +81,7 @@ void SkinnedMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			world,
+			worldTransform,
 			boundingBox
 		);
 		if (parameterCallback)

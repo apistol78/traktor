@@ -110,7 +110,7 @@ void PrecipitationComponent::render(world::WorldContext& worldContext, world::Wo
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	const Matrix44& view = worldRenderView.getView();
+	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInv = view.inverse();
 	Vector4 eyePosition = viewInv.translation().xyz1();
 	Vector4 movement = m_lastEyePosition - eyePosition;

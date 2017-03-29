@@ -61,7 +61,7 @@ public:
 
 	virtual bool beginRender(int frame, render::EyeType eye, const Color4f& clearColor) T_OVERRIDE T_FINAL;
 
-	virtual void render(uint32_t flags, int frame, render::EyeType eye) T_OVERRIDE T_FINAL;
+	virtual void render(int frame, render::EyeType eye) T_OVERRIDE T_FINAL;
 
 	virtual void endRender(int frame, render::EyeType eye, float deltaTime) T_OVERRIDE T_FINAL;
 
@@ -82,6 +82,7 @@ private:
 	{
 		Slice slice[MaxSliceCount];
 		Ref< WorldContext > gbuffer;
+		Ref< WorldContext > velocity;
 		Ref< WorldContext > visual;
 		float time;
 		float A;
@@ -92,18 +93,21 @@ private:
 		AlignedVector< Light > lights;
 		Vector4 godRayDirection;
 		bool haveGBuffer;
+		bool haveVelocity;
 
 		Frame()
 		:	time(0.0f)
 		,	A(0.0f)
 		,	B(0.0f)
 		,	haveGBuffer(false)
+		,	haveVelocity(false)
 		{
 		}
 	};
 
 	static render::handle_t ms_techniqueDeferredColor;
 	static render::handle_t ms_techniqueDeferredGBufferWrite;
+	static render::handle_t ms_techniqueVelocityWrite;
 	static render::handle_t ms_techniqueShadow;
 	static render::handle_t ms_handleTime;
 	static render::handle_t ms_handleView;
@@ -130,6 +134,7 @@ private:
 	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_intermediateTargetSet;
 	Ref< render::RenderTargetSet > m_gbufferTargetSet;
+	Ref< render::RenderTargetSet > m_velocityTargetSet;
 	Ref< render::RenderTargetSet > m_colorTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
@@ -143,6 +148,7 @@ private:
 	Ref< render::ImageProcess > m_antiAlias;
 	Ref< render::ImageProcess > m_visualImageProcess;
 	Ref< render::ImageProcess > m_gammaCorrectionImageProcess;
+	Ref< render::ImageProcess > m_motionBlurImageProcess;
 	Ref< LightRendererDeferred > m_lightRenderer;
 	RefArray< Entity > m_buildEntities;
 	AlignedVector< Frame > m_frames;
@@ -151,8 +157,9 @@ private:
 	Vector4 m_fogDistanceAndDensity;
 	Vector4 m_fogColor;
 
-
 	void buildGBuffer(WorldRenderView& worldRenderView, int frame);
+
+	void buildVelocity(WorldRenderView& worldRenderView, int frame);
 
 	void buildLightWithShadows(WorldRenderView& worldRenderView, int frame);
 

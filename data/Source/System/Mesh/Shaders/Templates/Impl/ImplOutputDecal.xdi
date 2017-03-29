@@ -22,6 +22,10 @@
 					<optional>false</optional>
 				</item>
 				<item>
+					<name>ViewVelocity</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
@@ -125,8 +129,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>498</first>
-				<second>540</second>
+				<first>507</first>
+				<second>598</second>
 			</position>
 			<name>T_RimIntensity</name>
 			<connectable>true</connectable>
@@ -136,8 +140,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>518</first>
-				<second>507</second>
+				<first>527</first>
+				<second>556</second>
 			</position>
 			<name>T_RimColor</name>
 			<connectable>true</connectable>
@@ -147,8 +151,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>488</first>
-				<second>276</second>
+				<first>497</first>
+				<second>178</second>
 			</position>
 			<name>T_SurfaceColor</name>
 			<connectable>true</connectable>
@@ -158,8 +162,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>498</first>
-				<second>210</second>
+				<first>507</first>
+				<second>220</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -169,8 +173,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>488</first>
-				<second>243</second>
+				<first>497</first>
+				<second>262</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -180,8 +184,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>498</first>
-				<second>309</second>
+				<first>507</first>
+				<second>346</second>
 			</position>
 			<name>T_DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -191,8 +195,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>438</first>
-				<second>375</second>
+				<first>447</first>
+				<second>682</second>
 			</position>
 			<name>T_SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -202,8 +206,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>488</first>
-				<second>408</second>
+				<first>497</first>
+				<second>724</second>
 			</position>
 			<name>T_SpecularTerm</name>
 			<connectable>true</connectable>
@@ -213,8 +217,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>528</first>
-				<second>474</second>
+				<first>537</first>
+				<second>430</second>
 			</position>
 			<name>T_Emissive</name>
 			<connectable>true</connectable>
@@ -224,8 +228,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>518</first>
-				<second>573</second>
+				<first>527</first>
+				<second>514</second>
 			</position>
 			<name>T_Reflective</name>
 			<connectable>true</connectable>
@@ -235,8 +239,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>488</first>
-				<second>342</second>
+				<first>497</first>
+				<second>388</second>
 			</position>
 			<name>T_Transparency</name>
 			<connectable>true</connectable>
@@ -246,8 +250,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>518</first>
-				<second>606</second>
+				<first>527</first>
+				<second>640</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -257,10 +261,21 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>508</first>
-				<second>441</second>
+				<first>517</first>
+				<second>472</second>
 			</position>
 			<name>T_Metalness</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>497</first>
+				<second>304</second>
+			</position>
+			<name>T_ViewVelocity</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
@@ -375,6 +390,16 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Metalness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>ViewVelocity</name>
 			</destination>
 		</item>
 	</edges>

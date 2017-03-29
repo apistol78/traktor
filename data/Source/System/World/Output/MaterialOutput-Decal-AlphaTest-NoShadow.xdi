@@ -4,7 +4,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>403</first>
+				<first>395</first>
 				<second>82</second>
 			</position>
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
@@ -239,8 +239,8 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>755</first>
-				<second>911</second>
+				<first>798</first>
+				<second>912</second>
 			</position>
 			<technique>World_DepthWrite</technique>
 		</item>
@@ -252,10 +252,10 @@
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
-				<first>1028</first>
+				<first>1135</first>
 				<second>807</second>
 			</position>
 			<technique>World_DepthWrite</technique>
@@ -269,9 +269,12 @@
 			</priority>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfOne</blendSource>
-			<blendDestination>BfZero</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfOne</blendColorSource>
+			<blendColorDestination>BfZero</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -294,6 +297,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Discard">
 			<comment/>
@@ -306,8 +310,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>410</first>
-				<second>376</second>
+				<first>395</first>
+				<second>397</second>
 			</position>
 			<fragmentGuid>{775F874A-7FE5-0141-B4B7-42FFE8DE1340}</fragmentGuid>
 			<inputPins>

@@ -86,7 +86,7 @@
 			<comment/>
 			<position>
 				<first>314</first>
-				<second>1187</second>
+				<second>1196</second>
 			</position>
 			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
 			<inputPins>
@@ -102,7 +102,7 @@
 			<comment/>
 			<position>
 				<first>314</first>
-				<second>1085</second>
+				<second>1091</second>
 			</position>
 			<fragmentGuid>{6EF33326-74C7-B640-BB38-5C57D2199FB4}</fragmentGuid>
 			<inputPins>
@@ -117,8 +117,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-399</first>
-				<second>302</second>
+				<first>-924</first>
+				<second>562</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -128,8 +128,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-389</first>
-				<second>334</second>
+				<first>-914</first>
+				<second>595</second>
 			</position>
 			<name>DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -139,8 +139,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-399</first>
-				<second>526</second>
+				<first>-924</first>
+				<second>793</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -150,8 +150,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-379</first>
-				<second>558</second>
+				<first>-904</first>
+				<second>859</second>
 			</position>
 			<name>Reflection</name>
 			<connectable>true</connectable>
@@ -161,8 +161,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-399</first>
-				<second>590</second>
+				<first>-924</first>
+				<second>892</second>
 			</position>
 			<name>RimIntensity</name>
 			<connectable>true</connectable>
@@ -172,8 +172,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-369</first>
-				<second>622</second>
+				<first>-894</first>
+				<second>925</second>
 			</position>
 			<name>RimColor</name>
 			<connectable>true</connectable>
@@ -183,8 +183,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-409</first>
-				<second>366</second>
+				<first>-934</first>
+				<second>628</second>
 			</position>
 			<name>SpecularTerm</name>
 			<connectable>true</connectable>
@@ -194,8 +194,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-399</first>
-				<second>494</second>
+				<first>-924</first>
+				<second>760</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -205,8 +205,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-449</first>
-				<second>398</second>
+				<first>-974</first>
+				<second>661</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -216,8 +216,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-369</first>
-				<second>430</second>
+				<first>-894</first>
+				<second>694</second>
 			</position>
 			<name>Emissive</name>
 			<connectable>true</connectable>
@@ -228,7 +228,7 @@
 			<comment/>
 			<position>
 				<first>314</first>
-				<second>1289</second>
+				<second>1406</second>
 			</position>
 			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
 			<inputPins>
@@ -304,8 +304,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-379</first>
-				<second>654</second>
+				<first>-904</first>
+				<second>958</second>
 			</position>
 			<name>Refractive</name>
 			<connectable>true</connectable>
@@ -315,16 +315,16 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-248</first>
-				<second>1094</second>
+				<first>-382</first>
+				<second>1185</second>
 			</position>
 			<value>0</value>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-439</first>
-				<second>686</second>
+				<first>-964</first>
+				<second>991</second>
 			</position>
 			<name>RefractiveAmount</name>
 			<connectable>true</connectable>
@@ -334,8 +334,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-449</first>
-				<second>718</second>
+				<first>-974</first>
+				<second>1024</second>
 			</position>
 			<name>RefractiveTintColor</name>
 			<connectable>true</connectable>
@@ -345,8 +345,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-459</first>
-				<second>750</second>
+				<first>-984</first>
+				<second>1057</second>
 			</position>
 			<name>RefractiveCoefficient</name>
 			<connectable>true</connectable>
@@ -357,7 +357,7 @@
 			<comment/>
 			<position>
 				<first>314</first>
-				<second>671</second>
+				<second>674</second>
 			</position>
 			<fragmentGuid>{D0106B3E-E48F-C24E-AA07-165B6053E8D3}</fragmentGuid>
 			<inputPins>
@@ -469,8 +469,8 @@
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>-102</first>
-				<second>1034</second>
+				<first>-109</first>
+				<second>1053</second>
 			</position>
 			<operator>CoEqual</operator>
 		</item>
@@ -482,19 +482,46 @@ shadow write, depth write and gbuffer write.
 			]]>
 			</comment>
 			<position>
-				<first>-241</first>
-				<second>1203</second>
+				<first>-189</first>
+				<second>981</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-379</first>
-				<second>462</second>
+				<first>-904</first>
+				<second>727</second>
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>314</first>
+				<second>1301</second>
+			</position>
+			<fragmentGuid>{E3C34875-BEFA-3C4E-BB51-8D334C1FD4D6}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>ViewVelocity</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-924</first>
+				<second>826</second>
+			</position>
+			<name>ViewVelocity</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
 			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
@@ -877,6 +904,16 @@ shadow write, depth write and gbuffer write.
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<name>Metalness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>ViewVelocity</name>
 			</destination>
 		</item>
 	</edges>

@@ -311,7 +311,7 @@ void ImageProcessEditor::updateViews()
 	updateStepView(0, steps, order);
 
 	// Add implicit, read-only, definitions.
-	const wchar_t* c_implicitDefinitions[] = { L"Output", L"InputColor", L"InputDepth", L"InputShadowMask" };
+	const wchar_t* c_implicitDefinitions[] = { L"Output", L"InputColor", L"InputDepth", L"InputVelocity", L"InputShadowMask" };
 	for (uint32_t i = 0; i < sizeof_array(c_implicitDefinitions); ++i)
 	{
 		Ref< ui::custom::GridRow > definitionRow = new ui::custom::GridRow();

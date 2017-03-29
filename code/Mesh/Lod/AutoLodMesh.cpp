@@ -32,7 +32,7 @@ void AutoLodMesh::render(
 	float lodDistance,
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
-	const Transform& worldTransform,
+	const IntervalTransform& worldTransform,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
 )

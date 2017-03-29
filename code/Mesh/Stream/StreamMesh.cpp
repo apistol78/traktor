@@ -91,7 +91,7 @@ void StreamMesh::render(
 
 		worldRenderPass.setShaderCombination(
 			m_shader,
-			worldTransform.toMatrix44(),
+			worldTransform,
 			getBoundingBox()
 		);
 
@@ -116,7 +116,7 @@ void StreamMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			worldTransform.toMatrix44(),
+			worldTransform,
 			getBoundingBox()
 		);
 		if (parameterCallback)

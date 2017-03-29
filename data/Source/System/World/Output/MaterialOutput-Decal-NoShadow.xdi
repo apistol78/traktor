@@ -4,7 +4,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>140</first>
+				<first>135</first>
 				<second>150</second>
 			</position>
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
@@ -93,8 +93,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>140</first>
-				<second>474</second>
+				<first>135</first>
+				<second>494</second>
 			</position>
 			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
 			<inputPins>
@@ -109,7 +109,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-508</first>
+				<first>-494</first>
 				<second>314</second>
 			</position>
 			<name>SurfaceColor</name>
@@ -120,8 +120,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-505</first>
-				<second>346</second>
+				<first>-484</first>
+				<second>348</second>
 			</position>
 			<name>DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -131,8 +131,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-513</first>
-				<second>378</second>
+				<first>-504</first>
+				<second>382</second>
 			</position>
 			<name>SpecularTerm</name>
 			<connectable>true</connectable>
@@ -142,8 +142,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-508</first>
-				<second>474</second>
+				<first>-494</first>
+				<second>484</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -153,8 +153,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-493</first>
-				<second>538</second>
+				<first>-474</first>
+				<second>586</second>
 			</position>
 			<name>Reflection</name>
 			<connectable>true</connectable>
@@ -165,7 +165,7 @@
 			<comment/>
 			<position>
 				<first>-544</first>
-				<second>410</second>
+				<second>416</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -175,8 +175,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-506</first>
-				<second>570</second>
+				<first>-494</first>
+				<second>620</second>
 			</position>
 			<name>RimIntensity</name>
 			<connectable>true</connectable>
@@ -186,8 +186,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-489</first>
-				<second>602</second>
+				<first>-464</first>
+				<second>654</second>
 			</position>
 			<name>RimColor</name>
 			<connectable>true</connectable>
@@ -197,8 +197,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-505</first>
-				<second>506</second>
+				<first>-494</first>
+				<second>552</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -208,8 +208,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>140</first>
-				<second>558</second>
+				<first>135</first>
+				<second>702</second>
 			</position>
 			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
 			<inputPins>
@@ -277,12 +277,39 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-485</first>
-				<second>442</second>
+				<first>-464</first>
+				<second>450</second>
 			</position>
 			<name>Emissive</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>135</first>
+				<second>598</second>
+			</position>
+			<fragmentGuid>{E3C34875-BEFA-3C4E-BB51-8D334C1FD4D6}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>ViewVelocity</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-494</first>
+				<second>518</second>
+			</position>
+			<name>ViewVelocity</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
 			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
@@ -475,6 +502,16 @@
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
 				<name>SpecularTerm</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>ViewVelocity</name>
 			</destination>
 		</item>
 	</edges>

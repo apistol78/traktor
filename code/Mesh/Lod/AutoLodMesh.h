@@ -3,6 +3,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
+#include "Core/Math/IntervalTransform.h"
 #include "Mesh/IMesh.h"
 #include "Render/Types.h"
 
@@ -54,7 +55,7 @@ public:
 		float lodDistance,
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
-		const Transform& worldTransform,
+		const IntervalTransform& worldTransform,
 		float distance,
 		const IMeshParameterCallback* parameterCallback
 	);

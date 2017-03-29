@@ -21,6 +21,8 @@ public:
 
 	T_MATH_INLINE IntervalTransform(const Transform& transform);
 
+	T_MATH_INLINE IntervalTransform(const Transform& transform0, const Transform& transform1);
+
 	T_MATH_INLINE void set(const Transform& transform);
 
 	T_MATH_INLINE Transform get(float interval) const;
@@ -28,6 +30,8 @@ public:
 	T_MATH_INLINE void step();
 
 	T_MATH_INLINE const Transform& get() const;
+
+	T_MATH_INLINE Transform getDelta() const;
 
 private:
 	Transform m_transform[2];

@@ -599,7 +599,7 @@ bool WorldRendererForward::beginRender(int frame, render::EyeType eye, const Col
 	return true;
 }
 
-void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye)
+void WorldRendererForward::render(int frame, render::EyeType eye)
 {
 	Frame& f = m_frames[frame];
 	Matrix44 projection;
@@ -631,7 +631,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	defaultProgramParams.endParameters(m_globalContext);
 
 	// Render depth map; use as z-prepass if able to share depth buffer with primary.
-	if ((flags & WrfDepthMap) != 0 && f.haveDepth)
+	if (f.haveDepth)
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth");
 		if (m_renderView->begin(m_depthTargetSet, 0))
@@ -654,7 +654,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	// Render shadow map.
 	if (eye == render::EtCyclop || eye == render::EtLeft)
 	{
-		if ((flags & WrfShadowMap) != 0 && f.haveShadows)
+		if (f.haveShadows)
 		{
 			for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
 			{
@@ -705,6 +705,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 						m_shadowTargetSet,
 						m_depthTargetSet,
 						0,
+						0,
 						params
 					);
 
@@ -731,6 +732,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 						m_shadowMaskProjectTargetSet,
 						m_depthTargetSet,
 						0,
+						0,
 						params
 					);
 					m_renderView->end();
@@ -741,17 +743,9 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	}
 
 	// Render visuals.
-	if ((flags & (WrfVisualOpaque | WrfVisualAlphaBlend)) != 0)
 	{
-		uint32_t renderFlags = render::RpSetup | render::RpOverlay;
-
-		if (flags & WrfVisualOpaque)
-			renderFlags |= render::RpOpaque | render::RpPostOpaque;
-		if (flags & WrfVisualAlphaBlend)
-			renderFlags |= render::RpAlphaBlend | render::RpPostAlphaBlend;
-
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual");
-		f.visual->getRenderContext()->render(m_renderView, renderFlags, &defaultProgramParams);
+		f.visual->getRenderContext()->render(m_renderView, render::RpAll, &defaultProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
@@ -807,6 +801,7 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 				m_renderView,
 				sourceTargetSet,
 				m_depthTargetSet,
+				0,
 				m_shadowTargetSet,
 				params
 			);
@@ -832,6 +827,7 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 				m_renderView,
 				sourceTargetSet,
 				m_depthTargetSet,
+				0,
 				m_shadowTargetSet,
 				params
 			);
@@ -854,6 +850,7 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 				m_renderView,
 				sourceTargetSet,
 				m_depthTargetSet,
+				0,
 				m_shadowTargetSet,
 				params
 			);
@@ -960,7 +957,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 		WorldRenderView shadowRenderView;
 		shadowRenderView.resetLights();
 		shadowRenderView.setProjection(shadowLightProjection);
-		shadowRenderView.setView(shadowLightView);
+		shadowRenderView.setView(shadowLightView, shadowLightView);
 		shadowRenderView.setViewFrustum(shadowFrustum);
 		shadowRenderView.setCullFrustum(shadowFrustum);
 		shadowRenderView.setEyePosition(worldRenderView.getEyePosition());

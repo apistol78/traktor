@@ -21,6 +21,7 @@ namespace traktor
 handle_t s_handleOutput;
 handle_t s_handleInputColor;
 handle_t s_handleInputDepth;
+handle_t s_handleInputVelocity;
 handle_t s_handleInputShadowMask;
 
 		}
@@ -34,6 +35,7 @@ ImageProcess::ImageProcess()
 	s_handleOutput = getParameterHandle(L"Output");
 	s_handleInputColor = getParameterHandle(L"InputColor");
 	s_handleInputDepth = getParameterHandle(L"InputDepth");
+	s_handleInputVelocity = getParameterHandle(L"InputVelocity");
 	s_handleInputShadowMask = getParameterHandle(L"InputShadowMask");
 }
 
@@ -102,6 +104,7 @@ bool ImageProcess::render(
 	IRenderView* renderView,
 	RenderTargetSet* colorBuffer,
 	RenderTargetSet* depthBuffer,
+	RenderTargetSet* velocityBuffer,
 	RenderTargetSet* shadowMask,
 	const ImageProcessStep::Instance::RenderParams& params
 )
@@ -113,6 +116,9 @@ bool ImageProcess::render(
 
 	m_targets[s_handleInputDepth].rts = depthBuffer;
 	m_targets[s_handleInputDepth].persistent = true;
+
+	m_targets[s_handleInputVelocity].rts = velocityBuffer;
+	m_targets[s_handleInputVelocity].persistent = true;
 
 	m_targets[s_handleInputShadowMask].rts = shadowMask;
 	m_targets[s_handleInputShadowMask].persistent = true;
@@ -172,6 +178,7 @@ void ImageProcess::defineTarget(const std::wstring& name, handle_t id, const Ren
 {
 	T_ASSERT_M(id != s_handleInputColor, L"Cannot define source color buffer");
 	T_ASSERT_M(id != s_handleInputDepth, L"Cannot define source depth buffer");
+	T_ASSERT_M(id != s_handleInputVelocity, L"Cannot define source velocity buffer");
 	T_ASSERT_M(id != s_handleInputShadowMask, L"Cannot define source shadow mask");
 
 	Target& t = m_targets[id];
@@ -187,6 +194,7 @@ void ImageProcess::setTarget(IRenderView* renderView, handle_t id)
 {
 	T_ASSERT_M(id != s_handleInputColor, L"Cannot bind source color buffer as output");
 	T_ASSERT_M(id != s_handleInputDepth, L"Cannot bind source depth buffer as output");
+	T_ASSERT_M(id != s_handleInputVelocity, L"Cannot bind source velocity buffer as output");
 	T_ASSERT_M(id != s_handleInputShadowMask, L"Cannot bind source shadow mask as output");
 
 	if (m_currentTarget)

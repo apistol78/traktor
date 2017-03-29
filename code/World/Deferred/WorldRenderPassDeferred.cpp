@@ -15,8 +15,10 @@ enum { MaxForwardLightCount = 2 };
 
 bool s_handlesInitialized = false;
 render::handle_t s_techniqueDeferredColor;
+render::handle_t s_techniqueVelocityWrite;
 render::handle_t s_handleWorld;
 render::handle_t s_handleWorldView;
+render::handle_t s_handleLastWorldView;
 render::handle_t s_handleFogEnable;
 render::handle_t s_handleDepthEnable;
 render::handle_t s_handleLightPositionAndType;
@@ -31,9 +33,11 @@ void initializeHandles()
 		return;
 
 	s_techniqueDeferredColor = render::getParameterHandle(L"World_DeferredColor");
+	s_techniqueVelocityWrite = render::getParameterHandle(L"World_VelocityWrite");
 
 	s_handleWorld = render::getParameterHandle(L"World_World");
 	s_handleWorldView = render::getParameterHandle(L"World_WorldView");
+	s_handleLastWorldView = render::getParameterHandle(L"World_LastWorldView");
 	s_handleFogEnable = render::getParameterHandle(L"World_FogEnable");
 	s_handleDepthEnable = render::getParameterHandle(L"World_DepthEnable");
 	s_handleLightPositionAndType = render::getParameterHandle(L"World_LightPositionAndType");
@@ -103,7 +107,7 @@ void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader) const
 	}
 }
 
-void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const
+void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader, const Transform& world, const Aabb3& bounds) const
 {
 	if (m_technique == s_techniqueDeferredColor)
 	{
@@ -114,22 +118,49 @@ void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader, const
 
 void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams) const
 {
-	setWorldProgramParameters(programParams, Matrix44::identity());
+	setWorldProgramParameters(programParams, Transform::identity());
 	if (m_technique == s_techniqueDeferredColor)
 		setLightProgramParameters(programParams);
 }
 
-void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const
+void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const
 {
 	setWorldProgramParameters(programParams, world);
 	if (m_technique == s_techniqueDeferredColor)
 		setLightProgramParameters(programParams);
 }
 
-void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const
+void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams, const IntervalTransform& world, const Aabb3& bounds) const
 {
-	programParams->setMatrixParameter(s_handleWorld, world);
-	programParams->setMatrixParameter(s_handleWorldView, m_worldRenderView.getView() * world);
+	setWorldProgramParameters(programParams, world);
+	if (m_technique == s_techniqueDeferredColor)
+		setLightProgramParameters(programParams);
+}
+
+void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& world) const
+{
+	Matrix44 w = world.toMatrix44();
+	programParams->setMatrixParameter(s_handleWorld, w);
+	programParams->setMatrixParameter(s_handleWorldView, m_worldRenderView.getView() * w);
+}
+
+void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameters* programParams, const IntervalTransform& world) const
+{
+	float interval = m_worldRenderView.getInterval();
+
+	const Matrix44& v = m_worldRenderView.getView();
+	Matrix44 w = world.get(interval).toMatrix44();
+
+	programParams->setMatrixParameter(s_handleWorld, w);
+	programParams->setMatrixParameter(s_handleWorldView, v * w);
+
+	if (m_technique == s_techniqueVelocityWrite)
+	{
+		const Matrix44& v0 = m_worldRenderView.getLastView();
+		Matrix44 w0 = world.get(0.0f).toMatrix44();
+
+		programParams->setMatrixParameter(s_handleLastWorldView, v0 * w0);
+	}
 }
 
 void WorldRenderPassDeferred::setLightProgramParameters(render::ProgramParameters* programParams) const

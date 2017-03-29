@@ -5,7 +5,7 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
-#include "Core/Math/Transform.h"
+#include "Core/Math/IntervalTransform.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
@@ -83,7 +83,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		world::IWorldRenderPass& worldRenderPass,
-		const Transform& worldTransform,
+		const IntervalTransform& worldTransform,
 		Instance* instance,
 		const std::vector< float >& blendWeights,
 		float distance,

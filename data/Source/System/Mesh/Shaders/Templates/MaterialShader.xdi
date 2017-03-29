@@ -114,8 +114,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-26</first>
-				<second>376</second>
+				<first>-67</first>
+				<second>368</second>
 			</position>
 			<fragmentGuid>{AEBE83FB-68D4-9D45-A672-0A8487A197CD}</fragmentGuid>
 			<inputPins/>
@@ -143,6 +143,9 @@
 				</item>
 				<item>
 					<name>T_ViewTangent</name>
+				</item>
+				<item>
+					<name>T_ViewVelocity</name>
 				</item>
 			</outputPins>
 			<values/>
@@ -192,8 +195,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1013</first>
-				<second>340</second>
+				<first>1090</first>
+				<second>307</second>
 			</position>
 			<fragmentGuid>{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}</fragmentGuid>
 			<inputPins>
@@ -247,6 +250,10 @@
 				</item>
 				<item>
 					<name>T_ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_ViewVelocity</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
@@ -645,6 +652,16 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>T_Metalness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_ViewVelocity</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_ViewVelocity</name>
 			</destination>
 		</item>
 	</edges>

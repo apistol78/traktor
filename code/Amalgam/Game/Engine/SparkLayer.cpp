@@ -295,6 +295,7 @@ void SparkLayer::render(render::EyeType eye, uint32_t frame)
 			m_imageTargetSet,
 			0,
 			0,
+			0,
 			params
 		);
 	}

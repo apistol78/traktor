@@ -151,8 +151,7 @@ void DecalRenderer::flush(
 
 		const Transform& transform = decalComponent->getTransform();
 		
-		Matrix44 world = transform.toMatrix44();
-		Matrix44 worldView = view * world;
+		Matrix44 worldView = view * transform.toMatrix44();
 		Matrix44 worldViewInv = worldView.inverse();
 
 		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Decal");
@@ -172,7 +171,7 @@ void DecalRenderer::flush(
 
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			world,
+			transform,
 			decalComponent->getBoundingBox()
 		);
 
