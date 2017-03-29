@@ -34,14 +34,17 @@ void AutoLodMeshEntity::render(
 	float distance
 )
 {
+	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+
 	const Vector4& eyePosition = worldRenderView.getEyePosition();
-	m_lodDistance = (m_transform.get().translation() - eyePosition).length();
+	m_lodDistance = (worldTransform.translation() - eyePosition).length();
 
 	m_mesh->render(
 		m_lodDistance,
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		m_transform,
+		m_transform.get0(),
+		worldTransform,
 		distance,
 		getParameterCallback()
 	);

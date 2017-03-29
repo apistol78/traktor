@@ -63,7 +63,8 @@ void BlendMeshComponent::render(world::WorldContext& worldContext, world::WorldR
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		m_transform,
+		m_transform.get0(),
+		m_transform.get(worldRenderView.getInterval()),
 		m_instance,
 		m_blendWeights,
 		distance,

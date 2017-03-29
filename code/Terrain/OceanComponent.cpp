@@ -268,6 +268,7 @@ void OceanComponent::render(
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
 		transform,
+		transform,
 		Aabb3()
 	);
 

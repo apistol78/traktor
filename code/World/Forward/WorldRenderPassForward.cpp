@@ -218,7 +218,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	}
 }
 
-void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const
+void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const
 {
 	setWorldProgramParameters(programParams, world);
 
@@ -231,11 +231,6 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 		setShadowMapProgramParameters(programParams);
 		setDepthMapProgramParameters(programParams);
 	}
-}
-
-void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, const IntervalTransform& world, const Aabb3& bounds) const
-{
-	setProgramParameters(programParams, world.get(m_worldRenderView.getInterval()), bounds);
 }
 
 void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& world) const

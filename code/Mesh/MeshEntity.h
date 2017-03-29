@@ -69,13 +69,6 @@ protected:
 	IntervalTransform m_transform;
 	Ref< const IMeshParameterCallback > m_parameterCallback;
 	bool m_screenSpaceCulling;
-
-	/*! \brief Calculate render transform.
-	 *
-	 * Use interval to interpolate between previous transform
-	 * and current transform.
-	 */
-	Transform getTransform(float interval) const;
 };
 
 	}

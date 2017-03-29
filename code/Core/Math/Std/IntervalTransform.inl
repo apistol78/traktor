@@ -47,14 +47,14 @@ void IntervalTransform::step()
 	m_stepped = true;
 }
 
+const Transform& IntervalTransform::get0() const
+{
+	return m_transform[0];
+}
+
 const Transform& IntervalTransform::get() const
 {
 	return m_transform[1];
-}
-
-Transform IntervalTransform::getDelta() const
-{
-	return m_transform[1] * m_transform[0].inverse();
 }
 
 }

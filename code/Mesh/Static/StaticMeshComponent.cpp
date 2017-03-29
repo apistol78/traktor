@@ -34,11 +34,13 @@ void StaticMeshComponent::render(world::WorldContext& worldContext, world::World
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
 
+	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+
 	float distance = 0.0f;
 	if (!isMeshVisible(
 		m_mesh->getBoundingBox(),
 		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * m_transform.get().toMatrix44(),
+		worldRenderView.getView() * worldTransform.toMatrix44(),
 		worldRenderView.getProjection(),
 		m_screenSpaceCulling ? 0.0001f : 0.0f,
 		distance
@@ -48,7 +50,8 @@ void StaticMeshComponent::render(world::WorldContext& worldContext, world::World
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		m_transform,
+		m_transform.get0(),
+		worldTransform,
 		distance,
 		m_parameterCallback
 	);

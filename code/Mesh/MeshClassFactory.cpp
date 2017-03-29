@@ -71,7 +71,7 @@ public:
 
 	void setVectorArrayParameter(const std::wstring& name, const AlignedVector< Vector4 >& param)
 	{
-		m_programParameters->setVectorArrayParameter(name, param.c_ptr(), param.size());
+		m_programParameters->setVectorArrayParameter(name, param.c_ptr(), (int)param.size());
 	}
 
 	void setTextureParameter(const std::wstring& name, render::ITexture* texture)

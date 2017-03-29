@@ -56,7 +56,7 @@ void StreamMeshEntity::render(
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		getTransform(worldRenderView.getInterval()),
+		m_transform.get(worldRenderView.getInterval()),
 		m_instance,
 		m_frame,
 		distance,

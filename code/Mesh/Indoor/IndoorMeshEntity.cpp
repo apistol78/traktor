@@ -37,7 +37,7 @@ void IndoorMeshEntity::render(
 		worldContext.getRenderContext(),
 		worldRenderView,
 		worldRenderPass,
-		getTransform(worldRenderView.getInterval()),
+		m_transform.get(worldRenderView.getInterval()),
 		distance,
 		getParameterCallback()
 	);

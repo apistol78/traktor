@@ -29,9 +29,9 @@ public:
 
 	T_MATH_INLINE void step();
 
-	T_MATH_INLINE const Transform& get() const;
+	T_MATH_INLINE const Transform& get0() const;
 
-	T_MATH_INLINE Transform getDelta() const;
+	T_MATH_INLINE const Transform& get() const;
 
 private:
 	Transform m_transform[2];

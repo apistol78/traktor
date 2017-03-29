@@ -24,7 +24,8 @@ bool StaticMesh::supportTechnique(render::handle_t technique) const
 void StaticMesh::render(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
-	const IntervalTransform& worldTransform,
+	const Transform& lastWorldTransform,
+	const Transform& worldTransform,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
 )
@@ -41,7 +42,7 @@ void StaticMesh::render(
 
 		worldRenderPass.setShaderCombination(
 			m_shader,
-			worldTransform.get(),
+			worldTransform,
 			boundingBox
 		);
 
@@ -69,6 +70,7 @@ void StaticMesh::render(
 		
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
+			lastWorldTransform,
 			worldTransform,
 			boundingBox
 		);

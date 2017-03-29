@@ -148,6 +148,7 @@ void PrecipitationComponent::render(world::WorldContext& worldContext, world::Wo
 		worldContext.getRenderContext(),
 		worldRenderPass,
 		Transform(m_rotation),
+		Transform(m_rotation),
 		0.0f,
 		&mc
 	);
