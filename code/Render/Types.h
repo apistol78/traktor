@@ -672,6 +672,7 @@ enum DebugTargetVisualize
 	DtvDefault,
 	DtvDepth,
 	DtvNormals,
+	DtvVelocity,
 	DtvDeferredSpecularRoughness,
 	DtvDeferredSpecularTerm,
 	DtvDeferredMetalness,

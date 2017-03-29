@@ -187,7 +187,7 @@ Ref< BlendMesh::Instance > BlendMesh::createInstance() const
 void BlendMesh::render(
 	render::RenderContext* renderContext,
 	world::IWorldRenderPass& worldRenderPass,
-	const Transform& worldTransform,
+	const IntervalTransform& worldTransform,
 	Instance* instance,
 	const std::vector< float >& blendWeights,
 	float distance,
@@ -286,7 +286,7 @@ void BlendMesh::render(
 
 		worldRenderPass.setShaderCombination(
 			m_shader,
-			worldTransform.toMatrix44(),
+			worldTransform.get(),
 			getBoundingBox()
 		);
 
@@ -306,7 +306,7 @@ void BlendMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			worldTransform.toMatrix44(),
+			worldTransform,
 			getBoundingBox()
 		);
 		if (parameterCallback)

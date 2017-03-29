@@ -347,7 +347,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	{
 		// Render entities.
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
-		m_worldRenderView.setView(view);
+		m_worldRenderView.setView(m_worldRenderView.getView(), view);
 
 		Ref< scene::Scene > sceneInstance = m_context->getScene();
 		if (sceneInstance)
@@ -374,7 +374,6 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 		);
 
 		m_worldRenderer->render(
-			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
 			0,
 			render::EtCyclop
 		);

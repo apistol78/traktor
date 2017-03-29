@@ -75,7 +75,7 @@ public:
 
 	virtual bool beginRender(int frame, render::EyeType eye, const Color4f& clearColor) T_OVERRIDE T_FINAL;
 
-	virtual void render(uint32_t flags, int frame, render::EyeType eye) T_OVERRIDE T_FINAL;
+	virtual void render(int frame, render::EyeType eye) T_OVERRIDE T_FINAL;
 
 	virtual void endRender(int frame, render::EyeType eye, float deltaTime) T_OVERRIDE T_FINAL;
 

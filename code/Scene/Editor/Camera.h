@@ -2,8 +2,8 @@
 #define traktor_scene_Camera_H
 
 #include "Core/Object.h"
-#include "Core/Math/Matrix44.h"
 #include "Core/Math/Quaternion.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,9 +36,9 @@ public:
 
 	void rotate(float dy, float dx);
 
-	Matrix44 getWorld() const;
+	Transform getWorld() const;
 
-	Matrix44 getView() const;
+	Transform getView() const;
 
 	void setPosition(const Vector4& position) { m_position = position; }
 

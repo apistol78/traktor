@@ -203,6 +203,7 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 			L"Default",
 			L"Depth",
 			L"Normals",
+			L"Velocity",
 			L"SpecularRoughness",
 			L"SpecularTerm",
 			L"Metalness",

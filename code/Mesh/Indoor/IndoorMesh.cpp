@@ -97,7 +97,7 @@ void IndoorMesh::render(
 
 			worldRenderPass.setShaderCombination(
 				m_shader,
-				worldTransform.toMatrix44(),
+				worldTransform,
 				getBoundingBox()
 			);
 
@@ -117,7 +117,7 @@ void IndoorMesh::render(
 			renderBlock->programParams->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(
 				renderBlock->programParams,
-				worldTransform.toMatrix44(),
+				worldTransform,
 				getBoundingBox()
 			);
 			if (parameterCallback)

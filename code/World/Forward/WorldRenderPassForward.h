@@ -64,11 +64,13 @@ public:
 
 	virtual void setShaderCombination(render::Shader* shader) const T_OVERRIDE T_FINAL;
 
-	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
+	virtual void setShaderCombination(render::Shader* shader, const Transform& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
 
 	virtual void setProgramParameters(render::ProgramParameters* programParams) const T_OVERRIDE T_FINAL;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
+
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const IntervalTransform& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
 
 private:
 	render::handle_t m_technique;
@@ -85,11 +87,11 @@ private:
 	render::ISimpleTexture* m_depthMap;
 	render::ISimpleTexture* m_shadowMask;
 
-	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const;
+	void setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& world) const;
 
 	void setLightProgramParameters(render::ProgramParameters* programParams) const;
 
-	void setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const;
+	void setLightProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const;
 
 	void setFogProgramParameters(render::ProgramParameters* programParams) const;
 

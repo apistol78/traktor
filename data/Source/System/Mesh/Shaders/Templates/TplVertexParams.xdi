@@ -4,74 +4,82 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>886</first>
-				<second>461</second>
+				<first>884</first>
+				<second>457</second>
 			</position>
 			<name>T_Color</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>886</first>
-				<second>269</second>
+				<first>884</first>
+				<second>226</second>
 			</position>
 			<name>T_ViewPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>886</first>
-				<second>333</second>
+				<first>884</first>
+				<second>325</second>
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>886</first>
-				<second>397</second>
+				<first>884</first>
+				<second>391</second>
 			</position>
 			<name>T_TexCoord0</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>886</first>
-				<second>301</second>
+				<first>884</first>
+				<second>292</second>
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>886</first>
-				<second>365</second>
+				<first>884</first>
+				<second>358</second>
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>738</first>
-				<second>132</second>
+				<first>567</first>
+				<second>325</second>
 			</position>
 			<value>0</value>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>886</first>
-				<second>237</second>
+				<first>884</first>
+				<second>193</second>
 			</position>
 			<name>T_Position</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>886</first>
-				<second>429</second>
+				<first>884</first>
+				<second>424</second>
 			</position>
 			<name>T_TexCoord1</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>884</first>
+				<second>259</second>
+			</position>
+			<name>T_ViewVelocity</name>
 		</item>
 	</nodes>
 	<edges>
@@ -152,6 +160,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Input</name>
 			</destination>
 		</item>

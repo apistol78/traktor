@@ -339,7 +339,6 @@ void CloudComponent::renderCluster(
 
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 	const Matrix44& view = worldRenderView.getView();
-
 	Matrix44 worldView = view * transform.toMatrix44();
 	Vector4 cameraDirection = worldView.inverse().axisZ();
 	Vector4 cameraPosition = worldView.inverse().translation();
@@ -489,7 +488,7 @@ void CloudComponent::renderCluster(
 
 					particleRenderBlock->programParams->beginParameters(renderContext);
 
-					worldRenderPass.setProgramParameters(particleRenderBlock->programParams, transform.toMatrix44(), clusterBoundingBox);
+					worldRenderPass.setProgramParameters(particleRenderBlock->programParams, transform, clusterBoundingBox);
 
 					particleRenderBlock->programParams->setFloatParameter(L"ParticleDensity", m_particleData.getDensity());
 					particleRenderBlock->programParams->setFloatParameter(L"SunInfluence", m_particleData.getSunInfluence());
@@ -548,7 +547,7 @@ void CloudComponent::renderCluster(
 			scale((maxXY[0] - minXY[0]) / 2.0f, (maxXY[1] - minXY[1]) / 2.0f, 1.0f);
 
 		renderBlock->programParams->beginParameters(renderContext);
-		worldRenderPass.setProgramParameters(renderBlock->programParams, transform.toMatrix44(), clusterBoundingBox);
+		worldRenderPass.setProgramParameters(renderBlock->programParams, transform, clusterBoundingBox);
 		renderBlock->programParams->setMatrixParameter(L"View", billboardView);
 		renderBlock->programParams->setFloatParameter(L"SliceDistance", sliceDistance);
 		renderBlock->programParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));

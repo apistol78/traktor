@@ -74,6 +74,7 @@ public:
 		IRenderView* renderView,
 		RenderTargetSet* colorBuffer,
 		RenderTargetSet* depthBuffer,
+		RenderTargetSet* velocityBuffer,
 		RenderTargetSet* shadowMask,
 		const ImageProcessStep::Instance::RenderParams& params
 	);

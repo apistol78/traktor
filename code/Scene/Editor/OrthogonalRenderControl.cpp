@@ -386,7 +386,7 @@ Matrix44 OrthogonalRenderControl::getProjectionTransform() const
 
 Matrix44 OrthogonalRenderControl::getViewTransform() const
 {
-	return m_camera->getView();
+	return m_camera->getView().toMatrix44();
 }
 
 void OrthogonalRenderControl::eventButtonDown(ui::MouseButtonDownEvent* event)
@@ -500,7 +500,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 
 		// Render entities.
 		worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
-		worldRenderView.setView(view);
+		worldRenderView.setView(view, view);
 
 		Ref< scene::Scene > sceneInstance = m_context->getScene();
 		if (sceneInstance)
@@ -518,7 +518,6 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		);
 
 		m_worldRenderer->render(
-			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
 			0,
 			render::EtCyclop
 		);
@@ -605,7 +604,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 				continue;
 
 			m_primitiveRenderer->pushView(view);
-			m_primitiveRenderer->pushWorld(camera->getWorld());
+			m_primitiveRenderer->pushWorld(camera->getWorld().toMatrix44());
 			m_primitiveRenderer->pushDepthState(false, false, false);
 
 			m_primitiveRenderer->drawWireAabb(

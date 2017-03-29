@@ -587,7 +587,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		world::WorldRenderView worldRenderView;
 		worldRenderView.setProjection(projectionTransform);
-		worldRenderView.setView(viewTransform);
+		worldRenderView.setView(viewTransform, viewTransform);
 		worldRenderView.setViewSize(Vector2(float(viewport.width), float(viewport.height)));
 		worldRenderView.setCullFrustum(viewFrustum);
 		worldRenderView.setViewFrustum(viewFrustum);
@@ -649,6 +649,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_postProcess->render(
 			m_renderView,
 			m_postTargetSet,
+			0,
 			0,
 			0,
 			params

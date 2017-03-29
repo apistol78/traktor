@@ -13,6 +13,13 @@ IntervalTransform::IntervalTransform(const Transform& transform)
 	m_transform[1] = transform;
 }
 
+IntervalTransform::IntervalTransform(const Transform& transform0, const Transform& transform1)
+:	m_stepped(false)
+{
+	m_transform[0] = transform0;
+	m_transform[1] = transform1;
+}
+
 void IntervalTransform::set(const Transform& transform)
 {
 	if (m_stepped)
@@ -43,6 +50,11 @@ void IntervalTransform::step()
 const Transform& IntervalTransform::get() const
 {
 	return m_transform[1];
+}
+
+Transform IntervalTransform::getDelta() const
+{
+	return m_transform[1] * m_transform[0].inverse();
 }
 
 }

@@ -332,7 +332,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	);
 
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
-	m_worldRenderView.setView(viewTransform);
+	m_worldRenderView.setView(viewTransform, viewTransform);
 
 	if (m_entity)
 	{
@@ -368,7 +368,6 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	);
 
 	m_worldRenderer->render(
-		world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
 		0,
 		render::EtCyclop
 	);

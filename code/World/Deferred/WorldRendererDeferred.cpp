@@ -30,8 +30,6 @@
 #include "World/SMProj/TrapezoidShadowProjection.h"
 #include "World/SMProj/UniformShadowProjection.h"
 
-//#define T_USE_BUILD_JOBS
-
 namespace traktor
 {
 	namespace world
@@ -43,13 +41,14 @@ const resource::Id< render::ImageProcessSettings > c_colorTargetCopy(Guid(L"{7DC
 const resource::Id< render::ImageProcessSettings > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		//< SSAO, half size
 const resource::Id< render::ImageProcessSettings > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	//< SSAO, full size
 const resource::Id< render::ImageProcessSettings > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		//< HBAO, half size
-const resource::Id< render::ImageProcessSettings > c_ambientOcclusionUltra(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));		//< HBAO, full size
+const resource::Id< render::ImageProcessSettings > c_ambientOcclusionUltra(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	//< HBAO, full size
 const resource::Id< render::ImageProcessSettings > c_antiAliasNone(Guid(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}"));
 const resource::Id< render::ImageProcessSettings > c_antiAliasLow(Guid(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}"));
 const resource::Id< render::ImageProcessSettings > c_antiAliasMedium(Guid(L"{3E1D810B-339A-F742-9345-4ECA00220D57}"));
 const resource::Id< render::ImageProcessSettings > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
 const resource::Id< render::ImageProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
 const resource::Id< render::ImageProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
+const resource::Id< render::ImageProcessSettings > c_motionBlur(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
 
 		}
 
@@ -57,6 +56,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererDeferred", 0, WorldR
 
 render::handle_t WorldRendererDeferred::ms_techniqueDeferredColor = 0;
 render::handle_t WorldRendererDeferred::ms_techniqueDeferredGBufferWrite = 0;
+render::handle_t WorldRendererDeferred::ms_techniqueVelocityWrite = 0;
 render::handle_t WorldRendererDeferred::ms_techniqueShadow = 0;
 render::handle_t WorldRendererDeferred::ms_handleTime = 0;
 render::handle_t WorldRendererDeferred::ms_handleView = 0;
@@ -79,6 +79,7 @@ WorldRendererDeferred::WorldRendererDeferred()
 	// Techniques
 	ms_techniqueDeferredColor = render::getParameterHandle(L"World_DeferredColor");
 	ms_techniqueDeferredGBufferWrite = render::getParameterHandle(L"World_DeferredGBufferWrite");
+	ms_techniqueVelocityWrite = render::getParameterHandle(L"World_VelocityWrite");
 	ms_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
 
 	// Global parameters.
@@ -166,6 +167,27 @@ bool WorldRendererDeferred::create(
 		if (!m_gbufferTargetSet)
 		{
 			log::error << L"Unable to create depth render target" << Endl;
+			return false;
+		}
+	}
+
+	// Create "velocity" target.
+	{
+		render::RenderTargetSetCreateDesc rtscd;
+
+		rtscd.count = 1;
+		rtscd.width = desc.width / 2;
+		rtscd.height = desc.height / 2;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = true;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.preferTiled = true;
+		rtscd.targets[0].format = render::TfR16G16F;
+
+		m_velocityTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		if (!m_velocityTargetSet)
+		{
+			log::error << L"Unable to create velocity render target" << Endl;
 			return false;
 		}
 	}
@@ -527,6 +549,31 @@ bool WorldRendererDeferred::create(
 		}
 	}
 
+	// Create motion blur processing.
+	{
+		resource::Proxy< render::ImageProcessSettings > motionBlur;
+		if (!resourceManager->bind(c_motionBlur, motionBlur))
+			log::warning << L"Unable to create motion blur process; motion blur disabled" << Endl;
+
+		if (motionBlur)
+		{
+			m_motionBlurImageProcess = new render::ImageProcess();
+			if (!m_motionBlurImageProcess->create(
+				motionBlur,
+				postProcessTargetPool,
+				resourceManager,
+				renderSystem,
+				desc.width,
+				desc.height,
+				desc.allTargetsPersistent
+			))
+			{
+				log::warning << L"Unable to create motion blur process; motion blur disabled" << Endl;
+				m_motionBlurImageProcess = 0;
+			}
+		}
+	}
+
 	// Create global reflection map.
 	if (m_settings.reflectionMap)
 	{
@@ -556,10 +603,12 @@ bool WorldRendererDeferred::create(
 			return false;
 	}
 
-	// Allocate "gbuffer" context.
+	// Allocate contexts.
+	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 	{
-		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->gbuffer = new WorldContext(desc.entityRenderers);
+		i->gbuffer = new WorldContext(desc.entityRenderers);
+		i->velocity = new WorldContext(desc.entityRenderers);
+		i->visual = new WorldContext(desc.entityRenderers);
 	}
 
 	// Allocate "shadow" contexts.
@@ -574,10 +623,6 @@ bool WorldRendererDeferred::create(
 			}
 		}
 	}
-
-	// Allocate "visual" contexts.
-	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-		i->visual = new WorldContext(desc.entityRenderers);
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.
@@ -610,6 +655,7 @@ void WorldRendererDeferred::destroy()
 	m_buildEntities.clear();
 
 	safeDestroy(m_lightRenderer);
+	safeDestroy(m_motionBlurImageProcess);
 	safeDestroy(m_gammaCorrectionImageProcess);
 	safeDestroy(m_visualImageProcess);
 	safeDestroy(m_antiAlias);
@@ -625,6 +671,7 @@ void WorldRendererDeferred::destroy()
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
 	safeDestroy(m_colorTargetSet);
+	safeDestroy(m_velocityTargetSet);
 	safeDestroy(m_gbufferTargetSet);
 	safeDestroy(m_intermediateTargetSet);
 	safeDestroy(m_visualTargetSet);
@@ -661,6 +708,7 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 		}
 	}
 
+	f.velocity->clear();
 	f.visual->clear();
 
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
@@ -670,37 +718,11 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 	// Store some global values.
 	f.time = worldRenderView.getTime();
 
-#if defined(T_USE_BUILD_JOBS)
-
-	Ref< Job > jobBuildGBuffer = JobManager::getInstance().add(makeFunctor< WorldRendererDeferred, WorldRenderView&, int >(
-		this,
-		&WorldRendererDeferred::buildGBuffer,
-		worldRenderView,
-		frame
-	));
-
-	Ref< Job > jobBuildLight = JobManager::getInstance().add(makeFunctor< WorldRendererDeferred, WorldRenderView&, int >(
-		this,
-		(m_shadowsQuality > QuDisabled) ? &WorldRendererDeferred::buildLightWithShadows : &WorldRendererDeferred::buildLightWithNoShadows,
-		worldRenderView,
-		frame
-	));
-
-	Ref< Job > jobBuildVisual = JobManager::getInstance().add(makeFunctor< WorldRendererDeferred, WorldRenderView&, int >(
-		this,
-		&WorldRendererDeferred::buildVisual,
-		worldRenderView,
-		frame
-	));
-
-	jobBuildGBuffer->wait();
-	jobBuildLight->wait();
-	jobBuildVisual->wait();
-
-#else
-
 	// Build gbuffer context.
 	buildGBuffer(worldRenderView, frame);
+
+	// Build velocity context.
+	buildVelocity(worldRenderView, frame);
 
 	// Build shadow contexts.
 	if (m_shadowsQuality > QuDisabled)
@@ -711,8 +733,6 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 	// Build visual context.
 	worldRenderView.resetLights();
 	buildVisual(worldRenderView, frame);
-
-#endif
 
 	// Prepare stereoscopic projection.
 	float screenWidth = float(m_renderView->getWidth());
@@ -732,7 +752,7 @@ bool WorldRendererDeferred::beginRender(int frame, render::EyeType eye, const Co
 	return true;
 }
 
-void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType eye)
+void WorldRendererDeferred::render(int frame, render::EyeType eye)
 {
 	Frame& f = m_frames[frame];
 	Matrix44 projection;
@@ -756,7 +776,6 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 	}
 
 	// Render gbuffer.
-	if ((flags & (WrfDepthMap | WrfNormalMap | WrfVisualOpaque)) != 0)
 	{
 		render::ProgramParameters gbufferProgramParams;
 		gbufferProgramParams.beginParameters(m_globalContext);
@@ -787,149 +806,138 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
+	// Render velocity.
+	{
+		render::ProgramParameters velocityProgramParams;
+		velocityProgramParams.beginParameters(m_globalContext);
+		velocityProgramParams.setFloatParameter(ms_handleTime, f.time);
+		velocityProgramParams.setMatrixParameter(ms_handleView, f.view);
+		velocityProgramParams.setMatrixParameter(ms_handleViewInverse, f.view.inverse());
+		velocityProgramParams.setMatrixParameter(ms_handleProjection, projection);
+		velocityProgramParams.endParameters(m_globalContext);
+
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Velocity");
+		if (m_renderView->begin(m_velocityTargetSet))
+		{
+			const float clearZ = std::numeric_limits< float >::max();
+
+			const Color4f depthColor(clearZ, clearZ, clearZ, clearZ);
+			const Color4f velocityColor(0.0f, 0.0f, 0.0f, 0.0f);
+			const Color4f clearColors[] = { velocityColor };
+
+			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
+
+			if (f.haveVelocity)
+				f.velocity->getRenderContext()->render(m_renderView, render::RpOpaque, &velocityProgramParams);
+
+			m_renderView->end();
+		}
+		T_RENDER_POP_MARKER(m_renderView);
+	}
+
 	// Render shadow and light maps.
-	if ((flags & (WrfShadowMap | WrfLightMap)) != 0 && !f.lights.empty())
+	if (!f.lights.empty())
 	{
 		bool firstLight = true;
 
 		// First render all shadowing lights.
-		if ((flags & WrfShadowMap) != 0)
+		uint32_t shadowLightCount = min< uint32_t >(f.lights.size(), MaxLightShadowCount);
+		for (uint32_t i = 0; i < shadowLightCount; ++i)
 		{
-			uint32_t shadowLightCount = min< uint32_t >(f.lights.size(), MaxLightShadowCount);
-			for (uint32_t i = 0; i < shadowLightCount; ++i)
+			if (!f.lights[i].castShadow)
+				continue;
+
+			if (eye == render::EtCyclop || eye == render::EtLeft)
 			{
-				if (!f.lights[i].castShadow)
-					continue;
-
-				if (eye == render::EtCyclop || eye == render::EtLeft)
+				// Combine all shadow slices into a screen shadow mask.
+				for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
 				{
-					// Combine all shadow slices into a screen shadow mask.
-					for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
+					render::ProgramParameters shadowProgramParams;
+					shadowProgramParams.beginParameters(m_globalContext);
+					shadowProgramParams.setFloatParameter(ms_handleTime, f.time);
+					shadowProgramParams.setMatrixParameter(ms_handleView, f.slice[j].shadowLightView[i]);
+					shadowProgramParams.setMatrixParameter(ms_handleViewInverse, f.slice[j].shadowLightView[i].inverse());
+					shadowProgramParams.setMatrixParameter(ms_handleProjection, f.slice[j].shadowLightProjection[i]);
+					shadowProgramParams.endParameters(m_globalContext);
+
+					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
+					if (m_renderView->begin(m_shadowTargetSet))
 					{
-						render::ProgramParameters shadowProgramParams;
-						shadowProgramParams.beginParameters(m_globalContext);
-						shadowProgramParams.setFloatParameter(ms_handleTime, f.time);
-						shadowProgramParams.setMatrixParameter(ms_handleView, f.slice[j].shadowLightView[i]);
-						shadowProgramParams.setMatrixParameter(ms_handleViewInverse, f.slice[j].shadowLightView[i].inverse());
-						shadowProgramParams.setMatrixParameter(ms_handleProjection, f.slice[j].shadowLightProjection[i]);
-						shadowProgramParams.endParameters(m_globalContext);
-
-						T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
-						if (m_renderView->begin(m_shadowTargetSet))
-						{
-							m_renderView->clear(render::CfDepth, 0, 1.0f, 0);
-							f.slice[j].shadow[i]->getRenderContext()->render(m_renderView, render::RpOpaque, &shadowProgramParams);
-							m_renderView->end();
-						}
-						T_RENDER_POP_MARKER(m_renderView);
-
-						T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask project");
-						if (m_renderView->begin(m_shadowMaskProjectTargetSet, 0))
-						{
-							if (j == 0)
-							{
-								const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
-								m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
-							}
-
-							Scalar zn(max(m_slicePositions[j], m_settings.viewNearZ));
-							Scalar zf(min(m_slicePositions[j + 1], m_shadowSettings.farZ));
-
-							render::ImageProcessStep::Instance::RenderParams params;
-							params.viewFrustum = f.viewFrustum;
-							params.viewToLight = f.slice[j].viewToLightSpace[i];
-							params.projection = projection;
-							params.sliceCount = m_shadowSettings.cascadingSlices;
-							params.sliceIndex = j;
-							params.sliceNearZ = zn;
-							params.sliceFarZ = zf;
-							params.shadowFarZ = m_shadowSettings.farZ;
-							params.shadowMapBias = m_shadowSettings.bias + i * m_shadowSettings.biasCoeff;
-							params.deltaTime = 0.0f;
-
-							m_shadowMaskProject->render(
-								m_renderView,
-								m_shadowTargetSet,
-								m_gbufferTargetSet,
-								0,
-								params
-							);
-
-							m_renderView->end();
-						}
-						T_RENDER_POP_MARKER(m_renderView);
-					}
-				}
-
-				if (m_shadowMaskFilterTargetSet)
-				{
-					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask filter");
-					if (m_renderView->begin(m_shadowMaskFilterTargetSet, 0))
-					{
-						const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
-						m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
-
-						render::ImageProcessStep::Instance::RenderParams params;
-						params.viewFrustum = f.viewFrustum;
-						params.projection = projection;
-						params.sliceNearZ = 0.0f;
-						params.sliceFarZ = m_shadowSettings.farZ;
-						params.shadowMapBias = m_shadowSettings.bias;
-						params.deltaTime = 0.0f;
-
-						m_shadowMaskFilter->render(
-							m_renderView,
-							m_shadowMaskProjectTargetSet,
-							m_gbufferTargetSet,
-							0,
-							params
-						);
+						m_renderView->clear(render::CfDepth, 0, 1.0f, 0);
+						f.slice[j].shadow[i]->getRenderContext()->render(m_renderView, render::RpOpaque, &shadowProgramParams);
 						m_renderView->end();
 					}
 					T_RENDER_POP_MARKER(m_renderView);
-				}
 
-				if ((flags & WrfLightMap) != 0)
-				{
-					T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (shadow)");
-					if (m_renderView->begin(m_visualTargetSet, 0))
+					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask project");
+					if (m_renderView->begin(m_shadowMaskProjectTargetSet, 0))
 					{
-						if (firstLight)
+						if (j == 0)
 						{
-							const Color4f lightClear(0.0f, 0.0f, 0.0f, 0.0f);
-							m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
-							firstLight = false;
+							const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
+							m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
 						}
 
-						render::RenderTargetSet* shadowMask = 0;
-						if (m_shadowMaskFilterTargetSet)
-							shadowMask = m_shadowMaskFilterTargetSet;
-						else
-							shadowMask = m_shadowMaskProjectTargetSet;
+						Scalar zn(max(m_slicePositions[j], m_settings.viewNearZ));
+						Scalar zf(min(m_slicePositions[j + 1], m_shadowSettings.farZ));
 
-						m_lightRenderer->renderLight(
+						render::ImageProcessStep::Instance::RenderParams params;
+						params.viewFrustum = f.viewFrustum;
+						params.viewToLight = f.slice[j].viewToLightSpace[i];
+						params.projection = projection;
+						params.sliceCount = m_shadowSettings.cascadingSlices;
+						params.sliceIndex = j;
+						params.sliceNearZ = zn;
+						params.sliceFarZ = zf;
+						params.shadowFarZ = m_shadowSettings.farZ;
+						params.shadowMapBias = m_shadowSettings.bias + i * m_shadowSettings.biasCoeff;
+						params.deltaTime = 0.0f;
+
+						m_shadowMaskProject->render(
 							m_renderView,
-							f.time,
-							projection,
-							f.view,
-							f.lights[i],
-							m_gbufferTargetSet->getColorTexture(0),
-							m_gbufferTargetSet->getColorTexture(1),
-							m_gbufferTargetSet->getColorTexture(2),
-							m_gbufferTargetSet->getColorTexture(3),
-							shadowMask != 0 ? shadowMask->getWidth() : 0,
-							shadowMask != 0 ? shadowMask->getColorTexture(0) : 0
+							m_shadowTargetSet,
+							m_gbufferTargetSet,
+							0,
+							0,
+							params
 						);
+
 						m_renderView->end();
 					}
 					T_RENDER_POP_MARKER(m_renderView);
 				}
 			}
-		}
 
-		// Then render all non-shadowing lights; no need to rebind render target for each light.
-		if ((flags & WrfLightMap) != 0)
-		{
+			if (m_shadowMaskFilterTargetSet)
+			{
+				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask filter");
+				if (m_renderView->begin(m_shadowMaskFilterTargetSet, 0))
+				{
+					const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
+					m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
+
+					render::ImageProcessStep::Instance::RenderParams params;
+					params.viewFrustum = f.viewFrustum;
+					params.projection = projection;
+					params.sliceNearZ = 0.0f;
+					params.sliceFarZ = m_shadowSettings.farZ;
+					params.shadowMapBias = m_shadowSettings.bias;
+					params.deltaTime = 0.0f;
+
+					m_shadowMaskFilter->render(
+						m_renderView,
+						m_shadowMaskProjectTargetSet,
+						m_gbufferTargetSet,
+						0,
+						0,
+						params
+					);
+					m_renderView->end();
+				}
+				T_RENDER_POP_MARKER(m_renderView);
+			}
+
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (shadow)");
 			if (m_renderView->begin(m_visualTargetSet, 0))
 			{
 				if (firstLight)
@@ -939,76 +947,105 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 					firstLight = false;
 				}
 
-				for (uint32_t i = 0; i < f.lights.size(); ++i)
-				{
-					if (f.lights[i].castShadow)
-						continue;
+				render::RenderTargetSet* shadowMask = 0;
+				if (m_shadowMaskFilterTargetSet)
+					shadowMask = m_shadowMaskFilterTargetSet;
+				else
+					shadowMask = m_shadowMaskProjectTargetSet;
 
-					T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (no shadow)");
-					m_lightRenderer->renderLight(
-						m_renderView,
-						f.time,
-						projection,
-						f.view,
-						f.lights[i],
-						m_gbufferTargetSet->getColorTexture(0),
-						m_gbufferTargetSet->getColorTexture(1),
-						m_gbufferTargetSet->getColorTexture(2),
-						m_gbufferTargetSet->getColorTexture(3),
-						0,
-						0
-					);
-					T_RENDER_POP_MARKER(m_renderView);
-				}
-
-				m_lightRenderer->renderReflections(
+				m_lightRenderer->renderLight(
 					m_renderView,
+					f.time,
 					projection,
 					f.view,
-					m_fogDistanceAndDensity,
-					m_fogColor,
-					m_reflectionMap,
+					f.lights[i],
 					m_gbufferTargetSet->getColorTexture(0),
 					m_gbufferTargetSet->getColorTexture(1),
 					m_gbufferTargetSet->getColorTexture(2),
-					m_gbufferTargetSet->getColorTexture(3)
+					m_gbufferTargetSet->getColorTexture(3),
+					shadowMask != 0 ? shadowMask->getWidth() : 0,
+					shadowMask != 0 ? shadowMask->getColorTexture(0) : 0
 				);
-
-				m_lightRenderer->renderFog(
-					m_renderView,
-					projection,
-					f.view,
-					m_fogDistanceAndDensity,
-					m_fogColor,
-					m_reflectionMap,
-					m_gbufferTargetSet->getColorTexture(0),
-					m_gbufferTargetSet->getColorTexture(1),
-					m_gbufferTargetSet->getColorTexture(2),
-					m_gbufferTargetSet->getColorTexture(3)
-				);
-
 				m_renderView->end();
 			}
+			T_RENDER_POP_MARKER(m_renderView);
+		}
+
+		// Then render all non-shadowing lights; no need to rebind render target for each light.
+		if (m_renderView->begin(m_visualTargetSet, 0))
+		{
+			if (firstLight)
+			{
+				const Color4f lightClear(0.0f, 0.0f, 0.0f, 0.0f);
+				m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
+				firstLight = false;
+			}
+
+			for (uint32_t i = 0; i < f.lights.size(); ++i)
+			{
+				if (f.lights[i].castShadow)
+					continue;
+
+				T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (no shadow)");
+				m_lightRenderer->renderLight(
+					m_renderView,
+					f.time,
+					projection,
+					f.view,
+					f.lights[i],
+					m_gbufferTargetSet->getColorTexture(0),
+					m_gbufferTargetSet->getColorTexture(1),
+					m_gbufferTargetSet->getColorTexture(2),
+					m_gbufferTargetSet->getColorTexture(3),
+					0,
+					0
+				);
+				T_RENDER_POP_MARKER(m_renderView);
+			}
+
+			m_lightRenderer->renderReflections(
+				m_renderView,
+				projection,
+				f.view,
+				m_fogDistanceAndDensity,
+				m_fogColor,
+				m_reflectionMap,
+				m_gbufferTargetSet->getColorTexture(0),
+				m_gbufferTargetSet->getColorTexture(1),
+				m_gbufferTargetSet->getColorTexture(2),
+				m_gbufferTargetSet->getColorTexture(3)
+			);
+
+			m_lightRenderer->renderFog(
+				m_renderView,
+				projection,
+				f.view,
+				m_fogDistanceAndDensity,
+				m_fogColor,
+				m_reflectionMap,
+				m_gbufferTargetSet->getColorTexture(0),
+				m_gbufferTargetSet->getColorTexture(1),
+				m_gbufferTargetSet->getColorTexture(2),
+				m_gbufferTargetSet->getColorTexture(3)
+			);
+
+			m_renderView->end();
 		}
 	}
 	else
 	{
 		// No active lights; ensure light map is cleared.
-		if ((flags & WrfLightMap) != 0)
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Light map");
+		if (m_renderView->begin(m_visualTargetSet, 0))
 		{
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Light map");
-			if (m_renderView->begin(m_visualTargetSet, 0))
-			{
-				const Color4f lightClear(0.0f, 0.0f, 0.0f, 0.0f);
-				m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
-				m_renderView->end();
-			}
-			T_RENDER_POP_MARKER(m_renderView);
+			const Color4f lightClear(0.0f, 0.0f, 0.0f, 0.0f);
+			m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
+			m_renderView->end();
 		}
+		T_RENDER_POP_MARKER(m_renderView);
 	}
 
 	// Render opaque visuals.
-	if ((flags & WrfVisualOpaque) != 0)
 	{
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
@@ -1028,30 +1065,27 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 		f.visual->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &visualProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
 
-		{
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy");
-			m_renderView->end();
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (1)");
+		m_renderView->end();
+		m_renderView->begin(m_colorTargetSet, 0);
 
-			m_renderView->begin(m_colorTargetSet, 0);
+		render::ImageProcessStep::Instance::RenderParams params;
+		params.viewFrustum = f.viewFrustum;
+		params.projection = projection;
+		params.deltaTime = 0.0f;
 
-			render::ImageProcessStep::Instance::RenderParams params;
-			params.viewFrustum = f.viewFrustum;
-			params.projection = projection;
-			params.deltaTime = 0.0f;
+		m_colorTargetCopy->render(
+			m_renderView,
+			m_visualTargetSet,
+			0,
+			0,
+			0,
+			params
+		);
 
-			m_colorTargetCopy->render(
-				m_renderView,
-				m_visualTargetSet,
-				0,
-				0,
-				params
-			);
-
-			m_renderView->end();
-
-			m_renderView->begin(m_visualTargetSet, 0);
-			T_RENDER_POP_MARKER(m_renderView);
-		}
+		m_renderView->end();
+		m_renderView->begin(m_visualTargetSet, 0);
+		T_RENDER_POP_MARKER(m_renderView);
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post opaque");
 		f.visual->getRenderContext()->render(m_renderView, render::RpPostOpaque, &visualProgramParams);
@@ -1072,6 +1106,7 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 				m_shadowTargetSet,
 				m_gbufferTargetSet,
 				0,
+				0,
 				params
 			);
 
@@ -1080,7 +1115,6 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 	}
 
 	// Render alpha blend visuals.
-	if ((flags & (WrfVisualAlphaBlend)) != 0)
 	{
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
@@ -1100,30 +1134,27 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 		f.visual->getRenderContext()->render(m_renderView, render::RpAlphaBlend, &visualProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
 
-		{
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy");
-			m_renderView->end();
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (2)");
+		m_renderView->end();
+		m_renderView->begin(m_colorTargetSet, 0);
 
-			m_renderView->begin(m_colorTargetSet, 0);
+		render::ImageProcessStep::Instance::RenderParams params;
+		params.viewFrustum = f.viewFrustum;
+		params.projection = projection;
+		params.deltaTime = 0.0f;
 
-			render::ImageProcessStep::Instance::RenderParams params;
-			params.viewFrustum = f.viewFrustum;
-			params.projection = projection;
-			params.deltaTime = 0.0f;
+		m_colorTargetCopy->render(
+			m_renderView,
+			m_visualTargetSet,
+			0,
+			0,
+			0,
+			params
+		);
 
-			m_colorTargetCopy->render(
-				m_renderView,
-				m_visualTargetSet,
-				0,
-				0,
-				params
-			);
-
-			m_renderView->end();
-
-			m_renderView->begin(m_visualTargetSet, 0);
-			T_RENDER_POP_MARKER(m_renderView);
-		}
+		m_renderView->end();
+		m_renderView->begin(m_visualTargetSet, 0);
+		T_RENDER_POP_MARKER(m_renderView);
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post alpha blend");
 		f.visual->getRenderContext()->render(m_renderView, render::RpPostAlphaBlend | render::RpOverlay, &visualProgramParams);
@@ -1151,68 +1182,38 @@ void WorldRendererDeferred::endRender(int frame, render::EyeType eye, float delt
 	render::RenderTargetSet* outputTargetSet = m_intermediateTargetSet;
 	T_ASSERT (sourceTargetSet);
 
-	// Apply custom post processing filter.
+	StaticVector< render::ImageProcess*, 4 > processes;
+	if (m_motionBlurImageProcess)
+		processes.push_back(m_motionBlurImageProcess);
 	if (m_visualImageProcess)
-	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Custom PP");
-
-		if (m_gammaCorrectionImageProcess || m_antiAlias)
-			m_renderView->begin(outputTargetSet);
-
-		m_visualImageProcess->render(
-			m_renderView,
-			sourceTargetSet,
-			m_gbufferTargetSet,
-			m_shadowTargetSet,
-			params
-		);
-
-		if (m_gammaCorrectionImageProcess || m_antiAlias)
-		{
-			m_renderView->end();
-			std::swap(sourceTargetSet, outputTargetSet);
-		}
-
-		T_RENDER_POP_MARKER(m_renderView);
-	}
-
-	// Apply gamma correction filter.
+		processes.push_back(m_visualImageProcess);
 	if (m_gammaCorrectionImageProcess)
-	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Gamma Correction");
+		processes.push_back(m_gammaCorrectionImageProcess);
+	if (m_antiAlias)
+		processes.push_back(m_antiAlias);
 
-		if (m_antiAlias)
+	for (size_t i = 0; i < processes.size(); ++i)
+	{
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Post process");
+
+		bool haveNext = bool((i + 1) < processes.size());
+		if (haveNext)
 			m_renderView->begin(outputTargetSet);
 
-		m_gammaCorrectionImageProcess->render(
+		processes[i]->render(
 			m_renderView,
 			sourceTargetSet,
 			m_gbufferTargetSet,
+			m_velocityTargetSet,
 			m_shadowTargetSet,
 			params
 		);
 
-		if (m_antiAlias)
+		if (haveNext)
 		{
 			m_renderView->end();
 			std::swap(sourceTargetSet, outputTargetSet);
 		}
-
-		T_RENDER_POP_MARKER(m_renderView);
-	}
-
-	// Apply software antialias filter.
-	if (m_antiAlias)
-	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: AntiAlias");
-
-		m_antiAlias->render(
-			m_renderView,
-			sourceTargetSet,
-			m_gbufferTargetSet,
-			m_shadowTargetSet,
-			params
-		);
 
 		T_RENDER_POP_MARKER(m_renderView);
 	}
@@ -1241,6 +1242,9 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		outTargets.push_back(render::DebugTarget(L"GBuffer metalness", render::DtvDeferredMetalness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(3)));
 	}
+
+	if (m_velocityTargetSet)
+		outTargets.push_back(render::DebugTarget(L"Velocity", render::DtvVelocity, m_velocityTargetSet->getColorTexture(0)));
 
 	if (m_colorTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Color read-back copy", render::DtvDefault, m_colorTargetSet->getColorTexture(0)));
@@ -1295,6 +1299,25 @@ void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int f
 	f.haveGBuffer = true;
 }
 
+void WorldRendererDeferred::buildVelocity(WorldRenderView& worldRenderView, int frame)
+{
+	Frame& f = m_frames[frame];
+
+	WorldRenderView velocityRenderView = worldRenderView;
+	velocityRenderView.resetLights();
+
+	WorldRenderPassDeferred velocityPass(
+		ms_techniqueVelocityWrite,
+		velocityRenderView,
+		true
+	);
+	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+		f.velocity->build(velocityRenderView, velocityPass, *i);
+	f.velocity->flush(velocityRenderView, velocityPass);
+
+	f.haveVelocity = true;
+}
+
 void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
@@ -1347,7 +1370,7 @@ void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderVi
 				WorldRenderView shadowRenderView;
 				shadowRenderView.resetLights();
 				shadowRenderView.setProjection(shadowLightProjection);
-				shadowRenderView.setView(shadowLightView);
+				shadowRenderView.setView(shadowLightView, shadowLightView);
 				shadowRenderView.setViewFrustum(shadowFrustum);
 				shadowRenderView.setCullFrustum(shadowFrustum);
 				shadowRenderView.setEyePosition(worldRenderView.getEyePosition());

@@ -166,8 +166,7 @@ void UndergrowthLayer::render(
 	// Update clusters at first pass from eye pow.
 	bool updateClusters = worldRenderPass.isFirstPassFromEye();
 
-	const Matrix44& view = worldRenderView.getView();
-	
+	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInv = view.inverse();
 	Vector4 eye = viewInv.translation();
 

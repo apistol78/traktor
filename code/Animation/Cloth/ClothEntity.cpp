@@ -196,7 +196,7 @@ void ClothEntity::render(
 	worldRenderPass.setShaderTechnique(m_shader);
 	worldRenderPass.setShaderCombination(
 		m_shader,
-		m_transform.toMatrix44(),
+		m_transform,
 		m_aabb
 	);
 
@@ -219,7 +219,7 @@ void ClothEntity::render(
 	renderBlock->programParams->beginParameters(renderContext);
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
-		m_transform.toMatrix44(),
+		m_transform,
 		m_aabb
 	);
 	renderBlock->programParams->endParameters(renderContext);

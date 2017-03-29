@@ -87,7 +87,7 @@ void RubbleLayer::render(
 	// Update clusters at first pass from eye pow.
 	bool updateClusters = worldRenderPass.isFirstPassFromEye();
 
-	const Matrix44& view = worldRenderView.getView();
+	Matrix44 view = worldRenderView.getView();
 	Vector4 eye = view.inverse().translation();
 
 	if (updateClusters)

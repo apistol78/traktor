@@ -41,7 +41,7 @@ void AutoLodMeshEntity::render(
 		m_lodDistance,
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		getTransform(worldRenderView.getInterval()),
+		m_transform,
 		distance,
 		getParameterCallback()
 	);

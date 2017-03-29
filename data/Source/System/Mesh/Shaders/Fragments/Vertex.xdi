@@ -4,72 +4,72 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>284</second>
+				<first>112</first>
+				<second>338</second>
 			</position>
 			<name>ViewBinormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>228</second>
+				<first>112</first>
+				<second>396</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>312</second>
+				<first>112</first>
+				<second>222</second>
 			</position>
 			<name>TexCoord0</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>256</second>
+				<first>112</first>
+				<second>512</second>
 			</position>
 			<name>ViewTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>200</second>
+				<first>112</first>
+				<second>454</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>368</second>
+				<first>112</first>
+				<second>106</second>
 			</position>
 			<name>Color</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>340</second>
+				<first>112</first>
+				<second>280</second>
 			</position>
 			<name>TexCoord1</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>172</second>
+				<first>112</first>
+				<second>164</second>
 			</position>
 			<name>Position</name>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-93</first>
-				<second>200</second>
+				<first>-357</first>
+				<second>214</second>
 			</position>
 			<fragmentGuid>{14AE48E1-723D-0944-821C-4B73AC942437}</fragmentGuid>
 			<inputPins/>
@@ -98,6 +98,9 @@
 				<item>
 					<name>ViewTangent</name>
 				</item>
+				<item>
+					<name>ViewVelocity</name>
+				</item>
 			</outputPins>
 			<values/>
 		</item>
@@ -113,9 +116,17 @@ work.
 			]]>
 			</comment>
 			<position>
-				<first>-16</first>
-				<second>-18</second>
+				<first>-155</first>
+				<second>-168</second>
 			</position>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>112</first>
+				<second>570</second>
+			</position>
+			<name>ViewVelocity</name>
 		</item>
 	</nodes>
 	<edges>
@@ -196,6 +207,16 @@ work.
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>ViewVelocity</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Input</name>
 			</destination>
 		</item>

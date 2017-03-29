@@ -24,7 +24,7 @@ bool StaticMesh::supportTechnique(render::handle_t technique) const
 void StaticMesh::render(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
-	const Transform& worldTransform,
+	const IntervalTransform& worldTransform,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
 )
@@ -32,7 +32,6 @@ void StaticMesh::render(
 	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT (it != m_parts.end());
 
-	Matrix44 transform = worldTransform.toMatrix44();
 	Aabb3 boundingBox = m_renderMesh->getBoundingBox();
 
 	const std::vector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
@@ -42,7 +41,7 @@ void StaticMesh::render(
 
 		worldRenderPass.setShaderCombination(
 			m_shader,
-			transform,
+			worldTransform.get(),
 			boundingBox
 		);
 
@@ -70,7 +69,7 @@ void StaticMesh::render(
 		
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			transform,
+			worldTransform,
 			boundingBox
 		);
 		

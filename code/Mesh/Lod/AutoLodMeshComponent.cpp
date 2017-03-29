@@ -57,7 +57,7 @@ void AutoLodMeshComponent::render(world::WorldContext& worldContext, world::Worl
 		m_lodDistance,
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		transform,
+		m_transform,
 		distance,
 		m_parameterCallback
 	);

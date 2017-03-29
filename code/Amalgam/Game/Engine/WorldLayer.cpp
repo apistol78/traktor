@@ -205,7 +205,10 @@ void WorldLayer::prepare(const UpdateInfo& info)
 	}
 
 	if (m_cameraEntity)
-		m_worldRenderView.setView((m_cameraTransform.get(info.getInterval()) * m_cameraOffset).inverse().toMatrix44());
+		m_worldRenderView.setView(
+			m_worldRenderView.getView(),
+			(m_cameraTransform.get(info.getInterval()) * m_cameraOffset).inverse().toMatrix44()
+		);
 
 	m_worldRenderView.setTimes(
 		info.getStateTime(),
@@ -317,12 +320,7 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 		}
 
 		// Render world.
-		m_worldRenderer->render(
-			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
-			frame,
-			eye
-		);
-
+		m_worldRenderer->render(frame, eye);
 		m_worldRenderer->endRender(frame, eye, m_deltaTime);
 	}
 }

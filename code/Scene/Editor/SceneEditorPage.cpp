@@ -446,7 +446,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		const Camera* camera = m_context->getCamera(viewIndex);
 		T_ASSERT (camera);
 
-		Matrix44 Mworld = camera->getWorld() * translate(0.0f, 0.0f, 4.0f);
+		Matrix44 Mworld = camera->getWorld().toMatrix44() * translate(0.0f, 0.0f, 4.0f);
 		entityAdapter->setTransform(Transform(Mworld.translation()));
 
 		// Finally add adapter to parent group.

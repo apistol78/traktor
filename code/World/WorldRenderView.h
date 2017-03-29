@@ -47,7 +47,7 @@ public:
 
 	void setProjection(const Matrix44& projection);
 
-	void setView(const Matrix44& view);
+	void setView(const Matrix44& lastView, const Matrix44& view);
 
 	void setViewSize(const Vector2& viewSize);
 
@@ -85,6 +85,10 @@ public:
 
 	T_FORCE_INLINE const Matrix44& getProjection() const {
 		return m_projection;
+	}
+
+	T_FORCE_INLINE const Matrix44& getLastView() const {
+		return m_lastView;
 	}
 
 	T_FORCE_INLINE const Matrix44& getView() const {
@@ -148,6 +152,7 @@ private:
 	Frustum m_viewFrustum;
 	Frustum m_cullFrustum;
 	Matrix44 m_projection;
+	Matrix44 m_lastView;
 	Matrix44 m_view;
 	Vector2 m_viewSize;
 	AlignedVector< Light > m_lights;
