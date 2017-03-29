@@ -172,6 +172,7 @@ void DecalRenderer::flush(
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			transform,
+			transform,
 			decalComponent->getBoundingBox()
 		);
 

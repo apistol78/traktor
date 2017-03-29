@@ -118,48 +118,28 @@ void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader, const
 
 void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams) const
 {
-	setWorldProgramParameters(programParams, Transform::identity());
+	setWorldProgramParameters(programParams, Transform::identity(), Transform::identity());
 	if (m_technique == s_techniqueDeferredColor)
 		setLightProgramParameters(programParams);
 }
 
-void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const
+void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const
 {
-	setWorldProgramParameters(programParams, world);
+	setWorldProgramParameters(programParams, lastWorld, world);
 	if (m_technique == s_techniqueDeferredColor)
 		setLightProgramParameters(programParams);
 }
 
-void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams, const IntervalTransform& world, const Aabb3& bounds) const
-{
-	setWorldProgramParameters(programParams, world);
-	if (m_technique == s_techniqueDeferredColor)
-		setLightProgramParameters(programParams);
-}
-
-void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& world) const
+void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const
 {
 	Matrix44 w = world.toMatrix44();
 	programParams->setMatrixParameter(s_handleWorld, w);
 	programParams->setMatrixParameter(s_handleWorldView, m_worldRenderView.getView() * w);
-}
-
-void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameters* programParams, const IntervalTransform& world) const
-{
-	float interval = m_worldRenderView.getInterval();
-
-	const Matrix44& v = m_worldRenderView.getView();
-	Matrix44 w = world.get(interval).toMatrix44();
-
-	programParams->setMatrixParameter(s_handleWorld, w);
-	programParams->setMatrixParameter(s_handleWorldView, v * w);
 
 	if (m_technique == s_techniqueVelocityWrite)
 	{
-		const Matrix44& v0 = m_worldRenderView.getLastView();
-		Matrix44 w0 = world.get(0.0f).toMatrix44();
-
-		programParams->setMatrixParameter(s_handleLastWorldView, v0 * w0);
+		Matrix44 w0 = lastWorld.toMatrix44();
+		programParams->setMatrixParameter(s_handleLastWorldView, m_worldRenderView.getLastView() * w0);
 	}
 }
 

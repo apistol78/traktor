@@ -131,6 +131,7 @@ void InstanceMesh::render(
 		worldRenderPass.setProgramParameters(
 			batchParameters,
 			boundingBoxCenter,
+			boundingBoxCenter,
 			boundingBoxWorld
 		);
 		batchParameters->endParameters(renderContext);
@@ -213,6 +214,7 @@ void InstanceMesh::render(
 			batchParameters->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(
 				batchParameters,
+				boundingBoxCenter,
 				boundingBoxCenter,
 				boundingBoxWorld
 			);

@@ -82,6 +82,7 @@ void SkinnedMesh::render(
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			worldTransform,
+			worldTransform,
 			boundingBox
 		);
 		if (parameterCallback)

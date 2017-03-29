@@ -3,7 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Math/Aabb3.h"
-#include "Core/Math/IntervalTransform.h"
+#include "Core/Math/Transform.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -58,18 +58,11 @@ public:
 	/*! \brief Set shader parameters.
 	 *
 	 * \param programParams Block to set parameters into.
+	 * \param lastWorld Previous world transform.
 	 * \param world World transform.
 	 * \param bounds World bounds.
 	 */
-	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const = 0;
-
-	/*! \brief Set shader parameters.
-	 *
-	 * \param programParams Block to set parameters into.
-	 * \param world World transform.
-	 * \param bounds World bounds.
-	 */
-	virtual void setProgramParameters(render::ProgramParameters* programParams, const IntervalTransform& world, const Aabb3& bounds) const = 0;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const = 0;
 };
 	
 	}

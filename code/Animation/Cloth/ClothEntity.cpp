@@ -220,6 +220,7 @@ void ClothEntity::render(
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
 		m_transform,
+		m_transform,
 		m_aabb
 	);
 	renderBlock->programParams->endParameters(renderContext);

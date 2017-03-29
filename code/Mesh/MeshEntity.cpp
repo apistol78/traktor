@@ -30,10 +30,5 @@ bool MeshEntity::getTransform(Transform& outTransform) const
 	return true;
 }
 
-Transform MeshEntity::getTransform(float interval) const
-{
-	return m_transform.get(interval);
-}
-
 	}
 }

@@ -36,7 +36,7 @@ void InstanceMeshEntityRenderer::render(
 		return;
 
 	Aabb3 boundingBox = meshEntity->getBoundingBox();
-	Transform transform = meshEntity->getTransform(worldRenderView.getInterval());
+	Transform transform = meshEntity->m_transform.get(worldRenderView.getInterval());
 
 	float distance = 0.0f;
 	if (!isMeshVisible(

@@ -3,7 +3,7 @@
 
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
-#include "Core/Math/IntervalTransform.h"
+#include "Core/Math/Transform.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
@@ -63,7 +63,8 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
-		const IntervalTransform& worldTransform,
+		const Transform& lastWorldTransform,
+		const Transform& worldTransform,
 		float distance,
 		const IMeshParameterCallback* parameterCallback
 	);

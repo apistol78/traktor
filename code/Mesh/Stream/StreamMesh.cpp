@@ -117,6 +117,7 @@ void StreamMesh::render(
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			worldTransform,
+			worldTransform,
 			getBoundingBox()
 		);
 		if (parameterCallback)
