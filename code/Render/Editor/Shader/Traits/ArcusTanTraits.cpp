@@ -15,7 +15,7 @@ TypeInfoSet ArcusTanTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool ArcusTanTraits::isRoot(const Node* node) const
+bool ArcusTanTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

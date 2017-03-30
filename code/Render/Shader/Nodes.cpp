@@ -750,15 +750,26 @@ void IndexedUniform::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.InputPort", 1, InputPort, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.InputPort", 2, InputPort, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_InputPort_o[] = { { L"Output" }, { 0 } };
 
-InputPort::InputPort(const std::wstring& name, bool connectable, bool optional, float defaultValue)
+InputPort::InputPort()
+:	ImmutableNode(0, c_InputPort_o)
+,	m_name(L"")
+,	m_connectable(true)
+,	m_optional(false)
+,	m_haveDefaultValue(false)
+,	m_defaultValue(0.0f)
+{
+}
+
+InputPort::InputPort(const std::wstring& name, bool connectable, bool optional, bool haveDefaultValue, float defaultValue)
 :	ImmutableNode(0, c_InputPort_o)
 ,	m_name(name)
 ,	m_connectable(connectable)
 ,	m_optional(optional)
+,	m_haveDefaultValue(haveDefaultValue)
 ,	m_defaultValue(defaultValue)
 {
 }
@@ -793,6 +804,16 @@ bool InputPort::isOptional() const
 	return m_optional;
 }
 
+void InputPort::setHaveDefaultValue(bool haveDefaultValue)
+{
+	m_haveDefaultValue = haveDefaultValue;
+}
+
+bool InputPort::haveDefaultValue() const
+{
+	return m_haveDefaultValue;
+}
+
 void InputPort::setDefaultValue(float defaultValue)
 {
 	m_defaultValue = defaultValue;
@@ -818,6 +839,12 @@ void InputPort::serialize(ISerializer& s)
 	{
 		s >> Member< bool >(L"connectable", m_connectable);
 		s >> Member< bool >(L"optional", m_optional);
+
+		if (s.getVersion() >= 2)
+			s >> Member< bool >(L"haveDefaultValue", m_haveDefaultValue);
+		else
+			m_haveDefaultValue = true;
+
 		s >> Member< float >(L"defaultValue", m_defaultValue);
 	}
 }

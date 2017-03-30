@@ -22,7 +22,7 @@ TypeInfoSet ConstantNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool ConstantNodeTraits::isRoot(const Node* node) const
+bool ConstantNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

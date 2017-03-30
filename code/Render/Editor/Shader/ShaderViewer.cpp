@@ -47,15 +47,7 @@ public:
 
 	virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const
 	{
-		Ref< const ShaderGraph > shaderGraph = m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
-		if (!shaderGraph)
-			return 0;
-
-		shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved();
-		if (!shaderGraph)
-			return 0;
-
-		return shaderGraph;
+		return m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
 	}
 
 private:

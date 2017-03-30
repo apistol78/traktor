@@ -16,7 +16,7 @@ TypeInfoSet VertexNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool VertexNodeTraits::isRoot(const Node* node) const
+bool VertexNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return is_a< VertexOutput >(node);
 }

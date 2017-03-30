@@ -85,8 +85,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>605</first>
-				<second>577</second>
+				<first>601</first>
+				<second>550</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
@@ -146,8 +146,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>605</first>
-				<second>543</second>
+				<first>601</first>
+				<second>516</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -177,8 +177,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>605</first>
-				<second>611</second>
+				<first>601</first>
+				<second>584</second>
 			</position>
 			<name>ViewTangent</name>
 		</item>
@@ -238,8 +238,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>605</first>
-				<second>645</second>
+				<first>601</first>
+				<second>618</second>
 			</position>
 			<name>ViewBinormal</name>
 		</item>
@@ -372,10 +372,62 @@
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>634</first>
-				<second>926</second>
+				<first>622</first>
+				<second>911</second>
 			</position>
 			<value>0, 0, 0, 0</value>
+		</item>
+		<item type="traktor.render.Comment">
+			<comment>
+			<![CDATA[
+All "default" vertex are exposed as variables
+to provide values to material output fragments.
+			]]>
+			</comment>
+			<position>
+				<first>1342</first>
+				<second>225</second>
+			</position>
+		</item>
+		<item type="traktor.render.Variable">
+			<comment/>
+			<position>
+				<first>1415</first>
+				<second>720</second>
+			</position>
+			<name>Vertex_ViewVelocity</name>
+		</item>
+		<item type="traktor.render.Variable">
+			<comment/>
+			<position>
+				<first>1415</first>
+				<second>414</second>
+			</position>
+			<name>Vertex_ViewNormal</name>
+		</item>
+		<item type="traktor.render.Variable">
+			<comment/>
+			<position>
+				<first>1415</first>
+				<second>312</second>
+			</position>
+			<name>Vertex_ViewPosition</name>
+		</item>
+		<item type="traktor.render.Variable">
+			<comment/>
+			<position>
+				<first>1415</first>
+				<second>516</second>
+			</position>
+			<name>Vertex_ViewTangent</name>
+		</item>
+		<item type="traktor.render.Variable">
+			<comment/>
+			<position>
+				<first>1415</first>
+				<second>618</second>
+			</position>
+			<name>Vertex_ViewBinormal</name>
 		</item>
 	</nodes>
 	<edges>
@@ -706,6 +758,56 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[37]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[41]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[43]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[44]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
 				<name>Input</name>
 			</destination>
 		</item>

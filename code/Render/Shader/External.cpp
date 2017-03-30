@@ -216,7 +216,7 @@ External::External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph)
 				));
 			}
 
-			if (!inputPort->isConnectable() || inputPort->isOptional())
+			if (!inputPort->isConnectable() || (inputPort->isOptional() && inputPort->haveDefaultValue()))
 				m_values[name] = inputPort->getDefaultValue();
 		}
 		else if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >(fragmentNode))

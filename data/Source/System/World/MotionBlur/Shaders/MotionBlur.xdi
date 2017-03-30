@@ -149,7 +149,7 @@
 				<second>686</second>
 			</position>
 			<from>0</from>
-			<to>15</to>
+			<to>8</to>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
@@ -169,9 +169,9 @@
 			<comment/>
 			<position>
 				<first>1003</first>
-				<second>950</second>
+				<second>949</second>
 			</position>
-			<value>16</value>
+			<value>9</value>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
@@ -187,6 +187,21 @@
 				<first>-50</first>
 				<second>897</second>
 			</position>
+		</item>
+		<item type="traktor.render.Sub">
+			<comment/>
+			<position>
+				<first>692</first>
+				<second>960</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>508</first>
+				<second>1062</second>
+			</position>
+			<value>4</value>
 		</item>
 	</nodes>
 	<edges>
@@ -272,16 +287,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>N</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Output</name>
 			</source>
@@ -348,6 +353,36 @@
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>N</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

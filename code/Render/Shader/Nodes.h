@@ -364,7 +364,9 @@ class T_DLLCLASS InputPort : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	InputPort(const std::wstring& name = L"", bool connectable = true, bool optional = false, float defaultValue = 0.0f);
+	InputPort();
+
+	InputPort(const std::wstring& name, bool connectable, bool optional, bool haveDefaultValue, float defaultValue);
 
 	void setName(const std::wstring& name);
 
@@ -378,6 +380,10 @@ public:
 
 	bool isOptional() const;
 
+	void setHaveDefaultValue(bool haveDefaultValue);
+
+	bool haveDefaultValue() const;
+
 	void setDefaultValue(float defaultValue);
 
 	float getDefaultValue() const;
@@ -390,6 +396,7 @@ private:
 	std::wstring m_name;
 	bool m_connectable;
 	bool m_optional;
+	bool m_haveDefaultValue;
 	float m_defaultValue;
 };
 

@@ -100,7 +100,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
 		const INodeTraits* nodeTraits = INodeTraits::find(*i);
-		if (nodeTraits && nodeTraits->isRoot(*i))
+		if (nodeTraits && nodeTraits->isRoot(m_shaderGraph, *i))
 			roots.push_back(*i);
 	}
 

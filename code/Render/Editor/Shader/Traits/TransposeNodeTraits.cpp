@@ -15,7 +15,7 @@ TypeInfoSet TransposeNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool TransposeNodeTraits::isRoot(const Node* node) const
+bool TransposeNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

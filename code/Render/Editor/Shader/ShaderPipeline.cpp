@@ -81,10 +81,6 @@ public:
 		if (!shaderGraph)
 			return 0;
 
-		shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved();
-		if (!shaderGraph)
-			return 0;
-
 		if (ShaderGraphValidator(shaderGraph).validateIntegrity())
 			return shaderGraph;
 		else
@@ -131,8 +127,16 @@ struct BuildCombinationTask : public Object
 		Ref< const ShaderGraph > combinationGraph = combinations->getCombinationShaderGraph(combination);
 		T_ASSERT (combinationGraph);
 
+		// Resolve all variables.
+		Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getVariableResolved();
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to resolve variables, material shader \"" << name << L"\"" << Endl;
+			return;
+		}
+
 		// Get connected permutation.
-		Ref< ShaderGraph > programGraph = render::ShaderGraphStatic(combinationGraph).getConnectedPermutation();
+		programGraph = render::ShaderGraphStatic(programGraph).getConnectedPermutation();
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to freeze connected conditionals, material shader \"" << name << L"\"" << Endl;

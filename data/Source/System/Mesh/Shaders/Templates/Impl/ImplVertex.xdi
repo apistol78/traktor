@@ -4,7 +4,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>566</first>
+				<first>942</first>
 				<second>333</second>
 			</position>
 			<fragmentGuid>{0A9BE5B4-4B45-B84A-AE16-57F6483436FC}</fragmentGuid>
@@ -43,7 +43,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>948</first>
+				<first>1468</first>
 				<second>457</second>
 			</position>
 			<name>T_ViewBinormal</name>
@@ -51,7 +51,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>948</first>
+				<first>1468</first>
 				<second>505</second>
 			</position>
 			<name>T_ViewNormal</name>
@@ -59,7 +59,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>948</first>
+				<first>1468</first>
 				<second>601</second>
 			</position>
 			<name>T_ViewTangent</name>
@@ -67,7 +67,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>948</first>
+				<first>1468</first>
 				<second>553</second>
 			</position>
 			<name>T_ViewPosition</name>
@@ -75,7 +75,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>948</first>
+				<first>1468</first>
 				<second>265</second>
 			</position>
 			<name>T_Color</name>
@@ -83,7 +83,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>948</first>
+				<first>1468</first>
 				<second>313</second>
 			</position>
 			<name>T_Position</name>
@@ -91,7 +91,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>948</first>
+				<first>1468</first>
 				<second>409</second>
 			</position>
 			<name>T_TexCoord1</name>
@@ -99,7 +99,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>948</first>
+				<first>1468</first>
 				<second>361</second>
 			</position>
 			<name>T_TexCoord0</name>
@@ -107,7 +107,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>948</first>
+				<first>1468</first>
 				<second>649</second>
 			</position>
 			<name>T_ViewVelocity</name>

@@ -32,7 +32,7 @@ TypeInfoSet ScriptNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool ScriptNodeTraits::isRoot(const Node* node) const
+bool ScriptNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

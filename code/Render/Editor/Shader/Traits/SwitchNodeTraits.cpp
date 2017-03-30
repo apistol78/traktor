@@ -32,7 +32,7 @@ TypeInfoSet SwitchNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool SwitchNodeTraits::isRoot(const Node* node) const
+bool SwitchNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

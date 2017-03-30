@@ -32,7 +32,7 @@ TypeInfoSet LerpNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool LerpNodeTraits::isRoot(const Node* node) const
+bool LerpNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

@@ -32,7 +32,7 @@ TypeInfoSet SamplerNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool SamplerNodeTraits::isRoot(const Node* node) const
+bool SamplerNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

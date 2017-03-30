@@ -34,7 +34,7 @@ TypeInfoSet ConditionalNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool ConditionalNodeTraits::isRoot(const Node* node) const
+bool ConditionalNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

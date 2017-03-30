@@ -1,5 +1,6 @@
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Traits/MetaNodeTraits.h"
 
 namespace traktor
@@ -40,12 +41,18 @@ TypeInfoSet MetaNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool MetaNodeTraits::isRoot(const Node* node) const
+bool MetaNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
-	if (is_a< InputPort >(node) || is_a< OutputPort >(node) || is_a< Variable >(node))
+	if (is_a< InputPort >(node) || is_a< OutputPort >(node))
 		return true;
 	else if (const External* externalNode = dynamic_type_cast< const External* >(node))
 		return externalNode->getOutputPinCount() == 0;
+	else if (const Variable* variableNode = dynamic_type_cast< const Variable* >(node))
+	{
+		return
+			bool(shaderGraph->findSourcePin(variableNode->getInputPin(0)) != 0) &&
+			bool(shaderGraph->getDestinationCount(variableNode->getOutputPin(0)) == 0);
+	}
 	else
 		return false;
 }
