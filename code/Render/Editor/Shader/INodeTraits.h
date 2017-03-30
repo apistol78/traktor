@@ -34,7 +34,7 @@ public:
 
 	/*! \brief Return true if node is considered to be a root.
 	 */
-	virtual bool isRoot(const Node* node) const = 0;
+	virtual bool isRoot(const ShaderGraph* shaderGraph, const Node* node) const = 0;
 
 	/*! \brief Determine type of output pin from given types of all input pins.
 	 */

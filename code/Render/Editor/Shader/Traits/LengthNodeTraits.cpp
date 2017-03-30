@@ -15,7 +15,7 @@ TypeInfoSet LengthNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool LengthNodeTraits::isRoot(const Node* node) const
+bool LengthNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

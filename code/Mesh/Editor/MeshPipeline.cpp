@@ -74,10 +74,6 @@ public:
 		if (!shaderGraph)
 			return 0;
 
-		shaderGraph = render::ShaderGraphStatic(shaderGraph).getVariableResolved();
-		if (!shaderGraph)
-			return 0;
-
 		if (render::ShaderGraphValidator(shaderGraph).validateIntegrity())
 			return shaderGraph;
 		else

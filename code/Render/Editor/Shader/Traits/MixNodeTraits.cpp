@@ -33,7 +33,7 @@ TypeInfoSet MixNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool MixNodeTraits::isRoot(const Node* node) const
+bool MixNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

@@ -15,7 +15,7 @@ TypeInfoSet DotNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool DotNodeTraits::isRoot(const Node* node) const
+bool DotNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

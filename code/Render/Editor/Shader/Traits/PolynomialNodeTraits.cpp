@@ -31,7 +31,7 @@ TypeInfoSet PolynomialNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool PolynomialNodeTraits::isRoot(const Node* node) const
+bool PolynomialNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

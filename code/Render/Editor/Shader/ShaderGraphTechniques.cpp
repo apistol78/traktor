@@ -4,6 +4,7 @@
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Shader/ShaderGraphTraverse.h"
+#include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
@@ -77,6 +78,14 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 			{
 				if (pixelOutput->getTechnique() == *i)
 					roots.push_back(pixelOutput);
+			}
+			else
+			{
+				const INodeTraits* traits = INodeTraits::find(*j);
+				T_FATAL_ASSERT (traits);
+
+				if (traits->isRoot(shaderGraphOpt, *j))
+					roots.push_back(*j);
 			}
 		}
 

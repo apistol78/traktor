@@ -194,16 +194,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 		const InputPin* inputPin = (*i)->findInputPin(L"Input");
 		T_ASSERT (inputPin);
 
-		bool inputConnected = false;
-
-		// Check if input edge is connected; and not to a synthesized default value.
-		const Edge* inputEdge = shaderGraph->findEdge(inputPin);
-		if (inputEdge)
-		{
-			if (inputEdge->getSource()->getNode()->getComment() != L"__synthesized__")
-				inputConnected = true;
-		}
-
+		bool inputConnected = bool(shaderGraph->findEdge(inputPin) != 0);
 		inputPin = (*i)->findInputPin(inputConnected ? L"True" : L"False");
 		T_ASSERT (inputPin);
 
@@ -542,11 +533,14 @@ restart_iteration:
 	}
 	while (constantPropagationCount > 0);
 
-	// Collect root nodes; assume all nodes with no output pins to be roots.
+	// Collect root nodes.
 	RefArray< Node > roots;
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
-		if ((*i)->getOutputPinCount() <= 0 && (*i)->getInputPinCount() > 0)
+		const INodeTraits* traits = INodeTraits::find(*i);
+		T_FATAL_ASSERT (traits);
+
+		if (traits->isRoot(shaderGraph, *i))
 			roots.push_back(*i);
 	}
 
@@ -675,7 +669,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved() const
 			RefArray< Variable >::iterator j = std::find_if(variableNodes.begin(), variableNodes.end(), ReadVariablePred(shaderGraph, (*i)->getName()));
 			if (j == variableNodes.end())
 			{
-				log::error << L"Unable to read variable \"" << (*i)->getName() << L", no such variable." << Endl;
+				log::error << L"Unable to read variable \"" << (*i)->getName() << L"\", no such variable." << Endl;
 				return 0;
 			}
 

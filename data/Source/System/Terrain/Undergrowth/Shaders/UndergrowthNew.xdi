@@ -248,7 +248,7 @@
 			</position>
 			<swizzle>x00</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-1414</first>
@@ -257,6 +257,7 @@
 			<name>Wave amount</name>
 			<connectable>false</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.6</defaultValue>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
@@ -307,7 +308,7 @@
 				<second>198</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-414</first>
@@ -316,6 +317,7 @@
 			<name>Random rotation</name>
 			<connectable>false</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.5</defaultValue>
 		</item>
 		<item type="traktor.render.MulAdd">
@@ -597,7 +599,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>41</first>
@@ -606,6 +608,7 @@
 			<name>DiffuseMap</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul">
@@ -619,7 +622,7 @@ Surface modulated
 				<second>900</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>1078</first>
@@ -628,6 +631,7 @@ Surface modulated
 			<name>Ground color influence</name>
 			<connectable>false</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.85</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -645,7 +649,7 @@ Surface modulated
 				<second>1208</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>67</first>
@@ -654,6 +658,7 @@ Surface modulated
 			<name>NormalMap</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Normalize">
@@ -775,7 +780,7 @@ Surface modulated
 				<second>659</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>729</first>
@@ -784,6 +789,7 @@ Surface modulated
 			<name>Ground normal influence</name>
 			<connectable>false</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.3</defaultValue>
 		</item>
 		<item type="traktor.render.Interpolator">
@@ -793,7 +799,7 @@ Surface modulated
 				<second>783</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>44</first>
@@ -802,6 +808,7 @@ Surface modulated
 			<name>Aspect</name>
 			<connectable>false</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>2</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -845,6 +852,10 @@ Surface modulated
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>Metalness</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>Reflection</name>
 					<optional>true</optional>
 				</item>
@@ -873,6 +884,10 @@ Surface modulated
 				</item>
 				<item>
 					<first>Emissive</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>Metalness</first>
 					<second>0</second>
 				</item>
 				<item>

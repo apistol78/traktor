@@ -1042,7 +1042,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	for (RefArray< InputPort >::iterator i = fragmentInputs.begin(); i != fragmentInputs.end(); ++i)
 	{
 		external->createInputPin((*i)->getName(), (*i)->isOptional());
-		if ((*i)->isOptional())
+		if ((*i)->isOptional() && (*i)->haveDefaultValue())
 			external->setValue((*i)->getName(), (*i)->getDefaultValue());
 	}
 	for (RefArray< OutputPort >::iterator i = fragmentOutputs.begin(); i != fragmentOutputs.end(); ++i)

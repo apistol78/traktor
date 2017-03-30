@@ -16,7 +16,7 @@ TypeInfoSet ValueNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool ValueNodeTraits::isRoot(const Node* node) const
+bool ValueNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

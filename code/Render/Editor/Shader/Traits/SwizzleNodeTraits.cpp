@@ -17,7 +17,7 @@ TypeInfoSet SwizzleNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool SwizzleNodeTraits::isRoot(const Node* node) const
+bool SwizzleNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

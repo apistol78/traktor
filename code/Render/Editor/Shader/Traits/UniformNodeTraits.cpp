@@ -32,7 +32,7 @@ TypeInfoSet UniformNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool UniformNodeTraits::isRoot(const Node* node) const
+bool UniformNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

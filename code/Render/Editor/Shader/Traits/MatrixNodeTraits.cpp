@@ -32,7 +32,7 @@ TypeInfoSet MatrixNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool MatrixNodeTraits::isRoot(const Node* node) const
+bool MatrixNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

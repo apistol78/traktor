@@ -15,7 +15,7 @@ class LengthNodeTraits : public INodeTraits
 public:
 	virtual TypeInfoSet getNodeTypes() const T_OVERRIDE T_FINAL;
 
-	virtual bool isRoot(const Node* node) const T_OVERRIDE T_FINAL;
+	virtual bool isRoot(const ShaderGraph* shaderGraph, const Node* node) const T_OVERRIDE T_FINAL;
 
 	virtual PinType getOutputPinType(
 		const Node* node,

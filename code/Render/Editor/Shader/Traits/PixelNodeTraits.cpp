@@ -32,7 +32,7 @@ TypeInfoSet PixelNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool PixelNodeTraits::isRoot(const Node* node) const
+bool PixelNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return true;
 }

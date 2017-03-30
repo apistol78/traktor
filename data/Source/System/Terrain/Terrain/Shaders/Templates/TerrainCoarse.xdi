@@ -137,6 +137,10 @@
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>ViewVelocity</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -450,6 +454,14 @@ Disabled emissive for now as it doesn't work on OpenGL
 				<first>1381</first>
 				<second>544</second>
 			</position>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>3100</first>
+				<second>308</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -861,6 +873,16 @@ Disabled emissive for now as it doesn't work on OpenGL
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>ViewNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>ViewVelocity</name>
 			</destination>
 		</item>
 	</edges>

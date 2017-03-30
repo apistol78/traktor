@@ -60,7 +60,7 @@ TypeInfoSet MathNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool MathNodeTraits::isRoot(const Node* node) const
+bool MathNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

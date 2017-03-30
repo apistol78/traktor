@@ -31,7 +31,7 @@ TypeInfoSet TransformNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool TransformNodeTraits::isRoot(const Node* node) const
+bool TransformNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

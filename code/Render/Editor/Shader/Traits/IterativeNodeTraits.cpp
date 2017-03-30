@@ -35,7 +35,7 @@ TypeInfoSet IterativeNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
-bool IterativeNodeTraits::isRoot(const Node* node) const
+bool IterativeNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
 }

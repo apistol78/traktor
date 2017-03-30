@@ -156,28 +156,27 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 						else if (!(*j)->isOptional())
 						{
 							if (optionalShaderGraphGuid)
-								log::error << L"Fragment linkage of \"" << optionalShaderGraphGuid->format() << L"\" non-optional pin \"" << inputPortName << L"\" unconnected" << Endl;
+								log::error << L"Fragment linkage of \"" << optionalShaderGraphGuid->format() << L"\" non-optional pin \"" << inputPortName << L"\" unconnected." << Endl;
 							else
-								log::error << L"Fragment linkage failed;  non-optional pin \"" << inputPortName << L"\" unconnected" << Endl;
+								log::error << L"Fragment linkage failed;  non-optional pin \"" << inputPortName << L"\" unconnected." << Endl;
 							return 0;
 						}
 					}
 					else if (!(*j)->isOptional())
 					{
 						if (optionalShaderGraphGuid)
-							log::error << L"Fragment linkage of \"" << optionalShaderGraphGuid->format() << L"\" failed; no such pin \"" << inputPortName << L"\"" << Endl;
+							log::error << L"Fragment linkage of \"" << optionalShaderGraphGuid->format() << L"\" failed; no such pin \"" << inputPortName << L"\"." << Endl;
 						else
-							log::error << L"Fragment linkage failed; no such pin \"" << inputPortName << L"\"" << Endl;
+							log::error << L"Fragment linkage failed; no such pin \"" << inputPortName << L"\"." << Endl;
 						return 0;
 					}
 				}
 
-				if (replaceWithValue)
+				// Non-connected or value-only input port; replace with scalar value node.
+				if (replaceWithValue && (*j)->haveDefaultValue())
 				{
-					// Non-connected or value-only input port; replace with scalar value node.
 					float value = externalNode->getValue(inputPortName, (*j)->getDefaultValue());
 					Ref< Scalar > valueNode = new Scalar(value);
-					valueNode->setComment(L"__synthesized__");
 					T_ASSERT (inputEstablishedPorts[inputPortName] == 0);
 					inputEstablishedPorts[inputPortName] = valueNode;
 					resolvedNodes.push_back(valueNode);
