@@ -14,7 +14,7 @@ namespace traktor
 		namespace
 		{
 
-class T_DLLCLASS FlashSoundRelay : public ActionObjectRelay
+class FlashSoundRelay : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 

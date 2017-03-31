@@ -136,6 +136,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CONSTANT_FOLD"), 11, ui::Command(L"ShaderGraph.Editor.ConstantFold")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CLEANUP_SWIZZLES"), 12, ui::Command(L"ShaderGraph.Editor.CleanupSwizzles")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_INSERT_INTERPOLATORS"), 13, ui::Command(L"ShaderGraph.Editor.InsertInterpolators")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_VARIABLES"), 13, ui::Command(L"ShaderGraph.Editor.ResolveVariables")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	
 	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), ui::scaleBySystemDPI(80), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
@@ -683,6 +684,27 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 		m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).insertInterpolators(false);
 		T_ASSERT (m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
+
+		m_editorGraph->removeAllEdges();
+		m_editorGraph->removeAllNodes();
+
+		createEditorNodes(
+			m_shaderGraph->getNodes(),
+			m_shaderGraph->getEdges()
+		);
+
+		updateGraph();
+
+		m_site->setPropertyObject(0);
+	}
+	else if (command == L"ShaderGraph.Editor.ResolveVariables")
+	{
+		m_document->push();
+
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getVariableResolved();
+		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
 

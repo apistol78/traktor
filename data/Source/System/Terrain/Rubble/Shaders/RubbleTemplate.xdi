@@ -213,6 +213,10 @@
 					<name>T_ViewPosition</name>
 					<optional>false</optional>
 				</item>
+				<item>
+					<name>T_ViewVelocity</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values/>
