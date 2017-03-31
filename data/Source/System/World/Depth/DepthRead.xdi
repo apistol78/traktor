@@ -64,30 +64,6 @@
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.External" version="1">
-			<comment/>
-			<position>
-				<first>-138</first>
-				<second>370</second>
-			</position>
-			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
-			<inputPins>
-				<item>
-					<name>DepthMap</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>DepthMapUV</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values/>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
