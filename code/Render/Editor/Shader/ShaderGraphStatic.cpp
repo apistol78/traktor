@@ -659,6 +659,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved() const
 	RefArray< Variable > variableNodes;
 	shaderGraph->findNodesOf< Variable >(variableNodes);
 
+	// Join variable references.
 	for (RefArray< Variable >::iterator i = variableNodes.begin(); i != variableNodes.end(); ++i)
 	{
 		const OutputPin* variableOutput = (*i)->getOutputPin(0);
@@ -667,26 +668,32 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved() const
 		if (shaderGraph->getDestinationCount(variableOutput) > 0)
 		{
 			RefArray< Variable >::iterator j = std::find_if(variableNodes.begin(), variableNodes.end(), ReadVariablePred(shaderGraph, (*i)->getName()));
-			if (j == variableNodes.end())
+			if (j != variableNodes.end())
 			{
-				log::error << L"Unable to read variable \"" << (*i)->getName() << L"\", no such variable." << Endl;
-				return 0;
+				const InputPin* variableInput = (*j)->getInputPin(0);
+				T_ASSERT(variableInput);
+
+				const OutputPin* sourcePin = shaderGraph->findSourcePin(variableInput);
+				T_ASSERT(sourcePin);
+
+				shaderGraph->rewire(variableOutput, sourcePin);
 			}
-
-			const InputPin* variableInput = (*j)->getInputPin(0);
-			T_ASSERT (variableInput);
-
-			const OutputPin* sourcePin = shaderGraph->findSourcePin(variableInput);
-			T_ASSERT (sourcePin);
-
-			shaderGraph->rewire(
-				variableOutput,
-				sourcePin
-			);
+			else
+			{
+				// Variable is undefined, disconnect output.
+				shaderGraph->rewire(variableOutput, 0);
+			}
 		}
 	}
 
-	return ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+	// Remove all variables.
+	for (RefArray< Variable >::iterator i = variableNodes.begin(); i != variableNodes.end(); ++i)
+	{
+		shaderGraph->detach(*i);
+		shaderGraph->removeNode(*i);
+	};
+
+	return shaderGraph;
 }
 
 	}

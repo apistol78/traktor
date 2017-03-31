@@ -142,13 +142,41 @@ uint32_t ShaderGraph::getDestinationCount(const OutputPin* outputPin) const
 	return i != m_outputPinEdges.end() ? uint32_t(i->second->size()) : 0;
 }
 
+void ShaderGraph::detach(const Node* node)
+{
+	int32_t inputPinCount = node->getInputPinCount();
+	for (int32_t i = 0; i < inputPinCount; ++i)
+	{
+		Edge* edge = findEdge(node->getInputPin(i));
+		if (edge)
+			removeEdge(edge);
+	}
+	int32_t outputPinCount = node->getOutputPinCount();
+	for (int32_t i = 0; i < outputPinCount; ++i)
+	{
+		RefSet< Edge > edges;
+		findEdges(node->getOutputPin(i), edges);
+		for (RefSet< Edge >::const_iterator j = edges.begin(); j != edges.end(); ++j)
+			removeEdge(*j);
+	}
+	updateAdjacency();
+}
+
 void ShaderGraph::rewire(const OutputPin* outputPin, const OutputPin* newOutputPin)
 {
 	RefSet< Edge > outputEdges;
 	findEdges(outputPin, outputEdges);
 
-	for (RefSet< Edge >::const_iterator j = outputEdges.begin(); j != outputEdges.end(); ++j)
-		(*j)->setSource(newOutputPin);
+	if (newOutputPin)
+	{
+		for (RefSet< Edge >::const_iterator j = outputEdges.begin(); j != outputEdges.end(); ++j)
+			(*j)->setSource(newOutputPin);
+	}
+	else
+	{
+		for (RefSet< Edge >::const_iterator j = outputEdges.begin(); j != outputEdges.end(); ++j)
+			removeEdge(*j);
+	}
 
 	updateAdjacency();
 }

@@ -130,6 +130,12 @@ public:
 	 */
 	uint32_t getDestinationCount(const OutputPin* outputPin) const;
 
+	/*! \brief Detach node from all input and output edges.
+	 *
+	 * \param node Node to be detached.
+	 */
+	void detach(const Node* node);
+
 	/*! \brief Rewire all edges from one output to another output.
 	 *
 	 * \param outputPin Current output pin.

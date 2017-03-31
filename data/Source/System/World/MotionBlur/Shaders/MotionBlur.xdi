@@ -137,10 +137,10 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-301</first>
+				<first>-300</first>
 				<second>878</second>
 			</position>
-			<value>0.2</value>
+			<value>0.02</value>
 		</item>
 		<item type="traktor.render.Sum">
 			<comment/>
