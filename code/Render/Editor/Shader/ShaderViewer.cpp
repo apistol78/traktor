@@ -343,7 +343,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 			if (!combinationGraph)
 				continue;
 
-			Ref< ShaderGraph > programGraph = ShaderGraphStatic(programGraph).getConnectedPermutation();
+			Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getConnectedPermutation();
 
 			if (programGraph)
 				programGraph = ShaderGraphStatic(programGraph).getTypePermutation();

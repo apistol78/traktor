@@ -25,6 +25,7 @@ ScenePipeline::ScenePipeline()
 ,	m_suppressShadows(false)
 ,	m_suppressLinearLighting(false)
 ,	m_suppressDepthPass(false)
+,	m_suppressMotionBlur(false)
 ,	m_suppressImageProcess(false)
 ,	m_shadowMapSizeDenom(1)
 ,	m_shadowMapMaxSlices(0)
@@ -37,6 +38,7 @@ bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 	m_suppressShadows = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressShadows");
 	m_suppressLinearLighting = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressLinearLighting");
 	m_suppressDepthPass = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressDepthPass");
+	m_suppressMotionBlur = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressMotionBlur");
 	m_suppressImageProcess = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressImageProcess");
 	m_shadowMapSizeDenom = settings->getProperty< PropertyInteger >(L"ScenePipeline.ShadowMapSizeDenom", 1);
 	m_shadowMapMaxSlices = settings->getProperty< PropertyInteger >(L"ScenePipeline.ShadowMapMaxSlices", 0);
@@ -150,10 +152,15 @@ bool ScenePipeline::buildOutput(
 		sceneResource->getWorldRenderSettings()->linearLighting = false;
 		log::info << L"Linear lighting suppressed" << Endl;
 	}
-	if (m_suppressDepthPass && sceneResource->getWorldRenderSettings()->depthPassEnabled)
+	if (m_suppressDepthPass && sceneResource->getWorldRenderSettings()->depthPass)
 	{
-		sceneResource->getWorldRenderSettings()->depthPassEnabled = false;
+		sceneResource->getWorldRenderSettings()->depthPass = false;
 		log::info << L"Depth pass suppressed" << Endl;
+	}
+	if (m_suppressMotionBlur && sceneResource->getWorldRenderSettings()->motionBlur)
+	{
+		sceneResource->getWorldRenderSettings()->motionBlur = false;
+		log::info << L"Motion blur suppressed" << Endl;
 	}
 
 	for (uint32_t i = 0; i < world::QuLast; ++i)

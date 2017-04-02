@@ -44,15 +44,17 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 22, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 23, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
 ,	viewFarZ(100.0f)
 ,	linearLighting(true)
-,	occlusionCullingEnabled(false)
-,	depthPassEnabled(true)
-,	fogEnabled(false)
+,	occlusionCulling(false)
+,	depthPass(true)
+,	motionBlur(false)
+,	motionBlurAmount(1.0f)
+,	fog(false)
 ,	fogDistanceY(0.0f)
 ,	fogDistanceZ(90.0f)
 ,	fogDensityY(0.0f)
@@ -68,15 +70,33 @@ void WorldRenderSettings::serialize(ISerializer& s)
 	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f));
 	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f));
 	s >> Member< bool >(L"linearLighting", linearLighting);
-	s >> Member< bool >(L"occlusionCullingEnabled", occlusionCullingEnabled);
-	s >> Member< bool >(L"depthPassEnabled", depthPassEnabled);
+
+	if (s.getVersion() >= 23)
+	{
+		s >> Member< bool >(L"occlusionCulling", occlusionCulling);
+		s >> Member< bool >(L"depthPass", depthPass);
+	}
+	else
+	{
+		s >> Member< bool >(L"occlusionCullingEnabled", occlusionCulling);
+		s >> Member< bool >(L"depthPassEnabled", depthPass);
+	}
 
 	if (s.getVersion() >= 19)
 		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames);
 	else
 		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames18);
 
-	s >> Member< bool >(L"fogEnabled", fogEnabled);
+	if (s.getVersion() >= 23)
+	{	
+		s >> Member< bool >(L"motionBlur", motionBlur);
+		s >> Member< float >(L"motionBlurAmount", motionBlurAmount);
+		s >> Member< bool >(L"fog", fog);
+	}
+	else
+	{
+		s >> Member< bool >(L"fogEnabled", fog);
+	}
 
 	if (s.getVersion() >= 21)
 	{
