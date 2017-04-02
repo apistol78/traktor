@@ -305,6 +305,10 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	if ((shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true)) == 0)
 		return;
 
+	// Resolve all variables.
+	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved();
+	T_ASSERT (shaderGraph);
+
 	// Get platform shader permutation.
 	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
 	T_ASSERT (shaderGraph);
@@ -339,10 +343,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 			if (!combinationGraph)
 				continue;
 
-			Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getVariableResolved();
-
-			if (programGraph)
-				programGraph = ShaderGraphStatic(programGraph).getConnectedPermutation();
+			Ref< ShaderGraph > programGraph = ShaderGraphStatic(programGraph).getConnectedPermutation();
 
 			if (programGraph)
 				programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
