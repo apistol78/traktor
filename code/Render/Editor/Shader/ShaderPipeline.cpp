@@ -127,16 +127,8 @@ struct BuildCombinationTask : public Object
 		Ref< const ShaderGraph > combinationGraph = combinations->getCombinationShaderGraph(combination);
 		T_ASSERT (combinationGraph);
 
-		// Resolve all variables.
-		Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getVariableResolved();
-		if (!programGraph)
-		{
-			log::error << L"ShaderPipeline failed; unable to resolve variables, material shader \"" << name << L"\"" << Endl;
-			return;
-		}
-
 		// Get connected permutation.
-		programGraph = render::ShaderGraphStatic(programGraph).getConnectedPermutation();
+		Ref< ShaderGraph > programGraph = render::ShaderGraphStatic(combinationGraph).getConnectedPermutation();
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to freeze connected conditionals, material shader \"" << name << L"\"" << Endl;
@@ -419,6 +411,14 @@ bool ShaderPipeline::buildOutput(
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to link shader fragments" << Endl;
+		return false;
+	}
+
+	// Resolve all variables.
+	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved();
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to resolve variables" << Endl;
 		return false;
 	}
 
