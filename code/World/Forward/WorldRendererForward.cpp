@@ -108,7 +108,7 @@ bool WorldRendererForward::create(
 	Ref< render::ImageProcessTargetPool > postProcessTargetPool = new render::ImageProcessTargetPool(renderSystem);
 
 	// Create "depth map" target.
-	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
+	if (m_settings.depthPass || m_shadowsQuality > QuDisabled)
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 
@@ -137,7 +137,7 @@ bool WorldRendererForward::create(
 		if (!m_depthTargetSet)
 		{
 			log::warning << L"Unable to create depth render target; depth disabled" << Endl;
-			m_settings.depthPassEnabled = false;
+			m_settings.depthPass = false;
 		}
 	}
 
@@ -472,7 +472,7 @@ bool WorldRendererForward::create(
 	}
 
 	// Allocate "depth" context.
-	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
+	if (m_settings.depthPass || m_shadowsQuality > QuDisabled)
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 			i->depth = new WorldContext(desc.entityRenderers);
@@ -571,7 +571,7 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 	// Store some global values.
 	f.time = worldRenderView.getTime();
 
-	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
+	if (m_settings.depthPass || m_shadowsQuality > QuDisabled)
 		buildDepth(worldRenderView, frame);
 
 	if (m_shadowsQuality > QuDisabled)
@@ -995,8 +995,8 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
 		worldRenderView,
-		(m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled) ? false : true,
-		m_settings.fogEnabled,
+		(m_settings.depthPass || m_shadowsQuality > QuDisabled) ? false : true,
+		m_settings.fog,
 		m_settings.fogDistanceY,
 		m_settings.fogDistanceZ,
 		m_settings.fogDensityY,
@@ -1025,8 +1025,8 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, int 
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
 		worldRenderView,
-		(m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled) ? false : true,
-		m_settings.fogEnabled,
+		(m_settings.depthPass || m_shadowsQuality > QuDisabled) ? false : true,
+		m_settings.fog,
 		m_settings.fogDistanceY,
 		m_settings.fogDistanceZ,
 		m_settings.fogDensityY,

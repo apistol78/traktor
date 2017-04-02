@@ -71,10 +71,12 @@ public:
 	float viewNearZ;
 	float viewFarZ;
 	bool linearLighting;
-	bool occlusionCullingEnabled;
-	bool depthPassEnabled;
+	bool occlusionCulling;
+	bool depthPass;
 	ShadowSettings shadowSettings[QuLast];
-	bool fogEnabled;
+	bool motionBlur;
+	float motionBlurAmount;
+	bool fog;
 	float fogDistanceY;
 	float fogDistanceZ;
 	float fogDensityY;

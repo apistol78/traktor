@@ -172,6 +172,7 @@ bool WorldRendererDeferred::create(
 	}
 
 	// Create "velocity" target.
+	if (m_settings.motionBlur)
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 
@@ -550,6 +551,7 @@ bool WorldRendererDeferred::create(
 	}
 
 	// Create motion blur processing.
+	if (m_settings.motionBlur)
 	{
 		resource::Proxy< render::ImageProcessSettings > motionBlur;
 		if (!resourceManager->bind(c_motionBlur, motionBlur))
@@ -558,7 +560,7 @@ bool WorldRendererDeferred::create(
 		if (motionBlur)
 		{
 			m_motionBlurImageProcess = new render::ImageProcess();
-			if (!m_motionBlurImageProcess->create(
+			if (m_motionBlurImageProcess->create(
 				motionBlur,
 				postProcessTargetPool,
 				resourceManager,
@@ -567,6 +569,10 @@ bool WorldRendererDeferred::create(
 				desc.height,
 				desc.allTargetsPersistent
 			))
+			{
+				m_motionBlurImageProcess->setFloatParameter(render::getParameterHandle(L"World_MotionBlurAmount"), m_settings.motionBlurAmount);
+			}
+			else
 			{
 				log::warning << L"Unable to create motion blur process; motion blur disabled" << Endl;
 				m_motionBlurImageProcess = 0;
@@ -607,8 +613,10 @@ bool WorldRendererDeferred::create(
 	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 	{
 		i->gbuffer = new WorldContext(desc.entityRenderers);
-		i->velocity = new WorldContext(desc.entityRenderers);
 		i->visual = new WorldContext(desc.entityRenderers);
+
+		if (m_settings.motionBlur)
+			i->velocity = new WorldContext(desc.entityRenderers);
 	}
 
 	// Allocate "shadow" contexts.
@@ -708,7 +716,9 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 		}
 	}
 
-	f.velocity->clear();
+	if (m_settings.motionBlur)
+		f.velocity->clear();
+
 	f.visual->clear();
 
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
@@ -722,7 +732,8 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 	buildGBuffer(worldRenderView, frame);
 
 	// Build velocity context.
-	buildVelocity(worldRenderView, frame);
+	if (m_settings.motionBlur)
+		buildVelocity(worldRenderView, frame);
 
 	// Build shadow contexts.
 	if (m_shadowsQuality > QuDisabled)
@@ -807,6 +818,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 	}
 
 	// Render velocity.
+	if (m_settings.motionBlur)
 	{
 		render::ProgramParameters velocityProgramParams;
 		velocityProgramParams.beginParameters(m_globalContext);
@@ -1422,7 +1434,7 @@ void WorldRendererDeferred::buildVisual(WorldRenderView& worldRenderView, int fr
 		ms_techniqueDeferredColor,
 		worldRenderView,
 		false,
-		m_settings.fogEnabled,
+		m_settings.fog,
 		m_gbufferTargetSet->getColorTexture(0) != 0
 	);
 	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)

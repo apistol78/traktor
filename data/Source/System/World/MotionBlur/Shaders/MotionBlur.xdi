@@ -4,8 +4,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>588</first>
-				<second>322</second>
+				<first>774</first>
+				<second>334</second>
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture2D</type>
@@ -14,8 +14,8 @@
 		<item type="traktor.render.Sampler" version="5">
 			<comment/>
 			<position>
-				<first>967</first>
-				<second>447</second>
+				<first>1153</first>
+				<second>459</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -31,8 +31,8 @@
 		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
-				<first>1437</first>
-				<second>569</second>
+				<first>1623</first>
+				<second>581</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -78,8 +78,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-264</first>
-				<second>471</second>
+				<first>-275</first>
+				<second>413</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -123,30 +123,30 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>500</first>
-				<second>558</second>
+				<first>686</first>
+				<second>570</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>473</first>
-				<second>721</second>
+				<first>659</first>
+				<second>733</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-300</first>
-				<second>878</second>
+				<first>-814</first>
+				<second>873</second>
 			</position>
-			<value>0.02</value>
+			<value>9</value>
 		</item>
 		<item type="traktor.render.Sum">
 			<comment/>
 			<position>
-				<first>803</first>
-				<second>686</second>
+				<first>989</first>
+				<second>698</second>
 			</position>
 			<from>0</from>
 			<to>8</to>
@@ -161,47 +161,64 @@
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>1155</first>
-				<second>816</second>
+				<first>1341</first>
+				<second>828</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1003</first>
-				<second>949</second>
+				<first>1189</first>
+				<second>961</second>
 			</position>
 			<value>9</value>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>-316</first>
-				<second>976</second>
+				<first>-508</first>
+				<second>988</second>
 			</position>
 			<value>1, -1, 0, 0</value>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>-50</first>
-				<second>897</second>
+				<first>-156</first>
+				<second>878</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>692</first>
-				<second>960</second>
+				<first>878</first>
+				<second>972</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>508</first>
-				<second>1062</second>
+				<first>694</first>
+				<second>1074</second>
 			</position>
 			<value>4</value>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>-1050</first>
+				<second>630</second>
+			</position>
+			<parameterName>World_MotionBlurAmount</parameterName>
+			<type>PtScalar</type>
+			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.Div">
+			<comment/>
+			<position>
+				<first>-503</first>
+				<second>724</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -327,16 +344,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[13]"/>
 				<name>Output</name>
 			</source>
@@ -382,6 +389,36 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
