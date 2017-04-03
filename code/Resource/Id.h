@@ -47,6 +47,21 @@ public:
 		return m_id < rh.m_id;
 	}
 
+	bool operator > (const Id& rh) const
+	{
+		return m_id > rh.m_id;
+	}
+
+	bool operator == (const Id& rh) const
+	{
+		return m_id == rh.m_id;
+	}
+
+	bool operator != (const Id& rh) const
+	{
+		return m_id != rh.m_id;
+	}
+
 	operator bool () const
 	{
 		return !isNull() && isValid();
