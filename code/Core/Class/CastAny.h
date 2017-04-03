@@ -216,7 +216,7 @@ struct CastAny < float, false >
 		return ss << L"float";
 	}
 	static bool accept(const Any& value) {
-		return value.isFloat();
+		return value.isNumeric();
 	}
 	static Any set(float value) {
 		return Any::fromFloat(value);
@@ -233,7 +233,7 @@ struct CastAny < double, false >
 		return ss << L"double";
 	}
 	static bool accept(const Any& value) {
-		return value.isFloat();
+		return value.isNumeric();
 	}
 	static Any set(double value) {
 		return Any::fromFloat(float(value));
@@ -250,7 +250,7 @@ struct CastAny < Scalar, false >
 		return ss << L"Scalar";
 	}
 	static bool accept(const Any& value) {
-		return value.isFloat();
+		return value.isNumeric();
 	}
 	static Any set(const Scalar& value) {
 		return Any::fromFloat(float(value));
@@ -267,7 +267,7 @@ struct CastAny < const Scalar&, false >
 		return ss << L"const Scalar&";
 	}
 	static bool accept(const Any& value) {
-		return value.isFloat();
+		return value.isNumeric();
 	}
 	static Any set(const Scalar& value) {
 		return Any::fromFloat(float(value));
