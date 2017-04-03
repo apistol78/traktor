@@ -42,7 +42,6 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashDictionary
 ,	m_inside(false)
 ,	m_inDispatch(false)
 ,	m_gotoIssued(false)
-,	m_haveEnterFrame(false)
 {
 	T_ASSERT (m_sprite->getFrameCount() > 0);
 }
@@ -492,14 +491,6 @@ bool FlashSpriteInstance::enumerateMembers(AlignedVector< uint32_t >& outMemberN
 	return true;
 }
 
-bool FlashSpriteInstance::setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue)
-{
-	// Cache "onEnterFrame" member availability as it's queried frequently.
-	if (memberName == ActionContext::IdOnEnterFrame)
-		m_haveEnterFrame = memberValue.isObject< ActionFunction >();
-	return FlashCharacterInstance::setMember(context, memberName, memberValue);
-}
-
 bool FlashSpriteInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
 {
 	// Find visible named character in display list.
@@ -595,8 +586,7 @@ void FlashSpriteInstance::eventFrame()
 	context->setMovieClip(this);
 
 	// Issue script assigned event.
-	if (m_haveEnterFrame)
-		executeScriptEvent(ActionContext::IdOnEnterFrame, ActionValue());
+	executeScriptEvent(ActionContext::IdOnEnterFrame, ActionValue());
 
 	// Execute frame scripts.
 	if (m_lastExecutedFrame != m_currentFrame)
