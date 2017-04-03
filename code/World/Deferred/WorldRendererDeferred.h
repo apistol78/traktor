@@ -148,6 +148,7 @@ private:
 	Ref< render::ImageProcess > m_antiAlias;
 	Ref< render::ImageProcess > m_visualImageProcess;
 	Ref< render::ImageProcess > m_gammaCorrectionImageProcess;
+	Ref< render::ImageProcess > m_motionBlurPrimeImageProcess;
 	Ref< render::ImageProcess > m_motionBlurImageProcess;
 	Ref< LightRendererDeferred > m_lightRenderer;
 	RefArray< Entity > m_buildEntities;
@@ -156,6 +157,7 @@ private:
 	uint32_t m_count;
 	Vector4 m_fogDistanceAndDensity;
 	Vector4 m_fogColor;
+	bool m_includeObjectVelocity;
 
 	void buildGBuffer(WorldRenderView& worldRenderView, int frame);
 

@@ -54,6 +54,7 @@ struct WorldCreateDesc
 {
 	const WorldRenderSettings* worldRenderSettings;
 	WorldEntityRenderers* entityRenderers;
+	Quality motionBlurQuality;
 	Quality shadowsQuality;
 	Quality ambientOcclusionQuality;
 	Quality antiAliasQuality;
@@ -69,6 +70,7 @@ struct WorldCreateDesc
 	WorldCreateDesc()
 	:	worldRenderSettings(0)
 	,	entityRenderers(0)
+	,	motionBlurQuality(QuDisabled)
 	,	shadowsQuality(QuDisabled)
 	,	ambientOcclusionQuality(QuDisabled)
 	,	antiAliasQuality(QuDisabled)

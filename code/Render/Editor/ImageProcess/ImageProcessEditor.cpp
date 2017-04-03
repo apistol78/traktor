@@ -30,6 +30,7 @@
 #include "Render/ImageProcess/ImageProcessStepSmProj.h"
 #include "Render/ImageProcess/ImageProcessStepSsao.h"
 #include "Render/ImageProcess/ImageProcessStepSwapTargets.h"
+#include "Render/ImageProcess/ImageProcessStepTemporal.h"
 #include "Render/Editor/ImageProcess/ImageProcessDefineTargetFacade.h"
 #include "Render/Editor/ImageProcess/ImageProcessDefineTextureFacade.h"
 #include "Render/Editor/ImageProcess/ImageProcessEditor.h"
@@ -45,6 +46,7 @@
 #include "Render/Editor/ImageProcess/ImageProcessStepSmProjFacade.h"
 #include "Render/Editor/ImageProcess/ImageProcessStepSsaoFacade.h"
 #include "Render/Editor/ImageProcess/ImageProcessStepSwapTargetsFacade.h"
+#include "Render/Editor/ImageProcess/ImageProcessStepTemporalFacade.h"
 #include "Render/Editor/ImageProcess/ImageProcessProperties.h"
 
 namespace traktor
@@ -132,6 +134,7 @@ bool ImageProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 	m_imageProcessStepFacades[&type_of< ImageProcessStepSmProj >()] = new ImageProcessStepSmProjFacade();
 	m_imageProcessStepFacades[&type_of< ImageProcessStepSsao >()] = new ImageProcessStepSsaoFacade();
 	m_imageProcessStepFacades[&type_of< ImageProcessStepSwapTargets >()] = new ImageProcessStepSwapTargetsFacade();
+	m_imageProcessStepFacades[&type_of< ImageProcessStepTemporal >()] = new ImageProcessStepTemporalFacade();
 
 	updateViews();
 	return true;

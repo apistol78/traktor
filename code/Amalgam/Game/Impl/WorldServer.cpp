@@ -94,6 +94,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.WorldServer", WorldServer, IWorldServer
 
 WorldServer::WorldServer()
 :	m_worldType(0)
+,	m_motionBlurQuality(world::QuMedium)
 ,	m_shadowQuality(world::QuMedium)
 ,	m_ambientOcclusionQuality(world::QuMedium)
 ,	m_antiAliasQuality(world::QuMedium)
@@ -117,6 +118,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 		return false;
 	}
 
+	m_motionBlurQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.MotionBlurQuality", world::QuMedium);
 	m_shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
 	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
 	m_antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
@@ -209,6 +211,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 
 int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 {
+	world::Quality motionBlurQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.MotionBlurQuality", world::QuMedium);
 	world::Quality shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
 	world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
 	world::Quality antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
@@ -221,6 +224,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 
 	// Check if we need to be reconfigured.
 	if (
+		motionBlurQuality == m_motionBlurQuality &&
 		shadowQuality == m_shadowQuality &&
 		ambientOcclusionQuality == m_ambientOcclusionQuality &&
 		antiAliasQuality == m_antiAliasQuality &&
@@ -244,6 +248,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	m_terrainEntityRenderer->setOceanDynamicReflectionEnable(bool(oceanQuality >= world::QuHigh));
 
 	// Save ghost configuration state.
+	m_motionBlurQuality = motionBlurQuality;
 	m_shadowQuality = shadowQuality;
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
@@ -301,6 +306,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = worldRenderSettings;
 	wcd.entityRenderers = m_entityRenderers;
+	wcd.motionBlurQuality = m_motionBlurQuality;
 	wcd.shadowsQuality = m_shadowQuality;
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;

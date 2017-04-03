@@ -79,6 +79,7 @@ private:
 	Ref< spray::FeedbackManager > m_feedbackManager;
 	Ref< terrain::EntityRenderer > m_terrainEntityRenderer;
 	const TypeInfo* m_worldType;
+	world::Quality m_motionBlurQuality;
 	world::Quality m_shadowQuality;
 	world::Quality m_ambientOcclusionQuality;
 	world::Quality m_antiAliasQuality;
