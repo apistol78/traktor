@@ -53,7 +53,8 @@ public:
 
 	virtual bool insert() const T_OVERRIDE T_FINAL
 	{
-		return false;
+		m_ref.insert(ValueType());
+		return true;
 	}
 	
 private:

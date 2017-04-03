@@ -75,6 +75,9 @@ public:
 		handle_t m_handleViewEdgeBottomLeft;
 		handle_t m_handleViewEdgeBottomRight;
 		handle_t m_handleProjection;
+		handle_t m_handleView;
+		handle_t m_handleViewLast;
+		handle_t m_handleViewInverse;
 		handle_t m_handleDeltaView;
 		handle_t m_handleDeltaViewProj;
 		handle_t m_handleMagicCoeffs;

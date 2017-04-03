@@ -97,5 +97,9 @@
 			<id>{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
+		<item>
+			<id>{73C2C7DC-BD77-F348-A6B7-06E0EFB633D9}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>

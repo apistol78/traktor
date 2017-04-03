@@ -48,7 +48,11 @@ const resource::Id< render::ImageProcessSettings > c_antiAliasMedium(Guid(L"{3E1
 const resource::Id< render::ImageProcessSettings > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
 const resource::Id< render::ImageProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
 const resource::Id< render::ImageProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
-const resource::Id< render::ImageProcessSettings > c_motionBlur(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
+const resource::Id< render::ImageProcessSettings > c_motionBlurPrime(Guid(L"{73C2C7DC-BD77-F348-A6B7-06E0EFB633D9}"));
+const resource::Id< render::ImageProcessSettings > c_motionBlurLow(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
+const resource::Id< render::ImageProcessSettings > c_motionBlurMedium(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
+const resource::Id< render::ImageProcessSettings > c_motionBlurHigh(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
+const resource::Id< render::ImageProcessSettings > c_motionBlurUltra(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
 
 		}
 
@@ -75,6 +79,7 @@ WorldRendererDeferred::WorldRendererDeferred()
 ,	m_ambientOcclusionQuality(QuDisabled)
 ,	m_antiAliasQuality(QuDisabled)
 ,	m_count(0)
+,	m_includeObjectVelocity(false)
 {
 	// Techniques
 	ms_techniqueDeferredColor = render::getParameterHandle(L"World_DeferredColor");
@@ -111,6 +116,11 @@ bool WorldRendererDeferred::create(
 	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
 	m_antiAliasQuality = desc.antiAliasQuality;
 	m_frames.resize(desc.frameCount);
+
+	if (desc.motionBlurQuality == QuDisabled)
+		m_settings.motionBlur = false;
+
+	m_includeObjectVelocity = bool(desc.motionBlurQuality >= QuHigh);
 
 	// Pack fog parameters.
 	m_fogDistanceAndDensity = Vector4(
@@ -550,17 +560,67 @@ bool WorldRendererDeferred::create(
 		}
 	}
 
-	// Create motion blur processing.
+	// Create motion blur prime processing.
 	if (m_settings.motionBlur)
 	{
+		resource::Proxy< render::ImageProcessSettings > motionBlurPrime;
+		if (!resourceManager->bind(c_motionBlurPrime, motionBlurPrime))
+			log::warning << L"Unable to create motion blur prime process; motion blur disabled" << Endl;
+
+		if (motionBlurPrime)
+		{
+			m_motionBlurPrimeImageProcess = new render::ImageProcess();
+			if (!m_motionBlurPrimeImageProcess->create(
+				motionBlurPrime,
+				postProcessTargetPool,
+				resourceManager,
+				renderSystem,
+				desc.width,
+				desc.height,
+				desc.allTargetsPersistent
+			))
+			{
+				log::warning << L"Unable to create motion blur process; motion blur disabled" << Endl;
+				m_motionBlurPrimeImageProcess = 0;
+			}
+		}
+	}
+
+	// Create motion blur final processing.
+	if (m_settings.motionBlur)
+	{
+		resource::Id< render::ImageProcessSettings > motionBlurId;
+		switch (desc.motionBlurQuality)
+		{
+		default:
+		case QuDisabled:
+			break;
+
+		case QuLow:
+			motionBlurId = c_motionBlurLow;
+			break;
+
+		case QuMedium:
+			motionBlurId = c_motionBlurMedium;
+			break;
+
+		case QuHigh:
+			motionBlurId = c_motionBlurHigh;
+			break;
+
+		case QuUltra:
+			motionBlurId = c_motionBlurUltra;
+			break;
+		}
+
 		resource::Proxy< render::ImageProcessSettings > motionBlur;
-		if (!resourceManager->bind(c_motionBlur, motionBlur))
+		if (!resourceManager->bind(motionBlurId, motionBlur))
 			log::warning << L"Unable to create motion blur process; motion blur disabled" << Endl;
 
 		if (motionBlur)
 		{
 			m_motionBlurImageProcess = new render::ImageProcess();
-			if (m_motionBlurImageProcess->create(
+			if (!m_motionBlurImageProcess->create(
 				motionBlur,
 				postProcessTargetPool,
 				resourceManager,
@@ -570,14 +630,22 @@ bool WorldRendererDeferred::create(
 				desc.allTargetsPersistent
 			))
 			{
-				m_motionBlurImageProcess->setFloatParameter(render::getParameterHandle(L"World_MotionBlurAmount"), m_settings.motionBlurAmount);
-			}
-			else
-			{
 				log::warning << L"Unable to create motion blur process; motion blur disabled" << Endl;
 				m_motionBlurImageProcess = 0;
 			}
 		}
+	}
+
+	// Setup motion blur processes.
+	if (m_motionBlurPrimeImageProcess && m_motionBlurImageProcess)
+	{
+		m_motionBlurPrimeImageProcess->setFloatParameter(render::getParameterHandle(L"World_MotionBlurAmount"), m_settings.motionBlurAmount);
+		m_motionBlurImageProcess->setFloatParameter(render::getParameterHandle(L"World_MotionBlurAmount"), m_settings.motionBlurAmount);
+	}
+	else
+	{
+		m_motionBlurPrimeImageProcess = 0;
+		m_motionBlurImageProcess = 0;
 	}
 
 	// Create global reflection map.
@@ -663,6 +731,7 @@ void WorldRendererDeferred::destroy()
 	m_buildEntities.clear();
 
 	safeDestroy(m_lightRenderer);
+	safeDestroy(m_motionBlurPrimeImageProcess);
 	safeDestroy(m_motionBlurImageProcess);
 	safeDestroy(m_gammaCorrectionImageProcess);
 	safeDestroy(m_visualImageProcess);
@@ -839,8 +908,28 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 
 			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
 
-			if (f.haveVelocity)
-				f.velocity->getRenderContext()->render(m_renderView, render::RpOpaque, &velocityProgramParams);
+			// Prime velocity with camera motion only.
+			if (m_motionBlurPrimeImageProcess)
+			{
+				render::ImageProcessStep::Instance::RenderParams params;
+				params.viewFrustum = f.viewFrustum;
+				params.view = f.view;
+				params.projection = projection;
+				params.deltaTime = 0.0f;
+
+				m_motionBlurPrimeImageProcess->render(
+					m_renderView,
+					0,	// color
+					m_gbufferTargetSet,	// depth
+					0,	// velocity
+					0,	// shadow mask
+					params
+				);
+			}
+
+			//// Render dynamic velocities.
+			//if (f.haveVelocity)
+			//	f.velocity->getRenderContext()->render(m_renderView, render::RpOpaque, &velocityProgramParams);
 
 			m_renderView->end();
 		}

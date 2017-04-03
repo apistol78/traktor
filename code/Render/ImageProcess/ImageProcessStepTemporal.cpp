@@ -71,6 +71,9 @@ ImageProcessStepTemporal::InstanceTemporal::InstanceTemporal(const ImageProcessS
 ,	m_handleViewEdgeBottomLeft(getParameterHandle(L"ViewEdgeBottomLeft"))
 ,	m_handleViewEdgeBottomRight(getParameterHandle(L"ViewEdgeBottomRight"))
 ,	m_handleProjection(getParameterHandle(L"Projection"))
+,	m_handleView(getParameterHandle(L"View"))
+,	m_handleViewLast(getParameterHandle(L"ViewLast"))
+,	m_handleViewInverse(getParameterHandle(L"ViewInverse"))
 ,	m_handleDeltaView(getParameterHandle(L"DeltaView"))
 ,	m_handleDeltaViewProj(getParameterHandle(L"DeltaViewProj"))
 ,	m_handleMagicCoeffs(getParameterHandle(L"MagicCoeffs"))
@@ -107,6 +110,9 @@ void ImageProcessStepTemporal::InstanceTemporal::render(
 	m_shader->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
 	m_shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
 	m_shader->setMatrixParameter(m_handleProjection, params.projection);
+	m_shader->setMatrixParameter(m_handleView, params.view);
+	m_shader->setMatrixParameter(m_handleViewLast, m_previousView);
+	m_shader->setMatrixParameter(m_handleViewInverse, params.view.inverse());
 	m_shader->setMatrixParameter(m_handleDeltaView, deltaView);
 	m_shader->setMatrixParameter(m_handleDeltaViewProj, params.projection * deltaView);
 
