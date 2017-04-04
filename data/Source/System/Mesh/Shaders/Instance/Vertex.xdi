@@ -443,8 +443,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-539</first>
-				<second>287</second>
+				<first>-549</first>
+				<second>282</second>
 			</position>
 			<fragmentGuid>{20E08173-83A8-D949-903E-D1ABB63CDA52}</fragmentGuid>
 			<inputPins/>
@@ -453,10 +453,19 @@
 					<name>Rotation</name>
 				</item>
 				<item>
+					<name>RotationLast</name>
+				</item>
+				<item>
 					<name>Scale</name>
 				</item>
 				<item>
+					<name>ScaleLast</name>
+				</item>
+				<item>
 					<name>Translation</name>
+				</item>
+				<item>
+					<name>TranslationLast</name>
 				</item>
 			</outputPins>
 			<values/>

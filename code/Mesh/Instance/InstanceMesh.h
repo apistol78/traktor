@@ -69,7 +69,23 @@ public:
 		uint32_t meshPart;
 	};
 
-	typedef std::pair< InstanceMeshData, float > instance_distance_t;
+	struct RenderInstance
+	{
+		InstanceMeshData data;
+		InstanceMeshData data0;
+		float distance;
+
+		RenderInstance()
+		{
+		}
+
+		RenderInstance(const InstanceMeshData& data_, const InstanceMeshData& data0_, float distance_)
+		:	data(data_)
+		,	data0(data0_)
+		,	distance(distance_)
+		{
+		}
+	};
 
 	InstanceMesh();
 
@@ -84,7 +100,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
-		AlignedVector< instance_distance_t >& instanceWorld,
+		AlignedVector< RenderInstance >& instanceWorld,
 		render::ProgramParameters* extraParameters
 	);
 

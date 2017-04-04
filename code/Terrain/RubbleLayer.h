@@ -85,7 +85,7 @@ private:
 	float m_spreadDistance;
 	float m_clusterSize;
 	Vector4 m_eye;
-	AlignedVector< mesh::InstanceMesh::instance_distance_t > m_instanceData;
+	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
 };
 
 	}

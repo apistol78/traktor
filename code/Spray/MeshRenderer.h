@@ -67,7 +67,7 @@ public:
 
 private:
 	SmallMap< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > > m_meshes;
-	AlignedVector< mesh::InstanceMesh::instance_distance_t > m_instances;
+	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instances;
 };
 
 	}
