@@ -58,7 +58,7 @@ public:
 
 	virtual void setAspect(float aspect) T_OVERRIDE T_FINAL;
 
-	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) T_OVERRIDE T_FINAL;
+	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) T_OVERRIDE T_FINAL;
 
 	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
@@ -85,6 +85,7 @@ private:
 	world::WorldRenderSettings m_worldRenderSettings;
 	world::Quality m_imageProcessQuality;
 	world::Quality m_shadowQuality;
+	world::Quality m_motionBlurQuality;
 	world::Quality m_ambientOcclusionQuality;
 	world::Quality m_antiAliasQuality;
 	RenderControlModel m_model;

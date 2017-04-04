@@ -2117,6 +2117,18 @@
       <second>Toggle post processing</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_QUALITY</first>
+      <second>Quality</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_QUALITY_TOOLTIP</first>
+      <second>Change render quality</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_MOTION_BLUR</first>
+      <second>Motion blur</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_POST_PROCESS</first>
       <second>Post Process</second>
     </item>

@@ -20,7 +20,7 @@ namespace traktor
 {
 
 // Uncomment this line if you want scope profiling enabled.
-#define T_PROFILER_ENABLE
+//#define T_PROFILER_ENABLE
 
 /*! \ingroup Core */
 //@{
