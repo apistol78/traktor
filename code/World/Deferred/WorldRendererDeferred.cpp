@@ -927,9 +927,9 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 				);
 			}
 
-			//// Render dynamic velocities.
-			//if (f.haveVelocity)
-			//	f.velocity->getRenderContext()->render(m_renderView, render::RpOpaque, &velocityProgramParams);
+			// Render dynamic velocities.
+			if (f.haveVelocity)
+				f.velocity->getRenderContext()->render(m_renderView, render::RpOpaque, &velocityProgramParams);
 
 			m_renderView->end();
 		}
