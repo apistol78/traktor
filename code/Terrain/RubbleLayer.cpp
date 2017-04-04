@@ -158,10 +158,10 @@ void RubbleLayer::render(
 			m_instanceData.resize(batch);
 			for (int32_t k = 0; k < batch; ++k, ++j)
 			{
-				m_instances[j + i->from].position.storeAligned( m_instanceData[k].first.translation );
-				m_instances[j + i->from].rotation.e.storeAligned( m_instanceData[k].first.rotation );
-				m_instanceData[k].first.scale = m_instances[j + i->from].scale;
-				m_instanceData[k].second = i->distance;
+				m_instances[j + i->from].position.storeAligned( m_instanceData[k].data.translation );
+				m_instances[j + i->from].rotation.e.storeAligned( m_instanceData[k].data.rotation );
+				m_instanceData[k].data.scale = m_instances[j + i->from].scale;
+				m_instanceData[k].distance = i->distance;
 			}
 
 			i->rubbleDef->mesh->render(

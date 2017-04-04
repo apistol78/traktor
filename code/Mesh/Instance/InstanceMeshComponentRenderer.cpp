@@ -47,8 +47,11 @@ void InstanceMeshComponentRenderer::render(
 	))
 		return;
 
-	m_meshInstances[mesh].push_back(std::make_pair(
+	Transform transformLast = meshComponent->getTransform().get(0);
+
+	m_meshInstances[mesh].push_back(InstanceMesh::RenderInstance(
 		packInstanceMeshData(transform),
+		packInstanceMeshData(transformLast),
 		distance
 	));
 }
@@ -59,7 +62,7 @@ void InstanceMeshComponentRenderer::flush(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	for (SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::instance_distance_t > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)
+	for (SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::RenderInstance > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)
 	{
 		if (i->second.empty())
 			continue;

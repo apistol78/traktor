@@ -14,12 +14,13 @@ namespace traktor
 		{
 
 render::handle_t s_handleInstanceWorld = 0;
+render::handle_t s_handleInstanceWorldLast = 0;
 
-struct SortInstanceDistance
+struct SortRenderInstance
 {
-	bool operator () (const InstanceMesh::instance_distance_t& d1, const InstanceMesh::instance_distance_t& d2) const
+	bool operator () (const InstanceMesh::RenderInstance& d1, const InstanceMesh::RenderInstance& d2) const
 	{
-		return d1.second < d2.second;
+		return d1.distance < d2.distance;
 	}
 };
 
@@ -32,6 +33,8 @@ InstanceMesh::InstanceMesh()
 {
 	if (!s_handleInstanceWorld)
 		s_handleInstanceWorld = render::getParameterHandle(L"InstanceWorld");
+	if (!s_handleInstanceWorldLast)
+		s_handleInstanceWorldLast = render::getParameterHandle(L"InstanceWorldLast");
 }
 
 InstanceMesh::~InstanceMesh()
@@ -57,11 +60,12 @@ void InstanceMesh::getTechniques(std::set< render::handle_t >& outHandles) const
 void InstanceMesh::render(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
-	AlignedVector< instance_distance_t >& instanceWorld,
+	AlignedVector< RenderInstance >& instanceWorld,
 	render::ProgramParameters* extraParameters
 )
 {
 	InstanceMeshData T_ALIGN16 instanceBatch[MaxInstanceCount];
+	InstanceMeshData T_ALIGN16 instanceLastBatch[MaxInstanceCount];
 	bool haveAlphaBlend = false;
 
 	if (instanceWorld.empty())
@@ -71,25 +75,25 @@ void InstanceMesh::render(
 	T_ASSERT (it != m_parts.end());
 
 	// Sort instances by ascending distance; note we're sorting caller's vector.
-	std::sort(instanceWorld.begin(), instanceWorld.end(), SortInstanceDistance());
+	std::sort(instanceWorld.begin(), instanceWorld.end(), SortRenderInstance());
 
 	// Calculate bounding box of all instances.
 	Aabb3 boundingBoxLocal = m_renderMesh->getBoundingBox();
 	Aabb3 boundingBoxWorld;
-	for (AlignedVector< instance_distance_t >::const_iterator i = instanceWorld.begin(); i != instanceWorld.end(); ++i)
+	for (AlignedVector< RenderInstance >::const_iterator i = instanceWorld.begin(); i != instanceWorld.end(); ++i)
 	{
 		Vector4 translation(
-			i->first.translation[0],
-			i->first.translation[1],
-			i->first.translation[2],
+			i->data.translation[0],
+			i->data.translation[1],
+			i->data.translation[2],
 			0.0f
 		);
 
 		Quaternion rotation(
-			i->first.rotation[0],
-			i->first.rotation[1],
-			i->first.rotation[2],
-			i->first.rotation[3]
+			i->data.rotation[0],
+			i->data.rotation[1],
+			i->data.rotation[2],
+			i->data.rotation[3]
 		);
 
 		boundingBoxWorld.contain(boundingBoxLocal.transform(Transform(
@@ -141,13 +145,16 @@ void InstanceMesh::render(
 			uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, m_maxInstanceCount);
 
 			for (uint32_t j = 0; j < batchCount; ++j)
-				instanceBatch[j] = instanceWorld[batchOffset + j].first;
+			{
+				instanceBatch[j] = instanceWorld[batchOffset + j].data;
+				instanceLastBatch[j] = instanceWorld[batchOffset + j].data0;
+			}
 
 #if !T_USE_LEGACY_INSTANCING
 
 			render::InstancingRenderBlock* renderBlock = renderContext->alloc< render::InstancingRenderBlock >("InstanceMesh opaque");
 
-			renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].second;
+			renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
 			renderBlock->program = program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
@@ -177,6 +184,11 @@ void InstanceMesh::render(
 			renderBlock->programParams->setVectorArrayParameter(
 				s_handleInstanceWorld,
 				reinterpret_cast< const Vector4* >(instanceBatch),
+				batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
+			);
+			renderBlock->programParams->setVectorArrayParameter(
+				s_handleInstanceWorldLast,
+				reinterpret_cast< const Vector4* >(instanceLastBatch),
 				batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
 			);
 			renderBlock->programParams->endParameters(renderContext);
@@ -225,13 +237,16 @@ void InstanceMesh::render(
 				uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, m_maxInstanceCount);
 
 				for (uint32_t j = 0; j < batchCount; ++j)
-					instanceBatch[j] = instanceWorld[batchOffset + j].first;
+				{
+					instanceBatch[j] = instanceWorld[batchOffset + j].data;
+					instanceLastBatch[j] = instanceWorld[batchOffset + j].data0;
+				}
 
 #if !T_USE_LEGACY_INSTANCING
 
 				render::InstancingRenderBlock* renderBlock = renderContext->alloc< render::InstancingRenderBlock >("InstanceMesh blend");
 
-				renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].second;
+				renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
 				renderBlock->program = program;
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
@@ -261,6 +276,11 @@ void InstanceMesh::render(
 				renderBlock->programParams->setVectorArrayParameter(
 					s_handleInstanceWorld,
 					reinterpret_cast< const Vector4* >(instanceBatch),
+					batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
+				);
+				renderBlock->programParams->setVectorArrayParameter(
+					s_handleInstanceWorldLast,
+					reinterpret_cast< const Vector4* >(instanceLastBatch),
 					batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
 				);
 				renderBlock->programParams->endParameters(renderContext);

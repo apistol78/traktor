@@ -40,7 +40,7 @@ public:
 	) T_OVERRIDE T_FINAL;
 
 private:
-	SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::instance_distance_t > > m_meshInstances;
+	SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::RenderInstance > > m_meshInstances;
 };
 
 	}

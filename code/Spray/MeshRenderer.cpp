@@ -70,10 +70,10 @@ void MeshRenderer::flush(
 				) :
 				Quaternion::identity();
 
-			R.e.storeUnaligned(m_instances[j].first.rotation);
-			i->second.first[j].position.storeUnaligned(m_instances[j].first.translation);
-			m_instances[j].first.scale = i->second.first[j].size;
-			m_instances[j].second = 0.0f;
+			R.e.storeUnaligned(m_instances[j].data.rotation);
+			i->second.first[j].position.storeUnaligned(m_instances[j].data.translation);
+			m_instances[j].data.scale = i->second.first[j].size;
+			m_instances[j].distance = 0.0f;
 		}
 
 		i->first->render(

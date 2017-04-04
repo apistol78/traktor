@@ -4,8 +4,8 @@
 		<item type="traktor.render.Instance">
 			<comment/>
 			<position>
-				<first>327</first>
-				<second>265</second>
+				<first>57</first>
+				<second>780</second>
 			</position>
 		</item>
 		<item type="traktor.render.Platform">
@@ -93,16 +93,16 @@ translation
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>462</first>
-				<second>358</second>
+				<first>192</first>
+				<second>873</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>587</first>
-				<second>358</second>
+				<first>317</first>
+				<second>873</second>
 			</position>
 		</item>
 		<item type="traktor.render.IndexedUniform" version="1">
@@ -123,16 +123,16 @@ translation
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>462</first>
-				<second>329</second>
+				<first>192</first>
+				<second>844</second>
 			</position>
 			<value>2</value>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>587</first>
-				<second>260</second>
+				<first>317</first>
+				<second>775</second>
 			</position>
 		</item>
 		<item type="traktor.render.IndexedUniform" version="1">
@@ -189,6 +189,158 @@ rotation
 				<second>476</second>
 			</position>
 			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>1547</first>
+				<second>1229</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>1549</first>
+				<second>1156</second>
+			</position>
+			<swizzle>xyz</swizzle>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>1670</first>
+				<second>1229</second>
+			</position>
+			<name>ScaleLast</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>1641</first>
+				<second>1156</second>
+			</position>
+			<name>TranslationLast</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>1509</first>
+				<second>957</second>
+			</position>
+			<name>RotationLast</name>
+		</item>
+		<item type="traktor.render.IndexedUniform" version="1">
+			<comment>
+			<![CDATA[
+rotation
+			]]>
+			</comment>
+			<position>
+				<first>822</first>
+				<second>819</second>
+			</position>
+			<parameterName>InstanceWorldLast</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+			<length>8</length>
+		</item>
+		<item type="traktor.render.IndexedUniform" version="1">
+			<comment>
+			<![CDATA[
+translation
+			]]>
+			</comment>
+			<position>
+				<first>822</first>
+				<second>912</second>
+			</position>
+			<parameterName>InstanceWorldLast</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+			<length>8</length>
+		</item>
+		<item type="traktor.render.IndexedUniform" version="1">
+			<comment>
+			<![CDATA[
+translation
+			]]>
+			</comment>
+			<position>
+				<first>822</first>
+				<second>1170</second>
+			</position>
+			<parameterName>InstanceWorldLast</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+			<length>40</length>
+		</item>
+		<item type="traktor.render.IndexedUniform" version="1">
+			<comment>
+			<![CDATA[
+rotation
+			]]>
+			</comment>
+			<position>
+				<first>822</first>
+				<second>1077</second>
+			</position>
+			<parameterName>InstanceWorldLast</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+			<length>40</length>
+		</item>
+		<item type="traktor.render.IndexedUniform" version="1">
+			<comment>
+			<![CDATA[
+translation
+			]]>
+			</comment>
+			<position>
+				<first>822</first>
+				<second>1431</second>
+			</position>
+			<parameterName>InstanceWorldLast</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+			<length>120</length>
+		</item>
+		<item type="traktor.render.IndexedUniform" version="1">
+			<comment>
+			<![CDATA[
+rotation
+			]]>
+			</comment>
+			<position>
+				<first>822</first>
+				<second>1338</second>
+			</position>
+			<parameterName>InstanceWorldLast</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+			<length>120</length>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment>
+			<![CDATA[
+rotation
+			]]>
+			</comment>
+			<position>
+				<first>1183</first>
+				<second>870</second>
+			</position>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment>
+			<![CDATA[
+translation
+			]]>
+			</comment>
+			<position>
+				<first>1182</first>
+				<second>1193</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -400,6 +552,176 @@ rotation
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[30]"/>
+				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<name>GCM</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[30]"/>
+				<name>GCM</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[30]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Index</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Index</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Index</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Index</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Index</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Index</name>
 			</destination>
 		</item>
 	</edges>
