@@ -22,12 +22,27 @@
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
+#include "Ui/Custom/ToolBar/ToolBarDropMenu.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
 namespace traktor
 {
 	namespace scene
 	{
+		namespace
+		{
+		
+ui::MenuItem* getChecked(ui::MenuItem* menu)
+{
+	for (int i = 0; i < menu->count(); ++i)
+	{
+		if (menu->get(i)->isChecked())
+			return menu->get(i);
+	}
+	return 0;
+}
+		
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultRenderControl", DefaultRenderControl, ISceneRenderControl)
 
@@ -89,7 +104,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		guideEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
-	m_toolAspect = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), ui::scaleBySystemDPI(60), i18n::Text(L"SCENE_EDITOR_ASPECT"));
+	m_toolAspect = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), ui::scaleBySystemDPI(130), i18n::Text(L"SCENE_EDITOR_ASPECT"));
 	m_toolAspect->add(L"Full");
 	m_toolAspect->add(L"1:1");
 	m_toolAspect->add(L"4:3");
@@ -101,37 +116,47 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolAspect->add(L"9:16");
 	m_toolAspect->select(0);
 
-	m_toolImageProcess = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.ImageProcessQuality"), ui::scaleBySystemDPI(80), i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
-	m_toolImageProcess->add(L"Disabled");
-	m_toolImageProcess->add(L"Low");
-	m_toolImageProcess->add(L"Medium");
-	m_toolImageProcess->add(L"High");
-	m_toolImageProcess->add(L"Ultra");
-	m_toolImageProcess->select(0);
+	Ref< ui::custom::ToolBarDropMenu > toolQualityMenu = new ui::custom::ToolBarDropMenu(ui::scaleBySystemDPI(130), i18n::Text(L"SCENE_EDITOR_QUALITY"), true, i18n::Text(L"SCENE_EDITOR_QUALITY_TOOLTIP"));
 
-	m_toolShadows = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.ShadowQuality"), ui::scaleBySystemDPI(80), i18n::Text(L"SCENE_EDITOR_SHADOWS"));
-	m_toolShadows->add(L"Disabled");
-	m_toolShadows->add(L"Low");
-	m_toolShadows->add(L"Medium");
-	m_toolShadows->add(L"High");
-	m_toolShadows->add(L"Ultra");
-	m_toolShadows->select(0);
+	m_menuPostProcess = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
+	m_menuPostProcess->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.PostProcessQuality"), L"Disabled", true, 0));
+	m_menuPostProcess->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.PostProcessQuality"), L"Low", true, 0));
+	m_menuPostProcess->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.PostProcessQuality"), L"Medium", true, 0));
+	m_menuPostProcess->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.PostProcessQuality"), L"High", true, 0));
+	m_menuPostProcess->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.PostProcessQuality"), L"Ultra", true, 0));
+	toolQualityMenu->add(m_menuPostProcess);
 
-	m_toolAO = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.AmbientOcclusionQuality"), ui::scaleBySystemDPI(80), i18n::Text(L"SCENE_EDITOR_AO"));
-	m_toolAO->add(L"Disabled");
-	m_toolAO->add(L"Low");
-	m_toolAO->add(L"Medium");
-	m_toolAO->add(L"High");
-	m_toolAO->add(L"Ultra");
-	m_toolAO->select(0);
+	m_menuMotionBlur = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_MOTION_BLUR"));
+	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.MotionBlurQuality"), L"Disabled", true, 0));
+	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.MotionBlurQuality"), L"Low", true, 0));
+	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.MotionBlurQuality"), L"Medium", true, 0));
+	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.MotionBlurQuality"), L"High", true, 0));
+	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.MotionBlurQuality"), L"Ultra", true, 0));
+	toolQualityMenu->add(m_menuMotionBlur);
 
-	m_toolAA = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.AntiAliasQuality"), ui::scaleBySystemDPI(80), i18n::Text(L"SCENE_EDITOR_AA"));
-	m_toolAA->add(L"Disabled");
-	m_toolAA->add(L"Low");
-	m_toolAA->add(L"Medium");
-	m_toolAA->add(L"High");
-	m_toolAA->add(L"Ultra");
-	m_toolAA->select(0);
+	m_menuShadows = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_SHADOWS"));
+	m_menuShadows->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.ShadowQuality"), L"Disabled", true, 0));
+	m_menuShadows->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.ShadowQuality"), L"Low", true, 0));
+	m_menuShadows->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.ShadowQuality"), L"Medium", true, 0));
+	m_menuShadows->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.ShadowQuality"), L"High", true, 0));
+	m_menuShadows->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.ShadowQuality"), L"Ultra", true, 0));
+	toolQualityMenu->add(m_menuShadows);
+
+	m_menuAO = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_AO"));
+	m_menuAO->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.AmbientOcclusionQuality"), L"Disabled", true, 0));
+	m_menuAO->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.AmbientOcclusionQuality"), L"Low", true, 0));
+	m_menuAO->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.AmbientOcclusionQuality"), L"Medium", true, 0));
+	m_menuAO->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.AmbientOcclusionQuality"), L"High", true, 0));
+	m_menuAO->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.AmbientOcclusionQuality"), L"Ultra", true, 0));
+	toolQualityMenu->add(m_menuAO);
+
+	m_menuAA = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_AA"));
+	m_menuAA->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.AntiAliasQuality"), L"Disabled", true, 0));
+	m_menuAA->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.AntiAliasQuality"), L"Low", true, 0));
+	m_menuAA->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.AntiAliasQuality"), L"Medium", true, 0));
+	m_menuAA->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.AntiAliasQuality"), L"High", true, 0));
+	m_menuAA->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.AntiAliasQuality"), L"Ultra", true, 0));
+	toolQualityMenu->add(m_menuAA);
 
 	m_toolBar->addItem(m_toolView);
 	m_toolBar->addItem(m_toolToggleGrid);
@@ -139,11 +164,14 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(m_toolAspect);
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(m_toolImageProcess);
-	m_toolBar->addItem(m_toolShadows);
-	m_toolBar->addItem(m_toolAO);
-	m_toolBar->addItem(m_toolAA);
+	m_toolBar->addItem(toolQualityMenu);
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
+
+	m_menuPostProcess->get(0)->setChecked(true);
+	m_menuMotionBlur->get(0)->setChecked(true);
+	m_menuShadows->get(0)->setChecked(true);
+	m_menuAO->get(0)->setChecked(true);
+	m_menuAA->get(0)->setChecked(true);
 
 	if (!createRenderControl(viewType))
 		return false;
@@ -187,12 +215,13 @@ void DefaultRenderControl::setAspect(float aspect)
 		m_renderControl->setAspect(aspect);
 }
 
-void DefaultRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void DefaultRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
 	if (m_renderControl)
 		m_renderControl->setQuality(
 			imageProcessQuality,
 			shadowQuality,
+			motionBlurQuality,
 			ambientOcclusionQuality,
 			antiAliasQuality
 		);
@@ -353,6 +382,8 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 
 void DefaultRenderControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
+	bool updateQuality = false;
+
 	if (event->getCommand() == L"Scene.Editor.View")
 	{
 		int32_t selected = m_toolView->getSelected();
@@ -389,18 +420,45 @@ void DefaultRenderControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 		};
 		m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
 	}
-	else if (
-		event->getCommand() == L"Scene.Editor.ImageProcessQuality" ||
-		event->getCommand() == L"Scene.Editor.ShadowQuality" ||
-		event->getCommand() == L"Scene.Editor.AmbientOcclusionQuality" ||
-		event->getCommand() == L"Scene.Editor.AntiAliasQuality"
-	)
+	else if (event->getCommand() == L"Scene.Editor.PostProcessQuality")
+	{
+		for (int i = 0; i < m_menuPostProcess->count(); ++i)
+			m_menuPostProcess->get(i)->setChecked(bool(i == event->getCommand().getId()));
+		updateQuality = true;
+	}
+	else if (event->getCommand() == L"Scene.Editor.MotionBlurQuality")
+	{
+		for (int i = 0; i < m_menuMotionBlur->count(); ++i)
+			m_menuMotionBlur->get(i)->setChecked(bool(i == event->getCommand().getId()));
+		updateQuality = true;
+	}
+	else if (event->getCommand() == L"Scene.Editor.ShadowQuality")
+	{
+		for (int i = 0; i < m_menuShadows->count(); ++i)
+			m_menuShadows->get(i)->setChecked(bool(i == event->getCommand().getId()));
+		updateQuality = true;
+	}
+	else if (event->getCommand() == L"Scene.Editor.AmbientOcclusionQuality")
+	{
+		for (int i = 0; i < m_menuAO->count(); ++i)
+			m_menuAO->get(i)->setChecked(bool(i == event->getCommand().getId()));
+		updateQuality = true;
+	}
+	else if (event->getCommand() == L"Scene.Editor.AntiAliasQuality")
+	{
+		for (int i = 0; i < m_menuAA->count(); ++i)
+			m_menuAA->get(i)->setChecked(bool(i == event->getCommand().getId()));
+		updateQuality = true;
+	}
+
+	if (updateQuality)
 	{
 		m_renderControl->setQuality(
-			(world::Quality)m_toolImageProcess->getSelected(),
-			(world::Quality)m_toolShadows->getSelected(),
-			(world::Quality)m_toolAO->getSelected(),
-			(world::Quality)m_toolAA->getSelected()
+			(world::Quality)getChecked(m_menuPostProcess)->getCommand().getId(),
+			(world::Quality)getChecked(m_menuShadows)->getCommand().getId(),
+			(world::Quality)getChecked(m_menuMotionBlur)->getCommand().getId(),
+			(world::Quality)getChecked(m_menuAO)->getCommand().getId(),
+			(world::Quality)getChecked(m_menuAA)->getCommand().getId()
 		);
 	}
 }

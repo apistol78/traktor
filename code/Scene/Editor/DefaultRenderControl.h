@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 class Container;
+class MenuItem;
 class Widget;
 
 		namespace custom
@@ -42,7 +43,7 @@ public:
 
 	virtual void setAspect(float aspect) T_OVERRIDE T_FINAL;
 
-	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) T_OVERRIDE T_FINAL;
+	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) T_OVERRIDE T_FINAL;
 
 	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
@@ -68,10 +69,11 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::custom::ToolBarDropDown > m_toolView;
 	Ref< ui::custom::ToolBarDropDown > m_toolAspect;
-	Ref< ui::custom::ToolBarDropDown > m_toolImageProcess;
-	Ref< ui::custom::ToolBarDropDown > m_toolShadows;
-	Ref< ui::custom::ToolBarDropDown > m_toolAO;
-	Ref< ui::custom::ToolBarDropDown > m_toolAA;
+	Ref< ui::MenuItem > m_menuPostProcess;
+	Ref< ui::MenuItem > m_menuMotionBlur;
+	Ref< ui::MenuItem > m_menuShadows;
+	Ref< ui::MenuItem > m_menuAO;
+	Ref< ui::MenuItem > m_menuAA;
 	Ref< ISceneRenderControl > m_renderControl;
 
 	bool createRenderControl(int32_t type);

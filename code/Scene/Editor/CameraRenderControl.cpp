@@ -61,6 +61,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CameraRenderControl", CameraRenderContro
 CameraRenderControl::CameraRenderControl()
 :	m_imageProcessQuality(world::QuDisabled)
 ,	m_shadowQuality(world::QuDisabled)
+,	m_motionBlurQuality(world::QuDisabled)
 ,	m_ambientOcclusionQuality(world::QuDisabled)
 ,	m_antiAliasQuality(world::QuDisabled)
 ,	m_gridEnable(true)
@@ -169,6 +170,7 @@ void CameraRenderControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = &m_worldRenderSettings;
 	wcd.entityRenderers = worldEntityRenderers;
+	wcd.motionBlurQuality = m_motionBlurQuality;
 	wcd.shadowsQuality = m_shadowQuality;
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
@@ -200,10 +202,11 @@ void CameraRenderControl::setAspect(float aspect)
 	m_containerAspect->update();
 }
 
-void CameraRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void CameraRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
 	m_imageProcessQuality = imageProcessQuality;
 	m_shadowQuality = shadowQuality;
+	m_motionBlurQuality = motionBlurQuality;
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
 	updateWorldRenderer();

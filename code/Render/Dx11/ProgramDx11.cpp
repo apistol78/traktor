@@ -203,7 +203,7 @@ bool ProgramDx11::create(
 		pm.count = resource->m_parameters[i].count;
 	}
 
-	m_parameterFloatArray.resize(resource->m_parameterScalarSize);
+	m_parameterFloatArray.resize(resource->m_parameterScalarSize, 0.0f);
 	m_parameterTextureArray.resize(resource->m_parameterTextureSize);
 
 	// Create state objects.

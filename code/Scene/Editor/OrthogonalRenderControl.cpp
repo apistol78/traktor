@@ -73,6 +73,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRend
 
 OrthogonalRenderControl::OrthogonalRenderControl()
 :	m_shadowQuality(world::QuDisabled)
+,	m_motionBlurQuality(world::QuDisabled)
 ,	m_ambientOcclusionQuality(world::QuDisabled)
 ,	m_antiAliasQuality(world::QuDisabled)
 ,	m_gridEnable(true)
@@ -218,6 +219,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = worldRenderSettings;
 	wcd.entityRenderers = worldEntityRenderers;
+	wcd.motionBlurQuality = m_motionBlurQuality;
 	wcd.shadowsQuality = m_shadowQuality;
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
@@ -242,9 +244,10 @@ void OrthogonalRenderControl::setAspect(float aspect)
 {
 }
 
-void OrthogonalRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void OrthogonalRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
 	m_shadowQuality = shadowQuality;
+	m_motionBlurQuality = motionBlurQuality;
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
 	updateWorldRenderer();
