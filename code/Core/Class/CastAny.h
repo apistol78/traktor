@@ -409,6 +409,9 @@ struct CastAny < Ref< Type >, false >
 		return Any::fromObject(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
 	static Ref< Type > get(const Any& value) {
+		if (value.isVoid())
+			return 0;
+
 		if (!value.isObject())
 			throw CastException("Cannot cast to object; value not an object");
 		
@@ -436,6 +439,9 @@ struct CastAny < const Ref< Type >&, false >
 		return Any::fromObject(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
 	static Ref< Type > get(const Any& value) {
+		if (value.isVoid())
+			return 0;
+
 		if (!value.isObject())
 			throw CastException("Cannot cast to object; value not an object");
 
@@ -465,6 +471,9 @@ struct CastAny < Type, false >
 		return Any::fromObject(new type_t(value));
 	}
 	static Type get(const Any& value) {
+		if (value.isVoid())
+			throw CastException("Cannot cast to object; value is void");
+
 		if (!value.isObject())
 			throw CastException("Cannot cast to object; value not an object");
 
@@ -494,6 +503,9 @@ struct CastAny < Type, true >
 		return Any::fromObject((ITypedObject*)(value));
 	}
 	static Type get(const Any& value) {
+		if (value.isVoid())
+			return 0;
+
 		if (!value.isObject())
 			throw CastException("Cannot cast to object; value not an object");
 
