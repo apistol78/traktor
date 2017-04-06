@@ -1021,7 +1021,13 @@ struct CastAny< TypeInfo, false >
 		return Any::fromObject(new BoxedTypeInfo(value));
 	}
 	static const TypeInfo& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedTypeInfo* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to TypeInfo; value not an object");
+
+		if (!is_a< BoxedTypeInfo* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to TypeInfo; value is not of correct type");
+
+		return static_cast< BoxedTypeInfo* >(value.getObject())->unbox();
 	}
 };
 
@@ -1038,7 +1044,13 @@ struct CastAny< const TypeInfo&, false >
 		return Any::fromObject(new BoxedTypeInfo(value));
 	}
 	static const TypeInfo& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedTypeInfo* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to TypeInfo; value not an object");
+
+		if (!is_a< BoxedTypeInfo* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to TypeInfo; value is not of correct type");
+
+		return static_cast< BoxedTypeInfo* >(value.getObject())->unbox();
 	}
 };
 
@@ -1055,7 +1067,13 @@ struct CastAny < Guid, false >
 		return Any::fromObject(new BoxedGuid(value));
 	}	
 	static const Guid& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedGuid* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Guid; value not an object");
+
+		if (!is_a< BoxedGuid* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Guid; value is not of correct type");
+
+		return static_cast< BoxedGuid* >(value.getObject())->unbox();
 	}
 };
 
@@ -1072,7 +1090,13 @@ struct CastAny < const Guid&, false >
 		return Any::fromObject(new BoxedGuid(value));
 	}	
 	static const Guid& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedGuid* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Guid; value not an object");
+
+		if (!is_a< BoxedGuid* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Guid; value is not of correct type");
+
+		return static_cast< BoxedGuid* >(value.getObject())->unbox();
 	}
 };
 
@@ -1089,7 +1113,13 @@ struct CastAny < Vector2, false >
 		return Any::fromObject(new BoxedVector2(value));
 	}	
 	static const Vector2& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedVector2* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Vector2; value not an object");
+
+		if (!is_a< BoxedVector2* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Vector2; value is not of correct type");
+
+		return static_cast< BoxedVector2* >(value.getObject())->unbox();
 	}
 };
 
@@ -1106,7 +1136,13 @@ struct CastAny < const Vector2&, false >
 		return Any::fromObject(new BoxedVector2(value));
 	}	
 	static const Vector2& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedVector2* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Vector2; value not an object");
+
+		if (!is_a< BoxedVector2* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Vector2; value is not of correct type");
+
+		return static_cast< BoxedVector2* >(value.getObject())->unbox();
 	}
 };
 
@@ -1123,7 +1159,13 @@ struct CastAny < Vector4, false >
         return Any::fromObject(new BoxedVector4(value));
     }	
     static const Vector4& get(const Any& value) {
-        return mandatory_non_null_type_cast< BoxedVector4* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Vector4; value not an object");
+
+		if (!is_a< BoxedVector4* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Vector4; value is not of correct type");
+
+		return static_cast< BoxedVector4* >(value.getObject())->unbox();
     }
 };
 
@@ -1140,8 +1182,14 @@ struct CastAny < const Vector4&, false >
         return Any::fromObject(new BoxedVector4(value));
     }	
     static const Vector4& get(const Any& value) {
-        return mandatory_non_null_type_cast< BoxedVector4* >(value.getObject())->unbox();
-    }
+		if (!value.isObject())
+			throw CastException("Cannot cast to Vector4; value not an object");
+
+		if (!is_a< BoxedVector4* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Vector4; value is not of correct type");
+
+		return static_cast< BoxedVector4* >(value.getObject())->unbox();
+	}
 };
 
 template < >
@@ -1157,7 +1205,13 @@ struct CastAny < AlignedVector< Vector4 >, false >
 		return Any::fromObject(new BoxedVector4Array(value));
 	}
 	static const AlignedVector< Vector4 >& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedVector4Array* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to AlignedVector< Vector4 >; value not an object");
+
+		if (!is_a< BoxedVector4Array* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to AlignedVector< Vector4 >; value is not of correct type");
+
+		return static_cast< BoxedVector4Array* >(value.getObject())->unbox();
 	}
 };
 
@@ -1174,7 +1228,13 @@ struct CastAny < const AlignedVector< Vector4 >&, false >
 		return Any::fromObject(new BoxedVector4Array(value));
 	}
 	static const AlignedVector< Vector4 >& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedVector4Array* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to AlignedVector< Vector4 >; value not an object");
+
+		if (!is_a< BoxedVector4Array* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to AlignedVector< Vector4 >; value is not of correct type");
+
+		return static_cast< BoxedVector4Array* >(value.getObject())->unbox();
 	}
 };
 
@@ -1191,7 +1251,13 @@ struct CastAny < Quaternion, false >
         return Any::fromObject(new BoxedQuaternion(value));
     }
     static const Quaternion& get(const Any& value) {
-        return mandatory_non_null_type_cast< BoxedQuaternion* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Quaternion; value not an object");
+
+		if (!is_a< BoxedQuaternion* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Quaternion; value is not of correct type");
+
+		return static_cast< BoxedQuaternion* >(value.getObject())->unbox();
     }
 };
 
@@ -1208,8 +1274,14 @@ struct CastAny < const Quaternion&, false >
         return Any::fromObject(new BoxedQuaternion(value));
     }
     static const Quaternion& get(const Any& value) {
-        return mandatory_non_null_type_cast< BoxedQuaternion* >(value.getObject())->unbox();
-    }
+		if (!value.isObject())
+			throw CastException("Cannot cast to Quaternion; value not an object");
+
+		if (!is_a< BoxedQuaternion* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Quaternion; value is not of correct type");
+
+		return static_cast< BoxedQuaternion* >(value.getObject())->unbox();
+	}
 };
 
 template < >
@@ -1225,7 +1297,13 @@ struct CastAny < Plane, false >
 		return Any::fromObject(new BoxedPlane(value));
 	}
 	static const Plane& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedPlane* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Plane; value not an object");
+
+		if (!is_a< BoxedPlane* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Plane; value is not of correct type");
+
+		return static_cast< BoxedPlane* >(value.getObject())->unbox();
 	}
 };
 
@@ -1242,7 +1320,13 @@ struct CastAny < const Plane&, false >
 		return Any::fromObject(new BoxedPlane(value));
 	}
 	static const Plane& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedPlane* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Plane; value not an object");
+
+		if (!is_a< BoxedPlane* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Plane; value is not of correct type");
+
+		return static_cast< BoxedPlane* >(value.getObject())->unbox();
 	}
 };
 
@@ -1259,7 +1343,13 @@ struct CastAny < Transform, false >
         return Any::fromObject(new BoxedTransform(value));
     }
     static const Transform& get(const Any& value) {
-        return mandatory_non_null_type_cast< BoxedTransform* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Transform; value not an object");
+
+		if (!is_a< BoxedTransform* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Transform; value is not of correct type");
+
+		return static_cast< BoxedTransform* >(value.getObject())->unbox();
     }
 };
 
@@ -1276,7 +1366,13 @@ struct CastAny < const Transform&, false >
         return Any::fromObject(new BoxedTransform(value));
     }
     static const Transform& get(const Any& value) {
-        return mandatory_non_null_type_cast< BoxedTransform* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Transform; value not an object");
+
+		if (!is_a< BoxedTransform* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Transform; value is not of correct type");
+
+		return static_cast< BoxedTransform* >(value.getObject())->unbox();
     }
 };
 
@@ -1293,7 +1389,13 @@ struct CastAny < Aabb2, false >
 		return Any::fromObject(new BoxedAabb2(value));
 	}	
 	static const Aabb2& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedAabb2* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Aabb2; value not an object");
+
+		if (!is_a< BoxedAabb2* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Aabb2; value is not of correct type");
+
+		return static_cast< BoxedAabb2* >(value.getObject())->unbox();
 	}
 };
 
@@ -1310,7 +1412,13 @@ struct CastAny < const Aabb2&, false >
 		return Any::fromObject(new BoxedAabb2(value));
 	}	
 	static const Aabb2& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedAabb2* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Aabb2; value not an object");
+
+		if (!is_a< BoxedAabb2* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Aabb2; value is not of correct type");
+
+		return static_cast< BoxedAabb2* >(value.getObject())->unbox();
 	}
 };
 
@@ -1327,7 +1435,13 @@ struct CastAny < Aabb3, false >
 		return Any::fromObject(new BoxedAabb3(value));
 	}	
 	static const Aabb3& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedAabb3* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Aabb3; value not an object");
+
+		if (!is_a< BoxedAabb3* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Aabb3; value is not of correct type");
+
+		return static_cast< BoxedAabb3* >(value.getObject())->unbox();
 	}
 };
 
@@ -1344,7 +1458,13 @@ struct CastAny < const Aabb3&, false >
 		return Any::fromObject(new BoxedAabb3(value));
 	}	
 	static const Aabb3& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedAabb3* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Aabb3; value not an object");
+
+		if (!is_a< BoxedAabb3* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Aabb3; value is not of correct type");
+
+		return static_cast< BoxedAabb3* >(value.getObject())->unbox();
 	}
 };
 
@@ -1361,7 +1481,13 @@ struct CastAny < Frustum, false >
 		return Any::fromObject(new BoxedFrustum(value));
 	}	
 	static const Frustum& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedFrustum* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Frustum; value not an object");
+
+		if (!is_a< BoxedFrustum* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Frustum; value is not of correct type");
+
+		return static_cast< BoxedFrustum* >(value.getObject())->unbox();
 	}
 };
 
@@ -1378,7 +1504,13 @@ struct CastAny < const Frustum&, false >
 		return Any::fromObject(new BoxedFrustum(value));
 	}	
 	static const Frustum& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedFrustum* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Frustum; value not an object");
+
+		if (!is_a< BoxedFrustum* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Frustum; value is not of correct type");
+
+		return static_cast< BoxedFrustum* >(value.getObject())->unbox();
 	}
 };
 
@@ -1395,7 +1527,13 @@ struct CastAny < Matrix33, false >
 		return Any::fromObject(new BoxedMatrix33(value));
 	}	
 	static const Matrix33& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedMatrix33* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Matrix33; value not an object");
+
+		if (!is_a< BoxedMatrix33* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Matrix33; value is not of correct type");
+
+		return static_cast< BoxedMatrix33* >(value.getObject())->unbox();
 	}
 };
 
@@ -1412,7 +1550,13 @@ struct CastAny < const Matrix33&, false >
 		return Any::fromObject(new BoxedMatrix33(value));
 	}	
 	static const Matrix33& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedMatrix33* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Matrix33; value not an object");
+
+		if (!is_a< BoxedMatrix33* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Matrix33; value is not of correct type");
+
+		return static_cast< BoxedMatrix33* >(value.getObject())->unbox();
 	}
 };
 
@@ -1429,7 +1573,13 @@ struct CastAny < Matrix44, false >
 		return Any::fromObject(new BoxedMatrix44(value));
 	}	
 	static const Matrix44& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedMatrix44* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Matrix44; value not an object");
+
+		if (!is_a< BoxedMatrix44* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Matrix44; value is not of correct type");
+
+		return static_cast< BoxedMatrix44* >(value.getObject())->unbox();
 	}
 };
 
@@ -1446,7 +1596,13 @@ struct CastAny < const Matrix44&, false >
 		return Any::fromObject(new BoxedMatrix44(value));
 	}	
 	static const Matrix44& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedMatrix44* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Matrix44; value not an object");
+
+		if (!is_a< BoxedMatrix44* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Matrix44; value is not of correct type");
+
+		return static_cast< BoxedMatrix44* >(value.getObject())->unbox();
 	}
 };
 
@@ -1463,7 +1619,13 @@ struct CastAny < Color4f, false >
 		return Any::fromObject(new BoxedColor4f(value));
 	}
 	static const Color4f& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedColor4f* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Color4f; value not an object");
+
+		if (!is_a< BoxedColor4f* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Color4f; value is not of correct type");
+
+		return static_cast< BoxedColor4f* >(value.getObject())->unbox();
 	}
 };
 
@@ -1480,7 +1642,13 @@ struct CastAny < const Color4f&, false >
 		return Any::fromObject(new BoxedColor4f(value));
 	}
 	static const Color4f& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedColor4f* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Color4f; value not an object");
+
+		if (!is_a< BoxedColor4f* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Color4f; value is not of correct type");
+
+		return static_cast< BoxedColor4f* >(value.getObject())->unbox();
 	}
 };
 
@@ -1497,7 +1665,13 @@ struct CastAny < Color4ub, false >
 		return Any::fromObject(new BoxedColor4ub(value));
 	}
 	static const Color4ub& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedColor4ub* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Color4ub; value not an object");
+
+		if (!is_a< BoxedColor4ub* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Color4ub; value is not of correct type");
+
+		return static_cast< BoxedColor4ub* >(value.getObject())->unbox();
 	}
 };
 
@@ -1514,7 +1688,13 @@ struct CastAny < const Color4ub&, false >
 		return Any::fromObject(new BoxedColor4ub(value));
 	}
 	static const Color4ub& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedColor4ub* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Color4ub; value not an object");
+
+		if (!is_a< BoxedColor4ub* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Color4ub; value is not of correct type");
+
+		return static_cast< BoxedColor4ub* >(value.getObject())->unbox();
 	}
 };
 
@@ -1531,7 +1711,13 @@ struct CastAny < Random, false >
 		return Any::fromObject(new BoxedRandom(value));
 	}
 	static const Random& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedRandom* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Random; value not an object");
+
+		if (!is_a< BoxedRandom* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Random; value is not of correct type");
+
+		return static_cast< BoxedRandom* >(value.getObject())->unbox();
 	}
 };
 
@@ -1548,7 +1734,13 @@ struct CastAny < const Random&, false >
 		return Any::fromObject(new BoxedRandom(value));
 	}
 	static const Random& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedRandom* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Random; value not an object");
+
+		if (!is_a< BoxedRandom* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Random; value is not of correct type");
+
+		return static_cast< BoxedRandom* >(value.getObject())->unbox();
 	}
 };
 
@@ -1565,7 +1757,13 @@ struct CastAny < RandomGeometry, false >
 		return Any::fromObject(new BoxedRandomGeometry(value));
 	}
 	static const RandomGeometry& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedRandomGeometry* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to RandomGeometry; value not an object");
+
+		if (!is_a< BoxedRandomGeometry* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to RandomGeometry; value is not of correct type");
+
+		return static_cast< BoxedRandomGeometry* >(value.getObject())->unbox();
 	}
 };
 
@@ -1582,7 +1780,13 @@ struct CastAny < const RandomGeometry&, false >
 		return Any::fromObject(new BoxedRandomGeometry(value));
 	}
 	static const RandomGeometry& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedRandomGeometry* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to RandomGeometry; value not an object");
+
+		if (!is_a< BoxedRandomGeometry* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to RandomGeometry; value is not of correct type");
+
+		return static_cast< BoxedRandomGeometry* >(value.getObject())->unbox();
 	}
 };
 
@@ -1599,7 +1803,13 @@ struct CastAny < Ray3, false >
 		return Any::fromObject(new BoxedRay3(value));
 	}
 	static const Ray3& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedRay3* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Ray3; value not an object");
+
+		if (!is_a< BoxedRay3* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Ray3; value is not of correct type");
+
+		return static_cast< BoxedRay3* >(value.getObject())->unbox();
 	}
 };
 
@@ -1616,7 +1826,13 @@ struct CastAny < const Ray3&, false >
 		return Any::fromObject(new BoxedRay3(value));
 	}
 	static const Ray3& get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedRay3* >(value.getObject())->unbox();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Ray3; value not an object");
+
+		if (!is_a< BoxedRay3* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Ray3; value is not of correct type");
+
+		return static_cast< BoxedRay3* >(value.getObject())->unbox();
 	}
 };
 
@@ -1633,7 +1849,13 @@ struct CastAny< Range< InnerType >, false >
 		return Any::fromObject(new BoxedRange(value));
 	}
 	static Range< InnerType > get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedRange* >(value.getObject())->unbox< InnerType >();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Range< InnerType >; value not an object");
+
+		if (!is_a< BoxedRange* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Range< InnerType >; value is not of correct type");
+
+		return static_cast< BoxedRange* >(value.getObject())->unbox< InnerType >();
 	}
 };
 
@@ -1650,7 +1872,13 @@ struct CastAny< const Range< InnerType >&, false >
 		return Any::fromObject(new BoxedRange(value));
 	}
 	static Range< InnerType > get(const Any& value) {
-		return mandatory_non_null_type_cast< BoxedRange* >(value.getObject())->unbox< InnerType >();
+		if (!value.isObject())
+			throw CastException("Cannot cast to Range< InnerType >; value not an object");
+
+		if (!is_a< BoxedRange* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to Range< InnerType >; value is not of correct type");
+
+		return static_cast< BoxedRange* >(value.getObject())->unbox< InnerType >();
 	}
 };
 
@@ -1667,7 +1895,13 @@ struct CastAny < RefArray< InnerType >, false >
         return Any::fromObject(new BoxedRefArray(value));
     }
     static RefArray< InnerType > get(const Any& value) {
-        return mandatory_non_null_type_cast< BoxedRefArray* >(value.getObject())->unbox< InnerType >();
+		if (!value.isObject())
+			throw CastException("Cannot cast to RefArray< InnerType >; value not an object");
+
+		if (!is_a< BoxedRefArray* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to RefArray< InnerType >; value is not of correct type");
+
+		return static_cast< BoxedRefArray* >(value.getObject())->unbox< InnerType >();
     }
 };
 
@@ -1684,7 +1918,13 @@ struct CastAny < const RefArray< InnerType >&, false >
         return Any::fromObject(new BoxedRefArray(value));
     }
     static RefArray< InnerType > get(const Any& value) {
-        return mandatory_non_null_type_cast< BoxedRefArray* >(value.getObject())->unbox< InnerType >();
+		if (!value.isObject())
+			throw CastException("Cannot cast to RefArray< InnerType >; value not an object");
+
+		if (!is_a< BoxedRefArray* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to RefArray< InnerType >; value is not of correct type");
+
+		return static_cast< BoxedRefArray* >(value.getObject())->unbox< InnerType >();
     }
 };
 
@@ -1701,7 +1941,13 @@ struct CastAny < std::vector< InnerType >, false >
         return Any::fromObject(new BoxedStdVector(value));
     }
     static std::vector< InnerType > get(const Any& value) {
-        return mandatory_non_null_type_cast< BoxedStdVector* >(value.getObject())->unbox< InnerType >();
+		if (!value.isObject())
+			throw CastException("Cannot cast to StdVector< InnerType >; value not an object");
+
+		if (!is_a< BoxedStdVector* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to StdVector< InnerType >; value is not of correct type");
+
+		return static_cast< BoxedStdVector* >(value.getObject())->unbox< InnerType >();
     }
 };
 
@@ -1718,8 +1964,14 @@ struct CastAny < const std::vector< InnerType >&, false >
         return Any::fromObject(new BoxedStdVector(value));
     }
     static std::vector< InnerType > get(const Any& value) {
-        return mandatory_non_null_type_cast< BoxedStdVector* >(value.getObject())->unbox< InnerType >();
-    }
+		if (!value.isObject())
+			throw CastException("Cannot cast to StdVector< InnerType >; value not an object");
+
+		if (!is_a< BoxedStdVector* >(value.getObjectUnsafe()))
+			throw CastException("Cannot cast to StdVector< InnerType >; value is not of correct type");
+
+		return static_cast< BoxedStdVector* >(value.getObject())->unbox< InnerType >();
+	}
 };
 
 class T_DLLCLASS BoxesClassFactory : public IRuntimeClassFactory

@@ -2,13 +2,12 @@
 #define traktor_CastAny_H
 
 #include "Core/Class/Any.h"
+#include "Core/Class/CastException.h"
 #include "Core/Io/OutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Math/Scalar.h"
 #include "Core/Meta/Traits.h"
 #include "Core/Misc/TString.h"
-
-#define T_CAST_ASSERT(x) T_FATAL_ASSERT((x))
 
 namespace traktor
 {
@@ -86,6 +85,7 @@ struct CastAny < int8_t, false >
 		return Any::fromInt32(value);
 	}
 	static int8_t get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to int8_t; value not numeric"); }
 		return value.getInt32();
 	}
 };
@@ -103,6 +103,7 @@ struct CastAny < uint8_t, false >
 		return Any::fromInt32(uint8_t(value));
 	}
 	static uint8_t get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to uint8_t; value not numeric"); }
 		return (uint8_t)value.getInt32();
 	}
 };
@@ -120,6 +121,7 @@ struct CastAny < int16_t, false >
 		return Any::fromInt32(value);
 	}
 	static int16_t get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to int16_t; value not numeric"); }
 		return value.getInt32();
 	}
 };
@@ -137,6 +139,7 @@ struct CastAny < uint16_t, false >
 		return Any::fromInt32(uint16_t(value));
 	}
 	static uint16_t get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to uint16_t; value not numeric"); }
 		return (uint16_t)value.getInt32();
 	}
 };
@@ -154,6 +157,7 @@ struct CastAny < int32_t, false >
 		return Any::fromInt32(value);
 	}
 	static int32_t get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to int32_t; value not numeric"); }
 		return value.getInt32();
 	}
 };
@@ -171,6 +175,7 @@ struct CastAny < uint32_t, false >
 		return Any::fromInt32(int32_t(value));
 	}
 	static uint32_t get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to uint32_t; value not numeric"); }
 		return (uint32_t)value.getInt32();
 	}
 };
@@ -188,6 +193,7 @@ struct CastAny < int64_t, false >
 		return Any::fromInt64(value);
 	}
 	static int64_t get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to int64_t; value not numeric"); }
 		return value.getInt64();
 	}
 };
@@ -205,6 +211,7 @@ struct CastAny < uint64_t, false >
 		return Any::fromInt64(int64_t(value));
 	}
 	static uint64_t get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to uint64_t; value not numeric"); }
 		return (uint64_t)value.getInt64();
 	}
 };
@@ -222,6 +229,7 @@ struct CastAny < float, false >
 		return Any::fromFloat(value);
 	}
 	static float get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to float; value not numeric"); }
 		return value.getFloat();
 	}
 };
@@ -239,6 +247,7 @@ struct CastAny < double, false >
 		return Any::fromFloat(float(value));
 	}
 	static double get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to double; value not numeric"); }
 		return double(value.getFloat());
 	}
 };
@@ -256,6 +265,7 @@ struct CastAny < Scalar, false >
 		return Any::fromFloat(float(value));
 	}
 	static Scalar get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to Scalar; value not numeric"); }
 		return Scalar(value.getFloat());
 	}
 };
@@ -273,6 +283,7 @@ struct CastAny < const Scalar&, false >
 		return Any::fromFloat(float(value));
 	}
 	static Scalar get(const Any& value) {
+		if (!value.isNumeric()) { throw CastException("Cannot cast to Scalar; value not numeric"); }
 		return Scalar(value.getFloat());
 	}
 };
@@ -290,6 +301,7 @@ struct CastAny < std::string, false >
 		return Any::fromString(value);
 	}
 	static std::string get(const Any& value) {
+		if (!value.isString() && !value.isNumeric()) { throw CastException("Cannot cast to std::string; value not string nor numeric"); }
 		return value.getString();
 	}
 };
@@ -307,6 +319,7 @@ struct CastAny < const std::string&, false >
 		return Any::fromString(value);
 	}
 	static std::string get(const Any& value) {
+		if (!value.isString() && !value.isNumeric()) { throw CastException("Cannot cast to std::string; value not string nor numeric"); }
 		return value.getString();
 	}
 };
@@ -324,6 +337,7 @@ struct CastAny < const char, true >
 		return Any::fromString(value);
 	}
 	static const char* get(const Any& value) {
+		if (!value.isString() && !value.isNumeric()) { throw CastException("Cannot cast to c-string; value not string nor numeric"); }
 		return value.getString().c_str();
 	}
 };
@@ -341,6 +355,7 @@ struct CastAny < std::wstring, false >
 		return Any::fromString(value);
 	}
 	static std::wstring get(const Any& value) {
+		if (!value.isString() && !value.isNumeric()) { throw CastException("Cannot cast to std::wstring; value not string nor numeric"); }
 		return value.getWideString();
 	}
 };
@@ -358,6 +373,7 @@ struct CastAny < const std::wstring&, false >
 		return Any::fromString(value);
 	}
 	static std::wstring get(const Any& value) {
+		if (!value.isString() && !value.isNumeric()) { throw CastException("Cannot cast to std::wstring; value not string nor numeric"); }
 		return value.getWideString();
 	}
 };
@@ -375,6 +391,7 @@ struct CastAny < const wchar_t, true >
 		return Any::fromString(value);
 	}
 	static const wchar_t* get(const Any& value) {
+		if (!value.isString() && !value.isNumeric()) { throw CastException("Cannot cast to c-wstring; value not string nor numeric"); }
 		return value.getWideString().c_str();
 	}
 };
@@ -392,8 +409,17 @@ struct CastAny < Ref< Type >, false >
 		return Any::fromObject(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
 	static Ref< Type > get(const Any& value) {
-		T_CAST_ASSERT (value.getObject() == 0 || is_a< Type >(value.getObject()));
-		return checked_type_cast< Type* >(value.getObject());
+		if (!value.isObject())
+			throw CastException("Cannot cast to object; value not an object");
+		
+		ITypedObject* ptr = value.getObjectUnsafe();
+		if (!ptr)
+			return 0;
+
+		if (!is_a< Type >(ptr))
+			throw CastException("Cannot cast to object; value is not of correct type");
+
+		return static_cast< Type* >(ptr);
 	}
 };
 
@@ -410,8 +436,17 @@ struct CastAny < const Ref< Type >&, false >
 		return Any::fromObject(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
 	static Ref< Type > get(const Any& value) {
-		T_CAST_ASSERT (value.getObject() == 0 || is_a< Type >(value.getObject()));
-		return checked_type_cast< Type* >(value.getObject());
+		if (!value.isObject())
+			throw CastException("Cannot cast to object; value not an object");
+
+		ITypedObject* ptr = value.getObjectUnsafe();
+		if (!ptr)
+			return 0;
+
+		if (!is_a< Type >(ptr))
+			throw CastException("Cannot cast to object; value is not of correct type");
+
+		return static_cast< Type* >(ptr);
 	}
 };
 
@@ -430,8 +465,17 @@ struct CastAny < Type, false >
 		return Any::fromObject(new type_t(value));
 	}
 	static Type get(const Any& value) {
-		T_CAST_ASSERT (value.getObject() != 0 && is_a< type_t* >(value.getObject()));
-		return Type(*checked_type_cast< type_t*, false >(value.getObject()));
+		if (!value.isObject())
+			throw CastException("Cannot cast to object; value not an object");
+
+		ITypedObject* ptr = value.getObjectUnsafe();
+		if (!ptr)
+			throw CastException("Cannot cast to object; value is null");
+
+		if (!is_a< type_t* >(ptr))
+			throw CastException("Cannot cast to object; value is not of correct type");
+
+		return Type(*static_cast< type_t* >(ptr));
 	}
 };
 
@@ -450,8 +494,17 @@ struct CastAny < Type, true >
 		return Any::fromObject((ITypedObject*)(value));
 	}
 	static Type get(const Any& value) {
-		T_CAST_ASSERT (value.getObject() == 0 || is_a< Type >(value.getObject()));
-		return checked_type_cast< Type >(value.getObject());
+		if (!value.isObject())
+			throw CastException("Cannot cast to object; value not an object");
+
+		ITypedObject* ptr = value.getObjectUnsafe();
+		if (!ptr)
+			return 0;
+
+		if (!is_a< Type >(ptr))
+			throw CastException("Cannot cast to object; value is not of correct type");
+
+		return static_cast< Type >(ptr);
 	}
 };
 
