@@ -37,34 +37,54 @@ function Widget.initialize(env, resourceKits)
 end
 
 function Widget:remove()
+	-- Ensure widget isn't modal.
 	for k, w in ipairs(Widget._modal) do
 		if w == self then
 			table.remove(Widget._modal, k)
 			break
 		end
 	end
+
+	-- Ensure widget isn't exclusive.
 	for k, w in ipairs(Widget._exclusive) do
 		if w == self then
 			table.remove(Widget._exclusive, k)
 			break
 		end
 	end
+
+	-- Ensure widget hasn't focus.
 	if Widget._focus == self then
 		Widget._focus = nil
 	end
-	self:removeAllChildren()
+
+	-- Remove all children.
+	local children = self._children
+	while #children > 0 do
+		local ln = #children
+		children[1]:remove()
+		assert (#children < ln)
+	end
+
+	-- Remove from parent.
 	if self._parent ~= nil then
 		self._parent:_removeChild(self)
 		self._parent = nil
 	end
+
+	-- Remove movieclip.
 	if self._mc ~= nil then
 		self._mc:removeMovieClip()
 		self._mc = nil
 	end
+
+#if defined(_DEBUG)
+	self._debugInfo = "REMOVED"
+#endif
 end
 
 function Widget:removeAllChildren()
-	local children = self._children
+	local children = self:getChildren()
 	while #children > 0 do
 		local ln = #children
 		children[1]:remove()
@@ -280,6 +300,9 @@ function Widget:_initialize(parent, mc)
 	if parent ~= nil then
 		parent:_addChild(self)
 	end
+#if defined(_DEBUG)
+	self._debugInfo = "INITIALIZED"
+#endif
 end
 
 function Widget:_addChild(child)
