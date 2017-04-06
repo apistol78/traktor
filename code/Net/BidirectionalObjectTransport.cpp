@@ -47,32 +47,35 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 	return true;
 }
 
-bool BidirectionalObjectTransport::wait(int32_t timeout)
-{
-	if (m_socket)
-		return m_socket->select(true, false, false, timeout) > 0;
-	else
-		return false;
-}
-
-BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const TypeInfo& objectType, int32_t timeout, Ref< ISerializable >& outObject)
+BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const TypeInfoSet& objectTypes, int32_t timeout, Ref< ISerializable >& outObject)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Check queue if any object of given type has already been received.
-	RefArray< ISerializable >& typeInQueue = m_inQueue[&objectType];
-	if (!typeInQueue.empty())
+	for (TypeInfoSet::const_iterator i = objectTypes.begin(); i != objectTypes.end(); ++i)
 	{
-		outObject = typeInQueue.front();
-		typeInQueue.pop_front();
-		return RtSuccess;
+		RefArray< ISerializable >& typeInQueue = m_inQueue[*i];
+		if (!typeInQueue.empty())
+		{
+			outObject = typeInQueue.front();
+			typeInQueue.pop_front();
+			return RtSuccess;
+		}
 	}
 
 	if (m_socket)
 	{
 		// Receive objects from connection; if not of desired type then queue object.
-		while (m_socket->select(true, false, false, timeout) > 0)
+		for (;;)
 		{
+			{
+				T_ANONYMOUS_VAR(Release< Semaphore >)(m_lock);
+				if (m_socket->select(true, false, false, timeout) <= 0)
+					break;
+			}
+			if (m_socket->select(true, false, false, 0) <= 0)
+				continue;
+
 			Ref< ISerializable > object;
 			{
 				T_ANONYMOUS_VAR(Release< Semaphore >)(m_lock);
@@ -80,21 +83,24 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 				BinarySerializer s(&ss);
 				object = s.readObject();
 			}
+
 			if (!object)
 			{
 				m_socket = 0;
 				break;
 			}
-			if (is_type_of(objectType, type_of(object)))
+
+			for (TypeInfoSet::const_iterator i = objectTypes.begin(); i != objectTypes.end(); ++i)
 			{
-				outObject = object;
-				return RtSuccess;
+				if (is_type_of(*(*i), type_of(object)))
+				{
+					outObject = object;
+					return RtSuccess;
+				}
 			}
-			else
-			{
-				RefArray< ISerializable >& typeInQueue = m_inQueue[&type_of(object)];
-				typeInQueue.push_back(object);
-			}
+
+			RefArray< ISerializable >& typeInQueue = m_inQueue[&type_of(object)];
+			typeInQueue.push_back(object);
 		}
 	}
 
