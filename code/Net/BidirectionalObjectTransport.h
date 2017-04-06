@@ -47,9 +47,7 @@ public:
 
 	bool send(const ISerializable* object);
 
-	bool wait(int32_t timeout);
-
-	Result recv(const TypeInfo& objectType, int32_t timeout, Ref< ISerializable >& outObject);
+	Result recv(const TypeInfoSet& objectTypes, int32_t timeout, Ref< ISerializable >& outObject);
 
 	void flush(const TypeInfo& objectType);
 
@@ -63,7 +61,7 @@ public:
 		Ref< ISerializable > obj;
 		Result result;
 		
-		result = recv(type_of< ObjectType >(), timeout, obj);
+		result = recv(makeTypeInfoSet< ObjectType >(), timeout, obj);
 		if (result != RtSuccess)
 			return result;
 

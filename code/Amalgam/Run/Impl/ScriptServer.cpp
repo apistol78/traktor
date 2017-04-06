@@ -191,7 +191,97 @@ void ScriptServer::threadDebugger()
 {
 	while (!m_scriptDebuggerThread->stopped() && m_transport->connected())
 	{
-		if (!m_transport->wait(500))
+		if (m_scriptDebugger)
+		{
+			Ref< ISerializable > object;
+			if (m_transport->recv(makeTypeInfoSet< ScriptDebuggerBreakpoint, ScriptDebuggerControl >(), 500, object) == net::BidirectionalObjectTransport::RtSuccess)
+			{
+				if (ScriptDebuggerBreakpoint* breakpoint = dynamic_type_cast< ScriptDebuggerBreakpoint* >(object))
+				{
+					if (breakpoint->shouldAdd())
+					{
+						m_scriptDebugger->setBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
+						log::debug << L"Breakpoint " << breakpoint->getScriptId().format() << L":" << breakpoint->getLineNumber() << L" added." << Endl;
+					}
+					else
+					{
+						m_scriptDebugger->removeBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
+						log::debug << L"Breakpoint " << breakpoint->getScriptId().format() << L":" << breakpoint->getLineNumber() << L" removed." << Endl;
+					}
+				}
+				else if (ScriptDebuggerControl* control = dynamic_type_cast< ScriptDebuggerControl* >(object))
+				{
+					switch (control->getAction())
+					{
+					case ScriptDebuggerControl::AcStatus:
+					{
+						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
+						m_transport->send(&status);
+					}
+					break;
+
+					case ScriptDebuggerControl::AcBreak:
+					{
+						m_scriptDebugger->actionBreak();
+					}
+					break;
+
+					case ScriptDebuggerControl::AcContinue:
+					{
+						m_scriptDebugger->actionContinue();
+					}
+					break;
+
+					case ScriptDebuggerControl::AcStepInto:
+					{
+						m_scriptDebugger->actionStepInto();
+					}
+					break;
+
+					case ScriptDebuggerControl::AcStepOver:
+					{
+						m_scriptDebugger->actionStepOver();
+					}
+					break;
+
+					case ScriptDebuggerControl::AcCaptureStack:
+					{
+						Ref< script::StackFrame > sf;
+						if (!m_scriptDebugger->captureStackFrame(control->getParam(), sf))
+							sf = 0;
+						ScriptDebuggerStackFrame capturedFrame(sf);
+						m_transport->send(&capturedFrame);
+					}
+					break;
+
+					case ScriptDebuggerControl::AcCaptureLocals:
+					{
+						RefArray< script::Variable > l;
+						if (m_scriptDebugger->captureLocals(control->getParam(), l))
+						{
+							ScriptDebuggerLocals capturedLocals(l);
+							m_transport->send(&capturedLocals);
+						}
+					}
+					break;
+
+					case ScriptDebuggerControl::AcCaptureObject:
+					{
+						RefArray< script::Variable > l;
+						if (m_scriptDebugger->captureObject(control->getParam(), l))
+						{
+							ScriptDebuggerLocals capturedLocals(l);
+							m_transport->send(&capturedLocals);
+						}
+					}
+					break;
+					}
+				}
+			}
+		}
+		else
+			ThreadManager::getInstance().getCurrentThread()->sleep(500);
+
 		{
 			int32_t index = (m_callSamplesIndex + 1) % 3;
 
@@ -204,91 +294,6 @@ void ScriptServer::threadDebugger()
 			samples.clear();
 
 			Atomic::exchange(m_callSamplesIndex, index);
-			continue;
-		}
-
-		if (m_scriptDebugger)
-		{
-			Ref< ScriptDebuggerBreakpoint > breakpoint;
-			if (m_transport->recv< ScriptDebuggerBreakpoint >(0, breakpoint) == net::BidirectionalObjectTransport::RtSuccess)
-			{
-				T_ASSERT (breakpoint);
-				if (breakpoint->shouldAdd())
-					m_scriptDebugger->setBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
-				else
-					m_scriptDebugger->removeBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
-			}
-
-			Ref< ScriptDebuggerControl > control;
-			if (m_transport->recv< ScriptDebuggerControl >(0, control) == net::BidirectionalObjectTransport::RtSuccess)
-			{
-				T_ASSERT (control);
-				switch (control->getAction())
-				{
-				case ScriptDebuggerControl::AcStatus:
-					{
-						ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
-						m_transport->send(&status);
-					}
-					break;
-
-				case ScriptDebuggerControl::AcBreak:
-					{
-						m_scriptDebugger->actionBreak();
-					}
-					break;
-
-				case ScriptDebuggerControl::AcContinue:
-					{
-						m_scriptDebugger->actionContinue();
-					}
-					break;
-
-				case ScriptDebuggerControl::AcStepInto:
-					{
-						m_scriptDebugger->actionStepInto();
-					}
-					break;
-
-				case ScriptDebuggerControl::AcStepOver:
-					{
-						m_scriptDebugger->actionStepOver();
-					}
-					break;
-
-				case ScriptDebuggerControl::AcCaptureStack:
-					{
-						Ref< script::StackFrame > sf;
-						if (!m_scriptDebugger->captureStackFrame(control->getParam(), sf))
-							sf = 0;
-						ScriptDebuggerStackFrame capturedFrame(sf);
-						m_transport->send(&capturedFrame);
-					}
-					break;
-
-				case ScriptDebuggerControl::AcCaptureLocals:
-					{
-						RefArray< script::Variable > l;
-						if (m_scriptDebugger->captureLocals(control->getParam(), l))
-						{
-							ScriptDebuggerLocals capturedLocals(l);
-							m_transport->send(&capturedLocals);
-						}
-					}
-					break;
-
-				case ScriptDebuggerControl::AcCaptureObject:
-					{
-						RefArray< script::Variable > l;
-						if (m_scriptDebugger->captureObject(control->getParam(), l))
-						{
-							ScriptDebuggerLocals capturedLocals(l);
-							m_transport->send(&capturedLocals);
-						}
-					}
-					break;
-				}
-			}
 		}
 	}
 
