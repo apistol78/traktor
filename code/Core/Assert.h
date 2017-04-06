@@ -8,7 +8,7 @@
 
 #if defined(_DEBUG)
 #	define T_ASSERT(expression) \
-		(void)((!!(expression)) || (traktor::Debugger::getInstance().assertionFailed(#expression, __FILE__, __LINE__, L ## __FUNCTION__), 0));
+		(void)((!!(expression)) || (traktor::Debugger::getInstance().assertionFailed(#expression, __FILE__, __LINE__), 0));
 
 #	define T_ASSERT_M(expression, message) \
 		(void)((!!(expression)) || (traktor::Debugger::getInstance().assertionFailed(#expression, __FILE__, __LINE__, message), 0));
