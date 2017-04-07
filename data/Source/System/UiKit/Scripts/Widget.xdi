@@ -85,10 +85,8 @@ end
 
 function Widget:removeAllChildren()
 	local children = self:getChildren()
-	while #children > 0 do
-		local ln = #children
-		children[1]:remove()
-		assert (#children < ln)
+	for _, c in ipairs(children) do
+		c:remove()
 	end
 end
 
@@ -149,8 +147,9 @@ end
 
 function Widget:releaseModal()
 	local m = #Widget._modal
-	assert (Widget._modal[m] == self)
-	table.remove(Widget._modal, m)
+	if Widget._modal[m] == self then
+		table.remove(Widget._modal, m)
+	end
 end
 
 function Widget:setExclusive()
@@ -160,8 +159,9 @@ end
 
 function Widget:releaseExclusive()
 	local x = #Widget._exclusive
-	assert (Widget._exclusive[x] == self)
-	table.remove(Widget._exclusive, x)
+	if Widget._exclusive[x] == self then
+		table.remove(Widget._exclusive, x)
+	end
 end
 
 function Widget:setFocus()
