@@ -60,17 +60,20 @@ function ScrollContainer:place(x, y, width, height)
 		local range = self._innerSize.width - self._scrollSize.width
 		self._scrollBarHorizontal:place(0, self._scrollSize.height, self._scrollSize.width, p.height - self._scrollSize.height)
 		self._scrollBarHorizontal:setRange(range, 100)
+		self._scrollBarHorizontal:setVisible(range > 0)
 	end
 	if self._scrollBarVertical ~= nil then
 		local range = self._innerSize.height - self._scrollSize.height
 		self._scrollBarVertical:place(self._scrollSize.width, 0, p.width - self._scrollSize.width, self._scrollSize.height)
 		self._scrollBarVertical:setRange(range, 100)
+		self._scrollBarVertical:setVisible(range > 0)
 	end
 end
 
 function ScrollContainer:layout()
 	if self:isVisible() and self._layout ~= nil then
 		local p = self:getPlacement()
+		self:place(p.x, p.y, p.width, p.height)
 		self._innerSize = self:_getInnerSize()
 		self._layout:update(self, p.width, p.height)
 	end
@@ -116,6 +119,19 @@ function ScrollContainer:getScrollBar(orientation)
 	end
 end
 
+function ScrollContainer:resetScroll()
+	self._scroll.y = 0
+	self._scroll.x = 0
+	self._inner_mc:setX(-self._scroll.x)
+	self._inner_mc:setY(-self._scroll.y)
+	if self._scrollBarHorizontal ~= nil then
+		self._scrollBarHorizontal:setPosition(0)	
+	end
+	if self._scrollBarVertical ~= nil then
+		self._scrollBarVertical:setPosition(0)	
+	end
+end
+
 function ScrollContainer:setOnScroll(scrollFn)
 	self._scrollFn = scrollFn
 	return self
@@ -148,7 +164,6 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 				local o = self:getOffset()
 				self:setOffset(v, o.y)
 			end)
---			self:_removeChild(self._scrollBarHorizontal)	-- Remove to ensure it's not part of external getChildren query.
 		end
 		if (mode & ScrollContainer.VERTICAL) ~= 0 then
 			self._scrollBarVertical = ScrollBar.new(self, ScrollBar.VERTICAL)
@@ -159,7 +174,6 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 				local o = self:getOffset()
 				self:setOffset(o.x, v)
 			end)
---			self:_removeChild(self._scrollBarVertical)	-- Remove to ensure it's not part of external getChildren query.
 		end
 	end
 
@@ -221,13 +235,6 @@ function ScrollContainer:_clampScrollOffsets()
 	if self._scroll.y < 0 then
 		self._scroll.y = 0
 	end
-end
-
-function ScrollContainer:resetScroll()
-	self._scroll.y = 0
-	self._scroll.x = 0
-	self._inner_mc:setX(-self._scroll.x)
-	self._inner_mc:setY(-self._scroll.y)
 end
 
 function ScrollContainer:_onMouseDown(event)
