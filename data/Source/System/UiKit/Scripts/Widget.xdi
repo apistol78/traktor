@@ -234,29 +234,23 @@ function Widget:place(x, y, width, height)
 end
 
 function Widget:globalToLocal(pt)
-	local x, y = pt.x, pt.y
-	local p = self._parent
-	while p ~= nil do
-		assert (p ~= p._parent)
-		local pp = p:getPlacement()
-		x = x - pp.x
-		y = y - pp.y
-		p = p._parent
+	local ancestor = self:getAncestor()
+	if ancestor ~= self then
+		local lpt = ancestor._mc:transformInto(self:getParent()._mc, Vector2(pt.x * 20, pt.y * 20))
+		return { x = lpt:x() / 20, y = lpt:y() / 20 }
+	else
+		return pt
 	end
-	return { x = x, y = y }
 end
 
 function Widget:localToGlobal(pt)
-	local x, y = pt.x, pt.y
-	local p = self._parent
-	while p ~= nil do
-		assert (p ~= p._parent)
-		local pp = p:getPlacement()
-		x = x + pp.x
-		y = y + pp.y
-		p = p._parent
+	local ancestor = self:getAncestor()
+	if ancestor ~= self then
+		local gpt = self:getParent()._mc:transformInto(ancestor._mc, Vector2(pt.x * 20, pt.y * 20))
+		return { x = gpt:x() / 20, y = gpt:y() / 20 }
+	else
+		return pt
 	end
-	return { x = x, y = y }
 end
 
 function Widget:hitTest(position)

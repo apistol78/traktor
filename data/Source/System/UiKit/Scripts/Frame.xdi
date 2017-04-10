@@ -74,6 +74,11 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	self._mc:setMember("onMouseDown", function() self:_eventMouseDown() end)
 	self._mc:setMember("onMouseUp", function() self:_eventMouseUp() end)
 	self._mc:setMember("onMouseMove", function() self:_eventMouseMove() end)
+
+#if defined(_DEBUG)
+	self._mc_debug = Widget._createResource(self, "MC_DebugMarker")
+	self._tb_position = self._mc_debug:getMember("tb_position")
+#endif
 end
 
 function Frame:_eventEnterFrame()
@@ -92,6 +97,10 @@ end
 
 function Frame:_eventMouseMove()
 	local pt = self:getMousePosition()
+#if defined(_DEBUG)
+	self._mc_debug:setPosition(Vector2(pt.x, pt.y))
+	self._tb_position:parseText(pt.x .. ";" .. pt.y)
+#endif
 	self:_dispatchEvent(MouseMoveEvent.new(pt.x, pt.y))
 end
 
