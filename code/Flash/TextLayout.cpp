@@ -2,6 +2,7 @@
 #include <limits>
 #include "Core/Math/Const.h"
 #include "Core/Misc/StringSplit.h"
+#include "Flash/FlashCharacterInstance.h"
 #include "Flash/FlashFont.h"
 #include "Flash/TextLayout.h"
 
@@ -131,7 +132,11 @@ TextLayout::TextLayout()
 
 void TextLayout::begin()
 {
+	m_attribs.resize(0);
+	m_characters.resize(0);
 	m_lines.resize(0);
+
+	m_currentAttrib = 0;
 	m_cursorX = 0.0f;
 	m_cursorY = 0.0f;
 	m_width = 0.0f;
@@ -264,7 +269,7 @@ void TextLayout::insertText(const std::wstring& text)
 			if (m_cursorX > FUZZY_EPSILON)
 				m_cursorX += spaceWidth * fontScale;
 
-			Word w = { m_currentAttrib };
+			Word w = { m_currentAttrib, 0 };
 
 			for (uint32_t j = 0; j < word.length(); ++j)
 			{
@@ -299,7 +304,7 @@ void TextLayout::insertText(const std::wstring& text)
 		if (word.empty())
 			return;
 
-		Word w = { m_currentAttrib };
+		Word w = { m_currentAttrib, 0 };
 
 		for (uint32_t j = 0; j < word.length(); ++j)
 		{
@@ -324,6 +329,20 @@ void TextLayout::insertText(const std::wstring& text)
 		m_lines.back().width = std::max(m_lines.back().width, m_cursorX);
 		m_width = std::max(m_width, m_cursorX);
 	}
+}
+
+void TextLayout::insertCharacter(FlashCharacterInstance* characterInstance)
+{
+	m_characters.push_back(characterInstance);
+
+	Aabb2 bounds = characterInstance->getBounds();
+
+	Word w = { m_currentAttrib, int32_t(m_characters.size()) };
+	m_lines.back().words.push_back(w);
+
+	m_cursorX += bounds.getSize().x;
+	m_lines.back().width = std::max(m_lines.back().width, m_cursorX);
+	m_width = std::max(m_width, m_cursorX);
 }
 
 void TextLayout::newLine()

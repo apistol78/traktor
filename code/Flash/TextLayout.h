@@ -2,6 +2,7 @@
 #define traktor_flash_TextLayout_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Flash/SwfTypes.h"
 
@@ -10,6 +11,7 @@ namespace traktor
 	namespace flash
 	{
 
+class FlashCharacterInstance;
 class FlashFont;
 
 /*! \brief Text layout engine.
@@ -35,7 +37,8 @@ public:
 
 	struct Word
 	{
-		int32_t attrib;
+		int32_t a;
+		int32_t c;
 		AlignedVector< Character > chars;
 	};
 
@@ -67,11 +70,15 @@ public:
 
 	void insertText(const std::wstring& text);
 
+	void insertCharacter(FlashCharacterInstance* characterInstance);
+
 	void newLine();
 
 	void end();
 
 	const AlignedVector< Attribute >& getAttributes() const { return m_attribs; }
+
+	const RefArray< FlashCharacterInstance >& getCharacters() const { return m_characters; }
 
 	const AlignedVector< Line >& getLines() const { return m_lines; }
 
@@ -89,6 +96,7 @@ public:
 
 private:
 	AlignedVector< Attribute > m_attribs;
+	RefArray< FlashCharacterInstance > m_characters;
 	AlignedVector< Line > m_lines;
 	int32_t m_currentAttrib;
 	Aabb2 m_bounds;

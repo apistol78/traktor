@@ -142,6 +142,11 @@ public:
 
 	//@}
 
+protected:
+	virtual void trace(visitor_t visitor) const T_OVERRIDE;
+
+	virtual void dereference() T_OVERRIDE;
+
 private:
 	Ref< const FlashEdit > m_edit;
 	Aabb2 m_textBounds;

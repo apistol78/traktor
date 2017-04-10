@@ -64,7 +64,14 @@ bool parseColor(const std::wstring& color, Color4f& outColor)
 	return false;
 }
 
-void traverseHtmlDOM(const html::Element* element, const FlashFont* font, const Color4f& textColor, TextLayout* layout, StringOutputStream& text)
+void traverseHtmlDOM(
+	FlashEditInstance* editInstance,
+	const html::Element* element,
+	const FlashFont* font,
+	const Color4f& textColor,
+	TextLayout* layout,
+	StringOutputStream& text
+)
 {
 	Color4f color = textColor;
 
@@ -75,6 +82,36 @@ void traverseHtmlDOM(const html::Element* element, const FlashFont* font, const 
 		{
 			if (!parseColor(colorAttribute->getValue(), color))
 				color = textColor;
+		}
+	}
+	else if (element->getName() == L"img")
+	{
+		Ref< const html::Attribute > sourceAttribute = element->getAttribute(L"src");
+		if (sourceAttribute)
+		{
+			ActionContext* context = editInstance->getContext();
+			FlashDictionary* dictionary = editInstance->getDictionary();
+
+			uint16_t id;
+			if (dictionary->getExportId(wstombs(sourceAttribute->getValue()), id))
+			{
+				const FlashCharacter* character = dictionary->getCharacter(id);
+				T_FATAL_ASSERT (character);
+
+				Ref< FlashCharacterInstance > instance = character->createInstance(
+					context,
+					dictionary,
+					editInstance,
+					"",
+					Matrix33::identity(),
+					0,
+					0
+				);
+				if (instance)
+				{
+					layout->insertCharacter(instance);
+				}
+			}
 		}
 	}
 	else if (element->getName() == L"br")
@@ -88,7 +125,7 @@ void traverseHtmlDOM(const html::Element* element, const FlashFont* font, const 
 	for (const html::Node* child = element->getFirstChild(); child; child = child->getNextSibling())
 	{
 		if (const html::Element* childElement = dynamic_type_cast< const html::Element* >(child))
-			traverseHtmlDOM(childElement, font, color, layout, text);
+			traverseHtmlDOM(editInstance, childElement, font, color, layout, text);
 		else
 		{
 			layout->insertText(child->getValue());
@@ -503,6 +540,23 @@ float FlashEditInstance::getTextHeight() const
 	return m_layout->getHeight();
 }
 
+void FlashEditInstance::trace(visitor_t visitor) const
+{
+	if (m_layout)
+	{
+		const RefArray< FlashCharacterInstance >& characters = m_layout->getCharacters();
+		for (RefArray< FlashCharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+			visitor(*i);
+	}
+	FlashCharacterInstance::trace(visitor);
+}
+
+void FlashEditInstance::dereference()
+{
+	m_layout = 0;
+	FlashCharacterInstance::dereference();
+}
+
 bool FlashEditInstance::internalParseText(const std::wstring& text)
 {
 	const FlashDictionary* dictionary = getDictionary();
@@ -573,7 +627,14 @@ bool FlashEditInstance::internalParseHtml(const std::wstring& html)
 	T_ASSERT (element);
 
 	StringOutputStream text;
-	traverseHtmlDOM(element, font, m_textColor, m_layout, text);
+	traverseHtmlDOM(
+		this,
+		element,
+		font,
+		m_textColor,
+		m_layout, 
+		text
+	);
 
 	m_layout->end();
 
