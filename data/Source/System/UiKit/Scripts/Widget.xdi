@@ -234,9 +234,9 @@ function Widget:place(x, y, width, height)
 end
 
 function Widget:globalToLocal(pt)
-	local ancestor = self:getAncestor()
-	if ancestor ~= self then
-		local lpt = ancestor._mc:transformInto(self:getParent()._mc, Vector2(pt.x * 20, pt.y * 20))
+	if self._mc ~= nil then
+		local ancestor = self:getAncestor()
+		local lpt = ancestor._mc:transformInto(self._mc, Vector2(pt.x * 20, pt.y * 20))
 		return { x = lpt:x() / 20, y = lpt:y() / 20 }
 	else
 		return pt
@@ -244,9 +244,9 @@ function Widget:globalToLocal(pt)
 end
 
 function Widget:localToGlobal(pt)
-	local ancestor = self:getAncestor()
-	if ancestor ~= self then
-		local gpt = self:getParent()._mc:transformInto(ancestor._mc, Vector2(pt.x * 20, pt.y * 20))
+	if self._mc ~= nil then
+		local ancestor = self:getAncestor()
+		local gpt = self._mc:transformInto(ancestor._mc, Vector2(pt.x * 20, pt.y * 20))
 		return { x = gpt:x() / 20, y = gpt:y() / 20 }
 	else
 		return pt
@@ -384,7 +384,7 @@ function Widget:_dispatchEvent(event)
 	if eventType == MouseMoveEvent then
 		local ps = self._placement
 		local pt = self:globalToLocal(event)
-		local inside = (pt.x >= ps.x and pt.y >= ps.y and pt.x <= ps.x + ps.width and pt.y <= ps.y + ps.height)
+		local inside = (pt.x >= 0 and pt.y >= 0 and pt.x <= ps.width and pt.y <= ps.height)
 		if inside ~= self._mouseInside then
 			if inside then
 				self:_notifyEventListeners(MouseEnterEvent.new())
@@ -397,7 +397,7 @@ function Widget:_dispatchEvent(event)
 	elseif eventType == MouseDownEvent then
 		local ps = self._placement
 		local pt = self:globalToLocal(event)
-		local inside = (pt.x >= ps.x and pt.y >= ps.y and pt.x <= ps.x + ps.width and pt.y <= ps.y + ps.height)
+		local inside = (pt.x >= 0 and pt.y >= 0 and pt.x <= ps.width and pt.y <= ps.height)
 		if inside then
 			-- First move focus to this widget.
 			self:setFocus()
@@ -408,7 +408,7 @@ function Widget:_dispatchEvent(event)
 	elseif eventType == MouseUpEvent and self._mousePressed then
 		local ps = self._placement
 		local pt = self:globalToLocal(event)
-		local inside = (pt.x >= ps.x and pt.y >= ps.y and pt.x <= ps.x + ps.width and pt.y <= ps.y + ps.height)
+		local inside = (pt.x >= 0 and pt.y >= 0 and pt.x <= ps.width and pt.y <= ps.height)
 		self:_notifyEventListeners(MouseReleaseEvent.new(inside))
 		self._mousePressed = false
 	end

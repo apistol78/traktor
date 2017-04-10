@@ -143,8 +143,8 @@ function DropDown:_onMousePress()
 
 	self._list:setOnClick(function(index) self:_onListClick(index) end)
 	self._list:addEventListener(MouseDownEvent, self, self._onListMouseDown)
-
 	self._list:setModal()
+	return true
 end
 
 function DropDown:_onListClick(index)
@@ -155,6 +155,7 @@ function DropDown:_onListClick(index)
 		end
 	end
 	self:_removeList()
+	return true
 end
 
 function DropDown:_onListMouseDown(event)
