@@ -206,7 +206,7 @@ void WireDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix3
 			{
 				for (AlignedVector< TextLayout::Word >::const_iterator j = i->words.begin(); j != i->words.end(); ++j)
 				{
-					const TextLayout::Attribute& attrib = attribs[j->attrib];
+					const TextLayout::Attribute& attrib = attribs[j->a];
 					const AlignedVector< TextLayout::Character >& chars = j->chars;
 
 					float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);

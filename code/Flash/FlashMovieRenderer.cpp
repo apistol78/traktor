@@ -612,16 +612,9 @@ void FlashMovieRenderer::renderCharacter(
 			if (!glyph)
 				continue;
 
-			//float scaleHeight = 
-			//	font->getCoordinateType() == FlashFont::CtTwips ? 
-			//	1.0f / 1000.0f :
-			//	1.0f / (20.0f * 1000.0f);
-
-			//float scaleOffset = i->height * scaleHeight;
-
 			m_displayRenderer->renderGlyph(
 				*dictionary,
-				textTransform * translate(i->offsetX, i->offsetY), // * scale(scaleOffset, scaleOffset),
+				textTransform * translate(i->offsetX, i->offsetY),
 				font,
 				glyph,
 				i->height,
@@ -652,6 +645,7 @@ void FlashMovieRenderer::renderCharacter(
 
 		const AlignedVector< TextLayout::Line >& lines = layout->getLines();
 		const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();
+		const RefArray< FlashCharacterInstance >& characters = layout->getCharacters();
 
 		ActionContext* context = editInstance->getContext();
 		T_ASSERT (context);
@@ -678,7 +672,19 @@ void FlashMovieRenderer::renderCharacter(
 		{
 			for (AlignedVector< TextLayout::Word >::const_iterator j = i->words.begin(); j != i->words.end(); ++j)
 			{
-				const TextLayout::Attribute& attrib = attribs[j->attrib];
+				if (j->c > 0)
+				{
+					T_ASSERT (characters[j->c - 1]);
+					renderCharacter(
+						characters[j->c - 1],
+						editTransform * translate(textOffsetX + i->x, textOffsetY + i->y),
+						cxTransform,
+						renderAsMask,
+						blendMode
+					);
+				}
+
+				const TextLayout::Attribute& attrib = attribs[j->a];
 				const AlignedVector< TextLayout::Character >& chars = j->chars;
 
 				float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
@@ -705,7 +711,7 @@ void FlashMovieRenderer::renderCharacter(
 
 						m_displayRenderer->renderGlyph(
 							*dictionary,
-							editTransform * translate(textOffsetX + i->x + chars[k].x, textOffsetY + i->y), // * scale(fontScale, fontScale),
+							editTransform * translate(textOffsetX + i->x + chars[k].x, textOffsetY + i->y),
 							attrib.font,
 							glyph,
 							layout->getFontHeight(),

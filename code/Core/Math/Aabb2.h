@@ -108,6 +108,12 @@ public:
 		return (mx - mn) * 0.5f;
 	}
 
+	/*! \brief Get size of bounding box. */
+	T_MATH_INLINE Vector2 getSize() const
+	{
+		return mn - mx;
+	}
+
 	/*! \brief Check if bounding box is empty. */
 	T_MATH_INLINE bool empty() const
 	{
