@@ -82,6 +82,8 @@ public:
 
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) T_OVERRIDE T_FINAL;
 
+	void createEditorGraph();
+
 private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;

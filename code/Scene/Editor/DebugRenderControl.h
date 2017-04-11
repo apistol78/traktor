@@ -47,7 +47,7 @@ public:
 
 	virtual void setAspect(float aspect) T_OVERRIDE T_FINAL;
 
-	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) T_OVERRIDE T_FINAL;
+	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) T_OVERRIDE T_FINAL;
 
 	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 

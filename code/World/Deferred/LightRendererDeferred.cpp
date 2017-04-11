@@ -29,10 +29,12 @@ const float c_pointLightScreenAreaThreshold = 4.0f * (c_pointLightScreenAreaThre
 render::handle_t s_handleTime;
 render::handle_t s_handleShadowEnable;
 render::handle_t s_handleCloudShadowEnable;
+render::handle_t s_handleTraceReflections;
 render::handle_t s_handleExtent;
 render::handle_t s_handleProjection;
 render::handle_t s_handleViewInverse;
 render::handle_t s_handleMagicCoeffs;
+render::handle_t s_handleScreenMap;
 render::handle_t s_handleReflectionMap;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleNormalMap;
@@ -71,10 +73,12 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleTime = render::getParameterHandle(L"World_Time");
 	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
 	s_handleCloudShadowEnable = render::getParameterHandle(L"World_CloudShadowEnable");
+	s_handleTraceReflections = render::getParameterHandle(L"World_TraceReflections");
 	s_handleExtent = render::getParameterHandle(L"World_Extent");
 	s_handleProjection = render::getParameterHandle(L"World_Projection");
 	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
 	s_handleMagicCoeffs = render::getParameterHandle(L"World_MagicCoeffs");
+	s_handleScreenMap = render::getParameterHandle(L"World_ScreenMap");
 	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
 	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
 	s_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
@@ -371,6 +375,8 @@ void LightRendererDeferred::renderReflections(
 	const Matrix44& view,
 	const Vector4& fogDistanceAndDensity,
 	const Vector4& fogColor,
+	bool traceReflections,
+	render::ITexture* screenMap,
 	render::ITexture* reflectionMap,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
@@ -381,11 +387,13 @@ void LightRendererDeferred::renderReflections(
 	Scalar p11 = projection.get(0, 0);
 	Scalar p22 = projection.get(1, 1);
 
+	m_reflectionShader->setCombination(s_handleTraceReflections, traceReflections);
 	m_reflectionShader->setMatrixParameter(s_handleProjection, projection);
 	m_reflectionShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 	m_reflectionShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 	m_reflectionShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);
 	m_reflectionShader->setVectorParameter(s_handleFogColor, fogColor);
+	m_reflectionShader->setTextureParameter(s_handleScreenMap, screenMap);
 	m_reflectionShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
 	m_reflectionShader->setTextureParameter(s_handleDepthMap, depthMap);
 	m_reflectionShader->setTextureParameter(s_handleNormalMap, normalMap);

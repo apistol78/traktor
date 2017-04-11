@@ -142,6 +142,14 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuShadows->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.ShadowQuality"), L"Ultra", true, 0));
 	toolQualityMenu->add(m_menuShadows);
 
+	m_menuReflections = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_REFLECTIONS"));
+	m_menuReflections->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.ReflectionsQuality"), L"Disabled", true, 0));
+	m_menuReflections->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.ReflectionsQuality"), L"Low", true, 0));
+	m_menuReflections->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.ReflectionsQuality"), L"Medium", true, 0));
+	m_menuReflections->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.ReflectionsQuality"), L"High", true, 0));
+	m_menuReflections->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.ReflectionsQuality"), L"Ultra", true, 0));
+	toolQualityMenu->add(m_menuReflections);
+
 	m_menuAO = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_AO"));
 	m_menuAO->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.AmbientOcclusionQuality"), L"Disabled", true, 0));
 	m_menuAO->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.AmbientOcclusionQuality"), L"Low", true, 0));
@@ -170,6 +178,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuPostProcess->get(0)->setChecked(true);
 	m_menuMotionBlur->get(0)->setChecked(true);
 	m_menuShadows->get(0)->setChecked(true);
+	m_menuReflections->get(0)->setChecked(true);
 	m_menuAO->get(0)->setChecked(true);
 	m_menuAA->get(0)->setChecked(true);
 
@@ -215,12 +224,13 @@ void DefaultRenderControl::setAspect(float aspect)
 		m_renderControl->setAspect(aspect);
 }
 
-void DefaultRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void DefaultRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
 	if (m_renderControl)
 		m_renderControl->setQuality(
 			imageProcessQuality,
 			shadowQuality,
+			reflectionsQuality,
 			motionBlurQuality,
 			ambientOcclusionQuality,
 			antiAliasQuality
@@ -438,6 +448,12 @@ void DefaultRenderControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 			m_menuShadows->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
+	else if (event->getCommand() == L"Scene.Editor.ReflectionsQuality")
+	{
+		for (int i = 0; i < m_menuReflections->count(); ++i)
+			m_menuReflections->get(i)->setChecked(bool(i == event->getCommand().getId()));
+		updateQuality = true;
+	}
 	else if (event->getCommand() == L"Scene.Editor.AmbientOcclusionQuality")
 	{
 		for (int i = 0; i < m_menuAO->count(); ++i)
@@ -456,6 +472,7 @@ void DefaultRenderControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 		m_renderControl->setQuality(
 			(world::Quality)getChecked(m_menuPostProcess)->getCommand().getId(),
 			(world::Quality)getChecked(m_menuShadows)->getCommand().getId(),
+			(world::Quality)getChecked(m_menuReflections)->getCommand().getId(),
 			(world::Quality)getChecked(m_menuMotionBlur)->getCommand().getId(),
 			(world::Quality)getChecked(m_menuAO)->getCommand().getId(),
 			(world::Quality)getChecked(m_menuAA)->getCommand().getId()

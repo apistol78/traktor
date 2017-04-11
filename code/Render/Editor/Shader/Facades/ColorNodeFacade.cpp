@@ -29,6 +29,7 @@ Ref< Node > ColorNodeFacade::createShaderNode(
 Ref< ui::custom::Node > ColorNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
@@ -68,6 +69,7 @@ void ColorNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	ui::custom::Node* editorNode,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
@@ -89,6 +91,7 @@ void ColorNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	ui::custom::Node* editorNode,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {

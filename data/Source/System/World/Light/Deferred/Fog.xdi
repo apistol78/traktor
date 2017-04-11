@@ -40,9 +40,9 @@
 			<blendSource>BfSourceAlpha</blendSource>
 			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
 			<colorWriteMask>
-				<red>true</red>
-				<green>true</green>
-				<blue>true</blue>
+				<red>false</red>
+				<green>false</green>
+				<blue>false</blue>
 				<alpha>false</alpha>
 			</colorWriteMask>
 			<depthEnable>false</depthEnable>

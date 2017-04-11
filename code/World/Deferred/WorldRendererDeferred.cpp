@@ -113,6 +113,7 @@ bool WorldRendererDeferred::create(
 	m_settings = *desc.worldRenderSettings;
 	m_shadowSettings = m_settings.shadowSettings[desc.shadowsQuality];
 	m_shadowsQuality = desc.shadowsQuality;
+	m_reflectionsQuality = desc.reflectionsQuality;
 	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
 	m_antiAliasQuality = desc.antiAliasQuality;
 	m_frames.resize(desc.frameCount);
@@ -1039,7 +1040,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			}
 
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (shadow)");
-			if (m_renderView->begin(m_visualTargetSet, 0))
+			if (m_renderView->begin(m_colorTargetSet, 0))
 			{
 				if (firstLight)
 				{
@@ -1073,7 +1074,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		}
 
 		// Then render all non-shadowing lights; no need to rebind render target for each light.
-		if (m_renderView->begin(m_visualTargetSet, 0))
+		if (m_renderView->begin(m_colorTargetSet, 0))
 		{
 			if (firstLight)
 			{
@@ -1104,12 +1105,19 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 				T_RENDER_POP_MARKER(m_renderView);
 			}
 
+			m_renderView->end();
+		}
+
+		if (m_renderView->begin(m_visualTargetSet, 0))
+		{
 			m_lightRenderer->renderReflections(
 				m_renderView,
 				projection,
 				f.view,
 				m_fogDistanceAndDensity,
 				m_fogColor,
+				bool(m_reflectionsQuality >= QuHigh),
+				m_colorTargetSet->getColorTexture(0),
 				m_reflectionMap,
 				m_gbufferTargetSet->getColorTexture(0),
 				m_gbufferTargetSet->getColorTexture(1),

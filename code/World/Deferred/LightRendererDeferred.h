@@ -69,6 +69,8 @@ public:
 		const Matrix44& view,
 		const Vector4& fogDistanceAndDensity,
 		const Vector4& fogColor,
+		bool traceReflections,
+		render::ITexture* screenMap,
 		render::ITexture* reflectionMap,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,

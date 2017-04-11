@@ -28,6 +28,7 @@ Ref< Node > SwizzleNodeFacade::createShaderNode(
 Ref< ui::custom::Node > SwizzleNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
@@ -67,6 +68,7 @@ void SwizzleNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	ui::custom::Node* editorNode,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
@@ -76,6 +78,7 @@ void SwizzleNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	ui::custom::Node* editorNode,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {

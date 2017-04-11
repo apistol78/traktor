@@ -81,6 +81,7 @@ private:
 	const TypeInfo* m_worldType;
 	world::Quality m_motionBlurQuality;
 	world::Quality m_shadowQuality;
+	world::Quality m_reflectionsQuality;
 	world::Quality m_ambientOcclusionQuality;
 	world::Quality m_antiAliasQuality;
 	world::Quality m_imageProcessQuality;
