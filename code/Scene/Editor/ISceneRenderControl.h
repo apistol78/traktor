@@ -37,7 +37,14 @@ public:
 
 	virtual void setAspect(float aspect) = 0;
 
-	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) = 0;
+	virtual void setQuality(
+		world::Quality imageProcessQuality,
+		world::Quality shadowQuality,
+		world::Quality reflectionsQuality,
+		world::Quality motionBlurQuality,
+		world::Quality ambientOcclusionQuality,
+		world::Quality antiAliasQuality
+	) = 0;
 
 	virtual bool handleCommand(const ui::Command& command) = 0;
 

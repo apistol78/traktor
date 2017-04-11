@@ -125,6 +125,7 @@ private:
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
 	Quality m_shadowsQuality;
+	Quality m_reflectionsQuality;
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 

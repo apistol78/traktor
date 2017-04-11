@@ -19,12 +19,14 @@ class NodeShape;
 	namespace render
 	{
 
+class ShaderGraphEditorPage;
+
 class ScriptNodeFacade : public INodeFacade
 {
 	T_RTTI_CLASS;
 
 public:
-	ScriptNodeFacade(ui::custom::GraphControl* graphControl);
+	ScriptNodeFacade(ShaderGraphEditorPage* page, ui::custom::GraphControl* graphControl);
 
 	virtual Ref< Node > createShaderNode(
 		const TypeInfo* nodeType,
@@ -34,6 +36,7 @@ public:
 	virtual Ref< ui::custom::Node > createEditorNode(
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
+		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) T_OVERRIDE T_FINAL;
 
@@ -41,6 +44,7 @@ public:
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		ui::custom::Node* editorNode,
+		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) T_OVERRIDE T_FINAL;
 
@@ -48,6 +52,7 @@ public:
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		ui::custom::Node* editorNode,
+		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) T_OVERRIDE T_FINAL;
 
@@ -57,6 +62,7 @@ public:
 	) T_OVERRIDE T_FINAL;
 
 private:
+	ShaderGraphEditorPage* m_page;
 	Ref< ui::custom::NodeShape > m_nodeShape;
 };
 

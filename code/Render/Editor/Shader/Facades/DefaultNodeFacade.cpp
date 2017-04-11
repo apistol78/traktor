@@ -34,6 +34,7 @@ Ref< Node > DefaultNodeFacade::createShaderNode(
 Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
@@ -78,12 +79,6 @@ Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 	}
 
 	editorNode->setComment(shaderNode->getComment());
-
-	//if (is_a< InputPort >(shaderNode) || is_a< OutputPort >(shaderNode))
-	//	editorNode->setColor(traktor::Color4ub(200, 255, 200));
-	//else if (is_a< Uniform >(shaderNode) || is_a< IndexedUniform >(shaderNode))
-	//	editorNode->setColor(traktor::Color4ub(200, 255, 255));
-
 	return editorNode;
 }
 
@@ -91,6 +86,7 @@ void DefaultNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	ui::custom::Node* editorNode,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
@@ -100,6 +96,7 @@ void DefaultNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	ui::custom::Node* editorNode,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {

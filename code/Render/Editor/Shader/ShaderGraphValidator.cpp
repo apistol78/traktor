@@ -75,6 +75,26 @@ public:
 		const RefArray< Edge >& edges = shaderGraph->getEdges();
 		for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
 		{
+			if (!(*i)->getSource())
+			{
+				outReport.addError(L"Edge referencing invalid node (no source)");
+				continue;
+			}
+			if (!(*i)->getSource()->getNode())
+			{
+				outReport.addError(L"Edge referencing invalid node (no source node)");
+				continue;
+			}
+			if (!(*i)->getDestination())
+			{
+				outReport.addError(L"Edge referencing invalid node (no destination)");
+				continue;
+			}
+			if (!(*i)->getDestination()->getNode())
+			{
+				outReport.addError(L"Edge referencing invalid node (no destination node)");
+				continue;
+			}
 			if (std::find(nodes.begin(), nodes.end(), (*i)->getSource()->getNode()) == nodes.end())
 				outReport.addError(L"Edge referencing invalid node (source, " + std::wstring(type_name((*i)->getSource()->getNode())) + L")");
 			if (std::find(nodes.begin(), nodes.end(), (*i)->getDestination()->getNode()) == nodes.end())

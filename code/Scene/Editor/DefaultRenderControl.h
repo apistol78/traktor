@@ -43,7 +43,7 @@ public:
 
 	virtual void setAspect(float aspect) T_OVERRIDE T_FINAL;
 
-	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) T_OVERRIDE T_FINAL;
+	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) T_OVERRIDE T_FINAL;
 
 	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
@@ -72,6 +72,7 @@ private:
 	Ref< ui::MenuItem > m_menuPostProcess;
 	Ref< ui::MenuItem > m_menuMotionBlur;
 	Ref< ui::MenuItem > m_menuShadows;
+	Ref< ui::MenuItem > m_menuReflections;
 	Ref< ui::MenuItem > m_menuAO;
 	Ref< ui::MenuItem > m_menuAA;
 	Ref< ISceneRenderControl > m_renderControl;

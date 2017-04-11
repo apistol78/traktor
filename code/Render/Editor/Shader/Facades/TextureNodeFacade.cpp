@@ -37,6 +37,7 @@ Ref< Node > TextureNodeFacade::createShaderNode(
 Ref< ui::custom::Node > TextureNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
@@ -80,6 +81,7 @@ void TextureNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	ui::custom::Node* editorNode,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
@@ -92,6 +94,7 @@ void TextureNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	ui::custom::Node* editorNode,
+	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {

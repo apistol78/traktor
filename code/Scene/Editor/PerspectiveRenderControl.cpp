@@ -79,6 +79,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRe
 PerspectiveRenderControl::PerspectiveRenderControl()
 :	m_imageProcessQuality(world::QuDisabled)
 ,	m_shadowQuality(world::QuDisabled)
+,	m_reflectionsQuality(world::QuDisabled)
 ,	m_motionBlurQuality(world::QuDisabled)
 ,	m_ambientOcclusionQuality(world::QuDisabled)
 ,	m_antiAliasQuality(world::QuDisabled)
@@ -210,6 +211,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	wcd.entityRenderers = worldEntityRenderers;
 	wcd.motionBlurQuality = m_motionBlurQuality;
 	wcd.shadowsQuality = m_shadowQuality;
+	wcd.reflectionsQuality = m_reflectionsQuality;
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.imageProcessQuality = m_imageProcessQuality;
@@ -240,10 +242,11 @@ void PerspectiveRenderControl::setAspect(float aspect)
 	m_containerAspect->update();
 }
 
-void PerspectiveRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void PerspectiveRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
 	m_imageProcessQuality = imageProcessQuality;
 	m_shadowQuality = shadowQuality;
+	m_reflectionsQuality = reflectionsQuality;
 	m_motionBlurQuality = motionBlurQuality;
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;

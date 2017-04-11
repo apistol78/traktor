@@ -96,6 +96,7 @@ WorldServer::WorldServer()
 :	m_worldType(0)
 ,	m_motionBlurQuality(world::QuMedium)
 ,	m_shadowQuality(world::QuMedium)
+,	m_reflectionsQuality(world::QuMedium)
 ,	m_ambientOcclusionQuality(world::QuMedium)
 ,	m_antiAliasQuality(world::QuMedium)
 ,	m_imageProcessQuality(world::QuMedium)
@@ -120,6 +121,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 
 	m_motionBlurQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.MotionBlurQuality", world::QuMedium);
 	m_shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
+	m_reflectionsQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ReflectionsQuality", world::QuMedium);
 	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
 	m_antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
 	m_imageProcessQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ImageProcessQuality", world::QuMedium);
@@ -213,6 +215,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 {
 	world::Quality motionBlurQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.MotionBlurQuality", world::QuMedium);
 	world::Quality shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
+	world::Quality reflectionsQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ReflectionsQuality", world::QuMedium);
 	world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
 	world::Quality antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
 	world::Quality imageProcessQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ImageProcessQuality", world::QuMedium);
@@ -226,6 +229,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	if (
 		motionBlurQuality == m_motionBlurQuality &&
 		shadowQuality == m_shadowQuality &&
+		reflectionsQuality == m_reflectionsQuality &&
 		ambientOcclusionQuality == m_ambientOcclusionQuality &&
 		antiAliasQuality == m_antiAliasQuality &&
 		imageProcessQuality == m_imageProcessQuality &&
@@ -250,6 +254,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	// Save ghost configuration state.
 	m_motionBlurQuality = motionBlurQuality;
 	m_shadowQuality = shadowQuality;
+	m_reflectionsQuality = reflectionsQuality;
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
 	m_imageProcessQuality = imageProcessQuality;
@@ -308,6 +313,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	wcd.entityRenderers = m_entityRenderers;
 	wcd.motionBlurQuality = m_motionBlurQuality;
 	wcd.shadowsQuality = m_shadowQuality;
+	wcd.reflectionsQuality = m_reflectionsQuality;
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.imageProcessQuality = m_imageProcessQuality;

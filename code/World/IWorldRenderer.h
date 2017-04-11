@@ -56,6 +56,7 @@ struct WorldCreateDesc
 	WorldEntityRenderers* entityRenderers;
 	Quality motionBlurQuality;
 	Quality shadowsQuality;
+	Quality reflectionsQuality;
 	Quality ambientOcclusionQuality;
 	Quality antiAliasQuality;
 	Quality imageProcessQuality;
@@ -72,6 +73,7 @@ struct WorldCreateDesc
 	,	entityRenderers(0)
 	,	motionBlurQuality(QuDisabled)
 	,	shadowsQuality(QuDisabled)
+	,	reflectionsQuality(QuDisabled)
 	,	ambientOcclusionQuality(QuDisabled)
 	,	antiAliasQuality(QuDisabled)
 	,	imageProcessQuality(QuDisabled)

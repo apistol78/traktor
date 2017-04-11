@@ -27,6 +27,7 @@ class Node;
 	{
 
 class Node;
+class ShaderGraph;
 
 class INodeFacade : public Object
 {
@@ -41,6 +42,7 @@ public:
 	virtual Ref< ui::custom::Node > createEditorNode(
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
+		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) = 0;
 
@@ -48,6 +50,7 @@ public:
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		ui::custom::Node* editorNode,
+		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) = 0;
 
@@ -55,6 +58,7 @@ public:
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		ui::custom::Node* editorNode,
+		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) = 0;
 
