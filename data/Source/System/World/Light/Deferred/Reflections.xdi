@@ -242,7 +242,6 @@ if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
 
 Color = float4(localColor.xyz, 0.0f);
 Hit = localColor.w;
-
 			]]>
 			</script>
 		</item>
@@ -554,12 +553,12 @@ Hit = localColor.w;
 				<item>
 					<name>ColorMap</name>
 					<type>PtTexture2D</type>
-					<samplerId/>
+					<samplerId>ColorMap_Sampler</samplerId>
 				</item>
 				<item>
 					<name>DepthMap</name>
 					<type>PtTexture2D</type>
-					<samplerId/>
+					<samplerId>DepthMap_Sampler</samplerId>
 				</item>
 				<item>
 					<name>Projection</name>
@@ -651,10 +650,10 @@ Screenspace reflection
 const float StepLength = 1.0f;
 const int MaxSteps = 16;
 const int BinarySearchSteps = 16;
-const float MaxDeltaDepth = 2.0f;
+const float MaxDeltaDepth = 2.0;
 
-float4 localColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-float3 hitCoord = Origin.xyz;
+vec4 localColor = vec4(0.0, 0.0, 0.0, 0.0);
+vec3 hitCoord = Origin.xyz;
 float deltaDepth = 0.0f;
 
 // Scan coarse hit.
@@ -662,11 +661,11 @@ for (int i = 0; i < MaxSteps; ++i)
 {
 	hitCoord += Direction.xyz * StepLength;
 	
-	float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
+	vec4 projCoord = Projection * vec4(hitCoord, 1.0);
 	projCoord.xy /= projCoord.w;
-	projCoord.xy = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+	projCoord.xy = projCoord.xy * vec2(0.5, -0.5) + vec2(0.5, 0.5);
 
-	float depth = DepthMap.Sample(DepthMap_Sampler, projCoord.xy).x;
+	float depth = texture(DepthMap_Sampler, projCoord.xy).x;
 	deltaDepth = depth - hitCoord.z;
 	if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
 		break;
@@ -675,49 +674,47 @@ for (int i = 0; i < MaxSteps; ++i)
 if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
 {
 	// Refine hit by binary search.
-	float3 dir = Direction.xyz * StepLength * 0.5f;
+	vec3 dir = Direction.xyz * StepLength * 0.5;
 	for (int i = 0; i < BinarySearchSteps; i++)
     {
-		float3 testCoord = hitCoord - dir;
+		vec3 testCoord = hitCoord - dir;
 
-		float4 projCoord = mul(Projection, float4(testCoord, 1.0f));
+		vec4 projCoord = Projection * vec4(testCoord, 1.0);
 
 		projCoord.xy /= projCoord.w;
-		projCoord.xy = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+		projCoord.xy = projCoord.xy * vec2(0.5, -0.5) + vec2(0.5, 0.5);
  
-		float depth = DepthMap.Sample(DepthMap_Sampler, projCoord.xy).x;
-
+		float depth = texture(DepthMap_Sampler, projCoord.xy).x;
 		deltaDepth = depth - testCoord.z;
-
-		if (deltaDepth < 0.0f)
+		if (deltaDepth < 0.0)
 		{
 			hitCoord = testCoord;
-			dir *= 0.5f;
+			dir *= 0.5;
 		}
 		else
 		{
-			dir *= 0.5f;
+			dir *= 0.5;
 		}
     }
 
 	//if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
 	{
-		float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
+		vec4 projCoord = Projection * vec4(hitCoord, 1.0);
 		projCoord.xy /= projCoord.w;
 
-		float2 colorCoord = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+		vec2 colorCoord = projCoord.xy * vec2(0.5, -0.5) + vec2(0.5, 0.5);
 	
-		float2 dc = abs(projCoord.xy);
-		float edgeFactor = clamp((1.0f - max(dc.x, dc.y)) * 10.0f, 0.0f, 1.0f);
-		float normFactor = pow(clamp(Direction.z, 0.0f, 1.0f), 0.2f);
-		float distFactor = 1.0f - pow(length(Origin.xyz - hitCoord) / (MaxSteps * StepLength), 2.0f);
+		vec2 dc = abs(projCoord.xy);
+		float edgeFactor = clamp((1.0 - max(dc.x, dc.y)) * 10.0, 0.0, 1.0);
+		float normFactor = pow(clamp(Direction.z, 0.0, 1.0), 0.2);
+		float distFactor = 1.0 - pow(length(Origin.xyz - hitCoord) / (MaxSteps * StepLength), 2.0);
 	
-		float3 color = ColorMap.SampleLevel(ColorMap_Sampler, colorCoord, 3.0f).xyz;
-		localColor = float4(color, edgeFactor * normFactor * distFactor);
+		vec3 color = texture(ColorMap_Sampler, colorCoord).xyz;
+		localColor = vec4(color, edgeFactor * normFactor * distFactor);
 	}
 }
 
-Color = float4(localColor.xyz, 0.0f);
+Color = vec4(localColor.xyz, 0.0);
 Hit = localColor.w;
 
 			]]>
