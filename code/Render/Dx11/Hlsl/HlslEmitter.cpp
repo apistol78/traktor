@@ -1615,34 +1615,30 @@ bool emitScript(HlslContext& cx, Script* node)
 	// Define script instance.
 	if (cx.getShader().defineScript(node->getName()))
 	{
-		StringOutputStream& fs = cx.getShader().getOutputStream(HlslShader::BtScript);
+		StringOutputStream ss;
 
-		fs << L"void " << node->getName() << L"(";
-
+		ss << L"void " << node->getName() << L"(";
 		for (int32_t i = 0; i < inputPinCount; ++i)
 		{
 			if (i > 0)
-				fs << L", ";
-			fs << hlsl_type_name(in[i]->getType(), false) << L" " << node->getInputPin(i)->getName();
+				ss << L", ";
+			ss << hlsl_type_name(in[i]->getType(), false) << L" " << node->getInputPin(i)->getName();
 		}
-
 		if (!in.empty())
-			fs << L", ";
-
+			ss << L", ";
 		for (int32_t i = 0; i < outputPinCount; ++i)
 		{
 			if (i > 0)
-				fs << L", ";
-			fs << L"out " << hlsl_type_name(out[i]->getType(), false) << L" " << node->getOutputPin(i)->getName();
+				ss << L", ";
+			ss << L"out " << hlsl_type_name(out[i]->getType(), false) << L" " << node->getOutputPin(i)->getName();
 		}
+		ss << L")";
 
-		fs << L")" << Endl;
-		fs << L"{" << Endl;
-		fs << IncreaseIndent;
-		fs << script << Endl;
-		fs << DecreaseIndent;
-		fs << L"}" << Endl;
-		fs << Endl;
+		std::wstring processedScript = replaceAll< std::wstring >(script, L"ENTRY", ss.str());
+		T_ASSERT (!processedScript.empty());
+
+		StringOutputStream& fs = cx.getShader().getOutputStream(HlslShader::BtScript);
+		fs << processedScript << Endl;
 	}
 
 	// Emit script invocation.
