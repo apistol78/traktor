@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
-				<first>7051</first>
-				<second>-716</second>
+				<first>6961</first>
+				<second>-636</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -46,7 +46,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>PhHigh</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -69,8 +69,8 @@
 		<item type="traktor.render.Script">
 			<comment/>
 			<position>
-				<first>4293</first>
-				<second>-260</second>
+				<first>4310</first>
+				<second>-319</second>
 			</position>
 			<name>RayCastFn_DX11</name>
 			<inputPins>
@@ -82,6 +82,16 @@
 				<item>
 					<name>DepthMap</name>
 					<type>PtTexture2D</type>
+					<samplerId/>
+				</item>
+				<item>
+					<name>FragmentPosition</name>
+					<type>PtVector</type>
+					<samplerId/>
+				</item>
+				<item>
+					<name>TargetSize</name>
+					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
@@ -164,100 +174,83 @@
 			</samplers>
 			<script>
 			<![CDATA[
-/*
+//----------------------
+// Screenspace ray cast
+//----------------------
 
-Screenspace reflection
-----------------------
+#define T_MAX_STEPS 64
+#define T_MAX_DISTANCE 4.0f
+#define T_STEP 4.0f
 
-*/
-
-const float StepLength = 1.0f;
-const int MaxSteps = 16;
-const int BinarySearchSteps = 16;
-const float MaxDeltaDepth = 2.0f;
-
-float4 localColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-float3 hitCoord = Origin.xyz;
-float deltaDepth = 0.0f;
-
-// Scan coarse hit.
-for (int i = 0; i < MaxSteps; ++i)
+bool intersectDepth(texture2D depthMap, float2 position, float z)
 {
-	hitCoord += Direction.xyz * StepLength;
-	
-	float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
-	projCoord.xy /= projCoord.w;
-	projCoord.xy = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
-
-	float depth = DepthMap.Sample(DepthMap_Sampler, projCoord.xy).x;
-	deltaDepth = depth - hitCoord.z;
-	if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
-		break;
+	float depth = depthMap.Load(float3(position, 0.0f)).x;
+	float dz = abs(z - depth - 0.2f);
+	return (dz < 0.3f);
 }
 
-if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
+ENTRY
 {
-	// Refine hit by binary search.
-	float3 dir = Direction.xyz * StepLength * 0.5f;
-	for (int i = 0; i < BinarySearchSteps; i++)
-    {
-		float3 testCoord = hitCoord - dir;
+	Color = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	Hit = 0.0f;
 
-		float4 projCoord = mul(Projection, float4(testCoord, 1.0f));
+	if (Direction.z <= 0.0f)
+		return;
 
-		projCoord.xy /= projCoord.w;
-		projCoord.xy = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
- 
-		float depth = DepthMap.Sample(DepthMap_Sampler, projCoord.xy).x;
+	float4 viewStart = float4(Origin.xyz, 1.0f);
+	float4 viewEnd = float4((Origin + Direction * T_MAX_DISTANCE).xyz, 1.0f);
+	
+	float4 clipStart = mul(Projection, viewStart);
+	float4 clipEnd = mul(Projection, viewEnd);
 
-		deltaDepth = depth - testCoord.z;
+	float2 screenStart = clipStart.xy / clipStart.w;
+	screenStart = screenStart * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+	screenStart *= TargetSize;
 
-		if (deltaDepth < 0.0f)
-		{
-			hitCoord = testCoord;
-			dir *= 0.5f;
-		}
-		else
-		{
-			dir *= 0.5f;
-		}
-    }
+	float2 screenEnd = clipEnd.xy / clipEnd.w;
+	screenEnd = screenEnd * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+	screenEnd *= TargetSize;
 
-	//if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
+	float viewZDelta = viewEnd.z - viewStart.z;
+	float2 screenDelta = screenEnd - screenStart;
+
+	float ln = length(screenDelta) / T_STEP;
+
+	float viewZStep = viewZDelta / ln;
+	float2 screenStep = screenDelta / ln;
+
+	float viewZ = viewStart.z;
+	float2 screenPosition = screenStart;
+
+	viewZ += viewZStep;
+	screenPosition += screenStep;
+
+	for (int i = 0; i < T_MAX_STEPS; ++i)
 	{
-		float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
-		projCoord.xy /= projCoord.w;
+		if (intersectDepth(DepthMap, screenPosition, viewZ))
+		{
+			Hit = 1.0f - saturate(float(i - T_MAX_STEPS / 2) / (T_MAX_STEPS / 2 - 1));
+			break;
+		}
 
-		float2 colorCoord = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
-	
-		float2 dc = abs(projCoord.xy);
-		float edgeFactor = clamp((1.0f - max(dc.x, dc.y)) * 10.0f, 0.0f, 1.0f);
-		float normFactor = pow(clamp(Direction.z, 0.0f, 1.0f), 0.2f);
-		float distFactor = 1.0f - pow(length(Origin.xyz - hitCoord) / (MaxSteps * StepLength), 2.0f);
-	
-		float3 color = ColorMap.SampleLevel(ColorMap_Sampler, colorCoord, 3.0f).xyz;
-		localColor = float4(color, edgeFactor * normFactor * distFactor);
+		viewZ += viewZStep;
+		screenPosition += screenStep;
 	}
+
+	if (
+		screenPosition.x < 0.0f || screenPosition.y < 0.0f ||
+		screenPosition.x >= TargetSize.x || screenPosition.y >= TargetSize.y
+	)
+	{
+		Hit = 0.0f;
+		return;
+	}
+
+	Color = ColorMap.Load(float3(screenPosition, 0.0f));
 }
 
-Color = float4(localColor.xyz, 0.0f);
-Hit = localColor.w;
 			]]>
 			</script>
-		</item>
-		<item type="traktor.render.Neg">
-			<comment/>
-			<position>
-				<first>3471</first>
-				<second>139</second>
-			</position>
-		</item>
-		<item type="traktor.render.Reflect">
-			<comment/>
-			<position>
-				<first>3108</first>
-				<second>139</second>
-			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -282,22 +275,15 @@ Hit = localColor.w;
 		<item type="traktor.render.Normalize">
 			<comment/>
 			<position>
-				<first>2778</first>
-				<second>167</second>
-			</position>
-		</item>
-		<item type="traktor.render.Neg">
-			<comment/>
-			<position>
-				<first>2462</first>
-				<second>193</second>
+				<first>3003</first>
+				<second>-702</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2247</first>
-				<second>-307</second>
+				<first>2266</first>
+				<second>-309</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -305,7 +291,7 @@ Hit = localColor.w;
 			<comment/>
 			<position>
 				<first>1937</first>
-				<second>-366</second>
+				<second>-353</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -314,7 +300,7 @@ Hit = localColor.w;
 				<first>1804</first>
 				<second>-319</second>
 			</position>
-			<swizzle>00x1</swizzle>
+			<swizzle>00x</swizzle>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -342,7 +328,7 @@ Hit = localColor.w;
 				<first>1804</first>
 				<second>-259</second>
 			</position>
-			<swizzle>xy00</swizzle>
+			<swizzle>xy0</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
@@ -419,8 +405,8 @@ Hit = localColor.w;
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>2971</first>
-				<second>-1370</second>
+				<first>2844</first>
+				<second>-1347</second>
 			</position>
 			<parameterName>World_ScreenMap</parameterName>
 			<type>PtTexture2D</type>
@@ -446,8 +432,8 @@ Hit = localColor.w;
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>4336</first>
-				<second>-704</second>
+				<first>4328</first>
+				<second>-702</second>
 			</position>
 			<fragmentGuid>{5961D8B7-FFC0-8742-B87F-1AD8B232D84E}</fragmentGuid>
 			<inputPins>
@@ -507,8 +493,8 @@ Hit = localColor.w;
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>4103</first>
-				<second>-525</second>
+				<first>4096</first>
+				<second>-538</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -522,8 +508,8 @@ Hit = localColor.w;
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>3969</first>
-				<second>158</second>
+				<first>3960</first>
+				<second>128</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -537,248 +523,111 @@ Hit = localColor.w;
 		<item type="traktor.render.Color">
 			<comment/>
 			<position>
-				<first>4017</first>
-				<second>-613</second>
+				<first>4012</first>
+				<second>-618</second>
 			</position>
 			<color>0, 0, 0, 0</color>
+		</item>
+		<item type="traktor.render.TargetSize">
+			<comment/>
+			<position>
+				<first>3762</first>
+				<second>-83</second>
+			</position>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>4085</first>
+				<second>-106</second>
+			</position>
+			<swizzle>xy00</swizzle>
+		</item>
+		<item type="traktor.render.FragmentPosition">
+			<comment/>
+			<position>
+				<first>3724</first>
+				<second>-164</second>
+			</position>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>4089</first>
+				<second>-176</second>
+			</position>
+			<swizzle>xy00</swizzle>
 		</item>
 		<item type="traktor.render.Script">
 			<comment/>
 			<position>
-				<first>4268</first>
-				<second>169</second>
+				<first>3330</first>
+				<second>-46</second>
 			</position>
-			<name>RayCastFn_OpenGL</name>
+			<name>ReflectionRay_DX11</name>
 			<inputPins>
 				<item>
-					<name>ColorMap</name>
-					<type>PtTexture2D</type>
-					<samplerId>ColorMap_Sampler</samplerId>
-				</item>
-				<item>
-					<name>DepthMap</name>
-					<type>PtTexture2D</type>
-					<samplerId>DepthMap_Sampler</samplerId>
-				</item>
-				<item>
-					<name>Projection</name>
-					<type>PtMatrix</type>
-					<samplerId/>
-				</item>
-				<item>
-					<name>Origin</name>
+					<name>ViewPosition</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
-					<name>Direction</name>
+					<name>ViewNormal</name>
 					<type>PtVector</type>
-					<samplerId/>
-				</item>
-				<item>
-					<name>Reflectivity</name>
-					<type>PtScalar</type>
 					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<name>Color</name>
+					<name>RayOrigin</name>
 					<type>PtVector</type>
 				</item>
 				<item>
-					<name>Hit</name>
-					<type>PtScalar</type>
+					<name>RayDirection</name>
+					<type>PtVector</type>
 				</item>
 			</outputPins>
-			<samplers>
-				<item>
-					<first>ColorMap_Sampler</first>
-					<second>
-						<minFilter>FtLinear</minFilter>
-						<mipFilter>FtLinear</mipFilter>
-						<magFilter>FtLinear</magFilter>
-						<addressU>AdClamp</addressU>
-						<addressV>AdClamp</addressV>
-						<addressW>AdClamp</addressW>
-						<compare>CfNone</compare>
-						<mipBias>0</mipBias>
-						<ignoreMips>false</ignoreMips>
-						<useAnisotropic>false</useAnisotropic>
-					</second>
-				</item>
-				<item>
-					<first>DepthMap_Sampler</first>
-					<second>
-						<minFilter>FtPoint</minFilter>
-						<mipFilter>FtPoint</mipFilter>
-						<magFilter>FtPoint</magFilter>
-						<addressU>AdClamp</addressU>
-						<addressV>AdClamp</addressV>
-						<addressW>AdClamp</addressW>
-						<compare>CfNone</compare>
-						<mipBias>0</mipBias>
-						<ignoreMips>true</ignoreMips>
-						<useAnisotropic>false</useAnisotropic>
-					</second>
-				</item>
-				<item>
-					<first>ReflectionMap_Sampler</first>
-					<second>
-						<minFilter>FtLinear</minFilter>
-						<mipFilter>FtLinear</mipFilter>
-						<magFilter>FtLinear</magFilter>
-						<addressU>AdClamp</addressU>
-						<addressV>AdClamp</addressV>
-						<addressW>AdClamp</addressW>
-						<compare>CfNone</compare>
-						<mipBias>0</mipBias>
-						<ignoreMips>false</ignoreMips>
-						<useAnisotropic>false</useAnisotropic>
-					</second>
-				</item>
-			</samplers>
+			<samplers/>
 			<script>
 			<![CDATA[
-/*
-
-Screenspace reflection
-----------------------
-
-*/
-
-const float StepLength = 1.0f;
-const int MaxSteps = 16;
-const int BinarySearchSteps = 16;
-const float MaxDeltaDepth = 2.0;
-
-vec4 localColor = vec4(0.0, 0.0, 0.0, 0.0);
-vec3 hitCoord = Origin.xyz;
-float deltaDepth = 0.0f;
-
-// Scan coarse hit.
-for (int i = 0; i < MaxSteps; ++i)
+ENTRY
 {
-	hitCoord += Direction.xyz * StepLength;
-	
-	vec4 projCoord = Projection * vec4(hitCoord, 1.0);
-	projCoord.xy /= projCoord.w;
-	projCoord.xy = projCoord.xy * vec2(0.5, -0.5) + vec2(0.5, 0.5);
+	float3 positionVS = ViewPosition.xyz + ViewNormal.xyz * 0.125f;
 
-	float depth = texture(DepthMap_Sampler, projCoord.xy).x;
-	deltaDepth = depth - hitCoord.z;
-	if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
-		break;
+	float3 toPositionVS = normalize(positionVS);
+	float3 rayDirectionVS = normalize(reflect(toPositionVS, ViewNormal.xyz));
+
+	RayOrigin = float4(positionVS, 0.0f);
+	RayDirection = float4(rayDirectionVS, 0.0f);
 }
-
-if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
-{
-	// Refine hit by binary search.
-	vec3 dir = Direction.xyz * StepLength * 0.5;
-	for (int i = 0; i < BinarySearchSteps; i++)
-    {
-		vec3 testCoord = hitCoord - dir;
-
-		vec4 projCoord = Projection * vec4(testCoord, 1.0);
-
-		projCoord.xy /= projCoord.w;
-		projCoord.xy = projCoord.xy * vec2(0.5, -0.5) + vec2(0.5, 0.5);
- 
-		float depth = texture(DepthMap_Sampler, projCoord.xy).x;
-		deltaDepth = depth - testCoord.z;
-		if (deltaDepth < 0.0)
-		{
-			hitCoord = testCoord;
-			dir *= 0.5;
-		}
-		else
-		{
-			dir *= 0.5;
-		}
-    }
-
-	//if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
-	{
-		vec4 projCoord = Projection * vec4(hitCoord, 1.0);
-		projCoord.xy /= projCoord.w;
-
-		vec2 colorCoord = projCoord.xy * vec2(0.5, -0.5) + vec2(0.5, 0.5);
-	
-		vec2 dc = abs(projCoord.xy);
-		float edgeFactor = clamp((1.0 - max(dc.x, dc.y)) * 10.0, 0.0, 1.0);
-		float normFactor = pow(clamp(Direction.z, 0.0, 1.0), 0.2);
-		float distFactor = 1.0 - pow(length(Origin.xyz - hitCoord) / (MaxSteps * StepLength), 2.0);
-	
-		vec3 color = texture(ColorMap_Sampler, colorCoord).xyz;
-		localColor = vec4(color, edgeFactor * normFactor * distFactor);
-	}
-}
-
-Color = vec4(localColor.xyz, 0.0);
-Hit = localColor.w;
-
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Platform">
+		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>4784</first>
-				<second>-252</second>
+				<first>3145</first>
+				<second>-19</second>
 			</position>
+			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.Platform">
+		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>4783</first>
-				<second>198</second>
+				<first>3156</first>
+				<second>50</second>
 			</position>
-		</item>
-		<item type="traktor.render.Color">
-			<comment/>
-			<position>
-				<first>4388</first>
-				<second>74</second>
-			</position>
-			<color>0, 0, 0, 0</color>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>4470</first>
-				<second>546</second>
-			</position>
-			<value>0</value>
+			<swizzle>xyz0</swizzle>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Normal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<name>TexCoord</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>UV</name>
 			</destination>
 		</item>
@@ -788,8 +637,8 @@ Hit = localColor.w;
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Direction</name>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -799,46 +648,16 @@ Hit = localColor.w;
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[10]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -848,27 +667,27 @@ Hit = localColor.w;
 				<name>TexCoord</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>UV</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -878,18 +697,8 @@ Hit = localColor.w;
 				<name>Position</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[13]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -898,17 +707,27 @@ Hit = localColor.w;
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[14]"/>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[12]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[14]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -918,17 +737,17 @@ Hit = localColor.w;
 				<name>TexCoord</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[18]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>UV</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[20]"/>
+				<node ref="/object/nodes/item[17]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[21]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Texture</name>
 			</destination>
 		</item>
@@ -938,13 +757,13 @@ Hit = localColor.w;
 				<name>TexCoord</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[21]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<name>TexCoord</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[17]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -954,7 +773,7 @@ Hit = localColor.w;
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -964,77 +783,57 @@ Hit = localColor.w;
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[20]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Direction</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Origin</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[19]"/>
 				<name>Amount</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[19]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[19]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[19]"/>
+				<node ref="/object/nodes/item[16]"/>
 				<name>True</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[19]"/>
 				<name>EyeDirection</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[20]"/>
+				<node ref="/object/nodes/item[17]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1044,7 +843,7 @@ Hit = localColor.w;
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
+				<node ref="/object/nodes/item[22]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1054,42 +853,22 @@ Hit = localColor.w;
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[19]"/>
+				<node ref="/object/nodes/item[16]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[26]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[22]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[19]"/>
-				<name>False</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[21]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
-				<name>Input1</name>
+				<node ref="/object/nodes/item[16]"/>
+				<name>False</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1098,17 +877,27 @@ Hit = localColor.w;
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
 				<name>Blend</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[24]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[19]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1118,68 +907,98 @@ Hit = localColor.w;
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Reflectivity</name>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Color</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<name>DX11</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Color</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<name>OpenGL</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Hit</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[30]"/>
-				<name>DX11</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Hit</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[30]"/>
-				<name>OpenGL</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[29]"/>
+				<node ref="/object/nodes/item[26]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[2]"/>
+				<name>TargetSize</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>FragmentPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<name>RayOrigin</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Origin</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<name>RayDirection</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Direction</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Color</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Hit</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Blend</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<name>Blend</name>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1189,67 +1008,37 @@ Hit = localColor.w;
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[29]"/>
-				<name>Other</name>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[30]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[30]"/>
-				<name>Other</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[20]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<name>ColorMap</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[16]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<name>DepthMap</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Projection</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Direction</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Origin</name>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
