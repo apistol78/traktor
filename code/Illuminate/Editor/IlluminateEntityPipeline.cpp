@@ -34,6 +34,7 @@
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CleanDegenerate.h"
+#include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/MergeModel.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Editor/Texture/TextureAsset.h"
@@ -133,8 +134,8 @@ IlluminateEntityPipeline::IlluminateEntityPipeline()
 
 bool IlluminateEntityPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-	m_build = settings->getProperty< PropertyBoolean >(L"IlluminatePipeline.Build", true);
+	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_build = settings->getProperty< bool >(L"IlluminatePipeline.Build", true);
 	return true;
 }
 
@@ -274,6 +275,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				continue;
 			}
 
+			model->clear(model::Model::CfColors | model::Model::CfJoints);
+
 			if (!model::MergeModel(*model, (*i)->getTransform(), 0.01f).apply(*mergedModel))
 				return 0;
 
@@ -284,6 +287,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		}
 
 		model::CleanDegenerate().apply(*mergedModel);
+		model::CleanDuplicates(0.01f).apply(*mergedModel);
 
 		// Create 3d windings.
 		const std::vector< model::Polygon >& polygons = mergedModel->getPolygons();
@@ -426,13 +430,11 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			tracesOcclusion.clear();
 			jobs.clear();
 
-			//log::info << L"Dilating occlusion map..." << Endl;
-			//drawing::DilateFilter dilateFilter(8);
-			//outputImageRadiance->apply(&dilateFilter);
-
 			if (illumEntityData->getDirectConvolveRadius() > 0)
 			{
 				log::info << L"Convolving occlusion..." << Endl;
+				drawing::DilateFilter dilateFilter(illumEntityData->getDirectConvolveRadius());
+				outputImageOcclusion->apply(&dilateFilter);
 				outputImageOcclusion->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getDirectConvolveRadius()));
 			}
 
@@ -479,13 +481,11 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		tracesDirect.clear();
 		jobs.clear();
 
-		//log::info << L"Dilating direct light map..." << Endl;
-		//drawing::DilateFilter dilateFilter(8);
-		//outputImageRadiance->apply(&dilateFilter);
-
 		if (illumEntityData->getDirectConvolveRadius() > 0)
 		{
 			log::info << L"Convolving direct lighting..." << Endl;
+			drawing::DilateFilter dilateFilter(illumEntityData->getDirectConvolveRadius());
+			outputImageRadiance->apply(&dilateFilter);
 			outputImageRadiance->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getDirectConvolveRadius()));
 		}
 
@@ -542,13 +542,11 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				tracesIndirect.clear();
 				jobs.clear();
 
-				//log::info << L"Dilating indirect light map..." << Endl;
-				//drawing::DilateFilter dilateFilter(8);
-				//outputImageIndirectTarget->apply(&dilateFilter);
-
 				if (illumEntityData->getIndirectConvolveRadius() > 0)
 				{
 					log::info << L"Convolving indirect lighting..." << Endl;
+					drawing::DilateFilter dilateFilter(illumEntityData->getIndirectConvolveRadius());
+					outputImageIndirectTarget->apply(&dilateFilter);
 					outputImageIndirectTarget->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getIndirectConvolveRadius()));
 				}
 
