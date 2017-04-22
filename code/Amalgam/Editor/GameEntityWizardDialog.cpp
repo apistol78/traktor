@@ -165,7 +165,7 @@ void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* ev
 	fileDialog.destroy();
 
 	// Create path relative to asset path.
-	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),
@@ -193,7 +193,7 @@ void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent*
 	fileDialog.destroy();
 
 	// Create path relative to asset path.
-	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),

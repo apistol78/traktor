@@ -20,7 +20,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.CloudMaskPipeline", 1, CloudMas
 
 bool CloudMaskPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 

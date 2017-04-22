@@ -181,7 +181,7 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 
 		m_callStackGrid->removeAllRows();
 
-		bool autoOpenDebuggedScript = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Editor.AutoOpenDebuggedScript", true);
+		bool autoOpenDebuggedScript = m_editor->getSettings()->getProperty< bool >(L"Editor.AutoOpenDebuggedScript", true);
 
 		int32_t depth = 0;
 		for (RefArray< StackFrame >::const_iterator i = m_stackFrames.begin(); i != m_stackFrames.end(); ++i)

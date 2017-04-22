@@ -24,7 +24,7 @@ RenderEditorPlugin::RenderEditorPlugin(editor::IEditor* editor)
 bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 {
 	// Create render system.
-	std::wstring renderSystemTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.RenderSystem");
+	std::wstring renderSystemTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.RenderSystem");
 
 	const TypeInfo* renderSystemType = TypeInfo::find(renderSystemTypeName);
 	if (!renderSystemType)
@@ -37,8 +37,8 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	T_ASSERT (renderSystem);
 
 	RenderSystemDesc desc;
-	desc.mipBias = m_editor->getSettings()->getProperty< PropertyFloat >(L"Editor.MipBias", 0.0f);
-	desc.maxAnisotropy = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MaxAnisotropy", 1);
+	desc.mipBias = m_editor->getSettings()->getProperty< float >(L"Editor.MipBias", 0.0f);
+	desc.maxAnisotropy = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MaxAnisotropy", 1);
 	desc.maxAnisotropy = std::max(desc.maxAnisotropy, 1);
 
 	if (!renderSystem->create(desc))

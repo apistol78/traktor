@@ -39,8 +39,8 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 	ui::Size preferredSize = m_objectEditor->getPreferredSize();
 
 	// Get instance's editor dimensions from settings.
-	int32_t width = m_settings->getProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Width", preferredSize.cx);
-	int32_t height = m_settings->getProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Height", preferredSize.cy);
+	int32_t width = m_settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Width", preferredSize.cx);
+	int32_t height = m_settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Height", preferredSize.cy);
 
 	StringOutputStream ss;
 	ss << L"Edit \"" << instance->getName() << L"\" (" << type_name(object) << L")";

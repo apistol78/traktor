@@ -21,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.OnlineServer", OnlineServer, IOnlineSer
 
 bool OnlineServer::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, db::Database* db)
 {
-	Guid configGuid(defaultSettings->getProperty< PropertyString >(L"Online.Config"));
+	Guid configGuid(defaultSettings->getProperty< std::wstring >(L"Online.Config"));
 	if (!configGuid.isValid() || configGuid.isNull())
 	{
 		log::error << L"Online server failed; invalid game guid" << Endl;
@@ -35,7 +35,7 @@ bool OnlineServer::create(const PropertyGroup* defaultSettings, PropertyGroup* s
 		return false;
 	}
 
-	std::wstring providerType = defaultSettings->getProperty< PropertyString >(L"Online.Type");
+	std::wstring providerType = defaultSettings->getProperty< std::wstring >(L"Online.Type");
 
 	Ref< online::ISessionManagerProvider > sessionManagerProvider = dynamic_type_cast< online::ISessionManagerProvider* >(TypeInfo::createInstance(providerType));
 	if (!sessionManagerProvider)
@@ -44,8 +44,8 @@ bool OnlineServer::create(const PropertyGroup* defaultSettings, PropertyGroup* s
 		return false;
 	}
 
-	std::wstring overrideLanguageCode = settings->getProperty< PropertyString >(L"Online.OverrideLanguageCode", L"");
-	bool downloadableContent = defaultSettings->getProperty< PropertyBoolean >(L"Online.DownloadableContent", true);
+	std::wstring overrideLanguageCode = settings->getProperty< std::wstring >(L"Online.OverrideLanguageCode", L"");
+	bool downloadableContent = defaultSettings->getProperty< bool >(L"Online.DownloadableContent", true);
 
 	Ref< online::SessionManager > sessionManager = new online::SessionManager();
 	if (!sessionManager->create(sessionManagerProvider, gameConfiguration, downloadableContent, overrideLanguageCode))

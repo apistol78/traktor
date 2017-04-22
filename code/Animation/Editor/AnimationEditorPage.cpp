@@ -235,7 +235,7 @@ bool AnimationEditorPage::create(ui::Container* parent)
 		render::RenderViewEmbeddedDesc desc;
 		desc.depthBits = 16;
 		desc.stencilBits = 0;
-		desc.multiSample = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", 4);
+		desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
 		desc.waitVBlanks = 0;
 		desc.syswin = m_renderWidgets[i]->getIWidget()->getSystemWindow();
 
@@ -658,10 +658,10 @@ void AnimationEditorPage::drawSkeleton(float time, const Color4ub& defaultColor,
 
 void AnimationEditorPage::updateSettings()
 {
-	m_colorClear = m_editor->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/Background");
-	m_colorGrid = m_editor->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/Grid");
-	m_colorBone = m_editor->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/BoneWire");
-	m_colorBoneSel = m_editor->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/BoneWireSelected");
+	m_colorClear = m_editor->getSettings()->getProperty< Color4ub >(L"Editor.Colors/Background");
+	m_colorGrid = m_editor->getSettings()->getProperty< Color4ub >(L"Editor.Colors/Grid");
+	m_colorBone = m_editor->getSettings()->getProperty< Color4ub >(L"Editor.Colors/BoneWire");
+	m_colorBoneSel = m_editor->getSettings()->getProperty< Color4ub >(L"Editor.Colors/BoneWireSelected");
 	updateRenderWidgets();
 }
 

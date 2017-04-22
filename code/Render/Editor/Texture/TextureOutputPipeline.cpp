@@ -128,14 +128,14 @@ TextureOutputPipeline::TextureOutputPipeline()
 
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_generateMipsThread = settings->getProperty< PropertyBoolean >(L"TexturePipeline.GenerateMipsThread", false);
-	m_skipMips = settings->getProperty< PropertyInteger >(L"TexturePipeline.SkipMips", 0);
-	m_clampSize = settings->getProperty< PropertyInteger >(L"TexturePipeline.ClampSize", 0);
-	m_compressionQuality = settings->getProperty< PropertyInteger >(L"TexturePipeline.CompressionQuality", 1);
-	m_gamma = settings->getProperty< PropertyFloat >(L"TexturePipeline.Gamma", 2.2f);
-	m_sRGB = settings->getProperty< PropertyBoolean >(L"TexturePipeline.sRGB", false);
+	m_generateMipsThread = settings->getProperty< bool >(L"TexturePipeline.GenerateMipsThread", false);
+	m_skipMips = settings->getProperty< int32_t >(L"TexturePipeline.SkipMips", 0);
+	m_clampSize = settings->getProperty< int32_t >(L"TexturePipeline.ClampSize", 0);
+	m_compressionQuality = settings->getProperty< int32_t >(L"TexturePipeline.CompressionQuality", 1);
+	m_gamma = settings->getProperty< float >(L"TexturePipeline.Gamma", 2.2f);
+	m_sRGB = settings->getProperty< bool >(L"TexturePipeline.sRGB", false);
 
-	std::wstring compressionMethod = settings->getProperty< PropertyString >(L"TexturePipeline.CompressionMethod", L"DXTn");
+	std::wstring compressionMethod = settings->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
 	if (compareIgnoreCase< std::wstring >(compressionMethod, L"None") == 0)
 		m_compressionMethod = CmNone;
 	else if (compareIgnoreCase< std::wstring >(compressionMethod, L"DXTn") == 0)

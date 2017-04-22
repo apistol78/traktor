@@ -57,7 +57,7 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editMultiSample = new ui::Edit();
 	m_editMultiSample->create(container, L"", ui::WsClientBorder, new ui::NumericEditValidator(false, 0, 8));
 
-	std::wstring renderSystemType = settings->getProperty< PropertyString >(L"Editor.RenderSystem");
+	std::wstring renderSystemType = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
 
 	TypeInfoSet renderSystemTypes;
 	type_of< render::IRenderSystem >().findAllOf(renderSystemTypes, false);
@@ -70,7 +70,7 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 			m_dropRenderSystem->select(index);
 	}
 	
-	std::wstring compilerType = settings->getProperty< PropertyString >(L"ShaderPipeline.ProgramCompiler");
+	std::wstring compilerType = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 	
 	TypeInfoSet compilerTypes;
 	type_of< render::IProgramCompiler >().findAllOf(compilerTypes, false);
@@ -83,9 +83,9 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 			m_dropCompiler->select(index);
 	}
 
-	m_editMipBias->setText(toString(settings->getProperty< PropertyFloat >(L"Editor.MipBias")));
-	m_editMaxAnisotropy->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.MaxAnisotropy")));
-	m_editMultiSample->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.MultiSample", 0)));
+	m_editMipBias->setText(toString(settings->getProperty< float >(L"Editor.MipBias")));
+	m_editMaxAnisotropy->setText(toString(settings->getProperty< int32_t >(L"Editor.MaxAnisotropy")));
+	m_editMultiSample->setText(toString(settings->getProperty< int32_t >(L"Editor.MultiSample", 0)));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_RENDERER"));
 	return true;

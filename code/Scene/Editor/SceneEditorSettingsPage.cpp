@@ -52,7 +52,7 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 	m_sliderFov = new ui::Slider();
 	m_sliderFov->create(containerSliders);
 	m_sliderFov->setRange(10, 180);
-	m_sliderFov->setValue(int32_t(settings->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView)));
+	m_sliderFov->setValue(int32_t(settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView)));
 	m_sliderFov->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorSettingsPage::eventValueChange);
 
 	m_staticFovValue = new ui::Static();
@@ -64,7 +64,7 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 	m_sliderMouseWheelRate = new ui::Slider();
 	m_sliderMouseWheelRate->create(containerSliders);
 	m_sliderMouseWheelRate->setRange(1, 100);
-	m_sliderMouseWheelRate->setValue(int32_t(settings->getProperty< PropertyFloat >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate)));
+	m_sliderMouseWheelRate->setValue(int32_t(settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate)));
 	m_sliderMouseWheelRate->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorSettingsPage::eventValueChange);
 
 	m_staticMouseWheelRateValue = new ui::Static();
@@ -72,31 +72,31 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 
 	m_checkInvertMouseWheel = new ui::CheckBox();
 	m_checkInvertMouseWheel->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_INVERT_MOUSE_WHEEL"));
-	m_checkInvertMouseWheel->setChecked(settings->getProperty< PropertyBoolean >(L"SceneEditor.InvertMouseWheel"));
+	m_checkInvertMouseWheel->setChecked(settings->getProperty< bool >(L"SceneEditor.InvertMouseWheel"));
 
 	m_checkInvertPanY = new ui::CheckBox();
 	m_checkInvertPanY->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_INVERT_PAN_Y"));
-	m_checkInvertPanY->setChecked(settings->getProperty< PropertyBoolean >(L"SceneEditor.InvertPanY"));
+	m_checkInvertPanY->setChecked(settings->getProperty< bool >(L"SceneEditor.InvertPanY"));
 
 	m_checkBuildWhenDrop = new ui::CheckBox();
 	m_checkBuildWhenDrop->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP"));
-	m_checkBuildWhenDrop->setChecked(settings->getProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", true));
+	m_checkBuildWhenDrop->setChecked(settings->getProperty< bool >(L"SceneEditor.BuildWhenDrop", true));
 
 	m_checkBuildNavMesh = new ui::CheckBox();
 	m_checkBuildNavMesh->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_NAVMESH"));
-	m_checkBuildNavMesh->setChecked(settings->getProperty< PropertyBoolean >(L"NavMeshPipeline.Build", true));
+	m_checkBuildNavMesh->setChecked(settings->getProperty< bool >(L"NavMeshPipeline.Build", true));
 
 	m_checkBuildLighting = new ui::CheckBox();
 	m_checkBuildLighting->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_LIGHTING"));
-	m_checkBuildLighting->setChecked(settings->getProperty< PropertyBoolean >(L"IlluminatePipeline.Build", true));
+	m_checkBuildLighting->setChecked(settings->getProperty< bool >(L"IlluminatePipeline.Build", true));
 
 	m_checkBuildOcclusion = new ui::CheckBox();
 	m_checkBuildOcclusion->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_OCCLUSION"));
-	m_checkBuildOcclusion->setChecked(settings->getProperty< PropertyBoolean >(L"OcclusionPipeline.Build", true));
+	m_checkBuildOcclusion->setChecked(settings->getProperty< bool >(L"OcclusionPipeline.Build", true));
 
 	parent->setText(i18n::Text(L"SCENE_EDITOR_SETTINGS"));
 
-	std::wstring worldRendererTypeName = settings->getProperty< PropertyString >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 
 	TypeInfoSet worldRendererTypes;
 	type_of< world::IWorldRenderer >().findAllOf(worldRendererTypes, false);

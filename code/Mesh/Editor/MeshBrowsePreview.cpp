@@ -32,7 +32,7 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 	if (!meshAsset)
 		return 0;
 
-	std::wstring assetPath = editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, meshAsset->getFileName());
 
 	Ref< model::Model > model = model::ModelFormat::readAny(fileName);

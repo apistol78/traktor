@@ -45,10 +45,10 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 	// Load resource bundle.
 	if (m_resourceBundle.isNotNull())
 	{
-		bool skipPreload = environment->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.SkipPreloadResources", false);
+		bool skipPreload = environment->getSettings()->getProperty< bool >(L"Amalgam.SkipPreloadResources", false);
 		if (!skipPreload)
 		{
-			uint32_t preloadLimit = environment->getSettings()->getProperty< PropertyInteger >(L"Amalgam.SkipPreloadLimit", 768) * 1024 * 1024;
+			uint32_t preloadLimit = environment->getSettings()->getProperty< int32_t >(L"Amalgam.SkipPreloadLimit", 768) * 1024 * 1024;
 
 			// Get amount of dedicated video memory; we cannot preload if too little amount of memory available or unknown vendor.
 			render::RenderSystemInformation rsi;

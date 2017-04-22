@@ -40,7 +40,7 @@ ScriptServer::ScriptServer()
 
 bool ScriptServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, bool debugger, bool profiler, net::BidirectionalObjectTransport* transport)
 {
-	std::wstring scriptType = defaultSettings->getProperty< PropertyString >(L"Script.Type");
+	std::wstring scriptType = defaultSettings->getProperty< std::wstring >(L"Script.Type");
 
 	m_scriptManager = dynamic_type_cast< script::IScriptManager* >(TypeInfo::createInstance(scriptType));
 	if (!m_scriptManager)
@@ -139,7 +139,7 @@ void ScriptServer::destroy()
 bool ScriptServer::execute(IEnvironment* environment)
 {
 	// Create script context.
-	Guid startupGuid(environment->getSettings()->getProperty< PropertyString >(L"Amalgam.Startup"));
+	Guid startupGuid(environment->getSettings()->getProperty< std::wstring >(L"Amalgam.Startup"));
 
 	Ref< script::ScriptResource > scriptResource = environment->getDatabase()->getObjectReadOnly< script::ScriptResource >(startupGuid);
 	if (!scriptResource)

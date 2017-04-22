@@ -245,10 +245,10 @@ bool DefaultEntityEditor::getStatusText(std::wstring& outStatusText) const
 void DefaultEntityEditor::updateSettings()
 {
 	Ref< PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
-	m_colorBoundingBox = colors->getProperty< PropertyColor >(L"BoundingBoxWire");
-	m_colorBoundingBoxSel = colors->getProperty< PropertyColor >(L"BoundingBoxWireSelected");
-	m_colorBoundingBoxFaceSel = colors->getProperty< PropertyColor >(L"BoundingBoxFaceSelected");
-	m_colorSnap = colors->getProperty< PropertyColor >(L"SnapPoint");
+	m_colorBoundingBox = colors->getProperty< Color4ub >(L"BoundingBoxWire");
+	m_colorBoundingBoxSel = colors->getProperty< Color4ub >(L"BoundingBoxWireSelected");
+	m_colorBoundingBoxFaceSel = colors->getProperty< Color4ub >(L"BoundingBoxFaceSelected");
+	m_colorSnap = colors->getProperty< Color4ub >(L"SnapPoint");
 }
 
 	}

@@ -22,7 +22,7 @@ AssetsPipeline::AssetsPipeline()
 
 bool AssetsPipeline::create(const IPipelineSettings* settings)
 {
-	m_editorDeploy = settings->getProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", false);
+	m_editorDeploy = settings->getProperty< bool >(L"Pipeline.EditorDeploy", false);
 	return true;
 }
 

@@ -188,10 +188,10 @@ NavMeshPipeline::NavMeshPipeline()
 
 bool NavMeshPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-	m_editor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor", false);
-	m_build = settings->getProperty< PropertyBoolean >(L"NavMeshPipeline.Build", true);
-	m_terrainStepSize = settings->getProperty< PropertyInteger >(L"NavMeshPipeline.TerrainStepSize", 16);
+	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
+	m_build = settings->getProperty< bool >(L"NavMeshPipeline.Build", true);
+	m_terrainStepSize = settings->getProperty< int32_t >(L"NavMeshPipeline.TerrainStepSize", 16);
 	return true;
 }
 

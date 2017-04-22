@@ -165,7 +165,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	m_categoryTree->update();
 
 	// Restore last state.
-	Ref< ui::HierarchicalState > state = dynamic_type_cast< ui::HierarchicalState* >(m_settings->getProperty< PropertyObject >(L"Editor.BrowseTypeTreeState"));
+	Ref< ui::HierarchicalState > state = dynamic_type_cast< ui::HierarchicalState* >(m_settings->getProperty< Ref< ISerializable > >(L"Editor.BrowseTypeTreeState"));
 	if (state)
 		m_categoryTree->applyState(state);
 

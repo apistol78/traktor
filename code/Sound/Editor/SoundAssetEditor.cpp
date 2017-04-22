@@ -125,7 +125,7 @@ void SoundAssetEditor::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* ev
 		return;
 	}
 
-	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
 
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);

@@ -63,9 +63,9 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	Ref< const PropertyGroup > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	int32_t viewType = settings->getProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_viewId), 0);
-	bool gridEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_viewId), true);
-	bool guideEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_viewId), true);
+	int32_t viewType = settings->getProperty< int32_t >(L"SceneEditor.View" + toString(m_viewId), 0);
+	bool gridEnable = settings->getProperty< bool >(L"Scene.Editor.GridEnable" + toString(m_viewId), true);
+	bool guideEnable = settings->getProperty< bool >(L"Scene.Editor.GuideEnable" + toString(m_viewId), true);
 
 	m_container = new ui::Container();
 	if (!m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))

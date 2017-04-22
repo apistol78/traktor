@@ -134,7 +134,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	Ref< world::EntityEventManager > eventManager = new world::EntityEventManager(64);
 
 	// Get physics manager type.
-	std::wstring physicsManagerTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"SceneEditor.PhysicsManager");
+	std::wstring physicsManagerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"SceneEditor.PhysicsManager");
 	const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName);
 	if (!physicsManagerType)
 	{
@@ -292,7 +292,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	for (std::set< std::wstring >::const_iterator i = guideIds.begin(); i != guideIds.end(); ++i)
 	{
-		bool shouldDraw = m_editor->getSettings()->getProperty< PropertyBoolean >(L"SceneEditor.Guides/" + *i, true);
+		bool shouldDraw = m_editor->getSettings()->getProperty< bool >(L"SceneEditor.Guides/" + *i, true);
 		m_context->setDrawGuide(*i, shouldDraw);
 
 		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
@@ -433,7 +433,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 
 		// Issue automatic build of dropped entity just in case the
 		// entity hasn't been built.
-		if (m_editor->getSettings()->getProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", true))
+		if (m_editor->getSettings()->getProperty< bool >(L"SceneEditor.BuildWhenDrop", true))
 			m_editor->buildAsset(instance->getGuid(), false);
 
 		m_context->getDocument()->push();

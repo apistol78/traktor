@@ -25,7 +25,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ResourceServer", ResourceServer, IResou
 
 bool ResourceServer::create(const PropertyGroup* settings, db::Database* database)
 {
-	m_resourceManager = new resource::ResourceManager(database, settings->getProperty< PropertyBoolean >(L"Resource.Verbose", false));
+	m_resourceManager = new resource::ResourceManager(database, settings->getProperty< bool >(L"Resource.Verbose", false));
 	return true;
 }
 

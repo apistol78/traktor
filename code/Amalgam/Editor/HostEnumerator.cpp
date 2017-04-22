@@ -19,7 +19,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.HostEnumerator", HostEnumerator, Object
 HostEnumerator::HostEnumerator(const PropertyGroup* settings, net::DiscoveryManager* discoveryManager)
 :	m_discoveryManager(discoveryManager)
 {
-	std::vector< std::wstring > hosts = settings->getProperty< PropertyStringArray >(L"Amalgam.RemoteHosts");
+	std::vector< std::wstring > hosts = settings->getProperty< std::vector< std::wstring > >(L"Amalgam.RemoteHosts");
 	for (std::vector< std::wstring >::const_iterator i = hosts.begin(); i != hosts.end(); ++i)
 	{
 		Host h;
@@ -111,11 +111,11 @@ void HostEnumerator::update()
 				continue;
 
 			Host h;
-			h.description = properties->getProperty< PropertyString >(L"Description");
-			h.host = properties->getProperty< PropertyString >(L"Host");
-			h.remotePort = properties->getProperty< PropertyInteger >(L"RemotePort");
-			h.httpPort = properties->getProperty< PropertyInteger >(L"HttpPort");
-			h.platforms = properties->getProperty< PropertyStringArray >(L"Platforms");
+			h.description = properties->getProperty< std::wstring >(L"Description");
+			h.host = properties->getProperty< std::wstring >(L"Host");
+			h.remotePort = properties->getProperty< int32_t >(L"RemotePort");
+			h.httpPort = properties->getProperty< int32_t >(L"HttpPort");
+			h.platforms = properties->getProperty< std::vector< std::wstring > >(L"Platforms");
 			h.local = bool(itf.addr != 0 && itf.addr->getHostName() == h.host);
 			m_pending.push_back(h);
 		}

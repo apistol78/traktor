@@ -142,18 +142,18 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	// Merge pipeline cache configuration from global configuration.
-	bool inheritCache = m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.InheritCache", true);
+	bool inheritCache = m_globalSettings->getProperty< bool >(L"Amalgam.InheritCache", true);
 	if (inheritCache)
 	{
-		bool fileCacheEnable = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
+		bool fileCacheEnable = m_globalSettings->getProperty< bool >(L"Pipeline.FileCache", false);
 		if (fileCacheEnable)
 		{
-			std::wstring fileCachePath = m_globalSettings->getProperty< PropertyString >(L"Pipeline.FileCache.Path", L"");
+			std::wstring fileCachePath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.FileCache.Path", L"");
 			fileCachePath = FileSystem::getInstance().getAbsolutePath(fileCachePath).getPathName();
 			if (!fileCachePath.empty())
 			{
-				bool fileCacheRead = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", false);
-				bool fileCacheWrite = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", false);
+				bool fileCacheRead = m_globalSettings->getProperty< bool >(L"Pipeline.FileCache.Read", false);
+				bool fileCacheWrite = m_globalSettings->getProperty< bool >(L"Pipeline.FileCache.Write", false);
 
 				pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.FileCache", true);
 				pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.FileCache.Path", fileCachePath);
@@ -162,13 +162,13 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 			}
 		}
 
-		bool memCachedEnable = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
+		bool memCachedEnable = m_globalSettings->getProperty< bool >(L"Pipeline.MemCached", false);
 		if (memCachedEnable)
 		{
-			std::wstring memCachedHost = m_globalSettings->getProperty< PropertyString >(L"Pipeline.MemCached.Host", L"");
-			int32_t memCachedPort = m_globalSettings->getProperty< PropertyInteger >(L"Pipeline.MemCached.Port", 0);
-			bool memCachedRead = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", false);
-			bool memCachedWrite = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", false);
+			std::wstring memCachedHost = m_globalSettings->getProperty< std::wstring >(L"Pipeline.MemCached.Host", L"");
+			int32_t memCachedPort = m_globalSettings->getProperty< int32_t >(L"Pipeline.MemCached.Port", 0);
+			bool memCachedRead = m_globalSettings->getProperty< bool >(L"Pipeline.MemCached.Read", false);
+			bool memCachedWrite = m_globalSettings->getProperty< bool >(L"Pipeline.MemCached.Write", false);
 
 			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemCached", true);
 			pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.MemCached.Host", memCachedHost);
@@ -182,13 +182,13 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.CachePath", FileSystem::getInstance().getAbsolutePath(m_outputPath + L"/temp/Cache").getPathName());
 
 	// Merge threaded build configuration from global configuration.
-	bool dependsThreads = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.DependsThreads", true);
+	bool dependsThreads = m_globalSettings->getProperty< bool >(L"Pipeline.DependsThreads", true);
 	pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.DependsThreads", dependsThreads);
-	bool buildThreads = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true);
+	bool buildThreads = m_globalSettings->getProperty< bool >(L"Pipeline.BuildThreads", true);
 	pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", buildThreads);
 
 	// Set database connection strings.
-	db::ConnectionString sourceDatabaseCs = m_globalSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
+	db::ConnectionString sourceDatabaseCs = m_globalSettings->getProperty< std::wstring >(L"Editor.SourceDatabase");
 	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=" + FileSystem::getInstance().getAbsolutePath(m_outputPath + L"/db").getPathName() + L";binary=true");
 
 	if (sourceDatabaseCs.have(L"groupPath"))
@@ -203,7 +203,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.OutputDatabase", outputDatabaseCs.format());
 
 	// Set asset path.
-	Path assetPath = m_globalSettings->getProperty< PropertyString >(L"Pipeline.AssetPath");
+	Path assetPath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.AssetPath");
 	assetPath = FileSystem::getInstance().getAbsolutePath(assetPath);
 	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.AssetPath", assetPath.getPathName());
 
@@ -243,16 +243,16 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 #else
 	env->set(L"DEPLOY_PROJECT_ROOT", projectRoot.getPathNameNoVolume());
 #endif
-	env->set(L"DEPLOY_SYSTEM_ROOT", m_globalSettings->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)"));
+	env->set(L"DEPLOY_SYSTEM_ROOT", m_globalSettings->getProperty< std::wstring >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)"));
 	env->set(L"DEPLOY_OUTPUT_PATH", m_outputPath);
-	env->set(L"DEPLOY_DEBUG", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
-	env->set(L"DEPLOY_STATIC_LINK", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", false) ? L"YES" : L"");
-	env->set(L"DEPLOY_ANDROID_USE_VS", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.AndroidUseVS", false) ? L"YES" : L"");
-	env->set(L"DEPLOY_ANDROID_HOME", resolveEnv(m_globalSettings->getProperty< PropertyString >(L"Amalgam.AndroidHome", L"$(ANDROID_HOME)"), 0));
-	env->set(L"DEPLOY_ANDROID_NDK_ROOT", resolveEnv(m_globalSettings->getProperty< PropertyString >(L"Amalgam.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"), 0));
-	env->set(L"DEPLOY_ANDROID_ANT_HOME", resolveEnv(m_globalSettings->getProperty< PropertyString >(L"Amalgam.AndroidAntHome", L"$(ANT_HOME)"), 0));
-	env->set(L"DEPLOY_ANDROID_TOOLCHAIN", m_globalSettings->getProperty< PropertyString >(L"Amalgam.AndroidToolchain", L"4.9"));
-	env->set(L"DEPLOY_ANDROID_APILEVEL", m_globalSettings->getProperty< PropertyString >(L"Amalgam.AndroidApiLevel", L"android-19"));
+	env->set(L"DEPLOY_DEBUG", m_globalSettings->getProperty< bool >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
+	env->set(L"DEPLOY_STATIC_LINK", m_globalSettings->getProperty< bool >(L"Amalgam.StaticallyLinked", false) ? L"YES" : L"");
+	env->set(L"DEPLOY_ANDROID_USE_VS", m_globalSettings->getProperty< bool >(L"Amalgam.AndroidUseVS", false) ? L"YES" : L"");
+	env->set(L"DEPLOY_ANDROID_HOME", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidHome", L"$(ANDROID_HOME)"), 0));
+	env->set(L"DEPLOY_ANDROID_NDK_ROOT", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"), 0));
+	env->set(L"DEPLOY_ANDROID_ANT_HOME", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidAntHome", L"$(ANT_HOME)"), 0));
+	env->set(L"DEPLOY_ANDROID_TOOLCHAIN", m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidToolchain", L"4.9"));
+	env->set(L"DEPLOY_ANDROID_APILEVEL", m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidApiLevel", L"android-19"));
 
 	// Flatten feature deploy variables.
 	const std::map< std::wstring, Ref< IPropertyValue > >& values = deploy->getValues();

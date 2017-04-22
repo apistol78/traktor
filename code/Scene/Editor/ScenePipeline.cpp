@@ -34,14 +34,14 @@ ScenePipeline::ScenePipeline()
 
 bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_targetEditor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor");
-	m_suppressShadows = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressShadows");
-	m_suppressLinearLighting = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressLinearLighting");
-	m_suppressDepthPass = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressDepthPass");
-	m_suppressMotionBlur = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressMotionBlur");
-	m_suppressImageProcess = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressImageProcess");
-	m_shadowMapSizeDenom = settings->getProperty< PropertyInteger >(L"ScenePipeline.ShadowMapSizeDenom", 1);
-	m_shadowMapMaxSlices = settings->getProperty< PropertyInteger >(L"ScenePipeline.ShadowMapMaxSlices", 0);
+	m_targetEditor = settings->getProperty< bool >(L"Pipeline.TargetEditor");
+	m_suppressShadows = settings->getProperty< bool >(L"ScenePipeline.SuppressShadows");
+	m_suppressLinearLighting = settings->getProperty< bool >(L"ScenePipeline.SuppressLinearLighting");
+	m_suppressDepthPass = settings->getProperty< bool >(L"ScenePipeline.SuppressDepthPass");
+	m_suppressMotionBlur = settings->getProperty< bool >(L"ScenePipeline.SuppressMotionBlur");
+	m_suppressImageProcess = settings->getProperty< bool >(L"ScenePipeline.SuppressImageProcess");
+	m_shadowMapSizeDenom = settings->getProperty< int32_t >(L"ScenePipeline.ShadowMapSizeDenom", 1);
+	m_shadowMapMaxSlices = settings->getProperty< int32_t >(L"ScenePipeline.ShadowMapMaxSlices", 0);
 	return true;
 }
 

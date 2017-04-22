@@ -259,7 +259,7 @@ int main(int argc, const char** argv)
 			return 1;
 		}
 
-		std::set< std::wstring > modules = settings->getProperty< PropertyStringSet >(L"Migrate.Modules");
+		std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Migrate.Modules");
 		for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 		{
 			Library library;
@@ -271,8 +271,8 @@ int main(int argc, const char** argv)
 			library.detach();
 		}
 
-		sourceCs = settings->getProperty< PropertyString >(L"Migrate.SourceDatabase");
-		destinationCs = settings->getProperty< PropertyString >(L"Migrate.OutputDatabase");
+		sourceCs = settings->getProperty< std::wstring >(L"Migrate.SourceDatabase");
+		destinationCs = settings->getProperty< std::wstring >(L"Migrate.OutputDatabase");
 	}
 	else
 	{

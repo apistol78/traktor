@@ -34,7 +34,7 @@ bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor, const std::wst
 	if (!database)
 		return true;
 
-	std::wstring assetPath = editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	RefArray< db::Instance > assetInstances;
 	db::recursiveFindChildInstances(

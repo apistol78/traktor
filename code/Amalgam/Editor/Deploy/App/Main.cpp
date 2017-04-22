@@ -108,7 +108,7 @@ int main(int argc, const char** argv)
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", true);
 	}
 
-	db::ConnectionString sourceDatabaseCS = settings->getProperty< PropertyString >(L"Editor.SourceDatabase");
+	db::ConnectionString sourceDatabaseCS = settings->getProperty< std::wstring >(L"Editor.SourceDatabase");
 	sourceDatabaseCS.set(L"fileStore", L"");
 
 	T_FORCE_LINK_REF(db::LocalDatabase);

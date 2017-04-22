@@ -75,7 +75,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshAssetEditor", MeshAssetEditor, editor:
 MeshAssetEditor::MeshAssetEditor(editor::IEditor* editor)
 :	m_editor(editor)
 {
-	m_assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 }
 
 bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
@@ -628,7 +628,7 @@ void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 
 void MeshAssetEditor::eventPreviewModelClick(ui::ButtonClickEvent* event)
 {
-	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_editor->openTool(L"traktor.model.ModelTool", assetPath + L"/" + m_editFileName->getText());
 }
 

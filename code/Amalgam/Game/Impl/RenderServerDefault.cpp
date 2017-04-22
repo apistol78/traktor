@@ -150,9 +150,9 @@ RenderServerDefault::RenderServerDefault()
 
 bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp)
 {
-	std::wstring renderType = defaultSettings->getProperty< PropertyString >(L"Render.Type");
-	std::wstring captureRenderType = settings->getProperty< PropertyString >(L"Render.CaptureType");
-	std::wstring vrCompositorType = settings->getProperty< PropertyString >(L"Render.VRCompositorType");
+	std::wstring renderType = defaultSettings->getProperty< std::wstring >(L"Render.Type");
+	std::wstring captureRenderType = settings->getProperty< std::wstring >(L"Render.CaptureType");
+	std::wstring vrCompositorType = settings->getProperty< std::wstring >(L"Render.VRCompositorType");
 
 	Ref< render::IRenderSystem > renderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(renderType));
 	if (!renderSystem)
@@ -176,13 +176,13 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 			return false;
 	}
 
-	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
+	int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
 
 	render::RenderSystemDesc rsd;
 	rsd.capture = captureRenderSystem;
 	rsd.sysapp = sysapp;
-	rsd.adapter = settings->getProperty< PropertyInteger >(L"Render.Adapter", -1);
-	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
+	rsd.adapter = settings->getProperty< int32_t >(L"Render.Adapter", -1);
+	rsd.mipBias = settings->getProperty< float >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
 	rsd.verbose = true;
 
@@ -206,12 +206,12 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 		}
 	}
 
-	m_renderViewDesc.depthBits = settings->getProperty< PropertyInteger >(L"Render.DepthBits", 24);
-	m_renderViewDesc.stencilBits = settings->getProperty< PropertyInteger >(L"Render.StencilBits", 8);
-	m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 0);
-	m_renderViewDesc.waitVBlanks = settings->getProperty< PropertyInteger >(L"Render.WaitVBlanks", 1);
-	m_renderViewDesc.title = settings->getProperty< PropertyString >(L"Render.Title", L"Traktor");
-	m_renderViewDesc.fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
+	m_renderViewDesc.depthBits = settings->getProperty< int32_t >(L"Render.DepthBits", 24);
+	m_renderViewDesc.stencilBits = settings->getProperty< int32_t >(L"Render.StencilBits", 8);
+	m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.MultiSample", 0);
+	m_renderViewDesc.waitVBlanks = settings->getProperty< int32_t >(L"Render.WaitVBlanks", 1);
+	m_renderViewDesc.title = settings->getProperty< std::wstring >(L"Render.Title", L"Traktor");
+	m_renderViewDesc.fullscreen = settings->getProperty< bool >(L"Render.FullScreen", false);
 
 #if defined(_PS3)
 
@@ -221,32 +221,32 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 		{
 		case 720:
 			log::info << L"Using HD television settings" << Endl;
-			m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionHD/Width", 1280);
-			m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionHD/Height", 720);
-			m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionHD/MultiSample", 0);
+			m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Width", 1280);
+			m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Height", 720);
+			m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/MultiSample", 0);
 			break;
 
 		case 1080:
 			log::info << L"Using FullHD television settings" << Endl;
-			m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionFullHD/Width", 1440);
-			m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionFullHD/Height", 1080);
-			m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionFullHD/MultiSample", 0);
+			m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Width", 1440);
+			m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Height", 1080);
+			m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/MultiSample", 0);
 			break;
 
 		default:
 			log::info << L"Using default television settings" << Endl;
 			m_renderViewDesc.displayMode.width = m_originalDisplayMode.width;
 			m_renderViewDesc.displayMode.height = m_originalDisplayMode.height;
-			m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionStandard/MultiSample", 0);
+			m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionStandard/MultiSample", 0);
 		}
 		m_renderViewDesc.displayMode.stereoscopic = false;
 	}
 	else
 	{
 		log::info << L"Using 3D television settings" << Endl;
-		m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Television3D/Width", 960);
-		m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Television3D/Height", 720);
-		m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Television3D/MultiSample", 0);
+		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/Width", 960);
+		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/Height", 720);
+		m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/MultiSample", 0);
 		m_renderViewDesc.displayMode.stereoscopic = true;
 	}
 	m_renderViewDesc.displayMode.colorBits = 24;
@@ -256,16 +256,16 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	// Get display mode from settings; use default settings if none is provided.
 	if (m_renderViewDesc.fullscreen)
 	{
-		m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_originalDisplayMode.width);
-		m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_originalDisplayMode.height);
+		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/Width", m_originalDisplayMode.width);
+		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/Height", m_originalDisplayMode.height);
 	}
 	else
 	{
-		m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", m_originalDisplayMode.width / 2);
-		m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", m_originalDisplayMode.height / 2);
+		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Width", m_originalDisplayMode.width / 2);
+		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Height", m_originalDisplayMode.height / 2);
 	}
 
-	m_renderViewDesc.displayMode.stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
+	m_renderViewDesc.displayMode.stereoscopic = settings->getProperty< bool >(L"Render.Stereoscopic", false);
 	m_renderViewDesc.displayMode.colorBits = 24;
 
 #endif
@@ -328,7 +328,7 @@ void RenderServerDefault::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	int32_t textureQuality = environment->getSettings()->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
+	int32_t textureQuality = environment->getSettings()->getProperty< int32_t >(L"Render.TextureQuality", 2);
 	int32_t skipMips = skipMipsFromQuality(textureQuality);
 
 	m_textureFactory = new render::TextureFactory(m_renderSystem, skipMips);
@@ -345,47 +345,47 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 	int32_t result = CrUnaffected;
 
 	render::RenderViewDefaultDesc rvdd;
-	rvdd.depthBits = settings->getProperty< PropertyInteger >(L"Render.DepthBits", 16);
-	rvdd.stencilBits = settings->getProperty< PropertyInteger >(L"Render.StencilBits", 8);
-	rvdd.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 4);
-	rvdd.waitVBlanks = settings->getProperty< PropertyInteger >(L"Render.WaitVBlanks", 1);
-	rvdd.fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
-	rvdd.title = settings->getProperty< PropertyString >(L"Render.Title", L"Traktor");
+	rvdd.depthBits = settings->getProperty< int32_t >(L"Render.DepthBits", 16);
+	rvdd.stencilBits = settings->getProperty< int32_t >(L"Render.StencilBits", 8);
+	rvdd.multiSample = settings->getProperty< int32_t >(L"Render.MultiSample", 4);
+	rvdd.waitVBlanks = settings->getProperty< int32_t >(L"Render.WaitVBlanks", 1);
+	rvdd.fullscreen = settings->getProperty< bool >(L"Render.FullScreen", false);
+	rvdd.title = settings->getProperty< std::wstring >(L"Render.Title", L"Traktor");
 
 #if defined(_PS3)
 
-	rvdd.displayMode.stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
+	rvdd.displayMode.stereoscopic = settings->getProperty< bool >(L"Render.Stereoscopic", false);
 	if (!rvdd.displayMode.stereoscopic)
 	{
 		switch (m_originalDisplayMode.height)
 		{
 		case 720:
 			log::info << L"Using HD television settings" << Endl;
-			rvdd.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionHD/Width", 1280);
-			rvdd.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionHD/Height", 720);
-			rvdd.multiSample = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionHD/MultiSample", 0);
+			rvdd.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Width", 1280);
+			rvdd.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Height", 720);
+			rvdd.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/MultiSample", 0);
 			break;
 
 		case 1080:
 			log::info << L"Using FullHD television settings" << Endl;
-			rvdd.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionFullHD/Width", 1440);
-			rvdd.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionFullHD/Height", 1080);
-			rvdd.multiSample = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionFullHD/MultiSample", 0);
+			rvdd.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Width", 1440);
+			rvdd.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Height", 1080);
+			rvdd.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/MultiSample", 0);
 			break;
 
 		default:
 			log::info << L"Using default television settings" << Endl;
 			rvdd.displayMode.width = m_originalDisplayMode.width;
 			rvdd.displayMode.height = m_originalDisplayMode.height;
-			rvdd.multiSample = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionStandard/MultiSample", 0);
+			rvdd.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionStandard/MultiSample", 0);
 		}
 	}
 	else
 	{
 		log::info << L"Using 3D television settings" << Endl;
-		rvdd.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Television3D/Width", 960);
-		rvdd.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Television3D/Height", 720);
-		rvdd.multiSample = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Television3D/MultiSample", 0);
+		rvdd.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/Width", 960);
+		rvdd.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/Height", 720);
+		rvdd.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/MultiSample", 0);
 	}
 	rvdd.displayMode.colorBits = 24;
 
@@ -393,16 +393,16 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 
 	if (rvdd.fullscreen)
 	{
-		rvdd.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_originalDisplayMode.width);
-		rvdd.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_originalDisplayMode.height);
+		rvdd.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/Width", m_originalDisplayMode.width);
+		rvdd.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/Height", m_originalDisplayMode.height);
 	}
 	else
 	{
-		rvdd.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", m_originalDisplayMode.width / 2);
-		rvdd.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", m_originalDisplayMode.height / 2);
+		rvdd.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Width", m_originalDisplayMode.width / 2);
+		rvdd.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Height", m_originalDisplayMode.height / 2);
 	}
 
-	rvdd.displayMode.stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
+	rvdd.displayMode.stereoscopic = settings->getProperty< bool >(L"Render.Stereoscopic", false);
 	rvdd.displayMode.colorBits = 24;
 
 #endif
@@ -446,7 +446,7 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 	else
 		T_DEBUG(L"Render view settings unchanged");
 
-	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
+	int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
 
 	// Update texture quality; manifest through skipping high-detail mips.
 	int32_t skipMips = skipMipsFromQuality(textureQuality);
@@ -467,8 +467,8 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 
 	// Reset render system.
 	render::RenderSystemDesc rsd;
-	rsd.adapter = settings->getProperty< PropertyInteger >(L"Render.Adapter", -1);
-	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
+	rsd.adapter = settings->getProperty< int32_t >(L"Render.Adapter", -1);
+	rsd.mipBias = settings->getProperty< float >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
 	if (!m_renderSystem->reset(rsd))
 		return CrFailed;

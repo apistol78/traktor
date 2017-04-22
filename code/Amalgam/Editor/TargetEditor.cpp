@@ -398,7 +398,7 @@ void TargetEditor::updateIcon()
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (targetConfiguration)
 	{
-		Path systemRoot = m_editor->getWorkspaceSettings()->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
+		Path systemRoot = m_editor->getWorkspaceSettings()->getProperty< std::wstring >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
 		Path iconPath = targetConfiguration->getIcon();
 
 		Ref< drawing::Image > iconImage = drawing::Image::load(systemRoot + iconPath);
@@ -634,7 +634,7 @@ void TargetEditor::eventBrowseIconClick(ui::MouseButtonDownEvent* event)
 		Path fileName;
 		if (fileDialog.showModal(fileName) == ui::DrOk)
 		{
-			std::wstring systemRoot = m_editor->getWorkspaceSettings()->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
+			std::wstring systemRoot = m_editor->getWorkspaceSettings()->getProperty< std::wstring >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
 
 			Path relativePath;
 			if (!FileSystem::getInstance().getRelativePath(fileName, systemRoot, relativePath))

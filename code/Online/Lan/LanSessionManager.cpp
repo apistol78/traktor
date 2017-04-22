@@ -181,12 +181,12 @@ uint32_t LanSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t& 
 		const PropertyGroup* propertyGroup = (*i)->getProperties();
 		T_ASSERT (propertyGroup);
 
-		uint32_t addr = propertyGroup->getProperty< PropertyInteger >(c_keyUserAddr);
-		uint16_t port = propertyGroup->getProperty< PropertyInteger >(c_keyUserPort);
+		uint32_t addr = propertyGroup->getProperty< int32_t >(c_keyUserAddr);
+		uint16_t port = propertyGroup->getProperty< int32_t >(c_keyUserPort);
 
 		if (fromAddr.getAddr() == addr && fromAddr.getPort() == port)
 		{
-			outFromUserHandle = propertyGroup->getProperty< PropertyInteger >(c_keyUserHandle);
+			outFromUserHandle = propertyGroup->getProperty< int32_t >(c_keyUserHandle);
 			return nbytes;
 		}
 	}

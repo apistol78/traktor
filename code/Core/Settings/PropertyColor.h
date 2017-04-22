@@ -40,6 +40,17 @@ private:
 	value_type_t m_value;
 };
 
+/*!
+ * \ingroup Core
+ */
+template< >
+struct PropertyTrait< Color4ub >
+{
+	typedef PropertyColor property_type_t;
+	typedef const Color4ub& default_value_type_t;
+	typedef Color4ub return_type_t;
+};
+
 }
 
 #endif	// traktor_PropertyColor_H

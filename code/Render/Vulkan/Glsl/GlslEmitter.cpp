@@ -434,7 +434,7 @@ bool emitInstance(GlslContext& cx, Instance* node)
 	assign(f, out) << L"float(gl_InstanceID);" << Endl;
 #else
 	const PropertyGroup* settings = cx.getSettings();
-	if (settings && settings->getProperty< PropertyBoolean >(L"Glsl.ES2.SupportHwInstancing", false))
+	if (settings && settings->getProperty< bool >(L"Glsl.ES2.SupportHwInstancing", false))
 		assign(f, out) << L"float(gl_InstanceIDEXT);" << Endl;
 	else
 		assign(f, out) << L"_gl_instanceID;" << Endl;

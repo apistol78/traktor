@@ -194,7 +194,7 @@ void ShortcutsSettingsPage::eventResetAll(ui::ButtonClickEvent* event)
 			const RefArray< ui::custom::GridItem >& items = (*i)->get();
 			T_ASSERT (items.size() == 2);
 
-			std::wstring value = m_originalSettings->getProperty< PropertyString >(L"Editor.Shortcuts/" + items[0]->getText());
+			std::wstring value = m_originalSettings->getProperty< std::wstring >(L"Editor.Shortcuts/" + items[0]->getText());
 			(*i)->setData(L"PROPERTYKEY", new PropertyString(value));
 		}
 		updateShortcutGrid();

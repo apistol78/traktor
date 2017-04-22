@@ -107,7 +107,7 @@ ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageS
 	m_bitmapFunction = new ui::StyleBitmap(L"Script.DefineGlobalFunction");
 	m_bitmapFunctionLocal = new ui::StyleBitmap(L"Script.DefineLocalFunction");
 	m_bitmapFunctionReference = new ui::StyleBitmap(L"Script.ReferenceFunction");
-	m_assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 }
 
 bool ScriptEditorPage::create(ui::Container* parent)
@@ -214,8 +214,8 @@ bool ScriptEditorPage::create(ui::Container* parent)
 			log::error << L"Unable to open external script (" << m_scriptAsset->getFileName().getOriginal() << L")" << Endl;
 	}
 
-	std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
-	int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
+	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 14);
 	m_edit->setFont(ui::Font(font, fontSize));
 
 	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
@@ -242,7 +242,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	// Create language specific implementations.
 	{
-		std::wstring syntaxLanguageTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.SyntaxLanguageType");
+		std::wstring syntaxLanguageTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.SyntaxLanguageType");
 		const TypeInfo* syntaxLanguageType = TypeInfo::find(syntaxLanguageTypeName);
 		if (syntaxLanguageType)
 		{
@@ -251,7 +251,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 			m_edit->setLanguage(syntaxLanguage);
 		}
 
-		std::wstring scriptManagerTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.ScriptManagerType");
+		std::wstring scriptManagerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.ScriptManagerType");
 		const TypeInfo* scriptManagerType = TypeInfo::find(scriptManagerTypeName);
 		if (scriptManagerType)
 		{
@@ -403,8 +403,8 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.SettingsChanged")
 	{
-		std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
-		int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
+		std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+		int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 14);
 		m_edit->setFont(ui::Font(font, fontSize));
 		m_edit->update();
 	}

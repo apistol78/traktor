@@ -81,7 +81,7 @@ bool SoundSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 	m_editMixerFrames = new ui::Edit();
 	m_editMixerFrames->create(container, L"", ui::WsClientBorder, new ui::NumericEditValidator(false, 1, 16));
 
-	std::wstring soundDriverType = settings->getProperty< PropertyString >(L"Editor.SoundDriver");
+	std::wstring soundDriverType = settings->getProperty< std::wstring >(L"Editor.SoundDriver");
 
 	TypeInfoSet soundDriverTypes;
 	type_of< sound::ISoundDriver >().findAllOf(soundDriverTypes, false);
@@ -94,9 +94,9 @@ bool SoundSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 			m_dropSoundDriver->select(index);
 	}
 
-	m_editVirtualChannels->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.SoundVirtualChannels")));
+	m_editVirtualChannels->setText(toString(settings->getProperty< int32_t >(L"Editor.SoundVirtualChannels")));
 
-	int32_t sampleRate = settings->getProperty< PropertyInteger >(L"Editor.SoundSampleRate");
+	int32_t sampleRate = settings->getProperty< int32_t >(L"Editor.SoundSampleRate");
 	switch (sampleRate)
 	{
 	case 11025:
@@ -113,16 +113,16 @@ bool SoundSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 		break;
 	}
 
-	int32_t bitsPerSample = settings->getProperty< PropertyInteger >(L"Editor.SoundBitsPerSample");
+	int32_t bitsPerSample = settings->getProperty< int32_t >(L"Editor.SoundBitsPerSample");
 	if (bitsPerSample == 8)
 		m_dropBitsPerSample->select(0);
 	else if (bitsPerSample == 16)
 		m_dropBitsPerSample->select(1);
 
-	m_dropHwChannels->select(settings->getProperty< PropertyInteger >(L"Editor.SoundHwChannels") - 1);
+	m_dropHwChannels->select(settings->getProperty< int32_t >(L"Editor.SoundHwChannels") - 1);
 
-	m_editFrameSamples->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.SoundFrameSamples")));
-	m_editMixerFrames->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.SoundMixerFrames")));
+	m_editFrameSamples->setText(toString(settings->getProperty< int32_t >(L"Editor.SoundFrameSamples")));
+	m_editMixerFrames->setText(toString(settings->getProperty< int32_t >(L"Editor.SoundMixerFrames")));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_SOUND"));
 	return true;

@@ -295,7 +295,7 @@ ShaderPipeline::ShaderPipeline()
 
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 {
-	std::wstring programCompilerTypeName = settings->getProperty< PropertyString >(L"ShaderPipeline.ProgramCompiler");
+	std::wstring programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 
 	const TypeInfo* programCompilerType = TypeInfo::find(programCompilerTypeName);
 	if (!programCompilerType)
@@ -312,12 +312,12 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 	}
 
 	m_compilerSettings = settings->getProperty< PropertyGroup >(L"ShaderPipeline.ProgramCompilerSettings");
-	m_includeOnlyTechniques = settings->getProperty< PropertyStringSet >(L"ShaderPipeline.IncludeOnlyTechniques");
-	m_frequentUniformsAsLinear = settings->getProperty< PropertyBoolean >(L"ShaderPipeline.FrequentUniformsAsLinear", m_frequentUniformsAsLinear);
-	m_optimize = settings->getProperty< PropertyInteger >(L"ShaderPipeline.Optimize", m_optimize);
-	m_validate = settings->getProperty< PropertyBoolean >(L"ShaderPipeline.Validate", m_validate);
-	m_debugCompleteGraphs = settings->getProperty< PropertyBoolean >(L"ShaderPipeline.DebugCompleteGraphs", false);
-	m_debugPath = settings->getProperty< PropertyString >(L"ShaderPipeline.DebugPath", L"");
+	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
+	m_frequentUniformsAsLinear = settings->getProperty< bool >(L"ShaderPipeline.FrequentUniformsAsLinear", m_frequentUniformsAsLinear);
+	m_optimize = settings->getProperty< int32_t >(L"ShaderPipeline.Optimize", m_optimize);
+	m_validate = settings->getProperty< bool >(L"ShaderPipeline.Validate", m_validate);
+	m_debugCompleteGraphs = settings->getProperty< bool >(L"ShaderPipeline.DebugCompleteGraphs", false);
+	m_debugPath = settings->getProperty< std::wstring >(L"ShaderPipeline.DebugPath", L"");
 
 	T_DEBUG(L"Using optimization level " << m_optimize << (m_validate ? L" with validation" : L" without validation"));
 	return true;

@@ -24,18 +24,18 @@ class T_DLLCLASS IPipelineSettings : public Object
 public:
 	virtual Ref< const IPropertyValue > getProperty(const std::wstring& propertyName) const = 0;
 
-	template < typename PropertyType >
-	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName, const typename PropertyType::value_type_t& defaultValue) const
+	template < typename ValueType >
+	typename PropertyTrait< ValueType >::return_type_t getProperty(const std::wstring& propertyName, typename PropertyTrait< ValueType >::default_value_type_t defaultValue) const
 	{
 		Ref< const IPropertyValue > value = getProperty(propertyName);
-		return value ? PropertyType::get(value) : defaultValue;
+		return value ? PropertyTrait< ValueType >::property_type_t::get(value) : defaultValue;
 	}
 
-	template < typename PropertyType >
-	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName) const
+	template < typename ValueType >
+	typename PropertyTrait< ValueType >::return_type_t getProperty(const std::wstring& propertyName) const
 	{
 		Ref< const IPropertyValue > value = getProperty(propertyName);
-		return PropertyType::get(value);
+		return PropertyTrait< ValueType >::property_type_t::get(value);
 	}
 };
 

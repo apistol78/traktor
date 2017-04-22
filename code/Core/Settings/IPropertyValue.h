@@ -27,6 +27,12 @@ public:
 	virtual Ref< IPropertyValue > clone() const = 0;
 };
 
+/*!
+ * \ingroup Core
+ */
+template< typename ValueType >
+struct PropertyTrait {};
+
 }
 
 #endif	// traktor_IPropertyValue_H

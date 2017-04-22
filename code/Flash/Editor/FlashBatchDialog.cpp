@@ -102,7 +102,7 @@ void FlashBatchDialog::addTexture()
 	}
 	fileDialog.destroy();
 
-	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	for (std::vector< Path >::iterator i = fileNames.begin(); i != fileNames.end(); ++i)
 	{

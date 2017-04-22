@@ -41,6 +41,17 @@ private:
 	value_type_t m_value;
 };
 
+/*!
+ * \ingroup Core
+ */
+template< >
+struct PropertyTrait< bool >
+{
+	typedef PropertyBoolean property_type_t;
+	typedef bool default_value_type_t;
+	typedef bool return_type_t;
+};
+
 }
 
 #endif	// traktor_PropertyBoolean_H

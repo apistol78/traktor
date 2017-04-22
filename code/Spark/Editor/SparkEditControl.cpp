@@ -149,7 +149,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		const PropertyGroup* settings = m_editor->getSettings();
 		T_ASSERT (settings);
 
-		Color4ub clearColor = settings->getProperty< PropertyColor >(L"Editor.Colors/Background");
+		Color4ub clearColor = settings->getProperty< Color4ub >(L"Editor.Colors/Background");
 
 		float c[4];
 		clearColor.getRGBA32F(c);

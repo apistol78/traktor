@@ -50,7 +50,7 @@ bool VideoEditorPage::create(ui::Container* parent)
 		return false;
 
 	// Open file stream to source video.
-	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 
 	Ref< IStream > stream = FileSystem::getInstance().open(fileName, File::FmRead);

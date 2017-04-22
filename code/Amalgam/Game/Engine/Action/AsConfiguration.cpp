@@ -49,8 +49,8 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(IEnvironment* environment)
 	current->m_settings = settings;
 
 	// Get configured display mode; if no set then get current display mode.
-	current->m_displayModeWidth = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", 0);
-	current->m_displayModeHeight = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", 0);
+	current->m_displayModeWidth = settings->getProperty< int32_t >(L"Render.DisplayMode/Width", 0);
+	current->m_displayModeHeight = settings->getProperty< int32_t >(L"Render.DisplayMode/Height", 0);
 
 	if (current->m_displayModeWidth == 0 || current->m_displayModeHeight == 0)
 	{
@@ -71,24 +71,24 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(IEnvironment* environment)
 	}
 
 	// Get other current settings.
-	current->m_fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
-	current->m_waitVBlanks = settings->getProperty< PropertyInteger >(L"Render.WaitVBlanks", 1);
-	current->m_multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 0);
-	current->m_stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
-	current->m_textureQuality = (Quality)settings->getProperty< PropertyInteger >(L"Render.TextureQuality", QtMedium);
-	current->m_shadowQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", QtMedium);
-	current->m_ambientOcclusionQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", QtMedium);
-	current->m_antiAliasQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", QtMedium);
-	current->m_particleQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", QtMedium);
-	current->m_terrainQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.TerrainQuality", QtMedium);
-	current->m_oceanQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", QtMedium);
-	current->m_imageProcessQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ImageProcessQuality", QtHigh);
-	current->m_gamma = settings->getProperty< PropertyFloat >(L"World.Gamma", 2.2f);
-	current->m_mouseSensitivity = settings->getProperty< PropertyFloat >(L"Input.MouseSensitivity", 0.5f);
-	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
-	current->m_soundDriver = settings->getProperty< PropertyString >(L"Audio.Type");
-	current->m_masterVolume = settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f);
-	current->m_autoMute = settings->getProperty< PropertyBoolean >(L"Audio.AutoMute", true);
+	current->m_fullscreen = settings->getProperty< bool >(L"Render.FullScreen", false);
+	current->m_waitVBlanks = settings->getProperty< int32_t >(L"Render.WaitVBlanks", 1);
+	current->m_multiSample = settings->getProperty< int32_t >(L"Render.MultiSample", 0);
+	current->m_stereoscopic = settings->getProperty< bool >(L"Render.Stereoscopic", false);
+	current->m_textureQuality = (Quality)settings->getProperty< int32_t >(L"Render.TextureQuality", QtMedium);
+	current->m_shadowQuality = (Quality)settings->getProperty< int32_t >(L"World.ShadowQuality", QtMedium);
+	current->m_ambientOcclusionQuality = (Quality)settings->getProperty< int32_t >(L"World.AmbientOcclusionQuality", QtMedium);
+	current->m_antiAliasQuality = (Quality)settings->getProperty< int32_t >(L"World.AntiAliasQuality", QtMedium);
+	current->m_particleQuality = (Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", QtMedium);
+	current->m_terrainQuality = (Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", QtMedium);
+	current->m_oceanQuality = (Quality)settings->getProperty< int32_t >(L"World.OceanQuality", QtMedium);
+	current->m_imageProcessQuality = (Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", QtHigh);
+	current->m_gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
+	current->m_mouseSensitivity = settings->getProperty< float >(L"Input.MouseSensitivity", 0.5f);
+	current->m_rumbleEnable = settings->getProperty< bool >(L"Input.Rumble", true);
+	current->m_soundDriver = settings->getProperty< std::wstring >(L"Audio.Type");
+	current->m_masterVolume = settings->getProperty< float >(L"Audio.MasterVolume", 1.0f);
+	current->m_autoMute = settings->getProperty< bool >(L"Audio.AutoMute", true);
 
 	Ref< const PropertyGroup > volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
 	if (volumes)
@@ -312,7 +312,7 @@ bool AsConfiguration::getBoolean(const std::wstring& name) const
 		return PropertyBoolean::get(i->second);
 
 	if (m_settings)
-		return m_settings->getProperty< PropertyBoolean >(name);
+		return m_settings->getProperty< bool >(name);
 	else
 		return false;
 }
@@ -329,7 +329,7 @@ int32_t AsConfiguration::getInteger(const std::wstring& name) const
 		return PropertyInteger::get(i->second);
 
 	if (m_settings)
-		return m_settings->getProperty< PropertyInteger >(name);
+		return m_settings->getProperty< int32_t >(name);
 	else
 		return false;
 }
@@ -346,7 +346,7 @@ float AsConfiguration::getFloat(const std::wstring& name) const
 		return PropertyFloat::get(i->second);
 
 	if (m_settings)
-		return m_settings->getProperty< PropertyFloat >(name);
+		return m_settings->getProperty< float >(name);
 	else
 		return false;
 }

@@ -34,7 +34,7 @@ bool RuntimePlugin::shutdown(IEnvironment* environment)
 
 Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment) const
 {
-	Guid startupGuid(environment->getSettings()->getProperty< PropertyString >(L"Amalgam.Startup"));
+	Guid startupGuid(environment->getSettings()->getProperty< std::wstring >(L"Amalgam.Startup"));
 
 	Ref< StageData > stageData = environment->getDatabase()->getObjectReadOnly< StageData >(startupGuid);
 	if (!stageData)

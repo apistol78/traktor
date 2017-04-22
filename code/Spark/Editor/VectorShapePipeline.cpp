@@ -57,7 +57,7 @@ VectorShapePipeline::VectorShapePipeline()
 
 bool VectorShapePipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 

@@ -142,14 +142,14 @@ MeshPipeline::MeshPipeline()
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-	m_promoteHalf = settings->getProperty< PropertyBoolean >(L"MeshPipeline.PromoteHalf", false);
-	m_enableCustomShaders = settings->getProperty< PropertyBoolean >(L"MeshPipeline.EnableCustomShaders", true);
-	m_enableCustomTemplates = settings->getProperty< PropertyBoolean >(L"MeshPipeline.EnableCustomTemplates", true);
-	m_enableBakeOcclusion = settings->getProperty< PropertyBoolean >(L"MeshPipeline.BakeOcclusion", true);
-	m_includeOnlyTechniques = settings->getProperty< PropertyStringSet >(L"ShaderPipeline.IncludeOnlyTechniques");
+	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_promoteHalf = settings->getProperty< bool >(L"MeshPipeline.PromoteHalf", false);
+	m_enableCustomShaders = settings->getProperty< bool >(L"MeshPipeline.EnableCustomShaders", true);
+	m_enableCustomTemplates = settings->getProperty< bool >(L"MeshPipeline.EnableCustomTemplates", true);
+	m_enableBakeOcclusion = settings->getProperty< bool >(L"MeshPipeline.BakeOcclusion", true);
+	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
 
-	std::wstring programCompilerTypeName = settings->getProperty< PropertyString >(L"ShaderPipeline.ProgramCompiler");
+	std::wstring programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 
 	const TypeInfo* programCompilerType = TypeInfo::find(programCompilerTypeName);
 	if (!programCompilerType)

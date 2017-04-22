@@ -158,7 +158,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	}
 
 	// Restore last state.
-	Ref< ui::HierarchicalState > state = dynamic_type_cast< ui::HierarchicalState* >(m_settings->getProperty< PropertyObject >(L"Editor.BrowseInstanceTreeState"));
+	Ref< ui::HierarchicalState > state = dynamic_type_cast< ui::HierarchicalState* >(m_settings->getProperty< Ref< ISerializable > >(L"Editor.BrowseInstanceTreeState"));
 	if (state)
 		m_treeDatabase->applyState(state);
 

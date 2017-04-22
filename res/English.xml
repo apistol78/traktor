@@ -2133,6 +2133,10 @@
       <second>Post Process</second>
     </item>
     <item>
+    	<first>SCENE_EDITOR_REFLECTIONS</first>
+    	<second>Reflections</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_SHADOWS</first>
       <second>Shadows</second>
     </item>

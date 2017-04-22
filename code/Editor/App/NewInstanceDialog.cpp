@@ -161,7 +161,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	m_categoryTree->update();
 
 	// Restore last state.
-	Ref< ui::HierarchicalState > state = dynamic_type_cast< ui::HierarchicalState* >(m_settings->getProperty< PropertyObject >(L"Editor.NewInstanceTreeState"));
+	Ref< ui::HierarchicalState > state = dynamic_type_cast< ui::HierarchicalState* >(m_settings->getProperty< Ref< ISerializable > >(L"Editor.NewInstanceTreeState"));
 	if (state)
 		m_categoryTree->applyState(state);
 

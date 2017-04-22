@@ -64,7 +64,7 @@ void SearchControl::setFocus()
 void SearchControl::show()
 {
 	if (!isVisible(false))
-		m_editSearch->setText(m_editor->getSettings()->getProperty< PropertyString >(L"Editor.LastSearch", L""));
+		m_editSearch->setText(m_editor->getSettings()->getProperty< std::wstring >(L"Editor.LastSearch", L""));
 
 	ui::Container::show();
 }

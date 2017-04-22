@@ -119,7 +119,7 @@ void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::custom::Node* e
 		Ref< TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< TextureAsset >(textureGuid);
 		if (textureAsset)
 		{
-			std::wstring assetPath = editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+			std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 			Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
 
 			Ref< editor::IThumbnailGenerator > thumbnailGenerator = editor->getStoreObject< editor::IThumbnailGenerator >(L"ThumbnailGenerator");

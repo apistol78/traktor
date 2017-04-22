@@ -280,9 +280,9 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.OcclusionTexturePipeline", 3, Occlus
 
 bool OcclusionTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-	m_editor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor", false);
-	m_build = settings->getProperty< PropertyBoolean >(L"OcclusionPipeline.Build", true);
+	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
+	m_build = settings->getProperty< bool >(L"OcclusionPipeline.Build", true);
 	return true;
 }
 

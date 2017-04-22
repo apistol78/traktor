@@ -135,7 +135,7 @@ ScriptPipeline::~ScriptPipeline()
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {
 	// Get implementation type name; return true if no type specified to silence error from pipeline if scripting isn't used.
-	std::wstring scriptManagerTypeName = settings->getProperty< PropertyString >(L"Editor.ScriptManagerType");
+	std::wstring scriptManagerTypeName = settings->getProperty< std::wstring >(L"Editor.ScriptManagerType");
 	if (scriptManagerTypeName.empty())
 		return true;
 
@@ -153,11 +153,11 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 	// Create preprocessor.
 	m_preprocessor = new Preprocessor();
 	
-	std::set< std::wstring > definitions = settings->getProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions");
+	std::set< std::wstring > definitions = settings->getProperty< std::set< std::wstring > >(L"ScriptPipeline.PreprocessorDefinitions");
 	for (std::set< std::wstring >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
 		m_preprocessor->setDefinition(*i);
 
-	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	return editor::DefaultPipeline::create(settings);
 }

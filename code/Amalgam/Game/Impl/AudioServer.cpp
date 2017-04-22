@@ -34,7 +34,7 @@ AudioServer::AudioServer()
 
 bool AudioServer::create(const PropertyGroup* settings, const SystemApplication& sysapp)
 {
-	m_audioType = settings->getProperty< PropertyString >(L"Audio.Type");
+	m_audioType = settings->getProperty< std::wstring >(L"Audio.Type");
 
 	// Create sound driver.
 	Ref< sound::ISoundDriver > soundDriver = dynamic_type_cast< sound::ISoundDriver* >(TypeInfo::createInstance(m_audioType));
@@ -42,7 +42,7 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 		return false;
 
 	// Create a wrapping "write out" driver if we want to debug audio.
-	if (settings->getProperty< PropertyBoolean >(L"Audio.WriteOut", false))
+	if (settings->getProperty< bool >(L"Audio.WriteOut", false))
 	{
 		log::info << L"Creating \"write out\" sound driver wrapper" << Endl;
 		soundDriver = new sound::SoundDriverWriteOut(soundDriver);
@@ -54,10 +54,10 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	sound::SoundSystemCreateDesc sscd;
 	sscd.sysapp = sysapp;
 #if !defined(_PS3)
-	sscd.channels = settings->getProperty< PropertyInteger >(L"Audio.Channels", 16);
-	sscd.driverDesc.sampleRate = settings->getProperty< PropertyInteger >(L"Audio.SampleRate", 44100);
-	sscd.driverDesc.bitsPerSample = settings->getProperty< PropertyInteger >(L"Audio.BitsPerSample", 16);
-	sscd.driverDesc.hwChannels = settings->getProperty< PropertyInteger >(L"Audio.HwChannels", 2);
+	sscd.channels = settings->getProperty< int32_t >(L"Audio.Channels", 16);
+	sscd.driverDesc.sampleRate = settings->getProperty< int32_t >(L"Audio.SampleRate", 44100);
+	sscd.driverDesc.bitsPerSample = settings->getProperty< int32_t >(L"Audio.BitsPerSample", 16);
+	sscd.driverDesc.hwChannels = settings->getProperty< int32_t >(L"Audio.HwChannels", 2);
 #	if defined(__IOS__) || defined(__PNACL__) || defined(__ANDROID__)
 	sscd.driverDesc.frameSamples = 1024;
 #	else
@@ -85,8 +85,8 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	}
 
 	// Set master volume.
-	m_soundSystem->setVolume(settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f));
-	m_autoMute = settings->getProperty< PropertyBoolean >(L"Audio.AutoMute", true);
+	m_soundSystem->setVolume(settings->getProperty< float >(L"Audio.MasterVolume", 1.0f));
+	m_autoMute = settings->getProperty< bool >(L"Audio.AutoMute", true);
 
 	// Set category volumes.
 	Ref< const PropertyGroup > volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
@@ -105,9 +105,9 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	}
 
 	// Create surround environment.
-	float surroundMaxDistance = settings->getProperty< PropertyFloat >(L"Audio.Surround/MaxDistance", 10.0f);
-	float surroundInnerRadius = settings->getProperty< PropertyFloat >(L"Audio.Surround/InnerRadius", 1.0f);
-	float surroundFallOffExponent = settings->getProperty< PropertyFloat >(L"Audio.Surround/FallOffExponent", 4.0f);
+	float surroundMaxDistance = settings->getProperty< float >(L"Audio.Surround/MaxDistance", 10.0f);
+	float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", 1.0f);
+	float surroundFallOffExponent = settings->getProperty< float >(L"Audio.Surround/FallOffExponent", 4.0f);
 	m_surroundEnvironment = new sound::SurroundEnvironment(
 		surroundMaxDistance,
 		surroundInnerRadius,
@@ -210,7 +210,7 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 		return CrUnaffected;
 
 	// Replace audio driver.
-	std::wstring audioType = settings->getProperty< PropertyString >(L"Audio.Type");
+	std::wstring audioType = settings->getProperty< std::wstring >(L"Audio.Type");
 	if (audioType != m_audioType)
 	{
 		Ref< sound::ISoundDriver > soundDriver = dynamic_type_cast< sound::ISoundDriver* >(TypeInfo::createInstance(audioType));
@@ -221,8 +221,8 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	}
 
 	// Set master volume.
-	m_soundSystem->setVolume(settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f));
-	m_autoMute = settings->getProperty< PropertyBoolean >(L"Audio.AutoMute", true);
+	m_soundSystem->setVolume(settings->getProperty< float >(L"Audio.MasterVolume", 1.0f));
+	m_autoMute = settings->getProperty< bool >(L"Audio.AutoMute", true);
 
 	// Set category volumes.
 	Ref< const PropertyGroup > volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
@@ -241,8 +241,8 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	}
 
 	// Configure surround environment distances.
-	float surroundMaxDistance = settings->getProperty< PropertyFloat >(L"Audio.Surround/MaxDistance", 10.0f);
-	float surroundInnerRadius = settings->getProperty< PropertyFloat >(L"Audio.Surround/InnerRadius", 1.0f);
+	float surroundMaxDistance = settings->getProperty< float >(L"Audio.Surround/MaxDistance", 10.0f);
+	float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", 1.0f);
 	m_surroundEnvironment->setMaxDistance(surroundMaxDistance);
 	m_surroundEnvironment->setInnerRadius(surroundInnerRadius);
 

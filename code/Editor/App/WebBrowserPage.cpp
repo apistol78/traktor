@@ -49,7 +49,7 @@ void WebBrowserPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	if (event->getCommand() == L"Editor.WebBrowser.Home")
 	{
-		std::wstring url = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.HomeUrl", L"about:blank");
+		std::wstring url = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.HomeUrl", L"about:blank");
 		m_browser->navigate(url);
 	}
 	else if (event->getCommand() == L"Editor.WebBrowser.Back")

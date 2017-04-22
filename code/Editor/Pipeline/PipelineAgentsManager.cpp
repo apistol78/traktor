@@ -171,10 +171,10 @@ void PipelineAgentsManager::threadUpdate()
 			if ((*i)->getType() != L"Pipeline/Agent2")
 				continue;
 
-			std::wstring description = (*i)->getProperties()->getProperty< PropertyString >(L"Description", L"");
-			std::wstring host = (*i)->getProperties()->getProperty< PropertyString >(L"Host", L"");
-			int32_t port = (*i)->getProperties()->getProperty< PropertyInteger >(L"Port", 0);
-			int32_t agents = (*i)->getProperties()->getProperty< PropertyInteger >(L"Agents", 0);
+			std::wstring description = (*i)->getProperties()->getProperty< std::wstring >(L"Description", L"");
+			std::wstring host = (*i)->getProperties()->getProperty< std::wstring >(L"Host", L"");
+			int32_t port = (*i)->getProperties()->getProperty< int32_t >(L"Port", 0);
+			int32_t agents = (*i)->getProperties()->getProperty< int32_t >(L"Agents", 0);
 
 			for (int32_t j = 0; j < agents; ++j)
 			{

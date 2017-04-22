@@ -44,7 +44,7 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 	fileDialog.destroy();
 
 	// Create path relative to asset path.
-	std::wstring assetPath = editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),

@@ -696,7 +696,7 @@ void FlashLayer::createMoviePlayer()
 	// Create debug Flash renderer.
 	if (!m_displayRendererWire)
 	{
-		if (m_environment->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.FlashDebugWires", false))
+		if (m_environment->getSettings()->getProperty< bool >(L"Amalgam.FlashDebugWires", false))
 		{
 			Ref< flash::WireDisplayRenderer > displayRenderer = new flash::WireDisplayRenderer(m_displayRendererAcc);
 			if (!displayRenderer->create(

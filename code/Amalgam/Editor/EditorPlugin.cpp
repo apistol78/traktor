@@ -336,7 +336,7 @@ void EditorPlugin::handleWorkspaceOpened()
 	m_connectionManager = m_editor->getStoreObject< db::ConnectionManager >(L"DbConnectionManager");
 
 	// Create slave pipeline process.
-	std::wstring systemRoot = m_editor->getSettings()->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
+	std::wstring systemRoot = m_editor->getSettings()->getProperty< std::wstring >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
 
 #if defined(_WIN32)
 #	if defined(_WIN64)
@@ -351,7 +351,7 @@ void EditorPlugin::handleWorkspaceOpened()
 #endif
 
 #if !defined(__LINUX__)
-	bool hidden = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.PipelineHidden", true);
+	bool hidden = m_editor->getSettings()->getProperty< bool >(L"Amalgam.PipelineHidden", true);
 
 	m_pipelineSlaveProcess = OS::getInstance().execute(
 		systemRoot + L"/bin/latest/" + systemOs + L"/releaseshared/Traktor.Pipeline.App -slave",
@@ -728,7 +728,7 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
 		if (m_toolTweaks->get(8)->isChecked())
 		{
-			std::set< std::wstring > modules = tweakSettings->getProperty< PropertyStringSet >(L"Amalgam.Modules");
+			std::set< std::wstring > modules = tweakSettings->getProperty< std::set< std::wstring > >(L"Amalgam.Modules");
 			modules.insert(L"Traktor.Render.Capture");
 			tweakSettings->setProperty< PropertyStringSet >(L"Amalgam.Modules", modules);
 			tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemCapture");

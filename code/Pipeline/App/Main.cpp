@@ -283,7 +283,7 @@ ConnectionAndCache openDatabase(const PropertyGroup* settings, const std::wstrin
 
 	if (!create)
 	{
-		std::wstring cachePath = settings->getProperty< PropertyString >(L"Pipeline.CachePath");
+		std::wstring cachePath = settings->getProperty< std::wstring >(L"Pipeline.CachePath");
 		g_databaseConnections[connectionString].cache = new editor::PipelineInstanceCache(database, cachePath);
 	}
 
@@ -557,7 +557,7 @@ bool perform(const PipelineParameters* params)
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
 	}
 
-	std::set< std::wstring > modules = settings->getProperty< PropertyStringSet >(L"Editor.Modules");
+	std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
 		if (g_loadedModules.find(*i) == g_loadedModules.end())
@@ -577,8 +577,8 @@ bool perform(const PipelineParameters* params)
 		}
 	}
 
-	std::wstring sourceDatabaseCS = settings->getProperty< PropertyString >(L"Editor.SourceDatabase");
-	std::wstring outputDatabaseCS = settings->getProperty< PropertyString >(L"Editor.OutputDatabase");
+	std::wstring sourceDatabaseCS = settings->getProperty< std::wstring >(L"Editor.SourceDatabase");
+	std::wstring outputDatabaseCS = settings->getProperty< std::wstring >(L"Editor.OutputDatabase");
 	
 	ConnectionAndCache sourceDatabaseAndCache = openDatabase(settings, sourceDatabaseCS, false);
 	if (!sourceDatabaseAndCache.database)
@@ -594,8 +594,8 @@ bool perform(const PipelineParameters* params)
 		return false;
 	}
 
-	std::wstring connectionString = settings->getProperty< PropertyString >(L"Pipeline.Db");
-	std::wstring cachePath = settings->getProperty< PropertyString >(L"Pipeline.CachePath");
+	std::wstring connectionString = settings->getProperty< std::wstring >(L"Pipeline.Db");
+	std::wstring cachePath = settings->getProperty< std::wstring >(L"Pipeline.CachePath");
 
 	Ref< editor::IPipelineDb > pipelineDb = new editor::PipelineDbFlat();
 	if (!pipelineDb->open(connectionString))
@@ -606,7 +606,7 @@ bool perform(const PipelineParameters* params)
 
 	// Create cache if enabled.
 	Ref< editor::IPipelineCache > pipelineCache;
-	if (settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false))
+	if (settings->getProperty< bool >(L"Pipeline.MemCached", false))
 	{
 		pipelineCache = new editor::MemCachedPipelineCache();
 		if (!pipelineCache->create(settings))
@@ -615,7 +615,7 @@ bool perform(const PipelineParameters* params)
 			pipelineCache = 0;
 		}
 	}
-	if (settings->getProperty< PropertyBoolean >(L"Pipeline.FileCache", false))
+	if (settings->getProperty< bool >(L"Pipeline.FileCache", false))
 	{
 		pipelineCache = new editor::FilePipelineCache();
 		if (!pipelineCache->create(settings))
@@ -631,7 +631,7 @@ bool perform(const PipelineParameters* params)
 
 	// Collect dependencies.
 	Ref< editor::IPipelineDepends > pipelineDepends;
-	if (settings->getProperty< PropertyBoolean >(L"Pipeline.DependsThreads", true))
+	if (settings->getProperty< bool >(L"Pipeline.DependsThreads", true))
 	{
 		pipelineDepends = new editor::PipelineDependsParallel(
 			&pipelineFactory,
@@ -696,7 +696,7 @@ bool perform(const PipelineParameters* params)
 		pipelineDb,
 		sourceDatabaseAndCache.cache,
 		statusListener.ptr(),
-		settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
+		settings->getProperty< bool >(L"Pipeline.BuildThreads", true)
 	);
 
 	if (params->getRebuild())

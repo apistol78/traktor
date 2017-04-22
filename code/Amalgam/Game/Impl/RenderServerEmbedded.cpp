@@ -77,8 +77,8 @@ RenderServerEmbedded::RenderServerEmbedded()
 
 bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp, const SystemWindow& syswin)
 {
-	std::wstring renderType = defaultSettings->getProperty< PropertyString >(L"Render.Type");
-	std::wstring captureRenderType = settings->getProperty< PropertyString >(L"Render.CaptureType");
+	std::wstring renderType = defaultSettings->getProperty< std::wstring >(L"Render.Type");
+	std::wstring captureRenderType = settings->getProperty< std::wstring >(L"Render.CaptureType");
 
 	Ref< render::IRenderSystem > renderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(renderType));
 	if (!renderSystem)
@@ -94,13 +94,13 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 		std::swap(captureRenderSystem, renderSystem);
 	}
 
-	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
+	int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
 
 	render::RenderSystemDesc rsd;
 	rsd.capture = captureRenderSystem;
 	rsd.sysapp = sysapp;
-	rsd.adapter = settings->getProperty< PropertyInteger >(L"Render.Adapter", -1);
-	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
+	rsd.adapter = settings->getProperty< int32_t >(L"Render.Adapter", -1);
+	rsd.mipBias = settings->getProperty< float >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
 	rsd.verbose = true;
 
@@ -124,11 +124,11 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 		}
 	}
 
-	m_renderViewDesc.depthBits = settings->getProperty< PropertyInteger >(L"Render.DepthBits", 24);
-	m_renderViewDesc.stencilBits = settings->getProperty< PropertyInteger >(L"Render.StencilBits", 8);
-	m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 4);
+	m_renderViewDesc.depthBits = settings->getProperty< int32_t >(L"Render.DepthBits", 24);
+	m_renderViewDesc.stencilBits = settings->getProperty< int32_t >(L"Render.StencilBits", 8);
+	m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.MultiSample", 4);
 	m_renderViewDesc.multiSample = sanitizeMultiSample(m_renderViewDesc.multiSample);
-	m_renderViewDesc.waitVBlanks = settings->getProperty< PropertyInteger >(L"Render.WaitVBlanks", 1);
+	m_renderViewDesc.waitVBlanks = settings->getProperty< int32_t >(L"Render.WaitVBlanks", 1);
 	m_renderViewDesc.syswin = syswin;
 	m_renderViewDesc.stereoscopic = false;
 
@@ -165,7 +165,7 @@ void RenderServerEmbedded::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	int32_t textureQuality = environment->getSettings()->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
+	int32_t textureQuality = environment->getSettings()->getProperty< int32_t >(L"Render.TextureQuality", 2);
 	int32_t skipMips = skipMipsFromQuality(textureQuality);
 
 	m_textureFactory = new render::TextureFactory(m_renderSystem, skipMips);
@@ -181,7 +181,7 @@ int32_t RenderServerEmbedded::reconfigure(IEnvironment* environment, const Prope
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	int32_t result = CrUnaffected;
 
-	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
+	int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
 
 	// Update texture quality; manifest through skipping high-detail mips.
 	int32_t skipMips = skipMipsFromQuality(textureQuality);
@@ -202,8 +202,8 @@ int32_t RenderServerEmbedded::reconfigure(IEnvironment* environment, const Prope
 
 	// Reset render system.
 	render::RenderSystemDesc rsd;
-	rsd.adapter = settings->getProperty< PropertyInteger >(L"Render.Adapter", -1);
-	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
+	rsd.adapter = settings->getProperty< int32_t >(L"Render.Adapter", -1);
+	rsd.mipBias = settings->getProperty< float >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
 	if (!m_renderSystem->reset(rsd))
 		return CrFailed;

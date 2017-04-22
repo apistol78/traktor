@@ -369,7 +369,7 @@ bool findShortcutCommandMapping(const PropertyGroup* settings, const std::wstrin
 	if (!shortcutGroup)
 		return false;
 
-	std::wstring keyDesc = shortcutGroup->getProperty< PropertyString >(command);
+	std::wstring keyDesc = shortcutGroup->getProperty< std::wstring >(command);
 	if (keyDesc.empty())
 		return false;
 
@@ -416,7 +416,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_mergedSettings = m_globalSettings;
 
 	// Load editor stylesheet.
-	std::wstring styleSheetName = m_mergedSettings->getProperty< PropertyString >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/themes/Light/StyleSheet.xss");
+	std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/themes/Light/StyleSheet.xss");
 	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 	if (!styleSheet)
 	{
@@ -427,7 +427,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Load dependent modules.
 #if !defined(T_STATIC)
-	const std::set< std::wstring >& modules = m_mergedSettings->getProperty< PropertyStringSet >(L"Editor.Modules");
+	const std::set< std::wstring >& modules = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
 		log::info << L"Loading module \"" << *i << L"\"..." << Endl;
@@ -559,7 +559,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_dataBaseView = new DatabaseView(this);
 	m_dataBaseView->create(m_dock);
 	m_dataBaseView->setText(i18n::Text(L"TITLE_DATABASE"));
-	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.DatabaseVisible"))
+	if (!m_mergedSettings->getProperty< bool >(L"Editor.DatabaseVisible"))
 		m_dataBaseView->hide();
 
 	m_paneWest->dock(m_dataBaseView, true);
@@ -567,7 +567,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_propertiesView = new PropertiesView(this);
 	m_propertiesView->create(m_dock);
 	m_propertiesView->setText(i18n::Text(L"TITLE_PROPERTIES"));
-	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.PropertiesVisible"))
+	if (!m_mergedSettings->getProperty< bool >(L"Editor.PropertiesVisible"))
 		m_propertiesView->hide();
 
 	m_paneWest->dock(m_propertiesView, true, ui::DockPane::DrSouth, ui::scaleBySystemDPI(300));
@@ -583,7 +583,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_logView = new LogView(this);
 	m_logView->create(tabPageLog);
 	m_logView->setText(i18n::Text(L"TITLE_LOG"));
-	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.LogVisible"))
+	if (!m_mergedSettings->getProperty< bool >(L"Editor.LogVisible"))
 		m_logView->hide();
 
 	log::info.setGlobalTarget(new LogDualTarget(log::info.getGlobalTarget(), m_logView->getLogTarget()));
@@ -775,21 +775,21 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	updateShortcutTable();
 
 	// Create auxiliary tools.
-	Path thumbsPath = m_mergedSettings->getProperty< PropertyString >(L"Editor.ThumbsPath");
+	Path thumbsPath = m_mergedSettings->getProperty< std::wstring >(L"Editor.ThumbsPath");
 	setStoreObject(L"ThumbnailGenerator", new ThumbnailGenerator(thumbsPath));
 
 	// Restore last used form settings.
-	int32_t x = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.PositionX");
-	int32_t y = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.PositionY");
-	int32_t width = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeWidth", ui::scaleBySystemDPI(1280));
-	int32_t height = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeHeight", ui::scaleBySystemDPI(900));
+	int32_t x = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionX");
+	int32_t y = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionY");
+	int32_t width = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeWidth", ui::scaleBySystemDPI(1280));
+	int32_t height = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeHeight", ui::scaleBySystemDPI(900));
 	setRect(ui::Rect(x, y, x + width, y + height));
 
-	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.Maximized"))
+	if (m_mergedSettings->getProperty< bool >(L"Editor.Maximized"))
 		maximize();
 
 	// Open recently used workspace.
-	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.AutoOpenRecentlyUsedWorkspace", false))
+	if (m_mergedSettings->getProperty< bool >(L"Editor.AutoOpenRecentlyUsedWorkspace", false))
 	{
 		Path workspacePath = m_mru->getMostRecentlyUseFile();
 		if (!workspacePath.empty())
@@ -1017,7 +1017,7 @@ Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 
 	if (instance)
 	{
-		if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.BuildAfterBrowseInstance"))
+		if (m_mergedSettings->getProperty< bool >(L"Editor.BuildAfterBrowseInstance"))
 			buildAsset(instance->getGuid(), false);
 	}
 
@@ -1425,12 +1425,12 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	m_agentsManager = new PipelineAgentsManager(m_discoveryManager, m_streamServer, m_dbConnectionManager);
 	m_agentsManager->create(
 		m_mergedSettings,
-		m_mergedSettings->getProperty< PropertyString >(L"Editor.SourceDatabase"),
-		m_mergedSettings->getProperty< PropertyString >(L"Editor.OutputDatabase")
+		m_mergedSettings->getProperty< std::wstring >(L"Editor.SourceDatabase"),
+		m_mergedSettings->getProperty< std::wstring >(L"Editor.OutputDatabase")
 	);
 
 	// Open pipeline database.
-	std::wstring pipelineDbConnectionStr = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.Db");
+	std::wstring pipelineDbConnectionStr = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.Db");
 
 	m_pipelineDb = new PipelineDbFlat();
 	m_pipelineDb->open(pipelineDbConnectionStr);
@@ -1447,7 +1447,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	m_mru->usedFile(workspacePath);
 
 	// Create "Home" page.
-	std::wstring url = m_mergedSettings->getProperty< PropertyString >(L"Editor.HomeUrl", L"");
+	std::wstring url = m_mergedSettings->getProperty< std::wstring >(L"Editor.HomeUrl", L"");
 	if (!url.empty())
 	{
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
@@ -1597,7 +1597,7 @@ void EditorForm::updateAdditionalPanelMenu()
 
 void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstances)
 {
-	std::wstring cachePath = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.CachePath");
+	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.CachePath");
 	std::vector< Guid > assetGuids;
 
 	PipelineFactory pipelineFactory(m_mergedSettings);
@@ -1680,7 +1680,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	// Create cache if enabled.
 	Ref< editor::IPipelineCache > pipelineCache;
-	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false))
+	if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemCached", false))
 	{
 		pipelineCache = new editor::MemCachedPipelineCache();
 		if (!pipelineCache->create(m_mergedSettings))
@@ -1689,7 +1689,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 			pipelineCache = 0;
 		}
 	}
-	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache", false))
+	if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
 	{
 		pipelineCache = new editor::FilePipelineCache();
 		if (!pipelineCache->create(m_mergedSettings))
@@ -1699,7 +1699,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		}
 	}
 
-	std::wstring cachePath = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.CachePath");
+	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.CachePath");
 
 	// Create pipeline factory.
 	PipelineFactory pipelineFactory(m_mergedSettings);
@@ -1708,7 +1708,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	// Build dependencies.
 	Ref< IPipelineDepends > pipelineDepends;
-	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.DependsThreads", true))
+	if (m_mergedSettings->getProperty< bool >(L"Pipeline.DependsThreads", true))
 	{
 		pipelineDepends = new PipelineDependsParallel(
 			&pipelineFactory,
@@ -1759,7 +1759,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	Ref< IPipelineBuilder > pipelineBuilder;
 
 	if (
-		!m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildDistributed", false) ||
+		!m_mergedSettings->getProperty< bool >(L"Pipeline.BuildDistributed", false) ||
 		m_agentsManager->getAgentCount() <= 0
 	)
 		pipelineBuilder = new PipelineBuilder(
@@ -1770,7 +1770,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 			m_pipelineDb,
 			&instanceCache,
 			&listener,
-			m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
+			m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", true)
 		);
 	else
 		pipelineBuilder = new PipelineBuilderDistributed(
@@ -1888,7 +1888,7 @@ void EditorForm::buildAssets(bool rebuild)
 		return;
 
 	// Automatically save all opened instances.
-	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.AutoSave", false))
+	if (m_mergedSettings->getProperty< bool >(L"Editor.AutoSave", false))
 		saveAllDocuments();
 
 	// Collect root assets.
@@ -1896,7 +1896,7 @@ void EditorForm::buildAssets(bool rebuild)
 	log::info << IncreaseIndent;
 
 	std::vector< Guid > assetGuids;
-	std::vector< std::wstring > rootInstances = m_workspaceSettings->getProperty< PropertyStringArray >(L"Editor.RootInstances");
+	std::vector< std::wstring > rootInstances = m_workspaceSettings->getProperty< std::vector< std::wstring > >(L"Editor.RootInstances");
 	for (std::vector< std::wstring >::const_iterator i = rootInstances.begin(); i != rootInstances.end(); ++i)
 		assetGuids.push_back(Guid(*i));
 
@@ -1912,7 +1912,7 @@ Ref< IPipelineDependencySet > EditorForm::buildAssetDependencies(const ISerializ
 
 	Ref< IPipelineDependencySet > dependencySet = new PipelineDependencySet();
 
-	std::wstring cachePath = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.CachePath");
+	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.CachePath");
 
 	PipelineFactory pipelineFactory(m_mergedSettings);
 	PipelineInstanceCache instanceCache(m_sourceDatabase, cachePath);
@@ -1961,7 +1961,7 @@ void EditorForm::updateTitle()
 {
 	std::wstringstream ss;
 
-	std::wstring targetTitle = m_mergedSettings->getProperty< PropertyString >(L"Editor.TargetTitle");
+	std::wstring targetTitle = m_mergedSettings->getProperty< std::wstring >(L"Editor.TargetTitle");
 	if (!targetTitle.empty())
 		ss << targetTitle << L" - ";
 
@@ -2265,7 +2265,7 @@ void EditorForm::activateNextEditor()
 
 void EditorForm::loadLanguageDictionary()
 {
-	std::wstring dictionaryFile = m_mergedSettings->getProperty< PropertyString >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/res/English.xml");
+	std::wstring dictionaryFile = m_mergedSettings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/res/English.xml");
 
 	Ref< IStream > file = FileSystem::getInstance().open(dictionaryFile, File::FmRead);
 	if (!file)
@@ -2285,7 +2285,7 @@ void EditorForm::loadLanguageDictionary()
 
 void EditorForm::loadHelpDictionary()
 {
-	std::wstring helpFile = m_mergedSettings->getProperty< PropertyString >(L"Editor.Help");
+	std::wstring helpFile = m_mergedSettings->getProperty< std::wstring >(L"Editor.Help");
 
 	Ref< IStream > file = FileSystem::getInstance().open(helpFile, File::FmRead);
 	if (!file)
@@ -2458,7 +2458,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 					m_mergedSettings = m_globalSettings;
 
 				// Load editor stylesheet.
-				std::wstring styleSheetName = m_mergedSettings->getProperty< PropertyString >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/Light.xss");
+				std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/Light.xss");
 				Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 				if (styleSheet)
 					ui::Application::getInstance()->setStyleSheet(styleSheet);
@@ -2493,7 +2493,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.ViewHome")
 	{
-		std::wstring url = m_mergedSettings->getProperty< PropertyString >(L"Editor.HomeUrl", L"");
+		std::wstring url = m_mergedSettings->getProperty< std::wstring >(L"Editor.HomeUrl", L"");
 		if (!url.empty())
 		{
 			Ref< ui::TabPage > tabPage = new ui::TabPage();
@@ -2805,7 +2805,7 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 			}
 			updateView |= remote;
 		}
-		if (anyCommitted && m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"))
+		if (anyCommitted && m_mergedSettings->getProperty< bool >(L"Editor.BuildWhenSourceModified"))
 		{
 			buildAssets(false);
 
@@ -2894,7 +2894,7 @@ void EditorForm::threadAssetMonitor()
 	{
 		if (
 			m_sourceDatabase &&
-			m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified") &&
+			m_mergedSettings->getProperty< bool >(L"Editor.BuildWhenAssetModified") &&
 			m_lockBuild.wait(0)
 		)
 		{
@@ -2910,7 +2910,7 @@ void EditorForm::threadAssetMonitor()
 				std::vector< Guid > modifiedAssets;
 				RefArray< const File > modifiedFiles;
 
-				std::wstring assetPath = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+				std::wstring assetPath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 				for (RefArray< db::Instance >::const_iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
 				{
@@ -2977,8 +2977,8 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 	progress = 200;
 
 	// Open databases.
-	std::wstring sourceDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
-	std::wstring outputDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.OutputDatabase");
+	std::wstring sourceDatabase = m_mergedSettings->getProperty< std::wstring >(L"Editor.SourceDatabase");
+	std::wstring outputDatabase = m_mergedSettings->getProperty< std::wstring >(L"Editor.OutputDatabase");
 
 	m_sourceDatabase = openDatabase(sourceDatabase, false);
 	if (!m_sourceDatabase)

@@ -4,76 +4,79 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-75</first>
-				<second>636</second>
+				<first>-227</first>
+				<second>799</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
-				<first>-82</first>
-				<second>311</second>
+				<first>-468</first>
+				<second>272</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
-				<first>-82</first>
-				<second>397</second>
+				<first>-441</first>
+				<second>406</second>
 			</position>
 			<name>Origin</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>896</first>
-				<second>498</second>
+				<first>1247</first>
+				<second>505</second>
 			</position>
 			<name>HitPosition</name>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-75</first>
-				<second>551</second>
+				<first>-238</first>
+				<second>631</second>
 			</position>
 			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
-				<first>-122</first>
-				<second>354</second>
+				<first>-507</first>
+				<second>338</second>
 			</position>
 			<name>ViewDirection</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Reflect">
 			<comment/>
 			<position>
-				<first>141</first>
-				<second>306</second>
+				<first>-58</first>
+				<second>278</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-75</first>
-				<second>466</second>
+				<first>-228</first>
+				<second>484</second>
 			</position>
 			<parameterName>World_ColorMap</parameterName>
 			<type>PtTexture2D</type>
@@ -82,8 +85,8 @@
 		<item type="traktor.render.Script">
 			<comment/>
 			<position>
-				<first>368</first>
-				<second>583</second>
+				<first>366</first>
+				<second>695</second>
 			</position>
 			<name>RayCastFn_OpenGL</name>
 			<inputPins>
@@ -153,55 +156,60 @@
 			</samplers>
 			<script>
 			<![CDATA[
-const float StepLength = 1.5;
-const int MaxSteps = 16;
-const int BinarySearchSteps = 5;
-const float MaxDeltaDepth = 4.0;
-
-vec3 hitCoord = Origin.xyz;
-float deltaDepth = 0.0;
-float hitDepth = 0.0;
-
-// Scan coarse hit.
-for (int i = 0; i < MaxSteps; ++i)
+ENTRY
 {
-	hitCoord += Direction.xyz * StepLength;
+	const float StepLength = 1.5;
+	const int MaxSteps = 16;
+	const int BinarySearchSteps = 5;
+	const float MaxDeltaDepth = 4.0;
 	
-	vec4 projCoord = Projection * vec4(hitCoord, 1.0);
-	projCoord.xy /= projCoord.w;
-	projCoord.xy = projCoord.xy * vec2(0.5, -0.5) + vec2(0.5, 0.5);
-
-	hitDepth = texture(DepthMap_Sampler, projCoord.xy).x;
-	deltaDepth = hitDepth - hitCoord.z;
-	if (deltaDepth < 0.0 && deltaDepth > -MaxDeltaDepth)
-		break;
+	vec3 hitCoord = Origin.xyz;
+	float deltaDepth = 0.0;
+	float hitDepth = 0.0;
+	
+	// Scan coarse hit.
+	for (int i = 0; i < MaxSteps; ++i)
+	{
+		hitCoord += Direction.xyz * StepLength;
+		
+		vec4 projCoord = Projection * vec4(hitCoord, 1.0);
+		projCoord.xy /= projCoord.w;
+		projCoord.xy = projCoord.xy * vec2(0.5, -0.5) + vec2(0.5, 0.5);
+	
+		hitDepth = texture(DepthMap_Sampler, projCoord.xy).x;
+		deltaDepth = hitDepth - hitCoord.z;
+		if (deltaDepth < 0.0 && deltaDepth > -MaxDeltaDepth)
+			break;
+	}
+	
+	if (/*hitDepth >= Origin.z &&*/ deltaDepth < 0.0 && deltaDepth > -MaxDeltaDepth)
+	{
+		vec4 projCoord = Projection * vec4(hitCoord, 1.0);
+		projCoord.xy /= projCoord.w;
+	
+		vec2 colorCoord = projCoord.xy * vec2(0.5, -0.5) + vec2(0.5, 0.5);
+	
+		vec2 dc = abs(projCoord.xy);
+		float edgeFactor = clamp((1.0f - max(dc.x, dc.y)) * 10.0, 0.0, 1.0);
+		float normFactor = pow(clamp(Direction.z, 0.0, 1.0), 0.2);
+		float distFactor = 1.0 - pow(length(Origin.xyz - vec3(hitCoord.xy, hitDepth)) / (MaxSteps * StepLength), 2);
+	
+		vec3 color = texture(ColorMap_Sampler, colorCoord).xyz;
+		Hit = vec4(color, edgeFactor * normFactor * distFactor);
+	}
+	else
+		Hit = vec4(0.0, 0.0, 0.0, 0.0);
 }
 
-if (/*hitDepth >= Origin.z &&*/ deltaDepth < 0.0 && deltaDepth > -MaxDeltaDepth)
-{
-	vec4 projCoord = Projection * vec4(hitCoord, 1.0);
-	projCoord.xy /= projCoord.w;
 
-	vec2 colorCoord = projCoord.xy * vec2(0.5, -0.5) + vec2(0.5, 0.5);
-
-	vec2 dc = abs(projCoord.xy);
-	float edgeFactor = clamp((1.0f - max(dc.x, dc.y)) * 10.0, 0.0, 1.0);
-	float normFactor = pow(clamp(Direction.z, 0.0, 1.0), 0.2);
-	float distFactor = 1.0 - pow(length(Origin.xyz - vec3(hitCoord.xy, hitDepth)) / (MaxSteps * StepLength), 2);
-
-	vec3 color = texture(ColorMap_Sampler, colorCoord).xyz;
-	Hit = vec4(color, edgeFactor * normFactor * distFactor);
-}
-else
-	Hit = vec4(0.0, 0.0, 0.0, 0.0);
 			]]>
 			</script>
 		</item>
 		<item type="traktor.render.Platform">
 			<comment/>
 			<position>
-				<first>616</first>
-				<second>478</second>
+				<first>791</first>
+				<second>491</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
@@ -286,72 +294,77 @@ else
 			</samplers>
 			<script>
 			<![CDATA[
-const float StepLength = 1.5f;
-const int MaxSteps = 16;
-const int BinarySearchSteps = 3;
-const float MaxDeltaDepth = 4.0f;
-
-float3 hitCoord = Origin.xyz;
-float deltaDepth = 0.0f;
-
-// Scan coarse hit.
-for (int i = 0; i < MaxSteps; ++i)
+ENTRY
 {
-	hitCoord += Direction.xyz * StepLength;
+	const float StepLength = 1.5f;
+	const int MaxSteps = 16;
+	const int BinarySearchSteps = 3;
+	const float MaxDeltaDepth = 4.0f;
 	
-	float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
-	projCoord.xy /= projCoord.w;
-	projCoord.xy = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
-
-	float depth = DepthMap.Sample(DepthMap_Sampler, projCoord.xy).x;
-	deltaDepth = depth - hitCoord.z;
-	if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
-		break;
-}
-
-Hit = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
-if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
-{
-	// Refine hit by binary search.
-	float3 dir = Direction.xyz * StepLength * 0.5f;
-	for (int i = 0; i < BinarySearchSteps; i++)
-    {
-		float3 testCoord = hitCoord - dir;
-
-		float4 projCoord = mul(Projection, float4(testCoord, 1.0f));
-
+	float3 hitCoord = Origin.xyz;
+	float deltaDepth = 0.0f;
+	
+	// Scan coarse hit.
+	for (int i = 0; i < MaxSteps; ++i)
+	{
+		hitCoord += Direction.xyz * StepLength;
+		
+		float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
 		projCoord.xy /= projCoord.w;
 		projCoord.xy = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
- 
+	
 		float depth = DepthMap.Sample(DepthMap_Sampler, projCoord.xy).x;
-
-		deltaDepth = depth - testCoord.z;
-
-		if (deltaDepth < 0.0f)
-		{
-			hitCoord = testCoord;
-			dir *= 0.5f;
-		}
-		else
-		{
-			dir *= 0.5f;
-		}
-    }
-
-	float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
-	projCoord.xy /= projCoord.w;
-
-	float2 colorCoord = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+		deltaDepth = depth - hitCoord.z;
+		if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
+			break;
+	}
 	
-	float2 dc = abs(projCoord.xy);
-	float edgeFactor = clamp((1.0f - max(dc.x, dc.y)) * 10.0f, 0.0f, 1.0f);
-	float normFactor = pow(clamp(Direction.z, 0.0f, 1.0f), 0.2f);
-	float distFactor = 1.0f - pow(length(Origin.xyz - hitCoord) / (MaxSteps * StepLength), 2.0f);
+	Hit = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	
-	float3 color = ColorMap.SampleLevel(ColorMap_Sampler, colorCoord, 3.0f).xyz;
-	Hit = float4(color, edgeFactor * normFactor * distFactor);
+	if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
+	{
+		// Refine hit by binary search.
+		float3 dir = Direction.xyz * StepLength * 0.5f;
+		for (int i = 0; i < BinarySearchSteps; i++)
+	    {
+			float3 testCoord = hitCoord - dir;
+	
+			float4 projCoord = mul(Projection, float4(testCoord, 1.0f));
+	
+			projCoord.xy /= projCoord.w;
+			projCoord.xy = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+	 
+			float depth = DepthMap.Sample(DepthMap_Sampler, projCoord.xy).x;
+	
+			deltaDepth = depth - testCoord.z;
+	
+			if (deltaDepth < 0.0f)
+			{
+				hitCoord = testCoord;
+				dir *= 0.5f;
+			}
+			else
+			{
+				dir *= 0.5f;
+			}
+	    }
+	
+		float4 projCoord = mul(Projection, float4(hitCoord, 1.0f));
+		projCoord.xy /= projCoord.w;
+	
+		float2 colorCoord = projCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+		
+		float2 dc = abs(projCoord.xy);
+		float edgeFactor = clamp((1.0f - max(dc.x, dc.y)) * 10.0f, 0.0f, 1.0f);
+		float normFactor = pow(clamp(Direction.z, 0.0f, 1.0f), 0.2f);
+		float distFactor = 1.0f - pow(length(Origin.xyz - hitCoord) / (MaxSteps * StepLength), 2.0f);
+		
+		float3 color = ColorMap.SampleLevel(ColorMap_Sampler, colorCoord, 3.0f).xyz;
+		Hit = float4(color, edgeFactor * normFactor * distFactor);
+	}
 }
+
+
 			]]>
 			</script>
 		</item>

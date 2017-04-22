@@ -63,7 +63,7 @@ WorldLayer::WorldLayer(
 ,	m_controllerEnable(true)
 {
 	// Get initial field of view.
-	m_fieldOfView = m_environment->getSettings()->getProperty< PropertyFloat >(L"World.FieldOfView", 70.0f);
+	m_fieldOfView = m_environment->getSettings()->getProperty< float >(L"World.FieldOfView", 70.0f);
 
 	// Register ourself for camera shake.
 	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();

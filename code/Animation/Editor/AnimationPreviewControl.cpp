@@ -139,8 +139,8 @@ void AnimationPreviewControl::setPoseController(IPoseController* poseController)
 void AnimationPreviewControl::updateSettings()
 {
 	Ref< PropertyGroup > colors = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
-	m_colorClear = colors->getProperty< PropertyColor >(L"Background");
-	m_colorGrid = colors->getProperty< PropertyColor >(L"Grid");
+	m_colorClear = colors->getProperty< Color4ub >(L"Background");
+	m_colorGrid = colors->getProperty< Color4ub >(L"Grid");
 }
 
 void AnimationPreviewControl::updatePreview()

@@ -41,6 +41,17 @@ private:
 	value_type_t m_value;
 };
 
+/*!
+ * \ingroup Core
+ */
+template< >
+struct PropertyTrait< std::wstring >
+{
+	typedef PropertyString property_type_t;
+	typedef const std::wstring& default_value_type_t;
+	typedef std::wstring return_type_t;
+};
+
 }
 
 #endif	// traktor_PropertyString_H

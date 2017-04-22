@@ -107,7 +107,7 @@ void TextureAssetEditor::updatePreview()
 	if (!thumbnailGenerator)
 		return;
 
-	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
 	int32_t size = ui::scaleBySystemDPI(128);
 

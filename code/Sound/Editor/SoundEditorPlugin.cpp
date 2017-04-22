@@ -49,7 +49,7 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 	if (m_editor->getStoreObject(L"SoundSystem") != 0)
 		return;
 
-	std::wstring soundDriverTypeName = settings->getProperty< PropertyString >(L"Editor.SoundDriver");
+	std::wstring soundDriverTypeName = settings->getProperty< std::wstring >(L"Editor.SoundDriver");
 	const TypeInfo* soundDriverType = TypeInfo::find(soundDriverTypeName);
 	if (!soundDriverType)
 		return;
@@ -58,11 +58,11 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 	T_ASSERT (soundDriver);
 
 	SoundSystemCreateDesc desc;
-	desc.channels = settings->getProperty< PropertyInteger >(L"Editor.SoundVirtualChannels", 8);
-	desc.driverDesc.sampleRate = settings->getProperty< PropertyInteger >(L"Editor.SoundSampleRate", 44100);
-	desc.driverDesc.bitsPerSample = settings->getProperty< PropertyInteger >(L"Editor.SoundBitsPerSample", 16);
-	desc.driverDesc.hwChannels = settings->getProperty< PropertyInteger >(L"Editor.SoundHwChannels", 5 + 1);
-	desc.driverDesc.frameSamples = settings->getProperty< PropertyInteger >(L"Editor.SoundFrameSamples", 1024);
+	desc.channels = settings->getProperty< int32_t >(L"Editor.SoundVirtualChannels", 8);
+	desc.driverDesc.sampleRate = settings->getProperty< int32_t >(L"Editor.SoundSampleRate", 44100);
+	desc.driverDesc.bitsPerSample = settings->getProperty< int32_t >(L"Editor.SoundBitsPerSample", 16);
+	desc.driverDesc.hwChannels = settings->getProperty< int32_t >(L"Editor.SoundHwChannels", 5 + 1);
+	desc.driverDesc.frameSamples = settings->getProperty< int32_t >(L"Editor.SoundFrameSamples", 1024);
 
 	Ref< SoundSystem > soundSystem = new SoundSystem(soundDriver);
 	if (!soundSystem->create(desc))
