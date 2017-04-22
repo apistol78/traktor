@@ -53,7 +53,7 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	staticDictionary->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_DICTIONARY"));
 
 	m_editDictionary = new ui::Edit();
-	m_editDictionary->create(containerInner, settings->getProperty< PropertyString >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/res/English.xml"));
+	m_editDictionary->create(containerInner, settings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/res/English.xml"));
 
 	Ref< ui::Static > staticStyleSheet = new ui::Static();
 	staticStyleSheet->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_STYLESHEET"));
@@ -65,7 +65,7 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	for (int32_t i = 0; c_styleSheets[i].id; ++i)
 	{
 		m_dropStyleSheet->add(i18n::Text(c_styleSheets[i].id));
-		if (compareIgnoreCase< std::wstring >(c_styleSheets[i].path, settings->getProperty< PropertyString >(L"Editor.StyleSheet")) == 0)
+		if (compareIgnoreCase< std::wstring >(c_styleSheets[i].path, settings->getProperty< std::wstring >(L"Editor.StyleSheet")) == 0)
 			current = i;
 	}
 	m_dropStyleSheet->select(current);
@@ -85,35 +85,35 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	for (std::list< std::wstring >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
 		m_dropFonts->add(*i);
 
-	m_dropFonts->select(settings->getProperty< PropertyString >(L"Editor.Font", L"Consolas"));
+	m_dropFonts->select(settings->getProperty< std::wstring >(L"Editor.Font", L"Consolas"));
 
 	m_editFontSize = new ui::Edit();
 	m_editFontSize->create(containerFont, L"1", ui::WsClientBorder, new ui::NumericEditValidator(false, 1, 100, 0));
-	m_editFontSize->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.FontSize", 14)));
+	m_editFontSize->setText(toString(settings->getProperty< int32_t >(L"Editor.FontSize", 14)));
 
 	m_checkAutoOpen = new ui::CheckBox();
 	m_checkAutoOpen->create(container, i18n::Text(L"EDITOR_SETTINGS_AUTOOPEN_RECENT_WORKSPACE"));
-	m_checkAutoOpen->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.AutoOpenRecentlyUsedWorkspace"));
+	m_checkAutoOpen->setChecked(settings->getProperty< bool >(L"Editor.AutoOpenRecentlyUsedWorkspace"));
 
 	m_checkAutoSave = new ui::CheckBox();
 	m_checkAutoSave->create(container, i18n::Text(L"EDITOR_SETTINGS_AUTOSAVE"));
-	m_checkAutoSave->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.AutoSave"));
+	m_checkAutoSave->setChecked(settings->getProperty< bool >(L"Editor.AutoSave"));
 
 	m_checkBuildWhenSourceModified = new ui::CheckBox();
 	m_checkBuildWhenSourceModified->create(container, i18n::Text(L"EDITOR_SETTINGS_BUILD_WHEN_SOURCE_MODIFIED"));
-	m_checkBuildWhenSourceModified->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"));
+	m_checkBuildWhenSourceModified->setChecked(settings->getProperty< bool >(L"Editor.BuildWhenSourceModified"));
 
 	m_checkBuildWhenAssetModified = new ui::CheckBox();
 	m_checkBuildWhenAssetModified->create(container, i18n::Text(L"EDITOR_SETTINGS_BUILD_WHEN_ASSET_MODIFIED"));
-	m_checkBuildWhenAssetModified->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified"));
+	m_checkBuildWhenAssetModified->setChecked(settings->getProperty< bool >(L"Editor.BuildWhenAssetModified"));
 
 	m_checkBuildAfterBrowseInstance = new ui::CheckBox();
 	m_checkBuildAfterBrowseInstance->create(container, i18n::Text(L"EDITOR_SETTINGS_BUILD_AFTER_BROWSE_INSTANCE"));
-	m_checkBuildAfterBrowseInstance->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.BuildAfterBrowseInstance"));
+	m_checkBuildAfterBrowseInstance->setChecked(settings->getProperty< bool >(L"Editor.BuildAfterBrowseInstance"));
 
 	m_checkPropertyHelpVisible = new ui::CheckBox();
 	m_checkPropertyHelpVisible->create(container, i18n::Text(L"EDITOR_SETTINGS_PROPERTY_HELP_VISIBLE"));
-	m_checkPropertyHelpVisible->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.PropertyHelpVisible"));
+	m_checkPropertyHelpVisible->setChecked(settings->getProperty< bool >(L"Editor.PropertyHelpVisible"));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_GENERAL"));
 	return true;

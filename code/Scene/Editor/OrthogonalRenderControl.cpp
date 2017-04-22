@@ -93,7 +93,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	m_context = context;
 	T_ASSERT (m_context);
 
-	m_multiSample = m_context->getEditor()->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", c_defaultMultiSample);
+	m_multiSample = m_context->getEditor()->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", c_defaultMultiSample);
 	m_viewPlane = viewPlane;
 
 	m_renderWidget = new ui::Widget();
@@ -361,10 +361,10 @@ void OrthogonalRenderControl::showSelectionRectangle(const ui::Rect& rect)
 void OrthogonalRenderControl::updateSettings()
 {
 	Ref< PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
-	m_colorClear = colors->getProperty< PropertyColor >(L"Background");
-	m_colorGrid = colors->getProperty< PropertyColor >(L"Grid");
-	m_colorRef = colors->getProperty< PropertyColor >(L"ReferenceEdge");
-	m_colorCamera = colors->getProperty< PropertyColor >(L"CameraWire");
+	m_colorClear = colors->getProperty< Color4ub >(L"Background");
+	m_colorGrid = colors->getProperty< Color4ub >(L"Grid");
+	m_colorRef = colors->getProperty< Color4ub >(L"ReferenceEdge");
+	m_colorCamera = colors->getProperty< Color4ub >(L"CameraWire");
 }
 
 Matrix44 OrthogonalRenderControl::getProjectionTransform() const

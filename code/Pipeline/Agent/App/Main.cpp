@@ -200,7 +200,7 @@ int main(int argc, const char** argv)
 		}
 	}
 
-	std::set< std::wstring > modules = settings->getProperty< PropertyStringSet >(L"Editor.Modules");
+	std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
 		Library library;

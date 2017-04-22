@@ -22,11 +22,11 @@ bool ScriptSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 
 	m_checkAutoOpenDebugger = new ui::CheckBox();
 	m_checkAutoOpenDebugger->create(container, i18n::Text(L"EDITOR_SETTINGS_SCRIPT_AUTO_OPEN_DEBUGGER"), false);
-	m_checkAutoOpenDebugger->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.AutoOpenDebugger", false));
+	m_checkAutoOpenDebugger->setChecked(settings->getProperty< bool >(L"Editor.AutoOpenDebugger", false));
 
 	m_checkAutoOpenScript = new ui::CheckBox();
 	m_checkAutoOpenScript->create(container, i18n::Text(L"EDITOR_SETTINGS_SCRIPT_AUTO_OPEN_SCRIPT"), false);
-	m_checkAutoOpenScript->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.AutoOpenDebuggedScript", true));
+	m_checkAutoOpenScript->setChecked(settings->getProperty< bool >(L"Editor.AutoOpenDebuggedScript", true));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_SCRIPT"));
 	return true;

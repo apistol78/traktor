@@ -107,7 +107,7 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 
 void AnimatedMeshEntityEditor::updateSettings()
 {
-	m_colorBone = getContext()->getEditor()->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/BoneWire");
+	m_colorBone = getContext()->getEditor()->getSettings()->getProperty< Color4ub >(L"Editor.Colors/BoneWire");
 }
 
 	}

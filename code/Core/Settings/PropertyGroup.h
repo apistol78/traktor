@@ -50,20 +50,20 @@ public:
 
 	/*! \brief Get user property.
 	 *
-	 * bool foo = settings->getProperty< PropertyBoolean >("foo", false);
+	 * bool foo = settings->getProperty< bool >("foo", false);
 	 */
-	template < typename PropertyType >
-	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName, typename PropertyType::value_type_t defaultValue) const
+	template < typename ValueType >
+	typename PropertyTrait< ValueType >::return_type_t getProperty(const std::wstring& propertyName, typename PropertyTrait< ValueType >::default_value_type_t defaultValue) const
 	{
 		Ref< const IPropertyValue > value = getProperty(propertyName);
-		return value ? PropertyType::get(value) : defaultValue;
+		return value ? PropertyTrait< ValueType >::property_type_t::get(value) : defaultValue;
 	}
 
-	template < typename PropertyType >
-	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName) const
+	template < typename ValueType >
+	typename PropertyTrait< ValueType >::return_type_t getProperty(const std::wstring& propertyName) const
 	{
 		Ref< const IPropertyValue > value = getProperty(propertyName);
-		return PropertyType::get(value);
+		return PropertyTrait< ValueType >::property_type_t::get(value);
 	}
 
 	Ref< PropertyGroup > mergeJoin(const PropertyGroup* rightGroup) const;
@@ -81,6 +81,28 @@ protected:
 
 private:
 	std::map< std::wstring, Ref< IPropertyValue > > m_value;
+};
+
+/*!
+ * \ingroup Core
+ */
+template< >
+struct PropertyTrait< PropertyGroup >
+{
+	typedef PropertyGroup property_type_t;
+	typedef PropertyGroup* default_value_type_t;
+	typedef Ref< PropertyGroup > return_type_t;
+};
+
+/*!
+ * \ingroup Core
+ */
+template< >
+struct PropertyTrait< Ref< PropertyGroup > >
+{
+	typedef PropertyGroup property_type_t;
+	typedef PropertyGroup* default_value_type_t;
+	typedef Ref< PropertyGroup > return_type_t;
 };
 
 }

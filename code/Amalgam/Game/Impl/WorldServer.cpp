@@ -110,7 +110,7 @@ WorldServer::WorldServer()
 
 bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer)
 {
-	std::wstring worldType = defaultSettings->getProperty< PropertyString >(L"World.Type");
+	std::wstring worldType = defaultSettings->getProperty< std::wstring >(L"World.Type");
 
 	m_worldType = TypeInfo::find(worldType);
 	if (!m_worldType)
@@ -119,17 +119,17 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 		return false;
 	}
 
-	m_motionBlurQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.MotionBlurQuality", world::QuMedium);
-	m_shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
-	m_reflectionsQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ReflectionsQuality", world::QuMedium);
-	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
-	m_antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
-	m_imageProcessQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ImageProcessQuality", world::QuMedium);
-	m_particleQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", world::QuMedium);
-	m_terrainQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.TerrainQuality", world::QuMedium);
-	m_oceanQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", world::QuMedium);
-	m_gamma = settings->getProperty< PropertyFloat >(L"World.Gamma", 2.2f);
-	m_superSample = settings->getProperty< PropertyInteger >(L"World.SuperSample", 0);
+	m_motionBlurQuality = (world::Quality)settings->getProperty< int32_t >(L"World.MotionBlurQuality", world::QuMedium);
+	m_shadowQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ShadowQuality", world::QuMedium);
+	m_reflectionsQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ReflectionsQuality", world::QuMedium);
+	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AmbientOcclusionQuality", world::QuMedium);
+	m_antiAliasQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AntiAliasQuality", world::QuMedium);
+	m_imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", world::QuMedium);
+	m_particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", world::QuMedium);
+	m_terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", world::QuMedium);
+	m_oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", world::QuMedium);
+	m_gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
+	m_superSample = settings->getProperty< int32_t >(L"World.SuperSample", 0);
 
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
@@ -165,7 +165,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_entityRenderers->add(new weather::WeatherRenderer());
 	m_entityRenderers->add(m_terrainEntityRenderer);
 
-	int32_t maxEventInstances = settings->getProperty< PropertyInteger >(L"World.MaxEventInstances", 512);
+	int32_t maxEventInstances = settings->getProperty< int32_t >(L"World.MaxEventInstances", 512);
 	m_eventManager = new world::EntityEventManager(maxEventInstances);
 
 	return true;
@@ -213,17 +213,17 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 
 int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 {
-	world::Quality motionBlurQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.MotionBlurQuality", world::QuMedium);
-	world::Quality shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
-	world::Quality reflectionsQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ReflectionsQuality", world::QuMedium);
-	world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
-	world::Quality antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
-	world::Quality imageProcessQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ImageProcessQuality", world::QuMedium);
-	world::Quality particleQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", world::QuMedium);
-	world::Quality terrainQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.TerrainQuality", world::QuMedium);
-	world::Quality oceanQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", world::QuMedium);
-	float gamma = settings->getProperty< PropertyFloat >(L"World.Gamma", 2.2f);
-	int32_t superSample = settings->getProperty< PropertyInteger >(L"World.SuperSample", 0);
+	world::Quality motionBlurQuality = (world::Quality)settings->getProperty< int32_t >(L"World.MotionBlurQuality", world::QuMedium);
+	world::Quality shadowQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ShadowQuality", world::QuMedium);
+	world::Quality reflectionsQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ReflectionsQuality", world::QuMedium);
+	world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AmbientOcclusionQuality", world::QuMedium);
+	world::Quality antiAliasQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AntiAliasQuality", world::QuMedium);
+	world::Quality imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", world::QuMedium);
+	world::Quality particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", world::QuMedium);
+	world::Quality terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", world::QuMedium);
+	world::Quality oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", world::QuMedium);
+	float gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
+	int32_t superSample = settings->getProperty< int32_t >(L"World.SuperSample", 0);
 
 	// Check if we need to be reconfigured.
 	if (

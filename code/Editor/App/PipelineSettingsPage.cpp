@@ -25,26 +25,26 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
 		return false;
 
-	bool dependsThreads = settings->getProperty< PropertyBoolean >(L"Pipeline.DependsThreads", true);
+	bool dependsThreads = settings->getProperty< bool >(L"Pipeline.DependsThreads", true);
 
 	m_checkDependsThreads = new ui::CheckBox();
 	m_checkDependsThreads->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_DEPENDS_THREADS"));
 	m_checkDependsThreads->setChecked(dependsThreads);
 
-	bool buildThreads = settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true);
+	bool buildThreads = settings->getProperty< bool >(L"Pipeline.BuildThreads", true);
 
 	m_checkBuildThreads = new ui::CheckBox();
 	m_checkBuildThreads->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_BUILD_THREADS"));
 	m_checkBuildThreads->setChecked(buildThreads);
 
-	bool buildDistributed = settings->getProperty< PropertyBoolean >(L"Pipeline.BuildDistributed", false);
+	bool buildDistributed = settings->getProperty< bool >(L"Pipeline.BuildDistributed", false);
 
 	m_checkBuildDistributed = new ui::CheckBox();
 	m_checkBuildDistributed->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_BUILD_DISTRIBUTED"));
 	m_checkBuildDistributed->setChecked(buildDistributed);
 
 	// Memcached
-	bool memCachedEnable = settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
+	bool memCachedEnable = settings->getProperty< bool >(L"Pipeline.MemCached", false);
 
 	m_checkUseMemCached = new ui::CheckBox();
 	m_checkUseMemCached->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED"));
@@ -52,25 +52,25 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_checkUseMemCached->addEventHandler< ui::ButtonClickEvent >(this, &PipelineSettingsPage::eventUseCacheClick);
 
 	m_editMemCachedHost = new ui::Edit();
-	m_editMemCachedHost->create(container, settings->getProperty< PropertyString >(L"Pipeline.MemCached.Host"));
+	m_editMemCachedHost->create(container, settings->getProperty< std::wstring >(L"Pipeline.MemCached.Host"));
 	m_editMemCachedHost->setEnable(memCachedEnable);
 
 	m_editMemCachedPort = new ui::Edit();
-	m_editMemCachedPort->create(container, toString(settings->getProperty< PropertyInteger >(L"Pipeline.MemCached.Port")), ui::WsClientBorder, new ui::NumericEditValidator(false, 0, 65535));
+	m_editMemCachedPort->create(container, toString(settings->getProperty< int32_t >(L"Pipeline.MemCached.Port")), ui::WsClientBorder, new ui::NumericEditValidator(false, 0, 65535));
 	m_editMemCachedPort->setEnable(memCachedEnable);
 
 	m_checkMemCachedRead = new ui::CheckBox();
 	m_checkMemCachedRead->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_CACHE_READ"));
-	m_checkMemCachedRead->setChecked(settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", true));
+	m_checkMemCachedRead->setChecked(settings->getProperty< bool >(L"Pipeline.MemCached.Read", true));
 	m_checkMemCachedRead->setEnable(memCachedEnable);
 
 	m_checkMemCachedWrite = new ui::CheckBox();
 	m_checkMemCachedWrite->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_CACHE_WRITE"));
-	m_checkMemCachedWrite->setChecked(settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", true));
+	m_checkMemCachedWrite->setChecked(settings->getProperty< bool >(L"Pipeline.MemCached.Write", true));
 	m_checkMemCachedWrite->setEnable(memCachedEnable);
 	
 	// File cache
-	bool fileCacheEnable = settings->getProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
+	bool fileCacheEnable = settings->getProperty< bool >(L"Pipeline.FileCache", false);
 	
 	m_checkUseFileCache = new ui::CheckBox();
 	m_checkUseFileCache->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_ENABLE_FILE_CACHE"));
@@ -78,17 +78,17 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_checkUseFileCache->addEventHandler< ui::ButtonClickEvent >(this, &PipelineSettingsPage::eventUseCacheClick);
 
 	m_editFileCachePath = new ui::Edit();
-	m_editFileCachePath->create(container, toString(settings->getProperty< PropertyString >(L"Pipeline.FileCache.Path")), ui::WsClientBorder);
+	m_editFileCachePath->create(container, toString(settings->getProperty< std::wstring >(L"Pipeline.FileCache.Path")), ui::WsClientBorder);
 	m_editFileCachePath->setEnable(fileCacheEnable);
 
 	m_checkFileCacheRead = new ui::CheckBox();
 	m_checkFileCacheRead->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_CACHE_READ"));
-	m_checkFileCacheRead->setChecked(settings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", true));
+	m_checkFileCacheRead->setChecked(settings->getProperty< bool >(L"Pipeline.FileCache.Read", true));
 	m_checkFileCacheRead->setEnable(fileCacheEnable);
 
 	m_checkFileCacheWrite = new ui::CheckBox();
 	m_checkFileCacheWrite->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_CACHE_WRITE"));
-	m_checkFileCacheWrite->setChecked(settings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", true));
+	m_checkFileCacheWrite->setChecked(settings->getProperty< bool >(L"Pipeline.FileCache.Write", true));
 	m_checkFileCacheWrite->setEnable(fileCacheEnable);
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_PIPELINE"));

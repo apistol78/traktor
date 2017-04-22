@@ -30,7 +30,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 10, MeshPipeline
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 

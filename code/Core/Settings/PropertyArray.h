@@ -41,18 +41,18 @@ public:
 
 	const IPropertyValue* getProperty(uint32_t index) const;
 
-	template < typename PropertyType >
-	typename PropertyType::value_type_t getProperty(uint32_t index, typename PropertyType::value_type_t defaultValue) const
+	template < typename ValueType >
+	typename PropertyTrait< ValueType >::return_type_t getProperty(uint32_t index, typename PropertyTrait< ValueType >::default_value_type_t defaultValue) const
 	{
 		Ref< const IPropertyValue > value = getProperty(index);
-		return value ? PropertyType::get(value) : defaultValue;
+		return value ? PropertyTrait< ValueType >::property_type_t::get(value) : defaultValue;
 	}
 
-	template < typename PropertyType >
-	typename PropertyType::value_type_t getProperty(uint32_t index) const
+	template < typename ValueType >
+	typename PropertyTrait< ValueType >::return_type_t getProperty(uint32_t index) const
 	{
 		Ref< const IPropertyValue > value = getProperty(index);
-		return PropertyType::get(value);
+		return PropertyTrait< ValueType >::property_type_t::get(value);
 	}
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
@@ -66,6 +66,17 @@ protected:
 
 private:
 	RefArray< IPropertyValue > m_values;
+};
+
+/*!
+ * \ingroup Core
+ */
+template< >
+struct PropertyTrait< RefArray< IPropertyValue > >
+{
+	typedef PropertyArray property_type_t;
+	typedef const RefArray< IPropertyValue >& default_value_type_t;
+	typedef RefArray< IPropertyValue > return_type_t;
 };
 
 }

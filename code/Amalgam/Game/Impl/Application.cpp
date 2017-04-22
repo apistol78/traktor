@@ -114,9 +114,9 @@ bool Application::create(
 )
 {
 	// Establish target manager connection is launched from the Editor.
-	std::wstring targetManagerHost = settings->getProperty< PropertyString >(L"Amalgam.TargetManager/Host");
-	int32_t targetManagerPort = settings->getProperty< PropertyInteger >(L"Amalgam.TargetManager/Port");
-	Guid targetManagerId = Guid(settings->getProperty< PropertyString >(L"Amalgam.TargetManager/Id"));
+	std::wstring targetManagerHost = settings->getProperty< std::wstring >(L"Amalgam.TargetManager/Host");
+	int32_t targetManagerPort = settings->getProperty< int32_t >(L"Amalgam.TargetManager/Port");
+	Guid targetManagerId = Guid(settings->getProperty< std::wstring >(L"Amalgam.TargetManager/Id"));
 	if (!targetManagerHost.empty() && targetManagerPort && targetManagerId.isValid())
 	{
 		m_targetManagerConnection = new TargetManagerConnection();
@@ -131,7 +131,7 @@ bool Application::create(
 
 	// Load dependent modules.
 #if !defined(T_STATIC)
-	std::set< std::wstring > modules = defaultSettings->getProperty< PropertyStringSet >(L"Amalgam.Modules");
+	std::set< std::wstring > modules = defaultSettings->getProperty< std::set< std::wstring > >(L"Amalgam.Modules");
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
 		Ref< Library > library = new Library();
@@ -143,7 +143,7 @@ bool Application::create(
 #endif
 
 	// Simulation setup.
-	m_maxSimulationUpdates = defaultSettings->getProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 8);
+	m_maxSimulationUpdates = defaultSettings->getProperty< int32_t >(L"Amalgam.MaxSimulationUpdates", 8);
 	m_maxSimulationUpdates = max(m_maxSimulationUpdates, 1);
 
 	m_stateManager = new StateManager();
@@ -151,7 +151,7 @@ bool Application::create(
 	// Database
 	T_DEBUG(L"Creating database...");
 	m_database = new db::Database ();
-	std::wstring connectionString = settings->getProperty< PropertyString >(L"Amalgam.Database");
+	std::wstring connectionString = settings->getProperty< std::wstring >(L"Amalgam.Database");
 	if (!m_database->open(connectionString))
 	{
 		log::error << L"Application failed; unable to open database \"" << connectionString << L"\"" << Endl;
@@ -217,8 +217,8 @@ bool Application::create(
 		T_DEBUG(L"Creating script server...");
 		m_scriptServer = new ScriptServer();
 
-		bool attachDebugger = settings->getProperty< PropertyBoolean >(L"Script.AttachDebugger", false);
-		bool attachProfiler = settings->getProperty< PropertyBoolean >(L"Script.AttachProfiler", false);
+		bool attachDebugger = settings->getProperty< bool >(L"Script.AttachDebugger", false);
+		bool attachProfiler = settings->getProperty< bool >(L"Script.AttachProfiler", false);
 
 		if ((attachDebugger || attachProfiler) && m_targetManagerConnection)
 		{
@@ -363,7 +363,7 @@ bool Application::create(
 #if !defined(__EMSCRIPTEN__)
 
 	// Database monitoring thread.
-	if (settings->getProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", false))
+	if (settings->getProperty< bool >(L"Amalgam.DatabaseThread", false))
 	{
 		T_DEBUG(L"Creating database monitoring thread...");
 		m_threadDatabase = ThreadManager::getInstance().create(makeFunctor(this, &Application::threadDatabase), L"Database events");
@@ -401,7 +401,7 @@ bool Application::create(
 	// Create render thread if enabled and we're running on a multi core system.
 	if (
 		OS::getInstance().getCPUCoreCount() >= 2 &&
-		settings->getProperty< PropertyBoolean >(L"Amalgam.RenderThread", true)
+		settings->getProperty< bool >(L"Amalgam.RenderThread", true)
 	)
 	{
 		m_threadRender = ThreadManager::getInstance().create(makeFunctor(this, &Application::threadRender), L"Render");

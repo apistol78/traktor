@@ -41,6 +41,28 @@ private:
 	value_type_t m_value;
 };
 
+/*!
+ * \ingroup Core
+ */
+template< >
+struct PropertyTrait< ISerializable >
+{
+	typedef PropertyObject property_type_t;
+	typedef ISerializable* default_value_type_t;
+	typedef Ref< ISerializable > return_type_t;
+};
+
+/*!
+ * \ingroup Core
+ */
+template< >
+struct PropertyTrait< Ref< ISerializable > >
+{
+	typedef PropertyObject property_type_t;
+	typedef ISerializable* default_value_type_t;
+	typedef Ref< ISerializable > return_type_t;
+};
+
 }
 
 #endif	// traktor_PropertyObject_H

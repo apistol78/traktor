@@ -43,7 +43,7 @@ bool ScriptServer::create(
 	net::BidirectionalObjectTransport* transport
 )
 {
-	std::wstring scriptType = defaultSettings->getProperty< PropertyString >(L"Script.Type");
+	std::wstring scriptType = defaultSettings->getProperty< std::wstring >(L"Script.Type");
 
 	m_scriptManager = dynamic_type_cast< script::IScriptManager* >(TypeInfo::createInstance(scriptType));
 	if (!m_scriptManager)

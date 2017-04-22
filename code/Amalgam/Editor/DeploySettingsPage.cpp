@@ -30,31 +30,31 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_checkInheritCache = new ui::CheckBox();
 	m_checkInheritCache->create(container, L"Inherit editor cache(s)");
 
-	bool inheritCache = settings->getProperty< PropertyBoolean >(L"Amalgam.InheritCache", true);
+	bool inheritCache = settings->getProperty< bool >(L"Amalgam.InheritCache", true);
 	m_checkInheritCache->setChecked(inheritCache);
 
 	m_checkHidePipeline = new ui::CheckBox();
 	m_checkHidePipeline->create(container, L"Hide pipeline console");
 
-	bool hidePipeline = settings->getProperty< PropertyBoolean >(L"Amalgam.PipelineHidden", true);
+	bool hidePipeline = settings->getProperty< bool >(L"Amalgam.PipelineHidden", true);
 	m_checkHidePipeline->setChecked(hidePipeline);
 
 	m_checkUseDebugBinaries = new ui::CheckBox();
 	m_checkUseDebugBinaries->create(container, L"Use debug binaries");
 
-	bool useDebugBinaries = settings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false);
+	bool useDebugBinaries = settings->getProperty< bool >(L"Amalgam.UseDebugBinaries", false);
 	m_checkUseDebugBinaries->setChecked(useDebugBinaries);
 
 	m_checkStaticallyLinked = new ui::CheckBox();
 	m_checkStaticallyLinked->create(container, L"Statically link product");
 
-	bool staticallyLinked = settings->getProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", false);
+	bool staticallyLinked = settings->getProperty< bool >(L"Amalgam.StaticallyLinked", false);
 	m_checkStaticallyLinked->setChecked(staticallyLinked);
 
 	m_checkUseVS = new ui::CheckBox();
 	m_checkUseVS->create(container, L"Build Android using MS Visual Studio");
 
-	bool useVS = settings->getProperty< PropertyBoolean >(L"Amalgam.AndroidUseVS", false);
+	bool useVS = settings->getProperty< bool >(L"Amalgam.AndroidUseVS", false);
 	m_checkUseVS->setChecked(useVS);
 
 	Ref< ui::Container > containerAndroid = new ui::Container();
@@ -64,31 +64,31 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	staticAndroidHome->create(containerAndroid, L"Android SDK home");
 
 	m_editAndroidHome = new ui::Edit();
-	m_editAndroidHome->create(containerAndroid, settings->getProperty< PropertyString >(L"Amalgam.AndroidHome", L"$(ANDROID_HOME"));
+	m_editAndroidHome->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidHome", L"$(ANDROID_HOME"));
 
 	Ref< ui::Static > staticAndroidNdkRoot = new ui::Static();
 	staticAndroidNdkRoot->create(containerAndroid, L"Android NDK root");
 
 	m_editAndroidNdkRoot = new ui::Edit();
-	m_editAndroidNdkRoot->create(containerAndroid, settings->getProperty< PropertyString >(L"Amalgam.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"));
+	m_editAndroidNdkRoot->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"));
 
 	Ref< ui::Static > staticAndroidAntHome = new ui::Static();
 	staticAndroidAntHome->create(containerAndroid, L"Android ANT home");
 
 	m_editAndroidAntHome = new ui::Edit();
-	m_editAndroidAntHome->create(containerAndroid, settings->getProperty< PropertyString >(L"Amalgam.AndroidAntHome", L"$(ANT_HOME)"));
+	m_editAndroidAntHome->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidAntHome", L"$(ANT_HOME)"));
 
 	Ref< ui::Static > staticAndroidToolchain = new ui::Static();
 	staticAndroidToolchain->create(containerAndroid, L"Android Toolchain");
 
 	m_editAndroidToolchain = new ui::Edit();
-	m_editAndroidToolchain->create(containerAndroid, settings->getProperty< PropertyString >(L"Amalgam.AndroidToolchain", L"4.9"));
+	m_editAndroidToolchain->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidToolchain", L"4.9"));
 
 	Ref< ui::Static > staticAndroidApiLevel = new ui::Static();
 	staticAndroidApiLevel->create(containerAndroid, L"Android API level");
 
 	m_editAndroidApiLevel = new ui::Edit();
-	m_editAndroidApiLevel->create(containerAndroid, settings->getProperty< PropertyString >(L"Amalgam.AndroidApiLevel", L"android-19"));
+	m_editAndroidApiLevel->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidApiLevel", L"android-19"));
 
 	Ref< ui::Container > containerEnvironment = new ui::Container();
 	containerEnvironment->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));

@@ -30,31 +30,31 @@ bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 	staticSystemRoot->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_SYSTEM_ROOT"));
 
 	m_editSystemRoot = new ui::Edit();
-	m_editSystemRoot->create(containerInner, settings->getProperty< PropertyString >(L"Amalgam.SystemRoot"));
+	m_editSystemRoot->create(containerInner, settings->getProperty< std::wstring >(L"Amalgam.SystemRoot"));
 
 	Ref< ui::Static > staticHomeUrl = new ui::Static();
 	staticHomeUrl->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_HOME_URL"));
 
 	m_editHomeUrl = new ui::Edit();
-	m_editHomeUrl->create(containerInner, settings->getProperty< PropertyString >(L"Editor.HomeUrl"));
+	m_editHomeUrl->create(containerInner, settings->getProperty< std::wstring >(L"Editor.HomeUrl"));
 
 	Ref< ui::Static > staticSourceDatabase = new ui::Static();
 	staticSourceDatabase->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_SOURCE_DATABASE"));
 
 	m_editSourceDatabase = new ui::Edit();
-	m_editSourceDatabase->create(containerInner, settings->getProperty< PropertyString >(L"Editor.SourceDatabase", L""));
+	m_editSourceDatabase->create(containerInner, settings->getProperty< std::wstring >(L"Editor.SourceDatabase", L""));
 
 	Ref< ui::Static > staticOutputDatabase = new ui::Static();
 	staticOutputDatabase->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_OUTPUT_DATABASE"));
 
 	m_editOutputDatabase = new ui::Edit();
-	m_editOutputDatabase->create(containerInner, settings->getProperty< PropertyString >(L"Editor.OutputDatabase", L""));
+	m_editOutputDatabase->create(containerInner, settings->getProperty< std::wstring >(L"Editor.OutputDatabase", L""));
 
 	Ref< ui::Static > staticAssetPath = new ui::Static();
 	staticAssetPath->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_ASSET_PATH"));
 
 	m_editAssetPath = new ui::Edit();
-	m_editAssetPath->create(containerInner, settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L""));
+	m_editAssetPath->create(containerInner, settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L""));
 
 	m_settings = settings;
 	return true;

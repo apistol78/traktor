@@ -148,13 +148,13 @@ bool EffectEditorPage::create(ui::Container* parent)
 	Ref< const PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT (settings);
 
-	m_guideVisible = settings->getProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
+	m_guideVisible = settings->getProperty< bool >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	m_toolToggleGuide->setToggled(m_guideVisible);
 
-	m_moveEmitter = settings->getProperty< PropertyBoolean >(L"EffectEditor.ToggleMove", m_moveEmitter);
+	m_moveEmitter = settings->getProperty< bool >(L"EffectEditor.ToggleMove", m_moveEmitter);
 	m_toolToggleMove->setToggled(m_moveEmitter);
 
-	m_groundClip = settings->getProperty< PropertyBoolean >(L"EffectEditor.ToggleGroundClip", m_groundClip);
+	m_groundClip = settings->getProperty< bool >(L"EffectEditor.ToggleGroundClip", m_groundClip);
 	m_toolToggleGroundClip->setToggled(m_groundClip);
 
 	m_toolBar = new ui::custom::ToolBar();

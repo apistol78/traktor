@@ -41,6 +41,17 @@ private:
 	value_type_t m_value;
 };
 
+/*!
+ * \ingroup Core
+ */
+template< >
+struct PropertyTrait< int32_t >
+{
+	typedef PropertyInteger property_type_t;
+	typedef int32_t default_value_type_t;
+	typedef int32_t return_type_t;
+};
+
 }
 
 #endif	// traktor_PropertyInteger_H

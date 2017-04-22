@@ -69,11 +69,11 @@ FlashPipeline::FlashPipeline()
 
 bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-	m_generateMips = settings->getProperty< PropertyBoolean >(L"FlashPipeline.GenerateMips", false);
-	m_sharpenStrength = settings->getProperty< PropertyBoolean >(L"FlashPipeline.SharpenStrength", false);
-	m_useTextureCompression = settings->getProperty< PropertyBoolean >(L"FlashPipeline.UseTextureCompression", true);
-	m_textureSizeDenom = settings->getProperty< PropertyInteger >(L"FlashPipeline.TextureSizeDenom", 1);
+	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_generateMips = settings->getProperty< bool >(L"FlashPipeline.GenerateMips", false);
+	m_sharpenStrength = settings->getProperty< bool >(L"FlashPipeline.SharpenStrength", false);
+	m_useTextureCompression = settings->getProperty< bool >(L"FlashPipeline.UseTextureCompression", true);
+	m_textureSizeDenom = settings->getProperty< int32_t >(L"FlashPipeline.TextureSizeDenom", 1);
 	return true;
 }
 

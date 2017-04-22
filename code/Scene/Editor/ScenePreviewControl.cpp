@@ -82,10 +82,10 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	Ref< const PropertyGroup > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	m_toolTogglePick->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.TogglePick", true));
+	m_toolTogglePick->setToggled(settings->getProperty< bool >(L"SceneEditor.TogglePick", true));
 	m_toolToggleTranslate->setToggled(true);
 	m_toolToggleRotate->setToggled(false);
-	m_toolToggleSnap->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleSnap", true));
+	m_toolToggleSnap->setToggled(settings->getProperty< bool >(L"SceneEditor.ToggleSnap", true));
 
 	m_toolBarActions = new ui::custom::ToolBar();
 	m_toolBarActions->create(this, ui::WsBorder);
@@ -130,7 +130,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_modifierRotate = new RotateModifier(m_context);
 	m_context->setModifier(m_modifierTranslate);
 
-	m_splitCount = settings->getProperty< PropertyInteger >(L"SceneEditor.SplitCount", 4);
+	m_splitCount = settings->getProperty< int32_t >(L"SceneEditor.SplitCount", 4);
 
 	if (!updateRenderControls())
 		return false;

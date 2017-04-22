@@ -146,7 +146,7 @@ bool PropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& resolve
 
 void PropertiesView::updateHelp()
 {
-	bool visible = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Editor.PropertyHelpVisible", false);
+	bool visible = m_editor->getSettings()->getProperty< bool >(L"Editor.PropertyHelpVisible", false);
 	if (visible != m_staticHelp->isVisible(false))
 	{
 		m_staticHelp->setVisible(visible);

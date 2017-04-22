@@ -73,7 +73,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	if (!asset)
 		return false;
 
-	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	traktor::Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 	Ref< IStream > stream = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!stream)

@@ -44,15 +44,15 @@ MemCachedPipelineCache::~MemCachedPipelineCache()
 
 bool MemCachedPipelineCache::create(const PropertyGroup* settings)
 {
-	std::wstring host = settings->getProperty< PropertyString >(L"Pipeline.MemCached.Host");
-	int32_t port = settings->getProperty< PropertyInteger >(L"Pipeline.MemCached.Port", 11211);
+	std::wstring host = settings->getProperty< std::wstring >(L"Pipeline.MemCached.Host");
+	int32_t port = settings->getProperty< int32_t >(L"Pipeline.MemCached.Port", 11211);
 
 	m_socket = new net::TcpSocket();
 	if (!m_socket->connect(net::SocketAddressIPv4(host, port)))
 		return false;
 
-	m_accessRead = settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", true);
-	m_accessWrite = settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", true);
+	m_accessRead = settings->getProperty< bool >(L"Pipeline.MemCached.Read", true);
+	m_accessWrite = settings->getProperty< bool >(L"Pipeline.MemCached.Write", true);
 	m_proto = new MemCachedProto(m_socket);
 
 	return true;

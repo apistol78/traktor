@@ -103,7 +103,7 @@ bool ShaderViewer::create(ui::Widget* parent)
 	std::set< const TypeInfo* > programCompilerTypes;
 	type_of< IProgramCompiler >().findAllOf(programCompilerTypes, false);
 
-	std::wstring programCompilerTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"ShaderPipeline.ProgramCompiler");
+	std::wstring programCompilerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 	int32_t compilerIndex = 0;
 	for (std::set< const TypeInfo* >::const_iterator i = programCompilerTypes.begin(); i != programCompilerTypes.end(); ++i)
 	{
@@ -137,8 +137,8 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_shaderEditPixel->create(tabPagePixel, L"", ui::WsDoubleBuffer);
 	m_shaderEditPixel->setLanguage(new ui::custom::SyntaxLanguageHlsl());
 
-	std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
-	int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
+	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 14);
 	m_shaderEditVertex->setFont(ui::Font(font, fontSize));
 	m_shaderEditPixel->setFont(ui::Font(font, fontSize));
 
@@ -157,8 +157,8 @@ bool ShaderViewer::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.SettingsChanged")
 	{
-		std::wstring font = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.Font", L"Consolas");
-		int32_t fontSize = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.FontSize", 14);
+		std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+		int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 14);
 		m_shaderEditVertex->setFont(ui::Font(font, fontSize));
 		m_shaderEditPixel->setFont(ui::Font(font, fontSize));
 		m_shaderEditVertex->update();

@@ -28,15 +28,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.PhysicsServer", PhysicsServer, IPhysics
 
 bool PhysicsServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings)
 {
-	std::wstring physicsType = defaultSettings->getProperty< PropertyString >(L"Physics.Type");
+	std::wstring physicsType = defaultSettings->getProperty< std::wstring >(L"Physics.Type");
 
 	Ref< physics::PhysicsManager > physicsManager = dynamic_type_cast< physics::PhysicsManager* >(TypeInfo::createInstance(physicsType));
 	if (!physicsManager)
 		return false;
 
 	physics::PhysicsCreateDesc pcd;
-	pcd.timeScale = defaultSettings->getProperty< PropertyFloat >(L"Physics.TimeScale", 1.0f) * c_timeScale;
-	pcd.solverIterations = defaultSettings->getProperty< PropertyInteger >(L"Physics.SolverIterations", 10);
+	pcd.timeScale = defaultSettings->getProperty< float >(L"Physics.TimeScale", 1.0f) * c_timeScale;
+	pcd.solverIterations = defaultSettings->getProperty< int32_t >(L"Physics.SolverIterations", 10);
 
 	if (!physicsManager->create(pcd))
 	{

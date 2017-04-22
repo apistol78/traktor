@@ -22,9 +22,9 @@ FilePipelineCache::FilePipelineCache()
 
 bool FilePipelineCache::create(const PropertyGroup* settings)
 {
-	m_accessRead = settings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", true);
-	m_accessWrite = settings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", true);	
-	m_path = settings->getProperty< PropertyString >(L"Pipeline.FileCache.Path");
+	m_accessRead = settings->getProperty< bool >(L"Pipeline.FileCache.Read", true);
+	m_accessWrite = settings->getProperty< bool >(L"Pipeline.FileCache.Write", true);	
+	m_path = settings->getProperty< std::wstring >(L"Pipeline.FileCache.Path");
 	
 	if (!FileSystem::getInstance().makeAllDirectories(m_path))
 		return false;

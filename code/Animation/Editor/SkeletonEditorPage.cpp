@@ -106,7 +106,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
-	desc.multiSample = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", 4);
+	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
 	desc.waitVBlanks = 0;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 
@@ -270,8 +270,8 @@ void SkeletonEditorPage::handleDatabaseEvent(db::Database* database, const Guid&
 void SkeletonEditorPage::updateSettings()
 {
 	Ref< PropertyGroup > colors = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
-	m_colorClear = colors->getProperty< PropertyColor >(L"Background");
-	m_colorGrid = colors->getProperty< PropertyColor >(L"Grid");
+	m_colorClear = colors->getProperty< Color4ub >(L"Background");
+	m_colorGrid = colors->getProperty< Color4ub >(L"Grid");
 }
 
 void SkeletonEditorPage::createSkeletonTreeNodes()

@@ -101,9 +101,9 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	m_fieldOfView = settings->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
-	m_mouseWheelRate = settings->getProperty< PropertyFloat >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
-	m_multiSample = settings->getProperty< PropertyInteger >(L"Editor.MultiSample", c_defaultMultiSample);
+	m_fieldOfView = settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
+	m_mouseWheelRate = settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
+	m_multiSample = settings->getProperty< int32_t >(L"Editor.MultiSample", c_defaultMultiSample);
 
 	m_containerAspect = new ui::Container();
 	m_containerAspect->create(parent, ui::WsNone, new ui::FloodLayout());
@@ -196,7 +196,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	std::wstring worldRendererTypeName = settings->getProperty< PropertyString >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 	
 	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName);
 	if (!worldRendererType)
@@ -380,12 +380,12 @@ void PerspectiveRenderControl::updateSettings()
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	m_colorClear = settings->getProperty< PropertyColor >(L"Editor.Colors/Background");
-	m_colorGrid = settings->getProperty< PropertyColor >(L"Editor.Colors/Grid");
-	m_colorRef = settings->getProperty< PropertyColor >(L"Editor.Colors/ReferenceEdge");
-	m_invertPanY = settings->getProperty< PropertyBoolean >(L"SceneEditor.InvertPanY");
-	m_fieldOfView = settings->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
-	m_mouseWheelRate = settings->getProperty< PropertyFloat >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
+	m_colorClear = settings->getProperty< Color4ub >(L"Editor.Colors/Background");
+	m_colorGrid = settings->getProperty< Color4ub >(L"Editor.Colors/Grid");
+	m_colorRef = settings->getProperty< Color4ub >(L"Editor.Colors/ReferenceEdge");
+	m_invertPanY = settings->getProperty< bool >(L"SceneEditor.InvertPanY");
+	m_fieldOfView = settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
+	m_mouseWheelRate = settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
 
 	updateWorldRenderer();
 }

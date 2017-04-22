@@ -512,11 +512,11 @@ void DatabaseView::updateView()
 		m_rootInstances.clear();
 		m_favoriteInstances.clear();
 
-		std::vector< std::wstring > rootInstances = m_editor->getSettings()->getProperty< PropertyStringArray >(L"Editor.RootInstances");
+		std::vector< std::wstring > rootInstances = m_editor->getSettings()->getProperty< std::vector< std::wstring > >(L"Editor.RootInstances");
 		for (std::vector< std::wstring >::const_iterator i = rootInstances.begin(); i != rootInstances.end(); ++i)
 			m_rootInstances.insert(Guid(*i));
 
-		std::vector< std::wstring > favoriteInstances = m_editor->getSettings()->getProperty< PropertyStringArray >(L"Editor.FavoriteInstances");
+		std::vector< std::wstring > favoriteInstances = m_editor->getSettings()->getProperty< std::vector< std::wstring > >(L"Editor.FavoriteInstances");
 		for (std::vector< std::wstring >::const_iterator i = favoriteInstances.begin(); i != favoriteInstances.end(); ++i)
 			m_favoriteInstances.insert(Guid(*i));
 

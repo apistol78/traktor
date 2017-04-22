@@ -80,7 +80,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 		mergedSettings = defaultSettings->mergeJoin(settings);
 
 	// Instanciate input drivers.
-	std::set< std::wstring > driverTypes = mergedSettings->getProperty< PropertyStringSet >(L"Input.DriverTypes");
+	std::set< std::wstring > driverTypes = mergedSettings->getProperty< std::set< std::wstring > >(L"Input.DriverTypes");
 	for (std::set< std::wstring >::const_iterator i = driverTypes.begin(); i != driverTypes.end(); ++i)
 	{
 		Ref< input::IInputDriver > driver = dynamic_type_cast< input::IInputDriver* >(TypeInfo::createInstance(*i));
@@ -100,7 +100,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 	}
 
 	// Read default input mapping.
-	Guid defaultSourceDataGuid(defaultSettings->getProperty< PropertyString >(L"Input.Default"));
+	Guid defaultSourceDataGuid(defaultSettings->getProperty< std::wstring >(L"Input.Default"));
 	if (defaultSourceDataGuid.isNotNull())
 	{
 		Ref< input::InputMappingResource > inputMappingResource = db->getObjectReadOnly< input::InputMappingResource >(defaultSourceDataGuid);
@@ -115,12 +115,12 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 	}
 
 	// Read input sources.
-	m_inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(mergedSettings->getProperty< PropertyObject >(L"Input.Sources"));
+	m_inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(mergedSettings->getProperty< Ref< ISerializable > >(L"Input.Sources"));
 	if (!m_inputMappingSourceData)
 		m_inputMappingSourceData = DeepClone(m_inputMappingDefaultSourceData).create< input::InputMappingSourceData >();
 
 	// Create rumble effect player.
-	if (mergedSettings->getProperty< PropertyBoolean >(L"Input.Rumble", true))
+	if (mergedSettings->getProperty< bool >(L"Input.Rumble", true))
 		m_rumbleEffectPlayer = new input::RumbleEffectPlayer();
 
 	m_inputFabricatorAborted = false;
@@ -168,7 +168,7 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 {
 	int32_t result = CrUnaffected;
 
-	Ref< input::InputMappingSourceData > inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(settings->getProperty< PropertyObject >(L"Input.Sources"));
+	Ref< input::InputMappingSourceData > inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(settings->getProperty< Ref< ISerializable > >(L"Input.Sources"));
 	if (!inputMappingSourceData)
 		inputMappingSourceData = DeepClone(m_inputMappingDefaultSourceData).create< input::InputMappingSourceData >();
 
@@ -207,7 +207,7 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 		result |= CrAccepted;
 	}
 
-	bool enableRumble = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
+	bool enableRumble = settings->getProperty< bool >(L"Input.Rumble", true);
 	if (enableRumble != bool(m_rumbleEffectPlayer != 0))
 	{
 		if (enableRumble)
@@ -525,7 +525,7 @@ void InputServer::apply()
 
 void InputServer::revert()
 {
-	m_inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(m_settings->getProperty< PropertyObject >(L"Input.Sources"));
+	m_inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(m_settings->getProperty< Ref< ISerializable > >(L"Input.Sources"));
 	if (!m_inputMappingSourceData)
 		m_inputMappingSourceData = DeepClone(m_inputMappingDefaultSourceData).create< input::InputMappingSourceData >();
 

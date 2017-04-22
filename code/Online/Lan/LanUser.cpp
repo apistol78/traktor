@@ -122,11 +122,11 @@ bool LanUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bo
 		const PropertyGroup* propertyGroup = (*i)->getProperties();
 		T_ASSERT (propertyGroup);
 
-		if (propertyGroup->getProperty< PropertyInteger >(c_keyUserHandle) != userHandle)
+		if (propertyGroup->getProperty< int32_t >(c_keyUserHandle) != userHandle)
 			continue;
 
-		uint32_t addr = propertyGroup->getProperty< PropertyInteger >(c_keyUserAddr);
-		uint16_t port = propertyGroup->getProperty< PropertyInteger >(c_keyUserPort);
+		uint32_t addr = propertyGroup->getProperty< int32_t >(c_keyUserAddr);
+		uint16_t port = propertyGroup->getProperty< int32_t >(c_keyUserPort);
 
 		int32_t result = m_socket->sendTo(
 			net::SocketAddressIPv4(addr, port),
@@ -159,11 +159,11 @@ void LanUser::update()
 				const PropertyGroup* propertyGroup = (*j)->getProperties();
 				T_ASSERT (propertyGroup);
 
-				if (propertyGroup->getProperty< PropertyInteger >(c_keyUserHandle) != i->userHandle)
+				if (propertyGroup->getProperty< int32_t >(c_keyUserHandle) != i->userHandle)
 					continue;
 
-				uint32_t addr = propertyGroup->getProperty< PropertyInteger >(c_keyUserAddr);
-				uint16_t port = propertyGroup->getProperty< PropertyInteger >(c_keyUserPort);
+				uint32_t addr = propertyGroup->getProperty< int32_t >(c_keyUserAddr);
+				uint16_t port = propertyGroup->getProperty< int32_t >(c_keyUserPort);
 
 				int32_t result = m_socket->sendTo(
 					net::SocketAddressIPv4(addr, port),

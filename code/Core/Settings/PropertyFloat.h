@@ -41,6 +41,17 @@ private:
 	value_type_t m_value;
 };
 
+/*!
+ * \ingroup Core
+ */
+template< >
+struct PropertyTrait< float >
+{
+	typedef PropertyFloat property_type_t;
+	typedef float default_value_type_t;
+	typedef float return_type_t;
+};
+
 }
 
 #endif	// traktor_PropertyFloat_H

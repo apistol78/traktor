@@ -457,7 +457,7 @@ bool emitInstance(GlslContext& cx, Instance* node)
 	assign(f, out) << L"float(gl_InstanceID);" << Endl;
 #else
 	const PropertyGroup* settings = cx.getSettings();
-	if (settings && settings->getProperty< PropertyBoolean >(L"Glsl.ES2.SupportHwInstancing", false))
+	if (settings && settings->getProperty< bool >(L"Glsl.ES2.SupportHwInstancing", false))
 		assign(f, out) << L"float(gl_InstanceIDEXT);" << Endl;
 	else
 		assign(f, out) << L"_gl_instanceID;" << Endl;
@@ -1786,9 +1786,9 @@ bool emitScript(GlslContext& cx, Script* node)
 	// Define script instance.
 	if (cx.getShader().defineScript(node->getName()))
 	{
-		StringOutputStream& fs = cx.getShader().getOutputStream(GlslShader::BtScript);
+		StringOutputStream ss;
 
-		fs << L"void " << node->getName() << L"(";
+		ss << L"void " << node->getName() << L"(";
 
 		int32_t ii = 0;
 		for (int32_t i = 0; i < inputPinCount; ++i)
@@ -1797,28 +1797,28 @@ bool emitScript(GlslContext& cx, Script* node)
 				continue;
 
 			if (ii++ > 0)
-				fs << L", ";
+				ss << L", ";
 
-			fs << glsl_type_name(in[i]->getType()) << L" " << node->getInputPin(i)->getName();
+			ss << glsl_type_name(in[i]->getType()) << L" " << node->getInputPin(i)->getName();
 		}
 
 		if (!in.empty())
-			fs << L", ";
+			ss << L", ";
 
 		for (int32_t i = 0; i < outputPinCount; ++i)
 		{
 			if (i > 0)
-				fs << L", ";
-			fs << L"out " << glsl_type_name(out[i]->getType()) << L" " << node->getOutputPin(i)->getName();
+				ss << L", ";
+			ss << L"out " << glsl_type_name(out[i]->getType()) << L" " << node->getOutputPin(i)->getName();
 		}
 
-		fs << L")" << Endl;
-		fs << L"{" << Endl;
-		fs << IncreaseIndent;
-		fs << script << Endl;
-		fs << DecreaseIndent;
-		fs << L"}" << Endl;
-		fs << Endl;
+		ss << L")" << Endl;
+
+		std::wstring processedScript = replaceAll< std::wstring >(script, L"ENTRY", ss.str());
+		T_ASSERT (!processedScript.empty());
+
+		StringOutputStream& fs = cx.getShader().getOutputStream(GlslShader::BtScript);
+		fs << processedScript << Endl;
 	}
 
 	// Emit script invocation.

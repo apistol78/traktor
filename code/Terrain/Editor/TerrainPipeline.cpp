@@ -198,8 +198,8 @@ TerrainPipeline::TerrainPipeline()
 
 bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-	m_suppressDetailShader = settings->getProperty< PropertyBoolean >(L"TerrainPipeline.SuppressDetailShader", false);
+	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_suppressDetailShader = settings->getProperty< bool >(L"TerrainPipeline.SuppressDetailShader", false);
 	return editor::DefaultPipeline::create(settings);
 }
 
