@@ -59,13 +59,13 @@ function ScrollContainer:place(x, y, width, height)
 	if self._scrollBarHorizontal ~= nil then
 		local range = self._innerSize.width - self._scrollSize.width
 		self._scrollBarHorizontal:place(0, self._scrollSize.height, self._scrollSize.width, p.height - self._scrollSize.height)
-		self._scrollBarHorizontal:setRange(range, 100)
+		self._scrollBarHorizontal:setRange(range, math.min(range / 2, 100))
 		self._scrollBarHorizontal:setVisible(range > 0)
 	end
 	if self._scrollBarVertical ~= nil then
 		local range = self._innerSize.height - self._scrollSize.height
 		self._scrollBarVertical:place(self._scrollSize.width, 0, p.width - self._scrollSize.width, self._scrollSize.height)
-		self._scrollBarVertical:setRange(range, 100)
+		self._scrollBarVertical:setRange(range, math.min(range / 2, 100))
 		self._scrollBarVertical:setVisible(range > 0)
 	end
 end
