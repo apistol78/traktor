@@ -1,5 +1,6 @@
 #include <limits>
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Scene/Editor/DebugRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Render/IRenderSystem.h"
@@ -18,6 +19,25 @@ namespace traktor
 		{
 
 const resource::Id< render::Shader > c_shader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
+
+const wchar_t* c_visualizeTechniques[] =
+{
+	L"Default",
+	L"Depth",
+	L"Normals",
+	L"Velocity",
+	L"SpecularRoughness",
+	L"SpecularTerm",
+	L"Metalness",
+	L"Reflectivity",
+	L"ShadowMap",
+	L"ShadowMask"
+};
+
+T_FORCE_INLINE bool DebugTargetPredicate(const render::DebugTarget& lh, const render::DebugTarget& rh)
+{
+	return compareIgnoreCase< std::wstring >(lh.name, rh.name) < 0;
+};
 
 		}
 
@@ -186,7 +206,8 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView || !m_screenRenderer)
 		return;
 
-	const std::vector< render::DebugTarget >& debugTargets = m_context->getDebugTargets();
+	std::vector< render::DebugTarget > debugTargets = m_context->getDebugTargets();
+	std::sort(debugTargets.begin(), debugTargets.end(), DebugTargetPredicate);
 
 	if (m_renderView->begin(render::EtCyclop))
 	{
@@ -197,20 +218,6 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 			1.0f,
 			128
 		);
-
-		const wchar_t* c_visualizeTechniques[] =
-		{
-			L"Default",
-			L"Depth",
-			L"Normals",
-			L"Velocity",
-			L"SpecularRoughness",
-			L"SpecularTerm",
-			L"Metalness",
-			L"Reflectivity",
-			L"ShadowMap",
-			L"ShadowMask"
-		};
 
 		if (!debugTargets.empty())
 		{
