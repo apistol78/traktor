@@ -114,6 +114,11 @@
 					<type>PtScalar</type>
 					<samplerId/>
 				</item>
+				<item>
+					<name>Roughness</name>
+					<type>PtScalar</type>
+					<samplerId/>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -180,7 +185,7 @@
 
 #define T_MAX_STEPS 64
 #define T_MAX_DISTANCE 4.0f
-#define T_STEP 4.0f
+#define T_STEP 2.0f
 
 bool intersectDepth(texture2D depthMap, float2 position, float z)
 {
@@ -194,8 +199,8 @@ ENTRY
 	Color = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	Hit = 0.0f;
 
-	if (Direction.z <= 0.0f)
-		return;
+//	if (Direction.z <= 0.0f)
+//		return;
 
 	float4 viewStart = float4(Origin.xyz, 1.0f);
 	float4 viewEnd = float4((Origin + Direction * T_MAX_DISTANCE).xyz, 1.0f);
@@ -214,7 +219,7 @@ ENTRY
 	float viewZDelta = viewEnd.z - viewStart.z;
 	float2 screenDelta = screenEnd - screenStart;
 
-	float ln = length(screenDelta) / T_STEP;
+	float ln = max(abs(screenDelta.x), abs(screenDelta.y)) / T_STEP;
 
 	float viewZStep = viewZDelta / ln;
 	float2 screenStep = screenDelta / ln;
@@ -246,8 +251,10 @@ ENTRY
 		return;
 	}
 
-	Color = ColorMap.Load(float3(screenPosition, 0.0f));
+	float2 uv = screenPosition / TargetSize.xy;
+	Color = ColorMap.SampleLevel(ColorMap_Sampler, uv, Roughness * 4.0f);
 }
+
 			]]>
 			</script>
 		</item>
@@ -647,6 +654,26 @@ ENTRY
 				<second>631</second>
 			</position>
 			<value>0</value>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>16</first>
+				<second>420</second>
+			</position>
+			<fragmentGuid>{FDCA9563-2389-4B43-A8E5-5262EC02EC1F}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>UV</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -1108,6 +1135,26 @@ ENTRY
 			<destination>
 				<node ref="/object/nodes/item[32]"/>
 				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>TexCoord</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<name>UV</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Roughness</name>
 			</destination>
 		</item>
 	</edges>
