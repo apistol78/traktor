@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include <limits>
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
@@ -209,12 +215,14 @@ bool WorldRendererDeferred::create(
 		render::RenderTargetSetCreateDesc rtscd;
 
 		rtscd.count = 1;
-		rtscd.width = desc.width;
-		rtscd.height = desc.height;
+		rtscd.width = previousLog2(desc.width);
+		rtscd.height = previousLog2(desc.height);
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.preferTiled = true;
+		rtscd.ignoreStencil = true;
+		rtscd.generateMips = true;
 		rtscd.targets[0].format = render::TfR11G11B10F;
 
 		m_colorTargetSet = renderSystem->createRenderTargetSet(rtscd);
@@ -1040,7 +1048,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			}
 
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (shadow)");
-			if (m_renderView->begin(m_colorTargetSet, 0))
+			if (m_renderView->begin(m_intermediateTargetSet, 0))
 			{
 				if (firstLight)
 				{
@@ -1074,7 +1082,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		}
 
 		// Then render all non-shadowing lights; no need to rebind render target for each light.
-		if (m_renderView->begin(m_colorTargetSet, 0))
+		if (m_renderView->begin(m_intermediateTargetSet, 0))
 		{
 			if (firstLight)
 			{
@@ -1107,6 +1115,26 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 
 			m_renderView->end();
 		}
+
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (0)");
+		m_renderView->begin(m_colorTargetSet, 0);
+
+		render::ImageProcessStep::Instance::RenderParams params;
+		params.viewFrustum = f.viewFrustum;
+		params.projection = projection;
+		params.deltaTime = 0.0f;
+
+		m_colorTargetCopy->render(
+			m_renderView,
+			m_intermediateTargetSet,
+			0,
+			0,
+			0,
+			params
+		);
+
+		m_renderView->end();
+		T_RENDER_POP_MARKER(m_renderView);
 
 		if (m_renderView->begin(m_visualTargetSet, 0))
 		{

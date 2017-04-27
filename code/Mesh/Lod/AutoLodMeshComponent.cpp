@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Lod/AutoLodMesh.h"
 #include "Mesh/Lod/AutoLodMeshComponent.h"

@@ -1,3 +1,12 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
+#include "Drawing/Config.h"
+#if defined(DRAWING_INCLUDE_ICO)
+
 #include "Core/Io/Writer.h"
 #include "Core/Math/Log2.h"
 #include "Drawing/Image.h"
@@ -98,3 +107,5 @@ bool ImageFormatIco::write(IStream* stream, Image* image)
 
 	}
 }
+
+#endif	// DRAWING_INCLUDE_ICO

@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Render/Shader/Node.h"
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
 #include "Ui/Custom/Graph/Node.h"

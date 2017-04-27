@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Database/Remote/Client/RemoteGroup.h"
 #include "Database/Remote/Client/RemoteInstance.h"
 #include "Database/Remote/Client/RemoteConnection.h"

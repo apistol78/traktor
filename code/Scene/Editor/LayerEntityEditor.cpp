@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/LayerEntityEditor.h"
 #include "World/Editor/LayerEntityData.h"

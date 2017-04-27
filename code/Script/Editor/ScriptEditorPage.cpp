@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StringReader.h"
@@ -79,6 +85,9 @@ struct DependencyCharacter : public RefCountImpl< ui::custom::RichEdit::ISpecial
 
 	virtual void draw(ui::Canvas& canvas, const ui::Rect& rc) const T_OVERRIDE T_FINAL
 	{
+		int32_t h = ui::scaleBySystemDPI(1);
+		canvas.setBackground(canvas.getForeground());
+		canvas.fillRect(ui::Rect(rc.left, rc.bottom - h, rc.right, rc.bottom));
 		canvas.drawText(rc, path, ui::AnCenter, ui::AnCenter);
 	}
 

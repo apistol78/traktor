@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Ui/Win32/WidgetFactoryWin32.h"
 #include "Ui/Win32/ButtonWin32.h"
 #include "Ui/Win32/CheckBoxWin32.h"

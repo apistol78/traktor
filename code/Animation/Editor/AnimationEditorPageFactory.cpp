@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Animation/Editor/AnimationEditorPageFactory.h"
 #include "Animation/Editor/AnimationEditorPage.h"
 #include "Animation/Animation/Animation.h"

@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "I18N/Dictionary.h"
 #include "I18N/Editor/DictionaryEditorPage.h"
 #include "I18N/Editor/DictionaryEditorPageFactory.h"

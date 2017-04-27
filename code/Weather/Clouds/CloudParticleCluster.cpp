@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Weather/Clouds/CloudParticleCluster.h"
 #include "Weather/Clouds/CloudParticleData.h"
 #include "Core/Math/Const.h"

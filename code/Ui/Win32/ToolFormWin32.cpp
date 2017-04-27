@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Ui/Events/NcMouseButtonDownEvent.h"
 #include "Ui/Events/NcMouseButtonUpEvent.h"
 #include "Ui/Events/NcMouseMoveEvent.h"

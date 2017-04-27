@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Scene/Editor/DefaultComponentEditor.h"
 #include "Scene/Editor/DefaultComponentEditorFactory.h"
 #include "World/IEntityComponentData.h"

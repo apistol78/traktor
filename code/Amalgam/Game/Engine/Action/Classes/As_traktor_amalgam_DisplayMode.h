@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #ifndef traktor_amalgam_As_traktor_amalgam_DisplayMode_h
 #define traktor_amalgam_As_traktor_amalgam_DisplayMode_h
 

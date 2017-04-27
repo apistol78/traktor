@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "I18N/Format.h"
 #include "Sound/Resound/SequenceGrainData.h"
 #include "Sound/Editor/Resound/SequenceGrainFacade.h"

@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Animation/Editor/PathEntity/PathEntityEditor.h"
 #include "Animation/PathEntity/PathEntityData.h"
 #include "Animation/PathEntity/PathEntity.h"

@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Animation/Cloth/ClothEntityData.h"
 #include "Animation/Editor/Cloth/ClothEntityPipeline.h"
 #include "Editor/IPipelineDepends.h"
