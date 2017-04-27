@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #define OGG_VORBIS_DECODER_REF 1
 #define OGG_VORBIS_DECODER_STB 2
 #define OGG_VORBIS_DECODER OGG_VORBIS_DECODER_STB

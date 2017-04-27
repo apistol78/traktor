@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Ai/NavMeshEntityData.h"
 #include "Ai/Editor/NavMeshEntityEditor.h"
 #include "Ai/Editor/NavMeshEntityEditorFactory.h"

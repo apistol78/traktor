@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Editor/Hinge2JointRenderer.h"
 #include "Render/PrimitiveRenderer.h"

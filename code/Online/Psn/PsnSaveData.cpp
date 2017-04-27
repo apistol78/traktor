@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include <sysutil/sysutil_gamecontent.h>
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"

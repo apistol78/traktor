@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include <limits>
 #include "Render/Dx9/Xbox360/RenderTargetPool.h"
 #include "Core/Log/Log.h"

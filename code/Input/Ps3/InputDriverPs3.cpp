@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include <cell/sysmodule.h>
 #include "Input/Ps3/InputDriverPs3.h"
 #include "Input/Ps3/InputDevicePs3.h"

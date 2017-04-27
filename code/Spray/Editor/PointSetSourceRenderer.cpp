@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Spray/PointSet.h"
 #include "Spray/Editor/PointSetSourceRenderer.h"
 #include "Spray/Sources/PointSetSourceData.h"

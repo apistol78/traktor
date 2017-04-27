@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Render/PS4/ContextPs4.h"
 #include "Render/PS4/MemoryHeapObjectPs4.h"
 #include "Render/PS4/MemoryHeapPs4.h"

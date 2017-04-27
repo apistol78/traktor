@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Ui/Wx/PopupMenuWx.h"
 #include "Ui/Wx/EvtHandler.h"
 #include "Ui/Itf/IWidget.h"

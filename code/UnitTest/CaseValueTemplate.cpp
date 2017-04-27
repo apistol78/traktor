@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Net/Replication/State/BodyStateTemplate.h"
 #include "Net/Replication/State/BodyStateValue.h"
 #include "Net/Replication/State/FloatTemplate.h"

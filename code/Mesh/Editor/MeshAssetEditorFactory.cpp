@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetEditor.h"
 #include "Mesh/Editor/MeshAssetEditorFactory.h"

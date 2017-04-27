@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Physics/SphereShapeDesc.h"
 #include "Physics/Editor/SphereShapeRenderer.h"
 #include "Render/PrimitiveRenderer.h"

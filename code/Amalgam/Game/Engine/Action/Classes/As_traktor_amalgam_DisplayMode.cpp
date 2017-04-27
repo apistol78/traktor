@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Amalgam/Game/Engine/Action/AsDisplayMode.h"
 #include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_DisplayMode.h"
 #include "Flash/Action/Common/Array.h"

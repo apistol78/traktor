@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Script/Editor/ScriptProfilerTool.h"
 #include "Script/Editor/ScriptProfilerDialog.h"

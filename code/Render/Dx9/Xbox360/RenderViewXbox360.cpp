@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Render/Dx9/Xbox360/RenderViewXbox360.h"
 #include "Render/Dx9/Xbox360/RenderSystemXbox360.h"
 #include "Render/Dx9/Xbox360/RenderTargetSetXbox360.h"

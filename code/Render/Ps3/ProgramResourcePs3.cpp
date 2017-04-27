@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Render/Ps3/ProgramResourcePs3.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"

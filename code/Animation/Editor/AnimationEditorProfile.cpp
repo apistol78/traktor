@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Animation/AnimatedMeshEntityFactory.h"
 #include "Animation/Animation/AnimationFactory.h"
 #include "Animation/Boids/BoidsEntityFactory.h"

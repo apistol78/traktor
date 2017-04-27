@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 //-----------------------------------------------------------------------------
 //  This is an implementation of Tom Forsyth's "Linear-Speed Vertex Cache 
 //  Optimization" algorithm as described here:

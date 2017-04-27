@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Animation/Skeleton.h"
 #include "Animation/Editor/SkeletonEditorPage.h"
 #include "Animation/Editor/SkeletonEditorPageFactory.h"

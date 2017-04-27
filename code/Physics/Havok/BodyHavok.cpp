@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include <Physics/Dynamics/Entity/hkpRigidBody.h>
 #include "Core/Math/Float.h"
 #include "Physics/Havok/BodyHavok.h"

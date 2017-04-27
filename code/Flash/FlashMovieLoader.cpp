@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Compress/Lzf/DeflateStreamLzf.h"
 #include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Functor/Functor.h"

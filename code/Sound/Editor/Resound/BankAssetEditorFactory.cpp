@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Sound/Editor/Resound/BankAsset.h"
 #include "Sound/Editor/Resound/BankAssetEditor.h"
 #include "Sound/Editor/Resound/BankAssetEditorFactory.h"

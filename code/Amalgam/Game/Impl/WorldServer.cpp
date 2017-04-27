@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Ai/NavMeshEntityFactory.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Impl/AudioServer.h"

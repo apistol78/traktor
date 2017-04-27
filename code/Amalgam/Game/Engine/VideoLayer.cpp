@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/Stage.h"

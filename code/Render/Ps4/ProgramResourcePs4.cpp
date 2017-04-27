@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Render/Ps4/BlobPs4.h"
 #include "Render/Ps4/ProgramResourcePs4.h"
 #include "Render/Shader/ShaderGraph.h"

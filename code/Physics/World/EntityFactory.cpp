@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Physics/World/ArticulatedEntity.h"
 #include "Physics/World/ArticulatedEntityData.h"
 #include "Physics/World/EntityFactory.h"

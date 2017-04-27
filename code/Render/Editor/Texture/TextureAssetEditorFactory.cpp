@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureAssetEditor.h"
 #include "Render/Editor/Texture/TextureAssetEditorFactory.h"

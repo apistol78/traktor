@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Render/OpenGL/ES2/ProgramCompilerOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #include "Render/OpenGL/Glsl/Glsl.h"

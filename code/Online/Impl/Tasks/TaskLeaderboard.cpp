@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Online/Result.h"
 #include "Online/Impl/Tasks/TaskLeaderboard.h"
 #include "Online/Provider/ILeaderboardsProvider.h"

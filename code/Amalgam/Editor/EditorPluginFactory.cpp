@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Amalgam/Editor/EditorPluginFactory.h"
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Core/Serialization/ISerializable.h"

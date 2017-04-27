@@ -1,6 +1,13 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #ifndef traktor_drawing_ImageFormatIco_H
 #define traktor_drawing_ImageFormatIco_H
 
+#include "Drawing/Config.h"
 #include "Drawing/IImageFormat.h"
 
 // import/export mechanism.
@@ -10,6 +17,8 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
+
+#if defined(DRAWING_INCLUDE_ICO)
 
 namespace traktor
 {
@@ -31,5 +40,7 @@ public:
 
 	}
 }
+
+#endif	// DRAWING_INCLUDE_ICO
 
 #endif	// traktor_drawing_ImageFormatIco_H

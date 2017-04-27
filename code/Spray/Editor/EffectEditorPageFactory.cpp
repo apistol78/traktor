@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Spray/EffectData.h"
 #include "Spray/Editor/EffectEditorPage.h"
 #include "Spray/Editor/EffectEditorPageFactory.h"

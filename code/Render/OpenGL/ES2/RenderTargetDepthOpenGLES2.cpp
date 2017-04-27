@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Render/OpenGL/ES2/RenderTargetDepthOpenGLES2.h"
 #if defined(__ANDROID__)
 #	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"

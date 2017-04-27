@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Theater/Editor/TheaterEditorProfile.h"
 #include "Theater/Editor/TheaterControllerEditorFactory.h"
 #include "Ui/Command.h"

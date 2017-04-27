@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
 #include "Core/Thread/Ps3/Spurs/SpursManager.h"
