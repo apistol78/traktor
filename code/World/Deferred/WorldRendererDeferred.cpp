@@ -1048,7 +1048,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			}
 
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (shadow)");
-			if (m_renderView->begin(m_intermediateTargetSet, 0))
+			if (m_renderView->begin(m_visualTargetSet, 0))
 			{
 				if (firstLight)
 				{
@@ -1082,7 +1082,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		}
 
 		// Then render all non-shadowing lights; no need to rebind render target for each light.
-		if (m_renderView->begin(m_intermediateTargetSet, 0))
+		if (m_renderView->begin(m_visualTargetSet, 0))
 		{
 			if (firstLight)
 			{
@@ -1116,28 +1116,32 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			m_renderView->end();
 		}
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (0)");
-		m_renderView->begin(m_colorTargetSet, 0);
+		// Copy visual target into smaller copy, generate mips.
+		if (m_renderView->begin(m_colorTargetSet, 0))
+		{
+			render::ImageProcessStep::Instance::RenderParams params;
+			params.viewFrustum = f.viewFrustum;
+			params.projection = projection;
+			params.deltaTime = 0.0f;
 
-		render::ImageProcessStep::Instance::RenderParams params;
-		params.viewFrustum = f.viewFrustum;
-		params.projection = projection;
-		params.deltaTime = 0.0f;
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (0)");
+			m_colorTargetCopy->render(
+				m_renderView,
+				m_visualTargetSet,
+				0,
+				0,
+				0,
+				params
+			);
+			T_RENDER_POP_MARKER(m_renderView);
 
-		m_colorTargetCopy->render(
-			m_renderView,
-			m_intermediateTargetSet,
-			0,
-			0,
-			0,
-			params
-		);
+			m_renderView->end();
+		}
 
-		m_renderView->end();
-		T_RENDER_POP_MARKER(m_renderView);
-
+		// Render reflections and fog.
 		if (m_renderView->begin(m_visualTargetSet, 0))
 		{
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Reflections");
 			m_lightRenderer->renderReflections(
 				m_renderView,
 				projection,
@@ -1152,7 +1156,9 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 				m_gbufferTargetSet->getColorTexture(2),
 				m_gbufferTargetSet->getColorTexture(3)
 			);
+			T_RENDER_POP_MARKER(m_renderView);
 
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Fog");
 			m_lightRenderer->renderFog(
 				m_renderView,
 				projection,
@@ -1165,6 +1171,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 				m_gbufferTargetSet->getColorTexture(2),
 				m_gbufferTargetSet->getColorTexture(3)
 			);
+			T_RENDER_POP_MARKER(m_renderView);
 
 			m_renderView->end();
 		}
