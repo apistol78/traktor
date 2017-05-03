@@ -105,19 +105,19 @@ public:
 	/*! \brief Get center of bounding box. */
 	T_MATH_INLINE Vector2 getCenter() const
 	{
-		return (mn + mx) * 0.5f;
+		return !empty() ? (mn + mx) * 0.5f : Vector2::zero();
 	}
 
 	/*! \brief Get extent of bounding box. */
 	T_MATH_INLINE Vector2 getExtent() const
 	{
-		return (mx - mn) * 0.5f;
+		return !empty() ? (mx - mn) * 0.5f : Vector2::zero();
 	}
 
 	/*! \brief Get size of bounding box. */
 	T_MATH_INLINE Vector2 getSize() const
 	{
-		return mn - mx;
+		return !empty() ? (mx - mn) : Vector2::zero();
 	}
 
 	/*! \brief Check if bounding box is empty. */
