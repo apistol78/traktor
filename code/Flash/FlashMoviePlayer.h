@@ -40,6 +40,7 @@ class IActionVM;
 class IDisplayRenderer;
 class IFlashMovieLoader;
 class ISoundRenderer;
+class MovieDebugger;
 
 struct CallArgs;
 struct IExternalCall;
@@ -55,7 +56,12 @@ class T_DLLCLASS FlashMoviePlayer : public Object
 	T_RTTI_CLASS;
 
 public:
-	FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRenderer* soundRenderer, const IFlashMovieLoader* movieLoader);
+	FlashMoviePlayer(
+		IDisplayRenderer* displayRenderer,
+		ISoundRenderer* soundRenderer,
+		const IFlashMovieLoader* movieLoader,
+		const MovieDebugger* movieDebugger
+	);
 
 	virtual ~FlashMoviePlayer();
 
@@ -258,6 +264,7 @@ private:
 	Ref< IDisplayRenderer > m_displayRenderer;
 	Ref< ISoundRenderer > m_soundRenderer;
 	Ref< const IFlashMovieLoader > m_movieLoader;
+	Ref< const MovieDebugger > m_movieDebugger;
 	Ref< FlashMovieRenderer > m_movieRenderer;
 	Ref< FlashSoundPlayer > m_soundPlayer;
 	Ref< IActionVM > m_actionVM;

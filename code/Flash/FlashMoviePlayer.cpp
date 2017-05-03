@@ -28,6 +28,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Action/Common/Classes/AsSound.h"
 #include "Flash/Action/Common/Classes/AsStage.h"
 #include "Flash/Action/Common/Classes/As_flash_external_ExternalInterface.h"
+#include "Flash/Debug/MovieDebugger.h"
 
 namespace traktor
 {
@@ -42,10 +43,16 @@ const int32_t c_framesBetweenCollections = 100;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMoviePlayer", FlashMoviePlayer, Object)
 
-FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRenderer* soundRenderer, const IFlashMovieLoader* movieLoader)
+FlashMoviePlayer::FlashMoviePlayer(
+	IDisplayRenderer* displayRenderer,
+	ISoundRenderer* soundRenderer,
+	const IFlashMovieLoader* movieLoader,
+	const MovieDebugger* movieDebugger
+)
 :	m_displayRenderer(displayRenderer)
 ,	m_soundRenderer(soundRenderer)
 ,	m_movieLoader(movieLoader)
+,	m_movieDebugger(movieDebugger)
 ,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
 ,	m_intervalNextId(1)
 ,	m_timeCurrent(0.0f)
@@ -337,6 +344,10 @@ void FlashMoviePlayer::executeFrame()
 			m_framesUntilCollection = c_framesBetweenCollections;
 		}
 	}
+
+	// Issue debugger if attached.
+	if (m_movieDebugger)
+		m_movieDebugger->postExecuteFrame(m_movie, m_movieInstance);
 }
 
 bool FlashMoviePlayer::progressFrame(float deltaTime)

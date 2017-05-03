@@ -213,7 +213,8 @@ void FlashPreviewControl::setMovie(FlashMovie* movie)
 	m_moviePlayer = new FlashMoviePlayer(
 		m_displayRenderer,
 		m_soundRenderer,
-		new flash::FlashMovieLoader()
+		new flash::FlashMovieLoader(),
+		0
 	);
 	m_moviePlayer->create(movie, sz.cx, sz.cy);
 

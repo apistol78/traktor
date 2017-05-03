@@ -4,6 +4,10 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Net/BidirectionalObjectTransport.h"
+#include "Net/SocketAddressIPv4.h"
+#include "Net/TcpSocket.h"
+
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/FlashLayer.h"
@@ -29,6 +33,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/ISoundRenderer.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
 #include "Flash/Action/Common/Classes/AsKey.h"
+#include "Flash/Debug/MovieDebugger.h"
 #include "Flash/Debug/WireDisplayRenderer.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Input/IInputDevice.h"
@@ -752,10 +757,17 @@ void FlashLayer::createMoviePlayer()
 		if (m_displayRendererWire)
 			displayRenderer = m_displayRendererWire;
 
+		// Connect to remote debugger.
+		Ref< flash::MovieDebugger > movieDebugger;
+		Ref< net::TcpSocket > remoteDebuggerSocket = new net::TcpSocket();
+		if (remoteDebuggerSocket->connect(net::SocketAddressIPv4(L"localhost", 12345)))
+			movieDebugger = new flash::MovieDebugger(new net::BidirectionalObjectTransport(remoteDebuggerSocket));
+
 		Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(
 			displayRenderer,
 			m_soundRenderer,
-			new CustomFlashMovieLoader(m_externalMovies)
+			new CustomFlashMovieLoader(m_externalMovies),
+			movieDebugger
 		);
 		if (!moviePlayer->create(m_movie, width, height))
 		{
