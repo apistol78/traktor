@@ -21,8 +21,17 @@ PostFrameDebugInfo::PostFrameDebugInfo()
 {
 }
 
-PostFrameDebugInfo::PostFrameDebugInfo(const Aabb2& frameBounds, const RefArray< InstanceDebugInfo >& instances)
+PostFrameDebugInfo::PostFrameDebugInfo(
+	const Aabb2& frameBounds,
+	const Vector4& stageTransform,
+	int32_t viewWidth,
+	int32_t viewHeight,
+	const RefArray< InstanceDebugInfo >& instances
+)
 :	m_frameBounds(frameBounds)
+,	m_stageTransform(stageTransform)
+,	m_viewWidth(viewWidth)
+,	m_viewHeight(viewHeight)
 ,	m_instances(instances)
 {
 }
@@ -30,6 +39,9 @@ PostFrameDebugInfo::PostFrameDebugInfo(const Aabb2& frameBounds, const RefArray<
 void PostFrameDebugInfo::serialize(ISerializer& s)
 {
 	s >> MemberAabb2(L"frameBounds", m_frameBounds);
+	s >> Member< Vector4 >(L"stageTransform", m_stageTransform);
+	s >> Member< int32_t >(L"viewWidth", m_viewWidth);
+	s >> Member< int32_t >(L"viewHeight", m_viewHeight);
 	s >> MemberRefArray< InstanceDebugInfo >(L"instances", m_instances);
 }
 

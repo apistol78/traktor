@@ -8,24 +8,30 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define DebugView_H
 
 #include <Flash/Debug/PostFrameDebugInfo.h>
-#include <Net/BidirectionalObjectTransport.h>
 #include <Ui/Widget.h>
 
 class DebugView : public traktor::ui::Widget
 {
 public:
 	bool create(
-		traktor::ui::Widget* parent,
-		traktor::net::BidirectionalObjectTransport* transport
+		traktor::ui::Widget* parent
 	);
 
+	void setDebugInfo(const traktor::flash::PostFrameDebugInfo* debugInfo);
+
 private:
-	traktor::Ref< traktor::net::BidirectionalObjectTransport > m_transport;
-	traktor::Ref< traktor::flash::PostFrameDebugInfo > m_debugInfo;
+	traktor::Ref< const traktor::flash::PostFrameDebugInfo > m_debugInfo;
+	traktor::ui::Point m_offset;
+	traktor::ui::Point m_mouseLast;
+	int32_t m_counter;
 
 	void eventPaint(traktor::ui::PaintEvent* event);
 
-	void eventTimer(traktor::ui::TimerEvent* event);
+	void eventMouseDown(traktor::ui::MouseButtonDownEvent* event);
+
+	void eventMouseUp(traktor::ui::MouseButtonUpEvent* event);
+
+	void eventMouseMove(traktor::ui::MouseMoveEvent* event);
 };
 
 #endif	// DebugView_H

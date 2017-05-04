@@ -16,8 +16,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionContext", ActionContext, Collectable)
 
-ActionContext::ActionContext(const FlashMovie* movie, const IFlashMovieLoader* movieLoader)
+ActionContext::ActionContext(const FlashMovie* movie, const ICharacterFactory* characterFactory, const IFlashMovieLoader* movieLoader)
 :	m_movie(movie)
+,	m_characterFactory(characterFactory)
 ,	m_movieLoader(movieLoader)
 {
 	m_strings[""];	// 0

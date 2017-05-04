@@ -4,30 +4,29 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Flash/FlashText.h"
-#include "Flash/FlashTextInstance.h"
-#include "Flash/Debug/TextInstanceDebugInfo.h"
+#include "Flash/FlashShapeInstance.h"
+#include "Flash/Debug/ShapeInstanceDebugInfo.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 	
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.TextInstanceDebugInfo", 0, TextInstanceDebugInfo, InstanceDebugInfo)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ShapeInstanceDebugInfo", 0, ShapeInstanceDebugInfo, InstanceDebugInfo)
 
-TextInstanceDebugInfo::TextInstanceDebugInfo()
+ShapeInstanceDebugInfo::ShapeInstanceDebugInfo()
 {
 }
 
-TextInstanceDebugInfo::TextInstanceDebugInfo(const FlashTextInstance* instance)
+ShapeInstanceDebugInfo::ShapeInstanceDebugInfo(const FlashShapeInstance* instance)
 {
 	m_name = instance->getName();
-	m_bounds = instance->getText()->getTextBounds();
+	m_bounds = instance->getBounds();
 	m_transform = instance->getFullTransform();
 	m_cxform = instance->getFullColorTransform();
 }
 
-void TextInstanceDebugInfo::serialize(ISerializer& s)
+void ShapeInstanceDebugInfo::serialize(ISerializer& s)
 {
 	InstanceDebugInfo::serialize(s);
 }

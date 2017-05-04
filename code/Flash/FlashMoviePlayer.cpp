@@ -46,11 +46,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMoviePlayer", FlashMoviePlayer, Obje
 FlashMoviePlayer::FlashMoviePlayer(
 	IDisplayRenderer* displayRenderer,
 	ISoundRenderer* soundRenderer,
+	const ICharacterFactory* characterFactory,
 	const IFlashMovieLoader* movieLoader,
 	const MovieDebugger* movieDebugger
 )
 :	m_displayRenderer(displayRenderer)
 ,	m_soundRenderer(soundRenderer)
+,	m_characterFactory(characterFactory)
 ,	m_movieLoader(movieLoader)
 ,	m_movieDebugger(movieDebugger)
 ,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
@@ -79,7 +81,7 @@ bool FlashMoviePlayer::create(FlashMovie* movie, int32_t width, int32_t height)
 	ActionValue memberValue;
 
 	m_movie = movie;
-	m_movieInstance = m_movie->createMovieClipInstance(m_movieLoader);
+	m_movieInstance = m_movie->createMovieClipInstance(m_characterFactory, m_movieLoader);
 
 	Ref< ActionContext > context = m_movieInstance->getContext();
 	Ref< ActionObject > global = context->getGlobal();
@@ -347,7 +349,13 @@ void FlashMoviePlayer::executeFrame()
 
 	// Issue debugger if attached.
 	if (m_movieDebugger)
-		m_movieDebugger->postExecuteFrame(m_movie, m_movieInstance);
+		m_movieDebugger->postExecuteFrame(
+			m_movie,
+			m_movieInstance,
+			m_stage->getFrameTransform(),
+			m_stage->getViewWidth(),
+			m_stage->getViewHeight()
+		);
 }
 
 bool FlashMoviePlayer::progressFrame(float deltaTime)

@@ -98,7 +98,13 @@ public:
 	 *
 	 * \param characterInstance Character instance.
 	 */
-	void removeObject(FlashCharacterInstance* characterInstance);
+	bool removeObject(FlashCharacterInstance* characterInstance);
+
+	/*! \brief Remove character instance from display list.
+	 *
+	 * \param characterInstance Character instance.
+	 */
+	bool removeObject(int32_t depth);
 
 	/*! \brief Get depth where character instance is placed.
 	 *

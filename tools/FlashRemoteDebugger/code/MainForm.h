@@ -21,6 +21,8 @@ private:
 	traktor::Ref< traktor::net::TcpSocket > m_serverSocket;
 
 	void eventTimer(traktor::ui::TimerEvent* event);
+
+	void eventClose(traktor::ui::CloseEvent* event);
 };
 
 #endif	// MainForm_H

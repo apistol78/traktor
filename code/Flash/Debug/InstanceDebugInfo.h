@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Math/Aabb2.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Flash/ColorTransform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -41,12 +42,15 @@ public:
 
 	const Matrix33& getTransform() const { return m_transform; }
 
+	const ColorTransform& getColorTransform() const { return m_cxform; }
+
 	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 protected:
 	std::string m_name;
 	Aabb2 m_bounds;
 	Matrix33 m_transform;
+	ColorTransform m_cxform;
 };
 	
 	}

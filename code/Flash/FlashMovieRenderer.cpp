@@ -683,7 +683,7 @@ void FlashMovieRenderer::renderCharacter(
 					T_ASSERT (characters[j->c - 1]);
 					renderCharacter(
 						characters[j->c - 1],
-						editTransform * translate(textOffsetX + i->x, textOffsetY + i->y),
+						editTransform * translate(textOffsetX + i->offset + i->x, textOffsetY + i->y),
 						cxTransform,
 						renderAsMask,
 						blendMode
@@ -717,7 +717,7 @@ void FlashMovieRenderer::renderCharacter(
 
 						m_displayRenderer->renderGlyph(
 							*dictionary,
-							editTransform * translate(textOffsetX + i->x + chars[k].x, textOffsetY + i->y),
+							editTransform * translate(textOffsetX + i->offset + i->x + chars[k].x, textOffsetY + i->y),
 							attrib.font,
 							glyph,
 							layout->getFontHeight(),
@@ -729,7 +729,7 @@ void FlashMovieRenderer::renderCharacter(
 						);
 					}
 
-					caretEndPosition = textOffsetX + i->x + chars[k].x + chars[k].w;
+					caretEndPosition = textOffsetX + i->offset + i->x + chars[k].x + chars[k].w;
 				}
 			}
 		}

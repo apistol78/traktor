@@ -27,6 +27,8 @@ namespace traktor
 	namespace flash
 	{
 
+#pragma warning( disable:4324 )
+
 /*! \brief Flash shape.
  * \ingroup Flash
  */
@@ -80,6 +82,8 @@ private:
 	AlignedVector< FlashLineStyle > m_lineStyles;
 	AlignedVector< Triangle > m_triangles;
 };
+
+#pragma warning( default:4324 )
 
 	}
 }

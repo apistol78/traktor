@@ -20,6 +20,8 @@ namespace traktor
 class FlashCharacterInstance;
 class FlashFont;
 
+#pragma warning( disable:4324 )
+
 /*! \brief Text layout engine.
  * \ingroup Flash
  */
@@ -53,6 +55,7 @@ public:
 		float width;
 		float x;
 		float y;
+		float offset;
 		AlignedVector< Word > words;
 	};
 

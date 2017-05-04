@@ -17,6 +17,8 @@ namespace traktor
 	namespace flash
 	{
 
+#pragma warning( disable:4324 )
+
 //@{
 /*! \ingroup Flash */
 
@@ -471,6 +473,8 @@ enum SwfBlendMode
 };
 
 //@}
+
+#pragma warning( default:4324 )
 
 	}
 }

@@ -30,6 +30,7 @@ class FlashFont;
 class FlashSound;
 class FlashSprite;
 class FlashSpriteInstance;
+class ICharacterFactory;
 class IFlashMovieLoader;
 
 /*! \brief Flash movie.
@@ -54,7 +55,7 @@ public:
 
 	void setExport(const std::string& name, uint16_t exportId);
 
-	Ref< FlashSpriteInstance > createMovieClipInstance(const IFlashMovieLoader* movieLoader) const;
+	Ref< FlashSpriteInstance > createMovieClipInstance(const ICharacterFactory* characterFactory, const IFlashMovieLoader* movieLoader) const;
 
 	Ref< FlashSpriteInstance > createExternalMovieClipInstance(FlashSpriteInstance* containerInstance, int32_t depth) const;
 

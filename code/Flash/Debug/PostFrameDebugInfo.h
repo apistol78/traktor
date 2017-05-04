@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -36,9 +37,21 @@ class T_DLLCLASS PostFrameDebugInfo : public ISerializable
 public:
 	PostFrameDebugInfo();
 
-	PostFrameDebugInfo(const Aabb2& frameBounds, const RefArray< InstanceDebugInfo >& instances);
+	PostFrameDebugInfo(
+		const Aabb2& frameBounds,
+		const Vector4& stageTransform,
+		int32_t viewWidth,
+		int32_t viewHeight,
+		const RefArray< InstanceDebugInfo >& instances
+	);
 
 	const Aabb2& getFrameBounds() const { return m_frameBounds; }
+
+	const Vector4& getStageTransform() const { return m_stageTransform; }
+
+	int32_t getViewWidth() const { return m_viewWidth; }
+
+	int32_t getViewHeight() const { return m_viewHeight; }
 
 	const RefArray< InstanceDebugInfo >& getInstances() const { return m_instances; }
 
@@ -46,6 +59,9 @@ public:
 
 private:
 	Aabb2 m_frameBounds;
+	Vector4 m_stageTransform;
+	int32_t m_viewWidth;
+	int32_t m_viewHeight;
 	RefArray< InstanceDebugInfo > m_instances;
 };
 	

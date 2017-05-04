@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Io/IStream.h"
 #include "Drawing/Image.h"
+#include "Flash/DefaultCharacterFactory.h"
 #include "Flash/FlashBitmapImage.h"
 #include "Flash/FlashBitmapResource.h"
 #include "Flash/FlashBitmapTexture.h"
@@ -249,6 +250,14 @@ uint32_t FlashShape_getPathCount(FlashShape* self)
 	return uint32_t(self->getPaths().size());
 }
 
+void FlashDisplayList_removeObject(FlashDisplayList* self, const Any& item)
+{
+	if (item.isObject< FlashCharacterInstance >())
+		self->removeObject(item.getObjectUnsafe< FlashCharacterInstance >());
+	else if (item.isNumeric())
+		self->removeObject(item.getInt32());
+}
+
 RefArray< FlashCharacterInstance > FlashDisplayList_getObjects(FlashDisplayList* self)
 {
 	RefArray< FlashCharacterInstance > characters;
@@ -416,6 +425,13 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classActionObjectRelay->setUnknownHandler(&ActionObjectRelay_invoke);
 	registrar->registerClass(classActionObjectRelay);
 
+	Ref< AutoRuntimeClass< ICharacterFactory > > classICharacterFactory = new AutoRuntimeClass< ICharacterFactory >();
+	registrar->registerClass(classICharacterFactory);
+
+	Ref< AutoRuntimeClass< DefaultCharacterFactory > > classDefaultCharacterFactory = new AutoRuntimeClass< DefaultCharacterFactory >();
+	classDefaultCharacterFactory->addConstructor();
+	registrar->registerClass(classDefaultCharacterFactory);
+
 	Ref< AutoRuntimeClass< IFlashMovieLoader > > classIFlashMovieLoader = new AutoRuntimeClass< IFlashMovieLoader >();
 	classIFlashMovieLoader->addMethod("loadAsync", &IFlashMovieLoader::loadAsync);
 	classIFlashMovieLoader->addMethod("load", &IFlashMovieLoader::load);
@@ -566,7 +582,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< FlashDisplayList > > classFlashDisplayList = new AutoRuntimeClass< FlashDisplayList >();
 	classFlashDisplayList->addMethod("reset", &FlashDisplayList::reset);
 	classFlashDisplayList->addMethod("showObject", &FlashDisplayList::showObject);
-	classFlashDisplayList->addMethod("removeObject", &FlashDisplayList::removeObject);
+	classFlashDisplayList->addMethod("removeObject", &FlashDisplayList_removeObject);
 	classFlashDisplayList->addMethod("getObjectDepth", &FlashDisplayList::getObjectDepth);
 	classFlashDisplayList->addMethod("getNextHighestDepth", &FlashDisplayList::getNextHighestDepth);
 	classFlashDisplayList->addMethod("swap", &FlashDisplayList::swap);

@@ -103,6 +103,9 @@ public:
 
 	bool isObject() const { return m_type == AtObject; }
 
+	template< typename ObjectType >
+	bool isObject() const { return m_type == AtObject && is_a< ObjectType >(m_data.m_object); }
+
 	bool isNumeric() const { return isInt32() || isInt64() || isFloat(); }
 
 	// \name Unsafe accessors.
@@ -119,6 +122,9 @@ public:
 	std::string getStringUnsafe() const { T_ASSERT (m_type == AtString); return m_data.m_string; }
 
 	ITypedObject* getObjectUnsafe() const { T_ASSERT (m_type == AtObject); return m_data.m_object; }
+
+	template < typename ObjectType >
+	ObjectType* getObjectUnsafe() const { T_ASSERT (m_type == AtObject); return mandatory_non_null_type_cast< ObjectType* >(m_data.m_object); }
 
 	// \}
 

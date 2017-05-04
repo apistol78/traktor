@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/FlashDisplayList.h"
 #include "Flash/FlashCharacter.h"
 #include "Flash/FlashFrame.h"
+#include "Flash/ICharacterFactory.h"
 #include "Flash/Action/ActionContext.h"
 
 namespace traktor
@@ -69,9 +70,12 @@ void FlashDisplayList::updateEnd()
 		if (!i->second.immutable && i->second.collect)
 		{
 			if (i->second.instance)
+			{
+				m_context->getCharacterFactory()->removeInstance(i->second.instance, i->first);
 				i->second.instance->clearCacheObject();
+			}
 			i = m_layers.erase(i);
-		}
+		} 
 		else
 			i++;
 	}
@@ -92,16 +96,27 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 		layer_map_t::iterator j = m_layers.find(removeObject.depth + c_depthOffset);
 		if (j != m_layers.end())
 		{
-			if (j->second.instance)
-				j->second.instance->clearCacheObject();
-
 			if (removeObject.hasCharacterId)
 			{
 				if (j->second.id == removeObject.characterId)
+				{
+					if (j->second.instance)
+					{
+						m_context->getCharacterFactory()->removeInstance(j->second.instance, j->first);
+						j->second.instance->clearCacheObject();
+					}
 					m_layers.erase(j);
+				}
 			}
 			else
+			{
+				if (j->second.instance)
+				{
+					m_context->getCharacterFactory()->removeInstance(j->second.instance, j->first);
+					j->second.instance->clearCacheObject();
+				}
 				m_layers.erase(j);
+			}
 		}
 #if defined(_DEBUG)
 		else
@@ -125,7 +140,10 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 			if (placeObject.has(FlashFrame::PfHasCharacterId) && placeObject.characterId != layer.id)
 			{
 				if (layer.instance)
+				{
+					m_context->getCharacterFactory()->removeInstance(layer.instance, depth);
 					layer.instance->clearCacheObject();
+				}
 
 				Ref< const FlashCharacter > character = ownerInstance->getDictionary()->getCharacter(placeObject.characterId);
 				if (character)
@@ -135,7 +153,9 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 					// Create new instance.
 					layer.id = placeObject.characterId;
-					layer.instance = character->createInstance(
+					layer.instance = m_context->getCharacterFactory()->createInstance(
+						character,
+						depth,
 						m_context,
 						ownerInstance->getDictionary(),
 						ownerInstance,
@@ -200,7 +220,10 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 			if (j != m_layers.end())
 			{
 				if (j->second.instance)
+				{
+					m_context->getCharacterFactory()->removeInstance(j->second.instance, j->first);
 					j->second.instance->clearCacheObject();
+				}
 				m_layers.erase(j);
 			}
 		}
@@ -211,25 +234,49 @@ void FlashDisplayList::showObject(int32_t depth, uint16_t characterId, FlashChar
 {
 	T_ASSERT (characterInstance);
 
-	if (m_layers[depth].instance)
-		m_layers[depth].instance->clearCacheObject();
+	Layer& layer = m_layers[depth];
 
-	m_layers[depth].id = characterId;
-	m_layers[depth].name = m_context->getString(characterInstance->getName());
-	m_layers[depth].instance = characterInstance;
-	m_layers[depth].immutable = immutable;
+	if (layer.instance)
+	{
+		m_context->getCharacterFactory()->removeInstance(layer.instance, depth);
+		layer.instance->clearCacheObject();
+	}
+
+	layer.id = characterId;
+	layer.name = m_context->getString(characterInstance->getName());
+	layer.instance = characterInstance;
+	layer.immutable = immutable;
 }
 
-void FlashDisplayList::removeObject(FlashCharacterInstance* characterInstance)
+bool FlashDisplayList::removeObject(FlashCharacterInstance* characterInstance)
 {
 	T_ASSERT (characterInstance);
 
 	layer_map_t::iterator i = std::find_if(m_layers.begin(), m_layers.end(), FindCharacter(characterInstance));
-	T_ASSERT (i != m_layers.end());
+	if (i == m_layers.end())
+		return false;
+
+	m_context->getCharacterFactory()->removeInstance(characterInstance, i->first);
+	characterInstance->clearCacheObject();
 
 	m_layers.erase(i);
+	return true;
+}
 
-	characterInstance->clearCacheObject();
+bool FlashDisplayList::removeObject(int32_t depth)
+{
+	layer_map_t::iterator i = m_layers.find(depth);
+	if (i == m_layers.end())
+		return false;
+
+	if (i->second.instance)
+	{
+		m_context->getCharacterFactory()->removeInstance(i->second.instance, i->first);
+		i->second.instance->clearCacheObject();
+	}
+
+	m_layers.erase(i);
+	return true;
 }
 
 int32_t FlashDisplayList::getObjectDepth(const FlashCharacterInstance* characterInstance) const

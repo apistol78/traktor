@@ -43,7 +43,13 @@ class T_DLLCLASS MovieDebugger : public Object
 public:
 	MovieDebugger(net::BidirectionalObjectTransport* transport);
 
-	void postExecuteFrame(const FlashMovie* movie, const FlashSpriteInstance* movieInstance) const;
+	void postExecuteFrame(
+		const FlashMovie* movie,
+		const FlashSpriteInstance* movieInstance,
+		const Vector4& stageTransform,
+		int32_t viewWidth,
+		int32_t viewHeight
+	) const;
 
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;

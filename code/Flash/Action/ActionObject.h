@@ -111,6 +111,8 @@ public:
 
 	bool getMember(const std::string& memberName, ActionValue& outMemberValue);
 
+	bool deleteMember(const std::string& memberName);
+
 	bool getLocalMember(const std::string& memberName, ActionValue& outMemberValue) const;
 
 	bool getMemberByQName(const std::string& memberName, ActionValue& outMemberValue);

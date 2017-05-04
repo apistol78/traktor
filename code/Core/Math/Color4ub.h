@@ -27,11 +27,13 @@ namespace traktor
 class T_DLLCLASS Color4ub
 {
 public:
+#pragma warning( disable:4201 )
 	union
 	{
 		uint8_t e[4];
 		struct { uint8_t r, g, b, a; };
 	};
+#pragma warning( default:4201 )
 	
 	T_MATH_INLINE Color4ub();
 
