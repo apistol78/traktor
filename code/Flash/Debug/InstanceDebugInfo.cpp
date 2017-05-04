@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Flash/FlashCharacterInstance.h"
+#include "Flash/SwfMembers.h"
 #include "Flash/Debug/InstanceDebugInfo.h"
 
 namespace traktor
@@ -26,6 +27,7 @@ void InstanceDebugInfo::serialize(ISerializer& s)
 	s >> Member< std::string >(L"name", m_name);
 	s >> MemberAabb2(L"bounds", m_bounds);
 	s >> Member< Matrix33 >(L"transform", m_transform);
+	s >> MemberColorTransform(L"cxform", m_cxform);
 }
 
 	}

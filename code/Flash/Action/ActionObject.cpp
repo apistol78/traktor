@@ -358,6 +358,11 @@ bool ActionObject::getMember(const std::string& memberName, ActionValue& outMemb
 	return getMember(m_context->getString(memberName), outMemberValue);
 }
 
+bool ActionObject::deleteMember(const std::string& memberName)
+{
+	return deleteMember(m_context->getString(memberName));
+}
+
 bool ActionObject::getLocalMember(const std::string& memberName, ActionValue& outMemberValue) const
 {
 	return getLocalMember(m_context->getString(memberName), outMemberValue);

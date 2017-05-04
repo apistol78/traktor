@@ -24,6 +24,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Timer/Profiler.h"
+#include "Flash/DefaultCharacterFactory.h"
 #include "Flash/FlashCast.h"
 #include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
@@ -766,6 +767,7 @@ void FlashLayer::createMoviePlayer()
 		Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(
 			displayRenderer,
 			m_soundRenderer,
+			new flash::DefaultCharacterFactory(),
 			new CustomFlashMovieLoader(m_externalMovies),
 			movieDebugger
 		);

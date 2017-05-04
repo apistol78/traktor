@@ -30,11 +30,13 @@ namespace traktor
 class T_DLLCLASS Vector2i
 {
 public:
+#pragma warning( disable:4201 )
 	union
 	{
 		int32_t e[2];
 		struct { int32_t x, y; };
 	};
+#pragma warning( default:4201 )
 
 	T_MATH_INLINE Vector2i();
 

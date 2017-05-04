@@ -1388,6 +1388,25 @@ bool FlashTagMetaData::read(SwfReader* swf, ReadContext& context)
 }
 
 // ============================================================================
+// FileAttributes
+
+bool FlashTagFileAttributes::read(SwfReader* swf, ReadContext& context)
+{
+	BitReader& bs = swf->getBitReader();
+
+	bs.skip(1);
+	bool useDirectBlit = bs.readBit();
+	bool useGPU = bs.readBit();
+	bool hasMetadata = bs.readBit();
+	bool useAVM2 = bs.readBit();
+	bs.skip(1);
+	bool useNetwork = bs.readBit();
+	bs.skip(1);
+
+	return true;
+}
+
+// ============================================================================
 // Unsupported
 
 FlashTagUnsupported::FlashTagUnsupported(int32_t tagId)

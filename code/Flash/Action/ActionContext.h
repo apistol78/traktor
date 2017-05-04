@@ -29,6 +29,7 @@ namespace traktor
 class FlashCharacterInstance;
 class FlashMovie;
 class FlashSpriteInstance;
+class ICharacterFactory;
 class IFlashMovieLoader;
 
 /*! \brief ActionScript execution context.
@@ -82,7 +83,7 @@ public:
 		IdHeight = 37
 	};
 
-	ActionContext(const FlashMovie* movie, const IFlashMovieLoader* movieLoader);
+	ActionContext(const FlashMovie* movie, const ICharacterFactory* characterFactory, const IFlashMovieLoader* movieLoader);
 
 	void setGlobal(ActionObject* global);
 
@@ -107,6 +108,8 @@ public:
 	std::string getString(uint32_t id);
 
 	const FlashMovie* getMovie() const { return m_movie; }
+
+	const ICharacterFactory* getCharacterFactory() const { return m_characterFactory; }
 
 	const IFlashMovieLoader* getMovieLoader() const { return m_movieLoader; }
 
@@ -135,6 +138,7 @@ private:
 	};
 
 	const FlashMovie* m_movie;
+	Ref< const ICharacterFactory > m_characterFactory;
 	Ref< const IFlashMovieLoader > m_movieLoader;
 	Ref< ActionObject > m_global;
 	Ref< FlashSpriteInstance > m_movieClip;

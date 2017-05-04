@@ -13,7 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Editor/IEditor.h"
-#include "Flash/Editor/FlashPreviewControl.h"
+#include "Flash/DefaultCharacterFactory.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieLoader.h"
 #include "Flash/FlashMoviePlayer.h"
@@ -21,6 +21,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/FlashSprite.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
 #include "Flash/Action/Common/Classes/AsKey.h"
+#include "Flash/Editor/FlashPreviewControl.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Flash/Sw/SwDisplayRenderer.h"
 #include "Sound/Player/SoundPlayer.h"
@@ -213,6 +214,7 @@ void FlashPreviewControl::setMovie(FlashMovie* movie)
 	m_moviePlayer = new FlashMoviePlayer(
 		m_displayRenderer,
 		m_soundRenderer,
+		new flash::DefaultCharacterFactory(),
 		new flash::FlashMovieLoader(),
 		0
 	);

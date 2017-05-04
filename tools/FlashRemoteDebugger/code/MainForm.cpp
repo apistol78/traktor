@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/FloodLayout.h>
 #include <Ui/TabPage.h>
 #include "MainForm.h"
-#include "DebugView.h"
+#include "ClientPage.h"
 
 using namespace traktor;
 
@@ -32,6 +32,8 @@ bool MainForm::create()
 	m_serverSocket->listen();
 
 	addEventHandler< ui::TimerEvent >(this, &MainForm::eventTimer);
+	addEventHandler< ui::CloseEvent >(this, &MainForm::eventClose);
+
 	startTimer(100);
 
 	update();
@@ -49,15 +51,20 @@ void MainForm::eventTimer(ui::TimerEvent* event)
 		{
 			Ref< net::BidirectionalObjectTransport > transport = new net::BidirectionalObjectTransport(clientSocket);
 
-			Ref< ui::TabPage > clientPage = new ui::TabPage();
-			clientPage->create(m_tab, L"Client", new ui::FloodLayout());
+			Ref< ui::TabPage > clientTabPage = new ui::TabPage();
+			clientTabPage->create(m_tab, L"Client", new ui::FloodLayout());
 
-			Ref< DebugView > clientDebugView = new DebugView();
-			clientDebugView->create(clientPage, transport);
+			Ref< ClientPage > clientPage = new ClientPage();
+			clientPage->create(clientTabPage, transport);
 
-			m_tab->addPage(clientPage);
+			m_tab->addPage(clientTabPage);
 
 			update();
 		}
 	}
+}
+
+void MainForm::eventClose(ui::CloseEvent* event)
+{
+	ui::Application::getInstance()->exit(0);
 }

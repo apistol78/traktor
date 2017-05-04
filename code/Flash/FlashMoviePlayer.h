@@ -37,6 +37,7 @@ class FlashMovieRenderer;
 class FlashSoundPlayer;
 class FlashSpriteInstance;
 class IActionVM;
+class ICharacterFactory;
 class IDisplayRenderer;
 class IFlashMovieLoader;
 class ISoundRenderer;
@@ -59,6 +60,7 @@ public:
 	FlashMoviePlayer(
 		IDisplayRenderer* displayRenderer,
 		ISoundRenderer* soundRenderer,
+		const ICharacterFactory* characterFactory,
 		const IFlashMovieLoader* movieLoader,
 		const MovieDebugger* movieDebugger
 	);
@@ -263,6 +265,7 @@ private:
 
 	Ref< IDisplayRenderer > m_displayRenderer;
 	Ref< ISoundRenderer > m_soundRenderer;
+	Ref< const ICharacterFactory > m_characterFactory;
 	Ref< const IFlashMovieLoader > m_movieLoader;
 	Ref< const MovieDebugger > m_movieDebugger;
 	Ref< FlashMovieRenderer > m_movieRenderer;

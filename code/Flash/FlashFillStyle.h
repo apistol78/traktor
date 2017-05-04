@@ -30,6 +30,8 @@ class ISerializer;
 
 class ColorTransform;
 
+#pragma warning( disable:4324 )
+
 /*! \brief Shape fill style.
  * \ingroup Flash
  */
@@ -95,6 +97,8 @@ private:
 	Matrix33 m_fillBitmapMatrix;
 	bool m_fillBitmapRepeat;
 };
+
+#pragma warning( default:4324 )
 
 	}
 }

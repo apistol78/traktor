@@ -62,7 +62,7 @@ void FlashMovie::setExport(const std::string& name, uint16_t exportId)
 	m_exports[name] = exportId;
 }
 
-Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IFlashMovieLoader* movieLoader) const
+Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const ICharacterFactory* characterFactory, const IFlashMovieLoader* movieLoader) const
 {
 	Ref< FlashDictionary > dictionary = new FlashDictionary();
 	dictionary->m_fonts = m_fonts;
@@ -71,7 +71,7 @@ Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IFlashMovie
 	dictionary->m_characters = m_characters;
 	dictionary->m_exports = m_exports;
 
-	Ref< ActionContext > context = new ActionContext(this, movieLoader);
+	Ref< ActionContext > context = new ActionContext(this, characterFactory, movieLoader);
 
 	Ref< ActionGlobal > global = new ActionGlobal(context);
 	context->setGlobal(global);

@@ -34,6 +34,7 @@ class FlashBitmap;
 /*! \brief Dynamic canvas.
  * \ingroup Flash
  */
+#pragma warning( disable:4324 )
 class T_DLLCLASS FlashCanvas : public Object
 {
 	T_RTTI_CLASS;

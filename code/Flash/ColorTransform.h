@@ -46,7 +46,7 @@ public:
 	{
 		ColorTransform cxtr;
 		cxtr.mul = mul * rh.mul;
-		cxtr.add = (add * rh.mul + rh.add).saturated();
+		cxtr.add = (mul * rh.add + add).saturated();
 		return cxtr;
 	}
 

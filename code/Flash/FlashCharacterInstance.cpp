@@ -85,6 +85,11 @@ void FlashCharacterInstance::destroy()
 	ActionObjectRelay::dereference();
 }
 
+void FlashCharacterInstance::setParent(FlashCharacterInstance* parent)
+{
+	m_parent = parent;
+}
+
 void FlashCharacterInstance::setName(const std::string& name)
 {
 	m_name = name;
@@ -119,6 +124,14 @@ void FlashCharacterInstance::setColorTransform(const ColorTransform& cxform)
 {
 	clearCacheObject();
 	m_cxform = cxform;
+}
+
+ColorTransform FlashCharacterInstance::getFullColorTransform() const
+{
+	if (m_parent)
+		return m_parent->getFullColorTransform() * m_cxform;
+	else
+		return m_cxform;
 }
 
 void FlashCharacterInstance::setTransform(const Matrix33& transform)
@@ -347,11 +360,6 @@ bool FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const Action
 
 	eventFunction->call(self, argv);
 	return true;
-}
-
-void FlashCharacterInstance::setParent(FlashCharacterInstance* parent)
-{
-	m_parent = parent;
 }
 
 void FlashCharacterInstance::trace(visitor_t visitor) const

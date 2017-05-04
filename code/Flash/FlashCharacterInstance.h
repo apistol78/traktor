@@ -33,6 +33,7 @@ class IActionVMImage;
 /*! \brief Character instance.
  * \ingroup Flash
  */
+#pragma warning( disable:4324 )
 class T_DLLCLASS FlashCharacterInstance : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
@@ -64,6 +65,10 @@ public:
 	 * \return Dictionary.
 	 */
 	FlashDictionary* getDictionary() const { return m_dictionary; }
+
+	/*! \brief Set parent instance.
+	 */
+	void setParent(FlashCharacterInstance* parent);
 
 	/*! \brief Get parent instance.
 	 *
@@ -120,6 +125,12 @@ public:
 	 * \return Color transform.
 	 */
 	const ColorTransform& getColorTransform() const { return m_cxform; }
+
+	/*! \brief Get color transform; concatenated through parents.
+	 *
+	 * \return Color transform.
+	 */
+	ColorTransform getFullColorTransform() const;
 
 	/*! \brief Set coordinate transformation.
 	 *
@@ -246,8 +257,6 @@ public:
 	bool executeScriptEvent(uint32_t eventName, const ActionValue& arg);
 
 protected:
-	void setParent(FlashCharacterInstance* parent);
-
 	virtual void trace(visitor_t visitor) const T_OVERRIDE;
 
 	virtual void dereference() T_OVERRIDE;
@@ -270,6 +279,7 @@ private:
 	bool m_visible;
 	bool m_enabled;
 };
+#pragma warning( default:4324 )
 
 	}
 }

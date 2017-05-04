@@ -132,7 +132,7 @@ TextLayout::TextLayout()
 ,	m_width(0.0f)
 ,	m_height(0.0f)
 {
-	Line ln = { 0.0f, 0.0f };
+	Line ln = { 0.0f, 0.0f, 0.0f, 0.0f };
 	m_lines.push_back(Line());
 }
 
@@ -148,7 +148,7 @@ void TextLayout::begin()
 	m_width = 0.0f;
 	m_height = 0.0f;
 
-	Line ln = { 0.0f, 0.0f, 0.0f };
+	Line ln = { 0.0f, 0.0f, 0.0f, 0.0f };
 	m_lines.push_back(ln);
 }
 
@@ -359,7 +359,7 @@ void TextLayout::newLine()
 	m_cursorY += lineHeight;
 	m_height = std::max(m_height, m_cursorY + lineHeight);
 
-	Line ln = { 0.0f, 0.0f, m_cursorY };
+	Line ln = { 0.0f, 0.0f, m_cursorY, 0.0f };
 	m_lines.push_back(ln);
 }
 
@@ -371,6 +371,10 @@ void TextLayout::end()
 		i->x = m_bounds.mn.x;
 		i->y += m_fontHeight;
 
+		if (i->words.empty())
+			continue;
+
+		// Calculate alignment.
 		if (m_alignment == StaRight || m_alignment == StaCenter)
 		{
 			float offset = boundsWidth - i->width;
@@ -380,10 +384,26 @@ void TextLayout::end()
 
 			i->x = m_bounds.mn.x + offset;
 		}
+
+		// Calculate line offset from first glyph on line to ensure it's glyph bound edge align with text bound.
+		if (!m_attribs.empty())
+		{
+			Word& w = i->words.front();
+			const Attribute& attrib = m_attribs[w.a];
+
+			float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+			float fontScale = coordScale * m_fontHeight;
+
+			int32_t idx = attrib.font->lookupIndex(w.chars.front().ch);
+			const Aabb2* bounds = attrib.font->getBounds(idx);
+
+			if (bounds)
+				i->offset -= fontScale * bounds->mn.x;
+		}
 	}
 
+	// Calculate height of last line.
 	float lineHeight = m_fontHeight + m_leading;
-
 	if (!m_attribs.empty())
 	{
 		const Attribute& attrib = m_attribs[m_currentAttrib];

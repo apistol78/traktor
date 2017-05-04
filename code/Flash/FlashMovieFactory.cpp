@@ -30,6 +30,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieFactory", FlashMovieFactory, Ob
 FlashMovieFactory::FlashMovieFactory(bool includeAS)
 :	m_includeAS(includeAS)
 {
+	m_tagReaders[TiFileAttributes] = new FlashTagFileAttributes();
+
 	// Setup tag readers.
 	m_tagReaders[TiSetBackgroundColor] = new FlashTagSetBackgroundColor();
 	m_tagReaders[TiDefineShape] = new FlashTagDefineShape(1);
@@ -89,7 +91,6 @@ FlashMovieFactory::FlashMovieFactory(bool includeAS)
 	m_tagReaders[TiSoundStreamBlock] = new FlashTagUnsupported(TiSoundStreamBlock);
 	m_tagReaders[TiSoundStreamHead2] = new FlashTagUnsupported(TiSoundStreamHead2);
 	m_tagReaders[TiDebugID] = new FlashTagUnsupported(TiDebugID);
-	m_tagReaders[TiFileAttributes] = new FlashTagUnsupported(TiFileAttributes);
 	m_tagReaders[TiDefineFontAlignZones] = new FlashTagUnsupported(TiDefineFontAlignZones);
 	m_tagReaders[TiCSMTextSettings] = new FlashTagUnsupported(TiCSMTextSettings);
 	m_tagReaders[TiDefineFontName] = new FlashTagUnsupported(TiDefineFontName);
