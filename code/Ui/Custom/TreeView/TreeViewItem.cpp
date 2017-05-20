@@ -263,7 +263,23 @@ Ref< TreeViewItem > TreeViewItem::findChild(const std::wstring& childPath)
 
 std::wstring TreeViewItem::getPath() const
 {
-	return getParent() ? getParent()->getPath() + L'/' + getText() : L"";
+	if (m_parent)
+	{
+		int32_t count = 0;
+		for (RefArray< TreeViewItem >::const_iterator i = m_parent->m_children.begin(); i != m_parent->m_children.end(); ++i)
+		{
+			if (*i == this)
+				break;
+			if ((*i)->getText() == m_text)
+				++count;
+		}
+		if (count > 0)
+			return m_parent->getPath() + L'/' + m_text + L'[' + toString(count) + L']';
+		else
+			return m_parent->getPath() + L'/' + m_text;
+	}
+	else
+		return m_text;
 }
 
 int32_t TreeViewItem::calculateDepth() const

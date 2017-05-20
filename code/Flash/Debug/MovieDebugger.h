@@ -53,7 +53,8 @@ public:
 
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
-	mutable Timer m_timer;
+	mutable bool m_firstFrame;
+	mutable int32_t m_captureFrames;
 };
 	
 	}

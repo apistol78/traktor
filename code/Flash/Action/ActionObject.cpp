@@ -227,7 +227,7 @@ ActionValue ActionObject::valueOf()
 ActionValue ActionObject::toString()
 {
 	ActionValue toStringFnV;
-	if (getMember("toString", toStringFnV))
+	if (getMember(ActionContext::IdToString, toStringFnV))
 	{
 		ActionFunction* toStringFn = toStringFnV.getObject< ActionFunction >();
 		if (toStringFn)

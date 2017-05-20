@@ -22,7 +22,8 @@ ButtonInstanceDebugInfo::ButtonInstanceDebugInfo(const FlashButtonInstance* inst
 {
 	m_name = instance->getName();
 	m_bounds = instance->getLocalBounds();
-	m_transform = instance->getFullTransform();
+	m_localTransform = instance->getTransform();
+	m_globalTransform = instance->getFullTransform();
 	m_cxform = instance->getFullColorTransform();
 }
 

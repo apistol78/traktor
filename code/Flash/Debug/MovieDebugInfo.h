@@ -4,10 +4,10 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_flash_ShapeInstanceDebugInfo_H
-#define traktor_flash_ShapeInstanceDebugInfo_H
+#ifndef traktor_flash_MovieDebugInfo_H
+#define traktor_flash_MovieDebugInfo_H
 
-#include "Flash/Debug/InstanceDebugInfo.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,31 +22,29 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashShape;
-class FlashShapeInstance;
+class FlashMovie;
 	
-/*! \brief
- * \ingroup Flash
- */
-class T_DLLCLASS ShapeInstanceDebugInfo : public InstanceDebugInfo
+class T_DLLCLASS MovieDebugInfo : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	ShapeInstanceDebugInfo();
+	MovieDebugInfo();
 
-	ShapeInstanceDebugInfo(const FlashShapeInstance* instance);
+	MovieDebugInfo(const std::wstring& name, const FlashMovie* movie);
 
-	const FlashShape* getShape() const { return m_shape; }
+	const std::wstring& getName() const { return m_name; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	const FlashMovie* getMovie() const { return m_movie; }
+
+	virtual void serialize(ISerializer& s);
 
 private:
-	Ref< const FlashShape > m_shape;
+	std::wstring m_name;
+	Ref< const FlashMovie > m_movie;
 };
 	
 	}
 }
 
-#endif	// traktor_flash_ShapeInstanceDebugInfo_H
-
+#endif	// traktor_flash_MovieDebugInfo_H

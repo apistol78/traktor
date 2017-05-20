@@ -7,8 +7,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
+#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionObject.h"
 #include "Flash/Debug/SpriteInstanceDebugInfo.h"
 
 namespace traktor
@@ -26,7 +29,8 @@ SpriteInstanceDebugInfo::SpriteInstanceDebugInfo(const FlashSpriteInstance* inst
 {
 	m_name = instance->getName();
 	m_bounds = instance->getLocalBounds();
-	m_transform = instance->getFullTransform();
+	m_localTransform = instance->getTransform();
+	m_globalTransform = instance->getFullTransform();
 	m_cxform = instance->getFullColorTransform();
 	m_frames = instance->getSprite()->getFrameCount();
 	m_currentFrame = instance->getCurrentFrame();

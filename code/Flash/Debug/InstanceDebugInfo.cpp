@@ -26,7 +26,8 @@ void InstanceDebugInfo::serialize(ISerializer& s)
 {
 	s >> Member< std::string >(L"name", m_name);
 	s >> MemberAabb2(L"bounds", m_bounds);
-	s >> Member< Matrix33 >(L"transform", m_transform);
+	s >> Member< Matrix33 >(L"localTransform", m_localTransform);
+	s >> Member< Matrix33 >(L"globalTransform", m_globalTransform);
 	s >> MemberColorTransform(L"cxform", m_cxform);
 }
 

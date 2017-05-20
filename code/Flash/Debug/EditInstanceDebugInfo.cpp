@@ -24,7 +24,8 @@ EditInstanceDebugInfo::EditInstanceDebugInfo(const FlashEditInstance* instance)
 {
 	m_name = instance->getName();
 	m_bounds = instance->getTextBounds();
-	m_transform = instance->getFullTransform();
+	m_localTransform = instance->getTransform();
+	m_globalTransform = instance->getFullTransform();
 	m_cxform = instance->getFullColorTransform();
 	m_text = instance->getText();
 }

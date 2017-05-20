@@ -13,9 +13,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashTextInstance.h"
 #include "Flash/Debug/ButtonInstanceDebugInfo.h"
+#include "Flash/Debug/CaptureControl.h"
 #include "Flash/Debug/EditInstanceDebugInfo.h"
 #include "Flash/Debug/MorphShapeInstanceDebugInfo.h"
 #include "Flash/Debug/MovieDebugger.h"
+#include "Flash/Debug/MovieDebugInfo.h"
 #include "Flash/Debug/PostFrameDebugInfo.h"
 #include "Flash/Debug/ShapeInstanceDebugInfo.h"
 #include "Flash/Debug/SpriteInstanceDebugInfo.h"
@@ -67,8 +69,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.MovieDebugger", MovieDebugger, Object)
 
 MovieDebugger::MovieDebugger(net::BidirectionalObjectTransport* transport)
 :	m_transport(transport)
+,	m_firstFrame(true)
+,	m_captureFrames(0)
 {
-	m_timer.start();
 }
 
 void MovieDebugger::postExecuteFrame(
@@ -79,18 +82,45 @@ void MovieDebugger::postExecuteFrame(
 	int32_t viewHeight
 ) const
 {
-	if (m_timer.getElapsedTime() >= 1.0)
+	Ref< CaptureControl > captureControl;
+	if (m_transport->recv< CaptureControl >(0, captureControl) == net::BidirectionalObjectTransport::RtSuccess)
+	{
+		switch (captureControl->getMode())
+		{
+		case CaptureControl::MdSingle:
+			m_captureFrames = 1;
+			break;
+
+		case CaptureControl::MdContinuous:
+			m_captureFrames = std::numeric_limits< int32_t >::max();
+			break;
+
+		default:
+			m_captureFrames = 0;
+			break;
+		}
+	}
+
+	if (m_firstFrame)
+	{
+		MovieDebugInfo movieInfo(L"unnamed", movie);
+		m_transport->send(&movieInfo);
+		m_firstFrame = false;
+	}
+
+	if (m_captureFrames > 0)
 	{
 		RefArray< InstanceDebugInfo > debugInfo;
 		collectDebugInfo(movieInstance, debugInfo);
-		m_transport->send(new PostFrameDebugInfo(
+		PostFrameDebugInfo postFrameInfo(
 			movie->getFrameBounds(),
 			stageTransform,
 			viewWidth,
 			viewHeight,
 			debugInfo
-		));
-		m_timer.start();
+		);
+		m_transport->send(&postFrameInfo);
+		m_captureFrames--;
 	}
 }
 

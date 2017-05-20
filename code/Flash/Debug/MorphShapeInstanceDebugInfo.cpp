@@ -22,7 +22,8 @@ MorphShapeInstanceDebugInfo::MorphShapeInstanceDebugInfo(const FlashMorphShapeIn
 {
 	m_name = instance->getName();
 	m_bounds = instance->getBounds();
-	m_transform = instance->getFullTransform();
+	m_localTransform = instance->getTransform();
+	m_globalTransform = instance->getFullTransform();
 	m_cxform = instance->getFullColorTransform();
 }
 

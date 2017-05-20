@@ -4,10 +4,10 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_flash_ShapeInstanceDebugInfo_H
-#define traktor_flash_ShapeInstanceDebugInfo_H
+#ifndef traktor_flash_CaptureControl_H
+#define traktor_flash_CaptureControl_H
 
-#include "Flash/Debug/InstanceDebugInfo.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,32 +21,32 @@ namespace traktor
 {
 	namespace flash
 	{
-
-class FlashShape;
-class FlashShapeInstance;
 	
-/*! \brief
- * \ingroup Flash
- */
-class T_DLLCLASS ShapeInstanceDebugInfo : public InstanceDebugInfo
+class T_DLLCLASS CaptureControl : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	ShapeInstanceDebugInfo();
+	enum Mode
+	{
+		MdStop,
+		MdSingle,
+		MdContinuous
+	};
 
-	ShapeInstanceDebugInfo(const FlashShapeInstance* instance);
+	CaptureControl();
 
-	const FlashShape* getShape() const { return m_shape; }
+	CaptureControl(Mode mode);
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	Mode getMode() const { return m_mode; }
+
+	virtual void serialize(ISerializer& s);
 
 private:
-	Ref< const FlashShape > m_shape;
+	Mode m_mode;
 };
-	
+
 	}
 }
 
-#endif	// traktor_flash_ShapeInstanceDebugInfo_H
-
+#endif	// traktor_flash_CaptureControl_H

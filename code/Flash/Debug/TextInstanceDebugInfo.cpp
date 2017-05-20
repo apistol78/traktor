@@ -23,7 +23,8 @@ TextInstanceDebugInfo::TextInstanceDebugInfo(const FlashTextInstance* instance)
 {
 	m_name = instance->getName();
 	m_bounds = instance->getText()->getTextBounds();
-	m_transform = instance->getFullTransform();
+	m_localTransform = instance->getTransform();
+	m_globalTransform = instance->getFullTransform();
 	m_cxform = instance->getFullColorTransform();
 }
 
