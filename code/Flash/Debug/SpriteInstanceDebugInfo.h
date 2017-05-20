@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_flash_SpriteInstanceDebugInfo_H
 #define traktor_flash_SpriteInstanceDebugInfo_H
 
+#include <map>
 #include "Core/RefArray.h"
 #include "Flash/Debug/InstanceDebugInfo.h"
 

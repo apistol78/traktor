@@ -40,7 +40,9 @@ public:
 
 	const Aabb2& getBounds() const { return m_bounds; }
 
-	const Matrix33& getTransform() const { return m_transform; }
+	const Matrix33& getLocalTransform() const { return m_localTransform; }
+
+	const Matrix33& getGlobalTransform() const { return m_globalTransform; }
 
 	const ColorTransform& getColorTransform() const { return m_cxform; }
 
@@ -49,7 +51,8 @@ public:
 protected:
 	std::string m_name;
 	Aabb2 m_bounds;
-	Matrix33 m_transform;
+	Matrix33 m_localTransform;
+	Matrix33 m_globalTransform;
 	ColorTransform m_cxform;
 };
 	
