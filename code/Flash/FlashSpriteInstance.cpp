@@ -840,7 +840,7 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 
 Aabb2 FlashSpriteInstance::getBounds() const
 {
-	return getTransform() * getLocalBounds();
+	return getTransform() * getVisibleLocalBounds();
 }
 
 void FlashSpriteInstance::setPosition(const Vector2& position)

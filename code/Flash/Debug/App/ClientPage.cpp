@@ -44,6 +44,7 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Continuous", ui::Command(L"Traktor.Flash.CaptureContinuous")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Selected Only", ui::Command(L"Traktor.Flash.ToggleShowSelectedOnly"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Outline", ui::Command(L"Traktor.Flash.ToggleShowOutline"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled));
 
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ClientPage::eventToolBarClick);
 
@@ -131,6 +132,12 @@ void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 	{
 		ui::custom::ToolBarButton* button = mandatory_non_null_type_cast< ui::custom::ToolBarButton* >(event->getItem());
 		m_debugView->setHighlightOnly(button->isToggled());
+		m_debugView->update();
+	}
+	else if (event->getCommand() == L"Traktor.Flash.ToggleShowOutline")
+	{
+		ui::custom::ToolBarButton* button = mandatory_non_null_type_cast< ui::custom::ToolBarButton* >(event->getItem());
+		m_debugView->setOutline(button->isToggled());
 		m_debugView->update();
 	}
 }

@@ -156,7 +156,7 @@ private:
 			m_movie = FlashOptimizer().merge(m_movie);
 
 		if (m_triangulate)
-			FlashOptimizer().triangulate(m_movie);
+			FlashOptimizer().triangulate(m_movie, false);
 
 		if (!m_cacheDirectory.empty())
 		{

@@ -288,7 +288,7 @@ Ref< FlashMovie > FlashOptimizer::merge(const FlashMovie* movie) const
 	return outputMovie;
 }
 
-void FlashOptimizer::triangulate(FlashMovie* movie) const
+void FlashOptimizer::triangulate(FlashMovie* movie, bool discardPaths) const
 {
 	const SmallMap< uint16_t, Ref< FlashCharacter > >& characters = movie->getCharacters();
 	for (SmallMap< uint16_t, Ref< FlashCharacter > >::const_iterator i = characters.begin(); i != characters.end(); ++i)
@@ -297,7 +297,8 @@ void FlashOptimizer::triangulate(FlashMovie* movie) const
 		if (shape)
 		{
 			shape->triangulate(false);
-			shape->discardPaths();
+			if (discardPaths)
+				shape->discardPaths();
 		}
 	}
 
@@ -308,7 +309,8 @@ void FlashOptimizer::triangulate(FlashMovie* movie) const
 		for (RefArray< FlashShape >::const_iterator j = glyphShapes.begin(); j != glyphShapes.end(); ++j)
 		{
 			(*j)->triangulate(true);
-			(*j)->discardPaths();
+			if (discardPaths)
+				(*j)->discardPaths();
 		}
 	}
 }

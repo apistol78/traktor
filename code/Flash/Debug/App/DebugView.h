@@ -13,6 +13,20 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
+	namespace ui
+	{
+	
+class Bitmap;
+
+	}
+
 	namespace flash
 	{
 
@@ -29,14 +43,25 @@ public:
 
 	void setHighlightOnly(bool highlightOnly);
 
+	void setOutline(bool outline);
+
 private:
 	Ref< const PostFrameDebugInfo > m_debugInfo;
 	Ref< const InstanceDebugInfo > m_highlightInstance;
 	bool m_highlightOnly;
+	bool m_outline;
 	ui::Point m_offset;
 	ui::Point m_mouseLast;
 	int32_t m_counter;
 	float m_scale;
+
+	struct ShapeCache
+	{
+		Ref< drawing::Image > image;
+		Ref< ui::Bitmap > bitmap;
+	};
+
+	std::map< uint16_t, ShapeCache > m_shapeCache;
 
 	void eventPaint(ui::PaintEvent* event);
 
