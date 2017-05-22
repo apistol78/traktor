@@ -34,7 +34,7 @@ class T_DLLCLASS FlashOptimizer : public Object
 public:
 	Ref< FlashMovie > merge(const FlashMovie* movie) const;
 
-	void triangulate(FlashMovie* movie) const;
+	void triangulate(FlashMovie* movie, bool discardPaths) const;
 };
 
 	}
