@@ -785,6 +785,30 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/PlusMinus.image</value>
 		</item>
 		<item>
+			<name>Flash.MovieClip</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/MovieClip.image</value>
+		</item>
+		<item>
+			<name>Flash.Shape</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/Shape.image</value>
+		</item>
+		<item>
+			<name>Flash.MorphShape</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/MorphShape.image</value>
+		</item>
+		<item>
+			<name>Flash.Text</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/Text.image</value>
+		</item>
+		<item>
+			<name>Flash.Edit</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/Edit.image</value>
+		</item>
+		<item>
+			<name>Flash.Button</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/Button.image</value>
+		</item>
+		<item>
 			<name>Shader.Tools</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Shader/Tools.image</value>
 		</item>

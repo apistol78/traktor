@@ -4,8 +4,11 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Format.h"
 #include "Core/Misc/TString.h"
 #include "Flash/Debug/ButtonInstanceDebugInfo.h"
 #include "Flash/Debug/CaptureControl.h"
@@ -17,14 +20,24 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Debug/TextInstanceDebugInfo.h"
 #include "Flash/Debug/App/ClientPage.h"
 #include "Flash/Debug/App/DebugView.h"
+#include "Ui/Application.h"
+#include "Ui/FileDialog.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
+#include "Ui/Custom/GridView/GridColumn.h"
+#include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridView.h"
+#include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/TreeView/TreeView.h"
 #include "Ui/Custom/TreeView/TreeViewItem.h"
+#include "Xml/XmlDeserializer.h"
+#include "Xml/XmlSerializer.h"
 
 namespace traktor
 {
@@ -39,6 +52,9 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(this);
 
+	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Load", ui::Command(L"Traktor.Flash.Load")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Save", ui::Command(L"Traktor.Flash.Save")));
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Stop", ui::Command(L"Traktor.Flash.CaptureStop")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Single", ui::Command(L"Traktor.Flash.CaptureSingle")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Continuous", ui::Command(L"Traktor.Flash.CaptureContinuous")));
@@ -49,14 +65,36 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ClientPage::eventToolBarClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, 20, true);
+	splitter->create(this, true, 30, true);
+
+	Ref< ui::custom::Splitter > splitter2 = new ui::custom::Splitter();
+	splitter2->create(splitter, false, 70, true);
 
 	m_debugTree = new ui::custom::TreeView();
-	m_debugTree->create(splitter, ui::custom::TreeView::WsTreeButtons | ui::custom::TreeView::WsTreeLines | ui::WsAccelerated);
+	m_debugTree->create(splitter2, ui::custom::TreeView::WsTreeButtons | ui::custom::TreeView::WsTreeLines | ui::WsAccelerated);
 	m_debugTree->addEventHandler< ui::SelectionChangeEvent >(this, &ClientPage::eventDebugTreeSelectionChange);
 
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.MovieClip"), 1);
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Shape"), 1);
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.MorphShape"), 1);
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Text"), 1);
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Edit"), 1);
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Button"), 1);
+
+	m_debugGrid = new ui::custom::GridView();
+	m_debugGrid->create(splitter2, ui::WsDoubleBuffer);
+	m_debugGrid->addColumn(new ui::custom::GridColumn(L"Name", ui::scaleBySystemDPI(150)));
+	m_debugGrid->addColumn(new ui::custom::GridColumn(L"Value", ui::scaleBySystemDPI(300)));
+
+	Ref< ui::Container > container = new ui::Container();
+	container->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0));
+
 	m_debugView = new DebugView();
-	m_debugView->create(splitter);
+	m_debugView->create(container);
+	m_debugView->addEventHandler< ui::PaintEvent >(this, &ClientPage::eventDebugViewPaint);
+
+	m_statusBar = new ui::custom::StatusBar();
+	m_statusBar->create(container, ui::WsDoubleBuffer);
 
 	m_transport = transport;
 
@@ -71,8 +109,57 @@ void ClientPage::updateSelection()
 {
 	RefArray< ui::custom::TreeViewItem > items;
 	m_debugTree->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
+
+	Ref< InstanceDebugInfo > debugInfo;
 	if (items.size() == 1)
-		m_debugView->setHighlight(items.front()->getData< InstanceDebugInfo >(L"DEBUGINFO"));
+		debugInfo = items.front()->getData< InstanceDebugInfo >(L"DEBUGINFO");
+
+	m_debugGrid->removeAllRows();
+	if (debugInfo)
+	{
+		m_debugView->setHighlight(debugInfo);
+
+		float lx = debugInfo->getLocalTransform().e13;
+		float ly = debugInfo->getLocalTransform().e23;
+		float gx = debugInfo->getGlobalTransform().e13;
+		float gy = debugInfo->getGlobalTransform().e23;
+		auto cx = debugInfo->getColorTransform();
+		
+		StringOutputStream ss;
+		Ref< ui::custom::GridRow > row;
+
+		ss.reset();
+		ss << mbstows(debugInfo->getName());
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Name"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+
+		ss.reset();
+		ss << int(lx) << L", " << int(ly);
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Local position"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+
+		ss.reset();
+		ss << int(gx) << L", " << int(gy);
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Global position"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+
+		ss.reset();
+		ss << L"+[" << cx.add << L"], *[" << cx.mul << L"]";
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Global color transform"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+	}
 	else
 		m_debugView->setHighlight(0);
 }
@@ -82,28 +169,27 @@ void ClientPage::buildDebugTree(ui::custom::TreeViewItem* parent, const RefArray
 	for (auto instance : instances)
 	{
 		StringOutputStream ss;
+		int32_t image = -1;
 
 		if (is_a< ButtonInstanceDebugInfo >(instance))
-			ss << L"BT: ";
+			image = 5;
 		else if (is_a< EditInstanceDebugInfo >(instance))
-			ss << L"ED: ";
+			image = 4;
 		else if (is_a< MorphShapeInstanceDebugInfo >(instance))
-			ss << L"MO: ";
+			image = 2;
 		else if (is_a< ShapeInstanceDebugInfo >(instance))
-			ss << L"SH: ";
+			image = 1;
 		else if (is_a< SpriteInstanceDebugInfo >(instance))
-			ss << L"MC: ";
+			image = 0;
 		else if (is_a< TextInstanceDebugInfo >(instance))
-			ss << L"TX: ";
-		else
-			ss << L"??: ";
+			image= 3;
 
 		if (!instance->getName().empty())
 			ss << mbstows(instance->getName());
 		else
 			ss << L"<unnamed>";
 
-		Ref< ui::custom::TreeViewItem > item = m_debugTree->createItem(parent, ss.str());
+		Ref< ui::custom::TreeViewItem > item = m_debugTree->createItem(parent, ss.str(), image);
 		item->setData(L"DEBUGINFO", instance);
 
 		if (SpriteInstanceDebugInfo* spriteInstance = dynamic_type_cast< SpriteInstanceDebugInfo* >(instance))
@@ -113,7 +199,62 @@ void ClientPage::buildDebugTree(ui::custom::TreeViewItem* parent, const RefArray
 
 void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	if (event->getCommand() == L"Traktor.Flash.CaptureStop")
+	if (event->getCommand() == L"Traktor.Flash.Load")
+	{
+		ui::FileDialog fileDialog;
+		fileDialog.create(this, L"Load capture...", L"All files;*.*", false);
+
+		Path fileName;
+		if (fileDialog.showModal(fileName) == ui::DrOk)
+		{
+			Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+			if (file)
+			{
+				m_debugInfo = xml::XmlDeserializer(file).readObject< PostFrameDebugInfo >();
+				file->close();
+
+				if (m_debugInfo)
+				{
+					auto state = m_debugTree->captureState();
+					m_debugTree->removeAllItems();
+
+					buildDebugTree(0, m_debugInfo->getInstances());
+
+					m_debugTree->applyState(state);
+					m_debugTree->update();
+
+					updateSelection();
+
+					m_debugView->setDebugInfo(m_debugInfo);
+					m_debugView->update();				
+				}
+			}
+		}
+
+		fileDialog.destroy();
+	}
+	else if (event->getCommand() == L"Traktor.Flash.Save")
+	{
+		if (m_debugInfo)
+		{
+			ui::FileDialog fileDialog;
+			fileDialog.create(this, L"Save capture as...", L"All files;*.*", true);
+
+			Path fileName;
+			if (fileDialog.showModal(fileName) == ui::DrOk)
+			{
+				Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
+				if (file)
+				{
+					xml::XmlSerializer(file).writeObject(m_debugInfo);
+					file->close();
+				}
+			}
+
+			fileDialog.destroy();
+		}
+	}
+	else if (event->getCommand() == L"Traktor.Flash.CaptureStop")
 	{
 		CaptureControl captureControl(CaptureControl::MdStop);
 		m_transport->send(&captureControl);
@@ -148,6 +289,13 @@ void ClientPage::eventDebugTreeSelectionChange(ui::SelectionChangeEvent* event)
 	m_debugView->update();
 }
 
+void ClientPage::eventDebugViewPaint(ui::PaintEvent* event)
+{
+	StringOutputStream ss;
+	ss << L"Mouse position: " << int32_t(m_debugView->getMousePosition().x) << L", " << int32_t(m_debugView->getMousePosition().y);
+	m_statusBar->setText(ss.str());
+}
+
 void ClientPage::eventTimer(ui::TimerEvent* event)
 {
 	Ref< ISerializable > debugInfo;
@@ -172,12 +320,13 @@ void ClientPage::eventTimer(ui::TimerEvent* event)
 
 		m_debugView->setDebugInfo(postFrame);
 		m_debugView->update();
+
+		m_debugInfo = postFrame;
 	}
 	else if (const MovieDebugInfo* movieInfo = dynamic_type_cast< const MovieDebugInfo* >(debugInfo))
 	{
-		log::info << L"Received movie debug info" << Endl;
-
 		getParent()->setText(movieInfo->getName());
+		getParent()->update();
 	}
 }
 

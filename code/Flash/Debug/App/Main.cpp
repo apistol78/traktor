@@ -8,9 +8,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define WIN32_LEAN_AND_MEAN
 #	include <windows.h>
 #endif
+#include <Core/Io/FileSystem.h>
 #include <Core/Misc/CommandLine.h>
 #include <Net/Network.h>
 #include <Ui/Application.h>
+#include <Ui/StyleSheet.h>
 #if defined(_WIN32)
 #	include <Ui/Win32/EventLoopWin32.h>
 #	include <Ui/Win32/WidgetFactoryWin32.h>
@@ -21,9 +23,27 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	include <Ui/Wx/EventLoopWx.h>
 #	include <Ui/Wx/WidgetFactoryWx.h>
 #endif
+#include <Xml/XmlDeserializer.h>
 #include "MainForm.h"
 
 using namespace traktor;
+
+#if defined(_WIN32)
+// NVidia hack to get Optimus to enable NVidia GPU when possible.
+extern "C"
+{
+    _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
+#endif
+
+Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
+{
+	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, File::FmRead);
+	if (file)
+		return xml::XmlDeserializer(file).readObject< ui::StyleSheet >();
+	else
+		return 0;
+}
 
 #if !defined(_WIN32) || defined(_CONSOLE)
 int main(int argc, const char** argv)
@@ -59,6 +79,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		0
 	);
 #endif
+
+	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(L"$(TRAKTOR_HOME)/res/themes/Dark/StyleSheet.xss");
+	if (!styleSheet)
+	{
+		log::error << L"Unable to load stylesheet." << Endl;
+		return false;
+	}
+	ui::Application::getInstance()->setStyleSheet(styleSheet);
 
 	flash::MainForm form;
 	if (form.create())
