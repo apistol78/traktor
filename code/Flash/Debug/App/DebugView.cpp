@@ -72,6 +72,7 @@ bool DebugView::create(ui::Widget* parent)
 	m_offset = ui::Point(0, 0);
 	m_counter = 0;
 	m_scale = 1.0f;
+	m_mousePosition = Vector2::zero();
 
 	addEventHandler< ui::PaintEvent >(this, &DebugView::eventPaint);
 	addEventHandler< ui::MouseButtonDownEvent >(this, &DebugView::eventMouseDown);
@@ -104,6 +105,11 @@ void DebugView::setOutline(bool outline)
 	m_outline = outline;
 }
 
+const Vector2& DebugView::getMousePosition() const
+{
+	return m_mousePosition;
+}
+
 void DebugView::eventPaint(ui::PaintEvent* event)
 {
 	ui::Canvas& canvas = event->getCanvas();
@@ -114,7 +120,7 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 
 	if (m_debugInfo)
 	{
-		ui::Point mousePosition = getMousePosition();
+		ui::Point mousePosition = ui::Widget::getMousePosition();
 
 		int32_t outputWidth = innerRect.getWidth();
 		int32_t outputHeight = innerRect.getHeight();
@@ -146,16 +152,8 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 		Vector2 t0 = rasterTransform.inverse() * Vector2(mx, my);
 
 		int32_t ty = ui::scaleBySystemDPI(12);
-		int32_t insideCount = 0;
 
-
-		// Print mouse position in stage coordinates.
-		{
-			StringOutputStream ss;
-			ss << L"Mouse " << int32_t(t0.x) << L", " << int32_t(t0.y) << L" - Frames " << m_counter;
-			canvas.setForeground(Color4ub(255, 255, 255, 200));
-			canvas.drawText(ui::Point(ty, ty), ss.str());
-		}
+		m_mousePosition = t0;
 
 		RefArray< InstanceDebugInfo > instances;
 		flattenDebugInfo(m_debugInfo->getInstances(), instances);
@@ -207,48 +205,6 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 			// Only draw highlighted instance.
 			if (m_highlightOnly && !childOf(m_highlightInstance, instance))
 				continue;
-
-			// 
-			if (inside)
-			{
-				float lx = instance->getLocalTransform().e13;
-				float ly = instance->getLocalTransform().e23;
-				float gx = instance->getGlobalTransform().e13;
-				float gy = instance->getGlobalTransform().e23;
-
-				StringOutputStream ss;
-
-				if (is_a< ButtonInstanceDebugInfo >(instance))
-					ss << L"BT: ";
-				else if (is_a< EditInstanceDebugInfo >(instance))
-					ss << L"ED: ";
-				else if (is_a< MorphShapeInstanceDebugInfo >(instance))
-					ss << L"MO: ";
-				else if (is_a< ShapeInstanceDebugInfo >(instance))
-					ss << L"SH: ";
-				else if (is_a< SpriteInstanceDebugInfo >(instance))
-					ss << L"MC: ";
-				else if (is_a< TextInstanceDebugInfo >(instance))
-					ss << L"TX: ";
-				else
-					ss << L"??: ";
-
-				if (!instance->getName().empty())
-					ss << mbstows(instance->getName());
-				else
-					ss << L"<unnamed>";
-
-				ss << L", local " << int32_t(lx) << L", " << int32_t(ly) << L", global " << int32_t(gx) << L", " << int32_t(gy);
-
-				auto cx = instance->getColorTransform();
-				ss << L", +[" << cx.add << L"], *[" << cx.mul << L"]";
-				
-				canvas.setForeground(Color4ub(255, 255, 255, 200));
-				canvas.drawText(ui::Point(ty, ty * (3 + insideCount)), ss.str());
-
-				++insideCount;
-			}
-
 
 			if (const ButtonInstanceDebugInfo* buttonInstance = dynamic_type_cast< const ButtonInstanceDebugInfo* >(instance))
 			{
@@ -489,7 +445,7 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 		canvas.drawLine(innerRect.left, targetRect.bottom, innerRect.right, targetRect.bottom);
 	}
 
-	event->consume();
+	//event->consume();
 }
 
 void DebugView::eventMouseDown(ui::MouseButtonDownEvent* event)

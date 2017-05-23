@@ -45,6 +45,8 @@ public:
 
 	void setOutline(bool outline);
 
+	const Vector2& getMousePosition() const;
+
 private:
 	Ref< const PostFrameDebugInfo > m_debugInfo;
 	Ref< const InstanceDebugInfo > m_highlightInstance;
@@ -54,6 +56,7 @@ private:
 	ui::Point m_mouseLast;
 	int32_t m_counter;
 	float m_scale;
+	Vector2 m_mousePosition;
 
 	struct ShapeCache
 	{

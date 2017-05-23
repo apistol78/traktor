@@ -18,6 +18,8 @@ namespace traktor
 		namespace custom
 		{
 		
+class GridView;
+class StatusBar;
 class ToolBar;
 class ToolBarButtonClickEvent;
 class TreeView;
@@ -43,8 +45,10 @@ private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::TreeView > m_debugTree;
+	Ref< ui::custom::GridView > m_debugGrid;
 	Ref< DebugView > m_debugView;
-	Ref< PostFrameDebugInfo > m_debugInfo;
+	Ref< ui::custom::StatusBar > m_statusBar;
+	Ref< const PostFrameDebugInfo > m_debugInfo;
 
 	void updateSelection();
 
@@ -53,6 +57,8 @@ private:
 	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
 
 	void eventDebugTreeSelectionChange(ui::SelectionChangeEvent* event);
+
+	void eventDebugViewPaint(ui::PaintEvent* event);
 
 	void eventTimer(ui::TimerEvent* event);
 };
