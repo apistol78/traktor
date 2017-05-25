@@ -28,7 +28,7 @@ SpriteInstanceDebugInfo::SpriteInstanceDebugInfo()
 SpriteInstanceDebugInfo::SpriteInstanceDebugInfo(const FlashSpriteInstance* instance, const RefArray< InstanceDebugInfo >& childrenDebugInfo)
 {
 	m_name = instance->getName();
-	m_bounds = instance->getLocalBounds();
+	m_bounds = instance->getVisibleLocalBounds();
 	m_localTransform = instance->getTransform();
 	m_globalTransform = instance->getFullTransform();
 	m_cxform = instance->getFullColorTransform();

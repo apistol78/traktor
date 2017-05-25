@@ -21,8 +21,6 @@ namespace traktor
 {
 	namespace flash
 	{
-
-class FlashMovie;
 	
 class T_DLLCLASS MovieDebugInfo : public ISerializable
 {
@@ -31,17 +29,14 @@ class T_DLLCLASS MovieDebugInfo : public ISerializable
 public:
 	MovieDebugInfo();
 
-	MovieDebugInfo(const std::wstring& name, const FlashMovie* movie);
+	MovieDebugInfo(const std::wstring& name);
 
 	const std::wstring& getName() const { return m_name; }
-
-	const FlashMovie* getMovie() const { return m_movie; }
 
 	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
-	Ref< const FlashMovie > m_movie;
 };
 	
 	}

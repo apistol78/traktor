@@ -762,7 +762,10 @@ void FlashLayer::createMoviePlayer()
 		Ref< flash::MovieDebugger > movieDebugger;
 		Ref< net::TcpSocket > remoteDebuggerSocket = new net::TcpSocket();
 		if (remoteDebuggerSocket->connect(net::SocketAddressIPv4(L"localhost", 12345)))
-			movieDebugger = new flash::MovieDebugger(new net::BidirectionalObjectTransport(remoteDebuggerSocket));
+			movieDebugger = new flash::MovieDebugger(
+				new net::BidirectionalObjectTransport(remoteDebuggerSocket),
+				getName()
+			);
 
 		Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(
 			displayRenderer,

@@ -717,11 +717,12 @@ void CanvasDirect2DWin32::shutdown()
 
 ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 {
-	std::map< const ISystemBitmap*, ComRef< ID2D1Bitmap > >::const_iterator i = m_d2dBitmaps.find(bm);
+	const BitmapWin32* bmw32 = reinterpret_cast< const BitmapWin32* >(bm);
+
+	std::map< int32_t, ComRef< ID2D1Bitmap > >::const_iterator i = m_d2dBitmaps.find(bmw32->getTag());
 	if (i != m_d2dBitmaps.end())
 		return i->second;
 
-	const BitmapWin32* bmw32 = reinterpret_cast< const BitmapWin32* >(bm);
 	Size size = bmw32->getSize();
 
 	const uint32_t* colorBits = reinterpret_cast< const uint32_t* >(bmw32->getBitsPerMulAlpha());
@@ -752,7 +753,7 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 	if (FAILED(hr))
 		return 0;
 
-	m_d2dBitmaps[bm] = d2dBitmap;
+	m_d2dBitmaps[bmw32->getTag()] = d2dBitmap;
 	return d2dBitmap;
 }
 

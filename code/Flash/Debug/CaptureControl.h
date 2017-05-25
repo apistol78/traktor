@@ -27,23 +27,16 @@ class T_DLLCLASS CaptureControl : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	enum Mode
-	{
-		MdStop,
-		MdSingle,
-		MdContinuous
-	};
-
 	CaptureControl();
 
-	CaptureControl(Mode mode);
+	CaptureControl(int32_t frameCount);
 
-	Mode getMode() const { return m_mode; }
+	int32_t getFrameCount() const { return m_frameCount; }
 
 	virtual void serialize(ISerializer& s);
 
 private:
-	Mode m_mode;
+	int32_t m_frameCount;
 };
 
 	}

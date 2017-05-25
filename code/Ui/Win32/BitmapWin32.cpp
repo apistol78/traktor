@@ -18,6 +18,8 @@ namespace traktor
 	namespace ui
 	{
 
+int32_t BitmapWin32::ms_nextTag = 1;
+
 BitmapWin32::BitmapWin32()
 :	m_hBitmap(NULL)
 ,	m_pBits(0)
@@ -30,6 +32,7 @@ BitmapWin32::BitmapWin32()
 ,	m_gpAlphaAdd(0x00000000)
 #endif
 {
+	m_tag = Atomic::increment(ms_nextTag);
 }
 
 bool BitmapWin32::create(uint32_t width, uint32_t height)

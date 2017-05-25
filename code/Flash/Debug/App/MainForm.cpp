@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Misc/SafeDestroy.h"
 #include "Flash/Debug/App/ClientPage.h"
 #include "Flash/Debug/App/MainForm.h"
 #include "Net/SocketAddressIPv4.h"
@@ -29,6 +30,7 @@ bool MainForm::create()
 
 	m_tab = new ui::Tab();
 	m_tab->create(this);
+	m_tab->addEventHandler< ui::TabCloseEvent >(this, &MainForm::eventTabClose);
 
 	m_serverSocket = new net::TcpSocket();
 	m_serverSocket->bind(net::SocketAddressIPv4(12345));
@@ -43,6 +45,16 @@ bool MainForm::create()
 	show();
 
 	return true;
+}
+
+void MainForm::eventTabClose(ui::TabCloseEvent* event)
+{
+	Ref< ui::TabPage > tabPage = event->getTabPage();
+
+	m_tab->removePage(tabPage);
+	m_tab->update();
+
+	safeDestroy(tabPage);
 }
 
 void MainForm::eventTimer(ui::TimerEvent* event)

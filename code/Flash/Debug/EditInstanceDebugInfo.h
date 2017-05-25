@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_flash_EditInstanceDebugInfo_H
 #define traktor_flash_EditInstanceDebugInfo_H
 
+#include "Flash/SwfTypes.h"
 #include "Flash/Debug/InstanceDebugInfo.h"
 
 // import/export mechanism.
@@ -38,10 +39,13 @@ public:
 
 	const std::wstring& getText() const { return m_text; }
 
+	SwfTextAlignType getTextAlign() const { return m_textAlign; }
+
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_text;
+	SwfTextAlignType m_textAlign;
 };
 	
 	}

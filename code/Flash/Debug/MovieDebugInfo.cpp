@@ -6,8 +6,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberRef.h"
-#include "Flash/FlashMovie.h"
 #include "Flash/Debug/MovieDebugInfo.h"
 
 namespace traktor
@@ -21,16 +19,14 @@ MovieDebugInfo::MovieDebugInfo()
 {
 }
 
-MovieDebugInfo::MovieDebugInfo(const std::wstring& name, const FlashMovie* movie)
+MovieDebugInfo::MovieDebugInfo(const std::wstring& name)
 :	m_name(name)
-,	m_movie(movie)
 {
 }
 
 void MovieDebugInfo::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
-	s >> MemberRef< const FlashMovie >(L"movie", m_movie);
 }
 
 	}

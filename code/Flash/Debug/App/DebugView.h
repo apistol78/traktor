@@ -54,7 +54,6 @@ private:
 	bool m_outline;
 	ui::Point m_offset;
 	ui::Point m_mouseLast;
-	int32_t m_counter;
 	float m_scale;
 	Vector2 m_mousePosition;
 
@@ -64,7 +63,7 @@ private:
 		Ref< ui::Bitmap > bitmap;
 	};
 
-	std::map< uint16_t, ShapeCache > m_shapeCache;
+	std::map< void*, ShapeCache > m_shapeCache;
 
 	void eventPaint(ui::PaintEvent* event);
 

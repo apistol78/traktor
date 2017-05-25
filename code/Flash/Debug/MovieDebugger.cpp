@@ -67,11 +67,12 @@ void collectDebugInfo(const FlashCharacterInstance* instance, RefArray< Instance
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.MovieDebugger", MovieDebugger, Object)
 
-MovieDebugger::MovieDebugger(net::BidirectionalObjectTransport* transport)
+MovieDebugger::MovieDebugger(net::BidirectionalObjectTransport* transport, const std::wstring& name)
 :	m_transport(transport)
-,	m_firstFrame(true)
 ,	m_captureFrames(0)
 {
+	MovieDebugInfo movieInfo(name);
+	m_transport->send(&movieInfo);
 }
 
 void MovieDebugger::postExecuteFrame(
@@ -84,29 +85,7 @@ void MovieDebugger::postExecuteFrame(
 {
 	Ref< CaptureControl > captureControl;
 	if (m_transport->recv< CaptureControl >(0, captureControl) == net::BidirectionalObjectTransport::RtSuccess)
-	{
-		switch (captureControl->getMode())
-		{
-		case CaptureControl::MdSingle:
-			m_captureFrames = 1;
-			break;
-
-		case CaptureControl::MdContinuous:
-			m_captureFrames = std::numeric_limits< int32_t >::max();
-			break;
-
-		default:
-			m_captureFrames = 0;
-			break;
-		}
-	}
-
-	if (m_firstFrame)
-	{
-		MovieDebugInfo movieInfo(L"unnamed", movie);
-		m_transport->send(&movieInfo);
-		m_firstFrame = false;
-	}
+		m_captureFrames = captureControl->getFrameCount();
 
 	if (m_captureFrames > 0)
 	{

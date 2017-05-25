@@ -70,7 +70,6 @@ bool DebugView::create(ui::Widget* parent)
 	m_highlightOnly = false;
 	m_outline = true;
 	m_offset = ui::Point(0, 0);
-	m_counter = 0;
 	m_scale = 1.0f;
 	m_mousePosition = Vector2::zero();
 
@@ -87,7 +86,7 @@ bool DebugView::create(ui::Widget* parent)
 void DebugView::setDebugInfo(const PostFrameDebugInfo* debugInfo)
 {
 	m_debugInfo = debugInfo;
-	m_counter++;
+	m_shapeCache.clear();
 }
 
 void DebugView::setHighlight(const InstanceDebugInfo* instance)
@@ -187,6 +186,13 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 				targetRect.getTopLeft() + ui::Size(s[3].x, s[3].y)
 			};
 
+			Aabb2 globalBounds = instance->getGlobalTransform() * instance->getBounds();
+			Aabb2 targetBounds = rasterTransform * globalBounds;
+			ui::Rect globalRect(
+				targetRect.getTopLeft() + ui::Size(targetBounds.mn.x, targetBounds.mn.y),
+				targetRect.getTopLeft() + ui::Size(targetBounds.mx.x, targetBounds.mx.y)
+			);
+
 			Vector2 p = rasterTransform * (instance->getGlobalTransform() * Vector2(0.0f, 0.0f));
 			ui::Point pivot = targetRect.getTopLeft() + ui::Size(p.x, p.y);
 
@@ -230,7 +236,22 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 					canvas.drawPolygon(pnts, 4);
 					canvas.setForeground(Color4ub(255, 255, 255, inside ? 200 : 100));
 					canvas.drawText(pnts[0], mbstows(instance->getName()));
-					canvas.drawText(pnts[0] + ui::Size(0, ty), editInstance->getText());
+				}
+
+				canvas.setForeground(Color4ub(255, 255, 255, inside ? 200 : 100));
+				switch (editInstance->getTextAlign())
+				{
+				case StaRight:
+					canvas.drawText(globalRect, editInstance->getText(), ui::AnRight, ui::AnCenter);
+					break;
+
+				case StaCenter:
+					canvas.drawText(globalRect, editInstance->getText(), ui::AnCenter, ui::AnCenter);
+					break;
+
+				default:
+					canvas.drawText(globalRect, editInstance->getText(), ui::AnLeft, ui::AnCenter);
+					break;
 				}
 			}
 			else if (const MorphShapeInstanceDebugInfo* morphShapeInstance = dynamic_type_cast< const MorphShapeInstanceDebugInfo* >(instance))
@@ -254,26 +275,23 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 				const FlashShape* shape = shapeInstance->getShape();
 				if (shape)
 				{
-					ShapeCache& sc = m_shapeCache[shape->getId()];
+					ShapeCache& sc = m_shapeCache[(void*)shapeInstance];
 
 					if (!sc.image)
 					{
-						sc.image = new drawing::Image(
-							drawing::PixelFormat::getA8R8G8B8(),
-							256,
-							256
-						);
-						sc.image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-
-						Ref< drawing::Raster > raster = new drawing::Raster(sc.image);
-
-						const Aabb2& shapeBounds = shape->getShapeBounds();
+						Aabb2 shapeBounds = instance->getGlobalTransform() * shape->getShapeBounds();
 
 						Color4f cxm = shapeInstance->getColorTransform().mul;
 						Color4f cxa = shapeInstance->getColorTransform().add;
 
-						int32_t width = sc.image->getWidth();
-						int32_t height = sc.image->getHeight();
+						Vector2 s[] =
+						{
+							rasterTransform * shapeBounds.mn,
+							rasterTransform * shapeBounds.mx
+						};
+
+						int32_t width = int32_t(s[1].x - s[0].x);
+						int32_t height = int32_t(s[1].y - s[0].y);
 
 						float frameWidth = shapeBounds.getSize().x;
 						float frameHeight = shapeBounds.getSize().y;
@@ -281,7 +299,17 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 						Matrix33 rasterTransform =
 							traktor::scale(width, height) *
 							traktor::scale(1.0f / frameWidth, 1.0f / frameHeight) *
-							traktor::translate(-shapeBounds.mn.x, -shapeBounds.mn.y);
+							traktor::translate(-shapeBounds.mn.x, -shapeBounds.mn.y) *
+							instance->getGlobalTransform();
+
+						sc.image = new drawing::Image(
+							drawing::PixelFormat::getA8R8G8B8(),
+							width,
+							height
+						);
+						sc.image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+						Ref< drawing::Raster > raster = new drawing::Raster(sc.image);
 
 						float strokeScale = std::min(width / frameWidth, height / frameHeight);
 
@@ -409,11 +437,11 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 			}
 			else if (const SpriteInstanceDebugInfo* spriteInstance = dynamic_type_cast< const SpriteInstanceDebugInfo* >(instance))
 			{
-				StringOutputStream ss;
-				ss << spriteInstance->getCurrentFrame() << L"/" << spriteInstance->getFrames();
-
 				if (m_outline)
 				{
+					StringOutputStream ss;
+					ss << spriteInstance->getCurrentFrame() << L"/" << spriteInstance->getFrames();
+
 					canvas.setBackground(inside ? Color4ub(80, 255, 80, 20) : Color4ub(200, 255, 200, 10));
 					canvas.setForeground(Color4ub(255, 255, 255, 100));
 					canvas.fillPolygon(pnts, 4);
@@ -473,6 +501,7 @@ void DebugView::eventMouseMove(ui::MouseMoveEvent* event)
 void DebugView::eventMouseWheel(ui::MouseWheelEvent* event)
 {
 	m_scale = clamp(m_scale + event->getRotation() * 0.1f, 0.1f, 10.0f);
+	m_shapeCache.clear();
 	update();
 }
 

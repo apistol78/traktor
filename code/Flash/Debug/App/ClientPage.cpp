@@ -55,9 +55,7 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Load", ui::Command(L"Traktor.Flash.Load")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Save", ui::Command(L"Traktor.Flash.Save")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Stop", ui::Command(L"Traktor.Flash.CaptureStop")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Single", ui::Command(L"Traktor.Flash.CaptureSingle")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Continuous", ui::Command(L"Traktor.Flash.CaptureContinuous")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Capture", ui::Command(L"Traktor.Flash.CaptureSingle")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Selected Only", ui::Command(L"Traktor.Flash.ToggleShowSelectedOnly"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Outline", ui::Command(L"Traktor.Flash.ToggleShowOutline"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled));
@@ -68,7 +66,7 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	splitter->create(this, true, 30, true);
 
 	Ref< ui::custom::Splitter > splitter2 = new ui::custom::Splitter();
-	splitter2->create(splitter, false, 70, true);
+	splitter2->create(splitter, false, 50, true);
 
 	m_debugTree = new ui::custom::TreeView();
 	m_debugTree->create(splitter2, ui::custom::TreeView::WsTreeButtons | ui::custom::TreeView::WsTreeLines | ui::WsAccelerated);
@@ -119,10 +117,15 @@ void ClientPage::updateSelection()
 	{
 		m_debugView->setHighlight(debugInfo);
 
-		float lx = debugInfo->getLocalTransform().e13;
-		float ly = debugInfo->getLocalTransform().e23;
-		float gx = debugInfo->getGlobalTransform().e13;
-		float gy = debugInfo->getGlobalTransform().e23;
+		Vector2 lt, ls; float lr;
+		debugInfo->getLocalTransform().decompose(&lt, &ls, &lr);
+
+		Vector2 gt, gs; float gr;
+		debugInfo->getGlobalTransform().decompose(&gt, &gs, &gr);
+
+		Aabb2 lb = debugInfo->getBounds();
+		Aabb2 gb = debugInfo->getGlobalTransform() * lb;
+
 		auto cx = debugInfo->getColorTransform();
 		
 		StringOutputStream ss;
@@ -136,8 +139,19 @@ void ClientPage::updateSelection()
 		row->add(new ui::custom::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
+		if (const EditInstanceDebugInfo* editDebugInfo = dynamic_type_cast< const EditInstanceDebugInfo* >(debugInfo))
+		{
+			ss.reset();
+			ss << editDebugInfo->getText();
+
+			row = new ui::custom::GridRow();
+			row->add(new ui::custom::GridItem(L"Text"));
+			row->add(new ui::custom::GridItem(ss.str()));
+			m_debugGrid->addRow(row);
+		}
+
 		ss.reset();
-		ss << int(lx) << L", " << int(ly);
+		ss << int(lt.x / 20.0f) << L", " << int(lt.y / 20.0f);
 
 		row = new ui::custom::GridRow();
 		row->add(new ui::custom::GridItem(L"Local position"));
@@ -145,12 +159,60 @@ void ClientPage::updateSelection()
 		m_debugGrid->addRow(row);
 
 		ss.reset();
-		ss << int(gx) << L", " << int(gy);
+		ss << ls.x << L", " << ls.y;
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Local scale"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+
+		ss.reset();
+		ss << rad2deg(lr);
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Local rotatation"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+
+		ss.reset();
+		ss << int(lb.mn.x / 20.0f) << L", " << int(lb.mn.y / 20.0f) << L" - " << int(lb.mx.x / 20.0f) << L", " << int(lb.mx.y / 20.0f);
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Local bounds"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+
+		ss.reset();
+		ss << int(gt.x / 20.0f) << L", " << int(gt.y / 20.0f);
 
 		row = new ui::custom::GridRow();
 		row->add(new ui::custom::GridItem(L"Global position"));
 		row->add(new ui::custom::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
+
+		ss.reset();
+		ss << gs.x << L", " << gs.y;
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Global scale"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+
+		ss.reset();
+		ss << rad2deg(gr);
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Global rotatation"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+
+		ss.reset();
+		ss << int(gb.mn.x / 20.0f) << L", " << int(gb.mn.y / 20.0f) << L" - " << int(gb.mx.x / 20.0f) << L", " << int(gb.mx.y / 20.0f);
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Global bounds"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);		
 
 		ss.reset();
 		ss << L"+[" << cx.add << L"], *[" << cx.mul << L"]";
@@ -254,19 +316,9 @@ void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 			fileDialog.destroy();
 		}
 	}
-	else if (event->getCommand() == L"Traktor.Flash.CaptureStop")
-	{
-		CaptureControl captureControl(CaptureControl::MdStop);
-		m_transport->send(&captureControl);
-	}
 	else if (event->getCommand() == L"Traktor.Flash.CaptureSingle")
 	{
-		CaptureControl captureControl(CaptureControl::MdSingle);
-		m_transport->send(&captureControl);
-	}
-	else if (event->getCommand() == L"Traktor.Flash.CaptureContinuous")
-	{
-		CaptureControl captureControl(CaptureControl::MdContinuous);
+		CaptureControl captureControl(1);
 		m_transport->send(&captureControl);
 	}
 	else if (event->getCommand() == L"Traktor.Flash.ToggleShowSelectedOnly")
@@ -292,7 +344,7 @@ void ClientPage::eventDebugTreeSelectionChange(ui::SelectionChangeEvent* event)
 void ClientPage::eventDebugViewPaint(ui::PaintEvent* event)
 {
 	StringOutputStream ss;
-	ss << L"Mouse position: " << int32_t(m_debugView->getMousePosition().x) << L", " << int32_t(m_debugView->getMousePosition().y);
+	ss << L"Mouse position: " << int32_t(m_debugView->getMousePosition().x / 20.0f) << L", " << int32_t(m_debugView->getMousePosition().y / 20.0f);
 	m_statusBar->setText(ss.str());
 }
 
