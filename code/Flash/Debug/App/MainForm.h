@@ -25,6 +25,8 @@ private:
 	Ref< ui::Tab > m_tab;
 	Ref< net::TcpSocket > m_serverSocket;
 
+	void eventTabClose(ui::TabCloseEvent* event);
+
 	void eventTimer(ui::TimerEvent* event);
 
 	void eventClose(ui::CloseEvent* event);

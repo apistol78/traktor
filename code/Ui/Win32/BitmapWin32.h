@@ -69,7 +69,11 @@ public:
 	Gdiplus::Bitmap* getGdiPlusBitmap();
 #endif
 
+	int32_t getTag() const { return m_tag; }
+
 private:
+	static int32_t ms_nextTag;
+	int32_t m_tag;
 	HBITMAP m_hBitmap;
 	HBITMAP m_hBitmapPreMulAlpha;
 	LPVOID m_pBits;

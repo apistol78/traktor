@@ -102,7 +102,7 @@ private:
 	D2D1_GRADIENT_STOP m_gradientStops[2];
 	ComRef< ID2D1GradientStopCollection > m_d2dGradientStops;
 	ComRef< IDWriteTextFormat > m_dwTextFormat;
-	std::map< const ISystemBitmap*, ComRef< ID2D1Bitmap > > m_d2dBitmaps;
+	std::map< int32_t, ComRef< ID2D1Bitmap > > m_d2dBitmaps;
 	float m_strokeWidth;
 	bool m_underline;
 	bool m_clip;

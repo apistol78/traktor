@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberEnum.h"
+#include "Core/Serialization/Member.h"
 #include "Flash/Debug/CaptureControl.h"
 
 namespace traktor
@@ -16,18 +16,18 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.CaptureControl", 0, CaptureControl, ISerializable)
 
 CaptureControl::CaptureControl()
-:	m_mode(MdStop)
+:	m_frameCount(0)
 {
 }
 
-CaptureControl::CaptureControl(Mode mode)
-:	m_mode(mode)
+CaptureControl::CaptureControl(int32_t frameCount)
+:	m_frameCount(frameCount)
 {
 }
 
 void CaptureControl::serialize(ISerializer& s)
 {
-	s >> MemberEnumByValue< Mode >(L"mode", m_mode);
+	s >> Member< int32_t >(L"frameCount", m_frameCount);
 }
 
 	}

@@ -41,7 +41,7 @@ class T_DLLCLASS MovieDebugger : public Object
 	T_RTTI_CLASS;
 
 public:
-	MovieDebugger(net::BidirectionalObjectTransport* transport);
+	MovieDebugger(net::BidirectionalObjectTransport* transport, const std::wstring& name);
 
 	void postExecuteFrame(
 		const FlashMovie* movie,
@@ -53,7 +53,6 @@ public:
 
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
-	mutable bool m_firstFrame;
 	mutable int32_t m_captureFrames;
 };
 	
