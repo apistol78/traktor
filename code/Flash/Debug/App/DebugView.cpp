@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 /*
 ================================================================================================
 CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
@@ -23,6 +21,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Debug/App/DebugView.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/StyleBitmap.h"
 
 namespace traktor
 {
@@ -67,6 +66,7 @@ bool DebugView::create(ui::Widget* parent)
 	if (!ui::Widget::create(parent, ui::WsAccelerated | ui::WsDoubleBuffer))
 		return false;
 
+	m_bitmapPivot = new ui::StyleBitmap(L"Flash.Pivot");
 	m_highlightOnly = false;
 	m_outline = true;
 	m_offset = ui::Point(0, 0);
@@ -218,7 +218,7 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 				{
 					canvas.setBackground(inside ? Color4ub(80, 255, 255, 20) : Color4ub(200, 255, 255, 10));
 					canvas.setForeground(Color4ub(255, 255, 255, 100));
-					canvas.drawLine(pivot, pnts[0]);
+					//canvas.drawLine(pivot, pnts[0]);
 					canvas.fillPolygon(pnts, 4);
 					canvas.drawPolygon(pnts, 4);
 					canvas.setForeground(Color4ub(255, 255, 255, inside ? 200 : 100));
@@ -231,7 +231,7 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 				{
 					canvas.setBackground(inside ? Color4ub(80, 80, 255, 20) : Color4ub(200, 200, 255, 10));
 					canvas.setForeground(Color4ub(255, 255, 255, 100));
-					canvas.drawLine(pivot, pnts[0]);
+					//canvas.drawLine(pivot, pnts[0]);
 					canvas.fillPolygon(pnts, 4);
 					canvas.drawPolygon(pnts, 4);
 					canvas.setForeground(Color4ub(255, 255, 255, inside ? 200 : 100));
@@ -260,7 +260,7 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 				{
 					canvas.setBackground(inside ? Color4ub(255, 255, 255, 20) : Color4ub(255, 255, 255, 10));
 					canvas.setForeground(Color4ub(255, 255, 255, 100));
-					canvas.drawLine(pivot, pnts[0]);
+					//canvas.drawLine(pivot, pnts[0]);
 					canvas.fillPolygon(pnts, 4);
 					canvas.drawPolygon(pnts, 4);
 					canvas.setForeground(Color4ub(255, 255, 255, inside ? 200 : 100));
@@ -429,7 +429,7 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 				{
 					if (m_outline)
 					{
-						canvas.drawLine(pivot, pnts[0]);
+						//canvas.drawLine(pivot, pnts[0]);
 						canvas.fillPolygon(pnts, 4);
 						canvas.drawPolygon(pnts, 4);
 					}
@@ -462,6 +462,12 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 					canvas.setForeground(Color4ub(255, 255, 255, inside ? 200 : 100));
 					canvas.drawText(pnts[0], mbstows(instance->getName()));
 				}
+			}
+
+			if (inside)
+			{
+				auto sz = m_bitmapPivot->getSize();
+				canvas.drawBitmap(pivot + ui::Size(-sz.cx / 2, -sz.cy / 2), ui::Point(0, 0), sz, m_bitmapPivot);
 			}
 		}
 
