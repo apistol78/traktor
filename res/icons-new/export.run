@@ -260,6 +260,7 @@ local outputs =
 			{ name = "Text", column = 3, row = 38, width = 1, height = 1 },
 			{ name = "Edit", column = 4, row = 38, width = 1, height = 1 },
 			{ name = "Button", column = 5, row = 38, width = 1, height = 1 },
+			{ name = "Pivot", column = 6, row = 38, width = 1, height = 1, base = 12 },
 		}
 	},
 	{

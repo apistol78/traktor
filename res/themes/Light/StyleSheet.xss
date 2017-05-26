@@ -809,6 +809,10 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/Button.image</value>
 		</item>
 		<item>
+			<name>Flash.Pivot</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Flash/Pivot.image</value>
+		</item>
+		<item>
 			<name>Shader.Tools</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Light/Images/Shader/Tools.image</value>
 		</item>

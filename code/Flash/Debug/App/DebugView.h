@@ -24,6 +24,7 @@ class Image;
 	{
 	
 class Bitmap;
+class StyleBitmap;
 
 	}
 
@@ -50,6 +51,7 @@ public:
 private:
 	Ref< const PostFrameDebugInfo > m_debugInfo;
 	Ref< const InstanceDebugInfo > m_highlightInstance;
+	Ref< ui::StyleBitmap > m_bitmapPivot;
 	bool m_highlightOnly;
 	bool m_outline;
 	ui::Point m_offset;
