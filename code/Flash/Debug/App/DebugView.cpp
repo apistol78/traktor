@@ -423,7 +423,7 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 					int32_t width = sc.image->getWidth();
 					int32_t height = sc.image->getHeight();
 
-					canvas.drawBitmap(pnts[0], ui::Size(width, height), ui::Point(0, 0), ui::Size(width, height), sc.bitmap);
+					canvas.drawBitmap(globalRect.getTopLeft(), ui::Point(0, 0), ui::Size(width, height), sc.bitmap);
 				}
 				else
 				{
