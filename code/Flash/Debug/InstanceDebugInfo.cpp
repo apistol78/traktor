@@ -19,6 +19,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.InstanceDebugInfo", InstanceDebugInfo, ISerializable)
 
 InstanceDebugInfo::InstanceDebugInfo()
+:	m_visible(false)
 {
 }
 
@@ -29,6 +30,7 @@ void InstanceDebugInfo::serialize(ISerializer& s)
 	s >> Member< Matrix33 >(L"localTransform", m_localTransform);
 	s >> Member< Matrix33 >(L"globalTransform", m_globalTransform);
 	s >> MemberColorTransform(L"cxform", m_cxform);
+	s >> Member< bool >(L"visible", m_visible);
 }
 
 	}

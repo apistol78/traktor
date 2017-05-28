@@ -25,6 +25,7 @@ ButtonInstanceDebugInfo::ButtonInstanceDebugInfo(const FlashButtonInstance* inst
 	m_localTransform = instance->getTransform();
 	m_globalTransform = instance->getFullTransform();
 	m_cxform = instance->getFullColorTransform();
+	m_visible = instance->isVisible();
 }
 
 void ButtonInstanceDebugInfo::serialize(ISerializer& s)

@@ -46,6 +46,8 @@ public:
 
 	const ColorTransform& getColorTransform() const { return m_cxform; }
 
+	bool getVisible() const { return m_visible; }
+
 	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 protected:
@@ -54,6 +56,7 @@ protected:
 	Matrix33 m_localTransform;
 	Matrix33 m_globalTransform;
 	ColorTransform m_cxform;
+	bool m_visible;
 };
 	
 	}
