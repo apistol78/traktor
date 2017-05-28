@@ -808,6 +808,14 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Flash/Pivot.image</value>
 		</item>
 		<item>
+			<name>Flash.PreviousFrame</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Flash/PreviousFrame.image</value>
+		</item>
+		<item>
+			<name>Flash.NextFrame</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Flash/NextFrame.image</value>
+		</item>
+		<item>
 			<name>Shader.Tools</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Shader/Tools.image</value>
 		</item>

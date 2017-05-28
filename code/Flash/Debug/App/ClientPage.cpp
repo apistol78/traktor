@@ -9,10 +9,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Flash/Debug/ButtonInstanceDebugInfo.h"
 #include "Flash/Debug/CaptureControl.h"
 #include "Flash/Debug/EditInstanceDebugInfo.h"
+#include "Flash/Debug/FrameDebugInfo.h"
 #include "Flash/Debug/MorphShapeInstanceDebugInfo.h"
 #include "Flash/Debug/MovieDebugInfo.h"
 #include "Flash/Debug/ShapeInstanceDebugInfo.h"
@@ -21,7 +23,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Debug/App/ClientPage.h"
 #include "Flash/Debug/App/DebugView.h"
 #include "Ui/Application.h"
+#include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
+#include "Ui/NumericEditValidator.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
@@ -33,6 +37,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/TreeView/TreeView.h"
 #include "Ui/Custom/TreeView/TreeViewItem.h"
@@ -52,10 +57,21 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(this);
 
+	m_toolBar->addImage(new ui::StyleBitmap(L"Flash.PreviousFrame"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Flash.NextFrame"), 1);
+
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Load", ui::Command(L"Traktor.Flash.Load")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Save", ui::Command(L"Traktor.Flash.Save")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Capture", ui::Command(L"Traktor.Flash.CaptureSingle")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Previous Frame", 0, ui::Command(L"Traktor.Flash.PreviousFrame")));
+
+	m_editFrame = new ui::Edit();
+	m_editFrame->create(m_toolBar, L"0", ui::WsNone, new ui::NumericEditValidator(false, 0));
+	m_editFrame->addEventHandler< ui::ContentChangeEvent >(this, &ClientPage::eventFrameChange);
+	m_toolBar->addItem(new ui::custom::ToolBarEmbed(m_editFrame, ui::scaleBySystemDPI(30)));
+
+	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Next Frame", 1, ui::Command(L"Traktor.Flash.NextFrame")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Selected Only", ui::Command(L"Traktor.Flash.ToggleShowSelectedOnly"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Outline", ui::Command(L"Traktor.Flash.ToggleShowOutline"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled));
@@ -95,6 +111,7 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_statusBar->create(container, ui::WsDoubleBuffer);
 
 	m_transport = transport;
+	m_selectedFrame = -1;
 
 	addEventHandler< ui::TimerEvent >(this, &ClientPage::eventTimer);
 	startTimer(20);
@@ -259,6 +276,37 @@ void ClientPage::buildDebugTree(ui::custom::TreeViewItem* parent, const RefArray
 	}
 }
 
+void ClientPage::selectFrame(int32_t frame)
+{
+	frame = clamp< int32_t >(frame, 0, int32_t(m_frameInfos.size() - 1));
+	if (frame == m_selectedFrame)
+		return;
+
+	const FrameDebugInfo* frameInfo = m_frameInfos[frame];
+
+	auto state = m_debugTree->captureState();
+	m_debugTree->removeAllItems();
+
+	if (frameInfo)
+		buildDebugTree(0, frameInfo->getInstances());
+
+	m_debugTree->applyState(state);
+	m_debugTree->update();
+
+	updateSelection();
+
+	m_debugView->setDebugInfo(frameInfo);
+	m_debugView->update();
+
+	m_selectedFrame = frame;
+	m_editFrame->setText(toString< int32_t >(frame));
+}
+
+void ClientPage::eventFrameChange(ui::ContentChangeEvent* event)
+{
+	selectFrame(parseString< int32_t >(m_editFrame->getText()));
+}
+
 void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	if (event->getCommand() == L"Traktor.Flash.Load")
@@ -272,24 +320,24 @@ void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 			Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 			if (file)
 			{
-				m_debugInfo = xml::XmlDeserializer(file).readObject< PostFrameDebugInfo >();
-				file->close();
+				//m_debugInfo = xml::XmlDeserializer(file).readObject< FrameDebugInfo >();
+				//file->close();
 
-				if (m_debugInfo)
-				{
-					auto state = m_debugTree->captureState();
-					m_debugTree->removeAllItems();
+				//if (m_debugInfo)
+				//{
+				//	auto state = m_debugTree->captureState();
+				//	m_debugTree->removeAllItems();
 
-					buildDebugTree(0, m_debugInfo->getInstances());
+				//	buildDebugTree(0, m_debugInfo->getInstances());
 
-					m_debugTree->applyState(state);
-					m_debugTree->update();
+				//	m_debugTree->applyState(state);
+				//	m_debugTree->update();
 
-					updateSelection();
+				//	updateSelection();
 
-					m_debugView->setDebugInfo(m_debugInfo);
-					m_debugView->update();				
-				}
+				//	m_debugView->setDebugInfo(m_debugInfo);
+				//	m_debugView->update();				
+				//}
 			}
 		}
 
@@ -297,29 +345,39 @@ void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 	}
 	else if (event->getCommand() == L"Traktor.Flash.Save")
 	{
-		if (m_debugInfo)
-		{
-			ui::FileDialog fileDialog;
-			fileDialog.create(this, L"Save capture as...", L"All files;*.*", true);
+		//if (m_debugInfo)
+		//{
+		//	ui::FileDialog fileDialog;
+		//	fileDialog.create(this, L"Save capture as...", L"All files;*.*", true);
 
-			Path fileName;
-			if (fileDialog.showModal(fileName) == ui::DrOk)
-			{
-				Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
-				if (file)
-				{
-					xml::XmlSerializer(file).writeObject(m_debugInfo);
-					file->close();
-				}
-			}
+		//	Path fileName;
+		//	if (fileDialog.showModal(fileName) == ui::DrOk)
+		//	{
+		//		Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
+		//		if (file)
+		//		{
+		//			xml::XmlSerializer(file).writeObject(m_debugInfo);
+		//			file->close();
+		//		}
+		//	}
 
-			fileDialog.destroy();
-		}
+		//	fileDialog.destroy();
+		//}
 	}
 	else if (event->getCommand() == L"Traktor.Flash.CaptureSingle")
 	{
 		CaptureControl captureControl(1);
 		m_transport->send(&captureControl);
+	}
+	else if (event->getCommand() == L"Traktor.Flash.PreviousFrame")
+	{
+		if (m_selectedFrame > 0)
+			selectFrame(m_selectedFrame - 1);
+	}
+	else if (event->getCommand() == L"Traktor.Flash.NextFrame")
+	{
+		if (m_selectedFrame < int32_t(m_frameInfos.size() - 1))
+			selectFrame(m_selectedFrame + 1);
 	}
 	else if (event->getCommand() == L"Traktor.Flash.ToggleShowSelectedOnly")
 	{
@@ -352,28 +410,16 @@ void ClientPage::eventTimer(ui::TimerEvent* event)
 {
 	Ref< ISerializable > debugInfo;
 	if (m_transport->recv(
-		makeTypeInfoSet< MovieDebugInfo, PostFrameDebugInfo >(),
+		makeTypeInfoSet< MovieDebugInfo, FrameDebugInfo >(),
 		10,
 		debugInfo
 	) != net::BidirectionalObjectTransport::RtSuccess)
 		return;
 
-	if (const PostFrameDebugInfo* postFrame = dynamic_type_cast< const PostFrameDebugInfo* >(debugInfo))
+	if (const FrameDebugInfo* frameInfo = dynamic_type_cast< const FrameDebugInfo* >(debugInfo))
 	{
-		auto state = m_debugTree->captureState();
-		m_debugTree->removeAllItems();
-
-		buildDebugTree(0, postFrame->getInstances());
-
-		m_debugTree->applyState(state);
-		m_debugTree->update();
-
-		updateSelection();
-
-		m_debugView->setDebugInfo(postFrame);
-		m_debugView->update();
-
-		m_debugInfo = postFrame;
+		m_frameInfos.push_back(frameInfo);
+		selectFrame(int32_t(m_frameInfos.size() - 1));
 	}
 	else if (const MovieDebugInfo* movieInfo = dynamic_type_cast< const MovieDebugInfo* >(debugInfo))
 	{

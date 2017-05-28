@@ -83,7 +83,7 @@ bool DebugView::create(ui::Widget* parent)
 	return true;
 }
 
-void DebugView::setDebugInfo(const PostFrameDebugInfo* debugInfo)
+void DebugView::setDebugInfo(const FrameDebugInfo* debugInfo)
 {
 	m_debugInfo = debugInfo;
 	m_shapeCache.clear();
@@ -145,6 +145,21 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 				targetHeight
 			)
 		);
+
+
+		// Outside frame
+		canvas.setForeground(Color4ub(255, 255, 0, 64));
+
+		int32_t dx = ui::scaleBySystemDPI(16);
+		int32_t ox = m_offset.x % dx;
+		int32_t oy = m_offset.y % dx;
+
+		for (int32_t x = 0; x < max(outputWidth, outputHeight) * 2 + dx; x += dx)
+			canvas.drawLine(x + ox - dx, oy - dx, ox - dx, x + oy - dx);
+
+		canvas.setBackground(Color4ub(40, 40, 40, 255));
+		canvas.fillRect(targetRect);
+
 
 		int32_t mx = mousePosition.x - targetRect.left;
 		int32_t my = mousePosition.y - targetRect.top;
@@ -218,7 +233,6 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 				{
 					canvas.setBackground(inside ? Color4ub(80, 255, 255, 20) : Color4ub(200, 255, 255, 10));
 					canvas.setForeground(Color4ub(255, 255, 255, 100));
-					//canvas.drawLine(pivot, pnts[0]);
 					canvas.fillPolygon(pnts, 4);
 					canvas.drawPolygon(pnts, 4);
 					canvas.setForeground(Color4ub(255, 255, 255, inside ? 200 : 100));
@@ -231,7 +245,6 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 				{
 					canvas.setBackground(inside ? Color4ub(80, 80, 255, 20) : Color4ub(200, 200, 255, 10));
 					canvas.setForeground(Color4ub(255, 255, 255, 100));
-					//canvas.drawLine(pivot, pnts[0]);
 					canvas.fillPolygon(pnts, 4);
 					canvas.drawPolygon(pnts, 4);
 					canvas.setForeground(Color4ub(255, 255, 255, inside ? 200 : 100));
@@ -260,7 +273,6 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 				{
 					canvas.setBackground(inside ? Color4ub(255, 255, 255, 20) : Color4ub(255, 255, 255, 10));
 					canvas.setForeground(Color4ub(255, 255, 255, 100));
-					//canvas.drawLine(pivot, pnts[0]);
 					canvas.fillPolygon(pnts, 4);
 					canvas.drawPolygon(pnts, 4);
 					canvas.setForeground(Color4ub(255, 255, 255, inside ? 200 : 100));
@@ -429,7 +441,6 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 				{
 					if (m_outline)
 					{
-						//canvas.drawLine(pivot, pnts[0]);
 						canvas.fillPolygon(pnts, 4);
 						canvas.drawPolygon(pnts, 4);
 					}
