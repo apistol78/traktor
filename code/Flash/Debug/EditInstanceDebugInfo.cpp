@@ -28,6 +28,7 @@ EditInstanceDebugInfo::EditInstanceDebugInfo(const FlashEditInstance* instance)
 	m_localTransform = instance->getTransform();
 	m_globalTransform = instance->getFullTransform();
 	m_cxform = instance->getFullColorTransform();
+	m_visible = instance->isVisible();
 	m_text = instance->getText();
 	m_textAlign = instance->getTextLayout()->getAlignment();
 }

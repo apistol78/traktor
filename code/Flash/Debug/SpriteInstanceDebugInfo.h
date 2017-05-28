@@ -36,7 +36,9 @@ class T_DLLCLASS SpriteInstanceDebugInfo : public InstanceDebugInfo
 public:
 	SpriteInstanceDebugInfo();
 
-	SpriteInstanceDebugInfo(const FlashSpriteInstance* instance, const RefArray< InstanceDebugInfo >& childrenDebugInfo);
+	SpriteInstanceDebugInfo(const FlashSpriteInstance* instance, const std::string& className, const RefArray< InstanceDebugInfo >& childrenDebugInfo);
+
+	const std::string& getClassName() const { return m_className; }
 
 	uint16_t getFrames() const { return m_frames; }
 
@@ -49,6 +51,7 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
+	std::string m_className;
 	uint16_t m_frames;
 	uint16_t m_currentFrame;
 	bool m_playing;

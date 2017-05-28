@@ -26,6 +26,7 @@ TextInstanceDebugInfo::TextInstanceDebugInfo(const FlashTextInstance* instance)
 	m_localTransform = instance->getTransform();
 	m_globalTransform = instance->getFullTransform();
 	m_cxform = instance->getFullColorTransform();
+	m_visible = instance->isVisible();
 }
 
 void TextInstanceDebugInfo::serialize(ISerializer& s)

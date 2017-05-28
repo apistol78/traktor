@@ -35,14 +35,17 @@ class T_DLLCLASS ShapeInstanceDebugInfo : public InstanceDebugInfo
 public:
 	ShapeInstanceDebugInfo();
 
-	ShapeInstanceDebugInfo(const FlashShapeInstance* instance);
+	ShapeInstanceDebugInfo(const FlashShapeInstance* instance, bool mask);
 
 	const FlashShape* getShape() const { return m_shape; }
+
+	bool getMask() const { return m_mask; }
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< const FlashShape > m_shape;
+	bool m_mask;
 };
 	
 	}

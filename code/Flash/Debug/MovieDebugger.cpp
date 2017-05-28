@@ -6,10 +6,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/RefArray.h"
 #include "Flash/FlashButtonInstance.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashEditInstance.h"
 #include "Flash/FlashMorphShapeInstance.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashShapeInstance.h"
+#include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashTextInstance.h"
 #include "Flash/Debug/ButtonInstanceDebugInfo.h"
@@ -31,7 +33,7 @@ namespace traktor
 		namespace
 		{
 		
-void collectDebugInfo(const FlashCharacterInstance* instance, RefArray< InstanceDebugInfo >& outDebugInfo)
+void collectDebugInfo(const FlashCharacterInstance* instance, bool mask, RefArray< InstanceDebugInfo >& outDebugInfo)
 {
 	if (const FlashButtonInstance* buttonInstance = dynamic_type_cast< const FlashButtonInstance* >(instance))
 	{
@@ -43,19 +45,52 @@ void collectDebugInfo(const FlashCharacterInstance* instance, RefArray< Instance
 	}
 	else if (const FlashMorphShapeInstance* morphShapeInstance = dynamic_type_cast< const FlashMorphShapeInstance* >(instance))
 	{
-		outDebugInfo.push_back(new MorphShapeInstanceDebugInfo(morphShapeInstance));
+		outDebugInfo.push_back(new MorphShapeInstanceDebugInfo(morphShapeInstance, mask));
 	}
 	else if (const FlashShapeInstance* shapeInstance = dynamic_type_cast< const FlashShapeInstance* >(instance))
 	{
-		outDebugInfo.push_back(new ShapeInstanceDebugInfo(shapeInstance));
+		outDebugInfo.push_back(new ShapeInstanceDebugInfo(shapeInstance, mask));
 	}
 	else if (const FlashSpriteInstance* spriteInstance = dynamic_type_cast< const FlashSpriteInstance* >(instance))
 	{
+		std::string className;
+		spriteInstance->getDictionary()->getExportName(spriteInstance->getSprite()->getId(), className);
+
 		RefArray< InstanceDebugInfo > childrenDebugInfo;
-		spriteInstance->getDisplayList().forEachVisibleObjectDirect([&](FlashCharacterInstance* child) {
-			collectDebugInfo(child, childrenDebugInfo);
-		});
-		outDebugInfo.push_back(new SpriteInstanceDebugInfo(spriteInstance, childrenDebugInfo));
+
+		const FlashDisplayList::layer_map_t& layers = spriteInstance->getDisplayList().getLayers();
+		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); )
+		{
+			const FlashDisplayList::Layer& layer = i->second;
+			if (!layer.instance)
+			{
+				++i;
+				continue;
+			}
+
+			if (!layer.clipEnable)
+			{
+				collectDebugInfo(layer.instance, false, childrenDebugInfo);
+				++i;
+			}
+			else
+			{
+				collectDebugInfo(layer.instance, true, childrenDebugInfo);
+				for (++i; i != layers.end(); ++i)
+				{
+					if (i->first > layer.clipDepth)
+						break;
+
+					const FlashDisplayList::Layer& clippedLayer = i->second;
+					if (!clippedLayer.instance)
+						continue;
+
+					collectDebugInfo(clippedLayer.instance, false, childrenDebugInfo);
+				}
+			}
+		}
+
+		outDebugInfo.push_back(new SpriteInstanceDebugInfo(spriteInstance, className, childrenDebugInfo));
 	}
 	else if (const FlashTextInstance* textInstance = dynamic_type_cast< const FlashTextInstance* >(instance))
 	{
@@ -73,6 +108,10 @@ MovieDebugger::MovieDebugger(net::BidirectionalObjectTransport* transport, const
 {
 	MovieDebugInfo movieInfo(name);
 	m_transport->send(&movieInfo);
+
+	Ref< CaptureControl > captureControl;
+	if (m_transport->recv< CaptureControl >(100, captureControl) == net::BidirectionalObjectTransport::RtSuccess)
+		m_captureFrames = captureControl->getFrameCount();
 }
 
 void MovieDebugger::postExecuteFrame(
@@ -90,7 +129,7 @@ void MovieDebugger::postExecuteFrame(
 	if (m_captureFrames > 0)
 	{
 		RefArray< InstanceDebugInfo > debugInfo;
-		collectDebugInfo(movieInstance, debugInfo);
+		collectDebugInfo(movieInstance, false, debugInfo);
 		FrameDebugInfo postFrameInfo(
 			movie->getFrameBounds(),
 			stageTransform,

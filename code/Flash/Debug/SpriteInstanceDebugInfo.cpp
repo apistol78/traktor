@@ -25,13 +25,15 @@ SpriteInstanceDebugInfo::SpriteInstanceDebugInfo()
 {
 }
 
-SpriteInstanceDebugInfo::SpriteInstanceDebugInfo(const FlashSpriteInstance* instance, const RefArray< InstanceDebugInfo >& childrenDebugInfo)
+SpriteInstanceDebugInfo::SpriteInstanceDebugInfo(const FlashSpriteInstance* instance, const std::string& className, const RefArray< InstanceDebugInfo >& childrenDebugInfo)
 {
 	m_name = instance->getName();
 	m_bounds = instance->getVisibleLocalBounds();
 	m_localTransform = instance->getTransform();
 	m_globalTransform = instance->getFullTransform();
 	m_cxform = instance->getFullColorTransform();
+	m_visible = instance->isVisible();
+	m_className = className;
 	m_frames = instance->getSprite()->getFrameCount();
 	m_currentFrame = instance->getCurrentFrame();
 	m_playing = instance->getPlaying();
@@ -42,6 +44,7 @@ void SpriteInstanceDebugInfo::serialize(ISerializer& s)
 {
 	InstanceDebugInfo::serialize(s);
 
+	s >> Member< std::string >(L"className", m_className);
 	s >> Member< uint16_t >(L"frames", m_frames);
 	s >> Member< uint16_t >(L"currentFrame", m_currentFrame);
 	s >> Member< bool >(L"playing", m_playing);

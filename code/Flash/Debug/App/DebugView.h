@@ -44,7 +44,11 @@ public:
 
 	void setHighlightOnly(bool highlightOnly);
 
+	void setVisibleOnly(bool visibleOnly);
+
 	void setOutline(bool outline);
+
+	void setShowMasks(bool showMasks);
 
 	const Vector2& getMousePosition() const;
 
@@ -53,7 +57,9 @@ private:
 	Ref< const InstanceDebugInfo > m_highlightInstance;
 	Ref< ui::StyleBitmap > m_bitmapPivot;
 	bool m_highlightOnly;
+	bool m_visibleOnly;
 	bool m_outline;
+	bool m_showMasks;
 	ui::Point m_offset;
 	ui::Point m_mouseLast;
 	float m_scale;

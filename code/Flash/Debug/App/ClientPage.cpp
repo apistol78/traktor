@@ -74,7 +74,9 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Next Frame", 1, ui::Command(L"Traktor.Flash.NextFrame")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Selected Only", ui::Command(L"Traktor.Flash.ToggleShowSelectedOnly"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Visible Only", ui::Command(L"Traktor.Flash.ToggleShowVisibleOnly"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Outline", ui::Command(L"Traktor.Flash.ToggleShowOutline"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Masks", ui::Command(L"Traktor.Flash.ToggleShowMasks"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle));
 
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ClientPage::eventToolBarClick);
 
@@ -117,6 +119,11 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	startTimer(20);
 
 	update();
+
+	// Capture initial frame.
+	CaptureControl captureControl(1);
+	m_transport->send(&captureControl);
+
 	return true;
 }
 
@@ -156,6 +163,17 @@ void ClientPage::updateSelection()
 		row->add(new ui::custom::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
+		if (const SpriteInstanceDebugInfo* spriteDebugInfo = dynamic_type_cast< const SpriteInstanceDebugInfo* >(debugInfo))
+		{
+			ss.reset();
+			ss << mbstows(spriteDebugInfo->getClassName());
+
+			row = new ui::custom::GridRow();
+			row->add(new ui::custom::GridItem(L"Class"));
+			row->add(new ui::custom::GridItem(ss.str()));
+			m_debugGrid->addRow(row);
+		}
+
 		if (const EditInstanceDebugInfo* editDebugInfo = dynamic_type_cast< const EditInstanceDebugInfo* >(debugInfo))
 		{
 			ss.reset();
@@ -166,6 +184,11 @@ void ClientPage::updateSelection()
 			row->add(new ui::custom::GridItem(ss.str()));
 			m_debugGrid->addRow(row);
 		}
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Visible"));
+		row->add(new ui::custom::GridItem(debugInfo->getVisible() ? L"Yes" : L"No"));
+		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << int(lt.x / 20.0f) << L", " << int(lt.y / 20.0f);
@@ -385,10 +408,22 @@ void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 		m_debugView->setHighlightOnly(button->isToggled());
 		m_debugView->update();
 	}
+	else if (event->getCommand() == L"Traktor.Flash.ToggleShowVisibleOnly")
+	{
+		ui::custom::ToolBarButton* button = mandatory_non_null_type_cast< ui::custom::ToolBarButton* >(event->getItem());
+		m_debugView->setVisibleOnly(button->isToggled());
+		m_debugView->update();
+	}
 	else if (event->getCommand() == L"Traktor.Flash.ToggleShowOutline")
 	{
 		ui::custom::ToolBarButton* button = mandatory_non_null_type_cast< ui::custom::ToolBarButton* >(event->getItem());
 		m_debugView->setOutline(button->isToggled());
+		m_debugView->update();
+	}
+	else if (event->getCommand() == L"Traktor.Flash.ToggleShowMasks")
+	{
+		ui::custom::ToolBarButton* button = mandatory_non_null_type_cast< ui::custom::ToolBarButton* >(event->getItem());
+		m_debugView->setShowMasks(button->isToggled());
 		m_debugView->update();
 	}
 }
