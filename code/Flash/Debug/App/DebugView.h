@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_flash_DebugView_H
 #define traktor_flash_DebugView_H
 
+#include "Flash/Debug/FrameDebugInfo.h"
 #include "Flash/Debug/InstanceDebugInfo.h"
-#include "Flash/Debug/PostFrameDebugInfo.h"
 #include "Ui/Widget.h"
 
 namespace traktor
@@ -38,7 +38,7 @@ public:
 		ui::Widget* parent
 	);
 
-	void setDebugInfo(const PostFrameDebugInfo* debugInfo);
+	void setDebugInfo(const FrameDebugInfo* debugInfo);
 
 	void setHighlight(const InstanceDebugInfo* instance);
 
@@ -49,7 +49,7 @@ public:
 	const Vector2& getMousePosition() const;
 
 private:
-	Ref< const PostFrameDebugInfo > m_debugInfo;
+	Ref< const FrameDebugInfo > m_debugInfo;
 	Ref< const InstanceDebugInfo > m_highlightInstance;
 	Ref< ui::StyleBitmap > m_bitmapPivot;
 	bool m_highlightOnly;

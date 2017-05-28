@@ -15,10 +15,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Debug/ButtonInstanceDebugInfo.h"
 #include "Flash/Debug/CaptureControl.h"
 #include "Flash/Debug/EditInstanceDebugInfo.h"
+#include "Flash/Debug/FrameDebugInfo.h"
 #include "Flash/Debug/MorphShapeInstanceDebugInfo.h"
 #include "Flash/Debug/MovieDebugger.h"
 #include "Flash/Debug/MovieDebugInfo.h"
-#include "Flash/Debug/PostFrameDebugInfo.h"
 #include "Flash/Debug/ShapeInstanceDebugInfo.h"
 #include "Flash/Debug/SpriteInstanceDebugInfo.h"
 #include "Flash/Debug/TextInstanceDebugInfo.h"
@@ -91,7 +91,7 @@ void MovieDebugger::postExecuteFrame(
 	{
 		RefArray< InstanceDebugInfo > debugInfo;
 		collectDebugInfo(movieInstance, debugInfo);
-		PostFrameDebugInfo postFrameInfo(
+		FrameDebugInfo postFrameInfo(
 			movie->getFrameBounds(),
 			stageTransform,
 			viewWidth,

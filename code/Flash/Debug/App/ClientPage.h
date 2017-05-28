@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_flash_ClientPage_H
 #define traktor_flash_ClientPage_H
 
-#include "Flash/Debug/PostFrameDebugInfo.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Ui/Container.h"
 
@@ -15,6 +14,9 @@ namespace traktor
 {
 	namespace ui
 	{
+
+class Edit;
+
 		namespace custom
 		{
 		
@@ -32,6 +34,8 @@ class TreeViewItem;
 	{
 
 class DebugView;
+class FrameDebugInfo;
+class InstanceDebugInfo;
 
 class ClientPage : public ui::Container
 {
@@ -44,15 +48,21 @@ public:
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	Ref< ui::custom::ToolBar > m_toolBar;
+	Ref< ui::Edit > m_editFrame;
 	Ref< ui::custom::TreeView > m_debugTree;
 	Ref< ui::custom::GridView > m_debugGrid;
 	Ref< DebugView > m_debugView;
 	Ref< ui::custom::StatusBar > m_statusBar;
-	Ref< const PostFrameDebugInfo > m_debugInfo;
+	RefArray< const FrameDebugInfo > m_frameInfos;
+	int32_t m_selectedFrame;
 
 	void updateSelection();
 
+	void selectFrame(int32_t frame);
+
 	void buildDebugTree(ui::custom::TreeViewItem* parent, const RefArray< InstanceDebugInfo >& instances);
+
+	void eventFrameChange(ui::ContentChangeEvent* event);
 
 	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
 

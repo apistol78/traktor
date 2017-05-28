@@ -4,8 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_flash_PostFrameDebugInfo_H
-#define traktor_flash_PostFrameDebugInfo_H
+#ifndef traktor_flash_FrameDebugInfo_H
+#define traktor_flash_FrameDebugInfo_H
 
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb2.h"
@@ -30,14 +30,14 @@ class InstanceDebugInfo;
 /*! \brief
  * \ingroup Flash
  */
-class T_DLLCLASS PostFrameDebugInfo : public ISerializable
+class T_DLLCLASS FrameDebugInfo : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	PostFrameDebugInfo();
+	FrameDebugInfo();
 
-	PostFrameDebugInfo(
+	FrameDebugInfo(
 		const Aabb2& frameBounds,
 		const Vector4& stageTransform,
 		int32_t viewWidth,
@@ -68,5 +68,5 @@ private:
 	}
 }
 
-#endif	// traktor_flash_PostFrameDebugInfo_H
+#endif	// traktor_flash_FrameDebugInfo_H
 

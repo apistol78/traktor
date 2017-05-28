@@ -7,21 +7,21 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Flash/Debug/FrameDebugInfo.h"
 #include "Flash/Debug/InstanceDebugInfo.h"
-#include "Flash/Debug/PostFrameDebugInfo.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 	
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.PostFrameDebugInfo", 0, PostFrameDebugInfo, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FrameDebugInfo", 0, FrameDebugInfo, ISerializable)
 
-PostFrameDebugInfo::PostFrameDebugInfo()
+FrameDebugInfo::FrameDebugInfo()
 {
 }
 
-PostFrameDebugInfo::PostFrameDebugInfo(
+FrameDebugInfo::FrameDebugInfo(
 	const Aabb2& frameBounds,
 	const Vector4& stageTransform,
 	int32_t viewWidth,
@@ -36,7 +36,7 @@ PostFrameDebugInfo::PostFrameDebugInfo(
 {
 }
 
-void PostFrameDebugInfo::serialize(ISerializer& s)
+void FrameDebugInfo::serialize(ISerializer& s)
 {
 	s >> MemberAabb2(L"frameBounds", m_frameBounds);
 	s >> Member< Vector4 >(L"stageTransform", m_stageTransform);
