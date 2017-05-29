@@ -132,8 +132,6 @@ TextLayout::TextLayout()
 ,	m_width(0.0f)
 ,	m_height(0.0f)
 {
-	Line ln = { 0.0f, 0.0f, 0.0f, 0.0f };
-	m_lines.push_back(Line());
 }
 
 void TextLayout::begin()
@@ -211,6 +209,7 @@ void TextLayout::insertText(const std::wstring& text)
 
 	uint16_t spaceGlyphIndex = attrib.font->lookupIndex(L' ');
 	int16_t spaceWidth = attrib.font->getAdvance(spaceGlyphIndex);
+	bool spaceInsert = false;
 
 	if (m_wordWrap)
 	{
@@ -270,9 +269,12 @@ void TextLayout::insertText(const std::wstring& text)
 				m_cursorX > FUZZY_EPSILON &&
 				m_cursorX + wordWidth > boundsWidth
 			)
+			{
 				newLine();
+				spaceInsert = false;
+			}
 
-			if (m_cursorX > FUZZY_EPSILON)
+			if (spaceInsert)
 				m_cursorX += spaceWidth * fontScale;
 
 			Word w = { m_currentAttrib, 0 };
@@ -302,6 +304,8 @@ void TextLayout::insertText(const std::wstring& text)
 
 			m_lines.back().width = std::max(m_lines.back().width, m_cursorX);
 			m_width = std::max(m_width, m_cursorX);
+
+			spaceInsert = true;
 		}
 	}
 	else
@@ -347,6 +351,13 @@ void TextLayout::insertCharacter(FlashCharacterInstance* characterInstance)
 	m_lines.back().words.push_back(w);
 
 	m_cursorX += bounds.getSize().x;
+	m_lines.back().width = std::max(m_lines.back().width, m_cursorX);
+	m_width = std::max(m_width, m_cursorX);
+}
+
+void TextLayout::insertBlank(int32_t width)
+{
+	m_cursorX += width;
 	m_lines.back().width = std::max(m_lines.back().width, m_cursorX);
 	m_width = std::max(m_width, m_cursorX);
 }

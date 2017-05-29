@@ -34,14 +34,17 @@ class T_DLLCLASS MorphShapeInstanceDebugInfo : public InstanceDebugInfo
 public:
 	MorphShapeInstanceDebugInfo();
 
-	MorphShapeInstanceDebugInfo(const FlashMorphShapeInstance* instance, bool mask);
+	MorphShapeInstanceDebugInfo(const FlashMorphShapeInstance* instance, bool mask, bool clipped);
 
 	bool getMask() const { return m_mask; }
+
+	bool getClipped() const { return m_clipped; }
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	bool m_mask;
+	bool m_clipped;
 };
 	
 	}

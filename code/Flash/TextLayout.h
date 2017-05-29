@@ -81,6 +81,8 @@ public:
 
 	void insertCharacter(FlashCharacterInstance* characterInstance);
 
+	void insertBlank(int32_t width);
+
 	void newLine();
 
 	void end();
@@ -98,6 +100,10 @@ public:
 	float getFontHeight() const { return m_fontHeight; }
 
 	SwfTextAlignType getAlignment() const { return m_alignment; }
+
+	float getCursorX() const { return m_cursorX; }
+
+	float getCursorY() const { return m_cursorY; }
 
 	float getWidth() const { return m_width / 20.0f; }
 

@@ -20,10 +20,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ShapeInstanceDebugInfo", 0, Shape
 
 ShapeInstanceDebugInfo::ShapeInstanceDebugInfo()
 :	m_mask(false)
+,	m_clipped(false)
 {
 }
 
-ShapeInstanceDebugInfo::ShapeInstanceDebugInfo(const FlashShapeInstance* instance, bool mask)
+ShapeInstanceDebugInfo::ShapeInstanceDebugInfo(const FlashShapeInstance* instance, bool mask, bool clipped)
 {
 	m_name = instance->getName();
 	m_bounds = instance->getBounds();
@@ -33,6 +34,7 @@ ShapeInstanceDebugInfo::ShapeInstanceDebugInfo(const FlashShapeInstance* instanc
 	m_visible = instance->isVisible();
 	m_shape = instance->getShape();
 	m_mask = mask;
+	m_clipped = clipped;
 }
 
 void ShapeInstanceDebugInfo::serialize(ISerializer& s)
@@ -41,6 +43,7 @@ void ShapeInstanceDebugInfo::serialize(ISerializer& s)
 
 	s >> MemberRef< const FlashShape >(L"shape", m_shape);
 	s >> Member< bool >(L"mask", m_mask);
+	s >> Member< bool >(L"clipped", m_clipped);
 }
 
 	}

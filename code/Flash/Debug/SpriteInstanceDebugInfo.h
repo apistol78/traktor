@@ -36,9 +36,13 @@ class T_DLLCLASS SpriteInstanceDebugInfo : public InstanceDebugInfo
 public:
 	SpriteInstanceDebugInfo();
 
-	SpriteInstanceDebugInfo(const FlashSpriteInstance* instance, const std::string& className, const RefArray< InstanceDebugInfo >& childrenDebugInfo);
+	SpriteInstanceDebugInfo(const FlashSpriteInstance* instance, const std::string& className, bool mask, bool clipped, const RefArray< InstanceDebugInfo >& childrenDebugInfo);
 
 	const std::string& getClassName() const { return m_className; }
+
+	bool getMask() const { return m_mask; }
+
+	bool getClipped() const { return m_clipped; }
 
 	uint16_t getFrames() const { return m_frames; }
 
@@ -46,15 +50,20 @@ public:
 
 	bool isPlaying() const { return m_playing; }
 
+	const Aabb2& getScalingGrid() const { return m_scalingGrid; }
+
 	const RefArray< InstanceDebugInfo >& getChildrenDebugInfo() const { return m_childrenDebugInfo; }
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::string m_className;
+	bool m_mask;
+	bool m_clipped;
 	uint16_t m_frames;
 	uint16_t m_currentFrame;
 	bool m_playing;
+	Aabb2 m_scalingGrid;
 	RefArray< InstanceDebugInfo > m_childrenDebugInfo;
 };
 	

@@ -85,6 +85,24 @@ public:
 
 	int32_t getMaxScroll() const;
 
+	/*! \brief Prepare a text layout.
+	 *
+	 * Preparing a text layout with edit field's font and attributes.
+	 * Useful for custom layout of field's content.
+	 *
+	 * \return Prepared text layout.
+	 */
+	Ref< TextLayout > prepareTextLayout() const;
+
+	/*! \brief Override text layout.
+	 *
+	 * \note
+	 * Layout is modified if text is changed in this field.
+	 *
+	 * \param layout Text layout.
+	 */
+	void setTextLayout(TextLayout* layout);
+
 	const TextLayout* getTextLayout() const { return m_layout; }
 
 	void setRenderClipMask(bool renderClipMask);
