@@ -18,10 +18,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.MorphShapeInstanceDebugInfo", 0, 
 
 MorphShapeInstanceDebugInfo::MorphShapeInstanceDebugInfo()
 :	m_mask(false)
+,	m_clipped(false)
 {
 }
 
-MorphShapeInstanceDebugInfo::MorphShapeInstanceDebugInfo(const FlashMorphShapeInstance* instance, bool mask)
+MorphShapeInstanceDebugInfo::MorphShapeInstanceDebugInfo(const FlashMorphShapeInstance* instance, bool mask, bool clipped)
 {
 	m_name = instance->getName();
 	m_bounds = instance->getBounds();
@@ -30,6 +31,7 @@ MorphShapeInstanceDebugInfo::MorphShapeInstanceDebugInfo(const FlashMorphShapeIn
 	m_cxform = instance->getFullColorTransform();
 	m_visible = instance->isVisible();
 	m_mask = mask;
+	m_clipped = clipped;
 }
 
 void MorphShapeInstanceDebugInfo::serialize(ISerializer& s)
@@ -37,6 +39,7 @@ void MorphShapeInstanceDebugInfo::serialize(ISerializer& s)
 	InstanceDebugInfo::serialize(s);
 
 	s >> Member< bool >(L"mask", m_mask);
+	s >> Member< bool >(L"clipped", m_clipped);
 }
 
 	}

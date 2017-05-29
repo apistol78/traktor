@@ -34,6 +34,12 @@ class StyleBitmap;
 class DebugView : public ui::Widget
 {
 public:
+	struct ShapeCache
+	{
+		Ref< drawing::Image > image;
+		Ref< ui::Bitmap > bitmap;
+	};
+
 	bool create(
 		ui::Widget* parent
 	);
@@ -64,13 +70,6 @@ private:
 	ui::Point m_mouseLast;
 	float m_scale;
 	Vector2 m_mousePosition;
-
-	struct ShapeCache
-	{
-		Ref< drawing::Image > image;
-		Ref< ui::Bitmap > bitmap;
-	};
-
 	std::map< void*, ShapeCache > m_shapeCache;
 
 	void eventPaint(ui::PaintEvent* event);

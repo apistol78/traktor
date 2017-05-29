@@ -172,6 +172,21 @@ void ClientPage::updateSelection()
 			row->add(new ui::custom::GridItem(L"Class"));
 			row->add(new ui::custom::GridItem(ss.str()));
 			m_debugGrid->addRow(row);
+
+			row = new ui::custom::GridRow();
+			row->add(new ui::custom::GridItem(L"Mask"));
+			row->add(new ui::custom::GridItem(spriteDebugInfo->getMask() ? L"Yes" : L"No"));
+			m_debugGrid->addRow(row);
+
+			row = new ui::custom::GridRow();
+			row->add(new ui::custom::GridItem(L"Clipped"));
+			row->add(new ui::custom::GridItem(spriteDebugInfo->getClipped() ? L"Yes" : L"No"));
+			m_debugGrid->addRow(row);
+
+			row = new ui::custom::GridRow();
+			row->add(new ui::custom::GridItem(L"9Grid Scaling"));
+			row->add(new ui::custom::GridItem(!spriteDebugInfo->getScalingGrid().empty() ? L"Yes" : L"No"));
+			m_debugGrid->addRow(row);
 		}
 
 		if (const EditInstanceDebugInfo* editDebugInfo = dynamic_type_cast< const EditInstanceDebugInfo* >(debugInfo))

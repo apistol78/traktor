@@ -134,6 +134,8 @@ void traverseHtmlDOM(
 			traverseHtmlDOM(editInstance, childElement, font, color, layout, text);
 		else
 		{
+			if (layout->getCursorX() > FUZZY_EPSILON)
+				layout->insertText(L" ");
 			layout->insertText(child->getValue());
 			text << child->getValue();
 		}
@@ -331,6 +333,34 @@ int32_t FlashEditInstance::getMaxScroll() const
 	}
 	else
 		return 0;
+}
+
+Ref< TextLayout > FlashEditInstance::prepareTextLayout() const
+{
+	const FlashDictionary* dictionary = getDictionary();
+	T_ASSERT (dictionary);
+
+	const FlashFont* font = dictionary->getFont(m_edit->getFontId());
+	T_ASSERT (font);
+
+	Ref< TextLayout > layout = new TextLayout();
+
+	layout->begin();
+
+	layout->setBounds(adjustForGutter(m_textBounds));
+	layout->setLeading(m_edit->getLeading());
+	layout->setLetterSpacing(m_password ? 6 : m_letterSpacing);
+	layout->setFontHeight(m_fontHeight);
+	layout->setWordWrap(m_wordWrap);
+	layout->setAlignment(m_align);
+	layout->setAttribute(font, m_textColor);
+
+	return layout;
+}
+
+void FlashEditInstance::setTextLayout(TextLayout* layout)
+{
+	m_layout = layout;
 }
 
 void FlashEditInstance::setRenderClipMask(bool renderClipMask)
