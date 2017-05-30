@@ -3396,5 +3396,21 @@
       <first>GAMEENTITY_WIZARD_FILE_TITLE</first>
       <second>Select mesh</second>
     </item>
+    <item>
+      <first>FLASH_EDITOR_REWIND</first>
+      <second>Rewind</second>
+    </item>
+    <item>
+      <first>FLASH_EDITOR_PLAY</first>
+      <second>Play</second>
+    </item>
+    <item>
+      <first>FLASH_EDITOR_STOP</first>
+      <second>Stop</second>
+    </item>
+    <item>
+      <first>FLASH_EDITOR_FORWARD</first>
+      <second>Forward</second>
+    </item>
   </map>
 </object>
