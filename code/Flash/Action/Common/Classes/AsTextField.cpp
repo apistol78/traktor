@@ -8,10 +8,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
-#include "Flash/FlashEdit.h"
-#include "Flash/FlashEditInstance.h"
-#include "Flash/FlashSpriteInstance.h"
-#include "Flash/FlashTextFormat.h"
+#include "Flash/Edit.h"
+#include "Flash/EditInstance.h"
+#include "Flash/SpriteInstance.h"
+#include "Flash/TextFormat.h"
 #include "Flash/TextLayout.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
@@ -134,14 +134,14 @@ ActionValue AsTextField::xplicit(const ActionValueArray& args)
 	return ActionValue();
 }
 
-void AsTextField::TextField_addListener(FlashEditInstance* self, ActionObject* listener) const
+void AsTextField::TextField_addListener(EditInstance* self, ActionObject* listener) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::addListener not implemented" << Endl;
 	)
 }
 
-float AsTextField::TextField_getDepth(FlashEditInstance* self) const
+float AsTextField::TextField_getDepth(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::getDepth not implemented" << Endl;
@@ -149,7 +149,7 @@ float AsTextField::TextField_getDepth(FlashEditInstance* self) const
 	return 0;
 }
 
-Ref< Array > AsTextField::TextField_getFontList(FlashEditInstance* self) const
+Ref< Array > AsTextField::TextField_getFontList(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::getFontList not implemented" << Endl;
@@ -157,22 +157,22 @@ Ref< Array > AsTextField::TextField_getFontList(FlashEditInstance* self) const
 	return 0;
 }
 
-Ref< FlashTextFormat > AsTextField::TextField_getNewTextFormat(FlashEditInstance* self) const
+Ref< TextFormat > AsTextField::TextField_getNewTextFormat(EditInstance* self) const
 {
 	return self->getTextFormat();
 }
 
-Ref< FlashTextFormat > AsTextField::TextField_getTextFormat_0(FlashEditInstance* self) const
+Ref< TextFormat > AsTextField::TextField_getTextFormat_0(EditInstance* self) const
 {
 	return self->getTextFormat();
 }
 
-Ref< FlashTextFormat > AsTextField::TextField_getTextFormat_2(FlashEditInstance* self, int32_t beginIndex, int32_t endIndex) const
+Ref< TextFormat > AsTextField::TextField_getTextFormat_2(EditInstance* self, int32_t beginIndex, int32_t endIndex) const
 {
 	return self->getTextFormat(beginIndex, endIndex);
 }
 
-bool AsTextField::TextField_removeListener(FlashEditInstance* self) const
+bool AsTextField::TextField_removeListener(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::removeListener not implemented" << Endl;
@@ -180,62 +180,62 @@ bool AsTextField::TextField_removeListener(FlashEditInstance* self) const
 	return false;
 }
 
-void AsTextField::TextField_removeTextField(FlashEditInstance* self) const
+void AsTextField::TextField_removeTextField(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::removeTextField not implemented" << Endl;
 	)
 }
 
-void AsTextField::TextField_replaceSel(FlashEditInstance* self, const std::wstring& newText) const
+void AsTextField::TextField_replaceSel(EditInstance* self, const std::wstring& newText) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::replaceSel not implemented" << Endl;
 	)
 }
 
-void AsTextField::TextField_replaceText(FlashEditInstance* self, int32_t beginIndex, int32_t endIndex, const std::wstring& newText) const
+void AsTextField::TextField_replaceText(EditInstance* self, int32_t beginIndex, int32_t endIndex, const std::wstring& newText) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::replaceText not implemented" << Endl;
 	)
 }
 
-void AsTextField::TextField_setNewTextFormat(FlashEditInstance* self, FlashTextFormat* textFormat) const
+void AsTextField::TextField_setNewTextFormat(EditInstance* self, TextFormat* textFormat) const
 {
 	self->setTextFormat(textFormat);
 }
 
-void AsTextField::TextField_setTextFormat_0(FlashEditInstance* self, FlashTextFormat* textFormat) const
+void AsTextField::TextField_setTextFormat_0(EditInstance* self, TextFormat* textFormat) const
 {
 	self->setTextFormat(textFormat);
 }
 
-void AsTextField::TextField_setTextFormat_2(FlashEditInstance* self, int32_t beginIndex, int32_t endIndex, FlashTextFormat* textFormat) const
+void AsTextField::TextField_setTextFormat_2(EditInstance* self, int32_t beginIndex, int32_t endIndex, TextFormat* textFormat) const
 {
 	self->setTextFormat(textFormat, beginIndex, endIndex);
 }
 
-std::string AsTextField::TextField_toString(const FlashEditInstance* self) const
+std::string AsTextField::TextField_toString(const EditInstance* self) const
 {
 	std::string target = self->getTarget();
 	return "_level0" + replaceAll(target, '/', '.');
 }
 
-float AsTextField::TextField_get_alpha(FlashEditInstance* self) const
+float AsTextField::TextField_get_alpha(EditInstance* self) const
 {
 	const ColorTransform& colorTransform = self->getColorTransform();
 	return colorTransform.mul.getAlpha() * 100.0f;
 }
 
-void AsTextField::TextField_set_alpha(FlashEditInstance* self, float alpha) const
+void AsTextField::TextField_set_alpha(EditInstance* self, float alpha) const
 {
 	ColorTransform colorTransform = self->getColorTransform();
 	colorTransform.mul.setAlpha(Scalar(alpha / 100.0f));
 	self->setColorTransform(colorTransform);
 }
 
-std::wstring AsTextField::TextField_get_antiAliasType(FlashEditInstance* self) const
+std::wstring AsTextField::TextField_get_antiAliasType(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_antiAliasType not implemented" << Endl;
@@ -243,14 +243,14 @@ std::wstring AsTextField::TextField_get_antiAliasType(FlashEditInstance* self) c
 	return L"normal";
 }
 
-void AsTextField::TextField_set_antiAliasType(FlashEditInstance* self, const std::wstring& antiAliasType) const
+void AsTextField::TextField_set_antiAliasType(EditInstance* self, const std::wstring& antiAliasType) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_antiAliasType not implemented" << Endl;
 	)
 }
 
-Ref< ActionObject > AsTextField::TextField_get_autoSize(FlashEditInstance* self) const
+Ref< ActionObject > AsTextField::TextField_get_autoSize(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_autoSize not implemented" << Endl;
@@ -258,14 +258,14 @@ Ref< ActionObject > AsTextField::TextField_get_autoSize(FlashEditInstance* self)
 	return 0;
 }
 
-void AsTextField::TextField_set_autoSize(FlashEditInstance* self, ActionObject* autoSize) const
+void AsTextField::TextField_set_autoSize(EditInstance* self, ActionObject* autoSize) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_autoSize not implemented" << Endl;
 	)
 }
 
-bool AsTextField::TextField_get_background(FlashEditInstance* self) const
+bool AsTextField::TextField_get_background(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_background not implemented" << Endl;
@@ -273,14 +273,14 @@ bool AsTextField::TextField_get_background(FlashEditInstance* self) const
 	return false;
 }
 
-void AsTextField::TextField_set_background(FlashEditInstance* self, bool hasBackground) const
+void AsTextField::TextField_set_background(EditInstance* self, bool hasBackground) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_background not implemented" << Endl;
 	)
 }
 
-float AsTextField::TextField_get_backgroundColor(FlashEditInstance* self) const
+float AsTextField::TextField_get_backgroundColor(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_backgroundColor not implemented" << Endl;
@@ -288,14 +288,14 @@ float AsTextField::TextField_get_backgroundColor(FlashEditInstance* self) const
 	return 0;
 }
 
-void AsTextField::TextField_set_backgroundColor(FlashEditInstance* self, float backgroundColor) const
+void AsTextField::TextField_set_backgroundColor(EditInstance* self, float backgroundColor) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_backgroundColor not implemented" << Endl;
 	)
 }
 
-bool AsTextField::TextField_get_border(FlashEditInstance* self) const
+bool AsTextField::TextField_get_border(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_border not implemented" << Endl;
@@ -303,14 +303,14 @@ bool AsTextField::TextField_get_border(FlashEditInstance* self) const
 	return false;
 }
 
-void AsTextField::TextField_set_border(FlashEditInstance* self, bool hasBorder) const
+void AsTextField::TextField_set_border(EditInstance* self, bool hasBorder) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_border not implemented" << Endl;
 	)
 }
 
-float AsTextField::TextField_get_borderColor(FlashEditInstance* self) const
+float AsTextField::TextField_get_borderColor(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_borderColor not implemented" << Endl;
@@ -318,14 +318,14 @@ float AsTextField::TextField_get_borderColor(FlashEditInstance* self) const
 	return 0;
 }
 
-void AsTextField::TextField_set_borderColor(FlashEditInstance* self, float borderColor) const
+void AsTextField::TextField_set_borderColor(EditInstance* self, float borderColor) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_borderColor not implemented" << Endl;
 	)
 }
 
-float AsTextField::TextField_get_bottomScroll(FlashEditInstance* self) const
+float AsTextField::TextField_get_bottomScroll(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_bottomScroll not implemented" << Endl;
@@ -333,7 +333,7 @@ float AsTextField::TextField_get_bottomScroll(FlashEditInstance* self) const
 	return 0;
 }
 
-bool AsTextField::TextField_get_condenseWhite(FlashEditInstance* self) const
+bool AsTextField::TextField_get_condenseWhite(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_condenseWhite not implemented" << Endl;
@@ -341,14 +341,14 @@ bool AsTextField::TextField_get_condenseWhite(FlashEditInstance* self) const
 	return false;
 }
 
-void AsTextField::TextField_set_condenseWhite(FlashEditInstance* self, bool condenseWhite) const
+void AsTextField::TextField_set_condenseWhite(EditInstance* self, bool condenseWhite) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_condenseWhite not implemented" << Endl;
 	)
 }
 
-bool AsTextField::TextField_get_embedFonts(FlashEditInstance* self) const
+bool AsTextField::TextField_get_embedFonts(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_embedFonts not implemented" << Endl;
@@ -356,14 +356,14 @@ bool AsTextField::TextField_get_embedFonts(FlashEditInstance* self) const
 	return true;
 }
 
-void AsTextField::TextField_set_embedFonts(FlashEditInstance* self, bool embedFonts) const
+void AsTextField::TextField_set_embedFonts(EditInstance* self, bool embedFonts) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_embedFonts not implemented" << Endl;
 	)
 }
 
-Ref< Array > AsTextField::TextField_get_filters(FlashEditInstance* self) const
+Ref< Array > AsTextField::TextField_get_filters(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_filters not implemented" << Endl;
@@ -371,14 +371,14 @@ Ref< Array > AsTextField::TextField_get_filters(FlashEditInstance* self) const
 	return 0;
 }
 
-void AsTextField::TextField_set_filters(FlashEditInstance* self, Array* filters) const
+void AsTextField::TextField_set_filters(EditInstance* self, Array* filters) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_filters not implemented" << Endl;
 	)
 }
 
-std::wstring AsTextField::TextField_get_gridFitType(FlashEditInstance* self) const
+std::wstring AsTextField::TextField_get_gridFitType(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_gridFitType not implemented" << Endl;
@@ -386,24 +386,24 @@ std::wstring AsTextField::TextField_get_gridFitType(FlashEditInstance* self) con
 	return L"none";
 }
 
-void AsTextField::TextField_set_gridFitType(FlashEditInstance* self, const std::wstring& gridFitType) const
+void AsTextField::TextField_set_gridFitType(EditInstance* self, const std::wstring& gridFitType) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_gridFitType not implemented" << Endl;
 	)
 }
 
-float AsTextField::TextField_get_height(FlashEditInstance* self) const
+float AsTextField::TextField_get_height(EditInstance* self) const
 {
 	return self->getHeight();
 }
 
-void AsTextField::TextField_set_height(FlashEditInstance* self, float height) const
+void AsTextField::TextField_set_height(EditInstance* self, float height) const
 {
 	self->setHeight(height);
 }
 
-float AsTextField::TextField_get_highquality(FlashEditInstance* self) const
+float AsTextField::TextField_get_highquality(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_highquality not implemented" << Endl;
@@ -411,14 +411,14 @@ float AsTextField::TextField_get_highquality(FlashEditInstance* self) const
 	return 2;
 }
 
-void AsTextField::TextField_set_highquality(FlashEditInstance* self, float highQuality) const
+void AsTextField::TextField_set_highquality(EditInstance* self, float highQuality) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_highquality not implemented" << Endl;
 	)
 }
 
-float AsTextField::TextField_get_hscroll(FlashEditInstance* self) const
+float AsTextField::TextField_get_hscroll(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_hscroll not implemented" << Endl;
@@ -426,41 +426,41 @@ float AsTextField::TextField_get_hscroll(FlashEditInstance* self) const
 	return 0;
 }
 
-void AsTextField::TextField_set_hscroll(FlashEditInstance* self, float hscroll) const
+void AsTextField::TextField_set_hscroll(EditInstance* self, float hscroll) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_hscroll not implemented" << Endl;
 	)
 }
 
-bool AsTextField::TextField_get_html(FlashEditInstance* self) const
+bool AsTextField::TextField_get_html(EditInstance* self) const
 {
 	return self->getEdit()->renderHtml();
 }
 
-void AsTextField::TextField_set_html(FlashEditInstance* self, bool html) const
+void AsTextField::TextField_set_html(EditInstance* self, bool html) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_html not implemented" << Endl;
 	)
 }
 
-std::wstring AsTextField::TextField_get_htmlText(FlashEditInstance* self) const
+std::wstring AsTextField::TextField_get_htmlText(EditInstance* self) const
 {
 	return self->getHtmlText();
 }
 
-void AsTextField::TextField_set_htmlText(FlashEditInstance* self, const std::wstring& htmlText) const
+void AsTextField::TextField_set_htmlText(EditInstance* self, const std::wstring& htmlText) const
 {
 	self->parseHtml(htmlText);
 }
 
-int32_t AsTextField::TextField_get_length(FlashEditInstance* self) const
+int32_t AsTextField::TextField_get_length(EditInstance* self) const
 {
 	return int32_t(self->getText().length());
 }
 
-int32_t AsTextField::TextField_get_maxChars(FlashEditInstance* self) const
+int32_t AsTextField::TextField_get_maxChars(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_maxChars not implemented" << Endl;
@@ -468,14 +468,14 @@ int32_t AsTextField::TextField_get_maxChars(FlashEditInstance* self) const
 	return 0;
 }
 
-void AsTextField::TextField_set_maxChars(FlashEditInstance* self, int32_t maxChars) const
+void AsTextField::TextField_set_maxChars(EditInstance* self, int32_t maxChars) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_maxChars not implemented" << Endl;
 	)
 }
 
-float AsTextField::TextField_get_maxhscroll(FlashEditInstance* self) const
+float AsTextField::TextField_get_maxhscroll(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_maxhscroll not implemented" << Endl;
@@ -483,12 +483,12 @@ float AsTextField::TextField_get_maxhscroll(FlashEditInstance* self) const
 	return 0;
 }
 
-int32_t AsTextField::TextField_get_maxscroll(FlashEditInstance* self) const
+int32_t AsTextField::TextField_get_maxscroll(EditInstance* self) const
 {
 	return self->getMaxScroll();
 }
 
-Ref< FlashContextMenu > AsTextField::TextField_get_menu(FlashEditInstance* self) const
+Ref< FlashContextMenu > AsTextField::TextField_get_menu(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_menu not implemented" << Endl;
@@ -496,14 +496,14 @@ Ref< FlashContextMenu > AsTextField::TextField_get_menu(FlashEditInstance* self)
 	return 0;
 }
 
-void AsTextField::TextField_set_menu(FlashEditInstance* self, FlashContextMenu* contextMenu) const
+void AsTextField::TextField_set_menu(EditInstance* self, FlashContextMenu* contextMenu) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_menu not implemented" << Endl;
 	)
 }
 
-bool AsTextField::TextField_get_mouseWheelEnabled(FlashEditInstance* self) const
+bool AsTextField::TextField_get_mouseWheelEnabled(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_mouseWheelEnabled not implemented" << Endl;
@@ -511,14 +511,14 @@ bool AsTextField::TextField_get_mouseWheelEnabled(FlashEditInstance* self) const
 	return false;
 }
 
-void AsTextField::TextField_set_mouseWheelEnabled(FlashEditInstance* self, bool mouseWheelEnabled) const
+void AsTextField::TextField_set_mouseWheelEnabled(EditInstance* self, bool mouseWheelEnabled) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_mouseWheelEnabled not implemented" << Endl;
 	)
 }
 
-bool AsTextField::TextField_get_multiline(FlashEditInstance* self) const
+bool AsTextField::TextField_get_multiline(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_multiline not implemented" << Endl;
@@ -526,46 +526,46 @@ bool AsTextField::TextField_get_multiline(FlashEditInstance* self) const
 	return true;
 }
 
-void AsTextField::TextField_set_multiline(FlashEditInstance* self, bool multiliine) const
+void AsTextField::TextField_set_multiline(EditInstance* self, bool multiliine) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_multiline not implemented" << Endl;
 	)
 }
 
-std::string AsTextField::TextField_get_name(FlashEditInstance* self) const
+std::string AsTextField::TextField_get_name(EditInstance* self) const
 {
 	return self->getName();
 }
 
-void AsTextField::TextField_set_name(FlashEditInstance* self, const std::string& name) const
+void AsTextField::TextField_set_name(EditInstance* self, const std::string& name) const
 {
 	self->setName(name);
 }
 
-Ref< FlashCharacterInstance > AsTextField::TextField_get_parent(FlashEditInstance* self) const
+Ref< CharacterInstance > AsTextField::TextField_get_parent(EditInstance* self) const
 {
 	return self->getParent();
 }
 
-void AsTextField::TextField_set_parent(FlashEditInstance* self, FlashSpriteInstance* movieClip) const
+void AsTextField::TextField_set_parent(EditInstance* self, SpriteInstance* movieClip) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_parent not implemented" << Endl;
 	)
 }
 
-bool AsTextField::TextField_get_password(FlashEditInstance* self) const
+bool AsTextField::TextField_get_password(EditInstance* self) const
 {
 	return self->getPassword();
 }
 
-void AsTextField::TextField_set_password(FlashEditInstance* self, bool password) const
+void AsTextField::TextField_set_password(EditInstance* self, bool password) const
 {
 	self->setPassword(password);
 }
 
-std::wstring AsTextField::TextField_get_quality(FlashEditInstance* self) const
+std::wstring AsTextField::TextField_get_quality(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_quality not implemented" << Endl;
@@ -573,14 +573,14 @@ std::wstring AsTextField::TextField_get_quality(FlashEditInstance* self) const
 	return L"BEST";
 }
 
-void AsTextField::TextField_set_quality(FlashEditInstance* self, const std::wstring& quality) const
+void AsTextField::TextField_set_quality(EditInstance* self, const std::wstring& quality) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_quality not implemented" << Endl;
 	)
 }
 
-std::wstring AsTextField::TextField_get_restrict(FlashEditInstance* self) const
+std::wstring AsTextField::TextField_get_restrict(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_restrict not implemented" << Endl;
@@ -588,34 +588,34 @@ std::wstring AsTextField::TextField_get_restrict(FlashEditInstance* self) const
 	return L"";
 }
 
-void AsTextField::TextField_set_restrict(FlashEditInstance* self, const std::wstring& restrict) const
+void AsTextField::TextField_set_restrict(EditInstance* self, const std::wstring& restrict) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_restrict not implemented" << Endl;
 	)
 }
 
-float AsTextField::TextField_get_rotation(FlashEditInstance* self) const
+float AsTextField::TextField_get_rotation(EditInstance* self) const
 {
 	return self->getRotation();
 }
 
-void AsTextField::TextField_set_rotation(FlashEditInstance* self, float rotation) const
+void AsTextField::TextField_set_rotation(EditInstance* self, float rotation) const
 {
 	self->setRotation(rotation);
 }
 
-int32_t AsTextField::TextField_get_scroll(FlashEditInstance* self) const
+int32_t AsTextField::TextField_get_scroll(EditInstance* self) const
 {
 	return self->getScroll();
 }
 
-void AsTextField::TextField_set_scroll(FlashEditInstance* self, int32_t scroll) const
+void AsTextField::TextField_set_scroll(EditInstance* self, int32_t scroll) const
 {
 	self->setScroll(scroll);
 }
 
-bool AsTextField::TextField_get_selectable(FlashEditInstance* self) const
+bool AsTextField::TextField_get_selectable(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_selectable not implemented" << Endl;
@@ -623,14 +623,14 @@ bool AsTextField::TextField_get_selectable(FlashEditInstance* self) const
 	return false;
 }
 
-void AsTextField::TextField_set_selectable(FlashEditInstance* self, bool selectable) const
+void AsTextField::TextField_set_selectable(EditInstance* self, bool selectable) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_selectable not implemented" << Endl;
 	)
 }
 
-float AsTextField::TextField_get_sharpness(FlashEditInstance* self) const
+float AsTextField::TextField_get_sharpness(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_sharpness not implemented" << Endl;
@@ -638,14 +638,14 @@ float AsTextField::TextField_get_sharpness(FlashEditInstance* self) const
 	return 0;
 }
 
-void AsTextField::TextField_set_sharpness(FlashEditInstance* self, float sharpness) const
+void AsTextField::TextField_set_sharpness(EditInstance* self, float sharpness) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_sharpness not implemented" << Endl;
 	)
 }
 
-float AsTextField::TextField_get_soundbuftime(FlashEditInstance* self) const
+float AsTextField::TextField_get_soundbuftime(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_soundbuftime not implemented" << Endl;
@@ -653,14 +653,14 @@ float AsTextField::TextField_get_soundbuftime(FlashEditInstance* self) const
 	return 0;
 }
 
-void AsTextField::TextField_set_soundbuftime(FlashEditInstance* self, float soundbuftime) const
+void AsTextField::TextField_set_soundbuftime(EditInstance* self, float soundbuftime) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_soundbuftime not implemented" << Endl;
 	)
 }
 
-Ref< FlashStyleSheet > AsTextField::TextField_get_styleSheet(FlashEditInstance* self) const
+Ref< FlashStyleSheet > AsTextField::TextField_get_styleSheet(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_styleSheet not implemented" << Endl;
@@ -668,14 +668,14 @@ Ref< FlashStyleSheet > AsTextField::TextField_get_styleSheet(FlashEditInstance* 
 	return 0;
 }
 
-void AsTextField::TextField_set_styleSheet(FlashEditInstance* self, FlashStyleSheet* styleSheet) const
+void AsTextField::TextField_set_styleSheet(EditInstance* self, FlashStyleSheet* styleSheet) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_styleSheet not implemented" << Endl;
 	)
 }
 
-bool AsTextField::TextField_get_tabEnabled(FlashEditInstance* self) const
+bool AsTextField::TextField_get_tabEnabled(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_tabEnabled not implemented" << Endl;
@@ -683,14 +683,14 @@ bool AsTextField::TextField_get_tabEnabled(FlashEditInstance* self) const
 	return false;
 }
 
-void AsTextField::TextField_set_tabEnabled(FlashEditInstance* self, bool tabEnabled) const
+void AsTextField::TextField_set_tabEnabled(EditInstance* self, bool tabEnabled) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_tabEnabled not implemented" << Endl;
 	)
 }
 
-int32_t AsTextField::TextField_get_tabIndex(FlashEditInstance* self) const
+int32_t AsTextField::TextField_get_tabIndex(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_tabIndex not implemented" << Endl;
@@ -698,14 +698,14 @@ int32_t AsTextField::TextField_get_tabIndex(FlashEditInstance* self) const
 	return 0;
 }
 
-void AsTextField::TextField_set_tabIndex(FlashEditInstance* self, int32_t tabIndex) const
+void AsTextField::TextField_set_tabIndex(EditInstance* self, int32_t tabIndex) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_tabIndex not implemented" << Endl;
 	)
 }
 
-std::wstring AsTextField::TextField_get_target(FlashEditInstance* self) const
+std::wstring AsTextField::TextField_get_target(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_target not implemented" << Endl;
@@ -713,17 +713,17 @@ std::wstring AsTextField::TextField_get_target(FlashEditInstance* self) const
 	return L"";
 }
 
-std::wstring AsTextField::TextField_get_text(FlashEditInstance* self) const
+std::wstring AsTextField::TextField_get_text(EditInstance* self) const
 {
 	return self->getText();
 }
 
-void AsTextField::TextField_set_text(FlashEditInstance* self, const std::wstring& text) const
+void AsTextField::TextField_set_text(EditInstance* self, const std::wstring& text) const
 {
 	self->parseText(text);
 }
 
-float AsTextField::TextField_get_textColor(FlashEditInstance* self) const
+float AsTextField::TextField_get_textColor(EditInstance* self) const
 {
 	Color4f textColor = self->getTextColor() * Scalar(255.0f);
 	uint8_t r = uint8_t(textColor.getRed());
@@ -732,7 +732,7 @@ float AsTextField::TextField_get_textColor(FlashEditInstance* self) const
 	return float((r << 16) | (g << 8) | b);
 }
 
-void AsTextField::TextField_set_textColor(FlashEditInstance* self, float textColor) const
+void AsTextField::TextField_set_textColor(EditInstance* self, float textColor) const
 {
 	uint32_t n = uint32_t(textColor);
 	uint8_t r = uint8_t((n >> 16) & 255);
@@ -741,17 +741,17 @@ void AsTextField::TextField_set_textColor(FlashEditInstance* self, float textCol
 	self->setTextColor(Color4f(r, g, b, 255.0f) / Scalar(255.0f));
 }
 
-float AsTextField::TextField_get_textWidth(FlashEditInstance* self) const
+float AsTextField::TextField_get_textWidth(EditInstance* self) const
 {
 	return self->getTextWidth();
 }
 
-float AsTextField::TextField_get_textHeight(FlashEditInstance* self) const
+float AsTextField::TextField_get_textHeight(EditInstance* self) const
 {
 	return self->getTextHeight();
 }
 
-float AsTextField::TextField_get_thickness(FlashEditInstance* self) const
+float AsTextField::TextField_get_thickness(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_thickness not implemented" << Endl;
@@ -759,14 +759,14 @@ float AsTextField::TextField_get_thickness(FlashEditInstance* self) const
 	return 0;
 }
 
-void AsTextField::TextField_set_thickness(FlashEditInstance* self, float thickness) const
+void AsTextField::TextField_set_thickness(EditInstance* self, float thickness) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_thickness not implemented" << Endl;
 	)
 }
 
-std::wstring AsTextField::TextField_get_type(FlashEditInstance* self) const
+std::wstring AsTextField::TextField_get_type(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_type not implemented" << Endl;
@@ -774,14 +774,14 @@ std::wstring AsTextField::TextField_get_type(FlashEditInstance* self) const
 	return L"input";
 }
 
-void AsTextField::TextField_set_type(FlashEditInstance* self, const std::wstring& type) const
+void AsTextField::TextField_set_type(EditInstance* self, const std::wstring& type) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_type not implemented" << Endl;
 	)
 }
 
-std::wstring AsTextField::TextField_get_url(FlashEditInstance* self) const
+std::wstring AsTextField::TextField_get_url(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_url not implemented" << Endl;
@@ -789,7 +789,7 @@ std::wstring AsTextField::TextField_get_url(FlashEditInstance* self) const
 	return L"";
 }
 
-std::string AsTextField::TextField_get_variable(FlashEditInstance* self) const
+std::string AsTextField::TextField_get_variable(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_variable not implemented" << Endl;
@@ -797,54 +797,54 @@ std::string AsTextField::TextField_get_variable(FlashEditInstance* self) const
 	return "";
 }
 
-void AsTextField::TextField_set_variable(FlashEditInstance* self, const std::string& url) const
+void AsTextField::TextField_set_variable(EditInstance* self, const std::string& url) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::set_variable not implemented" << Endl;
 	)
 }
 
-bool AsTextField::TextField_get_visible(FlashEditInstance* self) const
+bool AsTextField::TextField_get_visible(EditInstance* self) const
 {
 	return self->isVisible();
 }
 
-void AsTextField::TextField_set_visible(FlashEditInstance* self, bool visible) const
+void AsTextField::TextField_set_visible(EditInstance* self, bool visible) const
 {
 	self->setVisible(visible);
 }
 
-float AsTextField::TextField_get_width(FlashEditInstance* self) const
+float AsTextField::TextField_get_width(EditInstance* self) const
 {
 	return self->getWidth();
 }
 
-void AsTextField::TextField_set_width(FlashEditInstance* self, float width) const
+void AsTextField::TextField_set_width(EditInstance* self, float width) const
 {
 	self->setWidth(width);
 }
 
-bool AsTextField::TextField_get_wordWrap(FlashEditInstance* self) const
+bool AsTextField::TextField_get_wordWrap(EditInstance* self) const
 {
 	return self->getWordWrap();
 }
 
-void AsTextField::TextField_set_wordWrap(FlashEditInstance* self, bool wordWrap) const
+void AsTextField::TextField_set_wordWrap(EditInstance* self, bool wordWrap) const
 {
 	self->setWordWrap(wordWrap);
 }
 
-float AsTextField::TextField_get_x(FlashEditInstance* self) const
+float AsTextField::TextField_get_x(EditInstance* self) const
 {
 	return self->getX();
 }
 
-void AsTextField::TextField_set_x(FlashEditInstance* self, float x) const
+void AsTextField::TextField_set_x(EditInstance* self, float x) const
 {
 	self->setX(x);
 }
 
-float AsTextField::TextField_get_xmouse(FlashEditInstance* self) const
+float AsTextField::TextField_get_xmouse(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_xmouse not implemented" << Endl;
@@ -852,27 +852,27 @@ float AsTextField::TextField_get_xmouse(FlashEditInstance* self) const
 	return 0;
 }
 
-float AsTextField::TextField_get_xscale(FlashEditInstance* self) const
+float AsTextField::TextField_get_xscale(EditInstance* self) const
 {
 	return self->getXScale();
 }
 
-void AsTextField::TextField_set_xscale(FlashEditInstance* self, float xscale) const
+void AsTextField::TextField_set_xscale(EditInstance* self, float xscale) const
 {
 	self->setXScale(xscale);
 }
 
-float AsTextField::TextField_get_y(FlashEditInstance* self) const
+float AsTextField::TextField_get_y(EditInstance* self) const
 {
 	return self->getY();
 }
 
-void AsTextField::TextField_set_y(FlashEditInstance* self, float y) const
+void AsTextField::TextField_set_y(EditInstance* self, float y) const
 {
 	self->setY(y);
 }
 
-float AsTextField::TextField_get_ymouse(FlashEditInstance* self) const
+float AsTextField::TextField_get_ymouse(EditInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"TextField::get_ymouse not implemented" << Endl;
@@ -880,12 +880,12 @@ float AsTextField::TextField_get_ymouse(FlashEditInstance* self) const
 	return 0;
 }
 
-float AsTextField::TextField_get_yscale(FlashEditInstance* self) const
+float AsTextField::TextField_get_yscale(EditInstance* self) const
 {
 	return self->getYScale();
 }
 
-void AsTextField::TextField_set_yscale(FlashEditInstance* self, float yscale) const
+void AsTextField::TextField_set_yscale(EditInstance* self, float yscale) const
 {
 	self->setYScale(yscale);
 }

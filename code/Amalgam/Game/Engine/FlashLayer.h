@@ -37,9 +37,9 @@ class IEnvironment;
 
 class AccDisplayRenderer;
 class ActionObject;
-class FlashMovie;
-class FlashMoviePlayer;
-class FlashSpriteInstance;
+class Movie;
+class MoviePlayer;
+class SpriteInstance;
 class ISoundRenderer;
 class WireDisplayRenderer;
 
@@ -73,8 +73,8 @@ public:
 		const std::wstring& name,
 		bool permitTransition,
 		IEnvironment* environment,
-		const resource::Proxy< flash::FlashMovie >& movie,
-		const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
+		const resource::Proxy< flash::Movie >& movie,
+		const std::map< std::wstring, resource::Proxy< flash::Movie > >& externalMovies,
 		const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 		bool clearBackground,
 		bool enableShapeCache,
@@ -109,7 +109,7 @@ public:
 	 * 
 	 * \return Flash movie player object.
 	 */
-	flash::FlashMoviePlayer* getMoviePlayer();
+	flash::MoviePlayer* getMoviePlayer();
 
 	/*! \brief Get ActionScript context.
 	 *
@@ -121,14 +121,14 @@ public:
 	 *
 	 * \return "_root" sprite.
 	 */
-	flash::FlashSpriteInstance* getRoot();
+	flash::SpriteInstance* getRoot();
 
 	/*! \brief Get external movie.
 	 *
 	 * \param id Name of external movie.
 	 * \return External movie, null if doesn't exist.
 	 */
-	flash::FlashMovie* getExternal(const std::wstring& id) const;
+	flash::Movie* getExternal(const std::wstring& id) const;
 
 	/*! \brief Invoke methods registered through Flash ExternalInterface protocol.
 	 *
@@ -173,9 +173,9 @@ private:
 	};
 
 	Ref< IEnvironment > m_environment;
-	resource::Proxy< flash::FlashMovie > m_movie;
-	std::map< std::wstring, resource::Proxy< flash::FlashMovie > > m_externalMovies;
-	Ref< flash::FlashMoviePlayer > m_moviePlayer;
+	resource::Proxy< flash::Movie > m_movie;
+	std::map< std::wstring, resource::Proxy< flash::Movie > > m_externalMovies;
+	Ref< flash::MoviePlayer > m_moviePlayer;
 	Ref< flash::AccDisplayRenderer > m_displayRendererAcc;
 	Ref< flash::WireDisplayRenderer > m_displayRendererWire;
 	Ref< flash::ISoundRenderer > m_soundRenderer;

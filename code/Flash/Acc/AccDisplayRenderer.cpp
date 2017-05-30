@@ -9,16 +9,16 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Flash/FlashBitmap.h"
-#include "Flash/FlashCanvas.h"
-#include "Flash/FlashDictionary.h"
-#include "Flash/FlashEditInstance.h"
-#include "Flash/FlashFont.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashSprite.h"
-#include "Flash/FlashSpriteInstance.h"
-#include "Flash/FlashFrame.h"
-#include "Flash/FlashShape.h"
+#include "Flash/Bitmap.h"
+#include "Flash/Canvas.h"
+#include "Flash/Dictionary.h"
+#include "Flash/EditInstance.h"
+#include "Flash/Font.h"
+#include "Flash/Movie.h"
+#include "Flash/Sprite.h"
+#include "Flash/SpriteInstance.h"
+#include "Flash/Frame.h"
+#include "Flash/Shape.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
 #include "Flash/Acc/AccGradientCache.h"
 #include "Flash/Acc/AccGlyph.h"
@@ -262,7 +262,7 @@ bool AccDisplayRenderer::wantDirtyRegion() const
 }
 
 void AccDisplayRenderer::begin(
-	const FlashDictionary& dictionary,
+	const Dictionary& dictionary,
 	const Color4f& backgroundColor,
 	const Aabb2& frameBounds,
 	const Vector4& frameTransform,
@@ -370,7 +370,7 @@ void AccDisplayRenderer::begin(
 	}
 }
 
-void AccDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
+void AccDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
 	if (m_shapeRenderer)
 		m_shapeRenderer->beginSprite(
@@ -384,7 +384,7 @@ void AccDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Ma
 		);
 }
 
-void AccDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
+void AccDisplayRenderer::endSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
 	if (m_shapeRenderer)
 		m_shapeRenderer->endSprite(
@@ -397,7 +397,7 @@ void AccDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matr
 		);
 }
 
-void AccDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix33& transform)
+void AccDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& transform)
 {
 #if !defined(__ANDROID__)
 	if (edit.getRenderClipMask())
@@ -409,7 +409,7 @@ void AccDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix33
 #endif
 }
 
-void AccDisplayRenderer::endEdit(const FlashEditInstance& edit, const Matrix33& transform)
+void AccDisplayRenderer::endEdit(const EditInstance& edit, const Matrix33& transform)
 {
 #if !defined(__ANDROID__)
 	if (edit.getRenderClipMask())
@@ -446,7 +446,7 @@ void AccDisplayRenderer::endMask()
 	}
 }
 
-void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const ColorTransform& cxform, uint8_t blendMode)
+void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33& transform, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode)
 {
 	Ref< AccShape > accShape;
 
@@ -518,15 +518,15 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 	}
 }
 
-void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const ColorTransform& cxform)
+void AccDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const MorphShape& shape, const ColorTransform& cxform)
 {
 }
 
 void AccDisplayRenderer::renderGlyph(
-	const FlashDictionary& dictionary,
+	const Dictionary& dictionary,
 	const Matrix33& transform,
-	const FlashFont* font,
-	const FlashShape* glyph,
+	const Font* font,
+	const Shape* glyph,
 	float fontHeight,
 	wchar_t character,
 	const Color4f& color,
@@ -539,7 +539,7 @@ void AccDisplayRenderer::renderGlyph(
 	if (!glyph)
 		return;
 
-	float coordScale = font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+	float coordScale = font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
 	float fontScale = coordScale * fontHeight;
 	Matrix33 glyphTransform = transform * scale(fontScale, fontScale);
 	Color4f glyphColor = color * cxform.mul + cxform.add;
@@ -701,7 +701,7 @@ void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& boun
 	);
 }
 
-void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const ColorTransform& cxform, uint8_t blendMode)
+void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& canvas, const ColorTransform& cxform, uint8_t blendMode)
 {
 	Ref< AccShape > accShape;
 

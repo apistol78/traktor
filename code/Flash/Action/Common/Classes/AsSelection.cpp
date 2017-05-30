@@ -4,7 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Flash/FlashCharacterInstance.h"
+#include "Flash/CharacterInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Common/Classes/AsSelection.h"
@@ -50,7 +50,7 @@ void AsSelection::Selection_getEndIndex(CallArgs& ca)
 
 void AsSelection::Selection_getFocus(CallArgs& ca)
 {
-	FlashCharacterInstance* focusInstance = ca.context->getFocus();
+	CharacterInstance* focusInstance = ca.context->getFocus();
 	if (focusInstance)
 		ca.ret = ActionValue(focusInstance->getAsObject(ca.context));
 }
@@ -59,7 +59,7 @@ void AsSelection::Selection_setFocus(CallArgs& ca)
 {
 	if (ca.args[0].getObject())
 	{
-		FlashCharacterInstance* focusInstance = ca.args[0].getObject()->getRelay< FlashCharacterInstance >();
+		CharacterInstance* focusInstance = ca.args[0].getObject()->getRelay< CharacterInstance >();
 		ca.context->setFocus(focusInstance);
 	}
 	else

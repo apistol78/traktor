@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Misc/String.h"
-#include "Flash/FlashTextFormat.h"
+#include "Flash/TextFormat.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Common/Classes/AsTextFormat.h"
 
@@ -53,7 +53,7 @@ void AsTextFormat::initialize(ActionObject* self)
 
 void AsTextFormat::construct(ActionObject* self, const ActionValueArray& args)
 {
-	self->setRelay(new FlashTextFormat(0.0f, StaLeft, 0.0f));
+	self->setRelay(new TextFormat(0.0f, StaLeft, 0.0f));
 }
 
 ActionValue AsTextFormat::xplicit(const ActionValueArray& args)
@@ -61,7 +61,7 @@ ActionValue AsTextFormat::xplicit(const ActionValueArray& args)
 	return ActionValue();
 }
 
-std::string AsTextFormat::TextFormat_get_align(FlashTextFormat* self) const
+std::string AsTextFormat::TextFormat_get_align(TextFormat* self) const
 {
 	switch (self->getAlign())
 	{
@@ -78,7 +78,7 @@ std::string AsTextFormat::TextFormat_get_align(FlashTextFormat* self) const
 	}
 }
 
-void AsTextFormat::TextFormat_set_align(FlashTextFormat* self, const std::string& value) const
+void AsTextFormat::TextFormat_set_align(TextFormat* self, const std::string& value) const
 {
 	if (compareIgnoreCase< std::string >(value, "left") == 0)
 		self->setAlign(StaLeft);
@@ -90,158 +90,158 @@ void AsTextFormat::TextFormat_set_align(FlashTextFormat* self, const std::string
 		self->setAlign(StaJustify);
 }
 
-float AsTextFormat::TextFormat_get_blockIndent(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_blockIndent(TextFormat* self) const
 {
 	return 0.0f;
 }
 
-void AsTextFormat::TextFormat_set_blockIndent(FlashTextFormat* self, float value) const
+void AsTextFormat::TextFormat_set_blockIndent(TextFormat* self, float value) const
 {
 }
 
-bool AsTextFormat::TextFormat_get_bold(FlashTextFormat* self) const
-{
-	return false;
-}
-
-void AsTextFormat::TextFormat_set_bold(FlashTextFormat* self, bool value) const
-{
-}
-
-bool AsTextFormat::TextFormat_get_bullet(FlashTextFormat* self) const
+bool AsTextFormat::TextFormat_get_bold(TextFormat* self) const
 {
 	return false;
 }
 
-void AsTextFormat::TextFormat_set_bullet(FlashTextFormat* self, bool value) const
+void AsTextFormat::TextFormat_set_bold(TextFormat* self, bool value) const
 {
 }
 
-ActionValue AsTextFormat::TextFormat_get_color(FlashTextFormat* self) const
+bool AsTextFormat::TextFormat_get_bullet(TextFormat* self) const
+{
+	return false;
+}
+
+void AsTextFormat::TextFormat_set_bullet(TextFormat* self, bool value) const
+{
+}
+
+ActionValue AsTextFormat::TextFormat_get_color(TextFormat* self) const
 {
 	return ActionValue();
 }
 
-void AsTextFormat::TextFormat_set_color(FlashTextFormat* self, const ActionValue& value) const
+void AsTextFormat::TextFormat_set_color(TextFormat* self, const ActionValue& value) const
 {
 }
 
-std::string AsTextFormat::TextFormat_get_font(FlashTextFormat* self) const
+std::string AsTextFormat::TextFormat_get_font(TextFormat* self) const
 {
 	return "";
 }
 
-void AsTextFormat::TextFormat_set_font(FlashTextFormat* self, const std::string& value) const
+void AsTextFormat::TextFormat_set_font(TextFormat* self, const std::string& value) const
 {
 }
 
-float AsTextFormat::TextFormat_get_indent(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_indent(TextFormat* self) const
 {
 	return 0.0f;
 }
 
-void AsTextFormat::TextFormat_set_indent(FlashTextFormat* self, float value) const
+void AsTextFormat::TextFormat_set_indent(TextFormat* self, float value) const
 {
 }
 
-bool AsTextFormat::TextFormat_get_italic(FlashTextFormat* self) const
+bool AsTextFormat::TextFormat_get_italic(TextFormat* self) const
 {
 	return false;
 }
 
-void AsTextFormat::TextFormat_set_italic(FlashTextFormat* self, bool value) const
+void AsTextFormat::TextFormat_set_italic(TextFormat* self, bool value) const
 {
 }
 
-bool AsTextFormat::TextFormat_get_kerning(FlashTextFormat* self) const
+bool AsTextFormat::TextFormat_get_kerning(TextFormat* self) const
 {
 	return true;
 }
 
-void AsTextFormat::TextFormat_set_kerning(FlashTextFormat* self, bool value) const
+void AsTextFormat::TextFormat_set_kerning(TextFormat* self, bool value) const
 {
 }
 
-float AsTextFormat::TextFormat_get_leading(FlashTextFormat* self) const
-{
-	return 0.0f;
-}
-
-void AsTextFormat::TextFormat_set_leading(FlashTextFormat* self, float value) const
-{
-}
-
-float AsTextFormat::TextFormat_get_leftMargin(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_leading(TextFormat* self) const
 {
 	return 0.0f;
 }
 
-void AsTextFormat::TextFormat_set_leftMargin(FlashTextFormat* self, float value) const
+void AsTextFormat::TextFormat_set_leading(TextFormat* self, float value) const
 {
 }
 
-float AsTextFormat::TextFormat_get_letterSpacing(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_leftMargin(TextFormat* self) const
+{
+	return 0.0f;
+}
+
+void AsTextFormat::TextFormat_set_leftMargin(TextFormat* self, float value) const
+{
+}
+
+float AsTextFormat::TextFormat_get_letterSpacing(TextFormat* self) const
 {
 	return self->getLetterSpacing();
 }
 
-void AsTextFormat::TextFormat_set_letterSpacing(FlashTextFormat* self, float value) const
+void AsTextFormat::TextFormat_set_letterSpacing(TextFormat* self, float value) const
 {
 	self->setLetterSpacing(value);
 }
 
-float AsTextFormat::TextFormat_get_rightMargin(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_rightMargin(TextFormat* self) const
 {
 	return 0.0f;
 }
 
-void AsTextFormat::TextFormat_set_rightMargin(FlashTextFormat* self, float value) const
+void AsTextFormat::TextFormat_set_rightMargin(TextFormat* self, float value) const
 {
 }
 
-float AsTextFormat::TextFormat_get_size(FlashTextFormat* self) const
+float AsTextFormat::TextFormat_get_size(TextFormat* self) const
 {
 	return self->getSize();
 }
 
-void AsTextFormat::TextFormat_set_size(FlashTextFormat* self, float value) const
+void AsTextFormat::TextFormat_set_size(TextFormat* self, float value) const
 {
 	self->setSize(value);
 }
 
-ActionValue AsTextFormat::TextFormat_get_tabStops(FlashTextFormat* self) const
+ActionValue AsTextFormat::TextFormat_get_tabStops(TextFormat* self) const
 {
 	return ActionValue();
 }
 
-void AsTextFormat::TextFormat_set_tabStops(FlashTextFormat* self, const ActionValue& value) const
+void AsTextFormat::TextFormat_set_tabStops(TextFormat* self, const ActionValue& value) const
 {
 }
 
-std::string AsTextFormat::TextFormat_get_target(FlashTextFormat* self) const
+std::string AsTextFormat::TextFormat_get_target(TextFormat* self) const
 {
 	return "";
 }
 
-void AsTextFormat::TextFormat_set_target(FlashTextFormat* self, const std::string& value) const
+void AsTextFormat::TextFormat_set_target(TextFormat* self, const std::string& value) const
 {
 }
 
-bool AsTextFormat::TextFormat_get_underline(FlashTextFormat* self) const
+bool AsTextFormat::TextFormat_get_underline(TextFormat* self) const
 {
 	return false;
 }
 
-void AsTextFormat::TextFormat_set_underline(FlashTextFormat* self, bool value) const
+void AsTextFormat::TextFormat_set_underline(TextFormat* self, bool value) const
 {
 }
 
-std::string AsTextFormat::TextFormat_get_url(FlashTextFormat* self) const
+std::string AsTextFormat::TextFormat_get_url(TextFormat* self) const
 {
 	return "";
 }
 
-void AsTextFormat::TextFormat_set_url(FlashTextFormat* self, const std::string& value) const
+void AsTextFormat::TextFormat_set_url(TextFormat* self, const std::string& value) const
 {
 }
 

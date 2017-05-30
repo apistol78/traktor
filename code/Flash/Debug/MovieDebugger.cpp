@@ -5,15 +5,15 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/RefArray.h"
-#include "Flash/FlashButtonInstance.h"
-#include "Flash/FlashDictionary.h"
-#include "Flash/FlashEditInstance.h"
-#include "Flash/FlashMorphShapeInstance.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashShapeInstance.h"
-#include "Flash/FlashSprite.h"
-#include "Flash/FlashSpriteInstance.h"
-#include "Flash/FlashTextInstance.h"
+#include "Flash/ButtonInstance.h"
+#include "Flash/Dictionary.h"
+#include "Flash/EditInstance.h"
+#include "Flash/MorphShapeInstance.h"
+#include "Flash/Movie.h"
+#include "Flash/ShapeInstance.h"
+#include "Flash/Sprite.h"
+#include "Flash/SpriteInstance.h"
+#include "Flash/TextInstance.h"
 #include "Flash/Debug/ButtonInstanceDebugInfo.h"
 #include "Flash/Debug/CaptureControl.h"
 #include "Flash/Debug/EditInstanceDebugInfo.h"
@@ -33,35 +33,35 @@ namespace traktor
 		namespace
 		{
 		
-void collectDebugInfo(const FlashCharacterInstance* instance, bool mask, bool clipped, RefArray< InstanceDebugInfo >& outDebugInfo)
+void collectDebugInfo(const CharacterInstance* instance, bool mask, bool clipped, RefArray< InstanceDebugInfo >& outDebugInfo)
 {
-	if (const FlashButtonInstance* buttonInstance = dynamic_type_cast< const FlashButtonInstance* >(instance))
+	if (const ButtonInstance* buttonInstance = dynamic_type_cast< const ButtonInstance* >(instance))
 	{
 		outDebugInfo.push_back(new ButtonInstanceDebugInfo(buttonInstance));
 	}
-	else if (const FlashEditInstance* editInstance = dynamic_type_cast< const FlashEditInstance* >(instance))
+	else if (const EditInstance* editInstance = dynamic_type_cast< const EditInstance* >(instance))
 	{
 		outDebugInfo.push_back(new EditInstanceDebugInfo(editInstance));
 	}
-	else if (const FlashMorphShapeInstance* morphShapeInstance = dynamic_type_cast< const FlashMorphShapeInstance* >(instance))
+	else if (const MorphShapeInstance* morphShapeInstance = dynamic_type_cast< const MorphShapeInstance* >(instance))
 	{
 		outDebugInfo.push_back(new MorphShapeInstanceDebugInfo(morphShapeInstance, mask, clipped));
 	}
-	else if (const FlashShapeInstance* shapeInstance = dynamic_type_cast< const FlashShapeInstance* >(instance))
+	else if (const ShapeInstance* shapeInstance = dynamic_type_cast< const ShapeInstance* >(instance))
 	{
 		outDebugInfo.push_back(new ShapeInstanceDebugInfo(shapeInstance, mask, clipped));
 	}
-	else if (const FlashSpriteInstance* spriteInstance = dynamic_type_cast< const FlashSpriteInstance* >(instance))
+	else if (const SpriteInstance* spriteInstance = dynamic_type_cast< const SpriteInstance* >(instance))
 	{
 		std::string className;
 		spriteInstance->getDictionary()->getExportName(spriteInstance->getSprite()->getId(), className);
 
 		RefArray< InstanceDebugInfo > childrenDebugInfo;
 
-		const FlashDisplayList::layer_map_t& layers = spriteInstance->getDisplayList().getLayers();
-		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); )
+		const DisplayList::layer_map_t& layers = spriteInstance->getDisplayList().getLayers();
+		for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); )
 		{
-			const FlashDisplayList::Layer& layer = i->second;
+			const DisplayList::Layer& layer = i->second;
 			if (!layer.instance)
 			{
 				++i;
@@ -81,7 +81,7 @@ void collectDebugInfo(const FlashCharacterInstance* instance, bool mask, bool cl
 					if (i->first > layer.clipDepth)
 						break;
 
-					const FlashDisplayList::Layer& clippedLayer = i->second;
+					const DisplayList::Layer& clippedLayer = i->second;
 					if (!clippedLayer.instance)
 						continue;
 
@@ -92,7 +92,7 @@ void collectDebugInfo(const FlashCharacterInstance* instance, bool mask, bool cl
 
 		outDebugInfo.push_back(new SpriteInstanceDebugInfo(spriteInstance, className, mask, clipped, childrenDebugInfo));
 	}
-	else if (const FlashTextInstance* textInstance = dynamic_type_cast< const FlashTextInstance* >(instance))
+	else if (const TextInstance* textInstance = dynamic_type_cast< const TextInstance* >(instance))
 	{
 		outDebugInfo.push_back(new TextInstanceDebugInfo(textInstance));
 	}
@@ -115,8 +115,8 @@ MovieDebugger::MovieDebugger(net::BidirectionalObjectTransport* transport, const
 }
 
 void MovieDebugger::postExecuteFrame(
-	const FlashMovie* movie,
-	const FlashSpriteInstance* movieInstance,
+	const Movie* movie,
+	const SpriteInstance* movieInstance,
 	const Vector4& stageTransform,
 	int32_t viewWidth,
 	int32_t viewHeight

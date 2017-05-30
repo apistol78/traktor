@@ -26,11 +26,11 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashCharacterInstance;
-class FlashMovie;
-class FlashSpriteInstance;
+class CharacterInstance;
+class Movie;
+class SpriteInstance;
 class ICharacterFactory;
-class IFlashMovieLoader;
+class IMovieLoader;
 
 /*! \brief ActionScript execution context.
  * \ingroup Flash
@@ -83,17 +83,17 @@ public:
 		IdHeight = 37
 	};
 
-	ActionContext(const FlashMovie* movie, const ICharacterFactory* characterFactory, const IFlashMovieLoader* movieLoader);
+	ActionContext(const Movie* movie, const ICharacterFactory* characterFactory, const IMovieLoader* movieLoader);
 
 	void setGlobal(ActionObject* global);
 
-	void setMovieClip(FlashSpriteInstance* movieClip);
+	void setMovieClip(SpriteInstance* movieClip);
 
-	void setFocus(FlashCharacterInstance* focus);
+	void setFocus(CharacterInstance* focus);
 
-	void setPressed(FlashCharacterInstance* pressed);
+	void setPressed(CharacterInstance* pressed);
 
-	void setRolledOver(FlashCharacterInstance* rolledOver);
+	void setRolledOver(CharacterInstance* rolledOver);
 
 	void addFrameListener(ActionObject* frameListener);
 
@@ -107,21 +107,21 @@ public:
 
 	std::string getString(uint32_t id);
 
-	const FlashMovie* getMovie() const { return m_movie; }
+	const Movie* getMovie() const { return m_movie; }
 
 	const ICharacterFactory* getCharacterFactory() const { return m_characterFactory; }
 
-	const IFlashMovieLoader* getMovieLoader() const { return m_movieLoader; }
+	const IMovieLoader* getMovieLoader() const { return m_movieLoader; }
 
 	ActionObject* getGlobal() const { return m_global; }
 
-	FlashSpriteInstance* getMovieClip() const { return m_movieClip; }
+	SpriteInstance* getMovieClip() const { return m_movieClip; }
 
-	FlashCharacterInstance* getFocus() const { return m_focus; }
+	CharacterInstance* getFocus() const { return m_focus; }
 
-	FlashCharacterInstance* getPressed() const { return m_pressed; }
+	CharacterInstance* getPressed() const { return m_pressed; }
 
-	FlashCharacterInstance* getRolledOver() const { return m_rolledOver; }
+	CharacterInstance* getRolledOver() const { return m_rolledOver; }
 
 	ActionValuePool& getPool() { return m_pool; }
 
@@ -137,14 +137,14 @@ private:
 		Ref< ActionFunction > listenerFunction;
 	};
 
-	const FlashMovie* m_movie;
+	const Movie* m_movie;
 	Ref< const ICharacterFactory > m_characterFactory;
-	Ref< const IFlashMovieLoader > m_movieLoader;
+	Ref< const IMovieLoader > m_movieLoader;
 	Ref< ActionObject > m_global;
-	Ref< FlashSpriteInstance > m_movieClip;
-	Ref< FlashCharacterInstance > m_focus;
-	Ref< FlashCharacterInstance > m_pressed;
-	Ref< FlashCharacterInstance > m_rolledOver;
+	Ref< SpriteInstance > m_movieClip;
+	Ref< CharacterInstance > m_focus;
+	Ref< CharacterInstance > m_pressed;
+	Ref< CharacterInstance > m_rolledOver;
 	ActionStrings m_strings;
 	ActionValuePool m_pool;
 	AlignedVector< FrameListener > m_frameListeners;

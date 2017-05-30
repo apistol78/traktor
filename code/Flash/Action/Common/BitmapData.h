@@ -30,7 +30,7 @@ class Image;
 	{
 
 class BitmapFilter;
-class FlashSpriteInstance;
+class SpriteInstance;
 class Point;
 class Rectangle;
 
@@ -56,7 +56,7 @@ public:
 
 	void applyFilter(const BitmapData* sourceBitmapData, const Rectangle* sourceRect, const Point* destPoint, const BitmapFilter* filter);
 
-	void draw(FlashSpriteInstance* source);
+	void draw(SpriteInstance* source);
 
 	void fillRect(const Rectangle* rectangle, uint32_t color);
 

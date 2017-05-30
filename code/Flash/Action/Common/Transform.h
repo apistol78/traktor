@@ -23,7 +23,7 @@ namespace traktor
 	{
 
 class ColorTransform;
-class FlashCharacterInstance;
+class CharacterInstance;
 
 /*! \brief Geometry transform wrapper.
  * \ingroup Flash
@@ -33,7 +33,7 @@ class T_DLLCLASS Transform : public ActionObjectRelay
 	T_RTTI_CLASS;
 
 public:
-	Transform(FlashCharacterInstance* instance);
+	Transform(CharacterInstance* instance);
 
 	Ref< ColorTransform > getColorTransform() const;
 
@@ -45,7 +45,7 @@ protected:
 	virtual void dereference() T_OVERRIDE T_FINAL;
 
 private:
-	Ref< FlashCharacterInstance > m_instance;
+	Ref< CharacterInstance > m_instance;
 };
 
 	}

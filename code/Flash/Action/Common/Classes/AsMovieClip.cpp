@@ -7,18 +7,18 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/FileSystem.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
-#include "Flash/FlashBitmapImage.h"
-#include "Flash/FlashDictionary.h"
-#include "Flash/FlashCanvas.h"
-#include "Flash/FlashEditInstance.h"
-#include "Flash/FlashFrame.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashMovieFactory.h"
-#include "Flash/FlashShape.h"
-#include "Flash/FlashShapeInstance.h"
-#include "Flash/FlashSprite.h"
-#include "Flash/FlashSpriteInstance.h"
-#include "Flash/IFlashMovieLoader.h"
+#include "Flash/BitmapImage.h"
+#include "Flash/Dictionary.h"
+#include "Flash/Canvas.h"
+#include "Flash/EditInstance.h"
+#include "Flash/Frame.h"
+#include "Flash/Movie.h"
+#include "Flash/MovieFactory.h"
+#include "Flash/Shape.h"
+#include "Flash/ShapeInstance.h"
+#include "Flash/Sprite.h"
+#include "Flash/SpriteInstance.h"
+#include "Flash/IMovieLoader.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
@@ -181,38 +181,38 @@ ActionValue AsMovieClip::xplicit(const ActionValueArray& args)
 	return ActionValue();
 }
 
-void AsMovieClip::MovieClip_attachAudio(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_attachAudio(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::attachAudio not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_attachBitmap_2(FlashSpriteInstance* self, BitmapData* bmp, int32_t depth) const
+void AsMovieClip::MovieClip_attachBitmap_2(SpriteInstance* self, BitmapData* bmp, int32_t depth) const
 {
 	MovieClip_attachBitmap_4(self, bmp, depth, "auto", false);
 }
 
-void AsMovieClip::MovieClip_attachBitmap_3(FlashSpriteInstance* self, BitmapData* bmp, int32_t depth, const std::string& pixelSnapping) const
+void AsMovieClip::MovieClip_attachBitmap_3(SpriteInstance* self, BitmapData* bmp, int32_t depth, const std::string& pixelSnapping) const
 {
 	MovieClip_attachBitmap_4(self, bmp, depth, pixelSnapping, false);
 }
 
-void AsMovieClip::MovieClip_attachBitmap_4(FlashSpriteInstance* self, BitmapData* bmp, int32_t depth, const std::string& pixelSnapping, bool smoothing) const
+void AsMovieClip::MovieClip_attachBitmap_4(SpriteInstance* self, BitmapData* bmp, int32_t depth, const std::string& pixelSnapping, bool smoothing) const
 {
 	ActionContext* context = self->getContext();
 	T_ASSERT (context);
 
 	// Get dictionary.
-	FlashDictionary* dictionary = self->getDictionary();
+	Dictionary* dictionary = self->getDictionary();
 	if (!dictionary)
 		return;
 
 	// Define bitmap symbol.
-	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmapImage(bmp->getImage()));
+	uint16_t bitmapId = dictionary->addBitmap(new BitmapImage(bmp->getImage()));
 
 	// Create a quad shape.
-	Ref< FlashShape > shape = new FlashShape();
+	Ref< Shape > shape = new Shape();
 	shape->create(
 		bitmapId,
 		bmp->getWidth() * 20,
@@ -223,26 +223,26 @@ void AsMovieClip::MovieClip_attachBitmap_4(FlashSpriteInstance* self, BitmapData
 	uint16_t shapeId = dictionary->addCharacter(shape);
 
 	// Create new instance of shape.
-	Ref< FlashShapeInstance > attachShapeInstance = checked_type_cast< FlashShapeInstance* >(shape->createInstance(context, dictionary, self, "", Matrix33::identity(), 0, 0));
+	Ref< ShapeInstance > attachShapeInstance = checked_type_cast< ShapeInstance* >(shape->createInstance(context, dictionary, self, "", Matrix33::identity(), 0, 0));
 	T_ASSERT (attachShapeInstance);
 
 	// Add new instance to display list.
-	FlashDisplayList& displayList = self->getDisplayList();
+	DisplayList& displayList = self->getDisplayList();
 	displayList.showObject(depth, shapeId, attachShapeInstance, true);
 }
 
-Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_3(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth) const
+Ref< SpriteInstance > AsMovieClip::MovieClip_attachMovie_3(SpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth) const
 {
 	return MovieClip_attachMovie_4(self, attachClipName, attachClipNewName, depth, 0);
 }
 
-Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth, ActionObject* initObject) const
+Ref< SpriteInstance > AsMovieClip::MovieClip_attachMovie_4(SpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth, ActionObject* initObject) const
 {
 	ActionContext* context = self->getContext();
 	T_ASSERT (context);
 
 	// Get dictionary.
-	FlashDictionary* dictionary = self->getDictionary();
+	Dictionary* dictionary = self->getDictionary();
 	if (!dictionary)
 		return 0;
 
@@ -257,7 +257,7 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	}
 
 	// Get movie clip character.
-	Ref< const FlashSprite > attachClip = dynamic_type_cast< const FlashSprite* >(dictionary->getCharacter(attachClipId));
+	Ref< const Sprite > attachClip = dynamic_type_cast< const Sprite* >(dictionary->getCharacter(attachClipId));
 	if (!attachClip)
 	{
 		T_IF_VERBOSE(
@@ -267,7 +267,7 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	}
 
 	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(
+	Ref< SpriteInstance > attachClipInstance = checked_type_cast< SpriteInstance* >(attachClip->createInstance(
 		context,
 		dictionary,
 		self,
@@ -278,12 +278,12 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	));
 	
 	// Add new instance to display list.
-	FlashDisplayList& displayList = self->getDisplayList();
+	DisplayList& displayList = self->getDisplayList();
 	displayList.showObject(depth, attachClipId, attachClipInstance, true);
 	return attachClipInstance;
 }
 
-void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, BitmapData* bm, const Matrix* matrix, bool repeat, bool smoothing) const
+void AsMovieClip::MovieClip_beginBitmapFill(SpriteInstance* self, BitmapData* bm, const Matrix* matrix, bool repeat, bool smoothing) const
 {
 	Matrix33 M(
 		20.0f, 0.0f, 0.0f,
@@ -294,15 +294,15 @@ void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self, BitmapDat
 	if (matrix)
 		M = M * matrix->m_v;
 
-	self->createCanvas()->beginBitmapFill(new FlashBitmapImage(bm->getImage()), M, repeat);
+	self->createCanvas()->beginBitmapFill(new BitmapImage(bm->getImage()), M, repeat);
 }
 
-void AsMovieClip::MovieClip_beginFill_1(FlashSpriteInstance* self, uint32_t rgb) const
+void AsMovieClip::MovieClip_beginFill_1(SpriteInstance* self, uint32_t rgb) const
 {
 	MovieClip_beginFill_2(self, rgb, 100);
 }
 
-void AsMovieClip::MovieClip_beginFill_2(FlashSpriteInstance* self, uint32_t rgb, int32_t alpha) const
+void AsMovieClip::MovieClip_beginFill_2(SpriteInstance* self, uint32_t rgb, int32_t alpha) const
 {
 	uint8_t r = rgb >> 16;
 	uint8_t g = (rgb >> 8) & 255;
@@ -311,14 +311,14 @@ void AsMovieClip::MovieClip_beginFill_2(FlashSpriteInstance* self, uint32_t rgb,
 	self->createCanvas()->beginFill(Color4f(r, g, b, a) / Scalar(255.0f));
 }
 
-bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const std::string& fillType, const Array* colors, const Array* alphas, const Array* ratios, ActionObject* matrix) const
+bool AsMovieClip::MovieClip_beginGradientFill(SpriteInstance* self, const std::string& fillType, const Array* colors, const Array* alphas, const Array* ratios, ActionObject* matrix) const
 {
-	FlashFillStyle::GradientType gradientType = FlashFillStyle::GtInvalid;
+	FillStyle::GradientType gradientType = FillStyle::GtInvalid;
 
 	if (compareIgnoreCase< std::string >(fillType, "linear") == 0)
-		gradientType = FlashFillStyle::GtLinear;
+		gradientType = FillStyle::GtLinear;
 	else if (compareIgnoreCase< std::string >(fillType, "radial") == 0)
-		gradientType = FlashFillStyle::GtRadial;
+		gradientType = FillStyle::GtRadial;
 	else
 		return false;
 
@@ -328,7 +328,7 @@ bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const s
 	if (colors->length() != alphas->length() || colors->length() != ratios->length())
 		return false;
 
-	AlignedVector< FlashFillStyle::ColorRecord > colorRecords(colors->length());
+	AlignedVector< FillStyle::ColorRecord > colorRecords(colors->length());
 	for (uint32_t i = 0; i < colors->length(); ++i)
 	{
 		uint32_t rgb = uint32_t((*colors)[i].getInteger());
@@ -382,18 +382,18 @@ bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const s
 	return true;
 }
 
-void AsMovieClip::MovieClip_clear(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_clear(SpriteInstance* self) const
 {
 	self->createCanvas()->clear();
 }
 
-Ref< FlashSpriteInstance > AsMovieClip::MovieClip_createEmptyMovieClip(FlashSpriteInstance* self, const std::string& emptyClipName, int32_t depth) const
+Ref< SpriteInstance > AsMovieClip::MovieClip_createEmptyMovieClip(SpriteInstance* self, const std::string& emptyClipName, int32_t depth) const
 {
 	return self->createEmptyMovieClip(emptyClipName, depth);
 }
 
-Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
-	FlashSpriteInstance* self,
+Ref< EditInstance > AsMovieClip::MovieClip_createTextField(
+	SpriteInstance* self,
 	const std::string& name,
 	int32_t depth,
 	float x,
@@ -405,22 +405,22 @@ Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
 	return self->createTextField(name, depth, x, y, width, height);
 }
 
-void AsMovieClip::MovieClip_curveTo(FlashSpriteInstance* self, float controlX, float controlY, float anchorX, float anchorY) const
+void AsMovieClip::MovieClip_curveTo(SpriteInstance* self, float controlX, float controlY, float anchorX, float anchorY) const
 {
 	self->createCanvas()->curveTo(controlX * 20.0f, controlY * 20.0f, anchorX * 20.0f, anchorY * 20.0f);
 }
 
-Ref< FlashSpriteInstance > AsMovieClip::MovieClip_duplicateMovieClip(FlashSpriteInstance* self, const std::string& name, int32_t depth) const
+Ref< SpriteInstance > AsMovieClip::MovieClip_duplicateMovieClip(SpriteInstance* self, const std::string& name, int32_t depth) const
 {
 	return self->duplicateMovieClip(name, depth);
 }
 
-void AsMovieClip::MovieClip_endFill(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_endFill(SpriteInstance* self) const
 {
 	self->createCanvas()->endFill();
 }
 
-Ref< ActionObject > AsMovieClip::MovieClip_getBounds(FlashSpriteInstance* self, const FlashCharacterInstance* reference) const
+Ref< ActionObject > AsMovieClip::MovieClip_getBounds(SpriteInstance* self, const CharacterInstance* reference) const
 {
 	Aabb2 bounds = self->getLocalBounds();
 
@@ -444,26 +444,26 @@ Ref< ActionObject > AsMovieClip::MovieClip_getBounds(FlashSpriteInstance* self, 
 	return result;
 }
 
-int32_t AsMovieClip::MovieClip_getBytesLoaded(FlashSpriteInstance* self) const
+int32_t AsMovieClip::MovieClip_getBytesLoaded(SpriteInstance* self) const
 {
 	return 1;
 }
 
-int32_t AsMovieClip::MovieClip_getBytesTotal(FlashSpriteInstance* self) const
+int32_t AsMovieClip::MovieClip_getBytesTotal(SpriteInstance* self) const
 {
 	return 1;
 }
 
-int32_t AsMovieClip::MovieClip_getDepth(FlashSpriteInstance* self) const
+int32_t AsMovieClip::MovieClip_getDepth(SpriteInstance* self) const
 {
-	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(self->getParent());
+	Ref< SpriteInstance > parentClipInstance = checked_type_cast< SpriteInstance* >(self->getParent());
 	if (parentClipInstance)
 		return parentClipInstance->getDisplayList().getObjectDepth(self);
 	else
 		return 0;
 }
 
-Ref< FlashCharacterInstance > AsMovieClip::MovieClip_getInstanceAtDepth(FlashSpriteInstance* self, int32_t depth) const
+Ref< CharacterInstance > AsMovieClip::MovieClip_getInstanceAtDepth(SpriteInstance* self, int32_t depth) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::getInstanceAtDepth not implemented" << Endl;
@@ -471,12 +471,12 @@ Ref< FlashCharacterInstance > AsMovieClip::MovieClip_getInstanceAtDepth(FlashSpr
 	return 0;
 }
 
-int32_t AsMovieClip::MovieClip_getNextHighestDepth(FlashSpriteInstance* self) const
+int32_t AsMovieClip::MovieClip_getNextHighestDepth(SpriteInstance* self) const
 {
 	return self->getDisplayList().getNextHighestDepth();
 }
 
-Ref< ActionObject > AsMovieClip::MovieClip_getRect(FlashSpriteInstance* self, const FlashCharacterInstance* reference) const
+Ref< ActionObject > AsMovieClip::MovieClip_getRect(SpriteInstance* self, const CharacterInstance* reference) const
 {
 	Aabb2 bounds = self->getLocalBounds();
 
@@ -496,19 +496,19 @@ Ref< ActionObject > AsMovieClip::MovieClip_getRect(FlashSpriteInstance* self, co
 	return result;
 }
 
-int32_t AsMovieClip::MovieClip_getSWFVersion(FlashSpriteInstance* self) const
+int32_t AsMovieClip::MovieClip_getSWFVersion(SpriteInstance* self) const
 {
 	return 8;
 }
 
-void AsMovieClip::MovieClip_getTextSnapshot(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_getTextSnapshot(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::getTextSnapshot not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_getURL(FlashSpriteInstance* self, const std::wstring& url) const
+void AsMovieClip::MovieClip_getURL(SpriteInstance* self, const std::wstring& url) const
 {
 	ActionContext* context = self->getContext();
 
@@ -530,14 +530,14 @@ void AsMovieClip::MovieClip_getURL(FlashSpriteInstance* self, const std::wstring
 	}
 }
 
-void AsMovieClip::MovieClip_globalToLocal(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_globalToLocal(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::globalToLocal not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_gotoAndPlay(FlashSpriteInstance* self, const ActionValue& arg0) const
+void AsMovieClip::MovieClip_gotoAndPlay(SpriteInstance* self, const ActionValue& arg0) const
 {
 	if (arg0.isNumeric())
 		self->gotoFrame(uint32_t(arg0.getInteger() - 1));
@@ -554,7 +554,7 @@ void AsMovieClip::MovieClip_gotoAndPlay(FlashSpriteInstance* self, const ActionV
 	self->setPlaying(true, false);
 }
 
-void AsMovieClip::MovieClip_gotoAndStop(FlashSpriteInstance* self, const ActionValue& arg0) const
+void AsMovieClip::MovieClip_gotoAndStop(SpriteInstance* self, const ActionValue& arg0) const
 {
 	if (arg0.isNumeric())
 	{
@@ -574,7 +574,7 @@ void AsMovieClip::MovieClip_gotoAndStop(FlashSpriteInstance* self, const ActionV
 	self->setPlaying(false, false);
 }
 
-bool AsMovieClip::MovieClip_hitTest_1(const FlashSpriteInstance* self, const FlashCharacterInstance* shape) const
+bool AsMovieClip::MovieClip_hitTest_1(const SpriteInstance* self, const CharacterInstance* shape) const
 {
 	if (!shape)
 		return false;
@@ -589,7 +589,7 @@ bool AsMovieClip::MovieClip_hitTest_1(const FlashSpriteInstance* self, const Fla
 		(bounds.mx.y > shapeBounds.mn.y);
 }
 
-bool AsMovieClip::MovieClip_hitTest_2(const FlashSpriteInstance* self, float x, float y) const
+bool AsMovieClip::MovieClip_hitTest_2(const SpriteInstance* self, float x, float y) const
 {
 	// Transform coordinates into local space.
 	Matrix33 Tinv = self->getFullTransform().inverse();
@@ -600,107 +600,107 @@ bool AsMovieClip::MovieClip_hitTest_2(const FlashSpriteInstance* self, float x, 
 	return (L.x >= bounds.mn.x && L.y >= bounds.mn.y && L.x <= bounds.mx.x && L.y <= bounds.mx.y);
 }
 
-void AsMovieClip::MovieClip_lineGradientStyle(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_lineGradientStyle(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::lineGradientStyle not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_lineStyle(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_lineStyle(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::lineStyle not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_lineTo(FlashSpriteInstance* self, float x, float y) const
+void AsMovieClip::MovieClip_lineTo(SpriteInstance* self, float x, float y) const
 {
 	self->createCanvas()->lineTo(x * 20.0f, y * 20.0f);
 }
 
-Ref< FlashSpriteInstance > AsMovieClip::MovieClip_loadMovie(FlashSpriteInstance* self, const std::wstring& fileName) const
+Ref< SpriteInstance > AsMovieClip::MovieClip_loadMovie(SpriteInstance* self, const std::wstring& fileName) const
 {
 	ActionContext* cx = getContext();
 	T_ASSERT (cx);
 
-	const IFlashMovieLoader* movieLoader = cx->getMovieLoader();
+	const IMovieLoader* movieLoader = cx->getMovieLoader();
 	if (!movieLoader)
 		return 0;
 
-	Ref< FlashMovie > movie = movieLoader->load(fileName);
+	Ref< Movie > movie = movieLoader->load(fileName);
 	if (!movie)
 		return 0;
 
 	return movie->createExternalMovieClipInstance(self, 0);
 }
 
-void AsMovieClip::MovieClip_loadVariables(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_loadVariables(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::loadVariables not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_localToGlobal(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_localToGlobal(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::localToGlobal not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_moveTo(FlashSpriteInstance* self, float x, float y) const
+void AsMovieClip::MovieClip_moveTo(SpriteInstance* self, float x, float y) const
 {
 	self->createCanvas()->moveTo(x * 20.0f, y * 20.0f);
 }
 
-void AsMovieClip::MovieClip_nextFrame(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_nextFrame(SpriteInstance* self) const
 {
 	self->gotoNext();
 }
 
-void AsMovieClip::MovieClip_play(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_play(SpriteInstance* self) const
 {
 	self->setPlaying(true, false);
 }
 
-void AsMovieClip::MovieClip_prevFrame(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_prevFrame(SpriteInstance* self) const
 {
 	self->gotoPrevious();
 }
 
-void AsMovieClip::MovieClip_removeMovieClip(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_removeMovieClip(SpriteInstance* self) const
 {
 	self->removeMovieClip();
 }
 
-void AsMovieClip::MovieClip_setMask(FlashSpriteInstance* self, FlashSpriteInstance* mask) const
+void AsMovieClip::MovieClip_setMask(SpriteInstance* self, SpriteInstance* mask) const
 {
 	self->setMask(mask);
 }
 
-void AsMovieClip::MovieClip_startDrag(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_startDrag(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::startDrag not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_stop(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_stop(SpriteInstance* self) const
 {
 	self->setPlaying(false, false);
 }
 
-void AsMovieClip::MovieClip_stopDrag(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_stopDrag(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::stopDrag not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_swapDepths(FlashSpriteInstance* self, const ActionValue& arg0) const
+void AsMovieClip::MovieClip_swapDepths(SpriteInstance* self, const ActionValue& arg0) const
 {
-	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(self->getParent());
+	SpriteInstance* parentClipInstance = checked_type_cast< SpriteInstance*, false >(self->getParent());
 
 	// Get my own current depth.
 	int32_t depth = parentClipInstance->getDisplayList().getObjectDepth(self);
@@ -712,7 +712,7 @@ void AsMovieClip::MovieClip_swapDepths(FlashSpriteInstance* self, const ActionVa
 		targetDepth = arg0.getInteger();
 	else if (arg0.isObject())
 	{
-		Ref< FlashSpriteInstance > targetClipInstance = arg0.getObject()->getRelay< FlashSpriteInstance >();
+		Ref< SpriteInstance > targetClipInstance = arg0.getObject()->getRelay< SpriteInstance >();
 		if (targetClipInstance)
 			targetDepth = parentClipInstance->getDisplayList().getObjectDepth(targetClipInstance);
 	}
@@ -720,243 +720,243 @@ void AsMovieClip::MovieClip_swapDepths(FlashSpriteInstance* self, const ActionVa
 	parentClipInstance->getDisplayList().swap(depth, targetDepth);
 }
 
-std::string AsMovieClip::MovieClip_toString(const FlashSpriteInstance* self) const
+std::string AsMovieClip::MovieClip_toString(const SpriteInstance* self) const
 {
 	std::string target = self->getTarget();
 	return "_level0" + replaceAll(target, '/', '.');
 }
 
-void AsMovieClip::MovieClip_unloadMovie(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_unloadMovie(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::unloadMovie not implemented" << Endl;
 	)
 }
 
-float AsMovieClip::MovieClip_get_alpha(const FlashSpriteInstance* self) const
+float AsMovieClip::MovieClip_get_alpha(const SpriteInstance* self) const
 {
 	const ColorTransform& colorTransform = self->getColorTransform();
 	return colorTransform.mul.getAlpha() * 100.0f;
 }
 
-void AsMovieClip::MovieClip_set_alpha(FlashSpriteInstance* self, float alpha) const
+void AsMovieClip::MovieClip_set_alpha(SpriteInstance* self, float alpha) const
 {
 	ColorTransform colorTransform = self->getColorTransform();
 	colorTransform.mul.setAlpha(Scalar(alpha / 100.0f));
 	self->setColorTransform(colorTransform);
 }
 
-void AsMovieClip::MovieClip_get_blendMode(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_blendMode(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_blendMode not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_blendMode(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_blendMode(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_blendMode not implemented" << Endl;
 	)
 }
 
-bool AsMovieClip::MovieClip_get_cacheAsBitmap(const FlashSpriteInstance* self) const
+bool AsMovieClip::MovieClip_get_cacheAsBitmap(const SpriteInstance* self) const
 {
 	return self->getCacheAsBitmap();
 }
 
-void AsMovieClip::MovieClip_set_cacheAsBitmap(FlashSpriteInstance* self, bool enabled) const
+void AsMovieClip::MovieClip_set_cacheAsBitmap(SpriteInstance* self, bool enabled) const
 {
 	self->setCacheAsBitmap(enabled);
 }
 
-int32_t AsMovieClip::MovieClip_get_currentframe(const FlashSpriteInstance* self) const
+int32_t AsMovieClip::MovieClip_get_currentframe(const SpriteInstance* self) const
 {
 	return self->getCurrentFrame() + 1;
 }
 
-void AsMovieClip::MovieClip_get_droptarget(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_droptarget(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_droptarget not implemented" << Endl;
 	)
 }
 
-bool AsMovieClip::MovieClip_get_enabled(const FlashSpriteInstance* self) const
+bool AsMovieClip::MovieClip_get_enabled(const SpriteInstance* self) const
 {
 	return self->isEnabled();
 }
 
-void AsMovieClip::MovieClip_set_enabled(FlashSpriteInstance* self, bool enabled) const
+void AsMovieClip::MovieClip_set_enabled(SpriteInstance* self, bool enabled) const
 {
 	self->setEnabled(enabled);
 }
 
-void AsMovieClip::MovieClip_get_filters(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_filters(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_filters not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_filters(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_filters(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_filters not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_get_focusEnabled(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_focusEnabled(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::got_focusEnabled not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_focusEnabled(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_focusEnabled(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_focusEnabled not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_get_focusrect(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_focusrect(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_focusrect not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_focusrect(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_focusrect(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_focusrect not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_get_forceSmoothing(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_forceSmoothing(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_forceSmoothing not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_forceSmoothing(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_forceSmoothing(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_forceSmoothing not implemented" << Endl;
 	)
 }
 
-int32_t AsMovieClip::MovieClip_get_framesloaded(const FlashSpriteInstance* self) const
+int32_t AsMovieClip::MovieClip_get_framesloaded(const SpriteInstance* self) const
 {
 	return self->getSprite()->getFrameCount();
 }
 
-float AsMovieClip::MovieClip_get_height(const FlashSpriteInstance* self) const
+float AsMovieClip::MovieClip_get_height(const SpriteInstance* self) const
 {
 	return self->getHeight();
 }
 
-void AsMovieClip::MovieClip_set_height(FlashSpriteInstance* self, float height) const
+void AsMovieClip::MovieClip_set_height(SpriteInstance* self, float height) const
 {
 	self->setHeight(height);
 }
 
-void AsMovieClip::MovieClip_get_highquality(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_highquality(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_highquality not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_highquality(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_highquality(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_highquality not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_get_hitArea(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_hitArea(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_hitArea not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_hitArea(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_hitArea(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_hitArea not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_get_lockroot(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_lockroot(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_lockroot not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_lockroot(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_lockroot(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_lockroot not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_get_menu(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_menu(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_menu not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_menu(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_menu(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_menu not implemented" << Endl;
 	)
 }
 
-ActionValue AsMovieClip::MovieClip_get_name(const FlashSpriteInstance* self) const
+ActionValue AsMovieClip::MovieClip_get_name(const SpriteInstance* self) const
 {
 	std::string name = self->getName();
 	return !name.empty() ? ActionValue(name) : ActionValue();
 }
 
-void AsMovieClip::MovieClip_set_name(FlashSpriteInstance* self, const std::string& name) const
+void AsMovieClip::MovieClip_set_name(SpriteInstance* self, const std::string& name) const
 {
 	self->setName(name);
 }
 
-void AsMovieClip::MovieClip_get_opaqueBackground(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_opaqueBackground(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_opaqueBackground not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_opaqueBackground(FlashSpriteInstance* self, const ActionValue& value) const
+void AsMovieClip::MovieClip_set_opaqueBackground(SpriteInstance* self, const ActionValue& value) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_opaqueBackground not implemented" << Endl;
 	)
 }
 
-FlashCharacterInstance* AsMovieClip::MovieClip_get_parent(FlashSpriteInstance* self) const
+CharacterInstance* AsMovieClip::MovieClip_get_parent(SpriteInstance* self) const
 {
 	return self->getParent();
 }
 
-void AsMovieClip::MovieClip_set_parent(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_parent(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_parent not implemented" << Endl;
 	)
 }
 
-std::string AsMovieClip::MovieClip_get_quality(const FlashSpriteInstance* self) const
+std::string AsMovieClip::MovieClip_get_quality(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_quality not implemented" << Endl;
@@ -964,221 +964,221 @@ std::string AsMovieClip::MovieClip_get_quality(const FlashSpriteInstance* self) 
 	return "BEST";
 }
 
-void AsMovieClip::MovieClip_set_quality(FlashSpriteInstance* self, const std::string& quality) const
+void AsMovieClip::MovieClip_set_quality(SpriteInstance* self, const std::string& quality) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_quality not implemented" << Endl;
 	)
 }
 
-float AsMovieClip::MovieClip_get_rotation(const FlashSpriteInstance* self) const
+float AsMovieClip::MovieClip_get_rotation(const SpriteInstance* self) const
 {
 	return self->getRotation();
 }
 
-void AsMovieClip::MovieClip_set_rotation(FlashSpriteInstance* self, float rotation) const
+void AsMovieClip::MovieClip_set_rotation(SpriteInstance* self, float rotation) const
 {
 	self->setRotation(rotation);
 }
 
-void AsMovieClip::MovieClip_get_scale9Grid(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_scale9Grid(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_scale9Grid not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_scale9Grid(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_scale9Grid(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_scale9Grid not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_get_scrollRect(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_scrollRect(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_scrollRect not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_scrollRect(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_scrollRect(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_scrollRect not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_get_soundbuftime(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_soundbuftime(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_soundbuftime not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_soundbuftime(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_soundbuftime(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_soundbuftime not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_get_tabChildren(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_tabChildren(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_tabChildren not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_tabChildren(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_tabChildren(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_tabChildren not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_get_tabEnabled(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_tabEnabled(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_tabEnabled not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_tabEnabled(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_tabEnabled(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_tabEnabled not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_get_tabIndex(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_tabIndex(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_tabIndex not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_tabIndex(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_tabIndex(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_tabIndex not implemented" << Endl;
 	)
 }
 
-std::string AsMovieClip::MovieClip_get_target(const FlashSpriteInstance* self) const
+std::string AsMovieClip::MovieClip_get_target(const SpriteInstance* self) const
 {
 	return self->getTarget();
 }
 
-uint32_t AsMovieClip::MovieClip_get_totalframes(const FlashSpriteInstance* self) const
+uint32_t AsMovieClip::MovieClip_get_totalframes(const SpriteInstance* self) const
 {
 	return self->getSprite()->getFrameCount();
 }
 
-void AsMovieClip::MovieClip_get_trackAsMenu(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_trackAsMenu(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_trackAsMenu not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_trackAsMenu(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_trackAsMenu(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_trackAsMenu not implemented" << Endl;
 	)
 }
 
-Ref< Transform > AsMovieClip::MovieClip_get_transform(FlashSpriteInstance* self) const
+Ref< Transform > AsMovieClip::MovieClip_get_transform(SpriteInstance* self) const
 {
 	return new Transform(self);
 }
 
-std::string AsMovieClip::MovieClip_get_url(const FlashSpriteInstance* self) const
+std::string AsMovieClip::MovieClip_get_url(const SpriteInstance* self) const
 {
 	return "file:///Internal.swf";
 }
 
-void AsMovieClip::MovieClip_get_useHandCursor(const FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_get_useHandCursor(const SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_useHandCursor not implemented" << Endl;
 	)
 }
 
-void AsMovieClip::MovieClip_set_useHandCursor(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_useHandCursor(SpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::set_useHandCursor not implemented" << Endl;
 	)
 }
 
-bool AsMovieClip::MovieClip_get_visible(const FlashSpriteInstance* self) const
+bool AsMovieClip::MovieClip_get_visible(const SpriteInstance* self) const
 {
 	return self->isVisible();
 }
 
-void AsMovieClip::MovieClip_set_visible(FlashSpriteInstance* self, bool visible) const
+void AsMovieClip::MovieClip_set_visible(SpriteInstance* self, bool visible) const
 {
 	self->setVisible(visible);
 }
 
-float AsMovieClip::MovieClip_get_width(const FlashSpriteInstance* self) const
+float AsMovieClip::MovieClip_get_width(const SpriteInstance* self) const
 {
 	return self->getWidth();
 }
 
-void AsMovieClip::MovieClip_set_width(FlashSpriteInstance* self, float width) const
+void AsMovieClip::MovieClip_set_width(SpriteInstance* self, float width) const
 {
 	self->setWidth(width);
 }
 
-float AsMovieClip::MovieClip_get_x(const FlashSpriteInstance* self) const
+float AsMovieClip::MovieClip_get_x(const SpriteInstance* self) const
 {
 	return self->getX();
 }
 
-void AsMovieClip::MovieClip_set_x(FlashSpriteInstance* self, float x) const
+void AsMovieClip::MovieClip_set_x(SpriteInstance* self, float x) const
 {
 	self->setX(x);
 }
 
-int32_t AsMovieClip::MovieClip_get_xmouse(const FlashSpriteInstance* self) const
+int32_t AsMovieClip::MovieClip_get_xmouse(const SpriteInstance* self) const
 {
 	return self->getMouseX();
 }
 
-float AsMovieClip::MovieClip_get_xscale(const FlashSpriteInstance* self) const
+float AsMovieClip::MovieClip_get_xscale(const SpriteInstance* self) const
 {
 	return self->getXScale();
 }
 
-void AsMovieClip::MovieClip_set_xscale(FlashSpriteInstance* self, float x) const
+void AsMovieClip::MovieClip_set_xscale(SpriteInstance* self, float x) const
 {
 	self->setXScale(x);
 }
 
-float AsMovieClip::MovieClip_get_y(const FlashSpriteInstance* self) const
+float AsMovieClip::MovieClip_get_y(const SpriteInstance* self) const
 {
 	return self->getY();
 }
 
-void AsMovieClip::MovieClip_set_y(FlashSpriteInstance* self, float y) const
+void AsMovieClip::MovieClip_set_y(SpriteInstance* self, float y) const
 {
 	self->setY(y);
 }
 
-int32_t AsMovieClip::MovieClip_get_ymouse(const FlashSpriteInstance* self) const
+int32_t AsMovieClip::MovieClip_get_ymouse(const SpriteInstance* self) const
 {
 	return self->getMouseY();
 }
 
-float AsMovieClip::MovieClip_get_yscale(const FlashSpriteInstance* self) const
+float AsMovieClip::MovieClip_get_yscale(const SpriteInstance* self) const
 {
 	return self->getYScale();
 }
 
-void AsMovieClip::MovieClip_set_yscale(FlashSpriteInstance* self, float y) const
+void AsMovieClip::MovieClip_set_yscale(SpriteInstance* self, float y) const
 {
 	self->setYScale(y);
 }

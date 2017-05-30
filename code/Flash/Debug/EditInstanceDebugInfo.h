@@ -23,7 +23,7 @@ namespace traktor
 	namespace flash
 	{
 	
-class FlashEditInstance;
+class EditInstance;
 
 /*! \brief
  * \ingroup Flash
@@ -35,17 +35,23 @@ class T_DLLCLASS EditInstanceDebugInfo : public InstanceDebugInfo
 public:
 	EditInstanceDebugInfo();
 
-	EditInstanceDebugInfo(const FlashEditInstance* instance);
+	EditInstanceDebugInfo(const EditInstance* instance);
 
 	const std::wstring& getText() const { return m_text; }
 
+	const Color4f& getTextColor() const { return m_textColor; }
+
 	SwfTextAlignType getTextAlign() const { return m_textAlign; }
+
+	const Vector2& getTextSize() const { return m_textSize; }
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_text;
+	Color4f m_textColor;
 	SwfTextAlignType m_textAlign;
+	Vector2 m_textSize;
 };
 	
 	}

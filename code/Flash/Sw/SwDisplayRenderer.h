@@ -48,7 +48,7 @@ public:
 	virtual bool wantDirtyRegion() const T_OVERRIDE T_FINAL;
 	
 	virtual void begin(
-		const FlashDictionary& dictionary,
+		const Dictionary& dictionary,
 		const Color4f& backgroundColor,
 		const Aabb2& frameBounds,
 		const Vector4& frameTransform,
@@ -57,27 +57,27 @@ public:
 		const Aabb2& dirtyRegion
 	) T_OVERRIDE T_FINAL;
 
-	virtual void beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) T_OVERRIDE T_FINAL;
+	virtual void beginSprite(const SpriteInstance& sprite, const Matrix33& transform) T_OVERRIDE T_FINAL;
 
-	virtual void endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) T_OVERRIDE T_FINAL;
+	virtual void endSprite(const SpriteInstance& sprite, const Matrix33& transform) T_OVERRIDE T_FINAL;
 
-	virtual void beginEdit(const FlashEditInstance& edit, const Matrix33& transform) T_OVERRIDE T_FINAL;
+	virtual void beginEdit(const EditInstance& edit, const Matrix33& transform) T_OVERRIDE T_FINAL;
 
-	virtual void endEdit(const FlashEditInstance& edit, const Matrix33& transform) T_OVERRIDE T_FINAL;
+	virtual void endEdit(const EditInstance& edit, const Matrix33& transform) T_OVERRIDE T_FINAL;
 
 	virtual void beginMask(bool increment) T_OVERRIDE T_FINAL;
 
 	virtual void endMask() T_OVERRIDE T_FINAL;
 
-	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const ColorTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
+	virtual void renderShape(const Dictionary& dictionary, const Matrix33& transform, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
 
-	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const ColorTransform& cxform) T_OVERRIDE T_FINAL;
+	virtual void renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const MorphShape& shape, const ColorTransform& cxform) T_OVERRIDE T_FINAL;
 
 	virtual void renderGlyph(
-		const FlashDictionary& dictionary,
+		const Dictionary& dictionary,
 		const Matrix33& transform,
-		const FlashFont* font,
-		const FlashShape* glyph,
+		const Font* font,
+		const Shape* glyph,
 		float fontHeight,
 		wchar_t character,
 		const Color4f& color,
@@ -88,7 +88,7 @@ public:
 
 	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform) T_OVERRIDE T_FINAL;
 
-	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const ColorTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
+	virtual void renderCanvas(const Matrix33& transform, const Canvas& canvas, const ColorTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
 
 	virtual void end() T_OVERRIDE T_FINAL;
 

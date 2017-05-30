@@ -8,8 +8,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <limits>
 #include "Core/Math/Const.h"
 #include "Core/Misc/StringSplit.h"
-#include "Flash/FlashCharacterInstance.h"
-#include "Flash/FlashFont.h"
+#include "Flash/CharacterInstance.h"
+#include "Flash/Font.h"
 #include "Flash/TextLayout.h"
 
 namespace traktor
@@ -180,7 +180,7 @@ void TextLayout::setAlignment(SwfTextAlignType alignment)
 	m_alignment = alignment;
 }
 
-void TextLayout::setAttribute(const FlashFont* font, const Color4f& textColor)
+void TextLayout::setAttribute(const Font* font, const Color4f& textColor)
 {
 	if (!m_attribs.empty())
 	{
@@ -202,7 +202,7 @@ void TextLayout::insertText(const std::wstring& text)
 
 	const Attribute& attrib = m_attribs[m_currentAttrib];
 
-	float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+	float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
 	float fontScale = coordScale * m_fontHeight;
 	float letterSpacing = m_letterSpacing * 200.0f * 2000.0f / m_fontHeight;
 	float boundsWidth = m_bounds.mx.x - m_bounds.mn.x;
@@ -341,7 +341,7 @@ void TextLayout::insertText(const std::wstring& text)
 	}
 }
 
-void TextLayout::insertCharacter(FlashCharacterInstance* characterInstance)
+void TextLayout::insertCharacter(CharacterInstance* characterInstance)
 {
 	m_characters.push_back(characterInstance);
 
@@ -402,7 +402,7 @@ void TextLayout::end()
 			Word& w = i->words.front();
 			const Attribute& attrib = m_attribs[w.a];
 
-			float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+			float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
 			float fontScale = coordScale * m_fontHeight;
 
 			int32_t idx = attrib.font->lookupIndex(w.chars.front().ch);
@@ -420,7 +420,7 @@ void TextLayout::end()
 		const Attribute& attrib = m_attribs[m_currentAttrib];
 		if (attrib.font)
 		{
-			float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+			float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
 			float fontScale = coordScale * m_fontHeight;
 			lineHeight += attrib.font->getDescent() * fontScale;
 		}

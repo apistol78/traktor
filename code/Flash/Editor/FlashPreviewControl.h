@@ -78,8 +78,8 @@ class IGraphicsSystem;
 	{
 
 class AccDisplayRenderer;
-class FlashMovie;
-class FlashMoviePlayer;
+class Movie;
+class MoviePlayer;
 class SoundRenderer;
 class SwDisplayRenderer;
 
@@ -101,7 +101,7 @@ public:
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	void setMovie(FlashMovie* movie);
+	void setMovie(Movie* movie);
 
 	void rewind();
 
@@ -115,7 +115,7 @@ public:
 
 	virtual ui::Size getPreferedSize() const T_OVERRIDE T_FINAL;
 
-	FlashMoviePlayer* getMoviePlayer() const { return m_moviePlayer; }
+	MoviePlayer* getMoviePlayer() const { return m_moviePlayer; }
 
 private:
 	editor::IEditor* m_editor;
@@ -130,8 +130,8 @@ private:
 	Ref< SwDisplayRenderer > m_displayRenderer;
 #endif
 	Ref< SoundRenderer > m_soundRenderer;
-	Ref< FlashMoviePlayer > m_moviePlayer;
-	Ref< FlashMovie > m_movie;
+	Ref< MoviePlayer > m_moviePlayer;
+	Ref< Movie > m_movie;
 	Timer m_timer;
 	bool m_playing;
 

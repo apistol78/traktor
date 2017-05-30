@@ -15,7 +15,7 @@ namespace traktor
 	{
 
 struct CallArgs;
-class FlashSoundPlayer;
+class SoundPlayer;
 
 /*! \brief Sound class.
  * \ingroup Flash
@@ -25,7 +25,7 @@ class AsSound : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	AsSound(ActionContext* context, FlashSoundPlayer* soundPlayer);
+	AsSound(ActionContext* context, SoundPlayer* soundPlayer);
 
 	virtual void initialize(ActionObject* self) T_OVERRIDE T_FINAL;
 
@@ -34,7 +34,7 @@ public:
 	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
 
 private:
-	Ref< FlashSoundPlayer > m_soundPlayer;
+	Ref< SoundPlayer > m_soundPlayer;
 
 	void Sound_attachSound(ActionObject* self, const std::string& exportName) const;
 

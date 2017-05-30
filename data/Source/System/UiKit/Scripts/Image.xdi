@@ -51,13 +51,13 @@ function Image:setImage(image, mode)
 	-- Create image resource.
 	if isa(image, traktor.drawing.Image) then
 		self._image_mc = Widget._createEmptyResource(self)
-		self._image_mc:attachBitmap(traktor.flash.FlashBitmapImage(image), 0)
+		self._image_mc:attachBitmap(traktor.flash.BitmapImage(image), 0)
 
 	elseif isa(image, traktor.video.VideoTexture) then
 		self._image_mc = Widget._createEmptyResource(self)
-		self._image_mc:attachBitmap(traktor.flash.FlashBitmapTexture(image), 0)
+		self._image_mc:attachBitmap(traktor.flash.BitmapTexture(image), 0)
 
-	elseif isa(image, traktor.flash.FlashMovie) then
+	elseif isa(image, traktor.flash.Movie) then
 		self._image_mc = image:createExternalMovieClipInstance(self._mc, 0)
 
 	elseif type(image) == "string" then

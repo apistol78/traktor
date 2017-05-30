@@ -6,7 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Flash/FlashMorphShapeInstance.h"
+#include "Flash/MorphShapeInstance.h"
 #include "Flash/Debug/MorphShapeInstanceDebugInfo.h"
 
 namespace traktor
@@ -22,7 +22,7 @@ MorphShapeInstanceDebugInfo::MorphShapeInstanceDebugInfo()
 {
 }
 
-MorphShapeInstanceDebugInfo::MorphShapeInstanceDebugInfo(const FlashMorphShapeInstance* instance, bool mask, bool clipped)
+MorphShapeInstanceDebugInfo::MorphShapeInstanceDebugInfo(const MorphShapeInstance* instance, bool mask, bool clipped)
 {
 	m_name = instance->getName();
 	m_bounds = instance->getBounds();

@@ -6,7 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Flash/FlashMovie.h"
+#include "Flash/Movie.h"
 #include "Flash/Editor/FlashMovieAsset.h"
 
 namespace traktor

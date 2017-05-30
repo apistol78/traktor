@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAabb.h"
-#include "Flash/FlashCharacterInstance.h"
+#include "Flash/CharacterInstance.h"
 #include "Flash/SwfMembers.h"
 #include "Flash/Debug/InstanceDebugInfo.h"
 

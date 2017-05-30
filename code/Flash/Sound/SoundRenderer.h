@@ -42,7 +42,7 @@ public:
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void play(const FlashSound* sound) T_OVERRIDE T_FINAL;
+	virtual void play(const Sound* sound) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< sound::ISoundPlayer > m_soundPlayer;

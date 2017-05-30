@@ -9,8 +9,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Flash/FlashSprite.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/Sprite.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionObject.h"
 #include "Flash/Debug/SpriteInstanceDebugInfo.h"
@@ -31,7 +31,7 @@ SpriteInstanceDebugInfo::SpriteInstanceDebugInfo()
 {
 }
 
-SpriteInstanceDebugInfo::SpriteInstanceDebugInfo(const FlashSpriteInstance* instance, const std::string& className, bool mask, bool clipped, const RefArray< InstanceDebugInfo >& childrenDebugInfo)
+SpriteInstanceDebugInfo::SpriteInstanceDebugInfo(const SpriteInstance* instance, const std::string& className, bool mask, bool clipped, const RefArray< InstanceDebugInfo >& childrenDebugInfo)
 {
 	m_name = instance->getName();
 	m_bounds = instance->getVisibleLocalBounds();

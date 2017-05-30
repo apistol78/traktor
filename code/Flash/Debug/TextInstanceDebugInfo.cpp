@@ -4,8 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Flash/FlashText.h"
-#include "Flash/FlashTextInstance.h"
+#include "Flash/Text.h"
+#include "Flash/TextInstance.h"
 #include "Flash/Debug/TextInstanceDebugInfo.h"
 
 namespace traktor
@@ -19,7 +19,7 @@ TextInstanceDebugInfo::TextInstanceDebugInfo()
 {
 }
 
-TextInstanceDebugInfo::TextInstanceDebugInfo(const FlashTextInstance* instance)
+TextInstanceDebugInfo::TextInstanceDebugInfo(const TextInstance* instance)
 {
 	m_name = instance->getName();
 	m_bounds = instance->getText()->getTextBounds();

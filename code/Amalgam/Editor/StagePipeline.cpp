@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Amalgam/Editor/StagePipeline.h"
 #include "Amalgam/Game/Engine/AudioLayerData.h"
 #include "Amalgam/Game/Engine/FlashLayerData.h"
-#include "Amalgam/Game/Engine/SparkLayerData.h"
 #include "Amalgam/Game/Engine/StageData.h"
 #include "Amalgam/Game/Engine/VideoLayerData.h"
 #include "Amalgam/Game/Engine/WorldLayerData.h"
@@ -119,14 +118,9 @@ bool StagePipeline::buildDependencies(
 		else if (const FlashLayerData* flashLayer = dynamic_type_cast< const FlashLayerData* >(*i))
 		{
 			pipelineDepends->addDependency(flashLayer->m_movie, editor::PdfBuild);
-			for (std::map< std::wstring, resource::Id< flash::FlashMovie > >::const_iterator i = flashLayer->m_externalMovies.begin(); i != flashLayer->m_externalMovies.end(); ++i)
+			for (std::map< std::wstring, resource::Id< flash::Movie > >::const_iterator i = flashLayer->m_externalMovies.begin(); i != flashLayer->m_externalMovies.end(); ++i)
 				pipelineDepends->addDependency(i->second, editor::PdfBuild);
 			pipelineDepends->addDependency(flashLayer->m_imageProcess, editor::PdfBuild);
-		}
-		else if (const SparkLayerData* sparkLayer = dynamic_type_cast< const SparkLayerData* >(*i))
-		{
-			pipelineDepends->addDependency(sparkLayer->m_sprite, editor::PdfBuild);
-			pipelineDepends->addDependency(sparkLayer->m_imageProcess, editor::PdfBuild);
 		}
 		else if (const VideoLayerData* videoLayer = dynamic_type_cast< const VideoLayerData* >(*i))
 		{

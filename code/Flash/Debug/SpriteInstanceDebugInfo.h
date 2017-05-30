@@ -24,7 +24,7 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashSpriteInstance;
+class SpriteInstance;
 	
 /*! \brief
  * \ingroup Flash
@@ -36,7 +36,7 @@ class T_DLLCLASS SpriteInstanceDebugInfo : public InstanceDebugInfo
 public:
 	SpriteInstanceDebugInfo();
 
-	SpriteInstanceDebugInfo(const FlashSpriteInstance* instance, const std::string& className, bool mask, bool clipped, const RefArray< InstanceDebugInfo >& childrenDebugInfo);
+	SpriteInstanceDebugInfo(const SpriteInstance* instance, const std::string& className, bool mask, bool clipped, const RefArray< InstanceDebugInfo >& childrenDebugInfo);
 
 	const std::string& getClassName() const { return m_className; }
 

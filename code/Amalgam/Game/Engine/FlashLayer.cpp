@@ -24,13 +24,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Timer/Profiler.h"
+#include "Flash/Cast.h"
 #include "Flash/DefaultCharacterFactory.h"
-#include "Flash/FlashCast.h"
-#include "Flash/FlashFont.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashMovieLoader.h"
-#include "Flash/FlashMoviePlayer.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/Font.h"
+#include "Flash/Movie.h"
+#include "Flash/MovieLoader.h"
+#include "Flash/MoviePlayer.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/ISoundRenderer.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
 #include "Flash/Action/Common/Classes/AsKey.h"
@@ -93,10 +93,10 @@ uint32_t translateInputKeyCode(uint32_t inputKeyCode)
 	return 0;
 }
 
-class CustomFlashMovieLoader : public flash::IFlashMovieLoader
+class CustomMovieLoader : public flash::IMovieLoader
 {
 public:
-	CustomFlashMovieLoader(const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies)
+	CustomMovieLoader(const std::map< std::wstring, resource::Proxy< flash::Movie > >& externalMovies)
 	:	m_externalMovies(externalMovies)
 	{
 	}
@@ -106,9 +106,9 @@ public:
 		return 0;
 	}
 
-	virtual Ref< flash::FlashMovie > load(const std::wstring& url) const T_OVERRIDE T_FINAL
+	virtual Ref< flash::Movie > load(const std::wstring& url) const T_OVERRIDE T_FINAL
 	{
-		std::map< std::wstring, resource::Proxy< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(url);
+		std::map< std::wstring, resource::Proxy< flash::Movie > >::const_iterator i = m_externalMovies.find(url);
 		if (i != m_externalMovies.end())
 			return i->second.getResource();
 		else
@@ -119,7 +119,7 @@ public:
 	}
 
 private:
-	const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& m_externalMovies;
+	const std::map< std::wstring, resource::Proxy< flash::Movie > >& m_externalMovies;
 };
 
 		}
@@ -131,8 +131,8 @@ FlashLayer::FlashLayer(
 	const std::wstring& name,
 	bool permitTransition,
 	IEnvironment* environment,
-	const resource::Proxy< flash::FlashMovie >& movie,
-	const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
+	const resource::Proxy< flash::Movie >& movie,
+	const std::map< std::wstring, resource::Proxy< flash::Movie > >& externalMovies,
 	const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 	bool clearBackground,
 	bool enableShapeCache,
@@ -596,7 +596,7 @@ void FlashLayer::resume()
 {
 }
 
-flash::FlashMoviePlayer* FlashLayer::getMoviePlayer()
+flash::MoviePlayer* FlashLayer::getMoviePlayer()
 {
 	return m_moviePlayer;
 }
@@ -611,7 +611,7 @@ flash::ActionContext* FlashLayer::getContext()
 	return m_moviePlayer->getMovieInstance()->getContext();
 }
 
-flash::FlashSpriteInstance* FlashLayer::getRoot()
+flash::SpriteInstance* FlashLayer::getRoot()
 {
 	if (!m_moviePlayer)
 	{
@@ -621,9 +621,9 @@ flash::FlashSpriteInstance* FlashLayer::getRoot()
 	return m_moviePlayer->getMovieInstance();
 }
 
-flash::FlashMovie* FlashLayer::getExternal(const std::wstring& id) const
+flash::Movie* FlashLayer::getExternal(const std::wstring& id) const
 {
-	std::map< std::wstring, resource::Proxy< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(id);
+	std::map< std::wstring, resource::Proxy< flash::Movie > >::const_iterator i = m_externalMovies.find(id);
 	return i != m_externalMovies.end() ? i->second.getResource() : 0;
 }
 
@@ -652,7 +652,7 @@ std::wstring FlashLayer::getPrintableString(const std::wstring& text, const std:
 
 	StringOutputStream ss;
 
-	const SmallMap< uint16_t, Ref< flash::FlashFont > >& fonts = m_movie->getFonts();
+	const SmallMap< uint16_t, Ref< flash::Font > >& fonts = m_movie->getFonts();
 	for (size_t i = 0; i < text.length(); ++i)
 	{
 		wchar_t ch = text[i];
@@ -661,7 +661,7 @@ std::wstring FlashLayer::getPrintableString(const std::wstring& text, const std:
 		if (!isWhiteSpace(ch))
 		{
 			valid = false;
-			for (SmallMap< uint16_t, Ref< flash::FlashFont > >::const_iterator j = fonts.begin(); j != fonts.end(); ++j)
+			for (SmallMap< uint16_t, Ref< flash::Font > >::const_iterator j = fonts.begin(); j != fonts.end(); ++j)
 			{
 				if (j->second->lookupIndex(ch) != 0)
 				{
@@ -767,11 +767,11 @@ void FlashLayer::createMoviePlayer()
 				getName()
 			);
 
-		Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(
+		Ref< flash::MoviePlayer > moviePlayer = new flash::MoviePlayer(
 			displayRenderer,
 			m_soundRenderer,
 			new flash::DefaultCharacterFactory(),
-			new CustomFlashMovieLoader(m_externalMovies),
+			new CustomMovieLoader(m_externalMovies),
 			movieDebugger
 		);
 		if (!moviePlayer->create(m_movie, width, height))

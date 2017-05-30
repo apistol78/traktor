@@ -22,7 +22,7 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashMorphShapeInstance;
+class MorphShapeInstance;
 	
 /*! \brief
  * \ingroup Flash
@@ -34,7 +34,7 @@ class T_DLLCLASS MorphShapeInstanceDebugInfo : public InstanceDebugInfo
 public:
 	MorphShapeInstanceDebugInfo();
 
-	MorphShapeInstanceDebugInfo(const FlashMorphShapeInstance* instance, bool mask, bool clipped);
+	MorphShapeInstanceDebugInfo(const MorphShapeInstance* instance, bool mask, bool clipped);
 
 	bool getMask() const { return m_mask; }
 

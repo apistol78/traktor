@@ -57,7 +57,7 @@ public:
 
 	void beginSprite(
 		render::RenderContext* renderContext,
-		const FlashSpriteInstance& sprite,
+		const SpriteInstance& sprite,
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
 		const Vector4& viewSize,
@@ -67,7 +67,7 @@ public:
 
 	void endSprite(
 		render::RenderContext* renderContext,
-		const FlashSpriteInstance& sprite,
+		const SpriteInstance& sprite,
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
 		const Matrix33& transform,
@@ -114,7 +114,7 @@ private:
 
 	void beginCacheAsBitmap(
 		render::RenderContext* renderContext,
-		const FlashSpriteInstance& spriteInstance,
+		const SpriteInstance& spriteInstance,
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
 		const Vector4& viewSize,

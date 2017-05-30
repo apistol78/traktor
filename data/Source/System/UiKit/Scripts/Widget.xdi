@@ -29,7 +29,7 @@ function Widget.initialize(env, resourceKits)
 	Widget._exclusive = {}
 	Widget._focus = nil
 	for _, rkid in ipairs(resourceKits) do
-		local rk = env:getResource():getResourceManager():bind(traktor.flash.FlashMovie, rkid)
+		local rk = env:getResource():getResourceManager():bind(traktor.flash.Movie, rkid)
 		if rk == nil then return false end
 		table.insert(Widget._resourceKits, rk)
 	end

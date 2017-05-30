@@ -22,7 +22,7 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashSound;
+class Sound;
 
 /*! \brief Sound rendering interface.
  * \ingroup Flash
@@ -34,7 +34,7 @@ class T_DLLCLASS ISoundRenderer : public Object
 public:
 	virtual void destroy() = 0;
 
-	virtual void play(const FlashSound* sound) = 0;
+	virtual void play(const Sound* sound) = 0;
 };
 
 	}

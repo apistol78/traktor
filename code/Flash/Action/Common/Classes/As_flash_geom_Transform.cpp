@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Flash/ColorTransform.h"
-#include "Flash/FlashCharacterInstance.h"
+#include "Flash/CharacterInstance.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Common/Transform.h"
 #include "Flash/Action/Common/Classes/As_flash_geom_Transform.h"
@@ -44,7 +44,7 @@ void As_flash_geom_Transform::construct(ActionObject* self, const ActionValueArr
 	Ref< Transform > tf;
 	if (args.size() >= 1 && args[0].isObject())
 	{
-		Ref< FlashCharacterInstance > instance = args[0].getObject()->getRelay< FlashCharacterInstance >();
+		Ref< CharacterInstance > instance = args[0].getObject()->getRelay< CharacterInstance >();
 		if (instance)
 			tf = new Transform(instance);
 	}

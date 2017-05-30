@@ -9,8 +9,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Flash/FlashSprite.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/Sprite.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/SwfTypes.h"
 #include "Flash/Acc/AccQuad.h"
 #include "Flash/Acc/AccShape.h"
@@ -111,7 +111,7 @@ void AccShapeRenderer::endFrame()
 
 void AccShapeRenderer::beginSprite(
 	render::RenderContext* renderContext,
-	const FlashSpriteInstance& sprite,
+	const SpriteInstance& sprite,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
 	const Vector4& viewSize,
@@ -138,7 +138,7 @@ void AccShapeRenderer::beginSprite(
 
 void AccShapeRenderer::endSprite(
 	render::RenderContext* renderContext,
-	const FlashSpriteInstance& sprite,
+	const SpriteInstance& sprite,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
 	const Matrix33& transform,
@@ -222,7 +222,7 @@ bool AccShapeRenderer::shouldCull() const
 
 void AccShapeRenderer::beginCacheAsBitmap(
 	render::RenderContext* renderContext,
-	const FlashSpriteInstance& spriteInstance,
+	const SpriteInstance& spriteInstance,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
 	const Vector4& viewSize,

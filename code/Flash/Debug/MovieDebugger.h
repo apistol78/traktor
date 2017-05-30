@@ -30,8 +30,8 @@ class BidirectionalObjectTransport;
 	namespace flash
 	{
 	
-class FlashMovie;
-class FlashSpriteInstance;
+class Movie;
+class SpriteInstance;
 
 /*! \brief
  * \ingroup Flash
@@ -44,8 +44,8 @@ public:
 	MovieDebugger(net::BidirectionalObjectTransport* transport, const std::wstring& name);
 
 	void postExecuteFrame(
-		const FlashMovie* movie,
-		const FlashSpriteInstance* movieInstance,
+		const Movie* movie,
+		const SpriteInstance* movieInstance,
 		const Vector4& stageTransform,
 		int32_t viewWidth,
 		int32_t viewHeight
