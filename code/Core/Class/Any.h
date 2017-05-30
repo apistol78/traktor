@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Config.h"
 #include "Core/Ref.h"
-#include "Core/Rtti/TypeInfo.h"
+#include "Core/Rtti/ITypedObject.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
