@@ -397,19 +397,22 @@ void TextLayout::end()
 		}
 
 		// Calculate line offset from first glyph on line to ensure it's glyph bound edge align with text bound.
-		if (!m_attribs.empty())
+		if (!m_attribs.empty() && !i->words.empty())
 		{
 			Word& w = i->words.front();
-			const Attribute& attrib = m_attribs[w.a];
+			if (!w.chars.empty())
+			{
+				const Attribute& attrib = m_attribs[w.a];
 
-			float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
-			float fontScale = coordScale * m_fontHeight;
+				float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+				float fontScale = coordScale * m_fontHeight;
 
-			int32_t idx = attrib.font->lookupIndex(w.chars.front().ch);
-			const Aabb2* bounds = attrib.font->getBounds(idx);
+				int32_t idx = attrib.font->lookupIndex(w.chars.front().ch);
+				const Aabb2* bounds = attrib.font->getBounds(idx);
 
-			if (bounds)
-				i->offset -= fontScale * bounds->mn.x;
+				if (bounds)
+					i->offset -= fontScale * bounds->mn.x;
+			}
 		}
 	}
 

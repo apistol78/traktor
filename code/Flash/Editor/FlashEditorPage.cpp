@@ -35,6 +35,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Editor/FlashMovieAsset.h"
 #include "Flash/Editor/FlashPathControl.h"
 #include "Flash/Editor/FlashPreviewControl.h"
+#include "I18N/Text.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
@@ -118,12 +119,10 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_toolBarPlay->create(container);
 	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Flash.Playback"), 6);
 	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Flash.Flash"), 2);
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rewind", 0, ui::Command(L"Flash.Editor.Rewind")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", 1, ui::Command(L"Flash.Editor.Play")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Stop", 2, ui::Command(L"Flash.Editor.Stop")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Forward", 3, ui::Command(L"Flash.Editor.Forward")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Merge", 6, ui::Command(L"Flash.Editor.Merge")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rasterize", 7, ui::Command(L"Flash.Editor.Rasterize")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_EDITOR_REWIND"), 0, ui::Command(L"Flash.Editor.Rewind")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_EDITOR_PLAY"), 1, ui::Command(L"Flash.Editor.Play")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_EDITOR_STOP"), 2, ui::Command(L"Flash.Editor.Stop")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_EDITOR_FORWARD"), 3, ui::Command(L"Flash.Editor.Forward")));
 
 	m_toolBarPlay->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashEditorPage::eventToolClick);
 
@@ -153,7 +152,6 @@ bool FlashEditorPage::create(ui::Container* parent)
 void FlashEditorPage::destroy()
 {
 	safeDestroy(m_previewControl);
-	log::debug << CharacterInstance::getInstanceCount() << L" leaked character(s)" << Endl;
 }
 
 void FlashEditorPage::activate()
@@ -193,28 +191,6 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 		m_previewControl->forward();
 		updateTreeMovie();
 	}
-	else if (command == L"Flash.Editor.Merge")
-	{
-		Ref< Movie > movie = flash::Optimizer().merge(m_movie);
-		if (movie)
-		{
-			m_movie = movie;
-			m_previewControl->setMovie(m_movie);
-			m_previewControl->update();
-			updateTreeMovie();
-		}
-	}
-	//else if (command == L"Flash.Editor.Rasterize")
-	//{
-	//	Ref< FlashMovie > movie = flash::FlashOptimizer().rasterize(m_movie);
-	//	if (movie)
-	//	{
-	//		m_movie = movie;
-	//		m_previewControl->setMovie(m_movie);
-	//		m_previewControl->update();
-	//		updateTreeMovie();
-	//	}
-	//}
 	else
 		result = false;
 

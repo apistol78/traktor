@@ -8,7 +8,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_flash_SpriteInstanceDebugInfo_H
 
 #include <map>
+#include <utility>
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Flash/Debug/InstanceDebugInfo.h"
 
 // import/export mechanism.
@@ -52,6 +54,8 @@ public:
 
 	const Aabb2& getScalingGrid() const { return m_scalingGrid; }
 
+	const AlignedVector< std::pair< uint32_t, std::string > >& getLabels() const { return m_labels; }
+
 	const RefArray< InstanceDebugInfo >& getChildrenDebugInfo() const { return m_childrenDebugInfo; }
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
@@ -64,6 +68,7 @@ private:
 	uint16_t m_currentFrame;
 	bool m_playing;
 	Aabb2 m_scalingGrid;
+	AlignedVector< std::pair< uint32_t, std::string > > m_labels;
 	RefArray< InstanceDebugInfo > m_childrenDebugInfo;
 };
 	
