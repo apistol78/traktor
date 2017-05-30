@@ -25,7 +25,7 @@ class ISimpleTexture;
 	{
 
 class AccBitmapRect;
-class FlashFillStyle;
+class FillStyle;
 
 /*! \brief Gradient cache for accelerated rendering.
  * \ingroup Flash
@@ -41,7 +41,7 @@ public:
 
 	void clear();
 
-	Ref< AccBitmapRect > getGradientTexture(const FlashFillStyle& style);
+	Ref< AccBitmapRect > getGradientTexture(const FillStyle& style);
 
 	void synchronize();
 

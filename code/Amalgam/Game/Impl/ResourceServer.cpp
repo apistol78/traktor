@@ -11,12 +11,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Flash/FlashMovieResourceFactory.h"
+#include "Flash/MovieResourceFactory.h"
 #include "Heightfield/HeightfieldFactory.h"
 #include "Mesh/MeshFactory.h"
 #include "Spark/CharacterResourceFactory.h"
-#include "Spark/FontResourceFactory.h"
-#include "Spark/ShapeResourceFactory.h"
 #include "Spray/EffectFactory.h"
 #include "Video/VideoFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
@@ -47,10 +45,7 @@ void ResourceServer::createResourceFactories(IEnvironment* environment)
 	m_resourceManager->addFactory(new ai::NavMeshFactory());
 	m_resourceManager->addFactory(new animation::AnimationFactory());
 	m_resourceManager->addFactory(new mesh::MeshFactory(renderSystem));
-	m_resourceManager->addFactory(new spark::CharacterResourceFactory());
-	m_resourceManager->addFactory(new spark::FontResourceFactory(renderSystem));
-	m_resourceManager->addFactory(new spark::ShapeResourceFactory(renderSystem));
-	m_resourceManager->addFactory(new flash::FlashMovieResourceFactory());
+	m_resourceManager->addFactory(new flash::MovieResourceFactory());
 	m_resourceManager->addFactory(new hf::HeightfieldFactory());
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 	m_resourceManager->addFactory(new weather::CloudMaskFactory());

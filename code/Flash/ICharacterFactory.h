@@ -29,9 +29,9 @@ class Matrix33;
 	
 class ActionContext;
 class ActionObject;
-class FlashCharacter;
-class FlashCharacterInstance;
-class FlashDictionary;
+class Character;
+class CharacterInstance;
+class Dictionary;
 class IActionVMImage;
 
 /*! \brief
@@ -42,19 +42,19 @@ class T_DLLCLASS ICharacterFactory : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< FlashCharacterInstance > createInstance(
-		const FlashCharacter* character,
+	virtual Ref< CharacterInstance > createInstance(
+		const Character* character,
 		int32_t depth,
 		ActionContext* context,
-		FlashDictionary* dictionary,
-		FlashCharacterInstance* parent,
+		Dictionary* dictionary,
+		CharacterInstance* parent,
 		const std::string& name,
 		const Matrix33& transform,
 		const ActionObject* initObject,
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 	) const = 0;
 
-	virtual void removeInstance(FlashCharacterInstance* instance, int32_t depth) const = 0;
+	virtual void removeInstance(CharacterInstance* instance, int32_t depth) const = 0;
 };
 	
 	}

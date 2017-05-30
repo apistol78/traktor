@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Misc/StringSplit.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 
@@ -16,7 +16,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionContext", ActionContext, Collectable)
 
-ActionContext::ActionContext(const FlashMovie* movie, const ICharacterFactory* characterFactory, const IFlashMovieLoader* movieLoader)
+ActionContext::ActionContext(const Movie* movie, const ICharacterFactory* characterFactory, const IMovieLoader* movieLoader)
 :	m_movie(movie)
 ,	m_characterFactory(characterFactory)
 ,	m_movieLoader(movieLoader)
@@ -66,12 +66,12 @@ void ActionContext::setGlobal(ActionObject* global)
 	m_global = global;
 }
 
-void ActionContext::setMovieClip(FlashSpriteInstance* movieClip)
+void ActionContext::setMovieClip(SpriteInstance* movieClip)
 {
 	m_movieClip = movieClip;
 }
 
-void ActionContext::setFocus(FlashCharacterInstance* focus)
+void ActionContext::setFocus(CharacterInstance* focus)
 {
 	if (m_focus)
 		m_focus->eventKillFocus();
@@ -82,12 +82,12 @@ void ActionContext::setFocus(FlashCharacterInstance* focus)
 		m_focus->eventSetFocus();
 }
 
-void ActionContext::setPressed(FlashCharacterInstance* pressed)
+void ActionContext::setPressed(CharacterInstance* pressed)
 {
 	m_pressed = pressed;
 }
 
-void ActionContext::setRolledOver(FlashCharacterInstance* rolledOver)
+void ActionContext::setRolledOver(CharacterInstance* rolledOver)
 {
 	m_rolledOver = rolledOver;
 }

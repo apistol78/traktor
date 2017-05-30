@@ -23,7 +23,7 @@ class ActionContext;
 class ActionFrame;
 class ActionObject;
 class ActionVMImage1;
-class FlashSpriteInstance;
+class SpriteInstance;
 
 struct PreparationState
 {
@@ -51,7 +51,7 @@ struct ExecutionState
 	ActionContext* context;
 	ActionObject* self;
 	ActionObject* global;
-	FlashSpriteInstance* movieClip;
+	SpriteInstance* movieClip;
 
 	// Trace instances.
 	OutputStream* trace;

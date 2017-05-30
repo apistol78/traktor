@@ -11,7 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/TString.h"
 #include "Drawing/Image.h"
 #include "Drawing/Raster.h"
-#include "Flash/FlashShape.h"
+#include "Flash/Shape.h"
 #include "Flash/Debug/ButtonInstanceDebugInfo.h"
 #include "Flash/Debug/EditInstanceDebugInfo.h"
 #include "Flash/Debug/MorphShapeInstanceDebugInfo.h"
@@ -110,7 +110,9 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 
 	if (const EditInstanceDebugInfo* editInstance = dynamic_type_cast< const EditInstanceDebugInfo* >(instance))
 	{
-		canvas.setForeground(Color4ub(255, 255, 255, highlight ? 200 : 100));
+		auto color = editInstance->getTextColor();
+
+		canvas.setForeground(Color4ub(color.getRed() * 255, color.getGreen() * 255, color.getBlue() * 255, highlight ? 255 : color.getAlpha() * 255));
 		switch (editInstance->getTextAlign())
 		{
 		case StaRight:
@@ -128,7 +130,7 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 	}
 	else if (const ShapeInstanceDebugInfo* shapeInstance = dynamic_type_cast< const ShapeInstanceDebugInfo* >(instance))
 	{
-		const FlashShape* shape = shapeInstance->getShape();
+		const Shape* shape = shapeInstance->getShape();
 		if (shape)
 		{
 			DebugView::ShapeCache& sc = shapeCache[(void*)shapeInstance];
@@ -169,8 +171,8 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 
 				float strokeScale = std::min(width / frameWidth, height / frameHeight);
 
-				const AlignedVector< FlashFillStyle >& fillStyles = shape->getFillStyles();
-				const AlignedVector< FlashLineStyle >& lineStyles = shape->getLineStyles();
+				const AlignedVector< FillStyle >& fillStyles = shape->getFillStyles();
+				const AlignedVector< LineStyle >& lineStyles = shape->getLineStyles();
 				int32_t lineStyleBase = 0;
 
 				// Convert all styles used by this shape.
@@ -178,8 +180,8 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 
 				for (uint32_t i = 0; i < uint32_t(fillStyles.size()); ++i)
 				{
-					const FlashFillStyle& style = fillStyles[i];
-					const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
+					const FillStyle& style = fillStyles[i];
+					const AlignedVector< FillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 
 					if (colorRecords.size() == 1)
 					{
@@ -190,7 +192,7 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 					{
 						switch (style.getGradientType())
 						{
-						case FlashFillStyle::GtLinear:
+						case FillStyle::GtLinear:
 							{
 								AlignedVector< std::pair< Color4f, float > > colors;
 								for (uint32_t j = 0; j < colorRecords.size(); ++j)
@@ -205,7 +207,7 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 							}
 							break;
 
-						case FlashFillStyle::GtRadial:
+						case FillStyle::GtRadial:
 							{
 								AlignedVector< std::pair< Color4f, float > > colors;
 								for (uint32_t j = 0; j < colorRecords.size(); ++j)
@@ -233,7 +235,7 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 				lineStyleBase = int32_t(fillStyles.size());
 				for (uint32_t i = 0; i < uint32_t(lineStyles.size()); ++i)
 				{
-					const FlashLineStyle& style = lineStyles[i];
+					const LineStyle& style = lineStyles[i];
 					raster->defineSolidStyle(style.getLineColor() * cxm + cxa);
 				}
 

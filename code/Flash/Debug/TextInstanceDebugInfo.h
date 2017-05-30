@@ -22,7 +22,7 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashTextInstance;
+class TextInstance;
 	
 /*! \brief
  * \ingroup Flash
@@ -34,7 +34,7 @@ class T_DLLCLASS TextInstanceDebugInfo : public InstanceDebugInfo
 public:
 	TextInstanceDebugInfo();
 
-	TextInstanceDebugInfo(const FlashTextInstance* instance);
+	TextInstanceDebugInfo(const TextInstance* instance);
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 };

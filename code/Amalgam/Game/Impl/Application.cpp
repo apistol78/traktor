@@ -45,7 +45,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Timer/Profiler.h"
 #include "Database/Database.h"
 #include "Database/Events/EvtInstanceCommitted.h"
-#include "Flash/FlashCharacterInstance.h"
+#include "Flash/CharacterInstance.h"
 #include "Flash/GC.h"
 #include "Online/ISessionManager.h"
 #include "Net/BidirectionalObjectTransport.h"
@@ -1035,7 +1035,7 @@ bool Application::update()
 			if (m_audioServer)
 				m_targetPerformance.activeSoundChannels = m_audioServer->getActiveSoundChannels();
 
-			m_targetPerformance.flashCharacterCount = flash::FlashCharacterInstance::getInstanceCount();
+			m_targetPerformance.flashCharacterCount = flash::CharacterInstance::getInstanceCount();
 
 			m_targetManagerConnection->getTransport()->send(&m_targetPerformance);
 		}

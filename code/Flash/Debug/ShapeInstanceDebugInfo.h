@@ -22,8 +22,8 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashShape;
-class FlashShapeInstance;
+class Shape;
+class ShapeInstance;
 	
 /*! \brief
  * \ingroup Flash
@@ -35,9 +35,9 @@ class T_DLLCLASS ShapeInstanceDebugInfo : public InstanceDebugInfo
 public:
 	ShapeInstanceDebugInfo();
 
-	ShapeInstanceDebugInfo(const FlashShapeInstance* instance, bool mask, bool clipped);
+	ShapeInstanceDebugInfo(const ShapeInstance* instance, bool mask, bool clipped);
 
-	const FlashShape* getShape() const { return m_shape; }
+	const Shape* getShape() const { return m_shape; }
 
 	bool getMask() const { return m_mask; }
 
@@ -46,7 +46,7 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
-	Ref< const FlashShape > m_shape;
+	Ref< const Shape > m_shape;
 	bool m_mask;
 	bool m_clipped;
 };

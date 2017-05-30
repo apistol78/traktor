@@ -14,7 +14,7 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashTextFormat;
+class TextFormat;
 
 /*! \brief TextFormat class.
  * \ingroup Flash
@@ -33,77 +33,77 @@ public:
 	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
 
 private:
-	std::string TextFormat_get_align(FlashTextFormat* self) const;
+	std::string TextFormat_get_align(TextFormat* self) const;
 
-	void TextFormat_set_align(FlashTextFormat* self, const std::string& value) const;
+	void TextFormat_set_align(TextFormat* self, const std::string& value) const;
 
-	float TextFormat_get_blockIndent(FlashTextFormat* self) const;
+	float TextFormat_get_blockIndent(TextFormat* self) const;
 
-	void TextFormat_set_blockIndent(FlashTextFormat* self, float value) const;
+	void TextFormat_set_blockIndent(TextFormat* self, float value) const;
 
-	bool TextFormat_get_bold(FlashTextFormat* self) const;
+	bool TextFormat_get_bold(TextFormat* self) const;
 
-	void TextFormat_set_bold(FlashTextFormat* self, bool value) const;
+	void TextFormat_set_bold(TextFormat* self, bool value) const;
 
-	bool TextFormat_get_bullet(FlashTextFormat* self) const;
+	bool TextFormat_get_bullet(TextFormat* self) const;
 
-	void TextFormat_set_bullet(FlashTextFormat* self, bool value) const;
+	void TextFormat_set_bullet(TextFormat* self, bool value) const;
 
-	ActionValue TextFormat_get_color(FlashTextFormat* self) const;
+	ActionValue TextFormat_get_color(TextFormat* self) const;
 
-	void TextFormat_set_color(FlashTextFormat* self, const ActionValue& value) const;
+	void TextFormat_set_color(TextFormat* self, const ActionValue& value) const;
 
-	std::string TextFormat_get_font(FlashTextFormat* self) const;
+	std::string TextFormat_get_font(TextFormat* self) const;
 
-	void TextFormat_set_font(FlashTextFormat* self, const std::string& value) const;
+	void TextFormat_set_font(TextFormat* self, const std::string& value) const;
 
-	float TextFormat_get_indent(FlashTextFormat* self) const;
+	float TextFormat_get_indent(TextFormat* self) const;
 
-	void TextFormat_set_indent(FlashTextFormat* self, float value) const;
+	void TextFormat_set_indent(TextFormat* self, float value) const;
 
-	bool TextFormat_get_italic(FlashTextFormat* self) const;
+	bool TextFormat_get_italic(TextFormat* self) const;
 
-	void TextFormat_set_italic(FlashTextFormat* self, bool value) const;
+	void TextFormat_set_italic(TextFormat* self, bool value) const;
 
-	bool TextFormat_get_kerning(FlashTextFormat* self) const;
+	bool TextFormat_get_kerning(TextFormat* self) const;
 
-	void TextFormat_set_kerning(FlashTextFormat* self, bool value) const;
+	void TextFormat_set_kerning(TextFormat* self, bool value) const;
 
-	float TextFormat_get_leading(FlashTextFormat* self) const;
+	float TextFormat_get_leading(TextFormat* self) const;
 
-	void TextFormat_set_leading(FlashTextFormat* self, float value) const;
+	void TextFormat_set_leading(TextFormat* self, float value) const;
 
-	float TextFormat_get_leftMargin(FlashTextFormat* self) const;
+	float TextFormat_get_leftMargin(TextFormat* self) const;
 
-	void TextFormat_set_leftMargin(FlashTextFormat* self, float value) const;
+	void TextFormat_set_leftMargin(TextFormat* self, float value) const;
 
-	float TextFormat_get_letterSpacing(FlashTextFormat* self) const;
+	float TextFormat_get_letterSpacing(TextFormat* self) const;
 
-	void TextFormat_set_letterSpacing(FlashTextFormat* self, float value) const;
+	void TextFormat_set_letterSpacing(TextFormat* self, float value) const;
 
-	float TextFormat_get_rightMargin(FlashTextFormat* self) const;
+	float TextFormat_get_rightMargin(TextFormat* self) const;
 
-	void TextFormat_set_rightMargin(FlashTextFormat* self, float value) const;
+	void TextFormat_set_rightMargin(TextFormat* self, float value) const;
 
-	float TextFormat_get_size(FlashTextFormat* self) const;
+	float TextFormat_get_size(TextFormat* self) const;
 
-	void TextFormat_set_size(FlashTextFormat* self, float value) const;
+	void TextFormat_set_size(TextFormat* self, float value) const;
 
-	ActionValue TextFormat_get_tabStops(FlashTextFormat* self) const;
+	ActionValue TextFormat_get_tabStops(TextFormat* self) const;
 
-	void TextFormat_set_tabStops(FlashTextFormat* self, const ActionValue& value) const;
+	void TextFormat_set_tabStops(TextFormat* self, const ActionValue& value) const;
 
-	std::string TextFormat_get_target(FlashTextFormat* self) const;
+	std::string TextFormat_get_target(TextFormat* self) const;
 
-	void TextFormat_set_target(FlashTextFormat* self, const std::string& value) const;
+	void TextFormat_set_target(TextFormat* self, const std::string& value) const;
 
-	bool TextFormat_get_underline(FlashTextFormat* self) const;
+	bool TextFormat_get_underline(TextFormat* self) const;
 
-	void TextFormat_set_underline(FlashTextFormat* self, bool value) const;
+	void TextFormat_set_underline(TextFormat* self, bool value) const;
 
-	std::string TextFormat_get_url(FlashTextFormat* self) const;
+	std::string TextFormat_get_url(TextFormat* self) const;
 
-	void TextFormat_set_url(FlashTextFormat* self, const std::string& value) const;
+	void TextFormat_set_url(TextFormat* self, const std::string& value) const;
 };
 
 	}

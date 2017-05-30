@@ -33,19 +33,19 @@ class T_DLLCLASS DefaultCharacterFactory : public ICharacterFactory
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< FlashCharacterInstance > createInstance(
-		const FlashCharacter* character,
+	virtual Ref< CharacterInstance > createInstance(
+		const Character* character,
 		int32_t depth,
 		ActionContext* context,
-		FlashDictionary* dictionary,
-		FlashCharacterInstance* parent,
+		Dictionary* dictionary,
+		CharacterInstance* parent,
 		const std::string& name,
 		const Matrix33& transform,
 		const ActionObject* initObject,
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 	) const T_OVERRIDE T_FINAL;
 
-	virtual void removeInstance(FlashCharacterInstance* instance, int32_t depth) const T_OVERRIDE T_FINAL;
+	virtual void removeInstance(CharacterInstance* instance, int32_t depth) const T_OVERRIDE T_FINAL;
 };
 	
 	}

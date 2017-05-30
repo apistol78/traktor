@@ -5,9 +5,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Log/Log.h"
-#include "Flash/FlashDictionary.h"
-#include "Flash/FlashSoundPlayer.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/Dictionary.h"
+#include "Flash/SoundPlayer.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/ActionObjectRelay.h"
@@ -20,18 +20,18 @@ namespace traktor
 		namespace
 		{
 
-class FlashSoundRelay : public ActionObjectRelay
+class SoundRelay : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 
 public:
-	FlashSoundRelay(const FlashSound* sound)
+	SoundRelay(const Sound* sound)
 	:	ActionObjectRelay("Sound")
 	,	m_sound(sound)
 	{
 	}
 
-	const FlashSound* getSound() const { return m_sound; }
+	const Sound* getSound() const { return m_sound; }
 
 protected:
 	virtual void dereference() T_OVERRIDE T_FINAL
@@ -41,16 +41,16 @@ protected:
 	}
 
 private:
-	Ref< const FlashSound > m_sound;
+	Ref< const Sound > m_sound;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashSoundRelay", FlashSoundRelay, ActionObjectRelay)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.SoundRelay", SoundRelay, ActionObjectRelay)
 
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSound", AsSound, ActionClass)
 
-AsSound::AsSound(ActionContext* context, FlashSoundPlayer* soundPlayer)
+AsSound::AsSound(ActionContext* context, SoundPlayer* soundPlayer)
 :	ActionClass(context, "Sound")
 ,	m_soundPlayer(soundPlayer)
 {
@@ -98,7 +98,7 @@ void AsSound::Sound_attachSound(ActionObject* self, const std::string& exportNam
 	ActionContext* context = self->getContext();
 	T_ASSERT (context);
 
-	FlashDictionary* dictionary = context->getMovieClip()->getDictionary();
+	Dictionary* dictionary = context->getMovieClip()->getDictionary();
 	if (!dictionary)
 		return;
 
@@ -109,14 +109,14 @@ void AsSound::Sound_attachSound(ActionObject* self, const std::string& exportNam
 		return;
 	}
 
-	const FlashSound* sound = dictionary->getSound(soundId);
+	const Sound* sound = dictionary->getSound(soundId);
 	if (!sound)
 	{
 		log::error << L"No sound defined with id " << soundId << L", exported as \"" << mbstows(exportName) << L"\"" << Endl;
 		return;
 	}
 
-	self->setRelay(new FlashSoundRelay(sound));
+	self->setRelay(new SoundRelay(sound));
 }
 
 void AsSound::Sound_getBytesLoaded(CallArgs& ca)
@@ -184,7 +184,7 @@ void AsSound::Sound_setVolume(CallArgs& ca)
 
 void AsSound::Sound_start(ActionObject* self) const
 {
-	FlashSoundRelay* fsr = self->getRelay< FlashSoundRelay >();
+	SoundRelay* fsr = self->getRelay< SoundRelay >();
 	if (!fsr)
 		return;
 
@@ -193,7 +193,7 @@ void AsSound::Sound_start(ActionObject* self) const
 
 void AsSound::Sound_stop(ActionObject* self) const
 {
-	FlashSoundRelay* fsr = self->getRelay< FlashSoundRelay >();
+	SoundRelay* fsr = self->getRelay< SoundRelay >();
 	if (!fsr)
 		return;
 }

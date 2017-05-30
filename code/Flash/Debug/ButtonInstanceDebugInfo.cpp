@@ -4,7 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Flash/FlashButtonInstance.h"
+#include "Flash/ButtonInstance.h"
 #include "Flash/Debug/ButtonInstanceDebugInfo.h"
 
 namespace traktor
@@ -18,7 +18,7 @@ ButtonInstanceDebugInfo::ButtonInstanceDebugInfo()
 {
 }
 
-ButtonInstanceDebugInfo::ButtonInstanceDebugInfo(const FlashButtonInstance* instance)
+ButtonInstanceDebugInfo::ButtonInstanceDebugInfo(const ButtonInstance* instance)
 {
 	m_name = instance->getName();
 	m_bounds = instance->getLocalBounds();

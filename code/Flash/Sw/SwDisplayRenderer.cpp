@@ -7,12 +7,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Drawing/Image.h"
 #include "Drawing/Raster.h"
 #include "Flash/ColorTransform.h"
-#include "Flash/FlashBitmapImage.h"
-#include "Flash/FlashCanvas.h"
-#include "Flash/FlashDictionary.h"
-#include "Flash/FlashFont.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashShape.h"
+#include "Flash/BitmapImage.h"
+#include "Flash/Canvas.h"
+#include "Flash/Dictionary.h"
+#include "Flash/Font.h"
+#include "Flash/Movie.h"
+#include "Flash/Shape.h"
 #include "Flash/Sw/SwDisplayRenderer.h"
 
 namespace traktor
@@ -56,7 +56,7 @@ bool SwDisplayRenderer::wantDirtyRegion() const
 }
 
 void SwDisplayRenderer::begin(
-	const FlashDictionary& dictionary,
+	const Dictionary& dictionary,
 	const Color4f& backgroundColor,
 	const Aabb2& frameBounds,
 	const Vector4& frameTransform,
@@ -71,19 +71,19 @@ void SwDisplayRenderer::begin(
 	m_frameTransform = frameTransform;
 }
 
-void SwDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
+void SwDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
 }
 
-void SwDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
+void SwDisplayRenderer::endSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
 }
 
-void SwDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix33& transform)
+void SwDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& transform)
 {
 }
 
-void SwDisplayRenderer::endEdit(const FlashEditInstance& edit, const Matrix33& transform)
+void SwDisplayRenderer::endEdit(const EditInstance& edit, const Matrix33& transform)
 {
 }
 
@@ -125,7 +125,7 @@ void SwDisplayRenderer::endMask()
 		m_raster->setMask(0);
 }
 
-void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const ColorTransform& cxform, uint8_t blendMode)
+void SwDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33& transform, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode)
 {
 	if (!m_writeEnable)
 		return;
@@ -146,8 +146,8 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 
 	float strokeScale = std::min(width / frameWidth, height / frameHeight);
 
-	const AlignedVector< FlashFillStyle >& fillStyles = shape.getFillStyles();
-	const AlignedVector< FlashLineStyle >& lineStyles = shape.getLineStyles();
+	const AlignedVector< FillStyle >& fillStyles = shape.getFillStyles();
+	const AlignedVector< LineStyle >& lineStyles = shape.getLineStyles();
 	int32_t lineStyleBase = 0;
 
 	// Convert all styles used by this shape.
@@ -156,10 +156,10 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 	{
 		for (uint32_t i = 0; i < uint32_t(fillStyles.size()); ++i)
 		{
-			const FlashFillStyle& style = fillStyles[i];
-			const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
+			const FillStyle& style = fillStyles[i];
+			const AlignedVector< FillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 
-			const FlashBitmapImage* bitmap = dynamic_type_cast< const FlashBitmapImage* >(dictionary.getBitmap(style.getFillBitmap()));
+			const BitmapImage* bitmap = dynamic_type_cast< const BitmapImage* >(dictionary.getBitmap(style.getFillBitmap()));
 			if (bitmap)
 			{
 				const drawing::Image* image = bitmap->getImage();
@@ -182,7 +182,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 				{
 					switch (style.getGradientType())
 					{
-					case FlashFillStyle::GtLinear:
+					case FillStyle::GtLinear:
 						{
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)
@@ -197,7 +197,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 						}
 						break;
 
-					case FlashFillStyle::GtRadial:
+					case FillStyle::GtRadial:
 						{
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)
@@ -226,7 +226,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 		lineStyleBase = int32_t(fillStyles.size());
 		for (uint32_t i = 0; i < uint32_t(lineStyles.size()); ++i)
 		{
-			const FlashLineStyle& style = lineStyles[i];
+			const LineStyle& style = lineStyles[i];
 			m_raster->defineSolidStyle(style.getLineColor() * cxm + cxa);
 		}
 	}
@@ -282,15 +282,15 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 	}
 }
 
-void SwDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const ColorTransform& cxform)
+void SwDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const MorphShape& shape, const ColorTransform& cxform)
 {
 }
 
 void SwDisplayRenderer::renderGlyph(
-	const FlashDictionary& dictionary,
+	const Dictionary& dictionary,
 	const Matrix33& transform,
-	const FlashFont* font,
-	const FlashShape* glyph,
+	const Font* font,
+	const Shape* glyph,
 	float fontHeight,
 	wchar_t character,
 	const Color4f& color,
@@ -311,7 +311,7 @@ void SwDisplayRenderer::renderGlyph(
 	float frameWidth = m_frameBounds.mx.x;
 	float frameHeight = m_frameBounds.mx.y;
 
-	float coordScale = font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+	float coordScale = font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
 	float fontScale = coordScale * fontHeight;
 
 	Matrix33 rasterTransform =
@@ -359,7 +359,7 @@ void SwDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bound
 {
 }
 
-void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const ColorTransform& cxform, uint8_t blendMode)
+void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& canvas, const ColorTransform& cxform, uint8_t blendMode)
 {
 	if (!m_writeEnable)
 		return;
@@ -380,9 +380,9 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanva
 
 	float strokeScale = std::min(width / frameWidth, height / frameHeight);
 
-	const FlashDictionary& dictionary = canvas.getDictionary();
-	const AlignedVector< FlashFillStyle >& fillStyles = canvas.getFillStyles();
-	const AlignedVector< FlashLineStyle >& lineStyles = canvas.getLineStyles();
+	const Dictionary& dictionary = canvas.getDictionary();
+	const AlignedVector< FillStyle >& fillStyles = canvas.getFillStyles();
+	const AlignedVector< LineStyle >& lineStyles = canvas.getLineStyles();
 	int32_t lineStyleBase = 0;
 
 	// Convert all styles used by this shape.
@@ -391,10 +391,10 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanva
 	{
 		for (uint32_t i = 0; i < uint32_t(fillStyles.size()); ++i)
 		{
-			const FlashFillStyle& style = fillStyles[i];
-			const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
+			const FillStyle& style = fillStyles[i];
+			const AlignedVector< FillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 
-			const FlashBitmapImage* bitmap = dynamic_type_cast< const FlashBitmapImage* >(dictionary.getBitmap(style.getFillBitmap()));
+			const BitmapImage* bitmap = dynamic_type_cast< const BitmapImage* >(dictionary.getBitmap(style.getFillBitmap()));
 			if (bitmap)
 			{
 				const drawing::Image* image = bitmap->getImage();
@@ -417,7 +417,7 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanva
 				{
 					switch (style.getGradientType())
 					{
-					case FlashFillStyle::GtLinear:
+					case FillStyle::GtLinear:
 						{
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)
@@ -432,7 +432,7 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanva
 						}
 						break;
 
-					case FlashFillStyle::GtRadial:
+					case FillStyle::GtRadial:
 						{
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)
@@ -461,7 +461,7 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanva
 		lineStyleBase = int32_t(fillStyles.size());
 		for (uint32_t i = 0; i < uint32_t(lineStyles.size()); ++i)
 		{
-			const FlashLineStyle& style = lineStyles[i];
+			const LineStyle& style = lineStyles[i];
 			m_raster->defineSolidStyle(style.getLineColor() * cxm + cxa);
 		}
 	}

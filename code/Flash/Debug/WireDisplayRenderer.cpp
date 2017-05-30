@@ -5,10 +5,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Misc/SafeDestroy.h"
-#include "Flash/FlashEditInstance.h"
-#include "Flash/FlashFont.h"
-#include "Flash/FlashShape.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/EditInstance.h"
+#include "Flash/Font.h"
+#include "Flash/Shape.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/TextLayout.h"
 #include "Flash/Action/ActionObject.h"
 #include "Flash/Debug/WireDisplayRenderer.h"
@@ -83,7 +83,7 @@ bool WireDisplayRenderer::wantDirtyRegion() const
 }
 
 void WireDisplayRenderer::begin(
-	const FlashDictionary& dictionary,
+	const Dictionary& dictionary,
 	const Color4f& backgroundColor,
 	const Aabb2& frameBounds,
 	const Vector4& frameTransform,
@@ -100,7 +100,7 @@ void WireDisplayRenderer::begin(
 	m_wireEnable.push(false);
 }
 
-void WireDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
+void WireDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
 	m_displayRenderer->beginSprite(sprite, transform);
 
@@ -155,13 +155,13 @@ void WireDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const M
 	}
 }
 
-void WireDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
+void WireDisplayRenderer::endSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
 	m_displayRenderer->endSprite(sprite, transform);
 	m_wireEnable.pop();
 }
 
-void WireDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix33& transform)
+void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& transform)
 {
 	m_displayRenderer->beginEdit(edit, transform);
 
@@ -215,7 +215,7 @@ void WireDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix3
 					const TextLayout::Attribute& attrib = attribs[j->a];
 					const AlignedVector< TextLayout::Character >& chars = j->chars;
 
-					float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+					float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
 					float fontScale = coordScale * layout->getFontHeight();
 
 					for (uint32_t k = 0; k < chars.size(); ++k)
@@ -224,7 +224,7 @@ void WireDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix3
 						{
 							uint16_t glyphIndex = attrib.font->lookupIndex(chars[k].ch);
 
-							const FlashShape* glyphShape = attrib.font->getShape(glyphIndex);
+							const Shape* glyphShape = attrib.font->getShape(glyphIndex);
 							if (!glyphShape)
 								continue;
 
@@ -250,7 +250,7 @@ void WireDisplayRenderer::beginEdit(const FlashEditInstance& edit, const Matrix3
 	}
 }
 
-void WireDisplayRenderer::endEdit(const FlashEditInstance& edit, const Matrix33& transform)
+void WireDisplayRenderer::endEdit(const EditInstance& edit, const Matrix33& transform)
 {
 	m_displayRenderer->endEdit(edit, transform);
 	m_wireEnable.pop();
@@ -266,7 +266,7 @@ void WireDisplayRenderer::endMask()
 	m_displayRenderer->endMask();
 }
 
-void WireDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const ColorTransform& cxform, uint8_t blendMode)
+void WireDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33& transform, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode)
 {
 	m_displayRenderer->renderShape(dictionary, transform, shape, cxform, blendMode);
 
@@ -295,16 +295,16 @@ void WireDisplayRenderer::renderShape(const FlashDictionary& dictionary, const M
 	}
 }
 
-void WireDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const ColorTransform& cxform)
+void WireDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const MorphShape& shape, const ColorTransform& cxform)
 {
 	m_displayRenderer->renderMorphShape(dictionary, transform, shape, cxform);
 }
 
 void WireDisplayRenderer::renderGlyph(
-	const FlashDictionary& dictionary,
+	const Dictionary& dictionary,
 	const Matrix33& transform,
-	const FlashFont* font,
-	const FlashShape* glyph,
+	const Font* font,
+	const Shape* glyph,
 	float fontHeight,
 	wchar_t character,
 	const Color4f& color,
@@ -321,7 +321,7 @@ void WireDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bou
 	m_displayRenderer->renderQuad(transform, bounds, cxform);
 }
 
-void WireDisplayRenderer::renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const ColorTransform& cxform, uint8_t blendMode)
+void WireDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& canvas, const ColorTransform& cxform, uint8_t blendMode)
 {
 	m_displayRenderer->renderCanvas(transform, canvas, cxform, blendMode);
 }

@@ -14,11 +14,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Drawing/PixelFormat.h"
 #include "Editor/IEditor.h"
 #include "Flash/DefaultCharacterFactory.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashMovieLoader.h"
-#include "Flash/FlashMoviePlayer.h"
-#include "Flash/FlashFrame.h"
-#include "Flash/FlashSprite.h"
+#include "Flash/Movie.h"
+#include "Flash/MovieLoader.h"
+#include "Flash/MoviePlayer.h"
+#include "Flash/Frame.h"
+#include "Flash/Sprite.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
 #include "Flash/Action/Common/Classes/AsKey.h"
 #include "Flash/Editor/FlashPreviewControl.h"
@@ -202,7 +202,7 @@ void FlashPreviewControl::destroy()
 	Widget::destroy();
 }
 
-void FlashPreviewControl::setMovie(FlashMovie* movie)
+void FlashPreviewControl::setMovie(Movie* movie)
 {
 	m_movie = movie;
 	
@@ -211,11 +211,11 @@ void FlashPreviewControl::setMovie(FlashMovie* movie)
 
 	ui::Size sz = getInnerRect().getSize();
 
-	m_moviePlayer = new FlashMoviePlayer(
+	m_moviePlayer = new MoviePlayer(
 		m_displayRenderer,
 		m_soundRenderer,
 		new flash::DefaultCharacterFactory(),
-		new flash::FlashMovieLoader(),
+		new flash::MovieLoader(),
 		0
 	);
 	m_moviePlayer->create(movie, sz.cx, sz.cy);

@@ -37,11 +37,11 @@ class AccGradientCache;
 class AccShapeResources;
 class AccTextureCache;
 class ColorTransform;
-class FlashCanvas;
-class FlashDictionary;
-class FlashFillStyle;
-class FlashLineStyle;
-class FlashShape;
+class Canvas;
+class Dictionary;
+class FillStyle;
+class LineStyle;
+class Shape;
 
 /*! \brief Accelerated shape.
  * \ingroup Flash
@@ -64,9 +64,9 @@ public:
 		AccShapeVertexPool* vertexPool,
 		AccGradientCache* gradientCache,
 		AccTextureCache* textureCache,
-		const FlashDictionary& dictionary,
-		const AlignedVector< FlashFillStyle >& fillStyles,
-		const AlignedVector< FlashLineStyle >& lineStyles,
+		const Dictionary& dictionary,
+		const AlignedVector< FillStyle >& fillStyles,
+		const AlignedVector< LineStyle >& lineStyles,
 		const AlignedVector< Path >& paths,
 		bool oddEven
 	);
@@ -75,9 +75,9 @@ public:
 		AccShapeVertexPool* vertexPool,
 		AccGradientCache* gradientCache,
 		AccTextureCache* textureCache,
-		const FlashDictionary& dictionary,
-		const AlignedVector< FlashFillStyle >& fillStyles,
-		const AlignedVector< FlashLineStyle >& lineStyles,
+		const Dictionary& dictionary,
+		const AlignedVector< FillStyle >& fillStyles,
+		const AlignedVector< LineStyle >& lineStyles,
 		const AlignedVector< Triangle >& triangles
 	);
 
@@ -85,23 +85,23 @@ public:
 		AccShapeVertexPool* vertexPool,
 		AccGradientCache* gradientCache,
 		AccTextureCache* textureCache,
-		const FlashDictionary& dictionary,
-		const FlashShape& shape
+		const Dictionary& dictionary,
+		const Shape& shape
 	);
 
 	bool createFromGlyph(
 		AccShapeVertexPool* vertexPool,
 		AccGradientCache* gradientCache,
 		AccTextureCache* textureCache,
-		const FlashDictionary& dictionary,
-		const FlashShape& shape
+		const Dictionary& dictionary,
+		const Shape& shape
 	);
 
 	bool createFromCanvas(
 		AccShapeVertexPool* vertexPool,
 		AccGradientCache* gradientCache,
 		AccTextureCache* textureCache,
-		const FlashCanvas& canvas
+		const Canvas& canvas
 	);
 
 	void destroy();

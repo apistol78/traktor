@@ -6,7 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <cstring>
 #include "Core/Misc/Adler32.h"
-#include "Flash/FlashFillStyle.h"
+#include "Flash/FillStyle.h"
 #include "Flash/Acc/AccBitmapRect.h"
 #include "Flash/Acc/AccGradientCache.h"
 #include "Render/IRenderSystem.h"
@@ -25,7 +25,7 @@ const uint32_t c_gradientsWidth = 1024;
 const uint32_t c_gradientsHeight = 1024;
 const uint32_t c_gradientsColumns = c_gradientsWidth / c_gradientsSize;
 
-Color4f interpolateGradient(const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords, float f)
+Color4f interpolateGradient(const AlignedVector< FillStyle::ColorRecord >& colorRecords, float f)
 {
 	if (colorRecords.size() <= 1)
 		return colorRecords[0].color;
@@ -34,8 +34,8 @@ Color4f interpolateGradient(const AlignedVector< FlashFillStyle::ColorRecord >& 
 	while (i < int32_t(colorRecords.size() - 2) && colorRecords[i + 1].ratio < f)
 		++i;
 
-	const FlashFillStyle::ColorRecord& a = colorRecords[i];
-	const FlashFillStyle::ColorRecord& b = colorRecords[i + 1];
+	const FillStyle::ColorRecord& a = colorRecords[i];
+	const FillStyle::ColorRecord& b = colorRecords[i + 1];
 
 	if (f <= a.ratio)
 		return a.color;
@@ -92,15 +92,15 @@ void AccGradientCache::clear()
 	m_cache.clear();
 }
 
-Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& style)
+Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style)
 {
-	const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
+	const AlignedVector< FillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 	T_ASSERT (colorRecords.size() > 1);
 
 	Adler32 cs;
 	cs.begin();
 	cs.feed(style.getGradientType());
-	for (AlignedVector< FlashFillStyle::ColorRecord >::const_iterator i = colorRecords.begin(); i != colorRecords.end(); ++i)
+	for (AlignedVector< FillStyle::ColorRecord >::const_iterator i = colorRecords.begin(); i != colorRecords.end(); ++i)
 		cs.feed(*i);
 	cs.end();
 
@@ -109,7 +109,7 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 	if (it != m_cache.end())
 		return it->second;
 
-	if (style.getGradientType() == FlashFillStyle::GtLinear)
+	if (style.getGradientType() == FillStyle::GtLinear)
 	{
 		if (m_nextGradient + 1 > c_gradientsHeight)
 		{
@@ -160,7 +160,7 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FlashFillStyle& 
 
 		return m_cache[hash];
 	}
-	else if (style.getGradientType() == FlashFillStyle::GtRadial)
+	else if (style.getGradientType() == FillStyle::GtRadial)
 	{
 		if (m_nextGradient + c_gradientsSize > c_gradientsHeight)
 		{

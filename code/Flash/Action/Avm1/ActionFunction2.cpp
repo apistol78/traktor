@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Log/Log.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionSuper.h"
@@ -112,7 +112,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	{
 		if (self)
 		{
-			FlashCharacterInstance* characterInstance = self->getRelay< FlashCharacterInstance >();
+			CharacterInstance* characterInstance = self->getRelay< CharacterInstance >();
 			callFrame.setRegister(preloadRegister++, ActionValue(characterInstance->getParent()->getAsObject(cx)));
 		}
 		else

@@ -14,7 +14,7 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashButtonInstance;
+class ButtonInstance;
 
 /*! \brief Button class.
  * \ingroup Flash
@@ -33,115 +33,115 @@ public:
 	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
 
 private:
-	void Button_get_alpha(const FlashButtonInstance* self) const;
+	void Button_get_alpha(const ButtonInstance* self) const;
 
-	void Button_set_alpha(FlashButtonInstance* self) const;
+	void Button_set_alpha(ButtonInstance* self) const;
 
-	void Button_get_blendMode(const FlashButtonInstance* self) const;
+	void Button_get_blendMode(const ButtonInstance* self) const;
 
-	void Button_set_blendMode(FlashButtonInstance* self) const;
+	void Button_set_blendMode(ButtonInstance* self) const;
 
-	void Button_get_cacheAsBitmap(const FlashButtonInstance* self) const;
+	void Button_get_cacheAsBitmap(const ButtonInstance* self) const;
 
-	void Button_set_cacheAsBitmap(FlashButtonInstance* self) const;
+	void Button_set_cacheAsBitmap(ButtonInstance* self) const;
 
-	void Button_get_enabled(const FlashButtonInstance* self) const;
+	void Button_get_enabled(const ButtonInstance* self) const;
 
-	void Button_set_enabled(FlashButtonInstance* self) const;
+	void Button_set_enabled(ButtonInstance* self) const;
 
-	void Button_get_filters(const FlashButtonInstance* self) const;
+	void Button_get_filters(const ButtonInstance* self) const;
 
-	void Button_set_filters(FlashButtonInstance* self) const;
+	void Button_set_filters(ButtonInstance* self) const;
 
-	void Button_get_focusrect(const FlashButtonInstance* self) const;
+	void Button_get_focusrect(const ButtonInstance* self) const;
 
-	void Button_set_focusrect(FlashButtonInstance* self) const;
+	void Button_set_focusrect(ButtonInstance* self) const;
 
-	void Button_get_height(const FlashButtonInstance* self) const;
+	void Button_get_height(const ButtonInstance* self) const;
 
-	void Button_set_height(FlashButtonInstance* self) const;
+	void Button_set_height(ButtonInstance* self) const;
 
-	void Button_get_highquality(const FlashButtonInstance* self) const;
+	void Button_get_highquality(const ButtonInstance* self) const;
 
-	void Button_set_highquality(FlashButtonInstance* self) const;
+	void Button_set_highquality(ButtonInstance* self) const;
 
-	void Button_get_menu(const FlashButtonInstance* self) const;
+	void Button_get_menu(const ButtonInstance* self) const;
 
-	void Button_set_menu(FlashButtonInstance* self) const;
+	void Button_set_menu(ButtonInstance* self) const;
 
-	std::string Button_get_name(const FlashButtonInstance* self) const;
+	std::string Button_get_name(const ButtonInstance* self) const;
 
-	void Button_set_name(FlashButtonInstance* self, const std::string& name) const;
+	void Button_set_name(ButtonInstance* self, const std::string& name) const;
 
-	void Button_get_parent(const FlashButtonInstance* self) const;
+	void Button_get_parent(const ButtonInstance* self) const;
 
-	void Button_set_parent(FlashButtonInstance* self) const;
+	void Button_set_parent(ButtonInstance* self) const;
 
-	void Button_get_quality(const FlashButtonInstance* self) const;
+	void Button_get_quality(const ButtonInstance* self) const;
 
-	void Button_set_quality(FlashButtonInstance* self) const;
+	void Button_set_quality(ButtonInstance* self) const;
 
-	void Button_get_rotation(const FlashButtonInstance* self) const;
+	void Button_get_rotation(const ButtonInstance* self) const;
 
-	void Button_set_rotation(FlashButtonInstance* self) const;
+	void Button_set_rotation(ButtonInstance* self) const;
 
-	void Button_get_scale9Grid(const FlashButtonInstance* self) const;
+	void Button_get_scale9Grid(const ButtonInstance* self) const;
 
-	void Button_set_scale9Grid(FlashButtonInstance* self) const;
+	void Button_set_scale9Grid(ButtonInstance* self) const;
 
-	void Button_get_soundbuftime(const FlashButtonInstance* self) const;
+	void Button_get_soundbuftime(const ButtonInstance* self) const;
 
-	void Button_set_soundbuftime(FlashButtonInstance* self) const;
+	void Button_set_soundbuftime(ButtonInstance* self) const;
 
-	void Button_get_tabEnabled(const FlashButtonInstance* self) const;
+	void Button_get_tabEnabled(const ButtonInstance* self) const;
 
-	void Button_set_tabEnabled(FlashButtonInstance* self) const;
+	void Button_set_tabEnabled(ButtonInstance* self) const;
 
-	void Button_get_tabIndex(const FlashButtonInstance* self) const;
+	void Button_get_tabIndex(const ButtonInstance* self) const;
 
-	void Button_set_tabIndex(FlashButtonInstance* self) const;
+	void Button_set_tabIndex(ButtonInstance* self) const;
 
-	void Button_get_target(const FlashButtonInstance* self) const;
+	void Button_get_target(const ButtonInstance* self) const;
 
-	void Button_get_trackAsMenu(const FlashButtonInstance* self) const;
+	void Button_get_trackAsMenu(const ButtonInstance* self) const;
 
-	void Button_set_trackAsMenu(FlashButtonInstance* self) const;
+	void Button_set_trackAsMenu(ButtonInstance* self) const;
 
-	void Button_get_url(const FlashButtonInstance* self) const;
+	void Button_get_url(const ButtonInstance* self) const;
 
-	void Button_set_url(FlashButtonInstance* self) const;
+	void Button_set_url(ButtonInstance* self) const;
 
-	void Button_get_useHandCursor(const FlashButtonInstance* self) const;
+	void Button_get_useHandCursor(const ButtonInstance* self) const;
 
-	void Button_set_useHandCursor(FlashButtonInstance* self) const;
+	void Button_set_useHandCursor(ButtonInstance* self) const;
 
-	void Button_get_visible(const FlashButtonInstance* self) const;
+	void Button_get_visible(const ButtonInstance* self) const;
 
-	void Button_set_visible(FlashButtonInstance* self) const;
+	void Button_set_visible(ButtonInstance* self) const;
 
-	void Button_get_width(const FlashButtonInstance* self) const;
+	void Button_get_width(const ButtonInstance* self) const;
 
-	void Button_set_width(FlashButtonInstance* self) const;
+	void Button_set_width(ButtonInstance* self) const;
 
-	void Button_get_x(const FlashButtonInstance* self) const;
+	void Button_get_x(const ButtonInstance* self) const;
 
-	void Button_set_x(FlashButtonInstance* self) const;
+	void Button_set_x(ButtonInstance* self) const;
 
-	void Button_get_xmouse(const FlashButtonInstance* self) const;
+	void Button_get_xmouse(const ButtonInstance* self) const;
 
-	void Button_get_xscale(const FlashButtonInstance* self) const;
+	void Button_get_xscale(const ButtonInstance* self) const;
 
-	void Button_set_xscale(FlashButtonInstance* self) const;
+	void Button_set_xscale(ButtonInstance* self) const;
 
-	void Button_get_y(const FlashButtonInstance* self) const;
+	void Button_get_y(const ButtonInstance* self) const;
 
-	void Button_set_y(FlashButtonInstance* self) const;
+	void Button_set_y(ButtonInstance* self) const;
 
-	void Button_get_ymouse(const FlashButtonInstance* self) const;
+	void Button_get_ymouse(const ButtonInstance* self) const;
 
-	void Button_get_yscale(const FlashButtonInstance* self) const;
+	void Button_get_yscale(const ButtonInstance* self) const;
 
-	void Button_set_yscale(FlashButtonInstance* self) const;
+	void Button_set_yscale(ButtonInstance* self) const;
 };
 
 	}

@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Flash/ColorTransform.h"
-#include "Flash/FlashCharacterInstance.h"
+#include "Flash/CharacterInstance.h"
 #include "Flash/Action/Common/Transform.h"
 
 namespace traktor
@@ -15,7 +15,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Transform", Transform, ActionObjectRelay)
 
-Transform::Transform(FlashCharacterInstance* instance)
+Transform::Transform(CharacterInstance* instance)
 :	ActionObjectRelay("flash.geom.Transform")
 ,	m_instance(instance)
 {

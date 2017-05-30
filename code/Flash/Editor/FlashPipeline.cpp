@@ -21,15 +21,15 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Flash/FlashBitmapImage.h"
-#include "Flash/FlashBitmapResource.h"
-#include "Flash/FlashFont.h"
-#include "Flash/FlashFrame.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashMovieFactory.h"
-#include "Flash/FlashOptimizer.h"
-#include "Flash/FlashShape.h"
-#include "Flash/FlashSprite.h"
+#include "Flash/BitmapImage.h"
+#include "Flash/BitmapResource.h"
+#include "Flash/Font.h"
+#include "Flash/Frame.h"
+#include "Flash/Movie.h"
+#include "Flash/MovieFactory.h"
+#include "Flash/Optimizer.h"
+#include "Flash/Shape.h"
+#include "Flash/Sprite.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Editor/FlashEmptyMovieAsset.h"
 #include "Flash/Editor/FlashMovieAsset.h"
@@ -50,7 +50,7 @@ const Guid c_idFlashShaderAssets(L"{14D6A2DB-796D-E54D-9D70-73DE4AE7C4E8}");
 struct AtlasBitmap
 {
 	uint16_t id;
-	Ref< const FlashBitmapImage > bitmap;
+	Ref< const BitmapImage > bitmap;
 	stbrp_rect packedRect;
 };
 
@@ -63,7 +63,7 @@ struct AtlasBucket
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 53, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 54, FlashPipeline, editor::IPipeline)
 
 FlashPipeline::FlashPipeline()
 :	m_generateMips(false)
@@ -122,7 +122,7 @@ bool FlashPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< FlashMovie > movie;
+	Ref< Movie > movie;
 	bool optimize = false;
 
 	if (const FlashMovieAsset* movieAsset = dynamic_type_cast< const FlashMovieAsset* >(sourceAsset))
@@ -140,31 +140,31 @@ bool FlashPipeline::buildOutput(
 		if (image)
 		{
 			// Create a single frame and place shape.
-			Ref< FlashFrame > frame = new FlashFrame();
+			Ref< Frame > frame = new Frame();
 			
-			FlashFrame::PlaceObject p;
-			p.hasFlags = FlashFrame::PfHasCharacterId;
+			Frame::PlaceObject p;
+			p.hasFlags = Frame::PfHasCharacterId;
 			p.depth = 1;
 			p.characterId = 1;
 			frame->placeObject(p);
 
 			// Create sprite and add frame.
-			Ref< FlashSprite > sprite = new FlashSprite();
+			Ref< Sprite > sprite = new Sprite();
 			sprite->addFrame(frame);
 
 			// Create quad shape and fill with bitmap.
-			Ref< FlashShape > shape = new FlashShape();
+			Ref< Shape > shape = new Shape();
 			shape->create(1, image->getWidth() * 20, image->getHeight() * 20);
 
 			// Setup dictionary.
-			movie = new FlashMovie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20.0f, image->getHeight() * 20.0f)), sprite);
-			movie->defineBitmap(1, new FlashBitmapImage(image));
+			movie = new Movie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20.0f, image->getHeight() * 20.0f)), sprite);
+			movie->defineBitmap(1, new BitmapImage(image));
 			movie->defineCharacter(1, shape);
 		}
 		else
 		{
 			Ref< SwfReader > swf = new SwfReader(sourceStream);
-			movie = FlashMovieFactory(movieAsset->m_includeAS).createMovie(swf);
+			movie = MovieFactory(movieAsset->m_includeAS).createMovie(swf);
 			if (!movie)
 			{
 				log::error << L"Failed to import Flash; unable to parse SWF" << Endl;
@@ -180,13 +180,13 @@ bool FlashPipeline::buildOutput(
 	{
 		const Color4ub& bc = emptyMovieAsset->getBackgroundColor();
 		
-		Ref< FlashSprite > sprite = new FlashSprite(0, emptyMovieAsset->getFrameRate());
+		Ref< Sprite > sprite = new Sprite(0, emptyMovieAsset->getFrameRate());
 
-		Ref< FlashFrame > frame = new FlashFrame();
+		Ref< Frame > frame = new Frame();
 		frame->changeBackgroundColor(Color4f(bc.r, bc.g, bc.b, bc.a) / Scalar(255.0f));
 		sprite->addFrame(frame);
 
-		movie = new FlashMovie(
+		movie = new Movie(
 			Aabb2(
 				Vector2(0.0f, 0.0f),
 				Vector2(emptyMovieAsset->getStageWidth() * 20.0f, emptyMovieAsset->getStageHeight() * 20.0f)
@@ -207,7 +207,7 @@ bool FlashPipeline::buildOutput(
 	// Merge all characters of first frame into a single sprite.
 	if (optimize)
 	{
-		movie = FlashOptimizer().merge(movie);
+		movie = Optimizer().merge(movie);
 		if (!movie)
 		{
 			log::error << L"Failed to import Flash; failed to optimize static SWF" << Endl;
@@ -216,18 +216,18 @@ bool FlashPipeline::buildOutput(
 	}
 
 	// Generate triangles of every shape in movie.
-	FlashOptimizer().triangulate(movie, false);
+	Optimizer().triangulate(movie, false);
 
 	// Replace all bitmaps with resource references to textures.
-	SmallMap< uint16_t, Ref< FlashBitmap > > bitmaps = movie->getBitmaps();
+	SmallMap< uint16_t, Ref< Bitmap > > bitmaps = movie->getBitmaps();
 
 	// Create atlas buckets of small bitmaps.
 	std::list< AtlasBucket > buckets;
 	std::list< AtlasBitmap > standalone;
 
-	for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
+	for (SmallMap< uint16_t, Ref< Bitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
 	{
-		const FlashBitmapImage* bitmapData = dynamic_type_cast< const FlashBitmapImage* >(i->second);
+		const BitmapImage* bitmapData = dynamic_type_cast< const BitmapImage* >(i->second);
 		if (!bitmapData)
 		{
 			log::warning << L"Skipped bitmap as it not a static bitmap (" << type_name(i->second) << L")" << Endl;
@@ -402,7 +402,7 @@ bool FlashPipeline::buildOutput(
 
 			for (std::list< AtlasBitmap >::const_iterator j = i->bitmaps.begin(); j != i->bitmaps.end(); ++j)
 			{
-				movie->defineBitmap(j->id, new FlashBitmapResource(
+				movie->defineBitmap(j->id, new BitmapResource(
 					j->packedRect.x,
 					j->packedRect.y,
 					j->packedRect.w,
@@ -491,7 +491,7 @@ bool FlashPipeline::buildOutput(
 		))
 			return false;
 
-		movie->defineBitmap(i->id, new FlashBitmapResource(
+		movie->defineBitmap(i->id, new BitmapResource(
 			0,
 			0,
 			bitmapImage->getWidth(),

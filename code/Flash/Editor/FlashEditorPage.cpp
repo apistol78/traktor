@@ -16,17 +16,17 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
-#include "Flash/FlashButton.h"
-#include "Flash/FlashButtonInstance.h"
-#include "Flash/FlashFrame.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashMovieFactory.h"
-#include "Flash/FlashMoviePlayer.h"
-#include "Flash/FlashOptimizer.h"
-#include "Flash/FlashShape.h"
-#include "Flash/FlashShapeInstance.h"
-#include "Flash/FlashSprite.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/Button.h"
+#include "Flash/ButtonInstance.h"
+#include "Flash/Frame.h"
+#include "Flash/Movie.h"
+#include "Flash/MovieFactory.h"
+#include "Flash/MoviePlayer.h"
+#include "Flash/Optimizer.h"
+#include "Flash/Shape.h"
+#include "Flash/ShapeInstance.h"
+#include "Flash/Sprite.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionObject.h"
@@ -102,7 +102,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	Ref< MemoryStream > memoryStream = new MemoryStream(&assetBlob[0], int(assetSize), true, false);
 	Ref< SwfReader > swf = new SwfReader(memoryStream);
 
-	m_movie = flash::FlashMovieFactory(true).createMovie(swf);
+	m_movie = flash::MovieFactory(true).createMovie(swf);
 	if (!m_movie)
 		return false;
 
@@ -153,7 +153,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 void FlashEditorPage::destroy()
 {
 	safeDestroy(m_previewControl);
-	log::debug << FlashCharacterInstance::getInstanceCount() << L" leaked character(s)" << Endl;
+	log::debug << CharacterInstance::getInstanceCount() << L" leaked character(s)" << Endl;
 }
 
 void FlashEditorPage::activate()
@@ -195,7 +195,7 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Flash.Editor.Merge")
 	{
-		Ref< FlashMovie > movie = flash::FlashOptimizer().merge(m_movie);
+		Ref< Movie > movie = flash::Optimizer().merge(m_movie);
 		if (movie)
 		{
 			m_movie = movie;
@@ -311,7 +311,7 @@ void FlashEditorPage::updateTreeObject(ui::custom::TreeViewItem* parentItem, con
 	}
 }
 
-void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, FlashCharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)
+void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, CharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)
 {
 	StringOutputStream ss;
 	ss << type_name(characterInstance);
@@ -403,9 +403,9 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 	ss << L"Bounds: " << bounds.mn << L" - " << bounds.mx << IncreaseIndent;
 	m_treeMovie->createItem(characterItem, ss.str());
 
-	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
+	if (SpriteInstance* spriteInstance = dynamic_type_cast< SpriteInstance* >(characterInstance))
 	{
-		const FlashSprite* sprite = spriteInstance->getSprite();
+		const Sprite* sprite = spriteInstance->getSprite();
 		if (sprite)
 		{
 			uint32_t frameCount = sprite->getFrameCount();
@@ -414,7 +414,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 			Ref< ui::custom::TreeViewItem > labelsItem = m_treeMovie->createItem(characterItem, L"Label(s)", 0, 0);
 			for (uint32_t i = 0; i < frameCount; ++i)
 			{
-				const FlashFrame* frame = sprite->getFrame(i);
+				const Frame* frame = sprite->getFrame(i);
 				if (frame)
 				{
 					const std::string& label = frame->getLabel();
@@ -426,8 +426,8 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 
 		Ref< ui::custom::TreeViewItem > layersItem = m_treeMovie->createItem(characterItem, L"Layer(s)", 0, 0);
 
-		const FlashDisplayList::layer_map_t& layers = spriteInstance->getDisplayList().getLayers();
-		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		const DisplayList::layer_map_t& layers = spriteInstance->getDisplayList().getLayers();
+		for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 		{
 			ss.reset();
 			ss << i->first;
@@ -442,35 +442,35 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 			layerItem->setData(L"CHARACTER", i->second.instance);
 		}
 	}
-	else if (FlashButtonInstance* buttonInstance = dynamic_type_cast< FlashButtonInstance* >(characterInstance))
+	else if (ButtonInstance* buttonInstance = dynamic_type_cast< ButtonInstance* >(characterInstance))
 	{
-		const FlashButton* button = buttonInstance->getButton();
+		const Button* button = buttonInstance->getButton();
 		uint8_t buttonState = buttonInstance->getState();
 
 		m_treeMovie->createItem(characterItem, L"State " + toString(int32_t(buttonState)));
 
 		Ref< ui::custom::TreeViewItem > layersItem = m_treeMovie->createItem(characterItem, L"Layers(s)", 0, 0);
 
-		const FlashButton::button_layers_t& layers = button->getButtonLayers();
+		const Button::button_layers_t& layers = button->getButtonLayers();
 		for (int32_t j = 0; j < int32_t(layers.size()); ++j)
 		{
-			const FlashButton::ButtonLayer& layer = layers[j];
+			const Button::ButtonLayer& layer = layers[j];
 
 			Ref< ui::custom::TreeViewItem > layerItem = m_treeMovie->createItem(layersItem, toString(j) + L": " + toString(int32_t(layer.state)), 0, 0);
 			T_ASSERT (layerItem);
 
-			FlashCharacterInstance* referenceInstance = buttonInstance->getCharacterInstance(layer.characterId);
+			CharacterInstance* referenceInstance = buttonInstance->getCharacterInstance(layer.characterId);
 			if (referenceInstance)
 				updateTreeCharacter(layerItem, referenceInstance, pointerHash, nextPointerHash);
 
 			layerItem->setData(L"CHARACTER", referenceInstance);
 		}
 	}
-	else if (FlashShapeInstance* shapeInstance = dynamic_type_cast< FlashShapeInstance* >(characterInstance))
+	else if (ShapeInstance* shapeInstance = dynamic_type_cast< ShapeInstance* >(characterInstance))
 	{
-		const FlashShape* shape = shapeInstance->getShape();
+		const Shape* shape = shapeInstance->getShape();
 
-		const AlignedVector< FlashFillStyle >& fillStyles = shape->getFillStyles();
+		const AlignedVector< FillStyle >& fillStyles = shape->getFillStyles();
 		if (!fillStyles.empty())
 		{
 			ss.reset();
@@ -479,8 +479,8 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 
 			for (uint32_t i = 0; i < uint32_t(fillStyles.size()); ++i)
 			{
-				const FlashFillStyle& fs = fillStyles[i];
-				const AlignedVector< FlashFillStyle::ColorRecord >& cr = fs.getColorRecords();
+				const FillStyle& fs = fillStyles[i];
+				const AlignedVector< FillStyle::ColorRecord >& cr = fs.getColorRecords();
 
 				ss.reset();
 				ss << (cr[0].color.getRed()) << L", " << (cr[0].color.getGreen()) << L", " << (cr[0].color.getBlue()) << L", " << (cr[0].color.getAlpha());
@@ -519,10 +519,10 @@ void FlashEditorPage::updateTreeMovie()
 	m_treeMovie->removeAllItems();
 	if (!m_previewControl->playing())
 	{
-		FlashMoviePlayer* moviePlayer = m_previewControl->getMoviePlayer();
+		MoviePlayer* moviePlayer = m_previewControl->getMoviePlayer();
 		if (moviePlayer)
 		{
-			FlashSpriteInstance* movieInstance = moviePlayer->getMovieInstance();
+			SpriteInstance* movieInstance = moviePlayer->getMovieInstance();
 			if (movieInstance)
 			{
 				std::map< const void*, uint32_t > pointerHash;
@@ -578,7 +578,7 @@ void FlashEditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 
 	if (selectedItems.size() == 1)
 	{
-		m_selectedCharacterInstance = selectedItems[0]->getData< FlashCharacterInstance >(L"CHARACTER");
+		m_selectedCharacterInstance = selectedItems[0]->getData< CharacterInstance >(L"CHARACTER");
 		if (m_selectedCharacterInstance)
 		{
 			m_selectedCharacterInstanceCxForm = m_selectedCharacterInstance->getColorTransform();
@@ -594,7 +594,7 @@ void FlashEditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 			const PropertyInteger* pathIndex = selectedItems[0]->getData< PropertyInteger >(L"PATH");
 			if (pathIndex)
 			{
-				FlashShapeInstance* shapeInstance = checked_type_cast< FlashShapeInstance*, false >(m_selectedCharacterInstance);
+				ShapeInstance* shapeInstance = checked_type_cast< ShapeInstance*, false >(m_selectedCharacterInstance);
 				const AlignedVector< Path >& paths = shapeInstance->getShape()->getPaths();
 				m_pathControl->setPath(paths[PropertyInteger::get(pathIndex)]);
 			}

@@ -24,7 +24,7 @@ namespace traktor
 	namespace flash
 	{
 	
-class FlashCharacterInstance;
+class CharacterInstance;
 
 /*! \brief
  * \ingroup Flash

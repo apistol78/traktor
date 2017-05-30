@@ -24,7 +24,7 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashMovie;
+class Movie;
 
 	}
 
@@ -55,8 +55,8 @@ public:
 private:
 	friend class StagePipeline;
 
-	resource::Id< flash::FlashMovie > m_movie;
-	std::map< std::wstring, resource::Id< flash::FlashMovie > > m_externalMovies;
+	resource::Id< flash::Movie > m_movie;
+	std::map< std::wstring, resource::Id< flash::Movie > > m_externalMovies;
 	resource::Id< render::ImageProcessSettings > m_imageProcess;
 	bool m_clearBackground;
 	bool m_enableShapeCache;

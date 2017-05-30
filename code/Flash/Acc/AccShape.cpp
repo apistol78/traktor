@@ -10,10 +10,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Math/Const.h"
 #include "Core/Math/Color4ub.h"
 #include "Flash/ColorTransform.h"
-#include "Flash/FlashCanvas.h"
-#include "Flash/FlashDictionary.h"
-#include "Flash/FlashShape.h"
-#include "Flash/FlashBitmap.h"
+#include "Flash/Canvas.h"
+#include "Flash/Dictionary.h"
+#include "Flash/Shape.h"
+#include "Flash/Bitmap.h"
 #include "Flash/Triangulator.h"
 #include "Flash/Acc/AccBitmapRect.h"
 #include "Flash/Acc/AccGradientCache.h"
@@ -70,9 +70,9 @@ bool AccShape::createFromPaths(
 	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
-	const FlashDictionary& dictionary,
-	const AlignedVector< FlashFillStyle >& fillStyles,
-	const AlignedVector< FlashLineStyle >& lineStyles,
+	const Dictionary& dictionary,
+	const AlignedVector< FillStyle >& fillStyles,
+	const AlignedVector< LineStyle >& lineStyles,
 	const AlignedVector< Path >& paths,
 	bool oddEven
 )
@@ -175,9 +175,9 @@ bool AccShape::createFromTriangles(
 	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
-	const FlashDictionary& dictionary,
-	const AlignedVector< FlashFillStyle >& fillStyles,
-	const AlignedVector< FlashLineStyle >& lineStyles,
+	const Dictionary& dictionary,
+	const AlignedVector< FillStyle >& fillStyles,
+	const AlignedVector< LineStyle >& lineStyles,
 	const AlignedVector< Triangle >& triangles
 )
 {
@@ -237,10 +237,10 @@ bool AccShape::createFromTriangles(
 				color = Color4ub(255, 255, 255, 255);
 				texture = 0;
 
-				const FlashFillStyle& style = fillStyles[j->fillStyle - 1];
+				const FillStyle& style = fillStyles[j->fillStyle - 1];
 
 				// Convert colors, solid or gradients.
-				const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
+				const AlignedVector< FillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 				if (colorRecords.size() > 1)
 				{
 					texture = gradientCache->getGradientTexture(style);
@@ -255,7 +255,7 @@ bool AccShape::createFromTriangles(
 				}
 
 				// Convert bitmaps.
-				const FlashBitmap* bitmap = dictionary.getBitmap(style.getFillBitmap());
+				const Bitmap* bitmap = dictionary.getBitmap(style.getFillBitmap());
 				if (bitmap)
 				{
 					texture = textureCache->getBitmapTexture(*bitmap);
@@ -340,8 +340,8 @@ bool AccShape::createFromShape(
 	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
-	const FlashDictionary& dictionary,
-	const FlashShape& shape
+	const Dictionary& dictionary,
+	const Shape& shape
 )
 {
 	if (!shape.getTriangles().empty())
@@ -373,8 +373,8 @@ bool AccShape::createFromGlyph(
 	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
-	const FlashDictionary& dictionary,
-	const FlashShape& shape
+	const Dictionary& dictionary,
+	const Shape& shape
 )
 {
 	if (!shape.getTriangles().empty())
@@ -406,7 +406,7 @@ bool AccShape::createFromCanvas(
 	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
-	const FlashCanvas& canvas
+	const Canvas& canvas
 )
 {
 	return createFromPaths(

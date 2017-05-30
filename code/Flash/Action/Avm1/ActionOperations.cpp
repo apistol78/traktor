@@ -10,9 +10,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Timer/Timer.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashSprite.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/Movie.h"
+#include "Flash/Sprite.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionDictionary.h"
 #include "Flash/Action/ActionFrame.h"
@@ -156,7 +156,7 @@ ActionValue getVariable(ExecutionState& state, const ActionValue& variable)
 	// Get movie clip member.
 	if (state.movieClip)
 	{
-		FlashCharacterInstance* movieClip = state.movieClip;
+		CharacterInstance* movieClip = state.movieClip;
 		while (movieClip)
 		{
 			ActionObject* movieClipAS = movieClip->getAsObject(state.context);
@@ -449,10 +449,10 @@ void opx_getProperty(ExecutionState& state)
 	ActionValue index = stack.pop();
 	ActionValue target = stack.pop();
 
-	FlashSpriteInstance* movieClip = state.movieClip;
+	SpriteInstance* movieClip = state.movieClip;
 	if (target.isObject())
 	{
-		movieClip = target.getObject()->getRelay< FlashSpriteInstance >();
+		movieClip = target.getObject()->getRelay< SpriteInstance >();
 		if (!movieClip)
 		{
 			stack.push(ActionValue());
@@ -602,10 +602,10 @@ void opx_setProperty(ExecutionState& state)
 	ActionValue index = stack.pop();
 	ActionValue target = stack.pop();
 
-	FlashSpriteInstance* movieClip = state.movieClip;
+	SpriteInstance* movieClip = state.movieClip;
 	if (target.isObject())
 	{
-		movieClip = target.getObject()->getRelay< FlashSpriteInstance >();
+		movieClip = target.getObject()->getRelay< SpriteInstance >();
 		if (!movieClip)
 		{
 			stack.push(ActionValue());
@@ -691,8 +691,8 @@ void opx_cloneSprite(ExecutionState& state)
 	ActionValue target = stack.pop();
 	ActionValue source = stack.pop();
 
-	Ref< FlashSpriteInstance > sourceClip = source.getObjectAlways(state.context)->getRelay< FlashSpriteInstance >();
-	Ref< FlashSpriteInstance > cloneClip = sourceClip->clone();
+	Ref< SpriteInstance > sourceClip = source.getObjectAlways(state.context)->getRelay< SpriteInstance >();
+	Ref< SpriteInstance > cloneClip = sourceClip->clone();
 
 	cloneClip->setName(target.getString());
 
@@ -1150,7 +1150,7 @@ void opx_typeOf(ExecutionState& state)
 		Ref< ActionObject > object = value.getObject();
 		if (!object)
 			stack.push(ActionValue("null"));
-		else if (is_a< FlashSpriteInstance >(object->getRelay()))
+		else if (is_a< SpriteInstance >(object->getRelay()))
 			stack.push(ActionValue("movieclip"));
 		else if (is_a< ActionFunction >(object))
 			stack.push(ActionValue("function"));
@@ -1789,7 +1789,7 @@ void opp_gotoFrame(PreparationState& state)
 
 void opx_gotoFrame(ExecutionState& state)
 {
-	FlashSpriteInstance* movieClip = state.movieClip;
+	SpriteInstance* movieClip = state.movieClip;
 
 	uint16_t frame = unalignedRead< uint16_t >(state.data);
 	movieClip->gotoFrame(frame);
@@ -1882,7 +1882,7 @@ void opx_setTarget(ExecutionState& state)
 
 void opx_gotoLabel(ExecutionState& state)
 {
-	FlashSpriteInstance* movieClip = state.movieClip;
+	SpriteInstance* movieClip = state.movieClip;
 
 	const char* label = reinterpret_cast< const char* >(state.data);
 	int frame = movieClip->getSprite()->findFrame(label);
@@ -2427,7 +2427,7 @@ void opx_callFrame(ExecutionState& state)
 void opx_gotoFrame2(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = state.movieClip;
+	SpriteInstance* movieClip = state.movieClip;
 
 	ActionValue frame = stack.pop();
 	int frameIndex = -1;

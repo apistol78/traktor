@@ -6,8 +6,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Drawing/Image.h"
 #include "Drawing/Filters/BlurFilter.h"
-#include "Flash/FlashMovieRenderer.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/MovieRenderer.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Common/BitmapData.h"
 #include "Flash/Action/Common/BlurFilter.h"
@@ -73,10 +73,10 @@ void BitmapData::applyFilter(const BitmapData* sourceBitmapData, const Rectangle
 	}
 }
 
-void BitmapData::draw(FlashSpriteInstance* source)
+void BitmapData::draw(SpriteInstance* source)
 {
 	SwDisplayRenderer displayRenderer(m_image, false);
-	FlashMovieRenderer movieRenderer(&displayRenderer);
+	MovieRenderer movieRenderer(&displayRenderer);
 
 	Aabb2 frameBounds = source->getLocalBounds();
 	Vector4 frameTransform(0.0f, 0.0f, 1.0f, 1.0f);

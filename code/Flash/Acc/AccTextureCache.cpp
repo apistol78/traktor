@@ -6,9 +6,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <cstring>
 #include "Core/Log/Log.h"
-#include "Flash/FlashBitmapImage.h"
-#include "Flash/FlashBitmapResource.h"
-#include "Flash/FlashBitmapTexture.h"
+#include "Flash/BitmapImage.h"
+#include "Flash/BitmapResource.h"
+#include "Flash/BitmapTexture.h"
 #include "Flash/Acc/AccBitmapRect.h"
 #include "Flash/Acc/AccTextureCache.h"
 #include "Render/IRenderSystem.h"
@@ -112,13 +112,13 @@ void AccTextureCache::clear()
 	m_freeTextures.clear();
 }
 
-Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
+Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 {
 	AccBitmapRect* bmr = static_cast< AccBitmapRect* >(bitmap.getCacheObject());
 	if (bmr)
 		return bmr;
 
-	if (const FlashBitmapResource* bitmapResource = dynamic_type_cast< const FlashBitmapResource* >(&bitmap))
+	if (const BitmapResource* bitmapResource = dynamic_type_cast< const BitmapResource* >(&bitmap))
 	{
 		resource::Proxy< render::ISimpleTexture > texture;
 
@@ -141,7 +141,7 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap
 		bitmap.setCacheObject(br);
 		return br;
 	}
-	else if (const FlashBitmapTexture* bitmapTexture = dynamic_type_cast< const FlashBitmapTexture* >(&bitmap))
+	else if (const BitmapTexture* bitmapTexture = dynamic_type_cast< const BitmapTexture* >(&bitmap))
 	{
 		Ref< AccBitmapRect > br = new AccBitmapRect(
 			resource::Proxy< render::ISimpleTexture >(bitmapTexture->getTexture()),
@@ -154,7 +154,7 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap
 		bitmap.setCacheObject(br);
 		return br;
 	}
-	else if (const FlashBitmapImage* bitmapData = dynamic_type_cast< const FlashBitmapImage* >(&bitmap))
+	else if (const BitmapImage* bitmapData = dynamic_type_cast< const BitmapImage* >(&bitmap))
 	{
 		Ref< render::ISimpleTexture > texture;
 

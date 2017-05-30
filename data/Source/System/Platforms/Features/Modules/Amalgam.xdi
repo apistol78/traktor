@@ -47,7 +47,6 @@
 								<item>libTraktor.Scene.a</item>
 								<item>libTraktor.Script.a</item>
 								<item>libTraktor.Sound.a</item>
-								<item>libTraktor.Spark.a</item>
 								<item>libTraktor.Spray.a</item>
 								<item>libTraktor.Terrain.a</item>
 								<item>libTraktor.Theater.a</item>
@@ -92,7 +91,6 @@
 								<item>libTraktor.Scene.so</item>
 								<item>libTraktor.Script.so</item>
 								<item>libTraktor.Sound.so</item>
-								<item>libTraktor.Spark.so</item>
 								<item>libTraktor.Spray.so</item>
 								<item>libTraktor.Terrain.so</item>
 								<item>libTraktor.Theater.so</item>
@@ -137,7 +135,6 @@
 								<item>Traktor.Scene.dll</item>
 								<item>Traktor.Script.dll</item>
 								<item>Traktor.Sound.dll</item>
-								<item>Traktor.Spark.dll</item>
 								<item>Traktor.Spray.dll</item>
 								<item>Traktor.Terrain.dll</item>
 								<item>Traktor.Theater.dll</item>
@@ -185,7 +182,6 @@
 								<item>libTraktor.Scene.dylib</item>
 								<item>libTraktor.Script.dylib</item>
 								<item>libTraktor.Sound.dylib</item>
-								<item>libTraktor.Spark.dylib</item>
 								<item>libTraktor.Spray.dylib</item>
 								<item>libTraktor.Terrain.dylib</item>
 								<item>libTraktor.Theater.dylib</item>
@@ -248,7 +244,6 @@
 								<item>Traktor.Scene.lib</item>
 								<item>Traktor.Script.lib</item>
 								<item>Traktor.Sound.lib</item>
-								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Spray.lib</item>
 								<item>Traktor.Terrain.lib</item>
 								<item>Traktor.Theater.lib</item>
@@ -316,7 +311,6 @@
 								<item>Traktor.Scene.dll</item>
 								<item>Traktor.Script.dll</item>
 								<item>Traktor.Sound.dll</item>
-								<item>Traktor.Spark.dll</item>
 								<item>Traktor.Spray.dll</item>
 								<item>Traktor.Terrain.dll</item>
 								<item>Traktor.Theater.dll</item>
@@ -356,7 +350,6 @@
 								<item>Traktor.Scene.lib</item>
 								<item>Traktor.Script.lib</item>
 								<item>Traktor.Sound.lib</item>
-								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Spray.lib</item>
 								<item>Traktor.Terrain.lib</item>
 								<item>Traktor.Theater.lib</item>
@@ -427,7 +420,6 @@
 								<item>Traktor.Scene.dll</item>
 								<item>Traktor.Script.dll</item>
 								<item>Traktor.Sound.dll</item>
-								<item>Traktor.Spark.dll</item>
 								<item>Traktor.Spray.dll</item>
 								<item>Traktor.Terrain.dll</item>
 								<item>Traktor.Theater.dll</item>
@@ -467,7 +459,6 @@
 								<item>Traktor.Scene.lib</item>
 								<item>Traktor.Script.lib</item>
 								<item>Traktor.Sound.lib</item>
-								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Spray.lib</item>
 								<item>Traktor.Terrain.lib</item>
 								<item>Traktor.Theater.lib</item>
@@ -525,7 +516,6 @@
 								<item>Traktor.Scene.lib</item>
 								<item>Traktor.Script.lib</item>
 								<item>Traktor.Sound.lib</item>
-								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Spray.lib</item>
 								<item>Traktor.Terrain.lib</item>
 								<item>Traktor.Theater.lib</item>
@@ -581,7 +571,6 @@
 								<item>libTraktor.Scene.bc</item>
 								<item>libTraktor.Script.bc</item>
 								<item>libTraktor.Sound.bc</item>
-								<item>libTraktor.Spark.bc</item>
 								<item>libTraktor.Spray.bc</item>
 								<item>libTraktor.Terrain.bc</item>
 								<item>libTraktor.Theater.bc</item>
@@ -641,7 +630,6 @@
 								<item>libTraktor.Scene.a</item>
 								<item>libTraktor.Script.a</item>
 								<item>libTraktor.Sound.a</item>
-								<item>libTraktor.Spark.a</item>
 								<item>libTraktor.Spray.a</item>
 								<item>libTraktor.Terrain.a</item>
 								<item>libTraktor.Theater.a</item>
@@ -696,7 +684,6 @@
 								<item>libTraktor.Scene.a</item>
 								<item>libTraktor.Script.a</item>
 								<item>libTraktor.Sound.a</item>
-								<item>libTraktor.Spark.a</item>
 								<item>libTraktor.Spray.a</item>
 								<item>libTraktor.Terrain.a</item>
 								<item>libTraktor.Theater.a</item>

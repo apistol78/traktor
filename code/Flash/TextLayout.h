@@ -17,8 +17,8 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashCharacterInstance;
-class FlashFont;
+class CharacterInstance;
+class Font;
 
 #pragma warning( disable:4324 )
 
@@ -32,7 +32,7 @@ class TextLayout : public Object
 public:
 	struct Attribute
 	{
-		const FlashFont* font;
+		const Font* font;
 		Color4f color;
 	};
 
@@ -75,11 +75,11 @@ public:
 
 	void setAlignment(SwfTextAlignType alignment);
 
-	void setAttribute(const FlashFont* font, const Color4f& textColor);
+	void setAttribute(const Font* font, const Color4f& textColor);
 
 	void insertText(const std::wstring& text);
 
-	void insertCharacter(FlashCharacterInstance* characterInstance);
+	void insertCharacter(CharacterInstance* characterInstance);
 
 	void insertBlank(int32_t width);
 
@@ -89,7 +89,7 @@ public:
 
 	const AlignedVector< Attribute >& getAttributes() const { return m_attribs; }
 
-	const RefArray< FlashCharacterInstance >& getCharacters() const { return m_characters; }
+	const RefArray< CharacterInstance >& getCharacters() const { return m_characters; }
 
 	const AlignedVector< Line >& getLines() const { return m_lines; }
 
@@ -111,7 +111,7 @@ public:
 
 private:
 	AlignedVector< Attribute > m_attribs;
-	RefArray< FlashCharacterInstance > m_characters;
+	RefArray< CharacterInstance > m_characters;
 	AlignedVector< Line > m_lines;
 	int32_t m_currentAttrib;
 	Aabb2 m_bounds;

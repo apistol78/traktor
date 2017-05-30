@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/Movie.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Common/Classes/AsStage.h"
@@ -37,7 +37,7 @@ AsStage::AsStage(ActionContext* context)
 	addProperty("showMenu", createNativeFunction(context, this, &AsStage::Stage_get_showMenu), createNativeFunction(context, this, &AsStage::Stage_set_showMenu));
 	addProperty("width", createNativeFunction(context, this, &AsStage::Stage_get_width), 0);
 
-	const FlashMovie* movie = context->getMovie();
+	const Movie* movie = context->getMovie();
 	T_ASSERT (movie);
 
 	m_width = int32_t((movie->getFrameBounds().mx.x - movie->getFrameBounds().mn.x) / 20.0f);
@@ -83,7 +83,7 @@ void AsStage::eventResize(int32_t width, int32_t height)
 
 Vector2 AsStage::toStage(const Vector2& pos) const
 {
-	const FlashMovie* movie = getContext()->getMovie();
+	const Movie* movie = getContext()->getMovie();
 	T_ASSERT (movie);
 
 	Aabb2 bounds = movie->getFrameBounds();
@@ -101,7 +101,7 @@ Vector2 AsStage::toStage(const Vector2& pos) const
 
 Vector2 AsStage::toScreen(const Vector2& pos) const
 {
-	const FlashMovie* movie = getContext()->getMovie();
+	const Movie* movie = getContext()->getMovie();
 	T_ASSERT (movie);
 
 	Aabb2 bounds = movie->getFrameBounds();
@@ -127,7 +127,7 @@ void AsStage::updateViewOffset()
 	if (aspectRatio <= FUZZY_EPSILON)
 		return;
 
-	const FlashMovie* movie = getContext()->getMovie();
+	const Movie* movie = getContext()->getMovie();
 	T_ASSERT (movie);
 
 	Aabb2 bounds = movie->getFrameBounds();

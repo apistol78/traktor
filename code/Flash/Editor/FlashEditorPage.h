@@ -59,10 +59,10 @@ class IResourceManager;
 	{
 
 class ActionObject;
-class FlashCharacterInstance;
+class CharacterInstance;
 class FlashPathControl;
 class FlashPreviewControl;
-class FlashMovie;
+class Movie;
 
 class T_DLLCLASS FlashEditorPage : public editor::IEditorPage
 {
@@ -94,14 +94,14 @@ private:
 	Ref< FlashPreviewControl > m_previewControl;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< FlashMovie > m_movie;
-	Ref< FlashCharacterInstance > m_selectedCharacterInstance;
+	Ref< Movie > m_movie;
+	Ref< CharacterInstance > m_selectedCharacterInstance;
 	ColorTransform m_selectedCharacterInstanceCxForm;
 	uint8_t m_selectedCharacterInstanceBlendMode;
 
 	void updateTreeObject(ui::custom::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
 
-	void updateTreeCharacter(ui::custom::TreeViewItem* parentItem, FlashCharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
+	void updateTreeCharacter(ui::custom::TreeViewItem* parentItem, CharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
 
 	void updateTreeMovie();
 

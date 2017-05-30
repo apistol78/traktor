@@ -5,9 +5,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Log/Log.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashSpriteInstance.h"
-#include "Flash/IFlashMovieLoader.h"
+#include "Flash/Movie.h"
+#include "Flash/SpriteInstance.h"
+#include "Flash/IMovieLoader.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Common/Classes/AsMovieClipLoader.h"
@@ -63,16 +63,16 @@ void AsMovieClipLoader::MovieClipLoader_getProgress(CallArgs& ca)
 	)
 }
 
-bool AsMovieClipLoader::MovieClipLoader_loadClip(ActionObject* self, const std::wstring& url, FlashSpriteInstance* target) const
+bool AsMovieClipLoader::MovieClipLoader_loadClip(ActionObject* self, const std::wstring& url, SpriteInstance* target) const
 {
 	ActionContext* cx = getContext();
 	T_ASSERT (cx);
 
-	const IFlashMovieLoader* movieLoader = cx->getMovieLoader();
+	const IMovieLoader* movieLoader = cx->getMovieLoader();
 	if (!movieLoader)
 		return false;
 
-	Ref< FlashMovie > movie = movieLoader->load(url);
+	Ref< Movie > movie = movieLoader->load(url);
 	if (!movie)
 		return false;
 

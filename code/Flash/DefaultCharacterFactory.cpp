@@ -1,6 +1,6 @@
 #include "Flash/DefaultCharacterFactory.h"
-#include "Flash/FlashCharacter.h"
-#include "Flash/FlashCharacterInstance.h"
+#include "Flash/Character.h"
+#include "Flash/CharacterInstance.h"
 
 namespace traktor
 {
@@ -9,12 +9,12 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.DefaultCharacterFactory", DefaultCharacterFactory, ICharacterFactory)
 	
-Ref< FlashCharacterInstance > DefaultCharacterFactory::createInstance(
-	const FlashCharacter* character,
+Ref< CharacterInstance > DefaultCharacterFactory::createInstance(
+	const Character* character,
 	int32_t depth,
 	ActionContext* context,
-	FlashDictionary* dictionary,
-	FlashCharacterInstance* parent,
+	Dictionary* dictionary,
+	CharacterInstance* parent,
 	const std::string& name,
 	const Matrix33& transform,
 	const ActionObject* initObject,
@@ -32,7 +32,7 @@ Ref< FlashCharacterInstance > DefaultCharacterFactory::createInstance(
 	);
 }
 
-void DefaultCharacterFactory::removeInstance(FlashCharacterInstance* instance, int32_t depth) const
+void DefaultCharacterFactory::removeInstance(CharacterInstance* instance, int32_t depth) const
 {
 }
 

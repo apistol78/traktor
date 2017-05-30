@@ -14,7 +14,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Amalgam/Game/Engine/AudioLayer.h"
 #include "Amalgam/Game/Engine/StageData.h"
 #include "Amalgam/Game/Engine/FlashLayer.h"
-#include "Amalgam/Game/Engine/SparkLayer.h"
 #include "Amalgam/Game/Engine/Stage.h"
 #include "Amalgam/Game/Engine/StageData.h"
 #include "Amalgam/Game/Engine/StageLoader.h"
@@ -26,9 +25,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Settings/PropertyGroup.h"
 #include "Database/Database.h"
 #include "Drawing/Image.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashMoviePlayer.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/Movie.h"
+#include "Flash/MoviePlayer.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Input/InputSystem.h"
 #include "Input/RumbleEffectPlayer.h"
@@ -42,7 +41,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Sound/SoundSystem.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Player/ISoundPlayer.h"
-#include "Spark/Character.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
@@ -102,24 +100,6 @@ RefArray< BoxedTransition > StageData_getTransitions(StageData* self)
 Any FlashLayer_externalCall(FlashLayer* self, const std::string& methodName, uint32_t argc, const Any* argv)
 {
 	return self->externalCall(methodName, argc, argv);
-}
-
-Any SparkLayer_viewToScreen(SparkLayer* self, const Vector2& viewPosition)
-{
-	Vector2 screenPosition;
-	if (self->viewToScreen(viewPosition, screenPosition))
-		return CastAny< Vector2 >::set(screenPosition);
-	else
-		return Any();
-}
-
-Any SparkLayer_screenToView(SparkLayer* self, const Vector2& screenPosition)
-{
-	Vector2 viewPosition;
-	if (self->screenToView(screenPosition, viewPosition))
-		return CastAny< Vector2 >::set(viewPosition);
-	else
-		return Any();
 }
 
 world::Entity* WorldLayer_getEntity_1(WorldLayer* self, const std::wstring& name)
@@ -341,12 +321,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashLayer->addMethod("getPrintableString", &FlashLayer::getPrintableString);
 	classFlashLayer->setUnknownHandler(&FlashLayer_externalCall);
 	registrar->registerClass(classFlashLayer);
-
-	Ref< AutoRuntimeClass< SparkLayer > > classSparkLayer = new AutoRuntimeClass< SparkLayer >();
-	classSparkLayer->addMethod("getRoot", &SparkLayer::getRoot);
-	classSparkLayer->addMethod("viewToScreen", &SparkLayer_viewToScreen);
-	classSparkLayer->addMethod("screenToView", &SparkLayer_screenToView);
-	registrar->registerClass(classSparkLayer);
 
 	Ref< AutoRuntimeClass< VideoLayer > > classVideoLayer = new AutoRuntimeClass< VideoLayer >();
 	classVideoLayer->addMethod("play", &VideoLayer::play);

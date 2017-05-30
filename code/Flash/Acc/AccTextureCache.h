@@ -31,7 +31,7 @@ class IResourceManager;
 	{
 
 class AccBitmapRect;
-class FlashBitmap;
+class Bitmap;
 
 /*! \brief Texture cache for accelerated rendering.
  * \ingroup Flash
@@ -50,7 +50,7 @@ public:
 
 	void clear();
 
-	Ref< AccBitmapRect > getBitmapTexture(const FlashBitmap& bitmap);
+	Ref< AccBitmapRect > getBitmapTexture(const Bitmap& bitmap);
 
 	void freeTexture(render::ISimpleTexture* texture);
 

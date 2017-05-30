@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Flash/FlashShape.h"
-#include "Flash/FlashShapeInstance.h"
+#include "Flash/Shape.h"
+#include "Flash/ShapeInstance.h"
 #include "Flash/Debug/ShapeInstanceDebugInfo.h"
 
 namespace traktor
@@ -24,7 +24,7 @@ ShapeInstanceDebugInfo::ShapeInstanceDebugInfo()
 {
 }
 
-ShapeInstanceDebugInfo::ShapeInstanceDebugInfo(const FlashShapeInstance* instance, bool mask, bool clipped)
+ShapeInstanceDebugInfo::ShapeInstanceDebugInfo(const ShapeInstance* instance, bool mask, bool clipped)
 {
 	m_name = instance->getName();
 	m_bounds = instance->getBounds();
@@ -41,7 +41,7 @@ void ShapeInstanceDebugInfo::serialize(ISerializer& s)
 {
 	InstanceDebugInfo::serialize(s);
 
-	s >> MemberRef< const FlashShape >(L"shape", m_shape);
+	s >> MemberRef< const Shape >(L"shape", m_shape);
 	s >> Member< bool >(L"mask", m_mask);
 	s >> Member< bool >(L"clipped", m_clipped);
 }

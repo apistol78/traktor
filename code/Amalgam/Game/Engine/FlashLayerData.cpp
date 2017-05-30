@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Amalgam/Game/Engine/FlashLayerData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Flash/FlashMovie.h"
+#include "Flash/Movie.h"
 #include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
@@ -33,7 +33,7 @@ FlashLayerData::FlashLayerData()
 Ref< Layer > FlashLayerData::createInstance(Stage* stage, IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	resource::Proxy< flash::FlashMovie > movie;
+	resource::Proxy< flash::Movie > movie;
 	resource::Proxy< render::ImageProcessSettings > imageProcess;
 
 	// Bind proxies to resource manager.
@@ -41,8 +41,8 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, IEnvironment* environm
 		return 0;
 
 	// Bind external movies.
-	std::map< std::wstring, resource::Proxy< flash::FlashMovie > > externalMovies;
-	for (std::map< std::wstring, resource::Id< flash::FlashMovie > >::const_iterator i = m_externalMovies.begin(); i != m_externalMovies.end(); ++i)
+	std::map< std::wstring, resource::Proxy< flash::Movie > > externalMovies;
+	for (std::map< std::wstring, resource::Id< flash::Movie > >::const_iterator i = m_externalMovies.begin(); i != m_externalMovies.end(); ++i)
 	{
 		if (!resourceManager->bind(i->second, externalMovies[i->first]))
 			return 0;
@@ -76,17 +76,17 @@ void FlashLayerData::serialize(ISerializer& s)
 {
 	LayerData::serialize(s);
 
-	s >> resource::Member< flash::FlashMovie >(L"movie", m_movie);
+	s >> resource::Member< flash::Movie >(L"movie", m_movie);
 
 	if (s.getVersion() >= 1)
 		s >> MemberStlMap<
 			std::wstring,
-			resource::Id< flash::FlashMovie >,
+			resource::Id< flash::Movie >,
 			MemberStlPair<
 				std::wstring,
-				resource::Id< flash::FlashMovie >,
+				resource::Id< flash::Movie >,
 				Member< std::wstring >,
-				resource::Member< flash::FlashMovie >
+				resource::Member< flash::Movie >
 			>
 		>(L"externalMovies", m_externalMovies);
 

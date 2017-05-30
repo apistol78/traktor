@@ -4,7 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Common/BitmapData.h"
 #include "Flash/Action/Common/BitmapFilter.h"

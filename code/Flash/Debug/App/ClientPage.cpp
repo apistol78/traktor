@@ -198,6 +198,14 @@ void ClientPage::updateSelection()
 			row->add(new ui::custom::GridItem(L"Text"));
 			row->add(new ui::custom::GridItem(ss.str()));
 			m_debugGrid->addRow(row);
+
+			ss.reset();
+			ss << editDebugInfo->getTextColor().getRed() << L", " << editDebugInfo->getTextColor().getGreen() << L", " << editDebugInfo->getTextColor().getBlue() << L", " << editDebugInfo->getTextColor().getAlpha();
+
+			row = new ui::custom::GridRow();
+			row->add(new ui::custom::GridItem(L"Text Color"));
+			row->add(new ui::custom::GridItem(ss.str()));
+			m_debugGrid->addRow(row);
 		}
 
 		row = new ui::custom::GridRow();

@@ -25,13 +25,13 @@ namespace traktor
 	{
 
 class ColorTransform;
-class FlashCanvas;
-class FlashDictionary;
-class FlashEditInstance;
-class FlashFont;
-class FlashSpriteInstance;
-class FlashShape;
-class FlashMorphShape;
+class Canvas;
+class Dictionary;
+class EditInstance;
+class Font;
+class MorphShape;
+class Shape;
+class SpriteInstance;
 
 /*! \brief Rendering interface.
  * \ingroup Flash
@@ -56,7 +56,7 @@ public:
 	 * \param dirtyRegion Region of stage which needs to be redrawn.
 	 */
 	virtual void begin(
-		const FlashDictionary& dictionary,
+		const Dictionary& dictionary,
 		const Color4f& backgroundColor,
 		const Aabb2& frameBounds,
 		const Vector4& frameTransform,
@@ -67,17 +67,17 @@ public:
 
 	/*! \brief Begin rendering sprite.
 	 */
-	virtual void beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) = 0;
+	virtual void beginSprite(const SpriteInstance& sprite, const Matrix33& transform) = 0;
 
 	/*! \brief End rendering sprite.
 	 */
-	virtual void endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) = 0;
+	virtual void endSprite(const SpriteInstance& sprite, const Matrix33& transform) = 0;
 
 	/*! \brief Begin rendering edit field. */
-	virtual void beginEdit(const FlashEditInstance& edit, const Matrix33& transform) = 0;
+	virtual void beginEdit(const EditInstance& edit, const Matrix33& transform) = 0;
 
 	/*! \brief End rendering edit field. */
-	virtual void endEdit(const FlashEditInstance& edit, const Matrix33& transform) = 0;
+	virtual void endEdit(const EditInstance& edit, const Matrix33& transform) = 0;
 
 	/*! \brief Begin rendering mask.
 	 *
@@ -96,7 +96,7 @@ public:
 	 * \param cxform Color transform.
 	 * \param blendMode Blend mode.
 	 */
-	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const ColorTransform& cxform, uint8_t blendMode) = 0;
+	virtual void renderShape(const Dictionary& dictionary, const Matrix33& transform, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode) = 0;
 
 	/*! \brief Render morph shape.
 	 *
@@ -105,7 +105,7 @@ public:
 	 * \param shape Shape
 	 * \param cxform Color transform.
 	 */
-	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const ColorTransform& cxform) = 0;
+	virtual void renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const MorphShape& shape, const ColorTransform& cxform) = 0;
 
 	/*! \brief Render glyph.
 	 *
@@ -121,10 +121,10 @@ public:
 	 * \param filterColor Text filter color.
 	 */
 	virtual void renderGlyph(
-		const FlashDictionary& dictionary,
+		const Dictionary& dictionary,
 		const Matrix33& transform,
-		const FlashFont* font,
-		const FlashShape* glyph,
+		const Font* font,
+		const Shape* glyph,
 		float fontHeight,
 		wchar_t character,
 		const Color4f& color,
@@ -149,7 +149,7 @@ public:
 	 * \param cxform Color transform.
 	 * \param blendMode Blend mode.
 	 */
-	virtual void renderCanvas(const Matrix33& transform, const FlashCanvas& canvas, const ColorTransform& cxform, uint8_t blendMode) = 0;
+	virtual void renderCanvas(const Matrix33& transform, const Canvas& canvas, const ColorTransform& cxform, uint8_t blendMode) = 0;
 
 	/*! \brief End frame. */
 	virtual void end() = 0;
