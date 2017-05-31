@@ -213,6 +213,35 @@ void ClientPage::updateSelection()
 		row->add(new ui::custom::GridItem(debugInfo->getVisible() ? L"Yes" : L"No"));
 		m_debugGrid->addRow(row);
 
+
+		auto lm = debugInfo->getLocalTransform();
+
+		ss.reset();
+		ss << lm.e11 << L", " << lm.e12 << L", " << lm.e13;
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Local transform [11,12,13]"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+
+		ss.reset();
+		ss << lm.e21 << L", " << lm.e22 << L", " << lm.e23;
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Local transform [21,22,23]"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+
+		ss.reset();
+		ss << lm.e31 << L", " << lm.e32 << L", " << lm.e33;
+
+		row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L"Local transform [31,32,33]"));
+		row->add(new ui::custom::GridItem(ss.str()));
+		m_debugGrid->addRow(row);
+
+
+
 		ss.reset();
 		ss << int(lt.x / 20.0f) << L", " << int(lt.y / 20.0f);
 
