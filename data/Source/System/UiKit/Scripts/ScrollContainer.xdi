@@ -44,8 +44,12 @@ function ScrollContainer:place(x, y, width, height)
 		self._scrollSize.width = self._scrollSize.width - ps.width
 	end
 
-	self._mask_mc:setWidth(self._scrollSize.width)
-	self._mask_mc:setHeight(self._scrollSize.height)
+	if self._scrollSize.width > 0 then
+		self._mask_mc:setWidth(self._scrollSize.width)
+	end
+	if self._scrollSize.height > 0 then
+		self._mask_mc:setHeight(self._scrollSize.height)
+	end
 
 	if self._layout ~= nil then
 		self._innerSize = self:_getInnerSize()
