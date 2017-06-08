@@ -9,9 +9,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Color4ub.h"
-
-#include "Core/Math/Random.h"
-
 #include "Flash/ColorTransform.h"
 #include "Flash/Canvas.h"
 #include "Flash/Dictionary.h"
@@ -23,7 +20,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Acc/AccShape.h"
 #include "Flash/Acc/AccShapeResources.h"
 #include "Flash/Acc/AccTextureCache.h"
-
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
@@ -84,20 +80,14 @@ bool AccShape::createFromTriangles(
 	const AlignedVector< Line >& lines
 )
 {
-	// Update shape's bounds from all triangles and lines.
-	m_bounds.mn.x = m_bounds.mn.y =  std::numeric_limits< float >::max();
-	m_bounds.mx.x = m_bounds.mx.y = -std::numeric_limits< float >::max();
+	Aabb2 triangleBounds;
+	Aabb2 lineBounds;
 
+	// Update shape's bounds from all triangles and lines.
 	for (AlignedVector< Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
 	{
-		for (int k = 0; k < 3; ++k)
-		{
-			const Vector2& pt = j->v[k];
-			m_bounds.mn.x = min< float >(m_bounds.mn.x, pt.x);
-			m_bounds.mn.y = min< float >(m_bounds.mn.y, pt.y);
-			m_bounds.mx.x = max< float >(m_bounds.mx.x, pt.x);
-			m_bounds.mx.y = max< float >(m_bounds.mx.y, pt.y);
-		}
+		for (int32_t k = 0; k < 3; ++k)
+			triangleBounds.contain(j->v[k]);
 	}
 
 	for (AlignedVector< Line >::const_iterator j = lines.begin(); j != lines.end(); ++j)
@@ -105,16 +95,16 @@ bool AccShape::createFromTriangles(
 		const LineStyle& lineStyle = lineStyles[j->lineStyle - 1];
 		float width = lineStyle.getLineWidth() / 2.0f;
 
-		for (int k = 0; k < 2; ++k)
+		for (int32_t k = 0; k < 2; ++k)
 		{
 			const Vector2& pt = j->v[k];
-			m_bounds.mn.x = min< float >(m_bounds.mn.x, pt.x - width);
-			m_bounds.mn.y = min< float >(m_bounds.mn.y, pt.y - width);
-			m_bounds.mx.x = max< float >(m_bounds.mx.x, pt.x + width);
-			m_bounds.mx.y = max< float >(m_bounds.mx.y, pt.y + width);
+			lineBounds.contain(pt - width);
+			lineBounds.contain(pt + width);
 		}
 	}
 
+	m_bounds = triangleBounds;
+	m_bounds.contain(lineBounds);
 	m_fillRenderBatches.resize(0);
 	m_lineRenderBatches.resize(0);
 	m_batchFlags = 0;
@@ -130,191 +120,197 @@ bool AccShape::createFromTriangles(
 		const int32_t c_maxSubDivide = 4;
 		const int32_t c_maxLinesPerCluster = 4;
 
-		AlignedVector< LineCluster > clusters;
+		// Collect unique line styles.
+		std::set< int32_t > uniqueLineStyles;
+		for (auto line : lines)
+			uniqueLineStyles.insert(line.lineStyle);
 
-		// Create root clusters.
-		clusters.push_back();
-		clusters.back().bounds = m_bounds;
-		for (int32_t i = 0; i < lines.size(); ++i)
-			clusters.back().lines.push_back(i);
-
-		// \TBD Check if a single line occupy entire cluster... possibly when subdividing deep...
-
-		// Sub-divide clusters with too many lines.
-		for (int32_t it = 0; it < c_maxSubDivide; ++it)
+		// Generate cluster and batches for each line style.
+		for (auto lineStyleIndex : uniqueLineStyles)
 		{
-			int32_t nsub = 0;
-			int32_t size = clusters.size();
-			for (int32_t i = 0; i < size; ++i)
+			const LineStyle& lineStyle = lineStyles[lineStyleIndex - 1];
+			float width = lineStyle.getLineWidth() / 2.0f;
+
+			// Create root clusters.
+			AlignedVector< LineCluster > clusters;
+			clusters.push_back();
+			clusters.back().bounds = lineBounds;
+			for (int32_t i = 0; i < lines.size(); ++i)
 			{
-				if (clusters[i].lines.size() > c_maxLinesPerCluster)
+				if (lines[i].lineStyle == lineStyleIndex)
+					clusters.back().lines.push_back(i);
+			}
+
+			// \TBD Check if a single line occupy entire cluster... possibly when subdividing deep...
+
+			// Sub-divide clusters with too many lines.
+			for (int32_t it = 0; it < c_maxSubDivide; ++it)
+			{
+				int32_t nsub = 0;
+				int32_t size = clusters.size();
+				for (int32_t i = 0; i < size; ++i)
 				{
-					const int32_t c_subSize = 2;
-					for (int32_t iy = 0; iy < c_subSize; ++iy)
+					if (clusters[i].lines.size() > c_maxLinesPerCluster)
 					{
-						for (int32_t ix = 0; ix < c_subSize; ++ix)
+						const int32_t c_subSize = 2;
+						for (int32_t iy = 0; iy < c_subSize; ++iy)
 						{
-							Vector2 dxy(1.0f / float(c_subSize), 1.0f / float(c_subSize));
-							Vector2 fxy = Vector2(ix, iy) * dxy;
-
-							Aabb2 cell;
-							cell.mn = clusters[i].bounds.mn + (clusters[i].bounds.mx - clusters[i].bounds.mn) * fxy;
-							cell.mx = clusters[i].bounds.mn + (clusters[i].bounds.mx - clusters[i].bounds.mn) * (fxy + dxy);
-
-							bool foundLine = false;
-							for (int32_t j = 0; j < clusters[i].lines.size(); ++j)
+							for (int32_t ix = 0; ix < c_subSize; ++ix)
 							{
-								const Line& line = lines[clusters[i].lines[j]];
-								const LineStyle& lineStyle = lineStyles[line.lineStyle - 1];
-								float width = lineStyle.getLineWidth() / 2.0f;
+								Vector2 dxy(1.0f / float(c_subSize), 1.0f / float(c_subSize));
+								Vector2 fxy = Vector2(ix, iy) * dxy;
 
-								Aabb2 cellWithMargin = cell;
-								cellWithMargin.mn -= Vector2(width, width);
-								cellWithMargin.mx += Vector2(width, width);
+								Aabb2 cell;
+								cell.mn = clusters[i].bounds.mn + (clusters[i].bounds.mx - clusters[i].bounds.mn) * fxy;
+								cell.mx = clusters[i].bounds.mn + (clusters[i].bounds.mx - clusters[i].bounds.mn) * (fxy + dxy);
 
-								float d;
-								if (!cellWithMargin.intersectSegment(line.v[0], line.v[1], d))
-									continue;
-
-								if (!foundLine)
+								bool foundLine = false;
+								for (int32_t j = 0; j < clusters[i].lines.size(); ++j)
 								{
-									clusters.push_back();
-									foundLine = true;
-								}
+									const Line& line = lines[clusters[i].lines[j]];
 
-								LineCluster& cs = clusters.back();
-								cs.bounds.contain(cell);
-								cs.lines.push_back(clusters[i].lines[j]);
+									Aabb2 cellWithMargin = cell;
+									cellWithMargin.mn -= Vector2(width, width);
+									cellWithMargin.mx += Vector2(width, width);
+
+									float d;
+									if (!cellWithMargin.intersectSegment(line.v[0], line.v[1], d))
+										continue;
+
+									if (!foundLine)
+									{
+										clusters.push_back();
+										foundLine = true;
+									}
+
+									LineCluster& cs = clusters.back();
+									cs.bounds.contain(cell);
+									cs.lines.push_back(clusters[i].lines[j]);
+								}
 							}
 						}
-					}
 
-					clusters[i].lines.clear();
-					++nsub;
+						clusters[i].lines.clear();
+						++nsub;
+					}
+				}
+
+				AlignedVector< LineCluster >::iterator i = std::remove_if(clusters.begin(), clusters.end(), [](LineCluster& c) {
+					return c.lines.empty();
+				});
+				clusters.erase(i, clusters.end());
+
+				if (nsub <= 0)
+					break;
+			}
+
+			// Shrink bounds of clusters.
+			for (int32_t i = 0; i < clusters.size(); ++i)
+			{
+				LineCluster& c = clusters[i];
+				Aabb2 b;
+
+				for (int32_t j = 0; j < c.lines.size(); ++j)
+				{
+					const Line& line = lines[c.lines[j]];
+
+					//Aabb2 clip = c.bounds;
+					//clip.mn -= Vector2(width, width);
+					//clip.mx += Vector2(width, width);
+
+					//float d;
+					//if (clip.intersectSegment(line.v[0], line.v[1], d))
+					//{
+					//}
+
+					b.contain(line.v[0], width);
+					b.contain(line.v[1], width);
+				}
+
+				if (b.mn.x > c.bounds.mn.x)
+					c.bounds.mn.x = b.mn.x;
+				if (b.mn.y > c.bounds.mn.y)
+					c.bounds.mn.y = b.mn.y;
+				if (b.mx.x < c.bounds.mx.x)
+					c.bounds.mx.x = b.mx.x;
+				if (b.mx.y < c.bounds.mx.y)
+					c.bounds.mx.y = b.mx.y;
+			}
+
+			// Generate line batches from clusters.
+			AccShapeVertexPool::Range vertexRange;
+			if (!m_lineVertexPool->acquireRange(clusters.size() * 2 * 3, vertexRange))
+				return false;
+
+			LineVertex* vertex = static_cast< LineVertex* >(vertexRange.vertexBuffer->lock());
+			if (!vertex)
+				return false;
+
+			int32_t lineDataSize = 0;
+			for (auto c : clusters)
+				lineDataSize += min< int32_t >(c.lines.size(), c_maxLinesPerCluster);
+
+			render::SimpleTextureCreateDesc stcd;
+			stcd.width = lineDataSize;
+			stcd.height = 1;
+			stcd.mipCount = 1;
+			stcd.format = render::TfR32G32B32A32F;
+			stcd.sRGB = false;
+			stcd.immutable = false;
+
+			Ref< render::ISimpleTexture > lineTexture = m_renderSystem->createSimpleTexture(stcd);
+			if (!lineTexture)
+				return false;
+
+			render::ITexture::Lock lock;
+			if (!lineTexture->lock(0, lock))
+				return false;
+
+			float* lineData = static_cast< float* >(lock.bits);
+			int32_t lineDataOffset = 0;
+
+			m_lineRenderBatches.push_back();
+			m_lineRenderBatches.back().vertexRange = vertexRange;
+			m_lineRenderBatches.back().lineTexture = lineTexture;
+			m_lineRenderBatches.back().primitives.setNonIndexed(render::PtTriangles, 0, clusters.size() * 2);
+			m_lineRenderBatches.back().color = lineStyle.getLineColor();
+			m_lineRenderBatches.back().width = width;
+
+			for (int32_t i = 0; i < clusters.size(); ++i)
+			{
+				const LineCluster& c = clusters[i];
+
+				Vector2 q[4];
+				c.bounds.getExtents(q);
+
+				const int t[] = { 0, 1, 3, 2, 3, 1 };
+				for (int j = 0; j < sizeof_array(t); ++j)
+				{
+					vertex->pos[0] = q[t[j]].x;
+					vertex->pos[1] = q[t[j]].y;
+					vertex->lineOffset = float(lineDataOffset);
+					vertex++;
+				}
+
+				for (int32_t j = 0; j < min< int32_t >(c.lines.size(), c_maxLinesPerCluster); ++j)
+				{
+					const Line& line = lines[c.lines[j]];
+					float* p = &lineData[lineDataOffset * 4];
+
+					*p++ = line.v[0].x;
+					*p++ = line.v[0].y;
+					*p++ = line.v[1].x;
+					*p++ = line.v[1].y;
+
+					lineDataOffset++;
 				}
 			}
 
-			AlignedVector< LineCluster >::iterator i = std::remove_if(clusters.begin(), clusters.end(), [](LineCluster& c) {
-				return c.lines.empty();
-			});
-			clusters.erase(i, clusters.end());
+			T_ASSERT (lineDataOffset == lineDataSize);
 
-			if (nsub <= 0)
-				break;
+			lineTexture->unlock(0);
+			vertexRange.vertexBuffer->unlock();
 		}
-
-		// Shrink bounds of clusters.
-		for (int32_t i = 0; i < clusters.size(); ++i)
-		{
-			LineCluster& c = clusters[i];
-			Aabb2 b;
-
-			for (int32_t j = 0; j < c.lines.size(); ++j)
-			{
-				const Line& line = lines[c.lines[j]];
-				const LineStyle& lineStyle = lineStyles[line.lineStyle - 1];
-				float width = lineStyle.getLineWidth() / 2.0f;
-
-				//Aabb2 clip = c.bounds;
-				//clip.mn -= Vector2(width, width);
-				//clip.mx += Vector2(width, width);
-
-				//float d;
-				//if (clip.intersectSegment(line.v[0], line.v[1], d))
-				//{
-				//}
-
-				b.contain(line.v[0], width);
-				b.contain(line.v[1], width);
-			}
-
-			if (b.mn.x > c.bounds.mn.x)
-				c.bounds.mn.x = b.mn.x;
-			if (b.mn.y > c.bounds.mn.y)
-				c.bounds.mn.y = b.mn.y;
-			if (b.mx.x < c.bounds.mx.x)
-				c.bounds.mx.x = b.mx.x;
-			if (b.mx.y < c.bounds.mx.y)
-				c.bounds.mx.y = b.mx.y;
-		}
-
-		// Generate line batches from clusters.
-		if (!m_lineVertexPool->acquireRange(clusters.size() * 2 * 3, m_lineVertexRange))
-			return false;
-
-		LineVertex* vertex = static_cast< LineVertex* >(m_lineVertexRange.vertexBuffer->lock());
-		if (!vertex)
-			return false;
-
-		int32_t lineDataSize = 0;
-		for (auto c : clusters)
-			lineDataSize += min< int32_t >(c.lines.size(), c_maxLinesPerCluster) * 2;
-
-		render::SimpleTextureCreateDesc stcd;
-		stcd.width = lineDataSize;
-		stcd.height = 1;
-		stcd.mipCount = 1;
-		stcd.format = render::TfR32G32B32A32F;
-		stcd.sRGB = false;
-		stcd.immutable = false;
-
-		Ref< render::ISimpleTexture > lineTexture = m_renderSystem->createSimpleTexture(stcd);
-		if (!lineTexture)
-			return false;
-
-		render::ITexture::Lock lock;
-		if (!lineTexture->lock(0, lock))
-			return false;
-
-		float* lineData = static_cast< float* >(lock.bits);
-		int32_t lineDataOffset = 0;
-
-		m_lineRenderBatches.push_back();
-		m_lineRenderBatches.back().lineTexture = lineTexture;
-		m_lineRenderBatches.back().primitives.setNonIndexed(render::PtTriangles, 0, clusters.size() * 2);
-
-		for (int32_t i = 0; i < clusters.size(); ++i)
-		{
-			const LineCluster& c = clusters[i];
-
-			Vector2 q[4];
-			c.bounds.getExtents(q);
-
-			const int t[] = { 0, 1, 3, 2, 3, 1 };
-			for (int j = 0; j < sizeof_array(t); ++j)
-			{
-				vertex->pos[0] = q[t[j]].x;
-				vertex->pos[1] = q[t[j]].y;
-				vertex->lineOffset = float(lineDataOffset);
-				vertex++;
-			}
-
-			for (int32_t j = 0; j < min< int32_t >(c.lines.size(), c_maxLinesPerCluster); ++j)
-			{
-				const Line& line = lines[c.lines[j]];
-				const LineStyle& lineStyle = lineStyles[line.lineStyle - 1];
-				float width = lineStyle.getLineWidth() / 2.0f;
-
-				float* p = &lineData[lineDataOffset * 4];
-
-				*p++ = line.v[0].x;
-				*p++ = line.v[0].y;
-				*p++ = line.v[1].x;
-				*p++ = line.v[1].y;
-
-				*p++ = width;
-				*p++ = 0.0f;
-				*p++ = 0.0f;
-				*p++ = 0.0f;
-
-				lineDataOffset += 2;
-			}
-		}
-
-		T_ASSERT (lineDataOffset == lineDataSize);
-
-		lineTexture->unlock(0);
-		m_lineVertexRange.vertexBuffer->unlock();
 
 		m_batchFlags |= BfHaveLines;
 	}
@@ -700,22 +696,15 @@ void AccShape::render(
 		{
 			render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw line batch");
 			renderBlock->program = shaderLine->getCurrentProgram();
-			renderBlock->vertexBuffer = m_lineVertexRange.vertexBuffer;
+			renderBlock->vertexBuffer = i->vertexRange.vertexBuffer;
 			renderBlock->primitive = i->primitives.type;
 			renderBlock->offset = i->primitives.offset;
 			renderBlock->count = i->primitives.count;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->programParams->beginParameters(renderContext);
-
-			renderBlock->programParams->setTextureParameter(L"Flash_LineData", i->lineTexture);
-
-			//renderBlock->programParams->setVectorArrayParameter(m_shapeResources->m_handleLines, i->lines, min< int >(i->lines.size(), 4));
-			//renderBlock->programParams->setFloatArrayParameter(m_shapeResources->m_handleWidths, i->widths, min< int >(i->widths.size(), 4));
-
-			static Random s_rnd;
-			Color4f rnd(s_rnd.nextFloat(), s_rnd.nextFloat(), s_rnd.nextFloat(), 1.0f);
-			renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, rnd);
-
+			renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleLineData, i->lineTexture);
+			renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleLineColor, i->color);
+			renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleLineWidth, i->width);
 			renderBlock->programParams->endParameters(renderContext);
 			renderContext->draw(render::RpOverlay, renderBlock);
 		}
