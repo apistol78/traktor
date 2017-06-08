@@ -79,10 +79,11 @@ public:
 
 	struct LineRenderBatch
 	{
+		AccShapeVertexPool::Range vertexRange;
 		Ref< render::ITexture > lineTexture;
 		render::Primitives primitives;
-		//StaticVector< Vector4, 4 > lines;
-		//StaticVector< float, 4 > widths;
+		Color4f color;
+		float width;
 	};
 
 	AccShape(render::IRenderSystem* renderSystem, const AccShapeResources* shapeResources, AccShapeVertexPool* fillVertexPool, AccShapeVertexPool* lineVertexPool);
@@ -141,7 +142,6 @@ private:
 	AccShapeVertexPool* m_fillVertexPool;
 	AccShapeVertexPool* m_lineVertexPool;
 	AccShapeVertexPool::Range m_fillVertexRange;
-	AccShapeVertexPool::Range m_lineVertexRange;
 	AlignedVector< FillRenderBatch > m_fillRenderBatches;
 	AlignedVector< LineRenderBatch > m_lineRenderBatches;
 	Aabb2 m_bounds;

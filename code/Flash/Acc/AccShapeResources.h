@@ -50,8 +50,9 @@ private:
 	render::handle_t m_handleCxFormAdd;
 	render::handle_t m_handleTexture;
 	render::handle_t m_handleTextureClamp;
-	render::handle_t m_handleLines;
-	render::handle_t m_handleWidths;
+	render::handle_t m_handleLineData;
+	render::handle_t m_handleLineWidth;
+	render::handle_t m_handleLineColor;
 	render::handle_t m_handleTechniques[SbmLast];
 };
 
