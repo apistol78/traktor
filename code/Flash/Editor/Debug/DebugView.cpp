@@ -18,7 +18,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Debug/ShapeInstanceDebugInfo.h"
 #include "Flash/Debug/SpriteInstanceDebugInfo.h"
 #include "Flash/Debug/TextInstanceDebugInfo.h"
-#include "Flash/Debug/App/DebugView.h"
+#include "Flash/Editor/Debug/DebugView.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/StyleBitmap.h"

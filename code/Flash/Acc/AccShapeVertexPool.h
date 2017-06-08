@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Render/VertexElement.h"
 
 namespace traktor
 {
@@ -30,17 +31,6 @@ class AccShapeVertexPool : public Object
 	T_RTTI_CLASS;
 
 public:
-#pragma pack(1)
-	struct Vertex
-	{
-		float pos[2];
-		uint8_t curvature[4];
-		float texCoord[2];
-		float texRect[4];
-		uint8_t color[4];
-	};
-#pragma pack()
-
 	struct Range
 	{
 		render::VertexBuffer* vertexBuffer;
@@ -51,7 +41,7 @@ public:
 		}
 	};
 
-	AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frames);
+	AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frames, const std::vector< render::VertexElement >& vertexElements);
 
 	bool create();
 
@@ -73,6 +63,7 @@ private:
 	typedef std::list< VertexRange > vr_list_t;
 
 	Ref< render::IRenderSystem > m_renderSystem;
+	std::vector< render::VertexElement > m_vertexElements;
 	vr_list_t m_usedRanges;
 	vr_list_t m_freeRanges;
 	AlignedVector< vr_list_t > m_garbageRanges;

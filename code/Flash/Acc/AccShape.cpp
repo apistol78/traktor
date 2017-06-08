@@ -9,6 +9,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Color4ub.h"
+
+#include "Core/Math/Random.h"
+
 #include "Flash/ColorTransform.h"
 #include "Flash/Canvas.h"
 #include "Flash/Dictionary.h"
@@ -20,6 +23,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Acc/AccShape.h"
 #include "Flash/Acc/AccShapeResources.h"
 #include "Flash/Acc/AccTextureCache.h"
+
+#include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
@@ -35,7 +40,8 @@ namespace traktor
 enum BatchFlags
 {
 	BfHaveSolid = 1,
-	BfHaveTextured = 2
+	BfHaveTextured = 2,
+	BfHaveLines = 4
 };
 
 const uint8_t c_cpNegOne = 0;
@@ -54,9 +60,11 @@ const static Matrix33 c_textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0
 
 		}
 
-AccShape::AccShape(AccShapeResources* shapeResources)
-:	m_shapeResources(shapeResources)
-,	m_vertexPool(0)
+AccShape::AccShape(render::IRenderSystem* renderSystem, const AccShapeResources* shapeResources, AccShapeVertexPool* fillVertexPool, AccShapeVertexPool* lineVertexPool)
+:	m_renderSystem(renderSystem)
+,	m_shapeResources(shapeResources)
+,	m_fillVertexPool(fillVertexPool)
+,	m_lineVertexPool(lineVertexPool)
 ,	m_batchFlags(0)
 {
 }
@@ -66,124 +74,20 @@ AccShape::~AccShape()
 	destroy();
 }
 
-bool AccShape::createFromPaths(
-	AccShapeVertexPool* vertexPool,
-	AccGradientCache* gradientCache,
-	AccTextureCache* textureCache,
-	const Dictionary& dictionary,
-	const AlignedVector< FillStyle >& fillStyles,
-	const AlignedVector< LineStyle >& lineStyles,
-	const AlignedVector< Path >& paths,
-	bool oddEven
-)
-{
-	AlignedVector< Triangle > triangles;
-	AlignedVector< Segment > segments;
-	Triangulator triangulator;
-	Segment s;
-
-	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
-	{
-		const AlignedVector< Vector2 >& points = i->getPoints();
-		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
-
-		std::set< uint16_t > fillStyles;
-		for (uint32_t j = 0; j < subPaths.size(); ++j)
-		{
-			const SubPath& sp = subPaths[j];
-			if (sp.fillStyle0)
-				fillStyles.insert(sp.fillStyle0);
-			if (sp.fillStyle1)
-				fillStyles.insert(sp.fillStyle1);
-		}
-
-		for (std::set< uint16_t >::const_iterator ii = fillStyles.begin(); ii != fillStyles.end(); ++ii)
-		{
-			for (uint32_t j = 0; j < subPaths.size(); ++j)
-			{
-				const SubPath& sp = subPaths[j];
-				if (sp.fillStyle0 != *ii && sp.fillStyle1 != *ii)
-					continue;
-
-				for (AlignedVector< SubPathSegment >::const_iterator k = sp.segments.begin(); k != sp.segments.end(); ++k)
-				{
-					switch (k->type)
-					{
-					case SpgtLinear:
-						{
-							s.v[0] = points[k->pointsOffset];
-							s.v[1] = points[k->pointsOffset + 1];
-							s.curve = false;
-							s.fillStyle0 = sp.fillStyle0;
-							s.fillStyle1 = sp.fillStyle1;
-							s.lineStyle = sp.lineStyle;
-							segments.push_back(s);
-						}
-						break;
-
-					case SpgtQuadratic:
-						{
-							s.v[0] = points[k->pointsOffset];
-							s.v[1] = points[k->pointsOffset + 2];
-							s.c = points[k->pointsOffset + 1];
-							s.curve = true;
-							s.fillStyle0 = sp.fillStyle0;
-							s.fillStyle1 = sp.fillStyle1;
-							s.lineStyle = sp.lineStyle;
-							segments.push_back(s);
-						}
-						break;
-
-					default:
-						break;
-					}
-				}
-			}
-
-			if (!segments.empty())
-			{
-				uint32_t from = triangles.size();
-
-				triangulator.triangulate(segments, *ii, oddEven, triangles);
-				segments.resize(0);
-
-				uint32_t to = triangles.size();
-
-				// Transform each new triangle with path's transform.
-				for (uint32_t ti = from; ti < to; ++ti)
-				{
-					triangles[ti].v[0] = i->getTransform() * triangles[ti].v[0];
-					triangles[ti].v[1] = i->getTransform() * triangles[ti].v[1];
-					triangles[ti].v[2] = i->getTransform() * triangles[ti].v[2];
-				}
-			}
-		}
-	}
-
-	return createFromTriangles(
-		vertexPool,
-		gradientCache,
-		textureCache,
-		dictionary,
-		fillStyles,
-		lineStyles,
-		triangles
-	);
-}
-
 bool AccShape::createFromTriangles(
-	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
 	const Dictionary& dictionary,
 	const AlignedVector< FillStyle >& fillStyles,
 	const AlignedVector< LineStyle >& lineStyles,
-	const AlignedVector< Triangle >& triangles
+	const AlignedVector< Triangle >& triangles,
+	const AlignedVector< Line >& lines
 )
 {
-	// Update shape's bounds from all triangles.
+	// Update shape's bounds from all triangles and lines.
 	m_bounds.mn.x = m_bounds.mn.y =  std::numeric_limits< float >::max();
 	m_bounds.mx.x = m_bounds.mx.y = -std::numeric_limits< float >::max();
+
 	for (AlignedVector< Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
 	{
 		for (int k = 0; k < 3; ++k)
@@ -196,28 +100,240 @@ bool AccShape::createFromTriangles(
 		}
 	}
 
-	m_renderBatches.resize(0);
+	for (AlignedVector< Line >::const_iterator j = lines.begin(); j != lines.end(); ++j)
+	{
+		const LineStyle& lineStyle = lineStyles[j->lineStyle - 1];
+		float width = lineStyle.getLineWidth() / 2.0f;
+
+		for (int k = 0; k < 2; ++k)
+		{
+			const Vector2& pt = j->v[k];
+			m_bounds.mn.x = min< float >(m_bounds.mn.x, pt.x - width);
+			m_bounds.mn.y = min< float >(m_bounds.mn.y, pt.y - width);
+			m_bounds.mx.x = max< float >(m_bounds.mx.x, pt.x + width);
+			m_bounds.mx.y = max< float >(m_bounds.mx.y, pt.y + width);
+		}
+	}
+
+	m_fillRenderBatches.resize(0);
+	m_lineRenderBatches.resize(0);
 	m_batchFlags = 0;
 
-	if (!triangles.empty())
+	if (!lines.empty())
 	{
-		// Allocate vertex range.
-		T_ASSERT (!m_vertexRange.vertexBuffer)
-		if (!vertexPool->acquireRange(triangles.size() * 3, m_vertexRange))
-			return false;
-		T_ASSERT (m_vertexRange.vertexBuffer);
-		m_vertexPool = vertexPool;
+		struct LineCluster
+		{
+			Aabb2 bounds;
+			AlignedVector< int32_t > lines;
+		};
 
-		AccShapeVertexPool::Vertex* vertex = static_cast< AccShapeVertexPool::Vertex* >(m_vertexRange.vertexBuffer->lock());
+		const int32_t c_maxSubDivide = 4;
+		const int32_t c_maxLinesPerCluster = 4;
+
+		AlignedVector< LineCluster > clusters;
+
+		// Create root clusters.
+		clusters.push_back();
+		clusters.back().bounds = m_bounds;
+		for (int32_t i = 0; i < lines.size(); ++i)
+			clusters.back().lines.push_back(i);
+
+		// \TBD Check if a single line occupy entire cluster... possibly when subdividing deep...
+
+		// Sub-divide clusters with too many lines.
+		for (int32_t it = 0; it < c_maxSubDivide; ++it)
+		{
+			int32_t nsub = 0;
+			int32_t size = clusters.size();
+			for (int32_t i = 0; i < size; ++i)
+			{
+				if (clusters[i].lines.size() > c_maxLinesPerCluster)
+				{
+					const int32_t c_subSize = 2;
+					for (int32_t iy = 0; iy < c_subSize; ++iy)
+					{
+						for (int32_t ix = 0; ix < c_subSize; ++ix)
+						{
+							Vector2 dxy(1.0f / float(c_subSize), 1.0f / float(c_subSize));
+							Vector2 fxy = Vector2(ix, iy) * dxy;
+
+							Aabb2 cell;
+							cell.mn = clusters[i].bounds.mn + (clusters[i].bounds.mx - clusters[i].bounds.mn) * fxy;
+							cell.mx = clusters[i].bounds.mn + (clusters[i].bounds.mx - clusters[i].bounds.mn) * (fxy + dxy);
+
+							bool foundLine = false;
+							for (int32_t j = 0; j < clusters[i].lines.size(); ++j)
+							{
+								const Line& line = lines[clusters[i].lines[j]];
+								const LineStyle& lineStyle = lineStyles[line.lineStyle - 1];
+								float width = lineStyle.getLineWidth() / 2.0f;
+
+								Aabb2 cellWithMargin = cell;
+								cellWithMargin.mn -= Vector2(width, width);
+								cellWithMargin.mx += Vector2(width, width);
+
+								float d;
+								if (!cellWithMargin.intersectSegment(line.v[0], line.v[1], d))
+									continue;
+
+								if (!foundLine)
+								{
+									clusters.push_back();
+									foundLine = true;
+								}
+
+								LineCluster& cs = clusters.back();
+								cs.bounds.contain(cell);
+								cs.lines.push_back(clusters[i].lines[j]);
+							}
+						}
+					}
+
+					clusters[i].lines.clear();
+					++nsub;
+				}
+			}
+
+			AlignedVector< LineCluster >::iterator i = std::remove_if(clusters.begin(), clusters.end(), [](LineCluster& c) {
+				return c.lines.empty();
+			});
+			clusters.erase(i, clusters.end());
+
+			if (nsub <= 0)
+				break;
+		}
+
+		// Shrink bounds of clusters.
+		for (int32_t i = 0; i < clusters.size(); ++i)
+		{
+			LineCluster& c = clusters[i];
+			Aabb2 b;
+
+			for (int32_t j = 0; j < c.lines.size(); ++j)
+			{
+				const Line& line = lines[c.lines[j]];
+				const LineStyle& lineStyle = lineStyles[line.lineStyle - 1];
+				float width = lineStyle.getLineWidth() / 2.0f;
+
+				//Aabb2 clip = c.bounds;
+				//clip.mn -= Vector2(width, width);
+				//clip.mx += Vector2(width, width);
+
+				//float d;
+				//if (clip.intersectSegment(line.v[0], line.v[1], d))
+				//{
+				//}
+
+				b.contain(line.v[0], width);
+				b.contain(line.v[1], width);
+			}
+
+			if (b.mn.x > c.bounds.mn.x)
+				c.bounds.mn.x = b.mn.x;
+			if (b.mn.y > c.bounds.mn.y)
+				c.bounds.mn.y = b.mn.y;
+			if (b.mx.x < c.bounds.mx.x)
+				c.bounds.mx.x = b.mx.x;
+			if (b.mx.y < c.bounds.mx.y)
+				c.bounds.mx.y = b.mx.y;
+		}
+
+		// Generate line batches from clusters.
+		if (!m_lineVertexPool->acquireRange(clusters.size() * 2 * 3, m_lineVertexRange))
+			return false;
+
+		LineVertex* vertex = static_cast< LineVertex* >(m_lineVertexRange.vertexBuffer->lock());
 		if (!vertex)
 			return false;
 
+		int32_t lineDataSize = 0;
+		for (auto c : clusters)
+			lineDataSize += min< int32_t >(c.lines.size(), c_maxLinesPerCluster) * 2;
+
+		render::SimpleTextureCreateDesc stcd;
+		stcd.width = lineDataSize;
+		stcd.height = 1;
+		stcd.mipCount = 1;
+		stcd.format = render::TfR32G32B32A32F;
+		stcd.sRGB = false;
+		stcd.immutable = false;
+
+		Ref< render::ISimpleTexture > lineTexture = m_renderSystem->createSimpleTexture(stcd);
+		if (!lineTexture)
+			return false;
+
+		render::ITexture::Lock lock;
+		if (!lineTexture->lock(0, lock))
+			return false;
+
+		float* lineData = static_cast< float* >(lock.bits);
+		int32_t lineDataOffset = 0;
+
+		m_lineRenderBatches.push_back();
+		m_lineRenderBatches.back().lineTexture = lineTexture;
+		m_lineRenderBatches.back().primitives.setNonIndexed(render::PtTriangles, 0, clusters.size() * 2);
+
+		for (int32_t i = 0; i < clusters.size(); ++i)
+		{
+			const LineCluster& c = clusters[i];
+
+			Vector2 q[4];
+			c.bounds.getExtents(q);
+
+			const int t[] = { 0, 1, 3, 2, 3, 1 };
+			for (int j = 0; j < sizeof_array(t); ++j)
+			{
+				vertex->pos[0] = q[t[j]].x;
+				vertex->pos[1] = q[t[j]].y;
+				vertex->lineOffset = float(lineDataOffset);
+				vertex++;
+			}
+
+			for (int32_t j = 0; j < min< int32_t >(c.lines.size(), c_maxLinesPerCluster); ++j)
+			{
+				const Line& line = lines[c.lines[j]];
+				const LineStyle& lineStyle = lineStyles[line.lineStyle - 1];
+				float width = lineStyle.getLineWidth() / 2.0f;
+
+				float* p = &lineData[lineDataOffset * 4];
+
+				*p++ = line.v[0].x;
+				*p++ = line.v[0].y;
+				*p++ = line.v[1].x;
+				*p++ = line.v[1].y;
+
+				*p++ = width;
+				*p++ = 0.0f;
+				*p++ = 0.0f;
+				*p++ = 0.0f;
+
+				lineDataOffset += 2;
+			}
+		}
+
+		T_ASSERT (lineDataOffset == lineDataSize);
+
+		lineTexture->unlock(0);
+		m_lineVertexRange.vertexBuffer->unlock();
+
+		m_batchFlags |= BfHaveLines;
+	}
+
+	if (!triangles.empty())
+	{
 		uint32_t vertexOffset = 0;
 		Matrix33 textureMatrix;
 		uint16_t lastFillStyle = 0;
 		Color4ub color(255, 255, 255, 255);
 		Ref< AccBitmapRect > texture;
 		bool textureClamp = false;
+
+		if (!m_fillVertexPool->acquireRange(triangles.size() * 3, m_fillVertexRange))
+			return false;
+
+		FillVertex* vertex = static_cast< FillVertex* >(m_fillVertexRange.vertexBuffer->lock());
+		if (!vertex)
+			return false;
 
 		for (AlignedVector< Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
 		{
@@ -267,12 +383,12 @@ bool AccShape::createFromTriangles(
 				lastFillStyle = j->fillStyle;
 			}
 
-			if (m_renderBatches.empty() || m_renderBatches.back().texture != texture || m_renderBatches.back().textureClamp != textureClamp)
+			if (m_fillRenderBatches.empty() || m_fillRenderBatches.back().texture != texture || m_fillRenderBatches.back().textureClamp != textureClamp)
 			{
-				m_renderBatches.push_back(RenderBatch());
-				m_renderBatches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
-				m_renderBatches.back().texture = texture;
-				m_renderBatches.back().textureClamp = textureClamp;
+				m_fillRenderBatches.push_back(FillRenderBatch());
+				m_fillRenderBatches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
+				m_fillRenderBatches.back().texture = texture;
+				m_fillRenderBatches.back().textureClamp = textureClamp;
 			}
 
 			if (texture)
@@ -321,23 +437,22 @@ bool AccShape::createFromTriangles(
 				}
 			}
 
-			m_renderBatches.back().primitives.count++;
+			m_fillRenderBatches.back().primitives.count++;
 			vertexOffset += 3;
 		}
 
-		m_vertexRange.vertexBuffer->unlock();
-
-		// Some shapes doesn't expose styles, such as glyphs, but are
-		// assumed to be solids.
-		if (!m_batchFlags)
-			m_batchFlags |= BfHaveSolid;
+		m_fillVertexRange.vertexBuffer->unlock();
 	}
+
+	// Some shapes doesn't expose styles, such as glyphs, but are
+	// assumed to be solids.
+	if (!m_batchFlags)
+		m_batchFlags |= BfHaveSolid;
 
 	return true;
 }
 
 bool AccShape::createFromShape(
-	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
 	const Dictionary& dictionary,
@@ -346,31 +461,34 @@ bool AccShape::createFromShape(
 {
 	if (!shape.getTriangles().empty())
 		return createFromTriangles(
-			vertexPool,
 			gradientCache,
 			textureCache,
 			dictionary,
 			shape.getFillStyles(),
 			shape.getLineStyles(),
-			shape.getTriangles()
+			shape.getTriangles(),
+			shape.getLines()
 		);
 	else if (!shape.getPaths().empty())
-		return createFromPaths(
-			vertexPool,
+	{
+		AlignedVector< Triangle > triangles;
+		AlignedVector< Line > lines;
+		shape.triangulate(false, triangles, lines);
+		return createFromTriangles(
 			gradientCache,
 			textureCache,
 			dictionary,
 			shape.getFillStyles(),
 			shape.getLineStyles(),
-			shape.getPaths(),
-			false
+			triangles,
+			lines
 		);
+	}
 	else
 		return false;
 }
 
 bool AccShape::createFromGlyph(
-	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
 	const Dictionary& dictionary,
@@ -379,45 +497,50 @@ bool AccShape::createFromGlyph(
 {
 	if (!shape.getTriangles().empty())
 		return createFromTriangles(
-			vertexPool,
 			gradientCache,
 			textureCache,
 			dictionary,
 			shape.getFillStyles(),
 			shape.getLineStyles(),
-			shape.getTriangles()
+			shape.getTriangles(),
+			shape.getLines()
 		);
 	else if (!shape.getPaths().empty())
-		return createFromPaths(
-			vertexPool,
+	{
+		AlignedVector< Triangle > triangles;
+		AlignedVector< Line > lines;
+		shape.triangulate(false, triangles, lines);
+		return createFromTriangles(
 			gradientCache,
 			textureCache,
 			dictionary,
 			shape.getFillStyles(),
 			shape.getLineStyles(),
-			shape.getPaths(),
-			true
+			triangles,
+			lines
 		);
+	}
 	else
 		return false;
 }
 
 bool AccShape::createFromCanvas(
-	AccShapeVertexPool* vertexPool,
 	AccGradientCache* gradientCache,
 	AccTextureCache* textureCache,
 	const Canvas& canvas
 )
 {
-	return createFromPaths(
-		vertexPool,
+	AlignedVector< Triangle > triangles;
+	AlignedVector< Line > lines;
+	canvas.triangulate(false, triangles, lines);
+	return createFromTriangles(
 		gradientCache,
 		textureCache,
 		canvas.getDictionary(),
 		canvas.getFillStyles(),
 		canvas.getLineStyles(),
-		canvas.getPaths(),
-		false
+		triangles,
+		lines
 	);
 }
 
@@ -425,14 +548,13 @@ void AccShape::destroy()
 {
 	m_shapeResources = 0;
 
-	if (m_vertexPool)
+	if (m_fillVertexPool)
 	{
-		m_vertexPool->releaseRange(m_vertexRange);
-		m_vertexPool = 0;
-		m_vertexRange = AccShapeVertexPool::Range();
+		m_fillVertexPool->releaseRange(m_fillVertexRange);
+		m_fillVertexPool = 0;
 	}
 
-	m_renderBatches.clear();
+	m_fillRenderBatches.clear();
 }
 
 void AccShape::render(
@@ -447,9 +569,6 @@ void AccShape::render(
 	uint8_t blendMode
 )
 {
-	if (m_renderBatches.empty() || !m_vertexRange.vertexBuffer)
-		return;
-
 	const Matrix44 m(
 		transform.e11, transform.e12, transform.e13, 0.0f,
 		transform.e21, transform.e22, transform.e23, 0.0f,
@@ -459,6 +578,8 @@ void AccShape::render(
 
 	render::Shader* shaderSolid = 0;
 	render::Shader* shaderTextured = 0;
+	render::Shader* shaderLine = 0;
+
 	if (!maskWrite)
 	{
 		shaderSolid = m_shapeResources->m_shaderSolid;
@@ -466,6 +587,9 @@ void AccShape::render(
 
 		shaderTextured = m_shapeResources->m_shaderTextured;
 		shaderTextured->setTechnique(m_shapeResources->m_handleTechniques[blendMode]);
+
+		shaderLine = m_shapeResources->m_shaderLine;
+		shaderLine->setTechnique(m_shapeResources->m_handleTechniques[blendMode]);
 	}
 	else
 	{
@@ -515,7 +639,27 @@ void AccShape::render(
 		}
 	}
 
-	for (AlignedVector< RenderBatch >::iterator j = m_renderBatches.begin(); j != m_renderBatches.end(); ++j)
+	if (shaderLine && (m_batchFlags & BfHaveLines) != 0)
+	{
+		render::IProgram* program = shaderLine->getCurrentProgram();
+		if (program)
+		{
+			render::NullRenderBlock* renderBlockLine = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set line parameters");
+			renderBlockLine->program = program;
+			renderBlockLine->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlockLine->programParams->beginParameters(renderContext);
+			renderBlockLine->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
+			renderBlockLine->programParams->setVectorParameter(m_shapeResources->m_handleFrameBounds, frameBounds);
+			renderBlockLine->programParams->setVectorParameter(m_shapeResources->m_handleFrameTransform, frameTransform);
+			renderBlockLine->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, cxform.mul);
+			renderBlockLine->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, cxform.add);
+			renderBlockLine->programParams->setStencilReference(maskReference);
+			renderBlockLine->programParams->endParameters(renderContext);
+			renderContext->draw(render::RpOverlay, renderBlockLine);
+		}
+	}
+
+	for (AlignedVector< FillRenderBatch >::iterator j = m_fillRenderBatches.begin(); j != m_fillRenderBatches.end(); ++j)
 	{
 		if (!j->texture)
 		{
@@ -523,7 +667,7 @@ void AccShape::render(
 			{
 				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw solid batch");
 				renderBlock->program = shaderSolid->getCurrentProgram();
-				renderBlock->vertexBuffer = m_vertexRange.vertexBuffer;
+				renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer;
 				renderBlock->primitive = j->primitives.type;
 				renderBlock->offset = j->primitives.offset;
 				renderBlock->count = j->primitives.count;
@@ -536,7 +680,7 @@ void AccShape::render(
 			{
 				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw textured batch");
 				renderBlock->program = shaderTextured->getCurrentProgram();
-				renderBlock->vertexBuffer = m_vertexRange.vertexBuffer;
+				renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer;
 				renderBlock->primitive = j->primitives.type;
 				renderBlock->offset = j->primitives.offset;
 				renderBlock->count = j->primitives.count;
@@ -547,6 +691,33 @@ void AccShape::render(
 				renderBlock->programParams->endParameters(renderContext);
 				renderContext->draw(render::RpOverlay, renderBlock);
 			}
+		}
+	}
+
+	for (AlignedVector< LineRenderBatch >::const_iterator i = m_lineRenderBatches.begin(); i != m_lineRenderBatches.end(); ++i)
+	{
+		if (shaderLine && shaderLine->getCurrentProgram())
+		{
+			render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw line batch");
+			renderBlock->program = shaderLine->getCurrentProgram();
+			renderBlock->vertexBuffer = m_lineVertexRange.vertexBuffer;
+			renderBlock->primitive = i->primitives.type;
+			renderBlock->offset = i->primitives.offset;
+			renderBlock->count = i->primitives.count;
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->programParams->beginParameters(renderContext);
+
+			renderBlock->programParams->setTextureParameter(L"Flash_LineData", i->lineTexture);
+
+			//renderBlock->programParams->setVectorArrayParameter(m_shapeResources->m_handleLines, i->lines, min< int >(i->lines.size(), 4));
+			//renderBlock->programParams->setFloatArrayParameter(m_shapeResources->m_handleWidths, i->widths, min< int >(i->widths.size(), 4));
+
+			static Random s_rnd;
+			Color4f rnd(s_rnd.nextFloat(), s_rnd.nextFloat(), s_rnd.nextFloat(), 1.0f);
+			renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, rnd);
+
+			renderBlock->programParams->endParameters(renderContext);
+			renderContext->draw(render::RpOverlay, renderBlock);
 		}
 	}
 }

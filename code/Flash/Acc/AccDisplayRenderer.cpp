@@ -79,8 +79,7 @@ bool colorsEqual(const Color4f& a, const Color4f& b)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccDisplayRenderer", AccDisplayRenderer, IDisplayRenderer)
 
 AccDisplayRenderer::AccDisplayRenderer()
-:	m_vertexPool(0)
-,	m_nextIndex(0)
+:	m_nextIndex(0)
 ,	m_frameBounds(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_frameTransform(0.0f, 0.0f, 1.0f, 1.0f)
 ,	m_viewSize(0.0f, 0.0f, 0.0f, 0.0f)
@@ -124,28 +123,48 @@ bool AccDisplayRenderer::create(
 	m_shapeResources = new AccShapeResources();
 	if (!m_shapeResources->create(resourceManager))
 	{
-		log::error << L"Unable to create accelerated display renderer; failed to load shape resources" << Endl;
+		log::error << L"Unable to create accelerated display renderer; failed to load shape resources." << Endl;
 		return false;
 	}
 
-	m_vertexPool = new AccShapeVertexPool(renderSystem, frameCount > 0 ? frameCount : 1);
-	if (!m_vertexPool->create())
+	std::vector< render::VertexElement > fillVertexElements(5);
+	fillVertexElements[0] = render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(AccShape::FillVertex, pos));
+	fillVertexElements[1] = render::VertexElement(render::DuCustom, render::DtByte4N, offsetof(AccShape::FillVertex, curvature), 0);
+	fillVertexElements[2] = render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(AccShape::FillVertex, texCoord), 1);
+	fillVertexElements[3] = render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(AccShape::FillVertex, texRect), 2);
+	fillVertexElements[4] = render::VertexElement(render::DuColor, render::DtByte4N, offsetof(AccShape::FillVertex, color), 0);
+	T_FATAL_ASSERT (render::getVertexSize(fillVertexElements) == sizeof(AccShape::FillVertex));
+
+	m_fillVertexPool = new AccShapeVertexPool(renderSystem, frameCount > 0 ? frameCount : 1, fillVertexElements);
+	if (!m_fillVertexPool->create())
 	{
-		log::error << L"Unable to create accelerated display renderer; failed to create vertex pool" << Endl;
+		log::error << L"Unable to create accelerated display renderer; failed to create vertex pool (fill)." << Endl;
+		return false;
+	}
+
+	std::vector< render::VertexElement > lineVertexElements(2);
+	lineVertexElements[0] = render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(AccShape::LineVertex, pos));
+	lineVertexElements[1] = render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(AccShape::LineVertex, lineOffset), 0);
+	T_FATAL_ASSERT (render::getVertexSize(lineVertexElements) == sizeof(AccShape::LineVertex));
+
+	m_lineVertexPool = new AccShapeVertexPool(renderSystem, frameCount > 0 ? frameCount : 1, lineVertexElements);
+	if (!m_lineVertexPool->create())
+	{
+		log::error << L"Unable to create accelerated display renderer; failed to create vertex pool (line)." << Endl;
 		return false;
 	}
 
 	m_glyph = new AccGlyph();
 	if (!m_glyph->create(resourceManager, renderSystem))
 	{
-		log::error << L"Unable to create accelerated display renderer; failed to create glyph list" << Endl;
+		log::error << L"Unable to create accelerated display renderer; failed to create glyph list." << Endl;
 		return false;
 	}
 
 	m_quad = new AccQuad();
 	if (!m_quad->create(resourceManager, renderSystem))
 	{
-		log::error << L"Unable to create accelerated display renderer; failed to create quad shape" << Endl;
+		log::error << L"Unable to create accelerated display renderer; failed to create quad shape." << Endl;
 		return false;
 	}
 
@@ -165,7 +184,7 @@ bool AccDisplayRenderer::create(
 	m_renderTargetGlyphs = m_renderSystem->createRenderTargetSet(rtscd);
 	if (!m_renderTargetGlyphs)
 	{
-		log::error << L"Unable to create accelerated display renderer; failed to create glyph cache target" << Endl;
+		log::error << L"Unable to create accelerated display renderer; failed to create glyph cache target." << Endl;
 		return false;
 	}
 
@@ -174,7 +193,7 @@ bool AccDisplayRenderer::create(
 		m_shapeRenderer = new AccShapeRenderer();
 		if (!m_shapeRenderer->create(renderSystem, resourceManager))
 		{
-			log::error << L"Unable to create accelerated display renderer; failed to shape renderer" << Endl;
+			log::error << L"Unable to create accelerated display renderer; failed to shape renderer." << Endl;
 			return false;
 		}
 	}
@@ -207,7 +226,8 @@ void AccDisplayRenderer::destroy()
 
 	safeDestroy(m_shapeRenderer);
 	safeDestroy(m_shapeResources);
-	safeDestroy(m_vertexPool);
+	safeDestroy(m_fillVertexPool);
+	safeDestroy(m_lineVertexPool);
 
 	m_renderContexts.clear();
 	m_renderContext = 0;
@@ -462,9 +482,8 @@ void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix3
 	SmallMap< int32_t, ShapeCache >::iterator it = m_shapeCache.find(tag);
 	if (it == m_shapeCache.end())
 	{
-		accShape = new AccShape(m_shapeResources);
+		accShape = new AccShape(m_renderSystem, m_shapeResources, m_fillVertexPool, m_lineVertexPool);
 		if (!accShape->createFromShape(
-			m_vertexPool,
 			m_gradientCache,
 			m_textureCache,
 			dictionary,
@@ -564,9 +583,8 @@ void AccDisplayRenderer::renderGlyph(
 	SmallMap< int32_t, GlyphCache >::iterator it1 = m_glyphCache.find(tag);
 	if (it1 == m_glyphCache.end())
 	{
-		Ref< AccShape > accShape = new AccShape(m_shapeResources);
+		Ref< AccShape > accShape = new AccShape(m_renderSystem, m_shapeResources, m_fillVertexPool, m_lineVertexPool);
 		if (!accShape->createFromGlyph(
-			m_vertexPool,
 			m_gradientCache,
 			m_textureCache,
 			dictionary,
@@ -715,9 +733,8 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& c
 			it->second.shape = 0;
 		}
 
-		accShape = new AccShape(m_shapeResources);
+		accShape = new AccShape(m_renderSystem, m_shapeResources, m_fillVertexPool, m_lineVertexPool);
 		if (!accShape->createFromCanvas(
-			m_vertexPool,
 			m_gradientCache,
 			m_textureCache,
 			canvas
@@ -824,7 +841,8 @@ void AccDisplayRenderer::end()
 	}
 
 	m_gradientCache->synchronize();
-	m_vertexPool->cycleGarbage();
+	m_fillVertexPool->cycleGarbage();
+	m_lineVertexPool->cycleGarbage();
 	m_renderContext = 0;
 }
 

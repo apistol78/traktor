@@ -9,11 +9,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Flash/Path.h"
-#include "Flash/SwfTypes.h"
 #include "Flash/Dictionary.h"
-#include "Flash/LineStyle.h"
 #include "Flash/FillStyle.h"
+#include "Flash/LineStyle.h"
+#include "Flash/Path.h"
+#include "Flash/Polygon.h"
+#include "Flash/SwfTypes.h"
 #include "Flash/Action/ActionTypes.h"
 
 // import/export mechanism.
@@ -69,6 +70,9 @@ public:
 
 	/*! \brief Add a curve from cursor. */
 	void curveTo(float controlX, float controlY, float anchorX, float anchorY);
+
+	/*! \brief Generate triangles and lines from canvas. */
+	void triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, AlignedVector< Line >& outLines) const;
 
 	/*! \brief Get bounds of shapes in canvas. */
 	const Aabb2& getBounds() const { return m_bounds; }

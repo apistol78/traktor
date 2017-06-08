@@ -17,6 +17,7 @@ namespace traktor
 
 const resource::Id< render::Shader > c_idShaderSolid(Guid(L"{D46877B9-0F90-3A42-AB2D-7346AA607233}"));
 const resource::Id< render::Shader > c_idShaderTextured(Guid(L"{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}"));
+const resource::Id< render::Shader > c_idShaderLine(Guid(L"{8CAA6CFE-014A-3F4A-80C1-BD8A21B9A8C4}"));
 const resource::Id< render::Shader > c_idShaderIncrementMask(Guid(L"{8DCBCF05-4640-884E-95AC-F090510788F4}"));
 const resource::Id< render::Shader > c_idShaderDecrementMask(Guid(L"{57F6F4DF-F4EE-6740-907C-027A3A2596D7}"));
 
@@ -30,6 +31,8 @@ bool AccShapeResources::create(resource::IResourceManager* resourceManager)
 		return false;
 	if (!resourceManager->bind(c_idShaderTextured, m_shaderTextured))
 		return false;
+	if (!resourceManager->bind(c_idShaderLine, m_shaderLine))
+		return false;
 	if (!resourceManager->bind(c_idShaderIncrementMask, m_shaderIncrementMask))
 		return false;
 	if (!resourceManager->bind(c_idShaderDecrementMask, m_shaderDecrementMask))
@@ -42,6 +45,8 @@ bool AccShapeResources::create(resource::IResourceManager* resourceManager)
 	m_handleCxFormAdd = render::getParameterHandle(L"Flash_CxFormAdd");
 	m_handleTexture = render::getParameterHandle(L"Flash_Texture");
 	m_handleTextureClamp = render::getParameterHandle(L"Flash_TextureClamp");
+	m_handleLines = render::getParameterHandle(L"Flash_Lines");
+	m_handleWidths = render::getParameterHandle(L"Flash_Widths");
 
 	m_handleTechniques[SbmDefault] = render::getParameterHandle(L"Flash_Default");
 	m_handleTechniques[SbmNormal] = render::getParameterHandle(L"Flash_Default");
@@ -67,6 +72,7 @@ void AccShapeResources::destroy()
 {
 	m_shaderSolid.clear();
 	m_shaderTextured.clear();
+	m_shaderLine.clear();
 	m_shaderIncrementMask.clear();
 	m_shaderDecrementMask.clear();
 }

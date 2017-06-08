@@ -5,8 +5,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Misc/SafeDestroy.h"
-#include "Flash/Debug/App/ClientPage.h"
-#include "Flash/Debug/App/MainForm.h"
+#include "Flash/Editor/Debug/ClientPage.h"
+#include "Flash/Editor/Debug/MainForm.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"

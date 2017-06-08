@@ -24,7 +24,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	include <Ui/Wx/WidgetFactoryWx.h>
 #endif
 #include <Xml/XmlDeserializer.h>
-#include "MainForm.h"
+#include "../MainForm.h"
 
 using namespace traktor;
 
