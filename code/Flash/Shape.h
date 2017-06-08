@@ -49,6 +49,8 @@ public:
 
 	void merge(const Shape& shape, const Matrix33& transform, const ColorTransform& cxform);
 
+	void triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, AlignedVector< Line >& outLines) const;
+
 	void triangulate(bool oddEven);
 
 	void discardPaths();
@@ -73,6 +75,8 @@ public:
 
 	const AlignedVector< Triangle >& getTriangles() const { return m_triangles; }
 
+	const AlignedVector< Line >& getLines() const { return m_lines; }
+
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
@@ -81,6 +85,7 @@ private:
 	AlignedVector< FillStyle > m_fillStyles;
 	AlignedVector< LineStyle > m_lineStyles;
 	AlignedVector< Triangle > m_triangles;
+	AlignedVector< Line > m_lines;
 };
 
 #pragma warning( default:4324 )

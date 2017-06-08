@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <algorithm>
 #include "Core/Log/Log.h"
+#include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -45,6 +46,25 @@ public:
 
 private:
 	Triangle& m_ref;
+};
+
+class MemberLine : public MemberComplex
+{
+public:
+	MemberLine(const wchar_t* const name, Line& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	{
+		s >> MemberStaticArray< Vector2, 2 >(L"v", m_ref.v);
+		s >> Member< uint16_t >(L"lineStyle", m_ref.lineStyle);
+	}
+
+private:
+	Line& m_ref;
 };
 
 		}
@@ -318,14 +338,79 @@ void Shape::merge(const Shape& shape, const Matrix33& transform, const ColorTran
 		m_shapeBounds.contain(transform * shapeExtents[i]);
 }
 
-void Shape::triangulate(bool oddEven)
+void Shape::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, AlignedVector< Line >& outLines) const
 {
 	AlignedVector< Segment > segments;
 	Triangulator triangulator;
 	Segment s;
 
-	m_triangles.resize(0);
+	outTriangles.resize(0);
+	outLines.resize(0);
 
+	// Convert paths into lines.
+	for (AlignedVector< Path >::const_iterator i = m_paths.begin(); i != m_paths.end(); ++i)
+	{
+		const AlignedVector< Vector2 >& points = i->getPoints();
+		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
+
+		std::set< uint16_t > lineStyles;
+		for (uint32_t j = 0; j < subPaths.size(); ++j)
+		{
+			const SubPath& sp = subPaths[j];
+			if (sp.lineStyle)
+				lineStyles.insert(sp.lineStyle);
+		}
+
+		for (std::set< uint16_t >::const_iterator ii = lineStyles.begin(); ii != lineStyles.end(); ++ii)
+		{
+			for (uint32_t j = 0; j < subPaths.size(); ++j)
+			{
+				const SubPath& sp = subPaths[j];
+				if (sp.lineStyle != *ii)
+					continue;
+
+				for (AlignedVector< SubPathSegment >::const_iterator k = sp.segments.begin(); k != sp.segments.end(); ++k)
+				{
+					switch (k->type)
+					{
+					case flash::SpgtLinear:
+					{
+						Line ln;
+						ln.v[0] = i->getTransform() * points[k->pointsOffset];
+						ln.v[1] = i->getTransform() * points[k->pointsOffset + 1];
+						ln.lineStyle = sp.lineStyle;
+						outLines.push_back(ln);
+					}
+					break;
+
+					case flash::SpgtQuadratic:
+					{
+						Bezier2nd b(
+							i->getTransform() * points[k->pointsOffset],
+							i->getTransform() * points[k->pointsOffset + 1],
+							i->getTransform() * points[k->pointsOffset + 2]
+						);
+
+						for (int32_t i = 0; i < 4; ++i)
+						{
+							Line ln;
+							ln.v[0] = b.evaluate(float(i) / 4.0f);
+							ln.v[1] = b.evaluate(float(i + 1) / 4.0f);
+							ln.lineStyle = sp.lineStyle;
+							outLines.push_back(ln);
+						}
+					}
+					break;
+
+					default:
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	// Convert paths into triangles.
 	for (AlignedVector< Path >::const_iterator i = m_paths.begin(); i != m_paths.end(); ++i)
 	{
 		const AlignedVector< Vector2 >& points = i->getPoints();
@@ -386,23 +471,28 @@ void Shape::triangulate(bool oddEven)
 
 			if (!segments.empty())
 			{
-				uint32_t from = m_triangles.size();
+				uint32_t from = outTriangles.size();
 
-				triangulator.triangulate(segments, *ii, oddEven, m_triangles);
+				triangulator.triangulate(segments, *ii, oddEven, outTriangles);
 				segments.resize(0);
 
-				uint32_t to = m_triangles.size();
+				uint32_t to = outTriangles.size();
 
 				// Transform each new triangle with path's transform.
 				for (uint32_t ti = from; ti < to; ++ti)
 				{
-					m_triangles[ti].v[0] = i->getTransform() * m_triangles[ti].v[0];
-					m_triangles[ti].v[1] = i->getTransform() * m_triangles[ti].v[1];
-					m_triangles[ti].v[2] = i->getTransform() * m_triangles[ti].v[2];
+					outTriangles[ti].v[0] = i->getTransform() * outTriangles[ti].v[0];
+					outTriangles[ti].v[1] = i->getTransform() * outTriangles[ti].v[1];
+					outTriangles[ti].v[2] = i->getTransform() * outTriangles[ti].v[2];
 				}
 			}
 		}
 	}
+}
+
+void Shape::triangulate(bool oddEven)
+{
+	triangulate(oddEven, m_triangles, m_lines);
 }
 
 void Shape::discardPaths()
@@ -432,6 +522,7 @@ void Shape::serialize(ISerializer& s)
 	s >> MemberAlignedVector< FillStyle, MemberComposite< FillStyle > >(L"fillStyles", m_fillStyles);
 	s >> MemberAlignedVector< LineStyle, MemberComposite< LineStyle > >(L"lineStyles", m_lineStyles);
 	s >> MemberAlignedVector< Triangle, MemberTriangle >(L"triangles", m_triangles);
+	s >> MemberAlignedVector< Line, MemberLine >(L"lines", m_lines);
 }
 
 	}

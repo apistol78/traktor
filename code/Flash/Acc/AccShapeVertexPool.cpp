@@ -10,7 +10,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Acc/AccShapeVertexPool.h"
 #include "Render/IRenderSystem.h"
 #include "Render/VertexBuffer.h"
-#include "Render/VertexElement.h"
 
 namespace traktor
 {
@@ -19,8 +18,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccShapeVertexPool", AccShapeVertexPool, Object)
 
-AccShapeVertexPool::AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frameCount)
+AccShapeVertexPool::AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frameCount, const std::vector< render::VertexElement >& vertexElements)
 :	m_renderSystem(renderSystem)
+,	m_vertexElements(vertexElements)
 ,	m_frame(0)
 {
 	m_garbageRanges.resize(frameCount);
@@ -63,17 +63,9 @@ bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 		}
 	}
 
-	std::vector< render::VertexElement > vertexElements(5);
-	vertexElements[0] = render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos));
-	vertexElements[1] = render::VertexElement(render::DuCustom, render::DtByte4N, offsetof(Vertex, curvature), 0);
-	vertexElements[2] = render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord), 1);
-	vertexElements[3] = render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, texRect), 2);
-	vertexElements[4] = render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color), 0);
-	T_FATAL_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
-
 	Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
-		vertexElements,
-		vertexCount * sizeof(Vertex),
+		m_vertexElements,
+		vertexCount * render::getVertexSize(m_vertexElements),
 		false
 	);
 	if (!vertexBuffer)

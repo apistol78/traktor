@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Flash/Bitmap.h"
 #include "Flash/Canvas.h"
+#include "Flash/Triangulator.h"
 #include "Flash/Types.h"
 
 namespace traktor
@@ -116,6 +117,94 @@ void Canvas::curveTo(float controlX, float controlY, float anchorX, float anchor
 	p.quadraticTo(int32_t(controlX), int32_t(controlY), int32_t(anchorX), int32_t(anchorY), Path::CmAbsolute);
 	m_bounds.contain(Vector2(controlX, controlY));
 	m_bounds.contain(Vector2(anchorX, anchorY));
+}
+
+void Canvas::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, AlignedVector< Line >& outLines) const
+{
+	AlignedVector< Segment > segments;
+	Triangulator triangulator;
+	Segment s;
+
+	outTriangles.resize(0);
+	outLines.resize(0);
+
+	for (AlignedVector< Path >::const_iterator i = m_paths.begin(); i != m_paths.end(); ++i)
+	{
+		const AlignedVector< Vector2 >& points = i->getPoints();
+		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
+
+		std::set< uint16_t > fillStyles;
+		for (uint32_t j = 0; j < subPaths.size(); ++j)
+		{
+			const SubPath& sp = subPaths[j];
+			if (sp.fillStyle0)
+				fillStyles.insert(sp.fillStyle0);
+			if (sp.fillStyle1)
+				fillStyles.insert(sp.fillStyle1);
+		}
+
+		for (std::set< uint16_t >::const_iterator ii = fillStyles.begin(); ii != fillStyles.end(); ++ii)
+		{
+			for (uint32_t j = 0; j < subPaths.size(); ++j)
+			{
+				const SubPath& sp = subPaths[j];
+				if (sp.fillStyle0 != *ii && sp.fillStyle1 != *ii)
+					continue;
+
+				for (AlignedVector< SubPathSegment >::const_iterator k = sp.segments.begin(); k != sp.segments.end(); ++k)
+				{
+					switch (k->type)
+					{
+					case SpgtLinear:
+						{
+							s.v[0] = points[k->pointsOffset];
+							s.v[1] = points[k->pointsOffset + 1];
+							s.curve = false;
+							s.fillStyle0 = sp.fillStyle0;
+							s.fillStyle1 = sp.fillStyle1;
+							s.lineStyle = sp.lineStyle;
+							segments.push_back(s);
+						}
+						break;
+
+					case SpgtQuadratic:
+						{
+							s.v[0] = points[k->pointsOffset];
+							s.v[1] = points[k->pointsOffset + 2];
+							s.c = points[k->pointsOffset + 1];
+							s.curve = true;
+							s.fillStyle0 = sp.fillStyle0;
+							s.fillStyle1 = sp.fillStyle1;
+							s.lineStyle = sp.lineStyle;
+							segments.push_back(s);
+						}
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+
+			if (!segments.empty())
+			{
+				uint32_t from = outTriangles.size();
+
+				triangulator.triangulate(segments, *ii, oddEven, outTriangles);
+				segments.resize(0);
+
+				uint32_t to = outTriangles.size();
+
+				// Transform each new triangle with path's transform.
+				for (uint32_t ti = from; ti < to; ++ti)
+				{
+					outTriangles[ti].v[0] = i->getTransform() * outTriangles[ti].v[0];
+					outTriangles[ti].v[1] = i->getTransform() * outTriangles[ti].v[1];
+					outTriangles[ti].v[2] = i->getTransform() * outTriangles[ti].v[2];
+				}
+			}
+		}
+	}
 }
 
 	}

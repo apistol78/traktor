@@ -162,7 +162,8 @@ private:
 	Ref< render::RenderTargetSet > m_renderTargetGlyphs;
 	Ref< render::RenderTargetSet > m_frameTarget;
 	Ref< AccShapeResources > m_shapeResources;
-	Ref< AccShapeVertexPool > m_vertexPool;
+	Ref< AccShapeVertexPool > m_fillVertexPool;
+	Ref< AccShapeVertexPool > m_lineVertexPool;
 	Ref< AccShapeRenderer > m_shapeRenderer;
 	Ref< AccGradientCache > m_gradientCache;
 	Ref< AccTextureCache > m_textureCache;

@@ -1,15 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.editor.Assets">
+<object type="traktor.editor.Assets" version="1">
 	<dependencies>
-		<item>{D46877B9-0F90-3A42-AB2D-7346AA607233}</item>
-		<item>{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}</item>
-		<item>{8DCBCF05-4640-884E-95AC-F090510788F4}</item>
-		<item>{57F6F4DF-F4EE-6740-907C-027A3A2596D7}</item>
-		<item>{2EDC5E1B-562D-9F46-9E3C-474729FB078E}</item>
-		<item>{98A59F6A-1D90-144C-B688-4CEF382453F2}</item>
-		<item>{16868DF6-A619-5541-83D2-94088A0AC552}</item>
-		<item>{D6821007-47BB-D748-9E29-20829ED09C70}</item>
-		<item>{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}</item>
-		<item>{34029EA0-112D-D74B-94CA-9C32FF319BB0}</item>
+		<item>
+			<id>{D46877B9-0F90-3A42-AB2D-7346AA607233}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{8DCBCF05-4640-884E-95AC-F090510788F4}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{57F6F4DF-F4EE-6740-907C-027A3A2596D7}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{2EDC5E1B-562D-9F46-9E3C-474729FB078E}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{98A59F6A-1D90-144C-B688-4CEF382453F2}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{16868DF6-A619-5541-83D2-94088A0AC552}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{D6821007-47BB-D748-9E29-20829ED09C70}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{34029EA0-112D-D74B-94CA-9C32FF319BB0}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{8CAA6CFE-014A-3F4A-80C1-BD8A21B9A8C4}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>

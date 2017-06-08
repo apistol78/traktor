@@ -39,6 +39,7 @@ private:
 
 	resource::Proxy< render::Shader > m_shaderSolid;
 	resource::Proxy< render::Shader > m_shaderTextured;
+	resource::Proxy< render::Shader > m_shaderLine;
 	resource::Proxy< render::Shader > m_shaderIncrementMask;
 	resource::Proxy< render::Shader > m_shaderDecrementMask;
 
@@ -49,6 +50,8 @@ private:
 	render::handle_t m_handleCxFormAdd;
 	render::handle_t m_handleTexture;
 	render::handle_t m_handleTextureClamp;
+	render::handle_t m_handleLines;
+	render::handle_t m_handleWidths;
 	render::handle_t m_handleTechniques[SbmLast];
 };
 

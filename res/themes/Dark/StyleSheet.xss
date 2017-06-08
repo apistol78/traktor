@@ -816,6 +816,10 @@
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Flash/NextFrame.image</value>
 		</item>
 		<item>
+			<name>Flash.Tool.Debugger</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Flash/ToolDebugger.image</value>
+		</item>
+		<item>
 			<name>Shader.Tools</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Shader/Tools.image</value>
 		</item>
