@@ -11,7 +11,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	if defined (_XBOX)
 #		include <xtl.h>
 #	else
-#		define _WIN32_LEAN_AND_MEAN
 #		define NOMINMAX
 #		include <windows.h>
 #	endif
@@ -70,7 +69,7 @@ namespace traktor
 	 */
 	struct SystemWindow
 	{
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(_XBOX_ONE)
 		HWND hWnd;
 
 		SystemWindow()

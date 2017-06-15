@@ -20,9 +20,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_RESTRICT __restrict
 #	define T_FORCE_INLINE __forceinline
 #	define T_ALIGN16 __declspec(align(16))
-#	if defined(WINCE)
-#		define T_UNALIGNED __unaligned
-#	endif
 #	if _MSC_VER >= 1700
 #		define T_CXX11
 #	endif
@@ -85,7 +82,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #elif defined(_XBOX) || defined(__PS3__)
 // Both Xenon and PS3 use a PowerPC derivate.
 #	define T_BIG_ENDIAN
-#elif defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(__PNACL__) || defined(__PS4__)
+#elif defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(__PNACL__) || defined(__PS3__) || defined(__PS4__) || defined(_XBOX_ONE)
 // Assume little endian on Win32 as it's probably most common.
 #	define T_LITTLE_ENDIAN
 #elif defined(__GNUC__)

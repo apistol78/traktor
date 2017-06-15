@@ -20,7 +20,7 @@ TrackAllocator::TrackAllocator(IAllocator* systemAllocator)
 
 TrackAllocator::~TrackAllocator()
 {
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(_XBOX_ONE)
 	wchar_t buf[512];
 
 	wsprintf(buf, L"\nAllocation stats:\n");
@@ -41,7 +41,7 @@ TrackAllocator::~TrackAllocator()
 		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
 			totalAlive += i->second.size;
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(_XBOX_ONE)
 		wsprintf(buf, L"\nMemory leak detected, following %d allocation(s) not freed (%d KiB):\n", m_aliveBlocks.size(), (totalAlive + 1023) / 1024);
 		OutputDebugString(buf);
 		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
