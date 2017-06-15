@@ -15,7 +15,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define DRAWING_INCLUDE_ICO
 #	define DRAWING_INCLUDE_JPEG
 #	define DRAWING_INCLUDE_GIF
-#	if !defined(WINCE)
+#	if !defined(_XBOX_ONE)
 #		define DRAWING_INCLUDE_EXR
 #	endif
 #elif defined(__APPLE__)
