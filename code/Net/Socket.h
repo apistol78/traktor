@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_net_Socket_H
 #define traktor_net_Socket_H
 
-#include "Net/Network.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -37,9 +36,11 @@ class T_DLLCLASS Socket : public Object
 	T_RTTI_CLASS;
 
 public:
+	typedef intptr_t handle_t;
+
 	Socket();
 
-	Socket(SOCKET socket_);
+	Socket(handle_t socket_);
 
 	virtual ~Socket();
 
@@ -97,10 +98,10 @@ public:
 	 *
 	 * \return Socket handle.
 	 */
-	SOCKET handle() const;
+	handle_t handle() const;
 
 protected:
-	SOCKET m_socket;
+	handle_t m_socket;
 };
 
 	}

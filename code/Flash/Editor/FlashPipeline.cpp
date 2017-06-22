@@ -6,8 +6,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <cstring>
 #include <list>
-#define STB_RECT_PACK_IMPLEMENTATION
-#include <stb_rect_pack.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -28,6 +26,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Movie.h"
 #include "Flash/MovieFactory.h"
 #include "Flash/Optimizer.h"
+#include "Flash/Packer.h"
 #include "Flash/Shape.h"
 #include "Flash/Sprite.h"
 #include "Flash/SwfReader.h"
@@ -51,13 +50,12 @@ struct AtlasBitmap
 {
 	uint16_t id;
 	Ref< const BitmapImage > bitmap;
-	stbrp_rect packedRect;
+	Packer::Rectangle packedRect;
 };
 
 struct AtlasBucket
 {
-	stbrp_context* packer;
-	stbrp_node* nodes;
+	Ref< Packer > packer;
 	std::list< AtlasBitmap > bitmaps;
 };
 
@@ -70,6 +68,7 @@ FlashPipeline::FlashPipeline()
 ,	m_sharpenStrength(0.0f)
 ,	m_useTextureCompression(true)
 ,	m_textureSizeDenom(1)
+,	m_textureAtlasSize(1024)
 {
 }
 
@@ -80,6 +79,7 @@ bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 	m_sharpenStrength = settings->getProperty< bool >(L"FlashPipeline.SharpenStrength", false);
 	m_useTextureCompression = settings->getProperty< bool >(L"FlashPipeline.UseTextureCompression", true);
 	m_textureSizeDenom = settings->getProperty< int32_t >(L"FlashPipeline.TextureSizeDenom", 1);
+	m_textureAtlasSize = settings->getProperty< int32_t >(L"FlashPipeline.TextureAtlasSize", 1024);
 	return true;
 }
 
@@ -224,6 +224,7 @@ bool FlashPipeline::buildOutput(
 	// Create atlas buckets of small bitmaps.
 	std::list< AtlasBucket > buckets;
 	std::list< AtlasBitmap > standalone;
+	Packer::Rectangle r;
 
 	for (SmallMap< uint16_t, Ref< Bitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
 	{
@@ -238,11 +239,7 @@ bool FlashPipeline::buildOutput(
 
 		for (std::list< AtlasBucket >::iterator j = buckets.begin(); j != buckets.end(); ++j)
 		{
-			stbrp_rect r = { 0 };
-			r.w = bitmapData->getWidth() + 2;
-			r.h = bitmapData->getHeight() + 2;
-			stbrp_pack_rects(j->packer, &r, 1);
-			if (r.was_packed)
+			if (j->packer->insert(bitmapData->getWidth() + 2, bitmapData->getHeight() + 2, r))
 			{
 				AtlasBitmap ab;
 				ab.id = i->first;
@@ -250,8 +247,8 @@ bool FlashPipeline::buildOutput(
 				ab.packedRect = r;
 				ab.packedRect.x += 1;
 				ab.packedRect.y += 1;
-				ab.packedRect.w = bitmapData->getWidth();
-				ab.packedRect.h = bitmapData->getHeight();
+				ab.packedRect.width = bitmapData->getWidth();
+				ab.packedRect.height = bitmapData->getHeight();
 				j->bitmaps.push_back(ab);
 				foundBucket = true;
 				break;
@@ -263,16 +260,9 @@ bool FlashPipeline::buildOutput(
 			buckets.push_back(AtlasBucket());
 
 			AtlasBucket& b = buckets.back();
-			b.packer = new stbrp_context();
-			b.nodes = new stbrp_node [1024];
-			stbrp_setup_allow_out_of_mem(b.packer, 1);
-			stbrp_init_target(b.packer, 1024, 1024, b.nodes, 1024);
+			b.packer = new Packer(m_textureAtlasSize, m_textureAtlasSize);
 
-			stbrp_rect r = { 0 };
-			r.w = bitmapData->getWidth() + 2;
-			r.h = bitmapData->getHeight() + 2;
-			stbrp_pack_rects(b.packer, &r, 1);
-			if (r.was_packed)
+			if (b.packer->insert(bitmapData->getWidth() + 2, bitmapData->getHeight() + 2, r))
 			{
 				AtlasBitmap ab;
 				ab.id = i->first;
@@ -280,8 +270,8 @@ bool FlashPipeline::buildOutput(
 				ab.packedRect = r;
 				ab.packedRect.x += 1;
 				ab.packedRect.y += 1;
-				ab.packedRect.w = bitmapData->getWidth();
-				ab.packedRect.h = bitmapData->getHeight();
+				ab.packedRect.width = bitmapData->getWidth();
+				ab.packedRect.height = bitmapData->getHeight();
 				b.bitmaps.push_back(ab);
 			}
 			else
@@ -291,8 +281,8 @@ bool FlashPipeline::buildOutput(
 				ab.bitmap = bitmapData;
 				ab.packedRect.x = 0;
 				ab.packedRect.y = 0;
-				ab.packedRect.w = bitmapData->getWidth();
-				ab.packedRect.h = bitmapData->getHeight();
+				ab.packedRect.width = bitmapData->getWidth();
+				ab.packedRect.height = bitmapData->getHeight();
 				standalone.push_back(ab);
 			}
 		}
@@ -310,8 +300,8 @@ bool FlashPipeline::buildOutput(
 		{
 			Ref< drawing::Image > atlasImage = new drawing::Image(
 				drawing::PixelFormat::getA8B8G8R8(),
-				1024,
-				1024
+				m_textureAtlasSize,
+				m_textureAtlasSize
 			);
 
 			atlasImage->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
@@ -330,21 +320,21 @@ bool FlashPipeline::buildOutput(
 					j->bitmap->getWidth() * j->bitmap->getHeight() * 4
 				);
 
-				for (int32_t y = -1; y < j->packedRect.h + 1; ++y)
+				for (int32_t y = -1; y < j->packedRect.height + 1; ++y)
 				{
-					for (int32_t x = -1; x < j->packedRect.w + 1; ++x)
+					for (int32_t x = -1; x < j->packedRect.width + 1; ++x)
 					{
 						int32_t sx = x;
 						int32_t sy = y;
 
 						if (sx < 0)
-							sx = j->packedRect.w - 1;
-						else if (sx > j->packedRect.w - 1)
+							sx = j->packedRect.width - 1;
+						else if (sx > j->packedRect.width - 1)
 							sx = 0;
 
 						if (sy < 0)
-							sy = j->packedRect.h - 1;
-						else if (sy > j->packedRect.h - 1)
+							sy = j->packedRect.height - 1;
+						else if (sy > j->packedRect.height - 1)
 							sy = 0;
 
 						Color4f tmp;
@@ -405,10 +395,10 @@ bool FlashPipeline::buildOutput(
 				movie->defineBitmap(j->id, new BitmapResource(
 					j->packedRect.x,
 					j->packedRect.y,
-					j->packedRect.w,
-					j->packedRect.h,
-					1024,
-					1024,
+					j->packedRect.width,
+					j->packedRect.height,
+					m_textureAtlasSize,
+					m_textureAtlasSize,
 					bitmapOutputGuid
 				));
 			}
@@ -418,16 +408,10 @@ bool FlashPipeline::buildOutput(
 			AtlasBitmap ab = i->bitmaps.front();
 			ab.packedRect.x = 0;
 			ab.packedRect.y = 0;
-			ab.packedRect.w = ab.bitmap->getWidth();
-			ab.packedRect.h = ab.bitmap->getHeight();
+			ab.packedRect.width = ab.bitmap->getWidth();
+			ab.packedRect.height = ab.bitmap->getHeight();
 			standalone.push_back(ab);
 		}
-	}
-
-	for (std::list< AtlasBucket >::const_iterator i = buckets.begin(); i != buckets.end(); ++i)
-	{
-		delete i->packer;
-		delete[] i->nodes;
 	}
 
 	log::info << uint32_t(standalone.size()) << L" bitmap(s) didn't fit in any atlas..." << Endl;

@@ -51,6 +51,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/App/DefaultObjectEditorFactory.h"
 #include "Editor/App/Document.h"
 #include "Editor/App/EditorForm.h"
+#include "Editor/App/EditorPageForm.h"
 #include "Editor/App/EditorPageSite.h"
 #include "Editor/App/EditorPluginSite.h"
 #include "Editor/App/LogView.h"
@@ -1150,6 +1151,25 @@ bool EditorForm::openEditor(db::Instance* instance)
 			}
 		}
 
+		Ref< EditorPageForm > formPage = new EditorPageForm();
+		formPage->addRef(0);
+
+		formPage->create(this);
+		formPage->show();
+		formPage->update(0, true);
+
+		editorPage->create(formPage);
+
+		formPage->show();
+		formPage->update();
+
+		formPage->setData(L"NEEDOUTPUTRESOURCES", new PropertyBoolean(needOutputResources));
+		formPage->setData(L"EDITORPAGESITE", site);
+		formPage->setData(L"EDITORPAGE", editorPage);
+		formPage->setData(L"DOCUMENT", document);
+		formPage->setData(L"PRIMARY", instance);
+
+		/*
 		// Create tab page container.
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
 		if (!tabPage->create(m_tab, instance->getName(), iconIndex, new ui::FloodLayout()))
@@ -1181,6 +1201,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		tabPage->setData(L"EDITORPAGE", editorPage);
 		tabPage->setData(L"DOCUMENT", document);
 		tabPage->setData(L"PRIMARY", instance);
+		*/
 
 		// Activate newly created editor page.
 		setActiveEditorPage(editorPage);
@@ -1300,12 +1321,8 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 
 	int pageCount = m_tab->getPageCount();
 
-	if (m_activeEditorPage)
-	{
-		m_activeEditorPage->deactivate();
-		if (m_activeEditorPageSite)
-			m_activeEditorPageSite->hide();
-	}
+	if (m_activeEditorPageSite)
+		m_activeEditorPageSite->hide();
 
 	setPropertyObject(0);
 
@@ -1334,8 +1351,6 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 
 		if (m_activeEditorPageSite)
 			m_activeEditorPageSite->show();
-
-		m_activeEditorPage->activate();
 	}
 
 	updateAdditionalPanelMenu();
@@ -2122,7 +2137,6 @@ void EditorForm::closeCurrentEditor()
 	T_ASSERT (tabPage);
 	T_ASSERT (tabPage->getData(L"EDITORPAGE") == m_activeEditorPage);
 
-	m_activeEditorPage->deactivate();
 	if (m_activeEditorPageSite)
 		m_activeEditorPageSite->hide();
 
@@ -2178,7 +2192,6 @@ void EditorForm::closeAllEditors()
 		if (editorPage)
 		{
 			T_ASSERT (editorPage != m_activeEditorPage);
-			editorPage->deactivate();
 			editorPage->destroy();
 		}
 
@@ -2227,7 +2240,6 @@ void EditorForm::closeAllOtherEditors()
 		if (editorPage)
 		{
 			T_ASSERT (editorPage != m_activeEditorPage);
-			editorPage->deactivate();
 			editorPage->destroy();
 		}
 
@@ -2695,7 +2707,6 @@ void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 	if (editorPage)
 	{
 		T_ASSERT (m_activeEditorPage == editorPage);
-		editorPage->deactivate();
 		editorPage->destroy();
 		editorPage = 0;
 		m_activeEditorPage = 0;
@@ -2751,7 +2762,6 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		if (editorPage)
 		{
-			editorPage->deactivate();
 			editorPage->destroy();
 			editorPage = 0;
 		}

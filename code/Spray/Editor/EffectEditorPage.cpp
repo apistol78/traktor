@@ -142,8 +142,6 @@ bool EffectEditorPage::create(ui::Container* parent)
 	if (!m_effectData)
 		return false;
 
-	activate();
-
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
@@ -235,14 +233,6 @@ void EffectEditorPage::destroy()
 	safeDestroy(m_sequencer);
 	safeDestroy(m_previewControl);
 	safeDestroy(m_resourceManager);
-}
-
-void EffectEditorPage::activate()
-{
-}
-
-void EffectEditorPage::deactivate()
-{
 }
 
 bool EffectEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

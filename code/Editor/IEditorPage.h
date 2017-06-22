@@ -70,19 +70,6 @@ public:
 	 */
 	virtual void destroy() = 0;
 
-	/*! \brief Activate editor page.
-	 *
-	 * Called when editor page is to become active
-	 * editor page; ie. in which user is working.
-	 */
-	virtual void activate() = 0;
-
-	/*! \brief Deactivate editor page.
-	 *
-	 * Called when editor page is deactivated.
-	 */
-	virtual void deactivate() = 0;
-
 	/*! \brief Drop instance from database view.
 	 *
 	 * Called when user drag'n'dropped database instance

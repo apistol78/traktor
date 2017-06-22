@@ -164,14 +164,6 @@ void SkeletonEditorPage::destroy()
 	m_renderWidget->destroy();
 }
 
-void SkeletonEditorPage::activate()
-{
-}
-
-void SkeletonEditorPage::deactivate()
-{
-}
-
 bool SkeletonEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	return false;

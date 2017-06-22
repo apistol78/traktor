@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Net/Network.h"
+#include "Net/Platform.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

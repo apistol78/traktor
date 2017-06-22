@@ -4,14 +4,14 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_net_Network_H
-#define traktor_net_Network_H
+#ifndef traktor_flash_Packer_H
+#define traktor_flash_Packer_H
 
-#include "Core/Config.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_NET_EXPORT)
+#if defined(T_FLASH_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -19,28 +19,34 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	namespace net
+	namespace flash
 	{
-
-/*! \brief Network manager.
- * \ingroup Net
- */
-class T_DLLCLASS Network
+	
+class T_DLLCLASS Packer : public Object
 {
-public:
-	/*! \brief Initialize network.
-	 * \return True if network is initialized and ready to be used.
-	 */
-	static bool initialize();
+	T_RTTI_CLASS;
 
-	/*! \brief Finalize network. */
-	static void finalize();
+public:
+	struct Rectangle
+	{
+		int32_t x;
+		int32_t y;
+		int32_t width;
+		int32_t height;
+	};
+
+	Packer(int32_t width, int32_t height);
+
+	virtual ~Packer();
+
+	bool insert(int32_t width, int32_t height, Rectangle& outRectangle);
 
 private:
-	static int32_t ms_initialized;
+	class PackerImpl* m_impl;
 };
-
+	
 	}
 }
 
-#endif	// traktor_net_Network_H
+#endif	// traktor_flash_Packer_H
+

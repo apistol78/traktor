@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <list>
 #include <string>
 #include "Core/RefArray.h"
-#include "Net/Network.h"
+#include "Net/Platform.h"
 #include "Net/SocketAddress.h"
 
 // import/export mechanism.

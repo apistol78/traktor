@@ -275,14 +275,6 @@ void ShaderGraphEditorPage::destroy()
 	safeDestroy(m_menuQuick);
 }
 
-void ShaderGraphEditorPage::activate()
-{
-}
-
-void ShaderGraphEditorPage::deactivate()
-{
-}
-
 bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	const TypeInfo* primaryType = instance->getPrimaryType();

@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Custom/ColorPicker/ColorControl.h"
 
@@ -30,7 +31,10 @@ bool ColorControl::create(Widget* parent, int style)
 
 	addEventHandler< PaintEvent >(this, &ColorControl::eventPaint);
 
-	m_preview = new ui::Bitmap(c_width, c_height);
+	const int32_t width = scaleBySystemDPI(c_width);
+	const int32_t height = scaleBySystemDPI(c_height);
+
+	m_preview = new ui::Bitmap(width, height);
 	setColor(Color4ub(0, 0, 0));
 
 	return true;
@@ -38,16 +42,20 @@ bool ColorControl::create(Widget* parent, int style)
 
 void ColorControl::setColor(const Color4ub& color)
 {
+	const int32_t width = scaleBySystemDPI(c_width);
+	const int32_t height = scaleBySystemDPI(c_height);
+
 	m_color = color;
-	for (uint32_t y = 0; y < c_height; ++y)
+	for (int32_t y = 0; y < height; ++y)
 	{
-		for (uint32_t x = 0; x < c_width; ++x)
+		for (int32_t x = 0; x < width; ++x)
 		{
 			Color4ub checkerColor = (((x >> 2) & 1) ^ ((y >> 2) & 1)) ? Color4ub(180, 180, 180) : Color4ub(80, 80, 80);
 			Color4ub previewColor = lerp(checkerColor, color, color.a / 255.0f);
 			m_preview->setPixel(x, y, previewColor);
 		}
 	}
+
 	update();
 }
 
@@ -58,7 +66,9 @@ Color4ub ColorControl::getColor() const
 
 Size ColorControl::getPreferedSize() const
 {
-	return Size(c_width, c_height);
+	const int32_t width = scaleBySystemDPI(c_width);
+	const int32_t height = scaleBySystemDPI(c_height);
+	return Size(width, height);
 }
 
 void ColorControl::eventPaint(PaintEvent* event)
@@ -68,7 +78,7 @@ void ColorControl::eventPaint(PaintEvent* event)
 	canvas.drawBitmap(
 		Point(0, 0),
 		Point(0, 0),
-		Size(c_width, c_height),
+		m_preview->getSize(),
 		m_preview
 	);
 

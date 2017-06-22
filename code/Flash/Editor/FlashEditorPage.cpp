@@ -154,14 +154,6 @@ void FlashEditorPage::destroy()
 	safeDestroy(m_previewControl);
 }
 
-void FlashEditorPage::activate()
-{
-}
-
-void FlashEditorPage::deactivate()
-{
-}
-
 bool FlashEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	return false;

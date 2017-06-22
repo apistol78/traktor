@@ -4,14 +4,16 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_net_Network_H
-#define traktor_net_Network_H
+#ifndef traktor_mesh_LodMeshAsset_H
+#define traktor_mesh_LodMeshAsset_H
 
-#include "Core/Config.h"
+#include <list>
+#include "Core/Guid.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_NET_EXPORT)
+#if defined(T_MESH_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -19,28 +21,29 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	namespace net
+	namespace mesh
 	{
-
-/*! \brief Network manager.
- * \ingroup Net
+	
+/*! \brief
  */
-class T_DLLCLASS Network
+class LodMeshAsset : public ISerializable
 {
-public:
-	/*! \brief Initialize network.
-	 * \return True if network is initialized and ready to be used.
-	 */
-	static bool initialize();
+	T_RTTI_CLASS;
 
-	/*! \brief Finalize network. */
-	static void finalize();
+public:
+	LodMeshAsset();
+
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
-	static int32_t ms_initialized;
+	friend class LodMeshPipeline;
+
+	float m_maxDistance;
+	float m_cullDistance;
+	std::list< Guid > m_lods;
 };
 
 	}
 }
 
-#endif	// traktor_net_Network_H
+#endif	// traktor_mesh_LodMeshAsset_H

@@ -141,14 +141,6 @@ void StateGraphEditorPage::destroy()
 	safeDestroy(m_menuPopup);
 }
 
-void StateGraphEditorPage::activate()
-{
-}
-
-void StateGraphEditorPage::deactivate()
-{
-}
-
 bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	const TypeInfo* primaryType = instance->getPrimaryType();

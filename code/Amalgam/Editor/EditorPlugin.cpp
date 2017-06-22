@@ -53,6 +53,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
 #include "Net/BidirectionalObjectTransport.h"
+#include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Ui/Application.h"

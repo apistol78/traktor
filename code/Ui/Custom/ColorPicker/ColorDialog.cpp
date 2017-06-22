@@ -64,24 +64,26 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ColorDialog", ColorDialog, ConfigDial
 
 bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, const Color4ub& initialColor)
 {
+	const int32_t margin = ui::scaleBySystemDPI(4);
+
 	if (!ConfigDialog::create(
 		parent,
 		text,
 		scaleBySystemDPI(500),
 		scaleBySystemDPI(400),
 		style,
-		new TableLayout(L"*,*,*,*", L"*", 4, 4)
+		new TableLayout(L"*,*,*,*", L"*", margin, margin)
 	))
 		return false;
 
 	m_gradientControl = new ColorGradientControl();
-	m_gradientControl->create(this, WsClientBorder | WsTabStop, initialColor);
+	m_gradientControl->create(this, WsClientBorder | WsDoubleBuffer | WsTabStop, initialColor);
 	m_gradientControl->addEventHandler< ColorEvent >(this, &ColorDialog::eventGradientColorSelect);
 
 	m_colorGradient = new ColorGradient();
 
 	m_sliderColorControl = new ColorSliderControl();
-	m_sliderColorControl->create(this, WsClientBorder | WsTabStop, m_colorGradient);
+	m_sliderColorControl->create(this, WsClientBorder | WsDoubleBuffer  | WsTabStop, m_colorGradient);
 	m_sliderColorControl->addEventHandler< ColorEvent >(this, &ColorDialog::eventSliderColorSelect);
 
 	if (style & WsAlpha)
@@ -90,12 +92,13 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 		m_alphaGradient->color = initialColor;
 
 		m_sliderAlphaControl = new ColorSliderControl();
-		m_sliderAlphaControl->create(this, WsClientBorder | WsTabStop, m_alphaGradient);
+		m_sliderAlphaControl->create(this, WsClientBorder | WsDoubleBuffer  | WsTabStop, m_alphaGradient);
+		m_sliderAlphaControl->setMarker(initialColor.a);
 		m_sliderAlphaControl->addEventHandler< ColorEvent >(this, &ColorDialog::eventSliderAlphaSelect);
 	}
 
 	Ref< Container > container = new Container();
-	container->create(this, WsNone, new TableLayout(L"*,100", L"*,*,*,*", 0, 4));
+	container->create(this, WsNone, new TableLayout(L"*,100", L"*,*,*,*", 0, margin));
 
 	Ref< Static > labelR = new Static();
 	labelR->create(container, L"R:");

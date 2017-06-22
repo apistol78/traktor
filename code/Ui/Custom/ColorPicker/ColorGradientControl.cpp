@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Custom/ColorPicker/ColorEvent.h"
 #include "Ui/Custom/ColorPicker/ColorGradientControl.h"
@@ -38,7 +39,8 @@ bool ColorGradientControl::create(Widget* parent, int style, const Color4ub& col
 
 Size ColorGradientControl::getPreferedSize() const
 {
-	return Size(256, 256);
+	const int32_t size = scaleBySystemDPI(256);
+	return Size(size, size);
 }
 
 void ColorGradientControl::setColor(const Color4ub& color, bool updateCursor)
@@ -105,6 +107,10 @@ void ColorGradientControl::eventMouseMove(MouseMoveEvent* event)
 		return;
 
 	m_cursor = event->getPosition();
+
+	const int32_t size = scaleBySystemDPI(256);
+	m_cursor.x = (m_cursor.x * 256) / size;
+	m_cursor.y = (m_cursor.y * 256) / size;
 	
 	if (m_cursor.x < 0)
 		m_cursor.x = 0;
@@ -123,10 +129,12 @@ void ColorGradientControl::eventMouseMove(MouseMoveEvent* event)
 
 void ColorGradientControl::eventPaint(PaintEvent* event)
 {
+	const int32_t size = scaleBySystemDPI(256);
 	Canvas& canvas = event->getCanvas();
 
 	canvas.drawBitmap(
 		Point(0, 0),
+		Size(size, size),
 		Point(0, 0),
 		Size(256, 256),
 		m_gradientBitmap
@@ -140,7 +148,8 @@ void ColorGradientControl::eventPaint(PaintEvent* event)
 	else
 		canvas.setForeground(Color4ub(0, 0, 0));
 
-	canvas.drawCircle(m_cursor, 5);
+	Point cursor(scaleBySystemDPI(m_cursor.x), scaleBySystemDPI(m_cursor.y));
+	canvas.drawCircle(cursor, 5);
 
 	event->consume();
 }

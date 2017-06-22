@@ -291,14 +291,6 @@ void AnimationEditorPage::destroy()
 	m_sequencerPanel->destroy();
 }
 
-void AnimationEditorPage::activate()
-{
-}
-
-void AnimationEditorPage::deactivate()
-{
-}
-
 bool AnimationEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	Ref< Skeleton > skeleton = instance->getObject< Skeleton >();

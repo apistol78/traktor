@@ -4,11 +4,10 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#define STB_RECT_PACK_IMPLEMENTATION
-#include <stb_rect_pack.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Flash/Packer.h"
 #include "Flash/Sprite.h"
 #include "Flash/SpriteInstance.h"
 #include "Flash/SwfTypes.h"
@@ -76,10 +75,7 @@ bool AccShapeRenderer::create(render::IRenderSystem* renderSystem, resource::IRe
 		return false;
 	}
 
-	m_packer.reset(new stbrp_context());
-	m_nodes.reset(new stbrp_node [c_cacheWidth]);
-	stbrp_setup_allow_out_of_mem(m_packer.ptr(), 1);
-	stbrp_init_target(m_packer.ptr(), c_cacheWidth, c_cacheHeight, m_nodes.ptr(), c_cacheWidth);
+	m_packer = new Packer(c_cacheWidth, c_cacheHeight);
 	return true;
 }
 
@@ -96,7 +92,7 @@ void AccShapeRenderer::beginFrame()
 		if (++m_cache[i].unused >= 20)
 		{
 			m_cache.resize(0);
-			stbrp_init_target(m_packer.ptr(), c_cacheWidth, c_cacheHeight, m_nodes.ptr(), c_cacheWidth);
+			m_packer = new Packer(c_cacheWidth, c_cacheHeight);
 			break;
 		}
 	}
@@ -269,18 +265,15 @@ void AccShapeRenderer::beginCacheAsBitmap(
 	// If not cached then allocate a new region and begin rendering into cache.
 	if (slot < 0)
 	{
-		stbrp_rect r = { 0 };
-		r.w = pixelWidth + c_cacheMargin * 2;
-		r.h = pixelHeight + c_cacheMargin * 2;
-		stbrp_pack_rects(m_packer.ptr(), &r, 1);
-		if (r.was_packed)
+		Packer::Rectangle r;
+		if (m_packer->insert(pixelWidth + c_cacheMargin * 2, pixelHeight + c_cacheMargin * 2, r))
 		{
 			Cache c;
 			c.tag = tag;
 			c.x = r.x + c_cacheMargin;
 			c.y = r.y + c_cacheMargin;
-			c.width = r.w - c_cacheMargin * 2;
-			c.height = r.h - c_cacheMargin * 2;
+			c.width = r.width - c_cacheMargin * 2;
+			c.height = r.height - c_cacheMargin * 2;
 			c.unused = 0;
 			c.bounds = bounds;
 			c.transform = transform;

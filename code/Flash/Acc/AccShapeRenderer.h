@@ -9,7 +9,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Misc/AutoPtr.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Vector4.h"
 
@@ -37,6 +36,7 @@ class IResourceManager;
 class AccShape;
 class AccQuad;
 class ColorTransform;
+class Packer;
 
 /*! \brief
  */
@@ -106,8 +106,7 @@ private:
 	Ref< render::RenderTargetSet > m_renderTargetShapes;
 	Ref< AccQuad > m_quad;
 	AlignedVector< Cache > m_cache;
-	AutoPtr< struct stbrp_context > m_packer;
-	AutoArrayPtr< struct stbrp_node > m_nodes;
+	Ref< Packer > m_packer;
 	int32_t m_renderIntoSlot;
 	int32_t m_renderFromSlot;
 	int32_t m_cacheAsBitmap;

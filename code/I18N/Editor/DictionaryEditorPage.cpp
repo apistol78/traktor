@@ -159,14 +159,6 @@ void DictionaryEditorPage::destroy()
 	m_gridDictionary->destroy();
 }
 
-void DictionaryEditorPage::activate()
-{
-}
-
-void DictionaryEditorPage::deactivate()
-{
-}
-
 bool DictionaryEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	return false;

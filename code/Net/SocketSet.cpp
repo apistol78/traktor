@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	include <poll.h>
 #endif
 #include "Core/Containers/StaticVector.h"
+#include "Net/Platform.h"
 #include "Net/Socket.h"
 #include "Net/SocketSet.h"
 

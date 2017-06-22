@@ -67,6 +67,7 @@ private:
 	float m_sharpenStrength;
 	bool m_useTextureCompression;
 	int32_t m_textureSizeDenom;
+	int32_t m_textureAtlasSize;
 };
 
 	}
