@@ -326,14 +326,6 @@ void ScriptEditorPage::destroy()
 	safeDestroy(m_scriptManager);
 }
 
-void ScriptEditorPage::activate()
-{
-}
-
-void ScriptEditorPage::deactivate()
-{
-}
-
 bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	int32_t dropOffset = m_edit->getOffsetFromPosition(m_edit->screenToClient(position));

@@ -125,14 +125,6 @@ void VideoEditorPage::destroy()
 	safeDestroy(m_renderWidget);
 }
 
-void VideoEditorPage::activate()
-{
-}
-
-void VideoEditorPage::deactivate()
-{
-}
-
 bool VideoEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	return false;

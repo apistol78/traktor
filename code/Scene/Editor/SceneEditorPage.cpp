@@ -371,16 +371,6 @@ void SceneEditorPage::destroy()
 	m_context = 0;
 }
 
-void SceneEditorPage::activate()
-{
-	m_editControl->setVisible(true);
-}
-
-void SceneEditorPage::deactivate()
-{
-	m_editControl->setVisible(false);
-}
-
 bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	// Get index of view where user dropped instance.

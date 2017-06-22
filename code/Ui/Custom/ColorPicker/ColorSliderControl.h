@@ -42,6 +42,8 @@ public:
 
 	bool create(Widget* parent, int style, IGradient* gradient);
 
+	void setMarker(int32_t marker);
+
 	virtual Size getPreferedSize() const T_OVERRIDE;
 
 	void updateGradient();
@@ -49,6 +51,7 @@ public:
 private:
 	Ref< IGradient > m_gradient;
 	Ref< Bitmap > m_gradientBitmap;
+	int32_t m_marker;
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 

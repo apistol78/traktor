@@ -20,7 +20,7 @@ TcpSocket::TcpSocket()
 {
 }
 
-TcpSocket::TcpSocket(SOCKET socket_)
+TcpSocket::TcpSocket(handle_t socket_)
 :	Socket(socket_)
 {
 }

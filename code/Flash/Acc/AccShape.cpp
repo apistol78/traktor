@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Color4ub.h"
+#include "Core/Math/Half.h"
 #include "Flash/ColorTransform.h"
 #include "Flash/Canvas.h"
 #include "Flash/Dictionary.h"
@@ -254,7 +255,7 @@ bool AccShape::createFromTriangles(
 			stcd.width = lineDataSize;
 			stcd.height = 1;
 			stcd.mipCount = 1;
-			stcd.format = render::TfR32G32B32A32F;
+			stcd.format = render::TfR16G16B16A16F;
 			stcd.sRGB = false;
 			stcd.immutable = false;
 
@@ -266,7 +267,7 @@ bool AccShape::createFromTriangles(
 			if (!lineTexture->lock(0, lock))
 				return false;
 
-			float* lineData = static_cast< float* >(lock.bits);
+			half_t* lineData = static_cast< half_t* >(lock.bits);
 			int32_t lineDataOffset = 0;
 
 			m_lineRenderBatches.push_back();
@@ -295,12 +296,12 @@ bool AccShape::createFromTriangles(
 				for (int32_t j = 0; j < min< int32_t >(c.lines.size(), c_maxLinesPerCluster); ++j)
 				{
 					const Line& line = lines[c.lines[j]];
-					float* p = &lineData[lineDataOffset * 4];
+					half_t* p = &lineData[lineDataOffset * 4];
 
-					*p++ = line.v[0].x;
-					*p++ = line.v[0].y;
-					*p++ = line.v[1].x;
-					*p++ = line.v[1].y;
+					*p++ = floatToHalf(line.v[0].x);
+					*p++ = floatToHalf(line.v[0].y);
+					*p++ = floatToHalf(line.v[1].x);
+					*p++ = floatToHalf(line.v[1].y);
 
 					lineDataOffset++;
 				}

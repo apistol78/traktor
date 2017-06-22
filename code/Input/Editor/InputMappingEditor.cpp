@@ -288,14 +288,6 @@ void InputMappingEditor::destroy()
 	safeDestroy(m_menuPopup);
 }
 
-void InputMappingEditor::activate()
-{
-}
-
-void InputMappingEditor::deactivate()
-{
-}
-
 bool InputMappingEditor::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	return false;

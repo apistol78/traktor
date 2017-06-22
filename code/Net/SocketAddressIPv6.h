@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_net_SocketAddressIPv6_H
 
 #include <string>
-#include "Net/Network.h"
+#include "Net/Platform.h"
 #include "Net/SocketAddress.h"
 
 // import/export mechanism.

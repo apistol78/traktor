@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #if defined(__LINUX__) || defined(__APPLE__) || defined(__ANDROID__)
 #	include <sys/ioctl.h>
 #endif
+#include "Net/Platform.h"
 #include "Net/Socket.h"
 
 namespace traktor
@@ -21,7 +22,7 @@ Socket::Socket()
 {
 }
 
-Socket::Socket(SOCKET socket_)
+Socket::Socket(handle_t socket_)
 :	m_socket(socket_)
 {
 }
@@ -145,7 +146,7 @@ bool Socket::ioctl(IoctlCommand cmd, unsigned long* argp)
 #endif
 }
 
-SOCKET Socket::handle() const
+Socket::handle_t Socket::handle() const
 {
 	return m_socket;
 }
