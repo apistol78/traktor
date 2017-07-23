@@ -57,9 +57,21 @@ Ref< Model > ModelFormatScad::read(IStream* stream, uint32_t importFlags) const
 
 	sourceFile->close();
 
+	// Figure out OpenSCAD executable.
+	std::wstring executable = L"openscad";
+
+#if defined(_WIN32)
+	std::wstring openCommand;
+	if (OS::getInstance().getRegistry(L"HKEY_LOCAL_MACHINE", L"SOFTWARE\\Classes\\OpenSCAD_File\\shell\\open\\command", L"", openCommand))
+	{
+		if (endsWith< std::wstring >(openCommand, L" \"%1\""))
+			openCommand = openCommand.substr(0, openCommand.length() - 5);
+		executable = openCommand;
+	}
+#endif
+
 	// Convert OpenSCAD script into STL file.
-	std::wstring executable = L"c:\\Program Files\\OpenSCAD\\openscad.exe";
-	std::wstring cmdLine = L"\"" + executable + L"\" -o " + outputTmpFile.getFileName() + L" " + sourceTmpFile.getFileName();
+	std::wstring cmdLine = executable + L" -o " + outputTmpFile.getFileName() + L" " + sourceTmpFile.getFileName();
 	Ref< IProcess > openscad = OS::getInstance().execute(cmdLine, tmpFile.getPathOnly(), 0, false, false, false);
 	if (!openscad)
 	{
