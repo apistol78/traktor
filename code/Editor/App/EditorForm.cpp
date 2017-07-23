@@ -1151,6 +1151,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 			}
 		}
 
+		/*
 		Ref< EditorPageForm > formPage = new EditorPageForm();
 		formPage->addRef(0);
 
@@ -1168,8 +1169,8 @@ bool EditorForm::openEditor(db::Instance* instance)
 		formPage->setData(L"EDITORPAGE", editorPage);
 		formPage->setData(L"DOCUMENT", document);
 		formPage->setData(L"PRIMARY", instance);
+		*/
 
-		/*
 		// Create tab page container.
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
 		if (!tabPage->create(m_tab, instance->getName(), iconIndex, new ui::FloodLayout()))
@@ -1201,7 +1202,6 @@ bool EditorForm::openEditor(db::Instance* instance)
 		tabPage->setData(L"EDITORPAGE", editorPage);
 		tabPage->setData(L"DOCUMENT", document);
 		tabPage->setData(L"PRIMARY", instance);
-		*/
 
 		// Activate newly created editor page.
 		setActiveEditorPage(editorPage);
