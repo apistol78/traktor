@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/DynamicMemoryStream.h>
 #include <Core/Io/FileOutputStream.h>
@@ -39,7 +45,7 @@ namespace
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 6, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 7, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
 
 SolutionBuilderMsvcVCXProj::SolutionBuilderMsvcVCXProj()
 {
@@ -108,8 +114,10 @@ void SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 		s >> MemberStaticArray< std::wstring, sizeof_array(m_targetExts) >(L"targetExts", m_targetExts);
 	}
 
-	if (s.getVersion() >= 4)
-		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroups", m_propertyGroups);
+	if (s.getVersion() >= 4 && s.getVersion() < 7)
+		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroups", m_propertyGroupsBeforeImports);
+	else if (s.getVersion() >= 7)
+		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroupsBeforeImports", m_propertyGroupsBeforeImports);
 
 	if (s.getVersion() >= 5)
 		s >> MemberRefArray< SolutionBuilderMsvcVCXImportCommon >(L"imports", m_imports);
@@ -124,6 +132,10 @@ void SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 		));
 		m_imports.push_back(importGroup);
 	}
+
+	if (s.getVersion() >= 7)
+		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroupsAfterImports", m_propertyGroupsAfterImports);
+
 
 	if (s.getVersion() >= 3)
 	{
@@ -238,7 +250,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	os << IncreaseIndent;
 
 	// Custom property groups.
-	for (RefArray< SolutionBuilderMsvcVCXPropertyGroup >::const_iterator i = m_propertyGroups.begin(); i != m_propertyGroups.end(); ++i)
+	for (RefArray< SolutionBuilderMsvcVCXPropertyGroup >::const_iterator i = m_propertyGroupsBeforeImports.begin(); i != m_propertyGroupsBeforeImports.end(); ++i)
 		(*i)->generate(
 			context,
 			solution,
@@ -313,6 +325,15 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	// Imports
 	for (RefArray< SolutionBuilderMsvcVCXImportCommon >::const_iterator i = m_imports.begin(); i != m_imports.end(); ++i)
 		(*i)->generate(os);
+
+	// Custom property groups.
+	for (RefArray< SolutionBuilderMsvcVCXPropertyGroup >::const_iterator i = m_propertyGroupsAfterImports.begin(); i != m_propertyGroupsAfterImports.end(); ++i)
+		(*i)->generate(
+			context,
+			solution,
+			project,
+			os
+		);
 
 	// Properties
 	os << L"<PropertyGroup>" << Endl;

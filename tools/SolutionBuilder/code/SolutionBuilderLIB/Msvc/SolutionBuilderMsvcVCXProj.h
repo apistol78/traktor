@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #ifndef SolutionBuilderMsvcVCXProj_H
 #define SolutionBuilderMsvcVCXProj_H
 
@@ -43,8 +49,9 @@ protected:
 	std::wstring m_toolset;
 	std::wstring m_targetPrefixes[4];
 	std::wstring m_targetExts[4];
-	traktor::RefArray< SolutionBuilderMsvcVCXPropertyGroup > m_propertyGroups;
+	traktor::RefArray< SolutionBuilderMsvcVCXPropertyGroup > m_propertyGroupsBeforeImports;
 	traktor::RefArray< SolutionBuilderMsvcVCXImportCommon > m_imports;
+	traktor::RefArray< SolutionBuilderMsvcVCXPropertyGroup > m_propertyGroupsAfterImports;
 	std::map< std::wstring, std::wstring > m_configurationDefinitionsDebug[4];
 	std::map< std::wstring, std::wstring > m_configurationDefinitionsRelease[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsDebug[4];
