@@ -150,6 +150,14 @@ public:
 	
 	virtual Size getMaximumSize() const;
 
+	void setHorizontalAlign(Align halign);
+
+	Align getHorizontalAlign() const;
+
+	void setVerticalAlign(Align valign);
+
+	Align getVerticalAlign() const;
+
 	/*! \brief If this widget accepts to be part of layout.
 	 * For instance child dialogs cannot be part of a layout
 	 * as it's not logical, thus should return false.
@@ -186,6 +194,8 @@ protected:
 	Ref< Widget > m_nextSibling;
 	Ref< Widget > m_firstChild;
 	Ref< Widget > m_lastChild;
+	Align m_halign;
+	Align m_valign;
 };
 	
 	}

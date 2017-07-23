@@ -45,7 +45,7 @@ namespace
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 7, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 8, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
 
 SolutionBuilderMsvcVCXProj::SolutionBuilderMsvcVCXProj()
 {
@@ -104,6 +104,9 @@ void SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 
 	s >> Member< std::wstring >(L"platform", m_platform);
 	s >> Member< std::wstring >(L"keyword", m_keyword);
+
+	if (s.getVersion() >= 8)
+		s >> Member< std::wstring >(L"windowsTargetPlatformVersion", m_windowsTargetPlatformVersion);
 	
 	if (s.getVersion() >= 1 && s.getVersion() < 3)
 		s >> Member< std::wstring >(L"toolset", toolset);
@@ -290,6 +293,9 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 
 	os << L"<ProjectGUID>" << projectGuid << L"</ProjectGUID>" << Endl;
 	os << L"<RootNamespace>" << project->getName() << L"</RootNamespace>" << Endl;
+
+	if (!m_windowsTargetPlatformVersion.empty())
+		os << L"<WindowsTargetPlatformVersion>" << m_windowsTargetPlatformVersion << L"</WindowsTargetPlatformVersion>" << Endl;
 
 	os << DecreaseIndent;
 	os << L"</PropertyGroup>" << Endl;

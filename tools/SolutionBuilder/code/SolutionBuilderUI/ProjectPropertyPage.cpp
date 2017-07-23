@@ -8,10 +8,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/TableLayout.h>
 #include <Ui/Static.h>
 #include <Ui/Button.h>
-#include <Ui/ListViewItem.h>
 #include <Ui/FileDialog.h>
 #include <Ui/MessageBox.h>
 #include <Ui/Custom/InputDialog.h>
+#include <Ui/Custom/GridView/GridColumn.h>
+#include <Ui/Custom/GridView/GridItem.h>
+#include <Ui/Custom/GridView/GridRow.h>
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"
@@ -68,13 +70,13 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Static > staticDependencies = new ui::Static();
 	staticDependencies->create(container, L"Dependencies");
 
-	m_listDependencies = new ui::ListView();
-	m_listDependencies->create(container, ui::WsClientBorder | ui::ListView::WsReport);
-	m_listDependencies->addColumn(L"Dependency", ui::scaleBySystemDPI(130));
-	m_listDependencies->addColumn(L"Location", ui::scaleBySystemDPI(200));
-	m_listDependencies->addColumn(L"Inherit include paths", ui::scaleBySystemDPI(100));
-	m_listDependencies->addColumn(L"Link", ui::scaleBySystemDPI(50));
-	m_listDependencies->addEventHandler< ui::MouseDoubleClickEvent >(this, &ProjectPropertyPage::eventDependencyDoubleClick);
+	m_listDependencies = new ui::custom::GridView();
+	m_listDependencies->create(container, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
+	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Dependency", ui::scaleBySystemDPI(160)));
+	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Location", ui::scaleBySystemDPI(200)));
+	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Inherit include paths", ui::scaleBySystemDPI(130)));
+	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Link", ui::scaleBySystemDPI(50)));
+	m_listDependencies->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &ProjectPropertyPage::eventDependencyDoubleClick);
 
 	Ref< ui::Static > staticAvailable = new ui::Static();
 	staticAvailable->create(container, L"Available");
@@ -114,12 +116,14 @@ void ProjectPropertyPage::set(Solution* solution, Project* project)
 void ProjectPropertyPage::updateDependencyList()
 {
 	RefArray< Dependency > dependencies = m_project->getDependencies();
-	Ref< ui::ListViewItems > dependencyItems = new ui::ListViewItems();
+	//Ref< ui::ListViewItems > dependencyItems = new ui::ListViewItems();
 
 	const wchar_t* c_link[] = { L"No", L"Yes", L"Force" };
 
 	// Sort all dependencies.
 	dependencies.sort(DependencyPredicate());
+
+	m_listDependencies->removeAllRows();
 
 	// Add all local dependencies first.
 	for (RefArray< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
@@ -127,13 +131,13 @@ void ProjectPropertyPage::updateDependencyList()
 		if (is_a< ExternalDependency >(*i))
 			continue;
 
-		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
-		dependencyItem->setText(0, (*i)->getName());
-		dependencyItem->setText(1, (*i)->getLocation());
-		dependencyItem->setText(2, (*i)->getInheritIncludePaths() ? L"Yes" : L"No");
-		dependencyItem->setText(3, c_link[(*i)->getLink()]);
-		dependencyItem->setData(L"DEPENDENCY", *i);
-		dependencyItems->add(dependencyItem);
+		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem((*i)->getName()));
+		row->add(new ui::custom::GridItem((*i)->getLocation()));
+		row->add(new ui::custom::GridItem((*i)->getInheritIncludePaths() ? L"Yes" : L"No"));
+		row->add(new ui::custom::GridItem(c_link[(*i)->getLink()]));
+		row->setData(L"DEPENDENCY", *i);
+		m_listDependencies->addRow(row);
 	}
 
 	// Add external dependencies last.
@@ -142,16 +146,14 @@ void ProjectPropertyPage::updateDependencyList()
 		if (is_a< ProjectDependency >(*i))
 			continue;
 
-		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
-		dependencyItem->setText(0, (*i)->getName());
-		dependencyItem->setText(1, (*i)->getLocation());
-		dependencyItem->setText(2, (*i)->getInheritIncludePaths() ? L"Yes" : L"No");
-		dependencyItem->setText(3, c_link[(*i)->getLink()]);
-		dependencyItem->setData(L"DEPENDENCY", *i);
-		dependencyItems->add(dependencyItem);
+		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem((*i)->getName()));
+		row->add(new ui::custom::GridItem((*i)->getLocation()));
+		row->add(new ui::custom::GridItem((*i)->getInheritIncludePaths() ? L"Yes" : L"No"));
+		row->add(new ui::custom::GridItem(c_link[(*i)->getLink()]));
+		row->setData(L"DEPENDENCY", *i);
+		m_listDependencies->addRow(row);
 	}
-
-	m_listDependencies->setItems(dependencyItems);
 
 	// Get available projects, remove all local projects which are already in dependency list.
 	RefArray< Project > projects = m_solution->getProjects();
@@ -186,19 +188,13 @@ void ProjectPropertyPage::eventFocusSource(ui::FocusEvent* event)
 		m_project->setSourcePath(m_editSourcePath->getText());
 }
 
-void ProjectPropertyPage::eventDependencyDoubleClick(ui::MouseDoubleClickEvent* event)
+void ProjectPropertyPage::eventDependencyDoubleClick(ui::custom::GridRowDoubleClickEvent* event)
 {
-	ui::Point mousePosition = event->getPosition();
-
-	Ref< ui::ListViewItem > selectedItem = m_listDependencies->getSelectedItem();
-	if (!selectedItem)
-		return;
-
-	Ref< Dependency > dependency = selectedItem->getData< Dependency >(L"DEPENDENCY");
+	Ref< Dependency > dependency = event->getRow()->getData< Dependency >(L"DEPENDENCY");
 	if (!dependency)
 		return;
 
-	int32_t column = m_listDependencies->getColumnFromPosition(mousePosition.x);
+	int32_t column = event->getColumnIndex();
 	if (column < 0)
 		return;
 
@@ -264,11 +260,11 @@ void ProjectPropertyPage::eventClickAdd(ui::ButtonClickEvent* event)
 
 void ProjectPropertyPage::eventClickRemove(ui::ButtonClickEvent* event)
 {
-	Ref< ui::ListViewItem > selectedItem = m_listDependencies->getSelectedItem();
-	if (!selectedItem)
+	Ref< ui::custom::GridRow > selectedRow = m_listDependencies->getSelectedRow();
+	if (!selectedRow)
 		return;
 
-	Ref< Dependency > selectedDependency = selectedItem->getData< Dependency >(L"DEPENDENCY");
+	Ref< Dependency > selectedDependency = selectedRow->getData< Dependency >(L"DEPENDENCY");
 	T_ASSERT (selectedDependency);
 
 	RefArray< Dependency > dependencies = m_project->getDependencies();

@@ -31,6 +31,11 @@ Size Static::getPreferedSize() const
 	return getTextExtent(getText());
 }
 
+Size Static::getMaximumSize() const
+{
+	return getPreferedSize();
+}
+
 void Static::eventPaint(PaintEvent* event)
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();

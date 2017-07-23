@@ -19,6 +19,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Widget", Widget, EventSubject)
 Widget::Widget()
 :	m_widget(0)
 ,	m_parent(0)
+,	m_halign(AnLeft)
+,	m_valign(AnTop)
 {
 }
 
@@ -325,6 +327,26 @@ Size Widget::getMaximumSize() const
 {
 	T_ASSERT (m_widget);
 	return m_widget->getMaximumSize();
+}
+
+void Widget::setHorizontalAlign(Align halign)
+{
+	m_halign = halign;
+}
+
+Align Widget::getHorizontalAlign() const
+{
+	return m_halign;
+}
+
+void Widget::setVerticalAlign(Align valign)
+{
+	m_valign = valign;
+}
+
+Align Widget::getVerticalAlign() const
+{
+	return m_valign;
 }
 
 bool Widget::acceptLayout() const
