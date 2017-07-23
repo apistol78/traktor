@@ -1,3 +1,9 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
 #include <Core/Log/Log.h>
 #include "SolutionBuilderLIB/ExternalDependency.h"
 #include "SolutionBuilderLIB/Project.h"
