@@ -1,4 +1,10 @@
 /*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
+/*
 ** This file contains all sources (including headers) to the LEMON
 ** LALR(1) parser generator.  The sources have been combined into a
 ** single file to make it easy to include LEMON in the source tree
