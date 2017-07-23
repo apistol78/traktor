@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include <emmintrin.h>
 #include <xmmintrin.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"

@@ -197,20 +197,51 @@ void TableLayout::update(Widget* widget)
 	std::vector< WidgetRect > rects(children.size());
 
 	Point tl = inner.getTopLeft() + m_margin;
-	for (int i = 0; i < int(children.size()); ++i)
+	for (int32_t i = 0; i < int32_t(children.size()); ++i)
 	{
-		int c = i % std::max(nc, 1);
-		int r = i / std::max(nc, 1);
+		int32_t c = i % std::max(nc, 1);
+		int32_t r = i / std::max(nc, 1);
 		
+		Size pf = children[i]->getPreferedSize();
 		Size mx = children[i]->getMaximumSize();
 		
 		Size sz(
-			std::min< int >(w[c], mx.cx),
-			std::min< int >(h[r], mx.cy)
+			std::min< int32_t >(w[c], mx.cx),
+			std::min< int32_t >(h[r], mx.cy)
 		);
 		
+		Point ctl = tl;
+
+		switch (children[i]->getHorizontalAlign())
+		{
+		case AnCenter:
+			ctl.x = tl.x + std::max< int32_t >((sz.cx - pf.cx) / 2, 0);
+			break;
+
+		case AnRight:
+			ctl.x = tl.x + std::max< int32_t >(sz.cx - pf.cx, 0);
+			break;
+
+		default:
+			break;
+		}
+
+		switch (children[i]->getVerticalAlign())
+		{
+		case AnCenter:
+			ctl.y = tl.y + std::max< int32_t >((sz.cy - pf.cy) / 2, 0);
+			break;
+
+		case AnBottom:
+			ctl.y = tl.y + std::max< int32_t >(sz.cy - pf.cy, 0);
+			break;
+
+		default:
+			break;
+		}
+
 		rects[i].widget = children[i];
-		rects[i].rect = Rect(tl, sz);
+		rects[i].rect = Rect(ctl, sz);
 		
 		if (c < nc - 1)
 		{

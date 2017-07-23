@@ -56,5 +56,10 @@ Size StaticWin32::getPreferedSize() const
 	return Size(size.cx, size.cy);
 }
 
+Size StaticWin32::getMaximumSize() const
+{
+	return getPreferedSize();
+}
+
 	}
 }

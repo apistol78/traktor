@@ -34,6 +34,8 @@ public:
 
 	virtual Size getPreferedSize() const T_OVERRIDE;
 
+	virtual Size getMaximumSize() const T_OVERRIDE;
+
 private:
 	void eventPaint(PaintEvent* event);
 };

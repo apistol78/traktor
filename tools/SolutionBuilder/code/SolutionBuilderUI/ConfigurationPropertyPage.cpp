@@ -56,30 +56,31 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 
 	Ref< ui::Static > staticIncludePaths = new ui::Static();
 	staticIncludePaths->create(this, L"Include paths");
+	staticIncludePaths->setVerticalAlign(ui::AnTop);
 
 	m_listIncludePaths = new ui::custom::EditList();
-	m_listIncludePaths->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsDefault);
+	m_listIncludePaths->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
 	m_listIncludePaths->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeIncludePath);
 
 	Ref< ui::Static > staticDefinitions = new ui::Static();
 	staticDefinitions->create(this, L"Definitions");
 
 	m_listDefinitions = new ui::custom::EditList();
-	m_listDefinitions->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsDefault);
+	m_listDefinitions->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
 	m_listDefinitions->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeDefinitions);
 
 	Ref< ui::Static > staticLibraryPaths = new ui::Static();
 	staticLibraryPaths->create(this, L"Library paths");
 
 	m_listLibraryPaths = new ui::custom::EditList();
-	m_listLibraryPaths->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsDefault);
+	m_listLibraryPaths->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
 	m_listLibraryPaths->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeLibraryPaths);
 
 	Ref< ui::Static > staticLibraries = new ui::Static();
 	staticLibraries->create(this, L"Libraries");
 
 	m_listLibraries = new ui::custom::EditList();
-	m_listLibraries->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsDefault);
+	m_listLibraries->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
 	m_listLibraries->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeLibraries);
 
 	Ref< ui::Static > staticAdditionalCompilerOptions = new ui::Static();

@@ -31,7 +31,7 @@ bool SolutionPropertyPage::create(ui::Widget* parent)
 	staticDefinitions->create(this, L"Definitions");
 
 	m_listDefinitions = new ui::custom::EditList();
-	m_listDefinitions->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsDefault);
+	m_listDefinitions->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
 	m_listDefinitions->addEventHandler< ui::custom::EditListEditEvent >(this, &SolutionPropertyPage::eventChangeDefinitions);
 
 	return true;

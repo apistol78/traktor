@@ -52,20 +52,8 @@ void MRU::usedFile(const Path& filePath)
 
 bool MRU::getUsedFiles(std::vector< Path >& outFilePaths) const
 {
-	Path currentPath = FileSystem::getInstance().getAbsolutePath(L"");
-
-	// Generate list of relative paths.
 	for (std::vector< std::wstring >::const_iterator i = m_filePaths.begin(); i != m_filePaths.end(); ++i)
-	{
-		Path relativePath;
-		if (FileSystem::getInstance().getRelativePath(
-			*i,
-			currentPath,
-			relativePath
-		))
-			outFilePaths.push_back(relativePath);
-	}
-
+		outFilePaths.push_back(Path(*i));
 	return true;
 }
 

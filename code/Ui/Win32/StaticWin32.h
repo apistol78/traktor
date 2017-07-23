@@ -23,9 +23,11 @@ class StaticWin32 : public WidgetWin32Impl< IStatic >
 public:
 	StaticWin32(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::wstring& text);
+	virtual bool create(IWidget* parent, const std::wstring& text) T_OVERRIDE T_FINAL;
 
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferedSize() const T_OVERRIDE T_FINAL;
+
+	virtual Size getMaximumSize() const T_OVERRIDE T_FINAL;
 };
 
 	}

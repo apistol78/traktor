@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include <intrin.h>
 #include "Amalgam/Game/App/Win32/ErrorDialog.h"
 #include "Amalgam/Game/App/Win32/StackWalker.h"
 #include "Amalgam/Game/Impl/Application.h"

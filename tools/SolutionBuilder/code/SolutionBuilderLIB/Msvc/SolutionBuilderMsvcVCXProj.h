@@ -46,6 +46,7 @@ public:
 protected:
 	std::wstring m_platform;
 	std::wstring m_keyword;
+	std::wstring m_windowsTargetPlatformVersion;
 	std::wstring m_toolset;
 	std::wstring m_targetPrefixes[4];
 	std::wstring m_targetExts[4];
