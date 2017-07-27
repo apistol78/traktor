@@ -14,11 +14,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 3, Configuration, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 4, Configuration, ISerializable)
 
 Configuration::Configuration()
 :	m_targetFormat(TfStaticLibrary)
 ,	m_targetProfile(TpDebug)
+,	m_warningLevel(WlCompilerDefault)
 {
 }
 
@@ -110,6 +111,16 @@ void Configuration::setLibraries(const std::vector< std::wstring >& libraries)
 const std::vector< std::wstring >& Configuration::getLibraries() const
 {
 	return m_libraries;
+}
+
+void Configuration::setWarningLevel(WarningLevel warningLevel)
+{
+	m_warningLevel = warningLevel;
+}
+
+Configuration::WarningLevel Configuration::getWarningLevel() const
+{
+	return m_warningLevel;
 }
 
 void Configuration::setAdditionalCompilerOptions(const std::wstring& additionalCompilerOptions)
@@ -205,6 +216,15 @@ void Configuration::serialize(traktor::ISerializer& s)
 		{ 0, 0 }
 	};
 
+	traktor::MemberEnum< WarningLevel >::Key kWarningLevel[] =
+	{
+		{ L"WlNoWarnings", WlNoWarnings },
+		{ L"WlCriticalOnly", WlCriticalOnly },
+		{ L"WlCompilerDefault", WlCompilerDefault },
+		{ L"WlAllWarnings", WlAllWarnings },
+		{ 0, 0 }
+	};
+
 	s >> traktor::Member< std::wstring >(L"name", m_name);
 	s >> traktor::MemberEnum< TargetFormat >(L"targetFormat", m_targetFormat, kTargetFormat);
 	s >> traktor::MemberEnum< TargetProfile >(L"targetProfile", m_targetProfile, kTargetProfile);
@@ -213,6 +233,9 @@ void Configuration::serialize(traktor::ISerializer& s)
 	s >> traktor::MemberStlVector< std::wstring >(L"definitions", m_definitions);
 	s >> traktor::MemberStlVector< std::wstring >(L"libraryPaths", m_libraryPaths);
 	s >> traktor::MemberStlVector< std::wstring >(L"libraries", m_libraries);
+
+	if (s.getVersion() >= 4)
+		s >> traktor::MemberEnum< WarningLevel >(L"warningLevel", m_warningLevel, kWarningLevel);
 
 	if (s.getVersion() >= 1)
 	{

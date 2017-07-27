@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="Solution" version="2">
+	<name>SolutionBuilder</name>
+	<rootPath>$(TRAKTOR_HOME)/tools/SolutionBuilder/build/win64</rootPath>
+	<definitions/>
+	<projects>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>SolutionBuilder</name>
+			<sourcePath>$(TRAKTOR_HOME)/tools/SolutionBuilder/code/SolutionBuilder</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
+					</includePaths>
+					<definitions/>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>SolutionBuilderLIB</name>
+						<sourcePath>$(TRAKTOR_HOME)/tools/SolutionBuilder/code/SolutionBuilderLIB</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+									<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
+								</includePaths>
+								<definitions/>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+									<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>*.*</fileName>
+								<items/>
+							</item>
+							<item type="Filter">
+								<name>Make</name>
+								<items>
+									<item type="File">
+										<fileName>Make/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Msvc</name>
+								<items>
+									<item type="File">
+										<fileName>Msvc/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Xcode</name>
+								<items>
+									<item type="File">
+										<fileName>Xcode/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>CBlocks</name>
+								<items>
+									<item type="File">
+										<fileName>CBlocks/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>GraphViz</name>
+								<items>
+									<item type="File">
+										<fileName>GraphViz/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Eclipse</name>
+								<items>
+									<item type="File">
+										<fileName>Eclipse/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Dependencies</name>
+								<items>
+									<item type="File">
+										<fileName>Dependencies/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies>
+							<item type="ExternalDependency" version="2">
+								<link>LnkYes</link>
+								<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+								<projectName>Traktor.Core</projectName>
+							</item>
+							<item type="ExternalDependency" version="2">
+								<link>LnkYes</link>
+								<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+								<projectName>Traktor.Script</projectName>
+							</item>
+							<item type="ExternalDependency" version="2">
+								<link>LnkYes</link>
+								<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+								<projectName>Traktor.Script.Lua</projectName>
+							</item>
+						</dependencies>
+					</project>
+				</item>
+				<item type="ExternalDependency" version="2">
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Core</projectName>
+				</item>
+				<item type="ExternalDependency" version="2">
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Xml</projectName>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item/dependencies/item/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>SolutionBuilderUI</name>
+			<sourcePath>$(TRAKTOR_HOME)/tools/SolutionBuilder/code/SolutionBuilderUI</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
+					</includePaths>
+					<definitions/>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>../../../../res/Solution.png</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>../../../../res/TraktorSmall.png</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+				<item type="ExternalDependency" version="2">
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Core</projectName>
+				</item>
+				<item type="ExternalDependency" version="2">
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Ui</projectName>
+				</item>
+				<item type="ExternalDependency" version="2">
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Ui.Win32</projectName>
+				</item>
+				<item type="ExternalDependency" version="2">
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Xml</projectName>
+				</item>
+				<item type="ExternalDependency" version="2">
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Drawing</projectName>
+				</item>
+				<item type="ExternalDependency" version="2">
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Ui.Custom</projectName>
+				</item>
+			</dependencies>
+		</item>
+	</projects>
+	<aggregations/>
+</object>

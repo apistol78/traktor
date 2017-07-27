@@ -59,6 +59,16 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 	context.set(L"PROJECT_LIBRARIES", ssl.str());
 	context.set(L"PROJECT_LIBRARY_PATHS", sslp.str());
 
+	const wchar_t* c_warningLevels[] =
+	{
+		L"TurnOffAllWarnings",	// WlNoWarnings
+		L"Level1",				// WlCriticalOnly
+		L"Level3",				// WlCompilerDefault
+		L"EnableAllWarnings",	// WlAllWarnings
+	};
+
+	context.set(L"PROJECT_WARNING_LEVEL", c_warningLevels[configuration->getWarningLevel()]);
+
 	std::wstring aco = configuration->getAdditionalCompilerOptions();
 	if (!aco.empty())
 		context.set(L"PROJECT_ADDITIONAL_COMPILER_OPTIONS", aco + L" ");
