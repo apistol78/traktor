@@ -83,6 +83,17 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	m_listLibraries->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
 	m_listLibraries->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeLibraries);
 
+	Ref< ui::Static > staticWarningLevel = new ui::Static();
+	staticWarningLevel->create(this, L"Warning level");
+
+	m_dropWarningLevel = new ui::DropDown();
+	m_dropWarningLevel->create(this);
+	m_dropWarningLevel->add(L"No warnings");
+	m_dropWarningLevel->add(L"Critical warnings only");
+	m_dropWarningLevel->add(L"Compiler default");
+	m_dropWarningLevel->add(L"All warnings");
+	m_dropWarningLevel->addEventHandler< ui::SelectionChangeEvent >(this, &ConfigurationPropertyPage::eventSelectWarningLevel);
+
 	Ref< ui::Static > staticAdditionalCompilerOptions = new ui::Static();
 	staticAdditionalCompilerOptions->create(this, L"Compiler options");
 
@@ -168,6 +179,8 @@ void ConfigurationPropertyPage::set(Configuration* configuration)
 	m_listLibraries->removeAll();
 	for (std::vector< std::wstring >::const_iterator i = libraries.begin(); i != libraries.end(); ++i)
 		m_listLibraries->add(*i);
+
+	m_dropWarningLevel->select(int(m_configuration->getWarningLevel()));
 
 	m_editAdditionalCompilerOptions->setText(m_configuration->getAdditionalCompilerOptions());
 	m_editAdditionalLinkerOptions->setText(m_configuration->getAdditionalLinkerOptions());
@@ -260,6 +273,12 @@ void ConfigurationPropertyPage::eventChangeLibraries(ui::custom::EditListEditEve
 		libraries.push_back(event->getText());
 	m_configuration->setLibraries(libraries);
 	event->consume();
+}
+
+void ConfigurationPropertyPage::eventSelectWarningLevel(ui::SelectionChangeEvent* event)
+{
+	int id = m_dropWarningLevel->getSelected();
+	m_configuration->setWarningLevel((Configuration::WarningLevel)id);
 }
 
 void ConfigurationPropertyPage::eventFocusAdditionalOptions(ui::FocusEvent* event)

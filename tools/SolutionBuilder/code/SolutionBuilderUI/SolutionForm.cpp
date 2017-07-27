@@ -48,7 +48,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v3.1"
+#define TITLE L"SolutionBuilder v3.2"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 

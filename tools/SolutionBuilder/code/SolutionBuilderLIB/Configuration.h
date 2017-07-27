@@ -41,6 +41,14 @@ public:
 		TpRelease
 	};
 
+	enum WarningLevel
+	{
+		WlNoWarnings,
+		WlCriticalOnly,
+		WlCompilerDefault,
+		WlAllWarnings
+	};
+
 	Configuration();
 
 	void setName(const std::wstring& name);
@@ -78,6 +86,10 @@ public:
 	void setLibraries(const std::vector< std::wstring >& libraries);
 
 	const std::vector< std::wstring >& getLibraries() const;
+
+	void setWarningLevel(WarningLevel warningLevel);
+
+	WarningLevel getWarningLevel() const;
 
 	void setAdditionalCompilerOptions(const std::wstring& additionalCompilerOptions);
 
@@ -130,6 +142,7 @@ private:
 	std::vector< std::wstring > m_definitions;
 	std::vector< std::wstring > m_libraryPaths;
 	std::vector< std::wstring > m_libraries;
+	WarningLevel m_warningLevel;
 	std::wstring m_additionalCompilerOptions;
 	std::wstring m_additionalLinkerOptions;
 	std::wstring m_debugExecutable;

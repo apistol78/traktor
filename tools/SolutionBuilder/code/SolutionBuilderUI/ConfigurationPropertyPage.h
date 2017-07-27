@@ -30,6 +30,7 @@ private:
 	traktor::Ref< traktor::ui::custom::EditList > m_listDefinitions;
 	traktor::Ref< traktor::ui::custom::EditList > m_listLibraryPaths;
 	traktor::Ref< traktor::ui::custom::EditList > m_listLibraries;
+	traktor::Ref< traktor::ui::DropDown > m_dropWarningLevel;
 	traktor::Ref< traktor::ui::Edit > m_editAdditionalCompilerOptions;
 	traktor::Ref< traktor::ui::Edit > m_editAdditionalLinkerOptions;
 	traktor::Ref< traktor::ui::Edit > m_editDebugExecutable;
@@ -48,6 +49,8 @@ private:
 	void eventChangeLibraryPaths(traktor::ui::custom::EditListEditEvent* event);
 
 	void eventChangeLibraries(traktor::ui::custom::EditListEditEvent* event);
+
+	void eventSelectWarningLevel(traktor::ui::SelectionChangeEvent* event);
 
 	void eventFocusAdditionalOptions(traktor::ui::FocusEvent* event);
 };

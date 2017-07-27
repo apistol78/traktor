@@ -216,7 +216,7 @@
 						</item>
 						<item>
 							<name>WarningLevel</name>
-							<value>Level3</value>
+							<value>%(PROJECT_WARNING_LEVEL)</value>
 						</item>
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
@@ -270,7 +270,7 @@
 						</item>
 						<item>
 							<name>WarningLevel</name>
-							<value>Level3</value>
+							<value>%(PROJECT_WARNING_LEVEL)</value>
 						</item>
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
@@ -372,7 +372,7 @@
 						</item>
 						<item>
 							<name>WarningLevel</name>
-							<value>Level3</value>
+							<value>%(PROJECT_WARNING_LEVEL)</value>
 						</item>
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
@@ -470,7 +470,7 @@
 						</item>
 						<item>
 							<name>WarningLevel</name>
-							<value>Level3</value>
+							<value>%(PROJECT_WARNING_LEVEL)</value>
 						</item>
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
@@ -590,7 +590,7 @@
 						</item>
 						<item>
 							<name>WarningLevel</name>
-							<value>Level3</value>
+							<value>%(PROJECT_WARNING_LEVEL)</value>
 						</item>
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
@@ -664,7 +664,7 @@
 						</item>
 						<item>
 							<name>WarningLevel</name>
-							<value>Level3</value>
+							<value>%(PROJECT_WARNING_LEVEL)</value>
 						</item>
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
@@ -786,7 +786,7 @@
 						</item>
 						<item>
 							<name>WarningLevel</name>
-							<value>Level3</value>
+							<value>%(PROJECT_WARNING_LEVEL)</value>
 						</item>
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
@@ -904,7 +904,7 @@
 						</item>
 						<item>
 							<name>WarningLevel</name>
-							<value>Level3</value>
+							<value>%(PROJECT_WARNING_LEVEL)</value>
 						</item>
 						<item>
 							<name>EnableEnhancedInstructionSet</name>
