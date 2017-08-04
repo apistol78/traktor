@@ -24586,7 +24586,7 @@
 		<item ref="/object/projects/item[109]/dependencies/item/project"/>
 		<item ref="/object/projects/item[13]/dependencies/item[12]/project/dependencies/item[8]/project/dependencies/item[13]/project"/>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Flash.Debug.App</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Flash/Editor/Debug</sourcePath>
 			<configurations>
