@@ -62,6 +62,9 @@ void PartitionMeshComponent::render(world::WorldContext& worldContext, world::Wo
 		distance,
 		m_parameterCallback
 	);
+
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
+		m_transform.step();
 }
 
 	}

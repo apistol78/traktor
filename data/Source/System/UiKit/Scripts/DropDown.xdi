@@ -33,18 +33,43 @@ function DropDown:removeAll()
 	self._items = {}
 end
 
-function DropDown:select(index)
-	if index > 0 and index <= #self._items then
-		self._caption_tb:parseText(self._items[index])
-		self._selected = index
+function DropDown:select(indexOrPredicate)
+	if type(indexOrPredicate) ~= "function" then
+		local index = indexOrPredicate
+		if index > 0 and index <= #self._items then
+			self._caption_tb:parseText(self:_getTextOfItem(self._items[index]))	
+			self._selected = index
+		else
+			self._caption_tb:parseText("")
+			self._selected = 0
+		end
 	else
-		self._caption_tb:parseText("")
-		self._selected = 0
+		local fn = indexOrPredicate
+		local found = false
+		for index, item in ipairs(self._items) do
+			if fn(item) then
+				self._caption_tb:parseText(self:_getTextOfItem(item))
+				self._selected = index
+				found = true
+			end
+		end
+		if not found then
+			self._caption_tb:parseText("")
+			self._selected = 0
+		end
 	end
 end
 
-function DropDown:getSelected()
+function DropDown:getSelectedIndex()
 	return self._selected
+end
+
+function DropDown:getSelectedItem()
+	if self._selected > 0 and self._selected <= #self._items then
+		return self._items[self._selected]
+	else
+		return nil
+	end
 end
 
 function DropDown:setColor(color)
@@ -107,6 +132,16 @@ function DropDown:_removeList()
 	end
 end
 
+function DropDown:_getTextOfItem(item)
+	if type(item) == "table" then
+		if item.text ~= nil then
+			return item.text
+		end
+	elseif type(item) == "string" then
+		return item
+	end
+end
+
 function DropDown:_onMousePress()
 	assert (self._list == nil)
 
@@ -122,7 +157,7 @@ function DropDown:_onMousePress()
 	if self._textColor ~= nil then self._list:setTextColor(self._textColor) end
 
 	for _, item in ipairs(self._items) do
-		self._list:add(item)
+		self._list:add(self:_getTextOfItem(item))
 	end
 
 	local p = self:getPlacement()

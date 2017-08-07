@@ -69,7 +69,6 @@ ImageProcessStepTemporal::InstanceTemporal::InstanceTemporal(const ImageProcessS
 ,	m_shader(shader)
 ,	m_sources(sources)
 ,	m_time(0.0f)
-,	m_previousView(Matrix44::identity())
 ,	m_handleTime(getParameterHandle(L"Time"))
 ,	m_handleDeltaTime(getParameterHandle(L"DeltaTime"))
 ,	m_handleViewEdgeTopLeft(getParameterHandle(L"ViewEdgeTopLeft"))
@@ -106,23 +105,21 @@ void ImageProcessStepTemporal::InstanceTemporal::render(
 	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
 	 
-	Matrix44 deltaView = m_previousView * params.view.inverse();
+	Matrix44 deltaView = params.lastView * params.view.inverse();
 
 	m_shader->setFloatParameter(m_handleTime, m_time);
 	m_shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
-
 	m_shader->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
 	m_shader->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
 	m_shader->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
 	m_shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
+	m_shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 	m_shader->setMatrixParameter(m_handleProjection, params.projection);
 	m_shader->setMatrixParameter(m_handleView, params.view);
-	m_shader->setMatrixParameter(m_handleViewLast, m_previousView);
+	m_shader->setMatrixParameter(m_handleViewLast, params.lastView);
 	m_shader->setMatrixParameter(m_handleViewInverse, params.view.inverse());
 	m_shader->setMatrixParameter(m_handleDeltaView, deltaView);
 	m_shader->setMatrixParameter(m_handleDeltaViewProj, params.projection * deltaView);
-
-	m_shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
@@ -134,7 +131,6 @@ void ImageProcessStepTemporal::InstanceTemporal::render(
 	screenRenderer->draw(renderView, m_shader);
 
 	m_time += params.deltaTime;
-	m_previousView = params.view;
 }
 
 	}

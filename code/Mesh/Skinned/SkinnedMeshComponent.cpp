@@ -15,6 +15,12 @@ namespace traktor
 {
 	namespace mesh
 	{
+		namespace
+		{
+		
+static render::handle_t s_techniqueVelocityWrite = 0;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshComponent", SkinnedMeshComponent, MeshComponent)
 
@@ -26,6 +32,8 @@ SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >&
 	const std::map< std::wstring, int >& jointMap = m_mesh->getJointMap();
 	m_jointTransforms[0].resize(jointMap.size() * 2, Vector4::origo());
 	m_jointTransforms[1].resize(jointMap.size() * 2, Vector4::origo());
+
+	s_techniqueVelocityWrite = render::getParameterHandle(L"World_VelocityWrite");
 }
 
 void SkinnedMeshComponent::destroy()
@@ -46,14 +54,21 @@ void SkinnedMeshComponent::render(world::WorldContext& worldContext, world::Worl
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	Transform transform = m_transform.get(worldRenderView.getInterval());
-	Aabb3 boundingBox = m_mesh->getBoundingBox();
+	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
+
+	// Skip rendering velocities if mesh hasn't moved since last frame.
+	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
+	{
+		if (worldTransform == lastWorldTransform)
+			return;
+	}
 
 	float distance = 0.0f;
 	if (!isMeshVisible(
-		boundingBox,
+		m_mesh->getBoundingBox(),
 		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * transform.toMatrix44(),
+		worldRenderView.getView() * worldTransform.toMatrix44(),
 		worldRenderView.getProjection(),
 		m_screenSpaceCulling ? 0.0001f : 0.0f,
 		distance
@@ -63,11 +78,15 @@ void SkinnedMeshComponent::render(world::WorldContext& worldContext, world::Worl
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		transform,
+		lastWorldTransform,
+		worldTransform,
 		m_jointTransforms[m_count],
 		distance,
 		m_parameterCallback
 	);
+
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
+		m_transform.step();
 }
 
 void SkinnedMeshComponent::setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms_)

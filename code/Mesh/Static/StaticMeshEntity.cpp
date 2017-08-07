@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshEntity.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
@@ -13,6 +14,12 @@ namespace traktor
 {
 	namespace mesh
 	{
+		namespace
+		{
+		
+static render::handle_t s_techniqueVelocityWrite = 0;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMeshEntity", StaticMeshEntity, MeshEntity)
 
@@ -20,6 +27,7 @@ StaticMeshEntity::StaticMeshEntity(const Transform& transform, bool screenSpaceC
 :	MeshEntity(transform, screenSpaceCulling)
 ,	m_mesh(mesh)
 {
+	s_techniqueVelocityWrite = render::getParameterHandle(L"World_VelocityWrite");
 }
 
 Aabb3 StaticMeshEntity::getBoundingBox() const
@@ -39,14 +47,27 @@ void StaticMeshEntity::render(
 	float distance
 )
 {
+	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
+
+	// Skip rendering velocities if mesh hasn't moved since last frame.
+	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
+	{
+		if (worldTransform == lastWorldTransform)
+			return;
+	}
+
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		m_transform.get0(),
-		m_transform.get(worldRenderView.getInterval()),
+		lastWorldTransform,
+		worldTransform,
 		distance,
 		getParameterCallback()
 	);
+
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
+		m_transform.step();
 }
 
 	}

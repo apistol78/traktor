@@ -27,11 +27,11 @@
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
-				<blue>true</blue>
-				<alpha>true</alpha>
+				<blue>false</blue>
+				<alpha>false</alpha>
 			</colorWriteMask>
 			<depthEnable>true</depthEnable>
-			<depthWriteEnable>true</depthWriteEnable>
+			<depthWriteEnable>false</depthWriteEnable>
 			<depthFunction>CfLessEqual</depthFunction>
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
@@ -48,7 +48,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>1051</first>
@@ -57,6 +57,7 @@
 			<name>ViewVelocity</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>

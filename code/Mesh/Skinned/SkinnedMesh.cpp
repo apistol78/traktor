@@ -43,6 +43,7 @@ bool SkinnedMesh::supportTechnique(render::handle_t technique) const
 void SkinnedMesh::render(
 	render::RenderContext* renderContext,
 	world::IWorldRenderPass& worldRenderPass,
+	const Transform& lastWorldTransform,
 	const Transform& worldTransform,
 	const AlignedVector< Vector4 >& jointTransforms,
 	float distance,
@@ -87,7 +88,7 @@ void SkinnedMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			worldTransform,
+			lastWorldTransform,
 			worldTransform,
 			boundingBox
 		);

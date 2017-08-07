@@ -68,6 +68,9 @@ void AutoLodMeshComponent::render(world::WorldContext& worldContext, world::Worl
 		distance,
 		m_parameterCallback
 	);
+
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
+		m_transform.step();
 }
 
 	}

@@ -94,6 +94,7 @@ private:
 		float A;
 		float B;
 		Matrix44 projection;
+		Matrix44 lastView;
 		Matrix44 view;
 		Frustum viewFrustum;
 		AlignedVector< Light > lights;
@@ -130,6 +131,7 @@ private:
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
+	Quality m_motionBlurQuality;
 	Quality m_shadowsQuality;
 	Quality m_reflectionsQuality;
 	Quality m_ambientOcclusionQuality;

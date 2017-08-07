@@ -38,6 +38,7 @@ render::handle_t s_handleCloudShadowEnable;
 render::handle_t s_handleTraceReflections;
 render::handle_t s_handleExtent;
 render::handle_t s_handleProjection;
+render::handle_t s_handleView;
 render::handle_t s_handleViewInverse;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleScreenMap;
@@ -82,6 +83,7 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleTraceReflections = render::getParameterHandle(L"World_TraceReflections");
 	s_handleExtent = render::getParameterHandle(L"World_Extent");
 	s_handleProjection = render::getParameterHandle(L"World_Projection");
+	s_handleView = render::getParameterHandle(L"World_View");
 	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
 	s_handleMagicCoeffs = render::getParameterHandle(L"World_MagicCoeffs");
 	s_handleScreenMap = render::getParameterHandle(L"World_ScreenMap");
@@ -426,6 +428,7 @@ void LightRendererDeferred::renderFog(
 	Scalar p22 = projection.get(1, 1);
 
 	m_fogShader->setMatrixParameter(s_handleProjection, projection);
+	m_fogShader->setMatrixParameter(s_handleView, view);
 	m_fogShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 	m_fogShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 	m_fogShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);

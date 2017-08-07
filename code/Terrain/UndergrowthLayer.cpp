@@ -170,7 +170,7 @@ void UndergrowthLayer::render(
 	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
 
 	// Update clusters at first pass from eye pow.
-	bool updateClusters = worldRenderPass.isFirstPassFromEye();
+	bool updateClusters = bool((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
 
 	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInv = view.inverse();

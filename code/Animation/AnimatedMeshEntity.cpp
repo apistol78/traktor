@@ -147,6 +147,7 @@ void AnimatedMeshEntity::render(
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
+		m_transform.get(worldRenderView.getInterval() - 1.0f),
 		m_transform.get(worldRenderView.getInterval()),
 		m_skinTransforms[2],
 		distance,

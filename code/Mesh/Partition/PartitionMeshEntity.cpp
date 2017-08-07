@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Mesh/Partition/PartitionMesh.h"
 #include "Mesh/Partition/PartitionMeshEntity.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
@@ -47,6 +48,8 @@ void PartitionMeshEntity::render(
 		distance,
 		getParameterCallback()
 	);
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
+		m_transform.step();
 }
 
 	}

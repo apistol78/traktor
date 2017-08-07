@@ -60,6 +60,9 @@ void InstanceMeshComponentRenderer::render(
 		packInstanceMeshData(transformLast),
 		distance
 	));
+
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
+		meshComponent->getTransform().step();
 }
 
 void InstanceMeshComponentRenderer::flush(

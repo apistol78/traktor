@@ -66,7 +66,6 @@ private:
 	bool m_suppressShadows;
 	bool m_suppressLinearLighting;
 	bool m_suppressDepthPass;
-	bool m_suppressMotionBlur;
 	bool m_suppressImageProcess;
 	int32_t m_shadowMapSizeDenom;
 	int32_t m_shadowMapMaxSlices;

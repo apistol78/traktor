@@ -341,7 +341,7 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 		}
 	}
 
-	renderWidget->update(0, true);
+	context->raiseRedraw();
 
 	m_mousePosition = mousePosition;
 }

@@ -8,6 +8,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Capture/CubeTextureCapture.h"
 #include "Render/Capture/IndexBufferCapture.h"
 #include "Render/Capture/ProgramCapture.h"
+#include "Render/Capture/ProgramCompilerCapture.h"
+#include "Render/Capture/ProgramResourceCapture.h"
 #include "Render/Capture/RenderSystemCapture.h"
 #include "Render/Capture/RenderTargetSetCapture.h"
 #include "Render/Capture/RenderViewCapture.h"
@@ -176,10 +178,10 @@ Ref< IVolumeTexture > RenderSystemCapture::createVolumeTexture(const VolumeTextu
 
 Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	T_FATAL_ASSERT_M (desc.count > 0, L"Render error: Must have atleast one target.");
-	T_FATAL_ASSERT_M (desc.count < 4, L"Render error: Too many targets.");
-	T_FATAL_ASSERT_M (desc.width < 0, L"Render error: Invalid size.");
-	T_FATAL_ASSERT_M (desc.height < 0, L"Render error: Invalid size.");
+	T_FATAL_ASSERT_M (desc.count >= 0, L"Render error: Negative number of targets.");
+	T_FATAL_ASSERT_M (desc.count <= 4, L"Render error: Too many targets.");
+	T_FATAL_ASSERT_M (desc.width > 0, L"Render error: Invalid size.");
+	T_FATAL_ASSERT_M (desc.height > 0, L"Render error: Invalid size.");
 	T_FATAL_ASSERT_M (desc.multiSample >= 0, L"Render error: Invalid multisample count.");
 
 	Ref< RenderTargetSet > renderTargetSet = m_renderSystem->createRenderTargetSet(desc);
@@ -192,13 +194,41 @@ Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTa
 Ref< IProgram > RenderSystemCapture::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	T_FATAL_ASSERT_M (programResource, L"Render error: No program resource.");
-	Ref< IProgram > program = m_renderSystem->createProgram(programResource, tag);
-	return program ? new ProgramCapture(program, tag) : 0;
+
+	const ProgramResourceCapture* resource = dynamic_type_cast< const ProgramResourceCapture* >(programResource);
+	T_FATAL_ASSERT_M (resource, L"Render error: Incorrect program resource type.");
+	T_FATAL_ASSERT_M (resource->m_embedded, L"Render error: Invalid wrapped resource.");
+
+	Ref< IProgram > program = m_renderSystem->createProgram(resource->m_embedded, tag);
+	if (!program)
+		return 0;
+
+	Ref< ProgramCapture > programCapture = new ProgramCapture(program, tag);
+
+	for (RefArray< Uniform >::const_iterator i = resource->m_uniforms.begin(); i != resource->m_uniforms.end(); ++i)
+	{
+		handle_t handle = getParameterHandle(i->getParameterName());
+		programCapture->m_shadow[handle].uniform = *i;
+		programCapture->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
+	}
+
+	for (RefArray< IndexedUniform >::const_iterator i = resource->m_indexedUniforms.begin(); i != resource->m_indexedUniforms.end(); ++i)
+	{
+		handle_t handle = getParameterHandle(i->getParameterName());
+		programCapture->m_shadow[handle].indexedUniform = *i;
+		programCapture->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
+	}
+
+	return programCapture;
 }
 
 Ref< IProgramCompiler > RenderSystemCapture::createProgramCompiler() const
 {
-	return m_renderSystem->createProgramCompiler();
+	Ref< IProgramCompiler > compiler = m_renderSystem->createProgramCompiler();
+	if (compiler)
+		return new ProgramCompilerCapture(compiler);
+	else
+		return 0;
 }
 
 Ref< ITimeQuery > RenderSystemCapture::createTimeQuery() const

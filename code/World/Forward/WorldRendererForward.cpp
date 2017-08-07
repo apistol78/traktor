@@ -893,7 +893,7 @@ void WorldRendererForward::buildDepth(WorldRenderView& worldRenderView, int fram
 	WorldRenderPassForward pass(
 		s_techniqueDepth,
 		worldRenderView,
-		true,
+		IWorldRenderPass::PfFirst,
 		0,
 		0
 	);
@@ -976,7 +976,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 		WorldRenderPassForward shadowPass(
 			s_techniqueShadow,
 			shadowRenderView,
-			false,
+			IWorldRenderPass::PfNone,
 			0,
 			0
 		);
@@ -1001,7 +1001,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
 		worldRenderView,
-		(m_settings.depthPass || m_shadowsQuality > QuDisabled) ? false : true,
+		IWorldRenderPass::PfLast,
 		m_settings.fog,
 		m_settings.fogDistanceY,
 		m_settings.fogDistanceZ,
@@ -1031,7 +1031,7 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, int 
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
 		worldRenderView,
-		(m_settings.depthPass || m_shadowsQuality > QuDisabled) ? false : true,
+		(!m_settings.depthPass && m_shadowsQuality == QuDisabled) ? (IWorldRenderPass::PfFirst | IWorldRenderPass::PfLast) : IWorldRenderPass::PfLast,
 		m_settings.fog,
 		m_settings.fogDistanceY,
 		m_settings.fogDistanceZ,

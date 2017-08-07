@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Mesh/Lod/LodMeshEntity.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
@@ -75,6 +76,9 @@ void LodMeshEntity::render(
 
 	int32_t lod = clamp< int32_t >(int32_t(lodDistance / m_lodDistance), 0, int32_t(m_lods.size()) - 1);
 	worldContext.build(worldRenderView, worldRenderPass, m_lods[lod]);
+
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
+		m_transform.step();
 }
 
 void LodMeshEntity::update(const world::UpdateParams& update)

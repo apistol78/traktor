@@ -28,7 +28,12 @@ void MeshComponent::destroy()
 
 void MeshComponent::setOwner(world::Entity* owner)
 {
-	m_owner = owner;
+	if ((m_owner = owner) != 0)
+	{
+		Transform T;
+		if (m_owner->getTransform(T))
+			m_transform = IntervalTransform(T);
+	}
 }
 
 void MeshComponent::setTransform(const Transform& transform)
@@ -38,7 +43,6 @@ void MeshComponent::setTransform(const Transform& transform)
 
 void MeshComponent::update(const world::UpdateParams& update)
 {
-	m_transform.step();
 }
 
 	}

@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Mesh/Stream/StreamMeshEntity.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
@@ -68,6 +69,9 @@ void StreamMeshEntity::render(
 		distance,
 		getParameterCallback()
 	);
+
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
+		m_transform.step();
 }
 
 	}

@@ -15,62 +15,62 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>765</first>
-				<second>-39</second>
+				<first>951</first>
+				<second>-41</second>
 			</position>
 			<technique/>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>765</first>
-				<second>-8</second>
+				<first>951</first>
+				<second>-10</second>
 			</position>
 			<name>Position</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>557</first>
-				<second>227</second>
+				<first>849</first>
+				<second>290</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>35</first>
-				<second>254</second>
+				<first>178</first>
+				<second>312</second>
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>242</first>
-				<second>207</second>
+				<first>431</first>
+				<second>241</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>39</first>
-				<second>282</second>
+				<first>183</first>
+				<second>350</second>
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>183</first>
-				<second>-34</second>
+				<first>112</first>
+				<second>-42</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>-107</first>
-				<second>-30</second>
+				<first>-247</first>
+				<second>-51</second>
 			</position>
 			<value>1, -1, 0, 0</value>
 		</item>
@@ -84,38 +84,38 @@
 		<item type="traktor.render.Platform">
 			<comment/>
 			<position>
-				<first>564</first>
-				<second>-42</second>
+				<first>641</first>
+				<second>-50</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>68</first>
-				<second>-30</second>
+				<first>-3</first>
+				<second>-38</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.TargetSize">
 			<comment/>
 			<position>
-				<first>-70</first>
-				<second>16</second>
+				<first>-175</first>
+				<second>25</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>424</first>
-				<second>227</second>
+				<first>716</first>
+				<second>290</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>153</first>
-				<second>212</second>
+				<first>314</first>
+				<second>232</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>

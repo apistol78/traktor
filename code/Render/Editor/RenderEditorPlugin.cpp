@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
+#include "Render/Capture/RenderSystemCapture.h"
 #include "Render/Editor/RenderEditorPlugin.h"
 #include "Render/Editor/Shader/ShaderDependencyTracker.h"
 #include "Ui/MessageBox.h"
@@ -42,18 +43,21 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	Ref< IRenderSystem > renderSystem = dynamic_type_cast< IRenderSystem* >(renderSystemType->createInstance());
 	T_ASSERT (renderSystem);
 
+	Ref< RenderSystemCapture > renderSystemCapture = new RenderSystemCapture();
+
 	RenderSystemDesc desc;
+	desc.capture = renderSystem;
 	desc.mipBias = m_editor->getSettings()->getProperty< float >(L"Editor.MipBias", 0.0f);
 	desc.maxAnisotropy = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MaxAnisotropy", 1);
 	desc.maxAnisotropy = std::max(desc.maxAnisotropy, 1);
 
-	if (!renderSystem->create(desc))
+	if (!renderSystemCapture->create(desc))
 	{
 		ui::MessageBox::show(parent, std::wstring(L"Unable to create render system \"") + renderSystemTypeName + std::wstring(L"\""), L"Error", ui::MbIconError | ui::MbOk);
 		return false;
 	}
 
-	m_editor->setStoreObject(L"RenderSystem", renderSystem);
+	m_editor->setStoreObject(L"RenderSystem", renderSystemCapture);
 	return true;
 }
 

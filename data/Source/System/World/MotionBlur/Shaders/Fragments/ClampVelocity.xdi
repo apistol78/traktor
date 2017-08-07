@@ -52,7 +52,7 @@ Clamp velocity vector
 				<first>1091</first>
 				<second>837</second>
 			</position>
-			<value>0.1</value>
+			<value>2</value>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
@@ -67,7 +67,7 @@ Clamp velocity vector
 				<first>1421</first>
 				<second>802</second>
 			</position>
-			<value>20</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Min">
 			<comment/>
@@ -82,28 +82,28 @@ Clamp velocity vector
 				<first>1786</first>
 				<second>966</second>
 			</position>
-			<value>0.1</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>2790</first>
-				<second>532</second>
+				<first>3370</first>
+				<second>514</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>3643</first>
-				<second>451</second>
+				<first>3985</first>
+				<second>574</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Conditional" version="1">
 			<comment/>
 			<position>
-				<first>3100</first>
-				<second>583</second>
+				<first>3612</first>
+				<second>654</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoGreater</operator>
@@ -111,32 +111,32 @@ Clamp velocity vector
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>2728</first>
-				<second>747</second>
+				<first>3308</first>
+				<second>729</second>
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>2474</first>
-				<second>692</second>
+				<first>3054</first>
+				<second>674</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Pow">
 			<comment/>
 			<position>
-				<first>3259</first>
-				<second>311</second>
+				<first>2609</first>
+				<second>849</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>2948</first>
-				<second>294</second>
+				<first>3040</first>
+				<second>610</second>
 			</position>
-			<value>2</value>
+			<value>1</value>
 		</item>
 	</nodes>
 	<edges>
@@ -262,16 +262,6 @@ Clamp velocity vector
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
@@ -296,23 +286,23 @@ Clamp velocity vector
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[14]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -326,8 +316,8 @@ Clamp velocity vector
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Input1</name>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

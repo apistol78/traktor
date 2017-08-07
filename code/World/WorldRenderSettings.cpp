@@ -50,7 +50,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 23, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 24, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -58,8 +58,6 @@ WorldRenderSettings::WorldRenderSettings()
 ,	linearLighting(true)
 ,	occlusionCulling(false)
 ,	depthPass(true)
-,	motionBlur(false)
-,	motionBlurAmount(1.0f)
 ,	fog(false)
 ,	fogDistanceY(0.0f)
 ,	fogDistanceZ(90.0f)
@@ -94,9 +92,15 @@ void WorldRenderSettings::serialize(ISerializer& s)
 		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames18);
 
 	if (s.getVersion() >= 23)
-	{	
-		s >> Member< bool >(L"motionBlur", motionBlur);
-		s >> Member< float >(L"motionBlurAmount", motionBlurAmount);
+	{
+		if (s.getVersion() < 24)
+		{
+			float motionBlurAmount = 0.0f;
+			bool motionBlur = false;
+
+			s >> Member< bool >(L"motionBlur", motionBlur);
+			s >> Member< float >(L"motionBlurAmount", motionBlurAmount);
+		}
 		s >> Member< bool >(L"fog", fog);
 	}
 	else

@@ -73,7 +73,6 @@ public:
 		resource::Proxy< Shader > m_shader;
 		std::vector< Source > m_sources;
 		float m_time;
-		Matrix44 m_previousView;
 		handle_t m_handleTime;
 		handle_t m_handleDeltaTime;
 		handle_t m_handleViewEdgeTopLeft;

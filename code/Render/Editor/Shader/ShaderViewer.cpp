@@ -114,6 +114,9 @@ bool ShaderViewer::create(ui::Widget* parent)
 	for (std::set< const TypeInfo* >::const_iterator i = programCompilerTypes.begin(); i != programCompilerTypes.end(); ++i)
 	{
 		Ref< IProgramCompiler > compiler = mandatory_non_null_type_cast< IProgramCompiler* >((*i)->createInstance());
+		if (!compiler)
+			continue;
+
 		if (programCompilerTypeName == (*i)->getName())
 			compilerIndex = m_dropCompiler->add(compiler->getPlatformSignature(), compiler);
 		else
@@ -314,6 +317,14 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	// Resolve all variables.
 	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved();
 	T_ASSERT (shaderGraph);
+
+	// Get connected permutation.
+	shaderGraph = render::ShaderGraphStatic(shaderGraph).getConnectedPermutation();
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to resolve connected permutation" << Endl;
+		return;
+	}
 
 	// Get platform shader permutation.
 	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);

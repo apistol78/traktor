@@ -41,10 +41,17 @@ class T_DLLCLASS IWorldRenderPass : public Object
 	T_RTTI_CLASS;
 	
 public:
+	enum PassFlag
+	{
+		PfNone = 0,
+		PfFirst = 1 << 0,	//!< First pass for this frame.
+		PfLast = 1 << 1		//!< Last pass for this frame.
+	};
+
 	virtual render::handle_t getTechnique() const = 0;
 
-	/*! \brief Return true if this is the first pass rendered from eye/camera point of view. */
-	virtual bool isFirstPassFromEye() const = 0;
+	/*! \brief Return flags of pass. */
+	virtual uint32_t getPassFlags() const = 0;
 
 	/*! \brief Set shader technique used by this pass. */
 	virtual void setShaderTechnique(render::Shader* shader) const = 0;
