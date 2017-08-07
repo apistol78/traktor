@@ -53,7 +53,6 @@ void CompositeMeshComponent::setTransform(const Transform& transform)
 		Transform Tlocal = invTransform * currentTransform;
 		Transform Tworld = transform * Tlocal;
 		(*i)->setTransform(Tworld);
-		//(*i)->update({ 0.0f, 0.0f, 0.0f });
 	}
 	MeshComponent::setTransform(transform);
 }

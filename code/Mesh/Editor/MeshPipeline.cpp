@@ -136,7 +136,7 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 28, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 29, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -413,6 +413,14 @@ bool MeshPipeline::buildOutput(
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << i->first << L"\"" << Endl;
+			return false;
+		}
+
+		// Resolve all variables.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getVariableResolved();
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to resolve variables" << Endl;
 			return false;
 		}
 

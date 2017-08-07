@@ -24,6 +24,7 @@ render::handle_t s_techniqueDeferredColor;
 render::handle_t s_techniqueVelocityWrite;
 render::handle_t s_handleWorld;
 render::handle_t s_handleWorldView;
+render::handle_t s_handleLastWorld;
 render::handle_t s_handleLastWorldView;
 render::handle_t s_handleFogEnable;
 render::handle_t s_handleDepthEnable;
@@ -43,6 +44,7 @@ void initializeHandles()
 
 	s_handleWorld = render::getParameterHandle(L"World_World");
 	s_handleWorldView = render::getParameterHandle(L"World_WorldView");
+	s_handleLastWorld = render::getParameterHandle(L"World_LastWorld");
 	s_handleLastWorldView = render::getParameterHandle(L"World_LastWorldView");
 	s_handleFogEnable = render::getParameterHandle(L"World_FogEnable");
 	s_handleDepthEnable = render::getParameterHandle(L"World_DepthEnable");
@@ -62,13 +64,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassDeferred", WorldRenderPass
 WorldRenderPassDeferred::WorldRenderPassDeferred(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
-	bool firstPassFromEye,
+	uint32_t passFlags,
 	bool fogEnabled,
 	bool depthEnable
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
-,	m_firstPassFromEye(firstPassFromEye)
+,	m_passFlags(passFlags)
 ,	m_fogEnabled(fogEnabled)
 ,	m_depthEnable(depthEnable)
 {
@@ -78,11 +80,11 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 WorldRenderPassDeferred::WorldRenderPassDeferred(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
-	bool firstPassFromEye
+	uint32_t passFlags
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
-,	m_firstPassFromEye(firstPassFromEye)
+,	m_passFlags(passFlags)
 ,	m_fogEnabled(false)
 ,	m_depthEnable(false)
 {
@@ -94,9 +96,9 @@ render::handle_t WorldRenderPassDeferred::getTechnique() const
 	return m_technique;
 }
 
-bool WorldRenderPassDeferred::isFirstPassFromEye() const
+uint32_t WorldRenderPassDeferred::getPassFlags() const
 {
-	return m_firstPassFromEye;
+	return m_passFlags;
 }
 
 void WorldRenderPassDeferred::setShaderTechnique(render::Shader* shader) const
@@ -145,6 +147,7 @@ void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameter
 	if (m_technique == s_techniqueVelocityWrite)
 	{
 		Matrix44 w0 = lastWorld.toMatrix44();
+		programParams->setMatrixParameter(s_handleLastWorld, w0);
 		programParams->setMatrixParameter(s_handleLastWorldView, m_worldRenderView.getLastView() * w0);
 	}
 }

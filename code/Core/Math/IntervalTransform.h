@@ -41,7 +41,6 @@ public:
 
 private:
 	Transform m_transform[2];
-	bool m_stepped;
 };
 
 }

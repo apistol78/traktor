@@ -124,7 +124,7 @@ bool DebugRenderControl::handleCommand(const ui::Command& command)
 
 void DebugRenderControl::update()
 {
-	m_renderWidget->update();
+	m_renderWidget->update(0, true);
 }
 
 bool DebugRenderControl::hitTest(const ui::Point& position) const

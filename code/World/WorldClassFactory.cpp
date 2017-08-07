@@ -21,6 +21,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "World/IEntityEventManager.h"
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
+#include "World/IWorldRenderer.h"
 #include "World/WorldClassFactory.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
@@ -356,6 +357,14 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classComponentEntity->addMethod("setComponent", &ComponentEntity::setComponent);
 	classComponentEntity->addMethod("getComponent", &ComponentEntity_getComponent);
 	registrar->registerClass(classComponentEntity);
+
+	Ref< AutoRuntimeClass< IWorldRenderer > > classIWorldRenderer = new AutoRuntimeClass< IWorldRenderer >();
+	classIWorldRenderer->addConstant("QuDisabled", Any::fromInt32(QuDisabled));
+	classIWorldRenderer->addConstant("QuLow", Any::fromInt32(QuLow));
+	classIWorldRenderer->addConstant("QuMedium", Any::fromInt32(QuMedium));
+	classIWorldRenderer->addConstant("QuHigh", Any::fromInt32(QuHigh));
+	classIWorldRenderer->addConstant("QuUltra", Any::fromInt32(QuUltra));
+	registrar->registerClass(classIWorldRenderer);
 }
 
 	}

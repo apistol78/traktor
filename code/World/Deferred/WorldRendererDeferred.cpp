@@ -55,9 +55,9 @@ const resource::Id< render::ImageProcessSettings > c_antiAliasHigh(Guid(L"{0C288
 const resource::Id< render::ImageProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
 const resource::Id< render::ImageProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
 const resource::Id< render::ImageProcessSettings > c_motionBlurPrime(Guid(L"{73C2C7DC-BD77-F348-A6B7-06E0EFB633D9}"));
-const resource::Id< render::ImageProcessSettings > c_motionBlurLow(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
-const resource::Id< render::ImageProcessSettings > c_motionBlurMedium(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
-const resource::Id< render::ImageProcessSettings > c_motionBlurHigh(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
+const resource::Id< render::ImageProcessSettings > c_motionBlurLow(Guid(L"{BDFEFBE0-C5E9-2643-B445-DB02AC5C7687}"));
+const resource::Id< render::ImageProcessSettings > c_motionBlurMedium(Guid(L"{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}"));
+const resource::Id< render::ImageProcessSettings > c_motionBlurHigh(Guid(L"{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}"));
 const resource::Id< render::ImageProcessSettings > c_motionBlurUltra(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
 
 		}
@@ -81,7 +81,8 @@ render::handle_t WorldRendererDeferred::ms_handleFogDistanceAndDensity = 0;
 render::handle_t WorldRendererDeferred::ms_handleFogColor = 0;
 
 WorldRendererDeferred::WorldRendererDeferred()
-:	m_shadowsQuality(QuDisabled)
+:	m_motionBlurQuality(QuDisabled)
+,	m_shadowsQuality(QuDisabled)
 ,	m_ambientOcclusionQuality(QuDisabled)
 ,	m_antiAliasQuality(QuDisabled)
 ,	m_count(0)
@@ -117,15 +118,13 @@ bool WorldRendererDeferred::create(
 	m_renderView = renderView;
 
 	m_settings = *desc.worldRenderSettings;
+	m_motionBlurQuality = desc.motionBlurQuality;
 	m_shadowSettings = m_settings.shadowSettings[desc.shadowsQuality];
 	m_shadowsQuality = desc.shadowsQuality;
 	m_reflectionsQuality = desc.reflectionsQuality;
 	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
 	m_antiAliasQuality = desc.antiAliasQuality;
 	m_frames.resize(desc.frameCount);
-
-	if (desc.motionBlurQuality == QuDisabled)
-		m_settings.motionBlur = false;
 
 	m_includeObjectVelocity = bool(desc.motionBlurQuality >= QuHigh);
 
@@ -178,35 +177,35 @@ bool WorldRendererDeferred::create(
 
 			m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
 			if (m_gbufferTargetSet)
-				log::warning << L"MSAA depth render target unsupported; may cause poor performance" << Endl;
+				log::warning << L"MSAA depth render target unsupported; may cause poor performance." << Endl;
 		}
 
 		if (!m_gbufferTargetSet)
 		{
-			log::error << L"Unable to create depth render target" << Endl;
+			log::error << L"Unable to create depth render target." << Endl;
 			return false;
 		}
 	}
 
 	// Create "velocity" target.
-	if (m_settings.motionBlur)
+	if (m_motionBlurQuality > QuDisabled)
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 
 		rtscd.count = 1;
-		rtscd.width = desc.width / 2;
-		rtscd.height = desc.height / 2;
+		rtscd.width = desc.width;
+		rtscd.height = desc.height;
 		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = true;
-		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = true;
 		rtscd.preferTiled = true;
 		rtscd.targets[0].format = render::TfR16G16F;
 
 		m_velocityTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_velocityTargetSet)
 		{
-			log::error << L"Unable to create velocity render target" << Endl;
-			return false;
+			log::error << L"Unable to create velocity render target; motion blur disabled." << Endl;
+			m_motionBlurQuality = QuDisabled;
 		}
 	}
 
@@ -228,7 +227,7 @@ bool WorldRendererDeferred::create(
 		m_colorTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_colorTargetSet)
 		{
-			log::error << L"Unable to create color read-back render target" << Endl;
+			log::error << L"Unable to create color read-back render target." << Endl;
 			return false;
 		}
 	}
@@ -252,7 +251,7 @@ bool WorldRendererDeferred::create(
 
 		if (!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject))
 		{
-			log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
+			log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
 			m_shadowsQuality = QuDisabled;
 		}
 
@@ -262,7 +261,7 @@ bool WorldRendererDeferred::create(
 			!resourceManager->bind(m_shadowSettings.maskFilter, shadowMaskFilter)
 		)
 		{
-			log::warning << L"Unable to create shadow filter process; shadows disabled" << Endl;
+			log::warning << L"Unable to create shadow filter process; shadows disabled." << Endl;
 			m_shadowsQuality = QuDisabled;
 		}
 
@@ -306,7 +305,7 @@ bool WorldRendererDeferred::create(
 				desc.allTargetsPersistent
 			))
 			{
-				log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
+				log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
 				m_shadowsQuality = QuDisabled;
 			}
 
@@ -336,7 +335,7 @@ bool WorldRendererDeferred::create(
 					desc.allTargetsPersistent
 				))
 				{
-					log::warning << L"Unable to create shadow filter process; shadows disabled" << Endl;
+					log::warning << L"Unable to create shadow filter process; shadows disabled." << Endl;
 					m_shadowsQuality = QuDisabled;
 				}
 			}
@@ -381,7 +380,7 @@ bool WorldRendererDeferred::create(
 		resource::Proxy< render::ImageProcessSettings > colorTargetCopy;
 
 		if (!resourceManager->bind(c_colorTargetCopy, colorTargetCopy))
-			log::warning << L"Unable to create color read-back processing; color read-back disabled" << Endl;
+			log::warning << L"Unable to create color read-back processing; color read-back disabled." << Endl;
 
 		if (colorTargetCopy)
 		{
@@ -396,7 +395,7 @@ bool WorldRendererDeferred::create(
 				desc.allTargetsPersistent
 			))
 			{
-				log::warning << L"Unable to create color read-back processing; color read-back disabled" << Endl;
+				log::warning << L"Unable to create color read-back processing; color read-back disabled." << Endl;
 				m_colorTargetCopy = 0;
 			}
 		}
@@ -433,7 +432,7 @@ bool WorldRendererDeferred::create(
 		if (ambientOcclusionId)
 		{
 			if (!resourceManager->bind(ambientOcclusionId, ambientOcclusion))
-				log::warning << L"Unable to create ambient occlusion process; AO disabled" << Endl;
+				log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
 		}
 
 		if (ambientOcclusion)
@@ -449,7 +448,7 @@ bool WorldRendererDeferred::create(
 				desc.allTargetsPersistent
 			))
 			{
-				log::warning << L"Unable to create ambient occlusion process; AO disabled" << Endl;
+				log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
 				m_ambientOcclusion = 0;
 			}
 		}
@@ -487,7 +486,7 @@ bool WorldRendererDeferred::create(
 		if (antiAliasId)
 		{
 			if (!resourceManager->bind(antiAliasId, antiAlias))
-				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
+				log::warning << L"Unable to create antialias process; AA disabled." << Endl;
 		}
 
 		if (antiAlias)
@@ -503,7 +502,7 @@ bool WorldRendererDeferred::create(
 				desc.allTargetsPersistent
 			))
 			{
-				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
+				log::warning << L"Unable to create antialias process; AA disabled." << Endl;
 				m_antiAlias = 0;
 			}
 		}
@@ -516,7 +515,7 @@ bool WorldRendererDeferred::create(
 		{
 			resource::Proxy< render::ImageProcessSettings > imageProcess;
 			if (!resourceManager->bind(imageProcessSettings, imageProcess))
-				log::warning << L"Unable to create visual post processing image filter; post processing disabled" << Endl;
+				log::warning << L"Unable to create visual post processing image filter; post processing disabled." << Endl;
 
 			if (imageProcess)
 			{
@@ -531,7 +530,7 @@ bool WorldRendererDeferred::create(
 					desc.allTargetsPersistent
 				))
 				{
-					log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
+					log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
 					m_visualImageProcess = 0;
 				}
 			}
@@ -543,7 +542,7 @@ bool WorldRendererDeferred::create(
 	{
 		resource::Proxy< render::ImageProcessSettings > gammaCorrection;
 		if (!resourceManager->bind(c_gammaCorrection, gammaCorrection))
-			log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
+			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 
 		if (gammaCorrection)
 		{
@@ -563,18 +562,21 @@ bool WorldRendererDeferred::create(
 			}
 			else
 			{
-				log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
+				log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 				m_gammaCorrectionImageProcess = 0;
 			}
 		}
 	}
 
 	// Create motion blur prime processing.
-	if (m_settings.motionBlur)
+	if (m_motionBlurQuality > QuDisabled)
 	{
 		resource::Proxy< render::ImageProcessSettings > motionBlurPrime;
 		if (!resourceManager->bind(c_motionBlurPrime, motionBlurPrime))
-			log::warning << L"Unable to create motion blur prime process; motion blur disabled" << Endl;
+		{
+			log::warning << L"Unable to create motion blur prime process; motion blur disabled." << Endl;
+			m_motionBlurQuality = QuDisabled;
+		}
 
 		if (motionBlurPrime)
 		{
@@ -589,14 +591,15 @@ bool WorldRendererDeferred::create(
 				desc.allTargetsPersistent
 			))
 			{
-				log::warning << L"Unable to create motion blur process; motion blur disabled" << Endl;
+				log::warning << L"Unable to create motion blur process; motion blur disabled." << Endl;
 				m_motionBlurPrimeImageProcess = 0;
+				m_motionBlurQuality = QuDisabled;
 			}
 		}
 	}
 
 	// Create motion blur final processing.
-	if (m_settings.motionBlur)
+	if (m_motionBlurQuality > QuDisabled)
 	{
 		resource::Id< render::ImageProcessSettings > motionBlurId;
 		switch (desc.motionBlurQuality)
@@ -624,7 +627,10 @@ bool WorldRendererDeferred::create(
 
 		resource::Proxy< render::ImageProcessSettings > motionBlur;
 		if (!resourceManager->bind(motionBlurId, motionBlur))
-			log::warning << L"Unable to create motion blur process; motion blur disabled" << Endl;
+		{
+			log::warning << L"Unable to create motion blur process; motion blur disabled." << Endl;
+			m_motionBlurQuality = QuDisabled;
+		}
 
 		if (motionBlur)
 		{
@@ -639,22 +645,11 @@ bool WorldRendererDeferred::create(
 				desc.allTargetsPersistent
 			))
 			{
-				log::warning << L"Unable to create motion blur process; motion blur disabled" << Endl;
+				log::warning << L"Unable to create motion blur process; motion blur disabled." << Endl;
 				m_motionBlurImageProcess = 0;
+				m_motionBlurQuality = QuDisabled;
 			}
 		}
-	}
-
-	// Setup motion blur processes.
-	if (m_motionBlurPrimeImageProcess && m_motionBlurImageProcess)
-	{
-		m_motionBlurPrimeImageProcess->setFloatParameter(render::getParameterHandle(L"World_MotionBlurAmount"), m_settings.motionBlurAmount);
-		m_motionBlurImageProcess->setFloatParameter(render::getParameterHandle(L"World_MotionBlurAmount"), m_settings.motionBlurAmount);
-	}
-	else
-	{
-		m_motionBlurPrimeImageProcess = 0;
-		m_motionBlurImageProcess = 0;
 	}
 
 	// Create global reflection map.
@@ -692,7 +687,7 @@ bool WorldRendererDeferred::create(
 		i->gbuffer = new WorldContext(desc.entityRenderers);
 		i->visual = new WorldContext(desc.entityRenderers);
 
-		if (m_settings.motionBlur)
+		if (m_motionBlurQuality > QuDisabled)
 			i->velocity = new WorldContext(desc.entityRenderers);
 	}
 
@@ -794,7 +789,7 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 		}
 	}
 
-	if (m_settings.motionBlur)
+	if (m_motionBlurQuality > QuDisabled)
 		f.velocity->clear();
 
 	f.visual->clear();
@@ -810,7 +805,7 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 	buildGBuffer(worldRenderView, frame);
 
 	// Build velocity context.
-	if (m_settings.motionBlur)
+	if (m_motionBlurQuality > QuDisabled)
 		buildVelocity(worldRenderView, frame);
 
 	// Build shadow contexts.
@@ -877,14 +872,12 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		T_RENDER_PUSH_MARKER(m_renderView, "World: GBuffer");
 		if (m_renderView->begin(m_gbufferTargetSet))
 		{
-			const float clearZ = std::numeric_limits< float >::max();
-
+			const float clearZ = f.viewFrustum.getFarZ();
 			const Color4f depthColor(clearZ, clearZ, clearZ, clearZ);
 			const Color4f normalColor(0.0f, 0.0f, 1.0f, 0.0f);
 			const Color4f miscColor(0.0f, 0.0f, 0.0f, 0.0f);
 			const Color4f surfaceColor(0.0f, 0.0f, 0.0f, 0.0f);
 			const Color4f clearColors[] = { depthColor, normalColor, miscColor, surfaceColor };
-
 			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
 
 			if (f.haveGBuffer)
@@ -896,7 +889,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 	}
 
 	// Render velocity.
-	if (m_settings.motionBlur)
+	if (m_motionBlurQuality > QuDisabled)
 	{
 		render::ProgramParameters velocityProgramParams;
 		velocityProgramParams.beginParameters(m_globalContext);
@@ -909,19 +902,15 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Velocity");
 		if (m_renderView->begin(m_velocityTargetSet))
 		{
-			const float clearZ = std::numeric_limits< float >::max();
-
-			const Color4f depthColor(clearZ, clearZ, clearZ, clearZ);
 			const Color4f velocityColor(0.0f, 0.0f, 0.0f, 0.0f);
-			const Color4f clearColors[] = { velocityColor };
-
-			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
+			m_renderView->clear(render::CfColor, &velocityColor, 1.0f, 0);
 
 			// Prime velocity with camera motion only.
 			if (m_motionBlurPrimeImageProcess)
 			{
 				render::ImageProcessStep::Instance::RenderParams params;
 				params.viewFrustum = f.viewFrustum;
+				params.lastView = f.lastView;
 				params.view = f.view;
 				params.projection = projection;
 				params.deltaTime = 0.0f;
@@ -1241,6 +1230,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 
 			render::ImageProcessStep::Instance::RenderParams params;
 			params.viewFrustum = f.viewFrustum;
+			params.lastView = f.lastView;
 			params.view = f.view;
 			params.projection = projection;
 			params.deltaTime = 0.0f;
@@ -1434,7 +1424,7 @@ void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int f
 	WorldRenderPassDeferred gbufferPass(
 		ms_techniqueDeferredGBufferWrite,
 		gbufferRenderView,
-		true
+		IWorldRenderPass::PfFirst
 	);
 	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
 		f.gbuffer->build(gbufferRenderView, gbufferPass, *i);
@@ -1453,7 +1443,7 @@ void WorldRendererDeferred::buildVelocity(WorldRenderView& worldRenderView, int 
 	WorldRenderPassDeferred velocityPass(
 		ms_techniqueVelocityWrite,
 		velocityRenderView,
-		true
+		IWorldRenderPass::PfNone
 	);
 	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
 		f.velocity->build(velocityRenderView, velocityPass, *i);
@@ -1527,7 +1517,7 @@ void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderVi
 				WorldRenderPassDeferred shadowPass(
 					ms_techniqueShadow,
 					shadowRenderView,
-					false
+					IWorldRenderPass::PfNone
 				);
 				for (RefArray< Entity >::const_iterator j = m_buildEntities.begin(); j != m_buildEntities.end(); ++j)
 					f.slice[slice].shadow[i]->build(shadowRenderView, shadowPass, *j);
@@ -1565,7 +1555,7 @@ void WorldRendererDeferred::buildVisual(WorldRenderView& worldRenderView, int fr
 	WorldRenderPassDeferred defaultPreLitPass(
 		ms_techniqueDeferredColor,
 		worldRenderView,
-		false,
+		IWorldRenderPass::PfLast,
 		m_settings.fog,
 		m_gbufferTargetSet->getColorTexture(0) != 0
 	);
@@ -1574,6 +1564,7 @@ void WorldRendererDeferred::buildVisual(WorldRenderView& worldRenderView, int fr
 	f.visual->flush(worldRenderView, defaultPreLitPass);
 
 	f.projection = worldRenderView.getProjection();
+	f.lastView = worldRenderView.getLastView();
 	f.view = worldRenderView.getView();
 	f.viewFrustum = worldRenderView.getViewFrustum();
 	f.godRayDirection = worldRenderView.getGodRayDirection();

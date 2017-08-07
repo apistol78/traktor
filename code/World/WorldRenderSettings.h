@@ -80,8 +80,6 @@ public:
 	bool occlusionCulling;
 	bool depthPass;
 	ShadowSettings shadowSettings[QuLast];
-	bool motionBlur;
-	float motionBlurAmount;
 	bool fog;
 	float fogDistanceY;
 	float fogDistanceZ;

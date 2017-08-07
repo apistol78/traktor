@@ -51,6 +51,7 @@ public:
 		struct RenderParams
 		{
 			Frustum viewFrustum;
+			Matrix44 lastView;
 			Matrix44 view;
 			Matrix44 viewToLight;
 			Matrix44 projection;

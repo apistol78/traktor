@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Thread/Atomic.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshEntity.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
@@ -14,6 +15,12 @@ namespace traktor
 {
 	namespace mesh
 	{
+		namespace
+		{
+		
+static render::handle_t s_techniqueVelocityWrite = 0;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshEntity", SkinnedMeshEntity, MeshEntity)
 
@@ -25,6 +32,8 @@ SkinnedMeshEntity::SkinnedMeshEntity(const Transform& transform, bool screenSpac
 	const std::map< std::wstring, int >& jointMap = m_mesh->getJointMap();
 	m_jointTransforms[0].resize(jointMap.size() * 2, Vector4::origo());
 	m_jointTransforms[1].resize(jointMap.size() * 2, Vector4::origo());
+
+	s_techniqueVelocityWrite = render::getParameterHandle(L"World_VelocityWrite");
 }
 
 void SkinnedMeshEntity::setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms_)
@@ -70,15 +79,28 @@ void SkinnedMeshEntity::render(
 	float distance
 )
 {
+	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
+
+	// Skip rendering velocities if mesh hasn't moved since last frame.
+	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
+	{
+		if (worldTransform == lastWorldTransform)
+			return;
+	}
+
 	const AlignedVector< Vector4 >& jointTransforms = m_jointTransforms[m_count];
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		m_transform.get(worldRenderView.getInterval()),
+		lastWorldTransform,
+		worldTransform,
 		jointTransforms,
 		distance,
 		getParameterCallback()
 	);
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
+		m_transform.step();
 }
 
 	}

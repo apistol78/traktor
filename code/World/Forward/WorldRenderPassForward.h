@@ -42,7 +42,7 @@ public:
 	WorldRenderPassForward(
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
-		bool firstPassFromEye,
+		uint32_t passFlags,
 		bool fogEnabled,
 		float fogDistanceY,
 		float fogDistanceZ,
@@ -57,14 +57,14 @@ public:
 	WorldRenderPassForward(
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
-		bool firstPassFromEye,
+		uint32_t passFlags,
 		render::ISimpleTexture* colorMap,
 		render::ISimpleTexture* depthMap
 	);
 
 	virtual render::handle_t getTechnique() const T_OVERRIDE T_FINAL;
 
-	virtual bool isFirstPassFromEye() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getPassFlags() const T_OVERRIDE T_FINAL;
 
 	virtual void setShaderTechnique(render::Shader* shader) const T_OVERRIDE T_FINAL;
 
@@ -80,7 +80,7 @@ private:
 	render::handle_t m_technique;
 	const WorldRenderView& m_worldRenderView;
 	Matrix44 m_viewInverse;
-	bool m_firstPassFromEye;
+	uint32_t m_passFlags;
 	bool m_fogEnabled;
 	float m_fogDistanceY;
 	float m_fogDistanceZ;

@@ -29,6 +29,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Render/IProgramCompiler.h"
+#include "Render/Capture/ProgramCompilerCapture.h"
 #include "Render/Resource/FragmentLinker.h"
 #include "Render/Resource/ProgramResource.h"
 #include "Render/Resource/ShaderResource.h"
@@ -100,6 +101,7 @@ private:
 struct BuildCombinationTask : public Object
 {
 	std::wstring name;
+	std::wstring path;
 	ShaderGraphCombinations* combinations;
 	uint32_t combination;
 	ShaderResource* shaderResource;
@@ -133,19 +135,11 @@ struct BuildCombinationTask : public Object
 		Ref< const ShaderGraph > combinationGraph = combinations->getCombinationShaderGraph(combination);
 		T_ASSERT (combinationGraph);
 
-		// Get connected permutation.
-		Ref< ShaderGraph > programGraph = render::ShaderGraphStatic(combinationGraph).getConnectedPermutation();
-		if (!programGraph)
-		{
-			log::error << L"ShaderPipeline failed; unable to freeze connected conditionals, material shader \"" << name << L"\"" << Endl;
-			return;
-		}
-
 		// Freeze type permutation.
-		programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
+		Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getTypePermutation();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to get type permutation of \"" << name << L"\"" << Endl;
+			log::error << L"ShaderPipeline failed; unable to get type permutation of \"" << path << L"\"" << Endl;
 			return;
 		}
 
@@ -153,7 +147,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphStatic(programGraph).getConstantFolded();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to perform constant folding of \"" << name << L"\"" << Endl;
+			log::error << L"ShaderPipeline failed; unable to perform constant folding of \"" << path << L"\"" << Endl;
 			return;
 		}
 
@@ -161,7 +155,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphStatic(programGraph).getStateResolved();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to resolve render state of \"" << name << L"\"" << Endl;
+			log::error << L"ShaderPipeline failed; unable to resolve render state of \"" << path << L"\"" << Endl;
 			return;
 		}
 
@@ -169,7 +163,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to merge branches of \"" << name << L"\"" << Endl;
+			log::error << L"ShaderPipeline failed; unable to merge branches of \"" << path << L"\"" << Endl;
 			return;
 		}
 
@@ -177,7 +171,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators(frequentUniformsAsLinear);
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to optimize shader graph \"" << name << L"\"" << Endl;
+			log::error << L"ShaderPipeline failed; unable to optimize shader graph \"" << path << L"\"" << Endl;
 			return;
 		}
 
@@ -185,7 +179,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphStatic(programGraph).getSwizzledPermutation();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to perform swizzle optimization of \"" << name << L"\"" << Endl;
+			log::error << L"ShaderPipeline failed; unable to perform swizzle optimization of \"" << path << L"\"" << Endl;
 			return;
 		}
 
@@ -193,7 +187,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphStatic(programGraph).cleanupRedundantSwizzles();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to cleanup redundant swizzles of \"" << name << L"\"" << Endl;
+			log::error << L"ShaderPipeline failed; unable to cleanup redundant swizzles of \"" << path << L"\"" << Endl;
 			return;
 		}
 
@@ -275,7 +269,7 @@ struct BuildCombinationTask : public Object
 		);
 		if (!programResource)
 		{
-			log::error << L"ShaderPipeline failed; unable to compile shader \"" << name << L"\"" << Endl;
+			log::error << L"ShaderPipeline failed; unable to compile shader \"" << path << L"\"" << Endl;
 			return;
 		}
 
@@ -289,7 +283,7 @@ struct BuildCombinationTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 77, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 81, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)
@@ -316,6 +310,11 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 		log::error << L"Shader pipeline; unable to instanciate program compiler \"" << programCompilerTypeName << L"\"" << Endl;
 		return false;
 	}
+
+	// In case pipeline is launched for editor resources we wrap program compiler into "capture" compiler.
+	bool editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
+	if (editor)
+		m_programCompiler = new ProgramCompilerCapture(m_programCompiler);
 
 	m_compilerSettings = settings->getProperty< PropertyGroup >(L"ShaderPipeline.ProgramCompilerSettings");
 	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
@@ -425,6 +424,14 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
+	// Get connected permutation.
+	shaderGraph = render::ShaderGraphStatic(shaderGraph).getConnectedPermutation();
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to resolve connected permutation" << Endl;
+		return false;
+	}
+
 	// Extract platform permutation.
 	const wchar_t* platformSignature = m_programCompiler->getPlatformSignature();
 	T_ASSERT (platformSignature);
@@ -507,7 +514,8 @@ bool ShaderPipeline::buildOutput(
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
 		{
 			Ref< BuildCombinationTask > task = new BuildCombinationTask();
-			task->name = outputPath + L" - " + *i;
+			task->name = *i;
+			task->path = outputPath + L" - " + *i;
 			task->combinations = combinations;
 			task->combination = combination;
 			task->shaderResource = shaderResource;

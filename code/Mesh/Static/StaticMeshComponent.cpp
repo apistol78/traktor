@@ -15,6 +15,12 @@ namespace traktor
 {
 	namespace mesh
 	{
+		namespace
+		{
+		
+static render::handle_t s_techniqueVelocityWrite = 0;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMeshComponent", StaticMeshComponent, MeshComponent)
 
@@ -22,6 +28,7 @@ StaticMeshComponent::StaticMeshComponent(const resource::Proxy< StaticMesh >& me
 :	MeshComponent(screenSpaceCulling)
 ,	m_mesh(mesh)
 {
+	s_techniqueVelocityWrite = render::getParameterHandle(L"World_VelocityWrite");
 }
 
 void StaticMeshComponent::destroy()
@@ -41,6 +48,14 @@ void StaticMeshComponent::render(world::WorldContext& worldContext, world::World
 		return;
 
 	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
+
+	// Skip rendering velocities if mesh hasn't moved since last frame.
+	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
+	{
+		if (worldTransform == lastWorldTransform)
+			return;
+	}
 
 	float distance = 0.0f;
 	if (!isMeshVisible(
@@ -56,11 +71,14 @@ void StaticMeshComponent::render(world::WorldContext& worldContext, world::World
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		m_transform.get0(),
+		lastWorldTransform,
 		worldTransform,
 		distance,
 		m_parameterCallback
 	);
+
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
+		m_transform.step();
 }
 
 	}

@@ -101,5 +101,17 @@
 			<id>{73C2C7DC-BD77-F348-A6B7-06E0EFB633D9}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
+		<item>
+			<id>{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{BDFEFBE0-C5E9-2643-B445-DB02AC5C7687}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>

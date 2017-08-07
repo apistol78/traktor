@@ -108,10 +108,6 @@ void InstanceMesh::render(
 		)));
 	}
 
-	// Transform bounding box into origo; keep translation as matrix.
-	Transform boundingBoxCenter(boundingBoxWorld.getCenter());
-	boundingBoxWorld.transform(Transform(-boundingBoxWorld.getCenter()));
-
 	const std::vector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
 
 	// Render opaque parts front-to-back.
@@ -120,7 +116,7 @@ void InstanceMesh::render(
 		m_shader->setTechnique(i->shaderTechnique);
 		worldRenderPass.setShaderCombination(
 			m_shader,
-			boundingBoxCenter,
+			Transform::identity(),
 			boundingBoxWorld
 		);
 
@@ -140,8 +136,8 @@ void InstanceMesh::render(
 		batchParameters->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			batchParameters,
-			boundingBoxCenter,
-			boundingBoxCenter,
+			Transform::identity(),
+			Transform::identity(),
 			boundingBoxWorld
 		);
 		batchParameters->endParameters(renderContext);
@@ -215,7 +211,7 @@ void InstanceMesh::render(
 			m_shader->setTechnique(i->shaderTechnique);
 			worldRenderPass.setShaderCombination(
 				m_shader,
-				boundingBoxCenter,
+				Transform::identity(),
 				boundingBoxWorld
 			);
 
@@ -232,8 +228,8 @@ void InstanceMesh::render(
 			batchParameters->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(
 				batchParameters,
-				boundingBoxCenter,
-				boundingBoxCenter,
+				Transform::identity(),
+				Transform::identity(),
 				boundingBoxWorld
 			);
 			batchParameters->endParameters(renderContext);
