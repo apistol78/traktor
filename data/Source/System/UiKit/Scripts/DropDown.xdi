@@ -91,6 +91,11 @@ function DropDown:setTextColor(textColor)
 	return self
 end
 
+function DropDown:setTextHoverColor(textHoverColor)
+	self._textHoverColor = textHoverColor
+	return self
+end
+
 function DropDown:setOnClick(clickFn)
 	self._clickFn = clickFn
 	return self
@@ -155,6 +160,7 @@ function DropDown:_onMousePress()
 
 	if self._color ~= nil then self._list:setColor(self._color) end
 	if self._textColor ~= nil then self._list:setTextColor(self._textColor) end
+	if self._textHoverColor ~= nil then self._list:setTextHoverColor(self._textHoverColor) end
 
 	for _, item in ipairs(self._items) do
 		self._list:add(self:_getTextOfItem(item))
