@@ -207,9 +207,21 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 		outType = GL_HALF_FLOAT;
 		return true;
 
+	case TfR16G16F:
+		outInternalFormat = GL_RGBA16F;
+		outFormat = GL_RGBA;
+		outType = GL_HALF_FLOAT;
+		return true;
+
 	case TfR32F:
 		outInternalFormat = GL_RGBA32F;
 		outFormat = GL_RED;
+		outType = GL_FLOAT;
+		return true;
+
+	case TfR32G32F:
+		outInternalFormat = GL_RGBA32F;
+		outFormat = GL_RGBA;
 		outType = GL_FLOAT;
 		return true;
 
