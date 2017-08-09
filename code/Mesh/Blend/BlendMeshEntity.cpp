@@ -75,9 +75,6 @@ void BlendMeshEntity::render(
 		distance,
 		getParameterCallback()
 	);
-
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
-		m_transform.step();
 }
 
 	}

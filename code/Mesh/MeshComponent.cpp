@@ -43,6 +43,7 @@ void MeshComponent::setTransform(const Transform& transform)
 
 void MeshComponent::update(const world::UpdateParams& update)
 {
+	m_transform.step();
 }
 
 	}

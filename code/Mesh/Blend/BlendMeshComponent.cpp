@@ -76,9 +76,6 @@ void BlendMeshComponent::render(world::WorldContext& worldContext, world::WorldR
 		distance,
 		m_parameterCallback
 	);
-
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
-		m_transform.step();
 }
 
 void BlendMeshComponent::setBlendWeights(const std::vector< float >& blendWeights)
