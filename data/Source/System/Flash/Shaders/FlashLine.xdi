@@ -109,8 +109,8 @@
 		<item type="traktor.render.Script">
 			<comment/>
 			<position>
-				<first>1018</first>
-				<second>-527</second>
+				<first>1001</first>
+				<second>-526</second>
 			</position>
 			<name>DistanceToLine</name>
 			<inputPins>
@@ -316,6 +316,21 @@ ENTRY
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>1225</first>
+				<second>-513</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>1015</first>
+				<second>-290</second>
+			</position>
+			<value>0</value>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -445,16 +460,6 @@ ENTRY
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Distance</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -596,6 +601,36 @@ ENTRY
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Distance</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>DX11</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Other</name>
 			</destination>
 		</item>
 	</edges>
