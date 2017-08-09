@@ -84,9 +84,6 @@ void SkinnedMeshComponent::render(world::WorldContext& worldContext, world::Worl
 		distance,
 		m_parameterCallback
 	);
-
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
-		m_transform.step();
 }
 
 void SkinnedMeshComponent::setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms_)

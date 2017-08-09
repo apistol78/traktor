@@ -62,9 +62,6 @@ void InstanceMeshEntityRenderer::render(
 		packInstanceMeshData(transformLast),
 		distance
 	));
-
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
-		meshEntity->m_transform.step();
 }
 
 void InstanceMeshEntityRenderer::flush(
