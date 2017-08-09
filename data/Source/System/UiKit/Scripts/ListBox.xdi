@@ -36,6 +36,7 @@ end
 function ListBox:add(item)
 	local s = Static.new(self._listContainer, item)
 	s:setTextColor(self._textColor)
+	s:setTextHoverColor(self._textHoverColor)
 
 	self._index = self._index + 1
 	local index = self._index
@@ -66,6 +67,15 @@ function ListBox:setTextColor(textColor)
 	return self
 end
 
+function ListBox:setTextHoverColor(textHoverColor)
+	local children = self._listContainer:getChildren()
+	for _, child in ipairs(children) do
+		children:setTextColor(textHoverColor)
+	end
+	self._textHoverColor = textHoverColor
+	return self
+end
+
 function ListBox:setOnClick(clickFn)
 	self._clickFn = clickFn
 	return self
@@ -77,6 +87,7 @@ function ListBox:_initialize(parent, mc)
 	Widget._initialize(self, parent, mc)
 
 	self._textColor = Color4f(0, 0, 0, 1)
+	self._textHoverColor = Color4f(1, 1, 1, 1)
 	self._index = 0
 
 	self._panel = Panel.new(self, FloodLayout.new())

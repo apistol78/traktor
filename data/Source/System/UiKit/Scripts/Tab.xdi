@@ -66,6 +66,11 @@ function Tab:setColor(color)
 	return self
 end
 
+function Tab:setOnClick(fn)
+	self._clickFn = fn
+	return self
+end
+
 -- Private
 
 function Tab:_initialize(parent, mc, inner_mc)
@@ -89,6 +94,9 @@ function Tab:_addChild(child)
 	tab_mc:setMember("onPress", function()
 		self._active = n
 		self:_updateState()
+		if self._clickFn ~= nil then
+			self._clickFn()
+		end
 	end)
 
 	if self._color ~= nil then

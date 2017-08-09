@@ -66,7 +66,12 @@ end
 
 function Static:setTextColor(color)
 	self._text_tb:setTextColor(color)
+	self._textColor = color
 	return self
+end
+
+function Static:setTextHoverColor(color)
+	self._textHoverColor = color
 end
 
 function Static:setWordWrap(wordWrap)
@@ -87,9 +92,13 @@ function Static:_initialize(parent, mc, text)
 	self._text_tb = mc:getMember("text_tb")
 	self._text_tb:setTransform(Matrix33.identity)
 	self._text_tb:setRenderClipMask(false)
+	self._textColor = self._text_tb:getTextColor()
+	self._textHoverColor = nil
 
 	self:setText(text)
 
+	self:addEventListener(MouseEnterEvent, self, self._onMouseEnter)
+	self:addEventListener(MouseLeaveEvent, self, self._onMouseLeave)
 	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
 
 #if defined(_DEBUG)
@@ -97,11 +106,22 @@ function Static:_initialize(parent, mc, text)
 #endif
 end
 
+function Static:_onMouseEnter(event)
+	if self._textHoverColor ~= nil then
+		self._text_tb:setTextColor(self._textHoverColor)
+	end
+end
+
+function Static:_onMouseLeave(event)
+	if self._textHoverColor ~= nil then
+		self._text_tb:setTextColor(self._textColor)
+	end
+end
+
 function Static:_onMouseRelease(event)
 	if self._clickFn ~= nil then self._clickFn() end
 	return true
 end
-
 
 	]]>
 	</text>
