@@ -498,6 +498,16 @@
 		</item>
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<element>color-self</element>
+			<color>210, 150, 90, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<element>background-color-self</element>
+			<color>30, 30, 30, 0</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.SyntaxRichEdit</type>
 			<element>color-comment</element>
 			<color>96, 139, 78, 255</color>
 		</item>

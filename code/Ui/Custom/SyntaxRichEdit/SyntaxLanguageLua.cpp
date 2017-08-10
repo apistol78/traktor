@@ -104,7 +104,7 @@ bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& 
 	}
 
 	// Special numbers or keywords.
-	size_t i = text.find_first_of(L" \t\n\r");
+	size_t i = text.find_first_of(L" .,:;()[]{}+-*/%~=<>\t\n\r");
 	size_t ws = (i != text.npos) ? i : ln;
 
 	std::wstring word = text.substr(0, ws);
@@ -115,6 +115,14 @@ bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& 
 	)
 	{
 		outState = StNumber;
+		outConsumedChars = int(ws);
+		return true;
+	}
+	else if (
+		word == L"self"
+	)
+	{
+		outState = StSelf;
 		outConsumedChars = int(ws);
 		return true;
 	}
@@ -153,7 +161,7 @@ bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& 
 
 	// Default as text.
 	outState = StDefault;
-	outConsumedChars = 1;
+	outConsumedChars = std::max< int >(1, int(ws));
 	return true;
 }
 
