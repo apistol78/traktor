@@ -84,7 +84,7 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.StagePipeline", 6, StagePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.StagePipeline", 7, StagePipeline, editor::DefaultPipeline)
 
 TypeInfoSet StagePipeline::getAssetTypes() const
 {
@@ -103,7 +103,7 @@ bool StagePipeline::buildDependencies(
 {
 	const StageData* stageData = checked_type_cast< const StageData*, false >(sourceAsset);
 
-	pipelineDepends->addDependency(stageData->m_inherit, editor::PdfBuild);
+	pipelineDepends->addDependency(stageData->m_inherit, editor::PdfUse);
 	pipelineDepends->addDependency(stageData->m_class, editor::PdfBuild);
 	pipelineDepends->addDependency(stageData->m_script, editor::PdfBuild);
 	pipelineDepends->addDependency(stageData->m_shaderFade, editor::PdfBuild | editor::PdfResource);
