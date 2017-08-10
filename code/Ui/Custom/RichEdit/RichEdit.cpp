@@ -1223,8 +1223,17 @@ void RichEdit::eventMouseMove(MouseMoveEvent* event)
 	if (offset >= 0)
 	{
 		m_caret = offset;
-		m_selectionStart = std::min(m_fromCaret, m_caret);
-		m_selectionStop = std::max(m_fromCaret, m_caret);
+
+		if (offset != m_fromCaret)
+		{
+			m_selectionStart = std::min(m_fromCaret, m_caret);
+			m_selectionStop = std::max(m_fromCaret, m_caret);
+		}
+		else
+		{
+			m_selectionStart = -1;
+			m_selectionStop = -1;
+		}
 
 		CaretEvent caretEvent(this);
 		raiseEvent(&caretEvent);
