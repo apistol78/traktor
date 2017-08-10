@@ -40,6 +40,18 @@ namespace traktor
 {
 	namespace script
 	{
+		namespace
+		{
+		
+struct VariablePred
+{
+	bool operator () (const Variable* vl, const Variable* vr) const
+	{
+		return compareIgnoreCase< std::wstring >(vl->getName(), vr->getName()) <= 0;
+	}
+};
+		
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerView", ScriptDebuggerView, ui::Container)
 
@@ -159,6 +171,7 @@ void ScriptDebuggerView::updateLocals(int32_t depth)
 		RefArray< Variable > locals;
 		if (m_scriptDebugger->captureLocals(depth, locals))
 		{
+			locals.sort(VariablePred());
 			for (RefArray< Variable >::const_iterator j = locals.begin(); j != locals.end(); ++j)
 			{
 				Ref< ui::custom::GridRow > row = createVariableRow(*j);
@@ -280,6 +293,7 @@ void ScriptDebuggerView::eventLocalsGridStateChange(ui::custom::GridRowStateChan
 			RefArray< Variable > members;
 			if (m_scriptDebugger->captureObject(valueObject->getObjectRef(), members))
 			{
+				members.sort(VariablePred());
 				for (RefArray< Variable >::const_iterator j = members.begin(); j != members.end(); ++j)
 				{
 					Ref< ui::custom::GridRow > childRow = createVariableRow(*j);
