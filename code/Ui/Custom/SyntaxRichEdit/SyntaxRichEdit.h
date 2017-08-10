@@ -57,6 +57,7 @@ private:
 	int32_t m_attributeDefault[2];
 	int32_t m_attributeString[2];
 	int32_t m_attributeNumber[2];
+	int32_t m_attributeSelf[2];
 	int32_t m_attributeComment[2];
 	int32_t m_attributeFunction[2];
 	int32_t m_attributeType[2];

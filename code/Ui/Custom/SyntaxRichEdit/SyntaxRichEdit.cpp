@@ -25,6 +25,7 @@ SyntaxRichEdit::SyntaxRichEdit()
 	m_attributeDefault[0] = m_attributeDefault[1] = 0;
 	m_attributeString[0] = m_attributeString[1] = 0;
 	m_attributeNumber[0] = m_attributeNumber[1] = 0;
+	m_attributeSelf[0] = m_attributeSelf[1] = 0;
 	m_attributeComment[0] = m_attributeComment[1] = 0;
 	m_attributeFunction[0] = m_attributeFunction[1] = 0;
 	m_attributeType[0] = m_attributeType[1] = 0;
@@ -49,6 +50,9 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int32_t st
 
 	m_attributeNumber[0] = addTextAttribute(ss->getColor(this, L"color-number"), false, false, false);
 	m_attributeNumber[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-number"));
+
+	m_attributeSelf[0] = addTextAttribute(ss->getColor(this, L"color-self"), false, true, false);
+	m_attributeSelf[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-self"));
 
 	m_attributeComment[0] = addTextAttribute(ss->getColor(this, L"color-comment"), false, true, false);
 	m_attributeComment[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-comment"));
@@ -150,6 +154,10 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 						setAttributes(startOffset, endOffset - startOffset, m_attributeNumber[0], m_attributeNumber[1]);
 						break;
 
+					case SyntaxLanguage::StSelf:
+						setAttributes(startOffset, endOffset - startOffset, m_attributeSelf[0], m_attributeSelf[1]);
+						break;
+
 					case SyntaxLanguage::StComment:
 						setAttributes(startOffset, endOffset - startOffset, m_attributeComment[0], m_attributeComment[1]);
 						break;
@@ -211,6 +219,10 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 
 		case SyntaxLanguage::StNumber:
 			setAttributes(startOffset, endOffset - startOffset, m_attributeNumber[0], m_attributeNumber[1]);
+			break;
+
+		case SyntaxLanguage::StSelf:
+			setAttributes(startOffset, endOffset - startOffset, m_attributeSelf[0], m_attributeSelf[1]);
 			break;
 
 		case SyntaxLanguage::StComment:

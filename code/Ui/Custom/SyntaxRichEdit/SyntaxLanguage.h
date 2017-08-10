@@ -40,6 +40,7 @@ public:
 		StDefault,
 		StString,
 		StNumber,
+		StSelf,
 		StComment,
 		StFunction,
 		StType,
