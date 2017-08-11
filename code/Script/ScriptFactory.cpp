@@ -44,7 +44,7 @@ bool ScriptFactory::isCacheable(const TypeInfo& productType) const
 	if (is_type_a< IRuntimeClass >(productType))
 		return false;
 	else if (is_type_a< ScriptChunk >(productType))
-		return false;
+		return true;
 	else if (is_type_a< IScriptContext >(productType))
 		return true;
 	else
