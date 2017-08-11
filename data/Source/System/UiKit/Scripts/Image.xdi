@@ -11,6 +11,9 @@ Image.MODE_DEFAULT = 0
 Image.MODE_STRETCH = 1
 Image.MODE_CLIP = 2
 
+Image.BLEND_ALPHA = 0
+Image.BLEND_ADD = 1
+
 function Image.new(parent, image, mode)
 	local o = {}
 	setmetatable(o, Image_meta)
@@ -87,6 +90,20 @@ function Image:setImage(image, mode)
 	end
 
 	self._mode = mode
+end
+
+function Image:setBlend(mode)
+	if mode == Image.BLEND_ALPHA then
+		self._image_mc:setBlendMode(traktor.flash.CharacterInstance.SbmDefault)
+	elseif mode == Image.BLEND_ADD then
+		self._image_mc:setBlendMode(traktor.flash.CharacterInstance.SbmAdd)
+	end
+	return self
+end
+
+function Image:setAlpha(alpha)
+	self._image_mc:setProperty("_alpha", 100 * alpha)
+	return self
 end
 
 function Image:setScale(hscale, vscale)

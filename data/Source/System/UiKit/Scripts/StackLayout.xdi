@@ -18,7 +18,7 @@ function StackLayout.new(margin, pad)
 end
 
 function StackLayout:estimate(container)
-	local children = container:getChildren()
+	local children = container:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	local p = container:getPlacement()
 
 	local w, h = 0, 0
@@ -38,7 +38,7 @@ end
 
 function StackLayout:update(container, width, height)
 	local x = self._margin
-	local children = container:getChildren()
+	local children = container:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	for _, child in ipairs(children) do
 		local ps = child:getPreferredSize()
 		child:place(x, 0, ps.width, height)
