@@ -47,6 +47,8 @@ public:
 
 	bool resume();
 
+	bool resume(Priority priority);
+
 	void sleep(int32_t duration);
 
 	void yield();

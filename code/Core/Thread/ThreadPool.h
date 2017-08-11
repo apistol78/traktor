@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Event.h"
 #include "Core/Thread/Semaphore.h"
+#include "Core/Thread/Thread.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,7 +25,6 @@ namespace traktor
 {
 
 class Functor;
-class Thread;
 
 /*! \brief Thread pool manager.
  * \ingroup Core
@@ -34,7 +34,7 @@ class T_DLLCLASS ThreadPool : public ISingleton
 public:
 	static ThreadPool& getInstance();
 
-	bool spawn(Functor* functor, Thread*& outThread);
+	bool spawn(Functor* functor, Thread*& outThread, Thread::Priority priority = Thread::Normal);
 
 	bool join(Thread* thread);
 
