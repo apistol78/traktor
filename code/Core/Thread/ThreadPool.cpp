@@ -52,7 +52,7 @@ ThreadPool& ThreadPool::getInstance()
 	return *s_instance;
 }
 
-bool ThreadPool::spawn(Functor* functor, Thread*& outThread)
+bool ThreadPool::spawn(Functor* functor, Thread*& outThread, Thread::Priority priority)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -67,6 +67,7 @@ bool ThreadPool::spawn(Functor* functor, Thread*& outThread)
 			T_ASSERT (!worker.functorWork);
 
 			outThread = worker.threadWorker;
+			outThread->resume(priority);
 
 			worker.functorWork = functor;
 			worker.eventFinishedWork.reset();
@@ -98,7 +99,7 @@ bool ThreadPool::spawn(Functor* functor, Thread*& outThread)
 
 	outThread = worker.threadWorker;
 
-	if (!worker.threadWorker->start())
+	if (!worker.threadWorker->start(priority))
 	{
 		m_workerThreads.pop_back();
 		outThread = 0;
@@ -118,6 +119,7 @@ bool ThreadPool::join(Thread* thread)
 		{
 			if (worker.busy != 0)
 				worker.eventFinishedWork.wait();
+			worker.threadWorker->resume(Thread::Normal);
 			return true;
 		}
 	}
@@ -137,7 +139,7 @@ bool ThreadPool::stop(Thread* thread)
 			{
 				worker.threadWorker->stop(0);
 				worker.eventFinishedWork.wait();
-				worker.threadWorker->resume();
+				worker.threadWorker->resume(Thread::Normal);
 			}
 			return true;
 		}

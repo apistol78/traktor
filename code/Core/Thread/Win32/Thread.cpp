@@ -83,8 +83,7 @@ bool Thread::start(Priority priority)
 	PIXNameThread(m_name.c_str());
 #	endif
 
-	ResumeThread(m_handle);
-	return bool(m_handle != 0);
+	return resume(priority);
 }
 
 bool Thread::wait(int32_t timeout)
@@ -107,6 +106,20 @@ bool Thread::resume()
 {
 	m_stopped = false;
 	return bool(ResumeThread(m_handle) != ~0UL);
+}
+
+bool Thread::resume(Priority priority)
+{
+	const int c_priorities[] =
+	{
+		THREAD_PRIORITY_LOWEST,
+		THREAD_PRIORITY_BELOW_NORMAL,
+		THREAD_PRIORITY_NORMAL,
+		THREAD_PRIORITY_ABOVE_NORMAL,
+		THREAD_PRIORITY_HIGHEST
+	};
+	SetThreadPriority(m_handle, c_priorities[int(priority) + 2]);
+	return resume();
 }
 
 void Thread::sleep(int duration)
