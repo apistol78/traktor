@@ -28,6 +28,7 @@ function Widget.initialize(env, resourceKits)
 	Widget._modal = {}
 	Widget._exclusive = {}
 	Widget._focus = nil
+	Widget._eventMaskDirty = false
 	for _, rkid in ipairs(resourceKits) do
 		local rk = env:getResource():getResourceManager():bind(traktor.flash.Movie, rkid)
 		if rk == nil then return false end
@@ -206,27 +207,37 @@ function Widget:place(x, y, width, height)
 
 	local ps = self:getPreferredSize({ width = width, height = height })
 
-	local ax = x
-	local aw = width
-	if self._halign == Widget.ALIGN_RIGHT then
+	local ax, aw
+	if self._halign == Widget.ALIGN_LEFT then
+		ax = x
+		aw = ps.width
+	elseif self._halign == Widget.ALIGN_RIGHT then
 		ax = x + width - ps.width
 		aw = ps.width
 	elseif self._halign == Widget.ALIGN_CENTER then
 		ax = x + (width - ps.width) / 2
 		aw = ps.width
+	else
+		ax = x
+		aw = width
 	end
 	self._placement.x = ax
 	self._placement.width = aw
 	self._mc:setX(ax)
 
-	local ay = y
-	local ah = height
-	if self._valign == Widget.ALIGN_BOTTOM then
+	local ay, ah
+	if self._valign == Widget.ALIGN_TOP then
+		ay = y
+		ah = ps.height
+	elseif self._valign == Widget.ALIGN_BOTTOM then
 		ay = y + height - ps.height
 		ah = ps.height
 	elseif self._valign == Widget.ALIGN_CENTER then
 		ay = y + (height - ps.height) / 2
 		ah = ps.height
+	else
+		ay = y
+		ah = height
 	end
 	self._placement.y = ay
 	self._placement.height = ah
@@ -269,12 +280,12 @@ function Widget:addEventListener(eventType, target, fn)
 		target = target,
 		fn = fn
 	}
-	self:getAncestor():_updateEventFilter()
+	Widget._eventMaskDirty = true
 end
 
 function Widget:removeEventListener(eventType, target, fn)
 	self._eventListeners[eventType] = nil
-	self:getAncestor():_updateEventFilter()
+	Widget._eventMaskDirty = true
 end
 
 -- Private
@@ -301,14 +312,14 @@ end
 
 function Widget:_addChild(child)
 	table.insert(self._children, child)
-	self:getAncestor():_updateEventFilter()
+	Widget._eventMaskDirty = true
 end
 
 function Widget:_removeChild(child)
 	for i, k in ipairs(self._children) do
 		if k == child then
 			table.remove(self._children, i)
-			self:getAncestor():_updateEventFilter()
+			Widget._eventMaskDirty = true
 			return
 		end
 	end
@@ -368,6 +379,12 @@ function Widget:_dispatchEvent(event)
 	-- Enabled, non-visible, widgets are not permitted to receive events.
 	if not self._enable or not self._visible then
 		return false
+	end
+
+	-- Ensure event masks are updated.
+	if Widget._eventMaskDirty then
+		self:getAncestor():_updateEventFilter()
+		Widget._eventMaskDirty = false
 	end
 
 	local eventType = getmetatable(event).__index

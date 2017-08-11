@@ -15,7 +15,7 @@ function FloodLayout.new(o)
 end
 
 function FloodLayout:estimate(container)
-	local children = container:getChildren()
+	local children = container:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	local p = container:getPlacement()
 	local w, h = p.width, p.height
 	for _, child in ipairs(children) do
@@ -27,7 +27,7 @@ function FloodLayout:estimate(container)
 end
 
 function FloodLayout:update(container, width, height)
-	local children = container:getChildren()
+	local children = container:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	for _, child in ipairs(children) do
 		child:place(0, 0, width, height)
 	end
