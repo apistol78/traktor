@@ -566,6 +566,8 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterInstance->addMethod("isVisible", &CharacterInstance::isVisible);
 	classCharacterInstance->addMethod("setEnabled", &CharacterInstance::setEnabled);
 	classCharacterInstance->addMethod("isEnabled", &CharacterInstance::isEnabled);
+	classCharacterInstance->addMethod("setFocus", &CharacterInstance::setFocus);
+	classCharacterInstance->addMethod("haveFocus", &CharacterInstance::haveFocus);
 	classCharacterInstance->addMethod("getBounds", &CharacterInstance::getBounds);
 	classCharacterInstance->setUnknownHandler(&CharacterInstance_invoke);
 	registrar->registerClass(classCharacterInstance);
