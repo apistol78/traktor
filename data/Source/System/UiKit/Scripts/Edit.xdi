@@ -56,6 +56,11 @@ function Edit:getPreferredSize()
 	return self._preferredSize
 end
 
+function Edit:setFocus()
+	Widget.setFocus(self)
+	self._text_tb:setFocus()
+end
+
 function Edit:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
