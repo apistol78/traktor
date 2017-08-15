@@ -191,6 +191,11 @@ function Widget:setVerticalAlign(valign)
 	return self
 end
 
+function Widget:setAlpha(alpha)
+	self._mc:setProperty("_alpha", 100 * alpha)
+	return self
+end
+
 function Widget:getPlacement()
 	return self._placement
 end

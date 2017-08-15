@@ -101,11 +101,6 @@ function Image:setBlend(mode)
 	return self
 end
 
-function Image:setAlpha(alpha)
-	self._image_mc:setProperty("_alpha", 100 * alpha)
-	return self
-end
-
 function Image:setScale(hscale, vscale)
 	self._hscale = hscale
 	self._vscale = hscale
