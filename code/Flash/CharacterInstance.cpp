@@ -178,6 +178,16 @@ void CharacterInstance::setEnabled(bool enabled)
 	m_enabled = enabled;
 }
 
+void CharacterInstance::setFocus()
+{
+	getContext()->setFocus(this);
+}
+
+bool CharacterInstance::haveFocus() const
+{
+	return bool(getContext()->getFocus() == this);
+}
+
 void CharacterInstance::setEvents(const SmallMap< uint32_t, Ref< const IActionVMImage > >& eventScripts)
 {
 	m_eventScripts = eventScripts;

@@ -194,6 +194,14 @@ public:
 	 */
 	bool isEnabled() const { return m_enabled; }
 
+	/*! \brief
+	 */
+	void setFocus();
+
+	/*! \brief
+	 */
+	bool haveFocus() const;
+
 	/*! \brief Set event scripts.
 	 *
 	 * \param eventScripts Event scripts.
