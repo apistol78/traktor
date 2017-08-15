@@ -166,7 +166,12 @@ bool Thread::pause()
 
 bool Thread::resume()
 {
-	return false;
+	return true;
+}
+
+bool Thread::resume(Priority priority)
+{
+	return true;
 }
 
 void Thread::sleep(int duration)

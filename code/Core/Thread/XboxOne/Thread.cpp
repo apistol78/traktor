@@ -45,6 +45,11 @@ bool Thread::resume()
 	return false;
 }
 
+bool Thread::resume(Priority priority)
+{
+	return false;
+}
+
 void Thread::sleep(int duration)
 {
 }
