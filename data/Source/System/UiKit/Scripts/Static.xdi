@@ -95,7 +95,7 @@ function Static:_initialize(parent, mc, text)
 	self._textColor = self._text_tb:getTextColor()
 	self._textHoverColor = nil
 
-	self:setText(text)
+	self:setText(text or "")
 
 	self:addEventListener(MouseEnterEvent, self, self._onMouseEnter)
 	self:addEventListener(MouseLeaveEvent, self, self._onMouseLeave)

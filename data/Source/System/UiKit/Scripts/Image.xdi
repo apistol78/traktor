@@ -51,6 +51,11 @@ function Image:setImage(image, mode)
 		mode = Image.MODE_DEFAULT
 	end
 
+	if self._image_mc ~= nil then
+		self._image_mc:removeMovieClip()
+		self._image_mc = nil
+	end
+
 	-- Create image resource.
 	if isa(image, traktor.drawing.Image) then
 		self._image_mc = Widget._createEmptyResource(self)
