@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Capture/Error.h"
 #include "Render/Capture/VertexBufferCapture.h"
 
 namespace traktor
@@ -25,38 +26,53 @@ VertexBufferCapture::VertexBufferCapture(VertexBuffer* vertexBuffer, uint32_t bu
 
 void VertexBufferCapture::destroy()
 {
-	T_FATAL_ASSERT_M (m_vertexBuffer, L"Render error: Vertex buffer already destroyed.");
-	T_FATAL_ASSERT_M (!m_locked, L"Render error: Cannot destroy locked vertex buffer.");
+	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer already destroyed.");
+	T_CAPTURE_ASSERT (!m_locked, L"Cannot destroy locked vertex buffer.");
 	safeDestroy(m_vertexBuffer);
 }
 
 void* VertexBufferCapture::lock()
 {
-	T_FATAL_ASSERT_M (m_vertexBuffer, L"Render error: Vertex buffer destroyed.");
-	T_FATAL_ASSERT_M (!m_locked, L"Render error: Vertex buffer already locked.");
+	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer destroyed.");
+	T_CAPTURE_ASSERT (!m_locked, L"Vertex buffer already locked.");
+
+	if (!m_vertexBuffer)
+		return 0;
+
 	void* p = m_vertexBuffer->lock();
 	if (p)
 		m_locked = true;
+
 	return p;
 }
 
 void* VertexBufferCapture::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
-	T_FATAL_ASSERT_M (m_vertexBuffer, L"Render error: Vertex buffer destroyed.");
-	T_FATAL_ASSERT_M (!m_locked, L"Render error: Vertex buffer already locked.");
-	T_FATAL_ASSERT_M (vertexOffset + vertexCount <= getBufferSize() / m_vertexSize, L"Render error: Trying to lock vertex buffer out of range.");
+	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer destroyed.");
+	T_CAPTURE_ASSERT (!m_locked, L"Vertex buffer already locked.");
+	T_CAPTURE_ASSERT (vertexOffset + vertexCount <= getBufferSize() / m_vertexSize, L"Trying to lock vertex buffer out of range.");
+
+	if (!m_vertexBuffer)
+		return 0;
+
 	void* p = m_vertexBuffer->lock(vertexOffset, vertexCount);
 	if (p)
 		m_locked = true;
+
 	return p;
 }
 
 void VertexBufferCapture::unlock()
 {
-	T_FATAL_ASSERT_M (m_vertexBuffer, L"Render error: Vertex buffer destroyed.");
-	T_FATAL_ASSERT_M (m_locked, L"Render error: Vertex buffer not locked.");
+	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer destroyed.");
+	T_CAPTURE_ASSERT (m_locked, L"Vertex buffer not locked.");
+
+	if (!m_vertexBuffer)
+		return;
+
 	m_vertexBuffer->unlock();
 	m_locked = false;
+
 	setContentValid(m_vertexBuffer->isContentValid());
 }
 

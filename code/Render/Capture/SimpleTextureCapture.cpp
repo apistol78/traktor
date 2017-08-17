@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Capture/Error.h"
 #include "Render/Capture/SimpleTextureCapture.h"
 
 namespace traktor
@@ -22,49 +23,50 @@ SimpleTextureCapture::SimpleTextureCapture(ISimpleTexture* texture)
 
 void SimpleTextureCapture::destroy()
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Simple texture already destroyed.");
+	T_CAPTURE_ASSERT (m_texture, L"Simple texture already destroyed.");
 	safeDestroy(m_texture);
 }
 
 ITexture* SimpleTextureCapture::resolve()
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Simple texture destroyed.");
+	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	return this;
 }
 
 int SimpleTextureCapture::getWidth() const
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Simple texture destroyed.");
-	return m_texture->getWidth();
+	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
+	return m_texture ? m_texture->getWidth() : 0;
 }
 	
 int SimpleTextureCapture::getHeight() const
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Simple texture destroyed.");
-	return m_texture->getHeight();
+	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
+	return m_texture ? m_texture->getHeight() : 0;
 }
 	
 bool SimpleTextureCapture::lock(int level, Lock& lock)
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Simple texture destroyed.");
-	T_FATAL_ASSERT_M (level >= 0, L"Render error: Invalid mip level.");
-	T_FATAL_ASSERT_M (m_locked < 0, L"Render error: Already locked.");
-	return m_texture->lock(level, lock);
+	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
+	T_CAPTURE_ASSERT (level >= 0, L"Invalid mip level.");
+	T_CAPTURE_ASSERT (m_locked < 0, L"Already locked.");
+	return m_texture ? m_texture->lock(level, lock) : false;
 }
 
 void SimpleTextureCapture::unlock(int level)
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Simple texture destroyed.");
-	T_FATAL_ASSERT_M (level >= 0, L"Render error: Invalid mip level.");
-	T_FATAL_ASSERT_M (m_locked != level, L"Render error: Trying to unlock incorrect mip level.");
-	m_texture->unlock(level);
+	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
+	T_CAPTURE_ASSERT (level >= 0, L"Invalid mip level.");
+	T_CAPTURE_ASSERT (m_locked != level, L"Trying to unlock incorrect mip level.");
+	if (m_texture)
+		m_texture->unlock(level);
 	m_locked = -1;
 }
 
 void* SimpleTextureCapture::getInternalHandle()
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Simple texture destroyed.");
-	return m_texture->getInternalHandle();
+	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
+	return m_texture ? m_texture->getInternalHandle() : 0;
 }
 
 	}

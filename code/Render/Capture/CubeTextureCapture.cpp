@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Capture/CubeTextureCapture.h"
+#include "Render/Capture/Error.h"
 
 namespace traktor
 {
@@ -23,40 +24,41 @@ CubeTextureCapture::CubeTextureCapture(ICubeTexture* texture)
 
 void CubeTextureCapture::destroy()
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Cube texture already destroyed.");
+
+	T_CAPTURE_ASSERT (m_texture, L"Cube texture already destroyed.");
 	safeDestroy(m_texture);
 }
 
 ITexture* CubeTextureCapture::resolve()
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Cube texture destroyed.");
+	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
 	return this;
 }
 
 int CubeTextureCapture::getWidth() const
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Cube texture destroyed.");
-	return m_texture->getWidth();
+	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
+	return m_texture ? m_texture->getWidth() : 0;
 }
 	
 int CubeTextureCapture::getHeight() const
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Cube texture destroyed.");
-	return m_texture->getHeight();
+	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
+	return m_texture ? m_texture->getHeight() : 0;
 }
 	
 int CubeTextureCapture::getDepth() const
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Cube texture destroyed.");
-	return m_texture->getDepth();
+	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
+	return m_texture ? m_texture->getDepth() : 0;
 }
 
 bool CubeTextureCapture::lock(int side, int level, Lock& lock)
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Cube texture destroyed.");
-	T_FATAL_ASSERT_M (side >= 0, L"Render error: Invalid side index.");
-	T_FATAL_ASSERT_M (m_locked[0] < 0, L"Render error: Already locked.");
-	if (m_texture->lock(side, level, lock))
+	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
+	T_CAPTURE_ASSERT (side >= 0, L"Invalid side index.");
+	T_CAPTURE_ASSERT (m_locked[0] < 0, L"Already locked.");
+	if (m_texture && m_texture->lock(side, level, lock))
 	{
 		m_locked[0] = side;
 		m_locked[1] = level;
@@ -68,11 +70,12 @@ bool CubeTextureCapture::lock(int side, int level, Lock& lock)
 
 void CubeTextureCapture::unlock(int side, int level)
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Cube texture destroyed.");
-	T_FATAL_ASSERT_M (side >= 0, L"Render error: Invalid side index.");
-	T_FATAL_ASSERT_M (m_locked[0] == side, L"Render error: Trying to unlock incorrect side.");
-	T_FATAL_ASSERT_M (m_locked[1] == level, L"Render error: Trying to unlock incorrect level.");
-	m_texture->unlock(side, level);
+	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
+	T_CAPTURE_ASSERT (side >= 0, L"Invalid side index.");
+	T_CAPTURE_ASSERT (m_locked[0] == side, L"Trying to unlock incorrect side.");
+	T_CAPTURE_ASSERT (m_locked[1] == level, L"Trying to unlock incorrect level.");
+	if (m_texture)
+		m_texture->unlock(side, level);
 	m_locked[0] =
 	m_locked[1] = -1;
 }

@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Capture/Error.h"
 #include "Render/Capture/RenderTargetSetCapture.h"
 #include "Render/Capture/SimpleTextureCapture.h"
 
@@ -22,7 +23,7 @@ RenderTargetSetCapture::RenderTargetSetCapture(RenderTargetSet* renderTargetSet)
 
 void RenderTargetSetCapture::destroy()
 {
-	T_FATAL_ASSERT_M (m_renderTargetSet, L"Render error: Render target set already destroyed.");
+	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set already destroyed.");
 	
 	m_colorTextures[0].reset();
 	m_colorTextures[1].reset();
@@ -35,19 +36,23 @@ void RenderTargetSetCapture::destroy()
 
 int RenderTargetSetCapture::getWidth() const
 {
-	T_FATAL_ASSERT_M (m_renderTargetSet, L"Render error: Render target set destroyed.");
-	return m_renderTargetSet->getWidth();
+	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	return m_renderTargetSet ? m_renderTargetSet->getWidth() : 0;
 }
 	
 int RenderTargetSetCapture::getHeight() const
 {
-	T_FATAL_ASSERT_M (m_renderTargetSet, L"Render error: Render target set destroyed.");
-	return m_renderTargetSet->getHeight();
+	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	return m_renderTargetSet ? m_renderTargetSet->getHeight() : 0;
 }
 
 ISimpleTexture* RenderTargetSetCapture::getColorTexture(int index) const
 {
-	T_FATAL_ASSERT_M (m_renderTargetSet, L"Render error: Render target set destroyed.");
+	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+
+	if (!m_renderTargetSet)
+		return 0;
+
 	if (!m_colorTextures[index])
 	{
 		Ref< ISimpleTexture > colorTexture = m_renderTargetSet->getColorTexture(index);
@@ -56,12 +61,17 @@ ISimpleTexture* RenderTargetSetCapture::getColorTexture(int index) const
 
 		m_colorTextures[index] = new SimpleTextureCapture(colorTexture);
 	}
+
 	return m_colorTextures[index];
 }
 
 ISimpleTexture* RenderTargetSetCapture::getDepthTexture() const
 {
-	T_FATAL_ASSERT_M (m_renderTargetSet, L"Render error: Render target set destroyed.");
+	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+
+	if (!m_renderTargetSet)
+		return 0;
+
 	if (!m_depthTexture)
 	{
 		Ref< ISimpleTexture > depthTexture = m_renderTargetSet->getDepthTexture();
@@ -70,16 +80,21 @@ ISimpleTexture* RenderTargetSetCapture::getDepthTexture() const
 
 		m_depthTexture = new SimpleTextureCapture(depthTexture);
 	}
+
 	return m_depthTexture;
 }
 
 void RenderTargetSetCapture::swap(int index1, int index2)
 {
-	T_FATAL_ASSERT_M (m_renderTargetSet, L"Render error: Render target set destroyed.");
-	T_FATAL_ASSERT_M (index1 >= 0, L"Render error: Index invalid");
-	T_FATAL_ASSERT_M (index2 >= 0, L"Render error: Index invalid");
-	T_FATAL_ASSERT_M (index1 < 4, L"Render error: Index invalid");
-	T_FATAL_ASSERT_M (index2 < 4, L"Render error: Index invalid");
+	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+
+	if (!m_renderTargetSet)
+		return;
+
+	T_CAPTURE_ASSERT (index1 >= 0, L"Swap index 1 invalid");
+	T_CAPTURE_ASSERT (index2 >= 0, L"Swap index 2 invalid");
+	T_CAPTURE_ASSERT (index1 < 4, L"Swap index 1 invalid");
+	T_CAPTURE_ASSERT (index2 < 4, L"Swap index 2 invalid");
 
 	m_renderTargetSet->swap(index1, index2);
 
@@ -90,15 +105,16 @@ void RenderTargetSetCapture::swap(int index1, int index2)
 
 void RenderTargetSetCapture::discard()
 {
-	T_FATAL_ASSERT_M (m_renderTargetSet, L"Render error: Render target set destroyed.");
-	m_renderTargetSet->discard();
+	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	if (m_renderTargetSet)
+		m_renderTargetSet->discard();
 }
 
 bool RenderTargetSetCapture::read(int index, void* buffer) const
 {
-	T_FATAL_ASSERT_M (m_renderTargetSet, L"Render error: Render target set destroyed.");
-	T_FATAL_ASSERT_M (index >= 0, L"Render error: Incorrect read-back index.");
-	return m_renderTargetSet->read(index, buffer);
+	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	T_CAPTURE_ASSERT (index >= 0, L"Incorrect read-back index.");
+	return m_renderTargetSet ? m_renderTargetSet->read(index, buffer) : false;
 }
 
 	}

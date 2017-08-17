@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Capture/Error.h"
 #include "Render/Capture/VolumeTextureCapture.h"
 
 namespace traktor
@@ -21,32 +22,32 @@ VolumeTextureCapture::VolumeTextureCapture(IVolumeTexture* texture)
 
 void VolumeTextureCapture::destroy()
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Volume texture already destroyed.");
+	T_CAPTURE_ASSERT (m_texture, L"Volume texture already destroyed.");
 	safeDestroy(m_texture);
 }
 
 ITexture* VolumeTextureCapture::resolve()
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Volume texture destroyed.");
+	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
 	return this;
 }
 
 int VolumeTextureCapture::getWidth() const
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Volume texture destroyed.");
-	return m_texture->getWidth();
+	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
+	return m_texture ? m_texture->getWidth() : 0;
 }
 	
 int VolumeTextureCapture::getHeight() const
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Volume texture destroyed.");
-	return m_texture->getHeight();
+	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
+	return m_texture ? m_texture->getHeight() : 0;
 }
 	
 int VolumeTextureCapture::getDepth() const
 {
-	T_FATAL_ASSERT_M (m_texture, L"Render error: Volume texture destroyed.");
-	return m_texture->getDepth();
+	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
+	return m_texture ? m_texture->getDepth() : 0;
 }
 
 	}
