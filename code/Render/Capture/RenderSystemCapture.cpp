@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Render/VertexElement.h"
 #include "Render/Capture/CubeTextureCapture.h"
+#include "Render/Capture/Error.h"
 #include "Render/Capture/IndexBufferCapture.h"
 #include "Render/Capture/ProgramCapture.h"
 #include "Render/Capture/ProgramCompilerCapture.h"
@@ -87,10 +88,10 @@ Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewEmbedde
 
 Ref< VertexBuffer > RenderSystemCapture::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	T_FATAL_ASSERT_M (bufferSize > 0, L"Render error: Invalid buffer size.");
+	T_CAPTURE_ASSERT (bufferSize > 0, L"Invalid vertex buffer size.");
 
 	uint32_t vertexSize = getVertexSize(vertexElements);
-	T_FATAL_ASSERT_M (bufferSize % vertexSize == 0, L"Render error: Invalid buffer size, is not aligned with size of vertex.");
+	T_CAPTURE_ASSERT (bufferSize % vertexSize == 0, L"Invalid vertex buffer size, is not aligned with size of vertex.");
 
 	Ref< VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(vertexElements, bufferSize, dynamic);
 	if (!vertexBuffer)
@@ -101,7 +102,7 @@ Ref< VertexBuffer > RenderSystemCapture::createVertexBuffer(const std::vector< V
 
 Ref< IndexBuffer > RenderSystemCapture::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	T_FATAL_ASSERT_M (bufferSize > 0, L"Render error: Invalid buffer size.");
+	T_CAPTURE_ASSERT (bufferSize > 0, L"Invalid index buffer size.");
 
 	Ref< IndexBuffer > indexBuffer = m_renderSystem->createIndexBuffer(indexType, bufferSize, dynamic);
 	if (!indexBuffer)
@@ -112,16 +113,16 @@ Ref< IndexBuffer > RenderSystemCapture::createIndexBuffer(IndexType indexType, u
 
 Ref< ISimpleTexture > RenderSystemCapture::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	T_FATAL_ASSERT_M (desc.width > 0, L"Render error: Invalid size.");
-	T_FATAL_ASSERT_M (desc.height > 0, L"Render error: Invalid size.");
-	T_FATAL_ASSERT_M (desc.mipCount >= 1, L"Render error: Invalid number of mips.");
-	T_FATAL_ASSERT_M (desc.mipCount < 16, L"Render error: Too many mips.");
+	T_CAPTURE_ASSERT (desc.width > 0, L"Invalid texture width.");
+	T_CAPTURE_ASSERT (desc.height > 0, L"Invalid texture height.");
+	T_CAPTURE_ASSERT (desc.mipCount >= 1, L"Invalid number of mips.");
+	T_CAPTURE_ASSERT (desc.mipCount < 16, L"Too many mips.");
 
 	if (desc.immutable)
 	{
 		for (int32_t i = 0; i < desc.mipCount; ++i)
 		{
-			T_FATAL_ASSERT_M (desc.initialData[i].data, L"Render error: No initial data of immutable texture.");
+			T_CAPTURE_ASSERT (desc.initialData[i].data, L"No initial data of immutable texture.");
 		}
 	}
 
@@ -134,15 +135,15 @@ Ref< ISimpleTexture > RenderSystemCapture::createSimpleTexture(const SimpleTextu
 
 Ref< ICubeTexture > RenderSystemCapture::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	T_FATAL_ASSERT_M (desc.side > 0, L"Render error: Invalid size.");
-	T_FATAL_ASSERT_M (desc.mipCount >= 1, L"Render error: Invalid number of mips.");
-	T_FATAL_ASSERT_M (desc.mipCount < 16, L"Render error: Too many mips.");
+	T_CAPTURE_ASSERT (desc.side > 0, L"Invalid cube texture size.");
+	T_CAPTURE_ASSERT (desc.mipCount >= 1, L"Invalid number of mips.");
+	T_CAPTURE_ASSERT (desc.mipCount < 16, L"Too many mips.");
 
 	if (desc.immutable)
 	{
 		for (int32_t i = 0; i < desc.mipCount * 6; ++i)
 		{
-			T_FATAL_ASSERT_M (desc.initialData[i].data, L"Render error: No initial data of immutable texture.");
+			T_CAPTURE_ASSERT (desc.initialData[i].data, L"No initial data of immutable texture.");
 		}
 	}
 
@@ -155,17 +156,17 @@ Ref< ICubeTexture > RenderSystemCapture::createCubeTexture(const CubeTextureCrea
 
 Ref< IVolumeTexture > RenderSystemCapture::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	T_FATAL_ASSERT_M (desc.width > 0, L"Render error: Invalid size.");
-	T_FATAL_ASSERT_M (desc.height > 0, L"Render error: Invalid size.");
-	T_FATAL_ASSERT_M (desc.depth > 0, L"Render error: Invalid size.");
-	T_FATAL_ASSERT_M (desc.mipCount >= 1, L"Render error: Invalid number of mips.");
-	T_FATAL_ASSERT_M (desc.mipCount < 16, L"Render error: Too many mips.");
+	T_CAPTURE_ASSERT (desc.width > 0, L"Invalid volume texture width.");
+	T_CAPTURE_ASSERT (desc.height > 0, L"Invalid volume texture height.");
+	T_CAPTURE_ASSERT (desc.depth > 0, L"Invalid volume texture depth.");
+	T_CAPTURE_ASSERT (desc.mipCount >= 1, L"Invalid number of mips.");
+	T_CAPTURE_ASSERT (desc.mipCount < 16, L"Too many mips.");
 
 	if (desc.immutable)
 	{
 		for (int32_t i = 0; i < desc.mipCount; ++i)
 		{
-			T_FATAL_ASSERT_M (desc.initialData[i].data, L"Render error: No initial data of immutable texture.");
+			T_CAPTURE_ASSERT (desc.initialData[i].data, L"No initial data of immutable texture.");
 		}
 	}
 
@@ -178,11 +179,11 @@ Ref< IVolumeTexture > RenderSystemCapture::createVolumeTexture(const VolumeTextu
 
 Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	T_FATAL_ASSERT_M (desc.count >= 0, L"Render error: Negative number of targets.");
-	T_FATAL_ASSERT_M (desc.count <= 4, L"Render error: Too many targets.");
-	T_FATAL_ASSERT_M (desc.width > 0, L"Render error: Invalid size.");
-	T_FATAL_ASSERT_M (desc.height > 0, L"Render error: Invalid size.");
-	T_FATAL_ASSERT_M (desc.multiSample >= 0, L"Render error: Invalid multisample count.");
+	T_CAPTURE_ASSERT (desc.count >= 0, L"Negative number of targets.");
+	T_CAPTURE_ASSERT (desc.count <= 4, L"Too many targets.");
+	T_CAPTURE_ASSERT (desc.width > 0, L"Invalid size.");
+	T_CAPTURE_ASSERT (desc.height > 0, L"Invalid size.");
+	T_CAPTURE_ASSERT (desc.multiSample >= 0, L"Invalid multisample count.");
 
 	Ref< RenderTargetSet > renderTargetSet = m_renderSystem->createRenderTargetSet(desc);
 	if (!renderTargetSet)
@@ -193,11 +194,18 @@ Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTa
 
 Ref< IProgram > RenderSystemCapture::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
-	T_FATAL_ASSERT_M (programResource, L"Render error: No program resource.");
+	T_CAPTURE_ASSERT (programResource, L"No program resource.");
+
+	if (!programResource)
+		return 0;
 
 	const ProgramResourceCapture* resource = dynamic_type_cast< const ProgramResourceCapture* >(programResource);
-	T_FATAL_ASSERT_M (resource, L"Render error: Incorrect program resource type.");
-	T_FATAL_ASSERT_M (resource->m_embedded, L"Render error: Invalid wrapped resource.");
+	T_CAPTURE_ASSERT (resource, L"Incorrect program resource type.");
+
+	if (!resource)
+		return 0;
+
+	T_CAPTURE_ASSERT (resource->m_embedded, L"Invalid wrapped resource.");
 
 	Ref< IProgram > program = m_renderSystem->createProgram(resource->m_embedded, tag);
 	if (!program)

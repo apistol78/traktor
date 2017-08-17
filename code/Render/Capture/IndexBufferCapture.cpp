@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Capture/IndexBufferCapture.h"
+#include "Render/Capture/Error.h"
 
 namespace traktor
 {
@@ -23,25 +24,34 @@ IndexBufferCapture::IndexBufferCapture(IndexBuffer* indexBuffer, IndexType index
 
 void IndexBufferCapture::destroy()
 {
-	T_FATAL_ASSERT_M (m_indexBuffer, L"Render error: Index buffer already destroyed.");
-	T_FATAL_ASSERT_M (!m_locked, L"Render error: Cannot destroy locked index buffer.");
+	T_CAPTURE_ASSERT (m_indexBuffer, L"Index buffer already destroyed.");
+	T_CAPTURE_ASSERT (!m_locked, L"Cannot destroy locked index buffer.");
 	safeDestroy(m_indexBuffer);
 }
 
 void* IndexBufferCapture::lock()
 {
-	T_FATAL_ASSERT_M (m_indexBuffer, L"Render error: Index buffer destroyed.");
-	T_FATAL_ASSERT_M (!m_locked, L"Render error: Index buffer already locked.");
+	T_CAPTURE_ASSERT (m_indexBuffer, L"Index buffer destroyed.");
+	T_CAPTURE_ASSERT (!m_locked, L"Index buffer already locked.");
+	
+	if (!m_indexBuffer)
+		return 0;
+
 	void* p = m_indexBuffer->lock();
 	if (p)
 		m_locked = true;
+
 	return p;
 }
 	
 void IndexBufferCapture::unlock()
 {
-	T_FATAL_ASSERT_M (m_indexBuffer, L"Render error: Index buffer destroyed.");
-	T_FATAL_ASSERT_M (m_locked, L"Render error: Index buffer not locked.");
+	T_CAPTURE_ASSERT (m_indexBuffer, L"Index buffer destroyed.");
+	T_CAPTURE_ASSERT (m_locked, L"Index buffer not locked.");
+
+	if (!m_indexBuffer)
+		return;
+
 	m_indexBuffer->unlock();
 	m_locked = false;
 }
