@@ -72,6 +72,17 @@ end
 
 function Static:setTextHoverColor(color)
 	self._textHoverColor = color
+	return self
+end
+
+function Static:setDropShadowColor(color)
+	if color:getAlpha() > 0.01 then
+		self._text_tb:setFilter(1)
+		self._text_tb:setFilterColor(color)
+	else
+		self._text_tb:setFilter(0)
+	end
+	return self
 end
 
 function Static:setWordWrap(wordWrap)
