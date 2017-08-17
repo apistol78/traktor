@@ -65,7 +65,7 @@ Any castActionToAny(const ActionValue& value)
 			ActionObject* object = value.getObject();
 			if (is_a< ActionFunctionDelegate* >(object))
 				return Any::fromObject(static_cast< ActionFunctionDelegate* >(object)->getDelegate());
-			else if (object->getRelay())
+			else if (object && object->getRelay())
 				return Any::fromObject(object->getRelay());
 			else
 				return Any::fromObject(object);
