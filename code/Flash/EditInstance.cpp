@@ -614,10 +614,11 @@ bool EditInstance::internalParseText(const std::wstring& text)
 	if (m_edit->multiLine())
 	{
 		StringSplit< std::wstring > ss(text, L"\n");
-		for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+		for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); )
 		{
 			m_layout->insertText(*i);
-			m_layout->newLine();
+			if (++i != ss.end())
+				m_layout->newLine();
 		}
 	}
 	else if (m_password)
