@@ -267,8 +267,9 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	}
 	else
 	{
-		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Width", m_originalDisplayMode.width / 2);
-		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Height", m_originalDisplayMode.height / 2);
+		int32_t defaultDenominator = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/DefaultDenominator", 2);
+		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Width", m_originalDisplayMode.width / defaultDenominator);
+		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Height", m_originalDisplayMode.height / defaultDenominator);
 	}
 
 	m_renderViewDesc.displayMode.stereoscopic = settings->getProperty< bool >(L"Render.Stereoscopic", false);
