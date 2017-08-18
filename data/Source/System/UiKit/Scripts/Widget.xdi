@@ -177,6 +177,13 @@ function Widget:setFocus()
 	Widget._focus:_notifyEventListeners(FocusEvent.new(true))	
 end
 
+function Widget:killFocus()
+	if Widget._focus ~= self then return false end
+	self:_notifyEventListeners(FocusEvent.new(false))
+	Widget._focus = nil
+	return true
+end
+
 function Widget.getFocus()
 	return Widget._focus
 end

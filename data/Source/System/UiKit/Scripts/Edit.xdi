@@ -52,13 +52,29 @@ function Edit:setOnEdited(fn)
 	return self
 end
 
+function Edit:setOnEnter(fn)
+	self._enterFn = fn
+	return self
+end
+
 function Edit:getPreferredSize()
 	return self._preferredSize
 end
 
 function Edit:setFocus()
 	Widget.setFocus(self)
-	self._text_tb:setFocus()
+
+	local cx = self._mc:getContext()
+	local selection = cx:getGlobal():getMember("Selection")
+	selection:setFocus(self._text_tb)
+end
+
+function Edit:killFocus()
+	if Widget.killFocus(self) then
+		local cx = self._mc:getContext()
+		local selection = cx:getGlobal():getMember("Selection")
+		selection:setFocus(nil)
+	end
 end
 
 function Edit:place(x, y, width, height)
@@ -75,6 +91,8 @@ end
 -- private
 
 function Edit:_initialize(parent, mc, text, hint, validator)
+	Widget._initialize(self, parent, mc)
+
 	self._background_mc = mc:getMember("background_mc")
 	self._text_tb = mc:getMember("text_tb")
 	self._text_tb:setMember("onSetFocus", function() self:_onSetFocus() end)
@@ -102,28 +120,49 @@ function Edit:_initialize(parent, mc, text, hint, validator)
 		self._text_tb:parseText(hint)
 		self._hintActive = true
 	end
-
-	Widget._initialize(self, parent, mc)
 end
 
 function Edit:_onSetFocus()
+	-- Remove hint.
 	if self._hintActive then
 		self._text_tb:parseText("")
 		self._hintActive = false
 	end
+
+	-- Register global key up/down events.
+	local cx = self._mc:getContext()
+	local key = cx:getGlobal():getMember("Key")
+
+	self._keyListener = cx:createObject()
+	self._keyListener:setMember("onKeyDown", function() self:_onKeyDown() end)
+	self._keyListener:setMember("onKeyUp", function() self:_onKeyUp() end)
+	key:addListener(self._keyListener)
+
+	self._enterPressed = false
+
 #if defined(ANDROID)
 	KeyboardDeviceAndroid.showSoftKeyboard()
 #endif
 end
 
 function Edit:_onKillFocus()
+	if self._editedFn ~= nil then
+		self._editedFn()
+	end
+
 	if self._hint ~= "" and self._text_tb:getText() == "" then
 		self._text_tb:parseText(self._hint)
 		self._hintActive = true
 	end
-	if self._editedFn ~= nil then
-		self._editedFn()
+
+	-- Remove global key up/down events.
+	if self._keyListener ~= nil then
+		local cx = self._mc:getContext()
+		local key = cx:getGlobal():getMember("Key")
+		key:removeListener(self._keyListener)
+		self._keyListener = nil
 	end
+
 #if defined(ANDROID)
 	KeyboardDeviceAndroid.hideSoftKeyboard()
 #endif
@@ -142,6 +181,31 @@ function Edit:_onChanged()
 		end
 	end
 end
+
+function Edit:_onKeyDown()
+	local cx = self._mc:getContext()
+	local key = cx:getGlobal():getMember("Key")
+	local code = key:getCode()
+	if code == key:getMember("ENTER") or code == 220 then
+		self._enterPressed = true
+	end
+end
+
+function Edit:_onKeyUp()
+	if self._enterPressed then
+		self._enterPressed = false
+
+		local cx = self._mc:getContext()
+		local key = cx:getGlobal():getMember("Key")
+		local code = key:getCode()
+		if code == key:getMember("ENTER") or code == 220 then
+			if self._enterFn ~= nil then
+				self._enterFn()
+			end
+		end
+	end
+end
+
 
 	]]>
 	</text>
