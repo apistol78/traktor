@@ -174,6 +174,7 @@ EditInstance::EditInstance(ActionContext* context, Dictionary* dictionary, Chara
 ,	m_align(edit->getAlign())
 ,	m_fontHeight(edit->getFontHeight())
 ,	m_html(false)
+,	m_multiLine(edit->multiLine())
 ,	m_wordWrap(edit->wordWrap())
 ,	m_password(edit->password())
 ,	m_caret(0)
@@ -300,6 +301,17 @@ Ref< TextFormat > EditInstance::getTextFormat(int32_t beginIndex, int32_t endInd
 const std::wstring& EditInstance::getHtmlText() const
 {
 	return m_html ? m_htmlText : m_text;
+}
+
+void EditInstance::setMultiLine(bool multiLine)
+{
+	m_multiLine = multiLine;
+	updateLayout();
+}
+
+bool EditInstance::getMultiLine() const
+{
+	return m_multiLine;
 }
 
 void EditInstance::setWordWrap(bool wordWrap)
@@ -611,7 +623,7 @@ bool EditInstance::internalParseText(const std::wstring& text)
 	m_layout->setAlignment(m_align);
 	m_layout->setAttribute(font, m_textColor);
 
-	if (m_edit->multiLine())
+	if (m_multiLine)
 	{
 		StringSplit< std::wstring > ss(text, L"\n");
 		for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); )

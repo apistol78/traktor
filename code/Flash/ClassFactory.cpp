@@ -674,6 +674,8 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEditInstance->addMethod("getTextFormat", &EditInstance_getTextFormat_2);
 	classEditInstance->addMethod("getText", &EditInstance::getText);
 	classEditInstance->addMethod("getHtmlText", &EditInstance::getHtmlText);
+	classEditInstance->addMethod("setMultiLine", &EditInstance::setMultiLine);
+	classEditInstance->addMethod("getMultiLine", &EditInstance::getMultiLine);
 	classEditInstance->addMethod("setWordWrap", &EditInstance::setWordWrap);
 	classEditInstance->addMethod("getWordWrap", &EditInstance::getWordWrap);
 	classEditInstance->addMethod("setPassword", &EditInstance::setPassword);

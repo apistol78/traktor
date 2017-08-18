@@ -85,6 +85,12 @@ public:
 	/*! \brief Get html formatted text. */
 	const std::wstring& getHtmlText() const;
 
+	/*! \brief Set multiline. */
+	void setMultiLine(bool multiLine);
+
+	/*! \brief Get multiline. */
+	bool getMultiLine() const;
+
 	/*! \brief Set word wrapping. */
 	void setWordWrap(bool wordWrap);
 
@@ -208,6 +214,7 @@ private:
 	std::wstring m_text;
 	std::wstring m_htmlText;
 	bool m_html;
+	bool m_multiLine;
 	bool m_wordWrap;
 	bool m_password;
 	int32_t m_caret;
