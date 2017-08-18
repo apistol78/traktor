@@ -11,13 +11,13 @@ import(traktor)
 Static = Static or inherit(Widget)
 Static_meta = Static_meta or { name = "Static", __index = Static }
 
-function Static.new(parent, text)
+function Static.new(parent, text, clip)
 	local o = {}
 	setmetatable(o, Static_meta)
 
 	local mc = Widget._createResource(parent, "MC_Static")
 
-	o:_initialize(parent, mc, text)
+	o:_initialize(parent, mc, text, clip)
 	return o
 end
 
@@ -57,6 +57,11 @@ function Static:setText(text)
 	return self
 end
 
+function Static:setHtml(html)
+	self._text_tb:parseHtml(html)
+	return self
+end
+
 function Static:setTextSize(size)
 	local tf = self._text_tb:getTextFormat()
 	tf:setSize(size * 20)
@@ -85,9 +90,23 @@ function Static:setDropShadowColor(color)
 	return self
 end
 
+function Static:setMultiLine(multiLine)
+	self._text_tb:setMultiLine(multiLine)
+	return self
+end
+
 function Static:setWordWrap(wordWrap)
 	self._text_tb:setWordWrap(wordWrap)
 	return self
+end
+
+function Static:setScroll(scroll)
+	self._text_tb:setScroll(scroll)
+	return self
+end
+
+function Static:getMaxScroll()
+	return self._text_tb:getMaxScroll()
 end
 
 function Static:setOnClick(fn)
@@ -97,12 +116,12 @@ end
 
 -- Private
 
-function Static:_initialize(parent, mc, text)
+function Static:_initialize(parent, mc, text, clip)
 	Widget._initialize(self, parent, mc)
 
 	self._text_tb = mc:getMember("text_tb")
 	self._text_tb:setTransform(Matrix33.identity)
-	self._text_tb:setRenderClipMask(false)
+	self._text_tb:setRenderClipMask(clip or false)
 	self._textColor = self._text_tb:getTextColor()
 	self._textHoverColor = nil
 
