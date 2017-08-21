@@ -11,13 +11,13 @@ import(traktor.flash)
 ProgressBar = ProgressBar or inherit(Widget)
 ProgressBar_meta = ProgressBar_meta or { name = "ProgressBar", __index = ProgressBar }
 
-function ProgressBar.new(parent)
+function ProgressBar.new(parent, reverse, skin)
 	local o = {}
 	setmetatable(o, ProgressBar_meta)
 
-	local mc = Widget._createResource(parent, "MC_ProgressBar")
+	local mc = Widget._createResource(parent, skin or "MC_ProgressBar")
 
-	o:_initialize(parent, mc)
+	o:_initialize(parent, mc, reverse)
 	return o
 end
 
@@ -57,6 +57,9 @@ function ProgressBar:setValue(value)
 	self._value = math.max(math.min(value, 1), 0)
 	local w = self._back_mc:getWidth()
 	self._mask_mc:setWidth(w * value)
+	if self._reverse then
+		self._mask_mc:setX(w * (1 - value))
+	end
 	return self
 end
 
@@ -66,7 +69,7 @@ end
 
 -- Private
 
-function ProgressBar:_initialize(parent, mc)
+function ProgressBar:_initialize(parent, mc, reverse)
 	Widget._initialize(self, parent, mc)
 
 	self._preferredSize =
@@ -78,6 +81,7 @@ function ProgressBar:_initialize(parent, mc)
 	self._back_mc = mc:getMember("back_mc")
 	self._front_mc = mc:getMember("front_mc")
 	self._mask_mc = mc:getMember("mask_mc")
+	self._reverse = reverse or false
 
 #if defined(_DEBUG)
 	self._back_mc:setMember("__renderWireOutline", true)
@@ -85,7 +89,6 @@ function ProgressBar:_initialize(parent, mc)
 
 	self:setValue(0.5)
 end
-
 
 	]]>
 	</text>
