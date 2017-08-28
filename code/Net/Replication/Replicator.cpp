@@ -428,8 +428,8 @@ bool Replicator::update()
 		// Have we reached acceptable variance?
 		if (
 			m_timeErrors.full() &&
-			m_timeVariance <= 0.03 &&
-			abs(timeOffset) <= 0.01
+			m_timeVariance <= m_configuration.timeVarianceThreshold &&
+			abs(timeOffset) <= 0.02
 		)
 		{
 			if (!m_timeSynchronized)

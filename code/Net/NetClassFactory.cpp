@@ -152,6 +152,10 @@ public:
 	{
 	}
 
+	void setTimeVarianceThreshold(float timeVarianceThreshold) { m_configuration.timeVarianceThreshold = timeVarianceThreshold; }
+
+	float getTimeVarianceThreshold() const { return m_configuration.timeVarianceThreshold; }
+
 	void setNearDistance(float nearDistance) { m_configuration.nearDistance = nearDistance; }
 
 	float getNearDistance() const { return m_configuration.nearDistance; }
@@ -455,6 +459,8 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< ReplicatorConfiguration > > classReplicatorConfiguration = new AutoRuntimeClass< ReplicatorConfiguration >();
 	classReplicatorConfiguration->addConstructor();
+	classReplicatorConfiguration->addMethod("setTimeVarianceThreshold", &ReplicatorConfiguration::setTimeVarianceThreshold);
+	classReplicatorConfiguration->addMethod("getTimeVarianceThreshold", &ReplicatorConfiguration::getTimeVarianceThreshold);
 	classReplicatorConfiguration->addMethod("setNearDistance", &ReplicatorConfiguration::setNearDistance);
 	classReplicatorConfiguration->addMethod("getNearDistance", &ReplicatorConfiguration::getNearDistance);
 	classReplicatorConfiguration->addMethod("setFarDistance", &ReplicatorConfiguration::setFarDistance);
