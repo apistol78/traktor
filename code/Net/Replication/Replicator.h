@@ -47,6 +47,7 @@ class T_DLLCLASS Replicator
 public:
 	struct Configuration
 	{
+		float timeVarianceThreshold;
 		float nearDistance;
 		float farDistance;
 		float furthestDistance;
@@ -55,7 +56,8 @@ public:
 		float timeUntilTxPing;
 
 		Configuration()
-		:	nearDistance(8.0f)
+		:	timeVarianceThreshold(0.03f)
+		,	nearDistance(8.0f)
 		,	farDistance(90.0f)
 		,	furthestDistance(120.0f)
 		,	timeUntilTxStateNear(0.1f)
