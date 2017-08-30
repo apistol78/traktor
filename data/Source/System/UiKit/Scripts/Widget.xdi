@@ -123,11 +123,17 @@ function Widget:setVisible(visible)
 	return self
 end
 
-function Widget:isVisible()
-	local p = self
-	while p ~= nil do
-		if not p._visible then return false end
-		p = p._parent
+function Widget:isVisible(recursive)
+	local r = true
+	if recursive == false then r = false end
+	if r then
+		local p = self
+		while p ~= nil do
+			if not p._visible then return false end
+			p = p._parent
+		end
+	else
+		if not self._visible then return false end
 	end
 	return true
 end
