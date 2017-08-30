@@ -353,9 +353,18 @@ void RichEdit::clear(bool attributes, bool images, bool content)
 
 void RichEdit::insert(const std::wstring& text)
 {
+	if (text.empty())
+		return;
+
 	std::wstring tmp = replaceAll< std::wstring >(text, L"\r\n", L"\n");
 	for (std::wstring::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
-		insertCharacter(*i);
+		insertCharacter(*i, false);
+
+	CaretEvent caretEvent(this);
+	raiseEvent(&caretEvent);
+
+	ContentChangeEvent contentChangeEvent(this);
+	raiseEvent(&contentChangeEvent);
 }
 
 int32_t RichEdit::getOffsetFromPosition(const Point& position)
@@ -744,7 +753,7 @@ void RichEdit::deleteCharacters()
 	raiseEvent(&contentChangeEvent);
 }
 
-void RichEdit::insertCharacter(wchar_t ch)
+void RichEdit::insertCharacter(wchar_t ch, bool issueEvents)
 {
 	if (ch == L'\n' || ch == L'\r')
 	{
@@ -753,11 +762,14 @@ void RichEdit::insertCharacter(wchar_t ch)
 
 		insertAt(m_caret++, L'\n');
 
-		CaretEvent caretEvent(this);
-		raiseEvent(&caretEvent);
+		if (issueEvents)
+		{
+			CaretEvent caretEvent(this);
+			raiseEvent(&caretEvent);
 
-		ContentChangeEvent contentChangeEvent(this);
-		raiseEvent(&contentChangeEvent);
+			ContentChangeEvent contentChangeEvent(this);
+			raiseEvent(&contentChangeEvent);
+		}
 	}
 	else if (ch == '\t')
 	{
@@ -779,8 +791,11 @@ void RichEdit::insertCharacter(wchar_t ch)
 
 				m_caret++;
 
-				ContentChangeEvent contentChangeEvent(this);
-				raiseEvent(&contentChangeEvent);
+				if (issueEvents)
+				{
+					ContentChangeEvent contentChangeEvent(this);
+					raiseEvent(&contentChangeEvent);
+				}
 
 				return;
 			}
@@ -790,11 +805,14 @@ void RichEdit::insertCharacter(wchar_t ch)
 
 		insertAt(m_caret++, L'\t');
 
-		CaretEvent caretEvent(this);
-		raiseEvent(&caretEvent);
+		if (issueEvents)
+		{
+			CaretEvent caretEvent(this);
+			raiseEvent(&caretEvent);
 
-		ContentChangeEvent contentChangeEvent(this);
-		raiseEvent(&contentChangeEvent);
+			ContentChangeEvent contentChangeEvent(this);
+			raiseEvent(&contentChangeEvent);
+		}
 	}
 	else if (ch >= 32)
 	{
@@ -803,11 +821,14 @@ void RichEdit::insertCharacter(wchar_t ch)
 
 		insertAt(m_caret++, ch);
 
-		CaretEvent caretEvent(this);
-		raiseEvent(&caretEvent);
+		if (issueEvents)
+		{
+			CaretEvent caretEvent(this);
+			raiseEvent(&caretEvent);
 
-		ContentChangeEvent contentChangeEvent(this);
-		raiseEvent(&contentChangeEvent);
+			ContentChangeEvent contentChangeEvent(this);
+			raiseEvent(&contentChangeEvent);
+		}
 	}
 }
 
@@ -1145,7 +1166,7 @@ void RichEdit::eventKey(KeyEvent* event)
 		deleteCharacters();
 	}
 	else if (ch != 8)
-		insertCharacter(ch);
+		insertCharacter(ch, true);
 
 	updateScrollBars();
 	scrollToCaret();

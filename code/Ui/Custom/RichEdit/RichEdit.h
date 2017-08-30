@@ -256,7 +256,7 @@ private:
 
 	void deleteCharacters();
 
-	void insertCharacter(wchar_t ch);
+	void insertCharacter(wchar_t ch, bool issueEvents);
 
 	void insertAt(int32_t offset, wchar_t ch);
 
