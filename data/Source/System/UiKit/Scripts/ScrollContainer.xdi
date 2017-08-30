@@ -178,6 +178,7 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 				local o = self:getOffset()
 				self:setOffset(o.x, v)
 			end)
+			self:addEventListener(MouseWheelEvent, self, self._onMouseWheel)
 		end
 	end
 
@@ -299,6 +300,13 @@ function ScrollContainer:_onMouseMove(event)
 		self._scrollFn()
 	end
 
+	return true
+end
+
+function ScrollContainer:_onMouseWheel(event)
+	local range = self._innerSize.width - self._scrollSize.width
+	local offset = self:getOffset()
+	self:setOffset(offset.x, offset.y - event.delta * range / 4)
 	return true
 end
 

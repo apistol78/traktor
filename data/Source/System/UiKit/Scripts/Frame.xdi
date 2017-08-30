@@ -75,6 +75,11 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	self._mc:setMember("onMouseUp", function() self:_eventMouseUp() end)
 	self._mc:setMember("onMouseMove", function() self:_eventMouseMove() end)
 
+	local mouse = cx:getGlobal():getMember("Mouse")
+	local listener = cx:createObject()
+	listener:setMember("onMouseWheel", function(delta) self:_eventMouseWheel(delta) end)
+	mouse:addListener(listener)
+
 #if defined(_DEBUG)
 	self._mc_debug = Widget._createResource(self, "MC_DebugMarker")
 	self._tb_position = self._mc_debug:getMember("tb_position")
@@ -102,6 +107,11 @@ function Frame:_eventMouseMove()
 	self._tb_position:parseText(pt.x .. ";" .. pt.y)
 #endif
 	self:_dispatchEvent(MouseMoveEvent.new(pt.x, pt.y))
+end
+
+function Frame:_eventMouseWheel(delta)
+	local pt = self:getMousePosition()
+	self:_dispatchEvent(MouseWheelEvent.new(pt.x, pt.y, delta))
 end
 
 	]]>

@@ -26,8 +26,11 @@ public:
 
 	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) T_OVERRIDE T_FINAL
 	{
-		m_delegate->call(0, 0);
-		return ActionValue();
+		Any argv[16];
+		for (uint32_t i = 0; i < args.size(); ++i)
+			argv[i] = castActionToAny(args[i]);
+		Any retv = m_delegate->call(args.size(), argv);
+		return castAnyToAction(retv);
 	}
 
 	IRuntimeDelegate* getDelegate() const

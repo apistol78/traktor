@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- MouseWheelEvent
+
+MouseWheelEvent = MouseWheelEvent or { mask = 0x00000200 }
+MouseWheelEvent_meta = MouseWheelEvent_meta or { name = "MouseWheelEvent", __index = MouseWheelEvent }
+
+function MouseWheelEvent.new(x, y, delta)
+	local o = {}
+	setmetatable(o, MouseWheelEvent_meta)
+
+	o.x = x
+	o.y = y
+	o.delta = delta
+
+	return o
+end
+
+	]]>
+	</text>
+</object>
