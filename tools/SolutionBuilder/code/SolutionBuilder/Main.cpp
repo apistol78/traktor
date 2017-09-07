@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Core/Misc/CommandLine.h>
 #include <Core/Misc/TString.h>
 #include <Core/Timer/Timer.h>
+#include "Version.h"
 #include "SolutionBuilderLIB/Aggregation.h"
 #include "SolutionBuilderLIB/ExternalDependency.h"
 #include "SolutionBuilderLIB/Project.h"
@@ -25,8 +26,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "SolutionBuilderLIB/Xcode/SolutionBuilderXcode.h"
 
 using namespace traktor;
-
-#define TITLE L"SolutionBuilder v3.2.0"
 
 #define ERROR_UNKNOWN_FORMAT 1
 #define ERROR_UNABLE_TO_READ_SOLUTION 2
@@ -97,7 +96,7 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.hasOption('?') || cmdLine.hasOption('h', L"help"))
 	{
-		traktor::log::info << TITLE << Endl;
+		traktor::log::info << SB_TITLE << Endl;
 		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution]" << Endl;
 		traktor::log::info << L"\t-f,-format=[format]	[\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"make2\", \"xcode\", \"dependencies\"]" << Endl;
 		traktor::log::info << L"\t-rootPath=Path		Override solution root path" << Endl;
@@ -118,7 +117,7 @@ int main(int argc, const char** argv)
 
 		if (cmdLine.hasOption('v', L"verbose"))
 		{
-			traktor::log::info << TITLE << Endl;
+			traktor::log::info << SB_TITLE << Endl;
 			traktor::log::info << L"Loading solution \"" << cmdLine.getString(0) << L"\"..." << Endl;
 		}
 

@@ -37,7 +37,10 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 
 	const std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
 	for (std::vector< std::wstring >::const_iterator i = includePaths.begin(); i != includePaths.end(); ++i)
-		ssip << *i << L";";
+	{
+		std::wstring includePath = context.getProjectRelativePath(*i, false);
+		ssip << includePath << L";";
+	}
 
 	for (std::vector< std::wstring >::const_iterator i = solution->getDefinitions().begin(); i != solution->getDefinitions().end(); ++i)
 		ssd << *i << L";";

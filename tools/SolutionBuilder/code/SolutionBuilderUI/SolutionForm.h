@@ -84,7 +84,7 @@ private:
 
 	traktor::ui::custom::TreeViewItem* createTreeFilterItem(traktor::ui::custom::TreeViewItem* parentItem, Project* project, Filter* filter);
 
-	traktor::ui::custom::TreeViewItem* createTreeFileItem(traktor::ui::custom::TreeViewItem* parentItem, Project* project, File* file);
+	traktor::ui::custom::TreeViewItem* createTreeFileItem(traktor::ui::custom::TreeViewItem* parentItem, Project* project, ::File* file);
 
 	traktor::ui::custom::TreeViewItem* createTreeAggregationItemItem(traktor::ui::custom::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item);
 
