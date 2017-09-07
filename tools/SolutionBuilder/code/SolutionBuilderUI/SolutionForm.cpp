@@ -19,6 +19,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/Custom/Splitter.h>
 #include <Xml/XmlSerializer.h>
 #include <Xml/XmlDeserializer.h>
+#include "Version.h"
 #include "SolutionBuilderLIB/Aggregation.h"
 #include "SolutionBuilderLIB/AggregationItem.h"
 #include "SolutionBuilderLIB/Configuration.h"
@@ -48,8 +49,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v3.2"
-
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
 namespace
@@ -76,7 +75,7 @@ namespace
 bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 {
 	if (!ui::Form::create(
-		TITLE,
+		SB_TITLE,
 		ui::scaleBySystemDPI(1000),
 		ui::scaleBySystemDPI(800),
 		ui::Form::WsDefault,
@@ -257,7 +256,7 @@ void SolutionForm::updateTitle()
 {
 	std::wstringstream ss;
 	
-	ss << TITLE;
+	ss << SB_TITLE;
 
 	if (m_solution)
 	{
