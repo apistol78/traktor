@@ -13,6 +13,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/RefArray.h"
 #include "Ui/Enums.h"
 
+#if defined(T_CXX11)
+#	include <functional>
+#endif
+
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
@@ -56,7 +60,7 @@ public:
 		virtual void notify(Event* event) T_OVERRIDE
 		{
 			(*m_fn)(
-				checked_type_cast< EventType*, false >(event)
+				mandatory_non_null_type_cast< EventType* >(event)
 			);
 		}
 
@@ -79,7 +83,7 @@ public:
 		virtual void notify(Event* event) T_OVERRIDE
 		{
 			(m_target->*m_method)(
-				checked_type_cast< EventType*, false >(event)
+				mandatory_non_null_type_cast< EventType* >(event)
 			);
 		}
 
@@ -87,6 +91,28 @@ public:
 		Ref< ClassType > m_target;
 		method_t m_method;
 	};
+
+#if defined(T_CXX11)
+	template < typename EventType >
+	class LambdaEventHandler : public RefCountImpl< IEventHandler >
+	{
+	public:
+		LambdaEventHandler(const std::function< void( typename EventType* ) >& fn)
+		:	m_fn(fn)
+		{
+		}
+
+		virtual void notify(Event* event) T_OVERRIDE
+		{
+			m_fn(
+				mandatory_non_null_type_cast< EventType* >(event)
+			);
+		}
+
+	private:
+		std::function< void( typename EventType* ) > m_fn;
+	};
+#endif
 
 	void raiseEvent(Event* event);
 
@@ -113,6 +139,16 @@ public:
 		addEventHandler(type_of< EventType >(), eventHandler);
 		return eventHandler;
 	}
+
+#if defined(T_CXX11)
+	template < typename EventType >
+	IEventHandler* addEventHandler(const std::function< void(EventType*) >& fn)
+	{
+		Ref< IEventHandler > eventHandler = new LambdaEventHandler< EventType >(fn);
+		addEventHandler(type_of< EventType >(), eventHandler);
+		return eventHandler;
+	}
+#endif
 
 	void removeEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler);
 
