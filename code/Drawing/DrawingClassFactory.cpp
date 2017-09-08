@@ -131,11 +131,23 @@ Ref< ScaleFilter > ScaleFilter_constructor(int32_t width, int32_t height)
 	return new ScaleFilter(width, height, ScaleFilter::MnAverage, ScaleFilter::MgLinear);
 }
 
-Color4f Image_getPixel(Image* image, int32_t x, int32_t y)
+Color4f Image_getPixel_1(Image* image, int32_t x, int32_t y)
 {
 	Color4f c;
 	image->getPixel(x, y, c);
 	return c;
+}
+
+bool Image_getPixel_2(Image* image, int32_t x, int32_t y, BoxedColor4f* outColor)
+{
+	Color4f c;
+	if (image->getPixel(x, y, c))
+	{
+		*outColor = BoxedColor4f(c);
+		return true;
+	}
+	else
+		return false;
 }
 
 Ref< Image > Image_loadFromFile(const std::wstring& filePath)
@@ -275,7 +287,8 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classImage->addMethod("copy", &Image_copy_4);
 	classImage->addMethod("clear", &Image::clear);
 	classImage->addMethod("clearAlpha", &Image::clearAlpha);
-	classImage->addMethod("getPixel", &Image_getPixel);
+	classImage->addMethod("getPixel", &Image_getPixel_1);
+	classImage->addMethod("getPixel", &Image_getPixel_2);
 	classImage->addMethod("setPixel", &Image::setPixel);
 	classImage->addMethod("apply", &Image::apply);
 	classImage->addStaticMethod("loadFromFile", &Image_loadFromFile);
