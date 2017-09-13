@@ -192,7 +192,7 @@ Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType) con
 		RefArray< ActionWriteObject > actions;
 		if (m_transaction->get< ActionWriteObject >(actions) > 0)
 		{
-			const std::vector< uint8_t >& buffer = actions[0]->getBuffer();
+			const AlignedVector< uint8_t >& buffer = actions[0]->getBuffer();
 			if (!buffer.empty())
 				objectStream = new MemoryStream(&buffer[0], buffer.size());
 		}
@@ -289,7 +289,7 @@ Ref< IStream > LocalInstance::readData(const std::wstring& dataName) const
 			{
 				if ((*i)->getName() == dataName)
 				{
-					const std::vector< uint8_t >& buffer = (*i)->getBuffer();
+					const AlignedVector< uint8_t >& buffer = (*i)->getBuffer();
 					if (!buffer.empty())
 						return new MemoryStream(&buffer[0], buffer.size());
 				}

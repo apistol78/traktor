@@ -37,7 +37,7 @@ bool ClipboardWin32::setObject(ISerializable* object)
 	if (!BinarySerializer(&dms).writeObject(object))
 		return false;
 
-	const std::vector< uint8_t >& buffer = dms.getBuffer();
+	const AlignedVector< uint8_t >& buffer = dms.getBuffer();
 
 	if (!OpenClipboard(NULL))
 		return false;

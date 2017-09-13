@@ -88,12 +88,12 @@ std::wstring Base64::encode(const uint8_t* data, uint32_t size, bool insertCrLf)
 	return ss.str();
 }
 
-std::wstring Base64::encode(const std::vector< uint8_t >& data, bool insertCrLf) const
+std::wstring Base64::encode(const AlignedVector< uint8_t >& data, bool insertCrLf) const
 {
 	return data.size() > 0 ? encode(&data[0], uint32_t(data.size()), insertCrLf) : L"";
 }
 
-std::vector< uint8_t > Base64::decode(const std::wstring& b64) const
+AlignedVector< uint8_t > Base64::decode(const std::wstring& b64) const
 {
 	std::wstring str;
 	for (size_t i = 0; i < b64.length(); ++i)
@@ -102,7 +102,7 @@ std::vector< uint8_t > Base64::decode(const std::wstring& b64) const
 			str += b64[i];
 	}
 
-	std::vector< uint8_t > data;
+	AlignedVector< uint8_t > data;
 	data.reserve((str.length() * 3) / 4);
 
 	for (size_t i = 0; i < str.length(); i += 4)

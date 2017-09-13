@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.DynamicMemoryStream", DynamicMemoryStream, IStream)
 
-DynamicMemoryStream::DynamicMemoryStream(std::vector< uint8_t >& buffer, bool readAllowed, bool writeAllowed, const char* const name)
+DynamicMemoryStream::DynamicMemoryStream(AlignedVector< uint8_t >& buffer, bool readAllowed, bool writeAllowed, const char* const name)
 :	m_buffer(0)
 ,	m_readPosition(0)
 ,	m_readAllowed(readAllowed)
@@ -71,17 +71,21 @@ int64_t DynamicMemoryStream::tell() const
 
 int64_t DynamicMemoryStream::available() const
 {
-	return int64_t(m_buffer->size() - m_readPosition);
+	return m_buffer ? int64_t(m_buffer->size() - m_readPosition) : 0;
 }
 
 int64_t DynamicMemoryStream::seek(SeekOriginType origin, int64_t offset)
 {
+	if (!m_buffer)
+		return -1;
+
 	if (origin == SeekCurrent)
 		m_readPosition += offset;
 	else if (origin == SeekEnd)
 		m_readPosition = int64_t(m_buffer->size() + offset);
 	else if (origin == SeekSet)
 		m_readPosition = offset;
+
 	return m_readPosition;
 }
 
@@ -122,12 +126,12 @@ void DynamicMemoryStream::flush()
 {
 }
 
-const std::vector< uint8_t >& DynamicMemoryStream::getBuffer() const
+const AlignedVector< uint8_t >& DynamicMemoryStream::getBuffer() const
 {
 	return *m_buffer;
 }
 
-std::vector< uint8_t >& DynamicMemoryStream::getBuffer()
+AlignedVector< uint8_t >& DynamicMemoryStream::getBuffer()
 {
 	return *m_buffer;
 }

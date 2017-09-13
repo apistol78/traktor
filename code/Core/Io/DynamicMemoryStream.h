@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_DynamicMemoryStream_H
 #define traktor_DynamicMemoryStream_H
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/IStream.h"
 
 // import/export mechanism.
@@ -29,7 +29,7 @@ class T_DLLCLASS DynamicMemoryStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	DynamicMemoryStream(std::vector< uint8_t >& buffer, bool readAllowed = true, bool writeAllowed = true, const char* const name = 0);
+	DynamicMemoryStream(AlignedVector< uint8_t >& buffer, bool readAllowed = true, bool writeAllowed = true, const char* const name = 0);
 
 	DynamicMemoryStream(bool readAllowed = true, bool writeAllowed = true, const char* const name = 0);
 
@@ -53,13 +53,13 @@ public:
 
 	virtual void flush() T_OVERRIDE T_FINAL;
 
-	const std::vector< uint8_t >& getBuffer() const;
+	const AlignedVector< uint8_t >& getBuffer() const;
 
-	std::vector< uint8_t >& getBuffer();
+	AlignedVector< uint8_t >& getBuffer();
 
 private:
-	std::vector< uint8_t > m_internal;
-	std::vector< uint8_t >* m_buffer;
+	AlignedVector< uint8_t > m_internal;
+	AlignedVector< uint8_t >* m_buffer;
 	int64_t m_readPosition;
 	bool m_readAllowed;
 	bool m_writeAllowed;
