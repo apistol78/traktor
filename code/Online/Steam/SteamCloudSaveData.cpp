@@ -46,7 +46,7 @@ bool SteamCloudSaveData::get(const std::wstring& saveDataId, Ref< ISerializable 
 		return false;
 	}
 
-	std::vector< uint8_t > buffer(fileSize);
+	AlignedVector< uint8_t > buffer(fileSize);
 	int32_t nread = SteamRemoteStorage()->FileRead(fileName.c_str(), &buffer[0], fileSize);
 	if (nread != fileSize)
 	{
@@ -94,7 +94,7 @@ bool SteamCloudSaveData::set(const std::wstring& saveDataId, const SaveDataDesc&
 
 	BinarySerializer(&dms).writeObject(attachment);
 
-	std::vector< uint8_t >& buffer = dms.getBuffer();
+	AlignedVector< uint8_t >& buffer = dms.getBuffer();
 	T_ASSERT (buffer.size() >= 16);
 
 	// Calculate new MD5 checksum.

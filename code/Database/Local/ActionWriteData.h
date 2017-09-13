@@ -7,8 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_db_ActionWriteData_H
 #define traktor_db_ActionWriteData_H
 
-#include "Database/Local/Action.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Path.h"
+#include "Database/Local/Action.h"
 
 namespace traktor
 {
@@ -38,14 +39,14 @@ public:
 
 	const std::wstring& getName() const { return m_dataName; }
 
-	const std::vector< uint8_t >& getBuffer() const { return m_dataBuffer; }
+	const AlignedVector< uint8_t >& getBuffer() const { return m_dataBuffer; }
 
 	const Ref< IStream >& getStream() const { return m_dataStream; }
 
 private:
 	Path m_instancePath;
 	std::wstring m_dataName;
-	std::vector< uint8_t > m_dataBuffer;
+	AlignedVector< uint8_t > m_dataBuffer;
 	Ref< IStream > m_dataStream;
 	bool m_existingBlob;
 };

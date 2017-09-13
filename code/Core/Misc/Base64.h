@@ -8,8 +8,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_Base64_H
 
 #include <string>
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,9 +32,9 @@ class T_DLLCLASS Base64 : public Object
 public:
 	std::wstring encode(const uint8_t* data, uint32_t size, bool insertCrLf = false) const;
 
-	std::wstring encode(const std::vector< uint8_t >& data, bool insertCrLf = false) const;
+	std::wstring encode(const AlignedVector< uint8_t >& data, bool insertCrLf = false) const;
 
-	std::vector< uint8_t > decode(const std::wstring& b64) const;
+	AlignedVector< uint8_t > decode(const std::wstring& b64) const;
 };
 
 }

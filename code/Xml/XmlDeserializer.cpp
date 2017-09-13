@@ -333,7 +333,7 @@ void XmlDeserializer::operator >> (const Member< void* >& m)
 	if (!ensure(m_xpp.next() == XmlPullParser::EtText))
 		return;
 
-	std::vector< uint8_t > data = Base64().decode(m_xpp.getEvent().value);
+	AlignedVector< uint8_t > data = Base64().decode(m_xpp.getEvent().value);
 
 	if (!data.empty())
 	{

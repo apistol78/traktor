@@ -287,7 +287,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 			{
 				if (stream)
 				{
-					int64_t nrequest;
+					int64_t nrequest = 0;
 					net::recvBatch< int64_t >(clientSocket, nrequest);
 
 					while (nrequest > 0)
@@ -319,7 +319,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 			{
 				if (stream)
 				{
-					int64_t nbytes;
+					int64_t nbytes = 0;
 					net::recvBatch< int64_t >(clientSocket, nbytes);
 
 					while (nbytes > 0)

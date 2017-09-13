@@ -50,7 +50,7 @@ bool LocalSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& ou
 		return false;
 
 	std::wstring ab64 = rs->getString(0);
-	std::vector< uint8_t > ad = Base64().decode(ab64);
+	AlignedVector< uint8_t > ad = Base64().decode(ab64);
 
 	DynamicMemoryStream dms(ad, true, false);
 	outAttachment = BinarySerializer(&dms).readObject();

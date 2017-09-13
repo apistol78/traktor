@@ -7,9 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_DeepClone_H
 #define traktor_DeepClone_H
 
-#include <vector>
 #include "Core/Ref.h"
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,7 +48,7 @@ public:
 	}
 
 private:
-	std::vector< uint8_t > m_copy;
+	AlignedVector< uint8_t > m_copy;
 };
 
 }

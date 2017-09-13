@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_db_ActionWriteObject_H
 #define traktor_db_ActionWriteObject_H
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Path.h"
 #include "Database/Local/Action.h"
 
@@ -36,14 +37,14 @@ public:
 
 	virtual bool redundant(const Action* action) const T_OVERRIDE T_FINAL;
 
-	const std::vector< uint8_t >& getBuffer() const { return m_objectBuffer; }
+	const AlignedVector< uint8_t >& getBuffer() const { return m_objectBuffer; }
 
 	const Ref< IStream >& getStream() const { return m_objectStream; }
 
 private:
 	Path m_instancePath;
 	std::wstring m_primaryTypeName;
-	std::vector< uint8_t > m_objectBuffer;
+	AlignedVector< uint8_t > m_objectBuffer;
 	Ref< IStream > m_objectStream;
 	bool m_editObject;
 	bool m_editMeta;

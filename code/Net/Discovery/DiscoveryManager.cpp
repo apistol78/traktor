@@ -285,7 +285,7 @@ int32_t DiscoveryManager::sendMessage(UdpSocket* socket, const SocketAddressIPv4
 	if (!BinarySerializer(dms).writeObject(message))
 		return 1;
 
-	const std::vector< uint8_t >& buffer = dms->getBuffer();
+	const AlignedVector< uint8_t >& buffer = dms->getBuffer();
 	if (buffer.size() >= 1024)
         return 2;
 

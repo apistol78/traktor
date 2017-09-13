@@ -156,7 +156,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 		T_ASSERT ((status & (0x01 | 0x02)) == 0x01);
 		Ref< DynamicMemoryStream > dm = new DynamicMemoryStream(true, false, T_FILE_LINE);
 	
-		std::vector< uint8_t >& buffer = dm->getBuffer();
+		AlignedVector< uint8_t >& buffer = dm->getBuffer();
 		buffer.resize(avail);
 
 		uint8_t* ptr = &buffer[0];
@@ -295,9 +295,10 @@ int64_t RemoteStream::write(const void* block, int64_t nbytes)
 
 	const uint8_t* ptr = static_cast< const uint8_t* >(block);
 	int64_t nwritten = 0;
+
 	while (nwritten < nbytes)
 	{
-		int32_t write = int32_t(std::min< int64_t >(nbytes - nwritten, 1024 * 1024));
+		int32_t write = int32_t(std::min< int64_t >(nbytes - nwritten, 65536));
 		int32_t result = m_socket->send(&ptr[nwritten], write);
 		if (result != write)
 			break;
