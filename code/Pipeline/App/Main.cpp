@@ -1000,13 +1000,21 @@ int agent(const CommandLine& cmdLine)
 	std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
-		Library library;
-		if (!library.open(*i))
+		if (g_loadedModules.find(*i) == g_loadedModules.end())
 		{
-			traktor::log::warning << L"Unable to load module \"" << *i << L"\"" << Endl;
-			continue;
+			Library library;
+			if (!library.open(*i))
+			{
+				traktor::log::warning << L"Unable to load module \"" << *i << L"\"" << Endl;
+				continue;
+			}
+
+			if (cmdLine.hasOption('v', L"verbose"))
+				traktor::log::info << L"Library \"" << library.getPath().getPathName() << L"\" loaded." << Endl;
+
+			library.detach();
+			g_loadedModules.insert(*i);
 		}
-		library.detach();
 	}
 
 	net::Network::initialize();
