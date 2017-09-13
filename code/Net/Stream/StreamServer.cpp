@@ -213,7 +213,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 					}
 				}
 				else
-					net::sendBatch< uint8_t >(clientSocket, 0);
+					net::sendBatch< uint8_t, int64_t >(clientSocket, 0, 0);
 			}
 			break;
 
