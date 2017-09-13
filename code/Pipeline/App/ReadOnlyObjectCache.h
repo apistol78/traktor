@@ -4,8 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_editor_ReadOnlyObjectCache_H
-#define traktor_editor_ReadOnlyObjectCache_H
+#ifndef traktor_ReadOnlyObjectCache_H
+#define traktor_ReadOnlyObjectCache_H
 
 #include <map>
 #include "Core/Object.h"
@@ -24,9 +24,6 @@ class Database;
 
 	}
 
-	namespace editor
-	{
-
 class ReadOnlyObjectCache : public Object
 {
 	T_RTTI_CLASS;
@@ -42,7 +39,6 @@ private:
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 };
 
-	}
 }
 
-#endif	// traktor_editor_ReadOnlyObjectCache_H
+#endif	// traktor_ReadOnlyObjectCache_H

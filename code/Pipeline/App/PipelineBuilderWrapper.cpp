@@ -18,25 +18,23 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Net/SocketAddressIPv4.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/Stream/RemoteStream.h"
-#include "Pipeline/Agent/App/PipelineBuilderWrapper.h"
-#include "Pipeline/Agent/App/ReadOnlyObjectCache.h"
+#include "Pipeline/App/PipelineBuilderWrapper.h"
+#include "Pipeline/App/ReadOnlyObjectCache.h"
 
 namespace traktor
 {
-	namespace editor
+	namespace
 	{
-		namespace
-		{
 	
 const uint16_t c_databasePort = 38000;
 const uint16_t c_agentPort = 39000;
 		
-		}
+	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineBuilderWrapper", PipelineBuilderWrapper, IPipelineBuilder)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.PipelineBuilderWrapper", PipelineBuilderWrapper, editor::IPipelineBuilder)
 
 PipelineBuilderWrapper::PipelineBuilderWrapper(
-	PipelineFactory* pipelineFactory,
+	editor::PipelineFactory* pipelineFactory,
 	net::BidirectionalObjectTransport* transport,
 	const std::wstring& host,
 	uint16_t streamServerPort,
@@ -54,7 +52,7 @@ PipelineBuilderWrapper::PipelineBuilderWrapper(
 {
 }
 
-bool PipelineBuilderWrapper::build(const IPipelineDependencySet* dependencySet, bool rebuild)
+bool PipelineBuilderWrapper::build(const editor::IPipelineDependencySet* dependencySet, bool rebuild)
 {
 	T_FATAL_ERROR;
 	return false;
@@ -91,7 +89,7 @@ Ref< ISerializable > PipelineBuilderWrapper::buildOutput(const ISerializable* so
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 		return 0;
 
-	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
+	Ref< editor::IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT (pipeline);
 
 	Ref< ISerializable > product = pipeline->buildOutput(this, sourceAsset);
@@ -118,7 +116,7 @@ bool PipelineBuilderWrapper::buildOutput(const ISerializable* sourceAsset, const
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 		return 0;
 
-	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
+	Ref< editor::IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT (pipeline);
 
 	if (!pipeline->buildOutput(
@@ -131,7 +129,7 @@ bool PipelineBuilderWrapper::buildOutput(const ISerializable* sourceAsset, const
 		outputPath,
 		outputGuid,
 		buildParams,
-		PbrSynthesized
+		editor::PbrSynthesized
 	))
 		return false;
 
@@ -257,10 +255,9 @@ Ref< IStream > PipelineBuilderWrapper::openTemporaryFile(const std::wstring& fil
 	return 0;
 }
 
-Ref< IPipelineReport > PipelineBuilderWrapper::createReport(const std::wstring& name, const Guid& guid)
+Ref< editor::IPipelineReport > PipelineBuilderWrapper::createReport(const std::wstring& name, const Guid& guid)
 {
 	return 0;
 }
 
-	}
 }
