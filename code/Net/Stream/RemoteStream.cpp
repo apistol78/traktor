@@ -64,7 +64,7 @@ public:
 		return socket;
 	}
 
-	void disconnect(TcpSocket* socket)
+	void disconnect(TcpSocket* socket, bool failure)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		for (std::list< SocketEntry >::iterator i = m_entries.begin(); i != m_entries.end(); ++i)
@@ -72,7 +72,15 @@ public:
 			if (i->socket == socket)
 			{
 				T_FATAL_ASSERT (i->inuse);
-				i->inuse = false;
+				if (!failure)
+				{
+					i->inuse = false;
+				}
+				else
+				{
+					i->socket->close();
+					m_entries.erase(i);
+				}
 				return;
 			}
 		}
@@ -132,14 +140,14 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 	if (net::recvBatch< uint8_t, int64_t >(socket, status, avail) <= 0)
 	{
 		log::error << L"RemoteStream; no status from server" << Endl;
-		ConnectionPool::getInstance().disconnect(socket);
+		ConnectionPool::getInstance().disconnect(socket, true);
 		return 0;
 	}
 
 	if (!status)
 	{
 		log::error << L"RemoteStream; invalid status from server" << Endl;
-		ConnectionPool::getInstance().disconnect(socket);
+		ConnectionPool::getInstance().disconnect(socket, true);
 		return 0;
 	}
 
@@ -159,7 +167,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 			if (result <= 0)
 			{
 				log::error << L"RemoteStream; unexpected disconnect from server" << Endl;
-				ConnectionPool::getInstance().disconnect(socket);
+				ConnectionPool::getInstance().disconnect(socket, true);
 				return 0;
 			}
 			nread += result;
@@ -167,7 +175,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 		}
 
 		net::sendBatch< uint8_t >(socket, 0x02);
-		ConnectionPool::getInstance().disconnect(socket);
+		ConnectionPool::getInstance().disconnect(socket, false);
 		socket = 0;
 
 		return dm;
@@ -185,7 +193,7 @@ RemoteStream::~RemoteStream()
 	if (m_socket)
 	{
 		net::sendBatch< uint8_t >(m_socket, 0x02);
-		ConnectionPool::getInstance().disconnect(m_socket);
+		ConnectionPool::getInstance().disconnect(m_socket, false);
 		m_socket = 0;
 	}
 }
@@ -240,13 +248,15 @@ int64_t RemoteStream::read(void* block, int64_t nbytes)
 {
 	int32_t ntotal = 0;
 
-	net::sendBatch< uint8_t, int64_t >(m_socket, 0x07, nbytes);
+	if (net::sendBatch< uint8_t, int64_t >(m_socket, 0x07, nbytes) < 0)
+		return -1;
 
 	uint8_t* rp = (uint8_t*)block;
 	while (nbytes > 0)
 	{
 		int64_t navail = 0;
-		net::recvBatch< int64_t >(m_socket, navail);
+		if (net::recvBatch< int64_t >(m_socket, navail) < 0)
+			break;
 
 		if (navail == 0 || navail > nbytes)
 			break;
@@ -280,7 +290,8 @@ int64_t RemoteStream::read(void* block, int64_t nbytes)
 
 int64_t RemoteStream::write(const void* block, int64_t nbytes)
 {
-	net::sendBatch< uint8_t, int64_t >(m_socket, 0x08, nbytes);
+	if (net::sendBatch< uint8_t, int64_t >(m_socket, 0x08, nbytes) < 0)
+		return -1;
 
 	const uint8_t* ptr = static_cast< const uint8_t* >(block);
 	int64_t nwritten = 0;
