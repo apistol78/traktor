@@ -20,6 +20,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/IProcess.h"
@@ -40,6 +41,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Database/Local/LocalDatabase.h"
 #include "Editor/Assets.h"
 #include "Editor/IPipeline.h"
+#include "Editor/Pipeline/AgentBuild.h"
+#include "Editor/Pipeline/AgentConnect.h"
+#include "Editor/Pipeline/AgentStatus.h"
 #include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
@@ -49,11 +53,19 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "Editor/Pipeline/PipelineInstanceCache.h"
+#include "Editor/Pipeline/PipelineSettings.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
+#include "Net/Discovery/DiscoveryManager.h"
+#include "Net/Discovery/NetworkService.h"
+#include "Pipeline/App/PipelineBuilderWrapper.h"
+#include "Pipeline/App/PipelineLog.h"
+#include "Pipeline/App/PipelineParameters.h"
+#include "Pipeline/App/PipelineResult.h"
+#include "Pipeline/App/ReadOnlyObjectCache.h"
 #include "Xml/XmlDeserializer.h"
 
 #if defined(_WIN32)
@@ -196,6 +208,35 @@ private:
 	Ref< ILogTarget > m_target2;
 };
 
+class LogRedirect : public ILogTarget
+{
+public:
+	LogRedirect(
+		ILogTarget* originalTarget,
+		net::BidirectionalObjectTransport* transport
+	)
+	:	m_originalTarget(originalTarget)
+	,	m_transport(transport)
+	{
+	}
+
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
+	{
+		if (m_originalTarget)
+			m_originalTarget->log(threadId, level, str);
+
+		if (m_transport->connected())
+		{
+			const PipelineLog tlog(threadId, level, str);
+			m_transport->send(&tlog);
+		}
+	}
+
+private:
+	Ref< ILogTarget > m_originalTarget;
+	Ref< net::BidirectionalObjectTransport > m_transport;
+};
+
 struct StatusListener : public editor::IPipelineBuilder::IListener
 {
 	virtual void beginBuild(
@@ -230,6 +271,8 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
 	{
 		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		if (!settings)
+			log::warning << userConfig << L" corrupt!" << Endl;
 		file->close();
 	}
 
@@ -239,6 +282,8 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
 	{
 		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		if (!settings)
+			log::warning << userConfig << L" corrupt!" << Endl;
 		file->close();
 	}
 
@@ -341,203 +386,6 @@ void updateDatabases()
 		}
 	}
 }
-
-
-class PipelineParameters : public ISerializable
-{
-	T_RTTI_CLASS;
-
-public:
-	PipelineParameters();
-
-	PipelineParameters(
-		const std::wstring& workingDirectory,
-		const std::wstring& settings,
-		bool verbose,
-		bool progress,
-		bool rebuild,
-		bool noCache,
-		const std::vector< Guid >& roots
-	);
-
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
-
-	const std::wstring& getWorkingDirectory() const { return m_workingDirectory; }
-
-	const std::wstring& getSettings() const { return m_settings; }
-
-	bool getVerbose() const { return m_verbose; }
-
-	bool getProgress() const { return m_progress; }
-
-	bool getRebuild() const { return m_rebuild; }
-
-	bool getNoCache() const { return m_noCache; }
-
-	const std::vector< Guid >& getRoots() const { return m_roots; }
-
-private:
-	std::wstring m_workingDirectory;
-	std::wstring m_settings;
-	bool m_verbose;
-	bool m_progress;
-	bool m_rebuild;
-	bool m_noCache;
-	std::vector< Guid > m_roots;
-};
-
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"PipelineParameters", 0, PipelineParameters, ISerializable)
-
-PipelineParameters::PipelineParameters()
-:	m_verbose(false)
-,	m_progress(false)
-,	m_rebuild(false)
-,	m_noCache(false)
-{
-}
-
-PipelineParameters::PipelineParameters(
-	const std::wstring& workingDirectory,
-	const std::wstring& settings,
-	bool verbose,
-	bool progress,
-	bool rebuild,
-	bool noCache,
-	const std::vector< Guid >& roots
-)
-:	m_workingDirectory(workingDirectory)
-,	m_settings(settings)
-,	m_verbose(verbose)
-,	m_progress(progress)
-,	m_rebuild(rebuild)
-,	m_noCache(noCache)
-,	m_roots(roots)
-{
-}
-
-void PipelineParameters::serialize(ISerializer& s)
-{
-	s >> Member< std::wstring >(L"workingDirectory", m_workingDirectory);
-	s >> Member< std::wstring >(L"settings", m_settings);
-	s >> Member< bool >(L"verbose", m_verbose);
-	s >> Member< bool >(L"progress", m_progress);
-	s >> Member< bool >(L"rebuild", m_rebuild);
-	s >> Member< bool >(L"noCache", m_noCache);
-	s >> MemberStlVector< Guid >(L"roots", m_roots);
-}
-
-
-class PipelineResult : public ISerializable
-{
-	T_RTTI_CLASS;
-
-public:
-	PipelineResult();
-
-	PipelineResult(int32_t result);
-
-	int32_t getResult() const { return m_result; }
-
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
-
-private:
-	int32_t m_result;
-};
-
-
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"PipelineResult", 0, PipelineResult, ISerializable)
-
-PipelineResult::PipelineResult()
-:	m_result(0)
-{
-}
-
-PipelineResult::PipelineResult(int32_t result)
-:	m_result(result)
-{
-}
-
-void PipelineResult::serialize(ISerializer& s)
-{
-	s >> Member< int32_t >(L"result", m_result);
-}
-
-
-class PipelineLog : public ISerializable
-{
-	T_RTTI_CLASS;
-
-public:
-	PipelineLog();
-
-	PipelineLog(uint32_t threadId, int32_t level, const std::wstring& text);
-
-	uint32_t getThreadId() const { return m_threadId; }
-
-	int32_t getLevel() const { return m_level; }
-
-	const std::wstring& getText() const { return m_text; }
-
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
-
-private:
-	uint32_t m_threadId;
-	int32_t m_level;
-	std::wstring m_text;
-};
-
-
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"PipelineLog", 0, PipelineLog, ISerializable)
-
-PipelineLog::PipelineLog()
-:	m_threadId(0)
-,	m_level(0)
-{
-}
-
-PipelineLog::PipelineLog(uint32_t threadId, int32_t level, const std::wstring& text)
-:	m_threadId(threadId)
-,	m_level(level)
-,	m_text(text)
-{
-}
-
-void PipelineLog::serialize(ISerializer& s)
-{
-	s >> Member< uint32_t >(L"threadId", m_threadId);
-	s >> Member< int32_t >(L"level", m_level);
-	s >> Member< std::wstring >(L"text", m_text);
-}
-
-
-class LogRedirect : public ILogTarget
-{
-public:
-	LogRedirect(
-		ILogTarget* originalTarget,
-		net::BidirectionalObjectTransport* transport
-	)
-	:	m_originalTarget(originalTarget)
-	,	m_transport(transport)
-	{
-	}
-
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
-	{
-		if (m_originalTarget)
-			m_originalTarget->log(threadId, level, str);
-
-		if (m_transport->connected())
-		{
-			const PipelineLog tlog(threadId, level, str);
-			m_transport->send(&tlog);
-		}
-	}
-
-private:
-	Ref< ILogTarget > m_originalTarget;
-	Ref< net::BidirectionalObjectTransport > m_transport;
-};
 
 bool perform(const PipelineParameters* params)
 {
@@ -1047,6 +895,288 @@ int standalone(const CommandLine& cmdLine)
 	return success ? 0 : 1;
 }
 
+void threadProcessAgentClient(
+	Ref< editor::AgentConnect > agentConnect,
+	Ref< net::BidirectionalObjectTransport > transport,
+	Ref< db::Database > sourceDatabase,
+	Ref< db::Database > outputDatabase,
+	Ref< ReadOnlyObjectCache > objectCache
+)
+{
+	// Create pipeline environment.
+	Ref< editor::PipelineSettings > pipelineSettings = new editor::PipelineSettings(agentConnect->getSettings());
+	Ref< editor::PipelineFactory > pipelineFactory = new editor::PipelineFactory(agentConnect->getSettings());
+	Ref< PipelineBuilderWrapper > pipelineBuilder = new PipelineBuilderWrapper(
+		pipelineFactory,
+		transport,
+		agentConnect->getHost(),
+		agentConnect->getStreamServerPort(),
+		sourceDatabase,
+		outputDatabase,
+		objectCache
+	);
+
+	log::info << L"Ready; waiting for build items..." << Endl;
+
+	// Agent connected and ready; wait for build items.
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	while (!currentThread->stopped() && transport->connected())
+	{
+		Ref< editor::AgentBuild > agentBuild;
+		if (transport->recv< editor::AgentBuild >(100, agentBuild) != 1)
+			continue;
+
+		log::info << L"Received build item " << agentBuild->getOutputGuid().format() << Endl;
+
+		const TypeInfo* pipelineType = TypeInfo::find(agentBuild->getPipelineTypeName());
+		if (!pipelineType)
+		{
+			log::error << L"Agent build error; no such pipeline \"" << agentBuild->getPipelineTypeName() << L"\"" << Endl;
+			continue;
+		}
+	
+		Ref< editor::IPipeline > pipeline = pipelineFactory->findPipeline(*pipelineType);
+		if (!pipeline)
+		{
+			log::error << L"Agent build error; unable to get pipeline" << Endl;
+			continue;
+		}
+
+		log::info << L"Executing build using pipeline \"" << type_name(pipeline) << L"\"..." << Endl;
+
+		bool result = pipeline->buildOutput(
+			pipelineBuilder,
+			0,
+			0,
+			agentBuild->getSourceInstanceGuid().isNotNull() ? sourceDatabase->getInstance(agentBuild->getSourceInstanceGuid()) : 0,
+			agentBuild->getSourceAsset(),
+			agentBuild->getSourceAssetHash(),
+			agentBuild->getOutputPath(),
+			agentBuild->getOutputGuid(),
+			0,
+			agentBuild->getReason()
+		);
+
+		editor::AgentStatus agentStatus(
+			agentBuild->getOutputGuid(),
+			result
+		);
+		transport->send(&agentStatus);
+
+		if (result)
+			log::info << L"Build succeeded" << Endl;
+		else
+			log::info << L"Build failed" << Endl;
+	}
+
+	transport->close();
+	transport = 0;
+}
+
+int agent(const CommandLine& cmdLine)
+{
+	std::wstring settingsFile = L"Traktor.Editor";
+	if (cmdLine.hasOption('s', L"settings"))
+		settingsFile = cmdLine.getOption('s', L"settings").getString();
+
+	Ref< PropertyGroup > settings = loadSettings(settingsFile);
+	if (!settings)
+	{
+		traktor::log::error << L"Unable to load settings \"" << settingsFile << L"\"" << Endl;
+		return 1;
+	}
+
+	int32_t agentCount = OS::getInstance().getCPUCoreCount();
+	if (cmdLine.hasOption('n', L"agents"))
+	{
+		agentCount = cmdLine.getOption('n', L"agents").getInteger();
+		if (agentCount <= 0)
+		{
+			traktor::log::error << L"Invalid number of agents; must be atleast one" << Endl;
+			return 1;
+		}
+	}
+
+	std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
+	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	{
+		Library library;
+		if (!library.open(*i))
+		{
+			traktor::log::warning << L"Unable to load module \"" << *i << L"\"" << Endl;
+			continue;
+		}
+		library.detach();
+	}
+
+	net::Network::initialize();
+
+	Ref< net::TcpSocket > serverSocket = new net::TcpSocket();
+	if (!serverSocket->bind(net::SocketAddressIPv4()))
+	{
+		traktor::log::error << L"Unable to bind server socket to port" << Endl;
+		return 1;
+	}
+
+	if (!serverSocket->listen())
+	{
+		traktor::log::error << L"Unable to listen on server socket" << Endl;
+		return 2;
+	}
+
+	uint16_t listenPort = dynamic_type_cast< net::SocketAddressIPv4* >(serverSocket->getLocalAddress())->getPort();
+
+	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
+	if (!discoveryManager->create(net::MdPublishServices))
+	{
+		traktor::log::error << L"Unable to create discovery manager" << Endl;
+		return 3;
+	}
+
+	net::SocketAddressIPv4::Interface itf;
+	if (!net::SocketAddressIPv4::getBestInterface(itf))
+	{
+		traktor::log::error << L"Unable to get interfaces" << Endl;
+		return 4;
+	}
+
+	Ref< PropertyGroup > properties = new PropertyGroup();
+	properties->setProperty< PropertyString >(L"Description", OS::getInstance().getComputerName());
+	properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName());
+	properties->setProperty< PropertyInteger >(L"Port", listenPort);
+	properties->setProperty< PropertyInteger >(L"Agents", agentCount);
+
+	std::set< std::wstring > types;
+
+	/*
+	TypeInfoSet pipelineTypes;
+	type_of< editor::IPipeline >().findAllOf(pipelineTypes, false);
+	for (TypeInfoSet::const_iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
+		types.insert((*i)->getName());
+
+	properties->setProperty< PropertyStringSet >(L"PipelineTypes", types);
+	*/
+
+	discoveryManager->addService(new net::NetworkService(L"Pipeline/Agent2", properties));
+
+	traktor::log::info << L"Discoverable as \"Pipeline/Agent2\", host \"" << itf.addr->getHostName() << L"\" on port " << listenPort << Endl;
+	traktor::log::info << L"Waiting for client(s)..." << Endl;
+
+	std::map< std::wstring, Ref< db::Database > > databases;
+	std::map< std::wstring, Ref< ReadOnlyObjectCache > > objectCaches;
+	std::list< Thread* > clientThreads;
+	for (;;)
+	{
+		if (serverSocket->select(true, false, false, 1000) <= 0)
+		{
+			for (std::list< Thread* >::iterator i = clientThreads.begin(); i != clientThreads.end(); )
+			{
+				if ((*i)->wait(0))
+				{
+					traktor::log::info << L"Client thread destroyed" << Endl;
+					ThreadManager::getInstance().destroy(*i);
+					i = clientThreads.erase(i);
+				}
+				else
+					++i;
+			}
+			continue;
+		}
+
+		Ref< net::TcpSocket > clientSocket = serverSocket->accept();
+		if (!clientSocket)
+			continue;
+
+		Ref< net::BidirectionalObjectTransport > clientTransport = new net::BidirectionalObjectTransport(clientSocket);
+
+		Ref< editor::AgentConnect > agentConnect;
+		if (clientTransport->recv< editor::AgentConnect >(10000, agentConnect) != 1)
+		{
+			log::error << L"Agent build error; no AgentConnect message received" << Endl;
+			continue;
+		}
+
+		log::info << L"Agent connect message received" << Endl;
+		log::info << L"\tHost \"" << agentConnect->getHost() << L"\"" << Endl;
+		log::info << L"\tDatabase port " << agentConnect->getDatabasePort() << Endl;
+		log::info << L"\tStream server port " << agentConnect->getStreamServerPort() << Endl;
+
+		// Setup a remote database connection to source and output databases.
+		if (!databases[agentConnect->getSessionId().format() + L"|Source"])
+		{
+			db::ConnectionString cs;
+
+			cs.set(L"database", agentConnect->getSessionId().format() + L"|Source");
+			cs.set(L"host", agentConnect->getHost() + L":" + toString(agentConnect->getDatabasePort()));
+			cs.set(L"provider", L"traktor.db.RemoteDatabase");
+
+			log::info << L"Connecting to database \"" << cs.format() << L"\"..." << Endl;
+
+			Ref< db::Database > sourceDatabase = new db::Database();
+			if (!sourceDatabase->open(cs))
+			{
+				log::error << L"Agent build error; unable to open source database" << Endl;
+				continue;
+			}
+
+			databases[agentConnect->getSessionId().format() + L"|Source"] = sourceDatabase;
+			objectCaches[agentConnect->getSessionId().format() + L"|Source"] = new ReadOnlyObjectCache(sourceDatabase);
+		}
+
+		if (!databases[agentConnect->getSessionId().format() + L"|Output"])
+		{
+			db::ConnectionString cs;
+
+			cs.set(L"database", agentConnect->getSessionId().format() + L"|Output");
+			cs.set(L"host", agentConnect->getHost() + L":" + toString(agentConnect->getDatabasePort()));
+			cs.set(L"provider", L"traktor.db.RemoteDatabase");
+
+			log::info << L"Connecting to database \"" << cs.format() << L"\"..." << Endl;
+
+			Ref< db::Database > outputDatabase = new db::Database();
+			if (!outputDatabase->open(cs))
+			{
+				log::error << L"Agent build error; unable to open output database" << Endl;
+				continue;
+			}
+
+			databases[agentConnect->getSessionId().format() + L"|Output"] = outputDatabase;
+		}
+
+		traktor::log::info << L"Connection established; spawning thread..." << Endl;
+
+		Thread* clientThread = ThreadManager::getInstance().create(
+			makeStaticFunctor
+			<
+				Ref< editor::AgentConnect >,
+				Ref< net::BidirectionalObjectTransport >,
+				Ref< db::Database >,
+				Ref< db::Database >,
+				Ref< ReadOnlyObjectCache >
+			>
+			(
+				&threadProcessAgentClient,
+				agentConnect,
+				clientTransport,
+				databases[agentConnect->getSessionId().format() + L"|Source"],
+				databases[agentConnect->getSessionId().format() + L"|Output"],
+				objectCaches[agentConnect->getSessionId().format() + L"|Source"]
+			),
+			L"Client thread"
+		);
+		if (!clientThread)
+		{
+			traktor::log::error << L"Unable to create client thread" << Endl;
+			continue;
+		}
+
+		clientThread->start();
+		clientThreads.push_back(clientThread);
+	}
+
+	return 0;
+}
+
 int main(int argc, const char** argv)
 {
 	int32_t result = 1;
@@ -1070,6 +1200,8 @@ int main(int argc, const char** argv)
 			result = slave(cmdLine);
 		else if (cmdLine.hasOption(L"standalone"))
 			result = standalone(cmdLine);
+		else if (cmdLine.hasOption(L"agent"))
+			result = agent(cmdLine);
 		else
 			result = master(cmdLine);
 #else

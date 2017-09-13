@@ -5,14 +5,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Database/Database.h"
-#include "Pipeline/Agent/App/ReadOnlyObjectCache.h"
+#include "Pipeline/App/ReadOnlyObjectCache.h"
 
 namespace traktor
 {
-	namespace editor
-	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.ReadOnlyObjectCache", ReadOnlyObjectCache, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ReadOnlyObjectCache", ReadOnlyObjectCache, Object)
 
 ReadOnlyObjectCache::ReadOnlyObjectCache(db::Database* database)
 :	m_database(database)
@@ -44,5 +42,4 @@ Ref< const ISerializable > ReadOnlyObjectCache::get(const Guid& instanceGuid)
 	return object;
 }
 
-	}
 }
