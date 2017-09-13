@@ -265,9 +265,19 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	Ref< PropertyGroup > settings;
 	Ref< traktor::IStream > file;
 
+#if defined(_WIN32)
+    std::wstring system = L"win32";
+#elif defined(__APPLE__)
+    std::wstring system = L"osx";
+#else   // LINUX
+    std::wstring system = L"linux";
+#endif
+
 	std::wstring globalConfig = settingsFile + L".config";
+	std::wstring systemConfig = settingsFile + L"." + system + L".config";
 	std::wstring userConfig = settingsFile + L"." + OS::getInstance().getCurrentUser() + L".config";
 
+	// First try to read user configuration; contain both global and system.
 	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
 	{
 		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
@@ -275,17 +285,35 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 			log::warning << userConfig << L" corrupt!" << Endl;
 		file->close();
 	}
-
 	if (settings)
 		return settings;
 
+	// No user configuration; load global configuration.
+	Ref< PropertyGroup > globalSettings;
+	Ref< PropertyGroup > systemSettings;
+
 	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
 	{
-		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
-		if (!settings)
-			log::warning << userConfig << L" corrupt!" << Endl;
+		globalSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		if (!globalSettings)
+			log::warning << globalConfig << L" corrupt!" << Endl;
 		file->close();
 	}
+
+    // Read system properties.
+    if ((file = FileSystem::getInstance().open(systemConfig, File::FmRead)) != 0)
+    {
+        systemSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		if (!systemSettings)
+			log::warning << systemConfig << L" corrupt!" << Endl;
+        file->close();
+	}
+
+	// Merge in system configuration.
+	if (globalSettings && systemSettings)
+		settings = globalSettings->mergeReplace(systemSettings);
+	else
+		settings = globalSettings;
 
 	return settings;
 }
