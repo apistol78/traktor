@@ -620,8 +620,12 @@ public:
 	{
 		if (capacity > m_capacity)
 		{
-			ItemType* data = reinterpret_cast< ItemType* >(getAllocator()->alloc(capacity * sizeof(ItemType), Alignment, T_FILE_LINE));
-
+			size_t capacityAlignment = std::min< size_t >(
+				std::max< size_t >(m_capacity, MinCapacity),
+				MaxCapacityAlignment
+			);
+			size_t newCapacity = alignUp(capacity, capacityAlignment);
+			ItemType* data = reinterpret_cast< ItemType* >(getAllocator()->alloc(newCapacity * sizeof(ItemType), Alignment, T_FILE_LINE));
 			if (m_data)
 			{
 				for (size_t i = 0; i < m_size; ++i)
@@ -633,7 +637,7 @@ public:
 			}
 
 			m_data = data;
-			m_capacity = capacity;
+			m_capacity = newCapacity;
 		}
 	}
 
@@ -976,14 +980,7 @@ private:
 	{
 		size_t newSize = m_size + count;
 		if (newSize > m_capacity)
-		{
-			size_t capacityAlignment = std::min< size_t >(
-				std::max< size_t >(m_capacity, MinCapacity),
-				MaxCapacityAlignment
-			);
-			size_t newCapacity = alignUp(newSize, capacityAlignment);
-			reserve(newCapacity);
-		}
+			reserve(newSize);
 		m_size = newSize;
 		T_ASSERT (m_size <= m_capacity);
 	}
