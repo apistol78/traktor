@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/System/OS.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Database/Group.h"
@@ -107,7 +108,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 
 	Ref< ui::Container > containerFileName = new ui::Container();
-	if (!containerFileName->create(containerFile, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"*", 0, 0)))
+	if (!containerFileName->create(containerFile, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, 0)))
 		return false;
 
 	m_editFileName = new ui::Edit();
@@ -123,6 +124,11 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!previewModelButton->create(containerFileName, i18n::Text(L"MESHASSET_EDITOR_PREVIEW_MESH")))
 		return false;
 	previewModelButton->addEventHandler< ui::ButtonClickEvent >(this, &MeshAssetEditor::eventPreviewModelClick);
+
+	Ref< ui::custom::MiniButton > editModelButton = new ui::custom::MiniButton();
+	if (!editModelButton->create(containerFileName, i18n::Text(L"MESHASSET_EDITOR_EDIT_MESH")))
+		return false;
+	editModelButton->addEventHandler< ui::ButtonClickEvent >(this, &MeshAssetEditor::eventEditModelClick);
 
 	Ref< ui::Static > staticMeshType = new ui::Static();
 	if (!staticMeshType->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE")))
@@ -636,6 +642,13 @@ void MeshAssetEditor::eventPreviewModelClick(ui::ButtonClickEvent* event)
 {
 	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_editor->openTool(L"traktor.model.ModelTool", assetPath + L"/" + m_editFileName->getText());
+}
+
+void MeshAssetEditor::eventEditModelClick(ui::ButtonClickEvent* event)
+{
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	Path path = FileSystem::getInstance().getAbsolutePath(Path(assetPath + L"/" + m_editFileName->getText()));
+	OS::getInstance().openFile(path.getPathName());
 }
 
 void MeshAssetEditor::eventMaterialShaderToolClick(ui::custom::ToolBarButtonClickEvent* event)

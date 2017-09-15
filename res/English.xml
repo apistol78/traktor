@@ -1597,6 +1597,10 @@
       <second>Properties</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_EDIT_MESH</first>
+      <second>Edit...</second>
+    </item>
+    <item>
       <first>MESHASSET_EDITOR_PREVIEW_MESH</first>
       <second>Preview...</second>
     </item>

@@ -126,6 +126,8 @@ private:
 
 	void eventPreviewModelClick(ui::ButtonClickEvent* event);
 
+	void eventEditModelClick(ui::ButtonClickEvent* event);
+
 	void eventMaterialShaderToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
 	void eventMaterialShaderListDoubleClick(ui::MouseDoubleClickEvent* event);
