@@ -187,7 +187,7 @@ bool ImageFormatPng::write(IStream* stream, Image* image)
 	}
 
 	png_set_rows(png_ptr, info_ptr, (png_bytepp)rows);
-	info_ptr->valid |= PNG_INFO_IDAT;
+	//info_ptr->valid |= PNG_INFO_IDAT;
 
 	png_write_png(
 		png_ptr,

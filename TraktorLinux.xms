@@ -2555,8 +2555,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.lpng128</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/lpng128</sourcePath>
+			<name>Extern.lpng</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/lpng1632</sourcePath>
 			<configurations>
 				<item type="Configuration" version="4">
 					<name>DebugStatic</name>
@@ -2564,7 +2564,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
@@ -2581,7 +2581,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lpng128.a</sourceFile>
+							<sourceFile>libExtern.lpng.a</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2592,7 +2592,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
@@ -2609,7 +2609,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lpng128.a</sourceFile>
+							<sourceFile>libExtern.lpng.a</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2620,7 +2620,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
@@ -2644,7 +2644,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
@@ -7018,7 +7018,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
@@ -7050,7 +7050,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
@@ -7082,7 +7082,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
@@ -7114,7 +7114,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
