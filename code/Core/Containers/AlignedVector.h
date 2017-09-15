@@ -53,7 +53,7 @@ class AlignedVector
 {
 	enum
 	{
-		MaxCapacityAlignment = 1024,
+		MaxCapacityAlignment = 256 * 1024,
 		MinCapacity = 32,
 		Alignment = 16
 	};
