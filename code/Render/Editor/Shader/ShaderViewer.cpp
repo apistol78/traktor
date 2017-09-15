@@ -113,7 +113,7 @@ bool ShaderViewer::create(ui::Widget* parent)
 	int32_t compilerIndex = 0;
 	for (std::set< const TypeInfo* >::const_iterator i = programCompilerTypes.begin(); i != programCompilerTypes.end(); ++i)
 	{
-		Ref< IProgramCompiler > compiler = mandatory_non_null_type_cast< IProgramCompiler* >((*i)->createInstance());
+		Ref< IProgramCompiler > compiler = dynamic_type_cast< IProgramCompiler* >((*i)->createInstance());
 		if (!compiler)
 			continue;
 
