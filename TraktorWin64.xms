@@ -2549,8 +2549,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.lpng128</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/lpng128</sourcePath>
+			<name>Extern.lpng</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/lpng1632</sourcePath>
 			<configurations>
 				<item type="Configuration" version="4">
 					<name>DebugStatic</name>
@@ -2558,7 +2558,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
@@ -2576,7 +2576,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.lpng128.lib</sourceFile>
+							<sourceFile>Extern.lpng.lib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2587,7 +2587,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
@@ -2605,7 +2605,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.lpng128.lib</sourceFile>
+							<sourceFile>Extern.lpng.lib</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2616,11 +2616,10 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
-						<item>T_LPNG128_EXPORT</item>
 						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
@@ -2641,11 +2640,10 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
-						<item>T_LPNG128_EXPORT</item>
 						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
