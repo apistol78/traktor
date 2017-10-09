@@ -469,7 +469,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	httpServer->create(net::SocketAddressIPv4(0));
 	httpServer->setRequestListener(new HttpRequestListener(g_scratchPath));
 
-	Ref< Thread > httpServerThread = ThreadManager::getInstance().create(makeStaticFunctor< net::HttpServer* >(&threadHttpServer, httpServer), L"HTTP server");
+	Thread* httpServerThread = ThreadManager::getInstance().create(makeStaticFunctor< net::HttpServer* >(&threadHttpServer, httpServer), L"HTTP server");
 	httpServerThread->start();
 
 	// Create discovery manager and publish ourself.
