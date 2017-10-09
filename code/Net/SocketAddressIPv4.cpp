@@ -177,6 +177,17 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 		outInterfaces.push_back(itf);
 	}
 
+	sockaddr_in addr;
+	addr.sin_port = 0;
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	if (addr.sin_addr.s_addr)
+	{
+		Interface itf;
+		itf.type = ItLoopback;
+		itf.addr = new SocketAddressIPv4(addr);
+		outInterfaces.push_back(itf);
+	}
+
 #elif TARGET_OS_MAC
 
 	char hostName[200];
