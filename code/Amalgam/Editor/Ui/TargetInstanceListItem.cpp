@@ -264,7 +264,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 
 	ui::Rect performanceRect = rect;
 	performanceRect.top = rect.top + ui::scaleBySystemDPI(28);
-	performanceRect.bottom = performanceRect.top + ui::scaleBySystemDPI(c_performanceHeight);
+	performanceRect.bottom = performanceRect.top + ui::scaleBySystemDPI(c_performanceHeight + c_commandHeight);
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		canvas.setBackground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"item-connection-background-color"));
@@ -328,6 +328,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	performanceRect.top = rect.top + ui::scaleBySystemDPI(28);
 	performanceRect.bottom = performanceRect.top + ui::scaleBySystemDPI(c_performanceHeight);
 
+	canvas.setForeground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"color"));
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		const TargetPerformance& performance = connections[i]->getPerformance();
