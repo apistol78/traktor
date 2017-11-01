@@ -2751,7 +2751,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
 						<item>T_LPNG128_EXPORT</item>
@@ -2775,7 +2775,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
 						<item>T_LPNG128_EXPORT</item>
@@ -2799,7 +2799,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -2828,7 +2828,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -6245,7 +6245,7 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
 														<definitions>
@@ -6281,7 +6281,7 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
 														<definitions>
@@ -6317,7 +6317,7 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
 														<definitions>
@@ -6348,7 +6348,7 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
 														<definitions>
