@@ -31,7 +31,7 @@ bool ClipboardCocoa::setObject(ISerializable* object)
 	if (!BinarySerializer(&dms).writeObject(object))
 		return false;
 
-	const std::vector< uint8_t >& buffer = dms.getBuffer();
+	const AlignedVector< uint8_t >& buffer = dms.getBuffer();
 	if (buffer.empty())
 		return false;
 	

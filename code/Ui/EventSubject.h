@@ -97,7 +97,7 @@ public:
 	class LambdaEventHandler : public RefCountImpl< IEventHandler >
 	{
 	public:
-		LambdaEventHandler(const std::function< void( typename EventType* ) >& fn)
+		LambdaEventHandler(const std::function< void( EventType* ) >& fn)
 		:	m_fn(fn)
 		{
 		}
@@ -110,7 +110,7 @@ public:
 		}
 
 	private:
-		std::function< void( typename EventType* ) > m_fn;
+		std::function< void( EventType* ) > m_fn;
 	};
 #endif
 
