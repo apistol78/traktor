@@ -2751,7 +2751,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
 						<item>T_LPNG128_EXPORT</item>
@@ -2775,7 +2775,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
 						<item>T_LPNG128_EXPORT</item>
@@ -2799,7 +2799,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -2828,7 +2828,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3101,8 +3101,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.zlib-1.2.3</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</sourcePath>
+			<name>Extern.zlib-1.2.11</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</sourcePath>
 			<configurations>
 				<item type="Configuration" version="4">
 					<name>DebugShared</name>
@@ -3110,10 +3110,10 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
-						<item>T_ZLIB_1_2_3_EXPORT</item>
+						<item>T_ZLIB_1_2_11_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -3133,10 +3133,10 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
-						<item>T_ZLIB_1_2_3_EXPORT</item>
+						<item>T_ZLIB_1_2_11_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -3156,7 +3156,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3173,7 +3173,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.zlib-1.2.3.a</sourceFile>
+							<sourceFile>libExtern.zlib-1.2.11.a</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3184,7 +3184,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3201,7 +3201,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.zlib-1.2.3.a</sourceFile>
+							<sourceFile>libExtern.zlib-1.2.11.a</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -4339,7 +4339,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
+															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.11</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
@@ -4375,7 +4375,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
+															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.11</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
@@ -6245,7 +6245,7 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
 														<definitions>
@@ -6281,7 +6281,7 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
 														<definitions>
@@ -6317,7 +6317,7 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
 														<definitions>
@@ -6348,7 +6348,7 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+															<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 														</includePaths>
 														<definitions>
