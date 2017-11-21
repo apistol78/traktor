@@ -92,32 +92,32 @@ void EmitterData::serialize(ISerializer& s)
 	s >> MemberRefArray< ModifierData >(L"modifiers", m_modifiers);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion< EmitterData >() >= 3)
 		s >> resource::Member< mesh::InstanceMesh >(L"mesh", m_mesh);
 
-	if (s.getVersion() >= 6)
+	if (s.getVersion< EmitterData >() >= 6)
 		s >> MemberRef< EffectData >(L"effect", m_effect);
 
 	s >> Member< float >(L"middleAge", m_middleAge);
 	s >> Member< float >(L"cullNearDistance", m_cullNearDistance);
 
-	if (s.getVersion() >= 5)
+	if (s.getVersion< EmitterData >() >= 5)
 		s >> Member< float >(L"cullMeshDistance", m_cullMeshDistance);
 
 	s >> Member< float >(L"fadeNearRange", m_fadeNearRange);
 
-	if (s.getVersion() >= 7)
+	if (s.getVersion< EmitterData >() >= 7)
 		s >> Member< float >(L"viewOffset", m_viewOffset);
 
 	s >> Member< float >(L"warmUp", m_warmUp);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< EmitterData >() >= 1)
 		s >> Member< bool >(L"sort", m_sort);
 
-	if (s.getVersion() >= 2)
+	if (s.getVersion< EmitterData >() >= 2)
 		s >> Member< bool >(L"worldSpace", m_worldSpace);
 
-	if (s.getVersion() >= 4)
+	if (s.getVersion< EmitterData >() >= 4)
 		s >> Member< bool >(L"meshOrientationFromVelocity", m_meshOrientationFromVelocity);
 }
 

@@ -88,7 +88,7 @@ void InCombine::serialize(ISerializer& s)
 {
 	s >> MemberStlVector< Entry, MemberComposite< Entry > >(L"entries", m_entries);
 	
-	if (s.getVersion() >= 1)
+	if (s.getVersion< InCombine >() >= 1)
 	{
 		const MemberEnum< CombineOperator >::Key c_CombineOperator_Keys[] =
 		{

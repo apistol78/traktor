@@ -101,7 +101,7 @@ ProgramResourceSw::ProgramResourceSw(
 
 void ProgramResourceSw::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 1);
+	T_ASSERT (s.getVersion< ProgramResourceSw >() >= 1);
 
 	s >> MemberComposite< IntrProgram >(L"vertexProgram", m_vertexProgram);
 	s >> MemberComposite< IntrProgram >(L"pixelProgram", m_pixelProgram);

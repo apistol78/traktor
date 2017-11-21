@@ -77,7 +77,7 @@ void RigidEntityData::serialize(ISerializer& s)
 	s >> MemberRef< BodyDesc >(L"bodyDesc", m_bodyDesc);
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< RigidEntityData >() >= 1)
 		s >> MemberRef< world::IEntityEventData >(L"eventCollide", m_eventCollide);
 }
 

@@ -90,18 +90,18 @@ Ref< IGrain > EnvelopeGrainData::createInstance(IGrainFactory* grainFactory) con
 
 void EnvelopeGrainData::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 1)
+	if (s.getVersion< EnvelopeGrainData >() >= 1)
 		s >> Member< std::wstring >(L"id", m_id);
 
 	s >> MemberStlVector< GrainData, MemberComposite< GrainData > >(L"grains", m_grains);
 
-	if (s.getVersion() >= 2)
+	if (s.getVersion< EnvelopeGrainData >() >= 2)
 	{
 		s >> MemberStaticArray< float, sizeof_array(m_levels) >(L"levels", m_levels);
 		s >> Member< float >(L"mid", m_mid);
 	}
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion< EnvelopeGrainData >() >= 3)
 		s >> Member< float >(L"response", m_response);
 }
 

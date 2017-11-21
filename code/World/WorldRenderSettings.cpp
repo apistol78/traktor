@@ -69,13 +69,13 @@ WorldRenderSettings::WorldRenderSettings()
 
 void WorldRenderSettings::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 17);
+	T_ASSERT (s.getVersion< WorldRenderSettings >() >= 17);
 
 	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f));
 	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f));
 	s >> Member< bool >(L"linearLighting", linearLighting);
 
-	if (s.getVersion() >= 23)
+	if (s.getVersion< WorldRenderSettings >() >= 23)
 	{
 		s >> Member< bool >(L"occlusionCulling", occlusionCulling);
 		s >> Member< bool >(L"depthPass", depthPass);
@@ -86,14 +86,14 @@ void WorldRenderSettings::serialize(ISerializer& s)
 		s >> Member< bool >(L"depthPassEnabled", depthPass);
 	}
 
-	if (s.getVersion() >= 19)
+	if (s.getVersion< WorldRenderSettings >() >= 19)
 		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames);
 	else
 		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames18);
 
-	if (s.getVersion() >= 23)
+	if (s.getVersion< WorldRenderSettings >() >= 23)
 	{
-		if (s.getVersion() < 24)
+		if (s.getVersion< WorldRenderSettings >() < 24)
 		{
 			float motionBlurAmount = 0.0f;
 			bool motionBlur = false;
@@ -108,7 +108,7 @@ void WorldRenderSettings::serialize(ISerializer& s)
 		s >> Member< bool >(L"fogEnabled", fog);
 	}
 
-	if (s.getVersion() >= 21)
+	if (s.getVersion< WorldRenderSettings >() >= 21)
 	{
 		s >> Member< float >(L"fogDistanceY", fogDistanceY);
 		s >> Member< float >(L"fogDistanceZ", fogDistanceZ, AttributeRange(0.0f));
@@ -118,10 +118,10 @@ void WorldRenderSettings::serialize(ISerializer& s)
 
 	s >> Member< Color4ub >(L"fogColor", fogColor);
 
-	if (s.getVersion() >= 20)
+	if (s.getVersion< WorldRenderSettings >() >= 20)
 		s >> resource::Member< render::ITexture >(L"reflectionMap", reflectionMap);
 
-	if (s.getVersion() >= 22)
+	if (s.getVersion< WorldRenderSettings >() >= 22)
 		s >> MemberStaticArray< resource::Id< render::ImageProcessSettings >, sizeof_array(imageProcess), resource::Member< render::ImageProcessSettings > >(L"imageProcess", imageProcess, c_ImageProcess_elementNames);
 }
 
@@ -149,7 +149,7 @@ void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	if (s.getVersion() >= 18)
+	if (s.getVersion< WorldRenderSettings >() >= 18)
 		s >> MemberEnum< ShadowProjection >(L"projection", projection, c_ShadowProjection_Keys);
 
 	s >> Member< float >(L"farZ", farZ, AttributeRange(0.0f));

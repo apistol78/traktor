@@ -100,20 +100,20 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 
 void StageData::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 7)
+	if (s.getVersion< StageData >() >= 7)
 		s >> Member< std::wstring >(L"name", m_name);
 
-	if (s.getVersion() >= 6)
+	if (s.getVersion< StageData >() >= 6)
 		s >> Member< Guid >(L"inherit", m_inherit, AttributeType(type_of< StageData >()));
 
 	s >> MemberRefArray< LayerData >(L"layers", m_layers);
 
-	if (s.getVersion() >= 8)
+	if (s.getVersion< StageData >() >= 8)
 		s >> resource::Member< IRuntimeClass >(L"class", m_class);
 
 	s >> resource::Member< script::IScriptContext >(L"script", m_script);
 
-	if (s.getVersion() >= 4)
+	if (s.getVersion< StageData >() >= 4)
 		s >> resource::Member< render::Shader >(L"shaderFade", m_shaderFade);
 	else
 	{
@@ -121,21 +121,21 @@ void StageData::serialize(ISerializer& s)
 		m_shaderFade = c_shaderFade;
 	}
 
-	if (s.getVersion() >= 5)
+	if (s.getVersion< StageData >() >= 5)
 		s >> Member< float >(L"fadeRate", m_fadeRate, AttributeRange(0.1f));
 
 	s >> MemberStlMap< std::wstring, Guid >(L"transitions", m_transitions);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< StageData >() >= 1)
 		s >> Member< Guid >(L"resourceBundle", m_resourceBundle, AttributeType(type_of< resource::ResourceBundle >()));
 
-	if (s.getVersion() == 2)
+	if (s.getVersion< StageData >() == 2)
 	{
 		Guid dummy;
 		s >> Member< Guid >(L"localizationDictionary", dummy);
 	}
 
-	if (s.getVersion() >= 9)
+	if (s.getVersion< StageData >() >= 9)
 		s >> MemberRef< const PropertyGroup >(L"properties", m_properties);
 }
 

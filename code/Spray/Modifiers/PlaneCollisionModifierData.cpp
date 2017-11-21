@@ -73,7 +73,7 @@ void PlaneCollisionModifierData::serialize(ISerializer& s)
 {
 	s >> MemberPlane(L"plane", m_plane);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< PlaneCollisionModifierData >() >= 1)
 		s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
 
 	s >> Member< float >(L"restitution", m_restitution);

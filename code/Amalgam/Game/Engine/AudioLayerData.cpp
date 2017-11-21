@@ -49,9 +49,9 @@ void AudioLayerData::serialize(ISerializer& s)
 	LayerData::serialize(s);
 
 	s >> resource::Member< sound::Sound >(L"sound", m_sound);
-	if (s.getVersion() >= 1)
+	if (s.getVersion< AudioLayerData >() >= 1)
 		s >> Member< bool >(L"autoPlay", m_autoPlay);
-	if (s.getVersion() >= 2)
+	if (s.getVersion< AudioLayerData >() >= 2)
 		s >> Member< bool >(L"repeat", m_repeat);
 }
 

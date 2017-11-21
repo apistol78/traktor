@@ -46,11 +46,9 @@ public:
 		SdWrite
 	};
 
-	virtual int getVersion() const = 0;
+	virtual int32_t getVersion(const TypeInfo& typeInfo) const = 0;
 
 	virtual Direction getDirection() const = 0;
-
-	virtual ISerializable* getCurrentObject() = 0;
 
 	virtual void failure() = 0;
 
@@ -110,17 +108,17 @@ public:
 
 	virtual void operator >> (const MemberEnumBase& m) = 0;
 
-	template < typename T >
-	T* getCurrentObject()
-	{
-		return dynamic_type_cast< T* >(getCurrentObject());
-	}
-
 	bool ensure(bool condition)
 	{
 		if (!condition)
 			failure();
 		return condition;
+	}
+
+	template < typename T >
+	int32_t getVersion() const
+	{
+		return getVersion(type_of< T >());
 	}
 };
 

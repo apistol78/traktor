@@ -183,9 +183,9 @@ void ImageProcessStepBlur::serialize(ISerializer& s)
 	s >> resource::Member< Shader >(L"shader", m_shader);
 	s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
 	s >> Member< Vector4 >(L"direction", m_direction, AttributeDirection());
-	if (s.getVersion() >= 1)
+	if (s.getVersion< ImageProcessStepBlur >() >= 1)
 		s >> Member< int32_t >(L"taps", m_taps);
-	if (s.getVersion() >= 2)
+	if (s.getVersion< ImageProcessStepBlur >() >= 2)
 	{
 		const MemberEnum< BlurType >::Key c_BlurType_Keys[] =
 		{

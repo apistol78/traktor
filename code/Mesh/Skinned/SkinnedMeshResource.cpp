@@ -74,7 +74,7 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 
 void SkinnedMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 4, L"Incorrect version");
+	T_ASSERT_M(s.getVersion< SkinnedMeshResource >() >= 4, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
 		std::wstring,

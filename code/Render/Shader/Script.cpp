@@ -41,8 +41,9 @@ class MemberTypedInputPin : public MemberComplex
 public:
 	typedef TypedInputPin* value_type;
 
-	MemberTypedInputPin(const wchar_t* const name, value_type& pin)
+	MemberTypedInputPin(const wchar_t* const name, Node* node, value_type& pin)
 	:	MemberComplex(name, true)
+	,	m_node(node)
 	,	m_pin(pin)
 	{
 	}
@@ -83,7 +84,7 @@ public:
 			if (m_pin)
 			{
 				*m_pin = TypedInputPin(
-					s.getCurrentObject< Node >(),
+					m_node,
 					name,
 					false,
 					type,
@@ -93,7 +94,7 @@ public:
 			else
 			{
 				m_pin = new TypedInputPin(
-					s.getCurrentObject< Node >(),
+					m_node,
 					name,
 					false,
 					type,
@@ -104,6 +105,7 @@ public:
 	}
 
 private:
+	Node* m_node;
 	value_type& m_pin;
 };
 
@@ -112,8 +114,9 @@ class MemberTypedOutputPin : public MemberComplex
 public:
 	typedef TypedOutputPin* value_type;
 
-	MemberTypedOutputPin(const wchar_t* const name, value_type& pin)
+	MemberTypedOutputPin(const wchar_t* const name, Node* node, value_type& pin)
 	:	MemberComplex(name, true)
+	,	m_node(node)
 	,	m_pin(pin)
 	{
 	}
@@ -150,7 +153,7 @@ public:
 			if (m_pin)
 			{
 				*m_pin = TypedOutputPin(
-					s.getCurrentObject< Node >(),
+					m_node,
 					name,
 					type
 				);
@@ -158,7 +161,7 @@ public:
 			else
 			{
 				m_pin = new TypedOutputPin(
-					s.getCurrentObject< Node >(),
+					m_node,
 					name,
 					type
 				);
@@ -167,6 +170,7 @@ public:
 	}
 
 private:
+	Node* m_node;
 	value_type& m_pin;
 };
 
@@ -177,8 +181,9 @@ public:
 	typedef typename PinMember::value_type pin_type;
 	typedef std::vector< pin_type > value_type;
 
-	MemberPinArray(const wchar_t* const name, value_type& pins)
+	MemberPinArray(const wchar_t* const name, Node* node, value_type& pins)
 	:	MemberArray(name, &m_attribute)
+	,	m_node(node)
 	,	m_pins(pins)
 	,	m_index(0)
 	{
@@ -198,13 +203,13 @@ public:
 	{
 		if (m_index >= m_pins.size())
 			m_pins.push_back(0);
-		s >> PinMember(L"item", m_pins[m_index++]);
+		s >> PinMember(L"item", m_node, m_pins[m_index++]);
 	}
 
 	virtual void write(ISerializer& s) const
 	{
 		if (s.ensure(m_index < m_pins.size()))
-			s >> PinMember(L"item", m_pins[m_index++]);
+			s >> PinMember(L"item", m_node, m_pins[m_index++]);
 	}
 
 	virtual bool insert() const
@@ -214,6 +219,7 @@ public:
 
 private:
 	AttributeReadOnly m_attribute;
+	Node* m_node;
 	value_type& m_pins;
 	mutable size_t m_index;
 };
@@ -400,8 +406,8 @@ void Script::serialize(ISerializer& s)
 	Node::serialize(s);
 
 	s >> Member< std::wstring >(L"name", m_name);
-	s >> MemberPinArray< MemberTypedInputPin >(L"inputPins", m_inputPins);
-	s >> MemberPinArray< MemberTypedOutputPin >(L"outputPins", m_outputPins);
+	s >> MemberPinArray< MemberTypedInputPin >(L"inputPins", this, m_inputPins);
+	s >> MemberPinArray< MemberTypedOutputPin >(L"outputPins", this, m_outputPins);
 	s >> MemberStlMap<
 		std::wstring,
 		SamplerState,

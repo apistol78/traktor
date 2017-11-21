@@ -72,7 +72,7 @@ InputMappingAsset::Position InputMappingAsset::getPosition(const Object* object)
 
 void InputMappingAsset::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 1)
+	if (s.getVersion< InputMappingAsset >() >= 1)
 	{
 		s >> MemberRefSet< IInputNode >(L"inputNodes", m_inputNodes);
 		s >> MemberStlMap< Ref< const Object >, InputMappingAsset::Position, MemberStlPair< Ref< const Object >, InputMappingAsset::Position, MemberRef< const Object >, MemberPosition > >(L"positions", m_positions);

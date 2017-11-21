@@ -30,7 +30,7 @@ void SoundEventData::serialize(ISerializer& s)
 	s >> Member< bool >(L"positional", m_positional);
 	s >> Member< bool >(L"follow", m_follow);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< SoundEventData >() >= 1)
 		s >> Member< bool >(L"autoStopFar", m_autoStopFar);
 }
 

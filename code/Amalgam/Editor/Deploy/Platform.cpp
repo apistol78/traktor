@@ -44,12 +44,12 @@ void Platform::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"iconIndex", m_iconIndex);
 	s >> MemberComposite< DeployTool >(L"deployToolWin32", m_deployToolWin32);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< Platform >() >= 1)
 		s >> MemberComposite< DeployTool >(L"deployToolWin64", m_deployToolWin64);
 
 	s >> MemberComposite< DeployTool >(L"deployToolOsX", m_deployToolOsX);
 
-	if (s.getVersion() >= 2)
+	if (s.getVersion< Platform >() >= 2)
 		s >> MemberComposite< DeployTool >(L"deployToolLinux", m_deployToolLinux);
 }
 

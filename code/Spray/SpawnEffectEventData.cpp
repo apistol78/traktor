@@ -28,10 +28,10 @@ SpawnEffectEventData::SpawnEffectEventData()
 
 void SpawnEffectEventData::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT (s.getVersion() >= 2);
+	T_FATAL_ASSERT (s.getVersion< SpawnEffectEventData >() >= 2);
 	s >> resource::Member< Effect >(L"effect", m_effect);
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion< SpawnEffectEventData >() >= 3)
 		s >> MemberComposite< Transform >(L"transform", m_transform);
 
 	s >> Member< bool >(L"follow", m_follow);

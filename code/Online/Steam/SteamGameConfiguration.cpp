@@ -27,24 +27,24 @@ SteamGameConfiguration::SteamGameConfiguration()
 
 void SteamGameConfiguration::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 2)
+	if (s.getVersion< SteamGameConfiguration >() >= 2)
 		s >> Member< uint32_t >(L"appId", m_appId);
 
 	s >> Member< uint32_t >(L"requestAttempts", m_requestAttempts);
 
-	if (s.getVersion() >= 2)
+	if (s.getVersion< SteamGameConfiguration >() >= 2)
 		s >> Member< bool >(L"drmEnabled", m_drmEnabled);
 
 	s >> Member< bool >(L"cloudEnabled", m_cloudEnabled);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< SteamGameConfiguration >() >= 1)
 		s >> Member< bool >(L"allowP2PRelay", m_allowP2PRelay);
 
 	s >> MemberStlList< std::wstring >(L"achievementIds", m_achievementIds);
 	s >> MemberStlList< std::wstring >(L"leaderboardIds", m_leaderboardIds);
 	s >> MemberStlList< std::wstring >(L"statsIds", m_statsIds);
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion< SteamGameConfiguration >() >= 3)
 		s >> MemberStlMap< std::wstring, uint32_t >(L"dlcIds", m_dlcIds);
 }
 

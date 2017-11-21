@@ -71,7 +71,7 @@ Ref< ISceneControllerData > SceneAsset::getControllerData() const
 
 void SceneAsset::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 7);
+	T_ASSERT (s.getVersion< SceneAsset >() >= 7);
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
 	s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"imageProcessParams", m_imageProcessParams);
 	s >> MemberRefArray< world::LayerEntityData >(L"layers", m_layers);

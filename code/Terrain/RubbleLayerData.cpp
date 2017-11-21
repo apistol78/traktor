@@ -41,7 +41,7 @@ Ref< ITerrainLayer > RubbleLayerData::createLayerInstance(
 
 void RubbleLayerData::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 1);
+	T_ASSERT (s.getVersion< RubbleLayerData >() >= 1);
 
 	s >> Member< float >(L"spreadDistance", m_spreadDistance);
 	s >> MemberStlVector< RubbleMesh, MemberComposite< RubbleMesh > >(L"rubble", m_rubble);

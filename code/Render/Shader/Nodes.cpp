@@ -25,9 +25,10 @@ namespace traktor
 class MemberRenderState : public MemberComplex
 {
 public:
-	MemberRenderState(RenderState& ref)
+	MemberRenderState(RenderState& ref, int32_t version)
 	:	MemberComplex(L"", false)
 	,	m_ref(ref)
+	,	m_version(version)
 	{
 	}
 
@@ -104,7 +105,7 @@ public:
 		s >> MemberEnum< CullMode >(L"cullMode", m_ref.cullMode, kCullMode);
 		s >> Member< bool >(L"blendEnable", m_ref.blendEnable);
 
-		if (s.getVersion() >= 7)
+		if (m_version >= 7)
 		{
 			s >> MemberEnum< BlendOperation >(L"blendColorOperation", m_ref.blendColorOperation, kBlendOperations);
 			s >> MemberEnum< BlendFactor >(L"blendColorSource", m_ref.blendColorSource, kBlendFactors);
@@ -132,13 +133,13 @@ public:
 		s >> MemberEnum< CompareFunction >(L"alphaTestFunction", m_ref.alphaTestFunction, kCompareFunctions);
 		s >> Member< int32_t >(L"alphaTestReference", m_ref.alphaTestReference);
 
-		if (s.getVersion() >= 4)
+		if (m_version >= 4)
 			s >> Member< bool >(L"alphaToCoverageEnable", m_ref.alphaToCoverageEnable);
 
-		if (s.getVersion() >= 1)
+		if (m_version >= 1)
 			s >> Member< bool >(L"wireframe", m_ref.wireframe);
 
-		if (s.getVersion() >= 2)
+		if (m_version >= 2)
 		{
 			s >> Member< bool >(L"stencilEnable", m_ref.stencilEnable);
 			s >> MemberEnum< StencilOperation >(L"stencilFail", m_ref.stencilFail, kStencilOperations);
@@ -152,6 +153,7 @@ public:
 
 private:
 	RenderState& m_ref;
+	int32_t m_version;
 };
 
 class MemberSamplerState : public MemberComplex
@@ -454,7 +456,7 @@ void Conditional::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< Conditional >() >= 1)
 		s >> MemberEnum< Branch >(L"branch", m_branch, kBranch);
 
 	s >> MemberEnum< Operator >(L"operator", m_operator, kOperator);
@@ -748,7 +750,7 @@ void IndexedUniform::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
 	
-	if (s.getVersion() >= 1)
+	if (s.getVersion< IndexedUniform >() >= 1)
 		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
 	
 	s >> Member< int32_t >(L"length", m_length);
@@ -841,12 +843,12 @@ void InputPort::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"name", m_name);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< InputPort >() >= 1)
 	{
 		s >> Member< bool >(L"connectable", m_connectable);
 		s >> Member< bool >(L"optional", m_optional);
 
-		if (s.getVersion() >= 2)
+		if (s.getVersion< InputPort >() >= 2)
 			s >> Member< bool >(L"haveDefaultValue", m_haveDefaultValue);
 		else
 			m_haveDefaultValue = true;
@@ -1302,7 +1304,7 @@ void PixelOutput::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"technique", m_technique);
 
-	if (s.getVersion() >= 5)
+	if (s.getVersion< PixelOutput >() >= 5)
 	{
 		const MemberBitMask::Bit c_RenderPriorityBits[] =
 		{
@@ -1317,12 +1319,12 @@ void PixelOutput::serialize(ISerializer& s)
 		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);
 	}
 
-	s >> MemberRenderState(m_renderState);
+	s >> MemberRenderState(m_renderState, s.getVersion< PixelOutput >());
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion< PixelOutput >() >= 3)
 		s >> Member< uint32_t >(L"registerCount", m_registerCount);
 
-	if (s.getVersion() >= 6)
+	if (s.getVersion< PixelOutput >() >= 6)
 	{
 		const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] = 
 		{
@@ -1464,7 +1466,7 @@ void Sampler::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 
-	if (s.getVersion() >= 5)
+	if (s.getVersion< Sampler >() >= 5)
 		s >> MemberSamplerState(m_state);
 	else
 	{
@@ -1505,16 +1507,16 @@ void Sampler::serialize(ISerializer& s)
 		s >> MemberEnum< Address >(L"addressV", m_state.addressV, kAddress);
 		s >> MemberEnum< Address >(L"addressW", m_state.addressW, kAddress);
 
-		if (s.getVersion() >= 4)
+		if (s.getVersion< Sampler >() >= 4)
 			s >> MemberEnum< CompareFunction >(L"compare", m_state.compare, kCompare);
 
-		if (s.getVersion() >= 1)
+		if (s.getVersion< Sampler >() >= 1)
 			s >> Member< float >(L"mipBias", m_state.mipBias);
 
-		if (s.getVersion() >= 3)
+		if (s.getVersion< Sampler >() >= 3)
 			s >> Member< bool >(L"ignoreMips", m_state.ignoreMips);
 
-		if (s.getVersion() >= 2)
+		if (s.getVersion< Sampler >() >= 2)
 			s >> Member< bool >(L"useAnisotropic", m_state.useAnisotropic);
 	}
 }
@@ -1627,7 +1629,7 @@ void State::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 
-	if (s.getVersion() >= 5)
+	if (s.getVersion< State >() >= 5)
 	{
 		const MemberBitMask::Bit c_RenderPriorityBits[] =
 		{
@@ -1642,7 +1644,7 @@ void State::serialize(ISerializer& s)
 		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);
 	}
 
-	s >> MemberRenderState(m_renderState);
+	s >> MemberRenderState(m_renderState, s.getVersion< State >());
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1786,7 +1788,7 @@ void Switch::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< Switch >() >= 1)
 		s >> MemberEnum< Branch >(L"branch", m_branch, kBranch);
 
 	s >> MemberStlVector< int32_t >(L"cases", m_cases);
@@ -2051,7 +2053,7 @@ void Uniform::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
 	
-	if (s.getVersion() >= 1)
+	if (s.getVersion< Uniform >() >= 1)
 		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
 }
 
@@ -2252,7 +2254,7 @@ void VertexOutput::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< VertexOutput >() >= 1)
 		s >> Member< std::wstring >(L"technique", m_technique);
 }
 

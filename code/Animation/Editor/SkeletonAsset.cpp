@@ -30,14 +30,14 @@ void SkeletonAsset::serialize(ISerializer& s)
 {
 	editor::Asset::serialize(s);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< SkeletonAsset >() >= 1)
 	{
 		s >> Member< Vector4 >(L"offset", m_offset, AttributePoint());
 
-		if (s.getVersion() >= 3)
+		if (s.getVersion< SkeletonAsset >() >= 3)
 			s >> Member< float >(L"scale", m_scale, AttributeRange(0.0f));
 		
-		if (s.getVersion() >= 2)
+		if (s.getVersion< SkeletonAsset >() >= 2)
 			s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
 		else
 			s >> Member< float >(L"boneRadius", m_radius, AttributeRange(0.0f));

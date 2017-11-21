@@ -65,7 +65,7 @@ Ref< Sound > BankResource::createSound(resource::IResourceManager* resourceManag
 
 void BankResource::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT (s.getVersion() >= 6);
+	T_FATAL_ASSERT (s.getVersion< BankResource >() >= 6);
 	s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 	s >> Member< std::wstring >(L"category", m_category);
 	s >> Member< float >(L"gain", m_gain);

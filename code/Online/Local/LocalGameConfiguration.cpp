@@ -23,7 +23,7 @@ void LocalGameConfiguration::serialize(ISerializer& s)
 	s >> MemberStlList< std::wstring >(L"leaderboardIds", m_leaderboardIds);
 	s >> MemberStlList< std::wstring >(L"statsIds", m_statsIds);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< LocalGameConfiguration >() >= 1)
 		s >> MemberStlList< std::wstring >(L"dlcIds", m_dlcIds);
 }
 

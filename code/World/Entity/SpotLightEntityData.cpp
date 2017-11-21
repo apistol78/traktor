@@ -37,7 +37,7 @@ void SpotLightEntityData::serialize(ISerializer& s)
 	s >> Member< float >(L"range", m_range);
 	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f, PI));
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< SpotLightEntityData >() >= 1)
 		s >> Member< bool >(L"castShadow", m_castShadow);
 }
 

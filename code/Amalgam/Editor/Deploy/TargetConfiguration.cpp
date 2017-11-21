@@ -119,13 +119,13 @@ void TargetConfiguration::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< Guid >(L"platform", m_platform);
 
-	if (s.getVersion() >= 1 && s.getVersion() < 3)
+	if (s.getVersion< TargetConfiguration >() >= 1 && s.getVersion< TargetConfiguration >() < 3)
 	{
 		std::wstring systemRoot;
 		s >> Member< std::wstring >(L"systemRoot", systemRoot);
 	}
 
-	if (s.getVersion() < 2)
+	if (s.getVersion< TargetConfiguration >() < 2)
 	{
 		std::wstring executable;
 		s >> Member< std::wstring >(L"executable", executable);
