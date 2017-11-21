@@ -39,7 +39,7 @@ const Feature::Platform* Feature::getPlatform(const Guid& id) const
 
 void Feature::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 4);
+	T_ASSERT (s.getVersion< Feature >() >= 4);
 
 	s >> Member< std::wstring >(L"description", m_description);
 	s >> Member< int32_t >(L"priority", m_priority);
@@ -48,10 +48,10 @@ void Feature::serialize(ISerializer& s)
 	s >> MemberRef< PropertyGroup >(L"migrateProperties", m_migrateProperties);
 	s >> MemberRef< PropertyGroup >(L"runtimeProperties", m_runtimeProperties);
 
-	if (s.getVersion() >= 6)
+	if (s.getVersion< Feature >() >= 6)
 		s >> MemberStlMap< std::wstring, std::wstring >(L"environment", m_environment);
 
-	if (s.getVersion() >= 8)
+	if (s.getVersion< Feature >() >= 8)
 		s >> MemberStlList< Guid >(L"dependencies", m_dependencies);
 }
 
@@ -59,10 +59,10 @@ void Feature::Platform::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"platform", platform, AttributeType(type_of< traktor::amalgam::Platform >()));
 
-	if (s.getVersion() >= 5)
+	if (s.getVersion< Feature >() >= 5)
 		s >> Member< std::wstring >(L"executableFile", executableFile);
 
-	if (s.getVersion() >= 7)
+	if (s.getVersion< Feature >() >= 7)
 		s >> MemberRef< PropertyGroup >(L"deploy", deploy);
 	else
 	{

@@ -72,7 +72,7 @@ void StateNodeAnimation::serialize(ISerializer& s)
 	
 	s >> resource::MemberIdProxy< Animation >(L"animation", m_animation);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< StateNodeAnimation >() >= 1)
 		s >> Member< bool >(L"linearInterpolation", m_linearInterpolation);
 }
 

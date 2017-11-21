@@ -84,7 +84,7 @@ void ImageProcessDefineTarget::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"width", m_width);
 	s >> Member< uint32_t >(L"height", m_height);
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion< ImageProcessDefineTarget >() >= 3)
 	{
 		s >> Member< uint32_t >(L"screenWidthDenom", m_screenWidthDenom);
 		s >> Member< uint32_t >(L"screenHeightDenom", m_screenHeightDenom);
@@ -102,15 +102,15 @@ void ImageProcessDefineTarget::serialize(ISerializer& s)
 	s >> MemberEnum< TextureFormat >(L"format", m_format, kFormats);
 	s >> Member< bool >(L"depthStencil", m_depthStencil);
 	
-	if (s.getVersion() >= 1)
+	if (s.getVersion< ImageProcessDefineTarget >() >= 1)
 		s >> Member< bool >(L"preferTiled", m_preferTiled);
 	
 	s >> Member< int32_t >(L"multiSample", m_multiSample);
 
-	if (s.getVersion() >= 2)
+	if (s.getVersion< ImageProcessDefineTarget >() >= 2)
 		s >> Member< Color4f >(L"clearColor", m_clearColor);
 
-	if (s.getVersion() >= 4)
+	if (s.getVersion< ImageProcessDefineTarget >() >= 4)
 		s >> Member< bool >(L"persistent", m_persistent);
 }
 

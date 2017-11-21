@@ -217,7 +217,7 @@ void InGesturePinch::serialize(ISerializer& s)
 	s >> MemberRef< IInputNode >(L"sourceX2", m_sourceX2);
 	s >> MemberRef< IInputNode >(L"sourceY2", m_sourceY2);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< InGesturePinch >() >= 1)
 		s >> MemberEnum< PinchDirection >(L"direction", m_direction, c_PinchDirection_Keys);
 }
 	

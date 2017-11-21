@@ -4,8 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/Serializer.h"
 
 namespace traktor
 {
@@ -37,14 +37,9 @@ bool Serializer::writeObject(const ISerializable* o)
 	return !m_failure;
 }
 
-int Serializer::getVersion() const
+int32_t Serializer::getVersion(const TypeInfo& typeInfo) const
 {
-	return !m_constructing.empty() ? m_constructing.back().second : 0;
-}
-
-ISerializable* Serializer::getCurrentObject()
-{
-	return !m_constructing.empty() ? m_constructing.back().first : 0;
+	return !m_constructing.empty() ? m_constructing.back() : 0;
 }
 
 void Serializer::failure()
@@ -52,15 +47,12 @@ void Serializer::failure()
 	m_failure = true;
 }
 
-void Serializer::serialize(ISerializable* inner, int version)
+void Serializer::serialize(ISerializable* inner, int32_t version)
 {
 	if (!inner || m_failure)
 		return;
 
-	m_constructing.push_back(std::make_pair(
-		inner,
-		version
-	));
+	m_constructing.push_back(version);
 
 	inner->serialize(*this);
 

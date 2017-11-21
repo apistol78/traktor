@@ -99,16 +99,16 @@ void AnimatedMeshEntityData::serialize(ISerializer& s)
 	s >> resource::Member< Skeleton >(L"skeleton", m_skeleton);
 	s >> MemberRef< IPoseControllerData >(L"poseController", m_poseController);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< AnimatedMeshEntityData >() >= 1)
 	{
 		s >> Member< bool >(L"normalizePose", m_normalizePose);
 		s >> Member< bool >(L"normalizeTransform", m_normalizeTransform);
 	}
 
-	if (s.getVersion() >= 2)
+	if (s.getVersion< AnimatedMeshEntityData >() >= 2)
 		s >> Member< bool >(L"screenSpaceCulling", m_screenSpaceCulling);
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion< AnimatedMeshEntityData >() >= 3)
 		s >> MemberStlVector< Binding, MemberComposite< Binding > >(L"bindings", m_bindings);
 }
 

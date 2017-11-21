@@ -68,7 +68,7 @@ void ShapeDesc::serialize(ISerializer& s)
 {
 	s >> MemberComposite< Transform >(L"localTransform", m_localTransform);
 
-	if (s.getVersion() >= 5)
+	if (s.getVersion< ShapeDesc >() >= 5)
 	{
 		s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
 		s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"collisionMask", m_collisionMask);
@@ -106,7 +106,7 @@ void ShapeDesc::serialize(ISerializer& s)
 		}
 	}
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion< ShapeDesc >() >= 3)
 		s >> Member< int32_t >(L"material", m_material);
 }
 

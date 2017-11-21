@@ -73,19 +73,19 @@ void IlluminateEntityData::serialize(ISerializer& s)
 	
 	s >> Member< Guid >(L"seedGuid", m_seedGuid);
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion< IlluminateEntityData >() >= 3)
 		s >> Member< bool >(L"occlusion", m_occlusion);
 
 	s >> Member< bool >(L"directLighting", m_directLighting);
 	s >> Member< bool >(L"indirectLighting", m_indirectLighting);
 
-	if (s.getVersion() >= 2)
+	if (s.getVersion< IlluminateEntityData >() >= 2)
 		s >> Member< float >(L"lumelDensity", m_lumelDensity);
 
 	s >> Member< float >(L"pointLightRadius", m_pointLightRadius);
 	s >> Member< int32_t >(L"shadowSamples", m_shadowSamples, AttributeRange(0));
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< IlluminateEntityData >() >= 1)
 	{
 		s >> Member< int32_t >(L"probeSamples", m_probeSamples, AttributeRange(1));
 		s >> Member< float >(L"probeCoeff", m_probeCoeff, AttributeRange(0.0f));

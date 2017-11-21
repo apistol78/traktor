@@ -30,7 +30,7 @@ const std::vector< ShaderResource::Technique >& ShaderResource::getTechniques() 
 
 void ShaderResource::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 3);
+	T_ASSERT (s.getVersion< ShaderResource >() >= 3);
 	s >> MemberStlMap< std::wstring, uint32_t >(L"parameterBits", m_parameterBits);
 	s >> MemberStlVector< Technique, MemberComposite< Technique > >(L"techniques", m_techniques);
 }

@@ -29,13 +29,13 @@ void OcclusionTextureAsset::serialize(ISerializer& s)
 	s >> resource::Member< Heightfield >(L"heightfield", m_heightfield);
 	s >> resource::Member< ISerializable >(L"occluderData", m_occluderData);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< OcclusionTextureAsset >() >= 1)
 	{
 		s >> Member< uint32_t >(L"size", m_size, AttributeRange(16));
 		s >> Member< float >(L"traceDistance", m_traceDistance, AttributeRange(0.0f));
 	}
 
-	if (s.getVersion() >= 2)
+	if (s.getVersion< OcclusionTextureAsset >() >= 2)
 		s >> Member< int32_t >(L"blurRadius", m_blurRadius, AttributeRange(0));
 }
 

@@ -78,7 +78,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 
 void StaticMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 5, L"Incorrect version");
+	T_ASSERT_M(s.getVersion< StaticMeshResource >() >= 5, L"Incorrect version");
 	s >> Member< bool >(L"haveRenderMesh", m_haveRenderMesh);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<

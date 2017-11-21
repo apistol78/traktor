@@ -65,7 +65,7 @@ float TheaterControllerData::getActStartTime(int32_t act) const
 void TheaterControllerData::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< ActData >(L"acts", m_acts);
-	if (s.getVersion() >= 1)
+	if (s.getVersion< TheaterControllerData >() >= 1)
 	{
 		s >> Member< bool >(L"repeatActs", m_repeatActs);
 		s >> Member< bool >(L"randomizeActs", m_randomizeActs);

@@ -65,7 +65,7 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 void StatePoseControllerData::serialize(ISerializer& s)
 {
 	s >> resource::Member< StateGraph >(L"stateGraph", m_stateGraph);
-	if (s.getVersion() >= 1)
+	if (s.getVersion< StatePoseControllerData >() >= 1)
 		s >> MemberComposite< Range< float > >(L"randomTimeOffset", m_randomTimeOffset);
 }
 

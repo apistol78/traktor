@@ -36,7 +36,7 @@ Ref< IGrain > MuteGrainData::createInstance(IGrainFactory* grainFactory) const
 
 void MuteGrainData::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 1)
+	if (s.getVersion< MuteGrainData >() >= 1)
 		s >> MemberComposite< Range< float > >(L"duration", m_duration);
 	else
 	{

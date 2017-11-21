@@ -48,44 +48,44 @@ void MeshAsset::serialize(ISerializer& s)
 
 	s >> MemberEnum< MeshType >(L"meshType", m_meshType, c_MeshType_Keys);
 
-	if (s.getVersion() >= 6)
+	if (s.getVersion< MeshAsset >() >= 6)
 		s >> MemberStlMap< std::wstring, Guid >(L"materialTemplates", m_materialTemplates);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< MeshAsset >() >= 1)
 		s >> MemberStlMap< std::wstring, Guid >(L"materialShaders", m_materialShaders);
 
-	if (s.getVersion() >= 4)
+	if (s.getVersion< MeshAsset >() >= 4)
 		s >> MemberStlMap< std::wstring, Guid >(L"materialTextures", m_materialTextures);
 
-	if (s.getVersion() >= 11)
+	if (s.getVersion< MeshAsset >() >= 11)
 		s >> Member< float >(L"scaleFactor", m_scaleFactor);
 
-	if (s.getVersion() >= 2)
+	if (s.getVersion< MeshAsset >() >= 2)
 		s >> Member< bool >(L"bakeOcclusion", m_bakeOcclusion);
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion< MeshAsset >() >= 3)
 		s >> Member< bool >(L"cullDistantFaces", m_cullDistantFaces);
 
-	if (s.getVersion() >= 5 && s.getVersion() < 12)
+	if (s.getVersion< MeshAsset >() >= 5 && s.getVersion< MeshAsset >() < 12)
 	{
 		bool generateOccluder = false;
 		s >> Member< bool >(L"generateOccluder", generateOccluder);
 	}
 
-	if (s.getVersion() >= 10)
+	if (s.getVersion< MeshAsset >() >= 10)
 	{
 		s >> Member< int32_t >(L"lodSteps", m_lodSteps);
 		s >> Member< float >(L"lodMaxDistance", m_lodMaxDistance);
 		s >> Member< float >(L"lodCullDistance", m_lodCullDistance);
 	}
 
-	if (s.getVersion() >= 8 && s.getVersion() < 12)
+	if (s.getVersion< MeshAsset >() >= 8 && s.getVersion< MeshAsset >() < 12)
 	{
 		Path occluderModel;
 		s >> Member< Path >(L"occluderModel", occluderModel);
 	}
 
-	if (s.getVersion() >= 7 && s.getVersion() <= 8)
+	if (s.getVersion< MeshAsset >() >= 7 && s.getVersion< MeshAsset >() <= 8)
 	{
 		float autoDetailLevel = 0.0f;
 		s >> Member< float >(L"autoDetailLevel", autoDetailLevel, AttributeRange(0.0f, 1.0f));

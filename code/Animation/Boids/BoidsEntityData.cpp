@@ -61,7 +61,7 @@ void BoidsEntityData::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"spawnPositionDiagonal", m_spawnPositionDiagonal);
 	s >> Member< Vector4 >(L"spawnVelocityDiagonal", m_spawnVelocityDiagonal);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< BoidsEntityData >() >= 1)
 		s >> Member< Vector4 >(L"constrain", m_constrain);
 
 	s >> Member< float >(L"followForce", m_followForce);

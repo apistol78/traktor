@@ -18,7 +18,7 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.editor.Assets", 1, Assets, ISerializable)
 
 void Assets::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 1)
+	if (s.getVersion< Assets >() >= 1)
 		s >> MemberStlVector< Dependency, MemberComposite< Dependency > >(L"dependencies", m_dependencies);
 	else
 	{

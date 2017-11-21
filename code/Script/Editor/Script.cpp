@@ -71,13 +71,13 @@ std::wstring Script::escape(std::function< std::wstring (const Guid& g) > fn) co
 
 void Script::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 2)
+	if (s.getVersion< Script >() >= 2)
 		s >> Member< std::wstring >(L"text", m_text, AttributeMultiLine());
 	else
 	{
 		std::vector< Guid > dependencies;
 
-		if (s.getVersion() == 1)
+		if (s.getVersion< Script >() == 1)
 			s >> MemberStlVector< Guid >(L"dependencies", dependencies);
 	
 		s >> Member< std::wstring >(L"text", m_text, AttributeMultiLine());

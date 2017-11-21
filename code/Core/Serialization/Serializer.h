@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_Serializer_H
 #define traktor_Serializer_H
 
-#include <list>
 #include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializer.h"
 
 // import/export mechanism.
@@ -36,9 +36,7 @@ public:
 
 	bool writeObject(const ISerializable* o);
 
-	virtual int getVersion() const T_OVERRIDE;
-
-	virtual ISerializable* getCurrentObject() T_OVERRIDE;
+	virtual int32_t getVersion(const TypeInfo& typeInfo) const T_OVERRIDE;
 
 	virtual void failure() T_OVERRIDE;
 
@@ -50,12 +48,12 @@ public:
 	}
 
 protected:
-	void serialize(ISerializable* inner, int version);
+	void serialize(ISerializable* inner, int32_t version);
 
 	bool failed() const { return m_failure; }
 
 private:
-	std::list< std::pair< ISerializable*, int > > m_constructing;
+	AlignedVector< int32_t > m_constructing;
 	bool m_failure;
 };
 

@@ -49,7 +49,7 @@ const RefArray< ImageProcessStep >& ImageProcessSettings::getSteps() const
 
 void ImageProcessSettings::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 1)
+	if (s.getVersion< ImageProcessSettings >() >= 1)
 		s >> Member< bool >(L"requireHighRange", m_requireHighRange);
 
 	s >> MemberRefArray< ImageProcessDefine >(L"definitions", m_definitions);

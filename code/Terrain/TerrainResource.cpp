@@ -29,7 +29,7 @@ TerrainResource::TerrainResource()
 
 void TerrainResource::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 6);
+	T_ASSERT (s.getVersion< TerrainResource >() >= 6);
 	s >> Member< uint32_t >(L"detailSkip", m_detailSkip);
 	s >> Member< uint32_t >(L"patchDim", m_patchDim);
 	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);

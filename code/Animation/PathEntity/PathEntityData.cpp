@@ -52,7 +52,7 @@ void PathEntityData::serialize(ISerializer& s)
 	s >> MemberComposite< TransformPath >(L"path", m_path);
 	s >> MemberEnum< PathEntity::TimeMode >(L"timeMode", m_timeMode, c_TimeMode_Keys);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< PathEntityData >() >= 1)
 		s >> Member< float >(L"timeOffset", m_timeOffset);
 
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);

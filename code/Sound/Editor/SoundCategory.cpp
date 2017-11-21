@@ -32,10 +32,10 @@ void SoundCategory::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"parent", m_parent, AttributeType(type_of< SoundCategory >()));
 
-	if (s.getVersion() >= 4)
+	if (s.getVersion< SoundCategory >() >= 4)
 		s >> Member< std::wstring >(L"configurationId", m_configurationId);
 
-	if (s.getVersion() >= 5)
+	if (s.getVersion< SoundCategory >() >= 5)
 		s >> Member< float >(L"gain", m_gain, AttributeDecibel());
 	else
 	{
@@ -44,13 +44,13 @@ void SoundCategory::serialize(ISerializer& s)
 		m_gain = linearToDecibel(volumeLin);
 	}
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< SoundCategory >() >= 1)
 		s >> Member< float >(L"presence", m_presence, AttributeRange(0.0f));
 
-	if (s.getVersion() >= 2)
+	if (s.getVersion< SoundCategory >() >= 2)
 		s >> Member< float >(L"presenceRate", m_presenceRate, AttributeRange(0.0f));
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion< SoundCategory >() >= 3)
 		s >> Member< float >(L"range", m_range, AttributeRange(0.0f));
 }
 

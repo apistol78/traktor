@@ -100,7 +100,7 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 
 void RagDollPoseControllerData::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 1)
+	if (s.getVersion< RagDollPoseControllerData >() >= 1)
 	{
 		s >> Member< uint32_t >(L"collisionGroup", m_collisionGroup);
 		s >> Member< bool >(L"autoDeactivate", m_autoDeactivate);
@@ -110,18 +110,18 @@ void RagDollPoseControllerData::serialize(ISerializer& s)
 		s >> Member< float >(L"linearDamping", m_linearDamping);
 		s >> Member< float >(L"angularDamping", m_angularDamping);
 	}
-	if (s.getVersion() >= 4)
+	if (s.getVersion< RagDollPoseControllerData >() >= 4)
 	{
 		s >> Member< float >(L"linearThreshold", m_linearThreshold);
 		s >> Member< float >(L"angularThreshold", m_angularThreshold);
 	}
-	if (s.getVersion() >= 2)
+	if (s.getVersion< RagDollPoseControllerData >() >= 2)
 	{
 		s >> MemberRef< IPoseControllerData >(L"trackPoseController", m_trackPoseController);
 		s >> Member< float >(L"trackLinearTension", m_trackLinearTension);
 		s >> Member< float >(L"trackAngularTension", m_trackAngularTension);
 	}
-	if (s.getVersion() >= 3)
+	if (s.getVersion< RagDollPoseControllerData >() >= 3)
 	{
 		s >> Member< float >(L"trackDuration", m_trackDuration);
 	}

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_xml_XmlSerializer_H
 #define traktor_xml_XmlSerializer_H
 
+#include <list>
 #include <map>
 #include "Core/Ref.h"
 #include "Core/Io/FileOutputStream.h"

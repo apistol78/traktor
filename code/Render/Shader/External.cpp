@@ -30,8 +30,9 @@ class MemberInputPin : public MemberComplex
 public:
 	typedef InputPin* value_type;
 
-	MemberInputPin(const wchar_t* const name, value_type& pin)
+	MemberInputPin(const wchar_t* const name, Node* node, value_type& pin)
 	:	MemberComplex(name, true)
+	,	m_node(node)
 	,	m_pin(pin)
 	{
 	}
@@ -45,7 +46,7 @@ public:
 
 			s >> Member< std::wstring >(L"name", name);
 
-			if (s.getVersion() >= 1)
+			if (s.getVersion< External >() >= 1)
 				s >> Member< bool >(L"optional", optional);
 		}
 		else	// SdRead
@@ -55,13 +56,13 @@ public:
 
 			s >> Member< std::wstring >(L"name", name);
 
-			if (s.getVersion() >= 1)
+			if (s.getVersion< External >() >= 1)
 				s >> Member< bool >(L"optional", optional);
 
 			if (m_pin)
 			{
 				*m_pin = InputPin(
-					s.getCurrentObject< Node >(),
+					m_node,
 					name,
 					optional
 				);
@@ -69,7 +70,7 @@ public:
 			else
 			{
 				m_pin = new InputPin(
-					s.getCurrentObject< Node >(),
+					m_node,
 					name,
 					optional
 				);
@@ -78,6 +79,7 @@ public:
 	}
 
 private:
+	Node* m_node;
 	value_type& m_pin;
 };
 
@@ -86,8 +88,9 @@ class MemberOutputPin : public MemberComplex
 public:
 	typedef OutputPin* value_type;
 
-	MemberOutputPin(const wchar_t* const name, value_type& pin)
+	MemberOutputPin(const wchar_t* const name, Node* node, value_type& pin)
 	:	MemberComplex(name, true)
+	,	m_node(node)
 	,	m_pin(pin)
 	{
 	}
@@ -106,14 +109,14 @@ public:
 			if (m_pin)
 			{
 				*m_pin = OutputPin(
-					s.getCurrentObject< Node >(),
+					m_node,
 					name
 				);
 			}
 			else
 			{
 				m_pin = new OutputPin(
-					s.getCurrentObject< Node >(),
+					m_node,
 					name
 				);
 			}
@@ -121,6 +124,7 @@ public:
 	}
 
 private:
+	Node* m_node;
 	value_type& m_pin;
 };
 
@@ -131,8 +135,9 @@ public:
 	typedef typename PinMember::value_type pin_type;
 	typedef std::vector< pin_type > value_type;
 
-	MemberPinArray(const wchar_t* const name, value_type& pins)
+	MemberPinArray(const wchar_t* const name, Node* node, value_type& pins)
 	:	MemberArray(name, &m_attribute)
+	,	m_node(node)
 	,	m_pins(pins)
 	,	m_index(0)
 	{
@@ -152,13 +157,13 @@ public:
 	{
 		if (m_index >= m_pins.size())
 			m_pins.push_back(0);
-		s >> PinMember(L"item", m_pins[m_index++]);
+		s >> PinMember(L"item", m_node, m_pins[m_index++]);
 	}
 
 	virtual void write(ISerializer& s) const
 	{
 		if (s.ensure(m_index < m_pins.size()))
-			s >> PinMember(L"item", m_pins[m_index++]);
+			s >> PinMember(L"item", m_node, m_pins[m_index++]);
 	}
 
 	virtual bool insert() const
@@ -168,6 +173,7 @@ public:
 
 private:
 	AttributeReadOnly m_attribute;
+	Node* m_node;
 	value_type& m_pins;
 	mutable size_t m_index;
 };
@@ -334,10 +340,10 @@ void External::serialize(ISerializer& s)
 	Node::serialize(s);
 
 	s >> Member< Guid >(L"fragmentGuid", m_fragmentGuid, AttributeType(type_of< ShaderGraph >()));
-	s >> MemberPinArray< MemberInputPin >(L"inputPins", m_inputPins);
-	s >> MemberPinArray< MemberOutputPin >(L"outputPins", m_outputPins);
+	s >> MemberPinArray< MemberInputPin >(L"inputPins", this, m_inputPins);
+	s >> MemberPinArray< MemberOutputPin >(L"outputPins", this, m_outputPins);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< External >() >= 1)
 		s >> MemberStlMap< std::wstring, float >(L"values", m_values, AttributeReadOnly());
 }
 

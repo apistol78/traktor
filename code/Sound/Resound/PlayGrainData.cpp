@@ -50,7 +50,7 @@ void PlayGrainData::serialize(ISerializer& s)
 	s >> resource::Member< Sound >(L"sound", m_sound);
 	s >> MemberRefArray< IFilter >(L"filters", m_filters);
 	
-	if (s.getVersion() >= 2)
+	if (s.getVersion< PlayGrainData >() >= 2)
 		s >> MemberComposite< Range< float > >(L"gain", m_gain);
 	else
 	{
@@ -61,7 +61,7 @@ void PlayGrainData::serialize(ISerializer& s)
 
 	s >> MemberComposite< Range< float > >(L"pitch", m_pitch);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< PlayGrainData >() >= 1)
 		s >> Member< bool >(L"repeat", m_repeat);
 }
 

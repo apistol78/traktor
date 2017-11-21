@@ -17,7 +17,7 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.online.GcGameConfiguration", 2, GcGameConf
 
 void GcGameConfiguration::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 2);
+	T_ASSERT (s.getVersion< GcGameConfiguration >() >= 2);
 
 	s >> MemberStlList< std::wstring >(L"achievementIds", m_achievementIds);
 	s >> MemberStlList< std::wstring >(L"leaderboardIds", m_leaderboardIds);

@@ -127,7 +127,7 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 
 void StaticSoundResource::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT (s.getVersion() >=6);
+	T_FATAL_ASSERT (s.getVersion< StaticSoundResource >() >=6);
 	s >> Member< std::wstring >(L"category", m_category);
 	s >> Member< uint32_t >(L"sampleRate", m_sampleRate);
 	s >> Member< uint32_t >(L"samplesCount", m_samplesCount);
