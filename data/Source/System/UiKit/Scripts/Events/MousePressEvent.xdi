@@ -3,8 +3,8 @@
 	<text>
 	<![CDATA[
 -- MousePressEvent
-#using \\{D35E3668-DEFB-924A-B4DB-2E317DD67308}
-#using \\{816FB49B-11B4-7A40-8F72-5F76DC858D5F}
+#using \{D35E3668-DEFB-924A-B4DB-2E317DD67308}
+#using \{816FB49B-11B4-7A40-8F72-5F76DC858D5F}
 
 MousePressEvent = MousePressEvent or { mask = 0x00000040 | MouseDownEvent.mask | MouseUpEvent.mask }
 MousePressEvent_meta = MousePressEvent_meta or { name = "MousePressEvent", __index = MousePressEvent }
