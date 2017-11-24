@@ -55,8 +55,6 @@ function Tween.update(dT)
 		end
 	end
 end
-
-
 	]]>
 	</text>
 </object>

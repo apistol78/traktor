@@ -329,7 +329,6 @@ function ScrollContainer:_onFrame(event)
 	end
 	return false
 end
-
 	]]>
 	</text>
 </object>

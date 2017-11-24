@@ -12,7 +12,7 @@
 			<type>DtFloat1</type>
 			<index>1</index>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment>
 			<![CDATA[
 Normal in view space
@@ -25,6 +25,7 @@ Normal in view space
 			<name>Normal</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle">

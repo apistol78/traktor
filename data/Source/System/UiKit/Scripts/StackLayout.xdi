@@ -45,7 +45,6 @@ function StackLayout:update(container, width, height)
 		x = x + ps.width + self._pad
 	end
 end
-
 	]]>
 	</text>
 </object>

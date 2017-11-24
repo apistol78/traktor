@@ -15,7 +15,6 @@ function FocusEvent.new(received)
 
 	return o
 end
-
 	]]>
 	</text>
 </object>

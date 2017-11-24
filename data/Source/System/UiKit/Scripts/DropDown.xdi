@@ -206,7 +206,6 @@ function DropDown:_onListMouseDown(event)
 	end
 	return true
 end
-
 	]]>
 	</text>
 </object>

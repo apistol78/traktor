@@ -179,7 +179,6 @@ function Button:_onMouseLeave()
 	self._isRolledOver = false
 	return true
 end
-
 	]]>
 	</text>
 </object>

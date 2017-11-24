@@ -24,7 +24,7 @@
 			</position>
 			<value>0.2125, 0.7154, 0.0721, 0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment>
 			<![CDATA[
 	
@@ -37,6 +37,7 @@
 			<name>Input</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">

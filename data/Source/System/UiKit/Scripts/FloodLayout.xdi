@@ -34,7 +34,6 @@ function FloodLayout:update(container, width, height)
 		child:place(self._marginX, self._marginY, width - self._marginX * 2, height - self._marginY * 2)
 	end
 end
-
 	]]>
 	</text>
 </object>

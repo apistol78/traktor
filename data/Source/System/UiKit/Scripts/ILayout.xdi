@@ -17,7 +17,6 @@ end
 -- Update placement of all children.
 function ILayout:update(container, width, height)
 end
-
 	]]>
 	</text>
 </object>

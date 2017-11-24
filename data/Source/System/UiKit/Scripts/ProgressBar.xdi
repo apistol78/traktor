@@ -89,7 +89,6 @@ function ProgressBar:_initialize(parent, mc, reverse)
 
 	self:setValue(0.5)
 end
-
 	]]>
 	</text>
 </object>

@@ -2,7 +2,7 @@
 <object type="traktor.script.Script" version="2">
 	<text>
 	<![CDATA[
-#using \{7947759C-88DB-794E-8D09-7F30A40B6669}
+#using \\{7947759C-88DB-794E-8D09-7F30A40B6669}
 
 -- ToolBar
 
@@ -56,7 +56,6 @@ function ToolBar:_initialize(parent, mc)
 	local inner_mc = mc:getMember("innerContainer_mc")
 	self._getInnerClip = function() return inner_mc end
 end
-
 	]]>
 	</text>
 </object>

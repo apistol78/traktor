@@ -16,7 +16,6 @@ function MouseDownEvent.new(x, y)
 
 	return o
 end
-
 	]]>
 	</text>
 </object>

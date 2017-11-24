@@ -46,6 +46,12 @@
 				</second>
 			</item>
 			<item>
+				<first>TerrainPipeline.SuppressDetailShader</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
 				<first>TexturePipeline.CompressionMethod</first>
 				<second type="traktor.PropertyString">
 					<value>ETC1</value>
@@ -55,12 +61,6 @@
 				<first>TexturePipeline.SkipMips</first>
 				<second type="traktor.PropertyInteger">
 					<value>1</value>
-				</second>
-			</item>
-			<item>
-				<first>TerrainPipeline.SuppressDetailShader</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
 				</second>
 			</item>
 		</value>

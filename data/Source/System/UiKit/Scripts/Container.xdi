@@ -2,7 +2,7 @@
 <object type="traktor.script.Script" version="2">
 	<text>
 	<![CDATA[
-#using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
+#using \\{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
 
 -- Container
 
@@ -65,7 +65,6 @@ function Container:_initialize(parent, mc, layout)
 	Widget._initialize(self, parent, mc)
 	self._layout = layout
 end
-
 	]]>
 	</text>
 </object>

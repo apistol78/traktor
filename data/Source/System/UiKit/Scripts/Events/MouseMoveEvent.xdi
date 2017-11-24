@@ -16,7 +16,6 @@ function MouseMoveEvent.new(x, y)
 
 	return o
 end
-
 	]]>
 	</text>
 </object>

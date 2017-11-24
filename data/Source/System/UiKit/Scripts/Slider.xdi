@@ -2,7 +2,7 @@
 <object type="traktor.script.Script" version="2">
 	<text>
 	<![CDATA[
-#using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
+#using \\{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
 
 import(traktor.flash)
 
@@ -124,7 +124,6 @@ function Slider:_onMouseMove(event)
 
 	return true
 end
-
 	]]>
 	</text>
 </object>

@@ -152,7 +152,6 @@ function Static:_onMouseRelease(event)
 	if self._clickFn ~= nil then self._clickFn() end
 	return true
 end
-
 	]]>
 	</text>
 </object>

@@ -9,8 +9,6 @@ IEditValidator_meta = IEditValidator_meta or { name = "IEditValidator", __index 
 
 function IEditValidator:check(text)
 end
-
 	]]>
 	</text>
 </object>
-

@@ -200,8 +200,6 @@ ENTRY
 	else
 		Hit = vec4(0.0, 0.0, 0.0, 0.0);
 }
-
-
 			]]>
 			</script>
 		</item>
@@ -363,8 +361,6 @@ ENTRY
 		Hit = float4(color, edgeFactor * normFactor * distFactor);
 	}
 }
-
-
 			]]>
 			</script>
 		</item>
