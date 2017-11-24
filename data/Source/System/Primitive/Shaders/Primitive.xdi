@@ -31,7 +31,7 @@
 			</position>
 			<technique>Default</technique>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
 				<first>1457</first>
@@ -48,9 +48,12 @@
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -73,6 +76,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
@@ -139,7 +143,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.State" version="5">
+		<item type="traktor.render.State" version="7">
 			<comment/>
 			<position>
 				<first>-51</first>
@@ -155,9 +159,12 @@
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -180,7 +187,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 		</item>
-		<item type="traktor.render.State" version="5">
+		<item type="traktor.render.State" version="7">
 			<comment/>
 			<position>
 				<first>-52</first>
@@ -196,9 +203,12 @@
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -245,7 +255,7 @@
 			</position>
 			<parameterName>DepthTest</parameterName>
 		</item>
-		<item type="traktor.render.State" version="5">
+		<item type="traktor.render.State" version="7">
 			<comment/>
 			<position>
 				<first>-55</first>
@@ -261,9 +271,12 @@
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -286,7 +299,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 		</item>
-		<item type="traktor.render.State" version="5">
+		<item type="traktor.render.State" version="7">
 			<comment/>
 			<position>
 				<first>-52</first>
@@ -302,9 +315,12 @@
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -383,7 +399,7 @@
 			</position>
 			<parameterName>Depth</parameterName>
 		</item>
-		<item type="traktor.render.State" version="5">
+		<item type="traktor.render.State" version="7">
 			<comment/>
 			<position>
 				<first>625</first>
@@ -399,9 +415,12 @@
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>false</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>

@@ -36,7 +36,7 @@
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-491</first>
@@ -45,6 +45,7 @@
 			<name>ShadowMapUV</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Sub">
@@ -54,7 +55,7 @@
 				<second>443</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-651</first>
@@ -63,6 +64,7 @@
 			<name>ReferenceZ</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle">

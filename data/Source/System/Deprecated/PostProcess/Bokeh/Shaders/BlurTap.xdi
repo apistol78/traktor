@@ -16,7 +16,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-108</first>
@@ -25,6 +25,7 @@
 			<name>Taps</name>
 			<connectable>false</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>15</defaultValue>
 		</item>
 		<item type="traktor.render.Sub">
@@ -94,7 +95,7 @@
 				<second>611</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>234</first>
@@ -103,6 +104,7 @@
 			<name>Tap</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul">
@@ -141,7 +143,7 @@
 				<second>900</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>846</first>
@@ -150,6 +152,7 @@
 			<name>Total weight</name>
 			<connectable>false</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>9.6153</defaultValue>
 		</item>
 		<item type="traktor.render.Sub">

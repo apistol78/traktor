@@ -18,7 +18,7 @@
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-521</first>
@@ -27,9 +27,10 @@
 			<name>LightDirection</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-486</first>
@@ -38,6 +39,7 @@
 			<name>Normal</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
@@ -62,7 +64,7 @@
 				<second>507</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>820</first>
@@ -71,6 +73,7 @@
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar">
@@ -132,7 +135,7 @@ Spec. dot
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-511</first>
@@ -141,6 +144,7 @@ Spec. dot
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Pow">

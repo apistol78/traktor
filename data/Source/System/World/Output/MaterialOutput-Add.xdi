@@ -25,7 +25,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>92</first>
@@ -34,9 +34,10 @@
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>95</first>
@@ -45,6 +46,7 @@
 			<name>DiffuseTerm</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
 		<item type="traktor.render.Mul">
@@ -54,7 +56,7 @@
 				<second>567</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>87</first>
@@ -63,9 +65,10 @@
 			<name>SpecularTerm</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>95</first>
@@ -74,9 +77,10 @@
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>92</first>
@@ -85,9 +89,10 @@
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>56</first>
@@ -96,6 +101,7 @@
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.8</defaultValue>
 		</item>
 		<item type="traktor.render.External" version="1">

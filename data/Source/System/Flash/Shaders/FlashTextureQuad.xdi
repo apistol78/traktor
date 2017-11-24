@@ -27,7 +27,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="6">
+		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
 				<first>1282</first>
@@ -44,9 +44,12 @@
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>

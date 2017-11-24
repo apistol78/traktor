@@ -13,7 +13,6 @@ function FrameEvent.new()
 
 	return o
 end
-
 	]]>
 	</text>
 </object>

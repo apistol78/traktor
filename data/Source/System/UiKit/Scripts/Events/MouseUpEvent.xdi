@@ -16,7 +16,6 @@ function MouseUpEvent.new(x, y)
 
 	return o
 end
-
 	]]>
 	</text>
 </object>

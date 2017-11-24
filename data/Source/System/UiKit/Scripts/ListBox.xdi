@@ -93,7 +93,6 @@ function ListBox:_initialize(parent, mc)
 	self._panel = Panel.new(self, FloodLayout.new())
 	self._listContainer = ScrollContainer.new(self._panel, TableLayout.new({ 100 }, { 0 }, 4, 4, 0, 0), ScrollContainer.VERTICAL | ScrollContainer.SCROLLBARS)
 end
-
 	]]>
 	</text>
 </object>

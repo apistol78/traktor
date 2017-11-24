@@ -9,7 +9,7 @@
 			</position>
 			<name>Diffuse</name>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-1186</first>
@@ -18,9 +18,10 @@
 			<name>Roughness</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.5</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-1173</first>
@@ -29,9 +30,10 @@
 			<name>Normal</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-1208</first>
@@ -40,6 +42,7 @@
 			<name>LightDirection</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Dot">
@@ -49,7 +52,7 @@
 				<second>488</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-1200</first>
@@ -58,6 +61,7 @@
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>

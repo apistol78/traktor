@@ -2,7 +2,7 @@
 <object type="traktor.script.Script" version="2">
 	<text>
 	<![CDATA[
-#using \{9C4A9F23-52C0-2F45-989C-118732FF1DDD}
+#using \\{9C4A9F23-52C0-2F45-989C-118732FF1DDD}
 
 -- NumericEditValidator
 
@@ -19,8 +19,6 @@ end
 function NumericEditValidator:check(text)
 	return tonumber(text) ~= nil
 end
-
 	]]>
 	</text>
 </object>
-

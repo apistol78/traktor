@@ -44,7 +44,7 @@
 				<second>-40</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>387</first>
@@ -53,6 +53,7 @@
 			<name>Color1</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Color">
@@ -97,7 +98,7 @@
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>-574</first>
@@ -106,6 +107,7 @@
 			<name>WorldTexCoord</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul">
@@ -122,7 +124,7 @@
 				<second>116</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>387</first>
@@ -131,6 +133,7 @@
 			<name>Color2</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Add">
@@ -154,7 +157,7 @@
 				<second>272</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>387</first>
@@ -163,6 +166,7 @@
 			<name>Color3</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul">
@@ -179,7 +183,7 @@
 				<second>428</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>387</first>
@@ -188,6 +192,7 @@
 			<name>Color4</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul">
@@ -204,7 +209,7 @@
 				<second>1881</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>413</first>
@@ -213,6 +218,7 @@
 			<name>OcclusionMap</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -255,7 +261,7 @@
 				<second>2129</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>433</first>
@@ -264,6 +270,7 @@
 			<name>CavityMap</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Clamp">
@@ -351,7 +358,7 @@
 				<second>849</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>384</first>
@@ -360,6 +367,7 @@
 			<name>Normal1</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Vector">
@@ -384,7 +392,7 @@
 				<second>1005</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>384</first>
@@ -393,6 +401,7 @@
 			<name>Normal2</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Add">
@@ -416,7 +425,7 @@
 				<second>1161</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>384</first>
@@ -425,6 +434,7 @@
 			<name>Normal3</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul">
@@ -441,7 +451,7 @@
 				<second>1317</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>384</first>
@@ -450,6 +460,7 @@
 			<name>Normal4</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>

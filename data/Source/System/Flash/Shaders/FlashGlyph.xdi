@@ -184,7 +184,7 @@
 				<second>-2434</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="6">
+		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
 				<first>2760</first>
@@ -201,9 +201,12 @@
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -308,7 +311,7 @@
 				<second>-1673</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="6">
+		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
 				<first>2728</first>
@@ -325,9 +328,12 @@
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -415,7 +421,7 @@
 				<second>-2643</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="6">
+		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
 				<first>2340</first>
@@ -432,9 +438,12 @@
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>

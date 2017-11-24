@@ -873,7 +873,7 @@
 			</position>
 			<value>5</value>
 		</item>
-		<item type="traktor.render.State" version="5">
+		<item type="traktor.render.State" version="7">
 			<comment>
 			<![CDATA[
 Render in post alpha; using forward lighting and
@@ -894,9 +894,12 @@ read-back color buffer.
 			</priority>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfOne</blendSource>
-			<blendDestination>BfZero</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfOne</blendColorSource>
+			<blendColorDestination>BfZero</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -970,7 +973,7 @@ read-back color buffer.
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
 				<first>5648</first>
@@ -987,9 +990,12 @@ read-back color buffer.
 			</priority>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -1012,8 +1018,9 @@ read-back color buffer.
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
 				<first>5672</first>
@@ -1030,9 +1037,12 @@ read-back color buffer.
 			</priority>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -1055,8 +1065,9 @@ read-back color buffer.
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
 				<first>5680</first>
@@ -1073,9 +1084,12 @@ read-back color buffer.
 			</priority>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -1098,6 +1112,7 @@ read-back color buffer.
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Color">
 			<comment/>

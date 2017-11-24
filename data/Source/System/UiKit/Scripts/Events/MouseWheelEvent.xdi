@@ -17,7 +17,6 @@ function MouseWheelEvent.new(x, y, delta)
 
 	return o
 end
-
 	]]>
 	</text>
 </object>

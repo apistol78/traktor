@@ -36,7 +36,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
 				<first>1147</first>
@@ -53,9 +53,12 @@
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>false</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfOne</blendSource>
-			<blendDestination>BfZero</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfOne</blendColorSource>
+			<blendColorDestination>BfZero</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -78,6 +81,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Sampler" version="5">
 			<comment/>

@@ -158,7 +158,6 @@ function Tab:_updateState()
 		end
 	end
 end
-
 	]]>
 	</text>
 </object>

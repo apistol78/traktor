@@ -270,7 +270,7 @@ Shadow; adjusted for msaa.
 			<from>0</from>
 			<to>15</to>
 		</item>
-		<item type="traktor.render.PixelOutput" version="5">
+		<item type="traktor.render.PixelOutput" version="7">
 			<comment/>
 			<position>
 				<first>1879</first>
@@ -287,9 +287,12 @@ Shadow; adjusted for msaa.
 			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>false</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfOne</blendSource>
-			<blendDestination>BfZero</blendDestination>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfOne</blendColorSource>
+			<blendColorDestination>BfZero</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -312,6 +315,7 @@ Shadow; adjusted for msaa.
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
 			<registerCount>0</registerCount>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>

@@ -33,7 +33,7 @@
 			<outputPins/>
 			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>258</first>
@@ -42,6 +42,7 @@
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>

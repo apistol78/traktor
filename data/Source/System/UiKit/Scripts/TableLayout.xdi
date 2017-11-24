@@ -2,7 +2,7 @@
 <object type="traktor.script.Script" version="2">
 	<text>
 	<![CDATA[
-#using \{73B653B2-7D15-A345-93EE-B2511B60F0D0}
+#using \\{73B653B2-7D15-A345-93EE-B2511B60F0D0}
 
 -- TableLayout
 
@@ -193,7 +193,6 @@ function TableLayout:_calculate(container, width, height)
 
 	return w, h
 end
-
 	]]>
 	</text>
 </object>

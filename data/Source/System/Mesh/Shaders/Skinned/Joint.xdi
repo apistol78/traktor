@@ -31,7 +31,7 @@ translation
 			<frequency>UfDraw</frequency>
 			<length>16</length>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
+		<item type="traktor.render.InputPort" version="2">
 			<comment/>
 			<position>
 				<first>156</first>
@@ -40,6 +40,7 @@ translation
 			<name>Index</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul">
