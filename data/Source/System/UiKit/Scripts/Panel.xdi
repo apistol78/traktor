@@ -2,7 +2,7 @@
 <object type="traktor.script.Script" version="2">
 	<text>
 	<![CDATA[
-#using \\{7947759C-88DB-794E-8D09-7F30A40B6669}
+#using \{7947759C-88DB-794E-8D09-7F30A40B6669}
 
 import(traktor.flash)
 

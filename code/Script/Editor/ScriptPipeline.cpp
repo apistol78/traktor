@@ -101,7 +101,7 @@ bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const std::w
 	std::set< std::wstring > usings;
 	if (!prep->evaluate(source, text, usings))
 	{
-		log::error << L"Script pipeline failed; unable to preprocess script." << Endl;
+		log::error << L"Script pipeline failed; unable to preprocess script " << scriptGuid.format() << L"." << Endl;
 		return false;
 	}
 
@@ -197,7 +197,7 @@ bool ScriptPipeline::buildDependencies(
 	std::set< std::wstring > usings;
 	if (!m_preprocessor->evaluate(source, text, usings))
 	{
-		log::error << L"Script pipeline failed; unable to preprocess script." << Endl;
+		log::error << L"Script pipeline failed; unable to preprocess script " << outputGuid.format() << L"." << Endl;
 		return false;
 	}
 
@@ -216,7 +216,7 @@ bool ScriptPipeline::buildDependencies(
 				usingIds.insert(dependentInstance->getGuid());
 			else
 			{
-				log::error << L"Script pipeline failed; malformed using statement." << Endl;
+				log::error << L"Script pipeline failed; malformed using statement \"" << *i << L"\"." << Endl;
 				return false;
 			}
 		}
@@ -271,7 +271,7 @@ bool ScriptPipeline::buildOutput(
 	std::set< std::wstring > includes;
 	if (!m_preprocessor->evaluate(source, text, includes))
 	{
-		log::error << L"Script pipeline failed; unable to preprocess script." << Endl;
+		log::error << L"Script pipeline failed; unable to preprocess script " << outputGuid.format() << L"." << Endl;
 		return false;
 	}
 
@@ -279,7 +279,7 @@ bool ScriptPipeline::buildOutput(
 	std::vector< Guid > dependencies;
 	if (!flattenDependencies(pipelineBuilder, m_assetPath, m_preprocessor, outputGuid, dependencies))
 	{
-		log::error << L"Script pipeline failed; unable to resolve script dependencies." << Endl;
+		log::error << L"Script pipeline failed; unable to resolve script dependencies, in script " << outputGuid.format() << L"." << Endl;
 		return false;
 	}
 
@@ -293,7 +293,7 @@ bool ScriptPipeline::buildOutput(
 	Ref< IScriptBlob > blob = m_scriptManager->compile(outputGuid.format(), text, &errorCallback);
 	if (!blob)
 	{
-		log::error << L"Script pipeline failed; unable to compile script." << Endl;
+		log::error << L"Script pipeline failed; unable to compile script " << outputGuid.format() << L"." << Endl;
 		return false;
 	}
 
