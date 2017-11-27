@@ -110,7 +110,7 @@ float DynamicBodyDesc::getAngularThreshold() const
 
 void DynamicBodyDesc::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion< DynamicBodyDesc >() >= 4);
+	T_ASSERT (s.getVersion() >= 4);
 
 	BodyDesc::serialize(s);
 
@@ -121,7 +121,7 @@ void DynamicBodyDesc::serialize(ISerializer& s)
 	s >> Member< float >(L"angularDamping", m_angularDamping, AttributeRange(0.0f, 1.0f));
 	s >> Member< float >(L"friction", m_friction, AttributeRange(0.0f));
 
-	if (s.getVersion< DynamicBodyDesc >() >= 5)
+	if (s.getVersion() >= 5)
 	{
 		s >> Member< float >(L"linearThreshold", m_linearThreshold, AttributeRange(0.0f));
 		s >> Member< float >(L"angularThreshold", m_angularThreshold, AttributeRange(0.0f));

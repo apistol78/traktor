@@ -40,7 +40,7 @@ Ref< IGrain > TriggerGrainData::createInstance(IGrainFactory* grainFactory) cons
 
 void TriggerGrainData::serialize(ISerializer& s)
 {
-	if (s.getVersion< TriggerGrainData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"id", m_id);
 
 	s >> Member< float >(L"position", m_position);

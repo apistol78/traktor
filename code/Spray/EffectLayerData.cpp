@@ -84,7 +84,7 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager
 
 void EffectLayerData::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT (s.getVersion< EffectLayerData >() >= 4);
+	T_FATAL_ASSERT (s.getVersion() >= 4);
 
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< float >(L"time", m_time);

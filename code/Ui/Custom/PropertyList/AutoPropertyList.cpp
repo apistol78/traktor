@@ -43,10 +43,8 @@ bool AutoPropertyList::bind(ISerializable* object)
 		return true;
 	}
 
-	int32_t version = type_of(m_object).getVersion();
-
 	InspectReflector reflector(this);
-	reflector.serialize(m_object, version);
+	reflector.serialize(m_object);
 
 	update();
 	return true;
@@ -60,10 +58,8 @@ bool AutoPropertyList::refresh()
 	if (!m_object)
 		return true;
 
-	int32_t version = type_of(m_object).getVersion();
-
 	InspectReflector reflector(this);
-	reflector.serialize(m_object, version);
+	reflector.serialize(m_object);
 
 	applyState(state);
 	update();
@@ -79,10 +75,8 @@ bool AutoPropertyList::refresh(PropertyItem* parent, ISerializable* object)
 
 	if (object)
 	{
-		int32_t version = type_of(object).getVersion();
-
 		InspectReflector reflector(this, parent);
-		reflector.serialize(object, version);
+		reflector.serialize(object);
 	}
 
 	applyState(state);
@@ -95,13 +89,8 @@ bool AutoPropertyList::apply()
 	if (!m_object)
 		return false;
 
-	int32_t version = type_of(m_object).getVersion();
-
 	ApplyReflector reflector(this);
-	reflector.serialize(
-		m_object,
-		version
-	);
+	reflector.serialize(m_object);
 
 	return true;
 }

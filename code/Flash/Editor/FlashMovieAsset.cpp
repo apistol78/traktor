@@ -26,16 +26,16 @@ void FlashMovieAsset::serialize(ISerializer& s)
 {
 	editor::Asset::serialize(s);
 
-	if (s.getVersion< FlashMovieAsset >() == 1)
+	if (s.getVersion() == 1)
 	{
 		std::vector< Guid > dependentMovies;
 		s >> MemberStlVector< Guid >(L"dependentMovies", dependentMovies);
 	}
 
-	if (s.getVersion< FlashMovieAsset >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"staticMovie", m_staticMovie);
 
-	if (s.getVersion< FlashMovieAsset >() >= 3)
+	if (s.getVersion() >= 3)
 		s >> Member< bool >(L"includeAS", m_includeAS);
 }
 

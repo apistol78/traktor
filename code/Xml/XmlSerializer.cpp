@@ -260,16 +260,35 @@ void XmlSerializer::operator >> (const Member< ISerializable* >& m)
 	}
 	else if (o)
 	{
-		int32_t version = type_of(o).getVersion();
+		m_xml << m_indent << L"<" << m.getName() << L" type=\"" << type_name(o) << L"\"";
+		
+		StringOutputStream v2;
+
+		const TypeInfo* ti = &type_of(o);
+		int32_t version = ti->getVersion();
+
 		if (version > 0)
-			m_xml << m_indent << L"<" << m.getName() << L" type=\"" << type_name(o) << L"\" version=\"" << version << L"\">" << Endl;
-		else
-			m_xml << m_indent << L"<" << m.getName() << L" type=\"" << type_name(o) << L"\">" << Endl;
+			v2 << version;
+
+		for (ti = ti->getSuper() ; ti != 0; ti = ti->getSuper())
+		{
+			int32_t typeVersion = ti->getVersion();
+			if (typeVersion > 0)
+			{
+				if (!v2.empty())
+					v2 << L",";
+				v2 << ti->getName() << L":" << typeVersion;
+			}
+		}
+		if (!v2.empty())
+			m_xml << L" version=\"" << v2.str() << L"\"";
+
+		m_xml << L">" << Endl;
 
 		enterElement(m.getName());
 
 		rememberObject(o);
-		serialize(o, version);
+		serialize(o);
 
 		leaveElement();
 

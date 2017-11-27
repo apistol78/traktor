@@ -116,27 +116,27 @@ void TrackData::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 
-	if (s.getVersion< TrackData >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> MemberRef< world::EntityData >(L"lookAtEntityData", m_lookAtEntityData);
 
 	s >> MemberComposite< TransformPath >(L"path", m_path);
 	
-	if (s.getVersion< TrackData >() >= 1)
+	if (s.getVersion() >= 1)
 	{
 		s >> Member< float >(L"loopStart", m_loopStart);
 		s >> Member< float >(L"loopEnd", m_loopEnd);
 
-		if (s.getVersion< TrackData >() < 3)
+		if (s.getVersion() < 3)
 		{
 			float loopEase = 0.0f;
 			s >> Member< float >(L"loopEase", loopEase);
 		}
 	}
 
-	if (s.getVersion< TrackData >() >= 4)
+	if (s.getVersion() >= 4)
 		s >> Member< float >(L"timeOffset", m_timeOffset);
 
-	if (s.getVersion< TrackData >() >= 5)
+	if (s.getVersion() >= 5)
 	{
 		s >> Member< float >(L"wobbleMagnitude", m_wobbleMagnitude, AttributeRange(0.0f));
 		s >> Member< float >(L"wobbleRate", m_wobbleRate, AttributeRange(0.0f));

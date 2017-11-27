@@ -503,10 +503,7 @@ void InspectReflector::operator >> (const Member< ISerializable* >& m)
 	if (object)
 	{
 		m_propertyItemStack.push_back(propertyItem);
-
-		int32_t version = type_of(object).getVersion();
-		serialize(object, version);
-
+		serialize(object);
 		m_propertyItemStack.pop_back();
 	}
 }

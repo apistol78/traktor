@@ -92,16 +92,16 @@ void ControlInputSourceData::serialize(ISerializer& s)
 
 	s >> MemberEnum< InputCategory >(L"category", m_category, g_InputCategory_Keys);
 
-	if (s.getVersion< ControlInputSourceData >() < 2)
+	if (s.getVersion() < 2)
 	{
 		InputDefaultControlType controlType;
 		s >> MemberEnum< InputDefaultControlType >(L"controlType", controlType, g_InputDefaultControlType_Keys);
 	}
 
-	if (s.getVersion< ControlInputSourceData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> MemberEnum< ControlQuery >(L"controlQuery", m_controlQuery, c_ControlQuery_Keys);
 
-	if (s.getVersion< ControlInputSourceData >() < 2)
+	if (s.getVersion() < 2)
 	{
 		bool analogue;
 		s >> Member< bool >(L"analogue", analogue);

@@ -95,7 +95,7 @@ Ref< IMesh > BlendMeshResource::createMesh(
 
 void BlendMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion< BlendMeshResource >() >= 3, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
 		std::wstring,

@@ -46,7 +46,7 @@ public:
 
 			s >> Member< std::wstring >(L"name", name);
 
-			if (s.getVersion< External >() >= 1)
+			if (s.getVersion() >= 1)
 				s >> Member< bool >(L"optional", optional);
 		}
 		else	// SdRead
@@ -56,7 +56,7 @@ public:
 
 			s >> Member< std::wstring >(L"name", name);
 
-			if (s.getVersion< External >() >= 1)
+			if (s.getVersion() >= 1)
 				s >> Member< bool >(L"optional", optional);
 
 			if (m_pin)
@@ -343,7 +343,7 @@ void External::serialize(ISerializer& s)
 	s >> MemberPinArray< MemberInputPin >(L"inputPins", this, m_inputPins);
 	s >> MemberPinArray< MemberOutputPin >(L"outputPins", this, m_outputPins);
 
-	if (s.getVersion< External >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> MemberStlMap< std::wstring, float >(L"values", m_values, AttributeReadOnly());
 }
 

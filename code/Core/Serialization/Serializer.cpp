@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Log/Log.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/Serializer.h"
 
@@ -37,9 +38,18 @@ bool Serializer::writeObject(const ISerializable* o)
 	return !m_failure;
 }
 
+int32_t Serializer::getVersion() const
+{
+	T_ASSERT (!m_versions.empty());
+	return m_versions.back().v;
+}
+
 int32_t Serializer::getVersion(const TypeInfo& typeInfo) const
 {
-	return !m_constructing.empty() ? m_constructing.back() : 0;
+	T_ASSERT (!m_versions.empty());
+	const dataVersionMap_t& dv = m_versions.back().dvm;
+	dataVersionMap_t::const_iterator it = dv.find(&typeInfo);
+	return it != dv.end() ? it->second : 0;
 }
 
 void Serializer::failure()
@@ -47,16 +57,35 @@ void Serializer::failure()
 	m_failure = true;
 }
 
-void Serializer::serialize(ISerializable* inner, int32_t version)
+void Serializer::serialize(ISerializable* inner)
 {
 	if (!inner || m_failure)
 		return;
 
-	m_constructing.push_back(version);
+	dataVersionMap_t dataVersions;
+	for (const TypeInfo* ti = &type_of(inner); ti != nullptr; ti = ti->getSuper())
+		dataVersions.insert(std::make_pair(
+			ti,
+			ti->getVersion()
+		));
+
+	serialize(inner, dataVersions);
+}
+
+void Serializer::serialize(ISerializable* inner, const dataVersionMap_t& dataVersions)
+{
+	if (!inner || m_failure)
+		return;
+
+	dataVersionMap_t::const_iterator it = dataVersions.find(&type_of(inner));
+
+	Version& v = m_versions.push_back();
+	v.dvm = dataVersions;
+	v.v = (it != dataVersions.end()) ? it->second : 0;
 
 	inner->serialize(*this);
 
-	m_constructing.pop_back();
+	m_versions.pop_back();
 }
 
 }

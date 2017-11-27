@@ -49,9 +49,9 @@ void LightComponentData::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"baseColor", m_baseColor);
 	s >> Member< Vector4 >(L"shadowColor", m_shadowColor);
 
-	if (s.getVersion< LightComponentData >() >= 1)
+	if (s.getVersion() >= 1)
 	{
-		if (s.getVersion< LightComponentData >() >= 2)
+		if (s.getVersion() >= 2)
 		{
 			s >> resource::Member< render::ITexture >(L"probeDiffuseTexture", m_probeDiffuseTexture);
 			s >> resource::Member< render::ITexture >(L"probeSpecularTexture", m_probeSpecularTexture);

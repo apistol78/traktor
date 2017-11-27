@@ -35,9 +35,9 @@ void PointLightEntityData::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"shadowColor", m_shadowColor);
 	s >> Member< float >(L"range", m_range);
 
-	if (s.getVersion< PointLightEntityData >() == 1)
+	if (s.getVersion() == 1)
 		s >> Member< float >(L"randomFlicker", m_randomFlickerAmount, AttributeRange(0.0f, 1.0f));
-	else if (s.getVersion< PointLightEntityData >() >= 2)
+	else if (s.getVersion() >= 2)
 	{
 		s >> Member< float >(L"randomFlickerAmount", m_randomFlickerAmount, AttributeRange(0.0f, 1.0f));
 		s >> Member< float >(L"randomFlickerFilter", m_randomFlickerFilter, AttributeRange(0.0f, 1.0f));

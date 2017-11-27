@@ -58,7 +58,7 @@ void LayerEntityData::serialize(ISerializer& s)
 	s >> Member< bool >(L"include", m_include);
 	s >> Member< bool >(L"dynamic", m_dynamic);
 
-	if (s.getVersion< LayerEntityData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> MemberRefArray< const ILayerAttribute >(L"attributes", m_attributes);
 }
 

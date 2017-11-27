@@ -25,7 +25,7 @@ BfnTextureAsset::BfnTextureAsset()
 void BfnTextureAsset::serialize(ISerializer& s)
 {
 	s >> Member< bool >(L"bestFitFactorOnly", m_bestFitFactorOnly);
-	if (s.getVersion< BfnTextureAsset >() >= 1)
+	if (s.getVersion() >= 1)
 	{
 		s >> Member< bool >(L"collapseSymmetry", m_collapseSymmetry);
 		s >> Member< int32_t >(L"size", m_size);

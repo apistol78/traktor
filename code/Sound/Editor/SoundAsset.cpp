@@ -33,23 +33,23 @@ void SoundAsset::serialize(ISerializer& s)
 {
 	editor::Asset::serialize(s);
 
-	if (s.getVersion< SoundAsset >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> Member< Guid >(L"category", m_category, AttributeType(type_of< SoundCategory >()));
 
 	s >> Member< bool >(L"stream", m_stream);
 	
-	if (s.getVersion< SoundAsset >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"preload", m_preload);
 
-	if (s.getVersion< SoundAsset >() >= 3)
+	if (s.getVersion() >= 3)
 		s >> Member< float >(L"presence", m_presence, AttributeRange(0.0f));
 
-	if (s.getVersion< SoundAsset >() >= 4)
+	if (s.getVersion() >= 4)
 		s >> Member< float >(L"presenceRate", m_presenceRate, AttributeRange(0.0f));
 
-	if (s.getVersion< SoundAsset >() >= 5)
+	if (s.getVersion() >= 5)
 	{
-		if (s.getVersion< SoundAsset >() >= 6)
+		if (s.getVersion() >= 6)
 			s >> Member< float >(L"gain", m_gain, AttributeDecibel());
 		else
 		{

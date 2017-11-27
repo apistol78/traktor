@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_Serializer_H
 
 #include "Core/Ref.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializer.h"
 
 // import/export mechanism.
@@ -30,11 +30,15 @@ class T_DLLCLASS Serializer : public ISerializer
 	T_RTTI_CLASS;
 
 public:
+	typedef SmallMap< const TypeInfo*, int32_t > dataVersionMap_t;
+
 	Serializer();
 
 	Ref< ISerializable > readObject();
 
 	bool writeObject(const ISerializable* o);
+
+	virtual int32_t getVersion() const T_OVERRIDE;
 
 	virtual int32_t getVersion(const TypeInfo& typeInfo) const T_OVERRIDE;
 
@@ -48,12 +52,20 @@ public:
 	}
 
 protected:
-	void serialize(ISerializable* inner, int32_t version);
+	void serialize(ISerializable* inner);
+
+	void serialize(ISerializable* inner, const dataVersionMap_t& dataVersions);
 
 	bool failed() const { return m_failure; }
 
 private:
-	AlignedVector< int32_t > m_constructing;
+	struct Version
+	{
+		int32_t v;
+		dataVersionMap_t dvm;
+	};
+
+	AlignedVector< Version > m_versions;
 	bool m_failure;
 };
 

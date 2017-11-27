@@ -46,6 +46,12 @@ public:
 		SdWrite
 	};
 
+	/*! \brief Get, serialized class, data version.
+	 *
+	 * \return Data version.
+	 */
+	virtual int32_t getVersion() const = 0;
+
 	virtual int32_t getVersion(const TypeInfo& typeInfo) const = 0;
 
 	virtual Direction getDirection() const = 0;

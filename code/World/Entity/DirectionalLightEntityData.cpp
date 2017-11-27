@@ -33,10 +33,10 @@ void DirectionalLightEntityData::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"baseColor", m_baseColor);
 	s >> Member< Vector4 >(L"shadowColor", m_shadowColor);
 
-	if (s.getVersion< DirectionalLightEntityData >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> resource::Member< render::ITexture >(L"cloudShadowTexture", m_cloudShadowTexture);
 
-	if (s.getVersion< DirectionalLightEntityData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"castShadow", m_castShadow);
 }
 

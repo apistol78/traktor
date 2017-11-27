@@ -36,7 +36,7 @@ void IntegrateModifierData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"timeScale", m_timeScale);
 	
-	if (s.getVersion< IntegrateModifierData >() >= 1)
+	if (s.getVersion() >= 1)
 	{
 		s >> Member< bool >(L"linear", m_linear);
 		s >> Member< bool >(L"angular", m_angular);
