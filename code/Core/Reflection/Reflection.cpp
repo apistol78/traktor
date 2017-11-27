@@ -21,7 +21,7 @@ Ref< Reflection > Reflection::create(const ISerializable* object)
 	Ref< Reflection > r = new Reflection(type_of(object));
 
 	ReflectionInspectSerializer s(r);
-	s.serialize(const_cast< ISerializable* >(object), type_of(object).getVersion());
+	s.serialize(const_cast< ISerializable* >(object));
 
 	return r;
 }
@@ -29,7 +29,7 @@ Ref< Reflection > Reflection::create(const ISerializable* object)
 bool Reflection::apply(ISerializable* object) const
 {
 	ReflectionApplySerializer s(this);
-	s.serialize(object, type_of(object).getVersion());
+	s.serialize(object);
 	return true;
 }
 

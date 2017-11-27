@@ -64,7 +64,7 @@ void ConeSourceData::serialize(ISerializer& s)
 	s >> Member< float >(L"angle2", m_angle2);
 	s >> MemberComposite< Range< float > >(L"velocity", m_velocity);
 
-	if (s.getVersion< ConeSourceData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> MemberComposite< Range< float > >(L"inheritVelocity", m_inheritVelocity);
 
 	s >> MemberComposite< Range< float > >(L"orientation", m_orientation);

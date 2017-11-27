@@ -64,6 +64,17 @@ namespace traktor
 	);												\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
+#define T_IMPLEMENT_RTTI_VERSION_CLASS(ID, VERSION, CLASS, SUPER)	\
+	traktor::TypeInfo CLASS::ms_typeInfo(							\
+		ID,															\
+		sizeof(CLASS),												\
+		VERSION,													\
+		false,														\
+		&traktor::type_of< SUPER >(),								\
+		0															\
+	);																\
+	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
+
 #define T_IMPLEMENT_RTTI_FACTORY_CLASS_ROOT(ID, VERSION, CLASS)	\
 	traktor::TypeInfo CLASS::ms_typeInfo(						\
 		ID,														\

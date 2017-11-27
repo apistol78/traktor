@@ -5,12 +5,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <cstring>
+#include <map>
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Base64.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
@@ -301,16 +303,50 @@ void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 		if (!ensure(o != 0))
 			return;
 
-		int32_t version = 0;
-		if ((a = findAttribute(attr, L"version")) != attr.end())
-			version = parseString< int >(a->second);
+		Serializer::dataVersionMap_t dataVersions;
 
-		int32_t typeVersion = type->getVersion();
-		if (!ensure(version <= typeVersion))
-			return;
+		if ((a = findAttribute(attr, L"version")) != attr.end())
+		{
+			StringSplit< std::wstring > ss(a->second, L",");
+			for (auto s : ss)
+			{
+				size_t p = s.find(L':');
+				if (p != s.npos)
+				{
+					std::wstring dataTypeName = s.substr(0, p);
+					int32_t dataTypeVersion = parseString< int32_t >(s.substr(p + 1));
+
+					const TypeInfo* dataType = TypeInfo::find(dataTypeName);
+					if (!ensure(dataType != nullptr))
+						return;
+
+					if (!ensure(dataType->getVersion() >= dataTypeVersion))
+						return;
+
+					if (dataTypeVersion > 0)
+					{
+						dataVersions.insert(std::make_pair(
+							dataType,
+							dataTypeVersion
+						));
+					}
+				}
+				else
+				{
+					int32_t dataTypeVersion = parseString< int32_t >(s);
+					if (dataTypeVersion > 0)
+					{
+						dataVersions.insert(std::make_pair(
+							type,
+							dataTypeVersion
+						));
+					}
+				}
+			}
+		}
 
 		rememberObject(o);
-		serialize(o, version);
+		serialize(o, dataVersions);
 
 		m = o;
 	}

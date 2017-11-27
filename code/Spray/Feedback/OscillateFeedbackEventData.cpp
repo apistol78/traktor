@@ -51,7 +51,7 @@ void OscillateFeedbackEventData::OscillatingValue::serialize(ISerializer& s)
 	s >> Member< float >(L"duration", duration, AttributeRange(0.0f));
 	s >> Member< int32_t >(L"frequency", frequency, AttributeRange(0));
 	s >> Member< float >(L"magnitude", magnitude, AttributeRange(0.0f));
-	if (s.getVersion< OscillateFeedbackEventData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< float >(L"noise", noise, AttributeRange(0.0f, 1.0f));
 }
 

@@ -666,7 +666,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 			{
 				uint32_t typeHashOrLen;
 				const TypeInfo* type;
-				int32_t version;
+				int16_t version;
 
 				if (!ensure(read_primitive< uint32_t >(m_stream, typeHashOrLen)))
 				{
@@ -704,13 +704,65 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 					return;
 				}
 
-				if (!ensure(read_primitive< int32_t >(m_stream, version)))
+				Serializer::dataVersionMap_t dataVersions;
+
+				// Outer most version, mandatory and no type needed.
+				if (!ensure(read_primitive< int16_t >(m_stream, version)))
 				{
 					log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read version" << Endl;
 					return;
 				}
+				dataVersions.insert(std::make_pair(type, version));
 
-				serialize(object, version);
+				// Read base versions.
+				uint16_t baseVersionCount = 0;
+				if (!ensure(read_primitive< uint16_t >(m_stream, baseVersionCount)))
+				{
+					log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read # of base versions." << Endl;
+					return;
+				}
+
+				for (uint16_t i = 0; i < baseVersionCount; ++i)
+				{
+					if (!ensure(read_primitive< uint32_t >(m_stream, typeHashOrLen)))
+					{
+						log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read base type hash." << Endl;
+						return;
+					}
+
+					const TypeInfo* baseType;
+					if ((typeHashOrLen & 0x80000000) == 0x80000000)
+						baseType = m_typeReadCache[typeHashOrLen & 0x7fffffff];
+					else
+					{
+						std::wstring typeName;
+						if (!ensure(read_string(m_stream, typeHashOrLen, typeName)))
+						{
+							log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read base type." << Endl;
+							return;
+						}
+
+						baseType = TypeInfo::find(typeName);
+						if (!ensure(baseType != 0))
+						{
+							log::error << L"Unable to serialize \"" << m.getName() << L"\"; no such base type \"" << typeName << L"\"." << Endl;
+							return;
+						}
+
+						m_typeReadCache.push_back(baseType);
+					}
+					T_ASSERT (baseType);
+
+					if (!ensure(read_primitive< int16_t >(m_stream, version)))
+					{
+						log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read version of base type \"" << baseType->getName() << L"\"." << Endl;
+						return;
+					}
+
+					dataVersions.insert(std::make_pair(baseType, version));
+				}
+
+				serialize(object, dataVersions);
 
 				m_readCache[hash] = object;
 			}
@@ -744,7 +796,8 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 			}
 			else
 			{
-				int32_t version = type_of(object).getVersion();
+				const TypeInfo& type = type_of(object);
+				int32_t version = type.getVersion();
 				uint64_t hash = m_nextCacheId++;
 
 				if (!write_primitive< bool >(m_stream, false))
@@ -752,22 +805,52 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				if (!write_primitive< uint64_t >(m_stream, hash))
 					return;
 
-				std::map< const TypeInfo*, uint32_t >::const_iterator it = m_typeWriteCache.find(&type_of(object));
+				std::map< const TypeInfo*, uint32_t >::const_iterator it = m_typeWriteCache.find(&type);
 				if (it != m_typeWriteCache.end())
 					write_primitive< uint32_t >(m_stream, 0x80000000 | it->second);
 				else
 				{
-					if (!write_string(m_stream, type_name(object)))
+					if (!write_string(m_stream, type.getName()))
 						return;
 
-					m_typeWriteCache.insert(std::make_pair(&type_of(object), m_nextTypeCacheId++));
+					m_typeWriteCache.insert(std::make_pair(&type, m_nextTypeCacheId++));
 				}
 
-				if (!write_primitive< int32_t >(m_stream, version))
+				if (!write_primitive< int16_t >(m_stream, version))
 					return;
 
+				uint16_t baseVersionCount = 0;
+				for (const TypeInfo* ti = type.getSuper(); ti != 0; ti = ti->getSuper())
+				{
+					if (ti->getVersion() > 0)
+						++baseVersionCount;
+				}
+
+				if (!write_primitive< uint16_t >(m_stream, baseVersionCount))
+					return;
+
+				for (const TypeInfo* ti = type.getSuper(); ti != 0; ti = ti->getSuper())
+				{
+					if (ti->getVersion() > 0)
+					{
+						std::map< const TypeInfo*, uint32_t >::const_iterator it = m_typeWriteCache.find(ti);
+						if (it != m_typeWriteCache.end())
+							write_primitive< uint32_t >(m_stream, 0x80000000 | it->second);
+						else
+						{
+							if (!write_string(m_stream, ti->getName()))
+								return;
+
+							m_typeWriteCache.insert(std::make_pair(ti, m_nextTypeCacheId++));
+						}
+
+						if (!write_primitive< int16_t >(m_stream, ti->getVersion()))
+							return;
+					}
+				}
+
 				m_writeCache[object] = hash;
-				serialize(object, version);
+				serialize(object);
 			}
 		}
 		else

@@ -117,13 +117,13 @@ void GenericInputSourceData::serialize(ISerializer& s)
 	s >> MemberEnum< InputDefaultControlType >(L"controlType", m_controlType, g_InputDefaultControlType_Keys);
 	s >> Member< bool >(L"analogue", m_analogue);
 
-	if (s.getVersion< GenericInputSourceData >() >= 1 && s.getVersion< GenericInputSourceData >() <= 2)
+	if (s.getVersion() <= 2)
 	{
 		bool inverted = false;
 		s >> Member< bool >(L"inverted", inverted);
 	}
 
-	if (s.getVersion< GenericInputSourceData >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"normalize", m_normalize);
 
 	s >> Member< int32_t >(L"index", m_index);

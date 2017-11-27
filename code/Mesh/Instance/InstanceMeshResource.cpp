@@ -200,7 +200,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 void InstanceMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion< InstanceMeshResource >() >= 6, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 6, L"Incorrect version");
 	s >> Member< bool >(L"haveRenderMesh", m_haveRenderMesh);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<

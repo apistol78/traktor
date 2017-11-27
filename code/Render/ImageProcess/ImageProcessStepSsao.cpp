@@ -130,7 +130,7 @@ void ImageProcessStepSsao::serialize(ISerializer& s)
 {
 	s >> resource::Member< Shader >(L"shader", m_shader);
 	
-	if (s.getVersion< ImageProcessStepSsao >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
 }
 

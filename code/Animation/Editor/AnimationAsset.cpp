@@ -28,14 +28,14 @@ void AnimationAsset::serialize(ISerializer& s)
 {
 	editor::Asset::serialize(s);
 
-	if (s.getVersion< AnimationAsset >() >= 1)
+	if (s.getVersion() >= 1)
 	{
 		s >> Member< Vector4 >(L"offset", m_offset, AttributePoint());
 		s >> Member< bool >(L"invertX", m_invertX);
 		s >> Member< bool >(L"invertZ", m_invertZ);
 	}
 
-	if (s.getVersion< AnimationAsset >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"autoCenterKeyPoses", m_autoCenterKeyPoses);
 }
 

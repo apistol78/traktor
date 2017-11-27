@@ -25,10 +25,10 @@ void MeshAsset::serialize(ISerializer& s)
 {
 	editor::Asset::serialize(s);
 
-	if (s.getVersion< MeshAsset >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"calculateConvexHull", m_calculateConvexHull);
 
-	if (s.getVersion< MeshAsset >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> Member< float >(L"margin", m_margin);
 }
 

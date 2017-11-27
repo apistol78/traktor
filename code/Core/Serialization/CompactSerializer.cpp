@@ -792,7 +792,7 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 			if (!(object = checked_type_cast< ISerializable* >(type->createInstance())))
 				return;
 
-			serialize(object, type->getVersion());
+			serialize(object);
 		}
 		// Explicit type name.
 		else if (typeId == 0x1f)
@@ -809,7 +809,7 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 			if (!ensure(object != 0))
 				return;
 
-			serialize(object, type->getVersion());
+			serialize(object);
 		}
 
 		m = object;
@@ -833,13 +833,13 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 			if (m_types && typeId < m_ntypes && m_types[typeId] == &type)
 			{
 				m_writer.writeUnsigned(5, typeId + 1);
-				serialize(object, type.getVersion());
+				serialize(object);
 			}
 			else
 			{
 				m_writer.writeUnsigned(5, 0x1f);
 				write_string(m_writer, type.getName());
-				serialize(object, type.getVersion());
+				serialize(object);
 			}
 		}
 		else

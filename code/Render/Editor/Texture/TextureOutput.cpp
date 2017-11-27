@@ -49,7 +49,7 @@ TextureOutput::TextureOutput()
 
 void TextureOutput::serialize(ISerializer& s)
 {
-	if (s.getVersion< TextureOutput >() >= 6)
+	if (s.getVersion() >= 6)
 	{
 		const MemberEnum< TextureFormat >::Key c_TextureFormat_Keys[] =
 		{
@@ -86,7 +86,7 @@ void TextureOutput::serialize(ISerializer& s)
 	s >> Member< bool >(L"generateMips", m_generateMips);
 	s >> Member< bool >(L"keepZeroAlpha", m_keepZeroAlpha);
 
-	if (s.getVersion< TextureOutput >() >= 8)
+	if (s.getVersion() >= 8)
 	{
 		const MemberEnum< TextureType >::Key c_TextureType_Keys[] =
 		{
@@ -106,22 +106,22 @@ void TextureOutput::serialize(ISerializer& s)
 
 	s >> Member< bool >(L"hasAlpha", m_hasAlpha);
 
-	if (s.getVersion< TextureOutput >() >= 13)
+	if (s.getVersion() >= 13)
 		s >> Member< bool >(L"generateAlpha", m_generateAlpha);
 
-	if (s.getVersion< TextureOutput >() >= 12)
+	if (s.getVersion() >= 12)
 		s >> Member< bool >(L"invertAlpha", m_invertAlpha);
 
 	s >> Member< bool >(L"ignoreAlpha", m_ignoreAlpha);
 
-	if (s.getVersion< TextureOutput >() >= 7)
+	if (s.getVersion() >= 7)
 		s >> Member< bool >(L"premultiplyAlpha", m_premultiplyAlpha);
 
 	s >> Member< bool >(L"scaleImage", m_scaleImage);
 	s >> Member< int32_t >(L"scaleWidth", m_scaleWidth, AttributeRange(0));
 	s >> Member< int32_t >(L"scaleHeight", m_scaleHeight, AttributeRange(0));
 
-	if (s.getVersion< TextureOutput >() >= 9)
+	if (s.getVersion() >= 9)
 	{
 		s >> Member< bool >(L"flipX", m_flipX);
 		s >> Member< bool >(L"flipY", m_flipY);
@@ -129,33 +129,33 @@ void TextureOutput::serialize(ISerializer& s)
 
 	s >> Member< bool >(L"enableCompression", m_enableCompression);
 
-	if (s.getVersion< TextureOutput >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"enableNormalMapCompression", m_enableNormalMapCompression);
 
-	if (s.getVersion< TextureOutput >() >= 3)
+	if (s.getVersion() >= 3)
 		s >> Member< bool >(L"inverseNormalMapY", m_inverseNormalMapY);
 
 	s >> Member< bool >(L"linearGamma", m_linearGamma);
 
-	if (s.getVersion< TextureOutput >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"generateSphereMap", m_generateSphereMap);
 
-	if (s.getVersion< TextureOutput >() >= 5)
+	if (s.getVersion() >= 5)
 	{
 		s >> Member< bool >(L"preserveAlphaCoverage", m_preserveAlphaCoverage);
 		s >> Member< float >(L"alphaCoverageReference", m_alphaCoverageReference, AttributeRange(0.0f, 1.0f));
 	}
 
-	if (s.getVersion< TextureOutput >() >= 11)
+	if (s.getVersion() >= 11)
 	{
 		s >> Member< int32_t >(L"sharpenRadius", m_sharpenRadius);
 		s >> Member< float >(L"sharpenStrength", m_sharpenStrength, AttributeRange(0.0f));
 	}
 
-	if (s.getVersion< TextureOutput >() >= 14)
+	if (s.getVersion() >= 14)
 		s >> Member< float >(L"noiseStrength", m_noiseStrength, AttributeRange(0.0f, 1.0f));
 
-	if (s.getVersion< TextureOutput >() >= 10)
+	if (s.getVersion() >= 10)
 		s >> Member< bool >(L"systemTexture", m_systemTexture);
 }
 

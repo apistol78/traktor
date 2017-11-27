@@ -81,7 +81,7 @@ void MeshEntityData::serialize(ISerializer& s)
 	AbstractMeshEntityData::serialize(s);
 
 	s >> resource::Member< IMesh >(L"mesh", m_mesh);
-	if (s.getVersion< MeshEntityData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"screenSpaceCulling", m_screenSpaceCulling);
 }
 

@@ -40,7 +40,7 @@ void TrailData::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< float >(L"width", m_width);
 
-	if (s.getVersion< TrailData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< float >(L"age", m_age);
 
 	s >> Member< float >(L"lengthThreshold", m_lengthThreshold);

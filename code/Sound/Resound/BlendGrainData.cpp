@@ -45,10 +45,10 @@ Ref< IGrain > BlendGrainData::createInstance(IGrainFactory* grainFactory) const
 
 void BlendGrainData::serialize(ISerializer& s)
 {
-	if (s.getVersion< BlendGrainData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"id", m_id);
 
-	if (s.getVersion< BlendGrainData >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> Member< float >(L"response", m_response);
 
 	s >> MemberStaticArray< Ref< IGrainData >, 2, MemberRef< IGrainData > >(L"grains", m_grains);

@@ -456,7 +456,7 @@ void Conditional::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
-	if (s.getVersion< Conditional >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> MemberEnum< Branch >(L"branch", m_branch, kBranch);
 
 	s >> MemberEnum< Operator >(L"operator", m_operator, kOperator);
@@ -750,7 +750,7 @@ void IndexedUniform::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
 	
-	if (s.getVersion< IndexedUniform >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
 	
 	s >> Member< int32_t >(L"length", m_length);
@@ -843,12 +843,12 @@ void InputPort::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"name", m_name);
 
-	if (s.getVersion< InputPort >() >= 1)
+	if (s.getVersion() >= 1)
 	{
 		s >> Member< bool >(L"connectable", m_connectable);
 		s >> Member< bool >(L"optional", m_optional);
 
-		if (s.getVersion< InputPort >() >= 2)
+		if (s.getVersion() >= 2)
 			s >> Member< bool >(L"haveDefaultValue", m_haveDefaultValue);
 		else
 			m_haveDefaultValue = true;
@@ -1304,7 +1304,7 @@ void PixelOutput::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"technique", m_technique);
 
-	if (s.getVersion< PixelOutput >() >= 5)
+	if (s.getVersion() >= 5)
 	{
 		const MemberBitMask::Bit c_RenderPriorityBits[] =
 		{
@@ -1319,12 +1319,12 @@ void PixelOutput::serialize(ISerializer& s)
 		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);
 	}
 
-	s >> MemberRenderState(m_renderState, s.getVersion< PixelOutput >());
+	s >> MemberRenderState(m_renderState, s.getVersion());
 
-	if (s.getVersion< PixelOutput >() >= 3)
+	if (s.getVersion() >= 3)
 		s >> Member< uint32_t >(L"registerCount", m_registerCount);
 
-	if (s.getVersion< PixelOutput >() >= 6)
+	if (s.getVersion() >= 6)
 	{
 		const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] = 
 		{
@@ -1466,7 +1466,7 @@ void Sampler::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 
-	if (s.getVersion< Sampler >() >= 5)
+	if (s.getVersion() >= 5)
 		s >> MemberSamplerState(m_state);
 	else
 	{
@@ -1507,16 +1507,16 @@ void Sampler::serialize(ISerializer& s)
 		s >> MemberEnum< Address >(L"addressV", m_state.addressV, kAddress);
 		s >> MemberEnum< Address >(L"addressW", m_state.addressW, kAddress);
 
-		if (s.getVersion< Sampler >() >= 4)
+		if (s.getVersion() >= 4)
 			s >> MemberEnum< CompareFunction >(L"compare", m_state.compare, kCompare);
 
-		if (s.getVersion< Sampler >() >= 1)
+		if (s.getVersion() >= 1)
 			s >> Member< float >(L"mipBias", m_state.mipBias);
 
-		if (s.getVersion< Sampler >() >= 3)
+		if (s.getVersion() >= 3)
 			s >> Member< bool >(L"ignoreMips", m_state.ignoreMips);
 
-		if (s.getVersion< Sampler >() >= 2)
+		if (s.getVersion() >= 2)
 			s >> Member< bool >(L"useAnisotropic", m_state.useAnisotropic);
 	}
 }
@@ -1629,7 +1629,7 @@ void State::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 
-	if (s.getVersion< State >() >= 5)
+	if (s.getVersion() >= 5)
 	{
 		const MemberBitMask::Bit c_RenderPriorityBits[] =
 		{
@@ -1644,7 +1644,7 @@ void State::serialize(ISerializer& s)
 		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);
 	}
 
-	s >> MemberRenderState(m_renderState, s.getVersion< State >());
+	s >> MemberRenderState(m_renderState, s.getVersion());
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1788,7 +1788,7 @@ void Switch::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
-	if (s.getVersion< Switch >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> MemberEnum< Branch >(L"branch", m_branch, kBranch);
 
 	s >> MemberStlVector< int32_t >(L"cases", m_cases);
@@ -2053,7 +2053,7 @@ void Uniform::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
 	
-	if (s.getVersion< Uniform >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
 }
 
@@ -2254,7 +2254,7 @@ void VertexOutput::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 
-	if (s.getVersion< VertexOutput >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"technique", m_technique);
 }
 

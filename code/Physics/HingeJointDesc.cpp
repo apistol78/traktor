@@ -86,13 +86,13 @@ void HingeJointDesc::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 	s >> Member< Vector4 >(L"axis", m_axis, AttributeDirection());
 
-	if (s.getVersion< HingeJointDesc >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"enableLimits", m_enableLimits);
 
 	s >> Member< float >(L"minAngle", m_minAngle, AttributeRange(-PI, PI));
 	s >> Member< float >(L"maxAngle", m_maxAngle, AttributeRange(-PI, PI));
 
-	if (s.getVersion< HingeJointDesc >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"angularOnly", m_angularOnly);
 }
 

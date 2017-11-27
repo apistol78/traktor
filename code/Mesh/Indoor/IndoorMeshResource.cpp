@@ -79,7 +79,7 @@ Ref< IMesh > IndoorMeshResource::createMesh(
 
 void IndoorMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion< IndoorMeshResource >() >= 3, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< Sector, MemberComposite< Sector > >(L"sectors", m_sectors);
 	s >> MemberAlignedVector< Portal, MemberComposite< Portal > >(L"portals", m_portals);

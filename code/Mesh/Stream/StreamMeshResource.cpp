@@ -56,7 +56,7 @@ Ref< IMesh > StreamMeshResource::createMesh(
 
 void StreamMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion< StreamMeshResource >() >= 3, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlVector< uint32_t >(L"frameOffsets", m_frameOffsets);
 	s >> Member< Vector4 >(L"boundingBoxMin", m_boundingBox.mn);

@@ -39,7 +39,7 @@ void ExternalEntityData::serialize(ISerializer& s)
 {
 	EntityData::serialize(s);
 
-	if (s.getVersion< ExternalEntityData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> resource::Member< EntityData >(L"entityData", m_entityData);
 	else
 		s >> resource::Member< EntityData >(L"guid", m_entityData);

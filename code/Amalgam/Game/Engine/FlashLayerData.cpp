@@ -78,7 +78,7 @@ void FlashLayerData::serialize(ISerializer& s)
 
 	s >> resource::Member< flash::Movie >(L"movie", m_movie);
 
-	if (s.getVersion< FlashLayerData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> MemberStlMap<
 			std::wstring,
 			resource::Id< flash::Movie >,
@@ -90,19 +90,19 @@ void FlashLayerData::serialize(ISerializer& s)
 			>
 		>(L"externalMovies", m_externalMovies);
 
-	if (s.getVersion< FlashLayerData >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> resource::Member< render::ImageProcessSettings >(L"imageProcess", m_imageProcess);
 
 	s >> Member< bool >(L"clearBackground", m_clearBackground);
 	s >> Member< bool >(L"enableSound", m_enableSound);
 
-	if (s.getVersion< FlashLayerData >() >= 5)
+	if (s.getVersion() >= 5)
 		s >> Member< bool >(L"enableShapeCache", m_enableShapeCache);
 
-	if (s.getVersion< FlashLayerData >() >= 6)
+	if (s.getVersion() >= 6)
 		s >> Member< bool >(L"enableDirtyRegions", m_enableDirtyRegions);
 
-	if (s.getVersion< FlashLayerData >() >= 4)
+	if (s.getVersion() >= 4)
 		s >> Member< uint32_t >(L"contextSize", m_contextSize);
 }
 

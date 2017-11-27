@@ -35,13 +35,13 @@ void OceanComponentData::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> resource::Member< render::ITexture >(L"reflectionMap", m_reflectionMap);
 
-	if (s.getVersion< OceanComponentData >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> resource::Member< Terrain >(L"terrain", m_terrain);
 
 	s >> Member< Color4f >(L"shallowTint", m_shallowTint);
 	s >> Member< Color4f >(L"reflectionTint", m_reflectionTint);
 	
-	if (s.getVersion< OceanComponentData >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< Color4f >(L"shadowTint", m_shadowTint);
 
 	s >> Member< Color4f >(L"deepColor", m_deepColor);

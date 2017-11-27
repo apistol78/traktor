@@ -42,13 +42,13 @@ const RefArray< IGrainData >& BankAsset::getGrains() const
 
 void BankAsset::serialize(ISerializer& s)
 {
-	if (s.getVersion< BankAsset >() >= 1)
+	if (s.getVersion() >= 1)
 		s >> Member< Guid >(L"category", m_category, AttributeType(type_of< SoundCategory >()));
 
-	if (s.getVersion< BankAsset >() >= 2)
+	if (s.getVersion() >= 2)
 		s >> Member< float >(L"presence", m_presence, AttributeRange(0.0f));
 
-	if (s.getVersion< BankAsset >() >= 3)
+	if (s.getVersion() >= 3)
 		s >> Member< float >(L"presenceRate", m_presenceRate, AttributeRange(0.0f));
 
 	s >> MemberRefArray< IGrainData >(L"grains", m_grains);

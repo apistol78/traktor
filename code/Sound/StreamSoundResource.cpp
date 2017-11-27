@@ -87,7 +87,7 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 
 void StreamSoundResource::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT (s.getVersion< StreamSoundResource >() >= 7);
+	T_FATAL_ASSERT (s.getVersion() >= 7);
 	s >> MemberType(L"decoderType", m_decoderType);
 	s >> Member< std::wstring >(L"category", m_category);
 	s >> Member< float >(L"gain", m_gain);

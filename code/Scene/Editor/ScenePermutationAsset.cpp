@@ -24,7 +24,7 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.ScenePermutationAsset", 4, ScenePerm
 
 void ScenePermutationAsset::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion< ScenePermutationAsset >() >= 4);
+	T_ASSERT (s.getVersion() >= 4);
 
 	s >> Member< Guid >(L"scene", m_scene, AttributeType(type_of< SceneAsset >()));
 	s >> MemberStlList< std::wstring >(L"includeLayers", m_includeLayers);
