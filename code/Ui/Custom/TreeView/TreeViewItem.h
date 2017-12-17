@@ -65,6 +65,12 @@ public:
 
 	void collapse();
 
+	bool isEnabled() const;
+
+	void enable();
+
+	void disable();
+
 	bool isSelected() const;
 
 	void select();
@@ -111,6 +117,7 @@ private:
 	int32_t m_image;
 	int32_t m_expandedImage;
 	bool m_expanded;
+	bool m_enabled;
 	bool m_selected;
 	bool m_editable;
 	Point m_mouseDownPosition;

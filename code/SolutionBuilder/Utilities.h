@@ -4,14 +4,19 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Editor/IPipelineReport.h"
+#ifndef Utilities_H
+#define Utilities_H
+
+#include "Core/Containers/AlignedVector.h"
 
 namespace traktor
 {
-	namespace editor
+	namespace sb
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.IPipelineReport", IPipelineReport, Object)
+bool writeFileIfMismatch(const std::wstring& fileName, const AlignedVector< uint8_t >& data);
 
 	}
 }
+
+#endif	// Utilities_H

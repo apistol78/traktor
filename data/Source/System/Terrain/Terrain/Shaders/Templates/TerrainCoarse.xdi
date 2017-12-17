@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="1">
+		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+			<id>{C76E8339-C134-C546-B7B0-5A5CF7C2725E}</id>
 			<comment/>
 			<position>
 				<first>666</first>
@@ -9,14 +10,16 @@
 			</position>
 			<technique/>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{3B3BE56A-74AE-2646-8B94-06C44D40F575}</id>
 			<comment/>
 			<position>
 				<first>-132</first>
 				<second>232</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{A9B819BA-001E-8143-8607-51188F8C19ED}</id>
 			<comment/>
 			<position>
 				<first>-469</first>
@@ -24,7 +27,8 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{AC4874AA-7B5F-0547-B222-500A51F5BCA1}</id>
 			<comment/>
 			<position>
 				<first>-1093</first>
@@ -35,7 +39,8 @@
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{64F76742-54BD-614F-99DA-9FAC29D840D7}</id>
 			<comment/>
 			<position>
 				<first>-475</first>
@@ -45,7 +50,8 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{2A363D96-BCEE-3145-8591-7AF2334E8748}</id>
 			<comment/>
 			<position>
 				<first>-448</first>
@@ -55,7 +61,8 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Branch">
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{BE2BEBFF-224C-3B48-891A-D174FBFCCD81}</id>
 			<comment/>
 			<position>
 				<first>2112</first>
@@ -63,7 +70,8 @@
 			</position>
 			<parameterName>VisualizeLods</parameterName>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{BBB731B7-E117-944B-A571-888C401DC98E}</id>
 			<comment/>
 			<position>
 				<first>1640</first>
@@ -73,7 +81,8 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{75F6931F-6062-4C40-AEB3-DEDD34B51329}</id>
 			<comment>
 			<![CDATA[
 Generated texture from surface cache.
@@ -94,7 +103,8 @@ Generated texture from surface cache.
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{23C7A27A-2F37-2D48-8A54-DAA42407CBC6}</id>
 			<comment/>
 			<position>
 				<first>1163</first>
@@ -104,21 +114,24 @@ Generated texture from surface cache.
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{8EF41429-1657-BF46-942C-D1C829495F3E}</id>
 			<comment/>
 			<position>
 				<first>1181</first>
 				<second>-41</second>
 			</position>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{86A51A78-7647-C94F-A771-1862EBF04303}</id>
 			<comment/>
 			<position>
 				<first>845</first>
 				<second>-114</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{41D8D3BF-31A9-514A-9A4A-028BBA03E8D9}</id>
 			<comment/>
 			<position>
 				<first>-473</first>
@@ -126,7 +139,8 @@ Generated texture from surface cache.
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{FD98B762-CF91-1D48-9729-C3C776A75FFE}</id>
 			<comment/>
 			<position>
 				<first>289</first>
@@ -134,7 +148,8 @@ Generated texture from surface cache.
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{7CFC7BF9-88DD-AD40-88C9-00B05D4C9F57}</id>
 			<comment/>
 			<position>
 				<first>-54</first>
@@ -144,7 +159,8 @@ Generated texture from surface cache.
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{7FFF3E01-B06A-5B40-9852-C1D16FBC2844}</id>
 			<comment/>
 			<position>
 				<first>284</first>
@@ -152,7 +168,8 @@ Generated texture from surface cache.
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{9E954FC1-75F9-B546-A14F-A03051A339A6}</id>
 			<comment/>
 			<position>
 				<first>399</first>
@@ -172,21 +189,24 @@ Generated texture from surface cache.
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{6322312A-50EF-AD4E-A9FE-A1FC8AD34A64}</id>
 			<comment/>
 			<position>
 				<first>257</first>
 				<second>-218</second>
 			</position>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{BDBD34DC-8815-FD4B-81F5-43F9C7279CCC}</id>
 			<comment/>
 			<position>
 				<first>1154</first>
 				<second>81</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{ACE04FEA-D6B2-7D4B-A9E6-653DCA0D366D}</id>
 			<comment/>
 			<position>
 				<first>-275</first>
@@ -206,7 +226,8 @@ Generated texture from surface cache.
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Branch">
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{0D715F8E-9F9E-9A4A-884A-28A55F3BCA1C}</id>
 			<comment/>
 			<position>
 				<first>2115</first>
@@ -214,7 +235,8 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>CutEnable</parameterName>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{23FE9303-F7E1-1446-BC82-E5E457C4C78F}</id>
 			<comment/>
 			<position>
 				<first>1114</first>
@@ -224,7 +246,8 @@ Generated texture from surface cache.
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{B28F30AA-0E8C-AB4E-8C24-BAA217C78818}</id>
 			<comment/>
 			<position>
 				<first>1504</first>
@@ -241,7 +264,8 @@ Generated texture from surface cache.
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{930756AC-0122-CD41-ADBC-C923F197231C}</id>
 			<comment/>
 			<position>
 				<first>1972</first>
@@ -249,7 +273,8 @@ Generated texture from surface cache.
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{E7DA4717-17AA-BC43-B852-2DA5EE5C8014}</id>
 			<comment/>
 			<position>
 				<first>1859</first>
@@ -257,7 +282,8 @@ Generated texture from surface cache.
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Discard">
+		<item type="traktor.render.Discard" version="traktor.render.Node:1">
+			<id>{F58CCAAA-0301-4B43-A6D0-3F15552BFEC1}</id>
 			<comment/>
 			<position>
 				<first>2519</first>
@@ -265,7 +291,8 @@ Generated texture from surface cache.
 			</position>
 			<operator>CoGreaterEqual</operator>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{023C45DE-93AC-9647-8C39-DA85F6BB1066}</id>
 			<comment/>
 			<position>
 				<first>2224</first>
@@ -273,7 +300,8 @@ Generated texture from surface cache.
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.Branch">
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{FADADC53-69AD-9849-A0E9-FD547FB7718C}</id>
 			<comment/>
 			<position>
 				<first>2907</first>
@@ -281,7 +309,8 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>VisualizeMap</parameterName>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{60CA7A57-EA7E-5743-A608-B524F26E1A82}</id>
 			<comment/>
 			<position>
 				<first>1072</first>
@@ -291,7 +320,8 @@ Generated texture from surface cache.
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{8029AC5A-F22F-394B-B04E-A6DB816B81EE}</id>
 			<comment/>
 			<position>
 				<first>1480</first>
@@ -308,7 +338,8 @@ Generated texture from surface cache.
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{9A93861B-966F-B641-8867-C63792B9F994}</id>
 			<comment>
 			<![CDATA[
 Disabled emissive for now as it doesn't work on OpenGL
@@ -319,7 +350,8 @@ Disabled emissive for now as it doesn't work on OpenGL
 				<second>544</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{749DAD3D-DAA6-914D-AD31-883990798724}</id>
 			<comment/>
 			<position>
 				<first>417</first>
@@ -366,7 +398,8 @@ Disabled emissive for now as it doesn't work on OpenGL
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{CFDF1BBA-B20D-004F-9493-28FB4687D733}</id>
 			<comment/>
 			<position>
 				<first>3613</first>
@@ -382,7 +415,8 @@ Disabled emissive for now as it doesn't work on OpenGL
 			<outputPins/>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{0251ABE2-9AC2-6A4E-B3C1-665361561B75}</id>
 			<comment/>
 			<position>
 				<first>3619</first>
@@ -471,7 +505,8 @@ Disabled emissive for now as it doesn't work on OpenGL
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{78C22806-566F-E14B-9EC1-A18CDE37F5B1}</id>
 			<comment/>
 			<position>
 				<first>3613</first>

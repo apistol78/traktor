@@ -5,8 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <limits>
-#include "Core/Io/IStream.h"
-#include "Core/Io/StringOutputStream.h"
+#include "Core/Io/OutputStream.h"
 #include "Core/Misc/String.h"
 #include "Html/Text.h"
 
@@ -85,11 +84,9 @@ std::wstring Text::getValue() const
 	return m_text;
 }
 
-void Text::writeHtml(IStream* stream)
+void Text::toString(OutputStream& os) const
 {
-	std::wstring text = encodeCharacterEntities(m_text);
-	stream->write(text.c_str(), int(text.length()));
-	Node::writeHtml(stream);
+	os << encodeCharacterEntities(m_text);
 }
 
 	}

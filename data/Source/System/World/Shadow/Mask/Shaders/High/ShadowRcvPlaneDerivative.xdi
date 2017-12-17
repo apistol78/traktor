@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{C20BBE5C-0359-2E4A-A463-69D336E2E99D}</id>
 			<comment>
 			<![CDATA[
 ddist_duv.y
@@ -12,7 +13,8 @@ ddist_duv.y
 				<second>473</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{D3C27AD8-2CF4-2945-92B9-F842EBFCB1C3}</id>
 			<comment>
 			<![CDATA[
 determinant
@@ -23,7 +25,8 @@ determinant
 				<second>662</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{7BFEEA06-E201-014D-9BA9-81645FDCC79D}</id>
 			<comment/>
 			<position>
 				<first>176</first>
@@ -31,7 +34,8 @@ determinant
 			</position>
 			<swizzle>00x</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{BB0D1E40-52C0-CE4D-B431-C9C1F9D5897E}</id>
 			<comment/>
 			<position>
 				<first>176</first>
@@ -39,14 +43,16 @@ determinant
 			</position>
 			<swizzle>xy0</swizzle>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{C6A14000-113B-5E49-9F12-CA35509B2638}</id>
 			<comment/>
 			<position>
 				<first>262</first>
 				<second>465</second>
 			</position>
 		</item>
-		<item type="traktor.render.Derivative">
+		<item type="traktor.render.Derivative" version="traktor.render.Node:1">
+			<id>{F21D2457-4701-C549-A6F8-6A653EEACC03}</id>
 			<comment>
 			<![CDATA[
 duvdist_dx
@@ -58,7 +64,8 @@ duvdist_dx
 			</position>
 			<axis>DaX</axis>
 		</item>
-		<item type="traktor.render.Derivative">
+		<item type="traktor.render.Derivative" version="traktor.render.Node:1">
+			<id>{218C9318-610C-1B44-BE11-1D59DD2F71E8}</id>
 			<comment>
 			<![CDATA[
 duvdist_dy
@@ -70,7 +77,8 @@ duvdist_dy
 			</position>
 			<axis>DaY</axis>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{EB28DD61-CD40-5341-A6CE-1889B4A11D46}</id>
 			<comment/>
 			<position>
 				<first>587</first>
@@ -78,7 +86,8 @@ duvdist_dy
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{F068B931-BE93-D740-A65F-8E72A3CD741D}</id>
 			<comment/>
 			<position>
 				<first>587</first>
@@ -86,7 +95,8 @@ duvdist_dy
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{52E66B2B-B929-7648-99FA-D3D2E76CBE7A}</id>
 			<comment/>
 			<position>
 				<first>587</first>
@@ -94,7 +104,8 @@ duvdist_dy
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{D30258B1-B513-8642-A9CF-975667134835}</id>
 			<comment/>
 			<position>
 				<first>587</first>
@@ -102,7 +113,8 @@ duvdist_dy
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{B957389A-E6D7-F046-BE31-FFA98485C957}</id>
 			<comment/>
 			<position>
 				<first>587</first>
@@ -110,7 +122,8 @@ duvdist_dy
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{BB78332A-4F87-6A43-82C0-EC4CC68EAA8F}</id>
 			<comment/>
 			<position>
 				<first>587</first>
@@ -118,21 +131,24 @@ duvdist_dy
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{C44EA158-2900-7C49-B165-E722788F2480}</id>
 			<comment/>
 			<position>
 				<first>812</first>
 				<second>631</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{FE5A9924-407D-F54B-BB0E-35C507201CF7}</id>
 			<comment/>
 			<position>
 				<first>812</first>
 				<second>704</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{4E589063-EC13-0B45-A6A4-DEF55C46EAC4}</id>
 			<comment>
 			<![CDATA[
 ddist_duv
@@ -143,21 +159,24 @@ ddist_duv
 				<second>425</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{620F38A2-8DDC-7343-917D-A957A73ED330}</id>
 			<comment/>
 			<position>
 				<first>811</first>
 				<second>278</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{CF14239F-164D-3741-B614-47010B992365}</id>
 			<comment/>
 			<position>
 				<first>811</first>
 				<second>351</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{04F961F8-C561-0140-9CA3-2749F29633FA}</id>
 			<comment>
 			<![CDATA[
 ddist_duv.x
@@ -168,21 +187,24 @@ ddist_duv.x
 				<second>309</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{B46C70F2-E285-FB4F-8CC5-BF3889C94442}</id>
 			<comment/>
 			<position>
 				<first>812</first>
 				<second>515</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{B49AA325-6FB3-3B4F-AE50-E3F2A12BB5A6}</id>
 			<comment/>
 			<position>
 				<first>812</first>
 				<second>442</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{B73D0808-FF7A-8B4B-A25E-5366EFD25384}</id>
 			<comment/>
 			<position>
 				<first>1090</first>
@@ -190,7 +212,8 @@ ddist_duv.x
 			</position>
 			<swizzle>x0</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{F67435B0-511F-FF49-9C8A-4D7B4594EE76}</id>
 			<comment/>
 			<position>
 				<first>1090</first>
@@ -198,14 +221,16 @@ ddist_duv.x
 			</position>
 			<swizzle>0x</swizzle>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{E1230853-2F8C-154F-A12E-54D5FD6731DA}</id>
 			<comment/>
 			<position>
 				<first>1186</first>
 				<second>388</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{8D1AF747-FCFA-1241-B52A-852BADC63DF5}</id>
 			<comment/>
 			<position>
 				<first>-54</first>
@@ -217,7 +242,8 @@ ddist_duv.x
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{9FF613EE-EBC3-ED42-9E56-2F6817AE3059}</id>
 			<comment/>
 			<position>
 				<first>10</first>
@@ -229,7 +255,8 @@ ddist_duv.x
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{654AB39B-D8A7-1443-8FA0-536FB38E64F4}</id>
 			<comment/>
 			<position>
 				<first>1656</first>
@@ -237,7 +264,8 @@ ddist_duv.x
 			</position>
 			<name>dDistance_dUV</name>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{93484333-B414-074F-832B-55FE48005C9A}</id>
 			<comment/>
 			<position>
 				<first>1490</first>

@@ -116,33 +116,12 @@ const RefArray< Dependency >& Project::getDependencies() const
 
 void Project::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"enable", m_enable);
+	T_FATAL_ASSERT(s.getVersion() >= 1);
 
+	s >> Member< bool >(L"enable", m_enable);
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"sourcePath", m_sourcePath);
 	s >> MemberRefArray< Configuration >(L"configurations", m_configurations);
 	s >> MemberRefArray< ProjectItem >(L"items", m_items);
-
-	// Handle old style dependencies as well.
-	// Remove this when we have converted all solutions.
-	if (s.getDirection() == ISerializer::SdRead)
-	{
-		RefArray< ISerializable > dependencies;
-		s >> MemberRefArray< ISerializable >(L"dependencies", dependencies);
-
-		m_dependencies.clear();
-		for (RefArray< ISerializable >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		{
-			if (is_a< Project >(*i))
-			{
-				Project* project = static_cast< Project* >((*i).ptr());
-				m_dependencies.push_back(new ProjectDependency(project));
-			}
-			else
-				m_dependencies.push_back(checked_type_cast< Dependency* >(*i));
-		}
-	}
-	else
-		s >> MemberRefArray< Dependency >(L"dependencies", m_dependencies);
+	s >> MemberRefArray< Dependency >(L"dependencies", m_dependencies);
 }

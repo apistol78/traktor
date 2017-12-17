@@ -4,8 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/String.h"
 #include "Html/Attribute.h"
 #include "Html/Element.h"
 
@@ -125,45 +125,49 @@ Element* Element::getLastElementChild() const
 	return static_cast< Element* >(node.ptr());
 }
 
-void Element::writeHtml(IStream* stream)
+void Element::innerHTML(OutputStream& os) const
 {
-	static int depth = 0; depth++;
-	StringOutputStream ss;
+	for (Ref< Node > child = getFirstChild(); child; child = child->getNextSibling())
+		child->toString(os);
+}
 
-	for (int i = 0; i < depth - 1; ++i)
-		ss << L"\t";
-
-	ss << L"<" << m_name;
+void Element::toString(OutputStream& os) const
+{
+	os << L"<" << m_name;
 	for (Ref< Attribute > attribute = m_firstAttribute; attribute; attribute = attribute->getNext())
-		ss << L" " << attribute->getName() << L"=\"" << attribute->getValue() << L"\"";
+		os << L" " << attribute->getName() << L"=\"" << attribute->getValue() << L"\"";
 
 	if (getFirstChild())
 	{
-		ss << L">";
-		if (is_a< Element >(getFirstChild()))
-			ss << Endl;
-
-		std::wstring tmp = ss.str(); ss.reset();
-		stream->write(tmp.c_str(), int(tmp.length()));
-
-		for (Ref< Node > child = getFirstChild(); child; child = child->getNextSibling())
-			child->writeHtml(stream);
+		os << L">";
 
 		if (is_a< Element >(getFirstChild()))
 		{
-			for (int i = 0; i < depth - 1; ++i)
-				ss << L"\t";
-			ss << Endl;
+			os << IncreaseIndent;
+			os << Endl;
 		}
-		ss << L"</" << m_name << L">";
+
+		for (Ref< Node > child = getFirstChild(); child; child = child->getNextSibling())
+			child->toString(os);
+			
+		if (is_a< Element >(getFirstChild()))
+			os << DecreaseIndent;
+
+		os << L"</" << m_name << L">" << Endl;
 	}
 	else
-		ss << L"/>" << Endl;
+	{
+		bool permitClosed = !bool(
+			compareIgnoreCase< std::wstring >(L"script", m_name) == 0 ||
+			compareIgnoreCase< std::wstring >(L"link", m_name) == 0
+		);
+		if (permitClosed)
+			os << L"/>";
+		else
+			os << L"></" << m_name << L">";
 
-	std::wstring tmp = ss.str();
-	stream->write(tmp.c_str(), int(tmp.length()));
-
-	depth--;
+		os << Endl;
+	}
 }
 
 	}

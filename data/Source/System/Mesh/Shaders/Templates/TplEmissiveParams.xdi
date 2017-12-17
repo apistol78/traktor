@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{F944B121-8C45-CF4F-A560-9A1450349ABF}</id>
 			<comment/>
 			<position>
 				<first>476</first>
@@ -9,7 +10,8 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{E62A8A7F-3A89-DE45-B4BF-F874F1971FDC}</id>
 			<comment/>
 			<position>
 				<first>619</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>T_Emissive</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{F9272C05-7D08-3141-A7D4-CBDE462A9728}</id>
 			<comment/>
 			<position>
 				<first>276</first>
@@ -29,7 +32,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{F6DDA384-8418-9344-9F9C-4D3713812035}</id>
 			<comment/>
 			<position>
 				<first>276</first>

@@ -12,6 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/StringSplit.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
@@ -115,15 +116,43 @@ public:
 				Ref< IStream > ds;
 				int32_t result = 503;
 				bool cache = true;
+				std::wstring session;
+
+				// Extract session id from cookie.
+				if (request->hasValue(L"Cookie"))
+				{
+					std::wstring cookie = request->getValue(L"Cookie");
+					
+					StringSplit< std::wstring > ss(cookie, L";");
+					for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+					{
+						const std::wstring& kv = *i;
+						
+						size_t p = kv.find(L'=');
+						if (p != kv.npos)
+						{
+							std::wstring k = kv.substr(0, p);
+							if (k == L"SESSIONID")
+							{
+								session = kv.substr(p + 1);
+								break;
+							}
+						}
+					}
+				}
 
 				if (m_listener)
-					result = m_listener->httpClientRequest(m_server, request, ssr, ds, cache);
+					result = m_listener->httpClientRequest(m_server, request, ssr, ds, cache, session);
 
 				FileOutputStream os(&clientStream, new Utf8Encoding(), OutputStream::LeWin);
 				if (result >= 200 && result < 300)
 					os << L"HTTP/1.1 " << result << L" OK" << Endl;
 				else
 					os << L"HTTP/1.1 " << result << L" ERROR" << Endl;
+
+				// Update cookie if necessary.
+				if (!session.empty())
+					os << L"Set-Cookie: SESSIONID=" << session << L";path=/" << Endl;
 
 				if (!cache)
 					os << L"Cache-Control: no-cache" << Endl;

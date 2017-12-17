@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{776C371C-EA75-7F48-8B5A-7DB0225F5964}</id>
 			<comment/>
 			<position>
 				<first>383</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{0C3AD8EF-8F5E-2C40-9CAA-732255A2ED2F}</id>
 			<comment/>
 			<position>
 				<first>85</first>
@@ -25,7 +27,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{9EF67483-1C4F-3A45-96B3-C846CDC0FFB2}</id>
 			<comment/>
 			<position>
 				<first>658</first>
@@ -42,7 +45,8 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{E60660E3-F831-6340-A32B-1DBE6C88E5B8}</id>
 			<comment/>
 			<position>
 				<first>970</first>
@@ -50,7 +54,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{36EBF98B-49EF-A648-BD52-D1E2809A16EF}</id>
 			<comment/>
 			<position>
 				<first>57</first>
@@ -62,7 +67,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{DC4C8FF8-CFD5-E148-9E9D-F3872502F7B0}</id>
 			<comment/>
 			<position>
 				<first>31</first>
@@ -77,7 +83,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{E4CD8E34-8097-7045-8EC5-4921D29023D9}</id>
 			<comment/>
 			<position>
 				<first>284</first>
@@ -85,14 +92,16 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{E47D7B31-8822-884D-A9FB-76DED33D86A9}</id>
 			<comment/>
 			<position>
 				<first>403</first>
 				<second>417</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{E19AA2C2-9191-C643-A6EC-E141D142A191}</id>
 			<comment/>
 			<position>
 				<first>457</first>

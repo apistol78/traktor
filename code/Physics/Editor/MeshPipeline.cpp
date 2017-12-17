@@ -12,7 +12,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
@@ -266,17 +265,6 @@ bool MeshPipeline::buildOutput(
 	{
 		log::error << L"Phys mesh pipeline failed; unable to commit output instance" << Endl;
 		return false;
-	}
-
-	// Create report.
-	Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"PhysMesh", outputGuid);
-	if (report)
-	{
-		report->set(L"path", outputPath);
-		report->set(L"vertexCount", positions.size());
-		report->set(L"shapeTriangleCount", meshShapeTriangles.size());
-		report->set(L"hullTriangleCount", meshHullTriangles.size());
-		report->set(L"size", int32_t(dataSize));
 	}
 
 	return true;

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{C8E7631C-C473-5742-B31B-26D8EA5D64F1}</id>
 			<comment/>
 			<position>
 				<first>476</first>
@@ -9,7 +10,8 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{8A2A237F-D870-E045-9FCE-2243FBBE172B}</id>
 			<comment/>
 			<position>
 				<first>619</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>T_Transparency</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{884E8DF3-305B-A942-9CBA-10C152BA5F50}</id>
 			<comment/>
 			<position>
 				<first>276</first>
@@ -29,7 +32,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{14DAD9EC-801E-AA4D-9213-15138EBBB0F9}</id>
 			<comment/>
 			<position>
 				<first>276</first>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{00961895-E0CE-2444-98FC-D5865F8C4412}</id>
 			<comment>
 			<![CDATA[
 Microfacet Distribution Function
@@ -33,7 +34,8 @@ Microfacet Distribution Function
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{FED8A1E1-2072-2B46-8C42-3F8A9B15E64D}</id>
 			<comment>
 			<![CDATA[
 Fresnel Reflection
@@ -65,14 +67,16 @@ Fresnel Reflection
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{80A5CF6D-33F7-BE47-AC90-46D9217D4445}</id>
 			<comment/>
 			<position>
 				<first>733</first>
 				<second>194</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{C7EEEBD9-B838-3F4C-8BFF-2B75DA526F03}</id>
 			<comment/>
 			<position>
 				<first>22</first>
@@ -84,7 +88,8 @@ Fresnel Reflection
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{4B17CBAF-9066-F347-AC0D-8BE9F3B325BB}</id>
 			<comment/>
 			<position>
 				<first>9</first>
@@ -96,7 +101,8 @@ Fresnel Reflection
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{F47AB404-856E-B149-8DEF-5131CD77F152}</id>
 			<comment/>
 			<position>
 				<first>47</first>
@@ -108,7 +114,8 @@ Fresnel Reflection
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{D6EAD7C8-368E-7B42-8EBA-5F068FAC231E}</id>
 			<comment/>
 			<position>
 				<first>6</first>
@@ -120,7 +127,8 @@ Fresnel Reflection
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{38C270E2-56BE-6946-B694-F0BC93A4E02F}</id>
 			<comment/>
 			<position>
 				<first>54</first>
@@ -132,21 +140,24 @@ Fresnel Reflection
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{22EC0088-4149-9945-BCFD-E39D66C80B46}</id>
 			<comment/>
 			<position>
 				<first>330</first>
 				<second>6</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{C26B9371-AA54-3B4F-A018-73EF225A4C59}</id>
 			<comment/>
 			<position>
 				<first>685</first>
 				<second>-9</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{3192CEEB-C56C-4249-8BA7-2FDE047B26BD}</id>
 			<comment/>
 			<position>
 				<first>542</first>
@@ -154,14 +165,16 @@ Fresnel Reflection
 			</position>
 			<value>3.142</value>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{136D4E84-B107-D94B-90AA-BB3675B745C7}</id>
 			<comment/>
 			<position>
 				<first>858</first>
 				<second>20</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{F713EAA0-88B4-DE4E-865D-C70F59073986}</id>
 			<comment/>
 			<position>
 				<first>1033</first>

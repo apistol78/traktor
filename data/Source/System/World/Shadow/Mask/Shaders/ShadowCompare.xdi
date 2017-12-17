@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{F1660D27-E2BA-D845-8F2A-7600D318A110}</id>
 			<comment/>
 			<position>
 				<first>1821</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{99F4EA6B-5D2F-CE4C-AEB4-DC6F0F234C81}</id>
 			<comment/>
 			<position>
 				<first>318</first>
@@ -26,7 +28,8 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{D8A24B34-CA4F-8147-8BB4-DB3408399E82}</id>
 			<comment/>
 			<position>
 				<first>38</first>
@@ -36,7 +39,8 @@
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{762AE495-C2A9-5547-AF06-AA55ED4C1348}</id>
 			<comment/>
 			<position>
 				<first>-491</first>
@@ -48,14 +52,16 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{B0200090-177B-044D-AB64-DD9D483A4E8B}</id>
 			<comment/>
 			<position>
 				<first>-394</first>
 				<second>443</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{770B842D-4CD8-0049-A6F3-F1C0B1E8ECB5}</id>
 			<comment/>
 			<position>
 				<first>-651</first>
@@ -67,7 +73,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{5C83E220-79CE-664F-AA25-6F43687C039E}</id>
 			<comment>
 			<![CDATA[
 Constant bias
@@ -79,7 +86,8 @@ Constant bias
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{06275A36-4552-FC43-B61E-44FE404912F5}</id>
 			<comment/>
 			<position>
 				<first>-860</first>
@@ -89,7 +97,8 @@ Constant bias
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{796ED3C7-4279-6E4A-9C1D-0AC1991DE3A2}</id>
 			<comment/>
 			<position>
 				<first>-139</first>
@@ -97,7 +106,8 @@ Constant bias
 			</position>
 			<swizzle>xy0</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{BF7138D1-CDF8-8F47-81F3-F11A40120ABB}</id>
 			<comment/>
 			<position>
 				<first>-139</first>
@@ -105,14 +115,16 @@ Constant bias
 			</position>
 			<swizzle>00x</swizzle>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{9322DB2A-384F-2C43-AB6D-3897D6591DB2}</id>
 			<comment/>
 			<position>
 				<first>33</first>
 				<second>384</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{0F4F54CA-B962-C74C-B5EF-16583D951C62}</id>
 			<comment/>
 			<position>
 				<first>317</first>
@@ -129,7 +141,8 @@ Constant bias
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{2D50C703-418C-904B-94BD-E213264AD5D0}</id>
 			<comment/>
 			<position>
 				<first>202</first>
@@ -137,14 +150,16 @@ Constant bias
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Platform">
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{A1B4893B-389B-3E4F-A6A7-6AE668DD4BD8}</id>
 			<comment/>
 			<position>
 				<first>1441</first>
 				<second>316</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{EF6C0789-5F61-8E4D-B08E-EB248C8B6B8D}</id>
 			<comment/>
 			<position>
 				<first>562</first>
@@ -152,7 +167,8 @@ Constant bias
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{2B14A24B-F3E7-3B4A-B43F-D53AFCCA8621}</id>
 			<comment/>
 			<position>
 				<first>38</first>
@@ -162,14 +178,16 @@ Constant bias
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{0FA0A3C1-D494-524C-81AC-249B85AC2E3D}</id>
 			<comment/>
 			<position>
 				<first>690</first>
 				<second>641</second>
 			</position>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{03BC9C4C-EDF2-3D40-AB5B-E8A15444EF27}</id>
 			<comment/>
 			<position>
 				<first>1121</first>
@@ -178,14 +196,16 @@ Constant bias
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{DDF164A4-DD7B-E747-84EA-0A2B5AF696E5}</id>
 			<comment/>
 			<position>
 				<first>894</first>
 				<second>641</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{37082110-B48B-1E42-BE97-6986BC76264D}</id>
 			<comment/>
 			<position>
 				<first>738</first>

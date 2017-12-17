@@ -73,7 +73,7 @@ public:
 	{
 	}
 
-	virtual int32_t httpClientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os, Ref< traktor::IStream >& outStream, bool& outCache)
+	virtual int32_t httpClientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os, Ref< traktor::IStream >& outStream, bool& outCache, std::wstring& inoutSession)
 	{
 		std::wstring resource = request->getResource();
 

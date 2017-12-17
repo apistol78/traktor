@@ -16,11 +16,22 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Node", Node, ISerializable)
+T_IMPLEMENT_RTTI_VERSION_CLASS(L"traktor.render.Node", 1, Node, ISerializable)
 
 Node::Node()
-:	m_position(0, 0)
+:	m_id(Guid::create())
+,	m_position(0, 0)
 {
+}
+
+void Node::setId(const Guid& instanceId)
+{
+	m_id = instanceId;
+}
+
+const Guid& Node::getId() const
+{
+	return m_id;
 }
 
 void Node::setComment(const std::wstring& comment)
@@ -78,6 +89,9 @@ const OutputPin* Node::findOutputPin(const std::wstring& name) const
 
 void Node::serialize(ISerializer& s)
 {
+	if (s.getVersion< Node >() >= 1)
+		s >> Member< Guid >(L"id", m_id);
+
 	s >> Member< std::wstring >(L"comment", m_comment, AttributeMultiLine());
 	s >> MemberStlPair< int, int >(L"position", m_position);
 }

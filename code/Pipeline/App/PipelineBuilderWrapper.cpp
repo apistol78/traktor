@@ -255,9 +255,4 @@ Ref< IStream > PipelineBuilderWrapper::openTemporaryFile(const std::wstring& fil
 	return 0;
 }
 
-Ref< editor::IPipelineReport > PipelineBuilderWrapper::createReport(const std::wstring& name, const Guid& guid)
-{
-	return 0;
-}
-
 }

@@ -173,6 +173,11 @@
 		</item>
 		<item>
 			<type>traktor.ui.custom.TreeView</type>
+			<element>item-color-selected-disabled</element>
+			<color>180, 180, 180, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.TreeView</type>
 			<element>item-background-color-selected</element>
 			<color>51, 153, 255, 255</color>
 		</item>
@@ -397,7 +402,7 @@
 		</item>
 		<item>
 			<type>traktor.ui.custom.MiniButton</type>
-			<element>bevel-highlight-color</element>
+			<element>bevel-highDark-color</element>
 			<color>70, 70, 70, 255</color>
 		</item>
 		<item>
@@ -1092,6 +1097,34 @@
 		<item>
 			<name>Theater.Theater</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Theater/Theater.image</value>
+		</item>
+		<item>
+			<name>SolutionBuilder.Solution</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/SolutionBuilder/Solution.image</value>
+		</item>
+		<item>
+			<name>SolutionBuilder.Project</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/SolutionBuilder/Project.image</value>
+		</item>
+		<item>
+			<name>SolutionBuilder.Folders</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/SolutionBuilder/Folders.image</value>
+		</item>
+		<item>
+			<name>SolutionBuilder.File</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/SolutionBuilder/File.image</value>
+		</item>
+		<item>
+			<name>SolutionBuilder.Configuration</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/SolutionBuilder/Configuration.image</value>
+		</item>
+		<item>
+			<name>SolutionBuilder.Aggregation</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/SolutionBuilder/Aggregation.image</value>
+		</item>
+		<item>
+			<name>SolutionBuilder.AggregationRule</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/SolutionBuilder/AggregationRule.image</value>
 		</item>
 	</values>
 </object>

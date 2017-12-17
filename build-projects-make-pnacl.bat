@@ -14,7 +14,7 @@ set MAKE_SHARED_LIBRARY_FILE=lib%%s.a
 set MAKE_EXECUTABLE_FILE=%%s.js
 set AGGREGATE_OUTPUT_PATH=%TRAKTOR_HOME%\bin\latest\pnacl
 
-%TRAKTOR_HOME%\bin\win64\solutionbuilder ^
+%SOLUTIONBUILDER% ^
 	-f=make2 ^
 	-make-solution-template=$(TRAKTOR_HOME)\bin\make-solution.sbm ^
 	-make-project-template=$(TRAKTOR_HOME)\bin\make-project-emscripten.sbm ^

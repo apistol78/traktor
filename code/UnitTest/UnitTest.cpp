@@ -47,8 +47,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case atomic" << Endl;
 	//traktor::CaseAtomic().execute(context);
 
-	//log::info << L"Case clone" << Endl;
-	//traktor::CaseClone().execute(context);
+	log::info << L"Case clone" << Endl;
+	traktor::CaseClone().execute(context);
 
 	//log::info << L"Case cycle debugger" << Endl;
 	//traktor::CaseCycleDebugger().execute(context);
@@ -116,8 +116,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case stream copy" << Endl;
 	//traktor::CaseStreamCopy().execute(context);
 
-	log::info << L"Case semaphore" << Endl;
-	traktor::CaseSemaphore().execute(context);
+	//log::info << L"Case semaphore" << Endl;
+	//traktor::CaseSemaphore().execute(context);
 
 	log::info << L"Finished" << Endl;
 	log::info << IncreaseIndent;

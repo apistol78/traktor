@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{1C478C4A-B3CA-BC45-8380-12243A2753B6}</id>
 			<comment>
 			<![CDATA[
 	
@@ -17,7 +18,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{0D258CB5-04A4-A24D-B0C6-79A7721C0C77}</id>
 			<comment>
 			<![CDATA[
 	
@@ -29,7 +31,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{66969DDF-52E5-A643-9C11-9EC4EE684C50}</id>
 			<comment>
 			<![CDATA[
 	
@@ -40,7 +43,8 @@
 				<second>464</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{0888F117-36AF-864E-9F51-49A9BD89916B}</id>
 			<comment>
 			<![CDATA[
 	
@@ -52,7 +56,8 @@
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.Sqrt">
+		<item type="traktor.render.Sqrt" version="traktor.render.Node:1">
+			<id>{F4B8ABFA-FA1A-5F4F-A32E-7AF5C23709F8}</id>
 			<comment>
 			<![CDATA[
 	
@@ -63,7 +68,8 @@
 				<second>474</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{2CA966A4-8647-3648-985F-6802C76434C0}</id>
 			<comment>
 			<![CDATA[
 	
@@ -75,7 +81,8 @@
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{DF05003F-4AB8-6F4E-8EE7-F5A72416AFAE}</id>
 			<comment>
 			<![CDATA[
 	
@@ -86,7 +93,8 @@
 				<second>428</second>
 			</position>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{8BEBAA7A-82FA-DB46-883C-2EFF03F82940}</id>
 			<comment>
 			<![CDATA[
 Reconstruct normalized quaternion from 3-scalars.

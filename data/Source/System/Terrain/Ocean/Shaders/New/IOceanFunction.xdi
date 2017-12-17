@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{70923BCA-9AC6-0B4D-86AF-2308E1E03AEB}</id>
 			<comment/>
 			<position>
 				<first>271</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{7DDB3F31-9CA6-C34A-822A-FB68BE1E455C}</id>
 			<comment/>
 			<position>
 				<first>648</first>

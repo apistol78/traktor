@@ -72,7 +72,7 @@ bool SolutionBuilderMsvcVCProj::generate(
 	context.set(L"PROJECT_FILENAME", projectFileName);
 	context.set(L"PROJECT_GUID", projectGuid);
 
-	std::vector< uint8_t > buffer;
+	AlignedVector< uint8_t > buffer;
 	buffer.reserve(40000);
 
 	DynamicMemoryStream bufferStream(buffer, false, true);

@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
+#include "Ui/IBitmap.h"
 #include "Ui/NotificationIcon.h"
 #include "Ui/Widget.h"
 #include "Ui/Itf/INotificationIcon.h"
@@ -29,7 +29,7 @@ NotificationIcon::~NotificationIcon()
 	T_ASSERT_M (!m_ni, L"NotificationIcon not destroyed");
 }
 
-bool NotificationIcon::create(const std::wstring& text, Bitmap* image)
+bool NotificationIcon::create(const std::wstring& text, IBitmap* image)
 {
 	if (!image || !image->getSystemBitmap())
 		return false;
@@ -52,7 +52,7 @@ void NotificationIcon::destroy()
 	safeDestroy(m_ni);
 }
 
-void NotificationIcon::setImage(Bitmap* image)
+void NotificationIcon::setImage(IBitmap* image)
 {
 	m_ni->setImage(image->getSystemBitmap());
 }

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{8B9DE87E-213B-4341-A0A3-A215DD1B9A29}</id>
 			<comment/>
 			<position>
 				<first>160</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{C969E9FF-11F8-8C41-8713-DB9E534F4832}</id>
 			<comment/>
 			<position>
 				<first>353</first>
@@ -30,7 +32,8 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{C8A6ED82-CFF1-5C4B-9C64-0AA92800D988}</id>
 			<comment/>
 			<position>
 				<first>927</first>
@@ -38,7 +41,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{E804D315-29FB-5B46-8601-20785D42D2EF}</id>
 			<comment/>
 			<position>
 				<first>382</first>
@@ -46,21 +50,24 @@
 			</position>
 			<value>0.2125, 0.7154, 0.0721, 0</value>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{0C7E11A3-0A36-2C4B-BA9C-5DBA37EA6FB1}</id>
 			<comment/>
 			<position>
 				<first>611</first>
 				<second>237</second>
 			</position>
 		</item>
-		<item type="traktor.render.Lerp">
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{F17F7860-D99E-024B-ABF7-A4455FB5766F}</id>
 			<comment/>
 			<position>
 				<first>776</first>
 				<second>306</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{A540EF95-1607-C04A-82B0-25C71441D8A0}</id>
 			<comment/>
 			<position>
 				<first>637</first>
@@ -68,7 +75,8 @@
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{117A2FDE-C74A-C54D-AE1F-36A93F88AC07}</id>
 			<comment/>
 			<position>
 				<first>162</first>

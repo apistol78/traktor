@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{235FF8B0-CF29-1346-9B73-6397E03A96C2}</id>
 			<comment/>
 			<position>
 				<first>200</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{0CE7F75B-4848-744E-A366-EF4B5809E7A8}</id>
 			<comment/>
 			<position>
 				<first>167</first>
@@ -25,14 +27,16 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{38C03B02-AA0E-6B40-8C57-79D007E8BA37}</id>
 			<comment/>
 			<position>
 				<first>386</first>
 				<second>98</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{9FE87666-D341-404A-A67E-0BCD21C80EB0}</id>
 			<comment>
 			<![CDATA[
 PI
@@ -44,14 +48,16 @@ PI
 			</position>
 			<value>3.141593</value>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{D47A9326-4F1B-484D-8ABA-45765221436B}</id>
 			<comment/>
 			<position>
 				<first>385</first>
 				<second>234</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{8DB6E659-2EDD-3C41-B9AC-FAEA5EBE806C}</id>
 			<comment>
 			<![CDATA[
 PI * 2
@@ -63,7 +69,8 @@ PI * 2
 			</position>
 			<value>6.28319</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{BA257EF9-D315-AE43-9DFF-5B17FD5C54C4}</id>
 			<comment/>
 			<position>
 				<first>568</first>
@@ -71,7 +78,8 @@ PI * 2
 			</position>
 			<name>Phi</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{CF36CA85-75FF-D44F-9AF5-CC0112F67BDE}</id>
 			<comment/>
 			<position>
 				<first>565</first>

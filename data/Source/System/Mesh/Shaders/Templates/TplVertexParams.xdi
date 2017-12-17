@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{CEB97E6D-A05A-4340-BD0A-CE6070940C2B}</id>
 			<comment/>
 			<position>
 				<first>884</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>T_Color</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{A21A3F82-DDA6-A541-9CDD-7A1210BA2C45}</id>
 			<comment/>
 			<position>
 				<first>884</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>T_ViewPosition</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{3F6B1E16-CFCD-7A4D-91E8-4E33B1741B23}</id>
 			<comment/>
 			<position>
 				<first>884</first>
@@ -25,7 +28,8 @@
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{AE5867C5-3287-CD46-848D-7AF03E4617CF}</id>
 			<comment/>
 			<position>
 				<first>884</first>
@@ -33,7 +37,8 @@
 			</position>
 			<name>T_TexCoord0</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{E9753668-472E-2F46-89D9-190EB5A3044F}</id>
 			<comment/>
 			<position>
 				<first>884</first>
@@ -41,7 +46,8 @@
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{944D48B5-26D7-5647-9058-D9A1A473CFF1}</id>
 			<comment/>
 			<position>
 				<first>884</first>
@@ -49,7 +55,8 @@
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{40294FDA-C7A5-384C-8D3F-C306CEDCE4CB}</id>
 			<comment/>
 			<position>
 				<first>567</first>
@@ -57,7 +64,8 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{8FFBFC6B-2B32-8D4A-A4EB-0BB18EA60079}</id>
 			<comment/>
 			<position>
 				<first>884</first>
@@ -65,7 +73,8 @@
 			</position>
 			<name>T_Position</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{17F58DC9-C4AC-4346-9A00-7DF9E426EF3A}</id>
 			<comment/>
 			<position>
 				<first>884</first>
@@ -73,7 +82,8 @@
 			</position>
 			<name>T_TexCoord1</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{2D07DFB8-DE2C-8145-97EA-12320C2FBDCE}</id>
 			<comment/>
 			<position>
 				<first>884</first>

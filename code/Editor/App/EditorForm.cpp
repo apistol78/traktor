@@ -785,14 +785,25 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	Path thumbsPath = m_mergedSettings->getProperty< std::wstring >(L"Editor.ThumbsPath");
 	setStoreObject(L"ThumbnailGenerator", new ThumbnailGenerator(thumbsPath));
 
-	// Restore last used form settings.
-	int32_t x = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionX");
-	int32_t y = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionY");
-	int32_t width = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeWidth", ui::scaleBySystemDPI(1280));
-	int32_t height = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeHeight", ui::scaleBySystemDPI(900));
-	setRect(ui::Rect(x, y, x + width, y + height));
+	// Restore last used form settings, if desktop size still match.
+	int32_t x = 0, y = 0, width = ui::scaleBySystemDPI(1280), height = ui::scaleBySystemDPI(900);
+	bool maximized = false;
 
-	if (m_mergedSettings->getProperty< bool >(L"Editor.Maximized"))
+	ui::Size desktopSize = ui::Application::getInstance()->getEventLoop()->getDesktopSize();
+	if (
+		desktopSize.cx == m_mergedSettings->getProperty< int32_t >(L"Editor.LastDesktopWidth", -1) &&
+		desktopSize.cy == m_mergedSettings->getProperty< int32_t >(L"Editor.LastDesktopHeight", -1)
+	)
+	{
+		x = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionX");
+		y = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionY");
+		width = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeWidth", ui::scaleBySystemDPI(1280));
+		height = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeHeight", ui::scaleBySystemDPI(900));
+		maximized = m_mergedSettings->getProperty< bool >(L"Editor.Maximized");
+	}
+
+	setRect(ui::Rect(x, y, x + width, y + height));
+	if (maximized)
 		maximize();
 
 	// Open recently used workspace.
@@ -2786,6 +2797,11 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PositionY", rc.top);
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.SizeWidth", rc.getWidth());
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.SizeHeight", rc.getHeight());
+
+	// Save desktop size.
+	ui::Size desktopSize = ui::Application::getInstance()->getEventLoop()->getDesktopSize();
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.LastDesktopWidth", desktopSize.cx);
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.LastDesktopHeight", desktopSize.cy);
 
 	// Save settings and pipeline hash.
 #if !defined(__APPLE__)

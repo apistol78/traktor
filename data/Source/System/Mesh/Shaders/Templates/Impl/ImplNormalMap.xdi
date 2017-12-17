@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{CBE01901-16FD-0B48-88B1-AADAB2EF0BD2}</id>
 			<comment/>
 			<position>
 				<first>797</first>
@@ -53,7 +54,8 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Texture">
+		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+			<id>{000FD1AB-7DE6-0B44-A8E8-E7A1F300D7CF}</id>
 			<comment>
 			<![CDATA[
 Tag_NormalMap
@@ -66,7 +68,8 @@ Tag_NormalMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{0FE02B03-84F7-C54F-9819-EB06A2298E52}</id>
 			<comment/>
 			<position>
 				<first>512</first>
@@ -78,7 +81,8 @@ Tag_NormalMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{51E6ACEE-7868-C84E-9910-8DBD9BC0B921}</id>
 			<comment/>
 			<position>
 				<first>515</first>
@@ -90,7 +94,8 @@ Tag_NormalMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{0281E78A-073D-4D42-912D-EC0257935FC8}</id>
 			<comment/>
 			<position>
 				<first>512</first>
@@ -102,7 +107,8 @@ Tag_NormalMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{9EA27A4E-52CC-7D42-AF4E-9A4A81AA2947}</id>
 			<comment/>
 			<position>
 				<first>508</first>
@@ -114,7 +120,8 @@ Tag_NormalMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{745A7340-C2DB-3741-8355-A7E4261B9527}</id>
 			<comment/>
 			<position>
 				<first>1062</first>
@@ -122,7 +129,8 @@ Tag_NormalMap
 			</position>
 			<name>T_ViewPosition</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{82227F22-5001-0C42-8295-BF0D9F8BF2F9}</id>
 			<comment/>
 			<position>
 				<first>1062</first>
@@ -130,7 +138,8 @@ Tag_NormalMap
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{E0F1D49C-28F1-884A-9AED-5F8748B0F015}</id>
 			<comment/>
 			<position>
 				<first>1062</first>
@@ -138,7 +147,8 @@ Tag_NormalMap
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{D691E3CC-A81C-F940-B167-507F3448AD1F}</id>
 			<comment/>
 			<position>
 				<first>1063</first>
@@ -146,7 +156,8 @@ Tag_NormalMap
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{8FF5D60E-2D0A-2D42-9CA9-062489E65D5C}</id>
 			<comment/>
 			<position>
 				<first>564</first>
@@ -158,7 +169,8 @@ Tag_NormalMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{7CBCC5AA-214A-4A41-BADB-F0A5802F1FB3}</id>
 			<comment/>
 			<position>
 				<first>564</first>

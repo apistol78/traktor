@@ -87,5 +87,12 @@ Ref< world::EntityData > HeightfieldEditorProfile::createEntityData(
 	return 0;
 }
 
+void HeightfieldEditorProfile::getDebugTargets(
+	scene::SceneEditorContext* context,
+	std::vector< render::DebugTarget >& outDebugTargets
+) const
+{
+}
+
 	}
 }

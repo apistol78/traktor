@@ -510,6 +510,10 @@
       <second>Category</second>
     </item>
     <item>
+      <first>DATABASE_VIEW_MODE_SPLIT</first>
+      <second>Split</second>
+    </item>
+    <item>
       <first>DATABASE_BUILD</first>
       <second>Build</second>
     </item>
@@ -612,6 +616,14 @@
     <item>
       <first>DATABASE_LOADING_TITLE</first>
       <second>Loading</second>
+    </item>
+    <item>
+      <first>DATABASE_INSTANCE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>DATABASE_INSTANCE_TYPE</first>
+      <second>Type</second>
     </item>
     <item>
       <first>DATABASE_NEW_GROUP</first>

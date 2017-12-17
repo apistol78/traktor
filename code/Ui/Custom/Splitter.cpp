@@ -16,6 +16,17 @@ namespace traktor
 	{
 		namespace custom
 		{
+			namespace
+			{
+			
+Widget* findVisibleSibling(Widget* widget)
+{
+	while (widget != nullptr && !widget->isVisible(false))
+		widget = widget->getNextSibling();
+	return widget;
+}
+
+			}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Splitter", Splitter, Widget)
 
@@ -50,14 +61,14 @@ Size Splitter::getMinimumSize() const
 		size.cx = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
-		if (left != 0)
+		if (left != nullptr)
 		{
 			size.cx += left->getMinimumSize().cx;
 			size.cy = std::max< int >(size.cy, left->getMinimumSize().cy);
 		}
 		
 		Widget* right = getRightWidget();
-		if (right != 0)
+		if (right != nullptr)
 		{
 			size.cx += right->getMinimumSize().cx;
 			size.cy = std::max< int >(size.cy, right->getMinimumSize().cy);
@@ -68,14 +79,14 @@ Size Splitter::getMinimumSize() const
 		size.cy = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
-		if (left != 0)
+		if (left != nullptr)
 		{
 			size.cx = std::max< int >(size.cx, left->getMinimumSize().cx);
 			size.cy += left->getMinimumSize().cy;
 		}
 		
 		Widget* right = getRightWidget();
-		if (right != 0)
+		if (right != nullptr)
 		{
 			size.cx = std::max< int >(size.cx, right->getMinimumSize().cx);
 			size.cy += right->getMinimumSize().cy;
@@ -92,14 +103,14 @@ Size Splitter::getPreferedSize() const
 		size.cx = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
-		if (left != 0)
+		if (left != nullptr)
 		{
 			size.cx += left->getPreferedSize().cx;
 			size.cy = std::max< int >(size.cy, left->getPreferedSize().cy);
 		}
 		
 		Widget* right = getRightWidget();
-		if (right != 0)
+		if (right != nullptr)
 		{
 			size.cx += right->getPreferedSize().cx;
 			size.cy = std::max< int >(size.cy, right->getPreferedSize().cy);
@@ -110,14 +121,14 @@ Size Splitter::getPreferedSize() const
 		size.cy = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
-		if (left != 0)
+		if (left != nullptr)
 		{
 			size.cx = std::max< int >(size.cx, left->getPreferedSize().cx);
 			size.cy += left->getPreferedSize().cy;
 		}
 		
 		Widget* right = getRightWidget();
-		if (right != 0)
+		if (right != nullptr)
 		{
 			size.cx = std::max< int >(size.cx, right->getPreferedSize().cx);
 			size.cy += right->getPreferedSize().cy;
@@ -134,14 +145,14 @@ Size Splitter::getMaximumSize() const
 		size.cx = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
-		if (left != 0)
+		if (left != nullptr)
 		{
 			size.cx += left->getMaximumSize().cx;
 			size.cy = std::max< int >(size.cy, left->getMaximumSize().cy);
 		}
 		
 		Widget* right = getRightWidget();
-		if (right != 0)
+		if (right != nullptr)
 		{
 			size.cx += right->getMaximumSize().cx;
 			size.cy = std::max< int >(size.cy, right->getMaximumSize().cy);
@@ -152,14 +163,14 @@ Size Splitter::getMaximumSize() const
 		size.cy = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
-		if (left != 0)
+		if (left != nullptr)
 		{
 			size.cx = std::max< int >(size.cx, left->getMaximumSize().cx);
 			size.cy += left->getMaximumSize().cy;
 		}
 		
 		Widget* right = getRightWidget();
-		if (right != 0)
+		if (right != nullptr)
 		{
 			size.cx = std::max< int >(size.cx, right->getMaximumSize().cx);
 			size.cy += right->getMaximumSize().cy;
@@ -170,13 +181,14 @@ Size Splitter::getMaximumSize() const
 
 void Splitter::update(const Rect* rc, bool immediate)
 {
-	Rect inner = getInnerRect();
-	
-	int position = getAbsolutePosition();
-
 	Widget* left = getLeftWidget();	
-	if (left != 0)
+	Widget* right = getRightWidget();
+
+	Rect inner = getInnerRect();
+	if (left != nullptr && right != nullptr)
 	{
+		int position = getAbsolutePosition();
+
 		Rect rcLeft(0, 0, 0, 0);
 		if (m_vertical == true)
 			rcLeft.setSize(Size(position - ui::scaleBySystemDPI(c_splitterSize) / 2, inner.getHeight()));
@@ -184,10 +196,7 @@ void Splitter::update(const Rect* rc, bool immediate)
 			rcLeft.setSize(Size(inner.getWidth(), position - ui::scaleBySystemDPI(c_splitterSize) / 2));
 		left->setRect(rcLeft);
 		left->update();
-	}
-	Widget* right = getRightWidget();
-	if (right != 0)
-	{
+
 		Rect rcRight(0, 0, 0, 0);
 		if (m_vertical == true)
 		{
@@ -201,6 +210,11 @@ void Splitter::update(const Rect* rc, bool immediate)
 		}
 		right->setRect(rcRight);
 		right->update();
+	}
+	else if (left != nullptr)
+	{
+		left->setRect(inner);
+		left->update();
 	}
 
 	Widget::update(rc, immediate);
@@ -222,15 +236,16 @@ int Splitter::getPosition() const
 
 Ref< Widget > Splitter::getLeftWidget() const
 {
-	return getFirstChild();
+	return findVisibleSibling(getFirstChild());
 }
 
 Ref< Widget > Splitter::getRightWidget() const
 {
-	Ref< Widget > child = getFirstChild();
-	if (child != 0)
-		child = child->getNextSibling();
-	return child;
+	Widget* child = getFirstChild();
+	if (child != nullptr)
+		return findVisibleSibling(child->getNextSibling());
+	else
+		return nullptr;
 }
 
 int Splitter::getAbsolutePosition() const

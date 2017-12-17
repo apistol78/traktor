@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Texture">
+		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+			<id>{0536113E-D7BE-E743-A1E4-7EE2446D1457}</id>
 			<comment>
 			<![CDATA[
 Tag_ReflectiveMap
@@ -14,7 +15,8 @@ Tag_ReflectiveMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{DFC2878F-6571-1141-BF86-0A37B4656ABB}</id>
 			<comment/>
 			<position>
 				<first>526</first>
@@ -31,7 +33,8 @@ Tag_ReflectiveMap
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{B8149D0B-7104-A145-B30F-C31489FAB876}</id>
 			<comment/>
 			<position>
 				<first>687</first>
@@ -39,7 +42,8 @@ Tag_ReflectiveMap
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{DFCD2DC4-0B8D-E545-B568-82AEA8E03C94}</id>
 			<comment/>
 			<position>
 				<first>843</first>
@@ -47,7 +51,8 @@ Tag_ReflectiveMap
 			</position>
 			<name>T_Reflective</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{67C3F9EC-4D08-7C40-B3F7-E7B1A4CE3593}</id>
 			<comment/>
 			<position>
 				<first>318</first>
@@ -59,7 +64,8 @@ Tag_ReflectiveMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{6A09F0EF-B019-F446-A7D5-2226791EDB42}</id>
 			<comment/>
 			<position>
 				<first>318</first>

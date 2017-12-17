@@ -45,6 +45,8 @@ public:
 
 	virtual bool isKeyDown(VirtualKey vk) const T_OVERRIDE T_FINAL;
 
+	virtual Size getDesktopSize() const T_OVERRIDE T_FINAL;
+
 private:
 	int32_t m_exitCode;
 	bool m_terminate;

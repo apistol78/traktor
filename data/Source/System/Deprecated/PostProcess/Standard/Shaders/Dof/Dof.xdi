@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{AD95A0B6-2F8D-DD41-8AAE-0C9FA0C235B0}</id>
 			<comment/>
 			<position>
 				<first>295</first>
@@ -19,7 +20,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7">
+		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+			<id>{63E916A8-B17A-604E-8295-F2A5340753C9}</id>
 			<comment/>
 			<position>
 				<first>2222</first>
@@ -66,7 +68,8 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{40A2B748-76D8-B34B-9ABD-0B482446E583}</id>
 			<comment/>
 			<position>
 				<first>1048</first>
@@ -83,7 +86,8 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{7F87A157-D006-D348-8C1A-0680AE90ECE2}</id>
 			<comment/>
 			<position>
 				<first>512</first>
@@ -100,7 +104,8 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{D0A9A9A0-AC4F-3947-B377-F237A70B0B18}</id>
 			<comment/>
 			<position>
 				<first>1050</first>
@@ -117,7 +122,8 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{1BAB52F5-3007-E24A-A2AC-2C3B51BEA393}</id>
 			<comment>
 			<![CDATA[
 Focal distance
@@ -129,7 +135,8 @@ Focal distance
 			</position>
 			<value>0.1</value>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{370822A2-A080-5C44-BC90-49BD62B3B42F}</id>
 			<comment/>
 			<position>
 				<first>725</first>
@@ -137,7 +144,8 @@ Focal distance
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{933F75C8-8FEA-F74D-9702-C1B2D1650B2E}</id>
 			<comment/>
 			<position>
 				<first>1576</first>
@@ -146,14 +154,16 @@ Focal distance
 			<min>0</min>
 			<max>0.7</max>
 		</item>
-		<item type="traktor.render.Lerp">
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{196084E4-8F0E-9C48-8777-82B88A394AAC}</id>
 			<comment/>
 			<position>
 				<first>2026</first>
 				<second>337</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{1A0DCEAC-F4F1-104A-8E1F-9ED99E40E191}</id>
 			<comment/>
 			<position>
 				<first>294</first>
@@ -163,7 +173,8 @@ Focal distance
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{4B30F098-72A1-B242-8834-2C4CF8F63175}</id>
 			<comment/>
 			<position>
 				<first>714</first>
@@ -173,7 +184,8 @@ Focal distance
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{EFE53885-BBAA-3446-B826-7EC7D01C0545}</id>
 			<comment/>
 			<position>
 				<first>722</first>
@@ -183,14 +195,16 @@ Focal distance
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{E55C8D64-7D1F-434D-8030-18043BAFAAE4}</id>
 			<comment/>
 			<position>
 				<first>1021</first>
 				<second>518</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{5AD8E0A9-1619-6747-9DD7-898B607BA838}</id>
 			<comment>
 			<![CDATA[
 Focal distance

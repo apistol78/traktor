@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{F525A394-5C2E-5F43-886C-244EA5604782}</id>
 			<comment>
 			<![CDATA[
 Light range
@@ -13,7 +14,8 @@ Light range
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{AFB0D608-07EA-4845-8F38-38A7A72E52A7}</id>
 			<comment>
 			<![CDATA[
 Light direction
@@ -25,7 +27,8 @@ Light direction
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1">
+		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+			<id>{8C6DF57D-EE82-F04E-BEF8-1E99645BEC72}</id>
 			<comment/>
 			<position>
 				<first>429</first>
@@ -36,7 +39,8 @@ Light direction
 			<frequency>UfFrame</frequency>
 			<length>2</length>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{5BF35C5F-91FB-314F-9EFE-7A6BB98C53F9}</id>
 			<comment>
 			<![CDATA[
 Light position
@@ -48,7 +52,8 @@ Light position
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{BD5988A1-F89F-DA44-8337-FE48A4130365}</id>
 			<comment>
 			<![CDATA[
 Light type
@@ -60,7 +65,8 @@ Light type
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1">
+		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+			<id>{7B7166E4-9160-8642-8084-A0420DD56B8C}</id>
 			<comment/>
 			<position>
 				<first>429</first>
@@ -71,7 +77,8 @@ Light type
 			<frequency>UfFrame</frequency>
 			<length>2</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1">
+		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+			<id>{34A76688-9D42-7C45-B3A1-715F5E1EA713}</id>
 			<comment/>
 			<position>
 				<first>429</first>
@@ -82,7 +89,8 @@ Light type
 			<frequency>UfFrame</frequency>
 			<length>2</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1">
+		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+			<id>{8316B717-F3C1-154E-AF5A-8067646E1C79}</id>
 			<comment/>
 			<position>
 				<first>429</first>
@@ -93,7 +101,8 @@ Light type
 			<frequency>UfFrame</frequency>
 			<length>2</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1">
+		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+			<id>{DDC8492E-24DE-4E47-AF85-C30C0B850262}</id>
 			<comment/>
 			<position>
 				<first>429</first>
@@ -104,7 +113,8 @@ Light type
 			<frequency>UfFrame</frequency>
 			<length>2</length>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{230E7D55-5AF1-084F-9F07-74D13185A760}</id>
 			<comment/>
 			<position>
 				<first>200</first>
@@ -116,7 +126,8 @@ Light type
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{390D3546-C311-5C46-828F-A72F5E1F6050}</id>
 			<comment/>
 			<position>
 				<first>1065</first>
@@ -124,7 +135,8 @@ Light type
 			</position>
 			<name>SunColor</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{6F0BEB64-246B-D64B-A75A-AC7C2D803953}</id>
 			<comment/>
 			<position>
 				<first>1065</first>
@@ -132,7 +144,8 @@ Light type
 			</position>
 			<name>BaseColor</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{151EFDA1-ED94-1642-B80E-B18AFD0663BF}</id>
 			<comment/>
 			<position>
 				<first>1065</first>
@@ -140,7 +153,8 @@ Light type
 			</position>
 			<name>ShadowColor</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{CAEDFA17-F623-DB47-951B-0441218F1AB0}</id>
 			<comment/>
 			<position>
 				<first>1065</first>
@@ -148,7 +162,8 @@ Light type
 			</position>
 			<name>Type</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{02EB2288-A84C-7F4F-AE1C-0B331EE5CF85}</id>
 			<comment/>
 			<position>
 				<first>1065</first>
@@ -156,7 +171,8 @@ Light type
 			</position>
 			<name>Range</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{2564BE93-3D10-8B40-95ED-C515C8434DB3}</id>
 			<comment/>
 			<position>
 				<first>1065</first>
@@ -164,7 +180,8 @@ Light type
 			</position>
 			<name>Direction</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{F46BBF72-B290-6843-940C-0AC9D9508E61}</id>
 			<comment/>
 			<position>
 				<first>1065</first>
@@ -172,7 +189,8 @@ Light type
 			</position>
 			<name>Position</name>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{762DA743-9D80-5640-BDCC-4201AE5EF704}</id>
 			<comment/>
 			<position>
 				<first>923</first>
@@ -180,7 +198,8 @@ Light type
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{EA2E9CF5-3350-D648-A6D9-6915E2861B7A}</id>
 			<comment/>
 			<position>
 				<first>923</first>
@@ -188,7 +207,8 @@ Light type
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{F26DA817-A664-F94B-9919-7BF7E99CC91D}</id>
 			<comment/>
 			<position>
 				<first>923</first>

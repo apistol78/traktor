@@ -78,6 +78,11 @@ public:
 		scene::SceneEditorContext* context,
 		db::Instance* instance
 	) const T_OVERRIDE T_FINAL;
+
+	virtual void getDebugTargets(
+		scene::SceneEditorContext* context,
+		std::vector< render::DebugTarget >& outDebugTargets
+	) const T_OVERRIDE T_FINAL;
 };
 
 	}

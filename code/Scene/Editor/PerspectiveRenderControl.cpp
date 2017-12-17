@@ -653,13 +653,20 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->present();
 	}
 
-	// Expose various render targets for debugging.
-	std::vector< render::DebugTarget > worldTargets;
-	m_worldRenderer->getDebugTargets(worldTargets);
+	std::vector< render::DebugTarget > debugTargets;
 
+	// Debug world renderer targets.
+	m_worldRenderer->getDebugTargets(debugTargets);
+
+	// Debug profile render targets.
+	const RefArray< ISceneEditorProfile >& profiles = m_context->getEditorProfiles();
+	for (auto profile : profiles)
+		profile->getDebugTargets(m_context, debugTargets);
+
+	// Push debug targets to context.
 	m_context->clearDebugTargets();
-	for (std::vector< render::DebugTarget >::const_iterator i = worldTargets.begin(); i != worldTargets.end(); ++i)
-		m_context->addDebugTarget(*i);
+	for (auto debugTarget : debugTargets)
+		m_context->addDebugTarget(debugTarget);
 
 	event->consume();
 }

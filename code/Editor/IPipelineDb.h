@@ -24,8 +24,6 @@ namespace traktor
 	namespace editor
 	{
 
-class IPipelineReport;
-
 /*! \brief Pipeline database.
  * \ingroup Editor
  *
@@ -58,8 +56,6 @@ public:
 	virtual void setFile(const Path& path, const PipelineFileHash& file) = 0;
 
 	virtual bool getFile(const Path& path, PipelineFileHash& outFile) = 0;
-
-	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid) = 0;
 };
 
 	}

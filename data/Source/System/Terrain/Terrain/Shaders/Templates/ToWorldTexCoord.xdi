@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{20F9C204-67A2-934F-BE12-8F7EA04381C2}</id>
 			<comment/>
 			<position>
 				<first>878</first>
@@ -9,14 +10,16 @@
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{021532BF-B352-3A43-ACA5-77B499C17983}</id>
 			<comment/>
 			<position>
 				<first>712</first>
 				<second>412</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{E15455A9-C985-BA4D-8560-B4D10312157C}</id>
 			<comment/>
 			<position>
 				<first>512</first>
@@ -26,14 +29,16 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{1A91F6A6-D41E-F948-9E0A-94D5190DFAF7}</id>
 			<comment/>
 			<position>
 				<first>555</first>
 				<second>385</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{5D8FB29B-3812-5041-B96E-0B23EF11D62F}</id>
 			<comment/>
 			<position>
 				<first>353</first>
@@ -43,7 +48,8 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{A7C58665-DE2C-1B4B-90BA-E27FCE2CA687}</id>
 			<comment/>
 			<position>
 				<first>324</first>
@@ -55,7 +61,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{D9A0E443-C5DA-B742-9179-9B9EEC290E1B}</id>
 			<comment/>
 			<position>
 				<first>1022</first>

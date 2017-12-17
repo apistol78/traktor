@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{18B215C1-2830-C940-9892-3122130C133C}</id>
 			<comment/>
 			<position>
 				<first>1560</first>
 				<second>564</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{E23CF1C9-F916-D24B-815A-CC7E01284D75}</id>
 			<comment/>
 			<position>
 				<first>1165</first>
@@ -20,7 +22,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{0664FBEF-CF9D-724A-90D1-BEAB3A517019}</id>
 			<comment/>
 			<position>
 				<first>1216</first>
@@ -32,7 +35,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{6625AFE1-1798-FC48-AF88-01F43C31C5B7}</id>
 			<comment/>
 			<position>
 				<first>1901</first>
@@ -40,14 +44,16 @@
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{E6144C2E-8935-D846-B6BF-C8595C0D8D1B}</id>
 			<comment/>
 			<position>
 				<first>2075</first>
 				<second>564</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{A5EB0500-9C70-5E49-95E0-B3DC8B37133A}</id>
 			<comment/>
 			<position>
 				<first>2375</first>
@@ -55,7 +61,8 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{6B0EBF94-A421-EB45-AE66-6C2ACECEF50D}</id>
 			<comment/>
 			<position>
 				<first>2560</first>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{524CBBA2-C160-CB43-ADE9-BE7299EFF622}</id>
 			<comment/>
 			<position>
 				<first>494</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>T_Normal</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{10231020-AD85-D648-98B2-E9B028704052}</id>
 			<comment/>
 			<position>
 				<first>494</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>T_Color</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{5E3C7A16-8233-0946-9F8E-656A2F545AD8}</id>
 			<comment/>
 			<position>
 				<first>44</first>
@@ -29,7 +32,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{0F740AA1-AF96-F141-B047-9F2E0FFAA003}</id>
 			<comment/>
 			<position>
 				<first>85</first>
@@ -41,7 +45,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{8230C4D0-206C-CD4A-9A60-1B39BCCA921F}</id>
 			<comment/>
 			<position>
 				<first>41</first>
@@ -53,7 +58,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{5B0F7E0B-4BD2-5F49-80CB-173E05D74159}</id>
 			<comment/>
 			<position>
 				<first>89</first>
@@ -65,7 +71,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{5E6ACBAB-A90A-B443-8DDA-98440B5136BA}</id>
 			<comment/>
 			<position>
 				<first>302</first>
@@ -73,7 +80,8 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{FA9DB504-8F40-ED4A-97F8-C4B53F5BA20C}</id>
 			<comment>
 			<![CDATA[
 This is the contract of a terrain surface shader.
@@ -84,7 +92,8 @@ This is the contract of a terrain surface shader.
 				<second>215</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{8F2904B3-D860-A043-98F0-4AE6AC0D4ED1}</id>
 			<comment/>
 			<position>
 				<first>26</first>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{F0ACE969-5BB2-2F43-992C-323A51C860D7}</id>
 			<comment/>
 			<position>
 				<first>240</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{5E160266-7A40-544A-84C6-C34C90CC6033}</id>
 			<comment/>
 			<position>
 				<first>465</first>
@@ -21,14 +23,16 @@
 			</position>
 			<swizzle>wy</swizzle>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{D2C83DCB-1F86-E64C-9373-650A087E77B3}</id>
 			<comment/>
 			<position>
 				<first>593</first>
 				<second>210</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{6AE69605-F59D-774B-BA04-6F14253E0017}</id>
 			<comment/>
 			<position>
 				<first>455</first>
@@ -36,7 +40,8 @@
 			</position>
 			<value>2</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{E06BD086-2920-9747-BB72-A7E721D02E51}</id>
 			<comment/>
 			<position>
 				<first>455</first>
@@ -44,21 +49,24 @@
 			</position>
 			<value>-1</value>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{6DBA7EDE-ACAB-6D47-87B8-D1070F98C53E}</id>
 			<comment/>
 			<position>
 				<first>753</first>
 				<second>311</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sqrt">
+		<item type="traktor.render.Sqrt" version="traktor.render.Node:1">
+			<id>{6B711B13-1E4A-A24C-9C7E-DD2658BB72DD}</id>
 			<comment/>
 			<position>
 				<first>1168</first>
 				<second>287</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{D2D0D7CC-23C9-6748-BC41-71328402E525}</id>
 			<comment/>
 			<position>
 				<first>1294</first>
@@ -66,7 +74,8 @@
 			</position>
 			<swizzle>xy0</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{6F501409-6B2D-D143-8980-30A7A376FD80}</id>
 			<comment/>
 			<position>
 				<first>1293</first>
@@ -74,14 +83,16 @@
 			</position>
 			<swizzle>00x</swizzle>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{CDD4B318-1B4D-5942-B12F-3C96A9847817}</id>
 			<comment/>
 			<position>
 				<first>1398</first>
 				<second>210</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{E666AE3F-B432-9543-B7AC-15DF393C600A}</id>
 			<comment/>
 			<position>
 				<first>1727</first>
@@ -89,7 +100,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{174C9CE7-A998-244D-8BD1-5431840638D9}</id>
 			<comment>
 			<![CDATA[
 http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
@@ -100,7 +112,8 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 				<second>-86</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{95C7A109-F070-2149-AD66-7ED97981B064}</id>
 			<comment/>
 			<position>
 				<first>767</first>
@@ -108,21 +121,24 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{E4DCE0D8-6E76-AD48-A11A-11403F820AB0}</id>
 			<comment/>
 			<position>
 				<first>905</first>
 				<second>287</second>
 			</position>
 		</item>
-		<item type="traktor.render.Platform">
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{D7DCD55F-4743-304D-ADA2-F8912E51081B}</id>
 			<comment/>
 			<position>
 				<first>1533</first>
 				<second>46</second>
 			</position>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{6DB3D254-BC99-C94B-96C6-71019DB6253B}</id>
 			<comment>
 			<![CDATA[
 No compression available in OpenGL ES 2
@@ -134,7 +150,8 @@ thus normals are stored uncompressed.
 				<second>254</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{52B9A095-8AD8-A049-B38E-B683C50BCBAF}</id>
 			<comment/>
 			<position>
 				<first>453</first>
@@ -142,7 +159,8 @@ thus normals are stored uncompressed.
 			</position>
 			<value>-1</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{52B6B183-FE52-644F-B718-E4BE27D9DDFC}</id>
 			<comment/>
 			<position>
 				<first>453</first>
@@ -150,14 +168,16 @@ thus normals are stored uncompressed.
 			</position>
 			<value>2</value>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{284F8879-BB25-1048-9B83-4081ED3B0929}</id>
 			<comment/>
 			<position>
 				<first>591</first>
 				<second>63</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{FA6EF15B-4CA0-9440-892A-0D0A2DC2740C}</id>
 			<comment/>
 			<position>
 				<first>1428</first>
@@ -165,14 +185,16 @@ thus normals are stored uncompressed.
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{6C167212-F530-5D4C-A743-76EAF4C0BB5F}</id>
 			<comment/>
 			<position>
 				<first>764</first>
 				<second>12</second>
 			</position>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{3274A7D8-B769-ED4B-8C0B-260190D2CFA5}</id>
 			<comment/>
 			<position>
 				<first>600</first>
@@ -180,7 +202,8 @@ thus normals are stored uncompressed.
 			</position>
 			<value>-1, 1, 1, 0</value>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{D6E5311A-A741-5F4A-89D2-87494419C44D}</id>
 			<comment/>
 			<position>
 				<first>1035</first>

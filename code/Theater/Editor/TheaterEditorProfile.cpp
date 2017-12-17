@@ -95,5 +95,12 @@ Ref< world::EntityData > TheaterEditorProfile::createEntityData(
 	return 0;
 }
 
+void TheaterEditorProfile::getDebugTargets(
+	scene::SceneEditorContext* context,
+	std::vector< render::DebugTarget >& outDebugTargets
+) const
+{
+}
+
 	}
 }

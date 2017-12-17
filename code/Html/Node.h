@@ -21,7 +21,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 namespace traktor
 {
 
-class IStream;
+class OutputStream;
 
 	namespace html
 	{
@@ -56,7 +56,7 @@ public:
 	
 	Node* getLastChild() const;
 
-	virtual void writeHtml(IStream* stream);
+	virtual void toString(OutputStream& os) const;
 
 private:
 	Node* m_parent;

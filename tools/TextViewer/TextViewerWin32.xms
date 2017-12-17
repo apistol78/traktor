@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="Solution">
-	<name>TextViewer Win32</name>
+	<name>TextViewer</name>
 	<rootPath>build/win32</rootPath>
 	<projects>
 		<item type="Project" version="1">

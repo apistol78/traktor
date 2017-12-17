@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{D618F4B8-176E-574C-A7BB-21BD2BA91ECB}</id>
 			<comment/>
 			<position>
 				<first>1014</first>
 				<second>212</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{1248B307-C85D-8648-B001-25EEB0EA9498}</id>
 			<comment/>
 			<position>
 				<first>572</first>
@@ -18,7 +20,8 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{96C994FF-BB26-3748-8F06-39A895F777D9}</id>
 			<comment/>
 			<position>
 				<first>569</first>
@@ -28,7 +31,8 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{92F1019A-BBC5-E240-96B2-CA2ADC377460}</id>
 			<comment/>
 			<position>
 				<first>116</first>
@@ -46,7 +50,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1">
+		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+			<id>{4A0DA636-4718-A34B-9A20-979C348D2728}</id>
 			<comment/>
 			<position>
 				<first>669</first>
@@ -54,7 +59,8 @@
 			</position>
 			<technique/>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{2DBCEC5B-BBC4-684C-8947-9771B8CD57F1}</id>
 			<comment/>
 			<position>
 				<first>658</first>
@@ -77,7 +83,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{0D92A5EC-6178-C94D-A036-2EB378B4FF43}</id>
 			<comment/>
 			<position>
 				<first>1449</first>

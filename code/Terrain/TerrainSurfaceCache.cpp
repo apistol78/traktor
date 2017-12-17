@@ -173,7 +173,7 @@ void TerrainSurfaceCache::flush(uint32_t patchId)
 void TerrainSurfaceCache::flushBase()
 {
 	if (m_base)
-		m_base->setContentValid(false);
+		m_base->discard();
 }
 
 void TerrainSurfaceCache::flush()
@@ -233,8 +233,6 @@ void TerrainSurfaceCache::begin(
 		renderBlock->clear = true;
 
 		renderContext->draw(render::RpOpaque, renderBlock);
-
-		m_base->setContentValid(true);
 	}
 
 	m_updateCount = 0;

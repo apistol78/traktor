@@ -4,14 +4,17 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_editor_IPipelineReport_H
-#define traktor_editor_IPipelineReport_H
+#ifndef File_H
+#define File_H
 
-#include "Core/Object.h"
+#include <set>
+#include <string>
+#include "Core/Io/Path.h"
+#include "SolutionBuilder/ProjectItem.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_EDITOR_EXPORT)
+#if defined(T_SOLUTIONBUILDER_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -19,23 +22,27 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	namespace editor
+	namespace sb
 	{
 
-/*! \brief Pipeline reporting interface.
- * \ingroup Editor.
- */
-class T_DLLCLASS IPipelineReport : public Object
+class T_DLLCLASS File : public ProjectItem
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual void set(const std::wstring& name, int32_t value) = 0;
+	void setFileName(const std::wstring& fileName);
 
-	virtual void set(const std::wstring& name, const std::wstring& value) = 0;
+	const std::wstring& getFileName() const;
+
+	void getSystemFiles(const Path& sourcePath, std::set< Path >& outFiles) const;
+
+	virtual void serialize(ISerializer& s);
+
+private:
+	std::wstring m_fileName;
 };
 
 	}
 }
 
-#endif	// traktor_editor_IPipelineReport_H
+#endif	// File_H

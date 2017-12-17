@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{9FCC49C0-7007-074B-8483-BF1EA9B2BCDD}</id>
 			<comment/>
 			<position>
 				<first>169</first>
@@ -11,14 +12,16 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.MixOut">
+		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
+			<id>{F653B2CB-0CCF-1C4F-A25B-75AD2075078A}</id>
 			<comment/>
 			<position>
 				<first>431</first>
 				<second>256</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{68312C09-4D39-BB4C-ABF3-E5957BA5B1B3}</id>
 			<comment/>
 			<position>
 				<first>612</first>
@@ -26,7 +29,8 @@
 			</position>
 			<name>Size</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{D570412E-6287-9249-9B9D-1FFEBBD20F57}</id>
 			<comment/>
 			<position>
 				<first>612</first>
@@ -34,7 +38,8 @@
 			</position>
 			<name>Thickness</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{DC4A9C6F-906B-F048-B554-8105A4E9CB09}</id>
 			<comment/>
 			<position>
 				<first>612</first>
@@ -42,7 +47,8 @@
 			</position>
 			<name>Alpha</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{D051A873-AA64-974A-A2F4-4C2807548D5C}</id>
 			<comment/>
 			<position>
 				<first>612</first>

@@ -54,8 +54,6 @@ public:
 
 	virtual bool getFile(const Path& path, PipelineFileHash& outFile) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid) T_OVERRIDE T_FINAL;
-
 private:
 	mutable ReaderWriterLock m_lock;
 	mutable StringOutputStream m_ss;

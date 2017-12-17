@@ -49,7 +49,13 @@ public:
 
 	virtual void discard() T_OVERRIDE T_FINAL;
 
+	virtual bool isContentValid() const T_OVERRIDE T_FINAL;
+
 	virtual bool read(int index, void* buffer) const T_OVERRIDE T_FINAL;
+
+	void setContentValid(bool contentValid) {
+		m_contentValid = contentValid;
+	}
 
 	bool usingPrimaryDepthStencil() const {
 		return m_usingPrimaryDepthStencil;
@@ -61,6 +67,7 @@ private:
 	Ref< RenderTargetDepthDx11 > m_depthTexture;
 	int m_width;
 	int m_height;
+	bool m_contentValid;
 	bool m_usingPrimaryDepthStencil;
 };
 

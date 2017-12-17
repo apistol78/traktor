@@ -676,7 +676,8 @@ struct RenderTargetSetCreateDesc
 enum DebugTargetVisualize
 {
 	DtvDefault,
-	DtvDepth,
+	DtvUnitDepth,
+	DtvViewDepth,
 	DtvNormals,
 	DtvVelocity,
 	DtvDeferredSpecularRoughness,

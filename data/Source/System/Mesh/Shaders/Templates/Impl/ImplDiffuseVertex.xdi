@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{88F53C09-7B34-804F-8305-E172C84B0FCE}</id>
 			<comment/>
 			<position>
 				<first>918</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>T_DiffuseTerm</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{0C3499D6-7A46-CE4D-980A-D39BCE8A9374}</id>
 			<comment/>
 			<position>
 				<first>918</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>T_DiffuseColor</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{DE8FCA8B-92EF-3848-BDA0-9451AAF64D94}</id>
 			<comment>
 			<![CDATA[
 Tag_DiffuseTerm
@@ -29,7 +32,8 @@ Tag_DiffuseTerm
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{3C061940-2423-BC4A-98C3-74F828B050D1}</id>
 			<comment/>
 			<position>
 				<first>450</first>
@@ -41,7 +45,8 @@ Tag_DiffuseTerm
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{D9692D9D-20D1-DF40-98EB-3A27B768F6ED}</id>
 			<comment/>
 			<position>
 				<first>450</first>
@@ -53,7 +58,8 @@ Tag_DiffuseTerm
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{9A11E567-177E-1945-8CB3-D3A3476E22B9}</id>
 			<comment/>
 			<position>
 				<first>692</first>
@@ -63,7 +69,8 @@ Tag_DiffuseTerm
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{BFD21E4D-01A9-0B42-9023-5E129A8EAF62}</id>
 			<comment/>
 			<position>
 				<first>445</first>

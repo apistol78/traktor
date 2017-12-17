@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{AB7112BB-3F52-0A4C-B7E7-5F233E2D37AD}</id>
 			<comment/>
 			<position>
 				<first>1237</first>
 				<second>525</second>
 			</position>
 		</item>
-		<item type="traktor.render.Neg">
+		<item type="traktor.render.Neg" version="traktor.render.Node:1">
+			<id>{90DB650E-BA81-B34D-B625-B1118309BF53}</id>
 			<comment/>
 			<position>
 				<first>1035</first>
 				<second>504</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{425152C0-0176-9142-9F31-E66E16AE0BB8}</id>
 			<comment/>
 			<position>
 				<first>950</first>
@@ -23,7 +26,8 @@
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{9AB96B37-BB13-E44E-87D9-B21F62625FE0}</id>
 			<comment/>
 			<position>
 				<first>948</first>
@@ -31,14 +35,16 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Length">
+		<item type="traktor.render.Length" version="traktor.render.Node:1">
+			<id>{48C635B9-503B-704E-96B9-445265773F3A}</id>
 			<comment/>
 			<position>
 				<first>1032</first>
 				<second>567</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{E1D6A2E5-C972-C241-8C23-EC005A0A0636}</id>
 			<comment/>
 			<position>
 				<first>721</first>
@@ -50,7 +56,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{4DD4DAD4-5640-7940-88B4-CCE31D325F9B}</id>
 			<comment/>
 			<position>
 				<first>1448</first>

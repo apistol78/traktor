@@ -8,7 +8,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/Adler32.h"
 #include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/PipelineDb.h"
-#include "Editor/Pipeline/PipelineDbReport.h"
 #include "Sql/IResultSet.h"
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
 
@@ -230,19 +229,6 @@ bool PipelineDb::getFile(const Path& path, PipelineFileHash& outFile)
 	outFile.hash = rs->getInt32(L"hash");
 
 	return true;
-}
-
-Ref< IPipelineReport > PipelineDb::createReport(const std::wstring& name, const Guid& guid)
-{
-	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
-
-	if (!m_transaction)
-	{
-		m_connection->executeUpdate(L"begin transaction");
-		m_transaction = true;
-	}
-
-	return new PipelineDbReport(m_lock, m_connection, L"Report_" + name, guid);
 }
 
 	}

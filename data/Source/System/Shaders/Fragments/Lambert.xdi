@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{165F6581-BBA4-084E-928A-32D4EC7A2273}</id>
 			<comment/>
 			<position>
 				<first>-751</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>Diffuse</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{CD70F62C-2726-1E47-999D-D4DAFEC87EDB}</id>
 			<comment/>
 			<position>
 				<first>-1186</first>
@@ -21,7 +23,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.5</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{4666D0EC-DE58-214D-8EE2-5BD6FCD2E21A}</id>
 			<comment/>
 			<position>
 				<first>-1173</first>
@@ -33,7 +36,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{E254A735-D7E9-C14E-A252-3D723D16D3A8}</id>
 			<comment/>
 			<position>
 				<first>-1208</first>
@@ -45,14 +49,16 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{08C74221-A500-8A43-8347-94D4B10798EE}</id>
 			<comment/>
 			<position>
 				<first>-959</first>
 				<second>488</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{8BDBDF2F-1A2A-6346-9F2C-B435FEA75A6B}</id>
 			<comment/>
 			<position>
 				<first>-1200</first>

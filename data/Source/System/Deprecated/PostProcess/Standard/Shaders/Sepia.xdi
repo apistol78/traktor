@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{86F89D4F-4ACA-AB43-9AF4-E5D1E98736DA}</id>
 			<comment/>
 			<position>
 				<first>182</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{B0BBA091-D1B6-6542-BCDC-F2E8CDC1975C}</id>
 			<comment/>
 			<position>
 				<first>705</first>
@@ -21,7 +23,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{87DCEF9D-4DC6-A24F-97B7-9F6153BB41CA}</id>
 			<comment/>
 			<position>
 				<first>125</first>
@@ -29,14 +32,16 @@
 			</position>
 			<value>0.299, 0.587, 0.114, 0</value>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{36E078E8-D78D-0F41-BC97-E81D8BC657C8}</id>
 			<comment/>
 			<position>
 				<first>372</first>
 				<second>184</second>
 			</position>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{71349F34-9E8F-8F4D-A5FF-7153BE0E02D4}</id>
 			<comment/>
 			<position>
 				<first>278</first>
@@ -44,7 +49,8 @@
 			</position>
 			<value>0.191, -0.054, -0.221, 0</value>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{D5808531-6C75-2149-A739-AA91A0AFADE9}</id>
 			<comment/>
 			<position>
 				<first>535</first>

@@ -1368,7 +1368,7 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 
 	if (m_gbufferTargetSet)
 	{
-		outTargets.push_back(render::DebugTarget(L"GBuffer depth", render::DtvDepth, m_gbufferTargetSet->getColorTexture(0)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer depth", render::DtvViewDepth, m_gbufferTargetSet->getColorTexture(0)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer normals", render::DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer specular term", render::DtvDeferredSpecularTerm, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer reflectivity", render::DtvDeferredReflectivity, m_gbufferTargetSet->getColorTexture(2)));

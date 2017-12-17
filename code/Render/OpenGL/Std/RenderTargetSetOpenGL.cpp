@@ -64,6 +64,7 @@ RenderTargetSetOpenGL::RenderTargetSetOpenGL(ContextOpenGL* resourceContext)
 ,	m_targetFBO(0)
 ,	m_depthBufferOrTexture(0)
 ,	m_currentTag(0)
+,	m_contentValid(false)
 {
 }
 
@@ -230,6 +231,12 @@ void RenderTargetSetOpenGL::swap(int index1, int index2)
 
 void RenderTargetSetOpenGL::discard()
 {
+	m_contentValid = false;
+}
+
+bool RenderTargetSetOpenGL::isContentValid() const
+{
+	return m_contentValid;
 }
 
 bool RenderTargetSetOpenGL::read(int index, void* buffer) const

@@ -56,7 +56,9 @@ public:
 	
 	Element* getLastElementChild() const;
 
-	virtual void writeHtml(IStream* stream) T_OVERRIDE T_FINAL;
+	void innerHTML(OutputStream& os) const;
+
+	virtual void toString(OutputStream& os) const T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_name;

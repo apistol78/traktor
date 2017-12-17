@@ -73,8 +73,6 @@ public:
 
 	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) T_OVERRIDE T_FINAL;
 
-	virtual Ref< editor::IPipelineReport > createReport(const std::wstring& name, const Guid& guid) T_OVERRIDE T_FINAL;
-
 private:
 	struct BuiltCacheEntry
 	{

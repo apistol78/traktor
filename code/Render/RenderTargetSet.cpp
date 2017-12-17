@@ -13,10 +13,6 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSet", RenderTargetSet, Object)
 
-RenderTargetSet::RenderTargetSet()
-:	m_contentValid(false)
-{
-}
 
 	}
 }

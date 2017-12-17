@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.FragmentPosition">
+		<item type="traktor.render.FragmentPosition" version="traktor.render.Node:1">
+			<id>{1495594C-A118-B742-B532-6E10C52173AB}</id>
 			<comment/>
 			<position>
 				<first>51</first>
 				<second>339</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{A8A5B244-60B8-694D-B957-7F4E53EA9C65}</id>
 			<comment/>
 			<position>
 				<first>760</first>
@@ -16,21 +18,24 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.TargetSize">
+		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
+			<id>{1FE7868C-4C06-034D-A8E8-6C7EA2AC3B02}</id>
 			<comment/>
 			<position>
 				<first>95</first>
 				<second>371</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{AA37D652-0A56-EB43-9402-13F5BAA539A8}</id>
 			<comment/>
 			<position>
 				<first>260</first>
 				<second>328</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{2D6E843A-08DC-F042-BEB4-2D60E064FF32}</id>
 			<comment/>
 			<position>
 				<first>494</first>
@@ -54,7 +59,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{635BB9F2-AC29-4742-8D29-237ECC2A82F8}</id>
 			<comment/>
 			<position>
 				<first>241</first>

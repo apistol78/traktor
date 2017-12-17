@@ -153,13 +153,11 @@ private:
 	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount;
 	uint32_t m_cacheSize;
-	
 	Ref< render::IndexBuffer > m_indexBuffer;
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	Ref< render::VertexBuffer > m_vertexBuffer;
 #endif
 	render::Primitives m_primitives[LodCount];
-
 	float m_patchLodDistance;
 	float m_patchLodBias;
 	float m_patchLodExponent;
@@ -167,7 +165,6 @@ private:
 	float m_surfaceLodBias;
 	float m_surfaceLodExponent;
 	VisualizeMode m_visualizeMode;
-
 	RefArray< ITerrainLayer > m_layers;
 
 	render::handle_t m_handleSurface;

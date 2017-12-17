@@ -132,6 +132,12 @@ public:
 	 */
 	const std::vector< Patch >& getPatches() const { return m_patches; }
 
+	/*! \brief Get vector of patch information.
+	 *
+	 * \return Information about each patch.
+	 */
+	std::vector< Patch >& editPatches() { return m_patches; }
+
 private:
 	friend class TerrainFactory;
 	friend class TerrainEditModifier;

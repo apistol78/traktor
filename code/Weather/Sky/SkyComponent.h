@@ -51,7 +51,6 @@ public:
 		render::IndexBuffer* indexBuffer,
 		const render::Primitives& primitives,
 		const resource::Proxy< render::Shader >& shader,
-		const Vector4& sunDirection,
 		float offset
 	);
 
@@ -67,8 +66,6 @@ public:
 
 	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
-	void setSunDirection(const Vector4& sunDirection);
-
 	void render(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
@@ -80,7 +77,7 @@ private:
 	Ref< render::IndexBuffer > m_indexBuffer;
 	render::Primitives m_primitives;
 	resource::Proxy< render::Shader > m_shader;
-	Vector4 m_sunDirection;
+	Transform m_transform;
 	float m_offset;
 };
 

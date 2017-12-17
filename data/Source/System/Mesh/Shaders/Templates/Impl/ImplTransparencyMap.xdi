@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Texture">
+		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+			<id>{FA0B2A22-A1D1-114B-A179-CED497DA546A}</id>
 			<comment>
 			<![CDATA[
 Tag_TransparencyMap
@@ -14,7 +15,8 @@ Tag_TransparencyMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{04B5023C-6E60-F947-BC70-36D77C0E5AA8}</id>
 			<comment/>
 			<position>
 				<first>526</first>
@@ -31,7 +33,8 @@ Tag_TransparencyMap
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{558E5A7F-C73E-AA4B-B870-D4935DD1058E}</id>
 			<comment/>
 			<position>
 				<first>687</first>
@@ -39,7 +42,8 @@ Tag_TransparencyMap
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{9C492B9E-D049-114A-BF62-0CD3F183CA8D}</id>
 			<comment/>
 			<position>
 				<first>843</first>
@@ -47,7 +51,8 @@ Tag_TransparencyMap
 			</position>
 			<name>T_Transparency</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{EFED6E54-458B-E44C-9DD7-2F7FEE4E5FFE}</id>
 			<comment/>
 			<position>
 				<first>259</first>
@@ -59,7 +64,8 @@ Tag_TransparencyMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{DB2DC5B8-8FD4-9740-9F2A-134E5E8B1868}</id>
 			<comment/>
 			<position>
 				<first>259</first>

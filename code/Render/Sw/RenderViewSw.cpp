@@ -317,8 +317,6 @@ bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	}
 
 	m_renderStateStack.push_back(rs);
-
-	rts->setContentValid(true);
 	return true;
 }
 

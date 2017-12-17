@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{A53D656B-DDAF-414A-9D2E-363B99DB7DD9}</id>
 			<comment/>
 			<position>
 				<first>1048</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>T_SpecularTerm</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{2475CF62-E90F-A24A-8E37-F6977C54C7AF}</id>
 			<comment>
 			<![CDATA[
 Tag_SpecularTerm
@@ -21,7 +23,8 @@ Tag_SpecularTerm
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Texture">
+		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+			<id>{7762693C-D593-5644-89D1-023B7E4D82B7}</id>
 			<comment>
 			<![CDATA[
 Tag_SpecularMap
@@ -34,7 +37,8 @@ Tag_SpecularMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{95EDAF78-3D42-4340-AF26-7A8B38984746}</id>
 			<comment/>
 			<position>
 				<first>384</first>
@@ -51,14 +55,16 @@ Tag_SpecularMap
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{B1D61A23-95D9-DE4B-824E-EACD73E2EE42}</id>
 			<comment/>
 			<position>
 				<first>815</first>
 				<second>179</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{5DAD0B86-555B-B74C-BE68-2E2FB305ED80}</id>
 			<comment/>
 			<position>
 				<first>687</first>
@@ -66,7 +72,8 @@ Tag_SpecularMap
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{81C2ACF0-7568-594E-AC43-95304E70B99D}</id>
 			<comment/>
 			<position>
 				<first>27</first>
@@ -78,7 +85,8 @@ Tag_SpecularMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{A45F0B34-6A1B-8340-940F-B09B644A80AD}</id>
 			<comment/>
 			<position>
 				<first>27</first>
@@ -90,7 +98,8 @@ Tag_SpecularMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{F9784F40-F025-124B-AACD-DEFC237B2F23}</id>
 			<comment>
 			<![CDATA[
 Tag_SpecularRoughness
@@ -102,7 +111,8 @@ Tag_SpecularRoughness
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{FDBEBCBA-9918-C84F-BA04-CDA4D495C4C3}</id>
 			<comment/>
 			<position>
 				<first>986</first>
@@ -110,7 +120,8 @@ Tag_SpecularRoughness
 			</position>
 			<name>T_SpecularRoughness</name>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{16E1CDF6-E0B4-424D-ACFF-CAE037A0B810}</id>
 			<comment/>
 			<position>
 				<first>543</first>
@@ -120,7 +131,8 @@ Tag_SpecularRoughness
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{EA42C06B-DE6A-114D-8536-648CD9694EC8}</id>
 			<comment/>
 			<position>
 				<first>986</first>
@@ -128,7 +140,8 @@ Tag_SpecularRoughness
 			</position>
 			<name>T_Metalness</name>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{86B59ABF-433B-A043-8CCD-DBFAF67282C3}</id>
 			<comment/>
 			<position>
 				<first>579</first>
@@ -138,7 +151,8 @@ Tag_SpecularRoughness
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{ECE8DF58-1A33-034A-95E1-D8B4C2E6BECB}</id>
 			<comment>
 			<![CDATA[
 Tag_Metalness

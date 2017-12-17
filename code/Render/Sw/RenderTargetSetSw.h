@@ -46,6 +46,8 @@ public:
 
 	virtual void discard();
 
+	virtual bool isContentValid() const;
+
 	virtual bool read(int index, void* buffer) const;
 
 	float* getDepthSurface() { return m_depthSurface.ptr(); }

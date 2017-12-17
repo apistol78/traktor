@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{5441B110-9A4B-F148-BA1E-8CCB529671F8}</id>
 			<comment/>
 			<position>
 				<first>72</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{D59B06A3-9536-9449-9354-6C32FADE423D}</id>
 			<comment/>
 			<position>
 				<first>71</first>
@@ -25,14 +27,16 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{828188C7-1AF6-1E4E-8DF5-4039275F3046}</id>
 			<comment/>
 			<position>
 				<first>269</first>
 				<second>66</second>
 			</position>
 		</item>
-		<item type="traktor.render.Normalize">
+		<item type="traktor.render.Normalize" version="traktor.render.Node:1">
+			<id>{BB0A5A6A-3D12-D84E-8409-34DC609500C8}</id>
 			<comment>
 			<![CDATA[
 Half angle norm.
@@ -43,7 +47,8 @@ Half angle norm.
 				<second>66</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{0713AC1A-17E6-BA4A-BB66-C2BF61924A46}</id>
 			<comment/>
 			<position>
 				<first>573</first>

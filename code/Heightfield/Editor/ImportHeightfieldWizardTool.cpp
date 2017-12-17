@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Endian.h"
 #include "Core/Misc/String.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -44,6 +45,15 @@ Ref< drawing::Image > readRawTerrain(IStream* stream)
 	);
 
 	stream->read(image->getData(), fileSize);
+
+	uint16_t* d = (uint16_t*)image->getData();
+	for (uint32_t i = 0; i < fileSize / 2; ++i)
+	{
+		swap8in16(*d);
+		int32_t v = *(int16_t*)d + 32767;
+		*d = (uint16_t)v;
+	}
+
 	stream->close();
 
 	return image;

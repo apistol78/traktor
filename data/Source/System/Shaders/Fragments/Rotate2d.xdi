@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{1ECB987E-5B00-2742-9E93-46088B2A5C29}</id>
 			<comment/>
 			<position>
 				<first>225</first>
@@ -9,7 +10,8 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{ED32B114-1165-E341-92C9-BD684C26B19A}</id>
 			<comment/>
 			<position>
 				<first>107</first>
@@ -21,7 +23,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{DE25C017-660D-654C-91C2-EB740BFAD5DD}</id>
 			<comment/>
 			<position>
 				<first>105</first>
@@ -33,7 +36,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{F78C1D3D-284D-0941-BB2A-27E07F798F8A}</id>
 			<comment/>
 			<position>
 				<first>918</first>
@@ -41,56 +45,64 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Sin">
+		<item type="traktor.render.Sin" version="traktor.render.Node:1">
+			<id>{8EADD601-FA84-3F48-8B59-3CCEFD14EF6C}</id>
 			<comment/>
 			<position>
 				<first>216</first>
 				<second>200</second>
 			</position>
 		</item>
-		<item type="traktor.render.Cos">
+		<item type="traktor.render.Cos" version="traktor.render.Node:1">
+			<id>{D203CDA1-DD42-9F4A-9D91-7798D0D0864E}</id>
 			<comment/>
 			<position>
 				<first>216</first>
 				<second>142</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{B78463A3-15AF-3541-8206-6F58A4CBB902}</id>
 			<comment/>
 			<position>
 				<first>364</first>
 				<second>185</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{B95205C0-47B1-694D-8452-5DF134920E9F}</id>
 			<comment/>
 			<position>
 				<first>364</first>
 				<second>110</second>
 			</position>
 		</item>
-		<item type="traktor.render.MixIn">
+		<item type="traktor.render.MixIn" version="traktor.render.Node:1">
+			<id>{81EE4B41-2EE1-DE48-9921-0F9BE679DE53}</id>
 			<comment/>
 			<position>
 				<first>771</first>
 				<second>153</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{BEBB3702-58D4-F747-9B57-9237E4A7B84B}</id>
 			<comment/>
 			<position>
 				<first>628</first>
 				<second>185</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{9391ED37-029D-C84C-BE80-2FA3EDEFB331}</id>
 			<comment/>
 			<position>
 				<first>630</first>
 				<second>111</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{0E92EE0A-AF00-7146-BCB0-A78E00F28976}</id>
 			<comment/>
 			<position>
 				<first>506</first>
@@ -98,7 +110,8 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{CD5A92CB-7DFC-384F-9983-7737B151E022}</id>
 			<comment/>
 			<position>
 				<first>506</first>
@@ -106,7 +119,8 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{E9AAEA11-FE6A-0E4B-AD17-532C02ACA348}</id>
 			<comment/>
 			<position>
 				<first>506</first>
@@ -114,7 +128,8 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{43C7E3C0-46F7-D041-A105-86B46313FFC4}</id>
 			<comment/>
 			<position>
 				<first>506</first>

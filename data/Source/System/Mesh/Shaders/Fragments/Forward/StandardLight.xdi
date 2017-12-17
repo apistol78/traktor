@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{2D12540D-FD00-3B41-816B-D76486121A04}</id>
 			<comment/>
 			<position>
 				<first>1082</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>Diffuse</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{C530E70A-0C6E-5441-A9F4-92A525DCFEC7}</id>
 			<comment/>
 			<position>
 				<first>1082</first>
@@ -17,14 +19,16 @@
 			</position>
 			<name>Specular</name>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{65CFB8CC-26DC-284C-AD2E-E7F49E1ED00D}</id>
 			<comment/>
 			<position>
 				<first>936</first>
 				<second>370</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{2F0C66E0-0AC9-4D44-AAC7-C1965D14EF68}</id>
 			<comment/>
 			<position>
 				<first>706</first>
@@ -36,7 +40,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{666EF700-70E7-7740-8AAA-7CC51955B7C4}</id>
 			<comment/>
 			<position>
 				<first>121</first>
@@ -48,14 +53,16 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{96F04F07-B5A2-BF42-B495-206208CB3082}</id>
 			<comment/>
 			<position>
 				<first>936</first>
 				<second>449</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{41E40409-0B0F-A04E-8A8B-DD41FBE08975}</id>
 			<comment/>
 			<position>
 				<first>84</first>
@@ -67,7 +74,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.8</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{34220229-E8C0-E243-841B-D4E82E5CEE2F}</id>
 			<comment/>
 			<position>
 				<first>714</first>
@@ -79,7 +87,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{B16BCDBC-8915-1442-AB84-7F0F993848A4}</id>
 			<comment/>
 			<position>
 				<first>145</first>
@@ -91,7 +100,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{0A12DAA9-C014-034B-A23E-E94F97FFDFFC}</id>
 			<comment/>
 			<position>
 				<first>148</first>
@@ -103,7 +113,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{66DC0E3B-334B-5942-9E7F-B5B412EC4CD4}</id>
 			<comment/>
 			<position>
 				<first>660</first>
@@ -111,7 +122,8 @@
 			</position>
 			<name>Shadow</name>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{9CB59B5A-6210-9645-B11E-D9F29E2F52AA}</id>
 			<comment/>
 			<position>
 				<first>437</first>
@@ -126,7 +138,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{43C58D06-3C9A-5741-AC86-20710E9C2E33}</id>
 			<comment/>
 			<position>
 				<first>644</first>

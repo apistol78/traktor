@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{B79F461F-D6B3-B343-87CD-58350F51ABAF}</id>
 			<comment/>
 			<position>
 				<first>918</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>T_DiffuseTerm</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{1C406491-8E2C-2B45-971D-00B1D72F0623}</id>
 			<comment/>
 			<position>
 				<first>918</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>T_DiffuseColor</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{865F5A57-6EFB-D147-AFF6-7F61591C1A57}</id>
 			<comment>
 			<![CDATA[
 Tag_DiffuseTerm
@@ -29,7 +32,8 @@ Tag_DiffuseTerm
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Color">
+		<item type="traktor.render.Color" version="traktor.render.Node:1">
+			<id>{6D6E3E5B-EFA2-7F4E-8040-F35BAA88199E}</id>
 			<comment>
 			<![CDATA[
 Tag_DiffuseColor
@@ -41,7 +45,8 @@ Tag_DiffuseColor
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{16815465-4E22-514C-9E23-58398275B1B4}</id>
 			<comment/>
 			<position>
 				<first>466</first>
@@ -53,7 +58,8 @@ Tag_DiffuseColor
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{6BDBE582-FD11-5945-AD49-C7ED36E6A9BB}</id>
 			<comment/>
 			<position>
 				<first>466</first>
@@ -65,7 +71,8 @@ Tag_DiffuseColor
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{D791ACB9-E455-A84F-BC76-EDAF8563412F}</id>
 			<comment/>
 			<position>
 				<first>694</first>
@@ -75,7 +82,8 @@ Tag_DiffuseColor
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{6F28EC31-FFC8-7D41-A9B9-066E0408A4EB}</id>
 			<comment/>
 			<position>
 				<first>694</first>
@@ -85,7 +93,8 @@ Tag_DiffuseColor
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{8E6BF2A3-093C-C34F-A66E-4691CFBD9154}</id>
 			<comment/>
 			<position>
 				<first>461</first>

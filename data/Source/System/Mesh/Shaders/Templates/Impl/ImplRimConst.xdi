@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{3D9362CF-598B-E746-82D5-889528B46DEE}</id>
 			<comment>
 			<![CDATA[
 Tag_RimIntensity
@@ -13,7 +14,8 @@ Tag_RimIntensity
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{B4D89C8B-84B4-154D-96F1-958F7E8AD4FE}</id>
 			<comment/>
 			<position>
 				<first>937</first>
@@ -21,7 +23,8 @@ Tag_RimIntensity
 			</position>
 			<name>T_RimIntensity</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{3381D75A-2CCE-E842-A315-426FB1F88A6D}</id>
 			<comment/>
 			<position>
 				<first>937</first>
@@ -29,7 +32,8 @@ Tag_RimIntensity
 			</position>
 			<name>T_RimColor</name>
 		</item>
-		<item type="traktor.render.Color">
+		<item type="traktor.render.Color" version="traktor.render.Node:1">
+			<id>{185BCE37-9951-6B48-8915-38954D4D36BC}</id>
 			<comment/>
 			<position>
 				<first>686</first>

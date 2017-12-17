@@ -243,7 +243,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	context.set(L"MODULE_DEFINITION_FILE", L"");
 	findDefinitions(context, solution, project, project->getItems());
 
-	std::vector< uint8_t > buffer;
+	AlignedVector< uint8_t > buffer;
 	buffer.reserve(40000);
 
 	DynamicMemoryStream bufferStream(buffer, false, true);
@@ -555,7 +555,7 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 	context.set(L"PROJECT_FILENAME", projectFileName);
 	context.set(L"PROJECT_GUID", projectGuid);
 
-	std::vector< uint8_t > buffer;
+	AlignedVector< uint8_t > buffer;
 	buffer.reserve(40000);
 
 	DynamicMemoryStream bufferStream(buffer, false, true);
@@ -668,7 +668,7 @@ bool SolutionBuilderMsvcVCXProj::generateUser(
 	context.set(L"PROJECT_FILENAME", projectFileName);
 	context.set(L"PROJECT_GUID", projectGuid);
 
-	std::vector< uint8_t > buffer;
+	AlignedVector< uint8_t > buffer;
 	buffer.reserve(40000);
 
 	DynamicMemoryStream bufferStream(buffer, false, true);

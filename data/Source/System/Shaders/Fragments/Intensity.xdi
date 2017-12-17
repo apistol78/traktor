@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{AC70165D-0708-274A-9EBB-BC9BEA148F80}</id>
 			<comment>
 			<![CDATA[
 	
@@ -12,7 +13,8 @@
 				<second>401</second>
 			</position>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{19BF12D4-4D9E-674C-8CBB-EC4BE8BA9D7B}</id>
 			<comment>
 			<![CDATA[
 	
@@ -24,7 +26,8 @@
 			</position>
 			<value>0.2125, 0.7154, 0.0721, 0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{F6276849-154C-A441-844A-D05B40B46839}</id>
 			<comment>
 			<![CDATA[
 	
@@ -40,7 +43,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{156B2576-EA1C-D64A-98EF-217ACD5F4B25}</id>
 			<comment>
 			<![CDATA[
 	
@@ -52,7 +56,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{689DC2B1-12D9-0747-881A-750C0AA6DCA9}</id>
 			<comment>
 			<![CDATA[
 Calculate light intensity of RGB color.

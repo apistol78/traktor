@@ -33,14 +33,13 @@ SkyComponent::SkyComponent(
 	render::IndexBuffer* indexBuffer,
 	const render::Primitives& primitives,
 	const resource::Proxy< render::Shader >& shader,
-	const Vector4& sunDirection,
 	float offset
 )
 :	m_vertexBuffer(vertexBuffer)
 ,	m_indexBuffer(indexBuffer)
 ,	m_primitives(primitives)
 ,	m_shader(shader)
-,	m_sunDirection(sunDirection)
+,	m_transform(Transform::identity())
 ,	m_offset(offset)
 {
 	s_handleSkyDomeRadius = render::getParameterHandle(L"SkyDomeRadius");
@@ -65,6 +64,7 @@ void SkyComponent::setOwner(world::Entity* owner)
 
 void SkyComponent::setTransform(const Transform& transform)
 {
+	m_transform = transform;
 }
 
 Aabb3 SkyComponent::getBoundingBox() const
@@ -75,12 +75,6 @@ Aabb3 SkyComponent::getBoundingBox() const
 
 void SkyComponent::update(const world::UpdateParams& update)
 {
-}
-
-
-void SkyComponent::setSunDirection(const Vector4& sunDirection)
-{
-	m_sunDirection = sunDirection;
 }
 
 void SkyComponent::render(
@@ -96,9 +90,11 @@ void SkyComponent::render(
 	if (!program)
 		return;
 
+	Vector4 sunDirection = m_transform.rotation() * Vector4(0.0f, 1.0f, 0.0f);
+
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Sky");
 
-	// Render sky after all opaques but first of all alpha blended.
+	// Render sky after all opaques but before of all alpha blended.
 	renderBlock->distance = std::numeric_limits< float >::max();
 	renderBlock->program = program;
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -112,7 +108,7 @@ void SkyComponent::render(
 	
 	renderBlock->programParams->setFloatParameter(s_handleSkyDomeRadius, worldRenderView.getViewFrustum().getFarZ() - abs(m_offset) - 10.0f);
 	renderBlock->programParams->setFloatParameter(s_handleSkyDomeOffset, m_offset);
-	renderBlock->programParams->setVectorParameter(s_handleSunDirection, m_sunDirection);
+	renderBlock->programParams->setVectorParameter(s_handleSunDirection, sunDirection);
 
 	renderBlock->programParams->endParameters(renderContext);
 

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{220CAD07-F85A-5645-BD31-F65F0FC8354F}</id>
 			<comment/>
 			<position>
 				<first>371</first>
@@ -9,7 +10,8 @@
 			</position>
 			<value>0.01</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{6A3E1598-184C-594A-8166-26F16E1BB712}</id>
 			<comment/>
 			<position>
 				<first>628</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>SMAA_PREDICATION_THRESHOLD</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{8FEF8AF3-618A-5E4E-B0B5-E6EFE344E8A2}</id>
 			<comment/>
 			<position>
 				<first>591</first>
@@ -25,7 +28,8 @@
 			</position>
 			<name>SMAA_PREDICATION_SCALE</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{15FB70B9-83E5-9741-AABE-5C7A07E01DB9}</id>
 			<comment/>
 			<position>
 				<first>334</first>
@@ -33,7 +37,8 @@
 			</position>
 			<value>2</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{893A1313-3318-E645-A744-489EAACF2822}</id>
 			<comment/>
 			<position>
 				<first>355</first>
@@ -41,7 +46,8 @@
 			</position>
 			<value>0.4</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{93A243F3-52DF-4147-8379-78DE8BF46D9A}</id>
 			<comment/>
 			<position>
 				<first>612</first>
@@ -49,7 +55,8 @@
 			</position>
 			<name>SMAA_PREDICATION_STRENGTH</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{A4DB638B-9C22-AC47-9852-1D1E109FE377}</id>
 			<comment/>
 			<position>
 				<first>744</first>
@@ -57,7 +64,8 @@
 			</position>
 			<name>SMAA_THRESHOLD</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{316836FB-701E-BD4B-A29E-A2246C7F1DD3}</id>
 			<comment/>
 			<position>
 				<first>487</first>
@@ -65,7 +73,8 @@
 			</position>
 			<value>0.05</value>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{0F77BE33-CBAB-2247-954A-AFDD641E389C}</id>
 			<comment>
 			<![CDATA[
 SMAA_PRESET_MEDIUM
@@ -76,7 +85,8 @@ SMAA_PRESET_MEDIUM
 				<second>1288</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{13FDE740-CDC5-3746-BAA1-74D1F72E4265}</id>
 			<comment/>
 			<position>
 				<first>488</first>
@@ -84,7 +94,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<value>8</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{39B4E5FA-87DF-1447-9984-0C60320E8845}</id>
 			<comment/>
 			<position>
 				<first>745</first>
@@ -92,7 +103,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<name>SMAA_MAX_SEARCH_STEPS</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{51C5B72E-EFDB-FC4A-8F15-DA2F6D5108FA}</id>
 			<comment/>
 			<position>
 				<first>660</first>
@@ -100,7 +112,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<name>SMAA_PREDICATION</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{B95D0BA9-8474-8C46-8F5F-53537D2599D3}</id>
 			<comment/>
 			<position>
 				<first>403</first>
@@ -108,7 +121,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{0159F5DB-1B1F-C24D-B603-7F1E71025329}</id>
 			<comment/>
 			<position>
 				<first>656</first>
@@ -116,7 +130,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<name>SMAA_LOCAL_CONTRAST_ADAPTATION_FACTOR</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{F94044C9-1BC3-6348-A52F-F38E5D7EF8B2}</id>
 			<comment/>
 			<position>
 				<first>374</first>
@@ -124,7 +139,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<value>2</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{D4C2103E-1BF1-2841-BE67-35B24869EBF7}</id>
 			<comment/>
 			<position>
 				<first>899</first>
@@ -132,7 +148,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<name>SMAA_DEPTH_THRESHOLD</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{3E6E7511-5A21-764D-9AB5-408924BC4B8F}</id>
 			<comment/>
 			<position>
 				<first>474</first>
@@ -140,14 +157,16 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<value>0.1</value>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{20943490-615B-1D45-BA93-02EE08F8614F}</id>
 			<comment/>
 			<position>
 				<first>649</first>
 				<second>1509</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{BA423ECE-EA01-F843-8C21-E714556ACA03}</id>
 			<comment/>
 			<position>
 				<first>614</first>
@@ -155,7 +174,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<name>SMAA_SEARCHTEX_SIZE</name>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{F53A948D-A1D6-6D45-9CB3-10D6AA55D690}</id>
 			<comment/>
 			<position>
 				<first>339</first>
@@ -163,7 +183,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<value>66, 33, 0, 0</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{DFD5DEEF-0F3C-5C4B-9E92-068D959F3FD1}</id>
 			<comment/>
 			<position>
 				<first>666</first>
@@ -171,7 +192,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<name>SMAA_SEARCHTEX_PACKED_SIZE</name>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{59D2DEE2-2D14-F242-B646-BB8562BA4E49}</id>
 			<comment/>
 			<position>
 				<first>371</first>
@@ -179,7 +201,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<value>64, 16, 0, 0</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{8B131488-66AC-5340-A071-ABDCD4680F8D}</id>
 			<comment/>
 			<position>
 				<first>367</first>
@@ -187,7 +210,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<value>16</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{FFA9DBE5-6EDD-8B4E-A289-F0AF2768CD44}</id>
 			<comment/>
 			<position>
 				<first>649</first>
@@ -195,7 +219,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<name>SMAA_AREATEX_MAX_DISTANCE</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{56761870-9498-EC48-BEDC-1DCCE36EA28D}</id>
 			<comment/>
 			<position>
 				<first>660</first>
@@ -203,7 +228,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<name>SMAA_AREATEX_PIXEL_SIZE</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{2B9DAF96-4B56-3B45-A68D-8734121E19BD}</id>
 			<comment/>
 			<position>
 				<first>-268</first>
@@ -211,7 +237,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{4F62081D-C2DE-F441-8EEC-F1C396D163DE}</id>
 			<comment/>
 			<position>
 				<first>654</first>
@@ -219,14 +246,16 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<name>SMAA_AREATEX_SUBTEX_SIZE</name>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{DFDD3944-6201-364A-93E3-12FA7AB98F3F}</id>
 			<comment/>
 			<position>
 				<first>18</first>
 				<second>864</second>
 			</position>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{A695B106-87F9-534D-AC18-4BFF3DE743A7}</id>
 			<comment/>
 			<position>
 				<first>-255</first>
@@ -234,7 +263,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<value>160, 560, 0, 0</value>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{49649C17-5394-1A4E-9454-908F5E841B01}</id>
 			<comment/>
 			<position>
 				<first>249</first>
@@ -242,7 +272,8 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{823E3ECF-B229-5441-94FD-3550CACB604B}</id>
 			<comment/>
 			<position>
 				<first>-228</first>
@@ -250,14 +281,16 @@ SMAA_PRESET_MEDIUM
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{37B47A26-693E-4F4E-BAF8-BF40AB14462A}</id>
 			<comment/>
 			<position>
 				<first>58</first>
 				<second>1065</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{CBBED0B9-1245-E542-B6BC-F87CCDE03AA6}</id>
 			<comment/>
 			<position>
 				<first>-182</first>

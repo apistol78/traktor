@@ -26,7 +26,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Render/IProgramCompiler.h"
 #include "Render/Capture/ProgramCompilerCapture.h"
@@ -613,16 +612,6 @@ bool ShaderPipeline::buildOutput(
 		log::error << L"ShaderPipeline failed; unable to commit output instance" << Endl;
 		outputInstance->revert();
 		return false;
-	}
-
-	// Create report.
-	Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Shader", outputGuid);
-	if (report)
-	{
-		report->set(L"path", outputPath);
-		report->set(L"vertexCost", stats.vertexCost);
-		report->set(L"pixelCost", stats.pixelCost);
-		report->set(L"size", stats.vertexSize + stats.pixelSize);
 	}
 
 #if defined(_DEBUG)

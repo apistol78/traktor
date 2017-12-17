@@ -22,6 +22,9 @@ class PopupMenu;
 		namespace custom
 		{
 
+class GridRowDoubleClickEvent;
+class GridView;
+class Splitter;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
@@ -91,7 +94,9 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolFavoritesShow;
 	Ref< ui::custom::ToolBarDropDown > m_toolViewMode;
 	Ref< ui::Edit > m_editFilter;
+	Ref< ui::custom::Splitter > m_splitter;
 	Ref< ui::custom::TreeView > m_treeDatabase;
+	Ref< ui::custom::GridView > m_gridInstances;
 	Ref< ui::HierarchicalState > m_treeState;
 	Ref< ui::PopupMenu > m_menuGroup[2];
 	Ref< ui::PopupMenu > m_menuInstance;
@@ -107,6 +112,10 @@ private:
 
 	Ref< ui::custom::TreeViewItem > buildTreeItem(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group);
 
+	Ref< ui::custom::TreeViewItem > buildTreeItemSplit(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group);
+
+	void updateGridInstances();
+
 	void filterType(db::Instance* instance);
 
 	void filterDependencies(db::Instance* instance);
@@ -119,11 +128,15 @@ private:
 
 	void eventInstanceActivate(ui::custom::TreeViewItemActivateEvent* event);
 
+	void eventInstanceSelect(ui::SelectionChangeEvent* event);
+
 	void eventInstanceButtonDown(ui::MouseButtonDownEvent* event);
 
 	void eventInstanceRenamed(ui::custom::TreeViewContentChangeEvent* event);
 
 	void eventInstanceDrag(ui::custom::TreeViewDragEvent* event);
+
+	void eventInstanceGridActivate(ui::custom::GridRowDoubleClickEvent* event);
 };
 
 	}

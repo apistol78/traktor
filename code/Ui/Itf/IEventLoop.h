@@ -35,6 +35,8 @@ public:
 	virtual int32_t getAsyncKeyState() const = 0;
 
 	virtual bool isKeyDown(VirtualKey vk) const = 0;
+
+	virtual Size getDesktopSize() const = 0;
 };
 
 	}

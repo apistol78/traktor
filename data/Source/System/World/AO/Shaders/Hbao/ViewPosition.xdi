@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{06D1793E-E321-2F47-876F-F0E2F5DB880A}</id>
 			<comment/>
 			<position>
 				<first>803</first>
@@ -11,21 +12,24 @@
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{4F723850-8FAF-0A43-8BC4-9299A8C4610F}</id>
 			<comment/>
 			<position>
 				<first>1050</first>
 				<second>556</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{4223DD50-8274-0349-92DE-5D4B22A43E44}</id>
 			<comment/>
 			<position>
 				<first>1335</first>
 				<second>586</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{612D009C-8D86-2848-A5F6-8D48DC9162D8}</id>
 			<comment/>
 			<position>
 				<first>1618</first>
@@ -33,7 +37,8 @@
 			</position>
 			<swizzle>xy0</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{8C035A9B-025D-A04D-9FF3-93FBD0712733}</id>
 			<comment/>
 			<position>
 				<first>1618</first>
@@ -41,14 +46,16 @@
 			</position>
 			<swizzle>00x</swizzle>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{0D3DC7F3-DFFF-7B48-8B3B-3B74059CE51B}</id>
 			<comment/>
 			<position>
 				<first>1719</first>
 				<second>547</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{43A65A76-AB9F-E147-B7BC-EF0F69D8DAE7}</id>
 			<comment/>
 			<position>
 				<first>227</first>
@@ -58,7 +65,8 @@
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{EFA75610-467C-2646-815C-3FDF07121D59}</id>
 			<comment/>
 			<position>
 				<first>47</first>
@@ -70,7 +78,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{14495B5A-EE63-5B4A-9EA5-8F5152D77E3A}</id>
 			<comment/>
 			<position>
 				<first>1945</first>
@@ -78,7 +87,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{52479C7B-3C30-D54D-9D22-CDD519BC98FF}</id>
 			<comment/>
 			<position>
 				<first>121</first>
@@ -86,7 +96,8 @@
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{AD1355FE-46E7-494A-882F-F32352318602}</id>
 			<comment/>
 			<position>
 				<first>299</first>
@@ -94,21 +105,24 @@
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{DBB85E55-73E3-744C-8B0C-4CFCF76DE111}</id>
 			<comment/>
 			<position>
 				<first>624</first>
 				<second>664</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{C52B801E-9D61-A24D-9741-558AC262C69E}</id>
 			<comment/>
 			<position>
 				<first>381</first>
 				<second>634</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{850676D3-1C56-474F-92C1-AAD2E93CB4BF}</id>
 			<comment/>
 			<position>
 				<first>548</first>

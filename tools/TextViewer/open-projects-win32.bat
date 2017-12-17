@@ -2,4 +2,4 @@
 
 call %~dp0../../config.bat
 
-start build\win32\"TextViewer Win32.sln"
+start build\win32\"TextViewer.sln"

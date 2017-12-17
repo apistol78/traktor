@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{0282EAEF-F097-5241-BE67-94E4F07C2B36}</id>
 			<comment/>
 			<position>
 				<first>2096</first>
@@ -25,7 +26,8 @@
 			<outputPins/>
 			<values/>
 		</item>
-		<item type="traktor.render.Color">
+		<item type="traktor.render.Color" version="traktor.render.Node:1">
+			<id>{DEE6D509-00D3-104F-97A9-BBBB7A63CD5B}</id>
 			<comment>
 			<![CDATA[
 Deep color
@@ -37,7 +39,8 @@ Deep color
 			</position>
 			<color>0, 88, 96, 255</color>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{7B84177B-3F52-4841-8EAF-B001E546369F}</id>
 			<comment/>
 			<position>
 				<first>1899</first>
@@ -45,7 +48,8 @@ Deep color
 			</position>
 			<value>5</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{10A36332-132B-AB4C-A7BE-DBF572611611}</id>
 			<comment/>
 			<position>
 				<first>1896</first>

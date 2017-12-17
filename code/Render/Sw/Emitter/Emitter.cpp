@@ -66,6 +66,7 @@ EmitterVariable* expandTypes(EmitterContext& cx, EmitterVariable* in, EmitterVar
 	if (!var) \
 	{ \
 		log::error << L"Failed to emit mandatory input \"" << inputPin->getName() << L"\" of a " << type_name(node) << Endl; \
+		Debugger::getInstance().breakDebugger(); \
 		return false; \
 	}
 
@@ -74,6 +75,7 @@ EmitterVariable* expandTypes(EmitterContext& cx, EmitterVariable* in, EmitterVar
 	if (!var) \
 	{ \
 		log::error << L"Failed to emit mandatory input \"" << input << L"\" of a " << type_name(node) << Endl; \
+		Debugger::getInstance().breakDebugger(); \
 		return false; \
 	}
 
@@ -1704,7 +1706,10 @@ bool Emitter::emit(EmitterContext& c, Node* node)
 		}
 	}
 	else
+	{
+		log::error << L"Failed to emit \"" << type_name(node) << L"\"; node type \"" << type_name(node) << L"\" not supported." << Endl;
 		return false;
+	}
 }
 
 	}

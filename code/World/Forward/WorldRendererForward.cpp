@@ -874,7 +874,7 @@ render::ImageProcess* WorldRendererForward::getVisualImageProcess()
 void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& outTargets) const
 {
 	if (m_depthTargetSet)
-		outTargets.push_back(render::DebugTarget(L"View depth", render::DtvDepth, m_depthTargetSet->getColorTexture(0)));
+		outTargets.push_back(render::DebugTarget(L"View depth", render::DtvViewDepth, m_depthTargetSet->getColorTexture(0)));
 
 	if (m_shadowTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow map (last cascade)", render::DtvShadowMap, m_shadowTargetSet->getColorTexture(0)));
