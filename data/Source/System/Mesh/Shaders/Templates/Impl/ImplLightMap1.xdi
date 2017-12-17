@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{35F8CE8E-3757-C447-B519-ED109802E37E}</id>
 			<comment/>
 			<position>
 				<first>1594</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>T_Irradiance</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{0D5451A5-501F-D049-9924-E43ABBC4580E}</id>
 			<comment/>
 			<position>
 				<first>289</first>
@@ -21,7 +23,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{854E457F-78D2-8E43-B924-1AC7365713C6}</id>
 			<comment/>
 			<position>
 				<first>289</first>
@@ -33,7 +36,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{6569130C-7B59-6046-A722-2F34D029C2FC}</id>
 			<comment/>
 			<position>
 				<first>754</first>
@@ -50,7 +54,8 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Texture">
+		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+			<id>{09A4CF58-CEC6-9D45-ABA0-AAE5E78C645D}</id>
 			<comment>
 			<![CDATA[
 Tag_LightMap
@@ -63,14 +68,16 @@ Tag_LightMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{9293E28A-EBFC-A342-BDCF-9BFFC5F55F42}</id>
 			<comment/>
 			<position>
 				<first>1208</first>
 				<second>323</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{8E3F8C60-54DB-7247-9D88-EEF2BF8308D0}</id>
 			<comment>
 			<![CDATA[
 Tag_LightMapRange
@@ -82,7 +89,8 @@ Tag_LightMapRange
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{7B70C65D-1D18-7F45-A031-89EC63AC4A8D}</id>
 			<comment/>
 			<position>
 				<first>1206</first>

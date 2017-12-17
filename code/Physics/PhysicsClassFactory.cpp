@@ -18,6 +18,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/ArticulatedEntity.h"
 #include "Physics/World/RigidEntity.h"
+#include "Physics/World/Character/CharacterComponent.h"
+#include "Physics/World/Vehicle/VehicleComponent.h"
 
 namespace traktor
 {
@@ -395,6 +397,14 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classRigidEntity->addMethod("getBody", &RigidEntity::getBody);
 	classRigidEntity->addMethod("getEntity", &RigidEntity::getEntity);
 	registrar->registerClass(classRigidEntity);
+
+	Ref< AutoRuntimeClass< CharacterComponent > > classCharacterComponent = new AutoRuntimeClass< CharacterComponent >();
+	registrar->registerClass(classCharacterComponent);
+
+	Ref< AutoRuntimeClass< VehicleComponent > > classVehicleComponent = new AutoRuntimeClass< VehicleComponent >();
+	classVehicleComponent->addMethod("setSteerAngle", &VehicleComponent::setSteerAngle);
+	classVehicleComponent->addMethod("setEngineThrottle", &VehicleComponent::setEngineThrottle);
+	registrar->registerClass(classVehicleComponent);
 
 	Ref< AutoRuntimeClass< CollisionContactWrapper > > classCollisionContact = new AutoRuntimeClass< CollisionContactWrapper >();
 	classCollisionContact->addMethod("length", &CollisionContactWrapper::length);

@@ -104,6 +104,11 @@ void RenderTargetSetSw::discard()
 {
 }
 
+bool RenderTargetSetSw::isContentValid() const
+{
+	return true;
+}
+
 bool RenderTargetSetSw::read(int index, void* buffer) const
 {
 	return false;

@@ -195,6 +195,13 @@ bool EventLoopWin32::isKeyDown(VirtualKey vk) const
 		return false;
 }
 
+Size EventLoopWin32::getDesktopSize() const
+{
+	int32_t width = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+	int32_t height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+	return Size(width, height);
+}
+
 bool EventLoopWin32::preTranslateMessage(EventSubject* owner, const MSG& msg)
 {
 	bool consumed = false;

@@ -28,6 +28,7 @@ RenderTargetSetDx11::RenderTargetSetDx11(ContextDx11* context)
 ,	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
+,	m_contentValid(false)
 ,	m_usingPrimaryDepthStencil(false)
 {
 }
@@ -100,6 +101,12 @@ void RenderTargetSetDx11::swap(int index1, int index2)
 
 void RenderTargetSetDx11::discard()
 {
+	m_contentValid = false;
+}
+
+bool RenderTargetSetDx11::isContentValid() const
+{
+	return m_contentValid;
 }
 
 bool RenderTargetSetDx11::read(int index, void* buffer) const

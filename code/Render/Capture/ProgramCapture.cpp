@@ -228,7 +228,7 @@ void ProgramCapture::verify()
 
 	for (std::map< handle_t, Parameter >::const_iterator i = m_shadow.begin(); i != m_shadow.end(); ++i)
 	{
-		T_CAPTURE_ASSERT (!i->second.undefined, L"Parameter not set, value undefined.");
+		T_CAPTURE_ASSERT (!i->second.undefined, L"Parameter \"" << i->second.getName() << L"\" not set, value undefined (" << m_tag << L").");
 	}
 
 	for (std::map< handle_t, Ref< ITexture > >::const_iterator i = m_boundTextures.begin(); i != m_boundTextures.end(); ++i)
@@ -238,19 +238,29 @@ void ProgramCapture::verify()
 
 		if (CubeTextureCapture* cubeTexture = dynamic_type_cast< CubeTextureCapture* >(i->second->resolve()))
 		{
-			T_CAPTURE_ASSERT (cubeTexture->getTexture(), L"Trying to draw with destroyed texture.");
+			T_CAPTURE_ASSERT (cubeTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
 		}
 		else if (SimpleTextureCapture* simpleTexture = dynamic_type_cast< SimpleTextureCapture* >(i->second->resolve()))
 		{
-			T_CAPTURE_ASSERT (simpleTexture->getTexture(), L"Trying to draw with destroyed texture.");
+			T_CAPTURE_ASSERT (simpleTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
 		}
 		else if (VolumeTextureCapture* volumeTexture = dynamic_type_cast< VolumeTextureCapture* >(i->second->resolve()))
 		{
-			T_CAPTURE_ASSERT (volumeTexture->getTexture(), L"Trying to draw with destroyed texture.");
+			T_CAPTURE_ASSERT (volumeTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
 		}
 		else
 			T_FATAL_ERROR;
 	}
+}
+
+std::wstring ProgramCapture::Parameter::getName() const
+{
+	if (indexedUniform)
+		return indexedUniform->getParameterName();
+	else if (uniform)
+		return uniform->getParameterName();
+	else
+		return L"<Null uniform>";
 }
 
 	}

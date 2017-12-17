@@ -96,6 +96,12 @@ EmitterVariable* EmitterContext::emitInput(const InputPin* inputPin)
 		}
 	}
 
+	if (!i->second.var)
+	{
+		log::error << L"No variable associated after node \"" << type_name(sourcePin->getNode()) << L"\" emitted." << Endl;
+		return 0;
+	}
+
 	return i->second.var;
 }
 

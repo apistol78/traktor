@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{D6BD3D68-7296-3543-80C4-C5DB9A05636C}</id>
 			<comment/>
 			<position>
 				<first>629</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>T_RimColor</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{AF197A83-F4AE-DB47-9EA3-934E406B6296}</id>
 			<comment/>
 			<position>
 				<first>629</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>T_RimIntensity</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{111A4BED-7A5B-954E-BB82-6FB69D5A8B49}</id>
 			<comment/>
 			<position>
 				<first>492</first>

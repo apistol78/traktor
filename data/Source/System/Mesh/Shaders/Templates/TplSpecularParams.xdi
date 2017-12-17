@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{C024E223-E3B4-E649-A8CE-A9512F4435B7}</id>
 			<comment/>
 			<position>
 				<first>468</first>
@@ -9,7 +10,8 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{5AF8C5F7-1280-504F-94E8-4EF05EC45C38}</id>
 			<comment/>
 			<position>
 				<first>629</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>T_SpecularTerm</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{990E03F4-6CD9-4548-B2FD-84D42D5685B0}</id>
 			<comment/>
 			<position>
 				<first>629</first>
@@ -25,7 +28,8 @@
 			</position>
 			<name>T_SpecularRoughness</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{4ED91E46-072F-2C4A-BDD6-AE170BFFC68C}</id>
 			<comment/>
 			<position>
 				<first>192</first>
@@ -37,7 +41,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{497B3C86-9F5A-AF4F-8AD7-0396265DA354}</id>
 			<comment/>
 			<position>
 				<first>192</first>
@@ -49,7 +54,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{0CECD540-DED6-5845-A81A-8A2CA3F1BB96}</id>
 			<comment/>
 			<position>
 				<first>629</first>

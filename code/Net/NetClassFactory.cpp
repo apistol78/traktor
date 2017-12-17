@@ -112,7 +112,7 @@ public:
 	{
 	}
 
-	virtual int32_t httpClientRequest(HttpServer* server, const HttpRequest* request, OutputStream& os, Ref< traktor::IStream >& outStream, bool& outCache)
+	virtual int32_t httpClientRequest(HttpServer* server, const HttpRequest* request, OutputStream& os, Ref< traktor::IStream >& outStream, bool& outCache, std::wstring& inoutSession)
 	{
 		Any argv[] =
 		{

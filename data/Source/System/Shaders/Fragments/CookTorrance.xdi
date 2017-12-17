@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{84DD24C0-DFB2-5846-AC82-72CEDD361CA7}</id>
 			<comment/>
 			<position>
 				<first>271</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{AF5F6A3D-30A9-6A41-BE70-C3E4A45F9F5B}</id>
 			<comment/>
 			<position>
 				<first>249</first>
@@ -25,7 +27,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{20C5BF3D-7C8D-904A-9643-AA2814B3C3D1}</id>
 			<comment/>
 			<position>
 				<first>246</first>
@@ -37,7 +40,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{6C254A21-03CB-704B-A6F9-BB56707506D3}</id>
 			<comment/>
 			<position>
 				<first>288</first>
@@ -49,7 +53,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{D8FEC023-7EA4-1D40-8BB2-7B7443A742FD}</id>
 			<comment/>
 			<position>
 				<first>294</first>
@@ -61,28 +66,32 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{8664A09A-5E94-C94A-B71A-7F35CD8B386A}</id>
 			<comment/>
 			<position>
 				<first>506</first>
 				<second>408</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{A1B419EB-30B3-1446-95C1-260CF5F29219}</id>
 			<comment/>
 			<position>
 				<first>763</first>
 				<second>245</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{FC3AE250-57C4-C443-8DD2-805749B3D7EF}</id>
 			<comment/>
 			<position>
 				<first>823</first>
 				<second>354</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{7B02631F-E09B-5546-BC1E-0E6DCE01ABE6}</id>
 			<comment>
 			<![CDATA[
 Percentage of specular light reflected
@@ -98,14 +107,16 @@ Percentage of specular light reflected
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{D2488B9B-9063-904A-9D66-A3D552195E19}</id>
 			<comment/>
 			<position>
 				<first>585</first>
 				<second>194</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{51A6C008-DEC0-3242-96BA-815B9C26C65B}</id>
 			<comment/>
 			<position>
 				<first>472</first>
@@ -117,21 +128,24 @@ Percentage of specular light reflected
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{9378637B-2F25-3845-8E58-A2AA6DEBEC9C}</id>
 			<comment/>
 			<position>
 				<first>416</first>
 				<second>176</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{5E86764B-D616-1249-97C8-55D1A6347816}</id>
 			<comment/>
 			<position>
 				<first>258</first>
 				<second>158</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{AA08B3DB-1BD0-FC4A-9F1F-80D89BAF8541}</id>
 			<comment/>
 			<position>
 				<first>-78</first>
@@ -143,7 +157,8 @@ Percentage of specular light reflected
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{AFCF5172-03D2-D64A-B987-B78997E186F8}</id>
 			<comment/>
 			<position>
 				<first>98</first>
@@ -151,14 +166,16 @@ Percentage of specular light reflected
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{9EA0B83B-779C-2E4F-9D4B-9722761915B4}</id>
 			<comment/>
 			<position>
 				<first>273</first>
 				<second>17</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{A6810D69-31ED-3B44-AC40-9E996E5332F4}</id>
 			<comment/>
 			<position>
 				<first>-38</first>
@@ -170,7 +187,8 @@ Percentage of specular light reflected
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{981597A8-87D5-FF46-9CE5-9260E92591C5}</id>
 			<comment/>
 			<position>
 				<first>743</first>
@@ -182,7 +200,8 @@ Percentage of specular light reflected
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{14300CE4-658B-7D4D-A138-7A307A724D99}</id>
 			<comment>
 			<![CDATA[
 Cook Torrance Specular
@@ -222,7 +241,8 @@ Cook Torrance Specular
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{EADDAF40-6178-F44C-A67E-88A84F211C2D}</id>
 			<comment/>
 			<position>
 				<first>276</first>
@@ -234,7 +254,8 @@ Cook Torrance Specular
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{44C36E22-980B-724D-B31C-8E5D3DB7BAB5}</id>
 			<comment/>
 			<position>
 				<first>463</first>
@@ -242,7 +263,8 @@ Cook Torrance Specular
 			</position>
 			<name>Ambient</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{F0D6A113-E5FE-C345-A93E-221F9AF58388}</id>
 			<comment/>
 			<position>
 				<first>1183</first>
@@ -250,7 +272,8 @@ Cook Torrance Specular
 			</position>
 			<name>Diffuse</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{39756256-5C89-5742-BAEC-1F151945CF21}</id>
 			<comment/>
 			<position>
 				<first>1184</first>
@@ -258,14 +281,16 @@ Cook Torrance Specular
 			</position>
 			<name>Specular</name>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{9A5A147A-A092-8345-AD40-936F31662D7E}</id>
 			<comment/>
 			<position>
 				<first>1030</first>
 				<second>237</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{3B8DF48F-7526-3A4A-855B-0A483C1BE76E}</id>
 			<comment/>
 			<position>
 				<first>1030</first>

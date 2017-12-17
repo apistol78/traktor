@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Lerp">
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{C0C43D2C-4572-6F4B-BD32-4D2CF07A026C}</id>
 			<comment/>
 			<position>
 				<first>3166</first>
 				<second>222</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{3E01893B-1210-D647-9D3B-AA8C4E95105F}</id>
 			<comment/>
 			<position>
 				<first>2751</first>
@@ -28,14 +30,16 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{D338A835-1D14-E148-8BD3-8E24D4CAE35E}</id>
 			<comment/>
 			<position>
 				<first>2446</first>
 				<second>987</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{03E9A9BF-41C4-E141-8984-E8DEFDF8FC31}</id>
 			<comment/>
 			<position>
 				<first>2250</first>
@@ -47,21 +51,24 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{E3885177-EE33-9F44-BD6F-96FF3815308C}</id>
 			<comment/>
 			<position>
 				<first>2260</first>
 				<second>1015</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{47490889-19AF-2641-A0CD-C47B5FEA179B}</id>
 			<comment/>
 			<position>
 				<first>2081</first>
 				<second>970</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{B44702B2-5758-7940-8B3A-0DA26F6FD600}</id>
 			<comment/>
 			<position>
 				<first>1771</first>
@@ -69,7 +76,8 @@
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{E71CB9BC-0EA0-AC42-AF2F-CB7838CDDEA1}</id>
 			<comment/>
 			<position>
 				<first>1199</first>
@@ -81,14 +89,16 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{30D4408F-688C-DE4C-8A26-80005FC4C9E8}</id>
 			<comment/>
 			<position>
 				<first>1730</first>
 				<second>999</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{F319493E-7E78-9C4D-A513-01DC52453F69}</id>
 			<comment/>
 			<position>
 				<first>93</first>
@@ -100,7 +110,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Lerp">
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{3E63F0D6-03C8-E149-968D-7DABB7A65376}</id>
 			<comment>
 			<![CDATA[
 Lerp refraction amount on depth
@@ -111,7 +122,8 @@ Lerp refraction amount on depth
 				<second>1067</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{F27F2749-5A6E-0B48-B0D6-655E3F3D703D}</id>
 			<comment/>
 			<position>
 				<first>1894</first>
@@ -119,7 +131,8 @@ Lerp refraction amount on depth
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{EFDBBBCF-8418-EE49-A66F-87D96509B96C}</id>
 			<comment/>
 			<position>
 				<first>1885</first>
@@ -127,7 +140,8 @@ Lerp refraction amount on depth
 			</position>
 			<value>0.1</value>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{C2D31C5E-1CBE-0B4F-9643-81202768D422}</id>
 			<comment/>
 			<position>
 				<first>1896</first>
@@ -136,14 +150,16 @@ Lerp refraction amount on depth
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{02AC8E21-08FD-234B-92BD-AC892A2B6364}</id>
 			<comment/>
 			<position>
 				<first>1715</first>
 				<second>1134</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{A3C151AA-B9D7-344A-8F98-AD7347F42C9E}</id>
 			<comment/>
 			<position>
 				<first>1313</first>
@@ -155,7 +171,8 @@ Lerp refraction amount on depth
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{39A48E1F-C68A-8041-9A90-C943C213A0FC}</id>
 			<comment/>
 			<position>
 				<first>1587</first>
@@ -163,7 +180,8 @@ Lerp refraction amount on depth
 			</position>
 			<value>0.2</value>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{5F6A8293-BD07-9A4F-8638-930D96F57D78}</id>
 			<comment/>
 			<position>
 				<first>2650</first>
@@ -190,7 +208,8 @@ Lerp refraction amount on depth
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{C14D6CC1-AA3E-8447-8225-ACDB5AC45851}</id>
 			<comment/>
 			<position>
 				<first>2557</first>
@@ -198,7 +217,8 @@ Lerp refraction amount on depth
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.Branch">
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{5C249CFB-E508-B24E-AC2D-AB99DFF0DA46}</id>
 			<comment/>
 			<position>
 				<first>2383</first>
@@ -206,14 +226,16 @@ Lerp refraction amount on depth
 			</position>
 			<parameterName>ReflectionEnable</parameterName>
 		</item>
-		<item type="traktor.render.Lerp">
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{21D3255A-C8E9-704E-8BA1-5902A225E200}</id>
 			<comment/>
 			<position>
 				<first>2175</first>
 				<second>667</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{521BDBD9-EB6F-2647-AE5E-DB5977836F7D}</id>
 			<comment/>
 			<position>
 				<first>1707</first>
@@ -233,28 +255,32 @@ Lerp refraction amount on depth
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{8197943A-3877-044A-B878-E9D7CC2D43AE}</id>
 			<comment/>
 			<position>
 				<first>1532</first>
 				<second>1369</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{2A6B569B-A3F7-9740-A3B4-D544FE0ADD74}</id>
 			<comment/>
 			<position>
 				<first>1186</first>
 				<second>1358</second>
 			</position>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{409CA27B-1A10-2A4F-9CF3-E07EB33102AB}</id>
 			<comment/>
 			<position>
 				<first>904</first>
 				<second>1371</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{FFD0450A-56E6-1449-9650-B91C4F927535}</id>
 			<comment/>
 			<position>
 				<first>744</first>
@@ -262,7 +288,8 @@ Lerp refraction amount on depth
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{48EA2A7C-87B1-764A-B3FF-7CB553A930A7}</id>
 			<comment/>
 			<position>
 				<first>454</first>
@@ -286,7 +313,8 @@ Lerp refraction amount on depth
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{3D647458-BB83-8E42-A9D5-91C503E2205C}</id>
 			<comment/>
 			<position>
 				<first>90</first>
@@ -298,21 +326,24 @@ Lerp refraction amount on depth
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Reflect">
+		<item type="traktor.render.Reflect" version="traktor.render.Node:1">
+			<id>{FB33D7DA-731C-414D-B860-1C0598C23100}</id>
 			<comment/>
 			<position>
 				<first>226</first>
 				<second>1363</second>
 			</position>
 		</item>
-		<item type="traktor.render.Normalize">
+		<item type="traktor.render.Normalize" version="traktor.render.Node:1">
+			<id>{99338D41-9F41-1B46-9EDB-7862027EC4BA}</id>
 			<comment/>
 			<position>
 				<first>452</first>
 				<second>869</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{6D7CC81A-0BE6-924C-99C1-A22687379ED9}</id>
 			<comment/>
 			<position>
 				<first>357</first>
@@ -320,7 +351,8 @@ Lerp refraction amount on depth
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{86ACB7E8-639A-334B-B30B-7E664CB34C91}</id>
 			<comment/>
 			<position>
 				<first>683</first>
@@ -330,7 +362,8 @@ Lerp refraction amount on depth
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{D085F65E-77AA-0145-B57F-42976D6E71DE}</id>
 			<comment/>
 			<position>
 				<first>1078</first>
@@ -338,7 +371,8 @@ Lerp refraction amount on depth
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{15292D08-648C-5A41-9771-5A9EBF62D31D}</id>
 			<comment/>
 			<position>
 				<first>1315</first>
@@ -346,7 +380,8 @@ Lerp refraction amount on depth
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{FC0A7E95-DE09-7445-A4E2-088C462307C2}</id>
 			<comment/>
 			<position>
 				<first>1319</first>
@@ -354,28 +389,32 @@ Lerp refraction amount on depth
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.Neg">
+		<item type="traktor.render.Neg" version="traktor.render.Node:1">
+			<id>{BD3E39FB-1AB0-504A-B1CB-12504901E466}</id>
 			<comment/>
 			<position>
 				<first>602</first>
 				<second>825</second>
 			</position>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{0B1076CB-1A5F-E047-A5E7-4B171E23044B}</id>
 			<comment/>
 			<position>
 				<first>1515</first>
 				<second>557</second>
 			</position>
 		</item>
-		<item type="traktor.render.Lerp">
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{25A94898-0DE0-2C4D-A412-82E4004925EB}</id>
 			<comment/>
 			<position>
 				<first>2901</first>
 				<second>710</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{F22510E6-10A7-E24E-92B9-215909A952C4}</id>
 			<comment/>
 			<position>
 				<first>2604</first>
@@ -387,7 +426,8 @@ Lerp refraction amount on depth
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{B383FBD4-CDE8-0D46-8FBB-6FB973C50574}</id>
 			<comment/>
 			<position>
 				<first>2627</first>
@@ -396,21 +436,24 @@ Lerp refraction amount on depth
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{549019B6-7C80-DD4B-ACDD-E2C05BDE4BBA}</id>
 			<comment/>
 			<position>
 				<first>2474</first>
 				<second>759</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{144C2EDC-3D6C-EB4B-AD0D-D31499A50EA4}</id>
 			<comment/>
 			<position>
 				<first>2305</first>
 				<second>728</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{676F944D-DC30-214F-B4FB-5176765FFD72}</id>
 			<comment/>
 			<position>
 				<first>2116</first>
@@ -422,7 +465,8 @@ Lerp refraction amount on depth
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{55D530E7-63C4-CA41-9B7C-6DA70B43576C}</id>
 			<comment/>
 			<position>
 				<first>2274</first>
@@ -434,14 +478,16 @@ Lerp refraction amount on depth
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{2C1F5BEF-7101-5645-B00F-583BBAA05559}</id>
 			<comment/>
 			<position>
 				<first>1208</first>
 				<second>573</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{FD9A11FD-5293-9847-A314-C5A94D4A0944}</id>
 			<comment/>
 			<position>
 				<first>93</first>
@@ -453,7 +499,8 @@ Lerp refraction amount on depth
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{BA531670-C58A-664B-8C5A-90E38DA932F8}</id>
 			<comment/>
 			<position>
 				<first>912</first>
@@ -501,7 +548,8 @@ Lerp refraction amount on depth
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{7FF5ACE8-ED72-214F-BDE5-6E08439E752F}</id>
 			<comment/>
 			<position>
 				<first>695</first>
@@ -509,7 +557,8 @@ Lerp refraction amount on depth
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{5E7CFF47-B7ED-ED40-BA11-EB5952CFB79F}</id>
 			<comment/>
 			<position>
 				<first>54</first>
@@ -521,7 +570,8 @@ Lerp refraction amount on depth
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.8</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{E0E35CD7-3A13-FA41-BC52-F6181072865F}</id>
 			<comment/>
 			<position>
 				<first>1378</first>
@@ -529,14 +579,16 @@ Lerp refraction amount on depth
 			</position>
 			<swizzle>xxx</swizzle>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{5739924C-FD7A-7347-A21B-117BD3CFE163}</id>
 			<comment/>
 			<position>
 				<first>1208</first>
 				<second>652</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{C2E7A5FC-01FC-9D41-A676-BDE8E13B2D9B}</id>
 			<comment/>
 			<position>
 				<first>85</first>
@@ -548,7 +600,8 @@ Lerp refraction amount on depth
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.Lerp">
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{336AFAC9-1199-8046-8998-1EE2F1E72020}</id>
 			<comment>
 			<![CDATA[
 Amount of reflection on view angle.
@@ -559,7 +612,8 @@ Amount of reflection on view angle.
 				<second>770</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{C100A014-A347-CC43-ADCC-1ED1B30D7DA1}</id>
 			<comment/>
 			<position>
 				<first>1310</first>
@@ -567,7 +621,8 @@ Amount of reflection on view angle.
 			</position>
 			<value>0.8</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{5A8E3FD5-C074-4940-91D3-B625ACCC16E4}</id>
 			<comment/>
 			<position>
 				<first>1354</first>
@@ -575,7 +630,8 @@ Amount of reflection on view angle.
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{A6126C2A-6E21-E14D-A627-EBD43B13B47F}</id>
 			<comment/>
 			<position>
 				<first>1245</first>
@@ -584,14 +640,16 @@ Amount of reflection on view angle.
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{46C78B8A-0111-0C4E-BF0A-B81114ADFBCE}</id>
 			<comment/>
 			<position>
 				<first>957</first>
 				<second>809</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{227DE124-5733-4F47-B6DF-10E8303B39C0}</id>
 			<comment/>
 			<position>
 				<first>132</first>
@@ -603,14 +661,16 @@ Amount of reflection on view angle.
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{9956456D-D332-5745-90B3-0ED1BE9D479F}</id>
 			<comment/>
 			<position>
 				<first>1349</first>
 				<second>1618</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{41ABFA56-9C79-0F48-ABA3-FFE7FB899999}</id>
 			<comment/>
 			<position>
 				<first>1230</first>
@@ -618,7 +678,8 @@ Amount of reflection on view angle.
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{D8294A8A-7B9F-4540-B2CE-2357A413F1E2}</id>
 			<comment/>
 			<position>
 				<first>1210</first>
@@ -627,28 +688,32 @@ Amount of reflection on view angle.
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{0A4309AF-679D-CA40-B780-623FCD6DD721}</id>
 			<comment/>
 			<position>
 				<first>1073</first>
 				<second>1692</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{0BC497DF-6BEA-9249-8AE6-914531543C9C}</id>
 			<comment/>
 			<position>
 				<first>930</first>
 				<second>1675</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{8565F977-4DDB-CA48-B564-336C9E2934FD}</id>
 			<comment/>
 			<position>
 				<first>817</first>
 				<second>1608</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{E1F8AAF5-5689-6B4F-A022-BF246E6A6080}</id>
 			<comment/>
 			<position>
 				<first>740</first>
@@ -656,7 +721,8 @@ Amount of reflection on view angle.
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{B8983A72-BCAD-824B-B7A5-A75747B9C8EB}</id>
 			<comment/>
 			<position>
 				<first>702</first>
@@ -664,7 +730,8 @@ Amount of reflection on view angle.
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{CCCF860D-34AC-7749-B9BA-DAFD111CD0C8}</id>
 			<comment/>
 			<position>
 				<first>829</first>
@@ -672,7 +739,8 @@ Amount of reflection on view angle.
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{0D9DD607-EF3A-C34E-818C-931829E7DB2A}</id>
 			<comment/>
 			<position>
 				<first>934</first>
@@ -680,7 +748,8 @@ Amount of reflection on view angle.
 			</position>
 			<value>0.1</value>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{0C57586D-4C75-9A47-89DE-02773B2F522F}</id>
 			<comment/>
 			<position>
 				<first>2858</first>
@@ -688,21 +757,24 @@ Amount of reflection on view angle.
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{40F4D7EE-2204-2C4F-B3D5-A8C0869027B8}</id>
 			<comment/>
 			<position>
 				<first>2451</first>
 				<second>442</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{26C5D10A-43E8-AA4B-BD81-CBE395017D2A}</id>
 			<comment/>
 			<position>
 				<first>2189</first>
 				<second>333</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{C339ADEC-44F2-4041-A5D9-B1927923DFE3}</id>
 			<comment/>
 			<position>
 				<first>2074</first>
@@ -710,7 +782,8 @@ Amount of reflection on view angle.
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{25D59E48-0B72-D14F-8C07-21DBF95BFE79}</id>
 			<comment/>
 			<position>
 				<first>1968</first>
@@ -719,21 +792,24 @@ Amount of reflection on view angle.
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{0286483B-3B51-C940-A32D-B3CBBBCA0E7F}</id>
 			<comment/>
 			<position>
 				<first>1806</first>
 				<second>400</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{2C0084BA-F183-874F-B1DC-5A0894CB0D31}</id>
 			<comment/>
 			<position>
 				<first>1651</first>
 				<second>354</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{A9411220-9D2F-BE41-A891-5072EFE11861}</id>
 			<comment/>
 			<position>
 				<first>1260</first>
@@ -741,7 +817,8 @@ Amount of reflection on view angle.
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{38FD46F4-9FE9-5B40-A264-E3DAA11D2C37}</id>
 			<comment>
 			<![CDATA[
 Distance to fog plane
@@ -753,7 +830,8 @@ Distance to fog plane
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{D82BC998-4A77-494E-9D60-913547884913}</id>
 			<comment/>
 			<position>
 				<first>1361</first>
@@ -761,7 +839,8 @@ Distance to fog plane
 			</position>
 			<value>1000</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{953E9D96-E912-4840-BC91-3567AC283994}</id>
 			<comment/>
 			<position>
 				<first>1649</first>
@@ -769,7 +848,8 @@ Distance to fog plane
 			</position>
 			<value>0.0004</value>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{70DC4027-8773-4749-9D7B-04FB7E0B6AD7}</id>
 			<comment/>
 			<position>
 				<first>2248</first>
@@ -778,14 +858,16 @@ Distance to fog plane
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{7E686C0F-EC90-7D45-BC6B-91B142FFD816}</id>
 			<comment/>
 			<position>
 				<first>2107</first>
 				<second>515</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{E9CAC322-340A-4246-960E-8C539FE34CCB}</id>
 			<comment/>
 			<position>
 				<first>1993</first>
@@ -793,7 +875,8 @@ Distance to fog plane
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7">
+		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+			<id>{817B5965-7E0C-D844-8A91-7F3C12A1EEF4}</id>
 			<comment/>
 			<position>
 				<first>3506</first>
@@ -840,14 +923,16 @@ Distance to fog plane
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.Lerp">
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{74618DC2-614B-5747-98A2-ACA1027284AB}</id>
 			<comment/>
 			<position>
 				<first>2617</first>
 				<second>917</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{9D69D960-97BA-AD47-8C19-A1746EAF7093}</id>
 			<comment/>
 			<position>
 				<first>1827</first>
@@ -900,7 +985,8 @@ Distance to fog plane
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Abs">
+		<item type="traktor.render.Abs" version="traktor.render.Node:1">
+			<id>{519B6C77-193D-1142-AEBB-32398E714CA5}</id>
 			<comment/>
 			<position>
 				<first>989</first>

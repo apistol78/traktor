@@ -28,6 +28,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainComponentData.h"
+#include "Terrain/TerrainUtilities.h"
 #include "Terrain/Editor/AverageBrush.h"
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
@@ -611,6 +612,34 @@ void TerrainEditModifier::apply(
 		mxx = clamp(mxx, 0, size - 1);
 		mnz = clamp(mnz, 0, size - 1);
 		mxz = clamp(mxz, 0, size - 1);
+	}
+
+	// Update patch lod metrics if heights has been modified.
+	if ((m_brushMode & IBrush::MdHeight) != 0)
+	{
+		Terrain* terrain = m_terrainComponent->getTerrain();
+		if (terrain)
+		{
+			std::vector< Terrain::Patch >& patches = terrain->editPatches();
+
+			uint32_t heightfieldSize = m_heightfield->getSize();
+			uint32_t patchCount = heightfieldSize / (terrain->getPatchDim() * terrain->getDetailSkip());
+
+			uint32_t pmnx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnx);
+			uint32_t pmxx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxx);
+			uint32_t pmnz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnz);
+			uint32_t pmxz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxz);
+
+			for (uint32_t pz = pmnz; pz <= pmxz; ++pz)
+			{
+				for (uint32_t px = pmnx; px <= pmxx; ++px)
+				{
+					Terrain::Patch& patch = patches[px + pz * patchCount];
+					calculatePatchMinMaxHeight(m_heightfield, px, pz, terrain->getPatchDim(), terrain->getDetailSkip(), patch.height);
+					calculatePatchErrorMetrics(m_heightfield, 4, px, pz, terrain->getPatchDim(), terrain->getDetailSkip(), patch.error);
+				}
+			}
+		}
 	}
 
 	// Update splats.

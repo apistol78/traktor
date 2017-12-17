@@ -45,6 +45,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/HierarchicalState.h"
+#include "Ui/Custom/Splitter.h"
+#include "Ui/Custom/GridView/GridColumn.h"
+#include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridRowDoubleClickEvent.h"
+#include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
@@ -362,22 +368,36 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_toolViewMode = new ui::custom::ToolBarDropDown(ui::Command(L"Editor.ViewModes"), ui::scaleBySystemDPI(80), i18n::Text(L"DATABASE_VIEW_MODE"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_HIERARCHY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_CATEGORY"));
+	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_SPLIT"));
 	m_toolViewMode->select(0);
 	m_toolSelection->addItem(m_toolViewMode);
 
 	m_toolSelection->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
 
+	m_splitter = new ui::custom::Splitter();
+	m_splitter->create(this, false, 50, true);
+
 	m_treeDatabase = new ui::custom::TreeView();
-	if (!m_treeDatabase->create(this, (ui::custom::TreeView::WsDefault | ui::custom::TreeView::WsDrag | ui::WsDoubleBuffer) & ~ui::WsClientBorder))
+	if (!m_treeDatabase->create(m_splitter, (ui::custom::TreeView::WsDefault | ui::custom::TreeView::WsDrag | ui::WsAccelerated) & ~ui::WsClientBorder))
 		return false;
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Types"), 23);
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TypesHidden"), 23);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
+	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &DatabaseView::eventInstanceSelect);
 	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewDragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_treeDatabase->setEnable(false);
+
+	m_gridInstances = new ui::custom::GridView();
+	if (!m_gridInstances->create(m_splitter, ui::custom::GridView::WsColumnHeader | ui::WsAccelerated))
+		return false;
+	m_gridInstances->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(20)));
+	m_gridInstances->addColumn(new ui::custom::GridColumn(i18n::Text(L"DATABASE_INSTANCE_NAME"), ui::scaleBySystemDPI(240)));
+	m_gridInstances->addColumn(new ui::custom::GridColumn(i18n::Text(L"DATABASE_INSTANCE_TYPE"), ui::scaleBySystemDPI(100)));
+	m_gridInstances->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &DatabaseView::eventInstanceGridActivate);
+	m_gridInstances->setVisible(false);
 
 	m_menuGroup[0] = new ui::PopupMenu();
 	m_menuGroup[1] = new ui::PopupMenu();
@@ -512,6 +532,8 @@ void DatabaseView::updateView()
 	m_treeState = m_treeState ? m_treeState->merge(treeState) : treeState;
 
 	m_treeDatabase->removeAllItems();
+	m_gridInstances->removeAllRows();
+	m_gridInstances->setVisible(false);
 
 	if (m_db)
 	{
@@ -597,6 +619,12 @@ void DatabaseView::updateView()
 					m_treeDatabase->removeItem(instanceTypeItem);
 			}
 		}
+		else if (viewMode == 2)	// Split
+		{
+			m_gridInstances->setVisible(true);
+			buildTreeItemSplit(m_treeDatabase, 0, m_db->getRootGroup());
+			updateGridInstances();
+		}
 
 		setEnable(true);
 	}
@@ -604,6 +632,7 @@ void DatabaseView::updateView()
 		setEnable(false);
 
 	m_treeDatabase->applyState(m_treeState);
+	m_splitter->update();
 }
 
 bool DatabaseView::highlight(const db::Instance* instance)
@@ -1162,6 +1191,157 @@ Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItem(ui::custom::TreeView
 	return groupItem;
 }
 
+Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group)
+{
+	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 0, 1);
+	groupItem->setEditable(true);
+	groupItem->setData(L"GROUP", group);
+
+	RefArray< db::Group > childGroups;
+	group->getChildGroups(childGroups);
+	childGroups.sort(GroupByNamePred());
+
+	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+		buildTreeItemSplit(treeView, groupItem, *i);
+
+	/*
+	bool showFiltered = m_toolFilterShow->isToggled();
+	bool showFavorites = m_toolFavoritesShow->isToggled();
+	bool showPrivate = true;
+
+	RefArray< db::Instance > childInstances;
+	group->getChildInstances(childInstances);
+	childInstances.sort(InstanceByNamePred());
+
+	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	{
+		const TypeInfo* primaryType = (*i)->getPrimaryType();
+		if (!primaryType)
+			continue;
+
+		if (showFavorites)
+		{
+			if (m_favoriteInstances.find((*i)->getGuid()) == m_favoriteInstances.end())
+				continue;
+		}
+
+		if (!showPrivate)
+		{
+			if (isInstanceInPrivate(*i))
+				continue;
+		}
+
+		int32_t iconIndex = getIconIndex(primaryType);
+
+		if (!showFiltered)
+		{
+			if (!m_filter->acceptInstance((*i)))
+				continue;
+		}
+		else
+		{
+			if (!m_filter->acceptInstance((*i)))
+				iconIndex += 23;
+		}
+
+		Ref< ui::custom::TreeViewItem > instanceItem = treeView->createItem(
+			groupItem,
+			(*i)->getName(),
+			iconIndex
+		);
+
+		if (m_rootInstances.find((*i)->getGuid()) != m_rootInstances.end())
+			instanceItem->setBold(true);
+
+		instanceItem->setEditable(true);
+		instanceItem->setData(L"GROUP", group);
+		instanceItem->setData(L"INSTANCE", (*i));
+	}
+
+	// Remove group if it's empty.
+	if ((showFavorites || !m_filter->acceptEmptyGroups()) && !groupItem->hasChildren())
+	{
+		treeView->removeItem(groupItem);
+		groupItem = 0;
+	}
+	*/
+
+	return groupItem;
+}
+
+void DatabaseView::updateGridInstances()
+{
+	// Grid is only visible in "split" mode.
+	int32_t viewMode = m_toolViewMode->getSelected();
+	if (viewMode != 2)
+		return;
+
+	m_gridInstances->removeAllRows();
+
+	RefArray< ui::custom::TreeViewItem > items;
+	if (m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) <= 0)
+		return;
+
+	RefArray< db::Instance > childInstances;
+	for (RefArray< ui::custom::TreeViewItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	{
+		ui::custom::TreeViewItem* treeItem = *i;
+		T_ASSERT (treeItem);
+
+		db::Group* group = treeItem->getData< db::Group >(L"GROUP");
+		if (!group)
+			continue;
+
+		db::recursiveFindChildInstances(group, db::FindInstanceAll(), childInstances);
+	}
+	childInstances.sort(InstanceByNamePred());
+
+	bool showFiltered = m_toolFilterShow->isToggled();
+	bool showFavorites = m_toolFavoritesShow->isToggled();
+	bool showPrivate = true;
+
+	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	{
+		const TypeInfo* primaryType = (*i)->getPrimaryType();
+		if (!primaryType)
+			continue;
+
+		if (showFavorites)
+		{
+			if (m_favoriteInstances.find((*i)->getGuid()) == m_favoriteInstances.end())
+				continue;
+		}
+
+		if (!showPrivate)
+		{
+			if (isInstanceInPrivate(*i))
+				continue;
+		}
+
+		int32_t iconIndex = getIconIndex(primaryType);
+
+		if (!showFiltered)
+		{
+			if (!m_filter->acceptInstance((*i)))
+				continue;
+		}
+		else
+		{
+			if (!m_filter->acceptInstance((*i)))
+				iconIndex += 23;
+		}
+
+		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(L""));
+		row->add(new ui::custom::GridItem((*i)->getName()));
+		row->add(new ui::custom::GridItem(primaryType->getName()));
+		row->setData(L"INSTANCE", (*i));
+		m_gridInstances->addRow(row);
+	}
+
+	m_gridInstances->update();
+}
+
 void DatabaseView::filterType(db::Instance* instance)
 {
 	TypeInfoSet typeSet;
@@ -1299,6 +1479,15 @@ void DatabaseView::eventInstanceActivate(ui::custom::TreeViewItemActivateEvent* 
 	m_editor->openEditor(instance);
 }
 
+void DatabaseView::eventInstanceSelect(ui::SelectionChangeEvent* event)
+{
+	RefArray< ui::custom::TreeViewItem > items;
+	if (m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) <= 0)
+		return;
+
+	updateGridInstances();
+}
+
 void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 {
 	if (event->getButton() != ui::MbtRight)
@@ -1308,7 +1497,7 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 	if (m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) != 1)
 		return;
 
-	Ref< ui::custom::TreeViewItem > treeItem = items.front();
+	ui::custom::TreeViewItem* treeItem = items.front();
 	T_ASSERT (treeItem);
 
 	Ref< db::Group > group = treeItem->getData< db::Group >(L"GROUP");
@@ -1387,6 +1576,18 @@ void DatabaseView::eventInstanceDrag(ui::custom::TreeViewDragEvent* event)
 	}
 
 	event->consume();
+}
+
+void DatabaseView::eventInstanceGridActivate(ui::custom::GridRowDoubleClickEvent* event)
+{
+	Ref< ui::custom::GridRow > row = event->getRow();
+
+	Ref< db::Instance > instance = row->getData< db::Instance >(L"INSTANCE");
+	if (!instance)
+		return;
+
+	m_editor->openEditor(instance);
+
 }
 
 	}

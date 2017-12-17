@@ -36,7 +36,7 @@ public:
 
 	virtual std::wstring getValue() const T_OVERRIDE T_FINAL;
 
-	virtual void writeHtml(IStream* stream) T_OVERRIDE T_FINAL;
+	virtual void toString(OutputStream& os) const T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_text;

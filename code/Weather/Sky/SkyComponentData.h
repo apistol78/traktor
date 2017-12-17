@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_weather_SkyComponentData_H
 #define traktor_weather_SkyComponentData_H
 
-#include "Core/Math/Vector4.h"
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
@@ -56,7 +55,6 @@ public:
 
 private:
 	resource::Id< render::Shader > m_shader;
-	Vector4 m_sunDirection;
 	float m_offset;
 };
 

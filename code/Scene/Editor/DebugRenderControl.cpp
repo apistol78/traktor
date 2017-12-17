@@ -29,7 +29,8 @@ const resource::Id< render::Shader > c_shader(Guid(L"{949B3C96-0196-F24E-B36E-98
 const wchar_t* c_visualizeTechniques[] =
 {
 	L"Default",
-	L"Depth",
+	L"UnitDepth",
+	L"ViewDepth",
 	L"Normals",
 	L"Velocity",
 	L"SpecularRoughness",

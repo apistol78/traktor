@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{2B0FFEB2-C65F-1F4E-8607-B95ADCC683D5}</id>
 			<comment>
 			<![CDATA[
 Sprite index
@@ -17,7 +18,8 @@ Sprite index
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{2B44E6B6-4B2D-0542-911E-258B03A2FCCB}</id>
 			<comment/>
 			<position>
 				<first>92</first>
@@ -29,7 +31,8 @@ Sprite index
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>2</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{918EF4D1-B244-9E44-BD43-D1770070D73F}</id>
 			<comment/>
 			<position>
 				<first>78</first>
@@ -41,35 +44,40 @@ Sprite index
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>2</defaultValue>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{5920969C-26B5-8F41-A3A5-12E15C93A64D}</id>
 			<comment/>
 			<position>
 				<first>329</first>
 				<second>379</second>
 			</position>
 		</item>
-		<item type="traktor.render.Fraction">
+		<item type="traktor.render.Fraction" version="traktor.render.Node:1">
+			<id>{DB82EAB1-1517-2941-AB9C-491E10B75728}</id>
 			<comment/>
 			<position>
 				<first>540</first>
 				<second>426</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{55305C79-E030-454F-8EB9-97F0E257B150}</id>
 			<comment/>
 			<position>
 				<first>731</first>
 				<second>368</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{93AB5D16-D0E1-8044-B897-A5BBE0E02D72}</id>
 			<comment/>
 			<position>
 				<first>891</first>
 				<second>441</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{689B9821-943F-E945-905A-FC9F2B93AF5B}</id>
 			<comment/>
 			<position>
 				<first>1700</first>
@@ -77,14 +85,16 @@ Sprite index
 			</position>
 			<name>TexCoord</name>
 		</item>
-		<item type="traktor.render.MixIn">
+		<item type="traktor.render.MixIn" version="traktor.render.Node:1">
+			<id>{84A83A8F-12EA-4643-87EC-4D2BB4C2BE95}</id>
 			<comment/>
 			<position>
 				<first>1092</first>
 				<second>258</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{72517205-7342-D34F-A5D9-3F258E5F0484}</id>
 			<comment/>
 			<position>
 				<first>229</first>
@@ -96,28 +106,32 @@ Sprite index
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{1DD4F3B8-5DC0-1446-8CCF-5A43452F90F1}</id>
 			<comment/>
 			<position>
 				<first>597</first>
 				<second>160</second>
 			</position>
 		</item>
-		<item type="traktor.render.MixIn">
+		<item type="traktor.render.MixIn" version="traktor.render.Node:1">
+			<id>{0E83051D-C386-0C4C-8B91-9BA9348B2DD8}</id>
 			<comment/>
 			<position>
 				<first>344</first>
 				<second>195</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{B4E6A1B1-4327-EF45-9515-8691CD7203F6}</id>
 			<comment/>
 			<position>
 				<first>1378</first>
 				<second>193</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{39D96BBD-169E-7C4C-86E6-21B3AC065EDF}</id>
 			<comment/>
 			<position>
 				<first>200</first>

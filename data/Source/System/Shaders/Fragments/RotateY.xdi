@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{50A2F295-26DE-D145-914A-42D442E6ED38}</id>
 			<comment/>
 			<position>
 				<first>582</first>
@@ -25,7 +26,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{62D9169A-CC93-EC4F-8DCC-37F423CC260E}</id>
 			<comment/>
 			<position>
 				<first>319</first>
@@ -37,7 +39,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{3C21FB1B-016C-4B4C-988A-A71CCA99324E}</id>
 			<comment/>
 			<position>
 				<first>316</first>
@@ -49,7 +52,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{A4D18F88-B0D2-9544-B2FD-A7D8E6E36564}</id>
 			<comment/>
 			<position>
 				<first>492</first>
@@ -57,7 +61,8 @@
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{0FF8BBAA-2720-A743-9782-E5ABC97C8815}</id>
 			<comment/>
 			<position>
 				<first>492</first>
@@ -65,7 +70,8 @@
 			</position>
 			<swizzle>0y0w</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{204AEF96-1047-2F4E-950F-98B3149C8D3F}</id>
 			<comment/>
 			<position>
 				<first>720</first>
@@ -73,14 +79,16 @@
 			</position>
 			<swizzle>x0y</swizzle>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{C74E6BFF-3A50-0340-A533-851DE05A2856}</id>
 			<comment/>
 			<position>
 				<first>823</first>
 				<second>342</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{06FF6DE6-2E54-2F4D-A301-C049C364A0A0}</id>
 			<comment/>
 			<position>
 				<first>970</first>

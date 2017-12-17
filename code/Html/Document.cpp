@@ -7,8 +7,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <cstring>
 #include <list>
 #include "Core/RefArray.h"
+#include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Io/Utf16Encoding.h"
 #include "Core/Io/Utf32Encoding.h"
 #include "Core/Log/Log.h"
@@ -348,7 +350,9 @@ bool Document::saveIntoStream(IStream* stream)
 	if (!m_docElement)
 		return false;
 
-	m_docElement->writeHtml(stream);
+	Utf8Encoding utf8;
+	FileOutputStream fos(stream, &utf8);
+	m_docElement->toString(fos);
 
 	return true;
 }
@@ -361,6 +365,15 @@ void Document::setDocumentElement(Element* docElement)
 Element* Document::getDocumentElement() const
 {
 	return m_docElement;
+}
+
+void Document::toString(OutputStream& os) const
+{
+	if (m_docElement)
+	{
+		m_docElement->toString(os);
+		os << Endl;
+	}
 }
 
 	}

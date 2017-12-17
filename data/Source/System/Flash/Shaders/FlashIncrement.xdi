@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="1">
+		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+			<id>{B1F38CDD-F87F-514A-BDA1-CA50BF5A4DD2}</id>
 			<comment/>
 			<position>
 				<first>515</first>
@@ -9,7 +10,8 @@
 			</position>
 			<technique>Default</technique>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7">
+		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+			<id>{1EA02179-E8EE-E444-878D-D42DF572315B}</id>
 			<comment/>
 			<position>
 				<first>523</first>
@@ -56,7 +58,8 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{C89EA181-AD0A-394B-9E48-9C67B93D33AA}</id>
 			<comment/>
 			<position>
 				<first>289</first>

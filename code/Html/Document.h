@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <string>
 #include "Core/Object.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/OutputStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -52,6 +53,8 @@ public:
 	void setDocumentElement(Element* docElement);
 
 	Element* getDocumentElement() const;
+
+	void toString(OutputStream& os) const;
 	
 private:
 	bool m_parseComments;

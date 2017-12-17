@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{35E7F019-D328-6746-AA1B-D005FE549BA4}</id>
 			<comment>
 			<![CDATA[
 	
@@ -17,7 +18,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{7EB4B54B-0FF5-A744-9095-B50F9D5DED04}</id>
 			<comment>
 			<![CDATA[
 	
@@ -33,7 +35,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{51D3C00D-26F8-FB40-A071-FB6F47B4AFDB}</id>
 			<comment>
 			<![CDATA[
 	
@@ -45,7 +48,8 @@
 			</position>
 			<swizzle>wwww</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{5C9C1DC6-2121-B84A-B38C-62BE9A49C21F}</id>
 			<comment>
 			<![CDATA[
 	
@@ -57,7 +61,8 @@
 			</position>
 			<swizzle>xyzw</swizzle>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{53507C4C-9A9B-9046-A33B-21957EEFCE7E}</id>
 			<comment>
 			<![CDATA[
 	
@@ -68,7 +73,8 @@
 				<second>134</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{976079B2-FB4B-0340-AB0B-EF2A5D5F17B4}</id>
 			<comment>
 			<![CDATA[
 	
@@ -80,7 +86,8 @@
 			</position>
 			<swizzle>xyzx</swizzle>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{7BAC6F07-C5EA-6D4D-BF80-CBA4553F4863}</id>
 			<comment>
 			<![CDATA[
 	
@@ -91,7 +98,8 @@
 				<second>263</second>
 			</position>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{3D8B25ED-2206-8C45-B1AF-5AC498206C23}</id>
 			<comment>
 			<![CDATA[
 	
@@ -103,7 +111,8 @@
 			</position>
 			<value>1, 1, 1, -1</value>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{D046701F-7F1B-3743-9F78-F0D90BFAFAEF}</id>
 			<comment>
 			<![CDATA[
 	
@@ -115,7 +124,8 @@
 			</position>
 			<swizzle>wwwx</swizzle>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{457635E8-6872-C44D-8FE8-B080AD003A7E}</id>
 			<comment>
 			<![CDATA[
 	
@@ -126,7 +136,8 @@
 				<second>367</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{E2C734A1-9282-3F4D-A7E2-ECB908C0CFF9}</id>
 			<comment>
 			<![CDATA[
 	
@@ -138,7 +149,8 @@
 			</position>
 			<swizzle>yzxy</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{26E1AB29-3D44-1145-A983-4D7F5C58D4B9}</id>
 			<comment>
 			<![CDATA[
 	
@@ -150,7 +162,8 @@
 			</position>
 			<swizzle>zxyy</swizzle>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{12D5711D-929B-814C-B2FF-512DF246D613}</id>
 			<comment>
 			<![CDATA[
 	
@@ -161,7 +174,8 @@
 				<second>490</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{FDC194C0-D223-E345-BF60-CCD156145309}</id>
 			<comment>
 			<![CDATA[
 	
@@ -173,7 +187,8 @@
 			</position>
 			<swizzle>zxyz</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{138272D3-4CED-F64F-B3FA-8B47CCAFE80C}</id>
 			<comment>
 			<![CDATA[
 	
@@ -185,7 +200,8 @@
 			</position>
 			<swizzle>yzxz</swizzle>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{E7AB55D8-9175-EA43-85A0-FEA41BEA058F}</id>
 			<comment>
 			<![CDATA[
 	
@@ -196,7 +212,8 @@
 				<second>296</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{30311B8F-A92A-9341-9E48-AF6C6C1BD121}</id>
 			<comment>
 			<![CDATA[
 	
@@ -207,7 +224,8 @@
 				<second>393</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{C1F785E5-7E1F-4544-B491-E55B333CE1DE}</id>
 			<comment>
 			<![CDATA[
 	
@@ -218,7 +236,8 @@
 				<second>218</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{9FCE53D6-9909-4841-84C7-57B539876E74}</id>
 			<comment>
 			<![CDATA[
 	
@@ -229,7 +248,8 @@
 				<second>308</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{AB7D4F50-163C-1847-9E52-7BBF93135F86}</id>
 			<comment>
 			<![CDATA[
 	
@@ -240,7 +260,8 @@
 				<second>373</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{986891D0-90B2-6649-9063-41A54AE30AB2}</id>
 			<comment>
 			<![CDATA[
 	
@@ -252,7 +273,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{EE39432B-FFFB-7941-819D-64DE89C20E58}</id>
 			<comment>
 			<![CDATA[
 Quaternion multiply fragment.

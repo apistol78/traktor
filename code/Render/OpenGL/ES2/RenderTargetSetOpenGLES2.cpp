@@ -93,6 +93,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGLES2", RenderTargetS
 RenderTargetSetOpenGLES2::RenderTargetSetOpenGLES2(ContextOpenGLES2* context)
 :	m_context(context)
 ,	m_depthBufferOrTexture(0)
+,	m_contentValid(false)
 {
 	m_targetFBO[0] = 0;
 }
@@ -372,8 +373,12 @@ void RenderTargetSetOpenGLES2::discard()
 		}
 	}
 #endif
+	m_contentValid = false;
+}
 
-	setContentValid(false);
+bool RenderTargetSetOpenGLES2::isContentValid() const
+{
+	return m_contentValid;
 }
 
 bool RenderTargetSetOpenGLES2::read(int index, void* buffer) const

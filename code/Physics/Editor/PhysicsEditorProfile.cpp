@@ -100,5 +100,12 @@ Ref< world::EntityData > PhysicsEditorProfile::createEntityData(
 	return 0;
 }
 
+void PhysicsEditorProfile::getDebugTargets(
+	scene::SceneEditorContext* context,
+	std::vector< render::DebugTarget >& outDebugTargets
+) const
+{
+}
+
 	}
 }

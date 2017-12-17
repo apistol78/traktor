@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{02BDE4A8-7ED1-6145-9378-1E4F99AE12E6}</id>
 			<comment>
 			<![CDATA[
 Tangent space
@@ -17,7 +18,8 @@ Tangent space
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{97CC0060-C30A-A149-8449-0567E20F1D03}</id>
 			<comment>
 			<![CDATA[
 Tangent space
@@ -33,21 +35,24 @@ Tangent space
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Reflect">
+		<item type="traktor.render.Reflect" version="traktor.render.Node:1">
+			<id>{82F1441F-4B9E-2B4C-BA9D-1B82B169FD69}</id>
 			<comment/>
 			<position>
 				<first>108</first>
 				<second>183</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{8E7E787A-1458-0646-B17B-3C231212E7F7}</id>
 			<comment/>
 			<position>
 				<first>310</first>
 				<second>133</second>
 			</position>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{926F5496-66BF-C04D-B8D1-4B9B2D2EB81F}</id>
 			<comment/>
 			<position>
 				<first>159</first>
@@ -55,7 +60,8 @@ Tangent space
 			</position>
 			<value>1, 1, -1, 0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{A089E776-5F05-2F45-8799-BC2F7DEDCCFB}</id>
 			<comment/>
 			<position>
 				<first>470</first>
@@ -67,21 +73,24 @@ Tangent space
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{9CC59101-3E3B-7244-A66A-403645CD48BD}</id>
 			<comment/>
 			<position>
 				<first>661</first>
 				<second>185</second>
 			</position>
 		</item>
-		<item type="traktor.render.Length">
+		<item type="traktor.render.Length" version="traktor.render.Node:1">
+			<id>{32EB5561-64AB-8C43-AB4E-66FA99E08077}</id>
 			<comment/>
 			<position>
 				<first>487</first>
 				<second>232</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{C0B955D0-07A9-3B43-BBA3-15BC0613C78C}</id>
 			<comment/>
 			<position>
 				<first>628</first>
@@ -93,21 +102,24 @@ Tangent space
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{CA7CEF69-9780-C948-9D65-58E371808DFC}</id>
 			<comment/>
 			<position>
 				<first>834</first>
 				<second>219</second>
 			</position>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{31F82161-1C83-4241-B7F7-B04AD6B1BE6E}</id>
 			<comment/>
 			<position>
 				<first>1003</first>
 				<second>133</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{7129A16C-DB3E-0C46-88FA-50993DD85183}</id>
 			<comment/>
 			<position>
 				<first>745</first>
@@ -119,7 +131,8 @@ Tangent space
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{EC43BBF8-E565-8C49-B4A0-776B79FC054D}</id>
 			<comment/>
 			<position>
 				<first>1190</first>

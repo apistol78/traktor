@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{9F0CCB47-5A4A-F649-B7F0-B47881FF0EAE}</id>
 			<comment/>
 			<position>
 				<first>112</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>ViewBinormal</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{D73F8DCD-F147-6B42-8DD8-37CE63D8B02C}</id>
 			<comment/>
 			<position>
 				<first>112</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>ViewNormal</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{9402D4E5-E6CB-4C43-96CB-511062EAD0E0}</id>
 			<comment/>
 			<position>
 				<first>112</first>
@@ -25,7 +28,8 @@
 			</position>
 			<name>TexCoord0</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{2D3AAEC7-8DFE-3640-AC28-E96E3FCCB26B}</id>
 			<comment/>
 			<position>
 				<first>112</first>
@@ -33,7 +37,8 @@
 			</position>
 			<name>ViewTangent</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{650A4C93-F8D0-2248-87CA-C54103A6F725}</id>
 			<comment/>
 			<position>
 				<first>112</first>
@@ -41,7 +46,8 @@
 			</position>
 			<name>ViewPosition</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{9659570D-2E43-4640-B36B-A01C13A2A2CE}</id>
 			<comment/>
 			<position>
 				<first>112</first>
@@ -49,7 +55,8 @@
 			</position>
 			<name>Color</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{6C77CC4C-5487-214A-9BB2-D0AF1D620C73}</id>
 			<comment/>
 			<position>
 				<first>112</first>
@@ -57,7 +64,8 @@
 			</position>
 			<name>TexCoord1</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{A1CAAD55-D717-4A4F-BE70-396B4EDCA859}</id>
 			<comment/>
 			<position>
 				<first>112</first>
@@ -65,7 +73,8 @@
 			</position>
 			<name>Position</name>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{23855AF6-7786-DD4C-8EF8-8009F5F5F642}</id>
 			<comment/>
 			<position>
 				<first>-357</first>
@@ -104,7 +113,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{CEDE69C8-35C6-294F-B9CD-765CEC4AF929}</id>
 			<comment>
 			<![CDATA[
 This fragment is just a placeholder for
@@ -120,7 +130,8 @@ work.
 				<second>-168</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{8E47B001-A54D-5E40-8412-D8A34694976F}</id>
 			<comment/>
 			<position>
 				<first>112</first>

@@ -88,5 +88,12 @@ Ref< world::EntityData > IlluminateEditorProfile::createEntityData(
 	return 0;
 }
 
+void IlluminateEditorProfile::getDebugTargets(
+	scene::SceneEditorContext* context,
+	std::vector< render::DebugTarget >& outDebugTargets
+) const
+{
+}
+
 	}
 }

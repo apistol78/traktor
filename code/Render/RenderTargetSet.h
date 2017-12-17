@@ -34,8 +34,6 @@ class T_DLLCLASS RenderTargetSet : public Object
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSet();
-
 	/*! \brief Destroy render targets.h */
 	virtual void destroy() = 0;
 
@@ -57,6 +55,9 @@ public:
 	/*! \brief Discard target content. */
 	virtual void discard() = 0;
 
+	/*! \brief Check if target content is valid. */
+	virtual bool isContentValid() const = 0;
+
 	/*! \brief Read back color target into system memory.
 	 *
 	 * \note
@@ -70,15 +71,6 @@ public:
 	 * \return True if successfully copied.
 	 */
 	virtual bool read(int index, void* buffer) const = 0;
-
-	/*! \brief Set content valid flag. */
-	inline void setContentValid(bool contentValid) { m_contentValid = contentValid; }
-
-	/*! \brief Check content valid flag. */
-	inline bool isContentValid() const { return m_contentValid; }
-
-private:
-	bool m_contentValid;
 };
 	
 	}

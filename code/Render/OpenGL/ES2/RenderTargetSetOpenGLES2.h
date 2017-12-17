@@ -47,9 +47,13 @@ public:
 
 	virtual void discard() T_OVERRIDE T_FINAL;
 
+	virtual bool isContentValid() const T_OVERRIDE T_FINAL;
+
 	virtual bool read(int index, void* buffer) const T_OVERRIDE T_FINAL;
 
 	bool bind(GLuint primaryDepthBuffer, int32_t renderTarget);
+
+	void setContentValid(bool contentValid) { m_contentValid = contentValid; }
 
 private:
 	Ref< ContextOpenGLES2 > m_context;
@@ -59,6 +63,7 @@ private:
 	GLuint m_targetTextures[8];
 	Ref< RenderTargetDepthOpenGLES2 > m_depthTarget;
 	Ref< RenderTargetOpenGLES2 > m_renderTargets[8];
+	bool m_contentValid;
 
 	bool createFramebuffer(GLuint primaryDepthBuffer);
 };

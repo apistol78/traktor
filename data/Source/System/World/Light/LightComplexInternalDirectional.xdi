@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{6CC3CFF0-9311-F543-A14F-E724070212CE}</id>
 			<comment/>
 			<position>
 				<first>2294</first>
@@ -9,14 +10,16 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{B713392F-068C-B44E-A361-58F41776974A}</id>
 			<comment/>
 			<position>
 				<first>2081</first>
 				<second>276</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{4FD2C69D-8167-7942-B9FD-45D559868D48}</id>
 			<comment>
 			<![CDATA[
 Specular light
@@ -28,7 +31,8 @@ Specular light
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{B817DF94-0DEF-294C-B79E-213EC4463218}</id>
 			<comment/>
 			<position>
 				<first>1525</first>
@@ -59,14 +63,16 @@ Specular light
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.MixOut">
+		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
+			<id>{FBDF7A08-7D6F-9D40-B053-1A8338491D86}</id>
 			<comment/>
 			<position>
 				<first>1302</first>
 				<second>227</second>
 			</position>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{C8E305D7-FA87-A742-91A8-3E0C49159F66}</id>
 			<comment/>
 			<position>
 				<first>1082</first>
@@ -75,14 +81,16 @@ Specular light
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{80C7C8CC-975D-8244-902C-A861399D4675}</id>
 			<comment/>
 			<position>
 				<first>572</first>
 				<second>387</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{DE45E52B-E6F2-8448-BBC4-659791243A71}</id>
 			<comment/>
 			<position>
 				<first>487</first>
@@ -90,7 +98,8 @@ Specular light
 			</position>
 			<swizzle>0x</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{C4E6455D-E0D1-CC47-9D3F-33DB97307A0C}</id>
 			<comment/>
 			<position>
 				<first>126</first>
@@ -125,7 +134,8 @@ Specular light
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{6D8EDB16-7949-1346-8EE3-B75E5DF7104E}</id>
 			<comment/>
 			<position>
 				<first>-519</first>
@@ -137,7 +147,8 @@ Specular light
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{64D5F014-3B9B-6D46-99D6-E064C83C3245}</id>
 			<comment/>
 			<position>
 				<first>-439</first>
@@ -149,7 +160,8 @@ Specular light
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{0AD8D41C-DE0C-BC47-B8F8-53E6AE34FA59}</id>
 			<comment/>
 			<position>
 				<first>-181</first>
@@ -187,7 +199,8 @@ Specular light
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{93502E92-59FF-9045-AFB3-BB8E785131C5}</id>
 			<comment/>
 			<position>
 				<first>-392</first>
@@ -199,7 +212,8 @@ Specular light
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{3088729D-23E6-0941-A9A2-335485841147}</id>
 			<comment/>
 			<position>
 				<first>-469</first>
@@ -211,7 +225,8 @@ Specular light
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{06137383-6748-8944-9D8D-4F70E43A4028}</id>
 			<comment/>
 			<position>
 				<first>487</first>
@@ -219,7 +234,8 @@ Specular light
 			</position>
 			<swizzle>x0</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{CB1F6D72-0140-D74E-BD65-377CB09E8ECE}</id>
 			<comment/>
 			<position>
 				<first>1327</first>
@@ -231,7 +247,8 @@ Specular light
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{275027F7-BACC-0F44-B012-E59F8083C8C4}</id>
 			<comment>
 			<![CDATA[
 Diffuse light
@@ -243,7 +260,8 @@ Diffuse light
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{3F9F99B2-A743-F044-B77A-2F4FC53E6B10}</id>
 			<comment/>
 			<position>
 				<first>1734</first>

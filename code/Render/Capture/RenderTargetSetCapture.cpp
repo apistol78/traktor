@@ -110,6 +110,12 @@ void RenderTargetSetCapture::discard()
 		m_renderTargetSet->discard();
 }
 
+bool RenderTargetSetCapture::isContentValid() const
+{
+	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	return m_renderTargetSet ? m_renderTargetSet->isContentValid() : false;
+}
+
 bool RenderTargetSetCapture::read(int index, void* buffer) const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");

@@ -421,6 +421,10 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 			for (RefArray< Node >::const_iterator i = data->getNodes().begin(); i != data->getNodes().end(); ++i)
 			{
+				// Create new unique instance ID.
+				(*i)->setId(Guid::create());
+
+				// Place node in view.
 				std::pair< int, int > position = (*i)->getPosition();
 				position.first = (position.first - bounds.left) + centerLeft;
 				position.second = (position.second - bounds.top) + centerTop;

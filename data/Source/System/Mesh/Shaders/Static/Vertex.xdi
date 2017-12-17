@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="1">
+		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+			<id>{EDF2669D-EEC3-D143-ACF5-B51B664184C0}</id>
 			<comment/>
 			<position>
 				<first>157</first>
@@ -9,7 +10,8 @@
 			</position>
 			<technique/>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{DDD6B2A7-3CDD-F844-9487-62A4DE410B7B}</id>
 			<comment/>
 			<position>
 				<first>-842</first>
@@ -20,7 +22,8 @@
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{82181B8A-EE5B-4741-BF5F-31B31BC51B56}</id>
 			<comment/>
 			<position>
 				<first>298</first>
@@ -28,14 +31,16 @@
 			</position>
 			<name>ViewPosition</name>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{ADEA9D94-03D0-D845-A427-0E30BCC8A5CB}</id>
 			<comment/>
 			<position>
 				<first>206</first>
 				<second>1114</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{BBFBF99B-EA7F-0C41-B1B2-0144E04E27B2}</id>
 			<comment/>
 			<position>
 				<first>298</first>
@@ -43,14 +48,16 @@
 			</position>
 			<name>ViewNormal</name>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{098E34FB-2C62-4E42-B4EA-8B4CDCF6D83F}</id>
 			<comment/>
 			<position>
 				<first>206</first>
 				<second>1061</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{1C016BD1-FDE8-4844-97DB-9DD4672BD7C5}</id>
 			<comment/>
 			<position>
 				<first>-842</first>
@@ -61,7 +68,8 @@
 			<type>DtHalf4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{8FC0CA82-973E-9B44-B0EE-CD5C4552173A}</id>
 			<comment/>
 			<position>
 				<first>298</first>
@@ -69,14 +77,16 @@
 			</position>
 			<name>ViewTangent</name>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{B3B7B823-2EC9-CE45-9695-2779396E6DEC}</id>
 			<comment/>
 			<position>
 				<first>206</first>
 				<second>1167</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{A994BA85-7B34-2D4C-BD09-1129461A21DA}</id>
 			<comment/>
 			<position>
 				<first>-842</first>
@@ -87,7 +97,8 @@
 			<type>DtHalf4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{D6A4BC05-EBF0-F548-ACDE-95B4A89CC3E2}</id>
 			<comment/>
 			<position>
 				<first>298</first>
@@ -95,14 +106,16 @@
 			</position>
 			<name>ViewBinormal</name>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{F4C3675F-D889-D44F-A4D9-03696B7E6790}</id>
 			<comment/>
 			<position>
 				<first>206</first>
 				<second>1008</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{5F091539-E06E-C048-B413-B7F72A8D4C76}</id>
 			<comment/>
 			<position>
 				<first>-852</first>
@@ -113,7 +126,8 @@
 			<type>DtHalf4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{3D321314-D5BB-F24B-BF8C-067E0EF35ECF}</id>
 			<comment/>
 			<position>
 				<first>-88</first>
@@ -121,7 +135,8 @@
 			</position>
 			<name>Color</name>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{4471ED5E-181A-7F4D-9285-0A80AC612BAC}</id>
 			<comment/>
 			<position>
 				<first>-390</first>
@@ -141,7 +156,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{D6489C3F-9073-6845-ABF5-226E27C9D4BE}</id>
 			<comment/>
 			<position>
 				<first>-682</first>
@@ -152,7 +168,8 @@
 			<type>DtByte4N</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{8F43AC41-086E-C540-847D-D35ADF9176EF}</id>
 			<comment/>
 			<position>
 				<first>-501</first>
@@ -160,7 +177,8 @@
 			</position>
 			<name>Position</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{08C82BAA-6634-B848-926F-B5D0A51F810F}</id>
 			<comment/>
 			<position>
 				<first>-194</first>
@@ -168,7 +186,8 @@
 			</position>
 			<name>TexCoord1</name>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{9B40ABF5-ABEE-1147-B13A-346ACA3ECD52}</id>
 			<comment/>
 			<position>
 				<first>-514</first>
@@ -179,7 +198,8 @@
 			<type>DtHalf2</type>
 			<index>1</index>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{FB7A0FFB-6AA6-7046-981B-7ED6A4945473}</id>
 			<comment/>
 			<position>
 				<first>-194</first>
@@ -187,7 +207,8 @@
 			</position>
 			<name>TexCoord0</name>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{D539A931-AFDC-3748-A369-9B8A704B3D64}</id>
 			<comment/>
 			<position>
 				<first>-514</first>
@@ -198,7 +219,8 @@
 			<type>DtHalf2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{52B9557A-88FD-B84A-8E6F-DCAACCDB571D}</id>
 			<comment/>
 			<position>
 				<first>296</first>
@@ -206,7 +228,8 @@
 			</position>
 			<name>ViewVelocity</name>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{6F06A507-76C9-CF4B-9E3F-3B621925D65F}</id>
 			<comment>
 			<![CDATA[
 All "default" vertex are exposed as variables
@@ -218,7 +241,8 @@ to provide values to material output fragments.
 				<second>631</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable">
+		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+			<id>{1FF8D4A4-2E32-6A41-BA9A-F5C6831659F3}</id>
 			<comment/>
 			<position>
 				<first>1113</first>
@@ -226,7 +250,8 @@ to provide values to material output fragments.
 			</position>
 			<name>Vertex_ViewVelocity</name>
 		</item>
-		<item type="traktor.render.Variable">
+		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+			<id>{8C99978C-AAF2-5240-9092-12939EB47413}</id>
 			<comment/>
 			<position>
 				<first>1113</first>
@@ -234,7 +259,8 @@ to provide values to material output fragments.
 			</position>
 			<name>Vertex_ViewNormal</name>
 		</item>
-		<item type="traktor.render.Variable">
+		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+			<id>{D41E775B-E90E-CA40-B2B2-FB755CF11755}</id>
 			<comment/>
 			<position>
 				<first>1113</first>
@@ -242,7 +268,8 @@ to provide values to material output fragments.
 			</position>
 			<name>Vertex_ViewPosition</name>
 		</item>
-		<item type="traktor.render.Variable">
+		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+			<id>{6380689C-BFFB-1B4C-9693-35D2BCC6CE91}</id>
 			<comment/>
 			<position>
 				<first>1113</first>
@@ -250,7 +277,8 @@ to provide values to material output fragments.
 			</position>
 			<name>Vertex_ViewTangent</name>
 		</item>
-		<item type="traktor.render.Variable">
+		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+			<id>{F10EA037-0D74-C64E-BACD-A4A6ADF11D18}</id>
 			<comment/>
 			<position>
 				<first>1113</first>
@@ -258,7 +286,8 @@ to provide values to material output fragments.
 			</position>
 			<name>Vertex_ViewBinormal</name>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{7B4FFACE-E593-6D47-A07E-3A82BD12C62F}</id>
 			<comment/>
 			<position>
 				<first>-231</first>

@@ -47,6 +47,7 @@ TreeViewItem::TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstr
 ,	m_image(image)
 ,	m_expandedImage(expandedImage)
 ,	m_expanded(false)
+,	m_enabled(true)
 ,	m_selected(false)
 ,	m_editable(true)
 ,	m_editMode(0)
@@ -133,6 +134,21 @@ void TreeViewItem::collapse()
 		TreeViewItemStateChangeEvent stateChangeEvent(m_view, this);
 		m_view->raiseEvent(&stateChangeEvent);
 	}
+}
+
+bool TreeViewItem::isEnabled() const
+{
+	return m_enabled;
+}
+
+void TreeViewItem::enable()
+{
+	m_enabled = true;
+}
+
+void TreeViewItem::disable()
+{
+	m_enabled = false;
 }
 
 bool TreeViewItem::isSelected() const
@@ -506,7 +522,11 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 			}
 		}
 
-		canvas.setForeground(ss->getColor(m_view, m_selected ? L"item-color-selected" : L"color"));
+		if (m_enabled)
+			canvas.setForeground(ss->getColor(m_view, m_selected ? L"item-color-selected" : L"color"));
+		else
+			canvas.setForeground(ss->getColor(m_view, m_selected ? L"item-color-selected-disabled" : L"color-disabled"));
+
 		canvas.drawText(rcLabel, m_text, AnLeft, AnCenter);
 	}
 }

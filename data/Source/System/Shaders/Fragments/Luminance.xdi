@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{FCE0D4A5-D635-444D-BA28-82184545B4FF}</id>
 			<comment/>
 			<position>
 				<first>789</first>
 				<second>401</second>
 			</position>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{47305830-54DF-1641-8E55-9B8C0E013664}</id>
 			<comment/>
 			<position>
 				<first>511</first>
@@ -16,7 +18,8 @@
 			</position>
 			<value>0.299, 0.587, 0.114, 0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{E9711D6F-F18A-574F-B270-B270C70C239A}</id>
 			<comment/>
 			<position>
 				<first>631</first>
@@ -28,7 +31,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{653E9830-471D-574B-AE12-AA835F4FFFEE}</id>
 			<comment/>
 			<position>
 				<first>960</first>
@@ -36,7 +40,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{C818EEA8-5086-2948-AF87-95051340F81B}</id>
 			<comment>
 			<![CDATA[
 Calculate light luminance of RGB color.

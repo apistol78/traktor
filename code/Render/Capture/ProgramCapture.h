@@ -54,6 +54,8 @@ private:
 		Ref< const Uniform > uniform;
 		Ref< const IndexedUniform > indexedUniform;
 		bool undefined;
+
+		std::wstring getName() const;
 	};
 
 	Ref< IProgram > m_program;

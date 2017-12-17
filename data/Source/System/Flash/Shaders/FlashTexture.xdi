@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="1">
+		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+			<id>{BE2504AA-EE0C-1C44-A9DB-8A6E9D3D09A3}</id>
 			<comment/>
 			<position>
 				<first>113</first>
@@ -9,7 +10,8 @@
 			</position>
 			<technique/>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{BFE2F27C-D766-2D44-A9FA-28635FCF73F2}</id>
 			<comment/>
 			<position>
 				<first>-786</first>
@@ -27,7 +29,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{0B2B8B61-74F1-BA49-A4F9-E1414E63BF34}</id>
 			<comment/>
 			<position>
 				<first>868</first>
@@ -60,7 +63,8 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{616D25A3-59CD-D44E-A103-365D1874DDCC}</id>
 			<comment/>
 			<position>
 				<first>-294</first>
@@ -83,21 +87,24 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{BA979FD4-90C7-0A4E-B3EF-FA0825AEB43E}</id>
 			<comment/>
 			<position>
 				<first>444</first>
 				<second>273</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{49D122AD-D66C-6F41-B389-4032A1C236F1}</id>
 			<comment/>
 			<position>
 				<first>67</first>
 				<second>100</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{E1FF206B-CD72-944F-9308-3348938C74A7}</id>
 			<comment/>
 			<position>
 				<first>-359</first>
@@ -126,14 +133,16 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{F3C9F629-A3D6-904F-89DD-B0B2945031BA}</id>
 			<comment/>
 			<position>
 				<first>-591</first>
 				<second>288</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{8EE40D91-C677-1B46-B170-DC44C18324D1}</id>
 			<comment/>
 			<position>
 				<first>73</first>
@@ -143,7 +152,8 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{E9225AE8-651D-7241-895F-FB4F04DD8597}</id>
 			<comment/>
 			<position>
 				<first>67</first>
@@ -153,7 +163,8 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{09C24B05-A6F9-2449-B232-FED60B6AA2E3}</id>
 			<comment/>
 			<position>
 				<first>-1133</first>
@@ -164,7 +175,8 @@
 			<type>DtFloat2</type>
 			<index>1</index>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{7E16FF53-A601-8C4A-8F54-D986B310126B}</id>
 			<comment/>
 			<position>
 				<first>-365</first>
@@ -193,7 +205,8 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{F75AC9E7-3FD8-D048-8FAF-124562457E5C}</id>
 			<comment/>
 			<position>
 				<first>-614</first>
@@ -201,7 +214,8 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{96E58520-2B83-4545-A0A5-08D3023ACB46}</id>
 			<comment/>
 			<position>
 				<first>-731</first>

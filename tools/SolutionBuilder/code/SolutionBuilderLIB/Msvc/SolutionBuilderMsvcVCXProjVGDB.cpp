@@ -129,7 +129,7 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateProject(
 	context.set(L"MODULE_DEFINITION_FILE", L"");
 	findDefinitions(context, solution, project, project->getItems());
 
-	std::vector< uint8_t > buffer;
+	AlignedVector< uint8_t > buffer;
 	buffer.reserve(40000);
 
 	DynamicMemoryStream bufferStream(buffer, false, true);
@@ -403,7 +403,7 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 	}
 
 	{
-		std::vector< uint8_t > buffer;
+		AlignedVector< uint8_t > buffer;
 		buffer.reserve(40000);
 
 		DynamicMemoryStream bufferStream(buffer, false, true);
@@ -657,7 +657,7 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 			}
 		}
 
-		std::vector< uint8_t > buffer;
+		AlignedVector< uint8_t > buffer;
 		buffer.reserve(40000);
 
 		DynamicMemoryStream bufferStream(buffer, false, true);
@@ -841,7 +841,7 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 			file = 0;
 		}
 
-		std::vector< uint8_t > buffer;
+		AlignedVector< uint8_t > buffer;
 		buffer.reserve(40000);
 
 		DynamicMemoryStream bufferStream(buffer, false, true);

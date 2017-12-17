@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{777B613C-19C5-0146-808C-FD1924B77DF4}</id>
 			<comment/>
 			<position>
 				<first>109</first>
@@ -11,7 +12,8 @@
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{219360A2-8780-2246-BD45-2658C9AEF59C}</id>
 			<comment/>
 			<position>
 				<first>383</first>
@@ -28,7 +30,8 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{F7A15469-6147-1347-A154-8D105B3FB3C5}</id>
 			<comment/>
 			<position>
 				<first>121</first>
@@ -46,7 +49,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7">
+		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+			<id>{B8246A10-C4CA-4841-864A-56F7A1F7206E}</id>
 			<comment/>
 			<position>
 				<first>877</first>
@@ -93,14 +97,16 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.Pow">
+		<item type="traktor.render.Pow" version="traktor.render.Node:1">
+			<id>{D8BB8894-3A23-E348-AC2E-0DF123F8874B}</id>
 			<comment/>
 			<position>
 				<first>664</first>
 				<second>400</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{C14D788B-35E1-A847-8048-EBC4F7AFF81A}</id>
 			<comment/>
 			<position>
 				<first>526</first>
@@ -108,7 +114,8 @@
 			</position>
 			<swizzle>xxx1</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{69ACCBEC-ADFD-354B-9DA3-2F14EAD11F25}</id>
 			<comment/>
 			<position>
 				<first>246</first>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{53604D08-9D6A-F540-8063-7E0E44A3A4FF}</id>
 			<comment>
 			<![CDATA[
 	
@@ -17,7 +18,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.MixOut">
+		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
+			<id>{C16C1EED-9CB6-5640-9CBB-B3D2493B2680}</id>
 			<comment>
 			<![CDATA[
 	
@@ -28,7 +30,8 @@
 				<second>70</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{7C1FA852-362F-FE4E-AC81-AE025AD67285}</id>
 			<comment>
 			<![CDATA[
 	
@@ -39,7 +42,8 @@
 				<second>49</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{3B0F57AE-3171-C346-ACD8-D57BEA20E67F}</id>
 			<comment>
 			<![CDATA[
 	
@@ -50,7 +54,8 @@
 				<second>77</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{ED0B6F17-1B77-2B4F-AE16-8EA17D3F1D48}</id>
 			<comment>
 			<![CDATA[
 	
@@ -61,7 +66,8 @@
 				<second>77</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{4DE9DF8B-B668-174F-B0BA-2613E20BECC4}</id>
 			<comment>
 			<![CDATA[
 	
@@ -73,7 +79,8 @@
 			</position>
 			<value>3</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{BB54BAE3-77DE-9644-9E69-FB30B98F6CB0}</id>
 			<comment>
 			<![CDATA[
 	
@@ -85,7 +92,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Comment">
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{B6A72671-F385-9E4B-B4B6-B21CDC7D807E}</id>
 			<comment>
 			<![CDATA[
 Calculate average value from RGB color.

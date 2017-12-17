@@ -302,7 +302,22 @@ local outputs =
 		{
 			{ name = "Error", column = 0, row = 35, width = 3, height = 10 },
 		}
-	}
+	},
+	{
+		name = "SolutionBuilder",
+		-- path = "../../code/Flash/Editor/Resources",
+		path = "../themes/%s/Images/SolutionBuilder",
+		resources =
+		{
+			{ name = "Solution", column = 0, row = 39, width = 1, height = 1 },
+			{ name = "Project", column = 1, row = 39, width = 1, height = 1 },
+			{ name = "Folders", column = 2, row = 39, width = 2, height = 1 },
+			{ name = "File", column = 4, row = 39, width = 1, height = 1 },
+			{ name = "Configuration", column = 5, row = 39, width = 1, height = 1 },
+			{ name = "Aggregation", column = 6, row = 39, width = 1, height = 1 },
+			{ name = "AggregationRule", column = 7, row = 39, width = 1, height = 1 },
+		}
+	},	
 }
 
 local dpis =

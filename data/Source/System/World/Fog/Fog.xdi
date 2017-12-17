@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
 			<comment/>
 			<position>
 				<first>2696</first>
@@ -9,14 +10,16 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{606E7531-F4EE-A940-8DC6-3D848E76D7AF}</id>
 			<comment/>
 			<position>
 				<first>2462</first>
 				<second>579</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{CA2F8596-DED1-9348-9949-6A98D7D43EDB}</id>
 			<comment/>
 			<position>
 				<first>2372</first>
@@ -24,7 +27,8 @@
 			</position>
 			<swizzle>000w</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{AFF255D0-F99A-7B4E-BB42-5C8D3D7B7336}</id>
 			<comment/>
 			<position>
 				<first>446</first>
@@ -36,7 +40,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{C78F325C-B6E5-5B4D-821C-E37A9864389A}</id>
 			<comment/>
 			<position>
 				<first>2372</first>
@@ -44,14 +49,16 @@
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.Lerp">
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{704ED5CB-9E4E-304F-8207-D8C39CA3DB3E}</id>
 			<comment/>
 			<position>
 				<first>2121</first>
 				<second>643</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{56AB5FB1-017D-234B-BEAA-5DB4630DA8E9}</id>
 			<comment/>
 			<position>
 				<first>1399</first>
@@ -61,14 +68,16 @@
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{B3F5CF19-76B7-434F-AC73-624EE82BF631}</id>
 			<comment/>
 			<position>
 				<first>1877</first>
 				<second>714</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{F11724C5-0BCA-3944-AF36-3B1601F4E7F1}</id>
 			<comment>
 			<![CDATA[
 Fog density
@@ -80,14 +89,16 @@ Fog density
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{253D4E8B-E266-5248-8EF2-CDC50C2B70A8}</id>
 			<comment/>
 			<position>
 				<first>1582</first>
 				<second>748</second>
 			</position>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{D6BAF0E3-8EA2-D44F-8D3B-ACC83434B82E}</id>
 			<comment/>
 			<position>
 				<first>1207</first>
@@ -96,7 +107,8 @@ Fog density
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{D6185642-830B-CE4A-B2B0-723091D4C7A0}</id>
 			<comment/>
 			<position>
 				<first>987</first>
@@ -120,21 +132,24 @@ Fog density
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{E80E350E-BB2F-CE43-9A61-B58D0B8AEBD8}</id>
 			<comment/>
 			<position>
 				<first>752</first>
 				<second>700</second>
 			</position>
 		</item>
-		<item type="traktor.render.Length">
+		<item type="traktor.render.Length" version="traktor.render.Node:1">
+			<id>{52C6DB50-48AA-9542-80D1-B2681EBAD7DA}</id>
 			<comment/>
 			<position>
 				<first>512</first>
 				<second>673</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{6D9C5BED-2B3B-3546-B807-CD618017F552}</id>
 			<comment/>
 			<position>
 				<first>262</first>
@@ -146,7 +161,8 @@ Fog density
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{92A0CD9C-C5FC-7C44-B6CB-877215CE0F50}</id>
 			<comment/>
 			<position>
 				<first>613</first>
@@ -154,7 +170,8 @@ Fog density
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{92950B65-CB57-9F47-81D7-21F765CCFCF5}</id>
 			<comment/>
 			<position>
 				<first>226</first>
@@ -164,7 +181,8 @@ Fog density
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{7F456846-0BF2-4440-AAC1-757064E78E1B}</id>
 			<comment/>
 			<position>
 				<first>1417</first>
@@ -173,14 +191,16 @@ Fog density
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{DD72323F-9D79-4E4C-85D5-591097182851}</id>
 			<comment/>
 			<position>
 				<first>1266</first>
 				<second>841</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{7998EBE3-9337-0E47-BD6F-85AF0613AC52}</id>
 			<comment/>
 			<position>
 				<first>1126</first>
@@ -188,7 +208,8 @@ Fog density
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{B5C4FA7F-2749-114E-B2FF-AA96E145752F}</id>
 			<comment/>
 			<position>
 				<first>1108</first>
@@ -212,35 +233,40 @@ Fog density
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{04567A0F-9F05-BF45-9798-C7D7A6508607}</id>
 			<comment/>
 			<position>
 				<first>965</first>
 				<second>919</second>
 			</position>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{B237CB0B-4309-CE46-957E-F30F8ED349A6}</id>
 			<comment/>
 			<position>
 				<first>789</first>
 				<second>889</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{4FEF3F49-14B6-764A-B0AF-2B0C8D8F4151}</id>
 			<comment/>
 			<position>
 				<first>587</first>
 				<second>871</second>
 			</position>
 		</item>
-		<item type="traktor.render.MatrixOut">
+		<item type="traktor.render.MatrixOut" version="traktor.render.Node:1">
+			<id>{7C565430-0C64-7A42-B4AB-FCC85094FB39}</id>
 			<comment/>
 			<position>
 				<first>330</first>
 				<second>908</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{56336C53-E56D-C14F-A885-63DA927D882D}</id>
 			<comment/>
 			<position>
 				<first>129</first>
@@ -250,7 +276,8 @@ Fog density
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{F3EEC15C-D372-EB4E-8B1D-A363E4E044EA}</id>
 			<comment/>
 			<position>
 				<first>829</first>
@@ -258,7 +285,8 @@ Fog density
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{1D4A25A7-62B0-9F46-8EB9-49C6D93685E3}</id>
 			<comment/>
 			<position>
 				<first>613</first>
@@ -266,7 +294,8 @@ Fog density
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{E5ACA54D-2B5D-C247-9B0D-30FD1F7CDC51}</id>
 			<comment/>
 			<position>
 				<first>832</first>
@@ -274,7 +303,8 @@ Fog density
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{A983BA51-1DCB-104F-96C3-53E44704D60D}</id>
 			<comment/>
 			<position>
 				<first>2080</first>

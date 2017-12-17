@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7">
+		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+			<id>{80E1D93C-4D34-4743-967F-F8C267C1C062}</id>
 			<comment/>
 			<position>
 				<first>3380</first>
@@ -48,14 +49,16 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.Lerp">
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{556D1248-13BD-EF42-95B8-B37A85886E3F}</id>
 			<comment/>
 			<position>
 				<first>3035</first>
 				<second>504</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{AC361DA9-AB78-9A4A-96BA-6223D5F8C56E}</id>
 			<comment/>
 			<position>
 				<first>1820</first>
@@ -79,7 +82,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{4355C166-2ECB-7647-9150-1C222BC52655}</id>
 			<comment/>
 			<position>
 				<first>1676</first>
@@ -87,7 +91,8 @@
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{138F90D5-46FE-EA49-8B88-7B7D9DBEB18E}</id>
 			<comment>
 			<![CDATA[
 Light space position
@@ -98,7 +103,8 @@ Light space position
 				<second>425</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{0D59A2C3-353F-A443-BADD-C68A61BD2E6C}</id>
 			<comment/>
 			<position>
 				<first>196</first>
@@ -116,14 +122,16 @@ Light space position
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Platform">
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{28356514-8ADC-9B49-BC82-DA6DBD9F90A4}</id>
 			<comment/>
 			<position>
 				<first>-8</first>
 				<second>441</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{53FA4C76-A314-344F-AE32-BC3321291FB6}</id>
 			<comment/>
 			<position>
 				<first>-213</first>
@@ -143,7 +151,8 @@ Light space position
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{8912EB04-B873-794A-874B-0125987104C4}</id>
 			<comment>
 			<![CDATA[
 View to light space transform
@@ -157,7 +166,8 @@ View to light space transform
 			<type>PtMatrix</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{BC609F37-0B76-1141-96EE-989FD08C2139}</id>
 			<comment>
 			<![CDATA[
 Shadow map texcoord
@@ -168,14 +178,16 @@ Shadow map texcoord
 				<second>543</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{906C0C0A-D85F-CB42-B3FB-2719EC5339ED}</id>
 			<comment/>
 			<position>
 				<first>837</first>
 				<second>497</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{0771B470-EBF8-A947-95B4-01B114EFEA0E}</id>
 			<comment/>
 			<position>
 				<first>748</first>
@@ -183,7 +195,8 @@ Shadow map texcoord
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{55253AAF-D63C-044B-8302-B0BB842F5CF5}</id>
 			<comment/>
 			<position>
 				<first>842</first>
@@ -191,7 +204,8 @@ Shadow map texcoord
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{7EA72F0F-2811-C14B-9944-73521327211D}</id>
 			<comment/>
 			<position>
 				<first>842</first>
@@ -199,7 +213,8 @@ Shadow map texcoord
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{FE84E5CA-911A-FF45-B08A-A7C7F1289540}</id>
 			<comment/>
 			<position>
 				<first>2835</first>
@@ -207,7 +222,8 @@ Shadow map texcoord
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{C3EEAEC3-2884-3C4F-B9FF-CCA14438B99B}</id>
 			<comment/>
 			<position>
 				<first>1813</first>
@@ -216,14 +232,16 @@ Shadow map texcoord
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{D5742E28-EB31-8C4D-8891-23F33881CBD8}</id>
 			<comment/>
 			<position>
 				<first>1617</first>
 				<second>668</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{7EE43136-932D-274B-837A-FBA7F69F3F97}</id>
 			<comment/>
 			<position>
 				<first>1341</first>
@@ -231,7 +249,8 @@ Shadow map texcoord
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{F8617F57-7065-384D-BB51-6F3B56AE005D}</id>
 			<comment/>
 			<position>
 				<first>1063</first>
@@ -241,14 +260,16 @@ Shadow map texcoord
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{5196281C-3011-2242-923C-CA0578F1E286}</id>
 			<comment/>
 			<position>
 				<first>1446</first>
 				<second>711</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{34399110-D2BD-4F4D-809D-87812CDDAFF8}</id>
 			<comment/>
 			<position>
 				<first>1340</first>
@@ -256,7 +277,8 @@ Shadow map texcoord
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Branch">
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{855FB99B-F05E-884F-AAD2-2C2D024532D6}</id>
 			<comment/>
 			<position>
 				<first>3223</first>
@@ -264,7 +286,8 @@ Shadow map texcoord
 			</position>
 			<parameterName>LastSlice</parameterName>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{9990F067-D30B-4149-A649-38AD656838D3}</id>
 			<comment/>
 			<position>
 				<first>943</first>
@@ -272,14 +295,16 @@ Shadow map texcoord
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{963C05B0-DD14-BF4E-ADD6-F3F29FB46755}</id>
 			<comment/>
 			<position>
 				<first>2333</first>
 				<second>273</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{ED2B5560-009D-1645-B2E8-3346B5754660}</id>
 			<comment/>
 			<position>
 				<first>1164</first>
@@ -287,28 +312,32 @@ Shadow map texcoord
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{43069C62-3555-C64C-843A-B49EE6E43DAD}</id>
 			<comment/>
 			<position>
 				<first>1369</first>
 				<second>317</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{6B756CCD-E5EA-A049-9BBC-797B6F4FD463}</id>
 			<comment/>
 			<position>
 				<first>1593</first>
 				<second>354</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{DF18A32D-ABA2-6D4F-AB4D-572A52A26077}</id>
 			<comment/>
 			<position>
 				<first>2734</first>
 				<second>318</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{2AA90D22-18B8-1D45-A2BA-80BC25E9A760}</id>
 			<comment/>
 			<position>
 				<first>2591</first>
@@ -316,7 +345,8 @@ Shadow map texcoord
 			</position>
 			<value>12</value>
 		</item>
-		<item type="traktor.render.Iterate">
+		<item type="traktor.render.Iterate" version="traktor.render.Node:1">
+			<id>{B2C789AD-70C6-F34B-89ED-4B86B662C293}</id>
 			<comment/>
 			<position>
 				<first>1248</first>
@@ -325,7 +355,8 @@ Shadow map texcoord
 			<from>0</from>
 			<to>5</to>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1">
+		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+			<id>{5B94D0A4-2DFB-A843-823E-722118C7EE4B}</id>
 			<comment/>
 			<position>
 				<first>1615</first>
@@ -336,7 +367,8 @@ Shadow map texcoord
 			<frequency>UfOnce</frequency>
 			<length>6</length>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{4BEC42BA-6604-2846-BD97-0F6EB9347AF3}</id>
 			<comment/>
 			<position>
 				<first>1883</first>
@@ -344,7 +376,8 @@ Shadow map texcoord
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{84663C32-7F58-EE40-A49D-4FC81E250258}</id>
 			<comment/>
 			<position>
 				<first>1883</first>
@@ -352,21 +385,24 @@ Shadow map texcoord
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{1F287974-C3CA-F449-A0B6-D0DFDEDD676A}</id>
 			<comment/>
 			<position>
 				<first>1562</first>
 				<second>264</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{BB735937-36EF-D34A-8633-8E686FAFBF99}</id>
 			<comment/>
 			<position>
 				<first>1341</first>
 				<second>237</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{FE02727F-A8FE-3E4B-BE80-15F15F834721}</id>
 			<comment/>
 			<position>
 				<first>1819</first>
@@ -390,14 +426,16 @@ Shadow map texcoord
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{14E235A8-5F2A-004B-9D94-FCADACBF3D4F}</id>
 			<comment/>
 			<position>
 				<first>2095</first>
 				<second>346</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{86AA159E-F420-0A4A-B324-E4DA0B1717CA}</id>
 			<comment/>
 			<position>
 				<first>605</first>
@@ -415,7 +453,8 @@ Shadow map texcoord
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{DC398033-22D7-024E-B656-859149E25181}</id>
 			<comment/>
 			<position>
 				<first>1681</first>
@@ -432,7 +471,8 @@ Shadow map texcoord
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{8CED6BFA-ADBD-5748-8090-9221DD672859}</id>
 			<comment/>
 			<position>
 				<first>586</first>
@@ -442,42 +482,48 @@ Shadow map texcoord
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.TextureSize">
+		<item type="traktor.render.TextureSize" version="traktor.render.Node:1">
+			<id>{7B811012-F2A9-F241-AEAB-EACAE7D8BCD7}</id>
 			<comment/>
 			<position>
 				<first>963</first>
 				<second>-324</second>
 			</position>
 		</item>
-		<item type="traktor.render.TargetSize">
+		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
+			<id>{8538B80A-EC74-5743-B9AE-D826988C8F62}</id>
 			<comment/>
 			<position>
 				<first>999</first>
 				<second>-369</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{5B0593C2-4CD7-9D4B-9DA5-6D63EFD57435}</id>
 			<comment/>
 			<position>
 				<first>1152</first>
 				<second>-366</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{F4669BA2-F57F-6D49-A341-148455B5A94B}</id>
 			<comment/>
 			<position>
 				<first>1398</first>
 				<second>-405</second>
 			</position>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{3693BB6B-F998-5C42-A0F9-FCFE133CCF23}</id>
 			<comment/>
 			<position>
 				<first>2039</first>
 				<second>-459</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{D9AD2DA7-4D41-F347-A612-F6C6BD833D2D}</id>
 			<comment/>
 			<position>
 				<first>1859</first>
@@ -485,7 +531,8 @@ Shadow map texcoord
 			</position>
 			<value>2</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{9628A5DA-4689-EA4B-9F71-8A23121AA78C}</id>
 			<comment/>
 			<position>
 				<first>1859</first>
@@ -493,7 +540,8 @@ Shadow map texcoord
 			</position>
 			<value>-1</value>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{8593663D-B899-3F4D-9C90-DF2F73F3BCFE}</id>
 			<comment/>
 			<position>
 				<first>2318</first>
@@ -501,21 +549,24 @@ Shadow map texcoord
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{6DF29FAE-210D-034D-9000-44572C3AA909}</id>
 			<comment/>
 			<position>
 				<first>2431</first>
 				<second>-371</second>
 			</position>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{A3DE70AB-85FD-3C42-B349-844A47165391}</id>
 			<comment/>
 			<position>
 				<first>2431</first>
 				<second>-301</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{F149E12E-A632-F445-BB67-0883D6831203}</id>
 			<comment/>
 			<position>
 				<first>2318</first>
@@ -523,14 +574,16 @@ Shadow map texcoord
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.MixIn">
+		<item type="traktor.render.MixIn" version="traktor.render.Node:1">
+			<id>{C1ED41AF-0F6C-3749-90BE-08B92B048791}</id>
 			<comment/>
 			<position>
 				<first>2666</first>
 				<second>-336</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{A251AC0D-BEED-E046-8B88-791453FDDBF7}</id>
 			<comment/>
 			<position>
 				<first>2318</first>
@@ -538,21 +591,24 @@ Shadow map texcoord
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{501BD9D2-4881-284C-89F2-F61DB3B21215}</id>
 			<comment/>
 			<position>
 				<first>2431</first>
 				<second>-231</second>
 			</position>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{FD3CAD58-A928-6746-B7CC-F9705AF97A5B}</id>
 			<comment/>
 			<position>
 				<first>2431</first>
 				<second>-161</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{EF1C5B2D-86AC-1B4C-AC6B-DE0B65970DF8}</id>
 			<comment/>
 			<position>
 				<first>2318</first>
@@ -560,7 +616,8 @@ Shadow map texcoord
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.MixIn">
+		<item type="traktor.render.MixIn" version="traktor.render.Node:1">
+			<id>{4F560505-2419-5D4F-8C79-D80AB338F423}</id>
 			<comment/>
 			<position>
 				<first>2634</first>

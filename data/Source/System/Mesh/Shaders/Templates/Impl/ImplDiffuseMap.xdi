@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{624860C3-C7DE-0946-BAE7-A61D9F5ECA15}</id>
 			<comment/>
 			<position>
 				<first>1016</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>T_DiffuseTerm</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{BDE4D8D4-7A3A-DB49-A406-04AFBA127934}</id>
 			<comment/>
 			<position>
 				<first>1016</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>T_DiffuseColor</name>
 		</item>
-		<item type="traktor.render.Texture">
+		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+			<id>{828A4495-8B2E-5740-9232-8A380BC8FCA7}</id>
 			<comment>
 			<![CDATA[
 Tag_DiffuseMap
@@ -30,7 +33,8 @@ Tag_DiffuseMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{094F4DB0-E74C-CA41-A06C-5CD0C094304C}</id>
 			<comment/>
 			<position>
 				<first>651</first>
@@ -47,14 +51,16 @@ Tag_DiffuseMap
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{184D57C1-EA55-A447-8A87-4B5A3BF5263F}</id>
 			<comment/>
 			<position>
 				<first>856</first>
 				<second>193</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{BEF005BB-00A2-0944-8C41-F0A23304B37F}</id>
 			<comment/>
 			<position>
 				<first>312</first>
@@ -66,7 +72,8 @@ Tag_DiffuseMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{421894B1-595E-C847-9511-DEE41E3C3F69}</id>
 			<comment/>
 			<position>
 				<first>312</first>
@@ -78,7 +85,8 @@ Tag_DiffuseMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{182185C0-086A-954A-A79A-743F464CCF73}</id>
 			<comment/>
 			<position>
 				<first>307</first>
@@ -90,7 +98,8 @@ Tag_DiffuseMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{011BBA32-3102-6A4D-9084-79107C12B18F}</id>
 			<comment/>
 			<position>
 				<first>669</first>
@@ -100,7 +109,8 @@ Tag_DiffuseMap
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Color">
+		<item type="traktor.render.Color" version="traktor.render.Node:1">
+			<id>{F52B2FE5-339F-2444-B18D-F712CC49918B}</id>
 			<comment>
 			<![CDATA[
 Tag_DiffuseColor
@@ -112,7 +122,8 @@ Tag_DiffuseColor
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{210088ED-C67C-2D48-B016-60151153A98D}</id>
 			<comment/>
 			<position>
 				<first>727</first>
@@ -122,7 +133,8 @@ Tag_DiffuseColor
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{5A1B0581-F2DA-3444-A74D-D9E46D2BF96E}</id>
 			<comment>
 			<![CDATA[
 Tag_DiffuseTerm

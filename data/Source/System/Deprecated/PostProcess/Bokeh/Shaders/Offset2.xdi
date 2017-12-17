@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7">
+		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+			<id>{EE5DB1E3-EB31-714D-B58D-8F2F3835F41E}</id>
 			<comment/>
 			<position>
 				<first>1635</first>
@@ -48,14 +49,16 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{F827289E-0F93-6048-9285-E5F688C3BA87}</id>
 			<comment/>
 			<position>
 				<first>1469</first>
 				<second>484</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{9653C6C5-9147-B944-8964-74101C0B8FF3}</id>
 			<comment/>
 			<position>
 				<first>1338</first>
@@ -63,7 +66,8 @@
 			</position>
 			<value>4</value>
 		</item>
-		<item type="traktor.render.Sum">
+		<item type="traktor.render.Sum" version="traktor.render.Node:1">
+			<id>{BD2033F8-566F-E444-A01D-169C021175B0}</id>
 			<comment>
 			<![CDATA[
 Iterate V
@@ -76,7 +80,8 @@ Iterate V
 			<from>0</from>
 			<to>1</to>
 		</item>
-		<item type="traktor.render.Sum">
+		<item type="traktor.render.Sum" version="traktor.render.Node:1">
+			<id>{2D155E51-3075-194C-BE36-24CEE147916B}</id>
 			<comment>
 			<![CDATA[
 Iterate U
@@ -89,7 +94,8 @@ Iterate U
 			<from>0</from>
 			<to>1</to>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{9E1C3198-4226-2644-A4FA-871C7B4ABC05}</id>
 			<comment/>
 			<position>
 				<first>627</first>
@@ -106,14 +112,16 @@ Iterate U
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{290EC386-1ACF-A346-9A42-E48E1B2AFEAA}</id>
 			<comment/>
 			<position>
 				<first>423</first>
 				<second>211</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{E379FB4B-DF3F-A546-A65A-95F241B3B973}</id>
 			<comment/>
 			<position>
 				<first>112</first>
@@ -131,21 +139,24 @@ Iterate U
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{873C2985-DAB8-974D-9D75-97862FB3665D}</id>
 			<comment/>
 			<position>
 				<first>240</first>
 				<second>184</second>
 			</position>
 		</item>
-		<item type="traktor.render.TargetSize">
+		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
+			<id>{FA989D4B-B566-7A4D-9AA2-0FFA4CAE7C62}</id>
 			<comment/>
 			<position>
 				<first>105</first>
 				<second>237</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{6BA7E6CA-01CA-A34D-AF4E-62FAEE2771AE}</id>
 			<comment/>
 			<position>
 				<first>121</first>
@@ -153,14 +164,16 @@ Iterate U
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.MixIn">
+		<item type="traktor.render.MixIn" version="traktor.render.Node:1">
+			<id>{CD1BA16B-53F1-3C4E-AB88-41D198B06FAD}</id>
 			<comment/>
 			<position>
 				<first>1352</first>
 				<second>278</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{886BF720-FAC0-8A4E-923E-CB7C2CC699BC}</id>
 			<comment/>
 			<position>
 				<first>398</first>

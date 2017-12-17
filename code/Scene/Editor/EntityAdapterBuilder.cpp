@@ -55,11 +55,8 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 	RefArray< EntityAdapter > entityAdapters;
 	collectAllAdapters(currentEntityAdapter, entityAdapters);
 
-	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+	for (auto entityAdapter : entityAdapters)
 	{
-		EntityAdapter* entityAdapter = *i;
-		T_FATAL_ASSERT (entityAdapter);
-
 		if (entityAdapter->getEntityData())
 		{
 			Cache& cache = m_cache[&type_of(entityAdapter->getEntityData())];
@@ -82,6 +79,18 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 
 EntityAdapterBuilder::~EntityAdapterBuilder()
 {
+	// Ensure all unused entities from cache is properly destroyed.
+	for (auto ca : m_cache)
+	{
+		for (auto ue : ca.second.leafEntities)
+		{
+			for (auto e : ue.second)
+			{
+				if (e)
+					e->destroy();
+			}
+		}
+	}
 }
 
 void EntityAdapterBuilder::addFactory(const world::IEntityFactory* entityFactory)
@@ -137,7 +146,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		// Get visibility state from layer entity data, do this
 		// only when a new adapter is created as we want to keep
 		// editing session state.
-		if (const world::LayerEntityData* layerEntityData = dynamic_type_cast< const world::LayerEntityData* >(entityData))
+		if (auto layerEntityData = dynamic_type_cast< const world::LayerEntityData* >(entityData))
 		{
 			entityAdapter->setVisible(layerEntityData->isVisible());
 			entityAdapter->setLocked(layerEntityData->isLocked());

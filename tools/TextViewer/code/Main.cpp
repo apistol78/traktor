@@ -216,7 +216,8 @@ int main()
 {
 	ui::Application::getInstance()->initialize(
 		new EventLoopImpl(),
-		new WidgetFactoryImpl()
+		new WidgetFactoryImpl(),
+		0
 	);
 
 	MainForm form;

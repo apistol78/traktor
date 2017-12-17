@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{469E8EE5-5394-E345-AE38-7149D025FFF7}</id>
 			<comment/>
 			<position>
 				<first>505</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{8ABA4C43-B22D-DE4A-AA9E-A563465C8068}</id>
 			<comment/>
 			<position>
 				<first>496</first>
@@ -25,7 +27,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{6BF04DDD-AADD-1D49-8054-ACB85CEA7CC3}</id>
 			<comment/>
 			<position>
 				<first>499</first>
@@ -37,14 +40,16 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{41BFB285-B0FB-B749-B8C4-002A40B95211}</id>
 			<comment/>
 			<position>
 				<first>905</first>
 				<second>355</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{CFD7C699-DEC9-C942-9104-455F9058C029}</id>
 			<comment/>
 			<position>
 				<first>1095</first>
@@ -52,7 +57,8 @@
 			</position>
 			<name>Diffuse</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{CC8FAAE2-4BB9-9D49-A5AD-BC0A703EEF43}</id>
 			<comment/>
 			<position>
 				<first>1095</first>
@@ -60,14 +66,16 @@
 			</position>
 			<name>Specular</name>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{9F2E4239-3FEA-3B48-8498-2F44B92CEB10}</id>
 			<comment/>
 			<position>
 				<first>905</first>
 				<second>471</second>
 			</position>
 		</item>
-		<item type="traktor.render.Clamp">
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{0F72E972-9F15-C942-9970-26E6CB175551}</id>
 			<comment/>
 			<position>
 				<first>726</first>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{109AF090-7D39-FC4A-9A30-B95168ECEA9D}</id>
 			<comment/>
 			<position>
 				<first>56</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{7BAD9E96-8A90-4944-B235-C641FBDFA4E4}</id>
 			<comment/>
 			<position>
 				<first>56</first>
@@ -25,7 +27,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{8E7720CA-07AA-8048-96F2-06107A95711E}</id>
 			<comment/>
 			<position>
 				<first>447</first>
@@ -37,21 +40,24 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.MatrixIn">
+		<item type="traktor.render.MatrixIn" version="traktor.render.Node:1">
+			<id>{7110E3EC-792B-9940-8132-04651F7B9938}</id>
 			<comment/>
 			<position>
 				<first>414</first>
 				<second>126</second>
 			</position>
 		</item>
-		<item type="traktor.render.Cross">
+		<item type="traktor.render.Cross" version="traktor.render.Node:1">
+			<id>{8B77AF69-6613-E54B-A361-1CAA69217BCC}</id>
 			<comment/>
 			<position>
 				<first>254</first>
 				<second>197</second>
 			</position>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{D399F94A-1708-294D-B736-B163E10796F0}</id>
 			<comment/>
 			<position>
 				<first>276</first>
@@ -59,14 +65,16 @@
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{F744B516-C6DE-EA42-B1E4-2232056F1F09}</id>
 			<comment/>
 			<position>
 				<first>601</first>
 				<second>71</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{E29F9195-425D-2245-A21B-5677915A70A6}</id>
 			<comment/>
 			<position>
 				<first>785</first>

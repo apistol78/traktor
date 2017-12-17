@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Platform">
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{1FBE272F-C344-0240-A928-907D7C19FCB5}</id>
 			<comment/>
 			<position>
 				<first>1064</first>
 				<second>421</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{D39E603B-6590-CF41-AE96-29EA1788D7EC}</id>
 			<comment/>
 			<position>
 				<first>933</first>
 				<second>377</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{1F1E2E1E-DED2-E441-9CF6-5C386414A601}</id>
 			<comment/>
 			<position>
 				<first>697</first>
 				<second>316</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{677E8E1B-21ED-7144-A157-1A450A2FB104}</id>
 			<comment/>
 			<position>
 				<first>579</first>
@@ -30,7 +34,8 @@
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{32E297AB-3991-2649-82FF-74257BB583C4}</id>
 			<comment/>
 			<position>
 				<first>509</first>
@@ -42,7 +47,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{419AC77F-2CBC-DC4D-B389-CE95039883D1}</id>
 			<comment/>
 			<position>
 				<first>719</first>
@@ -54,7 +60,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{75D8DD99-4566-4641-9608-89075BA46226}</id>
 			<comment/>
 			<position>
 				<first>1229</first>

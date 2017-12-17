@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{A8B8CCDD-BD4E-8A45-8355-86F7958F7C48}</id>
 			<comment/>
 			<position>
 				<first>272</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{3A154CB7-54D1-7E48-BF6E-A50A59320649}</id>
 			<comment/>
 			<position>
 				<first>269</first>
@@ -25,7 +27,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{947AA0F9-60F6-E34A-B2AD-6D133425EB9B}</id>
 			<comment/>
 			<position>
 				<first>265</first>
@@ -37,7 +40,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{6D3E40F6-FC88-EB46-A0F6-AF8807F4BDDA}</id>
 			<comment/>
 			<position>
 				<first>269</first>
@@ -49,7 +53,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{B8496494-4662-8944-B86F-DE09D25832E1}</id>
 			<comment/>
 			<position>
 				<first>629</first>
@@ -57,7 +62,8 @@
 			</position>
 			<name>T_ViewPosition</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{0F9656A3-52F8-BA49-922A-083B227CEC89}</id>
 			<comment/>
 			<position>
 				<first>629</first>
@@ -65,7 +71,8 @@
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{B4DCFDCF-602A-AA42-A983-2A96C1E5A990}</id>
 			<comment/>
 			<position>
 				<first>629</first>
@@ -73,7 +80,8 @@
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{66F62FA9-CA8C-C741-8D8D-D9E2B2409E6A}</id>
 			<comment/>
 			<position>
 				<first>629</first>
@@ -81,7 +89,8 @@
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{CADD0680-B31A-D140-A748-545976FB3B71}</id>
 			<comment/>
 			<position>
 				<first>492</first>
@@ -89,7 +98,8 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{A1BD7081-7260-FD44-A633-190BACC07A1B}</id>
 			<comment/>
 			<position>
 				<first>280</first>
@@ -101,7 +111,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{2CF107FE-DF90-2745-B231-32F6A03CA23E}</id>
 			<comment/>
 			<position>
 				<first>280</first>

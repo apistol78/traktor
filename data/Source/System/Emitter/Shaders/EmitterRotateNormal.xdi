@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{5676CC12-6CF8-FD47-8CFD-F725F9C8F22C}</id>
 			<comment/>
 			<position>
 				<first>136</first>
@@ -12,7 +13,8 @@
 			<type>DtFloat1</type>
 			<index>1</index>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{CDE2DE4E-43B7-B143-98EC-E1EDF56168C3}</id>
 			<comment>
 			<![CDATA[
 Normal in view space
@@ -28,7 +30,8 @@ Normal in view space
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{93F746D7-CE31-F64E-AF85-3A442CFDD414}</id>
 			<comment/>
 			<position>
 				<first>525</first>
@@ -36,7 +39,8 @@ Normal in view space
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{67A99252-1A66-3049-9D40-CC39AD547090}</id>
 			<comment/>
 			<position>
 				<first>525</first>
@@ -44,7 +48,8 @@ Normal in view space
 			</position>
 			<swizzle>00z</swizzle>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{5522ECD2-3364-4B4D-9D03-4628616F9276}</id>
 			<comment>
 			<![CDATA[
 Rotated normal in view space
@@ -56,14 +61,16 @@ Rotated normal in view space
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{8A85F76D-1B4E-C340-B085-C5F7B9DD5ECA}</id>
 			<comment/>
 			<position>
 				<first>485</first>
 				<second>210</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{E4E8E3A9-A150-464F-B54D-BC54214105FB}</id>
 			<comment/>
 			<position>
 				<first>607</first>
@@ -87,14 +94,16 @@ Rotated normal in view space
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{8F5EA3C3-694A-E44D-8BAB-9D8F06C0E6A5}</id>
 			<comment/>
 			<position>
 				<first>765</first>
 				<second>235</second>
 			</position>
 		</item>
-		<item type="traktor.render.Neg">
+		<item type="traktor.render.Neg" version="traktor.render.Node:1">
+			<id>{1FBD1715-0C97-5B40-A39D-859A53110912}</id>
 			<comment/>
 			<position>
 				<first>350</first>

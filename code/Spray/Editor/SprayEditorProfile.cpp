@@ -93,5 +93,12 @@ Ref< world::EntityData > SprayEditorProfile::createEntityData(
 	return 0;
 }
 
+void SprayEditorProfile::getDebugTargets(
+	scene::SceneEditorContext* context,
+	std::vector< render::DebugTarget >& outDebugTargets
+) const
+{
+}
+
 	}
 }

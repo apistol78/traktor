@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{34490221-583A-6246-AB9D-427A5B34634C}</id>
 			<comment/>
 			<position>
 				<first>760</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>ParticlePosition</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{1C2A654A-9B69-4945-ADD7-AA49C0D4E769}</id>
 			<comment/>
 			<position>
 				<first>760</first>
@@ -17,7 +19,8 @@
 			</position>
 			<name>ParticleRadius</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{60E88494-0C4F-514D-8581-3EB80477E8FB}</id>
 			<comment/>
 			<position>
 				<first>760</first>
@@ -25,7 +28,8 @@
 			</position>
 			<name>ParticleRotation</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{B49FD4C9-C1CD-E14F-8189-319F0C817F5E}</id>
 			<comment/>
 			<position>
 				<first>760</first>
@@ -33,7 +37,8 @@
 			</position>
 			<name>ParticleUV</name>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{6B2614DF-4920-374D-8838-8D6EFC5D5F34}</id>
 			<comment/>
 			<position>
 				<first>184</first>
@@ -44,7 +49,8 @@
 			<type>DtFloat1</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1">
+		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+			<id>{50FE20A0-BE0E-4741-824B-EA99D18F86F8}</id>
 			<comment/>
 			<position>
 				<first>390</first>
@@ -55,7 +61,8 @@
 			<frequency>UfFrame</frequency>
 			<length>16</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1">
+		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+			<id>{257B859E-B158-C946-8BA5-F3FAAC171246}</id>
 			<comment/>
 			<position>
 				<first>390</first>
@@ -66,7 +73,8 @@
 			<frequency>UfFrame</frequency>
 			<length>16</length>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{90B27873-11FD-2B4B-BE49-40FF9A88A607}</id>
 			<comment/>
 			<position>
 				<first>605</first>
@@ -74,7 +82,8 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{28127443-CAF0-2A49-B26B-F3C5D6EBB6E7}</id>
 			<comment/>
 			<position>
 				<first>605</first>
@@ -82,7 +91,8 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{B6ABC732-8602-F644-9425-A81969227B75}</id>
 			<comment/>
 			<position>
 				<first>605</first>
@@ -90,7 +100,8 @@
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{091D6ABD-FF59-074E-9B4B-FF44710333DA}</id>
 			<comment/>
 			<position>
 				<first>760</first>
@@ -98,7 +109,8 @@
 			</position>
 			<name>ParticleOpacity</name>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{C55983F6-ABA8-8B42-8BAB-D145F0F61285}</id>
 			<comment/>
 			<position>
 				<first>605</first>
@@ -106,7 +118,8 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{E53BB5A6-6849-534C-AE2C-1DC81A3D5B88}</id>
 			<comment/>
 			<position>
 				<first>605</first>

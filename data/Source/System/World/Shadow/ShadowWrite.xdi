@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="1">
+		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+			<id>{45190069-4C4C-144C-A592-E43B03ECF289}</id>
 			<comment/>
 			<position>
 				<first>737</first>
@@ -9,14 +10,16 @@
 			</position>
 			<technique>World_ShadowWrite</technique>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{6E64A19D-481F-3F4C-B82D-1F49236F96B2}</id>
 			<comment/>
 			<position>
 				<first>361</first>
 				<second>375</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{71B4E6DB-4E21-5D47-BEF1-6516DAFA5B42}</id>
 			<comment/>
 			<position>
 				<first>-47</first>
@@ -28,7 +31,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{288CFE91-9CAB-AA4D-8847-4B1333C72CF6}</id>
 			<comment/>
 			<position>
 				<first>-15</first>
@@ -38,7 +42,8 @@
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7">
+		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+			<id>{E3A514E5-7A9B-D74D-A9D4-8B6A7F69FFF1}</id>
 			<comment/>
 			<position>
 				<first>701</first>
@@ -85,7 +90,8 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{D5D4BB0D-373C-A84B-BF44-76F51286AB94}</id>
 			<comment/>
 			<position>
 				<first>147</first>
@@ -93,14 +99,16 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Platform">
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{141ECFEF-D681-C34A-A3AA-305EF40810BF}</id>
 			<comment/>
 			<position>
 				<first>342</first>
 				<second>635</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{64243606-E454-E64C-ABC1-7E4BDFB9E9DE}</id>
 			<comment/>
 			<position>
 				<first>193</first>

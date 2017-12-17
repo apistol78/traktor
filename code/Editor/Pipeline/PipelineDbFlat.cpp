@@ -240,10 +240,5 @@ bool PipelineDbFlat::getFile(const Path& path, PipelineFileHash& outFile)
 	return true;
 }
 
-Ref< IPipelineReport > PipelineDbFlat::createReport(const std::wstring& name, const Guid& guid)
-{
-	return 0;
-}
-
 	}
 }

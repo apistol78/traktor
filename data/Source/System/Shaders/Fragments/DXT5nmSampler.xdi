@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{B7A805D3-8C98-3947-91C3-EEDA4E8F04D8}</id>
 			<comment/>
 			<position>
 				<first>349</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{3B4670EB-F2F6-3149-A660-70780B6F5F88}</id>
 			<comment/>
 			<position>
 				<first>337</first>
@@ -25,7 +27,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{798A79B3-87DC-244A-8893-F0079983A4B1}</id>
 			<comment/>
 			<position>
 				<first>348</first>
@@ -37,7 +40,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{EA8728D2-5DD0-6C4F-A619-A00E15DAE507}</id>
 			<comment/>
 			<position>
 				<first>340</first>
@@ -49,7 +53,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{E3FAEDAD-4391-1E40-9321-8E25D1D6E6DB}</id>
 			<comment/>
 			<position>
 				<first>344</first>
@@ -61,7 +66,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{04970A1B-D5DD-824C-A94D-CEE25A5DE9CE}</id>
 			<comment/>
 			<position>
 				<first>777</first>
@@ -81,7 +87,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{7F960414-2916-FA42-9110-4F074464F22B}</id>
 			<comment/>
 			<position>
 				<first>935</first>
@@ -113,7 +120,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{D79A5824-7262-0745-B8BD-DC4F533C2897}</id>
 			<comment/>
 			<position>
 				<first>564</first>
@@ -130,7 +138,8 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{9F9F54FB-F1C4-884A-BFB0-BD2D94D07B79}</id>
 			<comment/>
 			<position>
 				<first>1511</first>
@@ -138,14 +147,16 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Type">
+		<item type="traktor.render.Type" version="traktor.render.Node:1">
+			<id>{DB8BF4E5-4695-1E43-88A3-A988F68E010D}</id>
 			<comment/>
 			<position>
 				<first>1203</first>
 				<second>246</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{BDA03478-C91E-0544-9BDC-AA9A6A70E718}</id>
 			<comment/>
 			<position>
 				<first>1378</first>
@@ -153,7 +164,8 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{3AFF3C86-6D4D-5D4D-BF7D-56E769F65F7B}</id>
 			<comment/>
 			<position>
 				<first>959</first>
@@ -161,7 +173,8 @@
 			</position>
 			<name>Alpha</name>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{AE80883B-4892-784B-B2EC-37D61A548695}</id>
 			<comment/>
 			<position>
 				<first>800</first>

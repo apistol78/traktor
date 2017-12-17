@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="1">
+		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+			<id>{093A2505-14BD-784C-ACEE-D02395680CBE}</id>
 			<comment/>
 			<position>
 				<first>1048</first>
@@ -9,28 +10,32 @@
 			</position>
 			<technique/>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{277D4016-BDC8-F54E-B801-16B2CCFB08B9}</id>
 			<comment/>
 			<position>
 				<first>844</first>
 				<second>244</second>
 			</position>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{DB88B317-B77C-1F43-812E-B4199D40CCBE}</id>
 			<comment/>
 			<position>
 				<first>364</first>
 				<second>253</second>
 			</position>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{6735B5C4-6DAD-914B-9CF9-D1FD2AAB47A3}</id>
 			<comment/>
 			<position>
 				<first>91</first>
 				<second>202</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{6B54EDE8-000D-0442-8AB2-C4BA6175CDFC}</id>
 			<comment/>
 			<position>
 				<first>-142</first>
@@ -41,7 +46,8 @@
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{22A222B1-C705-954F-908A-9088B9F29A66}</id>
 			<comment/>
 			<position>
 				<first>-112</first>
@@ -51,7 +57,8 @@
 			<type>PtMatrix</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{FE05D512-446E-4546-93EB-4ACCC607FFA8}</id>
 			<comment/>
 			<position>
 				<first>122</first>
@@ -61,7 +68,8 @@
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{4A3F1D65-4A1D-F54B-A9EA-D550BCEC948C}</id>
 			<comment/>
 			<position>
 				<first>610</first>
@@ -71,7 +79,8 @@
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{0DDD25B3-C16C-2345-ACF0-F3FA40C6E4E8}</id>
 			<comment/>
 			<position>
 				<first>779</first>
@@ -79,14 +88,16 @@
 			</position>
 			<name>Normal</name>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{A71CCBCF-DD08-3D45-BE4F-1E2F5BBC8364}</id>
 			<comment/>
 			<position>
 				<first>569</first>
 				<second>459</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{F367555A-A725-E04A-AFC9-714BF46FCA20}</id>
 			<comment/>
 			<position>
 				<first>302</first>
@@ -97,7 +108,8 @@
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{D5BCE667-2EBF-3247-9058-D6F09AA29939}</id>
 			<comment/>
 			<position>
 				<first>346</first>
@@ -107,7 +119,8 @@
 			<type>PtMatrix</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{3B5F73A4-5A87-E847-8876-40BFE7308A97}</id>
 			<comment/>
 			<position>
 				<first>627</first>
@@ -115,7 +128,8 @@
 			</position>
 			<name>ViewPosition</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{A7469921-2AAB-B34B-A092-6E1AB56711AD}</id>
 			<comment/>
 			<position>
 				<first>360</first>
@@ -123,7 +137,8 @@
 			</position>
 			<name>Position</name>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{460B1547-AD76-FD43-BAF3-BD66B24D1E77}</id>
 			<comment/>
 			<position>
 				<first>1314</first>
@@ -131,21 +146,24 @@
 			</position>
 			<name>ViewNormal</name>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{60EBBE72-8984-9343-B09F-48DF1F2DB4DC}</id>
 			<comment/>
 			<position>
 				<first>1072</first>
 				<second>602</second>
 			</position>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{7601F0B4-83A8-2246-B839-ED30B087DD65}</id>
 			<comment/>
 			<position>
 				<first>745</first>
 				<second>556</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{E6326AF8-D233-9A42-A79F-62D18E319640}</id>
 			<comment/>
 			<position>
 				<first>546</first>
@@ -155,14 +173,16 @@
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.FrontFace">
+		<item type="traktor.render.FrontFace" version="traktor.render.Node:1">
+			<id>{4CDC3200-9243-354C-885B-3C6564277DBE}</id>
 			<comment/>
 			<position>
 				<first>937</first>
 				<second>672</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{E57ADCAF-6149-FF41-93D2-6990D1067941}</id>
 			<comment/>
 			<position>
 				<first>700</first>
@@ -170,7 +190,8 @@
 			</position>
 			<name>TexCoord</name>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{B17783A0-1655-9B4E-B47F-14807CCEDD7D}</id>
 			<comment/>
 			<position>
 				<first>461</first>
@@ -181,7 +202,8 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{6B856905-F433-9549-A263-570B71181C83}</id>
 			<comment/>
 			<position>
 				<first>996</first>

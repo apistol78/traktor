@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_Node_H
 
 #include <string>
-#include <vector>
+#include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -36,6 +36,18 @@ class T_DLLCLASS Node : public ISerializable
 
 public:
 	Node();
+
+	/*! \brief Set node instance id.
+	 *
+	 * \return Instance id.
+	 */
+	void setId(const Guid& instanceId);
+
+	/*! \brief Get node instance id.
+	 *
+	 * \return Instance id.
+	 */
+	const Guid& getId() const;
 
 	/*! \brief Set comment.
 	 *
@@ -110,6 +122,7 @@ public:
 	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 private:
+	Guid m_id;
 	std::wstring m_comment;
 	std::pair< int, int > m_position;
 };

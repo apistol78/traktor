@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{2F00B17C-E366-F144-8B0A-7167685FAEDE}</id>
 			<comment/>
 			<position>
 				<first>2559</first>
@@ -78,7 +79,8 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{E8465568-D7CB-3D44-BDB2-38CE658E6C0C}</id>
 			<comment/>
 			<position>
 				<first>2196</first>
@@ -90,7 +92,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{FA6A0D6B-4F1B-5640-89EE-918BE4EFA066}</id>
 			<comment/>
 			<position>
 				<first>2208</first>
@@ -102,7 +105,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{281DBFFE-0B7E-B648-B70D-837FE905EE17}</id>
 			<comment/>
 			<position>
 				<first>2221</first>
@@ -114,14 +118,16 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{69CCD6A9-CBDA-294B-8752-DBA8D76DF32B}</id>
 			<comment/>
 			<position>
 				<first>1986</first>
 				<second>432</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{06629F8E-7F01-3240-811B-AFDF192BBB82}</id>
 			<comment/>
 			<position>
 				<first>1770</first>
@@ -145,7 +151,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{CBB523BD-4427-0D40-A514-4C465640ED75}</id>
 			<comment/>
 			<position>
 				<first>1467</first>
@@ -155,7 +162,8 @@
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{94378758-6B49-C946-B85C-15255FAC1BE0}</id>
 			<comment/>
 			<position>
 				<first>-1677</first>
@@ -173,7 +181,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{6CC4EC08-6416-AC41-B553-1AF211F4B16E}</id>
 			<comment/>
 			<position>
 				<first>1713</first>
@@ -181,14 +190,16 @@
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{84957B0C-D968-EA41-BFAF-108AC54BDBDD}</id>
 			<comment/>
 			<position>
 				<first>1393</first>
 				<second>511</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{2AA0095C-9E75-7149-81E8-49DA8B1A7B9F}</id>
 			<comment/>
 			<position>
 				<first>1233</first>
@@ -196,7 +207,8 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{05BA503F-3977-D84C-B780-42E36DC1DD13}</id>
 			<comment/>
 			<position>
 				<first>910</first>
@@ -204,7 +216,8 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{A5D9A41D-8A02-9247-8898-0E1131D1EB74}</id>
 			<comment>
 			<![CDATA[
 Surface point
@@ -215,7 +228,8 @@ Surface point
 				<second>622</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{6950044C-4C39-064E-BAAD-3C389FF39473}</id>
 			<comment/>
 			<position>
 				<first>-351</first>
@@ -225,21 +239,24 @@ Surface point
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{CA20AF2A-FA62-D843-AD54-FFEC80DB1C7C}</id>
 			<comment/>
 			<position>
 				<first>320</first>
 				<second>669</second>
 			</position>
 		</item>
-		<item type="traktor.render.Normalize">
+		<item type="traktor.render.Normalize" version="traktor.render.Node:1">
+			<id>{17857349-ACC5-3247-A389-3F589B503237}</id>
 			<comment/>
 			<position>
 				<first>96</first>
 				<second>506</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{F3E62145-73C8-6A47-965E-8D940905F962}</id>
 			<comment/>
 			<position>
 				<first>-3</first>
@@ -247,14 +264,16 @@ Surface point
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{166703D6-A986-D948-8E3C-323F69BC6213}</id>
 			<comment/>
 			<position>
 				<first>-164</first>
 				<second>544</second>
 			</position>
 		</item>
-		<item type="traktor.render.Discard">
+		<item type="traktor.render.Discard" version="traktor.render.Node:1">
+			<id>{448F9D29-E3C7-C34D-BC9A-932A9333AAC3}</id>
 			<comment/>
 			<position>
 				<first>-518</first>
@@ -262,7 +281,8 @@ Surface point
 			</position>
 			<operator>CoLess</operator>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{6F21B363-12BC-C341-A03D-5E19D68523C5}</id>
 			<comment/>
 			<position>
 				<first>-731</first>
@@ -270,14 +290,16 @@ Surface point
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{DA55E1D7-4C7A-E448-B1C0-617C5313BFEF}</id>
 			<comment/>
 			<position>
 				<first>-1119</first>
 				<second>404</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{8D15FA0E-D4F1-A441-B751-A49988A735FA}</id>
 			<comment/>
 			<position>
 				<first>-1253</first>
@@ -285,7 +307,8 @@ Surface point
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{9915AEAB-E70A-3B48-AD05-AB1EEB4F7F16}</id>
 			<comment/>
 			<position>
 				<first>-1487</first>
@@ -305,7 +328,8 @@ Surface point
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{03A7BD0C-4573-B545-85C0-30FD002A13B7}</id>
 			<comment/>
 			<position>
 				<first>-1390</first>
@@ -315,7 +339,8 @@ Surface point
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{EFED7190-4691-9845-A684-5055CFBB6082}</id>
 			<comment/>
 			<position>
 				<first>-810</first>
@@ -325,21 +350,24 @@ Surface point
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{A8671E3A-4434-BD4B-B7C6-70F0068B1038}</id>
 			<comment/>
 			<position>
 				<first>154</first>
 				<second>707</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{176796D8-416C-964B-B22F-A4EA6B3C6566}</id>
 			<comment/>
 			<position>
 				<first>-18</first>
 				<second>691</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{3C8CC65D-05C5-324A-82C8-FA6613E7F351}</id>
 			<comment/>
 			<position>
 				<first>-152</first>
@@ -347,7 +375,8 @@ Surface point
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{B70BFAD8-A4CA-5348-82C3-1F9A7A620D6D}</id>
 			<comment/>
 			<position>
 				<first>-230</first>
@@ -357,14 +386,16 @@ Surface point
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Neg">
+		<item type="traktor.render.Neg" version="traktor.render.Node:1">
+			<id>{13D7ACF1-7272-304D-B5CF-03D2298A3E46}</id>
 			<comment/>
 			<position>
 				<first>325</first>
 				<second>565</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{890FA979-C2E6-5C42-913E-B4A6EA19E84E}</id>
 			<comment/>
 			<position>
 				<first>226</first>
@@ -372,7 +403,8 @@ Surface point
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{80C4BCF5-450D-F746-8BD3-15158FC5765D}</id>
 			<comment/>
 			<position>
 				<first>1186</first>
@@ -382,21 +414,24 @@ Surface point
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.MatrixOut">
+		<item type="traktor.render.MatrixOut" version="traktor.render.Node:1">
+			<id>{574D1F66-8076-8B48-A92F-E0557C952E60}</id>
 			<comment/>
 			<position>
 				<first>1669</first>
 				<second>612</second>
 			</position>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{CB04111A-76B7-A847-8A56-EE0AD522EE05}</id>
 			<comment/>
 			<position>
 				<first>1391</first>
 				<second>686</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{75C10766-B87A-CE4C-9E3F-D24948C92C69}</id>
 			<comment/>
 			<position>
 				<first>1199</first>
@@ -416,7 +451,8 @@ Surface point
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{21D4707F-06C2-8F42-86D0-45FBAF54B02C}</id>
 			<comment/>
 			<position>
 				<first>1209</first>

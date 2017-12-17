@@ -548,11 +548,6 @@ Ref< IStream > PipelineBuilder::openTemporaryFile(const std::wstring& fileName)
 	return fileStream ? new BufferedStream(fileStream) : 0;
 }
 
-Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, const Guid& guid)
-{
-	return m_pipelineDb->createReport(name, guid);
-}
-
 IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason)
 {
 	PipelineDependencyHash currentDependencyHash;

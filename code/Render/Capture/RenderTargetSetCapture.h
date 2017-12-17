@@ -40,6 +40,8 @@ public:
 
 	virtual void discard() T_OVERRIDE T_FINAL;
 
+	virtual bool isContentValid() const T_OVERRIDE T_FINAL;
+
 	virtual bool read(int index, void* buffer) const T_OVERRIDE T_FINAL;
 
 	RenderTargetSet* getRenderTargetSet() const { return m_renderTargetSet; }

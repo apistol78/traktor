@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{29646386-9200-5A48-8453-670F69381E4A}</id>
 			<comment/>
 			<position>
 				<first>321</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{BFE0D9AC-049A-E449-9735-BA652C41C211}</id>
 			<comment/>
 			<position>
 				<first>2491</first>
@@ -21,7 +23,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{B697A4FF-0F92-2C45-B196-9A6C0BD6EBA7}</id>
 			<comment>
 			<![CDATA[
 A
@@ -33,7 +36,8 @@ A
 			</position>
 			<value>0.15</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{8FE2E745-0D02-A140-9773-015C58298123}</id>
 			<comment>
 			<![CDATA[
 B
@@ -45,7 +49,8 @@ B
 			</position>
 			<value>0.3</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{E66122BE-81E9-FB43-85AD-68E99A1A2172}</id>
 			<comment>
 			<![CDATA[
 D
@@ -57,7 +62,8 @@ D
 			</position>
 			<value>0.2</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{B4D9CD24-6598-F249-9CA4-3DA6CCBE3A05}</id>
 			<comment>
 			<![CDATA[
 C
@@ -69,7 +75,8 @@ C
 			</position>
 			<value>0.1</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{C43853CC-962F-B44D-B80F-F224A04A5F2B}</id>
 			<comment>
 			<![CDATA[
 E
@@ -81,7 +88,8 @@ E
 			</position>
 			<value>0.02</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{3C0EA339-3E46-2242-97CB-07A79E4C6AF6}</id>
 			<comment>
 			<![CDATA[
 F
@@ -93,91 +101,104 @@ F
 			</position>
 			<value>0.3</value>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{FEFD98BC-1A23-1843-9907-16B5DBF0CFE6}</id>
 			<comment/>
 			<position>
 				<first>743</first>
 				<second>112</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{36D427E4-3D32-7B4B-9D62-143CBE3352CD}</id>
 			<comment/>
 			<position>
 				<first>591</first>
 				<second>270</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{FBD7F30D-C569-F043-AC13-213C85A6A5D7}</id>
 			<comment/>
 			<position>
 				<first>1011</first>
 				<second>160</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{A40DE77D-D830-E740-8271-8A8C24F50980}</id>
 			<comment/>
 			<position>
 				<first>1297</first>
 				<second>335</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{47B719BB-8D94-EA4F-9489-2509EB16D4BD}</id>
 			<comment/>
 			<position>
 				<first>1586</first>
 				<second>289</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{4CA51CE2-139A-234C-B7DC-2284102E56E7}</id>
 			<comment/>
 			<position>
 				<first>965</first>
 				<second>578</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{8449544B-74E0-A34D-8632-7DD02E18CB9D}</id>
 			<comment/>
 			<position>
 				<first>1232</first>
 				<second>631</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{AEA877A0-056C-2C44-93C8-8C90D8D19AA5}</id>
 			<comment/>
 			<position>
 				<first>1146</first>
 				<second>698</second>
 			</position>
 		</item>
-		<item type="traktor.render.Add">
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{87B21FDC-4048-A843-9487-085BF1D37185}</id>
 			<comment/>
 			<position>
 				<first>1488</first>
 				<second>660</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{1A35E270-D685-F040-AD70-C66E89274D74}</id>
 			<comment/>
 			<position>
 				<first>1969</first>
 				<second>410</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{D915E631-1911-6849-A491-DED853E7399E}</id>
 			<comment/>
 			<position>
 				<first>2223</first>
 				<second>466</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{1102A904-21AB-A848-8421-0A9043D8E9E5}</id>
 			<comment/>
 			<position>
 				<first>1956</first>
 				<second>547</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{4AB3D10B-ACCF-8947-9648-69E0CADCA40F}</id>
 			<comment/>
 			<position>
 				<first>1299</first>

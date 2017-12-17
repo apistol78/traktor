@@ -17,7 +17,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Sound/StaticSoundResource.h"
 #include "Sound/StreamSoundResource.h"
@@ -232,19 +231,6 @@ bool SoundPipeline::buildOutput(
 			log::error << L"Failed to build sound asset, unable to copy source data" << Endl;
 			return false;
 		}
-
-		// Create report.
-		Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Sound", outputGuid);
-		if (report)
-		{
-			report->set(L"path", outputPath);
-			report->set(L"type", 0);
-			report->set(L"preload", soundAsset->m_preload);
-			report->set(L"sampleRate", 0);
-			report->set(L"samplesCount", 0);
-			report->set(L"channelsCount", 0);
-			report->set(L"size", dataOffsetEnd - dataOffsetBegin);
-		}
 	}
 	else
 	{
@@ -375,19 +361,6 @@ bool SoundPipeline::buildOutput(
 		{
 			log::error << L"Failed to build sound asset, unable to commit instance" << Endl;
 			return false;
-		}
-
-		// Create report.
-		Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Sound", outputGuid);
-		if (report)
-		{
-			report->set(L"path", outputPath);
-			report->set(L"type", 1);
-			report->set(L"preload", 1);
-			report->set(L"sampleRate", sampleRate);
-			report->set(L"samplesCount", samplesCount);
-			report->set(L"channelsCount", maxChannel);
-			report->set(L"size", int32_t(dataOffsetEnd - dataOffsetBegin));
 		}
 	}
 

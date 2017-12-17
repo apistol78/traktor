@@ -33,11 +33,10 @@ const int c_indexCount = c_triangleCount * 3;
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 0, SkyComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 1, SkyComponentData, world::IEntityComponentData)
 
 SkyComponentData::SkyComponentData()
-:	m_sunDirection(0.0f, 1.0f, 0.0f, 0.0f)
-,	m_offset(0.0f)
+:	m_offset(0.0f)
 {
 }
 
@@ -114,7 +113,6 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 		indexBuffer,
 		primitives,
 		shader,
-		m_sunDirection.xyz0().normalized(),
 		m_offset
 	);
 }
@@ -122,7 +120,13 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 void SkyComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-	s >> Member< Vector4 >(L"sunDirection", m_sunDirection);
+
+	if (s.getVersion< SkyComponentData >() < 1)
+	{
+		Vector4 dummy;
+		s >> Member< Vector4 >(L"sunDirection", dummy);
+	}
+
 	s >> Member< float >(L"offset", m_offset);
 }
 

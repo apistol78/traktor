@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7">
+		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+			<id>{EC75D7DA-FED7-084C-8044-41B05DA651F7}</id>
 			<comment/>
 			<position>
 				<first>366</first>
@@ -48,7 +49,8 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{D8C685ED-AABA-244F-804D-66E10C720576}</id>
 			<comment/>
 			<position>
 				<first>-78</first>
@@ -60,7 +62,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7">
+		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+			<id>{7FEE0323-AFAE-914A-8F73-00F2AAE2A52D}</id>
 			<comment/>
 			<position>
 				<first>365</first>

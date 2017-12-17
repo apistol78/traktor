@@ -1,49 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.MatrixIn">
+		<item type="traktor.render.MatrixIn" version="traktor.render.Node:1">
+			<id>{28CCA6C1-1FCE-DC4D-B4A9-AAF54B30F2E4}</id>
 			<comment/>
 			<position>
 				<first>952</first>
 				<second>384</second>
 			</position>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{DF8A9F37-B4C8-5E4A-ACE9-EAAA0BD1ED82}</id>
 			<comment/>
 			<position>
 				<first>863</first>
 				<second>476</second>
 			</position>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{B437DB28-F22E-794B-9786-0D568BDE5337}</id>
 			<comment/>
 			<position>
 				<first>863</first>
 				<second>445</second>
 			</position>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{A18C6836-D6FF-8447-950D-15F66AB0496D}</id>
 			<comment/>
 			<position>
 				<first>863</first>
 				<second>414</second>
 			</position>
 		</item>
-		<item type="traktor.render.MatrixOut">
+		<item type="traktor.render.MatrixOut" version="traktor.render.Node:1">
+			<id>{12E00645-14E5-1F44-8C0D-63BCEDDF52F1}</id>
 			<comment/>
 			<position>
 				<first>567</first>
 				<second>385</second>
 			</position>
 		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{10C4002B-8166-C145-98DD-15637DB6BC09}</id>
 			<comment/>
 			<position>
 				<first>863</first>
 				<second>383</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{A07B5CEF-C74A-1547-988A-47532D7FD1A9}</id>
 			<comment/>
 			<position>
 				<first>387</first>
@@ -55,7 +62,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{F826FA52-F83F-B748-893E-F977E0D4E27E}</id>
 			<comment/>
 			<position>
 				<first>1163</first>

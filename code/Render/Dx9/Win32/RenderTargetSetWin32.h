@@ -54,6 +54,8 @@ public:
 
 	virtual void discard();
 
+	virtual bool isContentValid() const;
+
 	virtual bool read(int index, void* buffer) const;
 
 	// \}
@@ -75,6 +77,8 @@ public:
 
 	bool usingPrimaryDepthStencil() const { return m_desc.usingPrimaryDepthStencil; }
 
+	void setContentValid(bool contentValid) { m_contentValid = contentValid; }
+
 private:
 	Ref< ResourceManagerDx9 > m_resourceManager;
 	RenderTargetSetCreateDesc m_desc;
@@ -82,6 +86,7 @@ private:
 	ComRef< IDirect3DTexture9 > m_d3dTargetDepthStencilTexture;
 	ComRef< IDirect3DSurface9 > m_d3dTargetDepthStencilSurface;
 	RefArray< RenderTargetWin32 > m_colorTextures;
+	bool m_contentValid;
 
 	HRESULT internalCreate();
 };

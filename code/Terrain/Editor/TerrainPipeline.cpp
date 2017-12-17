@@ -26,6 +26,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Shader/External.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Terrain/TerrainResource.h"
+#include "Terrain/TerrainUtilities.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Terrain/Editor/TerrainPipeline.h"
 
@@ -92,8 +93,6 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 	uint32_t heightfieldSize = heightfield->getSize();
 	uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
 
-	const Vector4& worldExtent = heightfield->getWorldExtent();
-
 	outPatches.resize(patchCount * patchCount);
 
 	for (uint32_t pz = 0; pz < patchCount; ++pz)
@@ -101,94 +100,8 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 		for (uint32_t px = 0; px < patchCount; ++px)
 		{
 			TerrainResource::Patch& patch = outPatches[px + pz * patchCount];
-
-			int32_t pminX = (heightfieldSize * px) / patchCount;
-			int32_t pminZ = (heightfieldSize * pz) / patchCount;
-			int32_t pmaxX = (heightfieldSize * (px + 1)) / patchCount;
-			int32_t pmaxZ = (heightfieldSize * (pz + 1)) / patchCount;
-
-			// Measure min and max height of patch.
-			float minHeight =  std::numeric_limits< float >::max();
-			float maxHeight = -std::numeric_limits< float >::max();
-
-			for (int32_t z = pminZ; z <= pmaxZ; ++z)
-			{
-				for (int32_t x = pminX; x <= pmaxX; ++x)
-				{
-					float height = heightfield->getGridHeightNearest(x, z);
-					height = heightfield->unitToWorld(height);
-
-					minHeight = min(minHeight, height);
-					maxHeight = max(maxHeight, height);
-				}
-			}
-
-			patch.height[0] = minHeight;
-			patch.height[1] = maxHeight;
-
-			// Calculate lod errors.
-			float* error = patch.error;
-			for (uint32_t lod = 1; lod < /*LodCount*/4; ++lod)
-			{
-				*error = 0.0f;
-
-				uint32_t lodSkip = 1 << lod;
-				for (uint32_t z = 0; z < patchDim; z += lodSkip)
-				{
-					for (uint32_t x = 0; x < patchDim; x += lodSkip)
-					{
-						float fx0 = float(x) / (patchDim - 1);
-						float fz0 = float(z) / (patchDim - 1);
-						float fx1 = float(x + lodSkip) / (patchDim - 1);
-						float fz1 = float(z + lodSkip) / (patchDim - 1);
-
-						float gx0 = (fx0 * patchDim * detailSkip) + pminX;
-						float gz0 = (fz0 * patchDim * detailSkip) + pminZ;
-						float gx1 = (fx1 * patchDim * detailSkip) + pminX;
-						float gz1 = (fz1 * patchDim * detailSkip) + pminZ;
-
-						float h[] =
-						{
-							heightfield->getGridHeightBilinear(gx0, gz0),
-							heightfield->getGridHeightBilinear(gx1, gz0),
-							heightfield->getGridHeightBilinear(gx0, gz1),
-							heightfield->getGridHeightBilinear(gx1, gz1)
-						};
-
-						for (uint32_t lz = 0; lz <= lodSkip; ++lz)
-						{
-							for (uint32_t lx = 0; lx <= lodSkip; ++lx)
-							{
-								float fx = float(lx) / lodSkip;
-								float fz = float(lz) / lodSkip;
-
-								float gx = lerp(gx0, gx1, fx);
-								float gz = lerp(gz0, gz1, fz);
-
-								float ht = lerp(h[0], h[1], fx);
-								float hb = lerp(h[2], h[3], fx);
-								float h0 = lerp(ht, hb, fz);
-
-								float hl = lerp(h[0], h[2], fz);
-								float hr = lerp(h[1], h[3], fz);
-								float h1 = lerp(hl, hr, fx);
-
-								float h = heightfield->getGridHeightBilinear(gx, gz);
-
-								float herr0 = abs(h - h0);
-								float herr1 = abs(h - h1);
-								float herr = max(herr0, herr1);
-
-								herr = heightfield->getWorldExtent().y() * herr;
-
-								*error += herr;
-							}
-						}
-					}
-				}
-
-				*error++ /= 1000.0f;
-			}
+			calculatePatchMinMaxHeight(heightfield, px, pz, patchDim, detailSkip, patch.height);
+			calculatePatchErrorMetrics(heightfield, 4, px, pz, patchDim, detailSkip, patch.error);
 		}
 	}
 }

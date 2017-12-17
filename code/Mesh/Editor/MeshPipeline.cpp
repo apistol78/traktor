@@ -20,7 +20,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Database/Instance.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/IMeshResource.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
@@ -724,16 +723,6 @@ bool MeshPipeline::buildOutput(
 	{
 		log::error << L"Mesh pipeline failed; unable to commit output instance" << Endl;
 		return false;
-	}
-
-	// Create report.
-	Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Mesh", outputGuid);
-	if (report)
-	{
-		report->set(L"path", outputPath);
-		report->set(L"type", int32_t(asset->getMeshType()));
-		report->set(L"polygonCount", polygonCount);
-		report->set(L"size", dataSize);
 	}
 
 	return true;

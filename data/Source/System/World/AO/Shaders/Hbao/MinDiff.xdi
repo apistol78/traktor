@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{7D1456B4-00BC-EB43-AF43-D96D6967585F}</id>
 			<comment/>
 			<position>
 				<first>396</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{1E589C46-9143-6246-9907-9393EECA6D12}</id>
 			<comment/>
 			<position>
 				<first>1239</first>
@@ -21,7 +23,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{0B4528F4-9C56-274E-805C-550B806664C8}</id>
 			<comment/>
 			<position>
 				<first>389</first>
@@ -33,7 +36,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{4B0F9AEE-B96A-5A4B-88BD-DEED3EDB47EF}</id>
 			<comment/>
 			<position>
 				<first>389</first>
@@ -45,21 +49,24 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{275620C7-5C3F-694C-8002-E32F5922AEB2}</id>
 			<comment/>
 			<position>
 				<first>639</first>
 				<second>496</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{0C058007-5155-1F42-A140-68747EE40C0E}</id>
 			<comment/>
 			<position>
 				<first>639</first>
 				<second>582</second>
 			</position>
 		</item>
-		<item type="traktor.render.Conditional" version="1">
+		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
+			<id>{7D2E5A0F-568E-F949-A2D6-554DCA5F398B}</id>
 			<comment/>
 			<position>
 				<first>1083</first>
@@ -68,14 +75,16 @@
 			<branch>BrAuto</branch>
 			<operator>CoLess</operator>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{065840C3-F867-AB44-8255-D4C2CF5B4BA8}</id>
 			<comment/>
 			<position>
 				<first>847</first>
 				<second>632</second>
 			</position>
 		</item>
-		<item type="traktor.render.Dot">
+		<item type="traktor.render.Dot" version="traktor.render.Node:1">
+			<id>{DF8FCA9A-4295-DA45-95F4-D4C8B858020F}</id>
 			<comment/>
 			<position>
 				<first>847</first>

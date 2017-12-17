@@ -24,7 +24,7 @@ namespace traktor
 	{
 
 class Widget;
-class Bitmap;
+class IBitmap;
 class INotificationIcon;
 
 /*! \brief Notification icon.
@@ -41,11 +41,11 @@ public:
 
 	virtual ~NotificationIcon();
 
-	bool create(const std::wstring& text, Bitmap* image);
+	bool create(const std::wstring& text, IBitmap* image);
 
 	void destroy();
 
-	void setImage(Bitmap* image);
+	void setImage(IBitmap* image);
 
 private:
 	INotificationIcon* m_ni;

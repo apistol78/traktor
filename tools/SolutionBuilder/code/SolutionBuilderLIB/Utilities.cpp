@@ -13,7 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 using namespace traktor;
 
-bool writeFileIfMismatch(const std::wstring& fileName, const std::vector< uint8_t >& data)
+bool writeFileIfMismatch(const std::wstring& fileName, const AlignedVector< uint8_t >& data)
 {
 	bool needToWrite = false;
 

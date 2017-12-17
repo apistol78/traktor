@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{0C71E9C0-3547-C64E-9057-4120949A85D5}</id>
 			<comment/>
 			<position>
 				<first>997</first>
@@ -9,7 +10,8 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{9B6E9CB1-6807-6441-BE7E-E712D02ABC0E}</id>
 			<comment/>
 			<position>
 				<first>997</first>
@@ -17,7 +19,8 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{BE9BCC8C-AE58-AC40-BD42-7CCD332411D7}</id>
 			<comment/>
 			<position>
 				<first>649</first>
@@ -25,7 +28,8 @@
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{F5411FFF-D190-9642-896C-C0B5B5FB4FB1}</id>
 			<comment/>
 			<position>
 				<first>1369</first>
@@ -35,7 +39,8 @@
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{7BD1B2FB-D6FB-6F4D-B6E7-3CB301D06AE7}</id>
 			<comment/>
 			<position>
 				<first>1682</first>
@@ -59,7 +64,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Conditional" version="1">
+		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
+			<id>{57CCBDB8-3D4E-F14B-B036-9D474AD371C6}</id>
 			<comment/>
 			<position>
 				<first>1161</first>
@@ -68,7 +74,8 @@
 			<branch>BrAuto</branch>
 			<operator>CoGreaterEqual</operator>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{DE617C89-E57B-7C44-99DA-03C88A099D8A}</id>
 			<comment/>
 			<position>
 				<first>1151</first>
@@ -76,7 +83,8 @@
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{C18637EB-3DB7-B247-90BE-D60A743D1091}</id>
 			<comment/>
 			<position>
 				<first>1048</first>
@@ -84,7 +92,8 @@
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{CD04E846-6285-EA43-8E6E-0E35B980E2E3}</id>
 			<comment/>
 			<position>
 				<first>653</first>
@@ -94,14 +103,16 @@
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{1D3A0C64-0642-3C43-94DD-281830593EFC}</id>
 			<comment/>
 			<position>
 				<first>171</first>
 				<second>544</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{87F73499-23BC-0549-8F7F-90D7DBB69093}</id>
 			<comment/>
 			<position>
 				<first>714</first>
@@ -109,28 +120,32 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{57715272-2E9D-674B-B99A-375A3484721C}</id>
 			<comment/>
 			<position>
 				<first>874</first>
 				<second>599</second>
 			</position>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{0B1CD4AE-D1BD-A94F-8D06-305BA8BB0FA6}</id>
 			<comment/>
 			<position>
 				<first>1395</first>
 				<second>619</second>
 			</position>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{BCA159D3-919E-B248-A4C7-A42A84BAD9E2}</id>
 			<comment/>
 			<position>
 				<first>1156</first>
 				<second>586</second>
 			</position>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{7547BAC2-D704-BB4C-ADE9-FE3AB0EA0486}</id>
 			<comment/>
 			<position>
 				<first>1155</first>
@@ -138,7 +153,8 @@
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.Iterate">
+		<item type="traktor.render.Iterate" version="traktor.render.Node:1">
+			<id>{E9CC9C1F-27F4-B04E-B1BC-2F8227326569}</id>
 			<comment/>
 			<position>
 				<first>1350</first>
@@ -147,7 +163,8 @@
 			<from>0</from>
 			<to>15</to>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{D55BC3A7-AD1B-3A4F-81A9-5A8A7C080B5D}</id>
 			<comment/>
 			<position>
 				<first>-56</first>
@@ -159,7 +176,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{3C36C602-1C79-0F49-9D12-1781431974F7}</id>
 			<comment/>
 			<position>
 				<first>-85</first>
@@ -171,14 +189,16 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{324C1C1D-2B75-9F43-81BA-B9DCD926E937}</id>
 			<comment/>
 			<position>
 				<first>399</first>
 				<second>494</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{569FB0B2-E440-E049-89AD-4840EF81C56F}</id>
 			<comment/>
 			<position>
 				<first>-346</first>
@@ -190,7 +210,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{D4E2ECF9-EFB2-DA4E-A9E5-6A9CA9509116}</id>
 			<comment/>
 			<position>
 				<first>1702</first>
@@ -198,14 +219,16 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{674FA20B-1760-2748-9719-8EE5E8937751}</id>
 			<comment/>
 			<position>
 				<first>-12</first>
 				<second>581</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{37974DB8-03C7-D14A-B21E-0B78375840C4}</id>
 			<comment/>
 			<position>
 				<first>-259</first>
@@ -213,7 +236,8 @@
 			</position>
 			<value>15</value>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{E9EA9B48-95C6-9E4F-95A2-30EA1AE6F3CF}</id>
 			<comment/>
 			<position>
 				<first>223</first>
@@ -221,14 +245,16 @@
 			</position>
 			<name>SubMarchDistance</name>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{B6731654-B237-5441-8BC7-D43337E55D22}</id>
 			<comment/>
 			<position>
 				<first>848</first>
 				<second>321</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{DF33B4FA-1BEA-0F4A-930B-A57DF1E8E1A3}</id>
 			<comment/>
 			<position>
 				<first>998</first>
@@ -236,7 +262,8 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{E7390B27-CCD7-904C-AD42-AAE203820E96}</id>
 			<comment/>
 			<position>
 				<first>1555</first>
@@ -244,7 +271,8 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{EC57AC5A-DA68-CB42-9862-205F7EF8FD41}</id>
 			<comment/>
 			<position>
 				<first>1470</first>
@@ -252,28 +280,32 @@
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.Div">
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{FCDF35EC-27BA-4B4F-BCA9-8803132B0090}</id>
 			<comment/>
 			<position>
 				<first>1471</first>
 				<second>912</second>
 			</position>
 		</item>
-		<item type="traktor.render.MulAdd">
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{2CF41AE0-7F86-D74A-922D-91B59F5071C4}</id>
 			<comment/>
 			<position>
 				<first>1710</first>
 				<second>945</second>
 			</position>
 		</item>
-		<item type="traktor.render.Transform">
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{04F753AC-207F-084E-AE83-EA7CC15FCA58}</id>
 			<comment/>
 			<position>
 				<first>1189</first>
 				<second>925</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{EBD2B545-7B6A-D646-8163-387D6406F737}</id>
 			<comment/>
 			<position>
 				<first>1029</first>
@@ -281,7 +313,8 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{ED3549CF-329C-CE49-93D5-F85C458A5223}</id>
 			<comment/>
 			<position>
 				<first>927</first>
@@ -291,7 +324,8 @@
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{F13FAC6F-4510-7B4B-AFAA-FCC161262150}</id>
 			<comment/>
 			<position>
 				<first>1363</first>
@@ -299,7 +333,8 @@
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{6207C49D-ED42-404D-8D6D-A1728775F981}</id>
 			<comment/>
 			<position>
 				<first>1466</first>
@@ -307,7 +342,8 @@
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{433624C0-6EB1-ED4E-A8E2-CA7FE9351307}</id>
 			<comment/>
 			<position>
 				<first>2011</first>
@@ -331,7 +367,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{88687FC7-255D-C642-B841-9B952DC8F9D8}</id>
 			<comment/>
 			<position>
 				<first>1811</first>
@@ -341,7 +378,8 @@
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{725C8266-24A2-9541-A562-55649F56547C}</id>
 			<comment/>
 			<position>
 				<first>2263</first>

@@ -7,6 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Physics/Editor/PhysicsComponentEditor.h"
 #include "Physics/Editor/PhysicsComponentEditorFactory.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Physics/World/Character/CharacterComponentData.h"
+#include "Physics/World/Vehicle/VehicleComponentData.h"
 
 namespace traktor
 {
@@ -17,7 +19,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsComponentEditorFactory", Physics
 
 const TypeInfoSet PhysicsComponentEditorFactory::getComponentDataTypes() const
 {
-	return makeTypeInfoSet< RigidBodyComponentData >();
+	return makeTypeInfoSet< 
+		CharacterComponentData,
+		RigidBodyComponentData,
+		VehicleComponentData
+	>();
 }
 
 Ref< scene::IComponentEditor > PhysicsComponentEditorFactory::createComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const

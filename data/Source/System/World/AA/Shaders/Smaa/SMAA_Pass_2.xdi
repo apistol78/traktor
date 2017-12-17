@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{AB49A5AB-4D0F-764A-BC73-27BC30637555}</id>
 			<comment/>
 			<position>
 				<first>-32</first>
@@ -19,7 +20,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7">
+		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+			<id>{29515A38-DF07-6542-91E1-0039116262E8}</id>
 			<comment/>
 			<position>
 				<first>1120</first>
@@ -66,7 +68,8 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{2674AD51-CDFE-FD44-B9B2-A765F90531C5}</id>
 			<comment/>
 			<position>
 				<first>218</first>
@@ -95,7 +98,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{FC0A81BE-AC43-AF4A-A6D4-0AD9673E19FB}</id>
 			<comment/>
 			<position>
 				<first>689</first>
@@ -147,7 +151,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{F9B8D11E-FF79-2240-A674-E5D16BCEAC9C}</id>
 			<comment/>
 			<position>
 				<first>410</first>
@@ -155,7 +160,8 @@
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{D77F3ECF-9C1E-284A-80A9-0A2243AC3322}</id>
 			<comment/>
 			<position>
 				<first>197</first>
@@ -165,7 +171,8 @@
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Texture">
+		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+			<id>{A66A8EC2-4411-DE4C-9C3B-9B345B6A97B8}</id>
 			<comment/>
 			<position>
 				<first>304</first>
@@ -174,7 +181,8 @@
 			<external>{BC7EC8FB-C6DE-AA44-AB31-F4FF1375E447}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Texture">
+		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+			<id>{54124C47-3A52-6E46-B331-5D007B412AE4}</id>
 			<comment/>
 			<position>
 				<first>478</first>

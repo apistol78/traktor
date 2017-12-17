@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{4C0D49E5-5D83-9B4D-984E-490955455C0E}</id>
 			<comment/>
 			<position>
 				<first>459</first>
@@ -13,7 +14,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{4729FF7B-A2B9-414A-822E-08F559B55F1D}</id>
 			<comment/>
 			<position>
 				<first>460</first>
@@ -25,7 +27,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{4809EFF6-990E-7046-82FC-F720D3CB969B}</id>
 			<comment/>
 			<position>
 				<first>1216</first>
@@ -33,7 +36,8 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{D023037A-3296-8044-9F03-90F96503D4AC}</id>
 			<comment/>
 			<position>
 				<first>568</first>
@@ -41,28 +45,32 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{F3C2CE72-D277-6B42-9D2F-828D0B8DE18E}</id>
 			<comment/>
 			<position>
 				<first>721</first>
 				<second>291</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{472699CE-CDF0-734D-9B11-7A72EB63AB75}</id>
 			<comment/>
 			<position>
 				<first>721</first>
 				<second>377</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{02A34719-DC8B-C44D-B044-18E1E61E0BB4}</id>
 			<comment/>
 			<position>
 				<first>884</first>
 				<second>335</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{52A16527-5920-3844-966E-1A0A172A23FF}</id>
 			<comment/>
 			<position>
 				<first>1054</first>

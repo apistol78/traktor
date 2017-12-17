@@ -67,8 +67,6 @@ public:
 
 	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid) T_OVERRIDE T_FINAL;
-
 private:
 	Ref< PipelineAgentsManager > m_agentsManager;
 	Ref< PipelineFactory > m_pipelineFactory;

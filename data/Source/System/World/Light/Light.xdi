@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{CA1A6519-45A6-674B-9168-17F2AE22830D}</id>
 			<comment/>
 			<position>
 				<first>659</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>Diffuse</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{EDF06616-1C90-1E45-AC94-3D539248395C}</id>
 			<comment/>
 			<position>
 				<first>-540</first>
@@ -21,7 +23,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{D37BD4E6-ECC7-ED40-B94D-C24E65374C6F}</id>
 			<comment/>
 			<position>
 				<first>-500</first>
@@ -33,7 +36,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{DA74135F-816D-3443-B405-591DFA6BA749}</id>
 			<comment/>
 			<position>
 				<first>-590</first>
@@ -45,7 +49,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.8</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{C4B09B4D-EEDF-A542-BD33-1686A00BA987}</id>
 			<comment/>
 			<position>
 				<first>-500</first>
@@ -57,7 +62,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{06CA250C-639F-6247-A21E-61A11A98D04F}</id>
 			<comment/>
 			<position>
 				<first>-500</first>
@@ -69,7 +75,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{93F2608B-8402-5748-B621-34E0AF058CA8}</id>
 			<comment/>
 			<position>
 				<first>-194</first>
@@ -104,7 +111,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{97454B31-6F36-7342-9C10-681428D1C6C2}</id>
 			<comment/>
 			<position>
 				<first>659</first>
@@ -112,7 +120,8 @@
 			</position>
 			<name>Specular</name>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{E0366036-CAD8-C74A-9B3C-3747E932E582}</id>
 			<comment/>
 			<position>
 				<first>-194</first>
@@ -151,7 +160,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{DA1C213D-2555-F948-97C8-12B9C13916FD}</id>
 			<comment/>
 			<position>
 				<first>559</first>
@@ -159,7 +169,8 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{A89952A9-44C6-CB44-B1A3-5EE07FEF67B5}</id>
 			<comment/>
 			<position>
 				<first>559</first>
@@ -167,7 +178,8 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Branch">
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{8101789E-0F45-3748-952B-57BA277CECCE}</id>
 			<comment/>
 			<position>
 				<first>182</first>
@@ -175,7 +187,8 @@
 			</position>
 			<parameterName>World_LightEnableComplex</parameterName>
 		</item>
-		<item type="traktor.render.Branch">
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{F73C7FFE-73E0-8F4C-AA93-40C27DBD3CC5}</id>
 			<comment/>
 			<position>
 				<first>182</first>

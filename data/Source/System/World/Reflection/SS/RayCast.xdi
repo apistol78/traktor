@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{0B2EE0E4-B8CC-9042-831E-5EFF1C59D1FA}</id>
 			<comment/>
 			<position>
 				<first>-227</first>
@@ -11,7 +12,8 @@
 			<type>PtMatrix</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{0D208E44-9B2F-394C-8E59-2EABC49B3E2C}</id>
 			<comment/>
 			<position>
 				<first>-468</first>
@@ -23,7 +25,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{C833E647-3C3B-DA48-BA80-B3879D4B51CF}</id>
 			<comment/>
 			<position>
 				<first>-441</first>
@@ -35,7 +38,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{044EAF4E-8674-E04C-8987-F8F7676A9D09}</id>
 			<comment/>
 			<position>
 				<first>1247</first>
@@ -43,7 +47,8 @@
 			</position>
 			<name>HitPosition</name>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{AC20C69F-601F-3E42-98D9-11CE588C3EF6}</id>
 			<comment/>
 			<position>
 				<first>-238</first>
@@ -53,7 +58,8 @@
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{CC6BD573-963F-FC49-8CE3-B0AB5BBA406E}</id>
 			<comment/>
 			<position>
 				<first>-507</first>
@@ -65,14 +71,16 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Reflect">
+		<item type="traktor.render.Reflect" version="traktor.render.Node:1">
+			<id>{835F9907-7795-3541-9853-4BD4BF06DF8C}</id>
 			<comment/>
 			<position>
 				<first>-58</first>
 				<second>278</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{0567AD50-BDCD-5B4D-965E-BD282E153A05}</id>
 			<comment/>
 			<position>
 				<first>-228</first>
@@ -82,7 +90,8 @@
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Script">
+		<item type="traktor.render.Script" version="traktor.render.Node:1">
+			<id>{4CB98F79-EFCF-1149-BC58-D8C79BBA1B41}</id>
 			<comment/>
 			<position>
 				<first>366</first>
@@ -203,14 +212,16 @@ ENTRY
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Platform">
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{78891114-5C05-7B47-9C2B-B1F0ACB98B71}</id>
 			<comment/>
 			<position>
 				<first>791</first>
 				<second>491</second>
 			</position>
 		</item>
-		<item type="traktor.render.Vector">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{19FCFDA5-D60D-9747-A96C-19C0C0B04CBD}</id>
 			<comment/>
 			<position>
 				<first>421</first>
@@ -218,7 +229,8 @@ ENTRY
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
-		<item type="traktor.render.Script">
+		<item type="traktor.render.Script" version="traktor.render.Node:1">
+			<id>{CEE78239-3BF3-6F4E-9BF3-896D991DB8A3}</id>
 			<comment/>
 			<position>
 				<first>377</first>

@@ -344,7 +344,6 @@ void AccDisplayRenderer::begin(
 	// Flush glyph cache is RT has become invalid.
 	if (!m_renderTargetGlyphs->isContentValid())
 	{
-		m_renderTargetGlyphs->setContentValid(true);
 		for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
 			i->second.index = -1;
 	}

@@ -259,7 +259,7 @@ void SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 	traktor::log::info << L"Generating makefile \"" << makeFile << L"\"" << Endl;
 
-	std::vector< uint8_t > buffer;
+	AlignedVector< uint8_t > buffer;
 	buffer.reserve(40000);
 
 	// Generate project file into memory buffer.

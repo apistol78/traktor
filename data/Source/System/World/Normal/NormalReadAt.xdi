@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{FA70D12A-71FB-1E48-B18B-1D3780FD5943}</id>
 			<comment/>
 			<position>
 				<first>1190</first>
@@ -9,7 +10,8 @@
 			</position>
 			<name>Normal</name>
 		</item>
-		<item type="traktor.render.External" version="1">
+		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+			<id>{498D9767-698C-E746-8DD0-B7B3768A4612}</id>
 			<comment/>
 			<position>
 				<first>767</first>
@@ -29,7 +31,8 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Swizzle">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{9ACBBD47-B278-074F-882A-20925EA31BF2}</id>
 			<comment/>
 			<position>
 				<first>609</first>
@@ -37,7 +40,8 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="5">
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{411C17F6-BCE6-E345-8182-C5A54BAD603B}</id>
 			<comment/>
 			<position>
 				<first>132</first>
@@ -54,7 +58,8 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{DD499BAF-B821-9347-B77D-24251AB7655D}</id>
 			<comment/>
 			<position>
 				<first>-329</first>
@@ -66,7 +71,8 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2">
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{09242AE3-59FE-CB4F-A36A-17F581C6FF17}</id>
 			<comment/>
 			<position>
 				<first>-356</first>

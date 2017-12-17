@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Io/IStream.h"
-#include "Core/Io/StringOutputStream.h"
+#include "Core/Io/OutputStream.h"
 #include "Html/Comment.h"
 
 namespace traktor
@@ -30,12 +30,9 @@ std::wstring Comment::getValue() const
 	return m_text;
 }
 
-void Comment::writeHtml(IStream* stream)
+void Comment::toString(OutputStream& os) const
 {
-	StringOutputStream ss;
-	ss << L"<!-- " << m_text << L" -->" << Endl;
-	std::wstring tmp = ss.str();
-	stream->write(tmp.c_str(), int(tmp.length()));
+	os << L"<!-- " << m_text << L" -->" << Endl;
 }
 
 	}

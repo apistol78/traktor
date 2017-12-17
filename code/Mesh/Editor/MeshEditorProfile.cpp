@@ -115,5 +115,12 @@ Ref< world::EntityData > MeshEditorProfile::createEntityData(
 	return entityData;
 }
 
+void MeshEditorProfile::getDebugTargets(
+	scene::SceneEditorContext* context,
+	std::vector< render::DebugTarget >& outDebugTargets
+) const
+{
+}
+
 	}
 }

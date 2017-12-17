@@ -51,6 +51,8 @@ public:
 
 	virtual void discard() T_OVERRIDE T_FINAL;
 
+	virtual bool isContentValid() const T_OVERRIDE T_FINAL;
+
 	virtual bool read(int index, void* buffer) const T_OVERRIDE T_FINAL;
 
 	bool bind(ContextOpenGL* renderContext, GLuint primaryDepthBuffer);
@@ -61,6 +63,8 @@ public:
 
 	GLuint getDepthBuffer() const { return m_depthBufferOrTexture; }
 
+	void setContentValid(bool contentValid) { m_contentValid = contentValid; }
+
 private:
 	Ref< ContextOpenGL > m_resourceContext;
 	RenderTargetSetCreateDesc m_desc;
@@ -70,6 +74,7 @@ private:
 	Ref< RenderTargetDepthOpenGL > m_depthTarget;
 	Ref< RenderTargetOpenGL > m_colorTargets[8];
 	uint32_t m_currentTag;
+	bool m_contentValid;
 
 	bool createFramebuffer(GLuint primaryDepthBuffer);
 };

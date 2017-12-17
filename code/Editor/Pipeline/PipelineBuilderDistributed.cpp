@@ -272,12 +272,6 @@ Ref< IStream > PipelineBuilderDistributed::openTemporaryFile(const std::wstring&
 	return 0;
 }
 
-Ref< IPipelineReport > PipelineBuilderDistributed::createReport(const std::wstring& name, const Guid& guid)
-{
-	T_FATAL_ERROR;
-	return 0;
-}
-
 bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency)
 {
 	PipelineDependencyHash currentDependencyHash;

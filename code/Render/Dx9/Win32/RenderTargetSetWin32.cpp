@@ -69,6 +69,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetWin32", RenderTargetSetWi
 
 RenderTargetSetWin32::RenderTargetSetWin32(ResourceManagerDx9* resourceManager)
 :	m_resourceManager(resourceManager)
+,	m_contentValid(false)
 {
 	m_resourceManager->add(this);
 }
@@ -127,6 +128,12 @@ void RenderTargetSetWin32::swap(int index1, int index2)
 
 void RenderTargetSetWin32::discard()
 {
+	m_contentValid = false;
+}
+
+bool RenderTargetSetWin32::isContentValid() const
+{
+	return m_contentValid;
 }
 
 bool RenderTargetSetWin32::read(int index, void* buffer) const
@@ -196,8 +203,7 @@ HRESULT RenderTargetSetWin32::lostDevice()
 	m_d3dTargetDepthStencilTexture.release();
 	m_d3dTargetDepthStencilSurface.release();
 
-	setContentValid(false);
-
+	m_contentValid = false;
 	return S_OK;
 }
 

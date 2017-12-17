@@ -39,7 +39,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Drawing/Filters/TransformFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Render/Types.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
@@ -969,18 +968,6 @@ bool TextureOutputPipeline::buildOutput(
 	{
 		log::error << L"Unable to commit output instance" << Endl;
 		return false;
-	}
-
-	// Create report.
-	Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Texture", outputGuid);
-	if (report)
-	{
-		report->set(L"path", outputPath);
-		report->set(L"width", width);
-		report->set(L"height", height);
-		report->set(L"mipCount", mipCount);
-		report->set(L"format", int32_t(textureFormat));
-		report->set(L"dataSize", int32_t(dataOffsetEnd - dataOffsetBegin));
 	}
 
 	return true;
