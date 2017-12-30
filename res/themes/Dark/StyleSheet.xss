@@ -1126,5 +1126,9 @@
 			<name>SolutionBuilder.AggregationRule</name>
 			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/SolutionBuilder/AggregationRule.image</value>
 		</item>
+		<item>
+			<name>Drone.Icon</name>
+			<value>$(TRAKTOR_HOME)/res/themes/Dark/Images/Drone/Icon.image</value>
+		</item>
 	</values>
 </object>

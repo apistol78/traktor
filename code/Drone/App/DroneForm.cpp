@@ -45,7 +45,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.drone.DroneForm", DroneForm, ui::Form)
 
 bool DroneForm::create(const CommandLine& cmdLine)
 {
-	std::wstring configurationFile = L"Drone.App.config";
+	std::wstring configurationFile = L"Traktor.Drone.config";
 
 	if (cmdLine.getCount() >= 1)
 		configurationFile = cmdLine.getString(0);
@@ -66,7 +66,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 	Ref< IStream > file = FileSystem::getInstance().open(configurationFile, File::FmRead);
 	if (!file)
 	{
-		log::error << L"Unable to open configuration \"" << configurationFile << L"\"" << Endl;
+		ui::MessageBox::show(L"Unable to open configuration \"" + configurationFile + L"\"", L"Configuration error", ui::MbIconError | ui::MbOk);
 		return false;
 	}
 
@@ -76,7 +76,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 
 	if (!m_settings)
 	{
-		log::error << L"Unable to read configuration \"" << cmdLine.getString(0) << L"\"" << Endl;
+		ui::MessageBox::show(L"Unable to read configuration \"" + configurationFile + L"\"", L"Configuration error", ui::MbIconError | ui::MbOk);
 		return false;
 	}
 
@@ -97,7 +97,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 	m_menuTools->add(new ui::MenuItem(ui::Command(L"Drone.Exit"), L"Exit"));
 
 	m_notificationIcon = new ui::NotificationIcon();
-	m_notificationIcon->create(c_title, new ui::StyleBitmap(L"SolutionBuilder.Solution")); // ui::Bitmap::load(c_ResourceTraktorTiny, sizeof(c_ResourceTraktorTiny), L"png"));
+	m_notificationIcon->create(c_title, new ui::StyleBitmap(L"Drone.Icon")); // ui::Bitmap::load(c_ResourceTraktorTiny, sizeof(c_ResourceTraktorTiny), L"png"));
 	m_notificationIcon->addEventHandler< ui::MouseButtonDownEvent >(this, &DroneForm::eventNotificationButtonDown);
 
 	m_toolExecuting = false;

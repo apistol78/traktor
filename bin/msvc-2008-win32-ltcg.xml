@@ -1026,6 +1026,26 @@
 				</second>
 			</item>
 			<item>
+				<first>lua</first>
+				<second type="SolutionBuilderMsvcGenericTool">
+					<toolName>VCCustomBuildTool</toolName>
+					<staticOptions>
+						<item>
+							<first>CommandLine</first>
+							<second>$(TRAKTOR_HOME)/bin/win32/BinaryInclude $(InputPath) .\Resources\$(InputName).h c_Resource$(InputName)</second>
+						</item>
+						<item>
+							<first>Description</first>
+							<second>Building embedded resource file $(InputName).h</second>
+						</item>
+						<item>
+							<first>Outputs</first>
+							<second>.\Resources\$(InputName).h</second>
+						</item>
+					</staticOptions>
+				</second>
+			</item>
+			<item>
 				<first>image</first>
 				<second type="SolutionBuilderMsvcGenericTool">
 					<toolName>VCCustomBuildTool</toolName>

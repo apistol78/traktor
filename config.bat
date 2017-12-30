@@ -1,7 +1,7 @@
 @echo off
 
 set TRAKTOR_HOME=%~dp0
-set SOLUTIONBUILDER=%TRAKTOR_HOME%bin\latest\win64\releaseshared\Traktor.SolutionBuilder.App
+set SOLUTIONBUILDER=%TRAKTOR_HOME%bin\win64\releasestatic\Traktor.SolutionBuilder.App
 
 set STEAMWORKS_SDK=%TRAKTOR_HOME%3rdp\steamworks-sdk-137
 set FBX_SDK=%TRAKTOR_HOME%3rdp\FbxSdk\2016.1.2
