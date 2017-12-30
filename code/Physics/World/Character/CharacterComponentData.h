@@ -7,6 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_physics_CharacterComponentData_H
 #define traktor_physics_CharacterComponentData_H
 
+#include <set>
+#include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
 #undef T_DLLCLASS
@@ -30,8 +32,6 @@ class IResourceManager;
 
 class Entity;
 class IEntityBuilder;
-class IEntityEventData;
-class IEntityEventManager;
 
 	}
 
@@ -39,6 +39,7 @@ class IEntityEventManager;
 	{
 
 class BodyDesc;
+class CollisionSpecification;
 class PhysicsManager;
 class CharacterComponent;
 
@@ -54,11 +55,8 @@ public:
 
 	explicit CharacterComponentData(BodyDesc* bodyDesc);
 
-	explicit CharacterComponentData(BodyDesc* bodyDesc, world::IEntityEventData* eventCollide);
-
 	Ref< CharacterComponent > createComponent(
 		const world::IEntityBuilder* entityBuilder,
-		world::IEntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
 	) const;
@@ -67,11 +65,17 @@ public:
 
 	const BodyDesc* getBodyDesc() const { return m_bodyDesc; }
 
-	const world::IEntityEventData* getEventCollide() const { return m_eventCollide; }
+	const std::set< resource::Id< CollisionSpecification > >& getTraceInclude() const { return m_traceInclude; }
+
+	const std::set< resource::Id< CollisionSpecification > >& getTraceIgnore() const { return m_traceIgnore; }
+
+	float getStepHeight() const { return m_stepHeight; }
 
 private:
 	Ref< BodyDesc > m_bodyDesc;
-	Ref< world::IEntityEventData > m_eventCollide;
+	std::set< resource::Id< CollisionSpecification > > m_traceInclude;
+	std::set< resource::Id< CollisionSpecification > > m_traceIgnore;
+	float m_stepHeight;
 };
 
 	}

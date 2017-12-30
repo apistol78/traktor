@@ -116,9 +116,15 @@ public:
 
 	void set(float x, float y) { m_value.set(x, y); }
 
-	float x() const { return m_value.x; }
+	void set_x(float x) { m_value.x = x; }
 
-	float y() const { return m_value.y; }
+	float get_x() const { return m_value.x; }
+
+	void set_y(float y) { m_value.y = y; }
+
+	float get_y() const { return m_value.y; }
+
+	float get_length() const { return m_value.length(); }
 
 	Vector2 add(const BoxedVector2* v) const { return m_value + v->m_value; }
 
@@ -137,8 +143,6 @@ public:
 	Vector2 div(float v) const { return m_value / v; }
 
 	float dot(const BoxedVector2* v) const { return traktor::dot(m_value, v->m_value); }
-
-	float length() const { return m_value.length(); }
 
 	Vector2 normalized() const { return m_value.normalized(); }
 
@@ -175,20 +179,30 @@ public:
 	
 	explicit BoxedVector4(float x, float y, float z, float w);
 
+	void set_x(float v) { m_value.set(0, Scalar(v)); }
+
+	float get_x() const { return m_value.x(); }
+	
+	void set_y(float v) { m_value.set(1, Scalar(v)); }
+
+	float get_y() const { return m_value.y(); }
+	
+	void set_z(float v) { m_value.set(2, Scalar(v)); }
+
+	float get_z() const { return m_value.z(); }
+	
+	void set_w(float v) { m_value.set(3, Scalar(v)); }
+
+	float get_w() const { return m_value.w(); }
+
+	Vector4 get_xyz0() const { return m_value.xyz0(); }
+
+	Vector4 get_xyz1() const { return m_value.xyz1(); }
+
+	float get_length() const { return m_value.length(); }
+
 	void set(float x, float y, float z, float w) { m_value.set(x, y, z, w); }
 	
-	float x() const { return m_value.x(); }
-	
-	float y() const { return m_value.y(); }
-	
-	float z() const { return m_value.z(); }
-	
-	float w() const { return m_value.w(); }
-
-	Vector4 xyz0() const { return m_value.xyz0(); }
-
-	Vector4 xyz1() const { return m_value.xyz1(); }
-
 	Vector4 add(const BoxedVector4* v) const { return m_value + v->m_value; }
 
 	Vector4 sub(const BoxedVector4* v) const { return m_value - v->m_value; }
@@ -208,8 +222,6 @@ public:
 	float dot(const BoxedVector4* v) const { return traktor::dot3(m_value, v->m_value); }
 
 	Vector4 cross(const BoxedVector4* v) const { return traktor::cross(m_value, v->m_value); }
-
-	float length() const { return m_value.length(); }
 
 	Vector4 normalized() const { return m_value.normalized(); }
 
@@ -308,13 +320,21 @@ public:
 
 	explicit BoxedQuaternion(const class BoxedMatrix44* m);
 	
-	float x() const { return m_value.e.x(); }
+	void set_x(float v) { m_value.e.set(0, Scalar(v)); }
+
+	float get_x() const { return m_value.e.x(); }
 	
-	float y() const { return m_value.e.y(); }
+	void set_y(float v) { m_value.e.set(1, Scalar(v)); }
+
+	float get_y() const { return m_value.e.y(); }
 	
-	float z() const { return m_value.e.z(); }
+	void set_z(float v) { m_value.e.set(2, Scalar(v)); }
+
+	float get_z() const { return m_value.e.z(); }
 	
-	float w() const { return m_value.e.w(); }
+	void set_w(float v) { m_value.e.set(3, Scalar(v)); }
+
+	float get_w() const { return m_value.e.w(); }
 
 	Quaternion normalized() const;
 
@@ -418,21 +438,21 @@ public:
 
 	explicit BoxedTransform(const BoxedMatrix44* m);
 	
-	const Vector4& translation() const;
+	const Vector4& get_translation() const { return m_value.translation(); }
 	
-	const Quaternion& rotation() const;
+	const Quaternion& get_rotation() const { return m_value.rotation(); }
 
-	Vector4 axisX() const;
+	Vector4 get_axisX() const { return m_value.axisX(); }
 
-	Vector4 axisY() const;
+	Vector4 get_axisY() const { return m_value.axisY(); }
 
-	Vector4 axisZ() const;
+	Vector4 get_axisZ() const { return m_value.axisZ(); }
 
-	Plane planeX() const;
+	Plane get_planeX() const;
 
-	Plane planeY() const;
+	Plane get_planeY() const;
 
-	Plane planeZ() const;
+	Plane get_planeZ() const;
 
 	Transform inverse() const;
 

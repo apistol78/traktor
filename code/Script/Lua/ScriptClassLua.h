@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_script_ScriptClassLua_H
 
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Containers/SmallMap.h"
 
 struct lua_State;
 
@@ -60,6 +61,16 @@ public:
 
 	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL;
 
+	virtual uint32_t getPropertiesCount() const T_OVERRIDE T_FINAL;
+
+	virtual std::string getPropertyName(uint32_t propertyId) const T_OVERRIDE T_FINAL;
+
+	virtual std::wstring getPropertySignature(uint32_t propertyId) const T_OVERRIDE T_FINAL;
+
+	virtual Any invokePropertyGet(ITypedObject* self, uint32_t propertyId) const T_OVERRIDE T_FINAL;
+
+	virtual void invokePropertySet(ITypedObject* self, uint32_t propertyId, const Any& value) const T_OVERRIDE T_FINAL;
+
 	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL;
 
 	virtual Any invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const T_OVERRIDE T_FINAL;
@@ -75,7 +86,8 @@ private:
 	ScriptContextLua* m_scriptContext;
 	lua_State*& m_luaState;
 	std::string m_className;
-	std::vector< Method > m_methods;
+	AlignedVector< Method > m_methods;
+	SmallMap< std::string, uint32_t > m_methodLookup;
 };
 
 	}

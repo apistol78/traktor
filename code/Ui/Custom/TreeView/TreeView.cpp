@@ -43,9 +43,10 @@ bool TreeView::create(Widget* parent, int32_t style)
 	m_autoEdit = bool((style & WsAutoEdit) == WsAutoEdit);
 
 	m_itemEditor = new Edit();
-	m_itemEditor->create(this, L"", WsBorder);
+	m_itemEditor->create(this, L"", WsBorder | WsWantAllInput);
 	m_itemEditor->hide();
 	m_itemEditor->addEventHandler< FocusEvent >(this, &TreeView::eventEditFocus);
+	m_itemEditor->addEventHandler< KeyDownEvent >(this, &TreeView::eventEditKeyDownEvent);
 
 	m_imageState = new ui::StyleBitmap(L"UI.Tree", c_ResourceTree, sizeof(c_ResourceTree));
 
@@ -244,6 +245,29 @@ void TreeView::eventEditFocus(FocusEvent* event)
 
 		if (!changeEvent.consumed())
 			m_editItem->setText(originalText);
+	}
+}
+
+void TreeView::eventEditKeyDownEvent(KeyDownEvent* event)
+{
+	if (event->getVirtualKey() == ui::VkReturn)
+	{
+		std::wstring originalText = m_editItem->getText();
+		std::wstring newText = m_itemEditor->getText();
+
+		m_itemEditor->hide();
+
+		m_editItem->setText(newText);
+
+		TreeViewContentChangeEvent changeEvent(this, m_editItem);
+		raiseEvent(&changeEvent);
+
+		if (!changeEvent.consumed())
+			m_editItem->setText(originalText);
+	}
+	else if (event->getVirtualKey() == ui::VkEscape)
+	{
+		m_itemEditor->hide();
 	}
 }
 

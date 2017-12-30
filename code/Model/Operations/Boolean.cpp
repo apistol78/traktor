@@ -56,12 +56,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Boolean", Boolean, IModelOperation)
 
 Boolean::Boolean(
 	const Model& modelA, const Transform& modelTransformA,
-	const Model& modelB, const Transform& modelTransformB
+	const Model& modelB, const Transform& modelTransformB,
+	BooleanOperation operation
 )
 :	m_modelA(modelA)
 ,	m_modelB(modelB)
 ,	m_modelTransformA(modelTransformA)
 ,	m_modelTransformB(modelTransformB)
+,	m_operation(operation)
 {
 }
 

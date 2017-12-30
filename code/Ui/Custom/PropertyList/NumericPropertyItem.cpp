@@ -89,7 +89,7 @@ void NumericPropertyItem::createInPlaceControls(Widget* parent)
 	m_editor->create(
 		parent,
 		L"",
-		WsNone,
+		WsWantAllInput,
 		m_hex ? 0 : new NumericEditValidator(
 			m_floatPoint,
 			m_limitMin,
@@ -98,6 +98,7 @@ void NumericPropertyItem::createInPlaceControls(Widget* parent)
 	);
 	m_editor->setVisible(false);
 	m_editor->addEventHandler< FocusEvent >(this, &NumericPropertyItem::eventEditFocus);
+	m_editor->addEventHandler< KeyDownEvent >(this, &NumericPropertyItem::eventEditKeyDownEvent);
 }
 
 void NumericPropertyItem::destroyInPlaceControls()
@@ -229,7 +230,7 @@ bool NumericPropertyItem::paste()
 
 void NumericPropertyItem::eventEditFocus(FocusEvent* event)
 {
-	if (event->lostFocus())
+	if (event->lostFocus() && m_editor->isVisible(false))
 	{
 		std::wstringstream ss(m_editor->getText());
 
@@ -246,6 +247,29 @@ void NumericPropertyItem::eventEditFocus(FocusEvent* event)
 
 		notifyChange();
 	}
+}
+
+void NumericPropertyItem::eventEditKeyDownEvent(KeyDownEvent* event)
+{
+	if (event->getVirtualKey() == ui::VkReturn)
+	{
+		std::wstringstream ss(m_editor->getText());
+
+		if (m_hex)
+		{
+			uint32_t value;
+			ss >> std::hex >> value;
+			m_value = double(value);
+		}
+		else
+			ss >> m_value;
+		
+		m_editor->setVisible(false);
+
+		notifyChange();
+	}
+	else if (event->getVirtualKey() == ui::VkEscape)
+		m_editor->setVisible(false);
 }
 
 		}

@@ -51,6 +51,20 @@ struct T_NOVTABLE IStaticMethod
 	virtual Any invoke(uint32_t argc, const Any* argv) const = 0;
 };
 
+struct T_NOVTABLE IPropertySet
+{
+	virtual ~IPropertySet() {}
+
+	virtual void invoke(ITypedObject* object, const Any& value) const = 0;
+};
+
+struct T_NOVTABLE IPropertyGet
+{
+	virtual ~IPropertyGet() {}
+
+	virtual Any invoke(ITypedObject* object) const = 0;
+};
+
 struct T_NOVTABLE IOperator
 {
 	virtual ~IOperator() {}
@@ -2476,6 +2490,57 @@ struct StaticMethod_7 < ClassType, void, Argument1Type, Argument2Type, Argument3
 
 /*! \} */
 
+/*! \name Properties */
+/*! \{ */
+
+template <
+	typename ClassType,
+	typename ValueType
+>
+struct PropertySet : public IPropertySet
+{
+	typedef typename MethodSignature_1< ClassType, void, ValueType, false >::method_t method_t;
+
+	method_t m_method;
+
+	PropertySet(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual void invoke(ITypedObject* object, const Any& value) const
+	{
+		(mandatory_non_null_type_cast< ClassType* >(object)->*m_method)(
+			CastAny< ValueType >::get(value)
+		);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ValueType,
+	bool Const
+>
+struct PropertyGet : public IPropertyGet
+{
+	typedef typename MethodSignature_0< ClassType, ValueType, Const >::method_t method_t;
+
+	method_t m_method;
+
+	PropertyGet(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(ITypedObject* object) const T_OVERRIDE T_FINAL
+	{
+		ValueType value = (mandatory_non_null_type_cast< ClassType* >(object)->*m_method)();
+		return CastAny< ValueType >::set(value);
+	}
+};
+
+/*! \} */
+
 /*! \name Operator */
 /*! \{ */
 
@@ -3115,6 +3180,26 @@ public:
 
 	/*! \} */
 
+	template < typename ValueType >
+	void addProperty(const std::string& propertyName, void (ClassType::*setter)(ValueType value), ValueType (ClassType::*getter)() const)
+	{
+		addProperty(
+			propertyName,
+			setter != 0 ? new PropertySet< ClassType, ValueType >(setter) : 0,
+			getter != 0 ? new PropertyGet< ClassType, ValueType, true >(getter) : 0
+		);
+	}
+
+	template < typename ValueType >
+	void addProperty(const std::string& propertyName, void (ClassType::*setter)(ValueType value), ValueType (ClassType::*getter)())
+	{
+		addProperty(
+			propertyName,
+			setter != 0 ? new PropertySet< ClassType, ValueType >(setter) : 0,
+			getter != 0 ? new PropertyGet< ClassType, ValueType, false >(getter) : 0
+		);
+	}
+
 	template <
 		typename ReturnType,
 		typename Argument1Type
@@ -3256,6 +3341,35 @@ public:
 		}
 	}
 
+	virtual uint32_t getPropertiesCount() const T_OVERRIDE T_FINAL
+	{
+		return uint32_t(m_properties.size());
+	}
+
+	virtual std::string getPropertyName(uint32_t propertyId) const T_OVERRIDE T_FINAL
+	{
+		return m_properties[propertyId].name;
+	}
+
+	virtual std::wstring getPropertySignature(uint32_t propertyId) const T_OVERRIDE T_FINAL
+	{
+		return mbstows(m_properties[propertyId].name);
+	}
+	
+	virtual Any invokePropertyGet(ITypedObject* self, uint32_t propertyId) const T_OVERRIDE T_FINAL
+	{
+		if (m_properties[propertyId].getter)
+			return m_properties[propertyId].getter->invoke(self);
+		else
+			return Any();
+	}
+
+	virtual void invokePropertySet(ITypedObject* self, uint32_t propertyId, const Any& value) const T_OVERRIDE T_FINAL
+	{
+		if (m_properties[propertyId].setter)
+			m_properties[propertyId].setter->invoke(self, value);
+	}
+
 	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
 	{
 		if (m_unknown)
@@ -3302,10 +3416,18 @@ private:
 		std::vector< IStaticMethod* > methods;
 	};
 
+	struct PropertyInfo
+	{
+		std::string name;
+		IPropertySet* setter;
+		IPropertyGet* getter;
+	};
+
 	std::vector< IConstructor* > m_constructors;
 	std::vector< ConstInfo > m_consts;
 	std::vector< MethodInfo > m_methods;
 	std::vector< StaticMethodInfo > m_staticMethods;
+	std::vector< PropertyInfo > m_properties;
 	std::vector< IOperator* > m_operators[4];
 	unknown_fn_t m_unknown;
 
@@ -3356,6 +3478,25 @@ private:
 		m.methods.resize(argc + 1, 0);
 		m.methods[argc] = method;
 		m_staticMethods.push_back(m);
+	}
+
+	void addProperty(const std::string& propertyName, IPropertySet* setter, IPropertyGet* getter)
+	{
+		for (typename std::vector< PropertyInfo >::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
+		{
+			if (i->name == propertyName)
+			{
+				i->setter = setter;
+				i->getter = getter;
+				return;
+			}
+		}
+
+		PropertyInfo p;
+		p.name = propertyName;
+		p.setter = setter;
+		p.getter = getter;
+		m_properties.push_back(p);
 	}
 };
 

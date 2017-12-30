@@ -39,7 +39,8 @@ void dumpStack(lua_State* luaState, OutputStream& os, int32_t base)
 		case LUA_TTABLE:
 			os << i << L".\ttable" << Endl;
 
-			lua_getfield(luaState, i, "__name");
+			lua_pushstring(luaState, "__name");
+			lua_rawget(luaState, -2);
 			if (lua_isstring(luaState, -1))
 				os << i << L"\t\t__name \"" << mbstows(lua_tostring(luaState, -1)) << L"\"" << Endl;
 			lua_pop(luaState, 1);

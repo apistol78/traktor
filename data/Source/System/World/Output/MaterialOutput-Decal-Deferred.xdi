@@ -276,8 +276,8 @@
 			<id>{401D1D9A-92D8-2941-8D2E-E9B156CCD891}</id>
 			<comment/>
 			<position>
-				<first>-681</first>
-				<second>1034</second>
+				<first>-670</first>
+				<second>937</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1,traktor.render.Node:1">
@@ -366,8 +366,8 @@
 			<id>{397C8BD2-BB8F-B144-AF94-58BE9760EC50}</id>
 			<comment/>
 			<position>
-				<first>-540</first>
-				<second>995</second>
+				<first>-417</first>
+				<second>870</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -610,6 +610,14 @@
 				<second>1223</second>
 			</position>
 		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{72E269A9-ABB5-8549-9E99-0811F20078A4}</id>
+			<comment/>
+			<position>
+				<first>-672</first>
+				<second>808</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -719,16 +727,6 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[18]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1130,6 +1128,36 @@
 			<destination>
 				<node ref="/object/nodes/item[38]"/>
 				<name>Pass</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

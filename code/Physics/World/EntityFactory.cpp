@@ -78,7 +78,7 @@ Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntity
 Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	if (const CharacterComponentData* characterComponentData = dynamic_type_cast< const CharacterComponentData* >(&entityComponentData))
-		return characterComponentData->createComponent(builder, m_eventManager, m_resourceManager, m_physicsManager);
+		return characterComponentData->createComponent(builder, m_resourceManager, m_physicsManager);
 
 	if (const RigidBodyComponentData* rigidBodyComponentData = dynamic_type_cast< const RigidBodyComponentData* >(&entityComponentData))
 		return rigidBodyComponentData->createComponent(builder, m_eventManager, m_resourceManager, m_physicsManager);

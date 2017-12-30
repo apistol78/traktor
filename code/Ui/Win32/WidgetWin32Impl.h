@@ -46,6 +46,7 @@ public:
 	,	m_doubleBuffer(false)
 	,	m_canvasImpl(0)
 	,	m_hCursor(NULL)
+	,	m_ownCursor(false)
 	{
 	}
 
@@ -486,6 +487,7 @@ protected:
 	CanvasWin32* m_canvasImpl;
 	SmartFont m_hFont;
 	HCURSOR m_hCursor;
+	bool m_ownCursor;
 	std::map< uint32_t, uint32_t > m_timers;
 
 	static
@@ -713,7 +715,9 @@ protected:
 		if (!m.consumed())
 			outPass = true;
 
-		SetCursor(m_hCursor);
+		if (m_ownCursor)
+			SetCursor(m_hCursor);
+
 		return TRUE;
 	}
 

@@ -28,7 +28,7 @@ ScriptClassLua::ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua
 
 ScriptClassLua::~ScriptClassLua()
 {
-	for (std::vector< Method >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+	for (AlignedVector< Method >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
 	{
 		if (m_luaState)
 			luaL_unref(m_luaState, LUA_REGISTRYINDEX, i->ref);
@@ -37,10 +37,10 @@ ScriptClassLua::~ScriptClassLua()
 
 void ScriptClassLua::addMethod(const std::string& name, int32_t ref)
 {
-	Method m;
+	Method& m = m_methods.push_back();
 	m.name = name;
 	m.ref = ref;
-	m_methods.push_back(m);
+	m_methodLookup[name] = uint32_t(m_methods.size() - 1);
 }
 
 const TypeInfo& ScriptClassLua::getExportType() const
@@ -62,9 +62,16 @@ Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc,
 {
 	m_scriptManager->lock(m_scriptContext);
 
-	// Create a script object box for "self".
-	m_scriptManager->pushObject(self);
+	// Allocate table for script side object.
+	if (self)
+		m_scriptManager->pushObject(self);
+	else
+		lua_newtable(m_luaState);
+
+	// Create instance table.
 	int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+	// Create C++ script object.
 	Ref< ScriptObjectLua > scriptSelf = new ScriptObjectLua(m_luaState, tableRef);
 
 	// Initialize prototype members before calling constructor.
@@ -85,18 +92,16 @@ Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc,
 		argv2[i + 1] = argv[i];
 
 	// Call constructor method in script land.
-	for (std::vector< Method >::const_iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+	SmallMap< std::string, uint32_t >::const_iterator i = m_methodLookup.find("new");
+	if (i != m_methodLookup.end())
 	{
-		if (i->name == "new")
-		{
-			m_scriptContext->executeMethod(
-				0,
-				i->ref,
-				argc + 1,
-				argv2
-			);
-			break;
-		}
+		const Method& m = m_methods[i->second];
+		m_scriptContext->executeMethod(
+			0,
+			m.ref,
+			argc + 1,
+			argv2
+		);
 	}
 
 	return scriptSelf;
@@ -161,6 +166,30 @@ std::wstring ScriptClassLua::getStaticMethodSignature(uint32_t methodId) const
 Any ScriptClassLua::invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const
 {
 	return Any();
+}
+
+uint32_t ScriptClassLua::getPropertiesCount() const
+{
+	return 0;
+}
+
+std::string ScriptClassLua::getPropertyName(uint32_t propertyId) const
+{
+	return "";
+}
+
+std::wstring ScriptClassLua::getPropertySignature(uint32_t propertyId) const
+{
+	return L"";
+}
+
+Any ScriptClassLua::invokePropertyGet(ITypedObject* self, uint32_t propertyId) const
+{
+	return Any();
+}
+
+void ScriptClassLua::invokePropertySet(ITypedObject* self, uint32_t propertyId, const Any& value) const
+{
 }
 
 Any ScriptClassLua::invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const

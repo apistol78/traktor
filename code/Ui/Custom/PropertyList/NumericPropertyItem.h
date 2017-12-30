@@ -83,6 +83,8 @@ private:
 	Point m_mouseLastPosition;
 
 	void eventEditFocus(FocusEvent* event);
+
+	void eventEditKeyDownEvent(KeyDownEvent* event);
 };
 
 		}

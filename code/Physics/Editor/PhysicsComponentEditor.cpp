@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Physics/ShapeDesc.h"
 #include "Physics/Editor/PhysicsComponentEditor.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Character/CharacterComponentData.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
 #include "Physics/World/Vehicle/VehicleComponentData.h"

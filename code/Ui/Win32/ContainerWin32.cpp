@@ -42,6 +42,7 @@ bool ContainerWin32::create(IWidget* parent, int style)
 	if (!WidgetWin32Impl::create(style))
 		return false;
 
+	m_ownCursor = true;
 	return true;
 }
 

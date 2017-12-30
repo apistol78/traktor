@@ -48,6 +48,7 @@ bool UserWidgetWin32::create(IWidget* parent, int style)
 
 	m_hWnd.registerMessageHandler(WM_LBUTTONDOWN, new MethodMessageHandler< UserWidgetWin32 >(this, &UserWidgetWin32::eventButtonDown));
 
+	m_ownCursor = true;
 	return true;
 }
 

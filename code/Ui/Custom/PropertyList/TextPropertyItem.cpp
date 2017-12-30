@@ -53,10 +53,11 @@ void TextPropertyItem::createInPlaceControls(Widget* parent)
 		m_editor->create(
 			parent,
 			L"",
-			WsNone
+			WsWantAllInput
 		);
 		m_editor->setVisible(false);
 		m_editor->addEventHandler< FocusEvent >(this, &TextPropertyItem::eventEditFocus);
+		m_editor->addEventHandler< KeyDownEvent >(this, &TextPropertyItem::eventEditKeyDownEvent);
 	}
 	else
 	{
@@ -159,12 +160,24 @@ bool TextPropertyItem::paste()
 
 void TextPropertyItem::eventEditFocus(FocusEvent* event)
 {
-	if (event->lostFocus())
+	if (event->lostFocus() && m_editor->isVisible(false))
 	{
 		m_value = m_editor->getText();
 		m_editor->setVisible(false);
 		notifyChange();
 	}
+}
+
+void TextPropertyItem::eventEditKeyDownEvent(KeyDownEvent* event)
+{
+	if (event->getVirtualKey() == ui::VkReturn)
+	{
+		m_value = m_editor->getText();
+		m_editor->setVisible(false);
+		notifyChange();
+	}
+	else if (event->getVirtualKey() == ui::VkEscape)
+		m_editor->setVisible(false);
 }
 
 void TextPropertyItem::eventClick(ButtonClickEvent* event)

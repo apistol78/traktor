@@ -526,42 +526,17 @@ BoxedTransform::BoxedTransform(const BoxedMatrix44* m)
 {
 }
 
-const Vector4& BoxedTransform::translation() const
-{
-	return m_value.translation();
-}
-
-const Quaternion& BoxedTransform::rotation() const
-{
-	return m_value.rotation();
-}
-
-Vector4 BoxedTransform::axisX() const
-{
-	return m_value.axisX();
-}
-
-Vector4 BoxedTransform::axisY() const
-{
-	return m_value.axisY();
-}
-
-Vector4 BoxedTransform::axisZ() const
-{
-	return m_value.axisZ();
-}
-
-Plane BoxedTransform::planeX() const
+Plane BoxedTransform::get_planeX() const
 {
 	return Plane(m_value.axisX(), m_value.translation());
 }
 
-Plane BoxedTransform::planeY() const
+Plane BoxedTransform::get_planeY() const
 {
 	return Plane(m_value.axisY(), m_value.translation());
 }
 
-Plane BoxedTransform::planeZ() const
+Plane BoxedTransform::get_planeZ() const
 {
 	return Plane(m_value.axisZ(), m_value.translation());
 }
@@ -1383,9 +1358,10 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector2->addConstructor();
 	classBoxedVector2->addConstructor< float, float >();
 	classBoxedVector2->addConstant("zero", CastAny< Vector2 >::set(Vector2::zero()));
+	classBoxedVector2->addProperty< float >("x", &BoxedVector2::set_x, &BoxedVector2::get_x);
+	classBoxedVector2->addProperty< float >("y", &BoxedVector2::set_y, &BoxedVector2::get_y);
+	classBoxedVector2->addProperty< float >("length", 0, &BoxedVector2::get_length);
 	classBoxedVector2->addMethod("set", &BoxedVector2::set);
-	classBoxedVector2->addMethod("x", &BoxedVector2::x);
-	classBoxedVector2->addMethod("y", &BoxedVector2::y);
 	classBoxedVector2->addMethod< Vector2, const BoxedVector2* >("add", &BoxedVector2::add);
 	classBoxedVector2->addMethod< Vector2, const BoxedVector2* >("sub", &BoxedVector2::sub);
 	classBoxedVector2->addMethod< Vector2, const BoxedVector2* >("mul", &BoxedVector2::mul);
@@ -1395,7 +1371,6 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector2->addMethod< Vector2, float >("mulf", &BoxedVector2::mul);
 	classBoxedVector2->addMethod< Vector2, float >("divf", &BoxedVector2::div);
 	classBoxedVector2->addMethod("dot", &BoxedVector2::dot);
-	classBoxedVector2->addMethod("length", &BoxedVector2::length);
 	classBoxedVector2->addMethod("normalized", &BoxedVector2::normalized);
 	classBoxedVector2->addMethod("neg", &BoxedVector2::neg);
 	classBoxedVector2->addMethod("perpendicular", &BoxedVector2::perpendicular);
@@ -1417,13 +1392,14 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector4->addConstructor< float, float, float, float >();
 	classBoxedVector4->addConstant("zero", CastAny< Vector4 >::set(Vector4::zero()));
 	classBoxedVector4->addConstant("origo", CastAny< Vector4 >::set(Vector4::origo()));
+	classBoxedVector4->addProperty< float >("x", &BoxedVector4::set_x, &BoxedVector4::get_x);
+	classBoxedVector4->addProperty< float >("y", &BoxedVector4::set_y, &BoxedVector4::get_y);
+	classBoxedVector4->addProperty< float >("z", &BoxedVector4::set_z, &BoxedVector4::get_z);
+	classBoxedVector4->addProperty< float >("w", &BoxedVector4::set_w, &BoxedVector4::get_w);
+	classBoxedVector4->addProperty< Vector4 >("xyz0", 0, &BoxedVector4::get_xyz0);
+	classBoxedVector4->addProperty< Vector4 >("xyz1", 0, &BoxedVector4::get_xyz1);
+	classBoxedVector4->addProperty< float >("length", 0, &BoxedVector4::get_length);
 	classBoxedVector4->addMethod("set", &BoxedVector4::set);
-	classBoxedVector4->addMethod("x", &BoxedVector4::x);
-	classBoxedVector4->addMethod("y", &BoxedVector4::y);
-	classBoxedVector4->addMethod("z", &BoxedVector4::z);
-	classBoxedVector4->addMethod("w", &BoxedVector4::w);
-	classBoxedVector4->addMethod("xyz0", &BoxedVector4::xyz0);
-	classBoxedVector4->addMethod("xyz1", &BoxedVector4::xyz1);
 	classBoxedVector4->addMethod< Vector4, const BoxedVector4* >("add", &BoxedVector4::add);
 	classBoxedVector4->addMethod< Vector4, const BoxedVector4* >("sub", &BoxedVector4::sub);
 	classBoxedVector4->addMethod< Vector4, const BoxedVector4* >("mul", &BoxedVector4::mul);
@@ -1434,7 +1410,6 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector4->addMethod< Vector4, float >("divf", &BoxedVector4::div);
 	classBoxedVector4->addMethod("dot", &BoxedVector4::dot);
 	classBoxedVector4->addMethod("cross", &BoxedVector4::cross);
-	classBoxedVector4->addMethod("length", &BoxedVector4::length);
 	classBoxedVector4->addMethod("normalized", &BoxedVector4::normalized);
 	classBoxedVector4->addMethod("neg", &BoxedVector4::neg);
 	classBoxedVector4->addStaticMethod("lerp", &BoxedVector4::lerp);
@@ -1473,10 +1448,10 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedQuaternion->addConstructor< const BoxedVector4*, const BoxedVector4* >();
 	classBoxedQuaternion->addConstructor< const BoxedMatrix44* >();
 	classBoxedQuaternion->addConstant("identity", CastAny< Quaternion >::set(Quaternion::identity()));
-	classBoxedQuaternion->addMethod("x", &BoxedQuaternion::x);
-	classBoxedQuaternion->addMethod("y", &BoxedQuaternion::y);
-	classBoxedQuaternion->addMethod("z", &BoxedQuaternion::z);
-	classBoxedQuaternion->addMethod("w", &BoxedQuaternion::w);
+	classBoxedQuaternion->addProperty< float >("x", &BoxedQuaternion::set_x, &BoxedQuaternion::get_x);
+	classBoxedQuaternion->addProperty< float >("y", &BoxedQuaternion::set_y, &BoxedQuaternion::get_y);
+	classBoxedQuaternion->addProperty< float >("x", &BoxedQuaternion::set_z, &BoxedQuaternion::get_z);
+	classBoxedQuaternion->addProperty< float >("y", &BoxedQuaternion::set_w, &BoxedQuaternion::get_w);
 	classBoxedQuaternion->addMethod("normalized", &BoxedQuaternion::normalized);
 	classBoxedQuaternion->addMethod("inverse", &BoxedQuaternion::inverse);
 	classBoxedQuaternion->addMethod("concat", &BoxedQuaternion::concat);
@@ -1514,14 +1489,14 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedTransform->addConstructor< const BoxedVector4*, const BoxedQuaternion* >();
 	classBoxedTransform->addConstructor< const BoxedMatrix44* >();
 	classBoxedTransform->addConstant("identity", CastAny< Transform >::set(Transform::identity()));
-	classBoxedTransform->addMethod("translation", &BoxedTransform::translation);
-	classBoxedTransform->addMethod("rotation", &BoxedTransform::rotation);
-	classBoxedTransform->addMethod("axisX", &BoxedTransform::axisX);
-	classBoxedTransform->addMethod("axisY", &BoxedTransform::axisY);
-	classBoxedTransform->addMethod("axisZ", &BoxedTransform::axisZ);
-	classBoxedTransform->addMethod("planeX", &BoxedTransform::planeX);
-	classBoxedTransform->addMethod("planeY", &BoxedTransform::planeY);
-	classBoxedTransform->addMethod("planeZ", &BoxedTransform::planeZ);
+	classBoxedTransform->addProperty< const Vector4& >("translation", 0, &BoxedTransform::get_translation);
+	classBoxedTransform->addProperty< const Quaternion& >("rotation", 0, &BoxedTransform::get_rotation);
+	classBoxedTransform->addProperty< Vector4 >("axisX", 0, &BoxedTransform::get_axisX);
+	classBoxedTransform->addProperty< Vector4 >("axisY", 0, &BoxedTransform::get_axisY);
+	classBoxedTransform->addProperty< Vector4 >("axisZ", 0, &BoxedTransform::get_axisZ);
+	classBoxedTransform->addProperty< Plane >("planeX", 0, &BoxedTransform::get_planeX);
+	classBoxedTransform->addProperty< Plane >("planeY", 0, &BoxedTransform::get_planeY);
+	classBoxedTransform->addProperty< Plane >("planeZ", 0, &BoxedTransform::get_planeZ);
 	classBoxedTransform->addMethod("inverse", &BoxedTransform::inverse);
 	classBoxedTransform->addMethod("toMatrix44", &BoxedTransform::toMatrix44);
 	classBoxedTransform->addMethod("concat", &BoxedTransform::concat);

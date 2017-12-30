@@ -259,6 +259,31 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			T_MEASURE_STATEMENT_M((*i)->update(info), 1.0 / 60.0, type_name(*i));
 
+		// Issue script post update.
+		if (validateScriptContext())
+		{
+			T_PROFILER_SCOPE(L"Script post update");
+
+			Any argv[] =
+			{
+				Any::fromObject(const_cast< UpdateInfo* >(&info))
+			};
+
+			if (m_object)
+			{
+				uint32_t methodIdPostUpdate = findRuntimeClassMethodId(m_class, "postUpdate");
+				if (methodIdPostUpdate != ~0U)
+				{
+					T_MEASURE_STATEMENT(m_class->invoke(m_object, methodIdPostUpdate, sizeof_array(argv), argv), 1.0 / 60.0);
+				}
+			}
+
+			if (m_scriptContext)
+			{
+				T_MEASURE_STATEMENT(m_scriptContext->executeFunction("postUpdate", sizeof_array(argv), argv), 1.0 / 60.0);
+			}
+		}
+
 		// Remove ourself as a global in shared script context.
 		if (m_environment->getScript())
 			m_environment->getScript()->getScriptContext()->setGlobal("stage", Any());

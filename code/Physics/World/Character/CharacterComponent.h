@@ -22,8 +22,6 @@ namespace traktor
 	{
 
 class Entity;
-class IEntityEvent;
-class IEntityEventManager;
 
 	}
 
@@ -31,7 +29,8 @@ class IEntityEventManager;
 	{
 
 class Body;
-struct CollisionInfo;
+class CharacterComponentData;
+class PhysicsManager;
 
 /*! \brief
  * \ingroup Physics
@@ -42,9 +41,11 @@ class T_DLLCLASS CharacterComponent : public world::IEntityComponent
 
 public:
 	CharacterComponent(
+		PhysicsManager* physicsManager,
+		const CharacterComponentData* data,
 		Body* body,
-		world::IEntityEventManager* eventManager,
-		world::IEntityEvent* eventCollide
+		uint32_t traceInclude,
+		uint32_t traceIgnore
 	);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
@@ -57,13 +58,23 @@ public:
 
 	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
+	void setHeadAngle(float headAngle);
+
+	float getHeadAngle() const;
+
+	void setVelocity(const Vector4& velocity);
+
+	const Vector4& getVelocity() const;
+
 private:
 	world::Entity* m_owner;
+	Ref< PhysicsManager > m_physicsManager;
+	Ref< const CharacterComponentData > m_data;
 	Ref< Body > m_body;
-	Ref< world::IEntityEventManager > m_eventManager;
-	Ref< world::IEntityEvent > m_eventCollide;
-
-	void collisionListener(const physics::CollisionInfo& collisionInfo);
+	uint32_t m_traceInclude;
+	uint32_t m_traceIgnore;
+	float m_headAngle;
+	Vector4 m_velocity;
 };
 
 	}
