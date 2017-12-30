@@ -17985,6 +17985,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Prefab</name>
+					<items>
+						<item type="File">
+							<fileName>Prefab/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -18996,6 +19005,16 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[38]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[13]/dependencies/item[7]/project/dependencies/item[13]/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[13]/dependencies/item[15]/project/dependencies/item[5]/project"/>
 				</item>
 			</dependencies>
 		</item>

@@ -33,6 +33,7 @@ BidirectionalObjectTransport::~BidirectionalObjectTransport()
 
 void BidirectionalObjectTransport::close()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	safeClose(m_socket);
 }
 

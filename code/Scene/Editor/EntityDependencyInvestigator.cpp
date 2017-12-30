@@ -64,7 +64,7 @@ bool EntityDependencyInvestigator::create(ui::Widget* parent)
 	setText(i18n::Text(L"SCENE_EDITOR_DEPENDENCY_INVESTIGATOR"));
 
 	m_dependencyTree = new ui::custom::TreeView();
-	m_dependencyTree->create(this, (ui::custom::TreeView::WsDefault & ~ui::WsClientBorder) | ui::WsDoubleBuffer);
+	m_dependencyTree->create(this, (ui::custom::TreeView::WsDefault & ~(ui::custom::TreeView::WsAutoEdit | ui::WsClientBorder)) | ui::WsDoubleBuffer);
 	m_dependencyTree->addImage(new ui::StyleBitmap(L"Scene.Folders"), 2);
 	m_dependencyTree->addImage(new ui::StyleBitmap(L"Scene.Types"), 23);
 	m_dependencyTree->addEventHandler< ui::custom::TreeViewItemActivateEvent >(this, &EntityDependencyInvestigator::eventDependencyActivate);

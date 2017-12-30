@@ -39,8 +39,8 @@ class IEntityBuilder;
 	namespace physics
 	{
 
-class CollisionSpecification;
 class BodyDesc;
+class CollisionSpecification;
 class PhysicsManager;
 class VehicleComponent;
 class WheelData;

@@ -71,7 +71,7 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 	if (!m_objectEditor->create(this, instance, object))
 		return false;
 
-	startTimer(500);
+	startTimer(1000);
 	update();
 
 	return true;

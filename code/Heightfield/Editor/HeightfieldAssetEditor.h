@@ -16,7 +16,14 @@ class IEditor;
 	{
 	
 class Edit;
+class Image;
 
+		namespace custom
+		{
+		
+class ToolBarButtonClickEvent;
+
+		}
 	}
 
 	namespace hf
@@ -49,10 +56,14 @@ private:
 	Ref< db::Instance > m_instance;
 	Ref< HeightfieldAsset > m_asset;
 	Ref< Heightfield > m_heightfield;
-
 	Ref< ui::Edit > m_editExtent[3];
 	Ref< ui::Edit > m_editVista;
 	Ref< ui::Edit > m_editSize;
+	Ref< ui::Image > m_imagePreview;
+
+	void updatePreviewImage();
+
+	void eventToolBar(ui::custom::ToolBarButtonClickEvent* event);
 };
 
 	}

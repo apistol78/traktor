@@ -1276,6 +1276,30 @@
       <first>FIND_IN_DATABASE</first>
       <second>Find in database</second>
     </item>
+	<item>
+		<first>HEIGHTFIELD_ASSET_EXTENT</first>
+		<second>World extent</second>
+	</item>
+	<item>
+		<first>HEIGHTFIELD_ASSET_EXTENT_UNIT</first>
+		<second>(world units)</second>
+	</item>
+	<item>
+		<first>HEIGHTFIELD_ASSET_VISTA</first>
+		<second>Vista distance</second>
+	</item>
+	<item>
+		<first>HEIGHTFIELD_ASSET_VISTA_UNIT</first>
+		<second>(world units)</second>
+	</item>
+	<item>
+		<first>HEIGHTFIELD_ASSET_SIZE</first>
+		<second>Data size</second>
+	</item>
+	<item>
+		<first>HEIGHTFIELD_ASSET_SIZE_UNIT</first>
+		<second>(pixels)</second>
+	</item>
     <item>
       <first>IMPORT_ANIMATION_DESCRIPTION</first>
       <second>Animation...</second>

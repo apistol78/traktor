@@ -8,8 +8,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Resource/IResourceManager.h"
-#include "Resource/Member.h"
 #include "Physics/Body.h"
 #include "Physics/BodyDesc.h"
 #include "Physics/CollisionSpecification.h"
@@ -18,6 +16,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Physics/World/Vehicle/VehicleComponentData.h"
 #include "Physics/World/Vehicle/Wheel.h"
 #include "Physics/World/Vehicle/WheelData.h"
+#include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 #include "World/Entity.h"
 #include "World/IEntityBuilder.h"
 

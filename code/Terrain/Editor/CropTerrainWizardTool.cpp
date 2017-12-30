@@ -20,6 +20,21 @@ namespace traktor
 {
 	namespace terrain
 	{
+		namespace
+		{
+		
+Ref< drawing::Image > loadImage(IStream* stream)
+{
+	Ref< drawing::Image > img = drawing::Image::load(stream, L"tri");
+	if (!img)
+	{
+		stream->seek(IStream::SeekSet, 0);
+		img = drawing::Image::load(stream, L"tga");
+	}
+	return img;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.CropTerrainWizardTool", 0, CropTerrainWizardTool, editor::IWizardTool)
 
@@ -55,7 +70,7 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	file = instance->readData(L"Color");
 	if (file)
 	{
-		colorImage = drawing::Image::load(file, L"tga");
+		colorImage = loadImage(file);
 		file->close();
 		file = 0;
 	}
@@ -63,7 +78,7 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	file = instance->readData(L"Splat");
 	if (file)
 	{
-		splatImage = drawing::Image::load(file, L"tga");
+		splatImage = loadImage(file);
 		file->close();
 		file = 0;
 	}

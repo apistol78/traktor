@@ -7,14 +7,17 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_script_ScriptUtilitiesLua_H
 #define traktor_script_ScriptUtilitiesLua_H
 
-#if defined(_DEBUG)
+//#if defined(_DEBUG)
 #	define T_SCRIPT_LUA_FORCE_STACK_CHECK 1
-#else
-#	define T_SCRIPT_LUA_FORCE_STACK_CHECK 0
-#endif
+//#else
+//#	define T_SCRIPT_LUA_FORCE_STACK_CHECK 0
+//#endif
 
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#if T_SCRIPT_LUA_FORCE_STACK_CHECK
+#	include "Core/Io/StringOutputStream.h"
+#endif
 
 extern "C"
 {
@@ -44,7 +47,12 @@ public:
 	~CheckStack()
 	{
 		int32_t top = lua_gettop(m_luaState);
-		T_FATAL_ASSERT (m_top == top);
+		if (m_top != top)
+		{
+			StringOutputStream ss;
+			ss << L"LUA stack unbalanced, entering with " << m_top << L", leaving with " << top;
+			T_FATAL_ASSERT_M (m_top == top, ss.str());
+		}
 	}
 
 private:

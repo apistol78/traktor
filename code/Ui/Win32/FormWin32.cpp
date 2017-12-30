@@ -83,6 +83,7 @@ bool FormWin32::create(IWidget* parent, const std::wstring& text, int width, int
 		new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventTaskBarButtonCreated)
 	);
 
+	m_ownCursor = true;
 	return true;
 }
 

@@ -193,7 +193,7 @@ void Window::registerDefaultClass()
 	wc.hInstance     = g_hInstance;
 	wc.hbrBackground = NULL;
 	wc.hIcon         = LoadIcon(g_hInstance, _T("DEFAULTICON"));
-	wc.hCursor       = NULL; //LoadCursor(NULL, IDC_ARROW);
+	wc.hCursor       = NULL; // LoadCursor(NULL, IDC_ARROW);
 	wc.lpszMenuName  = NULL;
 	wc.lpszClassName = _T("TraktorWin32Class");
 

@@ -31,9 +31,17 @@ class T_DLLCLASS Boolean : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
+	enum BooleanOperation
+	{
+		BoAdd,
+		BoUninon,
+		DoDifference
+	};
+
 	Boolean(
 		const Model& modelA, const Transform& modelTransformA,
-		const Model& modelB, const Transform& modelTransformB
+		const Model& modelB, const Transform& modelTransformB,
+		BooleanOperation operation
 	);
 
 	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
@@ -43,6 +51,7 @@ private:
 	const Model& m_modelB;
 	Transform m_modelTransformA;
 	Transform m_modelTransformB;
+	BooleanOperation m_operation;
 };
 
 	}

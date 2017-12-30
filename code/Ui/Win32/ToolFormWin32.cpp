@@ -46,6 +46,7 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 	m_hWnd.registerMessageHandler(WM_NCRBUTTONUP, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventNcButtonUp));
 	m_hWnd.registerMessageHandler(WM_NCMOUSEMOVE, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventNcMouseMove));
 
+	m_ownCursor = true;
 	return true;
 }
 

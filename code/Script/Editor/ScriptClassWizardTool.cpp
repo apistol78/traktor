@@ -80,16 +80,13 @@ bool ScriptClassWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	ss << L"-- " << className << Endl;
 	ss << Endl;
 	if (inheritClassName.empty())
-		ss << className << L" = " << className << L" or {}" << Endl;
+		ss << className << L" = " << className << L" or class(\"" << className << L"\")" << Endl;
 	else
-		ss << className << L" = " << className << L" or inherit(" << inheritClassName << L")" << Endl;
-	ss << className << L"_meta = " << className << L"_meta or { __index = " << className << L" }" << Endl;
+		ss << className << L" = " << className << L" or class(\"" << className << L"\", " << inheritClassName << L")" << Endl;
 	ss << Endl;
-	ss << L"function " << className << L".new(o)" << Endl;
-	ss << L"\to = o or {}" << Endl;
-	ss << L"\tsetmetatable(o, " << className << L"_meta)" << Endl;
-	ss << Endl;
-	ss << L"\treturn o" << Endl;
+	ss << L"function " << className << L":new()" << Endl;
+	if (!inheritClassName.empty())
+		ss << L"\t" << inheritClassName << L".new(self)" << Endl;
 	ss << L"end" << Endl;
 
 	Ref< Script > s = new Script(ss.str());

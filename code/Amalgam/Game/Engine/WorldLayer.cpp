@@ -210,11 +210,21 @@ void WorldLayer::prepare(const UpdateInfo& info)
 		}
 	}
 
+	// Use transform from camera initially, camera can change during update so
+	// it's reset in "build".
 	if (m_cameraEntity)
+	{
+		Transform cameraTransform;
+		m_cameraEntity->getTransform(cameraTransform);
+
+		m_cameraTransform.step();
+		m_cameraTransform.set(cameraTransform);
+
 		m_worldRenderView.setView(
 			m_worldRenderView.getView(),
 			(m_cameraTransform.get(info.getInterval()) * m_cameraOffset).inverse().toMatrix44()
 		);
+	}
 
 	m_worldRenderView.setTimes(
 		info.getStateTime(),
@@ -245,15 +255,6 @@ void WorldLayer::update(const UpdateInfo& info)
 	T_PROFILER_SCOPE(L"WorldLayer update");
 	if (!m_worldRenderer)
 		return;
-
-	// Update camera transform.
-	if (m_cameraEntity)
-	{
-		Transform cameraTransform;
-		m_cameraEntity->getTransform(cameraTransform);
-		m_cameraTransform.step();
-		m_cameraTransform.set(cameraTransform);
-	}
 
 	// Update scene controller.
 	if (m_controllerEnable)
@@ -294,6 +295,20 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 	T_PROFILER_SCOPE(L"WorldLayer build");
 	if (!m_worldRenderer || !m_scene)
 		return;
+
+	if (m_cameraEntity)
+	{
+		Transform cameraTransform;
+		m_cameraEntity->getTransform(cameraTransform);
+
+		m_cameraTransform.step();
+		m_cameraTransform.set(cameraTransform);
+
+		m_worldRenderView.setView(
+			m_worldRenderView.getView(),
+			(m_cameraTransform.get(info.getInterval()) * m_cameraOffset).inverse().toMatrix44()
+		);
+	}
 
 	if (m_worldRenderer->beginBuild())
 	{

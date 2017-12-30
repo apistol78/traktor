@@ -14,6 +14,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Image", Image, Widget)
 
+Image::Image()
+:	m_transparent(false)
+,	m_scale(false)
+,	m_keepAspect(false)
+{
+}
+
 bool Image::create(Widget* parent, Bitmap* image, int style)
 {
 	if (!Widget::create(parent, style))
@@ -21,6 +28,8 @@ bool Image::create(Widget* parent, Bitmap* image, int style)
 
 	m_image = image;
 	m_transparent = bool((style & WsTransparent) == WsTransparent);
+	m_scale = bool((style & (WsScale | WsScaleKeepAspect)) != 0);
+	m_keepAspect = bool((style & WsScaleKeepAspect) == WsScaleKeepAspect);
 
 	addEventHandler< PaintEvent >(this, &Image::eventPaint);
 
@@ -29,12 +38,41 @@ bool Image::create(Widget* parent, Bitmap* image, int style)
 
 Size Image::getMinimumSize() const
 {
-	return m_image ? m_image->getSize() : Size(0, 0);
+	if (!m_image)
+		return Size(0, 0);
+
+	if (!m_scale)
+		return m_image->getSize();
+	else
+		return Size(0, 0);
 }
 
 Size Image::getPreferedSize() const
 {
-	return m_image ? m_image->getSize() : Size(0, 0);
+	if (!m_image)
+		return Size(0, 0);
+
+	if (m_scale && m_keepAspect)
+	{
+		Size csz = getInnerRect().getSize();
+		Size isz = m_image->getSize();
+
+		if (csz.cx < isz.cx)
+		{
+			isz.cy = (csz.cx * isz.cy) / isz.cx;
+			isz.cx = csz.cx;
+		}
+
+		if (csz.cy < isz.cy)
+		{
+			isz.cx = (csz.cy * isz.cx) / isz.cy;
+			isz.cy = csz.cy;
+		}
+
+		return isz;
+	}
+	else
+		return m_image->getSize();
 }
 
 Size Image::getMaximumSize() const
@@ -63,6 +101,11 @@ bool Image::isTransparent() const
 	return m_transparent;
 }
 
+bool Image::scaling() const
+{
+	return m_scale;
+}
+
 void Image::eventPaint(PaintEvent* event)
 {
 	if (m_image)
@@ -76,13 +119,23 @@ void Image::eventPaint(PaintEvent* event)
 			);
 		}
 
-		canvas.drawBitmap(
-			Point(0, 0),
-			Point(0, 0),
-			m_image->getSize(),
-			m_image,
-			m_transparent ? BmAlpha : BmNone
-		);
+		if (!m_scale)
+			canvas.drawBitmap(
+				Point(0, 0),
+				Point(0, 0),
+				m_image->getSize(),
+				m_image,
+				m_transparent ? BmAlpha : BmNone
+			);
+		else
+			canvas.drawBitmap(
+				Point(0, 0),
+				getInnerRect().getSize(),
+				Point(0, 0),
+				m_image->getSize(),
+				m_image,
+				m_transparent ? BmAlpha : BmNone
+			);
 	}
 }
 

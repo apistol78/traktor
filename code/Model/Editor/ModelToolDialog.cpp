@@ -533,8 +533,6 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 		m_modelTris = new Model(*m_model);
 		Triangulate().apply(*m_modelTris);
 
-		m_modelAdjacency = new ModelAdjacency(m_model, ModelAdjacency::MdByVertex);
-
 		Aabb3 boundingBox = m_model->getBoundingBox();
 		Vector4 extent = boundingBox.getExtent();
 		float maxExtent = extent[majorAxis3(extent)];
@@ -784,6 +782,10 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			// Render non-shared edges.
 			if (m_toolNonSharedEdges->isToggled())
 			{
+				// Lazy create adjacency information as it's pretty costly.
+				if (!m_modelAdjacency)
+					m_modelAdjacency = new ModelAdjacency(m_model, ModelAdjacency::MdByVertex);
+
 				m_primitiveRenderer->pushDepthState(true, false, false);
 				for (uint32_t i = 0; i < polygons.size(); ++i)
 				{

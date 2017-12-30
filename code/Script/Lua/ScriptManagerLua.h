@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define T_SCRIPT_LUA_USE_MT_LOCK
 
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Script/IScriptManager.h"
 
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)
@@ -78,8 +79,6 @@ private:
 	{
 		Ref< IRuntimeClass > runtimeClass;
 		int32_t classTableRef;
-		int32_t classMetaTableRef;
-		int32_t instanceMetaTableRef;
 	};
 
 	static ScriptManagerLua* ms_instance;
@@ -92,7 +91,7 @@ private:
 	mutable Semaphore m_lock;
 #endif
 	ScriptContextLua* m_lockContext;
-	std::vector< RegisteredClass > m_classRegistry;
+	AlignedVector< RegisteredClass > m_classRegistry;
 	RefArray< ScriptContextLua > m_contexts;
 	Ref< ScriptDebuggerLua > m_debugger;
 	Ref< ScriptProfilerLua > m_profiler;
@@ -137,27 +136,32 @@ private:
 
 	void breakDebugger(lua_State* luaState);
 
-	static int classIndexLookup(lua_State* luaState);
 
-	static int classCallConstructor(lua_State* luaState);
+	static int classAlloc(lua_State* luaState);
+
+	static int classGc(lua_State* luaState);
+
+	static int classNew(lua_State* luaState);
+
+	static int classCallUnknownMethod(lua_State* luaState);
 
 	static int classCallMethod(lua_State* luaState);
 
 	static int classCallStaticMethod(lua_State* luaState);
 
-	static int classCallUnknownMethod(lua_State* luaState);
+	static int classSetProperty(lua_State* luaState);
 
-	static int classGcMethod(lua_State* luaState);
+	static int classGetProperty(lua_State* luaState);
 
-	static int classEqualMethod(lua_State* luaState);
+	static int classEqual(lua_State* luaState);
 
-	static int classAddMethod(lua_State* luaState);
+	static int classAdd(lua_State* luaState);
 	
-	static int classSubtractMethod(lua_State* luaState);
+	static int classSubtract(lua_State* luaState);
 	
-	static int classMultiplyMethod(lua_State* luaState);
+	static int classMultiply(lua_State* luaState);
 
-	static int classDivideMethod(lua_State* luaState);
+	static int classDivide(lua_State* luaState);
 
 	static void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize);
 

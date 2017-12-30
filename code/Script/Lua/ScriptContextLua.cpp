@@ -234,7 +234,6 @@ bool ScriptContextLua::haveFunction(const std::string& functionName) const
 		CHECK_LUA_STACK(m_luaState, 0);
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		//lua_getfield(m_luaState, -1, functionName.c_str());
 		lua_pushstring(m_luaState, functionName.c_str());
 		lua_rawget(m_luaState, -2);
 		

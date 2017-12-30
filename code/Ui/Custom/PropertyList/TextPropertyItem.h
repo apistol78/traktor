@@ -67,6 +67,8 @@ private:
 
 	void eventEditFocus(FocusEvent* event);
 
+	void eventEditKeyDownEvent(KeyDownEvent* event);
+
 	void eventClick(ButtonClickEvent* event);
 };
 

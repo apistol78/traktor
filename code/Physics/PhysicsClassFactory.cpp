@@ -399,6 +399,10 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classRigidEntity);
 
 	Ref< AutoRuntimeClass< CharacterComponent > > classCharacterComponent = new AutoRuntimeClass< CharacterComponent >();
+	classCharacterComponent->addMethod("setVelocity", &CharacterComponent::setVelocity);
+	classCharacterComponent->addMethod("getVelocity", &CharacterComponent::getVelocity);
+	classCharacterComponent->addMethod("setHeadAngle", &CharacterComponent::setHeadAngle);
+	classCharacterComponent->addMethod("getHeadAngle", &CharacterComponent::getHeadAngle);
 	registrar->registerClass(classCharacterComponent);
 
 	Ref< AutoRuntimeClass< VehicleComponent > > classVehicleComponent = new AutoRuntimeClass< VehicleComponent >();

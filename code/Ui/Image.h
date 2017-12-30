@@ -34,8 +34,12 @@ class T_DLLCLASS Image : public Widget
 public:
 	enum Styles
 	{
-		WsTransparent = WsUser
+		WsTransparent = WsUser,
+		WsScale = (WsUser << 1),
+		WsScaleKeepAspect = (WsUser << 2),
 	};
+
+	Image();
 
 	bool create(Widget* parent, Bitmap* image = 0, int style = WsNone);
 	
@@ -51,10 +55,14 @@ public:
 
 	bool isTransparent() const;
 
+	bool scaling() const;
+
 private:
 	Ref< Bitmap > m_image;
 	bool m_transparent;
-	
+	bool m_scale;
+	bool m_keepAspect;
+
 	void eventPaint(PaintEvent* event);
 };
 

@@ -93,6 +93,8 @@ private:
 
 	void eventEditFocus(FocusEvent* event);
 
+	void eventEditKeyDownEvent(KeyDownEvent* event);
+
 	void eventScroll(ScrollEvent* event);
 
 	void eventKeyDown(KeyDownEvent* event);

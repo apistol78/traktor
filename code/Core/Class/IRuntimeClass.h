@@ -78,6 +78,21 @@ public:
 	/*! \brief Invoke exported static method. */
 	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
 
+	/*! \brief Get exported properties count. */
+	virtual uint32_t getPropertiesCount() const = 0;
+
+	/*! \brief Get name of exported property. */
+	virtual std::string getPropertyName(uint32_t propertyId) const = 0;
+
+	/*! \brief Get signature of exported property. */
+	virtual std::wstring getPropertySignature(uint32_t propertyId) const = 0;
+
+	/*! \brief Invoke property get. */
+	virtual Any invokePropertyGet(ITypedObject* self, uint32_t propertyId) const = 0;
+
+	/*! \brief Invoke property set. */
+	virtual void invokePropertySet(ITypedObject* self, uint32_t propertyId, const Any& value) const = 0;
+
 	/*! \brief Invoke unknown method. */
 	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const = 0;
 

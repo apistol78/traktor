@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/Editor/PhysicsPipeline.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Physics/World/Character/CharacterComponentData.h"
 #include "Physics/World/Vehicle/VehicleComponentData.h"
 #include "Editor/IPipelineDepends.h"
 #include "World/IEntityEventData.h"
@@ -62,6 +63,14 @@ bool PhysicsPipeline::buildDependencies(
 			else if (auto heightfieldShapeDesc = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 				pipelineDepends->addDependency(heightfieldShapeDesc->getHeightfield(), editor::PdfBuild | editor::PdfResource);
 		}
+	}
+	else if (auto characterData = dynamic_type_cast< const CharacterComponentData* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(characterData->getBodyDesc());
+		for (auto id : characterData->getTraceInclude())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
+		for (auto id : characterData->getTraceIgnore())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 	}
 	else if (auto rigidBodyData = dynamic_type_cast< const RigidBodyComponentData* >(sourceAsset))
 	{
