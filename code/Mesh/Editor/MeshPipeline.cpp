@@ -142,6 +142,7 @@ MeshPipeline::MeshPipeline()
 ,	m_enableCustomShaders(true)
 ,	m_enableCustomTemplates(true)
 ,	m_enableBakeOcclusion(true)
+,	m_editor(false)
 {
 }
 
@@ -153,28 +154,14 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 	m_enableCustomTemplates = settings->getProperty< bool >(L"MeshPipeline.EnableCustomTemplates", true);
 	m_enableBakeOcclusion = settings->getProperty< bool >(L"MeshPipeline.BakeOcclusion", true);
 	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
-
-	std::wstring programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
-
-	const TypeInfo* programCompilerType = TypeInfo::find(programCompilerTypeName);
-	if (!programCompilerType)
-	{
-		log::error << L"Mesh pipeline; unable to find program compiler type \"" << programCompilerTypeName << L"\"" << Endl;
-		return false;
-	}
-
-	m_programCompiler = dynamic_type_cast< render::IProgramCompiler* >(programCompilerType->createInstance());
-	if (!m_programCompiler)
-	{
-		log::error << L"Mesh pipeline; unable to instanciate program compiler \"" << programCompilerTypeName << L"\"" << Endl;
-		return false;
-	}
-
+	m_programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
+	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 	return true;
 }
 
 void MeshPipeline::destroy()
 {
+	m_programCompiler = 0;
 }
 
 TypeInfoSet MeshPipeline::getAssetTypes() const
@@ -245,20 +232,25 @@ bool MeshPipeline::buildOutput(
 	uint32_t /*reason*/
 ) const
 {
-	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
-	const std::map< std::wstring, Guid >& materialTemplates = asset->getMaterialTemplates();
-	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
-	const std::map< std::wstring, Guid >& materialTextures = asset->getMaterialTextures();
 	std::map< std::wstring, model::Material > materials;
 	RefArray< model::Model > models;
 	uint32_t polygonCount = 0;
 	Aabb3 boundingBox;
 
+	auto programCompiler = getProgramCompiler();
+	if (!programCompiler)
+		return false;
+
+	auto asset = mandatory_non_null_type_cast< const MeshAsset* >(sourceAsset);
+	auto& materialTemplates = asset->getMaterialTemplates();
+	auto& materialShaders = asset->getMaterialShaders();
+	auto& materialTextures = asset->getMaterialTextures();
+
 	// We allow models to be passed as build parameters in case models
 	// are procedurally generated.
 	if (buildParams)
 	{
-		Ref< model::Model > model = checked_type_cast< model::Model* >(
+		Ref< model::Model > model = mandatory_non_null_type_cast< model::Model* >(
 			const_cast< Object* >(buildParams)
 		);
 
@@ -305,10 +297,8 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Merge all materials into a single list (duplicates will be overridden).
-	for (RefArray< model::Model >::const_iterator i = models.begin(); i != models.end(); ++i)
+	for (auto model : models)
 	{
-		Ref< model::Model > model = *i;
-
 		// Scale model according to scale factor in asset.
 		model::Transform(scale(asset->getScaleFactor(), asset->getScaleFactor(), asset->getScaleFactor())).apply(*model);
 
@@ -424,7 +414,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Extract platform permutation.
-		const wchar_t* platformSignature = m_programCompiler->getPlatformSignature();
+		const wchar_t* platformSignature = programCompiler->getPlatformSignature();
 		T_ASSERT (platformSignature);
 
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getPlatformPermutation(platformSignature);
@@ -735,6 +725,28 @@ Ref< ISerializable > MeshPipeline::buildOutput(
 {
 	T_FATAL_ERROR;
 	return 0;
+}
+
+render::IProgramCompiler* MeshPipeline::getProgramCompiler() const
+{
+	if (m_programCompiler)
+		return m_programCompiler;
+
+	const TypeInfo* programCompilerType = TypeInfo::find(m_programCompilerTypeName);
+	if (!programCompilerType)
+	{
+		log::error << L"Mesh pipeline; unable to find program compiler type \"" << m_programCompilerTypeName << L"\"" << Endl;
+		return 0;
+	}
+
+	m_programCompiler = dynamic_type_cast< render::IProgramCompiler* >(programCompilerType->createInstance());
+	if (!m_programCompiler)
+	{
+		log::error << L"Mesh pipeline; unable to instanciate program compiler \"" << m_programCompilerTypeName << L"\"" << Endl;
+		return 0;
+	}
+
+	return m_programCompiler;
 }
 
 	}

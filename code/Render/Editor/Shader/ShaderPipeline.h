@@ -65,7 +65,8 @@ public:
 	) const T_OVERRIDE T_FINAL;
 
 private:
-	Ref< IProgramCompiler > m_programCompiler;
+	std::wstring m_programCompilerTypeName;
+	mutable Ref< IProgramCompiler > m_programCompiler;
 	Ref< IProgramHints > m_programHints;
 	std::set< std::wstring > m_includeOnlyTechniques;
 	Ref< const PropertyGroup > m_compilerSettings;
@@ -74,6 +75,9 @@ private:
 	bool m_validate;
 	bool m_debugCompleteGraphs;
 	std::wstring m_debugPath;
+	bool m_editor;
+
+	IProgramCompiler* getProgramCompiler() const;
 };
 
 	}

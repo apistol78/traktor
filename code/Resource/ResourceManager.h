@@ -27,6 +27,7 @@ namespace traktor
 	{
 
 class Database;
+class Instance;
 
 	}
 

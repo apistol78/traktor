@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_script_ScriptObjectLua_H
 #define traktor_script_ScriptObjectLua_H
 
-#include "Core/Object.h"
+#include "Core/Class/IRuntimeObject.h"
 
 struct lua_State;
 
@@ -16,18 +16,22 @@ namespace traktor
 	namespace script
 	{
 
-class ScriptObjectLua : public Object
+class ScriptObjectLua : public IRuntimeObject
 {
 	T_RTTI_CLASS;
 
 public:
-	ScriptObjectLua(lua_State*& luaState, int32_t tableRef);
+	ScriptObjectLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState, int32_t tableRef);
 
 	virtual ~ScriptObjectLua();
 
-	void push();
+	virtual Ref< const IRuntimeClass > getRuntimeClass() const T_OVERRIDE T_FINAL;
+
+	void push() const;
 
 private:
+	ScriptManagerLua* m_scriptManager;
+	ScriptContextLua* m_scriptContext;
 	lua_State*& m_luaState;
 	int32_t m_tableRef;
 };

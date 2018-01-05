@@ -133,9 +133,12 @@ private:
 	Ref< IRuntimeDelegate > m_delegateListener;
 };
 
-void net_HttpServer_setRequestListener(HttpServer* self, IRuntimeDelegate* delegateListener)
+void net_HttpServer_setRequestListener(HttpServer* self, Object* listener)
 {
-	self->setRequestListener(new HttpServerListenerDelegate(delegateListener));
+	if (HttpServer::IRequestListener* requestListener = dynamic_type_cast< HttpServer::IRequestListener* >(listener))
+		self->setRequestListener(requestListener);
+	else if (IRuntimeDelegate* delegateListener = dynamic_type_cast< IRuntimeDelegate* >(listener))
+		self->setRequestListener(new HttpServerListenerDelegate(delegateListener));
 }
 
 class ReplicatorConfiguration : public Object

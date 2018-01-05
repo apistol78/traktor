@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Amalgam/TargetPerformance.h"
 #include "Amalgam/Run/Impl/Application.h"
 #include "Amalgam/Run/Impl/Environment.h"
+#include "Amalgam/Run/Impl/ResourceServer.h"
 #include "Amalgam/Run/Impl/ScriptServer.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
@@ -72,6 +73,12 @@ bool Application::create(
 		return false;
 	}
 
+	// Resource
+	T_DEBUG(L"Creating resource server...");
+	m_resourceServer = new ResourceServer();
+	if (!m_resourceServer->create(settings, m_database))
+		return false;
+
 	// Script
 	if (settings->getProperty(L"Script.Type"))
 	{
@@ -98,8 +105,14 @@ bool Application::create(
 	m_environment = new Environment(
 		settings,
 		m_database,
+		m_resourceServer,
 		m_scriptServer
 	);
+
+	// Resource factories
+	T_DEBUG(L"Creating resource factories...");
+	if (m_scriptServer)
+		m_scriptServer->createResourceFactories(m_environment);
 
 	m_settings = settings;
 	return true;
@@ -110,6 +123,7 @@ void Application::destroy()
 	if (m_environment)
 		m_environment->m_alive = false;
 
+	safeDestroy(m_resourceServer);
 	safeDestroy(m_scriptServer);
 
 	m_environment = 0;

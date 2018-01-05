@@ -25,11 +25,11 @@ class ScriptClassLua : public IRuntimeClass
 	T_RTTI_CLASS;
 
 public:
-	ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState, const std::string& className);
+	static Ref< ScriptClassLua > createFromStack(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState);
 
 	virtual ~ScriptClassLua();
 
-	void addMethod(const std::string& name, int32_t ref);
+	//void addMethod(const std::string& name, int32_t ref);
 
 	virtual const TypeInfo& getExportType() const T_OVERRIDE T_FINAL;
 
@@ -85,9 +85,10 @@ private:
 	ScriptManagerLua* m_scriptManager;
 	ScriptContextLua* m_scriptContext;
 	lua_State*& m_luaState;
-	std::string m_className;
 	AlignedVector< Method > m_methods;
 	SmallMap< std::string, uint32_t > m_methodLookup;
+
+	ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState);
 };
 
 	}

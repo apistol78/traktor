@@ -2508,7 +2508,7 @@ struct PropertySet : public IPropertySet
 	{
 	}
 
-	virtual void invoke(ITypedObject* object, const Any& value) const
+	virtual void invoke(ITypedObject* object, const Any& value) const T_OVERRIDE T_FINAL
 	{
 		(mandatory_non_null_type_cast< ClassType* >(object)->*m_method)(
 			CastAny< ValueType >::get(value)
@@ -2535,6 +2535,52 @@ struct PropertyGet : public IPropertyGet
 	virtual Any invoke(ITypedObject* object) const T_OVERRIDE T_FINAL
 	{
 		ValueType value = (mandatory_non_null_type_cast< ClassType* >(object)->*m_method)();
+		return CastAny< ValueType >::set(value);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ValueType
+>
+struct FnPropertySet : public IPropertySet
+{
+	typedef void (*method_t)(ClassType*, ValueType);
+
+	method_t m_method;
+
+	FnPropertySet(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual void invoke(ITypedObject* object, const Any& value) const T_OVERRIDE T_FINAL
+	{
+		(*m_method)(
+			mandatory_non_null_type_cast< ClassType* >(object),
+			CastAny< ValueType >::get(value)
+		);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ValueType
+>
+struct FnPropertyGet : public IPropertyGet
+{
+	typedef ValueType (*method_t)(ClassType*);
+
+	method_t m_method;
+
+	FnPropertyGet(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(ITypedObject* object) const T_OVERRIDE T_FINAL
+	{
+		ValueType value = (*m_method)(mandatory_non_null_type_cast< ClassType* >(object));
 		return CastAny< ValueType >::set(value);
 	}
 };
@@ -3197,6 +3243,16 @@ public:
 			propertyName,
 			setter != 0 ? new PropertySet< ClassType, ValueType >(setter) : 0,
 			getter != 0 ? new PropertyGet< ClassType, ValueType, false >(getter) : 0
+		);
+	}
+
+	template < typename ValueType >
+	void addProperty(const std::string& propertyName, void (*setter)(ClassType* self, ValueType value), ValueType (*getter)(ClassType* self))
+	{
+		addProperty(
+			propertyName,
+			setter != 0 ? new FnPropertySet< ClassType, ValueType >(setter) : 0,
+			getter != 0 ? new FnPropertyGet< ClassType, ValueType >(getter) : 0
 		);
 	}
 

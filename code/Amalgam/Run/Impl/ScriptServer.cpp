@@ -14,6 +14,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Amalgam/Run/IEnvironment.h"
 #include "Amalgam/Run/Impl/ScriptServer.h"
 #include "Core/Class/CastAny.h"
+#include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Log/Log.h"
@@ -28,6 +29,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
 #include "Script/ScriptResource.h"
+#include "Script/ScriptFactory.h"
 #include "Script/StackFrame.h"
 
 namespace traktor
@@ -107,6 +109,14 @@ bool ScriptServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 		m_scriptDebuggerThread->start();
 	}
 
+	// Create script context.
+	m_scriptContext = m_scriptManager->createContext(false);
+	if (!m_scriptContext)
+	{
+		log::error << L"Unable to create script execution context" << Endl;
+		return false;
+	}
+
 	return true;
 }
 
@@ -142,30 +152,30 @@ void ScriptServer::destroy()
 	safeDestroy(m_scriptManager);
 }
 
+void ScriptServer::createResourceFactories(IEnvironment* environment)
+{
+	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
+	resourceManager->addFactory(new script::ScriptFactory(m_scriptManager, m_scriptContext));
+
+	// Expose environment as a global in shared script environment.
+	m_scriptContext->setGlobal("environment", Any::fromObject(environment));
+}
+
 bool ScriptServer::execute(IEnvironment* environment)
 {
-	// Create script context.
-	Guid startupGuid(environment->getSettings()->getProperty< std::wstring >(L"Amalgam.Startup"));
+	const resource::Id< IRuntimeClass > scriptClassId(Guid(
+		environment->getSettings()->getProperty< std::wstring >(L"Amalgam.Startup")
+	));
 
-	Ref< script::ScriptResource > scriptResource = environment->getDatabase()->getObjectReadOnly< script::ScriptResource >(startupGuid);
-	if (!scriptResource)
+	resource::Proxy< IRuntimeClass > scriptClass;
+	if (!environment->getResource()->getResourceManager()->bind(scriptClassId, scriptClass))
 	{
-		log::error << L"Unable to load script resource" << Endl;
+		log::error << L"Unable to load script resource \"" << Guid(scriptClassId).format() << L"\"." << Endl;
 		return false;
 	}
-
-	m_scriptContext = m_scriptManager->createContext(false);
-	if (!m_scriptContext)
-	{
-		log::error << L"Unable to create script execution context" << Endl;
-		return false;
-	}
-
-	m_scriptContext->load(scriptResource->getBlob());
-	m_scriptContext->setGlobal("environment", Any::fromObject(environment));
 
 	// Create execution thread.
-	m_executionThread = ThreadManager::getInstance().create(makeFunctor(this, &ScriptServer::threadExecution), L"Script execution thread");
+	m_executionThread = ThreadManager::getInstance().create(makeFunctor< ScriptServer, resource::Proxy< IRuntimeClass > >(this, &ScriptServer::threadExecution, scriptClass), L"Script execution thread");
 	if (!m_executionThread)
 		return false;
 
@@ -188,9 +198,15 @@ script::IScriptManager* ScriptServer::getScriptManager()
 	return m_scriptManager;
 }
 
-void ScriptServer::threadExecution()
+void ScriptServer::threadExecution(resource::Proxy< IRuntimeClass > scriptClass)
 {
-	m_scriptContext->executeFunction("main");
+	Ref< ITypedObject > scriptObject = scriptClass->construct(0, 0, 0);
+	if (!scriptObject)
+		return;
+
+	uint32_t runMethodId = findRuntimeClassMethodId(scriptClass, "run");
+	if (runMethodId != ~0U)
+		scriptClass->invoke(scriptObject, runMethodId, 0, 0);
 }
 
 void ScriptServer::threadDebugger()

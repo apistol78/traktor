@@ -34,6 +34,7 @@ class Database;
 	namespace amalgam
 	{
 
+class ResourceServer;
 class ScriptServer;
 class Environment;
 class TargetManagerConnection;
@@ -64,6 +65,7 @@ private:
 	RefArray< Library > m_libraries;
 	Ref< TargetManagerConnection > m_targetManagerConnection;
 	Ref< db::Database > m_database;
+	Ref< ResourceServer > m_resourceServer;
 	Ref< ScriptServer > m_scriptServer;
 	Ref< Environment > m_environment;
 };

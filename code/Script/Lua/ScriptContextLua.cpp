@@ -200,24 +200,26 @@ Ref< const IRuntimeClass > ScriptContextLua::findClass(const std::string& classN
 		lua_getfield(m_luaState, -1, className.c_str());
 		if (lua_istable(m_luaState, -1))
 		{
-			scriptClass = new ScriptClassLua(m_scriptManager, this, m_luaState, className);
+			scriptClass = ScriptClassLua::createFromStack(m_scriptManager, this, m_luaState);
 
-			// Gather all methods of script class.
-			lua_pushnil(m_luaState);
-			while (lua_next(m_luaState, -2))
-			{
-				if (lua_isfunction(m_luaState, -1))
-				{
-					const char* functionName = lua_tostring(m_luaState, -2);
-					T_ASSERT (functionName);
+			//scriptClass = new ScriptClassLua(m_scriptManager, this, m_luaState, className);
 
-					lua_pushvalue(m_luaState, -1);
-					int32_t functionRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+			//// Gather all methods of script class.
+			//lua_pushnil(m_luaState);
+			//while (lua_next(m_luaState, -2))
+			//{
+			//	if (lua_isfunction(m_luaState, -1))
+			//	{
+			//		const char* functionName = lua_tostring(m_luaState, -2);
+			//		T_ASSERT (functionName);
 
-					scriptClass->addMethod(functionName, functionRef);
-				}
-				lua_pop(m_luaState, 1);
-			}
+			//		lua_pushvalue(m_luaState, -1);
+			//		int32_t functionRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+			//		scriptClass->addMethod(functionName, functionRef);
+			//	}
+			//	lua_pop(m_luaState, 1);
+			//}
 		}
 		lua_pop(m_luaState, 2);
 	}
