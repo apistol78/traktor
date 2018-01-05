@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.resource.FileBundleAsset">
+	<patterns>
+		<item>
+			<sourceBase>$(TRAKTOR_HOME)/data/Assets/System/Webber</sourceBase>
+			<outputBase/>
+			<sourceMask>*.*</sourceMask>
+			<recursive>true</recursive>
+		</item>
+	</patterns>
+</object>

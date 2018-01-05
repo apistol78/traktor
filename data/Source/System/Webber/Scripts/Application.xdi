@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+import(traktor.wbr)
+
+Application = Application or class("Application")
+
+function Application:new(db)
+	self._db = db
+end
+
+function Application:build(parent)
+end
+
+function Application:consume(senderId, action)
+end
+
+function Application:resolve(uri)
+	local dbi = self._db:getInstanceByGuid(Guid("\{0B15CA62-4FF8-C04F-B093-BB0AC7804C86}"))
+	if dbi == nil then return nil end
+
+	local fb = dbi:getObject()
+	assert (fb ~= nil)
+
+	local id = fb:lookup(uri)
+	if id == "" then return nil end
+
+	return dbi:readData(id)
+end
+
+	]]>
+	</text>
+</object>
