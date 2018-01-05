@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Resource/FileBundle.h"
 #include "Resource/IResourceFactory.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/ResourceBundle.h"
@@ -45,6 +46,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.resource.ResourceClassFactory", 0, Reso
 
 void ResourceClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	Ref< AutoRuntimeClass< FileBundle > > classFileBundle = new AutoRuntimeClass< FileBundle >();
+	classFileBundle->addMethod("lookup", &FileBundle::lookup);
+	registrar->registerClass(classFileBundle);
+
 	Ref< AutoRuntimeClass< ResourceBundle > > classResourceBundle = new AutoRuntimeClass< ResourceBundle >();
 	registrar->registerClass(classResourceBundle);
 

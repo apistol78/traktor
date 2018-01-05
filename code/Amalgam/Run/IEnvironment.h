@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_amalgam_IEnvironment_H
 
 #include "Core/Object.h"
+#include "Amalgam/Run/IResourceServer.h"
 #include "Amalgam/Run/IScriptServer.h"
 
 // import/export mechanism.
@@ -46,6 +47,8 @@ class T_DLLCLASS IEnvironment : public Object
 
 public:
 	virtual db::Database* getDatabase() = 0;
+
+	virtual IResourceServer* getResource() = 0;
 
 	virtual IScriptServer* getScript() = 0;
 

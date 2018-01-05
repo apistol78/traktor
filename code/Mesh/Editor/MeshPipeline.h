@@ -78,7 +78,11 @@ private:
 	bool m_enableCustomTemplates;
 	bool m_enableBakeOcclusion;
 	std::set< std::wstring > m_includeOnlyTechniques;
-	Ref< render::IProgramCompiler > m_programCompiler;
+	std::wstring m_programCompilerTypeName;
+	bool m_editor;
+	mutable Ref< render::IProgramCompiler > m_programCompiler;
+
+	render::IProgramCompiler* MeshPipeline::getProgramCompiler() const;
 };
 
 	}

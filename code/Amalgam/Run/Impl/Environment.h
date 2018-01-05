@@ -14,6 +14,7 @@ namespace traktor
 	namespace amalgam
 	{
 
+class ResourceServer;
 class ScriptServer;
 
 /*! \brief
@@ -27,22 +28,26 @@ public:
 	Environment(
 		PropertyGroup* settings,
 		db::Database* database,
+		ResourceServer* resourceServer,
 		ScriptServer* scriptServer
 	);
 
-	virtual db::Database* getDatabase();
+	virtual db::Database* getDatabase() T_OVERRIDE T_FINAL;
 
-	virtual IScriptServer* getScript();
+	virtual IResourceServer* getResource() T_OVERRIDE T_FINAL;
 
-	virtual PropertyGroup* getSettings();
+	virtual IScriptServer* getScript() T_OVERRIDE T_FINAL;
 
-	virtual bool alive() const;
+	virtual PropertyGroup* getSettings() T_OVERRIDE T_FINAL;
+
+	virtual bool alive() const T_OVERRIDE T_FINAL;
 
 private:
 	friend class Application;
 
 	Ref< PropertyGroup > m_settings;
 	Ref< db::Database > m_database;
+	Ref< ResourceServer > m_resourceServer;
 	Ref< ScriptServer > m_scriptServer;
 	bool m_alive;
 };

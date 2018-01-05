@@ -289,32 +289,13 @@ ShaderPipeline::ShaderPipeline()
 ,	m_optimize(4)
 ,	m_validate(true)
 ,	m_debugCompleteGraphs(false)
+,	m_editor(false)
 {
 }
 
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 {
-	std::wstring programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
-
-	const TypeInfo* programCompilerType = TypeInfo::find(programCompilerTypeName);
-	if (!programCompilerType)
-	{
-		log::error << L"Shader pipeline; unable to find program compiler type \"" << programCompilerTypeName << L"\"" << Endl;
-		return false;
-	}
-
-	m_programCompiler = dynamic_type_cast< IProgramCompiler* >(programCompilerType->createInstance());
-	if (!m_programCompiler)
-	{
-		log::error << L"Shader pipeline; unable to instanciate program compiler \"" << programCompilerTypeName << L"\"" << Endl;
-		return false;
-	}
-
-	// In case pipeline is launched for editor resources we wrap program compiler into "capture" compiler.
-	bool editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
-	if (editor)
-		m_programCompiler = new ProgramCompilerCapture(m_programCompiler);
-
+	m_programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 	m_compilerSettings = settings->getProperty< PropertyGroup >(L"ShaderPipeline.ProgramCompilerSettings");
 	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
 	m_frequentUniformsAsLinear = settings->getProperty< bool >(L"ShaderPipeline.FrequentUniformsAsLinear", m_frequentUniformsAsLinear);
@@ -322,6 +303,7 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 	m_validate = settings->getProperty< bool >(L"ShaderPipeline.Validate", m_validate);
 	m_debugCompleteGraphs = settings->getProperty< bool >(L"ShaderPipeline.DebugCompleteGraphs", false);
 	m_debugPath = settings->getProperty< std::wstring >(L"ShaderPipeline.DebugPath", L"");
+	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 
 	T_DEBUG(L"Using optimization level " << m_optimize << (m_validate ? L" with validation" : L" without validation"));
 	return true;
@@ -348,10 +330,13 @@ bool ShaderPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	Ref< const ShaderGraph > shaderGraph = checked_type_cast< const ShaderGraph* >(sourceAsset);
+	auto shaderGraph = mandatory_non_null_type_cast< const ShaderGraph* >(sourceAsset);
+	auto programCompiler = getProgramCompiler();
+	if (!programCompiler)
+		return false;
 
 	// Extract platform permutation.
-	const wchar_t* platformSignature = m_programCompiler->getPlatformSignature();
+	const wchar_t* platformSignature = programCompiler->getPlatformSignature();
 	T_ASSERT (platformSignature);
 
 	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
@@ -402,7 +387,11 @@ bool ShaderPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< const ShaderGraph > shaderGraph = checked_type_cast< const ShaderGraph* >(sourceAsset);
+	auto shaderGraph = mandatory_non_null_type_cast< const ShaderGraph* >(sourceAsset);
+	auto programCompiler = getProgramCompiler();
+	if (!programCompiler)
+		return false;
+
 	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;
 
@@ -432,7 +421,7 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Extract platform permutation.
-	const wchar_t* platformSignature = m_programCompiler->getPlatformSignature();
+	const wchar_t* platformSignature = programCompiler->getPlatformSignature();
 	T_ASSERT (platformSignature);
 
 	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
@@ -522,7 +511,7 @@ bool ShaderPipeline::buildOutput(
 			task->shaderResourceCombination = new ShaderResource::Combination;
 			task->shaderResourceCombination->mask = 0;
 			task->shaderResourceCombination->value = 0;
-			task->programCompiler = m_programCompiler;
+			task->programCompiler = programCompiler;
 			task->compilerSettings = m_compilerSettings;
 			task->frequentUniformsAsLinear = m_frequentUniformsAsLinear;
 			task->optimize = m_optimize;
@@ -661,6 +650,31 @@ Ref< ISerializable > ShaderPipeline::buildOutput(
 {
 	T_FATAL_ERROR;
 	return 0;
+}
+
+IProgramCompiler* ShaderPipeline::getProgramCompiler() const
+{
+	if (m_programCompiler)
+		return m_programCompiler;
+
+	const TypeInfo* programCompilerType = TypeInfo::find(m_programCompilerTypeName);
+	if (!programCompilerType)
+	{
+		log::error << L"Shader pipeline; unable to find program compiler type \"" << m_programCompilerTypeName << L"\"" << Endl;
+		return 0;
+	}
+
+	m_programCompiler = dynamic_type_cast< IProgramCompiler* >(programCompilerType->createInstance());
+	if (!m_programCompiler)
+	{
+		log::error << L"Shader pipeline; unable to instanciate program compiler \"" << m_programCompilerTypeName << L"\"" << Endl;
+		return 0;
+	}
+
+	if (m_editor)
+		m_programCompiler = new ProgramCompilerCapture(m_programCompiler);
+
+	return m_programCompiler;
 }
 
 	}

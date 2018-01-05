@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.db.LocalInstanceMeta">
-	<guid>{5CEC374B-7B35-7E49-A734-7BB89CCBF5F8}</guid>
-	<primaryType>traktor.spark.VectorShapeAsset</primaryType>
-	<blobs/>
-</object>

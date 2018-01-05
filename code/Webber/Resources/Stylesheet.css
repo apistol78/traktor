@@ -1,0 +1,98 @@
+body
+{
+	font-family: Consolas;
+	font-size: 8pt;
+	background-color: #aaa;
+	padding: 0;
+	margin: 0;
+}
+
+.wtk_tabHeaders
+{
+	background-color: #aaa;
+	height: 6%;
+}
+
+.wtk_tabHeader
+{
+	background-color: #ddd;
+	float: left;
+	padding: 4pt 10pt 4pt 10pt;
+	margin-left: 2pt;
+	margin-right: 2pt;
+}
+
+.wtk_tabPages
+{
+	background-color: #ffd;
+	height: 94%;
+}
+
+.wtk_textarea
+{
+	width: 100%;
+	height: 100%;
+}
+
+.wtk_layout_splitter_top
+{
+	background-color: #ff8;
+	//height: 30%;
+	float: top;
+}
+
+.wtk_layout_splitter_bottom
+{
+	background-color: #f8f;
+	//height: 70%;
+	//float: bottom;
+	float top;
+}
+
+.wtk_layout_splitter_left
+{
+	background-color: #ff8;
+	width: 30%;
+	height: 100%;
+	float: left;
+	overflow: auto;
+}
+
+.wtk_layout_splitter_right
+{
+	background-color: #f8f;
+	width: 70%;
+	height: 100%;
+	float: left;
+	overflow: auto;
+}
+
+.wtk_static
+{
+}
+
+.wtk_button
+{
+	background-color: #fff;
+}
+
+.wtk_treeview
+{
+	background-color: #333;
+}
+
+.wtk_treeviewitem
+{
+	background-color: #333;
+	color: #ddd;
+}
+
+.wtk_treeviewitemchildren
+{
+	background-color: #333;	
+}
+
+.wtk_canvas_container
+{
+	background-color: #fff;
+}

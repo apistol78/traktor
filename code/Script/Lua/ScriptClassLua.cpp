@@ -18,12 +18,33 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptClassLua", ScriptClassLua, IRuntimeClass)
 
-ScriptClassLua::ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState, const std::string& className)
-:	m_scriptManager(scriptManager)
-,	m_scriptContext(scriptContext)
-,	m_luaState(luaState)
-,	m_className(className)
+Ref< ScriptClassLua > ScriptClassLua::createFromStack(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState)
 {
+	T_FATAL_ASSERT(lua_istable(luaState, -1));
+
+	Ref< ScriptClassLua > sc = new ScriptClassLua(scriptManager, scriptContext, luaState);
+
+	lua_pushnil(luaState);
+	while (lua_next(luaState, -2))
+	{
+		if (lua_isfunction(luaState, -1))
+		{
+			const char* functionName = lua_tostring(luaState, -2);
+			T_ASSERT (functionName);
+
+			lua_pushvalue(luaState, -1);
+			int32_t functionRef = luaL_ref(luaState, LUA_REGISTRYINDEX);
+
+			Method& m = sc->m_methods.push_back();
+			m.name = functionName;
+			m.ref = functionRef;
+
+			sc->m_methodLookup[functionName] = uint32_t(sc->m_methods.size() - 1);
+		}
+		lua_pop(luaState, 1);
+	}
+
+	return sc;
 }
 
 ScriptClassLua::~ScriptClassLua()
@@ -35,13 +56,13 @@ ScriptClassLua::~ScriptClassLua()
 	}
 }
 
-void ScriptClassLua::addMethod(const std::string& name, int32_t ref)
-{
-	Method& m = m_methods.push_back();
-	m.name = name;
-	m.ref = ref;
-	m_methodLookup[name] = uint32_t(m_methods.size() - 1);
-}
+//void ScriptClassLua::addMethod(const std::string& name, int32_t ref)
+//{
+//	Method& m = m_methods.push_back();
+//	m.name = name;
+//	m.ref = ref;
+//	m_methodLookup[name] = uint32_t(m_methods.size() - 1);
+//}
 
 const TypeInfo& ScriptClassLua::getExportType() const
 {
@@ -72,7 +93,7 @@ Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc,
 	int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
 	// Create C++ script object.
-	Ref< ScriptObjectLua > scriptSelf = new ScriptObjectLua(m_luaState, tableRef);
+	Ref< ScriptObjectLua > scriptSelf = new ScriptObjectLua(m_scriptManager, m_scriptContext, m_luaState, tableRef);
 
 	// Initialize prototype members before calling constructor.
 	for (prototype_t::const_iterator i = proto.begin(); i != proto.end(); ++i)
@@ -200,6 +221,13 @@ Any ScriptClassLua::invokeUnknown(ITypedObject* object, const std::string& metho
 Any ScriptClassLua::invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const
 {
 	return Any();
+}
+
+ScriptClassLua::ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState)
+:	m_scriptManager(scriptManager)
+,	m_scriptContext(scriptContext)
+,	m_luaState(luaState)
+{
 }
 
 	}

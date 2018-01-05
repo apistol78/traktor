@@ -11,12 +11,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Amalgam/Run/IScriptServer.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Thread.h"
+#include "Resource/Proxy.h"
 #include "Script/IScriptDebugger.h"
 #include "Script/IScriptProfiler.h"
 
 namespace traktor
 {
 
+class IRuntimeClass;
 class PropertyGroup;
 
 	namespace net
@@ -55,6 +57,8 @@ public:
 
 	void destroy();
 
+	void createResourceFactories(IEnvironment* environment);
+
 	bool execute(IEnvironment* environment);
 
 	bool update();
@@ -86,7 +90,7 @@ private:
 	Thread* m_executionThread;
 	Thread* m_scriptDebuggerThread;
 
-	void threadExecution();
+	void threadExecution(resource::Proxy< IRuntimeClass > scriptClass);
 
 	void threadDebugger();
 
