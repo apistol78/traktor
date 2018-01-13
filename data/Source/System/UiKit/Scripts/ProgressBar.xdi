@@ -8,17 +8,11 @@ import(traktor.flash)
 
 -- ProgressBar
 
-ProgressBar = ProgressBar or inherit(Widget)
-ProgressBar_meta = ProgressBar_meta or { name = "ProgressBar", __index = ProgressBar }
+ProgressBar = ProgressBar or class("ProgressBar", Widget)
 
-function ProgressBar.new(parent, reverse, skin)
-	local o = {}
-	setmetatable(o, ProgressBar_meta)
-
+function ProgressBar:new(parent, reverse, skin)
 	local mc = Widget._createResource(parent, skin or "MC_ProgressBar")
-
-	o:_initialize(parent, mc, reverse)
-	return o
+	self:_initialize(parent, mc, reverse)
 end
 
 function ProgressBar:getPreferredSize()
@@ -89,6 +83,7 @@ function ProgressBar:_initialize(parent, mc, reverse)
 
 	self:setValue(0.5)
 end
+
 	]]>
 	</text>
 </object>

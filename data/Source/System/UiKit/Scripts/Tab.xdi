@@ -8,17 +8,11 @@ import(traktor)
 
 -- Tab
 
-Tab = Tab or inherit(Widget)
-Tab_meta = Tab_meta or { name = "Tab", __index = Tab }
+Tab = Tab or class("Tab", Widget)
 
-function Tab.new(parent)
-	local o = {}
-	setmetatable(o, Tab_meta)
-
+function Tab:new(parent)
 	local mc = Widget._createEmptyResource(parent)
-
-	o:_initialize(parent, mc, mc)
-	return o
+	self:_initialize(parent, mc, mc)
 end
 
 function Tab:getPreferredSize()
@@ -121,10 +115,10 @@ function Tab:_addChild(child)
 		local mx = caption_tb:getX()
 		local sz = caption_tb:getTextSize()
 
-		background_mc:setWidth(sz:x() + mx * 2)
+		background_mc:setWidth(sz.x + mx * 2)
 		caption_tb:setTextBounds(Aabb2(
 			Vector2(mx, 0),
-			Vector2(sz:x() * 20, sz:y() * 20)
+			Vector2(sz.x * 20, sz.y * 20)
 		))
 
 		return childSelf
@@ -158,6 +152,7 @@ function Tab:_updateState()
 		end
 	end
 end
+
 	]]>
 	</text>
 </object>

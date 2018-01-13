@@ -5,15 +5,11 @@
 -- MouseLeaveEvent
 #using \{1821BA8C-3175-C94C-8520-87FFEFC1EDAF}
 
-MouseLeaveEvent = MouseLeaveEvent or { mask = 0x00000010 | MouseMoveEvent.mask }
-MouseLeaveEvent_meta = MouseLeaveEvent_meta or { name = "MouseLeaveEvent", __index = MouseLeaveEvent }
+MouseLeaveEvent = MouseLeaveEvent or class("MouseLeaveEvent")
 
-function MouseLeaveEvent.new()
-	local o = {}
-	setmetatable(o, MouseLeaveEvent_meta)
+MouseLeaveEvent.mask = 0x00000010 | MouseMoveEvent.mask
 
-	return o
-end
+
 	]]>
 	</text>
 </object>

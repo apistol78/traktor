@@ -6,17 +6,11 @@
 
 -- ToolBar
 
-ToolBar = ToolBar or inherit(Container)
-ToolBar_meta = ToolBar_meta or { name = "ToolBar", __index = ToolBar }
+ToolBar = ToolBar or class("ToolBar", Container)
 
-function ToolBar.new(parent)
-	local o = {}
-	setmetatable(o, ToolBar_meta)
-
+function ToolBar:new(parent)
 	local mc = Widget._createResource(parent, "MC_ToolBar")
-
-	o:_initialize(parent, mc)
-	return o
+	self:_initialize(parent, mc)
 end
 
 function ToolBar:place(x, y, width, height)
@@ -56,6 +50,7 @@ function ToolBar:_initialize(parent, mc)
 	local inner_mc = mc:getMember("innerContainer_mc")
 	self._getInnerClip = function() return inner_mc end
 end
+
 	]]>
 	</text>
 </object>

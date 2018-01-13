@@ -4,11 +4,11 @@
 	<![CDATA[
 -- IEditValidator
 
-IEditValidator = IEditValidator or {}
-IEditValidator_meta = IEditValidator_meta or { name = "IEditValidator", __index = IEditValidator }
+IEditValidator = IEditValidator or class("IEditValidator")
 
 function IEditValidator:check(text)
 end
+
 	]]>
 	</text>
 </object>

@@ -4,17 +4,11 @@
 	<![CDATA[
 -- StackLayout
 
-StackLayout = StackLayout or inherit(ILayout)
-StackLayout_meta = StackLayout_meta or { name = "StackLayout", __index = StackLayout }
+StackLayout = StackLayout or class("StackLayout", ILayout)
 
-function StackLayout.new(margin, pad)
-	local o = {}
-	setmetatable(o, StackLayout_meta)
-
-	o._margin = margin
-	o._pad = pad
-
-	return o
+function StackLayout:new(margin, pad)
+	self._margin = margin
+	self._pad = pad
 end
 
 function StackLayout:estimate(container)
@@ -45,6 +39,7 @@ function StackLayout:update(container, width, height)
 		x = x + ps.width + self._pad
 	end
 end
+
 	]]>
 	</text>
 </object>

@@ -4,18 +4,15 @@
 	<![CDATA[
 -- MouseDownEvent
 
-MouseDownEvent = MouseDownEvent or { mask = 0x00000004 }
-MouseDownEvent_meta = MouseDownEvent_meta or { name = "MouseDownEvent", __index = MouseDownEvent }
+MouseDownEvent = MouseDownEvent or class("MouseDownEvent")
 
-function MouseDownEvent.new(x, y)
-	local o = {}
-	setmetatable(o, MouseDownEvent_meta)
+MouseDownEvent.mask = 0x00000004
 
-	o.x = x
-	o.y = y
-
-	return o
+function MouseDownEvent:new(x, y)
+	self.x = x
+	self.y = y
 end
+
 	]]>
 	</text>
 </object>

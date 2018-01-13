@@ -6,17 +6,11 @@
 
 -- Button
 
-Button = Button or inherit(Widget)
-Button_meta = Button_meta or { name = "Button", __index = Button }
+Button = Button or class("Button", Widget)
 
-function Button.new(parent, imageUp, imageDown, imageHover)
-	local o = {}
-	setmetatable(o, Button_meta)
-
+function Button:new(parent, imageUp, imageDown, imageHover)
 	local mc = Widget._createEmptyResource(parent)
-
-	o:_initialize(parent, mc, imageUp, imageDown, imageHover)
-	return o
+	self:_initialize(parent, mc, imageUp, imageDown, imageHover)
 end
 
 function Button:getPreferredSize()
@@ -179,6 +173,7 @@ function Button:_onMouseLeave()
 	self._isRolledOver = false
 	return true
 end
+
 	]]>
 	</text>
 </object>

@@ -4,8 +4,7 @@
 	<![CDATA[
 -- Image
 
-Image = Image or inherit(Widget)
-Image_meta = Image_meta or { name = "Image", __index = Image }
+Image = Image or class("Image", Widget)
 
 Image.MODE_DEFAULT = 0
 Image.MODE_STRETCH = 1
@@ -14,14 +13,9 @@ Image.MODE_CLIP = 2
 Image.BLEND_ALPHA = 0
 Image.BLEND_ADD = 1
 
-function Image.new(parent, image, mode)
-	local o = {}
-	setmetatable(o, Image_meta)
-
+function Image:new(parent, image, mode)
 	local mc = Widget._createEmptyResource(parent)
-
-	o:_initialize(parent, mc, image, mode)
-	return o
+	self:_initialize(parent, mc, image, mode)
 end
 
 function Image:getPreferredSize()
@@ -153,6 +147,7 @@ function Image:_onMouseRelease(event)
 	self:releaseExclusive()
 	return true
 end
+
 	]]>
 	</text>
 </object>

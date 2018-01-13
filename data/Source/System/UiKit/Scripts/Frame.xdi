@@ -7,18 +7,12 @@
 
 -- Frame
 
-Frame = Frame or inherit(Container)
-Frame_meta = Frame_meta or { name = "Frame", __index = Frame }
+Frame = Frame or class("Frame", Container)
 
-function Frame.new(root_mc, vwidth, vheight, layout)
-	local o = {}
-	setmetatable(o, Frame_meta)
-
+function Frame:new(root_mc, vwidth, vheight, layout)
 	local depth = root_mc:getNextHighestDepth()
 	local mc = root_mc:createEmptyMovieClip("mc", depth)
-
-	o:_initialize(mc, vwidth, vheight, layout)
-	return o
+	self:_initialize(mc, vwidth, vheight, layout)
 end
 
 function Frame:remove()
@@ -87,17 +81,17 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 end
 
 function Frame:_eventEnterFrame()
-	self:_dispatchEvent(FrameEvent.new())
+	self:_dispatchEvent(FrameEvent())
 end
 
 function Frame:_eventMouseDown()
 	local pt = self:getMousePosition()
-	self:_dispatchEvent(MouseDownEvent.new(pt.x, pt.y))
+	self:_dispatchEvent(MouseDownEvent(pt.x, pt.y))
 end
 
 function Frame:_eventMouseUp()
 	local pt = self:getMousePosition()
-	self:_dispatchEvent(MouseUpEvent.new(pt.x, pt.y))
+	self:_dispatchEvent(MouseUpEvent(pt.x, pt.y))
 end
 
 function Frame:_eventMouseMove()
@@ -106,13 +100,14 @@ function Frame:_eventMouseMove()
 	self._mc_debug:setPosition(Vector2(pt.x, pt.y))
 	self._tb_position:parseText(pt.x .. ";" .. pt.y)
 #endif
-	self:_dispatchEvent(MouseMoveEvent.new(pt.x, pt.y))
+	self:_dispatchEvent(MouseMoveEvent(pt.x, pt.y))
 end
 
 function Frame:_eventMouseWheel(delta)
 	local pt = self:getMousePosition()
-	self:_dispatchEvent(MouseWheelEvent.new(pt.x, pt.y, delta))
+	self:_dispatchEvent(MouseWheelEvent(pt.x, pt.y, delta))
 end
+
 	]]>
 	</text>
 </object>

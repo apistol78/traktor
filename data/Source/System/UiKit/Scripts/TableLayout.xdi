@@ -6,21 +6,15 @@
 
 -- TableLayout
 
-TableLayout = TableLayout or inherit(ILayout)
-TableLayout_meta = TableLayout_meta or { name = "TableLayout", __index = TableLayout }
+TableLayout = TableLayout or class("TableLayout", ILayout)
 
-function TableLayout.new(cdef, rdef, hmargin, vmargin, hpad, vpad)
-	local o = {}
-	setmetatable(o, TableLayout_meta)
-
-	o._cdef = cdef
-	o._rdef = rdef
-	o._hmargin = hmargin
-	o._vmargin = vmargin
-	o._hpad = hpad
-	o._vpad = vpad
-
-	return o
+function TableLayout:new(cdef, rdef, hmargin, vmargin, hpad, vpad)
+	self._cdef = cdef
+	self._rdef = rdef
+	self._hmargin = hmargin
+	self._vmargin = vmargin
+	self._hpad = hpad
+	self._vpad = vpad
 end
 
 function TableLayout:estimate(container)
@@ -193,6 +187,7 @@ function TableLayout:_calculate(container, width, height)
 
 	return w, h
 end
+
 	]]>
 	</text>
 </object>

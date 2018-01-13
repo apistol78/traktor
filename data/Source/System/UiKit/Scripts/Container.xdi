@@ -6,17 +6,11 @@
 
 -- Container
 
-Container = Container or inherit(Widget)
-Container_meta = Container_meta or { name = "Container", __index = Container }
+Container = Container or class("Container", Widget)
 
-function Container.new(parent, layout)
-	local o = {}
-	setmetatable(o, Container_meta)
-
+function Container:new(parent, layout)
 	local mc = Widget._createEmptyResource(parent)
-
-	o:_initialize(parent, mc, layout)
-	return o
+	self:_initialize(parent, mc, layout)
 end
 
 function Container:getPreferredSize()
@@ -65,6 +59,7 @@ function Container:_initialize(parent, mc, layout)
 	Widget._initialize(self, parent, mc)
 	self._layout = layout
 end
+
 	]]>
 	</text>
 </object>

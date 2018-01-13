@@ -4,15 +4,11 @@
 	<![CDATA[
 -- FrameEvent
 
-FrameEvent = FrameEvent or { mask = 0x00000002 }
-FrameEvent_meta = FrameEvent_meta or { name = "FrameEvent", __index = FrameEvent }
+FrameEvent = FrameEvent or class("FrameEvent")
 
-function FrameEvent.new()
-	local o = {}
-	setmetatable(o, FrameEvent_meta)
+FrameEvent.mask = 0x00000002
 
-	return o
-end
+
 	]]>
 	</text>
 </object>

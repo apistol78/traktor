@@ -4,23 +4,18 @@
 	<![CDATA[
 -- Interval
 
-Interval = Interval or {}
-Interval_meta = Interval_meta or { __index = Interval }
+Interval = Interval or class("Interval")
 
 Interval._instances = {}
 
-function Interval.new(duration, callFn)
-	local o = {}
-	setmetatable(o, Interval_meta)
-
+function Interval:new(duration, callFn)
 	assert (duration > 0)
 	assert (callFn ~= nil)
 
-	o._duration = duration
-	o._callFn = callFn
+	self._duration = duration
+	self._callFn = callFn
 
-	table.insert(Interval._instances, o)
-	return o
+	table.insert(Interval._instances, self)
 end
 
 function Interval:cancel()
@@ -63,6 +58,7 @@ function Interval.update(dT)
 		end
 	end
 end
+
 	]]>
 	</text>
 </object>

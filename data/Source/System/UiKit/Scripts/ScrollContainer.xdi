@@ -8,8 +8,7 @@
 
 -- ScrollContainer
 
-ScrollContainer = ScrollContainer or inherit(Container)
-ScrollContainer_meta = ScrollContainer_meta or { name = "ScrollContainer", __index = ScrollContainer }
+ScrollContainer = ScrollContainer or class("ScrollContainer", Container)
 
 ScrollContainer.HORIZONTAL = 1
 ScrollContainer.VERTICAL = 2
@@ -17,14 +16,9 @@ ScrollContainer.BOTH = ScrollContainer.HORIZONTAL | ScrollContainer.VERTICAL
 ScrollContainer.AUTO = 4
 ScrollContainer.SCROLLBARS = 8
 
-function ScrollContainer.new(parent, layout, mode)
-	local o = {}
-	setmetatable(o, ScrollContainer_meta)
-
+function ScrollContainer:new(parent, layout, mode)
 	local mc = Widget._createResource(parent, "MC_ScrollContainer")
-
-	o:_initialize(parent, mc, layout, mode)
-	return o
+	self:_initialize(parent, mc, layout, mode)
 end
 
 function ScrollContainer:place(x, y, width, height)
@@ -160,7 +154,7 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 	-- Create scrollbars.
 	if (mode & ScrollContainer.SCROLLBARS) ~= 0 then
 		if (mode & ScrollContainer.HORIZONTAL) ~= 0 then
-			self._scrollBarHorizontal = ScrollBar.new(self, ScrollBar.HORIZONTAL)
+			self._scrollBarHorizontal = ScrollBar(self, ScrollBar.HORIZONTAL)
 			self._scrollBarHorizontal.__private = true
 			self._scrollBarHorizontal.__layout = ILayout.FLOAT
 			self._scrollBarHorizontal:setOnScroll(function()
@@ -170,7 +164,7 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 			end)
 		end
 		if (mode & ScrollContainer.VERTICAL) ~= 0 then
-			self._scrollBarVertical = ScrollBar.new(self, ScrollBar.VERTICAL)
+			self._scrollBarVertical = ScrollBar(self, ScrollBar.VERTICAL)
 			self._scrollBarVertical.__private = true
 			self._scrollBarVertical.__layout = ILayout.FLOAT
 			self._scrollBarVertical:setOnScroll(function()
@@ -329,6 +323,7 @@ function ScrollContainer:_onFrame(event)
 	end
 	return false
 end
+
 	]]>
 	</text>
 </object>

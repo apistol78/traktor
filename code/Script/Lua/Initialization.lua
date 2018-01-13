@@ -82,7 +82,7 @@ function class(name, super)
 		if gpfn ~= nil then return gpfn(instance) end
 
 		local unknown = rawget(cl, "__unknown")
-		if unknown ~= nil then return function(...) unknown(member, ...) end end
+		if unknown ~= nil then return function(...) return unknown(member, ...) end end
 
 		return nil
 	end

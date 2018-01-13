@@ -8,17 +8,11 @@ import(traktor.flash)
 
 -- CheckBox
 
-CheckBox = CheckBox or inherit(Widget)
-CheckBox_meta = CheckBox_meta or { name = "CheckBox", __index = CheckBox }
+CheckBox = CheckBox or class("CheckBox", Widget)
 
-function CheckBox.new(parent)
-	local o = {}
-	setmetatable(o, CheckBox_meta)
-
+function CheckBox:new(parent)
 	local mc = Widget._createResource(parent, "MC_CheckBox")
-
-	o:_initialize(parent, mc)
-	return o
+	self:_initialize(parent, mc)
 end
 
 function CheckBox:getPreferredSize()
@@ -85,6 +79,7 @@ function CheckBox:_onMouseRelease(event)
 	end
 	return true
 end
+
 	]]>
 	</text>
 </object>

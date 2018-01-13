@@ -913,18 +913,35 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	T_ASSERT (manager);
 
 	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	if (!runtimeClass)
-		return 0;
+	T_ASSERT (runtimeClass);
 
 	int32_t top = lua_gettop(luaState);
-	if (top < 1)
+	if (top < 2)
 		return 0;
 
-	ITypedObject* object = toTypedObject(luaState, 1);
+	const char* methodName = lua_tostring(luaState, 1);
+	T_ASSERT (methodName);
+
+	ITypedObject* object = toTypedObject(luaState, 2);
 	if (!object)
 	{
-		//log::error << L"Unable to call method \"" << mbstows(methodName) << L"\", class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
+		log::error << L"Unable to call method \"" << mbstows(methodName) << L"\", class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
 		return 0;
+	}
+
+	Any argv[8];
+	manager->toAny(3, top - 2, argv);
+
+	try
+	{
+		Any returnValue = runtimeClass->invokeUnknown(object, methodName, top - 2, argv);
+		manager->pushAny(returnValue);
+		return 1;
+	}
+	catch(const CastException& x)
+	{
+		log::error << L"Unhandled CastException occurred when calling unknown method \"" << mbstows(methodName) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		manager->breakDebugger(luaState);
 	}
 
 	return 0;

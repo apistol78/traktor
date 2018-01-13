@@ -6,17 +6,11 @@
 
 -- Dialog
 
-Dialog = Dialog or inherit(Container)
-Dialog_meta = Dialog_meta or { name = "Dialog", __index = Dialog }
+Dialog = Dialog or class("Dialog", Container)
 
-function Dialog.new(parent, layout)
-	local o = {}
-	setmetatable(o, Dialog_meta)
-
+function Dialog:new(parent, layout)
 	local mc = Widget._createResource(parent, "MC_Dialog")
-
-	o:_initialize(parent, mc, layout)
-	return o
+	self:_initialize(parent, mc, layout)
 end
 
 function Dialog:getPreferredSize()
@@ -46,6 +40,7 @@ function Dialog:_initialize(parent, mc, layout)
 	local inner_mc = mc:getMember("innerContainer_mc")
 	self._getInnerClip = function() return inner_mc end
 end
+
 	]]>
 	</text>
 </object>

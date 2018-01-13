@@ -7,17 +7,11 @@
 
 -- DropDown
 
-DropDown = DropDown or inherit(Widget)
-DropDown_meta = DropDown_meta or { name = "DropDown", __index = DropDown }
+DropDown = DropDown or class("DropDown", Widget)
 
-function DropDown.new(parent, items)
-	local o = {}
-	setmetatable(o, DropDown_meta)
-
+function DropDown:new(parent, items)
 	local mc = Widget._createResource(parent, "MC_DropDown")
-
-	o:_initialize(parent, mc, items)
-	return o
+	self:_initialize(parent, mc, items)
 end
 
 function DropDown:getPreferredSize()
@@ -155,7 +149,7 @@ function DropDown:_onMousePress()
 
 	local ancestor = self:getAncestor()
 
-	self._list = ListBox.new(ancestor)
+	self._list = ListBox(ancestor)
 	self._list.__layout = ILayout.FLOAT
 
 	if self._color ~= nil then self._list:setColor(self._color) end
@@ -206,6 +200,7 @@ function DropDown:_onListMouseDown(event)
 	end
 	return true
 end
+
 	]]>
 	</text>
 </object>
