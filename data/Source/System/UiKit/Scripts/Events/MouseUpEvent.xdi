@@ -4,18 +4,15 @@
 	<![CDATA[
 -- MouseUpEvent
 
-MouseUpEvent = MouseUpEvent or { mask = 0x00000100 }
-MouseUpEvent_meta = MouseUpEvent_meta or { name = "MouseUpEvent", __index = MouseUpEvent }
+MouseUpEvent = MouseUpEvent or class("MouseUpEvent")
 
-function MouseUpEvent.new(x, y)
-	local o = {}
-	setmetatable(o, MouseUpEvent_meta)
+MouseUpEvent.mask = 0x00000100
 
-	o.x = x
-	o.y = y
-
-	return o
+function MouseUpEvent:new(x, y)
+	self.x = x
+	self.y = y
 end
+
 	]]>
 	</text>
 </object>

@@ -8,17 +8,11 @@ import(traktor.flash)
 
 -- PushButton
 
-PushButton = PushButton or inherit(Widget)
-PushButton_meta = PushButton_meta or { name = "PushButton", __index = PushButton }
+PushButton = PushButton or class("PushButton", Widget)
 
-function PushButton.new(parent, caption)
-	local o = {}
-	setmetatable(o, PushButton_meta)
-
+function PushButton:new(parent, caption)
 	local mc = Widget._createResource(parent, "MC_PushButton")
-
-	o:_initialize(parent, mc, caption)
-	return o
+	self:_initialize(parent, mc, caption)
 end
 
 function PushButton:getPreferredSize()
@@ -32,7 +26,7 @@ function PushButton:place(x, y, width, height)
 	self._background_mc:setWidth(p.width)
 
 	local sz = self._caption_tb:getTextSize()
-	local m = p.width - sz:x()
+	local m = p.width - sz.x
 	self._caption_tb:setX(m / 2)
 end
 
@@ -54,7 +48,7 @@ function PushButton:setCaption(s)
 	self._caption_tb:parseText(s)
 
 	local sz = self._caption_tb:getTextSize()
-	self._preferredSize.width = math.max(sz:x() + self._margin * 2, self._minimumWidth)
+	self._preferredSize.width = math.max(sz.x + self._margin * 2, self._minimumWidth)
 
 	return self
 end
@@ -117,6 +111,7 @@ function PushButton:_onMouseRelease(event)
 	end
 	return true
 end
+
 	]]>
 	</text>
 </object>

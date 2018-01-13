@@ -6,17 +6,14 @@
 #using \{D35E3668-DEFB-924A-B4DB-2E317DD67308}
 #using \{816FB49B-11B4-7A40-8F72-5F76DC858D5F}
 
-MouseReleaseEvent = MouseReleaseEvent or { mask = 0x00000080 | MouseDownEvent.mask | MouseUpEvent.mask }
-MouseReleaseEvent_meta = MouseReleaseEvent_meta or { name = "MouseReleaseEvent", __index = MouseReleaseEvent }
+MouseReleaseEvent = MouseReleaseEvent or class("MouseReleaseEvent")
 
-function MouseReleaseEvent.new(inside)
-	local o = {}
-	setmetatable(o, MouseReleaseEvent_meta)
+MouseReleaseEvent.mask = 0x00000080 | MouseDownEvent.mask | MouseUpEvent.mask
 
-	o.inside = inside
-
-	return o
+function MouseReleaseEvent:new(inside)
+	self.inside = inside
 end
+
 	]]>
 	</text>
 </object>

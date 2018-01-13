@@ -8,17 +8,11 @@ import(traktor)
 
 -- Static
 
-Static = Static or inherit(Widget)
-Static_meta = Static_meta or { name = "Static", __index = Static }
+Static = Static or class("Static", Widget)
 
-function Static.new(parent, text, clip)
-	local o = {}
-	setmetatable(o, Static_meta)
-
+function Static:new(parent, text, clip)
 	local mc = Widget._createResource(parent, "MC_Static")
-
-	o:_initialize(parent, mc, text, clip)
-	return o
+	self:_initialize(parent, mc, text, clip)
 end
 
 function Static:getPreferredSize(hint)
@@ -30,10 +24,10 @@ function Static:getPreferredSize(hint)
 		))
 		self:setText(text)
 		local sz = self._text_tb:getTextSize()
-		return { width = sz:x(), height = sz:y() }
+		return { width = sz.x, height = sz.y }
 	else
 		local sz = self._text_tb:measureText(text)
-		return { width = sz:x(), height = sz:y() }
+		return { width = sz.x, height = sz.y }
 	end
 end
 
@@ -152,6 +146,7 @@ function Static:_onMouseRelease(event)
 	if self._clickFn ~= nil then self._clickFn() end
 	return true
 end
+
 	]]>
 	</text>
 </object>

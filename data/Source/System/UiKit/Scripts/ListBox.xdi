@@ -9,17 +9,11 @@
 
 -- ListBox
 
-ListBox = ListBox or inherit(Widget)
-ListBox_meta = ListBox_meta or { name = "ListBox", __index = ListBox }
+ListBox = ListBox or class("ListBox", Widget)
 
-function ListBox.new(parent)
-	local o = {}
-	setmetatable(o, ListBox_meta)
-
+function ListBox:new(parent)
 	local mc = Widget._createEmptyResource(parent)
-
-	o:_initialize(parent, mc)
-	return o
+	self:_initialize(parent, mc)
 end
 
 function ListBox:getPreferredSize()
@@ -34,7 +28,7 @@ function ListBox:place(x, y, width, height)
 end
 
 function ListBox:add(item)
-	local s = Static.new(self._listContainer, item)
+	local s = Static(self._listContainer, item)
 	s:setTextColor(self._textColor)
 	s:setTextHoverColor(self._textHoverColor)
 
@@ -90,9 +84,10 @@ function ListBox:_initialize(parent, mc)
 	self._textHoverColor = Color4f(1, 1, 1, 1)
 	self._index = 0
 
-	self._panel = Panel.new(self, FloodLayout.new())
-	self._listContainer = ScrollContainer.new(self._panel, TableLayout.new({ 100 }, { 0 }, 4, 4, 0, 0), ScrollContainer.VERTICAL | ScrollContainer.SCROLLBARS)
+	self._panel = Panel(self, FloodLayout())
+	self._listContainer = ScrollContainer(self._panel, TableLayout({ 100 }, { 0 }, 4, 4, 0, 0), ScrollContainer.VERTICAL | ScrollContainer.SCROLLBARS)
 end
+
 	]]>
 	</text>
 </object>

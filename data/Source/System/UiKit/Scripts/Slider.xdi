@@ -8,17 +8,11 @@ import(traktor.flash)
 
 -- Slider
 
-Slider = Slider or inherit(Widget)
-Slider_meta = Slider_meta or { name = "Slider", __index = Slider }
+Slider = Slider or class("Slider", Widget)
 
-function Slider.new(parent)
-	local o = {}
-	setmetatable(o, Slider_meta)
-
+function Slider:new(parent)
 	local mc = Widget._createResource(parent, "MC_Slider")
-
-	o:_initialize(parent, mc)
-	return o
+	self:_initialize(parent, mc)
 end
 
 function Slider:getPreferredSize()
@@ -124,6 +118,7 @@ function Slider:_onMouseMove(event)
 
 	return true
 end
+
 	]]>
 	</text>
 </object>

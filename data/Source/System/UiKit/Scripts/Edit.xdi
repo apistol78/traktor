@@ -5,20 +5,14 @@
 -- Edit
 import(traktor.input)
 
-Edit = Edit or inherit(Widget)
-Edit_meta = Edit_meta or { name = "Edit", __index = Edit }
+Edit = Edit or class("Edit", Widget)
 
 Edit.MODE_DEFAULT = 0
 Edit.MODE_PASSWORD = 1
 
-function Edit.new(parent, text, hint, validator)
-	local o = {}
-	setmetatable(o, Edit_meta)
-
+function Edit:new(parent, text, hint, validator)
 	local mc = Widget._createResource(parent, "MC_Edit")
-
-	o:_initialize(parent, mc, text, hint, validator)
-	return o
+	self:_initialize(parent, mc, text, hint, validator)
 end
 
 function Edit:remove()
@@ -205,6 +199,7 @@ function Edit:_onKeyUp()
 		end
 	end
 end
+
 	]]>
 	</text>
 </object>

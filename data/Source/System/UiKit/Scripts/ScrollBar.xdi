@@ -8,16 +8,12 @@ import(traktor.flash)
 
 -- ScrollBar
 
-ScrollBar = ScrollBar or inherit(Widget)
-ScrollBar_meta = ScrollBar_meta or { name = "ScrollBar", __index = ScrollBar }
+ScrollBar = ScrollBar or class("ScrollBar", Widget)
 
 ScrollBar.HORIZONTAL = 0
 ScrollBar.VERTICAL = 1
 
-function ScrollBar.new(parent, orientation)
-	local o = {}
-	setmetatable(o, ScrollBar_meta)
-
+function ScrollBar:new(parent, orientation)
 	local mc
 	if orientation == ScrollBar.HORIZONTAL then
 		mc = Widget._createResource(parent, "MC_ScrollBar_Horizontal")
@@ -25,9 +21,7 @@ function ScrollBar.new(parent, orientation)
 		mc = Widget._createResource(parent, "MC_ScrollBar_Vertical")
 	end
 	assert (mc ~= nil)
-
-	o:_initialize(parent, mc, orientation)
-	return o
+	self:_initialize(parent, mc, orientation)
 end
 
 function ScrollBar:getPreferredSize()
@@ -203,6 +197,7 @@ function ScrollBar:_onMouseMove(event)
 
 	return true
 end
+
 	]]>
 	</text>
 </object>

@@ -4,17 +4,11 @@
 	<![CDATA[
 -- FloodLayout
 
-FloodLayout = FloodLayout or inherit(ILayout)
-FloodLayout_meta = FloodLayout_meta or { name = "FloodLayout", __index = FloodLayout }
+FloodLayout = FloodLayout or class("FloodLayout", ILayout)
 
-function FloodLayout.new(marginX, marginY)
-	local o = {}
-	setmetatable(o, FloodLayout_meta)
-
-	o._marginX = marginX or 0
-	o._marginY = marginY or 0
-
-	return o
+function FloodLayout:new(marginX, marginY)
+	self._marginX = marginX or 0
+	self._marginY = marginY or 0
 end
 
 function FloodLayout:estimate(container)
@@ -34,6 +28,7 @@ function FloodLayout:update(container, width, height)
 		child:place(self._marginX, self._marginY, width - self._marginX * 2, height - self._marginY * 2)
 	end
 end
+
 	]]>
 	</text>
 </object>

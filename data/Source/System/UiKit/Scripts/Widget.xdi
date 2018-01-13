@@ -14,8 +14,7 @@
 
 -- Widget
 
-Widget = Widget or {}
-Widget_meta = Widget_meta or { name = "Widget", __index = Widget }
+Widget = Widget or class("Widget")
 
 Widget.ALIGN_LEFT = "L"
 Widget.ALIGN_CENTER = "C"
@@ -175,18 +174,18 @@ end
 function Widget:setFocus()
 	if Widget._focus ~= nil then
 		if Widget._focus ~= self then
-			Widget._focus:_notifyEventListeners(FocusEvent.new(false))
+			Widget._focus:_notifyEventListeners(FocusEvent(false))
 		else
 			return
 		end
 	end
 	Widget._focus = self
-	Widget._focus:_notifyEventListeners(FocusEvent.new(true))	
+	Widget._focus:_notifyEventListeners(FocusEvent(true))	
 end
 
 function Widget:killFocus()
 	if Widget._focus ~= self then return false end
-	self:_notifyEventListeners(FocusEvent.new(false))
+	self:_notifyEventListeners(FocusEvent(false))
 	Widget._focus = nil
 	return true
 end
@@ -267,7 +266,7 @@ function Widget:globalToLocal(pt)
 	if self._mc ~= nil then
 		local ancestor = self:getAncestor()
 		local lpt = ancestor._mc:transformInto(self._mc, Vector2(pt.x * 20, pt.y * 20))
-		return { x = lpt:x() / 20, y = lpt:y() / 20 }
+		return { x = lpt.x / 20, y = lpt.y / 20 }
 	else
 		return pt
 	end
@@ -277,7 +276,7 @@ function Widget:localToGlobal(pt)
 	if self._mc ~= nil then
 		local ancestor = self:getAncestor()
 		local gpt = self._mc:transformInto(ancestor._mc, Vector2(pt.x * 20, pt.y * 20))
-		return { x = gpt:x() / 20, y = gpt:y() / 20 }
+		return { x = gpt.x / 20, y = gpt.y / 20 }
 	else
 		return pt
 	end
@@ -406,7 +405,7 @@ function Widget:_dispatchEvent(event)
 		Widget._eventMaskDirty = false
 	end
 
-	local eventType = getmetatable(event).__index
+	local eventType = getmetatable(event)
 	if (self._eventFilter & eventType.mask) == 0x00000000 then
 		return false
 	end
@@ -423,9 +422,9 @@ function Widget:_dispatchEvent(event)
 		local inside = (pt.x >= 0 and pt.y >= 0 and pt.x <= ps.width and pt.y <= ps.height)
 		if inside ~= self._mouseInside then
 			if inside then
-				self:_notifyEventListeners(MouseEnterEvent.new())
+				self:_notifyEventListeners(MouseEnterEvent())
 			else
-				self:_notifyEventListeners(MouseLeaveEvent.new())
+				self:_notifyEventListeners(MouseLeaveEvent())
 			end
 			self._mouseInside = inside
 		end
@@ -438,14 +437,14 @@ function Widget:_dispatchEvent(event)
 			-- First move focus to this widget.
 			self:setFocus()
 			-- Then issue mouse press event.
-			self:_notifyEventListeners(MousePressEvent.new())
+			self:_notifyEventListeners(MousePressEvent())
 			self._mousePressed = true
 		end
 	elseif eventType == MouseUpEvent and self._mousePressed then
 		local ps = self._placement
 		local pt = self:globalToLocal(event)
 		local inside = (pt.x >= 0 and pt.y >= 0 and pt.x <= ps.width and pt.y <= ps.height)
-		self:_notifyEventListeners(MouseReleaseEvent.new(inside))
+		self:_notifyEventListeners(MouseReleaseEvent(inside))
 		self._mousePressed = false
 	end
 
@@ -500,6 +499,7 @@ function Widget:_playSound(soundId)
 
 	soundPlayer:play(sound:get(), 0)
 end
+
 	]]>
 	</text>
 </object>

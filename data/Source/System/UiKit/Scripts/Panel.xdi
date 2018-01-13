@@ -8,17 +8,11 @@ import(traktor.flash)
 
 -- Panel
 
-Panel = Panel or inherit(Container)
-Panel_meta = Panel_meta or { name = "Panel", __index = Panel }
+Panel = Panel or class("Panel", Container)
 
-function Panel.new(parent, layout)
-	local o = {}
-	setmetatable(o, Panel_meta)
-
+function Panel:new(parent, layout)
 	local mc = Widget._createResource(parent, "MC_Panel")
-
-	o:_initialize(parent, mc, layout)
-	return o
+	self:_initialize(parent, mc, layout)
 end
 
 function Panel:place(x, y, width, height)
@@ -49,6 +43,7 @@ end
 function Panel:_getInnerClip()
 	return self._inner_mc
 end
+
 	]]>
 	</text>
 </object>

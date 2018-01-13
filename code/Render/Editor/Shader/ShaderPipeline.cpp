@@ -330,8 +330,8 @@ bool ShaderPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	auto shaderGraph = mandatory_non_null_type_cast< const ShaderGraph* >(sourceAsset);
-	auto programCompiler = getProgramCompiler();
+	Ref< const ShaderGraph > shaderGraph = mandatory_non_null_type_cast< const ShaderGraph* >(sourceAsset);
+	Ref< IProgramCompiler > programCompiler = getProgramCompiler();
 	if (!programCompiler)
 		return false;
 
@@ -387,8 +387,8 @@ bool ShaderPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	auto shaderGraph = mandatory_non_null_type_cast< const ShaderGraph* >(sourceAsset);
-	auto programCompiler = getProgramCompiler();
+	Ref< const ShaderGraph > shaderGraph = mandatory_non_null_type_cast< const ShaderGraph* >(sourceAsset);
+	Ref< IProgramCompiler > programCompiler = getProgramCompiler();
 	if (!programCompiler)
 		return false;
 

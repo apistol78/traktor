@@ -6,19 +6,12 @@
 
 -- NumericEditValidator
 
-NumericEditValidator = NumericEditValidator or inherit(IEditValidator)
-NumericEditValidator_meta = NumericEditValidator_meta or { name = "NumericEditValidator", __index = NumericEditValidator }
-
-function NumericEditValidator.new()
-	local o = {}
-	setmetatable(o, NumericEditValidator_meta)
-
-	return o
-end
+NumericEditValidator = NumericEditValidator or class("NumericEditValidator", IEditValidator)
 
 function NumericEditValidator:check(text)
 	return tonumber(text) ~= nil
 end
+
 	]]>
 	</text>
 </object>

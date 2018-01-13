@@ -5,15 +5,11 @@
 -- MouseEnterEvent
 #using \{1821BA8C-3175-C94C-8520-87FFEFC1EDAF}
 
-MouseEnterEvent = MouseEnterEvent or { mask = 0x00000008 | MouseMoveEvent.mask }
-MouseEnterEvent_meta = MouseEnterEvent_meta or { name = "MouseEnterEvent", __index = MouseEnterEvent }
+MouseEnterEvent = MouseEnterEvent or class("MouseEnterEvent")
 
-function MouseEnterEvent.new()
-	local o = {}
-	setmetatable(o, MouseEnterEvent_meta)
+MouseEnterEvent.mask = 0x00000008 | MouseMoveEvent.mask
 
-	return o
-end
+
 	]]>
 	</text>
 </object>

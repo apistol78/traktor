@@ -4,23 +4,17 @@
 	<![CDATA[
 -- Tween
 
-Tween = Tween or {}
-Tween_meta = Tween_meta or { name = "Tween", __index = Tween }
+Tween = Tween or class("Tween")
 
 Tween._instances = {}
 
-function Tween.new(startValue, endValue, duration, fn)
-	local o = {}
-	setmetatable(o, Tween_meta)
-
-	o._startValue = startValue
-	o._endValue = endValue
-	o._duration = duration
-	o._time = 0
-	o._fn = fn
-
-	table.insert(Tween._instances, o)
-	return o
+function Tween:new(startValue, endValue, duration, fn)
+	self._startValue = startValue
+	self._endValue = endValue
+	self._duration = duration
+	self._time = 0
+	self._fn = fn
+	table.insert(Tween._instances, self)
 end
 
 function Tween:stop()
@@ -55,6 +49,7 @@ function Tween.update(dT)
 		end
 	end
 end
+
 	]]>
 	</text>
 </object>

@@ -4,8 +4,7 @@
 	<![CDATA[
 -- ILayout
 
-ILayout = ILayout or {}
-ILayout_meta = ILayout_meta or { name = "ILayout", __index = ILayout }
+ILayout = ILayout or class("ILayout")
 
 ILayout.NONE = "none"
 ILayout.FLOAT = "float"
@@ -17,6 +16,7 @@ end
 -- Update placement of all children.
 function ILayout:update(container, width, height)
 end
+
 	]]>
 	</text>
 </object>

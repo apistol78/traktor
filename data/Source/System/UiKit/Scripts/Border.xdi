@@ -4,17 +4,11 @@
 	<![CDATA[
 -- Border
 
-Border = Border or inherit(Widget)
-Border_meta = Border_meta or { name = "Border", __index = Border }
+Border = Border or class("Border", Widget)
 
-function Border.new(parent)
-	local o = {}
-	setmetatable(o, Border_meta)
-
+function Border:new(parent)
 	local mc = Widget._createResource(parent, "MC_Border")
-
-	o:_initialize(parent, mc)
-	return o
+	self:_initialize(parent, mc)
 end
 
 function Border:getPreferredSize()
@@ -38,6 +32,7 @@ function Border:_initialize(parent, mc)
 	}
 	Widget._initialize(self, parent, mc)
 end
+
 	]]>
 	</text>
 </object>

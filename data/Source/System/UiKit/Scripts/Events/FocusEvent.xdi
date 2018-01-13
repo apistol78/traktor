@@ -4,17 +4,14 @@
 	<![CDATA[
 -- FocusEvent
 
-FocusEvent = FocusEvent or { mask = 0x00000001 }
-FocusEvent_meta = FocusEvent_meta or { name = "FocusEvent", __index = FocusEvent }
+FocusEvent = FocusEvent or class("FocusEvent")
 
-function FocusEvent.new(received)
-	local o = {}
-	setmetatable(o, FocusEvent_meta)
+FocusEvent.mask = 0x00000001
 
-	o.received = received
-
-	return o
+function FocusEvent:new(received)
+	self.received = received
 end
+
 	]]>
 	</text>
 </object>

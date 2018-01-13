@@ -4,18 +4,15 @@
 	<![CDATA[
 -- MouseMoveEvent
 
-MouseMoveEvent = MouseMoveEvent or { mask = 0x00000020 }
-MouseMoveEvent_meta = MouseMoveEvent_meta or { name = "MouseMoveEvent", __index = MouseMoveEvent }
+MouseMoveEvent = MouseMoveEvent or class("MouseMoveEvent")
 
-function MouseMoveEvent.new(x, y)
-	local o = {}
-	setmetatable(o, MouseMoveEvent_meta)
+MouseMoveEvent.mask = 0x00000020
 
-	o.x = x
-	o.y = y
-
-	return o
+function MouseMoveEvent:new(x, y)
+	self.x = x
+	self.y = y
 end
+
 	]]>
 	</text>
 </object>

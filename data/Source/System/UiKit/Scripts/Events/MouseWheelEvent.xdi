@@ -4,19 +4,16 @@
 	<![CDATA[
 -- MouseWheelEvent
 
-MouseWheelEvent = MouseWheelEvent or { mask = 0x00000200 }
-MouseWheelEvent_meta = MouseWheelEvent_meta or { name = "MouseWheelEvent", __index = MouseWheelEvent }
+MouseWheelEvent = MouseWheelEvent or class("MouseWheelEvent")
 
-function MouseWheelEvent.new(x, y, delta)
-	local o = {}
-	setmetatable(o, MouseWheelEvent_meta)
+MouseWheelEvent.mask = 0x00000200
 
-	o.x = x
-	o.y = y
-	o.delta = delta
-
-	return o
+function MouseWheelEvent:new(x, y, delta)
+	self.x = x
+	self.y = y
+	self.delta = delta
 end
+
 	]]>
 	</text>
 </object>
