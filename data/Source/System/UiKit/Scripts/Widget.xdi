@@ -378,7 +378,7 @@ function Widget:_notifyEventListeners(event)
 	end
 
 	-- Find event listener from type of event.
-	local eventType = getmetatable(event).__index
+	local eventType = getmetatable(event)
 	local ln = self._eventListeners[eventType]
 	if ln ~= nil then
 		if ln.fn(ln.target, event) then

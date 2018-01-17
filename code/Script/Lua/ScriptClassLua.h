@@ -29,8 +29,6 @@ public:
 
 	virtual ~ScriptClassLua();
 
-	//void addMethod(const std::string& name, int32_t ref);
-
 	virtual const TypeInfo& getExportType() const T_OVERRIDE T_FINAL;
 
 	virtual bool haveConstructor() const T_OVERRIDE T_FINAL;
@@ -85,6 +83,7 @@ private:
 	ScriptManagerLua* m_scriptManager;
 	ScriptContextLua* m_scriptContext;
 	lua_State*& m_luaState;
+	int32_t m_classRef;
 	AlignedVector< Method > m_methods;
 	SmallMap< std::string, uint32_t > m_methodLookup;
 

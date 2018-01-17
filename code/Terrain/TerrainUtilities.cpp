@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Math/Float.h"
 #include "Heightfield/Heightfield.h"
 #include "Terrain/TerrainUtilities.h"
