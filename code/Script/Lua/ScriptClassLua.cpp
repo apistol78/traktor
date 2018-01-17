@@ -24,6 +24,9 @@ Ref< ScriptClassLua > ScriptClassLua::createFromStack(ScriptManagerLua* scriptMa
 
 	Ref< ScriptClassLua > sc = new ScriptClassLua(scriptManager, scriptContext, luaState);
 
+	sc->m_classRef = luaL_ref(luaState, LUA_REGISTRYINDEX);
+	lua_rawgeti(luaState, LUA_REGISTRYINDEX, sc->m_classRef);
+
 	lua_pushnil(luaState);
 	while (lua_next(luaState, -2))
 	{
@@ -54,15 +57,8 @@ ScriptClassLua::~ScriptClassLua()
 		if (m_luaState)
 			luaL_unref(m_luaState, LUA_REGISTRYINDEX, i->ref);
 	}
+	luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_classRef);
 }
-
-//void ScriptClassLua::addMethod(const std::string& name, int32_t ref)
-//{
-//	Method& m = m_methods.push_back();
-//	m.name = name;
-//	m.ref = ref;
-//	m_methodLookup[name] = uint32_t(m_methods.size() - 1);
-//}
 
 const TypeInfo& ScriptClassLua::getExportType() const
 {
@@ -88,6 +84,10 @@ Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc,
 		m_scriptManager->pushObject(self);
 	else
 		lua_newtable(m_luaState);
+
+	// Associate class with script side object.
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_classRef);
+	lua_setmetatable(m_luaState, -2);
 
 	// Create instance table.
 	int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
@@ -227,6 +227,7 @@ ScriptClassLua::ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua
 :	m_scriptManager(scriptManager)
 ,	m_scriptContext(scriptContext)
 ,	m_luaState(luaState)
+,	m_classRef(0)
 {
 }
 

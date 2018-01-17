@@ -876,7 +876,9 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 	// Discard all arguments, only instance table in stack.
 	lua_settop(luaState, 1);
 
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	try
+#endif
 	{
 		Ref< ITypedObject > object = rc.runtimeClass->construct(0, top - 1, argv);
 		if (!object)
@@ -898,11 +900,13 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 		lua_remove(luaState, -2);
 		return 0;
 	}
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	catch(const CastException& x)
 	{
 		log::error << L"Unhandled CastException occurred when calling constructor, class " << rc.runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
+#endif
 
 	return 0;
 }
@@ -932,17 +936,21 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	Any argv[8];
 	manager->toAny(3, top - 2, argv);
 
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	try
+#endif
 	{
 		Any returnValue = runtimeClass->invokeUnknown(object, methodName, top - 2, argv);
 		manager->pushAny(returnValue);
 		return 1;
 	}
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	catch(const CastException& x)
 	{
 		log::error << L"Unhandled CastException occurred when calling unknown method \"" << mbstows(methodName) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
+#endif
 
 	return 0;
 }
@@ -971,17 +979,21 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	Any argv[10];
 	manager->toAny(2, top - 1, argv);
 
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	try
+#endif
 	{
 		Any returnValue = runtimeClass->invoke(object, methodId, top - 1, argv);
 		manager->pushAny(returnValue);
 		return 1;
 	}
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	catch(const CastException& x)
 	{
 		log::error << L"Unhandled CastException occurred when calling method \"" << mbstows(runtimeClass->getMethodName(methodId)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
+#endif
 
 	return 0;
 }
@@ -1003,17 +1015,21 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	Any argv[10];
 	manager->toAny(1, top, argv);
 
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	try
+#endif
 	{
 		Any returnValue = runtimeClass->invokeStatic(methodId, top, argv);
 		manager->pushAny(returnValue);
 		return 1;
 	}
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	catch(const CastException& x)
 	{
 		log::error << L"Unhandled CastException occurred when calling static method \"" << mbstows(runtimeClass->getStaticMethodName(methodId)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
+#endif
 
 	return 0;
 }
@@ -1113,17 +1129,21 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 		return 0;
 	}
 
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	try
+#endif
 	{
 		Any returnValue = runtimeClass->invokeOperator(object, 0, arg);
 		manager->pushAny(returnValue);
 		return 1;
 	}
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	catch(const CastException& x)
 	{
 		log::error << L"Unhandled CastException occurred when calling add operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
+#endif
 
 	return 0;
 }
@@ -1149,17 +1169,21 @@ int ScriptManagerLua::classSubtract(lua_State* luaState)
 
 	Any arg = manager->toAny(2);
 
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	try
+#endif
 	{
 		Any returnValue = runtimeClass->invokeOperator(object, 1, arg);
 		manager->pushAny(returnValue);
 		return 1;
 	}
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	catch(const CastException& x)
 	{
 		log::error << L"Unhandled CastException occurred when calling subtract operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
+#endif
 
 	return 0;
 }
@@ -1196,17 +1220,21 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 		return 0;
 	}
 
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	try
+#endif
 	{
 		Any returnValue = runtimeClass->invokeOperator(object, 2, arg);
 		manager->pushAny(returnValue);
 		return 1;
 	}
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	catch(const CastException& x)
 	{
 		log::error << L"Unhandled CastException occurred when calling multiply operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
+#endif
 
 	return 0;
 }
@@ -1232,17 +1260,21 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 
 	Any arg = manager->toAny(2);
 
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	try
+#endif
 	{
 		Any returnValue = runtimeClass->invokeOperator(object, 3, arg);
 		manager->pushAny(returnValue);
 		return 1;
 	}
+#if defined(T_HAVE_CAST_EXCEPTIONS)
 	catch(const CastException& x)
 	{
 		log::error << L"Unhandled CastException occurred when calling divide operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
+#endif
 
 	return 0;
 }

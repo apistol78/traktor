@@ -70,7 +70,7 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	staticAndroidHome->create(containerAndroid, L"Android SDK home");
 
 	m_editAndroidHome = new ui::Edit();
-	m_editAndroidHome->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidHome", L"$(ANDROID_HOME"));
+	m_editAndroidHome->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidHome", L"$(ANDROID_HOME)"));
 
 	Ref< ui::Static > staticAndroidNdkRoot = new ui::Static();
 	staticAndroidNdkRoot->create(containerAndroid, L"Android NDK root");
