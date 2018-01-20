@@ -49,6 +49,7 @@ public:
 private:
 	IEditor* m_editor;
 	Ref< ui::Edit > m_editSearch;
+	Ref< ui::CheckBox > m_checkRegExp;
 	Ref< ui::CheckBox > m_checkCaseSensitive;
 	Ref< ui::Button > m_buttonFind;
 	Ref< ui::Button > m_buttonSaveAs;
@@ -68,7 +69,7 @@ private:
 
 	void eventClose(ui::CloseEvent* event);
 
-	void jobSearch(std::wstring needle, bool caseSensitive);
+	void jobSearch(std::wstring needle, bool regExp, bool caseSensitive);
 };
 
 	}
