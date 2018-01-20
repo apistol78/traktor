@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include <regex>
 #include "Core/RefSet.h"
 #include "Core/Functor/Functor.h"
 #include "Core/Io/FileOutputStream.h"
@@ -11,6 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
@@ -95,24 +97,71 @@ std::wstring getMemberValue(const ReflectionMember* member)
 		return L"";
 }
 
-bool match(const std::wstring& value, const std::wstring& needle, bool caseSensitive)
+bool match(const std::wstring& value, const std::wstring& needle, bool regExp, bool caseSensitive)
 {
-	if (caseSensitive)
-		return value.find(needle) != std::wstring::npos;
+	if (!regExp)
+	{
+		StringSplit< std::wstring > ss(value, L"\n\r");
+		if (caseSensitive)
+		{
+			for (auto s : ss)
+			{
+				if (s.empty())
+					continue;
+				if (s.find(needle) != std::wstring::npos)
+					return true;
+			}
+		}
+		else
+		{
+			for (auto s : ss)
+			{
+				if (s.empty())
+					continue;
+				if (toLower(s).find(toLower(needle)) != std::wstring::npos)
+					return true;
+			}
+		}
+	}
 	else
-		return toLower(value).find(toLower(needle)) != std::wstring::npos;
+	{
+		StringSplit< std::wstring > ss(value, L"\n\r");
+		if (caseSensitive)
+		{
+			std::basic_regex< wchar_t > rx(needle);
+			for (auto s : ss)
+			{
+				if (s.empty())
+					continue;
+				if (std::regex_match(s, rx))
+					return true;
+			}
+		}
+		else
+		{
+			std::basic_regex< wchar_t > rx(needle);
+			for (auto s : ss)
+			{
+				if (s.empty())
+					continue;
+				if (std::regex_match(toLower(s), rx))
+					return true;
+			}
+		}
+	}
+	return false;
 }
 
-Ref< const ReflectionMember > searchMember(db::Instance* instance, Reflection* reflection, const ReflectionMember* member, RefSet< Object >& visited, const std::wstring& needle, bool caseSensitive, ui::custom::GridView* gridResults)
+Ref< const ReflectionMember > searchMember(db::Instance* instance, Reflection* reflection, const ReflectionMember* member, RefSet< Object >& visited, const std::wstring& needle, bool regExp, bool caseSensitive, ui::custom::GridView* gridResults)
 {
-	if (match(stylizeMemberName(member->getName()), needle, caseSensitive))
+	if (match(stylizeMemberName(member->getName()), needle, regExp, caseSensitive))
 		return member;
 	else if (const RfmCompound* memberCompound = dynamic_type_cast< const RfmCompound* >(member))
 	{
 		const RefArray< ReflectionMember >& members = memberCompound->getMembers();
 		for (RefArray< ReflectionMember >::const_iterator i = members.begin(); i != members.end(); ++i)
 		{
-			Ref< const ReflectionMember > foundMember = searchMember(instance, reflection, *i, visited, needle, caseSensitive, gridResults);
+			Ref< const ReflectionMember > foundMember = searchMember(instance, reflection, *i, visited, needle, regExp, caseSensitive, gridResults);
 			if (foundMember)
 				return foundMember;
 		}
@@ -127,7 +176,7 @@ Ref< const ReflectionMember > searchMember(db::Instance* instance, Reflection* r
 				const RefArray< ReflectionMember >& members = childReflection->getMembers();
 				for (RefArray< ReflectionMember >::const_iterator i = members.begin(); i != members.end(); ++i)
 				{
-					Ref< const ReflectionMember > foundMember = searchMember(instance, childReflection, *i, visited, needle, caseSensitive, gridResults);
+					Ref< const ReflectionMember > foundMember = searchMember(instance, childReflection, *i, visited, needle, regExp, caseSensitive, gridResults);
 					if (foundMember)
 						return foundMember;
 				}
@@ -136,24 +185,24 @@ Ref< const ReflectionMember > searchMember(db::Instance* instance, Reflection* r
 	}
 	else if (const RfmPrimitiveString* memberString = dynamic_type_cast< const RfmPrimitiveString* >(member))
 	{
-		if (match(mbstows(memberString->get()), needle, caseSensitive))
+		if (match(mbstows(memberString->get()), needle, regExp, caseSensitive))
 			return member;
 	}
 	else if (const RfmPrimitiveWideString* memberWideString = dynamic_type_cast< const RfmPrimitiveWideString* >(member))
 	{
-		if (match(memberWideString->get(), needle, caseSensitive))
+		if (match(memberWideString->get(), needle, regExp, caseSensitive))
 			return member;
 	}
 	else if (const RfmPrimitivePath* memberPath = dynamic_type_cast< const RfmPrimitivePath* >(member))
 	{
-		if (match(memberPath->get().getPathName(), needle, caseSensitive))
+		if (match(memberPath->get().getPathName(), needle, regExp, caseSensitive))
 			return member;
 	}
 
 	return 0;
 }
 
-void searchInstance(db::Instance* instance, const std::wstring& needle, bool caseSensitive, ui::custom::GridView* gridResults)
+void searchInstance(db::Instance* instance, const std::wstring& needle, bool regExp, bool caseSensitive, ui::custom::GridView* gridResults)
 {
 	Ref< ISerializable > object = instance->getObject();
 	if (!object)
@@ -168,7 +217,7 @@ void searchInstance(db::Instance* instance, const std::wstring& needle, bool cas
 	const RefArray< ReflectionMember >& members = reflection->getMembers();
 	for (RefArray< ReflectionMember >::const_iterator i = members.begin(); i != members.end(); ++i)
 	{
-		Ref< const ReflectionMember > foundMember = searchMember(instance, reflection, *i, visited, needle, caseSensitive, gridResults);
+		Ref< const ReflectionMember > foundMember = searchMember(instance, reflection, *i, visited, needle, regExp, caseSensitive, gridResults);
 		if (foundMember)
 		{
 			std::wstring value = getMemberValue(foundMember);
@@ -189,7 +238,7 @@ void searchInstance(db::Instance* instance, const std::wstring& needle, bool cas
 	}
 }
 
-void searchGroup(db::Group* group, const std::wstring& needle, bool caseSensitive, ui::custom::ProgressBar* progressBar, ui::custom::GridView* gridResults)
+void searchGroup(db::Group* group, const std::wstring& needle, bool regExp, bool caseSensitive, ui::custom::ProgressBar* progressBar, ui::custom::GridView* gridResults)
 {
 	RefArray< db::Instance > childInstances;
 	db::recursiveFindChildInstances(group, db::FindInstanceAll(), childInstances);
@@ -197,7 +246,7 @@ void searchGroup(db::Group* group, const std::wstring& needle, bool caseSensitiv
 	progressBar->setRange(0, int32_t(childInstances.size()));
 	for (int32_t i = 0; i < int32_t(childInstances.size()); ++i)
 	{
-		searchInstance(childInstances[i], needle, caseSensitive, gridResults);
+		searchInstance(childInstances[i], needle, regExp, caseSensitive, gridResults);
 		progressBar->setProgress(i);
 	}
 }
@@ -232,6 +281,9 @@ bool SearchToolDialog::create(ui::Widget* parent)
 
 	m_editSearch = new ui::Edit();
 	m_editSearch->create(containerSearch);
+
+	m_checkRegExp = new ui::CheckBox();
+	m_checkRegExp->create(containerSearch, i18n::Text(L"EDITOR_SEARCH_TOOL_REGEXP"));
 
 	m_checkCaseSensitive = new ui::CheckBox();
 	m_checkCaseSensitive->create(containerSearch, i18n::Text(L"EDITOR_SEARCH_TOOL_CASE_SENSITIVE"));
@@ -271,12 +323,14 @@ void SearchToolDialog::eventButtonSearchClick(ui::ButtonClickEvent* event)
 	if (needle.empty())
 		return;
 
+	bool regExp = m_checkRegExp->isChecked();
 	bool caseSensitive = m_checkCaseSensitive->isChecked();
 
 	m_gridResults->removeAllRows();
-	m_jobSearch = JobManager::getInstance().add(makeFunctor(this, &SearchToolDialog::jobSearch, needle, caseSensitive));
+	m_jobSearch = JobManager::getInstance().add(makeFunctor(this, &SearchToolDialog::jobSearch, needle, regExp, caseSensitive));
 
 	m_editSearch->setEnable(false);
+	m_checkRegExp->setEnable(false);
 	m_checkCaseSensitive->setEnable(false);
 	m_buttonFind->setEnable(false);
 	m_buttonSaveAs->setEnable(false);
@@ -360,6 +414,7 @@ void SearchToolDialog::eventTimer(ui::TimerEvent* event)
 	{
 		stopTimer();
 		m_editSearch->setEnable(true);
+		m_checkRegExp->setEnable(true);
 		m_checkCaseSensitive->setEnable(true);
 		m_buttonFind->setEnable(true);
 		m_buttonSaveAs->setEnable(true);
@@ -374,7 +429,7 @@ void SearchToolDialog::eventClose(ui::CloseEvent* event)
 	destroy();
 }
 
-void SearchToolDialog::jobSearch(std::wstring needle, bool caseSensitive)
+void SearchToolDialog::jobSearch(std::wstring needle, bool regExp, bool caseSensitive)
 {
 	Ref< db::Database > database = m_editor->getSourceDatabase();
 	if (!database)
@@ -383,6 +438,7 @@ void SearchToolDialog::jobSearch(std::wstring needle, bool caseSensitive)
 	searchGroup(
 		database->getRootGroup(),
 		needle,
+		regExp,
 		caseSensitive,
 		m_progressBar,
 		m_gridResults

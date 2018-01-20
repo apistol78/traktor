@@ -1093,6 +1093,10 @@
       <second>Instance</second>
     </item>
     <item>
+    	<first>EDITOR_SEARCH_TOOL_REGEXP</first>
+    	<second>Regular expression</second>
+    </item>
+    <item>
       <first>EDITOR_SEARCH_TOOL_TYPE</first>
       <second>Type</second>
     </item>
