@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_animation_LwsValue_H
 #define traktor_animation_LwsValue_H
 
+#include <vector>
 #include "Animation/Editor/LwsParser/LwsNode.h"
 
 namespace traktor

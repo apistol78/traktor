@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_online_ILeaderboardsProvider_H
 
 #include <map>
+#include <vector>
 #include "Core/Object.h"
 
 // import/export mechanism.

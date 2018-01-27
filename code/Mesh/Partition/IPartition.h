@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_IPartition_H
 #define traktor_mesh_IPartition_H
 
+#include <vector>
 #include "Core/Object.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"

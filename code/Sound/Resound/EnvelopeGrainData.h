@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_sound_EnvelopeGrainData_H
 #define traktor_sound_EnvelopeGrainData_H
 
+#include <vector>
 #include "Core/RefArray.h"
 #include "Sound/Types.h"
 #include "Sound/Resound/IGrainData.h"

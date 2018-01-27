@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_BlendMeshComponent_H
 #define traktor_mesh_BlendMeshComponent_H
 
+#include <vector>
 #include "Mesh/MeshComponent.h"
 #include "Mesh/Blend/BlendMesh.h"
 #include "Resource/Proxy.h"

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_ImageProcessStepBokeh_H
 #define traktor_render_ImageProcessStepBokeh_H
 
+#include <vector>
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Types.h"
 #include "Resource/Id.h"

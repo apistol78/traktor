@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <map>
 #include <string>
+#include <vector>
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
 #include "Render/Shader/Node.h"

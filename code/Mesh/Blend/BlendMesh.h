@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_mesh_BlendMesh_H
 
 #include <map>
+#include <vector>
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"

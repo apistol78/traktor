@@ -7,8 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_drawing_ConvolutionFilter_H
 #define traktor_drawing_ConvolutionFilter_H
 
-#include "Drawing/IImageFilter.h"
+#include <vector>
 #include "Core/Math/Matrix33.h"
+#include "Drawing/IImageFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

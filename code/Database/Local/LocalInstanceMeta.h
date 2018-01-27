@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_db_LocalInstanceMeta_H
 #define traktor_db_LocalInstanceMeta_H
 
+#include <vector>
 #include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
 

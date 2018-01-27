@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_online_UserCache_H
 #define traktor_online_UserCache_H
 
+#include <vector>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"

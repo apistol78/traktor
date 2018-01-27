@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_animation_AnimatedMeshEntity_H
 #define traktor_animation_AnimatedMeshEntity_H
 
+#include <vector>
 #include "Animation/Pose.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Job.h"

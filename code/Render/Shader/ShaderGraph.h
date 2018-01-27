@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_ShaderGraph_H
 #define traktor_render_ShaderGraph_H
 
+#include <vector>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/RefSet.h"

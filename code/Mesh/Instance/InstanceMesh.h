@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_InstanceMesh_H
 #define traktor_mesh_InstanceMesh_H
 
+#include <vector>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Quaternion.h"

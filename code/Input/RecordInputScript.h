@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_input_RecordInputScript_H
 
 #include <map>
+#include <vector>
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_ui_custom_Sequence_H
 #define traktor_ui_custom_Sequence_H
 
+#include <vector>
 #include "Core/RefArray.h"
 #include "Ui/Command.h"
 #include "Ui/Rect.h"

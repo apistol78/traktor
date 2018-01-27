@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_model_ModelFormat_H
 #define traktor_model_ModelFormat_H
 
+#include <vector>
 #include "Core/Object.h"
 #include "Core/Io/Path.h"
 
