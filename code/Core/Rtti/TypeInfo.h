@@ -8,7 +8,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_TypeInfo_H
 
 #include <set>
-#include <vector>
 #include "Core/Config.h"
 #include "Core/Ref.h"
 

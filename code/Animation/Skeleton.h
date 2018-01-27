@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_animation_Skeleton_H
 #define traktor_animation_Skeleton_H
 
+#include <vector>
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"

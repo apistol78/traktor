@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_Script_H
 
 #include <map>
+#include <vector>
 #include "Render/Shader/Node.h"
 #include "Render/Shader/TypedInputPin.h"
 #include "Render/Shader/TypedOutputPin.h"

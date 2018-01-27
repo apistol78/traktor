@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_PartitionMesh_H
 #define traktor_mesh_PartitionMesh_H
 
+#include <vector>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Matrix44.h"

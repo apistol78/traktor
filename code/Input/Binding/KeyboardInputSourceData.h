@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_input_KeyboardInputSourceData_H
 #define traktor_input_KeyboardInputSourceData_H
 
+#include <vector>
 #include "Input/InputTypes.h"
 #include "Input/Binding/IInputSourceData.h"
 

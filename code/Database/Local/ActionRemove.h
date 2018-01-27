@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_db_ActionRemove_H
 #define traktor_db_ActionRemove_H
 
+#include <vector>
 #include "Database/Local/Action.h"
 #include "Core/Io/Path.h"
 

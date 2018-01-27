@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_RenderViewSw_H
 #define traktor_render_RenderViewSw_H
 
+#include <vector>
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "Graphics/ISurface.h"

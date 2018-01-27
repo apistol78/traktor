@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_ui_IWidget_H
 
 #include <string>
+#include <vector>
 #include "Core/Config.h"
 #include "Core/Platform.h"
 #include "Ui/Enums.h"

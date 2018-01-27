@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include <vector>
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
 #include "Net/Replication/State/FloatValue.h"

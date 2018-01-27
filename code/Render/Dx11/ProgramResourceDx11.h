@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_ProgramResourceDx11_H
 
 #include <map>
+#include <vector>
 #include "Render/Dx11/Platform.h"
 #include "Render/Resource/ProgramResource.h"
 

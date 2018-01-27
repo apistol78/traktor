@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <list>
 #include <string>
+#include <vector>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 

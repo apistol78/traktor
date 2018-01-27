@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_physics_PhysicsManager_H
 #define traktor_physics_PhysicsManager_H
 
+#include <vector>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"

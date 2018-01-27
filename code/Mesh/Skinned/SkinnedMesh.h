@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_mesh_SkinnedMesh_H
 
 #include <map>
+#include <vector>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Mesh/IMesh.h"

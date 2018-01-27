@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_GlslProgram_H
 
 #include <string>
+#include <vector>
 #include "Render/OpenGL/TypesOpenGL.h"
 
 namespace traktor

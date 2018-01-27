@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_amalgam_HostEnumerator_H
 #define traktor_amalgam_HostEnumerator_H
 
+#include <vector>
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 

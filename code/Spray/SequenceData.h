@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_spray_SequenceData_H
 #define traktor_spray_SequenceData_H
 
+#include <vector>
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

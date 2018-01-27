@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_ImmutableNode_H
 #define traktor_render_ImmutableNode_H
 
+#include <vector>
 #include "Render/Shader/InputPin.h"
 #include "Render/Shader/Node.h"
 #include "Render/Shader/OutputPin.h"

@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_BinarySerializer_H
 
 #include <map>
+#include <vector>
 #include "Core/Ref.h"
 #include "Core/Serialization/Serializer.h"
 
@@ -98,7 +99,7 @@ private:
 	std::map< uint64_t, Ref< ISerializable > > m_readCache;
 	std::map< ISerializable*, uint64_t > m_writeCache;
 	uint64_t m_nextCacheId;
-	std::vector< const TypeInfo*> m_typeReadCache;
+	std::vector< const TypeInfo* > m_typeReadCache;
 	std::map< const TypeInfo*, uint32_t > m_typeWriteCache;
 	uint32_t m_nextTypeCacheId;
 };

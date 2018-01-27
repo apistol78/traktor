@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_graphics_IGraphicsSystem_H
 #define traktor_graphics_IGraphicsSystem_H
 
+#include <vector>
 #include "Core/Object.h"
 #include "Core/Platform.h"
 #include "Graphics/PixelFormat.h"

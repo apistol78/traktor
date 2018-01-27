@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <cstring>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringReader.h"
 
@@ -47,7 +48,7 @@ wchar_t StringReader::readChar()
 
 int64_t StringReader::readLine(std::wstring& out)
 {
-	std::vector< wchar_t > buf;
+	AlignedVector< wchar_t > buf;
 	wchar_t ch;
 
 	for (;;)

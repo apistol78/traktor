@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_terrain_RubbleLayerData_H
 #define traktor_terrain_RubbleLayerData_H
 
+#include <vector>
 #include "Resource/Id.h"
 #include "Terrain/ITerrainLayerData.h"
 

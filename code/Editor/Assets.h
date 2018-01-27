@@ -7,8 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_editor_Assets_H
 #define traktor_editor_Assets_H
 
-#include "Core/Serialization/ISerializable.h"
+#include <vector>
 #include "Core/Guid.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

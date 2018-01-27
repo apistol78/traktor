@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_ContextOpenGLES2_H
 
 #include <map>
+#include <vector>
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"

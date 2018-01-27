@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_SHCoeffs_H
 #define traktor_render_SHCoeffs_H
 
+#include <vector>
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

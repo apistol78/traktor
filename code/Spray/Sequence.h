@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_spray_Sequence_H
 #define traktor_spray_Sequence_H
 
+#include <vector>
 #include "Core/Object.h"
 
 // import/export mechanism.
