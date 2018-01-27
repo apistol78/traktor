@@ -25,10 +25,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/Utf16Encoding.h"
 #include "Core/Io/Utf32Encoding.h"
 #include "Core/Io/Path.h"
-#include "Core/Misc/Adler32.h"
-#include "Core/Misc/Base64.h"
-#include "Core/Misc/MD5.h"
-#include "Core/Misc/SHA1.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyArray.h"
@@ -45,7 +41,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/System/IProcess.h"
 #include "Core/System/ISharedMemory.h"
 #include "Core/System/OS.h"
-#include "Core/Timer/Timer.h"
 
 namespace traktor
 {
@@ -541,85 +536,49 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classPropertyBoolean->addMethod("get", &PropertyBoolean_get);
 	registrar->registerClass(classPropertyBoolean);
 
-	//Ref< AutoRuntimeClass< PropertyColor > > classPropertyColor = new AutoRuntimeClass< PropertyColor >();
-	//classPropertyColor->addConstructor();
-	//classPropertyColor->addConstructor< Color4ub >();
-	//classPropertyColor->addMethod("get", &PropertyColor_get);
-	//registrar->registerClass(classPropertyColor);
+	Ref< AutoRuntimeClass< PropertyColor > > classPropertyColor = new AutoRuntimeClass< PropertyColor >();
+	classPropertyColor->addConstructor();
+	classPropertyColor->addConstructor< Color4ub >();
+	classPropertyColor->addMethod("get", &PropertyColor_get);
+	registrar->registerClass(classPropertyColor);
 
-	//Ref< AutoRuntimeClass< PropertyFloat > > classPropertyFloat = new AutoRuntimeClass< PropertyFloat >();
-	//classPropertyFloat->addConstructor();
-	//classPropertyFloat->addConstructor< float >();
-	//classPropertyFloat->addMethod("get", &PropertyFloat_get);
-	//registrar->registerClass(classPropertyFloat);
+	Ref< AutoRuntimeClass< PropertyFloat > > classPropertyFloat = new AutoRuntimeClass< PropertyFloat >();
+	classPropertyFloat->addConstructor();
+	classPropertyFloat->addConstructor< float >();
+	classPropertyFloat->addMethod("get", &PropertyFloat_get);
+	registrar->registerClass(classPropertyFloat);
 
-	//Ref< AutoRuntimeClass< PropertyGroup > > classPropertyGroup = new AutoRuntimeClass< PropertyGroup >();
-	//classPropertyGroup->addConstructor();
-	//classPropertyGroup->addMethod("setProperty", &PropertyGroup_setProperty);
-	//classPropertyGroup->addMethod("getProperty", &PropertyGroup_getProperty);
-	//classPropertyGroup->addMethod("getPropertyRaw", &PropertyGroup_getPropertyRaw);
-	//registrar->registerClass(classPropertyGroup);
+	Ref< AutoRuntimeClass< PropertyGroup > > classPropertyGroup = new AutoRuntimeClass< PropertyGroup >();
+	classPropertyGroup->addConstructor();
+	classPropertyGroup->addMethod("setProperty", &PropertyGroup_setProperty);
+	classPropertyGroup->addMethod("getProperty", &PropertyGroup_getProperty);
+	classPropertyGroup->addMethod("getPropertyRaw", &PropertyGroup_getPropertyRaw);
+	registrar->registerClass(classPropertyGroup);
 
-	//Ref< AutoRuntimeClass< PropertyInteger > > classPropertyInteger = new AutoRuntimeClass< PropertyInteger >();
-	//classPropertyInteger->addConstructor();
-	//classPropertyInteger->addConstructor< int32_t >();
-	//classPropertyInteger->addMethod("get", &PropertyInteger_get);
-	//registrar->registerClass(classPropertyInteger);
+	Ref< AutoRuntimeClass< PropertyInteger > > classPropertyInteger = new AutoRuntimeClass< PropertyInteger >();
+	classPropertyInteger->addConstructor();
+	classPropertyInteger->addConstructor< int32_t >();
+	classPropertyInteger->addMethod("get", &PropertyInteger_get);
+	registrar->registerClass(classPropertyInteger);
 
-	//Ref< AutoRuntimeClass< PropertyObject > > classPropertyObject = new AutoRuntimeClass< PropertyObject >();
-	//classPropertyObject->addConstructor();
-	//classPropertyObject->addMethod("get", &PropertyObject_get);
-	//registrar->registerClass(classPropertyObject);
+	Ref< AutoRuntimeClass< PropertyObject > > classPropertyObject = new AutoRuntimeClass< PropertyObject >();
+	classPropertyObject->addConstructor();
+	classPropertyObject->addMethod("get", &PropertyObject_get);
+	registrar->registerClass(classPropertyObject);
 
-	//Ref< AutoRuntimeClass< PropertyString > > classPropertyString = new AutoRuntimeClass< PropertyString >();
-	//classPropertyString->addConstructor();
-	//classPropertyString->addConstructor< const std::wstring& >();
-	//classPropertyString->addMethod("get", &PropertyString_get);
-	//registrar->registerClass(classPropertyString);
+	Ref< AutoRuntimeClass< PropertyString > > classPropertyString = new AutoRuntimeClass< PropertyString >();
+	classPropertyString->addConstructor();
+	classPropertyString->addConstructor< const std::wstring& >();
+	classPropertyString->addMethod("get", &PropertyString_get);
+	registrar->registerClass(classPropertyString);
 
-	//Ref< AutoRuntimeClass< PropertyStringArray > > classPropertyStringArray = new AutoRuntimeClass< PropertyStringArray >();
-	//classPropertyStringArray->addConstructor();
-	//registrar->registerClass(classPropertyStringArray);
+	Ref< AutoRuntimeClass< PropertyStringArray > > classPropertyStringArray = new AutoRuntimeClass< PropertyStringArray >();
+	classPropertyStringArray->addConstructor();
+	registrar->registerClass(classPropertyStringArray);
 
-	//Ref< AutoRuntimeClass< PropertyStringSet > > classPropertyStringSet = new AutoRuntimeClass< PropertyStringSet >();
-	//classPropertyStringSet->addConstructor();
-	//registrar->registerClass(classPropertyStringSet);
-
-	//Ref< AutoRuntimeClass< Timer > > classTimer = new AutoRuntimeClass< Timer >();
-	//classTimer->addConstructor();
-	//classTimer->addMethod("start", &Timer::start);
-	//classTimer->addMethod("pause", &Timer::pause);
-	//classTimer->addMethod("stop", &Timer::stop);
-	//classTimer->addMethod("getElapsedTime", &Timer::getElapsedTime);
-	//classTimer->addMethod("getDeltaTime", &Timer::getDeltaTime);
-	//registrar->registerClass(classTimer);
-
-	//Ref< AutoRuntimeClass< Adler32 > > classAdler32 = new AutoRuntimeClass< Adler32 >();
-	//classAdler32->addConstructor();
-	//classAdler32->addMethod("begin", &Adler32::begin);
-	//classAdler32->addMethod("end", &Adler32::end);
-	//classAdler32->addMethod("get", &Adler32::get);
-	//registrar->registerClass(classAdler32);
-	//
-	//Ref< AutoRuntimeClass< Base64 > > classBase64 = new AutoRuntimeClass< Base64 >();
-	//registrar->registerClass(classBase64);
-
-	//Ref< AutoRuntimeClass< MD5 > > classMD5 = new AutoRuntimeClass< MD5 >();
-	//classMD5->addConstructor();
-	//classMD5->addMethod("create", &MD5::create);
-	//classMD5->addMethod("createFromString", &MD5::createFromString);
-	//classMD5->addMethod("begin", &MD5::begin);
-	//classMD5->addMethod("end", &MD5::end);
-	//classMD5->addMethod("format", &MD5::format);
-	//registrar->registerClass(classMD5);
-
-	//Ref< AutoRuntimeClass< SHA1 > > classSHA1 = new AutoRuntimeClass< SHA1 >();
-	//classSHA1->addConstructor();
-	//classSHA1->addMethod("createFromString", &SHA1::createFromString);
-	//classSHA1->addMethod("begin", &SHA1::begin);
-	//classSHA1->addMethod("end", &SHA1::end);
-	//classSHA1->addMethod("format", &SHA1::format);
-	//registrar->registerClass(classSHA1);
+	Ref< AutoRuntimeClass< PropertyStringSet > > classPropertyStringSet = new AutoRuntimeClass< PropertyStringSet >();
+	classPropertyStringSet->addConstructor();
+	registrar->registerClass(classPropertyStringSet);
 }
 
 }
