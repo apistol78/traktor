@@ -72,7 +72,7 @@ EmitterVariable* EmitterContext::emitInput(const InputPin* inputPin)
 		return 0;
 
 	std::map< const OutputPin*, OutputVariable >::iterator i = m_currentState->inputs.find(sourcePin);
-	if (i == m_currentState->inputs.end())
+	if (i == m_currentState->inputs.end() || i->second.var == 0)
 	{
 		if (!m_emitter.emit(*this, sourcePin->getNode()))
 		{
@@ -87,21 +87,21 @@ EmitterVariable* EmitterContext::emitInput(const InputPin* inputPin)
 			return 0;
 		}
 
-		T_FATAL_ASSERT (std::find(i->second.pins.begin(), i->second.pins.end(), inputPin) != i->second.pins.end());
+		//T_FATAL_ASSERT (std::find(i->second.pins.begin(), i->second.pins.end(), inputPin) != i->second.pins.end());
+		//if (std::find(i->second.released.begin(), i->second.released.end(), inputPin) != i->second.released.end())
+		//{
+		//	log::error << L"Input pin \"" << inputPin->getName() << L"\" of node \"" << type_name(inputPin->getNode()) << L"\" (connected to node \"" << type_name(sourcePin->getNode()) << L"\") released; internal error." << Endl;
+		//	return 0;
+		//}
 
-		if (std::find(i->second.released.begin(), i->second.released.end(), inputPin) != i->second.released.end())
+		if (!i->second.var)
 		{
-			log::error << L"Input pin \"" << inputPin->getName() << L"\" of node \"" << type_name(inputPin->getNode()) << L"\" (connected to node \"" << type_name(sourcePin->getNode()) << L"\") released; internal error." << Endl;
+			log::error << L"No variable associated with output pin \"" << sourcePin->getName() << L"\" after node \"" << type_name(sourcePin->getNode()) << L"\" emitted " << sourcePin->getNode()->getId().format() << L"." << Endl;
 			return 0;
 		}
 	}
 
-	if (!i->second.var)
-	{
-		log::error << L"No variable associated after node \"" << type_name(sourcePin->getNode()) << L"\" emitted." << Endl;
-		return 0;
-	}
-
+	T_FATAL_ASSERT(i->second.var != 0);
 	return i->second.var;
 }
 
@@ -126,9 +126,9 @@ void EmitterContext::releaseInput(const InputPin* inputPin)
 		return;
 	}
 
-	T_FATAL_ASSERT (std::find(i->second.pins.begin(), i->second.pins.end(), inputPin) != i->second.pins.end());
-	T_FATAL_ASSERT (std::find(i->second.released.begin(), i->second.released.end(), inputPin) == i->second.released.end());
-	i->second.released.push_back(inputPin);
+	//T_FATAL_ASSERT (std::find(i->second.pins.begin(), i->second.pins.end(), inputPin) != i->second.pins.end());
+	//T_FATAL_ASSERT (std::find(i->second.released.begin(), i->second.released.end(), inputPin) == i->second.released.end());
+	//i->second.released.push_back(inputPin);
 
 	if (!i->second.resident && --i->second.count <= 0)
 		freeTemporary(i->second.var);
@@ -156,7 +156,7 @@ EmitterVariable* EmitterContext::emitOutput(Node* node, const std::wstring& outp
 	o.resident = resident;
 	T_FATAL_ASSERT (o.count >= 0);
 
-	m_shaderGraph->findDestinationPins(outputPin, o.pins);
+	//m_shaderGraph->findDestinationPins(outputPin, o.pins);
 
 	return o.var;
 }

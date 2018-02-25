@@ -211,8 +211,8 @@ void CubeMap::getPosition(const Vector4& direction, int32_t& outSide, int32_t& o
 	u *= n;
 	v *= n;
 
-	outX = clamp< int32_t >((u * 0.5f + 0.5f) * m_size, 0, m_size);
-	outY = clamp< int32_t >((v * 0.5f + 0.5f) * m_size, 0, m_size);
+	outX = clamp< int32_t >((u * 0.5f + 0.5f) * (m_size - 1), 0, m_size - 1);
+	outY = clamp< int32_t >((v * 0.5f + 0.5f) * (m_size - 1), 0, m_size - 1);
 }
 
 void CubeMap::set(const Vector4& direction, const Color4f& value)

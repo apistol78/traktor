@@ -258,7 +258,7 @@ collectFiles(
 	project,
 	function(file)
 		local ext = file:getExtension()
-		return ext == "xdi" or ext == "image" or ext == "png"
+		return ext == "xdi" or ext == "image" or ext == "png" or ext == "lua"
 	end,
 	resourceFiles
 )

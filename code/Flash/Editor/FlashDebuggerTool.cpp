@@ -27,6 +27,11 @@ Ref< ui::IBitmap > FlashDebuggerTool::getIcon() const
 	return new ui::StyleBitmap(L"Flash.Tool.Debugger");
 }
 
+bool FlashDebuggerTool::needOutputResources(std::set< Guid >& outDependencies) const
+{
+	return false;
+}
+
 bool FlashDebuggerTool::launch(ui::Widget* parent, editor::IEditor* editor, const std::wstring& param)
 {
 	//// If debugger dialog is already created then we only need to show it.

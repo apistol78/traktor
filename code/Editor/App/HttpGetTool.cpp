@@ -31,6 +31,11 @@ Ref< ui::IBitmap > HttpGetTool::getIcon() const
 	return 0;
 }
 
+bool HttpGetTool::needOutputResources(std::set< Guid >& outDependencies) const
+{
+	return false;
+}
+
 bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
 {
 	ui::custom::InputDialog inputDialog;

@@ -12,9 +12,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -41,14 +41,14 @@ public:
 
 	virtual Point getPinPosition(const Node* node, const Pin* pin) T_OVERRIDE;
 
-	virtual Ref< Pin > getPinAt(const Node* node, const Point& pt) T_OVERRIDE;
+	virtual Pin* getPinAt(const Node* node, const Point& pt) T_OVERRIDE;
 
 	virtual void paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset) T_OVERRIDE;
 
 	virtual Size calculateSize(const Node* node) T_OVERRIDE;
 
 private:
-	Ref< GraphControl > m_graphControl;
+	GraphControl* m_graphControl;
 	Ref< Bitmap > m_imageNode;
 	Ref< Bitmap > m_imagePin;
 };

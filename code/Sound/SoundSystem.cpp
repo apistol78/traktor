@@ -21,6 +21,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Sound/SoundChannel.h"
 #include "Sound/SoundMixer.h"
 #include "Sound/SoundSystem.h"
+#if defined(_WIN32)
+#	include "Sound/Avx/SoundMixerAvx.h"
+#endif
 
 namespace traktor
 {
@@ -77,7 +80,14 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	// If driver didn't create an alternative sound mixer we create
 	// a default mixer.
 	if (!m_mixer)
-		m_mixer = new SoundMixer();
+	{
+#if defined(_WIN32)
+		if (SoundMixerAvx::supported())
+			m_mixer = new SoundMixerAvx();
+#endif
+		if (!m_mixer)
+			m_mixer = new SoundMixer();
+	}
 
 	// Allocate samples.
 	const uint32_t samplesBlockCount = m_samplesBlocks.capacity();

@@ -105,6 +105,11 @@ void Solution::removeProject(Project* project)
 	}
 }
 
+void Solution::setProjects(const RefArray< Project >& projects)
+{
+	m_projects = projects;
+}
+
 const RefArray< Project >& Solution::getProjects() const
 {
 	return m_projects;

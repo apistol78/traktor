@@ -29,6 +29,11 @@ Ref< ui::IBitmap > CheckSerializableTool::getIcon() const
 	return 0;
 }
 
+bool CheckSerializableTool::needOutputResources(std::set< Guid >& outDependencies) const
+{
+	return false;
+}
+
 bool CheckSerializableTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
 {
 	AutoArrayPtr< uint8_t, AllocFreeAlign > memory((uint8_t*)Alloc::acquireAlign(1024 * 1024, 16, T_FILE_LINE));

@@ -34,6 +34,11 @@ Ref< ui::IBitmap > CheckAssetsTool::getIcon() const
 	return 0;
 }
 
+bool CheckAssetsTool::needOutputResources(std::set< Guid >& outDependencies) const
+{
+	return false;
+}
+
 bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
 {
 	Ref< db::Database > database = editor->getSourceDatabase();

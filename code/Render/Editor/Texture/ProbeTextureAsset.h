@@ -34,7 +34,6 @@ public:
 
 private:
 	float m_filterAngle;
-	float m_filterMipDeltaAngle;
 
 	friend class ProbeTexturePipeline;
 };

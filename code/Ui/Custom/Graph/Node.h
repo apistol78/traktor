@@ -84,19 +84,19 @@ public:
 
 	const RefArray< Pin >& getInputPins() const;
 
-	Ref< Pin > findInputPin(const std::wstring& name) const;
+	Pin* findInputPin(const std::wstring& name) const;
 
 	Ref< Pin > createOutputPin(const std::wstring& name);
 
 	const RefArray< Pin >& getOutputPins() const;
 
-	Ref< Pin > findOutputPin(const std::wstring& name) const;
+	Pin* findOutputPin(const std::wstring& name) const;
 
 	bool hit(const Point& p) const;
 
 	Point getPinPosition(const Pin* pin) const;
 
-	Ref< Pin > getPinAt(const Point& p) const;
+	Pin* getPinAt(const Point& p) const;
 
 	void paint(PaintSettings* settings, Canvas* canvas, const Size& offset) const;
 

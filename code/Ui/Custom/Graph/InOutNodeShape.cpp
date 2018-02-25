@@ -57,7 +57,7 @@ Point InOutNodeShape::getPinPosition(const Node* node, const Pin* pin)
 	return pt;
 }
 
-Ref< Pin > InOutNodeShape::getPinAt(const Node* node, const Point& pt)
+Pin* InOutNodeShape::getPinAt(const Node* node, const Point& pt)
 {
 	Rect rc = node->calculateRect();
 

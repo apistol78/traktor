@@ -738,6 +738,32 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 	return true;
 }
 
+bool convertMeshes(Model& outModel, FbxScene* scene, FbxNode* node, const Matrix44& axisTransform, std::vector< std::string >& outChannels, uint32_t importFlags)
+{
+	if (!node)
+		return true;
+
+	if (node->GetNodeAttribute() && node->GetVisibility())
+	{
+		FbxNodeAttribute::EType attributeType = node->GetNodeAttribute()->GetAttributeType();
+		if (attributeType == FbxNodeAttribute::eMesh)
+		{
+			if (!convertMesh(outModel, scene, node, axisTransform, outChannels, importFlags))
+				return false;
+		}
+	}
+
+	int32_t childCount = node->GetChildCount();
+	for (int32_t i = 0; i < childCount; ++i)
+	{
+		FbxNode* childNode = node->GetChild(i);
+		if (!convertMeshes(outModel, scene, childNode, axisTransform, outChannels, importFlags))
+			return false;
+	}
+
+	return true;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatFbx", 0, ModelFormatFbx, ModelFormat)
@@ -905,25 +931,10 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 	std::vector< std::string > channels;
 
 	FbxNode* node = s_scene->GetRootNode();
-	if (node)
+	if (!convertMeshes(*model, s_scene, node, axisTransform, channels, importFlags))
 	{
-		int32_t childCount = node->GetChildCount();
-		for (int32_t i = 0; i < childCount; ++i)
-		{
-			FbxNode* childNode = node->GetChild(i);
-			if (!childNode || !childNode->GetVisibility() || !childNode->GetNodeAttribute())
-				continue;
-
-			FbxNodeAttribute::EType attributeType = childNode->GetNodeAttribute()->GetAttributeType();
-			if (attributeType == FbxNodeAttribute::eMesh)
-			{
-				if (!convertMesh(*model, s_scene, childNode, axisTransform, channels, importFlags))
-				{
-					log::error << L"Unable to import FBX model; failed to convert mesh" << Endl;
-					return 0;
-				}
-			}
-		}
+		log::error << L"Unable to import FBX model; failed to convert mesh" << Endl;
+		return 0;
 	}
 
 	// Create and assign default material if anonymous faces has been created.

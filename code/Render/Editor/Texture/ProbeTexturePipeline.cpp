@@ -4,12 +4,10 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#if defined(_WIN32)
-#	include <CCubeMapProcessor.h>
-#	include <ErrorMsg.h>
-#endif
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Random.h"
+#include "Core/Math/Quaternion.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -26,6 +24,19 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+Vector4 randomCone(Random& r, const Vector4& direction, float coneAngle)
+{
+	float c = std::cos(coneAngle);
+	float z = r.nextFloat() * (1.0f - c) + c;
+	float p = r.nextFloat() * TWO_PI;
+	float s = std::sqrt(1.0f - z * z);
+	return Quaternion(Vector4(0.0f, 0.0f, 1.0f), direction) * Vector4(s * std::cos(p), s * std::sin(p), z);
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProbeTexturePipeline", 1, ProbeTexturePipeline, editor::DefaultPipeline)
 
@@ -91,63 +102,63 @@ bool ProbeTexturePipeline::buildOutput(
 	// Ensure source image has high dynamic range.
 	image->convert(drawing::PixelFormat::getARGBF32());
 
-#if defined(_WIN32)
-	Ref< CubeMap > cm = new CubeMap(image);
-	int32_t size = cm->getSize();
+	Ref< const CubeMap > cubeInput = new CubeMap(image);
+	Ref< CubeMap > cubeOutput = new CubeMap(cubeInput->getSize(), drawing::PixelFormat::getARGBF32());
 
-	CCubeMapProcessor cubeMapProcessor;
-	cubeMapProcessor.Init(size, size, 1, 4);
+	// Calculate filter radius in pixel space.
+	int32_t filterRadius = int32_t(std::sin(asset->m_filterAngle) * cubeInput->getSize());
+	if (filterRadius <= 0)
+		filterRadius = 1;
 
-	for (int32_t i = 0; i < 6; ++i)
+	log::info << L"Probe filter radius " << filterRadius << " pixel(s)." << Endl;
+
+	// Create output probe by filtering input.
+	Random random;
+	for (int32_t side = 0; side < 6; ++side)
 	{
-		cubeMapProcessor.SetInputFaceData(
-			i,
-			CP_VAL_FLOAT32,
-			4,
-			size * 4 * sizeof(float),
-			(void*)cm->getSide(i)->getData(),
-			1000000.0f,
-			1.0f,
-			1.0f
-		);
+		for (int32_t y = 0; y < cubeInput->getSize(); ++y)
+		{
+			for (int32_t x = 0; x < cubeInput->getSize(); ++x)
+			{
+				Color4f accum(0.0f, 0.0f, 0.0f, 0.0f);
+				float accumWeight = 0.0f;
+
+				for (int32_t dky = -filterRadius; dky <= filterRadius; ++dky)
+				{
+					float fdky = dky / float(filterRadius);
+					for (int32_t dkx = -filterRadius; dkx <= filterRadius; ++dkx)
+					{
+						float fdkx = dkx / float(filterRadius);
+						float f = 1.0f - std::sqrt(fdkx * fdkx + fdky * fdky);
+						if (f <= 0.0f)
+							continue;
+
+						Vector4 d = cubeInput->getDirection(side, x + dkx, y + dky);
+
+						int32_t sampleSide, sampleX, sampleY;
+						cubeInput->getPosition(d, sampleSide, sampleX, sampleY);
+
+						Color4f sample;
+						cubeInput->getSide(sampleSide)->getPixelUnsafe(sampleX, sampleY, sample);
+
+						accum += sample * Scalar(f);
+						accumWeight += f;
+					}
+				}
+				accum /= Scalar(accumWeight);
+
+				cubeOutput->getSide(side)->setPixelUnsafe(x, y, accum);
+			}
+		}
 	}
 
-	cubeMapProcessor.InitiateFiltering(
-		asset->m_filterAngle,
-		asset->m_filterMipDeltaAngle,
-		1.0f,
-		CP_FILTER_TYPE_ANGULAR_GAUSSIAN,
-		CP_FIXUP_PULL_LINEAR,
-		3,
-		TRUE
-	);
-
-	while (cubeMapProcessor.GetStatus() == CP_STATUS_PROCESSING)
-	{
-		log::debug << cubeMapProcessor.GetFilterProgressString() << Endl;
-		ThreadManager::getInstance().getCurrentThread()->sleep(200);
-	}
-
-	for (int32_t i = 0; i < 6; ++i)
-	{
-		std::memcpy(
-			(void*)cm->getSide(i)->getData(),
-			cubeMapProcessor.m_OutputSurface[0][i].m_ImgData,
-			size * size * 4 * sizeof(float)
-		);
-	}
-
-	Ref< drawing::Image > cross = cm->createCrossImage();
+	// Create cubemap from output probe.
+	Ref< drawing::Image > cross = cubeOutput->createCrossImage();
 	if (!cross)
 	{
 		log::error << L"Probe texture asset pipeline failed; unable to create cross image." << Endl;
 		return false;
 	}
-#else
-	// \fixme Since CubeMapGen doesn't compile on non-windows we cannot
-	// filter probe yet on Linux nor OSX.
-	Ref< drawing::Image > cross = image;
-#endif
 
 	output = new TextureOutput();
 	output->m_textureFormat = TfInvalid;

@@ -1298,8 +1298,17 @@ bool EditorForm::openTool(const std::wstring& toolType, const std::wstring& para
 	{
 		if (type_name(*i) == toolType)
 		{
+			// Issue a build if resources need to be up-to-date.
+			std::set< Guid > dependencies;
+			if ((*i)->needOutputResources(dependencies))
+			{
+				buildAssets(std::vector< Guid >(dependencies.begin(), dependencies.end()), false);
+				buildWaitUntilFinished();
+			}
+
 			if ((*i)->launch(this, this, param))
 				m_dataBaseView->updateView();
+
 			return true;
 		}
 	}
@@ -2576,6 +2585,14 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	{
 		Ref< IEditorTool > tool = m_editorTools[command.getId()];
 		T_ASSERT (tool);
+
+		// Issue a build if resources need to be up-to-date.
+		std::set< Guid > dependencies;
+		if (tool->needOutputResources(dependencies))
+		{
+			buildAssets(std::vector< Guid >(dependencies.begin(), dependencies.end()), false);
+			buildWaitUntilFinished();
+		}
 
 		if (tool->launch(this, this, L""))
 			m_dataBaseView->updateView();

@@ -72,6 +72,12 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editAndroidHome = new ui::Edit();
 	m_editAndroidHome->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidHome", L"$(ANDROID_HOME)"));
 
+	Ref< ui::Static > staticAndroidJavaHome = new ui::Static();
+	staticAndroidJavaHome->create(containerAndroid, L"Android Java home");
+
+	m_editAndroidJavaHome = new ui::Edit();
+	m_editAndroidJavaHome->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidJavaHome", L"$(JAVA_HOME)"));
+
 	Ref< ui::Static > staticAndroidNdkRoot = new ui::Static();
 	staticAndroidNdkRoot->create(containerAndroid, L"Android NDK root");
 
@@ -151,6 +157,9 @@ bool DeploySettingsPage::apply(PropertyGroup* settings)
 
 	std::wstring androidHome = m_editAndroidHome->getText();
 	settings->setProperty< PropertyString >(L"Amalgam.AndroidHome", androidHome);
+
+	std::wstring androidJavaHome = m_editAndroidJavaHome->getText();
+	settings->setProperty< PropertyString >(L"Amalgam.AndroidJavaHome", androidJavaHome);
 
 	std::wstring androidNdkRoot = m_editAndroidNdkRoot->getText();
 	settings->setProperty< PropertyString >(L"Amalgam.AndroidNdkRoot", androidNdkRoot);

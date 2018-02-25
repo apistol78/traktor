@@ -13,7 +13,7 @@ namespace traktor
 	namespace sound
 	{
 
-uint32_t deltaEncode(const int16_t* data, uint32_t count, BitWriter& bw)
+uint32_t Delta::encode(const int16_t* data, uint32_t count, BitWriter& bw)
 {
 	uint32_t nibbles = 4;
 	bw.writeUnsigned(16, data[0] + 32767);
@@ -42,7 +42,7 @@ uint32_t deltaEncode(const int16_t* data, uint32_t count, BitWriter& bw)
 	return nibbles / 2;
 }
 
-void deltaDecode(BitReader& br, uint32_t count, int16_t* out)
+void Delta::decode(BitReader& br, uint32_t count, int16_t* out)
 {
 	uint32_t i = 0;
 

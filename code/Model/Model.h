@@ -111,7 +111,7 @@ public:
 
 	void setPosition(uint32_t index, const Vector4& position) { m_positions.set(index, position); }
 
-	const Vector4& getPosition(uint32_t index) const { return m_positions.get(index); }
+	const Vector4& getPosition(uint32_t index) const { return m_positions.get(index, Vector4::zero()); }
 
 	const Vector4& getVertexPosition(uint32_t vertexIndex) const { return getPosition(getVertex(vertexIndex).getPosition()); }
 
@@ -125,7 +125,7 @@ public:
 
 	uint32_t getColorCount() const { return m_colors.size(); }
 
-	const Vector4& getColor(uint32_t index) const { return m_colors.get(index); }
+	const Vector4& getColor(uint32_t index) const { return m_colors.get(index, Vector4::zero()); }
 
 	void setColors(const AlignedVector< Vector4 >& colors) { m_colors.replace(colors); }
 
@@ -139,7 +139,7 @@ public:
 
 	uint32_t getNormalCount() const { return m_normals.size(); }
 
-	const Vector4& getNormal(uint32_t index) const { return m_normals.get(index); }
+	const Vector4& getNormal(uint32_t index) const { return m_normals.get(index, Vector4::zero()); }
 
 	void setNormals(const AlignedVector< Vector4 >& normals) { m_normals.replace(normals); }
 
@@ -151,7 +151,7 @@ public:
 
 	uint32_t addUniqueTexCoord(const Vector2& texCoord);
 
-	const Vector2& getTexCoord(uint32_t index) const { return m_texCoords.get(index); }
+	const Vector2& getTexCoord(uint32_t index) const { return m_texCoords.get(index, Vector2::zero()); }
 
 	void setTexCoords(const AlignedVector< Vector2 >& texCoords) { m_texCoords.replace(texCoords); }
 

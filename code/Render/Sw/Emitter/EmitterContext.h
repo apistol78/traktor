@@ -136,8 +136,8 @@ private:
 		int32_t count;
 		bool resident;
 
-		std::vector< const InputPin* > pins;
-		std::vector< const InputPin* > released;
+		//std::vector< const InputPin* > pins;
+		//std::vector< const InputPin* > released;
 
 		OutputVariable()
 		:	var(0)

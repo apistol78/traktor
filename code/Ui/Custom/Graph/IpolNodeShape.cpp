@@ -49,7 +49,7 @@ Point IpolNodeShape::getPinPosition(const Node* node, const Pin* pin)
 	return Point(rc.left + x, rc.top + y);
 }
 
-Ref< Pin > IpolNodeShape::getPinAt(const Node* node, const Point& pt)
+Pin* IpolNodeShape::getPinAt(const Node* node, const Point& pt)
 {
 	Rect rc = node->calculateRect();
 

@@ -604,7 +604,8 @@ Rect RichEdit::getEditRect() const
 {
 	Rect rc = getInnerRect();
 	rc.right -= m_scrollBarV->getPreferedSize().cx;
-	rc.bottom -= m_scrollBarH->getPreferedSize().cy;
+	if (m_scrollBarH->isVisible(false))
+		rc.bottom -= m_scrollBarH->getPreferedSize().cy;
 	return rc;
 }
 
@@ -630,12 +631,12 @@ void RichEdit::updateScrollBars()
 	{
 		m_scrollBarH->setRange(m_widestLineWidth / c_scrollHSteps);
 		m_scrollBarH->setPage(c_scrollHSteps);
-		m_scrollBarH->setEnable(true);
+		m_scrollBarH->setVisible(true);
 	}
 	else
 	{
 		m_scrollBarH->setPosition(0);
-		m_scrollBarH->setEnable(false);
+		m_scrollBarH->setVisible(false);
 	}
 
 	m_scrollBarH->update();
@@ -1327,7 +1328,8 @@ void RichEdit::eventPaint(PaintEvent* event)
 	canvas.fillRect(innerRc);
 
 	innerRc.right -= m_scrollBarV->getPreferedSize().cx;
-	innerRc.bottom -= m_scrollBarH->getPreferedSize().cy;
+	if (m_scrollBarH->isVisible(false))
+		innerRc.bottom -= m_scrollBarH->getPreferedSize().cy;
 
 	uint32_t lineCount = uint32_t(m_lines.size());
 	uint32_t lineOffset = m_scrollBarV->getPosition();
@@ -1336,7 +1338,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 	// Calculate margin width from highest visible line number.
 	m_lineMargin = scaleBySystemDPI(c_iconSize) + canvas.getTextExtent(toString(lineOffset + pageLines)).cx + scaleBySystemDPI(2);
-	m_lineOffsetH = m_scrollBarH->getPosition() * c_scrollHSteps;
+	m_lineOffsetH = m_scrollBarH->isVisible(false) ? m_scrollBarH->getPosition() * c_scrollHSteps : 0;
 
 	// Background
 	{
@@ -1452,7 +1454,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 			// Special condition; caret at the very end of a line.
 			if (showCaret && m_caret == line.stop)
 			{
-				textRc.left = m_lineMargin + 2 + x - scaleBySystemDPI(1);
+				textRc.left = m_lineMargin + 2 + x - m_lineOffsetH - scaleBySystemDPI(1);
 				textRc.right = textRc.left + scaleBySystemDPI(1);
 
 				canvas.setBackground(ss->getColor(this, L"color-caret"));
@@ -1469,7 +1471,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 void RichEdit::eventSize(SizeEvent* event)
 {
 	int32_t width = m_scrollBarV->getPreferedSize().cx;
-	int32_t height = m_scrollBarH->getPreferedSize().cy;
+	int32_t height = m_scrollBarH->isVisible(false) ? m_scrollBarH->getPreferedSize().cy : 0;
 
 	Rect inner = getInnerRect();
 

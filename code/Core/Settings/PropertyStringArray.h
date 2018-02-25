@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_PropertyStringArray_H
 #define traktor_PropertyStringArray_H
 
+#include <vector>
 #include "Core/Settings/IPropertyValue.h"
 
 // import/export mechanism.

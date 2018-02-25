@@ -432,6 +432,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstance->add(new ui::MenuItem(L"-"));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Copy"), i18n::Text(L"DATABASE_COPY")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.CopyAll"), i18n::Text(L"DATABASE_COPY_ALL")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.CopyInstanceId"), i18n::Text(L"DATABASE_COPY_INSTANCE_ID")));
 	m_menuInstance->add(new ui::MenuItem(L"-"));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
@@ -455,6 +456,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.DefaultEditInstance"), i18n::Text(L"DATABASE_DEFAULT_EDIT_INSTANCE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Copy"), i18n::Text(L"DATABASE_COPY")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.CopyInstanceId"), i18n::Text(L"DATABASE_COPY_INSTANCE_ID")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
@@ -852,6 +854,11 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			}
 
 			ui::Application::getInstance()->getClipboard()->setObject(instanceClipboardData);
+		}
+		else if (command == L"Editor.CopyInstanceId")	// Copy instance ID.
+		{
+			Guid id = instance->getGuid();
+			ui::Application::getInstance()->getClipboard()->setText(id.format());
 		}
 		else if (command == L"Editor.Database.FilterInstanceType")	// Filter on type.
 		{

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_input_InCombine_H
 #define traktor_input_InCombine_H
 
+#include <vector>
 #include "Input/Binding/IInputNode.h"
 
 // import/export mechanism.

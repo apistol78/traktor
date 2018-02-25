@@ -73,7 +73,7 @@ Point ExternalNodeShape::getPinPosition(const Node* node, const Pin* pin)
 	return Point(rc.left + x, rc.top + top);
 }
 
-Ref< Pin > ExternalNodeShape::getPinAt(const Node* node, const Point& pt)
+Pin* ExternalNodeShape::getPinAt(const Node* node, const Point& pt)
 {
 	Rect rc = node->calculateRect();
 	if (!rc.inside(pt))

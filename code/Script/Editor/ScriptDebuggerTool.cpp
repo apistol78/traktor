@@ -28,6 +28,11 @@ Ref< ui::IBitmap > ScriptDebuggerTool::getIcon() const
 	return new ui::StyleBitmap(L"Script.Tool.Debugger");
 }
 
+bool ScriptDebuggerTool::needOutputResources(std::set< Guid >& outDependencies) const
+{
+	return false;
+}
+
 bool ScriptDebuggerTool::launch(ui::Widget* parent, editor::IEditor* script, const std::wstring& param)
 {
 	// If debugger dialog is already created then we only need to show it.
