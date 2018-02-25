@@ -23,6 +23,8 @@ public:
 
 	virtual Ref< ui::IBitmap > getIcon() const T_OVERRIDE T_FINAL;
 
+	virtual bool needOutputResources(std::set< Guid >& outDependencies) const T_OVERRIDE T_FINAL;
+
 	virtual bool launch(ui::Widget* parent, IEditor* editor, const std::wstring& param) T_OVERRIDE T_FINAL;
 };
 

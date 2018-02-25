@@ -30,6 +30,8 @@ class T_DLLCLASS SoundMixerAvx : public ISoundMixer
 	T_RTTI_CLASS;
 
 public:
+	static bool supported();
+
 	virtual void mulConst(float* sb, uint32_t count, float factor) const T_OVERRIDE T_FINAL;
 
 	virtual void mulConst(float* lsb, const float* rsb, uint32_t count, float factor) const T_OVERRIDE T_FINAL;

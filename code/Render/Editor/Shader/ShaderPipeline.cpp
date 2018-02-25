@@ -654,6 +654,8 @@ Ref< ISerializable > ShaderPipeline::buildOutput(
 
 IProgramCompiler* ShaderPipeline::getProgramCompiler() const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_programCompilerLock);
+
 	if (m_programCompiler)
 		return m_programCompiler;
 

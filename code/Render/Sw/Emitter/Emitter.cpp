@@ -65,7 +65,7 @@ EmitterVariable* expandTypes(EmitterContext& cx, EmitterVariable* in, EmitterVar
 	EmitterVariable* var = cx.emitInput(inputPin); \
 	if (!var) \
 	{ \
-		log::error << L"Failed to emit mandatory input \"" << inputPin->getName() << L"\" of a " << type_name(node) << Endl; \
+		log::error << L"Failed to emit mandatory input \"" << inputPin->getName() << L"\" of a " << type_name(node) << L" " << node->getId().format() << Endl; \
 		Debugger::getInstance().breakDebugger(); \
 		return false; \
 	}
@@ -74,7 +74,7 @@ EmitterVariable* expandTypes(EmitterContext& cx, EmitterVariable* in, EmitterVar
 	EmitterVariable* var = cx.emitInput(node, input); \
 	if (!var) \
 	{ \
-		log::error << L"Failed to emit mandatory input \"" << input << L"\" of a " << type_name(node) << Endl; \
+		log::error << L"Failed to emit mandatory input \"" << input << L"\" of a " << type_name(node) << L" " << node->getId().format() << Endl; \
 		Debugger::getInstance().breakDebugger(); \
 		return false; \
 	}

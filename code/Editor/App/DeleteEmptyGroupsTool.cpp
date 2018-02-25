@@ -54,6 +54,11 @@ Ref< ui::IBitmap > DeleteEmptyGroupsTool::getIcon() const
 	return 0;
 }
 
+bool DeleteEmptyGroupsTool::needOutputResources(std::set< Guid >& outDependencies) const
+{
+	return false;
+}
+
 bool DeleteEmptyGroupsTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
 {
 	db::Database* db = editor->getSourceDatabase();

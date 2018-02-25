@@ -30,6 +30,11 @@ Ref< ui::IBitmap > TouchAllTool::getIcon() const
 	return 0;
 }
 
+bool TouchAllTool::needOutputResources(std::set< Guid >& outDependencies) const
+{
+	return false;
+}
+
 bool TouchAllTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
 {
 	Ref< db::Database > database = editor->getSourceDatabase();

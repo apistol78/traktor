@@ -143,7 +143,7 @@ const RefArray< Pin >& Node::getInputPins() const
 	return m_inputPins;
 }
 
-Ref< Pin > Node::findInputPin(const std::wstring& name) const
+Pin* Node::findInputPin(const std::wstring& name) const
 {
 	for (RefArray< Pin >::const_iterator i = m_inputPins.begin(); i != m_inputPins.end(); ++i)
 	{
@@ -170,7 +170,7 @@ const RefArray< Pin >& Node::getOutputPins() const
 	return m_outputPins;
 }
 
-Ref< Pin > Node::findOutputPin(const std::wstring& name) const
+Pin* Node::findOutputPin(const std::wstring& name) const
 {
 	for (RefArray< Pin >::const_iterator i = m_outputPins.begin(); i != m_outputPins.end(); ++i)
 	{
@@ -191,7 +191,7 @@ Point Node::getPinPosition(const Pin* pin) const
 	return m_shape->getPinPosition(this, pin);
 }
 
-Ref< Pin > Node::getPinAt(const Point& p) const
+Pin* Node::getPinAt(const Point& p) const
 {
 	T_ASSERT (m_shape);
 	return m_shape->getPinAt(this, p);

@@ -59,6 +59,8 @@ public:
 
 	virtual void discard() T_OVERRIDE T_FINAL;
 
+	virtual bool isContentValid() const T_OVERRIDE T_FINAL;
+
 	virtual bool read(int index, void* buffer) const T_OVERRIDE T_FINAL;
 
 	RenderTargetVk* getColorTargetVk(int32_t index) const { return m_colorTargets[index]; }

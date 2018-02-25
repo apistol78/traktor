@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_StreamMeshResource_H
 #define traktor_mesh_StreamMeshResource_H
 
+#include <vector>
 #include "Core/Guid.h"
 #include "Core/Math/Aabb3.h"
 #include "Mesh/IMeshResource.h"

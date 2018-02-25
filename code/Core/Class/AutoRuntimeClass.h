@@ -3229,8 +3229,12 @@ public:
 	template < typename ValueType >
 	void addProperty(const std::string& propertyName, void (ClassType::*setter)(ValueType value), ValueType (ClassType::*getter)() const)
 	{
+		StringOutputStream ss;
+		CastAny< ValueType >::typeName(ss);
+
 		addProperty(
 			propertyName,
+			ss.str(),
 			setter != 0 ? new PropertySet< ClassType, ValueType >(setter) : 0,
 			getter != 0 ? new PropertyGet< ClassType, ValueType, true >(getter) : 0
 		);
@@ -3239,8 +3243,12 @@ public:
 	template < typename ValueType >
 	void addProperty(const std::string& propertyName, void (ClassType::*setter)(ValueType value), ValueType (ClassType::*getter)())
 	{
+		StringOutputStream ss;
+		CastAny< ValueType >::typeName(ss);
+
 		addProperty(
 			propertyName,
+			ss.str(),
 			setter != 0 ? new PropertySet< ClassType, ValueType >(setter) : 0,
 			getter != 0 ? new PropertyGet< ClassType, ValueType, false >(getter) : 0
 		);
@@ -3249,8 +3257,12 @@ public:
 	template < typename ValueType >
 	void addProperty(const std::string& propertyName, void (*setter)(ClassType* self, ValueType value), ValueType (*getter)(ClassType* self))
 	{
+		StringOutputStream ss;
+		CastAny< ValueType >::typeName(ss);
+
 		addProperty(
 			propertyName,
+			ss.str(),
 			setter != 0 ? new FnPropertySet< ClassType, ValueType >(setter) : 0,
 			getter != 0 ? new FnPropertyGet< ClassType, ValueType >(getter) : 0
 		);
@@ -3409,7 +3421,7 @@ public:
 
 	virtual std::wstring getPropertySignature(uint32_t propertyId) const T_OVERRIDE T_FINAL
 	{
-		return mbstows(m_properties[propertyId].name);
+		return m_properties[propertyId].signature;
 	}
 	
 	virtual Any invokePropertyGet(ITypedObject* self, uint32_t propertyId) const T_OVERRIDE T_FINAL
@@ -3475,6 +3487,7 @@ private:
 	struct PropertyInfo
 	{
 		std::string name;
+		std::wstring signature;
 		IPropertySet* setter;
 		IPropertyGet* getter;
 	};
@@ -3536,7 +3549,7 @@ private:
 		m_staticMethods.push_back(m);
 	}
 
-	void addProperty(const std::string& propertyName, IPropertySet* setter, IPropertyGet* getter)
+	void addProperty(const std::string& propertyName, const std::wstring& signature, IPropertySet* setter, IPropertyGet* getter)
 	{
 		for (typename std::vector< PropertyInfo >::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
 		{
@@ -3550,6 +3563,7 @@ private:
 
 		PropertyInfo p;
 		p.name = propertyName;
+		p.signature = signature;
 		p.setter = setter;
 		p.getter = getter;
 		m_properties.push_back(p);

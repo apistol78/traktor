@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #if defined(T_STATIC)
 #	include "Core/Class/CoreClassFactory.h"
+#	include "Core/Class/CoreClassFactory2.h"
 #	include "Core/Settings/PropertyArray.h"
 #	include "Core/Settings/PropertyBoolean.h"
 #	include "Core/Settings/PropertyColor.h"
@@ -25,6 +26,7 @@ namespace traktor
 extern "C" void __module__Traktor_Core()
 {
 	T_FORCE_LINK_REF(CoreClassFactory);
+	T_FORCE_LINK_REF(CoreClassFactory2);
 	T_FORCE_LINK_REF(PropertyArray);
 	T_FORCE_LINK_REF(PropertyBoolean);
 	T_FORCE_LINK_REF(PropertyColor);

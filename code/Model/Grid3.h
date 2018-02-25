@@ -62,9 +62,9 @@ public:
 	{
 	}
 
-	const ValueType& get(uint32_t index) const
+	const ValueType& get(uint32_t index, const ValueType& defaultValue = ValueType()) const
 	{
-		return m_values[index];
+		return index < m_values.size() ? m_values[index] : defaultValue;
 	}
 
 	void set(uint32_t index, const ValueType& v)

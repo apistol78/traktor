@@ -44,7 +44,7 @@ class T_DLLCLASS NodeShape : public Object
 public:
 	virtual Point getPinPosition(const Node* node, const Pin* pin) = 0;
 
-	virtual Ref< Pin > getPinAt(const Node* node, const Point& pt) = 0;
+	virtual Pin* getPinAt(const Node* node, const Point& pt) = 0;
 
 	virtual void paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset) = 0;
 

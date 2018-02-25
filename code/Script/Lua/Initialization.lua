@@ -55,7 +55,7 @@ function class(name, super)
 			local o
 			local alloc = rawget(cl, "__alloc")
 			if alloc ~= nil then o = alloc(...) else o = {} end
-			assert (o ~= nil)
+--			assert (o ~= nil)
 
 			-- Setup object.
 			o.__name = "[" .. name .. " instance]"
@@ -76,7 +76,7 @@ function class(name, super)
 		if m ~= nil then return m end
 
 		local getters = rawget(cl, "__getters")
-		assert (getters ~= nil)
+--		assert (getters ~= nil)
 
 		local gpfn = rawget(getters, member)
 		if gpfn ~= nil then return gpfn(instance) end

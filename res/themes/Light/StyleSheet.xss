@@ -484,7 +484,7 @@
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
 			<element>background-color-default</element>
-			<color>255, 255, 255, 255</color>
+			<color>255, 255, 255, 0</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
@@ -504,7 +504,7 @@
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
 			<element>background-color-number</element>
-			<color>255, 255, 255, 255</color>
+			<color>255, 255, 255, 0</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
@@ -514,7 +514,7 @@
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
 			<element>background-color-self</element>
-			<color>255, 255, 255, 255</color>
+			<color>255, 255, 255, 0</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
@@ -524,7 +524,7 @@
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
 			<element>background-color-comment</element>
-			<color>255, 255, 255, 255</color>
+			<color>255, 255, 255, 0</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
@@ -534,7 +534,7 @@
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
 			<element>background-color-function</element>
-			<color>255, 255, 255, 255</color>
+			<color>255, 255, 255, 0</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
@@ -544,7 +544,7 @@
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
 			<element>background-color-type</element>
-			<color>255, 255, 255, 255</color>
+			<color>255, 255, 255, 0</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
@@ -554,7 +554,7 @@
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
 			<element>background-color-keyword</element>
-			<color>255, 255, 255, 255</color>
+			<color>255, 255, 255, 0</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
@@ -564,7 +564,7 @@
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
 			<element>background-color-special</element>
-			<color>255, 255, 255, 255</color>
+			<color>255, 255, 255, 0</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
@@ -574,7 +574,7 @@
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>
 			<element>background-color-preprocessor</element>
-			<color>255, 255, 255, 255</color>
+			<color>255, 255, 255, 0</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.SyntaxRichEdit</type>

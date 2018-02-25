@@ -12,12 +12,37 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/Align.h"
 #include "Sound/Avx/SoundMixerAvx.h"
 
+#if defined(_MSC_VER)
+#	include <intrin.h>
+#endif
+
 namespace traktor
 {
 	namespace sound
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundMixerAvx", SoundMixerAvx, ISoundMixer)
+
+bool SoundMixerAvx::supported()
+{
+#if defined(_MSC_VER)
+#	define OSXSAVEFlag (1UL<<27)
+#	define AVXFlag ((1UL<<28)|OSXSAVEFlag)
+
+	int ci[4] = { 0 };
+	__cpuid(ci, 1);
+
+	bool osUsesXSAVE_XRSTORE = ci[2] & (1 << 27) || false;
+	bool cpuAVXSuport = ci[2] & (1 << 28) || false;
+
+	if (osUsesXSAVE_XRSTORE && cpuAVXSuport)
+	{
+		unsigned long long xcrFeatureMask = _xgetbv(_XCR_XFEATURE_ENABLED_MASK);
+		return (xcrFeatureMask & 0x6) || false;
+	}
+#endif
+	return false;
+}
 
 void SoundMixerAvx::mulConst(float* sb, uint32_t count, float factor) const
 {

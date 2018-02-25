@@ -183,107 +183,101 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.GameClassFactory", 0, GameClass
 void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	Ref< AutoRuntimeClass< IEnvironment > > classEnvironment = new AutoRuntimeClass< IEnvironment >();
-	classEnvironment->addMethod("getDatabase", &IEnvironment::getDatabase);
-	classEnvironment->addMethod("getControl", &IEnvironment::getControl);
-	classEnvironment->addMethod("getAudio", &IEnvironment::getAudio);
-	classEnvironment->addMethod("getInput", &IEnvironment::getInput);
-	classEnvironment->addMethod("getOnline", &IEnvironment::getOnline);
-	classEnvironment->addMethod("getPhysics", &IEnvironment::getPhysics);
-	classEnvironment->addMethod("getRender", &IEnvironment::getRender);
-	classEnvironment->addMethod("getResource", &IEnvironment::getResource);
-	classEnvironment->addMethod("getScript", &IEnvironment::getScript);
-	classEnvironment->addMethod("getWorld", &IEnvironment::getWorld);
-	classEnvironment->addMethod("getSettings", &IEnvironment::getSettings);
+	classEnvironment->addProperty< db::Database* >("database", 0, &IEnvironment::getDatabase);
+	classEnvironment->addProperty< UpdateControl* >("control", 0, &IEnvironment::getControl);
+	classEnvironment->addProperty< IAudioServer* >("audio", 0, &IEnvironment::getAudio);
+	classEnvironment->addProperty< IInputServer* >("input", 0, &IEnvironment::getInput);
+	classEnvironment->addProperty< IOnlineServer* >("online", 0, &IEnvironment::getOnline);
+	classEnvironment->addProperty< IPhysicsServer* >("physics", 0, &IEnvironment::getPhysics);
+	classEnvironment->addProperty< IRenderServer* >("render", 0, &IEnvironment::getRender);
+	classEnvironment->addProperty< IResourceServer* >("resource", 0, &IEnvironment::getResource);
+	classEnvironment->addProperty< IScriptServer* >("script", 0, &IEnvironment::getScript);
+	classEnvironment->addProperty< IWorldServer* >("world", 0, &IEnvironment::getWorld);
+	classEnvironment->addProperty< PropertyGroup* >("settings", 0, &IEnvironment::getSettings);
 	classEnvironment->addMethod("reconfigure", &IEnvironment::reconfigure);
 	registrar->registerClass(classEnvironment);
 
 	Ref< AutoRuntimeClass< IAudioServer > > classAudioServer = new AutoRuntimeClass< IAudioServer >();
-	classAudioServer->addMethod("getSoundSystem", &IAudioServer::getSoundSystem);
-	classAudioServer->addMethod("getSoundPlayer", &IAudioServer::getSoundPlayer);
-	classAudioServer->addMethod("getSurroundEnvironment", &IAudioServer::getSurroundEnvironment);
+	classAudioServer->addProperty< sound::SoundSystem* >("soundSystem", 0, &IAudioServer::getSoundSystem);
+	classAudioServer->addProperty< sound::ISoundPlayer* >("soundPlayer", 0, &IAudioServer::getSoundPlayer);
+	classAudioServer->addProperty< sound::SurroundEnvironment* >("surroundEnvironment", 0, &IAudioServer::getSurroundEnvironment);
 	registrar->registerClass(classAudioServer);
 
 	Ref< AutoRuntimeClass< IInputServer > > classInputServer = new AutoRuntimeClass< IInputServer >();
+	classInputServer->addProperty< input::InputSystem* >("inputSystem", 0, &IInputServer::getInputSystem);
+	classInputServer->addProperty< input::InputMapping* >("inputMapping", 0, &IInputServer::getInputMapping);
+	classInputServer->addProperty< input::RumbleEffectPlayer* >("rumbleEffectPlayer", 0, &IInputServer::getRumbleEffectPlayer);
+	classInputServer->addProperty< bool >("isFabricating", 0, &IInputServer::isFabricating);
+	classInputServer->addProperty< bool >("isIdle", 0, &IInputServer::isIdle);
 	classInputServer->addMethod("fabricateInputSource", &IInputServer_fabricateInputSource);
-	classInputServer->addMethod("isFabricating", &IInputServer::isFabricating);
 	classInputServer->addMethod("abortedFabricating", &IInputServer::abortedFabricating);
 	classInputServer->addMethod("resetInputSource", &IInputServer::resetInputSource);
-	classInputServer->addMethod("isIdle", &IInputServer::isIdle);
 	classInputServer->addMethod("apply", &IInputServer::apply);
 	classInputServer->addMethod("revert", &IInputServer::revert);
-	classInputServer->addMethod("getInputSystem", &IInputServer::getInputSystem);
-	classInputServer->addMethod("getInputMapping", &IInputServer::getInputMapping);
-	classInputServer->addMethod("getRumbleEffectPlayer", &IInputServer::getRumbleEffectPlayer);
 	registrar->registerClass(classInputServer);
 
 	Ref< AutoRuntimeClass< IOnlineServer > > classOnlineServer = new AutoRuntimeClass< IOnlineServer >();
-	classOnlineServer->addMethod("getSessionManager", &IOnlineServer::getSessionManager);
+	classOnlineServer->addProperty< online::ISessionManager* >("sessionManager", 0, &IOnlineServer::getSessionManager);
 	registrar->registerClass(classOnlineServer);
 
 	Ref< AutoRuntimeClass< IPhysicsServer > > classPhysicsServer = new AutoRuntimeClass< IPhysicsServer >();
-	classPhysicsServer->addMethod("getPhysicsManager", &IPhysicsServer::getPhysicsManager);
+	classPhysicsServer->addProperty< physics::PhysicsManager* >("physicsManager", 0, &IPhysicsServer::getPhysicsManager);
 	registrar->registerClass(classPhysicsServer);
 
 	Ref< AutoRuntimeClass< IRenderServer > > classRenderServer = new AutoRuntimeClass< IRenderServer >();
-	classRenderServer->addMethod("getRenderSystem", &IRenderServer::getRenderSystem);
-	classRenderServer->addMethod("getRenderView", &IRenderServer::getRenderView);
-	classRenderServer->addMethod("getScreenAspectRatio", &IRenderServer::getScreenAspectRatio);
-	classRenderServer->addMethod("getViewAspectRatio", &IRenderServer::getViewAspectRatio);
-	classRenderServer->addMethod("getAspectRatio", &IRenderServer::getAspectRatio);
-	classRenderServer->addMethod("getStereoscopic", &IRenderServer::getStereoscopic);
-	classRenderServer->addMethod("getMultiSample", &IRenderServer::getMultiSample);
-	classRenderServer->addMethod("getFrameRate", &IRenderServer::getFrameRate);
+	classRenderServer->addProperty< render::IRenderSystem* >("renderSystem", 0, &IRenderServer::getRenderSystem);
+	classRenderServer->addProperty< render::IRenderView* >("renderView", 0, &IRenderServer::getRenderView);
+	classRenderServer->addProperty< float >("screenAspectRatio", 0, &IRenderServer::getScreenAspectRatio);
+	classRenderServer->addProperty< float >("viewAspectRatio", 0, &IRenderServer::getViewAspectRatio);
+	classRenderServer->addProperty< float >("aspectRatio", 0, &IRenderServer::getAspectRatio);
+	classRenderServer->addProperty< bool >("stereoscopic", 0, &IRenderServer::getStereoscopic);
+	classRenderServer->addProperty< int32_t >("multiSample", 0, &IRenderServer::getMultiSample);
+	classRenderServer->addProperty< int32_t >("frameRate", 0, &IRenderServer::getFrameRate);
 	registrar->registerClass(classRenderServer);
 
 	Ref< AutoRuntimeClass< IResourceServer > > classResourceServer = new AutoRuntimeClass< IResourceServer >();
-	classResourceServer->addMethod("getResourceManager", &IResourceServer::getResourceManager);
+	classResourceServer->addProperty< resource::IResourceManager* >("resourceManager", 0, &IResourceServer::getResourceManager);
 	registrar->registerClass(classResourceServer);
 
 	Ref< AutoRuntimeClass< IWorldServer > > classWorldServer = new AutoRuntimeClass< IWorldServer >();
+	classWorldServer->addProperty< const world::IEntityBuilder* >("entityBuilder", 0, &IWorldServer::getEntityBuilder);
+	classWorldServer->addProperty< world::WorldEntityRenderers* >("entityRenderers", 0, &IWorldServer::getEntityRenderers);
+	classWorldServer->addProperty< world::IEntityEventManager* >("entityEventManager", 0, &IWorldServer::getEntityEventManager);
 	classWorldServer->addMethod("addEntityFactory", &IWorldServer::addEntityFactory);
 	classWorldServer->addMethod("removeEntityFactory", &IWorldServer::removeEntityFactory);
 	classWorldServer->addMethod("addEntityRenderer", &IWorldServer::addEntityRenderer);
 	classWorldServer->addMethod("removeEntityRenderer", &IWorldServer::removeEntityRenderer);
-	classWorldServer->addMethod("getEntityBuilder", &IWorldServer::getEntityBuilder);
-	classWorldServer->addMethod("getEntityRenderers", &IWorldServer::getEntityRenderers);
-	classWorldServer->addMethod("getEntityEventManager", &IWorldServer::getEntityEventManager);
 	registrar->registerClass(classWorldServer);
 
 	Ref< AutoRuntimeClass< UpdateControl > > classUpdateControl = new AutoRuntimeClass< UpdateControl >();
-	classUpdateControl->addMethod("setPause", &UpdateControl::setPause);
-	classUpdateControl->addMethod("getPause", &UpdateControl::getPause);
-	classUpdateControl->addMethod("setTimeScale", &UpdateControl::setTimeScale);
-	classUpdateControl->addMethod("getTimeScale", &UpdateControl::getTimeScale);
-	classUpdateControl->addMethod("setSimulationFrequency", &UpdateControl::setSimulationFrequency);
-	classUpdateControl->addMethod("getSimulationFrequency", &UpdateControl::getSimulationFrequency);
+	classUpdateControl->addProperty< bool >("pause", &UpdateControl::setPause, &UpdateControl::getPause);
+	classUpdateControl->addProperty< float >("timeScale", &UpdateControl::setTimeScale, &UpdateControl::getTimeScale);
+	classUpdateControl->addProperty< float >("simulationFrequency", &UpdateControl::setSimulationFrequency, &UpdateControl::getSimulationFrequency);
 	registrar->registerClass(classUpdateControl);
 
 	Ref< AutoRuntimeClass< UpdateInfo > > classUpdateInfo = new AutoRuntimeClass< UpdateInfo >();
-	classUpdateInfo->addMethod("getTotalTime", &UpdateInfo::getTotalTime);
-	classUpdateInfo->addMethod("getStateTime", &UpdateInfo::getStateTime);
-	classUpdateInfo->addMethod("getSimulationTime", &UpdateInfo::getSimulationTime);
-	classUpdateInfo->addMethod("getSimulationDeltaTime", &UpdateInfo::getSimulationDeltaTime);
-	classUpdateInfo->addMethod("getSimulationFrequency", &UpdateInfo::getSimulationFrequency);
-	classUpdateInfo->addMethod("getFrameDeltaTime", &UpdateInfo::getFrameDeltaTime);
-	classUpdateInfo->addMethod("getInterval", &UpdateInfo::getInterval);
-	classUpdateInfo->addMethod("isRunningSlow", &UpdateInfo::isRunningSlow);
+	classUpdateInfo->addProperty< float >("totalTime", 0, &UpdateInfo::getTotalTime);
+	classUpdateInfo->addProperty< float >("stateTime", 0, &UpdateInfo::getStateTime);
+	classUpdateInfo->addProperty< float >("simulationTime", 0, &UpdateInfo::getSimulationTime);
+	classUpdateInfo->addProperty< float >("simulationDeltaTime", 0, &UpdateInfo::getSimulationDeltaTime);
+	classUpdateInfo->addProperty< int32_t >("simulationFrequency", 0, &UpdateInfo::getSimulationFrequency);
+	classUpdateInfo->addProperty< float >("frameDeltaTime", 0, &UpdateInfo::getFrameDeltaTime);
+	classUpdateInfo->addProperty< float >("interval", 0, &UpdateInfo::getInterval);
+	classUpdateInfo->addProperty< bool >("isRunningSlow", 0, &UpdateInfo::isRunningSlow);
 	registrar->registerClass(classUpdateInfo);
 
 	Ref< AutoRuntimeClass< BoxedTransition > > classBoxedTransition = new AutoRuntimeClass< BoxedTransition >();
-	classBoxedTransition->addMethod("getId", &BoxedTransition::getId);
-	classBoxedTransition->addMethod("getReference", &BoxedTransition::getReference);
+	classBoxedTransition->addProperty< const std::wstring& >("id", 0, &BoxedTransition::getId);
+	classBoxedTransition->addProperty< const Guid& >("reference", 0, &BoxedTransition::getReference);
 	registrar->registerClass(classBoxedTransition);
 
 	Ref< AutoRuntimeClass< StageData > > classStageData = new AutoRuntimeClass< StageData >();
-	classStageData->addMethod("getName", &StageData::getName);
-	classStageData->addMethod("getInherit", &StageData::getInherit);
-	classStageData->addMethod("setFadeRate", &StageData::setFadeRate);
-	classStageData->addMethod("getFadeRate", &StageData::getFadeRate);
+	classStageData->addProperty< const std::wstring& >("name", 0, &StageData::getName);
+	classStageData->addProperty< const Guid& >("inherit", 0, &StageData::getInherit);
+	classStageData->addProperty< float >("fadeRate", &StageData::setFadeRate, &StageData::getFadeRate);
+	classStageData->addProperty< const Guid& >("resourceBundle", &StageData::setResourceBundle, &StageData::getResourceBundle);
+	classStageData->addProperty< const PropertyGroup* >("properties", &StageData::setProperties, &StageData::getProperties);
 	classStageData->addMethod("getTransitions", &StageData_getTransitions);
-	classStageData->addMethod("setResourceBundle", &StageData::setResourceBundle);
-	classStageData->addMethod("getResourceBundle", &StageData::getResourceBundle);
-	classStageData->addMethod("setProperties", &StageData::setProperties);
-	classStageData->addMethod("getProperties", &StageData::getProperties);
 	registrar->registerClass(classStageData);
 
 	Ref< AutoRuntimeClass< Stage > > classStage = new AutoRuntimeClass< Stage >();
@@ -300,7 +294,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classStage);
 
 	Ref< AutoRuntimeClass< Layer > > classLayer = new AutoRuntimeClass< Layer >();
-	classLayer->addMethod("getName", &Layer::getName);
+	classLayer->addProperty< const std::wstring& >("name", 0, &Layer::getName);
 	registrar->registerClass(classLayer);
 
 	Ref< AutoRuntimeClass< AudioLayer > > classAudioLayer = new AutoRuntimeClass< AudioLayer >();
@@ -312,28 +306,26 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classAudioLayer);
 
 	Ref< AutoRuntimeClass< FlashLayer > > classFlashLayer = new AutoRuntimeClass< FlashLayer >();
-	classFlashLayer->addMethod("getMoviePlayer", &FlashLayer::getMoviePlayer);
-	classFlashLayer->addMethod("getContext", &FlashLayer::getContext);
-	classFlashLayer->addMethod("getRoot", &FlashLayer::getRoot);
+	classFlashLayer->addProperty< flash::MoviePlayer* >("moviePlayer", 0, &FlashLayer::getMoviePlayer);
+	classFlashLayer->addProperty< flash::ActionContext* >("context", 0, &FlashLayer::getContext);
+	classFlashLayer->addProperty< flash::SpriteInstance* >("root", 0, &FlashLayer::getRoot);
+	classFlashLayer->addProperty< bool >("visible", &FlashLayer::setVisible, &FlashLayer::isVisible);
 	classFlashLayer->addMethod("getExternal", &FlashLayer::getExternal);
-	classFlashLayer->addMethod("isVisible", &FlashLayer::isVisible);
-	classFlashLayer->addMethod("setVisible", &FlashLayer::setVisible);
 	classFlashLayer->addMethod("getPrintableString", &FlashLayer::getPrintableString);
 	classFlashLayer->setUnknownHandler(&FlashLayer_externalCall);
 	registrar->registerClass(classFlashLayer);
 
 	Ref< AutoRuntimeClass< VideoLayer > > classVideoLayer = new AutoRuntimeClass< VideoLayer >();
+	classVideoLayer->addProperty< bool >("playing", 0, &VideoLayer::isPlaying);
+	classVideoLayer->addProperty< bool >("visible", 0, &VideoLayer::isVisible);
+	classVideoLayer->addProperty< bool >("repeat", &VideoLayer::setRepeat, &VideoLayer::getRepeat);
 	classVideoLayer->addMethod("play", &VideoLayer::play);
 	classVideoLayer->addMethod("stop", &VideoLayer::stop);
 	classVideoLayer->addMethod("rewind", &VideoLayer::rewind);
 	classVideoLayer->addMethod("show", &VideoLayer::show);
 	classVideoLayer->addMethod("hide", &VideoLayer::hide);
-	classVideoLayer->addMethod("isPlaying", &VideoLayer::isPlaying);
-	classVideoLayer->addMethod("isVisible", &VideoLayer::isVisible);
 	classVideoLayer->addMethod("setScreenBounds", &VideoLayer::setScreenBounds);
 	classVideoLayer->addMethod("getScreenBounds", &VideoLayer::getScreenBounds);
-	classVideoLayer->addMethod("setRepeat", &VideoLayer::setRepeat);
-	classVideoLayer->addMethod("getRepeat", &VideoLayer::getRepeat);
 	registrar->registerClass(classVideoLayer);
 
 	Ref< AutoRuntimeClass< WorldLayer > > classWorldLayer = new AutoRuntimeClass< WorldLayer >();
@@ -375,10 +367,10 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classWorldLayer);
 
 	Ref< AutoRuntimeClass< StageLoader > > classStageLoader = new AutoRuntimeClass< StageLoader >();
+	classStageLoader->addProperty< bool >("ready", 0, &StageLoader::ready);
+	classStageLoader->addProperty< bool >("succeeded", 0, &StageLoader::succeeded);
+	classStageLoader->addProperty< bool >("failed", 0, &StageLoader::failed);
 	classStageLoader->addMethod("wait", &StageLoader::wait);
-	classStageLoader->addMethod("ready", &StageLoader::ready);
-	classStageLoader->addMethod("succeeded", &StageLoader::succeeded);
-	classStageLoader->addMethod("failed", &StageLoader::failed);
 	classStageLoader->addMethod("get", &StageLoader::get);
 	registrar->registerClass(classStageLoader);
 }

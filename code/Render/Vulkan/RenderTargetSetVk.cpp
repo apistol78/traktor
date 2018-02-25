@@ -241,6 +241,11 @@ void RenderTargetSetVk::discard()
 {
 }
 
+bool RenderTargetSetVk::isContentValid() const
+{
+	return true;
+}
+
 bool RenderTargetSetVk::read(int index, void* buffer) const
 {
 	return false;

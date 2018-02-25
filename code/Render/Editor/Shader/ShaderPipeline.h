@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_ShaderPipeline_H
 #define traktor_render_ShaderPipeline_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Editor/IPipeline.h"
 
 // import/export mechanism.
@@ -66,6 +67,7 @@ public:
 
 private:
 	std::wstring m_programCompilerTypeName;
+	mutable Semaphore m_programCompilerLock;
 	mutable Ref< IProgramCompiler > m_programCompiler;
 	Ref< IProgramHints > m_programHints;
 	std::set< std::wstring > m_includeOnlyTechniques;

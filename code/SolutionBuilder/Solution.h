@@ -51,6 +51,8 @@ public:
 
 	void removeProject(Project* project);
 
+	void setProjects(const RefArray< Project >& projects);
+
 	const RefArray< Project >& getProjects() const;
 
 	void addAggregation(Aggregation* aggregation);

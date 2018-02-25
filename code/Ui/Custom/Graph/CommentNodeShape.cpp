@@ -45,7 +45,7 @@ Point CommentNodeShape::getPinPosition(const Node* node, const Pin* pin)
 	return Point(0, 0);
 }
 
-Ref< Pin > CommentNodeShape::getPinAt(const Node* node, const Point& pt)
+Pin* CommentNodeShape::getPinAt(const Node* node, const Point& pt)
 {
 	return 0;
 }

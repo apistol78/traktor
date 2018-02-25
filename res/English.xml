@@ -350,6 +350,10 @@
       <second>Mesh entities</second>
     </item>
     <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_COMPONENTENTITYDATA</first>
+      <second>Component entities</second>
+    </item>
+    <item>
       <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_EFFECTDATA</first>
       <second>Effects</second>
     </item>
@@ -537,6 +541,10 @@
       <first>DATABASE_COPY_ALL</first>
       <second>Copy all</second>
     </item>
+    <item>
+      <first>DATABASE_COPY_INSTANCE_ID</first>
+      <second>Copy instance id</second>
+    </item>    
     <item>
       <first>DATABASE_PASTE</first>
       <second>Paste</second>

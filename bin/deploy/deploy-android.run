@@ -99,6 +99,11 @@ function deploy(args)
 	local libpath = syspath .. "/usr/lib"
 	local cl = toolpath .. "/" .. abi .. "-g++"
 
+	-- Fix for MS quirky path.
+	if not fileSystem:exist(Path(crtpath)) then
+		crtpath = ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host .."/lib/gcc/" .. abi .. "/" .. toolchain .. ".x/armv7-a"
+	end
+
 	-- Check all paths exist.
 	local ok =
 		fileSystem:exist(Path(toolpath)) and
@@ -295,20 +300,23 @@ function launch(args)
 
 		-- Use ant to build apk package.
 		stdout:printLn("Building package...")
-		run:execute("$(DEPLOY_ANDROID_ANT_HOME)/bin/ant.bat debug", nil)
+		local javaHome = os:getEnvironment("DEPLOY_ANDROID_JAVA_HOME")
+		local antEnv = os:getEnvironment()
+		antEnv:set("JAVA_HOME", javaHome)
+		run:execute("$(DEPLOY_ANDROID_ANT_HOME)/bin/ant.bat debug", nil, antEnv)
 
 		-- Launch application on attached device.
 		stdout:printLn("Installing package...")
 		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", nil)
 		if result ~= 0 then
-			stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
+			stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode (1).")
 			return 1
 		end
 
 		stdout:printLn("Launching...")
 		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $(DEPLOY_PROJECT_IDENTIFIER)/android.app.NativeActivity", nil)
 		if result ~= 0 then
-			stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode.")
+			stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode (2).")
 			return 1
 		end
 	
@@ -354,6 +362,11 @@ function migrate(args)
 	local syspath = ndk .. "/platforms/" .. apilevel .. "/" .. architecture
 	local libpath = syspath .. "/usr/lib"
 	local cl = toolpath .. "/" .. abi .. "-g++"
+
+	-- Fix for MS quirky path.
+	if not fileSystem:exist(Path(crtpath)) then
+		crtpath = ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host .."/lib/gcc/" .. abi .. "/" .. toolchain .. ".x/armv7-a"
+	end
 
 	-- Check all paths exist.
 	local ok =
@@ -489,9 +502,10 @@ function migrate(args)
 
 	-- Use ant to build apk package.
 	stdout:printLn("Building package...")
-	local env = os:getEnvironment()
-	env:set("ANT_HOME", antHome)
-	run:execute(antHome .. "/bin/ant.bat debug", nil, env)
+	local javaHome = os:getEnvironment("DEPLOY_ANDROID_JAVA_HOME")
+	local antEnv = os:getEnvironment()
+	antEnv:set("JAVA_HOME", javaHome)
+	run:execute("$(DEPLOY_ANDROID_ANT_HOME)/bin/ant.bat debug", nil, antEnv)
 
 	-- Ensure device is ready.
 	if not isDeviceConnected() then

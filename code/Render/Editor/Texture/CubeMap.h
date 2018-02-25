@@ -62,6 +62,9 @@ public:
 	void setSide(int32_t side, drawing::Image* image) { m_side[side] = image; }
 
 	/*! \brief Get image of one side. */
+	drawing::Image* getSide(int32_t side) { return m_side[side]; }
+
+	/*! \brief Get image of one side. */
 	const drawing::Image* getSide(int32_t side) const { return m_side[side]; }
 
 	/*! \brief Get size of cubemap. */

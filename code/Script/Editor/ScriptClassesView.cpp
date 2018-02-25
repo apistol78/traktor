@@ -71,6 +71,20 @@ public:
 			m_treeClasses->createItem(classItem, ss.str());
 		}
 
+		for (uint32_t i = 0; i < runtimeClass->getPropertiesCount(); ++i)
+		{
+			std::wstring signature = runtimeClass->getPropertySignature(i);
+
+			std::vector< std::wstring > s;
+			Split< std::wstring >::any(signature, L",", s, true);
+			T_FATAL_ASSERT(s.size() >= 1);
+
+			ss.reset();
+			ss << s[0] << L" " << mbstows(runtimeClass->getPropertyName(i));
+
+			m_treeClasses->createItem(classItem, ss.str());
+		}
+
 		for (uint32_t i = 0; i < runtimeClass->getMethodCount(); ++i)
 		{
 			std::wstring signature = runtimeClass->getMethodSignature(i);
