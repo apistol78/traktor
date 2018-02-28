@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/InputDialog.h"
+#include "Ui/Custom/MiniButton.h"
 
 namespace traktor
 {
@@ -50,9 +51,24 @@ bool InputDialog::create(
 
 		if (!m_outFields[i].values)
 		{
-			Ref< Edit > edit = new Edit();
-			edit->create(container, m_outFields[i].value, WsClientBorder | WsTabStop, m_outFields[i].validator);
-			m_editFields.push_back(edit);
+			if (!m_outFields[i].browseFile)
+			{
+				Ref< Edit > edit = new Edit();
+				edit->create(container, m_outFields[i].value, WsClientBorder | WsTabStop, m_outFields[i].validator);
+				m_editFields.push_back(edit);
+			}
+			else
+			{
+				Ref< Container > fieldContainer = new Container();
+				fieldContainer->create(container, WsNone, new TableLayout(L"100%,*", L"*", 0, 4));
+
+				Ref< Edit > edit = new Edit();
+				edit->create(fieldContainer, m_outFields[i].value, WsClientBorder | WsTabStop, m_outFields[i].validator);
+				m_editFields.push_back(edit);
+
+				Ref< MiniButton > browse = new MiniButton();
+				browse->create(fieldContainer, L"...");
+			}
 		}
 		else
 		{

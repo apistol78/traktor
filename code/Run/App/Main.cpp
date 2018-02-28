@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/CoreClassFactory.h"
+#include "Core/Class/CoreClassFactory2.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
@@ -92,6 +93,8 @@ void registerRuntimeClasses()
 	OrderedClassRegistrar registrar;
 
 	// System classes.
+	T_FORCE_LINK_REF(CoreClassFactory);
+	T_FORCE_LINK_REF(CoreClassFactory2);
 	T_FORCE_LINK_REF(drawing::DrawingClassFactory);
 	T_FORCE_LINK_REF(xml::XmlClassFactory);
 	T_FORCE_LINK_REF(sql::SqlClassFactory);

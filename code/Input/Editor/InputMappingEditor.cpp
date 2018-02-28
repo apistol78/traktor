@@ -622,7 +622,7 @@ void InputMappingEditor::eventNodeActivated(ui::custom::NodeActivateEvent* event
 
 		ui::custom::InputDialog::Field fields[] =
 		{
-			{ i18n::Text(L"INPUT_EDITOR_STATE_NAME"), currentName, 0, 0 }
+			ui::custom::InputDialog::Field(i18n::Text(L"INPUT_EDITOR_STATE_NAME"), currentName)
 		};
 
 		ui::custom::InputDialog inputDialog;

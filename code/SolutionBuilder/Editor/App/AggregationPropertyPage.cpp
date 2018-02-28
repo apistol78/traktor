@@ -194,7 +194,7 @@ void AggregationPropertyPage::eventDependencyDoubleClick(ui::MouseDoubleClickEve
 
 		ui::custom::InputDialog::Field inputFields[] =
 		{
-			{ L"Location", selectedDependency->getSolutionFileName(), 0 }
+			ui::custom::InputDialog::Field(L"Location", selectedDependency->getSolutionFileName())
 		};
 
 		ui::custom::InputDialog inputDialog;

@@ -15,6 +15,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/Solution.h"
+#include "SolutionBuilder/Editor/App/ExtractSolutionDialog.h"
 #include "SolutionBuilder/Editor/App/ExtractSolutionTool.h"
 
 namespace traktor
@@ -26,34 +27,46 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ExtractSolutionTool", ExtractSolutionTool, C
 
 bool ExtractSolutionTool::execute(ui::Widget* parent, Solution* solution)
 {
-	const std::wstring externalSolutionFileName = L"$(TRAKTOR_HOME)/ExternAndroid.xms";
+	Ref< ExtractSolutionDialog > dialog = new ExtractSolutionDialog();
+	
+	if (!dialog->create(parent, solution))
+		return false;
+
+	if (dialog->showModal() != ui::DrOk)
+		return false;
+
+	const std::wstring externalSolutionFileName = dialog->getSolutionFile();
+	if (externalSolutionFileName.empty())
+		return false;
+
+	const std::wstring externalSolutionName = dialog->getSolutionName();
+	if (externalSolutionName.empty())
+		return false;
+
+	RefArray< Project > externalProjects;
+	dialog->getSelectedProjects(externalProjects);
+	if (externalProjects.empty())
+		return false;
+
+	// Get projects to keep in current solution.
+	RefArray< Project > localProjects;
+	for (auto project : solution->getProjects())
+	{
+		if (std::find(externalProjects.begin(), externalProjects.end(), project) != externalProjects.end())
+			continue;
+
+		localProjects.push_back(project);
+	}
+	if (localProjects.empty())
+		return false;
 
 	Ref< IStream > file = FileSystem::getInstance().open(externalSolutionFileName, traktor::File::FmWrite);
 	if (!file)
 		return false;
 
-	// Split projects into two arrays, local and external.
-	RefArray< Project > localProjects = solution->getProjects();
-	RefArray< Project > externalProjects;
-
-	for (size_t i = 0; i < localProjects.size(); )
-	{
-		auto project = localProjects[i];
-		if (startsWith< std::wstring >(project->getName(), L"Extern."))
-		{
-			externalProjects.push_back(project);
-			localProjects.erase(localProjects.begin() + i);
-		}
-		else
-			++i;
-	}
-
-	if (externalProjects.empty())
-		return false;
-
 	// Create external solution.
 	Ref< Solution > externalSolution = new Solution();
-	externalSolution->setName(L"Extern Win64");
+	externalSolution->setName(externalSolutionName);
 	externalSolution->setRootPath(solution->getRootPath());
 	externalSolution->setDefinitions(solution->getDefinitions());
 

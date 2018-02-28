@@ -213,7 +213,7 @@ void ProjectPropertyPage::eventDependencyDoubleClick(ui::custom::GridRowDoubleCl
 
 		ui::custom::InputDialog::Field inputFields[] =
 		{
-			{ L"Location", selectedDependency->getSolutionFileName(), 0 }
+			ui::custom::InputDialog::Field(L"Location", selectedDependency->getSolutionFileName())
 		};
 
 		ui::custom::InputDialog inputDialog;

@@ -41,10 +41,9 @@ bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring
 	ui::custom::InputDialog inputDialog;
 	ui::custom::InputDialog::Field f[] =
 	{
-		i18n::Text(L"EDITOR_HTTP_GET_URL"),
-		L"",
-		0,
-		0
+		ui::custom::InputDialog::Field(
+			i18n::Text(L"EDITOR_HTTP_GET_URL")
+		)
 	};
 
 	inputDialog.create(

@@ -85,7 +85,7 @@ void ConfigurationsDialog::eventButtonNew(ui::ButtonClickEvent* event)
 
 	ui::custom::InputDialog::Field inputFields[] =
 	{
-		{ L"Name", current, 0 }
+		ui::custom::InputDialog::Field(L"Name", current)
 	};
 
 	ui::custom::InputDialog inputDialog;
@@ -119,7 +119,7 @@ void ConfigurationsDialog::eventButtonRename(ui::ButtonClickEvent* event)
 
 	ui::custom::InputDialog::Field inputFields[] =
 	{
-		{ L"Name", current, 0 }
+		ui::custom::InputDialog::Field(L"Name", current)
 	};
 
 	ui::custom::InputDialog inputDialog;

@@ -35,12 +35,9 @@ bool ImageProcessShaderWizardTool::launch(ui::Widget* parent, editor::IEditor* e
 	ui::custom::InputDialog inputDialog;
 	ui::custom::InputDialog::Field fields[] =
 	{
-		{
-			i18n::Text(L"RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_NAME"),
-			L"",
-			0,
-			0
-		},
+		ui::custom::InputDialog::Field(
+			i18n::Text(L"RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_NAME")
+		)
 	};
 
 	inputDialog.create(
