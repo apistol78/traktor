@@ -11,7 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	namespace theater
+	namespace wbr
 	{
 
 extern "C" void __module__Traktor_Webber()

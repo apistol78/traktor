@@ -748,7 +748,10 @@ void TheaterControllerEditor::timeScaleAct()
 
 	float fromDuration = act->getDuration();
 
-	ui::custom::InputDialog::Field fields[] = { { i18n::Text(L"THEATER_EDITOR_TIME_SCALE_NEW_TIME"), toString(fromDuration), new ui::NumericEditValidator(true, 0.0f), 0 } };
+	ui::custom::InputDialog::Field fields[] = 
+	{
+		ui::custom::InputDialog::Field(i18n::Text(L"THEATER_EDITOR_TIME_SCALE_NEW_TIME"), toString(fromDuration), new ui::NumericEditValidator(true, 0.0f))
+	};
 
 	ui::custom::InputDialog enterTimeDialog;
 	enterTimeDialog.create(m_listActs, i18n::Text(L"THEATER_EDITOR_TIME_SCALE_TITLE"), i18n::Text(L"THEATER_EDITOR_TIME_SCALE_MESSAGE"), fields, sizeof_array(fields));

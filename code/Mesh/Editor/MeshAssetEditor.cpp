@@ -499,13 +499,10 @@ void MeshAssetEditor::createMaterialShader()
 		return;
 
 	// Query user about material name; default model's material name.
-	ui::custom::InputDialog::Field materialNameField =
-	{
+	ui::custom::InputDialog::Field materialNameField(
 		L"",
-		materialName,
-		0,
-		0
-	};
+		materialName
+	);
 
 	ui::custom::InputDialog materialNameDialog;
 	if (materialNameDialog.create(m_materialShaderList, i18n::Text(L"MESHASSET_EDITOR_ENTER_NAME"), i18n::Text(L"MESHASSET_EDITOR_ENTER_NAME"), &materialNameField, 1))

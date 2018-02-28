@@ -42,6 +42,28 @@ public:
 		std::wstring value;
 		Ref< EditValidator > validator;
 		const wchar_t** values;
+		bool browseFile;
+
+		Field()
+		:	values(0)
+		,	browseFile(false)
+		{
+		}
+
+		Field(
+			const std::wstring& title_,
+			const std::wstring& value_ = L"",
+			EditValidator* validator_ = 0,
+			const wchar_t** values_ = 0,
+			bool browseFile_ = false
+		)
+		:	title(title_)
+		,	value(value_)
+		,	validator(validator_)
+		,	values(values_)
+		,	browseFile(browseFile_)
+		{
+		}
 	};
 
 	InputDialog();

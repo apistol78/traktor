@@ -6,1159 +6,6 @@
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.expat-2.1.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>XML_STATIC</item>
-						<item>XML_BUILDING_EXPAT</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.expat-2.1.0.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>XML_STATIC</item>
-						<item>XML_BUILDING_EXPAT</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.expat-2.1.0.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>xmlparse.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>xmlrole.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>xmltok.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>*.h</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.jpeg-6b</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/jpeg-6b</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>NO_GETENV</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.jpeg-6b.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>NO_GETENV</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.jpeg-6b.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>*.h</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.libflac-1.2.1</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-						<item>FLAC__NO_DLL</item>
-						<item>FLAC__NO_ASM</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.libflac-1.2.1.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-						<item>FLAC__NO_DLL</item>
-						<item>FLAC__NO_ASM</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.libflac-1.2.1.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>bitmath.c</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>include</name>
-					<items>
-						<item type="Filter">
-							<name>private</name>
-							<items>
-								<item type="File">
-									<fileName>include/private/*.*</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-						<item type="Filter">
-							<name>protected</name>
-							<items>
-								<item type="File">
-									<fileName>include/protected/*.*</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-					</items>
-				</item>
-				<item type="File">
-					<fileName>bitreader.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>bitwriter.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>cpu.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>crc.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>fixed.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>float.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>format.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lpc.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>md5.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>memory.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>metadata_iterators.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>metadata_object.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>stream_decoder.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>stream_encoder.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>stream_encoder_framing.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>window.c</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>false</enable>
-			<name>Extern.libmad-0.15.1b</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/ps4</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-						<item>HAVE_CONFIG_H</item>
-						<item>FPM_DEFAULT</item>
-						<item>OPT_SPEED</item>
-						<item>OPT_SSO</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.libmad-0.15.1b.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/ps4</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-						<item>HAVE_CONFIG_H</item>
-						<item>FPM_DEFAULT</item>
-						<item>OPT_SPEED</item>
-						<item>OPT_SSO</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.libmad-0.15.1b.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="Filter">
-					<name>platform</name>
-					<items>
-						<item type="File">
-							<fileName>platforms/ps4/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="File">
-					<fileName>version.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>bit.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>decoder.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>fixed.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>frame.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>huffman.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>layer3.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>layer12.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>stream.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>synth.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>timer.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>bit.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>decoder.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>fixed.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>frame.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>global.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>huffman.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>layer3.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>layer12.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>mad.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>stream.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>synth.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>timer.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>version.h</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.libogg-1.3.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/src</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.libogg-1.3.0.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.libogg-1.3.0.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>bitwise.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>framing.c</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.libvorbis-1.3.3</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.libvorbis-1.3.3.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.libvorbis-1.3.3.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>vorbisfile.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>analysis.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>backends.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>bitrate.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>bitrate.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>block.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>codebook.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>codebook.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>codec_internal.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>envelope.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>envelope.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>floor0.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>floor1.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>highlevel.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>info.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lookup.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lookup.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lookup_data.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lpc.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lpc.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lsp.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lsp.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>mapping0.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>masking.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>mdct.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>mdct.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>misc.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>os.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>psy.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>psy.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>registry.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>registry.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>res0.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>scales.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>sharedbook.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>smallft.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>smallft.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>synthesis.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>window.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>window.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>vorbisenc.c</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>modes</name>
-					<items>
-						<item type="File">
-							<fileName>modes/setup_X.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/floor_all.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/psych_8.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/psych_11.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/psych_16.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/psych_44.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/residue_8.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/residue_16.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/residue_44.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/residue_44u.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/setup_8.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/setup_11.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/setup_16.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/setup_22.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/setup_32.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/setup_44.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>modes/setup_44u.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>books</name>
-					<items>
-						<item type="Filter">
-							<name>coupled</name>
-							<items>
-								<item type="File">
-									<fileName>books/coupled/res_books_stereo.h</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-						<item type="Filter">
-							<name>floor</name>
-							<items>
-								<item type="File">
-									<fileName>books/floor/floor_books.h</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-						<item type="Filter">
-							<name>uncoupled</name>
-							<items>
-								<item type="File">
-									<fileName>books/uncoupled/res_books_uncoupled.h</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.lpng</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/lpng1632</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.lpng.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.lpng.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>*.h</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.squish-1.10</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/squish-1.10</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-						<item>SQUISH_USE_SSE</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.squish-1.10.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-						<item>SQUISH_USE_SSE</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.squish-1.10.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.cpp</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>*.h</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.zlib-1.2.3</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.zlib-1.2.3.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.zlib-1.2.3.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>*.h</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
 			<name>Traktor.Animation</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Animation</sourcePath>
 			<configurations>
@@ -1702,7 +549,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -1778,12 +625,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[11]"/>
+					<project ref="/object/projects/item[2]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -1859,12 +706,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[11]"/>
+					<project ref="/object/projects/item[2]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -1949,12 +796,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[11]"/>
+					<project ref="/object/projects/item[2]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -2030,17 +877,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[11]"/>
+					<project ref="/object/projects/item[2]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]"/>
+					<project ref="/object/projects/item[5]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -2151,125 +998,31 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[6]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[8]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]"/>
 				</item>
-				<item type="ProjectDependency" version="3">
+				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Extern.agg</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/agg-2.5</sourcePath>
-						<configurations>
-							<item type="Configuration" version="4">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/gpc</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Extern.agg.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-							<item type="Configuration" version="4">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/gpc</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Extern.agg.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-						</configurations>
-						<items>
-							<item type="Filter">
-								<name>src</name>
-								<items>
-									<item type="File">
-										<fileName>src/*.cpp</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>include</name>
-								<items>
-									<item type="File">
-										<fileName>include/*.h</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>gpc</name>
-								<items>
-									<item type="File">
-										<fileName>gpc/*.c</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>gpc/*.h</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies/>
-					</project>
+					<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+					<projectName>Extern.lpng</projectName>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+					<projectName>Extern.zlib-1.2.3</projectName>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+					<projectName>Extern.jpeg-6b</projectName>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+					<projectName>Extern.agg</projectName>
 				</item>
 			</dependencies>
 		</item>
@@ -2428,17 +1181,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[11]"/>
+					<project ref="/object/projects/item[2]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]"/>
+					<project ref="/object/projects/item[7]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -2550,186 +1303,25 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[10]"/>
+								<project ref="/object/projects/item[1]"/>
 							</item>
-							<item type="ProjectDependency" version="3">
+							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[8]"/>
+								<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+								<projectName>Extern.zlib-1.2.3</projectName>
 							</item>
-							<item type="ProjectDependency" version="3">
+							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project type="Project" version="1">
-									<enable>true</enable>
-									<name>Extern.minilzo-2.05</name>
-									<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</sourcePath>
-									<configurations>
-										<item type="Configuration" version="4">
-											<name>DebugStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-												<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-											</includePaths>
-											<definitions>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>Extern.minilzo-2.05.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-										<item type="Configuration" version="4">
-											<name>ReleaseStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-												<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-											</includePaths>
-											<definitions>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>Extern.minilzo-2.05.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-									</configurations>
-									<items>
-										<item type="File">
-											<fileName>minilzo.c</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>minilzo.h</fileName>
-											<items/>
-										</item>
-									</items>
-									<dependencies/>
-								</project>
+								<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+								<projectName>Extern.minilzo-2.05</projectName>
 							</item>
-							<item type="ProjectDependency" version="3">
+							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project type="Project" version="1">
-									<enable>true</enable>
-									<name>Extern.liblzf-3.6</name>
-									<sourcePath>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</sourcePath>
-									<configurations>
-										<item type="Configuration" version="4">
-											<name>DebugStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
-											</includePaths>
-											<definitions>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>Extern.liblzf-3.6.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-										<item type="Configuration" version="4">
-											<name>ReleaseStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
-											</includePaths>
-											<definitions>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>Extern.liblzf-3.6.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-									</configurations>
-									<items>
-										<item type="File">
-											<fileName>lzf_c.c</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>lzf_d.c</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>config.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>crc32.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>lzf.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>lzfP.h</fileName>
-											<items/>
-										</item>
-									</items>
-									<dependencies/>
-								</project>
+								<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+								<projectName>Extern.liblzf-3.6</projectName>
 							</item>
 						</dependencies>
 					</project>
@@ -2809,7 +1401,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[10]"/>
+								<project ref="/object/projects/item[1]"/>
 							</item>
 						</dependencies>
 					</project>
@@ -2943,7 +1535,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[10]"/>
+								<project ref="/object/projects/item[1]"/>
 							</item>
 						</dependencies>
 					</project>
@@ -3023,7 +1615,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[10]"/>
+								<project ref="/object/projects/item[1]"/>
 							</item>
 						</dependencies>
 					</project>
@@ -3149,379 +1741,30 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[10]"/>
+								<project ref="/object/projects/item[1]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+								<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 							</item>
-							<item type="ProjectDependency" version="3">
+							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[2]"/>
+								<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+								<projectName>Extern.libflac-1.2.1</projectName>
 							</item>
-							<item type="ProjectDependency" version="3">
+							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project type="Project" version="1">
-									<enable>true</enable>
-									<name>Extern.mpg123-1.13.2</name>
-									<sourcePath>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2</sourcePath>
-									<configurations>
-										<item type="Configuration" version="4">
-											<name>DebugStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/ps4</item>
-											</includePaths>
-											<definitions>
-												<item>T_STATIC</item>
-												<item>_DEBUG</item>
-												<item>OPT_GENERIC</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>Extern.mpg123-1.13.2.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-										<item type="Configuration" version="4">
-											<name>ReleaseStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/ps4</item>
-											</includePaths>
-											<definitions>
-												<item>T_STATIC</item>
-												<item>NDEBUG</item>
-												<item>OPT_GENERIC</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>Extern.mpg123-1.13.2.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-									</configurations>
-									<items>
-										<item type="Filter">
-											<name>libmpg123</name>
-											<items>
-												<item type="File">
-													<fileName>src/libmpg123/compat.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/dct64.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/equalizer.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/feature.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/format.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/frame.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/icy.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/icy2utf8.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/id3.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/index.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/layer1.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/layer2.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/layer3.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/libmpg123.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/ntom.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/optimize.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/parse.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/readers.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/stringbuf.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/tabinit.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/testcpu.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/compat.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/debug.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/decode.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/frame.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/getbits.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/getcpuflags.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/huffman.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/icy.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/icy2utf8.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/id3.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/index.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/intsym.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/l12_integer_tables.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/l2tables.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/l3_integer_tables.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/mangle.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/mpg123lib_intern.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/optimize.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/parse.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/reader.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/sample.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synths.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/true.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth_8bit.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth_8bit.h</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth_real.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>src/libmpg123/synth_s32.c</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
-											<name>ports</name>
-											<items>
-												<item type="File">
-													<fileName>ports/ps4/*.c</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>ports/ps4/*.h</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-									</items>
-									<dependencies/>
-								</project>
+								<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+								<projectName>Extern.mpg123-1.13.2</projectName>
 							</item>
-							<item type="ProjectDependency" version="3">
+							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project type="Project" version="1">
-									<enable>true</enable>
-									<name>Extern.stb_vorbis</name>
-									<sourcePath>$(TRAKTOR_HOME)/3rdp/stb_vorbis</sourcePath>
-									<configurations>
-										<item type="Configuration" version="4">
-											<name>DebugStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths/>
-											<definitions>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>Extern.stb_vorbis.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-										<item type="Configuration" version="4">
-											<name>ReleaseStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths/>
-											<definitions>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>Extern.stb_vorbis.a</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-												</item>
-											</aggregationItems>
-										</item>
-									</configurations>
-									<items>
-										<item type="File">
-											<fileName>*.*</fileName>
-											<items/>
-										</item>
-									</items>
-									<dependencies/>
-								</project>
+								<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+								<projectName>Extern.stb_vorbis</projectName>
 							</item>
 						</dependencies>
 					</project>
@@ -3600,11 +1843,11 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[17]/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[8]/dependencies/item[4]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.I18N</name>
@@ -3677,7 +1920,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3762,7 +2005,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3919,7 +2162,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4067,7 +2310,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4170,22 +2413,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[23]"/>
+					<project ref="/object/projects/item[14]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]"/>
+					<project ref="/object/projects/item[7]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4270,12 +2513,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[11]"/>
+					<project ref="/object/projects/item[2]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -4352,12 +2595,12 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[10]"/>
+								<project ref="/object/projects/item[1]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+								<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -4432,219 +2675,32 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]"/>
+					<project ref="/object/projects/item[16]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 				</item>
-				<item type="ProjectDependency" version="3">
+				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Extern.bullet</name>
-						<sourcePath>$(BULLET_SDK)</sourcePath>
-						<configurations>
-							<item type="Configuration" version="4">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(BULLET_SDK)/include</item>
-									<item>$(BULLET_SDK)/src</item>
-								</includePaths>
-								<definitions>
-									<item>_DEBUG</item>
-									<item>_CRT_SECURE_NO_WARNINGS</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Extern.bullet.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-							<item type="Configuration" version="4">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(BULLET_SDK)/include</item>
-									<item>$(BULLET_SDK)/src</item>
-								</includePaths>
-								<definitions>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Extern.bullet.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>src/*.cpp</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>src/*.h</fileName>
-								<items/>
-							</item>
-							<item type="Filter">
-								<name>BulletCollision</name>
-								<items>
-									<item type="Filter">
-										<name>BroadphaseCollision</name>
-										<items>
-											<item type="File">
-												<fileName>src/BulletCollision/BroadphaseCollision/*.cpp</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>src/BulletCollision/BroadphaseCollision/*.h</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
-									<item type="Filter">
-										<name>CollisionDispatch</name>
-										<items>
-											<item type="File">
-												<fileName>src/BulletCollision/CollisionDispatch/*.cpp</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>src/BulletCollision/CollisionDispatch/*.h</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
-									<item type="Filter">
-										<name>CollisionShapes</name>
-										<items>
-											<item type="File">
-												<fileName>src/BulletCollision/CollisionShapes/*.cpp</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>src/BulletCollision/CollisionShapes/*.h</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
-									<item type="Filter">
-										<name>NarrowPhaseCollision</name>
-										<items>
-											<item type="File">
-												<fileName>src/BulletCollision/NarrowPhaseCollision/*.cpp</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>src/BulletCollision/NarrowPhaseCollision/*.h</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>BulletDynamics</name>
-								<items>
-									<item type="Filter">
-										<name>ConstraintSolver</name>
-										<items>
-											<item type="File">
-												<fileName>src/BulletDynamics/ConstraintSolver/*.cpp</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>src/BulletDynamics/ConstraintSolver/*.h</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
-									<item type="Filter">
-										<name>Dynamics</name>
-										<items>
-											<item type="File">
-												<fileName>src/BulletDynamics/Dynamics/*.cpp</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>src/BulletDynamics/Dynamics/*.h</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
-									<item type="Filter">
-										<name>Vehicle</name>
-										<items>
-											<item type="File">
-												<fileName>src/BulletDynamics/Vehicle/*.cpp</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>src/BulletDynamics/Vehicle/*.h</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>LinearMath</name>
-								<items>
-									<item type="File">
-										<fileName>src/LinearMath/*.cpp</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>src/LinearMath/*.h</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies/>
-					</project>
+					<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+					<projectName>Extern.bullet</projectName>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[17]/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[8]/dependencies/item[5]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Render.Ps4</name>
@@ -4726,16 +2782,16 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[5]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+		<item ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Scene</name>
@@ -4808,17 +2864,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[5]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4894,12 +2950,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4979,102 +3035,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[31]"/>
+					<project ref="/object/projects/item[22]"/>
 				</item>
-				<item type="ProjectDependency" version="3">
+				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Extern.lua</name>
-						<sourcePath>$(LUA_SDK)/src</sourcePath>
-						<configurations>
-							<item type="Configuration" version="4">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(LUA_SDK)/src</item>
-								</includePaths>
-								<definitions>
-									<item>_DEBUG</item>
-									<item>_CRT_SECURE_NO_WARNINGS</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Extern.lua.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-							<item type="Configuration" version="4">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(LUA_SDK)/src</item>
-								</includePaths>
-								<definitions>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Extern.lua.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-									</item>
-								</aggregationItems>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.c</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>*.h</fileName>
-								<items/>
-							</item>
-							<item type="Filter">
-								<name>ps4</name>
-								<items>
-									<item type="File">
-										<fileName>ps4/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies/>
-					</project>
+					<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+					<projectName>Extern.lua</projectName>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[17]/dependencies/item[7]/project"/>
+		<item ref="/object/projects/item[8]/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Spray</name>
@@ -5183,32 +3159,32 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[11]"/>
+					<project ref="/object/projects/item[2]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[22]"/>
+					<project ref="/object/projects/item[13]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5284,27 +3260,27 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[22]"/>
+					<project ref="/object/projects/item[13]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5380,12 +3356,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[21]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5488,22 +3464,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[22]"/>
+					<project ref="/object/projects/item[13]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5615,22 +3591,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[11]"/>
+					<project ref="/object/projects/item[2]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5708,16 +3684,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
-				<item type="ProjectDependency" version="3">
+				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item"/>
+					<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+					<projectName>Extern.expat-2.1.0</projectName>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[17]/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[8]/dependencies/item[3]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Input.Ps4</name>
@@ -5790,12 +3767,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[21]"/>
+					<project ref="/object/projects/item[12]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5873,27 +3850,27 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[39]"/>
+					<project ref="/object/projects/item[30]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[23]"/>
+					<project ref="/object/projects/item[14]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5969,12 +3946,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[7]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -6050,99 +4027,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.libtheora-1.1.1</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.libtheora-1.1.1.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.libtheora-1.1.1.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>*.h</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[4]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[5]"/>
+					<project ref="/object/projects/item[15]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -6228,30 +4118,32 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="3">
+				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[4]"/>
+					<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+					<projectName>Extern.libogg-1.3.0</projectName>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+					<projectName>Extern.libtheora-1.1.1</projectName>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[45]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[8]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[5]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -6373,12 +4265,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[9]"/>
+					<project ref="/object/projects/item"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[2]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[8]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -6388,12 +4290,37 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]"/>
+					<project ref="/object/projects/item[12]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[20]"/>
+					<project ref="/object/projects/item[13]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[14]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[15]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[16]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[8]/dependencies/item[5]/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -6408,12 +4335,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[23]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]"/>
+					<project ref="/object/projects/item[8]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -6423,12 +4345,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[26]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[36]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[28]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -6438,47 +4370,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[31]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[7]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[34]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[35]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[46]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[37]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[38]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[39]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -6555,27 +4447,24 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[10]"/>
+								<project ref="/object/projects/item[1]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[31]"/>
+								<project ref="/object/projects/item[22]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[23]"/>
+								<project ref="/object/projects/item[14]"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[2]/project"/>
-		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[25]/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Amalgam.Game.App</name>
@@ -6657,184 +4546,19 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[47]"/>
+					<project ref="/object/projects/item[37]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[39]"/>
+					<project ref="/object/projects/item[30]"/>
 				</item>
 			</dependencies>
-		</item>
-		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[4]/project"/>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.recast</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.recast.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.recast.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="Filter">
-					<name>Source</name>
-					<items>
-						<item type="File">
-							<fileName>Source/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Include</name>
-					<items>
-						<item type="File">
-							<fileName>Include/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.detour</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.detour.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.detour.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="Filter">
-					<name>Source</name>
-					<items>
-						<item type="File">
-							<fileName>Source/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Include</name>
-					<items>
-						<item type="File">
-							<fileName>Include/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies/>
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -6910,120 +4634,25 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+					<projectName>Extern.detour</projectName>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[55]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[38]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[8]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
-		</item>
-		<item ref="/object/projects/item[32]/dependencies/item[2]/project"/>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.sqlite</name>
-			<sourcePath>$(SQLITE_SDK)</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(SQLITE_SDK)</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
-						<item>SQLITE_OMIT_WAL</item>
-						<item>SQLITE_OMIT_LOAD_EXTENSION</item>
-						<item>SQLITE_OS_OTHER=1</item>
-						<item>__ppc__</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.sqlite.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(SQLITE_SDK)</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
-						<item>SQLITE_OMIT_WAL</item>
-						<item>SQLITE_OMIT_LOAD_EXTENSION</item>
-						<item>SQLITE_OS_OTHER=1</item>
-						<item>__ppc__</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.sqlite.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>sqlite3.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>sqlite3.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>sqlite3ext.h</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>ps4</name>
-					<items>
-						<item type="File">
-							<fileName>ps4/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies/>
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -7097,7 +4726,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -7175,17 +4804,18 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]"/>
+					<project ref="/object/projects/item[41]"/>
 				</item>
-				<item type="ProjectDependency" version="3">
+				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[58]"/>
+					<solutionFileName>$(TRAKTOR_HOME)/ExternPs4.xms</solutionFileName>
+					<projectName>Extern.sqlite</projectName>
 				</item>
 			</dependencies>
 		</item>
@@ -7261,27 +4891,26 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]"/>
+					<project ref="/object/projects/item[15]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]"/>
+					<project ref="/object/projects/item[41]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[60]"/>
+					<project ref="/object/projects/item[42]"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[26]/dependencies/item[4]/project"/>
-		<item ref="/object/projects/item[47]/dependencies/item[22]/project"/>
+		<item ref="/object/projects/item[37]/dependencies/item[22]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Telemetry</name>
@@ -7354,12 +4983,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[23]"/>
+					<project ref="/object/projects/item[14]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -7437,11 +5066,10 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[1]"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[16]/dependencies/item[4]/project"/>
 	</projects>
 	<aggregations/>
 </object>

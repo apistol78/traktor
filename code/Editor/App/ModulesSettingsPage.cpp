@@ -74,7 +74,7 @@ void ModulesSettingsPage::eventAddModule(ui::ButtonClickEvent* event)
 {
 	ui::custom::InputDialog::Field fields[] =
 	{
-		{ i18n::Text(L"EDITOR_SETTINGS_ADD_DEPENDENT_NAME"), L"", 0, 0 }
+		ui::custom::InputDialog::Field(i18n::Text(L"EDITOR_SETTINGS_ADD_DEPENDENT_NAME"))
 	};
 
 	ui::custom::InputDialog inputDialog;
