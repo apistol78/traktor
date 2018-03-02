@@ -19,6 +19,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class Path;
+
 	namespace sb
 	{
 
@@ -50,7 +53,7 @@ public:
 
 	virtual std::wstring getLocation() const = 0;
 
-	virtual bool resolve(SolutionLoader* solutionLoader) = 0;
+	virtual bool resolve(const Path& referringSolutionPath, SolutionLoader* solutionLoader) = 0;
 
 	virtual void serialize(ISerializer& s);
 

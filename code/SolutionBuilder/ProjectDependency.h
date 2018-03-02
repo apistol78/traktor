@@ -39,7 +39,7 @@ public:
 
 	virtual std::wstring getLocation() const;
 
-	virtual bool resolve(SolutionLoader* solutionLoader);
+	virtual bool resolve(const Path& referringSolutionPath, SolutionLoader* solutionLoader);
 
 	virtual void serialize(ISerializer& s);
 

@@ -114,18 +114,19 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() >= 1)
 	{
+		Path solutionPath = cmdLine.getString(0);
 		SolutionLoader solutionLoader;
 
 		if (cmdLine.hasOption('v', L"verbose"))
 		{
 			traktor::log::info << SB_TITLE << Endl;
-			traktor::log::info << L"Loading solution \"" << cmdLine.getString(0) << L"\"..." << Endl;
+			traktor::log::info << L"Loading solution \"" << solutionPath.getPathName() << L"\"..." << Endl;
 		}
 
 		solution = solutionLoader.load(cmdLine.getString(0));
 		if (!solution)
 		{
-			traktor::log::error << L"Unable to read solution \"" << cmdLine.getString(0) << L"\"" << Endl;
+			traktor::log::error << L"Unable to read solution \"" << solutionPath.getPathName() << L"\"" << Endl;
 			return ERROR_UNABLE_TO_READ_SOLUTION;
 		}
 
@@ -147,7 +148,7 @@ int main(int argc, const char** argv)
 			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
 			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
-				if (!(*j)->resolve(&solutionLoader))
+				if (!(*j)->resolve(solutionPath, &solutionLoader))
 				{
 					traktor::log::error << L"Unable to resolve all dependencies" << Endl;
 					return ERROR_UNABLE_TO_RESOLVE_DEPENDENCIES;
@@ -161,7 +162,7 @@ int main(int argc, const char** argv)
 			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
 			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
-				if (!(*j)->resolve(&solutionLoader))
+				if (!(*j)->resolve(solutionPath, &solutionLoader))
 				{
 					traktor::log::error << L"Unable to resolve all dependencies" << Endl;
 					return ERROR_UNABLE_TO_RESOLVE_DEPENDENCIES;
