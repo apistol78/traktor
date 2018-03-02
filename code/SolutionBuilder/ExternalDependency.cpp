@@ -56,15 +56,17 @@ std::wstring ExternalDependency::getLocation() const
 	return m_solutionFileName;
 }
 
-bool ExternalDependency::resolve(SolutionLoader* solutionLoader)
+bool ExternalDependency::resolve(const Path& referringSolutionPath, SolutionLoader* solutionLoader)
 {
 	if (m_solution && m_project)
 		return true;
 
-	m_solution = solutionLoader->load(m_solutionFileName);
+	Path solutionFileName = Path(referringSolutionPath.getPathOnly()) + Path(m_solutionFileName);
+
+	m_solution = solutionLoader->load(solutionFileName.getPathName());
 	if (!m_solution)
 	{
-		log::error << L"Unable to load external solution \"" << m_solutionFileName << L"\"; corrupt or missing" << Endl;
+		log::error << L"Unable to load external solution \"" << solutionFileName.getPathName() << L"\"; corrupt or missing" << Endl;
 		return false;
 	}
 
@@ -80,7 +82,7 @@ bool ExternalDependency::resolve(SolutionLoader* solutionLoader)
 
 	if (!m_project)
 	{
-		log::error << L"Unable to resolve external dependency \"" << m_projectName << L"\"; no such project in solution \"" << m_solutionFileName << L"\"" << Endl;
+		log::error << L"Unable to resolve external dependency \"" << m_projectName << L"\"; no such project in solution \"" << solutionFileName.getPathName() << L"\"" << Endl;
 		return false;
 	}
 
@@ -96,14 +98,14 @@ bool ExternalDependency::resolve(SolutionLoader* solutionLoader)
 				m_solutionFileName,
 				projectDependency->getProject()->getName()
 			);
-			if (externalDependency->resolve(solutionLoader))
+			if (externalDependency->resolve(solutionFileName, solutionLoader))
 				resolvedDependencies.push_back(externalDependency);
 			else
 				return false;
 		}
-		if (ExternalDependency* externalDependency = dynamic_type_cast< ExternalDependency* >(*i))
+		else if (ExternalDependency* externalDependency = dynamic_type_cast< ExternalDependency* >(*i))
 		{
-			if (externalDependency->resolve(solutionLoader))
+			if (externalDependency->resolve(solutionFileName, solutionLoader))
 				resolvedDependencies.push_back(externalDependency);
 			else
 				return false;

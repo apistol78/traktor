@@ -41,12 +41,12 @@ std::wstring ProjectDependency::getLocation() const
 	return L"";
 }
 
-bool ProjectDependency::resolve(SolutionLoader* solutionLoader)
+bool ProjectDependency::resolve(const Path& referringSolutionPath, SolutionLoader* solutionLoader)
 {
 	const RefArray< Dependency >& projectDependencies = m_project->getDependencies();
 	for (RefArray< Dependency >::const_iterator i = projectDependencies.begin(); i != projectDependencies.end(); ++i)
 	{
-		if (!(*i)->resolve(solutionLoader))
+		if (!(*i)->resolve(referringSolutionPath, solutionLoader))
 			return false;
 	}
 	return true;
