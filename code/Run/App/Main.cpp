@@ -96,6 +96,7 @@ void registerRuntimeClasses()
 	T_FORCE_LINK_REF(CoreClassFactory);
 	T_FORCE_LINK_REF(CoreClassFactory2);
 	T_FORCE_LINK_REF(drawing::DrawingClassFactory);
+	T_FORCE_LINK_REF(net::NetClassFactory);
 	T_FORCE_LINK_REF(xml::XmlClassFactory);
 	T_FORCE_LINK_REF(sql::SqlClassFactory);
 	T_FORCE_LINK_REF(sql::Sqlite3ClassFactory);

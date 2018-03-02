@@ -125,6 +125,11 @@ public:
 			os << ret.getWideString();
 			return 200;
 		}
+		else if (ret.isObject< traktor::IStream >())
+		{
+			outStream = ret.getObjectUnsafe< traktor::IStream >();
+			return 200;
+		}
 		else
 			return 404;
 	}
