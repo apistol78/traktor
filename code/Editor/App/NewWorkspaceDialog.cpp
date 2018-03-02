@@ -67,7 +67,7 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 
 	// Find templates and add to list.
 	RefArray< File > templateFiles;
-	FileSystem::getInstance().find(L"$(TRAKTOR_HOME)/res/templates/*.template", templateFiles);
+	FileSystem::getInstance().find(L"$(TRAKTOR_HOME)/resources/runtime/editor/templates/*.template", templateFiles);
 
 	Ref< ui::custom::PreviewItems > previewItems = new ui::custom::PreviewItems();
 

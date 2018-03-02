@@ -1,0 +1,66 @@
+<html>
+	<head>
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Expires" content="-1">
+		<script type="text/javascript" src="common.js"></script>
+		<style>
+
+body {
+    background-color: #222222;
+}
+
+h1 {
+    color: white;
+    text-align: center;
+    font-family: "Verdana,Tahoma,Helvetica,Arial";
+    font-size: 22px;
+}
+
+#status_div {
+	color: white;
+    text-align: center;
+    font-family: "Verdana,Tahoma,Helvetica,Arial";
+    font-size: 12px;
+}
+
+		</style>		
+	</head>
+	<body>
+		<h1><!-- output:print(os:getEnvironment("DEPLOY_PROJECT_NAME")) --!></h1><br>
+		<center>
+			<div id="status_div">
+			</div>
+			<div id="listener_div">
+				<script type="text/javascript">
+
+var stat = document.getElementById('status_div');
+function handleEvent(e) {
+	if (e.type == "progress")
+	{
+		if (e.lengthComputable && e.total > 0)
+			stat.innerHTML = "Loading, " + Math.round(e.loaded / e.total * 100.0) + "%";
+		else
+			stat.innerHTML = "Loading...";
+	}
+	else if (e.type == "loadend")
+		stat.innerHTML = "Running";
+}
+
+var listener_element = document.getElementById('listener_div');
+listener_element.addEventListener('loadstart', handleEvent, true);
+listener_element.addEventListener('progress', handleEvent, true);
+listener_element.addEventListener('load', handleEvent, true);
+listener_element.addEventListener('loadend', handleEvent, true);
+
+				</script>
+
+				<embed
+					id="app"
+					width=640 height=480
+					src="<!-- output:print(os:getEnvironment("DEPLOY_EXECUTABLE")) --!>.nmf"
+					type="application/x-pnacl"
+				/>
+			</div>
+		</center>
+	</body>
+</html>

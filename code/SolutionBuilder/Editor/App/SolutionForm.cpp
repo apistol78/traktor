@@ -84,7 +84,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionForm", SolutionForm, ui::Form)
 bool SolutionForm::create(const CommandLine& cmdLine)
 {
 	// Load stylesheet.
-	std::wstring styleSheetName = L"$(TRAKTOR_HOME)/res/themes/Dark/StyleSheet.xss";
+	std::wstring styleSheetName = L"$(TRAKTOR_HOME)/resources/runtime/themes/Dark/StyleSheet.xss";
 	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 	if (!styleSheet)
 	{

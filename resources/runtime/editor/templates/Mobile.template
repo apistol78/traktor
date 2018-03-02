@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<template>
+	<description>Mobile</description>
+	<image>Mobile/meta/Preview.png</image>
+	<path>Mobile</path>
+	<rules>
+		<rule>
+			<pattern>data/.*</pattern>
+			<transform>false</transform>
+		</rule>
+		<rule>
+			<pattern>data/.*%.xdi</pattern>
+			<transform>true</transform>
+		</rule>		
+		<rule>
+			<pattern>data/.*%.xdm</pattern>
+			<transform>true</transform>
+		</rule>		
+		<rule>
+			<pattern>info/.*</pattern>
+			<transform>true</transform>
+		</rule>
+		<rule>
+			<pattern>.*%.workspace</pattern>
+			<transform>true</transform>
+		</rule>
+	</rules>
+</template>

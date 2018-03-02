@@ -1,0 +1,63 @@
+<!--
+
+-- Ensure product name is valid.
+local productName = environment:get("DEPLOY_EXECUTABLE"):gsub("[.,;:-]", "_")
+
+--!><?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string><!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!></string>
+	<key>CFBundleExecutable</key>
+	<string><!-- output:print(productName) --!></string>
+	<key>CFBundleIdentifier</key>
+	<string><!-- output:print(environment:get("DEPLOY_PROJECT_IDENTIFIER")) --!></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string><!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UIStatusBarHidden</key>
+	<true/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+<!--
+		local landscape = (environment:get("DEPLOY_VIEW_ORIENTATION_LANDSCAPE") == "1")
+        local portrait = (environment:get("DEPLOY_VIEW_ORIENTATION_PORTRAIT") == "1")
+        if landscape then
+        	output:printLn("\t\t<string>UIInterfaceOrientationLandscapeLeft</string>")
+        	output:printLn("\t\t<string>UIInterfaceOrientationLandscapeRight</string>")
+        end
+        if portrait or (not landscape and not portrait) then
+        	output:printLn("\t\t<string>UIInterfaceOrientationPortrait</string>")
+        end
+--!>	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+<!--
+		local landscape = (environment:get("DEPLOY_VIEW_ORIENTATION_LANDSCAPE") == "1")
+        local portrait = (environment:get("DEPLOY_VIEW_ORIENTATION_PORTRAIT") == "1")
+        if landscape then
+        	output:printLn("\t\t<string>UIInterfaceOrientationLandscapeLeft</string>")
+        	output:printLn("\t\t<string>UIInterfaceOrientationLandscapeRight</string>")
+        end
+        if portrait or (not landscape and not portrait) then
+        	output:printLn("\t\t<string>UIInterfaceOrientationPortrait</string>")
+        end
+--!>	</array>
+</dict>
+</plist>

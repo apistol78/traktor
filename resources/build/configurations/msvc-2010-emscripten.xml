@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="SolutionBuilderMsvcSettings">
+	<slnVersion>11.00</slnVersion>
+	<vsVersion>10</vsVersion>
+	<project type="SolutionBuilderMsvcVCXProj" version="6">
+		<platform>Emscripten</platform>
+		<keyword>Win32Proj</keyword>
+		<targetPrefixes>
+			<item>lib</item>
+			<item>lib</item>
+			<item>lib</item>
+			<item>lib</item>
+		</targetPrefixes>
+		<targetExts>
+			<item>.bc</item>
+			<item>.bc</item>
+			<item>.bc</item>
+			<item>.bc</item>
+		</targetExts>
+		<propertyGroups/>
+		<imports>
+			<item type="SolutionBuilderMsvcVCXImport">
+				<label/>
+				<project>$(VCTargetsPath)\Microsoft.Cpp.props</project>
+				<condition/>
+			</item>
+			<item type="SolutionBuilderMsvcVCXImportGroup">
+				<label>PropertySheets</label>
+				<condition/>
+				<imports>
+					<item type="SolutionBuilderMsvcVCXImport">
+						<label/>
+						<project>$(LocalAppData)\Microsoft\VisualStudio\10.0\Microsoft.Cpp.$(Platform).user.props</project>
+						<condition>exists(&apos;$(LocalAppData)\Microsoft\VisualStudio\10.0\Microsoft.Cpp.$(Platform).user.props&apos;)</condition>
+					</item>
+				</imports>
+			</item>
+		</imports>
+		<configurationDefinitionsDebug>
+			<staticLibrary>
+				<item>
+					<first>CharacterSet</first>
+					<second>MultiByte</second>
+				</item>
+				<item>
+					<first>ConfigurationType</first>
+					<second>StaticLibrary</second>
+				</item>
+				<item>
+					<first>PlatformToolset</first>
+					<second>emcc</second>
+				</item>
+				<item>
+					<first>WholeProgramOptimization</first>
+					<second>false</second>
+				</item>
+			</staticLibrary>
+			<sharedLibrary>
+				<item>
+					<first>CharacterSet</first>
+					<second>MultiByte</second>
+				</item>
+				<item>
+					<first>ConfigurationType</first>
+					<second>DynamicLibrary</second>
+				</item>
+				<item>
+					<first>PlatformToolset</first>
+					<second>emcc</second>
+				</item>
+				<item>
+					<first>WholeProgramOptimization</first>
+					<second>false</second>
+				</item>
+			</sharedLibrary>
+			<executable>
+				<item>
+					<first>CharacterSet</first>
+					<second>MultiByte</second>
+				</item>
+				<item>
+					<first>ConfigurationType</first>
+					<second>Executable</second>
+				</item>
+				<item>
+					<first>PlatformToolset</first>
+					<second>emcc</second>
+				</item>
+				<item>
+					<first>WholeProgramOptimization</first>
+					<second>false</second>
+				</item>
+			</executable>
+			<executableConsole>
+				<item>
+					<first>CharacterSet</first>
+					<second>MultiByte</second>
+				</item>
+				<item>
+					<first>ConfigurationType</first>
+					<second>Executable</second>
+				</item>
+				<item>
+					<first>PlatformToolset</first>
+					<second>emcc</second>
+				</item>
+				<item>
+					<first>WholeProgramOptimization</first>
+					<second>false</second>
+				</item>
+			</executableConsole>
+		</configurationDefinitionsDebug>
+		<configurationDefinitionsRelease>
+			<staticLibrary>
+				<item>
+					<first>CharacterSet</first>
+					<second>MultiByte</second>
+				</item>
+				<item>
+					<first>ConfigurationType</first>
+					<second>StaticLibrary</second>
+				</item>
+				<item>
+					<first>PlatformToolset</first>
+					<second>emcc</second>
+				</item>
+				<item>
+					<first>WholeProgramOptimization</first>
+					<second>false</second>
+				</item>
+			</staticLibrary>
+			<sharedLibrary>
+				<item>
+					<first>CharacterSet</first>
+					<second>MultiByte</second>
+				</item>
+				<item>
+					<first>ConfigurationType</first>
+					<second>DynamicLibrary</second>
+				</item>
+				<item>
+					<first>PlatformToolset</first>
+					<second>emcc</second>
+				</item>
+				<item>
+					<first>WholeProgramOptimization</first>
+					<second>false</second>
+				</item>
+			</sharedLibrary>
+			<executable>
+				<item>
+					<first>CharacterSet</first>
+					<second>MultiByte</second>
+				</item>
+				<item>
+					<first>ConfigurationType</first>
+					<second>Executable</second>
+				</item>
+				<item>
+					<first>PlatformToolset</first>
+					<second>emcc</second>
+				</item>
+				<item>
+					<first>WholeProgramOptimization</first>
+					<second>false</second>
+				</item>
+			</executable>
+			<executableConsole>
+				<item>
+					<first>CharacterSet</first>
+					<second>MultiByte</second>
+				</item>
+				<item>
+					<first>ConfigurationType</first>
+					<second>Executable</second>
+				</item>
+				<item>
+					<first>PlatformToolset</first>
+					<second>emcc</second>
+				</item>
+				<item>
+					<first>WholeProgramOptimization</first>
+					<second>false</second>
+				</item>
+			</executableConsole>
+		</configurationDefinitionsRelease>
+		<buildDefinitionsDebug>
+			<staticLibrary>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+			</staticLibrary>
+			<sharedLibrary>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+			</sharedLibrary>
+			<executable>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+			</executable>
+			<executableConsole>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+			</executableConsole>
+		</buildDefinitionsDebug>
+		<buildDefinitionsRelease>
+			<staticLibrary>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+			</staticLibrary>
+			<sharedLibrary>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+			</sharedLibrary>
+			<executable>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+			</executable>
+			<executableConsole>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+			</executableConsole>
+		</buildDefinitionsRelease>
+		<buildTools>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>js</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>css</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>lua</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>png</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>image</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>xdi</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>exe</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>ClInclude</name>
+				<fileType>h</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>ClInclude</name>
+				<fileType>hpp</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>ClCompile</name>
+				<fileType>cpp</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>ClCompile</name>
+				<fileType>cc</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>ClCompile</name>
+				<fileType>c</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>ResourceCompile</name>
+				<fileType>rc</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>None</name>
+				<fileType>inl</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>Midl</name>
+				<fileType>idl</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>Object</name>
+				<fileType>obj</fileType>
+			</item>
+		</buildTools>
+	</project>
+</object>

@@ -51,7 +51,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 		configurationFile = cmdLine.getString(0);
 
 	// Load stylesheet.
-	std::wstring styleSheetName = L"$(TRAKTOR_HOME)/res/themes/Dark/StyleSheet.xss";
+	std::wstring styleSheetName = L"$(TRAKTOR_HOME)/resources/runtime/themes/Dark/StyleSheet.xss";
 	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 	if (!styleSheet)
 	{

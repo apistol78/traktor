@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{85D329DA-5951-4E48-BE76-2BCC3B05A085}
+
+MyApplication = MyApplication or class("MyApplication", Application)
+
+function MyApplication:new(db)
+	Application.new(self, db)
+
+	self._page = Container()
+	self._page:setLayout(Float())
+
+	self._button1 = self._page:addChild(Button("Button 1"))
+	self._button1.clicked:add(function() print("Button 1 CLICKED") end)
+
+	self._button2 = self._page:addChild(Button("Button 2"))
+	self._button2.clicked:add(function() print("Button 2 CLICKED") end)
+
+	self._edit = self._page:addChild(TextArea())
+end
+
+function MyApplication:getRootWidget()
+	return self._page
+end
+
+	]]>
+	</text>
+</object>

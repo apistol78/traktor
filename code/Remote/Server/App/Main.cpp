@@ -77,88 +77,12 @@ public:
 	{
 		std::wstring resource = request->getResource();
 
-		T_DEBUG(L"HTTP request resource \"" << resource << L"\"");
-
 		if (resource == L"" || resource == L"/")
 			resource = L"/index.html";
 
-		if (startsWith< std::wstring >(resource, L"/loadFile?"))
-		{
-			std::wstring kvs = resource.substr(resource.find(L'?') + 1);
-
-			// Parse GET encoded key/value pairs.
-			std::map< std::wstring, std::wstring > kvm;
-			StringSplit< std::wstring > ss(kvs, L"&");
-			for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
-			{
-				const std::wstring& kv = *i;
-				size_t ii = kv.find(L'=');
-				if (ii != kv.npos)
-				{
-					std::wstring key = kv.substr(0, ii);
-					std::wstring value =  net::Url::decodeString(kv.substr(ii + 1));
-					kvm[key] = value;
-				}
-			}
-
-			outStream = FileSystem::getInstance().open(m_basePath + Path(kvm[L"path"]), File::FmRead);
-			outCache = false;
-		}
-		else if (startsWith< std::wstring >(resource, L"/loadDirectory?"))
-		{
-			std::wstring kvs = resource.substr(resource.find(L'?') + 1);
-
-			// Parse GET encoded key/value pairs.
-			std::map< std::wstring, std::wstring > kvm;
-			StringSplit< std::wstring > ss(kvs, L"&");
-			for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
-			{
-				const std::wstring& kv = *i;
-				size_t ii = kv.find(L'=');
-				if (ii != kv.npos)
-				{
-					std::wstring key = kv.substr(0, ii);
-					std::wstring value =  net::Url::decodeString(kv.substr(ii + 1));
-					kvm[key] = value;
-				}
-			}
-
-			os << L"[";
-
-			Path path = (m_basePath + Path(kvm[L"path"])).normalized();
-			Ref< File > file = FileSystem::getInstance().get(path);
-			if (file && file->isDirectory())
-			{
-				RefArray< File > files;
-				FileSystem::getInstance().find(file->getPath().getPathName() + L"/*.*", files);
-				for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
-				{
-					Path filePath;
-					FileSystem::getInstance().getRelativePath((*i)->getPath(), m_basePath, filePath);
-
-					if (i != files.begin())
-						os << L",";
-					if ((*i)->isDirectory())
-						os << L"[0,\"" << filePath.getFileName() << L"\",\"" << filePath.getPathName() << L"\"]";
-					else
-						os << L"[1,\"" << filePath.getFileName() << L"\",\"" << filePath.getPathName() << L"\"]";
-				}
-			}
-
-			os << L"]";
-
-			outCache = false;
-		}
-		else
-		{
-			if (FileSystem::getInstance().exist(L"$(TRAKTOR_HOME)/res/html" + resource))
-				outStream = FileSystem::getInstance().open(L"$(TRAKTOR_HOME)/res/html" + resource, File::FmRead);
-			else
-				outStream = FileSystem::getInstance().open(m_basePath.getPathName() + resource, File::FmRead);
-
-			if (!outStream)
-				return 404;
-		}
+		outStream = FileSystem::getInstance().open(m_basePath.getPathName() + resource, File::FmRead);
+		if (!outStream)
+			return 404;
 
 		return 200;
 	}

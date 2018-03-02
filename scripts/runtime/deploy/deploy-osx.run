@@ -1,0 +1,137 @@
+import(traktor)
+import(traktor.run)
+
+
+-- Tools
+local tools =
+{
+	pipeline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App",
+	migrate = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App",
+	remote = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Remote.Client.App"
+}
+
+
+function string:split(sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	self:gsub(pattern, function(c) fields[#fields+1] = c end)
+	return fields
+end
+
+
+function build(args)
+	stdout:printLn("Building asset(s)...")
+	local cmdline = tools.pipeline .. " -p -s=Pipeline"
+	for i = 1, args:size() - 1 do
+		cmdline = cmdline .. " " .. args:get(i)
+	end
+	return run:execute(cmdline)
+end
+
+
+function deploy(args)
+	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
+	local bundle = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("%s", "") .. ".app"
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
+	-- Create application bundle.
+	run:mkdir(bundle .. "/Contents/MacOS")
+	run:mkdir(bundle .. "/Contents/Resources")
+
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Info.plist.template", bundle .. "/Contents/Info.plist")
+	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Icon.icns", bundle .. "/Contents/Resources/Icon.icns")
+	run:replace("Application.config", bundle .. "/Contents/Resources/Application.config")
+	
+	-- Copy binaries into bundle.
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	for _, f in ipairs(files) do
+		if not debug then
+			run:replace("$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/releaseshared/" .. f, bundle .. "/Contents/MacOS/" .. f)
+		else
+			run:replace("$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/debugshared/" .. f, bundle .. "/Contents/MacOS/" .. f)
+		end
+	end
+
+	-- Deploy bundle to target.
+	stdout:printLn("Deploying application to target host...")
+	run:pushd(bundle)
+	run:execute(tools.remote .. " deploy -recursive $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)/" .. bundle .. "\" *", "(null)")
+	if run:exitCode() ~= 0 then
+		stderr:printLn("Failed to deploy application to target.")
+		return run:exitCode()
+	end	
+	run:popd()
+
+	-- Create launcher script.
+	local f = fileSystem:open(Path("launch.sh"), 2)
+	local s = StreamOutput(f, Utf8Encoding(), "unix")
+	s:printLn("chmod u+x " .. bundle .. "/Contents/MacOS/*")
+	s:printLn(bundle .. "/Contents/MacOS/" .. executable .. " -s")
+	f:close()
+
+	-- Deploy launcher script.
+	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh", "(null)")
+	return 0
+end
+
+
+function launch(args)
+	stdout:printLn("Launching OSX...")
+	return run:execute(tools.remote .. " launch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh", "(null)")
+end
+
+
+function migrate(args)
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+	local bundle = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("%s", "") .. ".app"
+
+	-- Build content database.
+	stdout:printLn("Migrating OSX...")
+	run:execute(tools.migrate .. " -p -s=Migrate")
+	if run:exitCode() ~= 0 then return run:exitCode() end
+
+	-- Create application bundle.
+	run:mkdir(bundle .. "/Contents/MacOS")
+	run:mkdir(bundle .. "/Contents/Resources")
+
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Info.plist.template", bundle .. "/Contents/Info.plist")
+	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Icon.icns", bundle .. "/Contents/Resources/Icon.icns")
+	run:replace("Application.config", bundle .. "/Contents/Resources/Application.config")
+	run:replace("Content.compact", bundle .. "/Contents/Resources/Content.compact")
+	
+	-- Determine source binary path.
+	local sourcePath
+	if not debug then
+		stdout:printLn("Deploying binaries to target host...")
+		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/releaseshared/"
+	else
+		stdout:printLn("Deploying *DEBUG* binaries to target host...")
+		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/debugshared/"
+	end
+
+	-- Copy binaries into bundle.
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	for _, f in ipairs(files) do
+		if not run:replace(sourcePath .. f, bundle .. "/Contents/MacOS/" .. f) then
+			stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
+			return 1
+		end
+	end
+
+	return 0
+end
+
+
+function main(args)
+	local action = args:get(0)
+	if action == "build" then
+		return build(args)
+	elseif action == "deploy" then
+		return deploy(args)
+	elseif action == "launch" then
+		return launch(args)
+	elseif action == "migrate" then
+		return migrate(args)
+	end
+	return 1
+end

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="1">
+	<dependencies/>
+	<text>
+	<![CDATA[
+import(traktor)
+
+
+local cubePosition = Vector4(0, 0, 0, 1)
+local cubeRotation = Vector4(0, 0, 0, 1)
+
+
+function initialize(params)
+end
+
+
+function update(info)
+	local inputMapping = environment:getInput():getInputMapping()
+
+	-- Read input state values.
+	local moveX = inputMapping:getStateValue("STATE_MOVE_X")
+	local moveZ = inputMapping:getStateValue("STATE_MOVE_Z")
+	local rotateHead = inputMapping:getStateValue("STATE_ROTATE_HEAD") * 0.1
+	local rotatePitch = inputMapping:getStateValue("STATE_ROTATE_PITCH") * 0.1
+
+	-- Update cube transform.
+	cubePosition = cubePosition + Vector4(moveX, 0, moveZ, 0) * info:getSimulationDeltaTime()
+	cubeRotation = cubeRotation + Vector4(rotateHead, rotatePitch, 0) * info:getSimulationDeltaTime()
+
+	local cubeEntity = world:getEntity("Cube")
+	cubeEntity:setTransform(Transform(
+		cubePosition,
+		Quaternion.fromEulerAngles(cubeRotation:x(), cubeRotation:y(), 0)
+	))
+end
+
+	]]>
+	</text>
+</object>

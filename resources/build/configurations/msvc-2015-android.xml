@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="SolutionBuilderMsvcSettings">
+  <slnVersion>12.00</slnVersion>
+  <vsVersion>14</vsVersion>
+	<project type="SolutionBuilderMsvcVCXProj" version="6">
+		<platform>ARM</platform>
+		<keyword>Android</keyword>
+		<targetPrefixes>
+			<item>lib</item>
+			<item>lib</item>
+			<item/>
+			<item/>
+		</targetPrefixes>
+		<targetExts>
+			<item>.a</item>
+			<item>.so</item>
+			<item/>
+			<item/>
+		</targetExts>
+		<propertyGroups>
+      <item type="SolutionBuilderMsvcVCXPropertyGroup" version="1">
+				<label>Globals</label>
+				<condition/>
+				<values>
+					<item>
+						<first>ApplicationType</first>
+						<second>Android</second>
+					</item>
+          <item>
+            <first>ApplicationTypeRevision</first>
+            <second>2.0</second>
+          </item>
+				</values>
+			</item>
+		</propertyGroups>
+		<imports>
+			<item type="SolutionBuilderMsvcVCXImport">
+				<label/>
+				<project>$(VCTargetsPath)\Microsoft.Cpp.props</project>
+				<condition/>
+			</item>
+		</imports>
+		<configurationDefinitionsDebug>
+			<staticLibrary>
+        <item>
+          <first>ConfigurationType</first>
+          <second>StaticLibrary</second>
+        </item>        
+        <item>
+          <first>UseDebugLibraries</first>
+          <second>true</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>Clang_3_8</second>
+        </item>
+      </staticLibrary>
+			<sharedLibrary/>
+			<executable/>
+			<executableConsole/>
+		</configurationDefinitionsDebug>
+		<configurationDefinitionsRelease>
+      <staticLibrary>
+        <item>
+          <first>ConfigurationType</first>
+          <second>StaticLibrary</second>
+        </item>        
+        <item>
+          <first>UseDebugLibraries</first>
+          <second>false</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>Clang_3_8</second>
+        </item>
+      </staticLibrary>
+			<sharedLibrary/>
+			<executable/>
+			<executableConsole/>
+		</configurationDefinitionsRelease>
+		<buildDefinitionsDebug>
+			<staticLibrary>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
+						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
+					</options>
+				</item>
+			</staticLibrary>
+			<sharedLibrary>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
+						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+					</options>
+				</item>
+			</sharedLibrary>
+			<executable>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
+						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+					</options>
+				</item>
+			</executable>
+			<executableConsole>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);WIN32;_CONSOLE;UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
+						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+					</options>
+				</item>
+			</executableConsole>
+		</buildDefinitionsDebug>
+		<buildDefinitionsRelease>
+			<staticLibrary>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
+						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
+					</options>
+				</item>
+			</staticLibrary>
+			<sharedLibrary>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
+						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+					</options>
+				</item>
+			</sharedLibrary>
+			<executable>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
+						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+					</options>
+				</item>
+			</executable>
+			<executableConsole>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>ClCompile</name>
+					<fileTypes>c;cc;cpp</fileTypes>
+					<options>
+						<item>
+							<name>AdditionalIncludeDirectories</name>
+							<value>%(PROJECT_INCLUDE_PATHS);.;%(AdditionalIncludeDirectories)</value>
+						</item>
+						<item>
+							<name>PreprocessorDefinitions</name>
+							<value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
+						</item>
+            <item>
+              <name>StrictAliasing</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>EnableNeonCodegen</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>BufferSecurityCheck</name>
+              <value>false</value>
+            </item>
+            <item>
+              <name>CppLanguageStandard</name>
+              <value>c++11</value>
+            </item>
+            <item>
+            	<name>AdditionalOptions</name>
+            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
+            </item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Link</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>AdditionalDependencies</name>
+							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
+						</item>
+						<item>
+							<name>AdditionalLibraryDirectories</name>
+							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+						</item>
+					</options>
+				</item>
+			</executableConsole>
+		</buildDefinitionsRelease>
+		<buildTools>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>js</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>css</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>lua</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>png</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>image</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>xdi</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>exe</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>ClInclude</name>
+				<fileType>h</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>ClInclude</name>
+				<fileType>hpp</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXClCompileBuildTool">
+				<name>ClCompile</name>
+				<fileType>cpp</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXClCompileBuildTool">
+				<name>ClCompile</name>
+				<fileType>cc</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXClCompileBuildTool">
+				<name>ClCompile</name>
+				<fileType>c</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>None</name>
+				<fileType>inl</fileType>
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>None</name>
+				<fileType>java</fileType>
+			</item>
+		</buildTools>
+	</project>
+</object>

@@ -1,0 +1,335 @@
+<?--
+
+function string:endswith(send)
+	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+end
+
+--?><?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="<?-- output:print(project:getName()) --?>" />
+		<Option compiler="clang" />
+		<Build><?--
+			import(traktor)
+
+			local configurations = project:getConfigurations()
+			for i = 0, configurations:size() - 1 do
+
+				local configuration = configurations:get(i)
+
+				local productFile = ""
+				local productType = ""
+
+				if configuration:getTargetFormat() == "StaticLibrary" then
+					productFile = "lib" .. project:getName() .. ".a"
+					productType = "2"
+				elseif configuration:getTargetFormat() == "SharedLibrary" then
+					productFile = "lib" .. project:getName() .. ".so"
+					productType = "3"
+				elseif configuration:getTargetFormat() == "Executable" then
+					productFile = project:getName()
+					productType = "0"
+				elseif configuration:getTargetFormat() == "ExecutableConsole" then
+					productFile = project:getName()
+					productType = "1"
+				end
+
+				local productPath = "../" .. configuration:getName():lower() .. "/" .. productFile
+				local intermediatePath = "obj/" .. configuration:getName()
+
+--?>
+			<Target title="<?-- output:print(configuration:getName()) --?>">
+				<Option output="<?-- output:print(productPath) --?>" prefix_auto="0" extension_auto="0" />
+				<Option object_output="<?-- output:print(intermediatePath) --?>" />
+				<Option compiler="clang" />
+				<Option type="<?-- output:print(productType) --?>" /><?--
+
+				if configuration:getTargetFormat() == "StaticLibrary" or configuration:getTargetFormat() == "SharedLibrary" then
+--?>
+				<Option createDefFile="0" />
+				<Option createStaticLib="1" /><?--
+
+				end
+--?>			
+				<Compiler><?--
+
+					if configuration:getTargetProfile() == "Debug" then
+--?>
+					<Add option="-march=core2" />
+					<Add option="-g" />
+					<Add option="-fPIC" />
+					<Add option="-DUNICODE" />
+					<Add option="-D_UNICODE" />
+					<Add option="-D__OSX__" /><?--
+					
+					else
+--?>
+					<Add option="-march=core2" />
+					<Add option="-O3" />
+					<Add option="-fPIC" />
+					<Add option="-DUNICODE" />
+					<Add option="-D_UNICODE" />
+					<Add option="-D__OSX__" /><?--
+					
+					end
+
+					local definitions = configuration:getDefinitions()
+					for j = 0, definitions:size() - 1 do
+
+						local def = definitions:get(j)
+						local def0 = string.sub(def, 1, 1)
+
+						if not (def0 == "'" or def0 == "`") then
+							def = "-D" .. def
+						end
+--?>
+					<Add option="<?-- output:print(def) --?>" /><?--
+					end
+
+					local includePaths = configuration:getIncludePaths()
+					for j = 0, includePaths:size() - 1 do
+
+						local ip = includePaths:get(j)
+						local ip0 = string.sub(ip, 1, 1)
+
+						if not (ip0 == "'" or ip0 == "`") then
+
+							local rel = fileSystem:getRelativePath(Path(ip), projectPath)
+							if rel ~= nil then
+								ip = rel:getPathName()
+							end
+
+--?>
+					<Add directory="<?-- output:print(ip) --?>" /><?--
+						else
+--?>
+					<Add option="<?-- output:print(ip) --?>" /><?--
+						end
+					end
+
+--?>
+					<Add directory="." />
+				</Compiler><?--
+
+				if configuration:getTargetFormat() ~= "StaticLibrary" then
+--?>
+				<Linker><?--
+
+function insertLibrary(outLibraries, library)
+	for i, v in ipairs(outLibraries) do
+		if v == library then
+			table.remove(outLibraries, i)
+			break
+		end
+	end
+	table.insert(outLibraries, library)
+end
+
+function collectLinkProducts(solution, project, configuration, outLibraries, outLibrariesExternal, outLibraryPaths)
+
+	local libraries = configuration:getLibraries()
+	for i = 0, libraries:size() - 1 do
+		insertLibrary(outLibrariesExternal, libraries:get(i))
+	end
+
+	local libraryPaths = configuration:getLibraryPaths()
+	for i = 0, libraryPaths:size() - 1 do
+		local libraryRelPath = fileSystem:getRelativePath(
+			Path(libraryPaths:get(i)),
+			projectPath
+		)
+		insertLibrary(outLibraryPaths, libraryRelPath:getPathName())
+	end
+
+	local dependencies = project:getDependencies()
+	for i = 0, dependencies:size() - 1 do
+		local dep = dependencies:get(i)
+
+		if isa(dep, ProjectDependency) then
+
+			local localSolution = solution
+			local localProject = dep:getProject()
+			local localConfig = localProject:getConfiguration(configuration:getName())
+
+			if localProject:getEnable() then
+				insertLibrary(outLibraries, localProject:getName())
+				collectLinkProducts(
+					localSolution,
+					localProject,
+					localConfig,
+					outLibraries,
+					outLibrariesExternal,
+					outLibraryPaths
+				)
+			end
+
+		elseif isa(dep, ExternalDependency) then
+
+			local externalSolution = dep:getSolution()
+			local externalProject = dep:getProject()
+			local externalConfig = externalProject:getConfiguration(configuration:getName())
+
+			if externalProject:getEnable() then
+				local externalRelPath = fileSystem:getRelativePath(
+					Path(externalSolution:getRootPath() .. "/" .. configuration:getName():lower()),
+					projectPath
+				)
+
+				insertLibrary(outLibraryPaths, externalRelPath:getPathName())
+				insertLibrary(outLibraries, externalProject:getName())
+
+				collectLinkProducts(
+					externalSolution,
+					externalProject,
+					externalConfig,
+					outLibraries,
+					outLibrariesExternal,
+					outLibraryPaths
+				)
+			end
+		end
+	end
+end
+
+					local libraries = {}
+					local librariesExternal = {}
+					local libraryPaths = {}
+
+					table.insert(libraryPaths, "../" .. configuration:getName():lower())
+					collectLinkProducts(
+						solution,
+						project,
+						configuration,
+						libraries,
+						librariesExternal,
+						libraryPaths
+					)
+
+					for i, lp in ipairs(libraryPaths) do
+--?>
+					<Add directory="<?-- output:print(lp) --?>" />
+					<Add option="-F<?-- output:print(lp) --?>" /><?--
+					end
+--?>
+					<!-- Dependencies --><?--
+					for i, lib in ipairs(libraries) do
+						local lib0 = string.sub(lib, 1, 1)
+						if not (lib0 == "'" or lib0 == "`") then
+--?>
+					<Add option="-l<?-- output:print(lib) --?>" /><?--
+						else
+--?>
+					<Add option="<?-- output:print(lib) --?>" /><?--
+						end
+					end
+
+--?>
+					<!-- External --><?--
+					for i, lib in ipairs(librariesExternal) do
+						local lib0 = string.sub(lib, 1, 1)
+						if not (lib0 == "'" or lib0 == "`") then
+							if not lib:endswith(".framework") then
+--?>
+					<Add option="-l<?-- output:print(lib) --?>" /><?--
+							else
+--?>
+					<Add option="-framework <?-- output:print(lib:sub(1, #lib - 10)) --?>" /><?--
+							end
+						else
+--?>
+					<Add option="<?-- output:print(lib) --?>" /><?--
+						end
+					end
+--?>
+
+					<!-- Misc -->
+				</Linker><?--
+				end
+--?>
+			</Target><?--
+			end
+--?>
+		</Build><?--
+
+		function addPreBuildItems(project, item)
+			if item.__index == Filter then
+				local childItems = item:getItems()
+				for i = 0, childItems:size() - 1 do
+					addPreBuildItems(project, childItems:get(i))
+				end
+			elseif item.__index == File then
+				local files = item:getSystemFiles(project:getSourcePath())
+				for i = 0, files:size() - 1 do
+					local filePath = Path(files:get(i):getPathNameNoVolume()) -- fileSystem:getAbsolutePath(files:get(i))
+					local ext = filePath:getExtension()
+					if ext == "png" or ext == "image" or ext == "xdi" then
+						local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
+						if filePathRel ~= nil then
+--?>
+			<Add before="BinaryInclude <?-- output:print(filePathRel:getPathName() .. " ./Resources/" .. filePathRel:getFileNameNoExtension() .. ".h c_Resource" .. filePathRel:getFileNameNoExtension()) --?>" /><?--
+						else
+							print("Unable to determine relative path; " .. filePath:getPathName() .. " vs " .. projectPath:getPathName())
+						end
+					end
+				end
+			end
+		end
+
+		function addItem(project, item)
+			if isa(item, Filter) then
+				local childItems = item:getItems()
+				for i = 0, childItems:size() - 1 do
+					addItem(project, childItems:get(i))
+				end
+			elseif isa(item, File) then
+				local files = item:getSystemFiles(project:getSourcePath())
+				for i = 0, files:size() - 1 do
+					local filePath = Path(files:get(i):getPathNameNoVolume()) -- fileSystem:getAbsolutePath(files:get(i))
+					local ext = filePath:getExtension()
+					if ext == "c" or ext == "cc" or ext == "cpp" or ext == "h" or ext == "hh" or ext == "hpp" or ext == "inl" or ext == "o" then
+						local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
+						if filePathRel ~= nil then
+--?>
+		<Unit filename="<?-- output:print(filePathRel:getPathName()) --?>" /><?--
+						else
+							print("Unable to determine relative path; " .. filePath:getPathName() .. " vs " .. projectPath:getPathName())
+						end
+					elseif ext == "m" or ext == "mm" then
+						local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
+						if filePathRel ~= nil then
+--?>
+		<Unit filename="<?-- output:print(filePathRel:getPathName()) --?>">
+			<Option compile="1" />
+			<Option link="1" />
+		</Unit><?--
+						else
+							print("Unable to determine relative path; " .. filePath:getPathName() .. " vs " .. projectPath:getPathName())
+						end
+					end
+				end
+			end
+		end
+
+		local items = project:getItems()
+--?>
+		<ExtraCommands><?--
+
+		for i = 0, items:size() - 1 do
+			addPreBuildItems(project, items:get(i))
+		end
+--?>
+		</ExtraCommands>
+		<Compiler>
+		</Compiler><?--
+
+		for i = 0, items:size() - 1 do
+			addItem(project, items:get(i))
+		end
+--?>
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
