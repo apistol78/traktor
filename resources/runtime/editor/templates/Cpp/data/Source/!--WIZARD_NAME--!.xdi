@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.amalgam.Target">
+	<identifier>com.yourcompany.<!-- output:print(os:getEnvironment("WIZARD_NAME")) --!></identifier>
+	<configurations>
+		<item type="traktor.amalgam.TargetConfiguration" version="3">
+			<name>Windows (x64)</name>
+			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
+			<icon/>
+			<features>
+				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
+				<item>{4058325A-C745-9640-815A-AE552A358A42}</item>
+				<item>{A51F808B-5002-FF46-82CE-4E92E2DA6C3B}</item>
+				<item>{080D94FE-74F2-C540-BF47-E9B844F07BA2}</item>
+				<item>{53F2B95D-52A1-FC41-B40A-8DD14A833EBC}</item>
+				<item>{1BE4C3D9-114D-1743-8E80-A3CED9EB2207}</item>
+				<item>{44DA7651-8D13-E54B-8564-ED92EE552376}</item>
+				<item>{805454A8-73DC-BF43-990B-266E51956C47}</item>
+				<item>{11ED2195-94AE-844C-8ED2-F57D7D6096AB}</item>
+			</features>
+			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
+			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
+			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
+			<defaultInput>{00000000-0000-0000-0000-000000000000}</defaultInput>
+		</item>
+	</configurations>
+</object>

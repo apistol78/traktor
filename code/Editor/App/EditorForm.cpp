@@ -423,7 +423,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_mergedSettings = m_globalSettings;
 
 	// Load editor stylesheet.
-	std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/themes/Light/StyleSheet.xss");
+	std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss");
 	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 	if (!styleSheet)
 	{
@@ -2303,7 +2303,7 @@ void EditorForm::activateNextEditor()
 
 void EditorForm::loadLanguageDictionary()
 {
-	std::wstring dictionaryFile = m_mergedSettings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/res/English.xml");
+	std::wstring dictionaryFile = m_mergedSettings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/English.xml");
 
 	Ref< IStream > file = FileSystem::getInstance().open(dictionaryFile, File::FmRead);
 	if (!file)
@@ -2496,7 +2496,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 					m_mergedSettings = m_globalSettings;
 
 				// Load editor stylesheet.
-				std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/res/Light.xss");
+				std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light.xss");
 				Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 				if (styleSheet)
 					ui::Application::getInstance()->setStyleSheet(styleSheet);

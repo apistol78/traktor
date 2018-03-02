@@ -1,0 +1,1 @@
+$(SCE_PS3_ROOT)/host-win32/bin/make_fself "$(TargetPath)" "$(TargetDir)$(TargetName).self"

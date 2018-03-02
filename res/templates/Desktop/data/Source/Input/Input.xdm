@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.db.LocalInstanceMeta">
-	<guid>{E7DE1157-DA53-B14F-9A14-70707DACAFB9}</guid>
-	<primaryType>traktor.input.InputMappingAsset</primaryType>
-	<blobs/>
-</object>

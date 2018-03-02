@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name"><!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!></string>
-</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="<!-- output:print(environment:get("DEPLOY_PROJECT_IDENTIFIER")) --!>"
+        android:versionCode="1"
+        android:versionName="1.0">
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="15"
+    />
+    <uses-feature android:glEsVersion="0x00020000" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application android:label="@string/app_name" android:hasCode="false">
+        <activity
+            android:name="android.app.NativeActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:label="@string/app_name"
+            android:icon="@drawable/ic_launcher"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboardHidden"
+            android:launchMode="singleInstance"
+            android:screenOrientation="<!--
+                local landscape = (environment:get("DEPLOY_VIEW_ORIENTATION_LANDSCAPE") == "1")
+                local portrait = (environment:get("DEPLOY_VIEW_ORIENTATION_PORTRAIT") == "1")
+                if landscape and not portrait then
+                    output:print("landscape")
+                elseif not landscape and portrait then
+                    output:print("portrait")
+                elseif landscape and portrait then
+                    output:print("sensor")
+                elseif not landscape and not portrait then
+                    output:print("unspecified")
+                end
+            --!>"
+        >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="<!-- output:print(environment:get("DEPLOY_EXECUTABLE")) --!>"
+            />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest> 

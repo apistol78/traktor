@@ -1,0 +1,305 @@
+import(traktor)
+
+local function transform_xdi_LightEntityData_to_ComponentEntityData(xcurrent)
+	local xa = xcurrent:getAttribute("type")
+	if xa == nil then return end
+
+	local lightType
+
+	local xsunColor
+	local xbaseColor
+	local xshadowColor
+	local xrange
+	local xrandomFlickerAmount
+	local xrandomFlickerFilter
+	local xcloudShadowTexture
+	local xcastShadow
+
+	local type = xa:getValue()
+	if type == "traktor.world.DirectionalLightEntityData" then
+
+		lightType = "LtDirectional"
+		xsunColor = xcurrent:getSingle("sunColor")
+		xbaseColor = xcurrent:getSingle("baseColor")
+		xshadowColor = xcurrent:getSingle("shadowColor")
+		xcloudShadowTexture = xcurrent:getSingle("cloudShadowTexture")
+		xcastShadow = xcurrent:getSingle("castShadow")
+		xrange = xml.Element("range")
+		xrange:setValue("0")
+		xradius = xml.Element("radius")
+		xradius:setValue("0")
+		xrandomFlickerAmount = xml.Element("flickerAmount")
+		xrandomFlickerAmount:setValue("0")
+		xrandomFlickerFilter = xml.Element("flickerFilter")
+		xrandomFlickerFilter:setValue("0")
+
+	elseif type == "traktor.world.PointLightEntityData" then
+
+		lightType = "LtPoint"
+		xsunColor = xcurrent:getSingle("sunColor")
+		xbaseColor = xcurrent:getSingle("baseColor")
+		xshadowColor = xcurrent:getSingle("shadowColor")
+		xcloudShadowTexture = xml.Element("cloudShadowTexture")
+		xcastShadow = xml.Element("castShadow")
+		xcastShadow:setValue("false")
+		xrange = xcurrent:getSingle("range")
+		xradius = xml.Element("radius")
+		xradius:setValue("0")
+		local xrandomFlicker = xcurrent:getSingle("randomFlicker")
+		if xrandomFlicker ~= nil then
+			xrandomFlickerAmount = xrandomFlicker
+			xrandomFlickerFilter = xml.Element("randomFlickerFilter")
+			xrandomFlickerFilter:setValue("0.5")
+		else
+			xrandomFlickerAmount = xcurrent:getSingle("randomFlickerAmount")
+			xrandomFlickerFilter = xcurrent:getSingle("randomFlickerFilter")
+		end
+		xrandomFlickerAmount:setName("flickerAmount")
+		xrandomFlickerFilter:setName("flickerFilter")
+
+	elseif type == "traktor.world.SpotLightEntityData" then
+
+		lightType = "LtSpot"
+		xsunColor = xcurrent:getSingle("sunColor")
+		xbaseColor = xcurrent:getSingle("baseColor")
+		xshadowColor = xcurrent:getSingle("shadowColor")
+		xcloudShadowTexture = xml.Element("cloudShadowTexture")
+		xcastShadow = xml.Element("castShadow")
+		xcastShadow:setValue("false")
+		xrange = xcurrent:getSingle("range")
+		xradius = xcurrent:getSingle("radius")
+		xcastShadow = xcurrent:getSingle("castShadow")
+		xrandomFlickerAmount = xml.Element("flickerAmount")
+		xrandomFlickerAmount:setValue("0")
+		xrandomFlickerFilter = xml.Element("flickerFilter")
+		xrandomFlickerFilter:setValue("0")
+
+	else
+		return
+	end
+
+	xcurrent:setAttribute("type", "traktor.world.ComponentEntityData")
+	xcurrent:setAttribute("version", "0")
+
+	local xname = xcurrent:getSingle("name")
+	local xtransform = xcurrent:getSingle("transform")
+
+	xcurrent:removeAllChildren()
+	xcurrent:addChild(xname)
+	xcurrent:addChild(xtransform)
+
+	local xcomponents = xml.Element("components")
+	xcurrent:addChild(xcomponents)
+
+	local xitem = xml.Element("item")
+	xitem:setAttribute("type", "traktor.world.LightComponentData")
+	xitem:setAttribute("version", "2")
+
+	local xlightType = xml.Element("lightType")
+	xlightType:setValue(lightType)
+	xitem:addChild(xlightType)
+
+	xitem:addChild(xsunColor)
+	xitem:addChild(xbaseColor)
+	xitem:addChild(xshadowColor)
+	xitem:addChild(xml.Element("probeDiffuseTexture"))
+	xitem:addChild(xml.Element("probeSpecularTexture"))
+	xitem:addChild(xcloudShadowTexture)
+	xitem:addChild(xcastShadow)
+	xitem:addChild(xrange)
+	xitem:addChild(xradius)
+	xitem:addChild(xrandomFlickerAmount)
+	xitem:addChild(xrandomFlickerFilter)
+
+	xcomponents:addChild(xitem)
+
+end
+
+local function transform_xdm_LightEntityData_to_ComponentEntityData(xcurrent)
+	if xcurrent:getName() ~= "primaryType" then return end
+	if 
+		xcurrent:getValue() ~= "traktor.world.DirectionalLightEntityData" and
+		xcurrent:getValue() ~= "traktor.world.PointLightEntityData" and
+		xcurrent:getValue() ~= "traktor.world.SpotLightEntityData"
+	then
+		return
+	end
+	xcurrent:setValue("traktor.world.ComponentEntityData")
+end
+
+-- Keep MeshEntityData for LodMeshEntityData; this should be fixed...
+local function transform_xdi_LodMeshEntityData_fix(xcurrent)
+	local xa = xcurrent:getAttribute("type")
+	if xa == nil then return end
+	if xa:getValue() ~= "traktor.mesh.LodMeshEntityData" then return end
+
+	local xitems = xcurrent:get("lods/item")
+	for i = 0, xitems:size() - 1 do
+		local xitem = xitems:get(i)
+		if xitem:getAttribute("type", ""):getValue() == "traktor.world.ComponentEntityData" then
+			local xmeshComponentData = xitem:getSingle("components/item[@type=traktor.mesh.MeshComponentData]")
+			if xmeshComponentData ~= nil then
+				xitem:setAttribute("type", "traktor.mesh.MeshEntityData")
+				xitem:setAttribute("version", "1")
+				xitem:removeChild(xitem:getSingle("components"))
+				xitem:addChild(xmeshComponentData:getSingle("mesh"))
+				xitem:addChild(xmeshComponentData:getSingle("screenSpaceCulling"))
+			end
+		end
+	end
+end
+
+local function transform_xdi_RigidEntityData_to_ComponentEntityData(xcurrent)
+	local xa = xcurrent:getAttribute("type")
+	if xa == nil then return end
+	if xa:getValue() ~= "traktor.physics.RigidEntityData" then return end
+
+	local xbodyDesc = xcurrent:getSingle("bodyDesc")
+	local xentityData = xcurrent:getSingle("entityData")
+	local xeventCollide = xcurrent:getSingle("eventCollide")
+
+	if xbodyDesc == nil then stderr:printLn("No bodyDesc"); return end
+	if xentityData == nil then stderr:printLn("No entityData"); return end
+	if xeventCollide == nil then stderr:printLn("No eventCollide"); return end
+
+	local xmeshComponentData = xcurrent:getSingle("entityData/components/item[@type=traktor.mesh.MeshComponentData]")
+	if xmeshComponentData == nil then stderr:printLn("No child MeshComponentData"); return end
+
+	xcurrent:removeChild(xbodyDesc)
+	xcurrent:removeChild(xentityData)
+
+	xcurrent:setAttribute("type", "traktor.world.ComponentEntityData")
+	xcurrent:setAttribute("version", "0")
+
+	local xcomponents = xml.Element("components")
+		local xcomponents_item = xml.Element("item")
+			xcomponents_item:setAttribute("type", "traktor.physics.RigidBodyComponentData")
+			xcomponents_item:addChild(xbodyDesc)
+			xcomponents_item:addChild(xeventCollide)
+		xcomponents:addChild(xcomponents_item)
+		xcomponents:addChild(xmeshComponentData)
+
+	xcurrent:addChild(xcomponents)
+end
+
+local function transform_xdm_RigidEntityData_to_ComponentEntityData(xcurrent)
+	if xcurrent:getName() ~= "primaryType" then return end
+	if xcurrent:getValue() ~= "traktor.physics.RigidEntityData" then return end
+	xcurrent:setValue("traktor.world.ComponentEntityData")
+end
+
+local function transform_xdi_MeshEntityData_to_ComponentEntityData(xcurrent)
+	local xa = xcurrent:getAttribute("type")
+	if xa == nil then return end
+	if xa:getValue() ~= "traktor.mesh.MeshEntityData" then return end
+
+	xcurrent:setAttribute("type", "traktor.world.ComponentEntityData")
+	xcurrent:setAttribute("version", "0")
+
+	local xmesh = xcurrent:getSingle("mesh")
+	local xscreenSpaceCulling = xcurrent:getSingle("screenSpaceCulling")
+
+	xcurrent:removeChild(xmesh)
+	xcurrent:removeChild(xscreenSpaceCulling)
+
+	local xcomponents = xml.Element("components")
+		local xcomponents_item = xml.Element("item")
+			xcomponents_item:setAttribute("type", "traktor.mesh.MeshComponentData")
+			local xcomponents_item_mesh = xml.Element("mesh")
+				xcomponents_item_mesh:setValue(xmesh:getValue())
+			xcomponents_item:addChild(xcomponents_item_mesh)
+			local xcomponents_item_screenSpaceCulling = xml.Element("screenSpaceCulling")
+				xcomponents_item_screenSpaceCulling:setValue(xscreenSpaceCulling:getValue())
+			xcomponents_item:addChild(xcomponents_item_screenSpaceCulling)
+		xcomponents:addChild(xcomponents_item)
+
+	xcurrent:addChild(xcomponents)
+end
+
+local function transform_xdm_MeshEntityData_to_ComponentEntityData(xcurrent)
+	if xcurrent:getName() ~= "primaryType" then return end
+	if xcurrent:getValue() ~= "traktor.mesh.MeshEntityData" then return end
+	xcurrent:setValue("traktor.world.ComponentEntityData")
+end
+
+local function transform(xcurrent)
+	local before = xcurrent:write()
+
+	-- tbd Call element modifier
+--	transform_xdi_MeshEntityData_to_ComponentEntityData(xcurrent)
+--	transform_xdm_MeshEntityData_to_ComponentEntityData(xcurrent)
+--	transform_xdi_RigidEntityData_to_ComponentEntityData(xcurrent)
+--	transform_xdm_RigidEntityData_to_ComponentEntityData(xcurrent)
+--	transform_xdi_LodMeshEntityData_fix(xcurrent)
+	transform_xdi_LightEntityData_to_ComponentEntityData(xcurrent)
+	transform_xdm_LightEntityData_to_ComponentEntityData(xcurrent)
+
+	local after = xcurrent:write()
+	local modified = (before ~= after)
+
+	local xchildren = {}
+
+	-- Collect all element children.
+	local xiter = xcurrent:getFirstChild()
+	while xiter ~= nil do
+		if isa(xiter, xml.Element) then
+			table.insert(xchildren, xiter)
+		end
+		xiter = xiter:getNextSibling()
+	end
+
+	-- Recurse with all child elements.
+	for _, xc in ipairs(xchildren) do
+		modified = modified or transform(xc)
+	end
+
+	return modified
+end
+
+local function update(path)
+--	stdout:printLn(path:getPathName() .. "...")
+
+	local doc = xml.Document()
+	if not doc:loadFromFile(path) then
+		stderr:printLn("Unable to read xml document " .. path:getPathName())
+		return false
+	end
+
+	if transform(doc:getDocumentElement()) then
+		stdout:printLn("Document " .. path:getPathName() .. " modified, saving...")
+		if not doc:saveAsFile(path) then
+			stderr:printLn("Failed to save document")
+		end
+	end
+
+	return true	
+end
+
+local function traverse(path)
+	local fa = FileSystem.getInstance():find(path:getPathName() .. "/*.*")
+	for i = 0, fa:size() - 1 do
+		local f = fa:get(i)
+		local p = f:getPath()
+		local fn = p:getFileName()
+		local pn = p:getPathName()
+
+		if f:isDirectory() then
+			if fn ~= "." and fn ~= ".." then
+				traverse(p)
+			end
+		else
+			if not f:isReadOnly() then
+				local x = p:getExtension():lower()
+				if x == "xdi" or x == "xdm" then
+					update(p)
+				end
+			end
+		end
+	end
+end
+
+function main(args)
+	traverse(
+		Path(".")
+	)
+end

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{FE487134-FA5A-C34B-8196-834A5DE84971}
+
+import(traktor)
+import(traktor.net)
+import(traktor.wbr)
+
+Main = Main or class("Main")
+
+function Main:run()
+	local httpServer = HttpServer()
+	httpServer:create(1337)
+	httpServer:setRequestListener(HttpRequestListener(
+		function()
+			return MyApplication(environment:getDatabase())
+		end,
+		false
+	))
+	while true do
+		httpServer:update(100)
+	end
+end
+
+	]]>
+	</text>
+</object>

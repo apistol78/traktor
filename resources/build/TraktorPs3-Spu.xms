@@ -1,0 +1,1785 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="Solution" version="2">
+	<name>Traktor Ps3 SPU</name>
+	<rootPath>$(TRAKTOR_HOME)/build/ps3-spu</rootPath>
+	<definitions/>
+	<projects>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Sound.JobMulConst</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.JobMulConst.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.JobMulConst.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobMixerMC.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Traktor.Core</name>
+						<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
+						<configurations>
+							<item type="Configuration" version="3">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries>
+									<item>$(SCE_PS3_ROOT)/target/spu/lib/libm.a</item>
+								</libraries>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+							</item>
+							<item type="Configuration" version="3">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries>
+									<item>$(SCE_PS3_ROOT)/target/spu/lib/libm.a</item>
+								</libraries>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+							</item>
+						</configurations>
+						<items>
+							<item type="Filter">
+								<name>Math</name>
+								<items>
+									<item type="Filter">
+										<name>Std</name>
+										<items>
+											<item type="File">
+												<fileName>Math/Std/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>AltiVec</name>
+										<items>
+											<item type="Filter">
+												<name>Ps3</name>
+												<items>
+													<item type="Filter">
+														<name>Spu</name>
+														<items>
+															<item type="File">
+																<fileName>Math/AltiVec/Ps3/Spu/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+												</items>
+											</item>
+										</items>
+									</item>
+									<item type="File">
+										<fileName>Math/Aabb.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Const.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Float.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Frustum.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Half.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/MathConfig.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/MathUtils.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Matrix*.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Plane.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Quaternion.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Random*.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Range.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Scalar.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Transform.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Vector*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Containers</name>
+								<items>
+									<item type="File">
+										<fileName>Containers/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Debug</name>
+								<items>
+									<item type="Filter">
+										<name>Ps3</name>
+										<items>
+											<item type="File">
+												<fileName>Debug/Ps3/Spu/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="File">
+										<fileName>Debug/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Meta</name>
+								<items>
+									<item type="File">
+										<fileName>Meta/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="File">
+								<fileName>Config.h</fileName>
+								<items/>
+							</item>
+							<item type="Filter">
+								<name>Misc</name>
+								<items>
+									<item type="File">
+										<fileName>Misc/Align.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Misc/EnterLeave.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Misc/Save.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Sound.JobAddMulConst</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.JobAddMulConst.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.JobAddMulConst.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobMixerAMC.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Sound.JobStretch</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.JobStretch.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.JobStretch.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobMixerStretch.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobDragModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobDragModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobDragModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobDragModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobGravityModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobGravityModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobGravityModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobGravityModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobIntegrateModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobIntegrateModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobIntegrateModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobIntegrateModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobPlaneCollisionModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobPlaneCollisionModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobPlaneCollisionModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobPlaneCollisionModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobSizeModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobSizeModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobSizeModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobSizeModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobVortexModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobVortexModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobVortexModifier.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobVortexModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item/dependencies/item/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobPointRenderer</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobPointRenderer.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.JobPointRenderer.ppu.o</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobPointRenderer.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>false</enable>
+			<name>PS3_SPURS_Broadphase</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>_DEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+						<item>__CELL_ASSERT__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
+					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>PS3_SPURS_Broadphase.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>NDEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
+					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>PS3_SPURS_Broadphase.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Source Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/BulletSpuBroadphase/ParallelSort.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletSpuBroadphase/Quicksort.spu.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletSpuBroadphase/sort_on_ls.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletSpuBroadphase/SpuBroadphase.cpp</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Header Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/BulletSpuBroadphase/ParallelSort.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletSpuBroadphase/Quicksort.spu.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletSpuBroadphase/sort_on_ls.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>false</enable>
+			<name>PS3_SPURS_BulletCD</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src/software_cache/cache/include</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>__GCC__</item>
+						<item>__CELLOS_LV2__</item>
+						<item>SPU</item>
+						<item>_DEBUG</item>
+						<item>__SPU__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -fstack-check -ffast-math</additionalCompilerOptions>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>PS3_SPURS_BulletCD.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>NDEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+						<item>__CELLOS_LV2__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -ffast-math --param inline-unit-growth=10000 --param large-function-growth=10000 --param max-inline-insns-single=10000</additionalCompilerOptions>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>PS3_SPURS_BulletCD.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Source Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/boxBoxDistance.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btBoxBoxDetector.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btBoxShape.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btCollisionShape.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btConvexInternalShape.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btConvexPointCloudShape.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btConvexPointCloudShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btConvexShape.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btGjkEpa2.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btGjkEpa2.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btGjkEpaPenetrationDepthSolver.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btGjkPairDetector.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btGjkPairDetector.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btPersistentManifold.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btPolyhedralConvexShape.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btStridingMeshInterface.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleCallback.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/SPURS_CollisionTask/SpursCollisionTaskMain.cpp</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Header Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/Box.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/boxBoxDistance.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btBoxBoxDetector.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btBoxShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btCollisionObject.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btCollisionShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btConvexInternalShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btConvexShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btOptimizedBvh.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btPersistentManifold.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btPolyhedralConvexShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleCallback.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleMeshShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>softwarecache</name>
+					<items>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/api.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/cbe_mfc.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/defs.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/dma.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/ilog2.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/memset.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/nway-lookup.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/nway-miss.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/nway-opt.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/nway-replace.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/nway.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/spe_cache.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/vec_literal.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>BulletMultiThreaded</name>
+					<items>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuCollisionShapes.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuCollisionShapes.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuContactManifoldCollisionAlgorithm.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuContactManifoldCollisionAlgorithm.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuContactResult.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuContactResult.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuConvexPenetrationDepthSolver.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuLocalSupport.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuPreferredPenetrationDirections.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>false</enable>
+			<name>PS3_SPURS_Integrate</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>_DEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+						<item>__CELL_ASSERT__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -fstack-check -ffast-math</additionalCompilerOptions>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>PS3_SPURS_Integrate.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>NDEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -ffast-math --param inline-unit-growth=10000 --param large-function-growth=10000 --param max-inline-insns-single=10000</additionalCompilerOptions>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>PS3_SPURS_Integrate.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Source Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btCollisionObject.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletDynamics/Dynamics/btRigidBody.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletDynamics/ConstraintSolver/btTypedConstraint.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/SPURS_IntegrateTask/SpuPEGatherScatterTask.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/SPURS_IntegrateTask/SpursPEGatherScatterTaskMain.cpp</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Header Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btCollisionObject.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletDynamics/Dynamics/btRigidBody.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletDynamics/ConstraintSolver/btTypedConstraint.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/SPURS_IntegrateTask/SpuPEGatherScatterTask.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>false</enable>
+			<name>PS3_SPURS_ConstraintSolver</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
+			<configurations>
+				<item type="Configuration" version="3">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src/BulletMultiThreaded</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>_DEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+						<item>CELL_DMA_ASSERT_VERBOSE</item>
+						<item>__SPU__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
+					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>PS3_SPURS_ConstraintSolver.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+				<item type="Configuration" version="3">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src/BulletMultiThreaded</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>NDEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+						<item>__SPU__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
+					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>PS3_SPURS_ConstraintSolver.lib</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Source Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/BulletPhysicsEffects2/PfxConstraintSolver.spu.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletPhysicsEffects2/PfxConstraintSolverTask.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletPhysicsEffects2/PfxContactConstraint.cpp</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Header Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/BulletPhysicsEffects2/PfxConstraintSolver.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletPhysicsEffects2/PfxConstraintSolverTask.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletPhysicsEffects2/PfxContactConstraint.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+	</projects>
+	<aggregations/>
+</object>

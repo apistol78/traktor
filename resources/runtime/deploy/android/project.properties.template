@@ -1,0 +1,1 @@
+target=<!-- output:print(environment:get("DEPLOY_ANDROID_APILEVEL")) --!>
