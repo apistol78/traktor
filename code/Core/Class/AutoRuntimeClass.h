@@ -3227,6 +3227,20 @@ public:
 	/*! \} */
 
 	template < typename ValueType >
+	void addProperty(const std::string& propertyName, ValueType (ClassType::*getter)() const)
+	{
+		StringOutputStream ss;
+		CastAny< ValueType >::typeName(ss);
+
+		addProperty(
+			propertyName,
+			ss.str(),
+			0,
+			getter != 0 ? new PropertyGet< ClassType, ValueType, true >(getter) : 0
+		);
+	}
+
+	template < typename ValueType >
 	void addProperty(const std::string& propertyName, void (ClassType::*setter)(ValueType value), ValueType (ClassType::*getter)() const)
 	{
 		StringOutputStream ss;
@@ -3241,6 +3255,20 @@ public:
 	}
 
 	template < typename ValueType >
+	void addProperty(const std::string& propertyName, ValueType (ClassType::*getter)())
+	{
+		StringOutputStream ss;
+		CastAny< ValueType >::typeName(ss);
+
+		addProperty(
+			propertyName,
+			ss.str(),
+			0,
+			getter != 0 ? new PropertyGet< ClassType, ValueType, false >(getter) : 0
+		);
+	}
+
+	template < typename ValueType >
 	void addProperty(const std::string& propertyName, void (ClassType::*setter)(ValueType value), ValueType (ClassType::*getter)())
 	{
 		StringOutputStream ss;
@@ -3251,6 +3279,20 @@ public:
 			ss.str(),
 			setter != 0 ? new PropertySet< ClassType, ValueType >(setter) : 0,
 			getter != 0 ? new PropertyGet< ClassType, ValueType, false >(getter) : 0
+		);
+	}
+
+	template < typename ValueType >
+	void addProperty(const std::string& propertyName, ValueType (*getter)(ClassType* self))
+	{
+		StringOutputStream ss;
+		CastAny< ValueType >::typeName(ss);
+
+		addProperty(
+			propertyName,
+			ss.str(),
+			0,
+			getter != 0 ? new FnPropertyGet< ClassType, ValueType >(getter) : 0
 		);
 	}
 
