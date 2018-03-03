@@ -2,9 +2,10 @@
 <object type="SolutionBuilderMsvcSettings">
 	<slnVersion>12.00</slnVersion>
 	<vsVersion>15</vsVersion>
-	<project type="SolutionBuilderMsvcVCXProj" version="6">
+	<project type="SolutionBuilderMsvcVCXProj" version="8">
 		<platform>Win32</platform>
 		<keyword>Win32Proj</keyword>
+		<windowsTargetPlatformVersion>10.0.15063.0</windowsTargetPlatformVersion>
 		<targetPrefixes>
 			<item/>
 			<item/>
@@ -17,7 +18,7 @@
 			<item>.exe</item>
 			<item>.exe</item>
 		</targetExts>
-		<propertyGroups/>
+		<propertyGroupsBeforeImports/>
 		<imports>
 			<item type="SolutionBuilderMsvcVCXImport">
 				<label/>
@@ -36,6 +37,7 @@
 				</imports>
 			</item>
 		</imports>
+		<propertyGroupsAfterImports/>
 		<configurationDefinitionsDebug>
 			<staticLibrary>
 				<item>
