@@ -2324,6 +2324,8 @@ void EditorForm::loadLanguageDictionary()
 void EditorForm::loadHelpDictionary()
 {
 	std::wstring helpFile = m_mergedSettings->getProperty< std::wstring >(L"Editor.Help");
+	if (helpFile.empty())
+		return;
 
 	Ref< IStream > file = FileSystem::getInstance().open(helpFile, File::FmRead);
 	if (!file)

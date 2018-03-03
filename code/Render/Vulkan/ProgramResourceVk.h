@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_ProgramResourceVk_H
 #define traktor_render_ProgramResourceVk_H
 
+#include <vector>
 #include "Render/Types.h"
 #include "Render/Resource/ProgramResource.h"
 

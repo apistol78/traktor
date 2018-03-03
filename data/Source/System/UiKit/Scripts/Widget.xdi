@@ -30,7 +30,7 @@ function Widget.initialize(env, resourceKits)
 	Widget._focus = nil
 	Widget._eventMaskDirty = false
 	for _, rkid in ipairs(resourceKits) do
-		local rk = env:getResource():getResourceManager():bind(traktor.flash.Movie, rkid)
+		local rk = env.resource.resourceManager:bind(traktor.flash.Movie, rkid)
 		if rk == nil then return false end
 		table.insert(Widget._resourceKits, rk)
 	end
@@ -484,7 +484,7 @@ function Widget._createResource(parent, resource)
 end
 
 function Widget:_playSound(soundId)
-	local resourceManager = Widget._env:getResource():getResourceManager()
+	local resourceManager = Widget._env.resource.resourceManager
 	assert (resourceManager ~= nil)
 
 	local soundPlayer = Widget._env:getAudio():getSoundPlayer()
