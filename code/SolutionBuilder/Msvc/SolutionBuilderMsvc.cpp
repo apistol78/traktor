@@ -369,6 +369,9 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 						else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
 						{
 							Ref< const Project > dependentProject = externalDependency->getProject();
+							if (!dependentProject)
+								continue;
+
 							if (!dependentProject->getEnable())
 							{
 								log::warning << L"Trying to add disabled dependency to project \"" << externalProject->getName() << L"\"; dependency skipped" << Endl;
