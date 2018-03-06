@@ -18,13 +18,14 @@ Debugger& Debugger::getInstance()
 	return instance;
 }
 
-void Debugger::assertionFailed(const std::string& expression, const std::string& file, int line, const std::wstring& message)
+void Debugger::assertionFailed(const char* const expression, const char* const file, int line, const wchar_t* const message)
 {
 	wchar_t* buttons[] = { L"Break", L"Ignore", L"Abort" };
 
 	StringOutputStream ss;
 	ss << mbstows(expression) << Endl;
-	ss << message << Endl;
+	if (message)
+		ss << message << Endl;
 	ss << mbstows(file) << L" (" << line << L")" << Endl;
 
 	HANDLE hOverlappedEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -77,7 +78,7 @@ void Debugger::breakDebugger()
 	DebugBreak();
 }
 
-void Debugger::reportEvent(const std::wstring& text, ...)
+void Debugger::reportEvent(const wchar_t* const text, ...)
 {
 	static wchar_t buffer[1024];
 	va_list arg;

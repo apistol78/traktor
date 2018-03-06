@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_StaticVector_H
 #define traktor_StaticVector_H
 
+#include <iterator>
 #include "Core/Config.h"
 
 namespace traktor
