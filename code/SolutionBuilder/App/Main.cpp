@@ -137,42 +137,12 @@ int main(int argc, const char** argv)
 		}
 
 		if (cmdLine.hasOption('v', L"verbose"))
-		{
 			traktor::log::info << L"Using root path \"" << solution->getRootPath() << L"\"" << Endl;
-			traktor::log::info << L"Resolving dependencies..." << Endl;
-		}
-
-		const RefArray< Project >& projects = solution->getProjects();
-		for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
-		{
-			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
-			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
-			{
-				if (!(*j)->resolve(solutionPath, &solutionLoader))
-				{
-					traktor::log::error << L"Unable to resolve all dependencies" << Endl;
-					return ERROR_UNABLE_TO_RESOLVE_DEPENDENCIES;
-				}
-			}
-		}
-
-		const RefArray< Aggregation >& aggregations = solution->getAggregations();
-		for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
-		{
-			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
-			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
-			{
-				if (!(*j)->resolve(solutionPath, &solutionLoader))
-				{
-					traktor::log::error << L"Unable to resolve all dependencies" << Endl;
-					return ERROR_UNABLE_TO_RESOLVE_DEPENDENCIES;
-				}
-			}
-		}
 
 		if (cmdLine.hasOption('v', L"verbose"))
 			traktor::log::info << L"Flatten include paths..." << Endl;
 
+		const RefArray< Project >& projects = solution->getProjects();
 		for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		{
 			std::map< std::wstring, std::set< std::wstring > > configurationIncludePaths;

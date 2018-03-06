@@ -7,6 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
+#include "SolutionBuilder/Aggregation.h"
+#include "SolutionBuilder/Dependency.h"
+#include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/SolutionLoader.h"
 #include "SolutionBuilder/Solution.h"
 #include "Xml/XmlDeserializer.h"
@@ -36,6 +39,32 @@ Solution* SolutionLoader::load(const std::wstring& fileName)
 	Ref< Solution > solution = xml::XmlDeserializer(file).readObject< Solution >();
 
 	file->close();
+
+	// Resolve dependencies.
+	if (solution)
+	{
+		const RefArray< Project >& projects = solution->getProjects();
+		for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+		{
+			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			{
+				if (!(*j)->resolve(Path(fileName), this))
+					return 0;
+			}
+		}
+
+		const RefArray< Aggregation >& aggregations = solution->getAggregations();
+		for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+		{
+			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			{
+				if (!(*j)->resolve(Path(fileName), this))
+					return 0;
+			}
+		}	
+	}
 
 	// Add solution to map.
 	if (solution)

@@ -60,6 +60,56 @@ struct ProjectNamePredicate
 	}
 };
 
+bool collectExternalSolutions(
+	const SolutionBuilderMsvcSettings* settings,
+	GeneratorContext& context,
+	Project* project,
+	std::map< const Project*, std::wstring >& outProjectGuids,
+	RefSet< Solution >& outExternalSolutions
+)
+{
+	const RefArray< Dependency >& dependencies = project->getDependencies();
+	for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+	{
+		const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j);
+		if (!externalDependency)
+			continue;
+
+		Solution* externalSolution = externalDependency->getSolution();
+		T_ASSERT (externalSolution);
+
+		const RefArray< Project >& externalProjects = externalSolution->getProjects();
+		for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
+		{
+			Project* externalProject = *j;
+
+			if (!externalProject->getEnable())
+				continue;
+			if (outProjectGuids.find(externalProject) != outProjectGuids.end())
+				continue;
+
+			std::wstring projectPath, projectFileName, projectGuid;
+			if (!settings->getProject()->getInformation(
+				context,
+				externalSolution,
+				externalProject,
+				projectPath,
+				projectFileName,
+				projectGuid
+			))
+				return false;
+
+			outProjectGuids[externalProject] = projectGuid;
+
+			if (!collectExternalSolutions(settings, context, externalProject, outProjectGuids, outExternalSolutions))
+				return false;
+		}
+
+		outExternalSolutions.insert(externalSolution);
+	}
+	return true;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderMsvc", SolutionBuilderMsvc, SolutionBuilder)
@@ -184,44 +234,11 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		))
 			return false;
 
-		// Collect external solutions which we should include. Only include first level of external
-		// solutions.
+		// Collect external projects which we should include in generated solution.
 		if (m_includeExternal)
 		{
-			const RefArray< Dependency >& dependencies = project->getDependencies();
-			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
-			{
-				const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j);
-				if (!externalDependency)
-					continue;
-
-				Solution* externalSolution = externalDependency->getSolution();
-				T_ASSERT (externalSolution);
-
-				const RefArray< Project >& externalProjects = externalSolution->getProjects();
-				for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
-				{
-					Project* externalProject = *j;
-
-					if (!externalProject->getEnable())
-						continue;
-
-					std::wstring projectPath, projectFileName, projectGuid;
-					if (!m_settings->getProject()->getInformation(
-						context,
-						externalSolution,
-						externalProject,
-						projectPath,
-						projectFileName,
-						projectGuid
-					))
-						return false;
-
-					projectGuids[externalProject] = projectGuid;
-				}
-
-				externalSolutions.insert(externalSolution);
-			}
+			if (!collectExternalSolutions(m_settings, context, project, projectGuids, externalSolutions))
+				return false;
 		}
 
 		projectGuids[project] = projectGuid;
@@ -314,8 +331,9 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		for (RefSet< Solution >::const_iterator i = externalSolutions.begin(); i != externalSolutions.end(); ++i)
 		{
 			Solution* externalSolution = *i;
+			std::wstring externalSolutionId = context.generateGUID(externalSolution->getName());
 
-			os << L"Project(\"{2150E333-8FDC-42A3-9474-1A3956D46DE8}\") = \"" << externalSolution->getName() << L"\", \"" << externalSolution->getName() << L"\", \"{3E0BD3A9-E831-4928-9EAA-B07D1ED32784}\"" << Endl;
+			os << L"Project(\"{2150E333-8FDC-42A3-9474-1A3956D46DE8}\") = \"" << externalSolution->getName() << L"\", \"" << externalSolution->getName() << L"\", \"" << externalSolutionId << L"\"" << Endl;
 			os << L"EndProject" << Endl;
 
 			RefArray< Project > externalProjects = externalSolution->getProjects();
@@ -489,9 +507,10 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 		for (RefSet< Solution >::const_iterator i = externalSolutions.begin(); i != externalSolutions.end(); ++i)
 		{
-			Solution* solution = *i;
+			Solution* externalSolution = *i;
+			std::wstring externalSolutionId = context.generateGUID(externalSolution->getName());
 
-			RefArray< Project > externalProjects = solution->getProjects();
+			RefArray< Project > externalProjects = externalSolution->getProjects();
 			externalProjects.sort(ProjectNamePredicate());
 
 			for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
@@ -502,7 +521,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 				if (!project->getEnable())
 					continue;
 
-				os << projectGuids[project] << L" = {3E0BD3A9-E831-4928-9EAA-B07D1ED32784}" << Endl;
+				os << projectGuids[project] << L" = " << externalSolutionId << Endl;
 			}
 		}
 
