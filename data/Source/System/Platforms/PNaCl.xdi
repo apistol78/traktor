@@ -2,7 +2,7 @@
 <object type="traktor.amalgam.Platform" version="2">
 	<iconIndex>8</iconIndex>
 	<deployToolWin32>
-		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/deploy/deploy-pnacl.run</executable>
+		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-pnacl.run</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
@@ -11,7 +11,7 @@
 		</environment>
 	</deployToolWin32>
 	<deployToolWin64>
-		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/deploy/deploy-pnacl.run</executable>
+		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-pnacl.run</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
@@ -20,7 +20,7 @@
 		</environment>
 	</deployToolWin64>
 	<deployToolOsX>
-		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/deploy/deploy-pnacl.run</executable>
+		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-pnacl.run</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
@@ -29,7 +29,7 @@
 		</environment>
 	</deployToolOsX>
 	<deployToolLinux>
-		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/linux/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/deploy/deploy-pnacl.run</executable>
+		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/linux/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-pnacl.run</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
