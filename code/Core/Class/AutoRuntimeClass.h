@@ -3408,7 +3408,9 @@ public:
 			return methods[argc]->invoke(object, argc, argv);
 		else
 		{
-			T_FATAL_ASSERT_M(false, L"Incorrect number of arguments when calling method \"" + mbstows(info.name) + L"\"");
+			StringOutputStream ss;
+			ss << L"Incorrect number of arguments when calling method \"" << mbstows(info.name) << L"\"";
+			T_FATAL_ASSERT_M(false, ss.str().c_str());
 			return Any();
 		}
 	}
@@ -3446,7 +3448,9 @@ public:
 			return methods[argc]->invoke(argc, argv);
 		else
 		{
-			T_FATAL_ASSERT_M(false, L"Incorrect number of arguments when calling static method \"" + mbstows(info.name) + L"\"");
+			StringOutputStream ss;
+			ss << L"Incorrect number of arguments when calling static method \"" << mbstows(info.name) << L"\"";
+			T_FATAL_ASSERT_M(false, ss.str().c_str());
 			return Any();
 		}
 	}
@@ -3486,7 +3490,9 @@ public:
 			return (*m_unknown)(mandatory_non_null_type_cast< ClassType* >(object), methodName, argc, argv);
 		else
 		{
-			T_FATAL_ASSERT_M(false, L"No such method");
+			StringOutputStream ss;
+			ss << L"No such method \"" << mbstows(methodName) << L"\"";
+			T_FATAL_ASSERT_M(false, ss.str().c_str());
 			return Any();
 		}
 	}

@@ -51,7 +51,7 @@ public:
 		{
 			StringOutputStream ss;
 			ss << L"LUA stack unbalanced, entering with " << m_top << L", leaving with " << top;
-			T_FATAL_ASSERT_M (m_top == top, ss.str());
+			T_FATAL_ASSERT_M (m_top == top, ss.str().c_str());
 		}
 	}
 

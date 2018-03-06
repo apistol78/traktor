@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_i18n_I18N_H
 #define traktor_i18n_I18N_H
 
+#include <string>
 #include "Core/Ref.h"
 #include "Core/Singleton/ISingleton.h"
 

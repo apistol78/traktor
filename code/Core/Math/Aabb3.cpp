@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include <algorithm>
 #include <limits>
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Const.h"

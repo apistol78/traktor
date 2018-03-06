@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_Debugger_H
 #define traktor_Debugger_H
 
-#include <string>
 #include "Core/Config.h"
 
 // import/export mechanism.
@@ -39,7 +38,7 @@ public:
 	 * \param line Line in source file.
 	 * \param message Custom message.
 	 */
-	void assertionFailed(const std::string& expression, const std::string& file, int line, const std::wstring& message = L"");
+	void assertionFailed(const char* const expression, const char* const file, int line, const wchar_t* const message = L"");
 
 	/*! \brief Check if debugger is attached. */
 	bool isDebuggerAttached() const;
@@ -48,7 +47,7 @@ public:
 	void breakDebugger();
 
 	/*! \brief Report profiling event to debugger. */
-	void reportEvent(const std::wstring& text, ...);
+	void reportEvent(const wchar_t* const text, ...);
 };
 
 }

@@ -83,7 +83,7 @@ Debugger& Debugger::getInstance()
 	return instance;
 }
 
-void Debugger::assertionFailed(const std::string& expression, const std::string& file, int line, const std::wstring& message)
+void Debugger::assertionFailed(const char* const expression, const char* const file, int line, const wchar_t* const message)
 {
 #if !defined(T_STATIC)
 #   if defined(_DEBUG)
@@ -135,7 +135,7 @@ void Debugger::breakDebugger()
 #endif
 }
 
-void Debugger::reportEvent(const std::wstring& text, ...)
+void Debugger::reportEvent(const wchar_t* const text, ...)
 {
 }
 

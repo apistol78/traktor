@@ -17,10 +17,10 @@ Debugger& Debugger::getInstance()
 	return instance;
 }
 
-void Debugger::assertionFailed(const std::string& expression, const std::string& file, int line, const std::wstring& message)
+void Debugger::assertionFailed(const char* const expression, const char* const file, int line, const wchar_t* const message)
 {
 	std::cerr << "ASSERT FAILED! " << expression << ", " << file << " (" << line << ")" << std::endl;
-	if (!message.empty())
+	if (message)
 		std::wcerr << L"               " << message << std::endl;
 
 	assert (0);
@@ -34,6 +34,10 @@ bool Debugger::isDebuggerAttached() const
 void Debugger::breakDebugger()
 {
 	assert (0);
+}
+
+void Debugger::reportEvent(const wchar_t* const text, ...)
+{
 }
 
 }

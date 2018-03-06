@@ -19,10 +19,10 @@ Debugger& Debugger::getInstance()
 	return instance;
 }
 
-void Debugger::assertionFailed(const std::string& expression, const std::string& file, int line, const std::wstring& message)
+void Debugger::assertionFailed(const char* const expression, const char* const file, int line, const wchar_t* const message)
 {
 	std::cerr << "ASSERT FAILED! " << expression << ", " << file << " (" << line << ")" << std::endl;
-	if (!message.empty())
+	if (message)
 		std::wcerr << L"               " << message << std::endl;
 
 #if defined(_WIN32)
@@ -46,6 +46,10 @@ void Debugger::breakDebugger()
 	// Fall back on assert macro
 	assert (0);
 #endif
+}
+
+void Debugger::reportEvent(const wchar_t* const text, ...)
+{
 }
 
 }

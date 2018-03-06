@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_input_InputTypes_H
 #define traktor_input_InputTypes_H
 
+#include <string>
 #include "Core/Config.h"
 
 // import/export mechanism.
