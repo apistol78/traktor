@@ -108,7 +108,7 @@ function deployStatic(args)
 	end
 
 	-- Compile resources.
-	local cmd = "rc /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
+	local cmd = "rc /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/resources/runtime/deploy/win32/Traktor.Amalgam.Game.App.rc"
 	local result = run:execute(preamble .. cmd .. postamble, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build product resources.")
@@ -149,7 +149,7 @@ function deployStatic(args)
 	end
 
 	-- Embed manifest in executable product.
-	local cmd = "mt -manifest $(TRAKTOR_HOME)/res/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
+	local cmd = "mt -manifest $(TRAKTOR_HOME)/resources/runtime/deploy/win32/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
 	local result = run:execute(preamble .. cmd .. postamble, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to embed manifest into executable product.")
@@ -281,7 +281,7 @@ function migrateStatic(args)
 	end
 
 	-- Compile resources.
-	local cmd = "rc /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
+	local cmd = "rc /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/resources/runtime/deploy/win32/Traktor.Amalgam.Game.App.rc"
 	local result = run:execute(preamble .. cmd .. postamble, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build product resources.")
@@ -322,7 +322,7 @@ function migrateStatic(args)
 	end
 
 	-- Embed manifest in executable product.
-	local cmd = "mt -manifest $(TRAKTOR_HOME)/res/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
+	local cmd = "mt -manifest $(TRAKTOR_HOME)/resources/runtime/deploy/win32/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
 	local result = run:execute(preamble .. cmd .. postamble, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to embed manifest into executable product.")
