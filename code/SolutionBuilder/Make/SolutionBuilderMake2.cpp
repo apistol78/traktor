@@ -95,7 +95,7 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 			return false;
 
 		Ref< IStream > file = FileSystem::getInstance().open(
-			solution->getRootPath() + L"/makefile",
+			solution->getRootPath() + L"/" + solution->getName() + L".mak",
 			File::FmWrite
 		);
 		if (!file)

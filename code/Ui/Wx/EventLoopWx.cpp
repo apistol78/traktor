@@ -91,5 +91,10 @@ bool EventLoopWx::isKeyDown(VirtualKey vk) const
 	return false;	
 }
 
+Size EventLoopWx::getDesktopSize() const
+{
+	return Size(1280, 720);
+}
+
 	}
 }

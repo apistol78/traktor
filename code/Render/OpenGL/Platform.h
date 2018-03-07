@@ -94,7 +94,7 @@ std::wstring getEGLErrorString(EGLint error);
 		{ \
 			StringOutputStream glErrorMsg; \
 			glErrorMsg << L"OpenGL error, " << uint32_t(glError) << L" (" << getOpenGLErrorString(glError) << L") " << T_FILE_LINE; \
-			T_ASSERT_M(glError == GL_NO_ERROR, glErrorMsg.str()); \
+			T_ASSERT_M(glError == GL_NO_ERROR, glErrorMsg.str().c_str()); \
 		} \
 	}
 #else

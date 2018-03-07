@@ -23,5 +23,15 @@ export ANT_PATH=$TRAKTOR_HOME/3rdp/apache-ant-1.9.4
 export ANDROID_HOME=$TRAKTOR_HOME/3rdp/android-sdk-macosx
 export ANDROID_NDK_ROOT=$TRAKTOR_HOME/3rdp/android-ndk-r10b
 
-# Output path when building Traktor.
-export AGGREGATE_OUTPUT_PATH="$TRAKTOR_HOME/bin/latest/osx"
+if [[ `uname -s` == Linux* ]]; then
+
+	export AGGREGATE_OUTPUT_PATH="$TRAKTOR_HOME/bin/latest/linux"
+	export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/linux/releasestatic/Traktor.SolutionBuilder.App"
+
+elif [[ `uname -s` == Darwin* ]]; then
+
+	export AGGREGATE_OUTPUT_PATH="$TRAKTOR_HOME/bin/latest/osx"
+	export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/osx/releasestatic/Traktor.SolutionBuilder.App"
+
+fi
+

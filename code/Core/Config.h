@@ -129,7 +129,8 @@ typedef unsigned __int64 uint64_t;
 #			include <stdint.h>
 #		endif
 #		define T_HAVE_TYPES
-#   endif
+#	endif
+#	include <stddef.h>
 #endif
 
 // Determine size of array in number of elements.
