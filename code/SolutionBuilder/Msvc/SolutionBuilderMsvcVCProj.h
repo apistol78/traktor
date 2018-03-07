@@ -24,7 +24,7 @@ class SolutionBuilderMsvcVCProj : public SolutionBuilderMsvcProject
 	T_RTTI_CLASS;
 
 public:
-	virtual std::wstring getPlatform() const;
+	virtual std::wstring getPlatform() const T_OVERRIDE T_FINAL;
 
 	virtual bool getInformation(
 		GeneratorContext& context,
@@ -33,15 +33,15 @@ public:
 		std::wstring& outProjectPath,
 		std::wstring& outProjectFileName,
 		std::wstring& outProjectGuid
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual bool generate(
 		GeneratorContext& context,
 		Solution* solution,
 		Project* project
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::map< std::wstring, std::wstring > m_staticOptions;

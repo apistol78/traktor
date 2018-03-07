@@ -34,7 +34,7 @@ public:
 
 	const RefArray< ProjectItem >& getItems() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 private:
 	RefArray< ProjectItem > m_items;

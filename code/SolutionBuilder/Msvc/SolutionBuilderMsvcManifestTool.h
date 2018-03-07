@@ -25,9 +25,9 @@ class SolutionBuilderMsvcManifestTool : public SolutionBuilderMsvcTool
 public:
 	SolutionBuilderMsvcManifestTool();
 
-	virtual bool generate(GeneratorContext& context, Solution* solution, Project* project, Configuration* configuration, OutputStream& os) const;
+	virtual bool generate(GeneratorContext& context, Solution* solution, Project* project, Configuration* configuration, OutputStream& os) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_manifest;

@@ -44,7 +44,7 @@ public:
 		OutputStream& os
 	) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 protected:
 	std::wstring m_name;

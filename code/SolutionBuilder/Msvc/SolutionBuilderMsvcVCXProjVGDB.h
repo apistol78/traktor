@@ -28,7 +28,7 @@ public:
 		GeneratorContext& context,
 		Solution* solution,
 		Project* project
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 private:
 	bool generateProject(

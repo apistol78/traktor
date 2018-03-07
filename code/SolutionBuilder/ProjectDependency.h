@@ -39,9 +39,9 @@ public:
 
 	virtual std::wstring getLocation() const;
 
-	virtual bool resolve(const Path& referringSolutionPath, SolutionLoader* solutionLoader);
+	virtual bool resolve(const Path& referringSolutionPath, SolutionLoader* solutionLoader) T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< Project > m_project;

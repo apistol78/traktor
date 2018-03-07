@@ -19,7 +19,7 @@ class VGDBCredentials : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const std::wstring& getHost() const { return m_host; }
 

@@ -28,11 +28,11 @@ class T_DLLCLASS SolutionBuilderDependencies : public SolutionBuilder
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const CommandLine& cmdLine);
+	virtual bool create(const CommandLine& cmdLine) T_OVERRIDE T_FINAL;
 
-	virtual bool generate(Solution* solution);
+	virtual bool generate(Solution* solution) T_OVERRIDE T_FINAL;
 
-	virtual void showOptions() const;
+	virtual void showOptions() const T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_projectName;

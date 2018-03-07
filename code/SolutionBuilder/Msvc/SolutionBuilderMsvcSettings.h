@@ -22,7 +22,7 @@ class SolutionBuilderMsvcSettings : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	inline const std::wstring& getSLNVersion() const { return m_slnVersion; }
 
