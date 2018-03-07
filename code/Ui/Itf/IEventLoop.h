@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_ui_IEventLoop_H
 
 #include "Core/Config.h"
+#include "Ui/Size.h"
 
 namespace traktor
 {

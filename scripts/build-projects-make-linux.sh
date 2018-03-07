@@ -25,8 +25,15 @@ else
 fi
 
 # Build solution files.
-$TRAKTOR_HOME/bin/linux/SolutionBuilder \
+$SOLUTIONBUILDER \
+	-f=make2 \
+	-make-solution-template=$TRAKTOR_HOME/resources/build/configurations/make-solution.sbm \
+	-make-project-template=$TRAKTOR_HOME/resources/build/configurations/make-project.sbm \
+	$TRAKTOR_HOME/resources/build/ExternLinux.xms
+
+$SOLUTIONBUILDER \
 	-f=make2 \
 	-make-solution-template=$TRAKTOR_HOME/resources/build/configurations/make-solution.sbm \
 	-make-project-template=$TRAKTOR_HOME/resources/build/configurations/make-project.sbm \
 	$TRAKTOR_HOME/resources/build/TraktorLinux.xms
+

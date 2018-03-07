@@ -82,7 +82,7 @@ private:
 	bool m_editor;
 	mutable Ref< render::IProgramCompiler > m_programCompiler;
 
-	render::IProgramCompiler* MeshPipeline::getProgramCompiler() const;
+	render::IProgramCompiler* getProgramCompiler() const;
 };
 
 	}
