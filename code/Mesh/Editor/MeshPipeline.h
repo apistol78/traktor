@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_MeshPipeline_H
 #define traktor_mesh_MeshPipeline_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Editor/IPipeline.h"
 
 // import/export mechanism.
@@ -80,6 +81,7 @@ private:
 	std::set< std::wstring > m_includeOnlyTechniques;
 	std::wstring m_programCompilerTypeName;
 	bool m_editor;
+	mutable Semaphore m_programCompilerLock;
 	mutable Ref< render::IProgramCompiler > m_programCompiler;
 
 	render::IProgramCompiler* getProgramCompiler() const;
