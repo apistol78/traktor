@@ -7534,7 +7534,12 @@
 									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries/>
+								<libraries>
+									<item>Cocoa.framework</item>
+									<item>AppKit.framework</item>
+									<item>CoreData.framework</item>
+									<item>Foundation.framework</item>
+								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -7562,7 +7567,12 @@
 									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries/>
+								<libraries>
+									<item>Cocoa.framework</item>
+									<item>AppKit.framework</item>
+									<item>CoreData.framework</item>
+									<item>Foundation.framework</item>
+								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
