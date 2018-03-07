@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #import "Ui/Cocoa/ObjCRef.h"
 
+#include <vector>
 #include "Core/Ref.h"
 #include "Ui/TreeViewItem.h"
 
