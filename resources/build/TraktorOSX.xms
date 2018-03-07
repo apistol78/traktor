@@ -7180,48 +7180,48 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/osx/Info.plist</sourceFile>
+							<sourceFile>$(TRAKTOR_HOME)/resources/build/osx/Traktor.Editor.App/Info.plist</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/Traktor.icns</sourceFile>
+							<sourceFile>$(TRAKTOR_HOME)/resources/build/osx/Traktor.icns</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/English.xml</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/English.xml</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/resources/runtime/editor/locale/english</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/Help.xml</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Help.xml</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/resources/runtime/editor/locale/english</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/deploy</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/deploy</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/resources/runtime</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/templates</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/editor/templates</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/resources/runtime/editor</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/bin/deploy</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/scripts/runtime/deploy</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/scripts/runtime</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/bin/template</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/scripts/runtime/editor/templates</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/scripts/runtime/editor</targetPath>
 						</item>
 						<item type="AggregationItem">
 							<sourceFile>$(TRAKTOR_HOME)/bin/osx</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/Traktor.Editor.config</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/resources/runtime/configurations</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/Traktor.Editor.osx.config</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.osx.config</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/resources/runtime/configurations</targetPath>
 						</item>
 						<item type="AggregationItem">
 							<sourceFile>$(TRAKTOR_HOME)/data/Source</sourceFile>
@@ -7232,8 +7232,8 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/data</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/themes</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/themes</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugshared/Traktor.Editor.App/Contents/Resources/resources/runtime</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
@@ -7264,48 +7264,48 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/MacOS</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/osx/Info.plist</sourceFile>
+							<sourceFile>$(TRAKTOR_HOME)/resources/build/osx/Traktor.Editor.App/Info.plist</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/Traktor.icns</sourceFile>
+							<sourceFile>$(TRAKTOR_HOME)/resources/build/osx/Traktor.icns</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/English.xml</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/English.xml</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/resources/runtime/editor/locale/english</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/Help.xml</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Help.xml</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/resources/runtime/editor/locale/english</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/deploy</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/deploy</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/resources/runtime</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/templates</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/editor/templates</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/resources/runtime/editor</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/bin/deploy</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/scripts/runtime/deploy</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/scripts/runtime</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/bin/template</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/scripts/runtime/editor/templates</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/scripts/runtime/editor</targetPath>
 						</item>
 						<item type="AggregationItem">
 							<sourceFile>$(TRAKTOR_HOME)/bin/osx</sourceFile>
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/bin</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/Traktor.Editor.config</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/resources/runtime/configurations</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/Traktor.Editor.osx.config</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.osx.config</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/resources/runtime/configurations</targetPath>
 						</item>
 						<item type="AggregationItem">
 							<sourceFile>$(TRAKTOR_HOME)/data/Source</sourceFile>
@@ -7316,8 +7316,8 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/data</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(TRAKTOR_HOME)/res/themes</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/res</targetPath>
+							<sourceFile>$(TRAKTOR_HOME)/resources/runtime/themes</sourceFile>
+							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releaseshared/Traktor.Editor.App/Contents/Resources/resources/runtime</targetPath>
 						</item>
 					</aggregationItems>
 				</item>
