@@ -27,9 +27,9 @@ public:
 		const std::wstring& condition
 	);
 
-	virtual bool generate(OutputStream& os) const;
+	virtual bool generate(OutputStream& os) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_label;

@@ -26,7 +26,7 @@ public:
 		const std::wstring& filter,
 		const Path& fileName,
 		OutputStream& os
-	) const;
+	) const T_OVERRIDE T_FINAL;
 };
 
 	}

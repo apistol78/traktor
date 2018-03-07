@@ -24,7 +24,7 @@ namespace traktor
 
 class SolutionBuilderMsvcSettings;
 
-/*! Generate solution files for Visual Studio 2003, 2005, 2008 or 2010. */
+/*! Generate solution files for Visual Studio 2003, 2005, 2008, 2010, 2012, 2015 and 2017. */
 class T_DLLCLASS SolutionBuilderMsvc : public SolutionBuilder
 {
 	T_RTTI_CLASS;
@@ -32,11 +32,11 @@ class T_DLLCLASS SolutionBuilderMsvc : public SolutionBuilder
 public:
 	SolutionBuilderMsvc();
 
-	virtual bool create(const CommandLine& cmdLine);
+	virtual bool create(const CommandLine& cmdLine) T_OVERRIDE T_FINAL;
 
-	virtual bool generate(Solution* solution);
+	virtual bool generate(Solution* solution) T_OVERRIDE T_FINAL;
 
-	virtual void showOptions() const;
+	virtual void showOptions() const T_OVERRIDE T_FINAL;
 
 private:
 	Ref< SolutionBuilderMsvcSettings > m_settings;

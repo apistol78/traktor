@@ -30,11 +30,11 @@ class T_DLLCLASS SolutionBuilderGraphViz : public SolutionBuilder
 public:
 	SolutionBuilderGraphViz();
 
-	virtual bool create(const CommandLine& cmdLine);
+	virtual bool create(const CommandLine& cmdLine) T_OVERRIDE T_FINAL;
 
-	virtual bool generate(Solution* solution);
+	virtual bool generate(Solution* solution) T_OVERRIDE T_FINAL;
 
-	virtual void showOptions() const;
+	virtual void showOptions() const T_OVERRIDE T_FINAL;
 
 private:
 	bool m_skipLeafs;

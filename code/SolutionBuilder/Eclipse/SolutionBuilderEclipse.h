@@ -34,11 +34,11 @@ class T_DLLCLASS SolutionBuilderEclipse : public SolutionBuilder
 public:
 	SolutionBuilderEclipse();
 
-	virtual bool create(const CommandLine& cmdLine);
+	virtual bool create(const CommandLine& cmdLine) T_OVERRIDE T_FINAL;
 
-	virtual bool generate(Solution* solution);
+	virtual bool generate(Solution* solution) T_OVERRIDE T_FINAL;
 
-	virtual void showOptions() const;
+	virtual void showOptions() const T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ScriptProcessor > m_scriptProcessor;

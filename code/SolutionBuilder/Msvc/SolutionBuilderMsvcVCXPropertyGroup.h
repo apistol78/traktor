@@ -33,7 +33,7 @@ public:
 		OutputStream& os
 	) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_label;
