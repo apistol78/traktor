@@ -15,6 +15,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Thread/Acquire.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -237,7 +238,7 @@ bool MeshPipeline::buildOutput(
 	uint32_t polygonCount = 0;
 	Aabb3 boundingBox;
 
-	auto programCompiler = getProgramCompiler();
+	Ref< render::IProgramCompiler > programCompiler = getProgramCompiler();
 	if (!programCompiler)
 		return false;
 
@@ -729,6 +730,8 @@ Ref< ISerializable > MeshPipeline::buildOutput(
 
 render::IProgramCompiler* MeshPipeline::getProgramCompiler() const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_programCompilerLock);
+
 	if (m_programCompiler)
 		return m_programCompiler;
 
