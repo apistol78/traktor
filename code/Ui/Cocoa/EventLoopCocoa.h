@@ -40,6 +40,8 @@ public:
 	virtual int32_t getAsyncKeyState() const T_OVERRIDE T_FINAL;
 
 	virtual bool isKeyDown(VirtualKey vk) const T_OVERRIDE T_FINAL;
+
+	virtual Size getDesktopSize() const T_OVERRIDE T_FINAL;
 	
 private:
 	void* m_pool;

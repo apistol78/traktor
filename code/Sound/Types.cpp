@@ -4,10 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-//#include <algorithm>
+#include <string>
 #include "Core/Containers/SmallMap.h"
-//#include "Core/Singleton/ISingleton.h"
-//#include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/CriticalSection.h"
 #include "Sound/Types.h"
