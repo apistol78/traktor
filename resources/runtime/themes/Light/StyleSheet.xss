@@ -620,6 +620,10 @@
 	<!-- Values -->
 	<values>
 		<item>
+			<name>Editor.Icon</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Icon.image</value>
+		</item>
+		<item>
 			<name>Editor.ToolBar.Save</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Save.image</value>
 		</item>

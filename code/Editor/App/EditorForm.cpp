@@ -402,13 +402,13 @@ EditorForm::EditorForm()
 
 bool EditorForm::create(const CommandLine& cmdLine)
 {
-	std::wstring settingsPath = L"Traktor.Editor.config";
+	std::wstring settingsPath = L"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config";
 
 #if defined(__APPLE__)
 	// Load configuration from bundle resources.
 	bool forceConsole = cmdLine.hasOption(L"console");
 	if (!forceConsole)
-		settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
+		settingsPath = L"$(BUNDLE_PATH)/Contents/Resources//resources/runtime/configurations/Traktor.Editor.config";
 #endif
 
 	// Remember startup directory so we can save user configuration properly.
@@ -417,8 +417,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Load settings; use only global settings as merged settings until workspace has been loaded.
 	if (!loadSettings(settingsPath, m_originalSettings, &m_globalSettings))
 	{
-		log::error << L"Unable to load global settings" << Endl;
-		return false;
+		// Try also in current directory.
+		settingsPath = L"Traktor.Editor.config";
+		if (!loadSettings(settingsPath, m_originalSettings, &m_globalSettings))
+		{
+			log::error << L"Unable to load global settings" << Endl;
+			return false;
+		}
 	}
 	m_mergedSettings = m_globalSettings;
 
@@ -465,7 +470,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	))
 		return false;
 
-	//setIcon(ui::Bitmap::load(c_ResourceTraktorSmall, sizeof(c_ResourceTraktorSmall), L"png"));
+	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
 	addEventHandler< ui::CloseEvent >(this, &EditorForm::eventClose);
 	addEventHandler< ui::TimerEvent >(this, &EditorForm::eventTimer);

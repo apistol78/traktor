@@ -97,7 +97,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 	m_menuTools->add(new ui::MenuItem(ui::Command(L"Drone.Exit"), L"Exit"));
 
 	m_notificationIcon = new ui::NotificationIcon();
-	m_notificationIcon->create(c_title, new ui::StyleBitmap(L"Drone.Icon")); // ui::Bitmap::load(c_ResourceTraktorTiny, sizeof(c_ResourceTraktorTiny), L"png"));
+	m_notificationIcon->create(c_title, new ui::StyleBitmap(L"Drone.Icon"));
 	m_notificationIcon->addEventHandler< ui::MouseButtonDownEvent >(this, &DroneForm::eventNotificationButtonDown);
 
 	m_toolExecuting = false;
