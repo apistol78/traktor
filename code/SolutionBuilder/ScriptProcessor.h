@@ -43,7 +43,7 @@ public:
 
 	bool generateFromFile(const Solution* solution, const Project* project, const std::wstring& projectPath, const std::wstring& fileName, std::wstring& output) const;
 
-	bool generateFromSource(const Solution* solution, const Project* project, const std::wstring& projectPath, const std::wstring& source, std::wstring& output) const;
+	bool generateFromSource(const Solution* solution, const Project* project, const std::wstring& projectPath, const std::wstring& sourceName, const std::wstring& source, std::wstring& output) const;
 
 private:
 	Ref< script::IScriptManager > m_scriptManager;

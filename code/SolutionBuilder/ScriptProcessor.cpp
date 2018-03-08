@@ -258,10 +258,10 @@ bool ScriptProcessor::generateFromFile(const Solution* solution, const Project* 
 
 	file->close();
 
-	return generateFromSource(solution, project, projectPath, ss.str(), output);
+	return generateFromSource(solution, project, projectPath, fileName, ss.str(), output);
 }
 
-bool ScriptProcessor::generateFromSource(const Solution* solution, const Project* project, const std::wstring& projectPath, const std::wstring& source, std::wstring& output) const
+bool ScriptProcessor::generateFromSource(const Solution* solution, const Project* project, const std::wstring& projectPath, const std::wstring& sourceName, const std::wstring& source, std::wstring& output) const
 {
 	StringOutputStream ss;
 	size_t offset = 0;
@@ -291,7 +291,7 @@ bool ScriptProcessor::generateFromSource(const Solution* solution, const Project
 	ss << L"\toutput:printSection(" << id << L")" << Endl;
 	ss << L"end" << Endl;
 
-	Ref< script::IScriptBlob > scriptBlob = m_scriptManager->compile(L"", ss.str(), 0);
+	Ref< script::IScriptBlob > scriptBlob = m_scriptManager->compile(sourceName, ss.str(), 0);
 	if (!scriptBlob)
 		return false;
 
