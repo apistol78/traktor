@@ -25,7 +25,7 @@ public:
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style);
 
-	virtual void setIcon(drawing::Image* icon);
+	virtual void setIcon(ISystemBitmap* icon);
 	
 	virtual int showModal();
 

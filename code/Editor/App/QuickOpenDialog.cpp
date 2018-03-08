@@ -15,6 +15,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
@@ -37,6 +38,8 @@ bool QuickOpenDialog::create(ui::Widget* parent)
 {
 	if (!ui::Dialog::create(parent, i18n::Text(L"EDITOR_QUICK_OPEN_TITLE"), ui::scaleBySystemDPI(600), ui::scaleBySystemDPI(250), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
 	m_editFilter = new ui::Edit();
 	m_editFilter->create(this, L"", ui::WsClientBorder | ui::WsWantAllInput);

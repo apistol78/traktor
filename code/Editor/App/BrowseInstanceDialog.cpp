@@ -92,6 +92,8 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	))
 		return false;
 
+	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
+
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	if (!splitter->create(this, true, ui::scaleBySystemDPI(200)))
 		return false;

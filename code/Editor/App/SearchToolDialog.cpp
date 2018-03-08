@@ -35,6 +35,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/MenuItem.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/TableLayout.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/ProgressBar.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/GridView/GridColumn.h"
@@ -272,6 +273,8 @@ bool SearchToolDialog::create(ui::Widget* parent)
 {
 	if (!ui::Dialog::create(parent, i18n::Text(L"EDITOR_SEARCH_TOOL_TITLE"), ui::scaleBySystemDPI(1100), ui::scaleBySystemDPI(600), ui::Dialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
 	Ref< ui::custom::Splitter > splitterV = new ui::custom::Splitter();
 	splitterV->create(this, true, ui::scaleBySystemDPI(220), false);

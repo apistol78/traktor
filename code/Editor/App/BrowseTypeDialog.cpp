@@ -79,6 +79,8 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	))
 		return false;
 
+	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
+
 	addEventHandler< ui::ButtonClickEvent >(this, &BrowseTypeDialog::eventDialogClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();

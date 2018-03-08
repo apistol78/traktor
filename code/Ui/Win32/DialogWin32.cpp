@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Ui/Dialog.h"
+#include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/DialogWin32.h"
 
 namespace traktor
@@ -97,8 +98,12 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 	return true;
 }
 
-void DialogWin32::setIcon(drawing::Image* icon)
+void DialogWin32::setIcon(ISystemBitmap* icon)
 {
+	BitmapWin32* bm = static_cast< BitmapWin32* >(icon);
+	HICON hIcon = bm->createIcon();
+	m_hWnd.sendMessage(WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+	m_hWnd.sendMessage(WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
 }
 
 int DialogWin32::showModal()

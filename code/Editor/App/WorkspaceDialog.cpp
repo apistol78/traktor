@@ -12,6 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Static.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 
 namespace traktor
@@ -25,6 +26,8 @@ bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 {
 	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_WORKSPACE_TITLE"), ui::scaleBySystemDPI(500), ui::scaleBySystemDPI(200), ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
 	addEventHandler< ui::ButtonClickEvent >(this, &WorkspaceDialog::eventDialogClick);
 

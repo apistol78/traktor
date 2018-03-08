@@ -217,30 +217,29 @@ Color4ub BitmapWin32::getPixel(uint32_t x, uint32_t y) const
 
 HICON BitmapWin32::createIcon() const
 {
-	HDC hMaskDC = CreateCompatibleDC(NULL);
-
+	HDC hScreenDC = GetDC(NULL);
+	HDC hMaskDC = CreateCompatibleDC(hScreenDC);
 	HBITMAP hMask = CreateCompatibleBitmap(hMaskDC, m_width, m_height);
 	HBITMAP hMaskPrev = (HBITMAP)SelectObject(hMaskDC, hMask);
 
-	const uint32_t* src = reinterpret_cast< const uint32_t* >(m_pBits);
+	const uint32_t* src = reinterpret_cast< const uint32_t* >(m_pBitsPreMulAlpha);
 	for (uint32_t y = 0; y < m_height; ++y)
 	{
 		for (uint32_t x = 0; x < m_width; ++x)
 		{
 			uint32_t color = src[x + y * m_width];
-			if (color == src[0])
-				SetPixel(hMaskDC, x, m_height - y - 1, RGB(255, 255, 255));
-			else
+			if ((color & 0xff000000) != 0x00000000)
 				SetPixel(hMaskDC, x, m_height - y - 1, RGB(0, 0, 0));
+			else
+				SetPixel(hMaskDC, x, m_height - y - 1, RGB(255, 255, 255));
 		}
 	}
 
 	SelectObject(hMaskDC, hMaskPrev);
-	DeleteDC(hMaskDC);
 
 	ICONINFO ii;
 	ii.fIcon = TRUE;
-	ii.hbmColor = m_hBitmap;
+	ii.hbmColor = m_hBitmapPreMulAlpha;
 	ii.hbmMask = hMask;
 	ii.xHotspot = 0;
 	ii.yHotspot = 0;
@@ -248,6 +247,8 @@ HICON BitmapWin32::createIcon() const
 	HICON hIcon = CreateIconIndirect(&ii);
 
 	DeleteObject(hMask);
+	DeleteDC(hMaskDC);
+	ReleaseDC(NULL, hScreenDC);
 
 	return hIcon;
 }

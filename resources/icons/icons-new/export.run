@@ -8,7 +8,7 @@ local outputs =
 		path = "../../runtime/themes/%s/Images/Editor",
 		resources =
 		{
-			{ name = "Icon", column = 0, row = 40, width = 1, height = 1 },
+			{ name = "Icon", column = 0, row = 40, width = 1, height = 1, base = 64 },
 			{ name = "Save", column = 0, row = 0, width = 1, height = 1 },
 			{ name = "Cut", column = 1, row = 0, width = 1, height = 1 },
 			{ name = "Copy", column = 2, row = 0, width = 1, height = 1 },
@@ -301,7 +301,7 @@ local outputs =
 		path = "../../runtime/themes/%s/Images/Drone",
 		resources =
 		{
-			{ name = "Icon", column = 0, row = 40, width = 1, height = 1 },
+			{ name = "Icon", column = 0, row = 40, width = 1, height = 1, base = 64 },
 		}
 	},
 }

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/Dialog.h"
+#include "Ui/IBitmap.h"
 #include "Ui/Layout.h"
 #include "Ui/Itf/IDialog.h"
 
@@ -46,10 +47,14 @@ bool Dialog::create(Widget* parent, const std::wstring& text, int width, int hei
 	return true;
 }
 
-void Dialog::setIcon(drawing::Image* icon)
+void Dialog::setIcon(IBitmap* icon)
 {
 	T_ASSERT (m_widget);
-	static_cast< IDialog* >(m_widget)->setIcon(icon);
+
+	if (!icon || !icon->getSystemBitmap())
+		return;
+
+	static_cast< IDialog* >(m_widget)->setIcon(icon->getSystemBitmap());
 }
 
 int Dialog::showModal()
