@@ -218,7 +218,9 @@ bool FileSystem::copy(const Path& destination, const Path& source, bool overwrit
 	Ref< IStream > src = open(source, File::FmRead);
 	if (!src)
 	{
+#if defined(_DEBUG)
 		log::error << L"Unable to open file \"" << source.getPathName() << L"\" for reading" << Endl;
+#endif
 		return 0;
 	}
 
@@ -226,7 +228,9 @@ bool FileSystem::copy(const Path& destination, const Path& source, bool overwrit
 	Ref< IStream > dst = open(destination, File::FmWrite);
 	if (!dst)
 	{
+#if defined(_DEBUG)
 		log::error << L"Unable to open file \"" << destination.getPathName() << L"\" for writing" << Endl;
+#endif
 		return 0;
 	}
 
@@ -366,8 +370,10 @@ IVolume* FileSystem::getVolume(const Path& path) const
 		std::map< std::wstring, Ref< IVolume > >::const_iterator it = m_volumes.find(toLower(path.getVolume()));
 		if (it != m_volumes.end())
 			volume = it->second;
+#if defined(_DEBUG)
 		else
 			log::error << L"No volume named \"" << path.getVolume() << L"\" mounted" << Endl;
+#endif
 	}
 	else
 		volume = m_currentVolume;

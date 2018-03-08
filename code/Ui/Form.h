@@ -22,7 +22,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
+class IBitmap;
 
 /*! \brief Top level form.
  * \ingroup UI
@@ -48,7 +48,7 @@ public:
 
 	bool create(const std::wstring& text, int width, int height, int style = WsDefault, Layout* layout = 0, Widget* parent = 0);
 
-	void setIcon(Bitmap* icon);
+	void setIcon(IBitmap* icon);
 
 	void maximize();
 

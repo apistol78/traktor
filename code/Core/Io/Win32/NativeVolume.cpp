@@ -185,9 +185,11 @@ Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 	);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
+#if defined(_DEBUG)
 		DWORD errorCode = GetLastError();
 		if ((mode & File::FmRead) != File::FmRead || errorCode != ERROR_FILE_NOT_FOUND)
 			log::warning << L"Unable to open file \"" << systemPath << L"\"; error code " << int32_t(errorCode) << Endl;
+#endif
 		return 0;
 	}
 

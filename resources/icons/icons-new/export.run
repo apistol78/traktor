@@ -5,9 +5,10 @@ local outputs =
 {
 	{
 		name = "Editor",
-		path = "../themes/%s/Images/Editor",
+		path = "../../runtime/themes/%s/Images/Editor",
 		resources =
 		{
+			{ name = "Icon", column = 0, row = 40, width = 1, height = 1 },
 			{ name = "Save", column = 0, row = 0, width = 1, height = 1 },
 			{ name = "Cut", column = 1, row = 0, width = 1, height = 1 },
 			{ name = "Copy", column = 2, row = 0, width = 1, height = 1 },
@@ -32,7 +33,7 @@ local outputs =
 	},
 	{
 		name = "UI_Dock",
-		path = "../themes/%s/Images/UI",
+		path = "../../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "DockClose", column = 2, row = 25, width = 1, height = 1, base = 12 },
@@ -41,7 +42,7 @@ local outputs =
 	},
 	{
 		name = "UI_Tab",
-		path = "../themes/%s/Images/UI",
+		path = "../../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "TabClose", column = 2, row = 25, width = 1, height = 1, base = 12 },
@@ -49,7 +50,7 @@ local outputs =
 	},	
 	{
 		name = "UI_TreeView",
-		path = "../themes/%s/Images/UI",
+		path = "../../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "Tree", column = 0, row = 5, width = 4, height = 1 },
@@ -57,7 +58,7 @@ local outputs =
 	},
 	{
 		name = "UI_GridView",
-		path = "../themes/%s/Images/UI",
+		path = "../../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "GridView", column = 0, row = 5, width = 4, height = 1 },
@@ -65,7 +66,7 @@ local outputs =
 	},
 	{
 		name = "UI_LogList",
-		path = "../themes/%s/Images/UI",
+		path = "../../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "Log", column = 0, row = 24, width = 3, height = 1, base = 12 },
@@ -73,7 +74,7 @@ local outputs =
 	},	
 	{
 		name = "UI_PropertyList",
-		path = "../themes/%s/Images/UI",
+		path = "../../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "PropertyList", column = 0, row = 5, width = 2, height = 1 },
@@ -87,7 +88,7 @@ local outputs =
 	},
 	{
 		name = "UI_Sequencer",
-		path = "../themes/%s/Images/UI",
+		path = "../../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "SequenceExpand", column = 0, row = 5, width = 1, height = 1, base = 9 },
@@ -98,7 +99,7 @@ local outputs =
 	},
 	{
 		name = "UI_Layer",
-		path = "../themes/%s/Images/UI",
+		path = "../../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "LayerVisible", column = 5, row = 7, width = 1, height = 1 },
@@ -107,7 +108,7 @@ local outputs =
 	},	
 	{
 		name = "Script",
-		path = "../themes/%s/Images/Script",
+		path = "../../runtime/themes/%s/Images/Script",
 		resources =
 		{
 			{ name = "ToggleComments", column = 0, row = 6, width = 1, height = 1 },
@@ -135,7 +136,7 @@ local outputs =
 	},
 	{
 		name = "Spray",
-		path = "../themes/%s/Images/Spray",
+		path = "../../runtime/themes/%s/Images/Spray",
 		resources =
 		{
 			{ name = "Randomize", column = 0, row = 7, width = 1, height = 1 },
@@ -152,7 +153,7 @@ local outputs =
 	},
 	{
 		name = "Shader",
-		path = "../themes/%s/Images/Shader",
+		path = "../../runtime/themes/%s/Images/Shader",
 		resources =
 		{
 			{ name = "Tools", column = 0, row = 8, width = 14, height = 1 },
@@ -160,7 +161,7 @@ local outputs =
 	},
 	{
 		name = "Texture",
-		path = "../themes/%s/Images/Texture",
+		path = "../../runtime/themes/%s/Images/Texture",
 		resources =
 		{
 			{ name = "PlusMinus", column = 0, row = 12, width = 2, height = 1 },
@@ -168,7 +169,7 @@ local outputs =
 	},
 	{
 		name = "Scene",
-		path = "../themes/%s/Images/Scene",
+		path = "../../runtime/themes/%s/Images/Scene",
 		resources =
 		{
 			{ name = "Pointer", column = 0, row = 9, width = 1, height = 1 },
@@ -197,7 +198,7 @@ local outputs =
 	},
 	{
 		name = "Amalgam",
-		path = "../themes/%s/Images/Amalgam",
+		path = "../../runtime/themes/%s/Images/Amalgam",
 		resources =
 		{
 			{ name = "Logos", column = 0, row = 10, width = 13, height = 1, base = 24 },
@@ -211,7 +212,7 @@ local outputs =
 	},
 	{
 		name = "Input",
-		path = "../themes/%s/Images/Input",
+		path = "../../runtime/themes/%s/Images/Input",
 		resources =
 		{
 			{ name = "Alignment", column = 0, row = 8, width = 6, height = 1 },
@@ -219,7 +220,7 @@ local outputs =
 	},
 	{
 		name = "Animation",
-		path = "../themes/%s/Images/Animation",
+		path = "../../runtime/themes/%s/Images/Animation",
 		resources =
 		{
 			{ name = "Alignment", column = 0, row = 8, width = 6, height = 1 },
@@ -230,7 +231,7 @@ local outputs =
 	},
 	{
 		name = "Flash",
-		path = "../themes/%s/Images/Flash",
+		path = "../../runtime/themes/%s/Images/Flash",
 		resources =
 		{
 			{ name = "Playback", column = 0, row = 14, width = 6, height = 1 },
@@ -250,7 +251,7 @@ local outputs =
 	},
 	{
 		name = "Terrain",
-		path = "../themes/%s/Images/Terrain",
+		path = "../../runtime/themes/%s/Images/Terrain",
 		resources =
 		{
 			{ name = "Terrain", column = 0, row = 15, width = 15, height = 1 },
@@ -258,7 +259,7 @@ local outputs =
 	},
 	{
 		name = "Theater",
-		path = "../themes/%s/Images/Theater",
+		path = "../../runtime/themes/%s/Images/Theater",
 		resources =
 		{
 			{ name = "Theater", column = 0, row = 16, width = 8, height = 1 },
@@ -266,7 +267,7 @@ local outputs =
 	},
 	{
 		name = "Sound",
-		path = "../themes/%s/Images/Sound",
+		path = "../../runtime/themes/%s/Images/Sound",
 		resources =
 		{
 			{ name = "PlusMinus", column = 0, row = 12, width = 2, height = 1 },
@@ -275,7 +276,7 @@ local outputs =
 	},	
 	{
 		name = "Amalgam_Run",
-		path = "../themes/%s/Images/Amalgam",
+		path = "../../runtime/themes/%s/Images/Amalgam",
 		resources =
 		{
 			{ name = "Error", column = 0, row = 35, width = 3, height = 10 },
@@ -283,7 +284,7 @@ local outputs =
 	},
 	{
 		name = "SolutionBuilder",
-		path = "../themes/%s/Images/SolutionBuilder",
+		path = "../../runtime/themes/%s/Images/SolutionBuilder",
 		resources =
 		{
 			{ name = "Solution", column = 0, row = 39, width = 1, height = 1 },
@@ -297,7 +298,7 @@ local outputs =
 	},
 	{
 		name = "Drone",
-		path = "../themes/%s/Images/Drone",
+		path = "../../runtime/themes/%s/Images/Drone",
 		resources =
 		{
 			{ name = "Icon", column = 0, row = 40, width = 1, height = 1 },
