@@ -50,7 +50,7 @@ bool DialogCocoa::create(IWidget* parent, const std::wstring& text, int width, i
 	return true;
 }
 
-void DialogCocoa::setIcon(drawing::Image* icon)
+void DialogCocoa::setIcon(ISystemBitmap* icon)
 {
 }
 

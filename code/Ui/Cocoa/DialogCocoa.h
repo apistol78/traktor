@@ -31,7 +31,7 @@ public:
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE;
 
-	virtual void setIcon(drawing::Image* icon) T_OVERRIDE;
+	virtual void setIcon(ISystemBitmap* icon) T_OVERRIDE;
 	
 	virtual int showModal() T_OVERRIDE;
 

@@ -39,7 +39,7 @@ bool DialogWx::create(IWidget* parent, const std::wstring& text, int width, int 
 	return true;
 }
 
-void DialogWx::setIcon(drawing::Image* icon)
+void DialogWx::setIcon(ISystemBitmap* icon)
 {
 }
 
