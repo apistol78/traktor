@@ -20,15 +20,15 @@ class DialogWx : public WidgetWxImpl< IDialog, wxDialog >
 public:
 	DialogWx(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style);
+	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE T_FINAL;
 
-	virtual void setIcon(drawing::Image* icon);
+	virtual void setIcon(ISystemBitmap* icon) T_OVERRIDE T_FINAL;
 	
-	virtual int showModal();
+	virtual int showModal() T_OVERRIDE T_FINAL;
 
-	virtual void endModal(int result);
+	virtual void endModal(int result) T_OVERRIDE T_FINAL;
 
-	virtual void setMinSize(const Size& minSize);
+	virtual void setMinSize(const Size& minSize) T_OVERRIDE T_FINAL;
 };
 
 	}
