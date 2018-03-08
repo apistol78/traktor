@@ -74,6 +74,8 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	))
 		return false;
 
+	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
+
 	addEventHandler< ui::ButtonClickEvent >(this, &NewInstanceDialog::eventDialogClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();

@@ -11,15 +11,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	namespace drawing
-	{
-
-class Image;
-
-	}
-
 	namespace ui
 	{
+
+class ISystemBitmap;
 
 /*! \brief Dialog interface.
  * \ingroup UI
@@ -29,7 +24,7 @@ class IDialog : public IWidget
 public:
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) = 0;
 
-	virtual void setIcon(drawing::Image* icon) = 0;
+	virtual void setIcon(ISystemBitmap* icon) = 0;
 	
 	virtual int showModal() = 0;
 

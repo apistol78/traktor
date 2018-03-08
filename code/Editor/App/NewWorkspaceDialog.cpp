@@ -17,6 +17,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Edit.h"
 #include "Ui/PathDialog.h"
 #include "Ui/Static.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PreviewList/PreviewList.h"
@@ -36,6 +37,8 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 {
 	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_NEW_WORKSPACE_TITLE"), ui::scaleBySystemDPI(500), ui::scaleBySystemDPI(400), ui::ConfigDialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"100%,*", 4, 4)))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
 	addEventHandler< ui::ButtonClickEvent >(this, &NewWorkspaceDialog::eventDialogClick);
 

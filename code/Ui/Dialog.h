@@ -19,17 +19,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	namespace drawing
-	{
-
-class Image;
-
-	}
-
 	namespace ui
 	{
 
 class ChildEvent;
+class IBitmap;
 
 /*! \brief Dialog
  * \ingroup UI
@@ -51,7 +45,7 @@ public:
 
 	bool create(Widget* parent, const std::wstring& text, int width, int height, int style = WsDefaultResizable, Layout* layout = 0);
 
-	void setIcon(drawing::Image* icon);
+	void setIcon(IBitmap* icon);
 	
 	virtual int showModal();
 

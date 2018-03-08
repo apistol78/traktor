@@ -14,8 +14,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/App/ObjectEditor.h"
 #include "Editor/App/ObjectEditorDialog.h"
 #include "I18N/Text.h"
-#include "Ui/MessageBox.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/MessageBox.h"
+#include "Ui/StyleBitmap.h"
 
 namespace traktor
 {
@@ -60,6 +61,8 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 		new ui::FloodLayout()
 	))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
 	addEventHandler< ui::ButtonClickEvent >(this, &ObjectEditorDialog::eventClick);
 	addEventHandler< ui::CloseEvent >(this, &ObjectEditorDialog::eventClose);

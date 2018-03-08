@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 
@@ -50,6 +51,8 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 
 	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_SETTINGS_TITLE"), ui::scaleBySystemDPI(700), ui::scaleBySystemDPI(600), ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
 	addEventHandler< ui::ButtonClickEvent >(this, &SettingsDialog::eventDialogClick);
 

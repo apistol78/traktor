@@ -94,29 +94,8 @@ void FormWin32::destroy()
 
 void FormWin32::setIcon(ISystemBitmap* icon)
 {
-	ICONINFO ii;
-
 	BitmapWin32* bm = static_cast< BitmapWin32* >(icon);
-
-	BitmapWin32 bmMask;
-	bmMask.create(bm->getSize().cx, bm->getSize().cy);
-	
-	uint32_t* pMaskBits = static_cast< uint32_t* >(bmMask.getBits());
-	uint32_t* pBits = static_cast< uint32_t* >(bm->getBits());
-
-	for (uint32_t i = 0; i < uint32_t(bm->getSize().cx * bm->getSize().cy); ++i)
-		pMaskBits[i] = pBits[i] != pBits[0] ? 0x00000000 : 0x00ffffff;
-
-	GdiFlush();
-
-	memset(&ii, 0, sizeof(ii));
-	ii.fIcon = TRUE;
-	ii.hbmMask = bmMask.getHBitmap();
-	ii.hbmColor = bm->getHBitmap();
-
-	HICON hIcon = CreateIconIndirect(&ii);
-	T_ASSERT (hIcon);
-
+	HICON hIcon = bm->createIcon();
 	m_hWnd.sendMessage(WM_SETICON, ICON_BIG, (LPARAM)hIcon);
 	m_hWnd.sendMessage(WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
 }
