@@ -183,17 +183,17 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.GameClassFactory", 0, GameClass
 void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	Ref< AutoRuntimeClass< IEnvironment > > classEnvironment = new AutoRuntimeClass< IEnvironment >();
-	classEnvironment->addProperty< db::Database* >("database", 0, &IEnvironment::getDatabase);
-	classEnvironment->addProperty< UpdateControl* >("control", 0, &IEnvironment::getControl);
-	classEnvironment->addProperty< IAudioServer* >("audio", 0, &IEnvironment::getAudio);
-	classEnvironment->addProperty< IInputServer* >("input", 0, &IEnvironment::getInput);
-	classEnvironment->addProperty< IOnlineServer* >("online", 0, &IEnvironment::getOnline);
-	classEnvironment->addProperty< IPhysicsServer* >("physics", 0, &IEnvironment::getPhysics);
-	classEnvironment->addProperty< IRenderServer* >("render", 0, &IEnvironment::getRender);
-	classEnvironment->addProperty< IResourceServer* >("resource", 0, &IEnvironment::getResource);
-	classEnvironment->addProperty< IScriptServer* >("script", 0, &IEnvironment::getScript);
-	classEnvironment->addProperty< IWorldServer* >("world", 0, &IEnvironment::getWorld);
-	classEnvironment->addProperty< PropertyGroup* >("settings", 0, &IEnvironment::getSettings);
+	classEnvironment->addProperty< db::Database* >("database", &IEnvironment::getDatabase);
+	classEnvironment->addProperty< UpdateControl* >("control", &IEnvironment::getControl);
+	classEnvironment->addProperty< IAudioServer* >("audio", &IEnvironment::getAudio);
+	classEnvironment->addProperty< IInputServer* >("input", &IEnvironment::getInput);
+	classEnvironment->addProperty< IOnlineServer* >("online", &IEnvironment::getOnline);
+	classEnvironment->addProperty< IPhysicsServer* >("physics", &IEnvironment::getPhysics);
+	classEnvironment->addProperty< IRenderServer* >("render", &IEnvironment::getRender);
+	classEnvironment->addProperty< IResourceServer* >("resource", &IEnvironment::getResource);
+	classEnvironment->addProperty< IScriptServer* >("script", &IEnvironment::getScript);
+	classEnvironment->addProperty< IWorldServer* >("world", &IEnvironment::getWorld);
+	classEnvironment->addProperty< PropertyGroup* >("settings", &IEnvironment::getSettings);
 	classEnvironment->addMethod("reconfigure", &IEnvironment::reconfigure);
 	registrar->registerClass(classEnvironment);
 

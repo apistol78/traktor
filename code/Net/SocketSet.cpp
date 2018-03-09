@@ -34,12 +34,12 @@ void SocketSet::remove(Socket* socket)
 		m_sockets.erase(i);
 }
 
-int SocketSet::count() const
+int32_t SocketSet::count() const
 {
-	return int(m_sockets.size());
+	return int32_t(m_sockets.size());
 }
 
-Ref< Socket > SocketSet::get(int index) const
+Ref< Socket > SocketSet::get(int32_t index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_sockets.size()));
 	return m_sockets[index];

@@ -242,6 +242,7 @@ private:
 	std::vector< Character > m_text;
 	std::map< wchar_t, Ref< const ISpecialCharacter > > m_specialCharacters;
 	int32_t m_caret;
+	bool m_caretBlink;
 	int32_t m_selectionStart;
 	int32_t m_selectionStop;
 	int32_t m_lineMargin;
@@ -281,6 +282,8 @@ private:
 	void eventPaint(PaintEvent* event);
 
 	void eventSize(SizeEvent* event);
+
+	void eventTimer(TimerEvent* event);
 
 	void eventScroll(ScrollEvent* event);
 };

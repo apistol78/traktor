@@ -111,6 +111,7 @@ ScriptManagerLua::ScriptManagerLua()
 #endif
 
 	lua_register(m_luaState, "print", luaPrint);
+	lua_register(m_luaState, "sleep", luaSleep);
 
 	lua_pushlightuserdata(m_luaState, (void*)this);
 	lua_pushcclosure(m_luaState, luaAllocatedMemory, 1);

@@ -9,6 +9,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/OutputStream.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
 namespace traktor
@@ -76,6 +78,14 @@ int luaPrint(lua_State* L)
 	}
 
 	log::info << Endl;
+	return 0;
+}
+
+int luaSleep(lua_State* L)
+{
+	int32_t ms = lua_tointeger(L, -1);
+	if (ms >= 0)
+		ThreadManager::getInstance().getCurrentThread()->sleep(ms);
 	return 0;
 }
 
