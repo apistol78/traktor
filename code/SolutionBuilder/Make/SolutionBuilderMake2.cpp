@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Timer/Timer.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ScriptProcessor.h"
 #include "SolutionBuilder/Solution.h"
@@ -47,11 +48,14 @@ bool SolutionBuilderMake2::create(const CommandLine& cmdLine)
 
 bool SolutionBuilderMake2::generate(Solution* solution)
 {
+	Timer timer;
+
 	// Create root path.
 	if (!FileSystem::getInstance().makeAllDirectories(solution->getRootPath()))
 		return false;
 
 	log::info << L"Generating project makefiles..." << Endl;
+	log::info << IncreaseIndent;
 
 	const RefArray< Project >& projects = solution->getProjects();
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
@@ -63,6 +67,9 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 			continue;
 
 		std::wstring projectPath = solution->getRootPath() + L"/" + project->getName();
+		log::info << projectPath + L"/makefile";
+
+		double timeStart = timer.getElapsedTime();
 
 		if (!FileSystem::getInstance().makeDirectory(projectPath))
 			return false;
@@ -84,9 +91,16 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 
 			file->close();
 		}
+
+		double timeEnd = timer.getElapsedTime();
+		log::info << L" (" << int32_t((timeEnd - timeStart) + 0.5) << L" s)" << Endl;
 	}
 
+	log::info << DecreaseIndent;
+	log::info << Endl;
+
 	log::info << L"Generating solution makefile..." << Endl;
+	log::info << IncreaseIndent;
 
 	// Generate solution makefile.
 	{
@@ -94,8 +108,13 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 		if (!m_scriptProcessor->generateFromFile(solution, 0, solution->getRootPath(), m_solutionTemplate, cprojectOut))
 			return false;
 
+		std::wstring solutionPath = solution->getRootPath() + L"/" + solution->getName() + L".mak";
+		log::info << solutionPath;
+
+		double timeStart = timer.getElapsedTime();
+
 		Ref< IStream > file = FileSystem::getInstance().open(
-			solution->getRootPath() + L"/" + solution->getName() + L".mak",
+			solutionPath,
 			File::FmWrite
 		);
 		if (!file)
@@ -104,7 +123,13 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 		FileOutputStream(file, new Utf8Encoding()) << cprojectOut;
 
 		file->close();
+
+		double timeEnd = timer.getElapsedTime();
+		log::info << L" (" << int32_t((timeEnd - timeStart) + 0.5) << L" s)" << Endl;
 	}
+
+	log::info << DecreaseIndent;
+	log::info << Endl;
 
 	return true;
 }

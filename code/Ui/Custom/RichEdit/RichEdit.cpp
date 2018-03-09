@@ -52,6 +52,7 @@ RichEdit::RichEdit()
 ,	m_imageHeight(0)
 ,	m_imageCount(0)
 ,	m_caret(0)
+,	m_caretBlink(true)
 ,	m_selectionStart(-1)
 ,	m_selectionStop(-1)
 ,	m_lineMargin(c_lineMarginMin)
@@ -75,6 +76,7 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	addEventHandler< MouseWheelEvent >(this, &RichEdit::eventMouseWheel);
 	addEventHandler< PaintEvent >(this, &RichEdit::eventPaint);
 	addEventHandler< SizeEvent >(this, &RichEdit::eventSize);
+	addEventHandler< TimerEvent >(this, &RichEdit::eventTimer);
 
 	// Create scrollbars.
 	m_scrollBarV = new ScrollBar();
@@ -99,6 +101,7 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	m_backgroundAttributes.push_back(bgAttrib);
 
 	setText(text);
+	startTimer(500);
 	return true;
 }
 
@@ -1372,7 +1375,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 	// Formatted text.
 	{
-		bool showCaret = hasFocus();
+		bool showCaret = m_caretBlink && hasFocus();
 
 		canvas.setClipRect(Rect(
 			innerRc.left + m_lineMargin,
@@ -1482,6 +1485,12 @@ void RichEdit::eventSize(SizeEvent* event)
 
 	Rect rcH(Point(0, inner.getHeight() - height), Size(inner.getWidth() - width, height));
 	m_scrollBarH->setRect(rcH);
+}
+
+void RichEdit::eventTimer(TimerEvent* event)
+{
+	m_caretBlink = !m_caretBlink;
+	update();
 }
 
 void RichEdit::eventScroll(ScrollEvent* event)

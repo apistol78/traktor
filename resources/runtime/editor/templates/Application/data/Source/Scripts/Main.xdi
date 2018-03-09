@@ -4,8 +4,14 @@
 	<text>
 	<![CDATA[
 
-function main()
-	print("Hello world")
+Main = Main or class("Main")
+
+function Main:new()
+	print("Main constructor")
+end
+
+function Main:run()
+	print("Main:run")
 end
 
 	]]>

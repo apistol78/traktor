@@ -4,8 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_net_UdpSocket_H
-#define traktor_net_UdpSocket_H
+#ifndef traktor_net_IcmpSocket_H
+#define traktor_net_IcmpSocket_H
 
 #include "Net/Socket.h"
 
@@ -26,15 +26,15 @@ class SocketAddress;
 class SocketAddressIPv4;
 class SocketAddressIPv6;
 
-/*! \brief UDP datagram socket.
+/*! \brief ICMP socket.
  * \ingroup Net
  */
-class T_DLLCLASS UdpSocket : public Socket
+class T_DLLCLASS IcmpSocket : public Socket
 {
 	T_RTTI_CLASS;
 
 public:
-	UdpSocket();
+	IcmpSocket();
 
 	virtual void close() T_OVERRIDE T_FINAL;
 
@@ -63,4 +63,4 @@ public:
 	}
 }
 
-#endif	// traktor_net_UdpSocket_H
+#endif	// traktor_net_IcmpSocket_H

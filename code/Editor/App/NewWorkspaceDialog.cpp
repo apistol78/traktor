@@ -141,13 +141,13 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 
 			Ref< IProcess > process = OS::getInstance().execute(
 #if defined(_WIN64)
-				L"$(TRAKTOR_HOME)/bin/latest/win64/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/template/create-workspace.run",
+				L"$(TRAKTOR_HOME)/bin/latest/win64/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run",
 #elif defined(_WIN32)
-				L"$(TRAKTOR_HOME)/bin/latest/win32/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/template/create-workspace.run",
+				L"$(TRAKTOR_HOME)/bin/latest/win32/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run",
 #elif defined(__APPLE__)
-				L"$(TRAKTOR_HOME)/bin/latest/osx/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/template/create-workspace.run",
+				L"$(TRAKTOR_HOME)/bin/latest/osx/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run",
 #elif defined(__LINUX__)
-				L"$(TRAKTOR_HOME)/bin/latest/linux/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/template/create-workspace.run",
+				L"$(TRAKTOR_HOME)/bin/latest/linux/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run",
 #endif
 				file->getPath().getPathOnly(),
 				env,

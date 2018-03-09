@@ -95,6 +95,8 @@ void dumpStack(lua_State* luaState, OutputStream& os, int32_t base = 1);
 
 int luaPrint(lua_State *L);
 
+int luaSleep(lua_State* L);
+
 	}
 }
 

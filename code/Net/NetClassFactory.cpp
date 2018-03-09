@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/OutputStream.h"
+#include "Net/IcmpSocket.h"
 #include "Net/MulticastUdpSocket.h"
 #include "Net/NetClassFactory.h"
 #include "Net/SocketAddressIPv4.h"
@@ -287,6 +288,16 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	//classSocket->addMethod("recv", &Socket::recv);
 	registrar->registerClass(classSocket);
 
+	Ref< AutoRuntimeClass< IcmpSocket > > classIcmpSocket = new AutoRuntimeClass< IcmpSocket >();
+	classIcmpSocket->addConstructor();
+	//classIcmpSocket->addMethod("bind", &IcmpSocket::bind);
+	//classIcmpSocket->addMethod("bind", &IcmpSocket::bind);
+	//classIcmpSocket->addMethod("connect", &IcmpSocket::connect);
+	//classIcmpSocket->addMethod("connect", &IcmpSocket::connect);
+	//classIcmpSocket->addMethod("sendTo", &IcmpSocket::send);
+	//classIcmpSocket->addMethod("recvFrom", &IcmpSocket::recv);
+	registrar->registerClass(classIcmpSocket);
+
 	Ref< AutoRuntimeClass< TcpSocket > > classTcpSocket = new AutoRuntimeClass< TcpSocket >();
 	classTcpSocket->addConstructor();
 	//classTcpSocket->addMethod("bind", &TcpSocket::bind);
@@ -317,12 +328,19 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classSocketAddress);
 
 	Ref< AutoRuntimeClass< SocketAddressIPv4 > > classSocketAddressIPv4 = new AutoRuntimeClass< SocketAddressIPv4 >();
+	classSocketAddressIPv4->addConstructor< uint16_t >();
+	classSocketAddressIPv4->addConstructor< const std::wstring&, uint16_t >();
 	registrar->registerClass(classSocketAddressIPv4);
 
 	Ref< AutoRuntimeClass< SocketAddressIPv6 > > classSocketAddressIPv6 = new AutoRuntimeClass< SocketAddressIPv6 >();
 	registrar->registerClass(classSocketAddressIPv6);
 
 	Ref< AutoRuntimeClass< SocketSet > > classSocketSet = new AutoRuntimeClass< SocketSet >();
+	classSocketSet->addMethod("add", &SocketSet::add);
+	classSocketSet->addMethod("remove", &SocketSet::remove);
+	classSocketSet->addMethod("count", &SocketSet::count);
+	classSocketSet->addMethod("get", &SocketSet::get);
+	classSocketSet->addMethod("contain", &SocketSet::contain);
 	registrar->registerClass(classSocketSet);
 
 	Ref< AutoRuntimeClass< Url > > classUrl = new AutoRuntimeClass< Url >();
