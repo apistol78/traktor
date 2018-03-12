@@ -56,6 +56,18 @@ public:
 
 	explicit BoxedTypeInfo(const TypeInfo& value);
 
+	std::wstring getName() const;
+
+	int32_t getSize() const;
+
+	int32_t getVersion() const;
+
+	Ref< ITypedObject > createInstance() const;
+
+	static Ref< BoxedTypeInfo > find(const std::wstring& name);
+
+	static Ref< class BoxedRefArray > findAllOf(const BoxedTypeInfo* typeInfo, bool inclusive);
+
 	const TypeInfo& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
@@ -907,17 +919,17 @@ public:
 
 	int32_t size() const;
 
-	void set(int32_t index, Object* object);
+	void set(int32_t index, ITypedObject* object);
 
-	Object* get(int32_t index);
+	ITypedObject* get(int32_t index);
 
-	void push_back(Object* object);
+	void push_back(ITypedObject* object);
 
 	void pop_back();
 
-	Object* front();
+	ITypedObject* front();
 
-	Object* back();
+	ITypedObject* back();
 
 	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
@@ -935,7 +947,7 @@ public:
 	void operator delete (void* ptr);
 
 private:
-	RefArray< Object > m_arr;
+	RefArray< ITypedObject > m_arr;
 };
 
 class T_DLLCLASS BoxedRange : public Boxed
