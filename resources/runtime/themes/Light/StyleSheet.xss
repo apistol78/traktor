@@ -780,8 +780,16 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/SearchWildCard.image</value>
 		</item>
 		<item>
+			<name>Script.Icon.Debugger</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/IconDebugger.image</value>
+		</item>
+		<item>
 			<name>Script.Tool.Debugger</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ToolDebugger.image</value>
+		</item>
+		<item>
+			<name>Script.Icon.Profiler</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/IconProfiler.image</value>
 		</item>
 		<item>
 			<name>Script.Tool.Profiler</name>

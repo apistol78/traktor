@@ -130,7 +130,9 @@ local outputs =
 			{ name = "SearchCaseSensitive", column = 15, row = 6, width = 1, height = 1 },
 			{ name = "SearchWholeWord", column = 16, row = 6, width = 1, height = 1 },
 			{ name = "SearchWildCard", column = 17, row = 6, width = 1, height = 1 },
+			{ name = "IconDebugger", column = 1, row = 36, width = 1, height = 1, base = 64 },
 			{ name = "ToolDebugger", column = 1, row = 36, width = 1, height = 1 },
+			{ name = "IconProfiler", column = 2, row = 36, width = 1, height = 1, base = 64 },
 			{ name = "ToolProfiler", column = 2, row = 36, width = 1, height = 1 },
 		}
 	},
