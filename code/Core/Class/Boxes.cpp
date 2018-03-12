@@ -124,6 +124,44 @@ BoxedTypeInfo::BoxedTypeInfo(const TypeInfo& value)
 {
 }
 
+std::wstring BoxedTypeInfo::getName() const
+{
+	return m_value.getName();
+}
+
+int32_t BoxedTypeInfo::getSize() const
+{
+	return (int32_t)m_value.getSize();
+}
+
+int32_t BoxedTypeInfo::getVersion() const
+{
+	return m_value.getVersion();
+}
+
+Ref< ITypedObject > BoxedTypeInfo::createInstance() const
+{
+	return m_value.createInstance();
+}
+
+Ref< BoxedTypeInfo > BoxedTypeInfo::find(const std::wstring& name)
+{
+	const TypeInfo* type = TypeInfo::find(name);
+	return type != 0 ? new BoxedTypeInfo(*type) : 0;
+}
+
+Ref< BoxedRefArray > BoxedTypeInfo::findAllOf(const BoxedTypeInfo* typeInfo, bool inclusive)
+{
+	std::set< const TypeInfo* > types;
+	typeInfo->unbox().findAllOf(types, inclusive);
+
+	Ref< BoxedRefArray > boxedTypes = new BoxedRefArray();
+	for (std::set< const TypeInfo* >::const_iterator i = types.begin(); i != types.end(); ++i)
+		boxedTypes->push_back(new BoxedTypeInfo(*(*i)));
+	
+	return boxedTypes;
+}
+
 std::wstring BoxedTypeInfo::toString() const
 {
 	return m_value.getName();
@@ -1172,13 +1210,13 @@ int32_t BoxedRefArray::size() const
 	return int32_t(m_arr.size());
 }
 
-void BoxedRefArray::set(int32_t index, Object* object)
+void BoxedRefArray::set(int32_t index, ITypedObject* object)
 {
 	if (index >= 0 && index < int32_t(m_arr.size()))
 		m_arr[index] = object;
 }
 
-Object* BoxedRefArray::get(int32_t index)
+ITypedObject* BoxedRefArray::get(int32_t index)
 {
 	if (index >= 0 && index < int32_t(m_arr.size()))
 		return m_arr[index];
@@ -1186,7 +1224,7 @@ Object* BoxedRefArray::get(int32_t index)
 		return 0;
 }
 
-void BoxedRefArray::push_back(Object* object)
+void BoxedRefArray::push_back(ITypedObject* object)
 {
 	m_arr.push_back(object);
 }
@@ -1196,12 +1234,12 @@ void BoxedRefArray::pop_back()
 	m_arr.pop_back();
 }
 
-Object* BoxedRefArray::front()
+ITypedObject* BoxedRefArray::front()
 {
 	return m_arr.front();
 }
 
-Object* BoxedRefArray::back()
+ITypedObject* BoxedRefArray::back()
 {
 	return m_arr.back();
 }
@@ -1342,6 +1380,15 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< Boxed > > classBoxed = new AutoRuntimeClass< Boxed >();
 	classBoxed->addMethod("toString", &Boxed::toString);
 	registrar->registerClass(classBoxed);
+
+	Ref< AutoRuntimeClass< BoxedTypeInfo > > classBoxedTypeInfo = new AutoRuntimeClass< BoxedTypeInfo >();
+	classBoxedTypeInfo->addProperty("name", &BoxedTypeInfo::getName);
+	classBoxedTypeInfo->addProperty("size", &BoxedTypeInfo::getSize);
+	classBoxedTypeInfo->addProperty("version", &BoxedTypeInfo::getVersion);
+	classBoxedTypeInfo->addMethod("createInstance", &BoxedTypeInfo::createInstance);
+	classBoxedTypeInfo->addStaticMethod("find", &BoxedTypeInfo::find);
+	classBoxedTypeInfo->addStaticMethod("findAllOf", &BoxedTypeInfo::findAllOf);
+	registrar->registerClass(classBoxedTypeInfo);
 
 	Ref< AutoRuntimeClass< BoxedGuid > > classBoxedGuid = new AutoRuntimeClass< BoxedGuid >();
 	classBoxedGuid->addConstructor();

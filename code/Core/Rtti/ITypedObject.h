@@ -138,6 +138,8 @@ namespace traktor
 class T_DLLCLASS ITypedObject : public IRefCount
 {
 public:
+	static const TypeInfo& getClassTypeInfo();
+
 	virtual const TypeInfo& getTypeInfo() const = 0;
 };
 
