@@ -102,7 +102,7 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	))
 		return false;
 
-	//setIcon(ui::Bitmap::load(c_ResourceTraktorSmall, sizeof(c_ResourceTraktorSmall), L"png"));
+	setIcon(new ui::StyleBitmap(L"SolutionBuilder.Icon"));
 
 	addEventHandler< ui::TimerEvent >(this, &SolutionForm::eventTimer);
 	addEventHandler< ui::CloseEvent >(this, &SolutionForm::eventClose);
