@@ -329,6 +329,14 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classVideoLayer);
 
 	Ref< AutoRuntimeClass< WorldLayer > > classWorldLayer = new AutoRuntimeClass< WorldLayer >();
+	classWorldLayer->addProperty< world::IEntitySchema* >("entitySchema", &WorldLayer::getEntitySchema);
+	classWorldLayer->addProperty< render::ImageProcess* >("imageProcess", &WorldLayer::getImageProcess);
+	classWorldLayer->addProperty< const Frustum& >("viewFrustum", &WorldLayer::getViewFrustum);
+	classWorldLayer->addProperty< float >("fieldOfView", &WorldLayer::setFieldOfView, &WorldLayer::getFieldOfView);
+	classWorldLayer->addProperty< float >("alternateTime", &WorldLayer::setAlternateTime, &WorldLayer::getAlternateTime);
+	classWorldLayer->addProperty< float >("feedbackScale", &WorldLayer::setFeedbackScale, &WorldLayer::getFeedbackScale);
+	classWorldLayer->addProperty< const world::Entity* >("camera", &WorldLayer::setCamera, &WorldLayer::getCamera);
+	classWorldLayer->addProperty< const world::Entity* >("listener", &WorldLayer::setListener, &WorldLayer::getListener);
 	classWorldLayer->addMethod("getEntityData", &WorldLayer::getEntityData);
 	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_1);
 	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_2);
@@ -343,27 +351,14 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addMethod("addEntity", &WorldLayer::addEntity);
 	classWorldLayer->addMethod("removeEntity", &WorldLayer::removeEntity);
 	classWorldLayer->addMethod("isEntityAdded", &WorldLayer::isEntityAdded);
-	classWorldLayer->addMethod("getEntitySchema", &WorldLayer::getEntitySchema);
 	classWorldLayer->addMethod("setControllerEnable", &WorldLayer::setControllerEnable);
 	classWorldLayer->addMethod("resetController", &WorldLayer::resetController);
-	classWorldLayer->addMethod("getImageProcess", &WorldLayer::getImageProcess);
-	classWorldLayer->addMethod("getViewFrustum", &WorldLayer::getViewFrustum);
 	classWorldLayer->addMethod("worldToView", &WorldLayer_worldToView);
 	classWorldLayer->addMethod("viewToWorld", &WorldLayer_viewToWorld);
 	classWorldLayer->addMethod("worldToScreen", &WorldLayer_worldToScreen);
 	classWorldLayer->addMethod("viewToScreen", &WorldLayer_viewToScreen);
 	classWorldLayer->addMethod("screenToView", &WorldLayer_screenToView);
 	classWorldLayer->addMethod("screenToWorld", &WorldLayer_screenToWorld);
-	classWorldLayer->addMethod("setFieldOfView", &WorldLayer::setFieldOfView);
-	classWorldLayer->addMethod("getFieldOfView", &WorldLayer::getFieldOfView);
-	classWorldLayer->addMethod("setAlternateTime", &WorldLayer::setAlternateTime);
-	classWorldLayer->addMethod("getAlternateTime", &WorldLayer::getAlternateTime);
-	classWorldLayer->addMethod("setFeedbackScale", &WorldLayer::setFeedbackScale);
-	classWorldLayer->addMethod("getFeedbackScale", &WorldLayer::getFeedbackScale);
-	classWorldLayer->addMethod("setCamera", &WorldLayer::setCamera);
-	classWorldLayer->addMethod("getCamera", &WorldLayer::getCamera);
-	classWorldLayer->addMethod("setListener", &WorldLayer::setListener);
-	classWorldLayer->addMethod("getListener", &WorldLayer::getListener);
 	registrar->registerClass(classWorldLayer);
 
 	Ref< AutoRuntimeClass< StageLoader > > classStageLoader = new AutoRuntimeClass< StageLoader >();
