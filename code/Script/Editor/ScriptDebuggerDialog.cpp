@@ -12,6 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 
@@ -39,6 +40,8 @@ bool ScriptDebuggerDialog::create(ui::Widget* parent)
 {
 	if (!ui::Dialog::create(parent, i18n::Text(L"SCRIPT_DEBUGGER_TOOL"), ui::scaleBySystemDPI(1024), ui::scaleBySystemDPI(800), ui::Dialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"Script.Icon.Debugger"));
 
 	m_tabSessions = new ui::Tab();
 	m_tabSessions->create(this, ui::WsNone);

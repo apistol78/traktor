@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Script/Editor/ScriptProfilerView.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 
@@ -38,6 +39,8 @@ bool ScriptProfilerDialog::create(ui::Widget* parent)
 {
 	if (!ui::Dialog::create(parent, i18n::Text(L"SCRIPT_PROFILER_TOOL"), ui::scaleBySystemDPI(1024), ui::scaleBySystemDPI(800), ui::Dialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"Script.Icon.Profiler"));
 
 	m_tabSessions = new ui::Tab();
 	m_tabSessions->create(this);
