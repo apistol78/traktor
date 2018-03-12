@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Static.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ListBox/ListBox.h"
@@ -46,6 +47,8 @@ bool ExtractSolutionDialog::create(ui::Widget* parent, Solution* solution)
 		new ui::FloodLayout()
 	))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"SolutionBuilder.Icon"));
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(this, true, ui::scaleBySystemDPI(300));

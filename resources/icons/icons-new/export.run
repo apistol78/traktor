@@ -287,6 +287,7 @@ local outputs =
 		path = "../../runtime/themes/%s/Images/SolutionBuilder",
 		resources =
 		{
+			{ name = "Icon", column = 0, row = 40, width = 1, height = 1, base = 64 },
 			{ name = "Solution", column = 0, row = 39, width = 1, height = 1 },
 			{ name = "Project", column = 1, row = 39, width = 1, height = 1 },
 			{ name = "Folders", column = 2, row = 39, width = 2, height = 1 },

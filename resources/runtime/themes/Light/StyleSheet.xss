@@ -1108,6 +1108,10 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Theater/Theater.image</value>
 		</item>
 		<item>
+			<name>SolutionBuilder.Icon</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Icon.image</value>
+		</item>
+		<item>
 			<name>SolutionBuilder.Solution</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Solution.image</value>
 		</item>

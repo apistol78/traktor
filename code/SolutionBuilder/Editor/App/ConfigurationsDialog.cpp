@@ -5,9 +5,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <Ui/Application.h>
-#include <Ui/TableLayout.h>
-#include <Ui/Container.h>
 #include <Ui/Button.h>
+#include <Ui/Container.h>
+#include <Ui/StyleBitmap.h>
+#include <Ui/TableLayout.h>
 #include <Ui/Custom/InputDialog.h>
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
@@ -32,6 +33,8 @@ bool ConfigurationsDialog::create(ui::Widget* parent, Solution* solution)
 		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"SolutionBuilder.Icon"));
 
 	m_listConfigurations = new ui::custom::ListBox();
 	m_listConfigurations->create(this, ui::custom::ListBox::WsSingle);

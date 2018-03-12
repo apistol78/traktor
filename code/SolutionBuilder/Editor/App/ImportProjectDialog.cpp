@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <Ui/Application.h>
+#include <Ui/StyleBitmap.h>
 #include <Ui/TableLayout.h>
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
@@ -28,6 +29,8 @@ bool ImportProjectDialog::create(ui::Widget* parent, const std::wstring& title, 
 		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"SolutionBuilder.Icon"));
 
 	m_listProjects = new ui::custom::ListBox();
 	m_listProjects->create(this, ui::custom::ListBox::WsExtended | ui::custom::ListBox::WsSort);
