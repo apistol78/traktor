@@ -1,73 +1,25 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.i18n.Dictionary">
   <map>
-    <item>
-      <first>DICTIONARY_EDITOR_IMPORT</first>
-      <second>Import...</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_EXPORT</first>
-      <second>Export...</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_TRANSLATE</first>
-      <second>Translate...</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_COPY_UNIQUE_CHARS</first>
-      <second>Copy unique characters...</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_SELECT_REFERENCE_DICTIONARY</first>
-      <second>Select reference dictionary...</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_COLUMN_ID</first>
-      <second>Id</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_COLUMN_TEXT</first>
-      <second>Text</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_COLUMN_REFERENCE</first>
-      <second>Reference</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_COLUMN_ADD</first>
-      <second>(Add...)</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_IMPORT_DICTIONARY_DIALOG</first>
-      <second>Import dictionary...</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_EXPORT_DICTIONARY_DIALOG</first>
-      <second>Export dictionary...</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_FROM_LANGUAGE</first>
-      <second>From language</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_TO_LANGUAGE</first>
-      <second>To language</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_TRANSLATE</first>
-      <second>Translate</second>
-    </item>
-    <item>
-      <first>DICTIONARY_EDITOR_AUTO_TRANSLATE_WORDS</first>
-      <second>Automatic translate word(s)</second>
-    </item>
     <item>
       <first>AMALGAM_LANGUAGE</first>
       <second>Language</second>
     </item>
     <item>
+      <first>AMALGAM_LANGUAGE_CHINESE</first>
+      <second>Chinese</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_CZECH</first>
+      <second>Czech</second>
+    </item>
+    <item>
       <first>AMALGAM_LANGUAGE_DEFAULT</first>
       <second>(Default)</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_DUTCH</first>
+      <second>Dutch</second>
     </item>
     <item>
       <first>AMALGAM_LANGUAGE_ENGLISH</first>
@@ -82,10 +34,6 @@
       <second>German</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_DUTCH</first>
-      <second>Dutch</second>
-    </item>
-    <item>
       <first>AMALGAM_LANGUAGE_ITALIAN</first>
       <second>Italian</second>
     </item>
@@ -98,14 +46,6 @@
       <second>Korean</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_SPANISH</first>
-      <second>Spanish</second>
-    </item>
-    <item>
-      <first>AMALGAM_LANGUAGE_RUSSIAN</first>
-      <second>Russian</second>
-    </item>
-    <item>
       <first>AMALGAM_LANGUAGE_POLISH</first>
       <second>Polish</second>
     </item>
@@ -114,36 +54,20 @@
       <second>Portuguese</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_CHINESE</first>
-      <second>Chinese</second>
-    </item>
-    <item>
-      <first>AMALGAM_LANGUAGE_SWEDISH</first>
-      <second>Swedish</second>
-    </item>
-    <item>
       <first>AMALGAM_LANGUAGE_ROMANIAN</first>
       <second>Romanian</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_CZECH</first>
-      <second>Czech</second>
-    </item>    
-    <item>
-      <first>AMALGAM_TARGETS</first>
-      <second>Targets</second>
+      <first>AMALGAM_LANGUAGE_RUSSIAN</first>
+      <second>Russian</second>
     </item>
     <item>
-      <first>AMALGAM_TWEAKS</first>
-      <second>Tweaks</second>
+      <first>AMALGAM_LANGUAGE_SPANISH</first>
+      <second>Spanish</second>
     </item>
     <item>
-      <first>AMALGAM_TWEAKS_TOOLTIP</first>
-      <second>Runtime tweaks</second>
-    </item>
-    <item>
-      <first>AMALGAM_STATE_IDLE</first>
-      <second></second>
+      <first>AMALGAM_LANGUAGE_SWEDISH</first>
+      <second>Swedish</second>
     </item>
     <item>
       <first>AMALGAM_STATE_BUILDING</first>
@@ -152,6 +76,10 @@
     <item>
       <first>AMALGAM_STATE_DEPLOYING</first>
       <second>Deploying...</second>
+    </item>
+    <item>
+      <first>AMALGAM_STATE_IDLE</first>
+      <second/>
     </item>
     <item>
       <first>AMALGAM_STATE_LAUNCHING</first>
@@ -164,6 +92,18 @@
     <item>
       <first>AMALGAM_STATE_PENDING</first>
       <second>Pending...</second>
+    </item>
+    <item>
+      <first>AMALGAM_TARGETS</first>
+      <second>Targets</second>
+    </item>
+    <item>
+      <first>AMALGAM_TWEAKS</first>
+      <second>Tweaks</second>
+    </item>
+    <item>
+      <first>AMALGAM_TWEAKS_TOOLTIP</first>
+      <second>Runtime tweaks</second>
     </item>
     <item>
       <first>ANIMATION_EDITOR_BROWSE_SKELETON</first>
@@ -290,192 +230,84 @@
       <second>Crop heightfield...</second>
     </item>
     <item>
-      <first>CROP_HEIGHTFIELD_WIZARDTOOL_TITLE</first>
-      <second>Crop heightfield</second>
-    </item>
-    <item>
       <first>CROP_HEIGHTFIELD_WIZARDTOOL_MESSAGE</first>
       <second>Enter crop rectangle dimensions</second>
+    </item>
+    <item>
+      <first>CROP_HEIGHTFIELD_WIZARDTOOL_TITLE</first>
+      <second>Crop heightfield</second>
     </item>
     <item>
       <first>CROP_TERRAIN_WIZARDTOOL_DESCRIPTION</first>
       <second>Crop terrain maps...</second>
     </item>
     <item>
-      <first>CROP_TERRAIN_WIZARDTOOL_TITLE</first>
-      <second>Crop terrain maps</second>
-    </item>
-    <item>
       <first>CROP_TERRAIN_WIZARDTOOL_MESSAGE</first>
       <second>Enter crop rectangle dimensions</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_EDITOR_ASSETS</first>
-      <second>Assets</second>
+      <first>CROP_TERRAIN_WIZARDTOOL_TITLE</first>
+      <second>Crop terrain maps</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_SKELETON</first>
-      <second>Animation skeletons</second>
+      <first>DATABASE_BUILD</first>
+      <second>Build</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_ANIMATION</first>
-      <second>Animations</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_STATEGRAPH</first>
-      <second>Animation state graphs</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_RENDER_SHADERGRAPH</first>
-      <second>Shaders</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_GAMEENTITYDATA</first>
-      <second>Game entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_STAGEDATA</first>
-      <second>Stages</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_GROUPENTITYDATA</first>
-      <second>Group entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_POSTPROCESSSETTINGS</first>
-      <second>Post processes</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_MESH_MESHENTITYDATA</first>
-      <second>Mesh entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_COMPONENTENTITYDATA</first>
-      <second>Component entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_EFFECTDATA</first>
-      <second>Effects</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_WEATHER_SKYENTITYDATA</first>
-      <second>Sky entities</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_AI_NAVMESHASSET</first>
+      <second>AI navigation meshes</second>
     </item>
     <item>
       <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_FEATURE</first>
       <second>Target features</second>
     </item>
     <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_GAMEENTITYDATA</first>
+      <second>Game entities</second>
+    </item>
+    <item>
       <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_PLATFORM</first>
       <second>Target platforms</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_STAGEDATA</first>
+      <second>Stages</second>
     </item>
     <item>
       <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_TARGET</first>
       <second>Targets</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_SCRIPT_SCRIPT</first>
-      <second>Scripts</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_ANIMATEDMESHENTITYDATA</first>
+      <second>Animated mesh entities</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_SCENE_SCENEASSET</first>
-      <second>Scenes</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_ANIMATION</first>
+      <second>Animations</second>
     </item>
     <item>
       <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_ANIMATIONASSET</first>
       <second>Animation assets</second>
     </item>
     <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_SKELETON</first>
+      <second>Animation skeletons</second>
+    </item>
+    <item>
       <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_SKELETONASSET</first>
       <second>Skeleton assets</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_MESH_MESHASSET</first>
-      <second>Mesh assets</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_STATEGRAPH</first>
+      <second>Animation state graphs</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_RENDER_BFNTEXTUREASSET</first>
-      <second>BFN texture assets</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_RENDER_TEXTUREASSET</first>
-      <second>Texture assets</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_EDITOR_ASSETS</first>
+      <second>Assets</second>
     </item>
     <item>
       <first>DATABASE_CATEGORY_TRAKTOR_FLASH_FLASHMOVIEASSET</first>
       <second>Flash assets</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_INPUT_INPUTMAPPINGASSET</first>
-      <second>Input assets</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_ONLINE_GCGAMECONFIGURATION</first>
-      <second>GameCenter provider</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_ONLINE_LOCALGAMECONFIGURATION</first>
-      <second>Local provider</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_RESOURCE_RESOURCEBUNDLEASSET</first>
-      <second>Resource bundles</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_POINTSETASSET</first>
-      <second>Effect pointset assets</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_SOUND_SOUNDASSET</first>
-      <second>Sound assets</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_SOUND_SOUNDCATEGORY</first>
-      <second>Sound categories</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_SOUND_BANKASSET</first>
-      <second>Sound banks</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_I18N_DICTIONARY</first>
-      <second>Language dictionaries</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_MESH_LODMESHENTITYDATA</first>
-      <second>LOD mesh entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_ENTITYEVENTSETDATA</first>
-      <second>Entity event sets</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_DECALENTITYDATA</first>
-      <second>Decal entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_SCENE_SCENEPERMUTATIONASSET</first>
-      <second>Scene permutations</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_PHYSICS_MESHASSET</first>
-      <second>Physics meshes</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_PHYSICS_RIGIDENTITYDATA</first>
-      <second>Rigid physics entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_ANIMATEDMESHENTITYDATA</first>
-      <second>Animated mesh entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_EFFECTENTITYDATA</first>
-      <second>Effect entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_AI_NAVMESHASSET</first>
-      <second>AI navigation meshes</second>
     </item>
     <item>
       <first>DATABASE_CATEGORY_TRAKTOR_HF_HEIGHTFIELDASSET</first>
@@ -490,48 +322,132 @@
       <second>Heightfield occlusion textures</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_TERRAIN_TERRAINASSET</first>
-      <second>Terrain assets</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_I18N_DICTIONARY</first>
+      <second>Language dictionaries</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_INPUT_INPUTMAPPINGASSET</first>
+      <second>Input assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_MESH_LODMESHENTITYDATA</first>
+      <second>LOD mesh entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_MESH_MESHASSET</first>
+      <second>Mesh assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_MESH_MESHENTITYDATA</first>
+      <second>Mesh entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ONLINE_GCGAMECONFIGURATION</first>
+      <second>GameCenter provider</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ONLINE_LOCALGAMECONFIGURATION</first>
+      <second>Local provider</second>
     </item>
     <item>
       <first>DATABASE_CATEGORY_TRAKTOR_ONLINE_STEAMGAMECONFIGURATION</first>
       <second>Steam game configurations</second>
     </item>
     <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_PHYSICS_MESHASSET</first>
+      <second>Physics meshes</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_PHYSICS_RIGIDENTITYDATA</first>
+      <second>Rigid physics entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RENDER_BFNTEXTUREASSET</first>
+      <second>BFN texture assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RENDER_SHADERGRAPH</first>
+      <second>Shaders</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RENDER_TEXTUREASSET</first>
+      <second>Texture assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RESOURCE_RESOURCEBUNDLEASSET</first>
+      <second>Resource bundles</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SCENE_SCENEASSET</first>
+      <second>Scenes</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SCENE_SCENEPERMUTATIONASSET</first>
+      <second>Scene permutations</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SCRIPT_SCRIPT</first>
+      <second>Scripts</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SOUND_BANKASSET</first>
+      <second>Sound banks</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SOUND_SOUNDASSET</first>
+      <second>Sound assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SOUND_SOUNDCATEGORY</first>
+      <second>Sound categories</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_EFFECTDATA</first>
+      <second>Effects</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_EFFECTENTITYDATA</first>
+      <second>Effect entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_POINTSETASSET</first>
+      <second>Effect pointset assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_TERRAIN_TERRAINASSET</first>
+      <second>Terrain assets</second>
+    </item>
+    <item>
       <first>DATABASE_CATEGORY_TRAKTOR_VIDEO_VIDEOASSET</first>
       <second>Video assets</second>
     </item>
     <item>
-      <first>DATABASE_VIEW_MODE</first>
-      <second>View mode</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_WEATHER_SKYENTITYDATA</first>
+      <second>Sky entities</second>
     </item>
     <item>
-      <first>DATABASE_VIEW_MODE_HIERARCHY</first>
-      <second>Hierarchy</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_COMPONENTENTITYDATA</first>
+      <second>Component entities</second>
     </item>
     <item>
-      <first>DATABASE_VIEW_MODE_CATEGORY</first>
-      <second>Category</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_DECALENTITYDATA</first>
+      <second>Decal entities</second>
     </item>
     <item>
-      <first>DATABASE_VIEW_MODE_SPLIT</first>
-      <second>Split</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_ENTITYEVENTSETDATA</first>
+      <second>Entity event sets</second>
     </item>
     <item>
-      <first>DATABASE_BUILD</first>
-      <second>Build</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_GROUPENTITYDATA</first>
+      <second>Group entities</second>
     </item>
     <item>
-      <first>DATABASE_DEFAULT_EDIT_INSTANCE</first>
-      <second>Edit instance with default editor...</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_POSTPROCESSSETTINGS</first>
+      <second>Post processes</second>
     </item>
     <item>
       <first>DATABASE_CLONE</first>
       <second>Clone</second>
-    </item>
-    <item>
-      <first>DATABASE_DELETE</first>
-      <second>Delete</second>
     </item>
     <item>
       <first>DATABASE_COPY</first>
@@ -544,10 +460,14 @@
     <item>
       <first>DATABASE_COPY_INSTANCE_ID</first>
       <second>Copy instance id</second>
-    </item>    
+    </item>
     <item>
-      <first>DATABASE_PASTE</first>
-      <second>Paste</second>
+      <first>DATABASE_DEFAULT_EDIT_INSTANCE</first>
+      <second>Edit instance with default editor...</second>
+    </item>
+    <item>
+      <first>DATABASE_DELETE</first>
+      <second>Delete</second>
     </item>
     <item>
       <first>DATABASE_DELETE_ARE_YOU_SURE</first>
@@ -574,10 +494,6 @@
       <second>Favorite entire group</second>
     </item>
     <item>
-      <first>DATABASE_UNFAVORITE_ENTIRE_GROUP</first>
-      <second>Remove entire group from favorites</second>
-    </item>
-    <item>
       <first>DATABASE_FILTER</first>
       <second>Filter</second>
     </item>
@@ -587,20 +503,20 @@
     </item>
     <item>
       <first>DATABASE_FILTER_DEPENDENCIES</first>
-      <second>Filter instance's dependencies</second>
+      <second>Filter instance&apos;s dependencies</second>
     </item>
     <item>
-      <first>DATABASE_FILTER_TYPE</first>
-      <second>Filter instance's type</second>
+      <first>DATABASE_FILTER_SHOW_FAVORITES</first>
+      <second>Show favorites</second>
     </item>
     <item>
       <first>DATABASE_FILTER_SHOW_FILTERED</first>
       <second>Show filtered</second>
     </item>
     <item>
-      <first>DATABASE_FILTER_SHOW_FAVORITES</first>
-      <second>Show favorites</second>
-    </item>    
+      <first>DATABASE_FILTER_TYPE</first>
+      <second>Filter instance&apos;s type</second>
+    </item>
     <item>
       <first>DATABASE_IMPORT</first>
       <second>Import</second>
@@ -618,20 +534,20 @@
       <second>Importing</second>
     </item>
     <item>
-      <first>DATABASE_LOADING_MESSAGE</first>
-      <second>Loading database...</second>
-    </item>
-    <item>
-      <first>DATABASE_LOADING_TITLE</first>
-      <second>Loading</second>
-    </item>
-    <item>
       <first>DATABASE_INSTANCE_NAME</first>
       <second>Name</second>
     </item>
     <item>
       <first>DATABASE_INSTANCE_TYPE</first>
       <second>Type</second>
+    </item>
+    <item>
+      <first>DATABASE_LOADING_MESSAGE</first>
+      <second>Loading database...</second>
+    </item>
+    <item>
+      <first>DATABASE_LOADING_TITLE</first>
+      <second>Loading</second>
     </item>
     <item>
       <first>DATABASE_NEW_GROUP</first>
@@ -648,6 +564,10 @@
     <item>
       <first>DATABASE_OPEN_DIALOG_TITLE</first>
       <second>Choose databas</second>
+    </item>
+    <item>
+      <first>DATABASE_PASTE</first>
+      <second>Paste</second>
     </item>
     <item>
       <first>DATABASE_REBUILD</first>
@@ -670,96 +590,96 @@
       <second>System</second>
     </item>
     <item>
+      <first>DATABASE_TOGGLE_AS_FAVORITE</first>
+      <second>Toggle favorite</second>
+    </item>
+    <item>
       <first>DATABASE_TOGGLE_AS_ROOT</first>
       <second>Toggle root</second>
     </item>
     <item>
-      <first>DATABASE_TOGGLE_AS_FAVORITE</first>
-      <second>Toggle favorite</second>
-    </item>    
+      <first>DATABASE_UNFAVORITE_ENTIRE_GROUP</first>
+      <second>Remove entire group from favorites</second>
+    </item>
     <item>
       <first>DATABASE_USER</first>
       <second>User</second>
+    </item>
+    <item>
+      <first>DATABASE_VIEW_MODE</first>
+      <second>View mode</second>
+    </item>
+    <item>
+      <first>DATABASE_VIEW_MODE_CATEGORY</first>
+      <second>Category</second>
+    </item>
+    <item>
+      <first>DATABASE_VIEW_MODE_HIERARCHY</first>
+      <second>Hierarchy</second>
+    </item>
+    <item>
+      <first>DATABASE_VIEW_MODE_SPLIT</first>
+      <second>Split</second>
     </item>
     <item>
       <first>DATABASE_WIZARDS</first>
       <second>Wizards</second>
     </item>
     <item>
-      <first>EDITOR_HOME</first>
-      <second>Home</second>
+      <first>DICTIONARY_EDITOR_AUTO_TRANSLATE_WORDS</first>
+      <second>Automatic translate word(s)</second>
     </item>
     <item>
-      <first>MENU_VIEW_HOME</first>
-      <second>Home</second>
-    </item>
-	<item>
-		<first>EDITOR_HTTP_GET</first>
-		<second>Http GET</second>
-	</item>
-	<item>
-		<first>EDITOR_HTTP_GET_URL</first>
-		<second>URL</second>
-	</item>
-	<item>
-		<first>EDITOR_HTTP_GET_URL_CAPTION</first>
-		<second>Enter URL</second>
-	<item>
-	<item>
-		<first>EDITOR_HTTP_GET_URL_MESSAGE</first>
-		<second>Enter URL</second>
-	</item>
-	<item>
-		<first>EDITOR_HTTP_GET_SAVE_AS</first>
-		<second>Save file as</second>
-	</item>
-    <item>
-      <first>EDITOR_QUICK_OPEN_TITLE</first>
-      <second>Quick open</second>
+      <first>DICTIONARY_EDITOR_COLUMN_ADD</first>
+      <second>(Add...)</second>
     </item>
     <item>
-      <first>EDITOR_QUICK_OPEN_COLUMN_NAME</first>
-      <second>Name</second>
+      <first>DICTIONARY_EDITOR_COLUMN_ID</first>
+      <second>Id</second>
     </item>
     <item>
-      <first>EDITOR_QUICK_OPEN_COLUMN_PATH</first>
-      <second>Path</second>
+      <first>DICTIONARY_EDITOR_COLUMN_REFERENCE</first>
+      <second>Reference</second>
     </item>
     <item>
-      <first>EDITOR_WAIT_BUILDING_TITLE</first>
-      <second>Building resources</second>
+      <first>DICTIONARY_EDITOR_COLUMN_TEXT</first>
+      <second>Text</second>
     </item>
     <item>
-      <first>EDITOR_WAIT_BUILDING_MESSAGE</first>
-      <second>Building editor resources...</second>
+      <first>DICTIONARY_EDITOR_COPY_UNIQUE_CHARS</first>
+      <second>Copy unique characters...</second>
     </item>
     <item>
-      <first>EDITOR_WAIT_OPENING_WORKSPACE_TITLE</first>
-      <second>Opening workspace</second>
+      <first>DICTIONARY_EDITOR_EXPORT</first>
+      <second>Export...</second>
     </item>
     <item>
-      <first>EDITOR_WAIT_OPENING_WORKSPACE_MESSAGE</first>
-      <second>Opening workspace...</second>
+      <first>DICTIONARY_EDITOR_EXPORT_DICTIONARY_DIALOG</first>
+      <second>Export dictionary...</second>
     </item>
     <item>
-      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_0</first>
-      <second>Workspace settings</second>
+      <first>DICTIONARY_EDITOR_FROM_LANGUAGE</first>
+      <second>From language</second>
     </item>
     <item>
-      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_100</first>
-      <second>Workspace settings</second>
+      <first>DICTIONARY_EDITOR_IMPORT</first>
+      <second>Import...</second>
     </item>
     <item>
-      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_200</first>
-      <second>Source database</second>
+      <first>DICTIONARY_EDITOR_IMPORT_DICTIONARY_DIALOG</first>
+      <second>Import dictionary...</second>
     </item>
     <item>
-      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_600</first>
-      <second>Output database</second>
+      <first>DICTIONARY_EDITOR_SELECT_REFERENCE_DICTIONARY</first>
+      <second>Select reference dictionary...</second>
     </item>
     <item>
-      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_1000</first>
-      <second>Done</second>
+      <first>DICTIONARY_EDITOR_TO_LANGUAGE</first>
+      <second>To language</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_TRANSLATE</first>
+      <second>Translate</second>
     </item>
     <item>
       <first>EDITOR_ABOUT_TITLE</first>
@@ -784,17 +704,106 @@
     <item>
       <first>EDITOR_DELETE_EMPTY_GROUPS</first>
       <second>Delete empty database groups</second>
-    <item>
-      <first>EDITOR_OPEN_PROJECT</first>
-      <second>Open project</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_ADD_MODULE</first>
-      <second>Add module...</second>
+      <first>EDITOR_HOME</first>
+      <second>Home</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_ADD_DEPENDENT_TITLE</first>
-      <second>Add module...</second>
+      <first>EDITOR_HTTP_GET</first>
+      <second>Http GET</second>
+    </item>
+    <item>
+      <first>EDITOR_HTTP_GET_SAVE_AS</first>
+      <second>Save file as</second>
+    </item>
+    <item>
+      <first>EDITOR_HTTP_GET_URL</first>
+      <second>URL</second>
+    </item>
+    <item>
+      <first>EDITOR_HTTP_GET_URL_CAPTION</first>
+      <second>Enter URL</second>
+    </item>
+    <item>
+      <first>EDITOR_NEW_WORKSPACE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>EDITOR_NEW_WORKSPACE_NAME_DEFAULT</first>
+      <second>Unnamed</second>
+    </item>
+    <item>
+      <first>EDITOR_NEW_WORKSPACE_PATH</first>
+      <second>Output path</second>
+    </item>
+    <item>
+      <first>EDITOR_NEW_WORKSPACE_TITLE</first>
+      <second>New workspace</second>
+    </item>
+    <item>
+      <first>EDITOR_QUICK_OPEN_COLUMN_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>EDITOR_QUICK_OPEN_COLUMN_PATH</first>
+      <second>Path</second>
+    </item>
+    <item>
+      <first>EDITOR_QUICK_OPEN_TITLE</first>
+      <second>Quick open</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL</first>
+      <second>Search in database</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_CASE_SENSITIVE</first>
+      <second>Case sensitive</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_FIND</first>
+      <second>Find</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_HIGHLIGHT_INSTANCE</first>
+      <second>Find in database view</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_INSTANCE</first>
+      <second>Instance</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_MEMBER</first>
+      <second>Member</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_OPEN_INSTANCE</first>
+      <second>Open...</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_REGEXP</first>
+      <second>Regular expression</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_SAVE_AS</first>
+      <second>Save result as CSV...</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_SAVE_AS_TITLE</first>
+      <second>Save result as</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_TITLE</first>
+      <second>Search</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_TYPE</first>
+      <second>Type</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_VALUE</first>
+      <second>Value</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_ADD_DEPENDENT_MESSAGE</first>
@@ -803,6 +812,14 @@
     <item>
       <first>EDITOR_SETTINGS_ADD_DEPENDENT_NAME</first>
       <second>Name</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_ADD_DEPENDENT_TITLE</first>
+      <second>Add module...</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_ADD_MODULE</first>
+      <second>Add module...</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_ASSET_PATH</first>
@@ -817,21 +834,21 @@
       <second>Auto-save opened instances before build</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_BUILD_AT_EDIT_INSTANCE</first>
-      <second>Build asset before editing</second>
+      <first>EDITOR_SETTINGS_BUILD_AFTER_BROWSE_INSTANCE</first>
+      <second>Build after browe instance</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_BUILD_WHEN_SOURCE_MODIFIED</first>
-      <second>Build when source modified</second>
+      <first>EDITOR_SETTINGS_BUILD_AT_EDIT_INSTANCE</first>
+      <second>Build asset before editing</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_BUILD_WHEN_ASSET_MODIFIED</first>
       <second>Build when asset modified</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_BUILD_AFTER_BROWSE_INSTANCE</first>
-      <second>Build after browe instance</second>
-    </item>    
+      <first>EDITOR_SETTINGS_BUILD_WHEN_SOURCE_MODIFIED</first>
+      <second>Build when source modified</second>
+    </item>
     <item>
       <first>EDITOR_SETTINGS_COLOR</first>
       <second>Colors</second>
@@ -841,16 +858,8 @@
       <second>Background</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_COLOR_GRID</first>
-      <second>Grid</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_COLOR_BONE_WIRE</first>
-      <second>Bones</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_COLOR_BONE_WIRE_SEL</first>
-      <second>Bones (Selected)</second>
+      <first>EDITOR_SETTINGS_COLOR_BBOX_FACE_SEL</first>
+      <second>Bounding box (Selected face)</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_COLOR_BBOX_WIRE</first>
@@ -861,20 +870,28 @@
       <second>Bounding box (Selected)</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_COLOR_BBOX_FACE_SEL</first>
-      <second>Bounding box (Selected face)</second>
+      <first>EDITOR_SETTINGS_COLOR_BONE_WIRE</first>
+      <second>Bones</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_COLOR_SNAP_POINTS</first>
-      <second>Snap points</second>
+      <first>EDITOR_SETTINGS_COLOR_BONE_WIRE_SEL</first>
+      <second>Bones (Selected)</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_CAMERA_WIRE</first>
+      <second>Camera symbol</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_GRID</first>
+      <second>Grid</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_COLOR_REFERENCE_EDGES</first>
       <second>Reference edges</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_COLOR_CAMERA_WIRE</first>
-      <second>Camera symbol</second>
+      <first>EDITOR_SETTINGS_COLOR_SNAP_POINTS</first>
+      <second>Snap points</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_COMMAND</first>
@@ -885,90 +902,6 @@
       <second>Shader compiler</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_EDITOR_FONT</first>
-      <second>Font</second>
-    </item>    
-    <item>
-      <first>EDITOR_SETTINGS_HOME_URL</first>
-      <second>Home URL</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_OPEN_LAST_PROJECT</first>
-      <second>Open last project at startup</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_PROPERTY_HELP_VISIBLE</first>
-      <second>Help section visible in property view</second>
-    </item>
-    <item>
-    	<first>EDITOR_SETTINGS_RESET_ALL_SHORTCUTS</first>
-    	<second>Reset all shortcuts</second>
-    </item>
-    <item>
-    	<first>EDITOR_SETTINGS_RESET_MODULES</first>
-    	<second>Reset all modules</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_SOURCE_DATABASE</first>
-      <second>Source database</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_STYLESHEET</first>
-      <second>Style sheet</second>
-    </item>    
-    <item>
-    	<first>EDITOR_SETTINGS_SYSTEM_ROOT</first>
-    	<second>System root</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_OUTPUT_DATABASE</first>
-      <second>Output database</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_PIPELINE</first>
-      <second>Pipeline</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
-      <second>Use multiple build threads</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_PIPELINE_BUILD_DISTRIBUTED</first>
-      <second>Use distributed build</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_PIPELINE_DEPENDS_THREADS</first>
-      <second>Use multiple threads for scanning dependencies</second>
-    </item>    
-    <item>
-      <first>EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED</first>
-      <second>Use memcached</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_PIPELINE_ENABLE_FILE_CACHE</first>
-      <second>Use file cache</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_PIPELINE_CACHE_READ</first>
-      <second>Read access</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_PIPELINE_CACHE_WRITE</first>
-      <second>Write access</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_PIPELINE_USE_DEPENDENCY_CACHE</first>
-      <second>Use dependency cache</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_SHORTCUT</first>
-      <second>Shortcut</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED</first>
-      <second>(Not assigned)</second>
-    </item>
-    <item>
       <first>EDITOR_SETTINGS_DEPENDENT_MODULES</first>
       <second>Modules</second>
     </item>
@@ -977,8 +910,16 @@
       <second>Dictionary</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_EDITOR_FONT</first>
+      <second>Font</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_GENERAL</first>
       <second>General</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_HOME_URL</first>
+      <second>Home URL</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_MODULES</first>
@@ -993,76 +934,84 @@
       <second>Open instances at startup</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_RENDERER</first>
-      <second>Renderer</second>
+      <first>EDITOR_SETTINGS_OPEN_LAST_PROJECT</first>
+      <second>Open last project at startup</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_RENDERER_TYPE</first>
-      <second>Renderer</second>
+      <first>EDITOR_SETTINGS_OUTPUT_DATABASE</first>
+      <second>Output database</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_RENDERER_MIPBIAS</first>
-      <second>Mip-map bias</second>
+      <first>EDITOR_SETTINGS_PIPELINE</first>
+      <second>Pipeline</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_RENDERER_MAX_ANISOTROPY</first>
-      <second>Max anisotropy</second>
+      <first>EDITOR_SETTINGS_PIPELINE_BUILD_DISTRIBUTED</first>
+      <second>Use distributed build</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_RENDERER_MULTISAMPLE</first>
-      <second>Multisample</second>
+      <first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
+      <second>Use multiple build threads</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_CACHE_READ</first>
+      <second>Read access</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_CACHE_WRITE</first>
+      <second>Write access</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_DEPENDS_THREADS</first>
+      <second>Use multiple threads for scanning dependencies</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_ENABLE_FILE_CACHE</first>
+      <second>Use file cache</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED</first>
+      <second>Use memcached</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_USE_DEPENDENCY_CACHE</first>
+      <second>Use dependency cache</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PROPERTY_HELP_VISIBLE</first>
+      <second>Help section visible in property view</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_REMOVE_MODULE</first>
       <second>Remove module</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_SOUND</first>
-      <second>Sound</second>
+      <first>EDITOR_SETTINGS_RENDERER</first>
+      <second>Renderer</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_SOUND_DRIVER_TYPE</first>
-      <second>Driver</second>
+      <first>EDITOR_SETTINGS_RENDERER_MAX_ANISOTROPY</first>
+      <second>Max anisotropy</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_SOUND_VIRTUAL_CHANNELS</first>
-      <second># virtual channels</second>
+      <first>EDITOR_SETTINGS_RENDERER_MIPBIAS</first>
+      <second>Mip-map bias</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_SOUND_SAMPLE_RATE</first>
-      <second>Sample rate</second>
+      <first>EDITOR_SETTINGS_RENDERER_MULTISAMPLE</first>
+      <second>Multisample</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_SOUND_BITS_PER_SAMPLE</first>
-      <second>Resolution</second>
+      <first>EDITOR_SETTINGS_RENDERER_TYPE</first>
+      <second>Renderer</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_SOUND_HW_CHANNELS</first>
-      <second>Output channels</second>
+      <first>EDITOR_SETTINGS_RESET_ALL_SHORTCUTS</first>
+      <second>Reset all shortcuts</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_SOUND_FRAME_SAMPLES</first>
-      <second># samples per frame</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_SOUND_MIXER_FRAMES</first>
-      <second># mixer frames</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_SHORTCUTS</first>
-      <second>Shortcuts</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_TITLE</first>
-      <second>Settings</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_STYLESHEET_LIGHT</first>
-      <second>Light</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_STYLESHEET_DARK</first>
-      <second>Dark</second>
+      <first>EDITOR_SETTINGS_RESET_MODULES</first>
+      <second>Reset all modules</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_SCRIPT</first>
@@ -1077,80 +1026,124 @@
       <second>Auto open and navigate through debugged script</second>
     </item>
     <item>
-      <first>EDITOR_WORKSPACE_TITLE</first>
-      <second>Workspace</second>
+      <first>EDITOR_SETTINGS_SHORTCUT</first>
+      <second>Shortcut</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL</first>
-      <second>Search in database</second>
+      <first>EDITOR_SETTINGS_SHORTCUTS</first>
+      <second>Shortcuts</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL_TITLE</first>
-      <second>Search</second>
+      <first>EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED</first>
+      <second>(Not assigned)</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL_CASE_SENSITIVE</first>
-      <second>Case sensitive</second>
+      <first>EDITOR_SETTINGS_SOUND</first>
+      <second>Sound</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL_FIND</first>
-      <second>Find</second>
+      <first>EDITOR_SETTINGS_SOUND_BITS_PER_SAMPLE</first>
+      <second>Resolution</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL_INSTANCE</first>
-      <second>Instance</second>
+      <first>EDITOR_SETTINGS_SOUND_DRIVER_TYPE</first>
+      <second>Driver</second>
     </item>
     <item>
-    	<first>EDITOR_SEARCH_TOOL_REGEXP</first>
-    	<second>Regular expression</second>
+      <first>EDITOR_SETTINGS_SOUND_FRAME_SAMPLES</first>
+      <second># samples per frame</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL_TYPE</first>
-      <second>Type</second>
+      <first>EDITOR_SETTINGS_SOUND_HW_CHANNELS</first>
+      <second>Output channels</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL_MEMBER</first>
-      <second>Member</second>
+      <first>EDITOR_SETTINGS_SOUND_MIXER_FRAMES</first>
+      <second># mixer frames</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL_VALUE</first>
-      <second>Value</second>
+      <first>EDITOR_SETTINGS_SOUND_SAMPLE_RATE</first>
+      <second>Sample rate</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL_OPEN_INSTANCE</first>
-      <second>Open...</second>
+      <first>EDITOR_SETTINGS_SOUND_VIRTUAL_CHANNELS</first>
+      <second># virtual channels</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL_HIGHLIGHT_INSTANCE</first>
-      <second>Find in database view</second>
+      <first>EDITOR_SETTINGS_SOURCE_DATABASE</first>
+      <second>Source database</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL_SAVE_AS</first>
-      <second>Save result as CSV...</second>
+      <first>EDITOR_SETTINGS_STYLESHEET</first>
+      <second>Style sheet</second>
     </item>
     <item>
-      <first>EDITOR_SEARCH_TOOL_SAVE_AS_TITLE</first>
-      <second>Save result as</second>
+      <first>EDITOR_SETTINGS_STYLESHEET_DARK</first>
+      <second>Dark</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_STYLESHEET_LIGHT</first>
+      <second>Light</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SYSTEM_ROOT</first>
+      <second>System root</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_TITLE</first>
+      <second>Settings</second>
+    </item>
+    <item>
+      <first>EDITOR_SURE_TO_REBUILD_CAPTION</first>
+      <second>Rebuild content</second>
+    </item>
+    <item>
+      <first>EDITOR_SURE_TO_REBUILD_MESSAGE</first>
+      <second>Are you sure you want to rebuild all content?</second>
     </item>
     <item>
       <first>EDITOR_TOUCH_ALL</first>
       <second>Touch all instances</second>
     </item>
     <item>
-      <first>EDITOR_NEW_WORKSPACE_TITLE</first>
-      <second>New workspace</second>
+      <first>EDITOR_WAIT_BUILDING_MESSAGE</first>
+      <second>Building editor resources...</second>
     </item>
     <item>
-      <first>EDITOR_NEW_WORKSPACE_NAME</first>
-      <second>Name</second>
+      <first>EDITOR_WAIT_BUILDING_TITLE</first>
+      <second>Building resources</second>
     </item>
     <item>
-      <first>EDITOR_NEW_WORKSPACE_NAME_DEFAULT</first>
-      <second>Unnamed</second>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_MESSAGE</first>
+      <second>Opening workspace...</second>
     </item>
     <item>
-      <first>EDITOR_NEW_WORKSPACE_PATH</first>
-      <second>Output path</second>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_0</first>
+      <second>Workspace settings</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_100</first>
+      <second>Workspace settings</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_1000</first>
+      <second>Done</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_200</first>
+      <second>Source database</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_600</first>
+      <second>Output database</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_TITLE</first>
+      <second>Opening workspace</second>
+    </item>
+    <item>
+      <first>EDITOR_WORKSPACE_TITLE</first>
+      <second>Workspace</second>
     </item>
     <item>
       <first>EDIT_BATCH_DESCRIPTION</first>
@@ -1169,26 +1162,6 @@
       <second>Browse postprocess...</second>
     </item>
     <item>
-      <first>EFFECT_EDITOR_REPLACE_EMITTER_SOURCE</first>
-      <second>Replace emitter source...</second>
-    </item>
-    <item>
-      <first>EFFECT_EDITOR_SEQUENCER</first>
-      <second>Timeline</second>
-    </item>
-    <item>
-      <first>EFFECT_EDITOR_TOGGLE_GUIDE</first>
-      <second>Show guide lines</second>
-    </item>
-    <item>
-      <first>EFFECT_EDITOR_TOGGLE_MOVE</first>
-      <second>Move emitter</second>
-    </item>
-    <item>
-      <first>EFFECT_EDITOR_TOGGLE_GROUND_CLIP</first>
-      <second>Ground clip</second>
-    </item>
-    <item>
       <first>EFFECT_EDITOR_PLAY</first>
       <second>Play</second>
     </item>
@@ -1197,16 +1170,32 @@
       <second>Randomize seed</second>
     </item>
     <item>
+      <first>EFFECT_EDITOR_REPLACE_EMITTER_SOURCE</first>
+      <second>Replace emitter source...</second>
+    </item>
+    <item>
       <first>EFFECT_EDITOR_REWIND</first>
       <second>Rewind</second>
     </item>
     <item>
-      <first>EFFECT_EDITOR_STOP</first>
-      <second>Stop</second>
+      <first>EFFECT_EDITOR_SEQUENCER</first>
+      <second>Timeline</second>
     </item>
     <item>
       <first>EFFECT_EDITOR_STOP</first>
       <second>Stop</second>
+    </item>
+    <item>
+      <first>EFFECT_EDITOR_TOGGLE_GROUND_CLIP</first>
+      <second>Ground clip</second>
+    </item>
+    <item>
+      <first>EFFECT_EDITOR_TOGGLE_GUIDE</first>
+      <second>Show guide lines</second>
+    </item>
+    <item>
+      <first>EFFECT_EDITOR_TOGGLE_MOVE</first>
+      <second>Move emitter</second>
     </item>
     <item>
       <first>ERROR_MESSAGE_UNABLE_TO_OPEN_DATABASE</first>
@@ -1229,14 +1218,6 @@
       <second>Execute tool</second>
     </item>
     <item>
-      <first>EXPORT_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
-      <second>Export heightfield...</second>
-    </item>
-    <item>
-      <first>EXPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE</first>
-      <second>Export heightfield...</second>
-    </item>
-    <item>
       <first>EXPORT_HEIGHTFIELD_AS_MESH_WIZARDTOOL_DESCRIPTION</first>
       <second>Export heightfield as mesh...</second>
     </item>
@@ -1245,73 +1226,145 @@
       <second>Export heightfield as mesh...</second>
     </item>
     <item>
-      <first>FLASH_BATCH_WIZARDTOOL_DESCRIPTION</first>
-      <second>Import SWF files...</second>
+      <first>EXPORT_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
+      <second>Export heightfield...</second>
     </item>
     <item>
-      <first>FLASH_BATCH_DIALOG_TITLE</first>
-      <second>Import SWF files</second>
+      <first>EXPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE</first>
+      <second>Export heightfield...</second>
+    </item>
+    <item>
+      <first>FIND_IN_DATABASE</first>
+      <second>Find in database</second>
     </item>
     <item>
       <first>FLASH_BATCH_ADD</first>
       <second>Add...</second>
     </item>
     <item>
-      <first>FLASH_BATCH_REMOVE</first>
-      <second>Remove</second>
+      <first>FLASH_BATCH_DIALOG_TITLE</first>
+      <second>Import SWF files</second>
     </item>
     <item>
       <first>FLASH_BATCH_FILE_TITLE</first>
       <second>Import SWF file</second>
     </item>
     <item>
-      <first>NEW_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
-      <second>Create new heightfield...</second>
+      <first>FLASH_BATCH_REMOVE</first>
+      <second>Remove</second>
     </item>
     <item>
-      <first>NEW_HEIGHTFIELD_TITLE</first>
-      <second>New heightfield</second>
+      <first>FLASH_BATCH_WIZARDTOOL_DESCRIPTION</first>
+      <second>Import SWF files...</second>
     </item>
     <item>
-      <first>NEW_HEIGHTFIELD_GRID_SIZE</first>
-      <second>Grid size (heights)</second>
+      <first>FLASH_EDITOR_FORWARD</first>
+      <second>Forward</second>
     </item>
     <item>
-      <first>NEW_HEIGHTFIELD_EXTENT</first>
-      <second>World extent (X, Y, Z)</second>
+      <first>FLASH_EDITOR_PLAY</first>
+      <second>Play</second>
     </item>
     <item>
-      <first>NEW_HEIGHTFIELD_PLANE</first>
-      <second>Plane (XY angle, ZY angle, elevation)</second>
+      <first>FLASH_EDITOR_REWIND</first>
+      <second>Rewind</second>
     </item>
     <item>
-      <first>FIND_IN_DATABASE</first>
-      <second>Find in database</second>
+      <first>FLASH_EDITOR_STOP</first>
+      <second>Stop</second>
     </item>
-	<item>
-		<first>HEIGHTFIELD_ASSET_EXTENT</first>
-		<second>World extent</second>
-	</item>
-	<item>
-		<first>HEIGHTFIELD_ASSET_EXTENT_UNIT</first>
-		<second>(world units)</second>
-	</item>
-	<item>
-		<first>HEIGHTFIELD_ASSET_VISTA</first>
-		<second>Vista distance</second>
-	</item>
-	<item>
-		<first>HEIGHTFIELD_ASSET_VISTA_UNIT</first>
-		<second>(world units)</second>
-	</item>
-	<item>
-		<first>HEIGHTFIELD_ASSET_SIZE</first>
-		<second>Data size</second>
-	</item>
-	<item>
-		<first>HEIGHTFIELD_ASSET_SIZE_UNIT</first>
-		<second>(pixels)</second>
-	</item>
+    <item>
+      <first>GAMEENTITY_WIZARD_COLLISION_GROUP</first>
+      <second>Collision group</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_COLLISION_MASK</first>
+      <second>Collision mask</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_COLLISION_MESH</first>
+      <second>Collision mesh</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_CREATE_GROUP</first>
+      <second>Create into group entity</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_CREATE_SCRIPT</first>
+      <second>Create script</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_DESCRIPTION</first>
+      <second>Create game entity...</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_DIALOG_TITLE</first>
+      <second>Create game entity</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_ENTITY_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_FILE_TITLE</first>
+      <second>Select mesh</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_FRICTION</first>
+      <second>Friction</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_MATERIAL</first>
+      <second>Material</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_PHYSICS_DYNAMIC</first>
+      <second>Dynamic - Movable and simulated</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_PHYSICS_KINEMATIC</first>
+      <second>Kinematic - Movable</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_PHYSICS_STATIC</first>
+      <second>Static - Non movable</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_PHYSICS_TYPE</first>
+      <second>Type of physics</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_UNNAMED</first>
+      <second>Unnamed</second>
+    </item>
+    <item>
+      <first>GAMEENTITY_WIZARD_VISUAL_MESH</first>
+      <second>Visual mesh</second>
+    </item>
+    <item>
+      <first>HEIGHTFIELD_ASSET_EXTENT</first>
+      <second>World extent</second>
+    </item>
+    <item>
+      <first>HEIGHTFIELD_ASSET_EXTENT_UNIT</first>
+      <second>(world units)</second>
+    </item>
+    <item>
+      <first>HEIGHTFIELD_ASSET_SIZE</first>
+      <second>Data size</second>
+    </item>
+    <item>
+      <first>HEIGHTFIELD_ASSET_SIZE_UNIT</first>
+      <second>(pixels)</second>
+    </item>
+    <item>
+      <first>HEIGHTFIELD_ASSET_VISTA</first>
+      <second>Vista distance</second>
+    </item>
+    <item>
+      <first>HEIGHTFIELD_ASSET_VISTA_UNIT</first>
+      <second>(world units)</second>
+    </item>
     <item>
       <first>IMPORT_ANIMATION_DESCRIPTION</first>
       <second>Animation...</second>
@@ -1379,7 +1432,7 @@
     <item>
       <first>IMPORT_DICTIONARY_WIZARDTOOL_FILE_TITLE</first>
       <second>Import dictionary...</second>
-    </item>      
+    </item>
     <item>
       <first>IMPORT_FLASH_DESCRIPTION</first>
       <second>Flash...</second>
@@ -1493,6 +1546,110 @@
       <second>Import texture</second>
     </item>
     <item>
+      <first>INPUT_EDITOR_ALIGN_BOTTOM</first>
+      <second>Align bottom</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_ALIGN_LEFT</first>
+      <second>Align left</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_ALIGN_RIGHT</first>
+      <second>Align right</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_ALIGN_TOP</first>
+      <second>Align top</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE</first>
+      <second>Create</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_STATE</first>
+      <second>State</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INBOOLEAN</first>
+      <second>Boolean</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INCLAMP</first>
+      <second>Clamp</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INCOMBINE</first>
+      <second>Combine</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INCONST</first>
+      <second>Constant</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INGESTUREPINCH</first>
+      <second>Gesture Pinch</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INGESTURESWIPE</first>
+      <second>Gesture Swipe</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INGESTURETAP</first>
+      <second>Gesture Tap</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INHYSTERESIS</first>
+      <second>Hysteresis</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INPULSE</first>
+      <second>Pulse</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INREADVALUE</first>
+      <second>Read Value</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INREMAPAXIS</first>
+      <second>Remap Axis</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INTHRESHOLD</first>
+      <second>Threshold</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INTRIGGER</first>
+      <second>Trigger</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_DELETE_NODE</first>
+      <second>Delete</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_EVEN_HORIZONTALLY</first>
+      <second>Even horizontally</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_EVEN_VERTICALLY</first>
+      <second>Even vertically</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_STATE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_STATE_NAME_MESSAGE</first>
+      <second>Enter state name</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_STATE_NAME_TITLE</first>
+      <second>Change name</second>
+    </item>
+    <item>
+      <first>LOG_CLEAR_ALL</first>
+      <second>Clear all</second>
+    </item>
+    <item>
       <first>LOG_COPY</first>
       <second>Copy</second>
     </item>
@@ -1501,8 +1658,8 @@
       <second>Copy filtered</second>
     </item>
     <item>
-      <first>LOG_CLEAR_ALL</first>
-      <second>Clear all</second>
+      <first>LOG_VIEW_ERROR</first>
+      <second>View errors</second>
     </item>
     <item>
       <first>LOG_VIEW_INFO</first>
@@ -1511,10 +1668,6 @@
     <item>
       <first>LOG_VIEW_WARNING</first>
       <second>View warnings</second>
-    </item>
-    <item>
-      <first>LOG_VIEW_ERROR</first>
-      <second>View errors</second>
     </item>
     <item>
       <first>MENU_BUILD</first>
@@ -1633,6 +1786,10 @@
       <second>Heap</second>
     </item>
     <item>
+      <first>MENU_VIEW_HOME</first>
+      <second>Home</second>
+    </item>
+    <item>
       <first>MENU_VIEW_LOG</first>
       <second>Log</second>
     </item>
@@ -1645,28 +1802,40 @@
       <second>Properties</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_EDIT_MESH</first>
-      <second>Edit...</second>
-    </item>
-    <item>
-      <first>MESHASSET_EDITOR_PREVIEW_MESH</first>
-      <second>Preview...</second>
-    </item>
-    <item>
-    	<first>MESHASSET_EDITOR_SCALE_FACTOR</first>
-    	<second>Scale factor</second>
-    </item>
-    <item>
-      <first>MESHASSET_EDITOR_TEMPLATE</first>
-      <second>Template</second>
-    </item>
-    <item>
-      <first>MESHASSET_EDITOR_TEMPLATE_NOT_ASSIGNED</first>
-      <second>[ Default ]</second>
-    </item>
-    <item>
       <first>MESHASSET_EDITOR_BAKE_OCCLUSION</first>
       <second>Bake occlusion</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_BROWSE_SHADER</first>
+      <second>Browse shader</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_BROWSE_TEMPLATE</first>
+      <second>Browse template</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_BROWSE_TEXTURE</first>
+      <second>Browse texture</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_CREATE_SHADER</first>
+      <second>Create shader</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_CREATE_TEXTURE</first>
+      <second>Create texture</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_CULL_DISTANT_FACES</first>
+      <second>Cull distant faces</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_DISABLED</first>
+      <second>[ Disabled ]</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_EDIT_MESH</first>
+      <second>Edit...</second>
     </item>
     <item>
       <first>MESHASSET_EDITOR_ENTER_NAME</first>
@@ -1681,20 +1850,20 @@
       <second>Generate culling occluder</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_CULL_DISTANT_FACES</first>
-      <second>Cull distant faces</second>
-    </item>
-    <item>
-      <first>MESHASSET_EDITOR_LOD_STEPS</first>
-      <second>LOD steps ({0})</second>
+      <first>MESHASSET_EDITOR_LOD_CULL_DISTANCE</first>
+      <second>Cull LOD distance</second>
     </item>
     <item>
       <first>MESHASSET_EDITOR_LOD_MAX_DISTANCE</first>
       <second>Max LOD distance</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_LOD_CULL_DISTANCE</first>
-      <second>Cull LOD distance</second>
+      <first>MESHASSET_EDITOR_LOD_STEPS</first>
+      <second>LOD steps ({0})</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MATERIAL</first>
+      <second>Material</second>
     </item>
     <item>
       <first>MESHASSET_EDITOR_MESH_TYPE</first>
@@ -1733,28 +1902,24 @@
       <second>Stream</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_CREATE_SHADER</first>
-      <second>Create shader</second>
-    </item>
-    <item>
-      <first>MESHASSET_EDITOR_BROWSE_SHADER</first>
-      <second>Browse shader</second>
+      <first>MESHASSET_EDITOR_PREVIEW_MESH</first>
+      <second>Preview...</second>
     </item>
     <item>
       <first>MESHASSET_EDITOR_REMOVE_SHADER</first>
       <second>Remove shader</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_BROWSE_TEMPLATE</first>
-      <second>Browse template</second>
-    </item>
-    <item>
       <first>MESHASSET_EDITOR_REMOVE_TEMPLATE</first>
       <second>Remove template</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_MATERIAL</first>
-      <second>Material</second>
+      <first>MESHASSET_EDITOR_REMOVE_TEXTURE</first>
+      <second>Remove texture</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_SCALE_FACTOR</first>
+      <second>Scale factor</second>
     </item>
     <item>
       <first>MESHASSET_EDITOR_SHADER</first>
@@ -1765,32 +1930,24 @@
       <second>[ Automatic shader ]</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_CREATE_TEXTURE</first>
-      <second>Create texture</second>
+      <first>MESHASSET_EDITOR_TEMPLATE</first>
+      <second>Template</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_BROWSE_TEXTURE</first>
-      <second>Browse texture</second>
-    </item>
-    <item>
-      <first>MESHASSET_EDITOR_REMOVE_TEXTURE</first>
-      <second>Remove texture</second>
-    </item>
-    <item>
-      <first>MESHASSET_EDITOR_TEXTURE_NAME</first>
-      <second>Name</second>
+      <first>MESHASSET_EDITOR_TEMPLATE_NOT_ASSIGNED</first>
+      <second>[ Default ]</second>
     </item>
     <item>
       <first>MESHASSET_EDITOR_TEXTURE_ASSET</first>
       <second>Texture</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED</first>
-      <second>[ No texture ]</second>
+      <first>MESHASSET_EDITOR_TEXTURE_NAME</first>
+      <second>Name</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_DISABLED</first>
-      <second>[ Disabled ]</second>
+      <first>MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED</first>
+      <second>[ No texture ]</second>
     </item>
     <item>
       <first>MESHASSET_WIZARDTOOL_DESCRIPTION</first>
@@ -1805,16 +1962,36 @@
       <second>Create mesh entity</second>
     </item>
     <item>
-      <first>MESHENTITY_WIZARDTOOL_ERROR_NOT_MESH_ASSET_MESSAGE</first>
-      <second>Select instance must be a mesh asset.</second>
-    </item>
-    <item>
       <first>MESHENTITY_WIZARDTOOL_ERROR_NOT_MESH_ASSET_CAPTION</first>
       <second>Not a mesh asset</second>
     </item>
     <item>
+      <first>MESHENTITY_WIZARDTOOL_ERROR_NOT_MESH_ASSET_MESSAGE</first>
+      <second>Select instance must be a mesh asset.</second>
+    </item>
+    <item>
       <first>NEW_BATCH_DESCRIPTION</first>
       <second>New import batch...</second>
+    </item>
+    <item>
+      <first>NEW_HEIGHTFIELD_EXTENT</first>
+      <second>World extent (X, Y, Z)</second>
+    </item>
+    <item>
+      <first>NEW_HEIGHTFIELD_GRID_SIZE</first>
+      <second>Grid size (heights)</second>
+    </item>
+    <item>
+      <first>NEW_HEIGHTFIELD_PLANE</first>
+      <second>Plane (XY angle, ZY angle, elevation)</second>
+    </item>
+    <item>
+      <first>NEW_HEIGHTFIELD_TITLE</first>
+      <second>New heightfield</second>
+    </item>
+    <item>
+      <first>NEW_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
+      <second>Create new heightfield...</second>
     </item>
     <item>
       <first>NEW_INSTANCE_CATEGORY</first>
@@ -1857,6 +2034,46 @@
       <second>Unable to commit instance, possibly write-protected!</second>
     </item>
     <item>
+      <first>POSTPROCESS_EDITOR_ADD_STEP</first>
+      <second>Add step</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ADD_TARGET_DEFINITION</first>
+      <second>Add target</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ADD_TEXTURE_DEFINITION</first>
+      <second>Add texture</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_DESCRIPTION</first>
+      <second>Description</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ID</first>
+      <second>Id</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_MOVE_DOWN</first>
+      <second>Move down</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_MOVE_UP</first>
+      <second>Move up</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ORDER</first>
+      <second>Order</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_REMOVE_DEFINITION</first>
+      <second>Remove</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_REMOVE_STEP</first>
+      <second>Remove step</second>
+    </item>
+    <item>
       <first>PROPERTY_COLUMN_NAME</first>
       <second>Name</second>
     </item>
@@ -1865,36 +2082,36 @@
       <second>Value</second>
     </item>
     <item>
-      <first>QUERY_MESSAGE_INSTANCE_NOT_SAVED_CLOSE_EDITOR</first>
-      <second>Instance not saved, close anyway?</second>
-    </item>
-    <item>
-      <first>QUERY_TITLE_INSTANCE_NOT_SAVED_CLOSE_EDITOR</first>
-      <second>Instance not saved</second>
-    </item>
-    <item>
       <first>QUERY_MESSAGE_INSTANCES_NOT_SAVED_CLOSE_EDITOR</first>
       <second>Instance(s) not saved, close anyway?</second>
+    </item>
+    <item>
+      <first>QUERY_MESSAGE_INSTANCE_NOT_SAVED_CLOSE_EDITOR</first>
+      <second>Instance not saved, close anyway?</second>
     </item>
     <item>
       <first>QUERY_TITLE_INSTANCES_NOT_SAVED_CLOSE_EDITOR</first>
       <second>Instance(s) not saved</second>
     </item>
     <item>
+      <first>QUERY_TITLE_INSTANCE_NOT_SAVED_CLOSE_EDITOR</first>
+      <second>Instance not saved</second>
+    </item>
+    <item>
       <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_DESCRIPTION</first>
       <second>Create image process shader...</second>
     </item>
     <item>
-      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_NAME</first>
-      <second>Name</second>
+      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_DIALOG_MESSAGE</first>
+      <second>Create image process shader</second>
     </item>
     <item>
       <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_DIALOG_TITLE</first>
       <second>Image process shader</second>
     </item>
     <item>
-      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_DIALOG_MESSAGE</first>
-      <second>Create image process shader</second>
+      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_NAME</first>
+      <second>Name</second>
     </item>
     <item>
       <first>RESOUND_BLEND_GRAIN_TEXT</first>
@@ -1917,12 +2134,12 @@
       <second>{0} child(ren)</second>
     </item>
     <item>
-      <first>RESOUND_REPEAT_GRAIN_TEXT</first>
-      <second>{0} time(s)</second>
-    </item>
-    <item>
       <first>RESOUND_REPEAT_GRAIN_INFINITE_TEXT</first>
       <second>Infinite</second>
+    </item>
+    <item>
+      <first>RESOUND_REPEAT_GRAIN_TEXT</first>
+      <second>{0} time(s)</second>
     </item>
     <item>
       <first>RESOUND_SEQUENCE_GRAIN_TEXT</first>
@@ -1937,32 +2154,12 @@
       <second>Trigger</second>
     </item>
     <item>
-      <first>STATUS_BUILDING</first>
-      <second>Building assets...</second>
-    </item>
-    <item>
-      <first>STATUS_IDLE</first>
-      <second>Ready</second>
-    </item>
-    <item>
-      <first>STATUS_FINDING_PIPELINES</first>
-      <second>Finding pipelines...</second>
-    </item>
-    <item>
-      <first>STATUS_COLLECTING_DEPENDENCIES</first>
-      <second>Collecting dependencies...</second>
-    </item>
-    <item>
-      <first>STATUS_BUILDING_ASSET</first>
-      <second>{0}</second>
-    </item>
-    <item>
-      <first>STATUS_FINISHED</first>
-      <second>Finished</second>
-    </item>
-    <item>
       <first>SCENE_CREATE_PREVIEW_SCENE_DESCRIPTION</first>
       <second>Create preview scene...</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_AA</first>
+      <second>Antialias</second>
     </item>
     <item>
       <first>SCENE_EDITOR_ADD_ENTITY</first>
@@ -1971,10 +2168,14 @@
     <item>
       <first>SCENE_EDITOR_ADD_GROUP_ENTITY</first>
       <second>Add group entity...</second>
-    </item>      
+    </item>
     <item>
       <first>SCENE_EDITOR_ADD_REFERENCE</first>
       <second>References</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_AO</first>
+      <second>Ambient occlusion</second>
     </item>
     <item>
       <first>SCENE_EDITOR_ASPECT</first>
@@ -1983,6 +2184,18 @@
     <item>
       <first>SCENE_EDITOR_BROWSE_POSTPROCESS</first>
       <second>Browse postprocessing filter...</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_CAMERA_BANK</first>
+      <second>Bank</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_CAMERA_HEAD</first>
+      <second>Head</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_CAMERA_PITCH</first>
+      <second>Pitch</second>
     </item>
     <item>
       <first>SCENE_EDITOR_CAMERA_POSITION</first>
@@ -2001,18 +2214,6 @@
       <second>Z</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_CAMERA_HEAD</first>
-      <second>Head</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_CAMERA_PITCH</first>
-      <second>Pitch</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_CAMERA_BANK</first>
-      <second>Bank</second>
-    </item>
-    <item>
       <first>SCENE_EDITOR_CONTROLLER</first>
       <second>Controller</second>
     </item>
@@ -2021,16 +2222,20 @@
       <second>Delta {0}</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_DEPENDENCY_INVESTIGATOR</first>
-      <second>Dependencies</second>
-    </item>
-    <item>
       <first>SCENE_EDITOR_DEPENDENCY_FILES</first>
       <second>External file(s)</second>
     </item>
     <item>
       <first>SCENE_EDITOR_DEPENDENCY_GROUP</first>
-      <second>Group "{0}"</second>
+      <second>Group &quot;{0}&quot;</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_DEPENDENCY_INVESTIGATOR</first>
+      <second>Dependencies</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_DOUBLE_VIEW</first>
+      <second>Double view</second>
     </item>
     <item>
       <first>SCENE_EDITOR_EDIT_SPACE_OBJECT</first>
@@ -2069,16 +2274,20 @@
       <second>Visible</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_LOADING_TITLE</first>
-      <second>Loading</second>
-    </item>
-    <item>
       <first>SCENE_EDITOR_LOADING</first>
       <second>Loading scene...</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_LOADING_TITLE</first>
+      <second>Loading</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_MISC</first>
       <second>Misc</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_MOTION_BLUR</first>
+      <second>Motion blur</second>
     </item>
     <item>
       <first>SCENE_EDITOR_MOVE_ENTITY_INTO_VIEW</first>
@@ -2089,8 +2298,32 @@
       <second>Move to entity</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_PHYSICS</first>
+      <second>Physic bodies {0}, {1} active</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_PLAY</first>
       <second>Play</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_POST_PROCESS</first>
+      <second>Post Process</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_QUADRUPLE_VIEW</first>
+      <second>Four views</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_QUALITY</first>
+      <second>Quality</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_QUALITY_TOOLTIP</first>
+      <second>Change render quality</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_REFLECTIONS</first>
+      <second>Reflections</second>
     </item>
     <item>
       <first>SCENE_EDITOR_REMOVE_ENTITY</first>
@@ -2099,10 +2332,6 @@
     <item>
       <first>SCENE_EDITOR_RENDER_TIME</first>
       <second>Render time {0} ms, FPS {1}</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_PHYSICS</first>
-      <second>Physic bodies {0}, {1} active</second>
     </item>
     <item>
       <first>SCENE_EDITOR_RESET</first>
@@ -2121,12 +2350,64 @@
       <second>Scale</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS</first>
+      <second>Scene</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_BUILD_LIGHTING</first>
+      <second>Bake lighting in editor</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_BUILD_NAVMESH</first>
+      <second>Build NavMesh in editor</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_BUILD_OCCLUSION</first>
+      <second>Bake terrain occlusion in editor</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP</first>
+      <second>Auto-build entity when drag&apos;n&apos;drop</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_FOV</first>
+      <second>Field of view</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_INVERT_MOUSE_WHEEL</first>
+      <second>Invert mouse wheel</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_INVERT_PAN_Y</first>
+      <second>Invert mouse Y when panning</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_MOUSE_WHEEL_RATE</first>
+      <second>Mouse wheel rate</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_WORLDRENDERER_TYPE</first>
+      <second>World renderer</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_WORLD_RENDERER</first>
+      <second>World renderer</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_SET_CAMERA_MESSAGE</first>
       <second>Set camera position and orientation</second>
     </item>
     <item>
       <first>SCENE_EDITOR_SET_CAMERA_TITLE</first>
       <second>Set camera position</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SHADOWS</first>
+      <second>Shadows</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SINGLE_VIEW</first>
+      <second>Single view</second>
     </item>
     <item>
       <first>SCENE_EDITOR_STOP</first>
@@ -2143,6 +2424,10 @@
     <item>
       <first>SCENE_EDITOR_TOGGLE_PICK</first>
       <second>Toggle pick</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_TOGGLE_POSTPROCESS</first>
+      <second>Toggle post processing</second>
     </item>
     <item>
       <first>SCENE_EDITOR_TOGGLE_SNAP</first>
@@ -2165,42 +2450,6 @@
       <second>Toggle Z axis</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_TOGGLE_POSTPROCESS</first>
-      <second>Toggle post processing</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_QUALITY</first>
-      <second>Quality</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_QUALITY_TOOLTIP</first>
-      <second>Change render quality</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_MOTION_BLUR</first>
-      <second>Motion blur</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_POST_PROCESS</first>
-      <second>Post Process</second>
-    </item>
-    <item>
-    	<first>SCENE_EDITOR_REFLECTIONS</first>
-    	<second>Reflections</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SHADOWS</first>
-      <second>Shadows</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_AO</first>
-      <second>Ambient occlusion</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_AA</first>
-      <second>Antialias</second>
-    </item>
-    <item>
       <first>SCENE_EDITOR_TRANSLATE</first>
       <second>Translate</second>
     </item>
@@ -2209,9 +2458,29 @@
       <second>Unnamed</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_VIEW_BACK</first>
+      <second>Back</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_BOTTOM</first>
+      <second>Bottom</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_VIEW_CAMERA</first>
       <second>Camera</second>
-    </item>    
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_DEBUG</first>
+      <second>Debug</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_FRONT</first>
+      <second>Front</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_LEFT</first>
+      <second>Left</second>
+    </item>
     <item>
       <first>SCENE_EDITOR_VIEW_MODE</first>
       <second>View mode</second>
@@ -2221,136 +2490,68 @@
       <second>Perspective</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_VIEW_FRONT</first>
-      <second>Front</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_BACK</first>
-      <second>Back</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_TOP</first>
-      <second>Top</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_BOTTOM</first>
-      <second>Bottom</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_LEFT</first>
-      <second>Left</second>
+      <first>SCENE_EDITOR_VIEW_REFERENCES</first>
+      <second>References</second>
     </item>
     <item>
       <first>SCENE_EDITOR_VIEW_RIGHT</first>
       <second>Right</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_VIEW_REFERENCES</first>
-      <second>References</second>
+      <first>SCENE_EDITOR_VIEW_TOP</first>
+      <second>Top</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_VIEW_DEBUG</first>
-      <second>Debug</second>
+      <first>SCRIPT_CLASS_WIZARDTOOL_CLASS_NAME</first>
+      <second>Class name</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_SINGLE_VIEW</first>
-      <second>Single view</second>
+      <first>SCRIPT_CLASS_WIZARDTOOL_DESCRIPTION</first>
+      <second>Create new script class..</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_DOUBLE_VIEW</first>
-      <second>Double view</second>
+      <first>SCRIPT_CLASS_WIZARDTOOL_DIALOG_MESSAGE</first>
+      <second>Enter class name</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_QUADRUPLE_VIEW</first>
-      <second>Four views</second>
+      <first>SCRIPT_CLASS_WIZARDTOOL_DIALOG_TITLE</first>
+      <second>Enter class name</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_SETTINGS</first>
-      <second>Scene</second>
+      <first>SCRIPT_CLASS_WIZARDTOOL_INHERIT_CLASS_NAME</first>
+      <second>Inherit from class</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_SETTINGS_INVERT_MOUSE_WHEEL</first>
-      <second>Invert mouse wheel</second>
+      <first>SCRIPT_DEBUGGER_TOOL</first>
+      <second>Script debugger</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_SETTINGS_INVERT_PAN_Y</first>
-      <second>Invert mouse Y when panning</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_WORLDRENDERER_TYPE</first>
-      <second>World renderer</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_FOV</first>
-      <second>Field of view</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_MOUSE_WHEEL_RATE</first>
-      <second>Mouse wheel rate</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP</first>
-      <second>Auto-build entity when drag'n'drop</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_WORLD_RENDERER</first>
-      <second>World renderer</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_BUILD_NAVMESH</first>
-      <second>Build NavMesh in editor</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_BUILD_LIGHTING</first>
-      <second>Bake lighting in editor</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_BUILD_OCCLUSION</first>
-      <second>Bake terrain occlusion in editor</second>
-    </item>
-    <item>
-    	<first>SCRIPT_DEBUGGER_TOOL</first>
-    	<second>Script debugger</second>
+      <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
+      <second>Add dependency</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_ADD_USING</first>
       <second>Add #using...</second>
     </item>
     <item>
+      <first>SCRIPT_EDITOR_BREAK</first>
+      <second>Break</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_CLASSES</first>
       <second>System classes</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_EXPLORER</first>
-      <second>Explorer</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_OUTLINE</first>
-      <second>Outline</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_DEPENDENCIES</first>
-      <second>Dependencies</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_DEPENDENTS</first>
-      <second>Dependents</second>
+      <first>SCRIPT_EDITOR_CONTINUE</first>
+      <second>Continue</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_DEBUGGER</first>
       <second>Debugger</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_STATUS_READY</first>
-      <second>Ready</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_STATUS_SYNTAX_ERROR</first>
-      <second>Syntax error ({0}): {1}</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_STATUS_OTHER_ERROR</first>
-      <second>Error: {0}</second>
+      <first>SCRIPT_EDITOR_DEBUG_COPY_LOCAL_VALUE</first>
+      <second>Copy value</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_DEBUG_FUNCTION</first>
@@ -2359,10 +2560,6 @@
     <item>
       <first>SCRIPT_EDITOR_DEBUG_LINE</first>
       <second>Line</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_DEBUG_SCRIPT</first>
-      <second>Script</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_DEBUG_LOCAL_NAME</first>
@@ -2377,48 +2574,60 @@
       <second>Value</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_DEBUG_COPY_LOCAL_VALUE</first>
-      <second>Copy value</second>
+      <first>SCRIPT_EDITOR_DEBUG_SCRIPT</first>
+      <second>Script</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
-      <second>Add dependency</second>
+      <first>SCRIPT_EDITOR_DEPENDENCIES</first>
+      <second>Dependencies</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_OUTLINE_NAME</first>
-      <second>Name</second>
+      <first>SCRIPT_EDITOR_DEPENDENTS</first>
+      <second>Dependents</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_OUTLINE_LINE</first>
-      <second>Line</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_REMOVE_DEPENDENCY</first>
-      <second>Remove dependency</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_TOGGLE_COMMENTS</first>
-      <second>Toggle comments</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS</first>
-      <second>Remove all breakpoints</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_MOVE_DEPENDENCY_UP</first>
-      <second>Move dependency up</second>
+      <first>SCRIPT_EDITOR_EXPLORER</first>
+      <second>Explorer</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN</first>
       <second>Move dependency down</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_CONTINUE</first>
-      <second>Continue</second>
+      <first>SCRIPT_EDITOR_MOVE_DEPENDENCY_UP</first>
+      <second>Move dependency up</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_BREAK</first>
-      <second>Break</second>
+      <first>SCRIPT_EDITOR_OUTLINE</first>
+      <second>Outline</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_OUTLINE_LINE</first>
+      <second>Line</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_OUTLINE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS</first>
+      <second>Remove all breakpoints</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_REMOVE_DEPENDENCY</first>
+      <second>Remove dependency</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_STATUS_OTHER_ERROR</first>
+      <second>Error: {0}</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_STATUS_READY</first>
+      <second>Ready</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_STATUS_SYNTAX_ERROR</first>
+      <second>Syntax error ({0}): {1}</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_STEP_INTO</first>
@@ -2429,48 +2638,56 @@
       <second>Step over</second>
     </item>
     <item>
-      <first>SCRIPT_PROFILER_TOOL</first>
-      <second>Script profiler</second>
+      <first>SCRIPT_EDITOR_TOGGLE_COMMENTS</first>
+      <second>Toggle comments</second>
     </item>
     <item>
       <first>SCRIPT_PROFILER_CLEAR_SAMPLES</first>
       <second>Clear samples</second>
     </item>
     <item>
-      <first>SCRIPT_PROFILER_COLUMN_FUNCTION</first>
-      <second>Function</second>
-    </item>
-    <item>
-      <first>SCRIPT_PROFILER_COLUMN_SCRIPT</first>
-      <second>Script</second>
-    </item>
-    <item>
-      <first>SCRIPT_PROFILER_COLUMN_INCLUSIVE_TIME</first>
-      <second>Inc. (ms)</second>
-    </item>
-    <item>
-      <first>SCRIPT_PROFILER_COLUMN_EXCLUSIVE_TIME</first>
-      <second>Excl. (ms)</second>
-    </item>
-    <item>
-      <first>SCRIPT_PROFILER_COLUMN_INCLUSIVE_PERCENT</first>
-      <second>Inc. (%)</second>
+      <first>SCRIPT_PROFILER_COLUMN_COUNT</first>
+      <second>Count</second>
     </item>
     <item>
       <first>SCRIPT_PROFILER_COLUMN_EXCLUSIVE_PERCENT</first>
       <second>Excl. (%)</second>
     </item>
     <item>
-      <first>SCRIPT_PROFILER_COLUMN_COUNT</first>
-      <second>Count</second>
+      <first>SCRIPT_PROFILER_COLUMN_EXCLUSIVE_TIME</first>
+      <second>Excl. (ms)</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_COLUMN_FUNCTION</first>
+      <second>Function</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_COLUMN_INCLUSIVE_PERCENT</first>
+      <second>Inc. (%)</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_COLUMN_INCLUSIVE_TIME</first>
+      <second>Inc. (ms)</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_COLUMN_SCRIPT</first>
+      <second>Script</second>
     </item>
     <item>
       <first>SCRIPT_PROFILER_NATIVE_FUNCTION</first>
       <second>(Native)</second>
     </item>
     <item>
-      <first>SHADERGRAPH_REFEREES</first>
-      <second>Referees</second>
+      <first>SCRIPT_PROFILER_TOOL</first>
+      <second>Script profiler</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_ALGEBRA</first>
+      <second>Algebra</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_ALIGN_BOTTOM</first>
+      <second>Align bottom</second>
     </item>
     <item>
       <first>SHADERGRAPH_ALIGN_LEFT</first>
@@ -2485,76 +2702,28 @@
       <second>Align top</second>
     </item>
     <item>
-      <first>SHADERGRAPH_CENTER</first>
-      <second>Center graph</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_ALIGN_BOTTOM</first>
-      <second>Align bottom</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_EVEN_VERTICALLY</first>
-      <second>Even vertically</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_EVEN_HORIZONTALLY</first>
-      <second>Even horizonally</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_MESSAGE</first>
-      <second>External fragment missing</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_TITLE</first>
-      <second>Fragment missing</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_MESSAGE</first>
-      <second>External node(s) mismatch; update external node(s)?</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_TITLE</first>
-      <second>External mismatch</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_REMOVE_UNUSED_NODES</first>
-      <second>Remove unused nodes</second>
+      <first>SHADERGRAPH_ARITHMETIC</first>
+      <second>Artihmetic</second>
     </item>
     <item>
       <first>SHADERGRAPH_AUTO_MERGE_BRANCHES</first>
       <second>Merge branches</second>
     </item>
     <item>
-      <first>SHADERGRAPH_UPDATE_FRAGMENTS</first>
-      <second>Update fragments</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_CONSTANT_FOLD</first>
-      <second>Constant fold</second>
+      <first>SHADERGRAPH_CENTER</first>
+      <second>Center graph</second>
     </item>
     <item>
       <first>SHADERGRAPH_CLEANUP_SWIZZLES</first>
       <second>Cleanup swizzles</second>
     </item>
     <item>
-      <first>SHADERGRAPH_INSERT_INTERPOLATORS</first>
-      <second>Insert interpolators</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_PLATFORM_PERMUTATION</first>
-      <second>Platform permutation</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_ALGEBRA</first>
-      <second>Algebra</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_ARITHMETIC</first>
-      <second>Artihmetic</second>
-    </item>
-    <item>
       <first>SHADERGRAPH_CONDITIONAL</first>
       <second>Conditional</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_CONSTANT_FOLD</first>
+      <second>Constant fold</second>
     </item>
     <item>
       <first>SHADERGRAPH_CREATE_NODE</first>
@@ -2565,32 +2734,32 @@
       <second>Delete</second>
     </item>
     <item>
+      <first>SHADERGRAPH_EVEN_HORIZONTALLY</first>
+      <second>Even horizonally</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_EVEN_VERTICALLY</first>
+      <second>Even vertically</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_MESSAGE</first>
+      <second>External node(s) mismatch; update external node(s)?</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_TITLE</first>
+      <second>External mismatch</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_FIND_IN_DATABASE</first>
       <second>Find in database</second>
     </item>
     <item>
+      <first>SHADERGRAPH_INSERT_INTERPOLATORS</first>
+      <second>Insert interpolators</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_MISCELLANEOUS</first>
       <second>Miscellaneous</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_PERMUTATION</first>
-      <second>Permutation</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_SAMPLER</first>
-      <second>Sampler</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_SCRIPT_EDIT</first>
-      <second>Edit script</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_TRIGONOMETRY</first>
-      <second>Trigonometry</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_VALUE</first>
-      <second>Value</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_ABS</first>
@@ -2631,7 +2800,7 @@
     <item>
       <first>SHADERGRAPH_NODE_CONNECTED</first>
       <second>Connected</second>
-    </item>    
+    </item>
     <item>
       <first>SHADERGRAPH_NODE_COS</first>
       <second>Cos</second>
@@ -2685,12 +2854,12 @@
       <second>Input port</second>
     </item>
     <item>
-      <first>SHADERGRAPH_NODE_INTERPOLATOR</first>
-      <second>Interpolator</second>
-    </item>
-    <item>
       <first>SHADERGRAPH_NODE_INSTANCE</first>
       <second>Instance</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_INTERPOLATOR</first>
+      <second>Interpolator</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_ITERATE</first>
@@ -2699,7 +2868,7 @@
     <item>
       <first>SHADERGRAPH_NODE_ITERATE2D</first>
       <second>Iterate 2D</second>
-    </item>    
+    </item>
     <item>
       <first>SHADERGRAPH_NODE_LENGTH</first>
       <second>Length</second>
@@ -2757,20 +2926,20 @@
       <second>Output port</second>
     </item>
     <item>
-      <first>SHADERGRAPH_NODE_POLYNOMIAL</first>
-      <second>Polynomial</second>
-    </item>
-    <item>
-      <first>SHADERGRAPH_NODE_POW</first>
-      <second>Pow</second>
-    </item>
-    <item>
       <first>SHADERGRAPH_NODE_PIXELOUTPUT</first>
       <second>Pixel output</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_PLATFORM</first>
       <second>Platform</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_POLYNOMIAL</first>
+      <second>Polynomial</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_POW</first>
+      <second>Pow</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_RECIPSQRT</first>
@@ -2889,12 +3058,52 @@
       <second>Vertex output</second>
     </item>
     <item>
+      <first>SHADERGRAPH_PERMUTATION</first>
+      <second>Permutation</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_PLATFORM_PERMUTATION</first>
+      <second>Platform permutation</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_REFEREES</first>
+      <second>Referees</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_REMOVE_UNUSED_NODES</first>
+      <second>Remove unused nodes</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SAMPLER</first>
+      <second>Sampler</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_EDIT</first>
+      <second>Edit script</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_TRIGONOMETRY</first>
+      <second>Trigonometry</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_UPDATE_FRAGMENTS</first>
+      <second>Update fragments</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VALUE</first>
+      <second>Value</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_VIEWER</first>
       <second>Generated</second>
     </item>
     <item>
       <first>SHADERGRAPH_VIEWER_COMPILER</first>
       <second>Compiler</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VIEWER_PIXEL</first>
+      <second>Pixel</second>
     </item>
     <item>
       <first>SHADERGRAPH_VIEWER_TECHNIQUE</first>
@@ -2905,24 +3114,32 @@
       <second>Vertex</second>
     </item>
     <item>
-      <first>SHADERGRAPH_VIEWER_PIXEL</first>
-      <second>Pixel</second>
+      <first>SKELETON_EDITOR_ADD_BONE</first>
+      <second>Add bone</second>
+    </item>
+    <item>
+      <first>SKELETON_EDITOR_DELETE_BONE</first>
+      <second>Delete bone</second>
+    </item>
+    <item>
+      <first>SKELETON_EDITOR_ROOT</first>
+      <second>(Root)</second>
+    </item>
+    <item>
+      <first>SKELETON_EDITOR_SKELETON</first>
+      <second>Skeleton</second>
     </item>
     <item>
       <first>SKELETON_WIZARDTOOL_DESCRIPTION</first>
       <second>Import skeleton...</second>
     </item>
     <item>
-      <first>SOUND_BATCH_WIZARDTOOL_DESCRIPTION</first>
-      <second>Import sound batch...</second>
+      <first>SOUNDE_BATCH_REMOVE</first>
+      <second>Remove sounds</second>
     </item>
     <item>
       <first>SOUND_BATCH_ADD</first>
       <second>Add sounds...</second>
-    </item>
-    <item>
-      <first>SOUNDE_BATCH_REMOVE</first>
-      <second>Remove sounds</second>
     </item>
     <item>
       <first>SOUND_BATCH_DIALOG_TITLE</first>
@@ -2931,6 +3148,14 @@
     <item>
       <first>SOUND_BATCH_FILE_TITLE</first>
       <second>Add sounds</second>
+    </item>
+    <item>
+      <first>SOUND_BATCH_WIZARDTOOL_DESCRIPTION</first>
+      <second>Import sound batch...</second>
+    </item>
+    <item>
+      <first>STATEGRAPH_ALIGN_BOTTOM</first>
+      <second>Align bottom</second>
     </item>
     <item>
       <first>STATEGRAPH_ALIGN_LEFT</first>
@@ -2945,24 +3170,20 @@
       <second>Align top</second>
     </item>
     <item>
-      <first>STATEGRAPH_ALIGN_BOTTOM</first>
-      <second>Align bottom</second>
-    </item>
-    <item>
-      <first>STATEGRAPH_EVEN_VERTICALLY</first>
-      <second>Even vertically</second>
-    </item>
-    <item>
-      <first>STATEGRAPH_EVEN_HORIZONTALLY</first>
-      <second>Even horizonally</second>
-    </item>
-    <item>
       <first>STATEGRAPH_CREATE_STATE</first>
       <second>Create state node</second>
     </item>
     <item>
       <first>STATEGRAPH_DELETE_STATE</first>
       <second>Delete node</second>
+    </item>
+    <item>
+      <first>STATEGRAPH_EVEN_HORIZONTALLY</first>
+      <second>Even horizonally</second>
+    </item>
+    <item>
+      <first>STATEGRAPH_EVEN_VERTICALLY</first>
+      <second>Even vertically</second>
     </item>
     <item>
       <first>STATEGRAPH_SET_ROOT</first>
@@ -2973,136 +3194,52 @@
       <second>Unnamed</second>
     </item>
     <item>
-      <first>SKELETON_EDITOR_ADD_BONE</first>
-      <second>Add bone</second>
+      <first>STATUS_BUILDING</first>
+      <second>Building assets...</second>
     </item>
     <item>
-      <first>SKELETON_EDITOR_DELETE_BONE</first>
-      <second>Delete bone</second>
+      <first>STATUS_BUILDING_ASSET</first>
+      <second>{0}</second>
     </item>
     <item>
-      <first>SKELETON_EDITOR_SKELETON</first>
-      <second>Skeleton</second>
+      <first>STATUS_COLLECTING_DEPENDENCIES</first>
+      <second>Collecting dependencies...</second>
     </item>
     <item>
-      <first>SKELETON_EDITOR_ROOT</first>
-      <second>(Root)</second>
+      <first>STATUS_FINDING_PIPELINES</first>
+      <second>Finding pipelines...</second>
     </item>
     <item>
-      <first>THEATER_EDITOR_UNNAMED_ACT</first>
-      <second>Unnamed</second>
+      <first>STATUS_FINISHED</first>
+      <second>Finished</second>
     </item>
     <item>
-      <first>THEATER_EDITOR_ADD_ACT</first>
-      <second>Add act</second>
+      <first>STATUS_IDLE</first>
+      <second>Ready</second>
     </item>
     <item>
-      <first>THEATER_EDITOR_REMOVE_ACT</first>
-      <second>Remove act</second>
-    </item>
-    <item>
-    	<first>THEATER_EDITOR_SPLIT_ACT</first>
-    	<second>Split act</second>
-    </item>
-    <item>
-    	<first>THEATER_EDITOR_TIME_SCALE_ACT</first>
-    	<second>Scale act time</second>
-    </item>    
-    <item>
-      <first>THEATER_EDITOR_MESSAGE_REMOVE_ACT</first>
-      <second>Are you sure you want to remove selected act?</second>
-    </item>
-    <item>
-      <first>THEATER_EDITOR_TITLE_REMOVE_ACT</first>
-      <second>Remove act</second>
-    </item>
-    <item>
-      <first>THEATER_EDITOR_SET_LOOKAT_ENTITY</first>
-      <second>Set look-at entity</second>
-    </item>
-    <item>
-      <first>THEATER_EDITOR_EASE_VELOCITY</first>
-      <second>Easy velocity</second>
-    </item>
-    <item>
-      <first>THEATER_EDITOR_CAPTURE_ENTITIES</first>
-      <second>Capture entities</second>
-    </item>
-    <item>
-      <first>THEATER_EDITOR_DELETE_SELECTED_KEY</first>
-      <second>Delete key</second>
-    </item>
-    <item>
-      <first>THEATER_EDITOR_GOTO_PREVIOUS_KEY</first>
-      <second>Goto previous key</second>
-    </item>
-    <item>
-      <first>THEATER_EDITOR_GOTO_NEXT_KEY</first>
-      <second>Goto next key</second>
-    </item>
-    <item>
-      <first>THEATER_EDITOR_TIME_SCALE_NEW_TIME</first>
-      <second>New time (second(s))</second>
-    </item>
-    <item>
-      <first>THEATER_EDITOR_TIME_SCALE_TITLE</first>
-      <second>Scale time</second>
-    </item>
-    <item>
-      <first>THEATER_EDITOR_TIME_SCALE_MESSAGE</first>
-      <second>Enter new duration of selected act</second>
-    </item>
-    <item>
-      <first>TERRAIN_EDITOR_EDIT_TERRAIN</first>
-      <second>Edit terrain</second>
-    </item>
-    <item>
-      <first>TERRAIN_EDITOR_SYMMETRY_X</first>
-      <second>Symmetry horizontal</second>
-    </item>
-    <item>
-      <first>TERRAIN_EDITOR_SYMMETRY_Z</first>
-      <second>Symmetry vertical</second>
-    </item>
-    <item>
-      <first>TERRAIN_EDITOR_SHARP_IMAGE</first>
-      <second>Sharp image</second>
-    </item>    
-    <item>
-      <first>TERRAIN_EDITOR_MATERIAL_BRUSH</first>
-      <second>Material brush</second>
-    </item>
-    <item>
-      <first>TERRAIN_EDITOR_MATERIAL</first>
-      <second>Material</second>
-    </item>
-    <item>
-      <first>TERRAIN_EDITOR_VISUALIZE</first>
-      <second>Visualize channel</second>
-    </item>    
-    <item>
-      <first>TERRAIN_EDITOR_EMISSIVE_BRUSH</first>
-      <second>Emissive brush</second>
-    </item>
-    <item>
-      <first>TERRAIN_EDITOR_NOISE_BRUSH</first>
-      <second>Noise brush</second>
+      <first>TERRAIN_EDITOR_AVERAGE_BRUSH</first>
+      <second>Average brush</second>
     </item>
     <item>
       <first>TERRAIN_EDITOR_COLOR_BRUSH</first>
       <second>Color brush</second>
     </item>
     <item>
-      <first>TERRAIN_EDITOR_SPLAT_BRUSH</first>
-      <second>Splat brush</second>
-    </item>    
-    <item>
       <first>TERRAIN_EDITOR_CUT_BRUSH</first>
       <second>Cut brush</second>
     </item>
     <item>
+      <first>TERRAIN_EDITOR_EDIT_TERRAIN</first>
+      <second>Edit terrain</second>
+    </item>
+    <item>
       <first>TERRAIN_EDITOR_ELEVATE_BRUSH</first>
       <second>Elevate brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_EMISSIVE_BRUSH</first>
+      <second>Emissive brush</second>
     </item>
     <item>
       <first>TERRAIN_EDITOR_ERODE_BRUSH</first>
@@ -3113,8 +3250,24 @@
       <second>Flatten brush</second>
     </item>
     <item>
-      <first>TERRAIN_EDITOR_AVERAGE_BRUSH</first>
-      <second>Average brush</second>
+      <first>TERRAIN_EDITOR_MATERIAL</first>
+      <second>Material</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_MATERIAL_BRUSH</first>
+      <second>Material brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_NOISE_BRUSH</first>
+      <second>Noise brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SHARP_FALLOFF</first>
+      <second>Smooth falloff</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SHARP_IMAGE</first>
+      <second>Sharp image</second>
     </item>
     <item>
       <first>TERRAIN_EDITOR_SMOOTH_BRUSH</first>
@@ -3125,24 +3278,24 @@
       <second>Smooth falloff</second>
     </item>
     <item>
-      <first>TERRAIN_EDITOR_SHARP_FALLOFF</first>
-      <second>Smooth falloff</second>
+      <first>TERRAIN_EDITOR_SPLAT_BRUSH</first>
+      <second>Splat brush</second>
     </item>
     <item>
-      <first>TEXT_EDIT</first>
-      <second>Edit</second>
+      <first>TERRAIN_EDITOR_SYMMETRY_X</first>
+      <second>Symmetry horizontal</second>
     </item>
     <item>
-      <first>TEXTURE_BATCH_WIZARDTOOL_DESCRIPTION</first>
-      <second>Import texture batch...</second>
+      <first>TERRAIN_EDITOR_SYMMETRY_Z</first>
+      <second>Symmetry vertical</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_VISUALIZE</first>
+      <second>Visualize channel</second>
     </item>
     <item>
       <first>TEXTURE_BATCH_ADD</first>
       <second>Add textures...</second>
-    </item>
-    <item>
-      <first>TEXTURE_BATCH_REMOVE</first>
-      <second>Remove textures</second>
     </item>
     <item>
       <first>TEXTURE_BATCH_DIALOG_TITLE</first>
@@ -3153,8 +3306,84 @@
       <second>Add textures</second>
     </item>
     <item>
+      <first>TEXTURE_BATCH_REMOVE</first>
+      <second>Remove textures</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_WIZARDTOOL_DESCRIPTION</first>
+      <second>Import texture batch...</second>
+    </item>
+    <item>
       <first>TEXTURE_EDITOR_COLOR</first>
       <second>Texture color</second>
+    </item>
+    <item>
+      <first>TEXT_EDIT</first>
+      <second>Edit</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_ADD_ACT</first>
+      <second>Add act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_CAPTURE_ENTITIES</first>
+      <second>Capture entities</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_DELETE_SELECTED_KEY</first>
+      <second>Delete key</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_EASE_VELOCITY</first>
+      <second>Easy velocity</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_GOTO_NEXT_KEY</first>
+      <second>Goto next key</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_GOTO_PREVIOUS_KEY</first>
+      <second>Goto previous key</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_MESSAGE_REMOVE_ACT</first>
+      <second>Are you sure you want to remove selected act?</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_REMOVE_ACT</first>
+      <second>Remove act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_SET_LOOKAT_ENTITY</first>
+      <second>Set look-at entity</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_SPLIT_ACT</first>
+      <second>Split act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TIME_SCALE_ACT</first>
+      <second>Scale act time</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TIME_SCALE_MESSAGE</first>
+      <second>Enter new duration of selected act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TIME_SCALE_NEW_TIME</first>
+      <second>New time (second(s))</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TIME_SCALE_TITLE</first>
+      <second>Scale time</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TITLE_REMOVE_ACT</first>
+      <second>Remove act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_UNNAMED_ACT</first>
+      <second>Unnamed</second>
     </item>
     <item>
       <first>TITLE_BUILD</first>
@@ -3211,258 +3440,6 @@
     <item>
       <first>TOOLBAR_UNDO</first>
       <second>Undo</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_ALIGN_LEFT</first>
-      <second>Align left</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_ALIGN_RIGHT</first>
-      <second>Align right</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_ALIGN_TOP</first>
-      <second>Align top</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_ALIGN_BOTTOM</first>
-      <second>Align bottom</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_EVEN_VERTICALLY</first>
-      <second>Even vertically</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_EVEN_HORIZONTALLY</first>
-      <second>Even horizontally</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE</first>
-      <second>Create</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_STATE</first>
-      <second>State</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_DELETE_NODE</first>
-      <second>Delete</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INBOOLEAN</first>
-      <second>Boolean</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INCLAMP</first>
-      <second>Clamp</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INCOMBINE</first>
-      <second>Combine</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INCONST</first>
-      <second>Constant</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INGESTUREPINCH</first>
-      <second>Gesture Pinch</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INGESTURESWIPE</first>
-      <second>Gesture Swipe</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INGESTURETAP</first>
-      <second>Gesture Tap</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INHYSTERESIS</first>
-      <second>Hysteresis</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INPULSE</first>
-      <second>Pulse</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INREADVALUE</first>
-      <second>Read Value</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INREMAPAXIS</first>
-      <second>Remap Axis</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INTHRESHOLD</first>
-      <second>Threshold</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INTRIGGER</first>
-      <second>Trigger</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_STATE_NAME</first>
-      <second>Name</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_STATE_NAME_TITLE</first>
-      <second>Change name</second>
-    </item>
-    <item>
-      <first>INPUT_EDITOR_STATE_NAME_MESSAGE</first>
-      <second>Enter state name</second>
-    </item>
-    <item>
-      <first>EDITOR_SURE_TO_REBUILD_MESSAGE</first>
-      <second>Are you sure you want to rebuild all content?</second>
-    </item>
-    <item>
-      <first>EDITOR_SURE_TO_REBUILD_CAPTION</first>
-      <second>Rebuild content</second>
-    </item>
-    <item>
-      <first>SCRIPT_CLASS_WIZARDTOOL_DESCRIPTION</first>
-      <second>Create new script class..</second>
-    </item>
-    <item>
-      <first>SCRIPT_CLASS_WIZARDTOOL_CLASS_NAME</first>
-      <second>Class name</second>
-    </item>
-    <item>
-      <first>SCRIPT_CLASS_WIZARDTOOL_DIALOG_TITLE</first>
-      <second>Enter class name</second>
-    </item>
-     <item>
-      <first>SCRIPT_CLASS_WIZARDTOOL_DIALOG_MESSAGE</first>
-      <second>Enter class name</second>
-    </item>
-    <item>
-      <first>SCRIPT_CLASS_WIZARDTOOL_INHERIT_CLASS_NAME</first>
-      <second>Inherit from class</second>
-    </item>
-    <item>
-      <first>POSTPROCESS_EDITOR_ADD_STEP</first>
-      <second>Add step</second>
-    </item>
-    <item>
-      <first>POSTPROCESS_EDITOR_REMOVE_STEP</first>
-      <second>Remove step</second>
-    </item>
-    <item>
-      <first>POSTPROCESS_EDITOR_MOVE_UP</first>
-      <second>Move up</second>
-    </item>
-    <item>
-      <first>POSTPROCESS_EDITOR_MOVE_DOWN</first>
-      <second>Move down</second>
-    </item>
-    <item>
-      <first>POSTPROCESS_EDITOR_ORDER</first>
-      <second>Order</second>
-    </item>
-    <item>
-      <first>POSTPROCESS_EDITOR_DESCRIPTION</first>
-      <second>Description</second>
-    </item>
-    <item>
-      <first>POSTPROCESS_EDITOR_ADD_TARGET_DEFINITION</first>
-      <second>Add target</second>
-    </item>
-    <item>
-      <first>POSTPROCESS_EDITOR_ADD_TEXTURE_DEFINITION</first>
-      <second>Add texture</second>
-    </item>
-    <item>
-      <first>POSTPROCESS_EDITOR_REMOVE_DEFINITION</first>
-      <second>Remove</second>
-    </item>
-    <item>
-      <first>POSTPROCESS_EDITOR_ID</first>
-      <second>Id</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_DESCRIPTION</first>
-      <second>Create game entity...</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_DIALOG_TITLE</first>
-      <second>Create game entity</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_ENTITY_NAME</first>
-      <second>Name</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_UNNAMED</first>
-      <second>Unnamed</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_VISUAL_MESH</first>
-      <second>Visual mesh</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_COLLISION_MESH</first>
-      <second>Collision mesh</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_PHYSICS_TYPE</first>
-      <second>Type of physics</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_PHYSICS_STATIC</first>
-      <second>Static - Non movable</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_PHYSICS_KINEMATIC</first>
-      <second>Kinematic - Movable</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_PHYSICS_DYNAMIC</first>
-      <second>Dynamic - Movable and simulated</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_COLLISION_GROUP</first>
-      <second>Collision group</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_COLLISION_MASK</first>
-      <second>Collision mask</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_MATERIAL</first>
-      <second>Material</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_FRICTION</first>
-      <second>Friction</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_CREATE_SCRIPT</first>
-      <second>Create script</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_CREATE_GROUP</first>
-      <second>Create into group entity</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_FILE_TITLE</first>
-      <second>Select mesh</second>
-    </item>
-    <item>
-      <first>FLASH_EDITOR_REWIND</first>
-      <second>Rewind</second>
-    </item>
-    <item>
-      <first>FLASH_EDITOR_PLAY</first>
-      <second>Play</second>
-    </item>
-    <item>
-      <first>FLASH_EDITOR_STOP</first>
-      <second>Stop</second>
-    </item>
-    <item>
-      <first>FLASH_EDITOR_FORWARD</first>
-      <second>Forward</second>
     </item>
   </map>
 </object>

@@ -132,6 +132,31 @@ const uint32_t c_offsetCollectingDependencies = 20;
 const uint32_t c_offsetBuildingAsset = 30;
 const uint32_t c_offsetFinished = 100;
 
+class LogRecordTarget : public ILogTarget
+{
+public:
+	void replay(ILogTarget* intoTarget) const
+	{
+		for (auto log : m_logs)
+			intoTarget->log(log.threadId, log.level, log.str);
+	}
+
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
+	{
+		m_logs.push_back({ threadId, level, str });
+	}
+
+private:
+	struct Log
+	{
+		uint32_t threadId;
+		int32_t level;
+		std::wstring str;
+	};
+
+	std::list< Log > m_logs;
+};
+
 class LogDualTarget : public ILogTarget
 {
 public:
@@ -402,6 +427,16 @@ EditorForm::EditorForm()
 
 bool EditorForm::create(const CommandLine& cmdLine)
 {
+	// Record logging occuring before log view has been propertly initialized.
+	Ref< LogRecordTarget > infoLog = new LogRecordTarget();
+	Ref< LogRecordTarget > warningLog = new LogRecordTarget();
+	Ref< LogRecordTarget > errorLog = new LogRecordTarget();
+	
+	log::info.setGlobalTarget(infoLog);
+	log::warning.setGlobalTarget(warningLog);
+	log::error.setGlobalTarget(errorLog);
+
+	// Default configuration file.
 	std::wstring settingsPath = L"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config";
 
 #if defined(__APPLE__)
@@ -410,6 +445,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!forceConsole)
 		settingsPath = L"$(BUNDLE_PATH)/Contents/Resources//resources/runtime/configurations/Traktor.Editor.config";
 #endif
+
+	// Overridden configuration file.
+	if (cmdLine.hasOption('c', L"configuration"))
+		settingsPath = cmdLine.getOption('c', L"configuration").getString();
 
 	// Remember startup directory so we can save user configuration properly.
 	m_startupDirectory = FileSystem::getInstance().getCurrentVolumeAndDirectory();
@@ -442,7 +481,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	const std::set< std::wstring >& modules = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
-		log::info << L"Loading module \"" << *i << L"\"..." << Endl;
 		Ref< Library > library = new Library();
 		if (library->open(*i))
 		{
@@ -597,6 +635,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_logView->setText(i18n::Text(L"TITLE_LOG"));
 	if (!m_mergedSettings->getProperty< bool >(L"Editor.LogVisible"))
 		m_logView->hide();
+
+	// Replay logs into log view.
+	infoLog->replay(m_logView->getLogTarget());
+	warningLog->replay(m_logView->getLogTarget());
+	errorLog->replay(m_logView->getLogTarget());
 
 	log::info.setGlobalTarget(new LogDualTarget(log::info.getGlobalTarget(), m_logView->getLogTarget()));
 	log::warning.setGlobalTarget(new LogDualTarget(log::warning.getGlobalTarget(), m_logView->getLogTarget()));
