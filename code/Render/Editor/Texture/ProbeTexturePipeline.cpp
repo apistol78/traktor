@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Settings/PropertyString.h"
