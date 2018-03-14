@@ -1,10 +1,8 @@
 @echo off
 
-:: Setup VC environment variables.
-call "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcvarsall.bat"
-
 :: Setup our build environment.
-call %~dp0../config.bat
+call "%~dp0..\config.bat"
+call "%~dp0..\vsenv.bat"
 
 :: Remove old log.
 del /F /Q %~dp0autobuild-ps3.log

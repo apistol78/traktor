@@ -3,29 +3,12 @@
 <?--
 
 -- Read configuration from environment.
-local dialect = OS.getInstance():getEnvironment("MAKE_DIALECT")
-local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
 local os = OS.getInstance():getEnvironment("MAKE_OS")
+local dialect = OS.getInstance():getEnvironment("MAKE_DIALECT")
+local format = OS.getInstance():getEnvironment("MAKE_FORMAT")
 local include = OS.getInstance():getEnvironment("MAKE_INCLUDE")
-local objectFile = OS.getInstance():getEnvironment("MAKE_OBJECT_FILE")
-local staticLibraryFile = OS.getInstance():getEnvironment("MAKE_STATIC_LIBRARY_FILE")
-local sharedLibraryFile = OS.getInstance():getEnvironment("MAKE_SHARED_LIBRARY_FILE")
-local executableFile = OS.getInstance():getEnvironment("MAKE_EXECUTABLE_FILE")
 
-local function getProductName(project, configuration)
-	local format = configuration:getTargetFormat()
-	if format == "StaticLibrary" then
-		return string.format(staticLibraryFile, project:getName())
-	elseif format == "SharedLibrary" then
-		return string.format(sharedLibraryFile, project:getName())
-	elseif format == "Executable" then
-		return string.format(executableFile, project:getName())
-	elseif format == "ExecutableConsole" then
-		return string.format(executableFile, project:getName())
-	end
-	assert(false)
-	return ""
-end
+dofile(format)
 
 if include ~= nil then
 	if dialect == "nmake" then
@@ -60,7 +43,7 @@ for i = 0, projects:size() - 1 do
 		local configurations = project:getConfigurations()
 		for j = 0, configurations:size() - 1 do
 			local configuration = configurations:get(j)
-			local productName = getProductName(project, configuration)
+			local productName = PRODUCTNAME(solution, project, configuration)
 			output:printLn(" \\")
 			output:print("\t" .. configuration:getName() .. "/" .. productName)
 		end
@@ -80,7 +63,7 @@ for c, _ in pairs(availConfigurations) do
 		if project:getEnable() then
 			local configuration = project:getConfiguration(c)
 			if configuration ~= nil then
-				local productName = getProductName(project, configuration)
+				local productName = PRODUCTNAME(solution, project, configuration)
 				output:printLn(" \\")
 				output:print("\t" .. configuration:getName() .. "/" .. productName)
 			end
@@ -99,7 +82,7 @@ for i = 0, projects:size() - 1 do
 		local configurations = project:getConfigurations()
 		for j = 0, configurations:size() - 1 do
 			local configuration = configurations:get(j)
-			local productName = getProductName(project, configuration)
+			local productName = PRODUCTNAME(solution, project, configuration)
 
 			output:printLn(".PHONY: " .. configuration:getName() .. "/" .. productName)
 			output:print(configuration:getName() .. "/" .. productName .. " :")
@@ -109,7 +92,7 @@ for i = 0, projects:size() - 1 do
 				if isa(dependency, ProjectDependency) then
 					local localProject = dependency:getProject()
 					local localConfiguration = localProject:getConfiguration(configuration:getName())
-					local localProductName = getProductName(localProject, localConfiguration)
+					local localProductName = PRODUCTNAME(solution, localProject, localConfiguration)
 					output:printLn(" \\")
 					output:print("\t" .. configuration:getName() .. "/" .. localProductName)
 				end
@@ -138,6 +121,7 @@ for i = 0, projects:size() - 1 do
 		end
 	end
 end
+output:printLn("")
 
 output:printLn(".PHONY: install")
 output:printLn("install :")
