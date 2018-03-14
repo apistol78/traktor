@@ -28,7 +28,7 @@ end
 function INCLUDE(solution, project, configuration, includePaths, libraryPaths, output)
 	output:print("/I " .. configuration:getName())
 	for _, includePath in ipairs(includePaths) do
-		output:print(" /I " .. includePath)
+		output:print(" /I \"" .. includePath .. "\"")
 	end
 end
 
@@ -44,7 +44,8 @@ function CC(solution, project, configuration, filePath, outputPath, output)
 			"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
 			"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
 			filePath:getPathName() .. " " ..
-			"/Fo" .. outputPath
+			"/Fo" .. outputPath .. " " ..
+			"1>nul 2>&1"
 		)
 	elseif format == "SharedLibrary" then
 		output:printLn(
@@ -54,7 +55,8 @@ function CC(solution, project, configuration, filePath, outputPath, output)
 			"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
 			"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
 			filePath:getPathName() .. " " ..
-			"/Fo" .. outputPath
+			"/Fo" .. outputPath .. " " ..
+			"1>nul 2>&1"
 		)
 	elseif format == "Executable" then
 		output:printLn(
@@ -64,7 +66,8 @@ function CC(solution, project, configuration, filePath, outputPath, output)
 			"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
 			"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
 			filePath:getPathName() .. " " ..
-			"/Fo" .. outputPath
+			"/Fo" .. outputPath .. " " ..
+			"1>nul 2>&1"
 		)
 	elseif format == "ExecutableConsole" then
 		output:printLn(
@@ -74,7 +77,8 @@ function CC(solution, project, configuration, filePath, outputPath, output)
 			"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
 			"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
 			filePath:getPathName() .. " " ..
-			"/Fo" .. outputPath
+			"/Fo" .. outputPath .. " " ..
+			"1>nul 2>&1"
 		)
 	end
 end
@@ -94,12 +98,12 @@ function LINK(solution, project, configuration, libraryPaths, libraries, externa
 		local lo = ""
 
 		if format ~= "StaticLibrary" then
-			lo = lo .. " /LIBPATH:../" .. configuration:getName()
+			lo = lo .. " /LIBPATH:\"../" .. configuration:getName() .. "\""
 			for _, libraryPath in ipairs(libraryPaths) do
-				lo = lo .. " /LIBPATH:" .. libraryPath
+				lo = lo .. " /LIBPATH:\"" .. libraryPath .. "\""
 			end
 			for _, library in ipairs(libraries) do
-				lo = lo .. " " .. library
+				lo = lo .. " " .. library .. ".lib"
 			end
 			for _, externalLibrary in ipairs(externalLibraries) do
 				lo = lo .. " " .. externalLibrary
