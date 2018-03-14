@@ -162,10 +162,8 @@ T_MATH_INLINE Quaternion Quaternion::fromAxisAngle(const Vector4& axisAngle)
 	if (abs(angle) >= FUZZY_EPSILON)
 	{
 		Vector4 axis = axisAngle / angle;
-		Scalar half = angle / Scalar(2.0f);
-		Scalar sh(sinf(half));
-		Scalar ch(cosf(half));
-		return Quaternion(axis.xyz0() * sh + Vector4(0.0f, 0.0f, 0.0f, ch));
+		float half = angle / Scalar(2.0f);
+		return Quaternion(axis.xyz0() * Scalar(sinf(half)) + Vector4(0.0f, 0.0f, 0.0f, cosf(half)));
 	}
 	else
 		return Quaternion::identity();
@@ -174,9 +172,7 @@ T_MATH_INLINE Quaternion Quaternion::fromAxisAngle(const Vector4& axisAngle)
 T_MATH_INLINE Quaternion Quaternion::fromAxisAngle(const Vector4& axis, float angle)
 {
 	float half = angle / 2.0f;
-	Scalar sh(sinf(half));
-	Scalar ch(cosf(half));
-	return Quaternion(axis.xyz0() * sh + Vector4(0.0f, 0.0f, 0.0f, ch));
+	return Quaternion(axis.xyz0() * Scalar(sinf(half)) + Vector4(0.0f, 0.0f, 0.0f, cosf(half)));
 }
 
 T_MATH_INLINE Matrix44 Quaternion::toMatrix44() const

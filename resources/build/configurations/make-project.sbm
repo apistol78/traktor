@@ -5,14 +5,12 @@
 import(traktor)
 
 -- Read configuration from environment.
-local dialect = OS.getInstance():getEnvironment("MAKE_DIALECT")
-local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
 local os = OS.getInstance():getEnvironment("MAKE_OS")
+local dialect = OS.getInstance():getEnvironment("MAKE_DIALECT")
+local format = OS.getInstance():getEnvironment("MAKE_FORMAT")
 local include = OS.getInstance():getEnvironment("MAKE_INCLUDE")
-local objectFile = OS.getInstance():getEnvironment("MAKE_OBJECT_FILE")
-local staticLibraryFile = OS.getInstance():getEnvironment("MAKE_STATIC_LIBRARY_FILE")
-local sharedLibraryFile = OS.getInstance():getEnvironment("MAKE_SHARED_LIBRARY_FILE")
-local executableFile = OS.getInstance():getEnvironment("MAKE_EXECUTABLE_FILE")
+
+dofile(format)
 
 local function printWithColor(c, s)
 	if os == "windows" then
@@ -22,21 +20,6 @@ local function printWithColor(c, s)
 	elseif os == "linux" then
 		output:printLn("\t@printf '\\e[0;" .. c .. "m" .. s .. "\\e[0m\\n'")
 	end
-end
-
-local function getProductName(project, configuration)
-	local format = configuration:getTargetFormat()
-	if format == "StaticLibrary" then
-		return string.format(staticLibraryFile, project:getName())
-	elseif format == "SharedLibrary" then
-		return string.format(sharedLibraryFile, project:getName())
-	elseif format == "Executable" then
-		return string.format(executableFile, project:getName())
-	elseif format == "ExecutableConsole" then
-		return string.format(executableFile, project:getName())
-	end
-	assert(false)
-	return ""
 end
 
 local function insertLast(t, iv)
@@ -69,7 +52,11 @@ local function collectDependencies(solution, project, configuration, outIncludeP
 			Path(libraryPaths:get(i)),
 			projectPath
 		)
-		insertLast(outLibraryPaths, libraryRelPath:getPathName())
+		if libraryRelPath ~= nil then
+			insertLast(outLibraryPaths, libraryRelPath:getPathName())
+		else
+			insertLast(outLibraryPaths, libraryPaths:get(i))
+		end
 	end
 
 	-- Recurse with dependencies.
@@ -157,7 +144,7 @@ local function scanHeaderDependencies(cache, includePaths, file, outDependencies
 
 	-- Scan for dependencies in files.
 	local fs = fileSystem:open(file, File.FmRead)
-	assert (fs ~= nil)
+	if fs == nil then return end
 
 	local sr = StringReader(BufferedStream(fs), AnsiEncoding())
 	while true do
@@ -268,34 +255,9 @@ collectFiles(
 -- Include paths.
 for i = 0, configurations:size() - 1 do
 	local configuration = configurations:get(i)
-
 	output:print(configuration:getName():upper() .. "_INCLUDE=")
 
-	if toolchain == "vc" then
-		output:print("/I " .. configuration:getName())
-	elseif toolchain == "gcc" or toolchain == "clang" then
-		output:print("-I" .. configuration:getName())
-	end
-
-	for _, includePath in ipairs(includePaths[i]) do
-		if toolchain == "vc" then
-			output:print(" /I " .. includePath)
-		elseif toolchain == "gcc" or toolchain == "clang" then
-			if includePath:sub(1, 1) ~= "`" then
-				output:print(" -I" .. includePath)
-			else
-				output:print(" " .. includePath)
-			end
-		end
-	end
-
-	if os == "osx" then
-		for _, libraryPath in ipairs(libraryPaths[i]) do
-			if toolchain == "gcc" or toolchain == "clang" then
-				output:print(" -F" .. libraryPath)
-			end
-		end
-	end	
+	INCLUDE(solution, project, configuration, includePaths[i], libraryPaths[i], output)
 
 	output:printLn("")
 end
@@ -313,11 +275,7 @@ for i = 0, configurations:size() - 1 do
 		local definition = definitions:get(j)
 		local def0 = string.sub(definition, 1, 1)
 		if not (def0 == "'" or def0 == "`") then
-			if toolchain == "vc" then
-				output:print("/D" .. definition .. " ")
-			elseif toolchain == "gcc" or toolchain == "clang" then
-				output:print("-D" .. definition .. " ")
-			end
+			DEFINE(solution, project, configuration, definition, output)
 		else
 			output:print(definition)
 		end
@@ -387,7 +345,6 @@ output:printLn("")
 -- Link targets.
 for i = 0, configurations:size() - 1 do
 	local configuration = configurations:get(i)
-	local productName = getProductName(project, configuration)
 	local profile = configuration:getTargetProfile()
 	local format = configuration:getTargetFormat()
 
@@ -396,7 +353,7 @@ for i = 0, configurations:size() - 1 do
 		local f = fileSystem:getRelativePath(file, sourcePath)
 		assert (f ~= nil)
 		output:printLn(" \\")
-		output:print("\t" .. configuration:getName() .. "/" .. string.format(objectFile, f:getPathNameNoExtension()))
+		output:print("\t" .. configuration:getName() .. "/" .. OBJNAME(f))
 	end
 	output:printLn("")
 
@@ -406,7 +363,7 @@ for i = 0, configurations:size() - 1 do
 	printWithColor(35, "Assembling " .. project:getName() .. "...")
 
 	if dialect == "nmake" then
-		output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
+		output:printLn("\t-@mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
 	elseif dialect == "make" then
 		if os == "windows" then
 			output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
@@ -415,57 +372,7 @@ for i = 0, configurations:size() - 1 do
 		end
 	end
 
-	local lo = ""
-	if format ~= "StaticLibrary" then
-		if toolchain == "vc" then
-			lo = lo .. " /LIBPATH:../" .. configuration:getName()
-		elseif toolchain == "gcc" or toolchain == "clang" then
-			lo = lo .. " -L../" .. configuration:getName()
-		end		
-		for _, libraryPath in ipairs(libraryPaths[i]) do
-			if toolchain == "vc" then
-				lo = lo .. " /LIBPATH:" .. libraryPath
-			elseif toolchain == "gcc" or toolchain == "clang" then
-				lo = lo .. " -L" .. libraryPath
-			end
-		end
-		for _, library in ipairs(libraries[i]) do
-			if toolchain == "vc" then
-				lo = lo .. " " .. library
-			elseif toolchain == "gcc" or toolchain == "clang" then
-				lo = lo .. " -l" .. library
-			end
-		end
-		for _, externalLibrary in ipairs(externalLibraries[i]) do
-			if toolchain == "vc" then
-				lo = lo .. " " .. externalLibrary
-			elseif toolchain == "gcc" or toolchain == "clang" then
-				if string.find(externalLibrary, ".framework") == nil then
-					if externalLibrary:sub(1, 1) ~= "`" then
-						lo = lo .. " -l" .. externalLibrary
-					else
-						lo = lo .. " " .. externalLibrary
-					end
-				else
-					lo = lo .. " -framework " .. externalLibrary:sub(1, #externalLibrary - 10)
-				end
-			end
-		end
-	end
-
-	if format == "StaticLibrary" then
-		output:printLn("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
-	elseif format == "SharedLibrary" then
-		if os ~= "osx" then
-			output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) $(LINK_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS) " .. lo)
-		else
-			output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -dynamiclib -install_name @executable_path/" .. productName .. " $(LINK_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS) " .. lo)
-		end
-	elseif format == "Executable" then
-		output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT) ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)" .. lo)
-	elseif format == "ExecutableConsole" then
-		output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT) ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)" .. lo)
-	end	
+	LINK(solution, project, configuration, libraryPaths[i], libraries[i], externalLibraries[i], output)
 
 	local aggregationItems = configuration:getAggregationItems()
 	for i = 0, aggregationItems:size() - 1 do
@@ -480,7 +387,7 @@ for i = 0, configurations:size() - 1 do
 			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
 		elseif os == "osx" or os == "linux" then
 			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath)
-			output:printLn("\t@mkdir -p \"" .. targetPath .. "/\"")
+			output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
 			output:printLn("\t@cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath .. "/\"")
 		end
 	end
@@ -503,7 +410,7 @@ for i = 0, configurations:size() - 1 do
 
 		printWithColor(35, "Converting " .. file:getFileName() .. "...")
 		if dialect == "nmake" then
-			output:printLn("\t-mkdir \"$(@D)\" 1>nul 2>&1")
+			output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")
 		elseif dialect == "make" then
 			if os == "windows" then
 				output:printLn("\t-mkdir \"$(@D:\\=)\"")
@@ -540,7 +447,7 @@ for i = 0, configurations:size() - 1 do
 		local f1 = fileSystem:getRelativePath(file, projectPath)
 		assert (f1 ~= nil)
 
-		output:printLn(configuration:getName() .. "/" .. string.format(objectFile, f:getPathNameNoExtension()) .. " : \\")
+		output:printLn(configuration:getName() .. "/" .. OBJNAME(f) .. " : \\")
 		output:print("\t" .. f1:getPathName())
 		for dep, _ in pairs(deps) do
 			local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
@@ -559,8 +466,9 @@ for i = 0, configurations:size() - 1 do
 		output:printLn("")
 
 		printWithColor(35, "Compiling " .. f:getFileName() .. "...")
+
 		if dialect == "nmake" then
-			output:printLn("\t-mkdir \"$(@D)\" 1>nul 2>&1")
+			output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")
 		elseif dialect == "make" then
 			if os == "windows" then
 				output:printLn("\t-mkdir \"$(@D:\\=)\"")
@@ -569,25 +477,8 @@ for i = 0, configurations:size() - 1 do
 			end
 		end
 
-		local cc = "CC"
-		local ext = f:getExtension()
-		if ext == "c" then
-			cc = "C"
-		elseif ext == "m" or ext == "mm" then
-			cc = "MM"
-		end
+		CC(solution, project, configuration, f1, "$@", output)
 
-		local profile = configuration:getTargetProfile()
-		local format = configuration:getTargetFormat()
-		if format == "StaticLibrary" then
-			output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
-		elseif format == "SharedLibrary" then
-			output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
-		elseif format == "Executable" then
-			output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
-		elseif format == "ExecutableConsole" then
-			output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. f1:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)$@")
-		end
 		output:printLn("")
 	end
 end

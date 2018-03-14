@@ -506,21 +506,26 @@ T_MATH_INLINE Matrix44 rotateZ(float angle)
 
 T_MATH_INLINE Matrix44 rotate(const Vector4& axis, float angle)
 {
-	Scalar c = Scalar(cosf(angle));
-	Scalar s = Scalar(sinf(angle));
-	Scalar t = Scalar(1.0f) - c;
+	float cf = cosf(angle);
+
+	Scalar c(cf);
+	Scalar s(sinf(angle));
+	Scalar t(1.0f - cf);
+
+	Vector4 txyz = t * axis;
+
 	return Matrix44(
-		t * axis.x() * axis.x() + c,
-		t * axis.x() * axis.y() + s * axis.z(),
-		t * axis.x() * axis.z() - s * axis.y(),
+		txyz.x() * axis.x() + c,
+		txyz.x() * axis.y() + s * axis.z(),
+		txyz.x() * axis.z() - s * axis.y(),
 		0.0f,
-		t * axis.x() * axis.y() - s * axis.z(),
-		t * axis.y() * axis.y() + c,
-		t * axis.y() * axis.z() + s * axis.x(),
+		txyz.x() * axis.y() - s * axis.z(),
+		txyz.y() * axis.y() + c,
+		txyz.y() * axis.z() + s * axis.x(),
 		0.0f,
-		t * axis.x() * axis.z() + s * axis.y(),
-		t * axis.y() * axis.z() - s * axis.x(),
-		t * axis.z() * axis.z() + c,
+		txyz.x() * axis.z() + s * axis.y(),
+		txyz.y() * axis.z() - s * axis.x(),
+		txyz.z() * axis.z() + c,
 		0.0f,
 		0.0f,
 		0.0f,
