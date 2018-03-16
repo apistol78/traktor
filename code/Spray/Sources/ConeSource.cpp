@@ -55,31 +55,39 @@ void ConeSource::emit(
 {
 	Vector4 position = transform * m_position;
 	Vector4 normal = transform * m_normal;
+	
 	Scalar dT(context.deltaTime);
 
 	Vector4 deltaVelocity = -deltaMotion / dT;
+
+	Vector4 tx = transform.axisX() * m_angle1s;
+	Vector4 tz = transform.axisZ() * m_angle2s;
 
 	Point* point = emitterInstance.addPoints(emitCount);
 	while (emitCount-- > 0)
 	{
 		float phi = context.random.nextFloat() * 2.0f * PI;
-		Scalar gamma = Scalar(context.random.nextFloat());
-		Scalar beta = Scalar(context.random.nextFloat()) * dT;
 
-		Scalar x = Scalar(cosf(phi));
-		Scalar z = Scalar(sinf(phi));
+		Scalar gamma(context.random.nextFloat());
+		Scalar beta(context.random.nextFloat());
 
-		Vector4 extent = transform.axisX() * m_angle1s * x + transform.axisZ() * m_angle2s * z;
+		Scalar x(traktor::sinf(phi + HALF_PI));
+		Scalar z(traktor::sinf(phi));
+
+		Vector4 ax = tx * x;
+		Vector4 az = tz * z;
+
+		Vector4 extent = ax + az;
 		Vector4 direction = (normal + extent * gamma).normalized();
 
 		point->velocity = direction * Scalar(m_velocity.random(context.random)) + deltaVelocity * Scalar(m_inheritVelocity.random(context.random));
-		point->position = position + point->velocity * beta;
+		point->position = position + point->velocity * beta * dT;
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);
 		point->color = Vector4::one();
 		point->age = beta;
 		point->maxAge = m_age.random(context.random);
-		point->inverseMass = 1.0f / (m_mass.random(context.random));
+		point->inverseMass = 1.0f / m_mass.random(context.random);
 		point->size = m_size.random(context.random);
 		point->random = context.random.nextFloat();
 		

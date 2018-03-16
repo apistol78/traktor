@@ -12,7 +12,7 @@ call "%~dp0..\vsenv-x86.bat"
 pushd "%TRAKTOR_HOME%"
 call "scripts\build-projects-make-win32.bat"
 cd "build\win32"
-%TRAKTOR_HOME%\3rdp\jom\jom -f "Extern Win32.mak" ReleaseShared
-%TRAKTOR_HOME%\3rdp\jom\jom -f "Traktor Win32.mak" ReleaseShared
+%TRAKTOR_HOME%\3rdp\jom\jom -f "Extern Win32.mak"
+%TRAKTOR_HOME%\3rdp\jom\jom -f "Traktor Win32.mak"
 popd
 

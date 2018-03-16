@@ -1,6 +1,10 @@
 
 function OBJNAME(filePath)
-	return filePath:getPathNameNoExtension() .. ".obj"
+	if filePath:getExtension() ~= "rc" then
+		return filePath:getPathNameNoExtension() .. ".obj"
+	else
+		return filePath:getPathNameNoExtension() .. ".res"
+	end
 end
 
 function PRODUCTNAME(solution, project, configuration)
@@ -36,65 +40,90 @@ function CC(solution, project, configuration, filePath, outputPath, output)
 	local profile = configuration:getTargetProfile()
 	local format = configuration:getTargetFormat()
 
-	if format == "StaticLibrary" then
-		output:printLn(
-			"\t@cl " ..
-			"-c " ..
-			"$(CC_FLAGS_" .. profile:upper() .. "_STATIC) " ..
-			"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
-			"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
-			filePath:getPathName() .. " " ..
-			"/Fo" .. outputPath .. " " ..
-			"1>nul 2>&1"
-		)
-	elseif format == "SharedLibrary" then
-		output:printLn(
-			"\t@cl " ..
-			"-c " ..
-			"$(CC_FLAGS_" .. profile:upper() .. "_SHARED) " ..
-			"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
-			"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
-			filePath:getPathName() .. " " ..
-			"/Fo" .. outputPath .. " " ..
-			"1>nul 2>&1"
-		)
-	elseif format == "Executable" then
-		output:printLn(
-			"\t@cl " ..
-			"-c " ..
-			"$(CC_FLAGS_" .. profile:upper() .. "_EXECUTABLE) " ..
-			"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
-			"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
-			filePath:getPathName() .. " " ..
-			"/Fo" .. outputPath .. " " ..
-			"1>nul 2>&1"
-		)
-	elseif format == "ExecutableConsole" then
-		output:printLn(
-			"\t@cl " ..
-			"-c " ..
-			"$(CC_FLAGS_" .. profile:upper() .. "_EXECUTABLE_CONSOLE) " ..
-			"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
-			"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
-			filePath:getPathName() .. " " ..
-			"/Fo" .. outputPath .. " " ..
-			"1>nul 2>&1"
-		)
+	if filePath:getExtension() ~= "rc" then
+		if format == "StaticLibrary" then
+			output:printLn(
+				"\tcl " ..
+				"$(CC_FLAGS_" .. profile:upper() .. "_STATIC) " ..
+				"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
+				"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
+				filePath:getPathName() .. " " ..
+				"/Fo" .. outputPath
+			)
+		elseif format == "SharedLibrary" then
+			output:printLn(
+				"\tcl " ..
+				"$(CC_FLAGS_" .. profile:upper() .. "_SHARED) " ..
+				"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
+				"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
+				filePath:getPathName() .. " " ..
+				"/Fo" .. outputPath
+			)
+		elseif format == "Executable" then
+			output:printLn(
+				"\tcl " ..
+				"$(CC_FLAGS_" .. profile:upper() .. "_EXECUTABLE) " ..
+				"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
+				"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
+				filePath:getPathName() .. " " ..
+				"/Fo" .. outputPath
+			)
+		elseif format == "ExecutableConsole" then
+			output:printLn(
+				"\tcl " ..
+				"$(CC_FLAGS_" .. profile:upper() .. "_EXECUTABLE_CONSOLE) " ..
+				"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
+				"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
+				filePath:getPathName() .. " " ..
+				"/Fo" .. outputPath
+			)
+		end
+	else
+		if format == "StaticLibrary" then
+			output:printLn(
+				"\trc " ..
+				"$(RC_FLAGS_" .. profile:upper() .. "_STATIC) " ..
+				"/fo\"" .. outputPath .. "\" " ..
+				filePath:getPathName()
+			)
+		elseif format == "SharedLibrary" then
+			output:printLn(
+				"\trc " ..
+				"$(RC_FLAGS_" .. profile:upper() .. "_SHARED) " ..
+				"/fo\"" .. outputPath .. "\" " ..
+				filePath:getPathName()
+			)
+		elseif format == "Executable" then
+			output:printLn(
+				"\trc " ..
+				"$(RC_FLAGS_" .. profile:upper() .. "_EXECUTABLE) " ..
+				"/fo\"" .. outputPath .. "\" " ..
+				filePath:getPathName()
+			)
+		elseif format == "ExecutableConsole" then
+			output:printLn(
+				"\trc " ..
+				"$(RC_FLAGS_" .. profile:upper() .. "_EXECUTABLE_CONSOLE) " ..
+				"/fo\"" .. outputPath .. "\" " ..
+				filePath:getPathName()
+			)
+		end		
 	end
 end
 
-function LINK(solution, project, configuration, libraryPaths, libraries, externalLibraries, output)
+function LINK(solution, project, configuration, libraryPaths, libraries, externalLibraries, definitionFile, output)
 	local profile = configuration:getTargetProfile()
 	local format = configuration:getTargetFormat()
 
 	if format == "StaticLibrary" then
 		output:printLn(
-			"\t@lib " ..
+			"\tlib " ..
 			"$(LIB_FLAGS_" .. profile:upper() .. "_STATIC) " ..
 			"/OUT:../" .. configuration:getName() .. "/" .. project:getName() .. ".lib " ..
 			"$(" .. configuration:getName() .. "_OBJS)"
 		)
 	else
+		local manifest = OS.getInstance():getEnvironment("MAKE_MANIFEST")
 		local lo = ""
 
 		if format ~= "StaticLibrary" then
@@ -108,32 +137,56 @@ function LINK(solution, project, configuration, libraryPaths, libraries, externa
 			for _, externalLibrary in ipairs(externalLibraries) do
 				lo = lo .. " " .. externalLibrary
 			end
+			if definitionFile ~= nil then
+				lo = lo .. " /DEF:\"" .. definitionFile:getPathName() .. "\""
+			end
 		end
 
 		if format == "SharedLibrary" then
 			output:printLn(
-				"\t@link " ..
+				"\tlink " ..
 				"$(LINK_FLAGS_" .. profile:upper() .. "_SHARED) " ..
 				"/IMPLIB:../" .. configuration:getName() .. "/" .. project:getName() .. ".lib " ..
 				"/OUT:../" .. configuration:getName() .. "/" .. project:getName() .. ".dll " ..
 				"$(" .. configuration:getName() .. "_OBJS) " .. 
 				lo
 			)
+			if manifest ~= "" then
+				output:printLn(
+					"\tmt " ..
+					"-manifest \"" .. manifest .. "\" " ..
+					"-outputresource:../" .. configuration:getName() .. "/" .. project:getName() .. ".dll;2"
+				)
+			end
 		elseif format == "Executable" then
 			output:printLn(
-				"\t@link " ..
+				"\tlink " ..
 				"$(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) " ..
 				"/OUT:../" .. configuration:getName() .. "/" .. project:getName() .. ".exe " ..
 				"$(" .. configuration:getName() .. "_OBJS)" ..
 				lo
 			)
+			if manifest ~= "" then
+				output:printLn(
+					"\tmt " ..
+					"-manifest \"" .. manifest .. "\" " ..
+					"-outputresource:../" .. configuration:getName() .. "/" .. project:getName() .. ".exe;1"
+				)
+			end
 		elseif format == "ExecutableConsole" then
 			output:printLn(
-				"\t@link $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE_CONSOLE) " ..
+				"\tlink $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE_CONSOLE) " ..
 				"/OUT:../" .. configuration:getName() .. "/" .. project:getName() .. ".exe " ..
 				"$(" .. configuration:getName() .. "_OBJS)" .. 
 				lo
 			)
+			if manifest ~= "" then
+				output:printLn(
+					"\tmt " ..
+					"-manifest \"" .. manifest .. "\" " ..
+					"-outputresource:../" .. configuration:getName() .. "/" .. project:getName() .. ".exe;1"
+				)
+			end
 		end
 	end
 end
