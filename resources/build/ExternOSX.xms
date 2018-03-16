@@ -6,134 +6,6 @@
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.LuaJIT-2.0.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths/>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0</item>
-					</libraryPaths>
-					<libraries>
-						<item>lj_vm_osx</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths/>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0</item>
-					</libraryPaths>
-					<libraries>
-						<item>lj_vm_osx</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths/>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0</item>
-					</libraryPaths>
-					<libraries>
-						<item>lj_vm_osx</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libExtern.LuaJIT-2.0.0.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths/>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0</item>
-					</libraryPaths>
-					<libraries>
-						<item>lj_vm_osx</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libExtern.LuaJIT-2.0.0.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>lj_*.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lib_*.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>*.h</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
 			<name>Extern.agg</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/agg-2.5</sourcePath>
 			<configurations>
@@ -3127,7 +2999,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[11]"/>
+					<project ref="/object/projects/item[10]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -3528,7 +3400,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[12]/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[11]/dependencies/item[1]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.lpng</name>

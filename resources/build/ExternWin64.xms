@@ -4380,142 +4380,6 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.LuaJIT-2.0.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</sourcePath>
-			<configurations>
-				<item type="Configuration" version="4">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>__LP64__</item>
-						<item>_LP64</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlNoWarnings</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>__LP64__</item>
-						<item>_LP64</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlNoWarnings</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-				</item>
-				<item type="Configuration" version="4">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>__LP64__</item>
-						<item>_LP64</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlNoWarnings</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.LuaJIT-2.0.0.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-				<item type="Configuration" version="4">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>__LP64__</item>
-						<item>_LP64</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlNoWarnings</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.LuaJIT-2.0.0.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>lj_*.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lib_*.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>*.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>../lj_vm64.obj</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
 			<name>Extern.angle.libGLESv2</name>
 			<sourcePath>$(ANGLE_SDK)/src/libGLESv2</sourcePath>
 			<configurations>
@@ -5140,7 +5004,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[22]"/>
+					<project ref="/object/projects/item[21]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5605,7 +5469,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[25]/dependencies/item/project"/>
+		<item ref="/object/projects/item[24]/dependencies/item/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.lua</name>
@@ -6072,7 +5936,7 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item ref="/object/projects/item[22]/dependencies/item/project"/>
+		<item ref="/object/projects/item[21]/dependencies/item/project"/>
 	</projects>
 	<aggregations/>
 </object>
