@@ -2,6 +2,11 @@
 
 <?--
 
+-- Dependency scanner cache global.
+if _G.__cache == nil then
+	_G.__cache = {}
+end
+
 import(traktor)
 
 -- Read configuration from environment.
@@ -104,12 +109,12 @@ local function collectDependencies(solution, project, configuration, outIncludeP
 	end
 end
 
-local function collectFiles(project, projectOrFilter, pred, outFiles)
+local function collectFiles(project, projectOrFilter, pred)
 	local items = projectOrFilter:getItems()
 	for i = 0, items:size() - 1 do
 		local item = items:get(i)
 		if isa(item, Filter) then
-			collectFiles(project, item, pred, outFiles)
+			collectFiles(project, item, pred)
 		else
 			local files = item:getSystemFiles(project:getSourcePath())
 			for i = 0, files:size() - 1 do
@@ -117,34 +122,31 @@ local function collectFiles(project, projectOrFilter, pred, outFiles)
 				if os ~= "windows" then
 					file = Path(files:get(i):getPathNameNoVolume())
 				end
-				if pred(file) then
-					table.insert(outFiles, file)
-				end
+				pred(file)
 			end
 		end
 	end
 end
 
-local function copyTable(t, s)
+local function mergeTable(t, s)
 	for k, v in pairs(s) do
 		t[k] = v
 	end
 end
 
-local function scanHeaderDependencies(cache, includePaths, file, outDependencies, outMissingDependencies)
-	if not fileSystem:exist(file) then return end
-
+local function scanHeaderDependencies(cache, includePaths, file)
 	-- Check if already cached.
 	local fpn = file:getPathName()
-	if cache[fpn] ~= nil then
-		copyTable(outDependencies, cache[fpn].dependencies)
-		copyTable(outMissingDependencies, cache[fpn].missing)
-		return
-	end
+	if cache[fpn] ~= nil then return cache[fpn]	end
+
+	local c = {}
+	c.dependencies = {}
+	c.missing = {}
+	cache[fpn] = c
 
 	-- Scan for dependencies in files.
 	local fs = fileSystem:open(file, File.FmRead)
-	if fs == nil then return end
+	if fs == nil then return c end
 
 	local sr = StringReader(BufferedStream(fs), AnsiEncoding())
 	while true do
@@ -156,9 +158,12 @@ local function scanHeaderDependencies(cache, includePaths, file, outDependencies
 			for _, ip in ipairs(includePaths) do
 				local ipp = Path(ip .. "/" .. p):normalized()
 				if fileSystem:exist(ipp) then
-					if outDependencies[ipp:getPathName()] ~= true then
-						outDependencies[ipp:getPathName()] = true
-						scanHeaderDependencies(cache, includePaths, ipp, outDependencies, outMissingDependencies)
+					if c.dependencies[ipp:getPathName()] ~= true then
+						c.dependencies[ipp:getPathName()] = true
+
+						local rc = scanHeaderDependencies(cache, includePaths, ipp)
+						mergeTable(c.dependencies, rc.dependencies)
+						mergeTable(c.missing, rc.missing)
 					end
 					found = true
 					break
@@ -167,28 +172,24 @@ local function scanHeaderDependencies(cache, includePaths, file, outDependencies
 			if not found then
 				local ipp = Path(file:getPathOnly() .. "/" .. p):normalized()
 				if fileSystem:exist(ipp) then
-					if outDependencies[ipp:getPathName()] ~= true then
-						outDependencies[ipp:getPathName()] = true
-						scanHeaderDependencies(cache, includePaths, ipp, outDependencies, outMissingDependencies)
+					if c.dependencies[ipp:getPathName()] ~= true then
+						c.dependencies[ipp:getPathName()] = true
+
+						local rc = scanHeaderDependencies(cache, includePaths, ipp)
+						mergeTable(c.dependencies, rc.dependencies)
+						mergeTable(c.missing, rc.missing)
 					end
 					found = true
 				end
 			end
 			if not found then
-				outMissingDependencies[p] = true
+				c.missing[p] = true
 			end
 		end
 	end
 
 	fs:close()
-
-	-- Store in cache.
-	local c = {}
-	c.dependencies = {}
-	c.missing = {}
-	copyTable(c.dependencies, outDependencies)
-	copyTable(c.missing, outMissingDependencies)
-	cache[fpn] = c
+	return c
 end
 
 ------------------------------------------------
@@ -226,29 +227,31 @@ for i = 0, configurations:size() - 1 do
 	)
 end
 
--- Collect source files.
+-- Collect input files.
 local sourceFiles = {}
+local resourceFiles = {}
+local definitionFile = nil
+
 collectFiles(
 	project,
 	project,
 	function(file)
 		local ext = file:getExtension()
-		return ext == "c" or ext == "cc" or ext == "cpp" or ext == "m" or ext == "mm" 
-	end,
-	sourceFiles
+		if ext == "c" or ext == "cc" or ext == "cpp" or ext == "m" or ext == "mm" or ext == "rc" then
+			table.insert(sourceFiles, file)
+		elseif ext == "xdi" or ext == "image" or ext == "png" or ext == "lua" or ext == "js" or ext == "css" then
+			table.insert(resourceFiles, file)
+		elseif ext == "def" then
+			definitionFile = file
+		end
+	end
 )
 
--- Collect resource files.
-local resourceFiles = {}
-collectFiles(
-	project,
-	project,
-	function(file)
-		local ext = file:getExtension()
-		return ext == "xdi" or ext == "image" or ext == "png" or ext == "lua"
-	end,
-	resourceFiles
-)
+-- Ensure definition file path is relative to project.
+if definitionFile ~= nil then
+	definitionFile = fileSystem:getRelativePath(definitionFile, projectPath)
+	assert (definitionFile ~= nil)
+end
 
 ------------------------------------------------
 
@@ -372,7 +375,7 @@ for i = 0, configurations:size() - 1 do
 		end
 	end
 
-	LINK(solution, project, configuration, libraryPaths[i], libraries[i], externalLibraries[i], output)
+	LINK(solution, project, configuration, libraryPaths[i], libraries[i], externalLibraries[i], definitionFile, output)
 
 	local aggregationItems = configuration:getAggregationItems()
 	for i = 0, aggregationItems:size() - 1 do
@@ -434,12 +437,8 @@ end
 -- Unit targets.
 for i = 0, configurations:size() - 1 do
 	local configuration = configurations:get(i)
-	local cache = {}
-
 	for _, file in ipairs(sourceFiles) do
-		local deps = {}
-		local missing = {}
-		scanHeaderDependencies(cache, includePaths[i], file, deps, missing)
+		local c = scanHeaderDependencies(_G.__cache, includePaths[i], file)
 
 		local f = fileSystem:getRelativePath(file, sourcePath)
 		assert (f ~= nil)
@@ -449,20 +448,20 @@ for i = 0, configurations:size() - 1 do
 
 		output:printLn(configuration:getName() .. "/" .. OBJNAME(f) .. " : \\")
 		output:print("\t" .. f1:getPathName())
-		for dep, _ in pairs(deps) do
+		for dep, _ in pairs(c.dependencies) do
 			local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
 			assert (f2 ~= nil)
 			output:printLn(" \\")
 			output:print("\t" .. f2:getPathName())
 		end
-		for dep, _ in pairs(missing) do
-			for _, file in ipairs(resourceFiles) do
-				if dep == "Resources/" .. file:getFileNameNoExtension() .. ".h" then
-					output:printLn(" \\")
-					output:print("\t" .. configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h")
-				end
-			end
-		end
+
+		-- Add resource builds as dependency to all targets to ensure
+		-- resources are built first and always.
+		for _, file in ipairs(resourceFiles) do
+			output:printLn(" \\")
+			output:print("\t" .. configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h")
+		end		
+
 		output:printLn("")
 
 		printWithColor(35, "Compiling " .. f:getFileName() .. "...")
