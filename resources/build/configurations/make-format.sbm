@@ -129,21 +129,21 @@ function LINK(solution, project, configuration, libraryPaths, libraries, externa
 		elseif toolchain == "gcc" or toolchain == "clang" then
 			lo = lo .. " -L../" .. configuration:getName()
 		end		
-		for _, libraryPath in ipairs(libraryPaths[i]) do
+		for _, libraryPath in ipairs(libraryPaths) do
 			if toolchain == "vc" then
 				lo = lo .. " /LIBPATH:" .. libraryPath
 			elseif toolchain == "gcc" or toolchain == "clang" then
 				lo = lo .. " -L" .. libraryPath
 			end
 		end
-		for _, library in ipairs(libraries[i]) do
+		for _, library in ipairs(libraries) do
 			if toolchain == "vc" then
 				lo = lo .. " " .. library
 			elseif toolchain == "gcc" or toolchain == "clang" then
 				lo = lo .. " -l" .. library
 			end
 		end
-		for _, externalLibrary in ipairs(externalLibraries[i]) do
+		for _, externalLibrary in ipairs(externalLibraries) do
 			if toolchain == "vc" then
 				lo = lo .. " " .. externalLibrary
 			elseif toolchain == "gcc" or toolchain == "clang" then

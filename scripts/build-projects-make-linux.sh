@@ -4,8 +4,8 @@
 . "`dirname \"$BASH_SOURCE\"`/config.sh"
 
 # Generator configuration.
-export MAKE_DIALECT=make
 export MAKE_OS=linux
+export MAKE_DIALECT=make
 export MAKE_FORMAT=$TRAKTOR_HOME/resources/build/configurations/make-format.sbm
 export MAKE_INCLUDE="\$(TRAKTOR_HOME)/resources/build/configurations/make-config-linux.inc"
 
