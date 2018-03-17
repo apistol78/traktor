@@ -384,14 +384,14 @@ for i = 0, configurations:size() - 1 do
 		local targetPath = aggregationItem:getTargetPath()
 
 		sourceFile = Path("../" .. configuration:getName()):concat(Path(sourceFile))
+		targetPath = Path(targetPath)
 
 		if os == "windows" then
-			targetPath = Path(targetPath)
 			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
 		elseif os == "osx" or os == "linux" then
-			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath)
+			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
 			output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
-			output:printLn("\t@cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath .. "/\"")
+			output:printLn("\t@cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
 		end
 	end
 
