@@ -1,15 +1,35 @@
 @echo off
-
-:: Locate VS environment script.
 set VSWHERE="%~dp0..\3rdp\Visual Studio\vswhere"
-for /f "usebackq delims=" %%i in (`%VSWHERE% -prerelease -legacy -latest -property installationPath`) do (
+
+:: Non-legacy 2017+ environment script.
+for /f "usebackq delims=" %%i in (`%VSWHERE% -prerelease -latest -property installationPath`) do (
 	if exist "%%i\Common7\Tools\vsdevcmd.bat" (
-		set VSDEVCMD="%%i\Common7\Tools\vsdevcmd.bat"
+		set VSDEVCMD_2017=%%i\Common7\Tools\vsdevcmd.bat
+	)
+)
+:: Legacy pre-2017 environment script.
+for /f "usebackq delims=" %%i in (`%VSWHERE% -prerelease -legacy -latest -property installationPath`) do (
+	if exist "%%i\VC\vcvarsall.bat" (
+		set VSDEVCMD_LEGACY=%%i\VC\vcvarsall.bat
 	)
 )
 
-:: Setup VC environment variables.
+if "%VSDEVCMD_2017%" == "" ( goto no_vs2017 )
+
+echo Visual Studio 2017+ environment script "%VSDEVCMD%"
 pushd
 set VSCMD_START_DIR=%CD%
-call %VSDEVCMD% -arch=amd64
+call "%VSDEVCMD_2017%" -arch=amd64
 popd
+goto eof
+
+:no_vs2017
+
+if "%VSDEVCMD_LEGACY%" == "" ( goto no_vs2015 )
+
+echo Visual Studio pre-2017 environment script "%VSDEVCMD%"
+call "%VSDEVCMD_LEGACY%" amd64
+
+:no_vs2015
+
+:eof
