@@ -55,6 +55,7 @@ protected:
 	std::wstring m_toolset;
 	std::wstring m_targetPrefixes[4];
 	std::wstring m_targetExts[4];
+	bool m_resolvePaths;
 	RefArray< SolutionBuilderMsvcVCXPropertyGroup > m_propertyGroupsBeforeImports;
 	RefArray< SolutionBuilderMsvcVCXImportCommon > m_imports;
 	RefArray< SolutionBuilderMsvcVCXPropertyGroup > m_propertyGroupsAfterImports;

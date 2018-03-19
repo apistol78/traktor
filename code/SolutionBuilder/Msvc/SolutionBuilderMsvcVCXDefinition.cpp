@@ -26,7 +26,12 @@ namespace traktor
 	namespace sb
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXDefinition", 0, SolutionBuilderMsvcVCXDefinition, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXDefinition", 1, SolutionBuilderMsvcVCXDefinition, ISerializable)
+
+SolutionBuilderMsvcVCXDefinition::SolutionBuilderMsvcVCXDefinition()
+:	m_resolvePaths(true)
+{
+}
 
 bool SolutionBuilderMsvcVCXDefinition::generate(
 	GeneratorContext& context,
@@ -41,7 +46,7 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 	const std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
 	for (std::vector< std::wstring >::const_iterator i = includePaths.begin(); i != includePaths.end(); ++i)
 	{
-		std::wstring includePath = context.getProjectRelativePath(*i, false);
+		std::wstring includePath = context.getProjectRelativePath(*i, m_resolvePaths);
 		ssip << includePath << L";";
 	}
 
@@ -57,7 +62,10 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 		ssl << *i << L";";
 
 	for (std::set< std::wstring >::const_iterator i = libraryPaths.begin(); i != libraryPaths.end(); ++i)
-		sslp << *i << L";";
+	{
+		std::wstring libraryPath = context.getProjectRelativePath(*i, m_resolvePaths);
+		sslp << libraryPath << L";";
+	}
 
 	context.set(L"PROJECT_NAME", project->getName());
 	context.set(L"PROJECT_INCLUDE_PATHS", ssip.str());
@@ -106,6 +114,10 @@ void SolutionBuilderMsvcVCXDefinition::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"fileTypes", m_fileTypes);
+
+	if (s.getVersion< SolutionBuilderMsvcVCXDefinition >() >= 1)
+		s >> Member< bool >(L"resolvePaths", m_resolvePaths);
+
 	s >> MemberStlVector< Option, MemberComposite< Option > >(L"options", m_options);
 }
 
