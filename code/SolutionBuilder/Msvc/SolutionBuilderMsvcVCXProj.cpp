@@ -47,9 +47,10 @@ std::wstring systemPath(const Path& path)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 8, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 9, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
 
 SolutionBuilderMsvcVCXProj::SolutionBuilderMsvcVCXProj()
+:	m_resolvePaths(true)
 {
 	m_targetPrefixes[0] = L"";
 	m_targetPrefixes[1] = L"";
@@ -118,6 +119,9 @@ void SolutionBuilderMsvcVCXProj::serialize(ISerializer& s)
 		s >> MemberStaticArray< std::wstring, sizeof_array(m_targetPrefixes) >(L"targetPrefixes", m_targetPrefixes);
 		s >> MemberStaticArray< std::wstring, sizeof_array(m_targetExts) >(L"targetExts", m_targetExts);
 	}
+
+	if (s.getVersion() >= 9)
+		s >> Member< bool >(L"resolvePaths", m_resolvePaths);
 
 	if (s.getVersion() >= 4 && s.getVersion() < 7)
 		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroups", m_propertyGroupsBeforeImports);
@@ -421,7 +425,18 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			os << L"@pushd \"$(TargetDir)\"" << Endl;
 			Path targetDir = projectPath + L"/" + configuration->getName();
 			for (RefArray< AggregationItem >::const_iterator j = aggregationItems.begin(); j != aggregationItems.end(); ++j)
-				os << L"@xcopy /D /F /R /Y /I \"" << (*j)->getSourceFile()<< L"\" \"" << (*j)->getTargetPath() << L"\\\"" << Endl;
+			{
+				std::wstring sourceFile = (*j)->getSourceFile();
+				std::wstring targetPath = (*j)->getTargetPath();
+				
+				if (m_resolvePaths)
+				{
+					sourceFile = Path(sourceFile).getPathName();
+					targetPath = Path(targetPath).getPathName();
+				}
+
+				os << L"@xcopy /D /F /R /Y /I \"" << (*j)->getSourceFile() << L"\" \"" << targetPath << L"\\\"" << Endl;
+			}
 			os << L"@popd" << Endl;
 
 			os.setIndent(indent);

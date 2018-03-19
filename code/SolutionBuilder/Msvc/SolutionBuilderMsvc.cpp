@@ -34,7 +34,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcLinkerTool.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcManifestTool.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXProj.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXProjVGDB.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXClCompileBuildTool.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXCustomBuildTool.h"
@@ -185,7 +184,6 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcLinkerTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcManifestTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXProj)
-	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXProjVGDB)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXBuildTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXClCompileBuildTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXCustomBuildTool)
