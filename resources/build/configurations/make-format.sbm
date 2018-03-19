@@ -86,13 +86,13 @@ function CC(solution, project, configuration, filePath, outputPath, output)
 	end
 
 	if format == "StaticLibrary" then
-		output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "SharedLibrary" then
-		output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "Executable" then
-		output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "ExecutableConsole" then
-		output:printLn("\t@$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	end
 end
 
@@ -161,16 +161,16 @@ function LINK(solution, project, configuration, libraryPaths, libraries, externa
 	end
 
 	if format == "StaticLibrary" then
-		output:printLn("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. " ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+		output:printLn("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. " ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
 	elseif format == "SharedLibrary" then
 		if os ~= "osx" then
-			output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS) " .. lo)
+			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS) " .. lo)
 		else
-			output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -dynamiclib -install_name @executable_path/" .. productName .. " $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS) " .. lo)
+			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -dynamiclib -install_name @executable_path/" .. productName .. " $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS) " .. lo)
 		end
 	elseif format == "Executable" then
-		output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)" .. lo)
+		output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)" .. lo)
 	elseif format == "ExecutableConsole" then
-		output:printLn("\t@$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)" .. lo)
+		output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)" .. lo)
 	end	
 end
