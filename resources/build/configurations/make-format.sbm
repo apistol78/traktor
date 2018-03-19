@@ -97,6 +97,7 @@ function CC(solution, project, configuration, filePath, outputPath, output)
 end
 
 function LINK(solution, project, configuration, libraryPaths, libraries, externalLibraries, definitionFile, output)
+	local os = OS.getInstance():getEnvironment("MAKE_OS")
 	local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
 	local profile = configuration:getTargetProfile()
 	local format = configuration:getTargetFormat()
