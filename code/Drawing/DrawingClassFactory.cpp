@@ -194,6 +194,32 @@ Ref< BlendFunction > BlendFunction_constructor(int32_t sourceFactor, int32_t des
 	);
 }
 
+int32_t Raster_defineLinearGradientStyle(Raster* self, const Matrix33& gradientMatrix, const AlignedVector< Any >& colors)
+{
+	AlignedVector< std::pair< Color4f, float > > cs;
+	for (size_t i = 0; i < colors.size(); i += 2)
+	{
+		cs.push_back(std::make_pair(
+			CastAny< Color4f >::get(colors[i]),
+			CastAny< float >::get(colors[i + 1])
+		));
+	}
+	self->defineLinearGradientStyle(gradientMatrix, cs);
+}
+
+int32_t Raster_defineRadialGradientStyle(Raster* self, const Matrix33& gradientMatrix, const AlignedVector< Any >& colors)
+{
+	AlignedVector< std::pair< Color4f, float > > cs;
+	for (size_t i = 0; i < colors.size(); i += 2)
+	{
+		cs.push_back(std::make_pair(
+			CastAny< Color4f >::get(colors[i]),
+			CastAny< float >::get(colors[i + 1])
+		));
+	}
+	self->defineRadialGradientStyle(gradientMatrix, cs);
+}
+
 void Raster_moveTo(Raster* self, float x, float y)
 {
 	self->moveTo(x, y);
@@ -422,8 +448,8 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classRaster->addMethod("setMask", &Raster::setMask);
 	classRaster->addMethod("clearStyles", &Raster::clearStyles);
 	classRaster->addMethod("defineSolidStyle", &Raster::defineSolidStyle);
-	//classRaster->addMethod("defineLinearGradientStyle", &Raster::defineLinearGradientStyle);
-	//classRaster->addMethod("defineRadialGradientStyle", &Raster::defineRadialGradientStyle);
+	classRaster->addMethod("defineLinearGradientStyle", &Raster_defineLinearGradientStyle);
+	classRaster->addMethod("defineRadialGradientStyle", &Raster_defineRadialGradientStyle);
 	classRaster->addMethod("defineImageStyle", &Raster::defineImageStyle);
 	classRaster->addMethod("clear", &Raster::clear);
 	classRaster->addMethod("moveTo", &Raster_moveTo);

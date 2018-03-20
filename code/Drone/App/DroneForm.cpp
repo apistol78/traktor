@@ -45,8 +45,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.drone.DroneForm", DroneForm, ui::Form)
 
 bool DroneForm::create(const CommandLine& cmdLine)
 {
-	std::wstring configurationFile = L"Traktor.Drone.config";
-
+	std::wstring configurationFile = L"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Drone.config";
 	if (cmdLine.getCount() >= 1)
 		configurationFile = cmdLine.getString(0);
 

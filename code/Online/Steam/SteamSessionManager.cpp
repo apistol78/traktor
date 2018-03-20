@@ -135,19 +135,19 @@ bool SteamSessionManager::create(const IGameConfiguration* configuration)
 			result = true;
 			break;
 		}
-		log::error << L"Steam API failed to initialize; retrying..." << Endl;
+		log::error << L"Steam API failed to initialize; retry attempt " << (i + 1) << L" of 10..." << Endl;
 		if (currentThread)
 			currentThread->sleep(500);
 	}
 	if (!result)
 	{
-		log::error << L"Session manager failed; Unable to initialize Steam API" << Endl;
-		log::error << L"Please restart Steam client and try again later" << Endl;
+		log::error << L"Online session manager failed; Unable to initialize Steam API!" << Endl;
+		log::error << L"Please restart Steam client and try again later." << Endl;
 		return false;
 	}
 
 	if (!::SteamUser()->BLoggedOn())
-		log::warning << L"Steam running in offline mode; Some features will be disabled or postponed until connected" << Endl;
+		log::warning << L"Steam running in offline mode; Some features will be disabled or postponed until connected." << Endl;
 
 	const char* allLanguages = SteamApps()->GetAvailableGameLanguages();
 	if (allLanguages)

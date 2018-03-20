@@ -24,15 +24,15 @@ void SqlClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIResultSet->addMethod("getColumnCount", &sql::IResultSet::getColumnCount);
 	classIResultSet->addMethod("getColumnName", &sql::IResultSet::getColumnName);
 	classIResultSet->addMethod< int32_t, int32_t >("getInt32", &sql::IResultSet::getInt32);
-	//classIResultSet->addMethod< int64_t, int32_t >("getInt64", &sql::IResultSet::getInt64);
+	classIResultSet->addMethod< int64_t, int32_t >("getInt64", &sql::IResultSet::getInt64);
 	classIResultSet->addMethod< float, int32_t >("getFloat", &sql::IResultSet::getFloat);
-	//classIResultSet->addMethod< double, int32_t >("getDouble", &sql::IResultSet::getDouble);
+	classIResultSet->addMethod< double, int32_t >("getDouble", &sql::IResultSet::getDouble);
 	classIResultSet->addMethod< std::wstring, int32_t >("getString", &sql::IResultSet::getString);
 	classIResultSet->addMethod("findColumn", &sql::IResultSet::findColumn);
 	classIResultSet->addMethod< int32_t, const std::wstring& >("getInt32ByName", &sql::IResultSet::getInt32);
-	//classIResultSet->addMethod< int64_t, const std::wstring& >("getInt64ByName", &sql::IResultSet::getInt64);
+	classIResultSet->addMethod< int64_t, const std::wstring& >("getInt64ByName", &sql::IResultSet::getInt64);
 	classIResultSet->addMethod< float, const std::wstring& >("getFloatByName", &sql::IResultSet::getFloat);
-	//classIResultSet->addMethod< double, const std::wstring& >("getDoubleByName", &sql::IResultSet::getDouble);
+	classIResultSet->addMethod< double, const std::wstring& >("getDoubleByName", &sql::IResultSet::getDouble);
 	classIResultSet->addMethod< std::wstring, const std::wstring& >("getStringByName", &sql::IResultSet::getString);
 	registrar->registerClass(classIResultSet);
 

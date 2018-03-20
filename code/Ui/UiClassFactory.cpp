@@ -263,6 +263,34 @@ void UiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	//classEventSubject->addMethod("hasEventHandler", &EventSubject_hasEventHandler);
 	registrar->registerClass(classEventSubject);
 
+	//Ref< AutoRuntimeClass< Canvas > > classCanvas = new AutoRuntimeClass< Canvas >();
+	//classCanvas->addMethod("setForeground", &Canvas::setForeground);
+	//classCanvas->addMethod("getForeground", &Canvas::getForeground);
+	//classCanvas->addMethod("setBackground", &Canvas::setBackground);
+	//classCanvas->addMethod("getBackground", &Canvas::getBackground);
+	//classCanvas->addMethod("setFont", &Canvas::setFont);
+	//classCanvas->addMethod("setLineStyle", &Canvas::setLineStyle);
+	//classCanvas->addMethod("setPenThickness", &Canvas::setPenThickness);
+	//classCanvas->addMethod("setClipRect", &Canvas::setClipRect);
+	//classCanvas->addMethod("resetClipRect", &Canvas::resetClipRect);
+	//classCanvas->addMethod("drawPixel", [](Canvas* self) {});
+	//classCanvas->addMethod("drawLine", [](Canvas* self) {});
+	//classCanvas->addMethod("drawLines", [](Canvas* self) {});
+	//classCanvas->addMethod("fillCircle", &Canvas::fillCircle);
+	//classCanvas->addMethod("drawCircle", &Canvas::drawCircle);
+	//classCanvas->addMethod("drawEllipticArc", &Canvas::drawEllipticArc);
+	//classCanvas->addMethod("drawSpline", [](Canvas* self) { self->drawSpline(); });
+	//classCanvas->addMethod("fillRect", &Canvas::fillRect);
+	//classCanvas->addMethod("fillGradientRect", &Canvas::fillGradientRect);
+	//classCanvas->addMethod("drawRect", &Canvas::drawRect);
+	//classCanvas->addMethod("drawRoundRect", &Canvas::drawRoundRect);
+	//classCanvas->addMethod("drawPolygon", &Canvas::drawPolygon);
+	//classCanvas->addMethod("fillPolygon", &Canvas::fillPolygon);
+	//classCanvas->addMethod("drawBitmap", &Canvas::drawBitmap);
+	//classCanvas->addMethod("drawText", &Canvas::drawText);
+	//classCanvas->addMethod("getTextExtent", &Canvas::getTextExtent);
+	//registrar->registerClass(classCanvas);
+
 	Ref< AutoRuntimeClass< Layout > > classLayout = new AutoRuntimeClass< Layout >();
 	registrar->registerClass(classLayout);
 
