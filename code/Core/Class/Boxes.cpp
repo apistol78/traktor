@@ -103,6 +103,7 @@ BoxedAllocator< BoxedRandom, 4 > s_allocBoxedRandom;
 BoxedAllocator< BoxedRandomGeometry, 4 > s_allocBoxedRandomGeometry;
 BoxedAllocator< BoxedRefArray, 512 > s_allocBoxedRefArray;
 BoxedAllocator< BoxedRange, 256 > s_allocBoxedRange;
+BoxedAllocator< BoxedAlignedVector, 16 > s_allocBoxedAlignedVector;
 BoxedAllocator< BoxedStdVector, 16 > s_allocBoxedStdVector;
 BoxedAllocator< BoxedRay3, 8 > s_allocBoxedRay3;
 
@@ -1373,6 +1374,93 @@ void BoxedStdVector::operator delete (void* ptr)
 	s_allocBoxedStdVector.free(ptr);
 }
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.AlignedVector", BoxedAlignedVector, Boxed)
+
+BoxedAlignedVector::BoxedAlignedVector()
+{
+}
+
+BoxedAlignedVector::BoxedAlignedVector(uint32_t size)
+:	m_arr(size)
+{
+}
+
+void BoxedAlignedVector::reserve(uint32_t capacity)
+{
+	m_arr.reserve(capacity);
+}
+
+void BoxedAlignedVector::resize(uint32_t size)
+{
+	m_arr.resize(size);
+}
+
+void BoxedAlignedVector::clear()
+{
+	m_arr.clear();
+}
+
+int32_t BoxedAlignedVector::size() const
+{
+	return int32_t(m_arr.size());
+}
+
+bool BoxedAlignedVector::empty() const
+{
+	return m_arr.empty();
+}
+
+void BoxedAlignedVector::push_back(const Any& value)
+{
+	m_arr.push_back(value);
+}
+
+void BoxedAlignedVector::pop_back()
+{
+	m_arr.pop_back();
+}
+
+const Any& BoxedAlignedVector::front()
+{
+	return m_arr.front();
+}
+
+const Any& BoxedAlignedVector::back()
+{
+	return m_arr.back();
+}
+
+void BoxedAlignedVector::set(int32_t index, const Any& value)
+{
+	if (index >= 0 && index < int32_t(m_arr.size()))
+		m_arr[index] = value;
+}
+
+Any BoxedAlignedVector::get(int32_t index)
+{
+	if (index >= 0 && index < int32_t(m_arr.size()))
+		return m_arr[index];
+	else
+		return Any();
+}
+
+std::wstring BoxedAlignedVector::toString() const
+{
+	StringOutputStream ss;
+	ss << L"[" << int32_t(m_arr.size()) << L"]";
+	return ss.str();
+}
+
+void* BoxedAlignedVector::operator new (size_t size)
+{
+	return s_allocBoxedAlignedVector.alloc();
+}
+
+void BoxedAlignedVector::operator delete (void* ptr)
+{
+	s_allocBoxedAlignedVector.free(ptr);
+}
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.BoxesClassFactory", 0, BoxesClassFactory, IRuntimeClassFactory)
 
 void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
@@ -1739,6 +1827,22 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedStdVector->addMethod("set", &BoxedStdVector::set);
 	classBoxedStdVector->addMethod("get", &BoxedStdVector::get);
 	registrar->registerClass(classBoxedStdVector);
+
+	Ref< AutoRuntimeClass< BoxedAlignedVector > > classBoxedAlignedVector = new AutoRuntimeClass< BoxedAlignedVector >();
+	classBoxedAlignedVector->addConstructor();
+	classBoxedAlignedVector->addConstructor< uint32_t >();
+	classBoxedAlignedVector->addMethod("reserve", &BoxedAlignedVector::reserve);
+	classBoxedAlignedVector->addMethod("resize", &BoxedAlignedVector::resize);
+	classBoxedAlignedVector->addMethod("clear", &BoxedAlignedVector::clear);
+	classBoxedAlignedVector->addMethod("size", &BoxedAlignedVector::size);
+	classBoxedAlignedVector->addMethod("empty", &BoxedAlignedVector::empty);
+	classBoxedAlignedVector->addMethod("push_back", &BoxedAlignedVector::push_back);
+	classBoxedAlignedVector->addMethod("pop_back", &BoxedAlignedVector::pop_back);
+	classBoxedAlignedVector->addMethod("front", &BoxedAlignedVector::front);
+	classBoxedAlignedVector->addMethod("back", &BoxedAlignedVector::back);
+	classBoxedAlignedVector->addMethod("set", &BoxedAlignedVector::set);
+	classBoxedAlignedVector->addMethod("get", &BoxedAlignedVector::get);
+	registrar->registerClass(classBoxedAlignedVector);
 }
 
 }
