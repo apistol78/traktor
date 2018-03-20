@@ -12,15 +12,20 @@ echo $(date +"%D %T") >>$BUILD_LOG_DIR/build-osx-stderr.log
 
 # Build Traktor
 pushd $TRAKTOR_HOME
-/bin/sh build-projects-make-osx.sh
+/bin/sh ./scripts/build-projects-make-osx.sh
 
 pushd build/osx
-echo "========== ReleaseShared ==========" >>$BUILD_LOG_DIR/build-osx-stderr.log
-make -j 4 ReleaseShared 2>>$BUILD_LOG_DIR/build-osx-stderr.log
 echo "========== DebugShared ==========" >>$BUILD_LOG_DIR/build-osx-stderr.log
-make -j 4 DebugShared 2>>$BUILD_LOG_DIR/build-osx-stderr.log
+make -f "Extern OSX.mak" -j 4 DebugShared 2>>$BUILD_LOG_DIR/build-osx-stderr.log
+make -f "Traktor OSX.mak" -j 4 DebugShared 2>>$BUILD_LOG_DIR/build-osx-stderr.log
+echo "========== ReleaseShared ==========" >>$BUILD_LOG_DIR/build-osx-stderr.log
+make -f "Extern OSX.mak" -j 4 ReleaseShared 2>>$BUILD_LOG_DIR/build-osx-stderr.log
+make -f "Traktor OSX.mak" -j 4 ReleaseShared 2>>$BUILD_LOG_DIR/build-osx-stderr.log
+echo "========== DebugStatic ==========" >>$BUILD_LOG_DIR/build-osx-stderr.log
+make -f "Extern OSX.mak" -j 4 DebugStatic 2>>$BUILD_LOG_DIR/build-osx-stderr.log
+make -f "Traktor OSX.mak" -j 4 DebugStatic 2>>$BUILD_LOG_DIR/build-osx-stderr.log
 echo "========== ReleaseStatic ==========" >>$BUILD_LOG_DIR/build-osx-stderr.log
-make -j 4 ReleaseStatic 2>$BUILD_LOG_DIR/build-osx-stderr.log
+make -f "Extern OSX.mak" -j 4 ReleaseStatic 2>>$BUILD_LOG_DIR/build-osx-stderr.log
+make -f "Traktor OSX.mak" -j 4 ReleaseStatic 2>>$BUILD_LOG_DIR/build-osx-stderr.log
 popd
-
 popd
