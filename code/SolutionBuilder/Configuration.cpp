@@ -196,6 +196,16 @@ void Configuration::removeAggregationItem(AggregationItem* item)
 	m_aggregationItems.remove(item);
 }
 
+void Configuration::removeAllAggregationItems()
+{
+	m_aggregationItems.clear();
+}
+
+void Configuration::setAggregationItems(const RefArray< AggregationItem >& aggregationItems)
+{
+	m_aggregationItems = aggregationItems;
+}
+
 const RefArray< AggregationItem >& Configuration::getAggregationItems() const
 {
 	return m_aggregationItems;
