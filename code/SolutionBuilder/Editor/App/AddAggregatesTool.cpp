@@ -26,10 +26,24 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 		const RefArray< Configuration >& configurations = (*i)->getConfigurations();
 		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 		{
-			if ((*j)->getAggregationItems().empty())
+			if (!(*j)->getAggregationItems().empty())
 			{
-				std::wstring suffix = L"";
+				// \hack Add .lib rule first if missing in existing .dll aggregates.
+				std::wstring sourceFile = (*j)->getAggregationItems().front()->getSourceFile();
+				if (compareIgnoreCase< std::wstring >(sourceFile, (*i)->getName() + L".dll") == 0)
+				{
+					RefArray< AggregationItem > items = (*j)->getAggregationItems();
 
+					Ref< AggregationItem > a = new AggregationItem();
+					a->setSourceFile((*i)->getName() + L".lib");
+					a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+					items.push_front(a);
+
+					(*j)->setAggregationItems(items);
+				}
+			}
+			else
+			{
 				switch ((*j)->getTargetFormat())
 				{
 				case Configuration::TfStaticLibrary:
@@ -37,25 +51,43 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 						compareIgnoreCase< std::wstring >((*j)->getName(), L"DebugStatic") == 0 ||
 						compareIgnoreCase< std::wstring >((*j)->getName(), L"ReleaseStatic") == 0
 					)
-						suffix = L".lib";
+					{
+						Ref< AggregationItem > a = new AggregationItem();
+						a->setSourceFile((*i)->getName() + L".lib");
+						a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+						(*j)->addAggregationItem(a);
+					}
 					break;
 				case Configuration::TfSharedLibrary:
-					suffix = L".dll";
+					{
+						Ref< AggregationItem > a = new AggregationItem();
+						a->setSourceFile((*i)->getName() + L".lib");
+						a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+						(*j)->addAggregationItem(a);
+					}
+					{
+						Ref< AggregationItem > a = new AggregationItem();
+						a->setSourceFile((*i)->getName() + L".dll");
+						a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+						(*j)->addAggregationItem(a);
+					}
 					break;
 				case Configuration::TfExecutable:
-					suffix = L".exe";
+					{
+						Ref< AggregationItem > a = new AggregationItem();
+						a->setSourceFile((*i)->getName() + L".exe");
+						a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+						(*j)->addAggregationItem(a);
+					}
 					break;
 				case Configuration::TfExecutableConsole:
-					suffix = L".exe";
+					{
+						Ref< AggregationItem > a = new AggregationItem();
+						a->setSourceFile((*i)->getName() + L".exe");
+						a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+						(*j)->addAggregationItem(a);
+					}
 					break;
-				}
-
-				if (!suffix.empty())
-				{
-					Ref< AggregationItem > a = new AggregationItem();
-					a->setSourceFile((*i)->getName() + suffix);
-					a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
-					(*j)->addAggregationItem(a);
 				}
 			}
 		}

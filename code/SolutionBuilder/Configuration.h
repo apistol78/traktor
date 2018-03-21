@@ -140,6 +140,10 @@ public:
 
 	void removeAggregationItem(AggregationItem* item);
 
+	void removeAllAggregationItems();
+
+	void setAggregationItems(const RefArray< AggregationItem >& aggregationItems);
+
 	const RefArray< AggregationItem >& getAggregationItems() const;
 
 	//@}
