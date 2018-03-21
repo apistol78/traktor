@@ -41,7 +41,10 @@ local function collectDependencies(solution, project, configuration, outIncludeP
 	-- Add include paths.
 	local includePaths = configuration:getIncludePaths()
 	for i = 0, includePaths:size() - 1 do
-		insertLast(outIncludePaths, includePaths:get(i))
+		local ip = Path(includePaths:get(i)):getPathName()
+		if ip ~= "" then
+			insertLast(outIncludePaths, ip)
+		end
 	end
 
 	-- Add libraries.
@@ -57,10 +60,14 @@ local function collectDependencies(solution, project, configuration, outIncludeP
 			Path(libraryPaths:get(i)),
 			projectPath
 		)
+		local lp = ""
 		if libraryRelPath ~= nil then
-			insertLast(outLibraryPaths, libraryRelPath:getPathName())
+			lp = libraryRelPath:getPathName()
 		else
-			insertLast(outLibraryPaths, libraryPaths:get(i))
+			lp = Path(libraryPaths:get(i)):getPathName()
+		end
+		if lp ~= "" then
+			insertLast(outLibraryPaths, lp)
 		end
 	end
 
@@ -93,7 +100,9 @@ local function collectDependencies(solution, project, configuration, outIncludeP
 					Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
 					projectPath
 				)
-				insertLast(outLibraryPaths, externalRelPath:getPathName())
+				if externalRelPath:getPathName() ~= "" then
+					insertLast(outLibraryPaths, externalRelPath:getPathName())
+				end
 				insertLast(outLibraries, externalProject:getName())
 				collectDependencies(
 					externalSolution,

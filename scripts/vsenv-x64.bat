@@ -16,7 +16,7 @@ for /f "usebackq delims=" %%i in (`%VSWHERE% -prerelease -legacy -latest -proper
 
 if "%VSDEVCMD_2017%" == "" ( goto no_vs2017 )
 
-echo Visual Studio 2017+ environment script "%VSDEVCMD%"
+echo Visual Studio 2017+ environment script "%VSDEVCMD_2017%"
 pushd
 set VSCMD_START_DIR=%CD%
 call "%VSDEVCMD_2017%" -arch=amd64
@@ -27,7 +27,7 @@ goto eof
 
 if "%VSDEVCMD_LEGACY%" == "" ( goto no_vs2015 )
 
-echo Visual Studio pre-2017 environment script "%VSDEVCMD%"
+echo Visual Studio pre-2017 environment script "%VSDEVCMD_LEGACY%"
 call "%VSDEVCMD_LEGACY%" amd64
 
 :no_vs2015

@@ -1,11 +1,10 @@
 #!/bin/sh
 
-source ../config.sh
-
 CONFIG=$1
-if [ -z $CONFIG ] ; then
-	CONFIG="both"
-fi
+if [ "$CONFIG" == "" ]; then CONFIG=all; fi
+
+# Source environment configuration.
+source ../config.sh
 
 # Get normalized path to this script, excluding file name.
 BUILD_LOG_DIR="`dirname \"$BASH_SOURCE\"`"
@@ -16,10 +15,7 @@ echo "========== Build Begun ($CONFIG) ==========" >$BUILD_LOG_DIR/build-ios-std
 echo $(date +"%D %T") >>$BUILD_LOG_DIR/build-ios-stderr.log
 
 # Build Traktor
-pushd $TRAKTOR_HOME
-source build-projects-make-ios.sh
-
-pushd build/ios
+pushd $TRAKTOR_HOME/build/ios
 if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
 	echo "========== ReleaseStatic ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
 	make -j 4 ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
@@ -28,6 +24,4 @@ if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
 	echo "========== DebugStatic ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
 	make -j 4 DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
 fi
-popd
-
 popd

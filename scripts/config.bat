@@ -4,8 +4,6 @@
 for %%i in ("%~dp0.") do (set TRAKTOR_HOME=%%~dpi)
 if %TRAKTOR_HOME:~-1%==\ set TRAKTOR_HOME=%TRAKTOR_HOME:~0,-1%
 
-set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App
-
 :: Paths to 3rd party dependencies.
 set STEAMWORKS_SDK=%TRAKTOR_HOME%\3rdp\steamworks-sdk-142
 set FBX_SDK=%TRAKTOR_HOME%\3rdp\FbxSdk\2016.1.2
@@ -22,3 +20,6 @@ set TOBII_SDK=%TRAKTOR_HOME%\3rdp\tobii-sdk-1.7.480
 set OPENVR_SDK=%TRAKTOR_HOME%\3rdp\openvr-master-20160822
 set NACL_SDK_ROOT=%TRAKTOR_HOME\%3rdp\nacl_sdk\pepper_47
 set CHROME_PATH=
+
+:: Export name of solution builder binary.
+set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App
