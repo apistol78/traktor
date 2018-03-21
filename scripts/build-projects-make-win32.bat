@@ -2,6 +2,10 @@
 
 call %~dp0config.bat
 
+:: \hack Setup paths to ABI specific binaries.
+set FBX_SDK_LIBPATH=%FBX_SDK%\lib\vs2015\x86\release
+set P4_SDK=%TRAKTOR_HOME%\3rdp\p4api-2016.1.1350954.BETA-vs2015_dyn_x86
+
 :: Mandatory parameters.
 set MAKE_OS=windows
 set MAKE_DIALECT=nmake
@@ -12,7 +16,9 @@ set MAKE_INCLUDE=$(TRAKTOR_HOME)\resources\build\configurations\make-config-win3
 set MAKE_MANIFEST=%TRAKTOR_HOME%\resources\build\windows\manifest-win32.xml
 
 :: Product output path.
-set AGGREGATE_OUTPUT_PATH=%TRAKTOR_HOME%\bin\latest\win32
+if "%AGGREGATE_OUTPUT_PATH%" == "" (
+	set AGGREGATE_OUTPUT_PATH=%TRAKTOR_HOME%\bin\latest\win32
+)
 
 %SOLUTIONBUILDER% ^
 	-f=make2 ^

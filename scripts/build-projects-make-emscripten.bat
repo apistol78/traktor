@@ -16,7 +16,9 @@ set MAKE_SHARED_LIBRARY_FILE=lib%%s.bc
 set MAKE_EXECUTABLE_FILE=%%s.js
 
 :: Product output path.
-set AGGREGATE_OUTPUT_PATH=%TRAKTOR_HOME%\bin\latest\emscripten
+if "%AGGREGATE_OUTPUT_PATH%" == "" (
+	set AGGREGATE_OUTPUT_PATH=%TRAKTOR_HOME%\bin\latest\emscripten
+)
 
 %SOLUTIONBUILDER% ^
 	-f=make2 ^
