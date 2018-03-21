@@ -7,7 +7,7 @@ if %TRAKTOR_HOME:~-1%==\ set TRAKTOR_HOME=%TRAKTOR_HOME:~0,-1%
 set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App
 
 :: Paths to 3rd party dependencies.
-set STEAMWORKS_SDK=%TRAKTOR_HOME%\3rdp\steamworks-sdk-137
+set STEAMWORKS_SDK=%TRAKTOR_HOME%\3rdp\steamworks-sdk-142
 set FBX_SDK=%TRAKTOR_HOME%\3rdp\FbxSdk\2016.1.2
 set BULLET_SDK=%TRAKTOR_HOME%\3rdp\bullet3-master-170526
 set PHYSX_SDK=%TRAKTOR_HOME%\3rdp\PhysX-3.3.1
