@@ -38,8 +38,8 @@ function deploy(args)
 	run:mkdir(bundle .. "/Contents/MacOS")
 	run:mkdir(bundle .. "/Contents/Resources")
 
-	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Info.plist.template", bundle .. "/Contents/Info.plist")
-	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Icon.icns", bundle .. "/Contents/Resources/Icon.icns")
+	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/osx/Info.plist.template", bundle .. "/Contents/Info.plist")
+	run:replace("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/osx/Icon.icns", bundle .. "/Contents/Resources/Icon.icns")
 	run:replace("Application.config", bundle .. "/Contents/Resources/Application.config")
 	
 	-- Copy binaries into bundle.
@@ -94,8 +94,8 @@ function migrate(args)
 	run:mkdir(bundle .. "/Contents/MacOS")
 	run:mkdir(bundle .. "/Contents/Resources")
 
-	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Info.plist.template", bundle .. "/Contents/Info.plist")
-	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Icon.icns", bundle .. "/Contents/Resources/Icon.icns")
+	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/osx/Info.plist.template", bundle .. "/Contents/Info.plist")
+	run:replace("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/osx/Icon.icns", bundle .. "/Contents/Resources/Icon.icns")
 	run:replace("Application.config", bundle .. "/Contents/Resources/Application.config")
 	run:replace("Content.compact", bundle .. "/Contents/Resources/Content.compact")
 	
