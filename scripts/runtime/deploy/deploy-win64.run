@@ -38,7 +38,7 @@ end
 local function createIcon()
 	local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
 	if #iconFile <= 0 then
-		iconFile = "$(DEPLOY_SYSTEM_ROOT)/res/deploy/DefaultIcon.png"
+		iconFile = "$(DEPLOY_SYSTEM_ROOT)/resources/deploy/DefaultIcon.png"
 	end
 
 	local iconImage = Image.loadFromFile(iconFile)
