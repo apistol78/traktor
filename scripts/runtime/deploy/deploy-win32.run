@@ -31,7 +31,7 @@ local function getSystemPaths()
 	end
 
 	local p = {}
-	p.dxLibPath = "$(TRAKTOR_HOME)\\3rdp\\DirectX SDK (June 2010)\\Lib\\x86"
+	p.dxLibPath = "%TRAKTOR_HOME%\\3rdp\\DirectX SDK (June 2010)\\Lib\\x86"
 
 	return p
 end
@@ -77,8 +77,7 @@ function deployStatic(args)
 	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/debugstatic/"
 	end
 
-	local preamble = "cmd.exe /C \"\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\" && "
-	local postamble = "\""
+	local preamble = "\"$(TRAKTOR_HOME)/scripts/vsenv-x86.bat\" && "
 
 	-- Append system path to files.
 	local wholeLinkFiles = ""
@@ -108,8 +107,8 @@ function deployStatic(args)
 	end
 
 	-- Compile resources.
-	local cmd = "rc /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/resources/runtime/deploy/win32/Traktor.Amalgam.Game.App.rc"
-	local result = run:execute(preamble .. cmd .. postamble, nil)
+	local cmd = "rc /fo\"%DEPLOY_EXECUTABLE%.res\" %TRAKTOR_HOME%/resources/runtime/deploy/win32/Traktor.Amalgam.Game.App.rc"
+	local result = run:execute(preamble .. cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build product resources.")
 		stderr:printLn(cmd)
@@ -128,9 +127,9 @@ function deployStatic(args)
 
 	-- Link files into an executable product.
 	local cmd = "link @" .. rsp .. " " .. linkerIncludes
-	cmd = cmd .. " $(DEPLOY_EXECUTABLE).res"
-	cmd = cmd .. " /OUT:$(DEPLOY_EXECUTABLE).exe"
-	cmd = cmd .. " /PDB:$(DEPLOY_EXECUTABLE).pdb"
+	cmd = cmd .. " %DEPLOY_EXECUTABLE%.res"
+	cmd = cmd .. " /OUT:%DEPLOY_EXECUTABLE%.exe"
+	cmd = cmd .. " /PDB:%DEPLOY_EXECUTABLE%.pdb"
 	cmd = cmd .. " /LIBPATH:\"" .. p.dxLibPath .. "\""
 	cmd = cmd .. " /MACHINE:X86"
 	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
@@ -139,7 +138,7 @@ function deployStatic(args)
 	else
 		cmd = cmd .. " /DEBUG"
 	end
-	local result = run:execute(preamble .. cmd .. postamble, nil)
+	local result = run:execute(preamble .. cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
@@ -150,7 +149,7 @@ function deployStatic(args)
 
 	-- Embed manifest in executable product.
 	local cmd = "mt -manifest $(TRAKTOR_HOME)/resources/runtime/deploy/win32/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
-	local result = run:execute(preamble .. cmd .. postamble, nil)
+	local result = run:execute(preamble .. cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to embed manifest into executable product.")
 		stderr:printLn(cmd)
@@ -250,8 +249,7 @@ function migrateStatic(args)
 	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/debugstatic/"
 	end
 
-	local preamble = "cmd.exe /C \"\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\" && "
-	local postamble = "\""
+	local preamble = "\"$(TRAKTOR_HOME)/scripts/vsenv-x86.bat\" && "
 
 	-- Append system path to files.
 	local wholeLinkFiles = ""
@@ -281,8 +279,8 @@ function migrateStatic(args)
 	end
 
 	-- Compile resources.
-	local cmd = "rc /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/resources/runtime/deploy/win32/Traktor.Amalgam.Game.App.rc"
-	local result = run:execute(preamble .. cmd .. postamble, nil)
+	local cmd = "rc /fo\"%DEPLOY_EXECUTABLE%.res\" %TRAKTOR_HOME%/resources/runtime/deploy/win32/Traktor.Amalgam.Game.App.rc"
+	local result = run:execute(preamble .. cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build product resources.")
 		stderr:printLn(cmd)
@@ -301,9 +299,9 @@ function migrateStatic(args)
 
 	-- Link files into an executable product.
 	local cmd = "link @" .. rsp .. " " .. linkerIncludes
-	cmd = cmd .. " $(DEPLOY_EXECUTABLE).res"
-	cmd = cmd .. " /OUT:$(DEPLOY_EXECUTABLE).exe"
-	cmd = cmd .. " /PDB:$(DEPLOY_EXECUTABLE).pdb"
+	cmd = cmd .. " %DEPLOY_EXECUTABLE%.res"
+	cmd = cmd .. " /OUT:%DEPLOY_EXECUTABLE%.exe"
+	cmd = cmd .. " /PDB:%DEPLOY_EXECUTABLE%.pdb"
 	cmd = cmd .. " /LIBPATH:\"" .. p.dxLibPath .. "\""
 	cmd = cmd .. " /MACHINE:X86"
 	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
@@ -312,7 +310,7 @@ function migrateStatic(args)
 	else
 		cmd = cmd .. " /DEBUG"
 	end
-	local result = run:execute(preamble .. cmd .. postamble, nil)
+	local result = run:execute(preamble .. cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
@@ -323,7 +321,7 @@ function migrateStatic(args)
 
 	-- Embed manifest in executable product.
 	local cmd = "mt -manifest $(TRAKTOR_HOME)/resources/runtime/deploy/win32/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
-	local result = run:execute(preamble .. cmd .. postamble, nil)
+	local result = run:execute(preamble .. cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to embed manifest into executable product.")
 		stderr:printLn(cmd)
