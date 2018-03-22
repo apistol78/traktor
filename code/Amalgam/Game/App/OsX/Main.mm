@@ -14,6 +14,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Singleton/SingletonManager.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
