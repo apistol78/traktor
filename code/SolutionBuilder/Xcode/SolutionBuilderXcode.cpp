@@ -1756,8 +1756,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			includeFile(s, m_targetConfigurationFileDebug, 4);
 
 			s << L"\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"";
-			std::vector< std::wstring > definitions = configurations[0]->getDefinitions();
-			definitions.insert(definitions.end(), solution->getDefinitions().begin(), solution->getDefinitions().end());
+			const std::vector< std::wstring >& definitions = configurations[0]->getDefinitions();
 			for (std::vector< std::wstring >::const_iterator j = definitions.begin(); j != definitions.end(); ++j)
 			{
 				if (j != definitions.begin())

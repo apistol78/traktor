@@ -1,4 +1,6 @@
-@call %~dp0config.bat
+@echo off
+
+call %~dp0config.bat
 
 %SOLUTIONBUILDER% ^
 	-f=msvc ^

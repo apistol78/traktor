@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include <Ui/Application.h>
 #include <Ui/TableLayout.h>
 #include <Ui/Static.h>
 #include <Ui/Edit.h>
@@ -19,10 +20,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.AggregationItemPropertyPage", AggregationIte
 
 bool AggregationItemPropertyPage::create(ui::Widget* parent)
 {
+	const int32_t f = ui::scaleBySystemDPI(4);
+
 	if (!ui::Container::create(
 		parent,
 		ui::WsNone,
-		new ui::TableLayout(L"*,100%", L"*,*,100%", 4, 4)
+		new ui::TableLayout(L"*,100%", L"*,*,100%", f, f)
 	))
 		return false;
 

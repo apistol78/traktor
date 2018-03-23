@@ -26,6 +26,16 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 		const RefArray< Configuration >& configurations = (*i)->getConfigurations();
 		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 		{
+			if (
+				(*j)->getTargetFormat() == Configuration::TfStaticLibrary ||
+				(*j)->getTargetFormat() == Configuration::TfSharedLibrary
+			)
+			{
+				// \hack Add aggregation output path as consumer library path.
+				if ((*j)->getConsumerLibraryPath().empty())
+					(*j)->setConsumerLibraryPath(toLower((*j)->getName()));
+			}
+
 			if (!(*j)->getAggregationItems().empty())
 			{
 				// \hack Add .lib rule first if missing in existing .dll aggregates.
@@ -36,7 +46,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 
 					Ref< AggregationItem > a = new AggregationItem();
 					a->setSourceFile((*i)->getName() + L".lib");
-					a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+					a->setTargetPath(toLower((*j)->getName()));
 					items.push_front(a);
 
 					(*j)->setAggregationItems(items);
@@ -54,7 +64,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 					{
 						Ref< AggregationItem > a = new AggregationItem();
 						a->setSourceFile((*i)->getName() + L".lib");
-						a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+						a->setTargetPath(toLower((*j)->getName()));
 						(*j)->addAggregationItem(a);
 					}
 					break;
@@ -62,13 +72,13 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 					{
 						Ref< AggregationItem > a = new AggregationItem();
 						a->setSourceFile((*i)->getName() + L".lib");
-						a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+						a->setTargetPath(toLower((*j)->getName()));
 						(*j)->addAggregationItem(a);
 					}
 					{
 						Ref< AggregationItem > a = new AggregationItem();
 						a->setSourceFile((*i)->getName() + L".dll");
-						a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+						a->setTargetPath(toLower((*j)->getName()));
 						(*j)->addAggregationItem(a);
 					}
 					break;
@@ -76,7 +86,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 					{
 						Ref< AggregationItem > a = new AggregationItem();
 						a->setSourceFile((*i)->getName() + L".exe");
-						a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+						a->setTargetPath(toLower((*j)->getName()));
 						(*j)->addAggregationItem(a);
 					}
 					break;
@@ -84,7 +94,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 					{
 						Ref< AggregationItem > a = new AggregationItem();
 						a->setSourceFile((*i)->getName() + L".exe");
-						a->setTargetPath(L"$(AGGREGATE_OUTPUT_PATH)/" + toLower((*j)->getName()));
+						a->setTargetPath(toLower((*j)->getName()));
 						(*j)->addAggregationItem(a);
 					}
 					break;

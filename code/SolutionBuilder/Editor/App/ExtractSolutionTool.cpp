@@ -68,7 +68,6 @@ bool ExtractSolutionTool::execute(ui::Widget* parent, Solution* solution)
 	Ref< Solution > externalSolution = new Solution();
 	externalSolution->setName(externalSolutionName);
 	externalSolution->setRootPath(solution->getRootPath());
-	externalSolution->setDefinitions(solution->getDefinitions());
 
 	// Replace dependencies to projects which will become external projects.
 	for (auto localProject : localProjects)

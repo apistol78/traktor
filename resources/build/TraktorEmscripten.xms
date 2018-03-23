@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="Solution" version="2">
+<object type="Solution" version="4">
 	<name>Traktor Emscripten</name>
 	<rootPath>$(TRAKTOR_HOME)/build/emscripten</rootPath>
-	<definitions/>
+	<aggregateOutputPath>$(TRAKTOR_HOME)/bin/latest/emscripten</aggregateOutputPath>
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Animation</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Animation</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -33,11 +33,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Animation.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -61,9 +62,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Animation.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -135,7 +137,7 @@
 						<name>Traktor.Core</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
 						<configurations>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -159,11 +161,12 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Core.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -187,9 +190,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Core.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -461,7 +465,7 @@
 						<name>Traktor.World</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/World</sourcePath>
 						<configurations>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -485,11 +489,12 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.World.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -513,9 +518,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.World.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -574,7 +580,7 @@
 									<name>Traktor.Render</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Render</sourcePath>
 									<configurations>
-										<item type="Configuration" version="4">
+										<item type="Configuration" version="5">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -598,11 +604,12 @@
 											<aggregationItems>
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Render.bc</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+													<targetPath>debugstatic</targetPath>
 												</item>
 											</aggregationItems>
+											<consumerLibraryPath>debugstatic</consumerLibraryPath>
 										</item>
-										<item type="Configuration" version="4">
+										<item type="Configuration" version="5">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -626,9 +633,10 @@
 											<aggregationItems>
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Render.bc</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+													<targetPath>releasestatic</targetPath>
 												</item>
 											</aggregationItems>
+											<consumerLibraryPath>releasestatic</consumerLibraryPath>
 										</item>
 									</configurations>
 									<items>
@@ -705,7 +713,7 @@
 												<name>Traktor.Resource</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Resource</sourcePath>
 												<configurations>
-													<item type="Configuration" version="4">
+													<item type="Configuration" version="5">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -729,11 +737,12 @@
 														<aggregationItems>
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Resource.bc</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+																<targetPath>debugstatic</targetPath>
 															</item>
 														</aggregationItems>
+														<consumerLibraryPath>debugstatic</consumerLibraryPath>
 													</item>
-													<item type="Configuration" version="4">
+													<item type="Configuration" version="5">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -757,9 +766,10 @@
 														<aggregationItems>
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Resource.bc</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+																<targetPath>releasestatic</targetPath>
 															</item>
 														</aggregationItems>
+														<consumerLibraryPath>releasestatic</consumerLibraryPath>
 													</item>
 												</configurations>
 												<items>
@@ -785,7 +795,7 @@
 												<name>Traktor.Compress</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Compress</sourcePath>
 												<configurations>
-													<item type="Configuration" version="4">
+													<item type="Configuration" version="5">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -813,11 +823,12 @@
 														<aggregationItems>
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Compress.bc</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+																<targetPath>debugstatic</targetPath>
 															</item>
 														</aggregationItems>
+														<consumerLibraryPath>debugstatic</consumerLibraryPath>
 													</item>
-													<item type="Configuration" version="4">
+													<item type="Configuration" version="5">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -845,9 +856,10 @@
 														<aggregationItems>
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Compress.bc</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+																<targetPath>releasestatic</targetPath>
 															</item>
 														</aggregationItems>
+														<consumerLibraryPath>releasestatic</consumerLibraryPath>
 													</item>
 												</configurations>
 												<items>
@@ -926,7 +938,7 @@
 									<name>Traktor.Database</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Database</sourcePath>
 									<configurations>
-										<item type="Configuration" version="4">
+										<item type="Configuration" version="5">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -950,11 +962,12 @@
 											<aggregationItems>
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Database.bc</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+													<targetPath>debugstatic</targetPath>
 												</item>
 											</aggregationItems>
+											<consumerLibraryPath>debugstatic</consumerLibraryPath>
 										</item>
-										<item type="Configuration" version="4">
+										<item type="Configuration" version="5">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -978,9 +991,10 @@
 											<aggregationItems>
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Database.bc</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+													<targetPath>releasestatic</targetPath>
 												</item>
 											</aggregationItems>
+											<consumerLibraryPath>releasestatic</consumerLibraryPath>
 										</item>
 									</configurations>
 									<items>
@@ -1021,7 +1035,7 @@
 												<name>Traktor.Xml</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Xml</sourcePath>
 												<configurations>
-													<item type="Configuration" version="4">
+													<item type="Configuration" version="5">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -1046,11 +1060,12 @@
 														<aggregationItems>
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Xml.bc</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+																<targetPath>debugstatic</targetPath>
 															</item>
 														</aggregationItems>
+														<consumerLibraryPath>debugstatic</consumerLibraryPath>
 													</item>
-													<item type="Configuration" version="4">
+													<item type="Configuration" version="5">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -1075,9 +1090,10 @@
 														<aggregationItems>
 															<item type="AggregationItem">
 																<sourceFile>libTraktor.Xml.bc</sourceFile>
-																<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+																<targetPath>releasestatic</targetPath>
 															</item>
 														</aggregationItems>
+														<consumerLibraryPath>releasestatic</consumerLibraryPath>
 													</item>
 												</configurations>
 												<items>
@@ -1115,7 +1131,7 @@
 						<name>Traktor.Mesh</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Mesh</sourcePath>
 						<configurations>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1139,11 +1155,12 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Mesh.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1167,9 +1184,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Mesh.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -1301,7 +1319,7 @@
 						<name>Traktor.Physics</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Physics</sourcePath>
 						<configurations>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1325,11 +1343,12 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Physics.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1353,9 +1372,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Physics.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -1402,7 +1422,7 @@
 									<name>Traktor.Heightfield</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Heightfield</sourcePath>
 									<configurations>
-										<item type="Configuration" version="4">
+										<item type="Configuration" version="5">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -1426,11 +1446,12 @@
 											<aggregationItems>
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Heightfield.bc</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+													<targetPath>debugstatic</targetPath>
 												</item>
 											</aggregationItems>
+											<consumerLibraryPath>debugstatic</consumerLibraryPath>
 										</item>
-										<item type="Configuration" version="4">
+										<item type="Configuration" version="5">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -1454,9 +1475,10 @@
 											<aggregationItems>
 												<item type="AggregationItem">
 													<sourceFile>libTraktor.Heightfield.bc</sourceFile>
-													<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+													<targetPath>releasestatic</targetPath>
 												</item>
 											</aggregationItems>
+											<consumerLibraryPath>releasestatic</consumerLibraryPath>
 										</item>
 									</configurations>
 									<items>
@@ -1496,7 +1518,7 @@
 			<name>Traktor.Database.Compact</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Database/Compact</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1520,11 +1542,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Database.Compact.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1548,9 +1571,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Database.Compact.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -1582,7 +1606,7 @@
 			<name>Traktor.Database.Local</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Database/Local</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1606,11 +1630,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Database.Local.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1634,9 +1659,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Database.Local.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -1668,7 +1694,7 @@
 			<name>Traktor.Database.Remote</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1692,11 +1718,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Database.Remote.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1720,9 +1747,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Database.Remote.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -1754,7 +1782,7 @@
 						<name>Traktor.Net</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Net</sourcePath>
 						<configurations>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1778,11 +1806,12 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Net.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1806,9 +1835,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Net.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -1910,7 +1940,7 @@
 			<name>Traktor.Database.Remote.Client</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Client</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1934,11 +1964,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Database.Remote.Client.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1962,9 +1993,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Database.Remote.Client.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2001,7 +2033,7 @@
 			<name>Traktor.Drawing</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Drawing</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2029,11 +2061,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Drawing.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2061,9 +2094,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Drawing.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2136,7 +2170,7 @@
 			<name>Traktor.Flash</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Flash</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2161,11 +2195,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Flash.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2190,9 +2225,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Flash.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2321,7 +2357,7 @@
 						<name>Traktor.Html</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Html</sourcePath>
 						<configurations>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2345,11 +2381,12 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Html.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2373,9 +2410,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Html.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -2401,7 +2439,7 @@
 						<name>Traktor.Sound</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Sound</sourcePath>
 						<configurations>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2430,11 +2468,12 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Sound.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2463,9 +2502,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Sound.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -2560,7 +2600,7 @@
 			<name>Traktor.I18N</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/I18N</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2584,11 +2624,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.I18N.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2612,9 +2653,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.I18N.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2636,7 +2678,7 @@
 			<name>Traktor.Input</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Input</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2660,11 +2702,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Input.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2688,9 +2731,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Input.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2729,7 +2773,7 @@
 			<name>Traktor.Physics.Bullet</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Physics/Bullet</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2755,11 +2799,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Physics.Bullet.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2785,9 +2830,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Physics.Bullet.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2831,7 +2877,7 @@
 			<name>Traktor.Render.OpenGL.ES2</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2859,11 +2905,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Render.OpenGL.ES2.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2891,9 +2938,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Render.OpenGL.ES2.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2948,7 +2996,7 @@
 			<name>Traktor.Scene</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Scene</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2972,11 +3020,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Scene.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3000,9 +3049,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Scene.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -3039,7 +3089,7 @@
 			<name>Traktor.Script</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Script</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3063,11 +3113,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Script.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3091,9 +3142,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Script.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -3120,7 +3172,7 @@
 			<name>Traktor.Script.Lua</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Script/Lua</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3145,11 +3197,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Script.Lua.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3174,9 +3227,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Script.Lua.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -3210,7 +3264,7 @@
 			<name>Traktor.Spray</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3234,11 +3288,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Spray.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3262,9 +3317,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Spray.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -3343,7 +3399,7 @@
 			<name>Traktor.Terrain</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Terrain</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3367,11 +3423,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Terrain.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3395,9 +3452,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Terrain.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -3444,7 +3502,7 @@
 			<name>Traktor.Theater</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Theater</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3468,11 +3526,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Theater.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3496,9 +3555,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Theater.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -3530,7 +3590,7 @@
 			<name>Traktor.Ui</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Ui</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3554,11 +3614,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Ui.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3582,9 +3643,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Ui.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -3638,7 +3700,7 @@
 			<name>Traktor.Ui.Custom</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Custom</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3662,11 +3724,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Ui.Custom.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3690,9 +3753,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Ui.Custom.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -3958,7 +4022,7 @@
 			<name>Traktor.Weather</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Weather</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3982,11 +4046,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Weather.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4010,9 +4075,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Weather.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -4084,7 +4150,7 @@
 			<name>Traktor.Render.Capture</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Capture</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4108,11 +4174,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Render.Capture.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4136,9 +4203,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Render.Capture.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -4170,7 +4238,7 @@
 			<name>Traktor.Sql</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sql</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4194,11 +4262,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Sql.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4222,9 +4291,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Sql.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -4246,7 +4316,7 @@
 			<name>Traktor.Sql.Sqlite3</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sql/Sqlite3</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4271,11 +4341,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Sql.Sqlite3.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4300,9 +4371,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Sql.Sqlite3.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -4335,7 +4407,7 @@
 			<name>Traktor.Video</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Video</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4361,11 +4433,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Video.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4391,9 +4464,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Video.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -4446,7 +4520,7 @@
 			<name>Traktor.Online</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Online</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4470,11 +4544,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Online.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4498,9 +4573,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Online.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -4564,7 +4640,7 @@
 			<name>Traktor.Online.Local</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Online/Local</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4588,11 +4664,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Online.Local.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4616,9 +4693,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Online.Local.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -4655,7 +4733,7 @@
 			<name>Traktor.Amalgam.Game</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Game</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4679,11 +4757,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Amalgam.Game.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4707,9 +4786,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Amalgam.Game.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -4882,7 +4962,7 @@
 						<name>Traktor.Ai</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Ai</sourcePath>
 						<configurations>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -4907,11 +4987,12 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Ai.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -4936,9 +5017,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Ai.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -4990,7 +5072,7 @@
 						<name>Traktor.Amalgam</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Amalgam</sourcePath>
 						<configurations>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -5014,11 +5096,12 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Amalgam.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -5042,9 +5125,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Amalgam.bc</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -5080,7 +5164,7 @@
 			<name>Traktor.Amalgam.Game.App</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Game/App</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5105,11 +5189,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Amalgam.Game.App.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5134,9 +5219,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Amalgam.Game.App.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -5188,7 +5274,7 @@
 			<name>UnitTest</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/UnitTest</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5213,11 +5299,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>UnitTest.exe</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5242,9 +5329,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>UnitTest.exe</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -5287,7 +5375,7 @@
 			<name>Traktor.Telemetry</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Telemetry</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5311,11 +5399,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Telemetry.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5339,9 +5428,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Telemetry.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -5368,7 +5458,7 @@
 			<name>Traktor.Json</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Json</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5393,11 +5483,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Json.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5422,9 +5513,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Json.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -5446,7 +5538,7 @@
 			<name>Traktor.Input.Emscripten</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Input/Emscripten</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5470,11 +5562,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Input.Emscripten.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5498,9 +5591,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Input.Emscripten.bc</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>

@@ -148,6 +148,15 @@ public:
 
 	//@}
 
+	/*! \name Consumer */
+	//@{
+
+	void setConsumerLibraryPath(const std::wstring& consumerLibraryPath);
+
+	const std::wstring& getConsumerLibraryPath() const;
+
+	//@}
+
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
@@ -167,6 +176,7 @@ private:
 	std::wstring m_debugEnvironment;
 	std::wstring m_debugWorkingDirectory;
 	RefArray< AggregationItem > m_aggregationItems;
+	std::wstring m_consumerLibraryPath;
 };
 
 	}

@@ -41,11 +41,9 @@ public:
 
 	const std::wstring& getRootPath() const;
 
-	void addDefinition(const std::wstring& definition);
+	void setAggregateOutputPath(const std::wstring& aggregateOutputPath);
 
-	void setDefinitions(const std::vector< std::wstring >& definitions);
-
-	const std::vector< std::wstring >& getDefinitions() const;
+	const std::wstring& getAggregateOutputPath() const;
 
 	void addProject(Project* project);
 
@@ -66,7 +64,7 @@ public:
 private:
 	std::wstring m_name;
 	std::wstring m_rootPath;
-	std::vector< std::wstring > m_definitions;
+	std::wstring m_aggregateOutputPath;
 	RefArray< Configuration > m_configurations;
 	RefArray< Project > m_projects;
 	RefArray< Aggregation > m_aggregations;

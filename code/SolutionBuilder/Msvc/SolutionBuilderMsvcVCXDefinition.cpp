@@ -50,8 +50,6 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 		ssip << includePath << L";";
 	}
 
-	for (std::vector< std::wstring >::const_iterator i = solution->getDefinitions().begin(); i != solution->getDefinitions().end(); ++i)
-		ssd << *i << L";";
 	for (std::vector< std::wstring >::const_iterator i = configuration->getDefinitions().begin(); i != configuration->getDefinitions().end(); ++i)
 		ssd << *i << L";";
 

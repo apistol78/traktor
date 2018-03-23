@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="Solution" version="2">
+<object type="Solution" version="4">
 	<name>Traktor Ps3 SPU</name>
 	<rootPath>$(TRAKTOR_HOME)/build/ps3-spu</rootPath>
-	<definitions/>
+	<aggregateOutputPath>$(TRAKTOR_HOME)/bin/latest/ps3/spu</aggregateOutputPath>
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Sound.JobMulConst</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -25,6 +25,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -37,8 +38,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -54,6 +56,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -66,6 +69,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -83,7 +87,7 @@
 						<name>Traktor.Core</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
 						<configurations>
-							<item type="Configuration" version="3">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -99,15 +103,22 @@
 								<libraries>
 									<item>$(SCE_PS3_ROOT)/target/spu/lib/libm.a</item>
 								</libraries>
+								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 								<debugExecutable/>
 								<debugArguments/>
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
-								<aggregationItems/>
+								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Core.lib</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="3">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -123,13 +134,20 @@
 								<libraries>
 									<item>$(SCE_PS3_ROOT)/target/spu/lib/libm.a</item>
 								</libraries>
+								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 								<debugExecutable/>
 								<debugArguments/>
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
-								<aggregationItems/>
+								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Core.lib</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
+								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -294,7 +312,7 @@
 			<name>Traktor.Sound.JobAddMulConst</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -310,6 +328,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -322,8 +341,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -339,6 +359,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -351,6 +372,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -372,7 +394,7 @@
 			<name>Traktor.Sound.JobStretch</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -389,6 +411,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -401,8 +424,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -419,6 +443,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -431,6 +456,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -452,7 +478,7 @@
 			<name>Traktor.Spray.JobDragModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -469,6 +495,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -481,8 +508,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -499,6 +527,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -511,6 +540,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -532,7 +562,7 @@
 			<name>Traktor.Spray.JobGravityModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -549,6 +579,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -561,8 +592,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -579,6 +611,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -591,6 +624,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -612,7 +646,7 @@
 			<name>Traktor.Spray.JobIntegrateModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -629,6 +663,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -641,8 +676,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -659,6 +695,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -671,6 +708,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -692,7 +730,7 @@
 			<name>Traktor.Spray.JobPlaneCollisionModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -709,6 +747,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -721,8 +760,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -739,6 +779,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -751,6 +792,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -772,7 +814,7 @@
 			<name>Traktor.Spray.JobSizeModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -789,6 +831,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -801,8 +844,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -819,6 +863,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -831,6 +876,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -852,7 +898,7 @@
 			<name>Traktor.Spray.JobVortexModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -869,6 +915,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -881,8 +928,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -899,6 +947,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -911,6 +960,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -933,7 +983,7 @@
 			<name>Traktor.Spray.JobPointRenderer</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -950,6 +1000,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -962,8 +1013,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -980,6 +1032,7 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 					<debugExecutable/>
@@ -992,6 +1045,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -1013,7 +1067,7 @@
 			<name>PS3_SPURS_Broadphase</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1040,6 +1094,7 @@
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
 					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
 					<debugExecutable/>
@@ -1052,8 +1107,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1079,6 +1135,7 @@
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
 					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
 					<debugExecutable/>
@@ -1091,6 +1148,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -1140,7 +1198,7 @@
 			<name>PS3_SPURS_BulletCD</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1169,6 +1227,7 @@
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -fstack-check -ffast-math</additionalCompilerOptions>
 					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
 					<debugExecutable/>
@@ -1181,8 +1240,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1208,6 +1268,7 @@
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -ffast-math --param inline-unit-growth=10000 --param large-function-growth=10000 --param max-inline-insns-single=10000</additionalCompilerOptions>
 					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
 					<debugExecutable/>
@@ -1220,6 +1281,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -1511,7 +1573,7 @@
 			<name>PS3_SPURS_Integrate</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1537,6 +1599,7 @@
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -fstack-check -ffast-math</additionalCompilerOptions>
 					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
 					<debugExecutable/>
@@ -1549,8 +1612,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1575,6 +1639,7 @@
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -O3 -ffast-math --param inline-unit-growth=10000 --param large-function-growth=10000 --param max-inline-insns-single=10000</additionalCompilerOptions>
 					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
 					<debugExecutable/>
@@ -1587,6 +1652,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -1660,7 +1726,7 @@
 			<name>PS3_SPURS_ConstraintSolver</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1688,6 +1754,7 @@
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
 					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
 					<debugExecutable/>
@@ -1700,8 +1767,9 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1728,6 +1796,7 @@
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
 						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
 					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check</additionalCompilerOptions>
 					<additionalLinkerOptions>-Wl,--gc-sections -Ttext=0x3000</additionalLinkerOptions>
 					<debugExecutable/>
@@ -1740,6 +1809,7 @@
 							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>

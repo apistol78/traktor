@@ -61,8 +61,6 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
 
 	// Preprocessor definitions.
 	os << L"PreprocessorDefinitions=\"";
-	for (std::vector< std::wstring >::const_iterator i = solution->getDefinitions().begin(); i != solution->getDefinitions().end(); ++i)
-		os << *i << L";";
 	for (std::vector< std::wstring >::const_iterator i = configuration->getDefinitions().begin(); i != configuration->getDefinitions().end(); ++i)
 		os << *i << L";";
 

@@ -96,13 +96,32 @@ local function collectDependencies(solution, project, configuration, outIncludeP
 			local externalProject = dep:getProject()
 			local externalConfig = externalProject:getConfiguration(configuration:getName())
 			if externalProject:getEnable() then
+
+				-- Add specified consumer library path.
+				if externalConfig:getConsumerLibraryPath() ~= "" then
+					local aggregateOutputPath = Path(externalSolution:getAggregateOutputPath())
+					local consumerLibraryPath = Path(externalConfig:getConsumerLibraryPath())
+
+					local consumerRelPath = fileSystem:getRelativePath(
+						aggregateOutputPath:concat(consumerLibraryPath),
+						projectPath
+					)
+
+					if consumerRelPath ~= nil then
+						insertLast(outLibraryPaths, consumerRelPath:getPathName())
+					end
+				end
+
+				-- Add path to build directory.
 				local externalRelPath = fileSystem:getRelativePath(
 					Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
 					projectPath
 				)
-				if externalRelPath:getPathName() ~= "" then
+				if externalRelPath ~= nil then
 					insertLast(outLibraryPaths, externalRelPath:getPathName())
 				end
+
+				-- Add library and recurse with dependencies.
 				insertLast(outLibraries, externalProject:getName())
 				collectDependencies(
 					externalSolution,
@@ -335,18 +354,17 @@ for i = 0, configurations:size() - 1 do
 	local aggregationItems = configuration:getAggregationItems()
 	for i = 0, aggregationItems:size() - 1 do
 		local aggregationItem = aggregationItems:get(i)
-		local sourceFile = aggregationItem:getSourceFile()
-		local targetPath = aggregationItem:getTargetPath()
 
-		sourceFile = Path("../" .. configuration:getName()):concat(Path(sourceFile))
+		local aggregateOutputPath = Path(solution:getAggregateOutputPath())
+		local sourceFile = Path("../" .. configuration:getName()):concat(Path(aggregationItem:getSourceFile()))
+		local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
 
 		if os == "windows" then
-			targetPath = Path(targetPath)
 			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
 		elseif os == "osx" or os == "linux" then
-			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath)
-			output:printLn("\t@mkdir -p \"" .. targetPath .. "/\"")
-			output:printLn("\t@-cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath .. "/\"")
+			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
+			output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+			output:printLn("\t@-cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
 		end
 	end
 end
@@ -389,18 +407,17 @@ for i = 0, configurations:size() - 1 do
 	local aggregationItems = configuration:getAggregationItems()
 	for i = 0, aggregationItems:size() - 1 do
 		local aggregationItem = aggregationItems:get(i)
-		local sourceFile = aggregationItem:getSourceFile()
-		local targetPath = aggregationItem:getTargetPath()
 
-		sourceFile = Path("../" .. configuration:getName()):concat(Path(sourceFile))
-		targetPath = Path(targetPath)
+		local aggregateOutputPath = Path(solution:getAggregateOutputPath())
+		local sourceFile = Path("../" .. configuration:getName()):concat(Path(aggregationItem:getSourceFile()))
+		local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
 
 		if os == "windows" then
 			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
 		elseif os == "osx" or os == "linux" then
 			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
 			output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
-			output:printLn("\t@cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+			output:printLn("\t@-cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
 		end
 	end
 
