@@ -37,7 +37,15 @@ local function insertLast(t, iv)
 	table.insert(t, iv)
 end
 
-local function collectDependencies(solution, project, configuration, outIncludePaths, outLibraries, outLibrariesExternal, outLibraryPaths)
+local function collectDependencies(
+	solution,
+	project,
+	configuration,
+	outIncludePaths,
+	outLibraries,
+	outLibrariesExternal,
+	outLibraryPaths
+)
 	-- Add include paths.
 	local includePaths = configuration:getIncludePaths()
 	for i = 0, includePaths:size() - 1 do
@@ -47,7 +55,7 @@ local function collectDependencies(solution, project, configuration, outIncludeP
 		end
 	end
 
-	-- Add libraries.
+	-- Add external libraries, ex precompiled libraries etc.
 	local libraries = configuration:getLibraries()
 	for i = 0, libraries:size() - 1 do
 		insertLast(outLibrariesExternal, libraries:get(i))
@@ -80,16 +88,33 @@ local function collectDependencies(solution, project, configuration, outIncludeP
 			local localProject = dep:getProject()
 			local localConfig = localProject:getConfiguration(configuration:getName())
 			if localProject:getEnable() then
+
+				-- Add library.
 				insertLast(outLibraries, localProject:getName())
-				collectDependencies(
-					localSolution,
-					localProject,
-					localConfig,
-					outIncludePaths,
-					outLibraries,
-					outLibrariesExternal,
-					outLibraryPaths
-				)
+
+				-- Recurse with child dependencies.
+				if localConfig:getTargetFormat() == "StaticLibrary" then
+					collectDependencies(
+						localSolution,
+						localProject,
+						localConfig,
+						outIncludePaths,
+						outLibraries,
+						outLibrariesExternal,
+						outLibraryPaths
+					)
+				else
+
+					-- Only add include paths when dealing with shared library dependencies.
+					local includePaths = localConfig:getIncludePaths()
+					for j = 0, includePaths:size() - 1 do
+						local ip = Path(includePaths:get(j)):getPathName()
+						if ip ~= "" then
+							insertLast(outIncludePaths, ip)
+						end
+					end
+
+				end
 			end
 		elseif isa(dep, ExternalDependency) then
 			local externalSolution = dep:getSolution()
@@ -97,7 +122,7 @@ local function collectDependencies(solution, project, configuration, outIncludeP
 			local externalConfig = externalProject:getConfiguration(configuration:getName())
 			if externalProject:getEnable() then
 
-				-- Add specified consumer library path.
+				-- Add path to library.
 				if externalConfig:getConsumerLibraryPath() ~= "" then
 					local aggregateOutputPath = Path(externalSolution:getAggregateOutputPath())
 					local consumerLibraryPath = Path(externalConfig:getConsumerLibraryPath())
@@ -110,28 +135,42 @@ local function collectDependencies(solution, project, configuration, outIncludeP
 					if consumerRelPath ~= nil then
 						insertLast(outLibraryPaths, consumerRelPath:getPathName())
 					end
+				else
+					local externalRelPath = fileSystem:getRelativePath(
+						Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
+						projectPath
+					)
+					if externalRelPath ~= nil then
+						insertLast(outLibraryPaths, externalRelPath:getPathName())
+					end
 				end
 
-				-- Add path to build directory.
-				local externalRelPath = fileSystem:getRelativePath(
-					Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
-					projectPath
-				)
-				if externalRelPath ~= nil then
-					insertLast(outLibraryPaths, externalRelPath:getPathName())
-				end
-
-				-- Add library and recurse with dependencies.
+				-- Add library.
 				insertLast(outLibraries, externalProject:getName())
-				collectDependencies(
-					externalSolution,
-					externalProject,
-					externalConfig,
-					outIncludePaths,
-					outLibraries,
-					outLibrariesExternal,
-					outLibraryPaths
-				)
+
+				-- Recurse with child dependencies.
+				if externalConfig:getTargetFormat() == "StaticLibrary" then
+					collectDependencies(
+						externalSolution,
+						externalProject,
+						externalConfig,
+						outIncludePaths,
+						outLibraries,
+						outLibrariesExternal,
+						outLibraryPaths
+					)
+				else
+
+					-- Only add include paths when dealing with shared library dependencies.
+					local includePaths = externalConfig:getIncludePaths()
+					for j = 0, includePaths:size() - 1 do
+						local ip = Path(includePaths:get(j)):getPathName()
+						if ip ~= "" then
+							insertLast(outIncludePaths, ip)
+						end
+					end
+
+				end
 			end
 		end
 	end
