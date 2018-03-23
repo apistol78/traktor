@@ -13,10 +13,6 @@ export MAKE_STATIC_LIBRARY_FILE="lib%s.a"
 export MAKE_SHARED_LIBRARY_FILE="lib%s.so"
 export MAKE_EXECUTABLE_FILE="%s"
 
-if [ "$AGGREGATE_OUTPUT_PATH" == "" ]; then
-	export AGGREGATE_OUTPUT_PATH="\$(TRAKTOR_HOME)/bin/latest/android"
-fi
-
 # Build solution files.
 $TRAKTOR_HOME/bin/linux/SolutionBuilder \
 	-f=make2 \

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="Solution" version="2">
+<object type="Solution" version="4">
 	<name>Extern Android</name>
 	<rootPath>$(TRAKTOR_HOME)/build/android</rootPath>
-	<definitions/>
+	<aggregateOutputPath>$(TRAKTOR_HOME)/bin/latest/android</aggregateOutputPath>
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.expat-2.1.0</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -35,11 +35,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.expat-2.1.0.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -65,9 +66,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.expat-2.1.0.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -95,7 +97,7 @@
 			<name>Extern.bullet</name>
 			<sourcePath>$(BULLET_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -121,11 +123,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.bullet.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -151,9 +154,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.bullet.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -287,7 +291,7 @@
 			<name>Extern.jpeg-6b</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/jpeg-6b</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -313,11 +317,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.jpeg-6b.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -343,9 +348,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.jpeg-6b.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -365,7 +371,7 @@
 			<name>Extern.libflac-1.2.1</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -395,11 +401,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.libflac-1.2.1.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -429,9 +436,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.libflac-1.2.1.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -534,7 +542,7 @@
 			<name>Extern.libmad-0.15.1b</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -564,11 +572,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.libmad-0.15.1b.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -598,9 +607,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.libmad-0.15.1b.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -717,7 +727,7 @@
 			<name>Extern.libogg-1.3.0</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/src</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -742,11 +752,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.libogg-1.3.0.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -771,9 +782,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.libogg-1.3.0.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -793,7 +805,7 @@
 			<name>Extern.libvorbis-1.3.3</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -820,11 +832,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.libvorbis-1.3.3.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -851,9 +864,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.libvorbis-1.3.3.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -1140,7 +1154,7 @@
 			<name>Extern.lpng</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/lpng1632</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1167,11 +1181,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.lpng.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1198,9 +1213,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.lpng.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -1222,7 +1238,7 @@
 						<name>Extern.zlib-1.2.3</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</sourcePath>
 						<configurations>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1247,11 +1263,12 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libExtern.zlib-1.2.3.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="4">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1276,9 +1293,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libExtern.zlib-1.2.3.a</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -1301,7 +1319,7 @@
 			<name>Extern.lwObject</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/lwObject</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1326,11 +1344,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.lwObject.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1355,9 +1374,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.lwObject.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -1373,7 +1393,7 @@
 			<name>Extern.squish-1.10</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/squish-1.10</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1399,11 +1419,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.squish-1.10.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1429,9 +1450,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.squish-1.10.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -1452,7 +1474,7 @@
 			<name>Extern.sqlite</name>
 			<sourcePath>$(SQLITE_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1478,11 +1500,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.sqlite.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1508,9 +1531,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.sqlite.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -1534,7 +1558,7 @@
 			<name>Extern.libtheora-1.1.1</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1561,11 +1585,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1592,9 +1617,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -1625,7 +1651,7 @@
 			<name>Extern.mpg123-1.13.2</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1654,11 +1680,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1687,9 +1714,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -1923,7 +1951,7 @@
 			<name>Extern.minilzo-2.05</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1949,11 +1977,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.minilzo-2.05.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1979,9 +2008,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.minilzo-2.05.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2001,7 +2031,7 @@
 			<name>Extern.liblzf-3.6</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2026,11 +2056,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.liblzf-3.6.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2055,9 +2086,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.liblzf-3.6.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2093,7 +2125,7 @@
 			<name>Extern.stb_vorbis</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/stb_vorbis</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2115,11 +2147,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.stb_vorbis.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2141,9 +2174,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.stb_vorbis.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2159,7 +2193,7 @@
 			<name>Extern.recast</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2183,11 +2217,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.recast.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2211,9 +2246,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.recast.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2243,7 +2279,7 @@
 			<name>Extern.detour</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2267,11 +2303,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.detour.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2295,9 +2332,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.detour.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2327,7 +2365,7 @@
 			<name>Extern.lua</name>
 			<sourcePath>$(LUA_SDK)/src</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2351,11 +2389,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.lua.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2379,9 +2418,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.lua.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -2401,7 +2441,7 @@
 			<name>Extern.agg</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/agg-2.5</sourcePath>
 			<configurations>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2426,11 +2466,12 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.agg.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="4">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2455,9 +2496,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libExtern.agg.a</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>

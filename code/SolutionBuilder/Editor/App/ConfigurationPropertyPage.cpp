@@ -5,7 +5,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <Core/Log/Log.h>
+#include <Ui/Application.h>
 #include <Ui/Static.h>
+#include <Ui/Tab.h>
+#include <Ui/TabPage.h>
 #include <Ui/TableLayout.h>
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/Editor/App/ConfigurationPropertyPage.h"
@@ -31,18 +34,38 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ConfigurationPropertyPage", ConfigurationPro
 
 bool ConfigurationPropertyPage::create(ui::Widget* parent)
 {
+	const int32_t f = ui::scaleBySystemDPI(4);
+
 	if (!ui::Container::create(
 		parent,
 		ui::WsNone,
-		new ui::TableLayout(L"*,100%", L"*,*,100%,100%,100%,100%,*,*,*,*,*,*", 4, 4)
+		new ui::TableLayout(L"100%", L"100%", f, f)
 	))
 		return false;
 
+	Ref< ui::Tab > tab = new ui::Tab();
+	tab->create(this, ui::Tab::WsLine | ui::WsDoubleBuffer);
+
+	Ref< ui::TabPage > tabPageBuild = new ui::TabPage();
+	tabPageBuild->create(tab, L"Build", new ui::TableLayout(L"*,100%", L"*,*,100%,100%,100%,100%,*,*,*", f, f));
+	tab->addPage(tabPageBuild);
+
+	Ref< ui::TabPage > tabPageDebug = new ui::TabPage();
+	tabPageDebug->create(tab, L"Debug", new ui::TableLayout(L"*,100%", L"*", f, f));
+	tab->addPage(tabPageDebug);
+
+	Ref< ui::TabPage > tabPageConsumer = new ui::TabPage();
+	tabPageConsumer->create(tab, L"Consumer", new ui::TableLayout(L"*,100%", L"*", f, f));
+	tab->addPage(tabPageConsumer);
+
+	tab->setActivePage(tabPageBuild);
+
+	// Build
 	Ref< ui::Static > staticType = new ui::Static();
-	staticType->create(this, L"Type");
+	staticType->create(tabPageBuild, L"Type");
 
 	m_dropType = new ui::DropDown();
-	m_dropType->create(this);
+	m_dropType->create(tabPageBuild);
 	m_dropType->add(L"Static library");
 	m_dropType->add(L"Shared library");
 	m_dropType->add(L"Executable");
@@ -50,48 +73,48 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	m_dropType->addEventHandler< ui::SelectionChangeEvent >(this, &ConfigurationPropertyPage::eventSelectType);
 
 	Ref< ui::Static > staticProfile = new ui::Static();
-	staticProfile->create(this, L"Profile");
+	staticProfile->create(tabPageBuild, L"Profile");
 
 	m_dropProfile = new ui::DropDown();
-	m_dropProfile->create(this);
+	m_dropProfile->create(tabPageBuild);
 	m_dropProfile->add(L"Debug");
 	m_dropProfile->add(L"Release");
 	m_dropProfile->addEventHandler< ui::SelectionChangeEvent >(this, &ConfigurationPropertyPage::eventSelectProfile);
 
 	Ref< ui::Static > staticIncludePaths = new ui::Static();
-	staticIncludePaths->create(this, L"Include paths");
+	staticIncludePaths->create(tabPageBuild, L"Include paths");
 	staticIncludePaths->setVerticalAlign(ui::AnTop);
 
 	m_listIncludePaths = new ui::custom::EditList();
-	m_listIncludePaths->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
+	m_listIncludePaths->create(tabPageBuild, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
 	m_listIncludePaths->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeIncludePath);
 
 	Ref< ui::Static > staticDefinitions = new ui::Static();
-	staticDefinitions->create(this, L"Definitions");
+	staticDefinitions->create(tabPageBuild, L"Definitions");
 
 	m_listDefinitions = new ui::custom::EditList();
-	m_listDefinitions->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
+	m_listDefinitions->create(tabPageBuild, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
 	m_listDefinitions->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeDefinitions);
 
 	Ref< ui::Static > staticLibraryPaths = new ui::Static();
-	staticLibraryPaths->create(this, L"Library paths");
+	staticLibraryPaths->create(tabPageBuild, L"Library paths");
 
 	m_listLibraryPaths = new ui::custom::EditList();
-	m_listLibraryPaths->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
+	m_listLibraryPaths->create(tabPageBuild, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
 	m_listLibraryPaths->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeLibraryPaths);
 
 	Ref< ui::Static > staticLibraries = new ui::Static();
-	staticLibraries->create(this, L"Libraries");
+	staticLibraries->create(tabPageBuild, L"Libraries");
 
 	m_listLibraries = new ui::custom::EditList();
-	m_listLibraries->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
+	m_listLibraries->create(tabPageBuild, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
 	m_listLibraries->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeLibraries);
 
 	Ref< ui::Static > staticWarningLevel = new ui::Static();
-	staticWarningLevel->create(this, L"Warning level");
+	staticWarningLevel->create(tabPageBuild, L"Warning level");
 
 	m_dropWarningLevel = new ui::DropDown();
-	m_dropWarningLevel->create(this);
+	m_dropWarningLevel->create(tabPageBuild);
 	m_dropWarningLevel->add(L"No warnings");
 	m_dropWarningLevel->add(L"Critical warnings only");
 	m_dropWarningLevel->add(L"Compiler default");
@@ -99,46 +122,55 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	m_dropWarningLevel->addEventHandler< ui::SelectionChangeEvent >(this, &ConfigurationPropertyPage::eventSelectWarningLevel);
 
 	Ref< ui::Static > staticAdditionalCompilerOptions = new ui::Static();
-	staticAdditionalCompilerOptions->create(this, L"Compiler options");
+	staticAdditionalCompilerOptions->create(tabPageBuild, L"Compiler options");
 
 	m_editAdditionalCompilerOptions = new ui::Edit();
-	m_editAdditionalCompilerOptions->create(this);
+	m_editAdditionalCompilerOptions->create(tabPageBuild);
 	m_editAdditionalCompilerOptions->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
 
 	Ref< ui::Static > staticAdditionalLinkerOptions = new ui::Static();
-	staticAdditionalLinkerOptions->create(this, L"Linker options");
+	staticAdditionalLinkerOptions->create(tabPageBuild, L"Linker options");
 
 	m_editAdditionalLinkerOptions = new ui::Edit();
-	m_editAdditionalLinkerOptions->create(this);
+	m_editAdditionalLinkerOptions->create(tabPageBuild);
 	m_editAdditionalLinkerOptions->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
 
+	// Debug
 	Ref< ui::Static > staticDebugExecutable = new ui::Static();
-	staticDebugExecutable->create(this, L"Debug executable");
+	staticDebugExecutable->create(tabPageDebug, L"Executable");
 
 	m_editDebugExecutable = new ui::Edit();
-	m_editDebugExecutable->create(this);
+	m_editDebugExecutable->create(tabPageDebug);
 	m_editDebugExecutable->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
 
 	Ref< ui::Static > staticDebugArguments = new ui::Static();
-	staticDebugArguments->create(this, L"Debug arguments");
+	staticDebugArguments->create(tabPageDebug, L"Arguments");
 
 	m_editDebugArguments = new ui::Edit();
-	m_editDebugArguments->create(this);
+	m_editDebugArguments->create(tabPageDebug);
 	m_editDebugArguments->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
 
 	Ref< ui::Static > staticDebugEnvironment = new ui::Static();
-	staticDebugEnvironment->create(this, L"Debug environment");
+	staticDebugEnvironment->create(tabPageDebug, L"Environment");
 
 	m_editDebugEnvironment = new ui::Edit();
-	m_editDebugEnvironment->create(this);
+	m_editDebugEnvironment->create(tabPageDebug);
 	m_editDebugEnvironment->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
 
 	Ref< ui::Static > staticDebugWorkingDirectory = new ui::Static();
-	staticDebugWorkingDirectory->create(this, L"Debug working directory");
+	staticDebugWorkingDirectory->create(tabPageDebug, L"Working directory");
 
 	m_editDebugWorkingDirectory = new ui::Edit();
-	m_editDebugWorkingDirectory->create(this);
+	m_editDebugWorkingDirectory->create(tabPageDebug);
 	m_editDebugWorkingDirectory->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
+
+	// Consumer
+	Ref< ui::Static > staticConsumerLibraryPath = new ui::Static();
+	staticConsumerLibraryPath->create(tabPageConsumer, L"Library path");
+
+	m_editConsumerLibraryPath = new ui::Edit();
+	m_editConsumerLibraryPath->create(tabPageConsumer);
+	m_editConsumerLibraryPath->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
 
 	fit();
 
@@ -193,6 +225,8 @@ void ConfigurationPropertyPage::set(Configuration* configuration)
 	m_editDebugArguments->setText(m_configuration->getDebugArguments());
 	m_editDebugEnvironment->setText(m_configuration->getDebugEnvironment());
 	m_editDebugWorkingDirectory->setText(m_configuration->getDebugWorkingDirectory());
+
+	m_editConsumerLibraryPath->setText(m_configuration->getConsumerLibraryPath());
 }
 
 void ConfigurationPropertyPage::eventSelectType(ui::SelectionChangeEvent* event)
@@ -294,6 +328,8 @@ void ConfigurationPropertyPage::eventFocusAdditionalOptions(ui::FocusEvent* even
 	m_configuration->setDebugArguments(m_editDebugArguments->getText());
 	m_configuration->setDebugEnvironment(m_editDebugEnvironment->getText());
 	m_configuration->setDebugWorkingDirectory(m_editDebugWorkingDirectory->getText());
+
+	m_configuration->setConsumerLibraryPath(m_editConsumerLibraryPath->getText());
 }
 
 	}

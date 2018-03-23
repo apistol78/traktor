@@ -44,6 +44,7 @@ private:
 	Ref< ui::Edit > m_editDebugArguments;
 	Ref< ui::Edit > m_editDebugEnvironment;
 	Ref< ui::Edit > m_editDebugWorkingDirectory;
+	Ref< ui::Edit > m_editConsumerLibraryPath;
 
 	void eventSelectType(ui::SelectionChangeEvent* event);
 

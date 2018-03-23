@@ -41,7 +41,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "SolutionBuilder/Editor/App/AddMultipleConfigurations.h"
 #include "SolutionBuilder/Editor/App/EditConfigurations.h"
 #include "SolutionBuilder/Editor/App/ExtractSolutionTool.h"
-#include "SolutionBuilder/Editor/App/FlattenDefinitionsTool.h"
 #include "SolutionBuilder/Editor/App/ImportMsvcProject.h"
 #include "SolutionBuilder/Editor/App/ImportProject.h"
 
@@ -138,7 +137,6 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.EditConfigurations"), L"Edit configurations..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportProject"), L"Import project..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportMsvcProject"), L"Import MSVC project..."));
-	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.FlattenDefinitions"), L"Flatten definitions"));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ExtractSolution"), L"Extract project(s) into external solution..."));
 	m_menuBar->add(menuTools);
 
@@ -668,12 +666,6 @@ void SolutionForm::eventMenuClick(ui::MenuClickEvent* event)
 	{
 		ImportMsvcProject importMsvcProject;
 		importMsvcProject.execute(this, m_solution, m_solutionFileName);
-		updateSolutionTree();
-	}
-	else if (command == L"Tools.FlattenDefinitions")
-	{
-		FlattenDefinitionsTool flattenDefinitions;
-		flattenDefinitions.execute(this, m_solution);
 		updateSolutionTree();
 	}
 	else if (command == L"Tools.ExtractSolution")

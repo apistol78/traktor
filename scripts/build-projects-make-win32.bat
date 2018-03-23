@@ -15,11 +15,6 @@ set MAKE_INCLUDE=$(TRAKTOR_HOME)\resources\build\configurations\make-config-win3
 :: Optional parameters.
 set MAKE_MANIFEST=%TRAKTOR_HOME%\resources\build\windows\manifest-win32.xml
 
-:: Product output path.
-if "%AGGREGATE_OUTPUT_PATH%" == "" (
-	set AGGREGATE_OUTPUT_PATH=%TRAKTOR_HOME%\bin\latest\win32
-)
-
 %SOLUTIONBUILDER% ^
 	-f=make2 ^
 	-make-solution-template=%TRAKTOR_HOME%\resources\build\configurations\make-solution.sbm ^

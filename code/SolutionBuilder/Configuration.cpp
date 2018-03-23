@@ -17,7 +17,7 @@ namespace traktor
 	namespace sb
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 4, Configuration, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 5, Configuration, ISerializable)
 
 Configuration::Configuration()
 :	m_targetFormat(TfStaticLibrary)
@@ -211,6 +211,16 @@ const RefArray< AggregationItem >& Configuration::getAggregationItems() const
 	return m_aggregationItems;
 }
 
+void Configuration::setConsumerLibraryPath(const std::wstring& consumerLibraryPath)
+{
+	m_consumerLibraryPath = consumerLibraryPath;
+}
+
+const std::wstring& Configuration::getConsumerLibraryPath() const
+{
+	return m_consumerLibraryPath;
+}
+
 void Configuration::serialize(ISerializer& s)
 {
 	MemberEnum< TargetFormat >::Key kTargetFormat[] =
@@ -266,6 +276,9 @@ void Configuration::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> MemberRefArray< AggregationItem >(L"aggregationItems", m_aggregationItems);
+
+	if (s.getVersion() >= 5)
+		s >> Member< std::wstring >(L"consumerLibraryPath", m_consumerLibraryPath);
 }
 
 	}

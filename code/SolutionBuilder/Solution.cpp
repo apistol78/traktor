@@ -18,7 +18,7 @@ namespace traktor
 	namespace sb
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Solution", 2, Solution, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Solution", 4, Solution, ISerializable)
 
 void Solution::setName(const std::wstring& name)
 {
@@ -40,19 +40,14 @@ const std::wstring& Solution::getRootPath() const
 	return m_rootPath;
 }
 
-void Solution::addDefinition(const std::wstring& definition)
+void Solution::setAggregateOutputPath(const std::wstring& aggregateOutputPath)
 {
-	m_definitions.push_back(definition);
+	m_aggregateOutputPath = aggregateOutputPath;
 }
 
-void Solution::setDefinitions(const std::vector< std::wstring >& definitions)
+const std::wstring& Solution::getAggregateOutputPath() const
 {
-	m_definitions = definitions;
-}
-
-const std::vector< std::wstring >& Solution::getDefinitions() const
-{
-	return m_definitions;
+	return m_aggregateOutputPath;
 }
 
 void Solution::addProject(Project* project)
@@ -135,8 +130,14 @@ void Solution::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"rootPath", m_rootPath);
 
-	if (s.getVersion() >= 1)
-		s >> MemberStlVector< std::wstring >(L"definitions", m_definitions);
+	if (s.getVersion() >= 4)
+		s >> Member< std::wstring >(L"aggregateOutputPath", m_aggregateOutputPath);
+
+	if (s.getVersion() >= 1 && s.getVersion() <= 2)
+	{
+		std::vector< std::wstring > definitions;
+		s >> MemberStlVector< std::wstring >(L"definitions", definitions);
+	}
 
 	s >> MemberRefArray< Project >(L"projects", m_projects);
 

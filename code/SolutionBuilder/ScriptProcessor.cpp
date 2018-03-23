@@ -167,7 +167,7 @@ bool ScriptProcessor::create()
 	Ref< AutoRuntimeClass< Solution > > classSolution = new AutoRuntimeClass< Solution >();
 	classSolution->addMethod("getName", &Solution::getName);
 	classSolution->addMethod("getRootPath", &Solution::getRootPath);
-	classSolution->addMethod("getDefinitions", &Solution::getDefinitions);
+	classSolution->addMethod("getAggregateOutputPath", &Solution::getAggregateOutputPath);
 	classSolution->addMethod("getProjects", &Solution::getProjects);
 	m_scriptManager->registerClass(classSolution);
 
@@ -197,6 +197,7 @@ bool ScriptProcessor::create()
 	classConfiguration->addMethod("getDebugEnvironment", &Configuration::getDebugEnvironment);
 	classConfiguration->addMethod("getDebugWorkingDirectory", &Configuration::getDebugWorkingDirectory);
 	classConfiguration->addMethod("getAggregationItems", &Configuration::getAggregationItems);
+	classConfiguration->addMethod("getConsumerLibraryPath", &Configuration::getConsumerLibraryPath);
 	m_scriptManager->registerClass(classConfiguration);
 
 	Ref< AutoRuntimeClass< ProjectItem > > classProjectItem = new AutoRuntimeClass< ProjectItem >();

@@ -9,8 +9,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <Ui/Container.h>
 #include <Ui/Edit.h>
-#include <Ui/Custom/EditList.h>
-#include <Ui/Custom/EditListEditEvent.h>
 
 namespace traktor
 {
@@ -30,12 +28,10 @@ public:
 
 private:
 	Ref< ui::Edit > m_rootPath;
-	Ref< ui::custom::EditList > m_listDefinitions;
+	Ref< ui::Edit > m_aggregateOutputPath;
 	Ref< Solution > m_solution;
 
 	void eventEditFocus(ui::FocusEvent* event);
-
-	void eventChangeDefinitions(ui::custom::EditListEditEvent* event);
 };
 
 	}

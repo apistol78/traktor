@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include <Ui/Application.h>
 #include <Ui/TableLayout.h>
 #include <Ui/Static.h>
 #include "SolutionBuilder/Editor/App/SolutionPropertyPage.h"
@@ -18,10 +19,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionPropertyPage", SolutionPropertyPage,
 
 bool SolutionPropertyPage::create(ui::Widget* parent)
 {
+	const int32_t f = ui::scaleBySystemDPI(4);
+
 	if (!ui::Container::create(
 		parent,
 		ui::WsNone,
-		new ui::TableLayout(L"*,100%", L"*,100%", 4, 4)
+		new ui::TableLayout(L"*,100%", L"*", f, f)
 	))
 		return false;
 
@@ -32,12 +35,12 @@ bool SolutionPropertyPage::create(ui::Widget* parent)
 	m_rootPath->create(this);
 	m_rootPath->addEventHandler< ui::FocusEvent >(this, &SolutionPropertyPage::eventEditFocus);
 
-	Ref< ui::Static > staticDefinitions = new ui::Static();
-	staticDefinitions->create(this, L"Definitions");
+	Ref< ui::Static > staticAggregateOutputPath = new ui::Static();
+	staticAggregateOutputPath->create(this, L"Aggregate output path");
 
-	m_listDefinitions = new ui::custom::EditList();
-	m_listDefinitions->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
-	m_listDefinitions->addEventHandler< ui::custom::EditListEditEvent >(this, &SolutionPropertyPage::eventChangeDefinitions);
+	m_aggregateOutputPath = new ui::Edit();
+	m_aggregateOutputPath->create(this);
+	m_aggregateOutputPath->addEventHandler< ui::FocusEvent >(this, &SolutionPropertyPage::eventEditFocus);
 
 	return true;
 }
@@ -47,35 +50,18 @@ void SolutionPropertyPage::set(Solution* solution)
 	m_solution = solution;
 
 	m_rootPath->setText(m_solution->getRootPath());
-	m_rootPath->setFocus();
+	m_aggregateOutputPath->setText(m_solution->getAggregateOutputPath());
 
-	m_listDefinitions->removeAll();
-	for (std::vector< std::wstring >::const_iterator i = m_solution->getDefinitions().begin(); i != m_solution->getDefinitions().end(); ++i)
-		m_listDefinitions->add(*i);
+	m_rootPath->setFocus();
 }
 
 void SolutionPropertyPage::eventEditFocus(ui::FocusEvent* event)
 {
-	if (event->lostFocus())
-		m_solution->setRootPath(m_rootPath->getText());
-}
+	if (!event->lostFocus())
+		return;
 
-void SolutionPropertyPage::eventChangeDefinitions(ui::custom::EditListEditEvent* event)
-{
-	std::vector< std::wstring > definitions = m_solution->getDefinitions();
-	int32_t editId = event->getIndex();
-	if (editId >= 0)
-	{
-		std::wstring text = event->getText();
-		if (!text.empty())
-			definitions[editId] = text;
-		else
-			definitions.erase(definitions.begin() + editId);
-	}
-	else
-		definitions.push_back(event->getText());
-	m_solution->setDefinitions(definitions);
-	event->consume();
+	m_solution->setRootPath(m_rootPath->getText());
+	m_solution->setAggregateOutputPath(m_aggregateOutputPath->getText());
 }
 
 	}

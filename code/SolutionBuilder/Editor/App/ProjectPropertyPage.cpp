@@ -51,10 +51,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ProjectPropertyPage", ProjectPropertyPage, u
 
 bool ProjectPropertyPage::create(ui::Widget* parent)
 {
+	const int32_t f = ui::scaleBySystemDPI(4);
+
 	if (!ui::Container::create(
 		parent,
 		ui::WsNone,
-		new ui::TableLayout(L"100%", L"*,100%", 4, 4)
+		new ui::TableLayout(L"100%", L"*,100%", f, f)
 	))
 		return false;
 
@@ -63,7 +65,7 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 	m_checkEnable->addEventHandler< ui::ButtonClickEvent >(this, &ProjectPropertyPage::eventEnableClick);
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,100%,*", 0, 4));
+	container->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,100%,*", 0, f));
 
 	Ref< ui::Static > staticSourcePath = new ui::Static();
 	staticSourcePath->create(container, L"Source path");
@@ -87,7 +89,7 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 	staticAvailable->create(container, L"Available");
 
 	Ref< ui::Container > containerAvailable = new ui::Container();
-	containerAvailable->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, 4));
+	containerAvailable->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, f));
 
 	m_dropAvailable = new ui::DropDown();
 	m_dropAvailable->create(containerAvailable);

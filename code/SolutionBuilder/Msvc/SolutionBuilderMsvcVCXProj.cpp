@@ -423,19 +423,11 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			os.setIndent(0);
 
 			os << L"@pushd \"$(TargetDir)\"" << Endl;
-			Path targetDir = projectPath + L"/" + configuration->getName();
 			for (RefArray< AggregationItem >::const_iterator j = aggregationItems.begin(); j != aggregationItems.end(); ++j)
 			{
 				std::wstring sourceFile = (*j)->getSourceFile();
-				std::wstring targetPath = (*j)->getTargetPath();
-				
-				if (m_resolvePaths)
-				{
-					sourceFile = Path(sourceFile).getPathName();
-					targetPath = Path(targetPath).getPathName();
-				}
-
-				os << L"@xcopy /D /F /R /Y /I \"" << (*j)->getSourceFile() << L"\" \"" << targetPath << L"\\\"" << Endl;
+				Path targetPath = Path(solution->getAggregateOutputPath()) + Path((*j)->getTargetPath());
+				os << L"@xcopy /D /F /R /Y /I \"" << sourceFile << L"\" \"" << targetPath.getPathName() << L"\\\"" << Endl;
 			}
 			os << L"@popd" << Endl;
 

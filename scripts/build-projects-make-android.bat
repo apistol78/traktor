@@ -21,11 +21,6 @@ set MAKE_STATIC_LIBRARY_FILE=lib%%s.a
 set MAKE_SHARED_LIBRARY_FILE=lib%%s.so
 set MAKE_EXECUTABLE_FILE=%%s
 
-:: Product output path.
-if "%AGGREGATE_OUTPUT_PATH%" == "" (
-	set AGGREGATE_OUTPUT_PATH=%TRAKTOR_HOME%\bin\latest\android
-)
-
 %SOLUTIONBUILDER% ^
 	-f=make2 ^
 	-make-solution-template=%TRAKTOR_HOME%\resources\build\configurations\make-solution.sbm ^
