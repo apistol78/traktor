@@ -204,7 +204,7 @@ int32_t Raster_defineLinearGradientStyle(Raster* self, const Matrix33& gradientM
 			CastAny< float >::get(colors[i + 1])
 		));
 	}
-	self->defineLinearGradientStyle(gradientMatrix, cs);
+	return self->defineLinearGradientStyle(gradientMatrix, cs);
 }
 
 int32_t Raster_defineRadialGradientStyle(Raster* self, const Matrix33& gradientMatrix, const AlignedVector< Any >& colors)
@@ -217,7 +217,7 @@ int32_t Raster_defineRadialGradientStyle(Raster* self, const Matrix33& gradientM
 			CastAny< float >::get(colors[i + 1])
 		));
 	}
-	self->defineRadialGradientStyle(gradientMatrix, cs);
+	return self->defineRadialGradientStyle(gradientMatrix, cs);
 }
 
 void Raster_moveTo(Raster* self, float x, float y)
