@@ -6660,7 +6660,7 @@
 					<additionalLinkerOptions/>
 					<debugExecutable>$(TargetPath)</debugExecutable>
 					<debugArguments/>
-					<debugEnvironment>PATH=$(AGGREGATE_OUTPUT_PATH)\debugshared;$(PATH)</debugEnvironment>
+					<debugEnvironment>PATH=$(TRAKTOR_HOME)\bin\latest\win64\debugshared;$(PATH)</debugEnvironment>
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="AggregationItem">
@@ -6687,7 +6687,7 @@
 					<additionalLinkerOptions/>
 					<debugExecutable>$(TargetPath)</debugExecutable>
 					<debugArguments/>
-					<debugEnvironment>PATH=$(AGGREGATE_OUTPUT_PATH)\releaseshared;$(PATH)</debugEnvironment>
+					<debugEnvironment>PATH=$(TRAKTOR_HOME)\bin\latest\win64\releaseshared;$(PATH)</debugEnvironment>
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="AggregationItem">
