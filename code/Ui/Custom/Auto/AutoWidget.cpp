@@ -161,6 +161,16 @@ void AutoWidget::releaseCapturedCell()
 	m_captureCell = 0;
 }
 
+const Size& AutoWidget::getScrollOffset() const
+{
+	return m_scrollOffset;
+}
+
+Point AutoWidget::getClientPosition(const Point& innerPosition) const
+{
+	return innerPosition - m_scrollOffset;
+}
+
 void AutoWidget::updateLayout()
 {
 	m_cells.resize(0);

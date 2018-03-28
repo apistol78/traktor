@@ -65,6 +65,10 @@ public:
 
 	void releaseCapturedCell();
 
+	const Size& getScrollOffset() const;
+
+	Point getClientPosition(const Point& innerPosition) const;
+
 	virtual void layoutCells(const Rect& rc) = 0;
 
 private:

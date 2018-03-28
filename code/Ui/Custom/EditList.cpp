@@ -46,7 +46,7 @@ bool EditList::create(Widget* parent, int32_t style)
 void EditList::eventDoubleClick(MouseDoubleClickEvent* event)
 {
 #if !defined(__LINUX__)
-	Point pt = event->getPosition();
+	Point pt = getClientPosition(event->getPosition());
 
 	if (m_editId != -1 || m_editItem->isVisible(false))
 		return;
@@ -59,7 +59,7 @@ void EditList::eventDoubleClick(MouseDoubleClickEvent* event)
 		if (rc.inside(pt))
 		{
 			m_editId = i;
-			m_editItem->setRect(rc.inflate(0, 2));
+			m_editItem->setRect(rc.offset(getScrollOffset()).inflate(0, 2));
 			m_editItem->setText(getItem(i));
 			m_editItem->selectAll();
 			m_editItem->setFocus();
@@ -76,7 +76,7 @@ void EditList::eventDoubleClick(MouseDoubleClickEvent* event)
 		rc.bottom = rc.top + getItemHeight();
 		rc = rc.offset(0, count() * getItemHeight());
 
-		m_editItem->setRect(rc.inflate(0, 2));
+		m_editItem->setRect(rc.offset(getScrollOffset()).inflate(0, 2));
 		m_editItem->setText(L"");
 		m_editItem->setFocus();
 		m_editItem->show();
