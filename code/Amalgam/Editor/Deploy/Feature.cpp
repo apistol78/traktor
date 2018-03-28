@@ -27,6 +27,45 @@ Feature::Feature()
 {
 }
 
+void Feature::setDescription(const std::wstring& description)
+{
+	m_description = description;
+}
+
+void Feature::setPriority(int32_t priority)
+{
+	m_priority = priority;
+}
+
+void Feature::addPlatform(const Platform& platform)
+{
+	T_ASSERT (!getPlatform(platform.platform));
+	m_platforms.push_back(platform);
+}
+
+bool Feature::removePlatform(const Guid& id)
+{
+	for (std::list< Platform >::iterator i = m_platforms.begin(); i != m_platforms.end(); ++i)
+	{
+		if (i->platform == id)
+		{
+			m_platforms.erase(i);
+			return true;
+		}
+	}
+	return false;
+}
+
+Feature::Platform* Feature::getPlatform(const Guid& id)
+{
+	for (std::list< Platform >::iterator i = m_platforms.begin(); i != m_platforms.end(); ++i)
+	{
+		if (i->platform == id)
+			return &(*i);
+	}
+	return 0;
+}
+
 const Feature::Platform* Feature::getPlatform(const Guid& id) const
 {
 	for (std::list< Platform >::const_iterator i = m_platforms.begin(); i != m_platforms.end(); ++i)

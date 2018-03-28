@@ -49,9 +49,21 @@ public:
 
 	Feature();
 
+	void setDescription(const std::wstring& description);
+
 	const std::wstring& getDescription() const { return m_description; }
 
+	void setPriority(int32_t priority);
+
 	int32_t getPriority() const { return m_priority; }
+
+	void addPlatform(const Platform& platform);
+
+	bool removePlatform(const Guid& id);
+
+	const std::list< Platform >& getPlatforms() const { return m_platforms; }
+
+	Platform* getPlatform(const Guid& id);
 
 	const Platform* getPlatform(const Guid& id) const;
 
