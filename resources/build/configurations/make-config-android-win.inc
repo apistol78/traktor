@@ -47,6 +47,7 @@ C_FLAG_OUTPUT=-o^ #
 CC="$(TOOLCHAIN_BIN)/arm-linux-androideabi-g++"
 
 CC_FLAGS_COMMON=\
+	-std=c++11\
 	-fno-strict-aliasing\
 	-fno-common\
 	-pthread\

@@ -15,15 +15,6 @@ export WXWIDGETS_SDK=$TRAKTOR_HOME/3rdp/wxWidgets-3.0.2
 export LUA_SDK=$TRAKTOR_HOME/3rdp/lua-5.3.2
 export GLEW_SDK=$TRAKTOR_HOME/3rdp/glew-1.13.0
 
-# PNaCl SDK; need to be manually installed in 3rdp folder.
-export NACL_SDK_ROOT=$TRAKTOR_HOME/3rdp/nacl_sdk/pepper_37
-export CHROME_PATH=
-
-# Android SDK/NDK; need to be manually installed in 3rdp folder.
-export ANT_PATH=$TRAKTOR_HOME/3rdp/apache-ant-1.9.4
-export ANDROID_HOME=$TRAKTOR_HOME/3rdp/android-sdk-macosx
-export ANDROID_NDK_ROOT=$TRAKTOR_HOME/3rdp/android-ndk-r10b
-
 # Export name of solution builder binary.
 if [[ `uname -s` == Linux* ]]; then
 	export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/linux/releasestatic/Traktor.SolutionBuilder.App"

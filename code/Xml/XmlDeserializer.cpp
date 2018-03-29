@@ -308,8 +308,9 @@ void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 		if ((a = findAttribute(attr, L"version")) != attr.end())
 		{
 			StringSplit< std::wstring > ss(a->second, L",");
-			for (auto s : ss)
+			for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
 			{
+				const std::wstring& s = *i;
 				size_t p = s.find(L':');
 				if (p != s.npos)
 				{
