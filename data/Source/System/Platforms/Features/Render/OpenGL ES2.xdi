@@ -9,17 +9,68 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Compress</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Render.OpenGL.ES2</item>
+								<item>Traktor.Resource</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>OpenGLES.framework</item>
 								<item>QuartzCore.framework</item>
 								<item>UIKit.framework</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
 								<item>libTraktor.Compress.a</item>
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Render.OpenGL.ES2.a</item>
 								<item>libTraktor.Render.a</item>
 								<item>libTraktor.Resource.a</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/releasestatic</item>
 							</value>
 						</second>
 					</item>
@@ -32,16 +83,19 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_EXTERN_FILES_STATIC</first>
+						<first>DEPLOY_MODULES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.angle.libEGL.lib</item>
-								<item>Extern.angle.libGLESv2.lib</item>
+								<item>Traktor.Compress</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Render.OpenGL.ES2</item>
+								<item>Traktor.Resource</item>
 							</value>
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_SHARED</first>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Extern.angle.libEGL.dll</item>
@@ -55,7 +109,23 @@
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Extern.angle.libEGL.lib</item>
@@ -65,6 +135,22 @@
 								<item>Traktor.Render.OpenGL.ES2.lib</item>
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/releasestatic</item>
 							</value>
 						</second>
 					</item>
@@ -77,7 +163,41 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Compress</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Render.OpenGL.ES2</item>
+								<item>Traktor.Resource</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>libTraktor.Compress.a</item>
@@ -85,6 +205,22 @@
 								<item>libTraktor.Render.OpenGL.ES2.a</item>
 								<item>libTraktor.Render.a</item>
 								<item>libTraktor.Resource.a</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/releasestatic</item>
 							</value>
 						</second>
 					</item>
@@ -95,20 +231,7 @@
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<executableFile/>
 			<deploy type="traktor.PropertyGroup">
-				<value>
-					<item>
-						<first>DEPLOY_FILES</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>libTraktor.Compress.a</item>
-								<item>libTraktor.Core.a</item>
-								<item>libTraktor.Render.OpenGL.ES2.a</item>
-								<item>libTraktor.Render.a</item>
-								<item>libTraktor.Resource.a</item>
-							</value>
-						</second>
-					</item>
-				</value>
+				<value/>
 			</deploy>
 		</item>
 		<item>
@@ -117,7 +240,41 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Compress</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Render.OpenGL.ES2</item>
+								<item>Traktor.Resource</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/emscripten/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/emscripten/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>libTraktor.Compress.bc</item>
@@ -125,6 +282,22 @@
 								<item>libTraktor.Render.OpenGL.ES2.bc</item>
 								<item>libTraktor.Render.bc</item>
 								<item>libTraktor.Resource.bc</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/emscripten/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/emscripten/releasestatic</item>
 							</value>
 						</second>
 					</item>
@@ -137,16 +310,19 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_EXTERN_FILES_STATIC</first>
+						<first>DEPLOY_MODULES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.angle.libEGL.lib</item>
-								<item>Extern.angle.libGLESv2.lib</item>
+								<item>Traktor.Compress</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Render.OpenGL.ES2</item>
+								<item>Traktor.Resource</item>
 							</value>
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_SHARED</first>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Extern.angle.libEGL.dll</item>
@@ -160,7 +336,23 @@
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Extern.angle.libEGL.lib</item>
@@ -170,6 +362,22 @@
 								<item>Traktor.Render.OpenGL.ES2.lib</item>
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/releasestatic</item>
 							</value>
 						</second>
 					</item>

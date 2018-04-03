@@ -9,7 +9,43 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.Bullet</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>libExtern.bullet.a</item>
@@ -23,6 +59,22 @@
 							</value>
 						</second>
 					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/releasestatic</item>
+							</value>
+						</second>
+					</item>
 				</value>
 			</deploy>
 		</item>
@@ -32,7 +84,21 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.Bullet</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>libTraktor.Core.so</item>
@@ -45,6 +111,44 @@
 							</value>
 						</second>
 					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux32/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux32/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux32/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux32/releasestatic</item>
+							</value>
+						</second>
+					</item>
 				</value>
 			</deploy>
 		</item>
@@ -52,22 +156,7 @@
 			<platform>{991B63B2-97FC-AA44-9FAE-466B5B153B4A}</platform>
 			<executableFile/>
 			<deploy type="traktor.PropertyGroup">
-				<value>
-					<item>
-						<first>DEPLOY_FILES</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>Traktor.Core.dll</item>
-								<item>Traktor.Database.dll</item>
-								<item>Traktor.Heightfield.dll</item>
-								<item>Traktor.Physics.Bullet.dll</item>
-								<item>Traktor.Physics.dll</item>
-								<item>Traktor.Resource.dll</item>
-								<item>Traktor.World.dll</item>
-							</value>
-						</second>
-					</item>
-				</value>
+				<value/>
 			</deploy>
 		</item>
 		<item>
@@ -76,7 +165,21 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.Bullet</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>libTraktor.Core.dylib</item>
@@ -89,6 +192,44 @@
 							</value>
 						</second>
 					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/osx/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/osx/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/osx/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/osx/releasestatic</item>
+							</value>
+						</second>
+					</item>
 				</value>
 			</deploy>
 		</item>
@@ -98,7 +239,43 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.Bullet</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Extern.bullet.lib</item>
@@ -109,6 +286,22 @@
 								<item>Traktor.Physics.lib</item>
 								<item>Traktor.Resource.lib</item>
 								<item>Traktor.World.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/releasestatic</item>
 							</value>
 						</second>
 					</item>
@@ -121,15 +314,21 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_EXTERN_FILES_STATIC</first>
+						<first>DEPLOY_MODULES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.bullet.lib</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.Bullet</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
 							</value>
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_SHARED</first>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Core.dll</item>
@@ -143,9 +342,26 @@
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Extern.bullet.lib</item>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Heightfield.lib</item>
@@ -153,6 +369,22 @@
 								<item>Traktor.Physics.lib</item>
 								<item>Traktor.Resource.lib</item>
 								<item>Traktor.World.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/releasestatic</item>
 							</value>
 						</second>
 					</item>
@@ -165,15 +397,21 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_EXTERN_FILES_STATIC</first>
+						<first>DEPLOY_MODULES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.bullet.lib</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.Bullet</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
 							</value>
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_SHARED</first>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Core.dll</item>
@@ -187,29 +425,23 @@
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Traktor.Core.lib</item>
-								<item>Traktor.Database.lib</item>
-								<item>Traktor.Heightfield.lib</item>
-								<item>Traktor.Physics.Bullet.lib</item>
-								<item>Traktor.Physics.lib</item>
-								<item>Traktor.Resource.lib</item>
-								<item>Traktor.World.lib</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/debugshared</item>
 							</value>
 						</second>
 					</item>
-				</value>
-			</deploy>
-		</item>
-		<item>
-			<platform>{D6FF12FC-9FEF-394D-B898-F563786A8789}</platform>
-			<executableFile/>
-			<deploy type="traktor.PropertyGroup">
-				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Extern.bullet.lib</item>
@@ -223,6 +455,97 @@
 							</value>
 						</second>
 					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/releasestatic</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
+		</item>
+		<item>
+			<platform>{D6FF12FC-9FEF-394D-B898-F563786A8789}</platform>
+			<executableFile/>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.Bullet</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/xbox360/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/xbox360/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Extern.bullet.lib</item>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Database.lib</item>
+								<item>Traktor.Heightfield.lib</item>
+								<item>Traktor.Physics.Bullet.lib</item>
+								<item>Traktor.Physics.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.World.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/xbox360/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/xbox360/releasestatic</item>
+							</value>
+						</second>
+					</item>
 				</value>
 			</deploy>
 		</item>
@@ -232,7 +555,43 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.Bullet</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/emscripten/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/emscripten/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>libExtern.bullet.bc</item>
@@ -246,6 +605,22 @@
 							</value>
 						</second>
 					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/emscripten/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/emscripten/releasestatic</item>
+							</value>
+						</second>
+					</item>
 				</value>
 			</deploy>
 		</item>
@@ -255,7 +630,43 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.Bullet</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>libExtern.bullet.a</item>
@@ -266,6 +677,22 @@
 								<item>libTraktor.Physics.a</item>
 								<item>libTraktor.Resource.a</item>
 								<item>libTraktor.World.a</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/releasestatic</item>
 							</value>
 						</second>
 					</item>
@@ -276,23 +703,7 @@
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<executableFile/>
 			<deploy type="traktor.PropertyGroup">
-				<value>
-					<item>
-						<first>DEPLOY_FILES</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>libExtern.bullet.a</item>
-								<item>libTraktor.Core.a</item>
-								<item>libTraktor.Database.a</item>
-								<item>libTraktor.Heightfield.a</item>
-								<item>libTraktor.Physics.Bullet.a</item>
-								<item>libTraktor.Physics.a</item>
-								<item>libTraktor.Resource.a</item>
-								<item>libTraktor.World.a</item>
-							</value>
-						</second>
-					</item>
-				</value>
+				<value/>
 			</deploy>
 		</item>
 		<item>
@@ -301,7 +712,43 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.Bullet</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps4/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps4/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Extern.bullet.a</item>
@@ -312,6 +759,22 @@
 								<item>Traktor.Physics.a</item>
 								<item>Traktor.Resource.a</item>
 								<item>Traktor.World.a</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps4/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps4/releasestatic</item>
 							</value>
 						</second>
 					</item>

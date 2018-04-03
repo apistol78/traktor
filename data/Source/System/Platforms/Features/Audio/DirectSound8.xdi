@@ -9,7 +9,17 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES_SHARED</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Sound</item>
+								<item>Traktor.Sound.Ds8</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Core.dll</item>
@@ -19,12 +29,48 @@
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>dxguid.lib</item>
+								<item>dsound.lib</item>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Sound.Ds8.lib</item>
 								<item>Traktor.Sound.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Lib/x86</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Lib/x86</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/releasestatic</item>
 							</value>
 						</second>
 					</item>
@@ -37,7 +83,17 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES_SHARED</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Sound</item>
+								<item>Traktor.Sound.Ds8</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Core.dll</item>
@@ -47,12 +103,48 @@
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>dxguid.lib</item>
+								<item>dsound.lib</item>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Sound.Ds8.lib</item>
 								<item>Traktor.Sound.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Lib/x64</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Lib/x64</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/releasestatic</item>
 							</value>
 						</second>
 					</item>

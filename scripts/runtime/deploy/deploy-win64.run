@@ -38,7 +38,7 @@ end
 local function createIcon()
 	local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
 	if #iconFile <= 0 then
-		iconFile = "$(DEPLOY_SYSTEM_ROOT)/resources/deploy/DefaultIcon.png"
+		iconFile = "$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/DefaultIcon.png"
 	end
 
 	local iconImage = Image.loadFromFile(iconFile)
@@ -48,20 +48,7 @@ local function createIcon()
 	end
 
 	iconImage:apply(ScaleFilter(256, 256))
-	return iconImage:save("Icon.ico")
-end
-
-
-local function getSystemPaths()
-	if os.getRegistry == nil then
-		stderr:printLn("Unfortunately statically link win64 product is currently only available from a Windows host.")
-		return nil
-	end
-
-	local p = {}
-	p.dxLibPath = "%TRAKTOR_HOME%\\3rdp\\DirectX SDK (June 2010)\\Lib\\x64"
-
-	return p
+	return iconImage:save("Traktor.Amalgam.Game.App.ico")
 end
 
 
@@ -80,68 +67,51 @@ local function generateResponseFile(files)
 end
 
 
-function build(args)
-	stdout:printLn("Building asset(s)...")
-	local cmdline = tools.pipeline .. " -p -s=Pipeline"
-	for i = 1, args:size() - 1 do
-		cmdline = cmdline .. " " .. args:get(i)
-	end
-	return run:execute(cmdline)
-end
-
-
-function deployStatic(args)
+local function linkStaticProduct()
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
-
-	local p = getSystemPaths()
-	if p == nil then return 1 end
-
-	-- Determine path to module libraries.
-	local prepend
-	if not debug then
-	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releasestatic/"
-	else
-		stdout:printLn("Using *DEBUG* binaries")
-	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugstatic/"
-	end
-
 	local preamble = "\"$(TRAKTOR_HOME)/scripts/vsenv-x64.bat\" && "
 
-	-- Append system path to files.
-	local wholeLinkFiles = ""
-	local externalLinkFiles = ""
-	local externalCopyFiles = ""
-	local linkerIncludes = ""
+	-- Get library paths.
+	local libraryPaths = ""
+	local paths = ""
+	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
+	for _, p in pairs(paths) do
+		libraryPaths = libraryPaths .. "/LIBPATH:\"" .. Path(p):getPathName() .. "\" "
+	end
 
-	local files = os:getEnvironment("DEPLOY_EXTERN_FILES_STATIC"):split(" ")
+	-- Get files to link or copy.
+	local linkFiles = ""
+	local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
 	for i = #files, 1, -1 do -- We must link in reverse order to ensure global initializers are executed correctly.
 		local f = files[i]
 		if f ~= "" then
 			if f:endswith(".lib") then
-				externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
-			else
-				externalCopyFiles = externalCopyFiles .. f .. " "
+				linkFiles = linkFiles .. f .. " "
 			end
 		end
 	end
 
-	local files = os:getEnvironment("DEPLOY_FILES_STATIC"):split(" ")
-	for i = #files, 1, -1 do -- We must link in reverse order to ensure global initializers are executed correctly.
-		local f = files[i]
-		if f ~= "" then
-			linkerIncludes = linkerIncludes .. "/INCLUDE:__module__" .. f:sub(1, string.len(f) - 4):gsub("%.", "_") .. " "
-			wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
-		end
+	-- Generate symbols which must be included in product after linkage.
+	local linkerIncludes = ""
+	local modules = os:getEnvironment("DEPLOY_MODULES"):split("\n")
+	for _, m in pairs(modules) do
+		linkerIncludes = linkerIncludes .. "/INCLUDE:__module__" .. m:gsub("%.", "_") .. " "
 	end
 
 	-- Create icon resource.
---	if not createIcon()	then
---		stderr:printLn("Unable to create product icon.")
---		return 1
---	end
+	if not createIcon()	then
+		stderr:printLn("Unable to create product icon.")
+		return 1
+	end
+
+	-- Generate resource script.
+	if run:run("$(TRAKTOR_HOME)/resources/runtime/deploy/win64/Traktor.Amalgam.Game.App.rc.template", "Traktor.Amalgam.Game.App.rc") ~= 0 then
+		stderr:printLn("Unable to generate resource script.")
+		return 1
+	end
 
 	-- Compile resources.
-	local cmd = "rc /fo\"%DEPLOY_EXECUTABLE%.res\" %TRAKTOR_HOME%/resources/runtime/deploy/win64/Traktor.Amalgam.Game.App.rc"
+	local cmd = "rc /fo\"%DEPLOY_EXECUTABLE%.res\" Traktor.Amalgam.Game.App.rc"
 	local result = run:execute(preamble .. cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build product resources.")
@@ -151,21 +121,17 @@ function deployStatic(args)
 	end
 
 	-- Generate link response file.
-	local rsp = generateResponseFile(
-		externalLinkFiles .. " " .. wholeLinkFiles .. " " ..
-		" msvcrt.lib winmm.lib iphlpapi.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib" ..
-		" comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib" ..
-		" comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
-	)
+	local rsp = generateResponseFile(linkFiles)
 
 	-- Link files into an executable product.
-	local cmd = "link @" .. rsp .. " " .. linkerIncludes
-	cmd = cmd .. " %DEPLOY_EXECUTABLE%.res"
-	cmd = cmd .. " /OUT:%DEPLOY_EXECUTABLE%.exe"
-	cmd = cmd .. " /PDB:%DEPLOY_EXECUTABLE%.pdb"
-	cmd = cmd .. " /LIBPATH:\"" .. p.dxLibPath .. "\""
-	cmd = cmd .. " /MACHINE:X64"
-	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
+	local cmd = 
+		"link @" .. rsp .. " " .. linkerIncludes .. " " ..
+		"%DEPLOY_EXECUTABLE%.res " ..
+		"/OUT:%DEPLOY_EXECUTABLE%.exe " ..
+		"/PDB:%DEPLOY_EXECUTABLE%.pdb " ..
+		libraryPaths ..
+		"/MACHINE:X64 " ..
+		"/SUBSYSTEM:WINDOWS"
 	if not debug then
 		cmd = cmd .. " /LTCG /OPT:REF"
 	else
@@ -189,62 +155,89 @@ function deployStatic(args)
 		return 1
 	end
 
-	-- Deploy executable into remote folder.
-	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" $(DEPLOY_EXECUTABLE).exe", nil)
-	if run:exitCode() ~= 0 then return run:exitCode() end
-
-	-- Deploy external files into remote folder.
-	if externalCopyFiles ~= "" then
-		if not debug then
-			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releasestatic")
-		else
-			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugstatic")
-		end
-		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. externalCopyFiles, nil)
-		run:popd()
-		if run:exitCode() ~= 0 then return run:exitCode() end
-	end
-
 	-- Clean some unwanted files.
 	run:rm("*.exp")
 	run:rm("*.lib")
 	run:rm("*.res")
+	run:rm("*.rc")
+	run:rm("*.ico")
 	run:rm(rsp)
+	return 0	
+end
+
+
+-------------------------------------------------------------------------------
+
+
+function build(args)
+	stdout:printLn("Building asset(s)...")
+	local cmdline = tools.pipeline .. " -p -s=Pipeline"
+	for i = 1, args:size() - 1 do
+		cmdline = cmdline .. " " .. args:get(i)
+	end
+	return run:execute(cmdline)
+end
+
+
+local function deployStatic(args)
+	-- Link our product.
+	local r = linkStaticProduct()
+	if r ~= 0 then return r end
+
+	-- Deploy executable into remote folder.
+	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" $(DEPLOY_EXECUTABLE).exe", nil)
+	if run:exitCode() ~= 0 then return run:exitCode() end
+
+	-- Deploy separate files into remote folder.
+	local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
+	for _, f in pairs(files) do
+		if f ~= "" and not f:endswith(".lib") then
+	--		if not debug then
+	--			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releasestatic")
+	--		else
+	--			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugstatic")
+	--		end
+	--		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. copyFiles, nil)
+	--		run:popd()
+	--		if run:exitCode() ~= 0 then return run:exitCode() end
+			stdout:printLn("TBD: Should deploy file \"" .. f .. "\"")
+		end
+	end
 
 	return 0
 end
 
 
-function deployShared(args)
+local function deployShared(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	-- Deploy binaries to target.
-	if not debug then
-		stdout:printLn("Deploying binaries to target host...")
-		run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releaseshared")
-	else
-		stdout:printLn("Deploying *DEBUG* binaries to target host...")
-		run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugshared")
-	end
-
-	-- Collect files to deploy.
-	local files = os:getEnvironment("DEPLOY_FILES_SHARED"):split(" ")
-	local deployFiles = ""
-
-	for _, f in ipairs(files) do
-		deployFiles = deployFiles .. " " .. f	
-	end
-
 	-- Create icon resource.
---	if not createIcon()	then
---		stderr:printLn("Unable to create product icon.")
---		return 1
---	end
+	if not createIcon()	then
+		stderr:printLn("Unable to create product icon.")
+		return 1
+	end
 
-	-- Transfer files to deploy target.
-	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, nil)
-	if run:exitCode() ~= 0 then return run:exitCode() end
-	run:popd()
+	-- Get shared paths.
+	local paths = nil
+	if not debug then paths = os:getEnvironment("DEPLOY_SHARED_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_SHARED_PATH_DEBUG"):split("\n") end
+
+	-- Find files to deploy; qualitfy through paths.
+	local files = os:getEnvironment("DEPLOY_SHARED"):split("\n")
+	for _, p in ipairs(paths) do
+		local deployFiles = ""
+		for _, f in ipairs(files) do
+			local qf = Path(p):concat(Path(f))
+			if FileSystem.getInstance():exist(qf) then
+				deployFiles = deployFiles .. " " .. f
+			end
+		end
+		if deployFiles ~= "" then
+			run:pushd(p)
+			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles) -- , nil)
+			run:popd()
+			if run:exitCode() ~= 0 then return run:exitCode() end
+		end
+	end
 
 	return 0
 end
@@ -273,154 +266,58 @@ function launch(args)
 end
 
 
-function migrateStatic(args)
-	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
-
-	local p = getSystemPaths()
-	if p == nil then return 1 end
-
-	-- Determine path to module libraries.
-	local prepend
-	if not debug then
-	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releasestatic/"
-	else
-		stdout:printLn("Using *DEBUG* binaries")
-	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugstatic/"
-	end
-
-	local preamble = "\"$(TRAKTOR_HOME)/scripts/vsenv-x64.bat\" && "
-
-	-- Append system path to files.
-	local wholeLinkFiles = ""
-	local externalLinkFiles = ""
-	local externalCopyFiles = ""
-	local linkerIncludes = ""
-
-	local files = os:getEnvironment("DEPLOY_EXTERN_FILES_STATIC"):split(" ")
-	for i = #files, 1, -1 do -- We must link in reverse order to ensure global initializers are executed correctly.
-		local f = files[i]
-		if f ~= "" then
-			if f:endswith(".lib") then
-				externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
-			else
-				externalCopyFiles = externalCopyFiles .. f .. " "
-			end
-		end
-	end
-
-	local files = os:getEnvironment("DEPLOY_FILES_STATIC"):split(" ")
-	for i = #files, 1, -1 do -- We must link in reverse order to ensure global initializers are executed correctly.
-		local f = files[i]
-		if f ~= "" then
-			linkerIncludes = linkerIncludes .. "/INCLUDE:__module__" .. f:sub(1, string.len(f) - 4):gsub("%.", "_") .. " "
-			wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
-		end
-	end
-
-	-- Create icon resource.
---	if not createIcon()	then
---		stderr:printLn("Unable to create product icon.")
---		return 1
---	end
-
-	-- Compile resources.
-	local cmd = "rc /fo\"%DEPLOY_EXECUTABLE%.res\" %TRAKTOR_HOME%/resources/runtime/deploy/win64/Traktor.Amalgam.Game.App.rc"
-	local result = run:execute(preamble .. cmd, nil)
-	if result ~= 0 then
-		stderr:printLn("Unable to build product resources.")
-		stderr:printLn(cmd)
-		stderr:printLn(run:stdOut())
-		return 1
-	end
-
-	-- Generate link response file.
-	local rsp = generateResponseFile(
-		externalLinkFiles .. " " .. wholeLinkFiles .. " " ..
-		" msvcrt.lib winmm.lib iphlpapi.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib" ..
-		" comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib" ..
-		" comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
-	)
-
-	-- Link files into an executable product.
-	local cmd = "link @" .. rsp .. " " .. linkerIncludes
-	cmd = cmd .. " %DEPLOY_EXECUTABLE%.res"
-	cmd = cmd .. " /OUT:%DEPLOY_EXECUTABLE%.exe"
-	cmd = cmd .. " /PDB:%DEPLOY_EXECUTABLE%.pdb"
-	cmd = cmd .. " /LIBPATH:\"" .. p.dxLibPath .. "\""
-	cmd = cmd .. " /MACHINE:X64"
-	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
-	if not debug then
-		cmd = cmd .. " /LTCG /OPT:REF"
-	else
-		cmd = cmd .. " /DEBUG"
-	end
-	local result = run:execute(preamble .. cmd, nil)
-	if result ~= 0 then
-		stderr:printLn("Unable to build executable product.")
-		stderr:printLn(cmd)
-		stderr:printLn(run:stdOut())
-		return 1
-	end
-
-	-- Embed manifest in executable product.
-	local cmd = "mt -manifest $(TRAKTOR_HOME)/resources/runtime/deploy/win64/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
-	local result = run:execute(preamble .. cmd, nil)
-	if result ~= 0 then
-		stderr:printLn("Unable to embed manifest into executable product.")
-		stderr:printLn(cmd)
-		stderr:printLn(run:stdOut())
-		return 1
-	end
-
-	-- Clean some unwanted files.
-	run:rm("*.exp")
-	run:rm("*.lib")
-	run:rm("*.res")
-	run:rm(rsp)
+local function migrateStatic(args)
+	-- Link our product.
+	local r = linkStaticProduct()
+	if r ~= 0 then return r end
 
 	-- Copy binaries into "bin".
 	run:mkdir("bin64")
 	run:replace("$(DEPLOY_EXECUTABLE).exe", "bin64/$(DEPLOY_EXECUTABLE).exe")
 
 	-- Copy external files into "bin".
-	if externalCopyFiles ~= "" then
-		for _, f in ipairs(externalCopyFiles:split(" ")) do
-			run:replace(prepend .. f, "bin64/" .. f)
+	local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
+	for _, f in pairs(files) do
+		if f ~= "" and not f:endswith(".lib") then
+			-- run:replace(prepend .. f, "bin64/" .. f)
+			stdout:printLn("TBD: Should copy file \"" .. f .. "\"")
 		end
-	end
+	end	
 
 	return 0
 end
 
 
-function migrateShared(args)
+local function migrateShared(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	-- Determine source binary path.
-	local sourcePath
-	if not debug then
-		stdout:printLn("Deploying binaries to target host...")
-		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releaseshared/"
-	else
-		stdout:printLn("Deploying *DEBUG* binaries to target host...")
-		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugshared/"
+	-- Create icon resource.
+	if not createIcon()	then
+		stderr:printLn("Unable to create product icon.")
+		return 1
 	end
 
-	-- Create icon resource.
---	if not createIcon()	then
---		stderr:printLn("Unable to create product icon.")
---		return 1
---	end
-
-	-- Copy binaries into "bin".
 	run:mkdir("bin64")
-	local files = os:getEnvironment("DEPLOY_FILES_SHARED"):split(" ")
-	for _, f in ipairs(files) do
-		if not run:replace(sourcePath .. f, "bin64/" .. f) then
-			stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
-			return 1
+
+	-- Get shared paths.
+	local paths = nil
+	if not debug then paths = os:getEnvironment("DEPLOY_SHARED_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_SHARED_PATH_DEBUG"):split("\n") end
+
+	-- Find files to deploy; qualitfy through paths.
+	local files = os:getEnvironment("DEPLOY_SHARED"):split("\n")
+	for _, p in ipairs(paths) do
+		for _, f in ipairs(files) do
+			local qf = Path(p):concat(Path(f))
+			if FileSystem.getInstance():exist(qf) then
+				if not run:replace(qf:getPathName(), "bin64/" .. f) then
+					stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
+					return 1
+				end
+			end
 		end
-	end	
+	end
+
+	return 0
 end
 
 

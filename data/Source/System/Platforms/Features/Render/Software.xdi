@@ -9,7 +9,21 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES_SHARED</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Compress</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Graphics</item>
+								<item>Traktor.Graphics.Gdi</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Render.Sw</item>
+								<item>Traktor.Resource</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Compress.dll</item>
@@ -23,7 +37,23 @@
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Compress.lib</item>
@@ -33,6 +63,22 @@
 								<item>Traktor.Render.Sw.lib</item>
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/releasestatic</item>
 							</value>
 						</second>
 					</item>
@@ -45,7 +91,21 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES_SHARED</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Compress</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Graphics</item>
+								<item>Traktor.Graphics.Gdi</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Render.Sw</item>
+								<item>Traktor.Resource</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Compress.dll</item>
@@ -59,7 +119,23 @@
 						</second>
 					</item>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Compress.lib</item>
@@ -72,6 +148,22 @@
 							</value>
 						</second>
 					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/releasestatic</item>
+							</value>
+						</second>
+					</item>
 				</value>
 			</deploy>
 		</item>
@@ -79,22 +171,7 @@
 			<platform>{991B63B2-97FC-AA44-9FAE-466B5B153B4A}</platform>
 			<executableFile/>
 			<deploy type="traktor.PropertyGroup">
-				<value>
-					<item>
-						<first>DEPLOY_FILES</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>Traktor.Compress.dll</item>
-								<item>Traktor.Core.dll</item>
-								<item>Traktor.Graphics.DdWm5.dll</item>
-								<item>Traktor.Graphics.dll</item>
-								<item>Traktor.Render.Sw.dll</item>
-								<item>Traktor.Render.dll</item>
-								<item>Traktor.Resource.dll</item>
-							</value>
-						</second>
-					</item>
-				</value>
+				<value/>
 			</deploy>
 		</item>
 	</platforms>

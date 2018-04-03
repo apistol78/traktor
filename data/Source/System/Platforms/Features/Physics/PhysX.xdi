@@ -9,7 +9,21 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.PhysX</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>PhysX3Common_x86.so</item>
@@ -27,6 +41,44 @@
 							</value>
 						</second>
 					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux32/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux32/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux32/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux32/releasestatic</item>
+							</value>
+						</second>
+					</item>
 				</value>
 			</deploy>
 		</item>
@@ -36,7 +88,43 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_EXTERN_FILES_STATIC</first>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Physics.PhysX</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.World</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>PhysX3Common_x86.lib</item>
@@ -44,13 +132,6 @@
 								<item>PhysX3Extensions.lib</item>
 								<item>PhysX3_x86.lib</item>
 								<item>PxTask.lib</item>
-							</value>
-						</second>
-					</item>
-					<item>
-						<first>DEPLOY_FILES_STATIC</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Heightfield.lib</item>
@@ -58,6 +139,22 @@
 								<item>Traktor.Physics.lib</item>
 								<item>Traktor.Resource.lib</item>
 								<item>Traktor.World.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win32/releasestatic</item>
 							</value>
 						</second>
 					</item>
