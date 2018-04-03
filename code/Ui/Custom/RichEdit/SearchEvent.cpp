@@ -4,14 +4,16 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Script/Editor/SearchEvent.h"
+#include "Ui/Custom/RichEdit/SearchEvent.h"
 
 namespace traktor
 {
-	namespace script
+	namespace ui
 	{
+		namespace custom
+		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.SearchEvent", SearchEvent, ui::Event)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.SearchEvent", SearchEvent, ui::Event)
 
 SearchEvent::SearchEvent(
 	ui::EventSubject* sender,
@@ -30,5 +32,6 @@ SearchEvent::SearchEvent(
 {
 }
 
+		}
 	}
 }

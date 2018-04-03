@@ -1704,7 +1704,7 @@
      inkscape:groupmode="layer"
      id="layer27"
      inkscape:label="Light"
-     style="display:none">
+     style="display:inline">
     <g
        inkscape:groupmode="layer"
        id="layer1"
@@ -7622,7 +7622,7 @@
                    style="fill:none" />
                 <polygon
                    id="polygon7496"
-                   points="491.427,82.049 491.427,88.467 492.408,88.467 492.408,82.049 494.73,82.049 494.73,81.218 489.103,81.218 489.103,82.049 " />
+                   points="492.408,88.467 492.408,82.049 494.73,82.049 494.73,81.218 489.103,81.218 489.103,82.049 491.427,82.049 491.427,88.467 " />
               </g>
               <g
                  id="g7498">
@@ -7633,7 +7633,7 @@
                    style="fill:none" />
                 <polygon
                    id="polygon7502"
-                   points="496.613,88.467 496.613,82.577 498.566,88.467 499.537,88.467 501.49,82.577 501.49,88.467 502.3,88.467 502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 495.632,81.218 495.632,88.467 " />
+                   points="498.566,88.467 499.537,88.467 501.49,82.577 501.49,88.467 502.3,88.467 502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 495.632,81.218 495.632,88.467 496.613,88.467 496.613,82.577 " />
               </g>
               <path
                  id="path7504"
@@ -11773,7 +11773,7 @@
        sodipodi:nodetypes="ccccccccccccccccc" />
   </g>
   <g
-     style="display:inline;opacity:1"
+     style="display:none;opacity:1"
      inkscape:label="Dark"
      id="g5948"
      inkscape:groupmode="layer">
@@ -17694,7 +17694,7 @@
                    d="M 502.3,24.062 H 180.797 v 64.45 0.633 H 502.921 V 24.062 Z m -13.197,57.156 h 5.627 v 0.831 h -2.322 v 6.418 h -0.98 v -6.418 h -2.324 v -0.831 z"
                    id="path8038" />
                 <polygon
-                   points="489.103,82.049 491.427,82.049 491.427,88.467 492.408,88.467 492.408,82.049 494.73,82.049 494.73,81.218 489.103,81.218 "
+                   points="491.427,88.467 492.408,88.467 492.408,82.049 494.73,82.049 494.73,81.218 489.103,81.218 489.103,82.049 491.427,82.049 "
                    id="polygon8040" />
               </g>
               <g
@@ -17705,7 +17705,7 @@
                    d="M 502.3,24.062 H 180.797 v 64.45 0.633 H 502.921 V 24.062 Z m -6.668,57.156 h 1.352 l 2.102,6.191 2.033,-6.191 h 1.182 v 7.249 h -0.811 v -5.89 l -1.953,5.89 h -0.971 l -1.953,-5.89 v 5.89 h -0.98 v -7.249 z"
                    id="path8044" />
                 <polygon
-                   points="495.632,88.467 496.613,88.467 496.613,82.577 498.566,88.467 499.537,88.467 501.49,82.577 501.49,88.467 502.3,88.467 502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 495.632,81.218 "
+                   points="496.613,82.577 498.566,88.467 499.537,88.467 501.49,82.577 501.49,88.467 502.3,88.467 502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 495.632,81.218 495.632,88.467 496.613,88.467 "
                    id="polygon8046" />
               </g>
               <path
@@ -21846,7 +21846,7 @@
        height="9.6464844"
        width="22.5"
        id="rect8720-0-7"
-       style="display:inline;opacity:1;fill:none;fill-opacity:1;stroke:#c7c7c7;stroke-width:1.529;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="display:inline;opacity:1;fill:none;fill-opacity:1;stroke:#c7c7c7;stroke-width:1.52900004;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <circle
        style="opacity:1;vector-effect:none;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:3.11958575;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path8494"
@@ -21860,7 +21860,7 @@
        cy="1290.1854"
        r="2.2954953" />
     <path
-       style="fill:none;stroke:#c7c7c7;stroke-width:1.529;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:none;stroke:#c7c7c7;stroke-width:1.52900004;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 48,1300 h -6 c 0,2 1,3 2,4 1,1 2,1.2465 2,4 v 2 h 2"
        id="path8513"
        inkscape:connector-curvature="0"

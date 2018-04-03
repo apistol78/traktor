@@ -474,6 +474,11 @@
 			<element>background-color-selection</element>
 			<color>51, 153, 255, 255</color>
 		</item>
+		<item>
+			<type>traktor.ui.custom.RichEdit</type>
+			<element>background-found-line</element>
+			<color>230, 255, 220, 255</color>
+		</item>
 
 		<!-- SyntaxRichEdit -->
 		<item>
@@ -605,11 +610,6 @@
 		</item>
 
 		<!-- Script editor -->
-		<item>
-			<type>traktor.script.ScriptEditorPage</type>
-			<element>background-found-line</element>
-			<color>230, 255, 220, 255</color>
-		</item>
 		<item>
 			<type>traktor.script.ScriptEditorPage</type>
 			<element>background-debug-line</element>
@@ -766,18 +766,6 @@
 		<item>
 			<name>Script.ProfilerClear</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ProfilerClear.image</value>
-		</item>
-		<item>
-			<name>Script.SearchCaseSensitive</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/SearchCaseSensitive.image</value>
-		</item>
-		<item>
-			<name>Script.SearchWholeWord</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/SearchWholeWord.image</value>
-		</item>
-		<item>
-			<name>Script.SearchWildCard</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/SearchWildCard.image</value>
 		</item>
 		<item>
 			<name>Script.Icon.Debugger</name>
@@ -994,6 +982,18 @@
 		<item>
 			<name>UI.SequenceHidden</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SequenceHidden.image</value>
+		</item>
+		<item>
+			<name>UI.SearchCaseSensitive</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SearchCaseSensitive.image</value>
+		</item>
+		<item>
+			<name>UI.SearchWholeWord</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SearchWholeWord.image</value>
+		</item>
+		<item>
+			<name>UI.SearchWildCard</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SearchWildCard.image</value>
 		</item>
 		<item>
 			<name>Amalgam.Logos</name>

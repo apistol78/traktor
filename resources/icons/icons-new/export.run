@@ -107,6 +107,16 @@ local outputs =
 		}
 	},	
 	{
+		name = "UI_RichEdit",
+		path = "../../runtime/themes/%s/Images/UI",
+		resources =
+		{
+			{ name = "SearchCaseSensitive", column = 15, row = 6, width = 1, height = 1 },
+			{ name = "SearchWholeWord", column = 16, row = 6, width = 1, height = 1 },
+			{ name = "SearchWildCard", column = 17, row = 6, width = 1, height = 1 },
+		}
+	},
+	{
 		name = "Script",
 		path = "../../runtime/themes/%s/Images/Script",
 		resources =
@@ -127,9 +137,6 @@ local outputs =
 			{ name = "DefineGlobalFunction", column = 12, row = 6, width = 1, height = 1 },
 			{ name = "DefineLocalFunction", column = 13, row = 6, width = 1, height = 1 },
 			{ name = "ReferenceFunction", column = 14, row = 6, width = 1, height = 1 },
-			{ name = "SearchCaseSensitive", column = 15, row = 6, width = 1, height = 1 },
-			{ name = "SearchWholeWord", column = 16, row = 6, width = 1, height = 1 },
-			{ name = "SearchWildCard", column = 17, row = 6, width = 1, height = 1 },
 			{ name = "IconDebugger", column = 1, row = 36, width = 1, height = 1, base = 64 },
 			{ name = "ToolDebugger", column = 1, row = 36, width = 1, height = 1 },
 			{ name = "IconProfiler", column = 2, row = 36, width = 1, height = 1, base = 64 },
@@ -420,7 +427,7 @@ function main(argv)
 
 					-- Remove all intermediate images.
 					for j, dpi in ipairs(dpis) do
---						run:rm(dpi .. ".png")
+						run:rm(dpi .. ".png")
 						FileSystem.getInstance():move(Path(o.name .. "_" .. dpi .. ".png"), Path(dpi .. ".png"), true)
 					end
 

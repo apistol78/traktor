@@ -66,8 +66,6 @@ class Script;
 class ScriptAsset;
 class ScriptBreakpointEvent;
 class ScriptClassesView;
-class SearchControl;
-class SearchEvent;
 
 class T_DLLCLASS ScriptEditorPage
 :	public editor::IEditorPage
@@ -111,11 +109,7 @@ private:
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	Ref< ui::PopupMenu > m_editMenu;
 	Ref< ui::custom::StatusBar > m_compileStatus;
-	Ref< SearchControl > m_searchControl;
-	std::wstring m_findNeedle;
-	std::wstring m_replaceValue;
 	int32_t m_compileCountDown;
-	int32_t m_foundLineAttribute;
 	int32_t m_debugLineAttribute;
 	int32_t m_debugLineLast;
 
@@ -161,10 +155,6 @@ private:
 	void eventScriptButtonDown(ui::MouseButtonDownEvent* event);
 
 	void eventScriptButtonUp(ui::MouseButtonUpEvent* event);
-
-	void eventScriptSize(ui::SizeEvent* event);
-
-	void eventSearch(SearchEvent* event);
 
 	void eventTimer(ui::TimerEvent* event);
 };

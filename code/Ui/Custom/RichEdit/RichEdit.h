@@ -30,6 +30,8 @@ class IBitmap;
 		{
 
 class ScrollBar;
+class SearchControl;
+class SearchEvent;
 
 /*! \brief Rich, multi-line, text editor.
  * \ingroup UIC
@@ -162,6 +164,18 @@ public:
 	/*! \brief Paste text from clipboard at caret position. */
 	bool paste();
 
+	/*! \brief Show and focus find. */
+	bool find();
+
+	/*! \brief Find next occurance of entered search term. */
+	bool findNext();
+
+	/*! \brief Show and focus replace. */
+	bool replace();
+
+	/*! \brief Replace all occurances of entered replace terms. */
+	bool replaceAll();
+
 	/*! \brief Get text inner rectangle. */
 	Rect getEditRect() const;
 
@@ -232,6 +246,7 @@ private:
 
 	Ref< ScrollBar > m_scrollBarV;
 	Ref< ScrollBar > m_scrollBarH;
+	Ref< SearchControl > m_searchControl;
 	std::vector< TextAttribute > m_textAttributes;
 	std::vector< BackgroundAttribute > m_backgroundAttributes;
 	Ref< IBitmap > m_image;
@@ -250,6 +265,7 @@ private:
 	int32_t m_widestLineWidth;
 	int32_t m_fromCaret;
 	wchar_t m_nextSpecialCharacter;
+	int32_t m_foundLineAttribute;
 
 	void updateScrollBars();
 
@@ -286,6 +302,8 @@ private:
 	void eventTimer(TimerEvent* event);
 
 	void eventScroll(ScrollEvent* event);
+
+	void eventSearch(SearchEvent* event);
 };
 
 		}
