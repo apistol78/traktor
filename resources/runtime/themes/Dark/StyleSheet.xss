@@ -469,6 +469,11 @@
 			<element>background-color-selection</element>
 			<color>38, 79, 120, 255</color>
 		</item>
+		<item>
+			<type>traktor.ui.custom.RichEdit</type>
+			<element>background-found-line</element>
+			<color>40, 80, 30, 255</color>
+		</item>
 
 		<!-- SyntaxRichEdit -->
 		<item>
@@ -600,11 +605,6 @@
 		</item>
 
 		<!-- Script editor -->
-		<item>
-			<type>traktor.script.ScriptEditorPage</type>
-			<element>background-found-line</element>
-			<color>40, 80, 30, 255</color>
-		</item>
 		<item>
 			<type>traktor.script.ScriptEditorPage</type>
 			<element>background-debug-line</element>
@@ -761,18 +761,6 @@
 		<item>
 			<name>Script.ProfilerClear</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Script/ProfilerClear.image</value>
-		</item>
-		<item>
-			<name>Script.SearchCaseSensitive</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Script/SearchCaseSensitive.image</value>
-		</item>
-		<item>
-			<name>Script.SearchWholeWord</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Script/SearchWholeWord.image</value>
-		</item>
-		<item>
-			<name>Script.SearchWildCard</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Script/SearchWildCard.image</value>
 		</item>
 		<item>
 			<name>Script.Icon.Debugger</name>
@@ -990,6 +978,18 @@
 			<name>UI.SequenceHidden</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/UI/SequenceHidden.image</value>
 		</item>
+		<item>
+			<name>UI.SearchCaseSensitive</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/UI/SearchCaseSensitive.image</value>
+		</item>
+		<item>
+			<name>UI.SearchWholeWord</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/UI/SearchWholeWord.image</value>
+		</item>
+		<item>
+			<name>UI.SearchWildCard</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/UI/SearchWildCard.image</value>
+		</item>		
 		<item>
 			<name>Amalgam.Logos</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Amalgam/Logos.image</value>

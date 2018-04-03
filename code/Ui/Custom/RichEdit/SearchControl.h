@@ -4,20 +4,21 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_script_SearchControl_H
-#define traktor_script_SearchControl_H
+#ifndef traktor_ui_custom_SearchControl_H
+#define traktor_ui_custom_SearchControl_H
 
 #include "Ui/Container.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_UI_CUSTOM_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
-	namespace editor
-	{
-
-class IEditor;
-
-	}
-
 	namespace ui
 	{
 
@@ -29,18 +30,12 @@ class Edit;
 class ToolBar;
 class ToolBarButton;
 
-		}
-	}
-
-	namespace script
-	{
-
-class SearchControl : public ui::Container
+class T_DLLCLASS SearchControl : public ui::Container
 {
 	T_RTTI_CLASS;
 
 public:
-	SearchControl(editor::IEditor* editor);
+	SearchControl();
 
 	bool create(ui::Widget* parent);
 
@@ -53,7 +48,6 @@ public:
 	virtual ui::Size getPreferedSize() const T_OVERRIDE T_FINAL;
 
 private:
-	editor::IEditor* m_editor;
 	Ref< ui::Edit > m_editSearch;
 	Ref< ui::custom::ToolBar > m_toolBarMode;
 	Ref< ui::custom::ToolBarButton > m_toolCaseSensitive;
@@ -65,7 +59,8 @@ private:
 	void eventEditChange(ui::ContentChangeEvent* event);
 };
 
+		}
 	}
 }
 
-#endif	// traktor_script_SearchControl_H
+#endif	// traktor_ui_custom_SearchControl_H

@@ -16,6 +16,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Custom/ScrollBar.h"
 #include "Ui/Custom/RichEdit/CaretEvent.h"
 #include "Ui/Custom/RichEdit/RichEdit.h"
+#include "Ui/Custom/RichEdit/SearchControl.h"
+#include "Ui/Custom/RichEdit/SearchEvent.h"
 
 namespace traktor
 {
@@ -59,6 +61,7 @@ RichEdit::RichEdit()
 ,	m_lineOffsetH(0)
 ,	m_widestLineWidth(0)
 ,	m_nextSpecialCharacter(0xff00)
+,	m_foundLineAttribute(0)
 {
 }
 
@@ -89,6 +92,12 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	m_scrollBarV->addEventHandler< ScrollEvent >(this, &RichEdit::eventScroll);
 	m_scrollBarH->addEventHandler< ScrollEvent >(this, &RichEdit::eventScroll);
 
+	// Create search control.
+	m_searchControl = new SearchControl();
+	m_searchControl->create(this);
+	m_searchControl->hide();
+	m_searchControl->addEventHandler< SearchEvent >(this, &RichEdit::eventSearch);
+
 	TextAttribute txAttrib;
 	txAttrib.textColor = Color4ub(0, 0, 0);
 	txAttrib.bold = false;
@@ -99,6 +108,9 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	BackgroundAttribute bgAttrib;
 	bgAttrib.backColor = Color4ub(255, 255, 255);
 	m_backgroundAttributes.push_back(bgAttrib);
+
+	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
+	m_foundLineAttribute = addBackgroundAttribute(ss->getColor(this, L"background-found-line"));
 
 	setText(text);
 	startTimer(500);
@@ -359,7 +371,7 @@ void RichEdit::insert(const std::wstring& text)
 	if (text.empty())
 		return;
 
-	std::wstring tmp = replaceAll< std::wstring >(text, L"\r\n", L"\n");
+	std::wstring tmp = traktor::replaceAll< std::wstring >(text, L"\r\n", L"\n");
 	for (std::wstring::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
 		insertCharacter(*i, false);
 
@@ -601,6 +613,28 @@ bool RichEdit::paste()
 	insert(pasteText);
 
 	return true;
+}
+
+bool RichEdit::find()
+{
+	m_searchControl->show();
+	m_searchControl->setFocus();
+	return true;
+}
+
+bool RichEdit::findNext()
+{
+	return false;
+}
+
+bool RichEdit::replace()
+{
+	return false;
+}
+
+bool RichEdit::replaceAll()
+{
+	return false;
 }
 
 Rect RichEdit::getEditRect() const
@@ -1485,6 +1519,12 @@ void RichEdit::eventSize(SizeEvent* event)
 
 	Rect rcH(Point(0, inner.getHeight() - height), Size(inner.getWidth() - width, height));
 	m_scrollBarH->setRect(rcH);
+
+	ui::Size searchControlSize = m_searchControl->getPreferedSize();
+	m_searchControl->setRect(ui::Rect(
+		ui::Point(getEditRect().getWidth() - searchControlSize.cx, 0),
+		searchControlSize
+	));
 }
 
 void RichEdit::eventTimer(TimerEvent* event)
@@ -1498,6 +1538,65 @@ void RichEdit::eventScroll(ScrollEvent* event)
 	Rect innerRc = getInnerRect();
 	Rect updateRc(innerRc.left, innerRc.top, m_lineMargin + m_widestLineWidth, innerRc.bottom);
 	update(&updateRc);
+}
+
+void RichEdit::eventSearch(SearchEvent* event)
+{
+	if (!event->isPreview())
+	{
+		int32_t caretLine = getLineFromOffset(getCaretOffset());
+		int32_t line = caretLine;
+
+		while (line < getLineCount())
+		{
+			std::wstring text = getLine(line);
+			size_t p = text.find(event->getSearch());
+			if (p != text.npos)
+			{
+				showLine(line);
+				placeCaret(getLineOffset(line) + int32_t(p));
+				for (int32_t i = 0; i < getLineCount(); ++i)
+					setBackgroundAttribute(i, (i == line) ? m_foundLineAttribute : 0xffff);
+				break;
+			}
+			++line;
+		}
+
+		if (line >= getLineCount())
+		{
+			line = 0;
+			while (line < caretLine)
+			{
+				std::wstring text = getLine(line);
+				size_t p = text.find(event->getSearch());
+				if (p != text.npos)
+				{
+					showLine(line);
+					placeCaret(getLineOffset(line) + int32_t(p));
+					for (int32_t i = 0; i < getLineCount(); ++i)
+						setBackgroundAttribute(i, (i == line) ? m_foundLineAttribute : 0xffff);
+					break;
+				}
+				++line;
+			}
+		}
+	}
+	else
+	{
+		// See if any match exist in document, update search control hints.
+		bool found = false;
+		for (int32_t line = 0; line < getLineCount(); ++line)
+		{
+			std::wstring text = getLine(line);
+			size_t p = text.find(event->getSearch());
+			if (p != text.npos)
+			{
+				found = true;
+				break;
+			}
+		}
+		m_searchControl->setAnyMatchingHint(found);
+	}
 }
 
 		}

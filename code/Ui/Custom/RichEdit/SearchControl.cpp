@@ -7,24 +7,25 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
-#include "Script/Editor/SearchControl.h"
-#include "Script/Editor/SearchEvent.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/RichEdit/SearchControl.h"
+#include "Ui/Custom/RichEdit/SearchEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 
 namespace traktor
 {
-	namespace script
+	namespace ui
 	{
+		namespace custom
+		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.SearchControl", SearchControl, ui::Container)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.SearchControl", SearchControl, ui::Container)
 
-SearchControl::SearchControl(editor::IEditor* editor)
-:	m_editor(editor)
+SearchControl::SearchControl()
 {
 }
 
@@ -40,9 +41,9 @@ bool SearchControl::create(ui::Widget* parent)
 
 	m_toolBarMode = new ui::custom::ToolBar();
 	m_toolBarMode->create(this);
-	m_toolBarMode->addImage(new ui::StyleBitmap(L"Script.SearchCaseSensitive"), 1);
-	m_toolBarMode->addImage(new ui::StyleBitmap(L"Script.SearchWholeWord"), 1);
-	m_toolBarMode->addImage(new ui::StyleBitmap(L"Script.SearchWildCard"), 1);
+	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchCaseSensitive"), 1);
+	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchWholeWord"), 1);
+	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchWildCard"), 1);
 	
 	m_toolCaseSensitive = new ui::custom::ToolBarButton(L"Toggle case sensitive search", 0, ui::Command(L"Script.Editor.ToggleCaseSensitive"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolBarMode->addItem(m_toolCaseSensitive);
@@ -69,8 +70,8 @@ void SearchControl::setFocus()
 
 void SearchControl::show()
 {
-	if (!isVisible(false))
-		m_editSearch->setText(m_editor->getSettings()->getProperty< std::wstring >(L"Editor.LastSearch", L""));
+	//if (!isVisible(false))
+	//	m_editSearch->setText(m_editor->getSettings()->getProperty< std::wstring >(L"Editor.LastSearch", L""));
 
 	ui::Container::show();
 }
@@ -94,8 +95,8 @@ void SearchControl::eventEditSearchKeyDown(ui::KeyDownEvent* event)
 		if (!m_editSearch->getText().empty())
 		{
 			// Save last search query in user settings.
-			m_editor->checkoutGlobalSettings()->setProperty< PropertyString >(L"Editor.LastSearch", m_editSearch->getText());
-			m_editor->commitGlobalSettings();
+			//m_editor->checkoutGlobalSettings()->setProperty< PropertyString >(L"Editor.LastSearch", m_editSearch->getText());
+			//m_editor->commitGlobalSettings();
 
 			SearchEvent searchEvent(
 				this,
@@ -127,5 +128,6 @@ void SearchControl::eventEditChange(ui::ContentChangeEvent* event)
 	}
 }
 
+		}
 	}
 }

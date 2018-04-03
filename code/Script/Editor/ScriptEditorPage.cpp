@@ -34,8 +34,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Script/Editor/ScriptClassesView.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditorPage.h"
-#include "Script/Editor/SearchControl.h"
-#include "Script/Editor/SearchEvent.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
@@ -109,7 +107,6 @@ ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageS
 ,	m_site(site)
 ,	m_document(document)
 ,	m_compileCountDown(0)
-,	m_foundLineAttribute(0)
 ,	m_debugLineAttribute(0)
 ,	m_debugLineLast(-1)
 {
@@ -230,20 +227,13 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
 	m_edit->addEventHandler< ui::MouseButtonDownEvent >(this, &ScriptEditorPage::eventScriptButtonDown);
 	m_edit->addEventHandler< ui::MouseButtonUpEvent >(this, &ScriptEditorPage::eventScriptButtonUp);
-	m_edit->addEventHandler< ui::SizeEvent >(this, &ScriptEditorPage::eventScriptSize);
 
 	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
-	m_foundLineAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-found-line"));
 	m_debugLineAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-debug-line"));
 
 	m_editMenu = new ui::PopupMenu();
 	m_editMenu->create();
 	m_editMenu->add(new ui::MenuItem(ui::Command(L"Script.Editor.AddUsingStatement"), i18n::Text(L"SCRIPT_EDITOR_ADD_USING")));
-
-	m_searchControl = new SearchControl(m_editor);
-	m_searchControl->create(m_edit);
-	m_searchControl->hide();
-	m_searchControl->addEventHandler< SearchEvent >(this, &ScriptEditorPage::eventSearch);
 
 	m_compileStatus = new ui::custom::StatusBar();
 	if (!m_compileStatus->create(containerEdit))
@@ -386,17 +376,19 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Find")
 	{
-		m_searchControl->show();
-		m_searchControl->setFocus();
+		m_edit->find();
 	}
 	else if (command == L"Editor.FindNext")
 	{
+		m_edit->findNext();
 	}
 	else if (command == L"Editor.Replace")
 	{
+		m_edit->replace();
 	}
 	else if (command == L"Editor.ReplaceAll")
 	{
+		m_edit->replaceAll();
 	}
 	else if (command == L"Editor.SelectAll")
 	{
@@ -675,74 +667,6 @@ void ScriptEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
 	}
 
 	event->consume();
-}
-
-void ScriptEditorPage::eventScriptSize(ui::SizeEvent* event)
-{
-	ui::Size searchControlSize = m_searchControl->getPreferedSize();
-	m_searchControl->setRect(ui::Rect(
-		ui::Point(m_edit->getEditRect().getWidth() - searchControlSize.cx, 0),
-		searchControlSize
-	));
-}
-
-void ScriptEditorPage::eventSearch(SearchEvent* event)
-{
-	if (!event->isPreview())
-	{
-		int32_t caretLine = m_edit->getLineFromOffset(m_edit->getCaretOffset());
-		int32_t line = caretLine;
-
-		while (line < m_edit->getLineCount())
-		{
-			std::wstring text = m_edit->getLine(line);
-			size_t p = text.find(event->getSearch());
-			if (p != text.npos)
-			{
-				m_edit->showLine(line);
-				m_edit->placeCaret(m_edit->getLineOffset(line) + int32_t(p));
-				for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
-					m_edit->setBackgroundAttribute(i, (i == line) ? m_foundLineAttribute : 0xffff);
-				break;
-			}
-			++line;
-		}
-
-		if (line >= m_edit->getLineCount())
-		{
-			line = 0;
-			while (line < caretLine)
-			{
-				std::wstring text = m_edit->getLine(line);
-				size_t p = text.find(event->getSearch());
-				if (p != text.npos)
-				{
-					m_edit->showLine(line);
-					m_edit->placeCaret(m_edit->getLineOffset(line) + int32_t(p));
-					for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
-						m_edit->setBackgroundAttribute(i, (i == line) ? m_foundLineAttribute : 0xffff);
-					break;
-				}
-				++line;
-			}
-		}
-	}
-	else
-	{
-		// See if any match exist in document, update search control hints.
-		bool found = false;
-		for (int32_t line = 0; line < m_edit->getLineCount(); ++line)
-		{
-			std::wstring text = m_edit->getLine(line);
-			size_t p = text.find(event->getSearch());
-			if (p != text.npos)
-			{
-				found = true;
-				break;
-			}
-		}
-		m_searchControl->setAnyMatchingHint(found);
-	}
 }
 
 void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
