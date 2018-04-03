@@ -239,6 +239,8 @@ local function deployShared(args)
 		end
 	end
 
+	-- Clean some unwanted files.
+	run:rm("*.ico")
 	return 0
 end
 
@@ -317,6 +319,8 @@ local function migrateShared(args)
 		end
 	end
 
+	-- Clean some unwanted files.
+	run:rm("*.ico")
 	return 0
 end
 
