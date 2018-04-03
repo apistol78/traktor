@@ -8,6 +8,6 @@ call "%~dp0..\config.bat"
 
 :: Rebuild entire solution.
 pushd "%TRAKTOR_HOME%\build\emscripten"
-%TRAKTOR_HOME%\3rdp\jom\jom -f "Extern Emscripten.mak" %CONFIG%
-%TRAKTOR_HOME%\3rdp\jom\jom -f "Traktor Emscripten.mak" %CONFIG%
+%TRAKTOR_HOME%\3rdp\jom\jom /L /J 12 /F "Extern Emscripten.mak" %CONFIG%
+%TRAKTOR_HOME%\3rdp\jom\jom /L /J 12 /F "Traktor Emscripten.mak" %CONFIG%
 popd
