@@ -61,6 +61,8 @@ public:
 
 	bool removePlatform(const Guid& id);
 
+	std::list< Platform >& getPlatforms() { return m_platforms; }
+
 	const std::list< Platform >& getPlatforms() const { return m_platforms; }
 
 	Platform* getPlatform(const Guid& id);

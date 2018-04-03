@@ -9,9 +9,82 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_MODULES</first>
 						<second type="traktor.PropertyStringSet">
 							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>msvcrt.lib</item>
+								<item>winmm.lib</item>
+								<item>iphlpapi.lib</item>
+								<item>ws2_32.lib</item>
+								<item>kernel32.lib</item>
+								<item>user32.lib</item>
+								<item>gdi32.lib</item>
+								<item>winspool.lib</item>
+								<item>comdlg32.lib</item>
+								<item>advapi32.lib</item>
+								<item>shell32.lib</item>
+								<item>ole32.lib</item>
+								<item>oleaut32.lib</item>
+								<item>uuid.lib</item>
+								<item>odbc32.lib</item>
+								<item>odbccp32.lib</item>
+								<item>comctl32.lib</item>
+								<item>d2d1.lib</item>
+								<item>dwrite.lib</item>
+								<item>gdiplus.lib</item>
+								<item>msimg32.lib</item>
+								<item>d3d11.lib</item>
+								<item>dxgi.lib</item>
+								<item>dinput8.lib</item>
+								<item>dxguid.lib</item>
+								<item>xinput.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Lib/x64</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Lib/x64</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/win64/releasestatic</item>
+							</value>
 						</second>
 					</item>
 				</value>
