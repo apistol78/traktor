@@ -92,8 +92,8 @@ local function collectDependencies(
 				-- Add library.
 				insertLast(outLibraries, localProject:getName())
 
-				-- Recurse with child dependencies.
-				if localConfig:getTargetFormat() == "StaticLibrary" then
+				-- Recurse with child dependencies, or linux as so needs to be when linking.
+				if localConfig:getTargetFormat() == "StaticLibrary" or os == "linux" then
 					collectDependencies(
 						localSolution,
 						localProject,
@@ -149,7 +149,7 @@ local function collectDependencies(
 				insertLast(outLibraries, externalProject:getName())
 
 				-- Recurse with child dependencies.
-				if externalConfig:getTargetFormat() == "StaticLibrary" then
+				if externalConfig:getTargetFormat() == "StaticLibrary" or os == "linux" then
 					collectDependencies(
 						externalSolution,
 						externalProject,
