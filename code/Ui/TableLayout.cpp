@@ -35,7 +35,6 @@ void parseDefinition(const std::wstring& def, std::vector< int >& out)
 		else
 		{
 			int n = abs(atoi(wstombs(str).c_str()));
-			T_ASSERT (n > 0);
 			if (*(str.end() - 1) == '%')
 				out.push_back(-n);
 			else
