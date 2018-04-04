@@ -25,28 +25,33 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridItem", GridItem, AutoWidgetCell)
 
 GridItem::GridItem()
+:	m_row(0)
 {
 }
 
 GridItem::GridItem(const std::wstring& text)
-:	m_text(text)
+:	m_row(0)
+,	m_text(text)
 {
 }
 
 GridItem::GridItem(const std::wstring& text, Font* font)
-:	m_text(text)
+:	m_row(0)
+,	m_text(text)
 ,	m_font(font)
 {
 }
 
 GridItem::GridItem(const std::wstring& text, IBitmap* image)
-:	m_text(text)
+:	m_row(0)
+,	m_text(text)
 ,	m_image(image)
 {
 }
 
 GridItem::GridItem(IBitmap* image)
-:	m_image(image)
+:	m_row(0)
+,	m_image(image)
 {
 }
 

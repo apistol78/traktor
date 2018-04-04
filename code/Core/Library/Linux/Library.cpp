@@ -30,11 +30,7 @@ bool Library::open(const Path& libraryName)
 
 bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)
 {
-#if !defined(_DEBUG)
 	std::wstring resolved = std::wstring(L"lib") + libraryName.getPathName() + L".so";
-#else
-	std::wstring resolved = std::wstring(L"lib") + libraryName.getPathName() + L"_d.so";
-#endif
 	std::wstring errors;
 
     // Prefer executable path first.
@@ -48,7 +44,7 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
         }
         else
             errors += mbstows(dlerror()) + L"\n";
-    }
+ 	}
 
 	// Try working directory second.
 	{
