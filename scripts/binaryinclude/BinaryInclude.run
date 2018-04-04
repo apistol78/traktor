@@ -1,0 +1,107 @@
+import(traktor)
+import(traktor.run)
+
+function main(args)
+	local fs = FileSystem.getInstance()
+
+	-- Ensure all arguments are available.
+	if args:size() < 3 then
+		stdout:printLn("BinaryInclude : Usage BinaryInclude.run <input> <output> <symbol>")
+		return 1
+	end
+
+	-- Unpack arguments.
+	local inputFile = Path(args:get(0))
+	local outputFile = Path(args:get(1))
+	local symbol = args:get(2)
+
+	-- Ensure symbol doesn't contain invalid characters.
+	symbol = symbol:gsub("%.", "_")
+	symbol = symbol:gsub("/", "_")
+	symbol = symbol:gsub("\\", "_")
+
+	-- Check if we need to build; do not touch output unneccessarily.
+	local fileInputFile = fs:get(inputFile)
+	if fileInputFile == nil then
+		stderr:printLn("Unable to convert file \"" .. inputFile:getPathName() .. "\"; no such file.")
+		return 1
+	end
+
+	local fileOutputFile = fs:get(outputFile)
+	if fileOutputFile ~= nil then
+		local filw = fileInputFile:getLastWriteTime()
+		local folw = fileOutputFile:getLastAccessTime()
+		if filw:getSecondsSinceEpoch() <= folw:getSecondsSinceEpoch() then
+			stdout:printLn("File up-to-date; skipped.")
+			return 0
+		end
+	end
+
+	-- Ensure output file is removed first, should not permit stale files
+	-- in case of error. Also ensure file times are correct.
+	fs:remove(outputFile)
+
+	-- Ensure all output directories exist.
+	fs:makeAllDirectories(Path(outputFile:getPathOnly()))
+
+	-- Get streams to input and output files.
+	local fileInput = fs:open(inputFile, File.FmRead)
+	if fileInput == nil then
+		stderr:printLn("Unable to convert file \"" .. inputFile:getPathName() .. "\"; failed to open for read.")
+		return 1
+	end
+
+	local fileOutput = fs:open(outputFile, File.FmWrite)
+	if fileOutput == nil then
+		stderr:printLn("Unable to convert file \"" .. inputFile:getPathName() .. "\"; failed to create file for writing.")
+		return 1
+	end
+
+	-- Generate output file.
+	local br = BitReader(fileInput)
+	local os = StreamOutput(fileOutput, Utf8Encoding())
+
+	os:printLn("#ifndef _INCLUDE_" .. symbol:upper() .. "_H")
+	os:printLn("#define _INCLUDE_" .. symbol:upper() .. "_H")
+	os:printLn("")
+
+	os:printLn("namespace")
+	os:printLn("{")
+	os:printLn("")
+
+	os:printLn("const unsigned char " .. symbol .. "[] =")
+	os:printLn("{")
+
+	while fileInput:available() > 0 do
+
+		local buffer = {}
+		while fileInput:available() > 0 and #buffer < 16 do
+			local v = br:readUInt8()
+			table.insert(buffer, v)
+		end
+
+		os:print("\t")
+
+		for i = 1, #buffer do
+			os:print(string.format("0x%02x", buffer[i]))
+			if i < #buffer or fileInput:available() > 0 then os:print(", ") end
+		end
+
+		os:printLn("")
+
+	end
+
+	os:printLn("};")
+	os:printLn("")
+
+	os:printLn("}")
+	os:printLn("")
+
+	os:printLn("#endif\t// _INCLUDE_" .. symbol:upper() .. "_H")
+
+	fileOutput:close()
+	fileInput:close()
+
+	stdout:printLn("File converted successfully.")
+	return 0
+end
