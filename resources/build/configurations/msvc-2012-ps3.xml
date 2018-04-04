@@ -1024,49 +1024,49 @@
 			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>js</fileType>
-				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
 			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>css</fileType>
-				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
 			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>lua</fileType>
-				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
 			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>png</fileType>
-				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
 			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>image</fileType>
-				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
 			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>xdi</fileType>
-				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
 			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>exe</fileType>
-				<command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
