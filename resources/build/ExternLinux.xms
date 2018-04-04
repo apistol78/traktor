@@ -538,6 +538,7 @@
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
 						<item>XML_POOR_ENTROPY</item>
+						<item>HAVE_MEMMOVE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -565,6 +566,7 @@
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
 						<item>XML_POOR_ENTROPY</item>
+						<item>HAVE_MEMMOVE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -592,6 +594,7 @@
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
 						<item>XML_POOR_ENTROPY</item>
+						<item>HAVE_MEMMOVE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -624,6 +627,7 @@
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
 						<item>XML_POOR_ENTROPY</item>
+						<item>HAVE_MEMMOVE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
