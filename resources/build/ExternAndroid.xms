@@ -21,7 +21,7 @@
 						<item>__ANDROID__</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>XML_POOR_ENTROPY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -52,7 +52,7 @@
 						<item>__ANDROID__</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>XML_POOR_ENTROPY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
