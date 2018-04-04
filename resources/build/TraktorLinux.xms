@@ -14359,7 +14359,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Illuminate.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Illuminate/Editor</sourcePath>
 			<configurations>
