@@ -6,8 +6,8 @@
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.expat-2.1.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</sourcePath>
+			<name>Extern.expat</name>
+			<sourcePath>$(EXPAT_SDK)/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -15,7 +15,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
 						<item>COMPILED_FROM_DSP</item>
@@ -41,7 +41,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
 						<item>COMPILED_FROM_DSP</item>
@@ -67,7 +67,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
 						<item>COMPILED_FROM_DSP</item>
@@ -86,7 +86,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.expat-2.1.0.lib</sourceFile>
+							<sourceFile>Extern.expat.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -98,7 +98,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
 						<item>COMPILED_FROM_DSP</item>
@@ -117,7 +117,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.expat-2.1.0.lib</sourceFile>
+							<sourceFile>Extern.expat.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -135,6 +135,10 @@
 				</item>
 				<item type="File">
 					<fileName>xmltok.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>loadlibrary.c</fileName>
 					<items/>
 				</item>
 				<item type="File">

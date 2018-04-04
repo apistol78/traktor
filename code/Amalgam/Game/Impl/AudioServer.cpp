@@ -64,7 +64,7 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	sscd.driverDesc.sampleRate = settings->getProperty< int32_t >(L"Audio.SampleRate", 44100);
 	sscd.driverDesc.bitsPerSample = settings->getProperty< int32_t >(L"Audio.BitsPerSample", 16);
 	sscd.driverDesc.hwChannels = settings->getProperty< int32_t >(L"Audio.HwChannels", 2);
-#	if defined(__IOS__) || defined(__PNACL__) || defined(__ANDROID__)
+#	if defined(__IOS__) || defined(__ANDROID__)
 	sscd.driverDesc.frameSamples = 1024;
 #	else
 	sscd.driverDesc.frameSamples = 512;

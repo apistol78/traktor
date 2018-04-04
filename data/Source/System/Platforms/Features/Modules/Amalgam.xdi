@@ -72,7 +72,7 @@
 							<value>
 								<item>libExtern.agg.a</item>
 								<item>libExtern.detour.a</item>
-								<item>libExtern.expat-2.1.0.a</item>
+								<item>libExtern.expat.a</item>
 								<item>libExtern.jpeg-6b.a</item>
 								<item>libExtern.libflac-1.2.1.a</item>
 								<item>libExtern.liblzf-3.6.a</item>
@@ -450,7 +450,7 @@
 							<value>
 								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
-								<item>Extern.expat-2.1.0.lib</item>
+								<item>Extern.expat.lib</item>
 								<item>Extern.jpeg-6b.lib</item>
 								<item>Extern.libflac-1.2.1.lib</item>
 								<item>Extern.liblzf-3.6.lib</item>
@@ -620,7 +620,7 @@
 								<item>Extern.OpenEXR.lib</item>
 								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
-								<item>Extern.expat-2.1.0.lib</item>
+								<item>Extern.expat.lib</item>
 								<item>Extern.ilmbase.lib</item>
 								<item>Extern.jpeg-6b.lib</item>
 								<item>Extern.libflac-1.2.1.lib</item>
@@ -793,7 +793,7 @@
 								<item>Extern.OpenEXR.lib</item>
 								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
-								<item>Extern.expat-2.1.0.lib</item>
+								<item>Extern.expat.lib</item>
 								<item>Extern.ilmbase.lib</item>
 								<item>Extern.jpeg-6b.lib</item>
 								<item>Extern.libflac-1.2.1.lib</item>
@@ -929,7 +929,7 @@
 							<value>
 								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
-								<item>Extern.expat-2.1.0.lib</item>
+								<item>Extern.expat.lib</item>
 								<item>Extern.libflac-1.2.1.lib</item>
 								<item>Extern.libogg-1.3.0.lib</item>
 								<item>Extern.libtheora-1.1.1.lib</item>
@@ -1057,7 +1057,7 @@
 							<value>
 								<item>libExtern.agg.bc</item>
 								<item>libExtern.detour.bc</item>
-								<item>libExtern.expat-2.1.0.bc</item>
+								<item>libExtern.expat.bc</item>
 								<item>libExtern.libflac-1.2.1.bc</item>
 								<item>libExtern.liblzf-3.6.bc</item>
 								<item>libExtern.libogg-1.3.0.bc</item>
@@ -1186,7 +1186,7 @@
 							<value>
 								<item>libExtern.agg.a</item>
 								<item>libExtern.detour.a</item>
-								<item>libExtern.expat-2.1.0.a</item>
+								<item>libExtern.expat.a</item>
 								<item>libExtern.jpeg-6b.a</item>
 								<item>libExtern.libflac-1.2.1.a</item>
 								<item>libExtern.liblzf-3.6.a</item>

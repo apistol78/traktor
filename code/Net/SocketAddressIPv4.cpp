@@ -85,9 +85,7 @@ SocketAddressIPv4::SocketAddressIPv4(const std::wstring& host, uint16_t port)
 
 	// Try to resolve address, first try string denoted IP number as it will
 	// probably fail faster than gethostbyname.
-#if !defined(__PNACL__)
 	ia = inet_addr(wstombs(host).c_str());
-#endif
 
 #if !defined(_XBOX) && !defined(__EMSCRIPTEN__)
 	if (ia == INADDR_NONE)

@@ -521,8 +521,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.expat-2.1.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</sourcePath>
+			<name>Extern.expat</name>
+			<sourcePath>$(EXPAT_SDK)/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -531,7 +531,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
 						<item>LINUX</item>
@@ -558,7 +558,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
 						<item>LINUX</item>
@@ -585,7 +585,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
 						<item>LINUX</item>
@@ -604,7 +604,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.expat-2.1.0.a</sourceFile>
+							<sourceFile>libExtern.expat.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -617,7 +617,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
 						<item>LINUX</item>
@@ -636,7 +636,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.expat-2.1.0.a</sourceFile>
+							<sourceFile>libExtern.expat.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

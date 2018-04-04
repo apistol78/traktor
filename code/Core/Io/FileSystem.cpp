@@ -35,9 +35,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #elif defined(__EMSCRIPTEN__)	// Emscripten
 #	include "Core/Io/Emscripten/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
-#elif defined(__PNACL__)	// PNaCl
-#	include "Core/Io/PNaCl/NativeVolume.h"
-#	define HAS_NATIVE_VOLUME
 #elif defined(__ANDROID__)
 #	include "Core/Io/Android/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME

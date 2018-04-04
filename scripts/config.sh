@@ -14,6 +14,7 @@ export SQLITE_SDK=$TRAKTOR_HOME/3rdp/sqlite-3.8.7.2
 export WXWIDGETS_SDK=$TRAKTOR_HOME/3rdp/wxWidgets-3.0.2
 export LUA_SDK=$TRAKTOR_HOME/3rdp/lua-5.3.2
 export GLEW_SDK=$TRAKTOR_HOME/3rdp/glew-1.13.0
+export EXPAT_SDK=$TRAKTOR_HOME/3rdp/libexpat-R_2_2_5/expat
 
 # Export name of solution builder binary.
 if [[ `uname -s` == Linux* ]]; then

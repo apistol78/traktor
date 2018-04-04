@@ -1476,7 +1476,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+															<item>$(EXPAT_SDK)/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_XML_EXPORT</item>
@@ -1506,7 +1506,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+															<item>$(EXPAT_SDK)/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_XML_EXPORT</item>
@@ -1536,7 +1536,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+															<item>$(EXPAT_SDK)/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -1566,7 +1566,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+															<item>$(EXPAT_SDK)/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -1606,7 +1606,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternLinux.xms</solutionFileName>
-														<projectName>Extern.expat-2.1.0</projectName>
+														<projectName>Extern.expat</projectName>
 													</item>
 												</dependencies>
 											</project>

@@ -18,8 +18,7 @@ set LUA_SDK=%TRAKTOR_HOME%\3rdp\lua-5.3.2
 set GLEW_SDK=%TRAKTOR_HOME%\3rdp\glew-1.13.0
 set TOBII_SDK=%TRAKTOR_HOME%\3rdp\tobii-sdk-1.7.480
 set OPENVR_SDK=%TRAKTOR_HOME%\3rdp\openvr-master-20160822
-set NACL_SDK_ROOT=%TRAKTOR_HOME\%3rdp\nacl_sdk\pepper_47
-set CHROME_PATH=
+set EXPAT_SDK=%TRAKTOR_HOME%\3rdp\libexpat-R_2_2_5\expat
 
 :: Export name of solution builder binary.
 set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App
