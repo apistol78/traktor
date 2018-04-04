@@ -398,6 +398,7 @@
 						<item>COMPILED_FROM_DSP</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
+						<item>XML_POOR_ENTROPY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -428,6 +429,7 @@
 						<item>COMPILED_FROM_DSP</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
+						<item>XML_POOR_ENTROPY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
