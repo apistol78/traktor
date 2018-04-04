@@ -1071,7 +1071,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+															<item>$(EXPAT_SDK)/lib</item>
 														</includePaths>
 														<definitions>
 															<item>__IOS__</item>
@@ -1102,7 +1102,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
+															<item>$(EXPAT_SDK)/lib</item>
 														</includePaths>
 														<definitions>
 															<item>__IOS__</item>
@@ -1143,7 +1143,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternIOS.xms</solutionFileName>
-														<projectName>Extern.expat-2.1.0</projectName>
+														<projectName>Extern.expat</projectName>
 													</item>
 												</dependencies>
 											</project>

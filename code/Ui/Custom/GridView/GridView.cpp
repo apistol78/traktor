@@ -271,7 +271,7 @@ void GridView::layoutCells(const Rect& rc)
 	RefArray< GridRow > rows;
 	getRows(rows, GfDescendants | GfExpandedOnly);
 
-#if !defined(__APPLE__) && !defined(__PNACL__)
+#if !defined(__APPLE__)
 	if (m_sortColumnIndex >= 0)
 	{
 		if (m_sortMode == SmLexical)

@@ -12,9 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Xml/XmlPullParser.h"
 
 #define XML_STATIC
-#if defined(__PNACL__)
-#	include "pnaclconfig.h"
-#elif defined(__EMSCRIPTEN__)
+#if defined(__EMSCRIPTEN__)
 #	include "emscriptenconfig.h"
 #elif defined(_WIN32)
 #	include "winconfig.h"

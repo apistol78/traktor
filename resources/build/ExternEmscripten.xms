@@ -383,8 +383,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.expat-2.1.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</sourcePath>
+			<name>Extern.expat</name>
+			<sourcePath>$(EXPAT_SDK)/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -410,7 +410,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.expat-2.1.0.bc</sourceFile>
+							<sourceFile>libExtern.expat.bc</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -440,7 +440,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.expat-2.1.0.bc</sourceFile>
+							<sourceFile>libExtern.expat.bc</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

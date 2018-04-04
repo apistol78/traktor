@@ -16,7 +16,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketAddressIPv6", SocketAddressIPv6, SocketAddress)
 
-#if !defined(__PS3__) && !defined(__PS4__) && !defined(__EMSCRIPTEN__) && !defined(__PNACL__) && !defined(_XBOX)
+#if !defined(__PS3__) && !defined(__PS4__) && !defined(__EMSCRIPTEN__) && !defined(_XBOX)
 
 SocketAddressIPv6::SocketAddressIPv6()
 :	m_info(0)

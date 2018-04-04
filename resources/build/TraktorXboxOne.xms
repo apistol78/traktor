@@ -1565,7 +1565,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternXboxOne.xms</solutionFileName>
-														<projectName>Extern.expat-2.1.0</projectName>
+														<projectName>Extern.expat</projectName>
 													</item>
 												</dependencies>
 											</project>

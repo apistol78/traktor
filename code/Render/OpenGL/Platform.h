@@ -45,9 +45,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	if TARGET_OS_IPHONE || TARGET_OS_IPAD
 #		include <OpenGLES/ES2/gl.h>
 #		include <OpenGLES/ES2/glext.h>
-#	elif __PNACL__
-#		include <GLES2/gl2.h>
-#		include <GLES2/gl2ext.h>
 #	else
 #		if defined(_WIN32)
 #			define _WIN32_LEAN_AND_MEAN
