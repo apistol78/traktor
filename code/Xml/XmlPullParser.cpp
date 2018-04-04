@@ -12,17 +12,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Xml/XmlPullParser.h"
 
 #define XML_STATIC
-#if defined(__EMSCRIPTEN__)
-#	include "emscriptenconfig.h"
-#elif defined(_WIN32)
-#	include "winconfig.h"
-#elif defined(__APPLE__)
-#	include "macconfig.h"
-#elif defined(_PS3)
-#	include "ps3config.h"
-#else
-#   include "linuxconfig.h"
-#endif
 #include "expat.h"
 
 namespace traktor
