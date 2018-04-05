@@ -42,13 +42,18 @@ function deploy(args)
 	run:replace("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/osx/Icon.icns", bundle .. "/Contents/Resources/Icon.icns")
 	run:replace("Application.config", bundle .. "/Contents/Resources/Application.config")
 	
+	-- Get shared paths.
+	local paths = nil
+	if not debug then paths = os:getEnvironment("DEPLOY_SHARED_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_SHARED_PATH_DEBUG"):split("\n") end
+
 	-- Copy binaries into bundle.
-	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
-	for _, f in ipairs(files) do
-		if not debug then
-			run:replace("$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/releaseshared/" .. f, bundle .. "/Contents/MacOS/" .. f)
-		else
-			run:replace("$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/debugshared/" .. f, bundle .. "/Contents/MacOS/" .. f)
+	local files = os:getEnvironment("DEPLOY_SHARED"):split("\n")
+	for _, p in ipairs(paths) do
+		for _, f in ipairs(files) do
+			local qf = Path(p):concat(Path(f))
+			if FileSystem.getInstance():exist(qf) then
+				run:replace(qf:getPathName(), bundle .. "/Contents/MacOS/" .. f)
+			end
 		end
 	end
 
@@ -99,22 +104,18 @@ function migrate(args)
 	run:replace("Application.config", bundle .. "/Contents/Resources/Application.config")
 	run:replace("Content.compact", bundle .. "/Contents/Resources/Content.compact")
 	
-	-- Determine source binary path.
-	local sourcePath
-	if not debug then
-		stdout:printLn("Deploying binaries to target host...")
-		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/releaseshared/"
-	else
-		stdout:printLn("Deploying *DEBUG* binaries to target host...")
-		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/debugshared/"
-	end
+	-- Get shared paths.
+	local paths = nil
+	if not debug then paths = os:getEnvironment("DEPLOY_SHARED_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_SHARED_PATH_DEBUG"):split("\n") end
 
 	-- Copy binaries into bundle.
-	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
-	for _, f in ipairs(files) do
-		if not run:replace(sourcePath .. f, bundle .. "/Contents/MacOS/" .. f) then
-			stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
-			return 1
+	local files = os:getEnvironment("DEPLOY_SHARED"):split("\n")
+	for _, p in ipairs(paths) do
+		for _, f in ipairs(files) do
+			local qf = Path(p):concat(Path(f))
+			if FileSystem.getInstance():exist(qf) then
+				run:replace(qf:getPathName(), bundle .. "/Contents/MacOS/" .. f)
+			end
 		end
 	end
 
