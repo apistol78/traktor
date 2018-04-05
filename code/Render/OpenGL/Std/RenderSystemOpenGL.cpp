@@ -189,25 +189,11 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 		return 0;
 	}
 
-	GLXContext oldContext = glXCreateContext(m_display, vi, NULL, GL_TRUE);
-	if (!oldContext)
-	{
-		log::error << L"Unable to create OpenGL renderer; glXCreateContext failed" << Endl;
-		return false;
-	}
-
-	glXMakeCurrent(m_display, m_windowShared->getWindow(), oldContext);
-
-	if (glewInit() != GLEW_OK)
-		return false;
-
-	glXMakeCurrent(m_display, 0, 0);
-	glXDestroyContext(m_display, oldContext);
-
 	static int contextAttribs[] =
 	{
-		GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-		GLX_CONTEXT_MINOR_VERSION_ARB, 0,
+		GLX_CONTEXT_MAJOR_VERSION_ARB, 4,
+		GLX_CONTEXT_MINOR_VERSION_ARB, 2,
+		GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
 		None
 	};
 
@@ -220,6 +206,9 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 
 	m_resourceContext = new ContextOpenGL(0, m_windowShared->getDisplay(), m_windowShared->getWindow(), context);
 	m_resourceContext->enter();
+
+	if (glewInit() != GLEW_OK)
+		return false;
 
 #endif
 
