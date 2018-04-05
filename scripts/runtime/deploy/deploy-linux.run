@@ -43,25 +43,27 @@ function deploy(args)
 	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Application.config", "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
-	-- Deploy binaries to target.
-	if not debug then
-		stdout:printLn("Deploying binaries to target host...")
-		run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/linux/releaseshared")
-	else
-		stdout:printLn("Deploying *DEBUG* binaries to target host...")
-		run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/linux/debugshared")
+	-- Get shared paths.
+	local paths = nil
+	if not debug then paths = os:getEnvironment("DEPLOY_SHARED_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_SHARED_PATH_DEBUG"):split("\n") end
+
+	-- Find files to deploy; qualitfy through paths.
+	local files = os:getEnvironment("DEPLOY_SHARED"):split("\n")
+	for _, p in ipairs(paths) do
+		local deployFiles = ""
+		for _, f in ipairs(files) do
+			local qf = Path(p):concat(Path(f))
+			if FileSystem.getInstance():exist(qf) then
+				deployFiles = deployFiles .. " " .. f
+			end
+		end
+		if deployFiles ~= "" then
+			run:pushd(p)
+			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles) -- , nil)
+			run:popd()
+			if run:exitCode() ~= 0 then return run:exitCode() end
+		end
 	end
-
-	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
-	local deployFiles = ""
-
-	for _, f in ipairs(files) do
-		deployFiles = deployFiles .. " " .. f	
-	end
-
-	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, "(null)")
-	if run:exitCode() ~= 0 then return run:exitCode() end
-	run:popd()
 
 	-- Create launcher script.
 	local f = fileSystem:open(Path("launch.sh"), 2)
