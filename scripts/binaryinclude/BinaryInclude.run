@@ -11,8 +11,8 @@ function main(args)
 	end
 
 	-- Unpack arguments.
-	local inputFile = Path(args:get(0))
-	local outputFile = Path(args:get(1))
+	local inputFile = fs:getAbsolutePath(Path(args:get(0)))
+	local outputFile = fs:getAbsolutePath(Path(args:get(1)))
 	local symbol = args:get(2)
 
 	-- Ensure symbol doesn't contain invalid characters.

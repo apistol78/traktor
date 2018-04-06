@@ -27,4 +27,4 @@ LINK_FLAGS_DEBUG_EXECUTABLE=$(LINK_FLAGS_COMMON)
 LINK_FLAGS_RELEASE_EXECUTABLE=$(LINK_FLAGS_COMMON) -O2
 LINK_FLAG_OUTPUT=-o^ #
 
-BINARY_INCLUDE="$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App" "$(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run"
+BINARY_INCLUDE=$(TRAKTOR_HOME)\bin\win64\releasestatic\Traktor.Run.App $(TRAKTOR_HOME)\scripts\binaryinclude\BinaryInclude.run
