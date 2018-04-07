@@ -3240,17 +3240,17 @@ public:
 		);
 	}
 
-	template < typename ValueType >
-	void addProperty(const std::string& propertyName, void (ClassType::*setter)(ValueType value), ValueType (ClassType::*getter)() const)
+	template < typename SetterValueType, typename GetterValueType >
+	void addProperty(const std::string& propertyName, void (ClassType::*setter)(SetterValueType value), GetterValueType (ClassType::*getter)() const)
 	{
 		StringOutputStream ss;
-		CastAny< ValueType >::typeName(ss);
+		CastAny< GetterValueType >::typeName(ss);
 
 		addProperty(
 			propertyName,
 			ss.str(),
-			setter != 0 ? new PropertySet< ClassType, ValueType >(setter) : 0,
-			getter != 0 ? new PropertyGet< ClassType, ValueType, true >(getter) : 0
+			setter != 0 ? new PropertySet< ClassType, SetterValueType >(setter) : 0,
+			getter != 0 ? new PropertyGet< ClassType, GetterValueType, true >(getter) : 0
 		);
 	}
 
@@ -3268,17 +3268,17 @@ public:
 		);
 	}
 
-	template < typename ValueType >
-	void addProperty(const std::string& propertyName, void (ClassType::*setter)(ValueType value), ValueType (ClassType::*getter)())
+	template < typename SetterValueType, typename GetterValueType >
+	void addProperty(const std::string& propertyName, void (ClassType::*setter)(SetterValueType value), GetterValueType (ClassType::*getter)())
 	{
 		StringOutputStream ss;
-		CastAny< ValueType >::typeName(ss);
+		CastAny< GetterValueType >::typeName(ss);
 
 		addProperty(
 			propertyName,
 			ss.str(),
-			setter != 0 ? new PropertySet< ClassType, ValueType >(setter) : 0,
-			getter != 0 ? new PropertyGet< ClassType, ValueType, false >(getter) : 0
+			setter != 0 ? new PropertySet< ClassType, SetterValueType >(setter) : 0,
+			getter != 0 ? new PropertyGet< ClassType, GetterValueType, false >(getter) : 0
 		);
 	}
 
@@ -3296,17 +3296,17 @@ public:
 		);
 	}
 
-	template < typename ValueType >
-	void addProperty(const std::string& propertyName, void (*setter)(ClassType* self, ValueType value), ValueType (*getter)(ClassType* self))
+	template < typename SetterValueType, typename GetterValueType >
+	void addProperty(const std::string& propertyName, void (*setter)(ClassType* self, SetterValueType value), GetterValueType (*getter)(ClassType* self))
 	{
 		StringOutputStream ss;
-		CastAny< ValueType >::typeName(ss);
+		CastAny< GetterValueType >::typeName(ss);
 
 		addProperty(
 			propertyName,
 			ss.str(),
-			setter != 0 ? new FnPropertySet< ClassType, ValueType >(setter) : 0,
-			getter != 0 ? new FnPropertyGet< ClassType, ValueType >(getter) : 0
+			setter != 0 ? new FnPropertySet< ClassType, SetterValueType >(setter) : 0,
+			getter != 0 ? new FnPropertyGet< ClassType, GetterValueType >(getter) : 0
 		);
 	}
 
