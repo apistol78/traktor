@@ -9,8 +9,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Render/Dx9/Hlsl.h"
-#include "Render/Dx9/HlslProgram.h"
+#include "Render/Dx9/Hlsl/Hlsl.h"
+#include "Render/Dx9/Hlsl/HlslProgram.h"
 #include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/ProgramResourceDx9.h"
 #include "Render/Dx9/Xbox360/ProgramCompilerXbox360.h"
@@ -373,21 +373,16 @@ bool ProgramCompilerXbox360::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	int32_t optimize,
-	std::wstring& outShader
+	std::wstring& outVertexShader,
+	std::wstring& outPixelShader
 ) const
 {
 	HlslProgram hlslProgram;
 	if (!Hlsl().generate(shaderGraph, hlslProgram))
 		return false;
 
-	outShader =
-		std::wstring(L"// Vertex shader\n") +
-		std::wstring(L"\n") +
-		hlslProgram.getVertexShader() +
-		std::wstring(L"\n") +
-		std::wstring(L"// Pixel shader\n") +
-		std::wstring(L"\n") +
-		hlslProgram.getPixelShader();
+	outVertexShader = hlslProgram.getVertexShader();
+	outPixelShader = hlslProgram.getPixelShader();
 
 	return true;
 }

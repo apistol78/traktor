@@ -84,7 +84,7 @@ void Debugger::reportEvent(const wchar_t* const text, ...)
 	va_list arg;
 
 	va_start(arg, text);
-	vswprintf(buffer, text.c_str(), arg);
+	vswprintf(buffer, text, arg);
 	va_end(arg);
 
 	PIXSetMarker(0xffffff, wstombs(buffer).c_str());

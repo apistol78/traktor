@@ -119,7 +119,7 @@ Ref< IRenderView > RenderSystemXbox360::createRenderView(const RenderViewDefault
 	d3dPresent.DisableAutoBackBuffer  = TRUE;
 	d3dPresent.DisableAutoFrontBuffer = TRUE;
 	d3dPresent.AutoDepthStencilFormat = D3DFMT_D24S8;
-	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+	d3dPresent.PresentationInterval = (desc.waitVBlanks > 0) ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
 	d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 	d3dPresent.RingBufferParameters.PrimarySize = 0;
 	d3dPresent.RingBufferParameters.SecondarySize = 6 * 1024 * 1024;
@@ -239,6 +239,10 @@ Ref< IProgramCompiler > RenderSystemXbox360::createProgramCompiler() const
 Ref< ITimeQuery > RenderSystemXbox360::createTimeQuery() const
 {
 	return 0;
+}
+
+void RenderSystemXbox360::purge()
+{
 }
 
 void RenderSystemXbox360::getStatistics(RenderSystemStatistics& outStatistics) const

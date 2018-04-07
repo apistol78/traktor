@@ -81,6 +81,8 @@ public:
 
 	virtual Ref< ITimeQuery > createTimeQuery() const;
 
+	virtual void purge();
+
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
 
 	/*! \name Direct3D interface. */

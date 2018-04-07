@@ -1,0 +1,96 @@
+import(traktor)
+import(traktor.run)
+
+
+-- Tools
+local tools =
+{
+	pipeline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App",
+	migrate = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App",
+	remote = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Remote.Client.App"
+}
+
+
+function string:split(sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	self:gsub(pattern, function(c) fields[#fields+1] = c end)
+	return fields
+end
+
+
+function string:endswith(send)
+	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+end
+
+
+function build(args)
+	stdout:printLn("Building asset(s)...")
+	local cmdline = tools.pipeline .. " -p -standalone -s=Pipeline"
+	for i = 1, args:size() - 1 do
+		cmdline = cmdline .. " " .. args:get(i)
+	end
+	return run:execute(cmdline)
+end
+
+
+function deploy(args)
+	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
+	-- Get shared paths.
+	local paths = nil
+	if not debug then paths = os:getEnvironment("DEPLOY_SHARED_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_SHARED_PATH_DEBUG"):split("\n") end
+
+	-- Find files to deploy; qualitfy through paths.
+	local files = os:getEnvironment("DEPLOY_SHARED"):split("\n")
+	for _, p in ipairs(paths) do
+		local deployFiles = ""
+		for _, f in ipairs(files) do
+			local qf = Path(p):concat(Path(f))
+			if FileSystem.getInstance():exist(qf) then
+				deployFiles = deployFiles .. " " .. f
+			end
+		end
+		if deployFiles ~= "" then
+			-- TBD
+		end
+	end
+
+	return 0
+end
+
+
+function launch(args)
+	stdout:printLn("Launching Xbox360...")
+	return 0
+end
+
+
+function migrate(args)
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+	stdout:printLn("Migrating Xbox360...")
+
+	-- Build content database.
+	run:execute(tools.migrate .. " -p -s=Migrate")
+	if run:exitCode() ~= 0 then return run:exitCode() end
+
+	-- TBD
+
+	return 0
+end
+
+
+function main(args)
+	local action = args:get(0)
+	if action == "build" then
+		return build(args)
+	elseif action == "deploy" then
+		return deploy(args)
+	elseif action == "launch" then
+		return launch(args)
+	elseif action == "migrate" then
+		return migrate(args)
+	end
+	return 1
+end

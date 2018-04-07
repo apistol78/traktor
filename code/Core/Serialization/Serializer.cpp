@@ -63,7 +63,7 @@ void Serializer::serialize(ISerializable* inner)
 		return;
 
 	dataVersionMap_t dataVersions;
-	for (const TypeInfo* ti = &type_of(inner); ti != nullptr; ti = ti->getSuper())
+	for (const TypeInfo* ti = &type_of(inner); ti != 0; ti = ti->getSuper())
 		dataVersions.insert(std::make_pair(
 			ti,
 			ti->getVersion()

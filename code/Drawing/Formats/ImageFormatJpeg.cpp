@@ -14,11 +14,11 @@ extern "C"
 	#include <jpeglib.h>
 }
 
+#include "Core/Log/Log.h"
 #include "Drawing/Formats/ImageFormatJpeg.h"
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

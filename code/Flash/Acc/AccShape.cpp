@@ -123,12 +123,13 @@ bool AccShape::createFromTriangles(
 
 		// Collect unique line styles.
 		std::set< int32_t > uniqueLineStyles;
-		for (auto line : lines)
-			uniqueLineStyles.insert(line.lineStyle);
+		for (AlignedVector< Line >::const_iterator j = lines.begin(); j != lines.end(); ++j)
+			uniqueLineStyles.insert(j->lineStyle);
 
 		// Generate cluster and batches for each line style.
-		for (auto lineStyleIndex : uniqueLineStyles)
+		for (std::set< int32_t >::const_iterator i = uniqueLineStyles.begin(); i != uniqueLineStyles.end(); ++i)
 		{
+			int32_t lineStyleIndex = *i;
 			const LineStyle& lineStyle = lineStyles[lineStyleIndex - 1];
 			float width = lineStyle.getLineWidth() / 2.0f;
 

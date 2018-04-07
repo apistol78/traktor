@@ -31,6 +31,7 @@ void IcmpSocket::close()
 
 bool IcmpSocket::bind(const SocketAddressIPv4& socketAddress)
 {
+#if !defined(__PS3__) && !defined(__PS4__) && !defined(EMSCRIPTEN) && !defined(_XBOX)
 	struct sockaddr_in local = socketAddress.getSockAddr();
 	
 	if (m_socket == INVALID_SOCKET)
@@ -44,6 +45,9 @@ bool IcmpSocket::bind(const SocketAddressIPv4& socketAddress)
 		return false;
 
 	return true;
+#else
+	return false;
+#endif
 }
 
 bool IcmpSocket::bind(const SocketAddressIPv6& socketAddress)
@@ -53,6 +57,7 @@ bool IcmpSocket::bind(const SocketAddressIPv6& socketAddress)
 
 bool IcmpSocket::connect(const SocketAddressIPv4& socketAddress)
 {
+#if !defined(__PS3__) && !defined(__PS4__) && !defined(EMSCRIPTEN) && !defined(_XBOX)
 	struct sockaddr_in remote = socketAddress.getSockAddr();
 
 	if (m_socket == INVALID_SOCKET)
@@ -66,6 +71,9 @@ bool IcmpSocket::connect(const SocketAddressIPv4& socketAddress)
 		return false;
 
 	return true;
+#else
+	return false;
+#endif
 }
 
 bool IcmpSocket::connect(const SocketAddressIPv6& socketAddress)

@@ -114,6 +114,11 @@ bool RenderViewXbox360::isActive() const
 	return true;
 }
 
+bool RenderViewXbox360::isMinimized() const
+{
+	return false;
+}
+
 bool RenderViewXbox360::isFullScreen() const
 {
 	return true;
