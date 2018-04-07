@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#define T_HAVE_TYPES
 #include <rapidjson/reader.h>
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"

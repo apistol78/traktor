@@ -27,6 +27,7 @@ Library::~Library()
 
 bool Library::open(const Path& libraryName)
 {
+#if !defined(_XBOX)
 	std::wstring ln = libraryName.getPathName();
 	if (!endsWith< std::wstring >(toLower(ln), L".dll"))
 		ln += L".dll";
@@ -57,6 +58,9 @@ bool Library::open(const Path& libraryName)
 	}	
 
 	return bool(m_handle != NULL);
+#else
+	return false;
+#endif
 }
 
 bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)
@@ -111,13 +115,19 @@ void Library::detach()
 
 void* Library::find(const std::wstring& symbol)
 {
+#if !defined(_XBOX)
 	return (void*)GetProcAddress((HMODULE)m_handle, wstombs(symbol).c_str());
+#else
+	return 0;
+#endif
 }
 
 Path Library::getPath() const
 {
 	wchar_t fileName[MAX_PATH + 1] = { 0 };
+#if !defined(_XBOX)
 	GetModuleFileName((HMODULE)m_handle, fileName, sizeof_array(fileName));
+#endif
 	return Path(fileName);
 }
 

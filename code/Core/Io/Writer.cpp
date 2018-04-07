@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <algorithm>
+#include <vector>
 #include "Core/Io/Writer.h"
 
 namespace traktor

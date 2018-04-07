@@ -318,7 +318,7 @@ void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 					int32_t dataTypeVersion = parseString< int32_t >(s.substr(p + 1));
 
 					const TypeInfo* dataType = TypeInfo::find(dataTypeName);
-					if (!ensure(dataType != nullptr))
+					if (!ensure(dataType != 0))
 						return;
 
 					if (!ensure(dataType->getVersion() >= dataTypeVersion))

@@ -93,7 +93,7 @@
 								</item>
 								<item>
 									<first>PreprocessorDefinitions</first>
-									<second>_XBOX</second>
+									<second>_XBOX;_BIG_ENDIAN;NOMINMAX</second>
 								</item>
 								<item>
 									<first>RuntimeLibrary</first>
@@ -167,7 +167,7 @@
 								</item>
 								<item>
 									<first>PreprocessorDefinitions</first>
-									<second>_XBOX;_HAS_EXCEPTIONS=0;_SECURE_SCL=0</second>
+									<second>_XBOX;_BIG_ENDIAN;NOMINMAX;_HAS_EXCEPTIONS=0;_SECURE_SCL=0</second>
 								</item>
 								<item>
 									<first>RuntimeLibrary</first>
@@ -259,7 +259,7 @@
 								</item>
 								<item>
 									<first>PreprocessorDefinitions</first>
-									<second>_XBOX</second>
+									<second>_XBOX;_BIG_ENDIAN;NOMINMAX</second>
 								</item>
 								<item>
 									<first>RuntimeLibrary</first>
@@ -344,7 +344,7 @@
 								</item>
 								<item>
 									<first>PreprocessorDefinitions</first>
-									<second>_XBOX;_HAS_EXCEPTIONS=0;_SECURE_SCL=0</second>
+									<second>_XBOX;_BIG_ENDIAN;NOMINMAX;_HAS_EXCEPTIONS=0;_SECURE_SCL=0</second>
 								</item>
 								<item>
 									<first>RuntimeLibrary</first>
@@ -451,7 +451,7 @@
 								</item>
 								<item>
 									<first>PreprocessorDefinitions</first>
-									<second>_XBOX</second>
+									<second>_XBOX;_BIG_ENDIAN;NOMINMAX</second>
 								</item>
 								<item>
 									<first>RuntimeLibrary</first>
@@ -545,7 +545,7 @@
 								</item>
 								<item>
 									<first>PreprocessorDefinitions</first>
-									<second>_XBOX;_HAS_EXCEPTIONS=0;_SECURE_SCL=0</second>
+									<second>_XBOX;_BIG_ENDIAN;NOMINMAX;_HAS_EXCEPTIONS=0;_SECURE_SCL=0</second>
 								</item>
 								<item>
 									<first>RuntimeLibrary</first>
@@ -755,7 +755,7 @@
 								</item>
 								<item>
 									<first>PreprocessorDefinitions</first>
-									<second>_XBOX;_HAS_EXCEPTIONS=0;_SECURE_SCL=0</second>
+									<second>_XBOX;_BIG_ENDIAN;NOMINMAX;_HAS_EXCEPTIONS=0;_SECURE_SCL=0</second>
 								</item>
 								<item>
 									<first>RuntimeLibrary</first>
