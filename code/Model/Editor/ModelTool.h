@@ -9,6 +9,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <Editor/IEditorTool.h>
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_MODEL_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif 
+
 namespace traktor
 {
 	namespace model
@@ -16,7 +24,7 @@ namespace traktor
 
 class ModelToolDialog;
 
-class ModelTool : public editor::IEditorTool
+class T_DLLCLASS ModelTool : public editor::IEditorTool
 {
 	T_RTTI_CLASS;
 
