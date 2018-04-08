@@ -23,7 +23,7 @@ namespace traktor
 	namespace online
 	{
 
-class T_DLCLLASS GcGameConfiguration : public IGameConfiguration
+class T_DLLCLASS GcGameConfiguration : public IGameConfiguration
 {
 	T_RTTI_CLASS;
 
