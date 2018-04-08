@@ -8,6 +8,6 @@ source ../config.sh
 
 # Build Traktor
 pushd $TRAKTOR_HOME/build/osx
-make -j 4 -f "Extern OSX.mak" $CONFIG
-make -j 4 -f "Traktor OSX.mak" $CONFIG
+make -f "Extern OSX.mak" $CONFIG
+make -f "Traktor OSX.mak" $CONFIG
 popd
