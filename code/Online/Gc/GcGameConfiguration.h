@@ -10,12 +10,20 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <list>
 #include "Online/IGameConfiguration.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_ONLINE_GC_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif 
+
 namespace traktor
 {
 	namespace online
 	{
 
-class GcGameConfiguration : public IGameConfiguration
+class T_DLCLLASS GcGameConfiguration : public IGameConfiguration
 {
 	T_RTTI_CLASS;
 
