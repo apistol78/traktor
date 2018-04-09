@@ -111,7 +111,7 @@ function CC(solution, project, configuration, filePath, outputPath, output)
 	end
 end
 
-function LINK(solution, project, configuration, libraryPaths, libraries, externalLibraries, definitionFile, output)
+function LINK(solution, project, configuration, sourcePath, sourceFiles, libraryPaths, libraries, externalLibraries, definitionFile, output)
 	local profile = configuration:getTargetProfile()
 	local format = configuration:getTargetFormat()
 

@@ -397,8 +397,6 @@ bool HeightfieldTexturePipeline::buildOutput(
 			}
 		}
 
-		outputMap->save(L"data/temp/Unwrap.png");
-
 		Ref< render::TextureOutput > output = new render::TextureOutput();
 		output->m_textureFormat = render::TfR8G8B8A8;
 		output->m_generateNormalMap = false;

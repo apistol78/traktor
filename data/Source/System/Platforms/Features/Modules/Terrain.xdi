@@ -572,12 +572,12 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Core.bc</item>
-								<item>libTraktor.Heightfield.bc</item>
-								<item>libTraktor.Render.bc</item>
-								<item>libTraktor.Resource.bc</item>
-								<item>libTraktor.Terrain.bc</item>
-								<item>libTraktor.World.bc</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Heightfield.a</item>
+								<item>libTraktor.Render.a</item>
+								<item>libTraktor.Resource.a</item>
+								<item>libTraktor.Terrain.a</item>
+								<item>libTraktor.World.a</item>
 							</value>
 						</second>
 					</item>

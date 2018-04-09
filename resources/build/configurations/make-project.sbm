@@ -441,7 +441,7 @@ for i = 0, configurations:size() - 1 do
 		end
 	end
 
-	LINK(solution, project, configuration, libraryPaths[i], libraries[i], externalLibraries[i], definitionFile, output)
+	LINK(solution, project, configuration, sourcePath, sourceFiles, libraryPaths[i], libraries[i], externalLibraries[i], definitionFile, output)
 
 	local aggregationItems = configuration:getAggregationItems()
 	for i = 0, aggregationItems:size() - 1 do

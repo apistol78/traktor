@@ -577,13 +577,13 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libExtern.sqlite.bc</item>
-								<item>libTraktor.Core.bc</item>
-								<item>libTraktor.Net.bc</item>
-								<item>libTraktor.Online.Local.bc</item>
-								<item>libTraktor.Online.bc</item>
-								<item>libTraktor.Sql.Sqlite3.bc</item>
-								<item>libTraktor.Sql.bc</item>
+								<item>libExtern.sqlite.a</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Net.a</item>
+								<item>libTraktor.Online.Local.a</item>
+								<item>libTraktor.Online.a</item>
+								<item>libTraktor.Sql.Sqlite3.a</item>
+								<item>libTraktor.Sql.a</item>
 							</value>
 						</second>
 					</item>

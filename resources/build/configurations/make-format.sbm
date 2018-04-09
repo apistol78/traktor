@@ -96,7 +96,7 @@ function CC(solution, project, configuration, filePath, outputPath, output)
 	end
 end
 
-function LINK(solution, project, configuration, libraryPaths, libraries, externalLibraries, definitionFile, output)
+function LINK(solution, project, configuration, sourcePath, sourceFiles, libraryPaths, libraries, externalLibraries, definitionFile, output)
 	local os = OS.getInstance():getEnvironment("MAKE_OS")
 	local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
 	local profile = configuration:getTargetProfile()
@@ -165,7 +165,17 @@ function LINK(solution, project, configuration, libraryPaths, libraries, externa
 	end
 
 	if format == "StaticLibrary" then
-		output:printLn("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. " ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+
+		-- Prevent "line too long" error if too many files present.
+		if #sourceFiles > 16 then
+			for _, file in ipairs(sourceFiles) do
+				local f = FileSystem.getInstance():getRelativePath(file, sourcePath)
+				output:printLn("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. " ../" .. configuration:getName() .. "/" .. productName .. " " .. configuration:getName() .. "/" .. OBJNAME(f))
+			end
+		else
+			output:printLn("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. " ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+		end
+
 	elseif format == "SharedLibrary" then
 		if os ~= "osx" then
 			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS) " .. lo)

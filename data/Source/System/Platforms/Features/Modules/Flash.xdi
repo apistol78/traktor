@@ -665,21 +665,21 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libExtern.jpeg-6b.bc</item>
-								<item>libExtern.liblzf-3.6.bc</item>
-								<item>libExtern.lpng.bc</item>
-								<item>libExtern.minilzo-2.05.bc</item>
-								<item>libExtern.zlib-1.2.3.bc</item>
-								<item>libTraktor.Compress.bc</item>
-								<item>libTraktor.Core.bc</item>
-								<item>libTraktor.Database.bc</item>
-								<item>libTraktor.Drawing.bc</item>
-								<item>libTraktor.Html.bc</item>
-								<item>libTraktor.Net.bc</item>
-								<item>libTraktor.Render.bc</item>
-								<item>libTraktor.Resource.bc</item>
-								<item>libTraktor.Sound.bc</item>
-								<item>libTraktor.Xml.bc</item>
+								<item>libExtern.jpeg-6b.a</item>
+								<item>libExtern.liblzf-3.6.a</item>
+								<item>libExtern.lpng.a</item>
+								<item>libExtern.minilzo-2.05.a</item>
+								<item>libExtern.zlib-1.2.3.a</item>
+								<item>libTraktor.Compress.a</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Database.a</item>
+								<item>libTraktor.Drawing.a</item>
+								<item>libTraktor.Html.a</item>
+								<item>libTraktor.Net.a</item>
+								<item>libTraktor.Render.a</item>
+								<item>libTraktor.Resource.a</item>
+								<item>libTraktor.Sound.a</item>
+								<item>libTraktor.Xml.a</item>
 							</value>
 						</second>
 					</item>

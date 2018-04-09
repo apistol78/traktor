@@ -42,7 +42,7 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Input.bc</item>
+								<item>libTraktor.Input.a</item>
 							</value>
 						</second>
 					</item>

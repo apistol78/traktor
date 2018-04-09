@@ -604,14 +604,14 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Amalgam.Run.App.bc</item>
-								<item>libTraktor.Amalgam.Run.bc</item>
-								<item>libTraktor.Amalgam.bc</item>
-								<item>libTraktor.Core.bc</item>
-								<item>libTraktor.Database.bc</item>
-								<item>libTraktor.Net.bc</item>
-								<item>libTraktor.Script.bc</item>
-								<item>libTraktor.Xml.bc</item>
+								<item>libTraktor.Amalgam.Run.App.a</item>
+								<item>libTraktor.Amalgam.Run.a</item>
+								<item>libTraktor.Amalgam.a</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Database.a</item>
+								<item>libTraktor.Net.a</item>
+								<item>libTraktor.Script.a</item>
+								<item>libTraktor.Xml.a</item>
 							</value>
 						</second>
 					</item>

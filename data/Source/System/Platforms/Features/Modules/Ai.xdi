@@ -514,10 +514,10 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libExtern.detour.bc</item>
-								<item>libExtern.recast.bc</item>
-								<item>libTraktor.Ai.bc</item>
-								<item>libTraktor.Core.bc</item>
+								<item>libExtern.detour.a</item>
+								<item>libExtern.recast.a</item>
+								<item>libTraktor.Ai.a</item>
+								<item>libTraktor.Core.a</item>
 							</value>
 						</second>
 					</item>

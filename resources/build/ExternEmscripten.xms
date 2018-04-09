@@ -33,7 +33,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.agg.bc</sourceFile>
+							<sourceFile>libExtern.agg.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -63,7 +63,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.agg.bc</sourceFile>
+							<sourceFile>libExtern.agg.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -134,7 +134,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.bullet.bc</sourceFile>
+							<sourceFile>libExtern.bullet.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -164,7 +164,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.bullet.bc</sourceFile>
+							<sourceFile>libExtern.bullet.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -324,7 +324,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.detour.bc</sourceFile>
+							<sourceFile>libExtern.detour.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -352,7 +352,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.detour.bc</sourceFile>
+							<sourceFile>libExtern.detour.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -411,7 +411,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.expat.bc</sourceFile>
+							<sourceFile>libExtern.expat.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -442,7 +442,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.expat.bc</sourceFile>
+							<sourceFile>libExtern.expat.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -498,7 +498,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.jpeg-6b.bc</sourceFile>
+							<sourceFile>libExtern.jpeg-6b.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -528,7 +528,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.jpeg-6b.bc</sourceFile>
+							<sourceFile>libExtern.jpeg-6b.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -768,7 +768,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libflac-1.2.1.bc</sourceFile>
+							<sourceFile>libExtern.libflac-1.2.1.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -802,7 +802,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libflac-1.2.1.bc</sourceFile>
+							<sourceFile>libExtern.libflac-1.2.1.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -932,7 +932,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.liblzf-3.6.bc</sourceFile>
+							<sourceFile>libExtern.liblzf-3.6.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -961,7 +961,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.liblzf-3.6.bc</sourceFile>
+							<sourceFile>libExtern.liblzf-3.6.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1029,7 +1029,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libmad-0.15.1b.bc</sourceFile>
+							<sourceFile>libExtern.libmad-0.15.1b.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1063,7 +1063,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libmad-0.15.1b.bc</sourceFile>
+							<sourceFile>libExtern.libmad-0.15.1b.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1207,7 +1207,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libogg-1.3.0.bc</sourceFile>
+							<sourceFile>libExtern.libogg-1.3.0.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1236,7 +1236,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libogg-1.3.0.bc</sourceFile>
+							<sourceFile>libExtern.libogg-1.3.0.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1285,7 +1285,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libtheora-1.1.1.bc</sourceFile>
+							<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1316,7 +1316,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libtheora-1.1.1.bc</sourceFile>
+							<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1372,7 +1372,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libExtern.libvorbis-1.3.3.bc</sourceFile>
+										<sourceFile>libExtern.libvorbis-1.3.3.a</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -1403,7 +1403,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libExtern.libvorbis-1.3.3.bc</sourceFile>
+										<sourceFile>libExtern.libvorbis-1.3.3.a</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -1718,7 +1718,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lpng.bc</sourceFile>
+							<sourceFile>libExtern.lpng.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1748,7 +1748,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lpng.bc</sourceFile>
+							<sourceFile>libExtern.lpng.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1861,7 +1861,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libExtern.zlib-1.2.3.bc</sourceFile>
+										<sourceFile>libExtern.zlib-1.2.3.a</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -1890,7 +1890,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libExtern.zlib-1.2.3.bc</sourceFile>
+										<sourceFile>libExtern.zlib-1.2.3.a</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -1940,7 +1940,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lua.bc</sourceFile>
+							<sourceFile>libExtern.lua.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1969,7 +1969,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lua.bc</sourceFile>
+							<sourceFile>libExtern.lua.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2016,7 +2016,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lwObject.bc</sourceFile>
+							<sourceFile>libExtern.lwObject.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2045,7 +2045,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.lwObject.bc</sourceFile>
+							<sourceFile>libExtern.lwObject.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2089,7 +2089,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.minilzo-2.05.bc</sourceFile>
+							<sourceFile>libExtern.minilzo-2.05.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2119,7 +2119,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.minilzo-2.05.bc</sourceFile>
+							<sourceFile>libExtern.minilzo-2.05.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2170,7 +2170,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.mpg123-1.13.2.bc</sourceFile>
+							<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2203,7 +2203,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.mpg123-1.13.2.bc</sourceFile>
+							<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2459,7 +2459,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.recast.bc</sourceFile>
+							<sourceFile>libExtern.recast.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2487,7 +2487,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.recast.bc</sourceFile>
+							<sourceFile>libExtern.recast.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2545,7 +2545,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.sqlite.bc</sourceFile>
+							<sourceFile>libExtern.sqlite.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2575,7 +2575,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.sqlite.bc</sourceFile>
+							<sourceFile>libExtern.sqlite.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2627,7 +2627,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.squish-1.10.bc</sourceFile>
+							<sourceFile>libExtern.squish-1.10.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2657,7 +2657,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.squish-1.10.bc</sourceFile>
+							<sourceFile>libExtern.squish-1.10.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2701,7 +2701,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.stb_vorbis.bc</sourceFile>
+							<sourceFile>libExtern.stb_vorbis.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2727,7 +2727,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.stb_vorbis.bc</sourceFile>
+							<sourceFile>libExtern.stb_vorbis.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

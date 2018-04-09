@@ -521,9 +521,9 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Core.bc</item>
-								<item>libTraktor.Net.bc</item>
-								<item>libTraktor.Telemetry.bc</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Net.a</item>
+								<item>libTraktor.Telemetry.a</item>
 							</value>
 						</second>
 					</item>
