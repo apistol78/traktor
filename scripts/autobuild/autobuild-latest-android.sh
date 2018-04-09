@@ -8,6 +8,6 @@ if [ "$CONFIG" == "" ]; then CONFIG=all; fi
 
 # Build Traktor
 pushd $TRAKTOR_HOME/build/android
-make -j 4 -f "Extern Android.mak" $CONFIG
-make -j 4 -f "Traktor Android.mak" $CONFIG
+make -f "Extern Android.mak" $CONFIG
+make -f "Traktor Android.mak" $CONFIG
 popd

@@ -8,6 +8,6 @@ source ../config.sh
 
 # Build Traktor
 pushd $TRAKTOR_HOME/build/ios
-make -j 8 -f "Extern iOS.mak" $CONFIG
-make -j 8 -f "Traktor iOS.mak" $CONFIG
+make -f "Extern iOS.mak" $CONFIG
+make -f "Traktor iOS.mak" $CONFIG
 popd
