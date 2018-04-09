@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="7">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="22">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="24">
 		<viewNearZ>1</viewNearZ>
 		<viewFarZ>1000</viewFarZ>
 		<linearLighting>true</linearLighting>
-		<occlusionCullingEnabled>false</occlusionCullingEnabled>
-		<depthPassEnabled>true</depthPassEnabled>
+		<occlusionCulling>false</occlusionCulling>
+		<depthPass>true</depthPass>
 		<shadowSettings>
 			<disabled>
 				<projection>SpUniform</projection>
@@ -73,7 +73,7 @@
 				<maskFilter>{00000000-0000-0000-0000-000000000000}</maskFilter>
 			</ultra>
 		</shadowSettings>
-		<fogEnabled>false</fogEnabled>
+		<fog>false</fog>
 		<fogDistanceY>0</fogDistanceY>
 		<fogDistanceZ>90</fogDistanceZ>
 		<fogDensityY>0</fogDensityY>
@@ -104,11 +104,13 @@
 						<rotation>-0.076577, -0.285037, -0.022852, 0.95518</rotation>
 					</transform>
 					<components>
-						<item type="traktor.world.LightComponentData">
+						<item type="traktor.world.LightComponentData" version="2">
 							<lightType>LtDirectional</lightType>
 							<sunColor>2, 2, 2, 0</sunColor>
 							<baseColor>0.5, 0.5, 0.5, 0</baseColor>
 							<shadowColor>0.25, 0.25, 0.25, 0</shadowColor>
+							<probeDiffuseTexture>{00000000-0000-0000-0000-000000000000}</probeDiffuseTexture>
+							<probeSpecularTexture>{00000000-0000-0000-0000-000000000000}</probeSpecularTexture>
 							<cloudShadowTexture>{00000000-0000-0000-0000-000000000000}</cloudShadowTexture>
 							<castShadow>true</castShadow>
 							<range>10</range>
@@ -169,9 +171,8 @@
 						<rotation>0, 0, 0, 1</rotation>
 					</transform>
 					<components>
-						<item type="traktor.weather.SkyComponentData">
+						<item type="traktor.weather.SkyComponentData" version="1">
 							<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
-							<sunDirection>0, 1, 0, 0</sunDirection>
 							<offset>0</offset>
 						</item>
 					</components>

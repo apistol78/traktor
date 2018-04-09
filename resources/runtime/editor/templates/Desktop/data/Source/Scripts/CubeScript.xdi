@@ -5,16 +5,10 @@
 -- CubeScript
 import(traktor)
 
-CubeScript = CubeScript or inherit(traktor.world.ComponentEntity)
-CubeScript_meta = CubeScript_meta or { __index = CubeScript }
+CubeScript = CubeScript or class("CubeScript", traktor.world.ComponentEntity)
 
-function CubeScript.new(o)
-	o = o or {}
-	setmetatable(o, CubeScript_meta)
-
-	o.angle = 0
-
-	return o
+function CubeScript:new()
+	self.angle = 0
 end
 
 function CubeScript:update(totalTime, deltaTime)
@@ -28,7 +22,6 @@ end
 function CubeScript:reset()
 	self.angle = 0
 end
-
 
 	]]>
 	</text>
