@@ -42,6 +42,9 @@ cp scripts/run* $OUTPUT/scripts/
 cp -r data/Assets $OUTPUT/data/
 cp -r data/Source $OUTPUT/data/
 
+# Documentation
+cp -r documentation $OUTPUT/
+
 # Workspace
 cp *.workspace $OUTPUT/
 
