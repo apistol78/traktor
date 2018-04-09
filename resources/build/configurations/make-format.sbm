@@ -127,7 +127,10 @@ function LINK(solution, project, configuration, libraryPaths, libraries, externa
 	if format ~= "StaticLibrary" then
 		if toolchain == "vc" then
 			lo = lo .. " /LIBPATH:../" .. configuration:getName()
-		elseif toolchain == "gcc" or toolchain == "clang" then
+		elseif toolchain == "gcc" then
+			lo = lo .. " -L../" .. configuration:getName()
+			lo = lo .. " -Wl,-rpath-link=../" .. configuration:getName()
+		elseif toolchain == "clang" then
 			lo = lo .. " -L../" .. configuration:getName()
 		end		
 		for _, libraryPath in ipairs(libraryPaths) do
