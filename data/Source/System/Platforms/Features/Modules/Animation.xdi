@@ -589,13 +589,13 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Animation.bc</item>
-								<item>libTraktor.Core.bc</item>
-								<item>libTraktor.Database.bc</item>
-								<item>libTraktor.Mesh.bc</item>
-								<item>libTraktor.Physics.bc</item>
-								<item>libTraktor.Render.bc</item>
-								<item>libTraktor.World.bc</item>
+								<item>libTraktor.Animation.a</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Database.a</item>
+								<item>libTraktor.Mesh.a</item>
+								<item>libTraktor.Physics.a</item>
+								<item>libTraktor.Render.a</item>
+								<item>libTraktor.World.a</item>
 							</value>
 						</second>
 					</item>

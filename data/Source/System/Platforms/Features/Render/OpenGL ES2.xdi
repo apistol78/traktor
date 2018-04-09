@@ -277,11 +277,11 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Compress.bc</item>
-								<item>libTraktor.Core.bc</item>
-								<item>libTraktor.Render.OpenGL.ES2.bc</item>
-								<item>libTraktor.Render.bc</item>
-								<item>libTraktor.Resource.bc</item>
+								<item>libTraktor.Compress.a</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Render.OpenGL.ES2.a</item>
+								<item>libTraktor.Render.a</item>
+								<item>libTraktor.Resource.a</item>
 							</value>
 						</second>
 					</item>

@@ -613,14 +613,14 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Core.bc</item>
-								<item>libTraktor.Database.bc</item>
-								<item>libTraktor.Mesh.bc</item>
-								<item>libTraktor.Render.bc</item>
-								<item>libTraktor.Resource.bc</item>
-								<item>libTraktor.Sound.bc</item>
-								<item>libTraktor.Spray.bc</item>
-								<item>libTraktor.World.bc</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Database.a</item>
+								<item>libTraktor.Mesh.a</item>
+								<item>libTraktor.Render.a</item>
+								<item>libTraktor.Resource.a</item>
+								<item>libTraktor.Sound.a</item>
+								<item>libTraktor.Spray.a</item>
+								<item>libTraktor.World.a</item>
 							</value>
 						</second>
 					</item>

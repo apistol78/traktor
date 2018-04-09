@@ -205,29 +205,24 @@ function migrate(args)
 --		emcc = emcc .. " -g"
 --	end
 
-	-- Determine path to module libraries.
-	local prepend
-	if not debug then
-	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/emscripten/releasestatic/"
-	else
-		stdout:printLn("Using *DEBUG* binaries")
-	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/emscripten/debugstatic/"
+	-- Get library paths.
+	local libraryPaths = ""
+	local paths = ""
+	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
+	 for _, p in pairs(paths) do
+		libraryPaths = libraryPaths .. " -L " .. Path(p):getPathName() .. ""
 	end
 
 	-- Collect libraries to link.
-	local linkerLibraries = {}
-	local linkerExternLibraries = {}
-
-	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	local libraries = ""
+	local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
 	for _, f in ipairs(files) do
-		if f:endswith(".bc") then
-			if not f:startswith("libExtern") then
-				table.insert(linkerLibraries, f)
-			else
-				table.insert(linkerExternLibraries, f)
-			end
-		elseif f:endswith(".a") or f:endswith(".o") then
-			table.insert(linkerLibraries, f)
+		if f:endswith(".a") then
+			f = f:sub(4)
+			f = f:sub(1, #f - 2)
+			libraries = libraries .. " -l" .. f		
+		elseif f:endswith(".bc") or f:endswith(".o") then
+			libraries = libraries .. " " .. f
 		else
 			stderr:printLn("Unknown deploy file \"" .. f .. "\"")
 		end
@@ -235,7 +230,7 @@ function migrate(args)
 
 	-- Create the module initialization file.
 	stdout:printLn("Generating Linkage.cpp...")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/emscripten/Linkage.cpp.template", "Linkage.cpp") ~= 0 then
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Linkage.cpp.template", "Linkage.cpp") ~= 0 then
 		stderr:printLn("Failed to generate Linkage.cpp")
 		return 1
 	end	
@@ -251,22 +246,17 @@ function migrate(args)
 
 	-- Build linker command line.
 	local cmd = "\"" .. emcc .. "\" "
-	cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+	-- cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 	cmd = cmd .. " -s USE_PTHREADS=0"
 	cmd = cmd .. " -s TOTAL_MEMORY=" .. totalMemory
-	cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0"
+	-- cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0"
 	cmd = cmd .. " -O2"
+	cmd = cmd .. libraryPaths
+	cmd = cmd .. libraries
+	cmd = cmd .. libraries
 	cmd = cmd .. " Linkage.o"
-	for _, m in ipairs(linkerLibraries) do
-		cmd = cmd .. " " .. prepend .. m
-	end
-	for _, m in ipairs(linkerLibraries) do
-		cmd = cmd .. " " .. prepend .. m
-	end
-	for _, m in ipairs(linkerExternLibraries) do
-		cmd = cmd .. " " .. prepend .. m
-	end
 	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).js --preload-file Application.config --preload-file Content.compact"
+	-- stdout:printLn(cmd)
 
 	-- Link files into an executable product.
 	local result = run:execute(cmd) --, nil)
@@ -277,8 +267,8 @@ function migrate(args)
 	end
 
 	-- Create html loader.
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/emscripten/Index.html.template", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
-		stderr:printLn("Failed to generate html loader.")
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Index.html.template", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
+		stderr:printLn("Failed to generate HTML loader.")
 		return 1
 	end	
 

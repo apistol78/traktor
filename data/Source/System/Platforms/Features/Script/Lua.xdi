@@ -543,11 +543,11 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libExtern.lua.bc</item>
-								<item>libTraktor.Core.bc</item>
-								<item>libTraktor.Resource.bc</item>
-								<item>libTraktor.Script.Lua.bc</item>
-								<item>libTraktor.Script.bc</item>
+								<item>libExtern.lua.a</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Resource.a</item>
+								<item>libTraktor.Script.Lua.a</item>
+								<item>libTraktor.Script.a</item>
 							</value>
 						</second>
 					</item>

@@ -504,8 +504,8 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Core.bc</item>
-								<item>libTraktor.Json.bc</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Json.a</item>
 							</value>
 						</second>
 					</item>

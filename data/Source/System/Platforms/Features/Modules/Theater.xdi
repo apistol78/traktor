@@ -538,10 +538,10 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libTraktor.Core.bc</item>
-								<item>libTraktor.Scene.bc</item>
-								<item>libTraktor.Theater.bc</item>
-								<item>libTraktor.World.bc</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Scene.a</item>
+								<item>libTraktor.Theater.a</item>
+								<item>libTraktor.World.a</item>
 							</value>
 						</second>
 					</item>

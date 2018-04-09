@@ -59,7 +59,7 @@ PrefabMergePipeline::PrefabMergePipeline()
 bool PrefabMergePipeline::create(const editor::IPipelineSettings* settings)
 {
 #if defined(T_SAVE_PREFABS)
-	FileSystem::getInstance().makeAllDirectories(L"temp/Prefabs");
+	FileSystem::getInstance().makeAllDirectories(L"data/Temp/Prefabs");
 #endif
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_visualMeshSnap = settings->getProperty< float >(L"PrefabPipeline.VisualMeshSnap", 0.01f);
@@ -204,7 +204,7 @@ bool PrefabMergePipeline::buildOutput(
 
 #if defined(T_SAVE_PREFABS)
 		// Build output mesh from merged model.
-		model::ModelFormat::writeAny(Path(L"temp/Prefabs/" + merge->getName() + L".obj"), mergedModel);
+		model::ModelFormat::writeAny(Path(L"data/Temp/Prefabs/" + merge->getName() + L".obj"), mergedModel);
 #endif
 		// Build output mesh from merged model.
 		Ref< mesh::MeshAsset > mergedMeshAsset = new mesh::MeshAsset();
@@ -285,7 +285,7 @@ bool PrefabMergePipeline::buildOutput(
 
 #if defined(T_SAVE_PREFABS)
 		// Build output mesh from merged model.
-		model::ModelFormat::writeAny(Path(L"temp/Prefabs/" + merge->getName() + L".obj"), mergedModel);
+		model::ModelFormat::writeAny(Path(L"data/Temp/Prefabs/" + merge->getName() + L".obj"), mergedModel);
 #endif
 
 		Ref< physics::MeshAsset > mergedMeshAsset = new physics::MeshAsset();

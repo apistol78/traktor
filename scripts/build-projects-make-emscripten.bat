@@ -11,8 +11,8 @@ set MAKE_INCLUDE=$(TRAKTOR_HOME)\resources\build\configurations\make-config-emsc
 :: Used by default format.
 set MAKE_TOOLCHAIN=clang
 set MAKE_OBJECT_FILE=%%s.o
-set MAKE_STATIC_LIBRARY_FILE=lib%%s.bc
-set MAKE_SHARED_LIBRARY_FILE=lib%%s.bc
+set MAKE_STATIC_LIBRARY_FILE=lib%%s.a
+set MAKE_SHARED_LIBRARY_FILE=lib%%s.a
 set MAKE_EXECUTABLE_FILE=%%s.js
 
 %SOLUTIONBUILDER% ^
