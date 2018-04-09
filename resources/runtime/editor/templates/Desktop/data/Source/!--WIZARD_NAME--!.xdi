@@ -5,7 +5,7 @@
 		<item type="traktor.amalgam.TargetConfiguration" version="3">
 			<name>Windows (x86)</name>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
-			<icon/>
+			<icon>$(TRAKTOR_HOME)/resources/runtime/deploy/DefaultIcon.png</icon>
 			<features>
 				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
 				<item>{AE8D0249-D7AD-6245-AF33-6BF89548FFCC}</item>
@@ -41,7 +41,7 @@
 		<item type="traktor.amalgam.TargetConfiguration" version="3">
 			<name>Windows (x64)</name>
 			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
-			<icon/>
+			<icon>$(TRAKTOR_HOME)/resources/runtime/deploy/DefaultIcon.png</icon>
 			<features>
 				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
 				<item>{EB30F688-CB36-074B-9F05-C12D5E90E231}</item>
@@ -77,7 +77,7 @@
 		<item type="traktor.amalgam.TargetConfiguration" version="3">
 			<name>OSX</name>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
-			<icon/>
+			<icon>$(TRAKTOR_HOME)/resources/runtime/deploy/DefaultIcon.png</icon>
 			<features>
 				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
 				<item>{EB30F688-CB36-074B-9F05-C12D5E90E231}</item>
@@ -110,7 +110,7 @@
 		<item type="traktor.amalgam.TargetConfiguration" version="3">
 			<name>Linux</name>
 			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
-			<icon/>
+			<icon>$(TRAKTOR_HOME)/resources/runtime/deploy/DefaultIcon.png</icon>
 			<features>
 				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
 				<item>{EB30F688-CB36-074B-9F05-C12D5E90E231}</item>

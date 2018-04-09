@@ -6,19 +6,16 @@
 
 -- MainStage
 
-MainStage = MainStage or inherit(traktor.amalgam.Stage)
-MainStage_meta = MainStage_meta or { __index = MainStage }
+MainStage = MainStage or class("MainStage", traktor.amalgam.Stage)
 
-function MainStage.new(o, params, environment)
-	o = o or {}
-	setmetatable(o, MainStage_meta)
+function MainStage:new(params, environment)
 
 	-- Save input mapping in member for quick access.
-	o.inputMapping = environment:getInput():getInputMapping()
+	self.inputMapping = environment.input.inputMapping
 
 	-- Access entities and save inital transform of camera.
-	local cubeEntity = o.world:getEntity("Cube")
-	local cameraEntity = o.world:getEntity("Camera")
+	local cubeEntity = self.world:getEntity("Cube")
+	local cameraEntity = self.world:getEntity("Camera")
 	local cameraTransform = cameraEntity:getTransform()
 
 	-- Initialize UiKit.
@@ -28,26 +25,25 @@ function MainStage.new(o, params, environment)
 	)
 
 	-- Create UI frame with virtual size of 1280x720.
-	local root = o.ui:getRoot()
-	o._frame = Frame.new(
+	local root = self.ui.root
+	self._frame = Frame(
 		root,
 		1280, 720,
 		TableLayout.new({ 0 }, { 0 }, 4, 4, 4, 4)
 	)
 
 	-- Create static label.
-	o._lbl = Static.new(o._frame, "Time: 0")
+	self._lbl = Static(self._frame, "Time: 0")
 
 	-- Create reset button.
-	o._btn = PushButton.new(o._frame, "Reset")
-	o._btn:setOnClick(function()
+	self._btn = PushButton(self._frame, "Reset")
+	self._btn:setOnClick(function()
 		cubeEntity:reset()
 		cameraEntity:setTransform(cameraTransform)
 	end)
 
 	-- Ensure layout is updated.
-	o._frame:update()
-	return o
+	self._frame:update()
 end
 
 function MainStage:finalize()
@@ -56,7 +52,7 @@ function MainStage:finalize()
 end
 
 function MainStage:update(info)
-	local dT = info:getSimulationDeltaTime()
+	local dT = info.simulationDeltaTime
 
 	-- Update input.
 	local moveX = self.inputMapping:getStateValue("STATE_MOVE_X")
@@ -68,7 +64,7 @@ function MainStage:update(info)
 	cameraEntity:setTransform(cameraTransform)
 
 	-- Update UI.
-	self._lbl:setText("Time: " .. info:getSimulationTime())
+	self._lbl:setText("Time: " .. info.simulationTime)
 end
 
 	]]>
