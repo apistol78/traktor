@@ -5,7 +5,7 @@ call %~dp0config.bat
 :: Mandatory parameters.
 set MAKE_OS=windows
 set MAKE_DIALECT=nmake
-set MAKE_FORMAT=%TRAKTOR_HOME%\resources\build\configurations\make-format.sbm
+set MAKE_FORMAT=%TRAKTOR_HOME%\resources\build\configurations\make-format-emscripten.sbm
 set MAKE_INCLUDE=$(TRAKTOR_HOME)\resources\build\configurations\make-config-emscripten.inc
 
 :: Used by default format.

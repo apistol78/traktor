@@ -165,7 +165,11 @@ function LINK(solution, project, configuration, sourcePath, sourceFiles, library
 	end
 
 	if format == "StaticLibrary" then
-		output:printLn("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. " ../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS)")
+		for _, file in ipairs(sourceFiles) do
+			local f = FileSystem.getInstance():getRelativePath(file, sourcePath)
+			output:printLn("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. " ../" .. configuration:getName() .. "/" .. productName .. " " .. configuration:getName() .. "/" .. OBJNAME(f))
+		end
+
 	elseif format == "SharedLibrary" then
 		if os ~= "osx" then
 			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName .. " $(" .. configuration:getName() .. "_OBJS) " .. lo)
