@@ -44,6 +44,14 @@ void t_user_flush(png_structp png_ptr)
 		stream->flush();
 }
 
+void t_user_warning(png_structp png_ptr, png_const_charp warning)
+{
+}
+
+void t_user_error(png_structp png_ptr, png_const_charp error)
+{
+}
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatPng", ImageFormatPng, IImageFormat)
@@ -61,6 +69,8 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (png_ptr == 0)
 		return 0;
+
+	png_set_error_fn(png_ptr, 0, t_user_error, t_user_warning);
 
 	if (setjmp(png_jmpbuf(png_ptr)))
 	{
