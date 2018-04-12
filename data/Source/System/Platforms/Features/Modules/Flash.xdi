@@ -131,7 +131,7 @@
 						<first>DEPLOY_SHARED_PATH_DEBUG</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>$(TRAKTOR_HOME)/bin/latest/linux32/debugshared</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux/debugshared</item>
 							</value>
 						</second>
 					</item>
@@ -139,7 +139,7 @@
 						<first>DEPLOY_SHARED_PATH_RELEASE</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>$(TRAKTOR_HOME)/bin/latest/linux32/releaseshared</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux/releaseshared</item>
 							</value>
 						</second>
 					</item>
@@ -153,7 +153,7 @@
 						<first>DEPLOY_STATIC_PATH_DEBUG</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>$(TRAKTOR_HOME)/bin/latest/linux32/debugstatic</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux/debugstatic</item>
 							</value>
 						</second>
 					</item>
@@ -161,7 +161,7 @@
 						<first>DEPLOY_STATIC_PATH_RELEASE</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>$(TRAKTOR_HOME)/bin/latest/linux32/releasestatic</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux/releasestatic</item>
 							</value>
 						</second>
 					</item>
