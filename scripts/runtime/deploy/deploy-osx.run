@@ -114,7 +114,10 @@ function migrate(args)
 		for _, f in ipairs(files) do
 			local qf = Path(p):concat(Path(f))
 			if FileSystem.getInstance():exist(qf) then
-				run:replace(qf:getPathName(), bundle .. "/Contents/MacOS/" .. f)
+				if not run:replace(qf:getPathName(), bundle .. "/Contents/MacOS/" .. f) then
+					stderr:printLn("Unable to copy file \"" .. f .. "\" to bundle")
+					return 1
+				end
 			end
 		end
 	end
