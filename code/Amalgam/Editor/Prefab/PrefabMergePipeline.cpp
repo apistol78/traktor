@@ -21,7 +21,7 @@
 #include "Model/Operations/Transform.h"
 #include "Physics/Editor/MeshAsset.h"
 
-#define T_SAVE_PREFABS
+//#define T_SAVE_PREFABS
 
 namespace traktor
 {
