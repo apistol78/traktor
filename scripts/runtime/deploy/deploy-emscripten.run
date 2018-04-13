@@ -251,12 +251,12 @@ function migrate(args)
 	cmd = cmd .. " -s TOTAL_MEMORY=" .. totalMemory
 	-- cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0"
 	cmd = cmd .. " -O2"
+	cmd = cmd .. " Linkage.o"
 	cmd = cmd .. libraryPaths
 	cmd = cmd .. libraries
 	cmd = cmd .. libraries
-	cmd = cmd .. " Linkage.o"
 	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).js --preload-file Application.config --preload-file Content.compact"
-	-- stdout:printLn(cmd)
+	stdout:printLn(cmd)
 
 	-- Link files into an executable product.
 	local result = run:execute(cmd) --, nil)
