@@ -92,6 +92,9 @@ function migrate(args)
 	run:execute(tools.migrate .. " -p -s=Migrate")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
+	-- Create application folders.
+	run:mkdir("bin")
+
 	-- Get shared paths.
 	local paths = nil
 	if not debug then paths = os:getEnvironment("DEPLOY_SHARED_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_SHARED_PATH_DEBUG"):split("\n") end
