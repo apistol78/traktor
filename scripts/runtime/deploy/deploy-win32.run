@@ -199,7 +199,7 @@ local function deployStatic(args)
 			if f ~= "" and not f:endswith(".lib") then
 				local qf = Path(p):concat(Path(f))
 				if FileSystem.getInstance():exist(qf) then
-					run:pushd(p:getPathName())
+					run:pushd(p)
 					run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. f, nil)
 					run:popd()
 				end
