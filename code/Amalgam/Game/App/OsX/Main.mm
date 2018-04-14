@@ -1,6 +1,6 @@
 #import <Cocoa/Cocoa.h>
 
-#include "Amalgam/Game/App/MacOSX/ErrorDialog.h"
+#include "Amalgam/Game/App/OsX/ErrorDialog.h"
 #include "Amalgam/Game/Impl/Application.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/FileSystem.h"
