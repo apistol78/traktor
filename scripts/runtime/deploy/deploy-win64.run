@@ -188,19 +188,22 @@ local function deployStatic(args)
 	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" $(DEPLOY_EXECUTABLE).exe", nil)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
-	-- Deploy separate files into remote folder.
+	-- Get shared paths.
+	local paths = nil
+	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
+
+	-- Find files to deploy; qualitfy through paths.
 	local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
-	for _, f in pairs(files) do
-		if f ~= "" and not f:endswith(".lib") then
-	--		if not debug then
-	--			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releasestatic")
-	--		else
-	--			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugstatic")
-	--		end
-	--		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. copyFiles, nil)
-	--		run:popd()
-	--		if run:exitCode() ~= 0 then return run:exitCode() end
-			stdout:printLn("TBD: Should deploy file \"" .. f .. "\"")
+	for _, p in ipairs(paths) do
+		for _, f in ipairs(files) do
+			if f ~= "" and not f:endswith(".lib") then
+				local qf = Path(p):concat(Path(f))
+				if FileSystem.getInstance():exist(qf) then
+					run:pushd(p:getPathName())
+					run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. f, nil)
+					run:popd()
+				end
+			end
 		end
 	end
 
@@ -277,14 +280,22 @@ local function migrateStatic(args)
 	run:mkdir("bin64")
 	run:replace("$(DEPLOY_EXECUTABLE).exe", "bin64/$(DEPLOY_EXECUTABLE).exe")
 
-	-- Copy external files into "bin".
+	-- Get shared paths.
+	local paths = nil
+	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
+
+	-- Find files to deploy; qualitfy through paths.
 	local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
-	for _, f in pairs(files) do
-		if f ~= "" and not f:endswith(".lib") then
-			-- run:replace(prepend .. f, "bin64/" .. f)
-			stdout:printLn("TBD: Should copy file \"" .. f .. "\"")
+	for _, p in ipairs(paths) do
+		for _, f in ipairs(files) do
+			if f ~= "" and not f:endswith(".lib") then
+				local qf = Path(p):concat(Path(f))
+				if FileSystem.getInstance():exist(qf) then
+					run:replace(qf:getPathName(), "bin64/" .. f)
+				end
+			end
 		end
-	end	
+	end
 
 	return 0
 end
