@@ -53,6 +53,15 @@ function PushButton:setCaption(s)
 	return self
 end
 
+function PushButton:setMinimumWidth(minimumWidth)
+	self._minimumWidth = minimumWidth
+	return self
+end
+
+function PushButton:getMinimumWidth()
+	return self._minimumWidth
+end
+
 function PushButton:setEnable(enable)
 	Widget.setEnable(self, enable)
 	if enable then

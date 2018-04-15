@@ -71,6 +71,10 @@ function DropDown:setColor(color)
 		color,
 		Color4f(0, 0, 0, 0)
 	))
+	return self
+end
+
+function DropDown:setListColor(color)
 	self._color = color
 	return self
 end
@@ -81,11 +85,15 @@ function DropDown:setTextColor(textColor)
 		textColor,
 		Color4f(0, 0, 0, 0)
 	))
+	return self
+end
+
+function DropDown:setListTextColor(textColor)
 	self._textColor = textColor
 	return self
 end
 
-function DropDown:setTextHoverColor(textHoverColor)
+function DropDown:setListTextHoverColor(textHoverColor)
 	self._textHoverColor = textHoverColor
 	return self
 end
