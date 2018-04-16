@@ -38,11 +38,13 @@ namespace traktor
 template < typename Type, bool IsTypePtr = IsPointer< Type >::value >
 struct CastAny
 {
+	T_NO_COPY_CLASS(CastAny);
 };
 
 template < >
 struct CastAny < Any, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"Any";
 	}
@@ -60,6 +62,7 @@ struct CastAny < Any, false >
 template < >
 struct CastAny < const Any&, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"const Any&";
 	}
@@ -77,6 +80,7 @@ struct CastAny < const Any&, false >
 template < >
 struct CastAny < bool, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"bool";
 	}
@@ -94,6 +98,7 @@ struct CastAny < bool, false >
 template < >
 struct CastAny < int8_t, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"int8_t";
 	}
@@ -112,6 +117,7 @@ struct CastAny < int8_t, false >
 template < >
 struct CastAny < uint8_t, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"uint8_t";
 	}
@@ -130,6 +136,7 @@ struct CastAny < uint8_t, false >
 template < >
 struct CastAny < int16_t, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"int16_t";
 	}
@@ -148,6 +155,7 @@ struct CastAny < int16_t, false >
 template < >
 struct CastAny < uint16_t, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"uint16_t";
 	}
@@ -166,6 +174,7 @@ struct CastAny < uint16_t, false >
 template < >
 struct CastAny < int32_t, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"int32_t";
 	}
@@ -184,6 +193,7 @@ struct CastAny < int32_t, false >
 template < >
 struct CastAny < uint32_t, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"uint32_t";
 	}
@@ -202,6 +212,7 @@ struct CastAny < uint32_t, false >
 template < >
 struct CastAny < int64_t, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"int64_t";
 	}
@@ -220,6 +231,7 @@ struct CastAny < int64_t, false >
 template < >
 struct CastAny < uint64_t, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"uint64_t";
 	}
@@ -238,6 +250,7 @@ struct CastAny < uint64_t, false >
 template < >
 struct CastAny < float, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"float";
 	}
@@ -256,6 +269,7 @@ struct CastAny < float, false >
 template < >
 struct CastAny < double, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"double";
 	}
@@ -274,6 +288,7 @@ struct CastAny < double, false >
 template < >
 struct CastAny < Scalar, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"Scalar";
 	}
@@ -292,6 +307,7 @@ struct CastAny < Scalar, false >
 template < >
 struct CastAny < const Scalar&, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"const Scalar&";
 	}
@@ -310,6 +326,7 @@ struct CastAny < const Scalar&, false >
 template < >
 struct CastAny < std::string, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"std::string";
 	}
@@ -328,6 +345,7 @@ struct CastAny < std::string, false >
 template < >
 struct CastAny < const std::string&, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"const std::string&";
 	}
@@ -346,6 +364,7 @@ struct CastAny < const std::string&, false >
 template < >
 struct CastAny < const char, true >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"const char";
 	}
@@ -364,6 +383,7 @@ struct CastAny < const char, true >
 template < >
 struct CastAny < std::wstring, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"std::wstring";
 	}
@@ -382,6 +402,7 @@ struct CastAny < std::wstring, false >
 template < >
 struct CastAny < const std::wstring&, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"const std::wstring&";
 	}
@@ -400,6 +421,7 @@ struct CastAny < const std::wstring&, false >
 template < >
 struct CastAny < const wchar_t, true >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"const wchar_t";
 	}
@@ -418,6 +440,7 @@ struct CastAny < const wchar_t, true >
 template < typename Type >
 struct CastAny < Ref< Type >, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"Ref< " << type_name< Type >() << L">";
 	}
@@ -446,6 +469,7 @@ struct CastAny < Ref< Type >, false >
 template < typename Type >
 struct CastAny < const Ref< Type >&, false >
 {
+	T_NO_COPY_CLASS(CastAny);
 	static OutputStream& typeName(OutputStream& ss) {
 		return ss << L"const Ref< " << type_name< Type >() << L" >&";
 	}
@@ -474,6 +498,8 @@ struct CastAny < const Ref< Type >&, false >
 template < typename Type >
 struct CastAny < Type, false >
 {
+	T_NO_COPY_CLASS(CastAny);
+
 	typedef typename IsConst< typename IsReference< Type >::base_t >::type_t type_t;
 
 	static OutputStream& typeName(OutputStream& ss) {
@@ -501,6 +527,8 @@ struct CastAny < Type, false >
 template < typename Type >
 struct CastAny < Type, true >
 {
+	T_NO_COPY_CLASS(CastAny);
+
 	typedef typename IsConst< Type >::type_t no_const_type_t;
 
 	static OutputStream& typeName(OutputStream& ss) {

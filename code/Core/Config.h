@@ -70,6 +70,16 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_OVERRIDE
 #endif
 
+// C++11 delete method support.
+#if defined(T_CXX11)
+#	define T_NO_COPY_CLASS(NAME)				\
+	NAME(NAME const &) = delete;				\
+	NAME(NAME &&) = delete;						\
+	void operator = (NAME const &) = delete;
+#else
+#	defien T_NO_COPY_CLASS(NAME)
+#endif
+
 // Detect endian.
 #if defined(__APPLE__)
 // Mac has a special header defining target endian.
