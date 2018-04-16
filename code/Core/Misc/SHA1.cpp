@@ -155,7 +155,7 @@ uint8_t* sha1_result(sha1info* s)
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.SHA1", SHA1, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.SHA1", SHA1, IHash)
 
 SHA1::SHA1()
 :	m_sha1nfo(new sha1info())
@@ -168,11 +168,6 @@ SHA1::~SHA1()
 	delete (sha1info*)m_sha1nfo;
 }
 
-void SHA1::begin()
-{
-	sha1_init((sha1info*)m_sha1nfo);
-}
-
 bool SHA1::createFromString(const std::wstring& str)
 {
 	std::string s = wstombs(str);
@@ -181,10 +176,15 @@ bool SHA1::createFromString(const std::wstring& str)
 	return true;
 }
 
-void SHA1::feed(const void* buffer, uint32_t bufferSize)
+void SHA1::begin()
+{
+	sha1_init((sha1info*)m_sha1nfo);
+}
+
+void SHA1::feed(const void* buffer, uint64_t bufferSize)
 {
 	const uint8_t* u8buffer = static_cast< const uint8_t* const >(buffer);
-	for (uint32_t i = 0; i < bufferSize; ++i)
+	for (uint64_t i = 0; i < bufferSize; ++i)
 		sha1_writebyte((sha1info*)m_sha1nfo, u8buffer[i]);
 }
 

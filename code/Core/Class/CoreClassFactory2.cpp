@@ -10,6 +10,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/Base64.h"
+#include "Core/Misc/HashStream.h"
+#include "Core/Misc/IHash.h"
 #include "Core/Misc/MD5.h"
 #include "Core/Misc/SHA1.h"
 #include "Core/Timer/Timer.h"
@@ -30,10 +32,13 @@ void CoreClassFactory2::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTimer->addMethod("getDeltaTime", &Timer::getDeltaTime);
 	registrar->registerClass(classTimer);
 
+	Ref< AutoRuntimeClass< IHash > > classIHash = new AutoRuntimeClass< IHash >();
+	classIHash->addMethod("begin", &IHash::begin);
+	classIHash->addMethod("end", &IHash::end);
+	registrar->registerClass(classIHash);
+
 	Ref< AutoRuntimeClass< Adler32 > > classAdler32 = new AutoRuntimeClass< Adler32 >();
 	classAdler32->addConstructor();
-	classAdler32->addMethod("begin", &Adler32::begin);
-	classAdler32->addMethod("end", &Adler32::end);
 	classAdler32->addMethod("get", &Adler32::get);
 	registrar->registerClass(classAdler32);
 	
@@ -44,18 +49,18 @@ void CoreClassFactory2::createClasses(IRuntimeClassRegistrar* registrar) const
 	classMD5->addConstructor();
 	classMD5->addMethod("create", &MD5::create);
 	classMD5->addMethod("createFromString", &MD5::createFromString);
-	classMD5->addMethod("begin", &MD5::begin);
-	classMD5->addMethod("end", &MD5::end);
 	classMD5->addMethod("format", &MD5::format);
 	registrar->registerClass(classMD5);
 
 	Ref< AutoRuntimeClass< SHA1 > > classSHA1 = new AutoRuntimeClass< SHA1 >();
 	classSHA1->addConstructor();
 	classSHA1->addMethod("createFromString", &SHA1::createFromString);
-	classSHA1->addMethod("begin", &SHA1::begin);
-	classSHA1->addMethod("end", &SHA1::end);
 	classSHA1->addMethod("format", &SHA1::format);
 	registrar->registerClass(classSHA1);
+
+	Ref< AutoRuntimeClass< HashStream > > classHashStream = new AutoRuntimeClass< HashStream >();
+	classHashStream->addConstructor< IHash* >();
+	registrar->registerClass(classHashStream);
 }
 
 }

@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_SHA1_H
 #define traktor_SHA1_H
 
-#include "Core/Object.h"
+#include "Core/Misc/IHash.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +23,7 @@ namespace traktor
 /*! \brief SHA-1 hash.
  * \ingroup Core
  */
-class T_DLLCLASS SHA1 : public Object
+class T_DLLCLASS SHA1 : public IHash
 {
 	T_RTTI_CLASS;
 
@@ -32,20 +32,20 @@ public:
 
 	virtual ~SHA1();
 
-	/*! \brief Begin feeding data for SHA1 checksum calculation. */
-	void begin();
-
 	bool createFromString(const std::wstring& str);
+
+	/*! \brief Begin feeding data for SHA1 checksum calculation. */
+	virtual void begin() T_OVERRIDE T_FINAL;
 
 	/*! \brief Feed data to SHA1 checksum calculation.
 	 *
 	 * \param buffer Pointer to data.
 	 * \param bufferSize Amount of data in bytes.
 	 */
-	void feed(const void* buffer, uint32_t bufferSize);
+	virtual void feed(const void* buffer, uint64_t bufferSize) T_OVERRIDE T_FINAL;
 
 	/*! \brief End feeding data for SHA1 checksum calculation. */
-	void end();
+	virtual void end() T_OVERRIDE T_FINAL;
 
 	/*! \brief Format MD5 checksum as string. */
 	std::wstring format() const;

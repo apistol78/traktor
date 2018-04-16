@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <string>
 #include "Core/Ref.h"
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Misc/IHash.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,7 +25,7 @@ namespace traktor
 /*! \brief MD5 checksum.
  * \ingroup Core
  */
-class T_DLLCLASS MD5 : public ISerializable
+class T_DLLCLASS MD5 : public IHash
 {
 	T_RTTI_CLASS;
 
@@ -44,17 +44,17 @@ public:
 	bool createFromString(const std::wstring& str);
 
 	/*! \brief Begin feeding data for MD5 checksum calculation. */
-	void begin();
+	virtual void begin() T_OVERRIDE T_FINAL;
 
 	/*! \brief Feed data to MD5 checksum calculation.
 	 *
 	 * \param buffer Pointer to data.
 	 * \param bufferSize Amount of data in bytes.
 	 */
-	void feed(const void* buffer, uint32_t bufferSize);
+	virtual void feed(const void* buffer, uint64_t bufferSize) T_OVERRIDE T_FINAL;
 
 	/*! \brief End feeding data for MD5 checksum calculation. */
-	void end();
+	virtual void end() T_OVERRIDE T_FINAL;
 
 	/*! \brief Get pointer to MD5 checksum. */
 	const uint32_t* get() const;
@@ -67,8 +67,6 @@ public:
 	bool operator != (const MD5& md5) const;
 
 	bool operator < (const MD5& md5) const;
-
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	uint8_t m_buffer[64];
