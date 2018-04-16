@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_Adler32_H
 #define traktor_Adler32_H
 
-#include "Core/Object.h"
+#include "Core/Misc/IHash.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,18 +23,18 @@ namespace traktor
 /* \brief Adler32 checksum.
  * \ingroup Core
  */
-class T_DLLCLASS Adler32 : public Object
+class T_DLLCLASS Adler32 : public IHash
 {
 	T_RTTI_CLASS;
 
 public:
 	Adler32();
 
-	void begin();
+	virtual void begin() T_OVERRIDE T_FINAL;
 
-	void feed(const void* buffer, uint64_t bufferSize);
+	virtual void feed(const void* buffer, uint64_t bufferSize) T_OVERRIDE T_FINAL;
 
-	void end();
+	virtual void end() T_OVERRIDE T_FINAL;
 
 	uint32_t get() const;
 

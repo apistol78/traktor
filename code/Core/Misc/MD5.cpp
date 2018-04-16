@@ -8,8 +8,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <sstream>
 #include "Core/Misc/MD5.h"
 #include "Core/Misc/TString.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStaticArray.h"
 
 #define MD5_INIT_STATE_0 0x67452301
 #define MD5_INIT_STATE_1 0xefcdab89
@@ -221,7 +219,7 @@ uint8_t PADDING[64] =
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.MD5", 0, MD5, ISerializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.MD5", MD5, IHash)
 
 MD5::MD5()
 {
@@ -278,13 +276,14 @@ void MD5::begin()
 	m_md5[3] = MD5_INIT_STATE_3;
 }
 
-void MD5::feed(const void* buffer, uint32_t bufferSize)
+void MD5::feed(const void* buffer, uint64_t bufferSize)
 {
 	uint32_t index = (m_count[0] >> 3) & 0x3f;
 
-	if ((m_count[0] += bufferSize << 3) < (bufferSize << 3))
+	uint32_t bs = uint32_t(bufferSize);
+	if ((m_count[0] += bs << 3) < (bs << 3))
 		m_count[1]++;
-	m_count[1] += (bufferSize >> 29);
+	m_count[1] += uint32_t(bs >> 29);
 
 	uint32_t i = 0;
 	uint32_t partSize = 64 - index;
@@ -332,21 +331,6 @@ std::wstring MD5::format() const
 
 	T_ASSERT (ss.str().length() == 32);
 	return ss.str();    
-}
-
-void MD5::serialize(ISerializer& s)
-{
-	if (s.getDirection() == ISerializer::SdRead)
-	{
-		std::wstring md5;
-		s >> Member< std::wstring >(L"md5", md5);
-		create(md5);
-	}
-	else	// SdWrite
-	{
-		std::wstring md5 = format();
-		s >> Member< std::wstring >(L"md5", md5);
-	}
 }
 
 bool MD5::operator == (const MD5& md5) const
