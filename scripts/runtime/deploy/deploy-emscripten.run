@@ -118,7 +118,7 @@ function deploy(args)
 
 	-- Compile linkage file.
 	stdout:printLn("Compiling Linkage.cpp...")
-	local cmd = "\"" .. emcc .. "\" Linkage.cpp -o Linkage.o"
+	local cmd = "\"" .. emcc .. "\" -s WASM=1 Linkage.cpp -o Linkage.o"
 	local result = run:execute(cmd) --, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to compile file.")
@@ -127,6 +127,7 @@ function deploy(args)
 
 	-- Build linker command line.
 	local cmd = "\"" .. emcc .. "\" "
+	cmd = cmd .. " -s WASM=1"
 	cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 	cmd = cmd .. " -s USE_PTHREADS=0"
 	cmd = cmd .. " -s TOTAL_MEMORY=" .. totalMemory
@@ -200,11 +201,6 @@ function migrate(args)
 		emcc = emcc .. ".bat"
 	end
 
-	-- Ensure debug symbols are kept when linking.
---	if debug then
---		emcc = emcc .. " -g"
---	end
-
 	-- Get library paths.
 	local libraryPaths = ""
 	local paths = ""
@@ -237,7 +233,7 @@ function migrate(args)
 
 	-- Compile linkage file.
 	stdout:printLn("Compiling Linkage.cpp...")
-	local cmd = "\"" .. emcc .. "\" Linkage.cpp -o Linkage.o"
+	local cmd = "\"" .. emcc .. "\" -s WASM=1 Linkage.cpp -o Linkage.o"
 	local result = run:execute(cmd) --, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to compile file.")
@@ -246,31 +242,36 @@ function migrate(args)
 
 	-- Build linker command line.
 	local cmd = "\"" .. emcc .. "\" "
+	cmd = cmd .. " -s WASM=1"
+	cmd = cmd .. " -s BINARYEN_TRAP_MODE='clamp'"
 	-- cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 	cmd = cmd .. " -s USE_PTHREADS=0"
 	cmd = cmd .. " -s TOTAL_MEMORY=" .. totalMemory
 	-- cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0"
+	-- cmd = cmd .. " -g"
 	cmd = cmd .. " -O2"
 	cmd = cmd .. " Linkage.o"
 	cmd = cmd .. libraryPaths
 	cmd = cmd .. libraries
 	cmd = cmd .. libraries
-	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).js --preload-file Application.config --preload-file Content.compact"
-	stdout:printLn(cmd)
+	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --preload-file Application.config --preload-file Content.compact"
 
 	-- Link files into an executable product.
-	local result = run:execute(cmd) --, nil)
+	local result = run:execute(cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
 		return 1
 	end
 
+	-- Remove intermediate files.
+	run:rm("Linkage.*")
+
 	-- Create html loader.
 	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Index.html.template", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
 		stderr:printLn("Failed to generate HTML loader.")
 		return 1
-	end	
+	end
 
 	stdout:printLn("Done")
 	return 0
