@@ -35,14 +35,14 @@ class RfmPrimitive : public ReflectionMember
 {
 public:
 	typedef PrimitiveType type_t;
+	typedef RfmPrimitive< PrimitiveType > class_type_t;
 
 	void set(const type_t& value) { m_value = value; }
 
 	const type_t& get() const { return m_value; }
 
-	virtual bool replace(const ReflectionMember* source)
+	virtual bool replace(const ReflectionMember* source) T_OVERRIDE T_FINAL
 	{
-		typedef RfmPrimitive< PrimitiveType > class_type_t;
 		if (const class_type_t* sourceType = dynamic_type_cast< const class_type_t* >(source))
 		{
 			m_value = sourceType->m_value;
@@ -63,17 +63,35 @@ private:
 	type_t T_ALIGN16 m_value;
 };
 
-#define T_DEFINE_DERIVED_CLASS(NAME, TYPE, TYPE_CONST_REF)	\
-	class T_DLLCLASS NAME : public RfmPrimitive< TYPE >		\
-	{														\
-		T_RTTI_CLASS;										\
-															\
-	public:													\
-		NAME(const wchar_t* name, TYPE_CONST_REF value)		\
-		:	RfmPrimitive< TYPE >(name, value)				\
-		{													\
-		}													\
-	};														\
+#if defined(T_CXX11)
+#	define T_DEFINE_DERIVED_CLASS(NAME, TYPE, TYPE_CONST_REF)	\
+		class T_DLLCLASS NAME : public RfmPrimitive< TYPE >		\
+		{														\
+			T_RTTI_CLASS;										\
+																\
+		public:													\
+			NAME(const wchar_t* name, TYPE_CONST_REF value)		\
+			:	RfmPrimitive< TYPE >(name, value)				\
+			{													\
+			}													\
+																\
+			NAME(NAME const &) = delete;						\
+			NAME(NAME &&) = delete;								\
+			void operator = (NAME const &) = delete;			\
+		};
+#else
+#	define T_DEFINE_DERIVED_CLASS(NAME, TYPE, TYPE_CONST_REF)	\
+		class T_DLLCLASS NAME : public RfmPrimitive< TYPE >		\
+		{														\
+			T_RTTI_CLASS;										\
+																\
+		public:													\
+			NAME(const wchar_t* name, TYPE_CONST_REF value)		\
+			:	RfmPrimitive< TYPE >(name, value)				\
+			{													\
+			}													\
+		};
+#endif
 
 T_DEFINE_DERIVED_CLASS(RfmPrimitiveBoolean, bool, bool)
 T_DEFINE_DERIVED_CLASS(RfmPrimitiveInt8, int8_t, int8_t)

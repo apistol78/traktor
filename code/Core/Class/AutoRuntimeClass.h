@@ -212,6 +212,8 @@ template<
 >
 struct FnConstructor_1 : public IConstructor
 {
+	T_NO_COPY_CLASS(FnConstructor_1);
+
 	typedef Ref< ClassType > (*fn_t)(Argument1Type);
 	fn_t fn;
 
@@ -236,6 +238,8 @@ template<
 >
 struct FnConstructor_2 : public IConstructor
 {
+	T_NO_COPY_CLASS(FnConstructor_2);
+
 	typedef Ref< ClassType > (*fn_t)(Argument1Type, Argument2Type);
 	fn_t fn;
 
@@ -262,6 +266,8 @@ template<
 >
 struct FnConstructor_3 : public IConstructor
 {
+	T_NO_COPY_CLASS(FnConstructor_3);
+
 	typedef Ref< ClassType > (*fn_t)(Argument1Type, Argument2Type, Argument3Type);
 	fn_t fn;
 
@@ -290,6 +296,8 @@ template<
 >
 struct FnConstructor_4 : public IConstructor
 {
+	T_NO_COPY_CLASS(FnConstructor_4);
+
 	typedef Ref< ClassType > (*fn_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type);
 	fn_t fn;
 
@@ -322,6 +330,7 @@ template <
 >
 struct MethodSignature_0
 {
+	T_NO_COPY_CLASS(MethodSignature_0);
 	typedef ReturnType (ClassType::*method_t)();
 	typedef ReturnType (*static_method_t)();
 };
@@ -332,6 +341,7 @@ template <
 >
 struct MethodSignature_0 < ClassType, ReturnType, true >
 {
+	T_NO_COPY_CLASS(MethodSignature_0);
 	typedef ReturnType (ClassType::*method_t)() const;
 };
 
@@ -343,6 +353,7 @@ template <
 >
 struct MethodSignature_1
 {
+	T_NO_COPY_CLASS(MethodSignature_1);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type);
 	typedef ReturnType (*static_method_t)(Argument1Type);
 };
@@ -354,6 +365,7 @@ template <
 >
 struct MethodSignature_1 < ClassType, ReturnType, Argument1Type, true >
 {
+	T_NO_COPY_CLASS(MethodSignature_1);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type) const;
 };
 
@@ -366,6 +378,7 @@ template <
 >
 struct MethodSignature_2
 {
+	T_NO_COPY_CLASS(MethodSignature_2);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type);
 	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type);
 };
@@ -378,6 +391,7 @@ template <
 >
 struct MethodSignature_2 < ClassType, ReturnType, Argument1Type, Argument2Type, true >
 {
+	T_NO_COPY_CLASS(MethodSignature_2);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type) const;
 };
 
@@ -391,6 +405,7 @@ template <
 >
 struct MethodSignature_3
 {
+	T_NO_COPY_CLASS(MethodSignature_3);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type);
 	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type);
 };
@@ -404,6 +419,7 @@ template <
 >
 struct MethodSignature_3 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, true >
 {
+	T_NO_COPY_CLASS(MethodSignature_3);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type) const;
 };
 
@@ -418,6 +434,7 @@ template <
 >
 struct MethodSignature_4
 {
+	T_NO_COPY_CLASS(MethodSignature_4);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type);
 	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type);
 };
@@ -432,6 +449,7 @@ template <
 >
 struct MethodSignature_4 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, true >
 {
+	T_NO_COPY_CLASS(MethodSignature_4);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type) const;
 };
 
@@ -447,6 +465,7 @@ template <
 >
 struct MethodSignature_5
 {
+	T_NO_COPY_CLASS(MethodSignature_5);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type);
 	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type);
 };
@@ -462,6 +481,7 @@ template <
 >
 struct MethodSignature_5 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, true >
 {
+	T_NO_COPY_CLASS(MethodSignature_5);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type) const;
 };
 
@@ -478,6 +498,7 @@ template <
 >
 struct MethodSignature_6
 {
+	T_NO_COPY_CLASS(MethodSignature_6);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
 	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
 };
@@ -494,6 +515,7 @@ template <
 >
 struct MethodSignature_6 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, true >
 {
+	T_NO_COPY_CLASS(MethodSignature_6);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type) const;
 };
 
@@ -511,6 +533,7 @@ template <
 >
 struct MethodSignature_7
 {
+	T_NO_COPY_CLASS(MethodSignature_7);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type);
 	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type);
 };
@@ -528,6 +551,7 @@ template <
 >
 struct MethodSignature_7 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, true >
 {
+	T_NO_COPY_CLASS(MethodSignature_7);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type) const;
 };
 
@@ -546,6 +570,7 @@ template <
 >
 struct MethodSignature_8
 {
+	T_NO_COPY_CLASS(MethodSignature_8);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type);
 	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type);
 };
@@ -564,6 +589,7 @@ template <
 >
 struct MethodSignature_8 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, true >
 {
+	T_NO_COPY_CLASS(MethodSignature_8);
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type) const;
 };
 
@@ -580,6 +606,8 @@ template <
 >
 struct Method_0 : public IMethod
 {
+	T_NO_COPY_CLASS(Method_0);
+
 	typedef typename MethodSignature_0< ClassType, ReturnType, Const >::method_t method_t;
 
 	method_t m_method;
@@ -607,6 +635,8 @@ template <
 >
 struct Method_0 < ClassType, void, Const > : public IMethod
 {
+	T_NO_COPY_CLASS(Method_0);
+
 	typedef typename MethodSignature_0< ClassType, void, Const >::method_t method_t;
 
 	method_t m_method;
@@ -636,6 +666,8 @@ template <
 >
 struct Method_1 : public IMethod
 {
+	T_NO_COPY_CLASS(Method_1);
+
 	typedef typename MethodSignature_1< ClassType, ReturnType, Argument1Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -667,6 +699,8 @@ template <
 >
 struct Method_1 < ClassType, void, Argument1Type, Const > : public IMethod
 {
+	T_NO_COPY_CLASS(Method_1);
+
 	typedef typename MethodSignature_1< ClassType, void, Argument1Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -700,6 +734,8 @@ template <
 >
 struct Method_2 : public IMethod
 {
+	T_NO_COPY_CLASS(Method_2);
+
 	typedef typename MethodSignature_2< ClassType, ReturnType, Argument1Type, Argument2Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -733,6 +769,8 @@ template <
 >
 struct Method_2 < ClassType, void, Argument1Type, Argument2Type, Const > : public IMethod
 {
+	T_NO_COPY_CLASS(Method_2);
+
 	typedef typename MethodSignature_2< ClassType, void, Argument1Type, Argument2Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -768,6 +806,8 @@ template <
 >
 struct Method_3 : public IMethod
 {
+	T_NO_COPY_CLASS(Method_3);
+
 	typedef typename MethodSignature_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -803,6 +843,8 @@ template <
 >
 struct Method_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Const > : public IMethod
 {
+	T_NO_COPY_CLASS(Method_3);
+
 	typedef typename MethodSignature_3< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -840,6 +882,8 @@ template <
 >
 struct Method_4 : public IMethod
 {
+	T_NO_COPY_CLASS(Method_4);
+
 	typedef typename MethodSignature_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -877,6 +921,8 @@ template <
 >
 struct Method_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Const > : public IMethod
 {
+	T_NO_COPY_CLASS(Method_4);
+
 	typedef typename MethodSignature_4< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -916,6 +962,8 @@ template <
 >
 struct Method_5 : public IMethod
 {
+	T_NO_COPY_CLASS(Method_5);
+
 	typedef typename MethodSignature_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -955,6 +1003,8 @@ template <
 >
 struct Method_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Const > : public IMethod
 {
+	T_NO_COPY_CLASS(Method_5);
+
 	typedef typename MethodSignature_5< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -996,6 +1046,8 @@ template <
 >
 struct Method_6 : public IMethod
 {
+	T_NO_COPY_CLASS(Method_6);
+
 	typedef typename MethodSignature_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -1037,6 +1089,8 @@ template <
 >
 struct Method_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Const > : public IMethod
 {
+	T_NO_COPY_CLASS(Method_6);
+
 	typedef typename MethodSignature_6< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -1080,6 +1134,8 @@ template <
 >
 struct Method_7 : public IMethod
 {
+	T_NO_COPY_CLASS(Method_7);
+
 	typedef typename MethodSignature_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -1123,6 +1179,8 @@ template <
 >
 struct Method_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Const > : public IMethod
 {
+	T_NO_COPY_CLASS(Method_7);
+
 	typedef typename MethodSignature_7< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -1168,6 +1226,8 @@ template <
 >
 struct Method_8 : public IMethod
 {
+	T_NO_COPY_CLASS(Method_8);
+
 	typedef typename MethodSignature_8< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -1213,6 +1273,8 @@ template <
 >
 struct Method_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, Const > : public IMethod
 {
+	T_NO_COPY_CLASS(Method_8);
+
 	typedef typename MethodSignature_8< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, Const >::method_t method_t;
 
 	method_t m_method;
@@ -1255,6 +1317,8 @@ template <
 >
 struct MethodTrunk_0 : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_0);
+
 	typedef ReturnType (*method_t)(ClassType*);
 
 	method_t m_method;
@@ -1281,6 +1345,8 @@ template <
 >
 struct MethodTrunk_0< ClassType, void > : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_0);
+
 	typedef void (*method_t)(ClassType*);
 
 	method_t m_method;
@@ -1310,6 +1376,8 @@ template <
 >
 struct MethodTrunk_1 : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_1);
+
 	typedef ReturnType (*method_t)(ClassType*, Argument1Type);
 
 	method_t m_method;
@@ -1341,6 +1409,8 @@ template <
 >
 struct MethodTrunk_1 < ClassType, void, Argument1Type > : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_1);
+
 	typedef void (*method_t)(ClassType*, Argument1Type);
 
 	method_t m_method;
@@ -1374,6 +1444,8 @@ template <
 >
 struct MethodTrunk_2 : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_2);
+
 	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type);
 
 	method_t m_method;
@@ -1407,6 +1479,8 @@ template <
 >
 struct MethodTrunk_2 < ClassType, void, Argument1Type, Argument2Type > : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_2);
+
 	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type);
 
 	method_t m_method;
@@ -1442,6 +1516,8 @@ template <
 >
 struct MethodTrunk_3 : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_3);
+
 	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type);
 
 	method_t m_method;
@@ -1477,6 +1553,8 @@ template <
 >
 struct MethodTrunk_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type > : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_3);
+
 	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type);
 
 	method_t m_method;
@@ -1514,6 +1592,8 @@ template <
 >
 struct MethodTrunk_4 : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_4);
+
 	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type);
 
 	method_t m_method;
@@ -1551,6 +1631,8 @@ template <
 >
 struct MethodTrunk_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type > : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_4);
+
 	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type);
 
 	method_t m_method;
@@ -1590,6 +1672,8 @@ template <
 >
 struct MethodTrunk_5 : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_5);
+
 	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type);
 
 	method_t m_method;
@@ -1629,6 +1713,8 @@ template <
 >
 struct MethodTrunk_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type > : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_5);
+
 	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type);
 
 	method_t m_method;
@@ -1670,6 +1756,8 @@ template <
 >
 struct MethodTrunk_6 : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_6);
+
 	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
 
 	method_t m_method;
@@ -1711,6 +1799,8 @@ template <
 >
 struct MethodTrunk_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_6);
+
 	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
 
 	method_t m_method;
@@ -1754,6 +1844,8 @@ template <
 >
 struct MethodTrunk_7 : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_7);
+
 	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type);
 
 	method_t m_method;
@@ -1797,6 +1889,8 @@ template <
 >
 struct MethodTrunk_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type > : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_7);
+
 	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type);
 
 	method_t m_method;
@@ -1842,6 +1936,8 @@ template <
 >
 struct MethodTrunk_8 : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_8);
+
 	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type);
 
 	method_t m_method;
@@ -1887,6 +1983,8 @@ template <
 >
 struct MethodTrunk_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type > : public IMethod
 {
+	T_NO_COPY_CLASS(MethodTrunk_8);
+
 	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type);
 
 	method_t m_method;
@@ -1930,6 +2028,8 @@ template <
 >
 struct StaticMethod_0 : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_0);
+
 	typedef typename MethodSignature_0< ClassType, ReturnType, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -1956,6 +2056,8 @@ template <
 >
 struct StaticMethod_0 < ClassType, void > : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_0);
+
 	typedef typename MethodSignature_0< ClassType, void, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -1984,6 +2086,8 @@ template <
 >
 struct StaticMethod_1 : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_1);
+
 	typedef typename MethodSignature_1< ClassType, ReturnType, Argument1Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2014,6 +2118,8 @@ template <
 >
 struct StaticMethod_1 < ClassType, void, Argument1Type > : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_1);
+
 	typedef typename MethodSignature_1< ClassType, void, Argument1Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2046,6 +2152,8 @@ template <
 >
 struct StaticMethod_2 : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_2);
+
 	typedef typename MethodSignature_2< ClassType, ReturnType, Argument1Type, Argument2Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2078,6 +2186,8 @@ template <
 >
 struct StaticMethod_2 < ClassType, void, Argument1Type, Argument2Type > : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_2);
+
 	typedef typename MethodSignature_2< ClassType, void, Argument1Type, Argument2Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2112,6 +2222,8 @@ template <
 >
 struct StaticMethod_3 : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_3);
+
 	typedef typename MethodSignature_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2146,6 +2258,8 @@ template <
 >
 struct StaticMethod_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type > : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_3);
+
 	typedef typename MethodSignature_3< ClassType, void, Argument1Type, Argument2Type, Argument3Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2182,6 +2296,8 @@ template <
 >
 struct StaticMethod_4 : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_4);
+
 	typedef typename MethodSignature_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2218,6 +2334,8 @@ template <
 >
 struct StaticMethod_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type > : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_4);
+
 	typedef typename MethodSignature_4< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2256,6 +2374,8 @@ template <
 >
 struct StaticMethod_5 : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_5);
+
 	typedef typename MethodSignature_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2294,6 +2414,8 @@ template <
 >
 struct StaticMethod_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type > : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_5);
+
 	typedef typename MethodSignature_5< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2334,6 +2456,8 @@ template <
 >
 struct StaticMethod_6 : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_6);
+
 	typedef typename MethodSignature_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2374,6 +2498,8 @@ template <
 >
 struct StaticMethod_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_6);
+
 	typedef typename MethodSignature_6< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2416,6 +2542,8 @@ template <
 >
 struct StaticMethod_7 : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_7);
+
 	typedef typename MethodSignature_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2458,6 +2586,8 @@ template <
 >
 struct StaticMethod_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type > : public IStaticMethod
 {
+	T_NO_COPY_CLASS(StaticMethod_7);
+
 	typedef typename MethodSignature_7< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, false >::static_method_t static_method_t;
 
 	static_method_t m_method;
@@ -2499,6 +2629,8 @@ template <
 >
 struct PropertySet : public IPropertySet
 {
+	T_NO_COPY_CLASS(PropertySet);
+
 	typedef typename MethodSignature_1< ClassType, void, ValueType, false >::method_t method_t;
 
 	method_t m_method;
@@ -2523,6 +2655,8 @@ template <
 >
 struct PropertyGet : public IPropertyGet
 {
+	T_NO_COPY_CLASS(PropertyGet);
+
 	typedef typename MethodSignature_0< ClassType, ValueType, Const >::method_t method_t;
 
 	method_t m_method;
@@ -2545,6 +2679,8 @@ template <
 >
 struct FnPropertySet : public IPropertySet
 {
+	T_NO_COPY_CLASS(FnPropertySet);
+
 	typedef void (*method_t)(ClassType*, ValueType);
 
 	method_t m_method;
@@ -2569,6 +2705,8 @@ template <
 >
 struct FnPropertyGet : public IPropertyGet
 {
+	T_NO_COPY_CLASS(FnPropertyGet);
+
 	typedef ValueType (*method_t)(ClassType*);
 
 	method_t m_method;
@@ -2597,6 +2735,8 @@ template <
 >
 struct Operator : public IOperator
 {
+	T_NO_COPY_CLASS(Operator);
+
 	typedef typename MethodSignature_1< ClassType, ReturnType, Argument1Type, true >::method_t method_t;
 
 	method_t m_method;
@@ -2636,6 +2776,8 @@ template < typename ClassType >
 class AutoRuntimeClass : public IRuntimeClass
 {
 public:
+	T_NO_COPY_CLASS(AutoRuntimeClass);
+
 	typedef Any (*unknown_fn_t)(ClassType* self, const std::string& methodName, uint32_t argc, const Any* argv);
 
 	AutoRuntimeClass()
