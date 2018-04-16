@@ -31,7 +31,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	endif
 #	define T_FORCE_INLINE inline
 #	define T_ALIGN16 __attribute__((aligned(16)))
-#	if __cplusplus >= 201103L || (defined(__PS3__) && !defined(SPU))
+#	if __cplusplus >= 201103L || (defined(__PS3__) && !defined(SPU)) || defined(__APPLE__)
 #		define T_CXX11
 #	endif
 #endif
@@ -77,7 +77,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 	NAME(NAME &&) = delete;						\
 	void operator = (NAME const &) = delete;
 #else
-#	defien T_NO_COPY_CLASS(NAME)
+#	define T_NO_COPY_CLASS(NAME)
 #endif
 
 // Detect endian.
