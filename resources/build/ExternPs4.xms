@@ -398,6 +398,7 @@
 						<item>XML_BUILDING_EXPAT</item>
 						<item>XML_POOR_ENTROPY</item>
 						<item>HAVE_MEMMOVE</item>
+						<item>XML_UNICODE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -429,6 +430,7 @@
 						<item>XML_BUILDING_EXPAT</item>
 						<item>XML_POOR_ENTROPY</item>
 						<item>HAVE_MEMMOVE</item>
+						<item>XML_UNICODE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
