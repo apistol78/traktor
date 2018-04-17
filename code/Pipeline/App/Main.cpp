@@ -439,13 +439,16 @@ bool perform(const PipelineParameters* params)
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
 	}
 
+	std::set< std::wstring > modulePaths = settings->getProperty< std::set< std::wstring > >(L"Editor.ModulePaths");
 	std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
+
+	std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
 		if (g_loadedModules.find(*i) == g_loadedModules.end())
 		{
 			Library library;
-			if (!library.open(*i))
+			if (!library.open(*i, modulePathsFlatten, true))
 			{
 				traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
 				return false;

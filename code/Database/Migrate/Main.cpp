@@ -265,11 +265,14 @@ int main(int argc, const char** argv)
 			return 1;
 		}
 
+		std::set< std::wstring > modulePaths = settings->getProperty< std::set< std::wstring > >(L"Migrate.ModulePaths");
 		std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Migrate.Modules");
+
+		std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
 		for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 		{
 			Library library;
-			if (!library.open(*i))
+			if (!library.open(*i, modulePathsFlatten, true))
 			{
 				traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
 				return 2;
