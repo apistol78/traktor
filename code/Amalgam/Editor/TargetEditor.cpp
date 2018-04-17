@@ -406,10 +406,10 @@ void TargetEditor::updateIcon()
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (targetConfiguration)
 	{
-		Path systemRoot = m_editor->getWorkspaceSettings()->getProperty< std::wstring >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
+		Path projectPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 		Path iconPath = targetConfiguration->getIcon();
 
-		Ref< drawing::Image > iconImage = drawing::Image::load(systemRoot + iconPath);
+		Ref< drawing::Image > iconImage = drawing::Image::load(projectPath + iconPath);
 		if (iconImage)
 		{
 			drawing::ScaleFilter scaleFilter(128, 128, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
@@ -642,10 +642,10 @@ void TargetEditor::eventBrowseIconClick(ui::MouseButtonDownEvent* event)
 		Path fileName;
 		if (fileDialog.showModal(fileName) == ui::DrOk)
 		{
-			std::wstring systemRoot = m_editor->getWorkspaceSettings()->getProperty< std::wstring >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
+			Path projectPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 
 			Path relativePath;
-			if (!FileSystem::getInstance().getRelativePath(fileName, systemRoot, relativePath))
+			if (!FileSystem::getInstance().getRelativePath(fileName, projectPath, relativePath))
 				relativePath = fileName;
 
 			targetConfiguration->setIcon(relativePath.normalized().getPathName());
