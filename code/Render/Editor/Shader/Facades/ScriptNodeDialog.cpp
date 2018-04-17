@@ -120,7 +120,7 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	m_edit->setLanguage(new ui::custom::SyntaxLanguageHlsl());
 
 	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 14);
+	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
 	m_edit->setFont(ui::Font(font, fontSize));
 
 	update();

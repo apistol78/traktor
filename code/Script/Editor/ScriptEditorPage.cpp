@@ -221,7 +221,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	}
 
 	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 14);
+	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
 	m_edit->setFont(ui::Font(font, fontSize));
 
 	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
@@ -397,7 +397,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.SettingsChanged")
 	{
 		std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-		int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 14);
+		int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
 		m_edit->setFont(ui::Font(font, fontSize));
 		m_edit->update();
 	}

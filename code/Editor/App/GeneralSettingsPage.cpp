@@ -95,7 +95,7 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 
 	m_editFontSize = new ui::Edit();
 	m_editFontSize->create(containerFont, L"1", ui::WsClientBorder, new ui::NumericEditValidator(false, 1, 100, 0));
-	m_editFontSize->setText(toString(settings->getProperty< int32_t >(L"Editor.FontSize", 14)));
+	m_editFontSize->setText(toString(settings->getProperty< int32_t >(L"Editor.FontSize", 11)));
 
 	m_checkAutoOpen = new ui::CheckBox();
 	m_checkAutoOpen->create(container, i18n::Text(L"EDITOR_SETTINGS_AUTOOPEN_RECENT_WORKSPACE"));

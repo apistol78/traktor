@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
 #include "Core/Math/Quaternion.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -41,9 +42,15 @@ Vector4 randomCone(Random& r, const Vector4& direction, float coneAngle)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProbeTexturePipeline", 1, ProbeTexturePipeline, editor::DefaultPipeline)
 
+ProbeTexturePipeline::ProbeTexturePipeline()
+:	m_maxFilterRadius(16)
+{
+}
+
 bool ProbeTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_maxFilterRadius = settings->getProperty< int32_t >(L"ProbeTexturePipeline.MaxFilterRadius", 16);
 	return true;
 }
 
@@ -110,8 +117,10 @@ bool ProbeTexturePipeline::buildOutput(
 	int32_t filterRadius = int32_t(std::sin(asset->m_filterAngle) * cubeInput->getSize());
 	if (filterRadius <= 0)
 		filterRadius = 1;
+	else if (filterRadius > m_maxFilterRadius)
+		filterRadius = m_maxFilterRadius;
 
-	log::info << L"Probe filter radius " << filterRadius << " pixel(s)." << Endl;
+	log::info << L"Probe filter radius " << filterRadius << L" pixel(s)." << Endl;
 
 	// Create output probe by filtering input.
 	Random random;
