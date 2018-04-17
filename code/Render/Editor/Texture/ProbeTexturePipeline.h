@@ -27,6 +27,8 @@ class T_DLLCLASS ProbeTexturePipeline : public editor::DefaultPipeline
 	T_RTTI_CLASS;
 
 public:
+	ProbeTexturePipeline();
+
 	virtual bool create(const editor::IPipelineSettings* settings) T_OVERRIDE T_FINAL;
 
 	virtual TypeInfoSet getAssetTypes() const T_OVERRIDE T_FINAL;
@@ -54,6 +56,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	int32_t m_maxFilterRadius;
 };
 
 	}

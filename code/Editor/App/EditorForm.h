@@ -211,7 +211,7 @@ private:
 	Thread* m_threadAssetMonitor;
 	Thread* m_threadBuild;
 	Semaphore m_lockBuild;
-	Path m_startupDirectory;
+	Path m_settingsPath;
 	Path m_workspacePath;
 	Ref< PropertyGroup > m_originalSettings;	//!< Traktor.Editor.config + Traktor.Editor.<platform>.config
 	Ref< PropertyGroup > m_globalSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config

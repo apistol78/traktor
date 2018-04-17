@@ -120,6 +120,12 @@ void PointRenderer::destroy()
 
 	safeDestroy(m_indexBuffer);
 
+	if (m_vertex)
+	{
+		m_vertexBuffers[m_count]->unlock();
+		m_vertex = 0;
+	}
+
 	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
 		safeDestroy(m_vertexBuffers[i]);
 }
