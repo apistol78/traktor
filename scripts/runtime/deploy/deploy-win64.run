@@ -36,10 +36,15 @@ end
 
 
 local function createIcon()
+	local projectRoot = os:getEnvironment("DEPLOY_PROJECT_ROOT")
+	assert (projectRoot ~= "")
+
 	local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
 	if #iconFile <= 0 then
 		iconFile = "$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/DefaultIcon.png"
 	end
+
+	iconFile = Path(projectRoot):concat(Path(iconFile)):getPathName()
 
 	local iconImage = Image.loadFromFile(iconFile)
 	if iconImage == nil then 
