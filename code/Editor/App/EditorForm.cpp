@@ -330,12 +330,28 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 	return true;
 }
 
-bool saveSettings(const Path& pathName, const PropertyGroup* properties, bool saveGlobal)
+bool saveGlobalSettings(const Path& pathName, const PropertyGroup* properties)
 {
 	std::wstring globalFile = pathName.getPathName();
+
+	Ref< IStream > file = FileSystem::getInstance().open(globalFile, File::FmWrite);
+	if (!file)
+	{
+		log::warning << L"Unable to save properties; changes will be lost" << Endl;
+		return false;
+	}
+
+	bool result = xml::XmlSerializer(file).writeObject(properties);
+	file->close();
+
+	return result;
+}
+
+bool saveUserSettings(const Path& pathName, const PropertyGroup* properties)
+{
 	std::wstring userFile = pathName.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + pathName.getExtension();
 
-	Ref< IStream > file = FileSystem::getInstance().open(saveGlobal ? globalFile : userFile, File::FmWrite);
+	Ref< IStream > file = FileSystem::getInstance().open(userFile, File::FmWrite);
 	if (!file)
 	{
 		log::warning << L"Unable to save properties; changes will be lost" << Endl;
@@ -437,33 +453,30 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	log::error.setGlobalTarget(errorLog);
 
 	// Default configuration file.
-	std::wstring settingsPath = L"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config";
+	m_settingsPath = Path(L"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config");
 
 #if defined(__APPLE__)
 	// Load configuration from bundle resources.
 	bool forceConsole = cmdLine.hasOption(L"console");
 	if (!forceConsole)
-		settingsPath = L"$(BUNDLE_PATH)/Contents/Resources//resources/runtime/configurations/Traktor.Editor.config";
+		m_settingsPath = Path(L"$(BUNDLE_PATH)/Contents/Resources//resources/runtime/configurations/Traktor.Editor.config");
 #endif
 
 	// Overridden configuration file.
 	if (cmdLine.hasOption('c', L"configuration"))
-		settingsPath = cmdLine.getOption('c', L"configuration").getString();
+		m_settingsPath = Path(cmdLine.getOption('c', L"configuration").getString());
 
-	// Remember startup directory so we can save user configuration properly.
-	m_startupDirectory = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+	// Resolve absolute path of settings path as loading a workspace change working directory.
+	m_settingsPath = FileSystem::getInstance().getAbsolutePath(m_settingsPath);
 
-	// Load settings; use only global settings as merged settings until workspace has been loaded.
-	if (!loadSettings(settingsPath, m_originalSettings, &m_globalSettings))
+	// Load editor global settings.
+	if (!loadSettings(m_settingsPath, m_originalSettings, &m_globalSettings))
 	{
-		// Try also in current directory.
-		settingsPath = L"Traktor.Editor.config";
-		if (!loadSettings(settingsPath, m_originalSettings, &m_globalSettings))
-		{
-			log::error << L"Unable to load global settings" << Endl;
-			return false;
-		}
+		log::error << L"Unable to load global settings" << Endl;
+		return false;
 	}
+
+	// Use only global settings as merged settings until workspace has been loaded.
 	m_mergedSettings = m_globalSettings;
 
 	// Load editor stylesheet.
@@ -478,11 +491,14 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Load dependent modules.
 #if !defined(T_STATIC)
-	const std::set< std::wstring >& modules = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
+	std::set< std::wstring > modulePaths = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.ModulePaths");
+	std::set< std::wstring > modules = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
+
+	std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
 		Ref< Library > library = new Library();
-		if (library->open(*i))
+		if (library->open(*i, modulePathsFlatten, true))
 		{
 			log::info << L"Module \"" << *i << L"\" loaded successfully" << Endl;
 			library->detach();
@@ -956,7 +972,7 @@ void EditorForm::commitWorkspaceSettings()
 	if (m_workspaceSettings)
 	{
 		m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
-		saveSettings(m_workspacePath, m_workspaceSettings, true);
+		saveGlobalSettings(m_workspacePath, m_workspaceSettings);
 	}
 	else
 		m_mergedSettings = m_globalSettings;
@@ -1648,6 +1664,7 @@ void EditorForm::destroyAdditionalPanel(ui::Widget* widget)
 {
 	T_ASSERT (widget);
 
+	m_paneWest->undock(widget);
 	m_paneEast->undock(widget);
 	m_paneSouth->undock(widget);
 }
@@ -2517,7 +2534,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 						m_mergedSettings = m_globalSettings;
 
 					// Save modified workspace.
-					if (saveSettings(m_workspacePath, m_workspaceSettings, true))
+					if (saveGlobalSettings(m_workspacePath, m_workspaceSettings))
 					{
 						// Re-open workspace.
 						Path workspacePath = m_workspacePath;
@@ -2555,12 +2572,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 
 				// Save modified settings; do this here as well as at termination
 				// as we want to make sure changes doesn't get lost in case of a crash.
-#if !defined(__APPLE__)
-				Path settingsPath = m_startupDirectory + Path(L"Traktor.Editor.config");
-#else
-				Path settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
-#endif
-				if (saveSettings(settingsPath, m_globalSettings, false))
+				if (saveUserSettings(m_settingsPath, m_globalSettings))
 				{
 					updateShortcutTable();
 					for (int i = 0; i < m_tab->getPageCount(); ++i)
@@ -2871,12 +2883,7 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.LastDesktopHeight", desktopSize.cy);
 
 	// Save settings and pipeline hash.
-#if !defined(__APPLE__)
-	Path settingsPath = m_startupDirectory + Path(L"Traktor.Editor.config");
-#else
-	Path settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
-#endif
-	saveSettings(settingsPath, m_globalSettings, false);
+	saveUserSettings(m_settingsPath, m_globalSettings);
 	ui::Application::getInstance()->exit(0);
 }
 
