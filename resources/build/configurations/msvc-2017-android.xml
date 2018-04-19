@@ -92,26 +92,36 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
+					</options>
+				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Lib</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
 					</options>
 				</item>
 			</staticLibrary>
@@ -155,12 +165,16 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 					</options>
 				</item>
@@ -178,26 +192,26 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -205,12 +219,16 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 					</options>
 				</item>
@@ -228,26 +246,26 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);WIN32;_CONSOLE;UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -255,12 +273,16 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 					</options>
 				</item>
@@ -280,26 +302,26 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
 			</staticLibrary>
@@ -316,26 +338,26 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -343,12 +365,16 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 					</options>
 				</item>
@@ -366,26 +392,26 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -393,12 +419,16 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 					</options>
 				</item>
@@ -416,26 +446,26 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -443,12 +473,16 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 					</options>
 				</item>
