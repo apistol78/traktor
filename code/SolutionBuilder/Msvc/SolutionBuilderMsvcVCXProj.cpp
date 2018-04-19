@@ -71,11 +71,13 @@ bool SolutionBuilderMsvcVCXProj::getInformation(
 	GeneratorContext& context,
 	Solution* solution,
 	Project* project,
+	std::wstring& outSolutionPath,
 	std::wstring& outProjectPath,
 	std::wstring& outProjectFileName,
 	std::wstring& outProjectGuid
 ) const
 {
+	outSolutionPath = solution->getRootPath();
 	outProjectPath = solution->getRootPath() + L"/" + project->getName();
 	outProjectFileName = outProjectPath + L"/" + project->getName() + L".vcxproj";
 	outProjectGuid = context.generateGUID(outProjectFileName);
@@ -224,11 +226,12 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	Project* project
 ) const
 {
-	std::wstring projectPath, projectFileName, projectGuid;
+	std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 	if (!getInformation(
 		context,
 		solution,
 		project,
+		solutionPath,
 		projectPath,
 		projectFileName,
 		projectGuid
@@ -240,6 +243,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 
 	log::info << L"Generating msbuild project \"" << projectFileName << L"\"" << Endl;
 
+	context.set(L"SOLUTION_PATH", solutionPath);
 	context.set(L"PROJECT_PLATFORM", m_platform);
 	context.set(L"PROJECT_NAME", project->getName());
 	context.set(L"PROJECT_PATH", projectPath);
@@ -422,7 +426,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			int32_t indent = os.getIndent();
 			os.setIndent(0);
 
-			os << L"@pushd \"$(TargetDir)\"" << Endl;
+			os << L"@pushd \"" << solutionPath << L"/" << name << L"\"" << Endl;
 			for (RefArray< AggregationItem >::const_iterator j = aggregationItems.begin(); j != aggregationItems.end(); ++j)
 			{
 				Path sourceFile = Path((*j)->getSourceFile());
@@ -493,6 +497,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			Ref< Project > dependentProject = projectDependency->getProject();
 			T_ASSERT (dependentProject);
 
+			std::wstring dependentSolutionPath;
 			std::wstring dependentProjectPath;
 			std::wstring dependentProjectFileName;
 			std::wstring dependentProjectGuid;
@@ -501,6 +506,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 				context,
 				solution,
 				dependentProject,
+				dependentSolutionPath,
 				dependentProjectPath,
 				dependentProjectFileName,
 				dependentProjectGuid
@@ -542,11 +548,12 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 	Project* project
 ) const
 {
-	std::wstring projectPath, projectFileName, projectGuid;
+	std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 	if (!getInformation(
 		context,
 		solution,
 		project,
+		solutionPath,
 		projectPath,
 		projectFileName,
 		projectGuid
@@ -655,11 +662,12 @@ bool SolutionBuilderMsvcVCXProj::generateUser(
 	Project* project
 ) const
 {
-	std::wstring projectPath, projectFileName, projectGuid;
+	std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 	if (!getInformation(
 		context,
 		solution,
 		project,
+		solutionPath,
 		projectPath,
 		projectFileName,
 		projectGuid

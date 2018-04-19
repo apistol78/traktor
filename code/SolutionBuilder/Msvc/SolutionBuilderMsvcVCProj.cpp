@@ -43,11 +43,13 @@ bool SolutionBuilderMsvcVCProj::getInformation(
 	GeneratorContext& context,
 	Solution* solution,
 	Project* project,
+	std::wstring& outSolutionPath,
 	std::wstring& outProjectPath,
 	std::wstring& outProjectFileName,
 	std::wstring& outProjectGuid
 ) const
 {
+	outSolutionPath = solution->getRootPath();
 	outProjectPath = solution->getRootPath() + L"/" + project->getName();
 	outProjectFileName = outProjectPath + L"/" + project->getName() + L".vcproj";
 	outProjectGuid = context.generateGUID(outProjectFileName);
@@ -60,8 +62,8 @@ bool SolutionBuilderMsvcVCProj::generate(
 	Project* project
 ) const
 {
-	std::wstring projectPath, projectFileName, projectGuid;
-	if (!getInformation(context, solution, project, projectPath, projectFileName, projectGuid))
+	std::wstring solutionPath, projectPath, projectFileName, projectGuid;
+	if (!getInformation(context, solution, project, solutionPath, projectPath, projectFileName, projectGuid))
 		return false;
 
 	if (!FileSystem::getInstance().makeAllDirectories(projectPath))

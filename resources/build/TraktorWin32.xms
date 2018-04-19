@@ -1459,6 +1459,7 @@
 															<item>T_XML_EXPORT</item>
 															<item>_DEBUG</item>
 															<item>XML_UNICODE</item>
+															<item>XML_UNICODE_WCHAR_T</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1491,6 +1492,7 @@
 															<item>T_XML_EXPORT</item>
 															<item>NDEBUG</item>
 															<item>XML_UNICODE</item>
+															<item>XML_UNICODE_WCHAR_T</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1523,6 +1525,7 @@
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
 															<item>XML_UNICODE</item>
+															<item>XML_UNICODE_WCHAR_T</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1551,6 +1554,7 @@
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
 															<item>XML_UNICODE</item>
+															<item>XML_UNICODE_WCHAR_T</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>

@@ -240,6 +240,16 @@
 						</item>
 					</options>
 				</item>
+				<item type="SolutionBuilderMsvcVCXDefinition">
+					<name>Lib</name>
+					<fileTypes/>
+					<options>
+						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+					</options>
+				</item>
 			</staticLibrary>
 			<sharedLibrary>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -299,12 +309,20 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 						<item>
 							<name>GenerateDebugInformation</name>
@@ -312,11 +330,11 @@
 						</item>
 						<item>
 							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
+							<value>%(SOLUTION_PATH)/$(Configuration)/%(PROJECT_NAME).pdb</value>
 						</item>
 						<item>
 							<name>ImportLibrary</name>
-							<value>$(OutDir)%(PROJECT_NAME).lib</value>
+							<value>%(SOLUTION_PATH)/$(Configuration)/%(PROJECT_NAME).lib</value>
 						</item>
 						<item>
 							<name>RandomizedBaseAddress</name>
@@ -401,12 +419,16 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 						<item>
 							<name>GenerateDebugInformation</name>
@@ -414,7 +436,7 @@
 						</item>
 						<item>
 							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
+							<value>%(SOLUTION_PATH)/$(Configuration)/%(PROJECT_NAME).pdb</value>
 						</item>
 						<item>
 							<name>RandomizedBaseAddress</name>
@@ -499,12 +521,16 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 						<item>
 							<name>GenerateDebugInformation</name>
@@ -512,7 +538,7 @@
 						</item>
 						<item>
 							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
+							<value>%(SOLUTION_PATH)/$(Configuration)/%(PROJECT_NAME).pdb</value>
 						</item>
 						<item>
 							<name>RandomizedBaseAddress</name>
@@ -693,12 +719,16 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 						<item>
 							<name>GenerateDebugInformation</name>
@@ -706,11 +736,11 @@
 						</item>
 						<item>
 							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
+							<value>%(SOLUTION_PATH)/$(Configuration)/%(PROJECT_NAME).pdb</value>
 						</item>
 						<item>
 							<name>ImportLibrary</name>
-							<value>$(OutDir)%(PROJECT_NAME).lib</value>
+							<value>%(SOLUTION_PATH)/$(Configuration)/%(PROJECT_NAME).lib</value>
 						</item>
 						<item>
 							<name>RandomizedBaseAddress</name>
@@ -815,12 +845,16 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 						<item>
 							<name>GenerateDebugInformation</name>
@@ -828,7 +862,7 @@
 						</item>
 						<item>
 							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
+							<value>%(SOLUTION_PATH)/$(Configuration)/%(PROJECT_NAME).pdb</value>
 						</item>
 						<item>
 							<name>RandomizedBaseAddress</name>
@@ -933,12 +967,16 @@
 					<fileTypes/>
 					<options>
 						<item>
+							<name>OutputFile</name>
+							<value>%(SOLUTION_PATH)/$(Configuration)/$(TargetName)$(TargetExt)</value>
+						</item>
+						<item>
 							<name>AdditionalDependencies</name>
 							<value>%(PROJECT_LIBRARIES);%(AdditionalDependencies)</value>
 						</item>
 						<item>
 							<name>AdditionalLibraryDirectories</name>
-							<value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+							<value>%(PROJECT_LIBRARY_PATHS);%(SOLUTION_PATH)/$(Configuration);%(AdditionalLibraryDirectories)</value>
 						</item>
 						<item>
 							<name>GenerateDebugInformation</name>
@@ -946,7 +984,7 @@
 						</item>
 						<item>
 							<name>ProgramDatabaseFile</name>
-							<value>$(OutDir)%(PROJECT_NAME).pdb</value>
+							<value>%(SOLUTION_PATH)/$(Configuration)/%(PROJECT_NAME).pdb</value>
 						</item>
 						<item>
 							<name>RandomizedBaseAddress</name>

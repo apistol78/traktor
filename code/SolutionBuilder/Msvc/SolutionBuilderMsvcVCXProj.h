@@ -35,6 +35,7 @@ public:
 		GeneratorContext& context,
 		Solution* solution,
 		Project* project,
+		std::wstring& outSolutionPath,
 		std::wstring& outProjectPath,
 		std::wstring& outProjectFileName,
 		std::wstring& outProjectGuid

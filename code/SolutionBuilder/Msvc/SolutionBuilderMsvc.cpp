@@ -87,11 +87,12 @@ bool collectExternalSolutions(
 			if (outProjectGuids.find(externalProject) != outProjectGuids.end())
 				continue;
 
-			std::wstring projectPath, projectFileName, projectGuid;
+			std::wstring solutionPàth, projectPath, projectFileName, projectGuid;
 			if (!settings->getProject()->getInformation(
 				context,
 				externalSolution,
 				externalProject,
+				solutionPàth,
 				projectPath,
 				projectFileName,
 				projectGuid
@@ -214,11 +215,12 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		if (!project->getEnable())
 			continue;
 
-		std::wstring projectPath, projectFileName, projectGuid;
+		std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 		if (!m_settings->getProject()->getInformation(
 			context,
 			solution,
 			project,
+			solutionPath,
 			projectPath,
 			projectFileName,
 			projectGuid
@@ -262,11 +264,12 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		if (!project->getEnable())
 			continue;
 
-		std::wstring projectPath, projectFileName, projectGuid;
+		std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 		if (!m_settings->getProject()->getInformation(
 			context,
 			solution,
 			project,
+			solutionPath,
 			projectPath,
 			projectFileName,
 			projectGuid
@@ -344,11 +347,12 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 				if (!externalProject->getEnable())
 					continue;
 
-				std::wstring projectPath, projectFileName, projectGuid;
+				std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 				if (!m_settings->getProject()->getInformation(
 					context,
 					externalSolution,
 					externalProject,
+					solutionPath,
 					projectPath,
 					projectFileName,
 					projectGuid
