@@ -31,15 +31,14 @@ class T_DLLCLASS MeshAsset : public editor::Asset
 public:
 	enum MeshType
 	{
-		MtInvalid,
-		MtBlend,
-		MtIndoor,
-		MtInstance,
-		MtLod,
-		MtPartition,
-		MtSkinned,
-		MtStatic,
-		MtStream
+		MtBlend = 0,
+		MtIndoor = 1,
+		MtInstance = 2,
+		MtLod = 3,
+		MtPartition = 4,
+		MtSkinned = 5,
+		MtStatic = 6,
+		MtStream = 7
 	};
 
 	MeshAsset();
