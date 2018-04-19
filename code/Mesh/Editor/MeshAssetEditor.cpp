@@ -251,7 +251,7 @@ void MeshAssetEditor::destroy()
 void MeshAssetEditor::apply()
 {
 	m_asset->setFileName(m_editFileName->getText());
-	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected() + 1));
+	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected()));
 	m_asset->setBakeOcclusion(m_checkBakeOcclusion->isChecked());
 	m_asset->setCullDistantFaces(m_checkCullDistantFaces->isChecked());
 	m_asset->setLodSteps(m_sliderLodSteps->getValue());
@@ -336,7 +336,7 @@ void MeshAssetEditor::updateFile()
 		assetRelPath = m_asset->getFileName().getOriginal();
 
 	m_editFileName->setText(assetRelPath.getPathName());
-	m_dropMeshType->select(m_asset->getMeshType() - 1);
+	m_dropMeshType->select(m_asset->getMeshType());
 	m_checkBakeOcclusion->setChecked(m_asset->getBakeOcclusion());
 	m_checkCullDistantFaces->setChecked(m_asset->getCullDistantFaces());
 	

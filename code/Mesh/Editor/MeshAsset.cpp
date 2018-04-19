@@ -18,7 +18,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 12, MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
-:	m_meshType(MtInvalid)
+:	m_meshType(MtStatic)
 ,	m_scaleFactor(1.0f)
 ,	m_bakeOcclusion(false)
 ,	m_cullDistantFaces(false)
@@ -32,7 +32,6 @@ void MeshAsset::serialize(ISerializer& s)
 {
 	const MemberEnum< MeshType >::Key c_MeshType_Keys[] =
 	{
-		{ L"MtInvalid", MtInvalid },
 		{ L"MtBlend", MtBlend },
 		{ L"MtIndoor", MtIndoor },
 		{ L"MtInstance", MtInstance },
