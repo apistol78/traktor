@@ -6,17 +6,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <algorithm>
 #include <cmath>
+#include "Drawing/Image.h"
+#include "Ui/Application.h"
+#include "Ui/Canvas.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/Graph/IpolNodeShape.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/Pin.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Canvas.h"
-#include "Drawing/Image.h"
-
-// Resources
-#include "Resources/Ipol.h"
-#include "Resources/Pin.h"
 
 namespace traktor
 {
@@ -35,16 +32,21 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.IpolNodeShape", IpolNodeShape, NodeSh
 
 IpolNodeShape::IpolNodeShape()
 {
-	m_imageNode = Bitmap::load(c_ResourceIpol, sizeof(c_ResourceIpol), L"png");
-	m_imagePin = Bitmap::load(c_ResourcePin, sizeof(c_ResourcePin), L"png");
+	m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.Ipol");
+	m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.IpolSelected");
+	m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.IpolError");
+	m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.IpolErrorSelected");
+
+	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
 }
 
 Point IpolNodeShape::getPinPosition(const Node* node, const Pin* pin)
 {
 	Rect rc = node->calculateRect();
 	
-	int x = pin->getDirection() == Pin::DrInput ? 4 : rc.getWidth() - 4;
-	int y = 16;
+	int32_t f = scaleBySystemDPI(4);
+	int32_t x = pin->getDirection() == Pin::DrInput ? -f : rc.getWidth() + f;
+	int32_t y = rc.getHeight() / 2;
 
 	return Point(rc.left + x, rc.top + y);
 }
@@ -53,14 +55,15 @@ Pin* IpolNodeShape::getPinAt(const Node* node, const Point& pt)
 {
 	Rect rc = node->calculateRect();
 
-	int x = pt.x - rc.left;
-	int y = pt.y - rc.top;
+	int32_t f = scaleBySystemDPI(4);
+	int32_t x = pt.x - rc.left;
+	int32_t y = pt.y - rc.top;
 
-	if (y >= 16 - 4 && y <= 16 + 4)
+	if (y >= rc.getHeight() / 2 - f && y <= rc.getHeight() / 2 + f)
 	{
-		if (x >= 0 && x <= c_pinHitWidth)
+		if (x >= -f && x <= scaleBySystemDPI(c_pinHitWidth))
 			return node->getInputPins()[0];
-		if (x >= rc.getWidth() - c_pinHitWidth && x <= rc.getWidth())
+		if (x >= rc.getWidth() - scaleBySystemDPI(c_pinHitWidth) && x <= rc.getWidth() + f)
 			return node->getOutputPins()[0];
 	}
 
@@ -70,20 +73,23 @@ Pin* IpolNodeShape::getPinAt(const Node* node, const Point& pt)
 void IpolNodeShape::paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset)
 {
 	Rect rc = node->calculateRect().offset(offset);
-	int ofx = node->isSelected() ? 32 : 0;
+
+	int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
+	Size sz = m_imageNode[imageIndex]->getSize();
 
 	canvas->drawBitmap(
 		rc.getTopLeft(),
-		Point(ofx, 0),
-		Size(32, 32),
-		m_imageNode,
-		ui::BmAlpha | ui::BmModulate
+		Point(0, 0),
+		sz,
+		m_imageNode[imageIndex],
+		ui::BmAlpha
 	);
 
+	int32_t f = scaleBySystemDPI(0);
 	Size pinSize = m_imagePin->getSize();
 
 	canvas->drawBitmap(
-		Point(rc.left + 4 - pinSize.cx / 2, rc.getCenter().y - pinSize.cy / 2),
+		Point(rc.left - f - pinSize.cx / 2, rc.getCenter().y - pinSize.cy / 2),
 		Point(0, 0),
 		pinSize,
 		m_imagePin,
@@ -91,7 +97,7 @@ void IpolNodeShape::paint(const Node* node, const PaintSettings* settings, Canva
 	);
 
 	canvas->drawBitmap(
-		Point(rc.right - 4 - pinSize.cx / 2, rc.getCenter().y - pinSize.cy / 2),
+		Point(rc.right + f - pinSize.cx / 2, rc.getCenter().y - pinSize.cy / 2),
 		Point(0, 0),
 		pinSize,
 		m_imagePin,
@@ -101,7 +107,8 @@ void IpolNodeShape::paint(const Node* node, const PaintSettings* settings, Canva
 
 Size IpolNodeShape::calculateSize(const Node* node)
 {
-	return Size(32, 32);
+	int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
+	return m_imageNode[imageIndex]->getSize();
 }
 
 		}

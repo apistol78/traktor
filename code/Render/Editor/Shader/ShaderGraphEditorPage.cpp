@@ -182,8 +182,9 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_site->createAdditionalPanel(m_shaderViewer, ui::scaleBySystemDPI(400), false);
 
 	// Modify graph control settings.
-	Ref< ui::custom::PaintSettings > paintSettings = m_editorGraph->getPaintSettings();
+	Ref< ui::custom::PaintSettings > paintSettings = new ui::custom::PaintSettings(*m_editorGraph->getPaintSettings());
 	paintSettings->setSmoothSpline(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.SmoothSpline"));
+	m_editorGraph->setPaintSettings(paintSettings);
 
 	// Build popup menu.
 	m_menuPopup = new ui::PopupMenu();

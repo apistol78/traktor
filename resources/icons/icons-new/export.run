@@ -4,6 +4,114 @@ import(traktor.drawing)
 local outputs =
 {
 	{
+		source = "Pin.svg",
+		name = "UI_Graph_Pin",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Pin", column = 0, row = 0, width = 1, height = 1, base = 12 }, -- , base = 16*96/45 },
+		}
+	},
+
+	{
+		source = "Node.svg",
+		name = "UI_Graph_Node",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Node", column = 0, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
+			{ name = "NodeSelected", column = 3, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
+			{ name = "NodeError", column = 0, row = 3, width = 3, height = 3 }, -- , base = 16*96/45 },
+			{ name = "NodeErrorSelected", column = 3, row = 3, width = 3, height = 3 }, -- , base = 16*96/45 },
+		}
+	},
+
+	{
+		source = "External.svg",
+		name = "UI_Graph_External",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "External", column = 0, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
+			{ name = "ExternalSelected", column = 3, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
+			{ name = "ExternalError", column = 0, row = 3, width = 3, height = 3 }, -- , base = 16*96/45 },
+			{ name = "ExternalErrorSelected", column = 3, row = 3, width = 3, height = 3 }, -- , base = 16*96/45 },
+		}
+	},
+
+	{
+		source = "Input.svg",
+		name = "UI_Graph_Input",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Input", column = 0, row = 0, width = 3, height = 2 },
+			{ name = "InputSelected", column = 3, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "InputError", column = 0, row = 2, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "InputErrorSelected", column = 3, row = 2, width = 3, height = 2 }, -- , base = 16*96/45 },
+		}
+	},
+
+	{
+		source = "InOut.svg",
+		name = "UI_Graph_InOut",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "InOut", column = 0, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "InOutSelected", column = 3, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "InOutError", column = 0, row = 2, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "InOutErrorSelected", column = 3, row = 2, width = 3, height = 2 }, -- , base = 16*96/45 },
+		}
+	},
+
+	{
+		source = "Output.svg",
+		name = "UI_Graph_Output",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Output", column = 0, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "OutputSelected", column = 3, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "OutputError", column = 0, row = 2, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "OutputErrorSelected", column = 3, row = 2, width = 3, height = 2 }, -- , base = 16*96/45 },
+		}
+	},
+
+	{
+		source = "Ipol.svg",
+		name = "UI_Graph_Output",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Ipol", column = 0, row = 0, width = 2, height = 2 }, -- , base = 16*96/45 },
+			{ name = "IpolSelected", column = 2, row = 0, width = 2, height = 2 }, -- , base = 16*96/45 },
+			{ name = "IpolError", column = 0, row = 2, width = 2, height = 2 }, -- , base = 16*96/45 },
+			{ name = "IpolErrorSelected", column = 2, row = 2, width = 2, height = 2 }, -- , base = 16*96/45 },
+		}
+	},
+
+	{
+		source = "Comment.svg",
+		name = "UI_Graph_Comment",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Comment", column = 0, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
+		}
+	},
+
+	{
+		source = "Background.svg",
+		name = "UI_Graph_Background",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Background", column = 0, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
+		}
+	},
+
+	{
 		name = "Editor",
 		path = "../../runtime/themes/%s/Images/Editor",
 		resources =
@@ -329,7 +437,8 @@ local dpis =
 local function export(input, x, y, width, height, dpi, output)
 	local inkscape = "c:/program files/inkscape/inkscape.exe"
 	local cmd = "\"" .. inkscape .. "\" -e \"" .. output .. "\" -a " .. x .. ":" .. -y .. ":" .. (x + width) .. ":" .. -y + height .. " -d " .. dpi .. " " .. input
-	local result = run:execute(cmd, nil)
+	stdout:printLn(cmd)
+	local result = run:execute(cmd) --, nil)
 	return result == 0
 end
 
@@ -341,6 +450,10 @@ function main(argv)
 	end
 
 	for _, g in ipairs(outputs) do
+
+		local source = g.source
+		if source == nil then source = "Icons.svg" end
+
 		-- if argv:empty() or argv:get(0) == g.name then
 		if true then
 			for _, o in ipairs(g.resources) do
@@ -349,57 +462,31 @@ function main(argv)
 				local path = string.format(g.path, argv:get(0))
 				local p = FileSystem.getInstance():getAbsolutePath(Path(path .. "/" .. o.name .. ".image"))
 				local f = FileSystem.getInstance():get(p)
+
 				if f == nil or not f:isReadOnly() then
 
 					local sizes = { 0, 0, 0, 0 }
 					local base = 16
 					if o.base ~= nil then base = o.base end
 
-					if false then
+					-- Generate PNG at different DPI resolutions.
+					for j, dpi in ipairs(dpis) do
+
+						stdout:printLn("Exporting @ dpi " .. dpi .. "...")
 
 						-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
-						local sdpi = 480
-						local xdpi = (90 / 2) * (sdpi / 96) * (base / 16)
-						export("Icons.svg", o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, sdpi .. ".png")
+						local xdpi = (90 / 2) * (dpi / 96) * (base / 16)
+						export(source, o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
 
-						-- Generate PNG at different DPI resolutions.
-						local source = Image.loadFromFile(sdpi .. ".png")
-						for j, dpi in ipairs(dpis) do
-
-							-- Produce scaled version of image.
-							if dpi ~= sdpi then
-								local scale = dpi / sdpi
-								local t = source:clone(true)
-								local flt = ScaleFilter(
-									t:getWidth() * scale,
-									t:getHeight() * scale
-								)
-								t:apply(flt)
-								t:save(dpi .. ".png")
-							end
-
-							-- Get file size of output.
-							local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
-							assert (f ~= nil)
-							sizes[j] = f:getSize()								
-						end
-
-					else
-
-						-- Generate PNG at different DPI resolutions.
-						for j, dpi in ipairs(dpis) do
-
-							-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
-							local xdpi = (90 / 2) * (dpi / 96) * (base / 16)
-							export("Icons.svg", o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
-
-							-- Get file size of output.
-							local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
-							assert (f ~= nil)
-							sizes[j] = f:getSize()
-						end
-
+						-- Get file size of output.
+						local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
+						assert (f ~= nil)
+						sizes[j] = f:getSize()
 					end
+
+					stdout:printLn("Merging into \"image\"...")
+
+					FileSystem.getInstance():makeAllDirectories(Path(p:getPathOnly()))
 
 					-- Merge all files into a simple "image pack" resource.
 					local f = FileSystem.getInstance():open(p, File.FmWrite)
@@ -425,11 +512,15 @@ function main(argv)
 
 					f:close()
 
+					stdout:printLn("Cleaning up intermediate")
+
 					-- Remove all intermediate images.
 					for j, dpi in ipairs(dpis) do
 						run:rm(dpi .. ".png")
 						FileSystem.getInstance():move(Path(o.name .. "_" .. dpi .. ".png"), Path(dpi .. ".png"), true)
 					end
+
+					stdout:printLn("Done")
 
 				else
 					stdout:printLn("Skipped as target is read-only; presumably because it's locked in SCM.")
@@ -437,5 +528,6 @@ function main(argv)
 			end
 		end
 	end
-	stdout:printLn("Done")
+
+	stdout:printLn("All done")
 end

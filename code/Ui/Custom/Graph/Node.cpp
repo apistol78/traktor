@@ -66,7 +66,7 @@ const std::wstring& Node::getComment() const
 	return m_comment;
 }
 
-void Node::setImage(Bitmap* image)
+void Node::setImage(IBitmap* image)
 {
 	T_ASSERT (m_shape);
 	if (m_image != image)
@@ -76,7 +76,7 @@ void Node::setImage(Bitmap* image)
 	}
 }
 
-Ref< Bitmap > Node::getImage() const
+IBitmap* Node::getImage() const
 {
 	return m_image;
 }
@@ -197,7 +197,7 @@ Pin* Node::getPinAt(const Point& p) const
 	return m_shape->getPinAt(this, p);
 }
 
-void Node::paint(PaintSettings* settings, Canvas* canvas, const Size& offset) const
+void Node::paint(const PaintSettings* settings, Canvas* canvas, const Size& offset) const
 {
 	T_ASSERT (m_shape);
 	m_shape->paint(this, settings, canvas, offset);

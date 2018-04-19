@@ -22,7 +22,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
+class IBitmap;
 
 		namespace custom
 		{
@@ -49,7 +49,7 @@ public:
 
 private:
 	GraphControl* m_graphControl;
-	Ref< Bitmap > m_imageNode;
+	Ref< IBitmap > m_imageNode;
 };
 
 		}
