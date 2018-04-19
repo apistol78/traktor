@@ -29,8 +29,8 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
 class Canvas;
+class IBitmap;
 class Size;
 
 		namespace custom
@@ -64,9 +64,9 @@ public:
 
 	const std::wstring& getComment() const;
 
-	void setImage(Bitmap* image);
+	void setImage(IBitmap* image);
 
-	Ref< Bitmap > getImage() const;
+	IBitmap* getImage() const;
 
 	void setState(int32_t state);
 
@@ -98,7 +98,7 @@ public:
 
 	Pin* getPinAt(const Point& p) const;
 
-	void paint(PaintSettings* settings, Canvas* canvas, const Size& offset) const;
+	void paint(const PaintSettings* settings, Canvas* canvas, const Size& offset) const;
 
 	Rect calculateRect() const;
 
@@ -106,7 +106,7 @@ private:
 	std::wstring m_title;
 	std::wstring m_info;
 	std::wstring m_comment;
-	Ref< Bitmap > m_image;
+	Ref< IBitmap > m_image;
 	int32_t m_state;
 	Point m_position;
 	Size m_size;

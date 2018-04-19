@@ -25,7 +25,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
+class IBitmap;
 
 		namespace custom
 		{
@@ -121,19 +121,19 @@ public:
 	 */
 	int getConnectedEdges(const RefArray< Node >& nodes, bool inclusive, RefArray< Edge >& outEdges) const;
 
-	Ref< Node > getNodeAt(const Point& p) const;
+	Node* getNodeAt(const Point& p) const;
 
-	Ref< Edge > getEdgeAt(const Point& p) const;
+	Edge* getEdgeAt(const Point& p) const;
 
-	Ref< Pin > getPinAt(const Point& p) const;
+	Pin* getPinAt(const Point& p) const;
 
 	void showProbe(const Point& p, const std::wstring& text);
 
 	void hideProbe();
 
-	void setPaintSettings(PaintSettings* paintSettings);
+	void setPaintSettings(const PaintSettings* paintSettings);
 
-	Ref< PaintSettings > getPaintSettings() const;
+	const PaintSettings* getPaintSettings() const;
 
 	void center();
 
@@ -144,8 +144,8 @@ public:
 	const Size& getOffset() const { return m_offset; }
 
 private:
-	Ref< PaintSettings > m_paintSettings;
-	Ref< Bitmap > m_imageBackground;
+	Ref< const PaintSettings > m_paintSettings;
+	Ref< IBitmap > m_imageBackground;
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
 	Size m_offset;

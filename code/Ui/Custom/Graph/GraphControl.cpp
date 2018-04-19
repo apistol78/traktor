@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Node.h"
@@ -20,9 +20,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Custom/Graph/EdgeDisconnectEvent.h"
 #include "Ui/Custom/Graph/Pin.h"
 #include "Ui/Custom/Graph/SelectEvent.h"
-
-// Resources
-#include "Resources/Background.h"
 
 namespace traktor
 {
@@ -76,7 +73,7 @@ bool GraphControl::create(Widget* parent, int style)
 		return false;
 
 	m_paintSettings = new PaintSettings(getFont());
-	m_imageBackground = Bitmap::load(c_ResourceBackground, sizeof(c_ResourceBackground), L"png");
+	m_imageBackground = new ui::StyleBitmap(L"UI.Graph.Background");
 
 	addEventHandler< MouseButtonDownEvent >(this, &GraphControl::eventMouseDown);
 	addEventHandler< MouseButtonUpEvent >(this, &GraphControl::eventMouseUp);
@@ -223,7 +220,7 @@ int GraphControl::getConnectedEdges(const RefArray< Node >& nodes, bool inclusiv
 	return int(outEdges.size());
 }
 
-Ref< Node > GraphControl::getNodeAt(const Point& p) const
+Node* GraphControl::getNodeAt(const Point& p) const
 {
 	for (RefArray< Node >::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
 	{
@@ -233,7 +230,7 @@ Ref< Node > GraphControl::getNodeAt(const Point& p) const
 	return 0;
 }
 
-Ref< Edge > GraphControl::getEdgeAt(const Point& p) const
+Edge* GraphControl::getEdgeAt(const Point& p) const
 {
 	for (RefArray< Edge >::const_iterator i = m_edges.begin(); i != m_edges.end(); ++i)
 	{
@@ -243,11 +240,11 @@ Ref< Edge > GraphControl::getEdgeAt(const Point& p) const
 	return 0;
 }
 
-Ref< Pin > GraphControl::getPinAt(const Point& p) const
+Pin* GraphControl::getPinAt(const Point& p) const
 {
 	for (RefArray< Node >::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
 	{
-		Ref< Pin > pin = (*i)->getPinAt(p - m_offset);
+		Pin* pin = (*i)->getPinAt(p - m_offset);
 		if (pin)
 			return pin;
 	}
@@ -270,12 +267,12 @@ void GraphControl::hideProbe()
 	}
 }
 
-void GraphControl::setPaintSettings(PaintSettings* paintSettings)
+void GraphControl::setPaintSettings(const PaintSettings* paintSettings)
 {
 	m_paintSettings = paintSettings;
 }
 
-Ref< PaintSettings > GraphControl::getPaintSettings() const
+const PaintSettings* GraphControl::getPaintSettings() const
 {
 	return m_paintSettings;
 }

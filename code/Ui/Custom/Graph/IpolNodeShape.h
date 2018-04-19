@@ -22,7 +22,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
+class IBitmap;
 
 		namespace custom
 		{
@@ -46,8 +46,8 @@ public:
 	virtual Size calculateSize(const Node* node) T_OVERRIDE;
 
 private:
-	Ref< Bitmap > m_imageNode;
-	Ref< Bitmap > m_imagePin;
+	Ref< IBitmap > m_imageNode[4];
+	Ref< IBitmap > m_imagePin;
 };
 
 		}

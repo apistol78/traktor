@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Math/Envelope.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Math/Vector2.h"
+#include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/Event.h"
 #include "Ui/Custom/Graph/Edge.h"
@@ -31,8 +32,8 @@ void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 {
 	Point s = s1, d = d1;
 
-	s.x += c_sourcePinOffset;
-	d.x -= c_destPinOffset;
+	s.x += scaleBySystemDPI(c_sourcePinOffset);
+	d.x -= scaleBySystemDPI(c_destPinOffset);
 
 	Point r(d.x - s.x, d.y - s.y);
 	Point ar(traktor::abs(r.x), traktor::abs(r.y));
@@ -224,16 +225,16 @@ void Edge::paint(const PaintSettings* paintSettings, Canvas* canvas, const Size&
 	else
 		calculateLinearSpline(s, d, m_spline);
 
-	canvas->setPenThickness(2);
+	canvas->setPenThickness(scaleBySystemDPI(2));
 	canvas->drawLines(m_spline);
 	canvas->setPenThickness(1);
 
 	Point at = m_destination->getPosition() + offset;
 	Point arrow[] =
 	{
-		Point(at.x - 12, at.y - 5),
-		Point(at.x - 2, at.y),
-		Point(at.x - 12, at.y + 5)
+		Point(at.x - scaleBySystemDPI(12), at.y - scaleBySystemDPI(5)),
+		Point(at.x - scaleBySystemDPI(2) , at.y),
+		Point(at.x - scaleBySystemDPI(12), at.y + scaleBySystemDPI(5))
 	};
 	canvas->fillPolygon(arrow, 3);
 }

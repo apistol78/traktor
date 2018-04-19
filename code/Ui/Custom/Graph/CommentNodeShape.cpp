@@ -9,15 +9,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Drawing/Image.h"
-#include "Ui/Bitmap.h"
+#include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Custom/Graph/CommentNodeShape.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
-
-// Resources
-#include "Resources/Comment.h"
 
 namespace traktor
 {
@@ -37,7 +35,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.CommentNodeShape", CommentNodeShape, 
 CommentNodeShape::CommentNodeShape(GraphControl* graphControl)
 :	m_graphControl(graphControl)
 {
-	m_imageNode = Bitmap::load(c_ResourceComment, sizeof(c_ResourceComment), L"png");
+	m_imageNode = new ui::StyleBitmap(L"UI.Graph.Comment");
 }
 
 Point CommentNodeShape::getPinPosition(const Node* node, const Pin* pin)
@@ -54,23 +52,32 @@ void CommentNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 {
 	Rect rc = node->calculateRect().offset(offset);
 
-	int sx[] = { 0, 20, 76, 96 };
-	int sy[] = { 0, 20, 76, 96 };
-	int dx[] = { 0, 20, rc.getWidth() - 20, rc.getWidth() };
-	int dy[] = { 0, 20, rc.getHeight() - 20, rc.getHeight() };
-
-	for (int iy = 0; iy < 3; ++iy)
+	// Draw node shape.
 	{
-		for (int ix = 0; ix < 3; ++ix)
+		Size sz = m_imageNode->getSize();
+
+		int32_t tw = sz.cx / 3;
+		int32_t th = sz.cy / 3;
+
+		int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
+		int32_t sy[] = { 0, th, sz.cy - th, sz.cy };
+
+		int32_t dx[] = { 0, tw, rc.getWidth() - tw, rc.getWidth() };
+		int32_t dy[] = { 0, th, rc.getHeight() - th, rc.getHeight() };
+
+		for (int32_t iy = 0; iy < 3; ++iy)
 		{
-			canvas->drawBitmap(
-				rc.getTopLeft() + Size(dx[ix], dy[iy]),
-				Size(dx[ix + 1] - dx[ix], dy[iy + 1] - dy[iy]),
-				Point(sx[ix], sy[iy]),
-				Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
-				m_imageNode,
-				ui::BmAlpha | ui::BmModulate
-			);
+			for (int32_t ix = 0; ix < 3; ++ix)
+			{
+				canvas->drawBitmap(
+					rc.getTopLeft() + Size(dx[ix], dy[iy]),
+					Size(dx[ix + 1] - dx[ix], dy[iy + 1] - dy[iy]),
+					Point(sx[ix], sy[iy]),
+					Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
+					m_imageNode,
+					ui::BmAlpha
+				);
+			}
 		}
 	}
 
@@ -118,7 +125,7 @@ Size CommentNodeShape::calculateSize(const Node* node)
 {
 	const std::wstring& comment = node->getComment();
 	if (comment.empty())
-		return Size(200, 200);
+		return Size(scaleBySystemDPI(200), scaleBySystemDPI(200));
 
 	int32_t lineHeight = m_graphControl->getTextExtent(L"W").cy;
 
@@ -133,7 +140,7 @@ Size CommentNodeShape::calculateSize(const Node* node)
 		textSize.cy += lineHeight;
 	}
 
-	return textSize + Size(c_margin * 2, c_margin * 2);
+	return textSize + Size(scaleBySystemDPI(c_margin) * 2, scaleBySystemDPI(c_margin) * 2);
 }
 
 		}
