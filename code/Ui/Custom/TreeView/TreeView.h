@@ -4,8 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_ui_TreeView_H
-#define traktor_ui_TreeView_H
+#ifndef traktor_ui_custom_TreeView_H
+#define traktor_ui_custom_TreeView_H
 
 #include "Core/RefArray.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
@@ -104,4 +104,4 @@ private:
 	}
 }
 
-#endif	// traktor_ui_TreeView_H
+#endif	// traktor_ui_custom_TreeView_H
