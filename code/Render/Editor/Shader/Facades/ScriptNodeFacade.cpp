@@ -13,6 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeDialog.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeFacade.h"
+#include "Ui/Application.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/Node.h"
@@ -220,8 +221,8 @@ Ref< ui::custom::Node > ScriptNodeFacade::createEditorNode(
 		scriptNode->getName(),
 		L"",
 		ui::Point(
-			scriptNode->getPosition().first,
-			scriptNode->getPosition().second
+			ui::scaleBySystemDPI(scriptNode->getPosition().first),
+			ui::scaleBySystemDPI(scriptNode->getPosition().second)
 		),
 		m_nodeShape
 	);

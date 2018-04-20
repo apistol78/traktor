@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Shader/OutputPin.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
+#include "Ui/Application.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
 #include "Ui/Custom/Graph/InputNodeShape.h"
@@ -61,8 +62,8 @@ Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 		title,
 		shaderNode->getInformation(),
 		ui::Point(
-			shaderNode->getPosition().first,
-			shaderNode->getPosition().second
+			ui::scaleBySystemDPI(shaderNode->getPosition().first),
+			ui::scaleBySystemDPI(shaderNode->getPosition().second)
 		),
 		shape
 	);

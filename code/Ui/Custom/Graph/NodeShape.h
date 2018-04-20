@@ -24,15 +24,14 @@ namespace traktor
 	namespace ui
 	{
 
-class Canvas;
 class Size;
 
 		namespace custom
 		{
 
+class GraphCanvas;
 class Node;
 class Pin;
-class PaintSettings;
 
 /*! \brief Graph node visual shape.
  * \ingroup UIC
@@ -42,13 +41,13 @@ class T_DLLCLASS NodeShape : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Point getPinPosition(const Node* node, const Pin* pin) = 0;
+	virtual Point getPinPosition(const Node* node, const Pin* pin) const = 0;
 
-	virtual Pin* getPinAt(const Node* node, const Point& pt) = 0;
+	virtual Pin* getPinAt(const Node* node, const Point& pt) const = 0;
 
-	virtual void paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset) = 0;
+	virtual void paint(const Node* node, GraphCanvas* canvas, const Size& offset) const = 0;
 
-	virtual Size calculateSize(const Node* node) = 0;
+	virtual Size calculateSize(const Node* node) const = 0;
 };
 
 		}

@@ -8,11 +8,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <cmath>
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
-#include "Ui/Canvas.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/Custom/Graph/GraphCanvas.h"
 #include "Ui/Custom/Graph/IpolNodeShape.h"
-#include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Node.h"
+#include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Pin.h"
 
 namespace traktor
@@ -40,7 +40,7 @@ IpolNodeShape::IpolNodeShape()
 	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
 }
 
-Point IpolNodeShape::getPinPosition(const Node* node, const Pin* pin)
+Point IpolNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 	
@@ -51,7 +51,7 @@ Point IpolNodeShape::getPinPosition(const Node* node, const Pin* pin)
 	return Point(rc.left + x, rc.top + y);
 }
 
-Pin* IpolNodeShape::getPinAt(const Node* node, const Point& pt)
+Pin* IpolNodeShape::getPinAt(const Node* node, const Point& pt) const
 {
 	Rect rc = node->calculateRect();
 
@@ -70,8 +70,9 @@ Pin* IpolNodeShape::getPinAt(const Node* node, const Point& pt)
 	return 0;
 }
 
-void IpolNodeShape::paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset)
+void IpolNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& offset) const
 {
+	const PaintSettings* settings = canvas->getPaintSettings();
 	Rect rc = node->calculateRect().offset(offset);
 
 	int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
@@ -79,6 +80,7 @@ void IpolNodeShape::paint(const Node* node, const PaintSettings* settings, Canva
 
 	canvas->drawBitmap(
 		rc.getTopLeft(),
+		sz,
 		Point(0, 0),
 		sz,
 		m_imageNode[imageIndex],
@@ -90,6 +92,7 @@ void IpolNodeShape::paint(const Node* node, const PaintSettings* settings, Canva
 
 	canvas->drawBitmap(
 		Point(rc.left - f - pinSize.cx / 2, rc.getCenter().y - pinSize.cy / 2),
+		pinSize,
 		Point(0, 0),
 		pinSize,
 		m_imagePin,
@@ -98,6 +101,7 @@ void IpolNodeShape::paint(const Node* node, const PaintSettings* settings, Canva
 
 	canvas->drawBitmap(
 		Point(rc.right + f - pinSize.cx / 2, rc.getCenter().y - pinSize.cy / 2),
+		pinSize,
 		Point(0, 0),
 		pinSize,
 		m_imagePin,
@@ -105,7 +109,7 @@ void IpolNodeShape::paint(const Node* node, const PaintSettings* settings, Canva
 	);
 }
 
-Size IpolNodeShape::calculateSize(const Node* node)
+Size IpolNodeShape::calculateSize(const Node* node) const
 {
 	int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
 	return m_imageNode[imageIndex]->getSize();

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_ui_custom_Edge_H
 #define traktor_ui_custom_Edge_H
 
+#include <vector>
 #include "Core/Object.h"
 #include "Ui/Associative.h"
 #include "Ui/Point.h"
@@ -14,9 +15,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,12 +25,12 @@ namespace traktor
 	namespace ui
 	{
 
-class Canvas;
 class Size;
 
 		namespace custom
 		{
 
+class GraphCanvas;
 class PaintSettings;
 class Pin;
 
@@ -47,11 +48,11 @@ public:
 
 	void setSourcePin(Pin* source);
 
-	Ref< Pin > getSourcePin() const;
+	Pin* getSourcePin() const;
 
 	void setDestinationPin(Pin* destination);
 
-	Ref< Pin > getDestinationPin() const;
+	Pin* getDestinationPin() const;
 
 	void setText(const std::wstring& text);
 
@@ -63,7 +64,7 @@ public:
 
 	bool hit(const PaintSettings* paintSettings, const Point& p) const;
 
-	void paint(const PaintSettings* paintSettings, Canvas* canvas, const Size& offset) const;
+	void paint(GraphCanvas* canvas, const Size& offset) const;
 
 private:
 	Ref< Pin > m_source;

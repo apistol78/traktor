@@ -10,9 +10,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/String.h"
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
-#include "Ui/Canvas.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/Custom/Graph/CommentNodeShape.h"
+#include "Ui/Custom/Graph/GraphCanvas.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
@@ -38,17 +38,17 @@ CommentNodeShape::CommentNodeShape(GraphControl* graphControl)
 	m_imageNode = new ui::StyleBitmap(L"UI.Graph.Comment");
 }
 
-Point CommentNodeShape::getPinPosition(const Node* node, const Pin* pin)
+Point CommentNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	return Point(0, 0);
 }
 
-Pin* CommentNodeShape::getPinAt(const Node* node, const Point& pt)
+Pin* CommentNodeShape::getPinAt(const Node* node, const Point& pt) const
 {
 	return 0;
 }
 
-void CommentNodeShape::paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset)
+void CommentNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& offset) const
 {
 	Rect rc = node->calculateRect().offset(offset);
 
@@ -97,7 +97,7 @@ void CommentNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 			textSize.cy += lineHeight;
 		}
 
-		canvas->setForeground(settings->getNodeText());
+		canvas->setForeground(canvas->getPaintSettings()->getNodeText());
 
 		int32_t x = rc.left + (rc.getWidth() - textSize.cx) / 2;
 		int32_t y = rc.top + (rc.getHeight() - textSize.cy) / 2;
@@ -121,7 +121,7 @@ void CommentNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 	}
 }
 
-Size CommentNodeShape::calculateSize(const Node* node)
+Size CommentNodeShape::calculateSize(const Node* node) const
 {
 	const std::wstring& comment = node->getComment();
 	if (comment.empty())

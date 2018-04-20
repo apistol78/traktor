@@ -135,6 +135,10 @@ public:
 
 	const PaintSettings* getPaintSettings() const;
 
+	void setScale(float scale);
+
+	float getScale() const;
+
 	void center();
 
 	void alignNodes(Alignment align);
@@ -148,6 +152,7 @@ private:
 	Ref< IBitmap > m_imageBackground;
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
+	float m_scale;
 	Size m_offset;
 	Point m_cursor;
 	Point m_moveOrigin;
@@ -176,6 +181,8 @@ private:
 	void eventMouseMove(MouseMoveEvent* event);
 
 	void eventDoubleClick(MouseDoubleClickEvent* event);
+
+	void eventMouseWheel(MouseWheelEvent* event);
 
 	void eventPaint(PaintEvent* event);
 };

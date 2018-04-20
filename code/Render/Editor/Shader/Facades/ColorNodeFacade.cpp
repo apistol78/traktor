@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Render/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
+#include "Ui/Application.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/InputNodeShape.h"
@@ -43,8 +44,8 @@ Ref< ui::custom::Node > ColorNodeFacade::createEditorNode(
 		i18n::Text(L"SHADERGRAPH_NODE_COLOR"),
 		shaderNode->getInformation(),
 		ui::Point(
-			shaderNode->getPosition().first,
-			shaderNode->getPosition().second
+			ui::scaleBySystemDPI(shaderNode->getPosition().first),
+			ui::scaleBySystemDPI(shaderNode->getPosition().second)
 		),
 		m_nodeShape
 	);

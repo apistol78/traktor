@@ -9,9 +9,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/Custom/Graph/ExternalNodeShape.h"
+#include "Ui/Custom/Graph/GraphCanvas.h"
 #include "Ui/Custom/Graph/GraphControl.h"
-#include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Node.h"
+#include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Pin.h"
 
 namespace traktor
@@ -46,7 +47,7 @@ ExternalNodeShape::ExternalNodeShape(GraphControl* graphControl)
 	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
 }
 
-Point ExternalNodeShape::getPinPosition(const Node* node, const Pin* pin)
+Point ExternalNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 
@@ -73,7 +74,7 @@ Point ExternalNodeShape::getPinPosition(const Node* node, const Pin* pin)
 	return Point(rc.left + x, rc.top + top);
 }
 
-Pin* ExternalNodeShape::getPinAt(const Node* node, const Point& pt)
+Pin* ExternalNodeShape::getPinAt(const Node* node, const Point& pt) const
 {
 	Rect rc = node->calculateRect();
 	if (!rc.inside(pt))
@@ -108,10 +109,12 @@ Pin* ExternalNodeShape::getPinAt(const Node* node, const Point& pt)
 	return 0;
 }
 
-void ExternalNodeShape::paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset)
+void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& offset) const
 {
+	const PaintSettings* settings = canvas->getPaintSettings();
+
 	Rect rc = node->calculateRect().offset(offset);
-	int32_t textHeight = settings->getFont().getPixelSize() + ui::scaleBySystemDPI(4);	
+	int32_t textHeight = settings->getFont().getPixelSize() + ui::scaleBySystemDPI(4);
 
 	// Draw node shape.
 	{
@@ -178,9 +181,11 @@ void ExternalNodeShape::paint(const Node* node, const PaintSettings* settings, C
 	{
 		canvas->drawBitmap(
 			Point(rc.getCenter().x - node->getImage()->getSize().cx / 2, top),
+			node->getImage()->getSize(),
 			Point(0, 0),
 			node->getImage()->getSize(),
-			node->getImage()
+			node->getImage(),
+			BmNone
 		);
 		top += node->getImage()->getSize().cy;
 	}
@@ -201,6 +206,7 @@ void ExternalNodeShape::paint(const Node* node, const PaintSettings* settings, C
 
 		canvas->drawBitmap(
 			pos,
+			pinSize,
 			Point(0, 0),
 			pinSize,
 			m_imagePin,
@@ -217,6 +223,7 @@ void ExternalNodeShape::paint(const Node* node, const PaintSettings* settings, C
 
 		canvas->drawBitmap(
 			pos,
+			pinSize,
 			Point(0, 0),
 			pinSize,
 			m_imagePin,
@@ -266,7 +273,7 @@ void ExternalNodeShape::paint(const Node* node, const PaintSettings* settings, C
 	}
 }
 
-Size ExternalNodeShape::calculateSize(const Node* node)
+Size ExternalNodeShape::calculateSize(const Node* node) const
 {
 	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::scaleBySystemDPI(4);	
 	int32_t height = ui::scaleBySystemDPI(c_marginHeight) * 2 + ui::scaleBySystemDPI(c_topMargin) + ui::scaleBySystemDPI(c_titlePad);
