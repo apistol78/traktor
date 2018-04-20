@@ -127,8 +127,13 @@ void InputNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& of
 		Size ext = canvas->getTextExtent(title);
 
 		canvas->drawText(
-			Point(left, rc.top + (rc.getHeight() - ext.cy) / 2),
-			title
+			Rect(
+				Point(left, rc.top + (rc.getHeight() - ext.cy) / 2),
+				ext
+			),
+			title,
+			AnLeft,
+			AnCenter
 		);
 
 		left += ext.cx;
@@ -145,8 +150,13 @@ void InputNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& of
 
 		canvas->setForeground(settings->getNodeTextInfo());
 		canvas->drawText(
-			Point(left, rc.top + (rc.getHeight() - ext.cy) / 2),
-			info
+			Rect(
+				Point(left, rc.top + (rc.getHeight() - ext.cy) / 2),
+				ext
+			),
+			info,
+			AnLeft,
+			AnCenter
 		);
 	}
 

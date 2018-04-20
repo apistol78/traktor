@@ -248,8 +248,13 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 			canvas->setFont(settings->getFontUnderline());
 
 		canvas->drawText(
-			Point(pos.x + ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),
-			name
+			Rect(
+				Point(pos.x + ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),
+				extent
+			),
+			name,
+			AnLeft,
+			AnCenter
 		);
 
 		canvas->setFont(settings->getFont());
@@ -267,8 +272,13 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 		Size extent = canvas->getTextExtent(name);
 
 		canvas->drawText(
-			Point(pos.x - extent.cx - ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),
-			name
+			Rect(
+				Point(pos.x - extent.cx - ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),
+				extent
+			),
+			name,
+			AnRight,
+			AnCenter
 		);
 	}
 }
