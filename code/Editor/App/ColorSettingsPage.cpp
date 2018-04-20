@@ -57,7 +57,7 @@ bool ColorSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 		return false;
 
 	m_colorList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &ColorSettingsPage::eventPropertyCommand);
-	m_colorList->setSeparator(ui::scaleBySystemDPI(200));
+	m_colorList->setSeparator(ui::dpi96(200));
 
 	Ref< PropertyGroup > colorGroup = settings->getProperty< PropertyGroup >(L"Editor.Colors");
 	T_ASSERT (colorGroup);

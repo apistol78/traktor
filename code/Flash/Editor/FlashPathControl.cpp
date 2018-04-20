@@ -31,7 +31,7 @@ public:
 	,	m_rc(rc)
 	,	m_viewOffset(viewOffset)
 	,	m_viewScale(viewScale)
-	,	m_tail(ui::scaleBySystemDPI(4))
+	,	m_tail(ui::dpi96(4))
 	{
 	}
 

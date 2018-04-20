@@ -62,8 +62,8 @@ Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 		title,
 		shaderNode->getInformation(),
 		ui::Point(
-			ui::scaleBySystemDPI(shaderNode->getPosition().first),
-			ui::scaleBySystemDPI(shaderNode->getPosition().second)
+			ui::dpi96(shaderNode->getPosition().first),
+			ui::dpi96(shaderNode->getPosition().second)
 		),
 		shape
 	);

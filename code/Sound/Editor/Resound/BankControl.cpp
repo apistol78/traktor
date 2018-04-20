@@ -48,8 +48,8 @@ const RefArray< BankControlGrain >& BankControl::getGrains() const
 void BankControl::layoutCells(const ui::Rect& rc)
 {
 	ui::Rect rowRect = rc;
-	rowRect.top += ui::scaleBySystemDPI(16);
-	rowRect.bottom = rowRect.top + ui::scaleBySystemDPI(32);
+	rowRect.top += ui::dpi96(16);
+	rowRect.bottom = rowRect.top + ui::dpi96(32);
 
 	for (RefArray< BankControlGrain >::const_iterator i = m_cells.begin(); i != m_cells.end(); ++i)
 	{
@@ -58,11 +58,11 @@ void BankControl::layoutCells(const ui::Rect& rc)
 			++depth;
 
 		ui::Rect cellRect = rowRect;
-		cellRect.left += depth * ui::scaleBySystemDPI(16);
-		cellRect.right = cellRect.left + ui::scaleBySystemDPI(128);
+		cellRect.left += depth * ui::dpi96(16);
+		cellRect.right = cellRect.left + ui::dpi96(128);
 		placeCell(*i, cellRect);
 
-		rowRect = rowRect.offset(0, ui::scaleBySystemDPI(32 + 8));
+		rowRect = rowRect.offset(0, ui::dpi96(32 + 8));
 	}
 }
 

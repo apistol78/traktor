@@ -107,7 +107,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	m_treeSkeleton->addEventHandler< ui::SelectionChangeEvent >(this, &SkeletonEditorPage::eventTreeSelect);
 	m_treeSkeleton->addEventHandler< ui::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
 
-	m_site->createAdditionalPanel(m_skeletonPanel, ui::scaleBySystemDPI(250), false);
+	m_site->createAdditionalPanel(m_skeletonPanel, ui::dpi96(250), false);
 
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;

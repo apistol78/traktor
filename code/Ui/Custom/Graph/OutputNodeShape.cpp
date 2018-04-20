@@ -60,9 +60,9 @@ Pin* OutputNodeShape::getPinAt(const Node* node, const Point& pt) const
 
 	int32_t x = pt.x - rc.left;
 	int32_t y = pt.y - rc.top;
-	int32_t f = ui::scaleBySystemDPI(4);
+	int32_t f = ui::dpi96(4);
 
-	if (x >= 0 && x <= ui::scaleBySystemDPI(c_pinHitWidth) && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= 0 && x <= ui::dpi96(c_pinHitWidth) && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
 		return node->getInputPins()[0];
 
 	return 0;
@@ -102,7 +102,7 @@ void OutputNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& o
 	canvas->setBackground(Color4ub(255, 255, 255));
 
 	Point pos(
-		rc.left - pinSize.cx / 2 + ui::scaleBySystemDPI(c_marginWidth),
+		rc.left - pinSize.cx / 2 + ui::dpi96(c_marginWidth),
 		rc.getCenter().y - pinSize.cy / 2
 	);
 
@@ -115,7 +115,7 @@ void OutputNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& o
 		ui::BmAlpha
 	);
 
-	int32_t left = rc.left + ui::scaleBySystemDPI(c_marginWidth) + ui::scaleBySystemDPI(c_textMargin);
+	int32_t left = rc.left + ui::dpi96(c_marginWidth) + ui::dpi96(c_textMargin);
 
 	std::wstring title = node->getTitle();
 	if (!title.empty())
@@ -135,7 +135,7 @@ void OutputNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& o
 		canvas->setFont(settings->getFont());
 	}
 
-	left += ui::scaleBySystemDPI(c_textPad);
+	left += ui::dpi96(c_textPad);
 
 	std::wstring info = node->getInfo();
 	if (!info.empty())
@@ -153,7 +153,7 @@ void OutputNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& o
 	if (!comment.empty())
 	{
 		canvas->setForeground(settings->getNodeShadow());
-		canvas->drawText(Rect(rc.left, rc.top - ui::scaleBySystemDPI(c_textHeight), rc.right, rc.top), comment, AnCenter, AnCenter);
+		canvas->drawText(Rect(rc.left, rc.top - ui::dpi96(c_textHeight), rc.right, rc.top), comment, AnCenter, AnCenter);
 	}
 }
 
@@ -175,10 +175,10 @@ Size OutputNodeShape::calculateSize(const Node* node) const
 	if (!node->getInfo().empty())
 	{
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFont());
-		width += ui::scaleBySystemDPI(c_textPad) + m_graphControl->getTextExtent(node->getInfo()).cx;
+		width += ui::dpi96(c_textPad) + m_graphControl->getTextExtent(node->getInfo()).cx;
 	}
 
-	width = alignUp(width, ui::scaleBySystemDPI(c_textWidthAlign)) + ui::scaleBySystemDPI(c_marginWidth) * 2 + ui::scaleBySystemDPI(c_textMargin) * 2;
+	width = alignUp(width, ui::dpi96(c_textWidthAlign)) + ui::dpi96(c_marginWidth) * 2 + ui::dpi96(c_textMargin) * 2;
 
 	m_graphControl->setFont(currentFont);
 

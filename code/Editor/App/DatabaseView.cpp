@@ -361,11 +361,11 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_editFilter = new ui::Edit();
 	m_editFilter->create(m_toolSelection, L"", ui::WsNone);
 	m_editFilter->addEventHandler< ui::KeyUpEvent >(this, &DatabaseView::eventFilterKey);
-	m_toolSelection->addItem(new ui::custom::ToolBarEmbed(m_editFilter, ui::scaleBySystemDPI(100)));
+	m_toolSelection->addItem(new ui::custom::ToolBarEmbed(m_editFilter, ui::dpi96(100)));
 
 	m_toolSelection->addItem(new ui::custom::ToolBarSeparator());
 
-	m_toolViewMode = new ui::custom::ToolBarDropDown(ui::Command(L"Editor.ViewModes"), ui::scaleBySystemDPI(80), i18n::Text(L"DATABASE_VIEW_MODE"));
+	m_toolViewMode = new ui::custom::ToolBarDropDown(ui::Command(L"Editor.ViewModes"), ui::dpi96(80), i18n::Text(L"DATABASE_VIEW_MODE"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_HIERARCHY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_CATEGORY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_SPLIT"));
@@ -393,9 +393,9 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_gridInstances = new ui::custom::GridView();
 	if (!m_gridInstances->create(m_splitter, ui::custom::GridView::WsColumnHeader | ui::WsAccelerated))
 		return false;
-	m_gridInstances->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(20)));
-	m_gridInstances->addColumn(new ui::custom::GridColumn(i18n::Text(L"DATABASE_INSTANCE_NAME"), ui::scaleBySystemDPI(240)));
-	m_gridInstances->addColumn(new ui::custom::GridColumn(i18n::Text(L"DATABASE_INSTANCE_TYPE"), ui::scaleBySystemDPI(100)));
+	m_gridInstances->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(20)));
+	m_gridInstances->addColumn(new ui::custom::GridColumn(i18n::Text(L"DATABASE_INSTANCE_NAME"), ui::dpi96(240)));
+	m_gridInstances->addColumn(new ui::custom::GridColumn(i18n::Text(L"DATABASE_INSTANCE_TYPE"), ui::dpi96(100)));
 	m_gridInstances->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &DatabaseView::eventInstanceGridActivate);
 	m_gridInstances->setVisible(false);
 

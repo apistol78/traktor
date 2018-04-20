@@ -93,18 +93,18 @@ IBitmap* GridItem::getImage() const
 
 int32_t GridItem::getHeight()
 {
-	int32_t height = scaleBySystemDPI(19);
+	int32_t height = dpi96(19);
 
 	if (m_font)
 	{
 		int32_t lines = std::max< int32_t >(1, std::count(m_text.begin(), m_text.end(), L'\n'));
-		height = std::max(height, lines * m_font->getPixelSize() + scaleBySystemDPI(10));
+		height = std::max(height, lines * m_font->getPixelSize() + dpi96(10));
 	}
 	else if (getWidget< GridView >())
 		height = std::max(height, getWidget< GridView >()->getTextExtent(m_text).cy);
 
 	if (m_image)
-		height = std::max(height, m_image->getSize().cy + scaleBySystemDPI(4));
+		height = std::max(height, m_image->getSize().cy + dpi96(4));
 
 	return height;
 }

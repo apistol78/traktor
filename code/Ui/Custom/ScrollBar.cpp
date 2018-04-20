@@ -97,7 +97,7 @@ void ScrollBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 
 	Rect rcInner = getInnerRect();
 
-	if (getPrimaryPosition(event->getPosition(), m_vertical) <= getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + scaleBySystemDPI(16))
+	if (getPrimaryPosition(event->getPosition(), m_vertical) <= getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + dpi96(16))
 	{
 		if (m_position > 0)
 		{
@@ -109,7 +109,7 @@ void ScrollBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 		return;
 	}
 
-	if (getPrimaryPosition(event->getPosition(), m_vertical) >= getPrimaryPosition(rcInner.getBottomRight(), m_vertical) - scaleBySystemDPI(16))
+	if (getPrimaryPosition(event->getPosition(), m_vertical) >= getPrimaryPosition(rcInner.getBottomRight(), m_vertical) - dpi96(16))
 	{
 		if (m_position < m_range - (m_page - 1))
 		{
@@ -123,21 +123,21 @@ void ScrollBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 
 	if (m_range > 0)
 	{
-		int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - scaleBySystemDPI(16) * 2;
-		int32_t sliderHeight = max(m_page * sliderRange / m_range, scaleBySystemDPI(60));
+		int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - dpi96(16) * 2;
+		int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
 		int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
 
 		if (
-			getPrimaryPosition(event->getPosition(), m_vertical) >= getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + scaleBySystemDPI(16) + sliderTop &&
-			getPrimaryPosition(event->getPosition(), m_vertical) <= getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + scaleBySystemDPI(16) + sliderTop + sliderHeight
+			getPrimaryPosition(event->getPosition(), m_vertical) >= getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + dpi96(16) + sliderTop &&
+			getPrimaryPosition(event->getPosition(), m_vertical) <= getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + dpi96(16) + sliderTop + sliderHeight
 		)
 		{
-			m_trackOffset = getPrimaryPosition(event->getPosition(), m_vertical) - (getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + scaleBySystemDPI(16) + sliderTop);
+			m_trackOffset = getPrimaryPosition(event->getPosition(), m_vertical) - (getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + dpi96(16) + sliderTop);
 			setCapture();
 			return;
 		}
 
-		if (getPrimaryPosition(event->getPosition(), m_vertical) < getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + scaleBySystemDPI(16) + sliderTop)
+		if (getPrimaryPosition(event->getPosition(), m_vertical) < getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + dpi96(16) + sliderTop)
 		{
 			m_position = max(m_position - (m_page - 1), 0);
 			ScrollEvent scrollEvent(this, m_position);
@@ -146,7 +146,7 @@ void ScrollBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 			return;
 		}
 
-		if (getPrimaryPosition(event->getPosition(), m_vertical) > getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + scaleBySystemDPI(16) + sliderTop + sliderHeight)
+		if (getPrimaryPosition(event->getPosition(), m_vertical) > getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + dpi96(16) + sliderTop + sliderHeight)
 		{
 			m_position = min(m_position + m_page, m_range - (m_page - 1));
 			ScrollEvent scrollEvent(this, m_position);
@@ -172,12 +172,12 @@ void ScrollBar::eventMouseMove(MouseMoveEvent* event)
 
 	Rect rcInner = getInnerRect();
 
-	int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - scaleBySystemDPI(16) * 2;
-	int32_t sliderHeight = max(m_page * sliderRange / m_range, scaleBySystemDPI(60));
+	int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - dpi96(16) * 2;
+	int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
 
 	int32_t position0 = m_position;
 
-	m_position = (getPrimaryPosition(event->getPosition(), m_vertical) - scaleBySystemDPI(16) - m_trackOffset) * (m_range - (m_page - 1)) / (sliderRange - sliderHeight);
+	m_position = (getPrimaryPosition(event->getPosition(), m_vertical) - dpi96(16) - m_trackOffset) * (m_range - (m_page - 1)) / (sliderRange - sliderHeight);
 	m_position = clamp(m_position, 0, m_range - (m_page - 1));
 
 	if (m_position != position0)
@@ -201,15 +201,15 @@ void ScrollBar::eventPaint(PaintEvent* event)
 	{
 		if (m_range > 0)
 		{
-			int32_t sliderRange = rcInner.getHeight() - scaleBySystemDPI(16) * 2;
-			int32_t sliderHeight = max(m_page * sliderRange / m_range, scaleBySystemDPI(60));
+			int32_t sliderRange = rcInner.getHeight() - dpi96(16) * 2;
+			int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
 			int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
 
 			Rect rcSlider(
-				rcInner.left + scaleBySystemDPI(4),
-				rcInner.top + scaleBySystemDPI(16) + sliderTop,
-				rcInner.right - scaleBySystemDPI(4),
-				rcInner.top + scaleBySystemDPI(16) + sliderTop + sliderHeight
+				rcInner.left + dpi96(4),
+				rcInner.top + dpi96(16) + sliderTop,
+				rcInner.right - dpi96(4),
+				rcInner.top + dpi96(16) + sliderTop + sliderHeight
 			);
 
 			canvas.setBackground(ss->getColor(this, L"color-slider"));
@@ -220,15 +220,15 @@ void ScrollBar::eventPaint(PaintEvent* event)
 			rcInner.left,
 			rcInner.top,
 			rcInner.right,
-			rcInner.top + scaleBySystemDPI(16)
+			rcInner.top + dpi96(16)
 		);
 
 		Point centerUp = rcButtonUp.getCenter();
 		ui::Point arrowUp[] =
 		{
-			ui::Point(centerUp.x - scaleBySystemDPI(4), centerUp.y + scaleBySystemDPI(2)),
-			ui::Point(centerUp.x + scaleBySystemDPI(4), centerUp.y + scaleBySystemDPI(2)),
-			ui::Point(centerUp.x                      , centerUp.y - scaleBySystemDPI(2))
+			ui::Point(centerUp.x - dpi96(4), centerUp.y + dpi96(2)),
+			ui::Point(centerUp.x + dpi96(4), centerUp.y + dpi96(2)),
+			ui::Point(centerUp.x                      , centerUp.y - dpi96(2))
 		};
 
 		canvas.setBackground(ss->getColor(this, L"color-arrow"));
@@ -236,7 +236,7 @@ void ScrollBar::eventPaint(PaintEvent* event)
 
 		Rect rcButtonDown(
 			rcInner.left,
-			rcInner.bottom - scaleBySystemDPI(16),
+			rcInner.bottom - dpi96(16),
 			rcInner.right,
 			rcInner.bottom
 		);
@@ -244,9 +244,9 @@ void ScrollBar::eventPaint(PaintEvent* event)
 		Point centerDown = rcButtonDown.getCenter();
 		ui::Point arrowDown[] =
 		{
-			ui::Point(centerDown.x - scaleBySystemDPI(4), centerDown.y - scaleBySystemDPI(2)),
-			ui::Point(centerDown.x + scaleBySystemDPI(4), centerDown.y - scaleBySystemDPI(2)),
-			ui::Point(centerDown.x                      , centerDown.y + scaleBySystemDPI(2))
+			ui::Point(centerDown.x - dpi96(4), centerDown.y - dpi96(2)),
+			ui::Point(centerDown.x + dpi96(4), centerDown.y - dpi96(2)),
+			ui::Point(centerDown.x                      , centerDown.y + dpi96(2))
 		};
 
 		canvas.setBackground(ss->getColor(this, L"color-arrow"));
@@ -256,15 +256,15 @@ void ScrollBar::eventPaint(PaintEvent* event)
 	{
 		if (m_range > 0)
 		{
-			int32_t sliderRange = rcInner.getWidth() - scaleBySystemDPI(16) * 2;
-			int32_t sliderHeight = max(m_page * sliderRange / m_range, scaleBySystemDPI(60));
+			int32_t sliderRange = rcInner.getWidth() - dpi96(16) * 2;
+			int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
 			int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
 
 			Rect rcSlider(
-				rcInner.left + scaleBySystemDPI(16) + sliderTop,
-				rcInner.top + scaleBySystemDPI(4),
-				rcInner.left + scaleBySystemDPI(16) + sliderTop + sliderHeight,
-				rcInner.bottom - scaleBySystemDPI(4)
+				rcInner.left + dpi96(16) + sliderTop,
+				rcInner.top + dpi96(4),
+				rcInner.left + dpi96(16) + sliderTop + sliderHeight,
+				rcInner.bottom - dpi96(4)
 			);
 
 			canvas.setBackground(ss->getColor(this, L"color-slider"));
@@ -274,23 +274,23 @@ void ScrollBar::eventPaint(PaintEvent* event)
 		Rect rcButtonUp(
 			rcInner.left,
 			rcInner.top,
-			rcInner.left + scaleBySystemDPI(16),
+			rcInner.left + dpi96(16),
 			rcInner.bottom
 		);
 
 		Point centerUp = rcButtonUp.getCenter();
 		ui::Point arrowUp[] =
 		{
-			ui::Point(centerUp.x + scaleBySystemDPI(2), centerUp.y - scaleBySystemDPI(4)),
-			ui::Point(centerUp.x + scaleBySystemDPI(2), centerUp.y + scaleBySystemDPI(4)),
-			ui::Point(centerUp.x - scaleBySystemDPI(2), centerUp.y)
+			ui::Point(centerUp.x + dpi96(2), centerUp.y - dpi96(4)),
+			ui::Point(centerUp.x + dpi96(2), centerUp.y + dpi96(4)),
+			ui::Point(centerUp.x - dpi96(2), centerUp.y)
 		};
 
 		canvas.setBackground(ss->getColor(this, L"color-arrow"));
 		canvas.fillPolygon(arrowUp, 3);
 
 		Rect rcButtonDown(
-			rcInner.right - scaleBySystemDPI(16),
+			rcInner.right - dpi96(16),
 			rcInner.top,
 			rcInner.right,
 			rcInner.bottom
@@ -299,9 +299,9 @@ void ScrollBar::eventPaint(PaintEvent* event)
 		Point centerDown = rcButtonDown.getCenter();
 		ui::Point arrowDown[] =
 		{
-			ui::Point(centerDown.x - scaleBySystemDPI(2), centerDown.y - scaleBySystemDPI(4)),
-			ui::Point(centerDown.x - scaleBySystemDPI(2), centerDown.y + scaleBySystemDPI(4)),
-			ui::Point(centerDown.x + scaleBySystemDPI(2), centerDown.y)
+			ui::Point(centerDown.x - dpi96(2), centerDown.y - dpi96(4)),
+			ui::Point(centerDown.x - dpi96(2), centerDown.y + dpi96(4)),
+			ui::Point(centerDown.x + dpi96(2), centerDown.y)
 		};
 
 		canvas.setBackground(ss->getColor(this, L"color-arrow"));
@@ -314,8 +314,8 @@ void ScrollBar::eventPaint(PaintEvent* event)
 Size ScrollBar::getPreferedSize() const
 {
 	return Size(
-		scaleBySystemDPI(16),
-		scaleBySystemDPI(16)
+		dpi96(16),
+		dpi96(16)
 	);
 }
 

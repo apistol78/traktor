@@ -118,8 +118,8 @@ void SoundAssetEditor::handleDatabaseEvent(db::Database* database, const Guid& e
 ui::Size SoundAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::scaleBySystemDPI(500),
-		ui::scaleBySystemDPI(400)
+		ui::dpi96(500),
+		ui::dpi96(400)
 	);
 }
 

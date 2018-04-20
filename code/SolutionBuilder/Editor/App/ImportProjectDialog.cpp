@@ -23,8 +23,8 @@ bool ImportProjectDialog::create(ui::Widget* parent, const std::wstring& title, 
 	if (!ui::ConfigDialog::create(
 		parent,
 		title,
-		ui::scaleBySystemDPI(500),
-		ui::scaleBySystemDPI(400),
+		ui::dpi96(500),
+		ui::dpi96(400),
 		ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))

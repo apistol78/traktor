@@ -70,7 +70,7 @@ bool PropertiesView::create(ui::Widget* parent)
 
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(this, ui::WsAccelerated | ui::WsTabStop, this);
-	m_propertyList->setSeparator(ui::scaleBySystemDPI(150));
+	m_propertyList->setSeparator(ui::dpi96(150));
 	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &PropertiesView::eventPropertyCommand);
 	m_propertyList->addEventHandler< ui::custom::PropertyContentChangeEvent >(this, &PropertiesView::eventPropertyChange);
 	m_propertyList->addEventHandler< ui::SelectionChangeEvent >(this, &PropertiesView::eventPropertySelect);

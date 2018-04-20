@@ -83,7 +83,7 @@ ModelToolDialog::ModelToolDialog(
 
 bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 {
-	if (!ui::Dialog::create(parent, L"Model Tool", ui::scaleBySystemDPI(1000), ui::scaleBySystemDPI(800), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(parent, L"Model Tool", ui::dpi96(1000), ui::dpi96(800), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	addEventHandler< ui::CloseEvent >(this, &ModelToolDialog::eventDialogClose);
@@ -117,13 +117,13 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 	m_toolWeight = new ui::custom::ToolBarButton(L"Weights", ui::Command(L"ModelTool.ToggleWeights"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolWeight);
 
-	m_toolJoint = new ui::custom::ToolBarDropDown(ui::Command(L"ModelTool.Joint"), ui::scaleBySystemDPI(200), L"Joints");
+	m_toolJoint = new ui::custom::ToolBarDropDown(ui::Command(L"ModelTool.Joint"), ui::dpi96(200), L"Joints");
 	toolBar->addItem(m_toolJoint);
 
 	toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ModelToolDialog::eventToolBarClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, ui::scaleBySystemDPI(300), false);
+	splitter->create(this, true, ui::dpi96(300), false);
 
 	Ref< ui::custom::Splitter > splitterH = new ui::custom::Splitter();
 	splitterH->create(splitter, false, 50, true);
@@ -135,25 +135,25 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 
 	m_materialGrid = new ui::custom::GridView();
 	m_materialGrid->create(splitterH, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Name", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Diffuse Map", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Map", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Transparency Map", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Emissive Map", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Reflective Map", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Normal Map", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Light Map", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Color", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Diffuse Term", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Term", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Roughness", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Metalness", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Transparency", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Emissive", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Reflective", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Rim Light Intensity", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Blend Operator", ui::scaleBySystemDPI(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Double Sided", ui::scaleBySystemDPI(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Name", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Diffuse Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Transparency Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Emissive Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Reflective Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Normal Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Light Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Color", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Diffuse Term", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Term", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Roughness", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Metalness", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Transparency", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Emissive", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Reflective", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Rim Light Intensity", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Blend Operator", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Double Sided", ui::dpi96(100)));
 
 	m_modelRootPopup = new ui::PopupMenu();
 	m_modelRootPopup->create();

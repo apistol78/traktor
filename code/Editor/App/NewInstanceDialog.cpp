@@ -67,8 +67,8 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"NEW_INSTANCE_TITLE"),
-		ui::scaleBySystemDPI(640),
-		ui::scaleBySystemDPI(500),
+		ui::dpi96(640),
+		ui::dpi96(500),
 		ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))
@@ -79,7 +79,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	addEventHandler< ui::ButtonClickEvent >(this, &NewInstanceDialog::eventDialogClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, ui::scaleBySystemDPI(200));
+	splitter->create(this, true, ui::dpi96(200));
 
 	Ref< ui::Container > left = new ui::Container();
 	left->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));

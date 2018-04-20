@@ -65,7 +65,7 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 
-	Size frameSize(scaleBySystemDPI(64), scaleBySystemDPI(64));
+	Size frameSize(dpi96(64), dpi96(64));
 	Point framePosition(rect.left + (rect.getWidth() - frameSize.cx) / 2, rect.top);
 
 	canvas.setBackground(ss->getColor(getWidget< ui::custom::AutoWidget >(), isSelected() ? L"item-background-color-selected" : L"item-background-color"));

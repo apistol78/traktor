@@ -217,7 +217,7 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	m_sequencer->addEventHandler< ui::TimerEvent >(this, &AnimationEditorPage::eventSequencerTimer);
 	m_sequencer->startTimer(30);
 
-	m_site->createAdditionalPanel(m_sequencerPanel, ui::scaleBySystemDPI(100), true);
+	m_site->createAdditionalPanel(m_sequencerPanel, ui::dpi96(100), true);
 
 	// Build popup menu.
 	m_menuPopup = new ui::PopupMenu();

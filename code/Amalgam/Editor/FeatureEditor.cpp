@@ -42,7 +42,7 @@ FeatureEditor::FeatureEditor(editor::IEditor* editor)
 
 bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
-	const int32_t f = ui::scaleBySystemDPI(4);
+	const int32_t f = ui::dpi96(4);
 
 	m_instance = instance;
 	m_feature = mandatory_non_null_type_cast< Feature* >(object);
@@ -72,7 +72,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	});
 
 	Ref< ui::custom::Splitter > splitterInner = new ui::custom::Splitter();
-	splitterInner->create(container, true, ui::scaleBySystemDPI(200));
+	splitterInner->create(container, true, ui::dpi96(200));
 
 	Ref< ui::Container > containerPlatforms = new ui::Container();
 	containerPlatforms->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, f));
@@ -142,7 +142,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	});
 
 	Ref< ui::custom::Splitter > splitterEnvironment = new ui::custom::Splitter();
-	splitterEnvironment->create(containerEdit, true, ui::scaleBySystemDPI(220));
+	splitterEnvironment->create(containerEdit, true, ui::dpi96(220));
 
 	m_listKeys = new ui::custom::EditList();
 	m_listKeys->create(splitterEnvironment, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove);
@@ -247,8 +247,8 @@ void FeatureEditor::handleDatabaseEvent(db::Database* database, const Guid& even
 ui::Size FeatureEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::scaleBySystemDPI(900),
-		ui::scaleBySystemDPI(600)
+		ui::dpi96(900),
+		ui::dpi96(600)
 	);
 }
 

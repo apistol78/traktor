@@ -160,7 +160,7 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 	// Draw tasks.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lanesLock);
-		Rect rcLane(rc.left, rc.top, rc.right, rc.top + scaleBySystemDPI(24));
+		Rect rcLane(rc.left, rc.top, rc.right, rc.top + dpi96(24));
 		for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
 		{
 			canvas.setForeground(Color4ub(0, 0, 0, 40));
@@ -172,17 +172,17 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 				int32_t x0 = timeToPosition(i->time0);
 				int32_t x1 = timeToPosition(i->time1 >= 0.0 ? i->time1 : m_time);
 
-				if (x1 < x0 + scaleBySystemDPI(4))
-					x1 = x0 + scaleBySystemDPI(4);
+				if (x1 < x0 + dpi96(4))
+					x1 = x0 + dpi96(4);
 
 				if (x0 >= rcLane.right || x1 <= rcLane.left)
 					continue;
 
 				Rect rcTask(
 					rcLane.left + x0,
-					rcLane.top + scaleBySystemDPI(2),
+					rcLane.top + dpi96(2),
 					rcLane.left + x1,
-					rcLane.bottom - scaleBySystemDPI(2)
+					rcLane.bottom - dpi96(2)
 				);
 
 				canvas.setForeground(Color4ub(220, 255, 220, 255));
@@ -196,12 +196,12 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 				canvas.drawText(rcTask, i->text, AnLeft, AnCenter);
 			}
 
-			rcLane = rcLane.offset(0, scaleBySystemDPI(24));
+			rcLane = rcLane.offset(0, dpi96(24));
 		}
 	}
 
 	// Draw time axis.
-	Rect rcTime(rc.left, rc.bottom - scaleBySystemDPI(16), rc.right, rc.bottom);
+	Rect rcTime(rc.left, rc.bottom - dpi96(16), rc.right, rc.bottom);
 	
 	canvas.setBackground(Color4ub(255, 255, 255, 255));
 	canvas.fillRect(rcTime);
@@ -219,7 +219,7 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 	for (double t = m_fromTime - a; t <= m_toTime; t += d / 10.0)
 	{
 		int32_t x = timeToPosition(t);
-		canvas.drawLine(x, rcTime.bottom - scaleBySystemDPI(8), x, rcTime.bottom);
+		canvas.drawLine(x, rcTime.bottom - dpi96(8), x, rcTime.bottom);
 	}
 
 	if (m_selecting)

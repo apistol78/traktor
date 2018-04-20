@@ -70,7 +70,7 @@ int32_t ProgressBar::getProgress() const
 
 Size ProgressBar::getPreferedSize() const
 {
-	return Size(scaleBySystemDPI(256), scaleBySystemDPI(16));
+	return Size(dpi96(256), dpi96(16));
 }
 
 void ProgressBar::eventPaint(PaintEvent* event)

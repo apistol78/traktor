@@ -65,7 +65,7 @@ bool CheckBox::isChecked() const
 Size CheckBox::getPreferedSize() const
 {
 	Size sz = getTextExtent(getText());
-	sz.cx += s_imageUnchecked->getSize().cx + scaleBySystemDPI(4);
+	sz.cx += s_imageUnchecked->getSize().cx + dpi96(4);
 	sz.cy = std::max(sz.cy, s_imageUnchecked->getSize().cy);
 	return sz;
 }
@@ -94,7 +94,7 @@ void CheckBox::eventPaint(PaintEvent* event)
 	);
 
 	Rect rcText = rcInner;
-	rcText.left += image->getSize().cx + scaleBySystemDPI(4);
+	rcText.left += image->getSize().cx + dpi96(4);
 
 	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawText(rcText, getText(), AnLeft, AnCenter);

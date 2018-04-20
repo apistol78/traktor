@@ -27,8 +27,8 @@ bool ConfigurationsDialog::create(ui::Widget* parent, Solution* solution)
 	if (!ui::ConfigDialog::create(
 		parent,
 		L"Edit configurations",
-		ui::scaleBySystemDPI(400),
-		ui::scaleBySystemDPI(300),
+		ui::dpi96(400),
+		ui::dpi96(300),
 		ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))

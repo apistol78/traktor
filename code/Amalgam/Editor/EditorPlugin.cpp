@@ -160,12 +160,12 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolBar->create(container);
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
 
-	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), ui::scaleBySystemDPI(120), i18n::Text(L"AMALGAM_TARGETS"));
+	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), ui::dpi96(120), i18n::Text(L"AMALGAM_TARGETS"));
 	m_toolBar->addItem(m_toolTargets);
 
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 
-	m_toolTweaks = new ui::custom::ToolBarDropMenu(ui::scaleBySystemDPI(70), i18n::Text(L"AMALGAM_TWEAKS"), true, i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
+	m_toolTweaks = new ui::custom::ToolBarDropMenu(ui::dpi96(70), i18n::Text(L"AMALGAM_TWEAKS"), true, i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
 	m_toolTweaks->add(createTweakMenuItem(L"Mute Audio", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Audio \"Write Out\"", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Force Render Thread Off", false));
@@ -181,7 +181,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
 	m_toolBar->addItem(m_toolTweaks);
 
-	m_toolLanguage = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Language"), ui::scaleBySystemDPI(85), i18n::Text(L"AMALGAM_LANGUAGE"));
+	m_toolLanguage = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Language"), ui::dpi96(85), i18n::Text(L"AMALGAM_LANGUAGE"));
 	m_toolLanguage->add(i18n::Text(L"AMALGAM_LANGUAGE_DEFAULT"));
 	for (uint32_t i = 0; i < sizeof_array(c_languageCodes); ++i)
 		m_toolLanguage->add(i18n::Text(c_languageCodes[i].human));
@@ -199,7 +199,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_targetList->addEventHandler< TargetStopEvent >(this, &EditorPlugin::eventTargetListStop);
 	m_targetList->addEventHandler< TargetCommandEvent >(this, &EditorPlugin::eventTargetListCommand);
 
-	m_site->createAdditionalPanel(container, ui::scaleBySystemDPI(200), false);
+	m_site->createAdditionalPanel(container, ui::dpi96(200), false);
 
 	// Create threads.
 	m_threadHostEnumerator = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadHostEnumerator), L"Host enumerator");

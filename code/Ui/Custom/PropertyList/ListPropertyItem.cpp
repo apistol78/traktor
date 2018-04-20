@@ -162,7 +162,7 @@ void ListPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widget
 		rc.left,
 		rc.top + rc.getHeight(),
 		rc.right,
-		rc.top + rc.getHeight() + scaleBySystemDPI(16) * 4
+		rc.top + rc.getHeight() + dpi96(16) * 4
 	);
 }
 

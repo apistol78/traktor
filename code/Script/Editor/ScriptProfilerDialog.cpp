@@ -37,7 +37,7 @@ void ScriptProfilerDialog::destroy()
 
 bool ScriptProfilerDialog::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, i18n::Text(L"SCRIPT_PROFILER_TOOL"), ui::scaleBySystemDPI(1024), ui::scaleBySystemDPI(800), ui::Dialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::Dialog::create(parent, i18n::Text(L"SCRIPT_PROFILER_TOOL"), ui::dpi96(1024), ui::dpi96(800), ui::Dialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Script.Icon.Profiler"));

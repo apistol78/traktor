@@ -44,8 +44,8 @@ Ref< ui::custom::Node > ColorNodeFacade::createEditorNode(
 		i18n::Text(L"SHADERGRAPH_NODE_COLOR"),
 		shaderNode->getInformation(),
 		ui::Point(
-			ui::scaleBySystemDPI(shaderNode->getPosition().first),
-			ui::scaleBySystemDPI(shaderNode->getPosition().second)
+			ui::dpi96(shaderNode->getPosition().first),
+			ui::dpi96(shaderNode->getPosition().second)
 		),
 		m_nodeShape
 	);

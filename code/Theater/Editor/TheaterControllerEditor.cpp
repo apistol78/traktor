@@ -110,7 +110,7 @@ TheaterControllerEditor::TheaterControllerEditor()
 bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Container* parent)
 {
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(parent, true, ui::scaleBySystemDPI(100));
+	splitter->create(parent, true, ui::dpi96(100));
 
 	Ref< ui::Container > containerActs = new ui::Container();
 	if (!containerActs->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))

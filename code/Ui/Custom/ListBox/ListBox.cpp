@@ -175,7 +175,7 @@ Ref< Object > ListBox::getSelectedData() const
 
 int32_t ListBox::getItemHeight()
 {
-	return getFont().getPixelSize() + scaleBySystemDPI(6);
+	return getFont().getPixelSize() + dpi96(6);
 }
 
 Rect ListBox::getItemRect(int32_t index) const

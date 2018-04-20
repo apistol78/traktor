@@ -72,7 +72,7 @@ void PreviewList::layoutCells(const Rect& rc)
 	if (nitems <= 0)
 		return;
 
-	int32_t ncolumns = (rc.getWidth() - scaleBySystemDPI(c_marginX * 2)) / scaleBySystemDPI(c_itemWidth);
+	int32_t ncolumns = (rc.getWidth() - dpi96(c_marginX * 2)) / dpi96(c_itemWidth);
 	if (ncolumns <= 0)
 		return;
 
@@ -86,10 +86,10 @@ void PreviewList::layoutCells(const Rect& rc)
 		int32_t row = i / ncolumns;
 
 		Rect rcItem(
-			scaleBySystemDPI(c_marginX + column * c_itemWidth),
-			scaleBySystemDPI(c_marginY + row * c_itemHeight),
-			scaleBySystemDPI(c_marginX + column * c_itemWidth + c_itemWidth),
-			scaleBySystemDPI(c_marginY + row * c_itemHeight + c_itemHeight)
+			dpi96(c_marginX + column * c_itemWidth),
+			dpi96(c_marginY + row * c_itemHeight),
+			dpi96(c_marginX + column * c_itemWidth + c_itemWidth),
+			dpi96(c_marginY + row * c_itemHeight + c_itemHeight)
 		);
 
 		placeCell(m_items->get(i), rcItem);
@@ -105,10 +105,10 @@ void PreviewList::layoutCells(const Rect& rc)
 		int32_t row = i / ncolumns;
 
 		Rect rcItem(
-			scaleBySystemDPI(c_marginX + column * c_itemWidth),
-			scaleBySystemDPI(c_marginY + row * c_itemHeight),
-			scaleBySystemDPI(c_marginX + column * c_itemWidth + c_itemWidth),
-			scaleBySystemDPI(c_marginY + row * c_itemHeight + c_itemHeight)
+			dpi96(c_marginX + column * c_itemWidth),
+			dpi96(c_marginY + row * c_itemHeight),
+			dpi96(c_marginX + column * c_itemWidth + c_itemWidth),
+			dpi96(c_marginY + row * c_itemHeight + c_itemHeight)
 		);
 
 		placeCell(m_items->get(i), rcItem);

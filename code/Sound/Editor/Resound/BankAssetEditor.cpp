@@ -132,13 +132,13 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	parent->startTimer(30);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(parent, true, ui::scaleBySystemDPI(180));
+	splitter->create(parent, true, ui::dpi96(180));
 
 	Ref< ui::custom::Splitter > splitterLeftH = new ui::custom::Splitter();
-	splitterLeftH->create(splitter, false, ui::scaleBySystemDPI(-150));
+	splitterLeftH->create(splitter, false, ui::dpi96(-150));
 
 	Ref< ui::custom::Splitter > splitterRightH = new ui::custom::Splitter();
-	splitterRightH->create(splitter, false, ui::scaleBySystemDPI(-150));
+	splitterRightH->create(splitter, false, ui::dpi96(-150));
 
 	Ref< ui::custom::Panel > containerBank = new ui::custom::Panel();
 	containerBank->create(splitterLeftH, L"Grains", new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -158,7 +158,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_bankControl->addEventHandler< ui::MouseButtonUpEvent >(this, &BankAssetEditor::eventGrainButtonUp);
 
 	m_containerParameters = new ui::custom::Panel();
-	m_containerParameters->create(splitterLeftH, L"Parameters", new ui::TableLayout(L"*,100%", L"*", ui::scaleBySystemDPI(4), 0));
+	m_containerParameters->create(splitterLeftH, L"Parameters", new ui::TableLayout(L"*,100%", L"*", ui::dpi96(4), 0));
 
 	Ref< ui::custom::Panel > m_containerGrainProperties = new ui::custom::Panel();
 	m_containerGrainProperties->create(splitterRightH, L"Properties", new ui::TableLayout(L"100%", L"100%", 0, 0));
@@ -368,7 +368,7 @@ void BankAssetEditor::handleDatabaseEvent(db::Database* database, const Guid& ev
 
 ui::Size BankAssetEditor::getPreferredSize() const
 {
-	return ui::Size(ui::scaleBySystemDPI(800), ui::scaleBySystemDPI(600));
+	return ui::Size(ui::dpi96(800), ui::dpi96(600));
 }
 
 void BankAssetEditor::updateBankControl(BankControlGrain* parent, const RefArray< IGrainData >& grains)

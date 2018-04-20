@@ -44,8 +44,8 @@ Ref< ui::custom::Node > SwitchNodeFacade::createEditorNode(
 		i18n::Text(L"SHADERGRAPH_NODE_SWITCH"),
 		shaderNode->getInformation(),
 		ui::Point(
-			ui::scaleBySystemDPI(shaderNode->getPosition().first),
-			ui::scaleBySystemDPI(shaderNode->getPosition().second)
+			ui::dpi96(shaderNode->getPosition().first),
+			ui::dpi96(shaderNode->getPosition().second)
 		),
 		m_nodeShape
 	);

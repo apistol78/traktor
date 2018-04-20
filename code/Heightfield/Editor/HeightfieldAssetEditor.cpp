@@ -195,8 +195,8 @@ void HeightfieldAssetEditor::handleDatabaseEvent(db::Database* database, const G
 ui::Size HeightfieldAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::scaleBySystemDPI(850),
-		ui::scaleBySystemDPI(550)
+		ui::dpi96(850),
+		ui::dpi96(550)
 	);
 }
 

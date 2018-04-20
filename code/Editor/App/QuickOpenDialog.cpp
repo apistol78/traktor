@@ -36,7 +36,7 @@ QuickOpenDialog::QuickOpenDialog(IEditor* editor)
 
 bool QuickOpenDialog::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, i18n::Text(L"EDITOR_QUICK_OPEN_TITLE"), ui::scaleBySystemDPI(600), ui::scaleBySystemDPI(250), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(parent, i18n::Text(L"EDITOR_QUICK_OPEN_TITLE"), ui::dpi96(600), ui::dpi96(250), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
@@ -48,8 +48,8 @@ bool QuickOpenDialog::create(ui::Widget* parent)
 
 	m_gridSuggestions = new ui::custom::GridView();
 	m_gridSuggestions->create(this, ui::WsDoubleBuffer);
-	m_gridSuggestions->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_QUICK_OPEN_COLUMN_NAME"), ui::scaleBySystemDPI(180)));
-	m_gridSuggestions->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_QUICK_OPEN_COLUMN_PATH"), ui::scaleBySystemDPI(400)));
+	m_gridSuggestions->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_QUICK_OPEN_COLUMN_NAME"), ui::dpi96(180)));
+	m_gridSuggestions->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_QUICK_OPEN_COLUMN_PATH"), ui::dpi96(400)));
 	m_gridSuggestions->addEventHandler< ui::SelectionChangeEvent >(this, &QuickOpenDialog::eventSuggestionSelect);
 
 	db::recursiveFindChildInstances(

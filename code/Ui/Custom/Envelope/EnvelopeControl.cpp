@@ -79,8 +79,8 @@ void EnvelopeControl::eventButtonDown(MouseButtonDownEvent* event)
 
 	if (event->getButton() == MbtLeft)
 	{
-		int32_t sx = scaleBySystemDPI(2);
-		int32_t sy = scaleBySystemDPI(2);
+		int32_t sx = dpi96(2);
+		int32_t sy = dpi96(2);
 
 		for (RefArray< EnvelopeKey >::iterator i = m_keys.begin(); i != m_keys.end(); ++i)
 		{

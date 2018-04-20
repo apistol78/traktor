@@ -41,8 +41,8 @@ bool ExtractSolutionDialog::create(ui::Widget* parent, Solution* solution)
 	if (!ui::ConfigDialog::create(
 		parent,
 		L"Extract project(s) into solution",
-		ui::scaleBySystemDPI(1000),
-		ui::scaleBySystemDPI(600),
+		ui::dpi96(1000),
+		ui::dpi96(600),
 		ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))
@@ -51,13 +51,13 @@ bool ExtractSolutionDialog::create(ui::Widget* parent, Solution* solution)
 	setIcon(new ui::StyleBitmap(L"SolutionBuilder.Icon"));
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, ui::scaleBySystemDPI(300));
+	splitter->create(this, true, ui::dpi96(300));
 
 	m_listProjects = new ui::custom::ListBox();
 	m_listProjects->create(splitter, ui::custom::ListBox::WsMultiple);
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(splitter, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", ui::scaleBySystemDPI(8), ui::scaleBySystemDPI(4)));
+	container->create(splitter, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", ui::dpi96(8), ui::dpi96(4)));
 
 	Ref< ui::Static > staticSolutionFile = new ui::Static();
 	staticSolutionFile->create(container, L"Solution file");

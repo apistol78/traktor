@@ -94,8 +94,8 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 
 	if (!ui::Form::create(
 		SB_TITLE,
-		ui::scaleBySystemDPI(1000),
-		ui::scaleBySystemDPI(800),
+		ui::dpi96(1000),
+		ui::dpi96(800),
 		ui::Form::WsDefault,
 		new ui::FloodLayout()
 	))
@@ -141,7 +141,7 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_menuBar->add(menuTools);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, ui::scaleBySystemDPI(300));
+	splitter->create(this, true, ui::dpi96(300));
 
 	m_treeSolution = new ui::custom::TreeView();
 	m_treeSolution->create(

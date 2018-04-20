@@ -31,8 +31,8 @@ bool ColorControl::create(Widget* parent, int style)
 
 	addEventHandler< PaintEvent >(this, &ColorControl::eventPaint);
 
-	const int32_t width = scaleBySystemDPI(c_width);
-	const int32_t height = scaleBySystemDPI(c_height);
+	const int32_t width = dpi96(c_width);
+	const int32_t height = dpi96(c_height);
 
 	m_preview = new ui::Bitmap(width, height);
 	setColor(Color4ub(0, 0, 0));
@@ -42,8 +42,8 @@ bool ColorControl::create(Widget* parent, int style)
 
 void ColorControl::setColor(const Color4ub& color)
 {
-	const int32_t width = scaleBySystemDPI(c_width);
-	const int32_t height = scaleBySystemDPI(c_height);
+	const int32_t width = dpi96(c_width);
+	const int32_t height = dpi96(c_height);
 
 	m_color = color;
 	for (int32_t y = 0; y < height; ++y)
@@ -66,8 +66,8 @@ Color4ub ColorControl::getColor() const
 
 Size ColorControl::getPreferedSize() const
 {
-	const int32_t width = scaleBySystemDPI(c_width);
-	const int32_t height = scaleBySystemDPI(c_height);
+	const int32_t width = dpi96(c_width);
+	const int32_t height = dpi96(c_height);
 	return Size(width, height);
 }
 

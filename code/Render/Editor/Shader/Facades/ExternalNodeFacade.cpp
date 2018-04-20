@@ -72,8 +72,8 @@ Ref< ui::custom::Node > ExternalNodeFacade::createEditorNode(
 		title,
 		L"",
 		ui::Point(
-			ui::scaleBySystemDPI(shaderNode->getPosition().first),
-			ui::scaleBySystemDPI(shaderNode->getPosition().second)
+			ui::dpi96(shaderNode->getPosition().first),
+			ui::dpi96(shaderNode->getPosition().second)
 		),
 		m_nodeShape
 	);

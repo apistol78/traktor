@@ -44,7 +44,7 @@ Point IpolNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 	
-	int32_t f = scaleBySystemDPI(4);
+	int32_t f = dpi96(4);
 	int32_t x = pin->getDirection() == Pin::DrInput ? -f : rc.getWidth() + f;
 	int32_t y = rc.getHeight() / 2;
 
@@ -55,15 +55,15 @@ Pin* IpolNodeShape::getPinAt(const Node* node, const Point& pt) const
 {
 	Rect rc = node->calculateRect();
 
-	int32_t f = scaleBySystemDPI(4);
+	int32_t f = dpi96(4);
 	int32_t x = pt.x - rc.left;
 	int32_t y = pt.y - rc.top;
 
 	if (y >= rc.getHeight() / 2 - f && y <= rc.getHeight() / 2 + f)
 	{
-		if (x >= -f && x <= scaleBySystemDPI(c_pinHitWidth))
+		if (x >= -f && x <= dpi96(c_pinHitWidth))
 			return node->getInputPins()[0];
-		if (x >= rc.getWidth() - scaleBySystemDPI(c_pinHitWidth) && x <= rc.getWidth() + f)
+		if (x >= rc.getWidth() - dpi96(c_pinHitWidth) && x <= rc.getWidth() + f)
 			return node->getOutputPins()[0];
 	}
 
@@ -87,7 +87,7 @@ void IpolNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& off
 		ui::BmAlpha
 	);
 
-	int32_t f = scaleBySystemDPI(0);
+	int32_t f = dpi96(0);
 	Size pinSize = m_imagePin->getSize();
 
 	canvas->drawBitmap(

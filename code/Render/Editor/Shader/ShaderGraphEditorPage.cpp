@@ -145,7 +145,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_VARIABLES"), 13, ui::Command(L"ShaderGraph.Editor.ResolveVariables")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	
-	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), ui::scaleBySystemDPI(80), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
+	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), ui::dpi96(80), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
 	m_toolPlatform->add(L"DX9");
 	m_toolPlatform->add(L"DX9 Xbox360");
 	m_toolPlatform->add(L"DX11");
@@ -173,13 +173,13 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_dependencyPane = new ShaderDependencyPane(m_editor, m_document->getInstance(0)->getGuid());
 	m_dependencyPane->create(parent);
 	m_dependencyPane->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderDependencyPaneVisible", true));
-	m_site->createAdditionalPanel(m_dependencyPane, ui::scaleBySystemDPI(400), false);
+	m_site->createAdditionalPanel(m_dependencyPane, ui::dpi96(400), false);
 
 	// Create shader graph output view.
 	m_shaderViewer = new ShaderViewer(m_editor);
 	m_shaderViewer->create(parent);
 	m_shaderViewer->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderViewVisible", true));
-	m_site->createAdditionalPanel(m_shaderViewer, ui::scaleBySystemDPI(400), false);
+	m_site->createAdditionalPanel(m_shaderViewer, ui::dpi96(400), false);
 
 	// Modify graph control settings.
 	Ref< ui::custom::PaintSettings > paintSettings = new ui::custom::PaintSettings(*m_editorGraph->getPaintSettings());
@@ -826,8 +826,8 @@ void ShaderGraphEditorPage::refreshGraph()
 		
 		const std::pair< int, int >& position = shaderNode->getPosition();
 		editorNode->setPosition(ui::Point(
-			ui::scaleBySystemDPI(position.first),
-			ui::scaleBySystemDPI(position.second)
+			ui::dpi96(position.first),
+			ui::dpi96(position.second)
 		));
 	}
 }
@@ -1104,8 +1104,8 @@ void ShaderGraphEditorPage::eventNodeMoved(ui::custom::NodeMovedEvent* event)
 	T_ASSERT (shaderNode);
 
 	ui::Point position = editorNode->getPosition();
-	position.x = ui::inverseScaleBySystemDPI(position.x);
-	position.y = ui::inverseScaleBySystemDPI(position.y);
+	position.x = ui::invdpi96(position.x);
+	position.y = ui::invdpi96(position.y);
 
 	if (position.x != shaderNode->getPosition().first || position.y != shaderNode->getPosition().second)
 	{

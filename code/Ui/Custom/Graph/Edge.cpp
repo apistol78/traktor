@@ -32,8 +32,8 @@ void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 {
 	Point s = s1, d = d1;
 
-	s.x += scaleBySystemDPI(c_sourcePinOffset);
-	d.x -= scaleBySystemDPI(c_destPinOffset);
+	s.x += dpi96(c_sourcePinOffset);
+	d.x -= dpi96(c_destPinOffset);
 
 	Point r(d.x - s.x, d.y - s.y);
 	Point ar(traktor::abs(r.x), traktor::abs(r.y));
@@ -226,14 +226,14 @@ void Edge::paint(GraphCanvas* canvas, const Size& offset) const
 	else
 		calculateLinearSpline(s, d, m_spline);
 
-	canvas->drawLines(m_spline, scaleBySystemDPI(2));
+	canvas->drawLines(m_spline, dpi96(2));
 
 	Point at = m_destination->getPosition() + offset;
 	Point arrow[] =
 	{
-		Point(at.x - scaleBySystemDPI(12), at.y - scaleBySystemDPI(5)),
-		Point(at.x - scaleBySystemDPI(2) , at.y),
-		Point(at.x - scaleBySystemDPI(12), at.y + scaleBySystemDPI(5))
+		Point(at.x - dpi96(12), at.y - dpi96(5)),
+		Point(at.x - dpi96(2) , at.y),
+		Point(at.x - dpi96(12), at.y + dpi96(5))
 	};
 	canvas->fillPolygon(arrow, 3);
 }

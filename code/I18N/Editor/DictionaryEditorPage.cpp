@@ -144,9 +144,9 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 
 	m_gridDictionary = new ui::custom::GridView();
 	m_gridDictionary->create(container, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_gridDictionary->addColumn(new ui::custom::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_ID"), ui::scaleBySystemDPI(300)));
-	m_gridDictionary->addColumn(new ui::custom::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_TEXT"), ui::scaleBySystemDPI(600)));
-	m_gridDictionary->addColumn(new ui::custom::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_REFERENCE"), ui::scaleBySystemDPI(600)));
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_ID"), ui::dpi96(300)));
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_TEXT"), ui::dpi96(600)));
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_REFERENCE"), ui::dpi96(600)));
 	m_gridDictionary->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &DictionaryEditorPage::eventGridRowDoubleClick);
 	m_gridDictionary->addEventHandler< ui::custom::GridItemContentChangeEvent >(this, &DictionaryEditorPage::eventGridItemChange);
 

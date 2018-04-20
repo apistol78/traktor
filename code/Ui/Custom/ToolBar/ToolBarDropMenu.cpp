@@ -74,11 +74,11 @@ bool ToolBarDropMenu::getToolTip(std::wstring& outToolTip) const
 Size ToolBarDropMenu::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
 {
 	if (m_width > 0)
-		return Size(m_width, imageHeight + scaleBySystemDPI(4));
+		return Size(m_width, imageHeight + dpi96(4));
 	else
 	{
 		Size sz = toolBar->getTextExtent(m_text);
-		return Size(sz.cx + scaleBySystemDPI(32), imageHeight + scaleBySystemDPI(4));
+		return Size(sz.cx + dpi96(32), imageHeight + dpi96(4));
 	}
 }
 
@@ -87,12 +87,12 @@ void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Size size = getSize(toolBar, imageWidth, imageHeight);
 
-	int32_t sep = scaleBySystemDPI(14);
+	int32_t sep = dpi96(14);
 
 	Rect rcText;
 	if (m_arrow)
 		rcText = Rect(
-			at.x + scaleBySystemDPI(4),
+			at.x + dpi96(4),
 			at.y + 2,
 			at.x + size.cx - sep - 2,
 			at.y + size.cy - 2
@@ -130,9 +130,9 @@ void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 		Point center = rcButton.getCenter();
 		Point pnts[] =
 		{
-			ui::Point(center.x - scaleBySystemDPI(3), center.y - scaleBySystemDPI(1)),
-			ui::Point(center.x + scaleBySystemDPI(2), center.y - scaleBySystemDPI(1)),
-			ui::Point(center.x - scaleBySystemDPI(1), center.y + scaleBySystemDPI(2))
+			ui::Point(center.x - dpi96(3), center.y - dpi96(1)),
+			ui::Point(center.x + dpi96(2), center.y - dpi96(1)),
+			ui::Point(center.x - dpi96(1), center.y + dpi96(2))
 		};
 
 		canvas.setBackground(ss->getColor(toolBar, L"item-color-dropdown-arrow"));

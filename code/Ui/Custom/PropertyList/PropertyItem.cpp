@@ -241,7 +241,7 @@ void PropertyItem::paintBackground(Canvas& canvas, const Rect& rc)
 void PropertyItem::paintText(Canvas& canvas, const Rect& rc)
 {
 	int32_t depth = getDepth();
-	int32_t left = depth * scaleBySystemDPI(8);
+	int32_t left = depth * dpi96(8);
 
 	if (!m_childItems.empty())
 	{
@@ -249,14 +249,14 @@ void PropertyItem::paintText(Canvas& canvas, const Rect& rc)
 		int32_t c = (rc.getHeight() - size) / 2;
 
 		canvas.drawBitmap(
-			ui::Point(rc.left + left + scaleBySystemDPI(2), rc.top + c),
+			ui::Point(rc.left + left + dpi96(2), rc.top + c),
 			ui::Point(m_expanded ? size : 0, 0),
 			ui::Size(size, size),
 			s_imageExpand,
 			BmAlpha
 		);
 
-		left += size + scaleBySystemDPI(4);
+		left += size + dpi96(4);
 	}
 
 	canvas.drawText(

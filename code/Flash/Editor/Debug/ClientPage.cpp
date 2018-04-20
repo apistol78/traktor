@@ -70,7 +70,7 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_editFrame = new ui::Edit();
 	m_editFrame->create(m_toolBar, L"0", ui::WsNone, new ui::NumericEditValidator(false, 0));
 	m_editFrame->addEventHandler< ui::ContentChangeEvent >(this, &ClientPage::eventFrameChange);
-	m_toolBar->addItem(new ui::custom::ToolBarEmbed(m_editFrame, ui::scaleBySystemDPI(30)));
+	m_toolBar->addItem(new ui::custom::ToolBarEmbed(m_editFrame, ui::dpi96(30)));
 
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Next Frame", 1, ui::Command(L"Traktor.Flash.NextFrame")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
@@ -100,8 +100,8 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 
 	m_debugGrid = new ui::custom::GridView();
 	m_debugGrid->create(splitter2, ui::WsDoubleBuffer);
-	m_debugGrid->addColumn(new ui::custom::GridColumn(L"Name", ui::scaleBySystemDPI(150)));
-	m_debugGrid->addColumn(new ui::custom::GridColumn(L"Value", ui::scaleBySystemDPI(300)));
+	m_debugGrid->addColumn(new ui::custom::GridColumn(L"Name", ui::dpi96(150)));
+	m_debugGrid->addColumn(new ui::custom::GridColumn(L"Value", ui::dpi96(300)));
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0));

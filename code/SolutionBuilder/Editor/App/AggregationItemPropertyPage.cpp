@@ -20,7 +20,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.AggregationItemPropertyPage", AggregationIte
 
 bool AggregationItemPropertyPage::create(ui::Widget* parent)
 {
-	const int32_t f = ui::scaleBySystemDPI(4);
+	const int32_t f = ui::dpi96(4);
 
 	if (!ui::Container::create(
 		parent,
