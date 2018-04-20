@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Render/Shader/Node.h"
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
+#include "Ui/Application.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/CommentNodeShape.h"
 
@@ -40,8 +41,8 @@ Ref< ui::custom::Node > CommentNodeFacade::createEditorNode(
 		L"",
 		L"",
 		ui::Point(
-			shaderNode->getPosition().first,
-			shaderNode->getPosition().second
+			ui::scaleBySystemDPI(shaderNode->getPosition().first),
+			ui::scaleBySystemDPI(shaderNode->getPosition().second)
 		),
 		m_nodeShape
 	);

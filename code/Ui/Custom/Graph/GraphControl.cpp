@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/Custom/Graph/GraphControl.h"
+#include "Ui/Custom/Graph/GraphCanvas.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/NodeActivateEvent.h"
@@ -30,6 +31,14 @@ namespace traktor
 			namespace
 			{
 
+enum Modes
+{
+	MdNothing,
+	MdDrawEdge,
+	MdConnectEdge,
+	MdDrawSelectionRectangle
+};
+
 struct SortNodePred
 {
 	GraphControl::EvenSpace m_space;
@@ -47,20 +56,52 @@ struct SortNodePred
 	}
 };
 
-			}
-
-enum Modes
+Size operator * (const Size& sz, float scale)
 {
-	MdNothing,
-	MdDrawEdge,
-	MdConnectEdge,
-	MdDrawSelectionRectangle
-};
+	return Size(
+		(int32_t)std::floor(sz.cx * scale),
+		(int32_t)std::floor(sz.cy * scale)
+	);
+}
+
+Size operator / (const Size& sz, float scale)
+{
+	return sz * (1.0f / scale);
+}
+
+Point operator * (const Point& pt, float scale)
+{
+	return Point(
+		(int32_t)std::floor(pt.x * scale),
+		(int32_t)std::floor(pt.y * scale)
+	);
+}
+
+Point operator / (const Point& pt, float scale)
+{
+	return pt * (1.0f / scale);
+}
+
+Rect operator * (const Rect& rc, float scale)
+{
+	return Rect(
+		rc.getTopLeft() * scale,
+		rc.getBottomRight() * scale
+	);
+}
+
+Rect operator / (const Rect& rc, float scale)
+{
+	return rc * (1.0f / scale);
+}
+
+			}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GraphControl", GraphControl, Widget)
 
 GraphControl::GraphControl()
-:	m_mode(MdNothing)
+:	m_scale(1.0f)
+,	m_mode(MdNothing)
 ,	m_moveAll(false)
 ,	m_moveSelected(false)
 ,	m_edgeSelectable(false)
@@ -79,8 +120,10 @@ bool GraphControl::create(Widget* parent, int style)
 	addEventHandler< MouseButtonUpEvent >(this, &GraphControl::eventMouseUp);
 	addEventHandler< MouseMoveEvent >(this, &GraphControl::eventMouseMove);
 	addEventHandler< MouseDoubleClickEvent >(this, &GraphControl::eventDoubleClick);
+	addEventHandler< MouseWheelEvent >(this, &GraphControl::eventMouseWheel);
 	addEventHandler< PaintEvent >(this, &GraphControl::eventPaint);
 
+	m_scale = 1.0f;
 	m_offset.cx =
 	m_offset.cy = 0;
 	m_moveOrigin.x =
@@ -275,6 +318,16 @@ void GraphControl::setPaintSettings(const PaintSettings* paintSettings)
 const PaintSettings* GraphControl::getPaintSettings() const
 {
 	return m_paintSettings;
+}
+
+void GraphControl::setScale(float scale)
+{
+	m_scale = scale;
+}
+
+float GraphControl::getScale() const
+{
+	return m_scale;
 }
 
 void GraphControl::center()
@@ -474,7 +527,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 
 	// Save origin of drag and where the cursor is currently at.
 	m_cursor =
-	m_moveOrigin = event->getPosition();
+	m_moveOrigin = event->getPosition() / m_scale;
 
 	// Save positions of all nodes so we can issue node moved events later..
 	m_nodePositions.resize(m_nodes.size());
@@ -659,7 +712,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 
 void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 {
-	m_cursor = event->getPosition();
+	m_cursor = event->getPosition() / m_scale;
 
 	if (m_moveAll || m_moveSelected)
 	{
@@ -759,17 +812,17 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 {
 	if (m_moveAll)
 	{
-		Size delta = event->getPosition() - m_moveOrigin;
+		Size delta = event->getPosition() / m_scale - m_moveOrigin;
 		m_offset += delta;
 		m_cursor += delta;
 		m_edgeOrigin += delta;
-		m_moveOrigin = event->getPosition();
+		m_moveOrigin = event->getPosition() / m_scale;
 		update();
 		event->consume();
 	}
 	else if (m_moveSelected)
 	{
-		Size offset = event->getPosition() - m_moveOrigin;
+		Size offset = event->getPosition() / m_scale - m_moveOrigin;
 		for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
 		{
 			if (!(*i)->isSelected())
@@ -779,19 +832,19 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 			(*i)->setPosition(position + offset);
 		}
 
-		m_moveOrigin = event->getPosition();
+		m_moveOrigin = event->getPosition() / m_scale;
 		update();
 		event->consume();
 	}
 	else if (m_mode == MdConnectEdge || m_mode == MdDrawEdge || m_mode == MdDrawSelectionRectangle)
 	{
 		Rect updateRect(
-			m_moveOrigin,
-			m_cursor
+			m_moveOrigin * m_scale,
+			m_cursor * m_scale
 		);
 
-		m_cursor = event->getPosition();
-		updateRect = updateRect.getUnified().contain(m_cursor).inflate(4, 4);
+		m_cursor = event->getPosition() / m_scale;
+		updateRect = updateRect.getUnified().contain(m_cursor * m_scale).inflate(4, 4);
 
 		update(&updateRect);
 		event->consume();
@@ -809,6 +862,24 @@ void GraphControl::eventDoubleClick(MouseDoubleClickEvent* event)
 	event->consume();
 }
 
+void GraphControl::eventMouseWheel(MouseWheelEvent* event)
+{
+	Point ct = getInnerRect().getCenter();
+	Size vp0 = (event->getPosition() - ct) / m_scale;
+
+	if (event->getRotation() < 0)
+		m_scale *= 0.9f;
+	else if (event->getRotation() > 0)
+		m_scale /= 0.9f;
+
+	Size vp1 = (event->getPosition() - ct) / m_scale;
+	m_offset -= (vp0 - vp1);
+
+	update();
+
+	event->consume();
+}
+
 void GraphControl::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
@@ -822,8 +893,8 @@ void GraphControl::eventPaint(PaintEvent* event)
 	{
 		Size backgroundSize = m_imageBackground->getSize();
 
-		int32_t ox = m_offset.cx % backgroundSize.cx;
-		int32_t oy = m_offset.cy % backgroundSize.cy;
+		int32_t ox = int32_t(m_offset.cx * m_scale) % backgroundSize.cx;
+		int32_t oy = int32_t(m_offset.cy * m_scale) % backgroundSize.cy;
 
 		canvas.setBackground(Color4ub(255, 255, 255, 255));
 		for (int32_t y = oy - backgroundSize.cy; y < rc.getHeight(); y += backgroundSize.cy)
@@ -905,51 +976,60 @@ void GraphControl::eventPaint(PaintEvent* event)
 			break;
 	}
 
+	GraphCanvas graphCanvas(
+		&canvas,
+		m_paintSettings,
+		m_scale
+	);
+
+	// Also prepare scaled canvas.
+	graphCanvas.setFont(m_paintSettings->getFont());
+
 	// Draw edges.
 	for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
 	{
 		if (!(*i)->isSelected())
-			(*i)->paint(m_paintSettings, &canvas, m_offset);
+			(*i)->paint(&graphCanvas, m_offset);
 	}
 
 	// Node shapes.
+	Rect cullRc = rc / m_scale;
 	for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
 	{
-		if ((*i)->calculateRect().offset(m_offset).intersect(rc))
-			(*i)->paint(m_paintSettings, &canvas, m_offset);
+		if ((*i)->calculateRect().offset(m_offset).intersect(cullRc))
+			(*i)->paint(&graphCanvas, m_offset);
 	}
 
 	// Draw selected edges.
 	for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
 	{
 		if ((*i)->isSelected())
-			(*i)->paint(m_paintSettings, &canvas, m_offset);
+			(*i)->paint(&graphCanvas, m_offset);
 	}
 
 	// Draw probe.
 	if (!m_probeText.empty())
 	{
-		canvas.setForeground(Color4ub(64, 255, 64, 200));
-		canvas.setFont(m_paintSettings->getFontProbe());
-		canvas.drawText(m_probeAt, m_probeText);
-
+		graphCanvas.setForeground(Color4ub(64, 255, 64, 200));
+		graphCanvas.setFont(m_paintSettings->getFontProbe());
+		graphCanvas.drawText(m_probeAt, m_probeText);
 	}
 
 	// Edge cursor.
 	if (m_mode == MdConnectEdge || m_mode == MdDrawEdge)
 	{
-		canvas.setBackground(m_paintSettings->getGridBackground());
-		canvas.setForeground(m_paintSettings->getEdgeCursor());
-		canvas.drawLine(m_edgeOrigin, m_cursor);
+		graphCanvas.setBackground(m_paintSettings->getGridBackground());
+		graphCanvas.setForeground(m_paintSettings->getEdgeCursor());
+		graphCanvas.drawLine(m_edgeOrigin, m_cursor);
 	}
 
 	// Selection rectangle.
 	if (m_mode == MdDrawSelectionRectangle)
 	{
-		canvas.setForeground(Color4ub(220, 220, 255, 200));
-		canvas.setBackground(Color4ub(90, 90, 120, 80));
-		canvas.fillRect(Rect(m_moveOrigin, m_cursor));
-		canvas.drawRect(Rect(m_moveOrigin, m_cursor));
+		graphCanvas.setForeground(Color4ub(220, 220, 255, 200));
+		graphCanvas.setBackground(Color4ub(90, 90, 120, 80));
+		graphCanvas.fillRect(Rect(m_moveOrigin, m_cursor));
+		graphCanvas.drawRect(Rect(m_moveOrigin, m_cursor));
 	}
 
 	event->consume();

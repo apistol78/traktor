@@ -137,6 +137,11 @@ inline int32_t scaleBySystemDPI(int32_t referenceMeasure)
 	return (getSystemDPI() * referenceMeasure) / 96;
 }
 
+inline int32_t inverseScaleBySystemDPI(int32_t measure)
+{
+	return (measure * 96) / getSystemDPI();
+}
+
 inline Color4ub getSystemColor(SystemColor systemColor)
 {
 	Color4ub color;

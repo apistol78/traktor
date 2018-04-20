@@ -9,9 +9,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
+#include "Ui/Custom/Graph/GraphCanvas.h"
 #include "Ui/Custom/Graph/GraphControl.h"
-#include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Node.h"
+#include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Pin.h"
 
 namespace traktor
@@ -46,7 +47,7 @@ DefaultNodeShape::DefaultNodeShape(GraphControl* graphControl)
 	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
 }
 
-Point DefaultNodeShape::getPinPosition(const Node* node, const Pin* pin)
+Point DefaultNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 
@@ -73,7 +74,7 @@ Point DefaultNodeShape::getPinPosition(const Node* node, const Pin* pin)
 	return Point(rc.left + x, rc.top + top);
 }
 
-Pin* DefaultNodeShape::getPinAt(const Node* node, const Point& pt)
+Pin* DefaultNodeShape::getPinAt(const Node* node, const Point& pt) const
 {
 	Rect rc = node->calculateRect();
 	if (!rc.inside(pt))
@@ -108,8 +109,10 @@ Pin* DefaultNodeShape::getPinAt(const Node* node, const Point& pt)
 	return 0;
 }
 
-void DefaultNodeShape::paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset)
+void DefaultNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& offset) const
 {
+	const PaintSettings* settings = canvas->getPaintSettings();
+
 	Rect rc = node->calculateRect().offset(offset);
 	int32_t textHeight = settings->getFont().getPixelSize() + ui::scaleBySystemDPI(4);	
 
@@ -178,9 +181,11 @@ void DefaultNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 	{
 		canvas->drawBitmap(
 			Point(rc.getCenter().x - node->getImage()->getSize().cx / 2, top),
+			node->getImage()->getSize(),
 			Point(0, 0),
 			node->getImage()->getSize(),
-			node->getImage()
+			node->getImage(),
+			BmNone
 		);
 		top += node->getImage()->getSize().cy;
 	}
@@ -201,6 +206,7 @@ void DefaultNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 
 		canvas->drawBitmap(
 			pos,
+			pinSize,
 			Point(0, 0),
 			pinSize,
 			m_imagePin,
@@ -217,6 +223,7 @@ void DefaultNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 
 		canvas->drawBitmap(
 			pos,
+			pinSize,
 			Point(0, 0),
 			pinSize,
 			m_imagePin,
@@ -266,7 +273,7 @@ void DefaultNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 	}
 }
 
-Size DefaultNodeShape::calculateSize(const Node* node)
+Size DefaultNodeShape::calculateSize(const Node* node) const
 {
 	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::scaleBySystemDPI(4);	
 	int32_t height = ui::scaleBySystemDPI(c_marginHeight) * 2 + ui::scaleBySystemDPI(c_topMargin) + ui::scaleBySystemDPI(c_titlePad);

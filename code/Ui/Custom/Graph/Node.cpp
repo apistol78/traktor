@@ -4,11 +4,11 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Ui/Event.h"
+#include "Ui/Custom/Graph/Edge.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/NodeShape.h"
 #include "Ui/Custom/Graph/Pin.h"
-#include "Ui/Custom/Graph/Edge.h"
-#include "Ui/Event.h"
 
 namespace traktor
 {
@@ -197,10 +197,10 @@ Pin* Node::getPinAt(const Point& p) const
 	return m_shape->getPinAt(this, p);
 }
 
-void Node::paint(const PaintSettings* settings, Canvas* canvas, const Size& offset) const
+void Node::paint(GraphCanvas* canvas, const Size& offset) const
 {
 	T_ASSERT (m_shape);
-	m_shape->paint(this, settings, canvas, offset);
+	m_shape->paint(this, canvas, offset);
 }
 
 Rect Node::calculateRect() const

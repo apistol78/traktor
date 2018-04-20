@@ -826,8 +826,8 @@ void ShaderGraphEditorPage::refreshGraph()
 		
 		const std::pair< int, int >& position = shaderNode->getPosition();
 		editorNode->setPosition(ui::Point(
-			position.first,
-			position.second
+			ui::scaleBySystemDPI(position.first),
+			ui::scaleBySystemDPI(position.second)
 		));
 	}
 }
@@ -1104,14 +1104,17 @@ void ShaderGraphEditorPage::eventNodeMoved(ui::custom::NodeMovedEvent* event)
 	T_ASSERT (shaderNode);
 
 	ui::Point position = editorNode->getPosition();
+	position.x = ui::inverseScaleBySystemDPI(position.x);
+	position.y = ui::inverseScaleBySystemDPI(position.y);
+
 	if (position.x != shaderNode->getPosition().first || position.y != shaderNode->getPosition().second)
 	{
 		m_document->push();
 
 		// Reflect position into shader graph node.
 		shaderNode->setPosition(std::pair< int, int >(
-			editorNode->getPosition().x,
-			editorNode->getPosition().y
+			position.x,
+			position.y
 		));
 	}
 

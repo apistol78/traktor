@@ -10,9 +10,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/Custom/Graph/InOutNodeShape.h"
+#include "Ui/Custom/Graph/GraphCanvas.h"
 #include "Ui/Custom/Graph/GraphControl.h"
-#include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Node.h"
+#include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Pin.h"
 
 namespace traktor
@@ -45,7 +46,7 @@ InOutNodeShape::InOutNodeShape(GraphControl* graphControl)
 	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
 }
 
-Point InOutNodeShape::getPinPosition(const Node* node, const Pin* pin)
+Point InOutNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 	Point pt;
@@ -58,7 +59,7 @@ Point InOutNodeShape::getPinPosition(const Node* node, const Pin* pin)
 	return pt;
 }
 
-Pin* InOutNodeShape::getPinAt(const Node* node, const Point& pt)
+Pin* InOutNodeShape::getPinAt(const Node* node, const Point& pt) const
 {
 	Rect rc = node->calculateRect();
 
@@ -75,8 +76,9 @@ Pin* InOutNodeShape::getPinAt(const Node* node, const Point& pt)
 	return 0;
 }
 
-void InOutNodeShape::paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset)
+void InOutNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& offset) const
 {
+	const PaintSettings* settings = canvas->getPaintSettings();
 	Rect rc = node->calculateRect().offset(offset);
 
 	// Draw node shape.
@@ -114,6 +116,7 @@ void InOutNodeShape::paint(const Node* node, const PaintSettings* settings, Canv
 
 	canvas->drawBitmap(
 		inputPinPos,
+		pinSize,
 		Point(0, 0),
 		pinSize,
 		m_imagePin,
@@ -127,6 +130,7 @@ void InOutNodeShape::paint(const Node* node, const PaintSettings* settings, Canv
 
 	canvas->drawBitmap(
 		outputPinPos,
+		pinSize,
 		Point(0, 0),
 		pinSize,
 		m_imagePin,
@@ -156,7 +160,7 @@ void InOutNodeShape::paint(const Node* node, const PaintSettings* settings, Canv
 	}
 }
 
-Size InOutNodeShape::calculateSize(const Node* node)
+Size InOutNodeShape::calculateSize(const Node* node) const
 {
 	Font currentFont = m_graphControl->getFont();
 	

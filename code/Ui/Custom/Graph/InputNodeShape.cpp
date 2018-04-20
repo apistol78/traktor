@@ -10,10 +10,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
-#include "Ui/Custom/Graph/InputNodeShape.h"
+#include "Ui/Custom/Graph/GraphCanvas.h"
 #include "Ui/Custom/Graph/GraphControl.h"
-#include "Ui/Custom/Graph/PaintSettings.h"
+#include "Ui/Custom/Graph/InputNodeShape.h"
 #include "Ui/Custom/Graph/Node.h"
+#include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Pin.h"
 
 namespace traktor
@@ -48,13 +49,13 @@ InputNodeShape::InputNodeShape(GraphControl* graphControl)
 	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
 }
 
-Point InputNodeShape::getPinPosition(const Node* node, const Pin* pin)
+Point InputNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 	return Point(rc.right, rc.getCenter().y);
 }
 
-Pin* InputNodeShape::getPinAt(const Node* node, const Point& pt)
+Pin* InputNodeShape::getPinAt(const Node* node, const Point& pt) const
 {
 	Rect rc = node->calculateRect();
 
@@ -68,8 +69,9 @@ Pin* InputNodeShape::getPinAt(const Node* node, const Point& pt)
 	return 0;
 }
 
-void InputNodeShape::paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset)
+void InputNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& offset) const
 {
+	const PaintSettings* settings = canvas->getPaintSettings();
 	Rect rc = node->calculateRect().offset(offset);
 
 	// Draw node shape.
@@ -107,6 +109,7 @@ void InputNodeShape::paint(const Node* node, const PaintSettings* settings, Canv
 
 	canvas->drawBitmap(
 		pos,
+		pinSize,
 		Point(0, 0),
 		pinSize,
 		m_imagePin,
@@ -155,7 +158,7 @@ void InputNodeShape::paint(const Node* node, const PaintSettings* settings, Canv
 	}
 }
 
-Size InputNodeShape::calculateSize(const Node* node)
+Size InputNodeShape::calculateSize(const Node* node) const
 {
 	Font currentFont = m_graphControl->getFont();
 

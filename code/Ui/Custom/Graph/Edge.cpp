@@ -9,11 +9,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Math/MathUtils.h"
 #include "Core/Math/Vector2.h"
 #include "Ui/Application.h"
-#include "Ui/Canvas.h"
 #include "Ui/Event.h"
 #include "Ui/Custom/Graph/Edge.h"
-#include "Ui/Custom/Graph/Pin.h"
+#include "Ui/Custom/Graph/GraphCanvas.h"
 #include "Ui/Custom/Graph/Node.h"
+#include "Ui/Custom/Graph/Pin.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
 
 namespace traktor
@@ -130,7 +130,7 @@ void Edge::setSourcePin(Pin* source)
 	m_source = source;
 }
 
-Ref< Pin > Edge::getSourcePin() const
+Pin* Edge::getSourcePin() const
 {
 	return m_source;
 }
@@ -140,7 +140,7 @@ void Edge::setDestinationPin(Pin* destination)
 	m_destination = destination;
 }
 
-Ref< Pin > Edge::getDestinationPin() const
+Pin* Edge::getDestinationPin() const
 {
 	return m_destination;
 }
@@ -201,33 +201,32 @@ bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
 	return false;
 }
 
-void Edge::paint(const PaintSettings* paintSettings, Canvas* canvas, const Size& offset) const
+void Edge::paint(GraphCanvas* canvas, const Size& offset) const
 {
 	if (!m_source || !m_destination)
 		return;
 
+	const PaintSettings* settings = canvas->getPaintSettings();
 	if (m_selected)
 	{
-		canvas->setForeground(paintSettings->getEdgeSelected());
-		canvas->setBackground(paintSettings->getEdgeSelected());
+		canvas->setForeground(settings->getEdgeSelected());
+		canvas->setBackground(settings->getEdgeSelected());
 	}
 	else
 	{
-		canvas->setForeground(paintSettings->getEdge());
-		canvas->setBackground(paintSettings->getEdge());
+		canvas->setForeground(settings->getEdge());
+		canvas->setBackground(settings->getEdge());
 	}
 
 	Point s = m_source->getPosition() + offset;
 	Point d = m_destination->getPosition() + offset;
 
-	if (paintSettings->getSmoothSpline())
+	if (settings->getSmoothSpline())
 		calculateSmoothSpline(s, d, m_spline);
 	else
 		calculateLinearSpline(s, d, m_spline);
 
-	canvas->setPenThickness(scaleBySystemDPI(2));
-	canvas->drawLines(m_spline);
-	canvas->setPenThickness(1);
+	canvas->drawLines(m_spline, scaleBySystemDPI(2));
 
 	Point at = m_destination->getPosition() + offset;
 	Point arrow[] =
