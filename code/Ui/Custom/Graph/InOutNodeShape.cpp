@@ -140,15 +140,12 @@ void InOutNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& of
 	std::wstring info = node->getInfo();
 	if (!info.empty())
 	{
-		Size ext = canvas->getTextExtent(info);
-
 		canvas->setForeground(settings->getNodeTextInfo());
 		canvas->drawText(
-			Point(
-				rc.left + (rc.getWidth() - ext.cx) / 2,
-				rc.top + (rc.getHeight() - ext.cy) / 2
-			),
-			info
+			rc,
+			info,
+			AnCenter,
+			AnCenter
 		);
 	}
 

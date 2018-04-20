@@ -49,8 +49,6 @@ public:
 
 	void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode);
 
-	void drawText(const Point& at, const std::wstring& text);
-
 	void drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign);
 
 	Size getTextExtent(const std::wstring& text) const;

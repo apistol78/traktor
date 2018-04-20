@@ -13,9 +13,14 @@ namespace traktor
 Size operator * (const Size& sz, float scale)
 {
 	return Size(
-		(int32_t)std::floor(sz.cx * scale + 0.5f),
-		(int32_t)std::floor(sz.cy * scale + 0.5f)
+		(int32_t)std::floor(sz.cx * scale),
+		(int32_t)std::floor(sz.cy * scale)
 	);
+}
+
+Size operator / (const Size& sz, float scale)
+{
+	return sz * (1.0f / scale);
 }
 
 Point operator * (const Point& pt, float scale)
@@ -26,12 +31,22 @@ Point operator * (const Point& pt, float scale)
 	);
 }
 
+Point operator / (const Point& pt, float scale)
+{
+	return pt * (1.0f / scale);
+}
+
 Rect operator * (const Rect& rc, float scale)
 {
 	return Rect(
 		rc.getTopLeft() * scale,
-		rc.getSize() * scale
+		rc.getBottomRight() * scale
 	);
+}
+
+Rect operator / (const Rect& rc, float scale)
+{
+	return rc * (1.0f / scale);
 }
 
 			}
@@ -75,7 +90,9 @@ void GraphCanvas::drawLine(const Point& start, const Point& end)
 
 void GraphCanvas::drawLines(const std::vector< Point >& pnts, int32_t thickness)
 {
-	std::vector< Point > tpnts; tpnts.reserve(pnts.size());
+	std::vector< Point > tpnts;
+	tpnts.reserve(pnts.size());
+
 	for (std::vector< Point >::const_iterator i = pnts.begin(); i != pnts.end(); ++i)
 		tpnts.push_back(*i * m_scale);
 
@@ -105,20 +122,12 @@ void GraphCanvas::fillPolygon(const Point* pnts, int count)
 void GraphCanvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
 {
 	m_canvas->drawBitmap(
-		dstAt * m_scale,
-		dstSize * m_scale,
+		(dstAt - Size(1, 1)) * m_scale,
+		(dstSize + Size(2, 2)) * m_scale,
 		srcAt,
 		srcSize,
 		bitmap,
 		blendMode
-	);
-}
-
-void GraphCanvas::drawText(const Point& at, const std::wstring& text)
-{
-	m_canvas->drawText(
-		at * m_scale,
-		text
 	);
 }
 
@@ -134,10 +143,7 @@ void GraphCanvas::drawText(const Rect& rc, const std::wstring& text, Align halig
 
 Size GraphCanvas::getTextExtent(const std::wstring& text) const
 {
-	m_canvas->setFont(m_originalFont);
-	Size sz = m_canvas->getTextExtent(text);
-	m_canvas->setFont(m_scaledFont);
-	return sz;
+	return m_canvas->getTextExtent(text) / m_scale;
 }
 
 		}

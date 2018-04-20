@@ -1008,12 +1008,12 @@ void GraphControl::eventPaint(PaintEvent* event)
 	}
 
 	// Draw probe.
-	if (!m_probeText.empty())
-	{
-		graphCanvas.setForeground(Color4ub(64, 255, 64, 200));
-		graphCanvas.setFont(m_paintSettings->getFontProbe());
-		graphCanvas.drawText(m_probeAt, m_probeText);
-	}
+	//if (!m_probeText.empty())
+	//{
+	//	graphCanvas.setForeground(Color4ub(64, 255, 64, 200));
+	//	graphCanvas.setFont(m_paintSettings->getFontProbe());
+	//	graphCanvas.drawText(m_probeAt, m_probeText);
+	//}
 
 	// Edge cursor.
 	if (m_mode == MdConnectEdge || m_mode == MdDrawEdge)

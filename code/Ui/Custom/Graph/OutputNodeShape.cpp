@@ -126,8 +126,13 @@ void OutputNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& o
 		Size ext = canvas->getTextExtent(title);
 
 		canvas->drawText(
-			Point(left, rc.top + (rc.getHeight() - ext.cy) / 2),
-			title
+			Rect(
+				Point(left, rc.top + (rc.getHeight() - ext.cy) / 2),
+				ext
+			),
+			title,
+			AnLeft,
+			AnCenter
 		);
 
 		left += ext.cx;
@@ -144,8 +149,13 @@ void OutputNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& o
 
 		canvas->setForeground(settings->getNodeTextInfo());
 		canvas->drawText(
-			Point(left, rc.top + (rc.getHeight() - ext.cy) / 2),
-			info
+			Rect(
+				Point(left, rc.top + (rc.getHeight() - ext.cy) / 2),
+				ext
+			),
+			info,
+			AnLeft,
+			AnCenter
 		);
 	}
 
