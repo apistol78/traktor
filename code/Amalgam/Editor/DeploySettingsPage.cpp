@@ -110,8 +110,8 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 
 	Ref< ui::custom::GridView > gridEnvironment = new ui::custom::GridView();
 	gridEnvironment->create(containerEnvironment, ui::WsDoubleBuffer);
-	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Name", ui::scaleBySystemDPI(200)));
-	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Value", ui::scaleBySystemDPI(400)));
+	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Name", ui::dpi96(200)));
+	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Value", ui::dpi96(400)));
 
 	Ref< PropertyGroup > settingsEnvironment = settings->getProperty< PropertyGroup >(L"Amalgam.Environment");
 	if (settingsEnvironment)

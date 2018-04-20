@@ -51,7 +51,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ProjectPropertyPage", ProjectPropertyPage, u
 
 bool ProjectPropertyPage::create(ui::Widget* parent)
 {
-	const int32_t f = ui::scaleBySystemDPI(4);
+	const int32_t f = ui::dpi96(4);
 
 	if (!ui::Container::create(
 		parent,
@@ -79,10 +79,10 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 
 	m_listDependencies = new ui::custom::GridView();
 	m_listDependencies->create(container, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Dependency", ui::scaleBySystemDPI(160)));
-	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Location", ui::scaleBySystemDPI(200)));
-	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Inherit include paths", ui::scaleBySystemDPI(130)));
-	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Link", ui::scaleBySystemDPI(50)));
+	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Dependency", ui::dpi96(160)));
+	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Location", ui::dpi96(200)));
+	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Inherit include paths", ui::dpi96(130)));
+	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Link", ui::dpi96(50)));
 	m_listDependencies->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &ProjectPropertyPage::eventDependencyDoubleClick);
 
 	Ref< ui::Static > staticAvailable = new ui::Static();

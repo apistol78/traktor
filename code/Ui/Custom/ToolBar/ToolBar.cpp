@@ -34,8 +34,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ToolBar", ToolBar, Widget)
 
 ToolBar::ToolBar()
 :	m_style(WsNone)
-,	m_imageWidth(scaleBySystemDPI(16))
-,	m_imageHeight(scaleBySystemDPI(16))
+,	m_imageWidth(dpi96(16))
+,	m_imageHeight(dpi96(16))
 ,	m_imageCount(0)
 {
 }
@@ -126,15 +126,15 @@ Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 {
 	Rect rc = getInnerRect();
 
-	int x = scaleBySystemDPI(c_marginWidth);
-	int y = scaleBySystemDPI(c_marginHeight);
+	int x = dpi96(c_marginWidth);
+	int y = dpi96(c_marginHeight);
 
 	for (RefArray< ToolBarItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
 	{
 		Size size = (*i)->getSize(this, m_imageWidth, m_imageHeight);
 
 		// Calculate item rectangle.
-		int offset = (rc.getHeight() - scaleBySystemDPI(c_marginHeight * 2) - size.cy) / 2;
+		int offset = (rc.getHeight() - dpi96(c_marginHeight * 2) - size.cy) / 2;
 		Rect rc(
 			Point(x, y + offset),
 			size
@@ -160,7 +160,7 @@ Size ToolBar::getPreferedSize() const
 		height = std::max(height, size.cy);
 	}
 
-	return Size(width, height + scaleBySystemDPI(c_marginHeight * 2 + 1));
+	return Size(width, height + dpi96(c_marginHeight * 2 + 1));
 }
 
 void ToolBar::eventMouseMove(MouseMoveEvent* event)
@@ -249,15 +249,15 @@ void ToolBar::eventPaint(PaintEvent* event)
 	}
 	*/
 
-	int x = rc.left + scaleBySystemDPI(c_marginWidth);
-	int y = rc.top + scaleBySystemDPI(c_marginHeight);
+	int x = rc.left + dpi96(c_marginWidth);
+	int y = rc.top + dpi96(c_marginHeight);
 
 	for (RefArray< ToolBarItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
 	{
 		Size size = (*i)->getSize(this, m_imageWidth, m_imageHeight);
 
 		// Calculate top-left position of item, center vertically.
-		int offset = (rc.getHeight() - scaleBySystemDPI(c_marginHeight) * 2 - size.cy) / 2;
+		int offset = (rc.getHeight() - dpi96(c_marginHeight) * 2 - size.cy) / 2;
 		Point at(x, y + offset);
 
 		(*i)->paint(

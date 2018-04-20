@@ -125,7 +125,7 @@ Size CommentNodeShape::calculateSize(const Node* node) const
 {
 	const std::wstring& comment = node->getComment();
 	if (comment.empty())
-		return Size(scaleBySystemDPI(200), scaleBySystemDPI(200));
+		return Size(dpi96(200), dpi96(200));
 
 	int32_t lineHeight = m_graphControl->getTextExtent(L"W").cy;
 
@@ -140,7 +140,7 @@ Size CommentNodeShape::calculateSize(const Node* node) const
 		textSize.cy += lineHeight;
 	}
 
-	return textSize + Size(scaleBySystemDPI(c_margin) * 2, scaleBySystemDPI(c_margin) * 2);
+	return textSize + Size(dpi96(c_margin) * 2, dpi96(c_margin) * 2);
 }
 
 		}

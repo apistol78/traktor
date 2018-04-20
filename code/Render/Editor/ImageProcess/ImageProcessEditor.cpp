@@ -78,7 +78,7 @@ bool ImageProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 		return false;
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(parent, true, ui::scaleBySystemDPI(400), false);
+	splitter->create(parent, true, ui::dpi96(400), false);
 
 	Ref< ui::custom::Splitter > splitterView = new ui::custom::Splitter();
 	splitterView->create(splitter, false, 60, true);
@@ -96,8 +96,8 @@ bool ImageProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 
 	m_gridSteps = new ui::custom::GridView();
 	m_gridSteps->create(containerSteps, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_gridSteps->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_ORDER"), ui::scaleBySystemDPI(60)));
-	m_gridSteps->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_DESCRIPTION"), ui::scaleBySystemDPI(300)));
+	m_gridSteps->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_ORDER"), ui::dpi96(60)));
+	m_gridSteps->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_DESCRIPTION"), ui::dpi96(300)));
 	m_gridSteps->addEventHandler< ui::SelectionChangeEvent >(this, &ImageProcessEditor::eventGridStepSelect);
 
 	Ref< ui::Container > containerDefinitions = new ui::Container();
@@ -112,8 +112,8 @@ bool ImageProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 
 	m_gridDefinitions = new ui::custom::GridView();
 	m_gridDefinitions->create(containerDefinitions, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_gridDefinitions->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_ID"), ui::scaleBySystemDPI(60)));
-	m_gridDefinitions->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_DESCRIPTION"), ui::scaleBySystemDPI(300)));
+	m_gridDefinitions->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_ID"), ui::dpi96(60)));
+	m_gridDefinitions->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_DESCRIPTION"), ui::dpi96(300)));
 	m_gridDefinitions->addEventHandler< ui::SelectionChangeEvent >(this, &ImageProcessEditor::eventGridDefinitionSelect);
 
 	Ref< ui::Container > container = new ui::Container();
@@ -157,7 +157,7 @@ void ImageProcessEditor::apply()
 
 ui::Size ImageProcessEditor::getPreferredSize() const
 {
-	return ui::Size(ui::scaleBySystemDPI(900), ui::scaleBySystemDPI(600));
+	return ui::Size(ui::dpi96(900), ui::dpi96(600));
 }
 
 bool ImageProcessEditor::handleCommand(const ui::Command& command)

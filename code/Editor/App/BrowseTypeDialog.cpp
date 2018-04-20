@@ -72,8 +72,8 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"BROWSE_TYPE_TITLE"),
-		ui::scaleBySystemDPI(640),
-		ui::scaleBySystemDPI(500),
+		ui::dpi96(640),
+		ui::dpi96(500),
 		ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))
@@ -84,7 +84,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	addEventHandler< ui::ButtonClickEvent >(this, &BrowseTypeDialog::eventDialogClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	if (!splitter->create(this, true, ui::scaleBySystemDPI(200)))
+	if (!splitter->create(this, true, ui::dpi96(200)))
 		return false;
 
 	Ref< ui::Container > left = new ui::Container();

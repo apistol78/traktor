@@ -49,7 +49,7 @@ void ProgressCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.fillRect(rect2);
 
 		ui::Rect rect3 = rect;
-		rect3.left += ui::scaleBySystemDPI(2);
+		rect3.left += ui::dpi96(2);
 
 		canvas.setForeground(Color4ub(0, 0, 0, 255));
 		canvas.drawText(rect3, m_text, ui::AnLeft, ui::AnCenter);
@@ -62,7 +62,7 @@ void ProgressCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	else if (!m_text.empty())
 	{
 		ui::Rect rect2 = rect;
-		rect2.left += ui::scaleBySystemDPI(2);
+		rect2.left += ui::dpi96(2);
 
 		canvas.setForeground(Color4ub(0, 0, 0, 255));
 		canvas.drawText(rect2, m_text, ui::AnLeft, ui::AnCenter);

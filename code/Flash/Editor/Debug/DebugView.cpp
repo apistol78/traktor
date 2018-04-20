@@ -383,7 +383,7 @@ void paintInstanceOutline(ui::Canvas& canvas, const Matrix33& rasterTransform, c
 		canvas.drawPolygon(pnts, 4);
 		canvas.setForeground(Color4ub(255, 255, 255, highlight ? 200 : 100));
 		canvas.drawText(pnts[0], mbstows(instance->getName()));
-		canvas.drawText(pnts[0] + ui::Size(0, ui::scaleBySystemDPI(12)), ss.str());
+		canvas.drawText(pnts[0] + ui::Size(0, ui::dpi96(12)), ss.str());
 
 		const Aabb2& scalingGrid = spriteInstance->getScalingGrid();
 		if (!scalingGrid.empty())
@@ -517,7 +517,7 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 		// Outside frame
 		canvas.setForeground(Color4ub(255, 255, 0, 64));
 
-		int32_t dx = ui::scaleBySystemDPI(16);
+		int32_t dx = ui::dpi96(16);
 		int32_t ox = m_offset.x % dx;
 		int32_t oy = m_offset.y % dx;
 

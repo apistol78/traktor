@@ -24,7 +24,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.WorkspaceDialog", WorkspaceDialog, ui::C
 
 bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 {
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_WORKSPACE_TITLE"), ui::scaleBySystemDPI(500), ui::scaleBySystemDPI(200), ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_WORKSPACE_TITLE"), ui::dpi96(500), ui::dpi96(200), ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));

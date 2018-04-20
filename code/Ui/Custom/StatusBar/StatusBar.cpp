@@ -60,7 +60,7 @@ void StatusBar::setText(const std::wstring& text)
 
 Size StatusBar::getPreferedSize() const
 {
-	Size preferedSize(0, scaleBySystemDPI(c_preferedHeight));
+	Size preferedSize(0, dpi96(c_preferedHeight));
 	if (getParent())
 		preferedSize.cx = getParent()->getInnerRect().getWidth();
 	return preferedSize;
@@ -74,9 +74,9 @@ void StatusBar::eventSize(SizeEvent* event)
 		Rect rc = getInnerRect();
 		Size preferedSize = child->getPreferedSize();
 
-		rc.top += scaleBySystemDPI(2);
-		rc.bottom -= scaleBySystemDPI(2);
-		rc.right -= scaleBySystemDPI(20);
+		rc.top += dpi96(2);
+		rc.bottom -= dpi96(2);
+		rc.right -= dpi96(20);
 		rc.left = rc.right - preferedSize.cx;
 
 		child->setRect(rc);
@@ -95,21 +95,21 @@ void StatusBar::eventPaint(PaintEvent* event)
 
 	std::wstring text = getText();
 	canvas.setForeground(ss->getColor(this, L"color"));
-	canvas.drawText(rc.inflate(scaleBySystemDPI(-8), 0), text, AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(dpi96(-8), 0), text, AnLeft, AnCenter);
 
 	// Draw scale grip if parent is a form and isn't maximized.
 	Ref< Form > parentForm = dynamic_type_cast< Form* >(getParent());
 	if (parentForm && !parentForm->isMaximized())
 	{
-		rc = rc.inflate(-scaleBySystemDPI(2), -scaleBySystemDPI(2));
+		rc = rc.inflate(-dpi96(2), -dpi96(2));
 		for (int i = 0; i <= 2; ++i)
 		{
 			canvas.setForeground(getSystemColor(ScButtonShadow));
-			canvas.drawLine(rc.right, rc.bottom - scaleBySystemDPI(i * 4 - 1), rc.right - scaleBySystemDPI(i * 4 - 1), rc.bottom);
-			canvas.drawLine(rc.right, rc.bottom - scaleBySystemDPI(i * 4 - 2), rc.right - scaleBySystemDPI(i * 4 - 2), rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - dpi96(i * 4 - 1), rc.right - dpi96(i * 4 - 1), rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - dpi96(i * 4 - 2), rc.right - dpi96(i * 4 - 2), rc.bottom);
 
 			canvas.setForeground(Color4ub(255, 255, 255));
-			canvas.drawLine(rc.right, rc.bottom - scaleBySystemDPI(i * 4 - 3), rc.right - scaleBySystemDPI(i * 4 - 3), rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - dpi96(i * 4 - 3), rc.right - dpi96(i * 4 - 3), rc.bottom);
 		}
 	}
 

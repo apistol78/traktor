@@ -58,7 +58,7 @@ TargetEditor::TargetEditor(editor::IEditor* editor)
 
 bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
-	const int32_t f = ui::scaleBySystemDPI(4);
+	const int32_t f = ui::dpi96(4);
 
 	m_editInstance = instance;
 	m_editTarget = checked_type_cast< Target* >(object);
@@ -67,7 +67,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_containerOuter->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", f, f));
 
 	Ref< ui::custom::Splitter > splitterInner = new ui::custom::Splitter();
-	splitterInner->create(m_containerOuter, true, ui::scaleBySystemDPI(200), false, ui::scaleBySystemDPI(100));
+	splitterInner->create(m_containerOuter, true, ui::dpi96(200), false, ui::dpi96(100));
 
 	Ref< ui::Container > containerTargetConfigurations = new ui::Container();
 	containerTargetConfigurations->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, f));
@@ -271,8 +271,8 @@ void TargetEditor::handleDatabaseEvent(db::Database* database, const Guid& event
 ui::Size TargetEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::scaleBySystemDPI(1000),
-		ui::scaleBySystemDPI(600)
+		ui::dpi96(1000),
+		ui::dpi96(600)
 	);
 }
 

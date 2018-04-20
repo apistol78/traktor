@@ -94,9 +94,9 @@ void VectorPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 			continue;
 
 		Rect rcSub(
-			rc.left + (scaleBySystemDPI(c_valueWidth) * i) / m_dimension,
+			rc.left + (dpi96(c_valueWidth) * i) / m_dimension,
 			rc.top,
-			rc.left + (scaleBySystemDPI(c_valueWidth) * (i + 1)) / m_dimension,
+			rc.left + (dpi96(c_valueWidth) * (i + 1)) / m_dimension,
 			rc.bottom
 		);
 
@@ -125,9 +125,9 @@ void VectorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	for (int32_t i = 0; i < m_dimension; ++i)
 	{
 		Rect rcSub(
-			rc.left + (scaleBySystemDPI(c_valueWidth) * i) / m_dimension,
+			rc.left + (dpi96(c_valueWidth) * i) / m_dimension,
 			rc.top,
-			rc.left + (scaleBySystemDPI(c_valueWidth) * (i + 1)) / m_dimension,
+			rc.left + (dpi96(c_valueWidth) * (i + 1)) / m_dimension,
 			rc.bottom
 		);
 

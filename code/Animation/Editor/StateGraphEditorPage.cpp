@@ -116,7 +116,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_previewConditions = new ui::Container();
 	m_previewConditions->create(m_containerPreview, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0, 0));
 
-	m_site->createAdditionalPanel(m_containerPreview, ui::scaleBySystemDPI(450), false);
+	m_site->createAdditionalPanel(m_containerPreview, ui::dpi96(450), false);
 
 	createEditorNodes(
 		m_stateGraph->getStates(),

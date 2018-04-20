@@ -31,7 +31,7 @@ SearchControl::SearchControl()
 
 bool SearchControl::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", ui::scaleBySystemDPI(4), ui::scaleBySystemDPI(4))))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", ui::dpi96(4), ui::dpi96(4))))
 		return false;
 
 	m_editSearch = new ui::Edit();
@@ -79,7 +79,7 @@ void SearchControl::show()
 ui::Size SearchControl::getPreferedSize() const
 {
 	ui::Size preferedSize = ui::Container::getPreferedSize();
-	return ui::Size(ui::scaleBySystemDPI(250), preferedSize.cy);
+	return ui::Size(ui::dpi96(250), preferedSize.cy);
 }
 
 void SearchControl::eventEditSearchKeyDown(ui::KeyDownEvent* event)

@@ -50,7 +50,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.AggregationPropertyPage", AggregationPropert
 
 bool AggregationPropertyPage::create(ui::Widget* parent)
 {
-	const int32_t f = ui::scaleBySystemDPI(4);
+	const int32_t f = ui::dpi96(4);
 
 	if (!ui::Container::create(
 		parent,
@@ -71,9 +71,9 @@ bool AggregationPropertyPage::create(ui::Widget* parent)
 
 	m_listDependencies = new ui::ListView();
 	m_listDependencies->create(container, ui::WsClientBorder | ui::ListView::WsReport);
-	m_listDependencies->addColumn(L"Dependency", ui::scaleBySystemDPI(130));
-	m_listDependencies->addColumn(L"Location", ui::scaleBySystemDPI(270));
-	m_listDependencies->addColumn(L"Link", ui::scaleBySystemDPI(50));
+	m_listDependencies->addColumn(L"Dependency", ui::dpi96(130));
+	m_listDependencies->addColumn(L"Location", ui::dpi96(270));
+	m_listDependencies->addColumn(L"Link", ui::dpi96(50));
 	m_listDependencies->addEventHandler< ui::MouseDoubleClickEvent >(this, &AggregationPropertyPage::eventDependencyDoubleClick);
 
 	Ref< ui::Static > staticAvailable = new ui::Static();

@@ -57,7 +57,7 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 
 	m_icons = new StyleBitmap(L"UI.Log", c_ResourceLog, sizeof(c_ResourceLog));
 
-	m_itemHeight = getFont().getPixelSize() + scaleBySystemDPI(4);
+	m_itemHeight = getFont().getPixelSize() + dpi96(4);
 	m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize().cy);
 
 	m_lookup = lookup;
@@ -254,7 +254,7 @@ void LogList::eventPaint(PaintEvent* event)
 
 		Rect textRect(rc.left + iconSize.cx, rc.top, rc.right, rc.bottom);
 		canvas.drawText(textRect, toString(threadIndex) + L">", AnLeft, AnCenter);
-		textRect.left += scaleBySystemDPI(20);
+		textRect.left += dpi96(20);
 
 		size_t s = 0;
 		while (s < i->logText.length())
@@ -263,7 +263,7 @@ void LogList::eventPaint(PaintEvent* event)
 			if (e1 == i->logText.npos)
 				break;
 
-			textRect.left += int32_t(e1 - s) * scaleBySystemDPI(8 * 4);
+			textRect.left += int32_t(e1 - s) * dpi96(8 * 4);
 
 			size_t e2 = i->logText.find_first_of('\t', e1);
 			if (e2 == i->logText.npos)

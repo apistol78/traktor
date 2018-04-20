@@ -312,7 +312,7 @@ Rect TreeViewItem::calculateExpandRect() const
 	int32_t depth = calculateDepth();
 
 	Rect rcItem = m_view->getCellClientRect(this);
-	rcItem.left += ui::scaleBySystemDPI(4 + depth * 20);
+	rcItem.left += ui::dpi96(4 + depth * 20);
 	rcItem.right = rcItem.left + d;
 
 	int32_t dy = (rcItem.getHeight() - d) / 2;
@@ -328,7 +328,7 @@ Rect TreeViewItem::calculateImageRect() const
 	int32_t depth = calculateDepth();
 
 	Rect rcItem = m_view->getCellClientRect(this);
-	rcItem.left += ui::scaleBySystemDPI(4 + depth * 20 + 22);
+	rcItem.left += ui::dpi96(4 + depth * 20 + 22);
 	rcItem.right = rcItem.left + d;
 
 	int32_t dy = (rcItem.getHeight() - d) / 2;
@@ -345,7 +345,7 @@ Rect TreeViewItem::calculateLabelRect() const
 	int32_t depth = calculateDepth();
 
 	Rect rcItem = m_view->getCellClientRect(this);
-	rcItem.left += ui::scaleBySystemDPI(4 + depth * 20 + 44);
+	rcItem.left += ui::dpi96(4 + depth * 20 + 44);
 	rcItem.right = rcItem.left + extent.cx + d;
 
 	return rcItem;
@@ -355,7 +355,7 @@ int32_t TreeViewItem::calculateWidth() const
 {
 	Size extent = m_view->getTextExtent(m_text);
 	int32_t d = m_view->m_imageState->getSize().cy;
-	return ui::scaleBySystemDPI(4 + calculateDepth() * 20 + 44) + extent.cx + d;
+	return ui::dpi96(4 + calculateDepth() * 20 + 44) + extent.cx + d;
 }
 
 void TreeViewItem::interval()
@@ -447,7 +447,7 @@ void TreeViewItem::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& p
 void TreeViewItem::mouseMove(MouseMoveEvent* event, const Point& position)
 {
 	Size d = position - m_mouseDownPosition;
-	if (abs(d.cx) > scaleBySystemDPI(2) || abs(d.cy) > scaleBySystemDPI(2))
+	if (abs(d.cx) > dpi96(2) || abs(d.cy) > dpi96(2))
 	{
 		// Ensure edit isn't triggered if mouse moved during edit state tracking.
 		m_editMode = 0;

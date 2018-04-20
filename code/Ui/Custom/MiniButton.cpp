@@ -57,9 +57,9 @@ void MiniButton::setImage(IBitmap* image)
 Size MiniButton::getPreferedSize() const
 {
 	if (m_image)
-		return m_image->getSize() + Size(ui::scaleBySystemDPI(6), ui::scaleBySystemDPI(6));
+		return m_image->getSize() + Size(ui::dpi96(6), ui::dpi96(6));
 	else
-		return Size(getTextExtent(getText()).cx + ui::scaleBySystemDPI(10), ui::scaleBySystemDPI(16));
+		return Size(getTextExtent(getText()).cx + ui::dpi96(10), ui::dpi96(16));
 }
 
 void MiniButton::eventButtonDown(MouseButtonDownEvent* event)

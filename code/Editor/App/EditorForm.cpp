@@ -517,8 +517,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	if (!ui::Form::create(
 		c_title,
-		ui::scaleBySystemDPI(1280),
-		ui::scaleBySystemDPI(900),
+		ui::dpi96(1280),
+		ui::dpi96(900),
 		ui::Form::WsDefault,
 		new ui::TableLayout(L"100%", L"*,*,100%,*", 0, 0)
 	))
@@ -616,10 +616,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	Ref< ui::DockPane > pane = m_dock->getPane();
 	Ref< ui::DockPane > paneCenter, paneLog;
 
-	pane->split(false, ui::scaleBySystemDPI(400), m_paneWest, paneCenter);
-	paneCenter->split(false, ui::scaleBySystemDPI(-250), paneCenter, m_paneEast);
-	paneCenter->split(true, ui::scaleBySystemDPI(-200), paneCenter, paneLog);
-	paneCenter->split(true, ui::scaleBySystemDPI(-200), paneCenter, m_paneSouth);
+	pane->split(false, ui::dpi96(400), m_paneWest, paneCenter);
+	paneCenter->split(false, ui::dpi96(-250), paneCenter, m_paneEast);
+	paneCenter->split(true, ui::dpi96(-200), paneCenter, paneLog);
+	paneCenter->split(true, ui::dpi96(-200), paneCenter, m_paneSouth);
 
 	// Create panes.
 	m_dataBaseView = new DatabaseView(this);
@@ -636,7 +636,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!m_mergedSettings->getProperty< bool >(L"Editor.PropertiesVisible"))
 		m_propertiesView->hide();
 
-	m_paneWest->dock(m_propertiesView, true, ui::DockPane::DrSouth, ui::scaleBySystemDPI(300));
+	m_paneWest->dock(m_propertiesView, true, ui::DockPane::DrSouth, ui::dpi96(300));
 
 	// Create output panel.
 	m_tabOutput = new ui::Tab();
@@ -850,7 +850,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	setStoreObject(L"ThumbnailGenerator", new ThumbnailGenerator(thumbsPath));
 
 	// Restore last used form settings, if desktop size still match.
-	int32_t x = 0, y = 0, width = ui::scaleBySystemDPI(1280), height = ui::scaleBySystemDPI(900);
+	int32_t x = 0, y = 0, width = ui::dpi96(1280), height = ui::dpi96(900);
 	bool maximized = false;
 
 	ui::Size desktopSize = ui::Application::getInstance()->getEventLoop()->getDesktopSize();
@@ -861,8 +861,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	{
 		x = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionX");
 		y = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionY");
-		width = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeWidth", ui::scaleBySystemDPI(1280));
-		height = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeHeight", ui::scaleBySystemDPI(900));
+		width = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeWidth", ui::dpi96(1280));
+		height = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeHeight", ui::dpi96(900));
 		maximized = m_mergedSettings->getProperty< bool >(L"Editor.Maximized");
 	}
 

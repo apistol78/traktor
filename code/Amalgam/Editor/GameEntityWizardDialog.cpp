@@ -56,16 +56,16 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"GAMEENTITY_WIZARD_DIALOG_TITLE"),
-		ui::scaleBySystemDPI(700),
-		ui::scaleBySystemDPI(400),
+		ui::dpi96(700),
+		ui::dpi96(400),
 		ui::ConfigDialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"*", ui::scaleBySystemDPI(8), ui::scaleBySystemDPI(8))
+		new ui::TableLayout(L"100%", L"*", ui::dpi96(8), ui::dpi96(8))
 	))
 		return false;
 
 	// Name
 	Ref< ui::Container > containerName = new ui::Container();
-	containerName->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, ui::scaleBySystemDPI(8)));
+	containerName->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, ui::dpi96(8)));
 
 	Ref< ui::Static > staticName = new ui::Static();
 	staticName->create(containerName, i18n::Text(L"GAMEENTITY_WIZARD_ENTITY_NAME"));
@@ -76,7 +76,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 
 	// Visual mesh
 	Ref< ui::Container > containerVisualMesh = new ui::Container();
-	containerVisualMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*", L"*", 0, ui::scaleBySystemDPI(8)));
+	containerVisualMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*", L"*", 0, ui::dpi96(8)));
 
 	Ref< ui::Static > staticVisualMesh = new ui::Static();
 	staticVisualMesh->create(containerVisualMesh, i18n::Text(L"GAMEENTITY_WIZARD_VISUAL_MESH"));
@@ -90,7 +90,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 
 	// Collision mesh
 	Ref< ui::Container > containerCollisionMesh = new ui::Container();
-	containerCollisionMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*", L"*", 0, ui::scaleBySystemDPI(8)));
+	containerCollisionMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*", L"*", 0, ui::dpi96(8)));
 
 	Ref< ui::Static > staticCollisionMesh = new ui::Static();
 	staticCollisionMesh->create(containerCollisionMesh, i18n::Text(L"GAMEENTITY_WIZARD_COLLISION_MESH"));
@@ -104,7 +104,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 
 	// Physics
 	Ref< ui::Container > containerPhysics = new ui::Container();
-	containerPhysics->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, ui::scaleBySystemDPI(8)));
+	containerPhysics->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, ui::dpi96(8)));
 
 	Ref< ui::Static > staticPhysicsType = new ui::Static();
 	staticPhysicsType->create(containerPhysics, i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_TYPE"));

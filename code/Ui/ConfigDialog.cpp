@@ -73,7 +73,7 @@ void ConfigDialog::update(const Rect* rc, bool immediate)
 	Size ok = m_ok->getPreferedSize();
 	Size cancel = m_cancel->getPreferedSize();
 
-	int32_t four = scaleBySystemDPI(4);
+	int32_t four = dpi96(4);
 	if (m_apply)
 	{
 		Size apply = m_apply->getPreferedSize();
@@ -96,7 +96,7 @@ Rect ConfigDialog::getInnerRect() const
 	Rect rc = Dialog::getInnerRect();
 	if (m_ok)
 	{
-		int32_t four = scaleBySystemDPI(4);
+		int32_t four = dpi96(4);
 		rc.bottom -= m_ok->getPreferedSize().cy + 2 * four + four;
 	}
 	return rc;

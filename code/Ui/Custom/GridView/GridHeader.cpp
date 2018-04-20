@@ -30,7 +30,7 @@ void GridHeader::mouseDown(MouseButtonDownEvent* event, const Point& position)
 	if (m_columns.size() < 2)
 		return;
 
-	int32_t dx = scaleBySystemDPI(1);
+	int32_t dx = dpi96(1);
 	int32_t x = 0;
 
 	for (uint32_t i = 0; i < m_columns.size() - 1; ++i)

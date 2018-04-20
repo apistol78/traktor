@@ -84,7 +84,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGrid"), 1);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGuide"), 1);
 
-	m_toolView = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), ui::scaleBySystemDPI(100), i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
+	m_toolView = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), ui::dpi96(100), i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_FRONT"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_BACK"));
@@ -110,7 +110,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		guideEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
-	m_toolAspect = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), ui::scaleBySystemDPI(130), i18n::Text(L"SCENE_EDITOR_ASPECT"));
+	m_toolAspect = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), ui::dpi96(130), i18n::Text(L"SCENE_EDITOR_ASPECT"));
 	m_toolAspect->add(L"Full");
 	m_toolAspect->add(L"1:1");
 	m_toolAspect->add(L"4:3");
@@ -122,7 +122,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolAspect->add(L"9:16");
 	m_toolAspect->select(0);
 
-	Ref< ui::custom::ToolBarDropMenu > toolQualityMenu = new ui::custom::ToolBarDropMenu(ui::scaleBySystemDPI(130), i18n::Text(L"SCENE_EDITOR_QUALITY"), true, i18n::Text(L"SCENE_EDITOR_QUALITY_TOOLTIP"));
+	Ref< ui::custom::ToolBarDropMenu > toolQualityMenu = new ui::custom::ToolBarDropMenu(ui::dpi96(130), i18n::Text(L"SCENE_EDITOR_QUALITY"), true, i18n::Text(L"SCENE_EDITOR_QUALITY_TOOLTIP"));
 
 	m_menuPostProcess = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
 	m_menuPostProcess->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.PostProcessQuality"), L"Disabled", true, 0));

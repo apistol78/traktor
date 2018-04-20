@@ -34,7 +34,7 @@ bool InputDialog::create(
 	uint32_t outFieldsCount
 )
 {
-	if (!ConfigDialog::create(parent, title, scaleBySystemDPI(300), scaleBySystemDPI(180), ConfigDialog::WsDefaultFixed, new TableLayout(L"100%", L"*,*", 4, 4)))
+	if (!ConfigDialog::create(parent, title, dpi96(300), dpi96(180), ConfigDialog::WsDefaultFixed, new TableLayout(L"100%", L"*,*", 4, 4)))
 		return false;
 
 	Ref< Static > labelMessage = new Static();

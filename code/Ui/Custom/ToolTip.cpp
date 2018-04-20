@@ -53,11 +53,11 @@ void ToolTip::show(const Point& at, const std::wstring& text)
 	setText(text);
 
 	Size extent = getTextExtent(text);
-	extent.cx += ui::scaleBySystemDPI(c_margin) * 2;
-	extent.cy += ui::scaleBySystemDPI(c_margin) * 2;
+	extent.cx += ui::dpi96(c_margin) * 2;
+	extent.cy += ui::dpi96(c_margin) * 2;
 
 	Point tipPosition = getParent()->clientToScreen(at);
-	tipPosition.y += ui::scaleBySystemDPI(c_cursorHeight);
+	tipPosition.y += ui::dpi96(c_cursorHeight);
 
 	setRect(Rect(tipPosition, extent));
 
@@ -122,7 +122,7 @@ void ToolTip::eventPaint(PaintEvent* event)
 	canvas.fillRect(innerRect);
 	canvas.drawRect(innerRect);
 
-	innerRect = innerRect.inflate(-ui::scaleBySystemDPI(c_margin), 0);
+	innerRect = innerRect.inflate(-ui::dpi96(c_margin), 0);
 	canvas.drawText(innerRect, getText(), AnLeft, AnCenter);
 
 	event->consume();

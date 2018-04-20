@@ -64,13 +64,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ColorDialog", ColorDialog, ConfigDial
 
 bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, const Color4ub& initialColor)
 {
-	const int32_t margin = ui::scaleBySystemDPI(4);
+	const int32_t margin = ui::dpi96(4);
 
 	if (!ConfigDialog::create(
 		parent,
 		text,
-		scaleBySystemDPI(500),
-		scaleBySystemDPI(400),
+		dpi96(500),
+		dpi96(400),
 		style,
 		new TableLayout(L"*,*,*,*", L"*", margin, margin)
 	))

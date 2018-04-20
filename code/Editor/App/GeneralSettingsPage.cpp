@@ -48,11 +48,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.GeneralSettingsPage", 0, General
 bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, ui::scaleBySystemDPI(4))))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, ui::dpi96(4))))
 		return false;
 
 	Ref< ui::Container > containerInner = new ui::Container();
-	if (!containerInner->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, ui::scaleBySystemDPI(4))))
+	if (!containerInner->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, ui::dpi96(4))))
 		return false;
 
 	Ref< ui::Static > staticDictionary = new ui::Static();
@@ -80,7 +80,7 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	staticFont->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_EDITOR_FONT"));
 
 	Ref< ui::Container > containerFont = new ui::Container();
-	if (!containerFont->create(containerInner, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, ui::scaleBySystemDPI(4))))
+	if (!containerFont->create(containerInner, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, ui::dpi96(4))))
 		return false;
 
 	m_dropFonts = new ui::DropDown();

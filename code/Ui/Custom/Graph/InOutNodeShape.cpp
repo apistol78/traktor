@@ -65,12 +65,12 @@ Pin* InOutNodeShape::getPinAt(const Node* node, const Point& pt) const
 
 	int32_t x = pt.x - rc.left;
 	int32_t y = pt.y - rc.top;
-	int32_t f = ui::scaleBySystemDPI(4);
+	int32_t f = ui::dpi96(4);
 
-	if (x >= 0 && x <= ui::scaleBySystemDPI(c_pinHitWidth) && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= 0 && x <= ui::dpi96(c_pinHitWidth) && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
 		return node->getInputPins()[0];
 
-	if (x >= rc.getWidth() - ui::scaleBySystemDPI(c_pinHitWidth) && x <= rc.getWidth() && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= rc.getWidth() - ui::dpi96(c_pinHitWidth) && x <= rc.getWidth() && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
 		return node->getOutputPins()[0];
 
 	return 0;
@@ -110,7 +110,7 @@ void InOutNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& of
 	canvas->setBackground(Color4ub(255, 255, 255));
 
 	Point inputPinPos(
-		rc.left - pinSize.cx / 2 + ui::scaleBySystemDPI(c_marginWidth),
+		rc.left - pinSize.cx / 2 + ui::dpi96(c_marginWidth),
 		rc.getCenter().y - pinSize.cy / 2
 	);
 
@@ -124,7 +124,7 @@ void InOutNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& of
 	);
 
 	Point outputPinPos(
-		rc.right - pinSize.cx / 2 - ui::scaleBySystemDPI(c_marginWidth),
+		rc.right - pinSize.cx / 2 - ui::dpi96(c_marginWidth),
 		rc.getCenter().y - pinSize.cy / 2
 	);
 
@@ -156,7 +156,7 @@ void InOutNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& of
 	if (!comment.empty())
 	{
 		canvas->setForeground(settings->getNodeShadow());
-		canvas->drawText(Rect(rc.left, rc.top - ui::scaleBySystemDPI(c_textHeight), rc.right, rc.top), comment, AnCenter, AnCenter);
+		canvas->drawText(Rect(rc.left, rc.top - ui::dpi96(c_textHeight), rc.right, rc.top), comment, AnCenter, AnCenter);
 	}
 }
 
@@ -167,13 +167,13 @@ Size InOutNodeShape::calculateSize(const Node* node) const
 	int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
 	Size sz = m_imageNode[imageIndex]->getSize();
 
-	int32_t width = ui::scaleBySystemDPI(c_marginWidth) * 2 + ui::scaleBySystemDPI(c_textMargin) * 2;
+	int32_t width = ui::dpi96(c_marginWidth) * 2 + ui::dpi96(c_textMargin) * 2;
 
 	if (!node->getInfo().empty())
 	{
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFont());
 		int32_t extent = m_graphControl->getTextExtent(node->getInfo()).cx;
-		width += std::max(extent, ui::scaleBySystemDPI(c_minExtent));
+		width += std::max(extent, ui::dpi96(c_minExtent));
 	}
 
 	m_graphControl->setFont(currentFont);

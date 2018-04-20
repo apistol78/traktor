@@ -98,7 +98,7 @@ void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	if (!m_text.empty())
 	{
 		ui::Rect textRect = rect;
-		textRect.left += dx + ui::scaleBySystemDPI(4);
+		textRect.left += dx + ui::dpi96(4);
 
 		canvas.setForeground(Color4ub(0, 0, 0));
 		canvas.drawText(textRect, m_text, ui::AnLeft, ui::AnCenter);

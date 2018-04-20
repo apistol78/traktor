@@ -111,7 +111,7 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 ui::Size TargetInstanceListItem::getSize() const
 {
 	RefArray< TargetConnection > connections = m_instance->getConnections();
-	return ui::Size(128, ui::scaleBySystemDPI(28 + connections.size() * (c_performanceHeight + c_commandHeight)));
+	return ui::Size(128, ui::dpi96(28 + connections.size() * (c_performanceHeight + c_commandHeight)));
 }
 
 void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect)
@@ -119,7 +119,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 	RefArray< TargetConnection > connections = m_instance->getConnections();
 
 	ui::Rect controlRect = rect;
-	controlRect.bottom = rect.top + ui::scaleBySystemDPI(28);
+	controlRect.bottom = rect.top + ui::dpi96(28);
 
 	int32_t logoSize = s_bitmapLogos->getSize().cy;
 
@@ -128,10 +128,10 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 		widget->placeCell(
 			m_hostsCell,
 			ui::Rect(
-				controlRect.left + ui::scaleBySystemDPI(130),
-				controlRect.getCenter().y - ui::scaleBySystemDPI(10),
-				controlRect.right - ui::scaleBySystemDPI(24) * 4 - 12,
-				controlRect.getCenter().y + ui::scaleBySystemDPI(10)
+				controlRect.left + ui::dpi96(130),
+				controlRect.getCenter().y - ui::dpi96(10),
+				controlRect.right - ui::dpi96(24) * 4 - 12,
+				controlRect.getCenter().y + ui::dpi96(10)
 			)
 		);
 	}
@@ -141,9 +141,9 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 			m_progressCell,
 			ui::Rect(
 				controlRect.left + logoSize + 10,
-				controlRect.getCenter().y - ui::scaleBySystemDPI(8),
-				controlRect.right - ui::scaleBySystemDPI(24) * 4 - 8,
-				controlRect.getCenter().y + ui::scaleBySystemDPI(8)
+				controlRect.getCenter().y - ui::dpi96(8),
+				controlRect.right - ui::dpi96(24) * 4 - 8,
+				controlRect.getCenter().y + ui::dpi96(8)
 			)
 		);
 	}
@@ -151,42 +151,42 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 	widget->placeCell(
 		m_playCell,
 		ui::Rect(
-			controlRect.right - ui::scaleBySystemDPI(24) * 4 - 4,
+			controlRect.right - ui::dpi96(24) * 4 - 4,
 			controlRect.top,
-			controlRect.right - ui::scaleBySystemDPI(24) * 3 - 4,
+			controlRect.right - ui::dpi96(24) * 3 - 4,
 			controlRect.bottom
 		)
 	);
 	widget->placeCell(
 		m_buildCell,
 		ui::Rect(
-			controlRect.right - ui::scaleBySystemDPI(24) * 3 - 4,
+			controlRect.right - ui::dpi96(24) * 3 - 4,
 			controlRect.top,
-			controlRect.right - ui::scaleBySystemDPI(24) * 2 - 4,
+			controlRect.right - ui::dpi96(24) * 2 - 4,
 			controlRect.bottom
 		)
 	);
 	widget->placeCell(
 		m_migrateCell,
 		ui::Rect(
-			controlRect.right - ui::scaleBySystemDPI(24) * 2 - 4,
+			controlRect.right - ui::dpi96(24) * 2 - 4,
 			controlRect.top,
-			controlRect.right - ui::scaleBySystemDPI(24) * 1 - 4,
+			controlRect.right - ui::dpi96(24) * 1 - 4,
 			controlRect.bottom
 		)
 	);
 	widget->placeCell(
 		m_browseCell,
 		ui::Rect(
-			controlRect.right - ui::scaleBySystemDPI(24) * 1 - 4,
+			controlRect.right - ui::dpi96(24) * 1 - 4,
 			controlRect.top,
-			controlRect.right - ui::scaleBySystemDPI(24) * 0 - 4,
+			controlRect.right - ui::dpi96(24) * 0 - 4,
 			controlRect.bottom
 		)
 	);
 
 	controlRect.top = controlRect.bottom;
-	controlRect.bottom = controlRect.top + ui::scaleBySystemDPI(c_performanceHeight);
+	controlRect.bottom = controlRect.top + ui::dpi96(c_performanceHeight);
 
 	m_stopCells.resize(connections.size());
 	m_captureCells.resize(connections.size());
@@ -217,9 +217,9 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 		widget->placeCell(
 			m_stopCells[i],
 			ui::Rect(
-				controlRect.right - ui::scaleBySystemDPI(24) * 1 - 4,
+				controlRect.right - ui::dpi96(24) * 1 - 4,
 				controlRect.top,
-				controlRect.right - ui::scaleBySystemDPI(24) * 0 - 4,
+				controlRect.right - ui::dpi96(24) * 0 - 4,
 				(controlRect.top + controlRect.bottom) / 2
 			)
 		);
@@ -227,9 +227,9 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 		widget->placeCell(
 			m_captureCells[i],
 			ui::Rect(
-				controlRect.right - ui::scaleBySystemDPI(24) * 1 - 4,
+				controlRect.right - ui::dpi96(24) * 1 - 4,
 				(controlRect.top + controlRect.bottom) / 2,
-				controlRect.right - ui::scaleBySystemDPI(24) * 0 - 4,
+				controlRect.right - ui::dpi96(24) * 0 - 4,
 				controlRect.bottom
 			)
 		);
@@ -240,7 +240,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 				controlRect.left,
 				controlRect.bottom,
 				controlRect.right,
-				controlRect.bottom + ui::scaleBySystemDPI(c_commandHeight)
+				controlRect.bottom + ui::dpi96(c_commandHeight)
 			)
 		);
 
@@ -257,14 +257,14 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	const TargetConfiguration* targetConfiguration = m_instance->getTargetConfiguration();
 	RefArray< TargetConnection > connections = m_instance->getConnections();
 
-	ui::Rect controlRect = rect; controlRect.bottom = rect.top + ui::scaleBySystemDPI(28);
+	ui::Rect controlRect = rect; controlRect.bottom = rect.top + ui::dpi96(28);
 
 	canvas.setBackground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"item-background-color"));
 	canvas.fillRect(controlRect);
 
 	ui::Rect performanceRect = rect;
-	performanceRect.top = rect.top + ui::scaleBySystemDPI(28);
-	performanceRect.bottom = performanceRect.top + ui::scaleBySystemDPI(c_performanceHeight + c_commandHeight);
+	performanceRect.top = rect.top + ui::dpi96(28);
+	performanceRect.bottom = performanceRect.top + ui::dpi96(c_performanceHeight + c_commandHeight);
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		canvas.setBackground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"item-connection-background-color"));
@@ -312,7 +312,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	{
 		ui::Rect textRect = controlRect;
 		textRect.left += logoSize + 10;
-		textRect.right -= ui::scaleBySystemDPI(24) * 3 - 8;
+		textRect.right -= ui::dpi96(24) * 3 - 8;
 
 		canvas.setForeground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"color"));
 		canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
@@ -324,9 +324,9 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	ui::Font markerFont = widgetFont; markerFont.setSize(7);
 
 	performanceRect = rect;
-	performanceRect.right -= ui::scaleBySystemDPI(34);
-	performanceRect.top = rect.top + ui::scaleBySystemDPI(28);
-	performanceRect.bottom = performanceRect.top + ui::scaleBySystemDPI(c_performanceHeight);
+	performanceRect.right -= ui::dpi96(34);
+	performanceRect.top = rect.top + ui::dpi96(28);
+	performanceRect.bottom = performanceRect.top + ui::dpi96(c_performanceHeight);
 
 	canvas.setForeground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"color"));
 	for (uint32_t i = 0; i < connections.size(); ++i)
@@ -336,7 +336,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.setClipRect(performanceRect);
 
 		ui::Rect nameRect = performanceRect;
-		nameRect.bottom = nameRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
+		nameRect.bottom = nameRect.top + ui::dpi96(c_performanceLineHeight);
 
 		nameRect.left += 6;
 		canvas.setFont(performanceBoldFont);
@@ -344,73 +344,73 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.setFont(performanceFont);
 
 		ui::Rect topRect = performanceRect;
-		topRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
-		topRect.bottom = topRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
+		topRect.top = performanceRect.top + ui::dpi96(c_performanceLineHeight);
+		topRect.bottom = topRect.top + ui::dpi96(c_performanceLineHeight);
 
-		topRect.left += ui::scaleBySystemDPI(6);
+		topRect.left += ui::dpi96(6);
 		canvas.drawText(topRect, toString(int32_t(performance.fps)), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += ui::scaleBySystemDPI(20);
+		topRect.left += ui::dpi96(20);
 		canvas.drawText(topRect, L"U: " + formatPerformanceTime(performance.update), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += ui::scaleBySystemDPI(80);
+		topRect.left += ui::dpi96(80);
 		canvas.drawText(topRect, L"B: " + formatPerformanceTime(performance.build), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += ui::scaleBySystemDPI(80);
+		topRect.left += ui::dpi96(80);
 		canvas.drawText(topRect, L"R: " + formatPerformanceTime(performance.render), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += ui::scaleBySystemDPI(80);
+		topRect.left += ui::dpi96(80);
 		canvas.drawText(topRect, L"GC: " + formatPerformanceTime(performance.garbageCollect), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect = performanceRect;
-		middleRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 2;
-		middleRect.bottom = middleRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
+		middleRect.top = performanceRect.top + ui::dpi96(c_performanceLineHeight) * 2;
+		middleRect.bottom = middleRect.top + ui::dpi96(c_performanceLineHeight);
 
-		middleRect.left += ui::scaleBySystemDPI(26);
+		middleRect.left += ui::dpi96(26);
 		canvas.drawText(middleRect, L"P: " + formatPerformanceTime(performance.physics), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += ui::scaleBySystemDPI(80);
+		middleRect.left += ui::dpi96(80);
 		canvas.drawText(middleRect, L"I: " + formatPerformanceTime(performance.input), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += ui::scaleBySystemDPI(80);
+		middleRect.left += ui::dpi96(80);
 		canvas.drawText(middleRect, L"Sim: " + toString(int32_t(performance.steps)) + L", " + formatPerformanceTime(performance.interval) + L", " + toString(performance.collisions), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += ui::scaleBySystemDPI(150);
+		middleRect.left += ui::dpi96(150);
 		canvas.drawText(middleRect, L"F: " + toString(performance.flashCharacterCount), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect2 = performanceRect;
-		middleRect2.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 3;
-		middleRect2.bottom = middleRect2.top + ui::scaleBySystemDPI(c_performanceLineHeight);
+		middleRect2.top = performanceRect.top + ui::dpi96(c_performanceLineHeight) * 3;
+		middleRect2.bottom = middleRect2.top + ui::dpi96(c_performanceLineHeight);
 
-		middleRect2.left += ui::scaleBySystemDPI(26);
+		middleRect2.left += ui::dpi96(26);
 		canvas.drawText(middleRect2, L"Draw: " + toString(performance.drawCalls), ui::AnLeft, ui::AnCenter);
 
-		middleRect2.left += ui::scaleBySystemDPI(100);
+		middleRect2.left += ui::dpi96(100);
 		canvas.drawText(middleRect2, L"Prim: " + toString(performance.primitiveCount), ui::AnLeft, ui::AnCenter);
 
-		middleRect2.left += ui::scaleBySystemDPI(100);
+		middleRect2.left += ui::dpi96(100);
 		canvas.drawText(middleRect2, L"Phys: " + toString(performance.activeBodyCount) + L"/" + toString(performance.bodyCount) + L", M: " + toString(performance.manifoldCount) + L", Q: " + toString(performance.queryCount), ui::AnLeft, ui::AnCenter);
 
-		middleRect2.left += ui::scaleBySystemDPI(150);
+		middleRect2.left += ui::dpi96(150);
 		canvas.drawText(middleRect2, L"Snd: " + toString(performance.activeSoundChannels), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect bottomRect = performanceRect;
-		bottomRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 4;
-		bottomRect.bottom = bottomRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
+		bottomRect.top = performanceRect.top + ui::dpi96(c_performanceLineHeight) * 4;
+		bottomRect.bottom = bottomRect.top + ui::dpi96(c_performanceLineHeight);
 
-		bottomRect.left += ui::scaleBySystemDPI(26);
+		bottomRect.left += ui::dpi96(26);
 		canvas.drawText(bottomRect, L"Mem: " + toString(performance.memInUse / 1024) + L" KiB, dC: " + toString(performance.memDeltaCount), ui::AnLeft, ui::AnCenter);
 
-		bottomRect.left += ui::scaleBySystemDPI(150);
+		bottomRect.left += ui::dpi96(150);
 		canvas.drawText(bottomRect, L"Obj: " + toString(performance.heapObjects), ui::AnLeft, ui::AnCenter);
 
-		bottomRect.left += ui::scaleBySystemDPI(100);
+		bottomRect.left += ui::dpi96(100);
 		canvas.drawText(bottomRect, L"Smem: " + toString(performance.memInUseScript / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
 
-		bottomRect.left += ui::scaleBySystemDPI(100);
+		bottomRect.left += ui::dpi96(100);
 		canvas.drawText(bottomRect, L"Res: " + toString(performance.residentResourcesCount) + L", " + toString(performance.exclusiveResourcesCount), ui::AnLeft, ui::AnCenter);
 
-		performanceRect = performanceRect.offset(0, ui::scaleBySystemDPI(c_performanceHeight + c_commandHeight));
+		performanceRect = performanceRect.offset(0, ui::dpi96(c_performanceHeight + c_commandHeight));
 	}
 
 	canvas.resetClipRect();

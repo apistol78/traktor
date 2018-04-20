@@ -221,8 +221,8 @@ Ref< ui::custom::Node > ScriptNodeFacade::createEditorNode(
 		scriptNode->getName(),
 		L"",
 		ui::Point(
-			ui::scaleBySystemDPI(scriptNode->getPosition().first),
-			ui::scaleBySystemDPI(scriptNode->getPosition().second)
+			ui::dpi96(scriptNode->getPosition().first),
+			ui::dpi96(scriptNode->getPosition().second)
 		),
 		m_nodeShape
 	);

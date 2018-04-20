@@ -83,7 +83,7 @@ struct DependencyCharacter : public RefCountImpl< ui::custom::RichEdit::ISpecial
 
 	virtual void draw(ui::Canvas& canvas, const ui::Rect& rc) const T_OVERRIDE T_FINAL
 	{
-		int32_t h = ui::scaleBySystemDPI(1);
+		int32_t h = ui::dpi96(1);
 		canvas.setBackground(canvas.getForeground());
 		canvas.fillRect(ui::Rect(rc.left, rc.bottom - h, rc.right, rc.bottom));
 		canvas.drawText(rc, path, ui::AnCenter, ui::AnCenter);
@@ -139,9 +139,9 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_outlineGrid = new ui::custom::GridView();
 	if (!m_outlineGrid->create(tabOutline, ui::custom::GridView::WsColumnHeader |ui::WsDoubleBuffer))
 		return false;
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(30)));
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), ui::scaleBySystemDPI(165)));
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), ui::scaleBySystemDPI(45)));
+	m_outlineGrid->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(30)));
+	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), ui::dpi96(165)));
+	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), ui::dpi96(45)));
 	m_outlineGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventOutlineDoubleClick);
 
 	Ref< ui::TabPage > tabClasses = new ui::TabPage();
@@ -156,7 +156,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	tab->addPage(tabClasses);
 	tab->setActivePage(tabOutline);
 
-	m_site->createAdditionalPanel(m_containerExplorer, ui::scaleBySystemDPI(300), false);
+	m_site->createAdditionalPanel(m_containerExplorer, ui::dpi96(300), false);
 
 	// Edit area panel.
 	Ref< ui::Container > containerEdit = new ui::Container();

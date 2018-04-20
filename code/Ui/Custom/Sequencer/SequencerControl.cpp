@@ -35,7 +35,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.SequencerControl", SequencerControl, 
 
 SequencerControl::SequencerControl()
 :	m_allowDragTracks(false)
-,	m_separator(ui::scaleBySystemDPI(140))
+,	m_separator(ui::dpi96(140))
 ,	m_timeScale(8)
 ,	m_length(5000)
 ,	m_cursor(0)

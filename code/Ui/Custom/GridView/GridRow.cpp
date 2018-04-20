@@ -262,7 +262,7 @@ void GridRow::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& positi
 void GridRow::mouseMove(MouseMoveEvent* event, const Point& position)
 {
 	Size d = position - m_mouseDownPosition;
-	if (abs(d.cx) > scaleBySystemDPI(2) || abs(d.cy) > scaleBySystemDPI(2))
+	if (abs(d.cx) > dpi96(2) || abs(d.cy) > dpi96(2))
 	{
 		// Ensure edit isn't triggered if mouse moved during edit state tracking.
 		m_editMode = 0;

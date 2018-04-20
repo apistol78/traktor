@@ -56,7 +56,7 @@ void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
 	ui::Size size = rect.getSize();
 
-	int32_t sep = ui::scaleBySystemDPI(14);
+	int32_t sep = ui::dpi96(14);
 
 	ui::Rect rcText(
 		rect.left + 4,
@@ -84,9 +84,9 @@ void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	ui::Point center = rcButton.getCenter();
 	ui::Point pnts[] =
 	{
-		ui::Point(center.x - ui::scaleBySystemDPI(3), center.y - ui::scaleBySystemDPI(1)),
-		ui::Point(center.x + ui::scaleBySystemDPI(2), center.y - ui::scaleBySystemDPI(1)),
-		ui::Point(center.x - ui::scaleBySystemDPI(1), center.y + ui::scaleBySystemDPI(2))
+		ui::Point(center.x - ui::dpi96(3), center.y - ui::dpi96(1)),
+		ui::Point(center.x + ui::dpi96(2), center.y - ui::dpi96(1)),
+		ui::Point(center.x - ui::dpi96(1), center.y + ui::dpi96(2))
 	};
 
 	canvas.setBackground(ui::getSystemColor(ui::ScWindowText));

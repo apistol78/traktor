@@ -29,8 +29,8 @@ bool ColorSliderControl::create(Widget* parent, int style, IGradient* gradient)
 	addEventHandler< MouseMoveEvent >(this, &ColorSliderControl::eventMouseMove);
 	addEventHandler< PaintEvent >(this, &ColorSliderControl::eventPaint);
 
-	const int32_t sliderWidth = scaleBySystemDPI(24);
-	const int32_t sliderHeight = scaleBySystemDPI(256);
+	const int32_t sliderWidth = dpi96(24);
+	const int32_t sliderHeight = dpi96(256);
 
 	m_gradient = gradient;
 	m_gradientBitmap = new Bitmap(sliderWidth, sliderHeight);
@@ -50,15 +50,15 @@ void ColorSliderControl::setMarker(int32_t marker)
 
 Size ColorSliderControl::getPreferedSize() const
 {
-	const int32_t sliderWidth = scaleBySystemDPI(24);
-	const int32_t sliderHeight = scaleBySystemDPI(256);
+	const int32_t sliderWidth = dpi96(24);
+	const int32_t sliderHeight = dpi96(256);
 	return Size(sliderWidth, sliderHeight);
 }
 
 void ColorSliderControl::updateGradient()
 {
-	const int32_t sliderWidth = scaleBySystemDPI(24);
-	const int32_t sliderHeight = scaleBySystemDPI(256);
+	const int32_t sliderWidth = dpi96(24);
+	const int32_t sliderHeight = dpi96(256);
 	for (int y = 0; y < sliderHeight; ++y)
 	{
 		Color4ub color = m_gradient->get((y * 256) / sliderHeight);
@@ -73,7 +73,7 @@ void ColorSliderControl::updateGradient()
 
 void ColorSliderControl::eventButtonDown(MouseButtonDownEvent* event)
 {
-	const int32_t sliderHeight = scaleBySystemDPI(256);
+	const int32_t sliderHeight = dpi96(256);
 	int32_t y = event->getPosition().y;
 	Color4ub color = m_gradient->get((y * 256) / sliderHeight);
 	ColorEvent colorEvent(this, color);
@@ -91,7 +91,7 @@ void ColorSliderControl::eventMouseMove(MouseMoveEvent* event)
 	if (!hasCapture())
 		return;
 
-	const int32_t sliderHeight = scaleBySystemDPI(256);
+	const int32_t sliderHeight = dpi96(256);
 	m_marker = clamp< int32_t >((event->getPosition().y * 256) / sliderHeight, 0, 255);
 
 	Color4ub color = m_gradient->get(m_marker);
@@ -113,7 +113,7 @@ void ColorSliderControl::eventPaint(PaintEvent* event)
 		m_gradientBitmap
 	);
 
-	int32_t y = scaleBySystemDPI(m_marker);
+	int32_t y = dpi96(m_marker);
 
 	canvas.setBackground(Color4ub(0, 0, 0, 255));
 	canvas.fillRect(Rect(

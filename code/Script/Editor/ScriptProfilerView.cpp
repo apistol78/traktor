@@ -59,13 +59,13 @@ bool ScriptProfilerView::create(ui::Widget* parent)
 
 	m_profileGrid = new ui::custom::GridView();
 	m_profileGrid->create(this, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_FUNCTION"), ui::scaleBySystemDPI(160)));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_SCRIPT"), ui::scaleBySystemDPI(180)));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_TIME"), ui::scaleBySystemDPI(100)));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_TIME"), ui::scaleBySystemDPI(100)));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_PERCENT"), ui::scaleBySystemDPI(80)));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_PERCENT"), ui::scaleBySystemDPI(80)));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_COUNT"), ui::scaleBySystemDPI(100)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_FUNCTION"), ui::dpi96(160)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_SCRIPT"), ui::dpi96(180)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_TIME"), ui::dpi96(100)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_TIME"), ui::dpi96(100)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_PERCENT"), ui::dpi96(80)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_PERCENT"), ui::dpi96(80)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_COUNT"), ui::dpi96(100)));
 	m_profileGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptProfilerView::eventProfileGridDoubleClick);
 
 	return true;

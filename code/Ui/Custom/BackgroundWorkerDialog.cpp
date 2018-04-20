@@ -28,7 +28,7 @@ BackgroundWorkerDialog::BackgroundWorkerDialog()
 
 bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& title, const std::wstring& message, bool abortButton)
 {
-	if (!ui::Dialog::create(parent, title, scaleBySystemDPI(300), scaleBySystemDPI(150), WsCenterParent, new ui::TableLayout(L"100%", L"*,*,*", scaleBySystemDPI(4), scaleBySystemDPI(4))))
+	if (!ui::Dialog::create(parent, title, dpi96(300), dpi96(150), WsCenterParent, new ui::TableLayout(L"100%", L"*,*,*", dpi96(4), dpi96(4))))
 		return false;
 
 	addEventHandler< TimerEvent >(this, &BackgroundWorkerDialog::eventTimer);

@@ -51,8 +51,8 @@ Point ExternalNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 
-	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::scaleBySystemDPI(4);	
-	int32_t top = ui::scaleBySystemDPI(c_marginHeight) + ui::scaleBySystemDPI(c_topMargin) + ui::scaleBySystemDPI(c_titlePad);
+	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);	
+	int32_t top = ui::dpi96(c_marginHeight) + ui::dpi96(c_topMargin) + ui::dpi96(c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
 	if (!node->getInfo().empty())
@@ -63,8 +63,8 @@ Point ExternalNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 	Size pinSize = m_imagePin->getSize();
 
 	int32_t x = pin->getDirection() == Pin::DrInput ?
-		-pinSize.cx / 2 + ui::scaleBySystemDPI(c_marginWidth) :
-		rc.getWidth() - pinSize.cx / 2 - ui::scaleBySystemDPI(c_marginWidth);
+		-pinSize.cx / 2 + ui::dpi96(c_marginWidth) :
+		rc.getWidth() - pinSize.cx / 2 - ui::dpi96(c_marginWidth);
 
 	const RefArray< Pin >& pins = (pin->getDirection() == Pin::DrInput) ? node->getInputPins() : node->getOutputPins();
 	RefArray< Pin >::const_iterator i = std::find(pins.begin(), pins.end(), pin);
@@ -82,8 +82,8 @@ Pin* ExternalNodeShape::getPinAt(const Node* node, const Point& pt) const
 
 	Point ptn(pt.x - rc.left, pt.y - rc.top);
 
-	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::scaleBySystemDPI(4);	
-	int32_t top = ui::scaleBySystemDPI(c_marginHeight) + ui::scaleBySystemDPI(c_topMargin) + ui::scaleBySystemDPI(c_titlePad);
+	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);	
+	int32_t top = ui::dpi96(c_marginHeight) + ui::dpi96(c_topMargin) + ui::dpi96(c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
 	if (!node->getInfo().empty())
@@ -92,9 +92,9 @@ Pin* ExternalNodeShape::getPinAt(const Node* node, const Point& pt) const
 		top += node->getImage()->getSize().cy;
 
 	const RefArray< Pin >* pins = 0;
-	if (ptn.x <= ui::scaleBySystemDPI(c_pinHitWidth) + ui::scaleBySystemDPI(c_marginWidth))
+	if (ptn.x <= ui::dpi96(c_pinHitWidth) + ui::dpi96(c_marginWidth))
 		pins = &node->getInputPins();
-	else if (ptn.x >= rc.getWidth() - ui::scaleBySystemDPI(c_pinHitWidth) - ui::scaleBySystemDPI(c_marginWidth))
+	else if (ptn.x >= rc.getWidth() - ui::dpi96(c_pinHitWidth) - ui::dpi96(c_marginWidth))
 		pins = &node->getOutputPins();
 
 	if (!pins)
@@ -114,7 +114,7 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 	const PaintSettings* settings = canvas->getPaintSettings();
 
 	Rect rc = node->calculateRect().offset(offset);
-	int32_t textHeight = settings->getFont().getPixelSize() + ui::scaleBySystemDPI(4);
+	int32_t textHeight = settings->getFont().getPixelSize() + ui::dpi96(4);
 
 	// Draw node shape.
 	{
@@ -146,7 +146,7 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 		}
 	}
 
-	int32_t top = rc.top + ui::scaleBySystemDPI(c_marginHeight) + ui::scaleBySystemDPI(c_topMargin);
+	int32_t top = rc.top + ui::dpi96(c_marginHeight) + ui::dpi96(c_topMargin);
 
 	const std::wstring& title = node->getTitle();
 	if (!title.empty())
@@ -190,7 +190,7 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 		top += node->getImage()->getSize().cy;
 	}
 
-	top += ui::scaleBySystemDPI(c_titlePad);
+	top += ui::dpi96(c_titlePad);
 
 	const RefArray< Pin >& inputPins = node->getInputPins();
 	const RefArray< Pin >& outputPins = node->getOutputPins();
@@ -200,7 +200,7 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 	for (int32_t i = 0; i < int32_t(inputPins.size()); ++i)
 	{
 		Point pos(
-			rc.left - pinSize.cx / 2 + ui::scaleBySystemDPI(c_marginWidth) - 1,
+			rc.left - pinSize.cx / 2 + ui::dpi96(c_marginWidth) - 1,
 			top + i * textHeight - pinSize.cy / 2
 		);
 
@@ -217,7 +217,7 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 	for (int32_t i = 0; i < int32_t(outputPins.size()); ++i)
 	{
 		Point pos(
-			rc.right - pinSize.cx / 2 - ui::scaleBySystemDPI(c_marginWidth),
+			rc.right - pinSize.cx / 2 - ui::dpi96(c_marginWidth),
 			top + i * textHeight - pinSize.cy / 2
 		);
 
@@ -248,7 +248,7 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 			canvas->setFont(settings->getFontUnderline());
 
 		canvas->drawText(
-			Point(pos.x + ui::scaleBySystemDPI(c_pinNamePad), pos.y - extent.cy / 2),
+			Point(pos.x + ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),
 			name
 		);
 
@@ -267,7 +267,7 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 		Size extent = canvas->getTextExtent(name);
 
 		canvas->drawText(
-			Point(pos.x - extent.cx - ui::scaleBySystemDPI(c_pinNamePad), pos.y - extent.cy / 2),
+			Point(pos.x - extent.cx - ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),
 			name
 		);
 	}
@@ -275,8 +275,8 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 
 Size ExternalNodeShape::calculateSize(const Node* node) const
 {
-	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::scaleBySystemDPI(4);	
-	int32_t height = ui::scaleBySystemDPI(c_marginHeight) * 2 + ui::scaleBySystemDPI(c_topMargin) + ui::scaleBySystemDPI(c_titlePad);
+	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);	
+	int32_t height = ui::dpi96(c_marginHeight) * 2 + ui::dpi96(c_topMargin) + ui::dpi96(c_titlePad);
 	
 	if (!node->getTitle().empty())
 		height += textHeight;
@@ -318,7 +318,7 @@ Size ExternalNodeShape::calculateSize(const Node* node) const
 		width = std::max(width, imageExtent);
 	}
 
-	width += ui::scaleBySystemDPI(c_marginWidth) * 2 + ui::scaleBySystemDPI(c_pinCenterPad) + ui::scaleBySystemDPI(c_pinNamePad) * 2;
+	width += ui::dpi96(c_marginWidth) * 2 + ui::dpi96(c_pinCenterPad) + ui::dpi96(c_pinNamePad) * 2;
 
 	return Size(width, height);
 }

@@ -260,9 +260,9 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGrid = new ui::custom::GridView();
 	m_instanceGrid->create(m_entityPanel, ui::WsDoubleBuffer);
 	//m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
-	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(200)));
-	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(30)));
-	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::scaleBySystemDPI(30)));
+	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(200)));
+	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(30)));
+	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(30)));
 	m_instanceGrid->addEventHandler< ui::SelectionChangeEvent >(this, &SceneEditorPage::eventInstanceSelect);
 	m_instanceGrid->addEventHandler< ui::custom::GridRowStateChangeEvent >(this, &SceneEditorPage::eventInstanceExpand);
 	m_instanceGrid->addEventHandler< ui::MouseButtonDownEvent >(this, &SceneEditorPage::eventInstanceButtonDown);
@@ -274,7 +274,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGridFontHuge = new ui::Font(m_instanceGrid->getFont());
 	m_instanceGridFontHuge->setSize(12);
 
-	m_site->createAdditionalPanel(m_entityPanel, ui::scaleBySystemDPI(300), false);
+	m_site->createAdditionalPanel(m_entityPanel, ui::dpi96(300), false);
 
 	m_tabMisc = new ui::Tab();
 	m_tabMisc->create(parent, ui::Tab::WsLine);
@@ -293,8 +293,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_gridGuides = new ui::custom::GridView();
 	m_gridGuides->create(tabPageGuides, ui::WsDoubleBuffer | ui::WsTabStop);
-	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_NAME"), ui::scaleBySystemDPI(150)));
-	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_VISIBLE"), ui::scaleBySystemDPI(50)));
+	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_NAME"), ui::dpi96(150)));
+	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_VISIBLE"), ui::dpi96(50)));
 
 	for (std::set< std::wstring >::const_iterator i = guideIds.begin(); i != guideIds.end(); ++i)
 	{
@@ -314,14 +314,14 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_tabMisc->addPage(tabPageGuides);
 	m_tabMisc->setActivePage(tabPageDependencies);
 
-	m_site->createAdditionalPanel(m_tabMisc, ui::scaleBySystemDPI(300), false);
+	m_site->createAdditionalPanel(m_tabMisc, ui::dpi96(300), false);
 
 	// Create controller panel.
 	m_controllerPanel = new ui::Container();
 	m_controllerPanel->create(parent, ui::WsNone, new ui::FloodLayout());
 	m_controllerPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
 
-	m_site->createAdditionalPanel(m_controllerPanel, ui::scaleBySystemDPI(120), true);
+	m_site->createAdditionalPanel(m_controllerPanel, ui::dpi96(120), true);
 
 	// Context event handlers.
 	m_context->addEventHandler< PostBuildEvent >(this, &SceneEditorPage::eventContextPostBuild);
@@ -890,7 +890,7 @@ Ref< ui::custom::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter*
 	else if (entityAdapter->isLayer())
 	{
 		row->add(new ui::custom::GridItem(entityName, m_instanceGridFontHuge/*, 4*/));
-		row->setMinimumHeight(ui::scaleBySystemDPI(32));
+		row->setMinimumHeight(ui::dpi96(32));
 	}
 	else if (entityAdapter->isGroup())
 		row->add(new ui::custom::GridItem(entityName/*, 2, 3*/));

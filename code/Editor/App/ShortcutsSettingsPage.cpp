@@ -31,17 +31,17 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ShortcutsSettingsPage", 0, Short
 bool ShortcutsSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, ui::scaleBySystemDPI(4))))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, ui::dpi96(4))))
 		return false;
 
 	m_gridShortcuts = new ui::custom::GridView();
 	m_gridShortcuts->create(container, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_COMMAND"), ui::scaleBySystemDPI(200)));
-	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), ui::scaleBySystemDPI(200)));
+	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_COMMAND"), ui::dpi96(200)));
+	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), ui::dpi96(200)));
 	m_gridShortcuts->addEventHandler< ui::SelectionChangeEvent >(this, &ShortcutsSettingsPage::eventShortcutSelect);
 
 	Ref< ui::Container > containerEdit = new ui::Container();
-	if (!containerEdit->create(container, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, ui::scaleBySystemDPI(4))))
+	if (!containerEdit->create(container, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, ui::dpi96(4))))
 		return false;
 
 	m_editShortcut = new ui::custom::ShortcutEdit();

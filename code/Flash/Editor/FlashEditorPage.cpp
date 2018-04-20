@@ -127,10 +127,10 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_toolBarPlay->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashEditorPage::eventToolClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(container, true, ui::scaleBySystemDPI(300));
+	splitter->create(container, true, ui::dpi96(300));
 
 	Ref< ui::custom::Splitter > splitterV = new ui::custom::Splitter();
-	splitterV->create(splitter, false, ui::scaleBySystemDPI(-200));
+	splitterV->create(splitter, false, ui::dpi96(-200));
 
 	m_treeMovie = new ui::custom::TreeView();
 	m_treeMovie->create(splitterV, ui::custom::TreeView::WsTreeButtons | ui::custom::TreeView::WsTreeLines | ui::WsDoubleBuffer);

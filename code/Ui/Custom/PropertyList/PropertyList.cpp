@@ -93,7 +93,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.PropertyList", PropertyList, Widget)
 
 PropertyList::PropertyList()
 :	m_guidResolver(0)
-,	m_separator(scaleBySystemDPI(80))
+,	m_separator(dpi96(80))
 ,	m_mode(MdNone)
 ,	m_columnHeader(true)
 {
@@ -249,7 +249,7 @@ void PropertyList::setColumnName(int column, const std::wstring& name)
 
 Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& position)
 {
-	int32_t scrollBarOffset = m_scrollBar->getPosition() * scaleBySystemDPI(c_propertyItemHeight);
+	int32_t scrollBarOffset = m_scrollBar->getPosition() * dpi96(c_propertyItemHeight);
 
 	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
@@ -257,12 +257,12 @@ Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& posit
 	int32_t y = position.y;
 	if (m_columnHeader)
 	{
-		y -= scaleBySystemDPI(c_columnsHeight);
+		y -= dpi96(c_columnsHeight);
 		if (y < 0)
 			return 0;
 	}
 
-	int32_t id = (y + scrollBarOffset) / scaleBySystemDPI(c_propertyItemHeight);
+	int32_t id = (y + scrollBarOffset) / dpi96(c_propertyItemHeight);
 	for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
 	{
 		if (id-- <= 0)
@@ -350,10 +350,10 @@ void PropertyList::updateScrollBar()
 
 	int32_t height = rc.getHeight();
 	if (m_columnHeader)
-		height -= scaleBySystemDPI(c_columnsHeight);
+		height -= dpi96(c_columnsHeight);
 
 	int32_t itemCount = int(propertyItems.size());
-	int32_t pageCount = height / scaleBySystemDPI(c_propertyItemHeight);
+	int32_t pageCount = height / dpi96(c_propertyItemHeight);
 
 	int32_t position = m_scrollBar->getPosition();
 	if (position > itemCount)
@@ -367,9 +367,9 @@ void PropertyList::updateScrollBar()
 
 void PropertyList::placeItems()
 {
-	int32_t scrollBarOffset = m_scrollBar->getPosition() * scaleBySystemDPI(c_propertyItemHeight);
+	int32_t scrollBarOffset = m_scrollBar->getPosition() * dpi96(c_propertyItemHeight);
 	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
-	int32_t top = m_columnHeader ? scaleBySystemDPI(c_columnsHeight) : 0;
+	int32_t top = m_columnHeader ? dpi96(c_columnsHeight) : 0;
 
 	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
@@ -380,14 +380,14 @@ void PropertyList::placeItems()
 	Rect rcInner = getInnerRect();
 	Rect rcItem(
 		rcInner.left, -scrollBarOffset + top,
-		rcInner.right - scrollBarWidth, -scrollBarOffset + top + scaleBySystemDPI(c_propertyItemHeight) - 1
+		rcInner.right - scrollBarWidth, -scrollBarOffset + top + dpi96(c_propertyItemHeight) - 1
 	);
 	for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
 	{
 		Rect rcValue (rcItem.left + m_separator + 1, rcItem.top, rcItem.right, rcItem.bottom);
 		(*i)->resizeInPlaceControls(rcValue, childRects);
 
-		rcItem = rcItem.offset(0, scaleBySystemDPI(c_propertyItemHeight));
+		rcItem = rcItem.offset(0, dpi96(c_propertyItemHeight));
 	}
 
 	// Move all children at once.
@@ -408,7 +408,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 	setFocus();
 
 	m_mousePropertyItem = 0;
-	if (p.x >= m_separator - scaleBySystemDPI(2) && p.x <= m_separator + scaleBySystemDPI(2))
+	if (p.x >= m_separator - dpi96(2) && p.x <= m_separator + dpi96(2))
 	{
 		m_mode = MdMoveSeparator;
 		setCursor(CrSizeWE);
@@ -417,29 +417,29 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 	}
 	else
 	{
-		int32_t scrollBarOffset = m_scrollBar->getPosition() * scaleBySystemDPI(c_propertyItemHeight);
+		int32_t scrollBarOffset = m_scrollBar->getPosition() * dpi96(c_propertyItemHeight);
 
 		int32_t y = event->getPosition().y;
 		if (m_columnHeader)
 		{
-			if ((y -= scaleBySystemDPI(c_columnsHeight)) < 0)
+			if ((y -= dpi96(c_columnsHeight)) < 0)
 				return;
 		}
 
 		RefArray< PropertyItem > propertyItems;
 		getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
 
-		int32_t id = (y + scrollBarOffset) / scaleBySystemDPI(c_propertyItemHeight);
+		int32_t id = (y + scrollBarOffset) / dpi96(c_propertyItemHeight);
 		for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
 		{
 			if (int(std::distance(propertyItems.begin(), i)) == id)
 			{
-				if (p.x >= m_separator + scaleBySystemDPI(2))
+				if (p.x >= m_separator + dpi96(2))
 				{
 					m_mousePropertyItem = *i;
 					m_mousePropertyItem->mouseButtonDown(event);
 				}
-				else if (p.x >= (*i)->getDepth() * scaleBySystemDPI(8) && p.x <= (*i)->getDepth() * scaleBySystemDPI(8) + scaleBySystemDPI(12))
+				else if (p.x >= (*i)->getDepth() * dpi96(8) && p.x <= (*i)->getDepth() * dpi96(8) + dpi96(12))
 				{
 					if ((*i)->isExpanded())
 						(*i)->collapse();
@@ -532,7 +532,7 @@ void PropertyList::eventMouseMove(MouseMoveEvent* event)
 	}
 	else
 	{
-		if (p.x >= m_separator - scaleBySystemDPI(2) && p.x <= m_separator + scaleBySystemDPI(2))
+		if (p.x >= m_separator - dpi96(2) && p.x <= m_separator + dpi96(2))
 		{
 			setCursor(CrSizeWE);
 			event->consume();
@@ -559,7 +559,7 @@ void PropertyList::eventSize(SizeEvent* event)
 	Rect rc = getInnerRect();
 
 	int32_t scrollWidth = m_scrollBar->getPreferedSize().cx;
-	int32_t top = m_columnHeader ? scaleBySystemDPI(c_columnsHeight) : 0;
+	int32_t top = m_columnHeader ? dpi96(c_columnsHeight) : 0;
 
 	m_scrollBar->setRect(Rect(
 		rc.right - scrollWidth,
@@ -581,9 +581,9 @@ void PropertyList::eventPaint(PaintEvent* event)
 
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 
-	int32_t scrollBarOffset = m_scrollBar->getPosition() * scaleBySystemDPI(c_propertyItemHeight);
+	int32_t scrollBarOffset = m_scrollBar->getPosition() * dpi96(c_propertyItemHeight);
 	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
-	int32_t top = m_columnHeader ? scaleBySystemDPI(c_columnsHeight) : 0;
+	int32_t top = m_columnHeader ? dpi96(c_columnsHeight) : 0;
 
 	// Clear widget background.
 	canvas.setBackground(ss->getColor(this, L"background-color"));
@@ -593,13 +593,13 @@ void PropertyList::eventPaint(PaintEvent* event)
 	if (m_columnHeader)
 	{
 		canvas.setBackground(ss->getColor(this, L"header-background-color"));
-		canvas.fillRect(Rect(rcInner.left, rcInner.top, rcInner.right, rcInner.top + scaleBySystemDPI(c_columnsHeight)));
+		canvas.fillRect(Rect(rcInner.left, rcInner.top, rcInner.right, rcInner.top + dpi96(c_columnsHeight)));
 
 		canvas.setForeground(ss->getColor(this, this->isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			Rect(
 				rcInner.left + 2, rcInner.top,
-				rcInner.left + m_separator - 2, rcInner.top + scaleBySystemDPI(c_columnsHeight)
+				rcInner.left + m_separator - 2, rcInner.top + dpi96(c_columnsHeight)
 			),
 			m_columnNames[0],
 			AnLeft,
@@ -610,7 +610,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 		canvas.drawText(
 			Rect(
 				rcInner.left + m_separator + 2, rcInner.top,
-				rcInner.right, rcInner.top + scaleBySystemDPI(c_columnsHeight)
+				rcInner.right, rcInner.top + dpi96(c_columnsHeight)
 			),
 			m_columnNames[1],
 			AnLeft,
@@ -625,12 +625,12 @@ void PropertyList::eventPaint(PaintEvent* event)
 	// Draw property items.
 	Rect rcItem(
 		rcInner.left, -scrollBarOffset + top,
-		rcInner.right - scrollBarWidth, -scrollBarOffset + top + scaleBySystemDPI(c_propertyItemHeight) - 1
+		rcInner.right - scrollBarWidth, -scrollBarOffset + top + dpi96(c_propertyItemHeight) - 1
 	);
 	RefArray< PropertyItem >::iterator i = propertyItems.begin();
 	while (rcItem.bottom < top && i != propertyItems.end())
 	{
-		rcItem = rcItem.offset(0, scaleBySystemDPI(c_propertyItemHeight));
+		rcItem = rcItem.offset(0, dpi96(c_propertyItemHeight));
 		++i;
 	}
 	while (i != propertyItems.end())
@@ -664,7 +664,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 			Point(rcItem.left + m_separator, rcItem.bottom)
 		);
 
-		rcItem = rcItem.offset(0, scaleBySystemDPI(c_propertyItemHeight));
+		rcItem = rcItem.offset(0, dpi96(c_propertyItemHeight));
 		++i;
 	}
 

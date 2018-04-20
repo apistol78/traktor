@@ -55,24 +55,24 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"SHADERGRAPH_SCRIPT_EDIT"),
-		ui::scaleBySystemDPI(1100),
-		ui::scaleBySystemDPI(800),
+		ui::dpi96(1100),
+		ui::dpi96(800),
 		ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsApplyButton,
 		new ui::FloodLayout())
 	)
 		return false;
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, ui::scaleBySystemDPI(230));
+	splitter->create(this, true, ui::dpi96(230));
 
 	Ref< ui::custom::Splitter > splitter2 = new ui::custom::Splitter();
-	splitter2->create(splitter, false, ui::scaleBySystemDPI(-20), true);
+	splitter2->create(splitter, false, ui::dpi96(-20), true);
 
 	m_inputPinList = new ui::custom::GridView();
 	m_inputPinList->create(splitter2, ui::custom::GridView::WsColumnHeader | ui::custom::GridView::WsAutoEdit| ui::WsDoubleBuffer);
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Input", ui::scaleBySystemDPI(90), true));
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::scaleBySystemDPI(70), false));
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Sampler", ui::scaleBySystemDPI(110), false));
+	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Input", ui::dpi96(90), true));
+	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::dpi96(70), false));
+	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Sampler", ui::dpi96(110), false));
 	m_inputPinList->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventInputPinRowDoubleClick);
 	m_inputPinList->addEventHandler< ui::custom::GridItemContentChangeEvent >(this, &ScriptNodeDialog::eventInputPinEdit);
 
@@ -94,8 +94,8 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 
 	m_outputPinList = new ui::custom::GridView();
 	m_outputPinList->create(splitter2, ui::custom::GridView::WsColumnHeader | ui::custom::GridView::WsAutoEdit | ui::WsDoubleBuffer);
-	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Output", ui::scaleBySystemDPI(90), true));
-	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::scaleBySystemDPI(70), false));
+	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Output", ui::dpi96(90), true));
+	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::dpi96(70), false));
 	m_outputPinList->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventOutputPinRowDoubleClick);
 	m_outputPinList->addEventHandler< ui::custom::GridItemContentChangeEvent >(this, &ScriptNodeDialog::eventOutputPinEdit);
 

@@ -41,15 +41,15 @@ bool FlashBatchDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"FLASH_BATCH_DIALOG_TITLE"),
-		ui::scaleBySystemDPI(900),
-		ui::scaleBySystemDPI(500),
+		ui::dpi96(900),
+		ui::dpi96(500),
 		ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))
 		return false;
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, ui::scaleBySystemDPI(200));
+	splitter->create(this, true, ui::dpi96(200));
 
 	Ref< ui::Container > textureListContainer = new ui::Container();
 	textureListContainer->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -69,7 +69,7 @@ bool FlashBatchDialog::create(ui::Widget* parent)
 
 	m_moviePropertyList = new ui::custom::AutoPropertyList();
 	m_moviePropertyList->create(splitter, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader);
-	m_moviePropertyList->setSeparator(ui::scaleBySystemDPI(200));
+	m_moviePropertyList->setSeparator(ui::dpi96(200));
 	m_moviePropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_moviePropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 

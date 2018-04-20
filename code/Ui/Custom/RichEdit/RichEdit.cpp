@@ -389,7 +389,7 @@ int32_t RichEdit::getOffsetFromPosition(const Point& position)
 
 	uint32_t lineCount = uint32_t(m_lines.size());
 	uint32_t lineOffset = m_scrollBarV->getPosition();
-	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
+	uint32_t lineHeight = font.getPixelSize() + ui::dpi96(c_fontHeightMargin);
 
 	uint32_t line = lineOffset + position.y / lineHeight;
 	if (line >= lineCount)
@@ -435,7 +435,7 @@ int32_t RichEdit::getLineFromPosition(int32_t position)
 
 	uint32_t lineCount = uint32_t(m_lines.size());
 	uint32_t lineOffset = m_scrollBarV->getPosition();
-	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
+	uint32_t lineHeight = font.getPixelSize() + ui::dpi96(c_fontHeightMargin);
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 	uint32_t line = lineOffset + position / lineHeight;
@@ -555,7 +555,7 @@ bool RichEdit::showLine(int32_t line)
 	Font font = getFont();
 	Rect rc = getEditRect();
 
-	int32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
+	int32_t lineHeight = font.getPixelSize() + ui::dpi96(c_fontHeightMargin);
 	int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 	int32_t top = m_scrollBarV->getPosition();
@@ -657,7 +657,7 @@ void RichEdit::updateScrollBars()
 	Rect rc = getEditRect();
 
 	uint32_t lineCount = uint32_t(m_lines.size());
-	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
+	uint32_t lineHeight = font.getPixelSize() + ui::dpi96(c_fontHeightMargin);
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 	m_scrollBarV->setRange(lineCount + pageLines);
@@ -923,7 +923,7 @@ void RichEdit::scrollToCaret()
 		Font font = getFont();
 		Rect rc = getEditRect();
 
-		int32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
+		int32_t lineHeight = font.getPixelSize() + ui::dpi96(c_fontHeightMargin);
 		int32_t pageLines = rc.getHeight() / lineHeight;
 
 		int32_t top = m_scrollBarV->getPosition();
@@ -1079,7 +1079,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			Font font = getFont();
 			Rect rc = getEditRect();
 
-			int32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
+			int32_t lineHeight = font.getPixelSize() + ui::dpi96(c_fontHeightMargin);
 			int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 			for (int32_t i = 1; i < int32_t(m_lines.size()); ++i)
@@ -1103,7 +1103,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			Font font = getFont();
 			Rect rc = getEditRect();
 
-			int32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
+			int32_t lineHeight = font.getPixelSize() + ui::dpi96(c_fontHeightMargin);
 			int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 			for (int32_t i = 0; i < int32_t(m_lines.size()) - 1; ++i)
@@ -1370,18 +1370,18 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 	uint32_t lineCount = uint32_t(m_lines.size());
 	uint32_t lineOffset = m_scrollBarV->getPosition();
-	uint32_t lineHeight = font.getPixelSize() + ui::scaleBySystemDPI(c_fontHeightMargin);
+	uint32_t lineHeight = font.getPixelSize() + ui::dpi96(c_fontHeightMargin);
 	uint32_t pageLines = (innerRc.getHeight() + lineHeight - 1) / lineHeight;
 
 	// Calculate margin width from highest visible line number.
-	m_lineMargin = scaleBySystemDPI(c_iconSize) + canvas.getTextExtent(toString(lineOffset + pageLines)).cx + scaleBySystemDPI(2);
+	m_lineMargin = dpi96(c_iconSize) + canvas.getTextExtent(toString(lineOffset + pageLines)).cx + dpi96(2);
 	m_lineOffsetH = m_scrollBarH->isVisible(false) ? m_scrollBarH->getPosition() * c_scrollHSteps : 0;
 
 	// Background
 	{
 		Rect marginRc(innerRc.left, innerRc.top, innerRc.left + m_lineMargin, innerRc.bottom);
-		Rect iconsRc(innerRc.left, innerRc.top, innerRc.left + scaleBySystemDPI(c_iconSize), innerRc.top + lineHeight);
-		Rect lineRc(innerRc.left + scaleBySystemDPI(c_iconSize), innerRc.top, innerRc.left + m_lineMargin, innerRc.top + lineHeight);
+		Rect iconsRc(innerRc.left, innerRc.top, innerRc.left + dpi96(c_iconSize), innerRc.top + lineHeight);
+		Rect lineRc(innerRc.left + dpi96(c_iconSize), innerRc.top, innerRc.left + m_lineMargin, innerRc.top + lineHeight);
 
 		canvas.setBackground(ss->getColor(this, L"background-color-margin"));
 		canvas.fillRect(marginRc);
@@ -1444,8 +1444,8 @@ void RichEdit::eventPaint(PaintEvent* event)
 				// Draw caret.
 				if (showCaret && m_caret == j)
 				{
-					textRc.left = m_lineMargin + 2 + x - scaleBySystemDPI(1) - m_lineOffsetH;
-					textRc.right = textRc.left + scaleBySystemDPI(1);
+					textRc.left = m_lineMargin + 2 + x - dpi96(1) - m_lineOffsetH;
+					textRc.right = textRc.left + dpi96(1);
 
 					canvas.setBackground(ss->getColor(this, L"color-caret"));
 					canvas.fillRect(textRc);
@@ -1491,8 +1491,8 @@ void RichEdit::eventPaint(PaintEvent* event)
 			// Special condition; caret at the very end of a line.
 			if (showCaret && m_caret == line.stop)
 			{
-				textRc.left = m_lineMargin + 2 + x - m_lineOffsetH - scaleBySystemDPI(1);
-				textRc.right = textRc.left + scaleBySystemDPI(1);
+				textRc.left = m_lineMargin + 2 + x - m_lineOffsetH - dpi96(1);
+				textRc.right = textRc.left + dpi96(1);
 
 				canvas.setBackground(ss->getColor(this, L"color-caret"));
 				canvas.fillRect(textRc);

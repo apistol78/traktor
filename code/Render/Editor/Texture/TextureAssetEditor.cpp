@@ -51,7 +51,7 @@ bool TextureAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"*,100%", L"100%", 0, 0));
 
 	Ref< ui::Container > imageContainer = new ui::Container();
-	imageContainer->create(container, ui::WsNone, new ui::TableLayout(toString(ui::scaleBySystemDPI(128)), L"*,*,*,100%", 8, 8));
+	imageContainer->create(container, ui::WsNone, new ui::TableLayout(toString(ui::dpi96(128)), L"*,*,*,100%", 8, 8));
 
 	m_imageTextureWithAlpha = new ui::Image();
 	m_imageTextureWithAlpha->create(imageContainer, 0, ui::Image::WsTransparent | ui::WsDoubleBuffer);
@@ -65,7 +65,7 @@ bool TextureAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(container, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
 	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &TextureAssetEditor::eventPropertyCommand);
-	m_propertyList->setSeparator(ui::scaleBySystemDPI(200));
+	m_propertyList->setSeparator(ui::dpi96(200));
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 	m_propertyList->bind(m_asset);
@@ -100,8 +100,8 @@ void TextureAssetEditor::handleDatabaseEvent(db::Database* database, const Guid&
 ui::Size TextureAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::scaleBySystemDPI(850),
-		ui::scaleBySystemDPI(550)
+		ui::dpi96(850),
+		ui::dpi96(550)
 	);
 }
 
@@ -115,7 +115,7 @@ void TextureAssetEditor::updatePreview()
 
 	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
-	int32_t size = ui::scaleBySystemDPI(128);
+	int32_t size = ui::dpi96(128);
 
 	bool visibleAlpha = (m_asset->m_output.m_hasAlpha == true && m_asset->m_output.m_ignoreAlpha == false);
 	textureThumb = thumbnailGenerator->get(

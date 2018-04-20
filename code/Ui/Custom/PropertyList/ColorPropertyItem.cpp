@@ -47,7 +47,7 @@ void ColorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	// Format color as string.
 	std::wstringstream ss;
 	ss << m_value.r << L", " << m_value.g << L", " << m_value.b << L", " << m_value.a;
-	canvas.drawText(rc.inflate(-2, 0).offset(scaleBySystemDPI(22), 0), ss.str(), AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(-2, 0).offset(dpi96(22), 0), ss.str(), AnLeft, AnCenter);
 
 	// Ignore alpha when drawing color preview.
 	Color4ub previewColor = m_value;
@@ -57,7 +57,7 @@ void ColorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	canvas.setForeground(Color4ub(0, 0, 0));
 
 	// Draw color preview with a black border.
-	m_rcColor = Rect(rc.left + 2, rc.top + 2, rc.left + scaleBySystemDPI(22), rc.bottom - 2);
+	m_rcColor = Rect(rc.left + 2, rc.top + 2, rc.left + dpi96(22), rc.bottom - 2);
 	canvas.fillRect(m_rcColor);
 	canvas.drawRect(m_rcColor);
 }

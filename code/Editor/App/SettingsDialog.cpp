@@ -49,7 +49,7 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 {
 	Ref< ui::Container > container;
 
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_SETTINGS_TITLE"), ui::scaleBySystemDPI(700), ui::scaleBySystemDPI(600), ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_SETTINGS_TITLE"), ui::dpi96(700), ui::dpi96(600), ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
@@ -67,7 +67,7 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 	std::vector< const TypeInfo* > types(settingPageTypes.begin(), settingPageTypes.end());
 	std::sort(types.begin(), types.end(), SettingsPagePredicate());
 
-	int32_t four = ui::scaleBySystemDPI(4);
+	int32_t four = ui::dpi96(4);
 	for (std::vector< const TypeInfo* >::const_iterator i = types.begin(); i != types.end(); ++i)
 	{
 		Ref< ISettingsPage > settingsPage = dynamic_type_cast< ISettingsPage* >((*i)->createInstance());

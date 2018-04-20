@@ -72,7 +72,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolToggleRotate = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_ROTATE"), 2, ui::Command(L"Scene.Editor.Rotate"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSnap = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), 3, ui::Command(1, L"Scene.Editor.ToggleSnap"), ui::custom::ToolBarButton::BsDefaultToggle);
 
-	m_toolSnapSpacing = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.SnapSpacing"), ui::scaleBySystemDPI(60), i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP_SPACING"));
+	m_toolSnapSpacing = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.SnapSpacing"), ui::dpi96(60), i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP_SPACING"));
 	m_toolSnapSpacing->add(L"None");
 	m_toolSnapSpacing->add(L"1/8");
 	m_toolSnapSpacing->add(L"1/4");

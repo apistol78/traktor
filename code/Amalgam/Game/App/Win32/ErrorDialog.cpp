@@ -29,8 +29,8 @@ bool ErrorDialog::create()
 	if (!ui::Dialog::create(
 		0,
 		L"Error",
-		ui::scaleBySystemDPI(500),
-		ui::scaleBySystemDPI(300),
+		ui::dpi96(500),
+		ui::dpi96(300),
 		ui::Dialog::WsDefaultResizable,
 		new ui::TableLayout(L"*,100%", L"100%", 0, 0)
 	))

@@ -87,7 +87,7 @@ bool ShaderViewer::create(ui::Widget* parent)
 	setText(i18n::Text(L"SHADERGRAPH_VIEWER"));
 
 	Ref< ui::Container > containerDrops = new ui::Container();
-	containerDrops->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", ui::scaleBySystemDPI(4), ui::scaleBySystemDPI(4)));
+	containerDrops->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", ui::dpi96(4), ui::dpi96(4)));
 
 	Ref< ui::Static > staticCompiler = new ui::Static();
 	staticCompiler->create(containerDrops, i18n::Text(L"SHADERGRAPH_VIEWER_COMPILER"));
@@ -104,7 +104,7 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_dropTechniques->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventTechniqueChange);
 
 	m_containerCombinations = new ui::Container();
-	m_containerCombinations->create(this, ui::WsNone, new ui::TableLayout(L"*", L"*", ui::scaleBySystemDPI(4), ui::scaleBySystemDPI(4)));
+	m_containerCombinations->create(this, ui::WsNone, new ui::TableLayout(L"*", L"*", ui::dpi96(4), ui::dpi96(4)));
 
 	std::set< const TypeInfo* > programCompilerTypes;
 	type_of< IProgramCompiler >().findAllOf(programCompilerTypes, false);

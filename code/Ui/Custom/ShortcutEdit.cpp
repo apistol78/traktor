@@ -74,8 +74,8 @@ std::wstring ShortcutEdit::getText() const
 Size ShortcutEdit::getPreferedSize() const
 {
 	return Size(
-		ui::scaleBySystemDPI(c_preferedWidth),
-		ui::scaleBySystemDPI(c_preferedHeight)
+		ui::dpi96(c_preferedWidth),
+		ui::dpi96(c_preferedHeight)
 	);
 }
 
@@ -135,7 +135,7 @@ void ShortcutEdit::eventPaint(PaintEvent* event)
 	else
 		canvas.setForeground(ss->getColor(this, L"color-focus"));
 
-	canvas.drawText(rc.inflate(scaleBySystemDPI(-8), 0), getText(), AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(dpi96(-8), 0), getText(), AnLeft, AnCenter);
 	
 	event->consume();
 }
