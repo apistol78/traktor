@@ -9,6 +9,6 @@ call "%~dp0..\vsenv-x64.bat"
 
 :: Rebuild entire solution.
 pushd "%TRAKTOR_HOME%\build\win64"
-%TRAKTOR_HOME%\3rdp\jom\jom /L /F "Extern Win64.mak" %CONFIG%
-%TRAKTOR_HOME%\3rdp\jom\jom /L /F "Traktor Win64.mak" %CONFIG%
+%TRAKTOR_HOME%\3rdp\jom\jom /J 1 /L /F "Extern Win64.mak" %CONFIG%
+%TRAKTOR_HOME%\3rdp\jom\jom /J 1 /L /F "Traktor Win64.mak" %CONFIG%
 popd
