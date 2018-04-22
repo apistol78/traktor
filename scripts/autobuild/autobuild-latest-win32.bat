@@ -9,7 +9,7 @@ call "%~dp0..\vsenv-x86.bat"
 
 :: Rebuild entire solution.
 pushd "%TRAKTOR_HOME%\build\win32"
-msbuild "Extern Win32.sln" /nologo /maxcpucount /p:Configuration=%CONFIG%
-msbuild "Traktor Win32.sln" /nologo /maxcpucount /p:Configuration=%CONFIG%
+msbuild "Extern Win32.sln" /nologo /maxcpucount /p:Configuration=%CONFIG% /p:Platform="Win32"
+msbuild "Traktor Win32.sln" /nologo /maxcpucount /p:Configuration=%CONFIG% /p:Platform="Win32"
 popd
 
