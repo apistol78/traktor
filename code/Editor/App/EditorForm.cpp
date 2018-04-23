@@ -1580,6 +1580,10 @@ void EditorForm::closeWorkspace()
 	buildCancel();
 	closeAllEditors();
 
+	// Ensure all tabs are closed, home tab isn't closed automatically by "close all editors".
+	m_tab->removeAllPages();
+
+	// Remove store objects.
 	setStoreObject(L"StreamServer", 0);
 	setStoreObject(L"DbConnectionManager", 0);
 	setStoreObject(L"PipelineAgentsManager", 0);
