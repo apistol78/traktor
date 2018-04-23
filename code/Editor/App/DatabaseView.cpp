@@ -525,11 +525,18 @@ void DatabaseView::destroy()
 void DatabaseView::setDatabase(db::Database* db)
 {
 	m_db = db;
+
+	// Ensure database views is cleaned.
+	m_treeDatabase->removeAllItems();
+	m_treeState = 0;
+
 	updateView();
 }
 
 void DatabaseView::updateView()
 {
+	bool shouldApplyState = bool(m_treeState != 0);
+
 	Ref< ui::HierarchicalState > treeState = m_treeDatabase->captureState();
 	m_treeState = m_treeState ? m_treeState->merge(treeState) : treeState;
 
@@ -633,7 +640,9 @@ void DatabaseView::updateView()
 	else
 		setEnable(false);
 
-	m_treeDatabase->applyState(m_treeState);
+	if (shouldApplyState)
+		m_treeDatabase->applyState(m_treeState);
+
 	m_splitter->update();
 }
 
@@ -1127,6 +1136,10 @@ Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItem(ui::custom::TreeView
 	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 0, 1);
 	groupItem->setEditable(true);
 	groupItem->setData(L"GROUP", group);
+
+	// Expand root groups by default.
+	if (!parentItem)
+		groupItem->expand();
 
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
