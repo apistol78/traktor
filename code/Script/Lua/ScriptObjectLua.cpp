@@ -31,20 +31,6 @@ ScriptObjectLua::ScriptObjectLua(ScriptManagerLua* scriptManager, ScriptContextL
 
 ScriptObjectLua::~ScriptObjectLua()
 {
-	T_ANONYMOUS_VAR(UnwindStack)(m_luaState);
-
-	// Explicit drop reference to object, don't wait for GC to collect.
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_tableRef);	
-	lua_rawgeti(m_luaState, -1, c_tableKey_instance);
-	ITypedObject* object = reinterpret_cast< ITypedObject* >(lua_touserdata(m_luaState, -1));
-	T_SAFE_RELEASE(object);
-
-	// Ensure table reference is nil.
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_tableRef);	// +1
-	lua_pushnil(m_luaState);
-	lua_rawseti(m_luaState, -2, c_tableKey_instance);
-
-	// Unpin table.
 	luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
 }
 
