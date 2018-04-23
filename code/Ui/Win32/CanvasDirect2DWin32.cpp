@@ -550,6 +550,9 @@ void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, co
 	if (!bm)
 		return;
 
+	D2D1_BITMAP_INTERPOLATION_MODE im =
+		(dstSize.cx == srcSize.cx && dstSize.cy == srcSize.cy) ? D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR : D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
+
 	m_d2dRenderTarget->DrawBitmap(
 		bm,
 		D2D1::RectF(
@@ -557,7 +560,7 @@ void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, co
 			dstAt.x + dstSize.cx, dstAt.y + dstSize.cy
 		),
 		1.0f,
-		D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR,
+		im,
 		D2D1::RectF(
 			srcAt.x, srcAt.y,
 			srcAt.x + srcSize.cx, srcAt.y + srcSize.cy
