@@ -737,18 +737,20 @@ void ScriptManagerLua::collectGarbageFull()
 
 void ScriptManagerLua::collectGarbageFullNoLock()
 {
-#if defined(T_LUA_5_2)
-	lua_gc(m_luaState, LUA_GCCOLLECT, 0);
-#else
-	uint32_t memoryUse = 0;
-	do
+	// Repeat GC until allocated memory doesn't decrease
+	// further in ten consecutive GCs.
+	int32_t count = 10;
+	while (count > 0)
 	{
-		memoryUse = m_totalMemoryUse;
+		size_t memoryUseBefore = m_totalMemoryUse;
 		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
+		
+		if (m_totalMemoryUse < memoryUseBefore)
+			count = 10;
+		else
+			count--;
 	}
-	while (memoryUse != m_totalMemoryUse);
 	m_lastMemoryUse = m_totalMemoryUse;
-#endif
 }
 
 void ScriptManagerLua::collectGarbagePartial()
@@ -866,7 +868,7 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (manager);
 
-	int32_t classId = lua_tointeger(luaState, lua_upvalueindex(2));
+	int32_t classId = (int32_t)lua_tointeger(luaState, lua_upvalueindex(2));
 	const RegisteredClass& rc =	manager->m_classRegistry[classId];
 
 	int32_t top = lua_gettop(luaState);
