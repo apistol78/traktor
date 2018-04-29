@@ -227,7 +227,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 			Aabb3 boundingBox = model->getBoundingBox();
 			Transform(translate(-boundingBox.getCenter())).apply(*model);
 
-			Ref< ui::custom::TreeViewItem > item = m_modelTree->createItem(0, fileName);
+			Ref< ui::custom::TreeViewItem > item = m_modelTree->createItem(0, fileName, 0);
 			item->setData(L"MODEL", model);
 		}
 		else
@@ -269,7 +269,7 @@ bool ModelToolDialog::loadModel()
 		Aabb3 boundingBox = model->getBoundingBox();
 		Transform(translate(-boundingBox.getCenter())).apply(*model);
 
-		Ref< ui::custom::TreeViewItem > item = m_modelTree->createItem(0, i->getFileName());
+		Ref< ui::custom::TreeViewItem > item = m_modelTree->createItem(0, i->getFileName(), 0);
 		item->setData(L"MODEL", model);
 	}
 
@@ -382,85 +382,85 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			const ui::Command& command = selected->getCommand();
 			if (command == L"ModelTool.CalculateTangents")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Calculate Tangents");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Calculate Tangents", 0);
 				itemOperation->setData(L"OPERATION", new CalculateTangents());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.CleanDegenerate")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Degenerate");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Degenerate", 0);
 				itemOperation->setData(L"OPERATION", new CleanDegenerate());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.CleanDuplicates")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Duplicates");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Duplicates", 0);
 				itemOperation->setData(L"OPERATION", new CleanDuplicates(0.1f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.ConvexHull")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Convex Hull");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Convex Hull", 0);
 				itemOperation->setData(L"OPERATION", new CalculateConvexHull());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.CullDistantFaces")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Cull Distant Faces");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Cull Distant Faces", 0);
 				itemOperation->setData(L"OPERATION", new CullDistantFaces(Aabb3()));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.FlattenDoubleSided")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Flatten Double Sided");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Flatten Double Sided", 0);
 				itemOperation->setData(L"OPERATION", new FlattenDoubleSided());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.MergeCoplanar")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Merge Coplanar");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Merge Coplanar", 0);
 				itemOperation->setData(L"OPERATION", new MergeCoplanarAdjacents(true));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Occluder")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Occluder");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Occluder", 0);
 				itemOperation->setData(L"OPERATION", new CalculateOccluder());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Quantize")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Quantize");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Quantize", 0);
 				itemOperation->setData(L"OPERATION", new Quantize(0.5f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Reduce")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Reduce");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Reduce", 0);
 				itemOperation->setData(L"OPERATION", new Reduce(0.5f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.ScaleAlongNormal")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Scale Along Normal");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Scale Along Normal", 0);
 				itemOperation->setData(L"OPERATION", new ScaleAlongNormal(1.0f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Triangulate")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Triangulate");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Triangulate", 0);
 				itemOperation->setData(L"OPERATION", new Triangulate());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.UnwrapUV")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Unwrap UV");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Unwrap UV", 0);
 				itemOperation->setData(L"OPERATION", new UnwrapUV(0, 0.01f, 0.0f, 0.0f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.WeldHoles")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Weld Holes");
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Weld Holes", 0);
 				itemOperation->setData(L"OPERATION", new WeldHoles());
 				updateOperations(itemModel);
 			}
@@ -566,8 +566,16 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 		}
 
 		uint32_t jointCount = m_model->getJointCount();
-		for (uint32_t i = 0; i < jointCount; ++i)
-			m_toolJoint->add(m_model->getJoint(i));
+		if (jointCount > 0)
+		{
+			for (uint32_t i = 0; i < jointCount; ++i)
+				m_toolJoint->add(m_model->getJoint(i));
+
+			m_toolJoint->select(0);
+			m_toolJoint->setEnable(true);
+		}
+		else
+			m_toolJoint->setEnable(false);
 	}
 
 	m_renderWidget->update();

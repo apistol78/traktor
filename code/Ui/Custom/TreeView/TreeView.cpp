@@ -74,14 +74,17 @@ int32_t TreeView::addImage(IBitmap* image, int32_t imageCount)
 	return m_imageCount - imageCount;
 }
 
-Ref< TreeViewItem > TreeView::createItem(TreeViewItem* parent, const std::wstring& text, int32_t image, int32_t expandedImage)
+Ref< TreeViewItem > TreeView::createItem(TreeViewItem* parent, const std::wstring& text, int32_t imageColumns)
 {
-	Ref< TreeViewItem > item = new TreeViewItem(this, parent, text, image, expandedImage);
+	Ref< TreeViewItem > item = new TreeViewItem(this, parent, text);
 
 	if (parent)
 		parent->m_children.push_back(item);
 	else
 		m_roots.push_back(item);
+
+	if (imageColumns > 0)
+		item->m_images.resize(imageColumns);
 
 	requestUpdate();
 	return item;

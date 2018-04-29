@@ -42,14 +42,16 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/TableLayout.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/Custom/QuadSplitter.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/Sequencer/CursorMoveEvent.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
+#include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
+#include "Ui/Custom/TreeView/TreeView.h"
+#include "Ui/Custom/TreeView/TreeViewItem.h"
 #include "Ui/Itf/IWidget.h"
 
 namespace traktor
@@ -187,6 +189,20 @@ bool AnimationEditorPage::create(ui::Container* parent)
 		m_renderWidgets[i]->setData(L"DATA", data);
 	}
 
+	// Create skeleton panel.
+	m_skeletonPanel = new ui::Container();
+	m_skeletonPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
+	m_skeletonPanel->setText(i18n::Text(L"ANIMATION_EDITOR_SKELETON"));
+
+	m_treeSkeleton = new ui::custom::TreeView();
+	m_treeSkeleton->create(m_skeletonPanel, (ui::custom::TreeView::WsDefault | ui::WsAccelerated) & ~ui::WsClientBorder);
+	m_treeSkeleton->addImage(new ui::StyleBitmap(L"Animation.Bones"), 2);
+	//m_treeSkeleton->addEventHandler< ui::MouseButtonDownEvent >(this, &SkeletonEditorPage::eventTreeButtonDown);
+	//m_treeSkeleton->addEventHandler< ui::SelectionChangeEvent >(this, &SkeletonEditorPage::eventTreeSelect);
+	//m_treeSkeleton->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
+
+	m_site->createAdditionalPanel(m_skeletonPanel, ui::dpi96(300), false);
+
 	// Create sequencer panel.
 	m_sequencerPanel = new ui::Container();
 	m_sequencerPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -217,7 +233,7 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	m_sequencer->addEventHandler< ui::TimerEvent >(this, &AnimationEditorPage::eventSequencerTimer);
 	m_sequencer->startTimer(30);
 
-	m_site->createAdditionalPanel(m_sequencerPanel, ui::dpi96(100), true);
+	m_site->createAdditionalPanel(m_sequencerPanel, ui::dpi96(160), true);
 
 	// Build popup menu.
 	m_menuPopup = new ui::PopupMenu();
@@ -417,28 +433,28 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 		m_ikEnabled = !m_ikEnabled;
 		updateRenderWidgets();
 	}
-	//else if (command == L"Animation.Editor.SelectPreviousBone")
-	//{
-	//	if (m_skeleton)
-	//	{
-	//		if (m_selectedBone > 0)
-	//			m_selectedBone--;
-	//		else
-	//			m_selectedBone = m_skeleton->getBoneCount() - 1;
-	//		updateRenderWidgets();
-	//	}
-	//}
-	//else if (command == L"Animation.Editor.SelectNextBone")
-	//{
-	//	if (m_skeleton)
-	//	{
-	//		if (m_selectedBone < int(m_skeleton->getBoneCount()) - 1)
-	//			m_selectedBone++;
-	//		else
-	//			m_selectedBone = 0;
-	//		updateRenderWidgets();
-	//	}
-	//}
+	else if (command == L"Animation.Editor.SelectPreviousBone")
+	{
+		if (m_skeleton)
+		{
+			if (m_selectedBone > 0)
+				m_selectedBone--;
+			else
+				m_selectedBone = m_skeleton->getJointCount() - 1;
+			updateRenderWidgets();
+		}
+	}
+	else if (command == L"Animation.Editor.SelectNextBone")
+	{
+		if (m_skeleton)
+		{
+			if (m_selectedBone < int(m_skeleton->getJointCount()) - 1)
+				m_selectedBone++;
+			else
+				m_selectedBone = 0;
+			updateRenderWidgets();
+		}
+	}
 	else if (command == L"Animation.Editor.Create")
 	{
 		float time = float(m_sequencer->getCursor() / 1000.0f);
@@ -591,11 +607,11 @@ void AnimationEditorPage::drawSkeleton(float time, const Color4ub& defaultColor,
 	int32_t indexHint = -1;
 	m_animation->getPose(time, false, indexHint, pose);
 
-	AlignedVector< Transform > boneTransforms;
+	AlignedVector< Transform > jointTransforms;
 	calculatePoseTransforms(
 		m_skeleton,
 		&pose,
-		boneTransforms
+		jointTransforms
 	);
 
 	if (m_ikEnabled)
@@ -605,53 +621,56 @@ void AnimationEditorPage::drawSkeleton(float time, const Color4ub& defaultColor,
 			0.0f,
 			Transform::identity(),
 			m_skeleton,
-			boneTransforms,
-			boneTransforms,
+			jointTransforms,
+			jointTransforms,
 			continueUpdate
 		);
 	}
 
-	//for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
-	//{
-	//	const Bone* bone = m_skeleton->getBone(i);
+	for (int32_t i = 0; i < int32_t(m_skeleton->getJointCount()); ++i)
+	{
+		const Joint* joint = m_skeleton->getJoint(i);
+		T_ASSERT (joint);
 
-	//	Vector4 start = boneTransforms[i].translation();
-	//	Vector4 end = boneTransforms[i].translation() + boneTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
+		if (drawAxis)
+			m_primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
 
-	//	const Color4ub& color = (m_selectedBone == i) ? selectedColor : defaultColor;
+		if (joint->getParent() >= 0)
+		{
+			const Joint* parent = m_skeleton->getJoint(joint->getParent());
+			T_ASSERT (parent);
 
-	//	Vector4 d = boneTransforms[i].axisZ();
-	//	Vector4 a = boneTransforms[i].axisX();
-	//	Vector4 b = boneTransforms[i].axisY();
+			Color4ub color = (m_selectedBone == joint->getParent()) ? Color4ub(255, 128, 255, 128) : Color4ub(255, 255, 0, 128);
 
-	//	Scalar radius = bone->getRadius();
-	//	d *= radius;
-	//	a *= radius;
-	//	b *= radius;
+			Vector4 start = jointTransforms[joint->getParent()].translation();
+			Vector4 end = jointTransforms[i].translation();
 
-	//	m_primitiveRenderer->drawLine(start, start + d + a + b, color);
-	//	m_primitiveRenderer->drawLine(start, start + d - a + b, color);
-	//	m_primitiveRenderer->drawLine(start, start + d + a - b, color);
-	//	m_primitiveRenderer->drawLine(start, start + d - a - b, color);
+			Vector4 z = (end - start).normalized();
 
-	//	m_primitiveRenderer->drawLine(start + d + a + b, end, color);
-	//	m_primitiveRenderer->drawLine(start + d - a + b, end, color);
-	//	m_primitiveRenderer->drawLine(start + d + a - b, end, color);
-	//	m_primitiveRenderer->drawLine(start + d - a - b, end, color);
+			Vector4 x, y;
+			orthogonalFrame(z, x, y);
 
-	//	m_primitiveRenderer->drawLine(start + d + a + b, start + d - a + b, color);
-	//	m_primitiveRenderer->drawLine(start + d - a + b, start + d - a - b, color);
-	//	m_primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, color);
-	//	m_primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, color);
+			Scalar radius(parent->getRadius());
+			x *= radius;
+			y *= radius;
+			z *= radius;
 
-	//	m_primitiveRenderer->drawLine(start, end, color);
+			m_primitiveRenderer->drawLine(start, start + z + x + y, color);
+			m_primitiveRenderer->drawLine(start, start + z - x + y, color);
+			m_primitiveRenderer->drawLine(start, start + z + x - y, color);
+			m_primitiveRenderer->drawLine(start, start + z - x - y, color);
 
-	//	if (drawAxis)
-	//	{
-	//		m_primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color4ub(255, 0, 0, color.a));
-	//		m_primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color4ub(0, 255, 0, color.a));
-	//	}
-	//}
+			m_primitiveRenderer->drawLine(start + z + x + y, end, color);
+			m_primitiveRenderer->drawLine(start + z - x + y, end, color);
+			m_primitiveRenderer->drawLine(start + z + x - y, end, color);
+			m_primitiveRenderer->drawLine(start + z - x - y, end, color);
+
+			m_primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
+			m_primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
+			m_primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
+			m_primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
+		}
+	}
 }
 
 void AnimationEditorPage::updateSettings()
@@ -737,56 +756,56 @@ void AnimationEditorPage::eventRenderMouseMove(ui::MouseMoveEvent* event)
 
 	mouseDelta /= 60.0f;
 
-	//if (m_editMode)
-	//{
-	//	int poseIndex;
-	//	if (getSelectedPoseId(poseIndex))
-	//	{
-	//		Pose& pose = m_animation->getKeyPose(poseIndex).pose;
+	if (m_editMode)
+	{
+		int poseIndex;
+		if (getSelectedPoseId(poseIndex))
+		{
+			Pose& pose = m_animation->getKeyPose(poseIndex).pose;
 
-	//		if ((mouseEvent->getKeyState() & ui::KsMenu) != ui::KsMenu)
-	//		{
-	//			if (mouseEvent->getButton() == ui::MbtLeft)
-	//			{
-	//				Vector4 orientation = pose.getBoneOrientation(m_selectedBone);
-	//				orientation += Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f);
-	//				pose.setBoneOrientation(m_selectedBone, orientation);
+			if ((event->getKeyState() & ui::KsMenu) != ui::KsMenu)
+			{
+				if (event->getButton() == ui::MbtLeft)
+				{
+					Rotator orientation = pose.getJointOrientation(m_selectedBone);
+					orientation += Rotator::fromHeadPitchBank(mouseDelta.x, mouseDelta.y, 0.0f);
+					pose.setJointOrientation(m_selectedBone, orientation);
 
-	//				// Compensate for applied twist.
-	//				if (m_twistLock && m_haveRelativeTwist)
-	//				{
-	//					float relativeTwist;
-	//					if (calculateRelativeTwist(poseIndex, m_selectedBone, relativeTwist))
-	//					{
-	//						orientation += Vector4(0.0f, 0.0f, m_relativeTwist - relativeTwist);
-	//						pose.setBoneOrientation(m_selectedBone, orientation);
-	//					}
-	//				}
-	//			}
-	//			else
-	//			{
-	//				Vector4 orientation = pose.getBoneOrientation(m_selectedBone);
-	//				orientation += Vector4(0.0f, 0.0f, mouseDelta.x, 0.0f);
-	//				pose.setBoneOrientation(m_selectedBone, orientation);
-	//			}
-	//		}
-	//		else
-	//		{
-	//			Vector4 delta;
-	//			if (mouseEvent->getButton() == ui::MbtLeft)
-	//				delta = Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f);
-	//			else
-	//				delta = Vector4(0.0f, 0.0f, mouseDelta.y, 0.0f);
+					// Compensate for applied twist.
+					if (m_twistLock && m_haveRelativeTwist)
+					{
+						float relativeTwist;
+						if (calculateRelativeTwist(poseIndex, m_selectedBone, relativeTwist))
+						{
+							orientation += Rotator::fromHeadPitchBank(0.0f, 0.0f, m_relativeTwist - relativeTwist);
+							pose.setJointOrientation(m_selectedBone, orientation);
+						}
+					}
+				}
+				else
+				{
+					Rotator orientation = pose.getJointOrientation(m_selectedBone);
+					orientation += Rotator::fromHeadPitchBank(0.0f, 0.0f, mouseDelta.x);
+					pose.setJointOrientation(m_selectedBone, orientation);
+				}
+			}
+			else
+			{
+				Vector4 delta;
+				if (event->getButton() == ui::MbtLeft)
+					delta = Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f);
+				else
+					delta = Vector4(0.0f, 0.0f, mouseDelta.y, 0.0f);
 
-	//			Vector4 offset = pose.getBoneOffset(m_selectedBone);
-	//			offset += delta;
-	//			pose.setBoneOffset(m_selectedBone, offset);
-	//		}
+				Vector4 offset = pose.getJointOffset(m_selectedBone);
+				offset += delta;
+				pose.setJointOffset(m_selectedBone, offset);
+			}
 
-	//		updateRenderWidgets();
-	//	}
-	//}
-	//else
+			updateRenderWidgets();
+		}
+	}
+	else
 	{
 		if (event->getButton() == ui::MbtLeft)
 		{

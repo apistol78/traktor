@@ -34,6 +34,8 @@ public:
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
+	virtual bool locked(const Path& filePath) T_OVERRIDE T_FINAL;
+
 	virtual bool pending(const Path& filePath) T_OVERRIDE T_FINAL;
 
 	virtual bool add(const Path& filePath) T_OVERRIDE T_FINAL;

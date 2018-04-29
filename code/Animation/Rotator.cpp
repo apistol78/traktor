@@ -71,6 +71,17 @@ Rotator& Rotator::operator *= (const Scalar& rh)
 	return *this;
 }
 
+Rotator Rotator::fromHeadPitchBank(float head, float pitch, float bank)
+{
+	const Vector4 rotations[] =
+	{
+		Vector4(0.0f, head, 0.0f),
+		Vector4(pitch, 0.0f, 0.0f),
+		Vector4(0.0f, 0.0f, bank)		
+	};
+	return Rotator(rotations[0], rotations[1], rotations[2]);
+}
+
 void Rotator::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"A", m_A);

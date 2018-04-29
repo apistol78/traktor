@@ -77,8 +77,9 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 						Vector4 end = poseTransforms[i].translation().xyz1();
 
 						Vector4 z = (end - start).normalized();
-						Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
-						Vector4 x = cross(y, z);
+
+						Vector4 x, y;
+						orthogonalFrame(z, x, y);
 
 						Scalar radius(parent->getRadius());
 						x *= radius;

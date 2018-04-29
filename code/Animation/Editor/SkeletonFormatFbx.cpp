@@ -75,7 +75,7 @@ public:
 	virtual int Read(void* pData, int pSize) const
 	{
 		T_ASSERT (m_stream);
-		return (int64_t)m_stream->read(pData, pSize);
+		return (int)m_stream->read(pData, pSize);
 	}
 
 	virtual int GetReaderID() const
@@ -178,7 +178,6 @@ void createJoints(
 	joint->setName(mbstows(fbxNode->GetName()));
 	joint->setTransform(Transform(translation + offset));
 	joint->setRadius(radius);
-	joint->setEnableLimits(false);
 
 	int32_t jointIndex = skeleton->addJoint(joint);
 	T_DEBUG(jointIndex << joint->getName());

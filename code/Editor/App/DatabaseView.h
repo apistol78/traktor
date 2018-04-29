@@ -107,12 +107,16 @@ private:
 	std::set< Guid > m_rootInstances;
 	std::set< Guid > m_favoriteInstances;
 	std::wstring m_filterText;
+	int32_t m_filterCountDown;
+	int32_t m_colorCountDown;
 
 	int32_t getIconIndex(const TypeInfo* instanceType) const;
 
 	Ref< ui::custom::TreeViewItem > buildTreeItem(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group);
 
 	Ref< ui::custom::TreeViewItem > buildTreeItemSplit(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group);
+
+	void updateTreeColors();
 
 	void updateGridInstances();
 
@@ -127,6 +131,8 @@ private:
 	void eventTimer(ui::TimerEvent* event);
 
 	void eventInstanceActivate(ui::custom::TreeViewItemActivateEvent* event);
+
+	void eventInstanceStateChange(ui::custom::TreeViewItemStateChangeEvent* event);
 
 	void eventInstanceSelect(ui::SelectionChangeEvent* event);
 

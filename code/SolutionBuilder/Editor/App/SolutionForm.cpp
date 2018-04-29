@@ -300,7 +300,8 @@ void SolutionForm::updateSolutionTree()
 
 	m_treeSolution->removeAllItems();
 
-	Ref< ui::custom::TreeViewItem > treeSolution = m_treeSolution->createItem(0, m_solution->getName(), 0);
+	Ref< ui::custom::TreeViewItem > treeSolution = m_treeSolution->createItem(0, m_solution->getName(), 1);
+	treeSolution->setImage(0, 0);
 	treeSolution->setData(L"PRIMARY", m_solution);
 	treeSolution->setData(L"SOLUTION", m_solution);
 	
@@ -343,13 +344,15 @@ bool SolutionForm::isModified() const
 ui::custom::TreeViewItem* SolutionForm::createTreeProjectItem(ui::custom::TreeViewItem* parentItem, Project* project)
 {
 	Ref< ui::custom::TreeViewItem > treeProject = m_treeSolution->createItem(parentItem, project->getName(), 1);
+	treeProject->setImage(0, 1);
 	treeProject->setData(L"PRIMARY", project);
 	treeProject->setData(L"PROJECT", project);
 
 	if (!project->getEnable())
 		treeProject->disable();
 
-	Ref< ui::custom::TreeViewItem > treeConfigurations = m_treeSolution->createItem(treeProject, L"Configurations", 2, 3);
+	Ref< ui::custom::TreeViewItem > treeConfigurations = m_treeSolution->createItem(treeProject, L"Configurations", 1);
+	treeConfigurations->setImage(0, 2, 3);
 
 	const RefArray< Configuration >& configurations = project->getConfigurations();
 	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
@@ -372,7 +375,8 @@ ui::custom::TreeViewItem* SolutionForm::createTreeProjectItem(ui::custom::TreeVi
 
 ui::custom::TreeViewItem* SolutionForm::createTreeAggregationItem(ui::custom::TreeViewItem* parentItem, Aggregation* aggregation)
 {
-	Ref< ui::custom::TreeViewItem > treeAggregation = m_treeSolution->createItem(parentItem, aggregation->getName(), 6);
+	Ref< ui::custom::TreeViewItem > treeAggregation = m_treeSolution->createItem(parentItem, aggregation->getName(), 1);
+	treeAggregation->setImage(0, 6);
 	treeAggregation->setData(L"PRIMARY", aggregation);
 	treeAggregation->setData(L"AGGREGATION", aggregation);
 
@@ -388,7 +392,8 @@ ui::custom::TreeViewItem* SolutionForm::createTreeAggregationItem(ui::custom::Tr
 
 ui::custom::TreeViewItem* SolutionForm::createTreeConfigurationItem(ui::custom::TreeViewItem* parentItem, Project* project, Configuration* configuration)
 {
-	Ref< ui::custom::TreeViewItem > treeConfiguration = m_treeSolution->createItem(parentItem, configuration->getName(), 5);
+	Ref< ui::custom::TreeViewItem > treeConfiguration = m_treeSolution->createItem(parentItem, configuration->getName(), 1);
+	treeConfiguration->setImage(0, 5);
 	treeConfiguration->setData(L"PRIMARY", configuration);
 	treeConfiguration->setData(L"PROJECT", project);
 	treeConfiguration->setData(L"CONFIGURATION", configuration);
@@ -402,7 +407,8 @@ ui::custom::TreeViewItem* SolutionForm::createTreeConfigurationItem(ui::custom::
 
 ui::custom::TreeViewItem* SolutionForm::createTreeFilterItem(ui::custom::TreeViewItem* parentItem, Project* project, Filter* filter)
 {
-	Ref< ui::custom::TreeViewItem > treeFilter = m_treeSolution->createItem(parentItem, filter->getName(), 2, 3);
+	Ref< ui::custom::TreeViewItem > treeFilter = m_treeSolution->createItem(parentItem, filter->getName(), 1);
+	treeFilter->setImage(0, 2, 3);
 	treeFilter->setData(L"PRIMARY", filter);
 	treeFilter->setData(L"PROJECT", project);
 	treeFilter->setData(L"FILTER", filter);
@@ -424,7 +430,8 @@ ui::custom::TreeViewItem* SolutionForm::createTreeFilterItem(ui::custom::TreeVie
 
 ui::custom::TreeViewItem* SolutionForm::createTreeFileItem(ui::custom::TreeViewItem* parentItem, Project* project, sb::File* file)
 {
-	Ref< ui::custom::TreeViewItem > treeFile = m_treeSolution->createItem(parentItem, file->getFileName(), 4);
+	Ref< ui::custom::TreeViewItem > treeFile = m_treeSolution->createItem(parentItem, file->getFileName(), 1);
+	treeFile->setImage(0, 4);
 	treeFile->setData(L"PRIMARY", file);
 	treeFile->setData(L"PROJECT", project);
 	treeFile->setData(L"FILE", file);
@@ -433,7 +440,8 @@ ui::custom::TreeViewItem* SolutionForm::createTreeFileItem(ui::custom::TreeViewI
 
 ui::custom::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::custom::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item)
 {
-	Ref< ui::custom::TreeViewItem > treeItem = m_treeSolution->createItem(parentItem, item->getSourceFile() + L" => " + item->getTargetPath(), 7);
+	Ref< ui::custom::TreeViewItem > treeItem = m_treeSolution->createItem(parentItem, item->getSourceFile() + L" => " + item->getTargetPath(), 1);
+	treeItem->setImage(0, 7);
 	treeItem->setData(L"PRIMARY", item);
 	treeItem->setData(L"AGGREGATION", aggregation);
 	return treeItem;
@@ -441,7 +449,8 @@ ui::custom::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::custom
 
 ui::custom::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::custom::TreeViewItem* parentItem, Project* project, Configuration* configuration, AggregationItem* item)
 {
-	Ref< ui::custom::TreeViewItem > treeItem = m_treeSolution->createItem(parentItem, item->getSourceFile() + L" => " + item->getTargetPath(), 7);
+	Ref< ui::custom::TreeViewItem > treeItem = m_treeSolution->createItem(parentItem, item->getSourceFile() + L" => " + item->getTargetPath(), 1);
+	treeItem->setImage(0, 7);
 	treeItem->setData(L"PRIMARY", item);
 	treeItem->setData(L"PROJECT", project);
 	treeItem->setData(L"CONFIGURATION", configuration);

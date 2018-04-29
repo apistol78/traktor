@@ -206,7 +206,9 @@ ui::custom::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::custom::Tree
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
 
-	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parent, group->getName(), 0, 1);
+	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parent, group->getName(), 1);
+	groupItem->setImage(0, 0, 1);
+
 	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 		buildGroupItems(treeView, groupItem, *i, filter);
 

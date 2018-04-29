@@ -308,6 +308,8 @@ bool replaceIdentifiers(RfmCompound* reflection, const std::list< InstanceClipbo
 DatabaseView::DatabaseView(IEditor* editor)
 :	m_editor(editor)
 ,	m_filter(new DefaultFilter())
+,	m_filterCountDown(-1)
+,	m_colorCountDown(-1)
 {
 }
 
@@ -383,7 +385,9 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Types"), 23);
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TypesHidden"), 23);
+	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TreeColors"), 4);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
+	m_treeDatabase->addEventHandler< ui::custom::TreeViewItemStateChangeEvent >(this, &DatabaseView::eventInstanceStateChange);
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &DatabaseView::eventInstanceSelect);
 	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
@@ -508,6 +512,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	}
 
 	addEventHandler< ui::TimerEvent >(this, &DatabaseView::eventTimer);
+	startTimer(100);
 
 	setEnable(false);
 	return true;
@@ -575,7 +580,8 @@ void DatabaseView::updateView()
 				const TypeInfo* instanceType = *i;
 				T_ASSERT (instanceType);
 
-				Ref< ui::custom::TreeViewItem > instanceTypeItem = m_treeDatabase->createItem(0, getCategoryText(instanceType), 0, 1);
+				Ref< ui::custom::TreeViewItem > instanceTypeItem = m_treeDatabase->createItem(0, getCategoryText(instanceType), 1);
+				instanceTypeItem->setImage(0, 0, 1);
 
 				RefArray< db::Instance > instances;
 				db::recursiveFindChildInstances(m_db->getRootGroup(), db::FindInstanceByType(*instanceType), instances);
@@ -611,11 +617,9 @@ void DatabaseView::updateView()
 							iconIndex += 23;
 					}
 
-					Ref< ui::custom::TreeViewItem > instanceItem = m_treeDatabase->createItem(
-						instanceTypeItem,
-						(*j)->getName(),
-						iconIndex
-					);
+					Ref< ui::custom::TreeViewItem > instanceItem = m_treeDatabase->createItem(instanceTypeItem, (*j)->getName(), 2);
+					instanceItem->setImage(0, -1);
+					instanceItem->setImage(1, iconIndex);
 
 					if (m_rootInstances.find((*j)->getGuid()) != m_rootInstances.end())
 						instanceItem->setBold(true);
@@ -644,6 +648,8 @@ void DatabaseView::updateView()
 		m_treeDatabase->applyState(m_treeState);
 
 	m_splitter->update();
+
+	updateTreeColors();
 }
 
 bool DatabaseView::highlight(const db::Instance* instance)
@@ -711,7 +717,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 					{
 						// Type might have changed; ensure icon is updated.
 						int32_t iconIndex = getIconIndex(type);
-						treeItem->setImage(iconIndex);
+						treeItem->setImage(1, iconIndex);
 						m_treeDatabase->update();
 					}
 					else
@@ -775,7 +781,9 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				return false;
 			}
 
-			Ref< ui::custom::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem->getParent(), instanceClone->getName(), treeItem->getImage());
+			Ref< ui::custom::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem->getParent(), instanceClone->getName(), 2);
+			treeCloneItem->setImage(0, -1);
+			treeCloneItem->setImage(1, treeItem->getImage(1), treeItem->getExpandedImage(1));
 			treeCloneItem->setEditable(true);
 			treeCloneItem->setData(L"GROUP", group);
 			treeCloneItem->setData(L"INSTANCE", instanceClone);
@@ -959,7 +967,9 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 					{
 						int32_t iconIndex = getIconIndex(type);
 
-						Ref< ui::custom::TreeViewItem > instanceItem = m_treeDatabase->createItem(treeItem, instanceName, iconIndex);
+						Ref< ui::custom::TreeViewItem > instanceItem = m_treeDatabase->createItem(treeItem, instanceName, 2);
+						instanceItem->setImage(0, -1);
+						instanceItem->setImage(1, iconIndex);
 						instanceItem->setEditable(true);
 						instanceItem->setData(L"GROUP", group);
 						instanceItem->setData(L"INSTANCE", instance);
@@ -976,7 +986,8 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< db::Group > newGroup = group->createGroup(i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"));
 			if (newGroup)
 			{
-				Ref< ui::custom::TreeViewItem > groupItem = m_treeDatabase->createItem(treeItem, i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"), 0, 1);
+				Ref< ui::custom::TreeViewItem > groupItem = m_treeDatabase->createItem(treeItem, i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"), 1);
+				groupItem->setImage(0, 0, 1);
 				groupItem->setEditable(true);
 				groupItem->setData(L"GROUP", newGroup);
 
@@ -1048,7 +1059,9 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 				int32_t iconIndex = getIconIndex(&type_of(i->object));
 
-				Ref< ui::custom::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem, pasteName, iconIndex);
+				Ref< ui::custom::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem, pasteName, 2);
+				treeCloneItem->setImage(0, -1);
+				treeCloneItem->setImage(1, iconIndex);
 				treeCloneItem->setEditable(true);
 				treeCloneItem->setData(L"GROUP", group);
 				treeCloneItem->setData(L"INSTANCE", instanceCopy);
@@ -1133,7 +1146,8 @@ int32_t DatabaseView::getIconIndex(const TypeInfo* instanceType) const
 
 Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItem(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group)
 {
-	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 0, 1);
+	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 1);
+	groupItem->setImage(0, 0, 1);
 	groupItem->setEditable(true);
 	groupItem->setData(L"GROUP", group);
 
@@ -1187,11 +1201,9 @@ Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItem(ui::custom::TreeView
 				iconIndex += 23;
 		}
 
-		Ref< ui::custom::TreeViewItem > instanceItem = treeView->createItem(
-			groupItem,
-			(*i)->getName(),
-			iconIndex
-		);
+		Ref< ui::custom::TreeViewItem > instanceItem = treeView->createItem(groupItem, (*i)->getName(), 2);
+		instanceItem->setImage(0, -1);
+		instanceItem->setImage(1, iconIndex);
 
 		if (m_rootInstances.find((*i)->getGuid()) != m_rootInstances.end())
 			instanceItem->setBold(true);
@@ -1213,7 +1225,8 @@ Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItem(ui::custom::TreeView
 
 Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group)
 {
-	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 0, 1);
+	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 1);
+	groupItem->setImage(0, 0, 1);
 	groupItem->setEditable(true);
 	groupItem->setData(L"GROUP", group);
 
@@ -1287,6 +1300,34 @@ Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::custom::Tre
 	*/
 
 	return groupItem;
+}
+
+void DatabaseView::updateTreeColors()
+{
+	RefArray< ui::custom::TreeViewItem > items;
+	m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfExpandedOnly);
+
+	for (RefArray< ui::custom::TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
+	{
+		db::Instance* instance = (*i)->getData< db::Instance >(L"INSTANCE");
+		if (instance)
+		{
+			int32_t image = 0;
+
+			if ((instance->getFlags() & db::IfReadOnly) != 0)
+				image |= 1;
+			if ((instance->getFlags() & db::IfModified) != 0)
+				image |= 2;
+
+			image += 2 + 23 + 23;	// Offset to correct image sequence.
+
+			if (image != (*i)->getImage(0))
+			{
+				(*i)->setImage(0, image);
+				m_treeDatabase->requestUpdate();
+			}
+		}
+	}
 }
 
 void DatabaseView::updateGridInstances()
@@ -1469,23 +1510,28 @@ void DatabaseView::eventToolSelectionClicked(ui::custom::ToolBarButtonClickEvent
 void DatabaseView::eventFilterKey(ui::KeyUpEvent* event)
 {
 	m_filterText = m_editFilter->getText();
-	stopTimer();
-	startTimer(500);
+	m_filterCountDown = 5;
 }
 
 void DatabaseView::eventTimer(ui::TimerEvent* event)
 {
-	stopTimer();
+	if (--m_filterCountDown == 0)
+	{
+		if (!m_filterText.empty())
+			m_filter = new TextFilter(m_filterText);
+		else
+			m_filter = new DefaultFilter();
 
-	if (!m_filterText.empty())
-		m_filter = new TextFilter(m_filterText);
-	else
-		m_filter = new DefaultFilter();
+		m_toolFilterType->setToggled(false);
+		m_toolFilterAssets->setToggled(false);
 
-	m_toolFilterType->setToggled(false);
-	m_toolFilterAssets->setToggled(false);
-
-	updateView();
+		updateView();
+	}
+	if (--m_colorCountDown <= 0)
+	{
+		updateTreeColors();
+		m_colorCountDown = 10;
+	}
 }
 
 void DatabaseView::eventInstanceActivate(ui::custom::TreeViewItemActivateEvent* event)
@@ -1497,6 +1543,11 @@ void DatabaseView::eventInstanceActivate(ui::custom::TreeViewItemActivateEvent* 
 		return;
 
 	m_editor->openEditor(instance);
+}
+
+void DatabaseView::eventInstanceStateChange(ui::custom::TreeViewItemStateChangeEvent* event)
+{
+	updateTreeColors();
 }
 
 void DatabaseView::eventInstanceSelect(ui::SelectionChangeEvent* event)

@@ -111,7 +111,9 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	m_editInstanceName = new ui::Edit();
 	m_editInstanceName->create(bottom, i18n::Text(L"NEW_INSTANCE_DEFAULT_NAME"));
 
-	Ref< ui::custom::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"NEW_INSTANCE_GLOBAL"), 0, 1);
+	Ref< ui::custom::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"NEW_INSTANCE_GLOBAL"), 1);
+	groupRoot->setImage(0, 0, 1);
+
 	for (TypeInfoSet::iterator i = types.begin(); i != types.end(); ++i)
 	{
 		const TypeInfo* type = *i;
@@ -132,7 +134,8 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 			Ref< ui::custom::TreeViewItem > child = group->findChild(*j);
 			if (!child)
 			{
-				child = m_categoryTree->createItem(group, *j, 0, 1);
+				child = m_categoryTree->createItem(group, *j, 1);
+				child->setImage(0, 0, 1);
 				child->expand();
 			}
 			group = child;
