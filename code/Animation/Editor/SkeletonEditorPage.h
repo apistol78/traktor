@@ -44,13 +44,14 @@ class Instance;
 class Widget;
 class Container;
 class PopupMenu;
-class TreeView;
-class TreeViewItem;
 
 		namespace custom
 		{
 
 class ToolBar;
+class TreeView;
+class TreeViewContentChangeEvent;
+class TreeViewItem;
 
 		}
 	}
@@ -103,7 +104,7 @@ private:
 	Ref< ui::Widget > m_renderWidget;
 	Ref< ui::PopupMenu > m_boneMenu;
 	Ref< ui::Container > m_skeletonPanel;
-	Ref< ui::TreeView > m_treeSkeleton;
+	Ref< ui::custom::TreeView > m_treeSkeleton;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< resource::IResourceManager > m_resourceManager;
@@ -122,7 +123,7 @@ private:
 
 	void createSkeletonTreeNodes();
 
-	void createSkeletonTreeNodes(ui::TreeViewItem* parentItem, int parentNodeIndex);
+	void createSkeletonTreeNodes(ui::custom::TreeViewItem* parentItem, int parentNodeIndex);
 
 	void eventMouseDown(ui::MouseButtonDownEvent* event);
 
@@ -138,7 +139,7 @@ private:
 
 	void eventTreeSelect(ui::SelectionChangeEvent* event);
 
-	void eventTreeEdited(ui::TreeViewContentChangeEvent* event);
+	void eventTreeEdited(ui::custom::TreeViewContentChangeEvent* event);
 };
 
 	}

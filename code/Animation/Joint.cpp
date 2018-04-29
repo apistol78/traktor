@@ -17,15 +17,12 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Joint", 0, Joint, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Joint", 1, Joint, ISerializable)
 
 Joint::Joint()
 :	m_parent(-1)
 ,	m_transform(Transform::identity())
-,	m_radius(0.0f)
-,	m_enableLimits(false)
-,	m_twistLimit(0.0f)
-,	m_coneLimit(0.0f, 0.0f)
+,	m_radius(0.1f)
 {
 }
 
@@ -35,9 +32,19 @@ void Joint::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberComposite< Transform >(L"transform", m_transform);
 	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
-	s >> Member< bool >(L"enableLimits", m_enableLimits);
-	s >> Member< float >(L"twistLimit", m_twistLimit, AttributeRange(-PI, PI));
-	s >> Member< Vector2 >(L"coneLimit", m_coneLimit);
+
+	if (s.getVersion< Joint >() < 1)
+	{
+	
+		bool enableLimits;
+		s >> Member< bool >(L"enableLimits", enableLimits);
+		
+		float twistLimit;
+		s >> Member< float >(L"twistLimit", twistLimit, AttributeRange(-PI, PI));
+
+		Vector2 coneLimit;
+		s >> Member< Vector2 >(L"coneLimit", coneLimit);
+	}
 }
 
 	}

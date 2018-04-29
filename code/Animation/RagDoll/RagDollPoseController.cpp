@@ -147,23 +147,23 @@ bool RagDollPoseController::create(
 
 			if (fixateBones)
 			{
-				if (joint->getEnableLimits())
-				{
-					Ref< physics::ConeTwistJointDesc > jointDesc = new physics::ConeTwistJointDesc();
-					jointDesc->setAnchor(anchor);
-					jointDesc->setConeAxis(coneAxis);
-					jointDesc->setTwistAxis(twistAxis);
-					jointDesc->setConeAngles(joint->getConeLimit().x, joint->getConeLimit().y);
-					jointDesc->setTwistAngle(joint->getTwistLimit());
+				//if (joint->getEnableLimits())
+				//{
+				//	Ref< physics::ConeTwistJointDesc > jointDesc = new physics::ConeTwistJointDesc();
+				//	jointDesc->setAnchor(anchor);
+				//	jointDesc->setConeAxis(coneAxis);
+				//	jointDesc->setTwistAxis(twistAxis);
+				//	jointDesc->setConeAngles(joint->getConeLimit().x, joint->getConeLimit().y);
+				//	jointDesc->setTwistAngle(joint->getTwistLimit());
 
-					limbJoint = physicsManager->createJoint(
-						jointDesc,
-						worldTransform,
-						m_limbs[i],
-						0
-					);
-				}
-				else
+				//	limbJoint = physicsManager->createJoint(
+				//		jointDesc,
+				//		worldTransform,
+				//		m_limbs[i],
+				//		0
+				//	);
+				//}
+				//else
 				{
 					Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
 					jointDesc->setAnchor(anchor);
@@ -179,23 +179,23 @@ bool RagDollPoseController::create(
 		}
 		else
 		{
-			if (joint->getEnableLimits())
-			{
-				Ref< physics::ConeTwistJointDesc > jointDesc = new physics::ConeTwistJointDesc();
-				jointDesc->setAnchor(anchor);
-				jointDesc->setConeAxis(coneAxis);
-				jointDesc->setTwistAxis(twistAxis);
-				jointDesc->setConeAngles(joint->getConeLimit().x, joint->getConeLimit().y);
-				jointDesc->setTwistAngle(joint->getTwistLimit());
+			//if (joint->getEnableLimits())
+			//{
+			//	Ref< physics::ConeTwistJointDesc > jointDesc = new physics::ConeTwistJointDesc();
+			//	jointDesc->setAnchor(anchor);
+			//	jointDesc->setConeAxis(coneAxis);
+			//	jointDesc->setTwistAxis(twistAxis);
+			//	jointDesc->setConeAngles(joint->getConeLimit().x, joint->getConeLimit().y);
+			//	jointDesc->setTwistAngle(joint->getTwistLimit());
 
-				limbJoint = physicsManager->createJoint(
-					jointDesc,
-					worldTransform,
-					m_limbs[parentIndex],
-					m_limbs[i]
-				);
-			}
-			else
+			//	limbJoint = physicsManager->createJoint(
+			//		jointDesc,
+			//		worldTransform,
+			//		m_limbs[parentIndex],
+			//		m_limbs[i]
+			//	);
+			//}
+			//else
 			{
 				Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
 				jointDesc->setAnchor(anchor);

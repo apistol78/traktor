@@ -134,6 +134,7 @@ local outputs =
 			{ name = "Favorites", column = 3, row = 1, width = 1, height = 1 },
 			{ name = "Types", column = 0, row = 2, width = 23, height = 1 },
 			{ name = "TypesHidden", column = 0, row = 3, width = 23, height = 1 },
+			{ name = "TreeColors", column = 0, row = 41, width = 4, height = 1 },
 			{ name = "Folders", column = 0, row = 4, width = 2, height = 1 },
 			{ name = "Navigate", column = 0, row = 17, width = 4, height = 1 },
 			{ name = "ToolSearch", column = 0, row = 36, width = 1, height = 1 },
@@ -516,7 +517,7 @@ function main(argv)
 
 					-- Remove all intermediate images.
 					for j, dpi in ipairs(dpis) do
-						run:rm(dpi .. ".png")
+						--run:rm(dpi .. ".png")
 						FileSystem.getInstance():move(Path(o.name .. "_" .. dpi .. ".png"), Path(dpi .. ".png"), true)
 					end
 

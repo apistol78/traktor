@@ -684,6 +684,10 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/TypesHidden.image</value>
 		</item>
 		<item>
+			<name>Editor.Database.TreeColors</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/TreeColors.image</value>
+		</item>
+		<item>
 			<name>Editor.Log.Info</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/LogInfo.image</value>
 		</item>

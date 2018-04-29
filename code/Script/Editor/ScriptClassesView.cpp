@@ -47,7 +47,8 @@ public:
 			if (!m_namespaceItems[qname[i]])
 				m_namespaceItems[qname[i]] = m_treeClasses->createItem(
 					(i > 0) ? m_namespaceItems[qname[i - 1]] : 0,
-					qname[i]
+					qname[i],
+					0
 				);
 		}
 
@@ -58,17 +59,18 @@ public:
 
 		Ref< ui::custom::TreeViewItem > classItem = m_treeClasses->createItem(
 			(qname.size() >= 2) ? m_namespaceItems[qname[qname.size() - 2]] : 0,
-			ss.str()
+			ss.str(),
+			0
 		);
 
 		if (runtimeClass->haveConstructor())
-			m_treeClasses->createItem(classItem, L"(ctor)");
+			m_treeClasses->createItem(classItem, L"(ctor)", 0);
 
 		for (uint32_t i = 0; i < runtimeClass->getConstantCount(); ++i)
 		{
 			ss.reset();
 			ss << mbstows(runtimeClass->getConstantName(i)) << L" = " << runtimeClass->getConstantValue(i).getWideString();
-			m_treeClasses->createItem(classItem, ss.str());
+			m_treeClasses->createItem(classItem, ss.str(), 0);
 		}
 
 		for (uint32_t i = 0; i < runtimeClass->getPropertiesCount(); ++i)
@@ -82,7 +84,7 @@ public:
 			ss.reset();
 			ss << s[0] << L" " << mbstows(runtimeClass->getPropertyName(i));
 
-			m_treeClasses->createItem(classItem, ss.str());
+			m_treeClasses->createItem(classItem, ss.str(), 0);
 		}
 
 		for (uint32_t i = 0; i < runtimeClass->getMethodCount(); ++i)
@@ -99,7 +101,7 @@ public:
 				ss << (j > 1 ? L", " : L"") << s[j];
 			ss << L")";
 
-			m_treeClasses->createItem(classItem, ss.str());
+			m_treeClasses->createItem(classItem, ss.str(), 0);
 		}
 
 		for (uint32_t i = 0; i < runtimeClass->getStaticMethodCount(); ++i)
@@ -116,7 +118,7 @@ public:
 				ss << (j > 1 ? L", " : L"") << s[j];
 			ss << L")";
 
-			m_treeClasses->createItem(classItem, ss.str());
+			m_treeClasses->createItem(classItem, ss.str(), 0);
 		}
 	}
 

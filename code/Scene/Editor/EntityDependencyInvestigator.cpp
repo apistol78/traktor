@@ -99,11 +99,13 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 			Ref< ui::custom::TreeViewItem > typeGroup = typeGroups[assetType];
 			if (!typeGroup)
 			{
-				typeGroup = m_dependencyTree->createItem(0, getCategoryText(assetType), 0, 1);
+				typeGroup = m_dependencyTree->createItem(0, getCategoryText(assetType), 1);
+				typeGroup->setImage(0, 0, 1);
 				typeGroups[assetType] = typeGroup;
 			}
 
-			Ref< ui::custom::TreeViewItem > dependencyItem = m_dependencyTree->createItem(typeGroup, dependency->outputPath, 2);
+			Ref< ui::custom::TreeViewItem > dependencyItem = m_dependencyTree->createItem(typeGroup, dependency->outputPath, 1);
+			dependencyItem->setImage(0, 2);
 			dependencyItem->setData(L"DEPENDENCY", dependency);
 
 			for (editor::PipelineDependency::external_files_t::const_iterator j = dependency->files.begin(); j != dependency->files.end(); ++j)
@@ -112,10 +114,12 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 
 		if (!externalFiles.empty())
 		{
-			Ref< ui::custom::TreeViewItem > filesGroup = m_dependencyTree->createItem(0, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_FILES"), 0, 1);
+			Ref< ui::custom::TreeViewItem > filesGroup = m_dependencyTree->createItem(0, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_FILES"), 1);
+			filesGroup->setImage(0, 0, 1);
 			for (std::set< Path >::iterator i = externalFiles.begin(); i != externalFiles.end(); ++i)
 			{
-				Ref< ui::custom::TreeViewItem > fileItem = m_dependencyTree->createItem(filesGroup, i->getFileName(), 2);
+				Ref< ui::custom::TreeViewItem > fileItem = m_dependencyTree->createItem(filesGroup, i->getFileName(), 1);
+				fileItem->setImage(0, 2);
 				fileItem->setData(L"FILE", new Path(*i));
 			}
 		}

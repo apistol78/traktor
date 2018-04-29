@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 /*
 ================================================================================================
 CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
@@ -21,6 +23,15 @@ bool DefaultFileStore::create(const ConnectionString& connectionString)
 
 void DefaultFileStore::destroy()
 {
+}
+
+bool DefaultFileStore::locked(const Path& filePath)
+{
+	Ref< File > file = FileSystem::getInstance().get(filePath);
+	if (file)
+		return file->isReadOnly();
+	else
+		return false;
 }
 
 bool DefaultFileStore::pending(const Path& filePath)

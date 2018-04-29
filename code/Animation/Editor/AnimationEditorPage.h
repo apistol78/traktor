@@ -53,6 +53,9 @@ class PopupMenu;
 class CursorMoveEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
+class TreeView;
+class TreeViewContentChangeEvent;
+class TreeViewItem;
 class SequencerControl;
 
 		}
@@ -106,6 +109,8 @@ private:
 	Ref< Animation > m_animation;
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidgets[4];
+	Ref< ui::Container > m_skeletonPanel;
+	Ref< ui::custom::TreeView > m_treeSkeleton;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
 	Ref< ui::Container > m_sequencerPanel;
 	Ref< ui::custom::SequencerControl > m_sequencer;

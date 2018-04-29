@@ -56,6 +56,8 @@ public:
 
 	Rotator& operator *= (const Scalar& rh);
 
+	static Rotator fromHeadPitchBank(float head, float pitch, float bank);
+
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_ui_custom_TreeViewItem_H
 #define traktor_ui_custom_TreeViewItem_H
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Color4ub.h"
 #include "Ui/Custom/Auto/AutoWidgetCell.h"
 
@@ -35,8 +36,6 @@ class T_DLLCLASS TreeViewItem : public AutoWidgetCell
 	T_RTTI_CLASS;
 
 public:
-	TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstring& text, int32_t image, int32_t expandedImage);
-
 	void setText(const std::wstring& text);
 
 	std::wstring getText() const;
@@ -49,13 +48,17 @@ public:
 
 	const Color4ub& getTextOutlineColor() const;
 
-	void setImage(int32_t image);
+	void removeAllImages();
 
-	int32_t getImage() const;
+	int32_t getImageCount() const;
 
-	void setExpandedImage(int32_t expandedImage);
+	void setImage(int32_t index, int32_t image, int32_t expandedImage = -1, int32_t overlayImage = -1);
 
-	int32_t getExpandedImage() const;
+	int32_t getImage(int32_t index) const;
+
+	int32_t getExpandedImage(int32_t index) const;
+
+	int32_t getOverlayImage(int32_t index) const;
 
 	bool isExpanded() const;
 
@@ -110,12 +113,25 @@ public:
 private:
 	friend class TreeView;
 
+	struct Image
+	{
+		int32_t image;
+		int32_t expanded;
+		int32_t overlay;
+
+		Image()
+		:	image(-1)
+		,	expanded(-1)
+		,	overlay(-1)
+		{
+		}
+	};
+
 	TreeView* m_view;
 	TreeViewItem* m_parent;
 	std::wstring m_text;
 	Color4ub m_outlineColor;
-	int32_t m_image;
-	int32_t m_expandedImage;
+	AlignedVector< Image > m_images;
 	bool m_expanded;
 	bool m_enabled;
 	bool m_selected;
@@ -124,6 +140,10 @@ private:
 	int32_t m_editMode;
 	int32_t m_dragMode;
 	RefArray< TreeViewItem > m_children;
+
+	TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstring& text, int32_t image, int32_t expandedImage = -1, int32_t overlayImage = -1);
+
+	TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstring& text);
 
 	int32_t calculateDepth() const;
 

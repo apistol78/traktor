@@ -38,7 +38,6 @@ void createJoints(
 	joint->setName(jointName);
 	joint->setTransform(Transform(bvhJoint->getOffset() + offset));
 	joint->setRadius(radius);
-	joint->setEnableLimits(false);
 
 	if (jointName.empty() && parent >= 0)
 		joint->setName(skeleton->getJoint(parent)->getName() + L"_END");

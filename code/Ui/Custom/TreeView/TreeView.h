@@ -58,11 +58,11 @@ public:
 
 	TreeView();
 
-	bool create(Widget* parent, int32_t style = WsDefault);
+	bool create(Widget* parent, int32_t style);
 
 	int32_t addImage(IBitmap* image, int32_t imageCount);
 
-	Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int32_t image = -1, int32_t expandedImage = -1);
+	Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int32_t imageColumns);
 
 	void removeItem(TreeViewItem* item);
 

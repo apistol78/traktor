@@ -32,9 +32,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/TableLayout.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/TreeView.h"
 #include "Ui/HierarchicalState.h"
-#include "Ui/TreeViewItem.h"
+#include "Ui/Custom/TreeView/TreeView.h"
+#include "Ui/Custom/TreeView/TreeViewContentChangeEvent.h"
+#include "Ui/Custom/TreeView/TreeViewItem.h"
 #include "Ui/Itf/IWidget.h"
 
 namespace traktor
@@ -100,12 +101,12 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	m_skeletonPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
 	m_skeletonPanel->setText(i18n::Text(L"SKELETON_EDITOR_SKELETON"));
 
-	m_treeSkeleton = new ui::TreeView();
-	m_treeSkeleton->create(m_skeletonPanel, ui::TreeView::WsDefault & ~ui::WsClientBorder);
+	m_treeSkeleton = new ui::custom::TreeView();
+	m_treeSkeleton->create(m_skeletonPanel, (ui::custom::TreeView::WsDefault | ui::WsAccelerated) & ~ui::WsClientBorder);
 	m_treeSkeleton->addImage(new ui::StyleBitmap(L"Animation.Bones"), 2);
 	m_treeSkeleton->addEventHandler< ui::MouseButtonDownEvent >(this, &SkeletonEditorPage::eventTreeButtonDown);
 	m_treeSkeleton->addEventHandler< ui::SelectionChangeEvent >(this, &SkeletonEditorPage::eventTreeSelect);
-	m_treeSkeleton->addEventHandler< ui::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
+	m_treeSkeleton->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
 
 	m_site->createAdditionalPanel(m_skeletonPanel, ui::dpi96(250), false);
 
@@ -128,7 +129,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem, 0))
+	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem, 1))
 		return false;
 
 	m_site->setPropertyObject(m_skeleton);
@@ -139,7 +140,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	float majorExtent = boundingBox.getExtent()[majorAxis];
 
 	m_cameraHead = 0.0f;
-	m_cameraY = 0.0f;
+	m_cameraY = -0.7f;
 	m_cameraZ = majorExtent * 2.0f;
 
 	m_cameraMoveScaleY = majorExtent / 200.0f;
@@ -209,24 +210,27 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Delete")
 	{
-		Ref< ui::TreeViewItem > selectedTreeItem = m_treeSkeleton->getSelectedItem();
-		if (!selectedTreeItem)
-			return true;
+		RefArray< ui::custom::TreeViewItem > selectedItems;
+		if (m_treeSkeleton->getItems(selectedItems, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) == 0)
+			return false;
 
 		m_document->push();
 
-		Ref< Joint > joint = selectedTreeItem->getData< Joint >(L"JOINT");
-
-		int jointIndex = findIndexOfJoint(m_skeleton, joint);
-		T_ASSERT (jointIndex >= 0);
-
-		for (int i = 0; i < int(m_skeleton->getJointCount()); ++i)
+		for (auto item : selectedItems)
 		{
-			if (m_skeleton->getJoint(i)->getParent() == jointIndex)
-				m_skeleton->getJoint(i)->setParent(-1);
-		}
+			Joint* joint = item->getData< Joint >(L"JOINT");
 
-		m_skeleton->removeJoint(joint);
+			int32_t jointIndex = findIndexOfJoint(m_skeleton, joint);
+			T_ASSERT (jointIndex >= 0);
+
+			for (int32_t i = 0; i < int32_t(m_skeleton->getJointCount()); ++i)
+			{
+				if (m_skeleton->getJoint(i)->getParent() == jointIndex)
+					m_skeleton->getJoint(i)->setParent(-1);
+			}
+
+			m_skeleton->removeJoint(joint);
+		}
 
 		createSkeletonTreeNodes();
 
@@ -235,13 +239,13 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Skeleton.Editor.AddJoint")
 	{
-		Ref< ui::TreeViewItem > selectedTreeItem = m_treeSkeleton->getSelectedItem();
-		if (!selectedTreeItem)
-			return true;
+		RefArray< ui::custom::TreeViewItem > selectedItems;
+		if (m_treeSkeleton->getItems(selectedItems, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) != 1)
+			return false;
 
 		m_document->push();
 
-		Ref< Joint > parentJoint = selectedTreeItem->getData< Joint >(L"JOINT");
+		Joint* parentJoint = selectedItems.front()->getData< Joint >(L"JOINT");
 
 		Ref< Joint > joint = new Joint();
 		joint->setName(L"Joint");
@@ -278,13 +282,15 @@ void SkeletonEditorPage::createSkeletonTreeNodes()
 
 	m_treeSkeleton->removeAllItems();
 
-	Ref< ui::TreeViewItem > itemRoot = m_treeSkeleton->createItem(0, i18n::Text(L"SKELETON_EDITOR_ROOT"), 0);
+	Ref< ui::custom::TreeViewItem > itemRoot = m_treeSkeleton->createItem(0, i18n::Text(L"SKELETON_EDITOR_ROOT"), 1);
+	itemRoot->setImage(0, 0);
+
 	createSkeletonTreeNodes(itemRoot, -1);
 
 	m_treeSkeleton->applyState(treeSkeletonState);
 }
 
-void SkeletonEditorPage::createSkeletonTreeNodes(ui::TreeViewItem* parentItem, int parentNodeIndex)
+void SkeletonEditorPage::createSkeletonTreeNodes(ui::custom::TreeViewItem* parentItem, int parentNodeIndex)
 {
 	int32_t jointCount = m_skeleton->getJointCount();
 	for (int32_t i = 0; i < jointCount; ++i)
@@ -292,7 +298,8 @@ void SkeletonEditorPage::createSkeletonTreeNodes(ui::TreeViewItem* parentItem, i
 		Joint* joint = m_skeleton->getJoint(i);
 		if (joint->getParent() == parentNodeIndex)
 		{
-			Ref< ui::TreeViewItem > itemJoint = m_treeSkeleton->createItem(parentItem, joint->getName(), 1);
+			Ref< ui::custom::TreeViewItem > itemJoint = m_treeSkeleton->createItem(parentItem, joint->getName(), 1);
+			itemJoint->setImage(0, 1);
 			itemJoint->setData(L"JOINT", joint);
 
 			createSkeletonTreeNodes(itemJoint, i);
@@ -462,8 +469,6 @@ void SkeletonEditorPage::eventPaint(ui::PaintEvent* event)
 			const Joint* joint = m_skeleton->getJoint(i);
 			T_ASSERT (joint);
 
-			Color4ub color = (m_selectedJoint == i) ? Color4ub(255, 128, 255, 128) : Color4ub(255, 255, 0, 128);
-
 			m_primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
 
 			if (joint->getParent() >= 0)
@@ -471,12 +476,15 @@ void SkeletonEditorPage::eventPaint(ui::PaintEvent* event)
 				const Joint* parent = m_skeleton->getJoint(joint->getParent());
 				T_ASSERT (parent);
 
+				Color4ub color = (m_selectedJoint == joint->getParent()) ? Color4ub(255, 128, 255, 128) : Color4ub(255, 255, 0, 128);
+
 				Vector4 start = jointTransforms[joint->getParent()].translation();
 				Vector4 end = jointTransforms[i].translation();
 
 				Vector4 z = (end - start).normalized();
-				Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
-				Vector4 x = cross(y, z);
+
+				Vector4 x, y;
+				orthogonalFrame(z, x, y);
 
 				Scalar radius(parent->getRadius());
 				x *= radius;
@@ -497,30 +505,6 @@ void SkeletonEditorPage::eventPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
 				m_primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
 				m_primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
-			}
-
-			if (joint->getEnableLimits())
-			{
-				m_primitiveRenderer->drawCone(
-					jointTransforms[i].toMatrix44(),
-					joint->getConeLimit().x,
-					joint->getConeLimit().y,
-					1.0f,
-					Color4ub(255, 255, 255, 64),
-					Color4ub(0, 0, 0, 32)
-				);
-
-				m_primitiveRenderer->drawProtractor(
-					jointTransforms[i].translation(),
-					jointTransforms[i].axisX(),
-					jointTransforms[i].axisY(),
-					-joint->getTwistLimit(),
-					joint->getTwistLimit(),
-					deg2rad(8.0f),
-					1.0f,
-					Color4ub(255, 255, 255, 64),
-					Color4ub(0, 0, 0, 32)
-				);
 			}
 		}
 
@@ -549,11 +533,11 @@ void SkeletonEditorPage::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 
 void SkeletonEditorPage::eventTreeSelect(ui::SelectionChangeEvent* event)
 {
-	ui::TreeViewItem* selectedItem = m_treeSkeleton->getSelectedItem();
-	if (!selectedItem)
+	RefArray< ui::custom::TreeViewItem > selectedItems;
+	if (m_treeSkeleton->getItems(selectedItems, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) != 1)
 		return;
 
-	Joint* joint = selectedItem->getData< Joint >(L"JOINT");
+	Joint* joint = selectedItems.front()->getData< Joint >(L"JOINT");
 	m_selectedJoint = findIndexOfJoint(m_skeleton, joint);
 
 	if (joint)
@@ -564,9 +548,9 @@ void SkeletonEditorPage::eventTreeSelect(ui::SelectionChangeEvent* event)
 	m_renderWidget->update();
 }
 
-void SkeletonEditorPage::eventTreeEdited(ui::TreeViewContentChangeEvent* event)
+void SkeletonEditorPage::eventTreeEdited(ui::custom::TreeViewContentChangeEvent* event)
 {
-	ui::TreeViewItem* selectedItem = event->getItem();
+	ui::custom::TreeViewItem* selectedItem = event->getItem();
 	Joint* joint = selectedItem->getData< Joint >(L"JOINT");
 	if (joint)
 	{

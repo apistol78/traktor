@@ -344,7 +344,8 @@ void ClientPage::buildDebugTree(ui::custom::TreeViewItem* parent, const RefArray
 		else
 			ss << L"<unnamed>";
 
-		Ref< ui::custom::TreeViewItem > item = m_debugTree->createItem(parent, ss.str(), image);
+		Ref< ui::custom::TreeViewItem > item = m_debugTree->createItem(parent, ss.str(), 1);
+		item->setImage(0, image);
 		item->setData(L"DEBUGINFO", instance);
 
 		if (SpriteInstanceDebugInfo* spriteInstance = dynamic_type_cast< SpriteInstanceDebugInfo* >(instance))

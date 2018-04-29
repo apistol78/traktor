@@ -39,22 +39,6 @@ struct ItemSortPredicate
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.TreeViewItem", TreeViewItem, AutoWidgetCell)
 
-TreeViewItem::TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstring& text, int32_t image, int32_t expandedImage)
-:	m_view(view)
-,	m_parent(parent)
-,	m_text(text)
-,	m_outlineColor(0, 0, 0, 0)
-,	m_image(image)
-,	m_expandedImage(expandedImage)
-,	m_expanded(false)
-,	m_enabled(true)
-,	m_selected(false)
-,	m_editable(true)
-,	m_editMode(0)
-,	m_dragMode(0)
-{
-}
-
 void TreeViewItem::setText(const std::wstring& text)
 {
 	m_text = text;
@@ -84,24 +68,49 @@ const Color4ub& TreeViewItem::getTextOutlineColor() const
 	return m_outlineColor;
 }
 
-void TreeViewItem::setImage(int32_t image)
+void TreeViewItem::removeAllImages()
 {
-	m_image = image;
+	m_images.clear();
 }
 
-int32_t TreeViewItem::getImage() const
+int32_t TreeViewItem::getImageCount() const
 {
-	return m_image;
+	return int32_t(m_images.size());
 }
 
-void TreeViewItem::setExpandedImage(int32_t expandedImage)
+void TreeViewItem::setImage(int32_t index, int32_t image, int32_t expandedImage, int32_t overlayImage)
 {
-	m_expandedImage = expandedImage;
+	if (index >= 0 && index < getImageCount())
+	{
+		Image& img = m_images[index];
+		img.image = image;
+		img.expanded = expandedImage;
+		img.overlay = overlayImage;
+	}
 }
 
-int32_t TreeViewItem::getExpandedImage() const
+int32_t TreeViewItem::getImage(int32_t index) const
 {
-	return m_expandedImage;
+	if (index >= 0 && index < getImageCount())
+		return m_images[index].image;
+	else
+		return -1;
+}
+
+int32_t TreeViewItem::getExpandedImage(int32_t index) const
+{
+	if (index >= 0 && index < getImageCount())
+		return m_images[index].expanded;
+	else
+		return -1;
+}
+
+int32_t TreeViewItem::getOverlayImage(int32_t index) const
+{
+	if (index >= 0 && index < getImageCount())
+		return m_images[index].overlay;
+	else
+		return -1;
 }
 
 bool TreeViewItem::isExpanded() const
@@ -298,6 +307,20 @@ std::wstring TreeViewItem::getPath() const
 		return m_text;
 }
 
+TreeViewItem::TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstring& text)
+:	m_view(view)
+,	m_parent(parent)
+,	m_text(text)
+,	m_outlineColor(0, 0, 0, 0)
+,	m_expanded(false)
+,	m_enabled(true)
+,	m_selected(false)
+,	m_editable(true)
+,	m_editMode(0)
+,	m_dragMode(0)
+{
+}
+
 int32_t TreeViewItem::calculateDepth() const
 {
 	int32_t depth = 0;
@@ -312,7 +335,7 @@ Rect TreeViewItem::calculateExpandRect() const
 	int32_t depth = calculateDepth();
 
 	Rect rcItem = m_view->getCellClientRect(this);
-	rcItem.left += ui::dpi96(4 + depth * 20);
+	rcItem.left += dpi96(4 + depth * 20);
 	rcItem.right = rcItem.left + d;
 
 	int32_t dy = (rcItem.getHeight() - d) / 2;
@@ -324,11 +347,11 @@ Rect TreeViewItem::calculateExpandRect() const
 
 Rect TreeViewItem::calculateImageRect() const
 {
-	int32_t d = m_view->m_image->getSize().cy;
-	int32_t depth = calculateDepth();
+	const int32_t d = m_view->m_image->getSize().cy;
+	const int32_t depth = calculateDepth();
 
 	Rect rcItem = m_view->getCellClientRect(this);
-	rcItem.left += ui::dpi96(4 + depth * 20 + 22);
+	rcItem.left += dpi96(4 + depth * 20 + 22);
 	rcItem.right = rcItem.left + d;
 
 	int32_t dy = (rcItem.getHeight() - d) / 2;
@@ -340,12 +363,14 @@ Rect TreeViewItem::calculateImageRect() const
 
 Rect TreeViewItem::calculateLabelRect() const
 {
+	const int32_t d = m_view->m_imageState->getSize().cy;
+	const int32_t depth = calculateDepth();
+	const int32_t imageCount = getImageCount();
+
 	Size extent = m_view->getTextExtent(m_text);
-	int32_t d = m_view->m_imageState->getSize().cy;
-	int32_t depth = calculateDepth();
 
 	Rect rcItem = m_view->getCellClientRect(this);
-	rcItem.left += ui::dpi96(4 + depth * 20 + 44);
+	rcItem.left += dpi96(4 + depth * 20 + 28) + imageCount * d;
 	rcItem.right = rcItem.left + extent.cx + d;
 
 	return rcItem;
@@ -355,7 +380,7 @@ int32_t TreeViewItem::calculateWidth() const
 {
 	Size extent = m_view->getTextExtent(m_text);
 	int32_t d = m_view->m_imageState->getSize().cy;
-	return ui::dpi96(4 + calculateDepth() * 20 + 44) + extent.cx + d;
+	return dpi96(4 + calculateDepth() * 20 + 28) + extent.cx + d;
 }
 
 void TreeViewItem::interval()
@@ -487,21 +512,36 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 		);
 	}
 
-	int32_t image = (hasChildren() && isExpanded()) ? m_expandedImage : m_image;
-	if (image < 0)
-		image = m_image;
-
-	if (m_view->m_image && image >= 0)
+	if (m_view->m_image)
 	{
-		Rect rcImage = calculateImageRect();
-		int32_t d = m_view->m_image->getSize().cy;
-		canvas.drawBitmap(
-			rcImage.getTopLeft(),
-			Point(image * d, 0),
-			Size(d, d),
-			m_view->m_image,
-			BmAlpha
-		);
+		const int32_t d = m_view->m_image->getSize().cy;
+
+		for (int32_t i = 0; i < getImageCount(); ++i)
+		{
+			int32_t image = (hasChildren() && isExpanded()) ? getExpandedImage(i) : getImage(i);
+			if (image < 0)
+				image = getImage(i);
+
+			Rect rcImage = calculateImageRect();
+
+			if (image >= 0)
+				canvas.drawBitmap(
+					rcImage.getTopLeft() + Size(i * d, 0),
+					Point(image * d, 0),
+					Size(d, d),
+					m_view->m_image,
+					BmAlpha
+				);
+
+			if (getOverlayImage(i) >= 0)
+				canvas.drawBitmap(
+					rcImage.getTopLeft() + Size(i * d, 0),
+					Point(getOverlayImage(i) * d, 0),
+					Size(d, d),
+					m_view->m_image,
+					BmAlpha
+				);
+		}
 	}
 
 	if (!m_text.empty())

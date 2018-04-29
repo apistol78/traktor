@@ -114,7 +114,9 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 		return false;
 	m_typeList->addEventHandler< ui::MouseDoubleClickEvent >(this, &BrowseTypeDialog::eventListDoubleClick);
 
-	Ref< ui::custom::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"BROWSE_TYPE_GLOBAL"), 0, 1);
+	Ref< ui::custom::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"BROWSE_TYPE_GLOBAL"), 1);
+	groupRoot->setImage(0, 0, 1);
+
 	for (TypeInfoSet::iterator i = types.begin(); i != types.end(); ++i)
 	{
 		const TypeInfo* type = *i;
@@ -136,7 +138,8 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 			Ref< ui::custom::TreeViewItem > child = group->findChild(*j);
 			if (!child)
 			{
-				child = m_categoryTree->createItem(group, *j, 0, 1);
+				child = m_categoryTree->createItem(group, *j, 1);
+				child->setImage(0, 0, 1);
 				child->expand();
 			}
 			group = child;

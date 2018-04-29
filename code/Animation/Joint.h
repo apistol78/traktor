@@ -87,30 +87,6 @@ public:
 	 */
 	const float getRadius() const { return m_radius; }
 
-	/*! \brief Set joint limits enabled.
-	 */
-	void setEnableLimits(bool enableLimits) { m_enableLimits = enableLimits; }
-
-	/*! \brief Check if joint limits is enabled.
-	 */
-	bool getEnableLimits() const { return m_enableLimits; }
-
-	/*! \brief Set amount of twist allowed.
-	 */
-	void setTwistLimit(float twistLimit) { m_twistLimit = twistLimit; }
-
-	/*! \brief Get twist limit.
-	 */
-	float getTwistLimit() const { return m_twistLimit; }
-
-	/*! \brief Set cone angle limit.
-	 */
-	void setConeLimit(const Vector2& coneLimit) { m_coneLimit = coneLimit; }
-
-	/*! \brief Get cone angle limit.
-	 */
-	const Vector2& getConeLimit() const { return m_coneLimit; }
-
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
@@ -118,9 +94,6 @@ private:
 	std::wstring m_name;
 	Transform m_transform;
 	float m_radius;
-	bool m_enableLimits;
-	float m_twistLimit;
-	Vector2 m_coneLimit;
 };
 
 	}
