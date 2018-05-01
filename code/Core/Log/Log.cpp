@@ -14,6 +14,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadLocal.h"
 #include "Core/Thread/ThreadManager.h"
 
 namespace traktor
@@ -103,37 +104,37 @@ public:
 		m_localTarget = target;
 	}
 
-	virtual int32_t getIndent() const
+	virtual int32_t getIndent() const T_OVERRIDE T_FINAL
 	{
 		return m_buffer.getIndent();
 	}
 
-	virtual void setIndent(int32_t indent)
+	virtual void setIndent(int32_t indent) T_OVERRIDE T_FINAL
 	{
 		m_buffer.setIndent(indent);
 	}
 
-	virtual int32_t getDecimals() const
+	virtual int32_t getDecimals() const T_OVERRIDE T_FINAL
 	{
 		return m_buffer.getDecimals();
 	}
 
-	virtual void setDecimals(int32_t decimals)
+	virtual void setDecimals(int32_t decimals) T_OVERRIDE T_FINAL
 	{
 		m_buffer.setDecimals(decimals);
 	}
 
-	virtual bool getPushIndent() const
+	virtual bool getPushIndent() const T_OVERRIDE T_FINAL
 	{
 		return m_buffer.getPushIndent();
 	}
 
-	virtual void setPushIndent(bool pushIndent)
+	virtual void setPushIndent(bool pushIndent) T_OVERRIDE T_FINAL
 	{
 		m_buffer.setPushIndent(pushIndent);
 	}
 
-	virtual int32_t overflow(const wchar_t* buffer, int32_t count)
+	virtual int32_t overflow(const wchar_t* buffer, int32_t count) T_OVERRIDE T_FINAL
 	{
 		for (int32_t i = 0; i < count; ++i)
 		{
@@ -194,37 +195,37 @@ public:
 		return os;
 	}
 
-	virtual int32_t getIndent() const
+	virtual int32_t getIndent() const T_OVERRIDE T_FINAL
 	{
 		return getThreadLocalBuffer()->getIndent();
 	}
 
-	virtual void setIndent(int32_t indent)
+	virtual void setIndent(int32_t indent) T_OVERRIDE T_FINAL
 	{
 		getThreadLocalBuffer()->setIndent(indent);
 	}
 
-	virtual int32_t getDecimals() const
+	virtual int32_t getDecimals() const T_OVERRIDE T_FINAL
 	{
 		return getThreadLocalBuffer()->getDecimals();
 	}
 
-	virtual void setDecimals(int32_t decimals)
+	virtual void setDecimals(int32_t decimals) T_OVERRIDE T_FINAL
 	{
 		getThreadLocalBuffer()->setDecimals(decimals);
 	}
 
-	virtual bool getPushIndent() const
+	virtual bool getPushIndent() const T_OVERRIDE T_FINAL
 	{
 		return getThreadLocalBuffer()->getPushIndent();
 	}
 
-	virtual void setPushIndent(bool pushIndent)
+	virtual void setPushIndent(bool pushIndent) T_OVERRIDE T_FINAL
 	{
 		getThreadLocalBuffer()->setPushIndent(pushIndent);
 	}
 
-	virtual int32_t overflow(const wchar_t* buffer, int32_t count)
+	virtual int32_t overflow(const wchar_t* buffer, int32_t count) T_OVERRIDE T_FINAL
 	{
 		return getThreadLocalBuffer()->overflow(buffer, count);
 	}

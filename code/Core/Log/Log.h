@@ -10,9 +10,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <string>
 #include <vector>
 #include "Core/Io/OutputStream.h"
-#include "Core/Io/OutputStreamBuffer.h"
-#include "Core/Thread/Semaphore.h"
-#include "Core/Thread/ThreadLocal.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
