@@ -1,5 +1,3 @@
-#pragma optimize( "" , off )
-
 /*
 ================================================================================================
 CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
@@ -8,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <sstream>
 #include "Core/Io/IStream.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -25,36 +24,14 @@ namespace traktor
 
 inline std::wstring xmltows(const XML_Char* xmlstr, const XML_Char* term)
 {
-#if defined(XML_UNICODE)
-#	if defined(XML_UNICODE_WCHAR_T)
-	T_ASSERT (sizeof(XML_Char) == sizeof(wchar_t));
-	return std::wstring(xmlstr, term);
-#	else
-	std::wstringstream ss;
-	for (const XML_Char* s = xmlstr; s != term; ++s)
-		ss << wchar_t(*s);
-	return ss.str();
-#	endif
-#else
-	return mbstows(std::string(xmlstr, term));
-#endif
+	const static Utf8Encoding utf8enc;
+	return mbstows(utf8enc, std::string(xmlstr, term));
 }
 
 inline std::wstring xmltows(const XML_Char* xmlstr)
 {
-#if defined(XML_UNICODE)
-#	if defined(XML_UNICODE_WCHAR_T)
-	T_ASSERT (sizeof(XML_Char) == sizeof(wchar_t));
-	return xmlstr;
-#	else
-	std::wstringstream ss;
-	for (const XML_Char* s = xmlstr; *s; ++s)
-		ss << wchar_t(*s);
-	return ss.str();
-#	endif
-#else
-	return mbstows(xmlstr);
-#endif
+	const static Utf8Encoding utf8enc;
+	return mbstows(utf8enc, (const char*)xmlstr);
 }
 
 		}

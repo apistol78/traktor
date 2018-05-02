@@ -400,8 +400,6 @@
 						<item>XML_BUILDING_EXPAT</item>
 						<item>XML_POOR_ENTROPY</item>
 						<item>HAVE_MEMMOVE</item>
-						<item>XML_UNICODE</item>
-						<item>XML_UNICODE_WCHAR_T</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -434,8 +432,6 @@
 						<item>XML_BUILDING_EXPAT</item>
 						<item>XML_POOR_ENTROPY</item>
 						<item>HAVE_MEMMOVE</item>
-						<item>XML_UNICODE</item>
-						<item>XML_UNICODE_WCHAR_T</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>

@@ -1686,8 +1686,6 @@
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>XML_UNICODE</item>
-						<item>XML_UNICODE_WCHAR_T</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -1714,8 +1712,6 @@
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>XML_UNICODE</item>
-						<item>XML_UNICODE_WCHAR_T</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -1742,8 +1738,6 @@
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>XML_UNICODE</item>
-						<item>XML_UNICODE_WCHAR_T</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -1775,8 +1769,6 @@
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>XML_UNICODE</item>
-						<item>XML_UNICODE_WCHAR_T</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
