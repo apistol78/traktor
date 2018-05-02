@@ -1062,7 +1062,6 @@
 															<item>__ANDROID__</item>
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
-															<item>XML_UNICODE</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1094,7 +1093,6 @@
 															<item>__ANDROID__</item>
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
-															<item>XML_UNICODE</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
