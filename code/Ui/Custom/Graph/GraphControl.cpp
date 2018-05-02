@@ -476,6 +476,16 @@ void GraphControl::evenSpace(EvenSpace space)
 	}
 }
 
+Point GraphControl::clientToVirtual(const Point& cpt) const
+{
+	return cpt / m_scale - m_offset;
+}
+
+Point GraphControl::virtualToClient(const Point& vpt) const
+{
+	return (vpt + m_offset) * m_scale;
+}
+
 void GraphControl::beginSelectModification()
 {
 	m_nodeSelectionStates.resize(m_nodes.size());

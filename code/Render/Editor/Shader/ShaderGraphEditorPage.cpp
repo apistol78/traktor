@@ -651,9 +651,10 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		if (typeInfo)
 		{
 			m_document->push();
+
 			createNode(
 				typeInfo,
-				m_editorGraph->getInnerRect().getCenter() - m_editorGraph->getOffset()
+				m_editorGraph->clientToVirtual(m_editorGraph->getInnerRect().getCenter())
 			);
 		}
 		m_editorGraph->setFocus();
@@ -799,7 +800,10 @@ void ShaderGraphEditorPage::createNode(const TypeInfo* nodeType, const ui::Point
 		return;
 
 	// Add to shader graph.
-	shaderNode->setPosition(std::pair< int, int >(at.x, at.y));
+	shaderNode->setPosition(std::pair< int, int >(
+		ui::invdpi96(at.x),
+		ui::invdpi96(at.y)
+	));
 	m_shaderGraph->addNode(shaderNode);
 
 	// Create editor node from shader node.
@@ -1073,8 +1077,11 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 	if (command == L"ShaderGraph.Editor.Create")	// Create
 	{
 		m_document->push();
-		const TypeInfo& type = c_nodeCategories[command.getId()].type;
-		createNode(&type, event->getPosition() - m_editorGraph->getOffset());
+
+		createNode(
+			&c_nodeCategories[command.getId()].type,
+			m_editorGraph->clientToVirtual(event->getPosition())
+		);
 	}
 	else
 		handleCommand(command);
