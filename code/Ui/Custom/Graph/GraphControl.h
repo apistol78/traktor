@@ -147,6 +147,10 @@ public:
 
 	const Size& getOffset() const { return m_offset; }
 
+	Point clientToVirtual(const Point& cpt) const;
+
+	Point virtualToClient(const Point& vpt) const;
+
 private:
 	Ref< const PaintSettings > m_paintSettings;
 	Ref< IBitmap > m_imageBackground;
