@@ -172,4 +172,4 @@ LINK_FLAG_OUTPUT=-o
 LINK_LIBS=
 
 # Binary include
-BINARY_INCLUDE=BinaryInclude
+BINARY_INCLUDE=$(TRAKTOR_HOME)/bin/osx/BinaryInclude

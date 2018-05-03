@@ -9,11 +9,32 @@ end
 
 import(traktor)
 
+local function split(s, delimiter)
+    local result = {}
+    for match in (s .. delimiter):gmatch("(.-)" .. delimiter) do
+    	if match ~= "" then
+        	table.insert(result, match)
+        end
+    end
+    return result
+end
+
+local function insertLast(t, iv)
+	for i, v in ipairs(t) do
+		if v == iv then
+			table.remove(t, i)
+			break
+		end
+	end
+	table.insert(t, iv)
+end
+
 -- Read configuration from environment.
 local os = OS.getInstance():getEnvironment("MAKE_OS")
 local dialect = OS.getInstance():getEnvironment("MAKE_DIALECT")
 local format = OS.getInstance():getEnvironment("MAKE_FORMAT")
 local include = OS.getInstance():getEnvironment("MAKE_INCLUDE")
+local architectures = split(OS.getInstance():getEnvironment("MAKE_ARCHITECTURES"), ",") -- "armv7,armv7s,arm64,i386,x86_64"
 
 dofile(format)
 
@@ -25,16 +46,6 @@ local function printWithColor(c, s)
 	elseif os == "linux" then
 		output:printLn("\t@printf '\\e[0;" .. c .. "m" .. s .. "\\e[0m\\n'")
 	end
-end
-
-local function insertLast(t, iv)
-	for i, v in ipairs(t) do
-		if v == iv then
-			table.remove(t, i)
-			break
-		end
-	end
-	table.insert(t, iv)
 end
 
 local function collectDependencies(
@@ -375,10 +386,20 @@ output:printLn(".PHONY: clean")
 output:printLn("clean :")
 for i = 0, configurations:size() - 1 do
 	local configuration = configurations:get(i)
-	if os == "linux" or os == "osx" then
-		output:printLn("\trm -Rf " .. configuration:getName())
-	elseif os == "windows" then
-		output:printLn("\tdel /F /Q " .. configuration:getName())
+	if #architectures > 0 then
+		for _, a in ipairs(architectures) do
+			if os == "linux" or os == "osx" then
+				output:printLn("\trm -Rf " .. configuration:getName() .. "_" .. a)
+			elseif os == "windows" then
+				output:printLn("\tdel /F /Q " .. configuration:getName() .. "_" .. a)
+			end			
+		end
+	else
+		if os == "linux" or os == "osx" then
+			output:printLn("\trm -Rf " .. configuration:getName())
+		elseif os == "windows" then
+			output:printLn("\tdel /F /Q " .. configuration:getName())
+		end
 	end
 end
 
@@ -409,58 +430,185 @@ for i = 0, configurations:size() - 1 do
 end
 
 ------------------------------------------------
-output:printLn("")
+if #architectures > 0 then
 
--- Link targets.
-for i = 0, configurations:size() - 1 do
-	local configuration = configurations:get(i)
-	local profile = configuration:getTargetProfile()
-	local format = configuration:getTargetFormat()
-
-	output:print(configuration:getName() .. "_OBJS=")
-	for _, file in ipairs(sourceFiles) do
-		local f = fileSystem:getRelativePath(file, sourcePath)
-		assert (f ~= nil)
-		output:printLn(" \\")
-		output:print("\t" .. configuration:getName() .. "/" .. OBJNAME(f))
-	end
+	------------------------------------------------
 	output:printLn("")
 
-	output:printLn(configuration:getName() .. " : \\")
-	output:printLn("\t$(" .. configuration:getName() .. "_OBJS)")
+	-- Architecture targets.
+	for i = 0, configurations:size() - 1 do
+		local configuration = configurations:get(i)
+		local profile = configuration:getTargetProfile()
+		local format = configuration:getTargetFormat()
 
-	printWithColor(35, "Assembling " .. project:getName() .. "...")
+		local configuration = configurations:get(i)
+		output:printLn(".PHONY: " .. configuration:getName())
+		output:print(configuration:getName() .. " :")
+		for _, a in ipairs(architectures) do
+			output:printLn(" \\")
+			output:print("\t" .. configuration:getName() .. "_" .. a)
+		end
+		output:printLn("")
 
-	if dialect == "nmake" then
-		output:printLn("\t-@mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
-	elseif dialect == "make" then
-		if os == "windows" then
+		if dialect == "nmake" then
 			output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
-		else
-			output:printLn("\t@mkdir -p ../" .. configuration:getName())
+		elseif dialect == "make" then
+			if os == "windows" then
+				output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
+			else
+				output:printLn("\t@mkdir -p ../" .. configuration:getName())
+			end
+		end
+
+		if format == "StaticLibrary" then
+			local productName = PRODUCTNAME(solution, project, configuration)
+			output:print("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName)
+			for _, a in ipairs(architectures) do
+				output:print(" " ..configuration:getName() .. "_" .. a .. "/" .. productName)
+			end
+			output:printLn("")
+		end
+
+		local aggregationItems = configuration:getAggregationItems()
+		for i = 0, aggregationItems:size() - 1 do
+			local aggregationItem = aggregationItems:get(i)
+
+			local aggregateOutputPath = Path(solution:getAggregateOutputPath())
+			local sourceFile = Path("../" .. configuration:getName()):concat(Path(aggregationItem:getSourceFile()))
+			local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
+
+			if os == "windows" then
+				output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
+			elseif os == "osx" or os == "linux" then
+				printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
+				output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+				output:printLn("\t@-cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+			end
+		end
+
+		output:printLn("")
+	end
+
+	------------------------------------------------
+
+	-- Link targets.
+	for i = 0, configurations:size() - 1 do
+		local configuration = configurations:get(i)
+		local profile = configuration:getTargetProfile()
+		local format = configuration:getTargetFormat()
+
+		for _, a in ipairs(architectures) do
+			output:print(configuration:getName() .. "_" .. a .. "_OBJS=")
+			for _, file in ipairs(sourceFiles) do
+				local f = fileSystem:getRelativePath(file, sourcePath)
+				assert (f ~= nil)
+				output:printLn(" \\")
+				output:print("\t" .. configuration:getName() .. "_" .. a .. "/" .. OBJNAME(f))
+			end
+			output:printLn("")
+
+			output:printLn(configuration:getName() .. "_" .. a .. " : \\")
+			output:printLn("\t$(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
+
+			printWithColor(35, "Assembling " .. project:getName() .. " (" .. a .. ")...")
+
+			if dialect == "nmake" then
+				output:printLn("\t-@mkdir \"../" .. configuration:getName() .. "_" .. a .. "\" 1>nul 2>&1")
+			elseif dialect == "make" then
+				if os == "windows" then
+					output:printLn("\t-mkdir \"../" .. configuration:getName() .. "_" .. a .. "\" 1>nul 2>&1")
+				else
+					output:printLn("\t@mkdir -p ../" .. configuration:getName() .. "_" .. a)
+				end
+			end
+
+			LINK(
+				solution,
+				project,
+				configuration,
+				a,
+				sourcePath,
+				sourceFiles,
+				libraryPaths[i],
+				libraries[i],
+				externalLibraries[i],
+				definitionFile,
+				output
+			)
+
+			output:printLn("")
 		end
 	end
 
-	LINK(solution, project, configuration, sourcePath, sourceFiles, libraryPaths[i], libraries[i], externalLibraries[i], definitionFile, output)
+else -- No architectures
 
-	local aggregationItems = configuration:getAggregationItems()
-	for i = 0, aggregationItems:size() - 1 do
-		local aggregationItem = aggregationItems:get(i)
-
-		local aggregateOutputPath = Path(solution:getAggregateOutputPath())
-		local sourceFile = Path("../" .. configuration:getName()):concat(Path(aggregationItem:getSourceFile()))
-		local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
-
-		if os == "windows" then
-			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
-		elseif os == "osx" or os == "linux" then
-			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
-			output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
-			output:printLn("\t@-cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
-		end
-	end
-
+	------------------------------------------------
 	output:printLn("")
+
+	-- Link targets.
+	for i = 0, configurations:size() - 1 do
+		local configuration = configurations:get(i)
+		local profile = configuration:getTargetProfile()
+		local format = configuration:getTargetFormat()
+
+		output:print(configuration:getName() .. "_OBJS=")
+		for _, file in ipairs(sourceFiles) do
+			local f = fileSystem:getRelativePath(file, sourcePath)
+			assert (f ~= nil)
+			output:printLn(" \\")
+			output:print("\t" .. configuration:getName() .. "/" .. OBJNAME(f))
+		end
+		output:printLn("")
+
+		output:printLn(configuration:getName() .. " : \\")
+		output:printLn("\t$(" .. configuration:getName() .. "_OBJS)")
+
+		printWithColor(35, "Assembling " .. project:getName() .. "...")
+
+		if dialect == "nmake" then
+			output:printLn("\t-@mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
+		elseif dialect == "make" then
+			if os == "windows" then
+				output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
+			else
+				output:printLn("\t@mkdir -p ../" .. configuration:getName())
+			end
+		end
+
+		LINK(
+			solution,
+			project,
+			configuration,
+			nil,
+			sourcePath,
+			sourceFiles,
+			libraryPaths[i],
+			libraries[i],
+			externalLibraries[i],
+			definitionFile,
+			output
+		)
+
+		local aggregationItems = configuration:getAggregationItems()
+		for i = 0, aggregationItems:size() - 1 do
+			local aggregationItem = aggregationItems:get(i)
+
+			local aggregateOutputPath = Path(solution:getAggregateOutputPath())
+			local sourceFile = Path("../" .. configuration:getName()):concat(Path(aggregationItem:getSourceFile()))
+			local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
+
+			if os == "windows" then
+				output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
+			elseif os == "osx" or os == "linux" then
+				printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
+				output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+				output:printLn("\t@-cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+			end
+		end
+
+		output:printLn("")
+	end
+
 end
 
 ------------------------------------------------
@@ -511,39 +659,94 @@ for i = 0, configurations:size() - 1 do
 		local f1 = fileSystem:getRelativePath(file, projectPath)
 		assert (f1 ~= nil)
 
-		output:printLn(configuration:getName() .. "/" .. OBJNAME(f) .. " : \\")
-		output:print("\t" .. f1:getPathName())
-		for dep, _ in pairs(c.dependencies) do
-			local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
-			assert (f2 ~= nil)
-			output:printLn(" \\")
-			output:print("\t" .. f2:getPathName())
-		end
+		if #architectures > 0 then
+			for _, a in ipairs(architectures) do
 
-		-- Add resource builds as dependency to all targets to ensure
-		-- resources are built first and always.
-		for _, file in ipairs(resourceFiles) do
-			output:printLn(" \\")
-			output:print("\t" .. configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h")
-		end		
+				output:printLn(configuration:getName() .. "_" .. a .. "/" .. OBJNAME(f) .. " : \\")
+				output:print("\t" .. f1:getPathName())
+				for dep, _ in pairs(c.dependencies) do
+					local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
+					assert (f2 ~= nil)
+					output:printLn(" \\")
+					output:print("\t" .. f2:getPathName())
+				end
 
-		output:printLn("")
+				-- Add resource builds as dependency to all targets to ensure
+				-- resources are built first and always.
+				for _, file in ipairs(resourceFiles) do
+					output:printLn(" \\")
+					output:print("\t" .. configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h")
+				end		
 
-		printWithColor(35, "Compiling " .. f:getFileName() .. "...")
+				output:printLn("")
 
-		if dialect == "nmake" then
-			output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")
-		elseif dialect == "make" then
-			if os == "windows" then
-				output:printLn("\t-mkdir \"$(@D:\\=)\"")
-			else
-				output:printLn("\t@mkdir -p $(@D:\\=)")
+				printWithColor(35, "Compiling " .. f:getFileName() .. " (" .. a .. ")...")
+
+				if dialect == "nmake" then
+					output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")
+				elseif dialect == "make" then
+					if os == "windows" then
+						output:printLn("\t-mkdir \"$(@D:\\=)\"")
+					else
+						output:printLn("\t@mkdir -p $(@D:\\=)")
+					end
+				end
+
+				CC(
+					solution,
+					project,
+					configuration,
+					a,
+					f1,
+					"$@",
+					output
+				)
+
+				output:printLn("")
 			end
+		else
+			output:printLn(configuration:getName() .. "/" .. OBJNAME(f) .. " : \\")
+			output:print("\t" .. f1:getPathName())
+			for dep, _ in pairs(c.dependencies) do
+				local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
+				assert (f2 ~= nil)
+				output:printLn(" \\")
+				output:print("\t" .. f2:getPathName())
+			end
+
+			-- Add resource builds as dependency to all targets to ensure
+			-- resources are built first and always.
+			for _, file in ipairs(resourceFiles) do
+				output:printLn(" \\")
+				output:print("\t" .. configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h")
+			end		
+
+			output:printLn("")
+
+			printWithColor(35, "Compiling " .. f:getFileName() .. "...")
+
+			if dialect == "nmake" then
+				output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")
+			elseif dialect == "make" then
+				if os == "windows" then
+					output:printLn("\t-mkdir \"$(@D:\\=)\"")
+				else
+					output:printLn("\t@mkdir -p $(@D:\\=)")
+				end
+			end
+
+			CC(
+				solution,
+				project,
+				configuration,
+				nil,
+				f1,
+				"$@",
+				output
+			)
+
+			output:printLn("")
 		end
-
-		CC(solution, project, configuration, f1, "$@", output)
-
-		output:printLn("")
 	end
 end
 

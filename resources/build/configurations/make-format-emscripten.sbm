@@ -67,7 +67,7 @@ function INCLUDE(solution, project, configuration, includePaths, libraryPaths, o
 	end	
 end
 
-function CC(solution, project, configuration, filePath, outputPath, output)
+function CC(solution, project, configuration, architecture, filePath, outputPath, output)
 	local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
 	local profile = configuration:getTargetProfile()
 	local format = configuration:getTargetFormat()
@@ -96,7 +96,7 @@ function CC(solution, project, configuration, filePath, outputPath, output)
 	end
 end
 
-function LINK(solution, project, configuration, sourcePath, sourceFiles, libraryPaths, libraries, externalLibraries, definitionFile, output)
+function LINK(solution, project, configuration, architecture, sourcePath, sourceFiles, libraryPaths, libraries, externalLibraries, definitionFile, output)
 	local os = OS.getInstance():getEnvironment("MAKE_OS")
 	local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
 	local profile = configuration:getTargetProfile()

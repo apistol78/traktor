@@ -8,6 +8,7 @@ export MAKE_OS=osx
 export MAKE_DIALECT=make
 export MAKE_FORMAT=$TRAKTOR_HOME/resources/build/configurations/make-format.sbm
 export MAKE_INCLUDE="\$(TRAKTOR_HOME)/resources/build/configurations/make-config-ios.inc"
+export MAKE_ARCHITECTURES="armv7,armv7s,arm64,i386,x86_64"
 
 # Used by default format.
 export MAKE_TOOLCHAIN=clang
@@ -25,5 +26,5 @@ $SOLUTIONBUILDER \
 $SOLUTIONBUILDER \
 	-f=make2 \
 	-make-solution-template=$TRAKTOR_HOME/resources/build/configurations/make-solution.sbm \
-	-make-project-template=$TRAKTOR_HOME/resources/build/configurations/make-project-ios.sbm \
+	-make-project-template=$TRAKTOR_HOME/resources/build/configurations/make-project.sbm \
 	$TRAKTOR_HOME/resources/build/TraktorIOS.xms
