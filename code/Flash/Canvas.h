@@ -35,7 +35,9 @@ class Bitmap;
 /*! \brief Dynamic canvas.
  * \ingroup Flash
  */
-#pragma warning( disable:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( disable:4324 )
+#endif
 class T_DLLCLASS Canvas : public Object
 {
 	T_RTTI_CLASS;

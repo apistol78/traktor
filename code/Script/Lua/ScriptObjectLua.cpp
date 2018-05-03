@@ -12,12 +12,6 @@ namespace traktor
 {
 	namespace script
 	{
-		namespace
-		{
-
-const int32_t c_tableKey_instance = -2;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptObjectLua", ScriptObjectLua, IRuntimeObject)
 

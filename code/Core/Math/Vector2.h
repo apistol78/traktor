@@ -36,13 +36,17 @@ namespace traktor
 class T_DLLCLASS Vector2
 {
 public:
-#pragma warning( disable:4201 )
+#if defined (_MSC_VER)
+#	pragma warning( disable:4201 )
+#endif
 	union
 	{
 		float e[2];
 		struct { float x, y; };
 	};
-#pragma warning( default:4201 )
+#if defined (_MSC_VER)
+#	pragma warning( default:4201 )
+#endif
 	
 	T_MATH_INLINE Vector2();
 

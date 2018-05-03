@@ -29,7 +29,9 @@ class ISerializer;
 	namespace flash
 	{
 
-#pragma warning( disable:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( disable:4324 )
+#endif
 
 /*! \brief Segment type.
  * \ingroup Flash
@@ -183,7 +185,9 @@ private:
 	void transform(CoordinateMode from, CoordinateMode to, int32_t& x, int32_t& y) const;
 };
 
-#pragma warning( default:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( default:4324 )
+#endif
 
 	}
 }

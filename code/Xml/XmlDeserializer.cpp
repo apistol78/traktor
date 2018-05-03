@@ -1,5 +1,3 @@
-#pragma optimize( "" , off )
-
 /*
 ================================================================================================
 CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION

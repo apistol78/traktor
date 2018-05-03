@@ -20,7 +20,9 @@ namespace traktor
 class CharacterInstance;
 class Font;
 
-#pragma warning( disable:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( disable:4324 )
+#endif
 
 /*! \brief Text layout engine.
  * \ingroup Flash
@@ -125,6 +127,10 @@ private:
 	float m_width;
 	float m_height;
 };
+
+#if defined (_MSC_VER)
+#	pragma warning( default:4324 )
+#endif
 
 	}
 }

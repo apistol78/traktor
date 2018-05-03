@@ -33,7 +33,9 @@ class IActionVMImage;
 /*! \brief Character instance.
  * \ingroup Flash
  */
-#pragma warning( disable:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( disable:4324 )
+#endif
 class T_DLLCLASS CharacterInstance : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
@@ -287,7 +289,9 @@ private:
 	bool m_visible;
 	bool m_enabled;
 };
-#pragma warning( default:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( default:4324 )
+#endif
 
 	}
 }

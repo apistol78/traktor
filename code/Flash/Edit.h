@@ -23,7 +23,9 @@ namespace traktor
 	namespace flash
 	{
 
-#pragma warning( disable:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( disable:4324 )
+#endif
 
 /*! \brief Dynamic text field.
  * \ingroup Flash
@@ -186,7 +188,9 @@ private:
 	bool m_renderHtml;
 };
 
-#pragma warning( default:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( default:4324 )
+#endif
 
 	}
 }
