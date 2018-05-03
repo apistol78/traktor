@@ -73,7 +73,7 @@ struct EnumerateData
 struct LoadData
 {
 	PsnSaveData* m_this;
-	std::vector< uint8_t > m_buffer;
+	AlignedVector< uint8_t > m_buffer;
 	bool m_bufferPending;
 
 	LoadData(PsnSaveData* this_)
@@ -87,13 +87,13 @@ struct SaveDataHelper
 {
 	PsnSaveData* m_this;
 	SaveDataDesc m_desc;
-	const std::vector< uint8_t >& m_dataBuffer;
+	const AlignedVector< uint8_t >& m_dataBuffer;
 	const uint8_t* m_iconBuffer;
 	int32_t m_iconSize;
 	bool m_dataPending;
 	bool m_iconPending;
 
-	SaveDataHelper(PsnSaveData* this_, const SaveDataDesc& desc, const std::vector< uint8_t >& dataBuffer, const uint8_t* iconBuffer, int32_t iconSize)
+	SaveDataHelper(PsnSaveData* this_, const SaveDataDesc& desc, const AlignedVector< uint8_t >& dataBuffer, const uint8_t* iconBuffer, int32_t iconSize)
 	:	m_this(this_)
 	,	m_desc(desc)
 	,	m_dataBuffer(dataBuffer)

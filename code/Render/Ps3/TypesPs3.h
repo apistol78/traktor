@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_TypesPs3_H
 #define traktor_render_TypesPs3_H
 
+#include "Core/Containers/AlignedVector.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Types.h"
 
@@ -90,7 +91,7 @@ struct ProgramScalar
 {
 	uint16_t vertexRegisterIndex;
 	uint16_t vertexRegisterCount;
-	std::vector< FragmentOffset > fragmentOffsets;
+	AlignedVector< FragmentOffset > fragmentOffsets;
 	uint16_t offset;
 };
 

@@ -62,6 +62,8 @@ public:
 
 	virtual void discard();
 
+	virtual bool isContentValid() const;
+
 	virtual bool read(int index, void* buffer) const;
 
 	const CellGcmTexture& getGcmDepthTexture();
@@ -80,6 +82,8 @@ public:
 
 	bool usingPrimaryDepthStencil() const { return m_usingPrimaryDepthStencil; }
 
+	void setContentValid(bool contentValid) { m_contentValid = contentValid; }
+
 private:
 	TileArea& m_tileArea;
 #if defined(T_RENDER_PS3_USE_ZCULL)
@@ -96,6 +100,7 @@ private:
 	TileArea::TileInfo m_zcullInfo;
 #endif
 	bool m_usingPrimaryDepthStencil;
+	bool m_contentValid;
 	int32_t& m_counter;
 };
 

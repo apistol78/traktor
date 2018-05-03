@@ -33,7 +33,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Animation.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -62,7 +62,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Animation.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -167,7 +167,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Core.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -204,7 +204,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Core.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -517,7 +517,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -546,7 +546,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -613,7 +613,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Compact.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -642,7 +642,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Compact.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -696,7 +696,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Local.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -725,7 +725,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Local.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -779,7 +779,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -808,7 +808,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -871,7 +871,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.Client.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -900,7 +900,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.Client.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -963,7 +963,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Drawing.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -996,7 +996,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Drawing.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -1097,7 +1097,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Flash.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -1127,7 +1127,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Flash.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -1272,7 +1272,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Compress.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -1305,7 +1305,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Compress.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -1403,7 +1403,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Html.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -1432,7 +1432,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Html.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -1485,7 +1485,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Render.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -1514,7 +1514,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Render.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -1621,7 +1621,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Resource.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -1650,7 +1650,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Resource.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -1708,7 +1708,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Sound.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -1742,7 +1742,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Sound.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -1853,7 +1853,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Graphics.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -1882,7 +1882,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Graphics.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -1932,7 +1932,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.I18N.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -1961,7 +1961,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.I18N.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -2010,7 +2010,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -2039,7 +2039,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -2097,7 +2097,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Mesh.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -2126,7 +2126,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Mesh.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -2260,7 +2260,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Net.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -2293,7 +2293,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Net.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -2414,7 +2414,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -2443,7 +2443,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -2534,7 +2534,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -2563,7 +2563,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -2627,7 +2627,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Heightfield.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -2656,7 +2656,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Heightfield.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -2711,7 +2711,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.Bullet.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -2738,7 +2738,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.Bullet.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -2815,7 +2815,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Ps3.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -2850,7 +2850,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Ps3.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -2923,7 +2923,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Scene.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -2952,7 +2952,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Scene.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -3011,7 +3011,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -3040,7 +3040,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -3096,7 +3096,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.Lua.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -3127,7 +3127,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.Lua.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -3188,7 +3188,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -3217,7 +3217,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -3375,7 +3375,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Terrain.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -3404,7 +3404,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Terrain.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -3473,7 +3473,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Theater.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -3502,7 +3502,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Theater.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -3556,7 +3556,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Weather.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -3585,7 +3585,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Weather.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -3676,7 +3676,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.World.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -3705,7 +3705,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.World.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -3806,7 +3806,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Xml.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -3836,7 +3836,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Xml.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -3892,7 +3892,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Ps3.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -3921,7 +3921,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Ps3.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -3976,7 +3976,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>UnitTest.exe</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -4006,7 +4006,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>UnitTest.exe</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -4081,7 +4081,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.Ps3.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -4116,7 +4116,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.Ps3.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -4193,7 +4193,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Psn.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -4227,7 +4227,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Psn.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -4283,7 +4283,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Video.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -4314,7 +4314,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Video.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -4394,7 +4394,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Game.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -4424,7 +4424,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Game.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -4624,7 +4624,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Amalgam.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -4653,7 +4653,7 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Amalgam.lib</sourceFile>
-										<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -4716,7 +4716,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Game.App.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -4745,7 +4745,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Game.App.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -4814,7 +4814,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Ai.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -4844,7 +4844,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Ai.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -4909,7 +4909,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -4938,7 +4938,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -4988,7 +4988,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.Sqlite3.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -5018,7 +5018,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.Sqlite3.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -5078,7 +5078,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Local.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -5107,7 +5107,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Local.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -5172,7 +5172,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Telemetry.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -5201,7 +5201,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Telemetry.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
@@ -5256,7 +5256,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Json.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
@@ -5286,7 +5286,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Json.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_PPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>

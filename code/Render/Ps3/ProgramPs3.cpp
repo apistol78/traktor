@@ -38,7 +38,7 @@ struct UCodeCacheEntry
 };
 
 Semaphore g_ucodeCacheLock;
-std::map< uint32_t, UCodeCacheEntry > g_ucodeCache;
+SmallMap< uint32_t, UCodeCacheEntry > g_ucodeCache;
 
 bool acquireProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapObject*& outUCode)
 {
@@ -59,7 +59,7 @@ bool acquireProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapOb
 	Adler32 a32; a32.begin(); a32.feed(ucode, ucodeSize); a32.end();
 	uint32_t hash = a32.get();
 
-	std::map< uint32_t, UCodeCacheEntry >::iterator i = g_ucodeCache.find(hash);
+	SmallMap< uint32_t, UCodeCacheEntry >::iterator i = g_ucodeCache.find(hash);
 	if (i == g_ucodeCache.end())
 	{
 		outUCode = memoryHeap->alloc(ucodeSize, 64, false);
@@ -85,7 +85,7 @@ bool acquireProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapOb
 void releaseProgramUCode(MemoryHeapObject* ucode)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_ucodeCacheLock);
-	for (std::map< uint32_t, UCodeCacheEntry >::iterator i = g_ucodeCache.begin(); i != g_ucodeCache.end(); ++i)
+	for (SmallMap< uint32_t, UCodeCacheEntry >::iterator i = g_ucodeCache.begin(); i != g_ucodeCache.end(); ++i)
 	{
 		if (i->second.ucode == ucode)
 		{
@@ -168,7 +168,7 @@ bool ProgramPs3::create(MemoryHeap* memoryHeapLocal, MemoryHeap* memoryHeapMain,
 	m_vertexSamplers = resource->m_vertexSamplers;
 	m_pixelSamplers = resource->m_pixelSamplers;
 
-	for (std::map< std::wstring, ScalarParameter >::const_iterator i = resource->m_scalarParameterMap.begin(); i != resource->m_scalarParameterMap.end(); ++i)
+	for (SmallMap< std::wstring, ScalarParameter >::const_iterator i = resource->m_scalarParameterMap.begin(); i != resource->m_scalarParameterMap.end(); ++i)
 	{
 		handle_t parameterHandle = getParameterHandle(i->first);
 		m_scalarParameterMap.insert(std::make_pair(
@@ -180,7 +180,7 @@ bool ProgramPs3::create(MemoryHeap* memoryHeapLocal, MemoryHeap* memoryHeapMain,
 #endif
 	}
 
-	for (std::map< std::wstring, uint32_t >::const_iterator i = resource->m_textureParameterMap.begin(); i != resource->m_textureParameterMap.end(); ++i)
+	for (SmallMap< std::wstring, uint32_t >::const_iterator i = resource->m_textureParameterMap.begin(); i != resource->m_textureParameterMap.end(); ++i)
 		m_textureParameterMap.insert(std::make_pair(
 			getParameterHandle(i->first),
 			i->second
@@ -499,7 +499,7 @@ void ProgramPs3::bind(StateCachePs3& stateCache, const float targetSize[], uint3
 		// Set vertex program constants.
 		if (m_dirty & DfVertex)
 		{
-			for (std::vector< ProgramScalar >::iterator i = m_vertexScalars.begin(); i != m_vertexScalars.end(); ++i)
+			for (AlignedVector< ProgramScalar >::iterator i = m_vertexScalars.begin(); i != m_vertexScalars.end(); ++i)
 				stateCache.setVertexShaderConstant(i->vertexRegisterIndex, i->vertexRegisterCount, &m_scalarParameterData[i->offset]);
 		}
 
@@ -538,9 +538,9 @@ void ProgramPs3::bind(StateCachePs3& stateCache, const float targetSize[], uint3
 			m_patchedPixelShaderUCode = patchQueue[m_patchCounter++];
 
 			uint8_t* patchedPixelShaderUCode = (uint8_t*)m_patchedPixelShaderUCode->getPointer();
-			for (std::vector< ProgramScalar >::const_iterator i = m_pixelScalars.begin(); i != m_pixelScalars.end(); ++i)
+			for (AlignedVector< ProgramScalar >::const_iterator i = m_pixelScalars.begin(); i != m_pixelScalars.end(); ++i)
 			{
-				for (std::vector< FragmentOffset >::const_iterator j = i->fragmentOffsets.begin(); j != i->fragmentOffsets.end(); ++j)
+				for (AlignedVector< FragmentOffset >::const_iterator j = i->fragmentOffsets.begin(); j != i->fragmentOffsets.end(); ++j)
 				{
 					const float* sv = &m_scalarParameterData[i->offset + j->parameterOffset];
 					uint32_t* uc = (uint32_t*)&patchedPixelShaderUCode[j->ucodeOffset];
@@ -550,7 +550,7 @@ void ProgramPs3::bind(StateCachePs3& stateCache, const float targetSize[], uint3
 				}
 			}
 
-			for (std::vector< uint32_t >::const_iterator i = m_pixelTargetSizeUCodeOffsets.begin(); i != m_pixelTargetSizeUCodeOffsets.end(); ++i)
+			for (AlignedVector< uint32_t >::const_iterator i = m_pixelTargetSizeUCodeOffsets.begin(); i != m_pixelTargetSizeUCodeOffsets.end(); ++i)
 			{
 				uint32_t* uc = (uint32_t*)&patchedPixelShaderUCode[*i];
 				writeFragmentScalar(&uc[0], m_targetSize[0]);
@@ -560,7 +560,7 @@ void ProgramPs3::bind(StateCachePs3& stateCache, const float targetSize[], uint3
 			++outPatchCounter;
 		}
 
-		for (std::vector< ProgramSampler >::iterator i = m_pixelSamplers.begin(); i != m_pixelSamplers.end(); ++i)
+		for (AlignedVector< ProgramSampler >::iterator i = m_pixelSamplers.begin(); i != m_pixelSamplers.end(); ++i)
 		{
 			ITexture* texture = m_textureParameterData[i->texture];
 			if (texture)

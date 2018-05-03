@@ -35,7 +35,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.JobMulConst.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -66,7 +66,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.JobMulConst.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -112,7 +112,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Core.lib</sourceFile>
+										<sourceFile>libTraktor.Core.a</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -143,7 +143,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Core.lib</sourceFile>
+										<sourceFile>libTraktor.Core.a</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -338,7 +338,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.JobAddMulConst.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -369,7 +369,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.JobAddMulConst.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -421,7 +421,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.JobStretch.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -453,7 +453,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.JobStretch.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -505,7 +505,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobDragModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -537,7 +537,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobDragModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -589,7 +589,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobGravityModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -621,7 +621,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobGravityModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -673,7 +673,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobIntegrateModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -705,7 +705,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobIntegrateModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -757,7 +757,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobPlaneCollisionModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -789,7 +789,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobPlaneCollisionModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -841,7 +841,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobSizeModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -873,7 +873,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobSizeModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -925,7 +925,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobVortexModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -957,7 +957,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobVortexModifier.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -1010,7 +1010,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobPointRenderer.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -1042,7 +1042,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.JobPointRenderer.ppu.o</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -1104,7 +1104,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_Broadphase.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -1145,7 +1145,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_Broadphase.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -1237,7 +1237,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_BulletCD.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -1278,7 +1278,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_BulletCD.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -1609,7 +1609,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_Integrate.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -1649,7 +1649,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_Integrate.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -1764,7 +1764,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_ConstraintSolver.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/debugstatic</targetPath>
+							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
@@ -1806,7 +1806,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>PS3_SPURS_ConstraintSolver.lib</sourceFile>
-							<targetPath>$(AGGREGATE_OUTPUT_PATH_SPU)/releasestatic</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>

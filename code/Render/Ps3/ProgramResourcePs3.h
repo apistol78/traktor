@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_ProgramResourcePs3_H
 #define traktor_render_ProgramResourcePs3_H
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Render/Ps3/TypesPs3.h"
 #include "Render/Ps3/Blob.h"
 #include "Render/Resource/ProgramResource.h"
@@ -35,15 +35,15 @@ private:
 
 	Blob m_vertexShaderBin;
 	Blob m_pixelShaderBin;
-	std::vector< ProgramScalar > m_vertexScalars;
-	std::vector< ProgramScalar > m_pixelScalars;
-	std::vector< ProgramSampler > m_vertexSamplers;
-	std::vector< ProgramSampler > m_pixelSamplers;
-	std::map< std::wstring, ScalarParameter > m_scalarParameterMap;
-	std::map< std::wstring, uint32_t > m_textureParameterMap;
+	AlignedVector< ProgramScalar > m_vertexScalars;
+	AlignedVector< ProgramScalar > m_pixelScalars;
+	AlignedVector< ProgramSampler > m_vertexSamplers;
+	AlignedVector< ProgramSampler > m_pixelSamplers;
+	SmallMap< std::wstring, ScalarParameter > m_scalarParameterMap;
+	SmallMap< std::wstring, uint32_t > m_textureParameterMap;
 	uint32_t m_scalarParameterDataSize;
 	uint32_t m_textureParameterDataSize;
-	std::vector< uint8_t > m_inputSignature;
+	AlignedVector< uint8_t > m_inputSignature;
 	RenderStateGCM m_renderState;
 };
 

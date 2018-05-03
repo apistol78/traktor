@@ -94,9 +94,9 @@ bool RenderSystemPs3::create(const RenderSystemDesc& desc)
 
 	log::info << 
 		L"PS3 render system created" << Endl <<
-		L"\tLocal address 0x" << config.localAddress << Endl <<
+		L"\tLocal address " << (uint64_t)config.localAddress << Endl <<
 		L"\t      size " << config.localSize / (1024 * 1024) << L" MiB" << Endl <<
-		L"\tMain address 0x" << mainAddr << Endl <<
+		L"\tMain address " << (uint64_t)mainAddr << Endl <<
 		L"\t      size " << c_mainSize / (1024 * 1024) << L" MiB" << Endl;
 
 	// Get video state.

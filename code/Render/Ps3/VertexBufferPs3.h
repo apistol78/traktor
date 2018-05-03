@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_VertexBufferPs3_H
 
 #include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 
@@ -44,7 +45,7 @@ public:
 	
 	virtual void unlock();
 
-	void bind(StateCachePs3& stateCache, const std::vector< uint8_t >& signature);
+	void bind(StateCachePs3& stateCache, const AlignedVector< uint8_t >& signature);
 
 private:
 	struct AttributeDesc

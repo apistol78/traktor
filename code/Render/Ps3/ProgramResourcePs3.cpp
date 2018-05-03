@@ -6,10 +6,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Render/Ps3/ProgramResourcePs3.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Core/Serialization/MemberStaticArray.h"
-#include "Core/Serialization/MemberStl.h"
 
 namespace traktor
 {
@@ -50,7 +51,7 @@ public:
 	{
 		s >> Member< uint16_t >(L"vertexRegisterIndex", m_ref.vertexRegisterIndex);
 		s >> Member< uint16_t >(L"vertexRegisterCount", m_ref.vertexRegisterCount);
-		s >> MemberStlVector< FragmentOffset, MemberFragmentOffset >(L"fragmentOffsets", m_ref.fragmentOffsets);
+		s >> MemberAlignedVector< FragmentOffset, MemberFragmentOffset >(L"fragmentOffsets", m_ref.fragmentOffsets);
 		s >> Member< uint16_t >(L"offset", m_ref.offset);
 	}
 
@@ -169,15 +170,15 @@ void ProgramResourcePs3::serialize(ISerializer& s)
 {
 	s >> MemberComposite< Blob >(L"vertexProgramBin", m_vertexShaderBin);
 	s >> MemberComposite< Blob >(L"pixelProgramBin", m_pixelShaderBin);
-	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"vertexScalars", m_vertexScalars);
-	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"pixelScalars", m_pixelScalars);
-	s >> MemberStlVector< ProgramSampler, MemberProgramSampler >(L"vertexSamplers", m_vertexSamplers);
-	s >> MemberStlVector< ProgramSampler, MemberProgramSampler >(L"pixelSamplers", m_pixelSamplers);
-	s >> MemberStlMap< std::wstring, ScalarParameter, MemberStlPair< std::wstring, ScalarParameter, Member< std::wstring >, MemberScalarParameter > >(L"scalarParameterMap", m_scalarParameterMap);
-	s >> MemberStlMap< std::wstring, uint32_t >(L"textureParameterMap", m_textureParameterMap);
+	s >> MemberAlignedVector< ProgramScalar, MemberProgramScalar >(L"vertexScalars", m_vertexScalars);
+	s >> MemberAlignedVector< ProgramScalar, MemberProgramScalar >(L"pixelScalars", m_pixelScalars);
+	s >> MemberAlignedVector< ProgramSampler, MemberProgramSampler >(L"vertexSamplers", m_vertexSamplers);
+	s >> MemberAlignedVector< ProgramSampler, MemberProgramSampler >(L"pixelSamplers", m_pixelSamplers);
+	s >> MemberSmallMap< std::wstring, ScalarParameter, Member< std::wstring >, MemberScalarParameter >(L"scalarParameterMap", m_scalarParameterMap);
+	s >> MemberSmallMap< std::wstring, uint32_t >(L"textureParameterMap", m_textureParameterMap);
 	s >> Member< uint32_t >(L"scalarParameterDataSize", m_scalarParameterDataSize);
 	s >> Member< uint32_t >(L"textureParameterDataSize", m_textureParameterDataSize);
-	s >> MemberStlVector< uint8_t >(L"inputSignature", m_inputSignature);
+	s >> MemberAlignedVector< uint8_t >(L"inputSignature", m_inputSignature);
 	s >> MemberRenderState(L"renderState", m_renderState);
 }
 

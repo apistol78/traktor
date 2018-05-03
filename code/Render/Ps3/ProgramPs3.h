@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_ProgramPs3_H
 #define traktor_render_ProgramPs3_H
 
-#include <vector>
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
@@ -66,7 +65,7 @@ public:
 
 	static void unbind();
 
-	inline const std::vector< uint8_t >& getInputSignature() const { return m_inputSignature; }
+	inline const AlignedVector< uint8_t >& getInputSignature() const { return m_inputSignature; }
 
 private:
 	static ProgramPs3* ms_activeProgram;
@@ -94,13 +93,13 @@ private:
 	MemoryHeapObject* m_patchedPixelShaderUCode;
 	uint32_t m_patchFrame;
 	uint32_t m_patchCounter;
-	std::vector< uint8_t > m_inputSignature;
+	AlignedVector< uint8_t > m_inputSignature;
 	RenderStateGCM m_renderState;
-	std::vector< ProgramScalar > m_vertexScalars;
-	std::vector< ProgramScalar > m_pixelScalars;
-	std::vector< uint32_t > m_pixelTargetSizeUCodeOffsets;
-	std::vector< ProgramSampler > m_vertexSamplers;
-	std::vector< ProgramSampler > m_pixelSamplers;
+	AlignedVector< ProgramScalar > m_vertexScalars;
+	AlignedVector< ProgramScalar > m_pixelScalars;
+	AlignedVector< uint32_t > m_pixelTargetSizeUCodeOffsets;
+	AlignedVector< ProgramSampler > m_vertexSamplers;
+	AlignedVector< ProgramSampler > m_pixelSamplers;
 	SmallMap< handle_t, ScalarParameter > m_scalarParameterMap;
 	SmallMap< handle_t, uint32_t > m_textureParameterMap;
 	AlignedVector< float > m_scalarParameterData;

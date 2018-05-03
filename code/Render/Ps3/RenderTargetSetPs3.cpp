@@ -33,6 +33,7 @@ RenderTargetSetPs3::RenderTargetSetPs3(
 ,	m_depthFormat(CELL_GCM_SURFACE_Z24S8)
 ,	m_depthData(0)
 ,	m_usingPrimaryDepthStencil(false)
+,	m_contentValid(false)
 ,	m_counter(counter)
 {
 	std::memset(&m_depthTexture, 0, sizeof(m_depthTexture));
@@ -239,6 +240,11 @@ void RenderTargetSetPs3::swap(int index1, int index2)
 
 void RenderTargetSetPs3::discard()
 {
+}
+
+bool RenderTargetSetPs3::isContentValid() const
+{
+	return m_contentValid;
 }
 
 bool RenderTargetSetPs3::read(int index, void* buffer) const

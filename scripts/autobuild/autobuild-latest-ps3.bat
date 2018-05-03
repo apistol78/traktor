@@ -1,18 +1,13 @@
 @echo off
 
+set CONFIG=%*
+if "%CONFIG%" == "" ( set CONFIG=all )
+
 :: Setup our build environment.
 call "%~dp0..\config.bat"
-call "%~dp0..\vsenv-x86.bat"
+call "%~dp0..\vsenv-legacy.bat" 12.0
 
-:: Remove old log.
-del /F /Q %~dp0autobuild-ps3.log
-
-:: Build Traktor.
+:: Rebuild entire solution.
 pushd "%TRAKTOR_HOME%\build\ps3"
-devenv "Traktor Ps3.sln" /Build DebugStatic /Out %~dp0autobuild-ps3.log
-devenv "Traktor Ps3.sln" /Build ReleaseStatic /Out %~dp0autobuild-ps3.log
-popd
-pushd "%TRAKTOR_HOME%\build\ps3-spu"
-devenv "Traktor Ps3 SPU.sln" /Build DebugStatic /Out %~dp0autobuild-ps3.log
-devenv "Traktor Ps3 SPU.sln" /Build ReleaseStatic /Out %~dp0autobuild-ps3.log
+msbuild "Traktor Ps3.sln" /nologo /maxcpucount /p:BuildInParallel=true /p:Configuration=%CONFIG% /p:Platform="PS3"
 popd

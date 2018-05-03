@@ -151,7 +151,7 @@ void VertexBufferPs3::unlock()
 	setContentValid(true);
 }
 
-void VertexBufferPs3::bind(StateCachePs3& stateCache, const std::vector< uint8_t >& signature)
+void VertexBufferPs3::bind(StateCachePs3& stateCache, const AlignedVector< uint8_t >& signature)
 {
 	for (int i = 0; i < sizeof_array(m_attributeDesc); ++i)
 	{
