@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Ui/Canvas.h"
 #include "Ui/Custom/Graph/GraphCanvas.h"
 
