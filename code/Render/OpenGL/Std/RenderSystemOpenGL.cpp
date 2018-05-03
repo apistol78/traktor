@@ -735,14 +735,14 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (!fbc || nfbc <= 0)
 	{
 		log::error << L"Unable to create OpenGL renderer; No framebuffer configuration" << Endl;
-		return false;
+		return 0;
 	}
 
 	XVisualInfo* vi = glXGetVisualFromFBConfig(m_display, fbc[0]);
 	if (!vi)
 	{
 		log::error << L"Unable to create OpenGL renderer; No visual information" << Endl;
-		return false;
+		return 0;
 	}
 
 	static int contextAttribs[] =
@@ -756,7 +756,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (!glcontext)
 	{
 		log::error << L"Unable to create OpenGL renderer; glXCreateContextAttribsARB failed" << Endl;
-		return false;
+		return 0;
 	}
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, m_display, (::Window)desc.syswin.window, glcontext);

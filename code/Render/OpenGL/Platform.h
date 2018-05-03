@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #if defined(_DEBUG)
 #	include "Core/Assert.h"
 #	include "Core/Io/StringOutputStream.h"
+#	include "Core/Misc/TString.h"
 #endif
 
 #if TARGET_OS_IPHONE || TARGET_OS_IPAD
@@ -90,7 +91,7 @@ std::wstring getEGLErrorString(EGLint error);
 		if (glError != GL_NO_ERROR) \
 		{ \
 			StringOutputStream glErrorMsg; \
-			glErrorMsg << L"OpenGL error, " << uint32_t(glError) << L" (" << getOpenGLErrorString(glError) << L") " << T_FILE_LINE; \
+			glErrorMsg << L"OpenGL error, " << uint32_t(glError) << L" (" << getOpenGLErrorString(glError) << L") " << mbstows(T_FILE_LINE); \
 			T_ASSERT_M(glError == GL_NO_ERROR, glErrorMsg.str().c_str()); \
 		} \
 	}
