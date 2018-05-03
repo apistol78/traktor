@@ -13,13 +13,13 @@ NDK_INCLUDES=\
 C=$(TOOLCHAIN_BIN)/arm-linux-androideabi-g++
 
 C_FLAGS_COMMON=\
-	-fno-strict-aliasing\
-	-fno-common\
 	-pthread\
 	-MMD\
 	-marm\
 	-march=armv7-a\
 	-mtune=xscale\
+	-fpermissive\
+	-fno-common\
 	-fno-strict-aliasing\
 	-funswitch-loops\
 	-finline-limit=100\
@@ -29,7 +29,6 @@ C_FLAGS_COMMON=\
 	-fno-rtti\
 	-fno-short-enums\
 	-fPIC\
-	-x c++\
 	-Wno-psabi\
 	-Wno-attributes\
 	-D __ANDROID__\
@@ -48,13 +47,12 @@ CC=$(TOOLCHAIN_BIN)/arm-linux-androideabi-g++
 
 CC_FLAGS_COMMON=\
 	-std=c++11\
-	-fno-strict-aliasing\
-	-fno-common\
 	-pthread\
 	-MMD\
 	-marm\
 	-march=armv7-a\
 	-mtune=xscale\
+	-fno-common\
 	-fno-strict-aliasing\
 	-funswitch-loops\
 	-finline-limit=100\
