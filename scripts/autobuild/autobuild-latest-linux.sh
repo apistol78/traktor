@@ -8,6 +8,11 @@ if [ "$CONFIG" == "" ]; then CONFIG=all; fi
 
 # Build Traktor
 pushd $TRAKTOR_HOME/build/linux
+
 make -f "Extern Linux.mak" $CONFIG
+if ! [ $? -eq 0 ]; then exit 1; fi
+
 make -f "Traktor Linux.mak" $CONFIG
+if ! [ $? -eq 0 ]; then exit 1; fi
+
 popd
