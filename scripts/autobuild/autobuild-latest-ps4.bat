@@ -5,7 +5,7 @@ if "%CONFIG%" == "" ( set CONFIG=all )
 
 :: Setup our build environment.
 call "%~dp0..\config.bat"
-call "%~dp0..\vsenv-x86.bat"
+call "%~dp0..\vsenv-legacy.bat" 14.0
 
 :: Rebuild entire solution.
 pushd "%TRAKTOR_HOME%\build\ps4"
