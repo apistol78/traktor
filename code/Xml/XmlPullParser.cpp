@@ -22,16 +22,16 @@ namespace traktor
 		namespace
 		{
 
+const static Utf8Encoding c_utf8enc;
+
 inline std::wstring xmltows(const XML_Char* xmlstr, const XML_Char* term)
 {
-	const static Utf8Encoding utf8enc;
-	return mbstows(utf8enc, std::string(xmlstr, term));
+	return mbstows(c_utf8enc, std::string(xmlstr, term));
 }
 
 inline std::wstring xmltows(const XML_Char* xmlstr)
 {
-	const static Utf8Encoding utf8enc;
-	return mbstows(utf8enc, (const char*)xmlstr);
+	return mbstows(c_utf8enc, (const char*)xmlstr);
 }
 
 		}
