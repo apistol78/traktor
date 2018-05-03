@@ -53,6 +53,7 @@ private:
 	std::vector< Option > m_options;
 
 	void collectAdditionalLibraries(
+		const Solution* solution,
 		const Project* project,
 		const Configuration* configuration,
 		std::set< std::wstring >& outAdditionalLibraries,

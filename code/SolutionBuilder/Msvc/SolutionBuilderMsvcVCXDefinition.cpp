@@ -54,7 +54,7 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 		ssd << *i << L";";
 
 	std::set< std::wstring > libraries, libraryPaths;
-	collectAdditionalLibraries(project, configuration, libraries, libraryPaths);
+	collectAdditionalLibraries(solution, project, configuration, libraries, libraryPaths);
 
 	for (std::set< std::wstring >::const_iterator i = libraries.begin(); i != libraries.end(); ++i)
 		ssl << *i << L";";
@@ -126,6 +126,7 @@ void SolutionBuilderMsvcVCXDefinition::Option::serialize(ISerializer& s)
 }
 
 void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
+	const Solution* solution,
 	const Project* project,
 	const Configuration* configuration,
 	std::set< std::wstring >& outAdditionalLibraries,
@@ -158,11 +159,20 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 			if (dependentConfiguration->getTargetFormat() == Configuration::TfStaticLibrary)
 			{
 				collectAdditionalLibraries(
+					solution,
 					projectDependency->getProject(),
 					dependentConfiguration,
 					outAdditionalLibraries,
 					outAdditionalLibraryPaths
 				);
+			}
+
+			// If "consumer library path" set then include it as well.
+			const std::wstring& consumerLibraryPath = dependentConfiguration->getConsumerLibraryPath();
+			if (!consumerLibraryPath.empty())
+			{
+				Path libraryPath = Path(solution->getAggregateOutputPath()) + Path(consumerLibraryPath);
+				outAdditionalLibraryPaths.insert(libraryPath.getPathName());
 			}
 		}
 
@@ -186,11 +196,20 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 			if (externalConfiguration->getTargetFormat() == Configuration::TfStaticLibrary)
 			{
 				collectAdditionalLibraries(
+					externalDependency->getSolution(),
 					externalDependency->getProject(),
 					externalConfiguration,
 					outAdditionalLibraries,
 					outAdditionalLibraryPaths
 				);
+			}
+
+			// If "consumer library path" set then include it as well.
+			const std::wstring& consumerLibraryPath = externalConfiguration->getConsumerLibraryPath();
+			if (!consumerLibraryPath.empty())
+			{
+				Path libraryPath = Path(externalDependency->getSolution()->getAggregateOutputPath()) + Path(consumerLibraryPath);
+				outAdditionalLibraryPaths.insert(libraryPath.getPathName());
 			}
 		}
 	}
