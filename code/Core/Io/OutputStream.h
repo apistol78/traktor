@@ -55,8 +55,6 @@ public:
 
 	OutputStream& operator << (manipulator_t m);
 
-	OutputStream& operator << (const void* p);
-
 	OutputStream& operator << (int8_t n);
 
 	OutputStream& operator << (uint8_t n);

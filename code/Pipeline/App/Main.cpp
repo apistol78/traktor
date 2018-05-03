@@ -782,7 +782,7 @@ int master(const CommandLine& cmdLine)
 			Guid assetGuid(cmdLine.getString(i));
 			if (assetGuid.isNull() || !assetGuid.isValid())
 			{
-				traktor::log::error << L"Invalid root asset guid (" << i << L" \"" << cmdLine.getString(i) << "\")" << Endl;
+				traktor::log::error << L"Invalid root asset guid (" << i << L" \"" << cmdLine.getString(i) << L"\")" << Endl;
 				return 1;
 			}
 			roots.push_back(assetGuid);
@@ -1260,10 +1260,10 @@ int main(int argc, const char** argv)
 		{
 			TCHAR fileName[MAX_PATH];
 			GetModuleFileName(hCrashModule, fileName, sizeof_array(fileName));
-			log::error << L"Unhandled exception occurred at 0x" << g_exceptionAddress << L" in module " << (void*)hCrashModule << L" " << fileName << Endl;
+			log::error << L"Unhandled exception occurred at 0x" << (uint64_t)g_exceptionAddress << L" in module " << (uint64_t)hCrashModule << L" " << fileName << Endl;
 		}
 		else
-			log::error << L"Unhandled exception occurred at 0x" << g_exceptionAddress << Endl;
+			log::error << L"Unhandled exception occurred at 0x" << (uint64_t)g_exceptionAddress << Endl;
 #	else
 		log::error << L"Unhandled exception occurred" << Endl;
 #	endif

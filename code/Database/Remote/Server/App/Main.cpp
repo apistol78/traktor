@@ -88,7 +88,7 @@ int main(int argc, const char** argv)
 	Ref< db::ConnectionManager > connectionManager = new db::ConnectionManager(streamServer);
 	//if (!connectionManager->create(configuration))
 	{
-		traktor::log::error << "Unable to create connection manager" << Endl;
+		traktor::log::error << L"Unable to create connection manager" << Endl;
 		return 1;
 	}
 	
