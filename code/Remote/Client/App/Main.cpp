@@ -71,7 +71,7 @@ int launch(const CommandLine& cmdLine)
 		return 1;
 	}
 
-	log::info << L"Successfully connected to \"" << host << "\"." << Endl;
+	log::info << L"Successfully connected to \"" << host << L"\"." << Endl;
 
 	net::SocketStream clientStream(clientSocket, true, true, 5000);
 	Writer writer(&clientStream);

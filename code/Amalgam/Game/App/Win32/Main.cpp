@@ -387,7 +387,7 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 		{
 			TCHAR fileName[MAX_PATH];
 			GetModuleFileName(hCrashModule, fileName, sizeof_array(fileName));
-			log::debug << L"Exception ( " << getExceptionString(g_exceptionCode) << L") occurred at 0x" << g_exceptionAddress << L" in module " << (void*)hCrashModule << L" " << fileName << Endl;
+			log::debug << L"Exception ( " << getExceptionString(g_exceptionCode) << L") occurred at 0x" << (uint64_t)g_exceptionAddress << L" in module " << (uint64_t)hCrashModule << L" " << fileName << Endl;
 		}
 	}
 
@@ -642,10 +642,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		{
 			TCHAR fileName[MAX_PATH];
 			GetModuleFileName(hCrashModule, fileName, sizeof_array(fileName));
-			log::error << L"Unhandled exception ( " << getExceptionString(g_exceptionCode) << L") occurred at 0x" << g_exceptionAddress << L" in module " << (void*)hCrashModule << L" " << fileName << Endl;
+			log::error << L"Unhandled exception ( " << getExceptionString(g_exceptionCode) << L") occurred at 0x" << (uint64_t)g_exceptionAddress << L" in module " << (uint64_t)hCrashModule << L" " << fileName << Endl;
 		}
 		else
-			log::error << L"Unhandled exception ( " << getExceptionString(g_exceptionCode) << L") occurred at 0x" << g_exceptionAddress << Endl;
+			log::error << L"Unhandled exception ( " << getExceptionString(g_exceptionCode) << L") occurred at 0x" << (uint64_t)g_exceptionAddress << Endl;
 
 		safeDestroy(application);
 		showErrorDialog(logTail->m_tail);

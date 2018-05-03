@@ -102,7 +102,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 		const IResourceFactory* factory = findFactory(*resourceType);
 		if (!factory)
 		{
-			log::error << L"Unable to preload resource " << i->second.format() << L"; no factory for specified resource type \"" << resourceType->getName() << "\"." << Endl;
+			log::error << L"Unable to preload resource " << i->second.format() << L"; no factory for specified resource type \"" << resourceType->getName() << L"\"." << Endl;
 			return 0;
 		}
 

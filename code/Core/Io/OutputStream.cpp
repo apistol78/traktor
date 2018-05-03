@@ -197,13 +197,6 @@ OutputStream& OutputStream::operator << (manipulator_t m)
 	return m(*this);
 }
 
-OutputStream& OutputStream::operator << (const void* p)
-{
-	wchar_t buf[17];
-	puts(uitoa__< size_t, sizeof_array(buf), 16 >(size_t(p), buf));
-	return *this;
-}
-
 OutputStream& OutputStream::operator << (int8_t n)
 {
 	put(n);
