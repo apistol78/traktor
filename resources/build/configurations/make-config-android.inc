@@ -29,6 +29,7 @@ C_FLAGS_COMMON=\
 	-fno-rtti\
 	-fno-short-enums\
 	-fPIC\
+	-x c++\
 	-Wno-psabi\
 	-Wno-attributes\
 	-D __ANDROID__\
@@ -52,6 +53,7 @@ CC_FLAGS_COMMON=\
 	-marm\
 	-march=armv7-a\
 	-mtune=xscale\
+	-fpermissive\
 	-fno-common\
 	-fno-strict-aliasing\
 	-funswitch-loops\
