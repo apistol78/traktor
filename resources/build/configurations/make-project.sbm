@@ -461,10 +461,11 @@ if #architectures > 0 then
 		end
 
 		if format == "StaticLibrary" then
+			printWithColor(35, "Merging architectures into " .. configuration:getName() .. "/" .. productName)
 			local productName = PRODUCTNAME(solution, project, configuration)
 			output:print("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName)
 			for _, a in ipairs(architectures) do
-				output:print(" " ..configuration:getName() .. "_" .. a .. "/" .. productName)
+				output:print(" ../" ..configuration:getName() .. "_" .. a .. "/" .. productName)
 			end
 			output:printLn("")
 		end
