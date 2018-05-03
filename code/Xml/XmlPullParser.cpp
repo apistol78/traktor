@@ -22,7 +22,7 @@ namespace traktor
 		namespace
 		{
 
-const static Utf8Encoding c_utf8enc;
+const Utf8Encoding c_utf8enc;
 
 inline std::wstring xmltows(const XML_Char* xmlstr, const XML_Char* term)
 {
@@ -31,7 +31,7 @@ inline std::wstring xmltows(const XML_Char* xmlstr, const XML_Char* term)
 
 inline std::wstring xmltows(const XML_Char* xmlstr)
 {
-	return mbstows(c_utf8enc, (const char*)xmlstr);
+	return mbstows((const char*)xmlstr);
 }
 
 		}
