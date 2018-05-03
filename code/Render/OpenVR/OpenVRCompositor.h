@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_OpenVRCompositor_H
 
 #include "Render/IVRCompositor.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,6 +49,10 @@ public:
 	virtual int32_t getWidth() const T_OVERRIDE T_FINAL;
 
 	virtual int32_t getHeight() const T_OVERRIDE T_FINAL;
+
+	virtual Matrix44 getProjection(int32_t eye, float nearZ, float farZ) const T_OVERRIDE T_FINAL;
+
+	virtual Matrix44 getEyeToHead(int32_t eye) const T_OVERRIDE T_FINAL;
 
 	virtual bool beginRenderEye(IRenderView* renderView, int32_t eye) T_OVERRIDE T_FINAL;
 

@@ -8,6 +8,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_IVRCompositor_H
 
 #include "Core/Object.h"
+#include "Core/Math/Frustum.h"
+#include "Core/Math/Matrix44.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -80,6 +82,12 @@ public:
 	 * \return Render output height.
 	 */
 	virtual int32_t getHeight() const = 0;
+
+	/*! */
+	virtual Matrix44 getProjection(int32_t eye, float nearZ, float farZ) const = 0;
+
+	/*! */
+	virtual Matrix44 getEyeToHead(int32_t eye) const = 0;
 
 	/*! \brief Begin rendering of either left or right eye.
 	 *

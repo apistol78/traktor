@@ -17,6 +17,12 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+	
+const vr::Hmd_Eye c_eyes[] = { vr::Eye_Left, vr::Eye_Left, vr::Eye_Right };
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.OpenVRCompositor", 0, OpenVRCompositor, IVRCompositor)
 
@@ -104,6 +110,33 @@ int32_t OpenVRCompositor::getHeight() const
 	return m_targetSet->getHeight();
 }
 
+Matrix44 OpenVRCompositor::getProjection(int32_t eye, float nearZ, float farZ) const
+{
+	float left = 0.0f, right = 0.0f;
+	float top = 0.0f, bottom = 0.0f;
+	m_vr->GetProjectionRaw(c_eyes[eye], &left, &right, &top, &bottom);
+	// \tbd Use coordinates to calculate projection matrix and also culling frustum.
+
+	vr::HmdMatrix44_t m = m_vr->GetProjectionMatrix(c_eyes[eye], nearZ, farZ, vr::API_DirectX);
+	return Matrix44(
+		m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0],
+		m.m[0][1], m.m[1][1], m.m[2][1], m.m[3][1],
+		m.m[0][2], m.m[1][2], m.m[2][2], m.m[3][2],
+		m.m[0][3], m.m[1][3], m.m[2][3], m.m[3][3]
+	);
+}
+
+Matrix44 OpenVRCompositor::getEyeToHead(int32_t eye) const
+{
+	vr::HmdMatrix34_t m = m_vr->GetEyeToHeadTransform(c_eyes[eye]);
+	return Matrix44(
+		m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0],
+		m.m[0][1], m.m[1][1], m.m[2][1], m.m[3][1],
+		m.m[0][2], m.m[1][2], m.m[2][2], m.m[3][2],
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+}
+
 bool OpenVRCompositor::beginRenderEye(IRenderView* renderView, int32_t eye)
 {
 	if (!renderView->begin(m_targetSet, eye == EtLeft ? 0 : 1))
@@ -149,6 +182,8 @@ bool OpenVRCompositor::presentCompositeOutput(IRenderView* renderView)
 		vr::ColorSpace_Gamma
 	};
 	vr::VRCompositor()->Submit(vr::Eye_Right, &rightEyeTexture);
+
+	// \tbd Render textures to main window as well to help debugging application.
 
 	renderView->present();
 
