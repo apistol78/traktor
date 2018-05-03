@@ -37,6 +37,7 @@ Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
+	SystemApplication sysapp;
 
 	Path settingsPath = L"Application.config";
 	if (cmdLine.getCount() >= 1)
@@ -65,7 +66,7 @@ int main(int argc, const char** argv)
 	if (application->create(
 		defaultSettings,
 		settings,
-		0,
+		sysapp,
 		0
 	))
 	{

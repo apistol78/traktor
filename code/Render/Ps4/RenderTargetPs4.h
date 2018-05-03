@@ -46,6 +46,8 @@ public:
 
 	virtual void unlock(int level) T_OVERRIDE T_FINAL;
 
+	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
+
 	const sce::Gnm::RenderTarget& getRenderTargetGnm() const { return m_renderTarget; }
 
 private:

@@ -14,8 +14,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/RefArray.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
-#include "Render/Ps4/PsslType.h"
-#include "Render/Ps4/PsslVariable.h"
+#include "Render/Ps4/Pssl/PsslType.h"
+#include "Render/Ps4/Pssl/PsslVariable.h"
 
 namespace traktor
 {

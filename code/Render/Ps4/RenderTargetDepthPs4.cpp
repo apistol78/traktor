@@ -133,5 +133,10 @@ void RenderTargetDepthPs4::unlock(int level)
 {
 }
 
+void* RenderTargetDepthPs4::getInternalHandle()
+{
+	return 0;
+}
+
 	}
 }

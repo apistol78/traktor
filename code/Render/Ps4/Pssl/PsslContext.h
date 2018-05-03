@@ -8,8 +8,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_PsslContext_H
 
 #include <map>
-#include "Render/Ps4/PsslEmitter.h"
-#include "Render/Ps4/PsslShader.h"
+#include "Render/Ps4/Pssl/PsslEmitter.h"
+#include "Render/Ps4/Pssl/PsslShader.h"
 
 namespace traktor
 {

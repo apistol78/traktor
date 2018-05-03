@@ -60,8 +60,6 @@ void calculatePatchErrorMetrics(const hf::Heightfield* heightfield, uint32_t lod
 
 	int32_t pminX = (heightfieldSize * patchX) / patchCount;
 	int32_t pminZ = (heightfieldSize * patchZ) / patchCount;
-	int32_t pmaxX = (heightfieldSize * (patchX + 1)) / patchCount;
-	int32_t pmaxZ = (heightfieldSize * (patchZ + 1)) / patchCount;
 
 	for (uint32_t lod = 1; lod < lodCount; ++lod)
 	{

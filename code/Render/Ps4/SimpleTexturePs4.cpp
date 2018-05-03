@@ -57,5 +57,10 @@ void SimpleTexturePs4::unlock(int level)
 {
 }
 
+void* SimpleTexturePs4::getInternalHandle()
+{
+	return 0;
+}
+
 	}
 }

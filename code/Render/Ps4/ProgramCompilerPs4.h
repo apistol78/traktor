@@ -38,7 +38,8 @@ public:
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
 		int32_t optimize,
-		std::wstring& outShader
+		std::wstring& outVertexShader,
+		std::wstring& outPixelShader
 	) const T_OVERRIDE T_FINAL;
 };
 

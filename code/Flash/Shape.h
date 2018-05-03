@@ -27,7 +27,9 @@ namespace traktor
 	namespace flash
 	{
 
-#pragma warning( disable:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( disable:4324 )
+#endif
 
 /*! \brief Flash shape.
  * \ingroup Flash
@@ -88,7 +90,9 @@ private:
 	AlignedVector< Line > m_lines;
 };
 
-#pragma warning( default:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( default:4324 )
+#endif
 
 	}
 }

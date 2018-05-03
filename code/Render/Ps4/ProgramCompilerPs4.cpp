@@ -4,10 +4,11 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include <wave_psslc.h>
-#include "Render/Ps4/Pssl.h"
-#include "Render/Ps4/PsslProgram.h"
+#include <stddef.h>
+#include <shader/wave_psslc.h>
 #include "Render/Ps4/ProgramCompilerPs4.h"
+#include "Render/Ps4/Pssl/Pssl.h"
+#include "Render/Ps4/Pssl/PsslProgram.h"
 
 namespace traktor
 {
@@ -44,21 +45,16 @@ bool ProgramCompilerPs4::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	int32_t optimize,
-	std::wstring& outShader
+	std::wstring& outVertexShader,
+	std::wstring& outPixelShader
 ) const
 {
 	PsslProgram psslProgram;
 	if (!Pssl().generate(shaderGraph, psslProgram))
 		return false;
 
-	outShader =
-		std::wstring(L"// Vertex shader\n") +
-		std::wstring(L"\n") +
-		psslProgram.getVertexShader() +
-		std::wstring(L"\n") +
-		std::wstring(L"// Pixel shader\n") +
-		std::wstring(L"\n") +
-		psslProgram.getPixelShader();
+	outVertexShader = psslProgram.getVertexShader();
+	outPixelShader = psslProgram.getPixelShader();
 
 	return true;
 }

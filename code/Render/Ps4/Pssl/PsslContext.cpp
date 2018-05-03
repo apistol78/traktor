@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <cassert>
 #include "Core/Log/Log.h"
 //#include "Render/Ps4/Platform.h"
-#include "Render/Ps4/PsslContext.h"
-#include "Render/Ps4/PsslShader.h"
+#include "Render/Ps4/Pssl/PsslContext.h"
+#include "Render/Ps4/Pssl/PsslShader.h"
 #include "Render/Shader/InputPin.h"
 #include "Render/Shader/Node.h"
 #include "Render/Shader/OutputPin.h"

@@ -106,5 +106,10 @@ void RenderTargetPs4::unlock(int level)
 {
 }
 
+void* RenderTargetPs4::getInternalHandle()
+{
+	return 0;
+}
+
 	}
 }

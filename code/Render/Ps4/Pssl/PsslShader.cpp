@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <cassert>
-#include "Render/Ps4/PsslShader.h"
+#include "Render/Ps4/Pssl/PsslShader.h"
 
 namespace traktor
 {

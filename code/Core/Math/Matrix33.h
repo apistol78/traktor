@@ -26,11 +26,15 @@ namespace traktor
 /*! \brief 3x3 matrix.
  * \ingroup Core
  */
-#pragma warning( disable:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( disable:4324 )
+#endif
 class T_MATH_ALIGN16 T_DLLCLASS Matrix33
 {
 public:
-#pragma warning( disable:4201 )
+#if defined (_MSC_VER)
+#	pragma warning( disable:4201 )
+#endif
 	union
 	{
 		union { float m[9]; };
@@ -42,7 +46,9 @@ public:
 			float e31, e32, e33;
 		};
 	};
-#pragma warning( default:4201 )
+#if defined (_MSC_VER)
+#	pragma warning( default:4201 )
+#endif
 
 	T_MATH_INLINE Matrix33();
 
@@ -80,7 +86,9 @@ public:
 
 	/*extern*/ friend T_MATH_INLINE T_DLLCLASS Matrix33 operator * (const Matrix33& lh, const Matrix33& rh);
 };
-#pragma warning( default:4324 )
+#if defined (_MSC_VER)
+#	pragma warning( default:4324 )
+#endif
 
 T_MATH_INLINE T_DLLCLASS Matrix33 translate(const Vector2& t);
 
@@ -95,7 +103,7 @@ T_MATH_INLINE T_DLLCLASS Matrix33 scale(float x, float y);
 }
 
 #if defined(T_MATH_USE_INLINE)
-#include "Core/Math/Std/Matrix33.inl"
+#	include "Core/Math/Std/Matrix33.inl"
 #endif
 
 #endif	// traktor_Matrix33_H

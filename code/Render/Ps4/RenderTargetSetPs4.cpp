@@ -89,6 +89,11 @@ void RenderTargetSetPs4::discard()
 {
 }
 
+bool RenderTargetSetPs4::isContentValid() const
+{
+	return true;
+}
+
 bool RenderTargetSetPs4::read(int index, void* buffer) const
 {
 	return false;

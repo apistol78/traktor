@@ -18,7 +18,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 namespace traktor
 {
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__PS4__)
 #	define T_CAST_EXCEPTION(condition, message) \
 	if (!(condition)) { \
 		throw CastException((message)); \

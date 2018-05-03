@@ -10,8 +10,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/String.h"
 #include "Render/VertexElement.h"
 //#include "Render/Ps4/Platform.h"
-#include "Render/Ps4/PsslContext.h"
-#include "Render/Ps4/PsslEmitter.h"
+#include "Render/Ps4/Pssl/PsslContext.h"
+#include "Render/Ps4/Pssl/PsslEmitter.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/Script.h"
 
@@ -2299,6 +2299,8 @@ bool emitVertexOutput(PsslContext& cx, VertexOutput* node)
 
 struct Emitter
 {
+	virtual ~Emitter() {}
+
 	virtual bool emit(PsslContext& c, Node* node) = 0;
 };
 

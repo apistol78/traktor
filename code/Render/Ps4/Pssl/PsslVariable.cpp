@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Misc/String.h"
-#include "Render/Ps4/PsslVariable.h"
+#include "Render/Ps4/Pssl/PsslVariable.h"
 
 namespace traktor
 {

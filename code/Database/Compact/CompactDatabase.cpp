@@ -48,7 +48,7 @@ bool CompactDatabase::create(const ConnectionString& connectionString)
 	}
 
 	uint32_t registryBlockId = blockFile->allocBlockId();
-	T_ASSERT (registryBlockId == 1);
+	T_FATAL_ASSERT (registryBlockId == 1);
 
 	Ref< CompactRegistry > registry = new CompactRegistry();
 

@@ -6,9 +6,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
-#include "Render/Ps4/Pssl.h"
-#include "Render/Ps4/PsslProgram.h"
-#include "Render/Ps4/PsslContext.h"
+#include "Render/Ps4/Pssl/Pssl.h"
+#include "Render/Ps4/Pssl/PsslContext.h"
+#include "Render/Ps4/Pssl/PsslProgram.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
 

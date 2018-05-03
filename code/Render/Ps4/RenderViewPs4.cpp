@@ -151,6 +151,11 @@ bool RenderViewPs4::isActive() const
 	return true;
 }
 
+bool RenderViewPs4::isMinimized() const
+{
+	return false;
+}
+
 bool RenderViewPs4::isFullScreen() const
 {
 	return true;
