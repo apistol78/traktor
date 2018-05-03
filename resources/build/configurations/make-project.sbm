@@ -31,6 +31,7 @@ end
 
 -- Read configuration from environment.
 local os = OS.getInstance():getEnvironment("MAKE_OS")
+local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
 local dialect = OS.getInstance():getEnvironment("MAKE_DIALECT")
 local format = OS.getInstance():getEnvironment("MAKE_FORMAT")
 local include = OS.getInstance():getEnvironment("MAKE_INCLUDE")
@@ -461,12 +462,20 @@ if #architectures > 0 then
 		end
 
 		if format == "StaticLibrary" then
-			printWithColor(35, "Merging architectures into " .. configuration:getName() .. "/" .. productName)
 			local productName = PRODUCTNAME(solution, project, configuration)
-			output:print("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)../" .. configuration:getName() .. "/" .. productName)
+
+			printWithColor(35, "Merging architectures into " .. configuration:getName() .. "/" .. productName)
+
+			local ws = ""
+			if toolchain == "gcc" or toolchain == "clang" then
+				ws = " "
+			end
+
+			output:print("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName)
 			for _, a in ipairs(architectures) do
 				output:print(" ../" ..configuration:getName() .. "_" .. a .. "/" .. productName)
 			end
+
 			output:printLn("")
 		end
 
