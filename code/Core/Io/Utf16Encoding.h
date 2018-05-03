@@ -28,6 +28,8 @@ class T_DLLCLASS Utf16Encoding : public IEncoding
 	T_RTTI_CLASS;
 
 public:
+	Utf16Encoding() {}
+
 	virtual int translate(const wchar_t* chars, int count, uint8_t* out) const T_OVERRIDE T_FINAL;
 
 	virtual int translate(const uint8_t in[MaxEncodingSize], int count, wchar_t& out) const T_OVERRIDE T_FINAL;
