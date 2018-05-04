@@ -10,7 +10,7 @@ NDK_INCLUDES=\
 	-I$(ANDROID_NDK_ROOT)/sysroot/usr/include
 
 # Build tools.
-C=$(TOOLCHAIN_BIN)/arm-linux-androideabi-g++
+C=$(TOOLCHAIN_BIN)/arm-linux-androideabi-gcc
 
 C_FLAGS_COMMON=\
 	-pthread\
@@ -18,7 +18,6 @@ C_FLAGS_COMMON=\
 	-marm\
 	-march=armv7-a\
 	-mtune=xscale\
-	-fpermissive\
 	-fno-common\
 	-fno-strict-aliasing\
 	-funswitch-loops\
@@ -26,10 +25,8 @@ C_FLAGS_COMMON=\
 	-fomit-frame-pointer\
 	-fno-exceptions\
 	-fstack-protector\
-	-fno-rtti\
 	-fno-short-enums\
 	-fPIC\
-	-x c++\
 	-Wno-psabi\
 	-Wno-attributes\
 	-D __ANDROID__\
