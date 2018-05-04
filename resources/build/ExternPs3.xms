@@ -1798,7 +1798,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -1828,7 +1828,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -2645,8 +2645,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.zlib-1.2.3</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</sourcePath>
+			<name>Extern.zlib</name>
+			<sourcePath>$(ZLIB_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2654,7 +2654,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -2671,7 +2671,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.zlib-1.2.3.lib</sourceFile>
+							<sourceFile>Extern.zlib.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2683,7 +2683,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -2700,7 +2700,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.zlib-1.2.3.lib</sourceFile>
+							<sourceFile>Extern.zlib.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

@@ -812,7 +812,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
+															<item>$(ZLIB_SDK)</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
@@ -846,7 +846,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
+															<item>$(ZLIB_SDK)</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
@@ -917,7 +917,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternAndroid.xms</solutionFileName>
-														<projectName>Extern.zlib-1.2.3</projectName>
+														<projectName>Extern.zlib</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -2097,7 +2097,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(ZLIB_SDK)</item>
 						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 					</includePaths>
 					<definitions>
@@ -2131,7 +2131,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
+						<item>$(ZLIB_SDK)</item>
 						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 					</includePaths>
 					<definitions>
@@ -2207,7 +2207,7 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>ExternAndroid.xms</solutionFileName>
-					<projectName>Extern.zlib-1.2.3</projectName>
+					<projectName>Extern.zlib</projectName>
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
