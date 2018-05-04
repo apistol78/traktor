@@ -19,6 +19,7 @@ set GLEW_SDK=%TRAKTOR_HOME%\3rdp\glew-1.13.0
 set TOBII_SDK=%TRAKTOR_HOME%\3rdp\tobii-sdk-1.7.480
 set OPENVR_SDK=%TRAKTOR_HOME%\3rdp\openvr-master-20160822
 set EXPAT_SDK=%TRAKTOR_HOME%\3rdp\libexpat-R_2_2_5\expat
+set ZLIB_SDK=%TRAKTOR_HOME%\3rdp\zlib-1.2.11
 
 :: Export name of solution builder binary.
 set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App

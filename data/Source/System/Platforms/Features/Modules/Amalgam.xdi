@@ -82,7 +82,7 @@
 								<item>libExtern.lpng.a</item>
 								<item>libExtern.recast.a</item>
 								<item>libExtern.stb_vorbis.a</item>
-								<item>libExtern.zlib-1.2.3.a</item>
+								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Ai.a</item>
 								<item>libTraktor.Amalgam.Game.App.a</item>
 								<item>libTraktor.Amalgam.Game.a</item>
@@ -462,7 +462,7 @@
 								<item>Extern.mpg123-1.13.2.lib</item>
 								<item>Extern.recast.lib</item>
 								<item>Extern.stb_vorbis.lib</item>
-								<item>Extern.zlib-1.2.3.lib</item>
+								<item>Extern.zlib.lib</item>
 								<item>Traktor.Ai.lib</item>
 								<item>Traktor.Amalgam.Game.App.lib</item>
 								<item>Traktor.Amalgam.Game.lib</item>
@@ -632,7 +632,7 @@
 								<item>Extern.mpg123-1.13.2.lib</item>
 								<item>Extern.recast.lib</item>
 								<item>Extern.stb_vorbis.lib</item>
-								<item>Extern.zlib-1.2.3.lib</item>
+								<item>Extern.zlib.lib</item>
 								<item>Traktor.Ai.lib</item>
 								<item>Traktor.Amalgam.Game.App.lib</item>
 								<item>Traktor.Amalgam.Game.lib</item>
@@ -805,7 +805,7 @@
 								<item>Extern.mpg123-1.13.2.lib</item>
 								<item>Extern.recast.lib</item>
 								<item>Extern.stb_vorbis.lib</item>
-								<item>Extern.zlib-1.2.3.lib</item>
+								<item>Extern.zlib.lib</item>
 								<item>Traktor.Ai.lib</item>
 								<item>Traktor.Amalgam.Game.App.lib</item>
 								<item>Traktor.Amalgam.Game.lib</item>
@@ -1198,7 +1198,7 @@
 								<item>libExtern.mpg123-1.13.2.a</item>
 								<item>libExtern.recast.a</item>
 								<item>libExtern.stb_vorbis.a</item>
-								<item>libExtern.zlib-1.2.3.a</item>
+								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Ai.a</item>
 								<item>libTraktor.Amalgam.Game.App.a</item>
 								<item>libTraktor.Amalgam.Game.a</item>

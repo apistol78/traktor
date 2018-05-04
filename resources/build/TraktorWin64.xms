@@ -1252,7 +1252,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternWin64.xms</solutionFileName>
-														<projectName>Extern.zlib-1.2.3</projectName>
+														<projectName>Extern.zlib</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -2874,7 +2874,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternWin64.xms</solutionFileName>
-														<projectName>Extern.zlib-1.2.3</projectName>
+														<projectName>Extern.zlib</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
