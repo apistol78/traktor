@@ -28,7 +28,7 @@ bool InputDeviceTouchGamepad::create(void* nativeWindowHandle)
 	m_pivots[1] = CGPointMake(cx, cy);
 	m_pivots[2] = CGPointMake(cx, cy + 30.0f);
 	
-	UIDeviceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
 	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 
 	if (!m_landscape)
