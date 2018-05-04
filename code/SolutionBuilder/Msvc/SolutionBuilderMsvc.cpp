@@ -87,12 +87,12 @@ bool collectExternalSolutions(
 			if (outProjectGuids.find(externalProject) != outProjectGuids.end())
 				continue;
 
-			std::wstring solutionPàth, projectPath, projectFileName, projectGuid;
+			std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 			if (!settings->getProject()->getInformation(
 				context,
 				externalSolution,
 				externalProject,
-				solutionPàth,
+				solutionPath,
 				projectPath,
 				projectFileName,
 				projectGuid
