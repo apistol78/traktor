@@ -39,6 +39,8 @@ bool g_suspend[2] = { false, true };
 void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* view)
 {
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	SystemApplication sysapp;
+	SystemWindow syswin(view);
 
 	// As we doesn't need to store user defined settings on iOS we
 	// create a plain copy of the default settings.
@@ -50,8 +52,8 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 	if (!application->create(
 		defaultSettings,
 		settings,
-        0,
-		(void*)view
+		sysapp,
+		&syswin
 	))
 		return;
 
@@ -110,7 +112,7 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 	}
 
 	// "Activate" retina display if application want's to use it.
-	if (defaultSettings->getProperty< PropertyBoolean >(L"Amalgam.SupportRetina", false))
+	if (defaultSettings->getProperty< bool >(L"Amalgam.SupportRetina", false))
 	{
 		// Adjust scale as we want full resolution of a retina display.
 		float scale = 1.0f;
