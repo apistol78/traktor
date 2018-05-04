@@ -46,7 +46,7 @@ bool InputDeviceTouchMouse::create(void* nativeWindowHandle)
 	m_width = frame.size.width;
 	m_height = frame.size.height;
 
-	UIDeviceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
 	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 
 	return true;
@@ -147,7 +147,7 @@ void InputDeviceTouchMouse::resetState()
 
 void InputDeviceTouchMouse::readState()
 {
-	UIDeviceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
 	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 }
 

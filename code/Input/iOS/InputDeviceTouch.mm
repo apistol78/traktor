@@ -50,7 +50,7 @@ bool InputDeviceTouch::create(void* nativeWindowHandle)
 	m_width = frame.size.width;
 	m_height = frame.size.height;
 
-	UIDeviceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
 	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 
 	return true;
@@ -167,7 +167,7 @@ void InputDeviceTouch::resetState()
 
 void InputDeviceTouch::readState()
 {
-	UIDeviceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
 	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 }
 
