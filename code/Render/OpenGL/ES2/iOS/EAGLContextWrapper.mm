@@ -93,7 +93,7 @@ void EAGLContextWrapper::resize(GLint width, GLint height)
 
 bool EAGLContextWrapper::getLandscape()
 {
-	UIDeviceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
 	return UIInterfaceOrientationIsLandscape(orientation);
 }
 

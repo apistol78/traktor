@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #if defined(__ANDROID__)
 #	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
 #elif defined(__IOS__)
-#	include "Render/OpenGL/ES2/iOS/EAGLContextWrapper.h"
+#	include "Render/OpenGL/ES2/iOS/ContextOpenGLES2.h"
 #elif defined(__EMSCRIPTEN__)
 #	include "Render/OpenGL/ES2/Emscripten/ContextOpenGLES2.h"
 #elif defined(__PNACL__)
