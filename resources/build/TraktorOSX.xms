@@ -1319,7 +1319,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternOSX.xms</solutionFileName>
-														<projectName>Extern.zlib-1.2.11</projectName>
+														<projectName>Extern.zlib</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -3036,7 +3036,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternOSX.xms</solutionFileName>
-														<projectName>Extern.zlib-1.2.11</projectName>
+														<projectName>Extern.zlib</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>

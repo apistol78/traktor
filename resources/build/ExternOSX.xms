@@ -4925,7 +4925,7 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.zlib-1.2.11</name>
+			<name>Extern.zlib</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
@@ -4939,6 +4939,7 @@
 					<definitions>
 						<item>T_ZLIB_1_2_11_EXPORT</item>
 						<item>_DEBUG</item>
+						<item>Z_SOLO</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -4963,6 +4964,7 @@
 					<definitions>
 						<item>T_ZLIB_1_2_11_EXPORT</item>
 						<item>NDEBUG</item>
+						<item>Z_SOLO</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -4987,6 +4989,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>Z_SOLO</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -4999,7 +5002,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.zlib-1.2.11.a</sourceFile>
+							<sourceFile>libExtern.zlib.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5016,6 +5019,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>Z_SOLO</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -5028,7 +5032,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.zlib-1.2.11.a</sourceFile>
+							<sourceFile>libExtern.zlib.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

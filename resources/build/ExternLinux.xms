@@ -3433,6 +3433,7 @@
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
+									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -3461,6 +3462,7 @@
 								</includePaths>
 								<definitions>
 									<item>NDEBUG</item>
+									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -3488,8 +3490,8 @@
 									<item>$(ZLIB_SDK)</item>
 								</includePaths>
 								<definitions>
-									<item>T_ZLIB_1_2_3_EXPORT</item>
 									<item>_DEBUG</item>
+									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -3512,8 +3514,8 @@
 									<item>$(ZLIB_SDK)</item>
 								</includePaths>
 								<definitions>
-									<item>T_ZLIB_1_2_3_EXPORT</item>
 									<item>NDEBUG</item>
+									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>

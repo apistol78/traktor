@@ -55,7 +55,7 @@
 						<item>XML_BUILDING_EXPAT</item>
 						<item>XML_POOR_ENTROPY</item>
 						<item>HAVE_MEMMOVE</item>
-						</definitions>
+					</definitions>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -1252,6 +1252,7 @@
 									<item>__ANDROID__</item>
 									<item>_DEBUG</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -1282,6 +1283,7 @@
 									<item>__ANDROID__</item>
 									<item>NDEBUG</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>

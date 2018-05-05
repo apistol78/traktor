@@ -3603,6 +3603,7 @@
 					<definitions>
 						<item>__IOS__</item>
 						<item>_DEBUG</item>
+						<item>Z_SOLO</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -3632,6 +3633,7 @@
 					<definitions>
 						<item>__IOS__</item>
 						<item>NDEBUG</item>
+						<item>Z_SOLO</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
