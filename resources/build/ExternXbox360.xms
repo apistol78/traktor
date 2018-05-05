@@ -2632,6 +2632,7 @@
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
+									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2660,6 +2661,7 @@
 								</includePaths>
 								<definitions>
 									<item>NDEBUG</item>
+									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>

@@ -1849,6 +1849,7 @@
 								<definitions>
 									<item>_DEBUG</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -1878,6 +1879,7 @@
 								<definitions>
 									<item>NDEBUG</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
