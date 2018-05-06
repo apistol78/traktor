@@ -12,11 +12,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/FlashLayer.h"
 #include "Amalgam/Game/Engine/Stage.h"
-#include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_Configuration.h"
-#include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_DisplayMode.h"
-#include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_I18N.h"
-#include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_InputFabricator.h"
-#include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_SoundDriver.h"
 #include "Core/Class/Any.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
@@ -779,26 +774,6 @@ void FlashLayer::createMoviePlayer()
 			log::error << L"Unable to create movie player" << Endl;
 			return;
 		}
-
-		// Register additional AS classes.
-		flash::ActionContext* context = moviePlayer->getMovieInstance()->getContext();
-		T_ASSERT (context);
-
-		Ref< flash::ActionObject > asTraktor = moviePlayer->getGlobal("traktor").getObject();
-		if (!asTraktor)
-			asTraktor = new flash::ActionObject(context);
-		{
-			Ref< flash::ActionObject > asAmalgam = new flash::ActionObject(context);
-			{
-				asAmalgam->setMember("Configuration", flash::ActionValue(new As_traktor_amalgam_Configuration(context, m_environment)));
-				asAmalgam->setMember("DisplayMode", flash::ActionValue(new As_traktor_amalgam_DisplayMode(context, m_environment)));
-				asAmalgam->setMember("I18N", flash::ActionValue(new As_traktor_amalgam_I18N(context)));
-				asAmalgam->setMember("InputFabricator", flash::ActionValue(new As_traktor_amalgam_InputFabricator(context, m_environment)));
-				asAmalgam->setMember("SoundDriver", flash::ActionValue(new As_traktor_amalgam_SoundDriver(context)));
-			}
-			asTraktor->setMember("amalgam", flash::ActionValue(asAmalgam));
-		}
-		moviePlayer->setGlobal("traktor", flash::ActionValue(asTraktor));
 
 		// Set ourself as external call hook.
 		moviePlayer->setExternalCall(this);

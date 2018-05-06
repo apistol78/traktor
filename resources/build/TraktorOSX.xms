@@ -13829,24 +13829,6 @@
 										<fileName>Engine/*.*</fileName>
 										<items/>
 									</item>
-									<item type="Filter">
-										<name>Action</name>
-										<items>
-											<item type="Filter">
-												<name>Classes</name>
-												<items>
-													<item type="File">
-														<fileName>Engine/Action/Classes/*.*</fileName>
-														<items/>
-													</item>
-												</items>
-											</item>
-											<item type="File">
-												<fileName>Engine/Action/*.*</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
 								</items>
 							</item>
 						</items>
