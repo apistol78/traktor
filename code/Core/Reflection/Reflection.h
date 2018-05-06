@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_Reflection_H
 #define traktor_Reflection_H
 
+#include "Core/Ref.h"
 #include "Core/Reflection/RfmCompound.h"
 
 // import/export mechanism.

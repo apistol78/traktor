@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <list>
 #include <vector>
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 namespace traktor
 {

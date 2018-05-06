@@ -1,6 +1,7 @@
 #ifndef traktor_hf_HeightfieldAssetEditor_H
 #define traktor_hf_HeightfieldAssetEditor_H
 
+#include "Core/Ref.h"
 #include "Editor/IObjectEditor.h"
 
 namespace traktor

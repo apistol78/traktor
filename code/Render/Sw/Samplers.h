@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_Samplers_H
 #define traktor_render_Samplers_H
 
+#include "Core/Ref.h"
 #include "Core/Math/Float.h"
 #include "Render/Sw/Core/Sampler.h"
 

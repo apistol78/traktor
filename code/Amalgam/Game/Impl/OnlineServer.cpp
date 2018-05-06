@@ -43,7 +43,7 @@ bool OnlineServer::create(const PropertyGroup* defaultSettings, PropertyGroup* s
 
 	std::wstring providerType = defaultSettings->getProperty< std::wstring >(L"Online.Type");
 
-	Ref< online::ISessionManagerProvider > sessionManagerProvider = dynamic_type_cast< online::ISessionManagerProvider* >(TypeInfo::createInstance(providerType));
+	Ref< online::ISessionManagerProvider > sessionManagerProvider = dynamic_type_cast< online::ISessionManagerProvider* >(TypeInfo::createInstance(providerType.c_str()));
 	if (!sessionManagerProvider)
 	{
 		log::error << L"Online server failed; no such type \"" << providerType << L"\"" << Endl;

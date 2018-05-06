@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <vector>
 #include "Core/Object.h"
 #include "Core/Platform.h"
+#include "Core/Ref.h"
 #include "Graphics/PixelFormat.h"
 
 // import/export mechanism.

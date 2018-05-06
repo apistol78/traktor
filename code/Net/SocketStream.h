@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_net_SocketStream_H
 #define traktor_net_SocketStream_H
 
+#include "Core/Ref.h"
 #include "Core/Io/IStream.h"
 
 // import/export mechanism.

@@ -1071,7 +1071,7 @@ Ref< db::Instance > EditorForm::browseInstance(const TypeInfo& filterType)
 			PropertyStringSet::value_type_t v = PropertyStringSet::get(browseTypesSet);
 			for (PropertyStringSet::value_type_t::const_iterator i = v.begin(); i != v.end(); ++i)
 			{
-				const TypeInfo* browseType = TypeInfo::find(*i);
+				const TypeInfo* browseType = TypeInfo::find(i->c_str());
 				if (browseType)
 					browseTypes.insert(browseType);
 			}
@@ -1218,7 +1218,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		int iconIndex = 2;
 		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = icons.begin(); i != icons.end(); ++i)
 		{
-			const TypeInfo* iconType = TypeInfo::find(i->first);
+			const TypeInfo* iconType = TypeInfo::find(i->first.c_str());
 			if (iconType && is_type_of(*iconType, type_of(object)))
 			{
 				iconIndex = PropertyInteger::get(i->second);

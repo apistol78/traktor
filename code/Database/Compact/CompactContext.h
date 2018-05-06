@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_db_CompactContext_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 namespace traktor
 {
@@ -27,9 +28,9 @@ class CompactContext : public Object
 public:
 	CompactContext(BlockFile* blockFile, CompactRegistry* registry);
 
-	inline Ref< BlockFile > getBlockFile() { return m_blockFile; }
+	BlockFile* getBlockFile() { return m_blockFile; }
 
-	inline Ref< CompactRegistry > getRegistry() { return m_registry; }
+	CompactRegistry* getRegistry() { return m_registry; }
 
 private:
 	Ref< BlockFile > m_blockFile;

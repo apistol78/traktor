@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <vector>
 #include "Core/Guid.h"
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Thread/Semaphore.h"
 #include "Database/Types.h"

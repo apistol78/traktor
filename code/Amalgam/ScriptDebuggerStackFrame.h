@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_amalgam_ScriptDebuggerStackFrame_H
 #define traktor_amalgam_ScriptDebuggerStackFrame_H
 
+#include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

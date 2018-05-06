@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

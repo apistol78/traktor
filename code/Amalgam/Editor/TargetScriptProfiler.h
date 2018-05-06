@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_amalgam_TargetScriptProfiler_H
 
 #include <list>
+#include "Core/Ref.h"
 #include "Script/IScriptProfiler.h"
 
 namespace traktor

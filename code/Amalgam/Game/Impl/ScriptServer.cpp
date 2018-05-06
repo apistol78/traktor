@@ -51,7 +51,7 @@ bool ScriptServer::create(
 {
 	std::wstring scriptType = defaultSettings->getProperty< std::wstring >(L"Script.Type");
 
-	m_scriptManager = dynamic_type_cast< script::IScriptManager* >(TypeInfo::createInstance(scriptType));
+	m_scriptManager = dynamic_type_cast< script::IScriptManager* >(TypeInfo::createInstance(scriptType.c_str()));
 	if (!m_scriptManager)
 		return false;
 

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_physics_RigidEntity_H
 #define traktor_physics_RigidEntity_H
 
+#include "Core/Ref.h"
 #include "World/Entity.h"
 
 #undef T_DLLCLASS

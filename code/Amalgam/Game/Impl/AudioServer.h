@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Amalgam/Game/IAudioServer.h"
 #include "Core/Platform.h"
+#include "Core/Ref.h"
 
 namespace traktor
 {

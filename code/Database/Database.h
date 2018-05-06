@@ -8,8 +8,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_db_Database_H
 
 #include <map>
-#include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/Thread/Semaphore.h"
 #include "Database/ConnectionString.h"
 #include "Database/IGroupEventListener.h"

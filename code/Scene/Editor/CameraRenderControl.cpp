@@ -166,7 +166,7 @@ void CameraRenderControl::updateWorldRenderer()
 
 	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 	
-	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName);
+	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
 	if (!worldRendererType)
 		return;
 

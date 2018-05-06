@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_net_SocketSet_H
 #define traktor_net_SocketSet_H
 
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 
 // import/export mechanism.

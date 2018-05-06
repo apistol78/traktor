@@ -24,7 +24,7 @@ void MemberType::serialize(ISerializer& s) const
 		s >> Member< std::wstring >(getName(), name);
 		if (!name.empty())
 		{
-			m_type = TypeInfo::find(name);
+			m_type = TypeInfo::find(name.c_str());
 			s.ensure(m_type != 0);
 		}
 		else

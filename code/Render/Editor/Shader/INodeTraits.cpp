@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Atomic.h"

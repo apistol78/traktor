@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_AbstractMeshEntityData_H
 #define traktor_mesh_AbstractMeshEntityData_H
 
+#include "Core/Ref.h"
 #include "Core/Math/Matrix44.h"
 #include "World/EntityData.h"
 

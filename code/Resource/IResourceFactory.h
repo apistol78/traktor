@@ -7,8 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_resource_IResourceFactory_H
 #define traktor_resource_IResourceFactory_H
 
-#include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

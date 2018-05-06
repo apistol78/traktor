@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_drawing_IImageFormat_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/Io/Path.h"
 #include "Core/Io/IStream.h"
 

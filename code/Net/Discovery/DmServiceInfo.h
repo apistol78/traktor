@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_net_DmServiceInfo_H
 
 #include "Core/Guid.h"
+#include "Core/Ref.h"
 #include "Net/Discovery/IDiscoveryMessage.h"
 
 namespace traktor
@@ -29,7 +30,7 @@ public:
 
 	const Guid& getServiceGuid() const { return m_serviceGuid; }
 
-	Ref< IService > getService() const { return m_service; }
+	IService* getService() const { return m_service; }
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 

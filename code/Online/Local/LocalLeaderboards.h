@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_online_LocalLeaderboards_H
 #define traktor_online_LocalLeaderboards_H
 
+#include "Core/Ref.h"
 #include "Online/Provider/ILeaderboardsProvider.h"
 
 namespace traktor

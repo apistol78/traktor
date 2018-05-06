@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_flash_BitmapTexture_H
 #define traktor_flash_BitmapTexture_H
 
+#include "Core/Ref.h"
 #include "Flash/Bitmap.h"
 #include "Flash/SwfTypes.h"
 

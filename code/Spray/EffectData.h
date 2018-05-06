@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_spray_EffectData_H
 #define traktor_spray_EffectData_H
 
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 

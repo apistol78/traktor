@@ -2,6 +2,7 @@
 #define traktor_wbr_IApplication_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

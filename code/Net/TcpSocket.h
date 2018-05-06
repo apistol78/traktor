@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_net_TcpSocket_H
 #define traktor_net_TcpSocket_H
 
+#include "Core/Ref.h"
 #include "Net/Socket.h"
 
 // import/export mechanism.

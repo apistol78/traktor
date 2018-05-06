@@ -801,7 +801,7 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 			if (!read_string(m_reader, typeName))
 				return;
 
-			const TypeInfo* type = TypeInfo::find(typeName);
+			const TypeInfo* type = TypeInfo::find(typeName.c_str());
 			if (!ensure(type != 0))
 				return;
 

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_online_TaskUpdateSessionManager_H
 #define traktor_online_TaskUpdateSessionManager_H
 
+#include "Core/Ref.h"
 #include "Online/Impl/ITask.h"
 
 namespace traktor

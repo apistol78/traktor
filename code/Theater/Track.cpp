@@ -39,7 +39,7 @@ void Track::setEntity(world::Entity* entity)
 	m_entity = entity;
 }
 
-Ref< world::Entity > Track::getEntity() const
+world::Entity* Track::getEntity() const
 {
 	return m_entity;
 }
@@ -49,7 +49,7 @@ void Track::setLookAtEntity(world::Entity* entity)
 	m_lookAtEntity = entity;
 }
 
-Ref< world::Entity > Track::getLookAtEntity() const
+world::Entity* Track::getLookAtEntity() const
 {
 	return m_lookAtEntity;
 }

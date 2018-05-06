@@ -72,7 +72,7 @@ bool DatabaseMessageListener::messageOpen(const DbmOpen* message)
 		return true;
 	}
 
-	const TypeInfo* providerType = TypeInfo::find(connectionString.get(L"provider"));
+	const TypeInfo* providerType = TypeInfo::find(connectionString.get(L"provider").c_str());
 	if (!providerType)
 	{
 		m_connection->sendReply(MsgStatus(StFailure));

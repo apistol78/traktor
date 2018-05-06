@@ -147,7 +147,7 @@ Ref< ITypedObject > BoxedTypeInfo::createInstance() const
 
 Ref< BoxedTypeInfo > BoxedTypeInfo::find(const std::wstring& name)
 {
-	const TypeInfo* type = TypeInfo::find(name);
+	const TypeInfo* type = TypeInfo::find(name.c_str());
 	return type != 0 ? new BoxedTypeInfo(*type) : 0;
 }
 

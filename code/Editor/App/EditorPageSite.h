@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_editor_EditorPageSite_H
 
 #include <map>
+#include "Core/Ref.h"
 #include "Editor/IEditorPageSite.h"
 
 namespace traktor

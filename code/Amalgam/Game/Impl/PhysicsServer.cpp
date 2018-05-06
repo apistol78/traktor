@@ -36,7 +36,7 @@ bool PhysicsServer::create(const PropertyGroup* defaultSettings, const PropertyG
 {
 	std::wstring physicsType = defaultSettings->getProperty< std::wstring >(L"Physics.Type");
 
-	Ref< physics::PhysicsManager > physicsManager = dynamic_type_cast< physics::PhysicsManager* >(TypeInfo::createInstance(physicsType));
+	Ref< physics::PhysicsManager > physicsManager = dynamic_type_cast< physics::PhysicsManager* >(TypeInfo::createInstance(physicsType.c_str()));
 	if (!physicsManager)
 		return false;
 

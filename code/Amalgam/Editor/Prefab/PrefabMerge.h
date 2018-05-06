@@ -1,6 +1,7 @@
 #ifndef traktor_amalgam_PrefabMerge_H
 #define traktor_amalgam_PrefabMerge_H
 
+#include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Path.h"
 #include "Core/Math/Transform.h"

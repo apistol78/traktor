@@ -86,14 +86,14 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 	std::wstring renderType = defaultSettings->getProperty< std::wstring >(L"Render.Type");
 	std::wstring captureRenderType = settings->getProperty< std::wstring >(L"Render.CaptureType");
 
-	Ref< render::IRenderSystem > renderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(renderType));
+	Ref< render::IRenderSystem > renderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(renderType.c_str()));
 	if (!renderSystem)
 		return false;
 
 	Ref< render::IRenderSystem > captureRenderSystem;
 	if (!captureRenderType.empty())
 	{
-		captureRenderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(captureRenderType));
+		captureRenderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(captureRenderType.c_str()));
 		if (!captureRenderSystem)
 			return false;
 

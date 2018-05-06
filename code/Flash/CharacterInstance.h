@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_flash_CharacterInstance_H
 #define traktor_flash_CharacterInstance_H
 
+#include "Core/Ref.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Matrix33.h"

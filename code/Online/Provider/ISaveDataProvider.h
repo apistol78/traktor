@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_online_ISaveDataProvider_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Online/Types.h"
 
 // import/export mechanism.

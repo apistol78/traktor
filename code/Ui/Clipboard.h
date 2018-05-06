@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_ui_Clipboard_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Ui/Enums.h"
 
 // import/export mechanism.

@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Containers/AlignedVector.h"

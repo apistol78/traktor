@@ -76,7 +76,7 @@ bool Database::open(const ConnectionString& connectionString)
 		return false;
 	}
 
-	const TypeInfo* providerType = TypeInfo::find(connectionString.get(L"provider"));
+	const TypeInfo* providerType = TypeInfo::find(connectionString.get(L"provider").c_str());
 	if (!providerType)
 	{
 		log::error << L"Unable to open database; no such provider \"" << connectionString.get(L"provider") << L"\"." << Endl;
@@ -104,7 +104,7 @@ bool Database::create(const ConnectionString& connectionString)
 		return false;
 	}
 
-	const TypeInfo* providerType = TypeInfo::find(connectionString.get(L"provider"));
+	const TypeInfo* providerType = TypeInfo::find(connectionString.get(L"provider").c_str());
 	if (!providerType)
 	{
 		log::error << L"Unable to open database; no such provider \"" << connectionString.get(L"provider") << L"\"." << Endl;

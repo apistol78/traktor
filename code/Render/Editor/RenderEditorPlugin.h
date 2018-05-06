@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_RenderEditorPlugin_H
 #define traktor_render_RenderEditorPlugin_H
 
+#include "Core/Ref.h"
 #include "Editor/IEditorPlugin.h"
 
 namespace traktor

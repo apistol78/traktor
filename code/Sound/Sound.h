@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_sound_Sound_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Sound/Types.h"
 
 // import/export mechanism.

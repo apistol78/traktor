@@ -33,7 +33,7 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	// Create render system.
 	std::wstring renderSystemTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.RenderSystem");
 
-	const TypeInfo* renderSystemType = TypeInfo::find(renderSystemTypeName);
+	const TypeInfo* renderSystemType = TypeInfo::find(renderSystemTypeName.c_str());
 	if (!renderSystemType)
 	{
 		ui::MessageBox::show(parent, std::wstring(L"Unable to instantiate render system \"") + renderSystemTypeName + std::wstring(L"\"\nNo such type"), L"Error", ui::MbIconError | ui::MbOk);

@@ -7,8 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_editor_IPipelineCache_H
 #define traktor_editor_IPipelineCache_H
 
-#include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Editor/PipelineTypes.h"
 
 // import/export mechanism.

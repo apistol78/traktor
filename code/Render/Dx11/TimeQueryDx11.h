@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_TimeQueryDx11_H
 #define traktor_render_TimeQueryDx11_H
 
+#include "Core/Ref.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/ITimeQuery.h"
 

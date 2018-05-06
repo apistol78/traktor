@@ -4,13 +4,13 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#pragma once
 #ifndef traktor_TypeInfo_H
 #define traktor_TypeInfo_H
 
 #include <set>
-#include <string>
 #include "Core/Config.h"
-#include "Core/Ref.h"
+#include "Core/IRefCount.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,7 +18,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -125,7 +125,7 @@ public:
 	 *
 	 * \return Type pointer, null if type not found.
 	 */
-	static const TypeInfo* find(const std::wstring& name);
+	static const TypeInfo* find(const wchar_t* name);
 
 	/*! \brief Find all types derived from this type.
 	 *
@@ -140,7 +140,7 @@ public:
 	 * \param memory Optional pointer to memory location.
 	 * \return New instance.
 	 */
-	static ITypedObject* createInstance(const std::wstring& name, void* memory = 0);
+	static ITypedObject* createInstance(const wchar_t* name, void* memory = 0);
 
 	/*! \brief Set tag.
 	 * \note This is specifically used for maintaining script class mapping.
@@ -157,7 +157,7 @@ private:
 	int32_t m_version;
 	bool m_editable;
 	const TypeInfo* m_super;
-	Ref< const IInstanceFactory > m_factory;
+	const IInstanceFactory* m_factory;
 	mutable uint32_t m_tag;
 };
 

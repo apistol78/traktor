@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_physics_BodyDesc_H
 #define traktor_physics_BodyDesc_H
 
-#include <string>
+#include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

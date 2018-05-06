@@ -89,7 +89,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 	std::set< std::wstring > driverTypes = mergedSettings->getProperty< std::set< std::wstring > >(L"Input.DriverTypes");
 	for (std::set< std::wstring >::const_iterator i = driverTypes.begin(); i != driverTypes.end(); ++i)
 	{
-		Ref< input::IInputDriver > driver = dynamic_type_cast< input::IInputDriver* >(TypeInfo::createInstance(*i));
+		Ref< input::IInputDriver > driver = dynamic_type_cast< input::IInputDriver* >(TypeInfo::createInstance(i->c_str()));
 		if (!driver)
 		{
 			log::error << L"Input server failed; unable to instantiate driver \"" << *i << L"\"" << Endl;

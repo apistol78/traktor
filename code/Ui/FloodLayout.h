@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_ui_FloodLayout_H
 #define traktor_ui_FloodLayout_H
 
+#include "Core/Ref.h"
 #include "Ui/Layout.h"
 #include "Ui/Size.h"
 

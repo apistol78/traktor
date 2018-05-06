@@ -118,7 +118,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 {
 	std::wstring worldType = defaultSettings->getProperty< std::wstring >(L"World.Type");
 
-	m_worldType = TypeInfo::find(worldType);
+	m_worldType = TypeInfo::find(worldType.c_str());
 	if (!m_worldType)
 	{
 		log::error << L"Unable to create world server; no such type \"" << worldType << L"\"" << Endl;

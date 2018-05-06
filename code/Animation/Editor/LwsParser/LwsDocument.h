@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_animation_LwsDocument_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 namespace traktor
 {

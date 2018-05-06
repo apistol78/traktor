@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_FileOutputStreamBuffer_H
 #define traktor_FileOutputStreamBuffer_H
 
+#include "Core/Ref.h"
 #include "Core/Io/OutputStreamBuffer.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Thread/Semaphore.h"

@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Config.h"
 #include "Core/Guid.h"
 #include "Core/Platform.h"
+#include "Core/Ref.h"
 #include "Core/Io/Path.h"
 
 // import/export mechanism.

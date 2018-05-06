@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_amalgam_ResourceServer_H
 
 #include "Amalgam/Run/IResourceServer.h"
+#include "Core/Ref.h"
 
 namespace traktor
 {

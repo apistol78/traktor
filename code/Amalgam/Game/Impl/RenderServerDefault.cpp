@@ -160,14 +160,14 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	std::wstring captureRenderType = settings->getProperty< std::wstring >(L"Render.CaptureType");
 	std::wstring vrCompositorType = settings->getProperty< std::wstring >(L"Render.VRCompositorType");
 
-	Ref< render::IRenderSystem > renderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(renderType));
+	Ref< render::IRenderSystem > renderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(renderType.c_str()));
 	if (!renderSystem)
 		return false;
 
 	Ref< render::IRenderSystem > captureRenderSystem;
 	if (!captureRenderType.empty())
 	{
-		captureRenderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(captureRenderType));
+		captureRenderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(captureRenderType.c_str()));
 		if (!captureRenderSystem)
 			return false;
 
@@ -177,7 +177,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	Ref< render::IVRCompositor > vrCompositor;
 	if (!vrCompositorType.empty())
 	{
-		vrCompositor = dynamic_type_cast< render::IVRCompositor* >(TypeInfo::createInstance(vrCompositorType));
+		vrCompositor = dynamic_type_cast< render::IVRCompositor* >(TypeInfo::createInstance(vrCompositorType.c_str()));
 		if (!vrCompositor)
 			return false;
 	}

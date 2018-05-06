@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_ui_IBitmap_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Ui/Size.h"
 
 // import/export mechanism.
